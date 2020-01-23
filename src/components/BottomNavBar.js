@@ -28,7 +28,7 @@ export default function BottomNavBar ({ screens, currentTab, setCurrentTab }) {
           className={classes.root}
         >
             {screens.map((screen) =>
-                <BottomNavigationAction label={screen.text} value={screen.name} icon={<screen.icon />} />
+                <BottomNavigationAction label={screen.text} value={screen.name} icon={screen.renderIcon()} />
             )}
         </BottomNavigation>
         <BottomNavigation />

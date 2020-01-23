@@ -5,25 +5,27 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import TimerIcon from '@material-ui/icons/Timer';
-import TimerOffIcon from '@material-ui/icons/TimerOff';
 import {formatTimer} from "../utils/timer";
 
 
 const useStylesForCard = makeStyles(theme => ({
   card: {
-    margin: "auto",
-    height: "17vh",
-    width: "25vw",
+    marginLeft: props => props.left ? "1vw" :"auto",
+    marginRight: props => props.left ? 'auto' : "1vw",
+    height: "40vw",
+    width: "40vw",
     cursor: "pointer"
   },
   title: {
-    fontSize: "1.5vh",
+    fontSize: "4vw",
+    fontWeight: props => props.onFocus ? "bold": "normal"
   },
   icon: {
-    fontSize: "8vh"
+    fontSize: "20vw"
   },
   timer: {
-    fontSize: "2vh"
+    fontSize: "5vw",
+    fontWeight: props => props.onFocus ? "bold": "normal"
   },
   timerContainer: {
     display: "flex",
@@ -38,19 +40,19 @@ const useStylesForGrid = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     overflow: 'hidden',
     backgroundColor: theme.palette.background.paper,
   },
   grid: {
-    width: "80vw",
-    height: "40vh"
+    width: "92vw",
+    height: "90vw",
   }
 }));
 
 
-function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick }) {
-    const classes = useStylesForCard({ onFocus: onFocus });
+function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick, left }) {
+    const classes = useStylesForCard({ onFocus: onFocus, left: left});
     const color = onFocus ? "primary" : "inherit";
     const timerProps = {
         className: classes.timer,
@@ -68,8 +70,8 @@ function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick }) {
             })}
             {timer &&
                 <div className={classes.timerContainer}>
-                    {onFocus ? <TimerIcon {...timerProps}/> : <TimerOffIcon {...timerProps}/>}
-                    <div style={{width: "1vw"}}></div>
+                    {onFocus && <TimerIcon {...timerProps}/>}
+                    <div style={{width: "1vw"}} />
                     <Typography {...timerProps}>
                         {formatTimer(timer)}
                     </Typography>
@@ -99,8 +101,9 @@ export function ActivitySwitchGrid ({ activitySwitches, timers, activityOnFocus,
               justify="space-evenly"
               alignItems={"center"}
               className={classes.grid}
+              spacing={0}
           >
-            {activitySwitches.map(activitySwitch => (
+            {activitySwitches.map((activitySwitch, index) => (
               <Grid item key={activitySwitch.name} xs={6}>
                 <ActivitySwitchCard
                     label={activitySwitch.label}
@@ -108,6 +111,7 @@ export function ActivitySwitchGrid ({ activitySwitches, timers, activityOnFocus,
                     timer={timers[activitySwitch.name]}
                     onFocus={activitySwitch.name === activityOnFocus}
                     onClick={handleActivitySwitch(activitySwitch.name)}
+                    left={index % 2 === 0}
                 />
               </Grid>
             ))}
