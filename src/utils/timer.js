@@ -1,5 +1,4 @@
 export function formatTimer (timerDuration) {
-    console.log(timerDuration);
     if (!timerDuration) return null;
     const timerDurationInMinutes = timerDuration / 60000 >> 0;
     const timerDurationInHours = timerDurationInMinutes / 60 >> 0;
