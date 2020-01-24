@@ -2,81 +2,63 @@ import React from 'react';
 import {makeStyles} from "@material-ui/core/styles";
 import {getActivityByName} from "../utils/activities";
 import {formatDate} from "../utils/time";
+import classNames from 'classnames';
 
 
 const useStyles = makeStyles({
-    root: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        width: props => props.width
-    },
     period: props => ({
-        height: props.height,
         width: props.width,
-        border: props.height === 0 ? "solid 1px" : "none",
-        borderColor: props.color,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center"
+        backgroundColor: props.color,
     }),
     point: props => ({
         height: props.height,
-        width: props.width,
-        border: props.draw ? "solid 0.5vw black" : "none",
-        borderRadius: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center"
     })
 });
 
-function Period ({width, color, height=0, children=null}) {
-    const classes = useStyles({width, height, color});
+function Period ({width, color, className, children=null}) {
+    const classes = useStyles({width, color});
     return (
-        <div className={classes.period}>{children}</div>
+        <div className={classNames("timeline-segment", classes.period, className)}>{children}</div>
     );
 }
 
-function Event({height="1vw", width="1vw", draw=true, children=null}) {
-    const classes = useStyles({height, width, draw});
+function Event({height, className, children=null}) {
+    const classes = useStyles({height});
     return (
-        <div className={classes.point}>{children}</div>
-    )
+        <div className={classNames("timeline-point", classes.point, className)}>{children}</div>
+    );
 }
 
-export function TimeLine ({width, height, dayEvents}) {
-    const classes = useStyles({width});
+export function TimeLine ({dayEvents}) {
     const periodWidth = `${Math.floor((100 - dayEvents.length)/ dayEvents.length)}%`;
     return (
-        <div style={{display: "flex", justifyContent: "center"}}>
+        <div className="timeline-container">
             <div>
-                <div className={classes.root}>
+                <div className="timeline-line">
                     {dayEvents.map((event, index) =>
                         <React.Fragment key={index}>
-                            <Event height={height} width="2vw" draw={false} />
-                            <Period width={periodWidth} color={"blue"} height={height}>
-                                {getActivityByName(event.activityName).renderIcon({style:{fontSize: height, color: "blue"}})}
+                            <Event className="timeline-legend" />
+                            <Period width={periodWidth} color={"blue"} className="timeline-legend">
+                                {getActivityByName(event.activityName).renderIcon({className: "timeline-legend-icon"})}
                             </Period>
                         </React.Fragment>
                     )}
                 </div>
-                <div className={classes.root}>
+                <div className="timeline-line">
                     {dayEvents.map((event, index) =>
                         <React.Fragment key={index}>
                             <Event />
-                            <Period width={periodWidth} color={"blue"} />
+                            <Period width={periodWidth} color={"blue"} className={index === dayEvents.length - 1 && "timeline-segment-blurred"}/>
                         </React.Fragment>
                     )}
                 </div>
-                <div className={classes.root}>
+                <div className="timeline-line">
                     {dayEvents.map((event, index) =>
                         <React.Fragment key={index}>
-                            <Event height={height} width="2vw" draw={false} >
-                                <p style={{fontSize: "50%"}}>{formatDate(event.date)}</p>
+                            <Event className="timeline-legend" >
+                                <p className="timeline-legend-label">{formatDate(event.date)}</p>
                             </Event>
-                            <Period width={periodWidth} height={height} />
+                            <Period width={periodWidth} className="timeline-legend"/>
                         </React.Fragment>
                     )}
                 </div>

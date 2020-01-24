@@ -1,22 +1,9 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 
 
-const useStyles = makeStyles(theme => ({
-  root: {
-      width: "100vw",
-      justifyContent: "space-between",
-      position: "fixed",
-      bottom: 0,
-  }
-}));
-
-
 export default function BottomNavBar ({ screens, currentTab, setCurrentTab }) {
-  const classes = useStyles();
-
   return (
     <React.Fragment>
         <BottomNavigation
@@ -25,7 +12,7 @@ export default function BottomNavBar ({ screens, currentTab, setCurrentTab }) {
             setCurrentTab(newValue);
           }}
           showLabels
-          className={classes.root}
+          className="nav-bar-container"
         >
             {screens.map((screen) =>
                 <BottomNavigationAction key={screen.name} label={screen.text} value={screen.name} icon={screen.renderIcon()} />
