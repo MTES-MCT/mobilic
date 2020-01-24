@@ -52,7 +52,7 @@ function App() {
 
   return (
     <div className="App">
-        <Container>
+        <Container className="container">
             <TimeLine width="80vw" height="3vh" dayEvents={currentDayEvents}/>
             <TimeOfService timer={timers["total"]} />
             <ActivitySwitchGrid
