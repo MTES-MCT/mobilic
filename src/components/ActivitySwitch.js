@@ -45,7 +45,7 @@ const useStylesForGrid = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
   },
   grid: {
-    height: "90vw",
+    height: "88vw",
   }
 }));
 
@@ -81,14 +81,14 @@ function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick, left 
     )
 }
 
-export function ActivitySwitchGrid ({ activitySwitches, timers, activityOnFocus, setActivityOnFocus, pushActivitySwitchEvent }) {
+export function ActivitySwitchGrid ({ activities, timers, activityOnFocus, setActivityOnFocus, pushActivitySwitchEvent }) {
     const classes = useStylesForGrid();
 
-    const handleActivitySwitch = (activity) => () => {
-        setActivityOnFocus(activity);
+    const handleActivitySwitch = (activityName) => () => {
+        setActivityOnFocus(activityName);
         pushActivitySwitchEvent({
             date: Date.now(),
-            activity: activity
+            activityName: activityName
         });
     };
 
@@ -102,14 +102,14 @@ export function ActivitySwitchGrid ({ activitySwitches, timers, activityOnFocus,
               className={classes.grid}
               spacing={0}
           >
-            {activitySwitches.map((activitySwitch, index) => (
-              <Grid item key={activitySwitch.name} xs={6}>
+            {activities.map((activity, index) => (
+              <Grid item key={activity.name} xs={6}>
                 <ActivitySwitchCard
-                    label={activitySwitch.label}
-                    renderIcon={activitySwitch.renderIcon}
-                    timer={timers[activitySwitch.name]}
-                    onFocus={activitySwitch.name === activityOnFocus}
-                    onClick={handleActivitySwitch(activitySwitch.name)}
+                    label={activity.label}
+                    renderIcon={activity.renderIcon}
+                    timer={timers[activity.name]}
+                    onFocus={activity.name === activityOnFocus}
+                    onClick={handleActivitySwitch(activity.name)}
                     left={index % 2 === 0}
                 />
               </Grid>
