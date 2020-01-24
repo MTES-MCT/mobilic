@@ -5,6 +5,11 @@ export function formatTimer (timerDuration) {
     return `${addZero(timerDurationInHours)}:${addZero(timerDurationInMinutes % 60)}`;
 }
 
+export function formatDate (unixDate) {
+    const date = new Date(unixDate);
+    return `${addZero(date.getHours())}h${addZero(date.getMinutes() % 60)}`;
+}
+
 function addZero (n) {
     return n < 10 ? '0' + n : n;
 }

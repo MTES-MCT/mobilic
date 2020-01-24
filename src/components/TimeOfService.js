@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import {formatTimer} from "../utils/timer";
+import {formatTimer} from "../utils/time";
 
 const useStyles = makeStyles({
     root: {
