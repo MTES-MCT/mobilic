@@ -5,7 +5,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import TimerIcon from '@material-ui/icons/Timer';
-import {formatTimer} from "../utils/timer";
+import {formatTimer} from "../utils/time";
 
 
 const useStylesForCard = makeStyles(theme => ({
