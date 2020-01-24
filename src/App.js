@@ -5,13 +5,11 @@ import Container from '@material-ui/core/Container';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import LocalShippingIcon from '@material-ui/icons/LocalShipping';
-import BuildIcon from '@material-ui/icons/Build';
-import HotelIcon from '@material-ui/icons/Hotel';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import {ActivitySwitchGrid} from "./components/ActivitySwitch";
 import {TimeOfService} from "./components/TimeOfService";
-import {computeDayTimers} from "./utils/activityEvents";
+import {computeTotalActivityDurations} from "./utils/activityPeriods";
+import {TimeLine} from "./components/Timeline";
+import {ACTIVITIES} from "./utils/activities";
 
 
 const NAV_SCREENS = [
@@ -33,30 +31,6 @@ const NAV_SCREENS = [
 ];
 
 
-const ACTIVITY_SWITCHES= [
-    {
-        name: "drive",
-        label: "Conduite",
-        renderIcon: (props) => <LocalShippingIcon {...props} />
-    },
-    {
-        name: "work",
-        label: "Travail",
-        renderIcon: (props) => <BuildIcon {...props} />,
-    },
-    {
-        name: "rest",
-        label: "Repos",
-        renderIcon: (props) => <HotelIcon {...props} />
-    },
-    {
-        name: "end",
-        label: "Fin de journée",
-        renderIcon: (props) => <HighlightOffIcon {...props} />
-    }
-];
-
-
 function App() {
   const [currentTab, setCurrentTab] = React.useState("item1");
   const [currentActivity, setCurrentActivity] = React.useState("drive");
@@ -74,13 +48,15 @@ function App() {
       ]);
   }
 
-  const timers = computeDayTimers(currentDayEvents, Date.now() + 1);
+  const timers = computeTotalActivityDurations(currentDayEvents, Date.now() + 1);
+
   return (
     <div className="App">
-        <Container >
+        <Container>
+            <TimeLine width="80vw" height="3vh" dayEvents={currentDayEvents}/>
             <TimeOfService timer={timers["total"]} />
             <ActivitySwitchGrid
-                activitySwitches={ACTIVITY_SWITCHES}
+                activities={ACTIVITIES}
                 timers={timers}
                 activityOnFocus={currentActivity}
                 setActivityOnFocus={setCurrentActivity}
