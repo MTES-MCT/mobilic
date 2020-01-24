@@ -45,7 +45,6 @@ const useStylesForGrid = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
   },
   grid: {
-    width: "92vw",
     height: "90vw",
   }
 }));

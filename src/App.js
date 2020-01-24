@@ -64,7 +64,7 @@ function App() {
   const [currentDate, setCurrentDate] = React.useState(Date.now());
 
   React.useEffect(
-      () => setInterval(() => setCurrentDate(Date.now()), 5000), []
+      () => {setInterval(() => setCurrentDate(Date.now()), 5000)}, []
   );
 
   function pushNewCurrentDayEvent (event) {
@@ -77,7 +77,7 @@ function App() {
   const timers = computeDayTimers(currentDayEvents, Date.now() + 1);
   return (
     <div className="App">
-        <Container maxWidth="90vw">
+        <Container >
             <TimeOfService timer={timers["total"]} />
             <ActivitySwitchGrid
                 activitySwitches={ACTIVITY_SWITCHES}
