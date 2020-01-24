@@ -1,15 +1,12 @@
 import React from 'react';
 import './App.css';
 import BottomNavBar from "./components/BottomNavBar";
-import Container from '@material-ui/core/Container';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import {ActivitySwitchGrid} from "./components/ActivitySwitch";
-import {TimeOfService} from "./components/TimeOfService";
 import {computeTotalActivityDurations} from "./utils/activityPeriods";
-import {TimeLine} from "./components/Timeline";
-import {ACTIVITIES} from "./utils/activities";
+import {CurrentActivity} from "./screens/CurrentActivity";
+
 
 
 const NAV_SCREENS = [
@@ -52,17 +49,13 @@ function App() {
 
   return (
     <div className="App">
-        <Container className="container">
-            <TimeLine width="80vw" height="3vh" dayEvents={currentDayEvents}/>
-            <TimeOfService timer={timers["total"]} />
-            <ActivitySwitchGrid
-                activities={ACTIVITIES}
-                timers={timers}
-                activityOnFocus={currentActivity}
-                setActivityOnFocus={setCurrentActivity}
-                pushActivitySwitchEvent={pushNewCurrentDayEvent}
-            />
-        </Container>
+        <CurrentActivity
+            currentActivity={currentActivity}
+            timers={timers}
+            setCurrentActivity={setCurrentActivity}
+            currentDayEvents={currentDayEvents}
+            pushNewCurrentDayEvent={pushNewCurrentDayEvent}
+        />
         <BottomNavBar screens={NAV_SCREENS} currentTab={currentTab} setCurrentTab={setCurrentTab} />
     </div>
   );

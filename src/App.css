@@ -69,7 +69,7 @@
 
 .nav-bar-container {
   width: 100vw;
-  justify-content: space-between;
+  justify-content: space-between !important;
   position: fixed;
   bottom: 0;
 }
