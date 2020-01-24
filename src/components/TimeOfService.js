@@ -6,7 +6,9 @@ const useStyles = makeStyles({
     root: {
         display: "flex",
         direction: "row",
-        alignItems: "center"
+        alignItems: "center",
+        marginLeft: "1vw",
+        marginRight: "1vw"
     }
 });
 
