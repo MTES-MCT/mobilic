@@ -18,7 +18,7 @@ export function SelectFirstActivityModal ({ open, handleClose, handleItemClick }
               <ListItem button onClick={() => {handleItemClick(activity.name); handleClose()}} key={activity.name}>
                 <ListItemAvatar>
                   <Avatar>
-                      {activity.renderIcon()}
+                      {activity.renderIcon({color: "primary"})}
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText primary={activity.label} />
