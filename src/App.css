@@ -121,3 +121,17 @@
 .timeline-segment-blurred {
   background: linear-gradient(to right, blue, white);
 }
+
+.start-buttons-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.summary-card-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
