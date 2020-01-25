@@ -25,7 +25,7 @@ export function BeforeWork ({ previousDayTimers, previousDayStart, previousDayEn
                     startIcon={<PersonIcon />}
                     onClick={() => setOpenFirstActivityModal(true)}
                 >
-                    Démarrer
+                    Commencer la journée
                 </Button>
                 <div style={{height: "2vh"}} />
                 <Button
@@ -34,7 +34,7 @@ export function BeforeWork ({ previousDayTimers, previousDayStart, previousDayEn
                     startIcon={<PeopleIcon />}
                     onClick={() => setOpenFirstActivityModal(true)}
                 >
-                    Démarrer en équipe
+                    Commencer en équipe
                 </Button>
             </div>
             <SelectFirstActivityModal

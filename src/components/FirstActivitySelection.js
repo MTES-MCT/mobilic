@@ -12,7 +12,7 @@ import {ACTIVITIES} from "../utils/activities";
 export function SelectFirstActivityModal ({ open, handleClose, handleItemClick }) {
     return (
         <Dialog onClose={handleClose} open={open}>
-          <DialogTitle>Choisir l'activité</DialogTitle>
+          <DialogTitle>Commencer par</DialogTitle>
           <List>
             {Object.values(ACTIVITIES).filter((a) => a.canBeFirst).map(activity => (
               <ListItem button onClick={() => {handleItemClick(activity.name); handleClose()}} key={activity.name}>

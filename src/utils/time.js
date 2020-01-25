@@ -2,7 +2,7 @@ export function formatTimer (timerDuration) {
     if (!timerDuration) return null;
     const timerDurationInMinutes = timerDuration / 60000 >> 0;
     const timerDurationInHours = timerDurationInMinutes / 60 >> 0;
-    return `${timerDurationInHours}h ${addZero(timerDurationInMinutes % 60)}m`;
+    return `${timerDurationInHours}h${"\u00A0"}${addZero(timerDurationInMinutes % 60)}m`;
 }
 
 export function formatDate (unixDate) {
@@ -12,7 +12,7 @@ export function formatDate (unixDate) {
 
 export function formatDay(unixDate) {
     const date = new Date(unixDate);
-    return `${addZero(date.getDay())}/${addZero(date.getMonth())}`
+    return `${addZero(date.getDate())}/${addZero(date.getMonth() + 1)}`
 }
 
 function addZero (n) {

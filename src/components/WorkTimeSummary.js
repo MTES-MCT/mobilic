@@ -53,7 +53,7 @@ export function WorkDaySummary ({ timers, dayStart, dayEnd, handleExport }) {
             summaryContent={[
                 {
                     stat: "Temps de service",
-                    value: `${formatTimer(serviceTime)} (${formatDate(dayStart)} - ${formatDate(dayEnd)})`
+                    value: `${formatTimer(serviceTime)} (${formatDate(dayStart)}${"\u00A0"}-${"\u00A0"}${formatDate(dayEnd)})`
                 },
                 {
                     stat: "Temps de travail",
