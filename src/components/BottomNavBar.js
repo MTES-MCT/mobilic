@@ -18,7 +18,6 @@ export default function BottomNavBar ({ screens, currentTab, setCurrentTab }) {
                 <BottomNavigationAction key={screen.name} label={screen.text} value={screen.name} icon={screen.renderIcon()} />
             )}
         </BottomNavigation>
-        <BottomNavigation />
     </React.Fragment>
   );
 }
