@@ -39,13 +39,9 @@ function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick }) {
     )
 }
 
-export function ActivitySwitchGrid ({ timers, activityOnFocus, setActivityOnFocus, pushActivitySwitchEvent }) {
+export function ActivitySwitchGrid ({ timers, activityOnFocus, pushActivitySwitchEvent }) {
     const handleActivitySwitch = (activityName) => () => {
-        setActivityOnFocus(activityName);
-        pushActivitySwitchEvent({
-            date: Date.now(),
-            activityName: activityName
-        });
+        pushActivitySwitchEvent(activityName);
     };
 
     return (

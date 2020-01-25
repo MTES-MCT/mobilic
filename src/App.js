@@ -6,6 +6,8 @@ import SearchIcon from '@material-ui/icons/Search';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import {computeTotalActivityDurations} from "./utils/activityPeriods";
 import {CurrentActivity} from "./screens/CurrentActivity";
+import {ACTIVITIES} from "./utils/activities";
+import {BeforeWork} from "./screens/BeforeWork";
 
 
 
@@ -30,7 +32,6 @@ const NAV_SCREENS = [
 
 function App() {
   const [currentTab, setCurrentTab] = React.useState("item1");
-  const [currentActivity, setCurrentActivity] = React.useState("drive");
   const [currentDayEvents, setCurrentDayEvents] = React.useState([]);
   const [currentDate, setCurrentDate] = React.useState(Date.now());
 
@@ -38,24 +39,37 @@ function App() {
       () => {setInterval(() => setCurrentDate(Date.now()), 5000)}, []
   );
 
-  function pushNewCurrentDayEvent (event) {
+  function pushNewCurrentDayEvent (activityName) {
       setCurrentDayEvents([
           ...currentDayEvents,
-          event
+          {
+              activityName: activityName,
+              date: Date.now()
+          }
       ]);
   }
+
+  const currentActivity = currentDayEvents[currentDayEvents.length - 1] ? currentDayEvents[currentDayEvents.length - 1].activityName : ACTIVITIES.end.name;
 
   const timers = computeTotalActivityDurations(currentDayEvents, Date.now() + 1);
 
   return (
     <div className="App">
-        <CurrentActivity
-            currentActivity={currentActivity}
-            timers={timers}
-            setCurrentActivity={setCurrentActivity}
-            currentDayEvents={currentDayEvents}
-            pushNewCurrentDayEvent={pushNewCurrentDayEvent}
-        />
+        {currentActivity === ACTIVITIES.end.name ?
+            <BeforeWork
+                previousDayTimers={timers}
+                previousDayStart={currentDayEvents[0] && currentDayEvents[0].date}
+                previousDayEnd={currentDayEvents[currentDayEvents.length - 1] && currentDayEvents[currentDayEvents.length - 1].date}
+                pushFirstActivity={pushNewCurrentDayEvent}
+            />
+            :
+            <CurrentActivity
+                currentActivity={currentActivity}
+                timers={timers}
+                currentDayEvents={currentDayEvents}
+                pushNewCurrentDayEvent={pushNewCurrentDayEvent}
+            />
+        }
         <BottomNavBar screens={NAV_SCREENS} currentTab={currentTab} setCurrentTab={setCurrentTab} />
     </div>
   );
