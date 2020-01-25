@@ -1,6 +1,5 @@
 :root {
   --activity-card-height: min(42vw, 30vh);
-  --background-paper-color: white;
   --timeline-base-font-size: min(1vh, 1vw);
   --bottom-nav-bar-height: 56px;
 }
@@ -27,7 +26,6 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  background-color: var(--background-paper-color, white);
 }
 
 .activity-card-container {
@@ -37,19 +35,20 @@
 }
 
 .activity-card-content {
-  padding: calc(var(--activity-card-height) * 0.1) !important;
-}
-
-.activity-card-title {
-  font-size: max(8px, calc(var(--activity-card-height) * 0.1)) !important;
-}
-
-.activity-card-timer {
-  font-size: max(10px, calc(var(--activity-card-height) * 0.1)) !important;
+  padding: 5% !important;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .activity-card-icon {
-  font-size: calc(var(--activity-card-height) * 0.5) !important;
+  padding: 2px;
+  flex-grow: 1;
+  flex-shrink: unset !important;
+  width: auto !important;
+  height: auto !important;
 }
 
 .activity-card-timer-container {
@@ -144,4 +143,8 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+}
+
+.hidden {
+  visibility: hidden;
 }
