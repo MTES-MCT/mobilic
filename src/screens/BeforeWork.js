@@ -10,15 +10,15 @@ import {SelectFirstActivityModal} from "../components/FirstActivitySelection";
 export function BeforeWork ({ previousDayTimers, previousDayStart, previousDayEnd, pushFirstActivity }) {
     const [openFirstActivityModal, setOpenFirstActivityModal] = React.useState(false);
     return (
-        <Container className="container">
+        <Container className="container scrollable">
             <WorkDaySummary
                 timers={previousDayTimers}
                 dayStart={previousDayStart}
                 dayEnd={previousDayEnd}
                 handleExport={() => console.log("caca")}
             />
-            <div style={{flexGrow: 1}} />
-            <div className="start-buttons-container">
+            <div style={{height: "5vh", flexGrow: 1}} />
+            <div className="start-buttons-container unshrinkable">
                 <Button
                     variant="contained"
                     color="primary"

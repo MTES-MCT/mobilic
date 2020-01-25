@@ -13,7 +13,7 @@ import TableRow from '@material-ui/core/TableRow';
 
 function SummaryCard ({ title, handleExport, summaryContent }) {
     return (
-        <Card className="summary-card-container">
+        <Card className="summary-card-container unshrinkable">
             <CardContent className="summary-card-content">
                 <div className="summary-card-header">
                     <Typography className="summary-card-title">
