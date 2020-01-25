@@ -1,5 +1,6 @@
 :root {
-  --activity-card-height: min(42vw, 30vh);
+  --activity-card-height: 42vw;
+  --activity-card-max-height: 30vh;
   --bottom-nav-bar-height: 56px;
 }
 
@@ -29,13 +30,16 @@
 
 .activity-card-container {
   height: var(--activity-card-height);
+  max-height: var(--activity-card-max-height);
   width: var(--activity-card-height);
+  max-width: var(--activity-card-max-height);
   cursor: pointer;
 }
 
 .activity-card-content {
   padding: 5% !important;
   height: 90%;
+  width: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
