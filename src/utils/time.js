@@ -10,6 +10,11 @@ export function formatDate (unixDate) {
     return `${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
 }
 
+export function formatDay(unixDate) {
+    const date = new Date(unixDate);
+    return `${addZero(date.getDay())}/${addZero(date.getMonth())}`
+}
+
 function addZero (n) {
     return n < 10 ? '0' + n : n;
 }
