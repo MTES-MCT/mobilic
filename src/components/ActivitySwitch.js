@@ -12,7 +12,7 @@ import {ACTIVITIES} from "../utils/activities";
 function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick }) {
     const color = onFocus ? "primary" : "inherit";
     const timerProps = {
-        className: classNames("activity-card-timer", {"card-on-focus": onFocus}),
+        className: classNames("activity-card-timer", {"card-on-focus": onFocus, hidden: !timer}),
         color: color
     };
     return (
@@ -25,15 +25,13 @@ function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick }) {
                 className: "activity-card-icon",
                 color: color
             })}
-            {timer &&
-                <div className="activity-card-timer-container">
-                    {onFocus && <TimerIcon {...timerProps}/>}
-                    <div style={{width: "1vw"}} />
-                    <Typography {...timerProps}>
-                        {formatTimer(timer)}
-                    </Typography>
-                </div>
-            }
+            <div className="activity-card-timer-container">
+                {onFocus && <TimerIcon {...timerProps}/>}
+                <div style={{width: "1vw"}} />
+                <Typography {...timerProps}>
+                    {formatTimer(timer || 10)}
+                </Typography>
+            </div>
           </CardContent>
         </Card>
     )
