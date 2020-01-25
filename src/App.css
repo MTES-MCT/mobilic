@@ -1,6 +1,5 @@
 :root {
   --activity-card-height: min(42vw, 30vh);
-  --timeline-base-font-size: min(1vh, 1vw);
   --bottom-nav-bar-height: 56px;
 }
 
@@ -92,20 +91,20 @@
   justify-content: center;
   align-items: center;
   width: 90%;
-  margin-bottom: var(--timeline-base-font-size);
+  margin-bottom: 0.25rem;
 }
 
 .timeline-segment {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: calc(var(--timeline-base-font-size) * 0.5);
+  height: 0.25rem;
 }
 
 .timeline-point {
-  border: solid calc(var(--timeline-base-font-size) * 0.5) black;
-  height: calc(var(--timeline-base-font-size) * 1);
-  width: calc(var(--timeline-base-font-size) * 1);
+  border: solid 0.25rem black;
+  height: 0.4rem;
+  width: 0.4rem;
   border-radius: 100%;
   display: flex;
   align-items: center;
@@ -113,18 +112,9 @@
 }
 
 .timeline-legend {
-  height: calc(var(--timeline-base-font-size) * 3);
+  height: 0.75rem;
   border: none;
   background: transparent !important;
-}
-
-.timeline-legend-icon {
-  font-size: calc(var(--timeline-base-font-size) * 3);
-  color: blue;
-}
-
-.timeline-legend-label {
-  font-size: calc(var(--timeline-base-font-size) * 3);
 }
 
 .timeline-segment-blurred {
