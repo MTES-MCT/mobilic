@@ -6,6 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import TimerIcon from '@material-ui/icons/Timer';
 import {formatTimer} from "../utils/time";
 import classNames from 'classnames';
+import {ACTIVITIES} from "../utils/activities";
 
 
 function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick }) {
@@ -38,7 +39,7 @@ function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick }) {
     )
 }
 
-export function ActivitySwitchGrid ({ activities, timers, activityOnFocus, setActivityOnFocus, pushActivitySwitchEvent }) {
+export function ActivitySwitchGrid ({ timers, activityOnFocus, setActivityOnFocus, pushActivitySwitchEvent }) {
     const handleActivitySwitch = (activityName) => () => {
         setActivityOnFocus(activityName);
         pushActivitySwitchEvent({
@@ -56,8 +57,8 @@ export function ActivitySwitchGrid ({ activities, timers, activityOnFocus, setAc
               alignItems={"center"}
               spacing={2}
           >
-            {activities.map((activity, index) => (
-              <Grid item key={activity.name} >
+            {Object.values(ACTIVITIES).map((activity, index) => (
+              <Grid item key={activity.name}>
                 <ActivitySwitchCard
                     label={activity.label}
                     renderIcon={activity.renderIcon}

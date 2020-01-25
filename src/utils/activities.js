@@ -5,29 +5,27 @@ import HotelIcon from '@material-ui/icons/Hotel';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 
-export const ACTIVITIES = [
-    {
+export const ACTIVITIES = {
+    drive: {
         name: "drive",
         label: "Conduite",
-        renderIcon: (props) => <LocalShippingIcon {...props} />
+        renderIcon: (props) => <LocalShippingIcon {...props} />,
+        canBeFirst: true
     },
-    {
+    work: {
         name: "work",
         label: "Travail",
         renderIcon: (props) => <BuildIcon {...props} />,
+        canBeFirst: true
     },
-    {
+    rest: {
         name: "rest",
         label: "Repos",
         renderIcon: (props) => <HotelIcon {...props} />
     },
-    {
+    end: {
         name: "end",
         label: "Fin de journée",
         renderIcon: (props) => <HighlightOffIcon {...props} />
     }
-];
-
-export function getActivityByName (name) {
-    return ACTIVITIES.filter((activity) => activity.name === name)[0];
-}
+};
