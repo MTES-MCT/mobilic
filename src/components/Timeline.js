@@ -3,6 +3,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import {formatDate} from "../utils/time";
 import classNames from 'classnames';
 import {ACTIVITIES} from "../utils/activities";
+import Typography from "@material-ui/core/Typography";
 
 
 const useStyles = makeStyles({
@@ -38,7 +39,7 @@ export function TimeLine ({dayEvents}) {
                     <React.Fragment key={index}>
                         <Event className="timeline-legend" />
                         <Period width={periodWidth} color={"blue"} className="timeline-legend">
-                            {ACTIVITIES[event.activityName].renderIcon({className: "timeline-legend-icon"})}
+                            {ACTIVITIES[event.activityName].renderIcon()}
                         </Period>
                     </React.Fragment>
                 )}
@@ -55,7 +56,7 @@ export function TimeLine ({dayEvents}) {
                 {dayEvents.map((event, index) =>
                     <React.Fragment key={index}>
                         <Event className="timeline-legend" >
-                            <p className="timeline-legend-label">{formatDate(event.date)}</p>
+                            <Typography variant="caption" className="timeline-legend-label">{formatDate(event.date)}</Typography>
                         </Event>
                         <Period width={periodWidth} className="timeline-legend"/>
                     </React.Fragment>
