@@ -1,8 +1,8 @@
 import React from 'react';
 import {makeStyles} from "@material-ui/core/styles";
-import {getActivityByName} from "../utils/activities";
 import {formatDate} from "../utils/time";
 import classNames from 'classnames';
+import {ACTIVITIES} from "../utils/activities";
 
 
 const useStyles = makeStyles({
@@ -38,7 +38,7 @@ export function TimeLine ({dayEvents}) {
                     <React.Fragment key={index}>
                         <Event className="timeline-legend" />
                         <Period width={periodWidth} color={"blue"} className="timeline-legend">
-                            {getActivityByName(event.activityName).renderIcon({className: "timeline-legend-icon"})}
+                            {ACTIVITIES[event.activityName].renderIcon({className: "timeline-legend-icon"})}
                         </Period>
                     </React.Fragment>
                 )}
