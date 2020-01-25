@@ -20,7 +20,7 @@ function SummaryCard ({ title, handleExport, summaryContent }) {
                         {title}
                     </Typography>
                     <IconButton onClick={handleExport}>
-                        <ShareIcon/>
+                        <ShareIcon color="primary"/>
                     </IconButton>
                 </div>
                 <Table>
