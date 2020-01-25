@@ -33,35 +33,33 @@ export function TimeLine ({dayEvents}) {
     const periodWidth = `${Math.floor((100 - dayEvents.length)/ dayEvents.length)}%`;
     return (
         <div className="timeline-container">
-            <div>
-                <div className="timeline-line">
-                    {dayEvents.map((event, index) =>
-                        <React.Fragment key={index}>
-                            <Event className="timeline-legend" />
-                            <Period width={periodWidth} color={"blue"} className="timeline-legend">
-                                {getActivityByName(event.activityName).renderIcon({className: "timeline-legend-icon"})}
-                            </Period>
-                        </React.Fragment>
-                    )}
-                </div>
-                <div className="timeline-line">
-                    {dayEvents.map((event, index) =>
-                        <React.Fragment key={index}>
-                            <Event />
-                            <Period width={periodWidth} color={"blue"} className={index === dayEvents.length - 1 && "timeline-segment-blurred"}/>
-                        </React.Fragment>
-                    )}
-                </div>
-                <div className="timeline-line">
-                    {dayEvents.map((event, index) =>
-                        <React.Fragment key={index}>
-                            <Event className="timeline-legend" >
-                                <p className="timeline-legend-label">{formatDate(event.date)}</p>
-                            </Event>
-                            <Period width={periodWidth} className="timeline-legend"/>
-                        </React.Fragment>
-                    )}
-                </div>
+            <div className="timeline-line">
+                {dayEvents.map((event, index) =>
+                    <React.Fragment key={index}>
+                        <Event className="timeline-legend" />
+                        <Period width={periodWidth} color={"blue"} className="timeline-legend">
+                            {getActivityByName(event.activityName).renderIcon({className: "timeline-legend-icon"})}
+                        </Period>
+                    </React.Fragment>
+                )}
+            </div>
+            <div className="timeline-line">
+                {dayEvents.map((event, index) =>
+                    <React.Fragment key={index}>
+                        <Event />
+                        <Period width={periodWidth} color={"blue"} className={index === dayEvents.length - 1 && "timeline-segment-blurred"}/>
+                    </React.Fragment>
+                )}
+            </div>
+            <div className="timeline-line">
+                {dayEvents.map((event, index) =>
+                    <React.Fragment key={index}>
+                        <Event className="timeline-legend" >
+                            <p className="timeline-legend-label">{formatDate(event.date)}</p>
+                        </Event>
+                        <Period width={periodWidth} className="timeline-legend"/>
+                    </React.Fragment>
+                )}
             </div>
         </div>
     )

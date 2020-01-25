@@ -8,14 +8,14 @@ import {formatTimer} from "../utils/time";
 import classNames from 'classnames';
 
 
-function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick, left }) {
+function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick }) {
     const color = onFocus ? "primary" : "inherit";
     const timerProps = {
         className: classNames("activity-card-timer", {"card-on-focus": onFocus}),
         color: color
     };
     return (
-        <Card className={classNames("activity-card-container", {right: !left})} onClick={onClick} raised={onFocus}>
+        <Card className="activity-card-container" onClick={onClick} raised={onFocus}>
           <CardContent className="activity-card-content">
             <Typography className={classNames("activity-card-title", {"card-on-focus": onFocus})} color={color} gutterBottom>
               {label}
@@ -52,20 +52,18 @@ export function ActivitySwitchGrid ({ activities, timers, activityOnFocus, setAc
           <Grid
               container
               direction="row"
-              justify="space-evenly"
+              justify="center"
               alignItems={"center"}
-              className="activity-grid"
-              spacing={0}
+              spacing={2}
           >
             {activities.map((activity, index) => (
-              <Grid item key={activity.name} xs={6}>
+              <Grid item key={activity.name} >
                 <ActivitySwitchCard
                     label={activity.label}
                     renderIcon={activity.renderIcon}
                     timer={timers[activity.name]}
                     onFocus={activity.name === activityOnFocus}
                     onClick={handleActivitySwitch(activity.name)}
-                    left={index % 2 === 0}
                 />
               </Grid>
             ))}

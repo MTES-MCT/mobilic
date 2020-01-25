@@ -9,7 +9,7 @@ import Container from "@material-ui/core/Container";
 export function CurrentActivity ({ timers, currentActivity, setCurrentActivity, currentDayEvents, pushNewCurrentDayEvent }) {
     return (
         <Container className="container">
-            <TimeLine width="80vw" height="3vh" dayEvents={currentDayEvents}/>
+            <TimeLine dayEvents={currentDayEvents}/>
             <TimeOfService timer={timers["total"]} />
             <ActivitySwitchGrid
                 activities={ACTIVITIES}
