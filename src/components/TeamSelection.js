@@ -63,54 +63,60 @@ export function TeamSelectionModal ({ open, handleBack, handleContinue, coworker
 
     return (
         <Dialog fullScreen open={open} onClose={() => {}} TransitionComponent={Transition}>
-        <AppBar style={{position: "relative"}}>
-          <Toolbar className="team-modal-header">
-            <IconButton edge="start" color="inherit" onClick={handleBack} >
-              <ArrowBackIcon />
-            </IconButton>
-            <Typography variant="h6" >
-              Mon équipe
-            </Typography>
-            <Button
-                autoFocus
-                color="inherit"
-                onClick={() => {
-                    setCoworkers(updatedCoworkers);
-                    handleContinue();
-                }}
+        <div style={{position: "sticky", top: 0, zIndex: 1000}}>
+            <AppBar style={{position: "relative"}}>
+              <Toolbar className="team-modal-header">
+                <IconButton edge="start" color="inherit" onClick={handleBack} >
+                  <ArrowBackIcon />
+                </IconButton>
+                <Typography variant="h6" >
+                  Mon équipe
+                </Typography>
+                <Button
+                    autoFocus
+                    color="inherit"
+                    onClick={() => {
+                        setCoworkers(updatedCoworkers);
+                        handleContinue();
+                    }}
+                >
+                  OK
+                </Button>
+              </Toolbar>
+            </AppBar>
+            <form
+                className="new-team-member-form"
+                onSubmit={handleTeamMemberSubmit}
             >
-              OK
-            </Button>
-          </Toolbar>
-        </AppBar>
-        <form
-            className="new-team-member-form"
-            onSubmit={handleTeamMemberSubmit}
-        >
-          <TextField
-              label="Prénom"
-              variant="outlined"
-              value={newTeamMemberFirstName}
-              onChange={(e) => setNewTeamMemberFirstName(e.target.value)}
-          />
-          <TextField
-              label="Nom"
-              variant="outlined"
-              value={newTeamMemberName}
-              onChange={(e) => setNewTeamMemberName(e.target.value)}
-          />
-          <IconButton
-              disabled={!newTeamMemberName || !newTeamMemberFirstName}
-              type="submit"
-          >
-              <AddIcon />
-          </IconButton>
-        </form>
-        <List>
+              <TextField
+                  label="Prénom"
+                  className="new-team-member-text-field"
+                  variant="outlined"
+                  value={newTeamMemberFirstName}
+                  onChange={(e) => setNewTeamMemberFirstName(e.target.value)}
+              />
+              <div style={{width: "2vw"}} />
+              <TextField
+                  label="Nom"
+                  variant="outlined"
+                  className="new-team-member-text-field"
+                  value={newTeamMemberName}
+                  onChange={(e) => setNewTeamMemberName(e.target.value)}
+              />
+              <IconButton
+                  disabled={!newTeamMemberName || !newTeamMemberFirstName}
+                  type="submit"
+              >
+                  <AddIcon />
+              </IconButton>
+            </form>
+        </div>
+        <List clasName="coworkers-list">
             {updatedCoworkers.map((member, index) => [
-                <ListItem key={2 * index}>
+                <Divider key={2 * index} />,
+                <ListItem key={2 * index + 1}>
                   <Checkbox checked={member.isInCurrentTeam} onChange={toggleAddCoworkerToTeam(index)} />
-                  <ListItemText
+                  <ListItemText className="coworker-name"
                     primary={`${member.firstName} ${member.lastName}`}
                   />
                   <ListItemSecondaryAction>
@@ -118,8 +124,7 @@ export function TeamSelectionModal ({ open, handleBack, handleContinue, coworker
                       <DeleteIcon />
                     </IconButton>
                   </ListItemSecondaryAction>
-                </ListItem>,
-                <React.Fragment key={2 * index + 1}>{(index !== coworkers.length - 1) && <Divider/>}</React.Fragment>
+                </ListItem>
             ])}
         </List>
       </Dialog>

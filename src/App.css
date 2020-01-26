@@ -150,3 +150,32 @@
 .unshrinkable {
   flex-shrink: 0;
 }
+
+.team-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.new-team-member-form {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: calc(100% - 2vh);
+  padding: 2vh 0 2vh 2vh;
+  background-color: white;
+}
+
+.new-team-member-text-field {
+  flex-grow: 1;
+}
+
+.coworkers-list {
+  overflow-y: scroll;
+}
+
+.coworker-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
