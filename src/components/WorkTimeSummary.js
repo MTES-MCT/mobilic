@@ -45,7 +45,7 @@ export function WorkDaySummary ({ timers, dayStart, dayEnd, handleExport }) {
     if (!dayStart) return null;
     const serviceTime = timers["total"];
     const workTime = (timers["drive"] || 0) + (timers["work"] || 0);
-    const title = `Résumé du ${formatDay(dayStart)}`;
+    const title = `Journée du ${formatDay(dayStart)}`;
     return (
         <SummaryCard
             title={title}
@@ -64,4 +64,33 @@ export function WorkDaySummary ({ timers, dayStart, dayEnd, handleExport }) {
     );
 }
 
-
+export function WorkWeekSummary ({nWorkedDays, weekStart, weekEnd, timers, nRests, nValidRests, handleExport}) {
+    if (nWorkedDays === 0) return null;
+    const serviceTime = timers["total"];
+    const workTime = (timers["drive"] || 0) + (timers["work"] || 0);
+    const title = `Semaine du ${formatDay(weekStart)} - ${formatDay(weekEnd)} `;
+    return (
+        <SummaryCard
+            title={title}
+            handleExport={handleExport}
+            summaryContent={[
+                {
+                    stat: "Jours de travail",
+                    value: `${nWorkedDays}`
+                },
+                {
+                    stat: "Temps de service",
+                    value: `${formatTimer(serviceTime)}`
+                },
+                {
+                    stat: "Temps de travail",
+                    value: `${formatTimer(workTime)}`
+                },
+                {
+                    stat: "Respect des repos journaliers",
+                    value: `${nRests}/${nValidRests}`
+                }
+            ]}
+        />
+    );
+}

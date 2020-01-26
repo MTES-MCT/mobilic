@@ -18,3 +18,10 @@ export function formatDay(unixDate) {
 function addZero (n) {
     return n < 10 ? '0' + n : n;
 }
+
+export function getStartOfWeek (unixDate) {
+    const date = new Date(unixDate);
+    const dayOfWeek = date.getDay();
+    const daysToSubstract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    return Math.floor((unixDate - daysToSubstract * 86400000) / 86400000) * 86400000;
+}

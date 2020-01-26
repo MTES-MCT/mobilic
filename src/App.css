@@ -130,6 +130,14 @@
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+  z-index: 500;
+}
+
+.summary-card-container {
+  margin-bottom: 3vh;
 }
 
 .summary-card-header {

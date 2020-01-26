@@ -26,7 +26,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export function TeamSelectionModal ({ open, handleBack, handleContinue, coworkers, setCoworkers }) {
     const [updatedCoworkers, setUpdatedCoworkers] = React.useState([]);
 
-    React.useEffect(() => setUpdatedCoworkers(coworkers), [open]);
+    React.useEffect(() => setUpdatedCoworkers(coworkers), [open, coworkers]);
 
     const pushNewCoworker = (firstName, lastName) =>  () => {
       setUpdatedCoworkers([

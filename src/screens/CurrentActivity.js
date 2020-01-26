@@ -4,9 +4,11 @@ import {TimeOfService} from "../components/TimeOfService";
 import {ActivitySwitchGrid} from "../components/ActivitySwitch";
 import Container from "@material-ui/core/Container";
 import Link from '@material-ui/core/Link';
+import {computeTotalActivityDurations} from "../utils/metrics";
 
 
-export function CurrentActivity ({ timers, currentActivityName, currentDayEvents, pushNewCurrentDayEvent, teamMates, setOpenTeamSelectionModal }) {
+export function CurrentActivity ({ currentActivityName, currentDayEvents, pushNewCurrentDayEvent, teamMates, setOpenTeamSelectionModal }) {
+    const timers = computeTotalActivityDurations(currentDayEvents, Date.now() + 1);
     return (
         <Container className="container">
             <TimeLine dayEvents={currentDayEvents}/>

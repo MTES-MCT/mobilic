@@ -4,14 +4,14 @@ import BottomNavBar from "./components/BottomNavBar";
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import {computeTotalActivityDurations} from "./utils/activityPeriods";
+import {computeTotalActivityDurations} from "./utils/metrics";
 import {CurrentActivity} from "./screens/CurrentActivity";
 import {ACTIVITIES} from "./utils/activities";
 import {BeforeWork} from "./screens/BeforeWork";
 import {TeamSelectionModal} from "./components/TeamSelection";
 import {SelectFirstActivityModal} from "./components/FirstActivitySelection";
 import {currentTeamMates} from "./utils/coworkers";
-import {getCurrentDayEvents} from "./utils/events";
+import {groupEventsByDay} from "./utils/events";
 
 
 
@@ -46,7 +46,8 @@ function App() {
   );
 
   const teamMates = currentTeamMates(coworkers);
-  const currentDayEvents = getCurrentDayEvents(activityEvents);
+  const eventsByDay = groupEventsByDay(activityEvents);
+  const previousDaysEvents = eventsByDay.slice(0, eventsByDay.length - 1);
   const currentActivityName = activityEvents[activityEvents.length - 1] ? activityEvents[activityEvents.length - 1].activityName : ACTIVITIES.end.name;
   const [openFirstActivityModal, setOpenFirstActivityModal] = React.useState(false);
 
@@ -71,15 +72,11 @@ function App() {
     setCoworkers(newCoworkers);
   };
 
-  const timers = computeTotalActivityDurations(currentDayEvents, Date.now() + 1);
-
   return (
     <div className="App">
         {currentActivityName === ACTIVITIES.end.name ?
             <BeforeWork
-                previousDayTimers={timers}
-                previousDayStart={currentDayEvents[0] && currentDayEvents[0].date}
-                previousDayEnd={currentDayEvents[currentDayEvents.length - 1] && currentDayEvents[currentDayEvents.length - 1].date}
+                previousDaysEvents={previousDaysEvents}
                 setOpenTeamSelectionModal={setOpenTeamSelectionModal}
                 setOpenFirstActivityModal={setOpenFirstActivityModal}
                 clearTeam={clearTeam}
@@ -87,8 +84,7 @@ function App() {
             :
             <CurrentActivity
                 currentActivityName={currentActivityName}
-                timers={timers}
-                currentDayEvents={currentDayEvents}
+                currentDayEvents={eventsByDay[eventsByDay.length - 1]}
                 pushNewCurrentDayEvent={pushNewEvent}
                 setOpenTeamSelectionModal={setOpenTeamSelectionModal}
                 teamMates={teamMates}
