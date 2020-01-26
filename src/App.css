@@ -179,3 +179,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.current-team-summary {
+  text-align: start;
+}
