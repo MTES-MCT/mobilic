@@ -10,6 +10,8 @@ import {ACTIVITIES} from "./utils/activities";
 import {BeforeWork} from "./screens/BeforeWork";
 import {TeamSelectionModal} from "./components/TeamSelection";
 import {SelectFirstActivityModal} from "./components/FirstActivitySelection";
+import {currentTeamMates} from "./utils/coworkers";
+import {getCurrentDayEvents} from "./utils/events";
 
 
 
@@ -34,7 +36,7 @@ const NAV_SCREENS = [
 
 function App() {
   const [currentTab, setCurrentTab] = React.useState("item1");
-  const [currentDayEvents, setCurrentDayEvents] = React.useState([]);
+  const [activityEvents, setActivityEvents] = React.useState([]);
   const [currentDate, setCurrentDate] = React.useState(Date.now());
   const [coworkers, setCoworkers] = React.useState([]);
   const [openTeamSelectionModal, setOpenTeamSelectionModal] = React.useState(false);
@@ -43,12 +45,20 @@ function App() {
       () => {setInterval(() => setCurrentDate(Date.now()), 5000)}, []
   );
 
-  function pushNewCurrentDayEvent (activityName) {
-      setCurrentDayEvents([
-          ...currentDayEvents,
+  const teamMates = currentTeamMates(coworkers);
+  const currentDayEvents = getCurrentDayEvents(activityEvents);
+  const currentActivityName = activityEvents[activityEvents.length - 1] ? activityEvents[activityEvents.length - 1].activityName : ACTIVITIES.end.name;
+  const [openFirstActivityModal, setOpenFirstActivityModal] = React.useState(false);
+
+
+  function pushNewEvent (activityName) {
+      if (activityName === currentActivityName) return;
+      setActivityEvents([
+          ...activityEvents,
           {
               activityName: activityName,
-              date: Date.now()
+              date: Date.now(),
+              team: teamMates
           }
       ]);
   }
@@ -61,16 +71,11 @@ function App() {
     setCoworkers(newCoworkers);
   };
 
-  const isWorkingInTeam = coworkers.filter((member) => member.isInCurrentTeam).length > 0;
-
-  const currentActivity = currentDayEvents[currentDayEvents.length - 1] ? currentDayEvents[currentDayEvents.length - 1].activityName : ACTIVITIES.end.name;
-  const [openFirstActivityModal, setOpenFirstActivityModal] = React.useState(false);
-
   const timers = computeTotalActivityDurations(currentDayEvents, Date.now() + 1);
 
   return (
     <div className="App">
-        {currentActivity === ACTIVITIES.end.name ?
+        {currentActivityName === ACTIVITIES.end.name ?
             <BeforeWork
                 previousDayTimers={timers}
                 previousDayStart={currentDayEvents[0] && currentDayEvents[0].date}
@@ -81,10 +86,12 @@ function App() {
             />
             :
             <CurrentActivity
-                currentActivity={currentActivity}
+                currentActivityName={currentActivityName}
                 timers={timers}
                 currentDayEvents={currentDayEvents}
-                pushNewCurrentDayEvent={pushNewCurrentDayEvent}
+                pushNewCurrentDayEvent={pushNewEvent}
+                setOpenTeamSelectionModal={setOpenTeamSelectionModal}
+                teamMates={teamMates}
             />
         }
         <TeamSelectionModal
@@ -92,7 +99,7 @@ function App() {
             handleBack={() => setOpenTeamSelectionModal(false)}
             handleContinue={() => {
                 setOpenTeamSelectionModal(false);
-                currentActivity === ACTIVITIES.end.name && setOpenFirstActivityModal(true)}
+                currentActivityName === ACTIVITIES.end.name && setOpenFirstActivityModal(true)}
             }
             coworkers={coworkers}
             setCoworkers={setCoworkers}
@@ -100,7 +107,7 @@ function App() {
         <SelectFirstActivityModal
             open={openFirstActivityModal}
             handleClose={() => setOpenFirstActivityModal(false)}
-            handleItemClick={(activity) => pushNewCurrentDayEvent(activity)}
+            handleItemClick={(activity) => pushNewEvent(activity)}
         />
         <BottomNavBar screens={NAV_SCREENS} currentTab={currentTab} setCurrentTab={setCurrentTab} />
     </div>

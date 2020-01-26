@@ -45,7 +45,7 @@ export function WorkDaySummary ({ timers, dayStart, dayEnd, handleExport }) {
     if (!dayStart) return null;
     const serviceTime = timers["total"];
     const workTime = (timers["drive"] || 0) + (timers["work"] || 0);
-    const title = `Résumé du ${formatDay(dayStart)}`
+    const title = `Résumé du ${formatDay(dayStart)}`;
     return (
         <SummaryCard
             title={title}
