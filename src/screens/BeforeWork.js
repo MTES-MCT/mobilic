@@ -4,7 +4,7 @@ import {WorkDaySummary, WorkWeekSummary} from "../components/WorkTimeSummary";
 import PeopleIcon from '@material-ui/icons/People';
 import PersonIcon from '@material-ui/icons/Person';
 import Button from "@material-ui/core/Button";
-import {getStartOfWeek} from "../utils/time";
+import {getStartOfWeek, MILLISECONDS_IN_A_WEEK} from "../utils/time";
 import {NotImplementedPlaceHolder} from "../components/NotImplementedPlaceHolder";
 import {shareEvents} from "../utils/events";
 
@@ -17,7 +17,7 @@ export function BeforeWork ({ previousDaysEventsByDay, setOpenTeamSelectionModal
         latestWeekStart = getStartOfWeek(latestDayStart);
         latestWeekEventsByDay = previousDaysEventsByDay.filter((dayEvents) => {
             const dayStart = dayEvents[0].date;
-            return dayStart > latestWeekStart && dayStart < latestWeekStart + 7 * 86400000;
+            return dayStart > latestWeekStart && dayStart < latestWeekStart + 7 * MILLISECONDS_IN_A_WEEK;
         });
     }
 

@@ -1,7 +1,7 @@
 import React from "react";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import {formatDate, formatDay, formatTimer} from "../utils/time";
+import {formatDate, formatDay, formatTimer, MILLISECONDS_IN_A_WEEK} from "../utils/time";
 import Card from "@material-ui/core/Card";
 import ShareIcon from '@material-ui/icons/Share';
 import IconButton from "@material-ui/core/IconButton";
@@ -80,7 +80,7 @@ export function WorkWeekSummary ({weekEventsByDay, weekStart, handleExport}) {
 
     const serviceTime = weekTimers["total"];
     const workTime = (weekTimers["drive"] || 0) + (weekTimers["work"] || 0);
-    const title = `Semaine du ${formatDay(weekStart)} - ${formatDay(weekStart + 7 * 86400000)} `;
+    const title = `Semaine du ${formatDay(weekStart)} - ${formatDay(weekStart + 7 * MILLISECONDS_IN_A_WEEK)} `;
     const nRests = 0;
     const nValidRests = 0;
 
