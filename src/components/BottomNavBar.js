@@ -3,19 +3,19 @@ import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 
 
-export default function BottomNavBar ({ screens, currentTab, setCurrentTab }) {
+export default function BottomNavBar ({ screens, currentScreen, setCurrentScreen }) {
   return (
     <React.Fragment>
         <BottomNavigation
-          value={currentTab}
+          value={currentScreen}
           onChange={(event, newValue) => {
-            setCurrentTab(newValue);
+            setCurrentScreen(newValue);
           }}
           showLabels
           className="nav-bar-container"
         >
-            {screens.map((screen) =>
-                <BottomNavigationAction key={screen.name} label={screen.text} value={screen.name} icon={screen.renderIcon()} />
+            {Object.values(screens).map((screen) =>
+                <BottomNavigationAction key={screen.name} label={screen.label} value={screen.name} icon={screen.renderIcon()} />
             )}
         </BottomNavigation>
     </React.Fragment>
