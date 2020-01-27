@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import {getStartOfWeek} from "../utils/time";
 import {computeTotalActivityDurations} from "../utils/metrics";
 import {ACTIVITIES} from "../utils/activities";
+import {NotImplementedPlaceHolder} from "../components/NotImplementedPlaceHolder";
 
 
 export function BeforeWork ({ previousDaysEvents, setOpenTeamSelectionModal, setOpenFirstActivityModal, clearTeam }) {
@@ -33,21 +34,29 @@ export function BeforeWork ({ previousDaysEvents, setOpenTeamSelectionModal, set
 
     return (
         <Container className="container scrollable">
-            <WorkDaySummary
-                timers={timersPerDay && timersPerDay[timersPerDay.length - 1]}
-                dayStart={latestDayStart}
-                dayEnd={latestDayEnd}
-                handleExport={() => console.log("caca")}
-            />
-            <WorkWeekSummary
-                timers={latestWeekTimers}
-                nWorkedDays={latestWeekEvents ? latestWeekEvents.length : 0}
-                weekStart={latestWeekStart}
-                weekEnd={latestWeekStart + 7 * 86400000}
-                nRests={0}
-                nValidRests={0}
-                handleExport={() => console.log("caca")}
-            />
+            {latestDayEvents ?
+                [
+                    <WorkDaySummary
+                        timers={timersPerDay && timersPerDay[timersPerDay.length - 1]}
+                        dayStart={latestDayStart}
+                        dayEnd={latestDayEnd}
+                        handleExport={() => console.log("caca")}
+                    />,
+                    <WorkWeekSummary
+                        timers={latestWeekTimers}
+                        nWorkedDays={latestWeekEvents ? latestWeekEvents.length : 0}
+                        weekStart={latestWeekStart}
+                        weekEnd={latestWeekStart + 7 * 86400000}
+                        nRests={0}
+                        nValidRests={0}
+                        handleExport={() => console.log("caca")}
+                    />
+                ]
+                :
+                <NotImplementedPlaceHolder
+                    label={"Page d'accueil"}
+                />
+            }
             <div style={{height: "5vh", flexGrow: 1}} />
             <div className="start-buttons-container unshrinkable">
                 <Button
