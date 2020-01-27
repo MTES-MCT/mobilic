@@ -26,6 +26,11 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export function TeamSelectionModal ({ open, handleBack, handleContinue, coworkers, setCoworkers }) {
     const [updatedCoworkers, setUpdatedCoworkers] = React.useState([]);
 
+    // The component maintains a separate "updatedCoworkers" state,
+    // so that pending changes to coworkers and current team can be either :
+    // - discarded, i.e. not committed to main "coworkers" state (when hitting Back button)
+    // - committed to main state (when hitting Ok button)
+    // We sync the secondary state with the main one whenever the modal is opened/closed or the main state changes
     React.useEffect(() => setUpdatedCoworkers(coworkers), [open, coworkers]);
 
     const pushNewCoworker = (firstName, lastName) =>  () => {

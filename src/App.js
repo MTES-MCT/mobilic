@@ -13,7 +13,9 @@ function App() {
   const [currentDate, setCurrentDate] = React.useState(Date.now());
   const [coworkers, setCoworkers] = React.useState([]);
   const [openTeamSelectionModal, setOpenTeamSelectionModal] = React.useState(false);
+  const [openFirstActivityModal, setOpenFirstActivityModal] = React.useState(false);
 
+  // We force re-rendering every 5 sec to update timers
   React.useEffect(
       () => {setInterval(() => setCurrentDate(Date.now()), 5000)}, []
   );
@@ -22,8 +24,6 @@ function App() {
   const eventsByDay = groupEventsByDay(activityEvents);
   const previousDaysEvents = eventsByDay.slice(0, eventsByDay.length - 1);
   const currentActivityName = activityEvents[activityEvents.length - 1] ? activityEvents[activityEvents.length - 1].activityName : ACTIVITIES.end.name;
-  const [openFirstActivityModal, setOpenFirstActivityModal] = React.useState(false);
-
 
   function pushNewEvent (activityName) {
       if (activityName === currentActivityName) return;

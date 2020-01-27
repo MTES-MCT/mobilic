@@ -23,7 +23,7 @@ function SummaryCard ({ title, handleExport, summaryContent }) {
                         <ShareIcon color="primary"/>
                     </IconButton>
                 </div>
-                <Table>
+                <Table size="small">
                     <TableBody>
                         {summaryContent.map((row, index) => (
                             <TableRow key={index}>
