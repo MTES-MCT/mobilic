@@ -1,3 +1,6 @@
+export const MILLISECONDS_IN_A_DAY = 86400000;
+
+
 export function formatTimer (timerDuration) {
     if (!timerDuration) return null;
     const timerDurationInMinutes = timerDuration / 60000 >> 0;
@@ -23,5 +26,5 @@ export function getStartOfWeek (unixDate) {
     const date = new Date(unixDate);
     const dayOfWeek = date.getDay();
     const daysToSubstract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    return Math.floor((unixDate - daysToSubstract * 86400000) / 86400000) * 86400000;
+    return Math.floor((unixDate - daysToSubstract * MILLISECONDS_IN_A_DAY) / MILLISECONDS_IN_A_DAY) * MILLISECONDS_IN_A_DAY;
 }
