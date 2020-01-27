@@ -22,7 +22,7 @@ function App() {
 
   const teamMates = currentTeamMates(coworkers);
   const eventsByDay = groupEventsByDay(activityEvents);
-  const previousDaysEvents = eventsByDay.slice(0, eventsByDay.length - 1);
+  const previousDaysEventsByDay = eventsByDay.slice(0, eventsByDay.length - 1);
   const currentActivityName = activityEvents[activityEvents.length - 1] ? activityEvents[activityEvents.length - 1].activityName : ACTIVITIES.end.name;
 
   function pushNewEvent (activityName) {
@@ -53,7 +53,7 @@ function App() {
             pushNewCurrentDayEvent={pushNewEvent}
             setOpenTeamSelectionModal={setOpenTeamSelectionModal}
             teamMates={teamMates}
-            previousDaysEvents={previousDaysEvents}
+            previousDaysEventsByDay={previousDaysEventsByDay}
             setOpenFirstActivityModal={setOpenFirstActivityModal}
             clearTeam={clearTeam}
         />

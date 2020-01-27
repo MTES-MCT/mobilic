@@ -9,6 +9,8 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
+import {computeTotalActivityDurations} from "../utils/metrics";
+import {ACTIVITIES} from "../utils/activities";
 
 
 function SummaryCard ({ title, handleExport, summaryContent }) {
@@ -41,8 +43,10 @@ function SummaryCard ({ title, handleExport, summaryContent }) {
 }
 
 
-export function WorkDaySummary ({ timers, dayStart, dayEnd, handleExport }) {
-    if (!dayStart) return null;
+export function WorkDaySummary ({ dayEvents, handleExport }) {
+    const dayEnd = dayEvents[dayEvents.length - 1].date;
+    const dayStart = dayEvents[0].date;
+    const timers = computeTotalActivityDurations(dayEvents);
     const serviceTime = timers["total"];
     const workTime = (timers["drive"] || 0) + (timers["work"] || 0);
     const title = `Journée du ${formatDay(dayStart)}`;
@@ -64,11 +68,22 @@ export function WorkDaySummary ({ timers, dayStart, dayEnd, handleExport }) {
     );
 }
 
-export function WorkWeekSummary ({nWorkedDays, weekStart, weekEnd, timers, nRests, nValidRests, handleExport}) {
-    if (nWorkedDays === 0) return null;
-    const serviceTime = timers["total"];
-    const workTime = (timers["drive"] || 0) + (timers["work"] || 0);
-    const title = `Semaine du ${formatDay(weekStart)} - ${formatDay(weekEnd)} `;
+export function WorkWeekSummary ({weekEventsByDay, weekStart, handleExport}) {
+    const timersPerDay = weekEventsByDay.map((dayEvents) => computeTotalActivityDurations(dayEvents));
+    const weekTimers = {};
+    timersPerDay.forEach((timer) => {
+        Object.values(ACTIVITIES).forEach((activity) => {
+            weekTimers[activity.name] = (weekTimers[activity.name] || 0) + (timer[activity.name] || 0)
+        });
+        weekTimers["total"] = (weekTimers["total"] || 0) + (timer["total"] || 0)
+    });
+
+    const serviceTime = weekTimers["total"];
+    const workTime = (weekTimers["drive"] || 0) + (weekTimers["work"] || 0);
+    const title = `Semaine du ${formatDay(weekStart)} - ${formatDay(weekStart + 7 * 86400000)} `;
+    const nRests = 0;
+    const nValidRests = 0;
+
     return (
         <SummaryCard
             title={title}
@@ -76,7 +91,7 @@ export function WorkWeekSummary ({nWorkedDays, weekStart, weekEnd, timers, nRest
             summaryContent={[
                 {
                     stat: "Jours de travail",
-                    value: `${nWorkedDays}`
+                    value: `${weekEventsByDay.length}`
                 },
                 {
                     stat: "Temps de service",
