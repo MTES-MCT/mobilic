@@ -10,7 +10,6 @@
   width: 100vw;
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 .container {
@@ -213,8 +212,30 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: bold !important;
 }
 
 .space-between {
   justify-content: space-between;
+}
+
+.expenditures-content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.expenditures-title {
+  font-weight: bold !important;
+  text-align: left;
+}
+
+.expenditures-checkbox {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.full-width-divider {
+  position: relative;
+  left: -100px;
+  width: calc(100vw + 100px);
 }

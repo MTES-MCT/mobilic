@@ -9,6 +9,7 @@ import {ScreenWithBottomNavigation} from "./utils/navigation";
 
 
 function App() {
+  const [currentDayExpenditures, setCurrentDayExpenditures] = React.useState({});
   const [activityEvents, setActivityEvents] = React.useState([]);
   const [currentDate, setCurrentDate] = React.useState(Date.now());
   const [coworkers, setCoworkers] = React.useState([]);
@@ -32,18 +33,23 @@ function App() {
           {
               activityName: activityName,
               date: Date.now(),
-              team: teamMates
+              team: teamMates,
+              currentDayExpenditures: currentDayExpenditures
           }
       ]);
+      if (activityName === ACTIVITIES.end.name) {
+          setCurrentDayExpenditures({});
+          clearTeam();
+      }
   }
 
-  const clearTeam = () => {
+  function clearTeam () {
     const newCoworkers = coworkers.slice();
     newCoworkers.forEach((coworker) => {
         coworker.isInCurrentTeam = false;
     });
     setCoworkers(newCoworkers);
-  };
+  }
 
   return (
     <div className="App">
@@ -56,6 +62,8 @@ function App() {
             previousDaysEventsByDay={previousDaysEventsByDay}
             setOpenFirstActivityModal={setOpenFirstActivityModal}
             clearTeam={clearTeam}
+            currentDayExpenditures={currentDayExpenditures}
+            setCurrentDayExpenditures={setCurrentDayExpenditures}
         />
         <TeamSelectionModal
             open={openTeamSelectionModal}
