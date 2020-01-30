@@ -203,3 +203,7 @@
 .current-team-summary {
   text-align: start;
 }
+
+.space-between {
+  justify-content: space-between;
+}

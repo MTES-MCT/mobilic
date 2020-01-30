@@ -10,9 +10,9 @@ import {computeTotalActivityDurations} from "../utils/metrics";
 export function CurrentActivity ({ currentActivityName, currentDayEvents, pushNewCurrentDayEvent, teamMates, setOpenTeamSelectionModal }) {
     const timers = computeTotalActivityDurations(currentDayEvents, Date.now() + 1);
     return (
-        <Container className="container">
+        <Container className="container space-between">
             <TimeLine dayEvents={currentDayEvents}/>
-            <div style={{flexGrow: 1}} />
+            <TimeOfService timer={timers["total"]} />
             {teamMates.length > 0 &&
                 <Link
                     className="current-team-summary"
@@ -25,7 +25,6 @@ export function CurrentActivity ({ currentActivityName, currentDayEvents, pushNe
                     Coéquipiers : {teamMates.length}
                 </Link>
             }
-            <TimeOfService timer={timers["total"]} />
             <ActivitySwitchGrid
                 timers={timers}
                 activityOnFocus={currentActivityName}
