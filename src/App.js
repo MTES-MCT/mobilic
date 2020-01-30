@@ -61,8 +61,7 @@ function App() {
             open={openTeamSelectionModal}
             handleBack={() => setOpenTeamSelectionModal(false)}
             handleContinue={() => {
-                setOpenTeamSelectionModal(false);
-                currentActivityName === ACTIVITIES.end.name && setOpenFirstActivityModal(true)}
+                currentActivityName === ACTIVITIES.end.name ? setOpenFirstActivityModal(true) : setOpenTeamSelectionModal(false)}
             }
             coworkers={coworkers}
             setCoworkers={setCoworkers}
@@ -70,7 +69,11 @@ function App() {
         <SelectFirstActivityModal
             open={openFirstActivityModal}
             handleClose={() => setOpenFirstActivityModal(false)}
-            handleItemClick={(activity) => pushNewEvent(activity)}
+            handleItemClick={(activity) => {
+                pushNewEvent(activity);
+                setOpenTeamSelectionModal(false);
+                setOpenFirstActivityModal(false);
+            }}
         />
     </div>
   );

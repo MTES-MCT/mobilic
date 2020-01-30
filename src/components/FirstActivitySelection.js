@@ -15,7 +15,7 @@ export function SelectFirstActivityModal ({ open, handleClose, handleItemClick }
           <DialogTitle>Commencer par</DialogTitle>
           <List>
             {Object.values(ACTIVITIES).filter((a) => a.canBeFirst).map(activity => (
-              <ListItem button onClick={() => {handleItemClick(activity.name); handleClose()}} key={activity.name}>
+              <ListItem button onClick={() => handleItemClick(activity.name)} key={activity.name}>
                 <ListItemAvatar>
                   <Avatar>
                       {activity.renderIcon({color: "primary"})}
