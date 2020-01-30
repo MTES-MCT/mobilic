@@ -4,6 +4,7 @@ import {formatDay, formatTimer, MILLISECONDS_IN_A_DAY} from "./time";
 import {share} from "./share";
 import {computeTotalActivityDurations} from "./metrics";
 import {formatCoworkerName} from "./coworkers";
+import {EXPENDITURES} from "./expenditures";
 
 
 export function groupEventsByDay (events) {
@@ -35,6 +36,7 @@ function formatEventsAsDaySummary (dayEvents) {
     const dayStartString = new Date(dayEvents[0].date).toISOString();
     const dayEndString = new Date(dayEvents[dayEvents.length - 1].date).toISOString();
     const team = dayEvents[0].team;
+    const expenditures = dayEvents[dayEvents.length - 1].currentDayExpenditures;
 
     const daySummary = {
         employe: "Moi",
@@ -43,7 +45,8 @@ function formatEventsAsDaySummary (dayEvents) {
         fin: dayEndString,
         conduite: formatTimer(timers[ACTIVITIES.drive.name] || 1),
         autre_tache: formatTimer(timers[ACTIVITIES.work.name] || 1),
-        repos: formatTimer(timers[ACTIVITIES.rest.name] || 1)
+        repos: formatTimer(timers[ACTIVITIES.rest.name] || 1),
+        frais: Object.keys(EXPENDITURES).flatMap((expType) => expenditures[expType] ? [EXPENDITURES[expType].label] : []).join(" + ")
     };
 
     return [
