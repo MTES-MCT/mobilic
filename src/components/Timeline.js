@@ -1,10 +1,10 @@
 import React from 'react';
 import {makeStyles} from "@material-ui/core/styles";
-import {formatDate} from "../utils/time";
+import {formatDate, formatTimer} from "../utils/time";
 import classNames from 'classnames';
 import {ACTIVITIES} from "../utils/activities";
 import Typography from "@material-ui/core/Typography";
-
+import ChevronRightOutlinedIcon from '@material-ui/icons/ChevronRightOutlined';
 
 const useStyles = makeStyles({
     period: props => ({
@@ -30,10 +30,13 @@ function Event({height, className, children=null}) {
     );
 }
 
-export function TimeLine ({dayEvents}) {
+export function TimeLine ({title, dayEvents}) {
     const periodWidth = `${Math.floor((100 - dayEvents.length)/ dayEvents.length)}%`;
     return (
         <div className="timeline-container">
+            <Typography variant="h6" className="timeline-title">
+                Horaires réels
+            </Typography>
             <div className="timeline-line">
                 {dayEvents.map((event, index) =>
                     <React.Fragment key={index}>
@@ -49,6 +52,9 @@ export function TimeLine ({dayEvents}) {
                     <React.Fragment key={index}>
                         <Event />
                         <Period width={periodWidth} color={"blue"} className={index === dayEvents.length - 1 && "timeline-segment-blurred"}/>
+                        {index === dayEvents.length - 1 &&
+                            <ChevronRightOutlinedIcon fontSize="small" color="primary" className="timeline-line-end-arrow"/>
+                        }
                     </React.Fragment>
                 )}
             </div>
