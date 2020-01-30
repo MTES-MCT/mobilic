@@ -80,7 +80,7 @@ export function WorkWeekSummary ({weekEventsByDay, weekStart, handleExport}) {
 
     const serviceTime = weekTimers["total"];
     const workTime = (weekTimers["drive"] || 0) + (weekTimers["work"] || 0);
-    const title = `Semaine du ${formatDay(weekStart)} - ${formatDay(weekStart + 7 * MILLISECONDS_IN_A_WEEK)} `;
+    const title = `Semaine du ${formatDay(weekStart)} - ${formatDay(weekStart + MILLISECONDS_IN_A_WEEK)} `;
     const nRests = 0;
     const nValidRests = 0;
 

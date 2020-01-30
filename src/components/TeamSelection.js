@@ -16,6 +16,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Divider from "@material-ui/core/Divider";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Checkbox from "@material-ui/core/Checkbox";
+import {formatCoworkerName} from "../utils/coworkers";
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -117,12 +118,12 @@ export function TeamSelectionModal ({ open, handleBack, handleContinue, coworker
             </form>
         </div>
         <List className="coworkers-list">
-            {updatedCoworkers.map((member, index) => [
+            {updatedCoworkers.map((coworker, index) => [
                 <Divider key={2 * index} />,
                 <ListItem key={2 * index + 1}>
-                  <Checkbox checked={member.isInCurrentTeam} onChange={toggleAddCoworkerToTeam(index)} />
+                  <Checkbox checked={coworker.isInCurrentTeam} onChange={toggleAddCoworkerToTeam(index)} />
                   <ListItemText className="coworker-name"
-                    primary={`${member.firstName} ${member.lastName}`}
+                    primary={formatCoworkerName(coworker)}
                   />
                   <ListItemSecondaryAction>
                     <IconButton edge="end" onClick={removeCoworker(index)}>

@@ -1,7 +1,9 @@
 import {ACTIVITIES} from "./activities";
 import stringify from "csv-stringify/lib/sync";
-import {formatDay, MILLISECONDS_IN_A_DAY} from "./time";
+import {formatDay, formatTimer, MILLISECONDS_IN_A_DAY} from "./time";
 import {share} from "./share";
+import {computeTotalActivityDurations} from "./metrics";
+import {formatCoworkerName} from "./coworkers";
 
 
 export function groupEventsByDay (events) {
@@ -17,26 +19,50 @@ export function groupEventsByDay (events) {
     return eventsByDay;
 }
 
-function formatEventsForExport (events) {
+function formatEventsAsLogs (events) {
     return events.map((event) => {
         const utcDateString = new Date(event.date).toISOString();
         return ({
-            day: utcDateString.slice(0, 10),
-            time: utcDateString.slice(11, 16),
+            date: utcDateString,
             activity: event.activityName,
             team: event.team
         })
     });
 }
 
-export function shareEvents (events, stringifyFunc=stringify) {
-    const firstDay = events[0].date;
-    const lastDay = events[events.length - 1].date;
+function formatEventsAsDaySummary (dayEvents) {
+    const timers = computeTotalActivityDurations(dayEvents);
+    const dayStartString = new Date(dayEvents[0].date).toISOString();
+    const dayEndString = new Date(dayEvents[dayEvents.length - 1].date).toISOString();
+    const team = dayEvents[0].team;
+
+    const daySummary = {
+        employe: "Moi",
+        jour: dayStartString.slice(0, 10),
+        debut: dayStartString,
+        fin: dayEndString,
+        conduite: formatTimer(timers[ACTIVITIES.drive.name] || 1),
+        autre_tache: formatTimer(timers[ACTIVITIES.work.name] || 1),
+        repos: formatTimer(timers[ACTIVITIES.rest.name] || 1)
+    };
+
+    return [
+        daySummary,
+        ...team.map((teamMate) => ({
+            ...daySummary,
+            employe: formatCoworkerName(teamMate)
+        }))
+    ];
+}
+
+export function shareEvents (eventsByDays, stringifyFunc=(data) => stringify(data, {header: true})) {
+    const firstDay = eventsByDays[0][0].date;
+    const lastDay = eventsByDays[eventsByDays.length - 1][0].date;
     const areAllEventsOnTheSameDay = (lastDay - firstDay) < MILLISECONDS_IN_A_DAY;
 
     const title = `Temps de travail du ${formatDay(firstDay)}${(areAllEventsOnTheSameDay ? "" : " au " + formatDay(lastDay))}`
     const text = stringifyFunc(
-        formatEventsForExport(events)
+        eventsByDays.flatMap(formatEventsAsDaySummary)
     );
     share(text, title);
 }

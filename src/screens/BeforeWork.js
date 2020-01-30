@@ -17,7 +17,7 @@ export function BeforeWork ({ previousDaysEventsByDay, setOpenTeamSelectionModal
         latestWeekStart = getStartOfWeek(latestDayStart);
         latestWeekEventsByDay = previousDaysEventsByDay.filter((dayEvents) => {
             const dayStart = dayEvents[0].date;
-            return dayStart > latestWeekStart && dayStart < latestWeekStart + 7 * MILLISECONDS_IN_A_WEEK;
+            return dayStart > latestWeekStart && dayStart < latestWeekStart + MILLISECONDS_IN_A_WEEK;
         });
     }
 
@@ -27,12 +27,12 @@ export function BeforeWork ({ previousDaysEventsByDay, setOpenTeamSelectionModal
                 [
                     <WorkDaySummary
                         dayEvents={latestDayEvents}
-                        handleExport={() => shareEvents(latestDayEvents)}
+                        handleExport={() => shareEvents([latestDayEvents])}
                     />,
                     <WorkWeekSummary
                         weekEventsByDay={latestWeekEventsByDay}
                         weekStart={latestWeekStart}
-                        handleExport={() => shareEvents(latestWeekEventsByDay.flatMap(array => array))}
+                        handleExport={() => shareEvents(latestWeekEventsByDay)}
                     />
                 ]
                 :
