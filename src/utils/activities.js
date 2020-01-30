@@ -14,7 +14,7 @@ export const ACTIVITIES = {
     },
     work: {
         name: "work",
-        label: "Travail",
+        label: "Autre tâche",
         renderIcon: (props) => <BuildIcon {...props} />,
         canBeFirst: true
     },
@@ -25,7 +25,7 @@ export const ACTIVITIES = {
     },
     end: {
         name: "end",
-        label: "Fin de journée",
+        label: "Fin journée",
         renderIcon: (props) => <HighlightOffIcon {...props} />
     }
 };
