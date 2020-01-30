@@ -116,7 +116,7 @@ export function TeamSelectionModal ({ open, handleBack, handleContinue, coworker
               </IconButton>
             </form>
         </div>
-        <List clasName="coworkers-list">
+        <List className="coworkers-list">
             {updatedCoworkers.map((member, index) => [
                 <Divider key={2 * index} />,
                 <ListItem key={2 * index + 1}>
