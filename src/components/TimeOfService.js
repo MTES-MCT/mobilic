@@ -6,7 +6,9 @@ import Typography from "@material-ui/core/Typography";
 export function TimeOfService ({ timer }) {
     return (
         <div className="time-of-service-container">
-            <Typography variant="h6">Temps de service  :  {formatTimer(timer)}</Typography>
+            <Typography variant="subtitle1" style={{fontWeight: "bold"}} gutterBottom>
+                Temps de service  :  {formatTimer(timer)}
+            </Typography>
         </div>
     )
 }

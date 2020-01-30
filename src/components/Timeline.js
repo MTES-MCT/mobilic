@@ -34,8 +34,8 @@ export function TimeLine ({title, dayEvents}) {
     const periodWidth = `${Math.floor((100 - dayEvents.length)/ dayEvents.length)}%`;
     return (
         <div className="timeline-container">
-            <Typography variant="h6" className="timeline-title">
-                Horaires réels
+            <Typography variant="subtitle1" className="timeline-title" gutterBottom>
+                Déroulé de la journée
             </Typography>
             <div className="timeline-line">
                 {dayEvents.map((event, index) =>

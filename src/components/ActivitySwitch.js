@@ -18,7 +18,7 @@ function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick }) {
     return (
         <Card className="activity-card-container" onClick={onClick} raised={onFocus}>
           <CardContent className="activity-card-content">
-            <Typography variant="body2" className={classNames("activity-card-title", {"card-on-focus": onFocus})} color={color} gutterBottom>
+            <Typography variant="caption" className={classNames("activity-card-title", {"card-on-focus": onFocus})} color={color} gutterBottom>
               {label}
             </Typography>
             {renderIcon({
@@ -26,9 +26,9 @@ function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick }) {
                 color: color
             })}
             <div className="activity-card-timer-container">
-                {onFocus && <TimerIcon {...timerProps}/>}
+                {onFocus && <TimerIcon fontSize="inherit" {...timerProps}/>}
                 <div style={{width: "1vw"}} />
-                <Typography {...timerProps}>
+                <Typography variant="caption" {...timerProps}>
                     {formatTimer(timer || 10)}
                 </Typography>
             </div>
