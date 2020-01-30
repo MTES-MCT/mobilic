@@ -3,8 +3,8 @@ import {TimeLine} from "../components/Timeline";
 import {TimeOfService} from "../components/TimeOfService";
 import {ActivitySwitchGrid} from "../components/ActivitySwitch";
 import Container from "@material-ui/core/Container";
-import Link from '@material-ui/core/Link';
 import {computeTotalActivityDurations} from "../utils/metrics";
+import Typography from "@material-ui/core/Typography";
 
 
 export function CurrentActivity ({ currentActivityName, currentDayEvents, pushNewCurrentDayEvent, teamMates, setOpenTeamSelectionModal }) {
@@ -14,16 +14,12 @@ export function CurrentActivity ({ currentActivityName, currentDayEvents, pushNe
             <TimeLine dayEvents={currentDayEvents}/>
             <TimeOfService timer={timers["total"]} />
             {teamMates.length > 0 &&
-                <Link
+                <Typography
+                    variant="subtitle1"
                     className="current-team-summary"
-                    href="#"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        setOpenTeamSelectionModal(true);
-                    }}
                 >
-                    Coéquipiers : {teamMates.length}
-                </Link>
+                    {teamMates.length} coéquipier{teamMates.length > 1 && "s"} : {teamMates.map((mate) => mate.firstName).join(", ")}
+                </Typography>
             }
             <ActivitySwitchGrid
                 timers={timers}
