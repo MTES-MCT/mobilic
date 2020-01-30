@@ -75,7 +75,7 @@ export function TeamSelectionModal ({ open, handleBack, handleContinue, coworker
                   <ArrowBackIcon />
                 </IconButton>
                 <Typography variant="h6" >
-                  Mon équipe
+                  Equipe du jour
                 </Typography>
                 <Button
                     autoFocus
