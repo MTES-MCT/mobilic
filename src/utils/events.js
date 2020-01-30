@@ -17,7 +17,7 @@ export function groupEventsByDay (events) {
     return eventsByDay;
 }
 
-export function preFormatEvents (events) {
+function formatEventsForExport (events) {
     return events.map((event) => {
         const utcDateString = new Date(event.date).toISOString();
         return ({
@@ -36,7 +36,7 @@ export function shareEvents (events, stringifyFunc=stringify) {
 
     const title = `Temps de travail du ${formatDay(firstDay)}${(areAllEventsOnTheSameDay ? "" : " au " + formatDay(lastDay))}`
     const text = stringifyFunc(
-        preFormatEvents(events)
+        formatEventsForExport(events)
     );
     share(text, title);
 }
