@@ -8904,13 +8904,6 @@ react-is@^16.7.0, react-is@^16.8.0, react-is@^16.8.1, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
 
-react-mobile-picker@^0.1.12:
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/react-mobile-picker/-/react-mobile-picker-0.1.12.tgz#424cdf324cd71e11585aecde91ead7845c64387c"
-  integrity sha512-YRv96yUhDbOLLdWqYf/5tikZTPMqBDZHiDKFPjafRp7tpYhZh3rODA9SrAmsHGtZbaWYnE1rlE1Knf5pvKEMJA==
-  dependencies:
-    prop-types "^15.6.0"
-
 react-scripts@3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/react-scripts/-/react-scripts-3.3.0.tgz#f26a21f208f20bd04770f43e50b5bbc151920c2a"
@@ -8970,6 +8963,13 @@ react-scripts@3.3.0:
     workbox-webpack-plugin "4.3.1"
   optionalDependencies:
     fsevents "2.1.2"
+
+react-scrollable-picker@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-scrollable-picker/-/react-scrollable-picker-1.0.2.tgz#872f6c766752177f1b308e1748c02b90c5f6ab60"
+  integrity sha512-e6uKlRJGiqOMXkZLtkn92s6veFc9pWx2fY/nScbqAuSF8JRVv1q0AEXbSyLpI51SWYEUdIo7uBu7ISsDBZWEaA==
+  dependencies:
+    prop-types "^15.6.0"
 
 react-transition-group@^4.3.0:
   version "4.3.0"

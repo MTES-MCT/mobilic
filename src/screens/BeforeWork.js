@@ -31,7 +31,6 @@ export function BeforeWork ({ previousDaysEventsByDay, setOpenTeamSelectionModal
                     />,
                     <WorkWeekSummary
                         weekEventsByDay={latestWeekEventsByDay}
-                        weekStart={latestWeekStart}
                         handleExport={() => shareEvents(latestWeekEventsByDay)}
                     />
                 ]
