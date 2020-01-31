@@ -6,6 +6,7 @@ import TimerIcon from '@material-ui/icons/Timer';
 import TimelineIcon from '@material-ui/icons/Timeline';
 import {NotImplementedPlaceHolder} from "../components/NotImplementedPlaceHolder";
 import BottomNavBar from "../components/BottomNavBar";
+import {History} from "../screens/History";
 
 
 const SCREENS_WITH_BOTTOM_NAVIGATION = {
@@ -29,9 +30,7 @@ const SCREENS_WITH_BOTTOM_NAVIGATION = {
         label: "Historique",
         renderIcon: (props) => <TimelineIcon {...props}/>,
         render: () => (
-            <NotImplementedPlaceHolder
-                label="Historique"
-            />
+            <History/>
         )
     }
 };
