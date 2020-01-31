@@ -71,7 +71,7 @@ export function TeamSelectionModal ({ open, handleBack, handleContinue, coworker
         <Dialog fullScreen open={open} onClose={() => {}} TransitionComponent={Transition}>
         <div style={{position: "sticky", top: 0, zIndex: 1000}}>
             <AppBar style={{position: "relative"}}>
-              <Toolbar className="team-modal-header">
+              <Toolbar className="app-header">
                 <IconButton edge="start" color="inherit" onClick={handleBack} >
                   <ArrowBackIcon />
                 </IconButton>

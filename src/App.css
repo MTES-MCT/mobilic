@@ -179,10 +179,14 @@
   flex-shrink: 0;
 }
 
-.team-modal-header {
+.app-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.stretch-header-content {
+  align-items: stretch !important;
 }
 
 .new-team-member-form {
