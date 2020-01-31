@@ -56,11 +56,11 @@ export function WorkDaySummary ({ dayEvents, handleExport }) {
             handleExport={handleExport}
             summaryContent={[
                 {
-                    stat: "Temps de service",
+                    stat: "Service",
                     value: `${formatTimer(serviceTime)} (${formatDate(dayStart)}${"\u00A0"}-${"\u00A0"}${formatDate(dayEnd)})`
                 },
                 {
-                    stat: "Temps de travail",
+                    stat: "Travail",
                     value: `${formatTimer(workTime)}`
                 },
             ]}
@@ -94,15 +94,15 @@ export function WorkWeekSummary ({weekEventsByDay, weekStart, handleExport}) {
                     value: `${weekEventsByDay.length}`
                 },
                 {
-                    stat: "Temps de service",
+                    stat: "Service total",
                     value: `${formatTimer(serviceTime)}`
                 },
                 {
-                    stat: "Temps de travail",
+                    stat: "Travail total",
                     value: `${formatTimer(workTime)}`
                 },
                 {
-                    stat: "Respect des repos journaliers",
+                    stat: "Repos journaliers valides",
                     value: `${nRests}/${nValidRests}`
                 }
             ]}
