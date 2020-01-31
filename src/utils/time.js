@@ -1,5 +1,19 @@
 export const MILLISECONDS_IN_A_DAY = 86400000;
 export const MILLISECONDS_IN_A_WEEK = 7 * 86400000;
+const MONTHS = [
+    'janv',
+    'fev',
+    'mars',
+    'avr',
+    'mai',
+    'juin',
+    'juil',
+    'aout',
+    'sept',
+    'oct',
+    'nov',
+    'dec'
+];
 
 
 export function formatTimer (timerDuration) {
@@ -19,6 +33,11 @@ export function formatDay(unixDate) {
     return `${addZero(date.getDate())}/${addZero(date.getMonth() + 1)}`
 }
 
+export function prettyFormatDay(unixDate) {
+    const date = new Date(unixDate);
+    return `${date.getDate()} ${MONTHS[date.getMonth()]}`
+}
+
 function addZero (n) {
     return n < 10 ? '0' + n : n;
 }
@@ -29,3 +48,5 @@ export function getStartOfWeek (unixDate) {
     const daysToSubstract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
     return Math.floor((unixDate - daysToSubstract * MILLISECONDS_IN_A_DAY) / MILLISECONDS_IN_A_DAY) * MILLISECONDS_IN_A_DAY;
 }
+
+

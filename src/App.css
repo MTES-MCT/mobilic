@@ -183,6 +183,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  z-index: 1000;
 }
 
 .stretch-header-content {
@@ -243,4 +244,12 @@
   position: relative;
   left: -100px;
   width: calc(100vw + 100px);
+}
+
+.MuiTabs-indicator {
+  background-color: white !important;
+}
+
+.picker-container {
+  z-index: 600 !important;
 }

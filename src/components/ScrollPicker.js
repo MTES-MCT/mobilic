@@ -1,8 +1,8 @@
 import React from 'react';
-import Picker from 'react-mobile-picker';
+import Picker from 'react-scrollable-picker';
 
 
-export function ScrollPicker ({name, values, value, setValue, height}) {
+export function ScrollPicker ({name, values, value, setValue, height, itemHeight}) {
     const optionGroups = {};
     const valueGroups = {};
     optionGroups[name] = values;
@@ -13,6 +13,7 @@ export function ScrollPicker ({name, values, value, setValue, height}) {
             valueGroups={valueGroups}
             onChange={(n, v) => setValue(v)}
             height={height}
+            itemHeight={itemHeight}
         />
     )
 }

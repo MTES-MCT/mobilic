@@ -29,8 +29,10 @@ const SCREENS_WITH_BOTTOM_NAVIGATION = {
         name: "history",
         label: "Historique",
         renderIcon: (props) => <TimelineIcon {...props}/>,
-        render: () => (
-            <History/>
+        render: (props) => (
+            <History
+                {...props}
+            />
         )
     }
 };
