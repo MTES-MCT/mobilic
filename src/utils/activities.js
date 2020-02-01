@@ -5,7 +5,7 @@ import HotelIcon from '@material-ui/icons/Hotel';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 
-export const ACTIVITIES = {
+export const TIMEABLE_ACTIVITIES = {
     drive: {
         name: "drive",
         label: "Conduite",
@@ -23,6 +23,11 @@ export const ACTIVITIES = {
         label: "Repos",
         renderIcon: (props) => <HotelIcon {...props} />
     },
+};
+
+
+export const ACTIVITIES = {
+    ...TIMEABLE_ACTIVITIES,
     end: {
         name: "end",
         label: "Fin journée",

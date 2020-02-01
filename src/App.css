@@ -167,6 +167,23 @@
   align-items: center;
 }
 
+.summary-card-title {
+  font-weight: bold !important;
+}
+
+.summary-card-timers {
+  display: flex;
+  justify-content: space-between;
+}
+
+.summary-card-timer {
+  flex-grow: 0.5
+}
+
+.summary-card-table-cell {
+  padding: 4px 0  !important;
+}
+
 .hidden {
   visibility: hidden;
 }

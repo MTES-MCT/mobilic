@@ -10,10 +10,11 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import {computeTotalActivityDurations} from "../utils/metrics";
-import {ACTIVITIES} from "../utils/activities";
+import {ACTIVITIES, TIMEABLE_ACTIVITIES} from "../utils/activities";
+import {ActivitySwitchCard} from "./ActivitySwitch";
 
 
-function SummaryCard ({ title, handleExport, summaryContent }) {
+function SummaryCard ({ title, handleExport, summaryContent, timers }) {
     return (
         <Card className="summary-card-container unshrinkable">
             <CardContent className="summary-card-content">
@@ -29,14 +30,24 @@ function SummaryCard ({ title, handleExport, summaryContent }) {
                     <TableBody>
                         {summaryContent.map((row, index) => (
                             <TableRow key={index}>
-                                <TableCell component="th" scope="row">
+                                <TableCell className="summary-card-table-cell" component="th" scope="row">
                                     {row.stat}
                                 </TableCell>
-                                <TableCell align="right">{row.value}</TableCell>
+                                <TableCell className="summary-card-table-cell" align="right">{row.value}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
+                <div className="summary-card-timers">
+                    {timers && Object.values(TIMEABLE_ACTIVITIES).map((activity) =>
+                        <ActivitySwitchCard
+                            className="summary-card-timer"
+                            renderIcon={activity.renderIcon}
+                            timer={timers[activity.name] || 10}
+                            forceSize={false}
+                        />
+                    )}
+                </div>
             </CardContent>
         </Card>
     )
@@ -64,6 +75,7 @@ export function WorkDaySummary ({ dayEvents, handleExport }) {
                     value: `${formatTimer(workTime)}`
                 },
             ]}
+            timers={timers}
         />
     );
 }

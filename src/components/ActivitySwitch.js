@@ -9,18 +9,21 @@ import classNames from 'classnames';
 import {ACTIVITIES} from "../utils/activities";
 
 
-function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick }) {
+export function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick, className }) {
     const color = onFocus ? "primary" : "inherit";
     const timerProps = {
         className: classNames("activity-card-timer", {"card-on-focus": onFocus, hidden: !timer}),
         color: color
     };
     return (
-        <Card className="activity-card-container" onClick={onClick} raised={onFocus}>
+        <Card className={className} onClick={onClick} raised={onFocus}>
           <CardContent className="activity-card-content">
-            <Typography variant="caption" className={classNames("activity-card-title", {"card-on-focus": onFocus})} color={color} gutterBottom>
-              {label}
-            </Typography>
+            {label &&
+              <Typography variant="caption" className={classNames("activity-card-title", {"card-on-focus": onFocus})}
+                          color={color} gutterBottom>
+                  {label}
+              </Typography>
+            }
             {renderIcon({
                 className: "activity-card-icon",
                 color: color
@@ -54,6 +57,7 @@ export function ActivitySwitchGrid ({ timers, activityOnFocus, pushActivitySwitc
             {Object.values(ACTIVITIES).map((activity, index) => (
               <Grid item key={activity.name}>
                 <ActivitySwitchCard
+                    className="activity-card-container"
                     label={activity.label}
                     renderIcon={activity.renderIcon}
                     timer={timers[activity.name]}
