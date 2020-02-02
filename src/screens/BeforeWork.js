@@ -24,16 +24,10 @@ export function BeforeWork ({ previousDaysEventsByDay, setOpenTeamSelectionModal
     return (
         <Container className="container scrollable">
             {latestDayEvents ?
-                [
-                    <WorkDaySummary
-                        dayEvents={latestDayEvents}
-                        handleExport={() => shareEvents([latestDayEvents])}
-                    />,
-                    <WorkWeekSummary
-                        weekEventsByDay={latestWeekEventsByDay}
-                        handleExport={() => shareEvents(latestWeekEventsByDay)}
-                    />
-                ]
+                <WorkDaySummary
+                    dayEvents={latestDayEvents}
+                    handleExport={() => shareEvents([latestDayEvents])}
+                />
                 :
                 <NotImplementedPlaceHolder
                     label={"Page d'accueil"}
