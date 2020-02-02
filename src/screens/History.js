@@ -63,7 +63,6 @@ export function History ({ previousDaysEventsByDay }) {
     }
 
     const {periods, eventsGroupedByPeriod} = groupEventsByPeriod(currentTab);
-    console.log(eventsGroupedByPeriod);
 
     const [selectedPeriod, setSelectedPeriod] = React.useState(periods[0]);
 
