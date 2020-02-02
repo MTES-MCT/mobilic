@@ -4,6 +4,12 @@
   --bottom-nav-bar-height: 56px;
 }
 
+@media screen and (max-height: 400px) {
+  :root {
+    --bottom-nav-bar-height: 0px;
+  }
+}
+
 .App {
   text-align: center;
   height: 100vh;
