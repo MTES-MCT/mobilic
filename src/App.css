@@ -86,6 +86,8 @@
   position: fixed;
   bottom: 0;
   height: var(--bottom-nav-bar-height) !important;
+  border-top: gray solid 1px;
+  background-color: #F5F5F5 !important;
 }
 
 .time-of-service-container {
