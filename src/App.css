@@ -182,10 +182,15 @@
 .summary-card-timers {
   display: flex;
   justify-content: space-between;
+  margin-top: 4vh;
 }
 
 .summary-card-timer {
-  flex-grow: 0.5
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 25vw;
+  max-width: 100px;
 }
 
 .summary-card-table-cell {

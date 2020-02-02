@@ -1,8 +1,7 @@
 import React from "react";
-import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import {formatDate, formatDay, formatTimer, getStartOfWeek, MILLISECONDS_IN_A_WEEK} from "../utils/time";
-import Card from "@material-ui/core/Card";
+import Box from "@material-ui/core/Box";
 import ShareIcon from '@material-ui/icons/Share';
 import IconButton from "@material-ui/core/IconButton";
 import Table from '@material-ui/core/Table';
@@ -11,45 +10,42 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import {computeTotalActivityDurations} from "../utils/metrics";
 import {ACTIVITIES, TIMEABLE_ACTIVITIES} from "../utils/activities";
-import {ActivitySwitchCard} from "./ActivitySwitch";
 
 
-function SummaryCard ({ title, handleExport, summaryContent, timers }) {
+function Summary ({ title, handleExport, summaryContent, timers }) {
     return (
-        <Card className="summary-card-container unshrinkable">
-            <CardContent className="summary-card-content">
-                <div className="summary-card-header">
-                    <Typography className="summary-card-title">
-                        {title}
-                    </Typography>
-                    <IconButton onClick={handleExport}>
-                        <ShareIcon color="primary"/>
-                    </IconButton>
-                </div>
-                <Table size="small">
-                    <TableBody>
-                        {summaryContent.map((row, index) => (
-                            <TableRow key={index}>
-                                <TableCell className="summary-card-table-cell" component="th" scope="row">
-                                    {row.stat}
-                                </TableCell>
-                                <TableCell className="summary-card-table-cell" align="right">{row.value}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-                <div className="summary-card-timers">
-                    {timers && Object.values(TIMEABLE_ACTIVITIES).map((activity) =>
-                        <ActivitySwitchCard
-                            className="summary-card-timer"
-                            renderIcon={activity.renderIcon}
-                            timer={timers[activity.name] || 10}
-                            forceSize={false}
-                        />
-                    )}
-                </div>
-            </CardContent>
-        </Card>
+        <div className="summary-card-container unshrinkable">
+            <Box className="summary-card-header">
+                <Typography className="summary-card-title">
+                    {title}
+                </Typography>
+                <IconButton onClick={handleExport}>
+                    <ShareIcon color="primary"/>
+                </IconButton>
+            </Box>
+            <Table>
+                <TableBody>
+                    {summaryContent.map((row, index) => (
+                        <TableRow key={index}>
+                            <TableCell className="summary-card-table-cell" component="th" scope="row">
+                                {row.stat}
+                            </TableCell>
+                            <TableCell className="summary-card-table-cell" align="right">{row.value}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+            <div className="summary-card-timers">
+                {timers && Object.values(TIMEABLE_ACTIVITIES).map((activity) =>
+                    <div className="summary-card-timer">
+                        {activity.renderIcon({className: "activity-card-icon"})}
+                        <Typography variant="body2">
+                            {` : ${formatTimer(timers[activity.name] || 10)}`}
+                        </Typography>
+                    </div>
+                )}
+            </div>
+        </div>
     )
 }
 
@@ -62,7 +58,7 @@ export function WorkDaySummary ({ dayEvents, handleExport }) {
     const workTime = (timers["drive"] || 0) + (timers["work"] || 0);
     const title = `Journée du ${formatDay(dayStart)}`;
     return (
-        <SummaryCard
+        <Summary
             title={title}
             handleExport={handleExport}
             summaryContent={[
@@ -98,7 +94,7 @@ export function WorkWeekSummary ({weekEventsByDay, handleExport}) {
     const nValidRests = 0;
 
     return (
-        <SummaryCard
+        <Summary
             title={title}
             handleExport={handleExport}
             summaryContent={[
