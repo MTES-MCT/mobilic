@@ -1,25 +1,15 @@
 import React from "react";
 import Container from "@material-ui/core/Container";
-import {WorkDaySummary, WorkWeekSummary} from "../components/WorkTimeSummary";
+import {WorkDaySummary} from "../components/WorkTimeSummary";
 import PeopleIcon from '@material-ui/icons/People';
 import PersonIcon from '@material-ui/icons/Person';
 import Button from "@material-ui/core/Button";
-import {getStartOfWeek, MILLISECONDS_IN_A_WEEK} from "../utils/time";
 import {NotImplementedPlaceHolder} from "../components/NotImplementedPlaceHolder";
 import {shareEvents} from "../utils/events";
 
 
 export function BeforeWork ({ previousDaysEventsByDay, setOpenTeamSelectionModal, setOpenFirstActivityModal, clearTeam }) {
     const latestDayEvents = previousDaysEventsByDay[previousDaysEventsByDay.length - 1];
-    let latestDayStart, latestWeekStart, latestWeekEventsByDay;
-    if (latestDayEvents) {
-        latestDayStart = latestDayEvents[0].date;
-        latestWeekStart = getStartOfWeek(latestDayStart);
-        latestWeekEventsByDay = previousDaysEventsByDay.filter((dayEvents) => {
-            const dayStart = dayEvents[0].date;
-            return dayStart > latestWeekStart && dayStart < latestWeekStart + MILLISECONDS_IN_A_WEEK;
-        });
-    }
 
     return (
         <Container className="container">
