@@ -28,9 +28,15 @@ function Summary ({ title, handleExport, summaryContent, timers }) {
                     {summaryContent.map((row, index) => (
                         <TableRow key={index}>
                             <TableCell className="summary-card-table-cell" component="th" scope="row">
-                                {row.stat}
+                                <Typography variant="body2">
+                                    {row.stat}
+                                </Typography>
                             </TableCell>
-                            <TableCell className="summary-card-table-cell" align="right">{row.value}</TableCell>
+                            <TableCell className="summary-card-table-cell" align="right">
+                                <Typography variant="body2" className="summary-card-table-cell-value">
+                                    {row.value}
+                                </Typography>
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

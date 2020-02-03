@@ -194,7 +194,11 @@
 }
 
 .summary-card-table-cell {
-  padding: 4px 0  !important;
+  padding: 8px 0  !important;
+}
+
+.summary-card-table-cell-value {
+    font-weight: bold !important;
 }
 
 .hidden {
@@ -282,4 +286,7 @@
 
 .picker-container {
   z-index: 600 !important;
+  width: 90%;
+  align-self: center;
+  max-width: 400px;
 }
