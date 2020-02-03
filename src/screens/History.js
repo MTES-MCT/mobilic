@@ -12,6 +12,8 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 
 
 const tabs = {
@@ -23,10 +25,14 @@ const tabs = {
         getPeriod: (date) => date,
         formatPeriod: shortPrettyFormatDay,
         renderPeriod: ({eventsByDay}) => (
-            <WorkDaySummary
-                dayEvents={eventsByDay[0]}
-                handleExport={() => shareEvents(eventsByDay)}
-            />
+            <Card>
+                <CardContent>
+                    <WorkDaySummary
+                        dayEvents={eventsByDay[0]}
+                        handleExport={() => shareEvents(eventsByDay)}
+                    />
+                </CardContent>
+            </Card>
         )
     },
     week: {
@@ -38,10 +44,14 @@ const tabs = {
         formatPeriod: (date) => `Semaine du ${formatDay(date)} au ${formatDay(date + MILLISECONDS_IN_A_WEEK)}`,
         renderPeriod: ({eventsByDay, handleDayClick}) => (
             <div>
-                <WorkWeekSummary
-                    weekEventsByDay={eventsByDay}
-                    handleExport={() => shareEvents(eventsByDay)}
-                />
+                <Card>
+                    <CardContent>
+                        <WorkWeekSummary
+                            weekEventsByDay={eventsByDay}
+                            handleExport={() => shareEvents(eventsByDay)}
+                        />
+                    </CardContent>
+                </Card>
                 <List className="days">
                     {eventsByDay.map((dayEvents, index) => [
                         <Divider key={2 * index} />,

@@ -2,7 +2,6 @@ import React from "react";
 import Typography from "@material-ui/core/Typography";
 import {
     formatTimeOfDay,
-    formatDay,
     formatTimer,
     getStartOfWeek,
     MILLISECONDS_IN_A_WEEK,
@@ -21,7 +20,7 @@ import {ACTIVITIES, TIMEABLE_ACTIVITIES} from "../utils/activities";
 
 function Summary ({ title, handleExport, summaryContent, timers }) {
     return (
-        <div className="summary-card-container unshrinkable">
+        <div className="unshrinkable">
             <Box className="summary-card-header">
                 <Typography className="summary-card-title">
                     {title}
@@ -48,16 +47,18 @@ function Summary ({ title, handleExport, summaryContent, timers }) {
                     ))}
                 </TableBody>
             </Table>
-            <div className="summary-card-timers">
-                {timers && Object.values(TIMEABLE_ACTIVITIES).map((activity) =>
-                    <div className="summary-card-timer">
-                        {activity.renderIcon({className: "activity-card-icon"})}
-                        <Typography variant="body2">
-                            {` : ${formatTimer(timers[activity.name] || 10)}`}
-                        </Typography>
-                    </div>
-                )}
-            </div>
+            {timers &&
+                <div className="summary-card-timers">
+                    {Object.values(TIMEABLE_ACTIVITIES).map((activity) =>
+                        <div className="summary-card-timer">
+                            {activity.renderIcon({className: "activity-card-icon"})}
+                            <Typography variant="body2">
+                                {` : ${formatTimer(timers[activity.name] || 10)}`}
+                            </Typography>
+                        </div>
+                    )}
+                </div>
+            }
         </div>
     )
 }

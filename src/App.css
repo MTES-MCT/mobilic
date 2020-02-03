@@ -161,10 +161,6 @@
   z-index: 500;
 }
 
-.summary-card-container {
-  margin-bottom: 3vh;
-}
-
 .summary-card-header {
   display: flex;
   flex-direction: row;
@@ -186,7 +182,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 25vw;
+  width: 27%;
   max-width: 100px;
 }
 
@@ -274,7 +270,7 @@
 
 .picker-container {
   z-index: 600 !important;
-  width: 90%;
+  width: 90% !important;
   align-self: center;
   max-width: 400px;
 }
