@@ -1,10 +1,12 @@
 import React from 'react';
 import {makeStyles} from "@material-ui/core/styles";
-import {formatTimeOfDay, formatTimer} from "../utils/time";
+import {formatTimeOfDay} from "../utils/time";
 import classNames from 'classnames';
 import {ACTIVITIES} from "../utils/activities";
 import Typography from "@material-ui/core/Typography";
 import ChevronRightOutlinedIcon from '@material-ui/icons/ChevronRightOutlined';
+import useTheme from "@material-ui/core/styles/useTheme";
+
 
 const useStyles = makeStyles({
     period: props => ({
@@ -31,6 +33,7 @@ function Event({height, className, children=null}) {
 }
 
 export function TimeLine ({title, dayEvents}) {
+    const theme = useTheme();
     const periodWidth = `${Math.floor((100 - dayEvents.length)/ dayEvents.length)}%`;
     return (
         <div className="timeline-container">
@@ -41,9 +44,12 @@ export function TimeLine ({title, dayEvents}) {
                 {dayEvents.map((event, index) =>
                     <React.Fragment key={index}>
                         <Event className="timeline-legend" />
-                        <Period width={periodWidth} color={"blue"} className="timeline-legend">
-                            {ACTIVITIES[event.activityName].renderIcon()}
+                        <Period width={periodWidth} className="timeline-legend">
+                            {ACTIVITIES[event.activityName].renderIcon({style: {color: index === dayEvents.length - 1 ? theme.palette.primary.main : theme.palette[event.activityName]}})}
                         </Period>
+                        {index === dayEvents.length - 1 &&
+                            <ChevronRightOutlinedIcon fontSize="small" color="primary" className="timeline-line-end-arrow hidden"/>
+                        }
                     </React.Fragment>
                 )}
             </div>
@@ -51,7 +57,7 @@ export function TimeLine ({title, dayEvents}) {
                 {dayEvents.map((event, index) =>
                     <React.Fragment key={index}>
                         <Event />
-                        <Period width={periodWidth} color={"blue"} className={index === dayEvents.length - 1 && "timeline-segment-blurred"}/>
+                        <Period width={periodWidth} color={theme.palette[event.activityName]} className={index === dayEvents.length - 1 && "timeline-segment-blurred"}/>
                         {index === dayEvents.length - 1 &&
                             <ChevronRightOutlinedIcon fontSize="small" color="primary" className="timeline-line-end-arrow"/>
                         }
@@ -65,6 +71,9 @@ export function TimeLine ({title, dayEvents}) {
                             <Typography variant="caption" className="timeline-legend-label">{formatTimeOfDay(event.date)}</Typography>
                         </Event>
                         <Period width={periodWidth} className="timeline-legend"/>
+                        {index === dayEvents.length - 1 &&
+                            <ChevronRightOutlinedIcon fontSize="small" color="primary" className="timeline-line-end-arrow hidden"/>
+                        }
                     </React.Fragment>
                 )}
             </div>

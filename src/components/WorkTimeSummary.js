@@ -16,9 +16,11 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import {computeTotalActivityDurations} from "../utils/metrics";
 import {ACTIVITIES, TIMEABLE_ACTIVITIES} from "../utils/activities";
+import useTheme from "@material-ui/core/styles/useTheme";
 
 
 function Summary ({ title, handleExport, summaryContent, timers }) {
+    const theme = useTheme();
     return (
         <div className="unshrinkable">
             <Box className="summary-card-header">
@@ -51,7 +53,7 @@ function Summary ({ title, handleExport, summaryContent, timers }) {
                 <div className="summary-card-timers">
                     {Object.values(TIMEABLE_ACTIVITIES).map((activity) =>
                         <div className="summary-card-timer">
-                            {activity.renderIcon({className: "activity-card-icon", color: activity.name})}
+                            {activity.renderIcon({className: "activity-card-icon", style:{color: theme.palette[activity.name]}})}
                             <Typography variant="body2">
                                 {` : ${formatTimer(timers[activity.name] || 10)}`}
                             </Typography>

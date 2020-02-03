@@ -7,13 +7,15 @@ import TimerIcon from '@material-ui/icons/Timer';
 import {formatTimer} from "../utils/time";
 import classNames from 'classnames';
 import {ACTIVITIES} from "../utils/activities";
+import useTheme from "@material-ui/core/styles/useTheme";
 
 
-export function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick, className }) {
-    const color = onFocus ? "primary" : "inherit";
+export function ActivitySwitchCard ({ label, baseColor, renderIcon, timer, onFocus, onClick, className }) {
+    const theme = useTheme();
+    const color = onFocus ? theme.palette.primary.main : baseColor ? baseColor : "inherit";
     const timerProps = {
         className: classNames("activity-card-timer", {"card-on-focus": onFocus, hidden: !timer}),
-        color: color
+        style: {color: color}
     };
     return (
         <Card className={className} onClick={onClick} raised={onFocus}>
@@ -22,7 +24,7 @@ export function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick
               <Typography
                   variant="caption"
                   className={classNames("activity-card-title", {"card-on-focus": onFocus})}
-                  color={color}
+                  style={{color: color}}
                   noWrap
                   gutterBottom
               >
@@ -31,7 +33,7 @@ export function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick
             }
             {renderIcon({
                 className: "activity-card-icon",
-                color: color
+                style: {color: color}
             })}
             <div className="activity-card-timer-container">
                 {onFocus && <TimerIcon fontSize="inherit" {...timerProps}/>}
@@ -46,6 +48,7 @@ export function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick
 }
 
 export function ActivitySwitchGrid ({ timers, activityOnFocus, pushActivitySwitchEvent }) {
+    const theme = useTheme();
     const handleActivitySwitch = (activityName) => () => {
         pushActivitySwitchEvent(activityName);
     };
@@ -68,6 +71,7 @@ export function ActivitySwitchGrid ({ timers, activityOnFocus, pushActivitySwitc
                     timer={timers[activity.name]}
                     onFocus={activity.name === activityOnFocus}
                     onClick={handleActivitySwitch(activity.name)}
+                    baseColor={theme.palette[activity.name]}
                 />
               </Grid>
             ))}
