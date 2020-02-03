@@ -19,8 +19,13 @@ export function ActivitySwitchCard ({ label, renderIcon, timer, onFocus, onClick
         <Card className={className} onClick={onClick} raised={onFocus}>
           <CardContent className="activity-card-content">
             {label &&
-              <Typography variant="caption" className={classNames("activity-card-title", {"card-on-focus": onFocus})}
-                          color={color} gutterBottom>
+              <Typography
+                  variant="caption"
+                  className={classNames("activity-card-title", {"card-on-focus": onFocus})}
+                  color={color}
+                  noWrap
+                  gutterBottom
+              >
                   {label}
               </Typography>
             }

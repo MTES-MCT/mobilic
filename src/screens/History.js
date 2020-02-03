@@ -5,9 +5,13 @@ import AppBar from "@material-ui/core/AppBar/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import {ScrollPicker} from "../components/ScrollPicker";
-import {formatDay, getStartOfWeek, MILLISECONDS_IN_A_WEEK, shortPrettyFormatDay} from "../utils/time";
+import {formatDay, getStartOfWeek, MILLISECONDS_IN_A_WEEK, prettyFormatDay, shortPrettyFormatDay} from "../utils/time";
 import {WorkDaySummary, WorkWeekSummary} from "../components/WorkTimeSummary";
 import {shareEvents} from "../utils/events";
+import Divider from "@material-ui/core/Divider";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import List from "@material-ui/core/List";
 
 
 const tabs = {
@@ -18,7 +22,7 @@ const tabs = {
         periodSize: 1,
         getPeriod: (date) => date,
         formatPeriod: shortPrettyFormatDay,
-        renderPeriod: (eventsByDay) => (
+        renderPeriod: ({eventsByDay}) => (
             <WorkDaySummary
                 dayEvents={eventsByDay[0]}
                 handleExport={() => shareEvents(eventsByDay)}
@@ -32,11 +36,25 @@ const tabs = {
         periodSize: 2,
         getPeriod: (date) => getStartOfWeek(date),
         formatPeriod: (date) => `Semaine du ${formatDay(date)} au ${formatDay(date + MILLISECONDS_IN_A_WEEK)}`,
-        renderPeriod: (eventsByDay) => (
-            <WorkWeekSummary
-                weekEventsByDay={eventsByDay}
-                handleExport={() => shareEvents(eventsByDay)}
-            />
+        renderPeriod: ({eventsByDay, handleDayClick}) => (
+            <div>
+                <WorkWeekSummary
+                    weekEventsByDay={eventsByDay}
+                    handleExport={() => shareEvents(eventsByDay)}
+                />
+                <List className="days">
+                    {eventsByDay.map((dayEvents, index) => [
+                        <Divider key={2 * index} />,
+                        <ListItem button key={2 * index + 1} onClick={handleDayClick(dayEvents[0].date)}>
+                          <ListItemText
+                            primaryTypographyProps={{noWrap: true, display: "block"}}
+                            primary={prettyFormatDay(dayEvents[0].date)}
+                          />
+                        </ListItem>
+                    ])}
+                </List>
+            </div>
+
         )
     }
 };
@@ -102,7 +120,10 @@ export function History ({ previousDaysEventsByDay }) {
                 itemHeight={25}
             />
             <div style={{height: "2vh"}} />
-            {tabs[currentTab].renderPeriod(eventsGroupedByPeriod[selectedPeriod])}
+            {tabs[currentTab].renderPeriod({
+                eventsByDay: eventsGroupedByPeriod[selectedPeriod],
+                handleDayClick: (date) => (e) => handlePeriodChange(e, "day", date)
+            })}
         </Container>
     );
 }

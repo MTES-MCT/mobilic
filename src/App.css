@@ -45,9 +45,6 @@
 
 .activity-card-title {
   flex-shrink: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   width: 100%;
 }
 
@@ -241,17 +238,8 @@
   overflow-y: scroll;
 }
 
-.coworker-name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .current-team-summary {
   text-align: start;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   font-weight: bold !important;
 }
 
@@ -289,4 +277,11 @@
   width: 90%;
   align-self: center;
   max-width: 400px;
+}
+
+.days {
+    overflow-y: scroll;
+    margin-top: 5vh !important;
+    margin-left: -16px !important;
+    width: 100vw;
 }

@@ -20,6 +20,7 @@ export function CurrentActivity ({ currentActivityName, currentDayEvents, pushNe
                     <Typography
                         variant="subtitle1"
                         className="current-team-summary"
+                        noWrap
                     >
                         {teamMates.length} coéquipier{teamMates.length > 1 && "s"} : {teamMates.map((mate) => mate.firstName).join(", ")}
                     </Typography>,

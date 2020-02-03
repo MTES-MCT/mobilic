@@ -122,7 +122,8 @@ export function TeamSelectionModal ({ open, handleBack, handleContinue, coworker
                 <Divider key={2 * index} />,
                 <ListItem key={2 * index + 1}>
                   <Checkbox checked={coworker.isInCurrentTeam} onChange={toggleAddCoworkerToTeam(index)} />
-                  <ListItemText className="coworker-name"
+                  <ListItemText
+                    primaryTypographyProps={{noWrap: true, display: "block"}}
                     primary={formatCoworkerName(coworker)}
                   />
                   <ListItemSecondaryAction>
