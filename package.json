@@ -28,7 +28,74 @@
     "yarn": "1.19.1"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "parser": "babel-eslint",
+    "env": {
+      "browser": true,
+      "es6": true,
+      "jest/globals": true
+    },
+    "plugins": [
+      "react",
+      "jest",
+      "import",
+      "react-hooks"
+    ],
+    "settings": {
+      "react": {
+        "version": "detect"
+      },
+      "import/resolver": {
+        "node": {
+          "extensions": [
+            ".js",
+            ".jsx",
+            ".json"
+          ]
+        }
+      }
+    },
+    "parserOptions": {
+      "ecmaVersion": 8,
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    },
+    "extends": [
+      "react-app",
+      "eslint:recommended",
+      "plugin:react/recommended",
+      "plugin:import/recommended",
+      "plugin:prettier/recommended"
+    ],
+    "rules": {
+      "no-console": "off",
+      "no-param-reassign": "error",
+      "no-var": "error",
+      "react/jsx-filename-extension": [
+        "error",
+        {
+          "extensions": [
+            ".js",
+            ".tsx"
+          ]
+        }
+      ],
+      "react/no-unescaped-entities": "off",
+      "react/prop-types": "off",
+      "react/display-name": "off",
+      "react/jsx-fragments": [
+        "error",
+        "syntax"
+      ],
+      "react/jsx-no-comment-textnodes": "error",
+      "import/no-duplicates": "error",
+      "import/no-named-as-default": "error",
+      "import/no-named-as-default-member": "error",
+      "import/no-mutable-exports": "error",
+      "import/first": "error",
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn"
+    }
   },
   "browserslist": {
     "production": [
@@ -41,5 +108,27 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{html,json,md,mdx,css,yaml}": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.{js,ts,tsx}": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^4.2.1",
+    "lint-staged": "^10.0.7",
+    "prettier": "1.19.1"
   }
 }
