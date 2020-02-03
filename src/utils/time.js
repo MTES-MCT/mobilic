@@ -1,6 +1,6 @@
 export const MILLISECONDS_IN_A_DAY = 86400000;
 export const MILLISECONDS_IN_A_WEEK = 7 * 86400000;
-const MONTHS = [
+const SHORT_MONTHS = [
     'janv',
     'fev',
     'mars',
@@ -14,6 +14,20 @@ const MONTHS = [
     'nov',
     'dec'
 ];
+const MONTHS = [
+    'janvier',
+    'février',
+    'mars',
+    'avril',
+    'mai',
+    'juin',
+    'juillet',
+    'aout',
+    'septembre',
+    'octobre',
+    'novembre',
+    'décembre'
+];
 
 
 export function formatTimer (timerDuration) {
@@ -23,7 +37,7 @@ export function formatTimer (timerDuration) {
     return `${timerDurationInHours}h${"\u00A0"}${addZero(timerDurationInMinutes % 60)}m`;
 }
 
-export function formatDate (unixDate) {
+export function formatTimeOfDay (unixDate) {
     const date = new Date(unixDate);
     return `${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
 }
@@ -36,6 +50,11 @@ export function formatDay(unixDate) {
 export function prettyFormatDay(unixDate) {
     const date = new Date(unixDate);
     return `${date.getDate()} ${MONTHS[date.getMonth()]}`
+}
+
+export function shortPrettyFormatDay(unixDate) {
+    const date = new Date(unixDate);
+    return `${date.getDate()} ${SHORT_MONTHS[date.getMonth()]}`
 }
 
 function addZero (n) {

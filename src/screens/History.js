@@ -5,7 +5,7 @@ import AppBar from "@material-ui/core/AppBar/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import {ScrollPicker} from "../components/ScrollPicker";
-import {formatDay, getStartOfWeek, MILLISECONDS_IN_A_WEEK, prettyFormatDay} from "../utils/time";
+import {formatDay, getStartOfWeek, MILLISECONDS_IN_A_WEEK, shortPrettyFormatDay} from "../utils/time";
 import {WorkDaySummary, WorkWeekSummary} from "../components/WorkTimeSummary";
 import {shareEvents} from "../utils/events";
 
@@ -17,7 +17,7 @@ const tabs = {
         value: "day",
         periodSize: 1,
         getPeriod: (date) => date,
-        formatPeriod: prettyFormatDay,
+        formatPeriod: shortPrettyFormatDay,
         renderPeriod: (eventsByDay) => (
             <WorkDaySummary
                 dayEvents={eventsByDay[0]}

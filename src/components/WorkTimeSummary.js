@@ -1,6 +1,13 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
-import {formatDate, formatDay, formatTimer, getStartOfWeek, MILLISECONDS_IN_A_WEEK} from "../utils/time";
+import {
+    formatTimeOfDay,
+    formatDay,
+    formatTimer,
+    getStartOfWeek,
+    MILLISECONDS_IN_A_WEEK,
+    shortPrettyFormatDay, prettyFormatDay
+} from "../utils/time";
 import Box from "@material-ui/core/Box";
 import ShareIcon from '@material-ui/icons/Share';
 import IconButton from "@material-ui/core/IconButton";
@@ -62,18 +69,18 @@ export function WorkDaySummary ({ dayEvents, handleExport }) {
     const timers = computeTotalActivityDurations(dayEvents);
     const serviceTime = timers["total"];
     const workTime = (timers["drive"] || 0) + (timers["work"] || 0);
-    const title = `Journée du ${formatDay(dayStart)}`;
+    const title = `Journée du ${prettyFormatDay(dayStart)}`;
     return (
         <Summary
             title={title}
             handleExport={handleExport}
             summaryContent={[
                 {
-                    stat: "Service",
-                    value: `${formatTimer(serviceTime)} (${formatDate(dayStart)}${"\u00A0"}-${"\u00A0"}${formatDate(dayEnd)})`
+                    stat: "Amplitude 📅",
+                    value: `${formatTimer(serviceTime)} (${formatTimeOfDay(dayStart)}${"\u00A0"}-${"\u00A0"}${formatTimeOfDay(dayEnd)})`
                 },
                 {
-                    stat: "Travail",
+                    stat: "Travail 💪",
                     value: `${formatTimer(workTime)}`
                 },
             ]}
@@ -95,7 +102,7 @@ export function WorkWeekSummary ({weekEventsByDay, handleExport}) {
 
     const serviceTime = weekTimers["total"];
     const workTime = (weekTimers["drive"] || 0) + (weekTimers["work"] || 0);
-    const title = `Semaine du ${formatDay(weekStart)} - ${formatDay(weekStart + MILLISECONDS_IN_A_WEEK)} `;
+    const title = `Semaine du ${shortPrettyFormatDay(weekStart)} - ${shortPrettyFormatDay(weekStart + MILLISECONDS_IN_A_WEEK)} `;
     const nRests = 0;
     const nValidRests = 0;
 
@@ -105,19 +112,19 @@ export function WorkWeekSummary ({weekEventsByDay, handleExport}) {
             handleExport={handleExport}
             summaryContent={[
                 {
-                    stat: "Jours de travail",
+                    stat: "Jours de travail 💪",
                     value: `${weekEventsByDay.length}`
                 },
                 {
-                    stat: "Service total",
+                    stat: "Amplitude totale 📅",
                     value: `${formatTimer(serviceTime)}`
                 },
                 {
-                    stat: "Travail total",
+                    stat: "Travail total 💪",
                     value: `${formatTimer(workTime)}`
                 },
                 {
-                    stat: "Repos journaliers valides",
+                    stat: "Repos journaliers valides 😴",
                     value: `${nRests}/${nValidRests}`
                 }
             ]}

@@ -1,6 +1,6 @@
 import React from 'react';
 import {makeStyles} from "@material-ui/core/styles";
-import {formatDate, formatTimer} from "../utils/time";
+import {formatTimeOfDay, formatTimer} from "../utils/time";
 import classNames from 'classnames';
 import {ACTIVITIES} from "../utils/activities";
 import Typography from "@material-ui/core/Typography";
@@ -62,7 +62,7 @@ export function TimeLine ({title, dayEvents}) {
                 {dayEvents.map((event, index) =>
                     <React.Fragment key={index}>
                         <Event className="timeline-legend" >
-                            <Typography variant="caption" className="timeline-legend-label">{formatDate(event.date)}</Typography>
+                            <Typography variant="caption" className="timeline-legend-label">{formatTimeOfDay(event.date)}</Typography>
                         </Event>
                         <Period width={periodWidth} className="timeline-legend"/>
                     </React.Fragment>
