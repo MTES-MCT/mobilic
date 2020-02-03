@@ -4,7 +4,7 @@ import {
     formatTimeOfDay,
     formatTimer,
     getStartOfWeek,
-    MILLISECONDS_IN_A_WEEK,
+    WEEK,
     shortPrettyFormatDay, prettyFormatDay
 } from "../utils/time";
 import Box from "@material-ui/core/Box";
@@ -17,9 +17,12 @@ import TableRow from '@material-ui/core/TableRow';
 import {computeTotalActivityDurations} from "../utils/metrics";
 import {ACTIVITIES, TIMEABLE_ACTIVITIES} from "../utils/activities";
 import useTheme from "@material-ui/core/styles/useTheme";
+import {checkDayRestRespect} from "../utils/regulation";
+import {RegulationCheck} from "./RegulationCheck";
+import Divider from "@material-ui/core/Divider";
 
 
-function Summary ({ title, handleExport, summaryContent, timers }) {
+function Summary ({ title, handleExport, summaryContent, timers, alerts }) {
     const theme = useTheme();
     return (
         <div className="unshrinkable">
@@ -61,12 +64,18 @@ function Summary ({ title, handleExport, summaryContent, timers }) {
                     )}
                 </div>
             }
+            {alerts &&
+                <div className="alerts-container">
+                    <Divider />
+                    {alerts.map((alert, index) => <RegulationCheck key={index} check={alert}/>)}
+                </div>
+            }
         </div>
     )
 }
 
 
-export function WorkDaySummary ({ dayEvents, handleExport }) {
+export function WorkDaySummary ({ dayEvents, handleExport, followingDayStart }) {
     const dayEnd = dayEvents[dayEvents.length - 1].date;
     const dayStart = dayEvents[0].date;
     const timers = computeTotalActivityDurations(dayEvents);
@@ -88,6 +97,9 @@ export function WorkDaySummary ({ dayEvents, handleExport }) {
                 },
             ]}
             timers={timers}
+            alerts={[
+                checkDayRestRespect(dayEnd, followingDayStart)
+            ]}
         />
     );
 }
@@ -105,10 +117,9 @@ export function WorkWeekSummary ({weekEventsByDay, handleExport}) {
 
     const serviceTime = weekTimers["total"];
     const workTime = (weekTimers["drive"] || 0) + (weekTimers["work"] || 0);
-    const title = `Semaine du ${shortPrettyFormatDay(weekStart)} - ${shortPrettyFormatDay(weekStart + MILLISECONDS_IN_A_WEEK)} `;
+    const title = `Semaine du ${shortPrettyFormatDay(weekStart)} - ${shortPrettyFormatDay(weekStart + WEEK)} `;
     const nRests = 0;
     const nValidRests = 0;
-
     return (
         <Summary
             title={title}

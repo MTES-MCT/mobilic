@@ -280,3 +280,22 @@
         margin-left: -24px !important;
     }
 }
+
+.regulation-check {
+    display: flex;
+    padding: 6px 0;
+}
+
+.regulation-check-message {
+    text-align: left;
+    font-style: italic;
+    padding-left: 8px;
+}
+
+.alerts-container {
+    margin-top: 3vh;
+}
+
+.non-italic {
+    font-style: normal;
+}

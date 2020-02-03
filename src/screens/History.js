@@ -5,7 +5,7 @@ import AppBar from "@material-ui/core/AppBar/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import {ScrollPicker} from "../components/ScrollPicker";
-import {formatDay, getStartOfWeek, MILLISECONDS_IN_A_WEEK, prettyFormatDay, shortPrettyFormatDay} from "../utils/time";
+import {formatDay, getStartOfWeek, WEEK, prettyFormatDay, shortPrettyFormatDay} from "../utils/time";
 import {WorkDaySummary, WorkWeekSummary} from "../components/WorkTimeSummary";
 import {shareEvents} from "../utils/events";
 import Divider from "@material-ui/core/Divider";
@@ -24,12 +24,13 @@ const tabs = {
         periodSize: 1,
         getPeriod: (date) => date,
         formatPeriod: shortPrettyFormatDay,
-        renderPeriod: ({eventsByDay}) => (
+        renderPeriod: ({eventsByDay, followingPeriodStart}) => (
             <Card>
                 <CardContent>
                     <WorkDaySummary
                         dayEvents={eventsByDay[0]}
                         handleExport={() => shareEvents(eventsByDay)}
+                        followingDayStart={followingPeriodStart}
                     />
                 </CardContent>
             </Card>
@@ -41,7 +42,7 @@ const tabs = {
         value: "week",
         periodSize: 2,
         getPeriod: (date) => getStartOfWeek(date),
-        formatPeriod: (date) => `Semaine du ${formatDay(date)} au ${formatDay(date + MILLISECONDS_IN_A_WEEK)}`,
+        formatPeriod: (date) => `Semaine du ${formatDay(date)} au ${formatDay(date + WEEK)}`,
         renderPeriod: ({eventsByDay, handleDayClick}) => (
             <div>
                 <Card>
@@ -80,11 +81,12 @@ export function History ({ previousDaysEventsByDay }) {
         previousDaysEventsByDay.forEach((dayEvents) => {
             const period = tabs[tab].getPeriod(dayEvents[0].date);
             if (currentPeriodIndex === -1 || period !== periods[currentPeriodIndex]) {
+                if (currentPeriodIndex >= 0) eventsGroupedByPeriod[periods[currentPeriodIndex]].followingPeriodStart = period;
                 periods.push(period);
                 currentPeriodIndex ++;
-                eventsGroupedByPeriod[period] = [];
+                eventsGroupedByPeriod[period] = {followingPeriodStart: undefined, events: []};
             }
-            eventsGroupedByPeriod[period].push(dayEvents);
+            eventsGroupedByPeriod[period].events.push(dayEvents);
         });
         periods.reverse();
         return {periods, eventsGroupedByPeriod}
@@ -131,8 +133,9 @@ export function History ({ previousDaysEventsByDay }) {
             />
             <div style={{height: "2vh"}} />
             {tabs[currentTab].renderPeriod({
-                eventsByDay: eventsGroupedByPeriod[selectedPeriod],
-                handleDayClick: (date) => (e) => handlePeriodChange(e, "day", date)
+                eventsByDay: eventsGroupedByPeriod[selectedPeriod].events,
+                handleDayClick: (date) => (e) => handlePeriodChange(e, "day", date),
+                followingPeriodStart: eventsGroupedByPeriod[selectedPeriod].followingPeriodStart
             })}
         </Container>
     );

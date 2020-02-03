@@ -1,6 +1,6 @@
 import {ACTIVITIES} from "./activities";
 import stringify from "csv-stringify/lib/sync";
-import {formatDay, formatTimer, MILLISECONDS_IN_A_DAY} from "./time";
+import {formatDay, formatTimer, DAY} from "./time";
 import {share} from "./share";
 import {computeTotalActivityDurations} from "./metrics";
 import {formatCoworkerName} from "./coworkers";
@@ -61,7 +61,7 @@ function formatEventsAsDaySummary (dayEvents) {
 export function shareEvents (eventsByDays, stringifyFunc=(data) => stringify(data, {header: true})) {
     const firstDay = eventsByDays[0][0].date;
     const lastDay = eventsByDays[eventsByDays.length - 1][0].date;
-    const areAllEventsOnTheSameDay = (lastDay - firstDay) < MILLISECONDS_IN_A_DAY;
+    const areAllEventsOnTheSameDay = (lastDay - firstDay) < DAY;
 
     const title = `Temps de travail du ${formatDay(firstDay)}${(areAllEventsOnTheSameDay ? "" : " au " + formatDay(lastDay))}`
     const text = stringifyFunc(

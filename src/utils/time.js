@@ -1,5 +1,6 @@
-export const MILLISECONDS_IN_A_DAY = 86400000;
-export const MILLISECONDS_IN_A_WEEK = 7 * 86400000;
+export const DAY = 86400000;
+export const WEEK = 7 * 86400000;
+export const HOUR = 3600000;
 const SHORT_MONTHS = [
     'janv',
     'fev',
@@ -65,7 +66,7 @@ export function getStartOfWeek (unixDate) {
     const date = new Date(unixDate);
     const dayOfWeek = date.getDay();
     const daysToSubstract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    return Math.floor((unixDate - daysToSubstract * MILLISECONDS_IN_A_DAY) / MILLISECONDS_IN_A_DAY) * MILLISECONDS_IN_A_DAY;
+    return Math.floor((unixDate - daysToSubstract * DAY) / DAY) * DAY;
 }
 
 
