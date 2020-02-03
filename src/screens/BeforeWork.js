@@ -22,18 +22,20 @@ export function BeforeWork ({ previousDaysEventsByDay, setOpenTeamSelectionModal
     }
 
     return (
-        <Container className="container scrollable">
-            {latestDayEvents ?
-                <WorkDaySummary
-                    dayEvents={latestDayEvents}
-                    handleExport={() => shareEvents([latestDayEvents])}
-                />
-                :
-                <NotImplementedPlaceHolder
-                    label={"Page d'accueil"}
-                />
-            }
-            <div style={{height: "5vh", flexGrow: 1}} />
+        <Container className="container">
+            <Container disableGutters className="scrollable" style={{flexGrow: 1, display: "flex", flexDirection: "column"}}>
+                {latestDayEvents ?
+                    <WorkDaySummary
+                        dayEvents={latestDayEvents}
+                        handleExport={() => shareEvents([latestDayEvents])}
+                    />
+                    :
+                    <NotImplementedPlaceHolder
+                        label={"Page d'accueil"}
+                    />
+                }
+                <div style={{height: "5vh", flexGrow: 1}} />
+            </Container>
             <div className="start-buttons-container unshrinkable">
                 <Button
                     variant="contained"

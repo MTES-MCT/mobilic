@@ -51,7 +51,7 @@ function Summary ({ title, handleExport, summaryContent, timers }) {
                 <div className="summary-card-timers">
                     {Object.values(TIMEABLE_ACTIVITIES).map((activity) =>
                         <div className="summary-card-timer">
-                            {activity.renderIcon({className: "activity-card-icon"})}
+                            {activity.renderIcon({className: "activity-card-icon", color: activity.name})}
                             <Typography variant="body2">
                                 {` : ${formatTimer(timers[activity.name] || 10)}`}
                             </Typography>

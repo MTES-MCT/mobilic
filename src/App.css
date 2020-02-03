@@ -83,8 +83,7 @@
   position: fixed;
   bottom: 0;
   height: var(--bottom-nav-bar-height) !important;
-  border-top: gray solid 1px;
-  background-color: #F5F5F5 !important;
+  border-top: solid 1px;
 }
 
 .time-of-service-container {
@@ -131,7 +130,7 @@
 }
 
 .timeline-point {
-  border: solid 0.25rem black;
+  border: solid 0.25rem;
   height: 0.4rem;
   width: 0.4rem;
   border-radius: 100%;
@@ -157,8 +156,7 @@
   justify-content: center;
   position: sticky;
   bottom: 0;
-  background-color: white;
-  z-index: 500;
+  z-index: 5000;
 }
 
 .summary-card-header {
@@ -223,7 +221,6 @@
   justify-content: flex-start;
   width: calc(100% - 2vh);
   padding: 2vh 0 2vh 2vh;
-  background-color: white;
 }
 
 .new-team-member-text-field {
@@ -262,10 +259,6 @@
   position: relative;
   left: -100px;
   width: calc(100vw + 100px);
-}
-
-.MuiTabs-indicator {
-  background-color: white !important;
 }
 
 .picker-container {
