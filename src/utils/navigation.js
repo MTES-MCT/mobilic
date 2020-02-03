@@ -4,9 +4,10 @@ import {CurrentActivity} from "../screens/CurrentActivity";
 import React from "react";
 import TimerIcon from '@material-ui/icons/Timer';
 import TimelineIcon from '@material-ui/icons/Timeline';
-import {NotImplementedPlaceHolder} from "../components/NotImplementedPlaceHolder";
+import {PlaceHolder} from "../components/PlaceHolder";
 import BottomNavBar from "../components/BottomNavBar";
 import {History} from "../screens/History";
+import Typography from "@material-ui/core/Typography";
 
 
 const SCREENS_WITH_BOTTOM_NAVIGATION = {
@@ -30,9 +31,19 @@ const SCREENS_WITH_BOTTOM_NAVIGATION = {
         label: "Historique",
         renderIcon: (props) => <TimelineIcon {...props}/>,
         render: (props) => (
-            <History
-                {...props}
-            />
+            props.previousDaysEventsByDay.length > 0 ?
+                <History
+                    {...props}
+                />
+                :
+                <PlaceHolder>
+                    <Typography variant="h4">
+                        😅
+                    </Typography>
+                    <Typography style={{fontWeight: "bold"}}>
+                        Vous n'avez pas encore d'historique !
+                    </Typography>
+                </PlaceHolder>
         )
     }
 };

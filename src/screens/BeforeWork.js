@@ -4,8 +4,9 @@ import {WorkDaySummary} from "../components/WorkTimeSummary";
 import PeopleIcon from '@material-ui/icons/People';
 import PersonIcon from '@material-ui/icons/Person';
 import Button from "@material-ui/core/Button";
-import {NotImplementedPlaceHolder} from "../components/NotImplementedPlaceHolder";
+import {PlaceHolder} from "../components/PlaceHolder";
 import {shareEvents} from "../utils/events";
+import Typography from "@material-ui/core/Typography";
 
 
 export function BeforeWork ({ previousDaysEventsByDay, setOpenTeamSelectionModal, setOpenFirstActivityModal, clearTeam }) {
@@ -20,9 +21,15 @@ export function BeforeWork ({ previousDaysEventsByDay, setOpenTeamSelectionModal
                         handleExport={() => shareEvents([latestDayEvents])}
                     />
                     :
-                    <NotImplementedPlaceHolder
-                        label={"Page d'accueil"}
-                    />
+                    <PlaceHolder
+                    >
+                        <Typography variant="h4">
+                            👋
+                        </Typography>
+                        <Typography style={{fontWeight: "bold"}}>
+                            Bienvenue sur MobiLIC !
+                        </Typography>
+                    </PlaceHolder>
                 }
                 <div style={{height: "5vh", flexGrow: 1}} />
             </Container>
