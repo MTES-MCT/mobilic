@@ -66,17 +66,17 @@ export function History ({ previousDaysEventsByDay }) {
 
     const [selectedPeriod, setSelectedPeriod] = React.useState(periods[0]);
 
-    function handlePeriodChange (e, newTab) {
+    function handlePeriodChange (e, newTab, selectedDate) {
         const newPeriods = groupEventsByPeriod(newTab).periods;
-        let mostRecentNewPeriodIndex = newPeriods.length - 1;
+        let mostRecentNewPeriodIndex = 0;
         let newPeriod;
-        while (mostRecentNewPeriodIndex > 0 && newPeriods[mostRecentNewPeriodIndex] > selectedPeriod) {
-            mostRecentNewPeriodIndex --;
+        while (mostRecentNewPeriodIndex < newPeriods.length - 1 && newPeriods[mostRecentNewPeriodIndex] > selectedDate) {
+            mostRecentNewPeriodIndex ++;
         }
-        if (mostRecentNewPeriodIndex === 0 || tabs[newTab].periodSize > tabs[currentTab].periodSize) {
+        if (selectedDate === newPeriods[mostRecentNewPeriodIndex] || mostRecentNewPeriodIndex === newPeriods.length - 1 || mostRecentNewPeriodIndex === 0 || tabs[newTab].periodSize > tabs[currentTab].periodSize) {
             newPeriod = newPeriods[mostRecentNewPeriodIndex];
         }
-        else newPeriod = newPeriods[mostRecentNewPeriodIndex + 1];
+        else newPeriod = newPeriods[mostRecentNewPeriodIndex - 1];
         setCurrentTab(newTab);
         setSelectedPeriod(newPeriod);
     }
@@ -85,7 +85,7 @@ export function History ({ previousDaysEventsByDay }) {
         <Container className="container scrollable">
             <AppBar>
               <Toolbar className="app-header stretch-header-content" disableGutters>
-                  <Tabs value={currentTab} onChange={handlePeriodChange} style={{flexGrow: 1}} centered>
+                  <Tabs value={currentTab} onChange={(e, tab) => handlePeriodChange(e, tab, selectedPeriod)} style={{flexGrow: 1}} centered>
                       {Object.values(tabs).map((tabProps) => (
                           <Tab label={tabProps.label} value={tabProps.value} style={{flexGrow: 1}} />
                       ))}
