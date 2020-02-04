@@ -24,7 +24,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export function TeamSelectionModal({
   open,
-  handleBack,
+  handleClose,
   handleContinue,
   coworkers,
   setCoworkers
@@ -36,7 +36,10 @@ export function TeamSelectionModal({
   // - discarded, i.e. not committed to main "coworkers" state (when hitting Back button)
   // - committed to main state (when hitting Ok button)
   // We sync the secondary state with the main one whenever the modal is opened/closed or the main state changes
-  React.useEffect(() => setUpdatedCoworkers(coworkers), [open, coworkers]);
+  React.useEffect(() => coworkers && setUpdatedCoworkers(coworkers), [
+    open,
+    coworkers
+  ]);
 
   const pushNewCoworker = (firstName, lastName) => () => {
     setUpdatedCoworkers([
@@ -84,7 +87,7 @@ export function TeamSelectionModal({
       <div style={{ position: "sticky", top: 0, zIndex: 1000 }}>
         <AppBar style={{ position: "relative" }}>
           <Toolbar className="app-header">
-            <IconButton edge="start" color="inherit" onClick={handleBack}>
+            <IconButton edge="start" color="inherit" onClick={handleClose}>
               <ArrowBackIcon />
             </IconButton>
             <Typography variant="h6">Equipe du jour</Typography>

@@ -7,15 +7,19 @@ import Button from "@material-ui/core/Button";
 import { PlaceHolder } from "../components/PlaceHolder";
 import { shareEvents } from "../utils/events";
 import Typography from "@material-ui/core/Typography";
+import { ModalContext } from "../utils/modals";
 
 export function BeforeWork({
+  pushNewCurrentDayEvent,
   previousDaysEventsByDay,
-  setOpenTeamSelectionModal,
-  setOpenFirstActivityModal,
+  coworkers,
+  setCoworkers,
   clearTeam
 }) {
   const latestDayEvents =
     previousDaysEventsByDay[previousDaysEventsByDay.length - 1];
+
+  const modals = React.useContext(ModalContext);
 
   return (
     <Container className="container">
@@ -46,7 +50,10 @@ export function BeforeWork({
           startIcon={<PersonIcon />}
           onClick={() => {
             clearTeam();
-            setOpenFirstActivityModal(true);
+            modals.open("firstActivity", {
+              handleItemClick: activityName =>
+                pushNewCurrentDayEvent(activityName)
+            });
           }}
         >
           Commencer la journée
@@ -56,7 +63,19 @@ export function BeforeWork({
           variant="outlined"
           color="primary"
           startIcon={<PeopleIcon />}
-          onClick={() => setOpenTeamSelectionModal(true)}
+          onClick={() =>
+            modals.open("teamSelection", {
+              handleContinue: () =>
+                modals.open("firstActivity", {
+                  handleItemClick: activityName => {
+                    pushNewCurrentDayEvent(activityName);
+                    modals.close("teamSelection");
+                  }
+                }),
+              coworkers: coworkers,
+              setCoworkers: setCoworkers
+            })
+          }
         >
           Commencer en équipe
         </Button>

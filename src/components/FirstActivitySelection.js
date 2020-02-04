@@ -22,7 +22,10 @@ export function SelectFirstActivityModal({
           .map(activity => (
             <ListItem
               button
-              onClick={() => handleItemClick(activity.name)}
+              onClick={() => {
+                handleItemClick(activity.name);
+                handleClose();
+              }}
               key={activity.name}
             >
               <ListItemAvatar>
