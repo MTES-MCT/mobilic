@@ -8,6 +8,7 @@ import { formatTimer } from "../utils/time";
 import classNames from "classnames";
 import { ACTIVITIES } from "../utils/activities";
 import useTheme from "@material-ui/core/styles/useTheme";
+import { ModalContext } from "../utils/modals";
 
 export function ActivitySwitchCard({
   label,
@@ -68,9 +69,16 @@ export function ActivitySwitchGrid({
   activityOnFocus,
   pushActivitySwitchEvent
 }) {
+  const modals = React.useContext(ModalContext);
+
   const theme = useTheme();
   const handleActivitySwitch = activityName => () => {
-    pushActivitySwitchEvent(activityName);
+    if (activityName === ACTIVITIES.end.name) {
+      modals.open("confirmation", {
+        handleConfirm: () => pushActivitySwitchEvent(activityName),
+        title: "Confirmer fin de journée"
+      });
+    } else pushActivitySwitchEvent(activityName);
   };
 
   return (
