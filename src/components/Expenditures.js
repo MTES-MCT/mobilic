@@ -7,7 +7,7 @@ import { EXPENDITURES } from "../utils/expenditures";
 export function Expenditures({ expenditures, setExpenditures }) {
   return (
     <div>
-      <Typography variant="subtitle1" className="expenditures-title">
+      <Typography variant="h6" className="expenditures-title">
         Frais
       </Typography>
       <div className="expenditures-content">
@@ -30,7 +30,7 @@ export function Expenditures({ expenditures, setExpenditures }) {
               />
             }
             label={
-              <Typography variant="caption">
+              <Typography variant="body2">
                 {EXPENDITURES[expenditureType]["label"]}
               </Typography>
             }

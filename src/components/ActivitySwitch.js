@@ -37,7 +37,7 @@ export function ActivitySwitchCard({
       <CardContent className="activity-card-content">
         {label && (
           <Typography
-            variant="caption"
+            variant="body2"
             className={classNames("activity-card-title", {
               "card-on-focus": onFocus
             })}
@@ -55,7 +55,7 @@ export function ActivitySwitchCard({
         <div className="activity-card-timer-container">
           {onFocus && <TimerIcon fontSize="inherit" {...timerProps} />}
           <div style={{ width: "1vw" }} />
-          <Typography variant="caption" {...timerProps}>
+          <Typography variant="body2" {...timerProps}>
             {formatTimer(timer || 10)}
           </Typography>
         </div>

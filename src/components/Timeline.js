@@ -42,7 +42,7 @@ export function TimeLine({ dayEvents, endDate }) {
   )}%`;
   return (
     <div className="timeline-container">
-      <Typography variant="subtitle1" className="timeline-title" gutterBottom>
+      <Typography variant="h6" className="timeline-title" gutterBottom>
         Évènements de la journée
       </Typography>
       <div className="timeline-line">
