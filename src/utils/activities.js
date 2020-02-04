@@ -19,7 +19,7 @@ export const TIMEABLE_ACTIVITIES = {
   },
   rest: {
     name: "rest",
-    label: "Repos",
+    label: "Pause",
     renderIcon: props => <HotelIcon {...props} />
   }
 };
