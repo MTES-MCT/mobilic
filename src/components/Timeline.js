@@ -35,7 +35,7 @@ function Event({ height, className, children = null }) {
   );
 }
 
-export function TimeLine({ title, dayEvents }) {
+export function TimeLine({ title, dayEvents, endDate }) {
   const theme = useTheme();
   const periodWidth = `${Math.floor(
     (100 - dayEvents.length) / dayEvents.length
@@ -43,29 +43,32 @@ export function TimeLine({ title, dayEvents }) {
   return (
     <div className="timeline-container">
       <Typography variant="subtitle1" className="timeline-title" gutterBottom>
-        Déroulé de la journée
+        {title}
       </Typography>
       <div className="timeline-line">
         {dayEvents.map((event, index) => (
           <React.Fragment key={index}>
-            <Event className="timeline-legend" />
+            <Event className="timeline-legend hidden" />
             <Period width={periodWidth} className="timeline-legend">
               {ACTIVITIES[event.activityName].renderIcon({
                 style: {
                   color:
-                    index === dayEvents.length - 1
+                    index === dayEvents.length - 1 && !endDate
                       ? theme.palette.primary.main
                       : theme.palette[event.activityName]
                 }
               })}
             </Period>
-            {index === dayEvents.length - 1 && (
-              <ChevronRightOutlinedIcon
-                fontSize="small"
-                color="primary"
-                className="timeline-line-end-arrow hidden"
-              />
-            )}
+            {index === dayEvents.length - 1 &&
+              (endDate ? (
+                <Event className="timeline-legend hidden" />
+              ) : (
+                <ChevronRightOutlinedIcon
+                  fontSize="small"
+                  color="primary"
+                  className="timeline-line-end-arrow hidden"
+                />
+              ))}
           </React.Fragment>
         ))}
       </div>
@@ -77,16 +80,21 @@ export function TimeLine({ title, dayEvents }) {
               width={periodWidth}
               color={theme.palette[event.activityName]}
               className={
-                index === dayEvents.length - 1 && "timeline-segment-blurred"
+                index === dayEvents.length - 1 &&
+                !endDate &&
+                "timeline-segment-blurred"
               }
             />
-            {index === dayEvents.length - 1 && (
-              <ChevronRightOutlinedIcon
-                fontSize="small"
-                color="primary"
-                className="timeline-line-end-arrow"
-              />
-            )}
+            {index === dayEvents.length - 1 &&
+              (endDate ? (
+                <Event />
+              ) : (
+                <ChevronRightOutlinedIcon
+                  fontSize="small"
+                  color="primary"
+                  className="timeline-line-end-arrow"
+                />
+              ))}
           </React.Fragment>
         ))}
       </div>
@@ -99,13 +107,23 @@ export function TimeLine({ title, dayEvents }) {
               </Typography>
             </Event>
             <Period width={periodWidth} className="timeline-legend" />
-            {index === dayEvents.length - 1 && (
-              <ChevronRightOutlinedIcon
-                fontSize="small"
-                color="primary"
-                className="timeline-line-end-arrow hidden"
-              />
-            )}
+            {index === dayEvents.length - 1 &&
+              (endDate ? (
+                <Event className="timeline-legend">
+                  <Typography
+                    variant="caption"
+                    className="timeline-legend-label"
+                  >
+                    {formatTimeOfDay(endDate)}
+                  </Typography>
+                </Event>
+              ) : (
+                <ChevronRightOutlinedIcon
+                  fontSize="small"
+                  color="primary"
+                  className="timeline-line-end-arrow hidden"
+                />
+              ))}
           </React.Fragment>
         ))}
       </div>

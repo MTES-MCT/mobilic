@@ -20,6 +20,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+import { TimeLine } from "../components/Timeline";
 
 const tabs = {
   day: {
@@ -29,17 +30,30 @@ const tabs = {
     periodSize: 1,
     getPeriod: date => date,
     formatPeriod: shortPrettyFormatDay,
-    renderPeriod: ({ eventsByDay, followingPeriodStart }) => (
-      <Card>
-        <CardContent>
-          <WorkDaySummary
-            dayEvents={eventsByDay[0]}
-            handleExport={() => shareEvents(eventsByDay)}
-            followingDayStart={followingPeriodStart}
-          />
-        </CardContent>
-      </Card>
-    )
+    renderPeriod: ({ eventsByDay, followingPeriodStart }) => {
+      const dayEvents = eventsByDay[0];
+      const dayEnd = dayEvents[dayEvents.length - 1].date;
+      return (
+        <div>
+          <Card>
+            <CardContent>
+              <WorkDaySummary
+                dayEvents={dayEvents}
+                handleExport={() => shareEvents(eventsByDay)}
+                followingDayStart={followingPeriodStart}
+              />
+            </CardContent>
+          </Card>
+          <div style={{ marginTop: "3vh" }}>
+            <TimeLine
+              title="Évènements"
+              dayEvents={dayEvents.slice(0, dayEvents.length - 1)}
+              endDate={dayEnd}
+            />
+          </div>
+        </div>
+      );
+    }
   },
   week: {
     screen: props => null,

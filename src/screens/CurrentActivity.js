@@ -21,7 +21,7 @@ export function CurrentActivity({
   );
   return (
     <Container className="container space-between">
-      <TimeLine dayEvents={currentDayEvents} />
+      <TimeLine title="Déroulé de la journée" dayEvents={currentDayEvents} />
       <Divider className="full-width-divider" />
       {teamMates.length > 0 && [
         <Typography
