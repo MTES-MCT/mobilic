@@ -50,8 +50,8 @@
 
 .activity-card-content {
   padding: 3% !important;
-  height: 94%;
-  width: 94%;
+  height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -75,7 +75,6 @@
 .card-on-focus {
   font-weight: bold !important;
 }
-
 
 .nav-bar-container {
   width: 100vw;
@@ -103,9 +102,9 @@
 }
 
 .timeline-line-end-arrow {
-  transform:translate(-50%,0);
-  -webkit-transform:translate(-50%,0);
-  -ms-transform:translate(-50%,0);
+  transform: translate(-50%, 0);
+  -webkit-transform: translate(-50%, 0);
+  -ms-transform: translate(-50%, 0);
   opacity: 0.2;
 }
 
@@ -185,11 +184,11 @@
 }
 
 .summary-card-table-cell {
-  padding: 8px 0  !important;
+  padding: 8px 0 !important;
 }
 
 .summary-card-table-cell-value {
-    font-weight: bold !important;
+  font-weight: bold !important;
 }
 
 .hidden {
@@ -269,33 +268,28 @@
 }
 
 .days {
-    overflow-y: scroll;
-    margin-top: 5vh !important;
-    margin-left: -16px !important;
-    width: 100vw;
+  overflow-y: scroll;
+  margin-top: 5vh !important;
+  margin-left: -16px !important;
+  width: 100vw;
 }
 
 @media screen and (min-width: 600px) {
-    .days {
-        margin-left: -24px !important;
-    }
+  .days {
+    margin-left: -24px !important;
+  }
 }
 
 .regulation-check {
-    display: flex;
-    padding: 6px 0;
+  display: flex;
+  padding: 6px 0;
 }
 
 .regulation-check-message {
-    text-align: left;
-    font-style: italic;
-    padding-left: 8px;
+  text-align: left;
+  padding-left: 8px;
 }
 
 .alerts-container {
-    margin-top: 3vh;
-}
-
-.non-italic {
-    font-style: normal;
+  margin-top: 3vh;
 }

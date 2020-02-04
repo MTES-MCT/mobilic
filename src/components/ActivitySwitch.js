@@ -91,7 +91,10 @@ export function ActivitySwitchGrid({
               timer={timers[activity.name]}
               onFocus={activity.name === activityOnFocus}
               onClick={handleActivitySwitch(activity.name)}
-              baseColor={theme.palette[activity.name]}
+              baseColor={
+                activity.name === ACTIVITIES.end.name &&
+                theme.palette[activity.name]
+              }
             />
           </Grid>
         ))}

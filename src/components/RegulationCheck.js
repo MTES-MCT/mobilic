@@ -36,7 +36,7 @@ export function RegulationCheck({ check }) {
         className="regulation-check-message"
       >
         {check.message}
-        <span className="non-italic">{` ${emoji}`}</span>
+        <span>{` ${emoji}`}</span>
       </Typography>
     </Box>
   );
