@@ -46,7 +46,6 @@ const tabs = {
           </Card>
           <div style={{ marginTop: "3vh" }}>
             <TimeLine
-              title="Évènements"
               dayEvents={dayEvents.slice(0, dayEvents.length - 1)}
               endDate={dayEnd}
             />

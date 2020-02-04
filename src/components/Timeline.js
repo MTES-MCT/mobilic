@@ -35,7 +35,7 @@ function Event({ height, className, children = null }) {
   );
 }
 
-export function TimeLine({ title, dayEvents, endDate }) {
+export function TimeLine({ dayEvents, endDate }) {
   const theme = useTheme();
   const periodWidth = `${Math.floor(
     (100 - dayEvents.length) / dayEvents.length
@@ -43,7 +43,7 @@ export function TimeLine({ title, dayEvents, endDate }) {
   return (
     <div className="timeline-container">
       <Typography variant="subtitle1" className="timeline-title" gutterBottom>
-        {title}
+        Évènements de la journée
       </Typography>
       <div className="timeline-line">
         {dayEvents.map((event, index) => (
