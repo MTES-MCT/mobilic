@@ -1,7 +1,7 @@
 import { ACTIVITIES } from "./activities";
 import stringify from "csv-stringify/lib/sync";
 import { formatDay, formatTimer, DAY } from "./time";
-import { share } from "./share";
+import { share } from "../../app/utils/share";
 import { computeTotalActivityDurations } from "./metrics";
 import { formatCoworkerName } from "./coworkers";
 import { EXPENDITURES } from "./expenditures";

@@ -1,11 +1,11 @@
 import React from "react";
 import Container from "@material-ui/core/Container";
-import { WorkDaySummary } from "../components/WorkTimeSummary";
+import { WorkDaySummary } from "../../common/components/WorkTimeSummary";
 import PeopleIcon from "@material-ui/icons/People";
 import PersonIcon from "@material-ui/icons/Person";
 import Button from "@material-ui/core/Button";
-import { PlaceHolder } from "../components/PlaceHolder";
-import { shareEvents } from "../utils/events";
+import { PlaceHolder } from "../../common/components/PlaceHolder";
+import { shareEvents } from "../../common/utils/events";
 import Typography from "@material-ui/core/Typography";
 import { ModalContext } from "../utils/modals";
 

@@ -8,7 +8,7 @@ import { formatTimer } from "../utils/time";
 import classNames from "classnames";
 import { ACTIVITIES } from "../utils/activities";
 import useTheme from "@material-ui/core/styles/useTheme";
-import { ModalContext } from "../utils/modals";
+import { ModalContext } from "../../app/utils/modals";
 
 export function ActivitySwitchCard({
   label,

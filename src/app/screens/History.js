@@ -11,16 +11,19 @@ import {
   WEEK,
   prettyFormatDay,
   shortPrettyFormatDay
-} from "../utils/time";
-import { WorkDaySummary, WorkWeekSummary } from "../components/WorkTimeSummary";
-import { shareEvents } from "../utils/events";
+} from "../../common/utils/time";
+import {
+  WorkDaySummary,
+  WorkWeekSummary
+} from "../../common/components/WorkTimeSummary";
+import { shareEvents } from "../../common/utils/events";
 import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import { TimeLine } from "../components/Timeline";
+import { TimeLine } from "../../common/components/Timeline";
 
 const tabs = {
   day: {

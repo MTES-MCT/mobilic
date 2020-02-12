@@ -1,11 +1,11 @@
 import React from "react";
-import "./App.css";
-import { ACTIVITIES } from "./utils/activities";
-import { currentTeamMates } from "./utils/coworkers";
-import { groupEventsByDay } from "./utils/events";
-import { ScreenWithBottomNavigation } from "./utils/navigation";
+import "../App.css";
+import { ACTIVITIES } from "../common/utils/activities";
+import { currentTeamMates } from "../common/utils/coworkers";
+import { groupEventsByDay } from "../common/utils/events";
+import { ScreenWithBottomNavigation } from "../common/utils/navigation";
 import { ThemeProvider } from "@material-ui/core/styles";
-import { theme } from "./utils/theme";
+import { theme } from "../common/utils/theme";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { MODAL_DICT, ModalProvider } from "./utils/modals";
 

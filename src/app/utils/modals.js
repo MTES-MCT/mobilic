@@ -1,7 +1,7 @@
 import React from "react";
 import { SelectFirstActivityModal } from "../components/FirstActivitySelection";
 import { TeamSelectionModal } from "../components/TeamSelection";
-import { ConfirmationModal } from "../components/Confirmation";
+import { ConfirmationModal } from "../../common/components/Confirmation";
 
 export const ModalContext = React.createContext(() => {});
 

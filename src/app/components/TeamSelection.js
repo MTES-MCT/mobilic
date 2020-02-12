@@ -16,7 +16,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Divider from "@material-ui/core/Divider";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Checkbox from "@material-ui/core/Checkbox";
-import { formatCoworkerName } from "../utils/coworkers";
+import { formatCoworkerName } from "../../common/utils/coworkers";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;

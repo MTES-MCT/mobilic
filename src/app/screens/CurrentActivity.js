@@ -1,10 +1,10 @@
 import React from "react";
-import { TimeLine } from "../components/Timeline";
-import { ActivitySwitchGrid } from "../components/ActivitySwitch";
+import { TimeLine } from "../../common/components/Timeline";
+import { ActivitySwitchGrid } from "../../common/components/ActivitySwitch";
 import Container from "@material-ui/core/Container";
-import { computeTotalActivityDurations } from "../utils/metrics";
+import { computeTotalActivityDurations } from "../../common/utils/metrics";
 import Typography from "@material-ui/core/Typography";
-import { Expenditures } from "../components/Expenditures";
+import { Expenditures } from "../../common/components/Expenditures";
 import Divider from "@material-ui/core/Divider";
 
 export function CurrentActivity({
