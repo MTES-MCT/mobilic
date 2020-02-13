@@ -321,3 +321,10 @@
 .landing-form-text-input {
   margin-bottom: 2vh !important;
 }
+
+.user-name-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2vh;
+}

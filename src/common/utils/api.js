@@ -51,6 +51,16 @@ export const USER_SIGNUP_MUTATION = gql`
   }
 `;
 
+export const USER_QUERY = gql`
+  query($id: Int!) {
+    user(id: $id) {
+      id
+      firstName
+      lastName
+    }
+  }
+`;
+
 const ApiContext = React.createContext(() => {});
 
 class Api {

@@ -7,8 +7,13 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import { theme } from "../common/utils/theme";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { MODAL_DICT, ModalProvider } from "./utils/modals";
+import { useApi, USER_QUERY } from "../common/utils/api";
+import { useLocalStorage } from "../common/utils/storage";
 
 function App() {
+  const api = useApi();
+  const localStorageContext = useLocalStorage();
+
   const [currentDayExpenditures, setCurrentDayExpenditures] = React.useState(
     {}
   );
@@ -20,6 +25,21 @@ function App() {
   React.useEffect(() => {
     setInterval(() => setCurrentDate(Date.now()), 5000);
   }, []);
+
+  React.useEffect(() => {
+    async function onAppStart() {
+      try {
+        const userData = await api.graphQlQuery(USER_QUERY, {
+          id: localStorageContext.getUserId()
+        });
+        const { firstName, lastName } = userData.data.user;
+        localStorageContext.setName({ firstName, lastName });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    onAppStart();
+  }, [api, localStorageContext]);
 
   const teamMates = currentTeamMates(coworkers);
   const eventsByDay = groupEventsByDay(activityEvents);

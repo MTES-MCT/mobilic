@@ -11,7 +11,9 @@ export class LocalStorageContextProvider extends React.Component {
       accessToken: {},
       refreshToken: {},
       companyAdmin: { deserialize: value => value === "true" },
-      userId: { deserialize: value => (value ? parseInt(value) : value) }
+      userId: { deserialize: value => (value ? parseInt(value) : value) },
+      firstName: {},
+      lastName: {}
     };
 
     // Init state from local storage
@@ -63,6 +65,9 @@ export class LocalStorageContextProvider extends React.Component {
     this.removeItems(["accessToken", "refreshToken", "userId", "companyAdmin"]);
   };
 
+  setName = ({ firstName, lastName }) => this.setItems({ firstName, lastName });
+  getFullName = () => `${this.state.firstName} ${this.state.lastName}`;
+
   render() {
     return (
       <>
@@ -73,7 +78,9 @@ export class LocalStorageContextProvider extends React.Component {
             getRefreshToken: this.getRefreshToken,
             getUserId: this.getUserId,
             getCompanyAdmin: this.getCompanyAdmin,
-            removeTokens: this.removeTokens
+            removeTokens: this.removeTokens,
+            setName: this.setName,
+            getFullName: this.getFullName
           }}
         >
           {this.props.children}

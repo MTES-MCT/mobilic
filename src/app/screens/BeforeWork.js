@@ -8,6 +8,9 @@ import { PlaceHolder } from "../../common/components/PlaceHolder";
 import { shareEvents } from "../../common/utils/events";
 import Typography from "@material-ui/core/Typography";
 import { ModalContext } from "../utils/modals";
+import { useLocalStorage } from "../../common/utils/storage";
+import { useApi } from "../../common/utils/api";
+import Divider from "@material-ui/core/Divider";
 
 export function BeforeWork({
   pushNewCurrentDayEvent,
@@ -20,9 +23,29 @@ export function BeforeWork({
     previousDaysEventsByDay[previousDaysEventsByDay.length - 1];
 
   const modals = React.useContext(ModalContext);
+  const localStorageContext = useLocalStorage();
+  const api = useApi();
 
   return (
     <Container className="container">
+      <div className="user-name-header">
+        <Typography noWrap variant="h6">
+          {localStorageContext.getFullName()}
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() =>
+            modals.open("confirmation", {
+              handleConfirm: () => api.logout(),
+              title: "Confirmer déconnexion"
+            })
+          }
+        >
+          Se déconnecter
+        </Button>
+      </div>
+      <Divider className="full-width-divider" />
       <Container
         disableGutters
         className="scrollable"

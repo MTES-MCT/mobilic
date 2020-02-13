@@ -33,15 +33,11 @@ function _Root() {
   const localStorageContext = useLocalStorage();
   const userId = localStorageContext.getUserId();
   const isCompanyAdmin = localStorageContext.getCompanyAdmin();
-  return (
-    <>
-      {!userId && signUpInsteadOfLogging && <Signup />}
-      {!userId && !signUpInsteadOfLogging && (
-        <Login setSignUpInsteadOfLogging={setSignUpInsteadOfLogging} />
-      )}
-      {userId && !isCompanyAdmin && <App />}
-    </>
-  );
+
+  if (!userId && signUpInsteadOfLogging) return <Signup />;
+  if (!userId && !signUpInsteadOfLogging)
+    return <Login setSignUpInsteadOfLogging={setSignUpInsteadOfLogging} />;
+  if (userId && !isCompanyAdmin) return <App />;
 }
 
 ReactDOM.render(<Root />, document.getElementById("root"));
