@@ -1,10 +1,50 @@
 import React from "react";
 import ReactDOM from "react-dom";
+
 import "./index.css";
+import "./root.css";
+
 import App from "./app/App";
 import * as serviceWorker from "./serviceWorker";
+import Login from "./landing/login";
+import Signup from "./landing/signup";
+import {
+  LocalStorageContextProvider,
+  useLocalStorage
+} from "./common/utils/storage";
+import { ApiContextProvider } from "./common/utils/api";
 
-ReactDOM.render(<App />, document.getElementById("root"));
+function Root() {
+  return (
+    <div className="Root">
+      <LocalStorageContextProvider>
+        <ApiContextProvider>
+          <_Root />
+        </ApiContextProvider>
+      </LocalStorageContextProvider>
+    </div>
+  );
+}
+
+function _Root() {
+  const [signUpInsteadOfLogging, setSignUpInsteadOfLogging] = React.useState(
+    false
+  );
+  const localStorageContext = useLocalStorage();
+  const userId = localStorageContext.getUserId();
+  const isCompanyAdmin = localStorageContext.getCompanyAdmin();
+  return (
+    <>
+      {!userId && signUpInsteadOfLogging && <Signup />}
+      {!userId && !signUpInsteadOfLogging && (
+        <Login setSignUpInsteadOfLogging={setSignUpInsteadOfLogging} />
+      )}
+      {userId && !isCompanyAdmin && <App />}
+    </>
+  );
+}
+
+ReactDOM.render(<Root />, document.getElementById("root"));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

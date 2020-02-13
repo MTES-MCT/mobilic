@@ -1,5 +1,4 @@
 import React from "react";
-import "../App.css";
 import { ACTIVITIES } from "../common/utils/activities";
 import { currentTeamMates } from "../common/utils/coworkers";
 import { groupEventsByDay } from "../common/utils/events";
@@ -58,20 +57,18 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <ModalProvider modalDict={MODAL_DICT}>
-        <div className="App">
-          <ScreenWithBottomNavigation
-            currentActivityName={currentActivityName}
-            currentDayEvents={eventsByDay[eventsByDay.length - 1]}
-            pushNewCurrentDayEvent={pushNewEvent}
-            teamMates={teamMates}
-            previousDaysEventsByDay={previousDaysEventsByDay}
-            clearTeam={clearTeam}
-            currentDayExpenditures={currentDayExpenditures}
-            setCurrentDayExpenditures={setCurrentDayExpenditures}
-            coworkers={coworkers}
-            setCoworkers={setCoworkers}
-          />
-        </div>
+        <ScreenWithBottomNavigation
+          currentActivityName={currentActivityName}
+          currentDayEvents={eventsByDay[eventsByDay.length - 1]}
+          pushNewCurrentDayEvent={pushNewEvent}
+          teamMates={teamMates}
+          previousDaysEventsByDay={previousDaysEventsByDay}
+          clearTeam={clearTeam}
+          currentDayExpenditures={currentDayExpenditures}
+          setCurrentDayExpenditures={setCurrentDayExpenditures}
+          coworkers={coworkers}
+          setCoworkers={setCoworkers}
+        />
       </ModalProvider>
     </ThemeProvider>
   );
