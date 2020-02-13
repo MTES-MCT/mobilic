@@ -1,5 +1,7 @@
+import React from "react";
 import ApolloClient, { gql } from "apollo-boost";
 import jwtDecode from "jwt-decode";
+import { useLocalStorage } from "./storage";
 
 const REFRESH_MUTATION = gql`
   mutation refreshToken {
@@ -23,25 +25,50 @@ export const LOGIN_MUTATION = gql`
   }
 `;
 
+export const USER_SIGNUP_MUTATION = gql`
+  mutation(
+    $email: String!
+    $password: String!
+    $firstName: String!
+    $lastName: String!
+    $companyName: String!
+  ) {
+    signupUser(
+      email: $email
+      password: $password
+      firstName: $firstName
+      lastName: $lastName
+      companyNameToResolve: $companyName
+    ) {
+      user {
+        id
+        firstName
+        lastName
+      }
+      accessToken
+      refreshToken
+    }
+  }
+`;
+
+const ApiContext = React.createContext(() => {});
+
 class Api {
   constructor(
+    localStorageContext = {},
     apiHost = process.env.REACT_APP_API_HOST || "http://192.168.1.38:5000",
     graphqlPath = "/api/graphql",
-    apiRootPath = "/api",
-    accessTokenKey = "accessToken",
-    refreshTokenKey = "refreshToken"
+    apiRootPath = "/api"
   ) {
     this.apiUrl = `${apiHost}${apiRootPath}`;
-    this.accessTokenKey = accessTokenKey;
-    this.refreshTokenKey = refreshTokenKey;
+    this.localStorageContext = localStorageContext;
     this.apolloClient = new ApolloClient({
       uri: `${apiHost}${graphqlPath}`,
       request: operation => {
-        const tokenType =
+        const token =
           operation.operationName === "refreshToken"
-            ? refreshTokenKey
-            : accessTokenKey;
-        const token = localStorage.getItem(tokenType);
+            ? this.localStorageContext.getRefreshToken()
+            : this.localStorageContext.getAccessToken();
         operation.setContext({
           headers: {
             authorization: token ? `Bearer ${token}` : ""
@@ -51,47 +78,49 @@ class Api {
     });
   }
 
-  graphQlQuery(query, variables) {
+  async graphQlQuery(query, variables) {
     this._refreshTokenIfNeeded();
+    return this.apolloClient.query({ query, variables });
   }
 
-  graphQlMutate(query, variables) {
+  async graphQlMutate(query, variables) {
     this._refreshTokenIfNeeded();
     return this.apolloClient.mutate({ mutation: query, variables: variables });
   }
 
-  httpQuery(method, endpoint, options) {
-    return 3;
+  async httpQuery(method, endpoint, options) {
+    this._refreshTokenIfNeeded();
   }
 
   async _refreshTokenIfNeeded() {
-    const accessToken = localStorage.getItem(this.accessTokenKey);
+    const accessToken = this.localStorageContext.getAccessToken();
     if (accessToken) {
       try {
         const decodedToken = jwtDecode(accessToken);
         const timeToExpire =
           decodedToken.exp && decodedToken.exp * 1000 - new Date().getTime();
         if (timeToExpire && timeToExpire < 10000) {
-          const tokens = await this.apolloClient.mutate({
+          const refreshResponse = await this.apolloClient.mutate({
             mutation: REFRESH_MUTATION
           });
-          console.log(tokens);
+          this.localStorageContext.storeTokens(refreshResponse.auth.refresh);
         }
       } catch {
-        console.log("Error");
+        console.log("Error refreshing tokens");
       }
     }
   }
 
-  clearTokens() {
-    localStorage.removeItem(this.accessTokenKey);
-    localStorage.removeItem(this.refreshTokenKey);
-  }
-
-  saveTokens(accessToken, refreshToken) {
-    localStorage.setItem(this.accessTokenKey, accessToken);
-    localStorage.setItem(this.refreshTokenKey, refreshToken);
+  logout() {
+    this.localStorageContext.removeTokens();
   }
 }
 
-export const api = new Api();
+const api = new Api();
+
+export function ApiContextProvider({ children }) {
+  api.localStorageContext = useLocalStorage();
+  return <ApiContext.Provider value={api}>{children}</ApiContext.Provider>;
+}
+
+export const useApi = () => React.useContext(ApiContext);
