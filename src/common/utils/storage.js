@@ -1,9 +1,9 @@
 import React from "react";
 import jwtDecode from "jwt-decode";
 
-const LocalStorageContext = React.createContext(() => {});
+const StoreSyncedWithLocalStorage = React.createContext(() => {});
 
-export class LocalStorageContextProvider extends React.Component {
+export class StoreSyncedWithLocalStorageProvider extends React.Component {
   constructor(props) {
     super(props);
     // What is stored in local storage and how to read/write to it
@@ -13,7 +13,19 @@ export class LocalStorageContextProvider extends React.Component {
       companyAdmin: { deserialize: value => value === "true" },
       userId: { deserialize: value => (value ? parseInt(value) : value) },
       firstName: {},
-      lastName: {}
+      lastName: {},
+      coworkers: {
+        serialize: JSON.stringify,
+        deserialize: value => (value ? JSON.parse(value) : [])
+      },
+      activities: {
+        serialize: JSON.stringify,
+        deserialize: value => (value ? JSON.parse(value) : [])
+      },
+      expenditures: {
+        serialize: JSON.stringify,
+        deserialize: value => (value ? JSON.parse(value) : [])
+      }
     };
 
     // Init state from local storage
@@ -28,15 +40,16 @@ export class LocalStorageContextProvider extends React.Component {
     });
   }
 
-  setItems = itemValueMap =>
-    this.setState(itemValueMap, () =>
+  setItems = (itemValueMap, callback = () => {}) =>
+    this.setState(itemValueMap, () => {
       Object.keys(itemValueMap).forEach(item => {
         localStorage.setItem(
           item,
           this.mapper[item].serialize(itemValueMap[item])
         );
-      })
-    );
+      });
+      callback();
+    });
 
   removeItems = items => {
     const itemValueMap = {};
@@ -45,11 +58,6 @@ export class LocalStorageContextProvider extends React.Component {
       items.forEach(item => localStorage.removeItem(item))
     );
   };
-
-  getAccessToken = () => this.state.accessToken;
-  getRefreshToken = () => this.state.refreshToken;
-  getUserId = () => this.state.userId;
-  getCompanyAdmin = () => this.state.companyAdmin;
 
   storeTokens = ({ accessToken, refreshToken }) => {
     const { id, company_admin } = jwtDecode(accessToken).identity;
@@ -68,26 +76,81 @@ export class LocalStorageContextProvider extends React.Component {
   setName = ({ firstName, lastName }) => this.setItems({ firstName, lastName });
   getFullName = () => `${this.state.firstName} ${this.state.lastName}`;
 
+  setCoworkers = (coworkers, callback = () => {}) =>
+    this.setItems({ coworkers }, callback);
+
+  pushNewCoworkers = coworkers =>
+    this.setItems({
+      coworkers: [...this.state.coworkers, ...coworkers]
+    });
+
+  coworkersPendingSubmission = () => this.state.coworkers.filter(cw => !cw.id);
+
+  activitiesPendingSubmission = () => this.state.activities.filter(a => !a.id);
+
+  setActivities = activities => this.setItems({ activities });
+
+  pushNewActivity = (activityType, team = []) =>
+    this.setItems({
+      activities: [
+        ...this.state.activities,
+        {
+          type: activityType,
+          eventTime: Date.now(),
+          team: [...team, { id: this.state.userId }]
+        }
+      ]
+    });
+
+  setExpenditures = expenditures => this.setItems({ expenditures });
+
+  pushNewExpenditure = expenditureType =>
+    this.setItems({
+      expenditures: [
+        ...this.state.expenditures,
+        {
+          type: expenditureType,
+          eventTime: Date.now()
+        }
+      ]
+    });
+
+  expendituresPendingSubmission = () =>
+    this.state.expenditures.filter(e => !e.id);
+
   render() {
     return (
       <>
-        <LocalStorageContext.Provider
+        <StoreSyncedWithLocalStorage.Provider
           value={{
             storeTokens: this.storeTokens,
-            getAccessToken: this.getAccessToken,
-            getRefreshToken: this.getRefreshToken,
-            getUserId: this.getUserId,
-            getCompanyAdmin: this.getCompanyAdmin,
+            accessToken: () => this.state.accessToken,
+            refreshToken: () => this.state.refreshToken,
+            userId: () => this.state.userId,
+            companyAdmin: () => this.state.companyAdmin,
             removeTokens: this.removeTokens,
             setName: this.setName,
-            getFullName: this.getFullName
+            getFullName: this.getFullName,
+            coworkers: () => this.state.coworkers,
+            setCoworkers: this.setCoworkers,
+            pushNewCoworkers: this.pushNewCoworkers,
+            activities: () => this.state.activities,
+            setActivities: this.setActivities,
+            pushNewActivity: this.pushNewActivity,
+            coworkersPendingSubmission: this.coworkersPendingSubmission,
+            activitiesPendingSubmission: this.activitiesPendingSubmission,
+            expenditures: () => this.state.expenditures,
+            setExpenditures: this.setExpenditures,
+            pushNewExpenditure: this.pushNewExpenditure,
+            expendituresPendingSubmission: this.expendituresPendingSubmission
           }}
         >
           {this.props.children}
-        </LocalStorageContext.Provider>
+        </StoreSyncedWithLocalStorage.Provider>
       </>
     );
   }
 }
 
-export const useLocalStorage = () => React.useContext(LocalStorageContext);
+export const useStoreSyncedWithLocalStorage = () =>
+  React.useContext(StoreSyncedWithLocalStorage);
