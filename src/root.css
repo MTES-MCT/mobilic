@@ -10,7 +10,7 @@
   }
 }
 
-.App {
+.Root {
   text-align: center;
   height: 100vh;
   width: 100vw;
@@ -292,4 +292,32 @@
 
 .alerts-container {
   margin-top: 3vh;
+}
+
+.landing-container {
+  padding-top: 2vh;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}
+
+.landing-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.landing-form-inputs {
+  max-width: 400px;
+  width: 90%;
+  margin-bottom: 20vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.landing-form-text-input {
+  margin-bottom: 2vh !important;
 }
