@@ -6,22 +6,22 @@ import { computeTotalActivityDurations } from "../../common/utils/metrics";
 import Typography from "@material-ui/core/Typography";
 import { Expenditures } from "../../common/components/Expenditures";
 import Divider from "@material-ui/core/Divider";
+import { useStoreSyncedWithLocalStorage } from "../../common/utils/storage";
 
 export function CurrentActivity({
-  currentActivityName,
-  currentDayEvents,
-  pushNewCurrentDayEvent,
+  currentActivityType,
+  currentDayActivityEvents,
   teamMates,
-  currentDayExpenditures,
-  setCurrentDayExpenditures
+  currentDayExpenditures
 }) {
+  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   const timers = computeTotalActivityDurations(
-    currentDayEvents,
+    currentDayActivityEvents,
     Date.now() + 1
   );
   return (
     <Container className="container space-between">
-      <TimeLine dayEvents={currentDayEvents} />
+      <TimeLine dayEvents={currentDayActivityEvents} />
       <Divider className="full-width-divider" />
       {teamMates.length > 0 && [
         <Typography
@@ -37,13 +37,15 @@ export function CurrentActivity({
       ]}
       <ActivitySwitchGrid
         timers={timers}
-        activityOnFocus={currentActivityName}
-        pushActivitySwitchEvent={pushNewCurrentDayEvent}
+        activityOnFocus={currentActivityType}
+        pushActivitySwitchEvent={type =>
+          storeSyncedWithLocalStorage.pushNewActivity(type, teamMates)
+        }
       />
       <Divider className="full-width-divider" />
       <Expenditures
         expenditures={currentDayExpenditures}
-        setExpenditures={setCurrentDayExpenditures}
+        pushNewExpenditure={storeSyncedWithLocalStorage.pushNewExpenditure}
       />
     </Container>
   );

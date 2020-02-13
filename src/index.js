@@ -9,19 +9,19 @@ import * as serviceWorker from "./serviceWorker";
 import Login from "./landing/login";
 import Signup from "./landing/signup";
 import {
-  LocalStorageContextProvider,
-  useLocalStorage
+  StoreSyncedWithLocalStorageProvider,
+  useStoreSyncedWithLocalStorage
 } from "./common/utils/storage";
 import { ApiContextProvider } from "./common/utils/api";
 
 function Root() {
   return (
     <div className="Root">
-      <LocalStorageContextProvider>
+      <StoreSyncedWithLocalStorageProvider>
         <ApiContextProvider>
           <_Root />
         </ApiContextProvider>
-      </LocalStorageContextProvider>
+      </StoreSyncedWithLocalStorageProvider>
     </div>
   );
 }
@@ -30,9 +30,9 @@ function _Root() {
   const [signUpInsteadOfLogging, setSignUpInsteadOfLogging] = React.useState(
     false
   );
-  const localStorageContext = useLocalStorage();
-  const userId = localStorageContext.getUserId();
-  const isCompanyAdmin = localStorageContext.getCompanyAdmin();
+  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const userId = storeSyncedWithLocalStorage.userId();
+  const isCompanyAdmin = storeSyncedWithLocalStorage.companyAdmin();
 
   if (!userId && signUpInsteadOfLogging) return <Signup />;
   if (!userId && !signUpInsteadOfLogging)

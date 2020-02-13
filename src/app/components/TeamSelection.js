@@ -17,29 +17,24 @@ import Divider from "@material-ui/core/Divider";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Checkbox from "@material-ui/core/Checkbox";
 import { formatCoworkerName } from "../../common/utils/coworkers";
+import { useStoreSyncedWithLocalStorage } from "../../common/utils/storage";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export function TeamSelectionModal({
-  open,
-  handleClose,
-  handleContinue,
-  coworkers,
-  setCoworkers
-}) {
+export function TeamSelectionModal({ open, handleClose, handleContinue }) {
   const [updatedCoworkers, setUpdatedCoworkers] = React.useState([]);
+
+  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const coworkers = storeSyncedWithLocalStorage.coworkers();
 
   // The component maintains a separate "updatedCoworkers" state,
   // so that pending changes to coworkers and current team can be either :
   // - discarded, i.e. not committed to main "coworkers" state (when hitting Back button)
   // - committed to main state (when hitting Ok button)
   // We sync the secondary state with the main one whenever the modal is opened/closed or the main state changes
-  React.useEffect(() => coworkers && setUpdatedCoworkers(coworkers), [
-    open,
-    coworkers
-  ]);
+  React.useEffect(() => setUpdatedCoworkers(coworkers), [open, coworkers]);
 
   const pushNewCoworker = (firstName, lastName) => () => {
     setUpdatedCoworkers([
@@ -94,9 +89,11 @@ export function TeamSelectionModal({
             <Button
               autoFocus
               color="inherit"
-              onClick={() => {
-                setCoworkers(updatedCoworkers);
-                handleContinue();
+              onClick={async () => {
+                storeSyncedWithLocalStorage.setCoworkers(
+                  updatedCoworkers,
+                  handleContinue
+                );
               }}
             >
               OK
@@ -135,7 +132,7 @@ export function TeamSelectionModal({
           <Divider key={2 * index} />,
           <ListItem key={2 * index + 1}>
             <Checkbox
-              checked={coworker.isInCurrentTeam}
+              checked={coworker.isInCurrentTeam || false}
               onChange={toggleAddCoworkerToTeam(index)}
             />
             <ListItemText

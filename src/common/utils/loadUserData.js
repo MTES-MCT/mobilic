@@ -12,13 +12,7 @@ export async function loadUserData(api, storeSyncedWithLocalStorage) {
       activities,
       expenditures
     } = userResponse.data.user;
-    console.log(company.users);
     storeSyncedWithLocalStorage.setName({ firstName, lastName });
-    console.log(
-      company.users.concat(
-        storeSyncedWithLocalStorage.coworkersPendingSubmission()
-      )
-    );
     storeSyncedWithLocalStorage.setCoworkers(
       company.users.concat(
         storeSyncedWithLocalStorage.coworkersPendingSubmission()

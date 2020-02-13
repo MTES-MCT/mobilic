@@ -4,7 +4,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import { EXPENDITURES } from "../utils/expenditures";
 
-export function Expenditures({ expenditures, setExpenditures }) {
+export function Expenditures({ expenditures, pushNewExpenditure }) {
   return (
     <div>
       <Typography variant="h6" className="expenditures-title">
@@ -18,14 +18,15 @@ export function Expenditures({ expenditures, setExpenditures }) {
               <Checkbox
                 size="small"
                 className="expenditures-checkbox"
-                checked={expenditures[expenditureType] || false}
-                disabled={expenditures[expenditureType] || false}
-                onChange={() =>
-                  setExpenditures({
-                    ...expenditures,
-                    [expenditureType]: !expenditures[expenditureType]
-                  })
+                checked={
+                  expenditures.filter(e => e.type === expenditureType).length >
+                    0 || false
                 }
+                disabled={
+                  expenditures.filter(e => e.type === expenditureType).length >
+                    0 || false
+                }
+                onChange={() => pushNewExpenditure(expenditureType)}
                 color="primary"
               />
             }

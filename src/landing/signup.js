@@ -5,7 +5,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Button from "@material-ui/core/Button";
 import { useApi, USER_SIGNUP_MUTATION } from "../common/utils/api";
 import Typography from "@material-ui/core/Typography";
-import { useLocalStorage } from "../common/utils/storage";
+import { useStoreSyncedWithLocalStorage } from "../common/utils/storage";
 
 export default function Signup() {
   const [firstName, setFirstName] = React.useState("");
@@ -17,7 +17,7 @@ export default function Signup() {
   const [error, setError] = React.useState("");
 
   const api = useApi();
-  const localStorageContext = useLocalStorage();
+  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -31,7 +31,7 @@ export default function Signup() {
         companyName
       });
       const { accessToken, refreshToken } = signUpResponse.data.signupUser;
-      localStorageContext.storeTokens({ accessToken, refreshToken });
+      storeSyncedWithLocalStorage.storeTokens({ accessToken, refreshToken });
     } catch (err) {
       setEmail("");
       setPassword("");

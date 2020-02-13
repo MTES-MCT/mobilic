@@ -15,7 +15,7 @@ const SCREENS_WITH_BOTTOM_NAVIGATION = {
     label: "Activité",
     renderIcon: props => <TimerIcon {...props} />,
     render: props =>
-      props.currentActivityName === ACTIVITIES.end.name ? (
+      props.currentActivityType === ACTIVITIES.end.name ? (
         <BeforeWork {...props} />
       ) : (
         <CurrentActivity {...props} />

@@ -1,6 +1,5 @@
 import React from "react";
 import { ACTIVITIES } from "../common/utils/activities";
-import { currentTeamMates } from "../common/utils/coworkers";
 import { groupEventsByDay } from "../common/utils/events";
 import { ScreenWithBottomNavigation } from "../common/utils/navigation";
 import { ThemeProvider } from "@material-ui/core/styles";
@@ -8,18 +7,14 @@ import { theme } from "../common/utils/theme";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { MODAL_DICT, ModalProvider } from "./utils/modals";
 import { useApi, USER_QUERY } from "../common/utils/api";
-import { useLocalStorage } from "../common/utils/storage";
+import { useStoreSyncedWithLocalStorage } from "../common/utils/storage";
+import { loadUserData } from "../common/utils/loadUserData";
 
 function App() {
   const api = useApi();
-  const localStorageContext = useLocalStorage();
+  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
 
-  const [currentDayExpenditures, setCurrentDayExpenditures] = React.useState(
-    {}
-  );
-  const [activityEvents, setActivityEvents] = React.useState([]);
   const [currentDate, setCurrentDate] = React.useState(Date.now());
-  const [coworkers, setCoworkers] = React.useState([]);
 
   // We force re-rendering every 5 sec to update timers
   React.useEffect(() => {
@@ -27,67 +22,46 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    async function onAppStart() {
-      try {
-        const userData = await api.graphQlQuery(USER_QUERY, {
-          id: localStorageContext.getUserId()
-        });
-        const { firstName, lastName } = userData.data.user;
-        localStorageContext.setName({ firstName, lastName });
-      } catch (err) {
-        console.log(err);
-      }
-    }
-    onAppStart();
-  }, [api, localStorageContext]);
+    loadUserData(api, storeSyncedWithLocalStorage);
+    return () => {};
+  }, []);
 
-  const teamMates = currentTeamMates(coworkers);
-  const eventsByDay = groupEventsByDay(activityEvents);
-  const previousDaysEventsByDay = eventsByDay.slice(0, eventsByDay.length - 1);
-  const currentActivityName = activityEvents[activityEvents.length - 1]
-    ? activityEvents[activityEvents.length - 1].activityName
+  const activityEvents = storeSyncedWithLocalStorage.activities();
+  const activityEventsByDay = groupEventsByDay(activityEvents);
+  const previousDaysEventsByDay = activityEventsByDay.slice(
+    0,
+    activityEventsByDay.length - 1
+  );
+
+  const currentDayActivityEvents =
+    activityEventsByDay[activityEventsByDay.length - 1];
+  const currentDayExpenditures =
+    currentDayActivityEvents && currentDayActivityEvents.length > 0
+      ? storeSyncedWithLocalStorage
+          .expenditures()
+          .filter(e => e.eventTime >= currentDayActivityEvents[0].eventTime)
+      : [];
+
+  const currentActivity = activityEvents[activityEvents.length - 1];
+  const currentActivityType = currentActivity
+    ? currentActivity.type
     : ACTIVITIES.end.name;
-
-  function pushNewEvent(activityName) {
-    if (activityName === currentActivityName) return;
-    setActivityEvents([
-      ...activityEvents,
-      {
-        activityName: activityName,
-        date: Date.now(),
-        team: teamMates,
-        currentDayExpenditures: currentDayExpenditures
-      }
-    ]);
-    if (activityName === ACTIVITIES.end.name) {
-      setCurrentDayExpenditures({});
-      clearTeam();
-    }
-  }
-
-  function clearTeam() {
-    const newCoworkers = coworkers.slice();
-    newCoworkers.forEach(coworker => {
-      coworker.isInCurrentTeam = false;
-    });
-    setCoworkers(newCoworkers);
-  }
+  const currentTeamMates = currentActivity
+    ? currentActivity.team.filter(
+        tm => tm.id !== storeSyncedWithLocalStorage.userId
+      )
+    : [];
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <ModalProvider modalDict={MODAL_DICT}>
         <ScreenWithBottomNavigation
-          currentActivityName={currentActivityName}
-          currentDayEvents={eventsByDay[eventsByDay.length - 1]}
-          pushNewCurrentDayEvent={pushNewEvent}
-          teamMates={teamMates}
+          currentActivityType={currentActivityType}
+          currentDayActivityEvents={currentDayActivityEvents}
+          teamMates={currentTeamMates}
           previousDaysEventsByDay={previousDaysEventsByDay}
-          clearTeam={clearTeam}
           currentDayExpenditures={currentDayExpenditures}
-          setCurrentDayExpenditures={setCurrentDayExpenditures}
-          coworkers={coworkers}
-          setCoworkers={setCoworkers}
         />
       </ModalProvider>
     </ThemeProvider>

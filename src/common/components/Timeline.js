@@ -50,12 +50,12 @@ export function TimeLine({ dayEvents, endDate }) {
           <React.Fragment key={index}>
             <Event className="timeline-legend hidden" />
             <Period width={periodWidth} className="timeline-legend">
-              {ACTIVITIES[event.activityName].renderIcon({
+              {ACTIVITIES[event.type].renderIcon({
                 style: {
                   color:
                     index === dayEvents.length - 1 && !endDate
                       ? theme.palette.primary.main
-                      : theme.palette[event.activityName]
+                      : theme.palette[event.type]
                 }
               })}
             </Period>
@@ -78,7 +78,7 @@ export function TimeLine({ dayEvents, endDate }) {
             <Event />
             <Period
               width={periodWidth}
-              color={theme.palette[event.activityName]}
+              color={theme.palette[event.type]}
               className={
                 index === dayEvents.length - 1 &&
                 !endDate &&
@@ -103,7 +103,7 @@ export function TimeLine({ dayEvents, endDate }) {
           <React.Fragment key={index}>
             <Event className="timeline-legend">
               <Typography variant="caption" className="timeline-legend-label">
-                {formatTimeOfDay(event.date)}
+                {formatTimeOfDay(event.eventTime)}
               </Typography>
             </Event>
             <Period width={periodWidth} className="timeline-legend" />

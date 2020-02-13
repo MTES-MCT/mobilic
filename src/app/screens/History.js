@@ -35,7 +35,7 @@ const tabs = {
     formatPeriod: shortPrettyFormatDay,
     renderPeriod: ({ eventsByDay, followingPeriodStart }) => {
       const dayEvents = eventsByDay[0];
-      const dayEnd = dayEvents[dayEvents.length - 1].date;
+      const dayEnd = dayEvents[dayEvents.length - 1].eventTime;
       return (
         <div>
           <Card>
@@ -81,11 +81,11 @@ const tabs = {
             <ListItem
               button
               key={2 * index + 1}
-              onClick={handleDayClick(dayEvents[0].date)}
+              onClick={handleDayClick(dayEvents[0].eventTime)}
             >
               <ListItemText
                 primaryTypographyProps={{ noWrap: true, display: "block" }}
-                primary={prettyFormatDay(dayEvents[0].date)}
+                primary={prettyFormatDay(dayEvents[0].eventTime)}
               />
             </ListItem>
           ])}
@@ -103,7 +103,7 @@ export function History({ previousDaysEventsByDay }) {
     let currentPeriodIndex = -1;
     const eventsGroupedByPeriod = {};
     previousDaysEventsByDay.forEach(dayEvents => {
-      const period = tabs[tab].getPeriod(dayEvents[0].date);
+      const period = tabs[tab].getPeriod(dayEvents[0].eventTime);
       if (currentPeriodIndex === -1 || period !== periods[currentPeriodIndex]) {
         if (currentPeriodIndex >= 0)
           eventsGroupedByPeriod[

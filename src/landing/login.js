@@ -7,7 +7,7 @@ import { useApi, LOGIN_MUTATION } from "../common/utils/api";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import { PlaceHolder } from "../common/components/PlaceHolder";
-import { useLocalStorage } from "../common/utils/storage";
+import { useStoreSyncedWithLocalStorage } from "../common/utils/storage";
 
 export default function Login({ setSignUpInsteadOfLogging }) {
   const [email, setEmail] = React.useState("");
@@ -16,7 +16,7 @@ export default function Login({ setSignUpInsteadOfLogging }) {
   const [error, setError] = React.useState("");
 
   const api = useApi();
-  const localStorageContext = useLocalStorage();
+  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -27,7 +27,7 @@ export default function Login({ setSignUpInsteadOfLogging }) {
         password
       });
       const { accessToken, refreshToken } = loginResponse.data.auth.login;
-      localStorageContext.storeTokens({ accessToken, refreshToken });
+      storeSyncedWithLocalStorage.storeTokens({ accessToken, refreshToken });
     } catch {
       setError("Identifiants de connection incorrects");
     }

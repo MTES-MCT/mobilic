@@ -8,29 +8,23 @@ import { PlaceHolder } from "../../common/components/PlaceHolder";
 import { shareEvents } from "../../common/utils/events";
 import Typography from "@material-ui/core/Typography";
 import { ModalContext } from "../utils/modals";
-import { useLocalStorage } from "../../common/utils/storage";
+import { useStoreSyncedWithLocalStorage } from "../../common/utils/storage";
 import { useApi } from "../../common/utils/api";
 import Divider from "@material-ui/core/Divider";
 
-export function BeforeWork({
-  pushNewCurrentDayEvent,
-  previousDaysEventsByDay,
-  coworkers,
-  setCoworkers,
-  clearTeam
-}) {
+export function BeforeWork({ previousDaysEventsByDay }) {
   const latestDayEvents =
     previousDaysEventsByDay[previousDaysEventsByDay.length - 1];
 
   const modals = React.useContext(ModalContext);
-  const localStorageContext = useLocalStorage();
+  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   const api = useApi();
 
   return (
     <Container className="container">
       <div className="user-name-header">
         <Typography noWrap variant="h6">
-          {localStorageContext.getFullName()}
+          {storeSyncedWithLocalStorage.getFullName()}
         </Typography>
         <Button
           variant="contained"
@@ -72,10 +66,9 @@ export function BeforeWork({
           color="primary"
           startIcon={<PersonIcon />}
           onClick={() => {
-            clearTeam();
             modals.open("firstActivity", {
-              handleItemClick: activityName =>
-                pushNewCurrentDayEvent(activityName)
+              handleItemClick: activityType =>
+                storeSyncedWithLocalStorage.pushNewActivity(activityType)
             });
           }}
         >
@@ -91,12 +84,15 @@ export function BeforeWork({
               handleContinue: () =>
                 modals.open("firstActivity", {
                   handleItemClick: activityName => {
-                    pushNewCurrentDayEvent(activityName);
+                    storeSyncedWithLocalStorage.pushNewActivity(
+                      activityName,
+                      storeSyncedWithLocalStorage
+                        .coworkers()
+                        .filter(cw => cw.isInCurrentTeam)
+                    );
                     modals.close("teamSelection");
                   }
-                }),
-              coworkers: coworkers,
-              setCoworkers: setCoworkers
+                })
             })
           }
         >

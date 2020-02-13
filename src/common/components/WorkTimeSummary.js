@@ -83,8 +83,8 @@ function Summary({ title, handleExport, summaryContent, timers, alerts }) {
 }
 
 export function WorkDaySummary({ dayEvents, handleExport, followingDayStart }) {
-  const dayEnd = dayEvents[dayEvents.length - 1].date;
-  const dayStart = dayEvents[0].date;
+  const dayEnd = dayEvents[dayEvents.length - 1].eventTime;
+  const dayStart = dayEvents[0].eventTime;
   const timers = computeTotalActivityDurations(dayEvents);
   const serviceTime = timers["total"];
   const workTime = (timers["drive"] || 0) + (timers["work"] || 0);
@@ -112,7 +112,7 @@ export function WorkDaySummary({ dayEvents, handleExport, followingDayStart }) {
 }
 
 export function WorkWeekSummary({ weekEventsByDay, handleExport }) {
-  const weekStart = getStartOfWeek(weekEventsByDay[0][0].date);
+  const weekStart = getStartOfWeek(weekEventsByDay[0][0].eventTime);
   const timersPerDay = weekEventsByDay.map(dayEvents =>
     computeTotalActivityDurations(dayEvents)
   );

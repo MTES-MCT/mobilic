@@ -11,7 +11,7 @@ export function groupEventsByDay(events) {
   let i = 0;
   events.forEach(event => {
     eventsByDay[i].push(event);
-    if (event.activityName === ACTIVITIES.end.name) {
+    if (event.type === ACTIVITIES.end.name) {
       eventsByDay.push([]);
       i++;
     }
