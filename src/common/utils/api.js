@@ -140,8 +140,7 @@ class Api {
             authorization: token ? `Bearer ${token}` : ""
           }
         });
-      },
-      addTypename: false
+      }
     });
     this.requestQueue = [];
     this.requestLock = false;
