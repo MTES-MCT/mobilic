@@ -39,6 +39,6 @@ export function parseActivityPayloadFromBackend(activity) {
     type: activity.type === "support" ? ACTIVITIES.drive.name : activity.type,
     eventTime: activity.eventTime,
     companyId: activity.companyId,
-    team: activity.team.map(id => ({ id: id }))
+    team: activity.team ? activity.team.map(id => ({ id: id })) : []
   };
 }

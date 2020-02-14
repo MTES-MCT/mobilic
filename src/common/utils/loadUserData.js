@@ -13,6 +13,7 @@ export async function loadUserData(api, storeSyncedWithLocalStorage) {
       activities,
       expenditures
     } = userResponse.data.user;
+    console.log(activities);
     const parsedActivities = activities.map(rawActivityPayload =>
       parseActivityPayloadFromBackend(rawActivityPayload)
     );

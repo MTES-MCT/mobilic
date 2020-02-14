@@ -1,11 +1,22 @@
+import { ACTIVITIES } from "./activities";
+
 export const EXPENDITURES = {
-  dayMeal: {
+  day_meal: {
     label: "repas"
   },
-  nightMeal: {
+  night_meal: {
     label: "repas nuit"
   },
-  nightAway: {
+  night_away: {
     label: "découchage"
   }
 };
+
+export function parseExpenditureFromBackend(expenditure) {
+  return {
+    id: expenditure.id,
+    type: expenditure.type,
+    eventTime: expenditure.eventTime,
+    companyId: expenditure.companyId
+  };
+}

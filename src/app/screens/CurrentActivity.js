@@ -7,6 +7,8 @@ import Typography from "@material-ui/core/Typography";
 import { Expenditures } from "../../common/components/Expenditures";
 import Divider from "@material-ui/core/Divider";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
+import { EXPENDITURE_LOG_MUTATION, useApi } from "../../common/utils/api";
+import { parseExpenditureFromBackend } from "../../common/utils/expenditures";
 
 export function CurrentActivity({
   currentActivityType,
@@ -16,10 +18,36 @@ export function CurrentActivity({
   currentDayExpenditures
 }) {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const api = useApi();
+
   const timers = computeTotalActivityDurations(
     currentDayActivityEvents,
     Date.now() + 1
   );
+
+  const pushNewExpenditure = expenditureType => {
+    storeSyncedWithLocalStorage.pushNewExpenditure(
+      expenditureType,
+      teamMates,
+      async () => {
+        try {
+          const expendituresToSubmit = storeSyncedWithLocalStorage.expendituresPendingSubmission();
+          const expendituresSubmit = await api.graphQlMutate(
+            EXPENDITURE_LOG_MUTATION,
+            { data: expendituresToSubmit }
+          );
+          const expenditures =
+            expendituresSubmit.data.logExpenditures.expenditures;
+          storeSyncedWithLocalStorage.setExpenditures(
+            expenditures.map(parseExpenditureFromBackend)
+          );
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    );
+  };
+
   return (
     <Container className="container space-between">
       <TimeLine dayEvents={currentDayActivityEvents} />
@@ -46,7 +74,7 @@ export function CurrentActivity({
       <Divider className="full-width-divider" />
       <Expenditures
         expenditures={currentDayExpenditures}
-        pushNewExpenditure={storeSyncedWithLocalStorage.pushNewExpenditure}
+        pushNewExpenditure={pushNewExpenditure}
       />
     </Container>
   );

@@ -74,6 +74,8 @@ function App() {
           storeSyncedWithLocalStorage.setActivities(
             activities.map(parseActivityPayloadFromBackend)
           );
+          const coworkers = activitySubmit.data.logActivities.company.users;
+          storeSyncedWithLocalStorage.setCoworkers(coworkers);
         } catch (err) {
           console.log(err);
         }

@@ -90,6 +90,26 @@ export const ACTIVITY_LOG_MUTATION = gql`
         eventTime
         team
       }
+      company {
+        users {
+          id
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+`;
+
+export const EXPENDITURE_LOG_MUTATION = gql`
+  mutation($data: [SingleExpenditureInput]!) {
+    logExpenditures(data: $data) {
+      expenditures {
+        id
+        companyId
+        type
+        eventTime
+      }
     }
   }
 `;

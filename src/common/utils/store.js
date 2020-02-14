@@ -114,16 +114,21 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
   setExpenditures = expenditures => this.setItems({ expenditures });
 
-  pushNewExpenditure = expenditureType =>
-    this.setItems({
-      expenditures: [
-        ...this.state.expenditures,
-        {
-          type: expenditureType,
-          eventTime: Date.now()
-        }
-      ]
-    });
+  pushNewExpenditure = (expenditureType, team, callback = () => {}) =>
+    this.setItems(
+      {
+        expenditures: [
+          ...this.state.expenditures,
+          {
+            type: expenditureType,
+            eventTime: Date.now(),
+            companyId: this.state.companyId,
+            team: [...team, { id: this.state.userId }]
+          }
+        ]
+      },
+      callback
+    );
 
   expendituresPendingSubmission = () =>
     this.state.expenditures.filter(e => !e.id);
