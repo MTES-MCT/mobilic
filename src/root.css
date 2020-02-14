@@ -242,6 +242,7 @@
 .expenditures-content {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .expenditures-title {

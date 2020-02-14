@@ -9,6 +9,9 @@ export const EXPENDITURES = {
   },
   night_away: {
     label: "découchage"
+  },
+  snack: {
+    label: "casse-croûte"
   }
 };
 
