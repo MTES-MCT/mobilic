@@ -4,12 +4,12 @@ import {
   parseActivityPayloadFromBackend
 } from "../common/utils/activities";
 import { groupEventsByDay } from "../common/utils/events";
-import { ScreenWithBottomNavigation } from "../common/utils/navigation";
+import { ScreenWithBottomNavigation } from "./utils/navigation";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { theme } from "../common/utils/theme";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { MODAL_DICT, ModalProvider } from "./utils/modals";
-import { ACTIVITY_LOG_MUTATION, useApi, USER_QUERY } from "../common/utils/api";
+import { MODAL_DICT, ModalProvider } from "../common/utils/modals";
+import { ACTIVITY_LOG_MUTATION, useApi } from "../common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import { loadUserData } from "../common/utils/loadUserData";
 
@@ -46,31 +46,21 @@ function App() {
       : [];
 
   const currentActivity = activityEvents[activityEvents.length - 1];
-  const currentActivityType = currentActivity
-    ? currentActivity.type
-    : ACTIVITIES.rest.name;
-  const currentTeamMates = currentActivity
-    ? storeSyncedWithLocalStorage
-        .coworkers()
-        .filter(
-          cw =>
-            cw.id !== storeSyncedWithLocalStorage.userId &&
-            currentActivity.team.map(tm => tm.id).includes(cw.id)
-        )
-    : [];
 
-  const pushNewActivityEvent = (
+  const pushNewActivityEvent = ({
     activityType,
-    team = [],
+    team,
+    driverIdx = null,
     mission = currentActivity && currentActivity.mission,
     vehicleRegistrationNumber = currentActivity &&
       currentActivity.vehicleRegistrationNumber
-  ) => {
+  }) => {
     storeSyncedWithLocalStorage.pushNewActivity(
       activityType,
       team,
       mission,
       vehicleRegistrationNumber,
+      driverIdx,
       async () => {
         try {
           const activitiesToSubmit = storeSyncedWithLocalStorage.activitiesPendingSubmission();
@@ -96,9 +86,8 @@ function App() {
       <CssBaseline />
       <ModalProvider modalDict={MODAL_DICT}>
         <ScreenWithBottomNavigation
-          currentActivityType={currentActivityType}
+          currentActivity={currentActivity}
           currentDayActivityEvents={currentDayActivityEvents}
-          teamMates={currentTeamMates}
           pushNewActivityEvent={pushNewActivityEvent}
           previousDaysEventsByDay={previousDaysEventsByDay}
           currentDayExpenditures={currentDayExpenditures}

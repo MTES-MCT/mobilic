@@ -33,7 +33,8 @@ function _Root() {
   const userId = storeSyncedWithLocalStorage.userId();
   const isCompanyAdmin = storeSyncedWithLocalStorage.companyAdmin();
 
-  if (!userId && signUpInsteadOfLogging) return <Signup />;
+  if (!userId && signUpInsteadOfLogging)
+    return <Signup setSignUpInsteadOfLogging={setSignUpInsteadOfLogging} />;
   if (!userId && !signUpInsteadOfLogging)
     return <Login setSignUpInsteadOfLogging={setSignUpInsteadOfLogging} />;
   if (userId && !isCompanyAdmin) return <App />;

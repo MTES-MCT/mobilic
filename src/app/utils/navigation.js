@@ -1,12 +1,12 @@
-import { ACTIVITIES } from "./activities";
-import { BeforeWork } from "../../app/screens/BeforeWork";
-import { CurrentActivity } from "../../app/screens/CurrentActivity";
+import { ACTIVITIES } from "../../common/utils/activities";
+import { BeforeWork } from "../screens/BeforeWork";
+import { CurrentActivity } from "../screens/CurrentActivity";
 import React from "react";
 import TimerIcon from "@material-ui/icons/Timer";
 import TimelineIcon from "@material-ui/icons/Timeline";
-import { PlaceHolder } from "../components/PlaceHolder";
-import BottomNavBar from "../../app/components/BottomNavBar";
-import { History } from "../../app/screens/History";
+import { PlaceHolder } from "../../common/components/PlaceHolder";
+import BottomNavBar from "../components/BottomNavBar";
+import { History } from "../screens/History";
 import Typography from "@material-ui/core/Typography";
 
 const SCREENS_WITH_BOTTOM_NAVIGATION = {
@@ -15,10 +15,11 @@ const SCREENS_WITH_BOTTOM_NAVIGATION = {
     label: "Activité",
     renderIcon: props => <TimerIcon {...props} />,
     render: props =>
-      props.currentActivityType === ACTIVITIES.rest.name ? (
-        <BeforeWork {...props} />
-      ) : (
+      props.currentActivity &&
+      props.currentActivity.type !== ACTIVITIES.rest.name ? (
         <CurrentActivity {...props} />
+      ) : (
+        <BeforeWork {...props} />
       )
   },
   history: {

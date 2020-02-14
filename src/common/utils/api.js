@@ -72,6 +72,9 @@ export const USER_QUERY = gql`
         eventTime
         companyId
         team
+        mission
+        vehicleRegistrationNumber
+        driverIdx
       }
       expenditures {
         type
@@ -92,6 +95,7 @@ export const ACTIVITY_LOG_MUTATION = gql`
         team
         mission
         vehicleRegistrationNumber
+        driverIdx
       }
       company {
         users {

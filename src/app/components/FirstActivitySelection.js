@@ -8,7 +8,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
 import { ACTIVITIES } from "../../common/utils/activities";
 
-export function SelectFirstActivityModal({
+export function FirstActivitySelectionModal({
   open,
   handleClose,
   handleItemClick

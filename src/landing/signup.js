@@ -7,7 +7,7 @@ import { useApi, USER_SIGNUP_MUTATION } from "../common/utils/api";
 import Typography from "@material-ui/core/Typography";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 
-export default function Signup() {
+export default function Signup({ setSignUpInsteadOfLogging }) {
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -32,6 +32,7 @@ export default function Signup() {
       });
       const { accessToken, refreshToken } = signUpResponse.data.signupUser;
       storeSyncedWithLocalStorage.storeTokens({ accessToken, refreshToken });
+      setSignUpInsteadOfLogging(false);
     } catch (err) {
       setEmail("");
       setPassword("");

@@ -1,8 +1,9 @@
 import React from "react";
-import { SelectFirstActivityModal } from "../components/FirstActivitySelection";
-import { TeamSelectionModal } from "../components/TeamSelection";
-import { ConfirmationModal } from "../../common/components/Confirmation";
-import { MissionSelectionModal } from "../components/MissionSelection";
+import { FirstActivitySelectionModal } from "../../app/components/FirstActivitySelection";
+import { TeamSelectionModal } from "../../app/components/TeamSelection";
+import { ConfirmationModal } from "../components/Confirmation";
+import { MissionSelectionModal } from "../../app/components/MissionSelection";
+import { DriverSelectionModal } from "../../app/components/DriverSelection";
 
 export const ModalContext = React.createContext(() => {});
 
@@ -50,8 +51,9 @@ export class ModalProvider extends React.Component {
 }
 
 export const MODAL_DICT = {
-  firstActivity: SelectFirstActivityModal,
+  firstActivity: FirstActivitySelectionModal,
   teamSelection: TeamSelectionModal,
   confirmation: ConfirmationModal,
-  missionSelection: MissionSelectionModal
+  missionSelection: MissionSelectionModal,
+  driverSelection: DriverSelectionModal
 };

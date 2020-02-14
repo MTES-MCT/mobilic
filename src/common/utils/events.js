@@ -3,7 +3,7 @@ import stringify from "csv-stringify/lib/sync";
 import { formatDay, formatTimer, DAY } from "./time";
 import { share } from "../../app/utils/share";
 import { computeTotalActivityDurations } from "./metrics";
-import { formatCoworkerName } from "./coworkers";
+import { formatPersonName } from "./coworkers";
 import { EXPENDITURES } from "./expenditures";
 
 export function groupEventsByDay(events) {
@@ -58,7 +58,7 @@ function formatEventsAsDaySummary(dayEvents) {
     daySummary,
     ...team.map(teamMate => ({
       ...daySummary,
-      employe: formatCoworkerName(teamMate)
+      employe: formatPersonName(teamMate)
     }))
   ];
 }

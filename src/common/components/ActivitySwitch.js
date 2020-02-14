@@ -8,7 +8,9 @@ import { formatTimer } from "../utils/time";
 import classNames from "classnames";
 import { ACTIVITIES } from "../utils/activities";
 import useTheme from "@material-ui/core/styles/useTheme";
-import { ModalContext } from "../../app/utils/modals";
+import { ModalContext } from "../utils/modals";
+import { useStoreSyncedWithLocalStorage } from "../utils/store";
+import { findDriverIndex } from "../utils/coworkers";
 
 export function ActivitySwitchCard({
   label,
@@ -66,15 +68,27 @@ export function ActivitySwitchCard({
 
 export function ActivitySwitchGrid({
   timers,
-  activityOnFocus,
+  team,
+  currentActivity,
   pushActivitySwitchEvent
 }) {
   const modals = React.useContext(ModalContext);
-
+  const hasTeamMates = team.length > 1;
   const theme = useTheme();
   const handleActivitySwitch = activityName => () => {
-    if (activityName === activityOnFocus) return;
-    if (activityName === ACTIVITIES.rest.name) {
+    if (!hasTeamMates && activityName === currentActivity.type) return;
+    else if (hasTeamMates && activityName === ACTIVITIES.drive.name) {
+      modals.open("driverSelection", {
+        team,
+        currentDriverIdx:
+          currentActivity.driverIdx !== undefined
+            ? currentActivity.driverIdx
+            : -1,
+        currentDriverStartTime: currentActivity.eventTime,
+        handleDriverSelection: driverIdx =>
+          pushActivitySwitchEvent(activityName, driverIdx)
+      });
+    } else if (activityName === ACTIVITIES.rest.name) {
       modals.open("confirmation", {
         handleConfirm: () => pushActivitySwitchEvent(activityName),
         title: "Confirmer fin de journée"
@@ -98,7 +112,7 @@ export function ActivitySwitchGrid({
               label={activity.label}
               renderIcon={activity.renderIcon}
               timer={timers[activity.name]}
-              onFocus={activity.name === activityOnFocus}
+              onFocus={activity.name === currentActivity.type}
               onClick={handleActivitySwitch(activity.name)}
               baseColor={
                 activity.name === ACTIVITIES.rest.name &&

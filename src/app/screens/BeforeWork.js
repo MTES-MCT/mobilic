@@ -8,11 +8,13 @@ import Button from "@material-ui/core/Button";
 import { PlaceHolder } from "../../common/components/PlaceHolder";
 import { shareEvents } from "../../common/utils/events";
 import Typography from "@material-ui/core/Typography";
-import { ModalContext } from "../utils/modals";
+import { ModalContext } from "../../common/utils/modals";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 import { useApi } from "../../common/utils/api";
 import Divider from "@material-ui/core/Divider";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { formatPersonName } from "../../common/utils/coworkers";
+import { ACTIVITIES } from "../../common/utils/activities";
 
 export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
   const latestDayEvents =
@@ -26,7 +28,7 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
     <Container className="container">
       <div className="user-name-header">
         <Typography noWrap variant="h6">
-          {storeSyncedWithLocalStorage.getFullName()}
+          {formatPersonName(storeSyncedWithLocalStorage.userInfo())}
         </Typography>
         <IconButton
           color="primary"
@@ -71,12 +73,13 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
               handleContinue: dayInfos =>
                 modals.open("firstActivity", {
                   handleItemClick: activityType => {
-                    pushNewActivityEvent(
+                    pushNewActivityEvent({
                       activityType,
-                      [],
-                      dayInfos.mission,
-                      dayInfos.vehicleRegistrationNumber
-                    );
+                      team: [storeSyncedWithLocalStorage.userInfo()],
+                      mission: dayInfos.mission,
+                      vehicleRegistrationNumber:
+                        dayInfos.vehicleRegistrationNumber
+                    });
                     modals.close("missionSelection");
                   }
                 })
@@ -96,17 +99,35 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
                 modals.open("missionSelection", {
                   handleContinue: dayInfos => {
                     modals.open("firstActivity", {
-                      handleItemClick: activityName => {
-                        pushNewActivityEvent(
-                          activityName,
-                          storeSyncedWithLocalStorage
-                            .coworkers()
-                            .filter(cw => cw.isInCurrentTeam),
-                          dayInfos.mission,
-                          dayInfos.vehicleRegistrationNumber
-                        );
-                        modals.close("missionSelection");
-                        modals.close("teamSelection");
+                      handleItemClick: activityType => {
+                        const teamMates = storeSyncedWithLocalStorage
+                          .coworkers()
+                          .filter(cw => cw.isInCurrentTeam);
+                        const team = [
+                          storeSyncedWithLocalStorage.userInfo(),
+                          ...teamMates
+                        ];
+                        const createActivity = (driverIdx = null) => {
+                          pushNewActivityEvent({
+                            activityType,
+                            team,
+                            driverIdx,
+                            mission: dayInfos.mission,
+                            vehicleRegistrationNumber:
+                              dayInfos.vehicleRegistrationNumber
+                          });
+                          modals.close("missionSelection");
+                          modals.close("teamSelection");
+                        };
+                        if (
+                          team.length > 1 &&
+                          activityType === ACTIVITIES.drive.name
+                        ) {
+                          modals.open("driverSelection", {
+                            team,
+                            handleDriverSelection: createActivity
+                          });
+                        } else createActivity();
                       }
                     });
                   }

@@ -7,8 +7,9 @@ import Divider from "@material-ui/core/Divider";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import { useApi } from "../common/utils/api";
 import Button from "@material-ui/core/Button";
-import { ModalContext } from "../app/utils/modals";
+import { ModalContext } from "../common/utils/modals";
 import { loadUserData } from "../common/utils/loadUserData";
+import { formatPersonName } from "../common/utils/coworkers";
 
 export function Admin() {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
@@ -20,14 +21,16 @@ export function Admin() {
     return () => {};
   }, []);
 
+  const userInfo = storeSyncedWithLocalStorage.userInfo();
+
   return (
     <Container>
       <div className="user-name-header">
         <Typography noWrap variant="h6">
-          {storeSyncedWithLocalStorage.getFullName()}
+          {formatPersonName(userInfo)}
         </Typography>
         <Typography noWrap variant="h6">
-          Entreprise : {storeSyncedWithLocalStorage.companyName()}
+          Entreprise : {userInfo.companyName}
         </Typography>
       </div>
       <Divider className="full-width-divider" />
@@ -39,7 +42,7 @@ export function Admin() {
             e.preventDefault();
             const response = await api.httpQuery(
               "GET",
-              `/download_company_activity_report/${storeSyncedWithLocalStorage.companyId()}`
+              `/download_company_activity_report/${userInfo.companyId}`
             );
             const blob = await response.blob();
             const link = document.createElement("a");

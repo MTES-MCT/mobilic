@@ -9,11 +9,11 @@ import Divider from "@material-ui/core/Divider";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 import { EXPENDITURE_LOG_MUTATION, useApi } from "../../common/utils/api";
 import { parseExpenditureFromBackend } from "../../common/utils/expenditures";
+import { getCoworkerById } from "../../common/utils/coworkers";
 
 export function CurrentActivity({
-  currentActivityType,
+  currentActivity,
   currentDayActivityEvents,
-  teamMates,
   pushNewActivityEvent,
   currentDayExpenditures
 }) {
@@ -25,10 +25,15 @@ export function CurrentActivity({
     Date.now() + 1
   );
 
+  const coworkers = storeSyncedWithLocalStorage.coworkers();
+  const team = currentActivity.team.map(tm =>
+    tm.id ? getCoworkerById(tm.id, coworkers) : tm
+  );
+
   const pushNewExpenditure = expenditureType => {
     storeSyncedWithLocalStorage.pushNewExpenditure(
       expenditureType,
-      teamMates,
+      team,
       async () => {
         try {
           const expendituresToSubmit = storeSyncedWithLocalStorage.expendituresPendingSubmission();
@@ -52,23 +57,27 @@ export function CurrentActivity({
     <Container className="container space-between">
       <TimeLine dayEvents={currentDayActivityEvents} />
       <Divider className="full-width-divider" />
-      {teamMates.length > 0 && [
+      {team.length > 1 && [
         <Typography
           key={1}
           variant="subtitle1"
           className="current-team-summary"
           noWrap
         >
-          {teamMates.length} coéquipier{teamMates.length > 1 && "s"} :{" "}
-          {teamMates.map(mate => mate.firstName).join(", ")}
+          {team.length - 1} coéquipier{team.length > 2 && "s"} :{" "}
+          {team
+            .filter(tm => tm.id !== storeSyncedWithLocalStorage.userId())
+            .map(mate => mate.firstName)
+            .join(", ")}
         </Typography>,
         <Divider key={2} className="full-width-divider" />
       ]}
       <ActivitySwitchGrid
         timers={timers}
-        activityOnFocus={currentActivityType}
-        pushActivitySwitchEvent={activityType =>
-          pushNewActivityEvent(activityType, teamMates)
+        team={team}
+        currentActivity={currentActivity}
+        pushActivitySwitchEvent={(activityType, driverIdx = null) =>
+          pushNewActivityEvent({ activityType, team, driverIdx })
         }
       />
       <Divider className="full-width-divider" />

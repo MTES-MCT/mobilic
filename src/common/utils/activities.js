@@ -41,6 +41,7 @@ export function parseActivityPayloadFromBackend(activity) {
     companyId: activity.companyId,
     mission: activity.mission,
     vehicleRegistrationNumber: activity.vehicleRegistrationNumber,
-    team: activity.team ? activity.team.map(id => ({ id: id })) : []
+    team: activity.team ? activity.team.map(id => ({ id: id })) : [],
+    driverIdx: activity.driverIdx
   };
 }

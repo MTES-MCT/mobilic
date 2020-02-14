@@ -1,5 +1,6 @@
 import React from "react";
 import jwtDecode from "jwt-decode";
+import { findDriverIndex } from "./coworkers";
 
 const StoreSyncedWithLocalStorage = React.createContext(() => {});
 
@@ -12,10 +13,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       refreshToken: {},
       companyAdmin: { deserialize: value => value === "true" },
       userId: { deserialize: value => (value ? parseInt(value) : value) },
-      companyId: { deserialize: value => (value ? parseInt(value) : value) },
-      companyName: {},
-      firstName: {},
-      lastName: {},
+      userInfo: {
+        serialize: JSON.stringify,
+        deserialize: value => (value ? JSON.parse(value) : {})
+      },
       coworkers: {
         serialize: JSON.stringify,
         deserialize: value => (value ? JSON.parse(value) : [])
@@ -80,8 +81,9 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   };
 
   setUserInfo = ({ firstName, lastName, companyId, companyName }) =>
-    this.setItems({ firstName, lastName, companyId, companyName });
-  getFullName = () => `${this.state.firstName} ${this.state.lastName}`;
+    this.setItems({
+      userInfo: { firstName, lastName, companyId, companyName }
+    });
 
   setCoworkers = (coworkers, callback = () => {}) =>
     this.setItems({ coworkers }, callback);
@@ -102,31 +104,30 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     team,
     mission,
     vehicleRegistrationNumber,
+    driverIdx,
     callback = () => {}
-  ) =>
+  ) => {
+    const newActivity = {
+      type: activityType,
+      eventTime: Date.now(),
+      companyId: this.state.userInfo.companyId,
+      mission: mission,
+      vehicleRegistrationNumber: vehicleRegistrationNumber,
+      team: team.map(tm => ({
+        id: tm.id,
+        firstName: tm.firstName,
+        lastName: tm.lastName
+      }))
+    };
+    if (driverIdx) newActivity.driverIdx = driverIdx;
+
     this.setItems(
       {
-        activities: [
-          ...this.state.activities,
-          {
-            type: activityType,
-            eventTime: Date.now(),
-            companyId: this.state.companyId,
-            mission: mission,
-            vehicleRegistrationNumber: vehicleRegistrationNumber,
-            team: [
-              ...team.map(tm => ({
-                id: tm.id,
-                firstName: tm.firstName,
-                lastName: tm.lastName
-              })),
-              { id: this.state.userId }
-            ]
-          }
-        ]
+        activities: [...this.state.activities, newActivity]
       },
       callback
     );
+  };
 
   setExpenditures = expenditures => this.setItems({ expenditures });
 
@@ -138,8 +139,12 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           {
             type: expenditureType,
             eventTime: Date.now(),
-            companyId: this.state.companyId,
-            team: [...team, { id: this.state.userId }]
+            companyId: this.state.userInfo.companyId,
+            team: team.map(tm => ({
+              id: tm.id,
+              firstName: tm.firstName,
+              lastName: tm.lastName
+            }))
           }
         ]
       },
@@ -158,12 +163,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             accessToken: () => this.state.accessToken,
             refreshToken: () => this.state.refreshToken,
             userId: () => this.state.userId,
-            companyId: () => this.state.companyId,
-            companyName: () => this.state.companyName,
             companyAdmin: () => this.state.companyAdmin,
             removeTokens: this.removeTokens,
             setUserInfo: this.setUserInfo,
-            getFullName: this.getFullName,
+            userInfo: () => ({ id: this.state.userId, ...this.state.userInfo }),
             coworkers: () => this.state.coworkers,
             setCoworkers: this.setCoworkers,
             pushNewCoworkers: this.pushNewCoworkers,

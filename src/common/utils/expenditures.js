@@ -1,5 +1,3 @@
-import { ACTIVITIES } from "./activities";
-
 export const EXPENDITURES = {
   day_meal: {
     label: "repas"
