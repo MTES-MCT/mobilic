@@ -5,7 +5,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Button from "@material-ui/core/Button";
 import { useApi, USER_SIGNUP_MUTATION } from "../common/utils/api";
 import Typography from "@material-ui/core/Typography";
-import { useStoreSyncedWithLocalStorage } from "../common/utils/storage";
+import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 
 export default function Signup() {
   const [firstName, setFirstName] = React.useState("");

@@ -7,8 +7,8 @@ import teal from "@material-ui/core/colors/teal";
 export const theme = createMuiTheme({
   palette: {
     work: teal[300],
-    rest: green[400],
+    break: green[400],
     drive: cyan[500],
-    end: red[600]
+    rest: red[600]
   }
 });

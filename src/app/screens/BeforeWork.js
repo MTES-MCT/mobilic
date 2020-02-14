@@ -8,11 +8,11 @@ import { PlaceHolder } from "../../common/components/PlaceHolder";
 import { shareEvents } from "../../common/utils/events";
 import Typography from "@material-ui/core/Typography";
 import { ModalContext } from "../utils/modals";
-import { useStoreSyncedWithLocalStorage } from "../../common/utils/storage";
+import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 import { useApi } from "../../common/utils/api";
 import Divider from "@material-ui/core/Divider";
 
-export function BeforeWork({ previousDaysEventsByDay }) {
+export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
   const latestDayEvents =
     previousDaysEventsByDay[previousDaysEventsByDay.length - 1];
 
@@ -68,7 +68,7 @@ export function BeforeWork({ previousDaysEventsByDay }) {
           onClick={() => {
             modals.open("firstActivity", {
               handleItemClick: activityType =>
-                storeSyncedWithLocalStorage.pushNewActivity(activityType)
+                pushNewActivityEvent(activityType)
             });
           }}
         >
@@ -84,7 +84,7 @@ export function BeforeWork({ previousDaysEventsByDay }) {
               handleContinue: () =>
                 modals.open("firstActivity", {
                   handleItemClick: activityName => {
-                    storeSyncedWithLocalStorage.pushNewActivity(
+                    pushNewActivityEvent(
                       activityName,
                       storeSyncedWithLocalStorage
                         .coworkers()

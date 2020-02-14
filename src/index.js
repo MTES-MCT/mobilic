@@ -11,7 +11,7 @@ import Signup from "./landing/signup";
 import {
   StoreSyncedWithLocalStorageProvider,
   useStoreSyncedWithLocalStorage
-} from "./common/utils/storage";
+} from "./common/utils/store";
 import { ApiContextProvider } from "./common/utils/api";
 
 function Root() {

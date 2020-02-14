@@ -17,7 +17,7 @@ import Divider from "@material-ui/core/Divider";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Checkbox from "@material-ui/core/Checkbox";
 import { formatCoworkerName } from "../../common/utils/coworkers";
-import { useStoreSyncedWithLocalStorage } from "../../common/utils/storage";
+import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;

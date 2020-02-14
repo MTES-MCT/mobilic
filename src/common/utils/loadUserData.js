@@ -1,4 +1,5 @@
 import { USER_QUERY } from "./api";
+import { parseActivityPayloadFromBackend } from "./activities";
 
 export async function loadUserData(api, storeSyncedWithLocalStorage) {
   try {
@@ -12,14 +13,21 @@ export async function loadUserData(api, storeSyncedWithLocalStorage) {
       activities,
       expenditures
     } = userResponse.data.user;
-    storeSyncedWithLocalStorage.setName({ firstName, lastName });
+    const parsedActivities = activities.map(rawActivityPayload =>
+      parseActivityPayloadFromBackend(rawActivityPayload)
+    );
+    storeSyncedWithLocalStorage.setUserInfo({
+      firstName,
+      lastName,
+      companyId: company.id
+    });
     storeSyncedWithLocalStorage.setCoworkers(
       company.users.concat(
         storeSyncedWithLocalStorage.coworkersPendingSubmission()
       )
     );
     storeSyncedWithLocalStorage.setActivities(
-      activities.concat(
+      parsedActivities.concat(
         storeSyncedWithLocalStorage.activitiesPendingSubmission()
       )
     );

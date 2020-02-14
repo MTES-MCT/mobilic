@@ -6,12 +6,13 @@ import { computeTotalActivityDurations } from "../../common/utils/metrics";
 import Typography from "@material-ui/core/Typography";
 import { Expenditures } from "../../common/components/Expenditures";
 import Divider from "@material-ui/core/Divider";
-import { useStoreSyncedWithLocalStorage } from "../../common/utils/storage";
+import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 
 export function CurrentActivity({
   currentActivityType,
   currentDayActivityEvents,
   teamMates,
+  pushNewActivityEvent,
   currentDayExpenditures
 }) {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
@@ -38,8 +39,8 @@ export function CurrentActivity({
       <ActivitySwitchGrid
         timers={timers}
         activityOnFocus={currentActivityType}
-        pushActivitySwitchEvent={type =>
-          storeSyncedWithLocalStorage.pushNewActivity(type, teamMates)
+        pushActivitySwitchEvent={activityType =>
+          pushNewActivityEvent(activityType, teamMates)
         }
       />
       <Divider className="full-width-divider" />

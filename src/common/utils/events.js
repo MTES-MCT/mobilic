@@ -11,7 +11,7 @@ export function groupEventsByDay(events) {
   let i = 0;
   events.forEach(event => {
     eventsByDay[i].push(event);
-    if (event.type === ACTIVITIES.end.name) {
+    if (event.type === ACTIVITIES.rest.name) {
       eventsByDay.push([]);
       i++;
     }
@@ -21,10 +21,10 @@ export function groupEventsByDay(events) {
 
 function formatEventsAsLogs(events) {
   return events.map(event => {
-    const utcDateString = new Date(event.date).toISOString();
+    const utcDateString = new Date(event.eventTime).toISOString();
     return {
       date: utcDateString,
-      activity: event.activityName,
+      activity: event.type,
       team: event.team
     };
   });
@@ -32,9 +32,9 @@ function formatEventsAsLogs(events) {
 
 function formatEventsAsDaySummary(dayEvents) {
   const timers = computeTotalActivityDurations(dayEvents);
-  const dayStartString = new Date(dayEvents[0].date).toISOString();
+  const dayStartString = new Date(dayEvents[0].eventTime).toISOString();
   const dayEndString = new Date(
-    dayEvents[dayEvents.length - 1].date
+    dayEvents[dayEvents.length - 1].eventTime
   ).toISOString();
   const team = dayEvents[0].team;
   const expenditures = dayEvents[dayEvents.length - 1].currentDayExpenditures;
@@ -46,7 +46,7 @@ function formatEventsAsDaySummary(dayEvents) {
     fin: dayEndString,
     conduite: formatTimer(timers[ACTIVITIES.drive.name] || 1),
     autre_tache: formatTimer(timers[ACTIVITIES.work.name] || 1),
-    repos: formatTimer(timers[ACTIVITIES.rest.name] || 1),
+    repos: formatTimer(timers[ACTIVITIES.break.name] || 1),
     frais: Object.keys(EXPENDITURES)
       .flatMap(expType =>
         expenditures[expType] ? [EXPENDITURES[expType].label] : []
@@ -67,8 +67,8 @@ export function shareEvents(
   eventsByDays,
   stringifyFunc = data => stringify(data, { header: true })
 ) {
-  const firstDay = eventsByDays[0][0].date;
-  const lastDay = eventsByDays[eventsByDays.length - 1][0].date;
+  const firstDay = eventsByDays[0][0].eventTime;
+  const lastDay = eventsByDays[eventsByDays.length - 1][0].eventTime;
   const areAllEventsOnTheSameDay = lastDay - firstDay < DAY;
 
   const title = `Temps de travail du ${formatDay(firstDay)}${

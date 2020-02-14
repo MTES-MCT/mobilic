@@ -73,7 +73,8 @@ export function ActivitySwitchGrid({
 
   const theme = useTheme();
   const handleActivitySwitch = activityName => () => {
-    if (activityName === ACTIVITIES.end.name) {
+    if (activityName === activityOnFocus) return;
+    if (activityName === ACTIVITIES.rest.name) {
       modals.open("confirmation", {
         handleConfirm: () => pushActivitySwitchEvent(activityName),
         title: "Confirmer fin de journée"
@@ -100,7 +101,7 @@ export function ActivitySwitchGrid({
               onFocus={activity.name === activityOnFocus}
               onClick={handleActivitySwitch(activity.name)}
               baseColor={
-                activity.name === ACTIVITIES.end.name &&
+                activity.name === ACTIVITIES.rest.name &&
                 theme.palette[activity.name]
               }
             />

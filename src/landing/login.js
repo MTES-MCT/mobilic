@@ -7,7 +7,7 @@ import { useApi, LOGIN_MUTATION } from "../common/utils/api";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import { PlaceHolder } from "../common/components/PlaceHolder";
-import { useStoreSyncedWithLocalStorage } from "../common/utils/storage";
+import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 
 export default function Login({ setSignUpInsteadOfLogging }) {
   const [email, setEmail] = React.useState("");

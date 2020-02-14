@@ -17,8 +17,8 @@ export const TIMEABLE_ACTIVITIES = {
     renderIcon: props => <BuildIcon {...props} />,
     canBeFirst: true
   },
-  rest: {
-    name: "rest",
+  break: {
+    name: "break",
     label: "Pause",
     renderIcon: props => <HotelIcon {...props} />
   }
@@ -26,9 +26,19 @@ export const TIMEABLE_ACTIVITIES = {
 
 export const ACTIVITIES = {
   ...TIMEABLE_ACTIVITIES,
-  end: {
-    name: "end",
+  rest: {
+    name: "rest",
     label: "Fin journée",
     renderIcon: props => <HighlightOffIcon {...props} />
   }
 };
+
+export function parseActivityPayloadFromBackend(activity) {
+  return {
+    id: activity.id,
+    type: activity.type === "support" ? ACTIVITIES.drive.name : activity.type,
+    eventTime: activity.eventTime,
+    companyId: activity.companyId,
+    team: activity.team.map(id => ({ id: id }))
+  };
+}
