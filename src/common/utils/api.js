@@ -89,6 +89,8 @@ export const ACTIVITY_LOG_MUTATION = gql`
         type
         eventTime
         team
+        mission
+        vehicleRegistrationNumber
       }
       company {
         users {

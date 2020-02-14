@@ -2,6 +2,7 @@ import React from "react";
 import { SelectFirstActivityModal } from "../components/FirstActivitySelection";
 import { TeamSelectionModal } from "../components/TeamSelection";
 import { ConfirmationModal } from "../../common/components/Confirmation";
+import { MissionSelectionModal } from "../components/MissionSelection";
 
 export const ModalContext = React.createContext(() => {});
 
@@ -51,5 +52,6 @@ export class ModalProvider extends React.Component {
 export const MODAL_DICT = {
   firstActivity: SelectFirstActivityModal,
   teamSelection: TeamSelectionModal,
-  confirmation: ConfirmationModal
+  confirmation: ConfirmationModal,
+  missionSelection: MissionSelectionModal
 };

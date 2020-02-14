@@ -67,9 +67,19 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
           color="primary"
           startIcon={<PersonIcon />}
           onClick={() => {
-            modals.open("firstActivity", {
-              handleItemClick: activityType =>
-                pushNewActivityEvent(activityType)
+            modals.open("missionSelection", {
+              handleContinue: dayInfos =>
+                modals.open("firstActivity", {
+                  handleItemClick: activityType => {
+                    pushNewActivityEvent(
+                      activityType,
+                      [],
+                      dayInfos.mission,
+                      dayInfos.vehicleRegistrationNumber
+                    );
+                    modals.close("missionSelection");
+                  }
+                })
             });
           }}
         >
@@ -83,15 +93,22 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
           onClick={() =>
             modals.open("teamSelection", {
               handleContinue: () =>
-                modals.open("firstActivity", {
-                  handleItemClick: activityName => {
-                    pushNewActivityEvent(
-                      activityName,
-                      storeSyncedWithLocalStorage
-                        .coworkers()
-                        .filter(cw => cw.isInCurrentTeam)
-                    );
-                    modals.close("teamSelection");
+                modals.open("missionSelection", {
+                  handleContinue: dayInfos => {
+                    modals.open("firstActivity", {
+                      handleItemClick: activityName => {
+                        pushNewActivityEvent(
+                          activityName,
+                          storeSyncedWithLocalStorage
+                            .coworkers()
+                            .filter(cw => cw.isInCurrentTeam),
+                          dayInfos.mission,
+                          dayInfos.vehicleRegistrationNumber
+                        );
+                        modals.close("missionSelection");
+                        modals.close("teamSelection");
+                      }
+                    });
                   }
                 })
             })

@@ -96,7 +96,13 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
   setActivities = activities => this.setItems({ activities });
 
-  pushNewActivity = (activityType, team, callback = () => {}) =>
+  pushNewActivity = (
+    activityType,
+    team,
+    mission,
+    vehicleRegistrationNumber,
+    callback = () => {}
+  ) =>
     this.setItems(
       {
         activities: [
@@ -105,6 +111,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             type: activityType,
             eventTime: Date.now(),
             companyId: this.state.companyId,
+            mission: mission,
+            vehicleRegistrationNumber: vehicleRegistrationNumber,
             team: [...team, { id: this.state.userId }]
           }
         ]

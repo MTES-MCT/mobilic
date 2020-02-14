@@ -59,10 +59,18 @@ function App() {
         )
     : [];
 
-  const pushNewActivityEvent = (activityType, team = []) => {
+  const pushNewActivityEvent = (
+    activityType,
+    team = [],
+    mission = currentActivity && currentActivity.mission,
+    vehicleRegistrationNumber = currentActivity &&
+      currentActivity.vehicleRegistrationNumber
+  ) => {
     storeSyncedWithLocalStorage.pushNewActivity(
       activityType,
       team,
+      mission,
+      vehicleRegistrationNumber,
       async () => {
         try {
           const activitiesToSubmit = storeSyncedWithLocalStorage.activitiesPendingSubmission();
