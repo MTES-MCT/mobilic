@@ -12,6 +12,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       refreshToken: {},
       companyAdmin: { deserialize: value => value === "true" },
       userId: { deserialize: value => (value ? parseInt(value) : value) },
+      companyId: { deserialize: value => (value ? parseInt(value) : value) },
       firstName: {},
       lastName: {},
       coworkers: {
@@ -59,21 +60,26 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     );
   };
 
-  storeTokens = ({ accessToken, refreshToken }) => {
-    const { id, company_admin } = jwtDecode(accessToken).identity;
-    this.setItems({
-      accessToken,
-      refreshToken,
-      userId: id,
-      companyAdmin: company_admin
+  storeTokens = ({ accessToken, refreshToken }) =>
+    new Promise(resolve => {
+      const { id, company_admin } = jwtDecode(accessToken).identity;
+      this.setItems(
+        {
+          accessToken,
+          refreshToken,
+          userId: id,
+          companyAdmin: company_admin
+        },
+        resolve()
+      );
     });
-  };
 
   removeTokens = () => {
     this.removeItems(["accessToken", "refreshToken", "userId", "companyAdmin"]);
   };
 
-  setName = ({ firstName, lastName }) => this.setItems({ firstName, lastName });
+  setUserInfo = ({ firstName, lastName, companyId }) =>
+    this.setItems({ firstName, lastName, companyId });
   getFullName = () => `${this.state.firstName} ${this.state.lastName}`;
 
   setCoworkers = (coworkers, callback = () => {}) =>
@@ -90,17 +96,21 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
   setActivities = activities => this.setItems({ activities });
 
-  pushNewActivity = (activityType, team = []) =>
-    this.setItems({
-      activities: [
-        ...this.state.activities,
-        {
-          type: activityType,
-          eventTime: Date.now(),
-          team: [...team, { id: this.state.userId }]
-        }
-      ]
-    });
+  pushNewActivity = (activityType, team, callback = () => {}) =>
+    this.setItems(
+      {
+        activities: [
+          ...this.state.activities,
+          {
+            type: activityType,
+            eventTime: Date.now(),
+            companyId: this.state.companyId,
+            team: [...team, { id: this.state.userId }]
+          }
+        ]
+      },
+      callback
+    );
 
   setExpenditures = expenditures => this.setItems({ expenditures });
 
@@ -127,9 +137,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             accessToken: () => this.state.accessToken,
             refreshToken: () => this.state.refreshToken,
             userId: () => this.state.userId,
+            companyId: () => this.state.companyId,
             companyAdmin: () => this.state.companyAdmin,
             removeTokens: this.removeTokens,
-            setName: this.setName,
+            setUserInfo: this.setUserInfo,
             getFullName: this.getFullName,
             coworkers: () => this.state.coworkers,
             setCoworkers: this.setCoworkers,

@@ -1,7 +1,7 @@
 import React from "react";
 import ApolloClient, { gql } from "apollo-boost";
 import jwtDecode from "jwt-decode";
-import { useStoreSyncedWithLocalStorage } from "./storage";
+import { useStoreSyncedWithLocalStorage } from "./store";
 
 const REFRESH_MUTATION = gql`
   mutation refreshToken {
@@ -58,6 +58,7 @@ export const USER_QUERY = gql`
       firstName
       lastName
       company {
+        id
         users {
           id
           firstName
@@ -68,11 +69,26 @@ export const USER_QUERY = gql`
         id
         type
         eventTime
+        companyId
         team
       }
       expenditures {
         type
         eventTime
+      }
+    }
+  }
+`;
+
+export const ACTIVITY_LOG_MUTATION = gql`
+  mutation($data: [SingleActivityInput]!) {
+    logActivities(data: $data) {
+      activities {
+        id
+        companyId
+        type
+        eventTime
+        team
       }
     }
   }
@@ -101,22 +117,51 @@ class Api {
             authorization: token ? `Bearer ${token}` : ""
           }
         });
-      }
+      },
+      addTypename: false
+    });
+    this.requestQueue = [];
+    this.requestLock = false;
+  }
+
+  async _query(func) {
+    return new Promise((resolve, reject) => {
+      const runQuery = async () => {
+        this.requestLock = true;
+        let response, error;
+        await this._refreshTokenIfNeeded();
+        try {
+          response = await func();
+        } catch (err) {
+          console.log(`Error accessing API : ${err}`);
+        }
+        if (this.requestQueue.length === 0) {
+          this.requestLock = false;
+        } else {
+          this.requestQueue[0]();
+          this.requestQueue = this.requestQueue.slice(1);
+        }
+        return error ? reject(error) : resolve(response);
+      };
+      if (!this.requestLock) runQuery();
+      else this.requestQueue.push(runQuery);
     });
   }
 
   async graphQlQuery(query, variables) {
-    this._refreshTokenIfNeeded();
-    return this.apolloClient.query({ query, variables });
+    return this._query(() => this.apolloClient.query({ query, variables }));
   }
 
   async graphQlMutate(query, variables) {
-    this._refreshTokenIfNeeded();
-    return this.apolloClient.mutate({ mutation: query, variables: variables });
+    return this._query(() =>
+      this.apolloClient.mutate({ mutation: query, variables: variables })
+    );
   }
 
   async httpQuery(method, endpoint, options) {
-    this._refreshTokenIfNeeded();
+    return this._query(() =>
+      console.log("Not implemented simple http query yet")
+    );
   }
 
   async _refreshTokenIfNeeded() {
@@ -130,12 +175,12 @@ class Api {
           const refreshResponse = await this.apolloClient.mutate({
             mutation: REFRESH_MUTATION
           });
-          this.storeSyncedWithLocalStorage.storeTokens(
-            refreshResponse.auth.refresh
+          await this.storeSyncedWithLocalStorage.storeTokens(
+            refreshResponse.data.auth.refresh
           );
         }
-      } catch {
-        console.log("Error refreshing tokens");
+      } catch (err) {
+        console.log(`Error refreshing tokens : ${err}`);
       }
     }
   }
