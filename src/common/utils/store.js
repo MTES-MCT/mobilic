@@ -13,6 +13,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       companyAdmin: { deserialize: value => value === "true" },
       userId: { deserialize: value => (value ? parseInt(value) : value) },
       companyId: { deserialize: value => (value ? parseInt(value) : value) },
+      companyName: {},
       firstName: {},
       lastName: {},
       coworkers: {
@@ -78,8 +79,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     this.removeItems(["accessToken", "refreshToken", "userId", "companyAdmin"]);
   };
 
-  setUserInfo = ({ firstName, lastName, companyId }) =>
-    this.setItems({ firstName, lastName, companyId });
+  setUserInfo = ({ firstName, lastName, companyId, companyName }) =>
+    this.setItems({ firstName, lastName, companyId, companyName });
   getFullName = () => `${this.state.firstName} ${this.state.lastName}`;
 
   setCoworkers = (coworkers, callback = () => {}) =>
@@ -158,6 +159,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             refreshToken: () => this.state.refreshToken,
             userId: () => this.state.userId,
             companyId: () => this.state.companyId,
+            companyName: () => this.state.companyName,
             companyAdmin: () => this.state.companyAdmin,
             removeTokens: this.removeTokens,
             setUserInfo: this.setUserInfo,

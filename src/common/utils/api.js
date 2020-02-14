@@ -59,6 +59,7 @@ export const USER_QUERY = gql`
       lastName
       company {
         id
+        name
         users {
           id
           firstName
@@ -180,10 +181,15 @@ class Api {
     );
   }
 
-  async httpQuery(method, endpoint, options) {
-    return this._query(() =>
-      console.log("Not implemented simple http query yet")
-    );
+  async httpQuery(method, endpoint, options = {}) {
+    return this._query(() => {
+      const url = `${this.apiUrl}${endpoint}`;
+      if (!options.headers) options.headers = {};
+      options.headers.Authorization = `Bearer ${this.storeSyncedWithLocalStorage.accessToken()}`;
+      options.headers.Origin = `http://localhost:3000/`;
+      options.method = method;
+      return fetch(url, options);
+    });
   }
 
   async _refreshTokenIfNeeded() {

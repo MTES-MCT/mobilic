@@ -19,7 +19,8 @@ export async function loadUserData(api, storeSyncedWithLocalStorage) {
     storeSyncedWithLocalStorage.setUserInfo({
       firstName,
       lastName,
-      companyId: company.id
+      companyId: company.id,
+      companyName: company.name
     });
     storeSyncedWithLocalStorage.setCoworkers(
       company.users.concat(

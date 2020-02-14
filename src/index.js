@@ -13,6 +13,7 @@ import {
   useStoreSyncedWithLocalStorage
 } from "./common/utils/store";
 import { ApiContextProvider } from "./common/utils/api";
+import { Admin } from "./admin/Admin";
 
 function Root() {
   return (
@@ -38,6 +39,7 @@ function _Root() {
   if (!userId && !signUpInsteadOfLogging)
     return <Login setSignUpInsteadOfLogging={setSignUpInsteadOfLogging} />;
   if (userId && !isCompanyAdmin) return <App />;
+  if (userId && isCompanyAdmin) return <Admin />;
 }
 
 ReactDOM.render(<Root />, document.getElementById("root"));
