@@ -3,6 +3,7 @@ import Container from "@material-ui/core/Container";
 import { WorkDaySummary } from "../../common/components/WorkTimeSummary";
 import PeopleIcon from "@material-ui/icons/People";
 import PersonIcon from "@material-ui/icons/Person";
+import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import { PlaceHolder } from "../../common/components/PlaceHolder";
 import { shareEvents } from "../../common/utils/events";
@@ -11,6 +12,7 @@ import { ModalContext } from "../utils/modals";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 import { useApi } from "../../common/utils/api";
 import Divider from "@material-ui/core/Divider";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 
 export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
   const latestDayEvents =
@@ -26,8 +28,7 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
         <Typography noWrap variant="h6">
           {storeSyncedWithLocalStorage.getFullName()}
         </Typography>
-        <Button
-          variant="contained"
+        <IconButton
           color="primary"
           onClick={() =>
             modals.open("confirmation", {
@@ -36,8 +37,8 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
             })
           }
         >
-          Se déconnecter
-        </Button>
+          <ExitToAppIcon />
+        </IconButton>
       </div>
       <Divider className="full-width-divider" />
       <Container
