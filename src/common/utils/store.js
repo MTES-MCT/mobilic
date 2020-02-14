@@ -113,7 +113,14 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             companyId: this.state.companyId,
             mission: mission,
             vehicleRegistrationNumber: vehicleRegistrationNumber,
-            team: [...team, { id: this.state.userId }]
+            team: [
+              ...team.map(tm => ({
+                id: tm.id,
+                firstName: tm.firstName,
+                lastName: tm.lastName
+              })),
+              { id: this.state.userId }
+            ]
           }
         ]
       },
