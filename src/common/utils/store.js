@@ -1,6 +1,5 @@
 import React from "react";
 import jwtDecode from "jwt-decode";
-import { findDriverIndex } from "./coworkers";
 
 const StoreSyncedWithLocalStorage = React.createContext(() => {});
 
@@ -86,7 +85,12 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     });
 
   setCoworkers = (coworkers, callback = () => {}) =>
-    this.setItems({ coworkers }, callback);
+    this.setItems(
+      {
+        coworkers: coworkers.filter(cw => cw.id !== this.state.userId)
+      },
+      callback
+    );
 
   pushNewCoworkers = coworkers =>
     this.setItems({

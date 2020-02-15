@@ -49,8 +49,7 @@ export function TeamSelectionModal({ open, handleClose, handleContinue }) {
 
   const toggleAddCoworkerToTeam = id => () => {
     const newCoworkers = updatedCoworkers.slice();
-    updatedCoworkers[id].isInCurrentTeam = !updatedCoworkers[id]
-      .isInCurrentTeam;
+    newCoworkers[id].isInCurrentTeam = !newCoworkers[id].isInCurrentTeam;
     setUpdatedCoworkers(newCoworkers);
   };
 
@@ -128,26 +127,24 @@ export function TeamSelectionModal({ open, handleClose, handleContinue }) {
         </form>
       </div>
       <List className="coworkers-list">
-        {updatedCoworkers
-          .filter(cw => cw.id !== storeSyncedWithLocalStorage.userId())
-          .map((coworker, index) => [
-            <Divider key={2 * index} />,
-            <ListItem key={2 * index + 1}>
-              <Checkbox
-                checked={coworker.isInCurrentTeam || false}
-                onChange={toggleAddCoworkerToTeam(index)}
-              />
-              <ListItemText
-                primaryTypographyProps={{ noWrap: true, display: "block" }}
-                primary={formatPersonName(coworker)}
-              />
-              <ListItemSecondaryAction>
-                <IconButton edge="end" onClick={removeCoworker(index)}>
-                  <DeleteIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ])}
+        {updatedCoworkers.map((coworker, index) => [
+          <Divider key={2 * index} />,
+          <ListItem key={2 * index + 1}>
+            <Checkbox
+              checked={coworker.isInCurrentTeam || false}
+              onChange={toggleAddCoworkerToTeam(index)}
+            />
+            <ListItemText
+              primaryTypographyProps={{ noWrap: true, display: "block" }}
+              primary={formatPersonName(coworker)}
+            />
+            <ListItemSecondaryAction>
+              <IconButton edge="end" onClick={removeCoworker(index)}>
+                <DeleteIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+        ])}
       </List>
     </Dialog>
   );

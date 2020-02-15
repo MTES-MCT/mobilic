@@ -10,7 +10,6 @@ import { ACTIVITIES } from "../utils/activities";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { ModalContext } from "../utils/modals";
 import { useStoreSyncedWithLocalStorage } from "../utils/store";
-import { findDriverIndex } from "../utils/coworkers";
 
 export function ActivitySwitchCard({
   label,
