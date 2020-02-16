@@ -296,30 +296,19 @@
 }
 
 .landing-container {
-  padding-top: 2vh;
-  display: flex;
-  flex-direction: column;
   height: 100%;
-  justify-content: center;
-}
-
-.landing-form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
 }
 
-.landing-form-inputs {
+.vertical-form {
   max-width: 400px;
   width: 90%;
-  margin-bottom: 20vh;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  margin: auto;
 }
 
-.landing-form-text-input {
+.vertical-form-text-input {
   margin-bottom: 2vh !important;
 }
 

@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import { PlaceHolder } from "../common/components/PlaceHolder";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
+import Box from "@material-ui/core/Box";
 
 export default function Login({ setSignUpInsteadOfLogging }) {
   const [email, setEmail] = React.useState("");
@@ -35,80 +36,83 @@ export default function Login({ setSignUpInsteadOfLogging }) {
   };
 
   return (
-    <Container className="landing-container">
-      <PlaceHolder style={{ maxHeight: "20vh" }}>
+    <Container className="landing-container scrollable">
+      <Box m={4}>
         <Typography variant="h4">👋</Typography>
         <Typography style={{ fontWeight: "bold" }}>
           Bienvenue sur MobiLIC !
         </Typography>
-      </PlaceHolder>
+      </Box>
       <form
-        className="landing-form"
+        className="vertical-form"
         noValidate
         autoComplete="on"
         onSubmit={handleSubmit}
       >
-        <div className="landing-form-inputs">
-          <TextField
-            fullWidth
-            className="landing-form-text-input"
-            label="Email"
-            type="email"
-            autoComplete="username"
-            value={email}
-            onChange={e => {
-              setError("");
-              setEmail(e.target.value);
-            }}
-          />
-          <TextField
-            fullWidth
-            className="landing-form-text-input"
-            label="Mot de passe"
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={e => {
-              setError("");
-              setPassword(e.target.value);
-            }}
-          />
-          {error && <Typography color="error">{error}</Typography>}
-        </div>
-        <Button
-          className="login-form-button"
-          variant="contained"
-          color="primary"
-          type="submit"
-          disabled={!email || !password || loading || !!error}
-        >
-          <span
-            style={{ position: "relative", visibility: loading && "hidden" }}
-          >
-            Se connecter
-          </span>
-          {loading && (
-            <CircularProgress
-              style={{ position: "absolute" }}
-              color="inherit"
-              size="1rem"
-            />
-          )}
-        </Button>
-      </form>
-      <Typography>
-        Pas encore de compte ?{" "}
-        <Link
-          href="/"
-          onClick={e => {
-            e.preventDefault();
-            setSignUpInsteadOfLogging(true);
+        <TextField
+          fullWidth
+          className="vertical-form-text-input"
+          label="Email"
+          type="email"
+          autoComplete="username"
+          value={email}
+          onChange={e => {
+            setError("");
+            setEmail(e.target.value);
           }}
-        >
-          {" "}
-          Inscrivez-vous
-        </Link>
-      </Typography>
+        />
+        <TextField
+          fullWidth
+          className="vertical-form-text-input"
+          label="Mot de passe"
+          type="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={e => {
+            setError("");
+            setPassword(e.target.value);
+          }}
+        />
+        {error && (
+          <Typography align="left" color="error">
+            {error}
+          </Typography>
+        )}
+        <Box m={4}>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            disabled={!email || !password || loading || !!error}
+          >
+            <span
+              style={{ position: "relative", visibility: loading && "hidden" }}
+            >
+              Se connecter
+            </span>
+            {loading && (
+              <CircularProgress
+                style={{ position: "absolute" }}
+                color="inherit"
+                size="1rem"
+              />
+            )}
+          </Button>
+          <Typography style={{ marginTop: "2vh" }}>
+            Pas encore de compte ?{" "}
+            <Link
+              href="/"
+              onClick={e => {
+                e.preventDefault();
+                setSignUpInsteadOfLogging(true);
+              }}
+            >
+              {" "}
+              Inscrivez-vous
+            </Link>
+          </Typography>
+        </Box>
+      </form>
     </Container>
   );
 }

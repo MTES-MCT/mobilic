@@ -27,7 +27,11 @@ export function CurrentActivity({
 
   const coworkers = storeSyncedWithLocalStorage.coworkers();
   const team = currentActivity.team.map(tm =>
-    tm.id ? getCoworkerById(tm.id, coworkers) : tm
+    tm.id
+      ? tm.id === storeSyncedWithLocalStorage.userId()
+        ? storeSyncedWithLocalStorage.userInfo()
+        : getCoworkerById(tm.id, coworkers)
+      : tm
   );
 
   const pushNewExpenditure = expenditureType => {
