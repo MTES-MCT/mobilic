@@ -80,6 +80,10 @@ export const USER_QUERY = gql`
         type
         eventTime
       }
+      comments {
+        content
+        eventTime
+      }
     }
   }
 `;
@@ -115,6 +119,19 @@ export const EXPENDITURE_LOG_MUTATION = gql`
         id
         companyId
         type
+        eventTime
+      }
+    }
+  }
+`;
+
+export const COMMENT_LOG_MUTATION = gql`
+  mutation($data: [CommentInput]!) {
+    logComments(data: $data) {
+      comments {
+        id
+        companyId
+        content
         eventTime
       }
     }

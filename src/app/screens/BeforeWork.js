@@ -10,11 +10,9 @@ import { shareEvents } from "../../common/utils/events";
 import Typography from "@material-ui/core/Typography";
 import { ModalContext } from "../../common/utils/modals";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
-import { useApi } from "../../common/utils/api";
 import Divider from "@material-ui/core/Divider";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import { formatPersonName } from "../../common/utils/coworkers";
 import { ACTIVITIES } from "../../common/utils/activities";
+import { UserNameHeader } from "../../common/components/UserNameHeader";
 
 export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
   const latestDayEvents =
@@ -22,26 +20,10 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
 
   const modals = React.useContext(ModalContext);
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
-  const api = useApi();
 
   return (
     <Container className="container">
-      <div className="user-name-header">
-        <Typography noWrap variant="h6">
-          {formatPersonName(storeSyncedWithLocalStorage.userInfo())}
-        </Typography>
-        <IconButton
-          color="primary"
-          onClick={() =>
-            modals.open("confirmation", {
-              handleConfirm: () => api.logout(),
-              title: "Confirmer déconnexion"
-            })
-          }
-        >
-          <ExitToAppIcon />
-        </IconButton>
-      </div>
+      <UserNameHeader />
       <Divider className="full-width-divider" />
       <Container
         disableGutters

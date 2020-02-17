@@ -11,7 +11,8 @@ export async function loadUserData(api, storeSyncedWithLocalStorage) {
       lastName,
       company,
       activities,
-      expenditures
+      expenditures,
+      comments
     } = userResponse.data.user;
     const parsedActivities = activities.map(rawActivityPayload =>
       parseActivityPayloadFromBackend(rawActivityPayload)
@@ -36,6 +37,9 @@ export async function loadUserData(api, storeSyncedWithLocalStorage) {
       expenditures.concat(
         storeSyncedWithLocalStorage.expendituresPendingSubmission()
       )
+    );
+    storeSyncedWithLocalStorage.setComments(
+      comments.concat(storeSyncedWithLocalStorage.commentsPendingSubmission())
     );
   } catch (err) {
     console.log(err);

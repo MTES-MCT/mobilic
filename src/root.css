@@ -335,3 +335,8 @@
   justify-content: center;
   align-items: center;
 }
+
+.new-lines-on-overflow {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}

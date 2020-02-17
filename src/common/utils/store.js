@@ -27,6 +27,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       expenditures: {
         serialize: JSON.stringify,
         deserialize: value => (value ? JSON.parse(value) : [])
+      },
+      comments: {
+        serialize: JSON.stringify,
+        deserialize: value => (value ? JSON.parse(value) : [])
       }
     };
 
@@ -158,6 +162,30 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   expendituresPendingSubmission = () =>
     this.state.expenditures.filter(e => !e.id);
 
+  setComments = comments => this.setItems({ comments });
+
+  pushNewComment = (content, team, callback = () => {}) =>
+    this.setItems(
+      {
+        comments: [
+          ...this.state.comments,
+          {
+            content,
+            eventTime: Date.now(),
+            companyId: this.state.userInfo.companyId,
+            team: team.map(tm => ({
+              id: tm.id,
+              firstName: tm.firstName,
+              lastName: tm.lastName
+            }))
+          }
+        ]
+      },
+      callback
+    );
+
+  commentsPendingSubmission = () => this.state.comments.filter(e => !e.id);
+
   render() {
     return (
       <>
@@ -182,7 +210,11 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             expenditures: () => this.state.expenditures,
             setExpenditures: this.setExpenditures,
             pushNewExpenditure: this.pushNewExpenditure,
-            expendituresPendingSubmission: this.expendituresPendingSubmission
+            expendituresPendingSubmission: this.expendituresPendingSubmission,
+            comments: () => this.state.comments,
+            setComments: this.setComments,
+            pushNewComment: this.pushNewComment,
+            commentsPendingSubmission: this.commentsPendingSubmission
           }}
         >
           {this.props.children}

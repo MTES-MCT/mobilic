@@ -4,6 +4,7 @@ import { TeamSelectionModal } from "../../app/components/TeamSelection";
 import { ConfirmationModal } from "../components/Confirmation";
 import { MissionSelectionModal } from "../../app/components/MissionSelection";
 import { DriverSelectionModal } from "../../app/components/DriverSelection";
+import { CommentInputModal } from "../../app/components/CommentInput";
 
 export const ModalContext = React.createContext(() => {});
 
@@ -55,5 +56,6 @@ export const MODAL_DICT = {
   teamSelection: TeamSelectionModal,
   confirmation: ConfirmationModal,
   missionSelection: MissionSelectionModal,
-  driverSelection: DriverSelectionModal
+  driverSelection: DriverSelectionModal,
+  commentInput: CommentInputModal
 };

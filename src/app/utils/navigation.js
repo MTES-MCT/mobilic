@@ -4,10 +4,12 @@ import { CurrentActivity } from "../screens/CurrentActivity";
 import React from "react";
 import TimerIcon from "@material-ui/icons/Timer";
 import TimelineIcon from "@material-ui/icons/Timeline";
+import InfoIcon from "@material-ui/icons/Info";
 import { PlaceHolder } from "../../common/components/PlaceHolder";
 import BottomNavBar from "../components/BottomNavBar";
 import { History } from "../screens/History";
 import Typography from "@material-ui/core/Typography";
+import { DailyContext } from "../screens/DailyContext";
 
 const SCREENS_WITH_BOTTOM_NAVIGATION = {
   activity: {
@@ -21,6 +23,12 @@ const SCREENS_WITH_BOTTOM_NAVIGATION = {
       ) : (
         <BeforeWork {...props} />
       )
+  },
+  context: {
+    name: "context",
+    label: "Infos",
+    renderIcon: props => <InfoIcon {...props} />,
+    render: props => <DailyContext {...props} />
   },
   history: {
     name: "history",
