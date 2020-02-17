@@ -163,6 +163,18 @@ class Api {
             authorization: token ? `Bearer ${token}` : ""
           }
         });
+      },
+      onError: ({ operation, graphQLErrors, networkError }) => {
+        if (
+          graphQLErrors &&
+          graphQLErrors.length > 0 &&
+          graphQLErrors.some(error => error.message === "Authentication error")
+        ) {
+          this.logout();
+        } else {
+          console.log(networkError);
+          console.log(graphQLErrors);
+        }
       }
     });
     this.requestQueue = [];
