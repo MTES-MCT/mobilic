@@ -95,7 +95,7 @@ export function DailyContext({
                 backgroundColor: theme.palette.background.default
               }}
             >
-              <Typography align="left">
+              <Typography className="bold" variant="body1" align="left">
                 {isCurrentDayStarted
                   ? "Journée en cours"
                   : `Journée du ${prettyFormatDay(
@@ -106,8 +106,12 @@ export function DailyContext({
           }
         >
           <ListItem disableGutters>
-            <ListItemIcon>
-              {team.length === 1 ? <PersonIcon /> : <PeopleIcon />}
+            <ListItemIcon color="primary">
+              {team.length === 1 ? (
+                <PersonIcon color="primary" />
+              ) : (
+                <PeopleIcon color="primary" />
+              )}
             </ListItemIcon>
             <ListItemText
               className="new-lines-on-overflow"
@@ -126,7 +130,7 @@ export function DailyContext({
           </ListItem>
           <ListItem className="new-lines-on-overflow" disableGutters>
             <ListItemIcon>
-              <DriveEtaIcon />
+              <DriveEtaIcon color="primary" />
             </ListItemIcon>
             <ListItemText
               primary={`Véhicule : ${currentActivity.vehicleRegistrationNumber}`}
@@ -134,14 +138,14 @@ export function DailyContext({
           </ListItem>
           <ListItem className="new-lines-on-overflow" disableGutters>
             <ListItemIcon>
-              <WorkIcon />
+              <WorkIcon color="primary" />
             </ListItemIcon>
             <ListItemText primary={`Mission : ${currentActivity.mission}`} />
           </ListItem>
 
           <ListItem className="new-lines-on-overflow" disableGutters>
             <ListItemIcon>
-              <AnnouncementIcon />
+              <AnnouncementIcon color="error" />
             </ListItemIcon>
             <ListItemText primary="Commentaires" />
             <ListItemSecondaryAction>

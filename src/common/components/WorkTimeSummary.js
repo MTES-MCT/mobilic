@@ -27,7 +27,7 @@ function Summary({ title, handleExport, summaryContent, timers, alerts }) {
   return (
     <div className="unshrinkable">
       <Box className="summary-card-header">
-        <Typography className="summary-card-title">{title}</Typography>
+        <Typography className="bold">{title}</Typography>
         <IconButton onClick={handleExport}>
           <ShareIcon color="primary" />
         </IconButton>
