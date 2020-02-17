@@ -88,7 +88,7 @@ export default function Login({ setSignUpInsteadOfLogging }) {
             <span
               style={{ position: "relative", visibility: loading && "hidden" }}
             >
-              Se connecter
+              Me connecter
             </span>
             {loading && (
               <CircularProgress
@@ -108,7 +108,7 @@ export default function Login({ setSignUpInsteadOfLogging }) {
               }}
             >
               {" "}
-              Inscrivez-vous
+              Je m'inscris
             </Link>
           </Typography>
         </Box>

@@ -7,7 +7,7 @@ import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 export const TIMEABLE_ACTIVITIES = {
   drive: {
     name: "drive",
-    label: "Conduite",
+    label: "Déplacement",
     renderIcon: props => <LocalShippingIcon {...props} />,
     canBeFirst: true
   },

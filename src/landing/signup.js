@@ -133,7 +133,7 @@ export default function Signup({ setSignUpInsteadOfLogging }) {
             <span
               style={{ position: "relative", visibility: loading && "hidden" }}
             >
-              S'inscrire
+              M'inscrire
             </span>
             {loading && (
               <CircularProgress

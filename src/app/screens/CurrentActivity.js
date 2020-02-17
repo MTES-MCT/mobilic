@@ -61,21 +61,6 @@ export function CurrentActivity({
     <Container className="container space-between">
       <TimeLine dayEvents={currentDayActivityEvents} />
       <Divider className="full-width-divider" />
-      {team.length > 1 && [
-        <Typography
-          key={1}
-          variant="subtitle1"
-          className="current-team-summary"
-          noWrap
-        >
-          {team.length - 1} coéquipier{team.length > 2 && "s"} :{" "}
-          {team
-            .filter(tm => tm.id !== storeSyncedWithLocalStorage.userId())
-            .map(mate => mate.firstName)
-            .join(", ")}
-        </Typography>,
-        <Divider key={2} className="full-width-divider" />
-      ]}
       <ActivitySwitchGrid
         timers={timers}
         team={team}
