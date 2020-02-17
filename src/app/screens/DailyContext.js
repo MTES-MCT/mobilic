@@ -24,6 +24,7 @@ import { COMMENT_LOG_MUTATION, useApi } from "../../common/utils/api";
 import { ModalContext } from "../../common/utils/modals";
 import useTheme from "@material-ui/core/styles/useTheme";
 import Box from "@material-ui/core/Box";
+import { isGraphQLParsingError } from "../../common/utils/errors";
 
 export function DailyContext({
   currentActivity,
@@ -64,15 +65,26 @@ export function DailyContext({
 
   const pushNewComment = content => {
     storeSyncedWithLocalStorage.pushNewComment(content, team, async () => {
+      const commentsToSubmit = storeSyncedWithLocalStorage.commentsPendingSubmission();
       try {
-        const commentsToSubmit = storeSyncedWithLocalStorage.commentsPendingSubmission();
         const commentsSubmit = await api.graphQlMutate(COMMENT_LOG_MUTATION, {
           data: commentsToSubmit
         });
         const comments = commentsSubmit.data.logComments.comments;
         storeSyncedWithLocalStorage.setComments(comments);
       } catch (err) {
-        console.log(err);
+        if (isGraphQLParsingError(err)) {
+          storeSyncedWithLocalStorage.setComments(
+            storeSyncedWithLocalStorage
+              .comments()
+              .filter(
+                comment =>
+                  !commentsToSubmit
+                    .map(c => c.eventTime)
+                    .includes(comment.eventTime)
+              )
+          );
+        }
       }
     });
   };

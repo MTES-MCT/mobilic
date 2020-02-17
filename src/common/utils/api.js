@@ -160,16 +160,14 @@ class Api {
           }
         });
       },
-      onError: ({ operation, graphQLErrors, networkError }) => {
+      onError: ({ operation, response, graphQLErrors, networkError }) => {
         if (
           graphQLErrors &&
           graphQLErrors.length > 0 &&
           graphQLErrors.some(error => error.message === "Authentication error")
         ) {
+          this.requestQueue = [];
           this.logout();
-        } else {
-          console.log(networkError);
-          console.log(graphQLErrors);
         }
       }
     });
@@ -186,6 +184,7 @@ class Api {
         try {
           response = await func();
         } catch (err) {
+          error = err;
           console.log(`Error accessing API : ${err}`);
         }
         if (this.requestQueue.length === 0) {
@@ -216,7 +215,6 @@ class Api {
       const url = `${this.apiUrl}${endpoint}`;
       if (!options.headers) options.headers = {};
       options.headers.Authorization = `Bearer ${this.storeSyncedWithLocalStorage.accessToken()}`;
-      options.headers.Origin = `http://localhost:3000/`;
       options.method = method;
       return fetch(url, options);
     });
@@ -239,6 +237,7 @@ class Api {
         }
       } catch (err) {
         console.log(`Error refreshing tokens : ${err}`);
+        return new Promise(resolve => setTimeout(resolve, 3000));
       }
     }
   }

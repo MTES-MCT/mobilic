@@ -10,6 +10,7 @@ import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 import { EXPENDITURE_LOG_MUTATION, useApi } from "../../common/utils/api";
 import { parseExpenditureFromBackend } from "../../common/utils/expenditures";
 import { getCoworkerById } from "../../common/utils/coworkers";
+import { isGraphQLParsingError } from "../../common/utils/errors";
 
 export function CurrentActivity({
   currentActivity,
@@ -39,8 +40,8 @@ export function CurrentActivity({
       expenditureType,
       team,
       async () => {
+        const expendituresToSubmit = storeSyncedWithLocalStorage.expendituresPendingSubmission();
         try {
-          const expendituresToSubmit = storeSyncedWithLocalStorage.expendituresPendingSubmission();
           const expendituresSubmit = await api.graphQlMutate(
             EXPENDITURE_LOG_MUTATION,
             { data: expendituresToSubmit }
@@ -51,7 +52,18 @@ export function CurrentActivity({
             expenditures.map(parseExpenditureFromBackend)
           );
         } catch (err) {
-          console.log(err);
+          if (isGraphQLParsingError(err)) {
+            storeSyncedWithLocalStorage.setExpenditures(
+              storeSyncedWithLocalStorage
+                .expenditures()
+                .filter(
+                  expenditure =>
+                    !expendituresToSubmit
+                      .map(e => e.eventTime)
+                      .includes(expenditure.eventTime)
+                )
+            );
+          }
         }
       }
     );

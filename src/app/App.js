@@ -10,6 +10,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { ACTIVITY_LOG_MUTATION, useApi } from "../common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import { loadUserData } from "../common/utils/loadUserData";
+import { isGraphQLParsingError } from "../common/utils/errors";
 
 function App() {
   const api = useApi();
@@ -60,8 +61,8 @@ function App() {
       vehicleRegistrationNumber,
       driverIdx,
       async () => {
+        const activitiesToSubmit = storeSyncedWithLocalStorage.activitiesPendingSubmission();
         try {
-          const activitiesToSubmit = storeSyncedWithLocalStorage.activitiesPendingSubmission();
           const activitySubmit = await api.graphQlMutate(
             ACTIVITY_LOG_MUTATION,
             { data: activitiesToSubmit }
@@ -73,7 +74,18 @@ function App() {
           const coworkers = activitySubmit.data.logActivities.company.users;
           storeSyncedWithLocalStorage.setCoworkers(coworkers);
         } catch (err) {
-          console.log(err);
+          if (isGraphQLParsingError(err)) {
+            storeSyncedWithLocalStorage.setActivities(
+              storeSyncedWithLocalStorage
+                .activities()
+                .filter(
+                  activity =>
+                    !activitiesToSubmit
+                      .map(a => a.eventTime)
+                      .includes(activity.eventTime)
+                )
+            );
+          }
         }
       }
     );
