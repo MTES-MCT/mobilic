@@ -3,7 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, height=device-height, target-densitydpi=device-dpi" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, height=device-height, target-densitydpi=device-dpi"
+    />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
@@ -24,6 +27,9 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+    <script>
+      window.API_HOST = process.env.API_HOST;
+    </script>
     <title>MobiLIC</title>
   </head>
   <body>
