@@ -17,7 +17,6 @@ export function parseExpenditureFromBackend(expenditure) {
   return {
     id: expenditure.id,
     type: expenditure.type,
-    eventTime: expenditure.eventTime,
-    companyId: expenditure.companyId
+    eventTime: expenditure.eventTime
   };
 }

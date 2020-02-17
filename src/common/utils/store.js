@@ -118,7 +118,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     const newActivity = {
       type: activityType,
       eventTime: Date.now(),
-      companyId: this.state.userInfo.companyId,
       mission: mission,
       vehicleRegistrationNumber: vehicleRegistrationNumber,
       team: team.map(tm => ({
@@ -147,7 +146,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           {
             type: expenditureType,
             eventTime: Date.now(),
-            companyId: this.state.userInfo.companyId,
             team: team.map(tm => ({
               id: tm.id,
               firstName: tm.firstName,
@@ -172,7 +170,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           {
             content,
             eventTime: Date.now(),
-            companyId: this.state.userInfo.companyId,
             team: team.map(tm => ({
               id: tm.id,
               firstName: tm.firstName,

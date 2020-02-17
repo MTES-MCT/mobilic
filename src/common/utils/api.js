@@ -70,7 +70,6 @@ export const USER_QUERY = gql`
         id
         type
         eventTime
-        companyId
         team
         mission
         vehicleRegistrationNumber
@@ -95,7 +94,6 @@ export const ACTIVITY_LOG_MUTATION = gql`
     logActivities(data: $data) {
       activities {
         id
-        companyId
         type
         eventTime
         team
@@ -119,7 +117,6 @@ export const EXPENDITURE_LOG_MUTATION = gql`
     logExpenditures(data: $data) {
       expenditures {
         id
-        companyId
         type
         eventTime
       }
@@ -132,7 +129,6 @@ export const COMMENT_LOG_MUTATION = gql`
     logComments(data: $data) {
       comments {
         id
-        companyId
         content
         eventTime
       }
