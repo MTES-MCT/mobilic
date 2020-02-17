@@ -7,6 +7,7 @@ import Box from "@material-ui/core/Box";
 import { ModalContext } from "../utils/modals";
 import { useApi } from "../utils/api";
 import { useStoreSyncedWithLocalStorage } from "../utils/store";
+import useTheme from "@material-ui/core/styles/useTheme";
 
 export function UserNameHeader() {
   const modals = React.useContext(ModalContext);
@@ -14,9 +15,24 @@ export function UserNameHeader() {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   return (
     <Box className="user-name-header">
-      <Typography noWrap variant="h6">
-        {formatPersonName(storeSyncedWithLocalStorage.userInfo())}
-      </Typography>
+      <Box style={{ display: "flex", alignItems: "center" }}>
+        <Typography noWrap variant="h6">
+          {formatPersonName(storeSyncedWithLocalStorage.userInfo())}
+        </Typography>
+        <Box
+          display={{
+            xs: "none",
+            sm: "none",
+            md: "block",
+            lg: "block",
+            xl: "block"
+          }}
+        >
+          <Typography style={{ marginLeft: "10vw" }} noWrap variant="h6">
+            Entreprise : {storeSyncedWithLocalStorage.userInfo().companyName}
+          </Typography>
+        </Box>
+      </Box>
       <IconButton
         color="primary"
         onClick={() =>

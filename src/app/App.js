@@ -6,9 +6,7 @@ import {
 import { groupEventsByDay } from "../common/utils/events";
 import { ScreenWithBottomNavigation } from "./utils/navigation";
 import { ThemeProvider } from "@material-ui/core/styles";
-import { theme } from "../common/utils/theme";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { MODAL_DICT, ModalProvider } from "../common/utils/modals";
 import { ACTIVITY_LOG_MUTATION, useApi } from "../common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import { loadUserData } from "../common/utils/loadUserData";
@@ -82,18 +80,13 @@ function App() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <ModalProvider modalDict={MODAL_DICT}>
-        <ScreenWithBottomNavigation
-          currentActivity={currentActivity}
-          currentDayActivityEvents={currentDayActivityEvents}
-          pushNewActivityEvent={pushNewActivityEvent}
-          previousDaysEventsByDay={previousDaysEventsByDay}
-          currentDayExpenditures={currentDayExpenditures}
-        />
-      </ModalProvider>
-    </ThemeProvider>
+    <ScreenWithBottomNavigation
+      currentActivity={currentActivity}
+      currentDayActivityEvents={currentDayActivityEvents}
+      pushNewActivityEvent={pushNewActivityEvent}
+      previousDaysEventsByDay={previousDaysEventsByDay}
+      currentDayExpenditures={currentDayExpenditures}
+    />
   );
 }
 

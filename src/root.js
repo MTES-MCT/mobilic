@@ -12,13 +12,22 @@ import {
 } from "./common/utils/store";
 import { ApiContextProvider } from "./common/utils/api";
 import { Admin } from "./admin/Admin";
+import { theme } from "./common/utils/theme";
+import { MODAL_DICT, ModalProvider } from "./common/utils/modals";
+import { ThemeProvider } from "@material-ui/styles";
+import { CssBaseline } from "@material-ui/core";
 
 export default function Root() {
   return (
     <div className="Root">
       <StoreSyncedWithLocalStorageProvider>
         <ApiContextProvider>
-          <_Root />
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <ModalProvider modalDict={MODAL_DICT}>
+              <_Root />
+            </ModalProvider>
+          </ThemeProvider>
         </ApiContextProvider>
       </StoreSyncedWithLocalStorageProvider>
     </div>

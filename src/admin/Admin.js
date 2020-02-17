@@ -10,6 +10,7 @@ import Button from "@material-ui/core/Button";
 import { ModalContext } from "../common/utils/modals";
 import { loadUserData } from "../common/utils/loadUserData";
 import { formatPersonName } from "../common/utils/coworkers";
+import { UserNameHeader } from "../common/components/UserNameHeader";
 
 export function Admin() {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
@@ -24,15 +25,8 @@ export function Admin() {
   const userInfo = storeSyncedWithLocalStorage.userInfo();
 
   return (
-    <Container>
-      <div className="user-name-header">
-        <Typography noWrap variant="h6">
-          {formatPersonName(userInfo)}
-        </Typography>
-        <Typography noWrap variant="h6">
-          Entreprise : {userInfo.companyName}
-        </Typography>
-      </div>
+    <Container style={{ height: "100%" }}>
+      <UserNameHeader />
       <Divider className="full-width-divider" />
       <Container className="admin-container">
         <Button

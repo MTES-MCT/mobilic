@@ -23,6 +23,7 @@ import { prettyFormatDay } from "../../common/utils/time";
 import { COMMENT_LOG_MUTATION, useApi } from "../../common/utils/api";
 import { ModalContext } from "../../common/utils/modals";
 import useTheme from "@material-ui/core/styles/useTheme";
+import Box from "@material-ui/core/Box";
 
 export function DailyContext({
   currentActivity,
@@ -79,9 +80,13 @@ export function DailyContext({
   return (
     <Container className="container">
       <UserNameHeader />
-      <Typography align="left">
-        Entreprise : {storeSyncedWithLocalStorage.userInfo().companyName}
-      </Typography>
+      {theme.breakpoints.down("md") && (
+        <Box display={{ xs: "block", sm: "block", md: "none" }}>
+          <Typography align="left">
+            Entreprise : {storeSyncedWithLocalStorage.userInfo().companyName}
+          </Typography>
+        </Box>
+      )}
       <Divider className="full-width-divider" />
       {firstActivityOfTheDay && (
         <List
