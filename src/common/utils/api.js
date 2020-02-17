@@ -77,10 +77,12 @@ export const USER_QUERY = gql`
         driverIdx
       }
       expenditures {
+        id
         type
         eventTime
       }
       comments {
+        id
         content
         eventTime
       }
