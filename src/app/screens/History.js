@@ -16,7 +16,6 @@ import {
   WorkDaySummary,
   WorkWeekSummary
 } from "../../common/components/WorkTimeSummary";
-import { shareEvents } from "../../common/utils/events";
 import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -42,7 +41,6 @@ const tabs = {
             <CardContent>
               <WorkDaySummary
                 dayEvents={dayEvents}
-                handleExport={() => shareEvents(eventsByDay)}
                 followingDayStart={followingPeriodStart}
               />
             </CardContent>
@@ -69,10 +67,7 @@ const tabs = {
       <div>
         <Card>
           <CardContent>
-            <WorkWeekSummary
-              weekEventsByDay={eventsByDay}
-              handleExport={() => shareEvents(eventsByDay)}
-            />
+            <WorkWeekSummary weekEventsByDay={eventsByDay} />
           </CardContent>
         </Card>
         <List className="days">

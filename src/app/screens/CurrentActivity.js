@@ -3,13 +3,12 @@ import { TimeLine } from "../../common/components/Timeline";
 import { ActivitySwitchGrid } from "../../common/components/ActivitySwitch";
 import Container from "@material-ui/core/Container";
 import { computeTotalActivityDurations } from "../../common/utils/metrics";
-import Typography from "@material-ui/core/Typography";
 import { Expenditures } from "../../common/components/Expenditures";
 import Divider from "@material-ui/core/Divider";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 import { EXPENDITURE_LOG_MUTATION, useApi } from "../../common/utils/api";
 import { parseExpenditureFromBackend } from "../../common/utils/expenditures";
-import { getCoworkerById } from "../../common/utils/coworkers";
+import { resolveCurrentTeam } from "../../common/utils/coworkers";
 import { isGraphQLParsingError } from "../../common/utils/errors";
 
 export function CurrentActivity({
@@ -26,14 +25,7 @@ export function CurrentActivity({
     Date.now() + 1
   );
 
-  const coworkers = storeSyncedWithLocalStorage.coworkers();
-  const team = currentActivity.team.map(tm =>
-    tm.id
-      ? tm.id === storeSyncedWithLocalStorage.userId()
-        ? storeSyncedWithLocalStorage.userInfo()
-        : getCoworkerById(tm.id, coworkers)
-      : tm
-  );
+  const team = resolveCurrentTeam(currentActivity, storeSyncedWithLocalStorage);
 
   const pushNewExpenditure = expenditureType => {
     storeSyncedWithLocalStorage.pushNewExpenditure(

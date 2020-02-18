@@ -12,7 +12,7 @@ import { UserNameHeader } from "../../common/components/UserNameHeader";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import List from "@material-ui/core/List";
-import { getCoworkerById } from "../../common/utils/coworkers";
+import { resolveCurrentTeam } from "../../common/utils/coworkers";
 import ListItemText from "@material-ui/core/ListItemText";
 import { ListItemSecondaryAction } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
@@ -35,7 +35,6 @@ export function DailyContext({
   const api = useApi();
   const modals = React.useContext(ModalContext);
   const theme = useTheme();
-  const coworkers = storeSyncedWithLocalStorage.coworkers();
 
   const isCurrentDayStarted =
     currentActivity && currentActivity.type !== ACTIVITIES.rest.name;
@@ -53,15 +52,7 @@ export function DailyContext({
     .comments()
     .filter(c => c.eventTime >= firstActivityOfTheDay.eventTime);
 
-  const team = currentActivity
-    ? currentActivity.team.map(tm =>
-        tm.id
-          ? tm.id === storeSyncedWithLocalStorage.userId()
-            ? storeSyncedWithLocalStorage.userInfo()
-            : getCoworkerById(tm.id, coworkers)
-          : tm
-      )
-    : [];
+  const team = resolveCurrentTeam(currentActivity, storeSyncedWithLocalStorage);
 
   const pushNewComment = content => {
     storeSyncedWithLocalStorage.pushNewComment(content, team, async () => {

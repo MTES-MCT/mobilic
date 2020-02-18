@@ -9,8 +9,6 @@ import {
   prettyFormatDay
 } from "../utils/time";
 import Box from "@material-ui/core/Box";
-import ShareIcon from "@material-ui/icons/Share";
-import IconButton from "@material-ui/core/IconButton";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -22,15 +20,12 @@ import { checkDayRestRespect } from "../utils/regulation";
 import { RegulationCheck } from "./RegulationCheck";
 import Divider from "@material-ui/core/Divider";
 
-function Summary({ title, handleExport, summaryContent, timers, alerts }) {
+function Summary({ title, summaryContent, timers, alerts }) {
   const theme = useTheme();
   return (
     <div className="unshrinkable">
       <Box className="summary-card-header">
         <Typography className="bold">{title}</Typography>
-        <IconButton onClick={handleExport}>
-          <ShareIcon color="primary" />
-        </IconButton>
       </Box>
       <Table>
         <TableBody>
@@ -82,7 +77,7 @@ function Summary({ title, handleExport, summaryContent, timers, alerts }) {
   );
 }
 
-export function WorkDaySummary({ dayEvents, handleExport, followingDayStart }) {
+export function WorkDaySummary({ dayEvents, followingDayStart }) {
   const dayEnd = dayEvents[dayEvents.length - 1].eventTime;
   const dayStart = dayEvents[0].eventTime;
   const timers = computeTotalActivityDurations(dayEvents);
@@ -92,7 +87,6 @@ export function WorkDaySummary({ dayEvents, handleExport, followingDayStart }) {
   return (
     <Summary
       title={title}
-      handleExport={handleExport}
       summaryContent={[
         {
           stat: "Amplitude 📅",
@@ -111,7 +105,7 @@ export function WorkDaySummary({ dayEvents, handleExport, followingDayStart }) {
   );
 }
 
-export function WorkWeekSummary({ weekEventsByDay, handleExport }) {
+export function WorkWeekSummary({ weekEventsByDay }) {
   const weekStart = getStartOfWeek(weekEventsByDay[0][0].eventTime);
   const timersPerDay = weekEventsByDay.map(dayEvents =>
     computeTotalActivityDurations(dayEvents)
@@ -135,7 +129,6 @@ export function WorkWeekSummary({ weekEventsByDay, handleExport }) {
   return (
     <Summary
       title={title}
-      handleExport={handleExport}
       summaryContent={[
         {
           stat: "Jours de travail 💪",

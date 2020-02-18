@@ -9,7 +9,6 @@ import classNames from "classnames";
 import { ACTIVITIES } from "../utils/activities";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { ModalContext } from "../utils/modals";
-import { useStoreSyncedWithLocalStorage } from "../utils/store";
 
 export function ActivitySwitchCard({
   label,

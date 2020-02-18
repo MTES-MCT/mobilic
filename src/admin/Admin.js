@@ -1,21 +1,15 @@
 import React from "react";
 import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import ExitToAppIcon from "@material-ui/core/SvgIcon/SvgIcon";
 import Divider from "@material-ui/core/Divider";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import { useApi } from "../common/utils/api";
 import Button from "@material-ui/core/Button";
-import { ModalContext } from "../common/utils/modals";
 import { loadUserData } from "../common/utils/loadUserData";
-import { formatPersonName } from "../common/utils/coworkers";
 import { UserNameHeader } from "../common/components/UserNameHeader";
 
 export function Admin() {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   const api = useApi();
-  const modals = React.useContext(ModalContext);
 
   React.useEffect(() => {
     loadUserData(api, storeSyncedWithLocalStorage);

@@ -7,7 +7,6 @@ import Box from "@material-ui/core/Box";
 import { ModalContext } from "../utils/modals";
 import { useApi } from "../utils/api";
 import { useStoreSyncedWithLocalStorage } from "../utils/store";
-import useTheme from "@material-ui/core/styles/useTheme";
 
 export function UserNameHeader() {
   const modals = React.useContext(ModalContext);

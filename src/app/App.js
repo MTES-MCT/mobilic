@@ -1,12 +1,7 @@
 import React from "react";
-import {
-  ACTIVITIES,
-  parseActivityPayloadFromBackend
-} from "../common/utils/activities";
+import { parseActivityPayloadFromBackend } from "../common/utils/activities";
 import { groupEventsByDay } from "../common/utils/events";
 import { ScreenWithBottomNavigation } from "./utils/navigation";
-import { ThemeProvider } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
 import { ACTIVITY_LOG_MUTATION, useApi } from "../common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import { loadUserData } from "../common/utils/loadUserData";

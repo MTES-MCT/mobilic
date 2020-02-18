@@ -3,10 +3,8 @@ import Container from "@material-ui/core/Container";
 import { WorkDaySummary } from "../../common/components/WorkTimeSummary";
 import PeopleIcon from "@material-ui/icons/People";
 import PersonIcon from "@material-ui/icons/Person";
-import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import { PlaceHolder } from "../../common/components/PlaceHolder";
-import { shareEvents } from "../../common/utils/events";
 import Typography from "@material-ui/core/Typography";
 import { ModalContext } from "../../common/utils/modals";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
@@ -28,13 +26,15 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
       <Container
         disableGutters
         className="scrollable"
-        style={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
+        style={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+          paddingTop: "2vh"
+        }}
       >
         {latestDayEvents ? (
-          <WorkDaySummary
-            dayEvents={latestDayEvents}
-            handleExport={() => shareEvents([latestDayEvents])}
-          />
+          <WorkDaySummary dayEvents={latestDayEvents} />
         ) : (
           <PlaceHolder>
             <Typography variant="h4">👋</Typography>
