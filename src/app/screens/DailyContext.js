@@ -48,9 +48,11 @@ export function DailyContext({
       ? relevantDayEvents[0]
       : null;
 
-  const comments = storeSyncedWithLocalStorage
-    .comments()
-    .filter(c => c.eventTime >= firstActivityOfTheDay.eventTime);
+  const comments = firstActivityOfTheDay
+    ? storeSyncedWithLocalStorage
+        .comments()
+        .filter(c => c.eventTime >= firstActivityOfTheDay.eventTime)
+    : [];
 
   const team = resolveCurrentTeam(currentActivity, storeSyncedWithLocalStorage);
 
