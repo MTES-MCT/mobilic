@@ -141,7 +141,7 @@ const ApiContext = React.createContext(() => {});
 class Api {
   constructor(
     storeSyncedWithLocalStorage = {},
-    apiHost = window.API_HOST || "http://192.168.1.38:5000",
+    apiHost = process.env.API_HOST || "/api" || "http://192.168.1.38:5000",
     graphqlPath = "/api/graphql",
     apiRootPath = "/api"
   ) {

@@ -7,5 +7,10 @@
       "Content-Security-Policy": "script-src 'self'",
       "X-XSS-Protection": "1; mode=block"
     }
+  },
+  "proxies": {
+    "/api/": {
+      "origin": "${API_HOST}"
+    }
   }
 }
