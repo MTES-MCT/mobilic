@@ -20,7 +20,14 @@ const useStyles = makeStyles({
 function Period({ width, color, className, children = null }) {
   const classes = useStyles({ width, color });
   return (
-    <div className={classNames("timeline-segment", classes.period, className)}>
+    <div
+      className={classNames(
+        "timeline-segment",
+        "flexbox-center",
+        classes.period,
+        className
+      )}
+    >
       {children}
     </div>
   );
@@ -29,7 +36,14 @@ function Period({ width, color, className, children = null }) {
 function Event({ height, className, children = null }) {
   const classes = useStyles({ height });
   return (
-    <div className={classNames("timeline-point", classes.point, className)}>
+    <div
+      className={classNames(
+        "timeline-point",
+        "flexbox-center",
+        classes.point,
+        className
+      )}
+    >
       {children}
     </div>
   );
@@ -45,7 +59,7 @@ export function TimeLine({ dayEvents, endDate }) {
       <Typography variant="h6" className="timeline-title" gutterBottom>
         Évènements de la journée
       </Typography>
-      <div className="timeline-line">
+      <div className="timeline-line flexbox-center">
         {dayEvents.map((event, index) => (
           <React.Fragment key={index}>
             <Event className="timeline-legend hidden" />
@@ -72,7 +86,7 @@ export function TimeLine({ dayEvents, endDate }) {
           </React.Fragment>
         ))}
       </div>
-      <div className="timeline-line">
+      <div className="timeline-line flexbox-center">
         {dayEvents.map((event, index) => (
           <React.Fragment key={index}>
             <Event />
@@ -98,7 +112,7 @@ export function TimeLine({ dayEvents, endDate }) {
           </React.Fragment>
         ))}
       </div>
-      <div className="timeline-line">
+      <div className="timeline-line flexbox-center">
         {dayEvents.map((event, index) => (
           <React.Fragment key={index}>
             <Event className="timeline-legend">

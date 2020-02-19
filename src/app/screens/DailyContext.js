@@ -119,8 +119,9 @@ export function DailyContext({
               primary={
                 team.length === 1
                   ? "En solo"
-                  : `${team.length - 1} coéquipier${team.length > 2 &&
-                      "s"} ${team
+                  : `${team.length - 1} coéquipier${
+                      team.length > 2 ? "s" : ""
+                    } : ${team
                       .filter(
                         tm => tm.id !== storeSyncedWithLocalStorage.userId()
                       )

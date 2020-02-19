@@ -44,8 +44,8 @@ export default function Signup({ setSignUpInsteadOfLogging }) {
 
   return (
     <Container className="landing-container scrollable" margin={2}>
-      <Box style={{ flexShrink: 0 }} m={2}>
-        <Typography variant="h6">Création de compte</Typography>
+      <Box className="header-container">
+        <Box my={1}></Box>
       </Box>
       <form
         className="vertical-form"
@@ -53,6 +53,9 @@ export default function Signup({ setSignUpInsteadOfLogging }) {
         autoComplete="off"
         onSubmit={handleSubmit}
       >
+        <Box my={4}>
+          <Typography variant="h6">Création de compte</Typography>
+        </Box>
         <TextField
           fullWidth
           className="vertical-form-text-input"
@@ -115,7 +118,7 @@ export default function Signup({ setSignUpInsteadOfLogging }) {
             {error}
           </Typography>
         )}
-        <Box m={4}>
+        <Box my={4}>
           <Button
             variant="contained"
             color="primary"

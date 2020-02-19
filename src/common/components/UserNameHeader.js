@@ -20,7 +20,7 @@ export function UserNameHeader({ withCompanyNameBelow = false }) {
       className="header-container"
       style={{ backgroundColor: theme.palette.background.default }}
     >
-      <Box my={1} className="user-name-header">
+      <Box my={1} className="flexbox-space-between">
         <Box style={{ display: "flex", alignItems: "center" }}>
           <Typography noWrap variant="h6">
             {formatPersonName(storeSyncedWithLocalStorage.userInfo())}

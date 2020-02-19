@@ -27,7 +27,7 @@ export function ActivitySwitchCard({
     : "inherit";
   const timerProps = {
     className: classNames("activity-card-timer", {
-      "card-on-focus": onFocus,
+      bold: onFocus,
       hidden: !timer
     }),
     style: { color: color }
@@ -39,7 +39,7 @@ export function ActivitySwitchCard({
           <Typography
             variant="body2"
             className={classNames("activity-card-title", {
-              "card-on-focus": onFocus
+              bold: onFocus
             })}
             style={{ color: color }}
             noWrap

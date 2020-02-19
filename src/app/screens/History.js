@@ -146,7 +146,10 @@ export function History({ previousDaysEventsByDay }) {
   return (
     <Container className="app-container scrollable">
       <AppBar>
-        <Toolbar className="app-header stretch-header-content" disableGutters>
+        <Toolbar
+          className="flexbox-space-between stretch-header-content"
+          disableGutters
+        >
           <Tabs
             value={currentTab}
             onChange={(e, tab) => handlePeriodChange(e, tab, selectedPeriod)}

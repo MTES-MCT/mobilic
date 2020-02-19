@@ -24,7 +24,7 @@ function Summary({ title, summaryContent, timers, alerts }) {
   const theme = useTheme();
   return (
     <div className="unshrinkable">
-      <Box className="summary-card-header">
+      <Box className="flexbox-space-between">
         <Typography className="bold">{title}</Typography>
       </Box>
       <Table>
@@ -39,10 +39,7 @@ function Summary({ title, summaryContent, timers, alerts }) {
                 <Typography variant="body2">{row.stat}</Typography>
               </TableCell>
               <TableCell className="summary-card-table-cell" align="right">
-                <Typography
-                  variant="body2"
-                  className="summary-card-table-cell-value"
-                >
+                <Typography variant="body2" className="bold">
                   {row.value}
                 </Typography>
               </TableCell>
@@ -51,9 +48,9 @@ function Summary({ title, summaryContent, timers, alerts }) {
         </TableBody>
       </Table>
       {timers && (
-        <div className="summary-card-timers">
+        <Box mt={2} className="flexbox-space-between">
           {Object.values(TIMEABLE_ACTIVITIES).map((activity, index) => (
-            <div key={index} className="summary-card-timer">
+            <div key={index} className="summary-card-timer flexbox-center">
               {activity.renderIcon({
                 className: "activity-card-icon",
                 style: { color: theme.palette[activity.name] }
@@ -63,7 +60,7 @@ function Summary({ title, summaryContent, timers, alerts }) {
               </Typography>
             </div>
           ))}
-        </div>
+        </Box>
       )}
       {alerts && (
         <div className="alerts-container">

@@ -38,18 +38,18 @@ export default function Login({ setSignUpInsteadOfLogging }) {
   return (
     <Container className="landing-container scrollable">
       <LogosHeader />
-      <Box my={4}>
-        <Typography variant="h4">👋</Typography>
-        <Typography style={{ fontWeight: "bold" }}>
-          Bienvenue sur MobiLIC !
-        </Typography>
-      </Box>
       <form
         className="vertical-form"
         noValidate
         autoComplete="on"
         onSubmit={handleSubmit}
       >
+        <Box my={4}>
+          <Typography variant="h4">👋</Typography>
+          <Typography style={{ fontWeight: "bold" }}>
+            Bienvenue sur MobiLIC !
+          </Typography>
+        </Box>
         <TextField
           fullWidth
           className="vertical-form-text-input"

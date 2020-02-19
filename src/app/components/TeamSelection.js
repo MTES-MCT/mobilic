@@ -18,6 +18,7 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Checkbox from "@material-ui/core/Checkbox";
 import { formatPersonName } from "../../common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
+import { Box } from "@material-ui/core";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -78,9 +79,9 @@ export function TeamSelectionModal({ open, handleClose, handleContinue }) {
       onClose={() => {}}
       TransitionComponent={Transition}
     >
-      <div style={{ position: "sticky", top: 0, zIndex: 1000 }}>
+      <Box className="header-container">
         <AppBar style={{ position: "relative" }}>
-          <Toolbar className="app-header">
+          <Toolbar className="flexbox-space-between">
             <IconButton edge="start" color="inherit" onClick={handleClose}>
               <ArrowBackIcon />
             </IconButton>
@@ -99,34 +100,36 @@ export function TeamSelectionModal({ open, handleClose, handleContinue }) {
             </Button>
           </Toolbar>
         </AppBar>
-        <form
-          className="new-team-member-form"
-          onSubmit={handleTeamMemberSubmit}
-        >
-          <TextField
-            label="Prénom"
-            className="new-team-member-text-field"
-            variant="outlined"
-            value={newTeamMemberFirstName}
-            onChange={e => setNewTeamMemberFirstName(e.target.value)}
-          />
-          <div style={{ width: "2vw" }} />
-          <TextField
-            label="Nom"
-            variant="outlined"
-            className="new-team-member-text-field"
-            value={newTeamMemberName}
-            onChange={e => setNewTeamMemberName(e.target.value)}
-          />
-          <IconButton
-            disabled={!newTeamMemberName || !newTeamMemberFirstName}
-            type="submit"
+        <Box my={2} ml={1}>
+          <form
+            className="new-team-member-form"
+            onSubmit={handleTeamMemberSubmit}
           >
-            <AddIcon />
-          </IconButton>
-        </form>
-      </div>
-      <List className="coworkers-list">
+            <TextField
+              label="Prénom"
+              className="new-team-member-text-field"
+              variant="outlined"
+              value={newTeamMemberFirstName}
+              onChange={e => setNewTeamMemberFirstName(e.target.value)}
+            />
+            <div style={{ width: "2vw" }} />
+            <TextField
+              label="Nom"
+              variant="outlined"
+              className="new-team-member-text-field"
+              value={newTeamMemberName}
+              onChange={e => setNewTeamMemberName(e.target.value)}
+            />
+            <IconButton
+              disabled={!newTeamMemberName || !newTeamMemberFirstName}
+              type="submit"
+            >
+              <AddIcon />
+            </IconButton>
+          </form>
+        </Box>
+      </Box>
+      <List className="scrollable">
         {updatedCoworkers.map((coworker, index) => [
           <Divider key={2 * index} />,
           <ListItem key={2 * index + 1}>

@@ -9,6 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
+import Box from "@material-ui/core/Box";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -28,9 +29,9 @@ export function MissionSelectionModal({ open, handleClose, handleContinue }) {
       onClose={() => {}}
       TransitionComponent={Transition}
     >
-      <div style={{ position: "sticky", top: 0, zIndex: 1000 }}>
+      <Box className="header-container">
         <AppBar style={{ position: "relative" }}>
-          <Toolbar className="app-header">
+          <Toolbar className="flexbox-space-between">
             <IconButton edge="start" color="inherit" onClick={handleClose}>
               <ArrowBackIcon />
             </IconButton>
@@ -48,7 +49,7 @@ export function MissionSelectionModal({ open, handleClose, handleContinue }) {
             </Button>
           </Toolbar>
         </AppBar>
-      </div>
+      </Box>
       <Container className="day-info-inputs">
         <TextField
           fullWidth

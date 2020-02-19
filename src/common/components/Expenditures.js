@@ -7,7 +7,7 @@ import { EXPENDITURES } from "../utils/expenditures";
 export function Expenditures({ expenditures, pushNewExpenditure }) {
   return (
     <div>
-      <Typography variant="h6" className="expenditures-title">
+      <Typography variant="h6" align="left" className="bold">
         Frais
       </Typography>
       <div className="expenditures-content">
