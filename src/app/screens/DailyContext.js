@@ -81,15 +81,8 @@ export function DailyContext({
   };
 
   return (
-    <Container className="container">
-      <UserNameHeader />
-      {theme.breakpoints.down("md") && (
-        <Box display={{ xs: "block", sm: "block", md: "none" }}>
-          <Typography align="left">
-            Entreprise : {storeSyncedWithLocalStorage.userInfo().companyName}
-          </Typography>
-        </Box>
-      )}
+    <Container className="app-container">
+      <UserNameHeader withCompanyNameBelow={true} />
       <Divider className="full-width-divider" />
       {firstActivityOfTheDay && (
         <List

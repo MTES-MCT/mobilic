@@ -6,9 +6,9 @@ import Button from "@material-ui/core/Button";
 import { useApi, LOGIN_MUTATION } from "../common/utils/api";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
-import { PlaceHolder } from "../common/components/PlaceHolder";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import Box from "@material-ui/core/Box";
+import { LogosHeader } from "../common/components/LogosHeader";
 
 export default function Login({ setSignUpInsteadOfLogging }) {
   const [email, setEmail] = React.useState("");
@@ -37,7 +37,8 @@ export default function Login({ setSignUpInsteadOfLogging }) {
 
   return (
     <Container className="landing-container scrollable">
-      <Box m={4}>
+      <LogosHeader />
+      <Box my={4}>
         <Typography variant="h4">👋</Typography>
         <Typography style={{ fontWeight: "bold" }}>
           Bienvenue sur MobiLIC !
@@ -78,7 +79,7 @@ export default function Login({ setSignUpInsteadOfLogging }) {
             {error}
           </Typography>
         )}
-        <Box m={4}>
+        <Box my={4}>
           <Button
             variant="contained"
             color="primary"

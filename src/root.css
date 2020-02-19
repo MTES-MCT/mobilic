@@ -8,6 +8,10 @@
   :root {
     --bottom-nav-bar-height: 0px;
   }
+
+  .nav-bar-container {
+    border-top: none !important;
+  }
 }
 
 .Root {
@@ -17,16 +21,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-x: hidden;
 }
 
-.container {
+.app-container {
   padding-top: 2vh;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
   position: fixed;
   bottom: calc(var(--bottom-nav-bar-height) + 2vh);
   top: 0;
+  overflow-x: hidden;
 }
 
 .activity-grid-container {
@@ -258,7 +263,8 @@
 .full-width-divider {
   position: relative;
   left: -100px;
-  width: calc(100vw + 100px);
+  width: calc(100vw + 200px);
+  overflow: hidden;
 }
 
 .picker-container {
@@ -300,6 +306,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-x: hidden;
 }
 
 .vertical-form {
@@ -316,7 +323,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2vh;
 }
 
 .day-info-inputs {
@@ -339,4 +345,28 @@
 .new-lines-on-overflow {
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+.logos {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.header-container {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.marianne-logo {
+  height: 50px !important;
+  width: 80px !important;
+  margin-right: 16px;
+}
+
+.betagouv-text {
+  height: 60px !important;
+  width: 120px !important;
 }

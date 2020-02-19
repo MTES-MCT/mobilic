@@ -62,7 +62,7 @@ export function CurrentActivity({
   };
 
   return (
-    <Container className="container space-between">
+    <Container className="app-container space-between">
       <TimeLine dayEvents={currentDayActivityEvents} />
       <Divider className="full-width-divider" />
       <ActivitySwitchGrid

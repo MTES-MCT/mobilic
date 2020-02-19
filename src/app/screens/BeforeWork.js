@@ -20,9 +20,8 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
 
   return (
-    <Container className="container">
+    <Container className="app-container">
       <UserNameHeader />
-      <Divider className="full-width-divider" />
       <Container
         disableGutters
         className="scrollable"

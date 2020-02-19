@@ -21,7 +21,6 @@ export function Admin() {
   return (
     <Container style={{ height: "100%" }}>
       <UserNameHeader />
-      <Divider className="full-width-divider" />
       <Container className="admin-container">
         <Button
           variant="contained"

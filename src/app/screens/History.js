@@ -144,7 +144,7 @@ export function History({ previousDaysEventsByDay }) {
   }
 
   return (
-    <Container className="container scrollable">
+    <Container className="app-container scrollable">
       <AppBar>
         <Toolbar className="app-header stretch-header-content" disableGutters>
           <Tabs
