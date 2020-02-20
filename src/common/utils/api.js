@@ -142,10 +142,9 @@ class Api {
   constructor(
     storeSyncedWithLocalStorage = {},
     apiHost = process.env.API_HOST || "/api" || "http://192.168.1.38:5000",
-    graphqlPath = "/api/graphql",
-    apiRootPath = "/api"
+    graphqlPath = "/graphql"
   ) {
-    this.apiUrl = `${apiHost}${apiRootPath}`;
+    this.apiHost = apiHost;
     this.storeSyncedWithLocalStorage = storeSyncedWithLocalStorage;
     this.apolloClient = new ApolloClient({
       uri: `${apiHost}${graphqlPath}`,
@@ -166,6 +165,7 @@ class Api {
           graphQLErrors.length > 0 &&
           graphQLErrors.some(error => error.message === "Authentication error")
         ) {
+          console.log("onerror");
           this.requestQueue = [];
           this.logout();
         }
@@ -180,12 +180,14 @@ class Api {
       const runQuery = async () => {
         this.requestLock = true;
         let response, error;
-        await this._refreshTokenIfNeeded();
-        try {
-          response = await func();
-        } catch (err) {
-          error = err;
-          console.log(`Error accessing API : ${err}`);
+        const isTokenValidOrRenewedOrNone = await this._refreshTokenIfNeeded();
+        if (isTokenValidOrRenewedOrNone) {
+          try {
+            response = await func();
+          } catch (err) {
+            error = err;
+            console.log(`Error accessing API : ${err}`);
+          }
         }
         if (this.requestQueue.length === 0) {
           this.requestLock = false;
@@ -212,7 +214,7 @@ class Api {
 
   async httpQuery(method, endpoint, options = {}) {
     return this._query(() => {
-      const url = `${this.apiUrl}${endpoint}`;
+      const url = `${this.apiHost}${endpoint}`;
       if (!options.headers) options.headers = {};
       options.headers.Authorization = `Bearer ${this.storeSyncedWithLocalStorage.accessToken()}`;
       options.method = method;
@@ -235,11 +237,13 @@ class Api {
             refreshResponse.data.auth.refresh
           );
         }
+        return true;
       } catch (err) {
         console.log(`Error refreshing tokens : ${err}`);
-        return new Promise(resolve => setTimeout(resolve, 3000));
+        return false;
       }
     }
+    return true;
   }
 
   logout() {
