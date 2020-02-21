@@ -63,12 +63,12 @@ function Summary({ title, summaryContent, timers, alerts }) {
         </Box>
       )}
       {alerts && (
-        <div className="alerts-container">
+        <Box mt={2}>
           <Divider />
           {alerts.map((alert, index) => (
             <RegulationCheck key={index} check={alert} />
           ))}
-        </div>
+        </Box>
       )}
     </div>
   );

@@ -226,30 +226,17 @@
 }
 
 .days {
-  overflow-y: scroll;
-  margin-top: 5vh !important;
-  margin-left: -16px !important;
   width: 100vw;
 }
 
 @media screen and (min-width: 600px) {
   .days {
-    margin-left: -24px !important;
+    margin-left: -8px !important;
   }
 }
 
 .regulation-check {
   display: flex;
-  padding: 6px 0;
-}
-
-.regulation-check-message {
-  text-align: left;
-  padding-left: 8px;
-}
-
-.alerts-container {
-  margin-top: 3vh;
 }
 
 .landing-container {

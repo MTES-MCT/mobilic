@@ -83,7 +83,7 @@ export function DailyContext({
   };
 
   return (
-    <Container className="app-container">
+    <Container className="app-container" maxWidth={false}>
       <UserNameHeader withCompanyNameBelow={true} />
       <Divider className="full-width-divider" />
       {firstActivityOfTheDay && (

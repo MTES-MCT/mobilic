@@ -20,7 +20,7 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
 
   return (
-    <Container className="app-container">
+    <Container className="app-container" maxWidth={false}>
       <UserNameHeader />
       <Container
         disableGutters
@@ -31,6 +31,7 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
           flexDirection: "column",
           paddingTop: "2vh"
         }}
+        maxWidth={false}
       >
         {latestDayEvents ? (
           <WorkDaySummary dayEvents={latestDayEvents} />

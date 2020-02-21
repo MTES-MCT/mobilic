@@ -23,6 +23,7 @@ import List from "@material-ui/core/List";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import { TimeLine } from "../../common/components/Timeline";
+import Box from "@material-ui/core/Box";
 
 const tabs = {
   day: {
@@ -45,12 +46,12 @@ const tabs = {
               />
             </CardContent>
           </Card>
-          <div style={{ marginTop: "3vh" }}>
+          <Box mt={3}>
             <TimeLine
               dayEvents={dayEvents.slice(0, dayEvents.length - 1)}
               endDate={dayEnd}
             />
-          </div>
+          </Box>
         </div>
       );
     }
@@ -70,21 +71,23 @@ const tabs = {
             <WorkWeekSummary weekEventsByDay={eventsByDay} />
           </CardContent>
         </Card>
-        <List className="days">
-          {eventsByDay.map((dayEvents, index) => [
-            <Divider key={2 * index} />,
-            <ListItem
-              button
-              key={2 * index + 1}
-              onClick={handleDayClick(dayEvents[0].eventTime)}
-            >
-              <ListItemText
-                primaryTypographyProps={{ noWrap: true, display: "block" }}
-                primary={prettyFormatDay(dayEvents[0].eventTime)}
-              />
-            </ListItem>
-          ])}
-        </List>
+        <Box mt={3} ml={-2}>
+          <List className="days scrollable">
+            {eventsByDay.map((dayEvents, index) => [
+              <Divider key={2 * index} />,
+              <ListItem
+                button
+                key={2 * index + 1}
+                onClick={handleDayClick(dayEvents[0].eventTime)}
+              >
+                <ListItemText
+                  primaryTypographyProps={{ noWrap: true, display: "block" }}
+                  primary={prettyFormatDay(dayEvents[0].eventTime)}
+                />
+              </ListItem>
+            ])}
+          </List>
+        </Box>
       </div>
     )
   }
@@ -144,7 +147,7 @@ export function History({ previousDaysEventsByDay }) {
   }
 
   return (
-    <Container className="app-container scrollable">
+    <Container className="app-container scrollable" maxWidth={false}>
       <AppBar>
         <Toolbar
           className="flexbox-space-between stretch-header-content"

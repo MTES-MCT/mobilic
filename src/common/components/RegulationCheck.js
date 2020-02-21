@@ -24,20 +24,18 @@ export function RegulationCheck({ check }) {
     emoji = "😢";
   }
   return (
-    <Box color={color} className="regulation-check">
+    <Box color={color} py={1} className="regulation-check">
       {icon({
         className: "regulation-check-icon",
         color: "inherit",
         fontSize: "small"
       })}
-      <Typography
-        variant="body2"
-        color="inherit"
-        className="regulation-check-message"
-      >
-        {check.message}
-        <span>{` ${emoji}`}</span>
-      </Typography>
+      <Box pl={1}>
+        <Typography align="left" variant="body2" color="inherit">
+          {check.message}
+          <span>{` ${emoji}`}</span>
+        </Typography>
+      </Box>
     </Box>
   );
 }

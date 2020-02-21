@@ -47,7 +47,7 @@ export default function Signup({ setSignUpInsteadOfLogging }) {
   };
 
   return (
-    <Container className="landing-container scrollable" margin={2}>
+    <Container className="landing-container scrollable" maxWidth={false}>
       <Header my={1} className="flexbox-flex-start">
         <IconButton
           edge="start"

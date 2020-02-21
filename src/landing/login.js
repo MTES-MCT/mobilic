@@ -36,7 +36,7 @@ export default function Login({ setSignUpInsteadOfLogging }) {
   };
 
   return (
-    <Container className="landing-container scrollable">
+    <Container className="landing-container scrollable" maxWidth={false}>
       <LogosHeader />
       <form
         className="vertical-form"
@@ -99,19 +99,21 @@ export default function Login({ setSignUpInsteadOfLogging }) {
               />
             )}
           </Button>
-          <Typography style={{ marginTop: "2vh" }}>
-            Pas encore de compte ?{" "}
-            <Link
-              href="/"
-              onClick={e => {
-                e.preventDefault();
-                setSignUpInsteadOfLogging(true);
-              }}
-            >
-              {" "}
-              Je m'inscris
-            </Link>
-          </Typography>
+          <Box mt={2}>
+            <Typography>
+              Pas encore de compte ?{" "}
+              <Link
+                href="/"
+                onClick={e => {
+                  e.preventDefault();
+                  setSignUpInsteadOfLogging(true);
+                }}
+              >
+                {" "}
+                Je m'inscris
+              </Link>
+            </Typography>
+          </Box>
         </Box>
       </form>
     </Container>
