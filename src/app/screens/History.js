@@ -27,7 +27,6 @@ import Box from "@material-ui/core/Box";
 
 const tabs = {
   day: {
-    screen: props => null,
     label: "Jour",
     value: "day",
     periodSize: 1,
@@ -57,7 +56,6 @@ const tabs = {
     }
   },
   week: {
-    screen: props => null,
     label: "Semaine",
     value: "week",
     periodSize: 2,
