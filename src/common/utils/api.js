@@ -141,7 +141,7 @@ const ApiContext = React.createContext(() => {});
 class Api {
   constructor(
     storeSyncedWithLocalStorage = {},
-    apiHost = process.env.API_HOST || "/api" || "http://192.168.1.38:5000",
+    apiHost = process.env.REACT_APP_API_HOST || "/api",
     graphqlPath = "/graphql"
   ) {
     this.apiHost = apiHost;
@@ -165,8 +165,8 @@ class Api {
           graphQLErrors.length > 0 &&
           graphQLErrors.some(error => error.message === "Authentication error")
         ) {
-          console.log("onerror");
           this.requestQueue = [];
+          this.requestLock = false;
           this.logout();
         }
       }
