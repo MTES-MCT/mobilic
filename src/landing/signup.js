@@ -131,7 +131,7 @@ export default function Signup({ setSignUpInsteadOfLogging }) {
             {error}
           </Typography>
         )}
-        <Box my={4}>
+        <Box mt={4} mb={8}>
           <Button
             variant="contained"
             color="primary"
