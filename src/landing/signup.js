@@ -7,6 +7,10 @@ import { useApi, USER_SIGNUP_MUTATION } from "../common/utils/api";
 import Typography from "@material-ui/core/Typography";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import Box from "@material-ui/core/Box";
+import Divider from "@material-ui/core/Divider";
+import IconButton from "@material-ui/core/IconButton";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import { Header } from "../common/components/Header";
 
 export default function Signup({ setSignUpInsteadOfLogging }) {
   const [firstName, setFirstName] = React.useState("");
@@ -44,9 +48,18 @@ export default function Signup({ setSignUpInsteadOfLogging }) {
 
   return (
     <Container className="landing-container scrollable" margin={2}>
-      <Box className="header-container">
-        <Box my={1}></Box>
-      </Box>
+      <Header my={1} className="flexbox-flex-start">
+        <IconButton
+          edge="start"
+          color="primary"
+          onClick={() => setSignUpInsteadOfLogging(false)}
+        >
+          <ArrowBackIcon />
+        </IconButton>
+        <Box ml={1}>
+          <Typography>J'ai déjà un compte</Typography>
+        </Box>
+      </Header>
       <form
         className="vertical-form"
         noValidate

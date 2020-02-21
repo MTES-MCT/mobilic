@@ -289,7 +289,7 @@
   overflow-wrap: break-word;
 }
 
-.logos {
+.flexbox-flex-start {
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -305,7 +305,6 @@
 .marianne-logo {
   height: 50px !important;
   width: 80px !important;
-  margin-right: 16px;
 }
 
 .betagouv-text {
