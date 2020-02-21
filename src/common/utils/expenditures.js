@@ -5,7 +5,7 @@ export const EXPENDITURES = {
   night_meal: {
     label: "repas nuit"
   },
-  night_away: {
+  sleep_over: {
     label: "découchage"
   },
   snack: {
