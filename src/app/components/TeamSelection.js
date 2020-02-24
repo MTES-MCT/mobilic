@@ -19,6 +19,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import { formatPersonName } from "../../common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 import { Box } from "@material-ui/core";
+import Container from "@material-ui/core/Container";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -86,18 +87,9 @@ export function TeamSelectionModal({ open, handleClose, handleContinue }) {
               <ArrowBackIcon />
             </IconButton>
             <Typography variant="h6">Equipe du jour</Typography>
-            <Button
-              autoFocus
-              color="inherit"
-              onClick={async () => {
-                storeSyncedWithLocalStorage.setCoworkers(
-                  updatedCoworkers,
-                  handleContinue
-                );
-              }}
-            >
-              OK
-            </Button>
+            <IconButton edge="end" color="inherit" className="hidden">
+              <ArrowBackIcon />
+            </IconButton>
           </Toolbar>
         </AppBar>
         <Box my={2} ml={1}>
@@ -149,6 +141,21 @@ export function TeamSelectionModal({ open, handleClose, handleContinue }) {
           </ListItem>
         ])}
       </List>
+      <Box style={{ height: "5vh", flexGrow: 1 }} />
+      <Box className="cta-container" mx={2} mb={2}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={async () => {
+            storeSyncedWithLocalStorage.setCoworkers(
+              updatedCoworkers,
+              handleContinue
+            );
+          }}
+        >
+          Continuer
+        </Button>
+      </Box>
     </Dialog>
   );
 }

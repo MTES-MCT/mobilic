@@ -61,7 +61,7 @@ export default function Signup({ setSignUpInsteadOfLogging }) {
         </Box>
       </Header>
       <form
-        className="vertical-form"
+        className="vertical-form centered-with-margin"
         noValidate
         autoComplete="off"
         onSubmit={handleSubmit}

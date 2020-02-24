@@ -24,6 +24,14 @@
   overflow-x: hidden;
 }
 
+.stretch-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  align-items: stretch;
+  justify-content: space-between;
+}
+
 .app-container {
   padding-top: 2vh;
   display: flex;
@@ -146,14 +154,17 @@
   background: linear-gradient(to right, blue, white);
 }
 
-.start-buttons-container {
+.cta-container {
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
   position: sticky;
+  left: 0;
+  right: 0;
   bottom: 0;
-  z-index: 5000;
+  z-index: 2000;
+  flex-shrink: 0;
 }
 
 .flexbox-space-between {
@@ -249,7 +260,10 @@
 
 .vertical-form {
   max-width: 400px;
-  width: 90%;
+  width: 90% !important;
+}
+
+.centered-with-margin {
   margin: auto;
 }
 
@@ -258,9 +272,7 @@
 }
 
 .day-info-inputs {
-  height: 60%;
-  max-width: 400px;
-  width: 90%;
+  min-height: 60vh !important;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;

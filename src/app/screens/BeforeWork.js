@@ -11,6 +11,8 @@ import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 import Divider from "@material-ui/core/Divider";
 import { ACTIVITIES } from "../../common/utils/activities";
 import { UserNameHeader } from "../../common/components/UserNameHeader";
+import Box from "@material-ui/core/Box";
+import Dialog from "@material-ui/core/Dialog";
 
 export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
   const latestDayEvents =
@@ -24,14 +26,9 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
       <UserNameHeader />
       <Container
         disableGutters
-        className="scrollable"
-        style={{
-          flexGrow: 1,
-          display: "flex",
-          flexDirection: "column",
-          paddingTop: "2vh"
-        }}
+        className="stretch-container scrollable"
         maxWidth={false}
+        style={{ paddingTop: "2vh" }}
       >
         {latestDayEvents ? (
           <WorkDaySummary dayEvents={latestDayEvents} />
@@ -43,9 +40,8 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
             </Typography>
           </PlaceHolder>
         )}
-        <div style={{ height: "5vh", flexGrow: 1 }} />
       </Container>
-      <div className="start-buttons-container unshrinkable">
+      <Box className="cta-container">
         <Button
           variant="contained"
           color="primary"
@@ -119,7 +115,7 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
         >
           Commencer en équipe
         </Button>
-      </div>
+      </Box>
     </Container>
   );
 }

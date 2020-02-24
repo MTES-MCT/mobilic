@@ -36,35 +36,40 @@ export function MissionSelectionModal({ open, handleClose, handleContinue }) {
               <ArrowBackIcon />
             </IconButton>
             <Typography variant="h6">Infos du jour</Typography>
-            <Button
-              autoFocus
-              color="inherit"
-              disabled={!mission || !vehicleRegistrationNumber}
-              onClick={async () => {
-                const payLoad = { mission, vehicleRegistrationNumber };
-                handleContinue(payLoad);
-              }}
-            >
-              OK
-            </Button>
+            <IconButton edge="end" color="inherit" className="hidden">
+              <ArrowBackIcon />
+            </IconButton>
           </Toolbar>
         </AppBar>
       </Box>
-      <Container className="day-info-inputs">
-        <TextField
-          fullWidth
-          label="Nom de la mission"
-          className="day-info-text-field"
-          value={mission}
-          onChange={e => setMission(e.target.value)}
-        />
-        <TextField
-          fullWidth
-          label="Immatriculation du véhicule"
-          className="day-info-text-field"
-          value={vehicleRegistrationNumber}
-          onChange={e => setVehicleRegistrationNumber(e.target.value)}
-        />
+      <Container className="stretch-container">
+        <Container className="day-info-inputs vertical-form" disableGutters>
+          <TextField
+            fullWidth
+            label="Nom de la mission"
+            value={mission}
+            onChange={e => setMission(e.target.value)}
+          />
+          <TextField
+            fullWidth
+            label="Immatriculation du véhicule"
+            value={vehicleRegistrationNumber}
+            onChange={e => setVehicleRegistrationNumber(e.target.value)}
+          />
+        </Container>
+        <Box className="cta-container" mb={2}>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={!mission || !vehicleRegistrationNumber}
+            onClick={async () => {
+              const payLoad = { mission, vehicleRegistrationNumber };
+              handleContinue(payLoad);
+            }}
+          >
+            Continuer
+          </Button>
+        </Box>
       </Container>
     </Dialog>
   );

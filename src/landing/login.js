@@ -39,7 +39,7 @@ export default function Login({ setSignUpInsteadOfLogging }) {
     <Container className="landing-container scrollable" maxWidth={false}>
       <LogosHeader />
       <form
-        className="vertical-form"
+        className="vertical-form centered-with-margin"
         noValidate
         autoComplete="on"
         onSubmit={handleSubmit}
