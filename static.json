@@ -5,7 +5,8 @@
     "/**": {
       "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
       "Content-Security-Policy": "script-src 'self'",
-      "X-XSS-Protection": "1; mode=block"
+      "X-XSS-Protection": "1; mode=block",
+      "Cache-Control": "no-cache; max-age=0"
     }
   },
   "proxies": {
