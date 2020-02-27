@@ -2,6 +2,7 @@ import React from "react";
 import ApolloClient, { gql } from "apollo-boost";
 import jwtDecode from "jwt-decode";
 import { useStoreSyncedWithLocalStorage } from "./store";
+import { isGraphQLParsingError } from "./errors";
 
 const REFRESH_MUTATION = gql`
   mutation refreshToken {
@@ -175,7 +176,7 @@ class Api {
     this.requestLock = false;
   }
 
-  async _query(func) {
+  async _nonConcurrentQuery(func) {
     return new Promise((resolve, reject) => {
       const runQuery = async () => {
         this.requestLock = true;
@@ -203,17 +204,19 @@ class Api {
   }
 
   async graphQlQuery(query, variables) {
-    return this._query(() => this.apolloClient.query({ query, variables }));
+    return this._nonConcurrentQuery(() =>
+      this.apolloClient.query({ query, variables })
+    );
   }
 
   async graphQlMutate(query, variables) {
-    return this._query(() =>
+    return this._nonConcurrentQuery(() =>
       this.apolloClient.mutate({ mutation: query, variables: variables })
     );
   }
 
   async httpQuery(method, endpoint, options = {}) {
-    return this._query(() => {
+    return this._nonConcurrentQuery(() => {
       const url = `${this.apiHost}${endpoint}`;
       if (!options.headers) options.headers = {};
       options.headers.Authorization = `Bearer ${this.storeSyncedWithLocalStorage.accessToken()}`;
@@ -244,6 +247,35 @@ class Api {
       }
     }
     return true;
+  }
+
+  submitEvents(query, storeEntry, handleSubmitResponse) {
+    return this._nonConcurrentQuery(async () => {
+      const eventsPendingSubmission = await this.storeSyncedWithLocalStorage.markAndGetEventsForSubmission(
+        storeEntry
+      );
+      if (eventsPendingSubmission.length === 0) return;
+      try {
+        const submit = await this.apolloClient.mutate({
+          mutation: query,
+          variables: {
+            data: eventsPendingSubmission.map(e => {
+              const { isBeingSubmitted, ...event } = e;
+              return event;
+            })
+          }
+        });
+        await handleSubmitResponse(submit);
+      } catch (err) {
+        if (isGraphQLParsingError(err)) {
+          this.storeSyncedWithLocalStorage.removeEventsAfterFailedSubmission(
+            storeEntry
+          );
+        } else {
+          this.storeSyncedWithLocalStorage.removeSubmissionMark(storeEntry);
+        }
+      }
+    });
   }
 
   logout() {

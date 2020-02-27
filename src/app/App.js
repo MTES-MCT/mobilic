@@ -55,34 +55,16 @@ function App() {
       mission,
       vehicleRegistrationNumber,
       driverIdx,
-      async () => {
-        const activitiesToSubmit = storeSyncedWithLocalStorage.activitiesPendingSubmission();
-        try {
-          const activitySubmit = await api.graphQlMutate(
-            ACTIVITY_LOG_MUTATION,
-            { data: activitiesToSubmit }
-          );
-          const activities = activitySubmit.data.logActivities.activities;
-          storeSyncedWithLocalStorage.setActivities(
-            activities.map(parseActivityPayloadFromBackend)
-          );
-          const coworkers = activitySubmit.data.logActivities.company.users;
+      () =>
+        api.submitEvents(ACTIVITY_LOG_MUTATION, "activities", apiResponse => {
+          const activities = apiResponse.data.logActivities.activities;
+          const coworkers = apiResponse.data.logActivities.company.users;
           storeSyncedWithLocalStorage.setCoworkers(coworkers);
-        } catch (err) {
-          if (isGraphQLParsingError(err)) {
-            storeSyncedWithLocalStorage.setActivities(
-              storeSyncedWithLocalStorage
-                .activities()
-                .filter(
-                  activity =>
-                    !activitiesToSubmit
-                      .map(a => a.eventTime)
-                      .includes(activity.eventTime)
-                )
-            );
-          }
-        }
-      }
+          return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+            activities.map(parseActivityPayloadFromBackend),
+            "activities"
+          );
+        })
     );
   };
 

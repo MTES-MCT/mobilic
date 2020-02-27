@@ -46,16 +46,69 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     });
   }
 
-  setItems = (itemValueMap, callback = () => {}) =>
-    this.setState(itemValueMap, () => {
-      Object.keys(itemValueMap).forEach(item => {
+  _setState = (stateUpdate, fieldsToSync, callback = () => {}) =>
+    this.setState(stateUpdate, () => {
+      fieldsToSync.forEach(field => {
         localStorage.setItem(
-          item,
-          this.mapper[item].serialize(itemValueMap[item])
+          field,
+          this.mapper[field].serialize(this.state[field])
         );
       });
       callback();
     });
+
+  setItems = (itemValueMap, callback = () => {}) =>
+    this._setState(itemValueMap, Object.keys(itemValueMap), callback);
+
+  pushEvent = (event, arrayField, callback = () => {}) =>
+    this._setState(
+      prevState => ({ [arrayField]: [...prevState[arrayField], event] }),
+      [arrayField],
+      callback
+    );
+
+  updateAllSubmittedEvents = (eventsFromApi, arrayField) =>
+    this._setState(
+      prevState => ({
+        [arrayField]: [
+          ...eventsFromApi,
+          ...prevState[arrayField].filter(e => !e.isBeingSubmitted && !e.id)
+        ]
+      }),
+      [arrayField]
+    );
+
+  markAndGetEventsForSubmission = arrayField =>
+    new Promise(resolve => {
+      this._setState(
+        prevState => ({
+          [arrayField]: prevState[arrayField].map(e =>
+            e.id ? e : { ...e, isBeingSubmitted: true }
+          )
+        }),
+        [arrayField],
+        () => resolve(this.state[arrayField].filter(e => e.isBeingSubmitted))
+      );
+    });
+
+  removeSubmissionMark = arrayField =>
+    this._setState(
+      prevState => ({
+        [arrayField]: prevState[arrayField].map(e => ({
+          ...e,
+          isBeingSubmitted: false
+        }))
+      }),
+      [arrayField]
+    );
+
+  removeEventsAfterFailedSubmission = arrayField =>
+    this._setState(
+      prevState => ({
+        [arrayField]: prevState[arrayField].filter(e => !e.isBeingSubmitted)
+      }),
+      [arrayField]
+    );
 
   removeItems = items => {
     const itemValueMap = {};
@@ -96,17 +149,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       callback
     );
 
-  pushNewCoworkers = coworkers =>
-    this.setItems({
-      coworkers: [...this.state.coworkers, ...coworkers]
-    });
-
-  coworkersPendingSubmission = () => this.state.coworkers.filter(cw => !cw.id);
-
-  activitiesPendingSubmission = () => this.state.activities.filter(a => !a.id);
-
-  setActivities = activities => this.setItems({ activities });
-
   pushNewActivity = (
     activityType,
     team,
@@ -128,60 +170,38 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     };
     if (driverIdx) newActivity.driverIdx = driverIdx;
 
-    this.setItems(
-      {
-        activities: [...this.state.activities, newActivity]
-      },
-      callback
-    );
+    this.pushEvent(newActivity, "activities", callback);
   };
 
-  setExpenditures = expenditures => this.setItems({ expenditures });
-
   pushNewExpenditure = (expenditureType, team, callback = () => {}) =>
-    this.setItems(
+    this.pushEvent(
       {
-        expenditures: [
-          ...this.state.expenditures,
-          {
-            type: expenditureType,
-            eventTime: Date.now(),
-            team: team.map(tm => ({
-              id: tm.id,
-              firstName: tm.firstName,
-              lastName: tm.lastName
-            }))
-          }
-        ]
+        type: expenditureType,
+        eventTime: Date.now(),
+        team: team.map(tm => ({
+          id: tm.id,
+          firstName: tm.firstName,
+          lastName: tm.lastName
+        }))
       },
+      "expenditures",
       callback
     );
-
-  expendituresPendingSubmission = () =>
-    this.state.expenditures.filter(e => !e.id);
-
-  setComments = comments => this.setItems({ comments });
 
   pushNewComment = (content, team, callback = () => {}) =>
-    this.setItems(
+    this.pushEvent(
       {
-        comments: [
-          ...this.state.comments,
-          {
-            content,
-            eventTime: Date.now(),
-            team: team.map(tm => ({
-              id: tm.id,
-              firstName: tm.firstName,
-              lastName: tm.lastName
-            }))
-          }
-        ]
+        content,
+        eventTime: Date.now(),
+        team: team.map(tm => ({
+          id: tm.id,
+          firstName: tm.firstName,
+          lastName: tm.lastName
+        }))
       },
+      "comments",
       callback
     );
-
-  commentsPendingSubmission = () => this.state.comments.filter(e => !e.id);
 
   render() {
     return (
@@ -198,20 +218,17 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             userInfo: () => ({ id: this.state.userId, ...this.state.userInfo }),
             coworkers: () => this.state.coworkers,
             setCoworkers: this.setCoworkers,
-            pushNewCoworkers: this.pushNewCoworkers,
             activities: () => this.state.activities,
-            setActivities: this.setActivities,
             pushNewActivity: this.pushNewActivity,
-            coworkersPendingSubmission: this.coworkersPendingSubmission,
-            activitiesPendingSubmission: this.activitiesPendingSubmission,
             expenditures: () => this.state.expenditures,
-            setExpenditures: this.setExpenditures,
             pushNewExpenditure: this.pushNewExpenditure,
-            expendituresPendingSubmission: this.expendituresPendingSubmission,
             comments: () => this.state.comments,
-            setComments: this.setComments,
             pushNewComment: this.pushNewComment,
-            commentsPendingSubmission: this.commentsPendingSubmission
+            updateAllSubmittedEvents: this.updateAllSubmittedEvents,
+            markAndGetEventsForSubmission: this.markAndGetEventsForSubmission,
+            removeSubmissionMark: this.removeSubmissionMark,
+            removeEventsAfterFailedSubmission: this
+              .removeEventsAfterFailedSubmission
           }}
         >
           {this.props.children}

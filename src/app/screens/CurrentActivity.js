@@ -28,36 +28,18 @@ export function CurrentActivity({
   const team = resolveCurrentTeam(currentActivity, storeSyncedWithLocalStorage);
 
   const pushNewExpenditure = expenditureType => {
-    storeSyncedWithLocalStorage.pushNewExpenditure(
-      expenditureType,
-      team,
-      async () => {
-        const expendituresToSubmit = storeSyncedWithLocalStorage.expendituresPendingSubmission();
-        try {
-          const expendituresSubmit = await api.graphQlMutate(
-            EXPENDITURE_LOG_MUTATION,
-            { data: expendituresToSubmit }
+    storeSyncedWithLocalStorage.pushNewExpenditure(expenditureType, team, () =>
+      api.submitEvents(
+        EXPENDITURE_LOG_MUTATION,
+        "expenditures",
+        apiResponse => {
+          const expenditures = apiResponse.data.logExpenditures.expenditures;
+          return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+            expenditures.map(parseExpenditureFromBackend),
+            "expenditures"
           );
-          const expenditures =
-            expendituresSubmit.data.logExpenditures.expenditures;
-          storeSyncedWithLocalStorage.setExpenditures(
-            expenditures.map(parseExpenditureFromBackend)
-          );
-        } catch (err) {
-          if (isGraphQLParsingError(err)) {
-            storeSyncedWithLocalStorage.setExpenditures(
-              storeSyncedWithLocalStorage
-                .expenditures()
-                .filter(
-                  expenditure =>
-                    !expendituresToSubmit
-                      .map(e => e.eventTime)
-                      .includes(expenditure.eventTime)
-                )
-            );
-          }
         }
-      }
+      )
     );
   };
 

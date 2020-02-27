@@ -57,29 +57,15 @@ export function DailyContext({
   const team = resolveCurrentTeam(currentActivity, storeSyncedWithLocalStorage);
 
   const pushNewComment = content => {
-    storeSyncedWithLocalStorage.pushNewComment(content, team, async () => {
-      const commentsToSubmit = storeSyncedWithLocalStorage.commentsPendingSubmission();
-      try {
-        const commentsSubmit = await api.graphQlMutate(COMMENT_LOG_MUTATION, {
-          data: commentsToSubmit
-        });
-        const comments = commentsSubmit.data.logComments.comments;
-        storeSyncedWithLocalStorage.setComments(comments);
-      } catch (err) {
-        if (isGraphQLParsingError(err)) {
-          storeSyncedWithLocalStorage.setComments(
-            storeSyncedWithLocalStorage
-              .comments()
-              .filter(
-                comment =>
-                  !commentsToSubmit
-                    .map(c => c.eventTime)
-                    .includes(comment.eventTime)
-              )
-          );
-        }
-      }
-    });
+    storeSyncedWithLocalStorage.pushNewComment(content, team, () =>
+      api.submitEvents(COMMENT_LOG_MUTATION, "comments", apiResponse => {
+        const comments = apiResponse.data.logComments.comments;
+        return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+          comments,
+          "comments"
+        );
+      })
+    );
   };
 
   return (

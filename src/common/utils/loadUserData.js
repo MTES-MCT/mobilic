@@ -23,24 +23,19 @@ export async function loadUserData(api, storeSyncedWithLocalStorage) {
       companyId: company.id,
       companyName: company.name
     });
-    storeSyncedWithLocalStorage.setCoworkers(
-      company.users.concat(
-        storeSyncedWithLocalStorage.coworkersPendingSubmission()
-      )
+    storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+      company.users.filter(u => u.id !== storeSyncedWithLocalStorage.userId()),
+      "coworkers"
     );
-    storeSyncedWithLocalStorage.setActivities(
-      parsedActivities.concat(
-        storeSyncedWithLocalStorage.activitiesPendingSubmission()
-      )
+    storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+      parsedActivities,
+      "activities"
     );
-    storeSyncedWithLocalStorage.setExpenditures(
-      expenditures.concat(
-        storeSyncedWithLocalStorage.expendituresPendingSubmission()
-      )
+    storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+      expenditures,
+      "expenditures"
     );
-    storeSyncedWithLocalStorage.setComments(
-      comments.concat(storeSyncedWithLocalStorage.commentsPendingSubmission())
-    );
+    storeSyncedWithLocalStorage.updateAllSubmittedEvents(comments, "comments");
   } catch (err) {
     console.log(err);
   }
