@@ -8,11 +8,9 @@ import { PlaceHolder } from "../../common/components/PlaceHolder";
 import Typography from "@material-ui/core/Typography";
 import { ModalContext } from "../../common/utils/modals";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
-import Divider from "@material-ui/core/Divider";
 import { ACTIVITIES } from "../../common/utils/activities";
 import { UserNameHeader } from "../../common/components/UserNameHeader";
 import Box from "@material-ui/core/Box";
-import Dialog from "@material-ui/core/Dialog";
 
 export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
   const latestDayEvents =

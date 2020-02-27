@@ -5,7 +5,6 @@ import { ScreenWithBottomNavigation } from "./utils/navigation";
 import { ACTIVITY_LOG_MUTATION, useApi } from "../common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import { loadUserData } from "../common/utils/loadUserData";
-import { isGraphQLParsingError } from "../common/utils/errors";
 
 function App() {
   const api = useApi();

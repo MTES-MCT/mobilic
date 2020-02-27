@@ -9,7 +9,6 @@ import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 import { EXPENDITURE_LOG_MUTATION, useApi } from "../../common/utils/api";
 import { parseExpenditureFromBackend } from "../../common/utils/expenditures";
 import { resolveCurrentTeam } from "../../common/utils/coworkers";
-import { isGraphQLParsingError } from "../../common/utils/errors";
 
 export function CurrentActivity({
   currentActivity,

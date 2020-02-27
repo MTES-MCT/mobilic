@@ -1,6 +1,5 @@
 import React from "react";
 import Container from "@material-ui/core/Container";
-import Divider from "@material-ui/core/Divider";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import { useApi } from "../common/utils/api";
 import Button from "@material-ui/core/Button";

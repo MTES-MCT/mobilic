@@ -19,7 +19,6 @@ import Checkbox from "@material-ui/core/Checkbox";
 import { formatPersonName } from "../../common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 import { Box } from "@material-ui/core";
-import Container from "@material-ui/core/Container";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;

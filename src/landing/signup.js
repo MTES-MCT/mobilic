@@ -7,7 +7,6 @@ import { useApi, USER_SIGNUP_MUTATION } from "../common/utils/api";
 import Typography from "@material-ui/core/Typography";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import Box from "@material-ui/core/Box";
-import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { Header } from "../common/components/Header";

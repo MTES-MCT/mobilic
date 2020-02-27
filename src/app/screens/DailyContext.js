@@ -23,8 +23,6 @@ import { prettyFormatDay } from "../../common/utils/time";
 import { COMMENT_LOG_MUTATION, useApi } from "../../common/utils/api";
 import { ModalContext } from "../../common/utils/modals";
 import useTheme from "@material-ui/core/styles/useTheme";
-import Box from "@material-ui/core/Box";
-import { isGraphQLParsingError } from "../../common/utils/errors";
 
 export function DailyContext({
   currentActivity,
