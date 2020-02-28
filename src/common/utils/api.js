@@ -217,13 +217,17 @@ class Api {
 
   async graphQlQuery(query, variables) {
     return this._nonConcurrentQuery(() =>
-      this.apolloClient.query({ query, variables })
+      this.apolloClient.query({ query, variables, fetchPolicy: "no-cache" })
     );
   }
 
   async graphQlMutate(query, variables) {
     return this._nonConcurrentQuery(() =>
-      this.apolloClient.mutate({ mutation: query, variables: variables })
+      this.apolloClient.mutate({
+        mutation: query,
+        variables: variables,
+        fetchPolicy: "no-cache"
+      })
     );
   }
 

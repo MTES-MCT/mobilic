@@ -9,7 +9,6 @@ import Link from "@material-ui/core/Link";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import Box from "@material-ui/core/Box";
 import { LogosHeader } from "../common/components/LogosHeader";
-import { loadUserData } from "../common/utils/loadUserData";
 
 export default function Login({ setSignUpInsteadOfLogging }) {
   const [email, setEmail] = React.useState("");
@@ -33,7 +32,6 @@ export default function Login({ setSignUpInsteadOfLogging }) {
         accessToken,
         refreshToken
       });
-      loadUserData(api, storeSyncedWithLocalStorage);
     } catch {
       setError("Identifiants de connection incorrects");
     }

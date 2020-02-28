@@ -47,7 +47,7 @@ function _Root() {
   React.useEffect(() => {
     loadUserData(api, storeSyncedWithLocalStorage);
     return () => {};
-  }, []);
+  }, [userId]);
 
   if (!userId && signUpInsteadOfLogging)
     return <Signup setSignUpInsteadOfLogging={setSignUpInsteadOfLogging} />;
