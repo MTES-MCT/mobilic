@@ -4,7 +4,6 @@ import { groupEventsByDay } from "../common/utils/events";
 import { ScreenWithBottomNavigation } from "./utils/navigation";
 import { ACTIVITY_LOG_MUTATION, useApi } from "../common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
-import { loadUserData } from "../common/utils/loadUserData";
 
 function App() {
   const api = useApi();
@@ -15,11 +14,6 @@ function App() {
   // We force re-rendering every 5 sec to update timers
   React.useEffect(() => {
     setInterval(() => setCurrentTime(Date.now()), 5000);
-  }, []);
-
-  React.useEffect(() => {
-    loadUserData(api, storeSyncedWithLocalStorage);
-    return () => {};
   }, []);
 
   const activityEvents = storeSyncedWithLocalStorage.activities();

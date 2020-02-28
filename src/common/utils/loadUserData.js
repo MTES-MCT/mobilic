@@ -2,9 +2,11 @@ import { USER_QUERY } from "./api";
 import { parseActivityPayloadFromBackend } from "./activities";
 
 export async function loadUserData(api, storeSyncedWithLocalStorage) {
+  const userId = storeSyncedWithLocalStorage.userId();
+  if (!userId) return;
   try {
     const userResponse = await api.graphQlQuery(USER_QUERY, {
-      id: storeSyncedWithLocalStorage.userId()
+      id: userId
     });
     const {
       firstName,

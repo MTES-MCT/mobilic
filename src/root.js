@@ -10,12 +10,13 @@ import {
   StoreSyncedWithLocalStorageProvider,
   useStoreSyncedWithLocalStorage
 } from "./common/utils/store";
-import { ApiContextProvider } from "./common/utils/api";
+import { ApiContextProvider, useApi } from "./common/utils/api";
 import { Admin } from "./admin/Admin";
 import { theme } from "./common/utils/theme";
 import { MODAL_DICT, ModalProvider } from "./common/utils/modals";
 import { ThemeProvider } from "@material-ui/styles";
 import { CssBaseline } from "@material-ui/core";
+import { loadUserData } from "./common/utils/loadUserData";
 
 export default function Root() {
   return (
@@ -38,9 +39,15 @@ function _Root() {
   const [signUpInsteadOfLogging, setSignUpInsteadOfLogging] = React.useState(
     false
   );
+  const api = useApi();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   const userId = storeSyncedWithLocalStorage.userId();
   const isCompanyAdmin = storeSyncedWithLocalStorage.companyAdmin();
+
+  React.useEffect(() => {
+    loadUserData(api, storeSyncedWithLocalStorage);
+    return () => {};
+  }, []);
 
   if (!userId && signUpInsteadOfLogging)
     return <Signup setSignUpInsteadOfLogging={setSignUpInsteadOfLogging} />;
