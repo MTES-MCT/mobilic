@@ -151,7 +151,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           userId: id,
           companyAdmin: company_admin
         },
-        resolve()
+        resolve
       );
     });
 
