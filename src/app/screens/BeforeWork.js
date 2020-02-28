@@ -12,9 +12,21 @@ import { ACTIVITIES } from "../../common/utils/activities";
 import { UserNameHeader } from "../../common/components/UserNameHeader";
 import Box from "@material-ui/core/Box";
 
-export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
+export function BeforeWork({
+  currentTime,
+  previousDaysEventsByDay,
+  pushNewActivityEvent
+}) {
   const latestDayEvents =
     previousDaysEventsByDay[previousDaysEventsByDay.length - 1];
+
+  const latestDayEnd = latestDayEvents
+    ? latestDayEvents[latestDayEvents.length - 1]
+    : null;
+  const shouldResumeDay =
+    latestDayEnd &&
+    new Date(latestDayEnd.eventTime).toISOString().slice(0, 10) ===
+      new Date(currentTime).toISOString().slice(0, 10);
 
   const modals = React.useContext(ModalContext);
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
@@ -49,6 +61,20 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
               handleContinue: dayInfos =>
                 modals.open("firstActivity", {
                   handleItemClick: activityType => {
+                    if (shouldResumeDay) {
+                      const breakInsteadOfRest = {
+                        ...latestDayEnd,
+                        type: ACTIVITIES.break.name
+                      };
+                      storeSyncedWithLocalStorage.removeEvent(
+                        latestDayEnd,
+                        "activities"
+                      );
+                      storeSyncedWithLocalStorage.pushEvent(
+                        breakInsteadOfRest,
+                        "activities"
+                      );
+                    }
                     pushNewActivityEvent({
                       activityType,
                       team: [storeSyncedWithLocalStorage.userInfo()],
@@ -62,7 +88,7 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
             });
           }}
         >
-          Commencer la journée
+          {shouldResumeDay ? "Reprendre la journée" : "Commencer la journée"}
         </Button>
         <div style={{ height: "2vh" }} />
         <Button
@@ -83,6 +109,20 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
                           storeSyncedWithLocalStorage.userInfo(),
                           ...teamMates
                         ];
+                        if (shouldResumeDay) {
+                          const breakInsteadOfRest = {
+                            ...latestDayEnd,
+                            type: ACTIVITIES.break.name
+                          };
+                          storeSyncedWithLocalStorage.removeEvent(
+                            latestDayEnd,
+                            "activities"
+                          );
+                          storeSyncedWithLocalStorage.pushEvent(
+                            breakInsteadOfRest,
+                            "activities"
+                          );
+                        }
                         const createActivity = (driverIdx = null) => {
                           pushNewActivityEvent({
                             activityType,
@@ -111,7 +151,7 @@ export function BeforeWork({ previousDaysEventsByDay, pushNewActivityEvent }) {
             })
           }
         >
-          Commencer en équipe
+          {shouldResumeDay ? "Reprendre en équipe" : "Commencer en équipe"}
         </Button>
       </Box>
     </Container>

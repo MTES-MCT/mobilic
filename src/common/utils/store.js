@@ -270,7 +270,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             removeSubmissionMark: this.removeSubmissionMark,
             removeEventsAfterFailedSubmission: this
               .removeEventsAfterFailedSubmission,
-            removeEvent: this.removeEvent
+            removeEvent: this.removeEvent,
+            pushEvent: this.pushEvent
           }}
         >
           {this.props.children}

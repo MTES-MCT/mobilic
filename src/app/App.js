@@ -10,11 +10,11 @@ function App() {
   const api = useApi();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
 
-  const [currentDate, setCurrentDate] = React.useState(Date.now());
+  const [currentTime, setCurrentTime] = React.useState(Date.now());
 
   // We force re-rendering every 5 sec to update timers
   React.useEffect(() => {
-    setInterval(() => setCurrentDate(Date.now()), 5000);
+    setInterval(() => setCurrentTime(Date.now()), 5000);
   }, []);
 
   React.useEffect(() => {
@@ -69,6 +69,7 @@ function App() {
 
   return (
     <ScreenWithBottomNavigation
+      currentTime={currentTime}
       currentActivity={currentActivity}
       currentDayActivityEvents={currentDayActivityEvents}
       pushNewActivityEvent={pushNewActivityEvent}
