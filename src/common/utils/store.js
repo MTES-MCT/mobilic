@@ -28,6 +28,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         serialize: JSON.stringify,
         deserialize: value => (value ? JSON.parse(value) : [])
       },
+      pendingExpenditureCancels: {
+        serialize: JSON.stringify,
+        deserialize: value => (value ? JSON.parse(value) : [])
+      },
       comments: {
         serialize: JSON.stringify,
         deserialize: value => (value ? JSON.parse(value) : [])
@@ -67,16 +71,29 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       callback
     );
 
-  updateAllSubmittedEvents = (eventsFromApi, arrayField) =>
+  removeEvent = (event, arrayField) =>
     this._setState(
       prevState => ({
-        [arrayField]: [
-          ...eventsFromApi,
-          ...prevState[arrayField].filter(e => !e.isBeingSubmitted && !e.id)
-        ]
+        [arrayField]: prevState[arrayField].filter(
+          e => JSON.stringify(e) !== JSON.stringify(event)
+        )
       }),
       [arrayField]
     );
+
+  updateAllSubmittedEvents = (eventsFromApi, arrayField) =>
+    new Promise(resolve => {
+      this._setState(
+        prevState => ({
+          [arrayField]: [
+            ...eventsFromApi,
+            ...prevState[arrayField].filter(e => !e.isBeingSubmitted && !e.id)
+          ]
+        }),
+        [arrayField],
+        () => resolve()
+      );
+    });
 
   markAndGetEventsForSubmission = arrayField =>
     new Promise(resolve => {
@@ -92,23 +109,29 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     });
 
   removeSubmissionMark = arrayField =>
-    this._setState(
-      prevState => ({
-        [arrayField]: prevState[arrayField].map(e => ({
-          ...e,
-          isBeingSubmitted: false
-        }))
-      }),
-      [arrayField]
-    );
+    new Promise(resolve => {
+      this._setState(
+        prevState => ({
+          [arrayField]: prevState[arrayField].map(e => ({
+            ...e,
+            isBeingSubmitted: false
+          }))
+        }),
+        [arrayField],
+        () => resolve()
+      );
+    });
 
   removeEventsAfterFailedSubmission = arrayField =>
-    this._setState(
-      prevState => ({
-        [arrayField]: prevState[arrayField].filter(e => !e.isBeingSubmitted)
-      }),
-      [arrayField]
-    );
+    new Promise(resolve => {
+      this._setState(
+        prevState => ({
+          [arrayField]: prevState[arrayField].filter(e => !e.isBeingSubmitted)
+        }),
+        [arrayField],
+        () => resolve()
+      );
+    });
 
   removeItems = items => {
     const itemValueMap = {};
@@ -188,6 +211,21 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       callback
     );
 
+  pushNewExpenditureCancel = (
+    expenditureId,
+    eventTime = null,
+    callback = () => {}
+  ) => {
+    const expenditureCancel = {
+      expenditureId: expenditureId,
+      cancelTime: Date.now()
+    };
+    if (eventTime) {
+      expenditureCancel.eventTime = eventTime;
+    }
+    this.pushEvent(expenditureCancel, "pendingExpenditureCancels", callback);
+  };
+
   pushNewComment = (content, team, callback = () => {}) =>
     this.pushEvent(
       {
@@ -224,11 +262,15 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             pushNewExpenditure: this.pushNewExpenditure,
             comments: () => this.state.comments,
             pushNewComment: this.pushNewComment,
+            pushNewExpenditureCancel: this.pushNewExpenditureCancel,
+            pendingExpenditureCancels: () =>
+              this.state.pendingExpenditureCancels,
             updateAllSubmittedEvents: this.updateAllSubmittedEvents,
             markAndGetEventsForSubmission: this.markAndGetEventsForSubmission,
             removeSubmissionMark: this.removeSubmissionMark,
             removeEventsAfterFailedSubmission: this
-              .removeEventsAfterFailedSubmission
+              .removeEventsAfterFailedSubmission,
+            removeEvent: this.removeEvent
           }}
         >
           {this.props.children}

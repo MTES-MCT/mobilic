@@ -6,7 +6,11 @@ import { computeTotalActivityDurations } from "../../common/utils/metrics";
 import { Expenditures } from "../../common/components/Expenditures";
 import Divider from "@material-ui/core/Divider";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
-import { EXPENDITURE_LOG_MUTATION, useApi } from "../../common/utils/api";
+import {
+  EXPENDITURE_CANCEL_MUTATION,
+  EXPENDITURE_LOG_MUTATION,
+  useApi
+} from "../../common/utils/api";
 import { parseExpenditureFromBackend } from "../../common/utils/expenditures";
 import { resolveCurrentTeam } from "../../common/utils/coworkers";
 
@@ -25,21 +29,76 @@ export function CurrentActivity({
   );
 
   const team = resolveCurrentTeam(currentActivity, storeSyncedWithLocalStorage);
+  const pendingExpenditureCancels = storeSyncedWithLocalStorage.pendingExpenditureCancels();
 
   const pushNewExpenditure = expenditureType => {
-    storeSyncedWithLocalStorage.pushNewExpenditure(expenditureType, team, () =>
-      api.submitEvents(
-        EXPENDITURE_LOG_MUTATION,
-        "expenditures",
-        apiResponse => {
-          const expenditures = apiResponse.data.logExpenditures.expenditures;
-          return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-            expenditures.map(parseExpenditureFromBackend),
-            "expenditures"
+    const expenditureMatch = currentDayExpenditures.find(
+      e => e.type === expenditureType
+    );
+    let expenditureCancel = null;
+    if (expenditureMatch) {
+      expenditureCancel = pendingExpenditureCancels.find(
+        e => e.expenditureId === expenditureMatch.id
+      );
+      if (expenditureCancel) {
+        storeSyncedWithLocalStorage.removeEvent(
+          expenditureCancel,
+          "pendingExpenditureCancels"
+        );
+      }
+    } else {
+      storeSyncedWithLocalStorage.pushNewExpenditure(
+        expenditureType,
+        team,
+        () =>
+          api.submitEvents(
+            EXPENDITURE_LOG_MUTATION,
+            "expenditures",
+            apiResponse => {
+              const expenditures =
+                apiResponse.data.logExpenditures.expenditures;
+              return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+                expenditures.map(parseExpenditureFromBackend),
+                "expenditures"
+              );
+            }
+          )
+      );
+    }
+  };
+
+  const cancelExpenditure = expenditureToCancel => {
+    if (!expenditureToCancel.id && !expenditureToCancel.isBeingSubmitted) {
+      storeSyncedWithLocalStorage.removeEvent(
+        expenditureToCancel,
+        "expenditures"
+      );
+    } else {
+      storeSyncedWithLocalStorage.pushNewExpenditureCancel(
+        expenditureToCancel.id,
+        null,
+        () => {
+          api.submitEvents(
+            EXPENDITURE_CANCEL_MUTATION,
+            "pendingExpenditureCancels",
+            apiResponse => {
+              const expenditures =
+                apiResponse.data.cancelExpenditures.expenditures;
+              return Promise.all([
+                storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+                  expenditures.map(parseExpenditureFromBackend),
+                  "expenditures"
+                ),
+                storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+                  [],
+                  "pendingExpenditureCancels"
+                )
+              ]);
+            }
           );
         }
-      )
-    );
+      );
+    }
   };
 
   return (
@@ -56,8 +115,14 @@ export function CurrentActivity({
       />
       <Divider className="full-width-divider" />
       <Expenditures
-        expenditures={currentDayExpenditures}
+        expenditures={currentDayExpenditures.filter(
+          e =>
+            !pendingExpenditureCancels
+              .map(ec => ec.expenditureId)
+              .includes(e.id)
+        )}
         pushNewExpenditure={pushNewExpenditure}
+        cancelExpenditure={cancelExpenditure}
       />
     </Container>
   );

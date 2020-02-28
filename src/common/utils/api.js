@@ -125,6 +125,18 @@ export const EXPENDITURE_LOG_MUTATION = gql`
   }
 `;
 
+export const EXPENDITURE_CANCEL_MUTATION = gql`
+  mutation($data: [CancelSingleExpenditureInput]!) {
+    cancelExpenditures(data: $data) {
+      expenditures {
+        id
+        type
+        eventTime
+      }
+    }
+  }
+`;
+
 export const COMMENT_LOG_MUTATION = gql`
   mutation($data: [CommentInput]!) {
     logComments(data: $data) {
@@ -268,11 +280,13 @@ class Api {
         await handleSubmitResponse(submit);
       } catch (err) {
         if (isGraphQLParsingError(err)) {
-          this.storeSyncedWithLocalStorage.removeEventsAfterFailedSubmission(
+          await this.storeSyncedWithLocalStorage.removeEventsAfterFailedSubmission(
             storeEntry
           );
         } else {
-          this.storeSyncedWithLocalStorage.removeSubmissionMark(storeEntry);
+          await this.storeSyncedWithLocalStorage.removeSubmissionMark(
+            storeEntry
+          );
         }
       }
     });
