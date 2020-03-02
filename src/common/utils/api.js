@@ -137,6 +137,38 @@ export const EXPENDITURE_CANCEL_MUTATION = gql`
   }
 `;
 
+export const ACTIVITY_CANCEL_MUTATION = gql`
+  mutation($data: [CancelEventInput]!) {
+    cancelActivities(data: $data) {
+      activities {
+        id
+        type
+        eventTime
+        team
+        mission
+        vehicleRegistrationNumber
+        driverIdx
+      }
+    }
+  }
+`;
+
+export const ACTIVITY_REVISION_MUTATION = gql`
+  mutation($data: [ActivityRevisionInput]!) {
+    reviseActivities(data: $data) {
+      activities {
+        id
+        type
+        eventTime
+        team
+        mission
+        vehicleRegistrationNumber
+        driverIdx
+      }
+    }
+  }
+`;
+
 export const COMMENT_LOG_MUTATION = gql`
   mutation($data: [CommentInput]!) {
     logComments(data: $data) {

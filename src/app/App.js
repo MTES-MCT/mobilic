@@ -16,7 +16,18 @@ function App() {
     setInterval(() => setCurrentTime(Date.now()), 5000);
   }, []);
 
-  const activityEvents = storeSyncedWithLocalStorage.activities();
+  const rawActivityEvents = storeSyncedWithLocalStorage.activities();
+  const cancelledActivityIds = storeSyncedWithLocalStorage
+    .pendingActivityCancels()
+    .map(ac => ac.eventId);
+  const activityRevisionEvents = storeSyncedWithLocalStorage.pendingActivityRevisions();
+  const activityEvents = rawActivityEvents
+    .filter(a => !cancelledActivityIds.includes(a.id))
+    .map(a => {
+      const revision = activityRevisionEvents.find(rev => rev.id === a.id);
+      return revision ? { ...a, eventTime: revision.eventTime } : a;
+    });
+
   const activityEventsByDay = groupEventsByDay(activityEvents);
   const previousDaysEventsByDay = activityEventsByDay.slice(
     0,

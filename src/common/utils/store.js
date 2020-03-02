@@ -24,6 +24,14 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         serialize: JSON.stringify,
         deserialize: value => (value ? JSON.parse(value) : [])
       },
+      pendingActivityCancels: {
+        serialize: JSON.stringify,
+        deserialize: value => (value ? JSON.parse(value) : [])
+      },
+      pendingActivityRevisions: {
+        serialize: JSON.stringify,
+        deserialize: value => (value ? JSON.parse(value) : [])
+      },
       expenditures: {
         serialize: JSON.stringify,
         deserialize: value => (value ? JSON.parse(value) : [])
@@ -211,20 +219,36 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       callback
     );
 
-  pushNewExpenditureCancel = (
-    eventId,
-    eventTime = null,
-    callback = () => {}
-  ) => {
-    const expenditureCancel = {
-      eventId: eventId,
-      cancelTime: Date.now()
-    };
-    if (eventTime) {
-      expenditureCancel.eventTime = eventTime;
-    }
-    this.pushEvent(expenditureCancel, "pendingExpenditureCancels", callback);
-  };
+  pushNewExpenditureCancel = (eventId, callback = () => {}) =>
+    this.pushEvent(
+      {
+        eventId: eventId,
+        cancelTime: Date.now()
+      },
+      "pendingExpenditureCancels",
+      callback
+    );
+
+  pushNewActivityCancel = (eventId, callback = () => {}) =>
+    this.pushEvent(
+      {
+        eventId: eventId,
+        cancelTime: Date.now()
+      },
+      "pendingActivityCancels",
+      callback
+    );
+
+  pushNewActivityRevision = (eventId, eventTime, callback = () => {}) =>
+    this.pushEvent(
+      {
+        eventId: eventId,
+        eventTime: eventTime,
+        revisionTime: Date.now()
+      },
+      "pendingActivityRevisions",
+      callback
+    );
 
   pushNewComment = (content, team, callback = () => {}) =>
     this.pushEvent(
@@ -271,7 +295,11 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             removeEventsAfterFailedSubmission: this
               .removeEventsAfterFailedSubmission,
             removeEvent: this.removeEvent,
-            pushEvent: this.pushEvent
+            pushEvent: this.pushEvent,
+            pendingActivityCancels: () => this.state.pendingActivityCancels,
+            pendingActivityRevisions: () => this.state.pendingActivityRevisions,
+            pushNewActivityCancel: this.pushNewActivityCancel,
+            pushNewActivityRevision: this.pushNewActivityRevision
           }}
         >
           {this.props.children}

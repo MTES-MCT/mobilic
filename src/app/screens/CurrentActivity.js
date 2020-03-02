@@ -76,7 +76,6 @@ export function CurrentActivity({
     } else {
       storeSyncedWithLocalStorage.pushNewExpenditureCancel(
         expenditureToCancel.id,
-        null,
         () => {
           api.submitEvents(
             EXPENDITURE_CANCEL_MUTATION,
