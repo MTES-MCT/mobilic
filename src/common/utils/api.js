@@ -126,7 +126,7 @@ export const EXPENDITURE_LOG_MUTATION = gql`
 `;
 
 export const EXPENDITURE_CANCEL_MUTATION = gql`
-  mutation($data: [CancelSingleExpenditureInput]!) {
+  mutation($data: [CancelEventInput]!) {
     cancelExpenditures(data: $data) {
       expenditures {
         id

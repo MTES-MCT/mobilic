@@ -212,12 +212,12 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     );
 
   pushNewExpenditureCancel = (
-    expenditureId,
+    eventId,
     eventTime = null,
     callback = () => {}
   ) => {
     const expenditureCancel = {
-      expenditureId: expenditureId,
+      eventId: eventId,
       cancelTime: Date.now()
     };
     if (eventTime) {

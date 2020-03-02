@@ -38,7 +38,7 @@ export function CurrentActivity({
     let expenditureCancel = null;
     if (expenditureMatch) {
       expenditureCancel = pendingExpenditureCancels.find(
-        e => e.expenditureId === expenditureMatch.id
+        e => e.eventId === expenditureMatch.id
       );
       if (expenditureCancel) {
         storeSyncedWithLocalStorage.removeEvent(
@@ -116,10 +116,7 @@ export function CurrentActivity({
       <Divider className="full-width-divider" />
       <Expenditures
         expenditures={currentDayExpenditures.filter(
-          e =>
-            !pendingExpenditureCancels
-              .map(ec => ec.expenditureId)
-              .includes(e.id)
+          e => !pendingExpenditureCancels.map(ec => ec.eventId).includes(e.id)
         )}
         pushNewExpenditure={pushNewExpenditure}
         cancelExpenditure={cancelExpenditure}
