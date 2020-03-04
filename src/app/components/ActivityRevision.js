@@ -8,7 +8,13 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import { VerticalTimeline } from "../../common/components/VerticalTimeline";
-import { formatTimeOfDay, shortPrettyFormatDay } from "../../common/utils/time";
+import {
+  isoFormatDateTime,
+  formatTimeOfDay,
+  shortPrettyFormatDay,
+  formatDateTime,
+  getStartOfDay
+} from "../../common/utils/time";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
@@ -29,11 +35,29 @@ export function ActivityRevisionModal({
   event,
   open,
   handleClose,
-  handleRevisionAction
+  handleRevisionAction,
+  minEventTime,
+  maxEventTime,
+  cancellable
 }) {
   const theme = useTheme();
   const [actionType, setActionType] = React.useState(undefined); // "cancel" or "revision"
   const [revisedEventTime, setRevisedEventTime] = React.useState(undefined);
+  const [revisedEventTimeError, setRevisedEventTimeError] = React.useState("");
+
+  const validatesRevisedEventTimeError = () => {
+    console.log("Prout");
+    if (revisedEventTime <= minEventTime) {
+      setRevisedEventTimeError(
+        `L'heure doit être après ${formatDateTime(minEventTime)}`
+      );
+    } else if (revisedEventTime >= maxEventTime) {
+      setRevisedEventTimeError(
+        `L'heure doit être avant ${formatDateTime(maxEventTime)}`
+      );
+    } else setRevisedEventTimeError("");
+    return () => {};
+  };
 
   React.useEffect(() => {
     event
@@ -42,6 +66,8 @@ export function ActivityRevisionModal({
     setActionType(undefined);
     return () => {};
   }, [open]);
+
+  React.useEffect(validatesRevisedEventTimeError, [revisedEventTime]);
 
   return (
     <Dialog open={open} onClose={handleClose}>
@@ -73,7 +99,9 @@ export function ActivityRevisionModal({
                 exclusive
                 onChange={(e, newType) => setActionType(newType)}
               >
-                <ToggleButton value="cancel">Supprimer</ToggleButton>
+                <ToggleButton disabled={!cancellable} value="cancel">
+                  Supprimer
+                </ToggleButton>
                 <ToggleButton value="revision">Modifier heure</ToggleButton>
               </ToggleButtonGroup>
             </Box>
@@ -81,18 +109,25 @@ export function ActivityRevisionModal({
               <Box style={{ display: "flex", alignItems: "center" }}>
                 <TextField
                   label="Début"
-                  type="time"
-                  value={formatTimeOfDay(revisedEventTime)}
+                  type="datetime-local"
+                  value={isoFormatDateTime(revisedEventTime)}
                   inputProps={{
                     step: 60
                   }}
                   onChange={e => {
-                    const timeElements = e.target.value.split(":");
+                    const dayVsTime = e.target.value.split("T");
+                    const dayElements = dayVsTime[0].split("-");
+                    const timeElements = dayVsTime[1].split(":");
                     const newRevisedEventTime = new Date(revisedEventTime);
+                    newRevisedEventTime.setFullYear(parseInt(dayElements[0]));
+                    newRevisedEventTime.setMonth(parseInt(dayElements[1]) - 1);
+                    newRevisedEventTime.setDate(parseInt(dayElements[2]));
                     newRevisedEventTime.setHours(parseInt(timeElements[0]));
                     newRevisedEventTime.setMinutes(parseInt(timeElements[1]));
                     setRevisedEventTime(newRevisedEventTime.getTime());
                   }}
+                  error={!!revisedEventTimeError}
+                  helperText={revisedEventTimeError}
                 />
               </Box>
             )}
@@ -109,7 +144,8 @@ export function ActivityRevisionModal({
               disabled={
                 !actionType ||
                 (actionType === "revision" &&
-                  revisedEventTime === event.eventTime)
+                  (!!revisedEventTimeError ||
+                    revisedEventTime === event.eventTime))
               }
               color="primary"
             >
@@ -134,7 +170,15 @@ export function WorkDayRevision({
     modals.open("activityRevision", {
       event,
       handleRevisionAction: (actionType, revisedEventTime) =>
-        handleActivityRevision(event, actionType, revisedEventTime)
+        handleActivityRevision(event, actionType, revisedEventTime),
+      minEventTime: getStartOfDay(activityEvents[0].eventTime),
+      maxEventTime:
+        event.type !== ACTIVITIES.rest.name &&
+        activityEvents[activityEvents.length - 1].type === ACTIVITIES.rest.name
+          ? activityEvents[activityEvents.length - 1].eventTime
+          : Date.now(),
+      cancellable:
+        event.type !== ACTIVITIES.rest.name || activityEvents.length === 1
     });
   };
 
