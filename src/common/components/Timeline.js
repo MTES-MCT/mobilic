@@ -6,6 +6,11 @@ import { ACTIVITIES } from "../utils/activities";
 import Typography from "@material-ui/core/Typography";
 import ChevronRightOutlinedIcon from "@material-ui/icons/ChevronRightOutlined";
 import useTheme from "@material-ui/core/styles/useTheme";
+import Box from "@material-ui/core/Box";
+import IconButton from "@material-ui/core/IconButton";
+import { ModalContext } from "../utils/modals";
+import EditIcon from "@material-ui/icons/Edit";
+import { WorkDayRevision } from "../../app/components/ActivityRevision";
 
 const useStyles = makeStyles({
   period: props => ({
@@ -49,98 +54,125 @@ function Event({ height, className, children = null }) {
   );
 }
 
-export function TimeLine({ dayEvents, endDate }) {
+export function TimeLine({ dayEvents, cancelOrReviseActivityEvent }) {
   const theme = useTheme();
+  const [openRevisionModal, setOpenRevisionModal] = React.useState(false);
+
+  const lastEvent = dayEvents[dayEvents.length - 1];
+  const endDate =
+    lastEvent.type === ACTIVITIES.rest.name ? lastEvent.eventTime : null;
+  const eventsToDisplay = endDate
+    ? dayEvents.slice(0, dayEvents.length - 1)
+    : dayEvents;
+
   const periodWidth = `${Math.floor(
-    (100 - dayEvents.length) / dayEvents.length
+    (100 - eventsToDisplay.length) / eventsToDisplay.length
   )}%`;
   return (
-    <div className="timeline-container">
-      <Typography variant="h6" className="timeline-title" gutterBottom>
-        Évènements de la journée
-      </Typography>
-      <div className="timeline-line flexbox-center">
-        {dayEvents.map((event, index) => (
-          <React.Fragment key={index}>
-            <Event className="timeline-legend hidden" />
-            <Period width={periodWidth} className="timeline-legend">
-              {ACTIVITIES[event.type].renderIcon({
-                style: {
-                  color:
-                    index === dayEvents.length - 1 && !endDate
-                      ? theme.palette.primary.main
-                      : theme.palette[event.type]
+    <>
+      <div className="timeline-container">
+        <Box mb={1} className="flexbox-space-between full-width">
+          <Typography variant="h6" className="bold">
+            Évènements du jour
+          </Typography>
+          {cancelOrReviseActivityEvent && (
+            <IconButton
+              color="primary"
+              onClick={() => setOpenRevisionModal(true)}
+            >
+              <EditIcon />
+            </IconButton>
+          )}
+        </Box>
+        <div className="timeline-line flexbox-center">
+          {eventsToDisplay.map((event, index) => (
+            <React.Fragment key={index}>
+              <Event className="timeline-legend hidden" />
+              <Period width={periodWidth} className="timeline-legend">
+                {ACTIVITIES[event.type].renderIcon({
+                  style: {
+                    color:
+                      index === eventsToDisplay.length - 1 && !endDate
+                        ? theme.palette.primary.main
+                        : theme.palette[event.type]
+                  }
+                })}
+              </Period>
+              {index === eventsToDisplay.length - 1 &&
+                (endDate ? (
+                  <Event className="timeline-legend hidden" />
+                ) : (
+                  <ChevronRightOutlinedIcon
+                    fontSize="small"
+                    color="primary"
+                    className="timeline-line-end-arrow hidden"
+                  />
+                ))}
+            </React.Fragment>
+          ))}
+        </div>
+        <div className="timeline-line flexbox-center">
+          {eventsToDisplay.map((event, index) => (
+            <React.Fragment key={index}>
+              <Event />
+              <Period
+                width={periodWidth}
+                color={theme.palette[event.type]}
+                className={
+                  index === eventsToDisplay.length - 1 &&
+                  !endDate &&
+                  "timeline-segment-blurred"
                 }
-              })}
-            </Period>
-            {index === dayEvents.length - 1 &&
-              (endDate ? (
-                <Event className="timeline-legend hidden" />
-              ) : (
-                <ChevronRightOutlinedIcon
-                  fontSize="small"
-                  color="primary"
-                  className="timeline-line-end-arrow hidden"
-                />
-              ))}
-          </React.Fragment>
-        ))}
+              />
+              {index === eventsToDisplay.length - 1 &&
+                (endDate ? (
+                  <Event />
+                ) : (
+                  <ChevronRightOutlinedIcon
+                    fontSize="small"
+                    color="primary"
+                    className="timeline-line-end-arrow"
+                  />
+                ))}
+            </React.Fragment>
+          ))}
+        </div>
+        <div className="timeline-line flexbox-center">
+          {eventsToDisplay.map((event, index) => (
+            <React.Fragment key={index}>
+              <Event className="timeline-legend">
+                <Typography variant="caption" className="timeline-legend-label">
+                  {formatTimeOfDay(event.eventTime)}
+                </Typography>
+              </Event>
+              <Period width={periodWidth} className="timeline-legend" />
+              {index === eventsToDisplay.length - 1 &&
+                (endDate ? (
+                  <Event className="timeline-legend">
+                    <Typography
+                      variant="caption"
+                      className="timeline-legend-label"
+                    >
+                      {formatTimeOfDay(endDate)}
+                    </Typography>
+                  </Event>
+                ) : (
+                  <ChevronRightOutlinedIcon
+                    fontSize="small"
+                    color="primary"
+                    className="timeline-line-end-arrow hidden"
+                  />
+                ))}
+            </React.Fragment>
+          ))}
+        </div>
       </div>
-      <div className="timeline-line flexbox-center">
-        {dayEvents.map((event, index) => (
-          <React.Fragment key={index}>
-            <Event />
-            <Period
-              width={periodWidth}
-              color={theme.palette[event.type]}
-              className={
-                index === dayEvents.length - 1 &&
-                !endDate &&
-                "timeline-segment-blurred"
-              }
-            />
-            {index === dayEvents.length - 1 &&
-              (endDate ? (
-                <Event />
-              ) : (
-                <ChevronRightOutlinedIcon
-                  fontSize="small"
-                  color="primary"
-                  className="timeline-line-end-arrow"
-                />
-              ))}
-          </React.Fragment>
-        ))}
-      </div>
-      <div className="timeline-line flexbox-center">
-        {dayEvents.map((event, index) => (
-          <React.Fragment key={index}>
-            <Event className="timeline-legend">
-              <Typography variant="caption" className="timeline-legend-label">
-                {formatTimeOfDay(event.eventTime)}
-              </Typography>
-            </Event>
-            <Period width={periodWidth} className="timeline-legend" />
-            {index === dayEvents.length - 1 &&
-              (endDate ? (
-                <Event className="timeline-legend">
-                  <Typography
-                    variant="caption"
-                    className="timeline-legend-label"
-                  >
-                    {formatTimeOfDay(endDate)}
-                  </Typography>
-                </Event>
-              ) : (
-                <ChevronRightOutlinedIcon
-                  fontSize="small"
-                  color="primary"
-                  className="timeline-line-end-arrow hidden"
-                />
-              ))}
-          </React.Fragment>
-        ))}
-      </div>
-    </div>
+      <WorkDayRevision
+        open={openRevisionModal}
+        handleClose={() => setOpenRevisionModal(false)}
+        handleActivityRevision={cancelOrReviseActivityEvent}
+        activityEvents={dayEvents}
+      />
+    </>
   );
 }

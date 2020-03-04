@@ -46,10 +46,7 @@ const tabs = {
             </CardContent>
           </Card>
           <Box mt={3}>
-            <TimeLine
-              dayEvents={dayEvents.slice(0, dayEvents.length - 1)}
-              endDate={dayEnd}
-            />
+            <TimeLine dayEvents={dayEvents} />
           </Box>
         </div>
       );

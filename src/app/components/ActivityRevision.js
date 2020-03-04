@@ -122,20 +122,23 @@ export function ActivityRevisionModal({
   );
 }
 
-export function WorkDayRevisionModal({ open, handleClose, latestDayEvents }) {
+export function WorkDayRevision({
+  open,
+  handleClose,
+  activityEvents,
+  handleActivityRevision
+}) {
   const modals = React.useContext(ModalContext);
 
   const handleEventClick = event => {
     modals.open("activityRevision", {
       event,
-      handleRevisionAction: (actionType, revisedEventTime) => {
-        console.log(actionType);
-        console.log(new Date(revisedEventTime));
-      }
+      handleRevisionAction: (actionType, revisedEventTime) =>
+        handleActivityRevision(event, actionType, revisedEventTime)
     });
   };
 
-  if (!latestDayEvents) return null;
+  if (!activityEvents) return null;
   return (
     <Dialog
       fullScreen
@@ -151,7 +154,7 @@ export function WorkDayRevisionModal({ open, handleClose, latestDayEvents }) {
             </IconButton>
             <Typography variant="h6" align="center">
               Corriger journée du{" "}
-              {shortPrettyFormatDay(latestDayEvents[0].eventTime)}
+              {shortPrettyFormatDay(activityEvents[0].eventTime)}
             </Typography>
             <IconButton edge="end" color="inherit" className="hidden">
               <ArrowBackIcon />
@@ -160,7 +163,7 @@ export function WorkDayRevisionModal({ open, handleClose, latestDayEvents }) {
         </AppBar>
       </Box>
       <VerticalTimeline
-        activityEvents={latestDayEvents}
+        activityEvents={activityEvents}
         handleEventClick={handleEventClick}
       />
     </Dialog>

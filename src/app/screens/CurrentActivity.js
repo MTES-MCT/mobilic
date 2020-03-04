@@ -18,7 +18,8 @@ export function CurrentActivity({
   currentActivity,
   currentDayActivityEvents,
   pushNewActivityEvent,
-  currentDayExpenditures
+  currentDayExpenditures,
+  cancelOrReviseActivityEvent
 }) {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   const api = useApi();
@@ -68,7 +69,8 @@ export function CurrentActivity({
   };
 
   const cancelExpenditure = expenditureToCancel => {
-    if (!expenditureToCancel.id && !expenditureToCancel.isBeingSubmitted) {
+    if (expenditureToCancel.isBeingSubmitted) return;
+    if (!expenditureToCancel.id) {
       storeSyncedWithLocalStorage.removeEvent(
         expenditureToCancel,
         "expenditures"
@@ -102,7 +104,10 @@ export function CurrentActivity({
 
   return (
     <Container className="app-container space-between" maxWidth={false}>
-      <TimeLine dayEvents={currentDayActivityEvents} />
+      <TimeLine
+        dayEvents={currentDayActivityEvents}
+        cancelOrReviseActivityEvent={cancelOrReviseActivityEvent}
+      />
       <Divider className="full-width-divider" />
       <ActivitySwitchGrid
         timers={timers}

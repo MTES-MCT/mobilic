@@ -5,10 +5,7 @@ import { ConfirmationModal } from "../components/Confirmation";
 import { MissionSelectionModal } from "../../app/components/MissionSelection";
 import { DriverSelectionModal } from "../../app/components/DriverSelection";
 import { CommentInputModal } from "../../app/components/CommentInput";
-import {
-  ActivityRevisionModal,
-  WorkDayRevisionModal
-} from "../../app/components/ActivityRevision";
+import { ActivityRevisionModal } from "../../app/components/ActivityRevision";
 
 export const ModalContext = React.createContext(() => {});
 
@@ -62,6 +59,5 @@ export const MODAL_DICT = {
   missionSelection: MissionSelectionModal,
   driverSelection: DriverSelectionModal,
   commentInput: CommentInputModal,
-  workDayRevision: WorkDayRevisionModal,
   activityRevision: ActivityRevisionModal
 };
