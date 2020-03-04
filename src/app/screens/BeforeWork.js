@@ -153,6 +153,16 @@ export function BeforeWork({
         >
           {shouldResumeDay ? "Reprendre en équipe" : "Commencer en équipe"}
         </Button>
+        <Button
+          variant="outlined"
+          color="primary"
+          startIcon={<PeopleIcon />}
+          onClick={() =>
+            modals.open("workDayRevision", { latestDayEvents: latestDayEvents })
+          }
+        >
+          Test
+        </Button>
       </Box>
     </Container>
   );

@@ -5,6 +5,10 @@ import { ConfirmationModal } from "../components/Confirmation";
 import { MissionSelectionModal } from "../../app/components/MissionSelection";
 import { DriverSelectionModal } from "../../app/components/DriverSelection";
 import { CommentInputModal } from "../../app/components/CommentInput";
+import {
+  ActivityRevisionModal,
+  WorkDayRevisionModal
+} from "../../app/components/ActivityRevision";
 
 export const ModalContext = React.createContext(() => {});
 
@@ -34,18 +38,18 @@ export class ModalProvider extends React.Component {
       <>
         <ModalContext.Provider value={{ open: this.open, close: this.close }}>
           {this.props.children}
+          {Object.keys(this.props.modalDict).map((modalName, index) => {
+            const Modal = this.props.modalDict[modalName];
+            return (
+              <Modal
+                key={index}
+                open={!!this.state[modalName].open}
+                handleClose={() => this.close(modalName)}
+                {...this.state[modalName].modalProps}
+              />
+            );
+          })}
         </ModalContext.Provider>
-        {Object.keys(this.props.modalDict).map((modalName, index) => {
-          const Modal = this.props.modalDict[modalName];
-          return (
-            <Modal
-              key={index}
-              open={!!this.state[modalName].open}
-              handleClose={() => this.close(modalName)}
-              {...this.state[modalName].modalProps}
-            />
-          );
-        })}
       </>
     );
   }
@@ -57,5 +61,7 @@ export const MODAL_DICT = {
   confirmation: ConfirmationModal,
   missionSelection: MissionSelectionModal,
   driverSelection: DriverSelectionModal,
-  commentInput: CommentInputModal
+  commentInput: CommentInputModal,
+  workDayRevision: WorkDayRevisionModal,
+  activityRevision: ActivityRevisionModal
 };

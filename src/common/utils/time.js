@@ -39,23 +39,23 @@ export function formatTimer(timerDuration) {
   )}m`;
 }
 
-export function formatTimeOfDay(unixDate) {
-  const date = new Date(unixDate);
+export function formatTimeOfDay(unixTimestamp) {
+  const date = new Date(unixTimestamp);
   return `${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
 }
 
-export function formatDay(unixDate) {
-  const date = new Date(unixDate);
+export function formatDay(unixTimestamp) {
+  const date = new Date(unixTimestamp);
   return `${addZero(date.getDate())}/${addZero(date.getMonth() + 1)}`;
 }
 
-export function prettyFormatDay(unixDate) {
-  const date = new Date(unixDate);
+export function prettyFormatDay(unixTimestamp) {
+  const date = new Date(unixTimestamp);
   return `${date.getDate()} ${MONTHS[date.getMonth()]}`;
 }
 
-export function shortPrettyFormatDay(unixDate) {
-  const date = new Date(unixDate);
+export function shortPrettyFormatDay(unixTimestamp) {
+  const date = new Date(unixTimestamp);
   return `${date.getDate()} ${SHORT_MONTHS[date.getMonth()]}`;
 }
 
@@ -63,9 +63,9 @@ function addZero(n) {
   return n < 10 ? "0" + n : n;
 }
 
-export function getStartOfWeek(unixDate) {
-  const date = new Date(unixDate);
+export function getStartOfWeek(unixTimestamp) {
+  const date = new Date(unixTimestamp);
   const dayOfWeek = date.getDay();
   const daysToSubstract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-  return Math.floor((unixDate - daysToSubstract * DAY) / DAY) * DAY;
+  return Math.floor((unixTimestamp - daysToSubstract * DAY) / DAY) * DAY;
 }
