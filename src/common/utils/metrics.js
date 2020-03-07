@@ -1,15 +1,20 @@
-export function computeTotalActivityDurations(dayEvents, until = null) {
-  if (dayEvents.length === 0) return {};
-  const actualUntil = until || dayEvents[dayEvents.length - 1].eventTime;
-  const firstEvent = dayEvents[0];
-  const timers = { total: actualUntil - firstEvent.eventTime };
-  for (let i = 0; i < dayEvents.length; i++) {
-    const event = dayEvents[i];
+import { getTime } from "./events";
+
+export function computeTotalActivityDurations(dayActivityEvents, until = null) {
+  if (dayActivityEvents.length === 0) return {};
+  const actualUntil =
+    until || getTime(dayActivityEvents[dayActivityEvents.length - 1]);
+  const firstEvent = dayActivityEvents[0];
+  const timers = { total: actualUntil - getTime(firstEvent) };
+  for (let i = 0; i < dayActivityEvents.length; i++) {
+    const event = dayActivityEvents[i];
     const nextEventDate =
-      i === dayEvents.length - 1 ? actualUntil : dayEvents[i + 1].eventTime;
+      i === dayActivityEvents.length - 1
+        ? actualUntil
+        : getTime(dayActivityEvents[i + 1]);
     timers[event.type] = timers[event.type]
-      ? timers[event.type] + nextEventDate - event.eventTime
-      : nextEventDate - event.eventTime;
+      ? timers[event.type] + nextEventDate - getTime(event)
+      : nextEventDate - getTime(event);
   }
   return timers;
 }

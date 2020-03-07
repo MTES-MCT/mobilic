@@ -37,7 +37,7 @@ export function parseActivityPayloadFromBackend(activity) {
   return {
     id: activity.id,
     type: activity.type === "support" ? ACTIVITIES.drive.name : activity.type,
-    eventTime: activity.eventTime,
+    startTime: activity.startTime,
     mission: activity.mission,
     vehicleRegistrationNumber: activity.vehicleRegistrationNumber,
     team: activity.team ? activity.team.map(id => ({ id: id })) : [],

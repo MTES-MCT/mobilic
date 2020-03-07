@@ -1,6 +1,6 @@
 import React from "react";
 import { parseActivityPayloadFromBackend } from "../common/utils/activities";
-import { groupEventsByDay } from "../common/utils/events";
+import { getTime, groupActivityEventsByDay } from "../common/utils/events";
 import { ScreenWithBottomNavigation } from "./utils/navigation";
 import {
   ACTIVITY_CANCEL_MUTATION,
@@ -9,7 +9,6 @@ import {
   useApi
 } from "../common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
-import { parseExpenditureFromBackend } from "../common/utils/expenditures";
 
 function App() {
   const api = useApi();
@@ -31,11 +30,11 @@ function App() {
     .filter(a => !cancelledActivityIds.includes(a.id))
     .map(a => {
       const revision = activityRevisionEvents.find(rev => rev.eventId === a.id);
-      return revision ? { ...a, eventTime: revision.eventTime } : a;
+      return revision ? { ...a, startTime: revision.startTime } : a;
     });
 
-  const activityEventsByDay = groupEventsByDay(activityEvents);
-  const previousDaysEventsByDay = activityEventsByDay.slice(
+  const activityEventsByDay = groupActivityEventsByDay(activityEvents);
+  const previousDaysActivityEventsByDay = activityEventsByDay.slice(
     0,
     activityEventsByDay.length - 1
   );
@@ -46,7 +45,7 @@ function App() {
     currentDayActivityEvents && currentDayActivityEvents.length > 0
       ? storeSyncedWithLocalStorage
           .expenditures()
-          .filter(e => e.eventTime >= currentDayActivityEvents[0].eventTime)
+          .filter(e => getTime(e) >= getTime(currentDayActivityEvents[0]))
       : [];
 
   const currentActivity = activityEvents[activityEvents.length - 1];
@@ -81,14 +80,14 @@ function App() {
   const cancelOrReviseActivityEvent = (
     activityEvent,
     actionType,
-    newEventTime = null
+    newStartTime = null
   ) => {
     if (activityEvent.isBeingSubmitted) return;
     if (!activityEvent.id) {
       storeSyncedWithLocalStorage.removeEvent(activityEvent, "activities");
       if (actionType === "revision") {
         storeSyncedWithLocalStorage.pushEvent(
-          { ...activityEvent, eventTime: newEventTime },
+          { ...activityEvent, eventTime: newStartTime },
           "activities"
         );
       }
@@ -106,7 +105,7 @@ function App() {
         }
         storeSyncedWithLocalStorage.pushNewActivityRevision(
           activityEvent.id,
-          newEventTime,
+          newStartTime,
           () => {
             api.submitEvents(
               ACTIVITY_REVISION_MUTATION,
@@ -161,7 +160,7 @@ function App() {
       currentDayActivityEvents={currentDayActivityEvents}
       pushNewActivityEvent={pushNewActivityEvent}
       cancelOrReviseActivityEvent={cancelOrReviseActivityEvent}
-      previousDaysEventsByDay={previousDaysEventsByDay}
+      previousDaysActivityEventsByDay={previousDaysActivityEventsByDay}
       currentDayExpenditures={currentDayExpenditures}
     />
   );

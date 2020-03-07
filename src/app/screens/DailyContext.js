@@ -23,11 +23,12 @@ import { prettyFormatDay } from "../../common/utils/time";
 import { COMMENT_LOG_MUTATION, useApi } from "../../common/utils/api";
 import { ModalContext } from "../../common/utils/modals";
 import useTheme from "@material-ui/core/styles/useTheme";
+import { getTime } from "../../common/utils/events";
 
 export function DailyContext({
   currentActivity,
   currentDayActivityEvents,
-  previousDaysEventsByDay
+  previousDaysActivityEventsByDay
 }) {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   const api = useApi();
@@ -39,7 +40,9 @@ export function DailyContext({
 
   const relevantDayEvents = isCurrentDayStarted
     ? currentDayActivityEvents
-    : previousDaysEventsByDay[previousDaysEventsByDay.length - 1];
+    : previousDaysActivityEventsByDay[
+        previousDaysActivityEventsByDay.length - 1
+      ];
 
   const firstActivityOfTheDay =
     relevantDayEvents && relevantDayEvents.length > 0
@@ -49,7 +52,7 @@ export function DailyContext({
   const comments = firstActivityOfTheDay
     ? storeSyncedWithLocalStorage
         .comments()
-        .filter(c => c.eventTime >= firstActivityOfTheDay.eventTime)
+        .filter(c => getTime(c) >= getTime(firstActivityOfTheDay))
     : [];
 
   const team = resolveCurrentTeam(currentActivity, storeSyncedWithLocalStorage);
@@ -86,7 +89,7 @@ export function DailyContext({
                 {isCurrentDayStarted
                   ? "Journée en cours"
                   : `Journée du ${prettyFormatDay(
-                      firstActivityOfTheDay.eventTime
+                      getTime(firstActivityOfTheDay)
                     )}`}
               </Typography>
             </ListSubheader>

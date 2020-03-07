@@ -14,24 +14,25 @@ import Box from "@material-ui/core/Box";
 import { WorkDayRevision } from "../components/ActivityRevision";
 import EditIcon from "@material-ui/icons/Edit";
 import Link from "@material-ui/core/Link";
+import { getTime } from "../../common/utils/events";
 
 export function BeforeWork({
   currentTime,
-  previousDaysEventsByDay,
+  previousDaysActivityEventsByDay,
   pushNewActivityEvent,
   cancelOrReviseActivityEvent
 }) {
   const [openRevisionModal, setOpenRevisionModal] = React.useState(false);
 
-  const latestDayEvents =
-    previousDaysEventsByDay[previousDaysEventsByDay.length - 1];
+  const latestDayActivityEvents =
+    previousDaysActivityEventsByDay[previousDaysActivityEventsByDay.length - 1];
 
-  const latestDayEnd = latestDayEvents
-    ? latestDayEvents[latestDayEvents.length - 1]
+  const latestDayEnd = latestDayActivityEvents
+    ? latestDayActivityEvents[latestDayActivityEvents.length - 1]
     : null;
   const shouldResumeDay =
     latestDayEnd &&
-    new Date(latestDayEnd.eventTime).toISOString().slice(0, 10) ===
+    new Date(getTime(latestDayEnd)).toISOString().slice(0, 10) ===
       new Date(currentTime).toISOString().slice(0, 10);
 
   const modals = React.useContext(ModalContext);
@@ -47,9 +48,9 @@ export function BeforeWork({
           maxWidth={false}
           style={{ paddingTop: "2vh", justifyContent: "flex-start" }}
         >
-          {latestDayEvents ? (
+          {latestDayActivityEvents ? (
             <>
-              <WorkDaySummary dayEvents={latestDayEvents} />
+              <WorkDaySummary dayActivityEvents={latestDayActivityEvents} />
               <Box my={1}>
                 <Box
                   className="flexbox-flex-start"
@@ -176,9 +177,9 @@ export function BeforeWork({
         </Box>
       </Container>
       <WorkDayRevision
-        open={latestDayEvents && openRevisionModal}
+        open={latestDayActivityEvents && openRevisionModal}
         handleClose={() => setOpenRevisionModal(false)}
-        activityEvents={latestDayEvents}
+        activityEvents={latestDayActivityEvents}
         handleActivityRevision={cancelOrReviseActivityEvent}
       />
     </>

@@ -105,7 +105,7 @@ export function CurrentActivity({
   return (
     <Container className="app-container space-between" maxWidth={false}>
       <TimeLine
-        dayEvents={currentDayActivityEvents}
+        dayActivityEvents={currentDayActivityEvents}
         cancelOrReviseActivityEvent={cancelOrReviseActivityEvent}
       />
       <Divider className="full-width-divider" />

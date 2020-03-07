@@ -1,10 +1,14 @@
 import { ACTIVITIES } from "./activities";
 
-export function groupEventsByDay(events) {
+export function getTime(event) {
+  return event.startTime || event.eventTime;
+}
+
+export function groupActivityEventsByDay(activityEvents) {
   const eventsByDay = [[]];
   let i = 0;
-  events
-    .sort((event1, event2) => event1.eventTime - event2.eventTime)
+  activityEvents
+    .sort((event1, event2) => getTime(event1) - getTime(event2))
     .forEach(event => {
       eventsByDay[i].push(event);
       if (event.type === ACTIVITIES.rest.name) {

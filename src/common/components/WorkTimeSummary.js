@@ -19,6 +19,7 @@ import useTheme from "@material-ui/core/styles/useTheme";
 import { checkDayRestRespect } from "../utils/regulation";
 import { RegulationCheck } from "./RegulationCheck";
 import Divider from "@material-ui/core/Divider";
+import { getTime } from "../utils/events";
 
 function Summary({ title, summaryContent, timers, alerts }) {
   const theme = useTheme();
@@ -74,10 +75,10 @@ function Summary({ title, summaryContent, timers, alerts }) {
   );
 }
 
-export function WorkDaySummary({ dayEvents, followingDayStart }) {
-  const dayEnd = dayEvents[dayEvents.length - 1].eventTime;
-  const dayStart = dayEvents[0].eventTime;
-  const timers = computeTotalActivityDurations(dayEvents);
+export function WorkDaySummary({ dayActivityEvents, followingDayStart }) {
+  const dayEnd = getTime(dayActivityEvents[dayActivityEvents.length - 1]);
+  const dayStart = getTime(dayActivityEvents[0]);
+  const timers = computeTotalActivityDurations(dayActivityEvents);
   const serviceTime = timers["total"];
   const workTime = (timers["drive"] || 0) + (timers["work"] || 0);
   const title = `Journée du ${prettyFormatDay(dayStart)}`;
@@ -102,9 +103,9 @@ export function WorkDaySummary({ dayEvents, followingDayStart }) {
   );
 }
 
-export function WorkWeekSummary({ weekEventsByDay }) {
-  const weekStart = getStartOfWeek(weekEventsByDay[0][0].eventTime);
-  const timersPerDay = weekEventsByDay.map(dayEvents =>
+export function WorkWeekSummary({ weekActivityEventsByDay }) {
+  const weekStart = getStartOfWeek(getTime(weekActivityEventsByDay[0][0]));
+  const timersPerDay = weekActivityEventsByDay.map(dayEvents =>
     computeTotalActivityDurations(dayEvents)
   );
   const weekTimers = {};
@@ -129,7 +130,7 @@ export function WorkWeekSummary({ weekEventsByDay }) {
       summaryContent={[
         {
           stat: "Jours de travail 💪",
-          value: `${weekEventsByDay.length}`
+          value: `${weekActivityEventsByDay.length}`
         },
         {
           stat: "Amplitude totale 📅",

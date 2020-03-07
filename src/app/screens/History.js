@@ -24,6 +24,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import { TimeLine } from "../../common/components/Timeline";
 import Box from "@material-ui/core/Box";
+import { getTime } from "../../common/utils/events";
 
 const tabs = {
   day: {
@@ -32,21 +33,21 @@ const tabs = {
     periodSize: 1,
     getPeriod: date => date,
     formatPeriod: shortPrettyFormatDay,
-    renderPeriod: ({ eventsByDay, followingPeriodStart }) => {
-      const dayEvents = eventsByDay[0];
-      const dayEnd = dayEvents[dayEvents.length - 1].eventTime;
+    renderPeriod: ({ activityEventsByDay, followingPeriodStart }) => {
+      const dayActivityEvents = activityEventsByDay[0];
+      const dayEnd = getTime(dayActivityEvents[dayActivityEvents.length - 1]);
       return (
         <div>
           <Card>
             <CardContent>
               <WorkDaySummary
-                dayEvents={dayEvents}
+                dayActivityEvents={dayActivityEvents}
                 followingDayStart={followingPeriodStart}
               />
             </CardContent>
           </Card>
           <Box mt={3}>
-            <TimeLine dayEvents={dayEvents} />
+            <TimeLine dayActivityEvents={dayActivityEvents} />
           </Box>
         </div>
       );
@@ -59,25 +60,25 @@ const tabs = {
     getPeriod: date => getStartOfWeek(date),
     formatPeriod: date =>
       `Semaine du ${formatDay(date)} au ${formatDay(date + WEEK)}`,
-    renderPeriod: ({ eventsByDay, handleDayClick }) => (
+    renderPeriod: ({ activityEventsByDay, handleDayClick }) => (
       <div>
         <Card>
           <CardContent>
-            <WorkWeekSummary weekEventsByDay={eventsByDay} />
+            <WorkWeekSummary weekActivityEventsByDay={activityEventsByDay} />
           </CardContent>
         </Card>
         <Box mt={3} ml={-2}>
           <List className="days scrollable">
-            {eventsByDay.map((dayEvents, index) => [
+            {activityEventsByDay.map((dayActivityEvents, index) => [
               <Divider key={2 * index} />,
               <ListItem
                 button
                 key={2 * index + 1}
-                onClick={handleDayClick(dayEvents[0].eventTime)}
+                onClick={handleDayClick(getTime(dayActivityEvents[0]))}
               >
                 <ListItemText
                   primaryTypographyProps={{ noWrap: true, display: "block" }}
-                  primary={prettyFormatDay(dayEvents[0].eventTime)}
+                  primary={prettyFormatDay(getTime(dayActivityEvents[0]))}
                 />
               </ListItem>
             ])}
@@ -88,15 +89,15 @@ const tabs = {
   }
 };
 
-export function History({ previousDaysEventsByDay }) {
+export function History({ previousDaysActivityEventsByDay }) {
   const [currentTab, setCurrentTab] = React.useState("day");
 
   function groupEventsByPeriod(tab) {
     const periods = [];
     let currentPeriodIndex = -1;
     const eventsGroupedByPeriod = {};
-    previousDaysEventsByDay.forEach(dayEvents => {
-      const period = tabs[tab].getPeriod(dayEvents[0].eventTime);
+    previousDaysActivityEventsByDay.forEach(dayEvents => {
+      const period = tabs[tab].getPeriod(getTime(dayEvents[0]));
       if (currentPeriodIndex === -1 || period !== periods[currentPeriodIndex]) {
         if (currentPeriodIndex >= 0)
           eventsGroupedByPeriod[
@@ -181,7 +182,7 @@ export function History({ previousDaysEventsByDay }) {
       />
       <div style={{ height: "2vh" }} />
       {tabs[currentTab].renderPeriod({
-        eventsByDay: eventsGroupedByPeriod[selectedPeriod].events,
+        activityEventsByDay: eventsGroupedByPeriod[selectedPeriod].events,
         handleDayClick: date => e => handlePeriodChange(e, "day", date),
         followingPeriodStart:
           eventsGroupedByPeriod[selectedPeriod].followingPeriodStart

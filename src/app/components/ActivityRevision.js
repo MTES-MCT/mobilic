@@ -26,6 +26,7 @@ import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import { ACTIVITIES } from "../../common/utils/activities";
 import useTheme from "@material-ui/core/styles/useTheme";
+import { getTime } from "../../common/utils/events";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -61,7 +62,7 @@ export function ActivityRevisionModal({
 
   React.useEffect(() => {
     event
-      ? setRevisedEventTime(event.eventTime)
+      ? setRevisedEventTime(getTime(event))
       : setRevisedEventTime(undefined);
     setActionType(undefined);
     return () => {};
@@ -90,7 +91,7 @@ export function ActivityRevisionModal({
               </Box>
               <Typography>
                 <span className="bold">Heure de début : </span>
-                {formatTimeOfDay(event.eventTime)}
+                {formatTimeOfDay(getTime(event))}
               </Typography>
             </Box>
             <Box m={2} style={{ display: "flex", justifyContent: "center" }}>
@@ -145,7 +146,7 @@ export function ActivityRevisionModal({
                 !actionType ||
                 (actionType === "revision" &&
                   (!!revisedEventTimeError ||
-                    revisedEventTime === event.eventTime))
+                    revisedEventTime === getTime(event)))
               }
               color="primary"
             >
@@ -171,11 +172,11 @@ export function WorkDayRevision({
       event,
       handleRevisionAction: (actionType, revisedEventTime) =>
         handleActivityRevision(event, actionType, revisedEventTime),
-      minEventTime: getStartOfDay(activityEvents[0].eventTime),
+      minEventTime: getStartOfDay(getTime(activityEvents[0])),
       maxEventTime:
         event.type !== ACTIVITIES.rest.name &&
         activityEvents[activityEvents.length - 1].type === ACTIVITIES.rest.name
-          ? activityEvents[activityEvents.length - 1].eventTime
+          ? getTime(activityEvents[activityEvents.length - 1])
           : Date.now(),
       cancellable:
         event.type !== ACTIVITIES.rest.name || activityEvents.length === 1
@@ -198,7 +199,7 @@ export function WorkDayRevision({
             </IconButton>
             <Typography variant="h6" align="center">
               Corriger journée du{" "}
-              {shortPrettyFormatDay(activityEvents[0].eventTime)}
+              {shortPrettyFormatDay(getTime(activityEvents[0]))}
             </Typography>
             <IconButton edge="end" color="inherit" className="hidden">
               <ArrowBackIcon />

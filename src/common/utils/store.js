@@ -239,12 +239,12 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       callback
     );
 
-  pushNewActivityRevision = (eventId, eventTime, callback = () => {}) =>
+  pushNewActivityRevision = (eventId, startTime, callback = () => {}) =>
     this.pushEvent(
       {
         eventId: eventId,
-        eventTime: eventTime,
-        revisionTime: Date.now()
+        startTime: startTime,
+        eventTime: Date.now()
       },
       "pendingActivityRevisions",
       callback

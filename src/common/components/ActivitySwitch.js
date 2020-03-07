@@ -9,6 +9,7 @@ import classNames from "classnames";
 import { ACTIVITIES } from "../utils/activities";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { ModalContext } from "../utils/modals";
+import { getTime } from "../utils/events";
 
 export function ActivitySwitchCard({
   label,
@@ -82,7 +83,7 @@ export function ActivitySwitchGrid({
           currentActivity.driverIdx !== undefined
             ? currentActivity.driverIdx
             : -1,
-        currentDriverStartTime: currentActivity.eventTime,
+        currentDriverStartTime: getTime(currentActivity),
         handleDriverSelection: driverIdx =>
           pushActivitySwitchEvent(activityName, driverIdx)
       });

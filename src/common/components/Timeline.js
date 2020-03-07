@@ -11,6 +11,7 @@ import IconButton from "@material-ui/core/IconButton";
 import { ModalContext } from "../utils/modals";
 import EditIcon from "@material-ui/icons/Edit";
 import { WorkDayRevision } from "../../app/components/ActivityRevision";
+import { getTime } from "../utils/events";
 
 const useStyles = makeStyles({
   period: props => ({
@@ -54,16 +55,18 @@ function Event({ height, className, children = null }) {
   );
 }
 
-export function TimeLine({ dayEvents, cancelOrReviseActivityEvent }) {
+export function TimeLine({ dayActivityEvents, cancelOrReviseActivityEvent }) {
   const theme = useTheme();
   const [openRevisionModal, setOpenRevisionModal] = React.useState(false);
 
-  const lastEvent = dayEvents[dayEvents.length - 1];
+  const lastActivityEvent = dayActivityEvents[dayActivityEvents.length - 1];
   const endDate =
-    lastEvent.type === ACTIVITIES.rest.name ? lastEvent.eventTime : null;
+    lastActivityEvent.type === ACTIVITIES.rest.name
+      ? getTime(lastActivityEvent)
+      : null;
   const eventsToDisplay = endDate
-    ? dayEvents.slice(0, dayEvents.length - 1)
-    : dayEvents;
+    ? dayActivityEvents.slice(0, dayActivityEvents.length - 1)
+    : dayActivityEvents;
 
   const periodWidth = `${Math.floor(
     (100 - eventsToDisplay.length) / eventsToDisplay.length
@@ -142,7 +145,7 @@ export function TimeLine({ dayEvents, cancelOrReviseActivityEvent }) {
             <React.Fragment key={index}>
               <Event className="timeline-legend">
                 <Typography variant="caption" className="timeline-legend-label">
-                  {formatTimeOfDay(event.eventTime)}
+                  {formatTimeOfDay(getTime(event))}
                 </Typography>
               </Event>
               <Period width={periodWidth} className="timeline-legend" />
@@ -171,7 +174,7 @@ export function TimeLine({ dayEvents, cancelOrReviseActivityEvent }) {
         open={openRevisionModal}
         handleClose={() => setOpenRevisionModal(false)}
         handleActivityRevision={cancelOrReviseActivityEvent}
-        activityEvents={dayEvents}
+        activityEvents={dayActivityEvents}
       />
     </>
   );

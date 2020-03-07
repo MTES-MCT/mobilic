@@ -70,7 +70,7 @@ export const USER_QUERY = gql`
       activities {
         id
         type
-        eventTime
+        startTime
         team
         mission
         vehicleRegistrationNumber
@@ -96,7 +96,7 @@ export const ACTIVITY_LOG_MUTATION = gql`
       activities {
         id
         type
-        eventTime
+        startTime
         team
         mission
         vehicleRegistrationNumber
@@ -143,7 +143,7 @@ export const ACTIVITY_CANCEL_MUTATION = gql`
       activities {
         id
         type
-        eventTime
+        startTime
         team
         mission
         vehicleRegistrationNumber
@@ -159,7 +159,7 @@ export const ACTIVITY_REVISION_MUTATION = gql`
       activities {
         id
         type
-        eventTime
+        startTime
         team
         mission
         vehicleRegistrationNumber

@@ -35,7 +35,7 @@ const SCREENS_WITH_BOTTOM_NAVIGATION = {
     label: "Historique",
     renderIcon: props => <TimelineIcon {...props} />,
     render: props =>
-      props.previousDaysEventsByDay.length > 0 ? (
+      props.previousDaysActivityEventsByDay.length > 0 ? (
         <History {...props} />
       ) : (
         <PlaceHolder>

@@ -5,6 +5,7 @@ import { formatTimeOfDay, prettyFormatDay } from "../utils/time";
 import useTheme from "@material-ui/core/styles/useTheme";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+import { getTime } from "../utils/events";
 
 function ActivityStepButton({ activity, onClick }) {
   const theme = useTheme();
@@ -42,13 +43,13 @@ export function VerticalTimeline({ activityEvents, handleEventClick }) {
             justifyContent: "center"
           }}
         >
-          <Typography>{formatTimeOfDay(activityEvent.eventTime)}</Typography>
+          <Typography>{formatTimeOfDay(getTime(activityEvent))}</Typography>
           <ActivityStepButton
             activity={ACTIVITIES[activityEvent.type]}
             onClick={() => handleEventClick(activityEvent)}
           />
           <Typography className="hidden">
-            {formatTimeOfDay(activityEvent.eventTime)}
+            {formatTimeOfDay(getTime(activityEvent))}
           </Typography>
         </Box>,
         <Box
