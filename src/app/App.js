@@ -18,7 +18,7 @@ function App() {
 
   // We force re-rendering every 5 sec to update timers
   React.useEffect(() => {
-    setInterval(() => setCurrentTime(Date.now()), 5000);
+    setInterval(() => setCurrentTime(Date.now()), 30000);
   }, []);
 
   const rawActivityEvents = storeSyncedWithLocalStorage.activities();
