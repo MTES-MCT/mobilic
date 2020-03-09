@@ -223,7 +223,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     this.pushEvent(
       {
         eventId: eventId,
-        cancelTime: Date.now()
+        eventTime: Date.now()
       },
       "pendingExpenditureCancels",
       callback
@@ -233,7 +233,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     this.pushEvent(
       {
         eventId: eventId,
-        cancelTime: Date.now()
+        eventTime: Date.now()
       },
       "pendingActivityCancels",
       callback
