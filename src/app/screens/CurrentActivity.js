@@ -107,6 +107,7 @@ export function CurrentActivity({
       <TimeLine
         dayActivityEvents={currentDayActivityEvents}
         cancelOrReviseActivityEvent={cancelOrReviseActivityEvent}
+        pushNewActivityEvent={pushNewActivityEvent}
       />
       <Divider className="full-width-divider" />
       <ActivitySwitchGrid

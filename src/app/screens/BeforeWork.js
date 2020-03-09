@@ -181,6 +181,7 @@ export function BeforeWork({
         handleClose={() => setOpenRevisionModal(false)}
         activityEvents={latestDayActivityEvents}
         handleActivityRevision={cancelOrReviseActivityEvent}
+        pushNewActivityEvent={pushNewActivityEvent}
       />
     </>
   );

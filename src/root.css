@@ -310,3 +310,8 @@
   height: 60px !important;
   width: 120px !important;
 }
+
+.vertical-timeline-label {
+  flex-shrink: 0;
+  width: calc(50% - 40px);
+}

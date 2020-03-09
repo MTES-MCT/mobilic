@@ -55,7 +55,11 @@ function Event({ height, className, children = null }) {
   );
 }
 
-export function TimeLine({ dayActivityEvents, cancelOrReviseActivityEvent }) {
+export function TimeLine({
+  dayActivityEvents,
+  cancelOrReviseActivityEvent,
+  pushNewActivityEvent
+}) {
   const theme = useTheme();
   const [openRevisionModal, setOpenRevisionModal] = React.useState(false);
 
@@ -175,6 +179,7 @@ export function TimeLine({ dayActivityEvents, cancelOrReviseActivityEvent }) {
         handleClose={() => setOpenRevisionModal(false)}
         handleActivityRevision={cancelOrReviseActivityEvent}
         activityEvents={dayActivityEvents}
+        pushNewActivityEvent={pushNewActivityEvent}
       />
     </>
   );

@@ -56,7 +56,8 @@ function App() {
     driverIdx = null,
     mission = currentActivity && currentActivity.mission,
     vehicleRegistrationNumber = currentActivity &&
-      currentActivity.vehicleRegistrationNumber
+      currentActivity.vehicleRegistrationNumber,
+    startTime = null
   }) => {
     storeSyncedWithLocalStorage.pushNewActivity(
       activityType,
@@ -64,6 +65,7 @@ function App() {
       mission,
       vehicleRegistrationNumber,
       driverIdx,
+      startTime,
       () =>
         api.submitEvents(ACTIVITY_LOG_MUTATION, "activities", apiResponse => {
           const activities = apiResponse.data.logActivities.activities;
@@ -83,6 +85,7 @@ function App() {
     newStartTime = null
   ) => {
     if (activityEvent.isBeingSubmitted) return;
+    // If the event was not submitted yet we can directly alter its value in the store, with no need for an API call
     if (!activityEvent.id) {
       storeSyncedWithLocalStorage.removeEvent(activityEvent, "activities");
       if (actionType === "revision") {
@@ -96,6 +99,7 @@ function App() {
         const pendingRevisionForActivity = storeSyncedWithLocalStorage
           .pendingActivityRevisions()
           .find(rev => rev.eventId === activityEvent.id);
+        // If a revision is currently being submitted for the same event, abort
         if (pendingRevisionForActivity) {
           if (pendingRevisionForActivity.isBeingSubmitted) return;
           storeSyncedWithLocalStorage.removeEvent(
@@ -127,6 +131,16 @@ function App() {
           }
         );
       } else {
+        // Remove revisions of the event that are pending, since the event will be cancelled anyway
+        const pendingRevisionForActivity = storeSyncedWithLocalStorage
+          .pendingActivityRevisions()
+          .find(rev => rev.eventId === activityEvent.id);
+        if (pendingRevisionForActivity) {
+          storeSyncedWithLocalStorage.removeEvent(
+            pendingRevisionForActivity,
+            "pendingActivityRevisions"
+          );
+        }
         storeSyncedWithLocalStorage.pushNewActivityCancel(
           activityEvent.id,
           () => {

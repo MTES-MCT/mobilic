@@ -186,6 +186,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     mission,
     vehicleRegistrationNumber,
     driverIdx,
+    startTime,
     callback = () => {}
   ) => {
     const newActivity = {
@@ -199,8 +200,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         lastName: tm.lastName
       }))
     };
-    if (driverIdx) newActivity.driverIdx = driverIdx;
-
+    if (driverIdx !== undefined && driverIdx !== null)
+      newActivity.driverIdx = driverIdx;
+    if (startTime !== undefined && startTime !== null)
+      newActivity.startTime = startTime;
     this.pushEvent(newActivity, "activities", callback);
   };
 

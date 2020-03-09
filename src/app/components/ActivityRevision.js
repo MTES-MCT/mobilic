@@ -3,10 +3,12 @@ import Dialog from "@material-ui/core/Dialog";
 import Slide from "@material-ui/core/Slide";
 import AppBar from "@material-ui/core/AppBar";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import AddIcon from "@material-ui/icons/Add";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
+import Fab from "@material-ui/core/Fab";
 import { VerticalTimeline } from "../../common/components/VerticalTimeline";
 import {
   isoFormatDateTime,
@@ -24,64 +26,133 @@ import CheckIcon from "@material-ui/icons/Check";
 import { ModalContext } from "../../common/utils/modals";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
-import { ACTIVITIES } from "../../common/utils/activities";
+import { ACTIVITIES, TIMEABLE_ACTIVITIES } from "../../common/utils/activities";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { getTime } from "../../common/utils/events";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
+import MenuItem from "@material-ui/core/MenuItem";
+import {
+  formatPersonName,
+  resolveCurrentTeam
+} from "../../common/utils/coworkers";
+import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export function ActivityRevisionModal({
+export function ActivityRevisionOrCreationModal({
   event,
   open,
   handleClose,
   handleRevisionAction,
-  minEventTime,
-  maxEventTime,
-  cancellable
+  minStartTime,
+  maxStartTime,
+  cancellable,
+  createActivity,
+  team
 }) {
   const theme = useTheme();
-  const [actionType, setActionType] = React.useState(undefined); // "cancel" or "revision"
-  const [revisedEventTime, setRevisedEventTime] = React.useState(undefined);
-  const [revisedEventTimeError, setRevisedEventTimeError] = React.useState("");
+  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const [actionType, setActionType] = React.useState(undefined); // "cancel", "revision" or "creation"
+
+  const [newActivityType, setNewActivityType] = React.useState(undefined);
+  const [newActivityIsTeamMode, setNewActivityIsTeamMode] = React.useState(
+    true
+  );
+  const [newActivityDriverIdx, setNewActivityDriverIdx] = React.useState(
+    undefined
+  );
+
+  const [newStartTime, setNewStartTime] = React.useState(undefined);
+  const [newStartTimeError, setNewStartTimeError] = React.useState("");
 
   const validatesRevisedEventTimeError = () => {
-    console.log("Prout");
-    if (revisedEventTime <= minEventTime) {
-      setRevisedEventTimeError(
-        `L'heure doit être après ${formatDateTime(minEventTime)}`
+    if (newStartTime <= minStartTime) {
+      setNewStartTimeError(
+        `L'heure doit être après ${formatDateTime(minStartTime)}`
       );
-    } else if (revisedEventTime >= maxEventTime) {
-      setRevisedEventTimeError(
-        `L'heure doit être avant ${formatDateTime(maxEventTime)}`
+    } else if (newStartTime >= maxStartTime) {
+      setNewStartTimeError(
+        `L'heure doit être avant ${formatDateTime(maxStartTime)}`
       );
-    } else setRevisedEventTimeError("");
+    } else setNewStartTimeError("");
     return () => {};
   };
 
+  function handleSubmit() {
+    if (actionType === "creation") {
+      let teamPayload = team;
+      let driverIdx = null;
+      if (!newActivityIsTeamMode)
+        teamPayload = [{ id: storeSyncedWithLocalStorage.userId() }];
+      if (requiresDriverIdx()) driverIdx = newActivityDriverIdx;
+      createActivity(newActivityType, newStartTime, teamPayload, driverIdx);
+    } else handleRevisionAction(actionType, newStartTime);
+  }
+
   React.useEffect(() => {
-    event
-      ? setRevisedEventTime(getTime(event))
-      : setRevisedEventTime(undefined);
-    setActionType(undefined);
+    if (event) {
+      setNewStartTime(getTime(event));
+      setActionType(undefined);
+    } else {
+      setNewStartTime(undefined);
+      setActionType("creation");
+    }
+    setNewActivityDriverIdx(undefined);
     return () => {};
   }, [open]);
 
-  React.useEffect(validatesRevisedEventTimeError, [revisedEventTime]);
+  React.useEffect(validatesRevisedEventTimeError, [newStartTime]);
+
+  function requiresDriverIdx() {
+    return (
+      actionType === "creation" &&
+      newActivityType === ACTIVITIES.drive.name &&
+      newActivityIsTeamMode &&
+      team &&
+      team.length > 1
+    );
+  }
+
+  function canSubmit() {
+    if (actionType === "cancel") {
+      return !!event;
+    }
+    if (actionType === "revision") {
+      return event && getTime(event) !== newStartTime && !newStartTimeError;
+    }
+    if (actionType === "creation") {
+      if (requiresDriverIdx()) {
+        return (
+          !!newActivityType &&
+          !!newStartTime &&
+          !newStartTimeError &&
+          newActivityDriverIdx !== undefined
+        );
+      }
+      return !!newActivityType && !!newStartTime && !newStartTimeError;
+    }
+    return false;
+  }
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Modifier l'activité</DialogTitle>
-      {event && (
-        <>
-          <DialogContent>
-            <Box my={2}>
-              <Typography>
-                ⚠️ Les modifications seront visibles par votre employeur et par
-                les contrôleurs
-              </Typography>
-            </Box>
+      <DialogTitle>
+        {actionType === "creation"
+          ? "Nouvelle activité"
+          : "Modifier l'activité"}
+      </DialogTitle>
+      <DialogContent>
+        <Box my={2}>
+          <Typography>
+            ⚠️ Les modifications seront visibles par votre employeur et par les
+            contrôleurs
+          </Typography>
+        </Box>
+        {event && (
+          <>
             <Box mb={1}>
               <Box className="flexbox-flex-start">
                 <Typography className="bold">Activité :&nbsp;</Typography>
@@ -106,55 +177,99 @@ export function ActivityRevisionModal({
                 <ToggleButton value="revision">Modifier heure</ToggleButton>
               </ToggleButtonGroup>
             </Box>
-            {actionType === "revision" && (
-              <Box style={{ display: "flex", alignItems: "center" }}>
-                <TextField
-                  label="Début"
-                  type="datetime-local"
-                  value={isoFormatDateTime(revisedEventTime)}
-                  inputProps={{
-                    step: 60
-                  }}
-                  onChange={e => {
-                    const dayVsTime = e.target.value.split("T");
-                    const dayElements = dayVsTime[0].split("-");
-                    const timeElements = dayVsTime[1].split(":");
-                    const newRevisedEventTime = new Date(revisedEventTime);
-                    newRevisedEventTime.setFullYear(parseInt(dayElements[0]));
-                    newRevisedEventTime.setMonth(parseInt(dayElements[1]) - 1);
-                    newRevisedEventTime.setDate(parseInt(dayElements[2]));
-                    newRevisedEventTime.setHours(parseInt(timeElements[0]));
-                    newRevisedEventTime.setMinutes(parseInt(timeElements[1]));
-                    setRevisedEventTime(newRevisedEventTime.getTime());
-                  }}
-                  error={!!revisedEventTimeError}
-                  helperText={revisedEventTimeError}
-                />
-              </Box>
-            )}
-          </DialogContent>
-          <DialogActions>
-            <IconButton onClick={handleClose}>
-              <CloseIcon color="error" />
-            </IconButton>
-            <IconButton
-              onClick={() => {
-                handleRevisionAction(actionType, revisedEventTime);
-                handleClose();
-              }}
-              disabled={
-                !actionType ||
-                (actionType === "revision" &&
-                  (!!revisedEventTimeError ||
-                    revisedEventTime === getTime(event)))
-              }
-              color="primary"
+          </>
+        )}
+        <Box mt={3}>
+          {actionType === "creation" && (
+            <TextField
+              label="Activité"
+              required
+              fullWidth
+              select
+              value={newActivityType}
+              onChange={e => setNewActivityType(e.target.value)}
             >
-              <CheckIcon />
-            </IconButton>
-          </DialogActions>
-        </>
-      )}
+              {Object.keys(TIMEABLE_ACTIVITIES).map(activityName => (
+                <MenuItem key={activityName} value={activityName}>
+                  {TIMEABLE_ACTIVITIES[activityName].label}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+          {requiresDriverIdx() && (
+            <TextField
+              label="Conducteur"
+              required
+              fullWidth
+              select
+              value={newActivityDriverIdx}
+              onChange={e => setNewActivityDriverIdx(e.target.value)}
+            >
+              {team.map((teamMate, index) => (
+                <MenuItem key={index} value={index}>
+                  {formatPersonName(teamMate)}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+          {(actionType === "revision" || actionType === "creation") && (
+            <TextField
+              label="Début"
+              type="datetime-local"
+              required
+              fullWidth
+              value={isoFormatDateTime(newStartTime)}
+              inputProps={{
+                step: 60
+              }}
+              onChange={e => {
+                const dayVsTime = e.target.value.split("T");
+                const dayElements = dayVsTime[0].split("-");
+                const timeElements = dayVsTime[1].split(":");
+                const newRevisedEventTime = new Date(newStartTime);
+                newRevisedEventTime.setFullYear(parseInt(dayElements[0]));
+                newRevisedEventTime.setMonth(parseInt(dayElements[1]) - 1);
+                newRevisedEventTime.setDate(parseInt(dayElements[2]));
+                newRevisedEventTime.setHours(parseInt(timeElements[0]));
+                newRevisedEventTime.setMinutes(parseInt(timeElements[1]));
+                setNewStartTime(newRevisedEventTime.getTime());
+              }}
+              error={!!newStartTimeError}
+              helperText={newStartTimeError}
+            />
+          )}
+          {actionType === "creation" && (
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={newActivityIsTeamMode}
+                  onChange={() =>
+                    setNewActivityIsTeamMode(!newActivityIsTeamMode)
+                  }
+                  color="primary"
+                />
+              }
+              label="Pour toute l'équipe"
+              labelPlacement="end"
+            />
+          )}
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <IconButton onClick={handleClose}>
+          <CloseIcon color="error" />
+        </IconButton>
+        <IconButton
+          onClick={() => {
+            handleSubmit();
+            handleClose();
+          }}
+          disabled={!canSubmit()}
+          color="primary"
+        >
+          <CheckIcon />
+        </IconButton>
+      </DialogActions>
     </Dialog>
   );
 }
@@ -163,23 +278,56 @@ export function WorkDayRevision({
   open,
   handleClose,
   activityEvents,
-  handleActivityRevision
+  handleActivityRevision,
+  pushNewActivityEvent
 }) {
   const modals = React.useContext(ModalContext);
+  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
 
   const handleEventClick = event => {
     modals.open("activityRevision", {
       event,
       handleRevisionAction: (actionType, revisedEventTime) =>
         handleActivityRevision(event, actionType, revisedEventTime),
-      minEventTime: getStartOfDay(getTime(activityEvents[0])),
-      maxEventTime:
+      minStartTime:
+        event.type === ACTIVITIES.rest.name &&
+        activityEvents[activityEvents.length - 1].type ===
+          ACTIVITIES.rest.name &&
+        activityEvents.length > 1
+          ? getTime(activityEvents[activityEvents.length - 2])
+          : getStartOfDay(getTime(activityEvents[0])),
+      maxStartTime:
         event.type !== ACTIVITIES.rest.name &&
         activityEvents[activityEvents.length - 1].type === ACTIVITIES.rest.name
           ? getTime(activityEvents[activityEvents.length - 1])
           : Date.now(),
       cancellable:
         event.type !== ACTIVITIES.rest.name || activityEvents.length === 1
+    });
+  };
+
+  const handleNewActivityClick = () => {
+    const lastActivityOfTheDay = activityEvents[activityEvents.length - 1];
+    modals.open("activityRevision", {
+      minStartTime: getStartOfDay(getTime(activityEvents[0])),
+      maxStartTime:
+        activityEvents[activityEvents.length - 1].type === ACTIVITIES.rest.name
+          ? getTime(activityEvents[activityEvents.length - 1])
+          : Date.now(),
+      createActivity: (activityType, startTime, team, driverIdx) =>
+        pushNewActivityEvent({
+          activityType,
+          team,
+          driverIdx,
+          mission: lastActivityOfTheDay.mission,
+          vehicleRegistrationNumber:
+            lastActivityOfTheDay.vehicleRegistrationNumber,
+          startTime
+        }),
+      team: resolveCurrentTeam(
+        lastActivityOfTheDay,
+        storeSyncedWithLocalStorage
+      )
     });
   };
 
@@ -211,6 +359,22 @@ export function WorkDayRevision({
         activityEvents={activityEvents}
         handleEventClick={handleEventClick}
       />
+      <Box
+        pb={1}
+        px={2}
+        className="full-width"
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          position: "fixed",
+          bottom: 0
+        }}
+      >
+        <Fab color="primary" onClick={handleNewActivityClick}>
+          <AddIcon />
+        </Fab>
+      </Box>
     </Dialog>
   );
 }
