@@ -368,10 +368,15 @@ export function WorkDayRevision({
           justifyContent: "flex-end",
           alignItems: "center",
           position: "fixed",
-          bottom: 0
+          bottom: 0,
+          pointerEvents: "none"
         }}
       >
-        <Fab color="primary" onClick={handleNewActivityClick}>
+        <Fab
+          color="primary"
+          style={{ pointerEvents: "auto" }}
+          onClick={handleNewActivityClick}
+        >
           <AddIcon />
         </Fab>
       </Box>
