@@ -16,5 +16,9 @@
     "/api/": {
       "origin": "${API_HOST}"
     }
+  },
+  "routes": {
+    "/static/**": "/static/",
+    "/**": "index.html"
   }
 }
