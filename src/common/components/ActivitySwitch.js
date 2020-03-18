@@ -34,7 +34,12 @@ export function ActivitySwitchCard({
     style: { color: color }
   };
   return (
-    <Card className={className} onClick={onClick} raised={onFocus}>
+    <Card
+      className={className}
+      onClick={onClick}
+      raised={onFocus}
+      style={{ border: onFocus ? `${color} groove 2px` : "none" }}
+    >
       <CardContent className="activity-card-content">
         {label && (
           <Typography
