@@ -8,7 +8,6 @@ import ChevronRightOutlinedIcon from "@material-ui/icons/ChevronRightOutlined";
 import useTheme from "@material-ui/core/styles/useTheme";
 import Box from "@material-ui/core/Box";
 import IconButton from "@material-ui/core/IconButton";
-import { ModalContext } from "../utils/modals";
 import EditIcon from "@material-ui/icons/Edit";
 import { WorkDayRevision } from "../../app/components/ActivityRevision";
 import { getTime } from "../utils/events";
