@@ -35,7 +35,6 @@ const tabs = {
     formatPeriod: shortPrettyFormatDay,
     renderPeriod: ({ activityEventsByDay, followingPeriodStart }) => {
       const dayActivityEvents = activityEventsByDay[0];
-      const dayEnd = getTime(dayActivityEvents[dayActivityEvents.length - 1]);
       return (
         <div>
           <Card>

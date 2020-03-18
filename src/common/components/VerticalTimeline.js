@@ -1,7 +1,7 @@
 import Box from "@material-ui/core/Box";
 import { ACTIVITIES } from "../utils/activities";
 import React from "react";
-import { formatTimeOfDay, prettyFormatDay } from "../utils/time";
+import { formatTimeOfDay } from "../utils/time";
 import useTheme from "@material-ui/core/styles/useTheme";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
