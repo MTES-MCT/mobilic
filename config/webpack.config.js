@@ -613,7 +613,19 @@ module.exports = function(webpackEnv) {
           clientsClaim: true,
           skipWaiting: true,
           exclude: [/\.map$/, /asset-manifest\.json$/],
-          importWorkboxFrom: "cdn"
+          importWorkboxFrom: "cdn",
+          navigateFallback: publicUrl + "/index.html",
+          navigateFallbackBlacklist: [
+            // Exclude any URLs whose last part seems to be a file extension
+            // as they're likely a resource and not a SPA route
+            // URLs containing a "?" character won't be blacklisted as they're likely
+            // a route with query params (e.g. auth callbacks).
+            new RegExp("/[^/?]+\\.[^/]+$"),
+            // API calls
+            new RegExp("^/api"),
+            // admin app
+            new RegExp("^/admin")
+          ]
         }),
       // TypeScript type checking
       useTypeScript &&
