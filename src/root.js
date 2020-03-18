@@ -58,23 +58,23 @@ function _Root() {
     <Switch>
       {userId &&
         !isCompanyAdmin && [
-          <Route key="app" path="/app">
+          <Route exact key="app" path="/app">
             <App />
           </Route>,
           <Redirect push key="*" from="*" to="/app" />
         ]}
       {userId &&
         isCompanyAdmin && [
-          <Route key="admin" path="/admin">
+          <Route exact key="admin" path="/admin">
             <Admin />
           </Route>,
           <Redirect push key="*" from="*" to="/admin" />
         ]}
       {!userId && [
-        <Route key="signup" path="/signup">
+        <Route exact key="signup" path="/signup">
           <Signup />
         </Route>,
-        <Route key="login" path="/">
+        <Route exact key="login" path="/">
           <Login />
         </Route>,
         <Redirect push key="*" from="*" to="/" />
