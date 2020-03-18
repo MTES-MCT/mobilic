@@ -101,12 +101,10 @@
   },
   "lint-staged": {
     "*.{html,json,md,mdx,css,yaml}": [
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ],
     "*.{js,ts,tsx}": [
-      "eslint --fix",
-      "git add"
+      "eslint --fix"
     ]
   },
   "devDependencies": {
