@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import ApolloClient, { gql } from "apollo-boost";
 import jwtDecode from "jwt-decode";
 import { useStoreSyncedWithLocalStorage } from "./store";
@@ -187,10 +188,12 @@ class Api {
   constructor(
     storeSyncedWithLocalStorage = {},
     apiHost = process.env.REACT_APP_API_HOST || "/api",
+    history = {},
     graphqlPath = "/graphql"
   ) {
     this.apiHost = apiHost;
     this.storeSyncedWithLocalStorage = storeSyncedWithLocalStorage;
+    this.history = history;
     this.apolloClient = new ApolloClient({
       uri: `${apiHost}${graphqlPath}`,
       request: operation => {
@@ -328,8 +331,9 @@ class Api {
     });
   }
 
-  logout() {
-    this.storeSyncedWithLocalStorage.removeTokens();
+  async logout() {
+    await this.storeSyncedWithLocalStorage.removeTokens();
+    this.history.push("/");
   }
 }
 
@@ -337,6 +341,7 @@ const api = new Api();
 
 export function ApiContextProvider({ children }) {
   api.storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  api.history = useHistory();
   return <ApiContext.Provider value={api}>{children}</ApiContext.Provider>;
 }
 

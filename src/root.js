@@ -1,4 +1,10 @@
 import React from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect
+} from "react-router-dom";
 
 import "./index.css";
 import "./root.css";
@@ -22,23 +28,22 @@ export default function Root() {
   return (
     <div className="Root">
       <StoreSyncedWithLocalStorageProvider>
-        <ApiContextProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <ModalProvider modalDict={MODAL_DICT}>
-              <_Root />
-            </ModalProvider>
-          </ThemeProvider>
-        </ApiContextProvider>
+        <Router>
+          <ApiContextProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <ModalProvider modalDict={MODAL_DICT}>
+                <_Root />
+              </ModalProvider>
+            </ThemeProvider>
+          </ApiContextProvider>
+        </Router>
       </StoreSyncedWithLocalStorageProvider>
     </div>
   );
 }
 
 function _Root() {
-  const [signUpInsteadOfLogging, setSignUpInsteadOfLogging] = React.useState(
-    false
-  );
   const api = useApi();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   const userId = storeSyncedWithLocalStorage.userId();
@@ -49,10 +54,31 @@ function _Root() {
     return () => {};
   }, [userId]);
 
-  if (!userId && signUpInsteadOfLogging)
-    return <Signup setSignUpInsteadOfLogging={setSignUpInsteadOfLogging} />;
-  if (!userId && !signUpInsteadOfLogging)
-    return <Login setSignUpInsteadOfLogging={setSignUpInsteadOfLogging} />;
-  if (userId && !isCompanyAdmin) return <App />;
-  if (userId && isCompanyAdmin) return <Admin />;
+  return (
+    <Switch>
+      {userId &&
+        !isCompanyAdmin && [
+          <Route key="app" path="/app">
+            <App />
+          </Route>,
+          <Redirect push key="*" from="*" to="/app" />
+        ]}
+      {userId &&
+        isCompanyAdmin && [
+          <Route key="admin" path="/admin">
+            <Admin />
+          </Route>,
+          <Redirect push key="*" from="*" to="/admin" />
+        ]}
+      {!userId && [
+        <Route key="signup" path="/signup">
+          <Signup />
+        </Route>,
+        <Route key="login" path="/">
+          <Login />
+        </Route>,
+        <Redirect push key="*" from="*" to="/" />
+      ]}
+    </Switch>
+  );
 }
