@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -11,7 +12,7 @@ import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { Header } from "../common/components/Header";
 
-export default function Signup({ setSignUpInsteadOfLogging }) {
+export default function Signup() {
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -22,6 +23,7 @@ export default function Signup({ setSignUpInsteadOfLogging }) {
 
   const api = useApi();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const history = useHistory();
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -35,8 +37,10 @@ export default function Signup({ setSignUpInsteadOfLogging }) {
         companyName
       });
       const { accessToken, refreshToken } = signUpResponse.data.signupUser;
-      storeSyncedWithLocalStorage.storeTokens({ accessToken, refreshToken });
-      setSignUpInsteadOfLogging(false);
+      await storeSyncedWithLocalStorage.storeTokens({
+        accessToken,
+        refreshToken
+      });
     } catch (err) {
       setEmail("");
       setPassword("");
@@ -51,7 +55,7 @@ export default function Signup({ setSignUpInsteadOfLogging }) {
         <IconButton
           edge="start"
           color="primary"
-          onClick={() => setSignUpInsteadOfLogging(false)}
+          onClick={() => history.push("/")}
         >
           <ArrowBackIcon />
         </IconButton>

@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -10,7 +11,7 @@ import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import Box from "@material-ui/core/Box";
 import { LogosHeader } from "../common/components/LogosHeader";
 
-export default function Login({ setSignUpInsteadOfLogging }) {
+export default function Login() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -18,6 +19,7 @@ export default function Login({ setSignUpInsteadOfLogging }) {
 
   const api = useApi();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const history = useHistory();
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -109,7 +111,7 @@ export default function Login({ setSignUpInsteadOfLogging }) {
                 href="/"
                 onClick={e => {
                   e.preventDefault();
-                  setSignUpInsteadOfLogging(true);
+                  history.push("/signup");
                 }}
               >
                 {" "}

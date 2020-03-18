@@ -141,12 +141,13 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       );
     });
 
-  removeItems = items => {
+  removeItems = (items, callback = () => {}) => {
     const itemValueMap = {};
     items.forEach(item => (itemValueMap[item] = null));
-    this.setState(itemValueMap, () =>
-      items.forEach(item => localStorage.removeItem(item))
-    );
+    this.setState(itemValueMap, () => {
+      items.forEach(item => localStorage.removeItem(item));
+      callback();
+    });
   };
 
   storeTokens = ({ accessToken, refreshToken }) =>
@@ -163,9 +164,13 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       );
     });
 
-  removeTokens = () => {
-    this.removeItems(["accessToken", "refreshToken", "userId", "companyAdmin"]);
-  };
+  removeTokens = () =>
+    new Promise(resolve =>
+      this.removeItems(
+        ["accessToken", "refreshToken", "userId", "companyAdmin"],
+        resolve
+      )
+    );
 
   setUserInfo = ({ firstName, lastName, companyId, companyName }) =>
     this.setItems({
