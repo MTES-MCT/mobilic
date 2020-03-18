@@ -63,11 +63,6 @@ function registerValidSW(swUrl, config) {
         if (installingWorker == null) {
           return;
         }
-        installingWorker.onstatechange = () => {
-          if (installingWorker.state === "installed") {
-            installingWorker.postMessage({ type: "SKIP_WAITING" });
-          }
-        };
       };
     })
     .catch(error => {
