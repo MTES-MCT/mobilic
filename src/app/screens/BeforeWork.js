@@ -55,7 +55,8 @@ export function BeforeWork({
       if (shouldResumeDay) {
         const breakInsteadOfRest = {
           ...latestDayEnd,
-          type: ACTIVITIES.break.name
+          type: ACTIVITIES.break.name,
+          isPrediction: true
         };
         storeSyncedWithLocalStorage.removeEvent(latestDayEnd, "activities");
         storeSyncedWithLocalStorage.pushEvent(breakInsteadOfRest, "activities");

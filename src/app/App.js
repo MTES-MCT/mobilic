@@ -1,5 +1,8 @@
 import React from "react";
-import { parseActivityPayloadFromBackend } from "../common/utils/activities";
+import {
+  ACTIVITIES,
+  parseActivityPayloadFromBackend
+} from "../common/utils/activities";
 import { getTime, groupActivityEventsByDay } from "../common/utils/events";
 import { ScreenWithBottomNavigation } from "./utils/navigation";
 import {
@@ -10,6 +13,7 @@ import {
   useApi
 } from "../common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
+import { resolveTeamAt } from "../common/utils/coworkers";
 
 function App() {
   const api = useApi();
@@ -59,6 +63,22 @@ function App() {
       currentActivity.vehicleRegistrationNumber,
     startTime = null
   }) => {
+    if (activityType === ACTIVITIES.rest.name && startTime === null) {
+      const team = resolveTeamAt(Date.now(), storeSyncedWithLocalStorage);
+      team.forEach(tm =>
+        storeSyncedWithLocalStorage.pushEvent(
+          {
+            type: "remove",
+            userId: tm.id,
+            firstName: tm.firstName,
+            lastName: tm.lastName,
+            eventTime: Date.now(),
+            isPrediction: true
+          },
+          "teamEnrollments"
+        )
+      );
+    }
     storeSyncedWithLocalStorage.pushNewActivity(
       activityType,
       mission,

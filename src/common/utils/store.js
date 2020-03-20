@@ -99,7 +99,9 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         prevState => ({
           [arrayField]: [
             ...eventsFromApi,
-            ...prevState[arrayField].filter(e => !e.isBeingSubmitted && !e.id)
+            ...prevState[arrayField].filter(
+              e => !e.id && !e.isBeingSubmitted && !e.isPrediction
+            )
           ]
         }),
         [arrayField],
@@ -112,7 +114,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       this._setState(
         prevState => ({
           [arrayField]: prevState[arrayField].map(e =>
-            e.id ? e : { ...e, isBeingSubmitted: true }
+            e.id || e.isPrediction ? e : { ...e, isBeingSubmitted: true }
           )
         }),
         [arrayField],
