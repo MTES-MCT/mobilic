@@ -48,22 +48,18 @@ export function CurrentActivity({
         );
       }
     } else {
-      storeSyncedWithLocalStorage.pushNewExpenditure(
-        expenditureType,
-        team,
-        () =>
-          api.submitEvents(
-            EXPENDITURE_LOG_MUTATION,
-            "expenditures",
-            apiResponse => {
-              const expenditures =
-                apiResponse.data.logExpenditures.expenditures;
-              return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-                expenditures.map(parseExpenditureFromBackend),
-                "expenditures"
-              );
-            }
-          )
+      storeSyncedWithLocalStorage.pushNewExpenditure(expenditureType, () =>
+        api.submitEvents(
+          EXPENDITURE_LOG_MUTATION,
+          "expenditures",
+          apiResponse => {
+            const expenditures = apiResponse.data.logExpenditures.expenditures;
+            return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+              expenditures.map(parseExpenditureFromBackend),
+              "expenditures"
+            );
+          }
+        )
       );
     }
   };
@@ -114,8 +110,8 @@ export function CurrentActivity({
         timers={timers}
         team={team}
         currentActivity={currentActivity}
-        pushActivitySwitchEvent={(activityType, driverIdx = null) =>
-          pushNewActivityEvent({ activityType, team, driverIdx })
+        pushActivitySwitchEvent={(activityType, driverId = null) =>
+          pushNewActivityEvent({ activityType, driverId })
         }
       />
       <Divider className="full-width-divider" />

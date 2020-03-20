@@ -62,11 +62,17 @@ export const USER_QUERY = gql`
       company {
         id
         name
-        users {
-          id
-          firstName
-          lastName
-        }
+      }
+      enrollableCoworkers {
+        id
+        firstName
+        lastName
+      }
+      teamEnrollments {
+        id
+        userId
+        type
+        actionTime
       }
       activities {
         id
@@ -75,7 +81,7 @@ export const USER_QUERY = gql`
         team
         mission
         vehicleRegistrationNumber
-        driverIdx
+        driverId
       }
       expenditures {
         id
@@ -101,14 +107,13 @@ export const ACTIVITY_LOG_MUTATION = gql`
         team
         mission
         vehicleRegistrationNumber
-        driverIdx
+        driverId
       }
-      company {
-        users {
-          id
-          firstName
-          lastName
-        }
+      teamEnrollments {
+        id
+        userId
+        type
+        actionTime
       }
     }
   }
@@ -148,7 +153,7 @@ export const ACTIVITY_CANCEL_MUTATION = gql`
         team
         mission
         vehicleRegistrationNumber
-        driverIdx
+        driverId
       }
     }
   }
@@ -164,7 +169,7 @@ export const ACTIVITY_REVISION_MUTATION = gql`
         team
         mission
         vehicleRegistrationNumber
-        driverIdx
+        driverId
       }
     }
   }
@@ -177,6 +182,24 @@ export const COMMENT_LOG_MUTATION = gql`
         id
         content
         eventTime
+      }
+    }
+  }
+`;
+
+export const TEAM_ENROLLMENT_LOG_MUTATION = gql`
+  mutation($data: [SingleTeamEnrollmentInput]!) {
+    logTeamEnrollments(data: $data) {
+      enrollableCoworkers {
+        id
+        firstName
+        lastName
+      }
+      teamEnrollments {
+        id
+        userId
+        type
+        actionTime
       }
     }
   }

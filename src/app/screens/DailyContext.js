@@ -58,7 +58,7 @@ export function DailyContext({
   const team = resolveCurrentTeam(currentActivity, storeSyncedWithLocalStorage);
 
   const pushNewComment = content => {
-    storeSyncedWithLocalStorage.pushNewComment(content, team, () =>
+    storeSyncedWithLocalStorage.pushNewComment(content, () =>
       api.submitEvents(COMMENT_LOG_MUTATION, "comments", apiResponse => {
         const comments = apiResponse.data.logComments.comments;
         return storeSyncedWithLocalStorage.updateAllSubmittedEvents(

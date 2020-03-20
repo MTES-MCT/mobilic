@@ -52,8 +52,7 @@ function App() {
 
   const pushNewActivityEvent = ({
     activityType,
-    team,
-    driverIdx = null,
+    driverId = null,
     mission = currentActivity && currentActivity.mission,
     vehicleRegistrationNumber = currentActivity &&
       currentActivity.vehicleRegistrationNumber,
@@ -61,20 +60,23 @@ function App() {
   }) => {
     storeSyncedWithLocalStorage.pushNewActivity(
       activityType,
-      team,
       mission,
       vehicleRegistrationNumber,
-      driverIdx,
+      driverId,
       startTime,
       () =>
         api.submitEvents(ACTIVITY_LOG_MUTATION, "activities", apiResponse => {
           const activities = apiResponse.data.logActivities.activities;
-          const coworkers = apiResponse.data.logActivities.company.users;
-          storeSyncedWithLocalStorage.setCoworkers(coworkers);
-          return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-            activities.map(parseActivityPayloadFromBackend),
-            "activities"
-          );
+          return Promise.all([
+            storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+              activities.map(parseActivityPayloadFromBackend),
+              "activities"
+            ),
+            storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+              apiResponse.data.logActivities.teamEnrollments,
+              "teamEnrollments"
+            )
+          ]);
         })
     );
   };

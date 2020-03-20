@@ -14,6 +14,8 @@ export async function loadUserData(api, storeSyncedWithLocalStorage) {
       company,
       activities,
       expenditures,
+      teamEnrollments,
+      enrollableCoworkers,
       comments
     } = userResponse.data.user;
     const parsedActivities = activities.map(rawActivityPayload =>
@@ -26,7 +28,7 @@ export async function loadUserData(api, storeSyncedWithLocalStorage) {
       companyName: company.name
     });
     storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-      company.users.filter(u => u.id !== storeSyncedWithLocalStorage.userId()),
+      enrollableCoworkers,
       "coworkers"
     );
     storeSyncedWithLocalStorage.updateAllSubmittedEvents(
@@ -38,6 +40,10 @@ export async function loadUserData(api, storeSyncedWithLocalStorage) {
       "expenditures"
     );
     storeSyncedWithLocalStorage.updateAllSubmittedEvents(comments, "comments");
+    storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+      teamEnrollments,
+      "teamEnrollments"
+    );
   } catch (err) {
     console.log(err);
   }

@@ -40,7 +40,6 @@ export function parseActivityPayloadFromBackend(activity) {
     startTime: activity.startTime,
     mission: activity.mission,
     vehicleRegistrationNumber: activity.vehicleRegistrationNumber,
-    team: activity.team ? activity.team.map(id => ({ id: id })) : [],
-    driverIdx: activity.driverIdx
+    driverId: activity.driverId
   };
 }
