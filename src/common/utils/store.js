@@ -20,6 +20,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         serialize: JSON.stringify,
         deserialize: value => (value ? JSON.parse(value) : [])
       },
+      teamEnrollments: {
+        serialize: JSON.stringify,
+        deserialize: value => (value ? JSON.parse(value) : [])
+      },
       activities: {
         serialize: JSON.stringify,
         deserialize: value => (value ? JSON.parse(value) : [])
@@ -187,10 +191,9 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
   pushNewActivity = (
     activityType,
-    team,
     mission,
     vehicleRegistrationNumber,
-    driverIdx,
+    driverId,
     startTime,
     callback = () => {}
   ) => {
@@ -198,30 +201,20 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       type: activityType,
       eventTime: Date.now(),
       mission: mission,
-      vehicleRegistrationNumber: vehicleRegistrationNumber,
-      team: team.map(tm => ({
-        id: tm.id,
-        firstName: tm.firstName,
-        lastName: tm.lastName
-      }))
+      vehicleRegistrationNumber: vehicleRegistrationNumber
     };
-    if (driverIdx !== undefined && driverIdx !== null)
-      newActivity.driverIdx = driverIdx;
+    if (driverId !== undefined && driverId !== null)
+      newActivity.driverId = driverId;
     if (startTime !== undefined && startTime !== null)
       newActivity.startTime = startTime;
     this.pushEvent(newActivity, "activities", callback);
   };
 
-  pushNewExpenditure = (expenditureType, team, callback = () => {}) =>
+  pushNewExpenditure = (expenditureType, callback = () => {}) =>
     this.pushEvent(
       {
         type: expenditureType,
-        eventTime: Date.now(),
-        team: team.map(tm => ({
-          id: tm.id,
-          firstName: tm.firstName,
-          lastName: tm.lastName
-        }))
+        eventTime: Date.now()
       },
       "expenditures",
       callback
@@ -258,18 +251,32 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       callback
     );
 
-  pushNewComment = (content, team, callback = () => {}) =>
+  pushNewComment = (content, callback = () => {}) =>
     this.pushEvent(
       {
         content,
-        eventTime: Date.now(),
-        team: team.map(tm => ({
-          id: tm.id,
-          firstName: tm.firstName,
-          lastName: tm.lastName
-        }))
+        eventTime: Date.now()
       },
       "comments",
+      callback
+    );
+
+  pushNewTeamEnrollment = (
+    enrollType,
+    userId,
+    firstName,
+    lastName,
+    callback = () => {}
+  ) =>
+    this.pushEvent(
+      {
+        type: enrollType,
+        userId,
+        firstName,
+        lastName,
+        eventTime: Date.now()
+      },
+      "teamEnrollments",
       callback
     );
 
@@ -307,7 +314,9 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             pendingActivityCancels: () => this.state.pendingActivityCancels,
             pendingActivityRevisions: () => this.state.pendingActivityRevisions,
             pushNewActivityCancel: this.pushNewActivityCancel,
-            pushNewActivityRevision: this.pushNewActivityRevision
+            pushNewActivityRevision: this.pushNewActivityRevision,
+            teamEnrollments: () => this.state.teamEnrollments,
+            pushNewTeamEnrollment: this.pushNewTeamEnrollment
           }}
         >
           {this.props.children}
