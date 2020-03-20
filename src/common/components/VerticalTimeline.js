@@ -6,7 +6,7 @@ import useTheme from "@material-ui/core/styles/useTheme";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { getTime } from "../utils/events";
-import { formatPersonName, resolveCurrentTeam } from "../utils/coworkers";
+import { formatPersonName, getCoworkerById } from "../utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "../utils/store";
 
 function ActivityStepButton({ activity, onClick }) {
@@ -33,23 +33,23 @@ function ActivityStepButton({ activity, onClick }) {
 }
 
 export function VerticalTimeline({ activityEvents, handleEventClick }) {
-  const theme = useTheme();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const theme = useTheme();
   return (
     <Box p={3} className="scrollable">
       {activityEvents.map((activityEvent, index) => {
         let driverInfo = "";
         if (
-          activityEvent.team.length > 1 &&
           activityEvent.type === ACTIVITIES.drive.name &&
-          (activityEvent.driverIdx || activityEvent.driverIdx === 0)
+          activityEvent.driverId
         ) {
-          const resolvedTeam = resolveCurrentTeam(
-            activityEvent,
-            storeSyncedWithLocalStorage
-          );
           driverInfo = `Conducteur : ${formatPersonName(
-            resolvedTeam[activityEvent.driverIdx]
+            activityEvent.driverId === storeSyncedWithLocalStorage.userId()
+              ? storeSyncedWithLocalStorage.userInfo()
+              : getCoworkerById(
+                  activityEvent.driverId,
+                  storeSyncedWithLocalStorage.coworkers()
+                )
           )}`;
         }
         return [

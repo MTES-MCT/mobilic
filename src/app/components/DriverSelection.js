@@ -11,7 +11,7 @@ import { formatTimer } from "../../common/utils/time";
 export function DriverSelectionModal({
   team = [],
   open,
-  currentDriverIdx = -1,
+  currentDriver = undefined,
   currentDriverStartTime = null,
   handleClose,
   handleDriverSelection
@@ -23,9 +23,9 @@ export function DriverSelectionModal({
         <RadioGroup
           aria-label="driver"
           name="driver"
-          value={currentDriverIdx}
+          value={team.findIndex(tm => tm === currentDriver)}
           onChange={e => {
-            handleDriverSelection(e.target.value);
+            handleDriverSelection(team[e.target.value]);
             handleClose();
           }}
         >
@@ -35,13 +35,13 @@ export function DriverSelectionModal({
               value={index}
               control={<Radio />}
               label={`${formatPersonName(teamMate)}${
-                index === currentDriverIdx
+                currentDriver && teamMate.id === currentDriver.id
                   ? ` (conduit depuis ${formatTimer(
                       Date.now() - currentDriverStartTime
                     )})`
                   : ""
               }`}
-              disabled={index === currentDriverIdx}
+              disabled={currentDriver && teamMate.id === currentDriver.id}
             />
           ))}
         </RadioGroup>

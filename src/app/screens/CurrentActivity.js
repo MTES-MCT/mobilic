@@ -12,7 +12,7 @@ import {
   useApi
 } from "../../common/utils/api";
 import { parseExpenditureFromBackend } from "../../common/utils/expenditures";
-import { resolveCurrentTeam } from "../../common/utils/coworkers";
+import { resolveTeamAt } from "../../common/utils/coworkers";
 
 export function CurrentActivity({
   currentActivity,
@@ -29,7 +29,6 @@ export function CurrentActivity({
     Date.now() + 1
   );
 
-  const team = resolveCurrentTeam(currentActivity, storeSyncedWithLocalStorage);
   const pendingExpenditureCancels = storeSyncedWithLocalStorage.pendingExpenditureCancels();
 
   const pushNewExpenditure = expenditureType => {
@@ -108,7 +107,7 @@ export function CurrentActivity({
       <Divider className="full-width-divider" />
       <ActivitySwitchGrid
         timers={timers}
-        team={team}
+        team={resolveTeamAt(Date.now(), storeSyncedWithLocalStorage)}
         currentActivity={currentActivity}
         pushActivitySwitchEvent={(activityType, driverId = null) =>
           pushNewActivityEvent({ activityType, driverId })

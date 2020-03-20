@@ -6,6 +6,7 @@ import {
   ACTIVITY_CANCEL_MUTATION,
   ACTIVITY_LOG_MUTATION,
   ACTIVITY_REVISION_MUTATION,
+  TEAM_ENROLLMENT_LOG_MUTATION,
   useApi
 } from "../common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
@@ -169,6 +170,35 @@ function App() {
     }
   };
 
+  const pushNewTeamEnrollment = (enrollType, userId, firstName, lastName) =>
+    storeSyncedWithLocalStorage.pushNewTeamEnrollment(
+      enrollType,
+      userId,
+      firstName,
+      lastName,
+      () =>
+        api.submitEvents(
+          TEAM_ENROLLMENT_LOG_MUTATION,
+          "teamEnrollments",
+          apiResponse => {
+            const coworkers =
+              apiResponse.data.logTeamEnrollments.enrollableCoworkers;
+            const teamEnrollments =
+              apiResponse.data.logTeamEnrollments.teamEnrollments;
+            return Promise.all([
+              storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+                coworkers,
+                "coworkers"
+              ),
+              storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+                teamEnrollments,
+                "teamEnrollments"
+              )
+            ]);
+          }
+        )
+    );
+
   return (
     <ScreenWithBottomNavigation
       currentTime={currentTime}
@@ -178,6 +208,7 @@ function App() {
       cancelOrReviseActivityEvent={cancelOrReviseActivityEvent}
       previousDaysActivityEventsByDay={previousDaysActivityEventsByDay}
       currentDayExpenditures={currentDayExpenditures}
+      pushNewTeamEnrollment={pushNewTeamEnrollment}
     />
   );
 }

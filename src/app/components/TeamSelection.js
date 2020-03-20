@@ -16,15 +16,24 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Divider from "@material-ui/core/Divider";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Checkbox from "@material-ui/core/Checkbox";
-import { formatPersonName } from "../../common/utils/coworkers";
+import {
+  augmentCoworkersWithEnrollmentHistoryAtTime,
+  formatPersonName
+} from "../../common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 import { Box } from "@material-ui/core";
+import { formatTimeOfDay } from "../../common/utils/time";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export function TeamSelectionModal({ open, handleClose, handleContinue }) {
+export function TeamSelectionModal({
+  open,
+  showEnrollmentHistoryAfterTime,
+  handleClose,
+  handleContinue
+}) {
   const [updatedCoworkers, setUpdatedCoworkers] = React.useState([]);
 
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
@@ -35,7 +44,18 @@ export function TeamSelectionModal({ open, handleClose, handleContinue }) {
   // - discarded, i.e. not committed to main "coworkers" state (when hitting Back button)
   // - committed to main state (when hitting Ok button)
   // We sync the secondary state with the main one whenever the modal is opened/closed or the main state changes
-  React.useEffect(() => setUpdatedCoworkers(coworkers), [open, coworkers]);
+  React.useEffect(() => {
+    console.log("Re-updating coworkers");
+    setUpdatedCoworkers(
+      showEnrollmentHistoryAfterTime
+        ? augmentCoworkersWithEnrollmentHistoryAtTime(
+            Date.now(),
+            storeSyncedWithLocalStorage,
+            showEnrollmentHistoryAfterTime
+          )
+        : coworkers
+    );
+  }, [open, coworkers, showEnrollmentHistoryAfterTime]);
 
   const pushNewCoworker = (firstName, lastName) => () => {
     setUpdatedCoworkers([
@@ -43,14 +63,20 @@ export function TeamSelectionModal({ open, handleClose, handleContinue }) {
       {
         firstName: firstName,
         lastName: lastName,
-        isInCurrentTeam: true
+        newEnrollmentType: "enroll"
       }
     ]);
   };
 
   const toggleAddCoworkerToTeam = id => () => {
     const newCoworkers = updatedCoworkers.slice();
-    newCoworkers[id].isInCurrentTeam = !newCoworkers[id].isInCurrentTeam;
+    const coworker = newCoworkers[id];
+    if (coworker.newEnrollmentType) {
+      coworker.newEnrollmentType = null;
+    } else {
+      coworker.newEnrollmentType =
+        coworker.latestEnrollmentType === "enroll" ? "remove" : "enroll";
+    }
     setUpdatedCoworkers(newCoworkers);
   };
 
@@ -125,12 +151,26 @@ export function TeamSelectionModal({ open, handleClose, handleContinue }) {
           <Divider key={2 * index} />,
           <ListItem key={2 * index + 1}>
             <Checkbox
-              checked={coworker.isInCurrentTeam || false}
+              checked={
+                coworker.newEnrollmentType
+                  ? coworker.newEnrollmentType === "enroll"
+                  : coworker.latestEnrollmentType === "enroll"
+              }
               onChange={toggleAddCoworkerToTeam(index)}
             />
             <ListItemText
               primaryTypographyProps={{ noWrap: true, display: "block" }}
               primary={formatPersonName(coworker)}
+              secondaryTypographyProps={{ noWrap: true, display: "block" }}
+              secondary={
+                coworker.latestEnrollmentType
+                  ? `${
+                      coworker.latestEnrollmentType === "enroll"
+                        ? "ajouté"
+                        : "retiré"
+                    } à ${formatTimeOfDay(coworker.latestEnrollmentTime)}`
+                  : null
+              }
             />
             <ListItemSecondaryAction>
               <IconButton edge="end" onClick={removeCoworker(index)}>
@@ -145,12 +185,7 @@ export function TeamSelectionModal({ open, handleClose, handleContinue }) {
         <Button
           variant="contained"
           color="primary"
-          onClick={async () => {
-            storeSyncedWithLocalStorage.setCoworkers(
-              updatedCoworkers,
-              handleContinue
-            );
-          }}
+          onClick={async () => handleContinue(updatedCoworkers)}
         >
           Continuer
         </Button>

@@ -15,12 +15,14 @@ import { WorkDayRevision } from "../components/ActivityRevision";
 import EditIcon from "@material-ui/icons/Edit";
 import Link from "@material-ui/core/Link";
 import { getTime } from "../../common/utils/events";
+import { resolveTeamAt } from "../../common/utils/coworkers";
 
 export function BeforeWork({
   currentTime,
   previousDaysActivityEventsByDay,
   pushNewActivityEvent,
-  cancelOrReviseActivityEvent
+  cancelOrReviseActivityEvent,
+  pushNewTeamEnrollment
 }) {
   const [openRevisionModal, setOpenRevisionModal] = React.useState(false);
 
@@ -37,6 +39,69 @@ export function BeforeWork({
 
   const modals = React.useContext(ModalContext);
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+
+  const handleFirstActivitySelection = (
+    activityType,
+    dayInfos,
+    updatedCoworkers = null
+  ) => {
+    let teamMates = [];
+    if (updatedCoworkers) {
+      teamMates = storeSyncedWithLocalStorage
+        .coworkers()
+        .filter(cw => cw.newEnrollmentType === "enroll");
+    }
+    const createActivity = async (driver = null) => {
+      if (shouldResumeDay) {
+        const breakInsteadOfRest = {
+          ...latestDayEnd,
+          type: ACTIVITIES.break.name
+        };
+        storeSyncedWithLocalStorage.removeEvent(latestDayEnd, "activities");
+        storeSyncedWithLocalStorage.pushEvent(breakInsteadOfRest, "activities");
+      }
+      await Promise.all(
+        teamMates.map(mate =>
+          pushNewTeamEnrollment(
+            "enroll",
+            mate.id,
+            mate.firstName,
+            mate.lastName
+          )
+        )
+      );
+
+      let driverId;
+      if (driver && driver.id) {
+        driverId = driver.id;
+      } else if (driver) {
+        const updatedTeamMates = resolveTeamAt(
+          Date.now(),
+          storeSyncedWithLocalStorage
+        );
+        const matchingTeamMate = updatedTeamMates.find(
+          tm =>
+            tm.firstName === driver.firstName && tm.lastName === driver.lastName
+        );
+        if (matchingTeamMate) driverId = matchingTeamMate.id;
+      }
+
+      pushNewActivityEvent({
+        activityType,
+        driverId,
+        mission: dayInfos.mission,
+        vehicleRegistrationNumber: dayInfos.vehicleRegistrationNumber
+      });
+      modals.close("missionSelection");
+      modals.close("teamSelection");
+    };
+    if (teamMates.length > 0 && activityType === ACTIVITIES.drive.name) {
+      modals.open("driverSelection", {
+        team: [storeSyncedWithLocalStorage.userInfo(), ...teamMates],
+        handleDriverSelection: createActivity
+      });
+    } else createActivity();
+  };
 
   return (
     <>
@@ -81,30 +146,8 @@ export function BeforeWork({
               modals.open("missionSelection", {
                 handleContinue: dayInfos =>
                   modals.open("firstActivity", {
-                    handleItemClick: activityType => {
-                      if (shouldResumeDay) {
-                        const breakInsteadOfRest = {
-                          ...latestDayEnd,
-                          type: ACTIVITIES.break.name
-                        };
-                        storeSyncedWithLocalStorage.removeEvent(
-                          latestDayEnd,
-                          "activities"
-                        );
-                        storeSyncedWithLocalStorage.pushEvent(
-                          breakInsteadOfRest,
-                          "activities"
-                        );
-                      }
-                      pushNewActivityEvent({
-                        activityType,
-                        team: [storeSyncedWithLocalStorage.userInfo()],
-                        mission: dayInfos.mission,
-                        vehicleRegistrationNumber:
-                          dayInfos.vehicleRegistrationNumber
-                      });
-                      modals.close("missionSelection");
-                    }
+                    handleItemClick: activityType =>
+                      handleFirstActivitySelection(activityType, dayInfos)
                   })
               });
             }}
@@ -118,54 +161,16 @@ export function BeforeWork({
             startIcon={<PeopleIcon />}
             onClick={() =>
               modals.open("teamSelection", {
-                handleContinue: () =>
+                handleContinue: updatedCoworkers =>
                   modals.open("missionSelection", {
                     handleContinue: dayInfos => {
                       modals.open("firstActivity", {
-                        handleItemClick: activityType => {
-                          const teamMates = storeSyncedWithLocalStorage
-                            .coworkers()
-                            .filter(cw => cw.isInCurrentTeam);
-                          const team = [
-                            storeSyncedWithLocalStorage.userInfo(),
-                            ...teamMates
-                          ];
-                          if (shouldResumeDay) {
-                            const breakInsteadOfRest = {
-                              ...latestDayEnd,
-                              type: ACTIVITIES.break.name
-                            };
-                            storeSyncedWithLocalStorage.removeEvent(
-                              latestDayEnd,
-                              "activities"
-                            );
-                            storeSyncedWithLocalStorage.pushEvent(
-                              breakInsteadOfRest,
-                              "activities"
-                            );
-                          }
-                          const createActivity = (driverIdx = null) => {
-                            pushNewActivityEvent({
-                              activityType,
-                              team,
-                              driverIdx,
-                              mission: dayInfos.mission,
-                              vehicleRegistrationNumber:
-                                dayInfos.vehicleRegistrationNumber
-                            });
-                            modals.close("missionSelection");
-                            modals.close("teamSelection");
-                          };
-                          if (
-                            team.length > 1 &&
-                            activityType === ACTIVITIES.drive.name
-                          ) {
-                            modals.open("driverSelection", {
-                              team,
-                              handleDriverSelection: createActivity
-                            });
-                          } else createActivity();
-                        }
+                        handleItemClick: activityType =>
+                          handleFirstActivitySelection(
+                            activityType,
+                            dayInfos,
+                            updatedCoworkers
+                          )
                       });
                     }
                   })

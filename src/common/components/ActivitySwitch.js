@@ -10,6 +10,7 @@ import { ACTIVITIES } from "../utils/activities";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { ModalContext } from "../utils/modals";
 import { getTime } from "../utils/events";
+import { useStoreSyncedWithLocalStorage } from "../utils/store";
 
 export function ActivitySwitchCard({
   label,
@@ -77,20 +78,22 @@ export function ActivitySwitchGrid({
   pushActivitySwitchEvent
 }) {
   const modals = React.useContext(ModalContext);
-  const hasTeamMates = team.length > 1;
+  const hasTeamMates = team.length > 0;
   const theme = useTheme();
+  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const teamWithSelf = [storeSyncedWithLocalStorage.userInfo(), ...team];
   const handleActivitySwitch = activityName => () => {
     if (!hasTeamMates && activityName === currentActivity.type) return;
     else if (hasTeamMates && activityName === ACTIVITIES.drive.name) {
       modals.open("driverSelection", {
-        team,
-        currentDriverIdx:
-          currentActivity.driverIdx !== undefined
-            ? currentActivity.driverIdx
-            : -1,
+        team: teamWithSelf,
+        currentDriver:
+          currentActivity.driverId !== undefined
+            ? teamWithSelf.find(tm => tm.id === currentActivity.driverId)
+            : undefined,
         currentDriverStartTime: getTime(currentActivity),
-        handleDriverSelection: driverIdx =>
-          pushActivitySwitchEvent(activityName, driverIdx)
+        handleDriverSelection: driver =>
+          pushActivitySwitchEvent(activityName, driver.id)
       });
     } else if (activityName === ACTIVITIES.rest.name) {
       modals.open("confirmation", {

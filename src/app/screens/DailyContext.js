@@ -12,7 +12,7 @@ import { UserNameHeader } from "../../common/components/UserNameHeader";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import List from "@material-ui/core/List";
-import { resolveCurrentTeam } from "../../common/utils/coworkers";
+import { resolveTeamAt } from "../../common/utils/coworkers";
 import ListItemText from "@material-ui/core/ListItemText";
 import { ListItemSecondaryAction } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
@@ -28,7 +28,8 @@ import { getTime } from "../../common/utils/events";
 export function DailyContext({
   currentActivity,
   currentDayActivityEvents,
-  previousDaysActivityEventsByDay
+  previousDaysActivityEventsByDay,
+  pushNewTeamEnrollment
 }) {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   const api = useApi();
@@ -55,7 +56,17 @@ export function DailyContext({
         .filter(c => getTime(c) >= getTime(firstActivityOfTheDay))
     : [];
 
-  const team = resolveCurrentTeam(currentActivity, storeSyncedWithLocalStorage);
+  const ignoreTeamEnrollmentsBeforeTime = firstActivityOfTheDay
+    ? getTime(firstActivityOfTheDay) - 10000
+    : null;
+
+  const team = currentActivity
+    ? resolveTeamAt(
+        isCurrentDayStarted ? Date.now() : getTime(currentActivity),
+        storeSyncedWithLocalStorage,
+        ignoreTeamEnrollmentsBeforeTime
+      )
+    : [];
 
   const pushNewComment = content => {
     storeSyncedWithLocalStorage.pushNewComment(content, () =>
@@ -97,7 +108,7 @@ export function DailyContext({
         >
           <ListItem disableGutters>
             <ListItemIcon color="primary">
-              {team.length === 1 ? (
+              {team.length === 0 ? (
                 <PersonIcon color="primary" />
               ) : (
                 <PeopleIcon color="primary" />
@@ -106,18 +117,38 @@ export function DailyContext({
             <ListItemText
               className="new-lines-on-overflow"
               primary={
-                team.length === 1
+                team.length === 0
                   ? "En solo"
-                  : `${team.length - 1} coéquipier${
-                      team.length > 2 ? "s" : ""
-                    } : ${team
-                      .filter(
-                        tm => tm.id !== storeSyncedWithLocalStorage.userId()
-                      )
-                      .map(mate => mate.firstName)
-                      .join(", ")}`
+                  : `${team.length} coéquipier${
+                      team.length > 1 ? "s" : ""
+                    } : ${team.map(mate => mate.firstName).join(", ")}`
               }
             />
+            <ListItemSecondaryAction>
+              <IconButton
+                edge="end"
+                onClick={() =>
+                  modals.open("teamSelection", {
+                    showEnrollmentHistoryAfterTime: ignoreTeamEnrollmentsBeforeTime,
+                    handleContinue: updatedCoworkers => {
+                      updatedCoworkers.forEach(
+                        cw =>
+                          cw.newEnrollmentType &&
+                          pushNewTeamEnrollment(
+                            cw.newEnrollmentType,
+                            cw.id,
+                            cw.firstName,
+                            cw.lastName
+                          )
+                      );
+                      modals.close("teamSelection");
+                    }
+                  })
+                }
+              >
+                <CreateIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
           </ListItem>
           <ListItem className="new-lines-on-overflow" disableGutters>
             <ListItemIcon>

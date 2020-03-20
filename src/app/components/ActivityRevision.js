@@ -32,10 +32,7 @@ import { getTime } from "../../common/utils/events";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import MenuItem from "@material-ui/core/MenuItem";
-import {
-  formatPersonName,
-  resolveCurrentTeam
-} from "../../common/utils/coworkers";
+import { formatPersonName, resolveTeamAt } from "../../common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -50,8 +47,7 @@ export function ActivityRevisionOrCreationModal({
   minStartTime,
   maxStartTime,
   cancellable,
-  createActivity,
-  team
+  createActivity
 }) {
   const theme = useTheme();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
@@ -61,12 +57,17 @@ export function ActivityRevisionOrCreationModal({
   const [newActivityIsTeamMode, setNewActivityIsTeamMode] = React.useState(
     true
   );
-  const [newActivityDriverIdx, setNewActivityDriverIdx] = React.useState(
+  const [newActivityDriverId, setNewActivityDriverId] = React.useState(
     undefined
   );
 
   const [newStartTime, setNewStartTime] = React.useState(undefined);
   const [newStartTimeError, setNewStartTimeError] = React.useState("");
+
+  const user = storeSyncedWithLocalStorage.userInfo();
+  const team = newStartTime
+    ? [user, ...resolveTeamAt(newStartTime, storeSyncedWithLocalStorage)]
+    : [user];
 
   const validatesRevisedEventTimeError = () => {
     if (newStartTime <= minStartTime) {
@@ -83,12 +84,9 @@ export function ActivityRevisionOrCreationModal({
 
   function handleSubmit() {
     if (actionType === "creation") {
-      let teamPayload = team;
-      let driverIdx = null;
-      if (!newActivityIsTeamMode)
-        teamPayload = [{ id: storeSyncedWithLocalStorage.userId() }];
-      if (requiresDriverIdx()) driverIdx = newActivityDriverIdx;
-      createActivity(newActivityType, newStartTime, teamPayload, driverIdx);
+      let driverId = null;
+      if (requiresDriverId()) driverId = newActivityDriverId;
+      createActivity(newActivityType, newStartTime, driverId);
     } else handleRevisionAction(actionType, newStartTime);
   }
 
@@ -100,13 +98,13 @@ export function ActivityRevisionOrCreationModal({
       setNewStartTime(undefined);
       setActionType("creation");
     }
-    setNewActivityDriverIdx(undefined);
+    setNewActivityDriverId(undefined);
     return () => {};
   }, [open]);
 
   React.useEffect(validatesRevisedEventTimeError, [newStartTime]);
 
-  function requiresDriverIdx() {
+  function requiresDriverId() {
     return (
       actionType === "creation" &&
       newActivityType === ACTIVITIES.drive.name &&
@@ -124,12 +122,12 @@ export function ActivityRevisionOrCreationModal({
       return event && getTime(event) !== newStartTime && !newStartTimeError;
     }
     if (actionType === "creation") {
-      if (requiresDriverIdx()) {
+      if (requiresDriverId()) {
         return (
           !!newActivityType &&
           !!newStartTime &&
           !newStartTimeError &&
-          newActivityDriverIdx !== undefined
+          newActivityDriverId !== undefined
         );
       }
       return !!newActivityType && !!newStartTime && !newStartTimeError;
@@ -196,17 +194,17 @@ export function ActivityRevisionOrCreationModal({
               ))}
             </TextField>
           )}
-          {requiresDriverIdx() && (
+          {requiresDriverId() && (
             <TextField
               label="Conducteur"
               required
               fullWidth
               select
-              value={newActivityDriverIdx}
-              onChange={e => setNewActivityDriverIdx(e.target.value)}
+              value={newActivityDriverId}
+              onChange={e => setNewActivityDriverId(e.target.value)}
             >
               {team.map((teamMate, index) => (
-                <MenuItem key={index} value={index}>
+                <MenuItem key={index} value={teamMate.id}>
                   {formatPersonName(teamMate)}
                 </MenuItem>
               ))}
@@ -282,7 +280,6 @@ export function WorkDayRevision({
   pushNewActivityEvent
 }) {
   const modals = React.useContext(ModalContext);
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
 
   const handleEventClick = event => {
     modals.open("activityRevision", {
@@ -314,20 +311,15 @@ export function WorkDayRevision({
         activityEvents[activityEvents.length - 1].type === ACTIVITIES.rest.name
           ? getTime(activityEvents[activityEvents.length - 1])
           : Date.now(),
-      createActivity: (activityType, startTime, team, driverIdx) =>
+      createActivity: (activityType, startTime, driverId) =>
         pushNewActivityEvent({
           activityType,
-          team,
-          driverIdx,
+          driverId,
           mission: lastActivityOfTheDay.mission,
           vehicleRegistrationNumber:
             lastActivityOfTheDay.vehicleRegistrationNumber,
           startTime
-        }),
-      team: resolveCurrentTeam(
-        lastActivityOfTheDay,
-        storeSyncedWithLocalStorage
-      )
+        })
     });
   };
 
