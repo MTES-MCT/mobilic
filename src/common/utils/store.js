@@ -93,6 +93,19 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       [arrayField]
     );
 
+  hideEvent = (event, arrayField) =>
+    this._setState(
+      prevState => ({
+        [arrayField]: [
+          ...prevState[arrayField].filter(
+            e => JSON.stringify(e) !== JSON.stringify(event)
+          ),
+          { ...event, isHidden: true }
+        ]
+      }),
+      [arrayField]
+    );
+
   updateAllSubmittedEvents = (eventsFromApi, arrayField) =>
     new Promise(resolve => {
       this._setState(
@@ -118,7 +131,15 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           )
         }),
         [arrayField],
-        () => resolve(this.state[arrayField].filter(e => e.isBeingSubmitted))
+        () =>
+          resolve(
+            this.state[arrayField]
+              .filter(e => e.isBeingSubmitted)
+              .map(event => {
+                const { isHidden, ...eventProps } = event;
+                return eventProps;
+              })
+          )
       );
     });
 
@@ -312,6 +333,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             removeEventsAfterFailedSubmission: this
               .removeEventsAfterFailedSubmission,
             removeEvent: this.removeEvent,
+            hideEvent: this.hideEvent,
             pushEvent: this.pushEvent,
             pendingActivityCancels: () => this.state.pendingActivityCancels,
             pendingActivityRevisions: () => this.state.pendingActivityRevisions,

@@ -32,7 +32,7 @@ function App() {
     .map(ac => ac.eventId);
   const activityRevisionEvents = storeSyncedWithLocalStorage.pendingActivityRevisions();
   const activityEvents = rawActivityEvents
-    .filter(a => !cancelledActivityIds.includes(a.id))
+    .filter(a => !cancelledActivityIds.includes(a.id) && !a.isHidden)
     .map(a => {
       const revision = activityRevisionEvents.find(rev => rev.eventId === a.id);
       return revision ? { ...a, startTime: revision.startTime } : a;

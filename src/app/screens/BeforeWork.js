@@ -58,7 +58,7 @@ export function BeforeWork({
           type: ACTIVITIES.break.name,
           isPrediction: true
         };
-        storeSyncedWithLocalStorage.removeEvent(latestDayEnd, "activities");
+        storeSyncedWithLocalStorage.hideEvent(latestDayEnd, "activities");
         storeSyncedWithLocalStorage.pushEvent(breakInsteadOfRest, "activities");
       }
       await Promise.all(
