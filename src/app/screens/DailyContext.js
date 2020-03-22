@@ -145,6 +145,7 @@ export function DailyContext({
                     }
                   })
                 }
+                disabled={!isCurrentDayStarted}
               >
                 <CreateIcon />
               </IconButton>
