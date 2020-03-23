@@ -68,16 +68,15 @@ export function DailyContext({
       )
     : [];
 
-  const pushNewComment = content => {
-    storeSyncedWithLocalStorage.pushNewComment(content, () =>
-      api.submitEvents(COMMENT_LOG_MUTATION, "comments", apiResponse => {
-        const comments = apiResponse.data.logComments.comments;
-        return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-          comments,
-          "comments"
-        );
-      })
-    );
+  const pushNewComment = async content => {
+    await storeSyncedWithLocalStorage.pushNewComment(content);
+    api.submitEvents(COMMENT_LOG_MUTATION, "comments", apiResponse => {
+      const comments = apiResponse.data.logComments.comments;
+      return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+        comments,
+        "comments"
+      );
+    });
   };
 
   return (

@@ -55,7 +55,7 @@ function App() {
 
   const currentActivity = activityEvents[activityEvents.length - 1];
 
-  const pushNewActivityEvent = ({
+  const pushNewActivityEvent = async ({
     activityType,
     driverId = null,
     mission = currentActivity && currentActivity.mission,
@@ -79,30 +79,29 @@ function App() {
         )
       );
     }
-    storeSyncedWithLocalStorage.pushNewActivity(
+    await storeSyncedWithLocalStorage.pushNewActivity(
       activityType,
       mission,
       vehicleRegistrationNumber,
       driverId,
-      startTime,
-      () =>
-        api.submitEvents(ACTIVITY_LOG_MUTATION, "activities", apiResponse => {
-          const activities = apiResponse.data.logActivities.activities;
-          return Promise.all([
-            storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-              activities.map(parseActivityPayloadFromBackend),
-              "activities"
-            ),
-            storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-              apiResponse.data.logActivities.teamEnrollments,
-              "teamEnrollments"
-            )
-          ]);
-        })
+      startTime
     );
+    api.submitEvents(ACTIVITY_LOG_MUTATION, "activities", apiResponse => {
+      const activities = apiResponse.data.logActivities.activities;
+      return Promise.all([
+        storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+          activities.map(parseActivityPayloadFromBackend),
+          "activities"
+        ),
+        storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+          apiResponse.data.logActivities.teamEnrollments,
+          "teamEnrollments"
+        )
+      ]);
+    });
   };
 
-  const cancelOrReviseActivityEvent = (
+  const cancelOrReviseActivityEvent = async (
     activityEvent,
     actionType,
     newStartTime = null
@@ -130,27 +129,25 @@ function App() {
             "pendingActivityRevisions"
           );
         }
-        storeSyncedWithLocalStorage.pushNewActivityRevision(
+        await storeSyncedWithLocalStorage.pushNewActivityRevision(
           activityEvent.id,
-          newStartTime,
-          () => {
-            api.submitEvents(
-              ACTIVITY_REVISION_MUTATION,
-              "pendingActivityRevisions",
-              apiResponse => {
-                const activities = apiResponse.data.reviseActivities.activities;
-                return Promise.all([
-                  storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-                    activities.map(parseActivityPayloadFromBackend),
-                    "activities"
-                  ),
-                  storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-                    [],
-                    "pendingActivityRevisions"
-                  )
-                ]);
-              }
-            );
+          newStartTime
+        );
+        api.submitEvents(
+          ACTIVITY_REVISION_MUTATION,
+          "pendingActivityRevisions",
+          apiResponse => {
+            const activities = apiResponse.data.reviseActivities.activities;
+            return Promise.all([
+              storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+                activities.map(parseActivityPayloadFromBackend),
+                "activities"
+              ),
+              storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+                [],
+                "pendingActivityRevisions"
+              )
+            ]);
           }
         );
       } else {
@@ -164,60 +161,63 @@ function App() {
             "pendingActivityRevisions"
           );
         }
-        storeSyncedWithLocalStorage.pushNewActivityCancel(
-          activityEvent.id,
-          () => {
-            api.submitEvents(
-              ACTIVITY_CANCEL_MUTATION,
-              "pendingActivityCancels",
-              apiResponse => {
-                const activities = apiResponse.data.cancelActivities.activities;
-                return Promise.all([
-                  storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-                    activities.map(parseActivityPayloadFromBackend),
-                    "activities"
-                  ),
-                  storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-                    [],
-                    "pendingActivityCancels"
-                  )
-                ]);
-              }
-            );
+        await storeSyncedWithLocalStorage.pushNewActivityCancel(
+          activityEvent.id
+        );
+        api.submitEvents(
+          ACTIVITY_CANCEL_MUTATION,
+          "pendingActivityCancels",
+          apiResponse => {
+            const activities = apiResponse.data.cancelActivities.activities;
+            return Promise.all([
+              storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+                activities.map(parseActivityPayloadFromBackend),
+                "activities"
+              ),
+              storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+                [],
+                "pendingActivityCancels"
+              )
+            ]);
           }
         );
       }
     }
   };
 
-  const pushNewTeamEnrollment = (enrollType, userId, firstName, lastName) =>
-    storeSyncedWithLocalStorage.pushNewTeamEnrollment(
+  const pushNewTeamEnrollment = async (
+    enrollType,
+    userId,
+    firstName,
+    lastName
+  ) => {
+    await storeSyncedWithLocalStorage.pushNewTeamEnrollment(
       enrollType,
       userId,
       firstName,
-      lastName,
-      () =>
-        api.submitEvents(
-          TEAM_ENROLLMENT_LOG_MUTATION,
-          "teamEnrollments",
-          apiResponse => {
-            const coworkers =
-              apiResponse.data.logTeamEnrollments.enrollableCoworkers;
-            const teamEnrollments =
-              apiResponse.data.logTeamEnrollments.teamEnrollments;
-            return Promise.all([
-              storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-                coworkers,
-                "coworkers"
-              ),
-              storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-                teamEnrollments,
-                "teamEnrollments"
-              )
-            ]);
-          }
-        )
+      lastName
     );
+    api.submitEvents(
+      TEAM_ENROLLMENT_LOG_MUTATION,
+      "teamEnrollments",
+      apiResponse => {
+        const coworkers =
+          apiResponse.data.logTeamEnrollments.enrollableCoworkers;
+        const teamEnrollments =
+          apiResponse.data.logTeamEnrollments.teamEnrollments;
+        return Promise.all([
+          storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+            coworkers,
+            "coworkers"
+          ),
+          storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+            teamEnrollments,
+            "teamEnrollments"
+          )
+        ]);
+      }
+    );
+  };
 
   return (
     <ScreenWithBottomNavigation

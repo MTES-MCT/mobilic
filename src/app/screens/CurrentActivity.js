@@ -31,7 +31,7 @@ export function CurrentActivity({
 
   const pendingExpenditureCancels = storeSyncedWithLocalStorage.pendingExpenditureCancels();
 
-  const pushNewExpenditure = expenditureType => {
+  const pushNewExpenditure = async expenditureType => {
     const expenditureMatch = currentDayExpenditures.find(
       e => e.type === expenditureType
     );
@@ -47,23 +47,22 @@ export function CurrentActivity({
         );
       }
     } else {
-      storeSyncedWithLocalStorage.pushNewExpenditure(expenditureType, () =>
-        api.submitEvents(
-          EXPENDITURE_LOG_MUTATION,
-          "expenditures",
-          apiResponse => {
-            const expenditures = apiResponse.data.logExpenditures.expenditures;
-            return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-              expenditures.map(parseExpenditureFromBackend),
-              "expenditures"
-            );
-          }
-        )
+      await storeSyncedWithLocalStorage.pushNewExpenditure(expenditureType);
+      api.submitEvents(
+        EXPENDITURE_LOG_MUTATION,
+        "expenditures",
+        apiResponse => {
+          const expenditures = apiResponse.data.logExpenditures.expenditures;
+          return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+            expenditures.map(parseExpenditureFromBackend),
+            "expenditures"
+          );
+        }
       );
     }
   };
 
-  const cancelExpenditure = expenditureToCancel => {
+  const cancelExpenditure = async expenditureToCancel => {
     if (expenditureToCancel.isBeingSubmitted) return;
     if (!expenditureToCancel.id) {
       storeSyncedWithLocalStorage.removeEvent(
@@ -71,27 +70,24 @@ export function CurrentActivity({
         "expenditures"
       );
     } else {
-      storeSyncedWithLocalStorage.pushNewExpenditureCancel(
-        expenditureToCancel.id,
-        () => {
-          api.submitEvents(
-            EXPENDITURE_CANCEL_MUTATION,
-            "pendingExpenditureCancels",
-            apiResponse => {
-              const expenditures =
-                apiResponse.data.cancelExpenditures.expenditures;
-              return Promise.all([
-                storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-                  expenditures.map(parseExpenditureFromBackend),
-                  "expenditures"
-                ),
-                storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-                  [],
-                  "pendingExpenditureCancels"
-                )
-              ]);
-            }
-          );
+      await storeSyncedWithLocalStorage.pushNewExpenditureCancel(
+        expenditureToCancel.id
+      );
+      api.submitEvents(
+        EXPENDITURE_CANCEL_MUTATION,
+        "pendingExpenditureCancels",
+        apiResponse => {
+          const expenditures = apiResponse.data.cancelExpenditures.expenditures;
+          return Promise.all([
+            storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+              expenditures.map(parseExpenditureFromBackend),
+              "expenditures"
+            ),
+            storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+              [],
+              "pendingExpenditureCancels"
+            )
+          ]);
         }
       );
     }

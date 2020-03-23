@@ -76,11 +76,13 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   setItems = (itemValueMap, callback = () => {}) =>
     this._setState(itemValueMap, Object.keys(itemValueMap), callback);
 
-  pushEvent = (event, arrayField, callback = () => {}) =>
-    this._setState(
-      prevState => ({ [arrayField]: [...prevState[arrayField], event] }),
-      [arrayField],
-      callback
+  pushEvent = (event, arrayField) =>
+    new Promise(resolve =>
+      this._setState(
+        prevState => ({ [arrayField]: [...prevState[arrayField], event] }),
+        [arrayField],
+        resolve
+      )
     );
 
   removeEvent = (event, arrayField) =>
@@ -217,8 +219,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     mission,
     vehicleRegistrationNumber,
     driverId,
-    startTime,
-    callback = () => {}
+    startTime
   ) => {
     const newActivity = {
       type: activityType,
@@ -230,67 +231,56 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       newActivity.driverId = driverId;
     if (startTime !== undefined && startTime !== null)
       newActivity.startTime = startTime;
-    this.pushEvent(newActivity, "activities", callback);
+    return this.pushEvent(newActivity, "activities");
   };
 
-  pushNewExpenditure = (expenditureType, callback = () => {}) =>
+  pushNewExpenditure = expenditureType =>
     this.pushEvent(
       {
         type: expenditureType,
         eventTime: Date.now()
       },
-      "expenditures",
-      callback
+      "expenditures"
     );
 
-  pushNewExpenditureCancel = (eventId, callback = () => {}) =>
+  pushNewExpenditureCancel = eventId =>
     this.pushEvent(
       {
         eventId: eventId,
         eventTime: Date.now()
       },
-      "pendingExpenditureCancels",
-      callback
+      "pendingExpenditureCancels"
     );
 
-  pushNewActivityCancel = (eventId, callback = () => {}) =>
+  pushNewActivityCancel = eventId =>
     this.pushEvent(
       {
         eventId: eventId,
         eventTime: Date.now()
       },
-      "pendingActivityCancels",
-      callback
+      "pendingActivityCancels"
     );
 
-  pushNewActivityRevision = (eventId, startTime, callback = () => {}) =>
+  pushNewActivityRevision = (eventId, startTime) =>
     this.pushEvent(
       {
         eventId: eventId,
         startTime: startTime,
         eventTime: Date.now()
       },
-      "pendingActivityRevisions",
-      callback
+      "pendingActivityRevisions"
     );
 
-  pushNewComment = (content, callback = () => {}) =>
+  pushNewComment = content =>
     this.pushEvent(
       {
         content,
         eventTime: Date.now()
       },
-      "comments",
-      callback
+      "comments"
     );
 
-  pushNewTeamEnrollment = (
-    enrollType,
-    userId,
-    firstName,
-    lastName,
-    callback = () => {}
-  ) =>
+  pushNewTeamEnrollment = (enrollType, userId, firstName, lastName) =>
     this.pushEvent(
       {
         type: enrollType,
@@ -299,8 +289,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         lastName,
         eventTime: Date.now()
       },
-      "teamEnrollments",
-      callback
+      "teamEnrollments"
     );
 
   render() {
