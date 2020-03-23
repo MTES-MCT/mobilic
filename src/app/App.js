@@ -197,7 +197,7 @@ function App() {
       firstName,
       lastName
     );
-    api.submitEvents(
+    return api.submitEvents(
       TEAM_ENROLLMENT_LOG_MUTATION,
       "teamEnrollments",
       apiResponse => {

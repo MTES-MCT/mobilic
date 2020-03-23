@@ -47,9 +47,9 @@ export function BeforeWork({
   ) => {
     let teamMates = [];
     if (updatedCoworkers) {
-      teamMates = storeSyncedWithLocalStorage
-        .coworkers()
-        .filter(cw => cw.newEnrollmentType === "enroll");
+      teamMates = updatedCoworkers.filter(
+        cw => cw.newEnrollmentType === "enroll"
+      );
     }
     const createActivity = async (driver = null) => {
       if (shouldResumeDay) {
@@ -61,7 +61,7 @@ export function BeforeWork({
         storeSyncedWithLocalStorage.hideEvent(latestDayEnd, "activities");
         storeSyncedWithLocalStorage.pushEvent(breakInsteadOfRest, "activities");
       }
-      await Promise.all(
+      const enrollment = Promise.all(
         teamMates.map(mate =>
           pushNewTeamEnrollment(
             "enroll",
@@ -71,6 +71,10 @@ export function BeforeWork({
           )
         )
       );
+
+      if (teamMates.some(mate => !mate.id)) {
+        await enrollment;
+      }
 
       let driverId;
       if (driver && driver.id) {
