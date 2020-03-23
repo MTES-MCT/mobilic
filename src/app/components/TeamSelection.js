@@ -45,7 +45,6 @@ export function TeamSelectionModal({
   // - committed to main state (when hitting Ok button)
   // We sync the secondary state with the main one whenever the modal is opened/closed or the main state changes
   React.useEffect(() => {
-    console.log("Re-updating coworkers");
     setUpdatedCoworkers(
       showEnrollmentHistoryAfterTime
         ? augmentCoworkersWithEnrollmentHistoryAtTime(
@@ -53,7 +52,7 @@ export function TeamSelectionModal({
             storeSyncedWithLocalStorage,
             showEnrollmentHistoryAfterTime
           )
-        : coworkers
+        : coworkers.map(cw => ({ ...cw }))
     );
   }, [open, coworkers, showEnrollmentHistoryAfterTime]);
 
