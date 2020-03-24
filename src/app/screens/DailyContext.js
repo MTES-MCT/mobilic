@@ -163,8 +163,23 @@ export function DailyContext({
               <WorkIcon color="primary" />
             </ListItemIcon>
             <ListItemText primary={`Mission : ${currentActivity.mission}`} />
+            <ListItemSecondaryAction>
+              <IconButton
+                edge="end"
+                onClick={() =>
+                  modals.open("missionChange", {
+                    currentMission: {
+                      name: currentActivity.mission,
+                      eventTime: Date.now()
+                    },
+                    handleContinue: () => {}
+                  })
+                }
+              >
+                <CreateIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
           </ListItem>
-
           <ListItem className="new-lines-on-overflow" disableGutters>
             <ListItemIcon>
               <AnnouncementIcon color="error" />

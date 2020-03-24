@@ -11,10 +11,8 @@ import Box from "@material-ui/core/Box";
 import Fab from "@material-ui/core/Fab";
 import { VerticalTimeline } from "../../common/components/VerticalTimeline";
 import {
-  isoFormatDateTime,
   formatTimeOfDay,
   shortPrettyFormatDay,
-  formatDateTime,
   getStartOfDay
 } from "../../common/utils/time";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -34,6 +32,7 @@ import Switch from "@material-ui/core/Switch";
 import MenuItem from "@material-ui/core/MenuItem";
 import { formatPersonName, resolveTeamAt } from "../../common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
+import { DateTimePicker } from "./DateTimePicker";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -69,19 +68,6 @@ export function ActivityRevisionOrCreationModal({
     ? [user, ...resolveTeamAt(newStartTime, storeSyncedWithLocalStorage)]
     : [user];
 
-  const validatesRevisedEventTimeError = () => {
-    if (newStartTime <= minStartTime) {
-      setNewStartTimeError(
-        `L'heure doit être après ${formatDateTime(minStartTime)}`
-      );
-    } else if (newStartTime >= maxStartTime) {
-      setNewStartTimeError(
-        `L'heure doit être avant ${formatDateTime(maxStartTime)}`
-      );
-    } else setNewStartTimeError("");
-    return () => {};
-  };
-
   function handleSubmit() {
     if (actionType === "creation") {
       let driverId = null;
@@ -101,8 +87,6 @@ export function ActivityRevisionOrCreationModal({
     setNewActivityDriverId(undefined);
     return () => {};
   }, [open]);
-
-  React.useEffect(validatesRevisedEventTimeError, [newStartTime]);
 
   function requiresDriverId() {
     return (
@@ -211,29 +195,15 @@ export function ActivityRevisionOrCreationModal({
             </TextField>
           )}
           {(actionType === "revision" || actionType === "creation") && (
-            <TextField
+            <DateTimePicker
               label="Début"
-              type="datetime-local"
-              required
-              fullWidth
-              value={isoFormatDateTime(newStartTime)}
-              inputProps={{
-                step: 60
-              }}
-              onChange={e => {
-                const dayVsTime = e.target.value.split("T");
-                const dayElements = dayVsTime[0].split("-");
-                const timeElements = dayVsTime[1].split(":");
-                const newRevisedEventTime = new Date(newStartTime);
-                newRevisedEventTime.setFullYear(parseInt(dayElements[0]));
-                newRevisedEventTime.setMonth(parseInt(dayElements[1]) - 1);
-                newRevisedEventTime.setDate(parseInt(dayElements[2]));
-                newRevisedEventTime.setHours(parseInt(timeElements[0]));
-                newRevisedEventTime.setMinutes(parseInt(timeElements[1]));
-                setNewStartTime(newRevisedEventTime.getTime());
-              }}
-              error={!!newStartTimeError}
-              helperText={newStartTimeError}
+              value={newStartTime}
+              setValue={setNewStartTime}
+              error={newStartTimeError}
+              setError={setNewStartTimeError}
+              minTime={minStartTime}
+              maxTime={maxStartTime}
+              required={true}
             />
           )}
           {actionType === "creation" && (

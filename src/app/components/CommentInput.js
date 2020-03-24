@@ -10,6 +10,9 @@ import TextField from "@material-ui/core/TextField";
 
 export function CommentInputModal({ open, handleClose, handleContinue }) {
   const [text, setText] = React.useState("");
+
+  React.useEffect(() => setText(""), [open]);
+
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Nouveau commentaire</DialogTitle>
@@ -30,7 +33,6 @@ export function CommentInputModal({ open, handleClose, handleContinue }) {
         <IconButton
           onClick={() => {
             handleContinue(text);
-            setText("");
             handleClose();
           }}
         >
