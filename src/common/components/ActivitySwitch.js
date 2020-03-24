@@ -83,7 +83,11 @@ export function ActivitySwitchGrid({
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   const teamWithSelf = [storeSyncedWithLocalStorage.userInfo(), ...team];
   const handleActivitySwitch = activityName => () => {
-    if (!hasTeamMates && activityName === currentActivity.type) return;
+    if (
+      activityName === currentActivity.type &&
+      (!hasTeamMates || activityName !== ACTIVITIES.drive.name)
+    )
+      return;
     else if (hasTeamMates && activityName === ACTIVITIES.drive.name) {
       modals.open("driverSelection", {
         team: teamWithSelf,
