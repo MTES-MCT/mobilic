@@ -31,7 +31,9 @@ export function DailyContext({
   previousDaysActivityEventsByDay,
   pushNewTeamEnrollment,
   pushNewMission,
-  currentOrLatestDayMission
+  currentOrLatestDayMission,
+  currentOrLatestDayVehicleBooking,
+  pushNewVehicleBooking
 }) {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   const api = useApi();
@@ -163,8 +165,26 @@ export function DailyContext({
               <DriveEtaIcon color="primary" />
             </ListItemIcon>
             <ListItemText
-              primary={`Véhicule : ${currentActivity.vehicleRegistrationNumber}`}
+              primary={`Véhicule : ${
+                currentOrLatestDayVehicleBooking
+                  ? currentOrLatestDayVehicleBooking.registrationNumber
+                  : ""
+              }`}
             />
+            <ListItemSecondaryAction>
+              <IconButton
+                edge="end"
+                onClick={() =>
+                  modals.open("vehicleBooking", {
+                    currentVehicleBooking: currentOrLatestDayVehicleBooking,
+                    handleContinue: pushNewVehicleBooking
+                  })
+                }
+                disabled={!isCurrentDayStarted}
+              >
+                <CreateIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
           </ListItem>
           <ListItem className="new-lines-on-overflow" disableGutters>
             <ListItemIcon>
@@ -184,6 +204,7 @@ export function DailyContext({
                     handleContinue: pushNewMission
                   })
                 }
+                disabled={!isCurrentDayStarted}
               >
                 <CreateIcon />
               </IconButton>

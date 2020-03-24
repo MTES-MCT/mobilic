@@ -93,6 +93,11 @@ export const USER_QUERY = gql`
         name
         startTime
       }
+      vehicleBookings {
+        id
+        registrationNumber
+        startTime
+      }
       comments {
         id
         content
@@ -123,6 +128,11 @@ export const ACTIVITY_LOG_MUTATION = gql`
       missions {
         id
         name
+        startTime
+      }
+      vehicleBookings {
+        id
+        registrationNumber
         startTime
       }
     }
@@ -221,6 +231,18 @@ export const MISSION_LOG_MUTATION = gql`
       missions {
         id
         name
+        startTime
+      }
+    }
+  }
+`;
+
+export const VEHICLE_BOOKING_LOG_MUTATION = gql`
+  mutation($data: [VehicleBookingInput]!) {
+    logVehicleBookings(data: $data) {
+      vehicleBookings {
+        id
+        registrationNumber
         startTime
       }
     }

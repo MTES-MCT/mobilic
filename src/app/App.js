@@ -15,7 +15,8 @@ import {
   ACTIVITY_REVISION_MUTATION,
   MISSION_LOG_MUTATION,
   TEAM_ENROLLMENT_LOG_MUTATION,
-  useApi
+  useApi,
+  VEHICLE_BOOKING_LOG_MUTATION
 } from "../common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import { resolveTeamAt } from "../common/utils/coworkers";
@@ -79,6 +80,15 @@ function App() {
       )
     : null;
 
+  const vehicleBookings = sortEvents(
+    storeSyncedWithLocalStorage.vehicleBookings()
+  ).reverse();
+  const currentOrLatestDayVehicleBooking = firstActivityOfCurrentOrLatestDay
+    ? vehicleBookings.find(
+        vb => getTime(vb) >= getTime(firstActivityOfCurrentOrLatestDay)
+      )
+    : null;
+
   const pushNewActivityEvent = async ({
     activityType,
     driverId = null,
@@ -133,6 +143,10 @@ function App() {
         storeSyncedWithLocalStorage.updateAllSubmittedEvents(
           apiResponse.data.logActivities.missions,
           "missions"
+        ),
+        storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+          apiResponse.data.logActivities.vehicleBookings,
+          "vehicleBookings"
         )
       ]);
     });
@@ -287,18 +301,42 @@ function App() {
     );
   };
 
+  const pushNewVehicleBooking = async (registrationNumber, startTime) => {
+    const eventTime = Date.now();
+    const event = {
+      registrationNumber,
+      eventTime
+    };
+    // If startTime is far enough from the current time we consider that the user intently set its value.
+    // Otherwise it's simply the current time at modal opening
+    if (eventTime - startTime > 60000) event.startTime = startTime;
+    await storeSyncedWithLocalStorage.pushEvent(event, "vehicleBookings");
+
+    api.submitEvents(
+      VEHICLE_BOOKING_LOG_MUTATION,
+      "vehicleBookings",
+      apiResponse =>
+        storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+          apiResponse.data.logVehicleBookings.vehicleBookings,
+          "vehicleBookings"
+        )
+    );
+  };
+
   return (
     <ScreenWithBottomNavigation
       currentTime={currentTime}
       currentActivity={currentActivity}
       currentDayActivityEvents={currentDayActivityEvents}
       currentOrLatestDayMission={currentOrLatestDayMission}
+      currentOrLatestDayVehicleBooking={currentOrLatestDayVehicleBooking}
       pushNewActivityEvent={pushNewActivityEvent}
       cancelOrReviseActivityEvent={cancelOrReviseActivityEvent}
       previousDaysActivityEventsByDay={previousDaysActivityEventsByDay}
       currentDayExpenditures={currentDayExpenditures}
       pushNewTeamEnrollment={pushNewTeamEnrollment}
       pushNewMission={pushNewMission}
+      pushNewVehicleBooking={pushNewVehicleBooking}
     />
   );
 }
