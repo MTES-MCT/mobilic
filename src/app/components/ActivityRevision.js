@@ -274,7 +274,6 @@ export function WorkDayRevision({
   };
 
   const handleNewActivityClick = () => {
-    const lastActivityOfTheDay = activityEvents[activityEvents.length - 1];
     modals.open("activityRevision", {
       minStartTime: getStartOfDay(getTime(activityEvents[0])),
       maxStartTime:
@@ -285,9 +284,6 @@ export function WorkDayRevision({
         pushNewActivityEvent({
           activityType,
           driverId,
-          mission: lastActivityOfTheDay.mission,
-          vehicleRegistrationNumber:
-            lastActivityOfTheDay.vehicleRegistrationNumber,
           startTime
         })
     });

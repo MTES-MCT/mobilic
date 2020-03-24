@@ -68,9 +68,8 @@ function App() {
   const pushNewActivityEvent = async ({
     activityType,
     driverId = null,
-    mission = currentActivity && currentActivity.mission,
-    vehicleRegistrationNumber = currentActivity &&
-      currentActivity.vehicleRegistrationNumber,
+    mission = null,
+    vehicleRegistrationNumber = null,
     startTime = null
   }) => {
     if (activityType === ACTIVITIES.rest.name && startTime === null) {
@@ -91,14 +90,19 @@ function App() {
     }
     const newActivity = {
       type: activityType,
-      eventTime: Date.now(),
-      mission: mission,
-      vehicleRegistrationNumber: vehicleRegistrationNumber
+      eventTime: Date.now()
     };
     if (driverId !== undefined && driverId !== null)
       newActivity.driverId = driverId;
     if (startTime !== undefined && startTime !== null)
       newActivity.startTime = startTime;
+    if (mission !== undefined && mission !== null)
+      newActivity.mission = mission;
+    if (
+      vehicleRegistrationNumber !== undefined &&
+      vehicleRegistrationNumber !== null
+    )
+      newActivity.vehicleRegistrationNumber = vehicleRegistrationNumber;
     await this.pushEvent(newActivity, "activities");
 
     api.submitEvents(ACTIVITY_LOG_MUTATION, "activities", apiResponse => {
