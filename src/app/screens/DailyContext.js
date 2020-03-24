@@ -31,7 +31,7 @@ export function DailyContext({
   previousDaysActivityEventsByDay,
   pushNewTeamEnrollment,
   pushNewMission,
-  currentMission
+  currentOrLatestDayMission
 }) {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   const api = useApi();
@@ -171,14 +171,16 @@ export function DailyContext({
               <WorkIcon color="primary" />
             </ListItemIcon>
             <ListItemText
-              primary={`Mission : ${currentMission ? currentMission.name : ""}`}
+              primary={`Mission : ${
+                currentOrLatestDayMission ? currentOrLatestDayMission.name : ""
+              }`}
             />
             <ListItemSecondaryAction>
               <IconButton
                 edge="end"
                 onClick={() =>
                   modals.open("missionChange", {
-                    currentMission,
+                    currentMission: currentOrLatestDayMission,
                     handleContinue: pushNewMission
                   })
                 }

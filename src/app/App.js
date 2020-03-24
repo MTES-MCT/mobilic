@@ -59,10 +59,24 @@ function App() {
       : [];
 
   const currentActivity = activityEvents[activityEvents.length - 1];
+  let firstActivityOfCurrentOrLatestDay;
+  if (currentDayActivityEvents && currentDayActivityEvents.length > 0) {
+    firstActivityOfCurrentOrLatestDay = currentDayActivityEvents[0];
+  } else if (
+    previousDaysActivityEventsByDay &&
+    previousDaysActivityEventsByDay.length > 0
+  ) {
+    firstActivityOfCurrentOrLatestDay =
+      previousDaysActivityEventsByDay[
+        previousDaysActivityEventsByDay.length - 1
+      ][0];
+  }
 
   const missions = sortEvents(storeSyncedWithLocalStorage.missions()).reverse();
-  const currentMission = currentDayActivityEvents
-    ? missions.find(m => getTime(m) >= getTime(currentDayActivityEvents[0]))
+  const currentOrLatestDayMission = firstActivityOfCurrentOrLatestDay
+    ? missions.find(
+        m => getTime(m) >= getTime(firstActivityOfCurrentOrLatestDay)
+      )
     : null;
 
   const pushNewActivityEvent = async ({
@@ -103,7 +117,7 @@ function App() {
       vehicleRegistrationNumber !== null
     )
       newActivity.vehicleRegistrationNumber = vehicleRegistrationNumber;
-    await this.pushEvent(newActivity, "activities");
+    await storeSyncedWithLocalStorage.pushEvent(newActivity, "activities");
 
     api.submitEvents(ACTIVITY_LOG_MUTATION, "activities", apiResponse => {
       const activities = apiResponse.data.logActivities.activities;
@@ -278,7 +292,7 @@ function App() {
       currentTime={currentTime}
       currentActivity={currentActivity}
       currentDayActivityEvents={currentDayActivityEvents}
-      currentMission={currentMission}
+      currentOrLatestDayMission={currentOrLatestDayMission}
       pushNewActivityEvent={pushNewActivityEvent}
       cancelOrReviseActivityEvent={cancelOrReviseActivityEvent}
       previousDaysActivityEventsByDay={previousDaysActivityEventsByDay}

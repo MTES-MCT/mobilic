@@ -65,10 +65,10 @@ export function MissionChangeModal({
         </IconButton>
         <IconButton
           onClick={() => {
-            handleContinue(mission, missionStartTimeError);
+            handleContinue(mission, missionStartTime);
             handleClose();
           }}
-          disabled={!mission || missionStartTimeError}
+          disabled={!mission || missionStartTimeError || false}
         >
           <CheckIcon color="primary" />
         </IconButton>
