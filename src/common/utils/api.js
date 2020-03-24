@@ -205,6 +205,17 @@ export const TEAM_ENROLLMENT_LOG_MUTATION = gql`
   }
 `;
 
+export const MISSION_LOG_MUTATION = gql`
+  mutation($data: [MissionInput]!) {
+    logMissions(data: $data) {
+      missions {
+        name
+        startTime
+      }
+    }
+  }
+`;
+
 const ApiContext = React.createContext(() => {});
 
 class Api {

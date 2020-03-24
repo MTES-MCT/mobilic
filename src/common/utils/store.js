@@ -3,6 +3,11 @@ import jwtDecode from "jwt-decode";
 
 const StoreSyncedWithLocalStorage = React.createContext(() => {});
 
+const List = {
+  serialize: JSON.stringify,
+  deserialize: value => (value ? JSON.parse(value) : [])
+};
+
 export class StoreSyncedWithLocalStorageProvider extends React.Component {
   constructor(props) {
     super(props);
@@ -16,38 +21,15 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         serialize: JSON.stringify,
         deserialize: value => (value ? JSON.parse(value) : {})
       },
-      coworkers: {
-        serialize: JSON.stringify,
-        deserialize: value => (value ? JSON.parse(value) : [])
-      },
-      teamEnrollments: {
-        serialize: JSON.stringify,
-        deserialize: value => (value ? JSON.parse(value) : [])
-      },
-      activities: {
-        serialize: JSON.stringify,
-        deserialize: value => (value ? JSON.parse(value) : [])
-      },
-      pendingActivityCancels: {
-        serialize: JSON.stringify,
-        deserialize: value => (value ? JSON.parse(value) : [])
-      },
-      pendingActivityRevisions: {
-        serialize: JSON.stringify,
-        deserialize: value => (value ? JSON.parse(value) : [])
-      },
-      expenditures: {
-        serialize: JSON.stringify,
-        deserialize: value => (value ? JSON.parse(value) : [])
-      },
-      pendingExpenditureCancels: {
-        serialize: JSON.stringify,
-        deserialize: value => (value ? JSON.parse(value) : [])
-      },
-      comments: {
-        serialize: JSON.stringify,
-        deserialize: value => (value ? JSON.parse(value) : [])
-      }
+      coworkers: List,
+      teamEnrollments: List,
+      activities: List,
+      pendingActivityCancels: List,
+      pendingActivityRevisions: List,
+      expenditures: List,
+      pendingExpenditureCancels: List,
+      comments: List,
+      missions: List
     };
 
     // Init state from local storage
@@ -214,84 +196,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       callback
     );
 
-  pushNewActivity = (
-    activityType,
-    mission,
-    vehicleRegistrationNumber,
-    driverId,
-    startTime
-  ) => {
-    const newActivity = {
-      type: activityType,
-      eventTime: Date.now(),
-      mission: mission,
-      vehicleRegistrationNumber: vehicleRegistrationNumber
-    };
-    if (driverId !== undefined && driverId !== null)
-      newActivity.driverId = driverId;
-    if (startTime !== undefined && startTime !== null)
-      newActivity.startTime = startTime;
-    return this.pushEvent(newActivity, "activities");
-  };
-
-  pushNewExpenditure = expenditureType =>
-    this.pushEvent(
-      {
-        type: expenditureType,
-        eventTime: Date.now()
-      },
-      "expenditures"
-    );
-
-  pushNewExpenditureCancel = eventId =>
-    this.pushEvent(
-      {
-        eventId: eventId,
-        eventTime: Date.now()
-      },
-      "pendingExpenditureCancels"
-    );
-
-  pushNewActivityCancel = eventId =>
-    this.pushEvent(
-      {
-        eventId: eventId,
-        eventTime: Date.now()
-      },
-      "pendingActivityCancels"
-    );
-
-  pushNewActivityRevision = (eventId, startTime) =>
-    this.pushEvent(
-      {
-        eventId: eventId,
-        startTime: startTime,
-        eventTime: Date.now()
-      },
-      "pendingActivityRevisions"
-    );
-
-  pushNewComment = content =>
-    this.pushEvent(
-      {
-        content,
-        eventTime: Date.now()
-      },
-      "comments"
-    );
-
-  pushNewTeamEnrollment = (enrollType, userId, firstName, lastName) =>
-    this.pushEvent(
-      {
-        type: enrollType,
-        userId,
-        firstName,
-        lastName,
-        eventTime: Date.now()
-      },
-      "teamEnrollments"
-    );
-
   render() {
     return (
       <>
@@ -308,12 +212,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             coworkers: () => this.state.coworkers,
             setCoworkers: this.setCoworkers,
             activities: () => this.state.activities,
-            pushNewActivity: this.pushNewActivity,
             expenditures: () => this.state.expenditures,
-            pushNewExpenditure: this.pushNewExpenditure,
             comments: () => this.state.comments,
-            pushNewComment: this.pushNewComment,
-            pushNewExpenditureCancel: this.pushNewExpenditureCancel,
             pendingExpenditureCancels: () =>
               this.state.pendingExpenditureCancels,
             updateAllSubmittedEvents: this.updateAllSubmittedEvents,
@@ -326,10 +226,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             pushEvent: this.pushEvent,
             pendingActivityCancels: () => this.state.pendingActivityCancels,
             pendingActivityRevisions: () => this.state.pendingActivityRevisions,
-            pushNewActivityCancel: this.pushNewActivityCancel,
-            pushNewActivityRevision: this.pushNewActivityRevision,
             teamEnrollments: () => this.state.teamEnrollments,
-            pushNewTeamEnrollment: this.pushNewTeamEnrollment
+            missions: () => this.state.missions
           }}
         >
           {this.props.children}

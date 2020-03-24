@@ -47,7 +47,13 @@ export function CurrentActivity({
         );
       }
     } else {
-      await storeSyncedWithLocalStorage.pushNewExpenditure(expenditureType);
+      await storeSyncedWithLocalStorage.pushEvent(
+        {
+          type: expenditureType,
+          eventTime: Date.now()
+        },
+        "expenditures"
+      );
       api.submitEvents(
         EXPENDITURE_LOG_MUTATION,
         "expenditures",
@@ -70,8 +76,12 @@ export function CurrentActivity({
         "expenditures"
       );
     } else {
-      await storeSyncedWithLocalStorage.pushNewExpenditureCancel(
-        expenditureToCancel.id
+      await storeSyncedWithLocalStorage.pushEvent(
+        {
+          eventId: expenditureToCancel.id,
+          eventTime: Date.now()
+        },
+        "pendingExpenditureCancels"
       );
       api.submitEvents(
         EXPENDITURE_CANCEL_MUTATION,

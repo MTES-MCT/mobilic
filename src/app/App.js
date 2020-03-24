@@ -3,12 +3,17 @@ import {
   ACTIVITIES,
   parseActivityPayloadFromBackend
 } from "../common/utils/activities";
-import { getTime, groupActivityEventsByDay } from "../common/utils/events";
+import {
+  getTime,
+  groupActivityEventsByDay,
+  sortEvents
+} from "../common/utils/events";
 import { ScreenWithBottomNavigation } from "./utils/navigation";
 import {
   ACTIVITY_CANCEL_MUTATION,
   ACTIVITY_LOG_MUTATION,
   ACTIVITY_REVISION_MUTATION,
+  MISSION_LOG_MUTATION,
   TEAM_ENROLLMENT_LOG_MUTATION,
   useApi
 } from "../common/utils/api";
@@ -55,6 +60,11 @@ function App() {
 
   const currentActivity = activityEvents[activityEvents.length - 1];
 
+  const missions = sortEvents(storeSyncedWithLocalStorage.missions()).reverse();
+  const currentMission = currentDayActivityEvents
+    ? missions.find(m => getTime(m) >= getTime(currentDayActivityEvents[0]))
+    : null;
+
   const pushNewActivityEvent = async ({
     activityType,
     driverId = null,
@@ -79,13 +89,18 @@ function App() {
         )
       );
     }
-    await storeSyncedWithLocalStorage.pushNewActivity(
-      activityType,
-      mission,
-      vehicleRegistrationNumber,
-      driverId,
-      startTime
-    );
+    const newActivity = {
+      type: activityType,
+      eventTime: Date.now(),
+      mission: mission,
+      vehicleRegistrationNumber: vehicleRegistrationNumber
+    };
+    if (driverId !== undefined && driverId !== null)
+      newActivity.driverId = driverId;
+    if (startTime !== undefined && startTime !== null)
+      newActivity.startTime = startTime;
+    await this.pushEvent(newActivity, "activities");
+
     api.submitEvents(ACTIVITY_LOG_MUTATION, "activities", apiResponse => {
       const activities = apiResponse.data.logActivities.activities;
       return Promise.all([
@@ -129,9 +144,13 @@ function App() {
             "pendingActivityRevisions"
           );
         }
-        await storeSyncedWithLocalStorage.pushNewActivityRevision(
-          activityEvent.id,
-          newStartTime
+        await storeSyncedWithLocalStorage.pushEvent(
+          {
+            eventId: activityEvent.id,
+            startTime: newStartTime,
+            eventTime: Date.now()
+          },
+          "pendingActivityRevisions"
         );
         api.submitEvents(
           ACTIVITY_REVISION_MUTATION,
@@ -161,8 +180,12 @@ function App() {
             "pendingActivityRevisions"
           );
         }
-        await storeSyncedWithLocalStorage.pushNewActivityCancel(
-          activityEvent.id
+        await storeSyncedWithLocalStorage.pushEvent(
+          {
+            eventId: activityEvent.id,
+            eventTime: Date.now()
+          },
+          "pendingActivityCancels"
         );
         api.submitEvents(
           ACTIVITY_CANCEL_MUTATION,
@@ -191,11 +214,15 @@ function App() {
     firstName,
     lastName
   ) => {
-    await storeSyncedWithLocalStorage.pushNewTeamEnrollment(
-      enrollType,
-      userId,
-      firstName,
-      lastName
+    await storeSyncedWithLocalStorage.pushEvent(
+      {
+        type: enrollType,
+        userId,
+        firstName,
+        lastName,
+        eventTime: Date.now()
+      },
+      "teamEnrollments"
     );
     return api.submitEvents(
       TEAM_ENROLLMENT_LOG_MUTATION,
@@ -219,16 +246,37 @@ function App() {
     );
   };
 
+  const pushNewMission = async (name, startTime) => {
+    const eventTime = Date.now();
+    const event = {
+      name,
+      eventTime
+    };
+    // If startTime is far enough from the current time we consider that the user intently set its value.
+    // Otherwise it's simply the current time at modal opening
+    if (eventTime - startTime > 60000) event.startTime = startTime;
+    await this.pushEvent(event, "missions");
+
+    api.submitEvents(MISSION_LOG_MUTATION, "missions", apiResponse => {
+      storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+        apiResponse.data.logMissions.missions,
+        "missions"
+      );
+    });
+  };
+
   return (
     <ScreenWithBottomNavigation
       currentTime={currentTime}
       currentActivity={currentActivity}
       currentDayActivityEvents={currentDayActivityEvents}
+      currentMission={currentMission}
       pushNewActivityEvent={pushNewActivityEvent}
       cancelOrReviseActivityEvent={cancelOrReviseActivityEvent}
       previousDaysActivityEventsByDay={previousDaysActivityEventsByDay}
       currentDayExpenditures={currentDayExpenditures}
       pushNewTeamEnrollment={pushNewTeamEnrollment}
+      pushNewMission={pushNewMission}
     />
   );
 }

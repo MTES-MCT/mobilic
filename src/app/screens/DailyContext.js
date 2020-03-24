@@ -29,7 +29,9 @@ export function DailyContext({
   currentActivity,
   currentDayActivityEvents,
   previousDaysActivityEventsByDay,
-  pushNewTeamEnrollment
+  pushNewTeamEnrollment,
+  pushNewMission,
+  currentMission
 }) {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   const api = useApi();
@@ -69,7 +71,13 @@ export function DailyContext({
     : [];
 
   const pushNewComment = async content => {
-    await storeSyncedWithLocalStorage.pushNewComment(content);
+    await storeSyncedWithLocalStorage.pushEvent(
+      {
+        content,
+        eventTime: Date.now()
+      },
+      "comments"
+    );
     api.submitEvents(COMMENT_LOG_MUTATION, "comments", apiResponse => {
       const comments = apiResponse.data.logComments.comments;
       return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
@@ -162,17 +170,16 @@ export function DailyContext({
             <ListItemIcon>
               <WorkIcon color="primary" />
             </ListItemIcon>
-            <ListItemText primary={`Mission : ${currentActivity.mission}`} />
+            <ListItemText
+              primary={`Mission : ${currentMission ? currentMission.name : ""}`}
+            />
             <ListItemSecondaryAction>
               <IconButton
                 edge="end"
                 onClick={() =>
                   modals.open("missionChange", {
-                    currentMission: {
-                      name: currentActivity.mission,
-                      eventTime: Date.now()
-                    },
-                    handleContinue: () => {}
+                    currentMission,
+                    handleContinue: pushNewMission
                   })
                 }
               >
