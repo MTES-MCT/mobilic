@@ -115,6 +115,10 @@ function App() {
         storeSyncedWithLocalStorage.updateAllSubmittedEvents(
           apiResponse.data.logActivities.teamEnrollments,
           "teamEnrollments"
+        ),
+        storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+          apiResponse.data.logActivities.missions,
+          "missions"
         )
       ]);
     });
@@ -259,14 +263,14 @@ function App() {
     // If startTime is far enough from the current time we consider that the user intently set its value.
     // Otherwise it's simply the current time at modal opening
     if (eventTime - startTime > 60000) event.startTime = startTime;
-    await this.pushEvent(event, "missions");
+    await storeSyncedWithLocalStorage.pushEvent(event, "missions");
 
-    api.submitEvents(MISSION_LOG_MUTATION, "missions", apiResponse => {
+    api.submitEvents(MISSION_LOG_MUTATION, "missions", apiResponse =>
       storeSyncedWithLocalStorage.updateAllSubmittedEvents(
         apiResponse.data.logMissions.missions,
         "missions"
-      );
-    });
+      )
+    );
   };
 
   return (

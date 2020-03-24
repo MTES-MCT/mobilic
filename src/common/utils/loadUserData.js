@@ -16,7 +16,8 @@ export async function loadUserData(api, storeSyncedWithLocalStorage) {
       expenditures,
       teamEnrollments,
       enrollableCoworkers,
-      comments
+      comments,
+      missions
     } = userResponse.data.user;
     const parsedActivities = activities.map(rawActivityPayload =>
       parseActivityPayloadFromBackend(rawActivityPayload)
@@ -44,6 +45,7 @@ export async function loadUserData(api, storeSyncedWithLocalStorage) {
       teamEnrollments,
       "teamEnrollments"
     );
+    storeSyncedWithLocalStorage.updateAllSubmittedEvents(missions, "missions");
   } catch (err) {
     console.log(err);
   }

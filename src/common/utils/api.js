@@ -88,6 +88,11 @@ export const USER_QUERY = gql`
         type
         eventTime
       }
+      missions {
+        id
+        name
+        startTime
+      }
       comments {
         id
         content
@@ -114,6 +119,11 @@ export const ACTIVITY_LOG_MUTATION = gql`
         userId
         type
         actionTime
+      }
+      missions {
+        id
+        name
+        startTime
       }
     }
   }
@@ -209,6 +219,7 @@ export const MISSION_LOG_MUTATION = gql`
   mutation($data: [MissionInput]!) {
     logMissions(data: $data) {
       missions {
+        id
         name
         startTime
       }
