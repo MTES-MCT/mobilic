@@ -74,7 +74,7 @@ export function ActivityRevisionOrCreationModal({
     if (actionType === "creation") {
       let driverId = null;
       if (requiresDriverId()) driverId = newActivityDriverId;
-      createActivity(newActivityType, newUserTime, driverId);
+      createActivity(newActivityType, newUserTime, driverId, userComment);
     } else handleRevisionAction(actionType, newUserTime, userComment);
   }
 
@@ -225,19 +225,17 @@ export function ActivityRevisionOrCreationModal({
             />
           )}
         </Box>
-        {actionType !== "creation" && (
-          <Box mt={2}>
-            <TextField
-              label="Raison (optionnelle)"
-              optional
-              fullWidth
-              multiline
-              rowsMax={10}
-              value={userComment}
-              onChange={e => setUserComment(e.target.value)}
-            />
-          </Box>
-        )}
+        <Box mt={2}>
+          <TextField
+            label="Raison (optionnelle)"
+            optional
+            fullWidth
+            multiline
+            rowsMax={10}
+            value={userComment}
+            onChange={e => setUserComment(e.target.value)}
+          />
+        </Box>
       </DialogContent>
       <DialogActions>
         <IconButton onClick={handleClose}>
@@ -301,11 +299,12 @@ export function WorkDayRevision({
         activityEvents[activityEvents.length - 1].type === ACTIVITIES.rest.name
           ? getTime(activityEvents[activityEvents.length - 1])
           : Date.now(),
-      createActivity: (activityType, userTime, driverId) =>
+      createActivity: (activityType, userTime, driverId, userComment) =>
         pushNewActivityEvent({
           activityType,
           driverId,
-          userTime
+          userTime,
+          userComment
         })
     });
   };

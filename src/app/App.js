@@ -94,7 +94,8 @@ function App() {
     driverId = null,
     mission = null,
     vehicleRegistrationNumber = null,
-    userTime = null
+    userTime = null,
+    userComment = null
   }) => {
     if (activityType === ACTIVITIES.rest.name && userTime === null) {
       const team = resolveTeamAt(Date.now(), storeSyncedWithLocalStorage);
@@ -122,6 +123,8 @@ function App() {
       newActivity.userTime = userTime;
     if (mission !== undefined && mission !== null)
       newActivity.mission = mission;
+    if (userComment !== undefined && userComment !== null)
+      newActivity.comment = userComment;
     if (
       vehicleRegistrationNumber !== undefined &&
       vehicleRegistrationNumber !== null
