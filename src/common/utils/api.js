@@ -72,12 +72,12 @@ export const USER_QUERY = gql`
         id
         userId
         type
-        actionTime
+        userTime
       }
       activities {
         id
         type
-        startTime
+        userTime
         team
         mission
         vehicleRegistrationNumber
@@ -91,12 +91,12 @@ export const USER_QUERY = gql`
       missions {
         id
         name
-        startTime
+        userTime
       }
       vehicleBookings {
         id
         registrationNumber
-        startTime
+        userTime
       }
       comments {
         id
@@ -113,7 +113,7 @@ export const ACTIVITY_LOG_MUTATION = gql`
       activities {
         id
         type
-        startTime
+        userTime
         team
         mission
         vehicleRegistrationNumber
@@ -123,17 +123,17 @@ export const ACTIVITY_LOG_MUTATION = gql`
         id
         userId
         type
-        actionTime
+        userTime
       }
       missions {
         id
         name
-        startTime
+        userTime
       }
       vehicleBookings {
         id
         registrationNumber
-        startTime
+        userTime
       }
     }
   }
@@ -169,7 +169,7 @@ export const ACTIVITY_CANCEL_MUTATION = gql`
       activities {
         id
         type
-        startTime
+        userTime
         team
         mission
         vehicleRegistrationNumber
@@ -185,7 +185,7 @@ export const ACTIVITY_REVISION_MUTATION = gql`
       activities {
         id
         type
-        startTime
+        userTime
         team
         mission
         vehicleRegistrationNumber
@@ -219,7 +219,7 @@ export const TEAM_ENROLLMENT_LOG_MUTATION = gql`
         id
         userId
         type
-        actionTime
+        userTime
       }
     }
   }
@@ -231,7 +231,7 @@ export const MISSION_LOG_MUTATION = gql`
       missions {
         id
         name
-        startTime
+        userTime
       }
     }
   }
@@ -243,7 +243,7 @@ export const VEHICLE_BOOKING_LOG_MUTATION = gql`
       vehicleBookings {
         id
         registrationNumber
-        startTime
+        userTime
       }
     }
   }

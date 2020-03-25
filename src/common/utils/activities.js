@@ -37,7 +37,7 @@ export function parseActivityPayloadFromBackend(activity) {
   return {
     id: activity.id,
     type: activity.type === "support" ? ACTIVITIES.drive.name : activity.type,
-    startTime: activity.startTime,
+    userTime: activity.userTime,
     mission: activity.mission,
     vehicleRegistrationNumber: activity.vehicleRegistrationNumber,
     driverId: activity.driverId

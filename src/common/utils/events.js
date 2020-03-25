@@ -1,7 +1,7 @@
 import { ACTIVITIES } from "./activities";
 
 export function getTime(event) {
-  return event.startTime || event.actionTime || event.eventTime;
+  return event.userTime || event.eventTime;
 }
 
 export function sortEvents(events) {

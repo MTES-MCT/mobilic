@@ -280,11 +280,11 @@ export function WorkDayRevision({
         activityEvents[activityEvents.length - 1].type === ACTIVITIES.rest.name
           ? getTime(activityEvents[activityEvents.length - 1])
           : Date.now(),
-      createActivity: (activityType, startTime, driverId) =>
+      createActivity: (activityType, userTime, driverId) =>
         pushNewActivityEvent({
           activityType,
           driverId,
-          startTime
+          userTime
         })
     });
   };

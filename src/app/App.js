@@ -41,7 +41,7 @@ function App() {
     .filter(a => !cancelledActivityIds.includes(a.id) && !a.isHidden)
     .map(a => {
       const revision = activityRevisionEvents.find(rev => rev.eventId === a.id);
-      return revision ? { ...a, startTime: revision.startTime } : a;
+      return revision ? { ...a, userTime: revision.userTime } : a;
     });
 
   const activityEventsByDay = groupActivityEventsByDay(activityEvents);
@@ -94,9 +94,9 @@ function App() {
     driverId = null,
     mission = null,
     vehicleRegistrationNumber = null,
-    startTime = null
+    userTime = null
   }) => {
-    if (activityType === ACTIVITIES.rest.name && startTime === null) {
+    if (activityType === ACTIVITIES.rest.name && userTime === null) {
       const team = resolveTeamAt(Date.now(), storeSyncedWithLocalStorage);
       team.forEach(tm =>
         storeSyncedWithLocalStorage.pushEvent(
@@ -118,8 +118,8 @@ function App() {
     };
     if (driverId !== undefined && driverId !== null)
       newActivity.driverId = driverId;
-    if (startTime !== undefined && startTime !== null)
-      newActivity.startTime = startTime;
+    if (userTime !== undefined && userTime !== null)
+      newActivity.userTime = userTime;
     if (mission !== undefined && mission !== null)
       newActivity.mission = mission;
     if (
@@ -155,7 +155,7 @@ function App() {
   const cancelOrReviseActivityEvent = async (
     activityEvent,
     actionType,
-    newStartTime = null
+    newUserTime = null
   ) => {
     if (activityEvent.isBeingSubmitted) return;
     // If the event was not submitted yet we can directly alter its value in the store, with no need for an API call
@@ -163,7 +163,7 @@ function App() {
       storeSyncedWithLocalStorage.removeEvent(activityEvent, "activities");
       if (actionType === "revision") {
         storeSyncedWithLocalStorage.pushEvent(
-          { ...activityEvent, eventTime: newStartTime },
+          { ...activityEvent, eventTime: newUserTime },
           "activities"
         );
       }
@@ -183,7 +183,7 @@ function App() {
         await storeSyncedWithLocalStorage.pushEvent(
           {
             eventId: activityEvent.id,
-            startTime: newStartTime,
+            userTime: newUserTime,
             eventTime: Date.now()
           },
           "pendingActivityRevisions"
@@ -282,15 +282,15 @@ function App() {
     );
   };
 
-  const pushNewMission = async (name, startTime) => {
+  const pushNewMission = async (name, userTime) => {
     const eventTime = Date.now();
     const event = {
       name,
       eventTime
     };
-    // If startTime is far enough from the current time we consider that the user intently set its value.
+    // If userTime is far enough from the current time we consider that the user intently set its value.
     // Otherwise it's simply the current time at modal opening
-    if (eventTime - startTime > 60000) event.startTime = startTime;
+    if (eventTime - userTime > 60000) event.userTime = userTime;
     await storeSyncedWithLocalStorage.pushEvent(event, "missions");
 
     api.submitEvents(MISSION_LOG_MUTATION, "missions", apiResponse =>
@@ -301,15 +301,15 @@ function App() {
     );
   };
 
-  const pushNewVehicleBooking = async (registrationNumber, startTime) => {
+  const pushNewVehicleBooking = async (registrationNumber, userTime) => {
     const eventTime = Date.now();
     const event = {
       registrationNumber,
       eventTime
     };
-    // If startTime is far enough from the current time we consider that the user intently set its value.
+    // If userTime is far enough from the current time we consider that the user intently set its value.
     // Otherwise it's simply the current time at modal opening
-    if (eventTime - startTime > 60000) event.startTime = startTime;
+    if (eventTime - userTime > 60000) event.userTime = userTime;
     await storeSyncedWithLocalStorage.pushEvent(event, "vehicleBookings");
 
     api.submitEvents(
