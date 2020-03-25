@@ -20,7 +20,7 @@ export function UserNameHeader({ withCompanyNameBelow = false }) {
       <Box>
         <Box mb={1} className="flexbox-space-between">
           <Box style={{ display: "flex", alignItems: "center" }}>
-            <Typography noWrap variant="h6">
+            <Typography noWrap variant="body1">
               {formatPersonName(storeSyncedWithLocalStorage.userInfo())}
             </Typography>
             <Box
@@ -32,7 +32,7 @@ export function UserNameHeader({ withCompanyNameBelow = false }) {
                 xl: "block"
               }}
             >
-              <Typography style={{ marginLeft: "10vw" }} noWrap variant="h6">
+              <Typography style={{ marginLeft: "10vw" }} noWrap variant="body1">
                 Entreprise :{" "}
                 {storeSyncedWithLocalStorage.userInfo().companyName}
               </Typography>

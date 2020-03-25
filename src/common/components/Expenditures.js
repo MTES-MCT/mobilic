@@ -12,7 +12,7 @@ export function Expenditures({
 }) {
   return (
     <div>
-      <Typography variant="h6" align="left" className="bold">
+      <Typography variant="h4" align="left" className="bold">
         Frais
       </Typography>
       <Grid

@@ -39,8 +39,8 @@ const SCREENS_WITH_BOTTOM_NAVIGATION = {
         <History {...props} />
       ) : (
         <PlaceHolder>
-          <Typography variant="h4">😅</Typography>
-          <Typography style={{ fontWeight: "bold" }}>
+          <Typography variant="h3">😅</Typography>
+          <Typography variant="h3">
             Vous n'avez pas encore d'historique !
           </Typography>
         </PlaceHolder>

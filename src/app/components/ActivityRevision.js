@@ -323,7 +323,7 @@ export function WorkDayRevision({
             <IconButton edge="start" color="inherit" onClick={handleClose}>
               <ArrowBackIcon />
             </IconButton>
-            <Typography variant="h6" align="center">
+            <Typography variant="h3" align="center">
               Corriger journée du{" "}
               {shortPrettyFormatDay(getTime(activityEvents[0]))}
             </Typography>

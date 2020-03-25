@@ -30,7 +30,9 @@ export function VehicleBookingModal({
 
   return (
     <Dialog onClose={handleClose} open={open} fullWidth>
-      <DialogTitle>Nouveau véhicule</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h4">Nouveau véhicule</Typography>
+      </DialogTitle>
       <DialogContent>
         {currentVehicleBooking && (
           <Box my={2}>

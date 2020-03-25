@@ -35,7 +35,7 @@ export function MissionSelectionModal({ open, handleClose, handleContinue }) {
             <IconButton edge="start" color="inherit" onClick={handleClose}>
               <ArrowBackIcon />
             </IconButton>
-            <Typography variant="h6">Infos du jour</Typography>
+            <Typography variant="h3">Infos du jour</Typography>
             <IconButton edge="end" color="inherit" className="hidden">
               <ArrowBackIcon />
             </IconButton>

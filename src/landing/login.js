@@ -50,10 +50,8 @@ export default function Login() {
         onSubmit={handleSubmit}
       >
         <Box my={4}>
-          <Typography variant="h4">👋</Typography>
-          <Typography style={{ fontWeight: "bold" }}>
-            Bienvenue sur MobiLIC !
-          </Typography>
+          <Typography variant="h3">👋</Typography>
+          <Typography variant="h3">Bienvenue sur MobiLIC !</Typography>
         </Box>
         <TextField
           fullWidth

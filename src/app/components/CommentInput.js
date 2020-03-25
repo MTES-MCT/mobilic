@@ -7,6 +7,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 
 export function CommentInputModal({ open, handleClose, handleContinue }) {
   const [text, setText] = React.useState("");
@@ -15,7 +16,9 @@ export function CommentInputModal({ open, handleClose, handleContinue }) {
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Nouveau commentaire</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h4">Nouveau commentaire</Typography>
+      </DialogTitle>
       <DialogContent>
         <TextField
           fullWidth

@@ -110,7 +110,7 @@ export function TeamSelectionModal({
             <IconButton edge="start" color="inherit" onClick={handleClose}>
               <ArrowBackIcon />
             </IconButton>
-            <Typography variant="h6">Equipe du jour</Typography>
+            <Typography variant="h3">Equipe du jour</Typography>
             <IconButton edge="end" color="inherit" className="hidden">
               <ArrowBackIcon />
             </IconButton>

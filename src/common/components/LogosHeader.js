@@ -1,6 +1,6 @@
 import React from "react";
-import { ReactComponent as MarianneIcon } from "../assets/marianne.svg";
-import { ReactComponent as BetaGouvTextIcon } from "../assets/betagouvfr.svg";
+import { ReactComponent as MarianneIcon } from "../assets/images/marianne.svg";
+import { ReactComponent as BetaGouvTextIcon } from "../assets/images/betagouvfr.svg";
 import SvgIcon from "@material-ui/core/SvgIcon";
 import Typography from "@material-ui/core/Typography";
 import { Header } from "./Header";

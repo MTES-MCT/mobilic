@@ -7,6 +7,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import DialogContent from "@material-ui/core/DialogContent";
 import { formatTimer } from "../../common/utils/time";
+import Typography from "@material-ui/core/Typography";
 
 export function DriverSelectionModal({
   team = [],
@@ -18,7 +19,9 @@ export function DriverSelectionModal({
 }) {
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Choisir conducteur</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h4">Choisir conducteur</Typography>
+      </DialogTitle>
       <DialogContent>
         <RadioGroup
           aria-label="driver"

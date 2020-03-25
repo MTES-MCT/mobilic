@@ -78,7 +78,7 @@ export function TimeLine({
     <>
       <div className="timeline-container">
         <Box mb={1} className="flexbox-space-between full-width">
-          <Typography variant="h6" className="bold">
+          <Typography variant="h4" className="bold">
             Évènements du jour
           </Typography>
           {cancelOrReviseActivityEvent && (

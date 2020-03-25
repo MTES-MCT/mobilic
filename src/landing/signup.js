@@ -70,7 +70,7 @@ export default function Signup() {
         onSubmit={handleSubmit}
       >
         <Box my={4}>
-          <Typography variant="h6">Création de compte</Typography>
+          <Typography variant="h3">Création de compte</Typography>
         </Box>
         <TextField
           fullWidth

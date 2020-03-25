@@ -128,7 +128,7 @@ export function BeforeWork({
                   onClick={() => setOpenRevisionModal(true)}
                 >
                   <EditIcon color="primary" />
-                  <Link component="button" variant="h6">
+                  <Link component="button" variant="body1">
                     Corriger activités
                   </Link>
                 </Box>
@@ -136,10 +136,8 @@ export function BeforeWork({
             </>
           ) : (
             <PlaceHolder>
-              <Typography variant="h4">👋</Typography>
-              <Typography style={{ fontWeight: "bold" }}>
-                Bienvenue sur MobiLIC !
-              </Typography>
+              <Typography variant="h3">👋</Typography>
+              <Typography variant="h3">Bienvenue sur MobiLIC !</Typography>
             </PlaceHolder>
           )}
         </Container>

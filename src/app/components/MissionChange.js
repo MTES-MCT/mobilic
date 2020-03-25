@@ -30,7 +30,9 @@ export function MissionChangeModal({
 
   return (
     <Dialog onClose={handleClose} open={open} fullWidth>
-      <DialogTitle>Nouvelle mission</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h4">Nouvelle mission</Typography>
+      </DialogTitle>
       <DialogContent>
         {currentMission && (
           <Box my={2}>

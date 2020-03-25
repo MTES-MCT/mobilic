@@ -7,6 +7,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
 import { ACTIVITIES } from "../../common/utils/activities";
+import Typography from "@material-ui/core/Typography";
 
 export function FirstActivitySelectionModal({
   open,
@@ -15,7 +16,9 @@ export function FirstActivitySelectionModal({
 }) {
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Commencer par</DialogTitle>
+      <DialogTitle disableTypography>
+        <Typography variant="h4">Commencer par</Typography>
+      </DialogTitle>
       <List>
         {Object.values(ACTIVITIES)
           .filter(a => a.canBeFirst)
