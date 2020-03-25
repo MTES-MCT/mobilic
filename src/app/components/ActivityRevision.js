@@ -60,31 +60,34 @@ export function ActivityRevisionOrCreationModal({
     undefined
   );
 
-  const [newStartTime, setNewStartTime] = React.useState(undefined);
-  const [newStartTimeError, setNewStartTimeError] = React.useState("");
+  const [newUserTime, setNewUserTime] = React.useState(undefined);
+  const [newUserTimeError, setNewUserTimeError] = React.useState("");
+
+  const [userComment, setUserComment] = React.useState(undefined);
 
   const user = storeSyncedWithLocalStorage.userInfo();
-  const team = newStartTime
-    ? [user, ...resolveTeamAt(newStartTime, storeSyncedWithLocalStorage)]
+  const team = newUserTime
+    ? [user, ...resolveTeamAt(newUserTime, storeSyncedWithLocalStorage)]
     : [user];
 
   function handleSubmit() {
     if (actionType === "creation") {
       let driverId = null;
       if (requiresDriverId()) driverId = newActivityDriverId;
-      createActivity(newActivityType, newStartTime, driverId);
-    } else handleRevisionAction(actionType, newStartTime);
+      createActivity(newActivityType, newUserTime, driverId);
+    } else handleRevisionAction(actionType, newUserTime, userComment);
   }
 
   React.useEffect(() => {
     if (event) {
-      setNewStartTime(getTime(event));
+      setNewUserTime(getTime(event));
       setActionType(undefined);
     } else {
-      setNewStartTime(undefined);
+      setNewUserTime(undefined);
       setActionType("creation");
     }
     setNewActivityDriverId(undefined);
+    setUserComment(undefined);
     return () => {};
   }, [open]);
 
@@ -103,18 +106,18 @@ export function ActivityRevisionOrCreationModal({
       return !!event;
     }
     if (actionType === "revision") {
-      return event && getTime(event) !== newStartTime && !newStartTimeError;
+      return event && getTime(event) !== newUserTime && !newUserTimeError;
     }
     if (actionType === "creation") {
       if (requiresDriverId()) {
         return (
           !!newActivityType &&
-          !!newStartTime &&
-          !newStartTimeError &&
+          !!newUserTime &&
+          !newUserTimeError &&
           newActivityDriverId !== undefined
         );
       }
-      return !!newActivityType && !!newStartTime && !newStartTimeError;
+      return !!newActivityType && !!newUserTime && !newUserTimeError;
     }
     return false;
   }
@@ -197,10 +200,10 @@ export function ActivityRevisionOrCreationModal({
           {(actionType === "revision" || actionType === "creation") && (
             <DateTimePicker
               label="Début"
-              value={newStartTime}
-              setValue={setNewStartTime}
-              error={newStartTimeError}
-              setError={setNewStartTimeError}
+              time={newUserTime}
+              setTime={setNewUserTime}
+              error={newUserTimeError}
+              setError={setNewUserTimeError}
               minTime={minStartTime}
               maxTime={maxStartTime}
               required={true}
@@ -222,6 +225,19 @@ export function ActivityRevisionOrCreationModal({
             />
           )}
         </Box>
+        {actionType !== "creation" && (
+          <Box mt={2}>
+            <TextField
+              label="Raison (optionnelle)"
+              optional
+              fullWidth
+              multiline
+              rowsMax={10}
+              value={userComment}
+              onChange={e => setUserComment(e.target.value)}
+            />
+          </Box>
+        )}
       </DialogContent>
       <DialogActions>
         <IconButton onClick={handleClose}>
@@ -254,8 +270,13 @@ export function WorkDayRevision({
   const handleEventClick = event => {
     modals.open("activityRevision", {
       event,
-      handleRevisionAction: (actionType, revisedEventTime) =>
-        handleActivityRevision(event, actionType, revisedEventTime),
+      handleRevisionAction: (actionType, revisedEventTime, userComment) =>
+        handleActivityRevision(
+          event,
+          actionType,
+          revisedEventTime,
+          userComment
+        ),
       minStartTime:
         event.type === ACTIVITIES.rest.name &&
         activityEvents[activityEvents.length - 1].type ===

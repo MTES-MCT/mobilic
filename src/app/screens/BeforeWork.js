@@ -32,6 +32,7 @@ export function BeforeWork({
   const latestDayEnd = latestDayActivityEvents
     ? latestDayActivityEvents[latestDayActivityEvents.length - 1]
     : null;
+  console.log(latestDayEnd);
   const shouldResumeDay =
     latestDayEnd &&
     new Date(getTime(latestDayEnd)).toISOString().slice(0, 10) ===

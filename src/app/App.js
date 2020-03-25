@@ -155,7 +155,8 @@ function App() {
   const cancelOrReviseActivityEvent = async (
     activityEvent,
     actionType,
-    newUserTime = null
+    newUserTime = null,
+    userComment = null
   ) => {
     if (activityEvent.isBeingSubmitted) return;
     // If the event was not submitted yet we can directly alter its value in the store, with no need for an API call
@@ -180,12 +181,15 @@ function App() {
             "pendingActivityRevisions"
           );
         }
+        const event = {
+          eventId: activityEvent.id,
+          userTime: newUserTime,
+          eventTime: Date.now()
+        };
+        if (userComment !== undefined && userComment !== null)
+          event.comment = userComment;
         await storeSyncedWithLocalStorage.pushEvent(
-          {
-            eventId: activityEvent.id,
-            userTime: newUserTime,
-            eventTime: Date.now()
-          },
+          event,
           "pendingActivityRevisions"
         );
         api.submitEvents(
@@ -216,11 +220,14 @@ function App() {
             "pendingActivityRevisions"
           );
         }
+        const event = {
+          eventId: activityEvent.id,
+          eventTime: Date.now()
+        };
+        if (userComment !== undefined && userComment !== null)
+          event.comment = userComment;
         await storeSyncedWithLocalStorage.pushEvent(
-          {
-            eventId: activityEvent.id,
-            eventTime: Date.now()
-          },
+          event,
           "pendingActivityCancels"
         );
         api.submitEvents(
