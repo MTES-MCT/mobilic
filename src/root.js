@@ -74,7 +74,7 @@ function _Root() {
         ]}
       {userId &&
         isCompanyAdmin && [
-          <Route exact key="admin" path="/admin">
+          <Route key="admin" path="/admin">
             <Admin />
           </Route>,
           <Redirect push key="*" from="*" to="/admin" />

@@ -20,8 +20,13 @@
 }
 
 .flex-row {
-  @extend .flex-column;
+  display: flex;
   flex-direction: row;
+}
+
+.flex-row-stretch {
+  @extend .flex-row;
+  align-items: stretch;
 }
 
 .flex-row-space-between {
@@ -53,14 +58,18 @@
   overflow-x: hidden;
 }
 
+.no-margin-no-padding {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 .root-container {
   @extend .container;
+  @extend .no-margin-no-padding;
   align-items: center;
   text-align: center;
   height: 100vh !important;
   width: 100vw !important;
-  margin: 0 !important;
-  padding: 0 !important;
 }
 
 .stretch-container {
@@ -72,10 +81,9 @@
 
 .app-container {
   @extend .container;
+  @extend .no-margin-no-padding;
   position: fixed;
   bottom: calc(var(--bottom-nav-bar-height));
-  padding: 0 !important;
-  margin: 0 !important;
   top: 0;
 }
 

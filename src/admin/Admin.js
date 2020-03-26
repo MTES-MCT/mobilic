@@ -1,45 +1,41 @@
 import React from "react";
+import { Switch, Route, Redirect, useRouteMatch } from "react-router-dom";
 import Container from "@material-ui/core/Container";
-import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
-import { useApi } from "../common/utils/api";
-import Button from "@material-ui/core/Button";
-import { loadUserData } from "../common/utils/loadUserData";
 import { UserHeader } from "../common/components/UserHeader";
+import { SideMenu } from "./components/SideMenu";
+import { ADMIN_VIEWS } from "./utils/navigation";
+import "./assets/admin.scss";
 
 export function Admin() {
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
-  const api = useApi();
+  const { path } = useRouteMatch();
 
-  React.useEffect(() => {
-    loadUserData(api, storeSyncedWithLocalStorage);
-    return () => {};
-  }, []);
+  const views = ADMIN_VIEWS.map(view => {
+    const absPath = `${path}${view.route}`;
+    return {
+      ...view,
+      route: absPath
+    };
+  });
 
-  const userInfo = storeSyncedWithLocalStorage.userInfo();
-
-  return (
-    <Container style={{ height: "100%" }}>
-      <UserHeader />
-      <Container className="admin-container flex-row-center">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={async e => {
-            e.preventDefault();
-            const response = await api.httpQuery(
-              "GET",
-              `/download_company_activity_report/${userInfo.companyId}`
-            );
-            const blob = await response.blob();
-            const link = document.createElement("a");
-            link.href = window.URL.createObjectURL(blob);
-            link.download = "rapport_activité.xlsx";
-            link.dispatchEvent(new MouseEvent("click"));
-          }}
-        >
-          Télécharger rapport d'activité
-        </Button>
-      </Container>
+  const defaultView = views.find(view => view.isDefault);
+  return [
+    <UserHeader key={0} />,
+    <Container
+      key={1}
+      className="flex-row-stretch no-margin-no-padding"
+      maxWidth={false}
+    >
+      <SideMenu views={views} />
+      <Switch>
+        {views.map(view => (
+          <Route key={view.label} path={view.route}>
+            {view.component}
+          </Route>
+        ))}
+        {defaultView && (
+          <Redirect key="default" push from="*" to={defaultView.route} />
+        )}
+      </Switch>
     </Container>
-  );
+  ];
 }
