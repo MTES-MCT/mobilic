@@ -38,6 +38,7 @@ export function CommentInputModal({ open, handleClose, handleContinue }) {
             handleContinue(text);
             handleClose();
           }}
+          disabled={!text}
         >
           <CheckIcon color="primary" />
         </IconButton>
