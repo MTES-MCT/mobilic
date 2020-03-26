@@ -45,6 +45,13 @@
   overflow-x: hidden;
 }
 
+.activity-switch-container {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
 .activity-grid-container {
   display: flex;
   flex-wrap: wrap;

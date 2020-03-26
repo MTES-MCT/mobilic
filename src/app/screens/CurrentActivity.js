@@ -104,7 +104,10 @@ export function CurrentActivity({
   };
 
   return (
-    <Container className="full-height space-between" maxWidth={false}>
+    <Container
+      className="activity-switch-container full-height space-between"
+      maxWidth={false}
+    >
       <TimeLine
         dayActivityEvents={currentDayActivityEvents}
         cancelOrReviseActivityEvent={cancelOrReviseActivityEvent}
