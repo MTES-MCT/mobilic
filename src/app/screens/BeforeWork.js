@@ -109,89 +109,93 @@ export function BeforeWork({
     } else createActivity();
   };
 
-  return (
-    <>
-      <Container className="app-container" maxWidth={false}>
-        <UserNameHeader />
-        <Container
-          disableGutters
-          className="stretch-container scrollable"
-          maxWidth={false}
-          style={{ paddingTop: "2vh", justifyContent: "flex-start" }}
-        >
-          {latestDayActivityEvents ? (
-            <>
-              <WorkDaySummary dayActivityEvents={latestDayActivityEvents} />
-              <Box my={1}>
-                <Box
-                  className="flexbox-flex-start"
-                  onClick={() => setOpenRevisionModal(true)}
-                >
-                  <EditIcon color="primary" />
-                  <Link component="button" variant="body1">
-                    Corriger activités
-                  </Link>
-                </Box>
+  return [
+    <UserNameHeader key={1} />,
+    <Container
+      key={2}
+      style={{ display: "flex", flexDirection: "column" }}
+      className="full-height scrollable"
+      maxWidth={false}
+    >
+      <Container
+        disableGutters
+        className="stretch-container scrollable"
+        maxWidth={false}
+        style={{ paddingTop: "2vh", justifyContent: "flex-start" }}
+      >
+        {latestDayActivityEvents ? (
+          <>
+            <WorkDaySummary dayActivityEvents={latestDayActivityEvents} />
+            <Box my={1}>
+              <Box
+                className="flexbox-flex-start"
+                onClick={() => setOpenRevisionModal(true)}
+              >
+                <EditIcon color="primary" />
+                <Link component="button" variant="body1">
+                  Corriger activités
+                </Link>
               </Box>
-            </>
-          ) : (
-            <PlaceHolder>
-              <Typography variant="h3">👋</Typography>
-              <Typography variant="h3">Bienvenue sur MobiLIC !</Typography>
-            </PlaceHolder>
-          )}
-        </Container>
-        <Box className="cta-container">
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<PersonIcon />}
-            onClick={() => {
-              modals.open("missionSelection", {
-                handleContinue: dayInfos =>
-                  modals.open("firstActivity", {
-                    handleItemClick: activityType =>
-                      handleFirstActivitySelection(activityType, dayInfos)
-                  })
-              });
-            }}
-          >
-            {shouldResumeDay ? "Reprendre la journée" : "Commencer la journée"}
-          </Button>
-          <div style={{ height: "2vh" }} />
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<PeopleIcon />}
-            onClick={() =>
-              modals.open("teamSelection", {
-                handleContinue: updatedCoworkers =>
-                  modals.open("missionSelection", {
-                    handleContinue: dayInfos => {
-                      modals.open("firstActivity", {
-                        handleItemClick: activityType =>
-                          handleFirstActivitySelection(
-                            activityType,
-                            dayInfos,
-                            updatedCoworkers
-                          )
-                      });
-                    }
-                  })
-              })
-            }
-          >
-            {shouldResumeDay ? "Reprendre en équipe" : "Commencer en équipe"}
-          </Button>
-        </Box>
+            </Box>
+          </>
+        ) : (
+          <PlaceHolder>
+            <Typography variant="h3">👋</Typography>
+            <Typography variant="h3">Bienvenue sur MobiLIC !</Typography>
+          </PlaceHolder>
+        )}
       </Container>
-      <WorkDayRevision
-        open={latestDayActivityEvents && openRevisionModal}
-        handleClose={() => setOpenRevisionModal(false)}
-        activityEvents={latestDayActivityEvents}
-        handleActivityRevision={cancelOrReviseActivityEvent}
-        pushNewActivityEvent={pushNewActivityEvent}
-      />
-    </>
-  );
+      <Box pb={1} className="cta-container">
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<PersonIcon />}
+          onClick={() => {
+            modals.open("missionSelection", {
+              handleContinue: dayInfos =>
+                modals.open("firstActivity", {
+                  handleItemClick: activityType =>
+                    handleFirstActivitySelection(activityType, dayInfos)
+                })
+            });
+          }}
+        >
+          {shouldResumeDay ? "Reprendre la journée" : "Commencer la journée"}
+        </Button>
+        <div style={{ height: "2vh" }} />
+        <Button
+          variant="outlined"
+          color="primary"
+          startIcon={<PeopleIcon />}
+          onClick={() =>
+            modals.open("teamSelection", {
+              handleContinue: updatedCoworkers =>
+                modals.open("missionSelection", {
+                  handleContinue: dayInfos => {
+                    modals.open("firstActivity", {
+                      handleItemClick: activityType =>
+                        handleFirstActivitySelection(
+                          activityType,
+                          dayInfos,
+                          updatedCoworkers
+                        )
+                    });
+                  }
+                })
+            })
+          }
+        >
+          {shouldResumeDay ? "Reprendre en équipe" : "Commencer en équipe"}
+        </Button>
+      </Box>
+    </Container>,
+    <WorkDayRevision
+      key={3}
+      open={latestDayActivityEvents && openRevisionModal}
+      handleClose={() => setOpenRevisionModal(false)}
+      activityEvents={latestDayActivityEvents}
+      handleActivityRevision={cancelOrReviseActivityEvent}
+      pushNewActivityEvent={pushNewActivityEvent}
+    />
+  ];
 }

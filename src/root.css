@@ -14,11 +14,13 @@
   }
 }
 
-.Root {
+.root-container {
   text-align: center;
-  height: 100vh;
-  width: 100vw;
+  height: 100vh !important;
+  width: 100vw !important;
   display: flex;
+  margin: 0 !important;
+  padding: 0 !important;
   flex-direction: column;
   align-items: center;
   overflow-x: hidden;
@@ -33,11 +35,12 @@
 }
 
 .app-container {
-  padding-top: 2vh;
   display: flex;
   flex-direction: column;
   position: fixed;
-  bottom: calc(var(--bottom-nav-bar-height) + 2vh);
+  bottom: calc(var(--bottom-nav-bar-height));
+  padding: 0 !important;
+  margin: 0 !important;
   top: 0;
   overflow-x: hidden;
 }
@@ -119,6 +122,10 @@
 
 .full-width {
   width: 100%;
+}
+
+.full-height {
+  height: 100%;
 }
 
 .flexbox-center {
@@ -231,6 +238,7 @@
 
 .picker-container {
   z-index: 600 !important;
+  margin: auto;
   width: 90% !important;
   align-self: center;
   max-width: 400px;
@@ -251,7 +259,6 @@
 }
 
 .landing-container {
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -263,7 +270,7 @@
   width: 90% !important;
 }
 
-.centered-with-margin {
+.centered {
   margin: auto;
 }
 
@@ -295,7 +302,8 @@
 }
 
 .header-container {
-  width: 100%;
+  align-self: center;
+  width: 100vw;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -304,6 +312,11 @@
 .marianne-logo {
   height: 50px !important;
   width: 80px !important;
+}
+
+.project-name {
+  font-family: Evolventa !important;
+  -webkit-padding-after: 3px;
 }
 
 .betagouv-text {

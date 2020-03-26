@@ -40,11 +40,11 @@ export default function Login() {
     setLoading(false);
   };
 
-  return (
-    <Container className="landing-container scrollable" maxWidth={false}>
-      <LogosHeader />
+  return [
+    <LogosHeader key={1} />,
+    <Container key={2} className="centered scrollable" maxWidth={false}>
       <form
-        className="vertical-form centered-with-margin"
+        className="vertical-form centered"
         noValidate
         autoComplete="on"
         onSubmit={handleSubmit}
@@ -120,5 +120,5 @@ export default function Login() {
         </Box>
       </form>
     </Container>
-  );
+  ];
 }

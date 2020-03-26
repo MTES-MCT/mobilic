@@ -16,7 +16,7 @@ export function UserNameHeader({ withCompanyNameBelow = false }) {
   const api = useApi();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   return (
-    <Header my={1}>
+    <Header py={1}>
       <Box>
         <Box mb={1} className="flexbox-space-between">
           <Box style={{ display: "flex", alignItems: "center" }}>

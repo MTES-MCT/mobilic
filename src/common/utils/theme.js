@@ -36,6 +36,9 @@ export const theme = responsiveFontSizes(
       background: {
         default: "#ebeff3",
         paper: "#fff"
+      },
+      text: {
+        primary: "#26353f"
       }
     },
     typography: {

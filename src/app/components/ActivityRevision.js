@@ -124,10 +124,12 @@ export function ActivityRevisionOrCreationModal({
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>
-        {actionType === "creation"
-          ? "Nouvelle activité"
-          : "Modifier l'activité"}
+      <DialogTitle disableTypography>
+        <Typography variant="h4">
+          {actionType === "creation"
+            ? "Nouvelle activité"
+            : "Modifier l'activité"}
+        </Typography>
       </DialogTitle>
       <DialogContent>
         <Box my={2}>

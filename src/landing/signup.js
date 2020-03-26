@@ -49,22 +49,22 @@ export default function Signup() {
     setLoading(false);
   };
 
-  return (
-    <Container className="landing-container scrollable" maxWidth={false}>
-      <Header my={1} className="flexbox-flex-start">
-        <IconButton
-          edge="start"
-          color="primary"
-          onClick={() => history.push("/")}
-        >
-          <ArrowBackIcon />
-        </IconButton>
-        <Box ml={1}>
-          <Typography>J'ai déjà un compte</Typography>
-        </Box>
-      </Header>
+  return [
+    <Header key={1} py={1} className="flexbox-flex-start">
+      <IconButton
+        edge="start"
+        color="primary"
+        onClick={() => history.push("/")}
+      >
+        <ArrowBackIcon />
+      </IconButton>
+      <Box ml={1}>
+        <Typography>J'ai déjà un compte</Typography>
+      </Box>
+    </Header>,
+    <Container key={2} className="centered scrollable" maxWidth={false}>
       <form
-        className="vertical-form centered-with-margin"
+        className="vertical-form centered"
         noValidate
         autoComplete="off"
         onSubmit={handleSubmit}
@@ -165,5 +165,5 @@ export default function Signup() {
         </Box>
       </form>
     </Container>
-  );
+  ];
 }

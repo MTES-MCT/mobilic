@@ -7,8 +7,9 @@ export function Header(props) {
   const theme = useTheme();
   return (
     <Box
+      px={2}
       className="header-container"
-      style={{ backgroundColor: theme.palette.background.default }}
+      style={{ backgroundColor: theme.palette.background.paper }}
     >
       <Box {...props}></Box>
       <Divider className="full-width-divider" />

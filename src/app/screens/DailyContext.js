@@ -1,6 +1,5 @@
 import Container from "@material-ui/core/Container";
 import DriveEtaIcon from "@material-ui/icons/DriveEta";
-import Divider from "@material-ui/core/Divider";
 import PeopleIcon from "@material-ui/icons/People";
 import PersonIcon from "@material-ui/icons/Person";
 import WorkIcon from "@material-ui/icons/Work";
@@ -89,10 +88,9 @@ export function DailyContext({
     });
   };
 
-  return (
-    <Container className="app-container" maxWidth={false}>
-      <UserNameHeader withCompanyNameBelow={true} />
-      <Divider className="full-width-divider" />
+  return [
+    <UserNameHeader key={1} withCompanyNameBelow={true} />,
+    <Container key={2} className="scrollable" maxWidth={false}>
       {firstActivityOfTheDay && (
         <List
           style={{ overflowY: "scroll" }}
@@ -246,5 +244,5 @@ export function DailyContext({
         </List>
       )}
     </Container>
-  );
+  ];
 }

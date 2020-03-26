@@ -31,10 +31,11 @@ import { MODAL_DICT, ModalProvider } from "./common/utils/modals";
 import { ThemeProvider } from "@material-ui/styles";
 import { CssBaseline } from "@material-ui/core";
 import { loadUserData } from "./common/utils/loadUserData";
+import Container from "@material-ui/core/Container";
 
 export default function Root() {
   return (
-    <div className="Root">
+    <Container className="root-container" maxWidth={false}>
       <StoreSyncedWithLocalStorageProvider>
         <Router>
           <ApiContextProvider>
@@ -47,7 +48,7 @@ export default function Root() {
           </ApiContextProvider>
         </Router>
       </StoreSyncedWithLocalStorageProvider>
-    </div>
+    </Container>
   );
 }
 

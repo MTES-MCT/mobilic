@@ -8,7 +8,7 @@ import Box from "@material-ui/core/Box";
 
 export function LogosHeader() {
   return (
-    <Header my={1} className="flexbox-flex-start">
+    <Header py={1} className="flexbox-flex-start">
       <Box mr={2}>
         <SvgIcon
           viewBox="0 0 1538 906"
@@ -16,7 +16,7 @@ export function LogosHeader() {
           component={MarianneIcon}
         />
       </Box>
-      <Typography>mobilic</Typography>
+      <Typography className="project-name">mobilic</Typography>
       <SvgIcon
         viewBox="0 0 117 40"
         className="betagouv-text"

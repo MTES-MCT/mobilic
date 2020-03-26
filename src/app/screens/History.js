@@ -20,8 +20,6 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import { TimeLine } from "../../common/components/Timeline";
 import Box from "@material-ui/core/Box";
 import { getTime } from "../../common/utils/events";
@@ -37,14 +35,10 @@ const tabs = {
       const dayActivityEvents = activityEventsByDay[0];
       return (
         <div>
-          <Card>
-            <CardContent>
-              <WorkDaySummary
-                dayActivityEvents={dayActivityEvents}
-                followingDayStart={followingPeriodStart}
-              />
-            </CardContent>
-          </Card>
+          <WorkDaySummary
+            dayActivityEvents={dayActivityEvents}
+            followingDayStart={followingPeriodStart}
+          />
           <Box mt={3}>
             <TimeLine dayActivityEvents={dayActivityEvents} />
           </Box>
@@ -61,11 +55,7 @@ const tabs = {
       `Semaine du ${formatDay(date)} au ${formatDay(date + WEEK)}`,
     renderPeriod: ({ activityEventsByDay, handleDayClick }) => (
       <div>
-        <Card>
-          <CardContent>
-            <WorkWeekSummary weekActivityEventsByDay={activityEventsByDay} />
-          </CardContent>
-        </Card>
+        <WorkWeekSummary weekActivityEventsByDay={activityEventsByDay} />
         <Box mt={3} ml={-2}>
           <List className="days scrollable">
             {activityEventsByDay.map((dayActivityEvents, index) => [
@@ -142,7 +132,7 @@ export function History({ previousDaysActivityEventsByDay }) {
   }
 
   return (
-    <Container className="app-container scrollable" maxWidth={false}>
+    <Container className="scrollable" maxWidth={false}>
       <AppBar>
         <Toolbar
           className="flexbox-space-between stretch-header-content"

@@ -10,6 +10,7 @@ import BottomNavBar from "../components/BottomNavBar";
 import { History } from "../screens/History";
 import Typography from "@material-ui/core/Typography";
 import { DailyContext } from "../screens/DailyContext";
+import Container from "@material-ui/core/Container";
 
 const SCREENS_WITH_BOTTOM_NAVIGATION = {
   activity: {
@@ -53,9 +54,11 @@ export function ScreenWithBottomNavigation(props) {
     SCREENS_WITH_BOTTOM_NAVIGATION.activity.name
   );
   return [
-    SCREENS_WITH_BOTTOM_NAVIGATION[screen].render({ key: 1, ...props }),
+    <Container key={0} className="app-container" maxWidth={false}>
+      {SCREENS_WITH_BOTTOM_NAVIGATION[screen].render({ key: 1, ...props })}
+    </Container>,
     <BottomNavBar
-      key={2}
+      key={1}
       screens={SCREENS_WITH_BOTTOM_NAVIGATION}
       currentScreen={screen}
       setCurrentScreen={setScreen}

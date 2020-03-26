@@ -20,58 +20,62 @@ import { checkDayRestRespect } from "../utils/regulation";
 import { RegulationCheck } from "./RegulationCheck";
 import Divider from "@material-ui/core/Divider";
 import { getTime } from "../utils/events";
+import CardContent from "@material-ui/core/CardContent";
+import Card from "@material-ui/core/Card";
 
 function Summary({ title, summaryContent, timers, alerts }) {
   const theme = useTheme();
   return (
-    <div className="unshrinkable">
-      <Box className="flexbox-space-between">
-        <Typography className="bold">{title}</Typography>
-      </Box>
-      <Table>
-        <TableBody>
-          {summaryContent.map((row, index) => (
-            <TableRow key={index}>
-              <TableCell
-                className="summary-card-table-cell"
-                component="th"
-                scope="row"
-              >
-                <Typography variant="body2">{row.stat}</Typography>
-              </TableCell>
-              <TableCell className="summary-card-table-cell" align="right">
-                <Typography variant="body2" className="bold">
-                  {row.value}
+    <Card className="unshrinkable">
+      <CardContent>
+        <Box mb={1} className="flexbox-space-between">
+          <Typography className="bold">{title}</Typography>
+        </Box>
+        <Table>
+          <TableBody>
+            {summaryContent.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell
+                  className="summary-card-table-cell"
+                  component="th"
+                  scope="row"
+                >
+                  <Typography variant="body2">{row.stat}</Typography>
+                </TableCell>
+                <TableCell className="summary-card-table-cell" align="right">
+                  <Typography variant="body2" className="bold">
+                    {row.value}
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        {timers && (
+          <Box mt={2} className="flexbox-space-between">
+            {Object.values(TIMEABLE_ACTIVITIES).map((activity, index) => (
+              <div key={index} className="summary-card-timer flexbox-center">
+                {activity.renderIcon({
+                  className: "activity-card-icon",
+                  style: { color: theme.palette[activity.name] }
+                })}
+                <Typography variant="body2">
+                  {` : ${formatTimer(timers[activity.name] || 10)}`}
                 </Typography>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      {timers && (
-        <Box mt={2} className="flexbox-space-between">
-          {Object.values(TIMEABLE_ACTIVITIES).map((activity, index) => (
-            <div key={index} className="summary-card-timer flexbox-center">
-              {activity.renderIcon({
-                className: "activity-card-icon",
-                style: { color: theme.palette[activity.name] }
-              })}
-              <Typography variant="body2">
-                {` : ${formatTimer(timers[activity.name] || 10)}`}
-              </Typography>
-            </div>
-          ))}
-        </Box>
-      )}
-      {alerts && (
-        <Box mt={2}>
-          <Divider />
-          {alerts.map((alert, index) => (
-            <RegulationCheck key={index} check={alert} />
-          ))}
-        </Box>
-      )}
-    </div>
+              </div>
+            ))}
+          </Box>
+        )}
+        {alerts && (
+          <Box mt={2}>
+            <Divider />
+            {alerts.map((alert, index) => (
+              <RegulationCheck key={index} check={alert} />
+            ))}
+          </Box>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
