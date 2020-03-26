@@ -16,7 +16,7 @@ export function LogosHeader() {
 
 export function Logos() {
   return (
-    <Box className="flexbox-flex-start">
+    <Box className="flex-row-flex-start">
       <Box mr={2}>
         <SvgIcon
           viewBox="0 0 1538 906"

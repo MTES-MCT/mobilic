@@ -106,7 +106,7 @@ export function TeamSelectionModal({
     >
       <Box className="header-container">
         <AppBar style={{ position: "relative" }}>
-          <Toolbar className="flexbox-space-between">
+          <Toolbar className="flex-row-space-between">
             <IconButton edge="start" color="inherit" onClick={handleClose}>
               <ArrowBackIcon />
             </IconButton>

@@ -59,7 +59,7 @@ export function ActivitySwitchCard({
           className: "activity-card-icon",
           style: { color: color }
         })}
-        <div className="activity-card-timer-container">
+        <div className="flex-row-center">
           {onFocus && <TimerIcon fontSize="inherit" {...timerProps} />}
           <div style={{ width: "1vw" }} />
           <Typography variant="body2" {...timerProps}>

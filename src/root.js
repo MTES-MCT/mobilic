@@ -15,7 +15,7 @@ import "./common/assets/fonts/Source Sans Pro/SourceSansPro-It.otf";
 import "./common/assets/fonts/Source Sans Pro/SourceSansPro-Regular.otf";
 
 import "./index.css";
-import "./root.css";
+import "./common/assets/styles/root.scss";
 
 import App from "./app/App";
 import Login from "./landing/login";

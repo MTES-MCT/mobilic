@@ -24,7 +24,7 @@ export function RegulationCheck({ check }) {
     emoji = "😢";
   }
   return (
-    <Box color={color} py={1} className="regulation-check">
+    <Box color={color} py={1} className="flex-column">
       {icon({
         className: "regulation-check-icon",
         color: "inherit",

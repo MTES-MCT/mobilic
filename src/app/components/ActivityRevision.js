@@ -141,7 +141,7 @@ export function ActivityRevisionOrCreationModal({
         {event && (
           <>
             <Box mb={1}>
-              <Box className="flexbox-flex-start">
+              <Box className="flex-row-flex-start">
                 <Typography className="bold">Activité :&nbsp;</Typography>
                 {ACTIVITIES[event.type].renderIcon({
                   style: { color: theme.palette[event.type] }
@@ -321,7 +321,7 @@ export function WorkDayRevision({
     >
       <Box className="header-container">
         <AppBar style={{ position: "relative" }}>
-          <Toolbar className="flexbox-space-between">
+          <Toolbar className="flex-row-space-between">
             <IconButton edge="start" color="inherit" onClick={handleClose}>
               <ArrowBackIcon />
             </IconButton>

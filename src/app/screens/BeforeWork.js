@@ -127,7 +127,7 @@ export function BeforeWork({
             <WorkDaySummary dayActivityEvents={latestDayActivityEvents} />
             <Box my={1}>
               <Box
-                className="flexbox-flex-start"
+                className="flex-row-flex-start"
                 onClick={() => setOpenRevisionModal(true)}
               >
                 <EditIcon color="primary" />

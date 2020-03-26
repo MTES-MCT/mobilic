@@ -28,7 +28,7 @@ function Period({ width, color, className, children = null }) {
     <div
       className={classNames(
         "timeline-segment",
-        "flexbox-center",
+        "flex-row-center",
         classes.period,
         className
       )}
@@ -44,7 +44,7 @@ function Event({ height, className, children = null }) {
     <div
       className={classNames(
         "timeline-point",
-        "flexbox-center",
+        "flex-row-center",
         classes.point,
         className
       )}
@@ -77,7 +77,7 @@ export function TimeLine({
   return (
     <>
       <div className="timeline-container">
-        <Box mb={1} className="flexbox-space-between full-width">
+        <Box mb={1} className="flex-row-space-between full-width">
           <Typography variant="h4" className="bold">
             Évènements du jour
           </Typography>
@@ -90,7 +90,7 @@ export function TimeLine({
             </IconButton>
           )}
         </Box>
-        <div className="timeline-line flexbox-center">
+        <div className="timeline-line">
           {eventsToDisplay.map((event, index) => (
             <React.Fragment key={index}>
               <Event className="timeline-legend hidden" />
@@ -117,7 +117,7 @@ export function TimeLine({
             </React.Fragment>
           ))}
         </div>
-        <div className="timeline-line flexbox-center">
+        <div className="timeline-line">
           {eventsToDisplay.map((event, index) => (
             <React.Fragment key={index}>
               <Event />
@@ -143,7 +143,7 @@ export function TimeLine({
             </React.Fragment>
           ))}
         </div>
-        <div className="timeline-line flexbox-center">
+        <div className="timeline-line">
           {eventsToDisplay.map((event, index) => (
             <React.Fragment key={index}>
               <Event className="timeline-legend">

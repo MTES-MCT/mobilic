@@ -28,7 +28,7 @@ function Summary({ title, summaryContent, timers, alerts }) {
   return (
     <Card className="unshrinkable">
       <CardContent>
-        <Box mb={1} className="flexbox-space-between">
+        <Box mb={1} className="flex-row-space-between">
           <Typography className="bold">{title}</Typography>
         </Box>
         <Table>
@@ -52,9 +52,9 @@ function Summary({ title, summaryContent, timers, alerts }) {
           </TableBody>
         </Table>
         {timers && (
-          <Box mt={2} className="flexbox-space-between">
+          <Box mt={2} className="flex-row-space-between">
             {Object.values(TIMEABLE_ACTIVITIES).map((activity, index) => (
-              <div key={index} className="summary-card-timer flexbox-center">
+              <div key={index} className="summary-card-timer flex-row-center">
                 {activity.renderIcon({
                   className: "activity-card-icon",
                   style: { color: theme.palette[activity.name] }

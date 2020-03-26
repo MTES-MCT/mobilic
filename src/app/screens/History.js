@@ -135,7 +135,7 @@ export function History({ previousDaysActivityEventsByDay }) {
     <Container className="scrollable" maxWidth={false}>
       <AppBar>
         <Toolbar
-          className="flexbox-space-between stretch-header-content"
+          className="flex-row-space-between stretch-header-content"
           disableGutters
         >
           <Tabs

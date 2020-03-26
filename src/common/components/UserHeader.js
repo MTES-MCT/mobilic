@@ -17,7 +17,7 @@ function AppUserHeader({ withCompanyNameBelow }) {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   return (
     <Box>
-      <Box className="flexbox-space-between">
+      <Box className="flex-row-space-between">
         <Box style={{ display: "flex", alignItems: "center" }}>
           <Typography noWrap variant="body1">
             {formatPersonName(storeSyncedWithLocalStorage.userInfo())}
@@ -51,7 +51,7 @@ function DesktopUserHeader() {
   const api = useApi();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   return (
-    <Box className="flexbox-space-between">
+    <Box className="flex-row-space-between">
       <Logos />
       <Box style={{ display: "flex", alignItems: "center" }}>
         <Box mr={10}>

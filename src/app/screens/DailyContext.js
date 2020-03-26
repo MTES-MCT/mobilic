@@ -93,7 +93,6 @@ export function DailyContext({
     <Container key={2} className="scrollable" maxWidth={false}>
       {firstActivityOfTheDay && (
         <List
-          style={{ overflowY: "scroll" }}
           subheader={
             <ListSubheader
               disableGutters

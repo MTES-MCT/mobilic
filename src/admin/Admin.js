@@ -20,7 +20,7 @@ export function Admin() {
   return (
     <Container style={{ height: "100%" }}>
       <UserHeader />
-      <Container className="admin-container flexbox-center">
+      <Container className="admin-container flex-row-center">
         <Button
           variant="contained"
           color="primary"
