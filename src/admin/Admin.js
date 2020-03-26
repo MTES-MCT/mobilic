@@ -4,7 +4,7 @@ import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import { useApi } from "../common/utils/api";
 import Button from "@material-ui/core/Button";
 import { loadUserData } from "../common/utils/loadUserData";
-import { UserNameHeader } from "../common/components/UserNameHeader";
+import { UserHeader } from "../common/components/UserHeader";
 
 export function Admin() {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
@@ -19,7 +19,7 @@ export function Admin() {
 
   return (
     <Container style={{ height: "100%" }}>
-      <UserNameHeader />
+      <UserHeader />
       <Container className="admin-container flexbox-center">
         <Button
           variant="contained"

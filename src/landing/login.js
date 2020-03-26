@@ -9,7 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import Box from "@material-ui/core/Box";
-import { LogosHeader } from "../common/components/LogosHeader";
+import { LogosHeader } from "../common/components/Logos";
 
 export default function Login() {
   const [email, setEmail] = React.useState("");

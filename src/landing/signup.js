@@ -50,7 +50,7 @@ export default function Signup() {
   };
 
   return [
-    <Header key={1} py={1} className="flexbox-flex-start">
+    <Header key={1} className="flexbox-flex-start">
       <IconButton
         edge="start"
         color="primary"

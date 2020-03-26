@@ -11,7 +11,7 @@ export function Header(props) {
       className="header-container"
       style={{ backgroundColor: theme.palette.background.paper }}
     >
-      <Box {...props}></Box>
+      <Box py={1} {...props}></Box>
       <Divider className="full-width-divider" />
     </Box>
   );

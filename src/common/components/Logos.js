@@ -8,7 +8,15 @@ import Box from "@material-ui/core/Box";
 
 export function LogosHeader() {
   return (
-    <Header py={1} className="flexbox-flex-start">
+    <Header>
+      <Logos />
+    </Header>
+  );
+}
+
+export function Logos() {
+  return (
+    <Box className="flexbox-flex-start">
       <Box mr={2}>
         <SvgIcon
           viewBox="0 0 1538 906"
@@ -22,6 +30,6 @@ export function LogosHeader() {
         className="betagouv-text"
         component={BetaGouvTextIcon}
       />
-    </Header>
+    </Box>
   );
 }

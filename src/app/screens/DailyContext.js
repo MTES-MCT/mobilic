@@ -7,7 +7,7 @@ import AnnouncementIcon from "@material-ui/icons/Announcement";
 import CreateIcon from "@material-ui/icons/Create";
 import React from "react";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
-import { UserNameHeader } from "../../common/components/UserNameHeader";
+import { UserHeader } from "../../common/components/UserHeader";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import List from "@material-ui/core/List";
@@ -89,7 +89,7 @@ export function DailyContext({
   };
 
   return [
-    <UserNameHeader key={1} withCompanyNameBelow={true} />,
+    <UserHeader key={1} withCompanyNameBelow={true} />,
     <Container key={2} className="scrollable" maxWidth={false}>
       {firstActivityOfTheDay && (
         <List

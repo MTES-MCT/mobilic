@@ -9,7 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import { ModalContext } from "../../common/utils/modals";
 import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 import { ACTIVITIES } from "../../common/utils/activities";
-import { UserNameHeader } from "../../common/components/UserNameHeader";
+import { UserHeader } from "../../common/components/UserHeader";
 import Box from "@material-ui/core/Box";
 import { WorkDayRevision } from "../components/ActivityRevision";
 import EditIcon from "@material-ui/icons/Edit";
@@ -109,7 +109,7 @@ export function BeforeWork({
   };
 
   return [
-    <UserNameHeader key={1} />,
+    <UserHeader key={1} />,
     <Container
       key={2}
       style={{ display: "flex", flexDirection: "column" }}
