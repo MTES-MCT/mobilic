@@ -96,18 +96,20 @@ export function ActivityPanel() {
           </Button>
         </Box>
       </Box>
-      <Box px={2} pb={2} className="flex-row-flex-start">
-        <FormControlLabel
-          control={
-            <Switch
-              checked={toggleDayDetails}
-              onChange={() => setToggleDayDetails(!toggleDayDetails)}
-              color="primary"
-            />
-          }
-          label="Voir détails de la journée"
-        />
-      </Box>
+      {period === "day" && (
+        <Box px={2} pb={2} className="flex-row-flex-start">
+          <FormControlLabel
+            control={
+              <Switch
+                checked={toggleDayDetails}
+                onChange={() => setToggleDayDetails(!toggleDayDetails)}
+                color="primary"
+              />
+            }
+            label="Voir détails de la journée"
+          />
+        </Box>
+      )}
     </Paper>,
     <Paper variant="outlined" key={1}>
       <Box m={2}>
