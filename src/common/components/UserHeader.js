@@ -10,6 +10,7 @@ import { useStoreSyncedWithLocalStorage } from "../utils/store";
 import { Header } from "./Header";
 import { Logos } from "./Logos";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
+import useTheme from "@material-ui/core/styles/useTheme";
 
 function AppUserHeader({ withCompanyNameBelow }) {
   const modals = React.useContext(ModalContext);
@@ -18,11 +19,9 @@ function AppUserHeader({ withCompanyNameBelow }) {
   return (
     <Box>
       <Box className="flex-row-space-between">
-        <Box style={{ display: "flex", alignItems: "center" }}>
-          <Typography noWrap variant="body1">
-            {formatPersonName(storeSyncedWithLocalStorage.userInfo())}
-          </Typography>
-        </Box>
+        <Typography noWrap variant="body1">
+          {formatPersonName(storeSyncedWithLocalStorage.userInfo())}
+        </Typography>
         <IconButton
           color="primary"
           onClick={() =>
@@ -36,8 +35,12 @@ function AppUserHeader({ withCompanyNameBelow }) {
         </IconButton>
       </Box>
       {withCompanyNameBelow && (
-        <Box mt={1} display={{ xs: "block", sm: "block", md: "none" }}>
-          <Typography align="left">
+        <Box
+          mt={1}
+          display={{ xs: "block", sm: "block", md: "none" }}
+          style={{ overflowX: "hidden" }}
+        >
+          <Typography noWrap align="left">
             Entreprise : {storeSyncedWithLocalStorage.userInfo().companyName}
           </Typography>
         </Box>
@@ -49,18 +52,24 @@ function AppUserHeader({ withCompanyNameBelow }) {
 function DesktopUserHeader() {
   const modals = React.useContext(ModalContext);
   const api = useApi();
+  const theme = useTheme();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   return (
     <Box className="flex-row-space-between">
       <Logos />
-      <Box style={{ display: "flex", alignItems: "center" }}>
-        <Box mr={10}>
-          <Typography noWrap variant="body1">
-            {formatPersonName(storeSyncedWithLocalStorage.userInfo())} -{" "}
-            {storeSyncedWithLocalStorage.userInfo().companyName}
-          </Typography>
-        </Box>
+      <Box
+        style={{ display: "flex", alignItems: "center", overflowX: "hidden" }}
+      >
+        <Typography
+          style={{ marginLeft: theme.spacing(4) }}
+          noWrap
+          variant="body1"
+        >
+          {formatPersonName(storeSyncedWithLocalStorage.userInfo())} -{" "}
+          {storeSyncedWithLocalStorage.userInfo().companyName}
+        </Typography>
         <IconButton
+          style={{ marginLeft: theme.spacing(10) }}
           color="primary"
           onClick={() =>
             modals.open("confirmation", {
