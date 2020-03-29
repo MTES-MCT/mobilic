@@ -107,6 +107,25 @@ export const USER_QUERY = gql`
   }
 `;
 
+export const COMPANY_QUERY = gql`
+  query($id: Int!) {
+    company(id: $id) {
+      users {
+        id
+        firstName
+        lastName
+        workDays {
+          startTime
+          expenditures {
+            type
+          }
+          activityTimers
+        }
+      }
+    }
+  }
+`;
+
 export const ACTIVITY_LOG_MUTATION = gql`
   mutation($data: [SingleActivityInput]!) {
     logActivities(data: $data) {
