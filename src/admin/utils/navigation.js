@@ -1,3 +1,6 @@
+import React from "react";
+import { ActivityPanel } from "../panels/Activities";
+
 export const ADMIN_VIEWS = [
   {
     label: "Employés",
@@ -13,6 +16,6 @@ export const ADMIN_VIEWS = [
     label: "Activités",
     route: "/activities",
     isDefault: true,
-    component: "null"
+    component: <ActivityPanel />
   }
 ];
