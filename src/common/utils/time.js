@@ -49,9 +49,15 @@ export function formatDay(unixTimestamp) {
   return `${addZero(date.getDate())}/${addZero(date.getMonth() + 1)}`;
 }
 
-export function prettyFormatDay(unixTimestamp) {
+export function prettyFormatDay(unixTimestamp, withYear = false) {
   const date = new Date(unixTimestamp);
-  return `${date.getDate()} ${MONTHS[date.getMonth()]}`;
+  const baseString = `${date.getDate()} ${MONTHS[date.getMonth()]}`;
+  return withYear ? `${baseString} ${date.getFullYear()}` : baseString;
+}
+
+export function prettyFormatMonth(unixTimestamp) {
+  const date = new Date(unixTimestamp);
+  return `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
 }
 
 export function shortPrettyFormatDay(unixTimestamp) {
@@ -83,14 +89,25 @@ export function getStartOfWeek(unixTimestamp) {
   const date = new Date(unixTimestamp);
   const dayOfWeek = date.getDay();
   const daysToSubstract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-  return Math.floor((unixTimestamp - daysToSubstract * DAY) / DAY) * DAY;
+  const sameTimeAtStartOfWeek = new Date(unixTimestamp - daysToSubstract * DAY);
+  return _startOfDay(sameTimeAtStartOfWeek);
 }
 
-export function getStartOfDay(unixTimestamp) {
+export function getStartOfMonth(unixTimestamp) {
   const date = new Date(unixTimestamp);
+  date.setDate(1);
+  return _startOfDay(date);
+}
+
+function _startOfDay(date) {
   date.setHours(0);
   date.setMinutes(0);
   date.setSeconds(0);
   date.setMilliseconds(0);
   return date.getTime();
+}
+
+export function getStartOfDay(unixTimestamp) {
+  const date = new Date(unixTimestamp);
+  return _startOfDay(date);
 }
