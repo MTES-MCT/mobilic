@@ -88,6 +88,7 @@ export function ActivityPanel() {
           <PeriodToggle period={period} setPeriod={setPeriod} />
           <Button
             className={classes.exportButton}
+            disabled
             color="primary"
             onClick={e => console.log(e)}
             variant="contained"
