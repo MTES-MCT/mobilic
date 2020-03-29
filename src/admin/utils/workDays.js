@@ -44,7 +44,12 @@ export function aggregateWorkDayPeriods(workDays, period) {
   });
   const flatAggregatedWorkDays = Object.values(
     workDaysGroupedByUserAndPeriod
-  ).map(computeWorkDayGroupAggregates);
+  ).map(group => {
+    const aggregateMetrics = computeWorkDayGroupAggregates(group);
+    return period === "day"
+      ? { ...group[0], ...aggregateMetrics }
+      : aggregateMetrics;
+  });
   const aggregatedWorkDaysByPeriod = {};
   flatAggregatedWorkDays.forEach(awd => {
     if (!aggregatedWorkDaysByPeriod[awd.periodStart])

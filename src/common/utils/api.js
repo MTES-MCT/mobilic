@@ -116,6 +116,7 @@ export const COMPANY_QUERY = gql`
         lastName
         workDays {
           startTime
+          endTime
           expenditures {
             type
           }

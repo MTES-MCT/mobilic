@@ -1,9 +1,10 @@
 .side-menu-container {
   flex: 1 0 auto;
+  min-width: 200px;
 }
 
 .panel-container {
-  flex: 4 1 auto;
+  flex: 5 0 auto;
 }
 
 .work-time-table {

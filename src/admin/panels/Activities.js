@@ -16,6 +16,8 @@ import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 import { loadCompanyData } from "../utils/loadCompanyData";
 import { useApi } from "../../common/utils/api";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 
 const useStyles = makeStyles(theme => ({
   exportButton: {
@@ -37,6 +39,7 @@ export function ActivityPanel() {
 
   const [rawUsers, setRawUsers] = React.useState([]);
   const [period, setPeriod] = React.useState("day");
+  const [toggleDayDetails, setToggleDayDetails] = React.useState(false);
 
   const [users, setUsers] = React.useState([]);
 
@@ -93,6 +96,18 @@ export function ActivityPanel() {
           </Button>
         </Box>
       </Box>
+      <Box px={2} pb={2} className="flex-row-flex-start">
+        <FormControlLabel
+          control={
+            <Switch
+              checked={toggleDayDetails}
+              onChange={() => setToggleDayDetails(!toggleDayDetails)}
+              color="primary"
+            />
+          }
+          label="Voir détails de la journée"
+        />
+      </Box>
     </Paper>,
     <Paper variant="outlined" key={1}>
       <Box m={2}>
@@ -120,6 +135,7 @@ export function ActivityPanel() {
               <WorkTimeTable
                 workTimeEntries={periodAggregates[periodStart]}
                 users={rawUsers}
+                displayDetails={toggleDayDetails && period === "day"}
               />
             </Box>
           );

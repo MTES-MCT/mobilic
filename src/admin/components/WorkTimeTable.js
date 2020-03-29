@@ -4,10 +4,11 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
-import { formatTimer } from "../../common/utils/time";
+import { formatTimeOfDay, formatTimer } from "../../common/utils/time";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { formatPersonName } from "../../common/utils/coworkers";
 import { formatExpendituresAsOneString } from "../../common/utils/expenditures";
+import { ACTIVITIES } from "../../common/utils/activities";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,8 +31,9 @@ function TableCellWithSort({ sortType, onSortTypeChange, children }) {
   );
 }
 
-export function WorkTimeTable({ workTimeEntries, users }) {
+export function WorkTimeTable({ workTimeEntries, users, displayDetails }) {
   const formattedWorkTimeEntries = workTimeEntries.map(wte => ({
+    ...wte,
     workerName: formatPersonName(users.find(u => u.id === wte.userId)),
     workTime: wte.timers.total_work,
     restTime: wte.timers.break,
@@ -72,6 +74,10 @@ export function WorkTimeTable({ workTimeEntries, users }) {
           >
             Employé
           </TableCellWithSort>
+          {displayDetails && [
+            <TableCell key={0}>Début</TableCell>,
+            <TableCell key={1}>Fin</TableCell>
+          ]}
           <TableCellWithSort
             sortType={sortBy === "workTime" ? sortType : undefined}
             onSortTypeChange={handleSortTypeChange("workTime")}
@@ -79,6 +85,11 @@ export function WorkTimeTable({ workTimeEntries, users }) {
             Temps de travail
           </TableCellWithSort>
           <TableCell>Temps de repos</TableCell>
+          {displayDetails && [
+            <TableCell key={0}>{ACTIVITIES.drive.renderIcon()}</TableCell>,
+            <TableCell key={1}>Accompagnement</TableCell>,
+            <TableCell key={2}>{ACTIVITIES.work.renderIcon()}</TableCell>
+          ]}
           <TableCell>Frais</TableCell>
         </TableRow>
       </TableHead>
@@ -86,8 +97,25 @@ export function WorkTimeTable({ workTimeEntries, users }) {
         {sortedWorkTimeEntries.map((entry, index) => (
           <TableRow key={index}>
             <TableCell>{entry.workerName}</TableCell>
+            {displayDetails && [
+              <TableCell key={0}>{formatTimeOfDay(entry.startTime)}</TableCell>,
+              <TableCell key={1}>
+                {entry.endTime ? formatTimeOfDay(entry.endTime) : ""}
+              </TableCell>
+            ]}
             <TableCell>{formatTimer(entry.workTime)}</TableCell>
             <TableCell>{formatTimer(entry.restTime)}</TableCell>
+            {displayDetails && [
+              <TableCell key={0}>
+                {formatTimer(entry.activityTimers[ACTIVITIES.drive.name])}
+              </TableCell>,
+              <TableCell key={1}>
+                {formatTimer(entry.activityTimers["support"])}
+              </TableCell>,
+              <TableCell key={2}>
+                {formatTimer(entry.activityTimers[ACTIVITIES.work.name])}
+              </TableCell>
+            ]}
             <TableCell style={{ whiteSpace: "pre-line" }}>
               {formatExpendituresAsOneString(entry.expenditures)}
             </TableCell>
