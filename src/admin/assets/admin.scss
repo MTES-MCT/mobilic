@@ -1,4 +1,54 @@
 .side-menu-container {
-  flex: 1 1 auto;
+  flex: 1 0 auto;
 }
 
+.panel-container {
+  flex: 4 1 auto;
+}
+
+.work-time-table {
+  border: 1px solid #c9d3df;
+  border-left: 0;
+  border-right: 0;
+  border-radius: 2px;
+  position: relative;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+
+  td, th {
+    padding: 1em;
+    text-align: left;
+  }
+
+  td {
+    border-top: 1px solid #ebeff3;
+
+  }
+
+  thead th {
+    font-size: 1rem;
+    background: #fafbfc;
+    border-bottom: 1px solid #c9d3df;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  thead th.ascending::after {
+    font-size: 0.75em;
+    content: '▲';
+    margin-left: 0.5em;
+    margin-left: var(--space-xs);
+  }
+
+  thead th.descending::after {
+    font-size: 0.75em;
+    content: '▼';
+    margin-left: 0.5em;
+    margin-left: var(--space-xs);
+  }
+
+  tr:hover {
+    background: #fafbfc;
+  }
+}
