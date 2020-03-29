@@ -3,7 +3,7 @@ export const EXPENDITURES = {
     label: "repas"
   },
   night_meal: {
-    label: "repas nuit"
+    label: `repas${"\u00A0"}nuit`
   },
   sleep_over: {
     label: "découchage"
@@ -19,4 +19,16 @@ export function parseExpenditureFromBackend(expenditure) {
     type: expenditure.type,
     eventTime: expenditure.eventTime
   };
+}
+
+export function formatExpendituresAsOneString(expenditureCounts) {
+  return Object.keys(expenditureCounts)
+    .map(
+      type =>
+        `${EXPENDITURES[type].label}${"\u00A0"}:${"\u00A0"}${
+          expenditureCounts[type]
+        }`
+    )
+    .sort()
+    .join("\n");
 }

@@ -7,6 +7,7 @@ import TableBody from "@material-ui/core/TableBody";
 import { formatTimer } from "../../common/utils/time";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { formatPersonName } from "../../common/utils/coworkers";
+import { formatExpendituresAsOneString } from "../../common/utils/expenditures";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,7 +35,7 @@ export function WorkTimeTable({ workTimeEntries, users }) {
     workerName: formatPersonName(users.find(u => u.id === wte.userId)),
     workTime: wte.timers.total_work,
     restTime: wte.timers.break,
-    ...wte.expenditures
+    expenditures: wte.expenditures
   }));
   const [sortBy, setSortBy] = React.useState(undefined);
   const [sortType, setSortType] = React.useState(undefined);
@@ -78,7 +79,7 @@ export function WorkTimeTable({ workTimeEntries, users }) {
             Temps de travail
           </TableCellWithSort>
           <TableCell>Temps de repos</TableCell>
-          <TableCell>Repas jour</TableCell>
+          <TableCell>Frais</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -87,7 +88,9 @@ export function WorkTimeTable({ workTimeEntries, users }) {
             <TableCell>{entry.workerName}</TableCell>
             <TableCell>{formatTimer(entry.workTime)}</TableCell>
             <TableCell>{formatTimer(entry.restTime)}</TableCell>
-            <TableCell>{entry.day_meal}</TableCell>
+            <TableCell style={{ whiteSpace: "pre-line" }}>
+              {formatExpendituresAsOneString(entry.expenditures)}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
