@@ -23,6 +23,7 @@ import { COMMENT_LOG_MUTATION, useApi } from "../../common/utils/api";
 import { ModalContext } from "../../common/utils/modals";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { getTime } from "../../common/utils/events";
+import { getVehicleName, resolveVehicle } from "../../common/utils/vehicles";
 
 export function DailyContext({
   currentActivity,
@@ -70,6 +71,11 @@ export function DailyContext({
         ignoreTeamEnrollmentsBeforeTime
       )
     : [];
+
+  const vehicleToDisplay = resolveVehicle(
+    currentOrLatestDayVehicleBooking,
+    storeSyncedWithLocalStorage
+  );
 
   const pushNewComment = async content => {
     await storeSyncedWithLocalStorage.pushEvent(
@@ -163,9 +169,7 @@ export function DailyContext({
             </ListItemIcon>
             <ListItemText
               primary={`Véhicule : ${
-                currentOrLatestDayVehicleBooking
-                  ? currentOrLatestDayVehicleBooking.registrationNumber
-                  : ""
+                vehicleToDisplay ? getVehicleName(vehicleToDisplay) : ""
               }`}
             />
             <ListItemSecondaryAction>

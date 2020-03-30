@@ -20,6 +20,7 @@ import {
 } from "../common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "../common/utils/store";
 import { resolveTeamAt } from "../common/utils/coworkers";
+import { syncUser } from "../common/utils/loadUserData";
 
 function App() {
   const api = useApi();
@@ -93,6 +94,7 @@ function App() {
     activityType,
     driverId = null,
     mission = null,
+    vehicleId = null,
     vehicleRegistrationNumber = null,
     userTime = null,
     userComment = null
@@ -125,6 +127,8 @@ function App() {
       newActivity.mission = mission;
     if (userComment !== undefined && userComment !== null)
       newActivity.comment = userComment;
+    if (vehicleId !== undefined && vehicleId !== null)
+      newActivity.vehicleId = vehicleId;
     if (
       vehicleRegistrationNumber !== undefined &&
       vehicleRegistrationNumber !== null
@@ -133,25 +137,8 @@ function App() {
     await storeSyncedWithLocalStorage.pushEvent(newActivity, "activities");
 
     api.submitEvents(ACTIVITY_LOG_MUTATION, "activities", apiResponse => {
-      const activities = apiResponse.data.logActivities.activities;
-      return Promise.all([
-        storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-          activities.map(parseActivityPayloadFromBackend),
-          "activities"
-        ),
-        storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-          apiResponse.data.logActivities.teamEnrollments,
-          "teamEnrollments"
-        ),
-        storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-          apiResponse.data.logActivities.missions,
-          "missions"
-        ),
-        storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-          apiResponse.data.logActivities.vehicleBookings,
-          "vehicleBookings"
-        )
-      ]);
+      const user = apiResponse.data.logActivities.user;
+      return syncUser(user, storeSyncedWithLocalStorage);
     });
   };
 
@@ -311,12 +298,17 @@ function App() {
     );
   };
 
-  const pushNewVehicleBooking = async (registrationNumber, userTime) => {
+  const pushNewVehicleBooking = async (vehicle, userTime) => {
+    if (!vehicle) return;
+    const { id, registrationNumber } = vehicle;
     const eventTime = Date.now();
     const event = {
-      registrationNumber,
       eventTime
     };
+    if (id !== undefined && id !== null) event.vehicleId = id;
+    if (registrationNumber !== undefined && registrationNumber !== null)
+      event.registrationNumber = registrationNumber;
+
     // If userTime is far enough from the current time we consider that the user intently set its value.
     // Otherwise it's simply the current time at modal opening
     if (eventTime - userTime > 60000) event.userTime = userTime;
@@ -325,11 +317,16 @@ function App() {
     api.submitEvents(
       VEHICLE_BOOKING_LOG_MUTATION,
       "vehicleBookings",
-      apiResponse =>
+      apiResponse => {
         storeSyncedWithLocalStorage.updateAllSubmittedEvents(
           apiResponse.data.logVehicleBookings.vehicleBookings,
           "vehicleBookings"
-        )
+        );
+        storeSyncedWithLocalStorage.updateAllSubmittedEvents(
+          apiResponse.data.logVehicleBookings.bookableVehicles,
+          "vehicles"
+        );
+      }
     );
   };
 

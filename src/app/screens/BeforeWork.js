@@ -95,7 +95,8 @@ export function BeforeWork({
         activityType,
         driverId,
         mission: dayInfos.mission,
-        vehicleRegistrationNumber: dayInfos.vehicleRegistrationNumber
+        vehicleId: dayInfos.vehicle.id,
+        vehicleRegistrationNumber: dayInfos.vehicle.registrationNumber
       });
       modals.close("missionSelection");
       modals.close("teamSelection");
