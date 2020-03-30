@@ -78,9 +78,6 @@ export const USER_QUERY = gql`
         id
         type
         userTime
-        team
-        mission
-        vehicleRegistrationNumber
         driverId
       }
       expenditures {
@@ -95,8 +92,12 @@ export const USER_QUERY = gql`
       }
       vehicleBookings {
         id
-        registrationNumber
+        vehicleId
         userTime
+      }
+      bookableVehicles {
+        id
+        name
       }
       comments {
         id
@@ -130,30 +131,33 @@ export const COMPANY_QUERY = gql`
 export const ACTIVITY_LOG_MUTATION = gql`
   mutation($data: [SingleActivityInput]!) {
     logActivities(data: $data) {
-      activities {
-        id
-        type
-        userTime
-        team
-        mission
-        vehicleRegistrationNumber
-        driverId
-      }
-      teamEnrollments {
-        id
-        userId
-        type
-        userTime
-      }
-      missions {
-        id
-        name
-        userTime
-      }
-      vehicleBookings {
-        id
-        registrationNumber
-        userTime
+      user {
+        activities {
+          id
+          type
+          userTime
+          driverId
+        }
+        teamEnrollments {
+          id
+          userId
+          type
+          userTime
+        }
+        missions {
+          id
+          name
+          userTime
+        }
+        vehicleBookings {
+          id
+          vehicleId
+          userTime
+        }
+        bookableVehicles {
+          id
+          name
+        }
       }
     }
   }
@@ -190,9 +194,6 @@ export const ACTIVITY_CANCEL_MUTATION = gql`
         id
         type
         userTime
-        team
-        mission
-        vehicleRegistrationNumber
         driverId
       }
     }
@@ -206,9 +207,6 @@ export const ACTIVITY_REVISION_MUTATION = gql`
         id
         type
         userTime
-        team
-        mission
-        vehicleRegistrationNumber
         driverId
       }
     }
@@ -262,8 +260,12 @@ export const VEHICLE_BOOKING_LOG_MUTATION = gql`
     logVehicleBookings(data: $data) {
       vehicleBookings {
         id
-        registrationNumber
+        vehicleId
         userTime
+      }
+      bookableVehicles {
+        id
+        name
       }
     }
   }
