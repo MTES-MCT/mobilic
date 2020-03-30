@@ -30,7 +30,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       pendingExpenditureCancels: List,
       comments: List,
       missions: List,
-      vehicleBookings: List
+      vehicleBookings: List,
+      vehicles: List
     };
 
     // Init state from local storage
@@ -229,7 +230,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             pendingActivityRevisions: () => this.state.pendingActivityRevisions,
             teamEnrollments: () => this.state.teamEnrollments,
             missions: () => this.state.missions,
-            vehicleBookings: () => this.state.vehicleBookings
+            vehicleBookings: () => this.state.vehicleBookings,
+            vehicles: () => this.state.vehicles
           }}
         >
           {this.props.children}
