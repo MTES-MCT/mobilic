@@ -8,50 +8,62 @@ export async function loadUserData(api, storeSyncedWithLocalStorage) {
     const userResponse = await api.graphQlQuery(USER_QUERY, {
       id: userId
     });
-    const {
-      firstName,
-      lastName,
-      company,
-      activities,
-      expenditures,
-      teamEnrollments,
-      enrollableCoworkers,
-      comments,
-      missions,
-      vehicleBookings
-    } = userResponse.data.user;
-    const parsedActivities = activities.map(rawActivityPayload =>
-      parseActivityPayloadFromBackend(rawActivityPayload)
-    );
-    storeSyncedWithLocalStorage.setUserInfo({
-      firstName,
-      lastName,
-      companyId: company.id,
-      companyName: company.name
-    });
-    storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-      enrollableCoworkers,
-      "coworkers"
-    );
-    storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-      parsedActivities,
-      "activities"
-    );
-    storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-      expenditures,
-      "expenditures"
-    );
-    storeSyncedWithLocalStorage.updateAllSubmittedEvents(comments, "comments");
-    storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-      teamEnrollments,
-      "teamEnrollments"
-    );
-    storeSyncedWithLocalStorage.updateAllSubmittedEvents(missions, "missions");
-    storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-      vehicleBookings,
-      "vehicleBookings"
-    );
+    return await syncUser(userResponse.data.user, storeSyncedWithLocalStorage);
   } catch (err) {
     console.log(err);
   }
+}
+
+export function syncUser(userPayload, store) {
+  const {
+    firstName,
+    lastName,
+    company,
+    activities,
+    expenditures,
+    teamEnrollments,
+    enrollableCoworkers,
+    comments,
+    missions,
+    vehicleBookings,
+    bookableVehicles
+  } = userPayload;
+  const syncs = [];
+  firstName &&
+    lastName &&
+    company &&
+    syncs.push(
+      store.setUserInfo({
+        firstName,
+        lastName,
+        companyId: company.id,
+        companyName: company.name
+      })
+    );
+  activities &&
+    syncs.push(
+      store.updateAllSubmittedEvents(
+        activities.map(parseActivityPayloadFromBackend),
+        "activities"
+      )
+    );
+  expenditures &&
+    syncs.push(store.updateAllSubmittedEvents(expenditures, "expenditures"));
+  teamEnrollments &&
+    syncs.push(
+      store.updateAllSubmittedEvents(teamEnrollments, "teamEnrollments")
+    );
+  enrollableCoworkers &&
+    syncs.push(
+      store.updateAllSubmittedEvents(enrollableCoworkers, "coworkers")
+    );
+  comments && syncs.push(store.updateAllSubmittedEvents(comments, "comments"));
+  missions && syncs.push(store.updateAllSubmittedEvents(missions, "missions"));
+  vehicleBookings &&
+    syncs.push(
+      store.updateAllSubmittedEvents(vehicleBookings, "vehicleBookings")
+    );
+  bookableVehicles &&
+    syncs.push(store.updateAllSubmittedEvents(bookableVehicles, "vehicles"));
+  return Promise.all(syncs);
 }
