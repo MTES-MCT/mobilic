@@ -6,12 +6,14 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 import DialogContent from "@material-ui/core/DialogContent";
-import TextField from "@material-ui/core/TextField";
 import { formatTimeOfDay } from "../../common/utils/time";
 import { getTime } from "../../common/utils/events";
 import { DateTimePicker } from "./DateTimePicker";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
+import { VehicleInput } from "./VehicleInput";
+import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
+import { getVehicleName, resolveVehicle } from "../../common/utils/vehicles";
 
 export function VehicleBookingModal({
   open,
@@ -19,13 +21,20 @@ export function VehicleBookingModal({
   handleClose,
   handleContinue
 }) {
-  const [registrationNumber, setRegistrationNumber] = React.useState("");
+  const storeSyncedWithLocaStorage = useStoreSyncedWithLocalStorage();
+
+  const [vehicle, setVehicle] = React.useState("");
   const [bookingTime, setBookingTime] = React.useState(undefined);
   const [bookingTimeError, setBookingTimeError] = React.useState("");
 
+  const currentVehicle = resolveVehicle(
+    currentVehicleBooking,
+    storeSyncedWithLocaStorage
+  );
+
   React.useEffect(() => {
     setBookingTime(Date.now());
-    setRegistrationNumber("");
+    setVehicle(null);
   }, [open]);
 
   return (
@@ -34,10 +43,10 @@ export function VehicleBookingModal({
         <Typography variant="h4">Nouveau véhicule</Typography>
       </DialogTitle>
       <DialogContent>
-        {currentVehicleBooking && (
+        {currentVehicle && (
           <Box my={2}>
             <Typography>
-              Véhicule actuel : {currentVehicleBooking.registrationNumber}
+              Véhicule actuel : {getVehicleName(currentVehicle)}
             </Typography>
             <Typography>
               Occupé depuis {formatTimeOfDay(getTime(currentVehicleBooking))}
@@ -45,11 +54,10 @@ export function VehicleBookingModal({
           </Box>
         )}
         <Box my={2}>
-          <TextField
-            fullWidth
-            label="Nouvelle immatriculation"
-            value={registrationNumber}
-            onChange={e => setRegistrationNumber(e.target.value)}
+          <VehicleInput
+            label="Test"
+            vehicle={vehicle}
+            setVehicle={setVehicle}
           />
           <Box mb={1} />
           <DateTimePicker
@@ -71,10 +79,15 @@ export function VehicleBookingModal({
         </IconButton>
         <IconButton
           onClick={() => {
-            handleContinue(registrationNumber, bookingTime);
+            handleContinue(vehicle, bookingTime);
             handleClose();
           }}
-          disabled={!registrationNumber || bookingTimeError || false}
+          disabled={
+            !vehicle ||
+            (!vehicle.id && !vehicle.registrationNumber) ||
+            bookingTimeError ||
+            false
+          }
         >
           <CheckIcon color="primary" />
         </IconButton>

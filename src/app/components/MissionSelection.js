@@ -10,6 +10,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
+import { VehicleInput } from "./VehicleInput";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -17,10 +18,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export function MissionSelectionModal({ open, handleClose, handleContinue }) {
   const [mission, setMission] = React.useState("");
-  const [
-    vehicleRegistrationNumber,
-    setVehicleRegistrationNumber
-  ] = React.useState("");
+  const [vehicle, setVehicle] = React.useState(null);
 
   return (
     <Dialog
@@ -50,20 +48,23 @@ export function MissionSelectionModal({ open, handleClose, handleContinue }) {
             value={mission}
             onChange={e => setMission(e.target.value)}
           />
-          <TextField
-            fullWidth
+          <VehicleInput
             label="Immatriculation du véhicule"
-            value={vehicleRegistrationNumber}
-            onChange={e => setVehicleRegistrationNumber(e.target.value)}
+            vehicle={vehicle}
+            setVehicle={setVehicle}
           />
         </Container>
         <Box className="cta-container" mb={2}>
           <Button
             variant="contained"
             color="primary"
-            disabled={!mission || !vehicleRegistrationNumber}
+            disabled={
+              !mission ||
+              !vehicle ||
+              (!vehicle.id && !vehicle.registrationNumber)
+            }
             onClick={async () => {
-              const payLoad = { mission, vehicleRegistrationNumber };
+              const payLoad = { mission, vehicle };
               handleContinue(payLoad);
             }}
           >
