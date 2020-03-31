@@ -55,7 +55,7 @@ export function VehicleBookingModal({
         )}
         <Box my={2}>
           <VehicleInput
-            label="Test"
+            label="Nouveau véhicule"
             vehicle={vehicle}
             setVehicle={setVehicle}
           />

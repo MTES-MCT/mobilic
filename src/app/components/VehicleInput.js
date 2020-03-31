@@ -36,7 +36,7 @@ export function VehicleInput({ label, vehicle, setVehicle }) {
           {...params}
           variant="standard"
           label={label}
-          placeholder="Filtrer les employés"
+          placeholder="Véhicule"
         />
       )}
     />
