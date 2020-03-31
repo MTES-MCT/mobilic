@@ -124,6 +124,11 @@ export const COMPANY_QUERY = gql`
           activityTimers
         }
       }
+      vehicles {
+        id
+        registrationNumber
+        alias
+      }
     }
   }
 `;

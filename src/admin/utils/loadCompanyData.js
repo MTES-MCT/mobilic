@@ -4,7 +4,8 @@ export async function loadCompanyData(api, companyId) {
   const companyResponse = await api.graphQlQuery(COMPANY_QUERY, {
     id: companyId
   });
-  const usersWithWorkDays = companyResponse.data.company.users;
+  const company = companyResponse.data.company;
+  const usersWithWorkDays = company.users;
   let users = [];
   let workDays = [];
   usersWithWorkDays.forEach(u => {
@@ -15,5 +16,5 @@ export async function loadCompanyData(api, companyId) {
     });
     u.workDays.forEach(wd => workDays.push({ userId: u.id, ...wd }));
   });
-  return { users, workDays };
+  return { users, workDays, vehicles: company.vehicles };
 }
