@@ -12,12 +12,10 @@ import {
   prettyFormatDay,
   prettyFormatMonth
 } from "../../common/utils/time";
-import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
-import { loadCompanyData } from "../utils/loadCompanyData";
-import { useApi } from "../../common/utils/api";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
+import { useAdminStore } from "../utils/store";
 
 const useStyles = makeStyles(theme => ({
   exportButton: {
@@ -33,44 +31,23 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ActivityPanel() {
-  const api = useApi();
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
-  const companyId = storeSyncedWithLocalStorage.userInfo().companyId;
+  const adminStore = useAdminStore();
 
-  const [rawUsers, setRawUsers] = React.useState([]);
+  const [users, setUsers] = React.useState([]);
   const [period, setPeriod] = React.useState("day");
   const [toggleDayDetails, setToggleDayDetails] = React.useState(false);
 
-  const [users, setUsers] = React.useState([]);
-
-  const [rawWorkDays, setRawWorkDays] = React.useState([]);
-
-  async function loadData() {
-    try {
-      const company = await loadCompanyData(api, companyId);
-      setRawUsers(company.users);
-      setRawWorkDays(company.workDays);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
   React.useEffect(() => {
-    loadData();
-    setInterval(loadData, 5 * 60 * 1000);
-  }, []);
-
-  React.useEffect(() => {
-    const newUsersWithCurrentSelectionStatus = rawUsers.map(user => {
+    const newUsersWithCurrentSelectionStatus = adminStore.users.map(user => {
       const userMatch = users.find(u => u.id === user.id);
       return userMatch ? { ...user, selected: userMatch.selected } : user;
     });
     setUsers(newUsersWithCurrentSelectionStatus);
-  }, [rawUsers]);
+  }, [adminStore.users]);
 
   let selectedUsers = users.filter(u => u.selected);
   if (selectedUsers.length === 0) selectedUsers = users;
-  const selectedWorkDays = rawWorkDays.filter(wd =>
+  const selectedWorkDays = adminStore.workDays.filter(wd =>
     selectedUsers.map(u => u.id).includes(wd.userId)
   );
 
@@ -137,7 +114,7 @@ export function ActivityPanel() {
               </Typography>
               <WorkTimeTable
                 workTimeEntries={periodAggregates[periodStart]}
-                users={rawUsers}
+                users={adminStore.users}
                 displayDetails={toggleDayDetails && period === "day"}
               />
             </Box>

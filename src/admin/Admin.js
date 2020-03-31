@@ -6,8 +6,13 @@ import { SideMenu } from "./components/SideMenu";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import "./assets/admin.scss";
 import Box from "@material-ui/core/Box";
+import { loadCompanyData } from "./utils/loadCompanyData";
+import { useApi } from "../common/utils/api";
+import { AdminStoreProvider, useAdminStore } from "./utils/store";
 
-export function Admin() {
+function _Admin() {
+  const api = useApi();
+  const adminStore = useAdminStore();
   const { path } = useRouteMatch();
 
   const views = ADMIN_VIEWS.map(view => {
@@ -17,6 +22,20 @@ export function Admin() {
       route: absPath
     };
   });
+
+  async function loadData() {
+    try {
+      const company = await loadCompanyData(api, adminStore.companyId);
+      adminStore.sync(company);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  React.useEffect(() => {
+    loadData();
+    setInterval(loadData, 5 * 60 * 1000);
+  }, []);
 
   const defaultView = views.find(view => view.isDefault);
   return [
@@ -44,4 +63,12 @@ export function Admin() {
       </Box>
     </Container>
   ];
+}
+
+export function Admin() {
+  return (
+    <AdminStoreProvider>
+      <_Admin />
+    </AdminStoreProvider>
+  );
 }
