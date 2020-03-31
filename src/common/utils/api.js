@@ -276,6 +276,34 @@ export const VEHICLE_BOOKING_LOG_MUTATION = gql`
   }
 `;
 
+export const VEHICLE_CREATE_MUTATION = gql`
+  mutation($registrationNumber: String!, $alias: String, $companyId: Int!) {
+    createVehicle(
+      registrationNumber: $registrationNumber
+      alias: $alias
+      companyId: $companyId
+    ) {
+      vehicle {
+        id
+        registrationNumber
+        alias
+      }
+    }
+  }
+`;
+
+export const VEHICLE_EDIT_MUTATION = gql`
+  mutation($id: Int!, $alias: String!) {
+    editVehicle(id: $id, alias: $alias) {
+      vehicle {
+        id
+        registrationNumber
+        alias
+      }
+    }
+  }
+`;
+
 const ApiContext = React.createContext(() => {});
 
 class Api {

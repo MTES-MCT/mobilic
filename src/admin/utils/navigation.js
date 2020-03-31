@@ -1,16 +1,12 @@
 import React from "react";
 import { ActivityPanel } from "../panels/Activities";
+import { CompanyPanel } from "../panels/Company";
 
 export const ADMIN_VIEWS = [
   {
-    label: "Employés",
-    route: "/employees",
-    component: "null"
-  },
-  {
-    label: "Véhicules",
-    route: "/vehicles",
-    component: "null"
+    label: "Entreprise",
+    route: "/company",
+    component: <CompanyPanel />
   },
   {
     label: "Activités",
