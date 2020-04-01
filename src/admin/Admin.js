@@ -47,19 +47,17 @@ function _Admin() {
       maxWidth={false}
     >
       <SideMenu views={views} />
-      <Box my={2} className="panel-container scrollable">
-        <Container>
-          <Switch>
-            {views.map(view => (
-              <Route key={view.label} path={view.route}>
-                {view.component}
-              </Route>
-            ))}
-            {defaultView && (
-              <Redirect key="default" push from="*" to={defaultView.route} />
-            )}
-          </Switch>
-        </Container>
+      <Box m={2} className="panel-container scrollable">
+        <Switch>
+          {views.map(view => (
+            <Route key={view.label} path={view.route}>
+              {view.component}
+            </Route>
+          ))}
+          {defaultView && (
+            <Redirect key="default" push from="*" to={defaultView.route} />
+          )}
+        </Switch>
       </Box>
     </Container>
   ];
