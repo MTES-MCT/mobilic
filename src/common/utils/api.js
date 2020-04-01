@@ -4,6 +4,7 @@ import ApolloClient, { gql } from "apollo-boost";
 import jwtDecode from "jwt-decode";
 import { useStoreSyncedWithLocalStorage } from "./store";
 import { isGraphQLParsingError } from "./errors";
+import { NonConcurrentExecutionQueue } from "./concurrency";
 
 const REFRESH_MUTATION = gql`
   mutation refreshToken {
@@ -336,61 +337,38 @@ class Api {
           graphQLErrors.length > 0 &&
           graphQLErrors.some(error => error.message === "Authentication error")
         ) {
-          this.requestQueue = [];
-          this.requestLock = false;
+          this.refreshTokenQueue.clear();
+          this.nonConcurrentQueryQueue.clear();
           this.logout();
         }
       }
     });
-    this.requestQueue = [];
-    this.requestLock = false;
-  }
-
-  async _nonConcurrentQuery(func) {
-    return new Promise((resolve, reject) => {
-      const runQuery = async () => {
-        this.requestLock = true;
-        let response, error;
-        const isTokenValidOrRenewedOrNone = await this._refreshTokenIfNeeded();
-        if (isTokenValidOrRenewedOrNone) {
-          try {
-            response = await func();
-          } catch (err) {
-            error = err;
-            console.log(`Error accessing API : ${err}`);
-          }
-        }
-        if (this.requestQueue.length === 0) {
-          this.requestLock = false;
-        } else {
-          this.requestQueue[0]();
-          this.requestQueue = this.requestQueue.slice(1);
-        }
-        return error ? reject(error) : resolve(response);
-      };
-      if (!this.requestLock) runQuery();
-      else this.requestQueue.push(runQuery);
-    });
+    this.refreshTokenQueue = new NonConcurrentExecutionQueue("refreshToken");
+    this.nonConcurrentQueryQueue = new NonConcurrentExecutionQueue("events");
   }
 
   async graphQlQuery(query, variables) {
-    return this._nonConcurrentQuery(() =>
+    return await this._queryWithRefreshToken(() =>
       this.apolloClient.query({ query, variables, fetchPolicy: "no-cache" })
     );
   }
 
-  async graphQlMutate(query, variables) {
-    return this._nonConcurrentQuery(() =>
-      this.apolloClient.mutate({
-        mutation: query,
-        variables: variables,
-        fetchPolicy: "no-cache"
-      })
-    );
+  async graphQlMutate(query, variables, nonConcurrent = false) {
+    const mutation = () =>
+      this._queryWithRefreshToken(() =>
+        this.apolloClient.mutate({
+          mutation: query,
+          variables: variables,
+          fetchPolicy: "no-cache"
+        })
+      );
+    if (nonConcurrent)
+      return await this.nonConcurrentQueryQueue.execute(mutation);
+    return await mutation();
   }
 
   async httpQuery(method, endpoint, options = {}) {
-    return this._nonConcurrentQuery(() => {
+    return await this._queryWithRefreshToken(() => {
       const url = `${this.apiHost}${endpoint}`;
       if (!options.headers) options.headers = {};
       options.headers.Authorization = `Bearer ${this.storeSyncedWithLocalStorage.accessToken()}`;
@@ -423,22 +401,32 @@ class Api {
     return true;
   }
 
+  async _queryWithRefreshToken(query) {
+    const isTokenValidOrRenewedOrNone = await this.refreshTokenQueue.execute(
+      () => this._refreshTokenIfNeeded()
+    );
+    if (isTokenValidOrRenewedOrNone) return await query();
+    // No need to catch the refresh-token error since logout is imminent
+  }
+
   submitEvents(query, storeEntry, handleSubmitResponse) {
-    return this._nonConcurrentQuery(async () => {
+    return this.nonConcurrentQueryQueue.execute(async () => {
       const eventsPendingSubmission = await this.storeSyncedWithLocalStorage.markAndGetEventsForSubmission(
         storeEntry
       );
       if (eventsPendingSubmission.length === 0) return;
       try {
-        const submit = await this.apolloClient.mutate({
-          mutation: query,
-          variables: {
-            data: eventsPendingSubmission.map(e => {
-              const { isBeingSubmitted, ...event } = e;
-              return event;
-            })
-          }
-        });
+        const submit = await this._queryWithRefreshToken(() =>
+          this.apolloClient.mutate({
+            mutation: query,
+            variables: {
+              data: eventsPendingSubmission.map(e => {
+                const { isBeingSubmitted, ...event } = e;
+                return event;
+              })
+            }
+          })
+        );
         await handleSubmitResponse(submit);
       } catch (err) {
         if (isGraphQLParsingError(err)) {
