@@ -19,7 +19,7 @@ export function AdminStoreProvider({ children }) {
   return (
     <AdminStoreContext.Provider
       value={{
-        companyId: storeSyncedWithLocalStorage.userInfo().companyId,
+        companyId: storeSyncedWithLocalStorage.companyId(),
         users,
         setUsers,
         workDays,

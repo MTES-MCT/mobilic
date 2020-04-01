@@ -17,6 +17,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       refreshToken: {},
       companyAdmin: { deserialize: value => value === "true" },
       userId: { deserialize: value => (value ? parseInt(value) : value) },
+      companyId: { deserialize: value => (value ? parseInt(value) : value) },
       userInfo: {
         serialize: JSON.stringify,
         deserialize: value => (value ? JSON.parse(value) : {})
@@ -165,12 +166,13 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
   storeTokens = ({ accessToken, refreshToken }) =>
     new Promise(resolve => {
-      const { id, company_admin } = jwtDecode(accessToken).identity;
+      const { id, company_admin, company_id } = jwtDecode(accessToken).identity;
       this.setItems(
         {
           accessToken,
           refreshToken,
           userId: id,
+          companyId: company_id,
           companyAdmin: company_admin
         },
         resolve
@@ -180,14 +182,22 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   removeTokens = () =>
     new Promise(resolve =>
       this.removeItems(
-        ["accessToken", "refreshToken", "userId", "companyAdmin"],
+        ["accessToken", "refreshToken", "userId", "companyId", "companyAdmin"],
         resolve
       )
     );
 
-  setUserInfo = ({ firstName, lastName, companyId, companyName }) =>
+  setUserInfo = ({
+    firstName,
+    lastName,
+    companyId,
+    companyName,
+    isCompanyAdmin
+  }) =>
     this.setItems({
-      userInfo: { firstName, lastName, companyId, companyName }
+      userInfo: { firstName, lastName, companyName },
+      companyId,
+      companyAdmin: isCompanyAdmin
     });
 
   setCoworkers = (coworkers, callback = () => {}) =>
@@ -208,6 +218,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             refreshToken: () => this.state.refreshToken,
             userId: () => this.state.userId,
             companyAdmin: () => this.state.companyAdmin,
+            companyId: () => this.state.companyId,
             removeTokens: this.removeTokens,
             setUserInfo: this.setUserInfo,
             userInfo: () => ({ id: this.state.userId, ...this.state.userInfo }),

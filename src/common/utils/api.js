@@ -59,6 +59,7 @@ export const USER_QUERY = gql`
       id
       firstName
       lastName
+      isCompanyAdmin
       company {
         id
         name

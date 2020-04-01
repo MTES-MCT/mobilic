@@ -19,6 +19,7 @@ export function syncUser(userPayload, store) {
     firstName,
     lastName,
     company,
+    isCompanyAdmin,
     activities,
     expenditures,
     teamEnrollments,
@@ -37,7 +38,8 @@ export function syncUser(userPayload, store) {
         firstName,
         lastName,
         companyId: company.id,
-        companyName: company.name
+        companyName: company.name,
+        isCompanyAdmin
       })
     );
   activities &&
