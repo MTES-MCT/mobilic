@@ -1,62 +1,100 @@
 import React from "react";
+import Tooltip from "@material-ui/core/Tooltip";
 import { formatTimeOfDay, formatTimer } from "../../common/utils/time";
 import { formatPersonName } from "../../common/utils/coworkers";
 import { formatExpendituresAsOneString } from "../../common/utils/expenditures";
 import { ACTIVITIES } from "../../common/utils/activities";
 import { AugmentedTable } from "./AugmentedTable";
 
-export function WorkTimeTable({ workTimeEntries, users, displayDetails }) {
-  const columns = displayDetails
-    ? [
-        { label: "Employé", name: "workerName", sortable: true },
-        { label: "Début", name: "startTime", format: formatTimeOfDay },
-        { label: "Fin", name: "endTime", format: formatTimeOfDay },
-        {
-          label: "Temps de travail",
-          name: "workTime",
-          sortable: true,
-          format: formatTimer
-        },
-        { label: "Temps de repos", name: "restTime", format: formatTimer },
-        {
-          renderLabel: ACTIVITIES.drive.renderIcon,
-          name: "driveTime",
-          format: formatTimer
-        },
-        { label: "Accompagnement", name: "supportTime", format: formatTimer },
-        {
-          renderLabel: ACTIVITIES.work.renderIcon,
-          name: "strictWorkTime",
-          format: formatTimer
-        },
-        {
-          label: "Frais",
-          name: "expenditures",
-          format: formatExpendituresAsOneString,
-          cellStyle: { whiteSpace: "pre-line" }
-        }
-      ]
-    : [
-        {
-          label: "Employé",
-          name: "workerName",
-          sortable: true,
-          editable: true
-        },
-        {
-          label: "Temps de travail",
-          name: "workTime",
-          sortable: true,
-          format: formatTimer
-        },
-        { label: "Temps de repos", name: "restTime", format: formatTimer },
-        {
-          label: "Frais",
-          name: "expenditures",
-          format: formatExpendituresAsOneString,
-          cellStyle: { whiteSpace: "pre-line" }
-        }
-      ];
+export function WorkTimeTable({
+  period,
+  workTimeEntries,
+  users,
+  displayDetails
+}) {
+  const employeeCol = { label: "Employé", name: "workerName", sortable: true };
+  const startTimeCol = {
+    label: "Début",
+    name: "startTime",
+    format: formatTimeOfDay
+  };
+  const endTimeCol = { label: "Fin", name: "endTime", format: formatTimeOfDay };
+  const workTimeCol = {
+    label: "Temps de travail",
+    name: "workTime",
+    sortable: true,
+    format: formatTimer
+  };
+  const restTimeCol = {
+    label: "Temps de repos",
+    name: "restTime",
+    format: formatTimer
+  };
+  const driveTimeCol = {
+    renderLabel: ACTIVITIES.drive.renderIcon,
+    name: "driveTime",
+    format: formatTimer
+  };
+  const supportTimeCol = {
+    label: "Accompagnement",
+    name: "supportTime",
+    format: formatTimer
+  };
+  const strictWorkTimeCol = {
+    renderLabel: ACTIVITIES.work.renderIcon,
+    name: "strictWorkTime",
+    format: formatTimer
+  };
+  const expenditureCol = {
+    label: "Frais",
+    name: "expenditures",
+    format: formatExpendituresAsOneString,
+    cellStyle: { whiteSpace: "pre-line" }
+  };
+  const hasModificationsCol = {
+    label: "",
+    name: "wasModified",
+    format: wasModified =>
+      wasModified ? (
+        <Tooltip
+          title="Cette journée a été modifiée après la saisie initiale"
+          placement="top"
+        >
+          <span>⚠️</span>
+        </Tooltip>
+      ) : (
+        ""
+      )
+  };
+  const workedDaysCol = {
+    label: "Jours travaillés",
+    name: "workedDays"
+  };
+  let columns = [];
+  if (period === "day" && displayDetails) {
+    columns = [
+      employeeCol,
+      startTimeCol,
+      endTimeCol,
+      workTimeCol,
+      restTimeCol,
+      driveTimeCol,
+      supportTimeCol,
+      strictWorkTimeCol,
+      expenditureCol,
+      hasModificationsCol
+    ];
+  } else if (period === "day") {
+    columns = [
+      employeeCol,
+      workTimeCol,
+      restTimeCol,
+      expenditureCol,
+      hasModificationsCol
+    ];
+  } else {
+    columns = [employeeCol, workTimeCol, workedDaysCol, expenditureCol];
+  }
 
   const preFormattedWorkTimeEntries = workTimeEntries.map(wte => {
     const base = {
@@ -64,8 +102,7 @@ export function WorkTimeTable({ workTimeEntries, users, displayDetails }) {
       id: wte.userId,
       workerName: formatPersonName(users.find(u => u.id === wte.userId)),
       workTime: wte.timers.total_work,
-      restTime: wte.timers.break,
-      expenditures: wte.expenditures
+      restTime: wte.timers.break
     };
     if (displayDetails) {
       base.driveTime = wte.activityTimers[ACTIVITIES.drive.name];

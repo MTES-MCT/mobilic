@@ -118,6 +118,7 @@ export function ActivityPanel() {
               {periodLabel}
             </Typography>
             <WorkTimeTable
+              period={period}
               workTimeEntries={periodAggregates[periodStart]}
               users={adminStore.users}
               displayDetails={toggleDayDetails && period === "day"}

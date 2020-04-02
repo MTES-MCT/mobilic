@@ -20,6 +20,7 @@ function computeWorkDayGroupAggregates(workDayGroup) {
   return {
     userId: workDayGroup[0].userId,
     periodStart: workDayGroup[0].periodStart,
+    workedDays: workDayGroup.length,
     timers: aggregateTimers,
     expenditures: aggregateExpenditures
   };

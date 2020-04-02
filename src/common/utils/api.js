@@ -124,6 +124,7 @@ export const COMPANY_QUERY = gql`
             type
           }
           activityTimers
+          wasModified
         }
       }
       vehicles {
