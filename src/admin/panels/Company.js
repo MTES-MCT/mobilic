@@ -1,6 +1,5 @@
 import React from "react";
 import Paper from "@material-ui/core/Paper";
-import Box from "@material-ui/core/Box";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {
   useApi,
@@ -13,15 +12,15 @@ import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup/ToggleButtonGr
 import { AugmentedTable } from "../components/AugmentedTable";
 
 const useStyles = makeStyles(theme => ({
-  exportButton: {
-    marginLeft: theme.spacing(4)
+  navigation: {
+    marginBottom: theme.spacing(2),
+    padding: theme.spacing(2),
+    position: "sticky",
+    top: "0",
+    zIndex: 500
   },
-  filters: {
-    marginBottom: theme.spacing(2)
-  },
-  tableTitle: {
-    marginBottom: theme.spacing(3),
-    paddingLeft: theme.spacing(2)
+  subPanel: {
+    padding: theme.spacing(2)
   }
 }));
 
@@ -123,13 +122,15 @@ export function CompanyPanel() {
   const classes = useStyles();
   const subPanel = COMPANY_SUB_PANELS.find(sp => sp.view === view);
   return [
-    <Paper className={classes.filters} variant="outlined" key={0}>
-      <Box p={2} className="flex-row-center">
-        <SubNavigationToggle view={view} setView={setView} />
-      </Box>
+    <Paper
+      className={`${classes.navigation} flex-row-center`}
+      variant="outlined"
+      key={0}
+    >
+      <SubNavigationToggle view={view} setView={setView} />
     </Paper>,
-    <Paper variant="outlined" key={1}>
-      <Box p={2}>{subPanel.component}</Box>
+    <Paper className={classes.subPanel} variant="outlined" key={1}>
+      {subPanel.component}
     </Paper>
   ];
 }

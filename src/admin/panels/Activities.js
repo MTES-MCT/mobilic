@@ -22,11 +22,17 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(4)
   },
   filters: {
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
+    position: "sticky",
+    top: "0",
+    zIndex: 500
   },
   tableTitle: {
     marginBottom: theme.spacing(3),
     paddingLeft: theme.spacing(2)
+  },
+  activityTables: {
+    padding: theme.spacing(2)
   }
 }));
 
@@ -89,38 +95,36 @@ export function ActivityPanel() {
         </Box>
       )}
     </Paper>,
-    <Paper variant="outlined" key={1}>
-      <Box m={2}>
-        {sortedPeriods.map((periodStart, index) => {
-          let periodLabel;
-          if (period === "day") {
-            periodLabel = prettyFormatDay(periodStart, true);
-          } else if (period === "week") {
-            periodLabel = `Semaine du ${prettyFormatDay(
-              getStartOfWeek(periodStart),
-              true
-            )}`;
-          } else if (period === "month") {
-            periodLabel = prettyFormatMonth(periodStart);
-          }
-          return (
-            <Box mb={8} key={index}>
-              <Typography
-                className={classes.tableTitle}
-                variant="h5"
-                align="left"
-              >
-                {periodLabel}
-              </Typography>
-              <WorkTimeTable
-                workTimeEntries={periodAggregates[periodStart]}
-                users={adminStore.users}
-                displayDetails={toggleDayDetails && period === "day"}
-              />
-            </Box>
-          );
-        })}
-      </Box>
+    <Paper className={classes.activityTables} variant="outlined" key={1}>
+      {sortedPeriods.map((periodStart, index) => {
+        let periodLabel;
+        if (period === "day") {
+          periodLabel = prettyFormatDay(periodStart, true);
+        } else if (period === "week") {
+          periodLabel = `Semaine du ${prettyFormatDay(
+            getStartOfWeek(periodStart),
+            true
+          )}`;
+        } else if (period === "month") {
+          periodLabel = prettyFormatMonth(periodStart);
+        }
+        return (
+          <Box mb={8} key={index}>
+            <Typography
+              className={classes.tableTitle}
+              variant="h5"
+              align="left"
+            >
+              {periodLabel}
+            </Typography>
+            <WorkTimeTable
+              workTimeEntries={periodAggregates[periodStart]}
+              users={adminStore.users}
+              displayDetails={toggleDayDetails && period === "day"}
+            />
+          </Box>
+        );
+      })}
     </Paper>
   ];
 }

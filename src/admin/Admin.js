@@ -47,7 +47,7 @@ function _Admin() {
       maxWidth={false}
     >
       <SideMenu views={views} />
-      <Box m={2} className="panel-container scrollable">
+      <Box my={2} px={2} className="panel-container scrollable">
         <Switch>
           {views.map(view => (
             <Route key={view.label} path={view.route}>

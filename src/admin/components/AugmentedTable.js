@@ -148,7 +148,7 @@ export function AugmentedTable({
           {addButtonLabel}
         </Button>
       )}
-      <Table className="work-time-table">
+      <Table stickyHeader className="table">
         <TableHead>
           {shouldDisplayEditActionsColumn && <TableCell />}
           {columns.map(column =>
