@@ -31,6 +31,9 @@ export function DataExport({ open, handleClose }) {
             value={minDate}
             format="d MMMM yyyy"
             onChange={setMinDate}
+            clearable
+            cancelLabel={null}
+            clearLabel="Annuler"
             autoOk
             disableFuture
             inputVariant="outlined"
