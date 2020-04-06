@@ -7,8 +7,12 @@ import Dialog from "@material-ui/core/Dialog";
 import Button from "@material-ui/core/Button";
 import DialogActions from "@material-ui/core/DialogActions";
 import Box from "@material-ui/core/Box";
+import { useApi } from "../../common/utils/api";
+import { useStoreSyncedWithLocalStorage } from "../../common/utils/store";
 
 export function DataExport({ open, handleClose }) {
+  const api = useApi();
+  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   const [minDate, setMinDate] = React.useState(null);
 
   return (
@@ -44,7 +48,21 @@ export function DataExport({ open, handleClose }) {
           <Button
             color="primary"
             variant="contained"
-            onClick={e => console.log(e)}
+            onClick={async e => {
+              const optionalQueryString = minDate
+                ? `?min_date=${minDate.toISOString().slice(0, 10)}`
+                : "";
+              e.preventDefault();
+              const response = await api.httpQuery(
+                "GET",
+                `/download_company_activity_report/${storeSyncedWithLocalStorage.companyId()}${optionalQueryString}`
+              );
+              const blob = await response.blob();
+              const link = document.createElement("a");
+              link.href = window.URL.createObjectURL(blob);
+              link.download = "rapport_activité.xlsx";
+              link.dispatchEvent(new MouseEvent("click"));
+            }}
           >
             Télécharger
           </Button>
