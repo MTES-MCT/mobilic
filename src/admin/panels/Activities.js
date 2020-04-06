@@ -16,6 +16,7 @@ import { aggregateWorkDayPeriods } from "../utils/workDays";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import { useAdminStore } from "../utils/store";
+import { ModalContext } from "../../common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   exportButton: {
@@ -38,6 +39,7 @@ const useStyles = makeStyles(theme => ({
 
 export function ActivityPanel() {
   const adminStore = useAdminStore();
+  const modals = React.useContext(ModalContext);
 
   const [users, setUsers] = React.useState([]);
   const [period, setPeriod] = React.useState("day");
@@ -57,6 +59,7 @@ export function ActivityPanel() {
     selectedUsers.map(u => u.id).includes(wd.userId)
   );
 
+  // TODO : memoize this
   const periodAggregates = aggregateWorkDayPeriods(selectedWorkDays, period);
   const sortedPeriods = Object.keys(periodAggregates)
     .map(x => parseInt(x))
@@ -71,9 +74,8 @@ export function ActivityPanel() {
           <PeriodToggle period={period} setPeriod={setPeriod} />
           <Button
             className={classes.exportButton}
-            disabled
             color="primary"
-            onClick={e => console.log(e)}
+            onClick={() => modals.open("dataExport")}
             variant="contained"
           >
             Export Excel

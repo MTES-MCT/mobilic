@@ -8,6 +8,7 @@ import { CommentInputModal } from "../../app/components/CommentInput";
 import { ActivityRevisionOrCreationModal } from "../../app/components/ActivityRevision";
 import { MissionChangeModal } from "../../app/components/MissionChange";
 import { VehicleBookingModal } from "../../app/components/VehicleBooking";
+import { DataExport } from "../../admin/components/DataExport";
 
 export const ModalContext = React.createContext(() => {});
 
@@ -63,5 +64,6 @@ export const MODAL_DICT = {
   commentInput: CommentInputModal,
   activityRevision: ActivityRevisionOrCreationModal,
   missionChange: MissionChangeModal,
-  vehicleBooking: VehicleBookingModal
+  vehicleBooking: VehicleBookingModal,
+  dataExport: DataExport
 };
