@@ -59,6 +59,7 @@ export function WorkTimeTable({
         <Tooltip
           title="Cette journée a été modifiée après la saisie initiale"
           placement="top"
+          style={{ cursor: "default" }}
         >
           <span>⚠️</span>
         </Tooltip>

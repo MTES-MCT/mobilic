@@ -150,22 +150,24 @@ export function AugmentedTable({
       )}
       <Table stickyHeader className="table">
         <TableHead>
-          {shouldDisplayEditActionsColumn && <TableCell />}
-          {columns.map(column =>
-            column.sortable ? (
-              <TableCellWithSort
-                key={column.name}
-                sortType={sortBy === column.name ? sortType : undefined}
-                onSortTypeChange={handleSortTypeChange(column.name)}
-              >
-                {column.renderLabel ? column.renderLabel() : column.label}
-              </TableCellWithSort>
-            ) : (
-              <TableCell key={column.name}>
-                {column.renderLabel ? column.renderLabel() : column.label}
-              </TableCell>
-            )
-          )}
+          <TableRow>
+            {shouldDisplayEditActionsColumn && <TableCell />}
+            {columns.map(column =>
+              column.sortable ? (
+                <TableCellWithSort
+                  key={column.name}
+                  sortType={sortBy === column.name ? sortType : undefined}
+                  onSortTypeChange={handleSortTypeChange(column.name)}
+                >
+                  {column.renderLabel ? column.renderLabel() : column.label}
+                </TableCellWithSort>
+              ) : (
+                <TableCell key={column.name}>
+                  {column.renderLabel ? column.renderLabel() : column.label}
+                </TableCell>
+              )
+            )}
+          </TableRow>
         </TableHead>
         <TableBody>
           {displayedEntries.map((entry, index) => {
