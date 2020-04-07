@@ -4,12 +4,14 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import {
   useApi,
   VEHICLE_CREATE_MUTATION,
-  VEHICLE_EDIT_MUTATION
+  VEHICLE_EDIT_MUTATION,
+  VEHICLE_TERMINATE_MUTATION
 } from "../../common/utils/api";
 import { useAdminStore } from "../utils/store";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup/ToggleButtonGroup";
 import { AugmentedTable } from "../components/AugmentedTable";
+import { ModalContext } from "../../common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   navigation: {
@@ -27,6 +29,7 @@ const useStyles = makeStyles(theme => ({
 function VehicleAdmin() {
   const api = useApi();
   const adminStore = useAdminStore();
+  const modals = React.useContext(ModalContext);
   const columns = [
     {
       label: "Immatriculation",
@@ -82,6 +85,24 @@ function VehicleAdmin() {
           console.log(err);
         }
       }}
+      onRowDelete={(vehicle, callback) =>
+        modals.open("confirmation", {
+          title: "Confirmer suppression",
+          handleConfirm: async () => {
+            try {
+              await api.graphQlMutate(VEHICLE_TERMINATE_MUTATION, {
+                id: vehicle.id
+              });
+              adminStore.setVehicles(oldVehicles =>
+                oldVehicles.filter(v => v.id !== vehicle.id)
+              );
+              callback();
+            } catch (err) {
+              console.log(err);
+            }
+          }
+        })
+      }
       addButtonLabel="Ajouter un véhicule"
     />
   );

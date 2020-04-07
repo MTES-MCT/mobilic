@@ -10,6 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
 import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
+import DeleteIcon from "@material-ui/icons/Delete";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import useTheme from "@material-ui/core/styles/useTheme";
@@ -40,6 +41,7 @@ export function AugmentedTable({
   entries,
   onRowEdit,
   onRowAdd,
+  onRowDelete,
   addButtonLabel,
   editable = true
 }) {
@@ -64,8 +66,11 @@ export function AugmentedTable({
   }
 
   const isAddingRow = editingRowId === 0;
+  const isEditingRow = editingRowId > 0;
 
   const shouldDisplayEditActionsColumn = editable || isAddingRow;
+
+  const shouldDisplayDeleteAction = isEditingRow && onRowDelete;
 
   const renderEditActions = (entry, onFocus) => {
     if (!onFocus && !editable) {
@@ -167,6 +172,7 @@ export function AugmentedTable({
                 </TableCell>
               )
             )}
+            {shouldDisplayDeleteAction && <TableCell />}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -215,6 +221,20 @@ export function AugmentedTable({
                       </TableCell>
                     );
                 })}
+                {shouldDisplayDeleteAction && (
+                  <TableCell>
+                    {onFocus ? (
+                      <IconButton
+                        className="no-margin-no-padding"
+                        onClick={() =>
+                          onRowDelete(entry, () => setEditingRowId(null))
+                        }
+                      >
+                        <DeleteIcon color="error" />
+                      </IconButton>
+                    ) : null}
+                  </TableCell>
+                )}
               </TableRow>
             );
           })}

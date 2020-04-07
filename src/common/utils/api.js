@@ -307,6 +307,14 @@ export const VEHICLE_EDIT_MUTATION = gql`
   }
 `;
 
+export const VEHICLE_TERMINATE_MUTATION = gql`
+  mutation($id: Int!) {
+    terminateVehicle(id: $id) {
+      success
+    }
+  }
+`;
+
 const ApiContext = React.createContext(() => {});
 
 class Api {
