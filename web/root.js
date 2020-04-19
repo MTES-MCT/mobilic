@@ -35,6 +35,7 @@ import Container from "@material-ui/core/Container";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import frLocale from "date-fns/locale/fr";
 import { FrLocalizedUtils } from "common/utils/time";
+import { ActionsContextProvider } from "common/utils/actions";
 
 export default function Root() {
   return (
@@ -42,14 +43,19 @@ export default function Root() {
       <StoreSyncedWithLocalStorageProvider storage={localStorage}>
         <Router>
           <ApiContextProvider>
-            <MuiPickersUtilsProvider utils={FrLocalizedUtils} locale={frLocale}>
-              <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <ModalProvider modalDict={MODAL_DICT}>
-                  <_Root />
-                </ModalProvider>
-              </ThemeProvider>
-            </MuiPickersUtilsProvider>
+            <ActionsContextProvider>
+              <MuiPickersUtilsProvider
+                utils={FrLocalizedUtils}
+                locale={frLocale}
+              >
+                <ThemeProvider theme={theme}>
+                  <CssBaseline />
+                  <ModalProvider modalDict={MODAL_DICT}>
+                    <_Root />
+                  </ModalProvider>
+                </ThemeProvider>
+              </MuiPickersUtilsProvider>
+            </ActionsContextProvider>
           </ApiContextProvider>
         </Router>
       </StoreSyncedWithLocalStorageProvider>
