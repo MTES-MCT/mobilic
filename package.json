@@ -1,9 +1,17 @@
 {
-  "name": "transport-routier",
+  "name": "mobilic",
   "version": "0.1.0",
   "private": true,
+  "workspaces": {
+    "packages": [
+      "web",
+      "common",
+      "app"
+    ]
+  },
   "dependencies": {
     "@babel/core": "7.7.4",
+    "@babel/runtime": "^7.6.2",
     "@date-io/date-fns": "1.x",
     "@material-ui/core": "^4.9.0",
     "@material-ui/icons": "^4.5.1",
@@ -13,9 +21,6 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "@typescript-eslint/eslint-plugin": "^2.8.0",
-    "@typescript-eslint/parser": "^2.8.0",
-    "apollo-boost": "^0.4.7",
     "babel-eslint": "10.0.3",
     "babel-jest": "^24.9.0",
     "babel-loader": "8.0.6",
@@ -24,13 +29,13 @@
     "camelcase": "^5.3.1",
     "case-sensitive-paths-webpack-plugin": "2.2.0",
     "classnames": "^2.2.6",
+    "common": "0.1.0",
     "css-loader": "3.2.0",
     "csv-stringify": "^5.3.6",
     "date-fns": "^2.11.1",
     "dotenv": "8.2.0",
     "dotenv-expand": "5.1.0",
     "eslint": "^6.6.0",
-    "eslint-config-react-app": "^5.1.0",
     "eslint-loader": "3.0.2",
     "eslint-plugin-flowtype": "3.13.0",
     "eslint-plugin-import": "2.18.2",
@@ -46,7 +51,6 @@
     "jest-environment-jsdom-fourteen": "0.1.0",
     "jest-resolve": "24.9.0",
     "jest-watch-typeahead": "0.4.2",
-    "jwt-decode": "^2.2.0",
     "mini-css-extract-plugin": "0.8.0",
     "node-sass": "^4.13.1",
     "optimize-css-assets-webpack-plugin": "5.0.3",
@@ -58,7 +62,7 @@
     "postcss-safe-parser": "4.0.1",
     "react": "^16.12.0",
     "react-app-polyfill": "^1.0.5",
-    "react-dev-utils": "^10.0.0",
+    "react-dev-utils": "10.0.0",
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2",
     "react-scrollable-picker": "^1.0.2",
@@ -113,6 +117,13 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "7.3.4",
+    "@babel/plugin-proposal-object-rest-spread": "7.3.4",
+    "@babel/plugin-syntax-dynamic-import": "7.2.0",
+    "@babel/polyfill": "7.2.5",
+    "@babel/preset-env": "7.3.4",
+    "@babel/preset-react": "7.0.0",
+    "@babel/preset-typescript": "7.3.3",
     "@typescript-eslint/eslint-plugin": "^2.19.0",
     "@typescript-eslint/parser": "^2.19.0",
     "eslint-config-prettier": "^6.10.0",
@@ -120,7 +131,9 @@
     "eslint-plugin-prettier": "^3.1.2",
     "husky": "^4.2.1",
     "lint-staged": "^10.0.7",
-    "prettier": "1.19.1"
+    "prettier": "1.19.1",
+    "react-hot-loader": "4.12.20",
+    "react-test-renderer": "16.11.0"
   },
   "jest": {
     "roots": [
@@ -170,11 +183,6 @@
     "watchPlugins": [
       "jest-watch-typeahead/filename",
       "jest-watch-typeahead/testname"
-    ]
-  },
-  "babel": {
-    "presets": [
-      "react-app"
     ]
   }
 }
