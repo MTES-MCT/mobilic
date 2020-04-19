@@ -19,7 +19,6 @@ import Typography from "@material-ui/core/Typography";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import { ACTIVITIES } from "common/utils/activities";
 import { prettyFormatDay } from "common/utils/time";
-import { COMMENT_LOG_MUTATION, useApi } from "common/utils/api";
 import { ModalContext } from "../../modals";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { getTime } from "common/utils/events";
@@ -33,10 +32,10 @@ export function DailyContext({
   pushNewMission,
   currentOrLatestDayMission,
   currentOrLatestDayVehicleBooking,
-  pushNewVehicleBooking
+  pushNewVehicleBooking,
+  pushNewComment
 }) {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
-  const api = useApi();
   const modals = React.useContext(ModalContext);
   const theme = useTheme();
 
@@ -76,23 +75,6 @@ export function DailyContext({
     currentOrLatestDayVehicleBooking,
     storeSyncedWithLocalStorage
   );
-
-  const pushNewComment = async content => {
-    await storeSyncedWithLocalStorage.pushEvent(
-      {
-        content,
-        eventTime: Date.now()
-      },
-      "comments"
-    );
-    api.submitEvents(COMMENT_LOG_MUTATION, "comments", apiResponse => {
-      const comments = apiResponse.data.logComments.comments;
-      return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-        comments,
-        "comments"
-      );
-    });
-  };
 
   return [
     <UserHeader key={1} withCompanyNameBelow={true} />,

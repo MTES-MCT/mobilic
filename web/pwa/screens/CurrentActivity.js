@@ -6,12 +6,6 @@ import { computeTotalActivityDurations } from "common/utils/metrics";
 import { Expenditures } from "../components/Expenditures";
 import Divider from "@material-ui/core/Divider";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import {
-  EXPENDITURE_CANCEL_MUTATION,
-  EXPENDITURE_LOG_MUTATION,
-  useApi
-} from "common/utils/api";
-import { parseExpenditureFromBackend } from "common/utils/expenditures";
 import { resolveTeamAt } from "common/utils/coworkers";
 
 export function CurrentActivity({
@@ -19,10 +13,11 @@ export function CurrentActivity({
   currentDayActivityEvents,
   pushNewActivityEvent,
   currentDayExpenditures,
-  cancelOrReviseActivityEvent
+  cancelOrReviseActivityEvent,
+  pushNewExpenditure,
+  cancelExpenditure
 }) {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
-  const api = useApi();
 
   const timers = computeTotalActivityDurations(
     currentDayActivityEvents,
@@ -30,78 +25,6 @@ export function CurrentActivity({
   );
 
   const pendingExpenditureCancels = storeSyncedWithLocalStorage.pendingExpenditureCancels();
-
-  const pushNewExpenditure = async expenditureType => {
-    const expenditureMatch = currentDayExpenditures.find(
-      e => e.type === expenditureType
-    );
-    let expenditureCancel = null;
-    if (expenditureMatch) {
-      expenditureCancel = pendingExpenditureCancels.find(
-        e => e.eventId === expenditureMatch.id
-      );
-      if (expenditureCancel) {
-        storeSyncedWithLocalStorage.removeEvent(
-          expenditureCancel,
-          "pendingExpenditureCancels"
-        );
-      }
-    } else {
-      await storeSyncedWithLocalStorage.pushEvent(
-        {
-          type: expenditureType,
-          eventTime: Date.now()
-        },
-        "expenditures"
-      );
-      api.submitEvents(
-        EXPENDITURE_LOG_MUTATION,
-        "expenditures",
-        apiResponse => {
-          const expenditures = apiResponse.data.logExpenditures.expenditures;
-          return storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-            expenditures.map(parseExpenditureFromBackend),
-            "expenditures"
-          );
-        }
-      );
-    }
-  };
-
-  const cancelExpenditure = async expenditureToCancel => {
-    if (expenditureToCancel.isBeingSubmitted) return;
-    if (!expenditureToCancel.id) {
-      storeSyncedWithLocalStorage.removeEvent(
-        expenditureToCancel,
-        "expenditures"
-      );
-    } else {
-      await storeSyncedWithLocalStorage.pushEvent(
-        {
-          eventId: expenditureToCancel.id,
-          eventTime: Date.now()
-        },
-        "pendingExpenditureCancels"
-      );
-      api.submitEvents(
-        EXPENDITURE_CANCEL_MUTATION,
-        "pendingExpenditureCancels",
-        apiResponse => {
-          const expenditures = apiResponse.data.cancelExpenditures.expenditures;
-          return Promise.all([
-            storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-              expenditures.map(parseExpenditureFromBackend),
-              "expenditures"
-            ),
-            storeSyncedWithLocalStorage.updateAllSubmittedEvents(
-              [],
-              "pendingExpenditureCancels"
-            )
-          ]);
-        }
-      );
-    }
-  };
 
   return (
     <Container
@@ -127,7 +50,10 @@ export function CurrentActivity({
         expenditures={currentDayExpenditures.filter(
           e => !pendingExpenditureCancels.map(ec => ec.eventId).includes(e.id)
         )}
-        pushNewExpenditure={pushNewExpenditure}
+        pushNewExpenditure={pushNewExpenditure(
+          currentDayExpenditures,
+          pendingExpenditureCancels
+        )}
         cancelExpenditure={cancelExpenditure}
       />
     </Container>
