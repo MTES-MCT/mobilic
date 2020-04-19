@@ -39,7 +39,7 @@ import { FrLocalizedUtils } from "common/utils/time";
 export default function Root() {
   return (
     <Container className="root-container" maxWidth={false}>
-      <StoreSyncedWithLocalStorageProvider>
+      <StoreSyncedWithLocalStorageProvider storage={localStorage}>
         <Router>
           <ApiContextProvider>
             <MuiPickersUtilsProvider utils={FrLocalizedUtils} locale={frLocale}>
