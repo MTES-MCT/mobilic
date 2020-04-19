@@ -11,6 +11,7 @@ const List = {
 export class StoreSyncedWithLocalStorageProvider extends React.Component {
   constructor(props) {
     super(props);
+    this.storage = props.storage;
     // What is stored in local storage and how to read/write to it
     this.mapper = {
       accessToken: {},
@@ -35,22 +36,33 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       vehicles: List
     };
 
-    // Init state from local storage
+    // Initialize state with null values
     this.state = {};
     Object.keys(this.mapper).forEach(entry => {
       this.mapper[entry] = {
         serialize: this.mapper[entry].serialize || (value => value),
         deserialize: this.mapper[entry].deserialize || (value => value)
       };
-      const rawValueFromLS = localStorage.getItem(entry);
-      this.state[entry] = this.mapper[entry].deserialize(rawValueFromLS);
+      this.state[entry] = this.mapper[entry].deserialize(null);
     });
+
+    // Async load state from storage
+    this.initFromStorage();
   }
+
+  initFromStorage = () => {
+    Object.keys(this.mapper).forEach(async entry => {
+      const rawValueFromLS = await this.storage.getItem(entry);
+      this.setState({
+        [entry]: this.mapper[entry].deserialize(rawValueFromLS)
+      });
+    });
+  };
 
   _setState = (stateUpdate, fieldsToSync, callback = () => {}) =>
     this.setState(stateUpdate, () => {
       fieldsToSync.forEach(field => {
-        localStorage.setItem(
+        this.storage.setItem(
           field,
           this.mapper[field].serialize(this.state[field])
         );
@@ -159,7 +171,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     const itemValueMap = {};
     items.forEach(item => (itemValueMap[item] = null));
     this.setState(itemValueMap, () => {
-      items.forEach(item => localStorage.removeItem(item));
+      items.forEach(item => this.storage.removeItem(item));
       callback();
     });
   };
