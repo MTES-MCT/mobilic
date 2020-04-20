@@ -16,7 +16,7 @@ import { aggregateWorkDayPeriods } from "../utils/workDays";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import { useAdminStore } from "../utils/store";
-import { ModalContext } from "../../modals";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   exportButton: {
@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 
 export function ActivityPanel() {
   const adminStore = useAdminStore();
-  const modals = React.useContext(ModalContext);
+  const modals = useModals();
 
   const [users, setUsers] = React.useState([]);
   const [period, setPeriod] = React.useState("day");

@@ -21,7 +21,7 @@ import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import CloseIcon from "@material-ui/icons/Close";
 import CheckIcon from "@material-ui/icons/Check";
-import { ModalContext } from "../../modals";
+import { useModals } from "common/utils/modals";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import { ACTIVITIES, TIMEABLE_ACTIVITIES } from "common/utils/activities";
@@ -265,7 +265,7 @@ export function WorkDayRevision({
   handleActivityRevision,
   pushNewActivityEvent
 }) {
-  const modals = React.useContext(ModalContext);
+  const modals = useModals();
 
   const handleEventClick = event => {
     modals.open("activityRevision", {

@@ -6,7 +6,7 @@ import PersonIcon from "@material-ui/icons/Person";
 import Button from "@material-ui/core/Button";
 import { PlaceHolder } from "../../common/PlaceHolder";
 import Typography from "@material-ui/core/Typography";
-import { ModalContext } from "../../modals";
+import { useModals } from "common/utils/modals";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { ACTIVITIES } from "common/utils/activities";
 import { UserHeader } from "../../common/UserHeader";
@@ -37,7 +37,7 @@ export function BeforeWork({
     new Date(getTime(latestDayEnd)).toISOString().slice(0, 10) ===
       new Date(currentTime).toISOString().slice(0, 10);
 
-  const modals = React.useContext(ModalContext);
+  const modals = useModals();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
 
   const handleFirstActivitySelection = (

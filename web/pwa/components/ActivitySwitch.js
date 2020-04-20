@@ -8,7 +8,7 @@ import { formatTimer } from "common/utils/time";
 import classNames from "classnames";
 import { ACTIVITIES } from "common/utils/activities";
 import useTheme from "@material-ui/core/styles/useTheme";
-import { ModalContext } from "../../modals";
+import { useModals } from "common/utils/modals";
 import { getTime } from "common/utils/events";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 
@@ -77,7 +77,7 @@ export function ActivitySwitchGrid({
   currentActivity,
   pushActivitySwitchEvent
 }) {
-  const modals = React.useContext(ModalContext);
+  const modals = useModals();
   const hasTeamMates = team.length > 0;
   const theme = useTheme();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
