@@ -5,11 +5,10 @@ import {
   groupActivityEventsByDay,
   sortEvents
 } from "common/utils/events";
-import { ScreenWithBottomNavigation } from "./utils/navigation";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { useActions } from "common/utils/actions";
 
-function App() {
+function App({ ScreenComponent }) {
   const actions = useActions();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
 
@@ -72,7 +71,7 @@ function App() {
     : null;
 
   return (
-    <ScreenWithBottomNavigation
+    <ScreenComponent
       currentTime={currentTime}
       currentActivity={currentActivity}
       currentDayActivityEvents={currentDayActivityEvents}

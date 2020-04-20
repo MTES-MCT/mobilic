@@ -17,7 +17,7 @@ import "common/assets/fonts/Source Sans Pro/SourceSansPro-Regular.otf";
 import "./index.css";
 import "common/assets/styles/root.scss";
 
-import App from "./pwa/App";
+import App from "common/components/App";
 import Login from "./landing/login";
 import Signup from "./landing/signup";
 import {
@@ -27,7 +27,7 @@ import {
 import { ApiContextProvider, useApi } from "common/utils/api";
 import { Admin } from "./admin/Admin";
 import { theme } from "common/utils/theme";
-import { MODAL_DICT, ModalProvider } from "./modals";
+import { MODAL_DICT } from "./modals";
 import { ThemeProvider } from "@material-ui/styles";
 import { CssBaseline } from "@material-ui/core";
 import { loadUserData } from "common/utils/loadUserData";
@@ -36,6 +36,8 @@ import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import frLocale from "date-fns/locale/fr";
 import { FrLocalizedUtils } from "common/utils/time";
 import { ActionsContextProvider } from "common/utils/actions";
+import { ScreenWithBottomNavigation } from "./pwa/utils/navigation";
+import { ModalProvider } from "common/utils/modals";
 
 export default function Root() {
   return (
@@ -79,7 +81,7 @@ function _Root() {
       {userId &&
         !isCompanyAdmin && [
           <Route exact key="app" path="/app">
-            <App />
+            <App ScreenComponent={ScreenWithBottomNavigation} />
           </Route>,
           <Redirect push key="*" from="*" to="/app" />
         ]}
