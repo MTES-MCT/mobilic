@@ -11,7 +11,7 @@ import { useAdminStore } from "../utils/store";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup/ToggleButtonGroup";
 import { AugmentedTable } from "../components/AugmentedTable";
-import { ModalContext } from "../../modals";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   navigation: {
@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
 function VehicleAdmin() {
   const api = useApi();
   const adminStore = useAdminStore();
-  const modals = React.useContext(ModalContext);
+  const modals = useModals();
   const columns = [
     {
       label: "Immatriculation",

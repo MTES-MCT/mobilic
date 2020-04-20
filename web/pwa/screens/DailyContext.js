@@ -19,7 +19,7 @@ import Typography from "@material-ui/core/Typography";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import { ACTIVITIES } from "common/utils/activities";
 import { prettyFormatDay } from "common/utils/time";
-import { ModalContext } from "../../modals";
+import { useModals } from "common/utils/modals";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { getTime } from "common/utils/events";
 import { getVehicleName, resolveVehicle } from "common/utils/vehicles";
@@ -36,7 +36,7 @@ export function DailyContext({
   pushNewComment
 }) {
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
-  const modals = React.useContext(ModalContext);
+  const modals = useModals();
   const theme = useTheme();
 
   const isCurrentDayStarted =

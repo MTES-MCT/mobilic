@@ -4,16 +4,16 @@ import IconButton from "@material-ui/core/IconButton";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import React from "react";
 import Box from "@material-ui/core/Box";
-import { ModalContext } from "../modals";
 import { useApi } from "common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { Header } from "./Header";
 import { Logos } from "./Logos";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import useTheme from "@material-ui/core/styles/useTheme";
+import { useModals } from "common/utils/modals";
 
 function AppUserHeader({ withCompanyNameBelow }) {
-  const modals = React.useContext(ModalContext);
+  const modals = useModals();
   const api = useApi();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
   return (
@@ -50,7 +50,7 @@ function AppUserHeader({ withCompanyNameBelow }) {
 }
 
 function DesktopUserHeader() {
-  const modals = React.useContext(ModalContext);
+  const modals = useModals();
   const api = useApi();
   const theme = useTheme();
   const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
