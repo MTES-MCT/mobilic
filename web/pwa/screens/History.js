@@ -19,7 +19,8 @@ import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
 import { TimeLine } from "../components/Timeline";
 import Box from "@material-ui/core/Box";
-import { getTime } from "common/utils/events";
+import { getTime, groupDayActivityEventsByPeriod } from "common/utils/events";
+import { findMatchingPeriodInNewScale } from "common/utils/history";
 
 const tabs = {
   day: {
@@ -78,52 +79,24 @@ const tabs = {
 export function History({ previousDaysActivityEventsByDay }) {
   const [currentTab, setCurrentTab] = React.useState("day");
 
-  function groupEventsByPeriod(tab) {
-    const periods = [];
-    let currentPeriodIndex = -1;
-    const eventsGroupedByPeriod = {};
-    previousDaysActivityEventsByDay.forEach(dayEvents => {
-      const period = tabs[tab].getPeriod(getTime(dayEvents[0]));
-      if (currentPeriodIndex === -1 || period !== periods[currentPeriodIndex]) {
-        if (currentPeriodIndex >= 0)
-          eventsGroupedByPeriod[
-            periods[currentPeriodIndex]
-          ].followingPeriodStart = period;
-        periods.push(period);
-        currentPeriodIndex++;
-        eventsGroupedByPeriod[period] = {
-          followingPeriodStart: undefined,
-          events: []
-        };
-      }
-      eventsGroupedByPeriod[period].events.push(dayEvents);
-    });
-    periods.reverse();
-    return { periods, eventsGroupedByPeriod };
-  }
-
-  const { periods, eventsGroupedByPeriod } = groupEventsByPeriod(currentTab);
+  const { periods, eventsGroupedByPeriod } = groupDayActivityEventsByPeriod(
+    previousDaysActivityEventsByDay,
+    tabs[currentTab].getPeriod
+  );
 
   const [selectedPeriod, setSelectedPeriod] = React.useState(periods[0]);
 
   function handlePeriodChange(e, newTab, selectedDate) {
-    const newPeriods = groupEventsByPeriod(newTab).periods;
-    let mostRecentNewPeriodIndex = 0;
-    let newPeriod;
-    while (
-      mostRecentNewPeriodIndex < newPeriods.length - 1 &&
-      newPeriods[mostRecentNewPeriodIndex] > selectedDate
-    ) {
-      mostRecentNewPeriodIndex++;
-    }
-    if (
-      selectedDate === newPeriods[mostRecentNewPeriodIndex] ||
-      mostRecentNewPeriodIndex === newPeriods.length - 1 ||
-      mostRecentNewPeriodIndex === 0 ||
-      tabs[newTab].periodSize > tabs[currentTab].periodSize
-    ) {
-      newPeriod = newPeriods[mostRecentNewPeriodIndex];
-    } else newPeriod = newPeriods[mostRecentNewPeriodIndex - 1];
+    const newPeriods = groupDayActivityEventsByPeriod(
+      previousDaysActivityEventsByDay,
+      tabs[newTab].getPeriod
+    ).periods;
+    const newPeriod = findMatchingPeriodInNewScale(
+      selectedDate,
+      newPeriods,
+      tabs[currentTab].periodSize,
+      tabs[newTab].periodSize
+    );
     setCurrentTab(newTab);
     setSelectedPeriod(newPeriod);
   }
