@@ -15,12 +15,12 @@
 }
 
 .flex-column {
-  display: flex;
+  display: flex !important;
   flex-direction: column;
 }
 
 .flex-row {
-  display: flex;
+  display: flex !important;
   flex-direction: row;
 }
 
