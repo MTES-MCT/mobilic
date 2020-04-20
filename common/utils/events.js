@@ -36,3 +36,27 @@ export function getActualActivityEvents(
       return revision ? { ...a, userTime: revision.userTime } : a;
     });
 }
+
+export function groupDayActivityEventsByPeriod(eventsByDay, periodCompute) {
+  const periods = [];
+  let currentPeriodIndex = -1;
+  const eventsGroupedByPeriod = {};
+  eventsByDay.forEach(dayEvents => {
+    const period = periodCompute(getTime(dayEvents[0]));
+    if (currentPeriodIndex === -1 || period !== periods[currentPeriodIndex]) {
+      if (currentPeriodIndex >= 0)
+        eventsGroupedByPeriod[
+          periods[currentPeriodIndex]
+        ].followingPeriodStart = period;
+      periods.push(period);
+      currentPeriodIndex++;
+      eventsGroupedByPeriod[period] = {
+        followingPeriodStart: undefined,
+        events: []
+      };
+    }
+    eventsGroupedByPeriod[period].events.push(dayEvents);
+  });
+  periods.reverse();
+  return { periods, eventsGroupedByPeriod };
+}
