@@ -3,19 +3,17 @@ import { TimeLine } from "../components/Timeline";
 import { ActivitySwitchGrid } from "../components/ActivitySwitch";
 import Container from "@material-ui/core/Container";
 import { computeTotalActivityDurations } from "common/utils/metrics";
-import { Expenditures } from "../components/Expenditures";
 import Divider from "@material-ui/core/Divider";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import { resolveTeamAt } from "common/utils/coworkers";
+import { resolveTeam } from "common/utils/coworkers";
+import {ACTIVITIES} from "common/utils/activities";
 
 export function CurrentActivity({
   currentActivity,
   currentDayActivityEvents,
   pushNewActivityEvent,
-  currentDayExpenditures,
-  cancelOrReviseActivityEvent,
-  pushNewExpenditure,
-  cancelExpenditure
+  editActivityEvent,
+  endMission
 }) {
   const store = useStoreSyncedWithLocalStorage();
 
@@ -24,8 +22,6 @@ export function CurrentActivity({
     Date.now() + 1
   );
 
-  const pendingExpenditureCancels = storeSyncedWithLocalStorage.pendingExpenditureCancels();
-
   return (
     <Container
       className="activity-switch-container full-height space-between"
@@ -33,7 +29,7 @@ export function CurrentActivity({
     >
       <TimeLine
         dayActivityEvents={currentDayActivityEvents}
-        cancelOrReviseActivityEvent={cancelOrReviseActivityEvent}
+        editActivityEvent={editActivityEvent}
         pushNewActivityEvent={pushNewActivityEvent}
       />
       <Divider className="full-width-divider" />
@@ -41,20 +37,11 @@ export function CurrentActivity({
         timers={timers}
         team={resolveTeam(store)}
         currentActivity={currentActivity}
-        pushActivitySwitchEvent={(activityType, driverId = null) =>
-          pushNewActivityEvent({ activityType, driverId })
+        pushActivitySwitchEvent={(activityType, driver = null) =>
+          activityType === ACTIVITIES.rest.name
+            ? endMission()
+            : pushNewActivityEvent({ activityType, driver })
         }
-      />
-      <Divider className="full-width-divider" />
-      <Expenditures
-        expenditures={currentDayExpenditures.filter(
-          e => !pendingExpenditureCancels.map(ec => ec.eventId).includes(e.id)
-        )}
-        pushNewExpenditure={pushNewExpenditure(
-          currentDayExpenditures,
-          pendingExpenditureCancels
-        )}
-        cancelExpenditure={cancelExpenditure}
       />
     </Container>
   );

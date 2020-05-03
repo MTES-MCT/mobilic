@@ -56,7 +56,7 @@ function Event({ height, className, children = null }) {
 
 export function TimeLine({
   dayActivityEvents,
-  cancelOrReviseActivityEvent,
+  editActivityEvent,
   pushNewActivityEvent
 }) {
   const theme = useTheme();
@@ -81,7 +81,7 @@ export function TimeLine({
           <Typography variant="h4" className="bold">
             Évènements du jour
           </Typography>
-          {cancelOrReviseActivityEvent && (
+          {editActivityEvent && (
             <IconButton
               color="primary"
               onClick={() => setOpenRevisionModal(true)}
@@ -176,7 +176,7 @@ export function TimeLine({
       <WorkDayRevision
         open={openRevisionModal}
         handleClose={() => setOpenRevisionModal(false)}
-        handleActivityRevision={cancelOrReviseActivityEvent}
+        handleActivityRevision={editActivityEvent}
         activityEvents={dayActivityEvents}
         pushNewActivityEvent={pushNewActivityEvent}
       />

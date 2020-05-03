@@ -13,7 +13,7 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { VehicleInput } from "./VehicleInput";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import { getVehicleName, resolveVehicle } from "common/utils/vehicles";
+import { resolveVehicle } from "common/utils/vehicles";
 
 export function VehicleBookingModal({
   open,
@@ -46,7 +46,7 @@ export function VehicleBookingModal({
         {currentVehicle && (
           <Box my={2}>
             <Typography>
-              Véhicule actuel : {getVehicleName(currentVehicle)}
+              Véhicule actuel : {currentVehicleBooking.vehicleName}
             </Typography>
             <Typography>
               Occupé depuis {formatTimeOfDay(getTime(currentVehicleBooking))}

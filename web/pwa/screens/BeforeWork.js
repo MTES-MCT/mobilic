@@ -15,14 +15,13 @@ import { WorkDayRevision } from "../components/ActivityRevision";
 import EditIcon from "@material-ui/icons/Edit";
 import Link from "@material-ui/core/Link";
 import { getTime } from "common/utils/events";
-import { resolveTeamAt } from "common/utils/coworkers";
 
 export function BeforeWork({
   currentTime,
   previousDaysActivityEventsByDay,
   pushNewActivityEvent,
-  cancelOrReviseActivityEvent,
-  pushNewTeamEnrollment
+  editActivityEvent,
+  beginNewMission,
 }) {
   const [openRevisionModal, setOpenRevisionModal] = React.useState(false);
 
@@ -38,72 +37,38 @@ export function BeforeWork({
       new Date(currentTime).toISOString().slice(0, 10);
 
   const modals = useModals();
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const store = useStoreSyncedWithLocalStorage();
 
   const handleFirstActivitySelection = (
     activityType,
     dayInfos,
     updatedCoworkers = null
   ) => {
-    let teamMates = [];
+    let teamMates = null;
     if (updatedCoworkers) {
       teamMates = updatedCoworkers.filter(
-        cw => cw.newEnrollmentType === "enroll"
-      );
+        cw => !!cw.enroll
+      ).map(cw => ({
+        id: cw.id,
+        firstName: cw.firstName,
+        lastName: cw.lastName
+      }));
     }
     const createActivity = async (driver = null) => {
-      if (shouldResumeDay) {
-        const breakInsteadOfRest = {
-          ...latestDayEnd,
-          type: ACTIVITIES.break.name,
-          isPrediction: true
-        };
-        storeSyncedWithLocalStorage.hideEvent(latestDayEnd, "activities");
-        storeSyncedWithLocalStorage.pushEvent(breakInsteadOfRest, "activities");
-      }
-      const enrollment = Promise.all(
-        teamMates.map(mate =>
-          pushNewTeamEnrollment(
-            "enroll",
-            mate.id,
-            mate.firstName,
-            mate.lastName
-          )
-        )
-      );
-
-      if (teamMates.some(mate => !mate.id)) {
-        await enrollment;
-      }
-
-      let driverId;
-      if (driver && driver.id) {
-        driverId = driver.id;
-      } else if (driver) {
-        const updatedTeamMates = resolveTeamAt(
-          Date.now(),
-          storeSyncedWithLocalStorage
-        );
-        const matchingTeamMate = updatedTeamMates.find(
-          tm =>
-            tm.firstName === driver.firstName && tm.lastName === driver.lastName
-        );
-        if (matchingTeamMate) driverId = matchingTeamMate.id;
-      }
-
-      pushNewActivityEvent({
-        activityType,
-        driverId,
-        mission: dayInfos.mission,
+      beginNewMission({
+        firstActivityType: activityType,
+        driver,
+        name: dayInfos.mission,
         vehicleId: dayInfos.vehicle.id,
-        vehicleRegistrationNumber: dayInfos.vehicle.registrationNumber
+        vehicleRegistrationNumber: dayInfos.vehicle.registrationNumber,
+        team: teamMates
       });
       modals.close("missionSelection");
       modals.close("teamSelection");
     };
-    if (teamMates.length > 0 && activityType === ACTIVITIES.drive.name) {
+    if (teamMates && teamMates.length > 0 && activityType === ACTIVITIES.drive.name) {
       modals.open("driverSelection", {
-        team: [storeSyncedWithLocalStorage.userInfo(), ...teamMates],
+        team: [store.userInfo(), ...teamMates],
         handleDriverSelection: createActivity
       });
     } else createActivity();
@@ -195,7 +160,7 @@ export function BeforeWork({
       open={latestDayActivityEvents && openRevisionModal}
       handleClose={() => setOpenRevisionModal(false)}
       activityEvents={latestDayActivityEvents}
-      handleActivityRevision={cancelOrReviseActivityEvent}
+      handleActivityRevision={editActivityEvent}
       pushNewActivityEvent={pushNewActivityEvent}
     />
   ];
