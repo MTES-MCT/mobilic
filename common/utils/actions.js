@@ -23,6 +23,15 @@ export function ActionsContextProvider({ children }) {
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
 
+  async function submitAction(query, variables, optimisticStoreUpdate, watchFields, handleSubmitResponse) {
+    // 1. Store the request and optimistically update the store as if the api responded successfully
+    const request = await store.newRequest(query, variables, optimisticStoreUpdate, watchFields, handleSubmitResponse);
+
+    // 2. Execute the request (call API) along with any other pending one
+    // await api.nonConcurrentQueryQueue.execute(() => api.executeRequest(request));
+    await api.executePendingRequests();
+  }
+
   const pushNewActivityEvent = async ({
     activityType,
     driverId = null,

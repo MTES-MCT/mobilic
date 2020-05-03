@@ -415,36 +415,34 @@ class Api {
     // No need to catch the refresh-token error since logout is imminent
   }
 
-  submitEvents(query, storeEntry, handleSubmitResponse) {
-    return this.nonConcurrentQueryQueue.execute(async () => {
-      const eventsPendingSubmission = await this.storeSyncedWithLocalStorage.markAndGetEventsForSubmission(
-        storeEntry
+  async executeRequest(request) {
+    try {
+      // 1. Call the API
+      const submit = await this._queryWithRefreshToken(() =>
+        this.apolloClient.mutate({
+          mutation: request.query,
+          variables: request.variables,
+          context: {batchable: request.batchable},
+        })
       );
-      if (eventsPendingSubmission.length === 0) return;
-      try {
-        const submit = await this._queryWithRefreshToken(() =>
-          this.apolloClient.mutate({
-            mutation: query,
-            variables: {
-              data: eventsPendingSubmission.map(e => {
-                const { isBeingSubmitted, ...event } = e;
-                return event;
-              })
-            }
-          })
-        );
-        await handleSubmitResponse(submit);
-      } catch (err) {
-        if (isGraphQLParsingError(err)) {
-          await this.storeSyncedWithLocalStorage.removeEventsAfterFailedSubmission(
-            storeEntry
-          );
-        } else {
-          await this.storeSyncedWithLocalStorage.removeSubmissionMark(
-            storeEntry
-          );
-        }
+      // 3. Commit the persistent changes to the store
+      await request.handleSubmitResponse(submit);
+
+      // 4. Remove the temporary updates and the pending request from the pool
+      await this.store.clearPendingRequest(request);
+    } catch (err) {
+      if (isGraphQLParsingError(err)) {
+        await this.store.clearPendingRequest(request);
       }
+    }
+  }
+
+  async executePendingRequests() {
+    return this.nonConcurrentQueryQueue.execute(async () => {
+      // 1. Retrieve all pending requests
+      const pendingRequests = await this.store.pendingRequests();
+      if (pendingRequests.length === 0) return;
+      await Promise.all(pendingRequests.map(async request => this.executeRequest(request)));
     });
   }
 
