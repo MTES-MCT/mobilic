@@ -3,9 +3,9 @@ import Paper from "@material-ui/core/Paper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {
   useApi,
-  VEHICLE_CREATE_MUTATION,
-  VEHICLE_EDIT_MUTATION,
-  VEHICLE_TERMINATE_MUTATION
+  CREATE_VEHICLE_MUTATION,
+  EDIT_VEHICLE_MUTATION,
+  TERMINATE_VEHICLE_MUTATION
 } from "common/utils/api";
 import { useAdminStore } from "../utils/store";
 import ToggleButton from "@material-ui/lab/ToggleButton";
@@ -53,7 +53,7 @@ function VehicleAdmin() {
       editable={true}
       onRowEdit={async (vehicle, { alias }) => {
         try {
-          const apiResponse = await api.graphQlMutate(VEHICLE_EDIT_MUTATION, {
+          const apiResponse = await api.graphQlMutate(EDIT_VEHICLE_MUTATION, {
             id: vehicle.id,
             alias
           });
@@ -72,7 +72,7 @@ function VehicleAdmin() {
       }}
       onRowAdd={async ({ registrationNumber, alias }) => {
         try {
-          const apiResponse = await api.graphQlMutate(VEHICLE_CREATE_MUTATION, {
+          const apiResponse = await api.graphQlMutate(CREATE_VEHICLE_MUTATION, {
             registrationNumber,
             alias,
             companyId: adminStore.companyId
@@ -90,7 +90,7 @@ function VehicleAdmin() {
           title: "Confirmer suppression",
           handleConfirm: async () => {
             try {
-              await api.graphQlMutate(VEHICLE_TERMINATE_MUTATION, {
+              await api.graphQlMutate(TERMINATE_VEHICLE_MUTATION, {
                 id: vehicle.id
               });
               adminStore.setVehicles(oldVehicles =>
