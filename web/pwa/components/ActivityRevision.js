@@ -49,7 +49,7 @@ export function ActivityRevisionOrCreationModal({
   createActivity
 }) {
   const theme = useTheme();
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const store = useStoreSyncedWithLocalStorage();
   const [actionType, setActionType] = React.useState(undefined); // "cancel", "revision" or "creation"
 
   const [newActivityType, setNewActivityType] = React.useState(undefined);
@@ -65,9 +65,9 @@ export function ActivityRevisionOrCreationModal({
 
   const [userComment, setUserComment] = React.useState(undefined);
 
-  const user = storeSyncedWithLocalStorage.userInfo();
+  const user = store.userInfo();
   const team = newUserTime
-    ? [user, ...resolveTeamAt(newUserTime, storeSyncedWithLocalStorage)]
+    ? [user, ...resolveTeam(store)]
     : [user];
 
   function handleSubmit() {

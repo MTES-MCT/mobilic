@@ -18,7 +18,7 @@ export default function Login() {
   const [error, setError] = React.useState("");
 
   const api = useApi();
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const store = useStoreSyncedWithLocalStorage();
   const history = useHistory();
 
   const handleSubmit = async e => {
@@ -30,7 +30,7 @@ export default function Login() {
         password
       });
       const { accessToken, refreshToken } = loginResponse.data.auth.login;
-      await storeSyncedWithLocalStorage.storeTokens({
+      await store.storeTokens({
         accessToken,
         refreshToken
       });

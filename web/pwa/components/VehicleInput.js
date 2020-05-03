@@ -6,9 +6,9 @@ import { createFilterOptions } from "@material-ui/lab/Autocomplete";
 import { getVehicleName } from "common/utils/vehicles";
 
 export function VehicleInput({ label, vehicle, setVehicle }) {
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const store = useStoreSyncedWithLocalStorage();
 
-  const vehicles = storeSyncedWithLocalStorage.vehicles();
+  const vehicles = store.vehicles();
   const _filterOptions = createFilterOptions({ stringify: getVehicleName });
   const filterOptions = (options, other) =>
     _filterOptions(options, { inputValue: getVehicleName(vehicle) || "" });

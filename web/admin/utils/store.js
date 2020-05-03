@@ -4,7 +4,7 @@ import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 const AdminStoreContext = React.createContext(() => {});
 
 export function AdminStoreProvider({ children }) {
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const store = useStoreSyncedWithLocalStorage();
 
   const [users, setUsers] = React.useState([]);
   const [workDays, setWorkDays] = React.useState([]);
@@ -19,7 +19,7 @@ export function AdminStoreProvider({ children }) {
   return (
     <AdminStoreContext.Provider
       value={{
-        companyId: storeSyncedWithLocalStorage.companyId(),
+        companyId: store.companyId(),
         users,
         setUsers,
         workDays,

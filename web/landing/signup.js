@@ -22,7 +22,7 @@ export default function Signup() {
   const [error, setError] = React.useState("");
 
   const api = useApi();
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const store = useStoreSyncedWithLocalStorage();
   const history = useHistory();
 
   const handleSubmit = async e => {
@@ -37,7 +37,7 @@ export default function Signup() {
         companyName
       });
       const { accessToken, refreshToken } = signUpResponse.data.signupUser;
-      await storeSyncedWithLocalStorage.storeTokens({
+      await store.storeTokens({
         accessToken,
         refreshToken
       });

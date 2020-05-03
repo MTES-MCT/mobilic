@@ -35,7 +35,7 @@ export function DailyContext({
   pushNewVehicleBooking,
   pushNewComment
 }) {
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
   const theme = useTheme();
 
@@ -54,9 +54,7 @@ export function DailyContext({
       : null;
 
   const comments = firstActivityOfTheDay
-    ? storeSyncedWithLocalStorage
-        .comments()
-        .filter(c => getTime(c) >= getTime(firstActivityOfTheDay))
+    ? store.getArray("comments").filter(c => getTime(c) >= getTime(firstActivityOfTheDay))
     : [];
 
   const ignoreTeamEnrollmentsBeforeTime = firstActivityOfTheDay
