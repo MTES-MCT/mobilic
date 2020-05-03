@@ -1,5 +1,11 @@
 import React from "react";
-import ApolloClient, { gql } from "apollo-boost";
+import { ApolloClient } from 'apollo-client';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { HttpLink } from 'apollo-link-http';
+import { onError } from 'apollo-link-error';
+import { BatchHttpLink } from "apollo-link-batch-http";
+import { ApolloLink, Observable } from 'apollo-link';
+import gql  from "graphql-tag";
 import jwtDecode from "jwt-decode";
 import { useStoreSyncedWithLocalStorage } from "./store";
 import { isGraphQLParsingError } from "./errors";
@@ -393,31 +399,57 @@ class Api {
     this.storeSyncedWithLocalStorage = storeSyncedWithLocalStorage;
     this.apolloClient = new ApolloClient({
       uri: `${apiHost}${graphqlPath}`,
-      request: operation => {
-        const token =
-          operation.operationName === "refreshToken"
-            ? this.storeSyncedWithLocalStorage.refreshToken()
-            : this.storeSyncedWithLocalStorage.accessToken();
-        operation.setContext({
-          headers: {
-            authorization: token ? `Bearer ${token}` : ""
+      link: ApolloLink.from([
+        onError(({ operation, response, graphQLErrors, networkError }) => {
+          if (
+            graphQLErrors &&
+            graphQLErrors.length > 0 &&
+            graphQLErrors.some(error => error.message === "Authentication error")
+          ) {
+            this.refreshTokenQueue.clear();
+            this.nonConcurrentQueryQueue.clear();
+            this.logout();
           }
-        });
-      },
-      onError: ({ operation, response, graphQLErrors, networkError }) => {
-        if (
-          graphQLErrors &&
-          graphQLErrors.length > 0 &&
-          graphQLErrors.some(error => error.message === "Authentication error")
-        ) {
-          this.refreshTokenQueue.clear();
-          this.nonConcurrentQueryQueue.clear();
-          this.logout();
-        }
-      }
+        }),
+        new ApolloLink((operation, forward) =>
+          new Observable(observer => {
+            let handle;
+            Promise.resolve(operation)
+              .then(oper => {
+                const token = oper.operationName === "refreshToken"
+                  ? this.store.refreshToken()
+                  : this.store.accessToken();
+                oper.setContext({
+                  headers: {
+                    authorization: token ? `Bearer ${token}` : ""
+                  }
+                });
+              })
+              .then(() => {
+                handle = forward(operation).subscribe({
+                  next: observer.next.bind(observer),
+                  error: observer.error.bind(observer),
+                  complete: observer.complete.bind(observer),
+                });
+              })
+              .catch(observer.error.bind(observer));
+
+            return () => {
+              if (handle) handle.unsubscribe();
+            };
+          })
+        ),
+        ApolloLink.split(
+          (operation) => !!operation.getContext().batchable,
+          new BatchHttpLink({ uri }),
+          new HttpLink({ uri })
+        )
+      ]),
+      cache: new InMemoryCache()
     });
     this.refreshTokenQueue = new NonConcurrentExecutionQueue("refreshToken");
     this.nonConcurrentQueryQueue = new NonConcurrentExecutionQueue("events");
+    this.isCurrentlySubmittingRequests = () => this.nonConcurrentQueryQueue.lock;
   }
 
   async graphQlQuery(query, variables) {
