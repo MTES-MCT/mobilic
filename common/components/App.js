@@ -1,7 +1,5 @@
 import React from "react";
 import {
-  getActualActivityEvents,
-  getTime,
   groupActivityEventsByDay,
   sortEvents
 } from "common/utils/events";
@@ -10,7 +8,7 @@ import { useActions } from "common/utils/actions";
 
 function App({ ScreenComponent }) {
   const actions = useActions();
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const store = useStoreSyncedWithLocalStorage();
 
   const [currentTime, setCurrentTime] = React.useState(Date.now());
 
@@ -19,11 +17,7 @@ function App({ ScreenComponent }) {
     setInterval(() => setCurrentTime(Date.now()), 30000);
   }, []);
 
-  const activityEvents = getActualActivityEvents(
-    storeSyncedWithLocalStorage.activities(),
-    storeSyncedWithLocalStorage.pendingActivityCancels(),
-    storeSyncedWithLocalStorage.pendingActivityRevisions()
-  );
+  const activityEvents = store.getArray("activities");
 
   const activityEventsByDay = groupActivityEventsByDay(activityEvents);
   const previousDaysActivityEventsByDay = activityEventsByDay.slice(
@@ -33,60 +27,35 @@ function App({ ScreenComponent }) {
 
   const currentDayActivityEvents =
     activityEventsByDay[activityEventsByDay.length - 1];
-  const currentDayExpenditures =
-    currentDayActivityEvents && currentDayActivityEvents.length > 0
-      ? storeSyncedWithLocalStorage
-          .expenditures()
-          .filter(e => getTime(e) >= getTime(currentDayActivityEvents[0]))
-      : [];
 
   const currentActivity = activityEvents[activityEvents.length - 1];
-  let firstActivityOfCurrentOrLatestDay;
-  if (currentDayActivityEvents && currentDayActivityEvents.length > 0) {
-    firstActivityOfCurrentOrLatestDay = currentDayActivityEvents[0];
-  } else if (
-    previousDaysActivityEventsByDay &&
-    previousDaysActivityEventsByDay.length > 0
-  ) {
-    firstActivityOfCurrentOrLatestDay =
-      previousDaysActivityEventsByDay[
-        previousDaysActivityEventsByDay.length - 1
-      ][0];
-  }
+  const missions = sortEvents(store.getArray("missions")).reverse();
+  const latestMission = missions.length > 0 ? missions[0] : null;
 
-  const missions = sortEvents(storeSyncedWithLocalStorage.missions()).reverse();
-  const currentOrLatestDayMission = firstActivityOfCurrentOrLatestDay
-    ? missions.find(
-        m => getTime(m) >= getTime(firstActivityOfCurrentOrLatestDay)
-      )
-    : null;
+  const vehicleBookingsForLatestMission = latestMission
+    ? sortEvents(
+      store.getArray("vehicleBookings").filter(vb => (vb.missionId === latestMission.id) || !vb.missionId)
+    ).reverse()
+    : [];
 
-  const vehicleBookings = sortEvents(
-    storeSyncedWithLocalStorage.vehicleBookings()
-  ).reverse();
-  const currentOrLatestDayVehicleBooking = firstActivityOfCurrentOrLatestDay
-    ? vehicleBookings.find(
-        vb => getTime(vb) >= getTime(firstActivityOfCurrentOrLatestDay)
-      )
-    : null;
+  console.log(vehicleBookingsForLatestMission);
+  const currentVehicleBookingForLatestMission = vehicleBookingsForLatestMission.length > 0 ? vehicleBookingsForLatestMission[0] : null;
 
   return (
     <ScreenComponent
       currentTime={currentTime}
       currentActivity={currentActivity}
       currentDayActivityEvents={currentDayActivityEvents}
-      currentOrLatestDayMission={currentOrLatestDayMission}
-      currentOrLatestDayVehicleBooking={currentOrLatestDayVehicleBooking}
+      latestMission={latestMission}
+      currentVehicleBookingForLatestMission={currentVehicleBookingForLatestMission}
       pushNewActivityEvent={actions.pushNewActivityEvent}
-      cancelOrReviseActivityEvent={actions.cancelOrReviseActivityEvent}
+      editActivityEvent={actions.editActivityEvent}
       previousDaysActivityEventsByDay={previousDaysActivityEventsByDay}
-      currentDayExpenditures={currentDayExpenditures}
-      pushNewTeamEnrollment={actions.pushNewTeamEnrollment}
-      pushNewMission={actions.pushNewMission}
+      pushNewTeamEnrollmentOrRelease={actions.pushNewTeamEnrollmentOrRelease}
+      beginNewMission={actions.beginNewMission}
       pushNewVehicleBooking={actions.pushNewVehicleBooking}
-      pushNewExpenditure={actions.pushNewExpenditure}
-      cancelExpenditure={actions.cancelExpenditure}
       pushNewComment={actions.pushNewComment}
+      endMission={actions.endMission}
     />
   );
 }

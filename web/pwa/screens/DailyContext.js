@@ -27,10 +27,9 @@ export function DailyContext({
   currentActivity,
   currentDayActivityEvents,
   previousDaysActivityEventsByDay,
-  pushNewTeamEnrollment,
-  pushNewMission,
-  currentOrLatestDayMission,
-  currentOrLatestDayVehicleBooking,
+  pushNewTeamEnrollmentOrRelease,
+  latestMission,
+  currentVehicleBookingForLatestMission,
   pushNewVehicleBooking,
   pushNewComment
 }) {
@@ -74,14 +73,24 @@ export function DailyContext({
             >
               <Typography className="bold" variant="body1" align="left">
                 {isCurrentDayStarted
-                  ? "Journée en cours"
-                  : `Journée du ${prettyFormatDay(
+                  ? "Mission en cours"
+                  : `Mission du ${prettyFormatDay(
                       getTime(firstActivityOfTheDay)
                     )}`}
               </Typography>
             </ListSubheader>
           }
         >
+          <ListItem className="new-lines-on-overflow" disableGutters>
+            <ListItemIcon>
+              <WorkIcon color="primary" />
+            </ListItemIcon>
+            <ListItemText
+              primary={`Nom : ${
+                latestMission ? latestMission.name : ""
+              }`}
+            />
+          </ListItem>
           <ListItem disableGutters>
             <ListItemIcon color="primary">
               {team.length === 0 ? (
@@ -132,7 +141,7 @@ export function DailyContext({
             </ListItemIcon>
             <ListItemText
               primary={`Véhicule : ${
-                vehicleToDisplay ? getVehicleName(vehicleToDisplay) : ""
+                currentVehicleBookingForLatestMission ? currentVehicleBookingForLatestMission.vehicleName : ""
               }`}
             />
             <ListItemSecondaryAction>
@@ -140,32 +149,8 @@ export function DailyContext({
                 edge="end"
                 onClick={() =>
                   modals.open("vehicleBooking", {
-                    currentVehicleBooking: currentOrLatestDayVehicleBooking,
+                    currentVehicleBooking: currentVehicleBookingForLatestMission,
                     handleContinue: pushNewVehicleBooking
-                  })
-                }
-                disabled={!isCurrentDayStarted}
-              >
-                <CreateIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-          <ListItem className="new-lines-on-overflow" disableGutters>
-            <ListItemIcon>
-              <WorkIcon color="primary" />
-            </ListItemIcon>
-            <ListItemText
-              primary={`Mission : ${
-                currentOrLatestDayMission ? currentOrLatestDayMission.name : ""
-              }`}
-            />
-            <ListItemSecondaryAction>
-              <IconButton
-                edge="end"
-                onClick={() =>
-                  modals.open("missionChange", {
-                    currentMission: currentOrLatestDayMission,
-                    handleContinue: pushNewMission
                   })
                 }
                 disabled={!isCurrentDayStarted}
