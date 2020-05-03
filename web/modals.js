@@ -5,7 +5,6 @@ import { MissionSelectionModal } from "./pwa/components/MissionSelection";
 import { DriverSelectionModal } from "./pwa/components/DriverSelection";
 import { CommentInputModal } from "./pwa/components/CommentInput";
 import { ActivityRevisionOrCreationModal } from "./pwa/components/ActivityRevision";
-import { MissionChangeModal } from "./pwa/components/MissionChange";
 import { VehicleBookingModal } from "./pwa/components/VehicleBooking";
 import { DataExport } from "./admin/components/DataExport";
 
@@ -17,7 +16,6 @@ export const MODAL_DICT = {
   driverSelection: DriverSelectionModal,
   commentInput: CommentInputModal,
   activityRevision: ActivityRevisionOrCreationModal,
-  missionChange: MissionChangeModal,
   vehicleBooking: VehicleBookingModal,
   dataExport: DataExport
 };
