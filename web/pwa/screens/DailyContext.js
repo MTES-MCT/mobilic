@@ -11,7 +11,6 @@ import { UserHeader } from "../../common/UserHeader";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import List from "@material-ui/core/List";
-import { resolveTeamAt } from "common/utils/coworkers";
 import ListItemText from "@material-ui/core/ListItemText";
 import { ListItemSecondaryAction } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
@@ -22,7 +21,7 @@ import { prettyFormatDay } from "common/utils/time";
 import { useModals } from "common/utils/modals";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { getTime } from "common/utils/events";
-import { getVehicleName, resolveVehicle } from "common/utils/vehicles";
+import {resolveTeam} from "common/utils/coworkers";
 
 export function DailyContext({
   currentActivity,
@@ -57,22 +56,7 @@ export function DailyContext({
     ? store.getArray("comments").filter(c => getTime(c) >= getTime(firstActivityOfTheDay))
     : [];
 
-  const ignoreTeamEnrollmentsBeforeTime = firstActivityOfTheDay
-    ? getTime(firstActivityOfTheDay) - 10000
-    : null;
-
-  const team = currentActivity
-    ? resolveTeamAt(
-        isCurrentDayStarted ? Date.now() : getTime(currentActivity),
-        storeSyncedWithLocalStorage,
-        ignoreTeamEnrollmentsBeforeTime
-      )
-    : [];
-
-  const vehicleToDisplay = resolveVehicle(
-    currentOrLatestDayVehicleBooking,
-    storeSyncedWithLocalStorage
-  );
+  const team = resolveTeam(store);
 
   return [
     <UserHeader key={1} withCompanyNameBelow={true} />,
@@ -121,16 +105,15 @@ export function DailyContext({
                 edge="end"
                 onClick={() =>
                   modals.open("teamSelection", {
-                    showEnrollmentHistoryAfterTime: ignoreTeamEnrollmentsBeforeTime,
+                    useCurrentEnrollment: true,
                     handleContinue: updatedCoworkers => {
                       updatedCoworkers.forEach(
                         cw =>
-                          cw.newEnrollmentType &&
-                          pushNewTeamEnrollment(
-                            cw.newEnrollmentType,
+                          pushNewTeamEnrollmentOrRelease(
                             cw.id,
                             cw.firstName,
-                            cw.lastName
+                            cw.lastName,
+                            cw.enroll
                           )
                       );
                       modals.close("teamSelection");

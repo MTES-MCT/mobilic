@@ -17,7 +17,6 @@ import Divider from "@material-ui/core/Divider";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Checkbox from "@material-ui/core/Checkbox";
 import {
-  augmentCoworkersWithEnrollmentHistoryAtTime,
   formatPersonName
 } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
@@ -45,16 +44,8 @@ export function TeamSelectionModal({
   // - committed to main state (when hitting Ok button)
   // We sync the secondary state with the main one whenever the modal is opened/closed or the main state changes
   React.useEffect(() => {
-    setUpdatedCoworkers(
-      showEnrollmentHistoryAfterTime
-        ? augmentCoworkersWithEnrollmentHistoryAtTime(
-            Date.now(),
-            storeSyncedWithLocalStorage,
-            showEnrollmentHistoryAfterTime
-          )
-        : coworkers.map(cw => ({ ...cw }))
-    );
-  }, [open, coworkers, showEnrollmentHistoryAfterTime]);
+    setUpdatedCoworkers(coworkers.map(cw => ({ ...cw })));
+  }, [open, coworkers]);
 
   const pushNewCoworker = (firstName, lastName) => () => {
     setUpdatedCoworkers([
@@ -62,7 +53,7 @@ export function TeamSelectionModal({
       {
         firstName: firstName,
         lastName: lastName,
-        newEnrollmentType: "enroll"
+        enroll: true
       }
     ]);
   };
@@ -70,11 +61,13 @@ export function TeamSelectionModal({
   const toggleAddCoworkerToTeam = id => () => {
     const newCoworkers = updatedCoworkers.slice();
     const coworker = newCoworkers[id];
-    if (coworker.newEnrollmentType) {
-      coworker.newEnrollmentType = null;
+    if (useCurrentEnrollment) {
+      if (coworker.enroll !== undefined) coworker.enroll = undefined;
+      else {
+        coworker.enroll = !coworker.joinedCurrentMissionAt;
+      }
     } else {
-      coworker.newEnrollmentType =
-        coworker.latestEnrollmentType === "enroll" ? "remove" : "enroll";
+      coworker.enroll = coworker.enroll ? undefined : true;
     }
     setUpdatedCoworkers(newCoworkers);
   };
@@ -150,11 +143,7 @@ export function TeamSelectionModal({
           <Divider key={2 * index} />,
           <ListItem key={2 * index + 1}>
             <Checkbox
-              checked={
-                coworker.newEnrollmentType
-                  ? coworker.newEnrollmentType === "enroll"
-                  : coworker.latestEnrollmentType === "enroll"
-              }
+              checked={coworker.enroll === true || (useCurrentEnrollment && coworker.enroll === undefined && !!coworker.joinedCurrentMissionAt)}
               onChange={toggleAddCoworkerToTeam(index)}
             />
             <ListItemText
@@ -162,13 +151,13 @@ export function TeamSelectionModal({
               primary={formatPersonName(coworker)}
               secondaryTypographyProps={{ noWrap: true, display: "block" }}
               secondary={
-                coworker.latestEnrollmentType
-                  ? `${
-                      coworker.latestEnrollmentType === "enroll"
-                        ? "ajouté"
-                        : "retiré"
-                    } à ${formatTimeOfDay(coworker.latestEnrollmentTime)}`
-                  : null
+                useCurrentEnrollment
+                  ? coworker.joinedCurrentMissionAt
+                    ? `ajouté à ${formatTimeOfDay(coworker.joinedCurrentMissionAt)}`
+                    : coworker.leftCurrentMissionAt
+                      ? `retiré à ${formatTimeOfDay(coworker.leftCurrentMissionAt)}`
+                      : ""
+                  : ""
               }
             />
             <ListItemSecondaryAction>
@@ -184,7 +173,7 @@ export function TeamSelectionModal({
         <Button
           variant="contained"
           color="primary"
-          onClick={async () => handleContinue(updatedCoworkers)}
+          onClick={async () => handleContinue(updatedCoworkers.filter(cw => cw.enroll !== undefined))}
         >
           Continuer
         </Button>

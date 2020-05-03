@@ -169,6 +169,7 @@ export function BeforeWork({
           startIcon={<PeopleIcon />}
           onClick={() =>
             modals.open("teamSelection", {
+              useCurrentEnrollment: false,
               handleContinue: updatedCoworkers =>
                 modals.open("missionSelection", {
                   handleContinue: dayInfos => {
