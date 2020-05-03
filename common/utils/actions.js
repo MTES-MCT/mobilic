@@ -24,317 +24,326 @@ export function ActionsContextProvider({ children }) {
 
   const pushNewActivityEvent = async ({
     activityType,
-    driverId = null,
-    mission = null,
-    vehicleId = null,
-    vehicleRegistrationNumber = null,
+    missionId = null,
+    driver = null,
     userTime = null,
     userComment = null
   }) => {
-    if (activityType === ACTIVITIES.rest.name && userTime === null) {
-      const team = resolveTeamAt(Date.now(), store);
-      team.forEach(tm =>
-        store.pushEvent(
-          {
-            type: "remove",
-            userId: tm.id,
-            firstName: tm.firstName,
-            lastName: tm.lastName,
-            eventTime: Date.now(),
-            isPrediction: true
-          },
-          "teamEnrollments"
-        )
-      );
-    }
     const newActivity = {
       type: activityType,
       eventTime: Date.now()
     };
-    if (driverId !== undefined && driverId !== null)
-      newActivity.driverId = driverId;
-    if (userTime !== undefined && userTime !== null)
+    if (driver)
+      newActivity.driver = {id: driver.id, firstName: driver.firstName, lastName: driver.lastName};
+    if (missionId)
+      newActivity.missionId = missionId;
+    if (userTime)
       newActivity.userTime = userTime;
-    if (mission !== undefined && mission !== null)
-      newActivity.mission = mission;
     if (userComment !== undefined && userComment !== null)
       newActivity.comment = userComment;
-    if (vehicleId !== undefined && vehicleId !== null)
-      newActivity.vehicleId = vehicleId;
-    if (
-      vehicleRegistrationNumber !== undefined &&
-      vehicleRegistrationNumber !== null
-    )
-      newActivity.vehicleRegistrationNumber = vehicleRegistrationNumber;
-    await store.pushEvent(newActivity, "activities");
 
-    api.submitEvents(ACTIVITY_LOG_MUTATION, "activities", apiResponse => {
-      const user = apiResponse.data.logActivities.user;
-      return syncUser(user, store);
-    });
+    const updateStore = (store, requestId) => store.pushItem(
+      {...newActivity, createdByRequestId: requestId},
+      "activities"
+    );
+
+    await submitAction(
+      LOG_ACTIVITY_MUTATION,
+      newActivity,
+      updateStore,
+      ["activities"],
+      apiResponse => {
+        const activities = apiResponse.data.logActivity.missionActivities.map(parseActivityPayloadFromBackend);
+        store.syncAllSubmittedItems(activities, "activities", (a) => a.missionId === activities[0].missionId)
+      }
+    );
   };
 
-  const cancelOrReviseActivityEvent = async (
+  const editActivityEvent = async (
     activityEvent,
     actionType,
     newUserTime = null,
     userComment = null
   ) => {
-    if (activityEvent.isBeingSubmitted) return;
-    // If the event was not submitted yet we can directly alter its value in the store, with no need for an API call
-    if (!activityEvent.id) {
-      store.removeEvent(activityEvent, "activities");
-      if (actionType === "revision") {
-        store.pushEvent(
-          { ...activityEvent, eventTime: newUserTime },
-          "activities"
-        );
+    let shouldCallApi = true;
+    if (isPendingSubmission(activityEvent)) {
+      if (api.isCurrentlySubmittingRequests()) return;
+      // If the event is present in the db and has other unsubmitted updates we edit these updates
+      if (activityEvent.updatedByRequestId) {
+        await store.clearPendingRequest(store.getItemById(activityEvent.updatedByRequestId, "pendingRequests"));
       }
-    } else {
-      if (actionType === "revision") {
-        const pendingRevisionForActivity = store
-          .pendingActivityRevisions()
-          .find(rev => rev.eventId === activityEvent.id);
-        // If a revision is currently being submitted for the same event, abort
-        if (pendingRevisionForActivity) {
-          if (pendingRevisionForActivity.isBeingSubmitted) return;
-          store.removeEvent(
-            pendingRevisionForActivity,
-            "pendingActivityRevisions"
-          );
-        }
-        const event = {
-          eventId: activityEvent.id,
-          userTime: newUserTime,
-          eventTime: Date.now()
-        };
-        if (userComment !== undefined && userComment !== null)
-          event.comment = userComment;
-        await store.pushEvent(event, "pendingActivityRevisions");
-        api.submitEvents(
-          ACTIVITY_REVISION_MUTATION,
-          "pendingActivityRevisions",
-          apiResponse => {
-            const activities = apiResponse.data.reviseActivities.activities;
-            return Promise.all([
-              store.updateAllSubmittedEvents(
-                activities.map(parseActivityPayloadFromBackend),
-                "activities"
-              ),
-              store.updateAllSubmittedEvents([], "pendingActivityRevisions")
-            ]);
+      // If the event is not present in the db yet we can more or less do the same
+      else if (activityEvent.createdByRequestId) {
+        shouldCallApi = false;
+        const requestToAlter = store.getItemById(activityEvent.updatedByRequestId);
+        if (requestToAlter.query !== MISSION_LOG_MUTATION) {
+          await store.clearPendingRequest(requestToAlter);
+          if (activityEvent === "revision") {
+            return pushNewActivityEvent(
+              requestToAlter.variables.type,
+              requestToAlter.variables.driverId,
+              newUserTime,
+              userComment
+            )
           }
-        );
-      } else {
-        // Remove revisions of the event that are pending, since the event will be cancelled anyway
-        const pendingRevisionForActivity = store
-          .pendingActivityRevisions()
-          .find(rev => rev.eventId === activityEvent.id);
-        if (pendingRevisionForActivity) {
-          store.removeEvent(
-            pendingRevisionForActivity,
-            "pendingActivityRevisions"
-          );
         }
-        const event = {
-          eventId: activityEvent.id,
-          eventTime: Date.now()
-        };
-        if (userComment !== undefined && userComment !== null)
-          event.comment = userComment;
-        await store.pushEvent(event, "pendingActivityCancels");
-        api.submitEvents(
-          ACTIVITY_CANCEL_MUTATION,
-          "pendingActivityCancels",
-          apiResponse => {
-            const activities = apiResponse.data.cancelActivities.activities;
-            return Promise.all([
-              store.updateAllSubmittedEvents(
-                activities.map(parseActivityPayloadFromBackend),
-                "activities"
-              ),
-              store.updateAllSubmittedEvents([], "pendingActivityCancels")
-            ]);
-          }
-        );
       }
+    }
+    if (shouldCallApi) {
+      const editActivityPayload = {
+        eventTime: Date.now(),
+        activityId: activityEvent.id,
+        dismiss: actionType === "cancel",
+        userTime: newUserTime,
+        comment: userComment,
+      };
+
+      const updateStore = (store, requestId) => {
+        const updatedActivity = actionType === "cancel"
+          ? {...activityEvent, deletedByRequestId: requestId}
+          : {...activityEvent, updatedByRequestId: requestId, userTime: newUserTime};
+        store.pushItem(updatedActivity, "activities");
+      };
+
+      await submitAction(
+        EDIT_ACTIVITY_MUTATION,
+        editActivityPayload,
+        updateStore,
+        ["activities"],
+        apiResponse => {
+          const activities = apiResponse.data.editActivity.missionActivities.map(parseActivityPayloadFromBackend);
+          store.syncAllSubmittedItems(activities, "activities", (a) => a.missionId === activities[0].missionId)
+        }
+      );
     }
   };
 
-  const pushNewTeamEnrollment = async (
-    enrollType,
-    userId,
-    firstName,
-    lastName
-  ) => {
-    await store.pushEvent(
-      {
-        type: enrollType,
-        userId,
+  const _updateStoreWithCoworkerEnrollment = (store, requestId, id, firstName, lastName, isEnrollment, enrollmentOrReleaseTime) => {
+    let coworker;
+    if (id) coworker = store.getItemById(id, "coworkers");
+    if (!coworker) {
+      coworker = {
+        id,
         firstName,
         lastName,
-        eventTime: Date.now()
+      };
+    }
+    if (isEnrollment) coworker.joinedCurrentMissionAt = enrollmentOrReleaseTime;
+    else coworker.leftCurrentMissionAt = enrollmentOrReleaseTime;
+    store.setStoreState(prevState => ({
+      coworkers: [
+        ...prevState.coworkers.filter(cw => cw.id !== coworker.id || cw.firstName !== coworker.firstName || cw.lastName !== coworker.lastName),
+        coworker
+      ]
+    }), ["coworkers"]);
+  };
+
+  const pushNewTeamEnrollmentOrRelease = async (
+    id,
+    firstName,
+    lastName,
+    isEnrollment
+  ) => {
+    const enrollmentOrReleaseTime = Date.now();
+    const enrollmentOrReleasePayload = {
+      eventTime: enrollmentOrReleaseTime,
+      teamMate: {
+        id,
+        firstName,
+        lastName
       },
-      "teamEnrollments"
-    );
-    return api.submitEvents(
-      TEAM_ENROLLMENT_LOG_MUTATION,
-      "teamEnrollments",
+      isEnrollment
+    };
+    const updateStore = (store, requestId) => {
+      _updateStoreWithCoworkerEnrollment(store, requestId, id, firstName, lastName, isEnrollment, enrollmentOrReleaseTime);
+    };
+
+    await submitAction(
+      ENROLL_OR_RELEASE_TEAM_MATE_MUTATION,
+      enrollmentOrReleasePayload,
+      updateStore,
+      ["coworkers"],
       apiResponse => {
-        const coworkers =
-          apiResponse.data.logTeamEnrollments.enrollableCoworkers;
-        const teamEnrollments =
-          apiResponse.data.logTeamEnrollments.teamEnrollments;
-        return Promise.all([
-          store.updateAllSubmittedEvents(coworkers, "coworkers"),
-          store.updateAllSubmittedEvents(teamEnrollments, "teamEnrollments")
-        ]);
+        const coworker = apiResponse.data.enrollOrReleaseTeamMate.coworker;
+        store.setStoreState(prevState => ({
+          coworkers: [
+            ...prevState.coworkers.filter(cw => cw.id !== coworker.id || cw.firstName !== coworker.firstName || cw.lastName !== coworker.lastName),
+            coworker
+          ]
+        }), ["coworkers"]);
       }
     );
   };
 
-  const pushNewMission = async (name, userTime) => {
-    const eventTime = Date.now();
-    const event = {
+  const beginNewMission = async ({
+   name,
+   firstActivityType,
+   team = null,
+   vehicleRegistrationNumber = null,
+   vehicleId = null,
+   driver = null
+  }) => {
+    const missionPayload = {
+      eventTime: Date.now(),
       name,
-      eventTime
+      firstActivityType,
     };
-    // If userTime is far enough from the current time we consider that the user intently set its value.
-    // Otherwise it's simply the current time at modal opening
-    if (eventTime - userTime > 60000) event.userTime = userTime;
-    await store.pushEvent(event, "missions");
 
-    api.submitEvents(MISSION_LOG_MUTATION, "missions", apiResponse =>
-      store.updateAllSubmittedEvents(
-        apiResponse.data.logMissions.missions,
-        "missions"
-      )
-    );
-  };
+    if (team) missionPayload.team = team;
+    if (vehicleId) missionPayload.vehicleId = vehicleId;
+    if (vehicleRegistrationNumber) missionPayload.vehicleRegistrationNumber = vehicleRegistrationNumber;
+    if (driver)
+      missionPayload.driver = {id: driver.id, firstName: driver.firstName, lastName: driver.lastName};
 
-  const pushNewVehicleBooking = async (vehicle, userTime) => {
-    if (!vehicle) return;
-    const { id, registrationNumber } = vehicle;
-    const eventTime = Date.now();
-    const event = {
-      eventTime
+    const updateStore = (store, requestId) => {
+      const mission = {name, eventTime: missionPayload.eventTime, createdByRequestId: requestId};
+      store.pushItem(mission, "missions");
+      store.pushItem({type: firstActivityType, eventTime: mission.eventTime, driver: driver, createdByRequestId: requestId}, "activities");
+      store.pushItem({eventTime: mission.eventTime, createdByRequestId: requestId, vehicleId: vehicleId, vehicleName: vehicleRegistrationNumber}, "vehicleBookings");
+      store.setStoreState(prevState => ({
+        coworkers: prevState.coworkers.map(cw => ({...cw, joinedCurrentMissionAt: null, leftCurrentMissionAt: null}))
+      }), ["coworkers"]);
+      if (team) team.forEach(tm => _updateStoreWithCoworkerEnrollment(store, requestId, tm.id, tm.firstName, tm.lastName, true, mission.eventTime));
     };
-    if (id !== undefined && id !== null) event.vehicleId = id;
-    if (registrationNumber !== undefined && registrationNumber !== null)
-      event.registrationNumber = registrationNumber;
-
-    // If userTime is far enough from the current time we consider that the user intently set its value.
-    // Otherwise it's simply the current time at modal opening
-    if (eventTime - userTime > 60000) event.userTime = userTime;
-    await store.pushEvent(event, "vehicleBookings");
-
-    api.submitEvents(
-      VEHICLE_BOOKING_LOG_MUTATION,
-      "vehicleBookings",
+    
+    await submitAction(
+      BEGIN_MISSION_MUTATION,
+      missionPayload,
+      updateStore,
+      ["missions", "activities", "vehicleBookings"],
       apiResponse => {
-        store.updateAllSubmittedEvents(
-          apiResponse.data.logVehicleBookings.vehicleBookings,
-          "vehicleBookings"
-        );
-        store.updateAllSubmittedEvents(
-          apiResponse.data.logVehicleBookings.bookableVehicles,
-          "vehicles"
-        );
+        const mission = apiResponse.data.beginMission.mission;;
+        store.pushItem({id: mission.id, name: mission.name, eventTime: mission.eventTime}, "missions");
+        store.setStoreState(prevState => ({
+          activities: [
+            ...prevState.activities.map(a => ({...a, missionId: a.missionId || mission.id})),
+            ...mission.activities.map(parseActivityPayloadFromBackend)
+          ]
+        }), ["activities"]);
+        store.setStoreState(prevState => ({
+          comments: prevState.comments.map(a => ({...a, missionId: a.missionId || mission.id}))
+        }), ["comments"]);
+        _handleNewVehicleBookingsFromApi(mission.vehicleBookings);
+        store.setStoreState(prevState => ({
+          vehicleBookings: prevState.vehicleBookings.map(a => ({...a, missionId: a.missionId || mission.id}))
+        }), ["vehicleBookings"]);
       }
     );
   };
 
-  const pushNewComment = async content => {
-    await store.pushEvent(
-      {
-        content,
-        eventTime: Date.now()
-      },
-      "comments"
-    );
-    api.submitEvents(COMMENT_LOG_MUTATION, "comments", apiResponse => {
-      const comments = apiResponse.data.logComments.comments;
-      return store.updateAllSubmittedEvents(comments, "comments");
+  const endMission = async (
+    missionId = null,
+    expenditures = null
+  ) => {
+    const endMissionPayload = {
+      eventTime: Date.now()
+    };
+    if (missionId) endMissionPayload.missionId = missionId;
+    if (expenditures) endMissionPayload.expenditures = expenditures;
+
+    const updateStore = (store, requestId) => {
+      store.pushItem({type: ACTIVITIES.rest.name, eventTime: endMissionPayload.eventTime, missionId: missionId, createdByRequestId: requestId}, "activities");
+      store.setStoreState(prevState => ({
+        missions: prevState.missions.map(m => ({...m, expenditures: m.id === missionId ? expenditures : m.expenditures, updatedByRequestId: requestId}))
+      }), ["missions"]);
+    };
+
+    await submitAction(
+      END_MISSION_MUTATION,
+      endMissionPayload,
+      updateStore,
+      ["activities", "missions"],
+      apiResponse => {
+        const mission = apiResponse.data.endMission.mission;
+        store.syncAllSubmittedItems(mission.activities.map(parseActivityPayloadFromBackend), "activities", (a) => a.missionId === mission.id);
+        store.setStoreState(prevState => ({
+          missions: [
+            ...prevState.missions.filter(m => m.id !== mission.id && m.id !== missionId),
+            mission
+          ],
+        }), ["missions"]);
+      }
+    )
+  }
+
+  const _handleNewVehicleBookingsFromApi = (newVehicleBookings) => {
+    store.setItems(prevState => ({
+      vehicleBookings: [
+        ...prevState.vehicleBookings,
+        ...newVehicleBookings
+      ]
+    }));
+    newVehicleBookings.forEach(vehicleBooking => {
+      const vehicle = store.getItemById(vehicleBooking.vehicle.id, "vehicles");
+      if (!vehicle) store.pushItem(vehicleBooking.vehicle, "vehicles");
     });
   };
 
-  const pushNewExpenditure = (
-    currentDayExpenditures,
-    pendingExpenditureCancels
-  ) => async expenditureType => {
-    const expenditureMatch = currentDayExpenditures.find(
-      e => e.type === expenditureType
-    );
-    let expenditureCancel = null;
-    if (expenditureMatch) {
-      expenditureCancel = pendingExpenditureCancels.find(
-        e => e.eventId === expenditureMatch.id
-      );
-      if (expenditureCancel) {
-        store.removeEvent(expenditureCancel, "pendingExpenditureCancels");
+  const pushNewVehicleBooking = async (vehicle, userTime, missionId = null) => {
+    if (!vehicle) return;
+    const { id, registrationNumber } = vehicle;
+    const vehicleBookingPayload = {
+      eventTime: Date.now()
+    };
+    if (id) vehicleBookingPayload.vehicleId = id;
+    if (registrationNumber)
+      vehicleBookingPayload.registrationNumber = registrationNumber;
+
+    if (userTime) vehicleBookingPayload.userTime = userTime;
+    if (missionId) vehicleBookingPayload.missionId = missionId;
+
+    let actualVehicle;
+    if (id) actualVehicle = store.getItemById(id, "vehicles");
+
+    const updateStore = (store, requestId) => {
+      store.pushItem({...vehicleBookingPayload, vehicleName: actualVehicle ? actualVehicle.name : registrationNumber, createdByRequestId: requestId}, "vehicleBookings");
+    };
+
+    await submitAction(
+      BOOK_VEHICLE_MUTATION,
+      vehicleBookingPayload,
+      updateStore,
+      ["vehicleBookings"],
+      apiResponse => {
+        const vehicleBooking = apiResponse.data.bookVehicle.vehicleBooking;
+        _handleNewVehicleBookingsFromApi([vehicleBooking]);
       }
-    } else {
-      await store.pushEvent(
-        {
-          type: expenditureType,
-          eventTime: Date.now()
-        },
-        "expenditures"
-      );
-      api.submitEvents(
-        EXPENDITURE_LOG_MUTATION,
-        "expenditures",
-        apiResponse => {
-          const expenditures = apiResponse.data.logExpenditures.expenditures;
-          return store.updateAllSubmittedEvents(
-            expenditures.map(parseExpenditureFromBackend),
-            "expenditures"
-          );
-        }
-      );
-    }
+    );
   };
 
-  const cancelExpenditure = async expenditureToCancel => {
-    if (expenditureToCancel.isBeingSubmitted) return;
-    if (!expenditureToCancel.id) {
-      store.removeEvent(expenditureToCancel, "expenditures");
-    } else {
-      await store.pushEvent(
-        {
-          eventId: expenditureToCancel.id,
-          eventTime: Date.now()
-        },
-        "pendingExpenditureCancels"
-      );
-      api.submitEvents(
-        EXPENDITURE_CANCEL_MUTATION,
-        "pendingExpenditureCancels",
-        apiResponse => {
-          const expenditures = apiResponse.data.cancelExpenditures.expenditures;
-          return Promise.all([
-            store.updateAllSubmittedEvents(
-              expenditures.map(parseExpenditureFromBackend),
-              "expenditures"
-            ),
-            store.updateAllSubmittedEvents([], "pendingExpenditureCancels")
-          ]);
-        }
-      );
-    }
+  const pushNewComment = async (content, missionId = null) => {
+    const commentPayload = {
+      eventTime: Date.now(),
+      content
+    };
+    if (missionId) commentPayload.missionId = missionId;
+
+    const updateStore = (store, requestId) => {
+      store.pushItem({...commentPayload, createdByRequestId: requestId}, "comments");
+    };
+
+    await submitAction(
+      LOG_COMMENT_MUTATION,
+      commentPayload,
+      updateStore,
+      ["comments"],
+      apiResponse => {
+        const comment = apiResponse.data.logComment.comment;
+        store.pushItem(comment, "comments");
+      }
+    );
   };
 
   return (
     <ActionsContext.Provider
       value={{
         pushNewActivityEvent,
-        pushNewTeamEnrollment,
-        cancelOrReviseActivityEvent,
-        pushNewMission,
+        editActivityEvent,
+        beginNewMission,
+        pushNewTeamEnrollmentOrRelease,
+        endMission,
         pushNewVehicleBooking,
         pushNewComment,
-        pushNewExpenditure,
-        cancelExpenditure
       }}
     >
       {children}
