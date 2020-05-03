@@ -39,7 +39,7 @@ export function CurrentActivity({
       <Divider className="full-width-divider" />
       <ActivitySwitchGrid
         timers={timers}
-        team={resolveTeamAt(Date.now(), storeSyncedWithLocalStorage)}
+        team={resolveTeam(store)}
         currentActivity={currentActivity}
         pushActivitySwitchEvent={(activityType, driverId = null) =>
           pushNewActivityEvent({ activityType, driverId })
