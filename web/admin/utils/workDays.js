@@ -13,8 +13,8 @@ function computeWorkDayGroupAggregates(workDayGroup) {
         (aggregateTimers[key] || 0) + wd.activityTimers[key];
     });
     wd.expenditures.forEach(exp => {
-      aggregateExpenditures[exp.type] =
-        (aggregateExpenditures[exp.type] || 0) + 1;
+      aggregateExpenditures[exp] =
+        (aggregateExpenditures[exp] || 0) + 1;
     });
   });
   return {
