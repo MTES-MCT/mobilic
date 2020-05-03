@@ -38,8 +38,7 @@ export function parseActivityPayloadFromBackend(activity) {
     id: activity.id,
     type: activity.type === "support" ? ACTIVITIES.drive.name : activity.type,
     userTime: activity.userTime,
-    mission: activity.mission,
-    vehicleRegistrationNumber: activity.vehicleRegistrationNumber,
-    driverId: activity.driverId
+    missionId: activity.missionId,
+    driver: activity.driver
   };
 }

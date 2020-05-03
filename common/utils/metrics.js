@@ -1,4 +1,5 @@
 import { getTime } from "./events";
+import {ACTIVITIES} from "./activities";
 
 export function computeTotalActivityDurations(dayActivityEvents, until = null) {
   if (dayActivityEvents.length === 0) return {};
@@ -12,8 +13,9 @@ export function computeTotalActivityDurations(dayActivityEvents, until = null) {
       i === dayActivityEvents.length - 1
         ? actualUntil
         : getTime(dayActivityEvents[i + 1]);
-    timers[event.type] = timers[event.type]
-      ? timers[event.type] + nextEventDate - getTime(event)
+    const timeableType = event.type === ACTIVITIES.rest.name ? ACTIVITIES.break.name : event.type;
+    timers[timeableType] = timers[timeableType]
+      ? timers[timeableType] + nextEventDate - getTime(event)
       : nextEventDate - getTime(event);
   }
   return timers;

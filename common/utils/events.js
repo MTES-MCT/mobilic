@@ -11,30 +11,22 @@ export function sortEvents(events) {
 }
 
 export function groupActivityEventsByDay(activityEvents) {
-  const eventsByDay = [[]];
-  let i = 0;
+  const eventsByDay = [];
+  let i = -1;
+  let missionJustFinishedTime = 1;
   sortEvents(activityEvents).forEach(event => {
-    eventsByDay[i].push(event);
-    if (event.type === ACTIVITIES.rest.name) {
+    if (missionJustFinishedTime && new Date(getTime(event)).toISOString().slice(0, 10) !== new Date(missionJustFinishedTime).toISOString().slice(0, 10)) {
       eventsByDay.push([]);
       i++;
     }
+    missionJustFinishedTime = null;
+    eventsByDay[i].push(event);
+    if (event.type === ACTIVITIES.rest.name) {
+      missionJustFinishedTime = getTime(event);
+    }
   });
+  if (missionJustFinishedTime) eventsByDay.push([]);
   return eventsByDay;
-}
-
-export function getActualActivityEvents(
-  rawActivityEvents,
-  activityCancels,
-  activityRevisions
-) {
-  const cancelledActivityIds = activityCancels.map(ac => ac.eventId);
-  return rawActivityEvents
-    .filter(a => !cancelledActivityIds.includes(a.id) && !a.isHidden)
-    .map(a => {
-      const revision = activityRevisions.find(rev => rev.eventId === a.id);
-      return revision ? { ...a, userTime: revision.userTime } : a;
-    });
 }
 
 export function groupDayActivityEventsByPeriod(eventsByDay, periodCompute) {
