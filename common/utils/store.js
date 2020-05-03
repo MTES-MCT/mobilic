@@ -1,5 +1,6 @@
 import React from "react";
 import jwtDecode from "jwt-decode";
+import {NonConcurrentExecutionQueue} from "./concurrency";
 
 const StoreSyncedWithLocalStorage = React.createContext(() => {});
 
@@ -7,6 +8,9 @@ const List = {
   serialize: JSON.stringify,
   deserialize: value => (value ? JSON.parse(value) : [])
 };
+
+export const isPendingSubmission = item =>
+  !!item.deletedByRequestId || !!item.createdByRequestId || !!item.updatedByRequestId;
 
 export class StoreSyncedWithLocalStorageProvider extends React.Component {
   constructor(props) {
@@ -24,20 +28,18 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         deserialize: value => (value ? JSON.parse(value) : {})
       },
       coworkers: List,
-      teamEnrollments: List,
       activities: List,
-      pendingActivityCancels: List,
-      pendingActivityRevisions: List,
-      expenditures: List,
-      pendingExpenditureCancels: List,
+      pendingRequests: List,
       comments: List,
       missions: List,
       vehicleBookings: List,
-      vehicles: List
+      vehicles: List,
+      nextRequestId: { deserialize: value => (value ? parseInt(value) : 1) },
     };
 
     // Initialize state with null values
     this.state = {};
+    this.generateRequestIdQueue = new NonConcurrentExecutionQueue("generateRequestId");
     Object.keys(this.mapper).forEach(entry => {
       this.mapper[entry] = {
         serialize: this.mapper[entry].serialize || (value => value),
@@ -53,13 +55,17 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   initFromStorage = () => {
     Object.keys(this.mapper).forEach(async entry => {
       const rawValueFromLS = await this.storage.getItem(entry);
-      this.setState({
-        [entry]: this.mapper[entry].deserialize(rawValueFromLS)
-      });
+      try {
+        this.setState({
+          [entry]: this.mapper[entry].deserialize(rawValueFromLS)
+        });
+      } catch(err) {
+        console.log(err);
+      }
     });
   };
 
-  _setState = (stateUpdate, fieldsToSync, callback = () => {}) =>
+  setStoreState = (stateUpdate, fieldsToSync, callback = () => {}) =>
     this.setState(stateUpdate, () => {
       fieldsToSync.forEach(field => {
         this.storage.setItem(
@@ -71,99 +77,121 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     });
 
   setItems = (itemValueMap, callback = () => {}) =>
-    this._setState(itemValueMap, Object.keys(itemValueMap), callback);
+    this.setStoreState(itemValueMap, Object.keys(itemValueMap), callback);
 
-  pushEvent = (event, arrayField) =>
-    new Promise(resolve =>
-      this._setState(
-        prevState => ({ [arrayField]: [...prevState[arrayField], event] }),
+  getItemById = (id, arrayField) =>
+    this.state[arrayField].find(e => e.id === id);
+
+  pushItem = (item, arrayField) => {
+    return new Promise(resolve =>
+      this.setStoreState(
+        prevState => ({[arrayField]: [...prevState[arrayField], item]}),
         [arrayField],
         resolve
       )
     );
+  }
 
-  removeEvent = (event, arrayField) =>
-    this._setState(
+  getArray = (arrayField) => {
+    const baseItems = this.state[arrayField];
+    const updatedIds = [];
+    const deletedIds = [];
+    baseItems.forEach(item => {
+      if (item.updatedByRequestId) updatedIds.push(item.id);
+      else if (item.deletedByRequestId) deletedIds.push(item.id);
+    });
+    if (updatedIds.length + deletedIds.length > 0) {
+      return baseItems.filter(item =>
+        !deletedIds.includes(item.id) && (!updatedIds.includes(item) || item.updatedByRequestId)
+      );
+    }
+    return baseItems;
+  };
+
+  removeItem = (item, arrayField) =>
+    this.setStoreState(
       prevState => ({
         [arrayField]: prevState[arrayField].filter(
-          e => JSON.stringify(e) !== JSON.stringify(event)
+          e => item.id ? item.id !== e.id : JSON.stringify(e) !== JSON.stringify(item)
         )
       }),
       [arrayField]
     );
 
-  hideEvent = (event, arrayField) =>
-    this._setState(
+  clearPendingRequest = async (request)  => {
+    await this.removeOptimisticUpdateForRequest(request.id, request.watchFields);
+    await this.removeItem(request, "pendingRequests");
+  }
+
+  hideItem = (item, arrayField) =>
+    this.setStoreState(
       prevState => ({
         [arrayField]: [
           ...prevState[arrayField].filter(
-            e => JSON.stringify(e) !== JSON.stringify(event)
+            e => item.id ? item.id !== e.id : JSON.stringify(e) !== JSON.stringify(item)
           ),
-          { ...event, isHidden: true }
+          { ...item, isHidden: true }
         ]
       }),
       [arrayField]
     );
 
-  updateAllSubmittedEvents = (eventsFromApi, arrayField) =>
+  newRequest = async (query, variables, updateStore, watchFields, handleSubmitResponse) => {
+    const requestId = await this.generateRequestIdQueue.execute(() => new Promise(resolve => {
+      const reqId = this.state.nextRequestId;
+      this.setStoreState(
+        prevState => ({
+          nextRequestId: prevState.nextRequestId + 1
+        }),
+        ["nextRequestId"],
+        () => resolve(reqId)
+      )
+    }));
+    await updateStore(this, requestId);
+    const request = {
+      id: requestId,
+      query,
+      variables,
+      watchFields,
+      handleSubmitResponse,
+      batchable: true,
+    };
+    await this.pushItem(
+      request,
+      "pendingRequests"
+    );
+    return request;
+  };
+
+  removeOptimisticUpdateForRequest = (requestId, watchFields) =>
     new Promise(resolve => {
-      this._setState(
+      this.setStoreState(
+        prevState => Object.fromEntries(
+          watchFields.map(
+            arrayField => ([
+              arrayField,
+              prevState[arrayField].filter(e => ![e.createdByRequestId, e.updatedByRequestId, e.deletedByRequestId].includes(requestId))
+            ])
+          )
+        ),
+        watchFields,
+        resolve
+      )
+    });
+
+  syncAllSubmittedItems = (itemsFromApi, arrayField, onlyReplaceEventsWithCondition = () => true) =>
+    new Promise(resolve => {
+      this.setStoreState(
         prevState => ({
           [arrayField]: [
-            ...eventsFromApi,
+            ...itemsFromApi,
             ...prevState[arrayField].filter(
-              e => !e.id && !e.isBeingSubmitted && !e.isPrediction
+              e => isPendingSubmission(e) || !onlyReplaceEventsWithCondition(e)
             )
           ]
         }),
         [arrayField],
-        () => resolve()
-      );
-    });
-
-  markAndGetEventsForSubmission = arrayField =>
-    new Promise(resolve => {
-      this._setState(
-        prevState => ({
-          [arrayField]: prevState[arrayField].map(e =>
-            e.id || e.isPrediction ? e : { ...e, isBeingSubmitted: true }
-          )
-        }),
-        [arrayField],
-        () =>
-          resolve(
-            this.state[arrayField]
-              .filter(e => e.isBeingSubmitted)
-              .map(event => {
-                const { isHidden, ...eventProps } = event;
-                return eventProps;
-              })
-          )
-      );
-    });
-
-  removeSubmissionMark = arrayField =>
-    new Promise(resolve => {
-      this._setState(
-        prevState => ({
-          [arrayField]: prevState[arrayField].map(e => ({
-            ...e,
-            isBeingSubmitted: false
-          }))
-        }),
-        [arrayField],
-        () => resolve()
-      );
-    });
-
-  removeEventsAfterFailedSubmission = arrayField =>
-    new Promise(resolve => {
-      this._setState(
-        prevState => ({
-          [arrayField]: prevState[arrayField].filter(e => !e.isBeingSubmitted)
-        }),
-        [arrayField],
-        () => resolve()
+        resolve
       );
     });
 
@@ -236,25 +264,19 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             userInfo: () => ({ id: this.state.userId, ...this.state.userInfo }),
             coworkers: () => this.state.coworkers,
             setCoworkers: this.setCoworkers,
-            activities: () => this.state.activities,
-            expenditures: () => this.state.expenditures,
-            comments: () => this.state.comments,
-            pendingExpenditureCancels: () =>
-              this.state.pendingExpenditureCancels,
-            updateAllSubmittedEvents: this.updateAllSubmittedEvents,
-            markAndGetEventsForSubmission: this.markAndGetEventsForSubmission,
-            removeSubmissionMark: this.removeSubmissionMark,
-            removeEventsAfterFailedSubmission: this
-              .removeEventsAfterFailedSubmission,
-            removeEvent: this.removeEvent,
-            hideEvent: this.hideEvent,
-            pushEvent: this.pushEvent,
-            pendingActivityCancels: () => this.state.pendingActivityCancels,
-            pendingActivityRevisions: () => this.state.pendingActivityRevisions,
-            teamEnrollments: () => this.state.teamEnrollments,
-            missions: () => this.state.missions,
-            vehicleBookings: () => this.state.vehicleBookings,
-            vehicles: () => this.state.vehicles
+            pendingRequests: () => this.state.pendingRequests,
+            getArray: this.getArray,
+            vehicles: () => this.state.vehicles,
+            removeItem: this.removeItem,
+            hideItem: this.hideItem,
+            pushItem: this.pushItem,
+            setItems: this.setItems,
+            setStoreState: this.setStoreState,
+            newRequest: this.newRequest,
+            syncAllSubmittedItems: this.syncAllSubmittedItems,
+            clearPendingRequest: this.clearPendingRequest,
+            removeOptimisticUpdateForRequest: this.removeOptimisticUpdateForRequest,
+            getItemById: this.getItemById
           }}
         >
           {this.props.children}
