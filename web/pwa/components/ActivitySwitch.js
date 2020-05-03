@@ -92,12 +92,10 @@ export function ActivitySwitchGrid({
       modals.open("driverSelection", {
         team: teamWithSelf,
         currentDriver:
-          currentActivity.driverId !== undefined
-            ? teamWithSelf.find(tm => tm.id === currentActivity.driverId)
-            : undefined,
+          currentActivity.driver || undefined,
         currentDriverStartTime: getTime(currentActivity),
         handleDriverSelection: driver =>
-          pushActivitySwitchEvent(activityName, driver.id)
+          pushActivitySwitchEvent(activityName, driver)
       });
     } else if (activityName === ACTIVITIES.rest.name) {
       modals.open("confirmation", {

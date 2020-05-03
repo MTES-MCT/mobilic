@@ -56,7 +56,7 @@ export function ActivityRevisionOrCreationModal({
   const [newActivityIsTeamMode, setNewActivityIsTeamMode] = React.useState(
     true
   );
-  const [newActivityDriverId, setNewActivityDriverId] = React.useState(
+  const [newActivityDriver, setNewActivityDriver] = React.useState(
     undefined
   );
 
@@ -72,9 +72,9 @@ export function ActivityRevisionOrCreationModal({
 
   function handleSubmit() {
     if (actionType === "creation") {
-      let driverId = null;
-      if (requiresDriverId()) driverId = newActivityDriverId;
-      createActivity(newActivityType, newUserTime, driverId, userComment);
+      let driver = null;
+      if (requiresDriver()) driver = newActivityDriver;
+      createActivity(newActivityType, newUserTime, driver, userComment);
     } else handleRevisionAction(actionType, newUserTime, userComment);
   }
 
@@ -86,12 +86,12 @@ export function ActivityRevisionOrCreationModal({
       setNewUserTime(undefined);
       setActionType("creation");
     }
-    setNewActivityDriverId(undefined);
+    setNewActivityDriver(undefined);
     setUserComment(undefined);
     return () => {};
   }, [open]);
 
-  function requiresDriverId() {
+  function requiresDriver() {
     return (
       actionType === "creation" &&
       newActivityType === ACTIVITIES.drive.name &&
@@ -109,12 +109,12 @@ export function ActivityRevisionOrCreationModal({
       return event && getTime(event) !== newUserTime && !newUserTimeError;
     }
     if (actionType === "creation") {
-      if (requiresDriverId()) {
+      if (requiresDriver()) {
         return (
           !!newActivityType &&
           !!newUserTime &&
           !newUserTimeError &&
-          newActivityDriverId !== undefined
+          newActivityDriver !== undefined
         );
       }
       return !!newActivityType && !!newUserTime && !newUserTimeError;
@@ -183,17 +183,17 @@ export function ActivityRevisionOrCreationModal({
               ))}
             </TextField>
           )}
-          {requiresDriverId() && (
+          {requiresDriver() && (
             <TextField
               label="Conducteur"
               required
               fullWidth
               select
-              value={newActivityDriverId}
-              onChange={e => setNewActivityDriverId(e.target.value)}
+              value={newActivityDriver}
+              onChange={e => setNewActivityDriver(e.target.value)}
             >
               {team.map((teamMate, index) => (
-                <MenuItem key={index} value={teamMate.id}>
+                <MenuItem key={index} value={teamMate}>
                   {formatPersonName(teamMate)}
                 </MenuItem>
               ))}
@@ -301,10 +301,10 @@ export function WorkDayRevision({
         activityEvents[activityEvents.length - 1].type === ACTIVITIES.rest.name
           ? getTime(activityEvents[activityEvents.length - 1])
           : Date.now(),
-      createActivity: (activityType, userTime, driverId, userComment) =>
+      createActivity: (activityType, userTime, driver, userComment) =>
         pushNewActivityEvent({
           activityType,
-          driverId,
+          driver,
           userTime,
           userComment
         })
