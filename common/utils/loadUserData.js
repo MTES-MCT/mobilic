@@ -1,14 +1,14 @@
 import { USER_QUERY } from "./api";
 import { parseActivityPayloadFromBackend } from "./activities";
 
-export async function loadUserData(api, storeSyncedWithLocalStorage) {
-  const userId = storeSyncedWithLocalStorage.userId();
+export async function loadUserData(api, store) {
+  const userId = store.userId();
   if (!userId) return;
   try {
     const userResponse = await api.graphQlQuery(USER_QUERY, {
       id: userId
     });
-    return await syncUser(userResponse.data.user, storeSyncedWithLocalStorage);
+    return await syncUser(userResponse.data.user, store);
   } catch (err) {
     console.log(err);
   }
@@ -20,20 +20,27 @@ export function syncUser(userPayload, store) {
     lastName,
     company,
     isCompanyAdmin,
-    activities,
-    expenditures,
-    teamEnrollments,
-    enrollableCoworkers,
-    comments,
     missions,
-    vehicleBookings,
+    enrollableCoworkers,
     bookableVehicles
   } = userPayload;
-  const syncs = [];
+
+  const activities = [];
+  const comments = [];
+  const vehicleBookings = [];
+  const missionData = [];
+  missions.forEach(mission => {
+    activities.push(...mission.activities);
+    comments.push(...mission.comments);
+    vehicleBookings.push(...mission.vehicleBookings);
+    missionData.push({id: mission.id, name: mission.name, eventTime: mission.eventTime})
+  });
+
+  const syncActions = [];
   firstName &&
     lastName &&
     company &&
-    syncs.push(
+    syncActions.push(
       store.setUserInfo({
         firstName,
         lastName,
@@ -43,29 +50,23 @@ export function syncUser(userPayload, store) {
       })
     );
   activities &&
-    syncs.push(
-      store.updateAllSubmittedEvents(
+    syncActions.push(
+      store.syncAllSubmittedItems(
         activities.map(parseActivityPayloadFromBackend),
         "activities"
       )
     );
-  expenditures &&
-    syncs.push(store.updateAllSubmittedEvents(expenditures, "expenditures"));
-  teamEnrollments &&
-    syncs.push(
-      store.updateAllSubmittedEvents(teamEnrollments, "teamEnrollments")
-    );
   enrollableCoworkers &&
-    syncs.push(
-      store.updateAllSubmittedEvents(enrollableCoworkers, "coworkers")
+    syncActions.push(
+      store.syncAllSubmittedItems(enrollableCoworkers, "coworkers")
     );
-  comments && syncs.push(store.updateAllSubmittedEvents(comments, "comments"));
-  missions && syncs.push(store.updateAllSubmittedEvents(missions, "missions"));
+  comments && syncActions.push(store.syncAllSubmittedItems(comments, "comments"));
+  missions && syncActions.push(store.syncAllSubmittedItems(missionData, "missions"));
   vehicleBookings &&
-    syncs.push(
-      store.updateAllSubmittedEvents(vehicleBookings, "vehicleBookings")
+    syncActions.push(
+      store.syncAllSubmittedItems(vehicleBookings, "vehicleBookings")
     );
   bookableVehicles &&
-    syncs.push(store.updateAllSubmittedEvents(bookableVehicles, "vehicles"));
-  return Promise.all(syncs);
+    syncActions.push(store.syncAllSubmittedItems(bookableVehicles, "vehicles"));
+  return Promise.all(syncActions);
 }
