@@ -80,8 +80,8 @@ export function ActivitySwitchGrid({
   const modals = useModals();
   const hasTeamMates = team.length > 0;
   const theme = useTheme();
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
-  const teamWithSelf = [storeSyncedWithLocalStorage.userInfo(), ...team];
+  const store = useStoreSyncedWithLocalStorage();
+  const teamWithSelf = [store.userInfo(), ...team];
   const handleActivitySwitch = activityName => () => {
     if (
       activityName === currentActivity.type &&

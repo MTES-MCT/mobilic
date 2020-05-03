@@ -33,7 +33,7 @@ function ActivityStepButton({ activity, onClick }) {
 }
 
 export function VerticalTimeline({ activityEvents, handleEventClick }) {
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const store = useStoreSyncedWithLocalStorage();
   const theme = useTheme();
   return (
     <Box p={3} className="scrollable">
@@ -44,11 +44,11 @@ export function VerticalTimeline({ activityEvents, handleEventClick }) {
           activityEvent.driverId
         ) {
           driverInfo = `Conducteur : ${formatPersonName(
-            activityEvent.driverId === storeSyncedWithLocalStorage.userId()
-              ? storeSyncedWithLocalStorage.userInfo()
+            activityEvent.driverId === store.userId()
+              ? store.userInfo()
               : getCoworkerById(
                   activityEvent.driverId,
-                  storeSyncedWithLocalStorage.coworkers()
+                  store.coworkers()
                 )
           )}`;
         }

@@ -15,12 +15,12 @@ import { useModals } from "common/utils/modals";
 function AppUserHeader({ withCompanyNameBelow }) {
   const modals = useModals();
   const api = useApi();
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const store = useStoreSyncedWithLocalStorage();
   return (
     <Box>
       <Box className="flex-row-space-between">
         <Typography noWrap variant="body1">
-          {formatPersonName(storeSyncedWithLocalStorage.userInfo())}
+          {formatPersonName(store.userInfo())}
         </Typography>
         <IconButton
           color="primary"
@@ -41,7 +41,7 @@ function AppUserHeader({ withCompanyNameBelow }) {
           style={{ overflowX: "hidden" }}
         >
           <Typography noWrap align="left">
-            Entreprise : {storeSyncedWithLocalStorage.userInfo().companyName}
+            Entreprise : {store.userInfo().companyName}
           </Typography>
         </Box>
       )}
@@ -53,7 +53,7 @@ function DesktopUserHeader() {
   const modals = useModals();
   const api = useApi();
   const theme = useTheme();
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const store = useStoreSyncedWithLocalStorage();
   return (
     <Box className="flex-row-space-between">
       <Logos />
@@ -65,8 +65,8 @@ function DesktopUserHeader() {
           noWrap
           variant="body1"
         >
-          {formatPersonName(storeSyncedWithLocalStorage.userInfo())} -{" "}
-          {storeSyncedWithLocalStorage.userInfo().companyName}
+          {formatPersonName(store.userInfo())} -{" "}
+          {store.userInfo().companyName}
         </Typography>
         <IconButton
           style={{ marginLeft: theme.spacing(10) }}

@@ -21,7 +21,7 @@ export function VehicleBookingModal({
   handleClose,
   handleContinue
 }) {
-  const storeSyncedWithLocaStorage = useStoreSyncedWithLocalStorage();
+  const store = useStoreSyncedWithLocalStorage();
 
   const [vehicle, setVehicle] = React.useState("");
   const [bookingTime, setBookingTime] = React.useState(undefined);
@@ -29,7 +29,7 @@ export function VehicleBookingModal({
 
   const currentVehicle = resolveVehicle(
     currentVehicleBooking,
-    storeSyncedWithLocaStorage
+    store
   );
 
   React.useEffect(() => {

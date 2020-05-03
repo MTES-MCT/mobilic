@@ -391,12 +391,13 @@ const ApiContext = React.createContext(() => {});
 
 class Api {
   constructor(
-    storeSyncedWithLocalStorage = {},
+    store = {},
     apiHost = process.env.REACT_APP_API_HOST || "/api",
     graphqlPath = "/graphql"
   ) {
     this.apiHost = apiHost;
-    this.storeSyncedWithLocalStorage = storeSyncedWithLocalStorage;
+    this.store = store;
+    const uri = `${apiHost}${graphqlPath}`;
     this.apolloClient = new ApolloClient({
       uri: `${apiHost}${graphqlPath}`,
       link: ApolloLink.from([
@@ -476,14 +477,14 @@ class Api {
     return await this._queryWithRefreshToken(() => {
       const url = `${this.apiHost}${endpoint}`;
       if (!options.headers) options.headers = {};
-      options.headers.Authorization = `Bearer ${this.storeSyncedWithLocalStorage.accessToken()}`;
+      options.headers.Authorization = `Bearer ${this.store.accessToken()}`;
       options.method = method;
       return fetch(url, options);
     });
   }
 
   async _refreshTokenIfNeeded() {
-    const accessToken = this.storeSyncedWithLocalStorage.accessToken();
+    const accessToken = this.store.accessToken();
     if (accessToken) {
       try {
         const decodedToken = jwtDecode(accessToken);
@@ -493,7 +494,7 @@ class Api {
           const refreshResponse = await this.apolloClient.mutate({
             mutation: REFRESH_MUTATION
           });
-          await this.storeSyncedWithLocalStorage.storeTokens(
+          await this.store.storeTokens(
             refreshResponse.data.auth.refresh
           );
         }
@@ -546,14 +547,14 @@ class Api {
   }
 
   async logout() {
-    await this.storeSyncedWithLocalStorage.removeTokens();
+    await this.store.removeTokens();
   }
 }
 
 const api = new Api();
 
 export function ApiContextProvider({ children }) {
-  api.storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  api.store = useStoreSyncedWithLocalStorage();
   return <ApiContext.Provider value={api}>{children}</ApiContext.Provider>;
 }
 

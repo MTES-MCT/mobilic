@@ -12,7 +12,7 @@ import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 
 export function DataExport({ open, handleClose }) {
   const api = useApi();
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const store = useStoreSyncedWithLocalStorage();
   const [minDate, setMinDate] = React.useState(null);
 
   return (
@@ -55,7 +55,7 @@ export function DataExport({ open, handleClose }) {
               e.preventDefault();
               const response = await api.httpQuery(
                 "GET",
-                `/download_company_activity_report/${storeSyncedWithLocalStorage.companyId()}${optionalQueryString}`
+                `/download_company_activity_report/${store.companyId()}${optionalQueryString}`
               );
               const blob = await response.blob();
               const link = document.createElement("a");

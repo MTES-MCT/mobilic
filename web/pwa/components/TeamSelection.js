@@ -30,14 +30,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export function TeamSelectionModal({
   open,
-  showEnrollmentHistoryAfterTime,
+  useCurrentEnrollment,
   handleClose,
   handleContinue
 }) {
   const [updatedCoworkers, setUpdatedCoworkers] = React.useState([]);
 
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
-  const coworkers = storeSyncedWithLocalStorage.coworkers();
+  const store = useStoreSyncedWithLocalStorage();
+  const coworkers = store.coworkers();
 
   // The component maintains a separate "updatedCoworkers" state,
   // so that pending changes to coworkers and current team can be either :

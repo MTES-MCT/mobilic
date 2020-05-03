@@ -67,12 +67,12 @@ export default function Root() {
 
 function _Root() {
   const api = useApi();
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
-  const userId = storeSyncedWithLocalStorage.userId();
-  const isCompanyAdmin = storeSyncedWithLocalStorage.companyAdmin();
+  const store = useStoreSyncedWithLocalStorage();
+  const userId = store.userId();
+  const isCompanyAdmin = store.companyAdmin();
 
   React.useEffect(() => {
-    loadUserData(api, storeSyncedWithLocalStorage);
+    loadUserData(api, store);
     return () => {};
   }, [userId]);
 

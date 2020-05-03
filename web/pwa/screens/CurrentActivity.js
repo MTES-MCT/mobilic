@@ -17,7 +17,7 @@ export function CurrentActivity({
   pushNewExpenditure,
   cancelExpenditure
 }) {
-  const storeSyncedWithLocalStorage = useStoreSyncedWithLocalStorage();
+  const store = useStoreSyncedWithLocalStorage();
 
   const timers = computeTotalActivityDurations(
     currentDayActivityEvents,
