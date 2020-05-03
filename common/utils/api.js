@@ -64,46 +64,44 @@ export const USER_QUERY = gql`
         id
         name
       }
+      missions {
+        id
+        name
+        eventTime
+        activities {
+          id
+          type
+          missionId
+          userTime
+          driver {
+            id
+            firstName
+            lastName
+          }
+        }
+        vehicleBookings {
+          id
+          vehicleName
+          userTime
+          missionId
+        }
+        comments {
+          id
+          content
+          missionId
+          eventTime
+        }
+      }
       enrollableCoworkers {
         id
         firstName
         lastName
-      }
-      teamEnrollments {
-        id
-        userId
-        type
-        userTime
-      }
-      activities {
-        id
-        type
-        userTime
-        driverId
-      }
-      expenditures {
-        id
-        type
-        eventTime
-      }
-      missions {
-        id
-        name
-        userTime
-      }
-      vehicleBookings {
-        id
-        vehicleId
-        userTime
+        joinedCurrentMissionAt
+        leftCurrentMissionAt
       }
       bookableVehicles {
         id
         name
-      }
-      comments {
-        id
-        content
-        eventTime
       }
     }
   }
@@ -119,9 +117,7 @@ export const COMPANY_QUERY = gql`
         workDays {
           startTime
           endTime
-          expenditures {
-            type
-          }
+          expenditures
           activityTimers
           wasModified
         }
@@ -135,150 +131,221 @@ export const COMPANY_QUERY = gql`
   }
 `;
 
-export const ACTIVITY_LOG_MUTATION = gql`
-  mutation($data: [SingleActivityInput]!) {
-    logActivities(data: $data) {
-      user {
-        activities {
-          id
-          type
-          userTime
-          driverId
-        }
-        teamEnrollments {
-          id
-          userId
-          type
-          userTime
-        }
-        missions {
-          id
-          name
-          userTime
-        }
-        vehicleBookings {
-          id
-          vehicleId
-          userTime
-        }
-        bookableVehicles {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
-
-export const EXPENDITURE_LOG_MUTATION = gql`
-  mutation($data: [SingleExpenditureInput]!) {
-    logExpenditures(data: $data) {
-      expenditures {
+export const LOG_ACTIVITY_MUTATION = gql`
+  mutation(
+    $type: InputableActivityTypeEnum!
+    $eventTime: DateTimeWithTimeStampSerialization!
+    $userTime: DateTimeWithTimeStampSerialization
+    $missionId: Int
+    $comment: String
+    $driver: TeamMateInput
+  ) {
+    logActivity(
+      type: $type
+      eventTime: $eventTime
+      userTime: $userTime
+      driver: $driver
+      missionId: $missionId
+      comment: $comment
+    ) {
+      missionActivities {
         id
         type
-        eventTime
-      }
-    }
-  }
-`;
-
-export const EXPENDITURE_CANCEL_MUTATION = gql`
-  mutation($data: [CancelEventInput]!) {
-    cancelExpenditures(data: $data) {
-      expenditures {
-        id
-        type
-        eventTime
-      }
-    }
-  }
-`;
-
-export const ACTIVITY_CANCEL_MUTATION = gql`
-  mutation($data: [CancelEventInput]!) {
-    cancelActivities(data: $data) {
-      activities {
-        id
-        type
+        missionId
         userTime
-        driverId
+        driver {
+          id
+          firstName
+          lastName
+        }
       }
     }
   }
 `;
 
-export const ACTIVITY_REVISION_MUTATION = gql`
-  mutation($data: [ActivityRevisionInput]!) {
-    reviseActivities(data: $data) {
-      activities {
+export const EDIT_ACTIVITY_MUTATION = gql`
+  mutation(
+    $eventTime: DateTimeWithTimeStampSerialization!
+    $userTime: DateTimeWithTimeStampSerialization
+    $dismiss: Boolean!
+    $activityId: Int!
+    $comment: String
+  ) {
+    editActivity(
+      eventTime: $eventTime
+      userTime: $userTime
+      dismiss: $dismiss
+      activityId: $activityId
+      comment: $comment
+    ) {
+      missionActivities {
         id
         type
+        missionId
         userTime
-        driverId
+        driver {
+          id
+          firstName
+          lastName
+        }
       }
     }
   }
 `;
 
-export const COMMENT_LOG_MUTATION = gql`
-  mutation($data: [CommentInput]!) {
-    logComments(data: $data) {
-      comments {
+export const LOG_COMMENT_MUTATION = gql`
+  mutation(
+    $eventTime: DateTimeWithTimeStampSerialization!
+    $content: String!
+    $missionId: Int
+  ) {
+    logComment(
+      eventTime: $eventTime
+      content: $content
+      missionId: $missionId
+    ) {
+      comment {
         id
         content
+        missionId
         eventTime
       }
     }
   }
 `;
 
-export const TEAM_ENROLLMENT_LOG_MUTATION = gql`
-  mutation($data: [SingleTeamEnrollmentInput]!) {
-    logTeamEnrollments(data: $data) {
-      enrollableCoworkers {
+export const ENROLL_OR_RELEASE_TEAM_MATE_MUTATION = gql`
+  mutation(
+    $eventTime: DateTimeWithTimeStampSerialization!
+    $teamMate: TeamMateInput!
+    $isEnrollment: Boolean!
+  ) {
+    enrollOrReleaseTeamMate(
+      eventTime: $eventTime
+      teamMate: $teamMate
+      isEnrollment: $isEnrollment
+    ) {
+      coworker {
         id
         firstName
         lastName
-      }
-      teamEnrollments {
-        id
-        userId
-        type
-        userTime
+        joinedCurrentMissionAt
+        leftCurrentMissionAt
       }
     }
   }
 `;
 
-export const MISSION_LOG_MUTATION = gql`
-  mutation($data: [MissionInput]!) {
-    logMissions(data: $data) {
-      missions {
+export const BEGIN_MISSION_MUTATION = gql`
+  mutation(
+    $eventTime: DateTimeWithTimeStampSerialization!
+    $name: String!
+    $firstActivityType: InputableActivityTypeEnum!
+    $vehicleRegistrationNumber: String
+    $vehicleId: Int
+    $team: [TeamMateInput]
+    $driver: TeamMateInput
+  ) {
+    beginMission(
+      eventTime: $eventTime
+      name: $name
+      firstActivityType: $firstActivityType
+      vehicleRegistrationNumber: $vehicleRegistrationNumber
+      vehicleId: $vehicleId
+      team: $team
+      driver: $driver
+    ) {
+      mission {
         id
         name
-        userTime
+        eventTime
+        activities {
+          id
+          type
+          missionId
+          userTime
+          driver {
+            id
+            firstName
+            lastName
+          }
+        }
+        vehicleBookings {
+          id
+          vehicleName
+          vehicle {
+            id
+            name
+          }
+          userTime
+          missionId
+        }
       }
     }
   }
 `;
 
-export const VEHICLE_BOOKING_LOG_MUTATION = gql`
-  mutation($data: [VehicleBookingInput]!) {
-    logVehicleBookings(data: $data) {
-      vehicleBookings {
-        id
-        vehicleId
-        userTime
-      }
-      bookableVehicles {
+export const END_MISSION_MUTATION = gql`
+  mutation(
+    $eventTime: DateTimeWithTimeStampSerialization!
+    $missionId: Int
+    $expenditures: GenericScalar
+  ) {
+    endMission(
+      eventTime: $eventTime
+      missionId: $missionId
+      expenditures: $expenditures
+    ) {
+      mission {
         id
         name
+        eventTime
+        activities {
+          id
+          type
+          missionId
+          userTime
+          driver {
+            id
+            firstName
+            lastName
+          }
+        }
       }
     }
   }
 `;
 
-export const VEHICLE_CREATE_MUTATION = gql`
+export const BOOK_VEHICLE_MUTATION = gql`
+  mutation(
+    $eventTime: DateTimeWithTimeStampSerialization!
+    $vehicleId: Int
+    $missionId: Int
+    $registrationNumber: String
+    $userTime: DateTimeWithTimeStampSerialization
+  ) {
+    bookVehicle(
+      eventTime: $eventTime
+      vehicleId: $vehicleId
+      missionId: $missionId
+      registrationNumber: $registrationNumber
+      userTime: $userTime
+    ) {
+      vehicleBooking {
+        id
+        vehicleName
+        vehicle {
+          id
+          name
+        }
+        userTime
+        missionId
+      }
+    }
+  }
+`;
+
+export const CREATE_VEHICLE_MUTATION = gql`
   mutation($registrationNumber: String!, $alias: String, $companyId: Int!) {
     createVehicle(
       registrationNumber: $registrationNumber
@@ -294,7 +361,7 @@ export const VEHICLE_CREATE_MUTATION = gql`
   }
 `;
 
-export const VEHICLE_EDIT_MUTATION = gql`
+export const EDIT_VEHICLE_MUTATION = gql`
   mutation($id: Int!, $alias: String!) {
     editVehicle(id: $id, alias: $alias) {
       vehicle {
@@ -306,7 +373,7 @@ export const VEHICLE_EDIT_MUTATION = gql`
   }
 `;
 
-export const VEHICLE_TERMINATE_MUTATION = gql`
+export const TERMINATE_VEHICLE_MUTATION = gql`
   mutation($id: Int!) {
     terminateVehicle(id: $id) {
       success
