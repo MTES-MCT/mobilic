@@ -1,7 +1,7 @@
 import { FirstActivitySelectionModal } from "./pwa/components/FirstActivitySelection";
 import { TeamSelectionModal } from "./pwa/components/TeamSelection";
 import { ConfirmationModal } from "./common/Confirmation";
-import { MissionSelectionModal } from "./pwa/components/MissionSelection";
+import { NewMissionModal } from "./pwa/components/NewMission";
 import { DriverSelectionModal } from "./pwa/components/DriverSelection";
 import { CommentInputModal } from "./pwa/components/CommentInput";
 import { ActivityRevisionOrCreationModal } from "./pwa/components/ActivityRevision";
@@ -12,7 +12,7 @@ export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
   teamSelection: TeamSelectionModal,
   confirmation: ConfirmationModal,
-  missionSelection: MissionSelectionModal,
+  newMission: NewMissionModal,
   driverSelection: DriverSelectionModal,
   commentInput: CommentInputModal,
   activityRevision: ActivityRevisionOrCreationModal,
