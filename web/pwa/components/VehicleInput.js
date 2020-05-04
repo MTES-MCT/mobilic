@@ -34,7 +34,7 @@ export function VehicleInput({ label, vehicle, setVehicle }) {
       renderInput={params => (
         <TextField
           {...params}
-          variant="standard"
+          variant="filled"
           label={label}
           placeholder="Véhicule"
         />

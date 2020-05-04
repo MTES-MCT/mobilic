@@ -59,11 +59,11 @@ export function BeforeWork({
         firstActivityType: activityType,
         driver,
         name: dayInfos.mission,
-        vehicleId: dayInfos.vehicle.id,
-        vehicleRegistrationNumber: dayInfos.vehicle.registrationNumber,
+        vehicleId: dayInfos.vehicle ? dayInfos.vehicle.id : null,
+        vehicleRegistrationNumber: dayInfos.vehicle ? dayInfos.vehicle.registrationNumber : null,
         team: teamMates
       });
-      modals.close("missionSelection");
+      modals.close("newMission");
       modals.close("teamSelection");
     };
     if (teamMates && teamMates.length > 0 && activityType === ACTIVITIES.drive.name) {
@@ -116,7 +116,7 @@ export function BeforeWork({
           color="primary"
           startIcon={<PersonIcon />}
           onClick={() => {
-            modals.open("missionSelection", {
+            modals.open("newMission", {
               handleContinue: dayInfos =>
                 modals.open("firstActivity", {
                   handleItemClick: activityType =>
@@ -136,7 +136,7 @@ export function BeforeWork({
             modals.open("teamSelection", {
               useCurrentEnrollment: false,
               handleContinue: updatedCoworkers =>
-                modals.open("missionSelection", {
+                modals.open("newMission", {
                   handleContinue: dayInfos => {
                     modals.open("firstActivity", {
                       handleItemClick: activityType =>
