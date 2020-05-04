@@ -5,11 +5,13 @@ import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import { VehicleInput } from "./VehicleInput";
-import {FunnelModal} from "./FunnelModal";
+import {FunnelModal, useStyles as useFunnelModalStyles } from "./FunnelModal";
 
 export function NewMissionModal({ open, handleClose, handleContinue }) {
   const [mission, setMission] = React.useState("");
   const [vehicle, setVehicle] = React.useState(null);
+
+  const funnelModalClasses = useFunnelModalStyles();
 
   return (
     <FunnelModal
@@ -17,7 +19,7 @@ export function NewMissionModal({ open, handleClose, handleContinue }) {
       handleBack={handleClose}
     >
       <Container className="flex-column-space-between" style={{flexGrow: 1}}>
-        <Container className="day-info-inputs" style={{maxWidth: "400px"}} disableGutters>
+        <Container className={`day-info-inputs ${funnelModalClasses.slimContainer}`} disableGutters>
           <Typography variant="h5">Quel est le nom de votre mission&nbsp;?</Typography>
           <TextField
             fullWidth
