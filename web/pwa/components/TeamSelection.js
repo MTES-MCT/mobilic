@@ -22,10 +22,23 @@ import {
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { Box } from "@material-ui/core";
 import { formatTimeOfDay } from "common/utils/time";
+import {FunnelModal, useStyles as useFunnelModalStyles} from "./FunnelModal";
+import Container from "@material-ui/core/Container";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+const useStyles = makeStyles(theme => ({
+  teamMate: {
+    paddingTop: 0,
+    paddingBottom: 0,
+    marginTop: theme.spacing(0.5),
+    marginBottom: theme.spacing(0.5),
+    backgroundColor: theme.palette.background.default,
+    borderRadius: 4
+  },
+  selected: {
+    backgroundColor: theme.palette.primary.light,
+  }
+}));
 
 export function TeamSelectionModal({
   open,
@@ -33,6 +46,8 @@ export function TeamSelectionModal({
   handleClose,
   handleContinue
 }) {
+  const funnelModalClasses = useFunnelModalStyles();
+  const classes = useStyles();
   const [updatedCoworkers, setUpdatedCoworkers] = React.useState([]);
 
   const store = useStoreSyncedWithLocalStorage();
@@ -90,94 +105,57 @@ export function TeamSelectionModal({
     setNewTeamMemberFirstName("");
   }
 
+  const isTeamMateChecked = (coworker) => coworker.enroll === true || (useCurrentEnrollment && coworker.enroll === undefined && !!coworker.joinedCurrentMissionAt);
+
   return (
-    <Dialog
-      fullScreen
+    <FunnelModal
       open={open}
-      onClose={() => {}}
-      TransitionComponent={Transition}
+      handleBack={handleClose}
     >
-      <Box className="header-container">
-        <AppBar style={{ position: "relative" }}>
-          <Toolbar className="flex-row-space-between">
-            <IconButton edge="start" color="inherit" onClick={handleClose}>
-              <ArrowBackIcon />
-            </IconButton>
-            <Typography variant="h3">Equipe du jour</Typography>
-            <IconButton edge="end" color="inherit" className="hidden">
-              <ArrowBackIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Box my={2} ml={1}>
-          <form
-            className="new-team-member-form"
-            onSubmit={handleTeamMemberSubmit}
-          >
-            <TextField
-              label="Prénom"
-              className="new-team-member-text-field"
-              variant="outlined"
-              value={newTeamMemberFirstName}
-              onChange={e => setNewTeamMemberFirstName(e.target.value)}
-            />
-            <div style={{ width: "2vw" }} />
-            <TextField
-              label="Nom"
-              variant="outlined"
-              className="new-team-member-text-field"
-              value={newTeamMemberName}
-              onChange={e => setNewTeamMemberName(e.target.value)}
-            />
-            <IconButton
-              disabled={!newTeamMemberName || !newTeamMemberFirstName}
-              type="submit"
-            >
-              <AddIcon />
-            </IconButton>
-          </form>
-        </Box>
-      </Box>
-      <List className="scrollable">
-        {updatedCoworkers.map((coworker, index) => [
-          <Divider key={2 * index} />,
-          <ListItem key={2 * index + 1}>
-            <Checkbox
-              checked={coworker.enroll === true || (useCurrentEnrollment && coworker.enroll === undefined && !!coworker.joinedCurrentMissionAt)}
-              onChange={toggleAddCoworkerToTeam(index)}
-            />
-            <ListItemText
-              primaryTypographyProps={{ noWrap: true, display: "block" }}
-              primary={formatPersonName(coworker)}
-              secondaryTypographyProps={{ noWrap: true, display: "block" }}
-              secondary={
-                useCurrentEnrollment
-                  ? coworker.joinedCurrentMissionAt
-                    ? `ajouté à ${formatTimeOfDay(coworker.joinedCurrentMissionAt)}`
-                    : coworker.leftCurrentMissionAt
-                      ? `retiré à ${formatTimeOfDay(coworker.leftCurrentMissionAt)}`
+      <Container className="flex-column scrollable">
+        <Typography className={funnelModalClasses.title} variant="h5">Quels sont vos coéquipiers&nbsp;?</Typography>
+        <Box pt={1} className="scrollable">
+          <List dense className="scrollable">
+            {updatedCoworkers.map((coworker, index) =>
+              <ListItem
+                disableGutters
+                className={`${classes.teamMate} ${isTeamMateChecked(coworker) && classes.selected}`}
+                key={index}
+                onClick={toggleAddCoworkerToTeam(index)}
+              >
+                <Checkbox
+                  checked={isTeamMateChecked(coworker)}
+                  color="default"
+                />
+                <ListItemText
+                  primaryTypographyProps={{ noWrap: true, display: "block" }}
+                  primary={formatPersonName(coworker)}
+                  secondaryTypographyProps={{ noWrap: true, display: "block" }}
+                  secondary={
+                    useCurrentEnrollment
+                      ? coworker.joinedCurrentMissionAt
+                        ? `ajouté à ${formatTimeOfDay(coworker.joinedCurrentMissionAt)}`
+                        : coworker.leftCurrentMissionAt
+                          ? `retiré à ${formatTimeOfDay(coworker.leftCurrentMissionAt)}`
+                          : ""
                       : ""
-                  : ""
-              }
-            />
-            <ListItemSecondaryAction>
-              <IconButton edge="end" onClick={removeCoworker(index)}>
-                <DeleteIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        ])}
-      </List>
-      <Box style={{ height: "5vh", flexGrow: 1 }} />
-      <Box className="cta-container" mx={2} mb={2}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={async () => handleContinue(updatedCoworkers.filter(cw => cw.enroll !== undefined))}
-        >
-          Continuer
-        </Button>
-      </Box>
-    </Dialog>
+                  }
+                />
+              </ListItem>
+            )}
+          </List>
+        </Box>
+        <Box my={1} />
+        <Box className="cta-container" mb={4}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={async () => handleContinue(updatedCoworkers.filter(cw => cw.enroll !== undefined))}
+          >
+            Continuer
+          </Button>
+        </Box>
+      </Container>
+    </FunnelModal>
   );
 }
