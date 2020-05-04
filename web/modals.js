@@ -7,6 +7,7 @@ import { CommentInputModal } from "./pwa/components/CommentInput";
 import { ActivityRevisionOrCreationModal } from "./pwa/components/ActivityRevision";
 import { VehicleBookingModal } from "./pwa/components/VehicleBooking";
 import { DataExport } from "./admin/components/DataExport";
+import {TeamOrSoloChoiceModal} from "./pwa/components/TeamOrSoloChoice";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -17,5 +18,6 @@ export const MODAL_DICT = {
   commentInput: CommentInputModal,
   activityRevision: ActivityRevisionOrCreationModal,
   vehicleBooking: VehicleBookingModal,
-  dataExport: DataExport
+  dataExport: DataExport,
+  teamOrSoloChoice: TeamOrSoloChoiceModal
 };
