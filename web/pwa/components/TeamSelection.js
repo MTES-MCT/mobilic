@@ -25,6 +25,7 @@ import { formatTimeOfDay } from "common/utils/time";
 import {FunnelModal, useStyles as useFunnelModalStyles} from "./FunnelModal";
 import Container from "@material-ui/core/Container";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import {useModals} from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   teamMate: {
@@ -37,6 +38,12 @@ const useStyles = makeStyles(theme => ({
   },
   selected: {
     backgroundColor: theme.palette.primary.light,
+  },
+  addTeamMate: {
+    marginTop: theme.spacing(1),
+    textTransform: "none",
+    alignSelf: "flex-start",
+    textDecoration: "underline"
   }
 }));
 
@@ -51,6 +58,7 @@ export function TeamSelectionModal({
   const [updatedCoworkers, setUpdatedCoworkers] = React.useState([]);
 
   const store = useStoreSyncedWithLocalStorage();
+  const modals = useModals();
   const coworkers = store.coworkers();
 
   // The component maintains a separate "updatedCoworkers" state,
@@ -62,14 +70,14 @@ export function TeamSelectionModal({
     setUpdatedCoworkers(coworkers.map(cw => ({ ...cw })));
   }, [open, coworkers]);
 
-  const pushNewCoworker = (firstName, lastName) => () => {
+  const pushNewCoworker = (firstName, lastName) => {
     setUpdatedCoworkers([
-      ...updatedCoworkers,
       {
         firstName: firstName,
         lastName: lastName,
         enroll: true
-      }
+      },
+      ...updatedCoworkers
     ]);
   };
 
@@ -87,24 +95,6 @@ export function TeamSelectionModal({
     setUpdatedCoworkers(newCoworkers);
   };
 
-  const removeCoworker = id => () => {
-    const newCoworkers = updatedCoworkers.slice();
-    newCoworkers.splice(id, 1);
-    setUpdatedCoworkers(newCoworkers);
-  };
-
-  const [newTeamMemberName, setNewTeamMemberName] = React.useState("");
-  const [newTeamMemberFirstName, setNewTeamMemberFirstName] = React.useState(
-    ""
-  );
-
-  function handleTeamMemberSubmit(e) {
-    e.preventDefault();
-    pushNewCoworker(newTeamMemberFirstName, newTeamMemberName)();
-    setNewTeamMemberName("");
-    setNewTeamMemberFirstName("");
-  }
-
   const isTeamMateChecked = (coworker) => coworker.enroll === true || (useCurrentEnrollment && coworker.enroll === undefined && !!coworker.joinedCurrentMissionAt);
 
   return (
@@ -114,7 +104,13 @@ export function TeamSelectionModal({
     >
       <Container className="flex-column scrollable">
         <Typography className={funnelModalClasses.title} variant="h5">Quels sont vos coéquipiers&nbsp;?</Typography>
-        <Box pt={1} className="scrollable">
+        <Button
+          className={classes.addTeamMate}
+          color="primary"
+          onClick={() => modals.open("newTeamMate", {handleSubmit: pushNewCoworker})}
+        >
+          Ajouter un coéquipier
+        </Button>
           <List dense className="scrollable">
             {updatedCoworkers.map((coworker, index) =>
               <ListItem
@@ -144,7 +140,6 @@ export function TeamSelectionModal({
               </ListItem>
             )}
           </List>
-        </Box>
         <Box my={1} />
         <Box className="cta-container" mb={4}>
           <Button
