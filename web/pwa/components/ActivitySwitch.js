@@ -1,85 +1,87 @@
 import React from "react";
 import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
-import TimerIcon from "@material-ui/icons/Timer";
-import { formatTimer } from "common/utils/time";
-import classNames from "classnames";
-import { ACTIVITIES } from "common/utils/activities";
-import useTheme from "@material-ui/core/styles/useTheme";
+import { ACTIVITIES, TIMEABLE_ACTIVITIES } from "common/utils/activities";
 import { useModals } from "common/utils/modals";
 import { getTime } from "common/utils/events";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import Box from "@material-ui/core/Box";
+import { MainCtaButton } from "./MainCtaButton";
 
-export function ActivitySwitchCard({
-  label,
-  baseColor,
-  renderIcon,
-  timer,
-  onFocus,
-  onClick,
-  className
-}) {
-  const theme = useTheme();
-  const color = onFocus
-    ? theme.palette.primary.main
-    : baseColor
-    ? baseColor
-    : "inherit";
-  const timerProps = {
-    className: classNames("activity-card-timer", {
-      bold: onFocus,
-      hidden: !timer
-    }),
-    style: { color: color }
-  };
+const useStyles = makeStyles(theme => ({
+  container: {
+    backgroundColor: theme.palette.background.paper,
+    borderRadius: "24px",
+    marginTop: theme.spacing(-3),
+    zIndex: 1000
+  },
+  gridItem: {
+    maxWidth: 120
+  },
+  card: props => ({
+    backgroundColor: props.current
+      ? theme.palette.primary.light
+      : theme.palette.background.paper,
+    color: props.current
+      ? theme.palette.primary.contrastText
+      : theme.palette.text.primary,
+    cursor: "pointer"
+  }),
+  cardContent: {
+    height: "100%",
+    width: "100%",
+    maxWidth: 90,
+    maxHeight: 90,
+    margin: "auto",
+    padding: theme.spacing(0.5),
+    paddingBottom: theme.spacing(0.5)
+  },
+  cardIcon: {
+    margin: theme.spacing(1),
+    flexGrow: 1,
+    flexShrink: "unset",
+    width: "auto",
+    height: "auto"
+  },
+  cardText: props => ({
+    width: "100%",
+    flexShrink: 0,
+    fontWeight: props.current ? "bold" : "normal"
+  })
+}));
+
+export function ActivitySwitchCard({ label, renderIcon, current, onClick }) {
+  const classes = useStyles({ current });
   return (
-    <Card
-      className={className}
-      onClick={onClick}
-      raised={onFocus}
-      style={{ border: onFocus ? `${color} groove 2px` : "none" }}
-    >
-      <CardContent className="activity-card-content">
-        {label && (
-          <Typography
-            variant="body2"
-            className={classNames("activity-card-title", {
-              bold: onFocus
-            })}
-            style={{ color: color }}
-            noWrap
-            gutterBottom
-          >
-            {label}
-          </Typography>
-        )}
+    <Card className={classes.card} onClick={onClick} raised>
+      <Box className={`${classes.cardContent} flex-column-space-between`}>
         {renderIcon({
-          className: "activity-card-icon",
-          style: { color: color }
+          className: classes.cardIcon
         })}
-        <div className="flex-row-center">
-          {onFocus && <TimerIcon fontSize="inherit" {...timerProps} />}
-          <div style={{ width: "1vw" }} />
-          <Typography variant="body2" {...timerProps}>
-            {formatTimer(timer || 10)}
-          </Typography>
-        </div>
-      </CardContent>
+        <Typography
+          variant="body2"
+          className={classes.cardText}
+          noWrap
+          gutterBottom
+        >
+          {label}
+        </Typography>
+      </Box>
     </Card>
   );
 }
 
-export function ActivitySwitchGrid({
-  timers,
+export function ActivitySwitch({
   team,
   currentActivity,
+  endMission,
   pushActivitySwitchEvent
 }) {
+  const classes = useStyles();
   const modals = useModals();
   const hasTeamMates = team.length > 0;
-  const theme = useTheme();
   const store = useStoreSyncedWithLocalStorage();
   const teamWithSelf = [store.userInfo(), ...team];
   const handleActivitySwitch = activityName => () => {
@@ -91,22 +93,16 @@ export function ActivitySwitchGrid({
     else if (hasTeamMates && activityName === ACTIVITIES.drive.name) {
       modals.open("driverSelection", {
         team: teamWithSelf,
-        currentDriver:
-          currentActivity.driver || undefined,
+        currentDriver: currentActivity.driver || undefined,
         currentDriverStartTime: getTime(currentActivity),
         handleDriverSelection: driver =>
           pushActivitySwitchEvent(activityName, driver)
-      });
-    } else if (activityName === ACTIVITIES.rest.name) {
-      modals.open("confirmation", {
-        handleConfirm: () => pushActivitySwitchEvent(activityName),
-        title: "Confirmer fin de journée"
       });
     } else pushActivitySwitchEvent(activityName);
   };
 
   return (
-    <div className="activity-grid-container">
+    <Box className={classes.container} p={2}>
       <Grid
         container
         direction="row"
@@ -114,23 +110,28 @@ export function ActivitySwitchGrid({
         alignItems={"center"}
         spacing={2}
       >
-        {Object.values(ACTIVITIES).map(activity => (
-          <Grid item key={activity.name}>
+        {Object.values(TIMEABLE_ACTIVITIES).map(activity => (
+          <Grid item className={classes.gridItem} xs key={activity.name}>
             <ActivitySwitchCard
-              className="activity-card-container"
               label={activity.label}
               renderIcon={activity.renderIcon}
-              timer={timers[activity.name]}
-              onFocus={activity.name === currentActivity.type}
+              current={activity.name === currentActivity.type}
               onClick={handleActivitySwitch(activity.name)}
-              baseColor={
-                activity.name === ACTIVITIES.rest.name &&
-                theme.palette[activity.name]
-              }
             />
           </Grid>
         ))}
       </Grid>
-    </div>
+      <Box pt={6} pb={2}>
+        <MainCtaButton
+          onClick={() =>
+            modals.open("endMission", {
+              handleMissionEnd: endMission
+            })
+          }
+        >
+          Mission terminée
+        </MainCtaButton>
+      </Box>
+    </Box>
   );
 }
