@@ -19,7 +19,8 @@ const baseOptions = {
     rest: red[600],
     primary: {
       main: "#0053b3",
-      light: "#b4e1fa",
+      light: "#006be6",
+      lighter: "#b4e1fa",
       dark: "#003b80"
     },
     success: {
