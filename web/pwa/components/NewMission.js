@@ -1,11 +1,11 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import { VehicleInput } from "./VehicleInput";
 import {FunnelModal, useStyles as useFunnelModalStyles } from "./FunnelModal";
+import {MainCtaButton} from "./MainCtaButton";
 
 export function NewMissionModal({ open, handleClose, handleContinue }) {
   const [mission, setMission] = React.useState("");
@@ -38,17 +38,14 @@ export function NewMissionModal({ open, handleClose, handleContinue }) {
           />
         </Container>
         <Box className="cta-container" mb={4}>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={!mission}
+          <MainCtaButton
             onClick={async () => {
               const payLoad = { mission, vehicle };
               handleContinue(payLoad);
             }}
           >
             Continuer
-          </Button>
+          </MainCtaButton>
         </Box>
       </Container>
     </FunnelModal>
