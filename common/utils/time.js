@@ -42,6 +42,15 @@ export function formatTimer(timerDuration) {
   )}m`;
 }
 
+export function formatLongTimer(timerDuration) {
+  if (!timerDuration) return null;
+  const timerDurationInMinutes = (timerDuration / 60000) >> 0;
+  const timerDurationInHours = (timerDurationInMinutes / 60) >> 0;
+  return `${
+    timerDurationInHours ? timerDurationInHours + " heures" : ""
+  } ${timerDurationInMinutes} minutes`;
+}
+
 export function formatTimeOfDay(unixTimestamp) {
   const date = new Date(unixTimestamp);
   return `${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
