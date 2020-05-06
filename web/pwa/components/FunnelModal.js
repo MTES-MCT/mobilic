@@ -12,14 +12,18 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export const useStyles = makeStyles(theme => ({
   title: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(2)
   },
   slimContainer: {
-    maxWidth: 400,
+    maxWidth: 400
+  },
+  backButton: {
+    color: theme.palette.primary.main
   }
 }));
 
 export function FunnelModal({ open, handleBack, children }) {
+  const classes = useStyles();
   return (
     <Dialog
       fullScreen
@@ -27,8 +31,20 @@ export function FunnelModal({ open, handleBack, children }) {
       onClose={() => {}}
       TransitionComponent={Transition}
     >
-      <Box px={2} pb={1} pt={2} className="header-container flex-row-flex-start">
-        <Button disableElevation startIcon={<ChevronLeftIcon />} color="primary" onClick={handleBack}>
+      <Box
+        px={2}
+        pb={1}
+        pt={2}
+        className="header-container flex-row-flex-start"
+      >
+        <Button
+          className={classes.backButton}
+          variant="contained"
+          disableElevation
+          color="default"
+          startIcon={<ChevronLeftIcon />}
+          onClick={handleBack}
+        >
           Retour
         </Button>
       </Box>
