@@ -7,8 +7,9 @@ import { CommentInputModal } from "./pwa/components/CommentInput";
 import { ActivityRevisionOrCreationModal } from "./pwa/components/ActivityRevision";
 import { VehicleBookingModal } from "./pwa/components/VehicleBooking";
 import { DataExport } from "./admin/components/DataExport";
-import {TeamOrSoloChoiceModal} from "./pwa/components/TeamOrSoloChoice";
-import {NewTeamMateModal} from "./pwa/components/NewTeamMate";
+import { TeamOrSoloChoiceModal } from "./pwa/components/TeamOrSoloChoice";
+import { NewTeamMateModal } from "./pwa/components/NewTeamMate";
+import { EndMissionModal } from "./pwa/components/EndMission";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -21,5 +22,6 @@ export const MODAL_DICT = {
   vehicleBooking: VehicleBookingModal,
   dataExport: DataExport,
   teamOrSoloChoice: TeamOrSoloChoiceModal,
-  newTeamMate: NewTeamMateModal
+  newTeamMate: NewTeamMateModal,
+  endMission: EndMissionModal
 };
