@@ -5,6 +5,13 @@ import cyan from "@material-ui/core/colors/cyan";
 import teal from "@material-ui/core/colors/teal";
 
 const baseOptions = {
+  overrides: {
+    MuiButton: {
+      root: {
+        borderRadius: "20px"
+      }
+    }
+  },
   palette: {
     work: teal[300],
     break: green[400],
