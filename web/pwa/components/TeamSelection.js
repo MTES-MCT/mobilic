@@ -2,19 +2,8 @@ import React from "react";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import Dialog from "@material-ui/core/Dialog";
-import Slide from "@material-ui/core/Slide";
-import AppBar from "@material-ui/core/AppBar";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import AddIcon from "@material-ui/icons/Add";
-import DeleteIcon from "@material-ui/icons/Delete";
-import Divider from "@material-ui/core/Divider";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Checkbox from "@material-ui/core/Checkbox";
 import {
   formatPersonName
@@ -26,6 +15,7 @@ import {FunnelModal, useStyles as useFunnelModalStyles} from "./FunnelModal";
 import Container from "@material-ui/core/Container";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {useModals} from "common/utils/modals";
+import {MainCtaButton} from "./MainCtaButton";
 
 const useStyles = makeStyles(theme => ({
   teamMate: {
@@ -37,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 4
   },
   selected: {
-    backgroundColor: theme.palette.primary.light,
+    backgroundColor: theme.palette.primary.lighter,
   },
   addTeamMate: {
     marginTop: theme.spacing(1),
@@ -102,53 +92,52 @@ export function TeamSelectionModal({
       open={open}
       handleBack={handleClose}
     >
-      <Container className="flex-column scrollable">
-        <Typography className={funnelModalClasses.title} variant="h5">Quels sont vos coéquipiers&nbsp;?</Typography>
-        <Button
-          className={classes.addTeamMate}
-          color="primary"
-          onClick={() => modals.open("newTeamMate", {handleSubmit: pushNewCoworker})}
-        >
-          Ajouter un coéquipier
-        </Button>
-          <List dense className="scrollable">
-            {updatedCoworkers.map((coworker, index) =>
-              <ListItem
-                disableGutters
-                className={`${classes.teamMate} ${isTeamMateChecked(coworker) && classes.selected}`}
-                key={index}
-                onClick={toggleAddCoworkerToTeam(index)}
-              >
-                <Checkbox
-                  checked={isTeamMateChecked(coworker)}
-                  color="default"
-                />
-                <ListItemText
-                  primaryTypographyProps={{ noWrap: true, display: "block" }}
-                  primary={formatPersonName(coworker)}
-                  secondaryTypographyProps={{ noWrap: true, display: "block" }}
-                  secondary={
-                    useCurrentEnrollment
-                      ? coworker.joinedCurrentMissionAt
-                        ? `ajouté à ${formatTimeOfDay(coworker.joinedCurrentMissionAt)}`
-                        : coworker.leftCurrentMissionAt
-                          ? `retiré à ${formatTimeOfDay(coworker.leftCurrentMissionAt)}`
-                          : ""
-                      : ""
-                  }
-                />
-              </ListItem>
-            )}
-          </List>
-        <Box my={1} />
-        <Box className="cta-container" mb={4}>
+      <Container className="flex-column-space-between scrollable" style={{flexGrow: 1}}>
+        <Container className="flex-column scrollable" disableGutters>
+          <Typography className={funnelModalClasses.title} variant="h5">Qui sont vos coéquipiers&nbsp;?</Typography>
           <Button
-            variant="contained"
+            className={classes.addTeamMate}
             color="primary"
+            onClick={() => modals.open("newTeamMate", {handleSubmit: pushNewCoworker})}
+          >
+            Ajouter un coéquipier
+          </Button>
+            <List dense className="scrollable">
+              {updatedCoworkers.map((coworker, index) =>
+                <ListItem
+                  disableGutters
+                  className={`${classes.teamMate} ${isTeamMateChecked(coworker) && classes.selected}`}
+                  key={index}
+                  onClick={toggleAddCoworkerToTeam(index)}
+                >
+                  <Checkbox
+                    checked={isTeamMateChecked(coworker)}
+                    color="default"
+                  />
+                  <ListItemText
+                    primaryTypographyProps={{ noWrap: true, display: "block" }}
+                    primary={formatPersonName(coworker)}
+                    secondaryTypographyProps={{ noWrap: true, display: "block" }}
+                    secondary={
+                      useCurrentEnrollment
+                        ? coworker.joinedCurrentMissionAt
+                          ? `ajouté à ${formatTimeOfDay(coworker.joinedCurrentMissionAt)}`
+                          : coworker.leftCurrentMissionAt
+                            ? `retiré à ${formatTimeOfDay(coworker.leftCurrentMissionAt)}`
+                            : ""
+                        : ""
+                    }
+                  />
+                </ListItem>
+              )}
+            </List>
+        </Container>
+        <Box className="cta-container" mt={2} mb={4}>
+          <MainCtaButton
             onClick={async () => handleContinue(updatedCoworkers.filter(cw => cw.enroll !== undefined))}
           >
             Continuer
-          </Button>
+          </MainCtaButton>
         </Box>
       </Container>
     </FunnelModal>
