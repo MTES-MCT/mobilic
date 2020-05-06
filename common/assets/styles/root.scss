@@ -1,7 +1,7 @@
 :root {
-  --activity-card-height: 30vw;
+  --activity-card-height: 70px;
   --activity-card-max-height: 22vh;
-  --bottom-nav-bar-height: 56px;
+  --bottom-nav-bar-height: 0px;
 }
 
 @media screen and (max-height: 400px) {
@@ -87,49 +87,9 @@
   top: 0;
 }
 
-.activity-switch-container {
+.activity-grid-container {
   @extend .flex-column;
-  justify-content: space-around;
-  padding-top: 8px;
-  padding-bottom: 8px;
-
-  .activity-grid-container {
-    @extend .flex-column;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    .activity-card-container {
-      height: var(--activity-card-height);
-      max-height: var(--activity-card-max-height);
-      width: var(--activity-card-height);
-      max-width: var(--activity-card-max-height);
-      cursor: pointer;
-
-      .activity-card-title {
-        flex-shrink: 0;
-        width: 100%;
-      }
-
-      .activity-card-content {
-        padding: 3% !important;
-        height: 100%;
-        width: 100%;
-        @extend .flex-column-space-between;
-
-        .activity-card-title {
-          flex-shrink: 0;
-          width: 100%;
-        }
-
-        .activity-card-icon {
-          flex-grow: 1;
-          flex-shrink: unset !important;
-          width: auto !important;
-          height: auto !important;
-        }
-      }
-    }
-  }
+  justify-content: center;
 }
 
 .nav-bar-container {
@@ -197,12 +157,7 @@
   @extend .container;
   align-items: center;
   justify-content: center;
-  position: sticky;
-  left: 0;
-  right: 0;
-  bottom: 0;
   z-index: 2000;
-  flex-shrink: 0;
 }
 
 .bold {
