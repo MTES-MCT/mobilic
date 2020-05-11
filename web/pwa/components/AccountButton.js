@@ -4,6 +4,9 @@ import Button from "@material-ui/core/Button";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { formatPersonName } from "common/utils/coworkers";
 import withStyles from "@material-ui/core/styles/withStyles";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import { useApi } from "common/utils/api";
 
 function hexToRgb(hex) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -34,16 +37,39 @@ const OutlinedColorButton = withStyles(theme => ({
 
 export function AccountButton({ backgroundColor }) {
   const store = useStoreSyncedWithLocalStorage();
+  const api = useApi();
   const ButtonComponent = backgroundColor ? OutlinedColorButton : Button;
-  return (
+
+  const [menuAnchor, setMenuAnchor] = React.useState(null);
+
+  return [
     <ButtonComponent
+      key={0}
+      style={{ textTransform: "capitalize" }}
       startIcon={<AccountCircleIcon />}
       variant="outlined"
       color="primary"
       backgroundColor={backgroundColor}
       disableElevation
+      onClick={e => setMenuAnchor(e.currentTarget)}
     >
       {formatPersonName(store.userInfo())}
-    </ButtonComponent>
-  );
+    </ButtonComponent>,
+    <Menu
+      key={1}
+      anchorEl={menuAnchor}
+      keepMounted
+      open={Boolean(menuAnchor)}
+      onClose={() => setMenuAnchor(null)}
+    >
+      <MenuItem
+        onClick={() => {
+          api.logout();
+          setMenuAnchor(null);
+        }}
+      >
+        Me déconnecter
+      </MenuItem>
+    </Menu>
+  ];
 }
