@@ -83,13 +83,33 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   setItems = (itemValueMap, callback = () => {}) =>
     this.setStoreState(itemValueMap, Object.keys(itemValueMap), callback);
 
-  getItemById = (id, arrayField) =>
+  getItemFromArrayById = (id, arrayField) =>
     this.state[arrayField].find(e => e.id === id);
 
-  pushItem = (item, arrayField) => {
+  pushItemToArray = (item, arrayField) => {
     return new Promise(resolve =>
       this.setStoreState(
         prevState => ({ [arrayField]: [...prevState[arrayField], item] }),
+        [arrayField],
+        resolve
+      )
+    );
+  };
+
+  updateItemInArray = (updatedItem, arrayField) => {
+    return new Promise(resolve =>
+      this.setStoreState(
+        prevState => {
+          const array = prevState[arrayField];
+          const oldItemVersionIdx = array.findIndex(
+            it => it.id === updatedItem.id
+          );
+          if (oldItemVersionIdx >= 0) {
+            array.splice(oldItemVersionIdx, 1, updatedItem);
+            return { [arrayField]: [...array] };
+          }
+          return {};
+        },
         [arrayField],
         resolve
       )
@@ -179,7 +199,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       handleSubmitResponse,
       batchable
     };
-    await this.pushItem(request, "pendingRequests");
+    await this.pushItemToArray(request, "pendingRequests");
     return request;
   };
 
@@ -299,7 +319,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             vehicles: () => this.state.vehicles,
             removeItem: this.removeItem,
             hideItem: this.hideItem,
-            pushItem: this.pushItem,
+            pushItemToArray: this.pushItemToArray,
             setItems: this.setItems,
             setStoreState: this.setStoreState,
             newRequest: this.newRequest,
@@ -307,7 +327,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             clearPendingRequest: this.clearPendingRequest,
             removeOptimisticUpdateForRequest: this
               .removeOptimisticUpdateForRequest,
-            getItemById: this.getItemById
+            getItemFromArrayById: this.getItemFromArrayById,
+            updateItemInArray: this.updateItemInArray
           }}
         >
           {this.props.children}

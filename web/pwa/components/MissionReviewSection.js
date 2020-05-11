@@ -8,6 +8,7 @@ import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 export function MissionReviewSection({
   title,
   displayExpandToggle,
+  onEdit,
   className,
   children
 }) {
@@ -26,6 +27,16 @@ export function MissionReviewSection({
             endIcon={expand ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
           >
             {expand ? "Masquer" : "Afficher"}
+          </Button>
+        )}
+        {onEdit && (
+          <Button
+            color="primary"
+            size="small"
+            variant="contained"
+            onClick={onEdit}
+          >
+            Editer
           </Button>
         )}
       </Box>

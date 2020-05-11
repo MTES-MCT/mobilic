@@ -20,6 +20,9 @@ import {
   computeDayKpis,
   WorkTimeSummaryKpiGrid
 } from "../components/WorkTimeSummary";
+import Chip from "@material-ui/core/Chip";
+import { EXPENDITURES } from "common/utils/expenditures";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   overviewTimersContainer: {
@@ -31,6 +34,14 @@ const useStyles = makeStyles(theme => ({
   },
   backgroundPaper: {
     backgroundColor: theme.palette.background.paper
+  },
+  expenditures: {
+    flexWrap: "wrap",
+    textAlign: "left",
+    textTransform: "capitalize",
+    "& > *": {
+      margin: theme.spacing(0.5)
+    }
   }
 }));
 
@@ -40,10 +51,12 @@ export function MissionReview({
   currentMissionActivities,
   pushNewActivityEvent,
   editActivityEvent,
-  validateMission
+  validateMission,
+  editMissionExpenditures
 }) {
   const [submissionError, setSubmissionError] = React.useState(null);
   const store = useStoreSyncedWithLocalStorage();
+  const modals = useModals();
 
   const dayMetrics = computeDayKpis(currentDayActivityEvents);
   const team = resolveTeamAt(
@@ -102,7 +115,22 @@ export function MissionReview({
       <MissionReviewSection
         title="Frais"
         className="unshrinkable"
-      ></MissionReviewSection>
+        onEdit={() =>
+          modals.open("expenditures", {
+            handleSubmit: expenditures =>
+              editMissionExpenditures(currentMission, expenditures),
+            currentExpenditures: currentMission.expenditures
+          })
+        }
+      >
+        <Box className={`flex-row ${classes.expenditures}`}>
+          {Object.keys(currentMission.expenditures)
+            .filter(exp => currentMission.expenditures[exp] > 0)
+            .map(exp => (
+              <Chip key={exp} label={EXPENDITURES[exp].label} />
+            ))}
+        </Box>
+      </MissionReviewSection>
     </Container>,
     <Box key={1} m={2} className="cta-container" mb={submissionError ? 2 : 4}>
       <MainCtaButton
