@@ -36,7 +36,7 @@ import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import frLocale from "date-fns/locale/fr";
 import { FrLocalizedUtils } from "common/utils/time";
 import { ActionsContextProvider } from "common/utils/actions";
-import { ScreenWithBottomNavigation } from "./pwa/utils/navigation";
+import { AppScreen } from "./pwa/utils/navigation";
 import { ModalProvider } from "common/utils/modals";
 
 export default function Root() {
@@ -81,7 +81,7 @@ function _Root() {
       {userId &&
         !isCompanyAdmin && [
           <Route exact key="app" path="/app">
-            <App ScreenComponent={ScreenWithBottomNavigation} />
+            <App ScreenComponent={AppScreen} />
           </Route>,
           <Redirect push key="*" from="*" to="/app" />
         ]}
