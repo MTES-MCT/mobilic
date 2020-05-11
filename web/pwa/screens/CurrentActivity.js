@@ -1,10 +1,11 @@
 import React from "react";
 import { ActivitySwitch } from "../components/ActivitySwitch";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import { resolveTeamAt} from "common/utils/coworkers";
+import { resolveTeamAt } from "common/utils/coworkers";
 import { CurrentActivityOverview } from "../components/CurrentActivityOverview";
 import { ActivityList } from "../components/ActivityList";
 import { getTime } from "common/utils/events";
+import { MissionReviewSection } from "../components/MissionReviewSection";
 
 export function CurrentActivity({
   currentActivity,
@@ -34,14 +35,20 @@ export function CurrentActivity({
           missionId: currentMission.id
         })
       }
-      endMission={endMission}
+      endMission={args => endMission({ missionId: currentMission.id, ...args })}
     />,
-    <ActivityList
+    <MissionReviewSection
+      title={`Détail de la mission${
+        currentMission.name ? " : " + currentMission.name : ""
+      }`}
+      className="scrollable"
       key={2}
-      mission={currentMission}
-      activities={currentMissionActivities}
-      editActivityEvent={editActivityEvent}
-      previousMissionEnd={0}
-    />
+    >
+      <ActivityList
+        activities={currentMissionActivities}
+        editActivityEvent={editActivityEvent}
+        previousMissionEnd={0}
+      />
+    </MissionReviewSection>
   ];
 }

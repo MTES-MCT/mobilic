@@ -46,7 +46,7 @@ export function EndMissionModal({ open, handleClose, handleMissionEnd }) {
           <Typography className={funnelModalClasses.title} variant="h5">
             Avez-vous eu des frais lors de cette mission&nbsp;?
           </Typography>
-          <List className="scrollable">
+          <List>
             {Object.entries(EXPENDITURES).map(([expenditure, { label }]) => (
               <ListItem
                 disableGutters
