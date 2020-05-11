@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(5)
   },
   overview: {
-    backgroundColor: theme.palette.primary.light,
+    backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText
   },
   secondaryText: {
@@ -67,7 +67,7 @@ export function CurrentActivityOverview({ currentActivity, currentDayStart }) {
   return (
     <Box p={2} pb={5} className={classes.overview}>
       <Box className={classes.accountButtonContainer}>
-        <AccountButton backgroundColor={theme.palette.primary.light} />
+        <AccountButton backgroundColor={theme.palette.primary.main} />
       </Box>
       <Container
         className={classes.textContainer}

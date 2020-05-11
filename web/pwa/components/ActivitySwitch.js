@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
   card: props => ({
     backgroundColor: props.current
-      ? theme.palette.primary.light
+      ? theme.palette.primary.main
       : theme.palette.background.paper,
     color: props.current
       ? theme.palette.primary.contrastText
@@ -35,8 +35,7 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 90,
     maxHeight: 90,
     margin: "auto",
-    padding: theme.spacing(0.5),
-    paddingBottom: theme.spacing(0.5)
+    padding: theme.spacing(0.5)
   },
   cardIcon: {
     margin: theme.spacing(1),
@@ -126,11 +125,12 @@ export function ActivitySwitch({
           onClick={() => {
             const missionEndTime = Date.now();
             modals.open("endMission", {
-              handleMissionEnd: (expenditures, comment) => endMission({
-                endTime: missionEndTime,
-                expenditures,
-                comment
-              })
+              handleMissionEnd: (expenditures, comment) =>
+                endMission({
+                  endTime: missionEndTime,
+                  expenditures,
+                  comment
+                })
             });
           }}
         >
