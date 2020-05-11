@@ -48,33 +48,35 @@ export function ActivityList({
               }`}
               secondaryTypographyProps={{ color: "primary" }}
             />
-            <ListItemSecondaryAction>
-              <IconButton
-                edge="end"
-                color="primary"
-                onClick={() =>
-                  modals.open("activityRevision", {
-                    event: activity,
-                    handleRevisionAction: (
-                      actionType,
-                      newUserTime,
-                      userComment
-                    ) =>
-                      editActivityEvent(
-                        activity,
+            {editActivityEvent && (
+              <ListItemSecondaryAction>
+                <IconButton
+                  edge="end"
+                  color="primary"
+                  onClick={() =>
+                    modals.open("activityRevision", {
+                      event: activity,
+                      handleRevisionAction: (
                         actionType,
                         newUserTime,
                         userComment
-                      ),
-                    minStartTime: previousMissionEnd + 1,
-                    maxStartTime: Date.now(),
-                    cancellable: true
-                  })
-                }
-              >
-                <CreateIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
+                      ) =>
+                        editActivityEvent(
+                          activity,
+                          actionType,
+                          newUserTime,
+                          userComment
+                        ),
+                      minStartTime: previousMissionEnd + 1,
+                      maxStartTime: Date.now(),
+                      cancellable: true
+                    })
+                  }
+                >
+                  <CreateIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            )}
           </ListItem>
         ))}
     </List>
