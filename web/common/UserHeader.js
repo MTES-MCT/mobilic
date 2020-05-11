@@ -65,8 +65,7 @@ function DesktopUserHeader() {
           noWrap
           variant="body1"
         >
-          {formatPersonName(store.userInfo())} -{" "}
-          {store.userInfo().companyName}
+          {formatPersonName(store.userInfo())} - {store.userInfo().companyName}
         </Typography>
         <IconButton
           style={{ marginLeft: theme.spacing(10) }}
