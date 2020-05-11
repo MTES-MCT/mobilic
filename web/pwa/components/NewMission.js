@@ -21,7 +21,7 @@ export function NewMissionModal({ open, handleClose, handleContinue }) {
           disableGutters
         >
           <Typography variant="h5">
-            Votre mission a-t-elle un nom&nbsp;?
+            Votre mission a-t-elle un nom&nbsp;? (optionnel)
           </Typography>
           <TextField
             fullWidth
@@ -44,7 +44,7 @@ export function NewMissionModal({ open, handleClose, handleContinue }) {
           <MainCtaButton
             onClick={async () => {
               const payLoad = { mission, vehicle };
-              handleContinue(payLoad);
+              await handleContinue(payLoad);
             }}
           >
             Continuer
