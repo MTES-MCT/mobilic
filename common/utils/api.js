@@ -74,6 +74,7 @@ export const USER_QUERY = gql`
         id
         name
         eventTime
+        validated
         activities {
           id
           type
@@ -386,6 +387,19 @@ export const TERMINATE_VEHICLE_MUTATION = gql`
     }
   }
 `;
+
+export const VALIDATE_MISSION_MUTATION = gql`
+  mutation($missionId: Int!) {
+    validateMission(missionId: $missionId) {
+      mission {
+        id
+        name
+        eventTime
+        validated
+      }
+    }
+  }
+`
 
 const ApiContext = React.createContext(() => {});
 

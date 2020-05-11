@@ -1,9 +1,10 @@
 import React from "react";
 import {isPendingSubmission, useStoreSyncedWithLocalStorage} from "./store";
-import {BEGIN_MISSION_MUTATION, BOOK_VEHICLE_MUTATION,
+import {
+  BEGIN_MISSION_MUTATION, BOOK_VEHICLE_MUTATION,
   EDIT_ACTIVITY_MUTATION, END_MISSION_MUTATION, ENROLL_OR_RELEASE_TEAM_MATE_MUTATION,
   LOG_ACTIVITY_MUTATION, LOG_COMMENT_MUTATION,
-  useApi,
+  useApi, VALIDATE_MISSION_MUTATION,
 } from "./api";
 import {ACTIVITIES, parseActivityPayloadFromBackend} from "./activities";
 
@@ -15,7 +16,7 @@ export function ActionsContextProvider({ children }) {
 
   async function submitAction(query, variables, optimisticStoreUpdate, watchFields, handleSubmitResponse) {
     // 1. Store the request and optimistically update the store as if the api responded successfully
-    const request = await store.newRequest(query, variables, optimisticStoreUpdate, watchFields, handleSubmitResponse);
+    await store.newRequest(query, variables, optimisticStoreUpdate, watchFields, handleSubmitResponse);
 
     // 2. Execute the request (call API) along with any other pending one
     // await api.nonConcurrentQueryQueue.execute(() => api.executeRequest(request));
@@ -76,7 +77,7 @@ export function ActionsContextProvider({ children }) {
       else if (activityEvent.createdByRequestId) {
         shouldCallApi = false;
         const requestToAlter = store.getItemById(activityEvent.updatedByRequestId);
-        if (requestToAlter.query !== MISSION_LOG_MUTATION) {
+        if (requestToAlter.query !== BEGIN_MISSION_MUTATION) {
           await store.clearPendingRequest(requestToAlter);
           if (activityEvent === "revision") {
             return pushNewActivityEvent(
@@ -264,7 +265,25 @@ export function ActionsContextProvider({ children }) {
         }), ["missions"]);
       }
     )
-  }
+  };
+
+  const validateMission = async (mission) => {
+    await api.executePendingRequests(true);
+    let missionId = mission.id;
+    if (!missionId) {
+      const updatedMission = store.getArray("missions").find(m => m.eventTime === mission.eventTime && m.name === mission.name);
+      if (updatedMission) {
+        missionId = updatedMission.id;
+      }
+    }
+    const apiResponse = await api.graphQlMutate(
+      VALIDATE_MISSION_MUTATION,
+      {missionId},
+      true
+    );
+    const missionData = apiResponse.data.validateMission.mission;
+    await store.syncAllSubmittedItems([missionData], "missions", m => m.id === missionData.id);
+  };
 
   const _handleNewVehicleBookingsFromApi = (newVehicleBookings) => {
     store.setItems(prevState => ({
@@ -344,6 +363,7 @@ export function ActionsContextProvider({ children }) {
         endMission,
         pushNewVehicleBooking,
         pushNewComment,
+        validateMission
       }}
     >
       {children}
