@@ -14,7 +14,7 @@ export function MissionReviewSection({
 }) {
   const [expand, setExpand] = React.useState(false);
   return (
-    <Box px={2} py={1} className={className}>
+    <Box px={2} py={2} className={className}>
       <Box className="flex-row-space-between full-width">
         <Typography align="left" className="bold">
           {title}
