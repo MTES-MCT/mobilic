@@ -12,10 +12,11 @@ function computeWorkDayGroupAggregates(workDayGroup) {
       aggregateTimers[key] =
         (aggregateTimers[key] || 0) + wd.activityTimers[key];
     });
-    wd.expenditures.forEach(exp => {
-      aggregateExpenditures[exp] =
-        (aggregateExpenditures[exp] || 0) + 1;
-    });
+    if (wd.expenditures) {
+      Object.keys(wd.expenditures).forEach(exp => {
+        aggregateExpenditures[exp] = (aggregateExpenditures[exp] || 0) + 1;
+      });
+    }
   });
   return {
     userId: workDayGroup[0].userId,

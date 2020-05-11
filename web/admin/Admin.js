@@ -23,9 +23,9 @@ function _Admin() {
     };
   });
 
-  async function loadData() {
+  async function loadData(companyId) {
     try {
-      const company = await loadCompanyData(api, adminStore.companyId);
+      const company = await loadCompanyData(api, companyId);
       adminStore.sync(company);
     } catch (err) {
       console.log(err);
@@ -33,9 +33,10 @@ function _Admin() {
   }
 
   React.useEffect(() => {
-    loadData();
-    setInterval(loadData, 5 * 60 * 1000);
-  }, []);
+    if (adminStore.companyId) {
+      loadData(adminStore.companyId);
+    }
+  }, [adminStore.companyId]);
 
   const defaultView = views.find(view => view.isDefault);
   return [
