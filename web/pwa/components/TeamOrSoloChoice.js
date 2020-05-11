@@ -6,12 +6,13 @@ import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card/Card";
-import {FunnelModal, useStyles as useFunnelModalStyles} from "./FunnelModal";
+import { FunnelModal, useStyles as useFunnelModalStyles } from "./FunnelModal";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
 const useStyles = makeStyles(theme => ({
   card: {
     width: 160,
+    cursor: "pointer"
   },
   right: {
     marginLeft: theme.spacing(0.5)
@@ -34,30 +35,37 @@ export function TeamOrSoloChoiceModal({ open, handleClose, handleContinue }) {
   const classes = useStyles();
   const funnelModalClasses = useFunnelModalStyles();
   return (
-    <FunnelModal
-      open={open}
-      handleBack={handleClose}
-    >
-      <Container className="flex-column-space-between" style={{flexGrow: 1}}>
+    <FunnelModal open={open} handleBack={handleClose}>
+      <Container className="flex-column-space-between" style={{ flexGrow: 1 }}>
         <Container className={funnelModalClasses.slimContainer} disableGutters>
-          <Typography className={funnelModalClasses.title} variant="h5">Pour qui enregistrez-vous le temps de travail&nbsp;?</Typography>
-          <Box mt={3} className="flex-row-center" >
+          <Typography className={funnelModalClasses.title} variant="h5">
+            Pour qui enregistrez-vous le temps de travail&nbsp;?
+          </Typography>
+          <Box mt={3} className="flex-row-center">
             <Card
               className={`${classes.card} ${classes.left}`}
               onClick={() => handleContinue(false)}
             >
-              <CardContent className={`flex-column-space-between ${classes.content}`}>
+              <CardContent
+                className={`flex-column-space-between ${classes.content}`}
+              >
                 <PersonIcon color="primary" className={classes.icon} />
-                <Typography className="bold" color="primary">Moi</Typography>
+                <Typography className="bold" color="primary">
+                  Moi
+                </Typography>
               </CardContent>
             </Card>
             <Card
               className={`${classes.card} ${classes.right}`}
               onClick={() => handleContinue(true)}
             >
-              <CardContent className={`flex-column-space-between ${classes.content}`}>
+              <CardContent
+                className={`flex-column-space-between ${classes.content}`}
+              >
                 <PeopleIcon color="primary" className={classes.icon} />
-                <Typography noWrap className="bold" color="primary">Moi et mon équipe</Typography>
+                <Typography noWrap className="bold" color="primary">
+                  Moi et mon équipe
+                </Typography>
               </CardContent>
             </Card>
           </Box>
