@@ -12,19 +12,23 @@ import {
 import {
   computeDayKpis,
   computeWeekKpis,
+  WorkTimeSummaryAdditionalInfo,
   WorkTimeSummaryKpiGrid
 } from "../components/WorkTimeSummary";
 import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
-import { TimeLine } from "../components/Timeline";
-import Box from "@material-ui/core/Box";
 import { getTime, groupDayActivityEventsByPeriod } from "common/utils/events";
 import { findMatchingPeriodInNewScale } from "common/utils/history";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
 import { FunnelModal } from "../components/FunnelModal";
+import { RegulationCheck } from "../components/RegulationCheck";
+import { checkDayRestRespect } from "common/utils/regulation";
+import { MissionReviewSection } from "../components/MissionReviewSection";
+import { ActivityList } from "../components/ActivityList";
+import Link from "@material-ui/core/Link";
 
 const tabs = {
   day: {
@@ -33,14 +37,26 @@ const tabs = {
     periodSize: 1,
     getPeriod: date => date,
     formatPeriod: shortPrettyFormatDay,
-    renderPeriod: ({ activityEventsByDay, followingPeriodStart }) => {
+    renderPeriod: ({ activityEventsByDay, followingPeriodStart, classes }) => {
       const dayActivityEvents = activityEventsByDay[0];
+      const dayEnd = getTime(dayActivityEvents[dayActivityEvents.length - 1]);
       return (
         <div>
           <WorkTimeSummaryKpiGrid metrics={computeDayKpis(dayActivityEvents)} />
-          <Box mt={3}>
-            <TimeLine dayActivityEvents={dayActivityEvents} />
-          </Box>
+          <WorkTimeSummaryAdditionalInfo>
+            <RegulationCheck
+              check={checkDayRestRespect(dayEnd, followingPeriodStart)}
+            />
+          </WorkTimeSummaryAdditionalInfo>
+          <WorkTimeSummaryAdditionalInfo>
+            <MissionReviewSection
+              displayExpandToggle
+              title="Détail de la journée"
+              className="no-margin-no-padding"
+            >
+              <ActivityList activities={dayActivityEvents} />
+            </MissionReviewSection>
+          </WorkTimeSummaryAdditionalInfo>
         </div>
       );
     }
@@ -57,23 +73,36 @@ const tabs = {
         <WorkTimeSummaryKpiGrid
           metrics={computeWeekKpis(activityEventsByDay)}
         />
-        <Box mt={3} ml={-2}>
-          <List className="days scrollable">
-            {activityEventsByDay.map((dayActivityEvents, index) => [
-              <Divider key={2 * index} />,
-              <ListItem
-                button
-                key={2 * index + 1}
-                onClick={handleDayClick(getTime(dayActivityEvents[0]))}
-              >
-                <ListItemText
-                  primaryTypographyProps={{ noWrap: true, display: "block" }}
-                  primary={prettyFormatDay(getTime(dayActivityEvents[0]))}
-                />
-              </ListItem>
-            ])}
-          </List>
-        </Box>
+        <WorkTimeSummaryAdditionalInfo>
+          <MissionReviewSection
+            title="Détail par journée"
+            className="no-margin-no-padding"
+          >
+            <List>
+              {activityEventsByDay.map((dayActivityEvents, index) => [
+                <ListItem
+                  key={2 * index}
+                  onClick={handleDayClick(getTime(dayActivityEvents[0]))}
+                >
+                  <ListItemText disableTypography>
+                    <Link
+                      component="button"
+                      variant="body1"
+                      onClick={e => {
+                        e.preventDefault();
+                      }}
+                    >
+                      {prettyFormatDay(getTime(dayActivityEvents[0]))}
+                    </Link>
+                  </ListItemText>
+                </ListItem>,
+                index < activityEventsByDay.length - 1 ? (
+                  <Divider key={2 * index + 1} component="li" />
+                ) : null
+              ])}
+            </List>
+          </MissionReviewSection>
+        </WorkTimeSummaryAdditionalInfo>
       </div>
     )
   }
@@ -91,6 +120,9 @@ const useStyles = makeStyles(theme => ({
   periodSelector: {
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(2)
+  },
+  dayAdditionalInfo: {
+    marginTop: theme.spacing(4)
   }
 }));
 
@@ -111,6 +143,7 @@ export function HistoryModal({ open, handleClose, activityEventsByDay = [] }) {
   ]);
 
   function handlePeriodChange(e, newTab, selectedDate) {
+    console.log("e");
     const newPeriods = groupDayActivityEventsByPeriod(
       activityEventsByDay,
       tabs[newTab].getPeriod
@@ -128,7 +161,6 @@ export function HistoryModal({ open, handleClose, activityEventsByDay = [] }) {
   const classes = useStyles();
 
   const selectedPeriodEvents = eventsGroupedByPeriod[selectedPeriod];
-  console.log(eventsGroupedByPeriod);
 
   return (
     <FunnelModal open={open} handleBack={handleClose}>
@@ -167,7 +199,8 @@ export function HistoryModal({ open, handleClose, activityEventsByDay = [] }) {
             tabs[currentTab].renderPeriod({
               activityEventsByDay: selectedPeriodEvents.events,
               handleDayClick: date => e => handlePeriodChange(e, "day", date),
-              followingPeriodStart: selectedPeriodEvents.followingPeriodStart
+              followingPeriodStart: selectedPeriodEvents.followingPeriodStart,
+              classes
             })}
         </Container>
       </Container>

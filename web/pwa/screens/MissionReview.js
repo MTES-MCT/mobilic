@@ -54,6 +54,7 @@ export function MissionReview({
   validateMission,
   editMissionExpenditures
 }) {
+  console.log(currentDayActivityEvents);
   const [submissionError, setSubmissionError] = React.useState(null);
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
@@ -72,7 +73,7 @@ export function MissionReview({
       className="flex-column scrollable"
       disableGutters
     >
-      <Box p={2} className={classes.overviewTimersContainer}>
+      <Box p={2} py={4} className={classes.overviewTimersContainer}>
         <Typography
           className={classes.overviewTimersTitle}
           align="left"
