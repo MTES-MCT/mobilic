@@ -128,7 +128,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       return baseItems.filter(
         item =>
           !deletedIds.includes(item.id) &&
-          (!updatedIds.includes(item) || item.updatedByRequestId)
+          (!updatedIds.includes(item.id) || item.updatedByRequestId)
       );
     }
     return baseItems;
