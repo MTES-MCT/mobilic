@@ -4,7 +4,7 @@ import format from "date-fns/format";
 export const DAY = 86400000;
 export const WEEK = 7 * 86400000;
 export const HOUR = 3600000;
-const SHORT_MONTHS = [
+export const SHORT_MONTHS = [
   "janv",
   "fev",
   "mars",
