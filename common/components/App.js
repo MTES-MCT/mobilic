@@ -1,8 +1,5 @@
 import React from "react";
-import {
-  groupActivityEventsByDay,
-  sortEvents
-} from "common/utils/events";
+import { groupActivityEventsByDay, sortEvents } from "common/utils/events";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { useActions } from "common/utils/actions";
 
@@ -20,42 +17,58 @@ function App({ ScreenComponent }) {
   const activityEvents = store.getArray("activities");
 
   const activityEventsByDay = groupActivityEventsByDay(activityEvents);
-  const previousDaysActivityEventsByDay = activityEventsByDay.slice(
-    0,
-    activityEventsByDay.length - 1
-  );
 
   const currentDayActivityEvents =
     activityEventsByDay[activityEventsByDay.length - 1];
 
   const currentActivity = activityEvents[activityEvents.length - 1];
-  const missions = sortEvents(store.getArray("missions")).reverse();
-  const latestMission = missions.length > 0 ? missions[0] : null;
+  const missions = store.getArray("missions");
+  const currentMission = currentActivity
+    ? missions.find(
+        m =>
+          m.id === currentActivity.missionId ||
+          (!m.id && !currentActivity.missionId)
+      )
+    : null;
 
-  const vehicleBookingsForLatestMission = latestMission
-    ? sortEvents(
-      store.getArray("vehicleBookings").filter(vb => (vb.missionId === latestMission.id) || !vb.missionId)
-    ).reverse()
+  const currentMissionActivities = currentMission
+    ? currentDayActivityEvents.filter(
+        a =>
+          a.missionId === currentMission.id ||
+          (!a.missionId && !currentMission.id)
+      )
     : [];
 
-  console.log(vehicleBookingsForLatestMission);
-  const currentVehicleBookingForLatestMission = vehicleBookingsForLatestMission.length > 0 ? vehicleBookingsForLatestMission[0] : null;
+  const vehicleBookingsForCurrentMission = currentMission
+    ? sortEvents(
+        store
+          .getArray("vehicleBookings")
+          .filter(vb => vb.missionId === currentMission.id || !vb.missionId)
+      ).reverse()
+    : [];
+
+  const currentVehicleBooking =
+    vehicleBookingsForCurrentMission.length > 0
+      ? vehicleBookingsForCurrentMission[0]
+      : null;
 
   return (
     <ScreenComponent
       currentTime={currentTime}
       currentActivity={currentActivity}
       currentDayActivityEvents={currentDayActivityEvents}
-      latestMission={latestMission}
-      currentVehicleBookingForLatestMission={currentVehicleBookingForLatestMission}
+      currentMission={currentMission}
+      currentMissionActivities={currentMissionActivities}
+      currentVehicleBooking={currentVehicleBooking}
       pushNewActivityEvent={actions.pushNewActivityEvent}
       editActivityEvent={actions.editActivityEvent}
-      previousDaysActivityEventsByDay={previousDaysActivityEventsByDay}
+      activityEventsByDay={activityEventsByDay}
       pushNewTeamEnrollmentOrRelease={actions.pushNewTeamEnrollmentOrRelease}
       beginNewMission={actions.beginNewMission}
       pushNewVehicleBooking={actions.pushNewVehicleBooking}
       pushNewComment={actions.pushNewComment}
       endMission={actions.endMission}
+      validateMission={actions.validateMission}
     />
   );
 }
