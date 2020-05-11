@@ -6,11 +6,11 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import {
+  formatLatestEnrollmentInfo,
   formatPersonName
 } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { Box } from "@material-ui/core";
-import { formatTimeOfDay } from "common/utils/time";
 import {FunnelModal, useStyles as useFunnelModalStyles} from "./FunnelModal";
 import Container from "@material-ui/core/Container";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -120,11 +120,7 @@ export function TeamSelectionModal({
                     secondaryTypographyProps={{ noWrap: true, display: "block" }}
                     secondary={
                       useCurrentEnrollment
-                        ? coworker.joinedCurrentMissionAt
-                          ? `ajouté à ${formatTimeOfDay(coworker.joinedCurrentMissionAt)}`
-                          : coworker.leftCurrentMissionAt
-                            ? `retiré à ${formatTimeOfDay(coworker.leftCurrentMissionAt)}`
-                            : ""
+                        ? formatLatestEnrollmentInfo(coworker)
                         : ""
                     }
                   />

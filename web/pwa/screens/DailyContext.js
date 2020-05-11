@@ -21,7 +21,7 @@ import { prettyFormatDay } from "common/utils/time";
 import { useModals } from "common/utils/modals";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { getTime } from "common/utils/events";
-import {resolveTeam} from "common/utils/coworkers";
+import {resolveTeamAt} from "common/utils/coworkers";
 
 export function DailyContext({
   currentActivity,
@@ -55,7 +55,7 @@ export function DailyContext({
     ? store.getArray("comments").filter(c => getTime(c) >= getTime(firstActivityOfTheDay))
     : [];
 
-  const team = resolveTeam(store);
+  const team = resolveTeamAt(store, Date.now());
 
   return [
     <UserHeader key={1} withCompanyNameBelow={true} />,

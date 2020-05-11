@@ -34,7 +34,7 @@ const MONTHS = [
 ];
 
 export function formatTimer(timerDuration) {
-  if (!timerDuration) return null;
+  if (!timerDuration && timerDuration !== 0) return null;
   const timerDurationInMinutes = (timerDuration / 60000) >> 0;
   const timerDurationInHours = (timerDurationInMinutes / 60) >> 0;
   return `${timerDurationInHours}h${"\u00A0"}${addZero(
@@ -43,12 +43,12 @@ export function formatTimer(timerDuration) {
 }
 
 export function formatLongTimer(timerDuration) {
-  if (!timerDuration) return null;
+  if (!timerDuration && timerDuration !== 0) return null;
   const timerDurationInMinutes = (timerDuration / 60000) >> 0;
   const timerDurationInHours = (timerDurationInMinutes / 60) >> 0;
   return `${
     timerDurationInHours ? timerDurationInHours + " heures" : ""
-  } ${timerDurationInMinutes} minutes`;
+  } ${timerDurationInMinutes % 60} minutes`;
 }
 
 export function formatTimeOfDay(unixTimestamp) {
