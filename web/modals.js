@@ -10,6 +10,7 @@ import { DataExport } from "./admin/components/DataExport";
 import { TeamOrSoloChoiceModal } from "./pwa/components/TeamOrSoloChoice";
 import { NewTeamMateModal } from "./pwa/components/NewTeamMate";
 import { EndMissionModal } from "./pwa/components/EndMission";
+import { HistoryModal } from "./pwa/screens/History";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -23,5 +24,6 @@ export const MODAL_DICT = {
   dataExport: DataExport,
   teamOrSoloChoice: TeamOrSoloChoiceModal,
   newTeamMate: NewTeamMateModal,
-  endMission: EndMissionModal
+  endMission: EndMissionModal,
+  history: HistoryModal
 };

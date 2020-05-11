@@ -1,10 +1,7 @@
 import React from "react";
 import { Container } from "@material-ui/core";
-import Toolbar from "@material-ui/core/Toolbar";
-import AppBar from "@material-ui/core/AppBar/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import { ScrollPicker } from "../components/ScrollPicker";
 import {
   formatDay,
   getStartOfWeek,
@@ -12,7 +9,11 @@ import {
   prettyFormatDay,
   shortPrettyFormatDay
 } from "common/utils/time";
-import { WorkDaySummary, WorkWeekSummary } from "../components/WorkTimeSummary";
+import {
+  computeDayKpis,
+  computeWeekKpis,
+  WorkTimeSummaryKpiGrid
+} from "../components/WorkTimeSummary";
 import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -21,6 +22,9 @@ import { TimeLine } from "../components/Timeline";
 import Box from "@material-ui/core/Box";
 import { getTime, groupDayActivityEventsByPeriod } from "common/utils/events";
 import { findMatchingPeriodInNewScale } from "common/utils/history";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
+import { FunnelModal } from "../components/FunnelModal";
 
 const tabs = {
   day: {
@@ -33,10 +37,7 @@ const tabs = {
       const dayActivityEvents = activityEventsByDay[0];
       return (
         <div>
-          <WorkDaySummary
-            dayActivityEvents={dayActivityEvents}
-            followingDayStart={followingPeriodStart}
-          />
+          <WorkTimeSummaryKpiGrid metrics={computeDayKpis(dayActivityEvents)} />
           <Box mt={3}>
             <TimeLine dayActivityEvents={dayActivityEvents} />
           </Box>
@@ -53,7 +54,9 @@ const tabs = {
       `Semaine du ${formatDay(date)} au ${formatDay(date + WEEK)}`,
     renderPeriod: ({ activityEventsByDay, handleDayClick }) => (
       <div>
-        <WorkWeekSummary weekActivityEventsByDay={activityEventsByDay} />
+        <WorkTimeSummaryKpiGrid
+          metrics={computeWeekKpis(activityEventsByDay)}
+        />
         <Box mt={3} ml={-2}>
           <List className="days scrollable">
             {activityEventsByDay.map((dayActivityEvents, index) => [
@@ -76,19 +79,40 @@ const tabs = {
   }
 };
 
-export function History({ previousDaysActivityEventsByDay }) {
+const useStyles = makeStyles(theme => ({
+  contentContainer: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    borderRadius: "24px 24px 0 0",
+    flexGrow: 1,
+    paddingTop: theme.spacing(4),
+    textAlign: "center"
+  },
+  periodSelector: {
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(2)
+  }
+}));
+
+export function HistoryModal({ open, handleClose, activityEventsByDay = [] }) {
   const [currentTab, setCurrentTab] = React.useState("day");
 
   const { periods, eventsGroupedByPeriod } = groupDayActivityEventsByPeriod(
-    previousDaysActivityEventsByDay,
+    activityEventsByDay,
     tabs[currentTab].getPeriod
   );
 
-  const [selectedPeriod, setSelectedPeriod] = React.useState(periods[0]);
+  const [selectedPeriod, setSelectedPeriod] = React.useState(
+    periods[periods.length - 1]
+  );
+
+  React.useEffect(() => setSelectedPeriod(periods[periods.length - 1]), [
+    activityEventsByDay
+  ]);
 
   function handlePeriodChange(e, newTab, selectedDate) {
     const newPeriods = groupDayActivityEventsByPeriod(
-      previousDaysActivityEventsByDay,
+      activityEventsByDay,
       tabs[newTab].getPeriod
     ).periods;
     const newPeriod = findMatchingPeriodInNewScale(
@@ -101,13 +125,19 @@ export function History({ previousDaysActivityEventsByDay }) {
     setSelectedPeriod(newPeriod);
   }
 
+  const classes = useStyles();
+
+  const selectedPeriodEvents = eventsGroupedByPeriod[selectedPeriod];
+  console.log(eventsGroupedByPeriod);
+
   return (
-    <Container className="scrollable" maxWidth={false}>
-      <AppBar>
-        <Toolbar
-          className="flex-row-space-between stretch-header-content"
-          disableGutters
-        >
+    <FunnelModal open={open} handleBack={handleClose}>
+      <Container
+        className="flex-column full-height scrollable"
+        disableGutters
+        maxWidth={false}
+      >
+        <Container className={classes.periodSelector} maxWidth={false}>
           <Tabs
             value={currentTab}
             onChange={(e, tab) => handlePeriodChange(e, tab, selectedPeriod)}
@@ -123,29 +153,24 @@ export function History({ previousDaysActivityEventsByDay }) {
               />
             ))}
           </Tabs>
-        </Toolbar>
-      </AppBar>
-      <AppBar style={{ position: "relative", visibility: "hidden" }}>
-        <Toolbar />
-      </AppBar>
-      <ScrollPicker
-        name="day"
-        values={periods.map(period => ({
-          value: period,
-          label: tabs[currentTab].formatPeriod(period)
-        }))}
-        value={selectedPeriod}
-        setValue={setSelectedPeriod}
-        height={60}
-        itemHeight={25}
-      />
-      <div style={{ height: "2vh" }} />
-      {tabs[currentTab].renderPeriod({
-        activityEventsByDay: eventsGroupedByPeriod[selectedPeriod].events,
-        handleDayClick: date => e => handlePeriodChange(e, "day", date),
-        followingPeriodStart:
-          eventsGroupedByPeriod[selectedPeriod].followingPeriodStart
-      })}
-    </Container>
+          <PeriodCarouselPicker
+            periods={periods}
+            selectedPeriod={selectedPeriod}
+            onPeriodChange={setSelectedPeriod}
+          />
+        </Container>
+        <Container
+          className={`scrollable ${classes.contentContainer}`}
+          maxWidth={false}
+        >
+          {selectedPeriodEvents &&
+            tabs[currentTab].renderPeriod({
+              activityEventsByDay: selectedPeriodEvents.events,
+              handleDayClick: date => e => handlePeriodChange(e, "day", date),
+              followingPeriodStart: selectedPeriodEvents.followingPeriodStart
+            })}
+        </Container>
+      </Container>
+    </FunnelModal>
   );
 }
