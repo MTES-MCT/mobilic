@@ -33,7 +33,7 @@ export function syncUser(userPayload, store) {
     activities.push(...mission.activities);
     comments.push(...mission.comments);
     vehicleBookings.push(...mission.vehicleBookings);
-    missionData.push({id: mission.id, name: mission.name, eventTime: mission.eventTime})
+    missionData.push({id: mission.id, name: mission.name, eventTime: mission.eventTime, validated: mission.validated})
   });
 
   const syncActions = [];
