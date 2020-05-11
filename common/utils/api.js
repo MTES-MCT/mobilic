@@ -1,14 +1,14 @@
 import React from "react";
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
-import { onError } from 'apollo-link-error';
+import { ApolloClient } from "apollo-client";
+import { InMemoryCache } from "apollo-cache-inmemory";
+import { HttpLink } from "apollo-link-http";
+import { onError } from "apollo-link-error";
 import { BatchHttpLink } from "apollo-link-batch-http";
-import { ApolloLink, Observable } from 'apollo-link';
-import gql  from "graphql-tag";
+import { ApolloLink, Observable } from "apollo-link";
+import gql from "graphql-tag";
 import jwtDecode from "jwt-decode";
 import { useStoreSyncedWithLocalStorage } from "./store";
-import { isGraphQLParsingError } from "./errors";
+import { isConnectionError } from "./errors";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 
 const REFRESH_MUTATION = gql`
@@ -401,7 +401,7 @@ export const VALIDATE_MISSION_MUTATION = gql`
       }
     }
   }
-`
+`;
 
 const ApiContext = React.createContext(() => {});
 
@@ -421,43 +421,47 @@ class Api {
           if (
             graphQLErrors &&
             graphQLErrors.length > 0 &&
-            graphQLErrors.some(error => error.message === "Authentication error")
+            graphQLErrors.some(
+              error => error.message === "Authentication error"
+            )
           ) {
             this.refreshTokenQueue.clear();
             this.nonConcurrentQueryQueue.clear();
             this.logout();
           }
         }),
-        new ApolloLink((operation, forward) =>
-          new Observable(observer => {
-            let handle;
-            Promise.resolve(operation)
-              .then(oper => {
-                const token = oper.operationName === "refreshToken"
-                  ? this.store.refreshToken()
-                  : this.store.accessToken();
-                oper.setContext({
-                  headers: {
-                    authorization: token ? `Bearer ${token}` : ""
-                  }
-                });
-              })
-              .then(() => {
-                handle = forward(operation).subscribe({
-                  next: observer.next.bind(observer),
-                  error: observer.error.bind(observer),
-                  complete: observer.complete.bind(observer),
-                });
-              })
-              .catch(observer.error.bind(observer));
+        new ApolloLink(
+          (operation, forward) =>
+            new Observable(observer => {
+              let handle;
+              Promise.resolve(operation)
+                .then(oper => {
+                  const token =
+                    oper.operationName === "refreshToken"
+                      ? this.store.refreshToken()
+                      : this.store.accessToken();
+                  oper.setContext({
+                    headers: {
+                      authorization: token ? `Bearer ${token}` : ""
+                    }
+                  });
+                })
+                .then(() => {
+                  handle = forward(operation).subscribe({
+                    next: observer.next.bind(observer),
+                    error: observer.error.bind(observer),
+                    complete: observer.complete.bind(observer)
+                  });
+                })
+                .catch(observer.error.bind(observer));
 
-            return () => {
-              if (handle) handle.unsubscribe();
-            };
-          })
+              return () => {
+                if (handle) handle.unsubscribe();
+              };
+            })
         ),
         ApolloLink.split(
-          (operation) => !!operation.getContext().batchable,
+          operation => !!operation.getContext().batchable,
           new BatchHttpLink({ uri }),
           new HttpLink({ uri })
         )
@@ -466,7 +470,8 @@ class Api {
     });
     this.refreshTokenQueue = new NonConcurrentExecutionQueue("refreshToken");
     this.nonConcurrentQueryQueue = new NonConcurrentExecutionQueue("events");
-    this.isCurrentlySubmittingRequests = () => this.nonConcurrentQueryQueue.lock;
+    this.isCurrentlySubmittingRequests = () =>
+      this.nonConcurrentQueryQueue.lock;
   }
 
   async graphQlQuery(query, variables) {
@@ -510,35 +515,29 @@ class Api {
           const refreshResponse = await this.apolloClient.mutate({
             mutation: REFRESH_MUTATION
           });
-          await this.store.storeTokens(
-            refreshResponse.data.auth.refresh
-          );
+          await this.store.storeTokens(refreshResponse.data.auth.refresh);
         }
-        return true;
       } catch (err) {
         console.log(`Error refreshing tokens : ${err}`);
-        return false;
+        throw err;
       }
     }
-    return true;
   }
 
   async _queryWithRefreshToken(query) {
-    const isTokenValidOrRenewedOrNone = await this.refreshTokenQueue.execute(
-      () => this._refreshTokenIfNeeded()
-    );
-    if (isTokenValidOrRenewedOrNone) return await query();
+    await this.refreshTokenQueue.execute(() => this._refreshTokenIfNeeded());
+    return await query();
     // No need to catch the refresh-token error since logout is imminent
   }
 
-  async executeRequest(request) {
+  async executeRequest(request, failOnError = false) {
     try {
       // 1. Call the API
       const submit = await this._queryWithRefreshToken(() =>
         this.apolloClient.mutate({
           mutation: request.query,
           variables: request.variables,
-          context: {batchable: request.batchable},
+          context: { batchable: request.batchable }
         })
       );
       // 3. Commit the persistent changes to the store
@@ -547,18 +546,23 @@ class Api {
       // 4. Remove the temporary updates and the pending request from the pool
       await this.store.clearPendingRequest(request);
     } catch (err) {
-      if (isGraphQLParsingError(err)) {
+      if (!isConnectionError(err)) {
         await this.store.clearPendingRequest(request);
       }
+      if (failOnError) throw err;
     }
   }
 
-  async executePendingRequests() {
+  async executePendingRequests(failOnError = false) {
     return this.nonConcurrentQueryQueue.execute(async () => {
       // 1. Retrieve all pending requests
       const pendingRequests = await this.store.pendingRequests();
       if (pendingRequests.length === 0) return;
-      await Promise.all(pendingRequests.map(async request => this.executeRequest(request)));
+      await Promise.all(
+        pendingRequests.map(async request =>
+          this.executeRequest(request, failOnError)
+        )
+      );
     });
   }
 
