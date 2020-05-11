@@ -297,11 +297,13 @@ export const END_MISSION_MUTATION = gql`
     $eventTime: DateTimeWithTimeStampSerialization!
     $missionId: Int
     $expenditures: GenericScalar
+    $comment: String
   ) {
     endMission(
       eventTime: $eventTime
       missionId: $missionId
       expenditures: $expenditures
+      comment: $comment
     ) {
       mission {
         id

@@ -232,15 +232,18 @@ export function ActionsContextProvider({ children }) {
     );
   };
 
-  const endMission = async (
+  const endMission = async ({
+    endTime,
     missionId = null,
-    expenditures = null
-  ) => {
+    expenditures = null,
+    comment = null
+  }) => {
     const endMissionPayload = {
-      eventTime: Date.now()
+      eventTime: endTime
     };
     if (missionId) endMissionPayload.missionId = missionId;
     if (expenditures) endMissionPayload.expenditures = expenditures;
+    if (comment) endMissionPayload.comment = comment;
 
     const updateStore = (store, requestId) => {
       store.pushItem({type: ACTIVITIES.rest.name, eventTime: endMissionPayload.eventTime, missionId: missionId, createdByRequestId: requestId}, "activities");
