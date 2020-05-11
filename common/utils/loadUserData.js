@@ -1,5 +1,6 @@
 import { USER_QUERY } from "./api";
 import { parseActivityPayloadFromBackend } from "./activities";
+import { parseMissionPayloadFromBackend } from "./mission";
 
 export async function loadUserData(api, store) {
   const userId = store.userId();
@@ -33,7 +34,7 @@ export function syncUser(userPayload, store) {
     activities.push(...mission.activities);
     comments.push(...mission.comments);
     vehicleBookings.push(...mission.vehicleBookings);
-    missionData.push({id: mission.id, name: mission.name, eventTime: mission.eventTime, validated: mission.validated})
+    missionData.push(parseMissionPayloadFromBackend(mission));
   });
 
   const syncActions = [];
@@ -60,8 +61,10 @@ export function syncUser(userPayload, store) {
     syncActions.push(
       store.syncAllSubmittedItems(enrollableCoworkers, "coworkers")
     );
-  comments && syncActions.push(store.syncAllSubmittedItems(comments, "comments"));
-  missions && syncActions.push(store.syncAllSubmittedItems(missionData, "missions"));
+  comments &&
+    syncActions.push(store.syncAllSubmittedItems(comments, "comments"));
+  missions &&
+    syncActions.push(store.syncAllSubmittedItems(missionData, "missions"));
   vehicleBookings &&
     syncActions.push(
       store.syncAllSubmittedItems(vehicleBookings, "vehicleBookings")

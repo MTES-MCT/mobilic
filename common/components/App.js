@@ -69,6 +69,7 @@ function App({ ScreenComponent }) {
       pushNewComment={actions.pushNewComment}
       endMission={actions.endMission}
       validateMission={actions.validateMission}
+      editMissionExpenditures={actions.editMissionExpenditures}
     />
   );
 }

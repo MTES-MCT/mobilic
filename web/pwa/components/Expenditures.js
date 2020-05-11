@@ -1,63 +1,56 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import { EXPENDITURES } from "common/utils/expenditures";
-import Grid from "@material-ui/core/Grid";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText/ListItemText";
+import List from "@material-ui/core/List";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
-export function Expenditures({
-  expenditures,
-  pushNewExpenditure,
-  cancelExpenditure
-}) {
+const useStyles = makeStyles(theme => ({
+  expenditure: {
+    paddingTop: 0,
+    paddingBottom: 0,
+    marginTop: theme.spacing(0.5),
+    marginBottom: theme.spacing(0.5),
+    backgroundColor: theme.palette.background.default,
+    borderRadius: 4
+  },
+  selected: {
+    backgroundColor: theme.palette.primary.lighter
+  },
+  expenditureText: {
+    textTransform: "capitalize"
+  }
+}));
+
+export function Expenditures({ expenditures, setExpenditures }) {
+  const classes = useStyles();
   return (
-    <div>
-      <Typography variant="h4" align="left" className="bold">
-        Frais
-      </Typography>
-      <Grid
-        container
-        direction="row"
-        justify="space-between"
-        alignItems="center"
-      >
-        {Object.keys(EXPENDITURES).map(expenditureType => {
-          const currentExpenditure = expenditures.find(
-            e => e.type === expenditureType
-          );
-          return (
-            <Grid
-              key={expenditureType}
-              item
-              xs={6}
-              md={3}
-              justify="flex-start"
-              style={{ textAlign: "left" }}
-            >
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    size="small"
-                    className="expenditures-checkbox"
-                    checked={!!currentExpenditure}
-                    onChange={() =>
-                      currentExpenditure
-                        ? cancelExpenditure(currentExpenditure)
-                        : pushNewExpenditure(expenditureType)
-                    }
-                    color="primary"
-                  />
-                }
-                label={
-                  <Typography variant="body2">
-                    {EXPENDITURES[expenditureType]["label"]}
-                  </Typography>
-                }
-              />
-            </Grid>
-          );
-        })}
-      </Grid>
-    </div>
+    <List>
+      {Object.entries(EXPENDITURES).map(([expenditure, { label }]) => (
+        <ListItem
+          disableGutters
+          className={`${classes.expenditure} ${expenditures[expenditure] &&
+            classes.selected}`}
+          key={expenditure}
+          onClick={() => {
+            setExpenditures({
+              ...expenditures,
+              [expenditure]: expenditures[expenditure] ? 0 : 1
+            });
+          }}
+        >
+          <Checkbox checked={!!expenditures[expenditure]} color="default" />
+          <ListItemText
+            primaryTypographyProps={{
+              noWrap: true,
+              display: "block",
+              className: classes.expenditureText
+            }}
+            primary={label}
+          />
+        </ListItem>
+      ))}
+    </List>
   );
 }

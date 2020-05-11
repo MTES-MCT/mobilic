@@ -75,6 +75,7 @@ export const USER_QUERY = gql`
         name
         eventTime
         validated
+        expenditures
         activities {
           id
           type
@@ -309,6 +310,7 @@ export const END_MISSION_MUTATION = gql`
         id
         name
         eventTime
+        expenditures
         activities {
           id
           type
@@ -398,6 +400,24 @@ export const VALIDATE_MISSION_MUTATION = gql`
         name
         eventTime
         validated
+        expenditures
+      }
+    }
+  }
+`;
+
+export const EDIT_MISSION_EXPENDITURES_MUTATION = gql`
+  mutation($missionId: Int, $expenditures: GenericScalar!) {
+    editMissionExpenditures(
+      missionId: $missionId
+      expenditures: $expenditures
+    ) {
+      mission {
+        id
+        name
+        eventTime
+        validated
+        expenditures
       }
     }
   }
