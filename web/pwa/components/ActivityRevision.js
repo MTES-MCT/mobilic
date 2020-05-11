@@ -30,7 +30,7 @@ import { getTime } from "common/utils/events";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import MenuItem from "@material-ui/core/MenuItem";
-import { formatPersonName, resolveTeam } from "common/utils/coworkers";
+import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { DateTimePicker } from "./DateTimePicker";
 
@@ -67,7 +67,7 @@ export function ActivityRevisionOrCreationModal({
 
   const user = store.userInfo();
   const team = newUserTime
-    ? [user, ...resolveTeam(store)]
+    ? [user, ...resolveTeamAt(store, newUserTime)]
     : [user];
 
   function handleSubmit() {

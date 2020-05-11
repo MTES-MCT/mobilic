@@ -1,7 +1,7 @@
 import React from "react";
 import { ActivitySwitch } from "../components/ActivitySwitch";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import { resolveTeam } from "common/utils/coworkers";
+import { resolveTeamAt} from "common/utils/coworkers";
 import { CurrentActivityOverview } from "../components/CurrentActivityOverview";
 import { ActivityList } from "../components/ActivityList";
 import { getTime } from "common/utils/events";
@@ -25,7 +25,7 @@ export function CurrentActivity({
     />,
     <ActivitySwitch
       key={1}
-      team={resolveTeam(store)}
+      team={resolveTeamAt(store, Date.now())}
       currentActivity={currentActivity}
       pushActivitySwitchEvent={(activityType, driver = null) =>
         pushNewActivityEvent({
