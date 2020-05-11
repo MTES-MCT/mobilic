@@ -54,7 +54,6 @@ export function MissionReview({
   validateMission,
   editMissionExpenditures
 }) {
-  console.log(currentDayActivityEvents);
   const [submissionError, setSubmissionError] = React.useState(null);
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
