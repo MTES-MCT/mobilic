@@ -1,4 +1,4 @@
-import {formatTimeOfDay} from "./time";
+import { formatTimeOfDay } from "./time";
 
 export function formatPersonName(coworker) {
   return `${coworker.firstName} ${coworker.lastName}`;
@@ -12,13 +12,20 @@ export function getCoworkerById(id, coworkers) {
 }
 
 export function resolveTeamAt(store, time) {
-  return store.coworkers().filter(cw => !!cw.joinedCurrentMissionAt && cw.joinedCurrentMissionAt <= time && (!cw.leftCurrentMissionAt || cw.leftCurrentMissionAt >= time));
+  return store
+    .coworkers()
+    .filter(
+      cw =>
+        !!cw.joinedCurrentMissionAt &&
+        cw.joinedCurrentMissionAt <= time &&
+        (!cw.leftCurrentMissionAt || cw.leftCurrentMissionAt >= time)
+    );
 }
 
 export function formatLatestEnrollmentInfo(coworker) {
   return coworker.leftCurrentMissionAt
     ? `retiré à ${formatTimeOfDay(coworker.leftCurrentMissionAt)}`
     : coworker.joinedCurrentMissionAt
-      ? `ajouté à ${formatTimeOfDay(coworker.joinedCurrentMissionAt)}`
-      : "";
+    ? `ajouté à ${formatTimeOfDay(coworker.joinedCurrentMissionAt)}`
+    : "";
 }

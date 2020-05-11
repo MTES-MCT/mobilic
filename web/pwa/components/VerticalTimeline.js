@@ -46,10 +46,7 @@ export function VerticalTimeline({ activityEvents, handleEventClick }) {
           driverInfo = `Conducteur : ${formatPersonName(
             activityEvent.driverId === store.userId()
               ? store.userInfo()
-              : getCoworkerById(
-                  activityEvent.driverId,
-                  store.coworkers()
-                )
+              : getCoworkerById(activityEvent.driverId, store.coworkers())
           )}`;
         }
         return [

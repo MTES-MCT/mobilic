@@ -25,9 +25,7 @@ export function NewTeamMateModal({ open, handleClose, handleSubmit }) {
   React.useEffect(() => {
     setFirstName("");
     setLastName("");
-  },
-    [open])
-  ;
+  }, [open]);
 
   return (
     <Dialog onClose={handleClose} open={open}>

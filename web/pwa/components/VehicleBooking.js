@@ -27,10 +27,7 @@ export function VehicleBookingModal({
   const [bookingTime, setBookingTime] = React.useState(undefined);
   const [bookingTimeError, setBookingTimeError] = React.useState("");
 
-  const currentVehicle = resolveVehicle(
-    currentVehicleBooking,
-    store
-  );
+  const currentVehicle = resolveVehicle(currentVehicleBooking, store);
 
   React.useEffect(() => {
     setBookingTime(Date.now());

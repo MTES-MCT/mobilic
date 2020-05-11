@@ -11,11 +11,11 @@ import {
 } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { Box } from "@material-ui/core";
-import {FunnelModal, useStyles as useFunnelModalStyles} from "./FunnelModal";
+import { FunnelModal, useStyles as useFunnelModalStyles } from "./FunnelModal";
 import Container from "@material-ui/core/Container";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import {useModals} from "common/utils/modals";
-import {MainCtaButton} from "./MainCtaButton";
+import { useModals } from "common/utils/modals";
+import { MainCtaButton } from "./MainCtaButton";
 
 const useStyles = makeStyles(theme => ({
   teamMate: {
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 4
   },
   selected: {
-    backgroundColor: theme.palette.primary.lighter,
+    backgroundColor: theme.palette.primary.lighter
   },
   addTeamMate: {
     marginTop: theme.spacing(1),
@@ -85,52 +85,65 @@ export function TeamSelectionModal({
     setUpdatedCoworkers(newCoworkers);
   };
 
-  const isTeamMateChecked = (coworker) => coworker.enroll === true || (useCurrentEnrollment && coworker.enroll === undefined && !!coworker.joinedCurrentMissionAt);
+  const isTeamMateChecked = coworker =>
+    coworker.enroll === true ||
+    (useCurrentEnrollment &&
+      coworker.enroll === undefined &&
+      !!coworker.joinedCurrentMissionAt);
 
   return (
-    <FunnelModal
-      open={open}
-      handleBack={handleClose}
-    >
-      <Container className="flex-column-space-between scrollable" style={{flexGrow: 1}}>
+    <FunnelModal open={open} handleBack={handleClose}>
+      <Container
+        className="flex-column-space-between scrollable"
+        style={{ flexGrow: 1 }}
+      >
         <Container className="flex-column scrollable" disableGutters>
-          <Typography className={funnelModalClasses.title} variant="h5">Qui sont vos coéquipiers&nbsp;?</Typography>
+          <Typography className={funnelModalClasses.title} variant="h5">
+            Qui sont vos coéquipiers&nbsp;?
+          </Typography>
           <Button
             className={classes.addTeamMate}
             color="primary"
-            onClick={() => modals.open("newTeamMate", {handleSubmit: pushNewCoworker})}
+            onClick={() =>
+              modals.open("newTeamMate", { handleSubmit: pushNewCoworker })
+            }
           >
             Ajouter un coéquipier
           </Button>
-            <List dense className="scrollable">
-              {updatedCoworkers.map((coworker, index) =>
-                <ListItem
-                  disableGutters
-                  className={`${classes.teamMate} ${isTeamMateChecked(coworker) && classes.selected}`}
-                  key={index}
-                  onClick={toggleAddCoworkerToTeam(index)}
-                >
-                  <Checkbox
-                    checked={isTeamMateChecked(coworker)}
-                    color="default"
-                  />
-                  <ListItemText
-                    primaryTypographyProps={{ noWrap: true, display: "block" }}
-                    primary={formatPersonName(coworker)}
-                    secondaryTypographyProps={{ noWrap: true, display: "block" }}
-                    secondary={
-                      useCurrentEnrollment
-                        ? formatLatestEnrollmentInfo(coworker)
-                        : ""
-                    }
-                  />
-                </ListItem>
-              )}
-            </List>
+          <List dense className="scrollable">
+            {updatedCoworkers.map((coworker, index) => (
+              <ListItem
+                disableGutters
+                className={`${classes.teamMate} ${isTeamMateChecked(coworker) &&
+                  classes.selected}`}
+                key={index}
+                onClick={toggleAddCoworkerToTeam(index)}
+              >
+                <Checkbox
+                  checked={isTeamMateChecked(coworker)}
+                  color="default"
+                />
+                <ListItemText
+                  primaryTypographyProps={{ noWrap: true, display: "block" }}
+                  primary={formatPersonName(coworker)}
+                  secondaryTypographyProps={{ noWrap: true, display: "block" }}
+                  secondary={
+                    useCurrentEnrollment
+                      ? formatLatestEnrollmentInfo(coworker)
+                      : ""
+                  }
+                />
+              </ListItem>
+            ))}
+          </List>
         </Container>
         <Box className="cta-container" mt={2} mb={4}>
           <MainCtaButton
-            onClick={async () => handleContinue(updatedCoworkers.filter(cw => cw.enroll !== undefined))}
+            onClick={async () =>
+              handleContinue(
+                updatedCoworkers.filter(cw => cw.enroll !== undefined)
+              )
+            }
           >
             Continuer
           </MainCtaButton>

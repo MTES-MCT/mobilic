@@ -56,9 +56,7 @@ export function ActivityRevisionOrCreationModal({
   const [newActivityIsTeamMode, setNewActivityIsTeamMode] = React.useState(
     true
   );
-  const [newActivityDriver, setNewActivityDriver] = React.useState(
-    undefined
-  );
+  const [newActivityDriver, setNewActivityDriver] = React.useState(undefined);
 
   const [newUserTime, setNewUserTime] = React.useState(undefined);
   const [newUserTimeError, setNewUserTimeError] = React.useState("");
