@@ -84,7 +84,6 @@ export function PeriodCarouselPicker({
       periods &&
       (!previousPeriods || previousPeriods.length !== periods.length)
     ) {
-      console.log("Scrolling from change other than user click");
       scrollToSelectedPeriod(selectedPeriod);
     }
     previousPeriodsRef.current = periods;
