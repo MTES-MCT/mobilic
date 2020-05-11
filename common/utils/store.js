@@ -1,6 +1,6 @@
 import React from "react";
 import jwtDecode from "jwt-decode";
-import {NonConcurrentExecutionQueue} from "./concurrency";
+import { NonConcurrentExecutionQueue } from "./concurrency";
 
 const StoreSyncedWithLocalStorage = React.createContext(() => {});
 
@@ -10,7 +10,9 @@ const List = {
 };
 
 export const isPendingSubmission = item =>
-  !!item.deletedByRequestId || !!item.createdByRequestId || !!item.updatedByRequestId;
+  !!item.deletedByRequestId ||
+  !!item.createdByRequestId ||
+  !!item.updatedByRequestId;
 
 export class StoreSyncedWithLocalStorageProvider extends React.Component {
   constructor(props) {
@@ -34,12 +36,14 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       missions: List,
       vehicleBookings: List,
       vehicles: List,
-      nextRequestId: { deserialize: value => (value ? parseInt(value) : 1) },
+      nextRequestId: { deserialize: value => (value ? parseInt(value) : 1) }
     };
 
     // Initialize state with null values
     this.state = {};
-    this.generateRequestIdQueue = new NonConcurrentExecutionQueue("generateRequestId");
+    this.generateRequestIdQueue = new NonConcurrentExecutionQueue(
+      "generateRequestId"
+    );
     Object.keys(this.mapper).forEach(entry => {
       this.mapper[entry] = {
         serialize: this.mapper[entry].serialize || (value => value),
@@ -59,7 +63,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         this.setState({
           [entry]: this.mapper[entry].deserialize(rawValueFromLS)
         });
-      } catch(err) {
+      } catch (err) {
         console.log(err);
       }
     });
@@ -85,14 +89,14 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   pushItem = (item, arrayField) => {
     return new Promise(resolve =>
       this.setStoreState(
-        prevState => ({[arrayField]: [...prevState[arrayField], item]}),
+        prevState => ({ [arrayField]: [...prevState[arrayField], item] }),
         [arrayField],
         resolve
       )
     );
-  }
+  };
 
-  getArray = (arrayField) => {
+  getArray = arrayField => {
     const baseItems = this.state[arrayField];
     const updatedIds = [];
     const deletedIds = [];
@@ -101,8 +105,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       else if (item.deletedByRequestId) deletedIds.push(item.id);
     });
     if (updatedIds.length + deletedIds.length > 0) {
-      return baseItems.filter(item =>
-        !deletedIds.includes(item.id) && (!updatedIds.includes(item) || item.updatedByRequestId)
+      return baseItems.filter(
+        item =>
+          !deletedIds.includes(item.id) &&
+          (!updatedIds.includes(item) || item.updatedByRequestId)
       );
     }
     return baseItems;
@@ -111,24 +117,31 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   removeItem = (item, arrayField) =>
     this.setStoreState(
       prevState => ({
-        [arrayField]: prevState[arrayField].filter(
-          e => item.id ? item.id !== e.id : JSON.stringify(e) !== JSON.stringify(item)
+        [arrayField]: prevState[arrayField].filter(e =>
+          item.id
+            ? item.id !== e.id
+            : JSON.stringify(e) !== JSON.stringify(item)
         )
       }),
       [arrayField]
     );
 
-  clearPendingRequest = async (request)  => {
-    await this.removeOptimisticUpdateForRequest(request.id, request.watchFields);
+  clearPendingRequest = async request => {
+    await this.removeOptimisticUpdateForRequest(
+      request.id,
+      request.watchFields
+    );
     await this.removeItem(request, "pendingRequests");
-  }
+  };
 
   hideItem = (item, arrayField) =>
     this.setStoreState(
       prevState => ({
         [arrayField]: [
-          ...prevState[arrayField].filter(
-            e => item.id ? item.id !== e.id : JSON.stringify(e) !== JSON.stringify(item)
+          ...prevState[arrayField].filter(e =>
+            item.id
+              ? item.id !== e.id
+              : JSON.stringify(e) !== JSON.stringify(item)
           ),
           { ...item, isHidden: true }
         ]
@@ -136,17 +149,27 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       [arrayField]
     );
 
-  newRequest = async (query, variables, updateStore, watchFields, handleSubmitResponse) => {
-    const requestId = await this.generateRequestIdQueue.execute(() => new Promise(resolve => {
-      const reqId = this.state.nextRequestId;
-      this.setStoreState(
-        prevState => ({
-          nextRequestId: prevState.nextRequestId + 1
-        }),
-        ["nextRequestId"],
-        () => resolve(reqId)
-      )
-    }));
+  newRequest = async (
+    query,
+    variables,
+    updateStore,
+    watchFields,
+    handleSubmitResponse,
+    batchable = true
+  ) => {
+    const requestId = await this.generateRequestIdQueue.execute(
+      () =>
+        new Promise(resolve => {
+          const reqId = this.state.nextRequestId;
+          this.setStoreState(
+            prevState => ({
+              nextRequestId: prevState.nextRequestId + 1
+            }),
+            ["nextRequestId"],
+            () => resolve(reqId)
+          );
+        })
+    );
     await updateStore(this, requestId);
     const request = {
       id: requestId,
@@ -154,32 +177,39 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       variables,
       watchFields,
       handleSubmitResponse,
-      batchable: true,
+      batchable
     };
-    await this.pushItem(
-      request,
-      "pendingRequests"
-    );
+    await this.pushItem(request, "pendingRequests");
     return request;
   };
 
   removeOptimisticUpdateForRequest = (requestId, watchFields) =>
     new Promise(resolve => {
       this.setStoreState(
-        prevState => Object.fromEntries(
-          watchFields.map(
-            arrayField => ([
+        prevState =>
+          Object.fromEntries(
+            watchFields.map(arrayField => [
               arrayField,
-              prevState[arrayField].filter(e => ![e.createdByRequestId, e.updatedByRequestId, e.deletedByRequestId].includes(requestId))
+              prevState[arrayField].filter(
+                e =>
+                  ![
+                    e.createdByRequestId,
+                    e.updatedByRequestId,
+                    e.deletedByRequestId
+                  ].includes(requestId)
+              )
             ])
-          )
-        ),
+          ),
         watchFields,
         resolve
-      )
+      );
     });
 
-  syncAllSubmittedItems = (itemsFromApi, arrayField, onlyReplaceEventsWithCondition = () => true) =>
+  syncAllSubmittedItems = (
+    itemsFromApi,
+    arrayField,
+    onlyReplaceEventsWithCondition = () => true
+  ) =>
     new Promise(resolve => {
       this.setStoreState(
         prevState => ({
@@ -275,7 +305,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             newRequest: this.newRequest,
             syncAllSubmittedItems: this.syncAllSubmittedItems,
             clearPendingRequest: this.clearPendingRequest,
-            removeOptimisticUpdateForRequest: this.removeOptimisticUpdateForRequest,
+            removeOptimisticUpdateForRequest: this
+              .removeOptimisticUpdateForRequest,
             getItemById: this.getItemById
           }}
         >
