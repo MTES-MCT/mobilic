@@ -123,11 +123,16 @@ export function ActivitySwitch({
       </Grid>
       <Box pt={6} pb={2}>
         <MainCtaButton
-          onClick={() =>
+          onClick={() => {
+            const missionEndTime = Date.now();
             modals.open("endMission", {
-              handleMissionEnd: endMission
-            })
-          }
+              handleMissionEnd: (expenditures, comment) => endMission({
+                endTime: missionEndTime,
+                expenditures,
+                comment
+              })
+            });
+          }}
         >
           Mission terminée
         </MainCtaButton>
