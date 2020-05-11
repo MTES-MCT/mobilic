@@ -15,7 +15,11 @@ export function groupActivityEventsByDay(activityEvents) {
   let i = -1;
   let missionJustFinishedTime = 1;
   sortEvents(activityEvents).forEach(event => {
-    if (missionJustFinishedTime && new Date(getTime(event)).toISOString().slice(0, 10) !== new Date(missionJustFinishedTime).toISOString().slice(0, 10)) {
+    if (
+      missionJustFinishedTime &&
+      new Date(getTime(event)).toISOString().slice(0, 10) !==
+        new Date(missionJustFinishedTime).toISOString().slice(0, 10)
+    ) {
       eventsByDay.push([]);
       i++;
     }
@@ -25,7 +29,6 @@ export function groupActivityEventsByDay(activityEvents) {
       missionJustFinishedTime = getTime(event);
     }
   });
-  if (missionJustFinishedTime) eventsByDay.push([]);
   return eventsByDay;
 }
 
@@ -49,6 +52,5 @@ export function groupDayActivityEventsByPeriod(eventsByDay, periodCompute) {
     }
     eventsGroupedByPeriod[period].events.push(dayEvents);
   });
-  periods.reverse();
   return { periods, eventsGroupedByPeriod };
 }
