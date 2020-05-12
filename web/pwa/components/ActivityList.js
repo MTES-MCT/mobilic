@@ -19,18 +19,21 @@ export function ActivityList({
 }) {
   const modals = useModals();
 
+  const augmentedAndSortedActivities = [...activities];
+
   // Compute duration for each activity
-  activities.forEach((activity, index) => {
+  augmentedAndSortedActivities.forEach((activity, index) => {
     if (index < activities.length - 1) {
       const nextActivity = activities[index + 1];
       activity.duration = getTime(nextActivity) - getTime(activity);
     }
   });
 
+  sortEvents(augmentedAndSortedActivities).reverse();
+
   return (
     <List dense className="scrollable">
-      {sortEvents(activities)
-        .reverse()
+      {augmentedAndSortedActivities
         .filter(a => a.type !== ACTIVITIES.rest.name)
         .map((activity, index) => (
           <ListItem disableGutters key={index}>

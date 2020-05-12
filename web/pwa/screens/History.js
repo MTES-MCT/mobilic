@@ -143,7 +143,6 @@ export function HistoryModal({ open, handleClose, activityEventsByDay = [] }) {
   ]);
 
   function handlePeriodChange(e, newTab, selectedDate) {
-    console.log("e");
     const newPeriods = groupDayActivityEventsByPeriod(
       activityEventsByDay,
       tabs[newTab].getPeriod
