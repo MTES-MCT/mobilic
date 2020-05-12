@@ -126,11 +126,10 @@ export function MissionReview({
           }
         >
           <Box className={`flex-row ${classes.expenditures}`}>
-            {Object.keys(currentMission.expenditures)
-              .filter(exp => currentMission.expenditures[exp] > 0)
-              .map(exp => (
-                <Chip key={exp} label={EXPENDITURES[exp].label} />
-              ))}
+            {currentMission.expenditures &&
+              Object.keys(currentMission.expenditures)
+                .filter(exp => currentMission.expenditures[exp] > 0)
+                .map(exp => <Chip key={exp} label={EXPENDITURES[exp].label} />)}
           </Box>
         </MissionReviewSection>
       </Box>
