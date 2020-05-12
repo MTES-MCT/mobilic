@@ -184,11 +184,13 @@ export function HistoryModal({ open, handleClose, activityEventsByDay = [] }) {
               />
             ))}
           </Tabs>
-          <PeriodCarouselPicker
-            periods={periods}
-            selectedPeriod={selectedPeriod}
-            onPeriodChange={setSelectedPeriod}
-          />
+          {periods.length > 0 && (
+            <PeriodCarouselPicker
+              periods={periods}
+              selectedPeriod={selectedPeriod}
+              onPeriodChange={setSelectedPeriod}
+            />
+          )}
         </Container>
         <Container
           className={`scrollable ${classes.contentContainer}`}
