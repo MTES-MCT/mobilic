@@ -5,10 +5,7 @@ export function isGraphQLParsingError(graphQLError) {
 }
 
 export function isConnectionError(graphQLError) {
-  return (
-    graphQLError.networkError &&
-    RegExp(".*Failed to fetch.*").test(graphQLError.networkError.message)
-  );
+  return graphQLError.networkError && !graphQLError.networkError.statusCode;
 }
 
 export function formatGraphQLError(graphQLError) {
