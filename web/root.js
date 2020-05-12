@@ -38,6 +38,8 @@ import { FrLocalizedUtils } from "common/utils/time";
 import { ActionsContextProvider } from "common/utils/actions";
 import { AppScreen } from "./pwa/utils/navigation";
 import { ModalProvider } from "common/utils/modals";
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 export default function Root() {
   return (
@@ -66,18 +68,29 @@ export default function Root() {
 }
 
 function _Root() {
+  const [syncingWithBackend, setSyncingWithBackend] = React.useState(false);
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const userId = store.userId();
   const isCompanyAdmin = store.companyAdmin();
 
+  const syncData = async () => {
+    setSyncingWithBackend(true);
+    try {
+      await loadUserData(api, store);
+      setSyncingWithBackend(false);
+    } catch (err) {
+      setSyncingWithBackend(false);
+    }
+  };
+
   React.useEffect(() => {
-    loadUserData(api, store);
+    if (userId) syncData();
     return () => {};
   }, [userId]);
 
-  return (
-    <Switch>
+  return [
+    <Switch key={0}>
       {userId &&
         !isCompanyAdmin && [
           <Route exact key="app" path="/app">
@@ -101,6 +114,9 @@ function _Root() {
         </Route>,
         <Redirect push key="*" from="*" to="/" />
       ]}
-    </Switch>
-  );
+    </Switch>,
+    <Backdrop key={1} open={syncingWithBackend} style={{ zIndex: 5000 }}>
+      <CircularProgress color="primary" />
+    </Backdrop>
+  ];
 }
