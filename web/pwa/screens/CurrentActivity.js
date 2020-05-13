@@ -41,7 +41,6 @@ export function CurrentActivity({
       title={`Détail de la mission${
         currentMission.name ? " : " + currentMission.name : ""
       }`}
-      className="scrollable"
       key={2}
       pt={5}
     >

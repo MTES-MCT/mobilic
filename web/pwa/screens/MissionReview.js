@@ -67,9 +67,8 @@ export function MissionReview({
   );
 
   const classes = useStyles();
-  return [
+  return (
     <Container
-      key={0}
       style={{ flexGrow: 1 }}
       className="flex-column scrollable"
       disableGutters
@@ -88,76 +87,77 @@ export function MissionReview({
         </Typography>
         <WorkTimeSummaryKpiGrid metrics={dayMetrics} />
       </Box>
-      <Box className="scrollable">
-        <MissionReviewSection
-          title={`Détail de la mission${
-            currentMission.name ? " : " + currentMission.name : ""
-          }`}
-          displayExpandToggle
-          className="unshrinkable"
-        >
-          <ActivityList
-            activities={currentMissionActivities}
-            editActivityEvent={editActivityEvent}
-            previousMissionEnd={0}
-          />
-        </MissionReviewSection>
-        <MissionReviewSection
-          title={team.length > 0 ? "En équipe" : "En solo"}
-          className={`${classes.backgroundPaper} unshrinkable scrollable`}
-          style={{ flexShrink: 0 }}
-        >
-          {team.length > 0 && (
-            <List dense>
-              {team.map((tm, index) => (
-                <ListItem disableGutters key={index}>
-                  <PersonIcon />
-                  <Typography>{`${tm.firstName} (${formatLatestEnrollmentInfo(
-                    tm
-                  )})`}</Typography>
-                </ListItem>
-              ))}
-            </List>
-          )}
-        </MissionReviewSection>
-        <MissionReviewSection
-          title="Frais"
-          className="unshrinkable"
-          onEdit={() =>
-            modals.open("expenditures", {
-              handleSubmit: expenditures =>
-                editMissionExpenditures(currentMission, expenditures),
-              currentExpenditures: currentMission.expenditures
-            })
-          }
-        >
-          <Box className={`flex-row ${classes.expenditures}`}>
-            {currentMission.expenditures &&
-              Object.keys(currentMission.expenditures)
-                .filter(exp => currentMission.expenditures[exp] > 0)
-                .map(exp => <Chip key={exp} label={EXPENDITURES[exp].label} />)}
-          </Box>
-        </MissionReviewSection>
-      </Box>
-    </Container>,
-    <Box key={1} m={2} className="cta-container" mb={submissionError ? 2 : 4}>
-      <MainCtaButton
-        onClick={async () => {
-          try {
-            await validateMission(currentMission);
-          } catch (err) {
-            console.log(err);
-            setSubmissionError(err);
-          }
-        }}
+      <MissionReviewSection
+        title={`Détail de la mission${
+          currentMission.name ? " : " + currentMission.name : ""
+        }`}
+        className="unshrinkable"
       >
-        Valider et envoyer
-      </MainCtaButton>
-      {submissionError && (
-        <Typography color="error">
-          {formatGraphQLError(submissionError)}
-        </Typography>
-      )}
-    </Box>
-  ];
+        <ActivityList
+          activities={currentMissionActivities}
+          editActivityEvent={editActivityEvent}
+          previousMissionEnd={0}
+        />
+      </MissionReviewSection>
+      <MissionReviewSection
+        title={team.length > 0 ? "En équipe" : "En solo"}
+        className={`${classes.backgroundPaper} unshrinkable`}
+        style={{ flexShrink: 0 }}
+      >
+        {team.length > 0 && (
+          <List dense>
+            {team.map((tm, index) => (
+              <ListItem disableGutters key={index}>
+                <PersonIcon />
+                <Typography>{`${tm.firstName} (${formatLatestEnrollmentInfo(
+                  tm
+                )})`}</Typography>
+              </ListItem>
+            ))}
+          </List>
+        )}
+      </MissionReviewSection>
+      <MissionReviewSection
+        title="Frais"
+        className="unshrinkable"
+        onEdit={() =>
+          modals.open("expenditures", {
+            handleSubmit: expenditures =>
+              editMissionExpenditures(currentMission, expenditures),
+            currentExpenditures: currentMission.expenditures
+          })
+        }
+      >
+        <Box className={`flex-row ${classes.expenditures}`}>
+          {currentMission.expenditures &&
+            Object.keys(currentMission.expenditures)
+              .filter(exp => currentMission.expenditures[exp] > 0)
+              .map(exp => <Chip key={exp} label={EXPENDITURES[exp].label} />)}
+        </Box>
+      </MissionReviewSection>
+      <Box
+        pt={4}
+        className={`cta-container unshrinkable ${classes.backgroundPaper}`}
+        pb={submissionError ? 2 : 4}
+      >
+        <MainCtaButton
+          onClick={async () => {
+            try {
+              await validateMission(currentMission);
+            } catch (err) {
+              console.log(err);
+              setSubmissionError(err);
+            }
+          }}
+        >
+          Valider et envoyer
+        </MainCtaButton>
+        {submissionError && (
+          <Typography color="error">
+            {formatGraphQLError(submissionError)}
+          </Typography>
+        )}
+      </Box>
+    </Container>
+  );
 }

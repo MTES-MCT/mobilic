@@ -192,10 +192,7 @@ export function HistoryModal({ open, handleClose, activityEventsByDay = [] }) {
             />
           )}
         </Container>
-        <Container
-          className={`scrollable ${classes.contentContainer}`}
-          maxWidth={false}
-        >
+        <Container className={classes.contentContainer} maxWidth={false}>
           {selectedPeriodEvents &&
             tabs[currentTab].renderPeriod({
               activityEventsByDay: selectedPeriodEvents.events,
