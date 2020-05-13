@@ -9,12 +9,12 @@ export function MissionReviewSection({
   title,
   displayExpandToggle,
   onEdit,
-  className,
-  children
+  children,
+  ...other
 }) {
   const [expand, setExpand] = React.useState(false);
   return (
-    <Box px={2} py={2} className={className}>
+    <Box px={2} py={2} {...other}>
       <Box className="flex-row-space-between full-width">
         <Typography align="left" className="bold">
           {title}

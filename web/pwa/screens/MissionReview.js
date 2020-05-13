@@ -23,6 +23,8 @@ import {
 import Chip from "@material-ui/core/Chip";
 import { EXPENDITURES } from "common/utils/expenditures";
 import { useModals } from "common/utils/modals";
+import { AccountButton } from "../components/AccountButton";
+import { prettyFormatDay } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   overviewTimersContainer: {
@@ -58,7 +60,7 @@ export function MissionReview({
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
 
-  const dayMetrics = computeDayKpis(currentDayActivityEvents);
+  const dayMetrics = computeDayKpis(currentMissionActivities);
   const team = resolveTeamAt(
     store,
     getTime(currentMissionActivities[currentMissionActivities.length - 1])
@@ -72,13 +74,17 @@ export function MissionReview({
       className="flex-column scrollable"
       disableGutters
     >
-      <Box p={2} py={4} className={classes.overviewTimersContainer}>
+      <Box p={2} pt={2} pb={4} className={classes.overviewTimersContainer}>
+        <AccountButton pb={4} darkBackground />
         <Typography
           className={classes.overviewTimersTitle}
           align="left"
           variant="h5"
         >
-          Récapitulatif de la journée en cours
+          Récapitulatif de la mission
+          {` ${
+            currentMission.name ? currentMission.name : ""
+          } du ${prettyFormatDay(getTime(currentMissionActivities[0]))}`}
         </Typography>
         <WorkTimeSummaryKpiGrid metrics={dayMetrics} />
       </Box>

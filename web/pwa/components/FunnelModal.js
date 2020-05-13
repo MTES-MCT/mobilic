@@ -18,18 +18,31 @@ export const useStyles = makeStyles(theme => ({
     maxWidth: 400
   },
   backButton: {
-    color: theme.palette.primary.main
+    color: theme.palette.primary.main,
+    borderColor: theme.palette.primary.main
+  },
+  container: {
+    backgroundColor: darkBackground =>
+      darkBackground
+        ? theme.palette.primary.main
+        : theme.palette.background.paper
   }
 }));
 
-export function FunnelModal({ open, handleBack, children }) {
-  const classes = useStyles();
+export function FunnelModal({
+  open,
+  handleBack,
+  children,
+  darkBackground = false
+}) {
+  const classes = useStyles(darkBackground);
   return (
     <Dialog
       fullScreen
       open={open}
       onClose={() => {}}
       TransitionComponent={Transition}
+      PaperProps={{ className: classes.container }}
     >
       <Box
         px={2}
@@ -41,7 +54,6 @@ export function FunnelModal({ open, handleBack, children }) {
           className={classes.backButton}
           variant="contained"
           disableElevation
-          color="default"
           startIcon={<ChevronLeftIcon />}
           onClick={handleBack}
         >

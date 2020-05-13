@@ -15,6 +15,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     borderRadius: "24px",
     marginTop: theme.spacing(-3),
+    marginBottom: theme.spacing(-3),
     zIndex: 1000
   },
   gridItem: {
@@ -60,6 +61,7 @@ export function ActivitySwitchCard({ label, renderIcon, current, onClick }) {
           className: classes.cardIcon
         })}
         <Typography
+          align="center"
           variant="body2"
           className={classes.cardText}
           noWrap
@@ -85,6 +87,7 @@ export function ActivitySwitch({
   const teamWithSelf = [store.userInfo(), ...team];
   const handleActivitySwitch = activityName => () => {
     if (
+      currentActivity &&
       activityName === currentActivity.type &&
       (!hasTeamMates || activityName !== ACTIVITIES.drive.name)
     )
@@ -92,8 +95,10 @@ export function ActivitySwitch({
     else if (hasTeamMates && activityName === ACTIVITIES.drive.name) {
       modals.open("driverSelection", {
         team: teamWithSelf,
-        currentDriver: currentActivity.driver || undefined,
-        currentDriverStartTime: getTime(currentActivity),
+        currentDriver: currentActivity ? currentActivity.driver : undefined,
+        currentDriverStartTime: currentActivity
+          ? getTime(currentActivity)
+          : null,
         handleDriverSelection: driver =>
           pushActivitySwitchEvent(activityName, driver)
       });
@@ -114,29 +119,33 @@ export function ActivitySwitch({
             <ActivitySwitchCard
               label={activity.label}
               renderIcon={activity.renderIcon}
-              current={activity.name === currentActivity.type}
+              current={
+                currentActivity && activity.name === currentActivity.type
+              }
               onClick={handleActivitySwitch(activity.name)}
             />
           </Grid>
         ))}
       </Grid>
-      <Box pt={6} pb={2}>
-        <MainCtaButton
-          onClick={() => {
-            const missionEndTime = Date.now();
-            modals.open("endMission", {
-              handleMissionEnd: (expenditures, comment) =>
-                endMission({
-                  endTime: missionEndTime,
-                  expenditures,
-                  comment
-                })
-            });
-          }}
-        >
-          Mission terminée
-        </MainCtaButton>
-      </Box>
+      {endMission && (
+        <Box pt={6} pb={2}>
+          <MainCtaButton
+            onClick={() => {
+              const missionEndTime = Date.now();
+              modals.open("endMission", {
+                handleMissionEnd: (expenditures, comment) =>
+                  endMission({
+                    endTime: missionEndTime,
+                    expenditures,
+                    comment
+                  })
+              });
+            }}
+          >
+            Mission terminée
+          </MainCtaButton>
+        </Box>
+      )}
     </Box>
   );
 }

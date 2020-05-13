@@ -23,10 +23,27 @@ export class ModalProvider extends React.Component {
     });
   };
 
+  closeAll = () => {
+    this.setState(prevState =>
+      Object.fromEntries(
+        Object.entries(this.state).map(([modalName, open]) => [
+          modalName,
+          false
+        ])
+      )
+    );
+  };
+
   render() {
     return (
       <>
-        <ModalContext.Provider value={{ open: this.open, close: this.close }}>
+        <ModalContext.Provider
+          value={{
+            open: this.open,
+            close: this.close,
+            closeAll: this.closeAll
+          }}
+        >
           {this.props.children}
           {Object.keys(this.props.modalDict).map((modalName, index) => {
             const Modal = this.props.modalDict[modalName];

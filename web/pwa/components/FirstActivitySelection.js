@@ -1,43 +1,40 @@
 import React from "react";
-import Avatar from "@material-ui/core/Avatar";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemText from "@material-ui/core/ListItemText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Dialog from "@material-ui/core/Dialog";
-import { ACTIVITIES } from "common/utils/activities";
 import Typography from "@material-ui/core/Typography";
+import { FunnelModal } from "./FunnelModal";
+import Box from "@material-ui/core/Box";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import { ActivitySwitch } from "./ActivitySwitch";
+
+const useStyles = makeStyles(theme => ({
+  topPanel: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText
+  },
+  bottomFill: {
+    backgroundColor: theme.palette.background.default,
+    flexGrow: 1
+  }
+}));
 
 export function FirstActivitySelectionModal({
   open,
   handleClose,
-  handleItemClick
+  team = [],
+  handleActivitySelection
 }) {
+  const classes = useStyles();
   return (
-    <Dialog onClose={handleClose} open={open}>
-      <DialogTitle disableTypography>
-        <Typography variant="h4">Commencer par</Typography>
-      </DialogTitle>
-      <List>
-        {Object.values(ACTIVITIES)
-          .filter(a => a.canBeFirst)
-          .map(activity => (
-            <ListItem
-              button
-              onClick={() => {
-                handleItemClick(activity.name);
-                handleClose();
-              }}
-              key={activity.name}
-            >
-              <ListItemAvatar>
-                <Avatar>{activity.renderIcon({ color: "primary" })}</Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={activity.label} />
-            </ListItem>
-          ))}
-      </List>
-    </Dialog>
+    <FunnelModal open={open} handleBack={handleClose} darkBackground>
+      <Box p={5} pb={8} className={classes.topPanel}>
+        <Typography variant="h2" align="center">
+          Commencez la mission en sélectionnant la première activité
+        </Typography>
+      </Box>
+      <ActivitySwitch
+        team={team}
+        pushActivitySwitchEvent={handleActivitySelection}
+      />
+      <Box className={classes.bottomFill} />
+    </FunnelModal>
   );
 }

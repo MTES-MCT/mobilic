@@ -3,8 +3,6 @@ import Container from "@material-ui/core/Container";
 import { PlaceHolder } from "../../common/PlaceHolder";
 import Typography from "@material-ui/core/Typography";
 import { useModals } from "common/utils/modals";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import { ACTIVITIES } from "common/utils/activities";
 import Box from "@material-ui/core/Box";
 import { AccountButton } from "../components/AccountButton";
 import { MainCtaButton } from "../components/MainCtaButton";
@@ -12,7 +10,6 @@ import Button from "@material-ui/core/Button";
 
 export function BeforeWork({ beginNewMission, activityEventsByDay }) {
   const modals = useModals();
-  const store = useStoreSyncedWithLocalStorage();
 
   const onEnterNewMissionFunnel = () => {
     modals.open("newMission", {
@@ -20,13 +17,32 @@ export function BeforeWork({ beginNewMission, activityEventsByDay }) {
         modals.open("teamOrSoloChoice", {
           handleContinue: isTeamMode => {
             const handleFirstActivitySelection = updatedCoworkers => {
+              const team = updatedCoworkers
+                ? updatedCoworkers
+                    .filter(cw => !!cw.enroll)
+                    .map(cw => ({
+                      id: cw.id,
+                      firstName: cw.firstName,
+                      lastName: cw.lastName
+                    }))
+                : [];
               modals.open("firstActivity", {
-                handleItemClick: activityType =>
-                  onCompleteNewMissionFunnel(
-                    activityType,
-                    missionInfos,
-                    updatedCoworkers
-                  )
+                team,
+                handleActivitySelection: (activityType, driver) => {
+                  beginNewMission({
+                    firstActivityType: activityType,
+                    driver,
+                    name: missionInfos.mission,
+                    vehicleId: missionInfos.vehicle
+                      ? missionInfos.vehicle.id
+                      : null,
+                    vehicleRegistrationNumber: missionInfos.vehicle
+                      ? missionInfos.vehicle.registrationNumber
+                      : null,
+                    team
+                  });
+                  modals.closeAll();
+                }
               });
             };
             if (isTeamMode) {
@@ -40,48 +56,6 @@ export function BeforeWork({ beginNewMission, activityEventsByDay }) {
     });
   };
 
-  const onCompleteNewMissionFunnel = (
-    activityType,
-    missionInfos,
-    updatedCoworkers = null
-  ) => {
-    let teamMates = null;
-    if (updatedCoworkers) {
-      teamMates = updatedCoworkers
-        .filter(cw => !!cw.enroll)
-        .map(cw => ({
-          id: cw.id,
-          firstName: cw.firstName,
-          lastName: cw.lastName
-        }));
-    }
-    const createActivity = async (driver = null) => {
-      beginNewMission({
-        firstActivityType: activityType,
-        driver,
-        name: missionInfos.mission,
-        vehicleId: missionInfos.vehicle ? missionInfos.vehicle.id : null,
-        vehicleRegistrationNumber: missionInfos.vehicle
-          ? missionInfos.vehicle.registrationNumber
-          : null,
-        team: teamMates
-      });
-      modals.close("newMission");
-      modals.close("teamOrSoloChoice");
-      modals.close("teamSelection");
-    };
-    if (
-      teamMates &&
-      teamMates.length > 0 &&
-      activityType === ACTIVITIES.drive.name
-    ) {
-      modals.open("driverSelection", {
-        team: [store.userInfo(), ...teamMates],
-        handleDriverSelection: createActivity
-      });
-    } else createActivity();
-  };
-
   return [
     <Container
       key={1}
@@ -89,9 +63,7 @@ export function BeforeWork({ beginNewMission, activityEventsByDay }) {
       maxWidth={false}
       style={{ justifyContent: "flex-start", flexGrow: 1 }}
     >
-      <Box py={2} style={{ alignSelf: "flex-start" }}>
-        <AccountButton />
-      </Box>
+      <AccountButton py={2} style={{ alignSelf: "flex-end" }} />
       <PlaceHolder>
         <Typography variant="h3">👋</Typography>
         <Typography variant="h3">Bienvenue sur MobiLIC !</Typography>

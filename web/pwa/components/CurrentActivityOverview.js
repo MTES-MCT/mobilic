@@ -7,7 +7,6 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import { AccountButton } from "./AccountButton";
 import Box from "@material-ui/core/Box";
-import useTheme from "@material-ui/core/styles/useTheme";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 
 const useStyles = makeStyles(theme => ({
@@ -38,7 +37,6 @@ export function CurrentActivityOverview({ currentActivity, currentDayStart }) {
   const store = useStoreSyncedWithLocalStorage();
   const classes = useStyles();
   const now = Date.now();
-  const theme = useTheme();
 
   const currentActivityDuration = now - getTime(currentActivity);
   let activityOverviewText;
@@ -60,14 +58,14 @@ export function CurrentActivityOverview({ currentActivity, currentDayStart }) {
     currentActivityDuration
   )}`;
 
-  const missionOverviewText = `Journée débutée depuis ${formatTimer(
+  const missionOverviewText = `Mission débutée depuis ${formatTimer(
     now - currentDayStart
   )}`;
 
   return (
     <Box p={2} pb={5} className={classes.overview}>
       <Box className={classes.accountButtonContainer}>
-        <AccountButton backgroundColor={theme.palette.primary.main} />
+        <AccountButton darkBackground />
       </Box>
       <Container
         className={classes.textContainer}

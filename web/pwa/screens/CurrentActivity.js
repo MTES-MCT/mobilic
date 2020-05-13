@@ -43,6 +43,7 @@ export function CurrentActivity({
       }`}
       className="scrollable"
       key={2}
+      pt={5}
     >
       <ActivityList
         activities={currentMissionActivities}
