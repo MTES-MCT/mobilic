@@ -9,6 +9,7 @@ export function MissionReviewSection({
   title,
   displayExpandToggle,
   onEdit,
+  editButtonLabel,
   children,
   ...other
 }) {
@@ -36,7 +37,7 @@ export function MissionReviewSection({
             variant="contained"
             onClick={onEdit}
           >
-            Editer
+            {editButtonLabel || "Editer"}
           </Button>
         )}
       </Box>

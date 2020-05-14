@@ -1,27 +1,15 @@
 import React from "react";
 import Dialog from "@material-ui/core/Dialog";
-import Slide from "@material-ui/core/Slide";
-import AppBar from "@material-ui/core/AppBar";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import AddIcon from "@material-ui/icons/Add";
-import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import Fab from "@material-ui/core/Fab";
-import { VerticalTimeline } from "./VerticalTimeline";
-import {
-  formatTimeOfDay,
-  shortPrettyFormatDay,
-  getStartOfDay
-} from "common/utils/time";
+import { formatTimeOfDay } from "common/utils/time";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import CloseIcon from "@material-ui/icons/Close";
 import CheckIcon from "@material-ui/icons/Check";
-import { useModals } from "common/utils/modals";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import { ACTIVITIES, TIMEABLE_ACTIVITIES } from "common/utils/activities";
@@ -33,10 +21,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { DateTimePicker } from "./DateTimePicker";
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
 export function ActivityRevisionOrCreationModal({
   event,
@@ -72,7 +56,12 @@ export function ActivityRevisionOrCreationModal({
     if (actionType === "creation") {
       let driver = null;
       if (requiresDriver()) driver = newActivityDriver;
-      createActivity(newActivityType, newUserTime, driver, userComment);
+      createActivity({
+        activityType: newActivityType,
+        userTime: newUserTime,
+        driver: driver,
+        userComment: userComment
+      });
     } else handleRevisionAction(actionType, newUserTime, userComment);
   }
 
@@ -252,112 +241,6 @@ export function ActivityRevisionOrCreationModal({
           <CheckIcon />
         </IconButton>
       </DialogActions>
-    </Dialog>
-  );
-}
-
-export function WorkDayRevision({
-  open,
-  handleClose,
-  activityEvents,
-  handleActivityRevision,
-  pushNewActivityEvent
-}) {
-  const modals = useModals();
-
-  const handleEventClick = event => {
-    modals.open("activityRevision", {
-      event,
-      handleRevisionAction: (actionType, revisedEventTime, userComment) =>
-        handleActivityRevision(
-          event,
-          actionType,
-          revisedEventTime,
-          userComment
-        ),
-      minStartTime:
-        event.type === ACTIVITIES.rest.name &&
-        activityEvents[activityEvents.length - 1].type ===
-          ACTIVITIES.rest.name &&
-        activityEvents.length > 1
-          ? getTime(activityEvents[activityEvents.length - 2])
-          : getStartOfDay(getTime(activityEvents[0])),
-      maxStartTime:
-        event.type !== ACTIVITIES.rest.name &&
-        activityEvents[activityEvents.length - 1].type === ACTIVITIES.rest.name
-          ? getTime(activityEvents[activityEvents.length - 1])
-          : Date.now(),
-      cancellable:
-        event.type !== ACTIVITIES.rest.name || activityEvents.length === 1
-    });
-  };
-
-  const handleNewActivityClick = () => {
-    modals.open("activityRevision", {
-      minStartTime: getStartOfDay(getTime(activityEvents[0])),
-      maxStartTime:
-        activityEvents[activityEvents.length - 1].type === ACTIVITIES.rest.name
-          ? getTime(activityEvents[activityEvents.length - 1])
-          : Date.now(),
-      createActivity: (activityType, userTime, driver, userComment) =>
-        pushNewActivityEvent({
-          activityType,
-          driver,
-          userTime,
-          userComment
-        })
-    });
-  };
-
-  if (!activityEvents) return null;
-  return (
-    <Dialog
-      fullScreen
-      open={open}
-      onClose={() => {}}
-      TransitionComponent={Transition}
-    >
-      <Box className="header-container">
-        <AppBar style={{ position: "relative" }}>
-          <Toolbar className="flex-row-space-between">
-            <IconButton edge="start" color="inherit" onClick={handleClose}>
-              <ArrowBackIcon />
-            </IconButton>
-            <Typography variant="h3" align="center">
-              Corriger journée du{" "}
-              {shortPrettyFormatDay(getTime(activityEvents[0]))}
-            </Typography>
-            <IconButton edge="end" color="inherit" className="hidden">
-              <ArrowBackIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-      </Box>
-      <VerticalTimeline
-        activityEvents={activityEvents}
-        handleEventClick={handleEventClick}
-      />
-      <Box
-        pb={1}
-        px={2}
-        className="full-width"
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          position: "fixed",
-          bottom: 0,
-          pointerEvents: "none"
-        }}
-      >
-        <Fab
-          color="primary"
-          style={{ pointerEvents: "auto" }}
-          onClick={handleNewActivityClick}
-        >
-          <AddIcon />
-        </Fab>
-      </Box>
     </Dialog>
   );
 }

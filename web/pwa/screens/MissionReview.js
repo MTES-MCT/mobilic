@@ -1,18 +1,10 @@
 import React from "react";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import {
-  formatLatestEnrollmentInfo,
-  resolveTeamAt
-} from "common/utils/coworkers";
-import { ActivityList } from "../components/ActivityList";
+import { resolveTeamAt } from "common/utils/coworkers";
 import { getTime } from "common/utils/events";
-import PersonIcon from "@material-ui/icons/Person";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import List from "@material-ui/core/List";
-import { MissionReviewSection } from "../components/MissionReviewSection";
-import ListItem from "@material-ui/core/ListItem";
 import Container from "@material-ui/core/Container";
 import { MainCtaButton } from "../components/MainCtaButton";
 import { formatGraphQLError } from "common/utils/errors";
@@ -20,11 +12,9 @@ import {
   computeDayKpis,
   WorkTimeSummaryKpiGrid
 } from "../components/WorkTimeSummary";
-import Chip from "@material-ui/core/Chip";
-import { EXPENDITURES } from "common/utils/expenditures";
-import { useModals } from "common/utils/modals";
 import { AccountButton } from "../components/AccountButton";
 import { prettyFormatDay } from "common/utils/time";
+import { MissionDetails } from "../components/MissionDetails";
 
 const useStyles = makeStyles(theme => ({
   overviewTimersContainer: {
@@ -36,20 +26,11 @@ const useStyles = makeStyles(theme => ({
   },
   backgroundPaper: {
     backgroundColor: theme.palette.background.paper
-  },
-  expenditures: {
-    flexWrap: "wrap",
-    textAlign: "left",
-    textTransform: "capitalize",
-    "& > *": {
-      margin: theme.spacing(0.5)
-    }
   }
 }));
 
 export function MissionReview({
   currentMission,
-  currentDayActivityEvents,
   currentMissionActivities,
   pushNewActivityEvent,
   editActivityEvent,
@@ -58,7 +39,6 @@ export function MissionReview({
 }) {
   const [submissionError, setSubmissionError] = React.useState(null);
   const store = useStoreSyncedWithLocalStorage();
-  const modals = useModals();
 
   const dayMetrics = computeDayKpis(currentMissionActivities);
   const team = resolveTeamAt(
@@ -87,77 +67,40 @@ export function MissionReview({
         </Typography>
         <WorkTimeSummaryKpiGrid metrics={dayMetrics} />
       </Box>
-      <MissionReviewSection
-        title={`Détail de la mission${
-          currentMission.name ? " : " + currentMission.name : ""
-        }`}
-        className="unshrinkable"
-      >
-        <ActivityList
-          activities={currentMissionActivities}
-          editActivityEvent={editActivityEvent}
-          previousMissionEnd={0}
-        />
-      </MissionReviewSection>
-      <MissionReviewSection
-        title={team.length > 0 ? "En équipe" : "En solo"}
-        className={`${classes.backgroundPaper} unshrinkable`}
-        style={{ flexShrink: 0 }}
-      >
-        {team.length > 0 && (
-          <List dense>
-            {team.map((tm, index) => (
-              <ListItem disableGutters key={index}>
-                <PersonIcon />
-                <Typography>{`${tm.firstName} (${formatLatestEnrollmentInfo(
-                  tm
-                )})`}</Typography>
-              </ListItem>
-            ))}
-          </List>
-        )}
-      </MissionReviewSection>
-      <MissionReviewSection
-        title="Frais"
-        className="unshrinkable"
-        onEdit={() =>
-          modals.open("expenditures", {
-            handleSubmit: expenditures =>
-              editMissionExpenditures(currentMission, expenditures),
-            currentExpenditures: currentMission.expenditures
-          })
-        }
-      >
-        <Box className={`flex-row ${classes.expenditures}`}>
-          {currentMission.expenditures &&
-            Object.keys(currentMission.expenditures)
-              .filter(exp => currentMission.expenditures[exp] > 0)
-              .map(exp => <Chip key={exp} label={EXPENDITURES[exp].label} />)}
-        </Box>
-      </MissionReviewSection>
-      <Box
-        pt={4}
-        className={`cta-container unshrinkable ${classes.backgroundPaper}`}
-        pb={submissionError ? 2 : 4}
-      >
-        <MainCtaButton
-          onClick={async () => {
-            try {
-              await validateMission(currentMission);
-            } catch (err) {
-              console.log(err);
-              setSubmissionError(err);
-            }
-          }}
+      <MissionDetails
+        mission={currentMission}
+        missionActivities={currentMissionActivities}
+        team={team}
+        editActivityEvent={editActivityEvent}
+        editExpenditures={editMissionExpenditures}
+        previousMissionEnd={0}
+        createActivity={pushNewActivityEvent}
+      />
+      {validateMission && (
+        <Box
+          pt={4}
+          className={`cta-container unshrinkable ${classes.backgroundPaper}`}
+          pb={submissionError ? 2 : 4}
         >
-          Valider et envoyer
-        </MainCtaButton>
-        {submissionError && (
-          <Typography color="error">
-            {formatGraphQLError(submissionError)}
-          </Typography>
-        )}
-      </Box>
+          <MainCtaButton
+            onClick={async () => {
+              try {
+                await validateMission(currentMission);
+              } catch (err) {
+                console.log(err);
+                setSubmissionError(err);
+              }
+            }}
+          >
+            Valider et envoyer
+          </MainCtaButton>
+          {submissionError && (
+            <Typography color="error">
+              {formatGraphQLError(submissionError)}
+            </Typography>
+          )}
+        </Box>
+      )}
     </Container>
   );
 }

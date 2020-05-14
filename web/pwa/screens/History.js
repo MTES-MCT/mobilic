@@ -27,8 +27,8 @@ import { FunnelModal } from "../components/FunnelModal";
 import { RegulationCheck } from "../components/RegulationCheck";
 import { checkDayRestRespect } from "common/utils/regulation";
 import { MissionReviewSection } from "../components/MissionReviewSection";
-import { ActivityList } from "../components/ActivityList";
 import Link from "@material-ui/core/Link";
+import { MissionDetails } from "../components/MissionDetails";
 
 const tabs = {
   day: {
@@ -37,7 +37,12 @@ const tabs = {
     periodSize: 1,
     getPeriod: date => date,
     formatPeriod: shortPrettyFormatDay,
-    renderPeriod: ({ activityEventsByDay, followingPeriodStart, classes }) => {
+    renderPeriod: ({
+      activityEventsByDay,
+      mission,
+      followingPeriodStart,
+      classes
+    }) => {
       const dayActivityEvents = activityEventsByDay[0];
       const dayEnd = getTime(dayActivityEvents[dayActivityEvents.length - 1]);
       return (
@@ -49,13 +54,7 @@ const tabs = {
             />
           </WorkTimeSummaryAdditionalInfo>
           <WorkTimeSummaryAdditionalInfo>
-            <MissionReviewSection
-              displayExpandToggle
-              title="Détail de la journée"
-              className="no-margin-no-padding"
-            >
-              <ActivityList activities={dayActivityEvents} />
-            </MissionReviewSection>
+            <MissionDetails mission={mission} />
           </WorkTimeSummaryAdditionalInfo>
         </div>
       );
