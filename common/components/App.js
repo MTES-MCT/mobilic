@@ -1,7 +1,12 @@
 import React from "react";
-import { groupActivityEventsByDay, sortEvents } from "common/utils/events";
+import values from "lodash/values";
+import { sortEvents } from "common/utils/events";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { useActions } from "common/utils/actions";
+import {
+  computeMissionProperties,
+  linkMissionsWithRelations
+} from "../utils/mission";
 
 function App({ ScreenComponent }) {
   const actions = useActions();
@@ -14,55 +19,42 @@ function App({ ScreenComponent }) {
     setInterval(() => setCurrentTime(Date.now()), 30000);
   }, []);
 
-  const activityEvents = store.getArray("activities");
+  const activities = sortEvents(values(store.getEntity("activities")));
+  const vehicleBookings = sortEvents(
+    values(store.getEntity("vehicleBookings"))
+  );
+  const teamChanges = sortEvents(values(store.getEntity("teamChanges")));
 
-  const activityEventsByDay = groupActivityEventsByDay(activityEvents);
+  const unsortedMissions = linkMissionsWithRelations(
+    store.getEntity("missions"),
+    {
+      activities,
+      vehicleBookings,
+      teamChanges
+    }
+  ).map(m => ({ ...m, ...computeMissionProperties(m) }));
 
-  const currentDayActivityEvents =
-    activityEventsByDay[activityEventsByDay.length - 1];
+  const missions = sortEvents(unsortedMissions);
 
-  const currentActivity = activityEvents[activityEvents.length - 1];
-  const missions = store.getArray("missions");
-  const currentMission = currentActivity
-    ? missions.find(
-        m =>
-          m.id === currentActivity.missionId ||
-          (!m.id && !currentActivity.missionId)
-      )
-    : null;
+  console.log(activities);
+  console.log(missions);
 
-  const currentMissionActivities = currentMission
-    ? currentDayActivityEvents.filter(
-        a =>
-          a.missionId === currentMission.id ||
-          (!a.missionId && !currentMission.id)
-      )
-    : [];
+  const currentMission =
+    missions.length > 0 ? missions[missions.length - 1] : null;
 
-  const vehicleBookingsForCurrentMission = currentMission
-    ? sortEvents(
-        store
-          .getArray("vehicleBookings")
-          .filter(vb => vb.missionId === currentMission.id || !vb.missionId)
-      ).reverse()
-    : [];
-
-  const currentVehicleBooking =
-    vehicleBookingsForCurrentMission.length > 0
-      ? vehicleBookingsForCurrentMission[0]
+  const currentActivity =
+    currentMission && currentMission.activities.length > 0
+      ? currentMission.activities[currentMission.activities.length - 1]
       : null;
 
   return (
     <ScreenComponent
       currentTime={currentTime}
+      missions={missions}
       currentActivity={currentActivity}
-      currentDayActivityEvents={currentDayActivityEvents}
       currentMission={currentMission}
-      currentMissionActivities={currentMissionActivities}
-      currentVehicleBooking={currentVehicleBooking}
       pushNewActivityEvent={actions.pushNewActivityEvent}
       editActivityEvent={actions.editActivityEvent}
-      activityEventsByDay={activityEventsByDay}
       pushNewTeamEnrollmentOrRelease={actions.pushNewTeamEnrollmentOrRelease}
       beginNewMission={actions.beginNewMission}
       pushNewVehicleBooking={actions.pushNewVehicleBooking}

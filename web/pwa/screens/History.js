@@ -1,4 +1,5 @@
 import React from "react";
+import groupBy from "lodash/groupBy";
 import { Container } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -10,7 +11,7 @@ import {
   shortPrettyFormatDay
 } from "common/utils/time";
 import {
-  computeDayKpis,
+  computeMissionKpis,
   computeWeekKpis,
   WorkTimeSummaryAdditionalInfo,
   WorkTimeSummaryKpiGrid
@@ -19,7 +20,7 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
-import { getTime, groupDayActivityEventsByPeriod } from "common/utils/events";
+import { getTime } from "common/utils/events";
 import { findMatchingPeriodInNewScale } from "common/utils/history";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
@@ -31,26 +32,23 @@ import Link from "@material-ui/core/Link";
 import { MissionDetails } from "../components/MissionDetails";
 
 const tabs = {
-  day: {
-    label: "Jour",
-    value: "day",
-    periodSize: 1,
+  mission: {
+    label: "Mission",
+    value: "mission",
+    periodSize: 0,
     getPeriod: date => date,
     formatPeriod: shortPrettyFormatDay,
-    renderPeriod: ({
-      activityEventsByDay,
-      mission,
-      followingPeriodStart,
-      classes
-    }) => {
-      const dayActivityEvents = activityEventsByDay[0];
-      const dayEnd = getTime(dayActivityEvents[dayActivityEvents.length - 1]);
+    renderPeriod: ({ missionsInPeriod, followingPeriodStart, classes }) => {
+      const mission = missionsInPeriod[0];
+      const missionEnd = getTime(
+        mission.activities[mission.activities.length - 1]
+      );
       return (
         <div>
-          <WorkTimeSummaryKpiGrid metrics={computeDayKpis(dayActivityEvents)} />
+          <WorkTimeSummaryKpiGrid metrics={computeMissionKpis(mission)} />
           <WorkTimeSummaryAdditionalInfo>
             <RegulationCheck
-              check={checkDayRestRespect(dayEnd, followingPeriodStart)}
+              check={checkDayRestRespect(missionEnd, followingPeriodStart)}
             />
           </WorkTimeSummaryAdditionalInfo>
           <WorkTimeSummaryAdditionalInfo>
@@ -67,21 +65,19 @@ const tabs = {
     getPeriod: date => getStartOfWeek(date),
     formatPeriod: date =>
       `Semaine du ${formatDay(date)} au ${formatDay(date + WEEK)}`,
-    renderPeriod: ({ activityEventsByDay, handleDayClick }) => (
+    renderPeriod: ({ missionsInPeriod, handleMissionClick }) => (
       <div>
-        <WorkTimeSummaryKpiGrid
-          metrics={computeWeekKpis(activityEventsByDay)}
-        />
+        <WorkTimeSummaryKpiGrid metrics={computeWeekKpis(missionsInPeriod)} />
         <WorkTimeSummaryAdditionalInfo>
           <MissionReviewSection
             title="Détail par journée"
             className="no-margin-no-padding"
           >
             <List>
-              {activityEventsByDay.map((dayActivityEvents, index) => [
+              {missionsInPeriod.map((mission, index) => [
                 <ListItem
                   key={2 * index}
-                  onClick={handleDayClick(getTime(dayActivityEvents[0]))}
+                  onClick={handleMissionClick(getTime(mission))}
                 >
                   <ListItemText disableTypography>
                     <Link
@@ -91,11 +87,12 @@ const tabs = {
                         e.preventDefault();
                       }}
                     >
-                      {prettyFormatDay(getTime(dayActivityEvents[0]))}
+                      Mission{mission.name ? " " + mission.name : ""} du{" "}
+                      {prettyFormatDay(getTime(mission))}
                     </Link>
                   </ListItemText>
                 </ListItem>,
-                index < activityEventsByDay.length - 1 ? (
+                index < missionsInPeriod.length - 1 ? (
                   <Divider key={2 * index + 1} component="li" />
                 ) : null
               ])}
@@ -125,27 +122,34 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function HistoryModal({ open, handleClose, activityEventsByDay = [] }) {
-  const [currentTab, setCurrentTab] = React.useState("day");
+export function HistoryModal({ open, handleClose, missions = [] }) {
+  const [currentTab, setCurrentTab] = React.useState("mission");
 
-  const { periods, eventsGroupedByPeriod } = groupDayActivityEventsByPeriod(
-    activityEventsByDay,
-    tabs[currentTab].getPeriod
+  const groupedMissions = groupBy(missions, m =>
+    tabs[currentTab].getPeriod(getTime(m))
   );
+
+  const periods = Object.keys(groupedMissions)
+    .map(p => parseInt(p))
+    .sort();
 
   const [selectedPeriod, setSelectedPeriod] = React.useState(
     periods[periods.length - 1]
   );
 
   React.useEffect(() => setSelectedPeriod(periods[periods.length - 1]), [
-    activityEventsByDay
+    missions
   ]);
 
   function handlePeriodChange(e, newTab, selectedDate) {
-    const newPeriods = groupDayActivityEventsByPeriod(
-      activityEventsByDay,
-      tabs[newTab].getPeriod
-    ).periods;
+    const newGroups = groupBy(missions, m =>
+      tabs[newTab].getPeriod(getTime(m))
+    );
+
+    const newPeriods = Object.keys(newGroups)
+      .map(p => parseInt(p))
+      .sort();
+
     const newPeriod = findMatchingPeriodInNewScale(
       selectedDate,
       newPeriods,
@@ -158,12 +162,13 @@ export function HistoryModal({ open, handleClose, activityEventsByDay = [] }) {
 
   const classes = useStyles();
 
-  const selectedPeriodEvents = eventsGroupedByPeriod[selectedPeriod];
+  const missionsInSelectedPeriod = groupedMissions[selectedPeriod];
+  const followingPeriodStart = periods.find(p => p > selectedPeriod);
 
   return (
     <FunnelModal open={open} handleBack={handleClose}>
       <Container
-        className="flex-column full-height scrollable"
+        className="flex-column full-height"
         disableGutters
         maxWidth={false}
       >
@@ -192,11 +197,12 @@ export function HistoryModal({ open, handleClose, activityEventsByDay = [] }) {
           )}
         </Container>
         <Container className={classes.contentContainer} maxWidth={false}>
-          {selectedPeriodEvents &&
+          {missionsInSelectedPeriod &&
             tabs[currentTab].renderPeriod({
-              activityEventsByDay: selectedPeriodEvents.events,
-              handleDayClick: date => e => handlePeriodChange(e, "day", date),
-              followingPeriodStart: selectedPeriodEvents.followingPeriodStart,
+              missionsInPeriod: missionsInSelectedPeriod,
+              handleMissionClick: date => e =>
+                handlePeriodChange(e, "mission", date),
+              followingPeriodStart,
               classes
             })}
         </Container>

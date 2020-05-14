@@ -1,6 +1,4 @@
 import React from "react";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import { resolveTeamAt } from "common/utils/coworkers";
 import { getTime } from "common/utils/events";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
@@ -9,7 +7,7 @@ import Container from "@material-ui/core/Container";
 import { MainCtaButton } from "../components/MainCtaButton";
 import { formatGraphQLError } from "common/utils/errors";
 import {
-  computeDayKpis,
+  computeMissionKpis,
   WorkTimeSummaryKpiGrid
 } from "../components/WorkTimeSummary";
 import { AccountButton } from "../components/AccountButton";
@@ -31,20 +29,14 @@ const useStyles = makeStyles(theme => ({
 
 export function MissionReview({
   currentMission,
-  currentMissionActivities,
   pushNewActivityEvent,
   editActivityEvent,
   validateMission,
   editMissionExpenditures
 }) {
   const [submissionError, setSubmissionError] = React.useState(null);
-  const store = useStoreSyncedWithLocalStorage();
 
-  const dayMetrics = computeDayKpis(currentMissionActivities);
-  const team = resolveTeamAt(
-    store,
-    getTime(currentMissionActivities[currentMissionActivities.length - 1])
-  );
+  const missionMetrics = computeMissionKpis(currentMission);
 
   const classes = useStyles();
   return (
@@ -63,14 +55,12 @@ export function MissionReview({
           Récapitulatif de la mission
           {` ${
             currentMission.name ? currentMission.name : ""
-          } du ${prettyFormatDay(getTime(currentMissionActivities[0]))}`}
+          } du ${prettyFormatDay(getTime(currentMission))}`}
         </Typography>
-        <WorkTimeSummaryKpiGrid metrics={dayMetrics} />
+        <WorkTimeSummaryKpiGrid metrics={missionMetrics} />
       </Box>
       <MissionDetails
         mission={currentMission}
-        missionActivities={currentMissionActivities}
-        team={team}
         editActivityEvent={editActivityEvent}
         editExpenditures={editMissionExpenditures}
         previousMissionEnd={0}

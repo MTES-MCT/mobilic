@@ -1,6 +1,6 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
-import { formatTimeOfDay, formatTimer } from "common/utils/time";
+import { formatTimeOfDay, formatTimer, getStartOfDay } from "common/utils/time";
 import Box from "@material-ui/core/Box";
 import { computeTotalActivityDurations } from "common/utils/metrics";
 import { ACTIVITIES } from "common/utils/activities";
@@ -9,6 +9,7 @@ import { getTime } from "common/utils/events";
 import Card from "@material-ui/core/Card";
 import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import groupBy from "lodash/groupBy";
 
 const useStyles = makeStyles(theme => ({
   overviewTimer: {
@@ -76,11 +77,13 @@ export function WorkTimeSummaryKpiGrid({ metrics }) {
   );
 }
 
-export function computeDayKpis(activityEvents) {
-  const dayTimers = computeTotalActivityDurations(activityEvents);
+export function computeMissionKpis(mission) {
+  const dayTimers = computeTotalActivityDurations(mission.activities);
   const serviceHourString = `De ${formatTimeOfDay(
-    getTime(activityEvents[0])
-  )} à ${formatTimeOfDay(getTime(activityEvents[activityEvents.length - 1]))}`;
+    getTime(mission)
+  )} à ${formatTimeOfDay(
+    getTime(mission.activities[mission.activities.length - 1])
+  )}`;
   return [
     {
       label: "Amplitude",
@@ -96,9 +99,10 @@ export function computeDayKpis(activityEvents) {
   ];
 }
 
-export function computeWeekKpis(activityEventsPerDay) {
-  const timersPerDay = activityEventsPerDay.map(dayEvents =>
-    computeTotalActivityDurations(dayEvents)
+export function computeWeekKpis(missions) {
+  const missionsPerDay = groupBy(missions, m => getStartOfDay(getTime(m)));
+  const timersPerDay = missions.map(mission =>
+    computeTotalActivityDurations(mission.activities)
   );
   const weekTimers = {};
   timersPerDay.forEach(timer => {
@@ -113,7 +117,7 @@ export function computeWeekKpis(activityEventsPerDay) {
   return [
     {
       label: "Jours travaillés",
-      value: activityEventsPerDay.length
+      value: Object.keys(missionsPerDay).length
     },
     {
       label: "Temps de travail",

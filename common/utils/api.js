@@ -1,4 +1,5 @@
 import React from "react";
+import forEach from "lodash/forEach";
 import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { HttpLink } from "apollo-link-http";
@@ -8,7 +9,7 @@ import { ApolloLink, Observable } from "apollo-link";
 import gql from "graphql-tag";
 import jwtDecode from "jwt-decode";
 import { useStoreSyncedWithLocalStorage } from "./store";
-import { isConnectionError } from "./errors";
+import { isAuthenticationError, isRetryable } from "./errors";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 
 const REFRESH_MUTATION = gql`
@@ -437,14 +438,8 @@ class Api {
     this.apolloClient = new ApolloClient({
       uri: `${apiHost}${graphqlPath}`,
       link: ApolloLink.from([
-        onError(({ operation, response, graphQLErrors, networkError }) => {
-          if (
-            graphQLErrors &&
-            graphQLErrors.length > 0 &&
-            graphQLErrors.some(
-              error => error.message === "Authentication error"
-            )
-          ) {
+        onError(error => {
+          if (isAuthenticationError(error)) {
             this.refreshTokenQueue.clear();
             this.nonConcurrentQueryQueue.clear();
             this.logout();
@@ -500,18 +495,14 @@ class Api {
     );
   }
 
-  async graphQlMutate(query, variables, nonConcurrent = false) {
-    const mutation = () =>
-      this._queryWithRefreshToken(() =>
-        this.apolloClient.mutate({
-          mutation: query,
-          variables: variables,
-          fetchPolicy: "no-cache"
-        })
-      );
-    if (nonConcurrent)
-      return await this.nonConcurrentQueryQueue.execute(mutation);
-    return await mutation();
+  async graphQlMutate(query, variables) {
+    return await this._queryWithRefreshToken(() =>
+      this.apolloClient.mutate({
+        mutation: query,
+        variables: variables,
+        fetchPolicy: "no-cache"
+      })
+    );
   }
 
   async httpQuery(method, endpoint, options = {}) {
@@ -550,7 +541,7 @@ class Api {
     // No need to catch the refresh-token error since logout is imminent
   }
 
-  async executeRequest(request, failOnError = false) {
+  async executeRequest(request) {
     try {
       // 1. Call the API
       const submit = await this._queryWithRefreshToken(() =>
@@ -566,23 +557,42 @@ class Api {
       // 4. Remove the temporary updates and the pending request from the pool
       await this.store.clearPendingRequest(request);
     } catch (err) {
-      if (!isConnectionError(err)) {
+      if (!isRetryable(err)) {
+        if (request.onApiError) await request.onApiError(err);
         await this.store.clearPendingRequest(request);
       }
-      if (failOnError) throw err;
+      throw err;
     }
   }
 
   async executePendingRequests(failOnError = false) {
     return this.nonConcurrentQueryQueue.execute(async () => {
       // 1. Retrieve all pending requests
-      const pendingRequests = await this.store.pendingRequests();
-      if (pendingRequests.length === 0) return;
-      await Promise.all(
-        pendingRequests.map(async request =>
-          this.executeRequest(request, failOnError)
-        )
-      );
+      while (this.store.pendingRequests().length > 0) {
+        let errors = [];
+        const pendingRequests = this.store.pendingRequests();
+        const batch = [];
+        forEach(pendingRequests, request => {
+          if (request.batchable) batch.push(request);
+          else {
+            if (batch.length === 0) batch.push(request);
+            return false;
+          }
+        });
+        await Promise.all(
+          batch.map(async request => {
+            try {
+              await this.executeRequest(request);
+            } catch (err) {
+              errors.push(err);
+            }
+          })
+        );
+        if (errors.length > 0) {
+          if (failOnError) throw errors[0];
+          return;
+        }
+      }
     });
   }
 

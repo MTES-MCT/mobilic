@@ -1,4 +1,5 @@
 import React from "react";
+import values from "lodash/values";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -6,7 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import {
-  formatLatestEnrollmentInfo,
+  formatLatestEnrollmentStatus,
   formatPersonName
 } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
@@ -49,7 +50,7 @@ export function TeamSelectionModal({
 
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
-  const coworkers = store.coworkers();
+  const coworkers = values(store.getEntity("coworkers"));
 
   // The component maintains a separate "updatedCoworkers" state,
   // so that pending changes to coworkers and current team can be either :
@@ -58,7 +59,7 @@ export function TeamSelectionModal({
   // We sync the secondary state with the main one whenever the modal is opened/closed or the main state changes
   React.useEffect(() => {
     setUpdatedCoworkers(coworkers.map(cw => ({ ...cw })));
-  }, [open, coworkers]);
+  }, [open]);
 
   const pushNewCoworker = (firstName, lastName) => {
     setUpdatedCoworkers([
@@ -129,7 +130,7 @@ export function TeamSelectionModal({
                   secondaryTypographyProps={{ noWrap: true, display: "block" }}
                   secondary={
                     useCurrentEnrollment
-                      ? formatLatestEnrollmentInfo(coworker)
+                      ? formatLatestEnrollmentStatus(coworker)
                       : ""
                   }
                 />

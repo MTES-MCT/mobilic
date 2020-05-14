@@ -8,7 +8,7 @@ import { AccountButton } from "../components/AccountButton";
 import { MainCtaButton } from "../components/MainCtaButton";
 import Button from "@material-ui/core/Button";
 
-export function BeforeWork({ beginNewMission, activityEventsByDay }) {
+export function BeforeWork({ beginNewMission, missions }) {
   const modals = useModals();
 
   const onEnterNewMissionFunnel = () => {
@@ -77,7 +77,7 @@ export function BeforeWork({ beginNewMission, activityEventsByDay }) {
         style={{ marginTop: 8 }}
         color="primary"
         onClick={() => {
-          modals.open("history", { activityEventsByDay });
+          modals.open("history", { missions });
         }}
       >
         Voir mon historique

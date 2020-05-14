@@ -29,11 +29,13 @@ export function syncUser(userPayload, store) {
   const activities = [];
   const comments = [];
   const vehicleBookings = [];
+  const teamChanges = [];
   const missionData = [];
   missions.forEach(mission => {
     activities.push(...mission.activities);
     comments.push(...mission.comments);
     vehicleBookings.push(...mission.vehicleBookings);
+    teamChanges.push(...(mission.teamChanges || []));
     missionData.push(parseMissionPayloadFromBackend(mission));
   });
 
@@ -50,26 +52,21 @@ export function syncUser(userPayload, store) {
         isCompanyAdmin
       })
     );
+  missions && syncActions.push(store.syncEntity(missionData, "missions"));
   activities &&
     syncActions.push(
-      store.syncAllSubmittedItems(
+      store.syncEntity(
         activities.map(parseActivityPayloadFromBackend),
         "activities"
       )
     );
   enrollableCoworkers &&
-    syncActions.push(
-      store.syncAllSubmittedItems(enrollableCoworkers, "coworkers")
-    );
-  comments &&
-    syncActions.push(store.syncAllSubmittedItems(comments, "comments"));
-  missions &&
-    syncActions.push(store.syncAllSubmittedItems(missionData, "missions"));
+    syncActions.push(store.syncEntity(enrollableCoworkers, "coworkers"));
+  comments && syncActions.push(store.syncEntity(comments, "comments"));
+  teamChanges && syncActions.push(store.syncEntity(teamChanges, "comments"));
   vehicleBookings &&
-    syncActions.push(
-      store.syncAllSubmittedItems(vehicleBookings, "vehicleBookings")
-    );
+    syncActions.push(store.syncEntity(vehicleBookings, "vehicleBookings"));
   bookableVehicles &&
-    syncActions.push(store.syncAllSubmittedItems(bookableVehicles, "vehicles"));
+    syncActions.push(store.syncEntity(bookableVehicles, "vehicles"));
   return Promise.all(syncActions);
 }

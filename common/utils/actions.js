@@ -1,4 +1,6 @@
 import React from "react";
+import mapValues from "lodash/mapValues";
+import keyBy from "lodash/keyBy";
 import { isPendingSubmission, useStoreSyncedWithLocalStorage } from "./store";
 import {
   BEGIN_MISSION_MUTATION,
@@ -26,7 +28,9 @@ export function ActionsContextProvider({ children }) {
     variables,
     optimisticStoreUpdate,
     watchFields,
-    handleSubmitResponse
+    handleSubmitResponse,
+    batchable = true,
+    onApiError = () => {}
   ) {
     // 1. Store the request and optimistically update the store as if the api responded successfully
     await store.newRequest(
@@ -34,7 +38,9 @@ export function ActionsContextProvider({ children }) {
       variables,
       optimisticStoreUpdate,
       watchFields,
-      handleSubmitResponse
+      handleSubmitResponse,
+      batchable,
+      onApiError
     );
 
     // 2. Execute the request (call API) along with any other pending one
@@ -44,14 +50,15 @@ export function ActionsContextProvider({ children }) {
 
   const pushNewActivityEvent = async ({
     activityType,
-    missionId = null,
+    missionId,
     driver = null,
     userTime = null,
     userComment = null
   }) => {
     const newActivity = {
       type: activityType,
-      eventTime: Date.now()
+      eventTime: Date.now(),
+      missionId
     };
     if (driver)
       newActivity.driver = {
@@ -59,16 +66,12 @@ export function ActionsContextProvider({ children }) {
         firstName: driver.firstName,
         lastName: driver.lastName
       };
-    if (missionId) newActivity.missionId = missionId;
     if (userTime) newActivity.userTime = userTime;
     if (userComment !== undefined && userComment !== null)
       newActivity.comment = userComment;
 
     const updateStore = (store, requestId) =>
-      store.pushItemToArray(
-        { ...newActivity, createdByRequestId: requestId },
-        "activities"
-      );
+      store.createEntityObject(newActivity, "activities", requestId);
 
     await submitAction(
       LOG_ACTIVITY_MUTATION,
@@ -79,7 +82,7 @@ export function ActionsContextProvider({ children }) {
         const activities = apiResponse.data.logActivity.missionActivities.map(
           parseActivityPayloadFromBackend
         );
-        store.syncAllSubmittedItems(
+        store.syncEntity(
           activities,
           "activities",
           a => a.missionId === activities[0].missionId
@@ -98,29 +101,29 @@ export function ActionsContextProvider({ children }) {
     if (isPendingSubmission(activityEvent)) {
       if (api.isCurrentlySubmittingRequests()) return;
       // If the event is present in the db and has other unsubmitted updates we edit these updates
-      if (activityEvent.updatedByRequestId) {
+      if (activityEvent.pendingUpdate.type === "update") {
         await store.clearPendingRequest(
-          store.getItemFromArrayById(
-            activityEvent.updatedByRequestId,
-            "pendingRequests"
-          )
+          store
+            .pendingRequests()
+            .find(r => r.id === activityEvent.pendingUpdate.requestId)
         );
       }
       // If the event is not present in the db yet we can more or less do the same
-      else if (activityEvent.createdByRequestId) {
+      else if (activityEvent.pendingUpdate.type === "create") {
         shouldCallApi = false;
-        const requestToAlter = store.getItemFromArrayById(
-          activityEvent.updatedByRequestId
-        );
+        const requestToAlter = store
+          .pendingRequests()
+          .find(r => r.id === activityEvent.pendingUpdate.requestId);
         if (requestToAlter.query !== BEGIN_MISSION_MUTATION) {
           await store.clearPendingRequest(requestToAlter);
           if (activityEvent === "revision") {
-            return pushNewActivityEvent(
-              requestToAlter.variables.type,
-              requestToAlter.variables.driverId,
-              newUserTime,
+            return pushNewActivityEvent({
+              activityType: activityEvent.type,
+              missionId: activityEvent.missionId,
+              driver: activityEvent.driver,
+              userTime: newUserTime,
               userComment
-            );
+            });
           }
         }
       }
@@ -135,15 +138,16 @@ export function ActionsContextProvider({ children }) {
       };
 
       const updateStore = (store, requestId) => {
-        const updatedActivity =
-          actionType === "cancel"
-            ? { ...activityEvent, deletedByRequestId: requestId }
-            : {
-                ...activityEvent,
-                updatedByRequestId: requestId,
-                userTime: newUserTime
-              };
-        store.pushItemToArray(updatedActivity, "activities");
+        if (actionType === "cancel") {
+          store.deleteEntityObject(activityEvent.id, "activities", requestId);
+        } else {
+          store.updateEntityObject(
+            activityEvent.id,
+            "activities",
+            { userTime: newUserTime },
+            requestId
+          );
+        }
       };
 
       await submitAction(
@@ -155,7 +159,7 @@ export function ActionsContextProvider({ children }) {
           const activities = apiResponse.data.editActivity.missionActivities.map(
             parseActivityPayloadFromBackend
           );
-          store.syncAllSubmittedItems(
+          store.syncEntity(
             activities,
             "activities",
             a => a.missionId === activities[0].missionId
@@ -171,11 +175,12 @@ export function ActionsContextProvider({ children }) {
     id,
     firstName,
     lastName,
+    missionId,
     isEnrollment,
-    enrollmentOrReleaseTime
+    eventTime
   ) => {
     let coworker;
-    if (id) coworker = store.getItemFromArrayById(id, "coworkers");
+    if (id) coworker = store.getEntity("coworkers")[id];
     if (!coworker) {
       coworker = {
         id,
@@ -183,21 +188,15 @@ export function ActionsContextProvider({ children }) {
         lastName
       };
     }
-    if (isEnrollment) coworker.joinedCurrentMissionAt = enrollmentOrReleaseTime;
-    else coworker.leftCurrentMissionAt = enrollmentOrReleaseTime;
-    store.setStoreState(
-      prevState => ({
-        coworkers: [
-          ...prevState.coworkers.filter(
-            cw =>
-              cw.id !== coworker.id ||
-              cw.firstName !== coworker.firstName ||
-              cw.lastName !== coworker.lastName
-          ),
-          coworker
-        ]
-      }),
-      ["coworkers"]
+    store.createEntityObject(
+      {
+        eventTime,
+        coworker,
+        missionId,
+        isEnrollment
+      },
+      "teamChanges",
+      requestId
     );
   };
 
@@ -205,16 +204,18 @@ export function ActionsContextProvider({ children }) {
     id,
     firstName,
     lastName,
-    isEnrollment
+    isEnrollment,
+    missionId
   ) => {
-    const enrollmentOrReleaseTime = Date.now();
+    const eventTime = Date.now();
     const enrollmentOrReleasePayload = {
-      eventTime: enrollmentOrReleaseTime,
+      eventTime,
       teamMate: {
         id,
         firstName,
         lastName
       },
+      missionId,
       isEnrollment
     };
     const updateStore = (store, requestId) => {
@@ -224,8 +225,9 @@ export function ActionsContextProvider({ children }) {
         id,
         firstName,
         lastName,
+        missionId,
         isEnrollment,
-        enrollmentOrReleaseTime
+        eventTime
       );
     };
 
@@ -235,21 +237,8 @@ export function ActionsContextProvider({ children }) {
       updateStore,
       ["coworkers"],
       apiResponse => {
-        const coworker = apiResponse.data.enrollOrReleaseTeamMate.coworker;
-        store.setStoreState(
-          prevState => ({
-            coworkers: [
-              ...prevState.coworkers.filter(
-                cw =>
-                  cw.id !== coworker.id ||
-                  cw.firstName !== coworker.firstName ||
-                  cw.lastName !== coworker.lastName
-              ),
-              coworker
-            ]
-          }),
-          ["coworkers"]
-        );
+        const teamChange = apiResponse.data.enrollOrReleaseTeamMate.teamChange;
+        store.syncEntity([teamChange], "teamChanges", () => false);
       }
     );
   };
@@ -279,41 +268,36 @@ export function ActionsContextProvider({ children }) {
         lastName: driver.lastName
       };
 
-    const updateStore = (store, requestId) => {
+    const updateStore = async (store, requestId) => {
       const mission = {
         name,
         eventTime: missionPayload.eventTime,
-        createdByRequestId: requestId,
         expenditures: {}
       };
-      store.pushItemToArray(mission, "missions");
-      store.pushItemToArray(
+      const missionId = await store.createEntityObject(
+        mission,
+        "missions",
+        requestId
+      );
+      store.createEntityObject(
         {
           type: firstActivityType,
+          missionId,
           eventTime: mission.eventTime,
-          driver: driver,
-          createdByRequestId: requestId
+          driver: driver
         },
-        "activities"
+        "activities",
+        requestId
       );
-      store.pushItemToArray(
+      store.createEntityObject(
         {
           eventTime: mission.eventTime,
-          createdByRequestId: requestId,
+          missionId,
           vehicleId: vehicleId,
           vehicleName: vehicleRegistrationNumber
         },
-        "vehicleBookings"
-      );
-      store.setStoreState(
-        prevState => ({
-          coworkers: prevState.coworkers.map(cw => ({
-            ...cw,
-            joinedCurrentMissionAt: null,
-            leftCurrentMissionAt: null
-          }))
-        }),
-        ["coworkers"]
+        "vehicleBookings",
+        requestId
       );
       if (team)
         team.forEach(tm =>
@@ -323,10 +307,13 @@ export function ActionsContextProvider({ children }) {
             tm.id,
             tm.firstName,
             tm.lastName,
+            missionId,
             true,
             mission.eventTime
           )
         );
+
+      return { missionId };
     };
 
     await submitAction(
@@ -334,79 +321,124 @@ export function ActionsContextProvider({ children }) {
       missionPayload,
       updateStore,
       ["missions", "activities", "vehicleBookings"],
-      apiResponse => {
+      async (apiResponse, { missionId: tempMissionId }) => {
         const mission = apiResponse.data.beginMission.mission;
-        store.pushItemToArray(
-          parseMissionPayloadFromBackend(mission),
-          "missions"
+        await new Promise((resolve, reject) => {
+          store.setStoreState(
+            prevState => ({
+              pendingRequests: prevState.pendingRequests.map(request => {
+                const requestVariables = { ...request.variables };
+                if (requestVariables.missionId === tempMissionId) {
+                  requestVariables.missionId = mission.id;
+                }
+                return { ...request, variables: requestVariables };
+              })
+            }),
+            ["pendingRequests"],
+            resolve
+          );
+        });
+        store.syncEntity(
+          [parseMissionPayloadFromBackend(mission)],
+          "missions",
+          () => false
         );
         store.setStoreState(
           prevState => ({
-            activities: [
-              ...prevState.activities.map(a => ({
+            activities: {
+              ...mapValues(prevState.activities, a => ({
                 ...a,
-                missionId: a.missionId || mission.id
+                missionId:
+                  a.missionId === tempMissionId ? mission.id : a.missionId
               })),
-              ...mission.activities.map(parseActivityPayloadFromBackend)
-            ]
+              ...keyBy(
+                mission.activities.map(parseActivityPayloadFromBackend),
+                a => a.id.toString()
+              )
+            }
           }),
           ["activities"]
         );
         store.setStoreState(
           prevState => ({
-            comments: prevState.comments.map(a => ({
-              ...a,
-              missionId: a.missionId || mission.id
-            }))
+            teamChanges: {
+              ...mapValues(prevState.teamChanges, a => ({
+                ...a,
+                missionId:
+                  a.missionId === tempMissionId ? mission.id : a.missionId
+              })),
+              ...keyBy(mission.teamChanges, a => a.id.toString())
+            }
+          }),
+          ["comments"]
+        );
+        store.setStoreState(
+          prevState => ({
+            comments: {
+              ...mapValues(prevState.comments, a => ({
+                ...a,
+                missionId:
+                  a.missionId === tempMissionId ? mission.id : a.missionId
+              })),
+              ...keyBy(mission.comments, a => a.id.toString())
+            }
           }),
           ["comments"]
         );
         _handleNewVehicleBookingsFromApi(mission.vehicleBookings);
         store.setStoreState(
           prevState => ({
-            vehicleBookings: prevState.vehicleBookings.map(a => ({
+            vehicleBookings: mapValues(prevState.vehicleBookings, a => ({
               ...a,
-              missionId: a.missionId || mission.id
+              missionId:
+                a.missionId === tempMissionId ? mission.id : a.missionId
             }))
           }),
           ["vehicleBookings"]
         );
+      },
+      false,
+      async (error, { missionId: tempMissionId }) => {
+        // If the begin-mission event raises an API error we cancel all the pending requests for the mission
+        const pendingMissionRequests = store
+          .pendingRequests()
+          .filter(req => req.variables.missionId === tempMissionId);
+        await Promise.all(
+          pendingMissionRequests.map(req => store.clearPendingRequest(req))
+        );
+        store.syncEntity([], "missions", m => m.id === tempMissionId);
       }
     );
   };
 
   const endMission = async ({
     endTime,
-    missionId = null,
+    missionId,
     expenditures = null,
     comment = null
   }) => {
     const endMissionPayload = {
-      eventTime: endTime
+      eventTime: endTime,
+      missionId
     };
-    if (missionId) endMissionPayload.missionId = missionId;
     if (expenditures) endMissionPayload.expenditures = expenditures;
     if (comment) endMissionPayload.comment = comment;
 
     const updateStore = (store, requestId) => {
-      store.pushItemToArray(
+      store.createEntityObject(
         {
           type: ACTIVITIES.rest.name,
           eventTime: endMissionPayload.eventTime,
-          missionId: missionId,
-          createdByRequestId: requestId
+          missionId
         },
-        "activities"
+        "activities",
+        requestId
       );
-      store.setStoreState(
-        prevState => ({
-          missions: prevState.missions.map(m => ({
-            ...m,
-            expenditures: m.id === missionId ? expenditures : m.expenditures,
-            updatedByRequestId: requestId
-          }))
-        }),
-        ["missions"]
+      store.updateEntityObject(
+        missionId,
+        "missions",
+        { expenditures },
+        requestId
       );
     };
 
@@ -417,89 +449,83 @@ export function ActionsContextProvider({ children }) {
       ["activities", "missions"],
       apiResponse => {
         const mission = apiResponse.data.endMission.mission;
-        store.syncAllSubmittedItems(
+        store.syncEntity(
           mission.activities.map(parseActivityPayloadFromBackend),
           "activities",
           a => a.missionId === mission.id
         );
-        store.setStoreState(
-          prevState => ({
-            missions: [
-              ...prevState.missions.filter(
-                m => m.id !== mission.id && m.id !== missionId
-              ),
-              parseMissionPayloadFromBackend(mission)
-            ]
-          }),
-          ["missions"]
+        store.syncEntity(
+          [parseMissionPayloadFromBackend(mission)],
+          ["missions"],
+          m => m.id === mission.id
         );
       }
     );
   };
 
   const validateMission = async mission => {
-    await api.executePendingRequests(true);
-    let missionId = mission.id;
-    if (!missionId) {
-      const updatedMission = store
-        .getArray("missions")
-        .find(
-          m => m.eventTime === mission.eventTime && m.name === mission.name
-        );
-      if (updatedMission) {
-        missionId = updatedMission.id;
+    let update = { validated: true };
+    if (isPendingSubmission(mission)) {
+      if (api.isCurrentlySubmittingRequests()) return;
+      if (mission.pendingUpdate.type === "update") {
+        update = { ...mission.pendingUpdate.new, ...update };
       }
     }
-    const apiResponse = await api.graphQlMutate(
+    const updateStore = (store, requestId) => {
+      store.updateEntityObject(mission.id, "missions", update, requestId);
+    };
+
+    await submitAction(
       VALIDATE_MISSION_MUTATION,
-      { missionId },
-      true
-    );
-    const missionData = apiResponse.data.validateMission.mission;
-    await store.syncAllSubmittedItems(
-      [parseMissionPayloadFromBackend(missionData)],
-      "missions",
-      m => m.id === missionData.id
+      { missionId: mission.id },
+      updateStore,
+      ["missions"],
+      async apiResponse => {
+        const mission = apiResponse.data.validateMission.mission;
+        await store.syncEntity(
+          [parseMissionPayloadFromBackend(mission)],
+          "missions",
+          m => m.id === mission.id
+        );
+      }
     );
   };
 
   const _handleNewVehicleBookingsFromApi = newVehicleBookings => {
-    store.setItems(prevState => ({
-      vehicleBookings: [...prevState.vehicleBookings, ...newVehicleBookings]
-    }));
+    store.syncEntity(newVehicleBookings, "vehicleBookings", () => false);
     newVehicleBookings.forEach(vehicleBooking => {
-      const vehicle = store.getItemFromArrayById(
-        vehicleBooking.vehicle.id,
-        "vehicles"
-      );
-      if (!vehicle) store.pushItemToArray(vehicleBooking.vehicle, "vehicles");
+      const vehicle = store.getEntity("vehicles")[
+        vehicleBooking.vehicle.id.toString()
+      ];
+      if (!vehicle)
+        store.syncEntity(vehicleBooking.vehicle, "vehicles", () => false);
     });
   };
 
-  const pushNewVehicleBooking = async (vehicle, userTime, missionId = null) => {
+  const pushNewVehicleBooking = async (vehicle, userTime, missionId) => {
     if (!vehicle) return;
     const { id, registrationNumber } = vehicle;
     const vehicleBookingPayload = {
-      eventTime: Date.now()
+      eventTime: Date.now(),
+      missionId
     };
     if (id) vehicleBookingPayload.vehicleId = id;
     if (registrationNumber)
       vehicleBookingPayload.registrationNumber = registrationNumber;
 
     if (userTime) vehicleBookingPayload.userTime = userTime;
-    if (missionId) vehicleBookingPayload.missionId = missionId;
 
     let actualVehicle;
-    if (id) actualVehicle = store.getItemFromArrayById(id, "vehicles");
+    if (id) actualVehicle = store.getEntity("vehicles")[id.toString()];
 
     const updateStore = (store, requestId) => {
-      store.pushItemToArray(
+      store.createEntityObject(
         {
           ...vehicleBookingPayload,
-          vehicleName: actualVehicle ? actualVehicle.name : registrationNumber,
-          createdByRequestId: requestId
+          vehicleName: actualVehicle ? actualVehicle.name : registrationNumber
         },
-        "vehicleBookings"
+        "vehicleBookings",
+        requestId
       );
     };
 
@@ -515,18 +541,15 @@ export function ActionsContextProvider({ children }) {
     );
   };
 
-  const pushNewComment = async (content, missionId = null) => {
+  const pushNewComment = async (content, missionId) => {
     const commentPayload = {
       eventTime: Date.now(),
-      content
+      content,
+      missionId
     };
-    if (missionId) commentPayload.missionId = missionId;
 
     const updateStore = (store, requestId) => {
-      store.pushItemToArray(
-        { ...commentPayload, createdByRequestId: requestId },
-        "comments"
-      );
+      store.createEntityObject({ ...commentPayload }, "comments", requestId);
     };
 
     await submitAction(
@@ -536,7 +559,7 @@ export function ActionsContextProvider({ children }) {
       ["comments"],
       apiResponse => {
         const comment = apiResponse.data.logComment.comment;
-        store.pushItemToArray(comment, "comments");
+        store.syncEntity([comment], "comments", () => false);
       }
     );
   };
@@ -545,18 +568,21 @@ export function ActionsContextProvider({ children }) {
     if (isPendingSubmission(mission)) {
       if (api.isCurrentlySubmittingRequests()) return;
       await api.nonConcurrentQueryQueue.execute(async () => {
-        const previousRequestId = mission.updatedByRequestId;
-        const previousRequest = await store.getItemFromArrayById(
-          previousRequestId,
-          "pendingRequests"
-        );
+        const previousRequestId = mission.pendingUpdate.requestId;
+        const previousRequest = store
+          .pendingRequests()
+          .find(req => req.id === previousRequestId);
         previousRequest.variables = {
           ...previousRequest.variables,
           expenditures: newExpenditures
         };
         await store.updateItemInArray(previousRequest, "pendingRequests");
-        mission.expenditures = newExpenditures;
-        await store.updateItemInArray(mission, "missions");
+        await store.updateEntityObject(
+          mission.id,
+          "missions",
+          { expenditures: newExpenditures },
+          previousRequestId
+        );
       });
     } else {
       const editExpenditurePayload = {
@@ -565,13 +591,11 @@ export function ActionsContextProvider({ children }) {
       };
 
       const updateStore = (store, requestId) =>
-        store.pushItemToArray(
-          {
-            ...mission,
-            expenditures: newExpenditures,
-            updatedByRequestId: requestId
-          },
-          "missions"
+        store.updateEntityObject(
+          mission.id,
+          "missions",
+          { expenditures: newExpenditures },
+          requestId
         );
 
       await submitAction(
@@ -581,7 +605,7 @@ export function ActionsContextProvider({ children }) {
         ["missions"],
         async apiResponse => {
           const mission = apiResponse.data.editMissionExpenditures.mission;
-          await store.syncAllSubmittedItems(
+          await store.syncEntity(
             [parseMissionPayloadFromBackend(mission)],
             "missions",
             m => m.id === mission.id

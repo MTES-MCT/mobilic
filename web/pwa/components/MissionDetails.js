@@ -4,15 +4,20 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import PersonIcon from "@material-ui/core/SvgIcon/SvgIcon";
 import Typography from "@material-ui/core/Typography";
-import { formatLatestEnrollmentInfo } from "common/utils/coworkers";
+import {
+  formatLatestEnrollmentStatus,
+  formatPersonName
+} from "common/utils/coworkers";
 import Box from "@material-ui/core/Box";
 import Chip from "@material-ui/core/Chip";
 import { EXPENDITURES } from "common/utils/expenditures";
 import React from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import { ACTIVITIES } from "common/utils/activities";
 import { useModals } from "common/utils/modals";
 import { getTime } from "common/utils/events";
+import groupBy from "lodash/groupBy";
+import map from "lodash/map";
+import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -30,8 +35,6 @@ const useStyles = makeStyles(theme => ({
 
 export function MissionDetails({
   mission,
-  missionActivities,
-  team,
   editActivityEvent,
   editExpenditures,
   previousMissionEnd,
@@ -40,9 +43,18 @@ export function MissionDetails({
 }) {
   const classes = useStyles();
   const modals = useModals();
+  const store = useStoreSyncedWithLocalStorage();
+  const userId = store.userId();
 
-  const lastMissionActivity = missionActivities[missionActivities.length - 1];
-  const isMissionComplete = lastMissionActivity.type === ACTIVITIES.rest.name;
+  const lastMissionActivity = mission.activities[mission.activities.length - 1];
+
+  const teamChanges = mission.teamChanges.filter(
+    tc => tc.coworker.id !== userId
+  );
+  const teamMatesLatestStatuses = map(
+    groupBy(teamChanges, tc => tc.coworker.id || formatPersonName(tc.coworker)),
+    statuses => statuses[statuses.length - 1]
+  );
 
   return [
     <MissionReviewSection
@@ -57,7 +69,7 @@ export function MissionDetails({
                 createActivity: args =>
                   createActivity({ ...args, missionId: mission.id }),
                 minStartTime: previousMissionEnd + 1,
-                maxStartTime: isMissionComplete
+                maxStartTime: mission.isComplete
                   ? getTime(lastMissionActivity) - 1
                   : Date.now()
               })
@@ -65,25 +77,25 @@ export function MissionDetails({
       }
     >
       <ActivityList
-        activities={missionActivities}
+        activities={mission.activities}
         editActivityEvent={editActivityEvent}
         previousMissionEnd={0}
       />
     </MissionReviewSection>,
     <MissionReviewSection
       key={1}
-      title={team.length > 0 ? "En équipe" : "En solo"}
+      title={teamMatesLatestStatuses.length > 0 ? "Coéquipiers" : "En solo"}
       className={`${classes.backgroundPaper} unshrinkable`}
       mb={hideExpenditures && 4}
     >
-      {team.length > 0 && (
+      {teamMatesLatestStatuses.length > 0 && (
         <List dense>
-          {team.map((tm, index) => (
+          {teamMatesLatestStatuses.map((tc, index) => (
             <ListItem disableGutters key={index}>
               <PersonIcon />
-              <Typography>{`${tm.firstName} (${formatLatestEnrollmentInfo(
-                tm
-              )})`}</Typography>
+              <Typography>{`${
+                tc.coworker.firstName
+              } (${formatLatestEnrollmentStatus(tc)})`}</Typography>
             </ListItem>
           ))}
         </List>

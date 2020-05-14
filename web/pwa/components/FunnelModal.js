@@ -42,13 +42,14 @@ export function FunnelModal({
       open={open}
       onClose={() => {}}
       TransitionComponent={Transition}
-      PaperProps={{ className: classes.container }}
+      PaperProps={{ className: `scrollable ${classes.container}` }}
     >
       <Box
         px={2}
-        pb={1}
+        pb={2}
         pt={2}
         className="header-container flex-row-flex-start"
+        style={{ position: "static" }}
       >
         <Button
           className={classes.backButton}

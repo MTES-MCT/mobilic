@@ -16,7 +16,8 @@ const useStyles = makeStyles(theme => ({
     borderRadius: "24px",
     marginTop: theme.spacing(-3),
     marginBottom: theme.spacing(-3),
-    zIndex: 1000
+    zIndex: 1000,
+    flexShrink: 0
   },
   gridItem: {
     maxWidth: 120
@@ -34,6 +35,7 @@ const useStyles = makeStyles(theme => ({
     height: "100%",
     width: "100%",
     maxWidth: 90,
+    minHeight: 70,
     maxHeight: 90,
     margin: "auto",
     padding: theme.spacing(0.5)

@@ -1,4 +1,8 @@
-import { getTime, sortEvents } from "./events";
+import forEach from "lodash/forEach";
+import mapValues from "lodash/mapValues";
+import values from "lodash/values";
+import { getTime } from "./events";
+import { ACTIVITIES } from "./activities";
 
 export function parseMissionPayloadFromBackend(missionPayload) {
   return {
@@ -12,43 +16,31 @@ export function parseMissionPayloadFromBackend(missionPayload) {
   };
 }
 
-function missionStartTime(mission) {
-  if (mission.activities && mission.activities.length > 0) {
-    return getTime(mission.activities[0]);
-  } else return getTime(mission);
-}
-
-export function sortMissionEvents(store, mission, eventSubFields) {
-  eventSubFields.forEach(field => {
-    mission[field] = sortEvents(store.getLastVersion(mission[field]));
+export function linkMissionsWithRelations(missions, relationMap) {
+  const augmentedMissions = mapValues(missions, m => ({
+    ...m,
+    ...mapValues(relationMap, () => [])
+  }));
+  forEach(relationMap, (items, relationName) => {
+    items.forEach(item => {
+      const associatedMission = augmentedMissions[item.missionId];
+      if (associatedMission) {
+        associatedMission[relationName].push(item);
+      }
+    });
   });
+  return values(augmentedMissions);
 }
 
-export function sortMissions(missions) {
-  return missions
-    .map(m => ({ ...m, startTime: missionStartTime(m) }))
-    .sort((mission1, mission2) => mission1.startTime - mission2.startTime);
-}
-
-export function groupSortedMissionsByPeriod(missions, getPeriod) {
-  const periods = [];
-  let currentPeriodIndex = -1;
-  const missionsGroupedByPeriod = {};
-  missions.forEach(mission => {
-    const period = getPeriod(getTime(mission));
-    if (currentPeriodIndex === -1 || period !== periods[currentPeriodIndex]) {
-      if (currentPeriodIndex >= 0)
-        missionsGroupedByPeriod[
-          periods[currentPeriodIndex]
-        ].followingPeriodStart = period;
-      periods.push(period);
-      currentPeriodIndex++;
-      missionsGroupedByPeriod[period] = {
-        followingPeriodStart: undefined,
-        missions: []
-      };
-    }
-    missionsGroupedByPeriod[period].missions.push(mission);
-  });
-  return { periods, missionsGroupedByPeriod };
+export function computeMissionProperties(mission) {
+  return {
+    startTime:
+      mission.activities.length > 0
+        ? getTime(mission.activities[0])
+        : getTime(mission),
+    isComplete:
+      mission.activities.length > 0 &&
+      mission.activities[mission.activities.length - 1].type ===
+        ACTIVITIES.rest.name
+  };
 }

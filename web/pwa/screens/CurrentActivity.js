@@ -10,24 +10,23 @@ import Box from "@material-ui/core/Box";
 export function CurrentActivity({
   currentActivity,
   currentMission,
-  currentMissionActivities,
   pushNewActivityEvent,
   editActivityEvent,
   endMission
 }) {
   const store = useStoreSyncedWithLocalStorage();
 
-  const team = resolveTeamAt(store, Date.now());
+  const currentTeam = resolveTeamAt(store, currentMission, Date.now());
 
   return [
     <CurrentActivityOverview
       key={0}
-      currentDayStart={getTime(currentMissionActivities[0])}
+      currentDayStart={getTime(currentMission.activities[0])}
       currentActivity={currentActivity}
     />,
     <ActivitySwitch
       key={1}
-      team={team}
+      team={currentTeam}
       currentActivity={currentActivity}
       pushActivitySwitchEvent={(activityType, driver = null) =>
         pushNewActivityEvent({
@@ -42,8 +41,6 @@ export function CurrentActivity({
     <MissionDetails
       key={3}
       mission={currentMission}
-      missionActivities={currentMissionActivities}
-      team={team}
       editActivityEvent={editActivityEvent}
       hideExpenditures
       previousMissionEnd={0}
