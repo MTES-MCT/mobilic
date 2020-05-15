@@ -24,6 +24,7 @@ import { DateTimePicker } from "./DateTimePicker";
 
 export function ActivityRevisionOrCreationModal({
   event,
+  teamChanges = [],
   open,
   handleClose,
   handleRevisionAction,
@@ -49,7 +50,7 @@ export function ActivityRevisionOrCreationModal({
 
   const user = store.userInfo();
   const team = newUserTime
-    ? [user, ...resolveTeamAt(store, newUserTime)]
+    ? [user, ...resolveTeamAt(teamChanges, newUserTime)]
     : [user];
 
   function handleSubmit() {

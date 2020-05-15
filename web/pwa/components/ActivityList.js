@@ -15,7 +15,8 @@ import { useModals } from "common/utils/modals";
 export function ActivityList({
   previousMissionEnd,
   activities,
-  editActivityEvent
+  editActivityEvent,
+  teamChanges
 }) {
   const modals = useModals();
 
@@ -72,7 +73,8 @@ export function ActivityList({
                         ),
                       minStartTime: previousMissionEnd + 1,
                       maxStartTime: Date.now(),
-                      cancellable: true
+                      cancellable: true,
+                      teamChanges
                     })
                   }
                 >

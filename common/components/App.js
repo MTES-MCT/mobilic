@@ -23,7 +23,7 @@ function App({ ScreenComponent }) {
   const vehicleBookings = sortEvents(
     values(store.getEntity("vehicleBookings"))
   );
-  const teamChanges = sortEvents(values(store.getEntity("teamChanges")));
+  const teamChanges = sortEvents(store.getEntity("teamChanges"));
 
   const unsortedMissions = linkMissionsWithRelations(
     store.getEntity("missions"),

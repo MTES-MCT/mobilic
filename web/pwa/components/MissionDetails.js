@@ -3,10 +3,10 @@ import DriveEtaIcon from "@material-ui/icons/DriveEta";
 import { ActivityList } from "./ActivityList";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import PersonIcon from "@material-ui/core/SvgIcon/SvgIcon";
+import PersonIcon from "@material-ui/icons/Person";
 import {
-  formatLatestEnrollmentStatus,
-  formatPersonName
+  computeLatestEnrollmentStatuses,
+  formatLatestEnrollmentStatus
 } from "common/utils/coworkers";
 import Box from "@material-ui/core/Box";
 import Chip from "@material-ui/core/Chip";
@@ -15,8 +15,6 @@ import React from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useModals } from "common/utils/modals";
 import { getTime } from "common/utils/events";
-import groupBy from "lodash/groupBy";
-import map from "lodash/map";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -81,10 +79,7 @@ export function MissionDetails({
   const teamChanges = mission.teamChanges.filter(
     tc => tc.coworker.id !== userId
   );
-  const teamMatesLatestStatuses = map(
-    groupBy(teamChanges, tc => tc.coworker.id || formatPersonName(tc.coworker)),
-    statuses => statuses[statuses.length - 1]
-  );
+  const teamMatesLatestStatuses = computeLatestEnrollmentStatuses(teamChanges);
 
   const isTeamMode = teamMatesLatestStatuses.length > 0;
 
@@ -102,7 +97,8 @@ export function MissionDetails({
                   minStartTime: previousMissionEnd + 1,
                   maxStartTime: mission.isComplete
                     ? getTime(lastMissionActivity) - 1
-                    : Date.now()
+                    : Date.now(),
+                  teamChanges
                 })
             : null
         }
@@ -111,6 +107,7 @@ export function MissionDetails({
           activities={mission.activities}
           editActivityEvent={editActivityEvent}
           previousMissionEnd={0}
+          teamChanges={teamChanges}
         />
       </MissionReviewSection>
       <MissionReviewSection
@@ -119,7 +116,9 @@ export function MissionDetails({
           changeTeam
             ? () =>
                 modals.open("teamSelection", {
-                  handleContinue: changeTeam
+                  mission: mission,
+                  handleContinue: changeTeam,
+                  closeOnContinue: true
                 })
             : null
         }

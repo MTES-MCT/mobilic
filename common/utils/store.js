@@ -8,7 +8,7 @@ import map from "lodash/map";
 import omit from "lodash/omit";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 
-const STORE_VERSION = 1;
+const STORE_VERSION = 3;
 
 const StoreSyncedWithLocalStorage = React.createContext(() => {});
 
@@ -22,6 +22,11 @@ const Map = {
   deserialize: value => (value ? JSON.parse(value) : {})
 };
 
+const String = {
+  serialize: value => value,
+  deserialize: value => value
+};
+
 export const isPendingSubmission = item => !!item.pendingUpdate;
 
 export class StoreSyncedWithLocalStorageProvider extends React.Component {
@@ -30,23 +35,36 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     this.storage = props.storage;
     // What is stored in local storage and how to read/write to it
     this.mapper = {
-      accessToken: {},
-      refreshToken: {},
-      companyAdmin: { deserialize: value => value === "true" },
-      userId: { deserialize: value => (value ? parseInt(value) : value) },
-      companyId: { deserialize: value => (value ? parseInt(value) : value) },
+      accessToken: String,
+      refreshToken: String,
+      companyAdmin: {
+        deserialize: value => value === "true",
+        serialize: String.serialize
+      },
+      userId: {
+        deserialize: value => (value ? parseInt(value) : value),
+        serialize: String.serialize
+      },
+      companyId: {
+        deserialize: value => (value ? parseInt(value) : value),
+        serialize: String.serialize
+      },
       userInfo: Map,
       coworkers: Map,
       activities: Map,
-      teamChanges: Map,
+      teamChanges: List,
       pendingRequests: List,
       comments: Map,
       missions: Map,
       vehicleBookings: Map,
       vehicles: Map,
-      nextRequestId: { deserialize: value => (value ? parseInt(value) : 1) },
+      nextRequestId: {
+        deserialize: value => (value ? parseInt(value) : 1),
+        serialize: String.serialize
+      },
       nextEntityObjectId: {
-        deserialize: value => (value ? parseInt(value) : 1)
+        deserialize: value => (value ? parseInt(value) : 1),
+        serialize: String.serialize
       }
     };
 
@@ -59,10 +77,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       "generateEntityObjectId"
     );
     Object.keys(this.mapper).forEach(entry => {
-      this.mapper[entry] = {
-        serialize: this.mapper[entry].serialize || (value => value),
-        deserialize: this.mapper[entry].deserialize || (value => value)
-      };
       this.state[entry] = this.mapper[entry].deserialize(null);
     });
 
@@ -157,6 +171,15 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     );
 
   createEntityObject = async (object, entity, requestId) => {
+    if (this.mapper[entity] === List) {
+      this.setStoreState(
+        prevState => ({
+          [entity]: [...prevState[entity], object]
+        }),
+        [entity]
+      );
+      return;
+    }
     const entityObjectId =
       "temp" +
       (await this._generateId(
@@ -210,13 +233,15 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       [entity]
     );
 
-  getEntity = entity =>
-    pickBy(
+  getEntity = entity => {
+    if (this.mapper[entity] === List) return this.state[entity];
+    return pickBy(
       mapValues(this.state[entity], item =>
         this.resolveLastVersionOfItem(item)
       ),
       value => !!value
     );
+  };
 
   removeItemFromArray = (item, arrayField) =>
     new Promise((resolve, reject) =>
@@ -275,8 +300,15 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         prevState =>
           zipObject(
             watchFields,
-            watchFields.map(entity =>
-              pickBy(
+            watchFields.map(entity => {
+              if (this.mapper[entity] === List) {
+                return prevState[entity].filter(
+                  item =>
+                    !isPendingSubmission(item) ||
+                    item.pendingUpdate.requestId !== requestId
+                );
+              }
+              return pickBy(
                 mapValues(prevState[entity], item =>
                   isPendingSubmission(item) &&
                   item.pendingUpdate.requestId === requestId
@@ -286,8 +318,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
                     : item
                 ),
                 value => !!value
-              )
-            )
+              );
+            })
           ),
         watchFields,
         resolve
@@ -311,6 +343,19 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       this.setStoreState(
         prevState => {
           const prevEntityState = prevState[entity];
+          if (this.mapper[entity] === List) {
+            return {
+              [entity]: [
+                ...prevEntityState.filter(
+                  item =>
+                    !belongsToSyncScope(item) ||
+                    (isPendingSubmission(item) &&
+                      item.pendingUpdate.type === "create")
+                ),
+                ...itemsFromApi
+              ]
+            };
+          }
           itemsFromApi.forEach(item => {
             const prevEntityMatch = prevEntityState[item.id.toString()];
             if (prevEntityMatch && isPendingSubmission(prevEntityMatch)) {

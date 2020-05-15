@@ -18,13 +18,11 @@ export function BeforeWork({ beginNewMission, missions }) {
           handleContinue: isTeamMode => {
             const handleFirstActivitySelection = updatedCoworkers => {
               const team = updatedCoworkers
-                ? updatedCoworkers
-                    .filter(cw => !!cw.enroll)
-                    .map(cw => ({
-                      id: cw.id,
-                      firstName: cw.firstName,
-                      lastName: cw.lastName
-                    }))
+                ? updatedCoworkers.map(cw => ({
+                    id: cw.id,
+                    firstName: cw.firstName,
+                    lastName: cw.lastName
+                  }))
                 : [];
               modals.open("firstActivity", {
                 team,
@@ -47,7 +45,7 @@ export function BeforeWork({ beginNewMission, missions }) {
             };
             if (isTeamMode) {
               modals.open("teamSelection", {
-                useCurrentEnrollment: false,
+                mission: null,
                 handleContinue: handleFirstActivitySelection
               });
             } else handleFirstActivitySelection(null);

@@ -1,6 +1,5 @@
 import React from "react";
 import { ActivitySwitch } from "../components/ActivitySwitch";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { resolveTeamAt } from "common/utils/coworkers";
 import { CurrentActivityOverview } from "../components/CurrentActivityOverview";
 import { getTime } from "common/utils/events";
@@ -13,11 +12,10 @@ export function CurrentActivity({
   pushNewActivityEvent,
   editActivityEvent,
   pushNewVehicleBooking,
+  pushNewTeamEnrollmentOrRelease,
   endMission
 }) {
-  const store = useStoreSyncedWithLocalStorage();
-
-  const currentTeam = resolveTeamAt(store, currentMission, Date.now());
+  const currentTeam = resolveTeamAt(currentMission.teamChanges, Date.now());
 
   return [
     <CurrentActivityOverview
@@ -48,6 +46,17 @@ export function CurrentActivity({
       createActivity={pushNewActivityEvent}
       changeVehicle={(vehicle, bookingTime) =>
         pushNewVehicleBooking(vehicle, bookingTime, currentMission.id)
+      }
+      changeTeam={updatedCoworkers =>
+        updatedCoworkers.forEach(cw => {
+          pushNewTeamEnrollmentOrRelease(
+            cw.id,
+            cw.firstName,
+            cw.lastName,
+            cw.enroll,
+            currentMission.id
+          );
+        })
       }
     />
   ];

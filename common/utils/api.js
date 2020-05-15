@@ -100,13 +100,21 @@ export const USER_QUERY = gql`
           missionId
           eventTime
         }
+        teamChanges {
+          isEnrollment
+          userTime
+          missionId
+          coworker {
+            id
+            firstName
+            lastName
+          }
+        }
       }
       enrollableCoworkers {
         id
         firstName
         lastName
-        joinedCurrentMissionAt
-        leftCurrentMissionAt
       }
       bookableVehicles {
         id
@@ -228,18 +236,23 @@ export const ENROLL_OR_RELEASE_TEAM_MATE_MUTATION = gql`
     $eventTime: DateTimeWithTimeStampSerialization!
     $teamMate: TeamMateInput!
     $isEnrollment: Boolean!
+    $missionId: Int!
   ) {
     enrollOrReleaseTeamMate(
       eventTime: $eventTime
       teamMate: $teamMate
       isEnrollment: $isEnrollment
+      missionId: $missionId
     ) {
-      coworker {
-        id
-        firstName
-        lastName
-        joinedCurrentMissionAt
-        leftCurrentMissionAt
+      teamChange {
+        isEnrollment
+        userTime
+        missionId
+        coworker {
+          id
+          firstName
+          lastName
+        }
       }
     }
   }
@@ -288,6 +301,16 @@ export const BEGIN_MISSION_MUTATION = gql`
           }
           userTime
           missionId
+        }
+        teamChanges {
+          isEnrollment
+          userTime
+          missionId
+          coworker {
+            id
+            firstName
+            lastName
+          }
         }
       }
     }

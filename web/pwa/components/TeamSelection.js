@@ -7,6 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import {
+  computeLatestEnrollmentStatuses,
   formatLatestEnrollmentStatus,
   formatPersonName
 } from "common/utils/coworkers";
@@ -40,17 +41,31 @@ const useStyles = makeStyles(theme => ({
 
 export function TeamSelectionModal({
   open,
-  useCurrentEnrollment,
+  mission,
   handleClose,
+  closeOnContinue = false,
   handleContinue
 }) {
   const funnelModalClasses = useFunnelModalStyles();
   const classes = useStyles();
   const [updatedCoworkers, setUpdatedCoworkers] = React.useState([]);
 
+  const missionLatestEnrollmentStatuses = mission
+    ? computeLatestEnrollmentStatuses(mission.teamChanges)
+    : [];
+
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
   const coworkers = values(store.getEntity("coworkers"));
+
+  const updatedCoworkersWithMissionEnrollmentStatuses = updatedCoworkers.map(
+    coworker => {
+      const coworkerEnrollmentStatus = missionLatestEnrollmentStatuses.find(
+        status => status.coworker.id === coworker.id
+      );
+      return { ...coworker, latestEnrollmentStatus: coworkerEnrollmentStatus };
+    }
+  );
 
   // The component maintains a separate "updatedCoworkers" state,
   // so that pending changes to coworkers and current team can be either :
@@ -58,7 +73,10 @@ export function TeamSelectionModal({
   // - committed to main state (when hitting Ok button)
   // We sync the secondary state with the main one whenever the modal is opened/closed or the main state changes
   React.useEffect(() => {
-    setUpdatedCoworkers(coworkers.map(cw => ({ ...cw })));
+    if (open) {
+      // TODO : call the API to get the up-to-date list of enrollable coworkers
+      setUpdatedCoworkers(coworkers.map(cw => ({ ...cw })));
+    }
   }, [open]);
 
   const pushNewCoworker = (firstName, lastName) => {
@@ -72,25 +90,27 @@ export function TeamSelectionModal({
     ]);
   };
 
-  const toggleAddCoworkerToTeam = id => () => {
+  const toggleAddCoworkerToTeam = (augmentedCoworker, index) => () => {
     const newCoworkers = updatedCoworkers.slice();
-    const coworker = newCoworkers[id];
-    if (useCurrentEnrollment) {
-      if (coworker.enroll !== undefined) coworker.enroll = undefined;
-      else {
-        coworker.enroll = !coworker.joinedCurrentMissionAt;
-      }
-    } else {
-      coworker.enroll = coworker.enroll ? undefined : true;
-    }
+    const coworker = newCoworkers[index];
+    if (coworker.enroll !== undefined) coworker.enroll = !coworker.enroll;
+    else
+      coworker.enroll = augmentedCoworker.latestEnrollmentStatus
+        ? !augmentedCoworker.latestEnrollmentStatus.isEnrollment
+        : true;
     setUpdatedCoworkers(newCoworkers);
   };
 
-  const isTeamMateChecked = coworker =>
-    coworker.enroll === true ||
-    (useCurrentEnrollment &&
-      coworker.enroll === undefined &&
-      !!coworker.joinedCurrentMissionAt);
+  const isTeamMateChecked = coworker => {
+    // If the user explictly checked or unchecked the corresponding list item
+    if (coworker.enroll === true || coworker.enroll === false)
+      return coworker.enroll;
+    // Otherwise return the enrollment status in the mission
+    return (
+      coworker.latestEnrollmentStatus &&
+      coworker.latestEnrollmentStatus.isEnrollment
+    );
+  };
 
   return (
     <FunnelModal open={open} handleBack={handleClose}>
@@ -112,39 +132,54 @@ export function TeamSelectionModal({
             Ajouter un coéquipier
           </Button>
           <List dense className="scrollable">
-            {updatedCoworkers.map((coworker, index) => (
-              <ListItem
-                disableGutters
-                className={`${classes.teamMate} ${isTeamMateChecked(coworker) &&
-                  classes.selected}`}
-                key={index}
-                onClick={toggleAddCoworkerToTeam(index)}
-              >
-                <Checkbox
-                  checked={isTeamMateChecked(coworker)}
-                  color="default"
-                />
-                <ListItemText
-                  primaryTypographyProps={{ noWrap: true, display: "block" }}
-                  primary={formatPersonName(coworker)}
-                  secondaryTypographyProps={{ noWrap: true, display: "block" }}
-                  secondary={
-                    useCurrentEnrollment
-                      ? formatLatestEnrollmentStatus(coworker)
-                      : ""
-                  }
-                />
-              </ListItem>
-            ))}
+            {updatedCoworkersWithMissionEnrollmentStatuses.map(
+              (coworker, index) => (
+                <ListItem
+                  disableGutters
+                  className={`${classes.teamMate} ${isTeamMateChecked(
+                    coworker
+                  ) && classes.selected}`}
+                  key={index}
+                  onClick={toggleAddCoworkerToTeam(coworker, index)}
+                >
+                  <Checkbox
+                    checked={isTeamMateChecked(coworker) || false}
+                    color="default"
+                  />
+                  <ListItemText
+                    primaryTypographyProps={{ noWrap: true, display: "block" }}
+                    primary={formatPersonName(coworker)}
+                    secondaryTypographyProps={{
+                      noWrap: true,
+                      display: "block"
+                    }}
+                    secondary={
+                      coworker.latestEnrollmentStatus
+                        ? formatLatestEnrollmentStatus(
+                            coworker.latestEnrollmentStatus
+                          )
+                        : ""
+                    }
+                  />
+                </ListItem>
+              )
+            )}
           </List>
         </Container>
         <Box className="cta-container" mt={2} mb={4}>
           <MainCtaButton
-            onClick={async () =>
+            onClick={async () => {
               handleContinue(
-                updatedCoworkers.filter(cw => cw.enroll !== undefined)
-              )
-            }
+                updatedCoworkersWithMissionEnrollmentStatuses.filter(
+                  cw =>
+                    (!cw.latestEnrollmentStatus && cw.enroll) ||
+                    (cw.latestEnrollmentStatus &&
+                      cw.enroll !== undefined &&
+                      cw.enroll !== cw.latestEnrollmentStatus.isEnrollment)
+                )
+              );
+              if (closeOnContinue) handleClose();
+            }}
           >
             Continuer
           </MainCtaButton>

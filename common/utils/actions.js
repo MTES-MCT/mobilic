@@ -1,5 +1,6 @@
 import React from "react";
 import mapValues from "lodash/mapValues";
+import map from "lodash/map";
 import keyBy from "lodash/keyBy";
 import { isPendingSubmission, useStoreSyncedWithLocalStorage } from "./store";
 import {
@@ -62,7 +63,7 @@ export function ActionsContextProvider({ children }) {
     };
     if (driver)
       newActivity.driver = {
-        id: driver.id,
+        id: parseInt(driver.id) || null,
         firstName: driver.firstName,
         lastName: driver.lastName
       };
@@ -71,7 +72,11 @@ export function ActionsContextProvider({ children }) {
       newActivity.comment = userComment;
 
     const updateStore = (store, requestId) =>
-      store.createEntityObject(newActivity, "activities", requestId);
+      store.createEntityObject(
+        { ...newActivity, driver },
+        "activities",
+        requestId
+      );
 
     await submitAction(
       LOG_ACTIVITY_MUTATION,
@@ -211,7 +216,7 @@ export function ActionsContextProvider({ children }) {
     const enrollmentOrReleasePayload = {
       eventTime,
       teamMate: {
-        id,
+        id: parseInt(id) || null,
         firstName,
         lastName
       },
@@ -263,7 +268,7 @@ export function ActionsContextProvider({ children }) {
       missionPayload.vehicleRegistrationNumber = vehicleRegistrationNumber;
     if (driver)
       missionPayload.driver = {
-        id: driver.id,
+        id: parseInt(driver.id) || null,
         firstName: driver.firstName,
         lastName: driver.lastName
       };
@@ -362,16 +367,16 @@ export function ActionsContextProvider({ children }) {
         );
         store.setStoreState(
           prevState => ({
-            teamChanges: {
-              ...mapValues(prevState.teamChanges, a => ({
+            teamChanges: [
+              ...map(prevState.teamChanges, a => ({
                 ...a,
                 missionId:
                   a.missionId === tempMissionId ? mission.id : a.missionId
               })),
-              ...keyBy(mission.teamChanges, a => a.id.toString())
-            }
+              ...mission.teamChanges
+            ]
           }),
-          ["comments"]
+          ["teamChanges"]
         );
         store.setStoreState(
           prevState => ({
@@ -457,7 +462,7 @@ export function ActionsContextProvider({ children }) {
         );
         store.syncEntity(
           [parseMissionPayloadFromBackend(mission)],
-          ["missions"],
+          "missions",
           m => m.id === mission.id
         );
       }
