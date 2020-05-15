@@ -82,13 +82,13 @@ export function MissionDetails({
         previousMissionEnd={0}
       />
     </MissionReviewSection>,
-    <MissionReviewSection
-      key={1}
-      title={teamMatesLatestStatuses.length > 0 ? "Coéquipiers" : "En solo"}
-      className={`${classes.backgroundPaper} unshrinkable`}
-      mb={hideExpenditures && 4}
-    >
-      {teamMatesLatestStatuses.length > 0 && (
+    teamMatesLatestStatuses.length > 0 && (
+      <MissionReviewSection
+        key={1}
+        title="Coéquipiers"
+        className={`${classes.backgroundPaper} unshrinkable`}
+        mb={hideExpenditures && 4}
+      >
         <List dense>
           {teamMatesLatestStatuses.map((tc, index) => (
             <ListItem disableGutters key={index}>
@@ -99,13 +99,14 @@ export function MissionDetails({
             </ListItem>
           ))}
         </List>
-      )}
-    </MissionReviewSection>,
+      </MissionReviewSection>
+    ),
     !hideExpenditures && (
       <MissionReviewSection
         key={2}
         title="Frais"
-        className="unshrinkable"
+        className={`unshrinkable ${teamMatesLatestStatuses.length === 0 &&
+          classes.backgroundPaper}`}
         mb={2}
         onEdit={
           editExpenditures

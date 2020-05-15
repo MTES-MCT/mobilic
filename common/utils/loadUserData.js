@@ -63,7 +63,7 @@ export function syncUser(userPayload, store) {
   enrollableCoworkers &&
     syncActions.push(store.syncEntity(enrollableCoworkers, "coworkers"));
   comments && syncActions.push(store.syncEntity(comments, "comments"));
-  teamChanges && syncActions.push(store.syncEntity(teamChanges, "comments"));
+  teamChanges && syncActions.push(store.syncEntity(teamChanges, "teamChanges"));
   vehicleBookings &&
     syncActions.push(store.syncEntity(vehicleBookings, "vehicleBookings"));
   bookableVehicles &&

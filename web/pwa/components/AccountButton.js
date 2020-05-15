@@ -1,4 +1,5 @@
 import React from "react";
+import omit from "lodash/omit";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Button from "@material-ui/core/Button";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
@@ -35,7 +36,7 @@ export function AccountButton(props) {
   const classes = useStyles(props.darkBackground || false);
 
   const mergedProps = {
-    ...props,
+    ...omit(props, ["darkBackground"]),
     className: `${classes.container} ${props.className}`
   };
 

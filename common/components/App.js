@@ -36,9 +36,6 @@ function App({ ScreenComponent }) {
 
   const missions = sortEvents(unsortedMissions);
 
-  console.log(activities);
-  console.log(missions);
-
   const currentMission =
     missions.length > 0 ? missions[missions.length - 1] : null;
 

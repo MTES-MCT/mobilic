@@ -278,7 +278,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             watchFields.map(entity =>
               pickBy(
                 mapValues(prevState[entity], item =>
-                  isPendingSubmission(item)
+                  isPendingSubmission(item) &&
+                  item.pendingUpdate.requestId === requestId
                     ? item.pendingUpdate.type === "create"
                       ? null
                       : omit(item, "pendingUpdate")
@@ -318,7 +319,13 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           });
           return {
             [entity]: {
-              ...pickBy(prevEntityState, item => !belongsToSyncScope(item)),
+              ...pickBy(
+                prevEntityState,
+                item =>
+                  !belongsToSyncScope(item) ||
+                  (isPendingSubmission(item) &&
+                    item.pendingUpdate.type === "create")
+              ),
               ...keyBy(itemsFromApi, item => item.id.toString())
             }
           };
