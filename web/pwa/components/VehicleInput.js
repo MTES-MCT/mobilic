@@ -1,4 +1,5 @@
 import React from "react";
+import values from "lodash/values";
 import TextField from "@material-ui/core/TextField";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import Autocomplete from "@material-ui/lab/Autocomplete/Autocomplete";
@@ -8,7 +9,7 @@ import { getVehicleName } from "common/utils/vehicles";
 export function VehicleInput({ label, vehicle, setVehicle }) {
   const store = useStoreSyncedWithLocalStorage();
 
-  const vehicles = store.vehicles();
+  const vehicles = values(store.getEntity("vehicles"));
   const _filterOptions = createFilterOptions({ stringify: getVehicleName });
   const filterOptions = (options, other) =>
     _filterOptions(options, { inputValue: getVehicleName(vehicle) || "" });

@@ -1,9 +1,9 @@
 import { MissionReviewSection } from "./MissionReviewSection";
+import DriveEtaIcon from "@material-ui/icons/DriveEta";
 import { ActivityList } from "./ActivityList";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import PersonIcon from "@material-ui/core/SvgIcon/SvgIcon";
-import Typography from "@material-ui/core/Typography";
 import {
   formatLatestEnrollmentStatus,
   formatPersonName
@@ -18,6 +18,9 @@ import { getTime } from "common/utils/events";
 import groupBy from "lodash/groupBy";
 import map from "lodash/map";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import { formatVehicleBookingTimes } from "common/utils/vehicles";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -33,13 +36,27 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+function AlternateColors({ children }) {
+  const classes = useStyles();
+  return React.Children.map(children, (child, index) => (
+    <Box
+      className={index % 2 === 1 ? classes.backgroundPaper : ""}
+      mb={index === React.Children.count(children) - 1 ? 2 : 0}
+    >
+      {child}
+    </Box>
+  ));
+}
+
 export function MissionDetails({
   mission,
   editActivityEvent,
   editExpenditures,
   previousMissionEnd,
   hideExpenditures,
-  createActivity
+  createActivity,
+  changeTeam,
+  changeVehicle
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -47,6 +64,19 @@ export function MissionDetails({
   const userId = store.userId();
 
   const lastMissionActivity = mission.activities[mission.activities.length - 1];
+  const lastVehicleBooking =
+    mission.vehicleBookings.length > 0
+      ? mission.vehicleBookings[mission.vehicleBookings.length - 1]
+      : null;
+  const vehicleBookingsWithEndTime = mission.vehicleBookings.map(
+    (vb, index) => ({
+      ...vb,
+      endTime:
+        index < mission.vehicleBookings.length - 1
+          ? getTime(mission.vehicleBookings[index + 1])
+          : null
+    })
+  );
 
   const teamChanges = mission.teamChanges.filter(
     tc => tc.coworker.id !== userId
@@ -56,76 +86,112 @@ export function MissionDetails({
     statuses => statuses[statuses.length - 1]
   );
 
-  return [
-    <MissionReviewSection
-      key={0}
-      title="Activités"
-      className="unshrinkable"
-      editButtonLabel="Ajouter"
-      onEdit={
-        createActivity
-          ? () =>
-              modals.open("activityRevision", {
-                createActivity: args =>
-                  createActivity({ ...args, missionId: mission.id }),
-                minStartTime: previousMissionEnd + 1,
-                maxStartTime: mission.isComplete
-                  ? getTime(lastMissionActivity) - 1
-                  : Date.now()
-              })
-          : null
-      }
-    >
-      <ActivityList
-        activities={mission.activities}
-        editActivityEvent={editActivityEvent}
-        previousMissionEnd={0}
-      />
-    </MissionReviewSection>,
-    teamMatesLatestStatuses.length > 0 && (
+  const isTeamMode = teamMatesLatestStatuses.length > 0;
+
+  return (
+    <AlternateColors>
       <MissionReviewSection
-        key={1}
-        title="Coéquipiers"
-        className={`${classes.backgroundPaper} unshrinkable`}
-        mb={hideExpenditures && 4}
-      >
-        <List dense>
-          {teamMatesLatestStatuses.map((tc, index) => (
-            <ListItem disableGutters key={index}>
-              <PersonIcon />
-              <Typography>{`${
-                tc.coworker.firstName
-              } (${formatLatestEnrollmentStatus(tc)})`}</Typography>
-            </ListItem>
-          ))}
-        </List>
-      </MissionReviewSection>
-    ),
-    !hideExpenditures && (
-      <MissionReviewSection
-        key={2}
-        title="Frais"
-        className={`unshrinkable ${teamMatesLatestStatuses.length === 0 &&
-          classes.backgroundPaper}`}
-        mb={2}
+        title="Activités"
+        editButtonLabel="Ajouter"
         onEdit={
-          editExpenditures
+          createActivity
             ? () =>
-                modals.open("expenditures", {
-                  handleSubmit: expenditures =>
-                    editExpenditures(mission, expenditures),
-                  currentExpenditures: mission.expenditures
+                modals.open("activityRevision", {
+                  createActivity: args =>
+                    createActivity({ ...args, missionId: mission.id }),
+                  minStartTime: previousMissionEnd + 1,
+                  maxStartTime: mission.isComplete
+                    ? getTime(lastMissionActivity) - 1
+                    : Date.now()
                 })
             : null
         }
       >
-        <Box className={`flex-row ${classes.expenditures}`}>
-          {mission.expenditures &&
-            Object.keys(mission.expenditures)
-              .filter(exp => mission.expenditures[exp] > 0)
-              .map(exp => <Chip key={exp} label={EXPENDITURES[exp].label} />)}
-        </Box>
+        <ActivityList
+          activities={mission.activities}
+          editActivityEvent={editActivityEvent}
+          previousMissionEnd={0}
+        />
       </MissionReviewSection>
-    )
-  ];
+      <MissionReviewSection
+        title={`${isTeamMode ? "Coéquipiers" : "En solo"}`}
+        onEdit={
+          changeTeam
+            ? () =>
+                modals.open("teamSelection", {
+                  handleContinue: changeTeam
+                })
+            : null
+        }
+        editButtonLabel="Changer"
+      >
+        {isTeamMode && (
+          <List dense>
+            {teamMatesLatestStatuses.map((tc, index) => (
+              <ListItem disableGutters key={index}>
+                <ListItemIcon>
+                  <PersonIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={tc.coworker.firstName}
+                  secondary={formatLatestEnrollmentStatus(tc)}
+                />
+              </ListItem>
+            ))}
+          </List>
+        )}
+      </MissionReviewSection>
+      <MissionReviewSection
+        title="Véhicules"
+        onEdit={
+          changeVehicle
+            ? () =>
+                modals.open("vehicleBooking", {
+                  currentVehicleBooking: lastVehicleBooking,
+                  handleContinue: changeVehicle
+                })
+            : null
+        }
+        editButtonLabel="Changer"
+      >
+        {mission.vehicleBookings.length > 0 && (
+          <List dense>
+            {vehicleBookingsWithEndTime.reverse().map((vb, index) => (
+              <ListItem disableGutters key={index}>
+                <ListItemIcon>
+                  <DriveEtaIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={vb.vehicleName}
+                  secondary={formatVehicleBookingTimes(vb, vb.endTime)}
+                />
+              </ListItem>
+            ))}
+          </List>
+        )}
+      </MissionReviewSection>
+      {!hideExpenditures && (
+        <MissionReviewSection
+          title="Frais"
+          onEdit={
+            editExpenditures
+              ? () =>
+                  modals.open("expenditures", {
+                    handleSubmit: expenditures =>
+                      editExpenditures(mission, expenditures),
+                    currentExpenditures: mission.expenditures
+                  })
+              : null
+          }
+        >
+          <Box className={`flex-row ${classes.expenditures}`}>
+            {mission.expenditures &&
+              Object.keys(mission.expenditures)
+                .filter(exp => mission.expenditures[exp] > 0)
+                .map(exp => <Chip key={exp} label={EXPENDITURES[exp].label} />)}
+          </Box>
+        </MissionReviewSection>
+      )}
+    </AlternateColors>
+  );
 }

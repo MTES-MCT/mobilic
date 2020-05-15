@@ -12,6 +12,7 @@ export function CurrentActivity({
   currentMission,
   pushNewActivityEvent,
   editActivityEvent,
+  pushNewVehicleBooking,
   endMission
 }) {
   const store = useStoreSyncedWithLocalStorage();
@@ -45,6 +46,9 @@ export function CurrentActivity({
       hideExpenditures
       previousMissionEnd={0}
       createActivity={pushNewActivityEvent}
+      changeVehicle={(vehicle, bookingTime) =>
+        pushNewVehicleBooking(vehicle, bookingTime, currentMission.id)
+      }
     />
   ];
 }

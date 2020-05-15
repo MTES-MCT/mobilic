@@ -397,7 +397,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             coworkers: () => this.state.coworkers,
             pendingRequests: () => this.state.pendingRequests,
             getEntity: this.getEntity,
-            vehicles: () => this.state.vehicles,
             pushItemToArray: this.pushItemToArray,
             setItems: this.setItems,
             setStoreState: this.setStoreState,

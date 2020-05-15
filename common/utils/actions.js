@@ -289,16 +289,17 @@ export function ActionsContextProvider({ children }) {
         "activities",
         requestId
       );
-      store.createEntityObject(
-        {
-          eventTime: mission.eventTime,
-          missionId,
-          vehicleId: vehicleId,
-          vehicleName: vehicleRegistrationNumber
-        },
-        "vehicleBookings",
-        requestId
-      );
+      if (vehicleId || vehicleRegistrationNumber)
+        store.createEntityObject(
+          {
+            eventTime: mission.eventTime,
+            missionId,
+            vehicleId: vehicleId,
+            vehicleName: vehicleRegistrationNumber
+          },
+          "vehicleBookings",
+          requestId
+        );
       if (team)
         team.forEach(tm =>
           _updateStoreWithCoworkerEnrollment(
