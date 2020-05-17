@@ -11,6 +11,11 @@ export function NewMissionModal({ open, handleClose, handleContinue }) {
   const [mission, setMission] = React.useState("");
   const [vehicle, setVehicle] = React.useState(null);
 
+  React.useEffect(() => {
+    setMission("");
+    setVehicle(null);
+  }, [open]);
+
   const funnelModalClasses = useFunnelModalStyles();
 
   return (

@@ -504,7 +504,7 @@ export function ActionsContextProvider({ children }) {
         vehicleBooking.vehicle.id.toString()
       ];
       if (!vehicle)
-        store.syncEntity(vehicleBooking.vehicle, "vehicles", () => false);
+        store.syncEntity([vehicleBooking.vehicle], "vehicles", () => false);
     });
   };
 

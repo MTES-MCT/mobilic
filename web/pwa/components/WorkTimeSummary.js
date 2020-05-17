@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: "200%"
   },
   additionalInfo: {
-    marginTop: theme.spacing(4),
+    marginTop: disableTopMargin => (disableTopMargin ? 0 : theme.spacing(4)),
     marginBottom: theme.spacing(4)
   }
 }));
@@ -43,8 +43,11 @@ export function WorkTimeSummaryKpi({ label, value, subText, hideSubText }) {
   );
 }
 
-export function WorkTimeSummaryAdditionalInfo({ children, className }) {
-  const classes = useStyles();
+export function WorkTimeSummaryAdditionalInfo({
+  children,
+  disableTopMargin = false
+}) {
+  const classes = useStyles(disableTopMargin);
   return (
     <Card className={classes.additionalInfo}>
       <Box px={2} py={1} mx={"auto"} style={{ textAlign: "left" }}>

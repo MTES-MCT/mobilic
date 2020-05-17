@@ -18,6 +18,11 @@ export function EndMissionModal({ open, handleClose, handleMissionEnd }) {
   const [expenditures, setExpenditures] = React.useState({});
   const [comment, setComment] = React.useState("");
 
+  React.useEffect(() => {
+    setExpenditures({});
+    setComment("");
+  }, [open]);
+
   const funnelModalClasses = useFunnelModalStyles();
   const classes = useStyles();
 

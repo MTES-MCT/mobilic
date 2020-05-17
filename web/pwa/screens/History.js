@@ -30,6 +30,7 @@ import { checkDayRestRespect } from "common/utils/regulation";
 import { MissionReviewSection } from "../components/MissionReviewSection";
 import Link from "@material-ui/core/Link";
 import { MissionDetails } from "../components/MissionDetails";
+import Typography from "@material-ui/core/Typography";
 
 const tabs = {
   mission: {
@@ -45,6 +46,13 @@ const tabs = {
       );
       return (
         <div>
+          {mission.name && (
+            <WorkTimeSummaryAdditionalInfo disableTopMargin>
+              <Typography className="bold">
+                Nom de la mission : {mission.name}
+              </Typography>
+            </WorkTimeSummaryAdditionalInfo>
+          )}
           <WorkTimeSummaryKpiGrid metrics={computeMissionKpis(mission)} />
           <WorkTimeSummaryAdditionalInfo>
             <RegulationCheck
