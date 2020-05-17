@@ -294,17 +294,22 @@ export function ActionsContextProvider({ children }) {
         "activities",
         requestId
       );
-      if (vehicleId || vehicleRegistrationNumber)
+      if (vehicleId || vehicleRegistrationNumber) {
+        let vehicle;
+        if (vehicleId) {
+          vehicle = store.getEntity("vehicles")[vehicleId.toString()];
+        }
         store.createEntityObject(
           {
             eventTime: mission.eventTime,
             missionId,
             vehicleId: vehicleId,
-            vehicleName: vehicleRegistrationNumber
+            vehicleName: vehicle ? vehicle.name : vehicleRegistrationNumber
           },
           "vehicleBookings",
           requestId
         );
+      }
       if (team)
         team.forEach(tm =>
           _updateStoreWithCoworkerEnrollment(
