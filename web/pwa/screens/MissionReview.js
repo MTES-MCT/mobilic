@@ -32,7 +32,8 @@ export function MissionReview({
   pushNewActivityEvent,
   editActivityEvent,
   validateMission,
-  editMissionExpenditures
+  editMissionExpenditures,
+  previousMissionEnd
 }) {
   const [submissionError, setSubmissionError] = React.useState(null);
 
@@ -63,7 +64,7 @@ export function MissionReview({
         mission={currentMission}
         editActivityEvent={editActivityEvent}
         editExpenditures={editMissionExpenditures}
-        previousMissionEnd={0}
+        previousMissionEnd={previousMissionEnd}
         createActivity={pushNewActivityEvent}
       />
       {validateMission && (

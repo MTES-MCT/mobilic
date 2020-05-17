@@ -13,7 +13,8 @@ export function CurrentActivity({
   editActivityEvent,
   pushNewVehicleBooking,
   pushNewTeamEnrollmentOrRelease,
-  endMission
+  endMission,
+  previousMissionEnd
 }) {
   const currentTeam = resolveTeamAt(currentMission.teamChanges, Date.now());
 
@@ -42,7 +43,7 @@ export function CurrentActivity({
       mission={currentMission}
       editActivityEvent={editActivityEvent}
       hideExpenditures
-      previousMissionEnd={0}
+      previousMissionEnd={previousMissionEnd}
       createActivity={pushNewActivityEvent}
       changeVehicle={(vehicle, bookingTime) =>
         pushNewVehicleBooking(vehicle, bookingTime, currentMission.id)

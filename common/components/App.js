@@ -7,6 +7,7 @@ import {
   computeMissionProperties,
   linkMissionsWithRelations
 } from "../utils/mission";
+import { getTime } from "../utils/events";
 
 function App({ ScreenComponent }) {
   const actions = useActions();
@@ -32,12 +33,20 @@ function App({ ScreenComponent }) {
       vehicleBookings,
       teamChanges
     }
-  ).map(m => ({ ...m, ...computeMissionProperties(m) }));
+  )
+    .map(m => ({ ...m, ...computeMissionProperties(m) }))
+    .filter(m => m.activities.length > 0);
 
   const missions = sortEvents(unsortedMissions);
 
   const currentMission =
     missions.length > 0 ? missions[missions.length - 1] : null;
+
+  const previousMission =
+    missions.length > 1 ? missions[missions.length - 2] : null;
+  const previousMissionEnd = previousMission
+    ? getTime(previousMission.activities[previousMission.activities.length - 1])
+    : 0;
 
   const currentActivity =
     currentMission && currentMission.activities.length > 0
@@ -59,6 +68,7 @@ function App({ ScreenComponent }) {
       endMission={actions.endMission}
       validateMission={actions.validateMission}
       editMissionExpenditures={actions.editMissionExpenditures}
+      previousMissionEnd={previousMissionEnd}
     />
   );
 }

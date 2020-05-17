@@ -120,7 +120,7 @@ export function MissionDetails({
               ? getTime(lastMissionActivity)
               : null
           }
-          previousMissionEnd={0}
+          previousMissionEnd={previousMissionEnd}
           teamChanges={teamChanges}
         />
       </MissionReviewSection>

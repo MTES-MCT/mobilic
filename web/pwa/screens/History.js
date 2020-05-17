@@ -133,9 +133,7 @@ const useStyles = makeStyles(theme => ({
 export function HistoryModal({ open, handleClose, missions = [] }) {
   const [currentTab, setCurrentTab] = React.useState("mission");
 
-  const nonEmptyMissions = missions.filter(m => m.activities.length > 0);
-
-  const groupedMissions = groupBy(nonEmptyMissions, m =>
+  const groupedMissions = groupBy(missions, m =>
     tabs[currentTab].getPeriod(getTime(m))
   );
 
@@ -152,7 +150,7 @@ export function HistoryModal({ open, handleClose, missions = [] }) {
   ]);
 
   function handlePeriodChange(e, newTab, selectedDate) {
-    const newGroups = groupBy(nonEmptyMissions, m =>
+    const newGroups = groupBy(missions, m =>
       tabs[newTab].getPeriod(getTime(m))
     );
 
