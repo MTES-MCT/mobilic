@@ -76,9 +76,17 @@ export function MissionDetails({
     })
   );
 
-  const teamChanges = mission.teamChanges.filter(
-    tc => tc.coworker.id !== userId
-  );
+  let teamChanges = mission.teamChanges.filter(tc => tc.coworker.id !== userId);
+  // Do not include the automatic releases of all team mates at mission end
+  if (mission.isComplete) {
+    teamChanges = teamChanges.filter(
+      tc =>
+        tc.isEnrollment ||
+        getTime(tc) !==
+          getTime(mission.activities[mission.activities.length - 1])
+    );
+  }
+
   const teamMatesLatestStatuses = computeLatestEnrollmentStatuses(teamChanges);
 
   const isTeamMode = teamMatesLatestStatuses.length > 0;
