@@ -90,7 +90,9 @@ export function ActionsContextProvider({ children }) {
         store.syncEntity(
           activities,
           "activities",
-          a => a.missionId === activities[0].missionId
+          a =>
+            a.missionId ===
+            (activities.length > 0 ? activities[0].missionId : missionId)
         );
       }
     );
@@ -167,7 +169,11 @@ export function ActionsContextProvider({ children }) {
           store.syncEntity(
             activities,
             "activities",
-            a => a.missionId === activities[0].missionId
+            a =>
+              a.missionId ===
+              (activities.length > 0
+                ? activities[0].missionId
+                : activityEvent.missionId)
           );
         }
       );

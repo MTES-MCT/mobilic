@@ -153,7 +153,7 @@ export const LOG_ACTIVITY_MUTATION = gql`
     $type: InputableActivityTypeEnum!
     $eventTime: DateTimeWithTimeStampSerialization!
     $userTime: DateTimeWithTimeStampSerialization
-    $missionId: Int
+    $missionId: Int!
     $comment: String
     $driver: TeamMateInput
   ) {
@@ -214,7 +214,7 @@ export const LOG_COMMENT_MUTATION = gql`
   mutation(
     $eventTime: DateTimeWithTimeStampSerialization!
     $content: String!
-    $missionId: Int
+    $missionId: Int!
   ) {
     logComment(
       eventTime: $eventTime
@@ -320,7 +320,7 @@ export const BEGIN_MISSION_MUTATION = gql`
 export const END_MISSION_MUTATION = gql`
   mutation(
     $eventTime: DateTimeWithTimeStampSerialization!
-    $missionId: Int
+    $missionId: Int!
     $expenditures: GenericScalar
     $comment: String
   ) {
@@ -355,7 +355,7 @@ export const BOOK_VEHICLE_MUTATION = gql`
   mutation(
     $eventTime: DateTimeWithTimeStampSerialization!
     $vehicleId: Int
-    $missionId: Int
+    $missionId: Int!
     $registrationNumber: String
     $userTime: DateTimeWithTimeStampSerialization
   ) {
@@ -431,7 +431,7 @@ export const VALIDATE_MISSION_MUTATION = gql`
 `;
 
 export const EDIT_MISSION_EXPENDITURES_MUTATION = gql`
-  mutation($missionId: Int, $expenditures: GenericScalar!) {
+  mutation($missionId: Int!, $expenditures: GenericScalar!) {
     editMissionExpenditures(
       missionId: $missionId
       expenditures: $expenditures

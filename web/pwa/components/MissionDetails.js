@@ -19,6 +19,7 @@ import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { formatVehicleBookingTimes } from "common/utils/vehicles";
+import { ACTIVITIES } from "common/utils/activities";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -114,6 +115,11 @@ export function MissionDetails({
         <ActivityList
           activities={mission.activities}
           editActivityEvent={editActivityEvent}
+          missionEnd={
+            lastMissionActivity.type === ACTIVITIES.rest.name
+              ? getTime(lastMissionActivity)
+              : null
+          }
           previousMissionEnd={0}
           teamChanges={teamChanges}
         />

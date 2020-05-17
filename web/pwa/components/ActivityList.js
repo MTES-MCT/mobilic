@@ -14,6 +14,7 @@ import { useModals } from "common/utils/modals";
 
 export function ActivityList({
   previousMissionEnd,
+  missionEnd,
   activities,
   editActivityEvent,
   teamChanges
@@ -72,7 +73,7 @@ export function ActivityList({
                           userComment
                         ),
                       minStartTime: previousMissionEnd + 1,
-                      maxStartTime: Date.now(),
+                      maxStartTime: missionEnd || Date.now(),
                       cancellable: true,
                       teamChanges
                     })
