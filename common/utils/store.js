@@ -5,6 +5,7 @@ import keyBy from "lodash/keyBy";
 import pickBy from "lodash/pickBy";
 import mapValues from "lodash/mapValues";
 import map from "lodash/map";
+import * as Sentry from "@sentry/browser";
 import omit from "lodash/omit";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 
@@ -107,6 +108,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         )
       );
     } catch (err) {
+      Sentry.captureException(err);
       console.log(err);
     }
   };

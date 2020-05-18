@@ -8,6 +8,7 @@ import { BatchHttpLink } from "apollo-link-batch-http";
 import { ApolloLink, Observable } from "apollo-link";
 import gql from "graphql-tag";
 import jwtDecode from "jwt-decode";
+import * as Sentry from "@sentry/browser";
 import { useStoreSyncedWithLocalStorage } from "./store";
 import { isAuthenticationError, isRetryable } from "./errors";
 import { NonConcurrentExecutionQueue } from "./concurrency";
@@ -591,6 +592,7 @@ class Api {
         if (request.onApiError) await request.onApiError(err);
         await this.store.clearPendingRequest(request);
       }
+      Sentry.captureException(err);
       throw err;
     }
   }

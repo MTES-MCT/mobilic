@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/browser";
 import { USER_QUERY } from "./api";
 import { parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
@@ -11,6 +12,7 @@ export async function loadUserData(api, store) {
     });
     return await syncUser(userResponse.data.user, store);
   } catch (err) {
+    Sentry.captureException(err);
     console.log(err);
   }
 }
