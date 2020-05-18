@@ -1,7 +1,12 @@
 import ReactDOM from "react-dom";
 import * as serviceWorker from "./serviceWorker";
+import * as Sentry from "@sentry/browser";
 import React from "react";
 import Root from "./root";
+
+if (process.env.REACT_APP_SENTRY_URL) {
+  Sentry.init({ dsn: process.env.REACT_APP_SENTRY_URL });
+}
 
 ReactDOM.render(<Root />, document.getElementById("root"));
 

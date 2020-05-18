@@ -607,6 +607,9 @@ class Api {
             try {
               await this.executeRequest(request);
             } catch (err) {
+              // It is important to wait for ALL the batched request handlers to execute
+              // because they are all processed by the API regardless of whether the others fail
+              // So we avoid throwing an error here, otherwise the other successful promises could be cancelled
               errors.push(err);
             }
           })
