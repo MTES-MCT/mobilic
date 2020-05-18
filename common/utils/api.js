@@ -24,7 +24,7 @@ const REFRESH_MUTATION = gql`
 `;
 
 export const LOGIN_MUTATION = gql`
-  mutation($email: String!, $password: String!) {
+  mutation login($email: String!, $password: String!) {
     auth {
       login(email: $email, password: $password) {
         accessToken
@@ -35,7 +35,7 @@ export const LOGIN_MUTATION = gql`
 `;
 
 export const USER_SIGNUP_MUTATION = gql`
-  mutation(
+  mutation signup(
     $email: String!
     $password: String!
     $firstName: String!
@@ -61,7 +61,7 @@ export const USER_SIGNUP_MUTATION = gql`
 `;
 
 export const USER_QUERY = gql`
-  query($id: Int!) {
+  query user($id: Int!) {
     user(id: $id) {
       id
       firstName
@@ -125,7 +125,7 @@ export const USER_QUERY = gql`
 `;
 
 export const COMPANY_QUERY = gql`
-  query($id: Int!) {
+  query company($id: Int!) {
     company(id: $id) {
       users {
         id
@@ -149,7 +149,7 @@ export const COMPANY_QUERY = gql`
 `;
 
 export const LOG_ACTIVITY_MUTATION = gql`
-  mutation(
+  mutation logActivity(
     $type: InputableActivityTypeEnum!
     $eventTime: DateTimeWithTimeStampSerialization!
     $userTime: DateTimeWithTimeStampSerialization
@@ -181,7 +181,7 @@ export const LOG_ACTIVITY_MUTATION = gql`
 `;
 
 export const EDIT_ACTIVITY_MUTATION = gql`
-  mutation(
+  mutation editActivity(
     $eventTime: DateTimeWithTimeStampSerialization!
     $userTime: DateTimeWithTimeStampSerialization
     $dismiss: Boolean!
@@ -211,7 +211,7 @@ export const EDIT_ACTIVITY_MUTATION = gql`
 `;
 
 export const LOG_COMMENT_MUTATION = gql`
-  mutation(
+  mutation logComment(
     $eventTime: DateTimeWithTimeStampSerialization!
     $content: String!
     $missionId: Int!
@@ -232,7 +232,7 @@ export const LOG_COMMENT_MUTATION = gql`
 `;
 
 export const ENROLL_OR_RELEASE_TEAM_MATE_MUTATION = gql`
-  mutation(
+  mutation enrollTeamMate(
     $eventTime: DateTimeWithTimeStampSerialization!
     $teamMate: TeamMateInput!
     $isEnrollment: Boolean!
@@ -259,7 +259,7 @@ export const ENROLL_OR_RELEASE_TEAM_MATE_MUTATION = gql`
 `;
 
 export const BEGIN_MISSION_MUTATION = gql`
-  mutation(
+  mutation beginMission(
     $eventTime: DateTimeWithTimeStampSerialization!
     $name: String!
     $firstActivityType: InputableActivityTypeEnum!
@@ -318,7 +318,7 @@ export const BEGIN_MISSION_MUTATION = gql`
 `;
 
 export const END_MISSION_MUTATION = gql`
-  mutation(
+  mutation endMission(
     $eventTime: DateTimeWithTimeStampSerialization!
     $missionId: Int!
     $expenditures: GenericScalar
@@ -352,7 +352,7 @@ export const END_MISSION_MUTATION = gql`
 `;
 
 export const BOOK_VEHICLE_MUTATION = gql`
-  mutation(
+  mutation bookVehicle(
     $eventTime: DateTimeWithTimeStampSerialization!
     $vehicleId: Int
     $missionId: Int!
@@ -381,7 +381,11 @@ export const BOOK_VEHICLE_MUTATION = gql`
 `;
 
 export const CREATE_VEHICLE_MUTATION = gql`
-  mutation($registrationNumber: String!, $alias: String, $companyId: Int!) {
+  mutation createVehicle(
+    $registrationNumber: String!
+    $alias: String
+    $companyId: Int!
+  ) {
     createVehicle(
       registrationNumber: $registrationNumber
       alias: $alias
@@ -409,7 +413,7 @@ export const EDIT_VEHICLE_MUTATION = gql`
 `;
 
 export const TERMINATE_VEHICLE_MUTATION = gql`
-  mutation($id: Int!) {
+  mutation terminateVehicle($id: Int!) {
     terminateVehicle(id: $id) {
       success
     }
@@ -417,7 +421,7 @@ export const TERMINATE_VEHICLE_MUTATION = gql`
 `;
 
 export const VALIDATE_MISSION_MUTATION = gql`
-  mutation($missionId: Int!) {
+  mutation validateMission($missionId: Int!) {
     validateMission(missionId: $missionId) {
       mission {
         id
@@ -431,7 +435,10 @@ export const VALIDATE_MISSION_MUTATION = gql`
 `;
 
 export const EDIT_MISSION_EXPENDITURES_MUTATION = gql`
-  mutation($missionId: Int!, $expenditures: GenericScalar!) {
+  mutation editMissionExpenditures(
+    $missionId: Int!
+    $expenditures: GenericScalar!
+  ) {
     editMissionExpenditures(
       missionId: $missionId
       expenditures: $expenditures
