@@ -245,7 +245,7 @@ export const ENROLL_OR_RELEASE_TEAM_MATE_MUTATION = gql`
       isEnrollment: $isEnrollment
       missionId: $missionId
     ) {
-      teamChange {
+      teamChanges {
         isEnrollment
         userTime
         missionId

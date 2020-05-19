@@ -9,7 +9,7 @@ import * as Sentry from "@sentry/browser";
 import omit from "lodash/omit";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 
-const STORE_VERSION = 3;
+const STORE_VERSION = 4;
 
 const StoreSyncedWithLocalStorage = React.createContext(() => {});
 
@@ -176,7 +176,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     if (this.mapper[entity] === List) {
       this.setStoreState(
         prevState => ({
-          [entity]: [...prevState[entity], object]
+          [entity]: [
+            ...prevState[entity],
+            { ...object, pendingUpdate: { requestId, type: "create" } }
+          ]
         }),
         [entity]
       );

@@ -246,10 +246,11 @@ export function ActionsContextProvider({ children }) {
       ENROLL_OR_RELEASE_TEAM_MATE_MUTATION,
       enrollmentOrReleasePayload,
       updateStore,
-      ["coworkers"],
+      ["teamChanges", "coworkers"],
       apiResponse => {
-        const teamChange = apiResponse.data.enrollOrReleaseTeamMate.teamChange;
-        store.syncEntity([teamChange], "teamChanges", () => false);
+        const teamChanges =
+          apiResponse.data.enrollOrReleaseTeamMate.teamChanges;
+        store.syncEntity(teamChanges, "teamChanges", () => false);
       }
     );
   };
