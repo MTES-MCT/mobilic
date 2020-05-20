@@ -1,26 +1,24 @@
 import React from "react";
-import LocalShippingIcon from "@material-ui/icons/LocalShipping";
-import BuildIcon from "@material-ui/icons/Build";
-import HotelIcon from "@material-ui/icons/Hotel";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
+import { RestIcon, TruckIcon, WorkIcon } from "./icons";
 
 export const TIMEABLE_ACTIVITIES = {
   drive: {
     name: "drive",
     label: "Déplacement",
-    renderIcon: props => <LocalShippingIcon {...props} />,
+    renderIcon: props => <TruckIcon {...props} />,
     canBeFirst: true
   },
   work: {
     name: "work",
     label: "Autre tâche",
-    renderIcon: props => <BuildIcon {...props} />,
+    renderIcon: props => <WorkIcon {...props} />,
     canBeFirst: true
   },
   break: {
     name: "break",
     label: "Pause",
-    renderIcon: props => <HotelIcon {...props} />
+    renderIcon: props => <RestIcon {...props} />
   }
 };
 

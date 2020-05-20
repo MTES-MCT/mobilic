@@ -3,7 +3,6 @@ import DriveEtaIcon from "@material-ui/icons/DriveEta";
 import { ActivityList } from "./ActivityList";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import PersonIcon from "@material-ui/icons/Person";
 import {
   computeLatestEnrollmentStatuses,
   formatLatestEnrollmentStatus
@@ -20,6 +19,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { formatVehicleBookingTimes } from "common/utils/vehicles";
 import { ACTIVITIES } from "common/utils/activities";
+import { PersonIcon } from "common/utils/icons";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
