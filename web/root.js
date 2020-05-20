@@ -84,7 +84,7 @@ function _Root() {
       setSyncingWithBackendCounter(currentCounter => currentCounter - 1);
     } catch (err) {
       setSyncingWithBackendCounter(currentCounter => currentCounter - 1);
-      throw err;
+      console.log(err);
     }
   };
 
