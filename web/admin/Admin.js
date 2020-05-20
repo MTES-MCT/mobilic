@@ -10,7 +10,7 @@ import { useApi } from "common/utils/api";
 import { AdminStoreProvider, useAdminStore } from "./utils/store";
 import { UserHeader } from "../common/UserHeader";
 
-function _Admin() {
+function _Admin({ withLoadingScreen }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const { path } = useRouteMatch();
@@ -33,10 +33,10 @@ function _Admin() {
   }
 
   React.useEffect(() => {
-    if (adminStore.companyId) {
-      loadData(adminStore.companyId);
+    if (adminStore.companyId && adminStore.userId) {
+      withLoadingScreen(() => loadData(adminStore.companyId));
     }
-  }, [adminStore.companyId]);
+  }, [adminStore.companyId, adminStore.userId]);
 
   const defaultView = views.find(view => view.isDefault);
   return [
@@ -64,10 +64,10 @@ function _Admin() {
   ];
 }
 
-export function Admin() {
+export function Admin(props) {
   return (
     <AdminStoreProvider>
-      <_Admin />
+      <_Admin {...props} />
     </AdminStoreProvider>
   );
 }

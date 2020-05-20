@@ -68,24 +68,28 @@ export default function Root() {
 }
 
 function _Root() {
-  const [syncingWithBackend, setSyncingWithBackend] = React.useState(false);
+  const [
+    syncingWithBackendCounter,
+    setSyncingWithBackendCounter
+  ] = React.useState(0); // We use a counter instead of a boolean because multiple syncs can run simultaneously
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const userId = store.userId();
   const isCompanyAdmin = store.companyAdmin();
 
-  const syncData = async () => {
-    setSyncingWithBackend(true);
+  const withLoadingScreen = async sync => {
+    setSyncingWithBackendCounter(currentCounter => currentCounter + 1);
     try {
-      await loadUserData(api, store);
-      setSyncingWithBackend(false);
+      await sync();
+      setSyncingWithBackendCounter(currentCounter => currentCounter - 1);
     } catch (err) {
-      setSyncingWithBackend(false);
+      setSyncingWithBackendCounter(currentCounter => currentCounter - 1);
+      throw err;
     }
   };
 
   React.useEffect(() => {
-    if (userId) syncData();
+    if (userId) withLoadingScreen(() => loadUserData(api, store));
     return () => {};
   }, [userId]);
 
@@ -101,7 +105,7 @@ function _Root() {
       {userId &&
         isCompanyAdmin && [
           <Route key="admin" path="/admin">
-            <Admin />
+            <Admin withLoadingScreen={withLoadingScreen} />
           </Route>,
           <Redirect push key="*" from="*" to="/admin" />
         ]}
@@ -115,7 +119,11 @@ function _Root() {
         <Redirect push key="*" from="*" to="/" />
       ]}
     </Switch>,
-    <Backdrop key={1} open={syncingWithBackend} style={{ zIndex: 5000 }}>
+    <Backdrop
+      key={1}
+      open={syncingWithBackendCounter > 0}
+      style={{ zIndex: 5000 }}
+    >
       <CircularProgress color="primary" />
     </Backdrop>
   ];
