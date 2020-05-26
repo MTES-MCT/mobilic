@@ -54,6 +54,10 @@ process.env.NODE_PATH = (process.env.NODE_PATH || "")
   .map(folder => path.resolve(appDirectory, folder))
   .join(path.delimiter);
 
+if (process.env.SOURCE_VERSION && !process.env.REACT_APP_SENTRY_RELEASE) {
+  process.env.REACT_APP_SENTRY_RELEASE = process.env.SOURCE_VERSION;
+}
+
 // Grab NODE_ENV and REACT_APP_* environment variables and prepare them to be
 // injected into the application via DefinePlugin in Webpack configuration.
 const REACT_APP = /^REACT_APP_/i;
