@@ -5,8 +5,11 @@ import * as Sentry from "@sentry/browser";
 import React from "react";
 import Root from "./root";
 
-if (process.env.REACT_APP_SENTRY_URL) {
-  Sentry.init({ dsn: process.env.REACT_APP_SENTRY_URL });
+if (process.env.REACT_APP_SENTRY_URL && process.env.REACT_APP_SENTRY_RELEASE) {
+  Sentry.init({
+    dsn: process.env.REACT_APP_SENTRY_URL,
+    release: process.env.REACT_APP_SENTRY_RELEASE
+  });
 }
 
 ReactDOM.render(<Root />, document.getElementById("root"));

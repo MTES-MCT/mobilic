@@ -13,6 +13,7 @@ const safePostCssParser = require("postcss-safe-parser");
 const ManifestPlugin = require("webpack-manifest-plugin");
 const InterpolateHtmlPlugin = require("react-dev-utils/InterpolateHtmlPlugin");
 const WorkboxWebpackPlugin = require("workbox-webpack-plugin");
+const SentryWebpackPlugin = require("@sentry/webpack-plugin");
 const WatchMissingNodeModulesPlugin = require("react-dev-utils/WatchMissingNodeModulesPlugin");
 const ModuleScopePlugin = require("react-dev-utils/ModuleScopePlugin");
 const getCSSModuleLocalIdent = require("react-dev-utils/getCSSModuleLocalIdent");
@@ -139,7 +140,7 @@ module.exports = function(webpackEnv) {
     bail: isEnvProduction,
     devtool: isEnvProduction
       ? shouldUseSourceMap
-        ? "source-map"
+        ? "hidden-source-map"
         : false
       : isEnvDevelopment && "cheap-module-source-map",
     // These are the "entry points" to our application.
@@ -653,6 +654,13 @@ module.exports = function(webpackEnv) {
           silent: true,
           // The formatter is invoked directly in WebpackDevServerUtils during development
           formatter: isEnvProduction ? typescriptFormatter : undefined
+        }),
+      process.env.SENTRY_AUTH_TOKEN &&
+        new SentryWebpackPlugin({
+          include: "build",
+          ignoreFile: ".sentrycliignore",
+          configFile: "sentry.properties",
+          release: process.env.REACT_APP_SENTRY_RELEASE
         })
     ].filter(Boolean),
     // Some libraries import Node modules but don't use them in the browser.
