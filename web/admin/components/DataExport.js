@@ -10,12 +10,25 @@ import Box from "@material-ui/core/Box";
 import { useApi } from "common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+
+const useStyles = makeStyles(theme => ({
+  start: {
+    marginRight: theme.spacing(4)
+  },
+  end: {
+    marginLeft: theme.spacing(4)
+  }
+}));
 
 export function DataExport({ open, handleClose }) {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const [minDate, setMinDate] = React.useState(null);
+  const [maxDate, setMaxDate] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
+
+  const classes = useStyles();
 
   return (
     <Dialog onClose={handleClose} open={open}>
@@ -29,14 +42,31 @@ export function DataExport({ open, handleClose }) {
         <Typography>
           Par défaut l'export contient l'historique intégral de votre
           entreprise. Vous pouvez restreindre la période en spécificant une date
-          de début.
+          de début et/ou une date de fin.
         </Typography>
         <Box my={2} className="flex-row-center">
           <DatePicker
+            className={classes.start}
             label="Date de début"
             value={minDate}
             format="d MMMM yyyy"
+            maxDate={maxDate}
             onChange={setMinDate}
+            clearable
+            cancelLabel={null}
+            clearLabel="Annuler"
+            autoOk
+            disableFuture
+            inputVariant="outlined"
+            animateYearScrolling
+          />
+          <DatePicker
+            className={classes.end}
+            label="Date de fin"
+            value={maxDate}
+            format="d MMMM yyyy"
+            minDate={minDate}
+            onChange={setMaxDate}
             clearable
             cancelLabel={null}
             clearLabel="Annuler"
@@ -53,9 +83,17 @@ export function DataExport({ open, handleClose }) {
             onClick={async e => {
               setLoading(true);
               try {
-                const optionalQueryString = minDate
-                  ? `?min_date=${minDate.toISOString().slice(0, 10)}`
-                  : "";
+                const queryParams = [];
+                if (minDate)
+                  queryParams.push(
+                    `min_date=${minDate.toISOString().slice(0, 10)}`
+                  );
+                if (maxDate)
+                  queryParams.push(
+                    `max_date=${maxDate.toISOString().slice(0, 10)}`
+                  );
+                const optionalQueryString =
+                  queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
                 e.preventDefault();
                 const response = await api.httpQuery(
                   "GET",
