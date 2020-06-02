@@ -154,6 +154,7 @@ export const LOG_ACTIVITY_MUTATION = gql`
     $type: InputableActivityTypeEnum!
     $eventTime: DateTimeWithTimeStampSerialization!
     $userTime: DateTimeWithTimeStampSerialization
+    $userEndTime: DateTimeWithTimeStampSerialization
     $missionId: Int!
     $comment: String
     $driver: TeamMateInput
@@ -162,6 +163,7 @@ export const LOG_ACTIVITY_MUTATION = gql`
       type: $type
       eventTime: $eventTime
       userTime: $userTime
+      userEndTime: $userEndTime
       driver: $driver
       missionId: $missionId
       comment: $comment
@@ -185,15 +187,19 @@ export const EDIT_ACTIVITY_MUTATION = gql`
   mutation editActivity(
     $eventTime: DateTimeWithTimeStampSerialization!
     $userTime: DateTimeWithTimeStampSerialization
+    $userEndTime: DateTimeWithTimeStampSerialization
     $dismiss: Boolean!
-    $activityId: Int!
+    $activityId: Int
+    $activityUserTime: DateTimeWithTimeStampSerialization
     $comment: String
   ) {
     editActivity(
       eventTime: $eventTime
       userTime: $userTime
+      userEndTime: $userEndTime
       dismiss: $dismiss
       activityId: $activityId
+      activityUserTime: $activityUserTime
       comment: $comment
     ) {
       missionActivities {

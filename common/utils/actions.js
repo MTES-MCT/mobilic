@@ -17,6 +17,7 @@ import {
 } from "./api";
 import { ACTIVITIES, parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
+import { getTime, sortEvents } from "./events";
 
 const ActionsContext = React.createContext(() => {});
 
@@ -51,9 +52,11 @@ export function ActionsContextProvider({ children }) {
 
   const pushNewActivityEvent = async ({
     activityType,
+    missionActivities,
     missionId,
     driver = null,
     userTime = null,
+    userEndTime = null,
     userComment = null
   }) => {
     const newActivity = {
@@ -68,15 +71,24 @@ export function ActionsContextProvider({ children }) {
         lastName: driver.lastName
       };
     if (userTime) newActivity.userTime = userTime;
+    if (userEndTime) newActivity.userEndTime = userEndTime;
     if (userComment !== undefined && userComment !== null)
       newActivity.comment = userComment;
 
-    const updateStore = (store, requestId) =>
+    const updateStore = (store, requestId) => {
+      if (userEndTime)
+        _handleActivitiesOverlap(
+          missionActivities,
+          userTime,
+          userEndTime,
+          requestId
+        );
       store.createEntityObject(
         { ...newActivity, driver },
         "activities",
         requestId
       );
+    };
 
     await submitAction(
       LOG_ACTIVITY_MUTATION,
@@ -98,86 +110,125 @@ export function ActionsContextProvider({ children }) {
     );
   };
 
-  const editActivityEvent = async (
-    activityEvent,
-    actionType,
-    newUserTime = null,
-    userComment = null
+  const _handleActivitiesOverlap = (
+    otherActivities,
+    userTime,
+    userEndTime,
+    requestId
   ) => {
-    let shouldCallApi = true;
-    if (isPendingSubmission(activityEvent)) {
-      if (api.isCurrentlySubmittingRequests()) return;
-      // If the event is present in the db and has other unsubmitted updates we edit these updates
-      if (activityEvent.pendingUpdate.type === "update") {
-        await store.clearPendingRequest(
-          store
-            .pendingRequests()
-            .find(r => r.id === activityEvent.pendingUpdate.requestId)
-        );
-      }
-      // If the event is not present in the db yet we can more or less do the same
-      else if (activityEvent.pendingUpdate.type === "create") {
-        shouldCallApi = false;
-        const requestToAlter = store
-          .pendingRequests()
-          .find(r => r.id === activityEvent.pendingUpdate.requestId);
-        if (requestToAlter.query !== BEGIN_MISSION_MUTATION) {
-          await store.clearPendingRequest(requestToAlter);
-          if (activityEvent === "revision") {
-            return pushNewActivityEvent({
-              activityType: activityEvent.type,
-              missionId: activityEvent.missionId,
-              driver: activityEvent.driver,
-              userTime: newUserTime,
-              userComment
-            });
-          }
+    const sortedOtherActivities = sortEvents([...otherActivities]);
+    const activitiesToOverride = sortedOtherActivities.filter(
+      a => userTime <= getTime(a) && getTime(a) <= userEndTime
+    );
+    if (activitiesToOverride.length > 0) {
+      const activityToShift =
+        activitiesToOverride[activitiesToOverride.length - 1];
+      activitiesToOverride.forEach((activity, index) => {
+        if (index < activitiesToOverride.length - 1) {
+          store.deleteEntityObject(activity, "activities", requestId);
         }
-      }
-    }
-    if (shouldCallApi) {
-      const editActivityPayload = {
-        eventTime: Date.now(),
-        activityId: activityEvent.id,
-        dismiss: actionType === "cancel",
-        userTime: newUserTime,
-        comment: userComment
-      };
-
-      const updateStore = (store, requestId) => {
-        if (actionType === "cancel") {
-          store.deleteEntityObject(activityEvent.id, "activities", requestId);
-        } else {
+      });
+      if (userEndTime !== getTime(activityToShift))
+        store.updateEntityObject(
+          activityToShift,
+          "activities",
+          { userTime: userEndTime },
+          requestId
+        );
+    } else {
+      const activitiesBefore = sortedOtherActivities.filter(
+        a => getTime(a) < userTime
+      );
+      if (activitiesBefore.length > 0) {
+        const activityImmediatelyBefore =
+          activitiesBefore[activitiesBefore.length - 1];
+        store.createEntityObject(
+          {
+            userTime: userEndTime,
+            type: activityImmediatelyBefore.type,
+            missionId: activityImmediatelyBefore.missionId,
+            driver: activityImmediatelyBefore.driver
+          },
+          "activities",
+          requestId
+        );
+      } else {
+        const activitiesAfter = sortedOtherActivities.filter(
+          a => userEndTime < getTime(a)
+        );
+        if (activitiesAfter.length > 0) {
           store.updateEntityObject(
-            activityEvent.id,
+            activitiesAfter[0],
             "activities",
-            { userTime: newUserTime },
+            { userTime: userEndTime },
             requestId
           );
         }
-      };
-
-      await submitAction(
-        EDIT_ACTIVITY_MUTATION,
-        editActivityPayload,
-        updateStore,
-        ["activities"],
-        apiResponse => {
-          const activities = apiResponse.data.editActivity.missionActivities.map(
-            parseActivityPayloadFromBackend
-          );
-          store.syncEntity(
-            activities,
-            "activities",
-            a =>
-              a.missionId ===
-              (activities.length > 0
-                ? activities[0].missionId
-                : activityEvent.missionId)
-          );
-        }
-      );
+      }
     }
+  };
+
+  const editActivityEvent = async (
+    activityEvent,
+    actionType,
+    missionActivities,
+    newUserTime = null,
+    newUserEndTime = null,
+    userComment = null
+  ) => {
+    const editActivityPayload = {
+      eventTime: Date.now(),
+      dismiss: actionType === "cancel",
+      userTime: newUserTime,
+      userEndTime: newUserEndTime,
+      comment: userComment
+    };
+    if (isPendingSubmission(activityEvent)) {
+      if (api.isCurrentlySubmittingRequests()) return;
+      editActivityPayload.activityUserTime = getTime(activityEvent);
+    } else {
+      editActivityPayload.activityId = activityEvent.id;
+    }
+
+    const updateStore = (store, requestId) => {
+      if (actionType === "cancel") {
+        store.deleteEntityObject(activityEvent.id, "activities", requestId);
+      } else {
+        _handleActivitiesOverlap(
+          missionActivities.filter(a => a.id !== activityEvent.id),
+          newUserTime,
+          newUserEndTime,
+          requestId
+        );
+        store.updateEntityObject(
+          activityEvent.id,
+          "activities",
+          { userTime: newUserTime },
+          requestId
+        );
+      }
+    };
+
+    await submitAction(
+      EDIT_ACTIVITY_MUTATION,
+      editActivityPayload,
+      updateStore,
+      ["activities"],
+      apiResponse => {
+        const activities = apiResponse.data.editActivity.missionActivities.map(
+          parseActivityPayloadFromBackend
+        );
+        store.syncEntity(
+          activities,
+          "activities",
+          a =>
+            a.missionId ===
+            (activities.length > 0
+              ? activities[0].missionId
+              : activityEvent.missionId)
+        );
+      }
+    );
   };
 
   const _updateStoreWithCoworkerEnrollment = (

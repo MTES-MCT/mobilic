@@ -102,7 +102,11 @@ export function MissionDetails({
             ? () =>
                 modals.open("activityRevision", {
                   createActivity: args =>
-                    createActivity({ ...args, missionId: mission.id }),
+                    createActivity({
+                      ...args,
+                      missionActivities: mission.activities,
+                      missionId: mission.id
+                    }),
                   minStartTime: previousMissionEnd + 1,
                   maxStartTime: mission.isComplete
                     ? getTime(lastMissionActivity) - 1

@@ -15,8 +15,6 @@ import ToggleButton from "@material-ui/lab/ToggleButton";
 import { ACTIVITIES, TIMEABLE_ACTIVITIES } from "common/utils/activities";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { getTime } from "common/utils/events";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
 import MenuItem from "@material-ui/core/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
@@ -38,13 +36,12 @@ export function ActivityRevisionOrCreationModal({
   const [actionType, setActionType] = React.useState(undefined); // "cancel", "revision" or "creation"
 
   const [newActivityType, setNewActivityType] = React.useState(undefined);
-  const [newActivityIsTeamMode, setNewActivityIsTeamMode] = React.useState(
-    true
-  );
   const [newActivityDriver, setNewActivityDriver] = React.useState(undefined);
 
   const [newUserTime, setNewUserTime] = React.useState(undefined);
+  const [newUserEndTime, setNewUserEndTime] = React.useState(undefined);
   const [newUserTimeError, setNewUserTimeError] = React.useState("");
+  const [newUserEndTimeError, setNewUserEndTimeError] = React.useState("");
 
   const [userComment, setUserComment] = React.useState(undefined);
 
@@ -60,18 +57,27 @@ export function ActivityRevisionOrCreationModal({
       createActivity({
         activityType: newActivityType,
         userTime: newUserTime,
+        userEndTime: newUserEndTime,
         driver: driver,
         userComment: userComment
       });
-    } else handleRevisionAction(actionType, newUserTime, userComment);
+    } else
+      handleRevisionAction(
+        actionType,
+        newUserTime,
+        newUserEndTime,
+        userComment
+      );
   }
 
   React.useEffect(() => {
     if (event) {
       setNewUserTime(getTime(event));
+      setNewUserEndTime(event.endTime);
       setActionType(undefined);
     } else {
       setNewUserTime(undefined);
+      setNewUserEndTime(undefined);
       setActionType("creation");
     }
     setNewActivityDriver(undefined);
@@ -83,7 +89,6 @@ export function ActivityRevisionOrCreationModal({
     return (
       actionType === "creation" &&
       newActivityType === ACTIVITIES.drive.name &&
-      newActivityIsTeamMode &&
       team &&
       team.length > 1
     );
@@ -94,18 +99,31 @@ export function ActivityRevisionOrCreationModal({
       return !!event;
     }
     if (actionType === "revision") {
-      return event && getTime(event) !== newUserTime && !newUserTimeError;
+      return (
+        event &&
+        (getTime(event) !== newUserTime || event.endTime !== newUserEndTime) &&
+        !newUserTimeError &&
+        !newUserEndTimeError
+      );
     }
     if (actionType === "creation") {
       if (requiresDriver()) {
         return (
           !!newActivityType &&
           !!newUserTime &&
+          !!newUserEndTime &&
           !newUserTimeError &&
+          !newUserEndTimeError &&
           newActivityDriver !== undefined
         );
       }
-      return !!newActivityType && !!newUserTime && !newUserTimeError;
+      return (
+        !!newActivityType &&
+        !!newUserTime &&
+        !!newUserEndTime &&
+        !newUserTimeError &&
+        !newUserEndTimeError
+      );
     }
     return false;
   }
@@ -136,9 +154,15 @@ export function ActivityRevisionOrCreationModal({
                 })}
               </Box>
               <Typography>
-                <span className="bold">Heure de début : </span>
+                <span className="bold">Début : </span>
                 {formatTimeOfDay(getTime(event))}
               </Typography>
+              {event.endTime && (
+                <Typography>
+                  <span className="bold">Fin : </span>
+                  {formatTimeOfDay(event.endTime)}
+                </Typography>
+              )}
             </Box>
             <Box m={2} style={{ display: "flex", justifyContent: "center" }}>
               <ToggleButtonGroup
@@ -187,33 +211,38 @@ export function ActivityRevisionOrCreationModal({
               ))}
             </TextField>
           )}
-          {(actionType === "revision" || actionType === "creation") && (
+          {(actionType === "revision" || actionType === "creation") && [
             <DateTimePicker
+              key={0}
               label="Début"
               time={newUserTime}
               setTime={setNewUserTime}
               error={newUserTimeError}
               setError={setNewUserTimeError}
               minTime={minStartTime}
-              maxTime={maxStartTime}
-              required={true}
-            />
-          )}
-          {actionType === "creation" && (
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={newActivityIsTeamMode}
-                  onChange={() =>
-                    setNewActivityIsTeamMode(!newActivityIsTeamMode)
-                  }
-                  color="primary"
-                />
+              maxTime={
+                newUserEndTime
+                  ? maxStartTime
+                    ? Math.min(newUserEndTime, maxStartTime)
+                    : newUserEndTime
+                  : maxStartTime
               }
-              label="Pour toute l'équipe"
-              labelPlacement="end"
-            />
-          )}
+              required={true}
+            />,
+            (actionType === "creation" || (event && event.endTime)) && (
+              <DateTimePicker
+                key={1}
+                label="Fin"
+                time={newUserEndTime}
+                setTime={setNewUserEndTime}
+                error={newUserEndTimeError}
+                setError={setNewUserEndTimeError}
+                minTime={newUserTime || minStartTime}
+                maxTime={Date.now()}
+                required={true}
+              />
+            )
+          ]}
         </Box>
         <Box mt={2}>
           <TextField

@@ -21,14 +21,17 @@ export function ActivityList({
 }) {
   const modals = useModals();
 
-  const augmentedAndSortedActivities = [...activities];
-
-  // Compute duration for each activity
-  augmentedAndSortedActivities.forEach((activity, index) => {
+  // Compute duration and end time for each activity
+  const augmentedAndSortedActivities = activities.map((activity, index) => {
     if (index < activities.length - 1) {
       const nextActivity = activities[index + 1];
-      activity.duration = getTime(nextActivity) - getTime(activity);
+      return {
+        ...activity,
+        duration: getTime(nextActivity) - getTime(activity),
+        endTime: getTime(nextActivity)
+      };
     }
+    return activity;
   });
 
   sortEvents(augmentedAndSortedActivities).reverse();
@@ -69,6 +72,7 @@ export function ActivityList({
                         editActivityEvent(
                           activity,
                           actionType,
+                          augmentedAndSortedActivities,
                           newUserTime,
                           userComment
                         ),
