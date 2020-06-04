@@ -598,7 +598,10 @@ class Api {
         if (request.onApiError) await request.onApiError(err);
         await this.store.clearPendingRequest(request);
       }
-      Sentry.captureException(err);
+      Sentry.withScope(function(scope) {
+        scope.setTag("request", request);
+        Sentry.captureException(err);
+      });
       throw err;
     }
   }
