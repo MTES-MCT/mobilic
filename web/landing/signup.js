@@ -36,7 +36,7 @@ export default function Signup() {
         lastName,
         companyName
       });
-      const { accessToken, refreshToken } = signUpResponse.data.signupUser;
+      const { accessToken, refreshToken } = signUpResponse.data.signUp.user;
       await store.storeTokens({
         accessToken,
         refreshToken

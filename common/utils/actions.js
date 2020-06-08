@@ -96,7 +96,7 @@ export function ActionsContextProvider({ children }) {
       updateStore,
       ["activities"],
       apiResponse => {
-        const activities = apiResponse.data.logActivity.missionActivities.map(
+        const activities = apiResponse.data.activity.logActivity.missionActivities.map(
           parseActivityPayloadFromBackend
         );
         store.syncEntity(
@@ -217,7 +217,7 @@ export function ActionsContextProvider({ children }) {
       updateStore,
       ["activities"],
       apiResponse => {
-        const activities = apiResponse.data.editActivity.missionActivities.map(
+        const activities = apiResponse.data.activity.editActivity.missionActivities.map(
           parseActivityPayloadFromBackend
         );
         store.syncEntity(
@@ -302,7 +302,7 @@ export function ActionsContextProvider({ children }) {
       ["teamChanges", "coworkers"],
       apiResponse => {
         const teamChanges =
-          apiResponse.data.enrollOrReleaseTeamMate.teamChanges;
+          apiResponse.data.activity.enrollOrReleaseTeamMate.teamChanges;
         store.syncEntity(teamChanges, "teamChanges", () => false);
       }
     );
@@ -393,7 +393,7 @@ export function ActionsContextProvider({ children }) {
       updateStore,
       ["missions", "activities", "vehicleBookings"],
       async (apiResponse, { missionId: tempMissionId }) => {
-        const mission = apiResponse.data.beginMission.mission;
+        const mission = apiResponse.data.activity.beginMission.mission;
         await new Promise((resolve, reject) => {
           store.setStoreState(
             prevState => ({
@@ -519,7 +519,7 @@ export function ActionsContextProvider({ children }) {
       updateStore,
       ["activities", "missions"],
       apiResponse => {
-        const mission = apiResponse.data.endMission.mission;
+        const mission = apiResponse.data.activity.endMission.mission;
         store.syncEntity(
           mission.activities.map(parseActivityPayloadFromBackend),
           "activities",
@@ -552,7 +552,7 @@ export function ActionsContextProvider({ children }) {
       updateStore,
       ["missions"],
       async apiResponse => {
-        const mission = apiResponse.data.validateMission.mission;
+        const mission = apiResponse.data.activity.validateMission.mission;
         await store.syncEntity(
           [parseMissionPayloadFromBackend(mission)],
           "missions",
@@ -606,7 +606,8 @@ export function ActionsContextProvider({ children }) {
       updateStore,
       ["vehicleBookings"],
       apiResponse => {
-        const vehicleBooking = apiResponse.data.bookVehicle.vehicleBooking;
+        const vehicleBooking =
+          apiResponse.data.activity.bookVehicle.vehicleBooking;
         _handleNewVehicleBookingsFromApi([vehicleBooking]);
       }
     );
@@ -629,7 +630,7 @@ export function ActionsContextProvider({ children }) {
       updateStore,
       ["comments"],
       apiResponse => {
-        const comment = apiResponse.data.logComment.comment;
+        const comment = apiResponse.data.activity.logComment.comment;
         store.syncEntity([comment], "comments", () => false);
       }
     );
@@ -675,7 +676,8 @@ export function ActionsContextProvider({ children }) {
         updateStore,
         ["missions"],
         async apiResponse => {
-          const mission = apiResponse.data.editMissionExpenditures.mission;
+          const mission =
+            apiResponse.data.activity.editMissionExpenditures.mission;
           await store.syncEntity(
             [parseMissionPayloadFromBackend(mission)],
             "missions",
