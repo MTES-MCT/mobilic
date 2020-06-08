@@ -128,13 +128,14 @@ export function ActionsContextProvider({ children }) {
           store.deleteEntityObject(activity, "activities", requestId);
         }
       });
-      if (userEndTime !== getTime(activityToShift))
+      if (userEndTime !== getTime(activityToShift)) {
         store.updateEntityObject(
-          activityToShift,
+          activityToShift.id,
           "activities",
           { userTime: userEndTime },
           requestId
         );
+      }
     } else {
       const activitiesBefore = sortedOtherActivities.filter(
         a => getTime(a) < userTime
@@ -194,12 +195,13 @@ export function ActionsContextProvider({ children }) {
       if (actionType === "cancel") {
         store.deleteEntityObject(activityEvent.id, "activities", requestId);
       } else {
-        _handleActivitiesOverlap(
-          missionActivities.filter(a => a.id !== activityEvent.id),
-          newUserTime,
-          newUserEndTime,
-          requestId
-        );
+        if (newUserEndTime)
+          _handleActivitiesOverlap(
+            missionActivities.filter(a => a.id !== activityEvent.id),
+            newUserTime,
+            newUserEndTime,
+            requestId
+          );
         store.updateEntityObject(
           activityEvent.id,
           "activities",
