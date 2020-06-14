@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import { MainCtaButton } from "../components/MainCtaButton";
-import { formatGraphQLError } from "common/utils/errors";
+import { formatApiError } from "common/utils/errors";
 import {
   computeMissionKpis,
   WorkTimeSummaryKpiGrid
@@ -87,7 +87,7 @@ export function MissionReview({
           </MainCtaButton>
           {submissionError && (
             <Typography color="error">
-              {formatGraphQLError(submissionError)}
+              {formatApiError(submissionError)}
             </Typography>
           )}
         </Box>

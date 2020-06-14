@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function BeforeWork({ beginNewMission, missions }) {
+export function BeforeWork({ beginNewMission, missions, loadUser }) {
   const modals = useModals();
 
   const onEnterNewMissionFunnel = () => {

@@ -182,6 +182,7 @@ export const LOG_ACTIVITY_MUTATION = gql`
             lastName
           }
         }
+        nonBlockingErrors
       }
     }
   }
@@ -218,6 +219,7 @@ export const EDIT_ACTIVITY_MUTATION = gql`
             lastName
           }
         }
+        nonBlockingErrors
       }
     }
   }
@@ -260,7 +262,7 @@ export const ENROLL_OR_RELEASE_TEAM_MATE_MUTATION = gql`
         isEnrollment: $isEnrollment
         missionId: $missionId
       ) {
-        teamChanges {
+        teamChange {
           isEnrollment
           userTime
           missionId
@@ -331,6 +333,7 @@ export const BEGIN_MISSION_MUTATION = gql`
             }
           }
         }
+        nonBlockingErrors
       }
     }
   }

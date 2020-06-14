@@ -9,7 +9,7 @@ import {
 } from "../utils/mission";
 import { getTime } from "../utils/events";
 
-function App({ ScreenComponent }) {
+function App({ ScreenComponent, loadUser }) {
   const actions = useActions();
   const store = useStoreSyncedWithLocalStorage();
 
@@ -69,6 +69,7 @@ function App({ ScreenComponent }) {
       validateMission={actions.validateMission}
       editMissionExpenditures={actions.editMissionExpenditures}
       previousMissionEnd={previousMissionEnd}
+      loadUser={loadUser}
     />
   );
 }

@@ -38,29 +38,33 @@ import { FrLocalizedUtils } from "common/utils/time";
 import { ActionsContextProvider } from "common/utils/actions";
 import { AppScreen } from "./pwa/utils/navigation";
 import { ModalProvider } from "common/utils/modals";
-import Backdrop from "@material-ui/core/Backdrop";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import {
+  LoadingScreenContextProvider,
+  useLoadingScreen
+} from "common/utils/loading";
 
 export default function Root() {
   return (
     <Container className="root-container" maxWidth={false}>
       <StoreSyncedWithLocalStorageProvider storage={localStorage}>
         <Router>
-          <ApiContextProvider>
-            <ActionsContextProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <ApiContextProvider>
               <MuiPickersUtilsProvider
                 utils={FrLocalizedUtils}
                 locale={frLocale}
               >
-                <ThemeProvider theme={theme}>
-                  <CssBaseline />
-                  <ModalProvider modalDict={MODAL_DICT}>
-                    <_Root />
-                  </ModalProvider>
-                </ThemeProvider>
+                <ModalProvider modalDict={MODAL_DICT}>
+                  <LoadingScreenContextProvider>
+                    <ActionsContextProvider>
+                      <_Root />
+                    </ActionsContextProvider>
+                  </LoadingScreenContextProvider>
+                </ModalProvider>
               </MuiPickersUtilsProvider>
-            </ActionsContextProvider>
-          </ApiContextProvider>
+            </ApiContextProvider>
+          </ThemeProvider>
         </Router>
       </StoreSyncedWithLocalStorageProvider>
     </Container>
@@ -68,33 +72,22 @@ export default function Root() {
 }
 
 function _Root() {
-  const [
-    syncingWithBackendCounter,
-    setSyncingWithBackendCounter
-  ] = React.useState(0); // We use a counter instead of a boolean because multiple syncs can run simultaneously
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
+  const withLoadingScreen = useLoadingScreen();
+
   const userId = store.userId();
   const isCompanyAdmin = store.companyAdmin();
 
-  const withLoadingScreen = async sync => {
-    setSyncingWithBackendCounter(currentCounter => currentCounter + 1);
-    try {
-      await sync();
-      setSyncingWithBackendCounter(currentCounter => currentCounter - 1);
-    } catch (err) {
-      setSyncingWithBackendCounter(currentCounter => currentCounter - 1);
-      console.log(err);
-    }
-  };
+  const loadUser = () => withLoadingScreen(() => loadUserData(api, store));
 
   React.useEffect(() => {
-    if (userId) withLoadingScreen(() => loadUserData(api, store));
+    if (userId) loadUser();
     return () => {};
   }, [userId]);
 
-  return [
-    <Switch key={0}>
+  return (
+    <Switch>
       {userId &&
         !isCompanyAdmin && [
           <Route exact key="app" path="/app">
@@ -105,7 +98,7 @@ function _Root() {
       {userId &&
         isCompanyAdmin && [
           <Route key="admin" path="/admin">
-            <Admin withLoadingScreen={withLoadingScreen} />
+            <Admin />
           </Route>,
           <Redirect push key="*" from="*" to="/admin" />
         ]}
@@ -118,13 +111,6 @@ function _Root() {
         </Route>,
         <Redirect push key="*" from="*" to="/" />
       ]}
-    </Switch>,
-    <Backdrop
-      key={1}
-      open={syncingWithBackendCounter > 0}
-      style={{ zIndex: 5000 }}
-    >
-      <CircularProgress color="primary" />
-    </Backdrop>
-  ];
+    </Switch>
+  );
 }

@@ -9,10 +9,12 @@ import { loadCompanyData } from "./utils/loadCompanyData";
 import { useApi } from "common/utils/api";
 import { AdminStoreProvider, useAdminStore } from "./utils/store";
 import { UserHeader } from "../common/UserHeader";
+import { useLoadingScreen } from "common/utils/loading";
 
-function _Admin({ withLoadingScreen }) {
+function _Admin() {
   const api = useApi();
   const adminStore = useAdminStore();
+  const withLoadingScreen = useLoadingScreen();
   const { path } = useRouteMatch();
 
   const views = ADMIN_VIEWS.map(view => {

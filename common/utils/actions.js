@@ -18,12 +18,34 @@ import {
 import { ACTIVITIES, parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
 import { getTime, sortEvents } from "./events";
+import { useModals } from "./modals";
+import { useLoadingScreen } from "./loading";
+import { loadUserData } from "./loadUserData";
+import { formatPersonName } from "./coworkers";
 
 const ActionsContext = React.createContext(() => {});
 
 export function ActionsContextProvider({ children }) {
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
+  const modals = useModals();
+  const withLoadingScreen = useLoadingScreen();
+
+  async function displayApiErrors(
+    errors,
+    actionDescription,
+    hasRequestFailed = true,
+    shouldReload = false
+  ) {
+    if (shouldReload) {
+      await withLoadingScreen(() => loadUserData(api, store));
+    }
+    modals.open("apiErrorDialog", {
+      hasRequestFailed,
+      actionDescription,
+      errors
+    });
+  }
 
   async function submitAction(
     query,
@@ -106,6 +128,27 @@ export function ActionsContextProvider({ children }) {
             a.missionId ===
             (activities.length > 0 ? activities[0].missionId : missionId)
         );
+        const nonBlockingErrors =
+          apiResponse.data.activity.logActivity.nonBlockingErrors;
+        if (nonBlockingErrors.length > 0) {
+          displayApiErrors(
+            nonBlockingErrors,
+            "Le changement d'activité",
+            true,
+            false
+          );
+        }
+      },
+      true,
+      error => {
+        if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+          displayApiErrors(
+            error.graphQLErrors,
+            "Le changement d'activité",
+            true,
+            true
+          );
+        }
       }
     );
   };
@@ -229,6 +272,12 @@ export function ActionsContextProvider({ children }) {
               ? activities[0].missionId
               : activityEvent.missionId)
         );
+      },
+      true,
+      error => {
+        if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+          displayApiErrors(error.graphQLErrors, "Le correctif", true, false);
+        }
       }
     );
   };
@@ -301,9 +350,23 @@ export function ActionsContextProvider({ children }) {
       updateStore,
       ["teamChanges", "coworkers"],
       apiResponse => {
-        const teamChanges =
-          apiResponse.data.activity.enrollOrReleaseTeamMate.teamChanges;
-        store.syncEntity(teamChanges, "teamChanges", () => false);
+        const teamChange =
+          apiResponse.data.activity.enrollOrReleaseTeamMate.teamChange;
+        store.syncEntity([teamChange], "teamChanges", () => false);
+      },
+      true,
+      error => {
+        store.syncEntity([], "teamChanges", () => false);
+        if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+          displayApiErrors(
+            error.graphQLErrors,
+            `${isEnrollment ? "L'ajout" : "Le retrait"} de ${formatPersonName(
+              enrollmentOrReleasePayload.teamMate
+            )}`,
+            true,
+            false
+          );
+        }
       }
     );
   };
@@ -391,7 +454,7 @@ export function ActionsContextProvider({ children }) {
       BEGIN_MISSION_MUTATION,
       missionPayload,
       updateStore,
-      ["missions", "activities", "vehicleBookings"],
+      ["missions", "activities", "vehicleBookings", "teamChanges"],
       async (apiResponse, { missionId: tempMissionId }) => {
         const mission = apiResponse.data.activity.beginMission.mission;
         await new Promise((resolve, reject) => {
@@ -467,6 +530,16 @@ export function ActionsContextProvider({ children }) {
           }),
           ["vehicleBookings"]
         );
+        const nonBlockingErrors =
+          apiResponse.data.activity.beginMission.nonBlockingErrors;
+        if (nonBlockingErrors.length > 0) {
+          displayApiErrors(
+            nonBlockingErrors,
+            "Le démarrage d'une nouvelle mission",
+            false,
+            false
+          );
+        }
       },
       false,
       async (error, { missionId: tempMissionId }) => {
@@ -478,6 +551,14 @@ export function ActionsContextProvider({ children }) {
           pendingMissionRequests.map(req => store.clearPendingRequest(req))
         );
         store.syncEntity([], "missions", m => m.id === tempMissionId);
+        if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+          displayApiErrors(
+            error.graphQLErrors,
+            "Le démarrage d'une nouvelle mission",
+            true,
+            true
+          );
+        }
       }
     );
   };

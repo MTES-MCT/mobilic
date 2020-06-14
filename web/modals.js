@@ -12,6 +12,7 @@ import { NewTeamMateModal } from "./pwa/components/NewTeamMate";
 import { EndMissionModal } from "./pwa/components/EndMission";
 import { HistoryModal } from "./pwa/screens/History";
 import { ExpenditureDialogModal } from "./pwa/components/ExpenditureDialog";
+import { ApiErrorDialogModal } from "./pwa/components/ApiErrorDialog";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -27,5 +28,6 @@ export const MODAL_DICT = {
   newTeamMate: NewTeamMateModal,
   endMission: EndMissionModal,
   history: HistoryModal,
-  expenditures: ExpenditureDialogModal
+  expenditures: ExpenditureDialogModal,
+  apiErrorDialog: ApiErrorDialogModal
 };
