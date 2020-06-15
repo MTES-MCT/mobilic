@@ -24,15 +24,18 @@ const REFRESH_MUTATION = gql`
   }
 `;
 
-export const LOGIN_MUTATION = gql`
-  mutation login($email: String!, $password: String!) {
-    auth {
-      login(email: $email, password: $password) {
-        accessToken
-        refreshToken
-      }
+export const LOGIN_MUTATION_STRING = `mutation login($email: String!, $password: String!) {
+  auth {
+    login(email: $email, password: $password) {
+      accessToken
+      refreshToken
     }
   }
+}
+`;
+
+export const LOGIN_MUTATION = gql`
+  ${LOGIN_MUTATION_STRING}
 `;
 
 export const USER_SIGNUP_MUTATION = gql`

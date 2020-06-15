@@ -5,7 +5,8 @@
   "workspaces": {
     "packages": [
       "web",
-      "common"
+      "common",
+      "docs"
     ]
   },
   "dependencies": {
@@ -45,7 +46,9 @@
     "eslint-plugin-react-hooks": "^1.6.1",
     "file-loader": "4.3.0",
     "fs-extra": "^8.1.0",
+    "graphiql": "^1.0.0",
     "graphql": "^14.6.0",
+    "graphql-playground-react": "^1.7.23",
     "html-webpack-plugin": "4.0.0-beta.5",
     "husky": "^4.2.5",
     "identity-obj-proxy": "3.0.0",

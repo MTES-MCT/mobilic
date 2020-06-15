@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+button {
+  border-style: none;
+}
+
+#root {
+  height: 100vh;
+}
