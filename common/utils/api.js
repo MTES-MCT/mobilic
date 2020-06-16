@@ -164,7 +164,7 @@ export const LOG_ACTIVITY_MUTATION = gql`
     $comment: String
     $driver: TeamMateInput
   ) {
-    activity {
+    activities {
       logActivity(
         type: $type
         eventTime: $eventTime
@@ -174,7 +174,7 @@ export const LOG_ACTIVITY_MUTATION = gql`
         missionId: $missionId
         comment: $comment
       ) {
-        missionActivities {
+        output {
           id
           type
           missionId
@@ -201,7 +201,7 @@ export const EDIT_ACTIVITY_MUTATION = gql`
     $activityUserTime: DateTimeWithTimeStampSerialization
     $comment: String
   ) {
-    activity {
+    activities {
       editActivity(
         eventTime: $eventTime
         userTime: $userTime
@@ -211,7 +211,7 @@ export const EDIT_ACTIVITY_MUTATION = gql`
         activityUserTime: $activityUserTime
         comment: $comment
       ) {
-        missionActivities {
+        output {
           id
           type
           missionId
@@ -234,18 +234,16 @@ export const LOG_COMMENT_MUTATION = gql`
     $content: String!
     $missionId: Int!
   ) {
-    activity {
+    activities {
       logComment(
         eventTime: $eventTime
         content: $content
         missionId: $missionId
       ) {
-        comment {
-          id
-          content
-          missionId
-          eventTime
-        }
+        id
+        content
+        missionId
+        eventTime
       }
     }
   }
@@ -258,22 +256,20 @@ export const ENROLL_OR_RELEASE_TEAM_MATE_MUTATION = gql`
     $isEnrollment: Boolean!
     $missionId: Int!
   ) {
-    activity {
+    activities {
       enrollOrReleaseTeamMate(
         eventTime: $eventTime
         teamMate: $teamMate
         isEnrollment: $isEnrollment
         missionId: $missionId
       ) {
-        teamChange {
-          isEnrollment
-          userTime
-          missionId
-          coworker {
-            id
-            firstName
-            lastName
-          }
+        isEnrollment
+        userTime
+        missionId
+        coworker {
+          id
+          firstName
+          lastName
         }
       }
     }
@@ -290,7 +286,7 @@ export const BEGIN_MISSION_MUTATION = gql`
     $team: [TeamMateInput]
     $driver: TeamMateInput
   ) {
-    activity {
+    activities {
       beginMission(
         eventTime: $eventTime
         name: $name
@@ -300,7 +296,7 @@ export const BEGIN_MISSION_MUTATION = gql`
         team: $team
         driver: $driver
       ) {
-        mission {
+        output {
           id
           name
           eventTime
@@ -349,28 +345,26 @@ export const END_MISSION_MUTATION = gql`
     $expenditures: GenericScalar
     $comment: String
   ) {
-    activity {
+    activities {
       endMission(
         eventTime: $eventTime
         missionId: $missionId
         expenditures: $expenditures
         comment: $comment
       ) {
-        mission {
+        id
+        name
+        eventTime
+        expenditures
+        activities {
           id
-          name
-          eventTime
-          expenditures
-          activities {
+          type
+          missionId
+          userTime
+          driver {
             id
-            type
-            missionId
-            userTime
-            driver {
-              id
-              firstName
-              lastName
-            }
+            firstName
+            lastName
           }
         }
       }
@@ -386,7 +380,7 @@ export const BOOK_VEHICLE_MUTATION = gql`
     $registrationNumber: String
     $userTime: DateTimeWithTimeStampSerialization
   ) {
-    activity {
+    activities {
       bookVehicle(
         eventTime: $eventTime
         vehicleId: $vehicleId
@@ -394,16 +388,14 @@ export const BOOK_VEHICLE_MUTATION = gql`
         registrationNumber: $registrationNumber
         userTime: $userTime
       ) {
-        vehicleBooking {
+        id
+        vehicleName
+        vehicle {
           id
-          vehicleName
-          vehicle {
-            id
-            name
-          }
-          userTime
-          missionId
+          name
         }
+        userTime
+        missionId
       }
     }
   }
@@ -421,11 +413,9 @@ export const CREATE_VEHICLE_MUTATION = gql`
         alias: $alias
         companyId: $companyId
       ) {
-        vehicle {
-          id
-          registrationNumber
-          alias
-        }
+        id
+        registrationNumber
+        alias
       }
     }
   }
@@ -435,11 +425,9 @@ export const EDIT_VEHICLE_MUTATION = gql`
   mutation($id: Int!, $alias: String!) {
     admin {
       editVehicle(id: $id, alias: $alias) {
-        vehicle {
-          id
-          registrationNumber
-          alias
-        }
+        id
+        registrationNumber
+        alias
       }
     }
   }
@@ -457,15 +445,13 @@ export const TERMINATE_VEHICLE_MUTATION = gql`
 
 export const VALIDATE_MISSION_MUTATION = gql`
   mutation validateMission($missionId: Int!) {
-    activity {
+    activities {
       validateMission(missionId: $missionId) {
-        mission {
-          id
-          name
-          eventTime
-          validated
-          expenditures
-        }
+        id
+        name
+        eventTime
+        validated
+        expenditures
       }
     }
   }
@@ -476,18 +462,16 @@ export const EDIT_MISSION_EXPENDITURES_MUTATION = gql`
     $missionId: Int!
     $expenditures: GenericScalar!
   ) {
-    activity {
+    activities {
       editMissionExpenditures(
         missionId: $missionId
         expenditures: $expenditures
       ) {
-        mission {
-          id
-          name
-          eventTime
-          validated
-          expenditures
-        }
+        id
+        name
+        eventTime
+        validated
+        expenditures
       }
     }
   }

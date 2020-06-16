@@ -63,8 +63,7 @@ function VehicleAdmin() {
               v => v.id === vehicle.id
             );
             if (vehicleIndex >= 0)
-              newVehicles[vehicleIndex] =
-                apiResponse.data.admin.editVehicle.vehicle;
+              newVehicles[vehicleIndex] = apiResponse.data.admin.editVehicle;
             return newVehicles;
           });
         } catch (err) {
@@ -79,7 +78,7 @@ function VehicleAdmin() {
             companyId: adminStore.companyId
           });
           adminStore.setVehicles(oldVehicles => [
-            apiResponse.data.admin.createVehicle.vehicle,
+            apiResponse.data.admin.createVehicle,
             ...oldVehicles
           ]);
         } catch (err) {
