@@ -615,7 +615,7 @@ class Api {
         await this.store.clearPendingRequest(request);
       }
       Sentry.withScope(function(scope) {
-        scope.setTag("request", request);
+        scope.setTag("request", JSON.stringify(request));
         Sentry.captureException(err);
       });
       throw err;
