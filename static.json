@@ -10,6 +10,9 @@
     },
     "/service-worker.js": {
       "Content-Security-Policy": "script-src 'self' https://storage.googleapis.com"
+    },
+    "/developers/**": {
+      "Content-Security-Policy": "script-src 'self' https://buttons.github.io"
     }
   },
   "proxies": {
@@ -19,6 +22,11 @@
   },
   "routes": {
     "/static/**": "/static/",
-    "/**": "index.html"
+    "/**": "index.html",
+    "/developers/playground": "api-playground.html"
+  },
+  "redirects": {
+    "/developers": "/developers/docs/intro",
+    "/developers/": "/developers/docs/intro"
   }
 }

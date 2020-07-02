@@ -1,0 +1,6 @@
+{
+  "docs": {
+    "Introduction": ["intro", "principles"],
+    "Guides": ["how-to", "auth", "graphql", "playground", "push-activity"]
+  }
+}

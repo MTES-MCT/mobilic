@@ -655,7 +655,9 @@ module.exports = function(webpackEnv) {
             // API calls
             new RegExp("^/api"),
             // admin app
-            new RegExp("^/admin")
+            new RegExp("^/admin"),
+            // doc
+            new RegExp("^/developers")
           ]
         }),
       // TypeScript type checking
