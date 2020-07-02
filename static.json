@@ -26,7 +26,11 @@
     "/developers/playground": "api-playground.html"
   },
   "redirects": {
-    "/developers": "/developers/docs/intro",
-    "/developers/": "/developers/docs/intro"
+    "/developers": {
+      "url": "/developers/docs/intro"
+    },
+    "/developers/": {
+      "url": "/developers/docs/intro"
+    }
   }
 }
