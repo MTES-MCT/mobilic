@@ -139,7 +139,7 @@ module.exports = function(webpackEnv) {
     // initialization, it doesn't blow up the WebpackDevServer client, and
     // changing JS code would still trigger a refresh.,
     main: paths.appIndexJs,
-    docs: paths.docsIndexJs
+    playground: paths.playgroundIndexJs
   };
 
   if (isEnvDevelopment) {
@@ -519,9 +519,9 @@ module.exports = function(webpackEnv) {
           {},
           {
             inject: true,
-            filename: "api-docs.html",
-            chunks: [isEnvDevelopment && "hot", "docs"].filter(Boolean),
-            template: paths.docsHtml
+            filename: "api-playground.html",
+            chunks: [isEnvDevelopment && "hot", "playground"].filter(Boolean),
+            template: paths.playgroundHtml
           },
           isEnvProduction
             ? {
