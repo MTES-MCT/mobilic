@@ -91,7 +91,7 @@
     "start": "node scripts/start.js",
     "start-https": "HTTPS=true node scripts/start.js",
     "build": "INLINE_RUNTIME_CHUNK=false node scripts/build.js && rm build/static/js/*.map && yarn build-doc && yarn inject-doc-build",
-    "build-doc": "cd docs/website && yarn build && cd ../..",
+    "build-doc": "cd docs/website && yarn docusaurus-build && cd ../..",
     "inject-doc-build": "rm -rf build/developers && cp -r docs/website/build/api-mobilic-doc build/developers",
     "test": "node scripts/test.js",
     "lint": "eslint --ext .js,.jsx ./"
