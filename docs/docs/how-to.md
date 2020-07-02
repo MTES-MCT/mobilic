@@ -7,7 +7,7 @@ title: Effectuer une requête à l'API
 
 L'API Mobilic est un service web (basé sur le protocole HTTP) qui utilise le standard [GraphQL](https://graphql.org/). Contrairement aux architectures de type REST où le verbe HTTP et l'URI vont caractériser l'opération, toutes les requêtes à l'API GraphQL partageront le même verbe HTTP `POST` et le même URI.
 
-Cet URI commun dépend de l'environnement :
+Cet URI unique dépend de l'environnement :
 
 - > https://api.mobilic.beta.gouv.fr/graphql pour l'environnement de production
 

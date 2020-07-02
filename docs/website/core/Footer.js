@@ -41,9 +41,12 @@ class Footer extends React.Component {
             <a href={this.docUrl("how-to.html")}>Guides</a>
           </div>
           <div>
-            <h5>More</h5>
-            <a href="https://github.com/MTES-MCT/mobilic">GitHub</a>
+            <h5>Liens utiles</h5>
             <a href={this.props.config.baseUrl + "/playground"}>Playground</a>
+          </div>
+          <div>
+            <h5>Plus</h5>
+            <a href="https://github.com/MTES-MCT/mobilic-api">Code source</a>
           </div>
         </section>
 
@@ -57,7 +60,7 @@ class Footer extends React.Component {
             src={`${this.props.config.baseUrl}img/marianne.svg`}
             alt="Fabrique Numérique"
             width="170"
-            height="80"
+            height="45"
           />
         </a>
         <section className="copyright">{this.props.config.copyright}</section>

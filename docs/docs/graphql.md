@@ -14,7 +14,7 @@ Une opération est constituée des éléments suivants :
 
 > La distinction entre 2 et 4 n'existe pas vraiment dans GraphQL, une opération étant vue comme la sélection d'un certain champ dans le graphe entier des opérations
 
-Nous nous servirons de l'opération de `login` pour illustrer chacun de ces consistuants :
+Nous nous servirons de l'opération de `login` pour illustrer chacun de ces constituants :
 
 ```
 mutation {
@@ -63,7 +63,7 @@ Le corps JSON de la requête HTTP doit alors contenir un champ `variables` qui d
 
 ## Schéma de la réponse
 
-C'est une fonctionnalité très puissante et qui est peut-être la caractéristique de GraphQL : la possibilité de personnaliser la réponse de l'API parmi le graphe des objets.
+C'est une fonctionnalité très puissante de GraphQL : la possibilité de personnaliser la réponse de l'API parmi le graphe des objets.
 
 Par exemple pour l'opération de `login` on pourrait ne demander que le jeton d'accès sans le jeton de rafraichissement, comme ceci :
 

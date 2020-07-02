@@ -25,3 +25,49 @@ mutation {
     }
 }
 ```
+
+Il y a deux variables, optionnelles toutes les deux :
+
+- `name`
+- `companyId`, qui permet de préciser l'entreprise associée à la mission dans le cas où l'auteur est rattaché à plusieurs entreprises.
+
+> Si une entreprise est donnée via `companyId` il faut que l'auteur y soit rattaché, soit en tant que gestionnaire soit en tant que travailleur. Dans le cas où aucune entreprise n'est précisée la mission est associée à l'entreprise de rattachement principale de l'auteur.
+
+## Enregistrement d'une activité
+
+C'est l'opération principale.
+
+```
+mutation {
+    activities {
+        logActivity(type: InputableActivityTypeEnum!, eventTime: TimeStamp!, missionId: Int!, userTime: TimeStamp) {
+            output {
+                id
+                type
+                startTime
+            }
+            nonBlockingErrors
+        }
+    }
+}
+```
+
+Elle prend en arguments :
+
+- `type`, la nature de l'activité (déplacement, travail, accompagnement, pause)
+- `eventTime`, l'heure de l'événement (= début de l'activité)
+- `missionId`, la mission de laquelle fait partie l'activité
+- `userTime`, optionnelle, la vraie heure de début de l'activité dans le cas d'un enregistrement qui n'est pas en temps réel.
+
+## Fin de mission
+
+```
+mutation {
+    activities {
+        endMission(eventTime: TimeStamp!, missionId: Int!) {
+            id
+            name
+        }
+    }
+}
+```

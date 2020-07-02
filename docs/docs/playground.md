@@ -28,7 +28,7 @@ Le playground est constitué de 4 parties :
 
 La plupart des requêtes à l'API nécessitent d'être [authentifié via un jeton d'accès](auth.md).
 
-Pour ajouter un jeton d'accès obtenu aux en-têtes d'une requête il suffit d'ajouter la ligne suivante dans l'éditeur correspondant (en bas à gauche), comme montré sur la capture d'écran précédente :
+Pour ajouter un jeton d'accès obtenu par authentification aux en-têtes d'une requête il suffit d'ajouter la ligne suivante dans l'éditeur correspondant (en bas à gauche), comme montré sur la capture d'écran précédente :
 
 ```
 {
