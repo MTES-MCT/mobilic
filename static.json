@@ -22,15 +22,16 @@
   },
   "routes": {
     "/static/**": "/static/",
-    "/**": "index.html",
-    "/developers/playground": "api-playground.html"
+    "/developers/playground": "api-playground.html",
+    "/developers/**": "/developers/",
+    "/**": "index.html"
   },
   "redirects": {
     "/developers": {
-      "url": "/developers/docs/intro"
+      "url": "/developers/docs/intro.html"
     },
     "/developers/": {
-      "url": "/developers/docs/intro"
+      "url": "/developers/docs/intro.html"
     }
   }
 }
