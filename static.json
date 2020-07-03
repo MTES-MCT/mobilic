@@ -29,10 +29,10 @@
   },
   "redirects": {
     "/developers": {
-      "url": "/developers/docs/intro.html"
+      "url": "/developers/docs/intro"
     },
     "/developers/": {
-      "url": "/developers/docs/intro.html"
+      "url": "/developers/docs/intro"
     }
   }
 }
