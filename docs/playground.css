@@ -10,3 +10,7 @@ button {
 #root {
   height: 100vh;
 }
+
+.playground {
+  height: calc(100vh - 50px) !important;
+}
