@@ -1,6 +1,14 @@
 {
   "docs": {
     "Introduction": ["intro", "principles"],
-    "Guides": ["how-to", "auth", "graphql", "playground", "push-activity"]
+    "Guides": [
+      "how-to",
+      "signup",
+      "auth",
+      "graphql",
+      "playground",
+      "push-activity",
+      "edit-activity"
+    ]
   }
 }

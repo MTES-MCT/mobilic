@@ -23,16 +23,16 @@ La mission permet de regrouper des activités d'un même travailleur ou de trava
 Le concept est plutôt orienté vers les besoins des exploitants :
 
 - pour calculer le temps total réel d'un "chantier", et donc le coût réel, et l'opposer au prix facturé
-- pour associer un travailleur à une équipe
+- pour rendre compte de la notion d'équipe
 - pour valider d'un bloc le temps de travail plutôt que activité par activité
 
 ## Temps réel
 
 Il existe deux manières d'enregistrer les activités :
 
-1. l'approche en temps réel qui repose sur les événements de changement d'activité. La durée d'une activité n'est déterminée qu'au prochain changement d'activité. Par construction il ne peut pas y avoir de "trous" dans la série temporelle des activités.
+1. l'approche en temps réel qui repose sur les événements de changement d'activité. La durée d'une activité n'est déterminée qu'a posteriori, au moment du prochain changement d'activité. Par construction il ne peut pas y avoir de "trous" dans la série temporelle des activités.
 
-2. l'enregistrement a posteriori où les activités sont renseignées avec leurs durées, à la manière d'un emploi du temps (ex. : j'ai travaillé de 9h à 12h, de 14h à 17h et entre les deux j'étais en pause).
+2. l'enregistrement en différé où les activités sont renseignées avec leurs durées, à la manière d'un emploi du temps (ex. : j'ai travaillé de 9h à 12h, de 14h à 17h et entre les deux j'étais en pause).
 
 L'API Mobilic permet de faire les deux mais privilégie fortement l'approche temps réel, à tel point que le paradigme de l'API est très proche du sourcing événementiel. La seconde approche est pensée principalement comme un outil de corrections ponctuelles. Dans le mode "temps réel" l'API tient soigneusement compte de l'heure de réception par le serveur des événements, tout en permettant à l'appelant de préciser l'heure de l'événement (très utile lorsque les événements ne peuvent pas être soumis tout de suite, pour des raisons de connectivité par exemple).
 

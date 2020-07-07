@@ -7,7 +7,7 @@ Pour des raisons de sécurité et de traçabilité la plupart des actions effect
 
 ## Jetons d'accès
 
-L'API Mobilic utilise une authentification par jeton d'accès (`accessToken`) : les requêtes dites authentifiées sont celles qui portent un jeton valide.
+L'API Mobilic utilise une authentification par jeton d'accès (`accessToken`) : les requêtes dites authentifiées sont celles qui comportent un jeton valide.
 
 ### JWT et autorisation
 

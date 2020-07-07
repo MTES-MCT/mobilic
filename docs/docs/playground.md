@@ -5,13 +5,9 @@ title: Guide du playground
 
 Le playground est une interface graphique simple mais efficace pour découvrir et requêter l'API.
 
-Il est accessible sur tous les environnements :
+Il est accessible depuis le lien suivant :
 
-- > https://mobilic.beta.gouv.fr/developers/playground pour l'environnement de production
-
-- > https://mobilic.beta.gouv.fr/developers/playground pour l'environnement bac à sable
-
-- > https://mobilic-staging.herokuapp.com/developers/playground pour l'environnement de recette
+> https://mobilic.beta.gouv.fr/developers/playground
 
 ## Présentation
 

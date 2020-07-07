@@ -11,7 +11,7 @@ Cet URI unique dépend de l'environnement :
 
 - > https://api.mobilic.beta.gouv.fr/graphql pour l'environnement de production
 
-- > https://api.mobilic.beta.gouv.fr/graphql pour l'environnement bac à sable
+- > https://api.sandbox.mobilic.beta.gouv.fr/graphql pour l'environnement bac à sable
 
 - > https://mobilic-api-staging.herokuapp.com/graphql pour l'environnement de recette
 
