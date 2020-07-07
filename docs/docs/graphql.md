@@ -5,6 +5,8 @@ title: Syntaxe des opérations GraphQL
 
 Nous avons déjà vu comment [construire à partir d'une opération une requête à l'API GraphQL](graphql.md). Nous allons maintenant détailler l'écriture d'une opération.
 
+> Cette page donne un aperçu très condensé du langage de requêtes GraphQL. Pour des informations plus détaillées vous pouvez consulter la [documentation officielle](https://graphql.org/).
+
 Une opération est constituée des éléments suivants :
 
 1. le type de l'opération, toujours précisé en premier
@@ -16,14 +18,14 @@ Une opération est constituée des éléments suivants :
 
 Nous nous servirons de l'opération de `login` pour illustrer chacun de ces constituants :
 
-```
+```gql
 mutation {
-    auth {
-        login(email: "XXX", password: "YYY") {
-            accessToken
-    	    refreshToken
-  	    }
+  auth {
+    login(email: "XXX", password: "YYY") {
+      accessToken
+      refreshToken
     }
+  }
 }
 ```
 
@@ -48,13 +50,13 @@ Elles sont précisées entre parenthèses à côté de l'opération concernée. 
 
 La syntaxe GraphQL permet de définir les variables dans l'opération mais de préciser leurs valeurs en dehors. Par exemple l'opération de `login` peut s'écrire :
 
-```
-mutation ($email: String!, $password: String!) {
+```gql
+mutation($email: String!, $password: String!) {
   auth {
     login(email: $email, password: $password) {
-    	accessToken
-    	refreshToken
-  	}
+      accessToken
+      refreshToken
+    }
   }
 }
 ```
@@ -67,13 +69,13 @@ C'est une fonctionnalité très puissante de GraphQL : la possibilité de person
 
 Par exemple pour l'opération de `login` on pourrait ne demander que le jeton d'accès sans le jeton de rafraichissement, comme ceci :
 
-```
+```gql
 mutation {
-    auth {
-        login(email: "XXX", password: "YYY") {
-            accessToken
-  	    }
+  auth {
+    login(email: "XXX", password: "YYY") {
+      accessToken
     }
+  }
 }
 ```
 

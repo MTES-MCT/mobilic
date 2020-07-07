@@ -15,7 +15,7 @@ Avant d'enregistrer les activités il est indispensable de créer une mission à
 
 L'opération de création de la mission est la suivante :
 
-```
+```gql
 mutation {
     activities {
         createMission(name: "XXX", "companyId: YYY) {
@@ -39,7 +39,7 @@ La création de la mission ne déclenche pas le démarrage du chrono de temps de
 
 C'est l'opération principale.
 
-```
+```gql
 mutation {
     activities {
         logActivitySwitch(type: InputableActivityTypeEnum!, switchTime: TimeStamp!, missionId: Int!) {
@@ -64,7 +64,7 @@ Elle prend en arguments :
 
 L'opération signale la fin de la dernière activité de la mission.
 
-```
+```gql
 mutation {
     activities {
         endMission(missionId: Int!, endTime: TimeStamp!) {

@@ -19,7 +19,7 @@ Bien que l'API Mobilic privilégie une saisie en temps réel du temps de travail
 
 L'opération pour enregistrer une activité en différé est la suivante. Contrairement à l'enregistrement en temps réel il faut préciser une heure de fin.
 
-```
+```gql
 mutation {
     activities {
         logActivity(type: InputableActivityTypeEnum!, startTime: TimeStamp!, missionId: Int!, endTime: TimeStamp!) {
@@ -47,7 +47,7 @@ La correction d'activités consiste à modifier les informations d'une activité
 - modifier l'heure de début
 - modifier l'heure de fin
 
-```
+```gql
 mutation {
     activities {
         editActivity(activityId: Int!, dismiss: Boolean!, startTime: TimeStamp, endTime: TimeStamp) {
