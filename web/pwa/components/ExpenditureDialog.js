@@ -7,14 +7,19 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import DialogContent from "@material-ui/core/DialogContent";
 import { Expenditures } from "./Expenditures";
+import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
+import Switch from "@material-ui/core/Switch/Switch";
+import Box from "@material-ui/core/Box";
 
 export function ExpenditureDialogModal({
   open,
   currentExpenditures,
+  hasTeamMates = false,
   handleClose,
   handleSubmit
 }) {
   const [expenditures, setExpenditures] = React.useState({});
+  const [forAllTeam, setForAllTeam] = React.useState(false);
 
   React.useEffect(() => {
     setExpenditures(currentExpenditures || {});
@@ -30,11 +35,26 @@ export function ExpenditureDialogModal({
           expenditures={expenditures}
           setExpenditures={setExpenditures}
         />
+        {hasTeamMates && (
+          <Box mt={2}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={forAllTeam}
+                  onChange={() => setForAllTeam(!forAllTeam)}
+                  color="primary"
+                />
+              }
+              label="Pour toute l'équipe"
+              labelPlacement="end"
+            />
+          </Box>
+        )}
       </DialogContent>
       <DialogActions>
         <IconButton
-          onClick={(...args) => {
-            handleSubmit(expenditures);
+          onClick={() => {
+            handleSubmit(expenditures, forAllTeam);
             handleClose();
           }}
         >

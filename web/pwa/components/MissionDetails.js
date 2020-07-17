@@ -5,19 +5,26 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import {
   computeLatestEnrollmentStatuses,
-  formatLatestEnrollmentStatus
+  formatLatestEnrollmentStatus,
+  resolveTeamAt
 } from "common/utils/coworkers";
 import Box from "@material-ui/core/Box";
 import Chip from "@material-ui/core/Chip";
 import { EXPENDITURES } from "common/utils/expenditures";
 import React from "react";
+import mapValues from "lodash/mapValues";
+import map from "lodash/map";
+import omit from "lodash/omit";
+import fromPairs from "lodash/fromPairs";
+import uniq from "lodash/uniq";
+import uniqBy from "lodash/uniqBy";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useModals } from "common/utils/modals";
 import { getTime } from "common/utils/events";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import { formatVehicleBookingTimes } from "common/utils/vehicles";
+import { getVehicleName } from "common/utils/vehicles";
 import { ACTIVITIES } from "common/utils/activities";
 import { PersonIcon } from "common/utils/icons";
 
@@ -54,43 +61,34 @@ export function MissionDetails({
   previousMissionEnd,
   hideExpenditures,
   createActivity,
-  changeTeam,
-  changeVehicle
+  changeTeam
 }) {
   const classes = useStyles();
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
   const userId = store.userId();
 
-  const lastMissionActivity = mission.activities[mission.activities.length - 1];
-  const lastVehicleBooking =
-    mission.vehicleBookings.length > 0
-      ? mission.vehicleBookings[mission.vehicleBookings.length - 1]
-      : null;
-  const vehicleBookingsWithEndTime = mission.vehicleBookings.map(
-    (vb, index) => ({
-      ...vb,
-      endTime:
-        index < mission.vehicleBookings.length - 1
-          ? getTime(mission.vehicleBookings[index + 1])
-          : null
-    })
-  );
+  const coworkers = store.getEntity("coworkers");
 
-  let teamChanges = mission.teamChanges.filter(tc => tc.coworker.id !== userId);
+  const lastMissionActivity = mission.activities[mission.activities.length - 1];
+  let teamChanges = omit(mission.teamChanges, [userId]);
+
   // Do not include the automatic releases of all team mates at mission end
   if (mission.isComplete) {
-    teamChanges = teamChanges.filter(
-      tc =>
-        tc.isEnrollment ||
-        getTime(tc) !==
-          getTime(mission.activities[mission.activities.length - 1])
+    teamChanges = mapValues(teamChanges, statuses =>
+      statuses.filter(
+        tc =>
+          tc.isEnrollment ||
+          getTime(tc) !==
+            getTime(mission.activities[mission.activities.length - 1])
+      )
     );
   }
 
-  const teamMatesLatestStatuses = computeLatestEnrollmentStatuses(teamChanges);
+  const teamAtMissionEnd = [userId, ...resolveTeamAt(teamChanges, Date.now())];
 
-  const isTeamMode = teamMatesLatestStatuses.length > 0;
+  const teamMatesLatestStatuses = computeLatestEnrollmentStatuses(teamChanges);
+  const isTeamMode = Object.keys(teamMatesLatestStatuses).length > 0;
 
   return (
     <AlternateColors>
@@ -104,7 +102,7 @@ export function MissionDetails({
                   createActivity: args =>
                     createActivity({
                       ...args,
-                      missionActivities: mission.activities,
+                      missionActivities: mission.allActivities,
                       missionId: mission.id
                     }),
                   minStartTime: previousMissionEnd + 1,
@@ -118,6 +116,7 @@ export function MissionDetails({
       >
         <ActivityList
           activities={mission.activities}
+          allMissionActivities={mission.allActivities}
           editActivityEvent={editActivityEvent}
           missionEnd={
             lastMissionActivity.type === ACTIVITIES.rest.name
@@ -144,13 +143,17 @@ export function MissionDetails({
       >
         {isTeamMode && (
           <List dense>
-            {teamMatesLatestStatuses.map((tc, index) => (
-              <ListItem disableGutters key={index}>
+            {map(teamMatesLatestStatuses, (tc, id) => (
+              <ListItem disableGutters key={id}>
                 <ListItemIcon>
                   <PersonIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary={tc.coworker.firstName}
+                  primary={
+                    coworkers[tc.userId.toString()]
+                      ? coworkers[tc.userId.toString()].firstName
+                      : "Inconnu"
+                  }
                   secondary={formatLatestEnrollmentStatus(tc)}
                 />
               </ListItem>
@@ -158,34 +161,29 @@ export function MissionDetails({
           </List>
         )}
       </MissionReviewSection>
-      <MissionReviewSection
-        title="Véhicules"
-        onEdit={
-          changeVehicle
-            ? () =>
-                modals.open("vehicleBooking", {
-                  currentVehicleBooking: lastVehicleBooking,
-                  handleContinue: changeVehicle
-                })
-            : null
-        }
-        editButtonLabel="Changer"
-      >
-        {mission.vehicleBookings.length > 0 && (
-          <List dense>
-            {vehicleBookingsWithEndTime.reverse().map((vb, index) => (
-              <ListItem disableGutters key={index}>
+      <MissionReviewSection title="Véhicule">
+        {mission.context &&
+          (mission.context.vehicleId ||
+            mission.context.vehicleRegistrationNumber) && (
+            <List dense>
+              <ListItem disableGutters>
                 <ListItemIcon>
                   <DriveEtaIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary={vb.vehicleName}
-                  secondary={formatVehicleBookingTimes(vb, vb.endTime)}
+                  primary={
+                    mission.context.vehicleId
+                      ? getVehicleName(
+                          store.getEntity("vehicles")[
+                            mission.context.vehicleId.toString()
+                          ]
+                        )
+                      : mission.context.vehicleRegistrationNumber
+                  }
                 />
               </ListItem>
-            ))}
-          </List>
-        )}
+            </List>
+          )}
       </MissionReviewSection>
       {!hideExpenditures && (
         <MissionReviewSection
@@ -194,18 +192,26 @@ export function MissionDetails({
             editExpenditures
               ? () =>
                   modals.open("expenditures", {
-                    handleSubmit: expenditures =>
-                      editExpenditures(mission, expenditures),
-                    currentExpenditures: mission.expenditures
+                    handleSubmit: (expenditures, forAllTeam) =>
+                      editExpenditures(
+                        expenditures,
+                        mission.expenditures,
+                        mission.id,
+                        forAllTeam ? teamAtMissionEnd : []
+                      ),
+                    hasTeamMates: teamAtMissionEnd.length > 1,
+                    currentExpenditures: fromPairs(
+                      uniq(mission.expenditures.map(e => [e.type, true]))
+                    )
                   })
               : null
           }
         >
           <Box className={`flex-row ${classes.expenditures}`}>
             {mission.expenditures &&
-              Object.keys(mission.expenditures)
-                .filter(exp => mission.expenditures[exp] > 0)
-                .map(exp => <Chip key={exp} label={EXPENDITURES[exp].label} />)}
+              uniqBy(mission.expenditures, e => e.type).map(exp => (
+                <Chip key={exp.type} label={EXPENDITURES[exp.type].label} />
+              ))}
           </Box>
         </MissionReviewSection>
       )}

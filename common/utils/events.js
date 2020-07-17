@@ -1,7 +1,5 @@
 export function getTime(event) {
-  return (
-    event.userTime || event.startTime || event.actionTime || event.eventTime
-  );
+  return event.startTime || event.time || event.eventTime;
 }
 
 export function sortEvents(events) {

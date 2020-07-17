@@ -10,11 +10,14 @@ import ListItem from "@material-ui/core/ListItem";
 import { formatGraphQLError } from "common/utils/errors";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Button from "@material-ui/core/Button";
+import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles(theme => ({
-  statusText: {
-    color: hasRequestFailed =>
-      hasRequestFailed ? theme.palette.error.main : theme.palette.warning.main
+  failureStatusText: {
+    color: theme.palette.error.main
+  },
+  warningStatusText: {
+    color: theme.palette.warning.main
   },
   errorList: {
     listStyle: "circle",
@@ -22,41 +25,59 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ApiErrorDialogModal({
-  open,
-  hasRequestFailed,
-  handleClose,
-  actionDescription,
-  errors = []
-}) {
+export function ApiErrorDialogModal({ open, handleClose, errors = [], title }) {
   const store = useStoreSyncedWithLocalStorage();
   const userId = store.userId();
-  const classes = useStyles(hasRequestFailed);
+  const classes = useStyles();
+
+  const displayTitle = title
+    ? title
+    : errors.some(e => e.hasRequestFailed)
+    ? `❌ Erreur${errors.length > 1 ? "s" : ""} d'enregistrement`
+    : `⚠️ Avertissement${errors.length > 1 ? "s" : ""}`;
+
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle disableTypography>
-        <Typography variant="h4">
-          {hasRequestFailed ? "❌ Erreur d'enregistrement" : "⚠️ Avertissement"}
-        </Typography>
+        <Typography variant="h4">{displayTitle}</Typography>
       </DialogTitle>
       <DialogContent>
-        <Typography className={classes.statusText}>
-          {actionDescription}{" "}
-          {hasRequestFailed
-            ? "n'a pas pu être enregistré pour les raisons suivantes :"
-            : "a bien été enregistré, mais avec les réserves suivantes : "}
-        </Typography>
-        <List className={classes.errorList}>
-          {errors.map((error, index) => (
-            <ListItem
-              disableGutters
-              style={{ display: "list-item" }}
-              key={index}
+        {errors.map((error, index) => (
+          <Box mt={2} key={index}>
+            <Typography
+              className={
+                error.hasRequestFailed
+                  ? classes.failureStatusText
+                  : classes.warningStatusText
+              }
             >
-              <Typography>{formatGraphQLError(error, userId)}</Typography>
-            </ListItem>
-          ))}
-        </List>
+              {error.message
+                ? error.message
+                : `${error.actionDescription} ${
+                    error.hasRequestFailed
+                      ? `n'a pas pu être enregistré${
+                          error.isActionDescriptionFemale ? "e" : ""
+                        } pour les raisons suivantes :`
+                      : `a bien été enregistré${
+                          error.isActionDescriptionFemale ? "e" : ""
+                        }, mais avec les réserves suivantes : `
+                  }`}
+            </Typography>
+            <List className={classes.errorList}>
+              {error.apiErrors.map((apiError, index) => (
+                <ListItem
+                  disableGutters
+                  style={{ display: "list-item" }}
+                  key={index}
+                >
+                  <Typography>
+                    {formatGraphQLError(apiError, userId)}
+                  </Typography>
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        ))}
       </DialogContent>
       <DialogActions>
         <Button color="primary" onClick={handleClose}>

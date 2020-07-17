@@ -15,14 +15,17 @@ import ToggleButton from "@material-ui/lab/ToggleButton";
 import { ACTIVITIES, TIMEABLE_ACTIVITIES } from "common/utils/activities";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { getTime } from "common/utils/events";
+import uniq from "lodash/uniq";
 import MenuItem from "@material-ui/core/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { DateTimePicker } from "./DateTimePicker";
+import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
+import Switch from "@material-ui/core/Switch/Switch";
 
 export function ActivityRevisionOrCreationModal({
   event,
-  teamChanges = [],
+  teamChanges = {},
   open,
   handleClose,
   handleRevisionAction,
@@ -33,10 +36,15 @@ export function ActivityRevisionOrCreationModal({
 }) {
   const theme = useTheme();
   const store = useStoreSyncedWithLocalStorage();
+  const coworkers = store.getEntity("coworkers");
   const [actionType, setActionType] = React.useState(undefined); // "cancel", "revision" or "creation"
 
   const [newActivityType, setNewActivityType] = React.useState(undefined);
-  const [newActivityDriver, setNewActivityDriver] = React.useState(undefined);
+  const [newActivityDriverId, setNewActivityDriverId] = React.useState(
+    undefined
+  );
+
+  const [teamMode, setTeamMode] = React.useState(false);
 
   const [newUserTime, setNewUserTime] = React.useState(undefined);
   const [newUserEndTime, setNewUserEndTime] = React.useState(undefined);
@@ -45,28 +53,30 @@ export function ActivityRevisionOrCreationModal({
 
   const [userComment, setUserComment] = React.useState(undefined);
 
-  const user = store.userInfo();
+  const userId = store.userId();
   const team = newUserTime
-    ? [user, ...resolveTeamAt(teamChanges, newUserTime)]
-    : [user];
+    ? uniq([userId, ...resolveTeamAt(teamChanges, newUserTime)])
+    : [userId];
 
   function handleSubmit() {
     if (actionType === "creation") {
-      let driver = null;
-      if (requiresDriver()) driver = newActivityDriver;
+      let driverId = null;
+      if (requiresDriver()) driverId = newActivityDriverId;
       createActivity({
         activityType: newActivityType,
-        userTime: newUserTime,
-        userEndTime: newUserEndTime,
-        driver: driver,
-        userComment: userComment
+        startTime: newUserTime,
+        endTime: newUserEndTime,
+        driverId: driverId,
+        userComment: userComment,
+        team: teamMode ? team : [userId]
       });
     } else
       handleRevisionAction(
         actionType,
         newUserTime,
         newUserEndTime,
-        userComment
+        userComment,
+        teamMode
       );
   }
 
@@ -80,8 +90,9 @@ export function ActivityRevisionOrCreationModal({
       setNewUserEndTime(undefined);
       setActionType("creation");
     }
-    setNewActivityDriver(undefined);
+    setNewActivityDriverId(undefined);
     setUserComment(undefined);
+    setTeamMode(false);
     return () => {};
   }, [open]);
 
@@ -114,7 +125,7 @@ export function ActivityRevisionOrCreationModal({
           !!newUserEndTime &&
           !newUserTimeError &&
           !newUserEndTimeError &&
-          newActivityDriver !== undefined
+          newActivityDriverId !== undefined
         );
       }
       return (
@@ -201,14 +212,19 @@ export function ActivityRevisionOrCreationModal({
               required
               fullWidth
               select
-              value={newActivityDriver}
-              onChange={e => setNewActivityDriver(e.target.value)}
+              value={newActivityDriverId}
+              onChange={e => setNewActivityDriverId(e.target.value)}
             >
-              {team.map((teamMate, index) => (
-                <MenuItem key={index} value={teamMate}>
-                  {formatPersonName(teamMate)}
+              {team.map((id, index) => (
+                <MenuItem key={index} value={id}>
+                  {coworkers[id.toString()]
+                    ? formatPersonName(coworkers[id.toString()])
+                    : "Inconnu"}
                 </MenuItem>
               ))}
+              <MenuItem key={-1} value={-1}>
+                Une autre personne
+              </MenuItem>
             </TextField>
           )}
           {(actionType === "revision" || actionType === "creation") && [
@@ -243,6 +259,19 @@ export function ActivityRevisionOrCreationModal({
               />
             )
           ]}
+        </Box>
+        <Box mt={2}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={teamMode}
+                onChange={() => setTeamMode(!teamMode)}
+                color="primary"
+              />
+            }
+            label="Pour toute l'équipe"
+            labelPlacement="end"
+          />
         </Box>
         <Box mt={2}>
           <TextField

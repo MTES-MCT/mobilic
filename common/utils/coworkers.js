@@ -1,24 +1,22 @@
 import { formatTimeOfDay } from "./time";
 import { getTime } from "./events";
 import map from "lodash/map";
-import groupBy from "lodash/groupBy";
+import mapValues from "lodash/mapValues";
+import values from "lodash/values";
+import omitBy from "lodash/omitBy";
+import { ACTIVITIES } from "./activities";
 
 export function formatPersonName(coworker) {
   return `${coworker.firstName} ${coworker.lastName}`;
 }
 
-export function getCoworkerById(id, coworkers) {
-  for (let i = 0; i < coworkers.length; i++) {
-    const cw = coworkers[i];
-    if (cw.id && id === cw.id) return cw;
-  }
-}
-
 export function resolveTeamAt(teamChanges, time) {
   const statusesAtTime = computeLatestEnrollmentStatuses(
-    teamChanges.filter(tc => getTime(tc) <= time)
+    mapValues(teamChanges, statuses => statuses.filter(s => getTime(s) <= time))
   );
-  return statusesAtTime.filter(tc => tc.isEnrollment).map(tc => tc.coworker);
+  return values(statusesAtTime)
+    .filter(tc => tc.isEnrollment)
+    .map(tc => tc.userId);
 }
 
 export function formatLatestEnrollmentStatus(teamChange) {
@@ -27,9 +25,30 @@ export function formatLatestEnrollmentStatus(teamChange) {
     : `ajouté à ${formatTimeOfDay(getTime(teamChange))}`;
 }
 
-export function computeLatestEnrollmentStatuses(missionTeamChanges) {
-  return map(
-    groupBy(missionTeamChanges, tc => tc.coworker.id),
-    statuses => statuses[statuses.length - 1]
+export function computeTeamChanges(allMissionSortedActivities) {
+  const statuses = {};
+  allMissionSortedActivities.forEach(a => {
+    const currentUserStatus = statuses[a.userId]
+      ? statuses[a.userId][statuses[a.userId].length - 1]
+      : null;
+    if (!currentUserStatus) statuses[a.userId] = [];
+    if (
+      !currentUserStatus ||
+      (a.type !== ACTIVITIES.rest.name) !== currentUserStatus.isEnrollment
+    ) {
+      statuses[a.userId].push({
+        userId: a.userId,
+        time: getTime(a),
+        isEnrollment: a.type !== ACTIVITIES.rest.name
+      });
+    }
+  });
+  return statuses;
+}
+
+export function computeLatestEnrollmentStatuses(teamChanges) {
+  return omitBy(
+    map(teamChanges, userStatuses => userStatuses[userStatuses.length - 1]),
+    value => !value
   );
 }

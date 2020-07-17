@@ -9,10 +9,9 @@ import Box from "@material-ui/core/Box";
 export function CurrentActivity({
   currentActivity,
   currentMission,
-  pushNewActivityEvent,
+  pushNewTeamActivityEvent,
   editActivityEvent,
-  pushNewVehicleBooking,
-  pushNewTeamEnrollmentOrRelease,
+  endMissionForTeam,
   endMission,
   previousMissionEnd
 }) {
@@ -28,14 +27,22 @@ export function CurrentActivity({
       key={1}
       team={currentTeam}
       currentActivity={currentActivity}
-      pushActivitySwitchEvent={(activityType, driver = null) =>
-        pushNewActivityEvent({
+      pushActivitySwitchEvent={(activityType, driverId = null) =>
+        pushNewTeamActivityEvent({
           activityType,
-          driver,
-          missionId: currentMission.id
+          driverId,
+          missionId: currentMission.id,
+          team: currentTeam,
+          startTime: Date.now()
         })
       }
-      endMission={args => endMission({ missionId: currentMission.id, ...args })}
+      endMission={args =>
+        endMissionForTeam({
+          missionId: currentMission.id,
+          team: currentTeam,
+          ...args
+        })
+      }
     />,
     <Box key={2} pt={3} />,
     <MissionDetails
@@ -44,19 +51,24 @@ export function CurrentActivity({
       editActivityEvent={editActivityEvent}
       hideExpenditures
       previousMissionEnd={previousMissionEnd}
-      createActivity={pushNewActivityEvent}
-      changeVehicle={(vehicle, bookingTime) =>
-        pushNewVehicleBooking(vehicle, bookingTime, currentMission.id)
-      }
+      createActivity={pushNewTeamActivityEvent}
       changeTeam={updatedCoworkers =>
         updatedCoworkers.forEach(cw => {
-          pushNewTeamEnrollmentOrRelease(
-            cw.id,
-            cw.firstName,
-            cw.lastName,
-            cw.enroll,
-            currentMission.id
-          );
+          if (cw.enroll) {
+            pushNewTeamActivityEvent({
+              activityType: currentActivity ? currentActivity.type : null,
+              missionId: currentMission.id,
+              startTime: Date.now(),
+              team: [cw.id],
+              driverId: -1
+            });
+          } else {
+            endMission({
+              endTime: Date.now(),
+              missionId: currentMission.id,
+              userId: cw.id
+            });
+          }
         })
       }
     />

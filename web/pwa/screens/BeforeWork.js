@@ -10,6 +10,7 @@ import { MainCtaButton } from "../components/MainCtaButton";
 import Button from "@material-ui/core/Button";
 import SvgIcon from "@material-ui/core/SvgIcon";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -30,8 +31,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function BeforeWork({ beginNewMission, missions, loadUser }) {
+export function BeforeWork({ beginNewMission, missions }) {
   const modals = useModals();
+  const store = useStoreSyncedWithLocalStorage();
 
   const onEnterNewMissionFunnel = () => {
     modals.open("newMission", {
@@ -40,18 +42,14 @@ export function BeforeWork({ beginNewMission, missions, loadUser }) {
           handleContinue: isTeamMode => {
             const handleFirstActivitySelection = updatedCoworkers => {
               const team = updatedCoworkers
-                ? updatedCoworkers.map(cw => ({
-                    id: cw.id,
-                    firstName: cw.firstName,
-                    lastName: cw.lastName
-                  }))
-                : [];
+                ? [store.userId(), ...updatedCoworkers.map(cw => cw.id)]
+                : [store.userId()];
               modals.open("firstActivity", {
                 team,
-                handleActivitySelection: (activityType, driver) => {
+                handleActivitySelection: (activityType, driverId) => {
                   beginNewMission({
                     firstActivityType: activityType,
-                    driver,
+                    driverId,
                     name: missionInfos.mission,
                     vehicleId: missionInfos.vehicle
                       ? missionInfos.vehicle.id

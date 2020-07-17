@@ -29,15 +29,11 @@ export function syncUser(userPayload, store) {
   } = userPayload;
 
   const activities = [];
-  const comments = [];
-  const vehicleBookings = [];
-  const teamChanges = [];
+  const expenditures = [];
   const missionData = [];
   missions.forEach(mission => {
     activities.push(...mission.activities);
-    comments.push(...mission.comments);
-    vehicleBookings.push(...mission.vehicleBookings);
-    teamChanges.push(...(mission.teamChanges || []));
+    expenditures.push(...mission.expenditures);
     missionData.push(parseMissionPayloadFromBackend(mission));
   });
 
@@ -62,12 +58,10 @@ export function syncUser(userPayload, store) {
         "activities"
       )
     );
+  expenditures &&
+    syncActions.push(store.syncEntity(expenditures, "expenditures"));
   enrollableCoworkers &&
     syncActions.push(store.syncEntity(enrollableCoworkers, "coworkers"));
-  comments && syncActions.push(store.syncEntity(comments, "comments"));
-  teamChanges && syncActions.push(store.syncEntity(teamChanges, "teamChanges"));
-  vehicleBookings &&
-    syncActions.push(store.syncEntity(vehicleBookings, "vehicleBookings"));
   bookableVehicles &&
     syncActions.push(store.syncEntity(bookableVehicles, "vehicles"));
   return Promise.all(syncActions);

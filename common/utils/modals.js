@@ -11,9 +11,17 @@ export class ModalProvider extends React.Component {
     });
   }
 
-  open = (modalName, modalProps = {}) => {
-    this.setState({
-      [modalName]: { open: true, modalProps }
+  open = (modalName, modalProps = {}, updateProps = () => {}) => {
+    this.setState(prevState => {
+      return {
+        [modalName]: {
+          open: true,
+          modalProps: {
+            ...modalProps,
+            ...updateProps(prevState[modalName].modalProps)
+          }
+        }
+      };
     });
   };
 
@@ -26,9 +34,9 @@ export class ModalProvider extends React.Component {
   closeAll = () => {
     this.setState(prevState =>
       Object.fromEntries(
-        Object.entries(this.state).map(([modalName, open]) => [
+        Object.keys(this.state).map(modalName => [
           modalName,
-          false
+          { open: false, modalProps: {} }
         ])
       )
     );

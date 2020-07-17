@@ -24,6 +24,11 @@ export const TIMEABLE_ACTIVITIES = {
 
 export const ACTIVITIES = {
   ...TIMEABLE_ACTIVITIES,
+  support: {
+    name: "support",
+    label: "Accompagnement",
+    renderIcon: props => <TruckIcon {...props} />
+  },
   rest: {
     name: "rest",
     label: "Fin journée",
@@ -34,9 +39,10 @@ export const ACTIVITIES = {
 export function parseActivityPayloadFromBackend(activity) {
   return {
     id: activity.id,
-    type: activity.type === "support" ? ACTIVITIES.drive.name : activity.type,
-    userTime: activity.userTime,
+    type: activity.type,
+    startTime: activity.startTime,
     missionId: activity.missionId,
-    driver: activity.driver
+    userId: activity.userId,
+    context: activity.context
   };
 }

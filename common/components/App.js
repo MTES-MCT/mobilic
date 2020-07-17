@@ -21,17 +21,14 @@ function App({ ScreenComponent, loadUser }) {
   }, []);
 
   const activities = sortEvents(values(store.getEntity("activities")));
-  const vehicleBookings = sortEvents(
-    values(store.getEntity("vehicleBookings"))
-  );
-  const teamChanges = sortEvents(store.getEntity("teamChanges"));
+  const expenditures = values(store.getEntity("expenditures"));
 
   const unsortedMissions = linkMissionsWithRelations(
     store.getEntity("missions"),
     {
-      activities,
-      vehicleBookings,
-      teamChanges
+      activities: activities.filter(a => a.userId === store.userId()),
+      allActivities: activities,
+      expenditures: expenditures.filter(e => e.userId === store.userId())
     }
   )
     .map(m => ({ ...m, ...computeMissionProperties(m) }))
@@ -59,15 +56,15 @@ function App({ ScreenComponent, loadUser }) {
       missions={missions}
       currentActivity={currentActivity}
       currentMission={currentMission}
-      pushNewActivityEvent={actions.pushNewActivityEvent}
+      pushNewTeamActivityEvent={actions.pushNewTeamActivityEvent}
       editActivityEvent={actions.editActivityEvent}
-      pushNewTeamEnrollmentOrRelease={actions.pushNewTeamEnrollmentOrRelease}
       beginNewMission={actions.beginNewMission}
-      pushNewVehicleBooking={actions.pushNewVehicleBooking}
-      pushNewComment={actions.pushNewComment}
+      endMissionForTeam={actions.endMissionForTeam}
       endMission={actions.endMission}
       validateMission={actions.validateMission}
-      editMissionExpenditures={actions.editMissionExpenditures}
+      logExpenditureForTeam={actions.logExpenditureForTeam}
+      cancelExpenditure={actions.cancelExpenditure}
+      editExpendituresForTeam={actions.editExpendituresForTeam}
       previousMissionEnd={previousMissionEnd}
       loadUser={loadUser}
     />

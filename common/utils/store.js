@@ -7,9 +7,8 @@ import mapValues from "lodash/mapValues";
 import map from "lodash/map";
 import * as Sentry from "@sentry/browser";
 import omit from "lodash/omit";
-import { NonConcurrentExecutionQueue } from "./concurrency";
 
-const STORE_VERSION = 4;
+const STORE_VERSION = 5;
 
 const StoreSyncedWithLocalStorage = React.createContext(() => {});
 
@@ -53,11 +52,9 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       userInfo: Map,
       coworkers: Map,
       activities: Map,
-      teamChanges: List,
       pendingRequests: List,
-      comments: Map,
       missions: Map,
-      vehicleBookings: Map,
+      expenditures: Map,
       vehicles: Map,
       nextRequestId: {
         deserialize: value => (value ? parseInt(value) : 1),
@@ -71,12 +68,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
     // Initialize state with null values
     this.state = {};
-    this.generateRequestIdQueue = new NonConcurrentExecutionQueue(
-      "generateRequestId"
-    );
-    this.generateEntityObjectIdQueue = new NonConcurrentExecutionQueue(
-      "generateEntityObjectId"
-    );
     Object.keys(this.mapper).forEach(entry => {
       this.state[entry] = this.mapper[entry].deserialize(null);
     });
@@ -113,7 +104,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     }
   };
 
-  setStoreState = (stateUpdate, fieldsToSync, callback = () => {}) =>
+  setStoreState = (stateUpdate, fieldsToSync, callback = () => {}) => {
     this.setState(stateUpdate, () => {
       fieldsToSync.forEach(field => {
         this.storage.setItem(
@@ -123,6 +114,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       });
       callback();
     });
+  };
 
   setItems = (itemValueMap, callback = () => {}) =>
     this.setStoreState(itemValueMap, Object.keys(itemValueMap), callback);
@@ -157,20 +149,18 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     );
   };
 
-  _generateId = (queue, idStateEntry) =>
-    queue.execute(
-      () =>
-        new Promise(resolve => {
-          const reqId = this.state[idStateEntry];
-          this.setStoreState(
-            prevState => ({
-              [idStateEntry]: prevState[idStateEntry] + 1
-            }),
-            [idStateEntry],
-            () => resolve(reqId)
-          );
-        })
-    );
+  _generateId = idStateEntry =>
+    new Promise(resolve => {
+      this.setStoreState(
+        prevState => {
+          resolve(prevState[idStateEntry]);
+          return {
+            [idStateEntry]: prevState[idStateEntry] + 1
+          };
+        },
+        [idStateEntry]
+      );
+    });
 
   createEntityObject = async (object, entity, requestId) => {
     if (this.mapper[entity] === List) {
@@ -186,11 +176,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       return;
     }
     const entityObjectId =
-      "temp" +
-      (await this._generateId(
-        this.generateEntityObjectIdQueue,
-        "nextEntityObjectId"
-      ));
+      "temp" + (await this._generateId("nextEntityObjectId"));
     this.setStoreState(
       prevState => ({
         [entity]: {
@@ -280,10 +266,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     batchable = true,
     onApiError = null
   ) => {
-    const requestId = await this._generateId(
-      this.generateRequestIdQueue,
-      "nextRequestId"
-    );
+    const requestId = await this._generateId("nextRequestId");
     const storeInfo = await updateStore(this, requestId);
     const request = {
       id: requestId,

@@ -82,27 +82,32 @@ export function ActivitySwitch({
   endMission,
   pushActivitySwitchEvent
 }) {
+  const store = useStoreSyncedWithLocalStorage();
   const classes = useStyles();
   const modals = useModals();
-  const hasTeamMates = team.length > 0;
-  const store = useStoreSyncedWithLocalStorage();
-  const teamWithSelf = [store.userInfo(), ...team];
   const handleActivitySwitch = activityName => () => {
     if (
       currentActivity &&
       activityName === currentActivity.type &&
-      (!hasTeamMates || activityName !== ACTIVITIES.drive.name)
+      activityName !== ACTIVITIES.drive.name &&
+      activityName !== ACTIVITIES.support.name
     )
       return;
-    else if (hasTeamMates && activityName === ACTIVITIES.drive.name) {
+    else if (
+      activityName === ACTIVITIES.drive.name ||
+      activityName === ACTIVITIES.support.name
+    ) {
       modals.open("driverSelection", {
-        team: teamWithSelf,
-        currentDriver: currentActivity ? currentActivity.driver : undefined,
+        team,
+        currentDriverId:
+          currentActivity && currentActivity.type === ACTIVITIES.drive.name
+            ? store.userId()
+            : undefined,
         currentDriverStartTime: currentActivity
           ? getTime(currentActivity)
           : null,
-        handleDriverSelection: driver =>
-          pushActivitySwitchEvent(activityName, driver)
+        handleDriverSelection: driverId =>
+          pushActivitySwitchEvent(activityName, driverId)
       });
     } else pushActivitySwitchEvent(activityName);
   };
@@ -122,7 +127,10 @@ export function ActivitySwitch({
               label={activity.label}
               renderIcon={activity.renderIcon}
               current={
-                currentActivity && activity.name === currentActivity.type
+                currentActivity &&
+                (activity.name === currentActivity.type ||
+                  (activity === ACTIVITIES.drive &&
+                    currentActivity.type === ACTIVITIES.support.name))
               }
               onClick={handleActivitySwitch(activity.name)}
             />

@@ -29,10 +29,10 @@ const useStyles = makeStyles(theme => ({
 
 export function MissionReview({
   currentMission,
-  pushNewActivityEvent,
+  pushNewTeamActivityEvent,
   editActivityEvent,
   validateMission,
-  editMissionExpenditures,
+  editExpendituresForTeam,
   previousMissionEnd
 }) {
   const [submissionError, setSubmissionError] = React.useState(null);
@@ -63,9 +63,9 @@ export function MissionReview({
       <MissionDetails
         mission={currentMission}
         editActivityEvent={editActivityEvent}
-        editExpenditures={editMissionExpenditures}
+        editExpenditures={editExpendituresForTeam}
         previousMissionEnd={previousMissionEnd}
-        createActivity={pushNewActivityEvent}
+        createActivity={pushNewTeamActivityEvent}
       />
       {validateMission && (
         <Box

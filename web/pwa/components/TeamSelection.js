@@ -4,7 +4,6 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import {
   computeLatestEnrollmentStatuses,
@@ -16,7 +15,6 @@ import { Box } from "@material-ui/core";
 import { FunnelModal, useStyles as useFunnelModalStyles } from "./FunnelModal";
 import Container from "@material-ui/core/Container";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import { useModals } from "common/utils/modals";
 import { MainCtaButton } from "./MainCtaButton";
 
 const useStyles = makeStyles(theme => ({
@@ -55,14 +53,13 @@ export function TeamSelectionModal({
     : [];
 
   const store = useStoreSyncedWithLocalStorage();
-  const modals = useModals();
   const coworkers = values(store.getEntity("coworkers"));
 
   const updatedCoworkersWithMissionEnrollmentStatuses = updatedCoworkers.map(
     coworker => {
-      const coworkerEnrollmentStatus = missionLatestEnrollmentStatuses.find(
-        status => status.coworker.id === coworker.id
-      );
+      const coworkerEnrollmentStatus = values(
+        missionLatestEnrollmentStatuses
+      ).find(status => status.userId === coworker.id);
       return { ...coworker, latestEnrollmentStatus: coworkerEnrollmentStatus };
     }
   );
@@ -78,17 +75,6 @@ export function TeamSelectionModal({
       setUpdatedCoworkers(coworkers.map(cw => ({ ...cw })));
     }
   }, [open]);
-
-  const pushNewCoworker = (firstName, lastName) => {
-    setUpdatedCoworkers([
-      {
-        firstName: firstName,
-        lastName: lastName,
-        enroll: true
-      },
-      ...updatedCoworkers
-    ]);
-  };
 
   const toggleAddCoworkerToTeam = (augmentedCoworker, index) => () => {
     const newCoworkers = updatedCoworkers.slice();
@@ -122,15 +108,6 @@ export function TeamSelectionModal({
           <Typography className={funnelModalClasses.title} variant="h5">
             Qui sont vos coéquipiers&nbsp;?
           </Typography>
-          <Button
-            className={classes.addTeamMate}
-            color="primary"
-            onClick={() =>
-              modals.open("newTeamMate", { handleSubmit: pushNewCoworker })
-            }
-          >
-            Ajouter un coéquipier
-          </Button>
           <List dense className="scrollable">
             {updatedCoworkersWithMissionEnrollmentStatuses.map(
               (coworker, index) => (

@@ -7,7 +7,6 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import { AccountButton } from "./AccountButton";
 import Box from "@material-ui/core/Box";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 
 const useStyles = makeStyles(theme => ({
   accountButtonContainer: {
@@ -34,21 +33,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function CurrentActivityOverview({ currentActivity, currentDayStart }) {
-  const store = useStoreSyncedWithLocalStorage();
   const classes = useStyles();
   const now = Date.now();
 
   const currentActivityDuration = now - getTime(currentActivity);
   let activityOverviewText;
   if (currentActivity.type === ACTIVITIES.drive.name) {
-    if (
-      !currentActivity.driver ||
-      currentActivity.driver.id === store.userId()
-    ) {
-      activityOverviewText = "Vous conduisez depuis";
-    } else {
-      activityOverviewText = `${currentActivity.driver.firstName} conduit depuis`;
-    }
+    activityOverviewText = "Vous conduisez depuis";
+  } else if (currentActivity.type === ACTIVITIES.support.name) {
+    activityOverviewText = "Vous êtes en accompagnement depuis";
   } else if (currentActivity.type === ACTIVITIES.work.name) {
     activityOverviewText = "Autre tâche commencée depuis";
   } else if (currentActivity.type === ACTIVITIES.break.name) {

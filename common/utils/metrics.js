@@ -20,6 +20,8 @@ export function computeTotalActivityDurations(activityEvents, until = null) {
       : nextEventDate - getTime(event);
   }
   timers.totalWork =
-    (timers[ACTIVITIES.work.name] || 0) + (timers[ACTIVITIES.drive.name] || 0);
+    (timers[ACTIVITIES.work.name] || 0) +
+    (timers[ACTIVITIES.drive.name] || 0) +
+    (timers[ACTIVITIES.support.name] || 0);
   return timers;
 }

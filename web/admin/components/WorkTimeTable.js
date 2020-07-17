@@ -103,7 +103,7 @@ export function WorkTimeTable({
       id: wte.userId,
       workerName: formatPersonName(users.find(u => u.id === wte.userId)),
       workTime: wte.timers.total_work,
-      restTime: wte.timers.break
+      restTime: wte.timers.break + (wte.timers.rest || 0)
     };
     if (displayDetails) {
       base.driveTime = wte.activityTimers[ACTIVITIES.drive.name];

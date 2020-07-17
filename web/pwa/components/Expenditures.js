@@ -30,13 +30,13 @@ export function Expenditures({ expenditures, setExpenditures }) {
       {Object.entries(EXPENDITURES).map(([expenditure, { label }]) => (
         <ListItem
           disableGutters
-          className={`${classes.expenditure} ${expenditures[expenditure] &&
+          className={`${classes.expenditure} ${!!expenditures[expenditure] &&
             classes.selected}`}
           key={expenditure}
           onClick={() => {
             setExpenditures({
               ...expenditures,
-              [expenditure]: expenditures[expenditure] ? 0 : 1
+              [expenditure]: !expenditures[expenditure]
             });
           }}
         >

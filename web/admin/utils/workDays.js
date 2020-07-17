@@ -14,7 +14,8 @@ function computeWorkDayGroupAggregates(workDayGroup) {
     });
     if (wd.expenditures) {
       Object.keys(wd.expenditures).forEach(exp => {
-        aggregateExpenditures[exp] = (aggregateExpenditures[exp] || 0) + 1;
+        aggregateExpenditures[exp] =
+          (aggregateExpenditures[exp] || 0) + wd.expenditures[exp];
       });
     }
   });

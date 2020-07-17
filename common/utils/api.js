@@ -80,41 +80,20 @@ export const USER_QUERY = gql`
       missions {
         id
         name
-        eventTime
         validated
-        expenditures
+        context
+        expenditures {
+          id
+          type
+          missionId
+          userId
+        }
         activities {
           id
           type
           missionId
-          userTime
-          driver {
-            id
-            firstName
-            lastName
-          }
-        }
-        vehicleBookings {
-          id
-          vehicleName
-          userTime
-          missionId
-        }
-        comments {
-          id
-          content
-          missionId
-          eventTime
-        }
-        teamChanges {
-          isEnrollment
-          userTime
-          missionId
-          coworker {
-            id
-            firstName
-            lastName
-          }
+          startTime
+          userId
         }
       }
       enrollableCoworkers {
@@ -157,35 +136,40 @@ export const COMPANY_QUERY = gql`
 export const LOG_ACTIVITY_MUTATION = gql`
   mutation logActivity(
     $type: InputableActivityTypeEnum!
-    $eventTime: DateTimeWithTimeStampSerialization!
-    $userTime: DateTimeWithTimeStampSerialization
-    $userEndTime: DateTimeWithTimeStampSerialization
+    $startTime: TimeStamp!
+    $endTime: TimeStamp
     $missionId: Int!
-    $comment: String
-    $driver: TeamMateInput
+    $userId: Int
+    $context: GenericScalar
   ) {
     activities {
       logActivity(
         type: $type
-        eventTime: $eventTime
-        userTime: $userTime
-        userEndTime: $userEndTime
-        driver: $driver
+        startTime: $startTime
+        endTime: $endTime
         missionId: $missionId
-        comment: $comment
+        userId: $userId
+        context: $context
       ) {
-        output {
-          id
-          type
-          missionId
-          userTime
-          driver {
-            id
-            firstName
-            lastName
-          }
-        }
-        nonBlockingErrors
+        id
+        type
+        userId
+        missionId
+        startTime
+      }
+    }
+  }
+`;
+
+export const CANCEL_ACTIVITY_MUTATION = gql`
+  mutation cancelActivity($activityId: Int!, $context: GenericScalar) {
+    activities {
+      cancelActivity(activityId: $activityId, context: $context) {
+        id
+        type
+        missionId
+        userId
+        startTime
       }
     }
   }
@@ -193,146 +177,39 @@ export const LOG_ACTIVITY_MUTATION = gql`
 
 export const EDIT_ACTIVITY_MUTATION = gql`
   mutation editActivity(
-    $eventTime: DateTimeWithTimeStampSerialization!
-    $userTime: DateTimeWithTimeStampSerialization
-    $userEndTime: DateTimeWithTimeStampSerialization
-    $dismiss: Boolean!
-    $activityId: Int
-    $activityUserTime: DateTimeWithTimeStampSerialization
-    $comment: String
+    $activityId: Int!
+    $context: GenericScalar
+    $startTime: TimeStamp
+    $endTime: TimeStamp
   ) {
     activities {
       editActivity(
-        eventTime: $eventTime
-        userTime: $userTime
-        userEndTime: $userEndTime
-        dismiss: $dismiss
         activityId: $activityId
-        activityUserTime: $activityUserTime
-        comment: $comment
-      ) {
-        output {
-          id
-          type
-          missionId
-          userTime
-          driver {
-            id
-            firstName
-            lastName
-          }
-        }
-        nonBlockingErrors
-      }
-    }
-  }
-`;
-
-export const LOG_COMMENT_MUTATION = gql`
-  mutation logComment(
-    $eventTime: DateTimeWithTimeStampSerialization!
-    $content: String!
-    $missionId: Int!
-  ) {
-    activities {
-      logComment(
-        eventTime: $eventTime
-        content: $content
-        missionId: $missionId
+        startTime: $startTime
+        endTime: $endTime
+        context: $context
       ) {
         id
-        content
+        type
         missionId
-        eventTime
+        userId
+        startTime
       }
     }
   }
 `;
 
-export const ENROLL_OR_RELEASE_TEAM_MATE_MUTATION = gql`
-  mutation enrollTeamMate(
-    $eventTime: DateTimeWithTimeStampSerialization!
-    $teamMate: TeamMateInput!
-    $isEnrollment: Boolean!
-    $missionId: Int!
+export const CREATE_MISSION_MUTATION = gql`
+  mutation createMission(
+    $name: String
+    $companyId: Int
+    $context: GenericScalar
   ) {
     activities {
-      enrollOrReleaseTeamMate(
-        eventTime: $eventTime
-        teamMate: $teamMate
-        isEnrollment: $isEnrollment
-        missionId: $missionId
-      ) {
-        isEnrollment
-        userTime
-        missionId
-        coworker {
-          id
-          firstName
-          lastName
-        }
-      }
-    }
-  }
-`;
-
-export const BEGIN_MISSION_MUTATION = gql`
-  mutation beginMission(
-    $eventTime: DateTimeWithTimeStampSerialization!
-    $name: String!
-    $firstActivityType: InputableActivityTypeEnum!
-    $vehicleRegistrationNumber: String
-    $vehicleId: Int
-    $team: [TeamMateInput]
-    $driver: TeamMateInput
-  ) {
-    activities {
-      beginMission(
-        eventTime: $eventTime
-        name: $name
-        firstActivityType: $firstActivityType
-        vehicleRegistrationNumber: $vehicleRegistrationNumber
-        vehicleId: $vehicleId
-        team: $team
-        driver: $driver
-      ) {
-        output {
-          id
-          name
-          eventTime
-          activities {
-            id
-            type
-            missionId
-            userTime
-            driver {
-              id
-              firstName
-              lastName
-            }
-          }
-          vehicleBookings {
-            id
-            vehicleName
-            vehicle {
-              id
-              name
-            }
-            userTime
-            missionId
-          }
-          teamChanges {
-            isEnrollment
-            userTime
-            missionId
-            coworker {
-              id
-              firstName
-              lastName
-            }
-          }
-        }
-        nonBlockingErrors
+      createMission(name: $name, companyId: $companyId, context: $context) {
+        id
+        name
+        context
       }
     }
   }
@@ -340,62 +217,28 @@ export const BEGIN_MISSION_MUTATION = gql`
 
 export const END_MISSION_MUTATION = gql`
   mutation endMission(
-    $eventTime: DateTimeWithTimeStampSerialization!
+    $endTime: TimeStamp!
     $missionId: Int!
-    $expenditures: GenericScalar
-    $comment: String
+    $userId: Int
+    $context: GenericScalar
   ) {
     activities {
       endMission(
-        eventTime: $eventTime
+        endTime: $endTime
         missionId: $missionId
-        expenditures: $expenditures
-        comment: $comment
+        userId: $userId
+        context: $context
       ) {
         id
         name
-        eventTime
-        expenditures
+        context
         activities {
           id
           type
           missionId
-          userTime
-          driver {
-            id
-            firstName
-            lastName
-          }
+          userId
+          startTime
         }
-      }
-    }
-  }
-`;
-
-export const BOOK_VEHICLE_MUTATION = gql`
-  mutation bookVehicle(
-    $eventTime: DateTimeWithTimeStampSerialization!
-    $vehicleId: Int
-    $missionId: Int!
-    $registrationNumber: String
-    $userTime: DateTimeWithTimeStampSerialization
-  ) {
-    activities {
-      bookVehicle(
-        eventTime: $eventTime
-        vehicleId: $vehicleId
-        missionId: $missionId
-        registrationNumber: $registrationNumber
-        userTime: $userTime
-      ) {
-        id
-        vehicleName
-        vehicle {
-          id
-          name
-        }
-        userTime
-        missionId
       }
     }
   }
@@ -449,29 +292,38 @@ export const VALIDATE_MISSION_MUTATION = gql`
       validateMission(missionId: $missionId) {
         id
         name
-        eventTime
         validated
-        expenditures
+        context
       }
     }
   }
 `;
 
-export const EDIT_MISSION_EXPENDITURES_MUTATION = gql`
-  mutation editMissionExpenditures(
+export const LOG_EXPENDITURE_MUTATION = gql`
+  mutation logExpenditure(
+    $type: ExpenditureTypeEnum!
     $missionId: Int!
-    $expenditures: GenericScalar!
+    $userId: Int
   ) {
     activities {
-      editMissionExpenditures(
-        missionId: $missionId
-        expenditures: $expenditures
-      ) {
+      logExpenditure(type: $type, missionId: $missionId, userId: $userId) {
         id
-        name
-        eventTime
-        validated
-        expenditures
+        type
+        missionId
+        userId
+      }
+    }
+  }
+`;
+
+export const CANCEL_EXPENDITURE_MUTATION = gql`
+  mutation cancelExpenditure($expenditureId: Int!) {
+    activities {
+      cancelExpenditure(expenditureId: $expenditureId) {
+        id
+        type
+        missionId
+        userId
       }
     }
   }

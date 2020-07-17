@@ -16,6 +16,7 @@ export function ActivityList({
   previousMissionEnd,
   missionEnd,
   activities,
+  allMissionActivities,
   editActivityEvent,
   teamChanges
 }) {
@@ -66,15 +67,19 @@ export function ActivityList({
                       event: activity,
                       handleRevisionAction: (
                         actionType,
-                        newUserTime,
-                        userComment
+                        newUserStartTime,
+                        newUserEndTime,
+                        userComment,
+                        forAllTeam
                       ) =>
                         editActivityEvent(
                           activity,
                           actionType,
-                          augmentedAndSortedActivities,
-                          newUserTime,
-                          userComment
+                          allMissionActivities,
+                          newUserStartTime,
+                          newUserEndTime,
+                          userComment,
+                          forAllTeam
                         ),
                       minStartTime: previousMissionEnd + 1,
                       maxStartTime: missionEnd || Date.now(),
