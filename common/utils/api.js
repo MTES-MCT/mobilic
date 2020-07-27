@@ -39,12 +39,12 @@ export const LOGIN_MUTATION = gql`
 `;
 
 export const USER_SIGNUP_MUTATION = gql`
-  mutation signUp(
+  mutation userSignUp(
     $email: String!
     $password: String!
     $firstName: String!
     $lastName: String!
-    $companyName: String!
+    $inviteToken: String
   ) {
     signUp {
       user(
@@ -52,17 +52,44 @@ export const USER_SIGNUP_MUTATION = gql`
         password: $password
         firstName: $firstName
         lastName: $lastName
-        companyNameToResolve: $companyName
+        inviteToken: $inviteToken
       ) {
         user {
           id
           firstName
           lastName
+          email
         }
         accessToken
         refreshToken
       }
     }
+  }
+`;
+
+export const COMPANY_SIGNUP_MUTATION = gql`
+  mutation companySignUp($siren: Int!, $usualName: String!, $sirets: [String]) {
+    signUp {
+      company(siren: $siren, usualName: $usualName, sirets: $sirets) {
+        employment {
+          id
+          startDate
+          isAcknowledged
+          isPrimary
+          hasAdminRights
+          company {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const SIREN_QUERY = gql`
+  query sirenInfo($siren: Int!) {
+    sirenInfo(siren: $siren)
   }
 `;
 
@@ -72,6 +99,7 @@ export const USER_QUERY = gql`
       id
       firstName
       lastName
+      email
       isCompanyAdmin
       company {
         id
@@ -105,6 +133,17 @@ export const USER_QUERY = gql`
         id
         name
       }
+      currentEmployments {
+        id
+        startDate
+        isAcknowledged
+        isPrimary
+        hasAdminRights
+        company {
+          id
+          name
+        }
+      }
     }
   }
 `;
@@ -128,6 +167,93 @@ export const COMPANY_QUERY = gql`
         id
         registrationNumber
         alias
+      }
+      employments {
+        id
+        startDate
+        endDate
+        isAcknowledged
+        isPrimary
+        email
+        hasAdminRights
+        company {
+          id
+          name
+        }
+        user {
+          id
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+`;
+
+export const VALIDATE_EMPLOYMENT_MUTATION = gql`
+  mutation validateEmployment($employmentId: Int!) {
+    admin {
+      validateEmployment(employmentId: $employmentId) {
+        id
+        startDate
+        isAcknowledged
+        isPrimary
+        hasAdminRights
+        company {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+export const REJECT_EMPLOYMENT_MUTATION = gql`
+  mutation rejectEmployment($employmentId: Int!) {
+    admin {
+      rejectEmployment(employmentId: $employmentId) {
+        id
+        startDate
+        isAcknowledged
+        hasAdminRights
+        company {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+export const CREATE_EMPLOYMENT_MUTATION = gql`
+  mutation createEmployment(
+    $userId: Int
+    $companyId: Int!
+    $hasAdminRights: Boolean
+    $mail: String
+  ) {
+    admin {
+      createEmployment(
+        userId: $userId
+        companyId: $companyId
+        hasAdminRights: $hasAdminRights
+        mail: $mail
+      ) {
+        id
+        startDate
+        isAcknowledged
+        isPrimary
+        email
+        hasAdminRights
+        company {
+          id
+          name
+        }
+        user {
+          id
+          firstName
+          lastName
+        }
       }
     }
   }
@@ -467,7 +593,8 @@ class Api {
         await this.store.clearPendingRequest(request);
       }
       Sentry.withScope(function(scope) {
-        scope.setTag("request", JSON.stringify(request));
+        scope.setTag("request_query", JSON.stringify(request.query));
+        scope.setTag("request_variables", JSON.stringify(request.variables));
         Sentry.captureException(err);
       });
       throw err;
@@ -510,6 +637,7 @@ class Api {
 
   async logout() {
     await this.store.removeTokens();
+    await this.store.setItems({ userInfo: {} });
   }
 }
 
