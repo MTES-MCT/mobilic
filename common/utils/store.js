@@ -52,6 +52,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       userInfo: Map,
       coworkers: Map,
       activities: Map,
+      employments: List,
       pendingRequests: List,
       missions: Map,
       expenditures: Map,
@@ -405,13 +406,23 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     lastName,
     companyId,
     companyName,
-    isCompanyAdmin
+    isCompanyAdmin,
+    email
   }) =>
     this.setItems({
-      userInfo: { firstName, lastName, companyName },
+      userInfo: { firstName, lastName, companyName, email },
       companyId,
       companyAdmin: isCompanyAdmin
     });
+
+  setEmployeeInvite = ({ token, company }) =>
+    this.setState({ employeeInvite: { token, company } });
+
+  clearEmployeeInvite = () => this.setState({ employeeInvite: null });
+
+  setIsSigningUp = () => this.setState({ isSigningUp: true });
+
+  clearIsSigningUp = () => this.setState({ isSigningUp: null });
 
   render() {
     return (
@@ -441,7 +452,13 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             updateItemInArray: this.updateItemInArray,
             createEntityObject: this.createEntityObject,
             updateEntityObject: this.updateEntityObject,
-            deleteEntityObject: this.deleteEntityObject
+            deleteEntityObject: this.deleteEntityObject,
+            setEmployeeInvite: this.setEmployeeInvite,
+            clearEmployeeInvite: this.clearEmployeeInvite,
+            employeeInvite: () => this.state.employeeInvite,
+            isSigningUp: () => this.state.isSigningUp,
+            setIsSigningUp: this.setIsSigningUp,
+            clearIsSigningUp: this.clearIsSigningUp
           }}
         >
           {this.props.children}
