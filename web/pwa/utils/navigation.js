@@ -20,7 +20,7 @@ export function _InnerAppScreen(props) {
 
 export function AppScreen(props) {
   return [
-    <Container key={0} className="app-container full-height" maxWidth={false}>
+    <Container key={0} className="app-container full-height" maxWidth="sm">
       <_InnerAppScreen {...props} />
     </Container>
   ];

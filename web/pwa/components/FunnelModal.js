@@ -5,6 +5,7 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import Slide from "@material-ui/core/Slide/Slide";
 import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import Container from "@material-ui/core/Container";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -44,24 +45,30 @@ export function FunnelModal({
       TransitionComponent={Transition}
       PaperProps={{ className: `scrollable ${classes.container}` }}
     >
-      <Box
-        px={2}
-        pb={2}
-        pt={2}
-        className="header-container flex-row-flex-start"
-        style={{ position: "static" }}
+      <Container
+        maxWidth="sm"
+        className="flex-column scrollable"
+        style={{ flexGrow: 1, height: "100%", padding: 0 }}
       >
-        <Button
-          className={classes.backButton}
-          variant="contained"
-          disableElevation
-          startIcon={<ChevronLeftIcon />}
-          onClick={handleBack}
+        <Box
+          px={2}
+          pb={2}
+          pt={2}
+          className="header-container flex-row-flex-start"
+          style={{ position: "static", width: "100%" }}
         >
-          Retour
-        </Button>
-      </Box>
-      {children}
+          <Button
+            className={classes.backButton}
+            variant="contained"
+            disableElevation
+            startIcon={<ChevronLeftIcon />}
+            onClick={handleBack}
+          >
+            Retour
+          </Button>
+        </Box>
+        {children}
+      </Container>
     </Dialog>
   );
 }
