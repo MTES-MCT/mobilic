@@ -10,18 +10,32 @@ export function isConnectionError(error) {
   return error.networkError && !error.networkError.statusCode;
 }
 
-export function formatApiError(error) {
-  if (isConnectionError(error)) {
-    return "Veuillez vérifier que vous êtes connecté à Internet avant de réessayer";
-  } else {
-    return "Une erreur est survenue. Veuillez nous contacter";
+export function formatApiError(error, userId) {
+  let formattedError;
+  try {
+    if (isConnectionError(error)) {
+      formattedError =
+        "Impossible de se connecter au serveur. Veuillez réessayer ultérieurement.";
+    } else if (isAuthenticationError(error)) {
+      formattedError =
+        "Erreur d'authentification. Etes-vous sûrs de vos identifiants ?";
+    } else if (isGraphQLError(error)) {
+      const formattedGraphQLErrors = error.graphQLErrors
+        .map(e => formatGraphQLError(e, userId))
+        .join("\n");
+      if (formattedGraphQLErrors) formattedError = formattedGraphQLErrors;
+    }
+  } catch {
+    // Do nothing
   }
+  return formattedError
+    ? formattedError
+    : "Une erreur est survenue. Veuillez nous contacter.";
 }
 
 export function isAuthenticationError(error) {
   return (
-    error.graphQLErrors &&
-    error.graphQLErrors.length > 0 &&
+    isGraphQLError(error) &&
     error.graphQLErrors.some(
       err => err.extensions && err.extensions.code === 100
     )
@@ -34,6 +48,10 @@ export function isRetryable(error) {
 
 function _formatName(user, selfId) {
   return selfId === user.id ? "Vous" : formatPersonName(user);
+}
+
+export function isGraphQLError(error) {
+  return error.graphQLErrors && error.graphQLErrors.length > 0;
 }
 
 export function formatGraphQLError(graphQLError, userId) {
@@ -59,5 +77,17 @@ export function formatGraphQLError(graphQLError, userId) {
     [202, 203, 204].includes(graphQLError.extensions.code)
   ) {
     return `L'évènement a déjà été enregistré`;
+  }
+  // SIREN was not found or is not accessible in SIREN API
+  if (graphQLError.extensions && graphQLError.extensions.code === 102) {
+    return `Aucun établissement n'a été trouvé pour ce SIREN. Vérifiez que le numéro est bon et que l'entreprise est commercialement diffusible.`;
+  }
+  // SIREN already registered
+  if (graphQLError.extensions && graphQLError.extensions.code === 103) {
+    return `L'entreprise a déjà été inscrite. Veuillez vous rapprocher de vos collaborateurs administrateurs pour y être rattaché(e)`;
+  }
+  // Misc error from SIREN API (downtime, ...)
+  if (graphQLError.extensions && graphQLError.extensions.code === 104) {
+    return `Recherche impossible actuellement. Veuillez réessayer ultérieurement.`;
   }
 }

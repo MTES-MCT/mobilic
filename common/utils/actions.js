@@ -18,6 +18,7 @@ import { ACTIVITIES, parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
 import { getTime, sortEvents } from "./events";
 import { useModals } from "./modals";
+import { isGraphQLError } from "./errors";
 
 const ActionsContext = React.createContext(() => {});
 
@@ -179,7 +180,7 @@ export function ActionsContextProvider({ children }) {
       },
       true,
       error => {
-        if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        if (isGraphQLError(error)) {
           displayApiErrors({
             apiErrors: error.graphQLErrors,
             actionDescription: "Le changement d'activité",
@@ -346,7 +347,7 @@ export function ActionsContextProvider({ children }) {
       },
       true,
       error => {
-        if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        if (isGraphQLError(error)) {
           displayApiErrors({
             apiErrors: error.graphQLErrors,
             actionDescription: "La correction d'activité",
@@ -548,7 +549,7 @@ export function ActionsContextProvider({ children }) {
         },
         true,
         error => {
-          if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+          if (isGraphQLError(error)) {
             displayApiErrors({
               apiErrors: error.graphQLErrors,
               actionDescription: "La fin de mission",
@@ -677,7 +678,7 @@ export function ActionsContextProvider({ children }) {
       },
       true,
       error => {
-        if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        if (isGraphQLError(error)) {
           displayApiErrors({
             apiErrors: error.graphQLErrors,
             actionDescription: "Le frais",
