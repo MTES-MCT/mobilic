@@ -5,6 +5,8 @@ import { ReactComponent as TeamIcon_ } from "../assets/images/Team.svg";
 import { ReactComponent as TruckIcon_ } from "../assets/images/Truck.svg";
 import { ReactComponent as HammerWenchIcon_ } from "../assets/images/Hammer Wench.svg";
 import { ReactComponent as BedIcon_ } from "../assets/images/Bed.svg";
+import { ReactComponent as ManagerIcon_ } from "../assets/images/Manager.svg";
+import { ReactComponent as FranceConnectIcon_ } from "../assets/images/FranceConnect.svg";
 
 export function PersonIcon(props) {
   return <SvgIcon {...props} viewBox="0 0 64 64" component={PersonIcon_} />;
@@ -26,4 +28,22 @@ export function WorkIcon(props) {
 
 export function RestIcon(props) {
   return <SvgIcon {...props} viewBox="0 0 64 64" component={BedIcon_} />;
+}
+
+export function ManagerIcon(props) {
+  return <SvgIcon {...props} viewBox="0 0 100 100" component={ManagerIcon_} />;
+}
+
+export function FranceConnectIcon(props) {
+  return (
+    <SvgIcon
+      style={{
+        width: 283 * (props.scale ? props.scale : 1),
+        height: 82 * (props.scale ? props.scale : 1)
+      }}
+      {...props}
+      viewBox="0 0 283.5 82.2"
+      component={FranceConnectIcon_}
+    />
+  );
 }
