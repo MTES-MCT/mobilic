@@ -8,8 +8,8 @@ import Box from "@material-ui/core/Box";
 import { loadCompanyData } from "./utils/loadCompanyData";
 import { useApi } from "common/utils/api";
 import { AdminStoreProvider, useAdminStore } from "./utils/store";
-import { UserHeader } from "../common/UserHeader";
 import { useLoadingScreen } from "common/utils/loading";
+import { Header } from "../common/Header";
 
 function _Admin() {
   const api = useApi();
@@ -42,7 +42,7 @@ function _Admin() {
 
   const defaultView = views.find(view => view.isDefault);
   return [
-    <UserHeader key={0} />,
+    <Header key={0} />,
     <Container
       key={1}
       className="flex-row-stretch no-margin-no-padding"

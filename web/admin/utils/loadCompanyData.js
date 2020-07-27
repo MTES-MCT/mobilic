@@ -16,5 +16,10 @@ export async function loadCompanyData(api, companyId) {
     });
     u.workDays.forEach(wd => workDays.push({ userId: u.id, ...wd }));
   });
-  return { users, workDays, vehicles: company.vehicles };
+  return {
+    users,
+    workDays,
+    vehicles: company.vehicles,
+    employments: company.employments
+  };
 }

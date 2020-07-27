@@ -14,6 +14,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import useTheme from "@material-ui/core/styles/useTheme";
+import Checkbox from "@material-ui/core/Checkbox";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -191,20 +192,33 @@ export function AugmentedTable({
                   ) {
                     return (
                       <TableCell key={column.name}>
-                        <TextField
-                          fullWidth
-                          variant="outlined"
-                          margin="dense"
-                          label={column.label}
-                          value={editingValues[column.name] || ""}
-                          onChange={e => {
-                            const newValue = e.target.value;
-                            setEditingValues(values => ({
-                              ...values,
-                              [column.name]: newValue
-                            }));
-                          }}
-                        />
+                        {column.boolean ? (
+                          <Checkbox
+                            checked={editingValues[column.name] || false}
+                            color="primary"
+                            onChange={e =>
+                              setEditingValues(values => ({
+                                ...values,
+                                [column.name]: e.target.checked
+                              }))
+                            }
+                          />
+                        ) : (
+                          <TextField
+                            fullWidth
+                            variant="outlined"
+                            margin="dense"
+                            label={column.label}
+                            value={editingValues[column.name] || ""}
+                            onChange={e => {
+                              const newValue = e.target.value;
+                              setEditingValues(values => ({
+                                ...values,
+                                [column.name]: newValue
+                              }));
+                            }}
+                          />
+                        )}
                       </TableCell>
                     );
                   } else
@@ -213,11 +227,18 @@ export function AugmentedTable({
                         key={column.name}
                         style={column.cellStyle || {}}
                       >
-                        {entry[column.name]
-                          ? column.format
-                            ? column.format(entry[column.name])
-                            : entry[column.name]
-                          : null}
+                        {column.boolean ? (
+                          <Checkbox
+                            checked={entry[column.name] || false}
+                            disabled
+                          />
+                        ) : entry[column.name] ? (
+                          column.format ? (
+                            column.format(entry[column.name])
+                          ) : (
+                            entry[column.name]
+                          )
+                        ) : null}
                       </TableCell>
                     );
                 })}

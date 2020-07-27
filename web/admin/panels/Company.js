@@ -12,6 +12,7 @@ import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup/ToggleButtonGroup";
 import { AugmentedTable } from "../components/AugmentedTable";
 import { useModals } from "common/utils/modals";
+import { Employees } from "./Employees";
 
 const useStyles = makeStyles(theme => ({
   navigation: {
@@ -110,14 +111,14 @@ function VehicleAdmin() {
 
 const COMPANY_SUB_PANELS = [
   {
+    label: "Employés",
+    view: "employees",
+    component: <Employees />
+  },
+  {
     label: "Véhicules",
     view: "vehicles",
     component: <VehicleAdmin />
-  },
-  {
-    label: "Employés",
-    view: "employees",
-    component: null
   }
 ];
 
@@ -138,7 +139,7 @@ function SubNavigationToggle({ view, setView }) {
 }
 
 export function CompanyPanel() {
-  const [view, setView] = React.useState("vehicles");
+  const [view, setView] = React.useState("employees");
 
   const classes = useStyles();
   const subPanel = COMPANY_SUB_PANELS.find(sp => sp.view === view);

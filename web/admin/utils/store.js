@@ -9,11 +9,13 @@ export function AdminStoreProvider({ children }) {
   const [users, setUsers] = React.useState([]);
   const [workDays, setWorkDays] = React.useState([]);
   const [vehicles, setVehicles] = React.useState([]);
+  const [employments, setEmployments] = React.useState([]);
 
   const sync = companyPayload => {
     setUsers(companyPayload.users || []);
     setWorkDays(companyPayload.workDays || []);
     setVehicles(companyPayload.vehicles || []);
+    setEmployments(companyPayload.employments || []);
   };
 
   return (
@@ -27,6 +29,8 @@ export function AdminStoreProvider({ children }) {
         setWorkDays,
         vehicles,
         setVehicles,
+        employments,
+        setEmployments,
         sync
       }}
     >

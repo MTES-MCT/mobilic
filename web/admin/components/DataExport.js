@@ -4,13 +4,12 @@ import Typography from "@material-ui/core/Typography";
 import DialogContent from "@material-ui/core/DialogContent";
 import { DatePicker } from "@material-ui/pickers";
 import Dialog from "@material-ui/core/Dialog";
-import Button from "@material-ui/core/Button";
 import DialogActions from "@material-ui/core/DialogActions";
 import Box from "@material-ui/core/Box";
 import { useApi } from "common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import { LoadingButton } from "common/components/LoadingButton";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -26,7 +25,6 @@ export function DataExport({ open, handleClose }) {
   const store = useStoreSyncedWithLocalStorage();
   const [minDate, setMinDate] = React.useState(null);
   const [maxDate, setMaxDate] = React.useState(null);
-  const [loading, setLoading] = React.useState(false);
 
   const classes = useStyles();
 
@@ -77,53 +75,35 @@ export function DataExport({ open, handleClose }) {
           />
         </Box>
         <DialogActions>
-          <Button
+          <LoadingButton
             color="primary"
             variant="contained"
             onClick={async e => {
-              setLoading(true);
-              try {
-                const queryParams = [];
-                if (minDate)
-                  queryParams.push(
-                    `min_date=${minDate.toISOString().slice(0, 10)}`
-                  );
-                if (maxDate)
-                  queryParams.push(
-                    `max_date=${maxDate.toISOString().slice(0, 10)}`
-                  );
-                const optionalQueryString =
-                  queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
-                e.preventDefault();
-                const response = await api.httpQuery(
-                  "GET",
-                  `/download_company_activity_report/${store.companyId()}${optionalQueryString}`
+              const queryParams = [];
+              if (minDate)
+                queryParams.push(
+                  `min_date=${minDate.toISOString().slice(0, 10)}`
                 );
-                const blob = await response.blob();
-                const link = document.createElement("a");
-                link.href = window.URL.createObjectURL(blob);
-                link.download = "rapport_activité.xlsx";
-                link.dispatchEvent(new MouseEvent("click"));
-                setLoading(false);
-              } catch (err) {
-                setLoading(false);
-                throw err;
-              }
+              if (maxDate)
+                queryParams.push(
+                  `max_date=${maxDate.toISOString().slice(0, 10)}`
+                );
+              const optionalQueryString =
+                queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
+              e.preventDefault();
+              const response = await api.httpQuery(
+                "GET",
+                `/download_company_activity_report/${store.companyId()}${optionalQueryString}`
+              );
+              const blob = await response.blob();
+              const link = document.createElement("a");
+              link.href = window.URL.createObjectURL(blob);
+              link.download = "rapport_activité.xlsx";
+              link.dispatchEvent(new MouseEvent("click"));
             }}
           >
-            <span
-              style={{ position: "relative", visibility: loading && "hidden" }}
-            >
-              Télécharger
-            </span>
-            {loading && (
-              <CircularProgress
-                style={{ position: "absolute" }}
-                color="inherit"
-                size="1rem"
-              />
-            )}
-          </Button>
+            Télécharger
+          </LoadingButton>
         </DialogActions>
       </DialogContent>
     </Dialog>
