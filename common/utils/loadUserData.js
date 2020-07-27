@@ -22,9 +22,11 @@ export function syncUser(userPayload, store) {
     firstName,
     lastName,
     company,
+    email,
     isCompanyAdmin,
     missions,
     enrollableCoworkers,
+    currentEmployments,
     bookableVehicles
   } = userPayload;
 
@@ -40,14 +42,14 @@ export function syncUser(userPayload, store) {
   const syncActions = [];
   firstName &&
     lastName &&
-    company &&
     syncActions.push(
       store.setUserInfo({
         firstName,
         lastName,
-        companyId: company.id,
-        companyName: company.name,
-        isCompanyAdmin
+        companyId: company ? company.id : null,
+        companyName: company ? company.name : null,
+        isCompanyAdmin,
+        email
       })
     );
   missions && syncActions.push(store.syncEntity(missionData, "missions"));
@@ -64,5 +66,7 @@ export function syncUser(userPayload, store) {
     syncActions.push(store.syncEntity(enrollableCoworkers, "coworkers"));
   bookableVehicles &&
     syncActions.push(store.syncEntity(bookableVehicles, "vehicles"));
+  currentEmployments &&
+    syncActions.push(store.syncEntity(currentEmployments, "employments"));
   return Promise.all(syncActions);
 }

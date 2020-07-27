@@ -17,15 +17,11 @@ import "common/assets/fonts/Source Sans Pro/SourceSansPro-Regular.otf";
 import "./index.css";
 import "common/assets/styles/root.scss";
 
-import App from "common/components/App";
-import Login from "./landing/login";
-import Signup from "./landing/signup";
 import {
   StoreSyncedWithLocalStorageProvider,
   useStoreSyncedWithLocalStorage
 } from "common/utils/store";
 import { ApiContextProvider, useApi } from "common/utils/api";
-import { Admin } from "./admin/Admin";
 import { theme } from "common/utils/theme";
 import { MODAL_DICT } from "./modals";
 import { ThemeProvider } from "@material-ui/styles";
@@ -36,12 +32,12 @@ import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import frLocale from "date-fns/locale/fr";
 import { FrLocalizedUtils } from "common/utils/time";
 import { ActionsContextProvider } from "common/utils/actions";
-import { AppScreen } from "./pwa/utils/navigation";
 import { ModalProvider } from "common/utils/modals";
 import {
   LoadingScreenContextProvider,
   useLoadingScreen
 } from "common/utils/loading";
+import { getAccessibleRoutes, getFallbackRoute } from "./common/routes";
 
 export default function Root() {
   return (
@@ -77,7 +73,9 @@ function _Root() {
   const withLoadingScreen = useLoadingScreen();
 
   const userId = store.userId();
-  const isCompanyAdmin = store.companyAdmin();
+  const userInfo = store.userInfo();
+  const companyAdmin = store.companyAdmin();
+  const isSigningUp = store.isSigningUp();
 
   const loadUser = () => withLoadingScreen(() => loadUserData(api, store));
 
@@ -86,31 +84,21 @@ function _Root() {
     return () => {};
   }, [userId]);
 
+  const routes = getAccessibleRoutes({ userInfo, companyAdmin, isSigningUp });
+  const fallbackRoute = getFallbackRoute({
+    userInfo,
+    companyAdmin,
+    isSigningUp
+  });
+
   return (
     <Switch>
-      {userId &&
-        !isCompanyAdmin && [
-          <Route exact key="app" path="/app">
-            <App ScreenComponent={AppScreen} />
-          </Route>,
-          <Redirect push key="*" from="*" to="/app" />
-        ]}
-      {userId &&
-        isCompanyAdmin && [
-          <Route key="admin" path="/admin">
-            <Admin />
-          </Route>,
-          <Redirect push key="*" from="*" to="/admin" />
-        ]}
-      {!userId && [
-        <Route exact key="signup" path="/signup">
-          <Signup />
-        </Route>,
-        <Route exact key="login" path="/">
-          <Login />
-        </Route>,
-        <Redirect push key="*" from="*" to="/" />
-      ]}
+      {routes.map(route => (
+        <Route key={route.path} path={route.path}>
+          {route.component}
+        </Route>
+      ))}
+      <Redirect push key="default" from="*" to={fallbackRoute} />
     </Switch>
   );
 }
