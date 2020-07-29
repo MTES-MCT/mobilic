@@ -3,7 +3,9 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect
+  Redirect,
+  useLocation,
+  useHistory
 } from "react-router-dom";
 
 import "common/assets/fonts/Evolventa/Evolventa-Bold.ttf";
@@ -74,22 +76,37 @@ function _Root() {
 
   const userId = store.userId();
   const userInfo = store.userInfo();
-  const companyAdmin = store.companyAdmin();
+  const companyInfo = store.companyInfo();
   const isSigningUp = store.isSigningUp();
 
-  const loadUser = () => withLoadingScreen(() => loadUserData(api, store));
+  const location = useLocation();
+  const history = useHistory();
+
+  const fallbackRoute = getFallbackRoute({
+    userInfo,
+    companyInfo,
+    isSigningUp
+  });
+
+  const loadUser = () =>
+    withLoadingScreen(async () => {
+      const isLoggingIn = location.pathname.startsWith("/login");
+      await loadUserData(api, store);
+      if (isLoggingIn)
+        history.push(
+          getFallbackRoute({
+            userInfo: store.userInfo(),
+            companyInfo: store.companyInfo()
+          })
+        );
+    });
 
   React.useEffect(() => {
     if (userId) loadUser();
     return () => {};
   }, [userId]);
 
-  const routes = getAccessibleRoutes({ userInfo, companyAdmin, isSigningUp });
-  const fallbackRoute = getFallbackRoute({
-    userInfo,
-    companyAdmin,
-    isSigningUp
-  });
+  const routes = getAccessibleRoutes({ userInfo, companyInfo, isSigningUp });
 
   return (
     <Switch>
