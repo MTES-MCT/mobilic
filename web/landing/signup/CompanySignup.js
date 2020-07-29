@@ -37,6 +37,9 @@ const useStyles = makeStyles(theme => ({
   facilityPostalCode: {
     fontWeight: "normal"
   },
+  warningButton: {
+    marginTop: theme.spacing(2)
+  },
   selectedFacility: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText
@@ -84,12 +87,14 @@ export function CompanySignup() {
       }
       luhnSum += digit;
     }
-    if (luhnSum % 10 !== 0) return false;
-    return true;
+    return luhnSum % 10 === 0;
   };
 
   const handleSirenSubmit = async e => {
     e.preventDefault();
+    setApiError("");
+    setFacilities(null);
+    setSignupError("");
     setLoadingSirenInfo(true);
     setShowUsualName(false);
     try {
@@ -101,7 +106,6 @@ export function CompanySignup() {
         setApiError("Aucun établissement n'a été trouvé pour ce SIREN");
       else setFacilities(facilitiesInfo);
     } catch (err) {
-      setSiren("");
       setApiError(formatApiError(err));
     }
     setLoadingSirenInfo(false);
@@ -111,11 +115,18 @@ export function CompanySignup() {
     e.preventDefault();
     setLoadingCompanySignup(true);
     try {
-      const apiResponse = await api.graphQlMutate(COMPANY_SIGNUP_MUTATION, {
+      const payload = {
         siren: parseInt(siren),
-        usualName: usualName || facilities[0].company_name,
-        sirets: facilities.filter(f => f.selected).map(f => f.siret)
-      });
+        usualName: usualName,
+        sirets: []
+      };
+      if (facilities && facilities.some(f => f.selected)) {
+        payload.sirets = facilities.filter(f => f.selected).map(f => f.siret);
+      }
+      const apiResponse = await api.graphQlMutate(
+        COMPANY_SIGNUP_MUTATION,
+        payload
+      );
       const employment = apiResponse.data.signUp.company.employment;
       await store.syncEntity([employment], "employments", () => false);
       history.push("/signup/complete");
@@ -147,7 +158,10 @@ export function CompanySignup() {
               autoComplete="off"
               onSubmit={handleSirenSubmit}
             >
-              <Box className="flex-row-space-between">
+              <Box
+                className="flex-row-space-between"
+                style={{ alignItems: "baseline" }}
+              >
                 <TextField
                   error={sirenError}
                   required
@@ -195,6 +209,19 @@ export function CompanySignup() {
                     ? "1 établissement a été trouvé"
                     : `${facilities.length} établissements ont été trouvés`}
                 </Typography>
+              )}
+              {apiError && (
+                <Button
+                  className={classes.warningButton}
+                  variant="outlined"
+                  color="secondary"
+                  onClick={() => {
+                    setApiError("");
+                    setShowUsualName(true);
+                  }}
+                >
+                  Continuer sans vérification du SIREN
+                </Button>
               )}
             </form>
           </Section>
@@ -260,8 +287,14 @@ export function CompanySignup() {
               </Button>
             </Section>
           )}
-          {facilities && facilities.some(f => f.selected) && showUsualName && (
-            <Section title="3. Souhaitez-vous changer le nom usuel de l'entreprise ?">
+          {showUsualName && (
+            <Section
+              title={
+                facilities
+                  ? "3. Souhaitez-vous changer le nom usuel de l'entreprise ?"
+                  : "2. Quel est le nom de l'entreprise ?"
+              }
+            >
               <form
                 className="vertical-form centered"
                 noValidate
@@ -271,6 +304,7 @@ export function CompanySignup() {
                 <TextField
                   fullWidth
                   className="vertical-form-text-input"
+                  required
                   label="Nom usuel"
                   value={usualName}
                   onChange={e => setUsualName(e.target.value)}
@@ -280,6 +314,7 @@ export function CompanySignup() {
                   variant="contained"
                   color="primary"
                   type="submit"
+                  disabled={!siren || !usualName}
                   loading={loadingCompanySignup}
                 >
                   Terminer
