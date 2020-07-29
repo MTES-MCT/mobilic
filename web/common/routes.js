@@ -11,14 +11,14 @@ export const ROUTES = [
   {
     path: "/app",
     label: "Saisie de temps",
-    accessible: ({ userInfo }) => userInfo.id && !!userInfo.companyName,
+    accessible: ({ userInfo, companyInfo }) => userInfo.id && companyInfo.id,
     component: <App ScreenComponent={AppScreen} />,
     fallbackPriority: 2
   },
   {
     path: "/admin",
     label: "Gestion entreprise",
-    accessible: ({ userInfo, companyAdmin }) => userInfo.id && companyAdmin,
+    accessible: ({ userInfo, companyInfo }) => userInfo.id && companyInfo.admin,
     component: <Admin />,
     fallbackPriority: 1
   },

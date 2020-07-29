@@ -7,9 +7,9 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import Box from "@material-ui/core/Box";
 import { useApi } from "common/utils/api";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { LoadingButton } from "common/components/LoadingButton";
+import { useAdminStore } from "../utils/store";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 export function DataExport({ open, handleClose }) {
   const api = useApi();
-  const store = useStoreSyncedWithLocalStorage();
+  const adminStore = useAdminStore();
   const [minDate, setMinDate] = React.useState(null);
   const [maxDate, setMaxDate] = React.useState(null);
 
@@ -93,7 +93,7 @@ export function DataExport({ open, handleClose }) {
               e.preventDefault();
               const response = await api.httpQuery(
                 "GET",
-                `/download_company_activity_report/${store.companyId()}${optionalQueryString}`
+                `/download_company_activity_report/${adminStore.companyId}${optionalQueryString}`
               );
               const blob = await response.blob();
               const link = document.createElement("a");

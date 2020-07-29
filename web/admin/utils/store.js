@@ -21,7 +21,7 @@ export function AdminStoreProvider({ children }) {
   return (
     <AdminStoreContext.Provider
       value={{
-        companyId: store.companyId(),
+        companyId: store.companyInfo().id,
         userId: store.userId(),
         users,
         setUsers,

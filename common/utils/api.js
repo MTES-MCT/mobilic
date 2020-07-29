@@ -636,8 +636,7 @@ class Api {
   }
 
   async logout() {
-    await this.store.removeTokens();
-    await this.store.setItems({ userInfo: {} });
+    await this.store.removeTokensAndUserInfo();
   }
 }
 

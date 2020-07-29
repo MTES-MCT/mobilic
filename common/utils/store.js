@@ -8,7 +8,7 @@ import map from "lodash/map";
 import * as Sentry from "@sentry/browser";
 import omit from "lodash/omit";
 
-const STORE_VERSION = 5;
+const STORE_VERSION = 6;
 
 const StoreSyncedWithLocalStorage = React.createContext(() => {});
 
@@ -37,15 +37,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     this.mapper = {
       accessToken: String,
       refreshToken: String,
-      companyAdmin: {
-        deserialize: value => value === "true",
-        serialize: String.serialize
-      },
       userId: {
-        deserialize: value => (value ? parseInt(value) : value),
-        serialize: String.serialize
-      },
-      companyId: {
         deserialize: value => (value ? parseInt(value) : value),
         serialize: String.serialize
       },
@@ -380,39 +372,29 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
   storeTokens = ({ accessToken, refreshToken }) =>
     new Promise(resolve => {
-      const { id, company_admin, company_id } = jwtDecode(accessToken).identity;
+      const { id } = jwtDecode(accessToken).identity;
       this.setItems(
         {
           accessToken,
           refreshToken,
-          userId: id,
-          companyId: company_id,
-          companyAdmin: company_admin
+          userId: id
         },
         resolve
       );
     });
 
-  removeTokens = () =>
-    new Promise(resolve =>
-      this.removeItems(
-        ["accessToken", "refreshToken", "userId", "companyId", "companyAdmin"],
-        resolve
-      )
-    );
-
-  setUserInfo = ({
-    firstName,
-    lastName,
-    companyId,
-    companyName,
-    isCompanyAdmin,
-    email
-  }) =>
+  removeTokensAndUserInfo = async () =>
+    await Promise.all([
+      new Promise(resolve =>
+        this.removeItems(["accessToken", "refreshToken", "userId"], resolve)
+      ),
+      new Promise(resolve => {
+        this.setItems({ userInfo: {}, employments: [] }, resolve);
+      })
+    ]);
+  setUserInfo = ({ firstName, lastName, email }) =>
     this.setItems({
-      userInfo: { firstName, lastName, companyName, email },
-      companyId,
-      companyAdmin: isCompanyAdmin
+      userInfo: { firstName, lastName, email }
     });
 
   setEmployeeInvite = ({ token, company }) =>
@@ -424,6 +406,20 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
   clearIsSigningUp = () => this.setState({ isSigningUp: null });
 
+  companyInfo = () => {
+    let info = { id: null, name: null, admin: null };
+    const primaryEmployments = this.getEntity("employments").filter(
+      e => e.isPrimary
+    );
+    if (primaryEmployments.length > 0) {
+      const primaryEmployment = primaryEmployments[0];
+      info.id = primaryEmployment.company.id;
+      info.admin = primaryEmployment.hasAdminRights;
+      info.name = primaryEmployment.company.name;
+    }
+    return info;
+  };
+
   render() {
     return (
       <>
@@ -433,9 +429,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             accessToken: () => this.state.accessToken,
             refreshToken: () => this.state.refreshToken,
             userId: () => this.state.userId,
-            companyAdmin: () => this.state.companyAdmin,
-            companyId: () => this.state.companyId,
-            removeTokens: this.removeTokens,
+            companyInfo: this.companyInfo,
+            removeTokensAndUserInfo: this.removeTokensAndUserInfo,
             setUserInfo: this.setUserInfo,
             userInfo: () => ({ id: this.state.userId, ...this.state.userInfo }),
             coworkers: () => this.state.coworkers,

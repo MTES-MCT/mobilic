@@ -70,10 +70,10 @@ function MobileHeader() {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
-  const companyAdmin = store.companyAdmin();
+  const companyInfo = store.companyInfo();
   const isSigningUp = store.isSigningUp();
 
-  const routes = getAccessibleRoutes({ userInfo, companyAdmin, isSigningUp });
+  const routes = getAccessibleRoutes({ userInfo, companyInfo, isSigningUp });
   const [menuAnchor, setMenuAnchor] = React.useState(null);
 
   return (
@@ -113,9 +113,10 @@ function DesktopHeader() {
 
   const classes = useStyles();
   const userInfo = store.userInfo();
-  const companyAdmin = store.companyAdmin();
+  const companyInfo = store.companyInfo();
+  const companyName = companyInfo.name;
   const isSigningUp = store.isSigningUp();
-  const routes = getAccessibleRoutes({ userInfo, companyAdmin, isSigningUp });
+  const routes = getAccessibleRoutes({ userInfo, companyInfo, isSigningUp });
 
   return (
     <Box className="flex-row-space-between" style={{ alignItems: "stretch" }}>
@@ -128,7 +129,7 @@ function DesktopHeader() {
             variant="body1"
           >
             {formatPersonName(userInfo)}
-            {userInfo.companyName ? ` - ${userInfo.companyName}` : ""}
+            {companyName ? ` - ${companyName}` : ""}
           </Typography>
           <IconButton
             style={{ marginRight: 16 }}
@@ -163,7 +164,7 @@ function DesktopHeader() {
           {routes
             .filter(
               r =>
-                r.accessible({ userInfo, companyAdmin, isSigningUp }) &&
+                r.accessible({ userInfo, companyInfo, isSigningUp }) &&
                 !r.noMenuItem
             )
             .map(route => (

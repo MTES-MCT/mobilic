@@ -21,9 +21,7 @@ export function syncUser(userPayload, store) {
   const {
     firstName,
     lastName,
-    company,
     email,
-    isCompanyAdmin,
     missions,
     enrollableCoworkers,
     currentEmployments,
@@ -46,9 +44,6 @@ export function syncUser(userPayload, store) {
       store.setUserInfo({
         firstName,
         lastName,
-        companyId: company ? company.id : null,
-        companyName: company ? company.name : null,
-        isCompanyAdmin,
         email
       })
     );
