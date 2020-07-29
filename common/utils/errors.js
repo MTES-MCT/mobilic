@@ -90,4 +90,8 @@ export function formatGraphQLError(graphQLError, userId) {
   if (graphQLError.extensions && graphQLError.extensions.code === 104) {
     return `Recherche impossible actuellement. Veuillez réessayer ultérieurement.`;
   }
+  // SIREN API client is disabled
+  if (graphQLError.extensions && graphQLError.extensions.code === 105) {
+    return `Recherche impossible.`;
+  }
 }
