@@ -58,7 +58,7 @@ export default function Login() {
           value={email}
           onChange={e => {
             setError("");
-            setEmail(e.target.value);
+            setEmail(e.target.value.replace(/\s/g, ""));
           }}
         />
         <TextField

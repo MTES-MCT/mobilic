@@ -179,8 +179,9 @@ export function CompanySignup() {
                     setSignupError("");
                     setFacilities(null);
                     setShowUsualName(false);
-                    setSiren(e.target.value);
-                    setSirenError(!validateSiren(e.target.value));
+                    const newSirenValue = e.target.value.replace(/\s/g, "");
+                    setSiren(newSirenValue);
+                    setSirenError(!validateSiren(newSirenValue));
                   }}
                 />
                 <LoadingButton
@@ -307,7 +308,7 @@ export function CompanySignup() {
                   required
                   label="Nom usuel"
                   value={usualName}
-                  onChange={e => setUsualName(e.target.value)}
+                  onChange={e => setUsualName(e.target.value.trim())}
                 />
                 <LoadingButton
                   className={classes.verticalFormButton}

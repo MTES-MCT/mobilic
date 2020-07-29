@@ -115,7 +115,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                 value={email}
                 onChange={e => {
                   setError("");
-                  setEmail(e.target.value);
+                  setEmail(e.target.value.replace(/\s/g, ""));
                 }}
               />
               <TextField
@@ -140,7 +140,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                 value={firstName}
                 onChange={e => {
                   setError("");
-                  setFirstName(e.target.value);
+                  setFirstName(e.target.value.trim());
                 }}
               />
               <TextField
@@ -152,7 +152,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                 value={lastName}
                 onChange={e => {
                   setError("");
-                  setLastName(e.target.value);
+                  setLastName(e.target.value.trim());
                 }}
               />
               <Box mt={4} mb={8}>
