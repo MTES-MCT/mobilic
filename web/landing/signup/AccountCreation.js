@@ -54,7 +54,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       }
       const signUpResponse = await api.graphQlMutate(
         USER_SIGNUP_MUTATION,
-        signupPayload
+        signupPayload,
+        { context: { nonPublicApi: true } }
       );
       const { accessToken, refreshToken } = signUpResponse.data.signUp.user;
       await store.storeTokens({

@@ -98,9 +98,13 @@ export function CompanySignup() {
     setLoadingSirenInfo(true);
     setShowUsualName(false);
     try {
-      const sirenResponse = await api.graphQlQuery(SIREN_QUERY, {
-        siren
-      });
+      const sirenResponse = await api.graphQlQuery(
+        SIREN_QUERY,
+        {
+          siren
+        },
+        { context: { nonPublicApi: true } }
+      );
       const facilitiesInfo = sirenResponse.data.sirenInfo;
       if (facilitiesInfo.length === 0)
         setApiError("Aucun établissement n'a été trouvé pour ce SIREN");
@@ -125,7 +129,8 @@ export function CompanySignup() {
       }
       const apiResponse = await api.graphQlMutate(
         COMPANY_SIGNUP_MUTATION,
-        payload
+        payload,
+        { context: { nonPublicApi: true } }
       );
       const employment = apiResponse.data.signUp.company.employment;
       await store.syncEntity([employment], "employments", () => false);

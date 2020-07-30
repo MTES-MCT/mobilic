@@ -192,7 +192,7 @@ export const COMPANY_QUERY = gql`
 
 export const VALIDATE_EMPLOYMENT_MUTATION = gql`
   mutation validateEmployment($employmentId: Int!) {
-    admin {
+    employments {
       validateEmployment(employmentId: $employmentId) {
         id
         startDate
@@ -210,7 +210,7 @@ export const VALIDATE_EMPLOYMENT_MUTATION = gql`
 
 export const REJECT_EMPLOYMENT_MUTATION = gql`
   mutation rejectEmployment($employmentId: Int!) {
-    admin {
+    employments {
       rejectEmployment(employmentId: $employmentId) {
         id
         startDate
@@ -232,7 +232,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
     $hasAdminRights: Boolean
     $mail: String
   ) {
-    admin {
+    employments {
       createEmployment(
         userId: $userId
         companyId: $companyId
@@ -376,7 +376,7 @@ export const CREATE_VEHICLE_MUTATION = gql`
     $alias: String
     $companyId: Int!
   ) {
-    admin {
+    vehicles {
       createVehicle(
         registrationNumber: $registrationNumber
         alias: $alias
@@ -392,7 +392,7 @@ export const CREATE_VEHICLE_MUTATION = gql`
 
 export const EDIT_VEHICLE_MUTATION = gql`
   mutation($id: Int!, $alias: String!) {
-    admin {
+    vehicles {
       editVehicle(id: $id, alias: $alias) {
         id
         registrationNumber
@@ -404,7 +404,7 @@ export const EDIT_VEHICLE_MUTATION = gql`
 
 export const TERMINATE_VEHICLE_MUTATION = gql`
   mutation terminateVehicle($id: Int!) {
-    admin {
+    vehicles {
       terminateVehicle(id: $id) {
         success
       }
@@ -466,6 +466,7 @@ class Api {
     this.apiHost = apiHost;
     this.store = store;
     const uri = `${apiHost}${graphqlPath}`;
+    const nonPublicUri = `${apiHost}/unexposed`;
     this.apolloClient = new ApolloClient({
       uri: `${apiHost}${graphqlPath}`,
       link: ApolloLink.from([
@@ -507,9 +508,16 @@ class Api {
             })
         ),
         ApolloLink.split(
-          operation => !!operation.getContext().batchable,
-          new BatchHttpLink({ uri }),
-          new HttpLink({ uri })
+          operation => {
+            console.log(operation.getContext());
+            return !!operation.getContext().nonPublicApi;
+          },
+          new HttpLink({ uri: nonPublicUri }),
+          ApolloLink.split(
+            operation => !!operation.getContext().batchable,
+            new BatchHttpLink({ uri }),
+            new HttpLink({ uri })
+          )
         )
       ]),
       cache: new InMemoryCache()
@@ -520,18 +528,24 @@ class Api {
       this.nonConcurrentQueryQueue.lock;
   }
 
-  async graphQlQuery(query, variables) {
+  async graphQlQuery(query, variables, other) {
     return await this._queryWithRefreshToken(() =>
-      this.apolloClient.query({ query, variables, fetchPolicy: "no-cache" })
+      this.apolloClient.query({
+        query,
+        variables,
+        fetchPolicy: "no-cache",
+        ...other
+      })
     );
   }
 
-  async graphQlMutate(query, variables) {
+  async graphQlMutate(query, variables, other) {
     return await this._queryWithRefreshToken(() =>
       this.apolloClient.mutate({
         mutation: query,
         variables: variables,
-        fetchPolicy: "no-cache"
+        fetchPolicy: "no-cache",
+        ...other
       })
     );
   }

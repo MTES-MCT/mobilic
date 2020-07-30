@@ -54,17 +54,21 @@ function VehicleAdmin() {
       editable={true}
       onRowEdit={async (vehicle, { alias }) => {
         try {
-          const apiResponse = await api.graphQlMutate(EDIT_VEHICLE_MUTATION, {
-            id: vehicle.id,
-            alias
-          });
+          const apiResponse = await api.graphQlMutate(
+            EDIT_VEHICLE_MUTATION,
+            {
+              id: vehicle.id,
+              alias
+            },
+            { context: { nonPublicApi: true } }
+          );
           adminStore.setVehicles(oldVehicles => {
             const newVehicles = [...oldVehicles];
             const vehicleIndex = oldVehicles.findIndex(
               v => v.id === vehicle.id
             );
             if (vehicleIndex >= 0)
-              newVehicles[vehicleIndex] = apiResponse.data.admin.editVehicle;
+              newVehicles[vehicleIndex] = apiResponse.data.vehicles.editVehicle;
             return newVehicles;
           });
         } catch (err) {
@@ -73,13 +77,17 @@ function VehicleAdmin() {
       }}
       onRowAdd={async ({ registrationNumber, alias }) => {
         try {
-          const apiResponse = await api.graphQlMutate(CREATE_VEHICLE_MUTATION, {
-            registrationNumber,
-            alias,
-            companyId: adminStore.companyId
-          });
+          const apiResponse = await api.graphQlMutate(
+            CREATE_VEHICLE_MUTATION,
+            {
+              registrationNumber,
+              alias,
+              companyId: adminStore.companyId
+            },
+            { context: { nonPublicApi: true } }
+          );
           adminStore.setVehicles(oldVehicles => [
-            apiResponse.data.admin.createVehicle,
+            apiResponse.data.vehicles.createVehicle,
             ...oldVehicles
           ]);
         } catch (err) {
@@ -91,9 +99,13 @@ function VehicleAdmin() {
           title: "Confirmer suppression",
           handleConfirm: async () => {
             try {
-              await api.graphQlMutate(TERMINATE_VEHICLE_MUTATION, {
-                id: vehicle.id
-              });
+              await api.graphQlMutate(
+                TERMINATE_VEHICLE_MUTATION,
+                {
+                  id: vehicle.id
+                },
+                { context: { nonPublicApi: true } }
+              );
               adminStore.setVehicles(oldVehicles =>
                 oldVehicles.filter(v => v.id !== vehicle.id)
               );

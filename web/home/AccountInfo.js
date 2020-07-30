@@ -73,7 +73,11 @@ function EmploymentInfo({ employment }) {
         }
       );
       await store.syncEntity(
-        [apiResponse.data.admin.validateEmployment],
+        [
+          accept
+            ? apiResponse.data.employments.validateEmployment
+            : apiResponse.data.employments.rejectEmployment
+        ],
         "employments",
         e => e.id === employment.id
       );

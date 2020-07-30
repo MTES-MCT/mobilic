@@ -134,8 +134,8 @@ export function Employees() {
             CREATE_EMPLOYMENT_MUTATION,
             payload
           );
-          adminStore.setPendingEmployments(oldEmployments => [
-            apiResponse.data.admin.createEmployment,
+          adminStore.setEmployments(oldEmployments => [
+            apiResponse.data.employments.createEmployment,
             ...oldEmployments
           ]);
         } catch (err) {
