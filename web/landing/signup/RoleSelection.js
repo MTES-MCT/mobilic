@@ -1,12 +1,11 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import { useHistory } from "react-router-dom";
 import Card from "@material-ui/core/Card";
 import { ManagerIcon, TruckIcon } from "common/utils/icons";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
+import { LinkButton } from "../../common/LinkButton";
 
 const useStyles = makeStyles(theme => ({
   roleButton: {
@@ -25,8 +24,6 @@ const useStyles = makeStyles(theme => ({
 export function RoleSelection() {
   const classes = useStyles();
 
-  const history = useHistory();
-
   return [
     <Box key={0} mb={10}>
       <Typography variant="h3">Quel est votre métier ?</Typography>
@@ -41,10 +38,7 @@ export function RoleSelection() {
       alignItems="stretch"
     >
       <Grid item xs={10} md={4}>
-        <Button
-          onClick={() => history.push("/signup/user")}
-          className={classes.roleButton}
-        >
+        <LinkButton href="/signup/user" className={classes.roleButton}>
           <Card raised>
             <Box p={2} className="flex-column-space-between">
               <TruckIcon color="primary" className={classes.icon} />
@@ -53,13 +47,10 @@ export function RoleSelection() {
               </Typography>
             </Box>
           </Card>
-        </Button>
+        </LinkButton>
       </Grid>
       <Grid item xs={10} md={4}>
-        <Button
-          onClick={() => history.push("/signup/admin")}
-          className={classes.roleButton}
-        >
+        <LinkButton href="/signup/admin" className={classes.roleButton}>
           <Card raised>
             <Box p={2} className="flex-column-space-between">
               <ManagerIcon color="primary" className={classes.icon} />
@@ -68,7 +59,7 @@ export function RoleSelection() {
               </Typography>
             </Box>
           </Card>
-        </Button>
+        </LinkButton>
       </Grid>
     </Grid>
   ];

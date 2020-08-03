@@ -15,6 +15,8 @@ import {
 import { Header } from "../../common/Header";
 import { CompanySignup } from "./CompanySignup";
 import { Complete } from "./Complete";
+import { loadEmployeeInvite } from "../../common/loadEmployeeInvite";
+import { useApi } from "common/utils/api";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -30,6 +32,7 @@ export default function Signup() {
   // const [autorisationCode, setAutorisationCode] = React.useState(null);
 
   const store = useStoreSyncedWithLocalStorage();
+  const api = useApi();
   const employeeInvite = store.employeeInvite();
 
   const location = useLocation();
@@ -42,10 +45,10 @@ export default function Signup() {
       store.setIsSigningUp();
     }
     if (!employeeInvite) {
-      const token = queryString.get("invite");
+      const token = queryString.get("token");
       console.log(token);
       if (token) {
-        store.setEmployeeInvite({ token, company: queryString.get("company") });
+        loadEmployeeInvite(token, store, api, () => {});
       }
     }
   }, [location]);

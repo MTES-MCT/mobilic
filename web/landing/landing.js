@@ -4,10 +4,9 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
-import { useHistory } from "react-router-dom";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
-import Button from "@material-ui/core/Button";
 import { Header } from "../common/Header";
+import { LinkButton } from "../common/LinkButton";
 
 const useStyles = makeStyles(theme => ({
   whiteSection: {
@@ -20,8 +19,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function _Landing({ width }) {
-  const history = useHistory();
-
   const classes = useStyles();
   return [
     <Header key={1} />,
@@ -56,13 +53,9 @@ function _Landing({ width }) {
                 </Typography>
               </Grid>
               <Grid item>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => history.push("/signup")}
-                >
+                <LinkButton variant="contained" color="primary" href="/signup">
                   M'inscrire
-                </Button>
+                </LinkButton>
               </Grid>
             </Grid>
           </Grid>
@@ -78,13 +71,9 @@ function _Landing({ width }) {
                 </Typography>
               </Grid>
               <Grid item>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => history.push("/login")}
-                >
+                <LinkButton variant="contained" color="primary" href="/login">
                   Me connecter
-                </Button>
+                </LinkButton>
               </Grid>
             </Grid>
           </Grid>

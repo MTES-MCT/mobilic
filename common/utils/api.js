@@ -190,6 +190,44 @@ export const COMPANY_QUERY = gql`
   }
 `;
 
+export const GET_EMPLOYMENT_QUERY = gql`
+  query getInvitation($inviteToken: String!) {
+    employment(inviteToken: $inviteToken) {
+      id
+      startDate
+      isPrimary
+      hasAdminRights
+      inviteToken
+      company {
+        id
+        name
+      }
+      submitter {
+        id
+        firstName
+        lastName
+      }
+    }
+  }
+`;
+
+export const REDEEM_INVITE_QUERY = gql`
+  mutation redeemInvite($inviteToken: String!) {
+    signUp {
+      redeemInvite(inviteToken: $inviteToken) {
+        id
+        startDate
+        isPrimary
+        hasAdminRights
+        company {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
 export const VALIDATE_EMPLOYMENT_MUTATION = gql`
   mutation validateEmployment($employmentId: Int!) {
     employments {

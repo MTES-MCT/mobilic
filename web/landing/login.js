@@ -91,7 +91,7 @@ export default function Login() {
             <Typography>
               Pas encore de compte ?{" "}
               <Link
-                href="/"
+                href="/signup"
                 onClick={e => {
                   e.preventDefault();
                   history.push("/signup");

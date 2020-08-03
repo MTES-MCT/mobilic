@@ -6,6 +6,8 @@ import { Landing } from "../landing/landing";
 import Signup from "../landing/signup/root";
 import Login from "../landing/login";
 import { Home } from "../home/AccountInfo";
+import { Invite } from "../landing/invite";
+import { RedeemInvite } from "../home/RedeemInvite";
 
 export const ROUTES = [
   {
@@ -40,6 +42,20 @@ export const ROUTES = [
     label: "Connexion",
     accessible: ({ userInfo }) => !userInfo.id,
     component: <Login />
+  },
+  {
+    path: "/invite",
+    label: "Invitation",
+    accessible: () => true,
+    component: <Invite />,
+    noMenuItem: true
+  },
+  {
+    path: "/redeem_invite",
+    label: "Redeem invite",
+    accessible: ({ userInfo }) => !!userInfo.id,
+    component: <RedeemInvite />,
+    noMenuItem: true
   },
   {
     path: "/",

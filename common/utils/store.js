@@ -397,8 +397,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       userInfo: { firstName, lastName, email }
     });
 
-  setEmployeeInvite = ({ token, company }) =>
-    this.setState({ employeeInvite: { token, company } });
+  setEmployeeInvite = employment =>
+    this.setState({ employeeInvite: employment });
 
   clearEmployeeInvite = () => this.setState({ employeeInvite: null });
 

@@ -91,14 +91,20 @@ function _Root() {
   const loadUser = () =>
     withLoadingScreen(async () => {
       const isLoggingIn = location.pathname.startsWith("/login");
+      const queryString = new URLSearchParams(location.search);
+
       await loadUserData(api, store);
-      if (isLoggingIn)
+      if (isLoggingIn) {
+        const nextLocation = queryString.get("next");
         history.push(
-          getFallbackRoute({
-            userInfo: store.userInfo(),
-            companyInfo: store.companyInfo()
-          })
+          nextLocation
+            ? decodeURI(nextLocation)
+            : getFallbackRoute({
+                userInfo: store.userInfo(),
+                companyInfo: store.companyInfo()
+              })
         );
+      }
     });
 
   React.useEffect(() => {

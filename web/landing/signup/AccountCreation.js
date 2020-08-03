@@ -50,7 +50,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
         lastName
       };
       if (employeeInvite) {
-        signupPayload.inviteToken = employeeInvite.token;
+        signupPayload.inviteToken = employeeInvite.inviteToken;
       }
       const signUpResponse = await api.graphQlMutate(
         USER_SIGNUP_MUTATION,
@@ -88,7 +88,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             <Typography align="left">
               Vous avez été invité(e) par{" "}
               <span style={{ fontWeight: "bold" }}>
-                {employeeInvite.company}
+                {employeeInvite.company.name}
               </span>{" "}
               à créer un compte
             </Typography>

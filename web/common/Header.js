@@ -157,6 +157,7 @@ function DesktopHeader() {
           exclusive
           value={location.pathname}
           onChange={(e, newPath) => {
+            e.preventDefault();
             if (newPath && !location.pathname.startsWith(newPath))
               history.push(newPath);
           }}
@@ -171,6 +172,7 @@ function DesktopHeader() {
               <ToggleButton
                 key={route.path}
                 value={route.path}
+                href={route.path}
                 selected={location.pathname.startsWith(route.path)}
                 className={classes.menuItemButton}
               >
