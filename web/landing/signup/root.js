@@ -46,7 +46,6 @@ export default function Signup() {
     }
     if (!employeeInvite) {
       const token = queryString.get("token");
-      console.log(token);
       if (token) {
         loadEmployeeInvite(token, store, api, () => {});
       }

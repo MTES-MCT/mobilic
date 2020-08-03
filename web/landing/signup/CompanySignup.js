@@ -136,7 +136,6 @@ export function CompanySignup() {
       await store.syncEntity([employment], "employments", () => false);
       history.push("/signup/complete");
     } catch (err) {
-      console.log(formatApiError(err));
       setSignupError(formatApiError(err));
     }
     setLoadingCompanySignup(false);

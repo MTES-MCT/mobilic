@@ -36,9 +36,7 @@ export function ActionsContextProvider({ children }) {
     title = null,
     message = null
   }) {
-    console.log("Test");
     modals.open("apiErrorDialog", {}, currentProps => {
-      console.log(currentProps);
       const newError = {
         actionDescription,
         apiErrors,
@@ -388,7 +386,6 @@ export function ActionsContextProvider({ children }) {
           "missions",
           requestId
         );
-        console.log("Store updated");
         resolve(missionId);
         return { missionId };
       };
@@ -457,7 +454,6 @@ export function ActionsContextProvider({ children }) {
     );
 
     const missionCurrentId = await missionIdPromise;
-    console.log("Retrieved mission Id");
 
     return await Promise.all([
       createMission,

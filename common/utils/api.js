@@ -547,7 +547,6 @@ class Api {
         ),
         ApolloLink.split(
           operation => {
-            console.log(operation.getContext());
             return !!operation.getContext().nonPublicApi;
           },
           new HttpLink({ uri: nonPublicUri }),

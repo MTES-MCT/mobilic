@@ -48,7 +48,6 @@ export function Invite() {
     const token = queryString.get("token");
 
     if (token) {
-      console.log(token);
       api.logout();
       withLoadingScreen(() => loadEmployeeInvite(token, store, api, setError));
     } else setError("Jeton d'invitation manquant");
