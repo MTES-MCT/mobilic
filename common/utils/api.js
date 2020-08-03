@@ -104,6 +104,15 @@ export const USER_QUERY = gql`
       company {
         id
         name
+        users {
+          id
+          firstName
+          lastName
+        }
+        vehicles {
+          id
+          name
+        }
       }
       missions {
         id
@@ -123,15 +132,6 @@ export const USER_QUERY = gql`
           startTime
           userId
         }
-      }
-      enrollableCoworkers {
-        id
-        firstName
-        lastName
-      }
-      bookableVehicles {
-        id
-        name
       }
       currentEmployments {
         id

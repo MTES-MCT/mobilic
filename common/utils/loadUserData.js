@@ -23,9 +23,8 @@ export function syncUser(userPayload, store) {
     lastName,
     email,
     missions,
-    enrollableCoworkers,
     currentEmployments,
-    bookableVehicles
+    company
   } = userPayload;
 
   const activities = [];
@@ -55,12 +54,18 @@ export function syncUser(userPayload, store) {
         "activities"
       )
     );
+
   expenditures &&
     syncActions.push(store.syncEntity(expenditures, "expenditures"));
-  enrollableCoworkers &&
-    syncActions.push(store.syncEntity(enrollableCoworkers, "coworkers"));
-  bookableVehicles &&
-    syncActions.push(store.syncEntity(bookableVehicles, "vehicles"));
+  company.users &&
+    syncActions.push(
+      store.syncEntity(
+        company.users.filter(c => c.id !== userPayload.id),
+        "coworkers"
+      )
+    );
+  company.vehicles &&
+    syncActions.push(store.syncEntity(company.vehicles, "vehicles"));
   currentEmployments &&
     syncActions.push(store.syncEntity(currentEmployments, "employments"));
   return Promise.all(syncActions);
