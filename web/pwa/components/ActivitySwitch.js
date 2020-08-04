@@ -26,10 +26,12 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: props.current
       ? theme.palette.primary.main
       : theme.palette.background.paper,
-    color: props.current
+    color: props.disabled
+      ? theme.palette.grey[500]
+      : props.current
       ? theme.palette.primary.contrastText
       : theme.palette.text.primary,
-    cursor: "pointer"
+    cursor: props.disabled ? "inherit" : "pointer"
   }),
   cardContent: {
     height: "100%",
@@ -54,10 +56,16 @@ const useStyles = makeStyles(theme => ({
   })
 }));
 
-export function ActivitySwitchCard({ label, renderIcon, current, onClick }) {
-  const classes = useStyles({ current });
+export function ActivitySwitchCard({
+  label,
+  renderIcon,
+  current,
+  disabled,
+  onClick
+}) {
+  const classes = useStyles({ current, disabled });
   return (
-    <Card className={classes.card} onClick={onClick} raised>
+    <Card className={classes.card} onClick={!disabled ? onClick : null} raised>
       <Box className={`${classes.cardContent} flex-column-space-between`}>
         {renderIcon({
           className: classes.cardIcon
@@ -79,9 +87,11 @@ export function ActivitySwitchCard({ label, renderIcon, current, onClick }) {
 export function ActivitySwitch({
   team,
   currentActivity,
+  disableBreak,
   endMission,
   pushActivitySwitchEvent
 }) {
+  console.log(disableBreak);
   const store = useStoreSyncedWithLocalStorage();
   const classes = useStyles();
   const modals = useModals();
@@ -133,6 +143,7 @@ export function ActivitySwitch({
                     currentActivity.type === ACTIVITIES.support.name))
               }
               onClick={handleActivitySwitch(activity.name)}
+              disabled={disableBreak && activity.name === ACTIVITIES.break.name}
             />
           </Grid>
         ))}

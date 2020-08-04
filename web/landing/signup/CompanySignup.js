@@ -121,7 +121,7 @@ export function CompanySignup() {
     try {
       const payload = {
         siren: parseInt(siren),
-        usualName: usualName,
+        usualName: usualName.trim(),
         sirets: []
       };
       if (facilities && facilities.some(f => f.selected)) {
@@ -312,7 +312,7 @@ export function CompanySignup() {
                   required
                   label="Nom usuel"
                   value={usualName}
-                  onChange={e => setUsualName(e.target.value.trim())}
+                  onChange={e => setUsualName(e.target.value.trimLeft())}
                 />
                 <LoadingButton
                   className={classes.verticalFormButton}

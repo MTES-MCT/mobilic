@@ -33,6 +33,7 @@ export function FirstActivitySelectionModal({
       <ActivitySwitch
         team={team}
         pushActivitySwitchEvent={handleActivitySelection}
+        disableBreak
       />
       <Box className={classes.bottomFill} />
     </FunnelModal>

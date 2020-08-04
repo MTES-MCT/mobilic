@@ -46,8 +46,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       const signupPayload = {
         email,
         password,
-        firstName,
-        lastName
+        firstName: firstName.trim(),
+        lastName: lastName.trim()
       };
       if (employeeInvite) {
         signupPayload.inviteToken = employeeInvite.inviteToken;
@@ -141,7 +141,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                 value={firstName}
                 onChange={e => {
                   setError("");
-                  setFirstName(e.target.value.trim());
+                  setFirstName(e.target.value.trimLeft());
                 }}
               />
               <TextField
@@ -153,7 +153,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                 value={lastName}
                 onChange={e => {
                   setError("");
-                  setLastName(e.target.value.trim());
+                  setLastName(e.target.value.trimLeft());
                 }}
               />
               <Box mt={4} mb={8}>
