@@ -12,14 +12,9 @@ const ENVS = {
     label: "PRODUCTION"
   },
   sandbox: {
-    host: "https://mobilic-api-sandbox.herokuapp.com",
+    host: "https://api.sandbox.mobilic.beta.gouv.fr",
     color: "#03bd5b",
     label: "BAC A SABLE"
-  },
-  staging: {
-    host: "https://mobilic-api-staging.herokuapp.com",
-    color: "#ff9947",
-    label: "RECETTE"
   }
 };
 
