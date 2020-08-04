@@ -33,8 +33,8 @@ function _Landing({ width }) {
         {isWidthUp("md", width) && (
           <Box mt={2}>
             <Typography variant="h5" style={{ fontWeight: "normal" }}>
-              Mobilic est une plate-forme de suivi du temps de travail dans le
-              transport routier
+              Mobilic est la plateforme gouvernementale de suivi du temps de
+              travail dans le transport
             </Typography>
           </Box>
         )}
