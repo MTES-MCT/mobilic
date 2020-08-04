@@ -62,7 +62,7 @@ function _Landing({ width }) {
           <Grid item md={4}>
             <Grid container spacing={2} direction="column" alignItems="stretch">
               <Grid item style={{ position: "relative" }}>
-                <Typography style={{ position: "absolute", left: 0 }}>
+                <Typography style={{ position: "absolute", left: 0, right: 0 }}>
                   J'ai déjà un compte Mobilic et je souhaite me connecter
                 </Typography>
                 <Typography className="hidden">
