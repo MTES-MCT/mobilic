@@ -20,7 +20,11 @@ Cette opération permet d'accéder à toutes les données de temps de travail pr
 query {
     company(id: Int!) {
         name
-        users
+        users {
+            id
+            firstName
+            lastName
+        }
     }
 }
 ```

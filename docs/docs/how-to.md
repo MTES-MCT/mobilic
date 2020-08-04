@@ -34,6 +34,14 @@ mutation {
 }
 ```
 
+Pour constituer le corps JSON de la requête, il suffit de mettre le texte de l'opération dans une chaîne de caractères, en échappant les guillemets à l'aide d'un anti-slash et en remplaçant les sauts de ligne par `\n` :
+
+```json
+{
+  "query": "mutation {\n  auth {\n    login(email: \"XXX\", password: \"YYY\",) {\n      accessToken\n      refreshToken\n    }\n   }\n}\n"
+}
+```
+
 Pour soumettre la requête à l'API il est possible d'utiliser :
 
 - le playground pour une expérience interactive. Voir le [guide du playground](playground.md)
@@ -47,18 +55,8 @@ Il suffit de constituer le corps JSON de la requête à partir du champ `query`.
 curl \
   -X POST \
   -H "Content-Type: application/json" \
-  --data " \
- { \
-   \"query\": \"mutation { \
-    auth { \
-        login(email: \\\"<EMAIL>\\\", password: \\\"<MOT DE PASSE>\\\") { \
-            accessToken \
-    	    refreshToken \
-  	    } \
-    } \
-   }\" \
- } \
-" https://mobilic-api-staging.herokuapp.com/graphql
+  --data "{ \"query\": \"mutation {\n  auth {\n    login(email: \\\"rayann\\\", password: \\\"rayann\\\",) {\n      accessToken\n      refreshToken\n    }\n   }\n}\n\"}" \
+  https://api.sandbox.mobilic.beta.gouv.fr/graphql
 ```
 
 ![curl-example.png](assets/curl-example.png)

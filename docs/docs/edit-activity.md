@@ -10,53 +10,74 @@ Bien que l'API Mobilic privilégie une saisie en temps réel du temps de travail
 - l'enregistrement de nouvelles activités en différé
 - la correction d'activités précédemment enregistrées
 
-> Comme pour l'enregistrement en temps réel :
+> Comme pour l'enregistrement en temps réel les opérations détaillées ici :
 >
-> - les opérations nécessitent d'être authentifié
+> - nécessitent d'être authentifié
 > - doivent être rattachées à une mission
 
 ### Enregistrement de nouvelles activités
 
-L'opération pour enregistrer une activité en différé est la suivante. Contrairement à l'enregistrement en temps réel il faut préciser une heure de fin.
+L'opération pour enregistrer une activité en différé est la même que pour l'enregistrement en temps réel. Il est possible de préciser une heure de fin, du moment que cette heure n'est pas dans le futur.
 
 ```gql
-mutation {
-    activities {
-        logActivity(type: InputableActivityTypeEnum!, startTime: TimeStamp!, missionId: Int!, endTime: TimeStamp!) {
-            output {
-                id
-                type
-                startTime
-            }
-            nonBlockingErrors
-        }
+mutation(
+  $type: InputableActivityTypeEnum!
+  $startTime: TimeStamp!
+  $missionId: Int!
+  $endTime: TimeStamp
+) {
+  activities {
+    logActivity(
+      type: $type
+      startTime: $startTime
+      missionId: $missionId
+      endTime: $endTime
+    ) {
+      id
+      type
+      startTime
     }
+  }
 }
 ```
 
 - `type`, la nature de l'activité (déplacement, travail, accompagnement, pause)
 - `startTime`, l'heure de début de l'activité
 - `missionId`, la mission de laquelle fait partie l'activité
-- `endTime`, l'heure de fin de l'activité
+- `endTime`, l'heure de fin **optionnelle** de l'activité
+
+### Suppression d'activité
+
+Il est possible de supprimer une activité, en utilisant l'opération `cancelActivity` :
+
+```gql
+mutation cancelActivity($activityId: Int!) {
+  activities {
+    cancelActivity(activityId: $activityId) {
+      id
+      type
+      startTime
+    }
+  }
+}
+```
+
+> ⚠️ Attention : la suppression d'activité efface le **changement d'activité**, ce qui allonge mécaniquement la durée de l'activité précédente. Le fonctionnement précis est détaillé plus bas.
 
 ### Correction d'activités
 
 La correction d'activités consiste à modifier les informations d'une activité existante. Trois modifications sont possibles :
 
-- supprimer l'activité
 - modifier l'heure de début
 - modifier l'heure de fin
 
 ```gql
 mutation {
     activities {
-        editActivity(activityId: Int!, dismiss: Boolean!, startTime: TimeStamp, endTime: TimeStamp) {
-            output {
-                id
-                type
-                startTime
-            }
-            nonBlockingErrors
+        editActivity(activityId: Int!, startTime: TimeStamp, endTime: TimeStamp) {
+            id
+            type
+            startTime
         }
     }
 }
@@ -65,9 +86,8 @@ mutation {
 Les arguments sont les suivants :
 
 - `activityId` : identifiant de l'activité à modifier
-- `dismiss` : flag qui indique si la modification est une suppression (`true`) ou une édition (`false`)
-- `startTime` : optionnelle, la nouvelle heure de début de l'activité dans le cas d'une édition
-- `endTime` : optionnelle, la nouvelle heure de fin de l'activité dans le cas d'une édition
+- `startTime` : optionnelle, la nouvelle heure de début de l'activité dans le cas d'une modification du début
+- `endTime` : optionnelle, la nouvelle heure de fin de l'activité dans le cas d'une modification de la fin
 
 ## Principes de l'enregistrement en différé
 

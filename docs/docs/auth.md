@@ -42,3 +42,5 @@ C'est l'opération `login(email, password)`.
 L'approche précédente pose problème dans le cas où l'appelant est une application métier qui veut se connecter pour le compte d'un utilisateur final. En effet il faudrait que l'application demande à l'utilisateur son mot de passe et le conserve quelque part, ce qui pose des problèmes de sécurité. Pour pallier à cela il existe des protocoles de délégation d'authentification.
 
 Mobilic implémente un de ces protocoles, le protocole [OAuth2](https://oauth.net/2/), qui évite aux applications métier d'avoir à gérer et stocker les identifiants Mobilic des utilisateurs.
+
+> ⚠️ Le protocole est en cours d'implémentation et n'est pas encore fonctionnel

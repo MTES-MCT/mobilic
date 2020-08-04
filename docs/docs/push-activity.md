@@ -40,39 +40,70 @@ La création de la mission ne déclenche pas le démarrage du chrono de temps de
 C'est l'opération principale.
 
 ```gql
-mutation {
-    activities {
-        logActivitySwitch(type: InputableActivityTypeEnum!, switchTime: TimeStamp!, missionId: Int!) {
-            output {
-                id
-                type
-                startTime
-            }
-            nonBlockingErrors
-        }
+mutation(
+  $type: InputableActivityTypeEnum!
+  $startTime: TimeStamp!
+  $missionId: Int!
+) {
+  activities {
+    logActivity(type: $type, startTime: $startTime, missionId: $missionId) {
+      id
+      type
+      startTime
     }
+  }
 }
 ```
 
 Elle prend en arguments :
 
 - `type`, la nature de la nouvelle activité (déplacement, travail, accompagnement, pause)
-- `switchTime`, l'heure de changement d'activité (= l'heure de l'enregistrement)
+- `startTime`, l'heure de changement d'activité (= l'heure de l'enregistrement)
 - `missionId`, la mission dans laquelle s'inscrit ce changement d'activité
+
+### Enregistrement pour le compte d'autrui
+
+Par défaut l'activité est enregistrée pour l'utilisateur qui effectue l'opération (l'utilisateur authentifié avec le jeton). Afin de faciliter l'usage de l'API il est possible d'enregistrer des activités pour un autre utilisateur, en utilisant le champ `userId`.
+
+L'opération s'écrit alors :
+
+```gql
+mutation(
+  $type: InputableActivityTypeEnum!
+  $startTime: TimeStamp!
+  $missionId: Int!
+  $userId: Int
+) {
+  activities {
+    logActivity(
+      type: $type
+      startTime: $startTime
+      missionId: $missionId
+      userId: $userId
+    ) {
+      id
+      type
+      startTime
+    }
+  }
+}
+```
 
 ## Fin de mission
 
 L'opération signale la fin de la dernière activité de la mission.
 
 ```gql
-mutation {
-    activities {
-        endMission(missionId: Int!, endTime: TimeStamp!) {
-            id
-            name
-        }
+mutation($missionId: Int!, $endTime: TimeStamp!) {
+  activities {
+    endMission(missionId: $missionId, endTime: $endTime) {
+      id
+      name
     }
+  }
 }
 ```
 
 Les arguments de l'opération sont les mêmes que pour l'enregistrement, sans l'argument `type` et avec `endTime` qui remplace `startTime`.
+
+> De même il est possible de terminer la mission pour le compte d'autrui en passant la variable `userId`.

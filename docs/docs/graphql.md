@@ -61,7 +61,19 @@ mutation($email: String!, $password: String!) {
 }
 ```
 
-Le corps JSON de la requête HTTP doit alors contenir un champ `variables` qui définit pour chaque variable la valeur à injecter.
+> Il est important de noter que :
+>
+> - les variables sont déclarées juste après le type de l'opération.
+> - une variable est toujours précédée d'un `$`
+
+Le corps JSON de la requête HTTP doit alors contenir un champ `variables` qui définit pour chaque variable la valeur à injecter :
+
+```json
+{
+  "query": "mutation login($email: String!, $password: String!) {\n  auth {\n    login(email: $email, password: $password) {\n      accessToken\n      refreshToken\n    }\n   }\n}\n",
+  "variables": { "email": "XXX", "password": "YYY" }
+}
+```
 
 ## Schéma de la réponse
 
@@ -74,6 +86,20 @@ mutation {
   auth {
     login(email: "XXX", password: "YYY") {
       accessToken
+    }
+  }
+}
+```
+
+Le corps de la réponse sera au format JSON, et **reproduira la structure de l'opération en ce qui concerne les chemins d'accès**. Ainsi dans l'exemple précédent le JSON de retour contiendra un champ `data` (la racine), contenant un champ `auth` qui contient lui-même un champ `login` et ainsi de suite :
+
+```json
+{
+  "data": {
+    "auth": {
+      "login": {
+        "accessToken": "XXX"
+      }
     }
   }
 }
