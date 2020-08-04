@@ -13,8 +13,6 @@ Cet URI unique dépend de l'environnement :
 
 - > https://api.sandbox.mobilic.beta.gouv.fr/graphql pour l'environnement bac à sable
 
-- > https://mobilic-api-staging.herokuapp.com/graphql pour l'environnement de recette
-
 Le détail de l'opération sera précisé dans le corps JSON de la requête.
 
 ## Exemple simple

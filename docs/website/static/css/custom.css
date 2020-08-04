@@ -21,3 +21,11 @@
 
 @media only screen and (min-width: 1500px) {
 }
+
+a {
+  color: #006be6;
+}
+
+a:hover {
+  color: #0053b3;
+}
