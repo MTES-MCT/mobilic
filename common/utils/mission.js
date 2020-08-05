@@ -10,7 +10,7 @@ export function parseMissionPayloadFromBackend(missionPayload) {
     id: missionPayload.id,
     name: missionPayload.name,
     validated: missionPayload.validated,
-    context: missionPayload.context ? JSON.parse(missionPayload.context) : null
+    context: missionPayload.context
   };
 }
 
