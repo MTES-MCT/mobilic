@@ -94,7 +94,11 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             </Typography>
           )}
           <Section title="via France Connect">
-            <Button onClick={() => console.log("FC")}>
+            <Button
+              onClick={() =>
+                window.alert("Fonctionnalité pas encore implémentée")
+              }
+            >
               <FranceConnectIcon scale={0.5} />
             </Button>
           </Section>
