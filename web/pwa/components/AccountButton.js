@@ -4,11 +4,9 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Button from "@material-ui/core/Button";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { formatPersonName } from "common/utils/coworkers";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import { useApi } from "common/utils/api";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";
+import { NavigationMenu } from "../../common/Header";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -29,7 +27,6 @@ const useStyles = makeStyles(theme => ({
 
 export function AccountButton(props) {
   const store = useStoreSyncedWithLocalStorage();
-  const api = useApi();
 
   const [menuAnchor, setMenuAnchor] = React.useState(null);
 
@@ -52,21 +49,7 @@ export function AccountButton(props) {
       >
         {formatPersonName(store.userInfo())}
       </Button>
-      <Menu
-        anchorEl={menuAnchor}
-        keepMounted
-        open={Boolean(menuAnchor)}
-        onClose={() => setMenuAnchor(null)}
-      >
-        <MenuItem
-          onClick={() => {
-            api.logout();
-            setMenuAnchor(null);
-          }}
-        >
-          Me déconnecter
-        </MenuItem>
-      </Menu>
+      <NavigationMenu menuAnchor={menuAnchor} setMenuAnchor={setMenuAnchor} />
     </Box>
   );
 }

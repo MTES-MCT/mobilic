@@ -46,7 +46,7 @@ function HeaderContainer(props) {
   );
 }
 
-function _MenuRouteItem({ route }) {
+function MenuRouteItem({ route }) {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
@@ -59,14 +59,14 @@ function _MenuRouteItem({ route }) {
       onClick={() => {
         if (!selected) history.push(route.path);
       }}
-      className={selected && classes.selectedMenuItem}
+      className={selected ? classes.selectedMenuItem : ""}
     >
       {route.label}
     </MenuItem>
   );
 }
 
-function MobileHeader() {
+export function NavigationMenu({ menuAnchor, setMenuAnchor }) {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
@@ -74,6 +74,27 @@ function MobileHeader() {
   const isSigningUp = store.isSigningUp();
 
   const routes = getAccessibleRoutes({ userInfo, companyInfo, isSigningUp });
+
+  return (
+    <Menu
+      anchorEl={menuAnchor}
+      keepMounted
+      open={Boolean(menuAnchor)}
+      onClose={() => setMenuAnchor(null)}
+    >
+      {routes
+        .filter(r => !r.noMenuItem)
+        .map(route => (
+          <MenuRouteItem key={route.path} route={route} />
+        ))}
+      {store.userId() && (
+        <MenuItem onClick={() => api.logout()}>Déconnexion</MenuItem>
+      )}
+    </Menu>
+  );
+}
+
+function MobileHeader() {
   const [menuAnchor, setMenuAnchor] = React.useState(null);
 
   return (
@@ -82,27 +103,12 @@ function MobileHeader() {
       <IconButton edge="end" onClick={e => setMenuAnchor(e.currentTarget)}>
         <MenuIcon />
       </IconButton>
-      <Menu
-        anchorEl={menuAnchor}
-        keepMounted
-        open={Boolean(menuAnchor)}
-        onClose={() => setMenuAnchor(null)}
-      >
-        {routes
-          .filter(r => !r.noMenuItem)
-          .map(route => (
-            <_MenuRouteItem key={route.path} route={route} />
-          ))}
-        {store.userId() && (
-          <MenuItem onClick={() => api.logout()}>Déconnexion</MenuItem>
-        )}
-      </Menu>
+      <NavigationMenu menuAnchor={menuAnchor} setMenuAnchor={setMenuAnchor} />
     </Box>
   );
 }
 
 function DesktopHeader() {
-  const api = useApi();
   const theme = useTheme();
   const store = useStoreSyncedWithLocalStorage();
 
@@ -138,19 +144,10 @@ function DesktopHeader() {
           >
             <MenuIcon />
           </IconButton>
-          <Menu
-            anchorEl={menuAnchor}
-            keepMounted
-            open={Boolean(menuAnchor)}
-            onClose={() => setMenuAnchor(null)}
-          >
-            {routes
-              .filter(r => !r.noMenuItem)
-              .map(route => (
-                <_MenuRouteItem key={route.path} route={route} />
-              ))}
-            <MenuItem onClick={() => api.logout()}>Déconnexion</MenuItem>
-          </Menu>
+          <NavigationMenu
+            menuAnchor={menuAnchor}
+            setMenuAnchor={setMenuAnchor}
+          />
         </Box>
       ) : (
         <ToggleButtonGroup
