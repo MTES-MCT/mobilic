@@ -15,6 +15,7 @@ export default function Login() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
@@ -22,6 +23,7 @@ export default function Login() {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    setLoading(true);
     try {
       const loginResponse = await api.graphQlMutate(LOGIN_MUTATION, {
         email,
@@ -35,6 +37,7 @@ export default function Login() {
     } catch (error) {
       setError(formatApiError(error));
     }
+    setLoading(false);
   };
 
   return [
@@ -83,6 +86,7 @@ export default function Login() {
             variant="contained"
             color="primary"
             type="submit"
+            loading={loading}
             disabled={!email || !password}
           >
             Me connecter

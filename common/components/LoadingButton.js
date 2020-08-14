@@ -1,4 +1,5 @@
 import React from "react";
+import omit from "lodash/omit";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 
@@ -6,7 +7,7 @@ export function LoadingButton(props) {
   const [loading, setLoading] = React.useState(false);
 
   async function onClick(e) {
-    if (props.loading === undefined) {
+    if (props.loading !== undefined) {
       await props.onClick(e);
       return;
     }
@@ -25,7 +26,7 @@ export function LoadingButton(props) {
   return (
     <Button
       onClick={props.onClick ? onClick : null}
-      {...props}
+      {...omit(props, "loading")}
       disabled={props.disabled || isLoading}
     >
       <span style={{ position: "relative", visibility: isLoading && "hidden" }}>
