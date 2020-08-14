@@ -8,8 +8,16 @@ import Login from "../landing/login";
 import { Home } from "../home/AccountInfo";
 import { Invite } from "../landing/invite";
 import { RedeemInvite } from "../home/RedeemInvite";
+import { FranceConnectCallback } from "../landing/signup/FranceConnectCallback";
 
 export const ROUTES = [
+  {
+    path: "/callback",
+    label: "Callback France Connect",
+    accessible: ({ userInfo }) => !userInfo.id,
+    component: <FranceConnectCallback />,
+    noMenuItem: true
+  },
   {
     path: "/app",
     label: "Saisie de temps",
@@ -34,8 +42,10 @@ export const ROUTES = [
   {
     path: "/signup",
     label: "Inscription",
-    accessible: ({ userInfo, isSigningUp }) => !userInfo.id || isSigningUp,
-    component: <Signup />
+    accessible: ({ userInfo, isSigningUp }) =>
+      !userInfo.id || !userInfo.email || isSigningUp,
+    component: <Signup />,
+    fallbackPriority: 1
   },
   {
     path: "/login",

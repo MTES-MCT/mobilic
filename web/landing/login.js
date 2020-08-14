@@ -10,6 +10,12 @@ import Box from "@material-ui/core/Box";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Header } from "../common/Header";
 import { formatApiError } from "common/utils/errors";
+import {
+  buildCallbackUrl,
+  buildFranceConnectUrl
+} from "common/utils/franceConnect";
+import { FranceConnectIcon } from "common/utils/icons";
+import Button from "@material-ui/core/Button";
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
@@ -91,6 +97,17 @@ export default function Login() {
           >
             Me connecter
           </LoadingButton>
+          <Box my={6}>
+            <Typography>ou me connecter via France Connect</Typography>
+            <Button
+              onClick={() => {
+                const callbackUrl = buildCallbackUrl();
+                window.location.href = buildFranceConnectUrl(callbackUrl);
+              }}
+            >
+              <FranceConnectIcon scale={0.5} />
+            </Button>
+          </Box>
           <Box mt={2}>
             <Typography>
               Pas encore de compte ?{" "}

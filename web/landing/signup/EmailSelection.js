@@ -2,22 +2,16 @@ import React from "react";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField/TextField";
-import Button from "@material-ui/core/Button";
-import { useApi, USER_SIGNUP_MUTATION } from "common/utils/api";
-import { useHistory } from "react-router-dom";
+import { CREATE_LOGIN_MUTATION, useApi } from "common/utils/api";
+import { useHistory, useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import Paper from "@material-ui/core/Paper";
 import SignupStepper from "./SignupStepper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
-import { FranceConnectIcon } from "common/utils/icons";
 import { formatApiError } from "common/utils/errors";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Section } from "../../common/Section";
-import {
-  buildCallbackUrl,
-  buildFranceConnectUrl
-} from "common/utils/franceConnect";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -27,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function AccountCreation({ employeeInvite, isAdmin }) {
+export function EmailSelection() {
   const classes = useStyles();
 
   const api = useApi();
@@ -36,35 +30,37 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
 
   React.useEffect(() => store.setIsSigningUp(), []);
 
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
+  const [isAdmin, setIsAdmin] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
+  const location = useLocation();
+
+  React.useEffect(() => {
+    const queryString = new URLSearchParams(location.search);
+    const admin = queryString.get("admin");
+    setIsAdmin(!!admin);
+  }, [location]);
+
   const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
     try {
-      const signupPayload = {
+      const payload = {
         email,
-        password,
-        firstName: firstName.trim(),
-        lastName: lastName.trim()
+        password
       };
-      if (employeeInvite) {
-        signupPayload.inviteToken = employeeInvite.inviteToken;
-      }
-      const signUpResponse = await api.graphQlMutate(
-        USER_SIGNUP_MUTATION,
-        signupPayload,
+      const apiResponse = await api.graphQlMutate(
+        CREATE_LOGIN_MUTATION,
+        payload,
         { context: { nonPublicApi: true } }
       );
-      const { accessToken, refreshToken } = signUpResponse.data.signUp.user;
-      await store.storeTokens({
-        accessToken,
-        refreshToken
+
+      store.setUserInfo({
+        ...store.userInfo(),
+        email: apiResponse.data.signUp.createLogin.email
       });
       if (isAdmin) history.push("/signup/company");
       else history.push("/signup/complete");
@@ -86,33 +82,15 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       <Paper key={1}>
         <Container className="centered" maxWidth="sm">
           <Typography className={classes.title} variant="h3">
-            Création de compte
+            Choix des identifiants
           </Typography>
-          {employeeInvite && employeeInvite.company && (
-            <Typography align="left">
-              Vous avez été invité(e) par{" "}
-              <span style={{ fontWeight: "bold" }}>
-                {employeeInvite.company.name}
-              </span>{" "}
-              à créer un compte
-            </Typography>
-          )}
-          <Section title="via France Connect">
-            <Button
-              onClick={() => {
-                const callbackUrl = buildCallbackUrl(
-                  employeeInvite,
-                  true,
-                  isAdmin
-                );
-                window.location.href = buildFranceConnectUrl(callbackUrl);
-              }}
-            >
-              <FranceConnectIcon scale={0.5} />
-            </Button>
-          </Section>
 
-          <Section title="ou via le formulaire d'inscription">
+          <Section>
+            <Typography align="left">
+              <span className="bold">{store.userInfo().firstName}</span>,
+              veuillez choisir une adresse e-mail de connexion et un mot de
+              passe pour finaliser votre création de compte
+            </Typography>
             <form
               className="vertical-form centered"
               noValidate
@@ -123,7 +101,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                 required
                 fullWidth
                 className="vertical-form-text-input"
-                label="Email"
+                label="Adresse e-mail"
                 type="email"
                 autoComplete="username"
                 value={email}
@@ -145,46 +123,15 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                   setPassword(e.target.value);
                 }}
               />
-              <TextField
-                required
-                fullWidth
-                className="vertical-form-text-input"
-                label="Prénom"
-                autoComplete="given-name"
-                value={firstName}
-                onChange={e => {
-                  setError("");
-                  setFirstName(e.target.value.trimLeft());
-                }}
-              />
-              <TextField
-                required
-                fullWidth
-                className="vertical-form-text-input"
-                label="Nom"
-                autoComplete="family-name"
-                value={lastName}
-                onChange={e => {
-                  setError("");
-                  setLastName(e.target.value.trimLeft());
-                }}
-              />
               <Box mt={4} mb={8}>
                 <LoadingButton
                   variant="contained"
                   color="primary"
                   type="submit"
                   loading={loading}
-                  disabled={
-                    !email ||
-                    !password ||
-                    !firstName ||
-                    !lastName ||
-                    loading ||
-                    !!error
-                  }
+                  disabled={!email || !password || loading || !!error}
                 >
-                  M'inscrire
+                  Continuer
                 </LoadingButton>
                 {error && <Typography color="error">{error}</Typography>}
               </Box>

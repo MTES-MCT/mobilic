@@ -1,6 +1,5 @@
 import React from "react";
 import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { RoleSelection } from "./RoleSelection";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -17,6 +16,7 @@ import { CompanySignup } from "./CompanySignup";
 import { Complete } from "./Complete";
 import { loadEmployeeInvite } from "../../common/loadEmployeeInvite";
 import { useApi } from "common/utils/api";
+import { EmailSelection } from "./EmailSelection";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -79,7 +79,7 @@ export default function Signup() {
           )}
           {userId && !userInfo.email && (
             <Route key="user_login" path={`${path}/user_login`}>
-              <Typography>User info</Typography>
+              <EmailSelection />
             </Route>
           )}
           {userId && userInfo.email && (

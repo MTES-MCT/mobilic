@@ -13,6 +13,8 @@ import { useStoreSyncedWithLocalStorage } from "./store";
 import { isAuthenticationError, isRetryable } from "./errors";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 
+export const API_HOST = process.env.REACT_APP_API_HOST || "/api";
+
 const REFRESH_MUTATION = gql`
   mutation refreshToken {
     auth {
@@ -54,14 +56,18 @@ export const USER_SIGNUP_MUTATION = gql`
         lastName: $lastName
         inviteToken: $inviteToken
       ) {
-        user {
-          id
-          firstName
-          lastName
-          email
-        }
         accessToken
         refreshToken
+      }
+    }
+  }
+`;
+
+export const CREATE_LOGIN_MUTATION = gql`
+  mutation createLogin($email: String!, $password: String!) {
+    signUp {
+      createLogin(email: $email, password: $password) {
+        email
       }
     }
   }
@@ -223,6 +229,27 @@ export const REDEEM_INVITE_QUERY = gql`
           id
           name
         }
+      }
+    }
+  }
+`;
+
+export const FRANCE_CONNECT_LOGIN_MUTATION = gql`
+  mutation franceConnectLogin(
+    $authorizationCode: String!
+    $originalRedirectUri: String!
+    $inviteToken: String
+    $create: Boolean
+  ) {
+    auth {
+      franceConnectLogin(
+        authorizationCode: $authorizationCode
+        originalRedirectUri: $originalRedirectUri
+        inviteToken: $inviteToken
+        create: $create
+      ) {
+        accessToken
+        refreshToken
       }
     }
   }
@@ -496,11 +523,7 @@ export const CANCEL_EXPENDITURE_MUTATION = gql`
 const ApiContext = React.createContext(() => {});
 
 class Api {
-  constructor(
-    store = {},
-    apiHost = process.env.REACT_APP_API_HOST || "/api",
-    graphqlPath = "/graphql"
-  ) {
+  constructor(store = {}, apiHost = API_HOST, graphqlPath = "/graphql") {
     this.apiHost = apiHost;
     this.store = store;
     const uri = `${apiHost}${graphqlPath}`;

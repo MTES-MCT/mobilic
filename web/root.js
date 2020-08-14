@@ -90,7 +90,9 @@ function _Root() {
 
   const loadUser = () =>
     withLoadingScreen(async () => {
-      const isLoggingIn = location.pathname.startsWith("/login");
+      const isLoggingIn =
+        location.pathname.startsWith("/login") ||
+        location.pathname.startsWith("/callback");
       const queryString = new URLSearchParams(location.search);
 
       await loadUserData(api, store);
