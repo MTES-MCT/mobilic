@@ -57,14 +57,16 @@ export function syncUser(userPayload, store) {
 
   expenditures &&
     syncActions.push(store.syncEntity(expenditures, "expenditures"));
-  company.users &&
+  company &&
+    company.users &&
     syncActions.push(
       store.syncEntity(
         company.users.filter(c => c.id !== userPayload.id),
         "coworkers"
       )
     );
-  company.vehicles &&
+  company &&
+    company.vehicles &&
     syncActions.push(store.syncEntity(company.vehicles, "vehicles"));
   currentEmployments &&
     syncActions.push(store.syncEntity(currentEmployments, "employments"));
