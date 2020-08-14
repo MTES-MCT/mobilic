@@ -139,7 +139,9 @@ function SubNavigationToggle({ view, setView }) {
     <ToggleButtonGroup
       value={view}
       exclusive
-      onChange={(e, newView) => setView(newView)}
+      onChange={(e, newView) => {
+        if (newView) setView(newView);
+      }}
     >
       {COMPANY_SUB_PANELS.map(panelInfos => (
         <ToggleButton key={panelInfos.view} value={panelInfos.view}>
