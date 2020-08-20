@@ -1,5 +1,6 @@
 import SvgIcon from "@material-ui/core/SvgIcon";
 import React from "react";
+import omit from "lodash/omit";
 import { ReactComponent as PersonIcon_ } from "../assets/images/User.svg";
 import { ReactComponent as TeamIcon_ } from "../assets/images/Team.svg";
 import { ReactComponent as TruckIcon_ } from "../assets/images/Truck.svg";
@@ -39,9 +40,10 @@ export function FranceConnectIcon(props) {
     <SvgIcon
       style={{
         width: 283 * (props.scale ? props.scale : 1),
-        height: 82 * (props.scale ? props.scale : 1)
+        height: 82 * (props.scale ? props.scale : 1),
+        ...props.style
       }}
-      {...props}
+      {...omit(props, "style")}
       viewBox="0 0 283.5 82.2"
       component={FranceConnectIcon_}
     />

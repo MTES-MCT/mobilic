@@ -2,7 +2,6 @@ import React from "react";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField/TextField";
-import Button from "@material-ui/core/Button";
 import { useApi, USER_SIGNUP_MUTATION } from "common/utils/api";
 import { useHistory } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
@@ -10,7 +9,6 @@ import Paper from "@material-ui/core/Paper";
 import SignupStepper from "./SignupStepper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
-import { FranceConnectIcon } from "common/utils/icons";
 import { formatApiError } from "common/utils/errors";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Section } from "../../common/Section";
@@ -18,6 +16,7 @@ import {
   buildCallbackUrl,
   buildFranceConnectUrl
 } from "common/utils/franceConnect";
+import { FranceConnectContainer } from "../../common/FranceConnect";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -97,9 +96,13 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
               à créer un compte
             </Typography>
           )}
-          <Section title="via France Connect">
-            <Button
-              onClick={() => {
+          <Section title="via FranceConnect">
+            <Typography style={{ fontStyle: "italic" }} variant="body2">
+              FranceConnect est la solution proposée par l’État pour sécuriser
+              et simplifier la connexion à vos services en ligne.
+            </Typography>
+            <FranceConnectContainer
+              onButtonClick={() => {
                 const callbackUrl = buildCallbackUrl(
                   employeeInvite,
                   true,
@@ -107,9 +110,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                 );
                 window.location.href = buildFranceConnectUrl(callbackUrl);
               }}
-            >
-              <FranceConnectIcon scale={0.5} />
-            </Button>
+            />
           </Section>
 
           <Section title="ou via le formulaire d'inscription">

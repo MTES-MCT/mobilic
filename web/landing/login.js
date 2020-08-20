@@ -14,8 +14,7 @@ import {
   buildCallbackUrl,
   buildFranceConnectUrl
 } from "common/utils/franceConnect";
-import { FranceConnectIcon } from "common/utils/icons";
-import Button from "@material-ui/core/Button";
+import { FranceConnectContainer } from "../common/FranceConnect";
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
@@ -48,65 +47,66 @@ export default function Login() {
 
   return [
     <Header key={1} />,
-    <Container key={2} className="centered scrollable" maxWidth="xs">
-      <form
-        className="vertical-form centered"
-        noValidate
-        autoComplete="on"
-        onSubmit={handleSubmit}
-      >
-        <Box my={4}>
-          <Typography variant="h3">Connexion</Typography>
-        </Box>
-        <TextField
-          fullWidth
-          className="vertical-form-text-input"
-          label="Email"
-          type="email"
-          autoComplete="username"
-          value={email}
-          onChange={e => {
-            setError("");
-            setEmail(e.target.value.replace(/\s/g, ""));
-          }}
-        />
-        <TextField
-          fullWidth
-          className="vertical-form-text-input"
-          label="Mot de passe"
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={e => {
-            setError("");
-            setPassword(e.target.value);
-          }}
-        />
-        {error && (
-          <Typography align="left" color="error">
-            {error}
-          </Typography>
-        )}
-        <Box mt={4} mb={8}>
-          <LoadingButton
-            variant="contained"
-            color="primary"
-            type="submit"
-            loading={loading}
-            disabled={!email || !password}
-          >
-            Me connecter
-          </LoadingButton>
-          <Box my={6}>
-            <Typography>ou me connecter via France Connect</Typography>
-            <Button
-              onClick={() => {
-                const callbackUrl = buildCallbackUrl();
-                window.location.href = buildFranceConnectUrl(callbackUrl);
-              }}
+    <Container key={2} className="centered" maxWidth="xs">
+      <Box my={4}>
+        <Typography variant="h3">Connexion</Typography>
+      </Box>
+      <FranceConnectContainer
+        mt={6}
+        mb={3}
+        onButtonClick={() => {
+          const callbackUrl = buildCallbackUrl();
+          window.location.href = buildFranceConnectUrl(callbackUrl);
+        }}
+      />
+      <Typography>ou</Typography>
+      <Box my={3}>
+        <form
+          className="vertical-form"
+          noValidate
+          autoComplete="on"
+          onSubmit={handleSubmit}
+        >
+          <TextField
+            fullWidth
+            className="vertical-form-text-input"
+            label="Email"
+            type="email"
+            autoComplete="username"
+            value={email}
+            onChange={e => {
+              setError("");
+              setEmail(e.target.value.replace(/\s/g, ""));
+            }}
+          />
+          <TextField
+            fullWidth
+            className="vertical-form-text-input"
+            label="Mot de passe"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={e => {
+              setError("");
+              setPassword(e.target.value);
+            }}
+          />
+          {error && (
+            <Typography align="left" color="error">
+              {error}
+            </Typography>
+          )}
+
+          <Box my={4}>
+            <LoadingButton
+              variant="contained"
+              color="primary"
+              type="submit"
+              loading={loading}
+              disabled={!email || !password}
             >
-              <FranceConnectIcon scale={0.5} />
-            </Button>
+              Me connecter
+            </LoadingButton>
           </Box>
           <Box mt={2}>
             <Typography>
@@ -123,8 +123,8 @@ export default function Login() {
               </Link>
             </Typography>
           </Box>
-        </Box>
-      </form>
+        </form>
+      </Box>
     </Container>
   ];
 }

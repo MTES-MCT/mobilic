@@ -25,7 +25,7 @@ function randomInt() {
 }
 
 export function buildFranceConnectUrl(redirectUri) {
-  return `${API_HOST}/fc/authorize?response_type=code&scope=openid gender given_name family_name email address phone&client_id=211286433e39cce01db448d80181bdfd005554b19cd51b3fe7943f6b3b86ab6e&nonce=${randomInt()}&state=${randomInt()}&redirect_uri=${encodeURIComponent(
+  return `${API_HOST}/fc/authorize?response_type=code&scope=openid given_name family_name email birth_date&client_id=211286433e39cce01db448d80181bdfd005554b19cd51b3fe7943f6b3b86ab6e&nonce=${randomInt()}&state=${randomInt()}&redirect_uri=${encodeURIComponent(
     redirectUri
   )}`;
 }

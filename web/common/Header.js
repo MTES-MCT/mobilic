@@ -94,21 +94,31 @@ export function NavigationMenu({ menuAnchor, setMenuAnchor }) {
   );
 }
 
-function MobileHeader() {
+function MobileHeader({ disableMenu }) {
   const [menuAnchor, setMenuAnchor] = React.useState(null);
 
   return (
     <Box className="flex-row-space-between">
       <Logos />
-      <IconButton edge="end" onClick={e => setMenuAnchor(e.currentTarget)}>
-        <MenuIcon />
-      </IconButton>
-      <NavigationMenu menuAnchor={menuAnchor} setMenuAnchor={setMenuAnchor} />
+      {!disableMenu && [
+        <IconButton
+          key={0}
+          edge="end"
+          onClick={e => setMenuAnchor(e.currentTarget)}
+        >
+          <MenuIcon />
+        </IconButton>,
+        <NavigationMenu
+          key={1}
+          menuAnchor={menuAnchor}
+          setMenuAnchor={setMenuAnchor}
+        />
+      ]}
     </Box>
   );
 }
 
-function DesktopHeader() {
+function DesktopHeader({ disableMenu }) {
   const theme = useTheme();
   const store = useStoreSyncedWithLocalStorage();
 
@@ -137,55 +147,65 @@ function DesktopHeader() {
             {formatPersonName(userInfo)}
             {companyName ? ` - ${companyName}` : ""}
           </Typography>
-          <IconButton
-            style={{ marginRight: 16 }}
-            edge="end"
-            onClick={e => setMenuAnchor(e.currentTarget)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <NavigationMenu
-            menuAnchor={menuAnchor}
-            setMenuAnchor={setMenuAnchor}
-          />
+          {!disableMenu && [
+            <IconButton
+              key={0}
+              style={{ marginRight: 16 }}
+              edge="end"
+              onClick={e => setMenuAnchor(e.currentTarget)}
+            >
+              <MenuIcon />
+            </IconButton>,
+            <NavigationMenu
+              key={1}
+              menuAnchor={menuAnchor}
+              setMenuAnchor={setMenuAnchor}
+            />
+          ]}
         </Box>
       ) : (
-        <ToggleButtonGroup
-          exclusive
-          value={location.pathname}
-          onChange={(e, newPath) => {
-            e.preventDefault();
-            if (newPath && !location.pathname.startsWith(newPath))
-              history.push(newPath);
-          }}
-        >
-          {routes
-            .filter(
-              r =>
-                r.accessible({ userInfo, companyInfo, isSigningUp }) &&
-                !r.noMenuItem
-            )
-            .map(route => (
-              <ToggleButton
-                key={route.path}
-                value={route.path}
-                href={route.path}
-                selected={location.pathname.startsWith(route.path)}
-                className={classes.menuItemButton}
-              >
-                {route.label}
-              </ToggleButton>
-            ))}
-        </ToggleButtonGroup>
+        !disableMenu && (
+          <ToggleButtonGroup
+            exclusive
+            value={location.pathname}
+            onChange={(e, newPath) => {
+              e.preventDefault();
+              if (newPath && !location.pathname.startsWith(newPath))
+                history.push(newPath);
+            }}
+          >
+            {routes
+              .filter(
+                r =>
+                  r.accessible({ userInfo, companyInfo, isSigningUp }) &&
+                  !r.noMenuItem
+              )
+              .map(route => (
+                <ToggleButton
+                  key={route.path}
+                  value={route.path}
+                  href={route.path}
+                  selected={location.pathname.startsWith(route.path)}
+                  className={classes.menuItemButton}
+                >
+                  {route.label}
+                </ToggleButton>
+              ))}
+          </ToggleButtonGroup>
+        )
       )}
     </Box>
   );
 }
 
-function _Header({ width }) {
+function _Header({ width, disableMenu }) {
   return (
     <HeaderContainer>
-      {isWidthUp("md", width) ? <DesktopHeader /> : <MobileHeader />}
+      {isWidthUp("md", width) ? (
+        <DesktopHeader disableMenu={disableMenu} />
+      ) : (
+        <MobileHeader disableMenu={disableMenu} />
+      )}
     </HeaderContainer>
   );
 }

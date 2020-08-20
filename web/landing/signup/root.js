@@ -29,8 +29,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Signup() {
-  // const [autorisationCode, setAutorisationCode] = React.useState(null);
-
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
   const employeeInvite = store.employeeInvite();
@@ -39,11 +37,6 @@ export default function Signup() {
 
   React.useEffect(() => {
     const queryString = new URLSearchParams(location.search);
-    const autorisationCode = queryString.get("autorisation_code");
-    if (autorisationCode) {
-      // setAutorisationCode(autorisationCode);
-      store.setIsSigningUp();
-    }
     if (!employeeInvite) {
       const token = queryString.get("token");
       if (token) {
