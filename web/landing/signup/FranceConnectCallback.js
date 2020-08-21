@@ -26,14 +26,7 @@ export function FranceConnectCallback() {
           },
           { context: { nonPublicApi: true } }
         );
-        const {
-          accessToken,
-          refreshToken
-        } = apiResponse.data.auth.franceConnectLogin;
-        await store.storeTokens({
-          accessToken,
-          refreshToken
-        });
+        await store.storeTokens(apiResponse.data.auth.franceConnectLogin);
       } catch (err) {
         setError(formatApiError(err));
         console.log(err);

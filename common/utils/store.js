@@ -8,7 +8,7 @@ import map from "lodash/map";
 import * as Sentry from "@sentry/browser";
 import omit from "lodash/omit";
 
-const STORE_VERSION = 6;
+const STORE_VERSION = 7;
 
 const StoreSyncedWithLocalStorage = React.createContext(() => {});
 
@@ -23,8 +23,8 @@ const Map = {
 };
 
 const String = {
-  serialize: value => value,
-  deserialize: value => value
+  serialize: value => value || "",
+  deserialize: value => value || null
 };
 
 export const isPendingSubmission = item => !!item.pendingUpdate;
@@ -37,6 +37,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     this.mapper = {
       accessToken: String,
       refreshToken: String,
+      fcToken: String,
       userId: {
         deserialize: value => (value ? parseInt(value) : value),
         serialize: String.serialize
@@ -370,23 +371,25 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     });
   };
 
-  storeTokens = ({ accessToken, refreshToken }) =>
+  storeTokens = ({ accessToken, refreshToken, fcToken, keepFcToken = false }) =>
     new Promise(resolve => {
       const { id } = jwtDecode(accessToken).identity;
-      this.setItems(
-        {
-          accessToken,
-          refreshToken,
-          userId: id
-        },
-        resolve
-      );
+      const itemMap = {
+        accessToken,
+        refreshToken,
+        userId: id
+      };
+      if (!keepFcToken) itemMap.fcToken = fcToken;
+      this.setItems(itemMap, resolve);
     });
 
   removeTokensAndUserInfo = async () =>
     await Promise.all([
       new Promise(resolve =>
-        this.removeItems(["accessToken", "refreshToken", "userId"], resolve)
+        this.removeItems(
+          ["accessToken", "refreshToken", "fcToken", "userId"],
+          resolve
+        )
       ),
       new Promise(resolve => {
         this.setItems({ userInfo: {}, employments: [] }, resolve);
@@ -428,6 +431,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             storeTokens: this.storeTokens,
             accessToken: () => this.state.accessToken,
             refreshToken: () => this.state.refreshToken,
+            fcToken: () => this.state.fcToken,
             userId: () => this.state.userId,
             companyInfo: this.companyInfo,
             removeTokensAndUserInfo: this.removeTokensAndUserInfo,

@@ -9,6 +9,8 @@ import { Home } from "../home/AccountInfo";
 import { Invite } from "../landing/invite";
 import { RedeemInvite } from "../home/RedeemInvite";
 import { FranceConnectCallback } from "../landing/signup/FranceConnectCallback";
+import OAuth from "../landing/oauth/root";
+import { Logout } from "../landing/logout";
 
 export const ROUTES = [
   {
@@ -16,73 +18,92 @@ export const ROUTES = [
     label: "Callback France Connect",
     accessible: ({ userInfo }) => !userInfo.id,
     component: <FranceConnectCallback />,
-    noMenuItem: true
+    menuItemFilter: () => false
   },
   {
     path: "/app",
     label: "Saisie de temps",
     accessible: ({ userInfo, companyInfo }) => userInfo.id && companyInfo.id,
-    component: <App ScreenComponent={AppScreen} />,
-    fallbackPriority: 2
+    component: <App ScreenComponent={AppScreen} />
   },
   {
     path: "/admin",
     label: "Gestion entreprise",
     accessible: ({ userInfo, companyInfo }) => userInfo.id && companyInfo.admin,
-    component: <Admin />,
-    fallbackPriority: 1
+    component: <Admin />
   },
   {
     path: "/home",
     label: "Mes informations",
     accessible: ({ userInfo }) => !!userInfo.id,
-    component: <Home />,
-    fallbackPriority: 3
+    component: <Home />
   },
   {
     path: "/signup",
     label: "Inscription",
     accessible: ({ userInfo, isSigningUp }) =>
       !userInfo.id || !userInfo.email || isSigningUp,
-    component: <Signup />,
-    fallbackPriority: 1
+    component: <Signup />
   },
   {
     path: "/login",
     label: "Connexion",
-    accessible: ({ userInfo }) => !userInfo.id,
-    component: <Login />
+    accessible: () => true,
+    component: <Login />,
+    menuItemFilter: ({ userInfo }) => !userInfo.id
   },
   {
     path: "/invite",
     label: "Invitation",
     accessible: () => true,
     component: <Invite />,
-    noMenuItem: true
+    menuItemFilter: () => false
   },
   {
     path: "/redeem_invite",
     label: "Redeem invite",
     accessible: ({ userInfo }) => !!userInfo.id,
     component: <RedeemInvite />,
-    noMenuItem: true
+    menuItemFilter: () => false
+  },
+  {
+    path: "/oauth/authorize",
+    label: "OAuth",
+    accessible: () => true,
+    component: <OAuth />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/logout",
+    label: "Logout",
+    accessible: () => true,
+    component: <Logout />,
+    menuItemFilter: () => false
   },
   {
     path: "/",
     label: "Landing",
     accessible: ({ userInfo }) => !userInfo.id,
+    exact: true,
     component: <Landing />,
-    noMenuItem: true,
-    fallbackPriority: 4
+    menuItemFilter: () => false
   }
 ];
 
-export function getFallbackRoute(store) {
-  const sortedFallbackRoutes = ROUTES.filter(
-    r => r.accessible(store) && !!r.fallbackPriority
-  ).sort((r1, r2) => r1.fallbackPriority - r2.fallbackPriority);
-
-  return sortedFallbackRoutes.length > 0 ? sortedFallbackRoutes[0].path : "/";
+export function getFallbackRoute({ userInfo, companyInfo }) {
+  if (userInfo.id && userInfo.email && companyInfo.admin) {
+    return "/admin";
+  }
+  if (userInfo.id && userInfo.email && companyInfo.id) {
+    return "/app";
+  }
+  if (userInfo.id && userInfo.email) {
+    return "/home";
+  }
+  if (userInfo.id && !userInfo.email) {
+    return "/signup/user_login";
+  }
+  return "/";
 }
 
 export function getAccessibleRoutes(storeData) {

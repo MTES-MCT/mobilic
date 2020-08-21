@@ -88,7 +88,7 @@ function _Root() {
     isSigningUp
   });
 
-  const loadUser = () =>
+  const loadUserAndRoute = currentPathName =>
     withLoadingScreen(async () => {
       const isLoggingIn =
         location.pathname.startsWith("/login") ||
@@ -110,7 +110,7 @@ function _Root() {
     });
 
   React.useEffect(() => {
-    if (userId) loadUser();
+    if (userId) loadUserAndRoute();
     return () => {};
   }, [userId]);
 
@@ -119,11 +119,11 @@ function _Root() {
   return (
     <Switch>
       {routes.map(route => (
-        <Route key={route.path} path={route.path}>
+        <Route key={route.path} exact={route.exact || false} path={route.path}>
           {route.component}
         </Route>
       ))}
-      <Redirect push key="default" from="*" to={fallbackRoute} />
+      <Redirect key="default" from="*" to={fallbackRoute} />
     </Switch>
   );
 }

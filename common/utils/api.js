@@ -12,6 +12,7 @@ import * as Sentry from "@sentry/browser";
 import { useStoreSyncedWithLocalStorage } from "./store";
 import { isAuthenticationError, isRetryable } from "./errors";
 import { NonConcurrentExecutionQueue } from "./concurrency";
+import { buildFCLogoutUrl } from "./franceConnect";
 
 export const API_HOST = process.env.REACT_APP_API_HOST || "/api";
 
@@ -250,6 +251,7 @@ export const FRANCE_CONNECT_LOGIN_MUTATION = gql`
       ) {
         accessToken
         refreshToken
+        fcToken
       }
     }
   }
@@ -631,7 +633,10 @@ class Api {
           const refreshResponse = await this.apolloClient.mutate({
             mutation: REFRESH_MUTATION
           });
-          await this.store.storeTokens(refreshResponse.data.auth.refresh);
+          await this.store.storeTokens({
+            ...refreshResponse.data.auth.refresh,
+            keepFcToken: true
+          });
         }
       } catch (err) {
         console.log(`Error refreshing tokens : ${err}`);
@@ -709,8 +714,14 @@ class Api {
     });
   }
 
-  async logout() {
-    await this.store.removeTokensAndUserInfo();
+  async logout(logoutFromFC = true) {
+    const fcToken = this.store.fcToken();
+    console.log(fcToken);
+    if (fcToken && logoutFromFC) {
+      window.location.href = buildFCLogoutUrl(fcToken);
+    } else {
+      await this.store.removeTokensAndUserInfo();
+    }
   }
 }
 

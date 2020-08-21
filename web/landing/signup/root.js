@@ -52,6 +52,18 @@ export default function Signup() {
   const userId = store.userId();
   const userInfo = store.userInfo();
 
+  function defaultRoute() {
+    if (userId && userInfo.email) {
+      return "/signup/company";
+    }
+    if (userId && !userInfo.email) {
+      return "/signup/user_login";
+    }
+    if (!userId) {
+      return "/signup/role_selection";
+    }
+  }
+
   return (
     <>
       <Header />
@@ -86,11 +98,11 @@ export default function Signup() {
             </Route>
           )}
           {!userId && (
-            <Route exact key="role" path={`${path}`}>
+            <Route exact key="role" path={`${path}/role_selection`}>
               <RoleSelection />
             </Route>
           )}
-          <Redirect push key="default" from="*" to={`${path}`} />
+          <Redirect key="default" from="*" to={defaultRoute()} />
         </Switch>
       </Container>
     </>

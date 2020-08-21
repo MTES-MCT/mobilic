@@ -83,7 +83,9 @@ export function NavigationMenu({ menuAnchor, setMenuAnchor }) {
       onClose={() => setMenuAnchor(null)}
     >
       {routes
-        .filter(r => !r.noMenuItem)
+        .filter(
+          r => !r.menuItemFilter || r.menuItemFilter({ userInfo, companyInfo })
+        )
         .map(route => (
           <MenuRouteItem key={route.path} route={route} />
         ))}
@@ -178,7 +180,8 @@ function DesktopHeader({ disableMenu }) {
               .filter(
                 r =>
                   r.accessible({ userInfo, companyInfo, isSigningUp }) &&
-                  !r.noMenuItem
+                  (!r.menuItemFilter ||
+                    r.menuItemFilter({ userInfo, companyInfo }))
               )
               .map(route => (
                 <ToggleButton
