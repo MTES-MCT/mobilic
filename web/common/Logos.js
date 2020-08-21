@@ -4,17 +4,11 @@ import { ReactComponent as BetaGouvTextIcon } from "common/assets/images/betagou
 import SvgIcon from "@material-ui/core/SvgIcon";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import { useHistory } from "react-router-dom";
+import { LinkButton } from "./LinkButton";
 
 export function Logos() {
-  const history = useHistory();
-
   return (
-    <Button
-      style={{ borderRadius: 0, textTransform: "none" }}
-      onClick={() => history.push("/")}
-    >
+    <LinkButton style={{ borderRadius: 0, textTransform: "none" }} href="/">
       <Box className="flex-row-flex-start">
         <Box mr={2}>
           <SvgIcon
@@ -30,6 +24,6 @@ export function Logos() {
           component={BetaGouvTextIcon}
         />
       </Box>
-    </Button>
+    </LinkButton>
   );
 }
