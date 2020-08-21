@@ -22,7 +22,7 @@ export function FranceConnectContainer({ onButtonClick, ...props }) {
       <Link
         style={{ display: "block" }}
         variant="body1"
-        href="https://www.franceconnect.gouv.fr"
+        href="https://franceconnect.gouv.fr"
         target="_blank"
         rel="noreferrer"
       >
