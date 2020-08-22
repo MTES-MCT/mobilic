@@ -94,4 +94,10 @@ export function formatGraphQLError(graphQLError, userId) {
   if (graphQLError.extensions && graphQLError.extensions.code === 105) {
     return `Recherche impossible.`;
   }
+  if (graphQLError.extensions && graphQLError.extensions.code === 107) {
+    return `Un problème est survenu dans la connexion avec FranceConnect.`;
+  }
+  if (graphQLError.extensions && graphQLError.extensions.code === 108) {
+    return `L'utilisateur n'existe pas. Vous êtes-vous inscrits ?`;
+  }
 }

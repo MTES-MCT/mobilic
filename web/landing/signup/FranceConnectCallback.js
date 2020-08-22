@@ -58,7 +58,7 @@ export function FranceConnectCallback() {
 
     if (code) {
       retrieveFranceConnectInfo(code, callBackUrl, inviteToken, create, state);
-    } else setError("Erreur avec France Connect");
+    } else setError("Paramètres invalides");
   }, []);
 
   return error ? <Typography color="error">{error}</Typography> : null;
