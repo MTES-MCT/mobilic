@@ -13,7 +13,7 @@ import { Logout } from "../landing/logout";
 
 export const ROUTES = [
   {
-    path: "/callback",
+    path: "/fc-callback",
     label: "Callback France Connect",
     accessible: ({ userInfo }) => !userInfo.id,
     component: <FranceConnectCallback />,

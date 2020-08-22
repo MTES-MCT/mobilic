@@ -241,6 +241,7 @@ export const FRANCE_CONNECT_LOGIN_MUTATION = gql`
     $originalRedirectUri: String!
     $inviteToken: String
     $create: Boolean
+    $state: String!
   ) {
     auth {
       franceConnectLogin(
@@ -248,6 +249,7 @@ export const FRANCE_CONNECT_LOGIN_MUTATION = gql`
         originalRedirectUri: $originalRedirectUri
         inviteToken: $inviteToken
         create: $create
+        state: $state
       ) {
         accessToken
         refreshToken

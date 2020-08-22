@@ -13,7 +13,13 @@ export function FranceConnectCallback() {
 
   const [error, setError] = React.useState("");
 
-  async function retrieveFranceConnectInfo(code, callbackURL, token, create) {
+  async function retrieveFranceConnectInfo(
+    code,
+    callbackURL,
+    token,
+    create,
+    state
+  ) {
     await withLoadingScreen(async () => {
       try {
         const apiResponse = await api.graphQlMutate(
@@ -22,7 +28,8 @@ export function FranceConnectCallback() {
             inviteToken: token,
             originalRedirectUri: callbackURL,
             authorizationCode: code,
-            create: !!create
+            create: !!create,
+            state
           },
           { context: { nonPublicApi: true } }
         );
@@ -39,6 +46,7 @@ export function FranceConnectCallback() {
     const inviteToken = queryString.get("invite_token");
     const code = queryString.get("code");
     const create = queryString.get("create");
+    const state = queryString.get("state");
     queryString.delete("code");
     queryString.delete("state");
     const newQS = queryString.toString();
@@ -49,7 +57,7 @@ export function FranceConnectCallback() {
     );
 
     if (code) {
-      retrieveFranceConnectInfo(code, callBackUrl, inviteToken, create);
+      retrieveFranceConnectInfo(code, callBackUrl, inviteToken, create, state);
     } else setError("Erreur avec France Connect");
   }, []);
 
