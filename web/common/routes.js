@@ -9,6 +9,7 @@ import { Home } from "../home/AccountInfo";
 import { Invite } from "../landing/invite";
 import { RedeemInvite } from "../home/RedeemInvite";
 import { FranceConnectCallback } from "../landing/signup/FranceConnectCallback";
+import OAuth from "../landing/oauth/root";
 import { Logout } from "../landing/logout";
 
 export const ROUTES = [
@@ -63,6 +64,13 @@ export const ROUTES = [
     label: "Redeem invite",
     accessible: ({ userInfo }) => !!userInfo.id,
     component: <RedeemInvite />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/oauth/authorize",
+    label: "OAuth",
+    accessible: () => true,
+    component: <OAuth />,
     menuItemFilter: () => false
   },
   {

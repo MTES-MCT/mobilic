@@ -50,12 +50,10 @@ export function FranceConnectCallback() {
     queryString.delete("code");
     queryString.delete("state");
     const newQS = queryString.toString();
-    const callBackUrl = decodeURIComponent(
+    const callBackUrl =
       window.location.origin +
-        window.location.pathname +
-        (newQS.length > 0 ? `?${newQS}` : "")
-    );
-
+      window.location.pathname +
+      (newQS.length > 0 ? `?${newQS}` : "");
     if (code) {
       retrieveFranceConnectInfo(code, callBackUrl, inviteToken, create, state);
     } else setError("Paramètres invalides");

@@ -2,9 +2,17 @@ import { API_HOST } from "./api";
 
 export function buildCallbackUrl(employeeInvite, create, isAdmin) {
   let baseUrl = window.location.origin + "/fc-callback";
+  const qs = new URLSearchParams(window.location.search);
+  const next = qs.get("next");
+  console.log(next);
   let hasQueryString = false;
   if (employeeInvite) {
     baseUrl = baseUrl + `?invite_token=${employeeInvite.inviteToken}`;
+    hasQueryString = true;
+  }
+  if (next) {
+    baseUrl =
+      baseUrl + `${hasQueryString ? "&" : "?"}next=${encodeURIComponent(next)}`;
     hasQueryString = true;
   }
   if (create) {

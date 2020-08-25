@@ -27,6 +27,17 @@ const REFRESH_MUTATION = gql`
   }
 `;
 
+const CHECK_MUTATION = gql`
+  mutation checkAuthentication {
+    auth {
+      check {
+        message
+        userId
+      }
+    }
+  }
+`;
+
 export const LOGIN_MUTATION_STRING = `mutation login($email: String!, $password: String!) {
   auth {
     login(email: $email, password: $password) {
@@ -723,6 +734,18 @@ class Api {
       window.location.href = buildFCLogoutUrl(fcToken);
     } else {
       await this.store.removeTokensAndUserInfo();
+    }
+  }
+
+  async checkAuthentication() {
+    const userId = this.store.userId();
+    console.log(userId);
+    if (!userId) return false;
+    try {
+      const response = await this.graphQlQuery(CHECK_MUTATION);
+      return response.data.auth.check.userId === userId;
+    } catch (err) {
+      return false;
     }
   }
 }
