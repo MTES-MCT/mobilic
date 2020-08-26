@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   container: {
     padding: theme.spacing(2),
     paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(7),
+    paddingBottom: theme.spacing(10),
     margin: "auto",
     flexGrow: 1
   }

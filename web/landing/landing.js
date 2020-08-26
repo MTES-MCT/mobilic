@@ -22,11 +22,7 @@ function _Landing({ width }) {
   const classes = useStyles();
   return [
     <Header key={1} />,
-    <Container
-      key={2}
-      className="no-margin-no-padding scrollable"
-      maxWidth={false}
-    >
+    <Container key={2} className="no-margin-no-padding" maxWidth={false}>
       <Container className={classes.section} maxWidth={false}>
         <Typography variant="h2">👋</Typography>
         <Typography variant="h2">Bienvenue sur MobiLIC !</Typography>

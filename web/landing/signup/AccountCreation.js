@@ -97,10 +97,6 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             </Typography>
           )}
           <Section title="via FranceConnect">
-            <Typography style={{ fontStyle: "italic" }} variant="body2">
-              FranceConnect est la solution proposée par l’État pour sécuriser
-              et simplifier la connexion à vos services en ligne.
-            </Typography>
             <FranceConnectContainer
               onButtonClick={() => {
                 const callbackUrl = buildCallbackUrl(
@@ -110,6 +106,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                 );
                 window.location.href = buildFranceConnectUrl(callbackUrl);
               }}
+              helperText="FranceConnect est la solution proposée par l’État pour sécuriser
+              et simplifier la connexion à vos services en ligne."
             />
           </Section>
 

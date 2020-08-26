@@ -15,6 +15,13 @@ import {
   buildFranceConnectUrl
 } from "common/utils/franceConnect";
 import { FranceConnectContainer } from "../common/FranceConnect";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+
+const useStyles = makeStyles(theme => ({
+  container: {
+    paddingBottom: theme.spacing(10)
+  }
+}));
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
@@ -45,9 +52,15 @@ export default function Login() {
     setLoading(false);
   };
 
+  const classes = useStyles();
+
   return [
     <Header key={1} />,
-    <Container key={2} className="centered" maxWidth="xs">
+    <Container
+      key={2}
+      className={`centered ${classes.container}`}
+      maxWidth="xs"
+    >
       <Box my={4}>
         <Typography variant="h3">Connexion</Typography>
       </Box>
@@ -58,6 +71,7 @@ export default function Login() {
           const callbackUrl = buildCallbackUrl();
           window.location.href = buildFranceConnectUrl(callbackUrl);
         }}
+        helperText="FranceConnect est la solution proposée par l’État pour simplifier la connexion à vos services en ligne. Vous pouvez vous connecter à votre compte via FranceConnect."
       />
       <Typography>ou</Typography>
       <Box my={3}>
