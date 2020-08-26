@@ -87,12 +87,12 @@ export default function Signup() {
               <EmailSelection />
             </Route>
           )}
-          {userId && userInfo.email && (
+          {userId && (
             <Route key="company" path={`${path}/company`}>
               <CompanySignup />
             </Route>
           )}
-          {userId && userInfo.email && (
+          {userId && (
             <Route key="completion" path={`${path}/complete`}>
               <Complete />
             </Route>

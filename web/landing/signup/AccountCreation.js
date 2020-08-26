@@ -17,6 +17,7 @@ import {
   buildFranceConnectUrl
 } from "common/utils/franceConnect";
 import { FranceConnectContainer } from "../../common/FranceConnect";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -32,6 +33,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const api = useApi();
   const history = useHistory();
   const store = useStoreSyncedWithLocalStorage();
+  const modals = useModals();
 
   React.useEffect(() => store.setIsSigningUp(), []);
 
@@ -40,11 +42,31 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
 
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
     e.preventDefault();
-    setLoading(true);
+    modals.open("cgu", {
+      handleAccept: async () =>
+        await _createAccount(
+          employeeInvite,
+          isAdmin,
+          email,
+          password,
+          firstName,
+          lastName
+        ),
+      handleReject: () => {}
+    });
+  };
+
+  const _createAccount = async (
+    employeeInvite,
+    isAdmin,
+    email,
+    password,
+    firstName,
+    lastName
+  ) => {
     try {
       const signupPayload = {
         email,
@@ -72,7 +94,6 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       setPassword("");
       setError(formatApiError(err));
     }
-    setLoading(false);
   };
 
   return (
@@ -173,14 +194,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                   variant="contained"
                   color="primary"
                   type="submit"
-                  loading={loading}
                   disabled={
-                    !email ||
-                    !password ||
-                    !firstName ||
-                    !lastName ||
-                    loading ||
-                    !!error
+                    !email || !password || !firstName || !lastName || !!error
                   }
                 >
                   M'inscrire

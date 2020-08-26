@@ -12,6 +12,7 @@ import Container from "@material-ui/core/Container";
 import { formatApiError } from "common/utils/errors";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Section } from "../../common/Section";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -27,6 +28,7 @@ export function EmailSelection() {
   const api = useApi();
   const history = useHistory();
   const store = useStoreSyncedWithLocalStorage();
+  const modals = useModals();
 
   React.useEffect(() => store.setIsSigningUp(), []);
 
@@ -44,8 +46,15 @@ export function EmailSelection() {
     setIsAdmin(!!admin);
   }, [location]);
 
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
     e.preventDefault();
+    modals.open("cgu", {
+      handleAccept: async () => await _createLogin(email, password),
+      handleReject: () => {}
+    });
+  };
+
+  const _createLogin = async (email, password) => {
     setLoading(true);
     try {
       const payload = {

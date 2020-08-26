@@ -26,7 +26,7 @@ export function LoadingButton(props) {
   return (
     <Button
       onClick={props.onClick ? onClick : null}
-      {...omit(props, "loading")}
+      {...omit(props, ["loading", "onClick"])}
       disabled={props.disabled || isLoading}
     >
       <span style={{ position: "relative", visibility: isLoading && "hidden" }}>

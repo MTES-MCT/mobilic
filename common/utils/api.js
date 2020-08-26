@@ -729,7 +729,6 @@ class Api {
 
   async logout(logoutFromFC = true) {
     const fcToken = this.store.fcToken();
-    console.log(fcToken);
     if (fcToken && logoutFromFC) {
       window.location.href = buildFCLogoutUrl(fcToken);
     } else {
