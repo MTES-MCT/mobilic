@@ -15,6 +15,9 @@ import { LoadingButton } from "common/components/LoadingButton";
 import { formatApiError } from "common/utils/errors";
 import { Section } from "../../common/Section";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormGroup from "@material-ui/core/FormGroup";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -62,6 +65,7 @@ export function CompanySignup() {
   const [facilities, setFacilities] = React.useState(null);
   const [apiError, setApiError] = React.useState("");
   const [sirenError, setSirenError] = React.useState(false);
+  const [claimedRights, setClaimedRights] = React.useState(false);
 
   const [signupError, setSignupError] = React.useState("");
 
@@ -97,6 +101,7 @@ export function CompanySignup() {
     setSignupError("");
     setLoadingSirenInfo(true);
     setShowUsualName(false);
+    setClaimedRights(false);
     try {
       const sirenResponse = await api.graphQlQuery(
         SIREN_QUERY,
@@ -183,6 +188,7 @@ export function CompanySignup() {
                     setSignupError("");
                     setFacilities(null);
                     setShowUsualName(false);
+                    setClaimedRights(false);
                     const newSirenValue = e.target.value.replace(/\s/g, "");
                     setSiren(newSirenValue);
                     setSirenError(!validateSiren(newSirenValue));
@@ -314,12 +320,25 @@ export function CompanySignup() {
                   value={usualName}
                   onChange={e => setUsualName(e.target.value.trimLeft())}
                 />
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        required
+                        color="primary"
+                        checked={claimedRights}
+                        onChange={() => setClaimedRights(!claimedRights)}
+                      />
+                    }
+                    label="J'atteste être habilité(e) à administrer l'entreprise"
+                  />
+                </FormGroup>
                 <LoadingButton
                   className={classes.verticalFormButton}
                   variant="contained"
                   color="primary"
                   type="submit"
-                  disabled={!siren || !usualName}
+                  disabled={!siren || !usualName || !claimedRights}
                   loading={loadingCompanySignup}
                 >
                   Terminer
