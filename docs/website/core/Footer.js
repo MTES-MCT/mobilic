@@ -57,7 +57,7 @@ class Footer extends React.Component {
           className="fbOpenSource"
         >
           <img
-            src={`${this.props.config.baseUrl}img/marianne.svg`}
+            src={`${this.props.config.baseUrl}img/mtes.svg`}
             alt="Fabrique Numérique"
             width="170"
             height="45"

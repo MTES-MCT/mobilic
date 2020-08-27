@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link as RouterLink } from "react-router-dom";
+import MaterialLink from "@material-ui/core/Link";
 
 export function LinkButton(props) {
   const history = useHistory();
@@ -14,4 +15,11 @@ export function LinkButton(props) {
       {...props}
     />
   );
+}
+
+export function Link(props) {
+  if (props.href) {
+    return <MaterialLink {...props} />;
+  }
+  return <MaterialLink component={RouterLink} {...props} />;
 }

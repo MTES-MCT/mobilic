@@ -8,6 +8,7 @@ import { LoadingButton } from "common/components/LoadingButton";
 import ReactMarkdown from "react-markdown";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
 
 const useStyles = makeStyles(theme => ({
   p: {
@@ -16,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function CGUModal({ open, handleClose, handleAccept, handleReject }) {
+function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
   const [md, setMd] = React.useState(null);
   const [disabledAccept, setDisabledAccept] = React.useState(true);
 
@@ -41,6 +42,7 @@ export function CGUModal({ open, handleClose, handleAccept, handleReject }) {
       open={open}
       scroll="paper"
       fullWidth
+      fullScreen={isWidthDown("xs", width)}
       maxWidth="md"
     >
       <DialogTitle disableTypography>
@@ -78,29 +80,33 @@ export function CGUModal({ open, handleClose, handleAccept, handleReject }) {
           <CircularProgress color="primary" />
         )}
       </DialogContent>
-      <DialogActions>
-        <LoadingButton
-          variant="contained"
-          color="primary"
-          onClick={async () => {
-            await handleAccept();
-            handleClose();
-          }}
-          disabled={disabledAccept}
-        >
-          Accepter
-        </LoadingButton>
-        <LoadingButton
-          variant="outlined"
-          color="primary"
-          onClick={async () => {
-            await handleReject();
-            handleClose();
-          }}
-        >
-          Refuser
-        </LoadingButton>
-      </DialogActions>
+      {handleAccept && (
+        <DialogActions>
+          <LoadingButton
+            variant="contained"
+            color="primary"
+            onClick={async () => {
+              await handleAccept();
+              handleClose();
+            }}
+            disabled={disabledAccept}
+          >
+            Accepter
+          </LoadingButton>
+          <LoadingButton
+            variant="outlined"
+            color="primary"
+            onClick={async () => {
+              await handleReject();
+              handleClose();
+            }}
+          >
+            Refuser
+          </LoadingButton>
+        </DialogActions>
+      )}
     </Dialog>
   );
 }
+
+export const CGUModal = withWidth()(_CGUModal);

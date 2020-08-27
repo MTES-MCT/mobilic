@@ -42,7 +42,8 @@ const baseOptions = {
     },
     background: {
       default: "#ebeff3",
-      paper: "#fff"
+      paper: "#fff",
+      dark: "#26353f"
     },
     text: {
       primary: "#26353f"

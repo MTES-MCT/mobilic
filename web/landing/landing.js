@@ -4,79 +4,326 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
-import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import { Header } from "../common/Header";
-import { LinkButton } from "../common/LinkButton";
+import { Link, LinkButton } from "../common/LinkButton";
+import Hidden from "@material-ui/core/Hidden";
+import {
+  FabNumIcon,
+  ManagerImage,
+  MtesIcon,
+  SoftwareImage,
+  WorkerImage
+} from "common/utils/icons";
+import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
+import BackgroundImage from "common/assets/images/vans.png";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   whiteSection: {
     backgroundColor: theme.palette.background.paper
   },
   section: {
-    padding: theme.spacing(10),
+    paddingTop: theme.spacing(10),
+    paddingBottom: theme.spacing(10),
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(5),
     margin: 0
+  },
+  darkSection: {
+    backgroundColor: theme.palette.background.dark,
+    color: theme.palette.primary.contrastText
+  },
+  sectionTitle: {
+    paddingBottom: theme.spacing(10)
+  },
+  inner: {
+    margin: "auto",
+    padding: 0
+  },
+  footerLinksSection: {
+    textAlign: "left"
+  },
+  footerLinksSectionTitle: {
+    paddingBottom: theme.spacing(4)
+  },
+  footerLink: {
+    paddingBottom: theme.spacing(1)
+  },
+  bgImage: {
+    background: `url(${BackgroundImage}) 50%`,
+    backgroundSize: "cover"
   }
 }));
 
-function _Landing({ width }) {
+function _Showcase({
+  image,
+  imageDescription,
+  imagePosition,
+  descriptionTitle,
+  descriptionContent,
+  width
+}) {
+  const Image = props => (
+    <Grid container direction="column" spacing={1} alignItems="center">
+      <Grid item>{image}</Grid>
+      <Grid item>
+        <Typography className="bold" variant="body1" color="primary">
+          {imageDescription}
+        </Typography>
+      </Grid>
+    </Grid>
+  );
+
+  const Description = props => [
+    <Typography align="left" key={0} className="bold">
+      {descriptionTitle}
+    </Typography>,
+    <Typography align="left" key={1}>
+      {descriptionContent}
+    </Typography>
+  ];
+
+  const leftAlignImage = isWidthDown("xs", width) || imagePosition === "left";
+
+  return (
+    <Grid
+      container
+      alignItems="center"
+      wrap="noWrap"
+      direction="row"
+      spacing={4}
+      justify="space-between"
+    >
+      <Grid item xs>
+        {leftAlignImage ? <Image /> : <Description />}
+      </Grid>
+      <Grid item xs>
+        {leftAlignImage ? <Description /> : <Image />}
+      </Grid>
+    </Grid>
+  );
+}
+
+const Showcase = withWidth()(_Showcase);
+
+export function Landing() {
   const classes = useStyles();
   return [
     <Header key={1} />,
     <Container key={2} className="no-margin-no-padding" maxWidth={false}>
-      <Container className={classes.section} maxWidth={false}>
-        <Typography variant="h2">👋</Typography>
-        <Typography variant="h2">Bienvenue sur MobiLIC !</Typography>
-        {isWidthUp("md", width) && (
-          <Box mt={2}>
-            <Typography variant="h5" style={{ fontWeight: "normal" }}>
-              Mobilic est la plateforme gouvernementale de suivi du temps de
-              travail dans le transport
-            </Typography>
-          </Box>
-        )}
+      <Container
+        className={`${classes.section} ${classes.bgImage}`}
+        maxWidth={false}
+      >
+        <Container maxWidth="lg" className={classes.inner}>
+          <Grid container direction="column" alignItems="center" spacing={2}>
+            <Grid item className={classes.whiteSection}>
+              <Typography variant="h2">👋</Typography>
+              <Typography variant="h2">Bienvenue sur MobiLIC !</Typography>
+            </Grid>
+            <Hidden smDown>
+              <Grid item className={classes.whiteSection}>
+                <Box mt={2}>
+                  <Typography variant="h5" style={{ fontWeight: "normal" }}>
+                    Mobilic est la plateforme gouvernementale de suivi du temps
+                    de travail dans le transport
+                  </Typography>
+                </Box>
+              </Grid>
+            </Hidden>
+          </Grid>
+        </Container>
       </Container>
       <Container
         className={`${classes.section} ${classes.whiteSection}`}
         maxWidth={false}
       >
-        <Grid container spacing={10} justify="space-around">
-          <Grid item md={4}>
-            <Grid container spacing={2} direction="column" alignItems="stretch">
-              <Grid item>
-                <Typography>
-                  Je suis un travailleur mobile ou un gestionnaire d'une
-                  entreprise de transport
-                </Typography>
+        <Container maxWidth="lg" className={classes.inner}>
+          <Grid container spacing={10} justify="space-around">
+            <Grid item md={4}>
+              <Grid
+                container
+                spacing={2}
+                direction="column"
+                alignItems="stretch"
+              >
+                <Grid item>
+                  <Typography>
+                    Je suis un travailleur mobile ou un gestionnaire d'une
+                    entreprise de transport
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <LinkButton
+                    variant="contained"
+                    color="primary"
+                    href="/signup"
+                  >
+                    M'inscrire
+                  </LinkButton>
+                </Grid>
               </Grid>
-              <Grid item>
-                <LinkButton variant="contained" color="primary" href="/signup">
-                  M'inscrire
-                </LinkButton>
+            </Grid>
+            <Grid item md={4}>
+              <Grid
+                container
+                spacing={2}
+                direction="column"
+                alignItems="stretch"
+              >
+                <Grid item style={{ position: "relative" }}>
+                  <Typography
+                    style={{ position: "absolute", left: 0, right: 0 }}
+                  >
+                    J'ai déjà un compte Mobilic et je souhaite me connecter
+                  </Typography>
+                  <Typography className="hidden">
+                    Je suis un travailleur mobile ou un gestionnaire d'une
+                    entreprise de transport
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <LinkButton variant="contained" color="primary" href="/login">
+                    Me connecter
+                  </LinkButton>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
-          <Grid item md={4}>
-            <Grid container spacing={2} direction="column" alignItems="stretch">
-              <Grid item style={{ position: "relative" }}>
-                <Typography style={{ position: "absolute", left: 0, right: 0 }}>
-                  J'ai déjà un compte Mobilic et je souhaite me connecter
-                </Typography>
-                <Typography className="hidden">
-                  Je suis un travailleur mobile ou un gestionnaire d'une
-                  entreprise de transport
-                </Typography>
-              </Grid>
-              <Grid item>
-                <LinkButton variant="contained" color="primary" href="/login">
-                  Me connecter
-                </LinkButton>
-              </Grid>
+        </Container>
+      </Container>
+      <Container className={classes.section} maxWidth={false}>
+        <Container maxWidth="md" className={classes.inner}>
+          <Typography variant="h3" className={classes.sectionTitle}>
+            Mobilic ... 🤔 c'est quoi ? C'est pour qui ?
+          </Typography>
+          <Grid container direction="column" spacing={10} alignItems="stretch">
+            <Grid item xs={12}>
+              <Showcase
+                image={<WorkerImage height={200} width={200} />}
+                imagePosition="left"
+                imageDescription="Travailleur mobile"
+                descriptionTitle="Suivre mon temps de travail et être mieux informé de mes droits depuis mon téléphone"
+                descriptionContent={
+                  <ul>
+                    <li>
+                      via l'outil Mobilic d'enregistrement du temps de travail
+                    </li>
+                    ou
+                    <li>
+                      par l'intermédiaire du logiciel métier de mon entreprise
+                    </li>
+                  </ul>
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Showcase
+                image={<ManagerImage height={200} width={200} />}
+                imagePosition="right"
+                imageDescription="Gestionnaire"
+                descriptionTitle="Gérer les données de temps de travail de mon entreprise sans prise de tête ni paperasse"
+                descriptionContent={
+                  <ul>
+                    <li>via l'interface de gestion Mobilic</li>
+                    ou
+                    <li>
+                      par l'intermédiaire du logiciel métier de mon entreprise
+                    </li>
+                  </ul>
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Showcase
+                image={<SoftwareImage height={200} width={200} />}
+                imagePosition="left"
+                imageDescription="Logiciel métier"
+                descriptionTitle="Soumettre et récupérer les données de travail qui font foi auprès de l'administration"
+              />
             </Grid>
           </Grid>
-        </Grid>
+        </Container>
+      </Container>
+      <Container
+        className={`${classes.section} ${classes.darkSection}`}
+        maxWidth={false}
+      >
+        <Container maxWidth="md" className={classes.inner}>
+          <Footer />
+        </Container>
       </Container>
     </Container>
   ];
 }
 
-export const Landing = withWidth()(_Landing);
+function Footer() {
+  const classes = useStyles();
+  const modals = useModals();
+
+  return (
+    <Grid
+      container
+      spacing="10"
+      justify="space-between"
+      alignItems="flex-start"
+    >
+      <Grid item sm={6} container alignItems="center" direction="column">
+        <Grid item>
+          <MtesIcon scale={0.7} />
+        </Grid>
+        <Grid
+          item
+          container
+          wrap="nowrap"
+          spacing={2}
+          direction="row"
+          alignItems="flex-start"
+        >
+          <Hidden xsDown>
+            <Grid item>
+              <FabNumIcon scale={0.5} />
+            </Grid>
+          </Hidden>
+          <Grid item>
+            <Typography align="left">
+              Mobilic est un service numérique de l'Etat incubé à la Fabrique
+              Numérique du Ministère de la Transition écologique et solidaire,
+              membre du réseau d’incubateurs beta.gouv.fr
+            </Typography>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid item className={classes.footerLinksSection}>
+        <Typography variant="h4" className={classes.footerLinksSectionTitle}>
+          A propos de Mobilic
+        </Typography>
+        <Typography className={classes.footerLink}>
+          <Link href="mailto:mobilic@beta.gouv.fr" color="inherit">
+            Nous contacter
+          </Link>
+        </Typography>
+        <Typography className={classes.footerLink}>
+          <Link to="/" color="inherit">
+            Foire aux questions
+          </Link>
+        </Typography>
+        <Typography className={classes.footerLink}>
+          <Link href="/developers/docs" color="inherit">
+            Espace développeurs
+          </Link>
+        </Typography>
+        <Typography className={classes.footerLink}>
+          <Link
+            component="button"
+            color="inherit"
+            onClick={() => modals.open("cgu")}
+            variant="body1"
+          >
+            Conditions générales d'utilisation
+          </Link>
+        </Typography>
+      </Grid>
+    </Grid>
+  );
+}
