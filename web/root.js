@@ -40,6 +40,7 @@ import {
   useLoadingScreen
 } from "common/utils/loading";
 import { getAccessibleRoutes, getFallbackRoute } from "./common/routes";
+import { ScrollToTop } from "common/utils/scroll";
 
 export default function Root() {
   return (
@@ -56,6 +57,7 @@ export default function Root() {
                 <ModalProvider modalDict={MODAL_DICT}>
                   <LoadingScreenContextProvider>
                     <ActionsContextProvider>
+                      <ScrollToTop />
                       <_Root />
                     </ActionsContextProvider>
                   </LoadingScreenContextProvider>

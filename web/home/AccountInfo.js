@@ -24,6 +24,7 @@ import { formatApiError } from "common/utils/errors";
 import { useModals } from "common/utils/modals";
 import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
+import { ScrollableContainer } from "common/utils/scroll";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -190,94 +191,98 @@ export function Home() {
 
   return [
     <Header key={0} />,
-    <Container key={1} className={classes.container} maxWidth="md">
-      <Paper>
-        <Container
-          className={`centered ${classes.innerContainer}`}
-          maxWidth="sm"
-        >
-          <Typography className={classes.title} variant="h3">
-            Mes informations
-          </Typography>
-
-          <Section title="Moi">
-            <Grid container wrap="wrap" spacing={4}>
-              <Grid item xs={12}>
-                <InfoItem
-                  name="Identifiant Mobilic"
-                  value={store.userId()}
-                  bold
-                  info="Cet identifiant est à communiquer à votre employeur afin qu'il vous rattache à l'entreprise"
-                />
-              </Grid>
-              <Grid item md={6} zeroMinWidth>
-                <InfoItem
-                  name="Nom"
-                  value={formatPersonName(store.userInfo())}
-                />
-              </Grid>
-              <Grid item md={6} zeroMinWidth>
-                <InfoItem name="Email" value={store.userInfo().email} />
-              </Grid>
-            </Grid>
-          </Section>
-          <Divider />
-          <Section
-            title={
-              employments.length > 1 ? "Mes rattachements" : "Mon entreprise"
-            }
+    <ScrollableContainer key={1}>
+      <Container className={classes.container} maxWidth="md">
+        <Paper>
+          <Container
+            className={`centered ${classes.innerContainer}`}
+            maxWidth="sm"
           >
-            {secondaryEmployments.length > 0 && [
-              <Accordion
-                key={0}
-                expanded={expandPrimaryCompany}
-                onChange={() => setExpandPrimaryCompany(!expandPrimaryCompany)}
-              >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography className="bold">
-                    Entreprise principale
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {primaryEmployment ? (
-                    <EmploymentInfo employment={primaryEmployment} />
-                  ) : (
-                    <NoPrimaryEmploymentAlert />
-                  )}
-                </AccordionDetails>
-              </Accordion>,
-              <Accordion
-                key={1}
-                expanded={expandSecondaryCompanies}
-                onChange={() =>
-                  setExpandSecondaryCompanies(!expandSecondaryCompanies)
-                }
-              >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography className="bold">
-                    Entreprises secondaires
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {secondaryEmployments.map((e, index) => (
-                    <Paper key={index} variant="outlined">
-                      <Box p={2}>
-                        <EmploymentInfo employment={e} />
-                      </Box>
-                    </Paper>
-                  ))}
-                </AccordionDetails>
-              </Accordion>
-            ]}
-            {secondaryEmployments.length === 0 && !primaryEmployment && (
-              <NoPrimaryEmploymentAlert />
-            )}
-            {secondaryEmployments.length === 0 && primaryEmployment && (
-              <EmploymentInfo employment={primaryEmployment} />
-            )}
-          </Section>
-        </Container>
-      </Paper>
-    </Container>
+            <Typography className={classes.title} variant="h3">
+              Mes informations
+            </Typography>
+
+            <Section title="Moi">
+              <Grid container wrap="wrap" spacing={4}>
+                <Grid item xs={12}>
+                  <InfoItem
+                    name="Identifiant Mobilic"
+                    value={store.userId()}
+                    bold
+                    info="Cet identifiant est à communiquer à votre employeur afin qu'il vous rattache à l'entreprise"
+                  />
+                </Grid>
+                <Grid item md={6} zeroMinWidth>
+                  <InfoItem
+                    name="Nom"
+                    value={formatPersonName(store.userInfo())}
+                  />
+                </Grid>
+                <Grid item md={6} zeroMinWidth>
+                  <InfoItem name="Email" value={store.userInfo().email} />
+                </Grid>
+              </Grid>
+            </Section>
+            <Divider />
+            <Section
+              title={
+                employments.length > 1 ? "Mes rattachements" : "Mon entreprise"
+              }
+            >
+              {secondaryEmployments.length > 0 && [
+                <Accordion
+                  key={0}
+                  expanded={expandPrimaryCompany}
+                  onChange={() =>
+                    setExpandPrimaryCompany(!expandPrimaryCompany)
+                  }
+                >
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography className="bold">
+                      Entreprise principale
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {primaryEmployment ? (
+                      <EmploymentInfo employment={primaryEmployment} />
+                    ) : (
+                      <NoPrimaryEmploymentAlert />
+                    )}
+                  </AccordionDetails>
+                </Accordion>,
+                <Accordion
+                  key={1}
+                  expanded={expandSecondaryCompanies}
+                  onChange={() =>
+                    setExpandSecondaryCompanies(!expandSecondaryCompanies)
+                  }
+                >
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography className="bold">
+                      Entreprises secondaires
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {secondaryEmployments.map((e, index) => (
+                      <Paper key={index} variant="outlined">
+                        <Box p={2}>
+                          <EmploymentInfo employment={e} />
+                        </Box>
+                      </Paper>
+                    ))}
+                  </AccordionDetails>
+                </Accordion>
+              ]}
+              {secondaryEmployments.length === 0 && !primaryEmployment && (
+                <NoPrimaryEmploymentAlert />
+              )}
+              {secondaryEmployments.length === 0 && primaryEmployment && (
+                <EmploymentInfo employment={primaryEmployment} />
+              )}
+            </Section>
+          </Container>
+        </Paper>
+      </Container>
+    </ScrollableContainer>
   ];
 }

@@ -9,6 +9,7 @@ import ReactMarkdown from "react-markdown";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles(theme => ({
   p: {
@@ -80,8 +81,8 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
           <CircularProgress color="primary" />
         )}
       </DialogContent>
-      {handleAccept && (
-        <DialogActions>
+      <DialogActions>
+        {handleAccept && (
           <LoadingButton
             variant="contained"
             color="primary"
@@ -93,18 +94,25 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
           >
             Accepter
           </LoadingButton>
+        )}
+        {handleAccept && (
           <LoadingButton
             variant="outlined"
             color="primary"
             onClick={async () => {
-              await handleReject();
+              if (handleReject) await handleReject();
               handleClose();
             }}
           >
             Refuser
           </LoadingButton>
-        </DialogActions>
-      )}
+        )}
+        {!handleAccept && (
+          <Button variant="outlined" color="primary" onClick={handleClose}>
+            Fermer
+          </Button>
+        )}
+      </DialogActions>
     </Dialog>
   );
 }

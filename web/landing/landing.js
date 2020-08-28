@@ -17,6 +17,7 @@ import {
 import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
 import BackgroundImage from "common/assets/images/vans.png";
 import { useModals } from "common/utils/modals";
+import { ScrollableContainer } from "common/utils/scroll";
 
 const useStyles = makeStyles(theme => ({
   whiteSection: {
@@ -78,9 +79,7 @@ function _Showcase({
     <Typography align="left" key={0} className="bold">
       {descriptionTitle}
     </Typography>,
-    <Typography align="left" key={1}>
-      {descriptionContent}
-    </Typography>
+    <React.Fragment key={1}>{descriptionContent}</React.Fragment>
   ];
 
   const leftAlignImage = isWidthDown("xs", width) || imagePosition === "left";
@@ -89,7 +88,6 @@ function _Showcase({
     <Grid
       container
       alignItems="center"
-      wrap="noWrap"
       direction="row"
       spacing={4}
       justify="space-between"
@@ -110,7 +108,7 @@ export function Landing() {
   const classes = useStyles();
   return [
     <Header key={1} />,
-    <Container key={2} className="no-margin-no-padding" maxWidth={false}>
+    <ScrollableContainer key={2}>
       <Container
         className={`${classes.section} ${classes.bgImage}`}
         maxWidth={false}
@@ -126,7 +124,7 @@ export function Landing() {
                 <Box mt={2}>
                   <Typography variant="h5" style={{ fontWeight: "normal" }}>
                     Mobilic est la plateforme gouvernementale de suivi du temps
-                    de travail dans le transport
+                    de travail dans le transport routier légerx
                   </Typography>
                 </Box>
               </Grid>
@@ -205,7 +203,7 @@ export function Landing() {
                 imageDescription="Travailleur mobile"
                 descriptionTitle="Suivre mon temps de travail et être mieux informé de mes droits depuis mon téléphone"
                 descriptionContent={
-                  <ul>
+                  <ul style={{ textAlign: "left" }}>
                     <li>
                       via l'outil Mobilic d'enregistrement du temps de travail
                     </li>
@@ -224,7 +222,7 @@ export function Landing() {
                 imageDescription="Gestionnaire"
                 descriptionTitle="Gérer les données de temps de travail de mon entreprise sans prise de tête ni paperasse"
                 descriptionContent={
-                  <ul>
+                  <ul style={{ textAlign: "left" }}>
                     <li>via l'interface de gestion Mobilic</li>
                     ou
                     <li>
@@ -253,7 +251,7 @@ export function Landing() {
           <Footer />
         </Container>
       </Container>
-    </Container>
+    </ScrollableContainer>
   ];
 }
 
@@ -264,7 +262,7 @@ function Footer() {
   return (
     <Grid
       container
-      spacing="10"
+      spacing={10}
       justify="space-between"
       alignItems="flex-start"
     >

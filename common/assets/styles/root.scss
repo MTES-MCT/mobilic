@@ -182,6 +182,11 @@
   overflow-y: auto;
 }
 
+#scrollable-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .unshrinkable {
   flex-shrink: 0;
 }
