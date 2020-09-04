@@ -307,7 +307,7 @@ function Footer() {
           </Link>
         </Typography>
         <Typography className={classes.footerLink}>
-          <Link href="/developers/docs" color="inherit">
+          <Link href="/developers/docs/intro" color="inherit">
             Espace développeurs
           </Link>
         </Typography>
