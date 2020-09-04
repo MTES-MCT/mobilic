@@ -6,12 +6,12 @@ export const ADMIN_VIEWS = [
   {
     label: "Entreprise",
     route: "/company",
-    component: <CompanyPanel />
+    component: <CompanyPanel />,
+    isDefault: true
   },
   {
     label: "Activités",
     route: "/activities",
-    isDefault: true,
     component: <ActivityPanel />
   }
 ];
