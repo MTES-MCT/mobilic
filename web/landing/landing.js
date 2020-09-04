@@ -124,7 +124,7 @@ export function Landing() {
                 <Box mt={2}>
                   <Typography variant="h5" style={{ fontWeight: "normal" }}>
                     Mobilic est la plateforme gouvernementale de suivi du temps
-                    de travail dans le transport routier légerx
+                    de travail dans le transport routier léger
                   </Typography>
                 </Box>
               </Grid>
