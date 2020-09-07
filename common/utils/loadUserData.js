@@ -22,6 +22,7 @@ export function syncUser(userPayload, store) {
     firstName,
     lastName,
     email,
+    hasConfirmedEmail,
     missions,
     currentEmployments,
     company
@@ -43,7 +44,8 @@ export function syncUser(userPayload, store) {
       store.setUserInfo({
         firstName,
         lastName,
-        email
+        email,
+        hasConfirmedEmail
       })
     );
   missions && syncActions.push(store.syncEntity(missionData, "missions"));

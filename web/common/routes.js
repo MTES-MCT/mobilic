@@ -42,7 +42,7 @@ export const ROUTES = [
     path: "/signup",
     label: "Inscription",
     accessible: ({ userInfo, isSigningUp }) =>
-      !userInfo.id || !userInfo.email || isSigningUp,
+      !userInfo.id || !userInfo.hasConfirmedEmail || isSigningUp,
     component: <Signup />
   },
   {
@@ -91,16 +91,16 @@ export const ROUTES = [
 ];
 
 export function getFallbackRoute({ userInfo, companyInfo }) {
-  if (userInfo.id && userInfo.email && companyInfo.admin) {
+  if (userInfo.id && userInfo.hasConfirmedEmail && companyInfo.admin) {
     return "/admin";
   }
-  if (userInfo.id && userInfo.email && companyInfo.id) {
+  if (userInfo.id && userInfo.hasConfirmedEmail && companyInfo.id) {
     return "/app";
   }
-  if (userInfo.id && userInfo.email) {
+  if (userInfo.id && userInfo.hasConfirmedEmail) {
     return "/home";
   }
-  if (userInfo.id && !userInfo.email) {
+  if (userInfo.id && !userInfo.hasConfirmedEmail) {
     return "/signup/user_login";
   }
   return "/";

@@ -75,11 +75,12 @@ export const USER_SIGNUP_MUTATION = gql`
   }
 `;
 
-export const CREATE_LOGIN_MUTATION = gql`
-  mutation createLogin($email: String!, $password: String!) {
+export const CONFIRM_FC_EMAIL_MUTATION = gql`
+  mutation confirmFcEmail($email: String!, $password: String) {
     signUp {
-      createLogin(email: $email, password: $password) {
+      confirmFcEmail(email: $email, password: $password) {
         email
+        hasConfirmedEmail
       }
     }
   }
@@ -118,6 +119,7 @@ export const USER_QUERY = gql`
       firstName
       lastName
       email
+      hasConfirmedEmail
       isCompanyAdmin
       company {
         id

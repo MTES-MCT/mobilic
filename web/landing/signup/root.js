@@ -54,10 +54,10 @@ export default function Signup() {
   const userInfo = store.userInfo();
 
   function defaultRoute() {
-    if (userId && userInfo.email) {
+    if (userId && userInfo.hasConfirmedEmail) {
       return "/signup/company";
     }
-    if (userId && !userInfo.email) {
+    if (userId && !userInfo.hasConfirmedEmail) {
       return "/signup/user_login";
     }
     if (!userId) {
@@ -84,7 +84,7 @@ export default function Signup() {
                 <AccountCreation isAdmin={true} />
               </Route>
             )}
-            {userId && !userInfo.email && (
+            {userId && !userInfo.hasConfirmedEmail && (
               <Route key="user_login" path={`${path}/user_login`}>
                 <EmailSelection />
               </Route>
