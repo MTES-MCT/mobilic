@@ -395,9 +395,21 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         this.setItems({ userInfo: {}, employments: [] }, resolve);
       })
     ]);
-  setUserInfo = ({ firstName, lastName, email, hasConfirmedEmail }) =>
+  setUserInfo = ({
+    firstName,
+    lastName,
+    email,
+    hasConfirmedEmail,
+    hasActivatedEmail
+  }) =>
     this.setItems({
-      userInfo: { firstName, lastName, email, hasConfirmedEmail }
+      userInfo: {
+        firstName,
+        lastName,
+        email,
+        hasConfirmedEmail,
+        hasActivatedEmail
+      }
     });
 
   setEmployeeInvite = employment =>

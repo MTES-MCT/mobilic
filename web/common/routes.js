@@ -23,13 +23,15 @@ export const ROUTES = [
   {
     path: "/app",
     label: "Saisie de temps",
-    accessible: ({ userInfo, companyInfo }) => userInfo.id && companyInfo.id,
+    accessible: ({ userInfo, companyInfo }) =>
+      userInfo.hasActivatedEmail && userInfo.id && companyInfo.id,
     component: <App ScreenComponent={AppScreen} />
   },
   {
     path: "/admin",
     label: "Gestion entreprise",
-    accessible: ({ userInfo, companyInfo }) => userInfo.id && companyInfo.admin,
+    accessible: ({ userInfo, companyInfo }) =>
+      userInfo.hasActivatedEmail && userInfo.id && companyInfo.admin,
     component: <Admin />
   },
   {
@@ -91,10 +93,20 @@ export const ROUTES = [
 ];
 
 export function getFallbackRoute({ userInfo, companyInfo }) {
-  if (userInfo.id && userInfo.hasConfirmedEmail && companyInfo.admin) {
+  if (
+    userInfo.id &&
+    userInfo.hasConfirmedEmail &&
+    userInfo.hasActivatedEmail &&
+    companyInfo.admin
+  ) {
     return "/admin";
   }
-  if (userInfo.id && userInfo.hasConfirmedEmail && companyInfo.id) {
+  if (
+    userInfo.id &&
+    userInfo.hasConfirmedEmail &&
+    userInfo.hasActivatedEmail &&
+    companyInfo.id
+  ) {
     return "/app";
   }
   if (userInfo.id && userInfo.hasConfirmedEmail) {

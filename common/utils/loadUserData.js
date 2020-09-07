@@ -23,6 +23,7 @@ export function syncUser(userPayload, store) {
     lastName,
     email,
     hasConfirmedEmail,
+    hasActivatedEmail,
     missions,
     currentEmployments,
     company
@@ -45,7 +46,8 @@ export function syncUser(userPayload, store) {
         firstName,
         lastName,
         email,
-        hasConfirmedEmail
+        hasConfirmedEmail,
+        hasActivatedEmail
       })
     );
   missions && syncActions.push(store.syncEntity(missionData, "missions"));

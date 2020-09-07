@@ -120,6 +120,7 @@ export const USER_QUERY = gql`
       lastName
       email
       hasConfirmedEmail
+      hasActivatedEmail
       isCompanyAdmin
       company {
         id
@@ -243,6 +244,18 @@ export const REDEEM_INVITE_QUERY = gql`
           id
           name
         }
+      }
+    }
+  }
+`;
+
+export const CHANGE_EMAIL_MUTATION = gql`
+  mutation changeEmail($email: String!) {
+    account {
+      changeEmail(email: $email) {
+        email
+        hasConfirmedEmail
+        hasActivatedEmail
       }
     }
   }

@@ -14,6 +14,7 @@ import { HistoryModal } from "./pwa/screens/History";
 import { ExpenditureDialogModal } from "./pwa/components/ExpenditureDialog";
 import { ApiErrorDialogModal } from "./pwa/components/ApiErrorDialog";
 import { CGUModal } from "./landing/cgu";
+import { ChangeEmailModal } from "./home/ChangeEmail";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -31,5 +32,6 @@ export const MODAL_DICT = {
   history: HistoryModal,
   expenditures: ExpenditureDialogModal,
   apiErrorDialog: ApiErrorDialogModal,
-  cgu: CGUModal
+  cgu: CGUModal,
+  changeEmail: ChangeEmailModal
 };
