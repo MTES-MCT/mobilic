@@ -11,6 +11,7 @@ import { RedeemInvite } from "../home/RedeemInvite";
 import { FranceConnectCallback } from "../landing/signup/FranceConnectCallback";
 import OAuth from "../landing/oauth/root";
 import { Logout } from "../landing/logout";
+import { ActivateEmail } from "../landing/signup/ActivateEmail";
 
 export const ROUTES = [
   {
@@ -66,6 +67,13 @@ export const ROUTES = [
     label: "Redeem invite",
     accessible: ({ userInfo }) => !!userInfo.id,
     component: <RedeemInvite />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/activate_email",
+    label: "Activate email",
+    accessible: () => true,
+    component: <ActivateEmail />,
     menuItemFilter: () => false
   },
   {

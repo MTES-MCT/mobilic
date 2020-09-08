@@ -261,6 +261,16 @@ export const CHANGE_EMAIL_MUTATION = gql`
   }
 `;
 
+export const ACTIVATE_EMAIL_MUTATION = gql`
+  mutation activateEmail($token: String!) {
+    signUp {
+      activateEmail(token: $token) {
+        hasActivatedEmail
+      }
+    }
+  }
+`;
+
 export const FRANCE_CONNECT_LOGIN_MUTATION = gql`
   mutation franceConnectLogin(
     $authorizationCode: String!
@@ -753,7 +763,6 @@ class Api {
 
   async checkAuthentication() {
     const userId = this.store.userId();
-    console.log(userId);
     if (!userId) return false;
     try {
       const response = await this.graphQlQuery(CHECK_MUTATION);
