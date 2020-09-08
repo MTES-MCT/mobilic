@@ -32,37 +32,41 @@ export function NewTeamMateModal({ open, handleClose, handleSubmit }) {
       <DialogTitle disableTypography>
         <Typography variant="h4">Nouveau coéquipier</Typography>
       </DialogTitle>
-      <DialogContent>
-        <TextField
-          fullWidth
-          variant="filled"
-          label="Prénom"
-          value={firstName}
-          onChange={e => setFirstName(e.target.value)}
-        />
-        <TextField
-          className={classes.lastNameField}
-          fullWidth
-          variant="filled"
-          label="Nom"
-          value={lastName}
-          onChange={e => setLastName(e.target.value)}
-        />
-      </DialogContent>
-      <DialogActions>
-        <IconButton onClick={handleClose}>
-          <CloseIcon color="error" />
-        </IconButton>
-        <IconButton
-          onClick={() => {
-            handleSubmit(firstName, lastName);
-            handleClose();
-          }}
-          disabled={!firstName || !lastName}
-        >
-          <CheckIcon color="primary" />
-        </IconButton>
-      </DialogActions>
+      <form
+        noValidate
+        autoComplete="off"
+        onSubmit={async e => {
+          e.preventDefault();
+          handleSubmit(firstName, lastName);
+          handleClose();
+        }}
+      >
+        <DialogContent>
+          <TextField
+            fullWidth
+            variant="filled"
+            label="Prénom"
+            value={firstName}
+            onChange={e => setFirstName(e.target.value)}
+          />
+          <TextField
+            className={classes.lastNameField}
+            fullWidth
+            variant="filled"
+            label="Nom"
+            value={lastName}
+            onChange={e => setLastName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <IconButton onClick={handleClose}>
+            <CloseIcon color="error" />
+          </IconButton>
+          <IconButton type="submit" disabled={!firstName || !lastName}>
+            <CheckIcon color="primary" />
+          </IconButton>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 }

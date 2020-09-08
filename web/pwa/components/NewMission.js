@@ -21,40 +21,43 @@ export function NewMissionModal({ open, handleClose, handleContinue }) {
   return (
     <FunnelModal open={open} handleBack={handleClose}>
       <Container className="flex-column-space-between" style={{ flexGrow: 1 }}>
-        <Container
-          className={`day-info-inputs ${funnelModalClasses.slimContainer}`}
-          disableGutters
+        <form
+          noValidate
+          autoComplete="off"
+          onSubmit={async e => {
+            e.preventDefault();
+            const payLoad = { mission, vehicle };
+            await handleContinue(payLoad);
+          }}
         >
-          <Typography variant="h5">
-            Votre mission a-t-elle un nom&nbsp;? (optionnel)
-          </Typography>
-          <TextField
-            fullWidth
-            label="Nom de la mission"
-            variant="filled"
-            value={mission}
-            onChange={e => setMission(e.target.value)}
-          />
-          <Box my={2} />
-          <Typography variant="h5">
-            Utilisez-vous un véhicule&nbsp;? (optionnel){" "}
-          </Typography>
-          <VehicleInput
-            label="Nom ou immatriculation du véhicule"
-            vehicle={vehicle}
-            setVehicle={setVehicle}
-          />
-        </Container>
-        <Box className="cta-container" mb={4}>
-          <MainCtaButton
-            onClick={async () => {
-              const payLoad = { mission, vehicle };
-              await handleContinue(payLoad);
-            }}
+          <Container
+            className={`day-info-inputs ${funnelModalClasses.slimContainer}`}
+            disableGutters
           >
-            Continuer
-          </MainCtaButton>
-        </Box>
+            <Typography variant="h5">
+              Votre mission a-t-elle un nom&nbsp;? (optionnel)
+            </Typography>
+            <TextField
+              fullWidth
+              label="Nom de la mission"
+              variant="filled"
+              value={mission}
+              onChange={e => setMission(e.target.value)}
+            />
+            <Box my={2} />
+            <Typography variant="h5">
+              Utilisez-vous un véhicule&nbsp;? (optionnel){" "}
+            </Typography>
+            <VehicleInput
+              label="Nom ou immatriculation du véhicule"
+              vehicle={vehicle}
+              setVehicle={setVehicle}
+            />
+          </Container>
+          <Box className="cta-container" mb={4}>
+            <MainCtaButton type="submit">Continuer</MainCtaButton>
+          </Box>
+        </form>
       </Container>
     </FunnelModal>
   );

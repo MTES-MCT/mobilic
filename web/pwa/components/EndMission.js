@@ -29,39 +29,42 @@ export function EndMissionModal({ open, handleClose, handleMissionEnd }) {
   return (
     <FunnelModal open={open} handleBack={handleClose}>
       <Container className="flex-column-space-between" style={{ flexGrow: 1 }}>
-        <Container className="flex-column scrollable" disableGutters>
-          <Typography className={funnelModalClasses.title} variant="h5">
-            Avez-vous eu des frais lors de cette mission&nbsp;?
-          </Typography>
-          <Expenditures
-            expenditures={expenditures}
-            setExpenditures={setExpenditures}
-          />
-          <Typography className={funnelModalClasses.title} variant="h5">
-            Avez-vous un commentaire&nbsp;? (optionnel)
-          </Typography>
-          <TextField
-            className={classes.commentInput}
-            fullWidth
-            label="Commentaire"
-            variant="filled"
-            multiline
-            rows={4}
-            rowsMax="10"
-            value={comment}
-            onChange={e => setComment(e.target.value)}
-          />
-        </Container>
-        <Box className="cta-container" mt={2} mb={4}>
-          <MainCtaButton
-            onClick={() => {
-              handleMissionEnd(expenditures, comment);
-              handleClose();
-            }}
-          >
-            Suivant
-          </MainCtaButton>
-        </Box>
+        <form
+          noValidate
+          autoComplete="off"
+          onSubmit={async e => {
+            e.preventDefault();
+            handleMissionEnd(expenditures, comment);
+            handleClose();
+          }}
+        >
+          <Container className="flex-column scrollable" disableGutters>
+            <Typography className={funnelModalClasses.title} variant="h5">
+              Avez-vous eu des frais lors de cette mission&nbsp;?
+            </Typography>
+            <Expenditures
+              expenditures={expenditures}
+              setExpenditures={setExpenditures}
+            />
+            <Typography className={funnelModalClasses.title} variant="h5">
+              Avez-vous un commentaire&nbsp;? (optionnel)
+            </Typography>
+            <TextField
+              className={classes.commentInput}
+              fullWidth
+              label="Commentaire"
+              variant="filled"
+              multiline
+              rows={4}
+              rowsMax="10"
+              value={comment}
+              onChange={e => setComment(e.target.value)}
+            />
+          </Container>
+          <Box className="cta-container" mt={2} mb={4}>
+            <MainCtaButton type="submit">Suivant</MainCtaButton>
+          </Box>
+        </form>
       </Container>
     </FunnelModal>
   );
