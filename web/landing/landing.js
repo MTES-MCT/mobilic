@@ -119,12 +119,12 @@ export function Landing() {
               <Typography variant="h2">👋</Typography>
               <Typography variant="h2">Bienvenue sur MobiLIC !</Typography>
             </Grid>
-            <Hidden smDown>
+            <Hidden xsDown>
               <Grid item className={classes.whiteSection}>
                 <Box mt={2}>
                   <Typography variant="h5" style={{ fontWeight: "normal" }}>
-                    Mobilic est la plateforme gouvernementale de suivi du temps
-                    de travail dans le transport routier léger
+                    Simplifier le suivi du temps de travail dans le transport
+                    routier léger afin de lutter contre le travail illégal
                   </Typography>
                 </Box>
               </Grid>
@@ -201,17 +201,26 @@ export function Landing() {
                 image={<WorkerImage height={200} width={200} />}
                 imagePosition="left"
                 imageDescription="Travailleur mobile"
-                descriptionTitle="Suivre mon temps de travail et être mieux informé de mes droits depuis mon téléphone"
+                descriptionTitle="Suivre mon temps de travail et être mieux informé sur mes droits"
                 descriptionContent={
-                  <ul style={{ textAlign: "left" }}>
-                    <li>
-                      via l'outil Mobilic d'enregistrement du temps de travail
-                    </li>
-                    ou
-                    <li>
-                      par l'intermédiaire du logiciel métier de mon entreprise
-                    </li>
-                  </ul>
+                  <>
+                    <ul style={{ textAlign: "left" }}>
+                      <li style={{ listStyle: "none" }}>
+                        Directement depuis mon téléphone à tout moment
+                      </li>
+                      <li>
+                        via l’interface de Mobilic (si mon entreprise n’utilise
+                        pas de logiciel)
+                      </li>
+                      <li style={{ fontStyle: "italic", listStyle: "none" }}>
+                        ou
+                      </li>
+                      <li>
+                        par l'intermédiaire du logiciel métier de mon entreprise
+                        (connecté à Mobilic)
+                      </li>
+                    </ul>
+                  </>
                 }
               />
             </Grid>
@@ -220,13 +229,17 @@ export function Landing() {
                 image={<ManagerImage height={200} width={200} />}
                 imagePosition="right"
                 imageDescription="Gestionnaire"
-                descriptionTitle="Gérer les données de temps de travail de mon entreprise sans prise de tête ni paperasse"
+                descriptionTitle="Gérer facilement les données de temps de travail des salariés de mon entreprise"
                 descriptionContent={
                   <ul style={{ textAlign: "left" }}>
-                    <li>via l'interface de gestion Mobilic</li>
-                    ou
                     <li>
-                      par l'intermédiaire du logiciel métier de mon entreprise
+                      une gestion administrative des données sociales allégée
+                      avec la fin de la double saisie LIC / logiciel gestion
+                      (accès direct dans Mobilic ou mon logiciel métier)
+                    </li>
+                    <li>
+                      des données sociales accessibles en temps réel pour mieux
+                      gérer l’organistion des équipes
                     </li>
                   </ul>
                 }
@@ -237,7 +250,7 @@ export function Landing() {
                 image={<SoftwareImage height={200} width={200} />}
                 imagePosition="left"
                 imageDescription="Logiciel métier"
-                descriptionTitle="Soumettre et récupérer les données de travail qui font foi auprès de l'administration"
+                descriptionTitle="Récupérer en temps réel par API des données sociales clés pour la gestion du personnel"
               />
             </Grid>
           </Grid>
