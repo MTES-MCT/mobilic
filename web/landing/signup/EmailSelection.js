@@ -64,13 +64,17 @@ export function EmailSelection() {
     setIsAdmin(!!admin);
   }, [location]);
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    modals.open("cgu", {
-      handleAccept: async () =>
-        await _createLogin(email, choosePassword ? password : null),
-      handleReject: () => {}
-    });
+    if (store.hasAcceptedCgu()) {
+      await _createLogin(email, choosePassword ? password : null);
+    } else {
+      modals.open("cgu", {
+        handleAccept: async () =>
+          await _createLogin(email, choosePassword ? password : null),
+        handleReject: () => {}
+      });
+    }
   };
 
   const _createLogin = async (email, password) => {
@@ -200,9 +204,7 @@ export function EmailSelection() {
                 color="primary"
                 type="submit"
                 loading={loading}
-                disabled={
-                  !email || (choosePassword && !password) || loading || !!error
-                }
+                disabled={!email || (choosePassword && !password) || !!error}
               >
                 Continuer
               </LoadingButton>

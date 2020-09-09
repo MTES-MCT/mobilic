@@ -34,6 +34,10 @@ export function Complete() {
           </Grid>
           <Grid item xs={12}>
             <Typography>L'inscription s'est terminée avec succès !</Typography>
+            <Typography>
+              Un email d'activation vous a été envoyé à l'adresse{" "}
+              <strong>{store.userInfo().email}</strong>.
+            </Typography>
           </Grid>
           <Grid item xs={12}>
             <Button

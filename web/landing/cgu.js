@@ -10,6 +10,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
 import Button from "@material-ui/core/Button";
+import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 
 const useStyles = makeStyles(theme => ({
   p: {
@@ -21,6 +22,8 @@ const useStyles = makeStyles(theme => ({
 function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
   const [md, setMd] = React.useState(null);
   const [disabledAccept, setDisabledAccept] = React.useState(true);
+
+  const store = useStoreSyncedWithLocalStorage();
 
   async function loadCGU() {
     const cguFile = await fetch("/cgu.md");
@@ -88,6 +91,7 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
             color="primary"
             onClick={async () => {
               await handleAccept();
+              await store.setHasAcceptedCgu();
               handleClose();
             }}
             disabled={disabledAccept}

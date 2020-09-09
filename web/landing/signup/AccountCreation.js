@@ -42,21 +42,33 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    modals.open("cgu", {
-      handleAccept: async () =>
-        await _createAccount(
-          employeeInvite,
-          isAdmin,
-          email,
-          password,
-          firstName,
-          lastName
-        ),
-      handleReject: () => {}
-    });
+    if (store.hasAcceptedCgu()) {
+      await _createAccount(
+        employeeInvite,
+        isAdmin,
+        email,
+        password,
+        firstName,
+        lastName
+      );
+    } else {
+      modals.open("cgu", {
+        handleAccept: async () =>
+          await _createAccount(
+            employeeInvite,
+            isAdmin,
+            email,
+            password,
+            firstName,
+            lastName
+          ),
+        handleReject: () => {}
+      });
+    }
   };
 
   const _createAccount = async (
@@ -67,6 +79,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
     firstName,
     lastName
   ) => {
+    setLoading(true);
     try {
       const signupPayload = {
         email,
@@ -94,6 +107,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       setPassword("");
       setError(formatApiError(err));
     }
+    setLoading(false);
   };
 
   return (
@@ -197,6 +211,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                   disabled={
                     !email || !password || !firstName || !lastName || !!error
                   }
+                  loading={loading}
                 >
                   M'inscrire
                 </LoadingButton>

@@ -387,7 +387,13 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     await Promise.all([
       new Promise(resolve =>
         this.removeItems(
-          ["accessToken", "refreshToken", "fcToken", "userId"],
+          [
+            "accessToken",
+            "refreshToken",
+            "fcToken",
+            "userId",
+            "hasAcceptedCgu"
+          ],
           resolve
         )
       ),
@@ -420,6 +426,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   setIsSigningUp = () => this.setState({ isSigningUp: true });
 
   clearIsSigningUp = () => this.setState({ isSigningUp: null });
+
+  setHasAcceptedCgu = () => this.setState({ hasAcceptedCgu: true });
 
   companyInfo = () => {
     let info = { id: null, name: null, admin: null };
@@ -469,7 +477,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             employeeInvite: () => this.state.employeeInvite,
             isSigningUp: () => this.state.isSigningUp,
             setIsSigningUp: this.setIsSigningUp,
-            clearIsSigningUp: this.clearIsSigningUp
+            clearIsSigningUp: this.clearIsSigningUp,
+            hasAcceptedCgu: () => this.state.hasAcceptedCgu,
+            clearHasAcceptedCgu: () => this.setState({ hasAcceptedCgu: null }),
+            setHasAcceptedCgu: this.setHasAcceptedCgu
           }}
         >
           {this.props.children}
