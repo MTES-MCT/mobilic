@@ -91,7 +91,6 @@ export function ActivitySwitch({
   endMission,
   pushActivitySwitchEvent
 }) {
-  console.log(disableBreak);
   const store = useStoreSyncedWithLocalStorage();
   const classes = useStyles();
   const modals = useModals();
@@ -154,8 +153,8 @@ export function ActivitySwitch({
             onClick={() => {
               const missionEndTime = Date.now();
               modals.open("endMission", {
-                handleMissionEnd: (expenditures, comment) =>
-                  endMission({
+                handleMissionEnd: async (expenditures, comment) =>
+                  await endMission({
                     endTime: missionEndTime,
                     expenditures,
                     comment

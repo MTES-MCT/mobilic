@@ -47,7 +47,7 @@ export function FunnelModal({
     >
       <Container
         maxWidth="sm"
-        className="flex-column scrollable"
+        className="flex-column"
         style={{ flexGrow: 1, height: "100%", padding: 0 }}
       >
         <Box

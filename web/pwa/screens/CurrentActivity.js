@@ -36,8 +36,8 @@ export function CurrentActivity({
           startTime: Date.now()
         })
       }
-      endMission={args =>
-        endMissionForTeam({
+      endMission={async args =>
+        await endMissionForTeam({
           missionId: currentMission.id,
           team: currentTeam,
           ...args

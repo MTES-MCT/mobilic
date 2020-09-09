@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
 export function EndMissionModal({ open, handleClose, handleMissionEnd }) {
   const [expenditures, setExpenditures] = React.useState({});
   const [comment, setComment] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
     setExpenditures({});
@@ -34,11 +35,13 @@ export function EndMissionModal({ open, handleClose, handleMissionEnd }) {
           autoComplete="off"
           onSubmit={async e => {
             e.preventDefault();
-            handleMissionEnd(expenditures, comment);
+            setLoading(true);
+            await handleMissionEnd(expenditures, comment);
             handleClose();
+            setLoading(false);
           }}
         >
-          <Container className="flex-column scrollable" disableGutters>
+          <Container className="flex-column" disableGutters>
             <Typography className={funnelModalClasses.title} variant="h5">
               Avez-vous eu des frais lors de cette mission&nbsp;?
             </Typography>
@@ -62,7 +65,9 @@ export function EndMissionModal({ open, handleClose, handleMissionEnd }) {
             />
           </Container>
           <Box className="cta-container" mt={2} mb={4}>
-            <MainCtaButton type="submit">Suivant</MainCtaButton>
+            <MainCtaButton type="submit" loading={loading}>
+              Suivant
+            </MainCtaButton>
           </Box>
         </form>
       </Container>

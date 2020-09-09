@@ -25,7 +25,6 @@ import { formatApiError } from "common/utils/errors";
 import { useModals } from "common/utils/modals";
 import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
-import { ScrollableContainer } from "common/utils/scroll";
 import AlertTitle from "@material-ui/lab/AlertTitle";
 
 const useStyles = makeStyles(theme => ({
@@ -201,134 +200,130 @@ export function Home() {
 
   return [
     <Header key={0} />,
-    <ScrollableContainer key={1}>
-      <Container className={classes.container} maxWidth="md">
-        <Paper>
-          <Container
-            className={`centered ${classes.innerContainer}`}
-            maxWidth="sm"
-          >
-            <Typography className={classes.title} variant="h3">
-              Mes informations
-            </Typography>
+    <Container key={1} className={classes.container} maxWidth="md">
+      <Paper>
+        <Container
+          className={`centered ${classes.innerContainer}`}
+          maxWidth="sm"
+        >
+          <Typography className={classes.title} variant="h3">
+            Mes informations
+          </Typography>
 
-            <Section title="Moi">
-              <Grid container wrap="wrap" spacing={5}>
-                <Grid item xs={12}>
-                  <InfoItem
-                    name="Identifiant Mobilic"
-                    value={store.userId()}
-                    bold
-                    info={
-                      isActive
-                        ? "Cet identifiant est à communiquer à votre employeur afin qu'il vous rattache à l'entreprise"
-                        : ""
-                    }
-                  />
-                </Grid>
-                <Grid item sm={6} zeroMinWidth>
-                  <InfoItem
-                    name="Nom"
-                    value={formatPersonName(store.userInfo())}
-                  />
-                </Grid>
-                <Grid item sm={6} zeroMinWidth>
-                  <InfoItem
-                    name="Email"
-                    value={store.userInfo().email}
-                    actionTitle="Modifier email"
-                    action={() =>
-                      modals.open("changeEmail", {
-                        handleSubmit: async email => {
-                          const apiResponse = await api.graphQlMutate(
-                            CHANGE_EMAIL_MUTATION,
-                            { email },
-                            { context: { nonPublicApi: true } }
-                          );
-                          await store.setUserInfo({
-                            ...store.userInfo(),
-                            ...apiResponse.data.account.changeEmail
-                          });
-                        }
-                      })
-                    }
-                  />
-                </Grid>
+          <Section title="Moi">
+            <Grid container wrap="wrap" spacing={5}>
+              <Grid item xs={12}>
+                <InfoItem
+                  name="Identifiant Mobilic"
+                  value={store.userId()}
+                  bold
+                  info={
+                    isActive
+                      ? "Cet identifiant est à communiquer à votre employeur afin qu'il vous rattache à l'entreprise"
+                      : ""
+                  }
+                />
               </Grid>
-              {!isActive && (
-                <Alert severity="error" className={classes.inactiveAlert}>
-                  <AlertTitle className="bold">
-                    Adresse email non activée
-                  </AlertTitle>
-                  Un email d'activation vous a été envoyé à l'adresse ci-dessus.
-                  L'activation est nécessaire pour accéder aux services Mobilic.
-                </Alert>
+              <Grid item sm={6} zeroMinWidth>
+                <InfoItem
+                  name="Nom"
+                  value={formatPersonName(store.userInfo())}
+                />
+              </Grid>
+              <Grid item sm={6} zeroMinWidth>
+                <InfoItem
+                  name="Email"
+                  value={store.userInfo().email}
+                  actionTitle="Modifier email"
+                  action={() =>
+                    modals.open("changeEmail", {
+                      handleSubmit: async email => {
+                        const apiResponse = await api.graphQlMutate(
+                          CHANGE_EMAIL_MUTATION,
+                          { email },
+                          { context: { nonPublicApi: true } }
+                        );
+                        await store.setUserInfo({
+                          ...store.userInfo(),
+                          ...apiResponse.data.account.changeEmail
+                        });
+                      }
+                    })
+                  }
+                />
+              </Grid>
+            </Grid>
+            {!isActive && (
+              <Alert severity="error" className={classes.inactiveAlert}>
+                <AlertTitle className="bold">
+                  Adresse email non activée
+                </AlertTitle>
+                Un email d'activation vous a été envoyé à l'adresse ci-dessus.
+                L'activation est nécessaire pour accéder aux services Mobilic.
+              </Alert>
+            )}
+          </Section>
+          <Divider />
+          {isActive && (
+            <Section
+              title={
+                employments.length > 1 ? "Mes rattachements" : "Mon entreprise"
+              }
+            >
+              {secondaryEmployments.length > 0 && [
+                <Accordion
+                  key={0}
+                  expanded={expandPrimaryCompany}
+                  onChange={() =>
+                    setExpandPrimaryCompany(!expandPrimaryCompany)
+                  }
+                >
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography className="bold">
+                      Entreprise principale
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {primaryEmployment ? (
+                      <EmploymentInfo employment={primaryEmployment} />
+                    ) : (
+                      <NoPrimaryEmploymentAlert />
+                    )}
+                  </AccordionDetails>
+                </Accordion>,
+                <Accordion
+                  key={1}
+                  expanded={expandSecondaryCompanies}
+                  onChange={() =>
+                    setExpandSecondaryCompanies(!expandSecondaryCompanies)
+                  }
+                >
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography className="bold">
+                      Entreprises secondaires
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {secondaryEmployments.map((e, index) => (
+                      <Paper key={index} variant="outlined">
+                        <Box p={2}>
+                          <EmploymentInfo employment={e} />
+                        </Box>
+                      </Paper>
+                    ))}
+                  </AccordionDetails>
+                </Accordion>
+              ]}
+              {secondaryEmployments.length === 0 && !primaryEmployment && (
+                <NoPrimaryEmploymentAlert />
+              )}
+              {secondaryEmployments.length === 0 && primaryEmployment && (
+                <EmploymentInfo employment={primaryEmployment} />
               )}
             </Section>
-            <Divider />
-            {isActive && (
-              <Section
-                title={
-                  employments.length > 1
-                    ? "Mes rattachements"
-                    : "Mon entreprise"
-                }
-              >
-                {secondaryEmployments.length > 0 && [
-                  <Accordion
-                    key={0}
-                    expanded={expandPrimaryCompany}
-                    onChange={() =>
-                      setExpandPrimaryCompany(!expandPrimaryCompany)
-                    }
-                  >
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography className="bold">
-                        Entreprise principale
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      {primaryEmployment ? (
-                        <EmploymentInfo employment={primaryEmployment} />
-                      ) : (
-                        <NoPrimaryEmploymentAlert />
-                      )}
-                    </AccordionDetails>
-                  </Accordion>,
-                  <Accordion
-                    key={1}
-                    expanded={expandSecondaryCompanies}
-                    onChange={() =>
-                      setExpandSecondaryCompanies(!expandSecondaryCompanies)
-                    }
-                  >
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography className="bold">
-                        Entreprises secondaires
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      {secondaryEmployments.map((e, index) => (
-                        <Paper key={index} variant="outlined">
-                          <Box p={2}>
-                            <EmploymentInfo employment={e} />
-                          </Box>
-                        </Paper>
-                      ))}
-                    </AccordionDetails>
-                  </Accordion>
-                ]}
-                {secondaryEmployments.length === 0 && !primaryEmployment && (
-                  <NoPrimaryEmploymentAlert />
-                )}
-                {secondaryEmployments.length === 0 && primaryEmployment && (
-                  <EmploymentInfo employment={primaryEmployment} />
-                )}
-              </Section>
-            )}
-          </Container>
-        </Paper>
-      </Container>
-    </ScrollableContainer>
+          )}
+        </Container>
+      </Paper>
+    </Container>
   ];
 }

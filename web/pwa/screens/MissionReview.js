@@ -41,11 +41,7 @@ export function MissionReview({
 
   const classes = useStyles();
   return (
-    <Container
-      style={{ flexGrow: 1 }}
-      className="flex-column scrollable"
-      disableGutters
-    >
+    <Container style={{ flexGrow: 1 }} className="flex-column" disableGutters>
       <Box p={2} pt={2} pb={4} className={classes.overviewTimersContainer}>
         <AccountButton pb={4} darkBackground />
         <Typography

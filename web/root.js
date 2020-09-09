@@ -29,7 +29,6 @@ import { MODAL_DICT } from "./modals";
 import { ThemeProvider } from "@material-ui/styles";
 import { CssBaseline } from "@material-ui/core";
 import { loadUserData } from "common/utils/loadUserData";
-import Container from "@material-ui/core/Container";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import frLocale from "date-fns/locale/fr";
 import { FrLocalizedUtils } from "common/utils/time";
@@ -44,30 +43,25 @@ import { ScrollToTop } from "common/utils/scroll";
 
 export default function Root() {
   return (
-    <Container className="root-container" maxWidth={false}>
-      <StoreSyncedWithLocalStorageProvider storage={localStorage}>
-        <Router>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <ApiContextProvider>
-              <MuiPickersUtilsProvider
-                utils={FrLocalizedUtils}
-                locale={frLocale}
-              >
-                <ModalProvider modalDict={MODAL_DICT}>
-                  <LoadingScreenContextProvider>
-                    <ActionsContextProvider>
-                      <ScrollToTop />
-                      <_Root />
-                    </ActionsContextProvider>
-                  </LoadingScreenContextProvider>
-                </ModalProvider>
-              </MuiPickersUtilsProvider>
-            </ApiContextProvider>
-          </ThemeProvider>
-        </Router>
-      </StoreSyncedWithLocalStorageProvider>
-    </Container>
+    <StoreSyncedWithLocalStorageProvider storage={localStorage}>
+      <Router>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <ApiContextProvider>
+            <MuiPickersUtilsProvider utils={FrLocalizedUtils} locale={frLocale}>
+              <ModalProvider modalDict={MODAL_DICT}>
+                <LoadingScreenContextProvider>
+                  <ActionsContextProvider>
+                    <ScrollToTop />
+                    <_Root />
+                  </ActionsContextProvider>
+                </LoadingScreenContextProvider>
+              </ModalProvider>
+            </MuiPickersUtilsProvider>
+          </ApiContextProvider>
+        </ThemeProvider>
+      </Router>
+    </StoreSyncedWithLocalStorageProvider>
   );
 }
 

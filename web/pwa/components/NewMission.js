@@ -10,6 +10,7 @@ import { MainCtaButton } from "./MainCtaButton";
 export function NewMissionModal({ open, handleClose, handleContinue }) {
   const [mission, setMission] = React.useState("");
   const [vehicle, setVehicle] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
     setMission("");
@@ -25,9 +26,11 @@ export function NewMissionModal({ open, handleClose, handleContinue }) {
           noValidate
           autoComplete="off"
           onSubmit={async e => {
+            setLoading(true);
             e.preventDefault();
             const payLoad = { mission, vehicle };
             await handleContinue(payLoad);
+            setLoading(false);
           }}
         >
           <Container
@@ -55,7 +58,9 @@ export function NewMissionModal({ open, handleClose, handleContinue }) {
             />
           </Container>
           <Box className="cta-container" mb={4}>
-            <MainCtaButton type="submit">Continuer</MainCtaButton>
+            <MainCtaButton type="submit" loading={loading}>
+              Continuer
+            </MainCtaButton>
           </Box>
         </form>
       </Container>

@@ -63,7 +63,7 @@
   padding: 0 !important;
 }
 
-.root-container {
+#root {
   @extend .container;
   @extend .no-margin-no-padding;
   align-items: center;
@@ -180,11 +180,6 @@
 
 .scrollable {
   overflow-y: auto;
-}
-
-#scrollable-container {
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .unshrinkable {

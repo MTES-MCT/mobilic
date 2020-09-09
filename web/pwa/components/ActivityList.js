@@ -38,7 +38,7 @@ export function ActivityList({
   sortEvents(augmentedAndSortedActivities).reverse();
 
   return (
-    <List dense className="scrollable">
+    <List dense>
       {augmentedAndSortedActivities
         .filter(a => a.type !== ACTIVITIES.rest.name)
         .map((activity, index) => (

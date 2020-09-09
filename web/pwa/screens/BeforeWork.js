@@ -79,7 +79,7 @@ export function BeforeWork({ beginNewMission, missions }) {
   return [
     <Container
       key={1}
-      className={`container scrollable ${classes.container}`}
+      className={`container ${classes.container}`}
       disableGutters
       maxWidth={false}
     >
