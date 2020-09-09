@@ -34,18 +34,29 @@ export function EmailSelection() {
   const api = useApi();
   const history = useHistory();
   const store = useStoreSyncedWithLocalStorage();
+
+  const userInfo = store.userInfo();
   const modals = useModals();
 
   React.useEffect(() => store.setIsSigningUp(), []);
 
   const [isAdmin, setIsAdmin] = React.useState(false);
-  const [email, setEmail] = React.useState(store.userInfo().email);
+  const [email, setEmail] = React.useState("");
+  const [origEmailSet, setOrigEmailSet] = React.useState(false);
   const [password, setPassword] = React.useState("");
   const [choosePassword, setChoosePassword] = React.useState(false);
   const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
   const location = useLocation();
+
+  React.useEffect(() => {
+    // Just do it once
+    if (!origEmailSet && userInfo.email) {
+      setEmail(userInfo.email);
+      setOrigEmailSet(true);
+    }
+  }, [userInfo]);
 
   React.useEffect(() => {
     const queryString = new URLSearchParams(location.search);
@@ -76,7 +87,7 @@ export function EmailSelection() {
       );
 
       store.setUserInfo({
-        ...store.userInfo(),
+        ...userInfo,
         ...apiResponse.data.signUp.confirmFcEmail
       });
       if (isAdmin) history.push("/signup/company");
@@ -89,7 +100,7 @@ export function EmailSelection() {
     setLoading(false);
   };
 
-  const origEmail = store.userInfo().email;
+  const origEmail = userInfo.email;
 
   return (
     <>
@@ -113,12 +124,11 @@ export function EmailSelection() {
           >
             <Section title="1. Adresse email">
               <Typography align="left" className={classes.text}>
-                <span className="bold">{store.userInfo().firstName}</span>,
-                veuillez{" "}
+                <span className="bold">{userInfo.firstName}</span>, veuillez{" "}
                 {origEmail ? (
                   <>
                     confirmer votre adresse email{" "}
-                    <span className="bold">{store.userInfo().email}</span>
+                    <span className="bold">{userInfo.email}</span>
                   </>
                 ) : (
                   "renseigner votre adresse email"
