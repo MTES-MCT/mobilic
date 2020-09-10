@@ -198,7 +198,7 @@ export function EmailSelection() {
                 />
               )}
             </Section>
-            <Box mt={4} mb={8}>
+            <Box my={4}>
               <LoadingButton
                 variant="contained"
                 color="primary"

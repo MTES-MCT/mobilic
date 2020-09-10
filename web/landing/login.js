@@ -15,13 +15,6 @@ import {
   buildFranceConnectUrl
 } from "common/utils/franceConnect";
 import { FranceConnectContainer } from "../common/FranceConnect";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-
-const useStyles = makeStyles(theme => ({
-  container: {
-    paddingBottom: theme.spacing(10)
-  }
-}));
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
@@ -52,15 +45,9 @@ export default function Login() {
     setLoading(false);
   };
 
-  const classes = useStyles();
-
   return [
     <Header key={1} />,
-    <Container
-      key={2}
-      className={`centered ${classes.container}`}
-      maxWidth="xs"
-    >
+    <Container key={2} className="centered" maxWidth="xs">
       <Box my={4}>
         <Typography variant="h3">Connexion</Typography>
       </Box>

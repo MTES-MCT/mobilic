@@ -43,7 +43,7 @@ export function ConfirmUser() {
         <Typography className={classes.title} variant="h3">
           Choisir un compte
         </Typography>
-        <Section>
+        <Section last>
           <List className={classes.list}>
             <ListItem button onClick={() => history.push(consentUrl)}>
               <ListItemIcon>

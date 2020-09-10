@@ -146,7 +146,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             />
           </Section>
 
-          <Section title="ou via le formulaire d'inscription">
+          <Section last title="ou via le formulaire d'inscription">
             <form
               className="vertical-form centered"
               noValidate
@@ -203,7 +203,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                   setLastName(e.target.value.trimLeft());
                 }}
               />
-              <Box mt={4} mb={8}>
+              <Box my={4}>
                 <LoadingButton
                   variant="contained"
                   color="primary"

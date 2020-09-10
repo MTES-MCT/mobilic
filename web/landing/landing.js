@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: "left"
   },
   footerLinksSectionTitle: {
-    paddingBottom: theme.spacing(4)
+    paddingBottom: theme.spacing(2)
   },
   footerLink: {
     paddingBottom: theme.spacing(1)

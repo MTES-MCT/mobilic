@@ -28,12 +28,19 @@
   font-weight: 800;
 }
 
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: "Source Sans Pro", Arial, sans-serif;
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
+  height: 100%;
+  padding: 0;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }

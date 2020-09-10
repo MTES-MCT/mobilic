@@ -86,7 +86,7 @@ export function Consent() {
             {clientName} souhaite accéder à votre compte Mobilic
           </Typography>
           <Typography>{store.userInfo().email}</Typography>
-          <Section>
+          <Section last>
             <Grid className="centered" container spacing={4} justify="center">
               <Grid item>
                 <LoadingButton
