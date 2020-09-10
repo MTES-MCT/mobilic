@@ -40,7 +40,7 @@ function HeaderContainer(props) {
       className="header-container"
       style={{ backgroundColor: theme.palette.background.paper }}
     >
-      <Box py={1} {...props}></Box>
+      <Box {...props}></Box>
       <Divider className="full-width-divider" />
     </Box>
   );
@@ -137,7 +137,7 @@ function DesktopHeader({ disableMenu }) {
   const routes = getAccessibleRoutes({ userInfo, companyInfo, isSigningUp });
 
   return (
-    <Box className="flex-row-space-between" style={{ alignItems: "stretch" }}>
+    <Box className="flex-row-space-between">
       <Logos />
       {store.userId() ? (
         <Box className="flex-row-center" style={{ overflowX: "hidden" }}>
