@@ -68,8 +68,7 @@
   @extend .no-margin-no-padding;
   align-items: center;
   text-align: center;
-  height: 100vh !important;
-  width: 100vw !important;
+  height: 100%;
 }
 
 .stretch-container {
@@ -82,9 +81,6 @@
 .app-container {
   @extend .container;
   @extend .no-margin-no-padding;
-  position: fixed;
-  bottom: calc(var(--bottom-nav-bar-height));
-  top: 0;
 }
 
 .activity-grid-container {
@@ -157,7 +153,7 @@
   @extend .container;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 500;
   flex-shrink: 0;
 }
 
@@ -268,11 +264,6 @@
   z-index: 1000;
 }
 
-.marianne-logo {
-  height: 50px !important;
-  width: 80px !important;
-}
-
 .project-name {
   font-family: Evolventa !important;
   -webkit-padding-after: 3px;
@@ -281,6 +272,7 @@
 .betagouv-text {
   height: 60px !important;
   width: 120px !important;
+  margin-bottom: 1px;
 }
 
 .vertical-timeline-label {
