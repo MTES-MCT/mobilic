@@ -18,6 +18,7 @@ import Menu from "@material-ui/core/Menu/Menu";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import useTheme from "@material-ui/core/styles/useTheme";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles(theme => ({
   menuItemButton: {
@@ -29,6 +30,14 @@ const useStyles = makeStyles(theme => ({
   },
   selectedMenuItem: {
     backgroundColor: theme.palette.grey[200]
+  },
+  docButton: {
+    textTransform: "none",
+    borderRadius: 0,
+    fontSize: "1rem"
+  },
+  divider: {
+    margin: theme.spacing(1)
   }
 }));
 
@@ -121,7 +130,6 @@ function MobileHeader({ disableMenu }) {
 }
 
 function DesktopHeader({ disableMenu }) {
-  const theme = useTheme();
   const store = useStoreSyncedWithLocalStorage();
 
   const location = useLocation();
@@ -136,16 +144,27 @@ function DesktopHeader({ disableMenu }) {
   const isSigningUp = store.isSigningUp();
   const routes = getAccessibleRoutes({ userInfo, companyInfo, isSigningUp });
 
+  const docLinks = () => [
+    <Button key={0} className={classes.docButton} href="/developers/docs/intro">
+      Espace développeurs
+    </Button>,
+    <Button key={1} href="/" className={classes.docButton}>
+      Foire aux questions
+    </Button>
+  ];
+
   return (
     <Box className="flex-row-space-between">
       <Logos />
       {store.userId() ? (
         <Box className="flex-row-center" style={{ overflowX: "hidden" }}>
-          <Typography
-            style={{ marginLeft: theme.spacing(4) }}
-            noWrap
-            variant="body1"
-          >
+          {docLinks()}
+          <Divider
+            className={classes.divider}
+            orientation="vertical"
+            flexItem
+          />
+          <Typography noWrap variant="body1">
             {formatPersonName(userInfo)}
             {companyName ? ` - ${companyName}` : ""}
           </Typography>
@@ -167,34 +186,42 @@ function DesktopHeader({ disableMenu }) {
         </Box>
       ) : (
         !disableMenu && (
-          <ToggleButtonGroup
-            exclusive
-            value={location.pathname}
-            onChange={(e, newPath) => {
-              e.preventDefault();
-              if (newPath && !location.pathname.startsWith(newPath))
-                history.push(newPath);
-            }}
-          >
-            {routes
-              .filter(
-                r =>
-                  r.accessible({ userInfo, companyInfo, isSigningUp }) &&
-                  (!r.menuItemFilter ||
-                    r.menuItemFilter({ userInfo, companyInfo }))
-              )
-              .map(route => (
-                <ToggleButton
-                  key={route.path}
-                  value={route.path}
-                  href={route.path}
-                  selected={location.pathname.startsWith(route.path)}
-                  className={classes.menuItemButton}
-                >
-                  {route.label}
-                </ToggleButton>
-              ))}
-          </ToggleButtonGroup>
+          <Box className="flex-row">
+            {docLinks()}
+            <Divider
+              className={classes.divider}
+              orientation="vertical"
+              flexItem
+            />
+            <ToggleButtonGroup
+              exclusive
+              value={location.pathname}
+              onChange={(e, newPath) => {
+                e.preventDefault();
+                if (newPath && !location.pathname.startsWith(newPath))
+                  history.push(newPath);
+              }}
+            >
+              {routes
+                .filter(
+                  r =>
+                    r.accessible({ userInfo, companyInfo, isSigningUp }) &&
+                    (!r.menuItemFilter ||
+                      r.menuItemFilter({ userInfo, companyInfo }))
+                )
+                .map(route => (
+                  <ToggleButton
+                    key={route.path}
+                    value={route.path}
+                    href={route.path}
+                    selected={location.pathname.startsWith(route.path)}
+                    className={classes.menuItemButton}
+                  >
+                    {route.label}
+                  </ToggleButton>
+                ))}
+            </ToggleButtonGroup>
+          </Box>
         )
       )}
     </Box>
