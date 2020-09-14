@@ -36,6 +36,10 @@ const useStyles = makeStyles(theme => ({
   sectionTitle: {
     paddingBottom: theme.spacing(10)
   },
+  sectionHPadding: {
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(5)
+  },
   inner: {
     margin: "auto",
     padding: 0
@@ -52,6 +56,18 @@ const useStyles = makeStyles(theme => ({
   bgImage: {
     background: `url(${BackgroundImage}) 50%`,
     backgroundSize: "cover"
+  },
+  showcase: {
+    padding: theme.spacing(2)
+  },
+  lightBlue: {
+    backgroundColor: theme.palette.info.light
+  },
+  lightGreen: {
+    backgroundColor: theme.palette.success.light
+  },
+  lightOrange: {
+    backgroundColor: theme.palette.warning.light
   }
 }));
 
@@ -75,7 +91,7 @@ function _Showcase({
   );
 
   const Description = props => [
-    <Typography align="left" key={0} className="bold">
+    <Typography align="left" variant="h5" key={0} className="bold">
       {descriptionTitle}
     </Typography>,
     <React.Fragment key={1}>{descriptionContent}</React.Fragment>
@@ -176,68 +192,65 @@ export function Landing() {
     </Container>,
     <Container key={4} className={classes.section} maxWidth={false}>
       <Container maxWidth="md" className={classes.inner}>
-        <Typography variant="h3" className={classes.sectionTitle}>
+        <Typography variant="h3" className={`${classes.sectionTitle}`}>
           Mobilic ... 🤔 c'est quoi ? C'est pour qui ?
         </Typography>
-        <Grid container direction="column" spacing={10} alignItems="stretch">
-          <Grid item xs={12}>
-            <Showcase
-              image={<WorkerImage height={200} width={200} />}
-              imagePosition="left"
-              imageDescription="Travailleur mobile"
-              descriptionTitle="Suivre mon temps de travail et être mieux informé sur mes droits"
-              descriptionContent={
-                <>
-                  <ul style={{ textAlign: "left" }}>
-                    <li style={{ listStyle: "none" }}>
-                      Directement depuis mon téléphone à tout moment
-                    </li>
-                    <li>
-                      via l’interface de Mobilic (si mon entreprise n’utilise
-                      pas de logiciel)
-                    </li>
-                    <li style={{ fontStyle: "italic", listStyle: "none" }}>
-                      ou
-                    </li>
-                    <li>
-                      par l'intermédiaire du logiciel métier de mon entreprise
-                      (connecté à Mobilic)
-                    </li>
-                  </ul>
-                </>
-              }
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Showcase
-              image={<ManagerImage height={200} width={200} />}
-              imagePosition="right"
-              imageDescription="Gestionnaire"
-              descriptionTitle="Gérer facilement les données de temps de travail des salariés de mon entreprise"
-              descriptionContent={
-                <ul style={{ textAlign: "left" }}>
-                  <li>
-                    une gestion administrative des données sociales allégée avec
-                    la fin de la double saisie LIC / logiciel gestion (accès
-                    direct dans Mobilic ou mon logiciel métier)
+
+        <Box className={`${classes.lightBlue}`} p={2}>
+          <Showcase
+            image={<WorkerImage height={200} width={200} />}
+            imagePosition="left"
+            imageDescription="Travailleur mobile"
+            descriptionTitle="Suivre mon temps de travail et être mieux informé sur mes droits"
+            descriptionContent={
+              <>
+                <ul style={{ textAlign: "left", fontSize: "1rem" }}>
+                  <li style={{ listStyle: "none" }}>
+                    Directement depuis mon téléphone à tout moment
                   </li>
                   <li>
-                    des données sociales accessibles en temps réel pour mieux
-                    gérer l’organistion des équipes
+                    via l’interface de Mobilic (si mon entreprise n’utilise pas
+                    de logiciel)
+                  </li>
+                  <li style={{ fontStyle: "italic", listStyle: "none" }}>ou</li>
+                  <li>
+                    par l'intermédiaire du logiciel métier de mon entreprise
+                    (connecté à Mobilic)
                   </li>
                 </ul>
-              }
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Showcase
-              image={<SoftwareImage height={200} width={200} />}
-              imagePosition="left"
-              imageDescription="Logiciel métier"
-              descriptionTitle="Récupérer en temps réel par API des données sociales clés pour la gestion du personnel"
-            />
-          </Grid>
-        </Grid>
+              </>
+            }
+          />
+        </Box>
+        <Box className={`${classes.lightGreen}`} p={2}>
+          <Showcase
+            image={<ManagerImage height={200} width={200} />}
+            imagePosition="right"
+            imageDescription="Gestionnaire"
+            descriptionTitle="Gérer facilement les données de temps de travail des salariés de mon entreprise"
+            descriptionContent={
+              <ul style={{ textAlign: "left", fontSize: "1rem" }}>
+                <li>
+                  une gestion administrative des données sociales allégée avec
+                  la fin de la double saisie LIC / logiciel gestion (accès
+                  direct dans Mobilic ou mon logiciel métier)
+                </li>
+                <li>
+                  des données sociales accessibles en temps réel pour mieux
+                  gérer l’organistion des équipes
+                </li>
+              </ul>
+            }
+          />
+        </Box>
+        <Box className={classes.lightBlue} p={2}>
+          <Showcase
+            image={<SoftwareImage height={200} width={200} />}
+            imagePosition="left"
+            imageDescription="Logiciel métier"
+            descriptionTitle="Récupérer en temps réel par API des données sociales clés pour la gestion du personnel"
+          />
+        </Box>
       </Container>
     </Container>,
     <Container
