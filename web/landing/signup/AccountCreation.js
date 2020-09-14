@@ -131,22 +131,24 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
               à créer un compte
             </Typography>
           )}
-          <Section title="via FranceConnect">
-            <FranceConnectContainer
-              onButtonClick={() => {
-                const callbackUrl = buildCallbackUrl(
-                  employeeInvite,
-                  true,
-                  isAdmin
-                );
-                window.location.href = buildFranceConnectUrl(callbackUrl);
-              }}
-              helperText="FranceConnect est la solution proposée par l’État pour sécuriser
+          {false && (
+            <Section title="via FranceConnect">
+              <FranceConnectContainer
+                onButtonClick={() => {
+                  const callbackUrl = buildCallbackUrl(
+                    employeeInvite,
+                    true,
+                    isAdmin
+                  );
+                  window.location.href = buildFranceConnectUrl(callbackUrl);
+                }}
+                helperText="FranceConnect est la solution proposée par l’État pour sécuriser
               et simplifier la connexion à vos services en ligne."
-            />
-          </Section>
+              />
+            </Section>
+          )}
 
-          <Section last title="ou via le formulaire d'inscription">
+          <Section last title="via le formulaire d'inscription">
             <form
               className="vertical-form centered"
               noValidate
