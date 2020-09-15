@@ -10,7 +10,6 @@ import Hidden from "@material-ui/core/Hidden";
 import {
   FabNumIcon,
   ManagerImage,
-  MtesIcon,
   SoftwareImage,
   WorkerImage
 } from "common/utils/icons";
@@ -137,7 +136,7 @@ export function Landing() {
           <Hidden xsDown>
             <Grid item className={classes.whiteSection}>
               <Box mt={2}>
-                <Typography variant="h5" style={{ fontWeight: "normal" }}>
+                <Typography variant="h3" style={{ fontWeight: "normal" }}>
                   Simplifier le suivi du temps de travail dans le transport
                   routier léger afin de lutter contre le travail illégal
                 </Typography>
@@ -176,8 +175,8 @@ export function Landing() {
                   J'ai déjà un compte Mobilic et je souhaite me connecter
                 </Typography>
                 <Typography className="hidden">
-                  Je suis un travailleur mobile ou un gestionnaire d'une
-                  entreprise de transport
+                  Je suis travailleur mobile ou gestionnaire d'une entreprise de
+                  transport
                 </Typography>
               </Grid>
               <Grid item>
@@ -222,7 +221,7 @@ export function Landing() {
             }
           />
         </Box>
-        <Box className={`${classes.lightGreen}`} p={2}>
+        <Box p={2}>
           <Showcase
             image={<ManagerImage height={200} width={200} />}
             imagePosition="right"
@@ -277,9 +276,6 @@ function Footer() {
       alignItems="flex-start"
     >
       <Grid item sm={6} container alignItems="center" direction="column">
-        <Grid item>
-          <MtesIcon scale={0.7} />
-        </Grid>
         <Grid
           item
           container
