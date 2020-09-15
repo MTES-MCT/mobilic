@@ -51,18 +51,16 @@ export default function Login() {
       <Box my={4}>
         <Typography variant="h3">Connexion</Typography>
       </Box>
-      {false && (
-        <FranceConnectContainer
-          mt={6}
-          mb={3}
-          onButtonClick={() => {
-            const callbackUrl = buildCallbackUrl();
-            window.location.href = buildFranceConnectUrl(callbackUrl);
-          }}
-          helperText="FranceConnect est la solution proposée par l’État pour simplifier la connexion à vos services en ligne. Vous pouvez vous connecter à votre compte via FranceConnect."
-        />
-      )}
-      {false && <Typography>ou</Typography>}
+      <FranceConnectContainer
+        mt={6}
+        mb={3}
+        onButtonClick={() => {
+          const callbackUrl = buildCallbackUrl();
+          window.location.href = buildFranceConnectUrl(callbackUrl);
+        }}
+        helperText="FranceConnect est la solution proposée par l’État pour simplifier la connexion à vos services en ligne. Vous pouvez vous connecter à votre compte via FranceConnect."
+      />
+      <Typography>ou</Typography>
       <Box my={3}>
         <form
           className="vertical-form"
