@@ -148,8 +148,10 @@ function EmploymentInfo({ employment }) {
                 variant="outlined"
                 onClick={() =>
                   modals.open("confirmation", {
+                    textButtons: true,
                     title: "Confirmer rejet du rattachement",
-                    handleConfirm: () => handleEmploymentValidation(false)
+                    handleConfirm: async () =>
+                      await handleEmploymentValidation(false)
                   })
                 }
               >

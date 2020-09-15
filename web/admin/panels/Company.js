@@ -96,6 +96,7 @@ function VehicleAdmin() {
       }}
       onRowDelete={(vehicle, callback) =>
         modals.open("confirmation", {
+          textButtons: true,
           title: "Confirmer suppression",
           handleConfirm: async () => {
             try {

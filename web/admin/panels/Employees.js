@@ -10,7 +10,8 @@ import { AugmentedTable } from "../components/AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import { LoadingButton } from "common/components/LoadingButton";
+import Button from "@material-ui/core/Button";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -31,6 +32,7 @@ const useStyles = makeStyles(theme => ({
 export function Employees() {
   const api = useApi();
   const adminStore = useAdminStore();
+  const modals = useModals();
 
   const classes = useStyles();
 
@@ -71,13 +73,19 @@ export function Employees() {
       label: "",
       name: "cancelEmployment",
       format: employmentId => (
-        <LoadingButton
+        <Button
           variant="outlined"
           color="primary"
-          onClick={async () => await cancelEmployment(employmentId)}
+          onClick={() =>
+            modals.open("confirmation", {
+              textButtons: true,
+              title: "Confirmer annulation du rattachement",
+              handleConfirm: async () => await cancelEmployment(employmentId)
+            })
+          }
         >
           Annuler
-        </LoadingButton>
+        </Button>
       )
     }
   ];
