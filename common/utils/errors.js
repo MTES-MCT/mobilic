@@ -100,4 +100,13 @@ export function formatGraphQLError(graphQLError, userId) {
   if (graphQLError.extensions && graphQLError.extensions.code === 108) {
     return `L'utilisateur n'existe pas. Vous êtes-vous inscrits ?`;
   }
+  if (graphQLError.extensions && graphQLError.extensions.code === 109) {
+    return `Le jeton est invalide`;
+  }
+  if (graphQLError.extensions && graphQLError.extensions.code === 110) {
+    return `Le jeton a expiré`;
+  }
+  if (graphQLError.extensions && graphQLError.extensions.code === 111) {
+    return `L'adresse email est déjà utilisée.`;
+  }
 }
