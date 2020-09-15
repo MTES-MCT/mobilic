@@ -233,7 +233,7 @@ export function AugmentedTable({
                             disabled
                           />
                         ) : column.format ? (
-                          column.format(entry[column.name], entry)
+                          column.format(entry[column.name], entry, onFocus)
                         ) : entry[column.name] ? (
                           entry[column.name]
                         ) : null}

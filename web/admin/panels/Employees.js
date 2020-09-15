@@ -132,10 +132,10 @@ export function Employees() {
     {
       label: "Fin rattachement",
       name: "endDate",
-      format: (endDate, employment) =>
+      format: (endDate, employment, onFocus) =>
         endDate ? (
           endDate
-        ) : (
+        ) : onFocus ? null : (
           <Button
             variant="outlined"
             color="primary"
