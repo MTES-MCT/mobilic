@@ -1,11 +1,16 @@
 import React from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import { useApi, CREATE_EMPLOYMENT_MUTATION } from "common/utils/api";
+import {
+  useApi,
+  CREATE_EMPLOYMENT_MUTATION,
+  CANCEL_EMPLOYMENT_MUTATION
+} from "common/utils/api";
 import { useAdminStore } from "../utils/store";
 import { AugmentedTable } from "../components/AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
+import { LoadingButton } from "common/components/LoadingButton";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -29,6 +34,19 @@ export function Employees() {
 
   const classes = useStyles();
 
+  async function cancelEmployment(employmentId) {
+    try {
+      await api.graphQlMutate(CANCEL_EMPLOYMENT_MUTATION, {
+        employmentId
+      });
+      await adminStore.setEmployments(oldEmployments =>
+        oldEmployments.filter(e => e.id !== employmentId)
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   const pendingEmploymentColumns = [
     {
       label: "Nom",
@@ -48,6 +66,19 @@ export function Employees() {
     {
       label: "Invité le",
       name: "creationDate"
+    },
+    {
+      label: "",
+      name: "cancelEmployment",
+      format: employmentId => (
+        <LoadingButton
+          variant="outlined"
+          color="primary"
+          onClick={async () => await cancelEmployment(employmentId)}
+        >
+          Annuler
+        </LoadingButton>
+      )
     }
   ];
 
@@ -94,7 +125,8 @@ export function Employees() {
       idOrEmail: e.user ? e.user.id : e.email,
       name: e.user ? formatPersonName(e.user) : null,
       hasAdminRights: e.hasAdminRights,
-      creationDate: e.startDate
+      creationDate: e.startDate,
+      cancelEmployment: e.id
     }));
 
   const today = new Date(Date.now()).toISOString().slice(0, 10);

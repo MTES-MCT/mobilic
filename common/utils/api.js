@@ -330,6 +330,16 @@ export const REJECT_EMPLOYMENT_MUTATION = gql`
   }
 `;
 
+export const CANCEL_EMPLOYMENT_MUTATION = gql`
+  mutation cancelEmployment($employmentId: Int!) {
+    employments {
+      cancelEmployment(employmentId: $employmentId) {
+        message
+      }
+    }
+  }
+`;
+
 export const CREATE_EMPLOYMENT_MUTATION = gql`
   mutation createEmployment(
     $userId: Int
