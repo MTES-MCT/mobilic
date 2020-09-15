@@ -93,21 +93,22 @@ export function Employees() {
     {
       label: "",
       name: "cancelEmployment",
-      format: employmentId => (
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() =>
-            modals.open("confirmation", {
-              textButtons: true,
-              title: "Confirmer annulation du rattachement",
-              handleConfirm: async () => await cancelEmployment(employmentId)
-            })
-          }
-        >
-          Annuler
-        </Button>
-      )
+      format: (employmentId, entry, onFocus) =>
+        onFocus ? null : (
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() =>
+              modals.open("confirmation", {
+                textButtons: true,
+                title: "Confirmer annulation du rattachement",
+                handleConfirm: async () => await cancelEmployment(employmentId)
+              })
+            }
+          >
+            Annuler
+          </Button>
+        )
     }
   ];
 
