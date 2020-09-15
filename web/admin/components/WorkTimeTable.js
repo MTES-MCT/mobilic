@@ -16,7 +16,7 @@ export function WorkTimeTable({
   const startTimeCol = {
     label: "Début",
     name: "startTime",
-    format: formatTimeOfDay
+    format: time => (time ? formatTimeOfDay(time) : null)
   };
   const endTimeCol = { label: "Fin", name: "endTime", format: formatTimeOfDay };
   const workTimeCol = {
@@ -48,7 +48,7 @@ export function WorkTimeTable({
   const expenditureCol = {
     label: "Frais",
     name: "expenditures",
-    format: formatExpendituresAsOneString,
+    format: exps => (exps ? formatExpendituresAsOneString(exps) : null),
     cellStyle: { whiteSpace: "pre-line" }
   };
   const hasModificationsCol = {

@@ -232,12 +232,10 @@ export function AugmentedTable({
                             checked={entry[column.name] || false}
                             disabled
                           />
+                        ) : column.format ? (
+                          column.format(entry[column.name], entry)
                         ) : entry[column.name] ? (
-                          column.format ? (
-                            column.format(entry[column.name])
-                          ) : (
-                            entry[column.name]
-                          )
+                          entry[column.name]
                         ) : null}
                       </TableCell>
                     );

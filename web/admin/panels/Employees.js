@@ -3,7 +3,8 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import {
   useApi,
   CREATE_EMPLOYMENT_MUTATION,
-  CANCEL_EMPLOYMENT_MUTATION
+  CANCEL_EMPLOYMENT_MUTATION,
+  TERMINATE_EMPLOYMENT_MUTATION
 } from "common/utils/api";
 import { useAdminStore } from "../utils/store";
 import { AugmentedTable } from "../components/AugmentedTable";
@@ -47,6 +48,26 @@ export function Employees() {
     } catch (err) {
       console.log(err);
     }
+  }
+
+  async function terminateEmployment(employmentId, endDate) {
+    const employmentResponse = await api.graphQlMutate(
+      TERMINATE_EMPLOYMENT_MUTATION,
+      {
+        employmentId,
+        endDate: endDate.toISOString().slice(0, 10)
+      }
+    );
+    await adminStore.setEmployments(oldEmployments => {
+      const newEmployments = [...oldEmployments];
+      const employmentIndex = oldEmployments.findIndex(
+        e => e.id === employmentId
+      );
+      if (employmentIndex >= 0)
+        newEmployments[employmentIndex] =
+          employmentResponse.data.employments.terminateEmployment;
+      return newEmployments;
+    });
   }
 
   const pendingEmploymentColumns = [
@@ -110,7 +131,25 @@ export function Employees() {
     },
     {
       label: "Fin rattachement",
-      name: "endDate"
+      name: "endDate",
+      format: (endDate, employment) =>
+        endDate ? (
+          endDate
+        ) : (
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() =>
+              modals.open("terminateEmployment", {
+                minDate: new Date(employment.startDate),
+                terminateEmployment: async endDate =>
+                  await terminateEmployment(employment.employmentId, endDate)
+              })
+            }
+          >
+            Terminer
+          </Button>
+        )
     },
     {
       label: "Statut",
@@ -143,10 +182,11 @@ export function Employees() {
     .filter(e => e.isAcknowledged)
     .map(e => ({
       id: e.user.id,
+      employmentId: e.id,
       name: formatPersonName(e.user),
       startDate: e.startDate,
       endDate: e.endDate,
-      active: !e.endDate || e.endDate() >= today,
+      active: !e.endDate || e.endDate >= today,
       hasAdminRights: e.hasAdminRights
     }));
 

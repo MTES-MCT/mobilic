@@ -340,6 +340,31 @@ export const CANCEL_EMPLOYMENT_MUTATION = gql`
   }
 `;
 
+export const TERMINATE_EMPLOYMENT_MUTATION = gql`
+  mutation terminateEmployment($employmentId: Int!, $endDate: Date) {
+    employments {
+      terminateEmployment(employmentId: $employmentId, endDate: $endDate) {
+        id
+        startDate
+        endDate
+        isAcknowledged
+        isPrimary
+        email
+        hasAdminRights
+        company {
+          id
+          name
+        }
+        user {
+          id
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+`;
+
 export const CREATE_EMPLOYMENT_MUTATION = gql`
   mutation createEmployment(
     $userId: Int
@@ -356,6 +381,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
       ) {
         id
         startDate
+        endDate
         isAcknowledged
         isPrimary
         email
