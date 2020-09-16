@@ -100,7 +100,8 @@ function _Root() {
             : getFallbackRoute({
                 userInfo: store.userInfo(),
                 companyInfo: store.companyInfo()
-              })
+              }),
+          location.state
         );
       }
     });

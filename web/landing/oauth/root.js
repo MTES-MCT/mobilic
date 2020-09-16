@@ -55,7 +55,8 @@ function Authorize({ path, setClientName, setRedirectUri }) {
                   history.push(
                     `/login?next=${encodeURIComponent(
                       path + "/consent" + location.search
-                    )}`
+                    )}`,
+                    { clientName: client_name, redirectUri: redirect_uri }
                   );
                 } else {
                   history.push(path + "/confirm_user" + location.search);

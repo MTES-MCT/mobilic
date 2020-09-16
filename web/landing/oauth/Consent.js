@@ -51,12 +51,16 @@ export function Consent({ clientName, redirectUri }) {
     return <Typography color="error">{error}</Typography>;
   }
 
-  if (clientName && redirectUri) {
+  if (
+    (clientName || location.state.clientName) &&
+    (redirectUri || location.state.redirectUri)
+  ) {
     return (
       <Paper key={1}>
         <Container className="centered" maxWidth="xs">
           <Typography className={classes.title} variant="h3">
-            {clientName} souhaite accéder à votre compte Mobilic
+            {clientName || location.state.clientName} souhaite accéder à votre
+            compte Mobilic
           </Typography>
           <Typography>{store.userInfo().email}</Typography>
           <Section last>
@@ -82,7 +86,7 @@ export function Consent({ clientName, redirectUri }) {
             </Grid>
             <Typography className={classes.redirection}>
               L'autorisation vous redirigera vers l'URL{" "}
-              {decodeURIComponent(redirectUri)}
+              {decodeURIComponent(redirectUri || location.state.redirectUri)}
             </Typography>
           </Section>
         </Container>
