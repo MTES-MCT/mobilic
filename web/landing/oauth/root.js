@@ -11,10 +11,11 @@ import {
   useHistory
 } from "react-router-dom";
 import { Header } from "../../common/Header";
-import { useApi } from "common/utils/api";
+import { API_HOST, useApi } from "common/utils/api";
 import { ConfirmUser } from "./ConfirmUser";
 import { useLoadingScreen } from "common/utils/loading";
 import { Consent } from "./Consent";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -25,34 +26,51 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Authorize({ path }) {
+function Authorize({ path, setClientName, setRedirectUri }) {
   const location = useLocation();
   const history = useHistory();
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
 
+  const [error, setError] = React.useState("");
+
   React.useEffect(() => {
     setTimeout(
       () =>
         withLoadingScreen(async () => {
-          if (location.pathname === path) {
-            const isAuthenticated = await api.checkAuthentication();
-            if (!isAuthenticated) {
-              history.push(
-                `/login?next=${encodeURIComponent(
-                  path + "/consent" + location.search
-                )}`
-              );
+          try {
+            const apiResponse = await fetch(
+              `${API_HOST}/oauth/parse_authorization_request${location.search}`,
+              { method: "GET" }
+            );
+            if (apiResponse.status !== 200) {
+              setError("Les paramètres de la requête sont invalides");
             } else {
-              history.push(path + "/confirm_user" + location.search);
+              const { client_name, redirect_uri } = await apiResponse.json();
+              setClientName(client_name);
+              setRedirectUri(redirect_uri);
+              if (location.pathname === path) {
+                const isAuthenticated = await api.checkAuthentication();
+                if (!isAuthenticated) {
+                  history.push(
+                    `/login?next=${encodeURIComponent(
+                      path + "/consent" + location.search
+                    )}`
+                  );
+                } else {
+                  history.push(path + "/confirm_user" + location.search);
+                }
+              }
             }
+          } catch (err) {
+            setError("Erreur lors de la connexion avec le serveur");
           }
         }),
       500
     );
   }, []);
 
-  return null;
+  return error ? <Typography color="error">{error}</Typography> : null;
 }
 
 export default function OAuth() {
@@ -63,6 +81,8 @@ export default function OAuth() {
   const path = useRouteMatch().path;
 
   const userId = store.userId();
+  const [clientName, setClientName] = React.useState("");
+  const [redirectUri, setRedirectUri] = React.useState("");
 
   return (
     <>
@@ -71,7 +91,7 @@ export default function OAuth() {
         <Switch>
           {userId && (
             <Route key="consent" path={`${path}/consent`}>
-              <Consent />
+              <Consent clientName={clientName} redirectUri={redirectUri} />
             </Route>
           )}
           {userId && (
@@ -80,7 +100,11 @@ export default function OAuth() {
             </Route>
           )}
           <Route exact key="authorize" path={path}>
-            <Authorize path={path} />
+            <Authorize
+              path={path}
+              setClientName={setClientName}
+              setRedirectUri={setRedirectUri}
+            />
           </Route>
           <Redirect push key="default" from="*" to={`${path}`} />
         </Switch>

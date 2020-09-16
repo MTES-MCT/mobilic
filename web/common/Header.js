@@ -158,12 +158,14 @@ function DesktopHeader({ disableMenu }) {
       <Logos />
       {store.userId() ? (
         <Box className="flex-row-center" style={{ overflowX: "hidden" }}>
-          {docLinks()}
-          <Divider
-            className={classes.divider}
-            orientation="vertical"
-            flexItem
-          />
+          {!disableMenu && docLinks()}
+          {!disableMenu && (
+            <Divider
+              className={classes.divider}
+              orientation="vertical"
+              flexItem
+            />
+          )}
           <Typography noWrap variant="body1">
             {formatPersonName(userInfo)}
             {companyName ? ` - ${companyName}` : ""}
