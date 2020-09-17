@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ConfirmUser() {
+export function ConfirmUser({ clientName, redirectUri }) {
   const classes = useStyles();
 
   const api = useApi();
@@ -56,7 +56,10 @@ export function ConfirmUser() {
               button
               onClick={async () => {
                 await api.logout();
-                history.push(`/login?next=${encodeURIComponent(consentUrl)}`);
+                history.push(`/login?next=${encodeURIComponent(consentUrl)}`, {
+                  clientName,
+                  redirectUri
+                });
               }}
             >
               <ListItemIcon>

@@ -38,18 +38,18 @@ function Authorize({ path, setClientName, setRedirectUri }) {
     setTimeout(
       () =>
         withLoadingScreen(async () => {
-          try {
-            const apiResponse = await fetch(
-              `${API_HOST}/oauth/parse_authorization_request${location.search}`,
-              { method: "GET" }
-            );
-            if (apiResponse.status !== 200) {
-              setError("Les paramètres de la requête sont invalides");
-            } else {
-              const { client_name, redirect_uri } = await apiResponse.json();
-              setClientName(client_name);
-              setRedirectUri(redirect_uri);
-              if (location.pathname === path) {
+          if (location.pathname == path) {
+            try {
+              const apiResponse = await fetch(
+                `${API_HOST}/oauth/parse_authorization_request${location.search}`,
+                { method: "GET" }
+              );
+              if (apiResponse.status !== 200) {
+                setError("Les paramètres de la requête sont invalides");
+              } else {
+                const { client_name, redirect_uri } = await apiResponse.json();
+                setClientName(client_name);
+                setRedirectUri(redirect_uri);
                 const isAuthenticated = await api.checkAuthentication();
                 if (!isAuthenticated) {
                   history.push(
@@ -62,9 +62,9 @@ function Authorize({ path, setClientName, setRedirectUri }) {
                   history.push(path + "/confirm_user" + location.search);
                 }
               }
+            } catch (err) {
+              setError("Erreur lors de la connexion avec le serveur");
             }
-          } catch (err) {
-            setError("Erreur lors de la connexion avec le serveur");
           }
         }),
       500
@@ -95,11 +95,9 @@ export default function OAuth() {
               <Consent clientName={clientName} redirectUri={redirectUri} />
             </Route>
           )}
-          {userId && (
-            <Route key="confirm_user" path={`${path}/confirm_user`}>
-              <ConfirmUser />
-            </Route>
-          )}
+          <Route key="confirm_user" path={`${path}/confirm_user`}>
+            <ConfirmUser clientName={clientName} redirectUri={redirectUri} />
+          </Route>
           <Route exact key="authorize" path={path}>
             <Authorize
               path={path}
