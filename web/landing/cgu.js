@@ -21,7 +21,6 @@ const useStyles = makeStyles(theme => ({
 
 function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
   const [md, setMd] = React.useState(null);
-  const [disabledAccept, setDisabledAccept] = React.useState(true);
 
   const store = useStoreSyncedWithLocalStorage();
 
@@ -33,10 +32,6 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
   React.useEffect(() => {
     loadCGU();
   }, []);
-
-  React.useEffect(() => {
-    setDisabledAccept(true);
-  }, [open]);
 
   const classes = useStyles();
 
@@ -52,17 +47,7 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
       <DialogTitle disableTypography>
         <Typography variant="h4">Conditions générales d'utilisation</Typography>
       </DialogTitle>
-      <DialogContent
-        dividers
-        onScroll={event => {
-          const bottom =
-            event.target.scrollHeight - event.target.scrollTop ===
-            event.target.clientHeight;
-          if (bottom) {
-            setDisabledAccept(false);
-          }
-        }}
-      >
+      <DialogContent dividers>
         {md ? (
           <ReactMarkdown
             source={md}
@@ -94,7 +79,6 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
               await store.setHasAcceptedCgu();
               handleClose();
             }}
-            disabled={disabledAccept}
           >
             Accepter
           </LoadingButton>
