@@ -157,8 +157,8 @@ export function Landing() {
             <Grid container spacing={2} direction="column" alignItems="stretch">
               <Grid item>
                 <Typography>
-                  Je suis un travailleur mobile ou un gestionnaire d'une
-                  entreprise de transport
+                  Je suis travailleur mobile ou gestionnaire d'une entreprise de
+                  transport
                 </Typography>
               </Grid>
               <Grid item>
@@ -172,7 +172,7 @@ export function Landing() {
             <Grid container spacing={2} direction="column" alignItems="stretch">
               <Grid item style={{ position: "relative" }}>
                 <Typography style={{ position: "absolute", left: 0, right: 0 }}>
-                  J'ai déjà un compte Mobilic et je souhaite me connecter
+                  J'ai déjà un compte Mobilic, je me connecte
                 </Typography>
                 <Typography className="hidden">
                   Je suis travailleur mobile ou gestionnaire d'une entreprise de
@@ -192,7 +192,7 @@ export function Landing() {
     <Container key={4} className={classes.section} maxWidth={false}>
       <Container maxWidth="md" className={classes.inner}>
         <Typography variant="h3" className={`${classes.sectionTitle}`}>
-          Mobilic ... 🤔 c'est quoi ? C'est pour qui ?
+          Mobilic ... 🤔 qu'est-ce que c'est ? A qui ça s'adresse ?
         </Typography>
 
         <Box className={`${classes.lightBlue}`} p={2}>
@@ -203,7 +203,13 @@ export function Landing() {
             descriptionTitle="Suivre mon temps de travail et être mieux informé sur mes droits"
             descriptionContent={
               <>
-                <ul style={{ textAlign: "left", fontSize: "1rem" }}>
+                <ul
+                  style={{
+                    textAlign: "left",
+                    fontSize: "1rem",
+                    lineHeight: "1.6"
+                  }}
+                >
                   <li style={{ listStyle: "none" }}>
                     Directement depuis mon téléphone à tout moment
                   </li>
@@ -226,13 +232,18 @@ export function Landing() {
             image={<ManagerImage height={200} width={200} />}
             imagePosition="right"
             imageDescription="Gestionnaire"
-            descriptionTitle="Gérer facilement les données de temps de travail des salariés de mon entreprise"
+            descriptionTitle="Gérer facilement le temps de travail des salariés de mon entreprise"
             descriptionContent={
-              <ul style={{ textAlign: "left", fontSize: "1rem" }}>
+              <ul
+                style={{
+                  textAlign: "left",
+                  fontSize: "1rem",
+                  lineHeight: "1.6"
+                }}
+              >
                 <li>
                   une gestion administrative des données sociales allégée avec
-                  la fin de la double saisie LIC / logiciel gestion (accès
-                  direct dans Mobilic ou mon logiciel métier)
+                  la fin de la double saisie LIC / logiciel gestion
                 </li>
                 <li>
                   des données sociales accessibles en temps réel pour mieux
