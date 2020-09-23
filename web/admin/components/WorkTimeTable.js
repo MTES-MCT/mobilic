@@ -6,12 +6,7 @@ import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import { ACTIVITIES } from "common/utils/activities";
 import { AugmentedTable } from "./AugmentedTable";
 
-export function WorkTimeTable({
-  period,
-  workTimeEntries,
-  users,
-  displayDetails
-}) {
+export function WorkTimeTable({ period, workTimeEntries, displayDetails }) {
   const employeeCol = { label: "Employé", name: "workerName", sortable: true };
   const startTimeCol = {
     label: "Début",
@@ -100,8 +95,8 @@ export function WorkTimeTable({
   const preFormattedWorkTimeEntries = workTimeEntries.map(wte => {
     const base = {
       ...wte,
-      id: wte.userId,
-      workerName: formatPersonName(users.find(u => u.id === wte.userId)),
+      id: wte.user.id,
+      workerName: formatPersonName(wte.user),
       workTime: wte.timers.total_work,
       restTime: wte.timers.break + (wte.timers.rest || 0)
     };

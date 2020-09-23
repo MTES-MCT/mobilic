@@ -38,7 +38,7 @@ function Authorize({ path, setClientName, setRedirectUri }) {
     setTimeout(
       () =>
         withLoadingScreen(async () => {
-          if (location.pathname == path) {
+          if (location.pathname === path) {
             try {
               const apiResponse = await fetch(
                 `${API_HOST}/oauth/parse_authorization_request${location.search}`,

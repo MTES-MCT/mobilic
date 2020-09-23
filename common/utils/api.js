@@ -113,7 +113,7 @@ export const SIREN_QUERY = gql`
 `;
 
 export const USER_QUERY = gql`
-  query user($id: Int!) {
+  query user($id: Int!, $activityAfter: TimeStamp) {
     user(id: $id) {
       id
       firstName
@@ -135,7 +135,7 @@ export const USER_QUERY = gql`
           name
         }
       }
-      missions {
+      missions(fromTime: $activityAfter) {
         id
         name
         validated
@@ -170,19 +170,24 @@ export const USER_QUERY = gql`
 `;
 
 export const COMPANY_QUERY = gql`
-  query company($id: Int!) {
+  query company($id: Int!, $activityAfter: Date) {
     company(id: $id) {
       users {
         id
         firstName
         lastName
-        workDays {
-          startTime
-          endTime
-          expenditures
-          activityTimers
-          wasModified
+      }
+      workDays(fromDate: $activityAfter) {
+        user {
+          id
+          firstName
+          lastName
         }
+        startTime
+        endTime
+        expenditures
+        activityTimers
+        wasModified
       }
       vehicles {
         id

@@ -8,7 +8,10 @@ import Box from "@material-ui/core/Box";
 import { loadCompanyData } from "./utils/loadCompanyData";
 import { useApi } from "common/utils/api";
 import { AdminStoreProvider, useAdminStore } from "./utils/store";
-import { useLoadingScreen } from "common/utils/loading";
+import {
+  LoadingScreenContextProvider,
+  useLoadingScreen
+} from "common/utils/loading";
 import { Header } from "../common/Header";
 
 function _Admin() {
@@ -36,7 +39,7 @@ function _Admin() {
 
   React.useEffect(() => {
     if (adminStore.companyId && adminStore.userId) {
-      withLoadingScreen(() => loadData(adminStore.companyId));
+      withLoadingScreen(async () => await loadData(adminStore.companyId));
     }
   }, [adminStore.companyId, adminStore.userId]);
 
@@ -68,8 +71,10 @@ function _Admin() {
 
 export function Admin(props) {
   return (
-    <AdminStoreProvider>
-      <_Admin {...props} />
-    </AdminStoreProvider>
+    <LoadingScreenContextProvider>
+      <AdminStoreProvider>
+        <_Admin {...props} />
+      </AdminStoreProvider>
+    </LoadingScreenContextProvider>
   );
 }

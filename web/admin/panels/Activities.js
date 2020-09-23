@@ -56,7 +56,7 @@ export function ActivityPanel() {
   let selectedUsers = users.filter(u => u.selected);
   if (selectedUsers.length === 0) selectedUsers = users;
   const selectedWorkDays = adminStore.workDays.filter(wd =>
-    selectedUsers.map(u => u.id).includes(wd.userId)
+    selectedUsers.map(u => u.id).includes(wd.user.id)
   );
 
   // TODO : memoize this
@@ -122,7 +122,6 @@ export function ActivityPanel() {
             <WorkTimeTable
               period={period}
               workTimeEntries={periodAggregates[periodStart]}
-              users={adminStore.users}
               displayDetails={toggleDayDetails && period === "day"}
             />
           </Box>

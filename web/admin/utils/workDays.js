@@ -20,7 +20,7 @@ function computeWorkDayGroupAggregates(workDayGroup) {
     }
   });
   return {
-    userId: workDayGroup[0].userId,
+    user: workDayGroup[0].user,
     periodStart: workDayGroup[0].periodStart,
     workedDays: workDayGroup.length,
     timers: aggregateTimers,
@@ -39,7 +39,7 @@ export function aggregateWorkDayPeriods(workDays, period) {
   }
   workDays.forEach(wd => {
     const periodStart = periodFunction(wd.startTime);
-    const key = `${wd.userId}${periodStart}`;
+    const key = `${wd.user.id}${periodStart}`;
     if (!workDaysGroupedByUserAndPeriod[key])
       workDaysGroupedByUserAndPeriod[key] = [];
     const userWorkdaysForPeriod = workDaysGroupedByUserAndPeriod[key];
