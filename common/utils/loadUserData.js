@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/browser";
 import { USER_QUERY } from "./api";
 import { parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
-import { DAY } from "./time";
+// import { DAY } from "./time";
 
 export async function loadUserData(api, store) {
   const userId = store.userId();
@@ -10,7 +10,7 @@ export async function loadUserData(api, store) {
   try {
     const userResponse = await api.graphQlQuery(USER_QUERY, {
       id: userId,
-      activityAfter: Date.now() - DAY * 180
+      activityAfter: 1561939200000
     });
     return await syncUser(userResponse.data.user, store);
   } catch (err) {
