@@ -4,7 +4,7 @@ import { DAY } from "common/utils/time";
 export async function loadCompanyData(api, companyId) {
   const companyResponse = await api.graphQlQuery(COMPANY_QUERY, {
     id: companyId,
-    activityAfter: new Date(Date.now() - DAY * 180).toISOString().slice(0, 10)
+    activityAfter: new Date(Date.now() - DAY * 120).toISOString().slice(0, 10)
   });
   const company = companyResponse.data.company;
   return {

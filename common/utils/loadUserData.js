@@ -10,7 +10,7 @@ export async function loadUserData(api, store) {
   try {
     const userResponse = await api.graphQlQuery(USER_QUERY, {
       id: userId,
-      activityAfter: Date.now() - DAY * 180
+      activityAfter: Date.now() - DAY * 120
     });
     return await syncUser(userResponse.data.user, store);
   } catch (err) {
