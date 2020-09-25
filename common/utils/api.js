@@ -138,7 +138,9 @@ export const USER_QUERY = gql`
       missions(fromTime: $activityAfter) {
         id
         name
-        validated
+        validations {
+          submitterId
+        }
         context
         expenditures {
           id
@@ -564,7 +566,9 @@ export const VALIDATE_MISSION_MUTATION = gql`
       validateMission(missionId: $missionId) {
         id
         name
-        validated
+        validations {
+          submitterId
+        }
         context
       }
     }

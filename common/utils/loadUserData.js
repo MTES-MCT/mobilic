@@ -37,7 +37,7 @@ export function syncUser(userPayload, store) {
   missions.forEach(mission => {
     activities.push(...mission.activities);
     expenditures.push(...mission.expenditures);
-    missionData.push(parseMissionPayloadFromBackend(mission));
+    missionData.push(parseMissionPayloadFromBackend(mission, store.userId()));
   });
 
   const syncActions = [];

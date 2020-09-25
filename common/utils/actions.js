@@ -415,7 +415,7 @@ export function ActionsContextProvider({ children }) {
           );
         });
         store.syncEntity(
-          [parseMissionPayloadFromBackend(mission)],
+          [parseMissionPayloadFromBackend(mission, store.userId())],
           "missions",
           () => false
         );
@@ -582,7 +582,7 @@ export function ActionsContextProvider({ children }) {
       async apiResponse => {
         const mission = apiResponse.data.activities.validateMission;
         await store.syncEntity(
-          [parseMissionPayloadFromBackend(mission)],
+          [parseMissionPayloadFromBackend(mission, store.userId())],
           "missions",
           m => m.id === mission.id
         );

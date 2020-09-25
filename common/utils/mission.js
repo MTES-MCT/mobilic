@@ -5,11 +5,11 @@ import { getTime } from "./events";
 import { ACTIVITIES } from "./activities";
 import { computeTeamChanges } from "./coworkers";
 
-export function parseMissionPayloadFromBackend(missionPayload) {
+export function parseMissionPayloadFromBackend(missionPayload, userId) {
   return {
     id: missionPayload.id,
     name: missionPayload.name,
-    validated: missionPayload.validated,
+    validated: missionPayload.validations.some(v => v.submitterId === userId),
     context: missionPayload.context
   };
 }
