@@ -7,7 +7,9 @@ export function PeriodToggle({ period, setPeriod }) {
     <ToggleButtonGroup
       value={period}
       exclusive
-      onChange={(e, newPeriod) => setPeriod(newPeriod)}
+      onChange={(e, newPeriod) => {
+        if (newPeriod) setPeriod(newPeriod);
+      }}
     >
       <ToggleButton value="day">Jour</ToggleButton>
       <ToggleButton value="week">Semaine</ToggleButton>
