@@ -128,4 +128,19 @@ grant_type=authorization_code&code=YYY
 
 #### E. Récupération du jeton d'accès
 
-Si la requête `POST` à l'URL de token est valide la réponse contiendra un jeton d'accès.
+Si la requête `POST` à l'URL de token est valide la réponse contiendra un jeton d'accès. Plus précisément ce sera une réponse JSON avec le schéma suivant :
+
+```json
+{
+  "token_type": "Bearer",
+  "access_token": "<TOKEN>"
+}
+```
+
+Si à l'inverse la requête échoue, la réponse JSON aura le schéma suivant :
+
+```json
+{
+  "error": "<ERROR>"
+}
+```
