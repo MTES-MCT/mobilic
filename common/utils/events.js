@@ -1,5 +1,5 @@
 export function getTime(event) {
-  return event.startTime || event.time || event.eventTime;
+  return event.startTime || event.receptionTime || event.time;
 }
 
 export function sortEvents(events) {

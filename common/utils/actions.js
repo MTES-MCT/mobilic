@@ -18,7 +18,12 @@ import { ACTIVITIES, parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
 import { getTime, sortEvents } from "./events";
 import { useModals } from "./modals";
-import { isGraphQLError } from "./errors";
+import {
+  formatNameInGqlError,
+  graphQLErrorMatchesCode,
+  isGraphQLError
+} from "./errors";
+import { formatDay, formatTimeOfDay } from "./time";
 
 const ActionsContext = React.createContext(() => {});
 
@@ -28,8 +33,9 @@ export function ActionsContextProvider({ children }) {
   const modals = useModals();
 
   async function displayApiErrors({
-    apiErrors,
+    graphQLErrors,
     actionDescription,
+    overrideFormatGraphQLError = null,
     hasRequestFailed = true,
     shouldReload = false,
     isActionDescriptionFemale = false,
@@ -39,7 +45,8 @@ export function ActionsContextProvider({ children }) {
     modals.open("apiErrorDialog", {}, currentProps => {
       const newError = {
         actionDescription,
-        apiErrors,
+        graphQLErrors,
+        overrideFormatGraphQLError,
         hasRequestFailed,
         shouldReload,
         isActionDescriptionFemale,
@@ -128,6 +135,32 @@ export function ActionsContextProvider({ children }) {
     );
   };
 
+  function formatLogActivityError(gqlError, user, selfId) {
+    if (graphQLErrorMatchesCode(gqlError, "OVERLAPPING_MISSIONS")) {
+      if (!user) {
+        return "L'utilisateur a déjà une mission en cours";
+      }
+      return `${formatNameInGqlError(user, selfId, true)} ${
+        user.id === selfId ? "avez" : "a"
+      } déjà une mission en cours démarrée par ${formatNameInGqlError(
+        gqlError.extensions.conflictingMission.submitter,
+        selfId,
+        false
+      )} le ${formatDay(
+        getTime(gqlError.extensions.conflictingMission)
+      )} à ${formatTimeOfDay(getTime(gqlError.extensions.conflictingMission))}`;
+    }
+    if (graphQLErrorMatchesCode(gqlError, "ACTIVITY_SEQUENCE_ERROR")) {
+      if (gqlError.extensions.missionEnd) {
+        return `La mission a déjà été terminée par ${formatNameInGqlError(
+          gqlError.extensions.missionEnd.submitter,
+          selfId,
+          false
+        )} à ${formatTimeOfDay(getTime(gqlError.extensions.missionEnd))}`;
+      }
+    }
+  }
+
   const pushNewActivityEvent = async ({
     activityType,
     missionActivities,
@@ -137,12 +170,13 @@ export function ActionsContextProvider({ children }) {
     endTime = null,
     comment = null
   }) => {
+    const actualUserId = userId || store.userId();
     const newActivity = {
       type: activityType,
       missionId,
       startTime,
       endTime,
-      userId: userId || store.userId()
+      userId: actualUserId
     };
 
     if (comment) newActivity.context = { comment };
@@ -151,7 +185,7 @@ export function ActionsContextProvider({ children }) {
       if (endTime)
         _handleActivitiesOverlap(
           missionActivities,
-          userId || store.userId(),
+          actualUserId,
           startTime,
           endTime,
           requestId
@@ -180,8 +214,16 @@ export function ActionsContextProvider({ children }) {
       error => {
         if (isGraphQLError(error)) {
           displayApiErrors({
-            apiErrors: error.graphQLErrors,
+            graphQLErrors: error.graphQLErrors,
             actionDescription: "Le changement d'activité",
+            overrideFormatGraphQLError: gqlError => {
+              const selfId = store.userId();
+              const user =
+                actualUserId === selfId
+                  ? store.userInfo()
+                  : store.getEntity("coworkers")[actualUserId.toString()];
+              return formatLogActivityError(gqlError, user, selfId);
+            },
             hasRequestFailed: true,
             shouldReload: false
           });
@@ -347,8 +389,18 @@ export function ActionsContextProvider({ children }) {
       error => {
         if (isGraphQLError(error)) {
           displayApiErrors({
-            apiErrors: error.graphQLErrors,
+            graphQLErrors: error.graphQLErrors,
             actionDescription: "La correction d'activité",
+            overrideFormatGraphQLError: gqlError => {
+              const selfId = store.userId();
+              const user =
+                activityEvent.userId === selfId
+                  ? store.userInfo()
+                  : store.getEntity("coworkers")[
+                      activityEvent.userId.toString()
+                    ];
+              return formatLogActivityError(gqlError, user, selfId);
+            },
             hasRequestFailed: true,
             shouldReload: false,
             isActionDescriptionFemale: true
@@ -547,8 +599,16 @@ export function ActionsContextProvider({ children }) {
         error => {
           if (isGraphQLError(error)) {
             displayApiErrors({
-              apiErrors: error.graphQLErrors,
+              graphQLErrors: error.graphQLErrors,
               actionDescription: "La fin de mission",
+              overrideFormatGraphQLError: gqlError => {
+                const selfId = store.userId();
+                const user =
+                  userId === selfId
+                    ? store.userInfo()
+                    : store.getEntity("coworkers")[userId.toString()];
+                return formatLogActivityError(gqlError, user, selfId);
+              },
               hasRequestFailed: true,
               shouldReload: false,
               isActionDescriptionFemale: true
@@ -676,7 +736,12 @@ export function ActionsContextProvider({ children }) {
       error => {
         if (isGraphQLError(error)) {
           displayApiErrors({
-            apiErrors: error.graphQLErrors,
+            graphQLErrors: error.graphQLErrors,
+            overrideFormatGraphQLError: gqlError => {
+              if (graphQLErrorMatchesCode(gqlError, "DUPLICATE_EXPENDITURES")) {
+                return "Un frais de cette nature a déjà été enregistré sur la mission.";
+              }
+            },
             actionDescription: "Le frais",
             hasRequestFailed: true,
             shouldReload: false

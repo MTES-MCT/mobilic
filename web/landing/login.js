@@ -9,7 +9,7 @@ import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import Box from "@material-ui/core/Box";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Header } from "../common/Header";
-import { formatApiError } from "common/utils/errors";
+import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import {
   buildCallbackUrl,
   buildFranceConnectUrl
@@ -40,7 +40,13 @@ export default function Login() {
         refreshToken
       });
     } catch (error) {
-      setError(formatApiError(error));
+      setError(
+        formatApiError(error, graphQLError => {
+          if (graphQLErrorMatchesCode(graphQLError, "AUTHENTICATION_ERROR")) {
+            return "Identifiants incorrects.";
+          }
+        })
+      );
     }
     setLoading(false);
   };

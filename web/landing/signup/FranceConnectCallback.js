@@ -2,7 +2,7 @@ import React from "react";
 
 import { FRANCE_CONNECT_LOGIN_MUTATION, useApi } from "common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import { formatApiError } from "common/utils/errors";
+import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { useLoadingScreen } from "common/utils/loading";
 import Typography from "@material-ui/core/Typography";
 
@@ -35,7 +35,13 @@ export function FranceConnectCallback() {
         );
         await store.storeTokens(apiResponse.data.auth.franceConnectLogin);
       } catch (err) {
-        setError(formatApiError(err));
+        setError(
+          formatApiError(err, gqlError => {
+            if (graphQLErrorMatchesCode(gqlError, "AUTHENTICATION_ERROR")) {
+              return "Vous n'avez pas encore de compte. Veuillez vous inscrire.";
+            }
+          })
+        );
         console.log(err);
       }
     });

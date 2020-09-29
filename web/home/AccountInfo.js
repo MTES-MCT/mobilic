@@ -21,7 +21,7 @@ import {
   useApi,
   VALIDATE_EMPLOYMENT_MUTATION
 } from "common/utils/api";
-import { formatApiError } from "common/utils/errors";
+import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { useModals } from "common/utils/modals";
 import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
@@ -86,7 +86,13 @@ function EmploymentInfo({ employment }) {
         e => e.id === employment.id
       );
     } catch (err) {
-      setError(formatApiError(err));
+      setError(
+        formatApiError(err, graphQLError => {
+          if (graphQLErrorMatchesCode(graphQLError, "INVALID_RESOURCE")) {
+            return "Opération impossible. Veuillez réessayer ultérieurement.";
+          }
+        })
+      );
     }
   }
 

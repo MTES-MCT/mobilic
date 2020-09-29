@@ -4,7 +4,6 @@ import Typography from "@material-ui/core/Typography";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import { formatGraphQLError } from "common/utils/errors";
@@ -26,8 +25,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ApiErrorDialogModal({ open, handleClose, errors = [], title }) {
-  const store = useStoreSyncedWithLocalStorage();
-  const userId = store.userId();
   const classes = useStyles();
 
   const displayTitle = title
@@ -64,14 +61,17 @@ export function ApiErrorDialogModal({ open, handleClose, errors = [], title }) {
                   }`}
             </Typography>
             <List className={classes.errorList}>
-              {error.apiErrors.map((apiError, index) => (
+              {error.graphQLErrors.map((graphQLError, index) => (
                 <ListItem
                   disableGutters
                   style={{ display: "list-item" }}
                   key={index}
                 >
                   <Typography>
-                    {formatGraphQLError(apiError, userId)}
+                    {formatGraphQLError(
+                      graphQLError,
+                      error.overrideFormatGraphQLError
+                    )}
                   </Typography>
                 </ListItem>
               ))}
