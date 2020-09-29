@@ -432,7 +432,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   companyInfo = () => {
     let info = { id: null, name: null, admin: null };
     const primaryEmployments = this.getEntity("employments").filter(
-      e => e.isPrimary
+      e => e.isPrimary && e.isAcknowledged
     );
     if (primaryEmployments.length > 0) {
       const primaryEmployment = primaryEmployments[0];

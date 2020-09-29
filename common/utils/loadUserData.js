@@ -28,7 +28,7 @@ export function syncUser(userPayload, store) {
     hasActivatedEmail,
     missions,
     currentEmployments,
-    company
+    primaryCompany
   } = userPayload;
 
   const activities = [];
@@ -63,17 +63,17 @@ export function syncUser(userPayload, store) {
 
   expenditures &&
     syncActions.push(store.syncEntity(expenditures, "expenditures"));
-  company &&
-    company.users &&
+  primaryCompany &&
+    primaryCompany.users &&
     syncActions.push(
       store.syncEntity(
-        company.users.filter(c => c.id !== userPayload.id),
+        primaryCompany.users.filter(c => c.id !== userPayload.id),
         "coworkers"
       )
     );
-  company &&
-    company.vehicles &&
-    syncActions.push(store.syncEntity(company.vehicles, "vehicles"));
+  primaryCompany &&
+    primaryCompany.vehicles &&
+    syncActions.push(store.syncEntity(primaryCompany.vehicles, "vehicles"));
   currentEmployments &&
     syncActions.push(store.syncEntity(currentEmployments, "employments"));
   return Promise.all(syncActions);

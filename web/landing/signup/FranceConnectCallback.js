@@ -38,7 +38,7 @@ export function FranceConnectCallback() {
         setError(
           formatApiError(err, gqlError => {
             if (graphQLErrorMatchesCode(gqlError, "AUTHENTICATION_ERROR")) {
-              return "Vous n'avez pas encore de compte. Veuillez vous inscrire.";
+              return "Vous n'avez pas encore de compte sur Mobilic. Veuillez vous inscrire.";
             }
           })
         );

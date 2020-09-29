@@ -103,7 +103,13 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
       case "DUPLICATE_EXPENDITURES":
         return "Vous avez déjà enregistré un frais de cette nature sur la mission.";
       case "OVERLAPPING_EMPLOYMENTS":
-        return "L'utilisateur est déjà rattaché à l'entreprise à cette date";
+        if (graphQLError.extensions.overlapType === "company") {
+          return "L'utilisateur est déjà rattaché à l'entreprise.";
+        }
+        if (graphQLError.extensions.overlapType === "primary") {
+          return "L'utilisateur a déjà une entreprise de rattachement principale";
+        }
+        return "L'utilisateur a un rattachement existant qui n'est pas compatible.";
       default:
         return null;
     }

@@ -38,12 +38,13 @@ export function RedeemInvite() {
     });
   }
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     const queryString = new URLSearchParams(location.search);
     const token = queryString.get("token");
 
     if (token) {
       redeemInvite(token);
+      return () => {};
     } else setError("Jeton d'invitation manquant");
   }, []);
 

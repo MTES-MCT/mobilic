@@ -121,8 +121,7 @@ export const USER_QUERY = gql`
       email
       hasConfirmedEmail
       hasActivatedEmail
-      isCompanyAdmin
-      company {
+      primaryCompany {
         id
         name
         users {
@@ -246,6 +245,7 @@ export const REDEEM_INVITE_QUERY = gql`
         id
         startDate
         isPrimary
+        isAcknowledged
         hasAdminRights
         company {
           id
