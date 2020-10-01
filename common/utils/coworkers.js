@@ -21,8 +21,8 @@ export function resolveTeamAt(teamChanges, time) {
 
 export function formatLatestEnrollmentStatus(teamChange) {
   return !teamChange.isEnrollment
-    ? `retiré à ${formatTimeOfDay(getTime(teamChange))}`
-    : `ajouté à ${formatTimeOfDay(getTime(teamChange))}`;
+    ? `retiré(e) à ${formatTimeOfDay(getTime(teamChange))}`
+    : `ajouté(e) à ${formatTimeOfDay(getTime(teamChange))}`;
 }
 
 export function computeTeamChanges(allMissionSortedActivities) {
