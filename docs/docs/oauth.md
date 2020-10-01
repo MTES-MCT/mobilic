@@ -117,7 +117,7 @@ La requête doit également être authentifiée avec les identifiants du client,
 Exemple :
 
 ```http request
-POST api/oauth/token HTTP/1.1
+POST /api/oauth/token HTTP/1.1
 Host: mobilic.beta.gouv.fr
 Authorization: Basic XXX
 Content-Type: application/x-www-form-urlencoded

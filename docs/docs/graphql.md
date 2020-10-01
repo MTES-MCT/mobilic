@@ -3,7 +3,7 @@ id: graphql
 title: Syntaxe des opérations GraphQL
 ---
 
-Nous avons déjà vu comment [construire à partir d'une opération une requête à l'API GraphQL](graphql.md). Nous allons maintenant détailler l'écriture d'une opération.
+Nous avons déjà vu comment [construire à partir d'une opération une requête à l'API GraphQL](how-to.md). Nous allons maintenant détailler l'écriture d'une opération.
 
 > Cette page donne un aperçu très condensé du langage de requêtes GraphQL. Pour des informations plus détaillées vous pouvez consulter la [documentation officielle](https://graphql.org/).
 
@@ -91,7 +91,7 @@ mutation {
 }
 ```
 
-Le corps de la réponse sera au format JSON, et **reproduira la structure de l'opération en ce qui concerne les chemins d'accès**. Ainsi dans l'exemple précédent le JSON de retour contiendra un champ `data` (la racine), contenant un champ `auth` qui contient lui-même un champ `login` et ainsi de suite :
+Le corps de la réponse sera au format JSON, et **suivra le schéma de la requête**, comme défini dans les [spécifications GraphQL](https://spec.graphql.org/June2018/#sec-Response-Format). Dans l'exemple précédent le JSON de retour contiendra un champ `data` (toujours présent dans le cas d'une requête sans erreurs), contenant un champ `auth` qui contient lui-même un champ `login` et ainsi de suite :
 
 ```json
 {
