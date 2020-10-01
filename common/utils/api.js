@@ -770,6 +770,7 @@ class Api {
         const pendingRequests = this.store.pendingRequests();
         const batch = [];
         forEach(pendingRequests, request => {
+          // Match Apollo batch size to ensure sequential execution
           if (request.batchable && batch.length < 10) batch.push(request);
           else {
             if (batch.length === 0) batch.push(request);
@@ -790,6 +791,7 @@ class Api {
         );
         if (errors.length > 0) {
           if (failOnError) throw errors[0];
+          // We stop early if some errors can lead to a retry, otherwise the execution will be stuck in an infinite loop
           if (errors.some(e => isRetryable(e))) {
             return;
           }
