@@ -564,12 +564,11 @@ export const VALIDATE_MISSION_MUTATION = gql`
   mutation validateMission($missionId: Int!) {
     activities {
       validateMission(missionId: $missionId) {
-        id
-        name
-        validations {
-          submitterId
+        mission {
+          id
+          name
+          context
         }
-        context
       }
     }
   }
@@ -771,7 +770,7 @@ class Api {
         const pendingRequests = this.store.pendingRequests();
         const batch = [];
         forEach(pendingRequests, request => {
-          if (request.batchable) batch.push(request);
+          if (request.batchable && batch.length < 10) batch.push(request);
           else {
             if (batch.length === 0) batch.push(request);
             return false;
@@ -791,7 +790,9 @@ class Api {
         );
         if (errors.length > 0) {
           if (failOnError) throw errors[0];
-          return;
+          if (errors.some(e => isRetryable(e))) {
+            return;
+          }
         }
       }
     });

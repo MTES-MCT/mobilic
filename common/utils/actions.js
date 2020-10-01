@@ -640,9 +640,9 @@ export function ActionsContextProvider({ children }) {
       updateStore,
       ["missions"],
       async apiResponse => {
-        const mission = apiResponse.data.activities.validateMission;
+        const mission = apiResponse.data.activities.validateMission.mission;
         await store.syncEntity(
-          [parseMissionPayloadFromBackend(mission, store.userId())],
+          [{ ...mission, validated: true }],
           "missions",
           m => m.id === mission.id
         );
