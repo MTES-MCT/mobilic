@@ -9,7 +9,9 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
   return {
     id: missionPayload.id,
     name: missionPayload.name,
-    validated: missionPayload.validations.some(v => v.submitterId === userId),
+    validated: missionPayload.validations
+      ? missionPayload.validations.some(v => v.submitterId === userId)
+      : false,
     context: missionPayload.context
   };
 }

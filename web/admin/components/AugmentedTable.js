@@ -55,7 +55,7 @@ export function AugmentedTable({
 
   const handleSortTypeChange = column => () => {
     let newSortType = "desc";
-    if (sortBy === column && sortType === "desc") newSortType = "asc;";
+    if (sortBy === column && sortType === "desc") newSortType = "asc";
     setSortBy(column);
     setSortType(newSortType);
   };
