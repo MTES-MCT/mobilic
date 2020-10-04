@@ -32,8 +32,8 @@ export function buildFranceConnectUrl(redirectUri) {
   )}`;
 }
 
-export function buildFCLogoutUrl(fcToken) {
-  return `${API_HOST}/fc/logout?id_token_hint=${fcToken}&post_logout_redirect_uri=${encodeURIComponent(
-    window.location.origin + "/logout"
+export function buildFCLogoutUrl(redirectPath = "/logout") {
+  return `${API_HOST}/fc/logout?post_logout_redirect_uri=${encodeURIComponent(
+    window.location.origin + redirectPath
   )}`;
 }

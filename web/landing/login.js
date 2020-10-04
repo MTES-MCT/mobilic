@@ -30,15 +30,11 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      const loginResponse = await api.graphQlMutate(LOGIN_MUTATION, {
+      await api.graphQlMutate(LOGIN_MUTATION, {
         email,
         password
       });
-      const { accessToken, refreshToken } = loginResponse.data.auth.login;
-      await store.storeTokens({
-        accessToken,
-        refreshToken
-      });
+      await store.updateUserIdAndInfo();
     } catch (error) {
       setError(
         formatApiError(error, graphQLError => {

@@ -5,27 +5,16 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { HttpLink } from "apollo-link-http";
 import { onError } from "apollo-link-error";
 import { BatchHttpLink } from "apollo-link-batch-http";
-import { ApolloLink, Observable } from "apollo-link";
+import { ApolloLink } from "apollo-link";
 import gql from "graphql-tag";
-import jwtDecode from "jwt-decode";
 import * as Sentry from "@sentry/browser";
-import { useStoreSyncedWithLocalStorage } from "./store";
+import { useStoreSyncedWithLocalStorage, broadCastChannel } from "./store";
 import { isAuthenticationError, isRetryable } from "./errors";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 import { buildFCLogoutUrl } from "./franceConnect";
+import { readCookie } from "./cookie";
 
-export const API_HOST = process.env.REACT_APP_API_HOST || "/api";
-
-const REFRESH_MUTATION = gql`
-  mutation refreshToken {
-    auth {
-      refresh {
-        accessToken
-        refreshToken
-      }
-    }
-  }
-`;
+export const API_HOST = "/api";
 
 const CHECK_MUTATION = gql`
   mutation checkAuthentication {
@@ -617,41 +606,9 @@ class Api {
       link: ApolloLink.from([
         onError(error => {
           if (isAuthenticationError(error)) {
-            this.refreshTokenQueue.clear();
-            this.nonConcurrentQueryQueue.clear();
             this.logout();
           }
         }),
-        new ApolloLink(
-          (operation, forward) =>
-            new Observable(observer => {
-              let handle;
-              Promise.resolve(operation)
-                .then(oper => {
-                  const token =
-                    oper.operationName === "refreshToken"
-                      ? this.store.refreshToken()
-                      : this.store.accessToken();
-                  oper.setContext({
-                    headers: {
-                      authorization: token ? `Bearer ${token}` : ""
-                    }
-                  });
-                })
-                .then(() => {
-                  handle = forward(operation).subscribe({
-                    next: observer.next.bind(observer),
-                    error: observer.error.bind(observer),
-                    complete: observer.complete.bind(observer)
-                  });
-                })
-                .catch(observer.error.bind(observer));
-
-              return () => {
-                if (handle) handle.unsubscribe();
-              };
-            })
-        ),
         ApolloLink.split(
           operation => {
             return !!operation.getContext().nonPublicApi;
@@ -666,8 +623,8 @@ class Api {
       ]),
       cache: new InMemoryCache()
     });
-    this.refreshTokenQueue = new NonConcurrentExecutionQueue("refreshToken");
-    this.nonConcurrentQueryQueue = new NonConcurrentExecutionQueue("events");
+    this.refreshTokenQueue = new NonConcurrentExecutionQueue(1);
+    this.nonConcurrentQueryQueue = new NonConcurrentExecutionQueue();
     this.isCurrentlySubmittingRequests = () =>
       this.nonConcurrentQueryQueue.lock;
   }
@@ -694,35 +651,46 @@ class Api {
     );
   }
 
+  async _fetch(method, endpoint, options = {}) {
+    const url = `${this.apiHost}${endpoint}`;
+    options.method = method;
+    return await fetch(url, options);
+  }
+
   async httpQuery(method, endpoint, options = {}) {
-    return await this._queryWithRefreshToken(() => {
-      const url = `${this.apiHost}${endpoint}`;
-      if (!options.headers) options.headers = {};
-      options.headers.Authorization = `Bearer ${this.store.accessToken()}`;
-      options.method = method;
-      return fetch(url, options);
-    });
+    return await this._queryWithRefreshToken(() =>
+      this._fetch(method, endpoint, options)
+    );
   }
 
   async _refreshTokenIfNeeded() {
-    const accessToken = this.store.accessToken();
-    if (accessToken) {
-      try {
-        const decodedToken = jwtDecode(accessToken);
-        const timeToExpire =
-          decodedToken.exp && decodedToken.exp * 1000 - new Date().getTime();
-        if (timeToExpire && timeToExpire < 10000) {
-          const refreshResponse = await this.apolloClient.mutate({
-            mutation: REFRESH_MUTATION
-          });
-          await this.store.storeTokens({
-            ...refreshResponse.data.auth.refresh,
-            keepFcToken: true
-          });
+    const accessTokenExpiryTime = parseInt(readCookie("atEat")) || null;
+    if (accessTokenExpiryTime) {
+      const timeToExpire = accessTokenExpiryTime * 1000 - new Date().getTime();
+      if (timeToExpire && timeToExpire < 10000) {
+        let refreshResponse;
+        try {
+          refreshResponse = await this._fetch("POST", "/token/refresh");
+        } catch (err) {
+          const newError = new Error(err.message);
+          newError.name = "NetworkError";
+          throw newError;
         }
-      } catch (err) {
-        console.log(`Error refreshing tokens : ${err}`);
-        throw err;
+        if (refreshResponse.status !== 200) {
+          // User is logged out from the API, update local store
+          await this.store.updateUserIdAndInfo();
+          this.refreshTokenQueue.clear();
+          this.nonConcurrentQueryQueue.clear();
+          await broadCastChannel.postMessage("update");
+          const hasFcToken = readCookie("hasFc") || false;
+          if (hasFcToken) {
+            window.location.href = buildFCLogoutUrl("/");
+          }
+          const errorMessage = refreshResponse.json().error;
+          const error = new Error(errorMessage);
+          error.name = "RefreshTokenError";
+          throw error;
+        }
       }
     }
   }
@@ -765,6 +733,7 @@ class Api {
   async executePendingRequests(failOnError = false) {
     return this.nonConcurrentQueryQueue.execute(async () => {
       // 1. Retrieve all pending requests
+      let processedRequests = 0;
       while (this.store.pendingRequests().length > 0) {
         let errors = [];
         const pendingRequests = this.store.pendingRequests();
@@ -781,6 +750,7 @@ class Api {
           batch.map(async request => {
             try {
               await this.executeRequest(request);
+              processedRequests = processedRequests + 1;
             } catch (err) {
               // It is important to wait for ALL the batched request handlers to execute
               // because they are all processed by the API regardless of whether the others fail
@@ -793,19 +763,26 @@ class Api {
           if (failOnError) throw errors[0];
           // We stop early if some errors can lead to a retry, otherwise the execution will be stuck in an infinite loop
           if (errors.some(e => isRetryable(e))) {
-            return;
+            break;
           }
         }
+      }
+      if (processedRequests > 0) {
+        await broadCastChannel.postMessage("update");
       }
     });
   }
 
-  async logout(logoutFromFC = true) {
-    const fcToken = this.store.fcToken();
-    if (fcToken && logoutFromFC) {
-      window.location.href = buildFCLogoutUrl(fcToken);
+  async logout() {
+    this.refreshTokenQueue.clear();
+    this.nonConcurrentQueryQueue.clear();
+    const hasFcToken = readCookie("hasFc") || false;
+    if (hasFcToken) {
+      window.location.href = buildFCLogoutUrl();
     } else {
-      await this.store.removeTokensAndUserInfo();
+      await this._fetch("POST", "/token/logout");
+      await this.store.updateUserIdAndInfo();
+      await broadCastChannel.postMessage("update");
     }
   }
 

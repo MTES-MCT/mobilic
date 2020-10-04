@@ -22,7 +22,7 @@ export function FranceConnectCallback() {
   ) {
     await withLoadingScreen(async () => {
       try {
-        const apiResponse = await api.graphQlMutate(
+        await api.graphQlMutate(
           FRANCE_CONNECT_LOGIN_MUTATION,
           {
             inviteToken: token,
@@ -33,7 +33,7 @@ export function FranceConnectCallback() {
           },
           { context: { nonPublicApi: true } }
         );
-        await store.storeTokens(apiResponse.data.auth.franceConnectLogin);
+        await store.updateUserIdAndInfo();
       } catch (err) {
         setError(
           formatApiError(err, gqlError => {

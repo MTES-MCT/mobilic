@@ -1,5 +1,8 @@
 import React from "react";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import {
+  broadCastChannel,
+  useStoreSyncedWithLocalStorage
+} from "common/utils/store";
 import { useLocation, useHistory } from "react-router-dom";
 import { ACTIVATE_EMAIL_MUTATION, useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
@@ -38,10 +41,11 @@ export function ActivateEmail() {
                   { token },
                   { context: { nonPublicApi: true } }
                 );
-                store.setUserInfo({
+                await store.setUserInfo({
                   ...store.userInfo(),
                   ...apiResponse.data.signUp.activateEmail
                 });
+                await broadCastChannel.postMessage("update");
                 history.push("/home");
               } catch (err) {
                 setError(formatApiError(err));

@@ -42,7 +42,7 @@ function Authorize({ path, setClientName, setRedirectUri }) {
             try {
               const apiResponse = await fetch(
                 `${API_HOST}/oauth/parse_authorization_request${location.search}`,
-                { method: "GET" }
+                { method: "POST" }
               );
               if (apiResponse.status !== 200) {
                 setError("Les paramètres de la requête sont invalides");

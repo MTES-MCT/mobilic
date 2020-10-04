@@ -3,7 +3,10 @@ import React from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { useLoadingScreen } from "common/utils/loading";
 import { REDEEM_INVITE_QUERY, useApi } from "common/utils/api";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import {
+  broadCastChannel,
+  useStoreSyncedWithLocalStorage
+} from "common/utils/store";
 import { formatApiError } from "common/utils/errors";
 import Typography from "@material-ui/core/Typography";
 
@@ -31,6 +34,7 @@ export function RedeemInvite() {
           "employments",
           () => false
         );
+        await broadCastChannel.postMessage("update");
         history.push("/home");
       } catch (err) {
         setError(formatApiError(err));

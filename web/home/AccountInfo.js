@@ -1,6 +1,9 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import {
+  useStoreSyncedWithLocalStorage,
+  broadCastChannel
+} from "common/utils/store";
 import Paper from "@material-ui/core/Paper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
@@ -81,6 +84,7 @@ function EmploymentInfo({ employment }) {
         "employments",
         e => e.id === employment.id
       );
+      await broadCastChannel.postMessage("update");
     } catch (err) {
       setError(
         formatApiError(err, graphQLError => {
@@ -250,6 +254,7 @@ export function Home() {
                           ...store.userInfo(),
                           ...apiResponse.data.account.changeEmail
                         });
+                        await broadCastChannel.postMessage("update");
                       }
                     })
                   }

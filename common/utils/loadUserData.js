@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/browser";
 import { USER_QUERY } from "./api";
+import { broadCastChannel } from "./store";
 import { parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
 import { DAY } from "./time";
@@ -12,7 +13,8 @@ export async function loadUserData(api, store) {
       id: userId,
       activityAfter: Date.now() - DAY * 120
     });
-    return await syncUser(userResponse.data.user, store);
+    await syncUser(userResponse.data.user, store);
+    await broadCastChannel.postMessage("update");
   } catch (err) {
     Sentry.captureException(err);
     console.log(err);

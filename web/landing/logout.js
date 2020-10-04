@@ -6,9 +6,13 @@ export function Logout() {
   const api = useApi();
   const history = useHistory();
 
-  React.useEffect(() => {
-    api.logout(false);
+  async function _logout() {
+    await api.logout();
     history.push("/");
+  }
+
+  React.useEffect(() => {
+    _logout();
   }, []);
 
   return null;

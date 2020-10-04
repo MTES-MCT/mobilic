@@ -4,7 +4,10 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField/TextField";
 import { CONFIRM_FC_EMAIL_MUTATION, useApi } from "common/utils/api";
 import { useHistory, useLocation } from "react-router-dom";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import {
+  broadCastChannel,
+  useStoreSyncedWithLocalStorage
+} from "common/utils/store";
 import Paper from "@material-ui/core/Paper";
 import SignupStepper from "./SignupStepper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -90,10 +93,11 @@ export function EmailSelection() {
         { context: { nonPublicApi: true } }
       );
 
-      store.setUserInfo({
+      await store.setUserInfo({
         ...userInfo,
         ...apiResponse.data.signUp.confirmFcEmail
       });
+      await broadCastChannel.postMessage("update");
       if (isAdmin) history.push("/signup/company");
       else history.push("/signup/complete");
     } catch (err) {

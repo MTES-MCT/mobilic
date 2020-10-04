@@ -1,5 +1,4 @@
 import React from "react";
-import jwtDecode from "jwt-decode";
 import zipObject from "lodash/zipObject";
 import keyBy from "lodash/keyBy";
 import pickBy from "lodash/pickBy";
@@ -7,8 +6,15 @@ import mapValues from "lodash/mapValues";
 import map from "lodash/map";
 import * as Sentry from "@sentry/browser";
 import omit from "lodash/omit";
+import { NonConcurrentExecutionQueue } from "./concurrency";
+import { BroadcastChannel } from "broadcast-channel";
+import { readCookie } from "./cookie";
 
-const STORE_VERSION = 7;
+const STORE_VERSION = 8;
+
+export const broadCastChannel = new BroadcastChannel("storeUpdates", {
+  webWorkerSupport: false
+});
 
 const StoreSyncedWithLocalStorage = React.createContext(() => {});
 
@@ -35,9 +41,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     this.storage = props.storage;
     // What is stored in local storage and how to read/write to it
     this.mapper = {
-      accessToken: String,
-      refreshToken: String,
-      fcToken: String,
       userId: {
         deserialize: value => (value ? parseInt(value) : value),
         serialize: String.serialize
@@ -66,37 +69,66 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       this.state[entry] = this.mapper[entry].deserialize(null);
     });
 
+    this.loadFromStorageQueue = new NonConcurrentExecutionQueue(2);
     // Async load state from storage
-    this.initFromStorage();
+    this.loadFromStorage();
   }
 
-  initFromStorage = async () => {
+  loadFromStorage = async (resetIfNeeded = true) => {
     // Reset storage when breaking backward compatibility
     const storeVersion = parseInt(await this.storage.getItem("storeVersion"));
-    if (storeVersion !== STORE_VERSION) {
+    if (storeVersion !== STORE_VERSION && resetIfNeeded) {
       await this.storage.clear();
       await this.storage.setItem("storeVersion", STORE_VERSION);
-      return;
-    }
-
-    const stateUpdate = Object.fromEntries(
-      await Promise.all(
-        map(this.mapper, async (value, entry) => {
-          return [entry, await this.storage.getItem(entry)];
-        })
-      )
-    );
-    try {
-      this.setState(
-        mapValues(stateUpdate, (value, entry) =>
-          this.mapper[entry].deserialize(value)
+    } else {
+      const stateUpdate = Object.fromEntries(
+        await Promise.all(
+          map(this.mapper, async (value, entry) => {
+            return [entry, await this.storage.getItem(entry)];
+          })
         )
       );
-    } catch (err) {
-      Sentry.captureException(err);
-      console.log(err);
+      try {
+        await new Promise(resolve =>
+          this.setState(
+            mapValues(stateUpdate, (value, entry) =>
+              this.mapper[entry].deserialize(value)
+            ),
+            resolve
+          )
+        );
+      } catch (err) {
+        Sentry.captureException(err);
+        console.log(err);
+      }
+    }
+    this._updateUserId();
+  };
+
+  broadcastChannelMessageHandler = msg => {
+    if (msg === "update") {
+      console.log("Syncing from storage");
+      this.loadFromStorageQueue.execute(
+        async () => await this.loadFromStorage(false)
+      );
     }
   };
+
+  componentDidMount() {
+    console.log("Store mounted");
+    broadCastChannel.addEventListener(
+      "message",
+      this.broadcastChannelMessageHandler
+    );
+  }
+
+  componentWillUnmount() {
+    console.log("Store unmounted");
+    broadCastChannel.removeEventListener(
+      "message",
+      this.broadcastChannelMessageHandler
+    );
+  }
 
   setStoreState = (stateUpdate, fieldsToSync, callback = () => {}) => {
     this.setState(stateUpdate, () => {
@@ -371,36 +403,14 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     });
   };
 
-  storeTokens = ({ accessToken, refreshToken, fcToken, keepFcToken = false }) =>
-    new Promise(resolve => {
-      const { id } = jwtDecode(accessToken).identity;
-      const itemMap = {
-        accessToken,
-        refreshToken,
-        userId: id
-      };
-      if (!keepFcToken) itemMap.fcToken = fcToken;
-      this.setItems(itemMap, resolve);
-    });
-
-  removeTokensAndUserInfo = async () =>
+  _removeUserInfo = async () =>
     await Promise.all([
-      new Promise(resolve =>
-        this.removeItems(
-          [
-            "accessToken",
-            "refreshToken",
-            "fcToken",
-            "userId",
-            "hasAcceptedCgu"
-          ],
-          resolve
-        )
-      ),
+      new Promise(resolve => this.removeItems(["hasAcceptedCgu"], resolve)),
       new Promise(resolve => {
         this.setItems({ userInfo: {}, employments: [] }, resolve);
       })
     ]);
+
   setUserInfo = ({
     firstName,
     lastName,
@@ -408,15 +418,20 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     hasConfirmedEmail,
     hasActivatedEmail
   }) =>
-    this.setItems({
-      userInfo: {
-        firstName,
-        lastName,
-        email,
-        hasConfirmedEmail,
-        hasActivatedEmail
-      }
-    });
+    new Promise(resolve =>
+      this.setItems(
+        {
+          userInfo: {
+            firstName,
+            lastName,
+            email,
+            hasConfirmedEmail,
+            hasActivatedEmail
+          }
+        },
+        resolve
+      )
+    );
 
   setEmployeeInvite = employment =>
     this.setState({ employeeInvite: employment });
@@ -443,18 +458,24 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     return info;
   };
 
+  _updateUserId = async () =>
+    new Promise(resolve =>
+      this.setItems({ userId: parseInt(readCookie("userId")) || null }, resolve)
+    );
+
+  updateUserIdAndInfo = async () => {
+    await this._updateUserId();
+    await this._removeUserInfo();
+  };
+
   render() {
     return (
       <>
         <StoreSyncedWithLocalStorage.Provider
           value={{
-            storeTokens: this.storeTokens,
-            accessToken: () => this.state.accessToken,
-            refreshToken: () => this.state.refreshToken,
-            fcToken: () => this.state.fcToken,
             userId: () => this.state.userId,
+            updateUserIdAndInfo: this.updateUserIdAndInfo,
             companyInfo: this.companyInfo,
-            removeTokensAndUserInfo: this.removeTokensAndUserInfo,
             setUserInfo: this.setUserInfo,
             userInfo: () => ({ id: this.state.userId, ...this.state.userInfo }),
             coworkers: () => this.state.coworkers,

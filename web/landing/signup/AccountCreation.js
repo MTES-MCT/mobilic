@@ -90,16 +90,10 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       if (employeeInvite) {
         signupPayload.inviteToken = employeeInvite.inviteToken;
       }
-      const signUpResponse = await api.graphQlMutate(
-        USER_SIGNUP_MUTATION,
-        signupPayload,
-        { context: { nonPublicApi: true } }
-      );
-      const { accessToken, refreshToken } = signUpResponse.data.signUp.user;
-      await store.storeTokens({
-        accessToken,
-        refreshToken
+      await api.graphQlMutate(USER_SIGNUP_MUTATION, signupPayload, {
+        context: { nonPublicApi: true }
       });
+      await store.updateUserIdAndInfo();
       if (isAdmin) history.push("/signup/company");
       else history.push("/signup/complete");
     } catch (err) {

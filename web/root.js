@@ -71,6 +71,7 @@ function _Root() {
   const withLoadingScreen = useLoadingScreen();
 
   const userId = store.userId();
+  console.log(userId);
   const userInfo = store.userInfo();
   const companyInfo = store.companyInfo();
   const isSigningUp = store.isSigningUp();
@@ -91,7 +92,14 @@ function _Root() {
         location.pathname.startsWith("/fc-callback");
       const queryString = new URLSearchParams(location.search);
 
-      await loadUserData(api, store);
+      const isLoggingOut = location.pathname.startsWith("/logout");
+      if (isLoggingOut) {
+        return;
+      }
+
+      if (!document.hidden) {
+        await loadUserData(api, store);
+      }
       if (isLoggingIn) {
         const nextLocation = queryString.get("next");
         history.push(

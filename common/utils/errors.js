@@ -3,7 +3,10 @@ import { formatDay, formatTimeOfDay } from "./time";
 import { getTime } from "./events";
 
 export function isConnectionError(error) {
-  return error.networkError && !error.networkError.statusCode;
+  return (
+    error.name === "NetworkError" ||
+    (error.networkError && !error.networkError.statusCode)
+  );
 }
 
 export function formatApiError(error, overrideFormatGraphQLError) {
@@ -29,10 +32,11 @@ export function formatApiError(error, overrideFormatGraphQLError) {
 
 export function isAuthenticationError(error) {
   return (
-    isGraphQLError(error) &&
-    error.graphQLErrors.some(
-      err => err.extensions && err.extensions.code === "AUTHENTICATION_ERROR"
-    )
+    error.name === "RefreshTokenError" ||
+    (isGraphQLError(error) &&
+      error.graphQLErrors.some(
+        err => err.extensions && err.extensions.code === "AUTHENTICATION_ERROR"
+      ))
   );
 }
 

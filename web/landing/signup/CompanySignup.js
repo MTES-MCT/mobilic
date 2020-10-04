@@ -14,7 +14,10 @@ import Card from "@material-ui/core/Card";
 import { LoadingButton } from "common/components/LoadingButton";
 import { formatApiError } from "common/utils/errors";
 import { Section } from "../../common/Section";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import {
+  broadCastChannel,
+  useStoreSyncedWithLocalStorage
+} from "common/utils/store";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormGroup from "@material-ui/core/FormGroup";
@@ -139,6 +142,7 @@ export function CompanySignup() {
       );
       const employment = apiResponse.data.signUp.company.employment;
       await store.syncEntity([employment], "employments", () => false);
+      await broadCastChannel.postMessage("update");
       history.push("/signup/complete");
     } catch (err) {
       setSignupError(formatApiError(err));
