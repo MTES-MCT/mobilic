@@ -41,8 +41,6 @@ export function EmailSelection() {
   const userInfo = store.userInfo();
   const modals = useModals();
 
-  React.useEffect(() => store.setIsSigningUp(), []);
-
   const [isAdmin, setIsAdmin] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [origEmailSet, setOrigEmailSet] = React.useState(false);
@@ -97,6 +95,7 @@ export function EmailSelection() {
         ...userInfo,
         ...apiResponse.data.signUp.confirmFcEmail
       });
+      store.setIsSigningUp();
       await broadCastChannel.postMessage("update");
       if (isAdmin) history.push("/signup/company");
       else history.push("/signup/complete");
