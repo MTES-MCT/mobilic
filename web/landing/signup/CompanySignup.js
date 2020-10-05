@@ -326,6 +326,7 @@ export function CompanySignup() {
                 />
                 <FormGroup>
                   <FormControlLabel
+                    style={{ textAlign: "left" }}
                     control={
                       <Checkbox
                         required
