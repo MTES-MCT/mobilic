@@ -415,6 +415,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     firstName,
     lastName,
     email,
+    birthDate,
     hasConfirmedEmail,
     hasActivatedEmail
   }) =>
@@ -425,6 +426,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             firstName,
             lastName,
             email,
+            birthDate,
             hasConfirmedEmail,
             hasActivatedEmail
           }

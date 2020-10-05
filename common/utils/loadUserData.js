@@ -26,6 +26,7 @@ export function syncUser(userPayload, store) {
     firstName,
     lastName,
     email,
+    birthDate,
     hasConfirmedEmail,
     hasActivatedEmail,
     missions,
@@ -50,6 +51,7 @@ export function syncUser(userPayload, store) {
         firstName,
         lastName,
         email,
+        birthDate,
         hasConfirmedEmail,
         hasActivatedEmail
       })

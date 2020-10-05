@@ -203,7 +203,8 @@ export function Home() {
   const primaryEmployment = employments.find(e => e.isPrimary);
   const secondaryEmployments = employments.filter(e => !e.isPrimary);
 
-  const isActive = store.userInfo().hasActivatedEmail;
+  const userInfo = store.userInfo();
+  const isActive = userInfo.hasActivatedEmail;
 
   return [
     <Header key={0} />,
@@ -218,29 +219,34 @@ export function Home() {
           </Typography>
 
           <Section title="Moi">
-            <Grid container wrap="wrap" spacing={5}>
+            <Grid container wrap="wrap" spacing={4}>
               <Grid item xs={12}>
                 <InfoItem
                   name="Identifiant Mobilic"
-                  value={store.userId()}
+                  value={userInfo.id}
                   bold
                   info={
-                    isActive
+                    !primaryEmployment
                       ? "Cet identifiant est à communiquer à votre employeur afin qu'il vous rattache à l'entreprise"
                       : ""
                   }
                 />
               </Grid>
               <Grid item sm={6} zeroMinWidth>
-                <InfoItem
-                  name="Nom"
-                  value={formatPersonName(store.userInfo())}
-                />
+                <InfoItem name="Nom" value={formatPersonName(userInfo)} />
               </Grid>
-              <Grid item sm={6} zeroMinWidth>
+              {userInfo.birthDate && (
+                <Grid item sm={6} zeroMinWidth>
+                  <InfoItem
+                    name="Date de naissance"
+                    value={userInfo.birthDate}
+                  />
+                </Grid>
+              )}
+              <Grid item {...(isActive ? { sm: 6 } : { xs: 12 })} zeroMinWidth>
                 <InfoItem
                   name="Email"
-                  value={store.userInfo().email}
+                  value={userInfo.email}
                   actionTitle="Modifier email"
                   action={() =>
                     modals.open("changeEmail", {
@@ -258,18 +264,21 @@ export function Home() {
                       }
                     })
                   }
+                  alertComponent={
+                    isActive ? null : (
+                      <Alert severity="error" className={classes.inactiveAlert}>
+                        <AlertTitle className="bold">
+                          Adresse email non activée
+                        </AlertTitle>
+                        Un email d'activation vous a été envoyé à l'adresse
+                        ci-dessus. L'activation est nécessaire pour accéder aux
+                        services Mobilic.
+                      </Alert>
+                    )
+                  }
                 />
               </Grid>
             </Grid>
-            {!isActive && (
-              <Alert severity="error" className={classes.inactiveAlert}>
-                <AlertTitle className="bold">
-                  Adresse email non activée
-                </AlertTitle>
-                Un email d'activation vous a été envoyé à l'adresse ci-dessus.
-                L'activation est nécessaire pour accéder aux services Mobilic.
-              </Alert>
-            )}
           </Section>
           <Divider />
           {isActive && (

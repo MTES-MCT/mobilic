@@ -19,7 +19,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function InfoItem({ name, value, info, bold, actionTitle, action }) {
+export function InfoItem({
+  name,
+  value,
+  info,
+  bold,
+  actionTitle,
+  action,
+  alertComponent
+}) {
   const classes = useStyles({ bold });
 
   return (
@@ -48,6 +56,7 @@ export function InfoItem({ name, value, info, bold, actionTitle, action }) {
         {value}
       </Typography>
       {info && <Alert severity="info">{info}</Alert>}
+      {alertComponent}
     </Box>
   );
 }

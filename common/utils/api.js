@@ -107,6 +107,7 @@ export const USER_QUERY = gql`
       id
       firstName
       lastName
+      birthDate
       email
       hasConfirmedEmail
       hasActivatedEmail
