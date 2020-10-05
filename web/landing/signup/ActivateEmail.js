@@ -63,6 +63,7 @@ export function ActivateEmail() {
                   await broadCastChannel.postMessage("update");
                   history.push("/home");
                 } catch (err) {
+                  console.log(err);
                   setError(formatApiError(err));
                 }
               }
