@@ -2,7 +2,7 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Card from "@material-ui/core/Card";
-import { ManagerIcon, TruckIcon } from "common/utils/icons";
+import { ManagerImage, WorkerImage } from "common/utils/icons";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { LinkButton } from "../../common/LinkButton";
@@ -41,7 +41,7 @@ export function RoleSelection() {
         <LinkButton href="/signup/user" className={classes.roleButton}>
           <Card raised>
             <Box p={2} className="flex-column-space-between">
-              <TruckIcon color="primary" className={classes.icon} />
+              <WorkerImage height={150} width={150} />
               <Typography className={classes.roleButtonText}>
                 Je suis travailleur mobile et je dois remplir le LIC
               </Typography>
@@ -53,7 +53,7 @@ export function RoleSelection() {
         <LinkButton href="/signup/admin" className={classes.roleButton}>
           <Card raised>
             <Box p={2} className="flex-column-space-between">
-              <ManagerIcon color="primary" className={classes.icon} />
+              <ManagerImage height={150} width={150} />
               <Typography className={classes.roleButtonText}>
                 Je suis gestionnaire d'une entreprise de transport
               </Typography>
