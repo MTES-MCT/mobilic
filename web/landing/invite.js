@@ -47,10 +47,17 @@ export function Invite() {
     const queryString = new URLSearchParams(location.search);
     const token = queryString.get("token");
 
-    if (token) {
-      api.logout();
-      withLoadingScreen(() => loadEmployeeInvite(token, store, api, setError));
-    } else setError("Jeton d'invitation manquant");
+    async function onMount() {
+      if (token) {
+        await api.logout(
+          `/logout?next=${encodeURIComponent("/invite?token=" + token)}`
+        );
+        withLoadingScreen(() =>
+          loadEmployeeInvite(token, store, api, setError)
+        );
+      } else setError("Jeton d'invitation manquant");
+    }
+    onMount();
   }, [location]);
 
   const employeeInvite = store.employeeInvite();
