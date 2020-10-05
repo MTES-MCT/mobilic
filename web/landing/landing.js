@@ -131,7 +131,7 @@ export function Landing() {
         <Grid container direction="column" alignItems="center" spacing={2}>
           <Grid item className={classes.whiteSection}>
             <Typography variant="h2">👋</Typography>
-            <Typography variant="h2">Bienvenue sur MobiLIC !</Typography>
+            <Typography variant="h2">Bienvenue sur Mobilic !</Typography>
           </Grid>
           <Hidden xsDown>
             <Grid item className={classes.whiteSection}>

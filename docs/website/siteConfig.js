@@ -23,8 +23,8 @@
  */
 
 const siteConfig = {
-  title: "API MobiLIC", // Title for your website.
-  tagline: "Documentation de l'API MobiLIC",
+  title: "API Mobilic", // Title for your website.
+  tagline: "Documentation de l'API Mobilic",
   baseUrl: "/developers/", // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: 'https://facebook.github.io',

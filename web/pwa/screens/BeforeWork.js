@@ -91,7 +91,7 @@ export function BeforeWork({ beginNewMission, missions }) {
       />
       <PlaceHolder>
         <Typography variant="h3">👋</Typography>
-        <Typography variant="h3">Bienvenue sur MobiLIC !</Typography>
+        <Typography variant="h3">Bienvenue sur Mobilic !</Typography>
       </PlaceHolder>
     </Container>,
     <Box key={2} mt={2} className="cta-container" mb={2}>
