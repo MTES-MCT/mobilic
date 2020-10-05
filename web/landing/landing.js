@@ -35,6 +35,23 @@ const useStyles = makeStyles(theme => ({
   sectionTitle: {
     paddingBottom: theme.spacing(10)
   },
+  videoHelperText: {
+    paddingBottom: theme.spacing(4)
+  },
+  videoContainer: {
+    position: "relative",
+    paddingBottom: "56.25%",
+    height: 0,
+    overflow: "hidden"
+  },
+  videoIframe: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    width: "100%",
+    height: "100%",
+    overflow: "hidden"
+  },
   sectionHPadding: {
     paddingLeft: theme.spacing(5),
     paddingRight: theme.spacing(5)
@@ -82,7 +99,7 @@ function _Showcase({
     <Grid container direction="column" spacing={1} alignItems="center">
       <Grid item>{image}</Grid>
       <Grid item>
-        <Typography className="bold" variant="body1" color="primary">
+        <Typography className="bold" variant="h4" color="primary">
           {imageDescription}
         </Typography>
       </Grid>
@@ -90,7 +107,7 @@ function _Showcase({
   );
 
   const Description = props => [
-    <Typography align="left" variant="h5" key={0} className="bold">
+    <Typography align="left" variant="h4" key={0} className="bold">
       {descriptionTitle}
     </Typography>,
     <React.Fragment key={1}>{descriptionContent}</React.Fragment>
@@ -137,8 +154,7 @@ export function Landing() {
             <Grid item className={classes.whiteSection}>
               <Box mt={2}>
                 <Typography variant="h3" style={{ fontWeight: "normal" }}>
-                  Simplifier le suivi du temps de travail dans le transport
-                  routier léger afin de lutter contre le travail illégal
+                  Le suivi de votre temps de travail. Fiable, facile, et rapide
                 </Typography>
               </Box>
             </Grid>
@@ -192,17 +208,57 @@ export function Landing() {
     <Container key={4} className={classes.section} maxWidth={false}>
       <Container maxWidth="md" className={classes.inner}>
         <Typography variant="h3" className={`${classes.sectionTitle}`}>
-          Mobilic ... 🤔 qu'est-ce que c'est ? A qui ça s'adresse ?
+          Mobilic ... 🤔 qu'est-ce que c'est ?
         </Typography>
-
+        <Typography className={classes.videoHelperText}>
+          Mobilic est la plateforme gouvernementale qui permet de simplifier le
+          suivi du temps de travail des travailleurs mobiles dans le transport
+          routier léger, afin entre autres de lutter contre le travail illégal.
+        </Typography>
+        <Container maxWidth="sm" disableGutters>
+          <Box className={classes.videoContainer}>
+            <iframe
+              className={classes.videoIframe}
+              frameBorder="0"
+              type="text/html"
+              src="https://www.dailymotion.com/embed/video/x7w86gu"
+              width="100%"
+              height="100%"
+              allowFullScreen
+            ></iframe>
+          </Box>
+        </Container>
+      </Container>
+    </Container>,
+    <Container
+      key={5}
+      className={`${classes.section} ${classes.whiteSection}`}
+      maxWidth={false}
+    >
+      <Container maxWidth="md" className={classes.inner}>
+        <Typography variant="h3" className={`${classes.sectionTitle}`}>
+          A qui ça s'adresse ?
+        </Typography>
+        <Typography className={classes.videoHelperText}>
+          {
+            "Mobilic s'adresse aux différents métiers des entreprises de transport routier qui utilisent des véhicules utilitaires légers (VUL, < 3.5T)."
+          }
+        </Typography>
         <Box className={`${classes.lightBlue}`} p={2}>
           <Showcase
             image={<WorkerImage height={200} width={200} />}
             imagePosition="left"
             imageDescription="Travailleur mobile"
-            descriptionTitle="Suivre mon temps de travail et être mieux informé sur mes droits"
+            descriptionTitle="Suivre simplement mon temps de travail et être mieux informé sur mes droits"
             descriptionContent={
-              <>
+              <div
+                style={{
+                  textAlign: "left",
+                  fontSize: "1rem",
+                  lineHeight: "1.6"
+                }}
+              >
+                <p>Directement sur mobile à tout moment</p>
                 <ul
                   style={{
                     textAlign: "left",
@@ -210,9 +266,6 @@ export function Landing() {
                     lineHeight: "1.6"
                   }}
                 >
-                  <li style={{ listStyle: "none" }}>
-                    Directement depuis mon téléphone à tout moment
-                  </li>
                   <li>
                     via l’interface de Mobilic (si mon entreprise n’utilise pas
                     de logiciel)
@@ -223,7 +276,7 @@ export function Landing() {
                     (connecté à Mobilic)
                   </li>
                 </ul>
-              </>
+              </div>
             }
           />
         </Box>
@@ -242,12 +295,12 @@ export function Landing() {
                 }}
               >
                 <li>
-                  une gestion administrative des données sociales allégée avec
-                  la fin de la double saisie LIC / logiciel gestion
+                  Alléger la gestion administrative des données sociales de mon
+                  entreprise en évitant la double saisie des informations
                 </li>
                 <li>
-                  des données sociales accessibles en temps réel pour mieux
-                  gérer l’organistion des équipes
+                  Optimiser l'organisation de mes équipes en accédant aux
+                  données sociales en temps réel
                 </li>
               </ul>
             }
@@ -258,7 +311,25 @@ export function Landing() {
             image={<SoftwareImage height={200} width={200} />}
             imagePosition="left"
             imageDescription="Logiciel métier"
-            descriptionTitle="Récupérer en temps réel par API des données sociales clés pour la gestion du personnel"
+            descriptionTitle="Echanger en temps réel avec l'API Mobilic des données sociales clés pour la gestion du personnel"
+            descriptionContent={
+              <ul
+                style={{
+                  textAlign: "left",
+                  fontSize: "1rem",
+                  lineHeight: "1.6"
+                }}
+              >
+                <li>
+                  Enrichir mon logiciel avec les données sociales, accessibles
+                  sans délai
+                </li>
+                <li>
+                  Garantir la conformité réglementaire de mes entreprises
+                  clientes
+                </li>
+              </ul>
+            }
           />
         </Box>
       </Container>
