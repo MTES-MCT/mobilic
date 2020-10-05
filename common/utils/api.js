@@ -773,12 +773,12 @@ class Api {
     });
   }
 
-  async logout() {
+  async logout(postFCLogoutRedirect = "/logout") {
     this.refreshTokenQueue.clear();
     this.nonConcurrentQueryQueue.clear();
     const hasFcToken = readCookie("hasFc") || false;
     if (hasFcToken) {
-      window.location.href = buildFCLogoutUrl();
+      window.location.href = buildFCLogoutUrl(postFCLogoutRedirect);
     } else {
       await this._fetch("POST", "/token/logout");
       await this.store.updateUserIdAndInfo();

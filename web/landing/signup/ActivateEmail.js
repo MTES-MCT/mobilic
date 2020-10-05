@@ -8,6 +8,7 @@ import { ACTIVATE_EMAIL_MUTATION, useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { formatApiError } from "common/utils/errors";
 import Typography from "@material-ui/core/Typography";
+import jwt_decode from "jwt-decode";
 
 export function ActivateEmail() {
   const location = useLocation();
@@ -24,36 +25,51 @@ export function ActivateEmail() {
 
     if (!token) setError("Jeton d'activation manquant");
     else {
-      setTimeout(
-        () =>
-          withLoadingScreen(async () => {
-            const isAuthenticated = await api.checkAuthentication();
-            if (!isAuthenticated) {
-              history.push(
-                `/login?next=${encodeURIComponent(
-                  "/activate_email?token=" + token
-                )}`
-              );
-            } else {
-              try {
-                const apiResponse = await api.graphQlMutate(
-                  ACTIVATE_EMAIL_MUTATION,
-                  { token },
-                  { context: { nonPublicApi: true } }
+      let userId;
+      try {
+        const decodedToken = jwt_decode(token);
+        userId = decodedToken["user_id"];
+      } catch (err) {
+        setError("Jeton d'activation invalide");
+      }
+
+      if (userId) {
+        setTimeout(
+          () =>
+            withLoadingScreen(async () => {
+              const isAuthenticated = await api.checkAuthentication();
+              // If a differrent user is authenticated, logout
+              if (isAuthenticated && store.userId() !== userId) {
+                history.push(
+                  `/logout?next=${encodeURIComponent(
+                    "/activate_email?token=" + token
+                  )}`
                 );
-                await store.setUserInfo({
-                  ...store.userInfo(),
-                  ...apiResponse.data.signUp.activateEmail
-                });
-                await broadCastChannel.postMessage("update");
-                history.push("/home");
-              } catch (err) {
-                setError(formatApiError(err));
+              } else {
+                try {
+                  const apiResponse = await api.graphQlMutate(
+                    ACTIVATE_EMAIL_MUTATION,
+                    { token },
+                    { context: { nonPublicApi: true } }
+                  );
+                  if (!isAuthenticated) {
+                    await store.updateUserIdAndInfo();
+                  } else {
+                    await store.setUserInfo({
+                      ...store.userInfo(),
+                      ...apiResponse.data.signUp.activateEmail
+                    });
+                  }
+                  await broadCastChannel.postMessage("update");
+                  history.push("/home");
+                } catch (err) {
+                  setError(formatApiError(err));
+                }
               }
-            }
-          }),
-        200
-      );
+            }),
+          200
+        );
+      }
     }
   }, []);
 
