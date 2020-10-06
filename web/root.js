@@ -71,7 +71,6 @@ function _Root() {
   const withLoadingScreen = useLoadingScreen();
 
   const userId = store.userId();
-  console.log(userId);
   const userInfo = store.userInfo();
   const companyInfo = store.companyInfo();
   const isSigningUp = store.isSigningUp();

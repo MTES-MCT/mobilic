@@ -624,7 +624,7 @@ class Api {
       ]),
       cache: new InMemoryCache()
     });
-    this.refreshTokenQueue = new NonConcurrentExecutionQueue(1);
+    this.refreshTokenQueue = new NonConcurrentExecutionQueue("sameSignal");
     this.nonConcurrentQueryQueue = new NonConcurrentExecutionQueue();
     this.isCurrentlySubmittingRequests = () =>
       this.nonConcurrentQueryQueue.lock;
