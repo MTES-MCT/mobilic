@@ -26,9 +26,9 @@ import {
 } from "common/utils/api";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { useModals } from "common/utils/modals";
-import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
 import AlertTitle from "@material-ui/lab/AlertTitle";
+import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -198,7 +198,7 @@ export function Home() {
   const [
     expandSecondaryCompanies,
     setExpandSecondaryCompanies
-  ] = React.useState(false);
+  ] = React.useState({});
 
   const primaryEmployment = employments.find(e => e.isPrimary);
   const secondaryEmployments = employments.filter(e => !e.isPrimary);
@@ -288,48 +288,51 @@ export function Home() {
               }
             >
               {secondaryEmployments.length > 0 && [
-                <Accordion
-                  key={0}
-                  expanded={expandPrimaryCompany}
-                  onChange={() =>
-                    setExpandPrimaryCompany(!expandPrimaryCompany)
-                  }
-                >
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography className="bold">
-                      Entreprise principale
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {primaryEmployment ? (
-                      <EmploymentInfo employment={primaryEmployment} />
-                    ) : (
-                      <NoPrimaryEmploymentAlert />
-                    )}
-                  </AccordionDetails>
-                </Accordion>,
-                <Accordion
-                  key={1}
-                  expanded={expandSecondaryCompanies}
-                  onChange={() =>
-                    setExpandSecondaryCompanies(!expandSecondaryCompanies)
-                  }
-                >
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography className="bold">
-                      Entreprises secondaires
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {secondaryEmployments.map((e, index) => (
-                      <Paper key={index} variant="outlined">
-                        <Box p={2}>
-                          <EmploymentInfo employment={e} />
-                        </Box>
-                      </Paper>
-                    ))}
-                  </AccordionDetails>
-                </Accordion>
+                <Box mb={6} key={0}>
+                  <Accordion
+                    expanded={expandPrimaryCompany}
+                    onChange={() =>
+                      setExpandPrimaryCompany(!expandPrimaryCompany)
+                    }
+                  >
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography className="bold">
+                        Entreprise principale
+                        {primaryEmployment
+                          ? ` : ${primaryEmployment.company.name}`
+                          : ""}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      {primaryEmployment ? (
+                        <EmploymentInfo employment={primaryEmployment} />
+                      ) : (
+                        <NoPrimaryEmploymentAlert />
+                      )}
+                    </AccordionDetails>
+                  </Accordion>
+                </Box>,
+                ...secondaryEmployments.map(employment => (
+                  <Accordion
+                    key={employment.id}
+                    expanded={expandSecondaryCompanies[employment.id]}
+                    onChange={() =>
+                      setExpandSecondaryCompanies(prevState => ({
+                        ...prevState,
+                        [employment.id]: !prevState[employment.id]
+                      }))
+                    }
+                  >
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography>
+                        Entreprise secondaire : {employment.company.name}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <EmploymentInfo employment={employment} />
+                    </AccordionDetails>
+                  </Accordion>
+                ))
               ]}
               {secondaryEmployments.length === 0 && !primaryEmployment && (
                 <NoPrimaryEmploymentAlert />

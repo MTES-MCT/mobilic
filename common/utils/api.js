@@ -781,9 +781,11 @@ class Api {
     if (hasFcToken) {
       window.location.href = buildFCLogoutUrl(postFCLogoutRedirect);
     } else {
-      await this._fetch("POST", "/token/logout");
-      await this.store.updateUserIdAndInfo();
-      await broadCastChannel.postMessage("update");
+      if (readCookie("userId")) {
+        await this._fetch("POST", "/token/logout");
+        await this.store.updateUserIdAndInfo();
+        await broadCastChannel.postMessage("update");
+      }
     }
   }
 
