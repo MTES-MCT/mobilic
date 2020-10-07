@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.contrastText
   },
   sectionTitle: {
-    paddingBottom: theme.spacing(10)
+    paddingBottom: theme.spacing(6)
   },
   videoHelperText: {
     paddingBottom: theme.spacing(4)
@@ -154,7 +154,7 @@ export function Landing() {
             <Grid item className={classes.whiteSection}>
               <Box mt={2}>
                 <Typography variant="h3" style={{ fontWeight: "normal" }}>
-                  Le suivi de votre temps de travail. Fiable, facile, et rapide
+                  Le suivi de votre temps de travail : fiable, facile, et rapide
                 </Typography>
               </Box>
             </Grid>
@@ -188,7 +188,7 @@ export function Landing() {
             <Grid container spacing={2} direction="column" alignItems="stretch">
               <Grid item style={{ position: "relative" }}>
                 <Typography style={{ position: "absolute", left: 0, right: 0 }}>
-                  J'ai déjà un compte Mobilic, je me connecte
+                  J'ai déjà un compte Mobilic
                 </Typography>
                 <Typography className="hidden">
                   Je suis travailleur mobile ou gestionnaire d'une entreprise de
@@ -212,8 +212,8 @@ export function Landing() {
         </Typography>
         <Typography className={classes.videoHelperText}>
           Mobilic est la plateforme gouvernementale qui permet de simplifier le
-          suivi du temps de travail des travailleurs mobiles dans le transport
-          routier léger, afin entre autres de lutter contre le travail illégal.
+          suivi du temps de travail dans le transport routier léger afin de
+          lutter contre le travail illégal.
         </Typography>
         <Container maxWidth="sm" disableGutters>
           <Box className={classes.videoContainer}>
