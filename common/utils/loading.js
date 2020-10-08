@@ -24,7 +24,10 @@ export function LoadingScreenContextProvider({ children }) {
   return (
     <LoadingScreenContext.Provider value={withLoadingScreen}>
       {children}
-      <Backdrop open={syncingWithBackendCounter > 0} style={{ zIndex: 5000 }}>
+      <Backdrop
+        open={syncingWithBackendCounter > 0}
+        style={{ zIndex: 5000, backdropFilter: "blur(5px)" }}
+      >
         <CircularProgress color="primary" />
       </Backdrop>
     </LoadingScreenContext.Provider>

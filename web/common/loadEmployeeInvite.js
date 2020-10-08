@@ -6,11 +6,14 @@ export async function loadEmployeeInvite(token, store, api, setError) {
     const employment = await api.graphQlQuery(
       GET_EMPLOYMENT_QUERY,
       {
-        inviteToken: token
+        token
       },
       { context: { nonPublicApi: true } }
     );
-    store.setEmployeeInvite(employment.data.employment);
+    store.setEmployeeInvite({
+      ...employment.data.employment,
+      inviteToken: token
+    });
   } catch (err) {
     setError(formatApiError(err));
   }

@@ -12,7 +12,7 @@ import { useStoreSyncedWithLocalStorage, broadCastChannel } from "./store";
 import { isAuthenticationError, isRetryable } from "./errors";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 import { buildFCLogoutUrl } from "./franceConnect";
-import { readCookie } from "./cookie";
+import { currentUserId, readCookie } from "./cookie";
 
 export const API_HOST = "/api";
 
@@ -208,17 +208,17 @@ export const COMPANY_QUERY = gql`
 `;
 
 export const GET_EMPLOYMENT_QUERY = gql`
-  query getInvitation($inviteToken: String!) {
-    employment(inviteToken: $inviteToken) {
+  query getInvitation($token: String!) {
+    employment(token: $token) {
       id
       startDate
       isPrimary
       hasAdminRights
-      inviteToken
       company {
         id
         name
       }
+      userId
       submitter {
         id
         firstName
@@ -229,9 +229,9 @@ export const GET_EMPLOYMENT_QUERY = gql`
 `;
 
 export const REDEEM_INVITE_QUERY = gql`
-  mutation redeemInvite($inviteToken: String!) {
+  mutation redeemInvite($token: String!) {
     signUp {
-      redeemInvite(inviteToken: $inviteToken) {
+      redeemInvite(token: $token) {
         id
         startDate
         isPrimary
@@ -780,8 +780,13 @@ class Api {
     const hasFcToken = readCookie("hasFc") || false;
     if (hasFcToken) {
       window.location.href = buildFCLogoutUrl(postFCLogoutRedirect);
+      // Effectively stop JS execution
+      const waitUntilLocationChange = new Promise(resolve =>
+        setTimeout(resolve, 5000)
+      );
+      await waitUntilLocationChange;
     } else {
-      if (readCookie("userId")) {
+      if (currentUserId()) {
         await this._fetch("POST", "/token/logout");
         await this.store.updateUserIdAndInfo();
         await broadCastChannel.postMessage("update");
@@ -790,7 +795,7 @@ class Api {
   }
 
   async checkAuthentication() {
-    const userId = this.store.userId();
+    const userId = currentUserId();
     if (!userId) return false;
     try {
       const response = await this.graphQlQuery(CHECK_MUTATION);

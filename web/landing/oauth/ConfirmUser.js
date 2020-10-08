@@ -35,7 +35,10 @@ export function ConfirmUser({ clientName, redirectUri }) {
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
 
-  const consentUrl = "/oauth/authorize/consent" + location.search;
+  const consentUrl =
+    "/oauth/authorize/consent" +
+    (location.search ? location.search + "&" : "?") +
+    `client_name=${clientName}`;
 
   return (
     <Paper key={1}>
@@ -55,7 +58,11 @@ export function ConfirmUser({ clientName, redirectUri }) {
             <ListItem
               button
               onClick={async () => {
-                await api.logout();
+                await api.logout(
+                  `/logout?next=${encodeURIComponent(
+                    "/login?next=" + encodeURIComponent(consentUrl)
+                  )}`
+                );
                 history.push(`/login?next=${encodeURIComponent(consentUrl)}`, {
                   clientName,
                   redirectUri

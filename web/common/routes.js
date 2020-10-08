@@ -65,7 +65,7 @@ export const ROUTES = [
   {
     path: "/redeem_invite",
     label: "Redeem invite",
-    accessible: ({ userInfo }) => !!userInfo.id,
+    accessible: () => true,
     component: <RedeemInvite />,
     menuItemFilter: () => false
   },

@@ -67,52 +67,51 @@ export function Invite() {
     <Container className={classes.container} key={2} maxWidth="md">
       <Paper>
         <Container className={classes.innerContainer} maxWidth="sm">
-          {error || !employeeInvite
-            ? [
-                <Typography key={0} color="error">
-                  Impossible d'accéder à la page pour la raison suivante :
-                </Typography>,
-                <Typography key={1} color="error">
-                  {error}
-                </Typography>
-              ]
-            : [
-                <Typography className={classes.text} key={1}>
-                  <span className="bold">
-                    {formatPersonName(employeeInvite.submitter)}
-                  </span>{" "}
-                  vous invite à rejoindre l'entreprise{" "}
-                  <span className="bold">{employeeInvite.company.name}</span>.
-                </Typography>,
-                <Grid
-                  key={2}
-                  className={classes.buttonContainer}
-                  container
-                  justify="space-evenly"
-                  spacing={2}
-                >
-                  <Grid item>
-                    <LinkButton
-                      color="primary"
-                      variant="contained"
-                      href={`/signup/user?token=${employeeInvite.inviteToken}`}
-                    >
-                      Je crée un compte
-                    </LinkButton>
-                  </Grid>
-                  <Grid item>
-                    <LinkButton
-                      color="primary"
-                      variant="outlined"
-                      href={`/login?next=${encodeURI(
-                        "/redeem_invite?token=" + employeeInvite.inviteToken
-                      )}`}
-                    >
-                      J'ai déjà un compte
-                    </LinkButton>
-                  </Grid>
+          {!employeeInvite || error ? (
+            error ? (
+              <Typography key={0} color="error">
+                Impossible d'accéder à la page pour la raison suivante : {error}
+              </Typography>
+            ) : null
+          ) : (
+            [
+              <Typography className={classes.text} key={1}>
+                <span className="bold">
+                  {formatPersonName(employeeInvite.submitter)}
+                </span>{" "}
+                vous invite à rejoindre l'entreprise{" "}
+                <span className="bold">{employeeInvite.company.name}</span>.
+              </Typography>,
+              <Grid
+                key={2}
+                className={classes.buttonContainer}
+                container
+                justify="space-evenly"
+                spacing={2}
+              >
+                <Grid item>
+                  <LinkButton
+                    color="primary"
+                    variant="contained"
+                    href={`/signup/user?token=${employeeInvite.inviteToken}`}
+                  >
+                    Je crée un compte
+                  </LinkButton>
                 </Grid>
-              ]}
+                <Grid item>
+                  <LinkButton
+                    color="primary"
+                    variant="outlined"
+                    href={`/login?next=${encodeURIComponent(
+                      "/redeem_invite?token=" + employeeInvite.inviteToken
+                    )}`}
+                  >
+                    J'ai déjà un compte
+                  </LinkButton>
+                </Grid>
+              </Grid>
+            ]
+          )}
         </Container>
       </Paper>
     </Container>

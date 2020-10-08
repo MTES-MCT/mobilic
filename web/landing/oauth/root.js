@@ -35,40 +35,39 @@ function Authorize({ path, setClientName, setRedirectUri }) {
   const [error, setError] = React.useState("");
 
   React.useEffect(() => {
-    setTimeout(
-      () =>
-        withLoadingScreen(async () => {
-          if (location.pathname === path) {
-            try {
-              const apiResponse = await fetch(
-                `${API_HOST}/oauth/parse_authorization_request${location.search}`,
-                { method: "POST" }
+    withLoadingScreen(async () => {
+      if (location.pathname === path) {
+        try {
+          const apiResponse = await fetch(
+            `${API_HOST}/oauth/parse_authorization_request${location.search}`,
+            { method: "POST" }
+          );
+          if (apiResponse.status !== 200) {
+            setError("Les paramètres de la requête sont invalides");
+          } else {
+            const { client_name, redirect_uri } = await apiResponse.json();
+            setClientName(client_name);
+            setRedirectUri(redirect_uri);
+            const isAuthenticated = await api.checkAuthentication();
+            if (!isAuthenticated) {
+              history.push(
+                `/login?next=${encodeURIComponent(
+                  path +
+                    "/consent" +
+                    (location.search ? location.search + "&" : "?") +
+                    `client_name=${client_name}`
+                )}`,
+                { clientName: client_name, redirectUri: redirect_uri }
               );
-              if (apiResponse.status !== 200) {
-                setError("Les paramètres de la requête sont invalides");
-              } else {
-                const { client_name, redirect_uri } = await apiResponse.json();
-                setClientName(client_name);
-                setRedirectUri(redirect_uri);
-                const isAuthenticated = await api.checkAuthentication();
-                if (!isAuthenticated) {
-                  history.push(
-                    `/login?next=${encodeURIComponent(
-                      path + "/consent" + location.search
-                    )}`,
-                    { clientName: client_name, redirectUri: redirect_uri }
-                  );
-                } else {
-                  history.push(path + "/confirm_user" + location.search);
-                }
-              }
-            } catch (err) {
-              setError("Erreur lors de la connexion avec le serveur");
+            } else {
+              history.push(path + "/confirm_user" + location.search);
             }
           }
-        }),
-      500
-    );
+        } catch (err) {
+          setError("Erreur lors de la connexion avec le serveur");
+        }
+      }
+    });
   }, []);
 
   return error ? <Typography color="error">{error}</Typography> : null;
@@ -76,6 +75,7 @@ function Authorize({ path, setClientName, setRedirectUri }) {
 
 export default function OAuth() {
   const store = useStoreSyncedWithLocalStorage();
+  const location = useLocation();
 
   const classes = useStyles();
 
@@ -84,6 +84,14 @@ export default function OAuth() {
   const userId = store.userId();
   const [clientName, setClientName] = React.useState("");
   const [redirectUri, setRedirectUri] = React.useState("");
+
+  React.useEffect(() => {
+    const qs = new URLSearchParams(window.location.search);
+    const cName = qs.get("client_name");
+    const rUri = qs.get("redirect_uri");
+    if (cName) setClientName(cName);
+    if (rUri) setRedirectUri(rUri);
+  }, [location]);
 
   return (
     <>

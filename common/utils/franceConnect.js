@@ -4,7 +4,6 @@ export function buildCallbackUrl(employeeInvite, create, isAdmin) {
   let baseUrl = window.location.origin + "/fc-callback";
   const qs = new URLSearchParams(window.location.search);
   const next = qs.get("next");
-  console.log(next);
   let hasQueryString = false;
   if (employeeInvite) {
     baseUrl = baseUrl + `?invite_token=${employeeInvite.inviteToken}`;
@@ -18,10 +17,9 @@ export function buildCallbackUrl(employeeInvite, create, isAdmin) {
   if (create) {
     baseUrl =
       baseUrl +
-      `${hasQueryString ? "&" : "?"}create=true&next=/signup/user_login`;
-    if (isAdmin) {
-      baseUrl = baseUrl + "?admin=true";
-    }
+      `${hasQueryString ? "&" : "?"}create=true&next=${encodeURIComponent(
+        "/signup/user_login" + (isAdmin ? "?admin=true" : "")
+      )}`;
   }
   return baseUrl;
 }

@@ -2,13 +2,18 @@ import React from "react";
 
 import { useLocation, useHistory } from "react-router-dom";
 import { useLoadingScreen } from "common/utils/loading";
-import { REDEEM_INVITE_QUERY, useApi } from "common/utils/api";
+import {
+  GET_EMPLOYMENT_QUERY,
+  REDEEM_INVITE_QUERY,
+  useApi
+} from "common/utils/api";
 import {
   broadCastChannel,
   useStoreSyncedWithLocalStorage
 } from "common/utils/store";
 import { formatApiError } from "common/utils/errors";
 import Typography from "@material-ui/core/Typography";
+import { currentUserId } from "common/utils/cookie";
 
 export function RedeemInvite() {
   const location = useLocation();
@@ -22,18 +27,36 @@ export function RedeemInvite() {
   async function redeemInvite(token) {
     await withLoadingScreen(async () => {
       try {
-        const apiResponse = await api.graphQlMutate(
-          REDEEM_INVITE_QUERY,
+        const userId = currentUserId();
+        const employment = await api.graphQlQuery(
+          GET_EMPLOYMENT_QUERY,
           {
-            inviteToken: token
+            token
           },
           { context: { nonPublicApi: true } }
         );
-        await store.syncEntity(
-          [apiResponse.data.signUp.redeemInvite],
-          "employments",
-          () => false
+        const employmentUserId = employment.data.employment.userId;
+        if (employmentUserId && employmentUserId !== userId) {
+          await api.logout(
+            `/logout?next=${encodeURIComponent(
+              "/redeem_invite?token=" + token
+            )}`
+          );
+        }
+        const apiResponse = await api.graphQlMutate(
+          REDEEM_INVITE_QUERY,
+          {
+            token
+          },
+          { context: { nonPublicApi: true } }
         );
+        if (employmentUserId === userId) {
+          await store.syncEntity(
+            [apiResponse.data.signUp.redeemInvite],
+            "employments",
+            () => false
+          );
+        } else await store.updateUserIdAndInfo();
         await broadCastChannel.postMessage("update");
         history.push("/home");
       } catch (err) {

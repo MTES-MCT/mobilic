@@ -1,11 +1,13 @@
 import React from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useApi } from "common/utils/api";
+import { useLoadingScreen } from "common/utils/loading";
 
 export function Logout() {
   const api = useApi();
   const history = useHistory();
   const location = useLocation();
+  const withLoadingScreen = useLoadingScreen();
 
   async function _logout() {
     const queryString = new URLSearchParams(location.search);
@@ -17,7 +19,7 @@ export function Logout() {
   }
 
   React.useEffect(() => {
-    _logout();
+    withLoadingScreen(_logout);
   }, []);
 
   return null;

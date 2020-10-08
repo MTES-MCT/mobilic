@@ -6,6 +6,15 @@ import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { useLoadingScreen } from "common/utils/loading";
 import Typography from "@material-ui/core/Typography";
 
+function removeParamsFromQueryString(qs, params) {
+  const qsWithoutQuestionMark = qs.startsWith("?") ? qs.slice(1) : qs;
+  const filteredQsParams = qsWithoutQuestionMark
+    .split("&")
+    .map(p => p.split("="))
+    .filter(p => !params.includes(p[0]));
+  return filteredQsParams.map(p => p.join("=")).join("&");
+}
+
 export function FranceConnectCallback() {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
@@ -53,9 +62,10 @@ export function FranceConnectCallback() {
     const code = queryString.get("code");
     const create = queryString.get("create");
     const state = queryString.get("state");
-    queryString.delete("code");
-    queryString.delete("state");
-    const newQS = queryString.toString();
+    const newQS = removeParamsFromQueryString(window.location.search, [
+      "code",
+      "state"
+    ]);
     const callBackUrl =
       window.location.origin +
       window.location.pathname +

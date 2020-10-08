@@ -8,7 +8,7 @@ import * as Sentry from "@sentry/browser";
 import omit from "lodash/omit";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 import { BroadcastChannel } from "broadcast-channel";
-import { readCookie } from "./cookie";
+import { currentUserId } from "./cookie";
 
 const STORE_VERSION = 8;
 
@@ -460,9 +460,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   };
 
   _updateUserId = async () =>
-    new Promise(resolve =>
-      this.setItems({ userId: parseInt(readCookie("userId")) || null }, resolve)
-    );
+    new Promise(resolve => this.setItems({ userId: currentUserId() }, resolve));
 
   updateUserIdAndInfo = async () => {
     await this._updateUserId();

@@ -94,6 +94,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "Jeton expiré";
       case "EMAIL_ALREADY_REGISTERED":
         return "L'adresse email est déjà utilisée.";
+      case "FC_USER_ALREADY_REGISTERED":
+        return "L'utilisateur est déjà inscrit sur Mobilic.";
       case "OVERLAPPING_MISSIONS":
         return `Vous avez déjà une mission en cours démarrée le ${formatDay(
           getTime(graphQLError.extensions.conflictingMission)

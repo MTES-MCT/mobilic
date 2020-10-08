@@ -4,3 +4,7 @@ export function readCookie(name) {
   );
   return cookieEntry ? cookieEntry.pop() : null;
 }
+
+export function currentUserId() {
+  return parseInt(readCookie("userId")) || null;
+}

@@ -30,6 +30,18 @@ export function Consent({ clientName, redirectUri }) {
   const location = useLocation();
   const store = useStoreSyncedWithLocalStorage();
 
+  const queryString = new URLSearchParams(location.search);
+  const actualClientName =
+    clientName ||
+    (location.state
+      ? location.state.clientName
+      : queryString.get("client_name"));
+  const actualRedirectUri =
+    redirectUri ||
+    (location.state
+      ? location.state.redirectUri
+      : queryString.get("redirect_uri"));
+
   const [error, setError] = React.useState("");
 
   async function handleAuthorize(deny = false) {
@@ -51,16 +63,12 @@ export function Consent({ clientName, redirectUri }) {
     return <Typography color="error">{error}</Typography>;
   }
 
-  if (
-    (clientName || location.state.clientName) &&
-    (redirectUri || location.state.redirectUri)
-  ) {
+  if (actualClientName && actualRedirectUri) {
     return (
       <Paper key={1}>
         <Container className="centered" maxWidth="xs">
           <Typography className={classes.title} variant="h3">
-            {clientName || location.state.clientName} souhaite accéder à votre
-            compte Mobilic
+            {actualClientName} souhaite accéder à votre compte Mobilic
           </Typography>
           <Typography>{store.userInfo().email}</Typography>
           <Section last>
@@ -86,7 +94,7 @@ export function Consent({ clientName, redirectUri }) {
             </Grid>
             <Typography className={classes.redirection}>
               L'autorisation vous redirigera vers l'URL{" "}
-              {decodeURIComponent(redirectUri || location.state.redirectUri)}
+              {decodeURIComponent(actualRedirectUri)}
             </Typography>
           </Section>
         </Container>
