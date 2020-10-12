@@ -19,6 +19,7 @@ import { useModals } from "common/utils/modals";
 import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup";
+import { PasswordField } from "common/components/PasswordField";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -186,12 +187,11 @@ export function EmailSelection() {
                 />
               </FormGroup>
               {choosePassword && (
-                <TextField
-                  required
+                <PasswordField
+                  reuired
                   fullWidth
                   className="vertical-form-text-input"
                   label="Choisissez un mot de passe"
-                  type="password"
                   autoComplete="current-password"
                   value={password}
                   onChange={e => {

@@ -39,15 +39,12 @@ export function ActivateEmail() {
           const isAuthenticated = await api.checkAuthentication();
           // If a differrent user is authenticated, logout
           if (isAuthenticated && currentUserId() !== userId) {
-            console.log("Different User Id");
             await api.logout(
               `/logout?next=${encodeURIComponent(
                 "/activate_email?token=" + token
               )}`
             );
-            console.log("Done with logout");
           }
-          console.log("Activating email");
           try {
             const apiResponse = await api.graphQlMutate(
               ACTIVATE_EMAIL_MUTATION,

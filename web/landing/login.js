@@ -15,6 +15,14 @@ import {
   buildFranceConnectUrl
 } from "common/utils/franceConnect";
 import { FranceConnectContainer } from "../common/FranceConnect";
+import { PasswordField } from "common/components/PasswordField";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+
+const useStyles = makeStyles(theme => ({
+  forgotPasswordLink: {
+    marginBottom: theme.spacing(2)
+  }
+}));
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
@@ -25,6 +33,7 @@ export default function Login() {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const history = useHistory();
+  const classes = useStyles();
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -82,11 +91,10 @@ export default function Login() {
               setEmail(e.target.value.replace(/\s/g, ""));
             }}
           />
-          <TextField
+          <PasswordField
             fullWidth
             className="vertical-form-text-input"
             label="Mot de passe"
-            type="password"
             autoComplete="current-password"
             value={password}
             onChange={e => {
@@ -112,6 +120,17 @@ export default function Login() {
             </LoadingButton>
           </Box>
           <Box mt={2}>
+            <Typography className={classes.forgotPasswordLink}>
+              <Link
+                href="/request_reset_password"
+                onClick={e => {
+                  e.preventDefault();
+                  history.push("/request_reset_password");
+                }}
+              >
+                J'ai oublié mon mot de passe
+              </Link>
+            </Typography>
             <Typography>
               Pas encore de compte ?{" "}
               <Link

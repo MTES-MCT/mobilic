@@ -12,6 +12,7 @@ import { FranceConnectCallback } from "../landing/signup/FranceConnectCallback";
 import OAuth from "../landing/oauth/root";
 import { Logout } from "../landing/logout";
 import { ActivateEmail } from "../landing/signup/ActivateEmail";
+import { RequestResetPassword, ResetPassword } from "../landing/ResetPassword";
 
 export const ROUTES = [
   {
@@ -96,6 +97,20 @@ export const ROUTES = [
     accessible: ({ userInfo }) => !userInfo.id,
     exact: true,
     component: <Landing />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/reset_password",
+    label: "Reset password",
+    accessible: () => true,
+    component: <ResetPassword />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/request_reset_password",
+    label: "Reset password",
+    accessible: ({ userInfo }) => !userInfo.id,
+    component: <RequestResetPassword />,
     menuItemFilter: () => false
   }
 ];

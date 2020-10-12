@@ -18,6 +18,7 @@ import {
 } from "common/utils/franceConnect";
 import { FranceConnectContainer } from "../../common/FranceConnect";
 import { useModals } from "common/utils/modals";
+import { PasswordField } from "common/components/PasswordField";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -160,12 +161,11 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                   setEmail(e.target.value.replace(/\s/g, ""));
                 }}
               />
-              <TextField
+              <PasswordField
                 required
                 fullWidth
                 className="vertical-form-text-input"
                 label="Choisissez un mot de passe"
-                type="password"
                 autoComplete="current-password"
                 value={password}
                 onChange={e => {

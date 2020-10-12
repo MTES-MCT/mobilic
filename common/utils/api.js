@@ -258,6 +258,26 @@ export const CHANGE_EMAIL_MUTATION = gql`
   }
 `;
 
+export const RESET_PASSWORD_MUTATION = gql`
+  mutation resetPassword($token: String!, $password: String!) {
+    account {
+      resetPassword(token: $token, password: $password) {
+        id
+      }
+    }
+  }
+`;
+
+export const REQUEST_RESET_PASSWORD_MUTATION = gql`
+  mutation requestResetPassword($mail: String!) {
+    account {
+      requestResetPassword(mail: $mail) {
+        message
+      }
+    }
+  }
+`;
+
 export const ACTIVATE_EMAIL_MUTATION = gql`
   mutation activateEmail($token: String!) {
     signUp {

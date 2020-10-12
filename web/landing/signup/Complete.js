@@ -13,6 +13,9 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(4),
     textAlign: "center",
     fontSize: "300%"
+  },
+  container: {
+    padding: theme.spacing(4)
   }
 }));
 
@@ -25,7 +28,7 @@ export function Complete() {
 
   return (
     <Paper>
-      <Container style={{ padding: "32px" }} className="centered" maxWidth="sm">
+      <Container className={`centered ${classes.container}`} maxWidth="sm">
         <Grid container spacing={10} direction="column" alignItems="center">
           <Grid item xs={12}>
             <Typography className={classes.title} variant="h1">
