@@ -68,7 +68,8 @@ export function ResetPassword() {
       setToken(tok);
       try {
         const decodedToken = jwt_decode(tok);
-        if (!decodedToken.user_id || !decodedToken.hash) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (!decodedToken.user_id || !decodedToken.hasOwnProperty("hash")) {
           throw Error;
         }
       } catch (err) {
