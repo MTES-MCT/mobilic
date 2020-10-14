@@ -439,24 +439,18 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
   clearEmployeeInvite = () => this.setState({ employeeInvite: null });
 
-  setIsSigningUp = () => this.setState({ isSigningUp: true });
-
-  clearIsSigningUp = () => this.setState({ isSigningUp: null });
-
   setHasAcceptedCgu = () => this.setState({ hasAcceptedCgu: true });
 
-  companyInfo = () => {
-    let info = { id: null, name: null, admin: null };
-    const primaryEmployments = this.getEntity("employments").filter(
-      e => e.isPrimary && e.isAcknowledged
+  companies = () => {
+    const employments = this.getEntity("employments").filter(
+      e => e.isAcknowledged
     );
-    if (primaryEmployments.length > 0) {
-      const primaryEmployment = primaryEmployments[0];
-      info.id = primaryEmployment.company.id;
-      info.admin = primaryEmployment.hasAdminRights;
-      info.name = primaryEmployment.company.name;
-    }
-    return info;
+    return employments.map(e => ({
+      id: e.company.id,
+      name: e.company.name,
+      admin: e.hasAdminRights,
+      isPrimary: e.isPrimary
+    }));
   };
 
   _updateUserId = async () =>
@@ -474,7 +468,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           value={{
             userId: () => this.state.userId,
             updateUserIdAndInfo: this.updateUserIdAndInfo,
-            companyInfo: this.companyInfo,
+            companies: this.companies,
             setUserInfo: this.setUserInfo,
             userInfo: () => ({ id: this.state.userId, ...this.state.userInfo }),
             coworkers: () => this.state.coworkers,
@@ -495,9 +489,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             setEmployeeInvite: this.setEmployeeInvite,
             clearEmployeeInvite: this.clearEmployeeInvite,
             employeeInvite: () => this.state.employeeInvite,
-            isSigningUp: () => this.state.isSigningUp,
-            setIsSigningUp: this.setIsSigningUp,
-            clearIsSigningUp: this.clearIsSigningUp,
             hasAcceptedCgu: () => this.state.hasAcceptedCgu,
             clearHasAcceptedCgu: () => this.setState({ hasAcceptedCgu: null }),
             setHasAcceptedCgu: this.setHasAcceptedCgu

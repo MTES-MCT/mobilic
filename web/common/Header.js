@@ -79,10 +79,9 @@ export function NavigationMenu({ menuAnchor, setMenuAnchor }) {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
-  const companyInfo = store.companyInfo();
-  const isSigningUp = store.isSigningUp();
+  const companies = store.companies();
 
-  const routes = getAccessibleRoutes({ userInfo, companyInfo, isSigningUp });
+  const routes = getAccessibleRoutes({ userInfo, companies });
 
   return (
     <Menu
@@ -93,7 +92,7 @@ export function NavigationMenu({ menuAnchor, setMenuAnchor }) {
     >
       {routes
         .filter(
-          r => !r.menuItemFilter || r.menuItemFilter({ userInfo, companyInfo })
+          r => !r.menuItemFilter || r.menuItemFilter({ userInfo, companies })
         )
         .map(route => (
           <MenuRouteItem key={route.path} route={route} />
@@ -139,10 +138,10 @@ function DesktopHeader({ disableMenu }) {
 
   const classes = useStyles();
   const userInfo = store.userInfo();
-  const companyInfo = store.companyInfo();
-  const companyName = companyInfo.name;
-  const isSigningUp = store.isSigningUp();
-  const routes = getAccessibleRoutes({ userInfo, companyInfo, isSigningUp });
+  const companies = store.companies();
+  const primaryCompany = companies.find(c => c.isPrimary);
+  const companyName = primaryCompany ? primaryCompany.name : null;
+  const routes = getAccessibleRoutes({ userInfo, companies });
 
   const docLinks = () => [
     <Button key={0} className={classes.docButton} href="/developers/docs/intro">
@@ -207,9 +206,9 @@ function DesktopHeader({ disableMenu }) {
               {routes
                 .filter(
                   r =>
-                    r.accessible({ userInfo, companyInfo, isSigningUp }) &&
+                    r.accessible({ userInfo, companies }) &&
                     (!r.menuItemFilter ||
-                      r.menuItemFilter({ userInfo, companyInfo }))
+                      r.menuItemFilter({ userInfo, companies }))
                 )
                 .map(route => (
                   <ToggleButton

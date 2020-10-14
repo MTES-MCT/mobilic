@@ -1,6 +1,6 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -19,12 +19,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function Complete() {
+export function Complete({ type }) {
   const classes = useStyles();
 
   const store = useStoreSyncedWithLocalStorage();
 
   const history = useHistory();
+  const location = useLocation();
+
+  const companyName = location.state ? location.state.companyName : null;
 
   return (
     <Paper>
@@ -36,18 +39,29 @@ export function Complete() {
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography>L'inscription s'est terminée avec succès !</Typography>
-            <Typography>
-              Un email d'activation vous a été envoyé à l'adresse{" "}
-              <strong>{store.userInfo().email}</strong>.
-            </Typography>
+            {type === "user" ? (
+              <Typography>
+                L'inscription s'est terminée avec succès !
+              </Typography>
+            ) : (
+              <Typography>
+                L'entreprise{" "}
+                {companyName ? <strong>{companyName} </strong> : ""}a été créée
+                avec succès !
+              </Typography>
+            )}
+            {type === "user" && (
+              <Typography>
+                Un email d'activation de votre compte vous a été envoyé à
+                l'adresse <strong>{store.userInfo().email}</strong>.
+              </Typography>
+            )}
           </Grid>
           <Grid item xs={12}>
             <Button
               color="primary"
               variant="contained"
               onClick={() => {
-                store.clearIsSigningUp();
                 history.push("/");
               }}
             >

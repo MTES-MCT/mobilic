@@ -1,5 +1,6 @@
 import React from "react";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import flatMap from "lodash/flatMap";
 
 const AdminStoreContext = React.createContext(() => {});
 
@@ -10,18 +11,53 @@ export function AdminStoreProvider({ children }) {
   const [workDays, setWorkDays] = React.useState([]);
   const [vehicles, setVehicles] = React.useState([]);
   const [employments, setEmployments] = React.useState([]);
+  const [companies, setCompanies] = React.useState([]);
 
-  const sync = companyPayload => {
-    setUsers(companyPayload.users || []);
-    setWorkDays(companyPayload.workDays || []);
-    setVehicles(companyPayload.vehicles || []);
-    setEmployments(companyPayload.employments || []);
+  const sync = companiesPayload => {
+    const primaryCompany = store.companies().find(c => c.isPrimary);
+    setCompanies(
+      companiesPayload.map(c => ({
+        id: c.id,
+        name: c.name,
+        isPrimary: primaryCompany ? c.id === primaryCompany.id : false
+      }))
+    );
+    setUsers(
+      flatMap(
+        companiesPayload.map(c => c.users.map(u => ({ ...u, companyId: c.id })))
+      )
+    );
+    setWorkDays(
+      flatMap(
+        companiesPayload.map(c =>
+          c.workDays.map(wd => ({ ...wd, companyId: c.id }))
+        )
+      )
+    );
+    setVehicles(
+      flatMap(
+        companiesPayload.map(c =>
+          c.vehicles.map(v => ({ ...v, companyId: c.id }))
+        )
+      )
+    );
+    setEmployments(
+      flatMap(
+        companiesPayload.map(c =>
+          c.employments.map(e => ({
+            ...e,
+            companyId: c.id,
+            company: { id: c.id, name: c.name }
+          }))
+        )
+      )
+    );
   };
 
   return (
     <AdminStoreContext.Provider
       value={{
-        companyId: store.companyInfo().id,
+        companies: companies,
         userId: store.userId(),
         users,
         setUsers,

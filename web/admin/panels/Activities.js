@@ -17,6 +17,8 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import { useAdminStore } from "../utils/store";
 import { useModals } from "common/utils/modals";
+import uniqBy from "lodash/uniqBy";
+import { CompanyFilter } from "../components/CompanyFilter";
 
 const useStyles = makeStyles(theme => ({
   exportButton: {
@@ -42,21 +44,45 @@ export function ActivityPanel() {
   const modals = useModals();
 
   const [users, setUsers] = React.useState([]);
+  const [companies, setCompanies] = React.useState([]);
   const [period, setPeriod] = React.useState("day");
   const [toggleDayDetails, setToggleDayDetails] = React.useState(false);
 
   React.useEffect(() => {
-    const newUsersWithCurrentSelectionStatus = adminStore.users.map(user => {
-      const userMatch = users.find(u => u.id === user.id);
-      return userMatch ? { ...user, selected: userMatch.selected } : user;
-    });
-    setUsers(newUsersWithCurrentSelectionStatus);
-  }, [adminStore.users]);
+    if (adminStore.companies) {
+      const newCompaniesWithCurrentSelectionStatus = adminStore.companies.map(
+        company => {
+          const companyMatch = companies.find(c => c.id === company.id);
+          return companyMatch
+            ? { ...company, selected: companyMatch.selected }
+            : company;
+        }
+      );
+      setCompanies(newCompaniesWithCurrentSelectionStatus);
+    }
+  }, [adminStore.companies]);
+
+  let selectedCompanies = companies.filter(c => c.selected);
+  if (selectedCompanies.length === 0) selectedCompanies = companies;
+
+  React.useEffect(() => {
+    setUsers(
+      uniqBy(
+        adminStore.users.filter(u =>
+          selectedCompanies.map(c => c.id).includes(u.companyId)
+        ),
+        u => u.id
+      )
+    );
+  }, [companies]);
 
   let selectedUsers = users.filter(u => u.selected);
   if (selectedUsers.length === 0) selectedUsers = users;
-  const selectedWorkDays = adminStore.workDays.filter(wd =>
-    selectedUsers.map(u => u.id).includes(wd.user.id)
+
+  const selectedWorkDays = adminStore.workDays.filter(
+    wd =>
+      selectedUsers.map(u => u.id).includes(wd.user.id) &&
+      selectedCompanies.map(c => c.id).includes(wd.companyId)
   );
 
   // TODO : memoize this
@@ -69,6 +95,9 @@ export function ActivityPanel() {
   return [
     <Paper className={classes.filters} variant="outlined" key={0}>
       <Box p={2} className="flex-row-space-between">
+        {companies.length > 1 && (
+          <CompanyFilter companies={companies} setCompanies={setCompanies} />
+        )}
         <EmployeeFilter users={users} setUsers={setUsers} />
         <Box className="flex-row">
           <PeriodToggle period={period} setPeriod={setPeriod} />

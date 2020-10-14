@@ -55,7 +55,7 @@ export function Invite() {
         withLoadingScreen(() =>
           loadEmployeeInvite(token, store, api, setError)
         );
-      } else setError("Jeton d'invitation manquant");
+      } else setError("lien d'invitation manquant");
     }
     onMount();
   }, [location]);

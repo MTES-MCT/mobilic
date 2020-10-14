@@ -160,47 +160,47 @@ export const USER_QUERY = gql`
   }
 `;
 
-export const COMPANY_QUERY = gql`
-  query company($id: Int!, $activityAfter: Date) {
-    company(id: $id) {
-      users {
+export const ADMIN_COMPANIES_QUERY = gql`
+  query adminCompanies($id: Int!, $activityAfter: Date) {
+    user(id: $id) {
+      adminedCompanies {
         id
-        firstName
-        lastName
-      }
-      workDays(fromDate: $activityAfter) {
-        user {
+        name
+        users {
           id
           firstName
           lastName
         }
-        startTime
-        endTime
-        expenditures
-        activityTimers
-        wasModified
-      }
-      vehicles {
-        id
-        registrationNumber
-        alias
-      }
-      employments {
-        id
-        startDate
-        endDate
-        isAcknowledged
-        isPrimary
-        email
-        hasAdminRights
-        company {
-          id
-          name
+        workDays(fromDate: $activityAfter) {
+          user {
+            id
+            firstName
+            lastName
+          }
+          startTime
+          endTime
+          expenditures
+          activityTimers
+          wasModified
         }
-        user {
+        vehicles {
           id
-          firstName
-          lastName
+          registrationNumber
+          alias
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          isPrimary
+          email
+          hasAdminRights
+          user {
+            id
+            firstName
+            lastName
+          }
         }
       }
     }

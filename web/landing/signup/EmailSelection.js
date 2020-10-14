@@ -96,9 +96,8 @@ export function EmailSelection() {
         ...userInfo,
         ...apiResponse.data.signUp.confirmFcEmail
       });
-      store.setIsSigningUp();
       await broadCastChannel.postMessage("update");
-      if (isAdmin) history.push("/signup/company");
+      if (isAdmin) history.push("/signup/company?onboarding=true");
       else history.push("/signup/complete");
     } catch (err) {
       setEmail("");

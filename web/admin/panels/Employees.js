@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function Employees() {
+export function Employees({ companyId }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const modals = useModals();
@@ -64,8 +64,10 @@ export function Employees() {
         e => e.id === employmentId
       );
       if (employmentIndex >= 0)
-        newEmployments[employmentIndex] =
-          employmentResponse.data.employments.terminateEmployment;
+        newEmployments[employmentIndex] = {
+          ...employmentResponse.data.employments.terminateEmployment,
+          companyId
+        };
       return newEmployments;
     });
   }
@@ -167,7 +169,11 @@ export function Employees() {
     }
   ];
 
-  const pendingEmployments = adminStore.employments
+  const companyEmployments = adminStore.employments.filter(
+    e => e.companyId === companyId
+  );
+
+  const pendingEmployments = companyEmployments
     .filter(e => !e.isAcknowledged)
     .map(e => ({
       idOrEmail: e.user ? e.user.id : e.email,
@@ -179,7 +185,7 @@ export function Employees() {
 
   const today = new Date(Date.now()).toISOString().slice(0, 10);
 
-  const validEmployments = adminStore.employments
+  const validEmployments = companyEmployments
     .filter(e => e.isAcknowledged)
     .map(e => ({
       id: e.user.id,
@@ -203,7 +209,7 @@ export function Employees() {
       onRowAdd={async ({ idOrEmail, hasAdminRights }) => {
         const payload = {
           hasAdminRights,
-          companyId: adminStore.companyId
+          companyId
         };
         if (/^\d+$/.test(idOrEmail)) {
           payload.userId = parseInt(idOrEmail);
@@ -216,7 +222,7 @@ export function Employees() {
             payload
           );
           adminStore.setEmployments(oldEmployments => [
-            apiResponse.data.employments.createEmployment,
+            { ...apiResponse.data.employments.createEmployment, companyId },
             ...oldEmployments
           ]);
         } catch (err) {

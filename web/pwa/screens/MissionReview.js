@@ -13,6 +13,7 @@ import {
 import { AccountButton } from "../components/AccountButton";
 import { prettyFormatDay } from "common/utils/time";
 import { MissionDetails } from "../components/MissionDetails";
+import * as Sentry from "@sentry/browser";
 
 const useStyles = makeStyles(theme => ({
   overviewTimersContainer: {
@@ -74,6 +75,7 @@ export function MissionReview({
               try {
                 await validateMission(currentMission);
               } catch (err) {
+                Sentry.captureException(err);
                 console.log(err);
                 setSubmissionError(err);
               }

@@ -5,7 +5,7 @@ import { SideMenu } from "./components/SideMenu";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import "./assets/admin.scss";
 import Box from "@material-ui/core/Box";
-import { loadCompanyData } from "./utils/loadCompanyData";
+import { loadCompaniesData } from "./utils/loadCompaniesData";
 import { useApi } from "common/utils/api";
 import { AdminStoreProvider, useAdminStore } from "./utils/store";
 import {
@@ -13,6 +13,7 @@ import {
   useLoadingScreen
 } from "common/utils/loading";
 import { Header } from "../common/Header";
+import * as Sentry from "@sentry/browser";
 
 function _Admin() {
   const api = useApi();
@@ -28,20 +29,21 @@ function _Admin() {
     };
   });
 
-  async function loadData(companyId) {
+  async function loadData(userId) {
     try {
-      const company = await loadCompanyData(api, companyId);
-      adminStore.sync(company);
+      const companies = await loadCompaniesData(api, userId);
+      adminStore.sync(companies);
     } catch (err) {
+      Sentry.captureException(err);
       console.log(err);
     }
   }
 
   React.useEffect(() => {
-    if (adminStore.companyId && adminStore.userId) {
-      withLoadingScreen(async () => await loadData(adminStore.companyId));
+    if (adminStore.userId) {
+      withLoadingScreen(async () => await loadData(adminStore.userId));
     }
-  }, [adminStore.companyId, adminStore.userId]);
+  }, [adminStore.userId]);
 
   const defaultView = views.find(view => view.isDefault);
   return [

@@ -1,5 +1,5 @@
 import { GET_EMPLOYMENT_QUERY } from "common/utils/api";
-import { formatApiError } from "common/utils/errors";
+import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 
 export async function loadEmployeeInvite(token, store, api, setError) {
   try {
@@ -15,6 +15,15 @@ export async function loadEmployeeInvite(token, store, api, setError) {
       inviteToken: token
     });
   } catch (err) {
-    setError(formatApiError(err));
+    setError(
+      formatApiError(err, gqlError => {
+        if (graphQLErrorMatchesCode(gqlError, "INVALID_TOKEN")) {
+          return "lien d'invitation invalide";
+        }
+        if (graphQLErrorMatchesCode(gqlError, "EXPIRED_TOKEN")) {
+          return "lien d'invitation expiré";
+        }
+      })
+    );
   }
 }

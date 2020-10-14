@@ -19,6 +19,7 @@ import {
 import { FranceConnectContainer } from "../../common/FranceConnect";
 import { useModals } from "common/utils/modals";
 import { PasswordField } from "common/components/PasswordField";
+import * as Sentry from "@sentry/browser";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -35,8 +36,6 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const history = useHistory();
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
-
-  React.useEffect(() => store.setIsSigningUp(), []);
 
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
@@ -95,9 +94,10 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
         context: { nonPublicApi: true }
       });
       await store.updateUserIdAndInfo();
-      if (isAdmin) history.push("/signup/company");
+      if (isAdmin) history.push("/signup/company?onboarding=true");
       else history.push("/signup/complete");
     } catch (err) {
+      Sentry.captureException(err);
       setEmail("");
       setPassword("");
       setError(formatApiError(err));

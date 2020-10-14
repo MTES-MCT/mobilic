@@ -53,7 +53,7 @@ export default function Signup() {
 
   function defaultRoute() {
     if (userId && userInfo.hasConfirmedEmail) {
-      return "/signup/company";
+      return "/signup/company?onboarding=true";
     }
     if (userId && !userInfo.hasConfirmedEmail) {
       return "/signup/user_login";
@@ -93,7 +93,12 @@ export default function Signup() {
           )}
           {userId && (
             <Route key="completion" path={`${path}/complete`}>
-              <Complete />
+              <Complete type="user" />
+            </Route>
+          )}
+          {userId && (
+            <Route key="company_completion" path={`${path}/company_complete`}>
+              <Complete type="company" />
             </Route>
           )}
           {!userId && (

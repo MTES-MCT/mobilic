@@ -72,16 +72,14 @@ function _Root() {
 
   const userId = store.userId();
   const userInfo = store.userInfo();
-  const companyInfo = store.companyInfo();
-  const isSigningUp = store.isSigningUp();
+  const companies = store.companies();
 
   const location = useLocation();
   const history = useHistory();
 
   const fallbackRoute = getFallbackRoute({
     userInfo,
-    companyInfo,
-    isSigningUp
+    companies
   });
 
   const loadUserAndRoute = currentPathName =>
@@ -106,7 +104,7 @@ function _Root() {
             ? decodeURI(nextLocation)
             : getFallbackRoute({
                 userInfo: store.userInfo(),
-                companyInfo: store.companyInfo()
+                companies: store.companies()
               }),
           location.state
         );
@@ -118,7 +116,7 @@ function _Root() {
     return () => {};
   }, [userId]);
 
-  const routes = getAccessibleRoutes({ userInfo, companyInfo, isSigningUp });
+  const routes = getAccessibleRoutes({ userInfo, companies });
 
   return (
     <Switch>

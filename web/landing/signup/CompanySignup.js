@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField/TextField";
 import Button from "@material-ui/core/Button";
 import { COMPANY_SIGNUP_MUTATION, SIREN_QUERY, useApi } from "common/utils/api";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import Paper from "@material-ui/core/Paper";
 import SignupStepper from "./SignupStepper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -21,6 +21,7 @@ import {
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormGroup from "@material-ui/core/FormGroup";
+import * as Sentry from "@sentry/browser";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -60,6 +61,7 @@ export function CompanySignup() {
 
   const api = useApi();
   const history = useHistory();
+  const location = useLocation();
   const store = useStoreSyncedWithLocalStorage();
 
   const [siren, setSiren] = React.useState("");
@@ -70,10 +72,21 @@ export function CompanySignup() {
   const [sirenError, setSirenError] = React.useState(false);
   const [claimedRights, setClaimedRights] = React.useState(false);
 
+  const [
+    shouldDisplaySignupProgress,
+    setShouldDisplaySignupProgress
+  ] = React.useState(false);
+
   const [signupError, setSignupError] = React.useState("");
 
   const [loadingSirenInfo, setLoadingSirenInfo] = React.useState(false);
   const [loadingCompanySignup, setLoadingCompanySignup] = React.useState(false);
+
+  React.useEffect(() => {
+    const queryString = new URLSearchParams(location.search);
+    const isOnboarding = queryString.get("onboarding") === "true";
+    if (isOnboarding) setShouldDisplaySignupProgress(true);
+  }, [location]);
 
   const validateSiren = string => {
     if (!string) return true;
@@ -143,8 +156,14 @@ export function CompanySignup() {
       const employment = apiResponse.data.signUp.company.employment;
       await store.syncEntity([employment], "employments", () => false);
       await broadCastChannel.postMessage("update");
-      history.push("/signup/complete");
+      history.push(
+        shouldDisplaySignupProgress
+          ? "/signup/complete"
+          : "/signup/company_complete",
+        { companyName: employment.company.name }
+      );
     } catch (err) {
+      Sentry.captureException(err);
       setSignupError(formatApiError(err));
     }
     setLoadingCompanySignup(false);
@@ -152,10 +171,12 @@ export function CompanySignup() {
 
   return (
     <>
-      <Paper key={0}>
-        <SignupStepper activeStep={1} />
-      </Paper>
-      <Paper key={1}>
+      {shouldDisplaySignupProgress && (
+        <Paper>
+          <SignupStepper activeStep={1} />
+        </Paper>
+      )}
+      <Paper>
         <Container
           style={{ paddingBottom: "16px" }}
           className="centered"

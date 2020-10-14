@@ -13,6 +13,11 @@ import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup/ToggleButtonGr
 import { AugmentedTable } from "../components/AugmentedTable";
 import { useModals } from "common/utils/modals";
 import { Employees } from "./Employees";
+import TextField from "@material-ui/core/TextField";
+import MenuItem from "@material-ui/core/MenuItem";
+import Grid from "@material-ui/core/Grid";
+import { LinkButton } from "../../common/LinkButton";
+import * as Sentry from "@sentry/browser";
 
 const useStyles = makeStyles(theme => ({
   navigation: {
@@ -20,14 +25,19 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     position: "sticky",
     top: "0",
-    zIndex: 500
+    zIndex: 500,
+    textAlign: "left"
   },
   subPanel: {
     padding: theme.spacing(2)
+  },
+  createCompanyButton: {
+    marginTop: theme.spacing(1),
+    flexShrink: 0
   }
 }));
 
-function VehicleAdmin() {
+function VehicleAdmin({ companyId }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const modals = useModals();
@@ -46,7 +56,7 @@ function VehicleAdmin() {
       sortable: true
     }
   ];
-  const vehicles = adminStore.vehicles;
+  const vehicles = adminStore.vehicles.filter(v => v.companyId === companyId);
   return (
     <AugmentedTable
       columns={columns}
@@ -68,10 +78,14 @@ function VehicleAdmin() {
               v => v.id === vehicle.id
             );
             if (vehicleIndex >= 0)
-              newVehicles[vehicleIndex] = apiResponse.data.vehicles.editVehicle;
+              newVehicles[vehicleIndex] = {
+                ...apiResponse.data.vehicles.editVehicle,
+                companyId: companyId
+              };
             return newVehicles;
           });
         } catch (err) {
+          Sentry.captureException(err);
           console.log(err);
         }
       }}
@@ -82,15 +96,19 @@ function VehicleAdmin() {
             {
               registrationNumber,
               alias,
-              companyId: adminStore.companyId
+              companyId
             },
             { context: { nonPublicApi: true } }
           );
           adminStore.setVehicles(oldVehicles => [
-            apiResponse.data.vehicles.createVehicle,
+            {
+              ...apiResponse.data.vehicles.createVehicle,
+              companyId: companyId
+            },
             ...oldVehicles
           ]);
         } catch (err) {
+          Sentry.captureException(err);
           console.log(err);
         }
       }}
@@ -112,6 +130,7 @@ function VehicleAdmin() {
               );
               callback();
             } catch (err) {
+              Sentry.captureException(err);
               console.log(err);
             }
           }
@@ -126,12 +145,12 @@ const COMPANY_SUB_PANELS = [
   {
     label: "Employés",
     view: "employees",
-    component: <Employees />
+    component: props => <Employees {...props} />
   },
   {
     label: "Véhicules",
     view: "vehicles",
-    component: <VehicleAdmin />
+    component: props => <VehicleAdmin {...props} />
   }
 ];
 
@@ -155,6 +174,19 @@ function SubNavigationToggle({ view, setView }) {
 
 export function CompanyPanel() {
   const [view, setView] = React.useState("employees");
+  const [companyId, setCompanyId] = React.useState(0);
+
+  const adminStore = useAdminStore();
+
+  const companies = adminStore.companies;
+
+  React.useEffect(() => {
+    if (companies && companies.length > 0) {
+      let defaultCompany = companies.find(c => c.isPrimary);
+      if (!defaultCompany) defaultCompany = companies[0];
+      setCompanyId(defaultCompany.id);
+    } else setCompanyId(0);
+  }, [companies]);
 
   const classes = useStyles();
   const subPanel = COMPANY_SUB_PANELS.find(sp => sp.view === view);
@@ -162,12 +194,43 @@ export function CompanyPanel() {
     <Paper
       className={`${classes.navigation} flex-row-center`}
       variant="outlined"
-      key={0}
+      key={1}
     >
-      <SubNavigationToggle view={view} setView={setView} />
+      <LinkButton
+        className={classes.createCompanyButton}
+        size="small"
+        variant="contained"
+        color="primary"
+        href="/signup/company"
+      >
+        Inscrire une nouvelle entreprise
+      </LinkButton>
+      <Grid container spacing={10} justify="center" alignItems="center">
+        {companies && companies.length > 1 && (
+          <Grid item>
+            <TextField
+              id="select-company-id"
+              select
+              label="Entreprise"
+              value={companyId}
+              onChange={e => setCompanyId(e.target.value)}
+              helperText="Voir une autre entreprise"
+            >
+              {companies.map(c => (
+                <MenuItem key={c.id} value={c.id}>
+                  {c.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+        )}
+        <Grid item>
+          <SubNavigationToggle view={view} setView={setView} />
+        </Grid>
+      </Grid>
     </Paper>,
-    <Paper className={classes.subPanel} variant="outlined" key={1}>
-      {subPanel.component}
+    <Paper className={classes.subPanel} variant="outlined" key={2}>
+      {companyId ? subPanel.component({ companyId }) : null}
     </Paper>
   ];
 }

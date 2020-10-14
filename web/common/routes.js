@@ -25,15 +25,15 @@ export const ROUTES = [
   {
     path: "/app",
     label: "Saisie de temps",
-    accessible: ({ userInfo, companyInfo }) =>
-      userInfo.hasActivatedEmail && userInfo.id && companyInfo.id,
+    accessible: ({ userInfo, companies }) =>
+      userInfo.hasActivatedEmail && userInfo.id && companies.length > 0,
     component: <App ScreenComponent={AppScreen} />
   },
   {
     path: "/admin",
     label: "Gestion entreprise",
-    accessible: ({ userInfo, companyInfo }) =>
-      userInfo.hasActivatedEmail && userInfo.id && companyInfo.admin,
+    accessible: ({ userInfo, companies }) =>
+      userInfo.hasActivatedEmail && userInfo.id && companies.some(c => c.admin),
     component: <Admin />
   },
   {
@@ -45,9 +45,9 @@ export const ROUTES = [
   {
     path: "/signup",
     label: "Inscription",
-    accessible: ({ userInfo, isSigningUp }) =>
-      !userInfo.id || !userInfo.hasConfirmedEmail || isSigningUp,
-    component: <Signup />
+    accessible: () => true,
+    component: <Signup />,
+    menuItemFilter: ({ userInfo }) => !userInfo.id
   },
   {
     path: "/login",
@@ -115,12 +115,12 @@ export const ROUTES = [
   }
 ];
 
-export function getFallbackRoute({ userInfo, companyInfo }) {
+export function getFallbackRoute({ userInfo, companies }) {
   if (
     userInfo.id &&
     userInfo.hasConfirmedEmail &&
     userInfo.hasActivatedEmail &&
-    companyInfo.admin
+    companies.some(c => c.admin)
   ) {
     return "/admin";
   }
@@ -128,7 +128,7 @@ export function getFallbackRoute({ userInfo, companyInfo }) {
     userInfo.id &&
     userInfo.hasConfirmedEmail &&
     userInfo.hasActivatedEmail &&
-    companyInfo.id
+    companies.length > 0
   ) {
     return "/app";
   }

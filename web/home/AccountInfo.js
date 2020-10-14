@@ -29,6 +29,7 @@ import { useModals } from "common/utils/modals";
 import Divider from "@material-ui/core/Divider";
 import AlertTitle from "@material-ui/lab/AlertTitle";
 import Box from "@material-ui/core/Box";
+import * as Sentry from "@sentry/browser";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -86,6 +87,7 @@ function EmploymentInfo({ employment }) {
       );
       await broadCastChannel.postMessage("update");
     } catch (err) {
+      Sentry.captureException(err);
       setError(
         formatApiError(err, graphQLError => {
           if (graphQLErrorMatchesCode(graphQLError, "INVALID_RESOURCE")) {

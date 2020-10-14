@@ -7,6 +7,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import Box from "@material-ui/core/Box";
 import { LoadingButton } from "common/components/LoadingButton";
+import * as Sentry from "@sentry/browser";
 
 export function TerminateEmployment({
   open,
@@ -37,6 +38,7 @@ export function TerminateEmployment({
             await terminateEmployment(endDate);
             handleClose();
           } catch (err) {
+            Sentry.captureException(err);
             console.log(err);
           }
           setLoading(false);

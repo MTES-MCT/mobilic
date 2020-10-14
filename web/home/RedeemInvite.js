@@ -14,6 +14,7 @@ import {
 import { formatApiError } from "common/utils/errors";
 import Typography from "@material-ui/core/Typography";
 import { currentUserId } from "common/utils/cookie";
+import * as Sentry from "@sentry/browser";
 
 export function RedeemInvite() {
   const location = useLocation();
@@ -60,6 +61,7 @@ export function RedeemInvite() {
         await broadCastChannel.postMessage("update");
         history.push("/home");
       } catch (err) {
+        Sentry.captureException(err);
         setError(formatApiError(err));
       }
     });
