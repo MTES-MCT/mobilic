@@ -51,7 +51,7 @@ export function RedeemInvite() {
           },
           { context: { nonPublicApi: true } }
         );
-        if (employmentUserId === userId) {
+        if (userId) {
           await store.syncEntity(
             [apiResponse.data.signUp.redeemInvite],
             "employments",
