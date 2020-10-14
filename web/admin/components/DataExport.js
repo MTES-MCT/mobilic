@@ -9,7 +9,7 @@ import Box from "@material-ui/core/Box";
 import { useApi } from "common/utils/api";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { LoadingButton } from "common/components/LoadingButton";
-import { useAdminStore } from "../utils/store";
+import { CompanyFilter } from "./CompanyFilter";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -20,11 +20,16 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function DataExport({ open, handleClose }) {
+export function DataExport({ open, handleClose, companies = [] }) {
   const api = useApi();
-  const adminStore = useAdminStore();
   const [minDate, setMinDate] = React.useState(null);
   const [maxDate, setMaxDate] = React.useState(null);
+
+  const [_companies, setCompanies] = React.useState([]);
+
+  React.useEffect(() => {
+    setCompanies(companies);
+  }, [open]);
 
   const classes = useStyles();
 
@@ -38,10 +43,16 @@ export function DataExport({ open, handleClose }) {
           Les données sont exportées à la vue "jour".
         </Typography>
         <Typography>
-          Par défaut l'export contient l'historique intégral de votre
-          entreprise. Vous pouvez restreindre la période en spécificant une date
-          de début et/ou une date de fin.
+          Par défaut l'export contient l'historique <strong>intégral</strong> de{" "}
+          <strong>toutes</strong> vos entreprises. Vous pouvez restreindre la
+          période en spécificant une date de début et/ou une date de fin, et
+          filtrer suivant les entreprises.
         </Typography>
+        {_companies.length > 1 && (
+          <Box my={2} className="flex-row-center">
+            <CompanyFilter companies={_companies} setCompanies={setCompanies} />
+          </Box>
+        )}
         <Box my={2} className="flex-row-center">
           <DatePicker
             className={classes.start}
@@ -79,7 +90,12 @@ export function DataExport({ open, handleClose }) {
             color="primary"
             variant="contained"
             onClick={async e => {
-              const queryParams = [];
+              let selectedCompanies = _companies.filter(c => c.selected);
+              if (selectedCompanies.length === 0)
+                selectedCompanies = _companies;
+              const queryParams = [
+                `company_ids=${selectedCompanies.map(c => c.id).join(",")}`
+              ];
               if (minDate)
                 queryParams.push(
                   `min_date=${minDate.toISOString().slice(0, 10)}`
@@ -93,7 +109,7 @@ export function DataExport({ open, handleClose }) {
               e.preventDefault();
               const response = await api.httpQuery(
                 "GET",
-                `/download_company_activity_report/${adminStore.companyId}${optionalQueryString}`
+                `/download_company_activity_report${optionalQueryString}`
               );
               const blob = await response.blob();
               const link = document.createElement("a");
