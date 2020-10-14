@@ -374,8 +374,8 @@ function Footer() {
           <Grid item>
             <Typography align="left">
               Mobilic est un service numérique de l'Etat incubé à la Fabrique
-              Numérique du Ministère de la Transition écologique et solidaire,
-              membre du réseau d’incubateurs beta.gouv.fr
+              Numérique du Ministère de la Transition écologique, membre du
+              réseau d’incubateurs beta.gouv.fr
             </Typography>
           </Grid>
         </Grid>
