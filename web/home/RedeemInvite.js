@@ -37,12 +37,14 @@ export function RedeemInvite() {
           { context: { nonPublicApi: true } }
         );
         const employmentUserId = employment.data.employment.userId;
+        let shouldLoadUser = !userId;
         if (employmentUserId && employmentUserId !== userId) {
           await api.logout(
             `/logout?next=${encodeURIComponent(
               "/redeem_invite?token=" + token
             )}`
           );
+          shouldLoadUser = true;
         }
         const apiResponse = await api.graphQlMutate(
           REDEEM_INVITE_QUERY,
@@ -51,7 +53,7 @@ export function RedeemInvite() {
           },
           { context: { nonPublicApi: true } }
         );
-        if (userId) {
+        if (!shouldLoadUser) {
           await store.syncEntity(
             [apiResponse.data.signUp.redeemInvite],
             "employments",
