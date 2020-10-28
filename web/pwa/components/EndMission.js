@@ -14,15 +14,20 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function EndMissionModal({ open, handleClose, handleMissionEnd }) {
+export function EndMissionModal({
+  open,
+  handleClose,
+  handleMissionEnd,
+  currentExpenditures
+}) {
   const [expenditures, setExpenditures] = React.useState({});
   const [comment, setComment] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
-    setExpenditures({});
+    setExpenditures(currentExpenditures || {});
     setComment("");
-  }, [open]);
+  }, [currentExpenditures, open]);
 
   const funnelModalClasses = useFunnelModalStyles();
   const classes = useStyles();

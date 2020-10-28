@@ -12,88 +12,133 @@ import IconButton from "@material-ui/core/IconButton";
 import CreateIcon from "@material-ui/icons/Create";
 import { useModals } from "common/utils/modals";
 
-export function ActivityList({
-  previousMissionEnd,
-  missionEnd,
-  activities,
-  allMissionActivities,
+function ActivityItem({
+  activity,
   editActivityEvent,
-  teamChanges
+  allMissionActivities,
+  previousMissionEnd,
+  nextMissionStart,
+  teamChanges,
+  nullableEndTimeInEditActivity
 }) {
   const modals = useModals();
 
+  return (
+    <ListItem disableGutters>
+      <ListItemAvatar>
+        <Avatar>
+          {ACTIVITIES[activity.type].renderIcon({ color: "primary" })}
+        </Avatar>
+      </ListItemAvatar>
+      <ListItemText
+        primary={ACTIVITIES[activity.type].label}
+        secondary={`${formatTimeOfDay(getTime(activity))} - ${
+          activity.endTime
+            ? `${formatTimeOfDay(activity.endTime)} - ${formatLongTimer(
+                activity.duration
+              )}`
+            : "En cours"
+        }`}
+        secondaryTypographyProps={{ color: "primary" }}
+      />
+      {editActivityEvent && (
+        <ListItemSecondaryAction>
+          <IconButton
+            edge="end"
+            color="primary"
+            onClick={() =>
+              modals.open("activityRevision", {
+                event: activity,
+                otherActivities: allMissionActivities.filter(
+                  a => getTime(a) !== getTime(activity)
+                ),
+                handleRevisionAction: (
+                  actionType,
+                  newUserStartTime,
+                  newUserEndTime,
+                  userComment,
+                  forAllTeam
+                ) =>
+                  editActivityEvent(
+                    activity,
+                    actionType,
+                    allMissionActivities,
+                    newUserStartTime,
+                    newUserEndTime,
+                    userComment,
+                    forAllTeam
+                  ),
+                minStartTime: previousMissionEnd,
+                maxStartTime: nextMissionStart,
+                cancellable: true,
+                teamChanges,
+                nullableEndTime: nullableEndTimeInEditActivity
+              })
+            }
+          >
+            <CreateIcon />
+          </IconButton>
+        </ListItemSecondaryAction>
+      )}
+    </ListItem>
+  );
+}
+
+export function ActivityList({
+  previousMissionEnd,
+  nextMissionStart,
+  activities,
+  allMissionActivities,
+  editActivityEvent,
+  teamChanges,
+  nullableEndTimeInEditActivity
+}) {
   // Compute duration and end time for each activity
-  const augmentedAndSortedActivities = activities.map((activity, index) => {
-    if (index < activities.length - 1) {
-      const nextActivity = activities[index + 1];
-      return {
-        ...activity,
-        duration: getTime(nextActivity) - getTime(activity),
-        endTime: getTime(nextActivity)
-      };
-    }
-    return activity;
-  });
+  const augmentedAndSortedActivities = activities.map(activity => ({
+    ...activity,
+    duration: (activity.endTime || Date.now()) - activity.startTime
+  }));
 
   sortEvents(augmentedAndSortedActivities).reverse();
 
   return (
     <List dense>
-      {augmentedAndSortedActivities
-        .filter(a => a.type !== ACTIVITIES.rest.name)
-        .map((activity, index) => (
-          <ListItem disableGutters key={index}>
-            <ListItemAvatar>
-              <Avatar>
-                {ACTIVITIES[activity.type].renderIcon({ color: "primary" })}
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={ACTIVITIES[activity.type].label}
-              secondary={`${formatTimeOfDay(getTime(activity))} - ${
-                activity.duration
-                  ? formatLongTimer(activity.duration)
-                  : "En cours"
-              }`}
-              secondaryTypographyProps={{ color: "primary" }}
-            />
-            {editActivityEvent && (
-              <ListItemSecondaryAction>
-                <IconButton
-                  edge="end"
-                  color="primary"
-                  onClick={() =>
-                    modals.open("activityRevision", {
-                      event: activity,
-                      handleRevisionAction: (
-                        actionType,
-                        newUserStartTime,
-                        newUserEndTime,
-                        userComment,
-                        forAllTeam
-                      ) =>
-                        editActivityEvent(
-                          activity,
-                          actionType,
-                          allMissionActivities,
-                          newUserStartTime,
-                          newUserEndTime,
-                          userComment,
-                          forAllTeam
-                        ),
-                      minStartTime: previousMissionEnd + 1,
-                      maxStartTime: missionEnd || Date.now(),
-                      cancellable: true,
-                      teamChanges
-                    })
-                  }
-                >
-                  <CreateIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            )}
-          </ListItem>
-        ))}
+      {augmentedAndSortedActivities.map((activity, index) => {
+        let nextActivity;
+        let breakItem;
+        if (index < augmentedAndSortedActivities.length - 1) {
+          nextActivity = augmentedAndSortedActivities[index + 1];
+        }
+        if (nextActivity && activity.startTime > nextActivity.endTime) {
+          breakItem = (
+            <ListItem disableGutters key={"break" + index}>
+              <ListItemAvatar>
+                <Avatar>{ACTIVITIES.break.renderIcon()}</Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={`${ACTIVITIES.break.label} - ${formatTimeOfDay(
+                  nextActivity.endTime
+                )} - ${formatLongTimer(
+                  getTime(activity) - nextActivity.endTime
+                )}`}
+              />
+            </ListItem>
+          );
+        }
+        return [
+          <ActivityItem
+            activity={activity}
+            editActivityEvent={editActivityEvent}
+            allMissionActivities={allMissionActivities}
+            previousMissionEnd={previousMissionEnd}
+            nextMissionStart={nextMissionStart}
+            teamChanges={teamChanges}
+            nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
+            key={index}
+          />,
+          breakItem
+        ];
+      })}
     </List>
   );
 }

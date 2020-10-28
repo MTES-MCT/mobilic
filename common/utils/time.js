@@ -129,3 +129,7 @@ export class FrLocalizedUtils extends DateFnsUtils {
     return format(date, "d MMMM yyyy", { locale: this.locale });
   }
 }
+
+export function truncateMinute(unixTimestamp) {
+  return unixTimestamp - (unixTimestamp % 60000);
+}

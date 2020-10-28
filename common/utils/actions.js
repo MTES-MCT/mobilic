@@ -1,6 +1,7 @@
 import React from "react";
 import mapValues from "lodash/mapValues";
 import map from "lodash/map";
+import values from "lodash/values";
 import find from "lodash/find";
 import { isPendingSubmission, useStoreSyncedWithLocalStorage } from "./store";
 import {
@@ -16,14 +17,14 @@ import {
 } from "./api";
 import { ACTIVITIES, parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
-import { getTime, sortEvents } from "./events";
+import { getTime } from "./events";
 import { useModals } from "./modals";
 import {
   formatNameInGqlError,
   graphQLErrorMatchesCode,
   isGraphQLError
 } from "./errors";
-import { formatDay, formatTimeOfDay } from "./time";
+import { formatDay, formatTimeOfDay, truncateMinute } from "./time";
 
 const ActionsContext = React.createContext(() => {});
 
@@ -66,9 +67,8 @@ export function ActionsContextProvider({ children }) {
     variables,
     optimisticStoreUpdate,
     watchFields,
-    handleSubmitResponse,
-    batchable = true,
-    onApiError = () => {}
+    responseHandlerName,
+    batchable = true
   ) {
     // 1. Store the request and optimistically update the store as if the api responded successfully
     await store.newRequest(
@@ -76,9 +76,8 @@ export function ActionsContextProvider({ children }) {
       variables,
       optimisticStoreUpdate,
       watchFields,
-      handleSubmitResponse,
-      batchable,
-      onApiError
+      responseHandlerName,
+      batchable
     );
 
     // 2. Execute the request (call API) along with any other pending one
@@ -94,7 +93,8 @@ export function ActionsContextProvider({ children }) {
     team = [],
     endTime = null,
     comment = null,
-    driverId = null
+    driverId = null,
+    switchMode = true
   }) => {
     if (team.length === 0)
       return await pushNewActivityEvent({
@@ -103,7 +103,8 @@ export function ActionsContextProvider({ children }) {
         missionId,
         startTime,
         endTime,
-        comment
+        comment,
+        switchMode
       });
 
     const teamToType = {};
@@ -115,23 +116,34 @@ export function ActionsContextProvider({ children }) {
     });
 
     const userId = store.userId();
-    let orderedTeam = team;
     if (team.includes(userId)) {
-      orderedTeam = [userId, ...team.filter(uid => uid !== userId)];
+      await pushNewActivityEvent({
+        activityType: teamToType[userId],
+        missionActivities,
+        missionId,
+        startTime,
+        userId: userId,
+        endTime,
+        comment,
+        switchMode
+      });
     }
 
     await Promise.all(
-      orderedTeam.map(id =>
-        pushNewActivityEvent({
-          activityType: teamToType[id],
-          missionActivities,
-          missionId,
-          startTime,
-          userId: id,
-          endTime,
-          comment
-        })
-      )
+      team
+        .filter(id => id !== userId)
+        .map(id =>
+          pushNewActivityEvent({
+            activityType: teamToType[id],
+            missionActivities,
+            missionId,
+            startTime,
+            userId: id,
+            endTime,
+            comment,
+            switchMode
+          })
+        )
     );
   };
 
@@ -150,7 +162,7 @@ export function ActionsContextProvider({ children }) {
         getTime(gqlError.extensions.conflictingMission)
       )} à ${formatTimeOfDay(getTime(gqlError.extensions.conflictingMission))}`;
     }
-    if (graphQLErrorMatchesCode(gqlError, "ACTIVITY_SEQUENCE_ERROR")) {
+    if (graphQLErrorMatchesCode(gqlError, "MISSION_ALREADY_ENDED")) {
       if (gqlError.extensions.missionEnd) {
         return `La mission a déjà été terminée par ${formatNameInGqlError(
           gqlError.extensions.missionEnd.submitter,
@@ -158,6 +170,9 @@ export function ActionsContextProvider({ children }) {
           false
         )} à ${formatTimeOfDay(getTime(gqlError.extensions.missionEnd))}`;
       }
+    }
+    if (graphQLErrorMatchesCode(gqlError, "OVERLAPPING_ACTIVITIES")) {
+      return "L'utilisateur a déjà une activité en cours à ce moment là";
     }
   }
 
@@ -168,7 +183,8 @@ export function ActionsContextProvider({ children }) {
     startTime,
     userId = null,
     endTime = null,
-    comment = null
+    comment = null,
+    switchMode = true
   }) => {
     const actualUserId = userId || store.userId();
     const newActivity = {
@@ -181,118 +197,121 @@ export function ActionsContextProvider({ children }) {
 
     if (comment) newActivity.context = { comment };
 
-    const updateStore = (store, requestId) => {
-      if (endTime)
-        _handleActivitiesOverlap(
-          missionActivities,
-          actualUserId,
-          startTime,
-          endTime,
-          requestId
+    const updateStore = async (store, requestId) => {
+      if (switchMode) {
+        const currentActivity = missionActivities.find(
+          a => a.userId === actualUserId && !a.endTime
         );
-      store.createEntityObject(newActivity, "activities", requestId);
-    };
-
-    await submitAction(
-      LOG_ACTIVITY_MUTATION,
-      newActivity,
-      updateStore,
-      ["activities"],
-      apiResponse => {
-        const activities = apiResponse.data.activities.logActivity.map(
-          parseActivityPayloadFromBackend
-        );
-        store.syncEntity(
-          activities,
-          "activities",
-          a =>
-            a.missionId ===
-            (activities.length > 0 ? activities[0].missionId : missionId)
-        );
-      },
-      true,
-      error => {
-        if (isGraphQLError(error)) {
-          displayApiErrors({
-            graphQLErrors: error.graphQLErrors,
-            actionDescription: "Le changement d'activité",
-            overrideFormatGraphQLError: gqlError => {
-              const selfId = store.userId();
-              const user =
-                actualUserId === selfId
-                  ? store.userInfo()
-                  : store.getEntity("coworkers")[actualUserId.toString()];
-              return formatLogActivityError(gqlError, user, selfId);
-            },
-            hasRequestFailed: true,
-            shouldReload: false
-          });
-        }
-      }
-    );
-  };
-
-  const _handleActivitiesOverlap = (
-    otherActivities,
-    userId,
-    startTime,
-    endTime,
-    requestId
-  ) => {
-    const sortedOtherActivities = sortEvents([
-      ...otherActivities.filter(a => a.userId === userId)
-    ]);
-    const activitiesToOverride = sortedOtherActivities.filter(
-      a => startTime <= getTime(a) && getTime(a) <= endTime
-    );
-    if (activitiesToOverride.length > 0) {
-      const activityToShift =
-        activitiesToOverride[activitiesToOverride.length - 1];
-      activitiesToOverride.forEach((activity, index) => {
-        if (index < activitiesToOverride.length - 1) {
-          store.deleteEntityObject(activity, "activities", requestId);
-        }
-      });
-      if (endTime !== getTime(activityToShift)) {
-        store.updateEntityObject(
-          activityToShift.id,
-          "activities",
-          { startTime: endTime },
-          requestId
-        );
-      }
-    } else {
-      const activitiesBefore = sortedOtherActivities.filter(
-        a => getTime(a) < startTime
-      );
-      if (activitiesBefore.length > 0) {
-        const activityImmediatelyBefore =
-          activitiesBefore[activitiesBefore.length - 1];
-        store.createEntityObject(
-          {
-            startTime: endTime,
-            type: activityImmediatelyBefore.type,
-            missionId: activityImmediatelyBefore.missionId,
-            userId: userId
-          },
-          "activities",
-          requestId
-        );
-      } else {
-        const activitiesAfter = sortedOtherActivities.filter(
-          a => endTime < getTime(a)
-        );
-        if (activitiesAfter.length > 0) {
+        if (currentActivity) {
           store.updateEntityObject(
-            activitiesAfter[0],
+            currentActivity.id,
             "activities",
-            { startTime: endTime },
+            { endTime: truncateMinute(startTime) },
             requestId
           );
         }
       }
-    }
+      const newItemId = await store.createEntityObject(
+        {
+          ...newActivity,
+          startTime: truncateMinute(startTime),
+          endTime: endTime ? truncateMinute(endTime) : null
+        },
+        "activities",
+        requestId
+      );
+      console.log("Prout");
+      return {
+        activityId: newItemId,
+        requestId,
+        switchMode,
+        endTime,
+        actualUserId
+      };
+    };
+
+    await submitAction(
+      LOG_ACTIVITY_MUTATION,
+      { ...newActivity, switch: switchMode },
+      updateStore,
+      ["activities"],
+      "logActivity",
+      true
+    );
   };
+
+  api.registerResponseHandler("logActivity", {
+    onSuccess: async (
+      apiResponse,
+      { activityId: tempActivityId, requestId, switchMode, endTime }
+    ) => {
+      const activity = parseActivityPayloadFromBackend(
+        apiResponse.data.activities.logActivity
+      );
+      const activities = [activity];
+      let syncScope = a => false;
+      if (switchMode) {
+        const previousActivity = values(store.getEntity("activities")).find(
+          a =>
+            a.userId === activity.userId &&
+            a.id !== tempActivityId &&
+            isPendingSubmission(a) &&
+            a.pendingUpdates.some(
+              upd => upd.type === "update" && upd.requestId === requestId
+            )
+        );
+        if (previousActivity) {
+          activities.push({ ...previousActivity, endTime: activity.startTime });
+          syncScope = a => a.id === previousActivity.id;
+        }
+      }
+      await store.addToIdentityMap(tempActivityId, activity.id);
+      if (!endTime) {
+        store.syncEntity(
+          [
+            {
+              ...store.getEntity("missions")[activity.missionId.toString()],
+              ended: false
+            }
+          ],
+          "missions",
+          m => m.id === activity.missionId
+        );
+      }
+      store.syncEntity(activities, "activities", syncScope, {
+        [activity.id]: tempActivityId
+      });
+    },
+    onError: async (error, { actualUserId, activityId: tempActivityId }) => {
+      // If the log-activity event raises an API error we cancel all the pending requests for the activity
+      const pendingActivityRequests = store
+        .pendingRequests()
+        .filter(
+          req =>
+            (req.variables && req.variables.activityId === tempActivityId) ||
+            (req.storeInfo && req.storeInfo.activityId === tempActivityId)
+        );
+      if (isGraphQLError(error)) {
+        displayApiErrors({
+          graphQLErrors: error.graphQLErrors,
+          actionDescription: "Le changement d'activité",
+          overrideFormatGraphQLError: gqlError => {
+            const selfId = store.userId();
+            const user =
+              actualUserId === selfId
+                ? store.userInfo()
+                : store.getEntity("coworkers")[actualUserId.toString()];
+            return formatLogActivityError(gqlError, user, selfId);
+          },
+          hasRequestFailed: true,
+          shouldReload: false
+        });
+      }
+      await Promise.all(
+        pendingActivityRequests.map(req => store.clearPendingRequest(req))
+      );
+    }
+  });
 
   const editActivityEvent = async (
     activityEvent,
@@ -305,30 +324,40 @@ export function ActionsContextProvider({ children }) {
   ) => {
     if (forAllTeam) {
       const activitiesToEdit = missionActivities.filter(
-        a => getTime(a) === getTime(activityEvent)
+        a =>
+          getTime(a) === getTime(activityEvent) &&
+          a.endTime === activityEvent.endTime
       );
-      return Promise.all(
-        activitiesToEdit.map(a =>
-          editActivityEvent(
-            a,
-            actionType,
-            missionActivities,
-            newStartTime,
-            newEndTime,
-            comment,
-            false
+      await Promise.all(
+        activitiesToEdit
+          .filter(a => a.userId === store.userId())
+          .map(a =>
+            editActivityEvent(
+              a,
+              actionType,
+              missionActivities,
+              newStartTime,
+              newEndTime,
+              comment,
+              false
+            )
           )
-        )
       );
-    }
-
-    if (isPendingSubmission(activityEvent)) {
-      displayApiErrors({
-        title: "❌ Action impossible pour le moment",
-        hasRequestFailed: true,
-        message:
-          "La modification ne peut pas être appliquée pour le moment car vos derniers enregistrements n'ont pas été communiqués au serveur."
-      });
+      await Promise.all(
+        activitiesToEdit
+          .filter(a => a.userId !== store.userId())
+          .map(a =>
+            editActivityEvent(
+              a,
+              actionType,
+              missionActivities,
+              newStartTime,
+              newEndTime,
+              comment,
+              false
+            )
+          )
+      );
       return;
     }
 
@@ -341,27 +370,30 @@ export function ActionsContextProvider({ children }) {
     if (actionType !== "cancel") {
       payload.startTime = newStartTime;
       payload.endTime = newEndTime;
+      payload.removeEndTime = !newEndTime;
     }
 
     const updateStore = (store, requestId) => {
       if (actionType === "cancel") {
         store.deleteEntityObject(activityEvent.id, "activities", requestId);
       } else {
-        if (newEndTime)
-          _handleActivitiesOverlap(
-            missionActivities.filter(a => a.id !== activityEvent.id),
-            activityEvent.userId || store.userId(),
-            newStartTime,
-            newEndTime,
-            requestId
-          );
         store.updateEntityObject(
           activityEvent.id,
           "activities",
-          { startTime: newStartTime },
+          {
+            startTime: truncateMinute(newStartTime),
+            endTime: newEndTime ? truncateMinute(newEndTime) : null
+          },
           requestId
         );
       }
+      console.log("Prout");
+      return {
+        activityId: activityEvent.id,
+        actionType,
+        newEndTime,
+        userId: activityEvent.userId
+      };
     };
 
     await submitAction(
@@ -371,44 +403,56 @@ export function ActionsContextProvider({ children }) {
       payload,
       updateStore,
       ["activities"],
-      apiResponse => {
-        const activities = apiResponse.data.activities[
-          actionType === "cancel" ? "cancelActivity" : "editActivity"
-        ].map(parseActivityPayloadFromBackend);
-        store.syncEntity(
-          activities,
-          "activities",
-          a =>
-            a.missionId ===
-            (activities.length > 0
-              ? activities[0].missionId
-              : activityEvent.missionId)
-        );
-      },
-      true,
-      error => {
-        if (isGraphQLError(error)) {
-          displayApiErrors({
-            graphQLErrors: error.graphQLErrors,
-            actionDescription: "La correction d'activité",
-            overrideFormatGraphQLError: gqlError => {
-              const selfId = store.userId();
-              const user =
-                activityEvent.userId === selfId
-                  ? store.userInfo()
-                  : store.getEntity("coworkers")[
-                      activityEvent.userId.toString()
-                    ];
-              return formatLogActivityError(gqlError, user, selfId);
-            },
-            hasRequestFailed: true,
-            shouldReload: false,
-            isActionDescriptionFemale: true
-          });
-        }
-      }
+      "cancelOrEditActivity",
+      !activityEvent.id.toString().startsWith("temp")
     );
   };
+
+  api.registerResponseHandler("cancelOrEditActivity", {
+    onSuccess: (apiResponse, { activityId, actionType, newEndTime }) => {
+      if (actionType === "cancel") {
+        if (apiResponse.data.activities.cancelActivity.success) {
+          store.syncEntity([], "activities", a => a.id === activityId);
+        }
+      } else {
+        const activity = parseActivityPayloadFromBackend(
+          apiResponse.data.activities.editActivity
+        );
+        if (!newEndTime) {
+          store.syncEntity(
+            [
+              {
+                ...store.getEntity("missions")[activity.missionId.toString()],
+                ended: false
+              }
+            ],
+            "missions",
+            m => m.id === activity.missionId
+          );
+        }
+        store.syncEntity([activity], "activities", a => a.id === activity.id);
+      }
+    },
+    onError: (error, { userId }) => {
+      if (isGraphQLError(error)) {
+        displayApiErrors({
+          graphQLErrors: error.graphQLErrors,
+          actionDescription: "La correction d'activité",
+          overrideFormatGraphQLError: gqlError => {
+            const selfId = store.userId();
+            const user =
+              userId === selfId
+                ? store.userInfo()
+                : store.getEntity("coworkers")[userId.toString()];
+            return formatLogActivityError(gqlError, user, selfId);
+          },
+          hasRequestFailed: true,
+          shouldReload: false,
+          isActionDescriptionFemale: true
+        });
+      }
+    }
+  });
 
   const beginNewMission = async ({
     name,
@@ -431,7 +475,8 @@ export function ActionsContextProvider({ children }) {
     const missionIdPromise = new Promise((resolve, reject) => {
       const _updateMissionStore = async (store, requestId) => {
         const mission = {
-          name
+          name,
+          ended: false
         };
         const missionId = await store.createEntityObject(
           mission,
@@ -449,60 +494,8 @@ export function ActionsContextProvider({ children }) {
       missionPayload,
       updateMissionStore,
       ["missions"],
-      async (apiResponse, { missionId: tempMissionId }) => {
-        const mission = apiResponse.data.activities.createMission;
-        await new Promise((resolve, reject) => {
-          store.setStoreState(
-            prevState => ({
-              pendingRequests: prevState.pendingRequests.map(request => {
-                const requestVariables = { ...request.variables };
-                if (requestVariables.missionId === tempMissionId) {
-                  requestVariables.missionId = mission.id;
-                }
-                return { ...request, variables: requestVariables };
-              })
-            }),
-            ["pendingRequests"],
-            resolve
-          );
-        });
-        store.syncEntity(
-          [parseMissionPayloadFromBackend(mission, store.userId())],
-          "missions",
-          () => false
-        );
-        store.setStoreState(
-          prevState => ({
-            activities: mapValues(prevState.activities, a => ({
-              ...a,
-              missionId:
-                a.missionId === tempMissionId ? mission.id : a.missionId
-            }))
-          }),
-          ["activities"]
-        );
-        store.setStoreState(
-          prevState => ({
-            expenditures: mapValues(prevState.expenditures, e => ({
-              ...e,
-              missionId:
-                e.missionId === tempMissionId ? mission.id : e.missionId
-            }))
-          }),
-          ["expenditures"]
-        );
-      },
-      false,
-      async (error, { missionId: tempMissionId }) => {
-        // If the begin-mission event raises an API error we cancel all the pending requests for the mission
-        const pendingMissionRequests = store
-          .pendingRequests()
-          .filter(req => req.variables.missionId === tempMissionId);
-        await Promise.all(
-          pendingMissionRequests.map(req => store.clearPendingRequest(req))
-        );
-        store.syncEntity([], "missions", m => m.id === tempMissionId);
-      }
+      "beginMission",
+      false
     );
 
     const missionCurrentId = await missionIdPromise;
@@ -520,65 +513,132 @@ export function ActionsContextProvider({ children }) {
     ]);
   };
 
+  api.registerResponseHandler("beginMission", {
+    onSuccess: async (apiResponse, { missionId: tempMissionId }) => {
+      const mission = apiResponse.data.activities.createMission;
+      await store.addToIdentityMap(tempMissionId, mission.id);
+      store.syncEntity(
+        [
+          parseMissionPayloadFromBackend(
+            { ...mission, ended: false },
+            store.userId()
+          )
+        ],
+        "missions",
+        () => false,
+        { [mission.id]: tempMissionId }
+      );
+      store.setStoreState(
+        prevState => ({
+          activities: mapValues(prevState.activities, a => ({
+            ...a,
+            missionId: a.missionId === tempMissionId ? mission.id : a.missionId
+          }))
+        }),
+        ["activities"]
+      );
+      store.setStoreState(
+        prevState => ({
+          expenditures: mapValues(prevState.expenditures, e => ({
+            ...e,
+            missionId: e.missionId === tempMissionId ? mission.id : e.missionId
+          }))
+        }),
+        ["expenditures"]
+      );
+    },
+    onError: async (error, { missionId: tempMissionId }) => {
+      // If the begin-mission event raises an API error we cancel all the pending requests for the mission
+      const pendingMissionRequests = store
+        .pendingRequests()
+        .filter(
+          req =>
+            (req.variables && req.variables.missionId === tempMissionId) ||
+            (req.storeInfo && req.storeInfo.missionId === tempMissionId)
+        );
+      await Promise.all(
+        pendingMissionRequests.map(req => store.clearPendingRequest(req))
+      );
+      store.syncEntity([], "missions", m => m.id === tempMissionId);
+    }
+  });
+
   const endMissionForTeam = async ({
     endTime,
     expenditures,
-    missionId,
+    mission,
     team = [],
     comment = null
   }) => {
     if (team.length === 0)
       return await endMission({
         endTime,
-        missionId,
+        mission,
         expenditures,
         comment
       });
 
     const userId = store.userId();
-    let orderedTeam = team;
     if (team.includes(userId)) {
-      orderedTeam = [userId, ...team.filter(uid => uid !== userId)];
+      await endMission({
+        endTime,
+        mission,
+        userId,
+        expenditures,
+        comment
+      });
     }
 
     return await Promise.all(
-      orderedTeam.map(id =>
-        endMission({
-          endTime,
-          missionId,
-          userId: id,
-          expenditures,
-          comment
-        })
-      )
+      team
+        .filter(id => id !== userId)
+        .map(id =>
+          endMission({
+            endTime,
+            mission,
+            userId: id,
+            expenditures,
+            comment
+          })
+        )
     );
   };
 
   const endMission = async ({
     endTime,
     expenditures,
-    missionId,
+    mission,
     userId = null,
     comment = null
   }) => {
+    const missionId = mission.id;
+    const actualUserId = userId || store.userId();
     const endMissionPayload = {
       endTime,
       missionId,
-      userId: userId || store.userId()
+      userId: actualUserId
     };
     if (comment) endMissionPayload.context = { comment };
 
     const updateStore = (store, requestId) => {
-      store.createEntityObject(
-        {
-          type: ACTIVITIES.rest.name,
-          startTime: endMissionPayload.endTime,
-          missionId,
-          userId
-        },
-        "activities",
+      const currentActivity = values(store.getEntity("activities")).find(
+        a => a.userId === actualUserId && !a.endTime
+      );
+      if (currentActivity) {
+        store.updateEntityObject(
+          currentActivity.id,
+          "activities",
+          { endTime: truncateMinute(endTime) },
+          requestId
+        );
+      }
+      store.updateEntityObject(
+        missionId,
+        "missions",
+        { ended: true },
         requestId
       );
+      return { userId: actualUserId, missionId };
     };
 
     await Promise.all([
@@ -586,50 +646,69 @@ export function ActionsContextProvider({ children }) {
         END_MISSION_MUTATION,
         endMissionPayload,
         updateStore,
-        ["activities"],
-        apiResponse => {
-          const mission = apiResponse.data.activities.endMission;
-          store.syncEntity(
-            mission.activities.map(parseActivityPayloadFromBackend),
-            "activities",
-            a => a.missionId === mission.id
-          );
-        },
-        true,
-        error => {
-          if (isGraphQLError(error)) {
-            displayApiErrors({
-              graphQLErrors: error.graphQLErrors,
-              actionDescription: "La fin de mission",
-              overrideFormatGraphQLError: gqlError => {
-                const selfId = store.userId();
-                const user =
-                  userId === selfId
-                    ? store.userInfo()
-                    : store.getEntity("coworkers")[userId.toString()];
-                return formatLogActivityError(gqlError, user, selfId);
-              },
-              hasRequestFailed: true,
-              shouldReload: false,
-              isActionDescriptionFemale: true
-            });
-          }
-        }
+        ["activities", "missions"],
+        "endMission",
+        true
       ),
-      ...map(expenditures, (checked, type) => {
-        if (checked > 0) return logExpenditure({ type, missionId, userId });
-      })
+      editExpenditures(expenditures, mission.expenditures, missionId, userId)
     ]);
   };
 
-  const validateMission = async mission => {
-    let update = { validated: true };
-    if (isPendingSubmission(mission)) {
-      if (api.isCurrentlySubmittingRequests()) return;
-      if (mission.pendingUpdate.type === "update") {
-        update = { ...mission.pendingUpdate.new, ...update };
+  api.registerResponseHandler("endMission", {
+    onSuccess: apiResponse => {
+      const mission = apiResponse.data.activities.endMission;
+      store.syncEntity(
+        [{ ...parseMissionPayloadFromBackend(mission), ended: true }],
+        "missions",
+        m => m.id === mission.id
+      );
+      store.syncEntity(
+        mission.activities.map(parseActivityPayloadFromBackend),
+        "activities",
+        a => a.missionId === mission.id
+      );
+    },
+    onError: (error, { userId, missionId }) => {
+      if (
+        isGraphQLError(error) &&
+        error.graphQLErrors.some(gqle =>
+          graphQLErrorMatchesCode(gqle, "MISSION_ALREADY_ENDED")
+        )
+      ) {
+        store.syncEntity(
+          [
+            {
+              ...store.getEntity("missions")[missionId.toString()],
+              ended: true
+            }
+          ],
+          "missions",
+          m => m.id === missionId
+        );
+      }
+      if (isGraphQLError(error)) {
+        displayApiErrors({
+          graphQLErrors: error.graphQLErrors,
+          actionDescription: "La fin de mission",
+          overrideFormatGraphQLError: gqlError => {
+            const selfId = store.userId();
+            const user =
+              userId === selfId
+                ? store.userInfo()
+                : store.getEntity("coworkers")[userId.toString()];
+            return formatLogActivityError(gqlError, user, selfId);
+          },
+          hasRequestFailed: true,
+          shouldReload: false,
+          isActionDescriptionFemale: true
+        });
       }
     }
+  });
+
+  const validateMission = async mission => {
+    const update = { ended: true, validated: true };
+
     const updateStore = (store, requestId) => {
       store.updateEntityObject(mission.id, "missions", update, requestId);
     };
@@ -639,16 +718,20 @@ export function ActionsContextProvider({ children }) {
       { missionId: mission.id },
       updateStore,
       ["missions"],
-      async apiResponse => {
-        const mission = apiResponse.data.activities.validateMission.mission;
-        await store.syncEntity(
-          [{ ...mission, validated: true }],
-          "missions",
-          m => m.id === mission.id
-        );
-      }
+      "validateMission"
     );
   };
+
+  api.registerResponseHandler("validateMission", {
+    onSuccess: async apiResponse => {
+      const mission = apiResponse.data.activities.validateMission.mission;
+      await store.syncEntity(
+        [{ ...mission, ended: true, validated: true }],
+        "missions",
+        m => m.id === mission.id
+      );
+    }
+  });
 
   const editExpendituresForTeam = async (
     newExpenditures,
@@ -715,6 +798,7 @@ export function ActionsContextProvider({ children }) {
 
     const updateStore = (store, requestId) => {
       store.createEntityObject(newExpenditure, "expenditures", requestId);
+      return { missionId };
     };
 
     await submitAction(
@@ -722,44 +806,52 @@ export function ActionsContextProvider({ children }) {
       newExpenditure,
       updateStore,
       ["expenditures"],
-      apiResponse => {
-        const expenditures = apiResponse.data.activities.logExpenditure;
-        store.syncEntity(
-          expenditures,
-          "expenditures",
-          e =>
-            e.missionId ===
-            (expenditures.length > 0 ? expenditures[0].missionId : missionId)
-        );
-      },
-      true,
-      error => {
-        if (isGraphQLError(error)) {
-          displayApiErrors({
-            graphQLErrors: error.graphQLErrors,
-            overrideFormatGraphQLError: gqlError => {
-              if (graphQLErrorMatchesCode(gqlError, "DUPLICATE_EXPENDITURES")) {
-                return "Un frais de cette nature a déjà été enregistré sur la mission.";
-              }
-            },
-            actionDescription: "Le frais",
-            hasRequestFailed: true,
-            shouldReload: false
-          });
-        }
-      }
+      "logExpenditure",
+      true
     );
   };
+
+  api.registerResponseHandler("logExpenditure", {
+    onSuccess: (apiResponse, { missionId }) => {
+      const expenditures = apiResponse.data.activities.logExpenditure;
+      store.syncEntity(
+        expenditures,
+        "expenditures",
+        e =>
+          e.missionId ===
+          (expenditures.length > 0 ? expenditures[0].missionId : missionId)
+      );
+    },
+    onError: error => {
+      if (isGraphQLError(error)) {
+        displayApiErrors({
+          graphQLErrors: error.graphQLErrors,
+          overrideFormatGraphQLError: gqlError => {
+            if (graphQLErrorMatchesCode(gqlError, "DUPLICATE_EXPENDITURES")) {
+              return "Un frais de cette nature a déjà été enregistré sur la mission.";
+            }
+          },
+          actionDescription: "Le frais",
+          hasRequestFailed: true,
+          shouldReload: false
+        });
+      }
+    }
+  });
 
   const cancelExpenditure = async expenditureToCancel => {
     if (isPendingSubmission(expenditureToCancel)) {
       if (
         api.isCurrentlySubmittingRequests() ||
-        expenditureToCancel.pendingUpdate.type === "delete"
+        expenditureToCancel.pendingUpdates.some(upd => upd.type === "delete")
       )
         return;
 
-      store.clearPendingRequest(expenditureToCancel.pendingUpdate.requestId);
+      const pendingCreationRequest = store
+        .pendingRequests()
+        .find(r => r.id === expenditureToCancel.pendingUpdates[0].requestId);
+      if (pendingCreationRequest)
+        await store.clearPendingRequest(pendingCreationRequest);
     }
 
     const updateStore = (store, requestId) => {
@@ -768,6 +860,7 @@ export function ActionsContextProvider({ children }) {
         "expenditures",
         requestId
       );
+      return { missionId: expenditureToCancel.missionId };
     };
 
     await submitAction(
@@ -775,21 +868,23 @@ export function ActionsContextProvider({ children }) {
       { expenditureId: expenditureToCancel.id },
       updateStore,
       ["expenditures"],
-      apiResponse => {
-        const expenditures = apiResponse.data.activities.cancelExpenditure;
-        store.syncEntity(
-          expenditures,
-          "expenditures",
-          e =>
-            e.missionId ===
-            (expenditures.length > 0
-              ? expenditures[0].missionId
-              : expenditureToCancel.missionId)
-        );
-      },
+      "cancelExpenditure",
       true
     );
   };
+
+  api.registerResponseHandler("cancelExpenditure", {
+    onSuccess: (apiResponse, { missionId }) => {
+      const expenditures = apiResponse.data.activities.cancelExpenditure;
+      store.syncEntity(
+        expenditures,
+        "expenditures",
+        e =>
+          e.missionId ===
+          (expenditures.length > 0 ? expenditures[0].missionId : missionId)
+      );
+    }
+  });
 
   return (
     <ActionsContext.Provider

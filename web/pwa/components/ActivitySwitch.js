@@ -2,13 +2,15 @@ import React from "react";
 import Card from "@material-ui/core/Card";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
-import { ACTIVITIES, TIMEABLE_ACTIVITIES } from "common/utils/activities";
+import { ACTIVITIES, SWITCH_ACTIVITIES } from "common/utils/activities";
 import { useModals } from "common/utils/modals";
 import { getTime } from "common/utils/events";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";
 import { MainCtaButton } from "./MainCtaButton";
+import fromPairs from "lodash/fromPairs";
+import uniq from "lodash/uniq";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -86,9 +88,10 @@ export function ActivitySwitchCard({
 
 export function ActivitySwitch({
   team,
-  currentActivity,
+  latestActivity,
   disableBreak,
   endMission,
+  currentMission,
   pushActivitySwitchEvent
 }) {
   const store = useStoreSyncedWithLocalStorage();
@@ -96,8 +99,11 @@ export function ActivitySwitch({
   const modals = useModals();
   const handleActivitySwitch = activityName => () => {
     if (
-      currentActivity &&
-      activityName === currentActivity.type &&
+      latestActivity &&
+      activityName ===
+        (latestActivity.endTime
+          ? ACTIVITIES.break.name
+          : latestActivity.type) &&
       activityName !== ACTIVITIES.drive.name &&
       activityName !== ACTIVITIES.support.name
     )
@@ -109,12 +115,10 @@ export function ActivitySwitch({
       modals.open("driverSelection", {
         team,
         currentDriverId:
-          currentActivity && currentActivity.type === ACTIVITIES.drive.name
+          latestActivity && latestActivity.type === ACTIVITIES.drive.name
             ? store.userId()
             : undefined,
-        currentDriverStartTime: currentActivity
-          ? getTime(currentActivity)
-          : null,
+        currentDriverStartTime: latestActivity ? getTime(latestActivity) : null,
         handleDriverSelection: driverId =>
           pushActivitySwitchEvent(activityName, driverId)
       });
@@ -130,16 +134,18 @@ export function ActivitySwitch({
         alignItems={"center"}
         spacing={2}
       >
-        {Object.values(TIMEABLE_ACTIVITIES).map(activity => (
+        {Object.values(SWITCH_ACTIVITIES).map(activity => (
           <Grid item className={classes.gridItem} xs key={activity.name}>
             <ActivitySwitchCard
               label={activity.label}
               renderIcon={activity.renderIcon}
               current={
-                currentActivity &&
-                (activity.name === currentActivity.type ||
-                  (activity === ACTIVITIES.drive &&
-                    currentActivity.type === ACTIVITIES.support.name))
+                latestActivity &&
+                (!latestActivity.endTime
+                  ? activity.name === latestActivity.type ||
+                    (activity === ACTIVITIES.drive &&
+                      latestActivity.type === ACTIVITIES.support.name)
+                  : activity === ACTIVITIES.break)
               }
               onClick={handleActivitySwitch(activity.name)}
               disabled={disableBreak && activity.name === ACTIVITIES.break.name}
@@ -153,6 +159,9 @@ export function ActivitySwitch({
             onClick={() => {
               const missionEndTime = Date.now();
               modals.open("endMission", {
+                currentExpenditures: fromPairs(
+                  uniq(currentMission.expenditures.map(e => [e.type, true]))
+                ),
                 handleMissionEnd: async (expenditures, comment) =>
                   await endMission({
                     endTime: missionEndTime,

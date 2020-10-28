@@ -3,14 +3,15 @@ import zipObject from "lodash/zipObject";
 import keyBy from "lodash/keyBy";
 import pickBy from "lodash/pickBy";
 import mapValues from "lodash/mapValues";
+import values from "lodash/values";
 import map from "lodash/map";
+import maxBy from "lodash/maxBy";
 import * as Sentry from "@sentry/browser";
-import omit from "lodash/omit";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 import { BroadcastChannel } from "broadcast-channel";
 import { currentUserId } from "./cookie";
 
-const STORE_VERSION = 8;
+const STORE_VERSION = 9;
 
 export const broadCastChannel = new BroadcastChannel("storeUpdates", {
   webWorkerSupport: false
@@ -33,7 +34,8 @@ const String = {
   deserialize: value => value || null
 };
 
-export const isPendingSubmission = item => !!item.pendingUpdate;
+export const isPendingSubmission = item =>
+  item.pendingUpdates && item.pendingUpdates.length > 0;
 
 export class StoreSyncedWithLocalStorageProvider extends React.Component {
   constructor(props) {
@@ -50,6 +52,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       activities: Map,
       employments: List,
       pendingRequests: List,
+      identityMap: Map,
       missions: Map,
       expenditures: Map,
       vehicles: Map,
@@ -96,7 +99,16 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             mapValues(stateUpdate, (value, entry) =>
               this.mapper[entry].deserialize(value)
             ),
-            resolve
+            () => {
+              if (this.state.pendingRequests.length === 0) {
+                this.setState({
+                  nextRequestId: 1,
+                  nextEntityObject: 1,
+                  identityMap: {}
+                });
+              }
+              resolve();
+            }
           )
         );
       } catch (err) {
@@ -187,13 +199,27 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       );
     });
 
+  addToIdentityMap = async (key, value) =>
+    new Promise(resolve =>
+      this.setStoreState(
+        prevState => ({
+          identityMap: { ...prevState.identityMap, [key]: value }
+        }),
+        ["identityMap"],
+        resolve
+      )
+    );
+
   createEntityObject = async (object, entity, requestId) => {
     if (this.mapper[entity] === List) {
       this.setStoreState(
         prevState => ({
           [entity]: [
             ...prevState[entity],
-            { ...object, pendingUpdate: { requestId, type: "create" } }
+            {
+              ...object,
+              pendingUpdates: [{ requestId, type: "create", time: Date.now() }]
+            }
           ]
         }),
         [entity]
@@ -209,7 +235,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           [entityObjectId.toString()]: {
             ...object,
             id: entityObjectId,
-            pendingUpdate: { requestId, type: "create" }
+            pendingUpdates: [{ requestId, type: "create", time: Date.now() }]
           }
         }
       }),
@@ -226,7 +252,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             id === objectId.toString()
               ? {
                   ...value,
-                  pendingUpdate: { requestId, type: "update", new: update }
+                  pendingUpdates: [
+                    ...(value.pendingUpdates || []),
+                    { requestId, type: "update", new: update, time: Date.now() }
+                  ]
                 }
               : value
           )
@@ -241,7 +270,13 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         [entity]: {
           ...mapValues(prevState[entity], (value, id) =>
             id === objectId.toString()
-              ? { ...value, pendingUpdate: { requestId, type: "delete" } }
+              ? {
+                  ...value,
+                  pendingUpdates: [
+                    ...(value.pendingUpdates || []),
+                    { requestId, type: "delete", time: Date.now() }
+                  ]
+                }
               : value
           )
         }
@@ -287,9 +322,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     variables,
     updateStore,
     watchFields,
-    handleSubmitResponse,
-    batchable = true,
-    onApiError = null
+    apiResponseHandlerName,
+    batchable = true
   ) => {
     const requestId = await this._generateId("nextRequestId");
     const storeInfo = await updateStore(this, requestId);
@@ -298,38 +332,51 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       query,
       variables,
       watchFields,
-      handleSubmitResponse: apiResponse =>
-        handleSubmitResponse(apiResponse, storeInfo),
-      batchable,
-      onApiError: onApiError ? err => onApiError(err, storeInfo) : null
+      storeInfo,
+      apiResponseHandlerName,
+      batchable
     };
     await this.pushItemToArray(request, "pendingRequests");
+    console.log("Caca");
     return request;
   };
 
-  removeOptimisticUpdateForRequest = (requestId, watchFields) =>
-    new Promise(resolve => {
+  removeOptimisticUpdateForRequest = (requestId, watchFields) => {
+    const _removeUpdateForItem = item => {
+      if (
+        isPendingSubmission(item) &&
+        item.pendingUpdates.some(upd => upd.requestId === requestId)
+      ) {
+        if (
+          item.pendingUpdates.some(
+            upd => upd.requestId === requestId && upd.type === "create"
+          )
+        ) {
+          return null;
+        }
+        return {
+          ...item,
+          pendingUpdates: item.pendingUpdates.filter(
+            upd => upd.requestId !== requestId
+          )
+        };
+      }
+      return item;
+    };
+
+    return new Promise(resolve => {
       this.setStoreState(
         prevState =>
           zipObject(
             watchFields,
             watchFields.map(entity => {
               if (this.mapper[entity] === List) {
-                return prevState[entity].filter(
-                  item =>
-                    !isPendingSubmission(item) ||
-                    item.pendingUpdate.requestId !== requestId
-                );
+                return prevState[entity]
+                  .map(_removeUpdateForItem)
+                  .filter(value => !!value);
               }
               return pickBy(
-                mapValues(prevState[entity], item =>
-                  isPendingSubmission(item) &&
-                  item.pendingUpdate.requestId === requestId
-                    ? item.pendingUpdate.type === "create"
-                      ? null
-                      : omit(item, "pendingUpdate")
-                    : item
-                ),
+                mapValues(prevState[entity], _removeUpdateForItem),
                 value => !!value
               );
             })
@@ -338,20 +385,30 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         resolve
       );
     });
+  };
 
   resolveLastVersionOfItem = item => {
-    if (!isPendingSubmission(item) || item.pendingUpdate.type === "create") {
+    if (!isPendingSubmission(item)) {
       return item;
     }
-    if (item.pendingUpdate.type === "delete") {
+    const lastUpdate = maxBy(item.pendingUpdates, upd => upd.time);
+    if (lastUpdate.type === "create") {
+      return item;
+    }
+    if (lastUpdate.type === "delete") {
       return null;
     }
-    if (item.pendingUpdate.type === "update") {
-      return { ...item, ...item.pendingUpdate.new };
+    if (lastUpdate.type === "update") {
+      return { ...item, ...lastUpdate.new };
     }
   };
 
-  syncEntity = (itemsFromApi, entity, belongsToSyncScope = () => true) =>
+  syncEntity = (
+    itemsFromApi,
+    entity,
+    belongsToSyncScope = () => true,
+    createdIdMap = {}
+  ) =>
     new Promise(resolve => {
       this.setStoreState(
         prevState => {
@@ -363,16 +420,23 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
                   item =>
                     !belongsToSyncScope(item) ||
                     (isPendingSubmission(item) &&
-                      item.pendingUpdate.type === "create")
+                      item.pendingUpdates.some(upd => upd.type === "create"))
                 ),
                 ...itemsFromApi
               ]
             };
           }
           itemsFromApi.forEach(item => {
-            const prevEntityMatch = prevEntityState[item.id.toString()];
+            const prevEntityMatch =
+              prevEntityState[
+                createdIdMap[item.id]
+                  ? createdIdMap[item.id].toString()
+                  : item.id.toString()
+              ];
             if (prevEntityMatch && isPendingSubmission(prevEntityMatch)) {
-              item.pendingUpdate = prevEntityMatch.pendingUpdate;
+              item.pendingUpdates = prevEntityMatch.pendingUpdates.filter(
+                upd => upd.type !== "create"
+              );
             }
           });
           return {
@@ -380,9 +444,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
               ...pickBy(
                 prevEntityState,
                 item =>
-                  !belongsToSyncScope(item) ||
-                  (isPendingSubmission(item) &&
-                    item.pendingUpdate.type === "create")
+                  !values(createdIdMap).includes(item.id) &&
+                  (!belongsToSyncScope(item) ||
+                    (isPendingSubmission(item) &&
+                      item.pendingUpdates.some(upd => upd.type === "create")))
               ),
               ...keyBy(itemsFromApi, item => item.id.toString())
             }
@@ -477,6 +542,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             pushItemToArray: this.pushItemToArray,
             setItems: this.setItems,
             setStoreState: this.setStoreState,
+            identityMap: () => this.state.identityMap,
+            addToIdentityMap: this.addToIdentityMap,
             newRequest: this.newRequest,
             syncEntity: this.syncEntity,
             clearPendingRequest: this.clearPendingRequest,

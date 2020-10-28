@@ -142,6 +142,7 @@ export const USER_QUERY = gql`
           type
           missionId
           startTime
+          endTime
           userId
         }
       }
@@ -419,12 +420,13 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
 
 export const LOG_ACTIVITY_MUTATION = gql`
   mutation logActivity(
-    $type: InputableActivityTypeEnum!
+    $type: ActivityTypeEnum!
     $startTime: TimeStamp!
     $endTime: TimeStamp
     $missionId: Int!
     $userId: Int
     $context: GenericScalar
+    $switch: Boolean
   ) {
     activities {
       logActivity(
@@ -434,12 +436,14 @@ export const LOG_ACTIVITY_MUTATION = gql`
         missionId: $missionId
         userId: $userId
         context: $context
+        switch: $switch
       ) {
         id
         type
         userId
         missionId
         startTime
+        endTime
       }
     }
   }
@@ -449,11 +453,7 @@ export const CANCEL_ACTIVITY_MUTATION = gql`
   mutation cancelActivity($activityId: Int!, $context: GenericScalar) {
     activities {
       cancelActivity(activityId: $activityId, context: $context) {
-        id
-        type
-        missionId
-        userId
-        startTime
+        success
       }
     }
   }
@@ -465,6 +465,7 @@ export const EDIT_ACTIVITY_MUTATION = gql`
     $context: GenericScalar
     $startTime: TimeStamp
     $endTime: TimeStamp
+    $removeEndTime: Boolean
   ) {
     activities {
       editActivity(
@@ -472,14 +473,22 @@ export const EDIT_ACTIVITY_MUTATION = gql`
         startTime: $startTime
         endTime: $endTime
         context: $context
+        removeEndTime: $removeEndTime
       ) {
         id
         type
         missionId
         userId
         startTime
+        endTime
       }
     }
+  }
+`;
+
+export const IS_MISSION_ENDED_QUERY = gql`
+  query isMissionEnded($missionId: Int!) {
+    isMissionEndedForSelf(missionId: $missionId)
   }
 `;
 
@@ -522,6 +531,7 @@ export const END_MISSION_MUTATION = gql`
           missionId
           userId
           startTime
+          endTime
         }
       }
     }
@@ -648,6 +658,7 @@ class Api {
     this.nonConcurrentQueryQueue = new NonConcurrentExecutionQueue();
     this.isCurrentlySubmittingRequests = () =>
       this.nonConcurrentQueryQueue.lock;
+    this.responseHandlers = {};
   }
 
   async graphQlQuery(query, variables, other) {
@@ -716,6 +727,10 @@ class Api {
     }
   }
 
+  registerResponseHandler(name, handler) {
+    this.responseHandlers[name] = handler;
+  }
+
   async _queryWithRefreshToken(query) {
     await this.refreshTokenQueue.execute(() => this._refreshTokenIfNeeded());
     return await query();
@@ -723,6 +738,18 @@ class Api {
   }
 
   async executeRequest(request) {
+    const apiResponseHandler =
+      this.responseHandlers[request.apiResponseHandlerName] || {};
+    // 0. Resolve temporary IDs if they exist
+    const identityMap = this.store.identityMap();
+    ["storeInfo", "variables"].forEach(requestProp => {
+      ["activityId", "missionId"].forEach(field => {
+        if (request[requestProp] && identityMap[request[requestProp][field]]) {
+          request[requestProp][field] =
+            identityMap[request[requestProp][field]];
+        }
+      });
+    });
     try {
       // 1. Call the API
       const submit = await this._queryWithRefreshToken(() =>
@@ -733,13 +760,16 @@ class Api {
         })
       );
       // 3. Commit the persistent changes to the store
-      await request.handleSubmitResponse(submit);
+      if (apiResponseHandler.onSuccess) {
+        await apiResponseHandler.onSuccess(submit, request.storeInfo);
+      }
 
       // 4. Remove the temporary updates and the pending request from the pool
       await this.store.clearPendingRequest(request);
     } catch (err) {
       if (!isRetryable(err)) {
-        if (request.onApiError) await request.onApiError(err);
+        if (apiResponseHandler.onError)
+          await apiResponseHandler.onError(err, request.storeInfo);
         await this.store.clearPendingRequest(request);
       }
       Sentry.withScope(function(scope) {

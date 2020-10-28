@@ -1,8 +1,7 @@
 import React from "react";
-import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import { RestIcon, TruckIcon, WorkIcon } from "./icons";
 
-export const TIMEABLE_ACTIVITIES = {
+export const SWITCH_ACTIVITIES = {
   drive: {
     name: "drive",
     label: "Déplacement",
@@ -23,17 +22,18 @@ export const TIMEABLE_ACTIVITIES = {
 };
 
 export const ACTIVITIES = {
-  ...TIMEABLE_ACTIVITIES,
+  ...SWITCH_ACTIVITIES,
   support: {
     name: "support",
     label: "Accompagnement",
     renderIcon: props => <TruckIcon {...props} />
-  },
-  rest: {
-    name: "rest",
-    label: "Fin journée",
-    renderIcon: props => <HighlightOffIcon {...props} />
   }
+};
+
+export const TIMEABLE_ACTIVITIES = {
+  drive: ACTIVITIES.drive,
+  work: ACTIVITIES.work,
+  support: ACTIVITIES.support
 };
 
 export function parseActivityPayloadFromBackend(activity) {
@@ -41,6 +41,7 @@ export function parseActivityPayloadFromBackend(activity) {
     id: activity.id,
     type: activity.type,
     startTime: activity.startTime,
+    endTime: activity.endTime,
     missionId: activity.missionId,
     userId: activity.userId,
     context: activity.context

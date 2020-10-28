@@ -1,6 +1,9 @@
 import { formatDateTime, isoFormatDateTime } from "common/utils/time";
 import TextField from "@material-ui/core/TextField";
+import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import React from "react";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import IconButton from "@material-ui/core/IconButton";
 
 export function DateTimePicker({
   label,
@@ -11,14 +14,18 @@ export function DateTimePicker({
   minTime,
   maxTime,
   required,
-  disabled
+  disabled,
+  noValidate,
+  clearable = false
 }) {
   const validatesTime = () => {
-    if (time <= minTime) {
-      setError(`L'heure doit être après ${formatDateTime(minTime)}`);
-    } else if (time >= maxTime) {
-      setError(`L'heure doit être avant ${formatDateTime(maxTime)}`);
-    } else setError("");
+    if (!noValidate) {
+      if (minTime && time <= minTime) {
+        setError(`L'heure doit être après ${formatDateTime(minTime)}`);
+      } else if (maxTime && time >= maxTime) {
+        setError(`L'heure doit être avant ${formatDateTime(maxTime)}`);
+      } else setError("");
+    }
     return () => {};
   };
 
@@ -44,13 +51,30 @@ export function DateTimePicker({
       required={required || false}
       disabled={disabled || false}
       fullWidth
-      value={isoFormatDateTime(time)}
+      value={time ? isoFormatDateTime(time) : ""}
       inputProps={{
         step: 60
       }}
       onChange={handleChange}
       error={!!error}
       helperText={error}
+      InputProps={
+        clearable
+          ? {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    size="small"
+                    onClick={() => setTime(null)}
+                    onMouseDown={e => e.preventDefault()}
+                  >
+                    <HighlightOffIcon />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }
+          : {}
+      }
     />
   );
 }

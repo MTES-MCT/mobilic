@@ -12,7 +12,6 @@ import Box from "@material-ui/core/Box";
 import Chip from "@material-ui/core/Chip";
 import { EXPENDITURES } from "common/utils/expenditures";
 import React from "react";
-import mapValues from "lodash/mapValues";
 import map from "lodash/map";
 import omit from "lodash/omit";
 import fromPairs from "lodash/fromPairs";
@@ -20,12 +19,10 @@ import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useModals } from "common/utils/modals";
-import { getTime } from "common/utils/events";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { getVehicleName } from "common/utils/vehicles";
-import { ACTIVITIES } from "common/utils/activities";
 import { PersonIcon } from "common/utils/icons";
 
 const useStyles = makeStyles(theme => ({
@@ -57,8 +54,10 @@ function AlternateColors({ children }) {
 export function MissionDetails({
   mission,
   editActivityEvent,
+  nullableEndTimeInEditActivity = true,
   editExpenditures,
   previousMissionEnd,
+  nextMissionStart,
   hideExpenditures,
   createActivity,
   changeTeam
@@ -70,20 +69,7 @@ export function MissionDetails({
 
   const coworkers = store.getEntity("coworkers");
 
-  const lastMissionActivity = mission.activities[mission.activities.length - 1];
   let teamChanges = omit(mission.teamChanges, [userId]);
-
-  // Do not include the automatic releases of all team mates at mission end
-  if (mission.isComplete) {
-    teamChanges = mapValues(teamChanges, statuses =>
-      statuses.filter(
-        tc =>
-          tc.isEnrollment ||
-          getTime(tc) !==
-            getTime(mission.activities[mission.activities.length - 1])
-      )
-    );
-  }
 
   const teamAtMissionEnd = [userId, ...resolveTeamAt(teamChanges, Date.now())];
 
@@ -99,17 +85,17 @@ export function MissionDetails({
           createActivity
             ? () =>
                 modals.open("activityRevision", {
+                  otherActivities: mission.allActivities,
                   createActivity: args =>
                     createActivity({
                       ...args,
                       missionActivities: mission.allActivities,
                       missionId: mission.id
                     }),
-                  minStartTime: previousMissionEnd + 1,
-                  maxStartTime: mission.isComplete
-                    ? getTime(lastMissionActivity) - 1
-                    : Date.now(),
-                  teamChanges
+                  minStartTime: previousMissionEnd,
+                  maxStartTime: nextMissionStart,
+                  teamChanges,
+                  nullableEndTime: nullableEndTimeInEditActivity
                 })
             : null
         }
@@ -118,13 +104,10 @@ export function MissionDetails({
           activities={mission.activities}
           allMissionActivities={mission.allActivities}
           editActivityEvent={editActivityEvent}
-          missionEnd={
-            lastMissionActivity.type === ACTIVITIES.rest.name
-              ? getTime(lastMissionActivity)
-              : null
-          }
+          nextMissionStart={nextMissionStart}
           previousMissionEnd={previousMissionEnd}
           teamChanges={teamChanges}
+          nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
         />
       </MissionReviewSection>
       <MissionReviewSection

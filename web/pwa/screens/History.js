@@ -39,11 +39,17 @@ const tabs = {
     periodSize: 0,
     getPeriod: date => date,
     formatPeriod: shortPrettyFormatDay,
-    renderPeriod: ({ missionsInPeriod, followingPeriodStart, classes }) => {
+    renderPeriod: ({
+      missionsInPeriod,
+      followingPeriodStart,
+      editActivityEvent,
+      createActivity,
+      editExpenditures,
+      currentMission
+    }) => {
       const mission = missionsInPeriod[0];
-      const missionEnd = getTime(
-        mission.activities[mission.activities.length - 1]
-      );
+      const missionEnd =
+        mission.activities[mission.activities.length - 1].endTime;
       return (
         <div>
           {mission.name && (
@@ -60,7 +66,15 @@ const tabs = {
             />
           </WorkTimeSummaryAdditionalInfo>
           <WorkTimeSummaryAdditionalInfo>
-            <MissionDetails mission={mission} />
+            <MissionDetails
+              mission={mission}
+              editActivityEvent={editActivityEvent}
+              createActivity={createActivity}
+              editExpenditures={editExpenditures}
+              nullableEndTimeInEditActivity={
+                currentMission ? mission.id === currentMission.id : true
+              }
+            />
           </WorkTimeSummaryAdditionalInfo>
         </div>
       );
@@ -130,7 +144,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function HistoryModal({ open, handleClose, missions = [] }) {
+export function HistoryModal({
+  open,
+  handleClose,
+  missions = [],
+  currentMission,
+  editActivityEvent,
+  createActivity,
+  editExpenditures
+}) {
   const [currentTab, setCurrentTab] = React.useState("mission");
 
   const groupedMissions = groupBy(missions, m =>
@@ -145,9 +167,10 @@ export function HistoryModal({ open, handleClose, missions = [] }) {
     periods[periods.length - 1]
   );
 
-  React.useEffect(() => setSelectedPeriod(periods[periods.length - 1]), [
-    missions
-  ]);
+  React.useEffect(() => {
+    if (!groupedMissions[selectedPeriod])
+      setSelectedPeriod(periods[periods.length - 1]);
+  }, [missions]);
 
   function handlePeriodChange(e, newTab, selectedDate) {
     const newGroups = groupBy(missions, m =>
@@ -211,7 +234,10 @@ export function HistoryModal({ open, handleClose, missions = [] }) {
               handleMissionClick: date => e =>
                 handlePeriodChange(e, "mission", date),
               followingPeriodStart,
-              classes
+              editActivityEvent,
+              createActivity,
+              editExpenditures,
+              currentMission
             })}
         </Container>
       </Container>

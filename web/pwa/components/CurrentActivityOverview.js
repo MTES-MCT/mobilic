@@ -32,21 +32,23 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function CurrentActivityOverview({ currentActivity, currentDayStart }) {
+export function CurrentActivityOverview({ latestActivity, currentDayStart }) {
   const classes = useStyles();
   const now = Date.now();
 
-  const currentActivityDuration = now - getTime(currentActivity);
+  const currentActivityDuration =
+    now - (latestActivity.endTime || getTime(latestActivity));
   let activityOverviewText;
-  if (currentActivity.type === ACTIVITIES.drive.name) {
-    activityOverviewText = "Vous conduisez depuis";
-  } else if (currentActivity.type === ACTIVITIES.support.name) {
-    activityOverviewText = "Vous êtes en accompagnement depuis";
-  } else if (currentActivity.type === ACTIVITIES.work.name) {
-    activityOverviewText = "Autre tâche commencée depuis";
-  } else if (currentActivity.type === ACTIVITIES.break.name) {
+  if (latestActivity.endTime) {
     activityOverviewText = "Vous êtes en pause depuis";
+  } else if (latestActivity.type === ACTIVITIES.drive.name) {
+    activityOverviewText = "Vous conduisez depuis";
+  } else if (latestActivity.type === ACTIVITIES.support.name) {
+    activityOverviewText = "Vous êtes en accompagnement depuis";
+  } else if (latestActivity.type === ACTIVITIES.work.name) {
+    activityOverviewText = "Autre tâche commencée depuis";
   }
+
   activityOverviewText = `${activityOverviewText} ${formatTimer(
     currentActivityDuration
   )}`;
@@ -66,7 +68,7 @@ export function CurrentActivityOverview({ currentActivity, currentDayStart }) {
         maxWidth={false}
       >
         <Typography className="hidden" variant="h2">
-          abcdefghijklmnopqrstuvwxyz conduit depuis 00h 00m
+          Vous êtes en accompagnement depuis 00h 00m
         </Typography>
         <Typography variant="h2" className={classes.primaryText}>
           {activityOverviewText}

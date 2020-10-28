@@ -5,9 +5,10 @@ import { CurrentActivityOverview } from "../components/CurrentActivityOverview";
 import { getTime } from "common/utils/events";
 import { MissionDetails } from "../components/MissionDetails";
 import Box from "@material-ui/core/Box";
+import { ACTIVITIES } from "common/utils/activities";
 
 export function CurrentActivity({
-  currentActivity,
+  latestActivity,
   currentMission,
   pushNewTeamActivityEvent,
   editActivityEvent,
@@ -21,28 +22,40 @@ export function CurrentActivity({
     <CurrentActivityOverview
       key={0}
       currentDayStart={getTime(currentMission.activities[0])}
-      currentActivity={currentActivity}
+      latestActivity={latestActivity}
     />,
     <ActivitySwitch
       key={1}
       team={currentTeam}
-      currentActivity={currentActivity}
-      pushActivitySwitchEvent={(activityType, driverId = null) =>
-        pushNewTeamActivityEvent({
-          activityType,
-          driverId,
-          missionId: currentMission.id,
-          team: currentTeam,
-          startTime: Date.now()
-        })
+      latestActivity={latestActivity}
+      pushActivitySwitchEvent={async (activityType, driverId = null) =>
+        activityType === ACTIVITIES.break.name
+          ? await editActivityEvent(
+              latestActivity,
+              "revision",
+              currentMission.allActivities,
+              getTime(latestActivity),
+              Date.now(),
+              null,
+              true
+            )
+          : await pushNewTeamActivityEvent({
+              activityType,
+              driverId,
+              missionActivities: currentMission.allActivities,
+              missionId: currentMission.id,
+              team: currentTeam,
+              startTime: Date.now()
+            })
       }
       endMission={async args =>
         await endMissionForTeam({
-          missionId: currentMission.id,
+          mission: currentMission,
           team: currentTeam,
           ...args
         })
       }
+      currentMission={currentMission}
     />,
     <Box key={2} pt={3} />,
     <MissionDetails
@@ -51,12 +64,15 @@ export function CurrentActivity({
       editActivityEvent={editActivityEvent}
       hideExpenditures
       previousMissionEnd={previousMissionEnd}
-      createActivity={pushNewTeamActivityEvent}
+      createActivity={args =>
+        pushNewTeamActivityEvent({ ...args, switchMode: false })
+      }
       changeTeam={updatedCoworkers =>
         updatedCoworkers.forEach(cw => {
           if (cw.enroll) {
             pushNewTeamActivityEvent({
-              activityType: currentActivity ? currentActivity.type : null,
+              missionActivities: currentMission.allActivities,
+              activityType: latestActivity ? latestActivity.type : null,
               missionId: currentMission.id,
               startTime: Date.now(),
               team: [cw.id],
@@ -65,7 +81,7 @@ export function CurrentActivity({
           } else {
             endMission({
               endTime: Date.now(),
-              missionId: currentMission.id,
+              mission: currentMission,
               userId: cw.id
             });
           }

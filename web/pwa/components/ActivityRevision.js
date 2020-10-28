@@ -3,7 +3,7 @@ import Dialog from "@material-ui/core/Dialog";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import { formatTimeOfDay } from "common/utils/time";
+import { formatDateTime, formatTimeOfDay } from "common/utils/time";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
@@ -26,12 +26,14 @@ import Switch from "@material-ui/core/Switch/Switch";
 export function ActivityRevisionOrCreationModal({
   event,
   teamChanges = {},
+  otherActivities = [],
   open,
   handleClose,
   handleRevisionAction,
   minStartTime,
   maxStartTime,
   cancellable,
+  nullableEndTime = true,
   createActivity
 }) {
   const theme = useTheme();
@@ -57,6 +59,30 @@ export function ActivityRevisionOrCreationModal({
   const team = newUserTime
     ? uniq([userId, ...resolveTeamAt(teamChanges, newUserTime)])
     : [userId];
+
+  function _getOverlappingActivities(userIds) {
+    const overlappingActivities = otherActivities.filter(a => {
+      if (event && a.id === event.id) return false;
+      if (!userIds.includes(a.userId)) return false;
+      return (
+        (!newUserEndTime || a.startTime < newUserEndTime) &&
+        (!a.endTime || a.endTime > newUserTime)
+      );
+    });
+    return {
+      start: overlappingActivities.filter(
+        a =>
+          a.startTime <= newUserTime && (!a.endTime || a.endTime >= newUserTime)
+      ),
+      end: overlappingActivities.filter(
+        a =>
+          !(
+            a.startTime <= newUserTime &&
+            (!a.endTime || a.endTime >= newUserTime)
+          )
+      )
+    };
+  }
 
   function handleSubmit() {
     if (actionType === "creation") {
@@ -90,16 +116,98 @@ export function ActivityRevisionOrCreationModal({
       setNewUserEndTime(undefined);
       setActionType("creation");
     }
+    setNewUserEndTimeError("");
+    setNewUserTimeError("");
     setNewActivityDriverId(undefined);
     setUserComment(undefined);
     setTeamMode(false);
     return () => {};
   }, [open]);
 
+  React.useEffect(() => {
+    if (newUserTime) {
+      let hasStartError = false;
+      let hasEndError = false;
+      if (minStartTime && newUserTime < minStartTime) {
+        hasStartError = true;
+        setNewUserTimeError(
+          `L'heure doit être après ${formatDateTime(minStartTime)}`
+        );
+      } else if (
+        (maxStartTime && newUserTime > maxStartTime) ||
+        newUserTime > Date.now()
+      ) {
+        hasStartError = true;
+        setNewUserTimeError(
+          `L'heure doit être avant ${formatDateTime(maxStartTime)}`
+        );
+      }
+
+      if (newUserEndTime) {
+        if (newUserEndTime <= newUserTime) {
+          hasEndError = true;
+          setNewUserEndTimeError("La fin doit être après le début");
+        } else if (newUserEndTime > Date.now()) {
+          hasEndError = true;
+          setNewUserEndTimeError(
+            `L'heure doit être avant ${formatDateTime(Date.now())}`
+          );
+        }
+      }
+
+      if (!hasStartError && !hasEndError) {
+        const overlappingActivities = _getOverlappingActivities(
+          teamMode ? team : [userId]
+        );
+        if (overlappingActivities.start.length > 0) {
+          hasStartError = true;
+          if (overlappingActivities.start.some(a => a.userId === userId)) {
+            setNewUserTimeError(
+              `Conflit avec l'activité ${
+                ACTIVITIES[overlappingActivities.start[0].type].label
+              }`
+            );
+          } else
+            setNewUserTimeError(
+              `Conflit avec l'activité ${
+                ACTIVITIES[overlappingActivities.start[0].type].label
+              } pour les coéquipiers`
+            );
+        }
+        if (overlappingActivities.end.length > 0) {
+          hasEndError = true;
+          if (overlappingActivities.end.some(a => a.userId === userId)) {
+            setNewUserEndTimeError(
+              `Conflit avec l'activité ${
+                ACTIVITIES[overlappingActivities.end[0].type].label
+              }`
+            );
+          } else
+            setNewUserEndTimeError(
+              `Conflit avec l'activité ${
+                ACTIVITIES[overlappingActivities.end[0].type].label
+              } pour les coéquipiers`
+            );
+        }
+      }
+
+      if (!hasStartError) setNewUserTimeError("");
+      if (!hasEndError) setNewUserEndTimeError("");
+    }
+  }, [
+    newUserTime,
+    newUserEndTime,
+    minStartTime,
+    maxStartTime,
+    userId,
+    teamMode
+  ]);
+
   function requiresDriver() {
     return (
       actionType === "creation" &&
-      newActivityType === ACTIVITIES.drive.name &&
+      (newActivityType === ACTIVITIES.drive.name ||
+        newActivityType === ACTIVITIES.support.name) &&
       team &&
       team.length > 1
     );
@@ -122,7 +230,7 @@ export function ActivityRevisionOrCreationModal({
         return (
           !!newActivityType &&
           !!newUserTime &&
-          !!newUserEndTime &&
+          (nullableEndTime || !newUserEndTime) &&
           !newUserTimeError &&
           !newUserEndTimeError &&
           newActivityDriverId !== undefined
@@ -131,7 +239,7 @@ export function ActivityRevisionOrCreationModal({
       return (
         !!newActivityType &&
         !!newUserTime &&
-        !!newUserEndTime &&
+        (nullableEndTime || !newUserEndTime) &&
         !newUserTimeError &&
         !newUserEndTimeError
       );
@@ -234,28 +342,19 @@ export function ActivityRevisionOrCreationModal({
               time={newUserTime}
               setTime={setNewUserTime}
               error={newUserTimeError}
-              setError={setNewUserTimeError}
-              minTime={minStartTime}
-              maxTime={
-                newUserEndTime
-                  ? maxStartTime
-                    ? Math.min(newUserEndTime, maxStartTime)
-                    : newUserEndTime
-                  : maxStartTime
-              }
               required={true}
+              noValidate
             />,
-            (actionType === "creation" || (event && event.endTime)) && (
+            (actionType === "creation" || event) && (
               <DateTimePicker
                 key={1}
                 label="Fin"
                 time={newUserEndTime}
                 setTime={setNewUserEndTime}
                 error={newUserEndTimeError}
-                setError={setNewUserEndTimeError}
-                minTime={newUserTime || minStartTime}
-                maxTime={Date.now()}
                 required={true}
+                clearable={nullableEndTime}
+                noValidate
               />
             )
           ]}
@@ -276,7 +375,6 @@ export function ActivityRevisionOrCreationModal({
         <Box mt={2}>
           <TextField
             label="Raison (optionnelle)"
-            optional
             fullWidth
             multiline
             rowsMax={10}

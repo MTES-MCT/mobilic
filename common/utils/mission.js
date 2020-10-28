@@ -2,7 +2,6 @@ import forEach from "lodash/forEach";
 import mapValues from "lodash/mapValues";
 import values from "lodash/values";
 import { getTime } from "./events";
-import { ACTIVITIES } from "./activities";
 import { computeTeamChanges } from "./coworkers";
 
 export function parseMissionPayloadFromBackend(missionPayload, userId) {
@@ -12,7 +11,8 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     validated: missionPayload.validations
       ? missionPayload.validations.some(v => v.submitterId === userId)
       : false,
-    context: missionPayload.context
+    context: missionPayload.context,
+    ended: missionPayload.ended !== undefined ? missionPayload.ended : true
   };
 }
 
@@ -32,7 +32,7 @@ export function linkMissionsWithRelations(missions, relationMap) {
   return values(augmentedMissions);
 }
 
-export function computeMissionProperties(mission) {
+export function computeMissionProperties(mission, userId) {
   return {
     startTime:
       mission.activities.length > 0
@@ -40,8 +40,7 @@ export function computeMissionProperties(mission) {
         : getTime(mission),
     isComplete:
       mission.activities.length > 0 &&
-      mission.activities[mission.activities.length - 1].type ===
-        ACTIVITIES.rest.name,
-    teamChanges: computeTeamChanges(mission.allActivities)
+      !!mission.activities[mission.activities.length - 1].endTime,
+    teamChanges: computeTeamChanges(mission.allActivities, userId)
   };
 }

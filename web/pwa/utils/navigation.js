@@ -1,4 +1,3 @@
-import { ACTIVITIES } from "common/utils/activities";
 import { BeforeWork } from "../screens/BeforeWork";
 import { CurrentActivity } from "../screens/CurrentActivity";
 import React from "react";
@@ -7,15 +6,17 @@ import { MissionReview } from "../screens/MissionReview";
 
 export function _InnerAppScreen(props) {
   if (
-    props.currentActivity &&
-    props.currentMission &&
-    !props.currentMission.validated
+    !props.latestActivity ||
+    !props.currentMission ||
+    (props.currentMission.validated &&
+      props.currentMission.ended &&
+      props.latestActivity.endTime)
   ) {
-    if (props.currentActivity.type !== ACTIVITIES.rest.name) {
-      return <CurrentActivity {...props} />;
-    } else return <MissionReview {...props} />;
+    return <BeforeWork {...props} />;
   }
-  return <BeforeWork {...props} />;
+  if (!props.currentMission.ended || !props.latestActivity.endTime) {
+    return <CurrentActivity {...props} />;
+  } else return <MissionReview {...props} />;
 }
 
 export function AppScreen(props) {

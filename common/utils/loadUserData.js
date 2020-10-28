@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/browser";
-import { USER_QUERY } from "./api";
+import { IS_MISSION_ENDED_QUERY, USER_QUERY } from "./api";
 import { broadCastChannel } from "./store";
 import { parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
@@ -11,9 +11,9 @@ export async function loadUserData(api, store) {
   try {
     const userResponse = await api.graphQlQuery(USER_QUERY, {
       id: userId,
-      activityAfter: Date.now() - DAY * 120
+      activityAfter: Date.now() - DAY * 90
     });
-    await syncUser(userResponse.data.user, store);
+    await syncUser(userResponse.data.user, api, store);
     await broadCastChannel.postMessage("update");
   } catch (err) {
     Sentry.captureException(err);
@@ -21,7 +21,7 @@ export async function loadUserData(api, store) {
   }
 }
 
-export function syncUser(userPayload, store) {
+export async function syncUser(userPayload, api, store) {
   const {
     firstName,
     lastName,
@@ -37,6 +37,21 @@ export function syncUser(userPayload, store) {
   const activities = [];
   const expenditures = [];
   const missionData = [];
+
+  // Get end status for latest mission;
+  if (missions.length > 0) {
+    const latestMission = missions[missions.length - 1];
+    try {
+      const isMissionEnded = await api.graphQlQuery(
+        IS_MISSION_ENDED_QUERY,
+        { missionId: latestMission.id },
+        { context: { nonPublicApi: true } }
+      );
+      latestMission.ended = isMissionEnded.data.isMissionEndedForSelf;
+    } catch (err) {
+      console.log(err);
+    }
+  }
   missions.forEach(mission => {
     activities.push(...mission.activities);
     expenditures.push(...mission.expenditures);
@@ -80,5 +95,5 @@ export function syncUser(userPayload, store) {
     syncActions.push(store.syncEntity(primaryCompany.vehicles, "vehicles"));
   currentEmployments &&
     syncActions.push(store.syncEntity(currentEmployments, "employments"));
-  return Promise.all(syncActions);
+  return await Promise.all(syncActions);
 }

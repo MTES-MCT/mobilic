@@ -7,11 +7,13 @@ import {
   computeMissionProperties,
   linkMissionsWithRelations
 } from "../utils/mission";
-import { getTime } from "../utils/events";
+import { HistoryModal } from "../../web/pwa/screens/History";
 
 function App({ ScreenComponent, loadUser }) {
   const actions = useActions();
   const store = useStoreSyncedWithLocalStorage();
+
+  const [openHistory, setOpenHistory] = React.useState(false);
 
   const [currentTime, setCurrentTime] = React.useState(Date.now());
 
@@ -31,7 +33,7 @@ function App({ ScreenComponent, loadUser }) {
       expenditures: expenditures.filter(e => e.userId === store.userId())
     }
   )
-    .map(m => ({ ...m, ...computeMissionProperties(m) }))
+    .map(m => ({ ...m, ...computeMissionProperties(m, store.userId()) }))
     .filter(m => m.activities.length > 0);
 
   const missions = sortEvents(unsortedMissions);
@@ -42,32 +44,46 @@ function App({ ScreenComponent, loadUser }) {
   const previousMission =
     missions.length > 1 ? missions[missions.length - 2] : null;
   const previousMissionEnd = previousMission
-    ? getTime(previousMission.activities[previousMission.activities.length - 1])
+    ? previousMission.activities[previousMission.activities.length - 1].endTime
     : 0;
 
-  const currentActivity =
+  const latestActivity =
     currentMission && currentMission.activities.length > 0
       ? currentMission.activities[currentMission.activities.length - 1]
       : null;
 
   return (
-    <ScreenComponent
-      currentTime={currentTime}
-      missions={missions}
-      currentActivity={currentActivity}
-      currentMission={currentMission}
-      pushNewTeamActivityEvent={actions.pushNewTeamActivityEvent}
-      editActivityEvent={actions.editActivityEvent}
-      beginNewMission={actions.beginNewMission}
-      endMissionForTeam={actions.endMissionForTeam}
-      endMission={actions.endMission}
-      validateMission={actions.validateMission}
-      logExpenditureForTeam={actions.logExpenditureForTeam}
-      cancelExpenditure={actions.cancelExpenditure}
-      editExpendituresForTeam={actions.editExpendituresForTeam}
-      previousMissionEnd={previousMissionEnd}
-      loadUser={loadUser}
-    />
+    <>
+      <ScreenComponent
+        currentTime={currentTime}
+        missions={missions}
+        latestActivity={latestActivity}
+        currentMission={currentMission}
+        pushNewTeamActivityEvent={actions.pushNewTeamActivityEvent}
+        editActivityEvent={actions.editActivityEvent}
+        beginNewMission={actions.beginNewMission}
+        endMissionForTeam={actions.endMissionForTeam}
+        endMission={actions.endMission}
+        validateMission={actions.validateMission}
+        logExpenditureForTeam={actions.logExpenditureForTeam}
+        cancelExpenditure={actions.cancelExpenditure}
+        editExpendituresForTeam={actions.editExpendituresForTeam}
+        previousMissionEnd={previousMissionEnd}
+        loadUser={loadUser}
+        openHistory={() => setOpenHistory(true)}
+      />
+      <HistoryModal
+        open={openHistory}
+        handleClose={() => setOpenHistory(false)}
+        missions={missions.filter(m => m.isComplete)}
+        createActivity={args =>
+          actions.pushNewTeamActivityEvent({ ...args, switchMode: false })
+        }
+        editExpenditures={actions.editExpendituresForTeam}
+        editActivityEvent={actions.editActivityEvent}
+        currentMission={currentMission}
+      />
+    </>
   );
 }
 

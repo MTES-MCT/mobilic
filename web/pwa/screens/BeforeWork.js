@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function BeforeWork({ beginNewMission, missions }) {
+export function BeforeWork({ beginNewMission, openHistory }) {
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
 
@@ -98,13 +98,7 @@ export function BeforeWork({ beginNewMission, missions }) {
       <MainCtaButton onClick={onEnterNewMissionFunnel}>
         Commencer une mission
       </MainCtaButton>
-      <Button
-        style={{ marginTop: 8 }}
-        color="primary"
-        onClick={() => {
-          modals.open("history", { missions });
-        }}
-      >
+      <Button style={{ marginTop: 8 }} color="primary" onClick={openHistory}>
         Voir mon historique
       </Button>
     </Box>

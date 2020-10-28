@@ -85,7 +85,7 @@ export function computeMissionKpis(mission) {
   const serviceHourString = `De ${formatTimeOfDay(
     getTime(mission)
   )} à ${formatTimeOfDay(
-    getTime(mission.activities[mission.activities.length - 1])
+    mission.activities[mission.activities.length - 1].endTime
   )}`;
   return [
     {

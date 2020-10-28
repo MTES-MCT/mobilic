@@ -60,22 +60,24 @@ export function ApiErrorDialogModal({ open, handleClose, errors = [], title }) {
                         }, mais avec les réserves suivantes : `
                   }`}
             </Typography>
-            <List className={classes.errorList}>
-              {error.graphQLErrors.map((graphQLError, index) => (
-                <ListItem
-                  disableGutters
-                  style={{ display: "list-item" }}
-                  key={index}
-                >
-                  <Typography>
-                    {formatGraphQLError(
-                      graphQLError,
-                      error.overrideFormatGraphQLError
-                    )}
-                  </Typography>
-                </ListItem>
-              ))}
-            </List>
+            {error.graphQLErrors && (
+              <List className={classes.errorList}>
+                {error.graphQLErrors.map((graphQLError, index) => (
+                  <ListItem
+                    disableGutters
+                    style={{ display: "list-item" }}
+                    key={index}
+                  >
+                    <Typography>
+                      {formatGraphQLError(
+                        graphQLError,
+                        error.overrideFormatGraphQLError
+                      )}
+                    </Typography>
+                  </ListItem>
+                ))}
+              </List>
+            )}
           </Box>
         ))}
       </DialogContent>

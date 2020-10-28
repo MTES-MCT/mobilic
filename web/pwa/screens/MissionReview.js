@@ -62,7 +62,9 @@ export function MissionReview({
         editActivityEvent={editActivityEvent}
         editExpenditures={editExpendituresForTeam}
         previousMissionEnd={previousMissionEnd}
-        createActivity={pushNewTeamActivityEvent}
+        createActivity={args =>
+          pushNewTeamActivityEvent({ ...args, switchMode: false })
+        }
       />
       {validateMission && (
         <Box
