@@ -108,7 +108,7 @@ export function PeriodCarouselPicker({
           className={`flex-row ${classes.carousel}`}
         >
           {periods.map(period => {
-            const periodDate = new Date(period);
+            const periodDate = new Date(period * 1000);
             return (
               <Box
                 p={1}

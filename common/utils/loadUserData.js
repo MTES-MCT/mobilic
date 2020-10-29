@@ -3,7 +3,7 @@ import { IS_MISSION_ENDED_QUERY, USER_QUERY } from "./api";
 import { broadCastChannel } from "./store";
 import { parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
-import { DAY } from "./time";
+import { DAY, now } from "./time";
 
 export async function loadUserData(api, store) {
   const userId = store.userId();
@@ -11,7 +11,7 @@ export async function loadUserData(api, store) {
   try {
     const userResponse = await api.graphQlQuery(USER_QUERY, {
       id: userId,
-      activityAfter: Date.now() - DAY * 90
+      activityAfter: now() - DAY * 100
     });
     await syncUser(userResponse.data.user, api, store);
     await broadCastChannel.postMessage("update");

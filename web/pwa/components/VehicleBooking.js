@@ -6,7 +6,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 import DialogContent from "@material-ui/core/DialogContent";
-import { formatTimeOfDay } from "common/utils/time";
+import { formatTimeOfDay, now } from "common/utils/time";
 import { getTime } from "common/utils/events";
 import { DateTimePicker } from "./DateTimePicker";
 import Box from "@material-ui/core/Box";
@@ -30,7 +30,7 @@ export function VehicleBookingModal({
   const currentVehicle = resolveVehicle(currentVehicleBooking, store);
 
   React.useEffect(() => {
-    setBookingTime(Date.now());
+    setBookingTime(now());
     setVehicle(null);
   }, [open]);
 
@@ -66,7 +66,7 @@ export function VehicleBookingModal({
             minTime={
               currentVehicleBooking ? getTime(currentVehicleBooking) : null
             }
-            maxTime={Date.now()}
+            maxTime={now()}
           />
         </Box>
       </DialogContent>

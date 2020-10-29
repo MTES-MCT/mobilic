@@ -10,6 +10,7 @@ import * as Sentry from "@sentry/browser";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 import { BroadcastChannel } from "broadcast-channel";
 import { currentUserId } from "./cookie";
+import { now } from "./time";
 
 const STORE_VERSION = 9;
 
@@ -218,7 +219,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             ...prevState[entity],
             {
               ...object,
-              pendingUpdates: [{ requestId, type: "create", time: Date.now() }]
+              pendingUpdates: [{ requestId, type: "create", time: now() }]
             }
           ]
         }),
@@ -235,7 +236,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           [entityObjectId.toString()]: {
             ...object,
             id: entityObjectId,
-            pendingUpdates: [{ requestId, type: "create", time: Date.now() }]
+            pendingUpdates: [{ requestId, type: "create", time: now() }]
           }
         }
       }),
@@ -254,7 +255,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
                   ...value,
                   pendingUpdates: [
                     ...(value.pendingUpdates || []),
-                    { requestId, type: "update", new: update, time: Date.now() }
+                    { requestId, type: "update", new: update, time: now() }
                   ]
                 }
               : value
@@ -274,7 +275,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
                   ...value,
                   pendingUpdates: [
                     ...(value.pendingUpdates || []),
-                    { requestId, type: "delete", time: Date.now() }
+                    { requestId, type: "delete", time: now() }
                   ]
                 }
               : value
@@ -337,7 +338,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       batchable
     };
     await this.pushItemToArray(request, "pendingRequests");
-    console.log("Caca");
     return request;
   };
 

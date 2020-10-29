@@ -35,13 +35,13 @@ export function DateTimePicker({
     const dayVsTime = e.target.value.split("T");
     const dayElements = dayVsTime[0].split("-");
     const timeElements = dayVsTime[1].split(":");
-    const newRevisedEventTime = new Date(time);
+    const newRevisedEventTime = new Date(time * 1000);
     newRevisedEventTime.setFullYear(parseInt(dayElements[0]));
     newRevisedEventTime.setMonth(parseInt(dayElements[1]) - 1);
     newRevisedEventTime.setDate(parseInt(dayElements[2]));
     newRevisedEventTime.setHours(parseInt(timeElements[0]));
     newRevisedEventTime.setMinutes(parseInt(timeElements[1]));
-    setTime(newRevisedEventTime.getTime());
+    setTime((newRevisedEventTime.getTime() / 1000) >> 0);
   };
 
   return (

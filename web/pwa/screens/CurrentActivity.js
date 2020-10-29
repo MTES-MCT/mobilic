@@ -6,6 +6,7 @@ import { getTime } from "common/utils/events";
 import { MissionDetails } from "../components/MissionDetails";
 import Box from "@material-ui/core/Box";
 import { ACTIVITIES } from "common/utils/activities";
+import { now } from "common/utils/time";
 
 export function CurrentActivity({
   latestActivity,
@@ -16,7 +17,7 @@ export function CurrentActivity({
   endMission,
   previousMissionEnd
 }) {
-  const currentTeam = resolveTeamAt(currentMission.teamChanges, Date.now());
+  const currentTeam = resolveTeamAt(currentMission.teamChanges, now());
 
   return [
     <CurrentActivityOverview
@@ -35,7 +36,7 @@ export function CurrentActivity({
               "revision",
               currentMission.allActivities,
               getTime(latestActivity),
-              Date.now(),
+              now(),
               null,
               true
             )
@@ -45,7 +46,7 @@ export function CurrentActivity({
               missionActivities: currentMission.allActivities,
               missionId: currentMission.id,
               team: currentTeam,
-              startTime: Date.now()
+              startTime: now()
             })
       }
       endMission={async args =>
@@ -74,13 +75,13 @@ export function CurrentActivity({
               missionActivities: currentMission.allActivities,
               activityType: latestActivity ? latestActivity.type : null,
               missionId: currentMission.id,
-              startTime: Date.now(),
+              startTime: now(),
               team: [cw.id],
               driverId: -1
             });
           } else {
             endMission({
-              endTime: Date.now(),
+              endTime: now(),
               mission: currentMission,
               userId: cw.id
             });

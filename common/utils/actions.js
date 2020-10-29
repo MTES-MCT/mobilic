@@ -24,7 +24,8 @@ import {
   graphQLErrorMatchesCode,
   isGraphQLError
 } from "./errors";
-import { formatDay, formatTimeOfDay, truncateMinute } from "./time";
+import { formatDay, formatTimeOfDay, now, truncateMinute } from "./time";
+import { formatPersonName } from "./coworkers";
 
 const ActionsContext = React.createContext(() => {});
 
@@ -220,13 +221,13 @@ export function ActionsContextProvider({ children }) {
         "activities",
         requestId
       );
-      console.log("Prout");
       return {
         activityId: newItemId,
         requestId,
         switchMode,
         endTime,
-        actualUserId
+        actualUserId,
+        type: activityType
       };
     };
 
@@ -282,7 +283,10 @@ export function ActionsContextProvider({ children }) {
         [activity.id]: tempActivityId
       });
     },
-    onError: async (error, { actualUserId, activityId: tempActivityId }) => {
+    onError: async (
+      error,
+      { actualUserId, activityId: tempActivityId, type }
+    ) => {
       // If the log-activity event raises an API error we cancel all the pending requests for the activity
       const pendingActivityRequests = store
         .pendingRequests()
@@ -292,16 +296,17 @@ export function ActionsContextProvider({ children }) {
             (req.storeInfo && req.storeInfo.activityId === tempActivityId)
         );
       if (isGraphQLError(error)) {
+        const user =
+          actualUserId === store.userId()
+            ? store.userInfo()
+            : store.getEntity("coworkers")[actualUserId.toString()];
         displayApiErrors({
           graphQLErrors: error.graphQLErrors,
-          actionDescription: "Le changement d'activité",
+          actionDescription: `L'enregistrement de l'activité ${type} pour l'utilisateur ${formatPersonName(
+            user
+          )}`,
           overrideFormatGraphQLError: gqlError => {
-            const selfId = store.userId();
-            const user =
-              actualUserId === selfId
-                ? store.userInfo()
-                : store.getEntity("coworkers")[actualUserId.toString()];
-            return formatLogActivityError(gqlError, user, selfId);
+            return formatLogActivityError(gqlError, user, store.userId());
           },
           hasRequestFailed: true,
           shouldReload: false
@@ -387,12 +392,12 @@ export function ActionsContextProvider({ children }) {
           requestId
         );
       }
-      console.log("Prout");
       return {
         activityId: activityEvent.id,
         actionType,
         newEndTime,
-        userId: activityEvent.userId
+        userId: activityEvent.userId,
+        type: activityEvent.type
       };
     };
 
@@ -433,17 +438,19 @@ export function ActionsContextProvider({ children }) {
         store.syncEntity([activity], "activities", a => a.id === activity.id);
       }
     },
-    onError: (error, { userId }) => {
+    onError: (error, { userId, type }) => {
+      const selfId = store.userId();
+      const user =
+        userId === selfId
+          ? store.userInfo()
+          : store.getEntity("coworkers")[userId.toString()];
       if (isGraphQLError(error)) {
         displayApiErrors({
           graphQLErrors: error.graphQLErrors,
-          actionDescription: "La correction d'activité",
+          actionDescription: `La correction de l'activité ${type} pour l'utilisateur ${formatPersonName(
+            user
+          )}`,
           overrideFormatGraphQLError: gqlError => {
-            const selfId = store.userId();
-            const user =
-              userId === selfId
-                ? store.userInfo()
-                : store.getEntity("coworkers")[userId.toString()];
             return formatLogActivityError(gqlError, user, selfId);
           },
           hasRequestFailed: true,
@@ -506,7 +513,7 @@ export function ActionsContextProvider({ children }) {
         activityType: firstActivityType,
         missionActivities: [],
         missionId: missionCurrentId,
-        startTime: Date.now(),
+        startTime: now(),
         team,
         driverId
       })

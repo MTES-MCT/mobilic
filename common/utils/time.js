@@ -1,9 +1,9 @@
 import DateFnsUtils from "@date-io/date-fns";
 import format from "date-fns/format";
 
-export const DAY = 86400000;
-export const WEEK = 7 * 86400000;
-export const HOUR = 3600000;
+export const DAY = 86400;
+export const WEEK = 7 * 86400;
+export const HOUR = 3600;
 export const SHORT_MONTHS = [
   "janv",
   "fev",
@@ -35,7 +35,7 @@ const MONTHS = [
 
 export function formatTimer(timerDuration) {
   if (!timerDuration && timerDuration !== 0) return null;
-  const timerDurationInMinutes = (timerDuration / 60000) >> 0;
+  const timerDurationInMinutes = (timerDuration / 60) >> 0;
   const timerDurationInHours = (timerDurationInMinutes / 60) >> 0;
   return `${timerDurationInHours}h${"\u00A0"}${addZero(
     timerDurationInMinutes % 60
@@ -44,7 +44,7 @@ export function formatTimer(timerDuration) {
 
 export function formatLongTimer(timerDuration) {
   if (!timerDuration && timerDuration !== 0) return null;
-  const timerDurationInMinutes = (timerDuration / 60000) >> 0;
+  const timerDurationInMinutes = (timerDuration / 60) >> 0;
   const timerDurationInHours = (timerDurationInMinutes / 60) >> 0;
   return `${
     timerDurationInHours ? timerDurationInHours + " heures" : ""
@@ -52,40 +52,40 @@ export function formatLongTimer(timerDuration) {
 }
 
 export function formatTimeOfDay(unixTimestamp) {
-  const date = new Date(unixTimestamp);
+  const date = new Date(unixTimestamp * 1000);
   return `${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
 }
 
 export function formatDay(unixTimestamp) {
-  const date = new Date(unixTimestamp);
+  const date = new Date(unixTimestamp * 1000);
   return `${addZero(date.getDate())}/${addZero(date.getMonth() + 1)}`;
 }
 
 export function prettyFormatDay(unixTimestamp, withYear = false) {
-  const date = new Date(unixTimestamp);
+  const date = new Date(unixTimestamp * 1000);
   const baseString = `${date.getDate()} ${MONTHS[date.getMonth()]}`;
   return withYear ? `${baseString} ${date.getFullYear()}` : baseString;
 }
 
 export function prettyFormatMonth(unixTimestamp) {
-  const date = new Date(unixTimestamp);
+  const date = new Date(unixTimestamp * 1000);
   return `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
 }
 
 export function shortPrettyFormatDay(unixTimestamp) {
-  const date = new Date(unixTimestamp);
+  const date = new Date(unixTimestamp * 1000);
   return `${date.getDate()} ${SHORT_MONTHS[date.getMonth()]}`;
 }
 
 export function isoFormatDateTime(unixTimestamp) {
-  const date = new Date(unixTimestamp);
+  const date = new Date(unixTimestamp * 1000);
   return `${date.getFullYear()}-${addZero(date.getMonth() + 1)}-${addZero(
     date.getDate()
   )}T${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
 }
 
 export function formatDateTime(unixTimestamp) {
-  const date = new Date(unixTimestamp);
+  const date = new Date(unixTimestamp * 1000);
   return `${addZero(date.getDate())}/${addZero(
     date.getMonth() + 1
   )}/${date.getFullYear()} ${addZero(date.getHours())}:${addZero(
@@ -98,7 +98,7 @@ function addZero(n) {
 }
 
 export function getStartOfWeek(unixTimestamp) {
-  const date = new Date(unixTimestamp);
+  const date = new Date(unixTimestamp * 1000);
   const dayOfWeek = date.getDay();
   const daysToSubstract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   const sameTimeAtStartOfWeek = new Date(unixTimestamp - daysToSubstract * DAY);
@@ -106,7 +106,7 @@ export function getStartOfWeek(unixTimestamp) {
 }
 
 export function getStartOfMonth(unixTimestamp) {
-  const date = new Date(unixTimestamp);
+  const date = new Date(unixTimestamp * 1000);
   date.setDate(1);
   return _startOfDay(date);
 }
@@ -116,11 +116,11 @@ function _startOfDay(date) {
   date.setMinutes(0);
   date.setSeconds(0);
   date.setMilliseconds(0);
-  return date.getTime();
+  return (date.getTime() / 1000) >> 0;
 }
 
 export function getStartOfDay(unixTimestamp) {
-  const date = new Date(unixTimestamp);
+  const date = new Date(unixTimestamp * 1000);
   return _startOfDay(date);
 }
 
@@ -131,5 +131,9 @@ export class FrLocalizedUtils extends DateFnsUtils {
 }
 
 export function truncateMinute(unixTimestamp) {
-  return unixTimestamp - (unixTimestamp % 60000);
+  return unixTimestamp - (unixTimestamp % 60);
+}
+
+export function now() {
+  return (Date.now() / 1000) >> 0;
 }

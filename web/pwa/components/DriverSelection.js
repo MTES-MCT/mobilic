@@ -6,7 +6,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import DialogContent from "@material-ui/core/DialogContent";
-import { formatTimer } from "common/utils/time";
+import { formatTimer, now } from "common/utils/time";
 import Typography from "@material-ui/core/Typography";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 
@@ -55,7 +55,7 @@ export function DriverSelectionModal({
                     }${
                       currentDriverId && teamMateId === currentDriverId
                         ? ` (conduit depuis ${formatTimer(
-                            Date.now() - currentDriverStartTime
+                            now() - currentDriverStartTime
                           )})`
                         : ""
                     }`

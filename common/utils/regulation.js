@@ -1,4 +1,4 @@
-import { formatTimer, HOUR } from "./time";
+import { formatTimer, HOUR, now } from "./time";
 
 export const RULE_RESPECT_STATUS = {
   success: "success",
@@ -7,7 +7,7 @@ export const RULE_RESPECT_STATUS = {
 };
 
 export function checkDayRestRespect(dayEnd, followingDayStart) {
-  const checkDayRestAt = followingDayStart ? followingDayStart : Date.now();
+  const checkDayRestAt = followingDayStart ? followingDayStart : now();
   const ruleRespected = checkDayRestAt - dayEnd >= 10 * HOUR;
   if (ruleRespected) {
     return {

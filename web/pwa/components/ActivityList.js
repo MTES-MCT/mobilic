@@ -4,7 +4,7 @@ import ListItem from "@material-ui/core/ListItem";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import { ACTIVITIES } from "common/utils/activities";
-import { formatLongTimer, formatTimeOfDay } from "common/utils/time";
+import { formatLongTimer, formatTimeOfDay, now } from "common/utils/time";
 import { getTime, sortEvents } from "common/utils/events";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
@@ -96,7 +96,7 @@ export function ActivityList({
   // Compute duration and end time for each activity
   const augmentedAndSortedActivities = activities.map(activity => ({
     ...activity,
-    duration: (activity.endTime || Date.now()) - activity.startTime
+    duration: (activity.endTime || now()) - activity.startTime
   }));
 
   sortEvents(augmentedAndSortedActivities).reverse();

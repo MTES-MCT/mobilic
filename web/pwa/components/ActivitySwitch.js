@@ -11,6 +11,7 @@ import Box from "@material-ui/core/Box";
 import { MainCtaButton } from "./MainCtaButton";
 import fromPairs from "lodash/fromPairs";
 import uniq from "lodash/uniq";
+import { now } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -157,7 +158,7 @@ export function ActivitySwitch({
         <Box pt={6} pb={2}>
           <MainCtaButton
             onClick={() => {
-              const missionEndTime = Date.now();
+              const missionEndTime = now();
               modals.open("endMission", {
                 currentExpenditures: fromPairs(
                   uniq(currentMission.expenditures.map(e => [e.type, true]))

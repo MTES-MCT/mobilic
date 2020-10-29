@@ -8,6 +8,7 @@ import {
   linkMissionsWithRelations
 } from "../utils/mission";
 import { HistoryModal } from "../../web/pwa/screens/History";
+import { now } from "../utils/time";
 
 function App({ ScreenComponent, loadUser }) {
   const actions = useActions();
@@ -15,11 +16,11 @@ function App({ ScreenComponent, loadUser }) {
 
   const [openHistory, setOpenHistory] = React.useState(false);
 
-  const [currentTime, setCurrentTime] = React.useState(Date.now());
+  const [currentTime, setCurrentTime] = React.useState(now());
 
   // We force re-rendering every 5 sec to update timers
   React.useEffect(() => {
-    setInterval(() => setCurrentTime(Date.now()), 30000);
+    setInterval(() => setCurrentTime(now()), 30000);
   }, []);
 
   const activities = sortEvents(values(store.getEntity("activities")));

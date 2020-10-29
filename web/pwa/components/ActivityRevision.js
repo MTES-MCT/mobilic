@@ -3,7 +3,7 @@ import Dialog from "@material-ui/core/Dialog";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import { formatDateTime, formatTimeOfDay } from "common/utils/time";
+import { formatDateTime, formatTimeOfDay, now } from "common/utils/time";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
@@ -135,7 +135,7 @@ export function ActivityRevisionOrCreationModal({
         );
       } else if (
         (maxStartTime && newUserTime > maxStartTime) ||
-        newUserTime > Date.now()
+        newUserTime > now()
       ) {
         hasStartError = true;
         setNewUserTimeError(
@@ -147,10 +147,10 @@ export function ActivityRevisionOrCreationModal({
         if (newUserEndTime <= newUserTime) {
           hasEndError = true;
           setNewUserEndTimeError("La fin doit être après le début");
-        } else if (newUserEndTime > Date.now()) {
+        } else if (newUserEndTime > now()) {
           hasEndError = true;
           setNewUserEndTimeError(
-            `L'heure doit être avant ${formatDateTime(Date.now())}`
+            `L'heure doit être avant ${formatDateTime(now())}`
           );
         }
       }

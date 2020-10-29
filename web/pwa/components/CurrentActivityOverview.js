@@ -2,7 +2,7 @@ import React from "react";
 import Container from "@material-ui/core/Container";
 import { ACTIVITIES } from "common/utils/activities";
 import { getTime } from "common/utils/events";
-import { formatTimer } from "common/utils/time";
+import { formatTimer, now } from "common/utils/time";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import { AccountButton } from "./AccountButton";
@@ -34,10 +34,10 @@ const useStyles = makeStyles(theme => ({
 
 export function CurrentActivityOverview({ latestActivity, currentDayStart }) {
   const classes = useStyles();
-  const now = Date.now();
+  const _now = now();
 
   const currentActivityDuration =
-    now - (latestActivity.endTime || getTime(latestActivity));
+    _now - (latestActivity.endTime || getTime(latestActivity));
   let activityOverviewText;
   if (latestActivity.endTime) {
     activityOverviewText = "Vous êtes en pause depuis";
@@ -54,7 +54,7 @@ export function CurrentActivityOverview({ latestActivity, currentDayStart }) {
   )}`;
 
   const missionOverviewText = `Mission débutée depuis ${formatTimer(
-    now - currentDayStart
+    _now - currentDayStart
   )}`;
 
   return (

@@ -24,6 +24,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { getVehicleName } from "common/utils/vehicles";
 import { PersonIcon } from "common/utils/icons";
+import { now } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -71,7 +72,7 @@ export function MissionDetails({
 
   let teamChanges = omit(mission.teamChanges, [userId]);
 
-  const teamAtMissionEnd = [userId, ...resolveTeamAt(teamChanges, Date.now())];
+  const teamAtMissionEnd = [userId, ...resolveTeamAt(teamChanges, now())];
 
   const teamMatesLatestStatuses = computeLatestEnrollmentStatuses(teamChanges);
   const isTeamMode = Object.keys(teamMatesLatestStatuses).length > 0;

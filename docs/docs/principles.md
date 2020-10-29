@@ -3,7 +3,7 @@ id: principles
 title: Philosophie de l'API
 ---
 
-Dans ses grandes lignes l'API Mobilic est un simple système d'enregistrement des changements d'activité, dans un esprit très proche de celui du tachygraphe. L'API agrège pour chaque travailleur mobile la succession de ses activités, à partir de ces changements d'activité transmis par les applications métier. Ces dernières peuvent en retour demander à accéder à tout ou partie de la série temporelle.
+Dans ses grandes lignes l'API Mobilic est un simple système d'enregistrement des activités, dans un esprit très proche de celui du tachygraphe. L'API agrège pour chaque travailleur mobile la succession de ses activités à partir des informations transmises par les applications métier. Ces dernières peuvent en retour demander à accéder à tout ou partie de la série temporelle.
 
 ## Activité
 
@@ -11,8 +11,8 @@ Le concept d'activité est central. Il est caractérisé par :
 
 - l'identité du travailleur mobile qui effectue l'activité
 - l'horodatage de début
-- l'horodatage éventuel de fin (si le travailleur a effectué un nouveau changement d'activité après)
-- la nature (déplacement, travail en dehors du véhicule, pause)
+- l'horodatage de fin
+- la nature (déplacement, travail en dehors du véhicule)
 
 Ainsi une activité peut être vue comme une période de la journée d'un travailleur mobile associée à un type de travail (ou de repos). L'historique des activités pour un travailleur donné est suffisant pour recalculer les temps de travail agrégés à différentes échelles et ainsi vérifier le respect de la réglementation.
 
