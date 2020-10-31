@@ -14,7 +14,7 @@ Le concept d'activité est central. Il est caractérisé par :
 - l'horodatage de fin
 - la nature (déplacement, travail en dehors du véhicule)
 
-Ainsi une activité peut être vue comme une période de la journée d'un travailleur mobile associée à un type de travail (ou de repos). L'historique des activités pour un travailleur donné est suffisant pour recalculer les temps de travail agrégés à différentes échelles et ainsi vérifier le respect de la réglementation.
+Ainsi une activité peut être vue comme une période de la journée d'un travailleur mobile associée à un type de travail. Les temps de repos sont déduits comme étant les creux entre les différentes périodes. L'historique des activités pour un travailleur donné est suffisant pour recalculer les temps de travail (et de repos) agrégés à différentes échelles et ainsi vérifier le respect de la réglementation.
 
 ## Mission
 
@@ -30,16 +30,15 @@ Le concept est plutôt orienté vers les besoins des exploitants :
 
 Il existe deux manières d'enregistrer les activités :
 
-1. l'approche en temps réel qui repose sur les événements de changement d'activité. La durée d'une activité n'est déterminée qu'a posteriori, au moment du prochain changement d'activité. Par construction il ne peut pas y avoir de "trous" dans la série temporelle des activités.
+1. l'approche en temps réel qui repose sur des événements de changement d'activité. La durée d'une activité n'est déterminée qu'a posteriori, au moment du prochain changement d'activité.
 
 2. l'enregistrement en différé où les activités sont renseignées avec leurs durées, à la manière d'un emploi du temps (ex. : j'ai travaillé de 9h à 12h, de 14h à 17h et entre les deux j'étais en pause).
 
-L'API Mobilic permet de faire les deux mais privilégie fortement l'approche temps réel, à tel point que le paradigme de l'API est très proche du sourcing événementiel. La seconde approche est pensée principalement comme un outil de corrections ponctuelles. Dans le mode "temps réel" l'API tient soigneusement compte de l'heure de réception par le serveur des événements, tout en permettant à l'appelant de préciser l'heure de l'événement (très utile lorsque les événements ne peuvent pas être soumis tout de suite, pour des raisons de connectivité par exemple).
+L'API Mobilic permet de faire les deux mais privilégie fortement l'approche temps réel. La seconde approche est pensée principalement comme un outil de corrections ponctuelles. Dans le mode "temps réel" l'API tient soigneusement compte de l'heure de réception par le serveur des événements, tout en permettant à l'appelant de préciser la véritable heure métier (très utile lorsque les événements ne peuvent pas être soumis tout de suite, pour des raisons de connectivité par exemple).
 
 Ce fonctionnement vise à garantir les avantages suivants :
 
 - en enregistrant les changements d'activité dès qu'ils se produisent on réduit fortement l'imprécision dans la mesure du temps de travail par rapport à une déclaration a posteriori
 - le risque de falsification est également atténué
-- il ne peut pas y avoir de période de "trou" dans la journée d'un travailleur
 
 Pour comprendre plus en détail le fonctionnement de l'approche en temps réel voir [Enregistrement des activités](push-activity.md).

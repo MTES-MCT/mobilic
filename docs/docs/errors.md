@@ -208,7 +208,7 @@ Dans le cas ci-dessus la réponse a retourné des résultats partiels car une pa
 
 ### Codes erreurs
 
-Chaque erreur applicative comprend un code, situé dans le champ `extensions.code` du dictionnaire de l'erreur. Ces codes servent à classer les erreurs. Voici la liste des codes :
+Chaque erreur applicative comprend un code, situé dans le champ `extensions.code` de l'erreur. Ces codes servent à classer les erreurs. Voici la liste des codes :
 
 - `INVALID_INPUTS` : mauvaises valeurs prises par les variables d'opération, sans erreurs de type.
 
@@ -220,11 +220,17 @@ Chaque erreur applicative comprend un code, situé dans le champ `extensions.cod
 
 - `OVERLAPPING_MISSIONS` : chevauchement de deux missions dans le temps pour un travailleur mobile.
 
-- `ACTIVITY_SEQUENCE_ERROR` : incohérence dans la succession des activités d'une mission pour un travailleur mobile. Exemple : enregistrement d'une activité après la fin de la mission.
+- `OVERLAPPING_ACTIVITIES` : chevauchement de deux activités dans le temps pour un travailleur mobile.
+
+- `INVALID_ACTIVITY_SWITCH` : l'enregistrement en mode tachygraphe a échoué car il y a des enregistrements ultérieurs à la date T.
+
+- `MISSION_ALREADY_ENDED` : la mission a déjà été terminée pour le travailleur mobile.
 
 - `DUPLICATE_EXPENDITURES` : enregistrement d'un frais en double sur la mission pour un travailleur mobile.
 
 - `OVERLAPPING_EMPLOYMENTS` : chevauchement de deux rattachements à une entreprise pour un travailleur mobile.
+
+- `NO_PRIMARY_EMPLOYMENT` : l'utilisateur n'a pas d'entreprise de rattachement principale, il est impossible de lui créer un rattachement secondaire.
 
 - `INVALID_RESOURCE` : impossibilité d'effectuer l'opération demandée sur l'objet. Exemple : suppression d'une activité qui est déjà supprimée.
 
