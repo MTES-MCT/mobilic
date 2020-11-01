@@ -1,6 +1,6 @@
 {
   "docs": {
-    "Introduction": ["intro", "principles"],
+    "Introduction": ["intro", "principles", "changelog"],
     "Guides": [
       "how-to",
       "signup",

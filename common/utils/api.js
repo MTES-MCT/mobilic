@@ -162,7 +162,7 @@ export const USER_QUERY = gql`
 `;
 
 export const ADMIN_COMPANIES_QUERY = gql`
-  query adminCompanies($id: Int!, $activityAfter: Date) {
+  query adminCompanies($id: Int!, $activityAfter: Date, $workDaysLimit: Int) {
     user(id: $id) {
       adminedCompanies {
         id
@@ -172,7 +172,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
           firstName
           lastName
         }
-        workDays(fromDate: $activityAfter) {
+        workDays(fromDate: $activityAfter, limit: $workDaysLimit) {
           user {
             id
             firstName

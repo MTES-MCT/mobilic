@@ -6,7 +6,8 @@ export async function loadCompaniesData(api, userId) {
     id: userId,
     activityAfter: new Date(Date.now() - DAY * 1000 * 120)
       .toISOString()
-      .slice(0, 10)
+      .slice(0, 10),
+    workDaysLimit: 250
   });
   return companyResponse.data.user.adminedCompanies;
 }
