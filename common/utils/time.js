@@ -101,7 +101,9 @@ export function getStartOfWeek(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
   const dayOfWeek = date.getDay();
   const daysToSubstract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-  const sameTimeAtStartOfWeek = new Date(unixTimestamp - daysToSubstract * DAY);
+  const sameTimeAtStartOfWeek = new Date(
+    (unixTimestamp - daysToSubstract * DAY) * 1000
+  );
   return _startOfDay(sameTimeAtStartOfWeek);
 }
 
