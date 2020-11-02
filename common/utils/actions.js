@@ -169,7 +169,7 @@ export function ActionsContextProvider({ children }) {
           gqlError.extensions.missionEnd.submitter,
           selfId,
           false
-        )} à ${formatTimeOfDay(getTime(gqlError.extensions.missionEnd))}`;
+        )} à ${formatTimeOfDay(gqlError.extensions.missionEnd.endTime)}`;
       }
     }
     if (graphQLErrorMatchesCode(gqlError, "OVERLAPPING_ACTIVITIES")) {
