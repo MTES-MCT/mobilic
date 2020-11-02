@@ -250,3 +250,5 @@ query {
   }
 }
 ```
+
+Sur les champs de l'entreprise il existe également un paramètre `limit` qui définit un nombre maximal de missions retournées, en plus du filtre sur les dates. Les missions les plus récentes (dans la période sélectionnée) seront renvoyées.

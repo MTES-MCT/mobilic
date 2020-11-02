@@ -5,7 +5,7 @@ title: Changelog
 
 ## 29/10/2020
 
-- ajout de paramètres pour [restreindre la période d'historique récupérée](read-activities.md##choix-de-la-période-dhistorique-récupérée) (pour un utilisateur ou une entreprise).
+- ajout de paramètres pour [restreindre la période d'historique récupérée](read-activities.md#choix-de-la-période-dhistorique-récupérée) (pour un utilisateur ou une entreprise).
 - gestion des erreurs par des [codes erreurs](errors.md).
 - simplification du format d'entrée pour les horodatages : passage d'un format en millisecondes à un format en secondes.
 - les horodatages de début et de fin d'activité sont désormais arrondis à la minute (inférieure).
