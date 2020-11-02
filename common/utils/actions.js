@@ -819,15 +819,9 @@ export function ActionsContextProvider({ children }) {
   };
 
   api.registerResponseHandler("logExpenditure", {
-    onSuccess: (apiResponse, { missionId }) => {
-      const expenditures = apiResponse.data.activities.logExpenditure;
-      store.syncEntity(
-        expenditures,
-        "expenditures",
-        e =>
-          e.missionId ===
-          (expenditures.length > 0 ? expenditures[0].missionId : missionId)
-      );
+    onSuccess: apiResponse => {
+      const expenditure = apiResponse.data.activities.logExpenditure;
+      store.syncEntity([expenditure], "expenditures", () => false);
     },
     onError: error => {
       if (isGraphQLError(error)) {
@@ -858,7 +852,7 @@ export function ActionsContextProvider({ children }) {
         .pendingRequests()
         .find(r => r.id === expenditureToCancel.pendingUpdates[0].requestId);
       if (pendingCreationRequest)
-        await store.clearPendingRequest(pendingCreationRequest);
+        return await store.clearPendingRequest(pendingCreationRequest);
     }
 
     const updateStore = (store, requestId) => {
@@ -867,7 +861,7 @@ export function ActionsContextProvider({ children }) {
         "expenditures",
         requestId
       );
-      return { missionId: expenditureToCancel.missionId };
+      return { expenditureId: expenditureToCancel.id };
     };
 
     await submitAction(
@@ -881,15 +875,8 @@ export function ActionsContextProvider({ children }) {
   };
 
   api.registerResponseHandler("cancelExpenditure", {
-    onSuccess: (apiResponse, { missionId }) => {
-      const expenditures = apiResponse.data.activities.cancelExpenditure;
-      store.syncEntity(
-        expenditures,
-        "expenditures",
-        e =>
-          e.missionId ===
-          (expenditures.length > 0 ? expenditures[0].missionId : missionId)
-      );
+    onSuccess: (apiResponse, { expenditureId }) => {
+      store.syncEntity([], "expenditures", e => e.id === expenditureId);
     }
   });
 

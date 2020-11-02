@@ -20,7 +20,7 @@ const CHECK_MUTATION = gql`
   mutation checkAuthentication {
     auth {
       check {
-        message
+        success
         userId
       }
     }
@@ -273,7 +273,7 @@ export const REQUEST_RESET_PASSWORD_MUTATION = gql`
   mutation requestResetPassword($mail: String!) {
     account {
       requestResetPassword(mail: $mail) {
-        message
+        success
       }
     }
   }
@@ -352,7 +352,7 @@ export const CANCEL_EMPLOYMENT_MUTATION = gql`
   mutation cancelEmployment($employmentId: Int!) {
     employments {
       cancelEmployment(employmentId: $employmentId) {
-        message
+        success
       }
     }
   }
@@ -615,10 +615,7 @@ export const CANCEL_EXPENDITURE_MUTATION = gql`
   mutation cancelExpenditure($expenditureId: Int!) {
     activities {
       cancelExpenditure(expenditureId: $expenditureId) {
-        id
-        type
-        missionId
-        userId
+        success
       }
     }
   }
