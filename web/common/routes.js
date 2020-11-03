@@ -5,6 +5,7 @@ import { Admin } from "../admin/Admin";
 import { Landing } from "../landing/landing";
 import Signup from "../landing/signup/root";
 import Login from "../landing/login";
+import Stats from "../landing/stats";
 import { Home } from "../home/AccountInfo";
 import { Invite } from "../landing/invite";
 import { RedeemInvite } from "../home/RedeemInvite";
@@ -55,6 +56,13 @@ export const ROUTES = [
     accessible: () => true,
     component: <Login />,
     menuItemFilter: ({ userInfo }) => !userInfo.id
+  },
+  {
+    path: "/stats",
+    label: "Statistiques",
+    accessible: () => true,
+    component: <Stats />,
+    menuItemFilter: () => false
   },
   {
     path: "/invite",

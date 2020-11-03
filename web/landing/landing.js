@@ -400,6 +400,11 @@ function Footer() {
           </Link>
         </Typography>
         <Typography className={classes.footerLink}>
+          <Link to="/stats" color="inherit">
+            Statistiques
+          </Link>
+        </Typography>
+        <Typography className={classes.footerLink}>
           <Link
             component="button"
             color="inherit"
