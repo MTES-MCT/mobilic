@@ -242,7 +242,7 @@ export function ActionsContextProvider({ children }) {
   };
 
   api.registerResponseHandler("logActivity", {
-    onSuccess: async (
+    onSuccess: (
       apiResponse,
       { activityId: tempActivityId, requestId, switchMode, endTime }
     ) => {
@@ -266,7 +266,7 @@ export function ActionsContextProvider({ children }) {
           syncScope = a => a.id === previousActivity.id;
         }
       }
-      await store.addToIdentityMap(tempActivityId, activity.id);
+      store.addToIdentityMap(tempActivityId, activity.id);
       if (!endTime) {
         store.syncEntity(
           [
@@ -521,9 +521,9 @@ export function ActionsContextProvider({ children }) {
   };
 
   api.registerResponseHandler("beginMission", {
-    onSuccess: async (apiResponse, { missionId: tempMissionId }) => {
+    onSuccess: (apiResponse, { missionId: tempMissionId }) => {
       const mission = apiResponse.data.activities.createMission;
-      await store.addToIdentityMap(tempMissionId, mission.id);
+      store.addToIdentityMap(tempMissionId, mission.id);
       store.syncEntity(
         [
           parseMissionPayloadFromBackend(
