@@ -2,7 +2,7 @@ port_in_redirect off;
 keepalive_timeout 5;
 root /app/build/;
 
-resolver 172.16.0.23 8.8.8.8;
+resolver 8.8.8.8;
 
 if ($http_x_forwarded_proto != "https") {
   return 301 https://$host$request_uri;
