@@ -9,13 +9,16 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 export function Logos() {
   const shouldDisplayBothLogos = useMediaQuery("(min-width:350px)");
+  const shouldDisplayFullSizeLogo = useMediaQuery(theme =>
+    theme.breakpoints.up("sm")
+  );
   return (
     <LinkButton style={{ borderRadius: 0, textTransform: "none" }} href="/">
       <Box className="flex-row-flex-start">
         {shouldDisplayBothLogos && (
           <Box mr={2}>
             <SvgIcon
-              style={{ fontSize: 100 }}
+              style={{ fontSize: shouldDisplayFullSizeLogo ? 70 : 50 }}
               viewBox="40 40 210 200"
               className="marianne-logo"
               component={MarianneIcon}

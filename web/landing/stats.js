@@ -8,8 +8,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(4),
     paddingBottom: theme.spacing(1),
     margin: "auto",
-    height: "100%",
-    overflowY: "hidden"
+    height: "100%"
   }
 }));
 
