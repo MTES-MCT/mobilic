@@ -1,6 +1,6 @@
 port_in_redirect off;
 keepalive_timeout 5;
-root build;
+root /app/build/;
 
 resolver 172.16.0.23 8.8.8.8;
 
@@ -14,15 +14,15 @@ add_header X-XSS-Protection "1; mode=block";
 add_header Cache-Control "no-cache; max-age=0";
 
 location / {
-  try_files $uri.html $uri $uri/ index.html;
+  try_files $uri.html $uri $uri/ /index.html;
 }
 
 location ~ \.html$ {
-  try_files $uri =404;
+  try_files $uri @404;
 }
 
 location ^~ /static/ {
- try_files $uri.html $uri $uri/ =404;
+ try_files $uri.html $uri $uri/ @404;
 }
 
 location ~ ^/developers/playground$ {
@@ -30,19 +30,18 @@ location ~ ^/developers/playground$ {
     add_header Content-Security-Policy "script-src 'self' https://buttons.github.io";
     add_header X-XSS-Protection "1; mode=block";
     add_header Cache-Control "no-cache; max-age=0";
-  try_files api-playground.html =404;
+  try_files /api-playground.html @404;
 }
 
 location ~ ^/developers/.*$ {
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
-    add_header Content-Security-Policy "script-src 'self' https://buttons.github.io";
     add_header X-XSS-Protection "1; mode=block";
     add_header Cache-Control "no-cache; max-age=0";
-  try_files $uri.html $uri $uri/ =404;
+  try_files $uri.html $uri $uri/ @404;
 }
 
 location ~ ^/.*$ {
- try_files $uri.html $uri $uri/ index.html;
+ try_files $uri.html $uri $uri/ /index.html;
 }
 
 
@@ -60,7 +59,7 @@ location ^~ /api/ {
   proxy_pass $upstream_endpoint_0;
   proxy_ssl_server_name on;
 
-  proxy_redirect <%= ENV["API_HOST"] %>/ /api/;
+  proxy_redirect $upstream_endpoint_0 /api/;
 }
 
 
@@ -79,5 +78,5 @@ location = /service-worker.js {
     add_header Content-Security-Policy "script-src 'self' https://storage.googleapis.com";
     add_header X-XSS-Protection "1; mode=block";
     add_header Cache-Control "no-cache; max-age=0";
-   try_files service-worker.js =404;
+   try_files /service-worker.js @404;
 }
