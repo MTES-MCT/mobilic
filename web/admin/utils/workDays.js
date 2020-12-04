@@ -7,22 +7,37 @@ import {
 function computeWorkDayGroupAggregates(workDayGroup) {
   const aggregateTimers = {};
   const aggregateExpenditures = {};
+  let serviceDuration = 0;
+  let totalWorkDuration = 0;
+  let minStartTime;
+  let maxEndTime;
   workDayGroup.forEach(wd => {
-    Object.keys(wd.activityTimers).forEach(key => {
+    Object.keys(wd.activityDurations).forEach(key => {
       aggregateTimers[key] =
-        (aggregateTimers[key] || 0) + wd.activityTimers[key];
+        (aggregateTimers[key] || 0) + wd.activityDurations[key];
     });
+    serviceDuration = serviceDuration + wd.serviceDuration;
+    totalWorkDuration = totalWorkDuration + wd.totalWorkDuration;
     if (wd.expenditures) {
       Object.keys(wd.expenditures).forEach(exp => {
         aggregateExpenditures[exp] =
           (aggregateExpenditures[exp] || 0) + wd.expenditures[exp];
       });
     }
+    minStartTime = minStartTime
+      ? Math.min(wd.startTime, minStartTime)
+      : wd.startTime;
+    maxEndTime = maxEndTime ? Math.max(wd.endTime, maxEndTime) : wd.endTime;
   });
   return {
     user: workDayGroup[0].user,
     periodStart: workDayGroup[0].periodStart,
+    periodActualStart: minStartTime,
+    periodActualEnd: maxEndTime,
     workedDays: workDayGroup.length,
+    service: serviceDuration,
+    totalWork: totalWorkDuration,
+    rest: serviceDuration - totalWorkDuration,
     timers: aggregateTimers,
     expenditures: aggregateExpenditures
   };
@@ -53,11 +68,5 @@ export function aggregateWorkDayPeriods(workDays, period) {
       ? { ...group[0], ...aggregateMetrics }
       : aggregateMetrics;
   });
-  const aggregatedWorkDaysByPeriod = {};
-  flatAggregatedWorkDays.forEach(awd => {
-    if (!aggregatedWorkDaysByPeriod[awd.periodStart])
-      aggregatedWorkDaysByPeriod[awd.periodStart] = [];
-    aggregatedWorkDaysByPeriod[awd.periodStart].push(awd);
-  });
-  return aggregatedWorkDaysByPeriod;
+  return flatAggregatedWorkDays;
 }

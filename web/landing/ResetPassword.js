@@ -246,7 +246,7 @@ export function RequestResetPassword() {
           context: { nonPublicApi: true }
         }
       );
-      if (apiResponse.data.account.requestResetPassword.message !== "success") {
+      if (!apiResponse.data.account.requestResetPassword.success) {
         throw Error;
       }
       setDidSubmitForm(true);

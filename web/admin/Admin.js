@@ -14,8 +14,9 @@ import {
 } from "common/utils/loading";
 import { Header } from "../common/Header";
 import * as Sentry from "@sentry/browser";
+import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 
-function _Admin() {
+function __Admin({ width }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const withLoadingScreen = useLoadingScreen();
@@ -45,21 +46,27 @@ function _Admin() {
     }
   }, [adminStore.userId]);
 
+  const ref = React.useRef(null);
+
   const defaultView = views.find(view => view.isDefault);
   return [
     <Header key={0} />,
     <Container
       key={1}
       className="flex-row-stretch no-margin-no-padding"
-      style={{ height: "100%", overflowY: "hidden" }}
+      style={{
+        height: "100%",
+        overflowY: "hidden",
+        flexDirection: isWidthUp("md", width) ? "row" : "column"
+      }}
       maxWidth={false}
     >
-      <SideMenu views={views} />
-      <Box my={2} px={2} className="panel-container scrollable">
+      <SideMenu views={views} horizontalDisplay={!isWidthUp("md", width)} />
+      <Box my={1} px={1} className="panel-container scrollable" ref={ref}>
         <Switch>
           {views.map(view => (
             <Route key={view.label} path={view.route}>
-              {view.component}
+              {view.component({ containerRef: ref })}
             </Route>
           ))}
           {defaultView && (
@@ -71,12 +78,14 @@ function _Admin() {
   ];
 }
 
-export function Admin(props) {
+function _Admin(props) {
   return (
     <LoadingScreenContextProvider>
       <AdminStoreProvider>
-        <_Admin {...props} />
+        <__Admin {...props} />
       </AdminStoreProvider>
     </LoadingScreenContextProvider>
   );
 }
+
+export const Admin = withWidth()(_Admin);

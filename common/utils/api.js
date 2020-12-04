@@ -181,8 +181,9 @@ export const ADMIN_COMPANIES_QUERY = gql`
           startTime
           endTime
           expenditures
-          activityTimers
-          wasModified
+          serviceDuration
+          totalWorkDuration
+          activityDurations
         }
         vehicles {
           id

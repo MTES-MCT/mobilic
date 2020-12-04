@@ -41,6 +41,8 @@ export function CompanyFilter({ companies, setCompanies }) {
       id="company-filter-filter"
       options={companies}
       disableCloseOnSelect
+      limitTags={1}
+      size="small"
       getOptionLabel={company => company.name}
       renderOption={company => (
         <>

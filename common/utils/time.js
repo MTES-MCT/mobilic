@@ -37,9 +37,7 @@ export function formatTimer(timerDuration) {
   if (!timerDuration && timerDuration !== 0) return null;
   const timerDurationInMinutes = (timerDuration / 60) >> 0;
   const timerDurationInHours = (timerDurationInMinutes / 60) >> 0;
-  return `${timerDurationInHours}h${"\u00A0"}${addZero(
-    timerDurationInMinutes % 60
-  )}m`;
+  return `${timerDurationInHours}h${addZero(timerDurationInMinutes % 60)}`;
 }
 
 export function formatLongTimer(timerDuration) {
@@ -58,7 +56,9 @@ export function formatTimeOfDay(unixTimestamp) {
 
 export function formatDay(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
-  return `${addZero(date.getDate())}/${addZero(date.getMonth() + 1)}`;
+  return `${addZero(date.getDate())}/${addZero(
+    date.getMonth() + 1
+  )}/${date.getFullYear()}`;
 }
 
 export function prettyFormatDay(unixTimestamp, withYear = false) {

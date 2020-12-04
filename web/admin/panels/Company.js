@@ -18,15 +18,17 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Grid from "@material-ui/core/Grid";
 import { LinkButton } from "../../common/LinkButton";
 import * as Sentry from "@sentry/browser";
+import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 
 const useStyles = makeStyles(theme => ({
   navigation: {
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(1),
     padding: theme.spacing(2),
-    position: "sticky",
+    position: ({ width }) => (isWidthUp("md", width) ? "sticky" : "static"),
     top: "0",
     zIndex: 500,
-    textAlign: "left"
+    textAlign: "left",
+    flexWrap: "wrap"
   },
   subPanel: {
     padding: theme.spacing(2)
@@ -172,7 +174,7 @@ function SubNavigationToggle({ view, setView }) {
   );
 }
 
-export function CompanyPanel() {
+function _CompanyPanel({ width, containerRef }) {
   const [view, setView] = React.useState("employees");
   const [companyId, setCompanyId] = React.useState(0);
 
@@ -188,7 +190,7 @@ export function CompanyPanel() {
     } else setCompanyId(0);
   }, [companies]);
 
-  const classes = useStyles();
+  const classes = useStyles({ width });
   const subPanel = COMPANY_SUB_PANELS.find(sp => sp.view === view);
   return [
     <Paper
@@ -205,7 +207,13 @@ export function CompanyPanel() {
       >
         Inscrire une nouvelle entreprise
       </LinkButton>
-      <Grid container spacing={10} justify="center" alignItems="center">
+      <Grid
+        container
+        spacing={10}
+        justify="center"
+        alignItems="center"
+        style={{ flex: "1 1 auto", width: "unset" }}
+      >
         {companies && companies.length > 1 && (
           <Grid item>
             <TextField
@@ -230,7 +238,9 @@ export function CompanyPanel() {
       </Grid>
     </Paper>,
     <Paper className={classes.subPanel} variant="outlined" key={2}>
-      {companyId ? subPanel.component({ companyId }) : null}
+      {companyId ? subPanel.component({ companyId, containerRef }) : null}
     </Paper>
   ];
 }
+
+export const CompanyPanel = withWidth()(_CompanyPanel);

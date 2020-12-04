@@ -7,7 +7,10 @@ import {
   TERMINATE_EMPLOYMENT_MUTATION
 } from "common/utils/api";
 import { useAdminStore } from "../utils/store";
-import { AugmentedTable } from "../components/AugmentedTable";
+import {
+  AugmentedTable,
+  AugmentedVirtualizedTable
+} from "../components/AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
@@ -30,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function Employees({ companyId }) {
+export function Employees({ companyId, containerRef }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const modals = useModals();
@@ -91,46 +94,38 @@ export function Employees({ companyId }) {
     {
       label: "Invité le",
       name: "creationDate"
-    },
-    {
-      label: "",
-      name: "cancelEmployment",
-      format: (employmentId, entry, onFocus) =>
-        onFocus ? null : (
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() =>
-              modals.open("confirmation", {
-                textButtons: true,
-                title: "Confirmer annulation du rattachement",
-                handleConfirm: async () => await cancelEmployment(employmentId)
-              })
-            }
-          >
-            Annuler
-          </Button>
-        )
     }
   ];
 
   const validEmploymentColumns = [
     {
       label: "Nom",
-      name: "name"
+      name: "name",
+      align: "left",
+      sortable: true,
+      minWidth: 200,
+      overflowTooltip: true
     },
     {
       label: "Identifiant",
-      name: "id"
+      name: "id",
+      align: "left",
+      minWidth: 100
     },
     {
       label: "Administrateur",
       name: "hasAdminRights",
-      boolean: true
+      boolean: true,
+      align: "left",
+      sortable: true,
+      minWidth: 120
     },
     {
       label: "Début rattachement",
-      name: "startDate"
+      name: "startDate",
+      align: "left",
+      sortable: true,
+      minWidth: 130
     },
     {
       label: "Fin rattachement",
@@ -142,6 +137,7 @@ export function Employees({ companyId }) {
           <Button
             variant="outlined"
             color="primary"
+            size="small"
             onClick={() =>
               modals.open("terminateEmployment", {
                 minDate: new Date(employment.startDate),
@@ -152,7 +148,9 @@ export function Employees({ companyId }) {
           >
             Terminer
           </Button>
-        )
+        ),
+      align: "left",
+      minWidth: 130
     },
     {
       label: "Statut",
@@ -165,7 +163,10 @@ export function Employees({ companyId }) {
         >
           {active ? "Actif" : "Terminé"}
         </Typography>
-      )
+      ),
+      align: "left",
+      sortable: true,
+      minWidth: 100
     }
   ];
 
@@ -180,7 +181,7 @@ export function Employees({ companyId }) {
       name: e.user ? formatPersonName(e.user) : null,
       hasAdminRights: e.hasAdminRights,
       creationDate: e.startDate,
-      cancelEmployment: e.id
+      id: e.id
     }));
 
   const today = new Date(Date.now()).toISOString().slice(0, 10);
@@ -199,13 +200,20 @@ export function Employees({ companyId }) {
 
   return [
     <Typography key={0} variant="h4" className={classes.title}>
-      Invitations en attente
+      Invitations en attente ({pendingEmployments.length})
     </Typography>,
     <AugmentedTable
       key={1}
       columns={pendingEmploymentColumns}
       entries={pendingEmployments}
       editable={false}
+      onRowDelete={entry =>
+        modals.open("confirmation", {
+          textButtons: true,
+          title: "Confirmer annulation du rattachement",
+          handleConfirm: async () => await cancelEmployment(entry.id)
+        })
+      }
       onRowAdd={async ({ idOrEmail, hasAdminRights }) => {
         const payload = {
           hasAdminRights,
@@ -233,13 +241,16 @@ export function Employees({ companyId }) {
     />,
     <Box key={2} my={6}></Box>,
     <Typography key={3} variant="h4" className={classes.title}>
-      Employés
+      Employés ({validEmployments.length})
     </Typography>,
-    <AugmentedTable
+    <AugmentedVirtualizedTable
       key={4}
       columns={validEmploymentColumns}
       entries={validEmployments}
       editable={false}
+      rowHeight={60}
+      defaultSortBy="startDate"
+      attachScrollTo={containerRef.current}
     />
   ];
 }

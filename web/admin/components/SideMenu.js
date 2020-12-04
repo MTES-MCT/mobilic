@@ -10,7 +10,7 @@ const menuItemStyles = makeStyles(theme => ({
   root: {
     width: "100%",
     paddingLeft: theme.spacing(4),
-    paddingRight: theme.spacing(4),
+    paddingRight: theme.spacing(6),
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
     display: "block",
@@ -21,6 +21,10 @@ const menuItemStyles = makeStyles(theme => ({
   },
   active: {
     background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.main} 5px, ${theme.palette.background.default} 5px, ${theme.palette.background.default})`
+  },
+  horizontalDisplay: {
+    display: "flex",
+    flexGrow: 1
   }
 }));
 
@@ -47,12 +51,16 @@ function MenuItem({ label, route }) {
   );
 }
 
-export function SideMenu({ views }) {
+export function SideMenu({ views, horizontalDisplay }) {
   const theme = useTheme();
+
+  const classes = menuItemStyles();
+
   return (
     <List
       disablePadding
-      className="side-menu-container"
+      className={`side-menu-container ${horizontalDisplay &&
+        classes.horizontalDisplay}`}
       style={{ backgroundColor: theme.palette.background.paper }}
     >
       {views.map((view, index) => (

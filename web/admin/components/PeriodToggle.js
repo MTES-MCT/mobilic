@@ -5,6 +5,7 @@ import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup/ToggleButtonGr
 export function PeriodToggle({ period, setPeriod }) {
   return (
     <ToggleButtonGroup
+      size="small"
       value={period}
       exclusive
       onChange={(e, newPeriod) => {

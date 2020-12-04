@@ -41,6 +41,8 @@ export function EmployeeFilter({ users, setUsers }) {
       multiple
       id="employee-filter"
       options={users}
+      limitTags={1}
+      size="small"
       disableCloseOnSelect
       getOptionLabel={option => formatPersonName(option)}
       renderOption={option => (

@@ -6,36 +6,37 @@ import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { WorkTimeTable } from "../components/WorkTimeTable";
-import Typography from "@material-ui/core/Typography";
-import {
-  getStartOfWeek,
-  prettyFormatDay,
-  prettyFormatMonth
-} from "common/utils/time";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
 import { useAdminStore } from "../utils/store";
 import { useModals } from "common/utils/modals";
 import uniqBy from "lodash/uniqBy";
+import uniq from "lodash/uniq";
+import min from "lodash/min";
+import max from "lodash/max";
 import { CompanyFilter } from "../components/CompanyFilter";
+import Typography from "@material-ui/core/Typography";
+import { formatDay } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   exportButton: {
     marginLeft: theme.spacing(4)
   },
-  filters: {
-    marginBottom: theme.spacing(2),
-    position: "sticky",
-    top: "0",
-    zIndex: 500
-  },
   tableTitle: {
     marginBottom: theme.spacing(3),
     paddingLeft: theme.spacing(2)
   },
-  activityTables: {
-    padding: theme.spacing(2)
+  container: {
+    height: "100%"
+  },
+  workTimeTable: {
+    overflowY: "hidden",
+    flexGrow: 1,
+    paddingTop: theme.spacing(1)
+  },
+  workTimeTableContainer: {
+    maxHeight: "100%",
+    padding: theme.spacing(2),
+    paddingTop: theme.spacing(1)
   }
 }));
 
@@ -46,7 +47,6 @@ export function ActivityPanel() {
   const [users, setUsers] = React.useState([]);
   const [companies, setCompanies] = React.useState([]);
   const [period, setPeriod] = React.useState("day");
-  const [toggleDayDetails, setToggleDayDetails] = React.useState(false);
 
   React.useEffect(() => {
     if (adminStore.companies) {
@@ -87,75 +87,52 @@ export function ActivityPanel() {
 
   // TODO : memoize this
   const periodAggregates = aggregateWorkDayPeriods(selectedWorkDays, period);
-  const sortedPeriods = Object.keys(periodAggregates)
-    .map(x => parseInt(x))
-    .sort((periodStart1, periodStart2) => periodStart2 - periodStart1);
 
   const classes = useStyles();
   return [
-    <Paper className={classes.filters} variant="outlined" key={0}>
-      <Box p={2} className="flex-row-space-between">
+    <Paper
+      className={`flex-column scrollable ${classes.container}`}
+      variant="outlined"
+      key={0}
+    >
+      <Box
+        px={2}
+        pt={2}
+        className="flex-row-space-between"
+        style={{ flexWrap: "wrap" }}
+      >
         {companies.length > 1 && (
           <CompanyFilter companies={companies} setCompanies={setCompanies} />
         )}
         <EmployeeFilter users={users} setUsers={setUsers} />
-        <Box className="flex-row">
-          <PeriodToggle period={period} setPeriod={setPeriod} />
-          <Button
-            className={classes.exportButton}
-            color="primary"
-            onClick={() => modals.open("dataExport", { companies })}
-            variant="contained"
-          >
-            Export Excel
-          </Button>
-        </Box>
+        <PeriodToggle period={period} setPeriod={setPeriod} />
+        <Button
+          className={classes.exportButton}
+          color="primary"
+          onClick={() => modals.open("dataExport", { companies })}
+          variant="contained"
+        >
+          Export Excel
+        </Button>
       </Box>
-      {period === "day" && (
-        <Box px={2} pb={2} className="flex-row-flex-start">
-          <FormControlLabel
-            control={
-              <Switch
-                checked={toggleDayDetails}
-                onChange={() => setToggleDayDetails(!toggleDayDetails)}
-                color="primary"
-              />
-            }
-            label="Voir détails de la journée"
-          />
-        </Box>
-      )}
-    </Paper>,
-    <Paper className={classes.activityTables} variant="outlined" key={1}>
-      {sortedPeriods.map((periodStart, index) => {
-        let periodLabel;
-        if (period === "day") {
-          periodLabel = prettyFormatDay(periodStart, true);
-        } else if (period === "week") {
-          periodLabel = `Semaine du ${prettyFormatDay(
-            getStartOfWeek(periodStart),
-            true
-          )}`;
-        } else if (period === "month") {
-          periodLabel = prettyFormatMonth(periodStart);
-        }
-        return (
-          <Box mb={8} key={index}>
-            <Typography
-              className={classes.tableTitle}
-              variant="h5"
-              align="left"
-            >
-              {periodLabel}
-            </Typography>
-            <WorkTimeTable
-              period={period}
-              workTimeEntries={periodAggregates[periodStart]}
-              displayDetails={toggleDayDetails && period === "day"}
-            />
-          </Box>
-        );
-      })}
+      <Box className={`flex-column ${classes.workTimeTableContainer}`}>
+        <Typography align="left" variant="h6">
+          {periodAggregates.length} résultats{" "}
+          {periodAggregates.length > 0 &&
+            `pour ${
+              uniq(periodAggregates.map(pa => pa.user.id)).length
+            } employé(s) entre le ${formatDay(
+              min(periodAggregates.map(pa => pa.periodActualStart))
+            )} et le ${formatDay(
+              max(periodAggregates.map(pa => pa.periodActualEnd))
+            )}`}
+        </Typography>
+        <WorkTimeTable
+          className={classes.workTimeTable}
+          period={period}
+          workTimeEntries={periodAggregates}
+        />
+      </Box>
     </Paper>
   ];
 }

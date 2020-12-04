@@ -18,7 +18,7 @@ export function Logos() {
         {shouldDisplayBothLogos && (
           <Box mr={2}>
             <SvgIcon
-              style={{ fontSize: shouldDisplayFullSizeLogo ? 70 : 50 }}
+              style={{ fontSize: shouldDisplayFullSizeLogo ? 60 : 40 }}
               viewBox="40 40 210 200"
               className="marianne-logo"
               component={MarianneIcon}
