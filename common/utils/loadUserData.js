@@ -11,7 +11,7 @@ export async function loadUserData(api, store) {
   try {
     const userResponse = await api.graphQlQuery(USER_QUERY, {
       id: userId,
-      activityAfter: now() - DAY * 100
+      activityAfter: now() - DAY * 183
     });
     await syncUser(userResponse.data.user, api, store);
     await broadCastChannel.postMessage("update");
