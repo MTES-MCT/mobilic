@@ -249,6 +249,7 @@ export function Employees({ companyId, containerRef }) {
       entries={validEmployments}
       editable={false}
       rowHeight={60}
+      maxHeight={"100%"}
       defaultSortBy="startDate"
       attachScrollTo={containerRef.current}
     />

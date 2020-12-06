@@ -12,24 +12,25 @@ import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { Logos } from "./Logos";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
-import MenuItem from "@material-ui/core/MenuItem";
 import MenuIcon from "@material-ui/icons/Menu";
-import Menu from "@material-ui/core/Menu/Menu";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import useTheme from "@material-ui/core/styles/useTheme";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Button from "@material-ui/core/Button";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import List from "@material-ui/core/List";
+import Drawer from "@material-ui/core/Drawer";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import CloseIcon from "@material-ui/icons/Close";
 
 const useStyles = makeStyles(theme => ({
-  menuItemButton: {
+  navItemButton: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
     borderRadius: 0,
     border: "none",
     color: theme.palette.text.primary
-  },
-  selectedMenuItem: {
-    backgroundColor: theme.palette.grey[200]
   },
   docButton: {
     textTransform: "none",
@@ -38,6 +39,30 @@ const useStyles = makeStyles(theme => ({
   },
   divider: {
     margin: theme.spacing(1)
+  },
+  navListItem: {
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(6),
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    display: "block",
+    "&:hover": {
+      color: theme.palette.primary.main,
+      backgroundColor: theme.palette.background.default
+    }
+  },
+  selectedNavListItem: {
+    background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.main} 5px, ${theme.palette.background.default} 5px, ${theme.palette.background.default})`
+  },
+  nestedListSubheader: {
+    paddingLeft: theme.spacing(4)
+  },
+  closeNavButton: {
+    display: "flex",
+    justifyContent: "flex-end"
+  },
+  navDrawer: {
+    minWidth: 200
   }
 }));
 
@@ -55,57 +80,107 @@ function HeaderContainer(props) {
   );
 }
 
-function MenuRouteItem({ route }) {
+function ListRouteItem({ route, closeDrawer }) {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
 
   const selected = location.pathname.startsWith(route.path);
 
-  return (
-    <MenuItem
+  return route.subRoutes ? (
+    <>
+      <Divider />
+      <List
+        key={route.path + "subRoutes"}
+        disablePadding
+        subheader={
+          <ListSubheader
+            component="div"
+            className={classes.nestedListSubheader}
+          >
+            {route.label}
+          </ListSubheader>
+        }
+      >
+        {route.subRoutes.map(subRoute => (
+          <ListRouteItem
+            key={subRoute.path}
+            route={{ ...subRoute, path: `${route.path}${subRoute.path}` }}
+            closeDrawer={closeDrawer}
+          />
+        ))}
+      </List>
+      <Divider />
+    </>
+  ) : (
+    <ListItem
       key={route.path}
+      button
       onClick={() => {
         if (!selected) history.push(route.path);
+        closeDrawer();
       }}
-      className={selected ? classes.selectedMenuItem : ""}
+      className={`${classes.navListItem} ${selected &&
+        classes.selectedNavListItem}`}
     >
-      {route.label}
-    </MenuItem>
+      <ListItemText primary={route.label} />
+    </ListItem>
   );
 }
 
-export function NavigationMenu({ menuAnchor, setMenuAnchor }) {
+export function NavigationMenu({ open, setOpen }) {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
   const companies = store.companies();
 
+  const classes = useStyles();
+
   const routes = getAccessibleRoutes({ userInfo, companies });
 
   return (
-    <Menu
-      anchorEl={menuAnchor}
-      keepMounted
-      open={Boolean(menuAnchor)}
-      onClose={() => setMenuAnchor(null)}
+    <Drawer
+      anchor="right"
+      open={open}
+      onClose={() => setOpen(false)}
+      PaperProps={{ className: classes.navDrawer }}
     >
-      {routes
-        .filter(
-          r => !r.menuItemFilter || r.menuItemFilter({ userInfo, companies })
-        )
-        .map(route => (
-          <MenuRouteItem key={route.path} route={route} />
-        ))}
-      {store.userId() && (
-        <MenuItem onClick={() => api.logout()}>Déconnexion</MenuItem>
-      )}
-    </Menu>
+      <Box className={classes.closeNavButton} pt={2}>
+        <IconButton
+          onClick={() => setOpen(false)}
+          className={classes.closeNavButton}
+        >
+          <CloseIcon />
+        </IconButton>
+      </Box>
+      <List>
+        {routes
+          .filter(
+            r => !r.menuItemFilter || r.menuItemFilter({ userInfo, companies })
+          )
+          .map(route => (
+            <ListRouteItem
+              key={route.path}
+              route={route}
+              closeDrawer={() => setOpen(false)}
+            />
+          ))}
+        {store.userId() && (
+          <ListItem
+            button
+            className={classes.navListItem}
+            onClick={() => api.logout()}
+          >
+            <ListItemText primary="Déconnexion" />
+          </ListItem>
+        )}
+      </List>
+    </Drawer>
   );
 }
 
 function MobileHeader({ disableMenu }) {
-  const [menuAnchor, setMenuAnchor] = React.useState(null);
+  const [openNavDrawer, setOpenNavDrawer] = React.useState(false);
 
   return (
     <Box className="flex-row-space-between">
@@ -114,14 +189,14 @@ function MobileHeader({ disableMenu }) {
         <IconButton
           key={0}
           edge="end"
-          onClick={e => setMenuAnchor(e.currentTarget)}
+          onClick={() => setOpenNavDrawer(!openNavDrawer)}
         >
           <MenuIcon />
         </IconButton>,
         <NavigationMenu
           key={1}
-          menuAnchor={menuAnchor}
-          setMenuAnchor={setMenuAnchor}
+          open={openNavDrawer}
+          setOpen={setOpenNavDrawer}
         />
       ]}
     </Box>
@@ -134,7 +209,7 @@ function DesktopHeader({ disableMenu }) {
   const location = useLocation();
   const history = useHistory();
 
-  const [menuAnchor, setMenuAnchor] = React.useState(null);
+  const [openNavDrawer, setOpenNavDrawer] = React.useState(false);
 
   const classes = useStyles();
   const userInfo = store.userInfo();
@@ -174,14 +249,14 @@ function DesktopHeader({ disableMenu }) {
               key={0}
               style={{ marginRight: 16 }}
               edge="end"
-              onClick={e => setMenuAnchor(e.currentTarget)}
+              onClick={() => setOpenNavDrawer(!openNavDrawer)}
             >
               <MenuIcon />
             </IconButton>,
             <NavigationMenu
               key={1}
-              menuAnchor={menuAnchor}
-              setMenuAnchor={setMenuAnchor}
+              open={openNavDrawer}
+              setOpen={setOpenNavDrawer}
             />
           ]}
         </Box>
@@ -216,7 +291,7 @@ function DesktopHeader({ disableMenu }) {
                     value={route.path}
                     href={route.path}
                     selected={location.pathname.startsWith(route.path)}
-                    className={classes.menuItemButton}
+                    className={classes.navItemButton}
                   >
                     {route.label}
                   </ToggleButton>

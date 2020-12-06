@@ -26,7 +26,8 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(2)
   },
   container: {
-    height: "100%"
+    height: "100%",
+    flexGrow: 1
   },
   workTimeTable: {
     overflowY: "hidden",
@@ -34,7 +35,6 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(1)
   },
   workTimeTableContainer: {
-    maxHeight: "100%",
     padding: theme.spacing(2),
     paddingTop: theme.spacing(1)
   }
@@ -88,18 +88,23 @@ export function ActivityPanel() {
   // TODO : memoize this
   const periodAggregates = aggregateWorkDayPeriods(selectedWorkDays, period);
 
+  const ref = React.useRef(null);
+
+  console.log(ref.current);
+
   const classes = useStyles();
   return [
     <Paper
-      className={`flex-column scrollable ${classes.container}`}
+      className={`scrollable ${classes.container}`}
       variant="outlined"
       key={0}
+      ref={ref}
     >
       <Box
         px={2}
         pt={2}
         className="flex-row-space-between"
-        style={{ flexWrap: "wrap" }}
+        style={{ flexWrap: "wrap", flexShrink: 0 }}
       >
         {companies.length > 1 && (
           <CompanyFilter companies={companies} setCompanies={setCompanies} />
@@ -115,7 +120,10 @@ export function ActivityPanel() {
           Export Excel
         </Button>
       </Box>
-      <Box className={`flex-column ${classes.workTimeTableContainer}`}>
+      <Box
+        className={`flex-column ${classes.workTimeTableContainer}`}
+        style={{ maxHeight: ref.current ? ref.current.clientHeight : 0 }}
+      >
         <Typography align="left" variant="h6">
           {periodAggregates.length} résultats{" "}
           {periodAggregates.length > 0 &&

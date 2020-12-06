@@ -335,7 +335,7 @@ export function Landing() {
       </Container>
     </Container>,
     <Container
-      key={5}
+      key={6}
       className={`${classes.section} ${classes.darkSection}`}
       maxWidth={false}
     >

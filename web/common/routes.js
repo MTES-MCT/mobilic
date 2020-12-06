@@ -14,6 +14,7 @@ import OAuth from "../landing/oauth/root";
 import { Logout } from "../landing/logout";
 import { ActivateEmail } from "../landing/signup/ActivateEmail";
 import { RequestResetPassword, ResetPassword } from "../landing/ResetPassword";
+import { ADMIN_VIEWS } from "../admin/utils/navigation";
 
 export const ROUTES = [
   {
@@ -35,7 +36,8 @@ export const ROUTES = [
     label: "Gestion entreprise",
     accessible: ({ userInfo, companies }) =>
       userInfo.hasActivatedEmail && userInfo.id && companies.some(c => c.admin),
-    component: <Admin />
+    component: <Admin />,
+    subRoutes: ADMIN_VIEWS
   },
   {
     path: "/home",

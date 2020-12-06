@@ -6,13 +6,13 @@ import { CompanyPanel } from "../panels/Company";
 export const ADMIN_VIEWS = [
   {
     label: "Entreprise",
-    route: "/company",
+    path: "/company",
     component: props => <CompanyPanel {...props} />,
     isDefault: true
   },
   {
     label: "Activités",
-    route: "/activities",
+    path: "/activities",
     component: props => <ActivityPanel {...props} />
   }
 ];

@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
   navigation: {
     marginBottom: theme.spacing(1),
     padding: theme.spacing(2),
+    flexShrink: 0,
     position: ({ width }) => (isWidthUp("md", width) ? "sticky" : "static"),
     top: "0",
     zIndex: 500,

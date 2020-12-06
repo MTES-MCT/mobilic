@@ -29,17 +29,6 @@ const useStyles = makeStyles(theme => ({
     cursor: "pointer",
     color: ({ sortType }) => (sortType ? theme.palette.primary.main : "inherit")
   },
-  visuallyHidden: {
-    border: 0,
-    clip: "rect(0 0 0 0)",
-    height: 1,
-    margin: -1,
-    overflow: "hidden",
-    padding: 0,
-    position: "absolute",
-    top: 20,
-    width: 1
-  },
   table: {
     "& td, th": {
       paddingLeft: theme.spacing(1),
@@ -105,6 +94,7 @@ export function AugmentedTable({
   addButtonLabel,
   dense = false,
   defaultSortBy = undefined,
+  defaultSortType = "asc",
   rowChangeAlertMessage = "",
   rowChangeAlertSeverity = "success",
   onRowChangeAlertClose = () => {},
@@ -113,7 +103,7 @@ export function AugmentedTable({
 }) {
   const [sortBy, setSortBy] = React.useState(defaultSortBy);
   const [sortType, setSortType] = React.useState(
-    defaultSortBy ? "asc" : undefined
+    defaultSortBy ? defaultSortType : undefined
   );
 
   const [editingRowId, setEditingRowId] = React.useState(null);
@@ -267,7 +257,7 @@ export function AugmentedTable({
           </Alert>
         )
       )}
-      <TableContainer className={`scrollable ${classes.tableContainer}`}>
+      <TableContainer className={` ${classes.tableContainer}`}>
         <MaterialTable
           stickyHeader={stickyHeader}
           className={`table ${classes.table}`}
@@ -275,34 +265,31 @@ export function AugmentedTable({
         >
           <TableHead>
             <TableRow>
-              {columns.map(column =>
-                column.sortable ? (
-                  <TableCell
-                    key={column.name}
-                    align={column.align || "left"}
-                    sortDirection={sortBy === column.name ? sortType : false}
-                  >
+              {columns.map(column => (
+                <TableCell
+                  key={column.name}
+                  align={column.align || "left"}
+                  style={{ minWidth: column.minWidth || "unset" }}
+                >
+                  {column.sortable ? (
                     <TableSortLabel
                       active={sortBy === column.name}
                       direction={sortBy === column.name ? sortType : "desc"}
                       onClick={handleSortTypeChange(column.name)}
+                      style={{
+                        flexDirection:
+                          column.align === "right" ? "row-reverse" : "row"
+                      }}
                     >
                       {column.renderLabel ? column.renderLabel() : column.label}
-                      {sortBy === column.name ? (
-                        <span className={classes.visuallyHidden}>
-                          {sortType === "desc"
-                            ? "sorted descending"
-                            : "sorted ascending"}
-                        </span>
-                      ) : null}
                     </TableSortLabel>
-                  </TableCell>
-                ) : (
-                  <TableCell key={column.name}>
-                    {column.renderLabel ? column.renderLabel() : column.label}
-                  </TableCell>
-                )
-              )}
+                  ) : column.renderLabel ? (
+                    column.renderLabel()
+                  ) : (
+                    column.label
+                  )}
+                </TableCell>
+              ))}
               {shouldDisplayEditActionsColumn && <TableCell />}
             </TableRow>
           </TableHead>
@@ -313,13 +300,20 @@ export function AugmentedTable({
               return (
                 <TableRow key={entry.id} hover>
                   {columns.map(column => {
+                    const CellInnerComponent = column.overflowTooltip
+                      ? TextWithOverflowTooltip
+                      : React.Fragment;
                     if (
                       onFocus &&
                       ((isAddingRow && column.create) ||
                         (!isAddingRow && column.edit))
                     ) {
                       return (
-                        <TableCell key={column.name}>
+                        <TableCell
+                          key={column.name}
+                          align={column.align || "left"}
+                          style={{ minWidth: column.minWidth || "unset" }}
+                        >
                           {column.boolean ? (
                             <Checkbox
                               checked={editingValues[column.name] || false}
@@ -353,18 +347,21 @@ export function AugmentedTable({
                       return (
                         <TableCell
                           key={column.name}
-                          style={column.cellStyle || {}}
+                          align={column.align || "left"}
+                          style={{ minWidth: column.minWidth || "unset" }}
                         >
-                          {column.boolean ? (
-                            <Checkbox
-                              checked={entry[column.name] || false}
-                              disabled
-                            />
-                          ) : column.format ? (
-                            column.format(entry[column.name], entry, onFocus)
-                          ) : entry[column.name] ? (
-                            entry[column.name]
-                          ) : null}
+                          <CellInnerComponent>
+                            {column.boolean ? (
+                              <Checkbox
+                                checked={entry[column.name] || false}
+                                disabled
+                              />
+                            ) : column.format ? (
+                              column.format(entry[column.name], entry, onFocus)
+                            ) : entry[column.name] ? (
+                              entry[column.name]
+                            ) : null}
+                          </CellInnerComponent>
                         </TableCell>
                       );
                   })}
@@ -485,11 +482,7 @@ function VirtualizedTable({
                   </CellInnerComponent>
                 );
             }}
-            style={
-              { ...column.cellStyle, textAlign: column.align } || {
-                textAlign: column.align
-              }
-            }
+            style={{ textAlign: column.align }}
             headerStyle={{ textAlign: column.align }}
             headerRenderer={() => headerRenderer(column)}
             width={column.baseWidth || columnDefaultBaseWidth}
@@ -683,7 +676,7 @@ export function AugmentedVirtualizedTable({
     : sortedEntries;
 
   return (
-    <Box className={`${className}`}>
+    <Box className={`${className} flex-column`}>
       {onRowAdd ? (
         <Box
           className="flex-row"

@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
 export function AccountButton(props) {
   const store = useStoreSyncedWithLocalStorage();
 
-  const [menuAnchor, setMenuAnchor] = React.useState(null);
+  const [openNavDrawer, setOpenNavDrawer] = React.useState(false);
 
   const classes = useStyles(props.darkBackground || false);
 
@@ -45,11 +45,11 @@ export function AccountButton(props) {
         variant="outlined"
         className={classes.button}
         disableElevation
-        onClick={e => setMenuAnchor(e.currentTarget)}
+        onClick={e => setOpenNavDrawer(!openNavDrawer)}
       >
         {formatPersonName(store.userInfo())}
       </Button>
-      <NavigationMenu menuAnchor={menuAnchor} setMenuAnchor={setMenuAnchor} />
+      <NavigationMenu open={openNavDrawer} setOpen={setOpenNavDrawer} />
     </Box>
   );
 }

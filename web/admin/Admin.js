@@ -1,10 +1,8 @@
 import React from "react";
 import { Switch, Route, Redirect, useRouteMatch } from "react-router-dom";
 import Container from "@material-ui/core/Container";
-import { SideMenu } from "./components/SideMenu";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import "./assets/admin.scss";
-import Box from "@material-ui/core/Box";
 import { loadCompaniesData } from "./utils/loadCompaniesData";
 import { useApi } from "common/utils/api";
 import { AdminStoreProvider, useAdminStore } from "./utils/store";
@@ -14,19 +12,34 @@ import {
 } from "common/utils/loading";
 import { Header } from "../common/Header";
 import * as Sentry from "@sentry/browser";
-import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
-function __Admin({ width }) {
+const useStyles = makeStyles(theme => ({
+  panelContainer: {
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+    overflowX: "hidden",
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1)
+  }
+}));
+
+function _Admin() {
   const api = useApi();
   const adminStore = useAdminStore();
   const withLoadingScreen = useLoadingScreen();
   const { path } = useRouteMatch();
 
+  const classes = useStyles();
+
   const views = ADMIN_VIEWS.map(view => {
-    const absPath = `${path}${view.route}`;
+    const absPath = `${path}${view.path}`;
     return {
       ...view,
-      route: absPath
+      path: absPath
     };
   });
 
@@ -53,39 +66,30 @@ function __Admin({ width }) {
     <Header key={0} />,
     <Container
       key={1}
-      className="flex-row-stretch no-margin-no-padding"
-      style={{
-        height: "100%",
-        overflowY: "hidden",
-        flexDirection: isWidthUp("md", width) ? "row" : "column"
-      }}
+      className={`scrollable ${classes.panelContainer}`}
       maxWidth={false}
+      ref={ref}
     >
-      <SideMenu views={views} horizontalDisplay={!isWidthUp("md", width)} />
-      <Box my={1} px={1} className="panel-container scrollable" ref={ref}>
-        <Switch>
-          {views.map(view => (
-            <Route key={view.label} path={view.route}>
-              {view.component({ containerRef: ref })}
-            </Route>
-          ))}
-          {defaultView && (
-            <Redirect key="default" push from="*" to={defaultView.route} />
-          )}
-        </Switch>
-      </Box>
+      <Switch>
+        {views.map(view => (
+          <Route key={view.label} path={view.path}>
+            {view.component({ containerRef: ref })}
+          </Route>
+        ))}
+        {defaultView && (
+          <Redirect key="default" push from="*" to={defaultView.path} />
+        )}
+      </Switch>
     </Container>
   ];
 }
 
-function _Admin(props) {
+export function Admin(props) {
   return (
     <LoadingScreenContextProvider>
       <AdminStoreProvider>
-        <__Admin {...props} />
+        <_Admin {...props} />
       </AdminStoreProvider>
     </LoadingScreenContextProvider>
   );
 }
-
-export const Admin = withWidth()(_Admin);
