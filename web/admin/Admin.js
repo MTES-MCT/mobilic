@@ -13,10 +13,20 @@ import {
 import { Header } from "../common/Header";
 import * as Sentry from "@sentry/browser";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import { SideMenu } from "./components/SideMenu";
+import { isWidthUp } from "@material-ui/core";
+import withWidth from "@material-ui/core/withWidth";
 
 const useStyles = makeStyles(theme => ({
-  panelContainer: {
+  container: {
+    display: "flex",
     flexGrow: 1,
+    flexShrink: 1,
+    alignItems: "stretch",
+    overflowY: "hidden"
+  },
+  panelContainer: {
+    flex: "100 1 auto",
     display: "flex",
     flexDirection: "column",
     overflowX: "hidden",
@@ -27,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function _Admin() {
+function __Admin({ width }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const withLoadingScreen = useLoadingScreen();
@@ -66,30 +76,39 @@ function _Admin() {
     <Header key={0} />,
     <Container
       key={1}
-      className={`scrollable ${classes.panelContainer}`}
       maxWidth={false}
-      ref={ref}
+      disableGutters
+      className={classes.container}
     >
-      <Switch>
-        {views.map(view => (
-          <Route key={view.label} path={view.path}>
-            {view.component({ containerRef: ref })}
-          </Route>
-        ))}
-        {defaultView && (
-          <Redirect key="default" push from="*" to={defaultView.path} />
-        )}
-      </Switch>
+      {isWidthUp("md", width) && <SideMenu views={views} />}
+      <Container
+        className={`scrollable ${classes.panelContainer}`}
+        maxWidth={false}
+        ref={ref}
+      >
+        <Switch>
+          {views.map(view => (
+            <Route key={view.label} path={view.path}>
+              {view.component({ containerRef: ref })}
+            </Route>
+          ))}
+          {defaultView && (
+            <Redirect key="default" push from="*" to={defaultView.path} />
+          )}
+        </Switch>
+      </Container>
     </Container>
   ];
 }
 
-export function Admin(props) {
+function _Admin(props) {
   return (
     <LoadingScreenContextProvider>
       <AdminStoreProvider>
-        <_Admin {...props} />
+        <__Admin {...props} />
       </AdminStoreProvider>
     </LoadingScreenContextProvider>
   );
 }
+
+export const Admin = withWidth()(_Admin);

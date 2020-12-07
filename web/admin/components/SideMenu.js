@@ -21,28 +21,24 @@ const menuItemStyles = makeStyles(theme => ({
   },
   active: {
     background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.main} 5px, ${theme.palette.background.default} 5px, ${theme.palette.background.default})`
-  },
-  horizontalDisplay: {
-    display: "flex",
-    flexGrow: 1
   }
 }));
 
-function MenuItem({ label, route }) {
+function MenuItem({ label, path }) {
   const history = useHistory();
   const classes = menuItemStyles();
-  const selected = useRouteMatch(route);
+  const selected = useRouteMatch(path);
   return (
     <ListItem className="no-margin-no-padding">
       <Link
         className={`${classes.root} ${selected ? classes.active : ""}`}
         variant="body1"
         color="inherit"
-        href={route}
+        href={path}
         underline="none"
         onClick={e => {
           e.preventDefault();
-          history.push(route);
+          history.push(path);
         }}
       >
         {label}
@@ -51,16 +47,13 @@ function MenuItem({ label, route }) {
   );
 }
 
-export function SideMenu({ views, horizontalDisplay }) {
+export function SideMenu({ views }) {
   const theme = useTheme();
-
-  const classes = menuItemStyles();
 
   return (
     <List
       disablePadding
-      className={`side-menu-container ${horizontalDisplay &&
-        classes.horizontalDisplay}`}
+      className={`side-menu-container`}
       style={{ backgroundColor: theme.palette.background.paper }}
     >
       {views.map((view, index) => (

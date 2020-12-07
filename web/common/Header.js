@@ -23,6 +23,7 @@ import List from "@material-ui/core/List";
 import Drawer from "@material-ui/core/Drawer";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import CloseIcon from "@material-ui/icons/Close";
+import Link from "@material-ui/core/Link";
 
 const useStyles = makeStyles(theme => ({
   navItemButton: {
@@ -41,6 +42,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1)
   },
   navListItem: {
+    width: "100%",
     paddingLeft: theme.spacing(4),
     paddingRight: theme.spacing(6),
     paddingTop: theme.spacing(2),
@@ -91,6 +93,7 @@ function ListRouteItem({ route, closeDrawer }) {
     <>
       <Divider />
       <List
+        dense
         key={route.path + "subRoutes"}
         disablePadding
         subheader={
@@ -113,17 +116,22 @@ function ListRouteItem({ route, closeDrawer }) {
       <Divider />
     </>
   ) : (
-    <ListItem
-      key={route.path}
-      button
-      onClick={() => {
-        if (!selected) history.push(route.path);
-        closeDrawer();
-      }}
-      className={`${classes.navListItem} ${selected &&
-        classes.selectedNavListItem}`}
-    >
-      <ListItemText primary={route.label} />
+    <ListItem key={route.path} disableGutters>
+      <Link
+        className={`${classes.navListItem} ${selected &&
+          classes.selectedNavListItem}`}
+        variant="body1"
+        color="inherit"
+        href={route.path}
+        underline="none"
+        onClick={e => {
+          e.preventDefault();
+          if (!selected) history.push(route.path);
+          closeDrawer();
+        }}
+      >
+        {route.label}
+      </Link>
     </ListItem>
   );
 }
@@ -153,7 +161,7 @@ export function NavigationMenu({ open, setOpen }) {
           <CloseIcon />
         </IconButton>
       </Box>
-      <List>
+      <List dense>
         {routes
           .filter(
             r => !r.menuItemFilter || r.menuItemFilter({ userInfo, companies })
@@ -170,8 +178,12 @@ export function NavigationMenu({ open, setOpen }) {
             button
             className={classes.navListItem}
             onClick={() => api.logout()}
+            disableGutters
           >
-            <ListItemText primary="Déconnexion" />
+            <ListItemText
+              primary="Déconnexion"
+              primaryTypographyProps={{ variant: "body1" }}
+            />
           </ListItem>
         )}
       </List>
