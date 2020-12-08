@@ -642,11 +642,11 @@ class Api {
           operation => {
             return !!operation.getContext().nonPublicApi;
           },
-          new HttpLink({ uri: nonPublicUri }),
+          new HttpLink({ uri: nonPublicUri, credentials: "same-origin" }),
           ApolloLink.split(
             operation => !!operation.getContext().batchable,
-            new BatchHttpLink({ uri }),
-            new HttpLink({ uri })
+            new BatchHttpLink({ uri, credentials: "same-origin" }),
+            new HttpLink({ uri, credentials: "same-origin" })
           )
         )
       ]),
@@ -684,6 +684,7 @@ class Api {
   async _fetch(method, endpoint, options = {}) {
     const url = `${this.apiHost}${endpoint}`;
     options.method = method;
+    options.credentials = "same-origin";
     return await fetch(url, options);
   }
 

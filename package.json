@@ -32,7 +32,7 @@
     "case-sensitive-paths-webpack-plugin": "2.2.0",
     "classnames": "^2.2.6",
     "common": "0.1.0",
-    "core-js": "^3.6.5",
+    "core-js": "^3.8.1",
     "css-loader": "3.2.0",
     "csv-stringify": "^5.3.6",
     "date-fns": "^2.11.1",

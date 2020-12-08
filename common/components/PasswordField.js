@@ -48,7 +48,6 @@ export function PasswordField(props) {
                 e.preventDefault();
               }}
               onMouseUp={e => e.preventDefault()}
-              disablePointerEvents
             >
               {showPassword ? <Visibility /> : <VisibilityOff />}
             </IconButton>
