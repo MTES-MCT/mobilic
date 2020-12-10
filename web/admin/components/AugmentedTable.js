@@ -1,5 +1,6 @@
 import React from "react";
 import orderBy from "lodash/orderBy";
+import isEqual from "lodash/isEqual";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
@@ -21,6 +22,14 @@ import MaterialTable from "@material-ui/core/Table";
 import { Table, AutoSizer, Column, WindowScroller } from "react-virtualized";
 import "react-virtualized/styles.css";
 import { TextWithOverflowTooltip } from "./TextWithOverflowTooltip";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+
+const overflowStyleForMaxWidthCells = {
+  overflowX: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap"
+};
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,7 +45,8 @@ const useStyles = makeStyles(theme => ({
       paddingTop: ({ dense }) =>
         dense ? theme.spacing(0.5) : theme.spacing(2),
       paddingBottom: ({ dense }) =>
-        dense ? theme.spacing(0.5) : theme.spacing(2)
+        dense ? theme.spacing(0.5) : theme.spacing(2),
+      fontSize: ({ small }) => (small ? "0.75rem" : null)
     }
   },
   tableContainer: {
@@ -51,12 +61,19 @@ const useStyles = makeStyles(theme => ({
       borderBottom: "unset"
     },
     "&:hover": {
-      background: "#fafbfc"
+      background: "#fafbfc",
+      cursor: ({ clickableRow }) => (clickableRow ? "pointer" : "inherit")
     },
     borderTop: "0.5px solid #ebeff3",
     "&:first-child": {
       borderTop: "none"
+    },
+    "&:focus": {
+      outline: "none"
     }
+  },
+  selected: {
+    background: theme.palette.primary.lighter
   },
   saveIcon: {
     color: theme.palette.success.main
@@ -85,6 +102,160 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+class Row extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { openCollapse: false };
+  }
+
+  shouldComponentUpdate(props, state, context) {
+    if (this.state.openCollapse !== state.openCollapse) return true;
+    if (!isEqual(this.props.entry, props.entry)) return true;
+    if (this.props.onFocus !== props.onFocus) return true;
+    if (this.props.collapsable !== props.collapsable) return true;
+    if (this.props.rowClassName !== props.rowClassName) return true;
+    if (this.props.editingValues !== props.editingValues && this.props.onFocus)
+      return true;
+    if (
+      this.props.shouldDisplayEditActionsColumn !==
+      props.shouldDisplayEditActionsColumn
+    )
+      return true;
+    return false;
+  }
+
+  render() {
+    console.log("Rendering row");
+    const {
+      columns,
+      entry,
+      onFocus,
+      isAddingRow,
+      editingValues,
+      setEditingValues,
+      shouldDisplayEditActionsColumn,
+      renderEditActions,
+      collapsable,
+      rowClassName,
+      renderCollapse
+    } = this.props;
+    const noBorderBottomStyle = this.state.openCollapse
+      ? { borderBottom: "unset" }
+      : {};
+    return (
+      <>
+        <TableRow
+          hover
+          className={rowClassName}
+          {...noBorderBottomStyle}
+          onClick={
+            collapsable
+              ? () => this.setState({ openCollapse: !this.state.openCollapse })
+              : null
+          }
+        >
+          {collapsable && (
+            <TableCell>
+              <IconButton
+                size="small"
+                onClick={() =>
+                  this.setState({ openCollapse: !this.state.openCollapse })
+                }
+              >
+                {this.state.openCollapse ? (
+                  <KeyboardArrowUpIcon fontSize="inherit" />
+                ) : (
+                  <KeyboardArrowDownIcon fontSize="inherit" />
+                )}
+              </IconButton>
+            </TableCell>
+          )}
+          {columns.map(column => {
+            const CellInnerComponent = column.overflowTooltip
+              ? TextWithOverflowTooltip
+              : React.Fragment;
+            let cellStyle = {
+              minWidth: column.minWidth,
+              maxWidth: column.maxWidth
+            };
+            if (column.maxWidth)
+              cellStyle = { ...cellStyle, ...overflowStyleForMaxWidthCells };
+            if (
+              onFocus &&
+              ((isAddingRow && column.create) || (!isAddingRow && column.edit))
+            ) {
+              return (
+                <TableCell
+                  key={column.name}
+                  align={column.align || "left"}
+                  style={{
+                    minWidth: column.minWidth,
+                    maxWidth: column.maxWidth
+                  }}
+                >
+                  {column.boolean ? (
+                    <Checkbox
+                      checked={editingValues[column.name] || false}
+                      color="primary"
+                      onChange={e =>
+                        setEditingValues(values => ({
+                          ...values,
+                          [column.name]: e.target.checked
+                        }))
+                      }
+                    />
+                  ) : (
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      margin="dense"
+                      label={column.label}
+                      value={editingValues[column.name] || ""}
+                      onChange={e => {
+                        const newValue = e.target.value;
+                        setEditingValues(values => ({
+                          ...values,
+                          [column.name]: newValue
+                        }));
+                      }}
+                    />
+                  )}
+                </TableCell>
+              );
+            } else
+              return (
+                <TableCell
+                  key={column.name}
+                  align={column.align || "left"}
+                  style={cellStyle}
+                >
+                  <CellInnerComponent>
+                    {column.boolean ? (
+                      <Checkbox
+                        checked={entry[column.name] || false}
+                        disabled
+                      />
+                    ) : column.format ? (
+                      column.format(entry[column.name], entry, onFocus)
+                    ) : entry[column.name] ? (
+                      entry[column.name]
+                    ) : null}
+                  </CellInnerComponent>
+                </TableCell>
+              );
+          })}
+          {shouldDisplayEditActionsColumn && renderEditActions(entry, onFocus)}
+        </TableRow>
+        {collapsable && this.state.openCollapse && (
+          <TableRow>
+            <TableCell colSpan={10}>{renderCollapse(entry)}</TableCell>
+          </TableRow>
+        )}
+      </>
+    );
+  }
+}
+
 export function AugmentedTable({
   columns,
   entries,
@@ -92,7 +263,9 @@ export function AugmentedTable({
   onRowAdd,
   onRowDelete,
   addButtonLabel,
+  renderCollapse = null,
   dense = false,
+  small = false,
   defaultSortBy = undefined,
   defaultSortType = "asc",
   rowChangeAlertMessage = "",
@@ -109,7 +282,13 @@ export function AugmentedTable({
   const [editingRowId, setEditingRowId] = React.useState(null);
   const [editingValues, setEditingValues] = React.useState({});
 
-  const classes = useStyles({ dense });
+  const collapsable = !!renderCollapse;
+
+  const classes = useStyles({
+    dense: dense || small,
+    clickableRow: collapsable,
+    small
+  });
 
   const handleSortTypeChange = column => () => {
     let newSortType = "desc";
@@ -265,11 +444,15 @@ export function AugmentedTable({
         >
           <TableHead>
             <TableRow>
+              {collapsable && <TableCell />}
               {columns.map(column => (
                 <TableCell
                   key={column.name}
                   align={column.align || "left"}
-                  style={{ minWidth: column.minWidth || "unset" }}
+                  style={{
+                    minWidth: column.minWidth,
+                    maxWidth: column.maxWidth
+                  }}
                 >
                   {column.sortable ? (
                     <TableSortLabel
@@ -298,76 +481,21 @@ export function AugmentedTable({
               const onFocus =
                 (isAddingRow && index === 0) || editingRowId === entry.id;
               return (
-                <TableRow key={entry.id} hover>
-                  {columns.map(column => {
-                    const CellInnerComponent = column.overflowTooltip
-                      ? TextWithOverflowTooltip
-                      : React.Fragment;
-                    if (
-                      onFocus &&
-                      ((isAddingRow && column.create) ||
-                        (!isAddingRow && column.edit))
-                    ) {
-                      return (
-                        <TableCell
-                          key={column.name}
-                          align={column.align || "left"}
-                          style={{ minWidth: column.minWidth || "unset" }}
-                        >
-                          {column.boolean ? (
-                            <Checkbox
-                              checked={editingValues[column.name] || false}
-                              color="primary"
-                              onChange={e =>
-                                setEditingValues(values => ({
-                                  ...values,
-                                  [column.name]: e.target.checked
-                                }))
-                              }
-                            />
-                          ) : (
-                            <TextField
-                              fullWidth
-                              variant="outlined"
-                              margin="dense"
-                              label={column.label}
-                              value={editingValues[column.name] || ""}
-                              onChange={e => {
-                                const newValue = e.target.value;
-                                setEditingValues(values => ({
-                                  ...values,
-                                  [column.name]: newValue
-                                }));
-                              }}
-                            />
-                          )}
-                        </TableCell>
-                      );
-                    } else
-                      return (
-                        <TableCell
-                          key={column.name}
-                          align={column.align || "left"}
-                          style={{ minWidth: column.minWidth || "unset" }}
-                        >
-                          <CellInnerComponent>
-                            {column.boolean ? (
-                              <Checkbox
-                                checked={entry[column.name] || false}
-                                disabled
-                              />
-                            ) : column.format ? (
-                              column.format(entry[column.name], entry, onFocus)
-                            ) : entry[column.name] ? (
-                              entry[column.name]
-                            ) : null}
-                          </CellInnerComponent>
-                        </TableCell>
-                      );
-                  })}
-                  {shouldDisplayEditActionsColumn &&
-                    renderEditActions(entry, onFocus)}
-                </TableRow>
+                <Row
+                  key={entry.id || 0}
+                  columns={columns}
+                  entry={entry}
+                  onFocus={onFocus}
+                  isAddingRow={isAddingRow}
+                  editingValues={editingValues}
+                  setEditingValues={setEditingValues}
+                  shouldDisplayEditActionsColumn={
+                    shouldDisplayEditActionsColumn
+                  }
+                  renderEditActions={renderEditActions}
+                  collapsable={collapsable}
+                  rowClassName={classes.row}
+                />
               );
             })}
           </TableBody>
@@ -396,8 +524,13 @@ function VirtualizedTable({
   editingValues,
   setEditingValues,
   onScroll = () => {},
+  onRowClick,
+  selectedRowId,
   scrollTop = null,
-  autoHeight = false
+  autoHeight = false,
+  rowClassName,
+  onRowMouseOut,
+  onRowMouseOver
 }) {
   const minTableWidth =
     columns.reduce((acc, col) => {
@@ -413,9 +546,20 @@ function VirtualizedTable({
       rowCount={entries.length}
       rowGetter={({ index }) => entries[index]}
       rowHeight={rowHeight}
-      rowClassName={({ index }) => (index >= 0 ? classes.row : classes.header)}
+      rowClassName={({ index }) =>
+        index >= 0
+          ? `${classes.row} ${
+              selectedRowId && selectedRowId === entries[index].id
+                ? classes.selected
+                : ""
+            } ${rowClassName(index, entries[index])}`
+          : classes.header
+      }
       onScroll={onScroll}
       scrollTop={scrollTop}
+      onRowClick={onRowClick}
+      onRowMouseOut={onRowMouseOut}
+      onRowMouseOver={onRowMouseOver}
     >
       {columns.map(column => {
         return (
@@ -429,10 +573,19 @@ function VirtualizedTable({
               return rowData[dataKey];
             }}
             cellRenderer={({ rowData, cellData, rowIndex }) => {
+              console.log("C");
               const onFocus = isRowOnFocus(rowData, rowIndex);
               const CellInnerComponent = column.overflowTooltip
                 ? TextWithOverflowTooltip
                 : React.Fragment;
+              const cellInnerComponentProps = column.overflowTooltip
+                ? {
+                    text: column.formatTooltipContent
+                      ? column.formatTooltipContent(cellData, rowData)
+                      : null,
+                    alwaysShow: column.alwaysShowTooltip
+                  }
+                : {};
               if (
                 onFocus &&
                 ((isAddingRow && column.create) ||
@@ -471,7 +624,7 @@ function VirtualizedTable({
                 );
               } else
                 return (
-                  <CellInnerComponent>
+                  <CellInnerComponent {...cellInnerComponentProps}>
                     {column.boolean ? (
                       <Checkbox checked={cellData || false} disabled />
                     ) : column.format ? (
@@ -516,6 +669,7 @@ export function AugmentedVirtualizedTable({
   columns,
   entries,
   onRowEdit,
+  onRowClick = null,
   onRowAdd,
   onRowDelete,
   addButtonLabel,
@@ -532,7 +686,11 @@ export function AugmentedVirtualizedTable({
   columnDefaultBaseWidth = 200,
   columnDefaultMinWidth = 200,
   className = "",
-  attachScrollTo = null
+  attachScrollTo = null,
+  selectedRowId,
+  rowClassName = () => "",
+  onRowMouseOver = null,
+  onRowMouseOut = null
 }) {
   const [sortBy, setSortBy] = React.useState(defaultSortBy);
   const [sortType, setSortType] = React.useState(
@@ -542,7 +700,7 @@ export function AugmentedVirtualizedTable({
   const [editingRowId, setEditingRowId] = React.useState(null);
   const [editingValues, setEditingValues] = React.useState({});
 
-  const classes = useStyles({ dense });
+  const classes = useStyles({ dense, clickableRow: !!onRowClick });
 
   const handleSortTypeChange = column => () => {
     let newSortType = "desc";
@@ -760,6 +918,11 @@ export function AugmentedVirtualizedTable({
                       onScroll={onChildScroll}
                       scrollTop={scrollTop}
                       autoHeight={true}
+                      onRowClick={onRowClick}
+                      selectedRowId={selectedRowId}
+                      rowClassName={rowClassName}
+                      onRowMouseOut={onRowMouseOut}
+                      onRowMouseOver={onRowMouseOver}
                     />
                   </div>
                 )}
@@ -779,6 +942,7 @@ export function AugmentedVirtualizedTable({
                   minHeight={minHeight}
                   headerHeight={headerHeight}
                   rowHeight={rowHeight}
+                  onRowClick={onRowClick}
                   isAddingRow={isAddingRow}
                   isRowOnFocus={isRowOnFocus}
                   headerRenderer={_headerRenderer}
@@ -790,6 +954,10 @@ export function AugmentedVirtualizedTable({
                   renderEditActions={renderEditActions}
                   editingValues={editingValues}
                   setEditingValues={setEditingValues}
+                  selectedRowId={selectedRowId}
+                  rowClassName={rowClassName}
+                  onRowMouseOut={onRowMouseOut}
+                  onRowMouseOver={onRowMouseOver}
                 />
               );
             }}
