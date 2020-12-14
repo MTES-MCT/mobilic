@@ -1,6 +1,7 @@
 import React from "react";
 import orderBy from "lodash/orderBy";
 import isEqual from "lodash/isEqual";
+import sum from "lodash/sum";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
@@ -19,7 +20,13 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableContainer from "@material-ui/core/TableContainer";
 import Alert from "@material-ui/lab/Alert";
 import MaterialTable from "@material-ui/core/Table";
-import { Table, AutoSizer, Column, WindowScroller } from "react-virtualized";
+import {
+  Table,
+  AutoSizer,
+  Column,
+  WindowScroller,
+  defaultTableRowRenderer
+} from "react-virtualized";
 import "react-virtualized/styles.css";
 import { TextWithOverflowTooltip } from "./TextWithOverflowTooltip";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
@@ -57,6 +64,8 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1)
   },
   row: {
+    boxSizing: "border-box",
+    fontSize: ({ small }) => (small ? "0.75rem" : "inherit"),
     "& > *": {
       borderBottom: "unset"
     },
@@ -87,7 +96,8 @@ const useStyles = makeStyles(theme => ({
     borderTop: "1px solid #c9d3df",
     borderRadius: "2px",
     fontWeight: 700,
-    textTransform: "uppercase"
+    textTransform: "uppercase",
+    fontSize: ({ small }) => (small ? "0.75rem" : "inherit")
   },
   cell: {
     margin: "0 !important",
@@ -96,11 +106,33 @@ const useStyles = makeStyles(theme => ({
     paddingTop: ({ dense }) => (dense ? theme.spacing(0.5) : theme.spacing(2)),
     paddingBottom: ({ dense }) =>
       dense ? theme.spacing(0.5) : theme.spacing(2)
-  },
-  grid: {
-    borderBottom: "1px solid #c9d3df"
   }
 }));
+
+export function CellContent({ column, cellData, rowData, onFocus }) {
+  const CellInnerComponent = column.overflowTooltip
+    ? TextWithOverflowTooltip
+    : React.Fragment;
+  const cellInnerComponentProps = column.overflowTooltip
+    ? {
+        text: column.formatTooltipContent
+          ? column.formatTooltipContent(cellData, rowData)
+          : null,
+        alwaysShow: column.alwaysShowTooltip
+      }
+    : {};
+  return (
+    <CellInnerComponent {...cellInnerComponentProps}>
+      {column.boolean ? (
+        <Checkbox checked={cellData || false} disabled />
+      ) : column.format ? (
+        column.format(cellData, rowData, onFocus)
+      ) : cellData ? (
+        cellData
+      ) : null}
+    </CellInnerComponent>
+  );
+}
 
 class Row extends React.Component {
   constructor(props) {
@@ -125,7 +157,6 @@ class Row extends React.Component {
   }
 
   render() {
-    console.log("Rendering row");
     const {
       columns,
       entry,
@@ -171,9 +202,6 @@ class Row extends React.Component {
             </TableCell>
           )}
           {columns.map(column => {
-            const CellInnerComponent = column.overflowTooltip
-              ? TextWithOverflowTooltip
-              : React.Fragment;
             let cellStyle = {
               minWidth: column.minWidth,
               maxWidth: column.maxWidth
@@ -229,18 +257,12 @@ class Row extends React.Component {
                   align={column.align || "left"}
                   style={cellStyle}
                 >
-                  <CellInnerComponent>
-                    {column.boolean ? (
-                      <Checkbox
-                        checked={entry[column.name] || false}
-                        disabled
-                      />
-                    ) : column.format ? (
-                      column.format(entry[column.name], entry, onFocus)
-                    ) : entry[column.name] ? (
-                      entry[column.name]
-                    ) : null}
-                  </CellInnerComponent>
+                  <CellContent
+                    cellData={entry[column.name]}
+                    rowData={entry}
+                    onFocus={onFocus}
+                    column={column}
+                  />
                 </TableCell>
               );
           })}
@@ -529,8 +551,8 @@ function VirtualizedTable({
   scrollTop = null,
   autoHeight = false,
   rowClassName,
-  onRowMouseOut,
-  onRowMouseOver
+  rowRenderer = null,
+  headerClassName
 }) {
   const minTableWidth =
     columns.reduce((acc, col) => {
@@ -545,7 +567,14 @@ function VirtualizedTable({
       headerHeight={headerHeight}
       rowCount={entries.length}
       rowGetter={({ index }) => entries[index]}
-      rowHeight={rowHeight}
+      rowRenderer={props =>
+        rowRenderer ? rowRenderer(props) : defaultTableRowRenderer(props)
+      }
+      rowHeight={
+        typeof rowHeight === "number"
+          ? rowHeight
+          : ({ index }) => rowHeight(index, entries[index])
+      }
       rowClassName={({ index }) =>
         index >= 0
           ? `${classes.row} ${
@@ -553,13 +582,11 @@ function VirtualizedTable({
                 ? classes.selected
                 : ""
             } ${rowClassName(index, entries[index])}`
-          : classes.header
+          : `${classes.header} ${headerClassName ? headerClassName : ""}`
       }
       onScroll={onScroll}
       scrollTop={scrollTop}
       onRowClick={onRowClick}
-      onRowMouseOut={onRowMouseOut}
-      onRowMouseOver={onRowMouseOver}
     >
       {columns.map(column => {
         return (
@@ -573,19 +600,7 @@ function VirtualizedTable({
               return rowData[dataKey];
             }}
             cellRenderer={({ rowData, cellData, rowIndex }) => {
-              console.log("C");
               const onFocus = isRowOnFocus(rowData, rowIndex);
-              const CellInnerComponent = column.overflowTooltip
-                ? TextWithOverflowTooltip
-                : React.Fragment;
-              const cellInnerComponentProps = column.overflowTooltip
-                ? {
-                    text: column.formatTooltipContent
-                      ? column.formatTooltipContent(cellData, rowData)
-                      : null,
-                    alwaysShow: column.alwaysShowTooltip
-                  }
-                : {};
               if (
                 onFocus &&
                 ((isAddingRow && column.create) ||
@@ -624,15 +639,12 @@ function VirtualizedTable({
                 );
               } else
                 return (
-                  <CellInnerComponent {...cellInnerComponentProps}>
-                    {column.boolean ? (
-                      <Checkbox checked={cellData || false} disabled />
-                    ) : column.format ? (
-                      column.format(cellData, rowData, onFocus)
-                    ) : cellData ? (
-                      cellData
-                    ) : null}
-                  </CellInnerComponent>
+                  <CellContent
+                    cellData={cellData}
+                    rowData={rowData}
+                    onFocus={onFocus}
+                    column={column}
+                  />
                 );
             }}
             style={{ textAlign: column.align }}
@@ -689,8 +701,9 @@ export function AugmentedVirtualizedTable({
   attachScrollTo = null,
   selectedRowId,
   rowClassName = () => "",
-  onRowMouseOver = null,
-  onRowMouseOut = null
+  rowRenderer = null,
+  headerClassName,
+  small
 }) {
   const [sortBy, setSortBy] = React.useState(defaultSortBy);
   const [sortType, setSortType] = React.useState(
@@ -700,7 +713,7 @@ export function AugmentedVirtualizedTable({
   const [editingRowId, setEditingRowId] = React.useState(null);
   const [editingValues, setEditingValues] = React.useState({});
 
-  const classes = useStyles({ dense, clickableRow: !!onRowClick });
+  const classes = useStyles({ dense, clickableRow: !!onRowClick, small });
 
   const handleSortTypeChange = column => () => {
     let newSortType = "desc";
@@ -875,12 +888,20 @@ export function AugmentedVirtualizedTable({
       )}
       <TableContainer
         style={{
-          height: Math.max(
-            displayedEntries.length * rowHeight + headerHeight,
-            minHeight
-          ),
+          height:
+            Math.max(
+              (typeof rowHeight === "number"
+                ? displayedEntries.length * rowHeight
+                : sum(
+                    displayedEntries.map((entry, index) =>
+                      rowHeight(index, entry)
+                    )
+                  )) + headerHeight,
+              minHeight
+            ) + 2,
           maxHeight,
-          overflowY: "hidden"
+          overflowY: "hidden",
+          marginBottom: 1
         }}
       >
         {attachScrollTo ? (
@@ -900,7 +921,7 @@ export function AugmentedVirtualizedTable({
                       entries={displayedEntries}
                       classes={classes}
                       width={width}
-                      height={height}
+                      height={height - 2}
                       minHeight={minHeight}
                       headerHeight={headerHeight}
                       rowHeight={rowHeight}
@@ -921,8 +942,8 @@ export function AugmentedVirtualizedTable({
                       onRowClick={onRowClick}
                       selectedRowId={selectedRowId}
                       rowClassName={rowClassName}
-                      onRowMouseOut={onRowMouseOut}
-                      onRowMouseOver={onRowMouseOver}
+                      rowRenderer={rowRenderer}
+                      headerClassName={headerClassName}
                     />
                   </div>
                 )}
@@ -938,7 +959,7 @@ export function AugmentedVirtualizedTable({
                   entries={displayedEntries}
                   classes={classes}
                   width={width}
-                  height={height}
+                  height={height - 2}
                   minHeight={minHeight}
                   headerHeight={headerHeight}
                   rowHeight={rowHeight}
@@ -956,8 +977,8 @@ export function AugmentedVirtualizedTable({
                   setEditingValues={setEditingValues}
                   selectedRowId={selectedRowId}
                   rowClassName={rowClassName}
-                  onRowMouseOut={onRowMouseOut}
-                  onRowMouseOver={onRowMouseOver}
+                  rowRenderer={rowRenderer}
+                  headerClassName={headerClassName}
                 />
               );
             }}

@@ -128,7 +128,11 @@ export function getStartOfDay(unixTimestamp) {
 
 export class FrLocalizedUtils extends DateFnsUtils {
   getDatePickerHeaderText(date) {
-    return format(date, "d MMMM yyyy", { locale: this.locale });
+    return format(date, "d MMM", { locale: this.locale });
+  }
+
+  getDateTimePickerHeaderText(date) {
+    return format(date, "d MMM", { locale: this.locale });
   }
 }
 

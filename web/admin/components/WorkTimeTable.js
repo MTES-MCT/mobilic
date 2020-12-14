@@ -9,8 +9,18 @@ import {
 import { formatPersonName } from "common/utils/coworkers";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import { AugmentedVirtualizedTable } from "./AugmentedTable";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+
+const useStyles = makeStyles(theme => ({
+  warningText: {
+    color: theme.palette.warning.main,
+    fontWeight: "bold"
+  }
+}));
 
 export function WorkTimeTable({ period, workTimeEntries, className }) {
+  const classes = useStyles();
+
   let periodLabel, periodFormatter;
   if (period === "day") {
     periodLabel = "Date";
@@ -48,7 +58,12 @@ export function WorkTimeTable({ period, workTimeEntries, className }) {
   const endTimeCol = {
     label: "Fin",
     name: "endTime",
-    format: formatTimeOfDay,
+    format: time =>
+      time ? (
+        formatTimeOfDay(time)
+      ) : (
+        <span className={classes.warningText}>En cours</span>
+      ),
     align: "left",
     minWidth: 80
   };

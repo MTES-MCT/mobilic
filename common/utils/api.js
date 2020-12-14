@@ -162,7 +162,12 @@ export const USER_QUERY = gql`
 `;
 
 export const ADMIN_COMPANIES_QUERY = gql`
-  query adminCompanies($id: Int!, $activityAfter: Date, $workDaysLimit: Int) {
+  query adminCompanies(
+    $id: Int!
+    $activityAfter: Date
+    $workDaysLimit: Int
+    $nonValidatedMissionsAfter: Date
+  ) {
     user(id: $id) {
       adminedCompanies {
         id
@@ -184,6 +189,34 @@ export const ADMIN_COMPANIES_QUERY = gql`
           serviceDuration
           totalWorkDuration
           activityDurations
+        }
+        missions(
+          fromTime: $nonValidatedMissionsAfter
+          onlyNonValidatedMissions: true
+        ) {
+          id
+          name
+          validations {
+            submitterId
+            receptionTime
+          }
+          context
+          expenditures {
+            id
+            type
+            userId
+          }
+          activities {
+            id
+            type
+            startTime
+            endTime
+            user {
+              id
+              firstName
+              lastName
+            }
+          }
         }
         vehicles {
           id

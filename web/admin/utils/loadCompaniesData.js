@@ -7,7 +7,10 @@ export async function loadCompaniesData(api, userId) {
     activityAfter: new Date(Date.now() - DAY * 1000 * 150)
       .toISOString()
       .slice(0, 10),
-    workDaysLimit: 10000
+    workDaysLimit: 10000,
+    nonValidatedMissionsAfter: new Date(Date.now() - DAY * 1000 * 60)
+      .toISOString()
+      .slice(0, 10)
   });
   return companyResponse.data.user.adminedCompanies;
 }

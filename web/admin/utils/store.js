@@ -12,6 +12,7 @@ export function AdminStoreProvider({ children }) {
   const [vehicles, setVehicles] = React.useState([]);
   const [employments, setEmployments] = React.useState([]);
   const [companies, setCompanies] = React.useState([]);
+  const [missions, setMissions] = React.useState([]);
 
   const sync = companiesPayload => {
     const primaryCompany = store.companies().find(c => c.isPrimary);
@@ -52,6 +53,13 @@ export function AdminStoreProvider({ children }) {
         )
       )
     );
+    setMissions(
+      flatMap(
+        companiesPayload.map(c =>
+          c.missions.map(m => ({ ...m, companyId: c.id }))
+        )
+      )
+    );
   };
 
   return (
@@ -67,6 +75,8 @@ export function AdminStoreProvider({ children }) {
         setVehicles,
         employments,
         setEmployments,
+        missions,
+        setMissions,
         sync
       }}
     >

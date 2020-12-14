@@ -74,7 +74,7 @@ export function ActivityPanel() {
         u => u.id
       )
     );
-  }, [companies]);
+  }, [companies, adminStore.users]);
 
   let selectedUsers = users.filter(u => u.selected);
   if (selectedUsers.length === 0) selectedUsers = users;
@@ -87,10 +87,7 @@ export function ActivityPanel() {
 
   // TODO : memoize this
   const periodAggregates = aggregateWorkDayPeriods(selectedWorkDays, period);
-
   const ref = React.useRef(null);
-
-  console.log(ref.current);
 
   const classes = useStyles();
   return [

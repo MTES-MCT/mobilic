@@ -3,7 +3,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Box from "@material-ui/core/Box";
 
 // Taken from https://stackoverflow.com/questions/56588625/react-show-material-ui-tooltip-only-for-text-that-has-ellipsis
-export function TextWithOverflowTooltip({ children }) {
+export function TextWithOverflowTooltip({ text, children, alwaysShow }) {
   // Create Ref
   const textElementRef = useRef();
 
@@ -31,7 +31,11 @@ export function TextWithOverflowTooltip({ children }) {
   const [hoverStatus, setHover] = useState(false);
 
   return (
-    <Tooltip title={children} interactive disableHoverListener={!hoverStatus}>
+    <Tooltip
+      title={text || children}
+      interactive
+      disableHoverListener={!alwaysShow && !hoverStatus}
+    >
       <Box
         ref={textElementRef}
         style={{

@@ -1,9 +1,9 @@
-import { formatDateTime, isoFormatDateTime } from "common/utils/time";
-import TextField from "@material-ui/core/TextField";
+import { formatDateTime } from "common/utils/time";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import React from "react";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import IconButton from "@material-ui/core/IconButton";
+import { DateTimePicker as MaterialPicker } from "@material-ui/pickers";
 
 export function DateTimePicker({
   label,
@@ -16,7 +16,9 @@ export function DateTimePicker({
   required,
   disabled,
   noValidate,
-  clearable = false
+  clearable = false,
+  format = "dd/MM/yyyy HH:mm",
+  ...props
 }) {
   const validatesTime = () => {
     if (!noValidate) {
@@ -31,30 +33,26 @@ export function DateTimePicker({
 
   React.useEffect(validatesTime, [time, minTime, maxTime]);
 
-  const handleChange = e => {
-    const dayVsTime = e.target.value.split("T");
-    const dayElements = dayVsTime[0].split("-");
-    const timeElements = dayVsTime[1].split(":");
-    const newRevisedEventTime = new Date(time * 1000);
-    newRevisedEventTime.setFullYear(parseInt(dayElements[0]));
-    newRevisedEventTime.setMonth(parseInt(dayElements[1]) - 1);
-    newRevisedEventTime.setDate(parseInt(dayElements[2]));
-    newRevisedEventTime.setHours(parseInt(timeElements[0]));
-    newRevisedEventTime.setMinutes(parseInt(timeElements[1]));
-    setTime((newRevisedEventTime.getTime() / 1000) >> 0);
+  const handleChange = dt => {
+    if (dt) setTime(dt.getTime() / 1000);
+    else setTime(null);
   };
 
   return (
-    <TextField
+    <MaterialPicker
       label={label}
-      type="datetime-local"
       required={required || false}
       disabled={disabled || false}
       fullWidth
-      value={time ? isoFormatDateTime(time) : ""}
+      autoOk={true}
+      value={time ? new Date(time * 1000) : null}
       inputProps={{
         step: 60
       }}
+      openTo="minutes"
+      ampm={false}
+      views={["date", "month", "hours", "minutes"]}
+      format={format}
       onChange={handleChange}
       error={!!error}
       helperText={error}
@@ -75,6 +73,7 @@ export function DateTimePicker({
             }
           : {}
       }
+      {...props}
     />
   );
 }

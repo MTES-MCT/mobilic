@@ -2,6 +2,18 @@
   flex: 0 0 auto;
 }
 
+.ReactVirtualized__Grid__innerScrollContainer {
+  border-bottom: 1px solid #c9d3df;
+}
+
+.ReactVirtualized__Grid__innerScrollContainer:focus {
+  outline: none;
+}
+
+.ReactVirtualized__Grid:focus {
+  outline: none;
+}
+
 .table {
   border: 1px solid #c9d3df;
   border-left: 0;
