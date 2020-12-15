@@ -255,7 +255,7 @@ export function MissionDetails({ mission, handleClose, width }) {
         activityIdToEdit === entry.id ? (
           <DateTimePicker
             disableFuture
-            label="Début"
+            label="Fin"
             time={editedValues.endTime}
             setTime={t => setEditedValues({ ...editedValues, endTime: t })}
             error={errors.endTime}
@@ -322,7 +322,8 @@ export function MissionDetails({ mission, handleClose, width }) {
                   {formatPersonName(userStats.user)}
                 </Typography>
                 <Typography className={classes.validationTime}>
-                  ✅ validé le {formatDay(getTime(userStats.validation))}
+                  <span style={{ fontStyle: "normal" }}>✅</span> validé le{" "}
+                  {formatDay(getTime(userStats.validation))}
                 </Typography>
               </Box>
               {userStats.activities.map(activity => {

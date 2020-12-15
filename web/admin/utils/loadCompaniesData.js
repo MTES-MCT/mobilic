@@ -8,7 +8,7 @@ export async function loadCompaniesData(api, userId) {
       .toISOString()
       .slice(0, 10),
     workDaysLimit: 10000,
-    nonValidatedMissionsAfter: new Date(Date.now() - DAY * 1000 * 60)
+    nonValidatedMissionsAfter: new Date(Date.now() - DAY * 1000 * 61)
       .toISOString()
       .slice(0, 10)
   });
