@@ -353,7 +353,7 @@ function _ValidationPanel({ containerRef, width }) {
         PaperProps={{
           className: classes.missionModal,
           style: {
-            minWidth: isWidthUp("xs", width) ? 600 : "100vw",
+            minWidth: isWidthUp("sm", width) ? 600 : "100vw",
             maxWidth: isWidthUp("md", width) ? 550 : "100vw"
           }
         }}
