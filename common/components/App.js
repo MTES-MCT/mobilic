@@ -83,6 +83,7 @@ function App({ ScreenComponent, loadUser }) {
         editExpenditures={actions.editExpendituresForTeam}
         editActivityEvent={actions.editActivityEvent}
         currentMission={currentMission}
+        validateMission={actions.validateMission}
       />
     </>
   );

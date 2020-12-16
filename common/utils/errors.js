@@ -102,8 +102,22 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         )} à ${formatTimeOfDay(
           getTime(graphQLError.extensions.conflictingMission)
         )}`;
-      case "ACTIVITY_SEQUENCE_ERROR":
-        return "Opération impossible avec les autres activités de la mission.";
+      case "OVERLAPPING_ACTIVITIES":
+        return `L'activité est en chevauchement avec d'autres activités`;
+      case "MISSION_ALREADY_ENDED":
+        return `La mission a déjà été terminée${
+          graphQLError.extensions.missionEnd
+            ? ` le ${formatDay(
+                graphQLError.extensions.missionEnd.endTime
+              )} à ${formatTimeOfDay(
+                graphQLError.extensions.missionEnd.endTime
+              )} par ${formatPersonName(
+                graphQLError.extensions.missionEnd.submitter
+              )}.`
+            : "."
+        }`;
+      case "MISSION_ALREADY_VALIDATED_BY_ADMIN":
+        return `La mission n'est plus modifiable, elle a été validée par le gestionnaire.`;
       case "INVALID_RESOURCE":
         return "Opération impossible sur cette ressource.";
       case "DUPLICATE_EXPENDITURES":

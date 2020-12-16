@@ -45,12 +45,18 @@ export function WorkTimeSummaryKpi({ label, value, subText, hideSubText }) {
 
 export function WorkTimeSummaryAdditionalInfo({
   children,
-  disableTopMargin = false
+  disableTopMargin = false,
+  disablePadding = false
 }) {
   const classes = useStyles(disableTopMargin);
   return (
     <Card className={classes.additionalInfo}>
-      <Box px={2} py={1} mx={"auto"} style={{ textAlign: "left" }}>
+      <Box
+        px={disablePadding ? 0 : 2}
+        py={disablePadding ? 0 : 1}
+        mx={"auto"}
+        style={{ textAlign: "left" }}
+      >
         {React.Children.map(children, (child, index) => [
           child,
           index < React.Children.count(children) - 1 ? (

@@ -714,15 +714,22 @@ export function ActionsContextProvider({ children }) {
   });
 
   const validateMission = async mission => {
-    const update = { ended: true, validated: true };
+    const userId = store.userId();
+    const validation = {
+      receptionTime: Date.now(),
+      submitterId: userId,
+      userId: userId
+    };
+    const update = { ended: true, validation };
 
     const updateStore = (store, requestId) => {
       store.updateEntityObject(mission.id, "missions", update, requestId);
+      return { validation };
     };
 
     await submitAction(
       VALIDATE_MISSION_MUTATION,
-      { missionId: mission.id },
+      { missionId: mission.id, userId: store.userId() },
       updateStore,
       ["missions"],
       "validateMission"
@@ -730,10 +737,10 @@ export function ActionsContextProvider({ children }) {
   };
 
   api.registerResponseHandler("validateMission", {
-    onSuccess: async apiResponse => {
+    onSuccess: async (apiResponse, { validation }) => {
       const mission = apiResponse.data.activities.validateMission.mission;
       await store.syncEntity(
-        [{ ...mission, ended: true, validated: true }],
+        [{ ...mission, ended: true, validation }],
         "missions",
         m => m.id === mission.id
       );

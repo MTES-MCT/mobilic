@@ -45,7 +45,8 @@ const tabs = {
       editActivityEvent,
       createActivity,
       editExpenditures,
-      currentMission
+      currentMission,
+      validateMission
     }) => {
       const mission = missionsInPeriod[0];
       const missionEnd =
@@ -65,15 +66,22 @@ const tabs = {
               check={checkDayRestRespect(missionEnd, followingPeriodStart)}
             />
           </WorkTimeSummaryAdditionalInfo>
-          <WorkTimeSummaryAdditionalInfo>
+          <WorkTimeSummaryAdditionalInfo disablePadding>
             <MissionDetails
+              inverseColors
               mission={mission}
-              editActivityEvent={editActivityEvent}
-              createActivity={createActivity}
-              editExpenditures={editExpenditures}
+              editActivityEvent={
+                mission.adminValidation ? null : editActivityEvent
+              }
+              createActivity={mission.adminValidation ? null : createActivity}
+              editExpenditures={
+                mission.adminValidation ? null : editExpenditures
+              }
               nullableEndTimeInEditActivity={
                 currentMission ? mission.id === currentMission.id : true
               }
+              validateMission={validateMission}
+              validationButtonName="Valider"
             />
           </WorkTimeSummaryAdditionalInfo>
         </div>
@@ -151,7 +159,8 @@ export function HistoryModal({
   currentMission,
   editActivityEvent,
   createActivity,
-  editExpenditures
+  editExpenditures,
+  validateMission
 }) {
   const [currentTab, setCurrentTab] = React.useState("mission");
 
@@ -237,7 +246,8 @@ export function HistoryModal({
               editActivityEvent,
               createActivity,
               editExpenditures,
-              currentMission
+              currentMission,
+              validateMission
             })}
         </Container>
       </Container>

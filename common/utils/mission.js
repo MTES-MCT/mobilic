@@ -8,9 +8,16 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
   return {
     id: missionPayload.id,
     name: missionPayload.name,
-    validated: missionPayload.validations
-      ? missionPayload.validations.some(v => v.submitterId === userId)
-      : false,
+    validation: missionPayload.validations
+      ? missionPayload.validations.find(v => v.submitterId === userId)
+      : null,
+    adminValidation: missionPayload.validations
+      ? missionPayload.validations.find(
+          v =>
+            v.isAdmin &&
+            (!v.userId || (v.userId === userId && v.submitterId !== userId))
+        )
+      : null,
     context: missionPayload.context,
     ended: missionPayload.ended !== undefined ? missionPayload.ended : true
   };

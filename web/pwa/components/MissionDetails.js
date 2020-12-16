@@ -24,11 +24,20 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { getVehicleName } from "common/utils/vehicles";
 import { PersonIcon } from "common/utils/icons";
-import { now } from "common/utils/time";
+import { formatDay, now } from "common/utils/time";
+import { MainCtaButton } from "./MainCtaButton";
+import * as Sentry from "@sentry/browser";
+import Typography from "@material-ui/core/Typography";
+import { formatApiError } from "common/utils/errors";
+import CheckIcon from "@material-ui/icons/Check";
+import ScheduleIcon from "@material-ui/icons/Schedule";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
     backgroundColor: theme.palette.background.paper
+  },
+  backgroundNormal: {
+    backgroundColor: theme.palette.background.default
   },
   expenditures: {
     flexWrap: "wrap",
@@ -37,14 +46,27 @@ const useStyles = makeStyles(theme => ({
     "& > *": {
       margin: theme.spacing(0.5)
     }
+  },
+  validationText: {
+    paddingLeft: theme.spacing(1)
+  },
+  validationContainer: {
+    display: "flex",
+    alignItems: "center"
   }
 }));
 
-function AlternateColors({ children }) {
+function AlternateColors({ children, inverseColors = false }) {
   const classes = useStyles();
+  const firstColor = inverseColors
+    ? classes.backgroundPaper
+    : classes.backgroundNormal;
+  const secondColor = inverseColors
+    ? classes.backgroundNormal
+    : classes.backgroundPaper;
   return React.Children.map(children, (child, index) => (
     <Box
-      className={index % 2 === 1 ? classes.backgroundPaper : ""}
+      className={index % 2 === 1 ? secondColor : firstColor}
       mb={index === React.Children.count(children) - 1 ? 2 : 0}
     >
       {child}
@@ -61,12 +83,18 @@ export function MissionDetails({
   nextMissionStart,
   hideExpenditures,
   createActivity,
-  changeTeam
+  changeTeam,
+  hideValidations,
+  validateMission,
+  validationButtonName = "Valider et Envoyer",
+  inverseColors = false
 }) {
   const classes = useStyles();
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
   const userId = store.userId();
+
+  const [submissionError, setSubmissionError] = React.useState(null);
 
   const coworkers = store.getEntity("coworkers");
 
@@ -78,7 +106,7 @@ export function MissionDetails({
   const isTeamMode = Object.keys(teamMatesLatestStatuses).length > 0;
 
   return (
-    <AlternateColors>
+    <AlternateColors inverseColors={inverseColors}>
       <MissionReviewSection
         title="Activités"
         editButtonLabel="Ajouter"
@@ -197,6 +225,66 @@ export function MissionDetails({
                 <Chip key={exp.type} label={EXPENDITURES[exp.type].label} />
               ))}
           </Box>
+        </MissionReviewSection>
+      )}
+      {!hideValidations && (
+        <MissionReviewSection title="">
+          {!mission.adminValidation && !mission.validation && (
+            <Box
+              style={{ textAlign: "center" }}
+              pt={2}
+              pb={submissionError ? 0 : 2}
+            >
+              <MainCtaButton
+                style={{ textAlign: "center" }}
+                onClick={async () => {
+                  try {
+                    await validateMission(mission);
+                  } catch (err) {
+                    Sentry.captureException(err);
+                    console.log(err);
+                    setSubmissionError(err);
+                  }
+                }}
+              >
+                {validationButtonName}
+              </MainCtaButton>
+              {submissionError && (
+                <Typography color="error">
+                  {formatApiError(submissionError)}
+                </Typography>
+              )}
+            </Box>
+          )}
+          {mission.validation && (
+            <>
+              <Box color="success.main" className={classes.validationContainer}>
+                <CheckIcon fontSize="small" color="inherit" />
+                <Typography className={classes.validationText}>
+                  validée le {formatDay(mission.validation.receptionTime)}
+                </Typography>
+              </Box>
+              <Box
+                color={
+                  mission.adminValidation ? "success.main" : "warning.main"
+                }
+                className={classes.validationContainer}
+              >
+                {mission.adminValidation ? (
+                  <CheckIcon fontSize="small" color="inherit" />
+                ) : (
+                  <ScheduleIcon fontSize="small" color="inherit" />
+                )}
+                <Typography className={classes.validationText}>
+                  {mission.adminValidation
+                    ? `validée par le gestionnaire le ${formatDay(
+                        mission.adminValidation.receptionTime
+                      )}`
+                    : "en attente de validation gestionnaire"}
+                </Typography>
+              </Box>
+            </>
+          )}
         </MissionReviewSection>
       )}
     </AlternateColors>

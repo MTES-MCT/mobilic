@@ -16,13 +16,15 @@ import Divider from "@material-ui/core/Divider";
 import { AugmentedVirtualizedTable, CellContent } from "./AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
 import { getTime } from "common/utils/events";
-import { ACTIVITIES } from "common/utils/activities";
+import { ACTIVITIES, TIMEABLE_ACTIVITIES } from "common/utils/activities";
 import CheckIcon from "@material-ui/icons/Check";
 import EditIcon from "@material-ui/icons/Edit";
+import AddIcon from "@material-ui/icons/Add";
 import { DateTimePicker } from "../../pwa/components/DateTimePicker";
 import {
   CANCEL_ACTIVITY_MUTATION,
   EDIT_ACTIVITY_MUTATION,
+  LOG_ACTIVITY_MUTATION,
   useApi,
   VALIDATE_MISSION_MUTATION
 } from "common/utils/api";
@@ -30,6 +32,8 @@ import { useAdminStore } from "../utils/store";
 import { LoadingButton } from "common/components/LoadingButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { useModals } from "common/utils/modals";
+import MenuItem from "@material-ui/core/MenuItem";
+import TextField from "@material-ui/core/TextField/TextField";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {
@@ -106,6 +110,10 @@ export function MissionDetails({ mission, handleClose, width }) {
   const modals = useModals();
 
   const [activityIdToEdit, setActivityIdToEdit] = React.useState(null);
+  const [
+    creatingActivityForUserId,
+    setCreatingActivityForUserId
+  ] = React.useState(null);
   const [editedValues, setEditedValues] = React.useState({});
 
   const [errors, setErrors] = React.useState({});
@@ -126,6 +134,37 @@ export function MissionDetails({ mission, handleClose, width }) {
     await api.graphQlMutate(CANCEL_ACTIVITY_MUTATION, {
       activityId: activity.id
     });
+  }
+
+  async function onCreateActivity(user, newValues) {
+    const apiResponse = await api.graphQlMutate(LOG_ACTIVITY_MUTATION, {
+      ...newValues,
+      missionId: mission.id,
+      userId: user.id,
+      switch: false
+    });
+    const activity = apiResponse.data.activities.logActivity;
+    mission.userStats = mapValues(mission.userStats, us => ({
+      ...us,
+      activities:
+        us.user.id === user.id
+          ? [
+              ...us.activities,
+              {
+                ...activity,
+                user
+              }
+            ].sort((a1, a2) => a1.startTime - a2.startTime)
+          : us.activities
+    }));
+    adminStore.setMissions(missions =>
+      missions.map(m => ({
+        ...m,
+        activities: [...m.activities, { ...activity, user }].sort(
+          (a1, a2) => a1.startTime - a2.startTime
+        )
+      }))
+    );
   }
 
   async function onEditActivity(activity, newValues) {
@@ -166,21 +205,30 @@ export function MissionDetails({ mission, handleClose, width }) {
       label: "",
       name: "id",
       format: (id, entry) =>
-        activityIdToEdit === id ? (
+        activityIdToEdit === id ||
+        (!id && creatingActivityForUserId === entry.user.id) ? (
           <>
             <IconButton
               className="no-margin-no-padding"
               disabled={!!errors.startTime || !!errors.endTime}
               onClick={() => {
-                onEditActivity(entry, { ...editedValues });
+                activityIdToEdit
+                  ? onEditActivity(entry, { ...editedValues })
+                  : onCreateActivity(entry.user, { ...editedValues });
                 setActivityIdToEdit(null);
+                setCreatingActivityForUserId({});
+                setEditedValues({});
               }}
             >
               <CheckIcon fontSize="small" className={classes.saveIcon} />
             </IconButton>
             <IconButton
               className="no-margin-no-padding"
-              onClick={() => setActivityIdToEdit(null)}
+              onClick={() => {
+                setEditedValues(null);
+                setActivityIdToEdit(null);
+                setCreatingActivityForUserId(null);
+              }}
             >
               <CloseIcon fontSize="small" color="error" />
             </IconButton>
@@ -223,7 +271,27 @@ export function MissionDetails({ mission, handleClose, width }) {
     {
       label: "Activité",
       name: "type",
-      format: type => ACTIVITIES[type].label,
+      format: (type, entry) =>
+        !entry.id && creatingActivityForUserId === entry.user.id ? (
+          <TextField
+            label="Activité"
+            required
+            fullWidth
+            select
+            value={editedValues.type}
+            onChange={e =>
+              setEditedValues({ ...editedValues, type: e.target.value })
+            }
+          >
+            {Object.keys(TIMEABLE_ACTIVITIES).map(activityName => (
+              <MenuItem key={activityName} value={activityName}>
+                {TIMEABLE_ACTIVITIES[activityName].label}
+              </MenuItem>
+            ))}
+          </TextField>
+        ) : (
+          ACTIVITIES[type].label
+        ),
       maxWidth: 185,
       minWidth: 150
     },
@@ -231,7 +299,8 @@ export function MissionDetails({ mission, handleClose, width }) {
       label: "Début",
       name: "startTime",
       format: (time, entry) =>
-        activityIdToEdit === entry.id ? (
+        activityIdToEdit === entry.id ||
+        (!entry.id && creatingActivityForUserId === entry.user.id) ? (
           <DateTimePicker
             label="Début"
             disableFuture
@@ -252,11 +321,13 @@ export function MissionDetails({ mission, handleClose, width }) {
       label: "Fin",
       name: "endTime",
       format: (time, entry) =>
-        activityIdToEdit === entry.id ? (
+        activityIdToEdit === entry.id ||
+        (!entry.id && creatingActivityForUserId === entry.user.id) ? (
           <DateTimePicker
             disableFuture
             label="Fin"
             time={editedValues.endTime}
+            minTime={editedValues.startTime - 1}
             setTime={t => setEditedValues({ ...editedValues, endTime: t })}
             error={errors.endTime}
             setError={e => setErrors({ ...errors, endTime: e })}
@@ -277,6 +348,12 @@ export function MissionDetails({ mission, handleClose, width }) {
       minWidth: 60
     }
   ];
+
+  const entries = values(mission.userStats).map(stats =>
+    creatingActivityForUserId === stats.user.id
+      ? { ...stats, activities: [{ user: stats.user }, ...stats.activities] }
+      : stats
+  );
 
   return [
     <Box
@@ -303,7 +380,7 @@ export function MissionDetails({ mission, handleClose, width }) {
         headerHeight={30}
         headerClassName={classes.header}
         columns={perUserColumns}
-        entries={values(mission.userStats)}
+        entries={entries}
         editable={false}
         rowHeight={(index, userStats) =>
           30 + 50 * Object.keys(userStats.activities).length
@@ -326,6 +403,19 @@ export function MissionDetails({ mission, handleClose, width }) {
                   {formatDay(getTime(userStats.validation))}
                 </Typography>
               </Box>
+              <IconButton
+                color="primary"
+                variant="contained"
+                onClick={() => {
+                  setCreatingActivityForUserId(userStats.user.id);
+                  setEditedValues({
+                    startTime: mission.endTime,
+                    endTime: mission.endTime
+                  });
+                }}
+              >
+                <AddIcon />
+              </IconButton>
               {userStats.activities.map(activity => {
                 return (
                   <Box key={activity.id} className={classes.activityRow}>

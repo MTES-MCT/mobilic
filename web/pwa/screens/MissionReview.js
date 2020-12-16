@@ -4,8 +4,6 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
-import { MainCtaButton } from "../components/MainCtaButton";
-import { formatApiError } from "common/utils/errors";
 import {
   computeMissionKpis,
   WorkTimeSummaryKpiGrid
@@ -13,7 +11,6 @@ import {
 import { AccountButton } from "../components/AccountButton";
 import { prettyFormatDay } from "common/utils/time";
 import { MissionDetails } from "../components/MissionDetails";
-import * as Sentry from "@sentry/browser";
 
 const useStyles = makeStyles(theme => ({
   overviewTimersContainer: {
@@ -36,8 +33,6 @@ export function MissionReview({
   editExpendituresForTeam,
   previousMissionEnd
 }) {
-  const [submissionError, setSubmissionError] = React.useState(null);
-
   const missionMetrics = computeMissionKpis(currentMission);
 
   const classes = useStyles();
@@ -65,33 +60,8 @@ export function MissionReview({
         createActivity={args =>
           pushNewTeamActivityEvent({ ...args, switchMode: false })
         }
+        validateMission={validateMission}
       />
-      {validateMission && (
-        <Box
-          pt={4}
-          className={`cta-container unshrinkable ${classes.backgroundPaper}`}
-          pb={submissionError ? 2 : 4}
-        >
-          <MainCtaButton
-            onClick={async () => {
-              try {
-                await validateMission(currentMission);
-              } catch (err) {
-                Sentry.captureException(err);
-                console.log(err);
-                setSubmissionError(err);
-              }
-            }}
-          >
-            Valider et envoyer
-          </MainCtaButton>
-          {submissionError && (
-            <Typography color="error">
-              {formatApiError(submissionError)}
-            </Typography>
-          )}
-        </Box>
-      )}
     </Container>
   );
 }

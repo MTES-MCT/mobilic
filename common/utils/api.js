@@ -129,6 +129,9 @@ export const USER_QUERY = gql`
         name
         validations {
           submitterId
+          receptionTime
+          isAdmin
+          userId
         }
         context
         expenditures {
