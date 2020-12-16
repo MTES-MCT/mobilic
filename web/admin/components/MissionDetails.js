@@ -19,7 +19,7 @@ import { getTime } from "common/utils/events";
 import { ACTIVITIES, TIMEABLE_ACTIVITIES } from "common/utils/activities";
 import CheckIcon from "@material-ui/icons/Check";
 import EditIcon from "@material-ui/icons/Edit";
-import AddIcon from "@material-ui/icons/Add";
+import AddIcon from "@material-ui/icons/AddCircle";
 import { DateTimePicker } from "../../pwa/components/DateTimePicker";
 import {
   CANCEL_ACTIVITY_MUTATION,
@@ -383,7 +383,7 @@ export function MissionDetails({ mission, handleClose, width }) {
         entries={entries}
         editable={false}
         rowHeight={(index, userStats) =>
-          30 + 50 * Object.keys(userStats.activities).length
+          80 + 50 * Object.keys(userStats.activities.filter(a => !!a.id)).length
         }
         dense
         rowClassName={() => classes.row}
@@ -403,19 +403,23 @@ export function MissionDetails({ mission, handleClose, width }) {
                   {formatDay(getTime(userStats.validation))}
                 </Typography>
               </Box>
-              <IconButton
-                color="primary"
-                variant="contained"
-                onClick={() => {
-                  setCreatingActivityForUserId(userStats.user.id);
-                  setEditedValues({
-                    startTime: mission.endTime,
-                    endTime: mission.endTime
-                  });
-                }}
-              >
-                <AddIcon />
-              </IconButton>
+              {creatingActivityForUserId !== userStats.user.id && (
+                <IconButton
+                  color="primary"
+                  variant="contained"
+                  style={{ height: 50 }}
+                  disabled={creatingActivityForUserId || activityIdToEdit}
+                  onClick={() => {
+                    setCreatingActivityForUserId(userStats.user.id);
+                    setEditedValues({
+                      startTime: mission.endTime,
+                      endTime: mission.endTime
+                    });
+                  }}
+                >
+                  <AddIcon />
+                </IconButton>
+              )}
               {userStats.activities.map(activity => {
                 return (
                   <Box key={activity.id} className={classes.activityRow}>
