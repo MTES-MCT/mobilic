@@ -608,8 +608,7 @@ export function ActionsContextProvider({ children }) {
             endTime,
             mission,
             userId: id,
-            expenditures,
-            comment
+            expenditures
           })
         )
     );
