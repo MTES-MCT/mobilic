@@ -65,6 +65,9 @@ const useStyles = makeStyles(theme => ({
   },
   navDrawer: {
     minWidth: 200
+  },
+  userName: {
+    maxWidth: 500
   }
 }));
 
@@ -252,7 +255,7 @@ function DesktopHeader({ disableMenu }) {
               flexItem
             />
           )}
-          <Typography noWrap variant="body1">
+          <Typography noWrap variant="body1" className={classes.userName}>
             {formatPersonName(userInfo)}
             {companyName ? ` - ${companyName}` : ""}
           </Typography>
