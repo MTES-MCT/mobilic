@@ -24,6 +24,7 @@ import Drawer from "@material-ui/core/Drawer";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import CloseIcon from "@material-ui/icons/Close";
 import Link from "@material-ui/core/Link";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles(theme => ({
   navItemButton: {
@@ -255,10 +256,17 @@ function DesktopHeader({ disableMenu }) {
               flexItem
             />
           )}
-          <Typography noWrap variant="body1" className={classes.userName}>
-            {formatPersonName(userInfo)}
-            {companyName ? ` - ${companyName}` : ""}
-          </Typography>
+          <Tooltip
+            interactive
+            title={`${formatPersonName(userInfo)}${
+              companyName ? " - " + companyName : ""
+            }`}
+          >
+            <Typography noWrap variant="body1" className={classes.userName}>
+              {formatPersonName(userInfo)}
+              {companyName ? ` - ${companyName}` : ""}
+            </Typography>
+          </Tooltip>
           {!disableMenu && [
             <IconButton
               key={0}
