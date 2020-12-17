@@ -75,6 +75,12 @@ const useStyles = makeStyles(theme => ({
   },
   tabContainer: {
     marginBottom: theme.spacing(2)
+  },
+  validatedRow: {
+    backgroundColor: theme.palette.success.light,
+    "&:hover": {
+      backgroundColor: theme.palette.success.light
+    }
   }
 }));
 
@@ -229,6 +235,7 @@ function _ValidationPanel({ containerRef, width }) {
   );
 
   const [missionOnFocus, setMissionOnFocus] = React.useState(null);
+  const [validatedMissionId, setValidatedMissionId] = React.useState(null);
 
   return (
     <Paper className={classes.container} variant="outlined">
@@ -273,11 +280,11 @@ function _ValidationPanel({ containerRef, width }) {
               }
             : null
         }
-        rowRenderer={({ rowData: mission, ...props }) => {
+        rowRenderer={({ rowData: mission, index, ...props }) => {
           return (
             <Box
               key={props.key}
-              className={props.className}
+              className={`${props.className}`}
               style={{ ...props.style, display: "block" }}
               onClick={
                 props.onRowClick
@@ -301,6 +308,7 @@ function _ValidationPanel({ containerRef, width }) {
                     size="small"
                     onClick={async e => {
                       e.stopPropagation();
+                      setValidatedMissionId(index);
                       adminStore.setMissions(missions =>
                         missions.filter(m => m.id !== mission.id)
                       );
@@ -318,6 +326,7 @@ function _ValidationPanel({ containerRef, width }) {
                       } catch (err) {
                         alerts.error(formatApiError(err), mission.id, 6000);
                       }
+                      setValidatedMissionId(null);
                     }}
                   >
                     Valider
@@ -354,7 +363,11 @@ function _ValidationPanel({ containerRef, width }) {
           );
         }}
         selectedRowId={missionOnFocus ? missionOnFocus.id : null}
-        rowClassName={() => classes.row}
+        rowClassName={({ index }) =>
+          `${classes.row} ${
+            validatedMissionId === index ? classes.validatedRow : ""
+          }`
+        }
         headerClassName={classes.row}
       />
       <Drawer
