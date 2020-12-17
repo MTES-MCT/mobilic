@@ -37,6 +37,7 @@ export async function syncUser(userPayload, api, store) {
   const activities = [];
   const expenditures = [];
   const missionData = [];
+  const comments = [];
 
   // Get end status for latest mission;
   if (missions.length > 0) {
@@ -49,12 +50,14 @@ export async function syncUser(userPayload, api, store) {
       );
       latestMission.ended = isMissionEnded.data.isMissionEndedForSelf;
     } catch (err) {
+      Sentry.captureException(err);
       console.log(err);
     }
   }
   missions.forEach(mission => {
     activities.push(...mission.activities);
     expenditures.push(...mission.expenditures);
+    comments.push(...mission.comments);
     missionData.push(parseMissionPayloadFromBackend(mission, store.userId()));
   });
 
@@ -82,6 +85,7 @@ export async function syncUser(userPayload, api, store) {
 
   expenditures &&
     syncActions.push(store.syncEntity(expenditures, "expenditures"));
+  comments && syncActions.push(store.syncEntity(comments, "comments"));
   primaryCompany &&
     primaryCompany.users &&
     syncActions.push(

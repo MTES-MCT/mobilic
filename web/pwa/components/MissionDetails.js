@@ -24,13 +24,14 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { getVehicleName } from "common/utils/vehicles";
 import { PersonIcon } from "common/utils/icons";
-import { formatDay, now } from "common/utils/time";
+import { formatDay, getStartOfDay, now } from "common/utils/time";
 import { MainCtaButton } from "./MainCtaButton";
 import * as Sentry from "@sentry/browser";
 import Typography from "@material-ui/core/Typography";
 import { formatApiError } from "common/utils/errors";
 import CheckIcon from "@material-ui/icons/Check";
 import ScheduleIcon from "@material-ui/icons/Schedule";
+import { Comment } from "../../common/Comment";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -53,6 +54,9 @@ const useStyles = makeStyles(theme => ({
   validationContainer: {
     display: "flex",
     alignItems: "center"
+  },
+  commentList: {
+    paddingLeft: theme.spacing(3)
   }
 }));
 
@@ -82,6 +86,9 @@ export function MissionDetails({
   previousMissionEnd,
   nextMissionStart,
   hideExpenditures,
+  hideComments,
+  logComment,
+  cancelComment,
   createActivity,
   changeTeam,
   hideValidations,
@@ -225,6 +232,37 @@ export function MissionDetails({
                 <Chip key={exp.type} label={EXPENDITURES[exp.type].label} />
               ))}
           </Box>
+        </MissionReviewSection>
+      )}
+      {!hideComments && (
+        <MissionReviewSection
+          title="Observations"
+          editButtonLabel="Ajouter"
+          onEdit={
+            logComment
+              ? () =>
+                  modals.open("commentInput", {
+                    handleContinue: text =>
+                      logComment({ text, missionId: mission.id })
+                  })
+              : null
+          }
+        >
+          <List dense className={classes.commentList}>
+            {mission.comments
+              ? mission.comments.map(comment => (
+                  <Comment
+                    key={comment.id}
+                    comment={comment}
+                    cancelComment={cancelComment}
+                    withFullDate={
+                      getStartOfDay(comment.receptionTime) !==
+                      getStartOfDay(mission.startTime)
+                    }
+                  />
+                ))
+              : null}
+          </List>
         </MissionReviewSection>
       )}
       {!hideValidations && (

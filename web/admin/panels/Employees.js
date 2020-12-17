@@ -16,6 +16,8 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import { useModals } from "common/utils/modals";
+import { useSnackbarAlerts } from "../../common/Snackbar";
+import { formatApiError } from "common/utils/errors";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -37,42 +39,47 @@ export function Employees({ companyId, containerRef }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const modals = useModals();
+  const alerts = useSnackbarAlerts();
 
   const classes = useStyles();
 
-  async function cancelEmployment(employmentId) {
+  async function cancelEmployment(employment) {
     try {
       await api.graphQlMutate(CANCEL_EMPLOYMENT_MUTATION, {
-        employmentId
+        employmentId: employment.id
       });
       await adminStore.setEmployments(oldEmployments =>
-        oldEmployments.filter(e => e.id !== employmentId)
+        oldEmployments.filter(e => e.id !== employment.id)
       );
     } catch (err) {
-      console.log(err);
+      alerts.error(formatApiError(err), employment.id, 6000);
     }
   }
 
   async function terminateEmployment(employmentId, endDate) {
-    const employmentResponse = await api.graphQlMutate(
-      TERMINATE_EMPLOYMENT_MUTATION,
-      {
-        employmentId,
-        endDate: endDate.toISOString().slice(0, 10)
-      }
-    );
-    await adminStore.setEmployments(oldEmployments => {
-      const newEmployments = [...oldEmployments];
-      const employmentIndex = oldEmployments.findIndex(
-        e => e.id === employmentId
+    try {
+      const employmentResponse = await api.graphQlMutate(
+        TERMINATE_EMPLOYMENT_MUTATION,
+        {
+          employmentId,
+          endDate: endDate.toISOString().slice(0, 10)
+        }
       );
-      if (employmentIndex >= 0)
-        newEmployments[employmentIndex] = {
-          ...employmentResponse.data.employments.terminateEmployment,
-          companyId
-        };
-      return newEmployments;
-    });
+      await adminStore.setEmployments(oldEmployments => {
+        const newEmployments = [...oldEmployments];
+        const employmentIndex = oldEmployments.findIndex(
+          e => e.id === employmentId
+        );
+        if (employmentIndex >= 0)
+          newEmployments[employmentIndex] = {
+            ...employmentResponse.data.employments.terminateEmployment,
+            companyId
+          };
+        return newEmployments;
+      });
+    } catch (err) {
+      alerts.error(formatApiError(err), employmentId, 6000);
+    }
   }
 
   const pendingEmploymentColumns = [
@@ -211,7 +218,7 @@ export function Employees({ companyId, containerRef }) {
         modals.open("confirmation", {
           textButtons: true,
           title: "Confirmer annulation du rattachement",
-          handleConfirm: async () => await cancelEmployment(entry.id)
+          handleConfirm: async () => await cancelEmployment(entry)
         })
       }
       onRowAdd={async ({ idOrEmail, hasAdminRights }) => {
@@ -234,7 +241,7 @@ export function Employees({ companyId, containerRef }) {
             ...oldEmployments
           ]);
         } catch (err) {
-          console.log(err);
+          alerts.error(formatApiError(err), idOrEmail, 6000);
         }
       }}
       addButtonLabel="Inviter un nouveau salarié"

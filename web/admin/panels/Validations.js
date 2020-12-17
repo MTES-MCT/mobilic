@@ -25,6 +25,8 @@ import { MissionDetails } from "../components/MissionDetails";
 import { withWidth, isWidthUp } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import { useSnackbarAlerts } from "../../common/Snackbar";
+import { formatApiError } from "common/utils/errors";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -79,6 +81,7 @@ const useStyles = makeStyles(theme => ({
 function _ValidationPanel({ containerRef, width }) {
   const api = useApi();
   const adminStore = useAdminStore();
+  const alerts = useSnackbarAlerts();
 
   const classes = useStyles();
 
@@ -301,9 +304,20 @@ function _ValidationPanel({ containerRef, width }) {
                       adminStore.setMissions(missions =>
                         missions.filter(m => m.id !== mission.id)
                       );
-                      await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
-                        missionId: mission.id
-                      });
+                      try {
+                        await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
+                          missionId: mission.id
+                        });
+                        alerts.success(
+                          `La mission${
+                            mission.name ? " " + mission.name : ""
+                          } a été validée avec succès !`,
+                          mission.id,
+                          6000
+                        );
+                      } catch (err) {
+                        alerts.error(formatApiError(err), mission.id, 6000);
+                      }
                     }}
                   >
                     Valider

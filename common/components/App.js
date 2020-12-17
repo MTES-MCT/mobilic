@@ -25,13 +25,15 @@ function App({ ScreenComponent, loadUser }) {
 
   const activities = sortEvents(values(store.getEntity("activities")));
   const expenditures = values(store.getEntity("expenditures"));
+  const comments = sortEvents(values(store.getEntity("comments")));
 
   const unsortedMissions = linkMissionsWithRelations(
     store.getEntity("missions"),
     {
       activities: activities.filter(a => a.userId === store.userId()),
       allActivities: activities,
-      expenditures: expenditures.filter(e => e.userId === store.userId())
+      expenditures: expenditures.filter(e => e.userId === store.userId()),
+      comments: comments
     }
   )
     .map(m => ({ ...m, ...computeMissionProperties(m, store.userId()) }))
@@ -69,6 +71,8 @@ function App({ ScreenComponent, loadUser }) {
         logExpenditureForTeam={actions.logExpenditureForTeam}
         cancelExpenditure={actions.cancelExpenditure}
         editExpendituresForTeam={actions.editExpendituresForTeam}
+        logComment={actions.logComment}
+        cancelComment={actions.cancelComment}
         previousMissionEnd={previousMissionEnd}
         loadUser={loadUser}
         openHistory={() => setOpenHistory(true)}
@@ -84,6 +88,8 @@ function App({ ScreenComponent, loadUser }) {
         editActivityEvent={actions.editActivityEvent}
         currentMission={currentMission}
         validateMission={actions.validateMission}
+        logComment={actions.logComment}
+        cancelComment={actions.cancelComment}
       />
     </>
   );

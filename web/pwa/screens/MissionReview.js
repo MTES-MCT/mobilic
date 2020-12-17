@@ -31,7 +31,9 @@ export function MissionReview({
   editActivityEvent,
   validateMission,
   editExpendituresForTeam,
-  previousMissionEnd
+  previousMissionEnd,
+  logComment,
+  cancelComment
 }) {
   const missionMetrics = computeMissionKpis(currentMission);
 
@@ -61,6 +63,8 @@ export function MissionReview({
           pushNewTeamActivityEvent({ ...args, switchMode: false })
         }
         validateMission={validateMission}
+        logComment={logComment}
+        cancelComment={cancelComment}
       />
     </Container>
   );

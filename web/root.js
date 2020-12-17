@@ -40,6 +40,7 @@ import {
 } from "common/utils/loading";
 import { getAccessibleRoutes, getFallbackRoute } from "./common/routes";
 import { ScrollToTop } from "common/utils/scroll";
+import { SnackbarProvider } from "./common/Snackbar";
 
 export default function Root() {
   return (
@@ -49,14 +50,16 @@ export default function Root() {
           <CssBaseline />
           <ApiContextProvider>
             <MuiPickersUtilsProvider utils={FrLocalizedUtils} locale={frLocale}>
-              <ModalProvider modalDict={MODAL_DICT}>
-                <LoadingScreenContextProvider>
-                  <ActionsContextProvider>
-                    <ScrollToTop />
-                    <_Root />
-                  </ActionsContextProvider>
-                </LoadingScreenContextProvider>
-              </ModalProvider>
+              <SnackbarProvider>
+                <ModalProvider modalDict={MODAL_DICT}>
+                  <LoadingScreenContextProvider>
+                    <ActionsContextProvider>
+                      <ScrollToTop />
+                      <_Root />
+                    </ActionsContextProvider>
+                  </LoadingScreenContextProvider>
+                </ModalProvider>
+              </SnackbarProvider>
             </MuiPickersUtilsProvider>
           </ApiContextProvider>
         </ThemeProvider>

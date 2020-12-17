@@ -17,7 +17,7 @@ export function CommentInputModal({ open, handleClose, handleContinue }) {
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle disableTypography>
-        <Typography variant="h4">Nouveau commentaire</Typography>
+        <Typography variant="h4">Nouvelle observation</Typography>
       </DialogTitle>
       <DialogContent>
         <TextField

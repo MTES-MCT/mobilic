@@ -23,8 +23,10 @@ import AddIcon from "@material-ui/icons/AddCircle";
 import { DateTimePicker } from "../../pwa/components/DateTimePicker";
 import {
   CANCEL_ACTIVITY_MUTATION,
+  CANCEL_COMMENT_MUTATION,
   EDIT_ACTIVITY_MUTATION,
   LOG_ACTIVITY_MUTATION,
+  LOG_COMMENT_MUTATION,
   useApi,
   VALIDATE_MISSION_MUTATION
 } from "common/utils/api";
@@ -34,6 +36,10 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { useModals } from "common/utils/modals";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField/TextField";
+import List from "@material-ui/core/List";
+import { Comment } from "../../common/Comment";
+import { useSnackbarAlerts } from "../../common/Snackbar";
+import { formatApiError } from "common/utils/errors";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {
@@ -75,10 +81,11 @@ const useStyles = makeStyles(theme => ({
   userRow: {
     background: "#ebeff3",
     display: "flex",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    alignItems: "center"
   },
   activityRow: {
-    borderTop: "1px solid #ebeff3",
+    borderBottom: "1px solid #ebeff3",
     alignItems: "flex-end",
     height: 50,
     display: "flex",
@@ -99,6 +106,14 @@ const useStyles = makeStyles(theme => ({
   validationSection: {
     textAlign: "center",
     paddingTop: theme.spacing(4)
+  },
+  comments: {
+    paddingLeft: theme.spacing(3)
+  },
+  table: {
+    "& .ReactVirtualized__Grid__innerScrollContainer": {
+      borderBottom: "none"
+    }
   }
 }));
 
@@ -108,6 +123,7 @@ export function MissionDetails({ mission, handleClose, width }) {
   const adminStore = useAdminStore();
   const api = useApi();
   const modals = useModals();
+  const alerts = useSnackbarAlerts();
 
   const [activityIdToEdit, setActivityIdToEdit] = React.useState(null);
   const [
@@ -120,7 +136,18 @@ export function MissionDetails({ mission, handleClose, width }) {
 
   if (!mission) return null;
 
+  const withAlerts = (func, key) => async () => {
+    try {
+      await func();
+    } catch (err) {
+      alerts.error(formatApiError(err), key, 6000);
+    }
+  };
+
   async function onCancelActivity(activity) {
+    await api.graphQlMutate(CANCEL_ACTIVITY_MUTATION, {
+      activityId: activity.id
+    });
     mission.userStats = mapValues(mission.userStats, us => ({
       ...us,
       activities: us.activities.filter(a => activity.id !== a.id)
@@ -131,9 +158,6 @@ export function MissionDetails({ mission, handleClose, width }) {
         activities: m.activities.filter(a => activity.id !== a.id)
       }))
     );
-    await api.graphQlMutate(CANCEL_ACTIVITY_MUTATION, {
-      activityId: activity.id
-    });
   }
 
   async function onCreateActivity(user, newValues) {
@@ -154,20 +178,26 @@ export function MissionDetails({ mission, handleClose, width }) {
                 ...activity,
                 user
               }
-            ].sort((a1, a2) => a1.startTime - a2.startTime)
+            ]
           : us.activities
     }));
     adminStore.setMissions(missions =>
-      missions.map(m => ({
-        ...m,
-        activities: [...m.activities, { ...activity, user }].sort(
-          (a1, a2) => a1.startTime - a2.startTime
-        )
-      }))
+      missions.map(m =>
+        m.id === mission.id
+          ? {
+              ...m,
+              activities: [...m.activities, { ...activity, user }]
+            }
+          : m
+      )
     );
   }
 
   async function onEditActivity(activity, newValues) {
+    await api.graphQlMutate(EDIT_ACTIVITY_MUTATION, {
+      activityId: activity.id,
+      ...newValues
+    });
     mission.userStats = mapValues(mission.userStats, us => ({
       ...us,
       activities: us.activities.map(a =>
@@ -194,80 +224,47 @@ export function MissionDetails({ mission, handleClose, width }) {
         )
       }))
     );
-    await api.graphQlMutate(EDIT_ACTIVITY_MUTATION, {
-      activityId: activity.id,
-      ...newValues
+  }
+
+  async function onCreateComment(text) {
+    const apiResponse = await api.graphQlMutate(LOG_COMMENT_MUTATION, {
+      text,
+      missionId: mission.id
     });
+    const comment = apiResponse.data.activities.logComment;
+    mission.comments = [...mission.comments, comment];
+
+    adminStore.setMissions(missions =>
+      missions.map(m =>
+        m.id === mission.id
+          ? {
+              ...m,
+              comments: [...m.comments, comment]
+            }
+          : m
+      )
+    );
+  }
+
+  async function onDeleteComment(comment) {
+    await api.graphQlMutate(CANCEL_COMMENT_MUTATION, {
+      commentId: comment.id
+    });
+    mission.comments = mission.comments.filter(c => c.id !== comment.id);
+
+    adminStore.setMissions(missions =>
+      missions.map(m =>
+        m.id === mission.id
+          ? {
+              ...m,
+              comments: m.comments.filter(c => c.id !== comment.id)
+            }
+          : m
+      )
+    );
   }
 
   const perUserColumns = [
-    {
-      label: "",
-      name: "id",
-      format: (id, entry) =>
-        activityIdToEdit === id ||
-        (!id && creatingActivityForUserId === entry.user.id) ? (
-          <>
-            <IconButton
-              className="no-margin-no-padding"
-              disabled={!!errors.startTime || !!errors.endTime}
-              onClick={() => {
-                activityIdToEdit
-                  ? onEditActivity(entry, { ...editedValues })
-                  : onCreateActivity(entry.user, { ...editedValues });
-                setActivityIdToEdit(null);
-                setCreatingActivityForUserId({});
-                setEditedValues({});
-              }}
-            >
-              <CheckIcon fontSize="small" className={classes.saveIcon} />
-            </IconButton>
-            <IconButton
-              className="no-margin-no-padding"
-              onClick={() => {
-                setEditedValues(null);
-                setActivityIdToEdit(null);
-                setCreatingActivityForUserId(null);
-              }}
-            >
-              <CloseIcon fontSize="small" color="error" />
-            </IconButton>
-          </>
-        ) : (
-          <>
-            <IconButton
-              className="no-margin-no-padding"
-              color="primary"
-              disabled={!!activityIdToEdit}
-              onClick={() => {
-                const initialValues = {};
-                perUserColumns.forEach(column => {
-                  if (column.edit)
-                    initialValues[column.name] = entry[column.name];
-                });
-                setEditedValues(initialValues);
-                setErrors({});
-                setActivityIdToEdit(entry.id);
-              }}
-            >
-              <EditIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              className="no-margin-no-padding"
-              disabled={!!activityIdToEdit}
-              onClick={() =>
-                modals.open("confirmation", {
-                  title: "Confirmer suppression de l'activité",
-                  handleConfirm: () => onCancelActivity(entry)
-                })
-              }
-            >
-              <DeleteIcon color={!activityIdToEdit ? "error" : ""} />
-            </IconButton>
-          </>
-        ),
-      minWidth: 55
-    },
     {
       label: "Activité",
       name: "type",
@@ -346,6 +343,81 @@ export function MissionDetails({ mission, handleClose, width }) {
       align: "right",
       format: (duration, entry) => formatTimer(entry.endTime - entry.startTime),
       minWidth: 60
+    },
+    {
+      label: "",
+      name: "id",
+      format: (id, entry) =>
+        activityIdToEdit === id ||
+        (!id && creatingActivityForUserId === entry.user.id) ? (
+          <>
+            <IconButton
+              className="no-margin-no-padding"
+              disabled={!!errors.startTime || !!errors.endTime}
+              onClick={withAlerts(async () => {
+                activityIdToEdit
+                  ? await onEditActivity(entry, { ...editedValues })
+                  : await onCreateActivity(entry.user, { ...editedValues });
+                setActivityIdToEdit(null);
+                setCreatingActivityForUserId(null);
+                setEditedValues({});
+              }, activityIdToEdit || creatingActivityForUserId)}
+            >
+              <CheckIcon fontSize="small" className={classes.saveIcon} />
+            </IconButton>
+            <IconButton
+              className="no-margin-no-padding"
+              onClick={() => {
+                setEditedValues(null);
+                setActivityIdToEdit(null);
+                setCreatingActivityForUserId(null);
+              }}
+            >
+              <CloseIcon fontSize="small" color="error" />
+            </IconButton>
+          </>
+        ) : (
+          <>
+            <IconButton
+              className="no-margin-no-padding"
+              color="primary"
+              disabled={!!activityIdToEdit || !!creatingActivityForUserId}
+              onClick={() => {
+                const initialValues = {};
+                perUserColumns.forEach(column => {
+                  if (column.edit)
+                    initialValues[column.name] = entry[column.name];
+                });
+                setEditedValues(initialValues);
+                setErrors({});
+                setActivityIdToEdit(entry.id);
+              }}
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              className="no-margin-no-padding"
+              disabled={!!activityIdToEdit || !!creatingActivityForUserId}
+              onClick={() =>
+                modals.open("confirmation", {
+                  title: "Confirmer suppression de l'activité",
+                  handleConfirm: withAlerts(
+                    async () => await onCancelActivity(entry),
+                    activityIdToEdit
+                  )
+                })
+              }
+            >
+              <DeleteIcon
+                color={
+                  !activityIdToEdit && !creatingActivityForUserId ? "error" : ""
+                }
+              />
+            </IconButton>
+          </>
+        ),
+      minWidth: 55,
+      align: "right"
     }
   ];
 
@@ -387,6 +459,7 @@ export function MissionDetails({ mission, handleClose, width }) {
         }
         dense
         rowClassName={() => classes.row}
+        className={classes.table}
         rowRenderer={({ rowData: userStats, ...props }) => {
           return (
             <Box
@@ -402,12 +475,10 @@ export function MissionDetails({ mission, handleClose, width }) {
                   <span style={{ fontStyle: "normal" }}>✅</span> validé le{" "}
                   {formatDay(getTime(userStats.validation))}
                 </Typography>
-              </Box>
-              {creatingActivityForUserId !== userStats.user.id && (
                 <IconButton
                   color="primary"
                   variant="contained"
-                  style={{ height: 50 }}
+                  className="no-margin-no-padding"
                   disabled={creatingActivityForUserId || activityIdToEdit}
                   onClick={() => {
                     setCreatingActivityForUserId(userStats.user.id);
@@ -419,7 +490,7 @@ export function MissionDetails({ mission, handleClose, width }) {
                 >
                   <AddIcon />
                 </IconButton>
-              )}
+              </Box>
               {userStats.activities.map(activity => {
                 return (
                   <Box key={activity.id} className={classes.activityRow}>
@@ -450,7 +521,28 @@ export function MissionDetails({ mission, handleClose, width }) {
       />
     </Section>,
     <Section key={3} title="Observations">
-      <Typography>Pas d'observations</Typography>
+      <IconButton
+        color="primary"
+        variant="contained"
+        style={{ float: "right", padding: 0, paddingRight: 8 }}
+        onClick={() => {
+          modals.open("commentInput", {
+            handleContinue: onCreateComment
+          });
+        }}
+      >
+        <AddIcon />
+      </IconButton>
+      <List className={classes.comments}>
+        {mission.comments.map(comment => (
+          <Comment
+            key={comment.id}
+            comment={comment}
+            withFullDate={true}
+            cancelComment={onDeleteComment}
+          />
+        ))}
+      </List>
     </Section>,
     <Section key={4} title="" className={classes.validationSection}>
       <LoadingButton
@@ -458,13 +550,24 @@ export function MissionDetails({ mission, handleClose, width }) {
         color="primary"
         size="small"
         onClick={async () => {
-          await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
-            missionId: mission.id
-          });
-          adminStore.setMissions(missions =>
-            missions.filter(m => m.id !== mission.id)
-          );
-          handleClose();
+          try {
+            await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
+              missionId: mission.id
+            });
+            adminStore.setMissions(missions =>
+              missions.filter(m => m.id !== mission.id)
+            );
+            handleClose();
+            alerts.success(
+              `La mission${
+                mission.name ? " " + mission.name : ""
+              } a été validée avec succès !`,
+              mission.id,
+              6000
+            );
+          } catch (err) {
+            alerts.error(formatApiError(err), mission.id, 6000);
+          }
         }}
       >
         Valider toute la mission
@@ -481,7 +584,7 @@ function Section({ className, children, title }) {
       <Divider />
       <Box
         pt={1}
-        pb={6}
+        pb={2}
         className={`${classes.horizontalPadding} ${className}`}
       >
         <Typography variant="overline" className={classes.sectionTitle}>

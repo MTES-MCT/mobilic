@@ -46,7 +46,9 @@ const tabs = {
       createActivity,
       editExpenditures,
       currentMission,
-      validateMission
+      validateMission,
+      logComment,
+      cancelComment
     }) => {
       const mission = missionsInPeriod[0];
       const missionEnd =
@@ -82,6 +84,8 @@ const tabs = {
               }
               validateMission={validateMission}
               validationButtonName="Valider"
+              logComment={logComment}
+              cancelComment={cancelComment}
             />
           </WorkTimeSummaryAdditionalInfo>
         </div>
@@ -160,7 +164,9 @@ export function HistoryModal({
   editActivityEvent,
   createActivity,
   editExpenditures,
-  validateMission
+  validateMission,
+  logComment,
+  cancelComment
 }) {
   const [currentTab, setCurrentTab] = React.useState("mission");
 
@@ -247,7 +253,9 @@ export function HistoryModal({
               createActivity,
               editExpenditures,
               currentMission,
-              validateMission
+              validateMission,
+              logComment,
+              cancelComment
             })}
         </Container>
       </Container>

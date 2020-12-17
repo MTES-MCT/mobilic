@@ -6,11 +6,13 @@ import find from "lodash/find";
 import { isPendingSubmission, useStoreSyncedWithLocalStorage } from "./store";
 import {
   CANCEL_ACTIVITY_MUTATION,
+  CANCEL_COMMENT_MUTATION,
   CANCEL_EXPENDITURE_MUTATION,
   CREATE_MISSION_MUTATION,
   EDIT_ACTIVITY_MUTATION,
   END_MISSION_MUTATION,
   LOG_ACTIVITY_MUTATION,
+  LOG_COMMENT_MUTATION,
   LOG_EXPENDITURE_MUTATION,
   useApi,
   VALIDATE_MISSION_MUTATION
@@ -26,6 +28,7 @@ import {
 } from "./errors";
 import { formatDay, formatTimeOfDay, now, truncateMinute } from "./time";
 import { formatPersonName } from "./coworkers";
+import { useSnackbarAlerts } from "../../web/common/Snackbar";
 
 const ActionsContext = React.createContext(() => {});
 
@@ -33,6 +36,7 @@ export function ActionsContextProvider({ children }) {
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
   const modals = useModals();
+  const alerts = useSnackbarAlerts();
 
   async function displayApiErrors({
     graphQLErrors,
@@ -625,8 +629,6 @@ export function ActionsContextProvider({ children }) {
       missionId,
       userId: actualUserId
     };
-    if (comment) endMissionPayload.context = { comment };
-
     const updateStore = (store, requestId) => {
       const currentActivity = values(store.getEntity("activities")).find(
         a => a.userId === actualUserId && !a.endTime
@@ -657,7 +659,8 @@ export function ActionsContextProvider({ children }) {
         "endMission",
         true
       ),
-      editExpenditures(expenditures, mission.expenditures, missionId, userId)
+      editExpenditures(expenditures, mission.expenditures, missionId, userId),
+      comment ? logComment({ text: comment, missionId }) : Promise.resolve(null)
     ]);
   };
 
@@ -743,6 +746,13 @@ export function ActionsContextProvider({ children }) {
         [{ ...mission, ended: true, validation }],
         "missions",
         m => m.id === mission.id
+      );
+      alerts.success(
+        `La mission${
+          mission.name ? " " + mission.name : ""
+        } a été validée avec succès !`,
+        mission.id,
+        6000
       );
     }
   });
@@ -887,6 +897,71 @@ export function ActionsContextProvider({ children }) {
     }
   });
 
+  const logComment = async ({ text, missionId }) => {
+    const newComment = {
+      text,
+      missionId,
+      submitterId: store.userId()
+    };
+
+    const updateStore = (store, requestId) => {
+      store.createEntityObject(newComment, "comments", requestId);
+      return { missionId };
+    };
+
+    await submitAction(
+      LOG_COMMENT_MUTATION,
+      newComment,
+      updateStore,
+      ["comments"],
+      "logComment",
+      true
+    );
+  };
+
+  api.registerResponseHandler("logComment", {
+    onSuccess: apiResponse => {
+      const comment = apiResponse.data.activities.logComment;
+      store.syncEntity([comment], "comments", () => false);
+    }
+  });
+
+  const cancelComment = async commentToCancel => {
+    if (isPendingSubmission(commentToCancel)) {
+      if (
+        api.isCurrentlySubmittingRequests() ||
+        commentToCancel.pendingUpdates.some(upd => upd.type === "delete")
+      )
+        return;
+
+      const pendingCreationRequest = store
+        .pendingRequests()
+        .find(r => r.id === commentToCancel.pendingUpdates[0].requestId);
+      if (pendingCreationRequest)
+        return await store.clearPendingRequest(pendingCreationRequest);
+    }
+
+    const updateStore = (store, requestId) => {
+      store.deleteEntityObject(commentToCancel.id, "comments", requestId);
+      return { commentId: commentToCancel.id };
+    };
+
+    await submitAction(
+      CANCEL_COMMENT_MUTATION,
+      { commentId: commentToCancel.id },
+      updateStore,
+      ["comments"],
+      "cancelComment",
+      true
+    );
+  };
+
+  api.registerResponseHandler("cancelComment", {
+    onSuccess: (apiResponse, { commentId }) => {
+      store.syncEntity([], "comments", e => e.id === commentId);
+    }
+  });
+
   return (
     <ActionsContext.Provider
       value={{
@@ -900,7 +975,9 @@ export function ActionsContextProvider({ children }) {
         logExpenditureForTeam,
         editExpendituresForTeam,
         cancelExpenditure,
-        editExpenditures
+        editExpenditures,
+        logComment,
+        cancelComment
       }}
     >
       {children}

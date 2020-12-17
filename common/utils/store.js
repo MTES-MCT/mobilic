@@ -12,7 +12,7 @@ import { BroadcastChannel } from "broadcast-channel";
 import { currentUserId } from "./cookie";
 import { now } from "./time";
 
-const STORE_VERSION = 9;
+const STORE_VERSION = 10;
 
 export const broadCastChannel = new BroadcastChannel("storeUpdates", {
   webWorkerSupport: false
@@ -52,6 +52,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       coworkers: Map,
       activities: Map,
       employments: List,
+      comments: Map,
       pendingRequests: List,
       identityMap: Map,
       missions: Map,

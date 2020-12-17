@@ -65,6 +65,7 @@ export function CurrentActivity({
       editActivityEvent={editActivityEvent}
       hideExpenditures
       hideValidations
+      hideComments
       previousMissionEnd={previousMissionEnd}
       createActivity={args =>
         pushNewTeamActivityEvent({ ...args, switchMode: false })

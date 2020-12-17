@@ -64,6 +64,7 @@ export function ActivateEmail() {
             await broadCastChannel.postMessage("update");
             history.push("/home");
           } catch (err) {
+            Sentry.captureException(err);
             console.log(err);
             setError(formatApiError(err));
           }

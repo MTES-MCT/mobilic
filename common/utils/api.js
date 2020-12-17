@@ -148,6 +148,17 @@ export const USER_QUERY = gql`
           endTime
           userId
         }
+        comments {
+          id
+          text
+          missionId
+          receptionTime
+          submitter {
+            id
+            firstName
+            lastName
+          }
+        }
       }
       currentEmployments {
         id
@@ -215,6 +226,16 @@ export const ADMIN_COMPANIES_QUERY = gql`
             startTime
             endTime
             user {
+              id
+              firstName
+              lastName
+            }
+          }
+          comments {
+            id
+            text
+            receptionTime
+            submitter {
               id
               firstName
               lastName
@@ -546,19 +567,9 @@ export const CREATE_MISSION_MUTATION = gql`
 `;
 
 export const END_MISSION_MUTATION = gql`
-  mutation endMission(
-    $endTime: TimeStamp!
-    $missionId: Int!
-    $userId: Int
-    $context: GenericScalar
-  ) {
+  mutation endMission($endTime: TimeStamp!, $missionId: Int!, $userId: Int) {
     activities {
-      endMission(
-        endTime: $endTime
-        missionId: $missionId
-        userId: $userId
-        context: $context
-      ) {
+      endMission(endTime: $endTime, missionId: $missionId, userId: $userId) {
         id
         name
         context
@@ -652,6 +663,34 @@ export const CANCEL_EXPENDITURE_MUTATION = gql`
   mutation cancelExpenditure($expenditureId: Int!) {
     activities {
       cancelExpenditure(expenditureId: $expenditureId) {
+        success
+      }
+    }
+  }
+`;
+
+export const LOG_COMMENT_MUTATION = gql`
+  mutation logComment($text: String!, $missionId: Int!) {
+    activities {
+      logComment(text: $text, missionId: $missionId) {
+        id
+        text
+        missionId
+        receptionTime
+        submitter {
+          id
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+`;
+
+export const CANCEL_COMMENT_MUTATION = gql`
+  mutation cancelComment($commentId: Int!) {
+    activities {
+      cancelComment(commentId: $commentId) {
         success
       }
     }
