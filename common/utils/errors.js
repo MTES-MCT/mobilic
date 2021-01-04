@@ -77,7 +77,7 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
       case "AUTHENTICATION_ERROR":
         return "Erreur d'authentification.";
       case "AUTHORIZATION_ERROR":
-        return "Vous n'êtes pas autorisés à effectuer cette opération.";
+        return "Vous n'êtes pas autorisé(e) à effectuer cette opération.";
       case "INACCESSIBLE_SIREN":
         return `Aucun établissement n'a été trouvé pour ce SIREN. Vérifiez que le numéro est bon et que l'entreprise est commercialement diffusible.`;
       case "SIREN_ALREADY_SIGNED_UP":

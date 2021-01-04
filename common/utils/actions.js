@@ -306,9 +306,10 @@ export function ActionsContextProvider({ children }) {
             : store.getEntity("coworkers")[actualUserId.toString()];
         displayApiErrors({
           graphQLErrors: error.graphQLErrors,
-          actionDescription: `L'enregistrement de l'activité ${type} pour l'utilisateur ${formatPersonName(
-            user
-          )}`,
+          actionDescription: `L'activité ${
+            ACTIVITIES[type].label
+          } pour l'utilisateur ${formatPersonName(user)}`,
+          isActionDescriptionFemale: true,
           overrideFormatGraphQLError: gqlError => {
             return formatLogActivityError(gqlError, user, store.userId());
           },
@@ -451,9 +452,9 @@ export function ActionsContextProvider({ children }) {
       if (isGraphQLError(error)) {
         displayApiErrors({
           graphQLErrors: error.graphQLErrors,
-          actionDescription: `La correction de l'activité ${type} pour l'utilisateur ${formatPersonName(
-            user
-          )}`,
+          actionDescription: `La correction de l'activité ${
+            ACTIVITIES[type].label
+          } pour l'utilisateur ${formatPersonName(user)}`,
           overrideFormatGraphQLError: gqlError => {
             return formatLogActivityError(gqlError, user, selfId);
           },

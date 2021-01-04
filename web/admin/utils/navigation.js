@@ -5,7 +5,7 @@ import { ValidationPanel } from "../panels/Validations";
 
 export const ADMIN_VIEWS = [
   {
-    label: "Entreprise",
+    label: "Entreprise(s)",
     path: "/company",
     component: props => <CompanyPanel {...props} />,
     isDefault: true
