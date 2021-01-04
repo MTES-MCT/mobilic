@@ -49,7 +49,7 @@ export function MissionReviewSection({
             className={classes.button}
             onClick={onEdit}
           >
-            {editButtonLabel || "Editer"}
+            {editButtonLabel || "Modifier"}
           </Button>
         )}
       </Box>
