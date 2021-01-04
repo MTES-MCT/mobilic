@@ -718,7 +718,7 @@ export function ActionsContextProvider({ children }) {
   const validateMission = async mission => {
     const userId = store.userId();
     const validation = {
-      receptionTime: Date.now(),
+      receptionTime: now(),
       submitterId: userId,
       userId: userId
     };

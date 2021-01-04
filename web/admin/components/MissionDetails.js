@@ -57,7 +57,8 @@ const useStyles = makeStyles(theme => ({
   missionOverallTimes: {
     marginTop: theme.spacing(2),
     color: theme.palette.grey[700],
-    marginBottom: theme.spacing(4)
+    marginBottom: theme.spacing(4),
+    display: "block"
   },
   horizontalPadding: {
     paddingLeft: theme.spacing(2),
@@ -69,7 +70,8 @@ const useStyles = makeStyles(theme => ({
   },
   missionSubTitle: {
     fontWeight: 200,
-    paddingBottom: theme.spacing(4)
+    paddingBottom: theme.spacing(4),
+    display: "block"
   },
   saveIcon: {
     color: theme.palette.success.main
