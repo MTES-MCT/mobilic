@@ -92,6 +92,7 @@ function VehicleAdmin({ companyId }) {
           console.log(err);
         }
       }}
+      disableAdd={({ registrationNumber }) => !registrationNumber}
       onRowAdd={async ({ registrationNumber, alias }) => {
         try {
           const apiResponse = await api.graphQlMutate(

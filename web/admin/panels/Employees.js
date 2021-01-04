@@ -221,6 +221,7 @@ export function Employees({ companyId, containerRef }) {
           handleConfirm: async () => await cancelEmployment(entry)
         })
       }
+      disableAdd={({ idOrEmail }) => !idOrEmail}
       onRowAdd={async ({ idOrEmail, hasAdminRights }) => {
         const payload = {
           hasAdminRights,

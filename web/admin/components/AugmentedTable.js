@@ -283,6 +283,7 @@ export function AugmentedTable({
   entries,
   onRowEdit,
   onRowAdd,
+  disableAdd = null,
   onRowDelete,
   addButtonLabel,
   renderCollapse = null,
@@ -339,6 +340,7 @@ export function AugmentedTable({
               <Button
                 variant="contained"
                 color="primary"
+                disabled={disableAdd && disableAdd(editingValues)}
                 onClick={() => {
                   onRowAdd(editingValues);
                   setEditingRowId(null);
