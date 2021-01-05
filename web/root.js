@@ -87,9 +87,7 @@ function _Root() {
 
   const loadUserAndRoute = currentPathName =>
     withLoadingScreen(async () => {
-      const isLoggingIn =
-        location.pathname.startsWith("/login") ||
-        location.pathname.startsWith("/fc-callback");
+      const isSigningUp = location.pathname.startsWith("/signup");
       const queryString = new URLSearchParams(location.search);
 
       const isLoggingOut = location.pathname.startsWith("/logout");
@@ -100,7 +98,7 @@ function _Root() {
       if (!document.hidden) {
         await loadUserData(api, store);
       }
-      if (isLoggingIn) {
+      if (!isSigningUp) {
         const nextLocation = queryString.get("next");
         history.push(
           nextLocation
