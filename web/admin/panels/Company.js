@@ -239,7 +239,7 @@ function _CompanyPanel({ width, containerRef }) {
     >
       <Grid
         container
-        spacing={10}
+        spacing={5}
         justify="space-between"
         alignItems="center"
         style={{ flex: "1 1 auto", width: "unset" }}

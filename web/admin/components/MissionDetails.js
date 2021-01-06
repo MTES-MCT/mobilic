@@ -19,7 +19,6 @@ import { getTime } from "common/utils/events";
 import { ACTIVITIES, TIMEABLE_ACTIVITIES } from "common/utils/activities";
 import CheckIcon from "@material-ui/icons/Check";
 import EditIcon from "@material-ui/icons/Edit";
-import AddIcon from "@material-ui/icons/AddCircle";
 import { DateTimePicker } from "../../pwa/components/DateTimePicker";
 import {
   CANCEL_ACTIVITY_MUTATION,
@@ -40,6 +39,7 @@ import List from "@material-ui/core/List";
 import { Comment } from "../../common/Comment";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {
@@ -116,6 +116,9 @@ const useStyles = makeStyles(theme => ({
     "& .ReactVirtualized__Grid__innerScrollContainer": {
       borderBottom: "none"
     }
+  },
+  smallTextButton: {
+    fontSize: "0.7rem"
   }
 }));
 
@@ -135,6 +138,8 @@ export function MissionDetails({ mission, handleClose, width }) {
   const [editedValues, setEditedValues] = React.useState({});
 
   const [errors, setErrors] = React.useState({});
+
+  const ref = React.createRef();
 
   if (!mission) return null;
 
@@ -457,8 +462,9 @@ export function MissionDetails({ mission, handleClose, width }) {
         entries={entries}
         editable={false}
         rowHeight={(index, userStats) =>
-          80 + 50 * Object.keys(userStats.activities.filter(a => !!a.id)).length
+          90 + 50 * Object.keys(userStats.activities).length
         }
+        ref={ref}
         dense
         rowClassName={() => classes.row}
         className={classes.table}
@@ -473,25 +479,6 @@ export function MissionDetails({ mission, handleClose, width }) {
                 <Typography className={classes.userName}>
                   {formatPersonName(userStats.user)}
                 </Typography>
-                <Typography className={classes.validationTime}>
-                  <span style={{ fontStyle: "normal" }}>✅</span> validé le{" "}
-                  {formatDay(getTime(userStats.validation))}
-                </Typography>
-                <IconButton
-                  color="primary"
-                  variant="contained"
-                  className="no-margin-no-padding"
-                  disabled={creatingActivityForUserId || activityIdToEdit}
-                  onClick={() => {
-                    setCreatingActivityForUserId(userStats.user.id);
-                    setEditedValues({
-                      startTime: mission.endTime,
-                      endTime: mission.endTime
-                    });
-                  }}
-                >
-                  <AddIcon />
-                </IconButton>
               </Box>
               {userStats.activities.map(activity => {
                 return (
@@ -517,24 +504,53 @@ export function MissionDetails({ mission, handleClose, width }) {
                   </Box>
                 );
               })}
+              <Box
+                style={{ height: 40, marginTop: 10 }}
+                pl={1}
+                className="flex-row-space-between"
+              >
+                <Typography className={classes.validationTime}>
+                  <span style={{ fontStyle: "normal" }}>✅</span> validé le{" "}
+                  {formatDay(getTime(userStats.validation))}
+                </Typography>
+                <Button
+                  color="primary"
+                  variant="outlined"
+                  size="small"
+                  className={classes.smallTextButton}
+                  disabled={creatingActivityForUserId || activityIdToEdit}
+                  onClick={() => {
+                    setCreatingActivityForUserId(userStats.user.id);
+                    setEditedValues({
+                      startTime: mission.endTime,
+                      endTime: mission.endTime
+                    });
+                    ref.current.recomputeRowHeights();
+                  }}
+                >
+                  Ajouter une activité
+                </Button>
+              </Box>
             </Box>
           );
         }}
       />
     </Section>,
     <Section key={3} title="Observations">
-      <IconButton
+      <Button
         color="primary"
-        variant="contained"
-        style={{ float: "right", padding: 0, paddingRight: 8 }}
+        variant="outlined"
+        size="small"
+        style={{ float: "right" }}
+        className={classes.smallTextButton}
         onClick={() => {
           modals.open("commentInput", {
             handleContinue: onCreateComment
           });
         }}
       >
-        <AddIcon />
-      </IconButton>
+        Ajouter une observation
+      </Button>
       <List className={classes.comments}>
         {mission.comments.map(comment => (
           <Comment

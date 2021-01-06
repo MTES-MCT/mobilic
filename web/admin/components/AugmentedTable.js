@@ -500,434 +500,436 @@ export function AugmentedTable({
   );
 }
 
-function VirtualizedTable({
-  columns,
-  entries,
-  classes,
-  width,
-  height,
-  minHeight,
-  headerHeight,
-  rowHeight,
-  isAddingRow,
-  isRowOnFocus,
-  headerRenderer,
-  columnDefaultMinWidth,
-  columnDefaultBaseWidth,
-  shouldDisplayEditActionsColumn,
-  renderEditActions,
-  editingValues,
-  setEditingValues,
-  onScroll = () => {},
-  onRowClick,
-  selectedRowId,
-  scrollTop = null,
-  autoHeight = false,
-  rowClassName,
-  rowRenderer = null,
-  headerClassName
-}) {
-  const minTableWidth =
-    columns.reduce((acc, col) => {
-      return acc + (col.minWidth || columnDefaultMinWidth);
-    }, 0) + (shouldDisplayEditActionsColumn ? columnDefaultMinWidth : 0);
-  return (
-    <Table
-      autoHeight={autoHeight}
-      className={`table ${classes.table}`}
-      width={Math.max(width, minTableWidth)}
-      height={Math.max(height, minHeight)}
-      headerHeight={headerHeight}
-      rowCount={entries.length}
-      rowGetter={({ index }) => entries[index]}
-      rowRenderer={props =>
-        rowRenderer ? rowRenderer(props) : defaultTableRowRenderer(props)
-      }
-      rowHeight={
-        typeof rowHeight === "number"
-          ? rowHeight
-          : ({ index }) => rowHeight(index, entries[index])
-      }
-      rowClassName={({ index }) =>
-        index >= 0
-          ? `${classes.row} ${
-              selectedRowId && selectedRowId === entries[index].id
-                ? classes.selected
-                : ""
-            } ${rowClassName(index, entries[index])}`
-          : `${classes.header} ${headerClassName ? headerClassName : ""}`
-      }
-      onScroll={onScroll}
-      scrollTop={scrollTop}
-      onRowClick={onRowClick}
-    >
-      {columns.map(column => {
-        return (
+const VirtualizedTable = React.forwardRef(
+  (
+    {
+      columns,
+      entries,
+      classes,
+      width,
+      height,
+      minHeight,
+      headerHeight,
+      rowHeight,
+      isAddingRow,
+      isRowOnFocus,
+      headerRenderer,
+      columnDefaultMinWidth,
+      columnDefaultBaseWidth,
+      shouldDisplayEditActionsColumn,
+      renderEditActions,
+      editingValues,
+      setEditingValues,
+      onScroll = () => {},
+      onRowClick,
+      scrollTop = null,
+      autoHeight = false,
+      rowClassName,
+      rowRenderer = null,
+      headerClassName
+    },
+    ref
+  ) => {
+    const minTableWidth =
+      columns.reduce((acc, col) => {
+        return acc + (col.minWidth || columnDefaultMinWidth);
+      }, 0) + (shouldDisplayEditActionsColumn ? columnDefaultMinWidth : 0);
+    return (
+      <Table
+        ref={ref}
+        autoHeight={autoHeight}
+        className={`table ${classes.table}`}
+        width={Math.max(width, minTableWidth)}
+        height={Math.max(height, minHeight)}
+        headerHeight={headerHeight}
+        rowCount={entries.length}
+        rowGetter={({ index }) => entries[index]}
+        rowRenderer={props =>
+          rowRenderer ? rowRenderer(props) : defaultTableRowRenderer(props)
+        }
+        rowHeight={
+          typeof rowHeight === "number"
+            ? rowHeight
+            : ({ index }) => rowHeight(index, entries[index])
+        }
+        rowClassName={({ index }) =>
+          index >= 0
+            ? `${classes.row} ${rowClassName &&
+                rowClassName(index, entries[index])}`
+            : `${classes.header} ${headerClassName ? headerClassName : ""}`
+        }
+        onScroll={onScroll}
+        scrollTop={scrollTop}
+        onRowClick={onRowClick}
+      >
+        {columns.map(column => {
+          return (
+            <Column
+              key={column.name}
+              flexGrow={1}
+              dataKey={column.name}
+              className={classes.cell}
+              headerClassName={classes.cell}
+              cellDataGetter={({ rowData, dataKey }) => {
+                return rowData[dataKey];
+              }}
+              cellRenderer={({ rowData, cellData, rowIndex }) => {
+                const onFocus = isRowOnFocus(rowData, rowIndex);
+                if (
+                  onFocus &&
+                  ((isAddingRow && column.create) ||
+                    (!isAddingRow && column.edit))
+                ) {
+                  return (
+                    <>
+                      {column.boolean ? (
+                        <Checkbox
+                          checked={editingValues[column.name] || false}
+                          color="primary"
+                          onChange={e =>
+                            setEditingValues(values => ({
+                              ...values,
+                              [column.name]: e.target.checked
+                            }))
+                          }
+                        />
+                      ) : (
+                        <TextField
+                          fullWidth
+                          variant="outlined"
+                          margin="dense"
+                          label={column.label}
+                          value={editingValues[column.name] || ""}
+                          onChange={e => {
+                            const newValue = e.target.value;
+                            setEditingValues(values => ({
+                              ...values,
+                              [column.name]: newValue
+                            }));
+                          }}
+                        />
+                      )}
+                    </>
+                  );
+                } else
+                  return (
+                    <CellContent
+                      cellData={cellData}
+                      rowData={rowData}
+                      onFocus={onFocus}
+                      column={column}
+                    />
+                  );
+              }}
+              style={{ textAlign: column.align }}
+              headerStyle={{ textAlign: column.align }}
+              headerRenderer={() => headerRenderer(column)}
+              width={column.baseWidth || columnDefaultBaseWidth}
+              minWidth={column.minWidth || columnDefaultMinWidth}
+            />
+          );
+        })}
+        {shouldDisplayEditActionsColumn && (
           <Column
-            key={column.name}
-            flexGrow={1}
-            dataKey={column.name}
+            disableSort
+            dataKey="edit"
             className={classes.cell}
             headerClassName={classes.cell}
-            cellDataGetter={({ rowData, dataKey }) => {
-              return rowData[dataKey];
-            }}
-            cellRenderer={({ rowData, cellData, rowIndex }) => {
-              const onFocus = isRowOnFocus(rowData, rowIndex);
-              if (
-                onFocus &&
-                ((isAddingRow && column.create) ||
-                  (!isAddingRow && column.edit))
-              ) {
-                return (
-                  <>
-                    {column.boolean ? (
-                      <Checkbox
-                        checked={editingValues[column.name] || false}
-                        color="primary"
-                        onChange={e =>
-                          setEditingValues(values => ({
-                            ...values,
-                            [column.name]: e.target.checked
-                          }))
-                        }
-                      />
-                    ) : (
-                      <TextField
-                        fullWidth
-                        variant="outlined"
-                        margin="dense"
-                        label={column.label}
-                        value={editingValues[column.name] || ""}
-                        onChange={e => {
-                          const newValue = e.target.value;
-                          setEditingValues(values => ({
-                            ...values,
-                            [column.name]: newValue
-                          }));
-                        }}
-                      />
-                    )}
-                  </>
-                );
-              } else
-                return (
-                  <CellContent
-                    cellData={cellData}
-                    rowData={rowData}
-                    onFocus={onFocus}
-                    column={column}
-                  />
-                );
-            }}
-            style={{ textAlign: column.align }}
-            headerStyle={{ textAlign: column.align }}
-            headerRenderer={() => headerRenderer(column)}
-            width={column.baseWidth || columnDefaultBaseWidth}
-            minWidth={column.minWidth || columnDefaultMinWidth}
+            cellDataGetter={() => 0}
+            cellRenderer={({ rowData, rowIndex }) =>
+              renderEditActions(rowData, rowIndex)
+            }
+            headerRenderer={() => ""}
+            style={{ textAlign: "center" }}
+            headerStyle={{ textAlign: "center" }}
+            width={columnDefaultBaseWidth}
+            minWidth={columnDefaultMinWidth}
+            flexGrow={1}
           />
-        );
-      })}
-      {shouldDisplayEditActionsColumn && (
-        <Column
-          disableSort
-          dataKey="edit"
-          className={classes.cell}
-          headerClassName={classes.cell}
-          cellDataGetter={() => 0}
-          cellRenderer={({ rowData, rowIndex }) =>
-            renderEditActions(rowData, rowIndex)
-          }
-          headerRenderer={() => ""}
-          style={{ textAlign: "center" }}
-          headerStyle={{ textAlign: "center" }}
-          width={columnDefaultBaseWidth}
-          minWidth={columnDefaultMinWidth}
-          flexGrow={1}
-        />
-      )}
-    </Table>
-  );
-}
+        )}
+      </Table>
+    );
+  }
+);
 
-export function AugmentedVirtualizedTable({
-  columns,
-  entries,
-  onRowEdit,
-  onRowClick = null,
-  onRowAdd,
-  triggerRowAdd = { value: false },
-  onRowDelete,
-  addButtonLabel,
-  dense = false,
-  defaultSortBy = undefined,
-  defaultSortType = "asc",
-  rowChangeAlertMessage = "",
-  rowChangeAlertSeverity = "success",
-  onRowChangeAlertClose = () => {},
-  headerHeight = 60,
-  rowHeight = 40,
-  minHeight = 0,
-  maxHeight = "100%",
-  columnDefaultBaseWidth = 200,
-  columnDefaultMinWidth = 200,
-  className = "",
-  attachScrollTo = null,
-  selectedRowId,
-  rowClassName = () => "",
-  rowRenderer = null,
-  headerClassName,
-  small
-}) {
-  const [sortBy, setSortBy] = React.useState(defaultSortBy);
-  const [sortType, setSortType] = React.useState(
-    defaultSortBy ? defaultSortType : undefined
-  );
+export const AugmentedVirtualizedTable = React.forwardRef(
+  (
+    {
+      columns,
+      entries,
+      onRowEdit,
+      onRowClick = null,
+      onRowAdd,
+      triggerRowAdd = { value: false },
+      onRowDelete,
+      dense = false,
+      defaultSortBy = undefined,
+      defaultSortType = "asc",
+      headerHeight = 60,
+      rowHeight = 40,
+      minHeight = 0,
+      maxHeight = "100%",
+      columnDefaultBaseWidth = 200,
+      columnDefaultMinWidth = 200,
+      className = "",
+      attachScrollTo = null,
+      rowClassName = () => "",
+      rowRenderer = null,
+      headerClassName,
+      small
+    },
+    ref
+  ) => {
+    const [sortBy, setSortBy] = React.useState(defaultSortBy);
+    const [sortType, setSortType] = React.useState(
+      defaultSortBy ? defaultSortType : undefined
+    );
 
-  const [editingRowId, setEditingRowId] = React.useState(null);
-  const [editingValues, setEditingValues] = React.useState({});
+    const [editingRowId, setEditingRowId] = React.useState(null);
+    const [editingValues, setEditingValues] = React.useState({});
 
-  const classes = useStyles({ dense, clickableRow: !!onRowClick, small });
+    const classes = useStyles({ dense, clickableRow: !!onRowClick, small });
 
-  React.useEffect(() => {
-    if (triggerRowAdd.value && editingRowId !== 0) {
-      setEditingValues({});
-      setEditingRowId(0);
-    }
-  }, [triggerRowAdd]);
+    React.useEffect(() => {
+      if (triggerRowAdd.value && editingRowId !== 0) {
+        setEditingValues({});
+        setEditingRowId(0);
+      }
+    }, [triggerRowAdd]);
 
-  const handleSortTypeChange = column => () => {
-    let newSortType = "desc";
-    if (sortBy === column && sortType === "desc") newSortType = "asc";
-    setSortBy(column);
-    setSortType(newSortType);
-  };
+    const handleSortTypeChange = column => () => {
+      let newSortType = "desc";
+      if (sortBy === column && sortType === "desc") newSortType = "asc";
+      setSortBy(column);
+      setSortType(newSortType);
+    };
 
-  const isAddingRow = editingRowId === 0;
-  const isEditingRow = editingRowId > 0;
+    const isAddingRow = editingRowId === 0;
+    const isEditingRow = editingRowId > 0;
 
-  const editable = !!onRowEdit;
-  const deletable = !!onRowDelete;
+    const editable = !!onRowEdit;
+    const deletable = !!onRowDelete;
 
-  const shouldDisplayEditActionsColumn = editable || isAddingRow || deletable;
+    const shouldDisplayEditActionsColumn = editable || isAddingRow || deletable;
 
-  const isRowOnFocus = (entry, index) =>
-    (isAddingRow && index === 0) || editingRowId === entry.id;
+    const isRowOnFocus = (entry, index) =>
+      (isAddingRow && index === 0) || editingRowId === entry.id;
 
-  const renderEditActions = (entry, index) => {
-    const onFocus = isRowOnFocus(entry, index);
-    if (!onFocus && !editable && !deletable) {
-      return null;
-    }
-    return (
-      <>
-        {onFocus ? (
-          isAddingRow ? (
-            <>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  onRowAdd(editingValues);
-                  setEditingRowId(null);
-                }}
-              >
-                Créer
-              </Button>
-              <Button
-                variant="outlined"
-                color="primary"
-                className={classes.cancelCreationButton}
-                onClick={() => setEditingRowId(null)}
-              >
-                Annuler
-              </Button>
-            </>
+    const renderEditActions = (entry, index) => {
+      const onFocus = isRowOnFocus(entry, index);
+      if (!onFocus && !editable && !deletable) {
+        return null;
+      }
+      return (
+        <>
+          {onFocus ? (
+            isAddingRow ? (
+              <>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    onRowAdd(editingValues);
+                    setEditingRowId(null);
+                  }}
+                >
+                  Créer
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  className={classes.cancelCreationButton}
+                  onClick={() => setEditingRowId(null)}
+                >
+                  Annuler
+                </Button>
+              </>
+            ) : (
+              <>
+                <IconButton
+                  className="no-margin-no-padding"
+                  onClick={() => {
+                    onRowEdit(entry, { ...editingValues });
+                    setEditingRowId(null);
+                  }}
+                >
+                  <CheckIcon className={classes.saveIcon} />
+                </IconButton>
+                <IconButton
+                  className="no-margin-no-padding"
+                  onClick={() => setEditingRowId(null)}
+                >
+                  <CloseIcon color="error" />
+                </IconButton>
+              </>
+            )
           ) : (
             <>
-              <IconButton
-                className="no-margin-no-padding"
-                onClick={() => {
-                  onRowEdit(entry, { ...editingValues });
-                  setEditingRowId(null);
-                }}
-              >
-                <CheckIcon className={classes.saveIcon} />
-              </IconButton>
-              <IconButton
-                className="no-margin-no-padding"
-                onClick={() => setEditingRowId(null)}
-              >
-                <CloseIcon color="error" />
-              </IconButton>
+              {editable && (
+                <IconButton
+                  className="no-margin-no-padding"
+                  color="primary"
+                  disabled={isAddingRow || isEditingRow}
+                  onClick={() => {
+                    const initialValues = {};
+                    columns.forEach(column => {
+                      if (column.edit)
+                        initialValues[column.name] = entry[column.name];
+                    });
+                    setEditingValues(initialValues);
+                    setEditingRowId(entry.id);
+                  }}
+                >
+                  <EditIcon />
+                </IconButton>
+              )}
+              {deletable && (
+                <IconButton
+                  className="no-margin-no-padding"
+                  disabled={isAddingRow || isEditingRow}
+                  onClick={() => onRowDelete(entry)}
+                >
+                  <DeleteIcon
+                    color={!isAddingRow && !isEditingRow ? "error" : ""}
+                  />
+                </IconButton>
+              )}
             </>
-          )
-        ) : (
-          <>
-            {editable && (
-              <IconButton
-                className="no-margin-no-padding"
-                color="primary"
-                disabled={isAddingRow || isEditingRow}
-                onClick={() => {
-                  const initialValues = {};
-                  columns.forEach(column => {
-                    if (column.edit)
-                      initialValues[column.name] = entry[column.name];
-                  });
-                  setEditingValues(initialValues);
-                  setEditingRowId(entry.id);
-                }}
-              >
-                <EditIcon />
-              </IconButton>
-            )}
-            {deletable && (
-              <IconButton
-                className="no-margin-no-padding"
-                disabled={isAddingRow || isEditingRow}
-                onClick={() => onRowDelete(entry)}
-              >
-                <DeleteIcon
-                  color={!isAddingRow && !isEditingRow ? "error" : ""}
-                />
-              </IconButton>
-            )}
-          </>
-        )}
-      </>
-    );
-  };
+          )}
+        </>
+      );
+    };
 
-  const _headerRenderer = column => {
-    return column.sortable ? (
-      <>
-        <TableSortLabel
-          active={sortBy === column.name}
-          direction={sortBy === column.name ? sortType : "desc"}
-          onClick={handleSortTypeChange(column.name)}
+    const _headerRenderer = column => {
+      return column.sortable ? (
+        <>
+          <TableSortLabel
+            active={sortBy === column.name}
+            direction={sortBy === column.name ? sortType : "desc"}
+            onClick={handleSortTypeChange(column.name)}
+            style={{
+              flexDirection: column.align === "right" ? "row-reverse" : "row"
+            }}
+          >
+            {column.renderLabel ? column.renderLabel() : column.label}
+          </TableSortLabel>
+        </>
+      ) : column.renderLabel ? (
+        column.renderLabel()
+      ) : (
+        column.label
+      );
+    };
+
+    const sortedEntries =
+      sortBy && sortType ? orderBy(entries, [sortBy], [sortType]) : entries;
+
+    const displayedEntries = isAddingRow
+      ? [editingValues, ...sortedEntries]
+      : sortedEntries;
+
+    return (
+      <Box className={`${className} flex-column`}>
+        <TableContainer
           style={{
-            flexDirection: column.align === "right" ? "row-reverse" : "row"
+            height:
+              Math.max(
+                (typeof rowHeight === "number"
+                  ? displayedEntries.length * rowHeight
+                  : sum(
+                      displayedEntries.map((entry, index) =>
+                        rowHeight(index, entry)
+                      )
+                    )) + headerHeight,
+                minHeight
+              ) + 2,
+            maxHeight,
+            overflowY: "hidden",
+            marginBottom: 1
           }}
         >
-          {column.renderLabel ? column.renderLabel() : column.label}
-        </TableSortLabel>
-      </>
-    ) : column.renderLabel ? (
-      column.renderLabel()
-    ) : (
-      column.label
+          {attachScrollTo ? (
+            <WindowScroller scrollElement={attachScrollTo}>
+              {({
+                height,
+                isScrolling,
+                registerChild,
+                onChildScroll,
+                scrollTop
+              }) => (
+                <AutoSizer disableHeight>
+                  {({ width }) => (
+                    <div ref={registerChild}>
+                      <VirtualizedTable
+                        ref={ref}
+                        columns={columns}
+                        entries={displayedEntries}
+                        classes={classes}
+                        width={width}
+                        height={height - 2}
+                        minHeight={minHeight}
+                        headerHeight={headerHeight}
+                        rowHeight={rowHeight}
+                        isAddingRow={isAddingRow}
+                        isRowOnFocus={isRowOnFocus}
+                        headerRenderer={_headerRenderer}
+                        columnDefaultMinWidth={columnDefaultMinWidth}
+                        columnDefaultBaseWidth={columnDefaultBaseWidth}
+                        shouldDisplayEditActionsColumn={
+                          shouldDisplayEditActionsColumn
+                        }
+                        renderEditActions={renderEditActions}
+                        editingValues={editingValues}
+                        setEditingValues={setEditingValues}
+                        onScroll={onChildScroll}
+                        scrollTop={scrollTop}
+                        autoHeight={true}
+                        onRowClick={onRowClick}
+                        rowClassName={rowClassName}
+                        rowRenderer={rowRenderer}
+                        headerClassName={headerClassName}
+                      />
+                    </div>
+                  )}
+                </AutoSizer>
+              )}
+            </WindowScroller>
+          ) : (
+            <AutoSizer>
+              {({ width, height }) => {
+                return (
+                  <VirtualizedTable
+                    columns={columns}
+                    entries={displayedEntries}
+                    classes={classes}
+                    width={width}
+                    height={height - 2}
+                    ref={ref}
+                    minHeight={minHeight}
+                    headerHeight={headerHeight}
+                    rowHeight={rowHeight}
+                    onRowClick={onRowClick}
+                    isAddingRow={isAddingRow}
+                    isRowOnFocus={isRowOnFocus}
+                    headerRenderer={_headerRenderer}
+                    columnDefaultMinWidth={columnDefaultMinWidth}
+                    columnDefaultBaseWidth={columnDefaultBaseWidth}
+                    shouldDisplayEditActionsColumn={
+                      shouldDisplayEditActionsColumn
+                    }
+                    renderEditActions={renderEditActions}
+                    editingValues={editingValues}
+                    setEditingValues={setEditingValues}
+                    rowClassName={rowClassName}
+                    rowRenderer={rowRenderer}
+                    headerClassName={headerClassName}
+                  />
+                );
+              }}
+            </AutoSizer>
+          )}
+        </TableContainer>
+      </Box>
     );
-  };
-
-  const sortedEntries =
-    sortBy && sortType ? orderBy(entries, [sortBy], [sortType]) : entries;
-
-  const displayedEntries = isAddingRow
-    ? [editingValues, ...sortedEntries]
-    : sortedEntries;
-
-  return (
-    <Box className={`${className} flex-column`}>
-      <TableContainer
-        style={{
-          height:
-            Math.max(
-              (typeof rowHeight === "number"
-                ? displayedEntries.length * rowHeight
-                : sum(
-                    displayedEntries.map((entry, index) =>
-                      rowHeight(index, entry)
-                    )
-                  )) + headerHeight,
-              minHeight
-            ) + 2,
-          maxHeight,
-          overflowY: "hidden",
-          marginBottom: 1
-        }}
-      >
-        {attachScrollTo ? (
-          <WindowScroller scrollElement={attachScrollTo}>
-            {({
-              height,
-              isScrolling,
-              registerChild,
-              onChildScroll,
-              scrollTop
-            }) => (
-              <AutoSizer disableHeight>
-                {({ width }) => (
-                  <div ref={registerChild}>
-                    <VirtualizedTable
-                      columns={columns}
-                      entries={displayedEntries}
-                      classes={classes}
-                      width={width}
-                      height={height - 2}
-                      minHeight={minHeight}
-                      headerHeight={headerHeight}
-                      rowHeight={rowHeight}
-                      isAddingRow={isAddingRow}
-                      isRowOnFocus={isRowOnFocus}
-                      headerRenderer={_headerRenderer}
-                      columnDefaultMinWidth={columnDefaultMinWidth}
-                      columnDefaultBaseWidth={columnDefaultBaseWidth}
-                      shouldDisplayEditActionsColumn={
-                        shouldDisplayEditActionsColumn
-                      }
-                      renderEditActions={renderEditActions}
-                      editingValues={editingValues}
-                      setEditingValues={setEditingValues}
-                      onScroll={onChildScroll}
-                      scrollTop={scrollTop}
-                      autoHeight={true}
-                      onRowClick={onRowClick}
-                      selectedRowId={selectedRowId}
-                      rowClassName={rowClassName}
-                      rowRenderer={rowRenderer}
-                      headerClassName={headerClassName}
-                    />
-                  </div>
-                )}
-              </AutoSizer>
-            )}
-          </WindowScroller>
-        ) : (
-          <AutoSizer>
-            {({ width, height }) => {
-              return (
-                <VirtualizedTable
-                  columns={columns}
-                  entries={displayedEntries}
-                  classes={classes}
-                  width={width}
-                  height={height - 2}
-                  minHeight={minHeight}
-                  headerHeight={headerHeight}
-                  rowHeight={rowHeight}
-                  onRowClick={onRowClick}
-                  isAddingRow={isAddingRow}
-                  isRowOnFocus={isRowOnFocus}
-                  headerRenderer={_headerRenderer}
-                  columnDefaultMinWidth={columnDefaultMinWidth}
-                  columnDefaultBaseWidth={columnDefaultBaseWidth}
-                  shouldDisplayEditActionsColumn={
-                    shouldDisplayEditActionsColumn
-                  }
-                  renderEditActions={renderEditActions}
-                  editingValues={editingValues}
-                  setEditingValues={setEditingValues}
-                  selectedRowId={selectedRowId}
-                  rowClassName={rowClassName}
-                  rowRenderer={rowRenderer}
-                  headerClassName={headerClassName}
-                />
-              );
-            }}
-          </AutoSizer>
-        )}
-      </TableContainer>
-    </Box>
-  );
-}
+  }
+);

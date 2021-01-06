@@ -65,10 +65,21 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(2)
   },
   row: {
-    borderLeft: "1px solid #c9d3df",
-    borderRight: "1px solid #c9d3df",
+    border: "1px solid #c9d3df",
     borderRadius: 5,
-    borderTop: "1px solid #c9d3df"
+    marginBottom: 12,
+    "&:focus": {
+      outline: "none"
+    },
+    "&:hover": {
+      background: "#fafbfc",
+      cursor: ({ clickableRow }) => (clickableRow ? "pointer" : "inherit")
+    }
+  },
+  header: {
+    "&:hover": {
+      cursor: "inherit"
+    }
   },
   tab: {
     maxWidth: "unset"
@@ -81,6 +92,13 @@ const useStyles = makeStyles(theme => ({
     "&:hover": {
       backgroundColor: theme.palette.success.light
     }
+  },
+  selectedRow: {
+    background: theme.palette.primary.lighter
+  },
+  missionTitle: {
+    textTransform: "uppercase",
+    color: theme.palette.primary.main
   }
 }));
 
@@ -89,9 +107,8 @@ function _ValidationPanel({ containerRef, width }) {
   const adminStore = useAdminStore();
   const alerts = useSnackbarAlerts();
 
-  const classes = useStyles();
-
   const [tab, setTab] = React.useState(0);
+  const classes = useStyles({ clickableRow: tab === 0 });
 
   const commonCols = [
     {
@@ -235,7 +252,6 @@ function _ValidationPanel({ containerRef, width }) {
   );
 
   const [missionOnFocus, setMissionOnFocus] = React.useState(null);
-  const [validatedMissionId, setValidatedMissionId] = React.useState(null);
 
   return (
     <Paper className={classes.container} variant="outlined">
@@ -264,7 +280,7 @@ function _ValidationPanel({ containerRef, width }) {
         }
         editable={false}
         rowHeight={(index, mission) =>
-          60 + 35 * Object.keys(mission.userStats).length
+          72 + 30 * Object.keys(mission.userStats).length
         }
         maxHeight={"100%"}
         defaultSortBy="startTime"
@@ -284,8 +300,16 @@ function _ValidationPanel({ containerRef, width }) {
           return (
             <Box
               key={props.key}
-              className={`${props.className}`}
-              style={{ ...props.style, display: "block" }}
+              className={`${classes.row} ${
+                missionOnFocus && mission.id === missionOnFocus.id
+                  ? classes.selectedRow
+                  : ""
+              }`}
+              style={{
+                ...props.style,
+                display: "block",
+                height: 60 + 30 * Object.keys(mission.userStats).length
+              }}
               onClick={
                 props.onRowClick
                   ? e => props.onRowClick({ event: e, rowData: mission })
@@ -294,10 +318,10 @@ function _ValidationPanel({ containerRef, width }) {
             >
               <Box
                 style={{ height: 60 }}
-                px={1}
                 className="flex-row-space-between"
+                px={1}
               >
-                <Typography variant="h6">
+                <Typography variant="h6" className={classes.missionTitle}>
                   Mission {mission.name ? mission.name : "sans nom"} du{" "}
                   {formatDay(mission.startTime)}
                 </Typography>
@@ -308,7 +332,6 @@ function _ValidationPanel({ containerRef, width }) {
                     size="small"
                     onClick={async e => {
                       e.stopPropagation();
-                      setValidatedMissionId(index);
                       adminStore.setMissions(missions =>
                         missions.filter(m => m.id !== mission.id)
                       );
@@ -326,7 +349,6 @@ function _ValidationPanel({ containerRef, width }) {
                       } catch (err) {
                         alerts.error(formatApiError(err), mission.id, 6000);
                       }
-                      setValidatedMissionId(null);
                     }}
                   >
                     Valider
@@ -335,7 +357,7 @@ function _ValidationPanel({ containerRef, width }) {
               </Box>
               {map(mission.userStats, (stats, userId) => (
                 <Box
-                  style={{ height: 35 }}
+                  style={{ height: 30 }}
                   key={userId}
                   className="flex-row-center"
                 >
@@ -362,13 +384,7 @@ function _ValidationPanel({ containerRef, width }) {
             </Box>
           );
         }}
-        selectedRowId={missionOnFocus ? missionOnFocus.id : null}
-        rowClassName={({ index }) =>
-          `${classes.row} ${
-            validatedMissionId === index ? classes.validatedRow : ""
-          }`
-        }
-        headerClassName={classes.row}
+        headerClassName={`${classes.row} ${classes.header}`}
       />
       <Drawer
         anchor="right"
