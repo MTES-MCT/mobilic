@@ -19,6 +19,8 @@ import Grid from "@material-ui/core/Grid";
 import { LinkButton } from "../../common/LinkButton";
 import * as Sentry from "@sentry/browser";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles(theme => ({
   navigation: {
@@ -37,6 +39,13 @@ const useStyles = makeStyles(theme => ({
   createCompanyButton: {
     marginTop: theme.spacing(1),
     flexShrink: 0
+  },
+  companyName: {
+    marginBottom: theme.spacing(1)
+  },
+  title: {
+    textAlign: "left",
+    marginBottom: theme.spacing(2)
   }
 }));
 
@@ -44,6 +53,9 @@ function VehicleAdmin({ companyId }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const modals = useModals();
+
+  const classes = useStyles();
+
   const columns = [
     {
       label: "Immatriculation",
@@ -60,8 +72,12 @@ function VehicleAdmin({ companyId }) {
     }
   ];
   const vehicles = adminStore.vehicles.filter(v => v.companyId === companyId);
-  return (
+  return [
+    <Typography key={0} variant="h4" className={classes.title}>
+      Véhicules ({vehicles.length})
+    </Typography>,
     <AugmentedTable
+      key={1}
       columns={columns}
       entries={vehicles}
       editable={true}
@@ -141,7 +157,7 @@ function VehicleAdmin({ companyId }) {
       }
       addButtonLabel="Ajouter un véhicule"
     />
-  );
+  ];
 }
 
 const COMPANY_SUB_PANELS = [
@@ -165,6 +181,7 @@ function SubNavigationToggle({ view, setView }) {
       onChange={(e, newView) => {
         if (newView) setView(newView);
       }}
+      size="small"
     >
       {COMPANY_SUB_PANELS.map(panelInfos => (
         <ToggleButton key={panelInfos.view} value={panelInfos.view}>
@@ -193,28 +210,31 @@ function _CompanyPanel({ width, containerRef }) {
 
   const classes = useStyles({ width });
   const subPanel = COMPANY_SUB_PANELS.find(sp => sp.view === view);
+
+  const currentCompanyName =
+    companies && companyId ? companies.find(c => c.id === companyId).name : "";
+
   return [
     <Paper
       className={`${classes.navigation} flex-row-center`}
       variant="outlined"
       key={1}
     >
-      <LinkButton
-        className={classes.createCompanyButton}
-        size="small"
-        variant="contained"
-        color="primary"
-        href="/signup/company"
-      >
-        Inscrire une nouvelle entreprise
-      </LinkButton>
       <Grid
         container
         spacing={10}
-        justify="center"
+        justify="space-between"
         alignItems="center"
         style={{ flex: "1 1 auto", width: "unset" }}
       >
+        <Grid item>
+          <Box>
+            <Typography className={classes.companyName} variant="h3">
+              {currentCompanyName}
+            </Typography>
+            <SubNavigationToggle view={view} setView={setView} />
+          </Box>
+        </Grid>
         {companies && companies.length > 1 && (
           <Grid item>
             <TextField
@@ -234,7 +254,15 @@ function _CompanyPanel({ width, containerRef }) {
           </Grid>
         )}
         <Grid item>
-          <SubNavigationToggle view={view} setView={setView} />
+          <LinkButton
+            className={classes.createCompanyButton}
+            size="small"
+            variant="contained"
+            color="primary"
+            href="/signup/company"
+          >
+            Inscrire une nouvelle entreprise
+          </LinkButton>
         </Grid>
       </Grid>
     </Paper>,
