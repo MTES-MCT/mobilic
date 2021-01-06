@@ -5,7 +5,7 @@ function _ScrollToTop({ history }) {
   React.useEffect(() => {
     const unlisten = history.listen(() => {
       const el = document.getElementById("root");
-      if (el) el.scrollTo(0, 0);
+      if (el && el.scrollTo) el.scrollTo(0, 0);
     });
     return () => {
       unlisten();

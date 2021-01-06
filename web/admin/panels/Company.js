@@ -116,7 +116,7 @@ function VehicleAdmin({ companyId }) {
           console.log(err);
         }
       }}
-      onRowDelete={(vehicle, callback) =>
+      onRowDelete={vehicle =>
         modals.open("confirmation", {
           textButtons: true,
           title: "Confirmer suppression",
@@ -132,7 +132,6 @@ function VehicleAdmin({ companyId }) {
               adminStore.setVehicles(oldVehicles =>
                 oldVehicles.filter(v => v.id !== vehicle.id)
               );
-              callback();
             } catch (err) {
               Sentry.captureException(err);
               console.log(err);
