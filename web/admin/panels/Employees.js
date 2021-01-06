@@ -21,8 +21,10 @@ import { formatApiError } from "common/utils/errors";
 
 const useStyles = makeStyles(theme => ({
   title: {
-    textAlign: "left",
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center"
   },
   subPanel: {
     padding: theme.spacing(2)
@@ -32,6 +34,9 @@ const useStyles = makeStyles(theme => ({
   },
   warningText: {
     color: theme.palette.warning.main
+  },
+  pendingEmployments: {
+    marginBottom: theme.spacing(10)
   }
 }));
 
@@ -40,6 +45,10 @@ export function Employees({ companyId, containerRef }) {
   const adminStore = useAdminStore();
   const modals = useModals();
   const alerts = useSnackbarAlerts();
+
+  const [triggerAddEmployee, setTriggerAddEmployee] = React.useState({
+    value: false
+  });
 
   const classes = useStyles();
 
@@ -206,51 +215,78 @@ export function Employees({ companyId, containerRef }) {
     }));
 
   return [
-    <Typography key={0} variant="h4" className={classes.title}>
-      Invitations en attente ({pendingEmployments.length})
-    </Typography>,
-    <AugmentedTable
-      key={1}
-      columns={pendingEmploymentColumns}
-      entries={pendingEmployments}
-      editable={false}
-      onRowDelete={entry =>
-        modals.open("confirmation", {
-          textButtons: true,
-          title: "Confirmer annulation du rattachement",
-          handleConfirm: async () => await cancelEmployment(entry)
-        })
-      }
-      disableAdd={({ idOrEmail }) => !idOrEmail}
-      onRowAdd={async ({ idOrEmail, hasAdminRights }) => {
-        const payload = {
-          hasAdminRights,
-          companyId
-        };
-        if (/^\d+$/.test(idOrEmail)) {
-          payload.userId = parseInt(idOrEmail);
-        } else {
-          payload.mail = idOrEmail;
+    (triggerAddEmployee.value || pendingEmployments.length > 0) && (
+      <Box key={0} className={classes.title}>
+        <Typography variant="h4">
+          Invitations en attente ({pendingEmployments.length})
+        </Typography>
+        <Button
+          variant="contained"
+          size="small"
+          color="primary"
+          onClick={() => setTriggerAddEmployee({ value: true })}
+          className={classes.actionButton}
+        >
+          Inviter un nouveau salarié
+        </Button>
+      </Box>
+    ),
+    (triggerAddEmployee.value || pendingEmployments.length > 0) && (
+      <AugmentedTable
+        key={1}
+        columns={pendingEmploymentColumns}
+        entries={pendingEmployments}
+        editable={false}
+        className={classes.pendingEmployments}
+        onRowDelete={entry =>
+          modals.open("confirmation", {
+            textButtons: true,
+            title: "Confirmer annulation du rattachement",
+            handleConfirm: async () => await cancelEmployment(entry)
+          })
         }
-        try {
-          const apiResponse = await api.graphQlMutate(
-            CREATE_EMPLOYMENT_MUTATION,
-            payload
-          );
-          adminStore.setEmployments(oldEmployments => [
-            { ...apiResponse.data.employments.createEmployment, companyId },
-            ...oldEmployments
-          ]);
-        } catch (err) {
-          alerts.error(formatApiError(err), idOrEmail, 6000);
-        }
-      }}
-      addButtonLabel="Inviter un nouveau salarié"
-    />,
-    <Box key={2} my={6}></Box>,
-    <Typography key={3} variant="h4" className={classes.title}>
-      Employés ({validEmployments.length})
-    </Typography>,
+        disableAdd={({ idOrEmail }) => !idOrEmail}
+        triggerRowAdd={triggerAddEmployee}
+        onRowAdd={async ({ idOrEmail, hasAdminRights }) => {
+          const payload = {
+            hasAdminRights,
+            companyId
+          };
+          if (/^\d+$/.test(idOrEmail)) {
+            payload.userId = parseInt(idOrEmail);
+          } else {
+            payload.mail = idOrEmail;
+          }
+          try {
+            const apiResponse = await api.graphQlMutate(
+              CREATE_EMPLOYMENT_MUTATION,
+              payload
+            );
+            adminStore.setEmployments(oldEmployments => [
+              { ...apiResponse.data.employments.createEmployment, companyId },
+              ...oldEmployments
+            ]);
+          } catch (err) {
+            alerts.error(formatApiError(err), idOrEmail, 6000);
+          }
+        }}
+        afterRowAdd={() => setTriggerAddEmployee({ value: false })}
+      />
+    ),
+    <Box key={3} className={classes.title}>
+      <Typography variant="h4">Employés ({validEmployments.length})</Typography>
+      {pendingEmployments.length === 0 && !triggerAddEmployee.value && (
+        <Button
+          variant="contained"
+          size="small"
+          color="primary"
+          onClick={() => setTriggerAddEmployee({ value: true })}
+          className={classes.actionButton}
+        >
+          Inviter un nouveau salarié
+        </Button>
+      )}
+    </Box>,
     <AugmentedVirtualizedTable
       key={4}
       columns={validEmploymentColumns}

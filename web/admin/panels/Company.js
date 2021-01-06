@@ -21,6 +21,7 @@ import * as Sentry from "@sentry/browser";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles(theme => ({
   navigation: {
@@ -44,8 +45,10 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1)
   },
   title: {
-    textAlign: "left",
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center"
   }
 }));
 
@@ -53,6 +56,10 @@ function VehicleAdmin({ companyId }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const modals = useModals();
+
+  const [triggerAddVehicle, setTriggerAddVehicle] = React.useState({
+    value: false
+  });
 
   const classes = useStyles();
 
@@ -73,13 +80,23 @@ function VehicleAdmin({ companyId }) {
   ];
   const vehicles = adminStore.vehicles.filter(v => v.companyId === companyId);
   return [
-    <Typography key={0} variant="h4" className={classes.title}>
-      Véhicules ({vehicles.length})
-    </Typography>,
+    <Box key={0} className={classes.title}>
+      <Typography variant="h4">Véhicules ({vehicles.length})</Typography>
+      <Button
+        variant="contained"
+        size="small"
+        color="primary"
+        onClick={() => setTriggerAddVehicle({ value: true })}
+      >
+        Ajouter un véhicule
+      </Button>
+    </Box>,
     <AugmentedTable
       key={1}
       columns={columns}
       entries={vehicles}
+      triggerRowAdd={triggerAddVehicle}
+      afterRowAdd={() => setTriggerAddVehicle({ value: false })}
       editable={true}
       onRowEdit={async (vehicle, { alias }) => {
         try {

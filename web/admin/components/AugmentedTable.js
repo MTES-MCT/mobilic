@@ -18,7 +18,6 @@ import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableContainer from "@material-ui/core/TableContainer";
-import Alert from "@material-ui/lab/Alert";
 import MaterialTable from "@material-ui/core/Table";
 import {
   Table,
@@ -153,6 +152,7 @@ class Row extends React.Component {
       props.shouldDisplayEditActionsColumn
     )
       return true;
+    if (this.props.isAddingRow !== props.isAddingRow) return true;
     return false;
   }
 
@@ -283,17 +283,15 @@ export function AugmentedTable({
   entries,
   onRowEdit,
   onRowAdd,
+  triggerRowAdd = { value: false },
   disableAdd = null,
   onRowDelete,
-  addButtonLabel,
+  afterRowAdd = null,
   renderCollapse = null,
   dense = false,
   small = false,
   defaultSortBy = undefined,
   defaultSortType = "asc",
-  rowChangeAlertMessage = "",
-  rowChangeAlertSeverity = "success",
-  onRowChangeAlertClose = () => {},
   stickyHeader = false,
   className = ""
 }) {
@@ -304,6 +302,13 @@ export function AugmentedTable({
 
   const [editingRowId, setEditingRowId] = React.useState(null);
   const [editingValues, setEditingValues] = React.useState({});
+
+  React.useEffect(() => {
+    if (triggerRowAdd.value && editingRowId !== 0) {
+      setEditingValues({});
+      setEditingRowId(0);
+    }
+  }, [triggerRowAdd]);
 
   const collapsable = !!renderCollapse;
 
@@ -344,6 +349,7 @@ export function AugmentedTable({
                 onClick={() => {
                   onRowAdd(editingValues);
                   setEditingRowId(null);
+                  afterRowAdd && afterRowAdd();
                 }}
               >
                 Créer
@@ -352,7 +358,10 @@ export function AugmentedTable({
                 variant="outlined"
                 color="primary"
                 className={classes.cancelCreationButton}
-                onClick={() => setEditingRowId(null)}
+                onClick={() => {
+                  setEditingRowId(null);
+                  afterRowAdd && afterRowAdd();
+                }}
               >
                 Annuler
               </Button>
@@ -422,44 +431,6 @@ export function AugmentedTable({
 
   return (
     <Box className={`${className}`}>
-      {onRowAdd ? (
-        <Box
-          className="flex-row"
-          mb={2}
-          style={{ flexWrap: "wrap", alignItems: "center" }}
-        >
-          <Button
-            variant="contained"
-            size="small"
-            disabled={editingRowId === 0}
-            color="primary"
-            onClick={() => {
-              setEditingValues({});
-              setEditingRowId(0);
-            }}
-            className={classes.actionButton}
-          >
-            {addButtonLabel}
-          </Button>
-          {rowChangeAlertMessage && (
-            <Alert
-              severity={rowChangeAlertSeverity}
-              onClose={onRowChangeAlertClose}
-            >
-              {rowChangeAlertMessage}
-            </Alert>
-          )}
-        </Box>
-      ) : (
-        rowChangeAlertMessage && (
-          <Alert
-            severity={rowChangeAlertSeverity}
-            onClose={onRowChangeAlertClose}
-          >
-            {rowChangeAlertMessage}
-          </Alert>
-        )
-      )}
       <TableContainer className={` ${classes.tableContainer}`}>
         <MaterialTable
           stickyHeader={stickyHeader}
@@ -685,6 +656,7 @@ export function AugmentedVirtualizedTable({
   onRowEdit,
   onRowClick = null,
   onRowAdd,
+  triggerRowAdd = { value: false },
   onRowDelete,
   addButtonLabel,
   dense = false,
@@ -716,6 +688,13 @@ export function AugmentedVirtualizedTable({
   const [editingValues, setEditingValues] = React.useState({});
 
   const classes = useStyles({ dense, clickableRow: !!onRowClick, small });
+
+  React.useEffect(() => {
+    if (triggerRowAdd.value && editingRowId !== 0) {
+      setEditingValues({});
+      setEditingRowId(0);
+    }
+  }, [triggerRowAdd]);
 
   const handleSortTypeChange = column => () => {
     let newSortType = "desc";
@@ -850,44 +829,6 @@ export function AugmentedVirtualizedTable({
 
   return (
     <Box className={`${className} flex-column`}>
-      {onRowAdd ? (
-        <Box
-          className="flex-row"
-          mb={2}
-          style={{ flexWrap: "wrap", alignItems: "center" }}
-        >
-          <Button
-            variant="contained"
-            size="small"
-            disabled={editingRowId === 0}
-            color="primary"
-            onClick={() => {
-              setEditingValues({});
-              setEditingRowId(0);
-            }}
-            className={classes.actionButton}
-          >
-            {addButtonLabel}
-          </Button>
-          {rowChangeAlertMessage && (
-            <Alert
-              severity={rowChangeAlertSeverity}
-              onClose={onRowChangeAlertClose}
-            >
-              {rowChangeAlertMessage}
-            </Alert>
-          )}
-        </Box>
-      ) : (
-        rowChangeAlertMessage && (
-          <Alert
-            severity={rowChangeAlertSeverity}
-            onClose={onRowChangeAlertClose}
-          >
-            {rowChangeAlertMessage}
-          </Alert>
-        )
-      )}
       <TableContainer
         style={{
           height:
