@@ -1,5 +1,6 @@
 import React from "react";
 import groupBy from "lodash/groupBy";
+import mapValues from "lodash/mapValues";
 import { Container } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -211,6 +212,11 @@ export function HistoryModal({
   const missionsInSelectedPeriod = groupedMissions[selectedPeriod];
   const followingPeriodStart = periods.find(p => p > selectedPeriod);
 
+  const periodsWithNeedForValidation = mapValues(
+    groupedMissions,
+    ms => !ms[0].validation
+  );
+
   return (
     <FunnelModal open={open} handleBack={handleClose}>
       <Container
@@ -237,6 +243,9 @@ export function HistoryModal({
           {periods.length > 0 && (
             <PeriodCarouselPicker
               periods={periods}
+              shouldDisplayChipsForPeriods={
+                currentTab === "mission" ? periodsWithNeedForValidation : null
+              }
               selectedPeriod={selectedPeriod}
               onPeriodChange={setSelectedPeriod}
             />

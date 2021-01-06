@@ -8,7 +8,8 @@ import { SHORT_MONTHS } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   periodContainer: {
-    borderRadius: "16px"
+    borderRadius: "16px",
+    position: "relative"
   },
   selectedPeriod: {
     backgroundColor: theme.palette.primary.main,
@@ -37,12 +38,25 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     background:
       "linear-gradient(to left, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.9) 100%)"
+  },
+  periodChip: {
+    position: "absolute",
+    top: theme.spacing(0.5),
+    right: theme.spacing(0.5),
+    backgroundColor: theme.palette.secondary.main,
+    height: theme.spacing(1),
+    width: theme.spacing(1),
+    borderRadius: "50%"
+  },
+  selectedPeriodChip: {
+    backgroundColor: theme.palette.primary.contrastText
   }
 }));
 
 export function PeriodCarouselPicker({
   selectedPeriod,
   periods,
+  shouldDisplayChipsForPeriods,
   onPeriodChange,
   renderPeriod
 }) {
@@ -112,6 +126,7 @@ export function PeriodCarouselPicker({
             return (
               <Box
                 p={1}
+                px={2}
                 ref={periodRefs[period]}
                 key={period}
                 className={`${classes.periodContainer} ${period ===
@@ -121,6 +136,13 @@ export function PeriodCarouselPicker({
                   scrollToSelectedPeriod(period);
                 }}
               >
+                {shouldDisplayChipsForPeriods &&
+                  shouldDisplayChipsForPeriods[period.toString()] && (
+                    <Box
+                      className={`${classes.periodChip} ${period ===
+                        selectedPeriod && classes.selectedPeriodChip}`}
+                    />
+                  )}
                 {renderPeriod ? (
                   renderPeriod(period)
                 ) : (
