@@ -10,6 +10,8 @@ import { useApi } from "common/utils/api";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { LoadingButton } from "common/components/LoadingButton";
 import { CompanyFilter } from "./CompanyFilter";
+import { useSnackbarAlerts } from "../../common/Snackbar";
+import { formatApiError } from "common/utils/errors";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -22,6 +24,7 @@ const useStyles = makeStyles(theme => ({
 
 export function DataExport({ open, handleClose, companies = [] }) {
   const api = useApi();
+  const alerts = useSnackbarAlerts();
   const [minDate, setMinDate] = React.useState(null);
   const [maxDate, setMaxDate] = React.useState(null);
 
@@ -107,15 +110,23 @@ export function DataExport({ open, handleClose, companies = [] }) {
               const optionalQueryString =
                 queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
               e.preventDefault();
-              const response = await api.httpQuery(
-                "GET",
-                `/download_company_activity_report${optionalQueryString}`
-              );
-              const blob = await response.blob();
-              const link = document.createElement("a");
-              link.href = window.URL.createObjectURL(blob);
-              link.download = "rapport_activité.xlsx";
-              link.dispatchEvent(new MouseEvent("click"));
+              try {
+                const response = await api.httpQuery(
+                  "POST",
+                  `/download_company_activity_report${optionalQueryString}`
+                );
+                const blob = await response.blob();
+                const link = document.createElement("a");
+                link.href = window.URL.createObjectURL(blob);
+                link.download = "rapport_activité.xlsx";
+                link.dispatchEvent(new MouseEvent("click"));
+              } catch (err) {
+                alerts.error(
+                  formatApiError(err),
+                  "download_company_report",
+                  6000
+                );
+              }
             }}
           >
             Télécharger
