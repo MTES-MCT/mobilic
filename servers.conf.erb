@@ -9,6 +9,8 @@ server {
 
     charset utf-8;
 
+    resolver 8.8.8.8;
+
     port_in_redirect off;
     keepalive_timeout 5;
     root /app/build/;
@@ -89,6 +91,6 @@ server {
         add_header Content-Security-Policy "script-src 'self' https://storage.googleapis.com";
         add_header X-XSS-Protection "1; mode=block";
         add_header Cache-Control "no-cache; max-age=0";
-       try_files /service-worker.js @404;
+        try_files /service-worker.js @404;
     }
 }
