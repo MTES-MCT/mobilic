@@ -1,0 +1,94 @@
+map $http_cache_control $cache_control {
+    ""        "no-cache; max-age=0";
+    default   $http_cache_control;
+}
+
+server {
+    server_name localhost;
+    listen <%= ENV['PORT'] %>;
+
+    charset utf-8;
+
+    port_in_redirect off;
+    keepalive_timeout 5;
+    root /app/build/;
+
+    if ($http_x_forwarded_proto != "https") {
+      return 301 https://$host$request_uri;
+    }
+
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+    add_header Content-Security-Policy "script-src 'self'";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Cache-Control $cache_control;
+
+    location / {
+      try_files $uri.html $uri $uri/ /index.html;
+    }
+
+    location ~ \.html$ {
+      try_files $uri @404;
+    }
+
+    location ^~ /static/ {
+     try_files $uri.html $uri $uri/ @404;
+    }
+
+    location ~ ^/developers/playground$ {
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+        add_header Content-Security-Policy "script-src 'self' https://buttons.github.io";
+        add_header X-XSS-Protection "1; mode=block";
+        add_header Cache-Control "no-cache; max-age=0";
+      try_files /api-playground.html @404;
+    }
+
+    location ~ ^/developers/.*$ {
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+        add_header X-XSS-Protection "1; mode=block";
+        add_header Cache-Control "no-cache; max-age=0";
+      try_files $uri.html $uri $uri/ @404;
+    }
+
+    location ~ ^/.*$ {
+     try_files $uri.html $uri $uri/ /index.html;
+    }
+
+
+    # need this b/c setting $fallback to =404 will try #{root}=404 instead of returning a 404
+    location @404 {
+      return 404;
+    }
+
+    # fallback proxy named match
+
+    set $upstream_endpoint_0 <%= ENV["API_HOST"] %>;
+    location ^~ /api/ {
+      rewrite ^/api//?(.*)$ /$1 break;
+      # can reuse variable set above
+      proxy_pass $upstream_endpoint_0;
+      proxy_ssl_server_name on;
+
+      proxy_hide_header Cache-Control;
+
+      proxy_redirect $upstream_endpoint_0 /api/;
+    }
+
+
+    # fallback redirects named match
+
+    location = /developers {
+      return 301 /developers/docs/intro;
+    }
+
+    location = /developers/ {
+      return 301 /developers/docs/intro;
+    }
+
+    location = /service-worker.js {
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+        add_header Content-Security-Policy "script-src 'self' https://storage.googleapis.com";
+        add_header X-XSS-Protection "1; mode=block";
+        add_header Cache-Control "no-cache; max-age=0";
+       try_files /service-worker.js @404;
+    }
+}
