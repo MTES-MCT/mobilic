@@ -842,7 +842,7 @@ export const AugmentedVirtualizedTable = React.forwardRef(
                       )
                     )) + headerHeight,
                 minHeight
-              ) + 2,
+              ) + 16,
             maxHeight,
             overflowY: "hidden",
             marginBottom: 1
@@ -866,7 +866,7 @@ export const AugmentedVirtualizedTable = React.forwardRef(
                         entries={displayedEntries}
                         classes={classes}
                         width={width}
-                        height={height - 2}
+                        height={height - 16}
                         minHeight={minHeight}
                         headerHeight={headerHeight}
                         rowHeight={rowHeight}
@@ -903,7 +903,7 @@ export const AugmentedVirtualizedTable = React.forwardRef(
                     entries={displayedEntries}
                     classes={classes}
                     width={width}
-                    height={height - 2}
+                    height={height - 16}
                     ref={ref}
                     minHeight={minHeight}
                     headerHeight={headerHeight}
