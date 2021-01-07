@@ -78,7 +78,7 @@ const useStyles = makeStyles(theme => ({
   },
   header: {
     "&:hover": {
-      cursor: "inherit"
+      cursor: "inherit !important"
     }
   },
   tab: {
@@ -384,7 +384,7 @@ function _ValidationPanel({ containerRef, width }) {
             </Box>
           );
         }}
-        headerClassName={`${classes.row} ${classes.header}`}
+        headerClassName={`${classes.header} ${classes.row}`}
       />
       <Drawer
         anchor="right"
