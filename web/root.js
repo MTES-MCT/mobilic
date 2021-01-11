@@ -41,6 +41,7 @@ import {
 import { getAccessibleRoutes, getFallbackRoute } from "./common/routes";
 import { ScrollToTop } from "common/utils/scroll";
 import { SnackbarProvider } from "./common/Snackbar";
+import { EnvironmentHeader } from "./common/EnvironmentHeader";
 
 export default function Root() {
   return (
@@ -120,13 +121,23 @@ function _Root() {
   const routes = getAccessibleRoutes({ userInfo, companies });
 
   return (
-    <Switch>
-      {routes.map(route => (
-        <Route key={route.path} exact={route.exact || false} path={route.path}>
-          {route.component}
-        </Route>
-      ))}
-      <Redirect key="default" from="*" to={fallbackRoute} />
-    </Switch>
+    <>
+      {(process.env.REACT_APP_SENTRY_ENVIRONMENT === "staging" ||
+        process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
+        <EnvironmentHeader />
+      )}
+      <Switch>
+        {routes.map(route => (
+          <Route
+            key={route.path}
+            exact={route.exact || false}
+            path={route.path}
+          >
+            {route.component}
+          </Route>
+        ))}
+        <Redirect key="default" from="*" to={fallbackRoute} />
+      </Switch>
+    </>
   );
 }
