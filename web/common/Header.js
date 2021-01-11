@@ -91,7 +91,9 @@ function ListRouteItem({ route, closeDrawer }) {
   const history = useHistory();
   const location = useLocation();
 
-  const selected = location.pathname.startsWith(route.path);
+  const selected = route.exact
+    ? location.pathname === route.path
+    : location.pathname.startsWith(route.path);
 
   return route.subRoutes ? (
     <>

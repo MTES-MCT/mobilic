@@ -7,14 +7,16 @@ import {
   computeMissionProperties,
   linkMissionsWithRelations
 } from "../utils/mission";
-import { HistoryModal } from "../../web/pwa/screens/History";
+import { History } from "../../web/pwa/screens/History";
 import { now } from "../utils/time";
+import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
 
 function App({ ScreenComponent, loadUser }) {
+  const { path } = useRouteMatch();
+  const history = useHistory();
+
   const actions = useActions();
   const store = useStoreSyncedWithLocalStorage();
-
-  const [openHistory, setOpenHistory] = React.useState(false);
 
   const [currentTime, setCurrentTime] = React.useState(now());
 
@@ -56,42 +58,45 @@ function App({ ScreenComponent, loadUser }) {
       : null;
 
   return (
-    <>
-      <ScreenComponent
-        currentTime={currentTime}
-        missions={missions}
-        latestActivity={latestActivity}
-        currentMission={currentMission}
-        pushNewTeamActivityEvent={actions.pushNewTeamActivityEvent}
-        editActivityEvent={actions.editActivityEvent}
-        beginNewMission={actions.beginNewMission}
-        endMissionForTeam={actions.endMissionForTeam}
-        endMission={actions.endMission}
-        validateMission={actions.validateMission}
-        logExpenditureForTeam={actions.logExpenditureForTeam}
-        cancelExpenditure={actions.cancelExpenditure}
-        editExpendituresForTeam={actions.editExpendituresForTeam}
-        logComment={actions.logComment}
-        cancelComment={actions.cancelComment}
-        previousMissionEnd={previousMissionEnd}
-        loadUser={loadUser}
-        openHistory={() => setOpenHistory(true)}
-      />
-      <HistoryModal
-        open={openHistory}
-        handleClose={() => setOpenHistory(false)}
-        missions={missions.filter(m => m.isComplete)}
-        createActivity={args =>
-          actions.pushNewTeamActivityEvent({ ...args, switchMode: false })
-        }
-        editExpenditures={actions.editExpendituresForTeam}
-        editActivityEvent={actions.editActivityEvent}
-        currentMission={currentMission}
-        validateMission={actions.validateMission}
-        logComment={actions.logComment}
-        cancelComment={actions.cancelComment}
-      />
-    </>
+    <Switch>
+      <Route path={`${path}/history`}>
+        <History
+          handleBack={() => history.push(path)}
+          missions={missions.filter(m => m.isComplete && m.ended)}
+          createActivity={args =>
+            actions.pushNewTeamActivityEvent({ ...args, switchMode: false })
+          }
+          editExpenditures={actions.editExpendituresForTeam}
+          editActivityEvent={actions.editActivityEvent}
+          currentMission={currentMission}
+          validateMission={actions.validateMission}
+          logComment={actions.logComment}
+          cancelComment={actions.cancelComment}
+        />
+      </Route>
+      <Route path={path}>
+        <ScreenComponent
+          currentTime={currentTime}
+          missions={missions}
+          latestActivity={latestActivity}
+          currentMission={currentMission}
+          pushNewTeamActivityEvent={actions.pushNewTeamActivityEvent}
+          editActivityEvent={actions.editActivityEvent}
+          beginNewMission={actions.beginNewMission}
+          endMissionForTeam={actions.endMissionForTeam}
+          endMission={actions.endMission}
+          validateMission={actions.validateMission}
+          logExpenditureForTeam={actions.logExpenditureForTeam}
+          cancelExpenditure={actions.cancelExpenditure}
+          editExpendituresForTeam={actions.editExpendituresForTeam}
+          logComment={actions.logComment}
+          cancelComment={actions.cancelComment}
+          previousMissionEnd={previousMissionEnd}
+          loadUser={loadUser}
+          openHistory={() => history.push(`${path}/history`)}
+        />
+      </Route>
+    </Switch>
   );
 }
 

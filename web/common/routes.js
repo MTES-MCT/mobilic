@@ -29,7 +29,18 @@ export const ROUTES = [
     label: "Saisie de temps",
     accessible: ({ userInfo, companies }) =>
       userInfo.hasActivatedEmail && userInfo.id && companies.length > 0,
-    component: <App ScreenComponent={AppScreen} />
+    component: <App ScreenComponent={AppScreen} />,
+    subRoutes: [
+      {
+        path: "",
+        label: "Saisie",
+        exact: true
+      },
+      {
+        path: "/history",
+        label: "Historique"
+      }
+    ]
   },
   {
     path: "/admin",

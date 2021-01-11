@@ -10,7 +10,6 @@ import { DataExport } from "./admin/components/DataExport";
 import { TeamOrSoloChoiceModal } from "./pwa/components/TeamOrSoloChoice";
 import { NewTeamMateModal } from "./pwa/components/NewTeamMate";
 import { EndMissionModal } from "./pwa/components/EndMission";
-import { HistoryModal } from "./pwa/screens/History";
 import { ExpenditureDialogModal } from "./pwa/components/ExpenditureDialog";
 import { ApiErrorDialogModal } from "./pwa/components/ApiErrorDialog";
 import { CGUModal } from "./landing/cgu";
@@ -30,7 +29,6 @@ export const MODAL_DICT = {
   teamOrSoloChoice: TeamOrSoloChoiceModal,
   newTeamMate: NewTeamMateModal,
   endMission: EndMissionModal,
-  history: HistoryModal,
   expenditures: ExpenditureDialogModal,
   apiErrorDialog: ApiErrorDialogModal,
   cgu: CGUModal,

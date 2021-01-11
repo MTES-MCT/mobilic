@@ -25,13 +25,15 @@ import { getTime } from "common/utils/events";
 import { findMatchingPeriodInNewScale } from "common/utils/history";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
-import { FunnelModal } from "../components/FunnelModal";
 import { RegulationCheck } from "../components/RegulationCheck";
 import { checkDayRestRespect } from "common/utils/regulation";
 import { MissionReviewSection } from "../components/MissionReviewSection";
 import Link from "@material-ui/core/Link";
 import { MissionDetails } from "../components/MissionDetails";
 import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper";
+import Slide from "@material-ui/core/Slide/Slide";
+import { AccountButton } from "../components/AccountButton";
 
 const tabs = {
   mission: {
@@ -154,12 +156,13 @@ const useStyles = makeStyles(theme => ({
   },
   dayAdditionalInfo: {
     marginTop: theme.spacing(4)
+  },
+  fullScreen: {
+    width: "100%"
   }
 }));
 
-export function HistoryModal({
-  open,
-  handleClose,
+export function History({
   missions = [],
   currentMission,
   editActivityEvent,
@@ -218,56 +221,59 @@ export function HistoryModal({
   );
 
   return (
-    <FunnelModal open={open} handleBack={handleClose}>
-      <Container
-        className="flex-column full-height"
-        disableGutters
-        maxWidth={false}
-      >
-        <Container className={classes.periodSelector} maxWidth={false}>
-          <Tabs
-            value={currentTab}
-            onChange={(e, tab) => handlePeriodChange(e, tab, selectedPeriod)}
-            style={{ flexGrow: 1 }}
-            centered
-          >
-            {Object.values(tabs).map((tabProps, index) => (
-              <Tab
-                key={index}
-                label={tabProps.label}
-                value={tabProps.value}
-                style={{ flexGrow: 1 }}
+    <Slide direction="left" in={true}>
+      <Paper className={classes.fullScreen}>
+        <Container
+          className="flex-column full-height"
+          disableGutters
+          maxWidth="sm"
+        >
+          <AccountButton p={2} />
+          <Container className={classes.periodSelector} maxWidth={false}>
+            <Tabs
+              value={currentTab}
+              onChange={(e, tab) => handlePeriodChange(e, tab, selectedPeriod)}
+              style={{ flexGrow: 1 }}
+              centered
+            >
+              {Object.values(tabs).map((tabProps, index) => (
+                <Tab
+                  key={index}
+                  label={tabProps.label}
+                  value={tabProps.value}
+                  style={{ flexGrow: 1 }}
+                />
+              ))}
+            </Tabs>
+            {periods.length > 0 && (
+              <PeriodCarouselPicker
+                periods={periods}
+                shouldDisplayChipsForPeriods={
+                  currentTab === "mission" ? periodsWithNeedForValidation : null
+                }
+                selectedPeriod={selectedPeriod}
+                onPeriodChange={setSelectedPeriod}
               />
-            ))}
-          </Tabs>
-          {periods.length > 0 && (
-            <PeriodCarouselPicker
-              periods={periods}
-              shouldDisplayChipsForPeriods={
-                currentTab === "mission" ? periodsWithNeedForValidation : null
-              }
-              selectedPeriod={selectedPeriod}
-              onPeriodChange={setSelectedPeriod}
-            />
-          )}
+            )}
+          </Container>
+          <Container className={classes.contentContainer} maxWidth={false}>
+            {missionsInSelectedPeriod &&
+              tabs[currentTab].renderPeriod({
+                missionsInPeriod: missionsInSelectedPeriod,
+                handleMissionClick: date => e =>
+                  handlePeriodChange(e, "mission", date),
+                followingPeriodStart,
+                editActivityEvent,
+                createActivity,
+                editExpenditures,
+                currentMission,
+                validateMission,
+                logComment,
+                cancelComment
+              })}
+          </Container>
         </Container>
-        <Container className={classes.contentContainer} maxWidth={false}>
-          {missionsInSelectedPeriod &&
-            tabs[currentTab].renderPeriod({
-              missionsInPeriod: missionsInSelectedPeriod,
-              handleMissionClick: date => e =>
-                handlePeriodChange(e, "mission", date),
-              followingPeriodStart,
-              editActivityEvent,
-              createActivity,
-              editExpenditures,
-              currentMission,
-              validateMission,
-              logComment,
-              cancelComment
-            })}
-        </Container>
-      </Container>
-    </FunnelModal>
+      </Paper>
+    </Slide>
   );
 }
