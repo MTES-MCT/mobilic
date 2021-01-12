@@ -49,9 +49,11 @@ export function Invite() {
 
     async function onMount() {
       if (token) {
-        await api.logout(
-          `/logout?next=${encodeURIComponent("/invite?token=" + token)}`
-        );
+        await api.logout({
+          postFCLogoutRedirect: `/logout?next=${encodeURIComponent(
+            "/invite?token=" + token
+          )}`
+        });
         withLoadingScreen(() =>
           loadEmployeeInvite(token, store, api, setError)
         );

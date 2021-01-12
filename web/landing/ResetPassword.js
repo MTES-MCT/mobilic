@@ -79,9 +79,11 @@ export function ResetPassword() {
         return;
       }
       // Logout if another user is logged in
-      await api.logout(
-        `/logout?next=${encodeURIComponent("/reset_password?token=" + tok)}`
-      );
+      await api.logout({
+        postFCLogoutRedirect: `/logout?next=${encodeURIComponent(
+          "/reset_password?token=" + tok
+        )}`
+      });
     });
   }, []);
 

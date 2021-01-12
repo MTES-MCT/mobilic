@@ -12,7 +12,7 @@ import { useStoreSyncedWithLocalStorage, broadCastChannel } from "./store";
 import { isAuthenticationError, isRetryable } from "./errors";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 import { buildFCLogoutUrl } from "./franceConnect";
-import { currentUserId, readCookie } from "./cookie";
+import { currentUserId, readCookie, clearUserIdCookie } from "./cookie";
 
 export const API_HOST = "/api";
 
@@ -784,6 +784,7 @@ class Api {
         }
         if (refreshResponse.status !== 200) {
           // User is logged out from the API, update local store
+          clearUserIdCookie();
           await this.store.updateUserIdAndInfo();
           this.refreshTokenQueue.clear();
           this.nonConcurrentQueryQueue.clear();
@@ -898,7 +899,7 @@ class Api {
     });
   }
 
-  async logout(postFCLogoutRedirect = "/logout") {
+  async logout({ postFCLogoutRedirect = "/logout", failOnError = true }) {
     this.refreshTokenQueue.clear();
     this.nonConcurrentQueryQueue.clear();
     const hasFcToken = readCookie("hasFc") || false;
@@ -911,7 +912,12 @@ class Api {
       await waitUntilLocationChange;
     } else {
       if (currentUserId()) {
-        await this._fetch("POST", "/token/logout");
+        try {
+          await this._fetch("POST", "/token/logout");
+        } catch (err) {
+          if (failOnError) throw err;
+        }
+        clearUserIdCookie();
         await this.store.updateUserIdAndInfo();
         await broadCastChannel.postMessage("update");
       }

@@ -39,11 +39,11 @@ export function RedeemInvite() {
         const employmentUserId = employment.data.employment.userId;
         let shouldLoadUser = !userId;
         if (employmentUserId && employmentUserId !== userId) {
-          await api.logout(
-            `/logout?next=${encodeURIComponent(
+          await api.logout({
+            postFCLogoutRedirect: `/logout?next=${encodeURIComponent(
               "/redeem_invite?token=" + token
             )}`
-          );
+          });
           shouldLoadUser = true;
         }
         const apiResponse = await api.graphQlMutate(

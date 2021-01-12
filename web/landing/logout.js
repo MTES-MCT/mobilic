@@ -12,9 +12,11 @@ export function Logout() {
   async function _logout() {
     const queryString = new URLSearchParams(location.search);
     const next = queryString.get("next");
-    await api.logout(
-      "/logout" + (next ? `?next=${encodeURIComponent(next)}` : "")
-    );
+    await api.logout({
+      postFCLogoutRedirect:
+        "/logout" + (next ? `?next=${encodeURIComponent(next)}` : ""),
+      failOnError: false
+    });
     history.push(next ? decodeURI(next) : "/");
   }
 

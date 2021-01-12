@@ -41,11 +41,11 @@ export function ActivateEmail() {
           const isAuthenticated = await api.checkAuthentication();
           // If a differrent user is authenticated, logout
           if (isAuthenticated && currentUserId() !== userId) {
-            await api.logout(
-              `/logout?next=${encodeURIComponent(
+            await api.logout({
+              postFCLogoutRedirect: `/logout?next=${encodeURIComponent(
                 "/activate_email?token=" + token
               )}`
-            );
+            });
           }
           try {
             const apiResponse = await api.graphQlMutate(

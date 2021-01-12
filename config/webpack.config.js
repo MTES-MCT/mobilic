@@ -23,6 +23,7 @@ const getClientEnvironment = require("./env");
 const ModuleNotFoundPlugin = require("react-dev-utils/ModuleNotFoundPlugin");
 const ForkTsCheckerWebpackPlugin = require("react-dev-utils/ForkTsCheckerWebpackPlugin");
 const typescriptFormatter = require("react-dev-utils/typescriptFormatter");
+const CopyPlugin = require("copy-webpack-plugin");
 
 const postcssNormalize = require("postcss-normalize");
 
@@ -514,6 +515,9 @@ module.exports = function(webpackEnv) {
       ]
     },
     plugins: [
+      new CopyPlugin({
+        patterns: [{ from: paths.cgu, to: "cgu.md" }]
+      }),
       new HtmlWebpackPlugin(
         Object.assign(
           {},
@@ -644,9 +648,9 @@ module.exports = function(webpackEnv) {
           clientsClaim: true,
           skipWaiting: true,
           exclude: [/\.map$/, /asset-manifest\.json$/],
-          importWorkboxFrom: "cdn",
           navigateFallback: publicUrl + "/index.html",
-          navigateFallbackBlacklist: [
+          sourcemap: false,
+          navigateFallbackDenylist: [
             // Exclude any URLs whose last part seems to be a file extension
             // as they're likely a resource and not a SPA route
             // URLs containing a "?" character won't be blacklisted as they're likely

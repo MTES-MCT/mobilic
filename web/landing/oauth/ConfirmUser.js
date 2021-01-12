@@ -58,11 +58,11 @@ export function ConfirmUser({ clientName, redirectUri }) {
             <ListItem
               button
               onClick={async () => {
-                await api.logout(
-                  `/logout?next=${encodeURIComponent(
+                await api.logout({
+                  postFCLogoutRedirect: `/logout?next=${encodeURIComponent(
                     "/login?next=" + encodeURIComponent(consentUrl)
                   )}`
-                );
+                });
                 history.push(`/login?next=${encodeURIComponent(consentUrl)}`, {
                   clientName,
                   redirectUri

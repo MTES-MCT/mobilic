@@ -183,7 +183,7 @@ export function NavigationMenu({ open, setOpen }) {
           <ListItem
             button
             className={classes.navListItem}
-            onClick={() => api.logout()}
+            onClick={() => api.logout({ failOnError: false })}
             disableGutters
           >
             <ListItemText

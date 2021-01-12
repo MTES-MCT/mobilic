@@ -8,3 +8,7 @@ export function readCookie(name) {
 export function currentUserId() {
   return parseInt(readCookie("userId")) || null;
 }
+
+export function clearUserIdCookie() {
+  document.cookie = "userId=;";
+}
