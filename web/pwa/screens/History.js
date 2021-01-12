@@ -32,7 +32,6 @@ import Link from "@material-ui/core/Link";
 import { MissionDetails } from "../components/MissionDetails";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-import Slide from "@material-ui/core/Slide/Slide";
 import { AccountButton } from "../components/AccountButton";
 
 const tabs = {
@@ -221,59 +220,57 @@ export function History({
   );
 
   return (
-    <Slide direction="left" in={true}>
-      <Paper className={classes.fullScreen}>
-        <Container
-          className="flex-column full-height"
-          disableGutters
-          maxWidth="sm"
-        >
-          <AccountButton p={2} />
-          <Container className={classes.periodSelector} maxWidth={false}>
-            <Tabs
-              value={currentTab}
-              onChange={(e, tab) => handlePeriodChange(e, tab, selectedPeriod)}
-              style={{ flexGrow: 1 }}
-              centered
-            >
-              {Object.values(tabs).map((tabProps, index) => (
-                <Tab
-                  key={index}
-                  label={tabProps.label}
-                  value={tabProps.value}
-                  style={{ flexGrow: 1 }}
-                />
-              ))}
-            </Tabs>
-            {periods.length > 0 && (
-              <PeriodCarouselPicker
-                periods={periods}
-                shouldDisplayChipsForPeriods={
-                  currentTab === "mission" ? periodsWithNeedForValidation : null
-                }
-                selectedPeriod={selectedPeriod}
-                onPeriodChange={setSelectedPeriod}
+    <Paper className={classes.fullScreen}>
+      <Container
+        className="flex-column full-height"
+        disableGutters
+        maxWidth="sm"
+      >
+        <AccountButton p={2} />
+        <Container className={classes.periodSelector} maxWidth={false}>
+          <Tabs
+            value={currentTab}
+            onChange={(e, tab) => handlePeriodChange(e, tab, selectedPeriod)}
+            style={{ flexGrow: 1 }}
+            centered
+          >
+            {Object.values(tabs).map((tabProps, index) => (
+              <Tab
+                key={index}
+                label={tabProps.label}
+                value={tabProps.value}
+                style={{ flexGrow: 1 }}
               />
-            )}
-          </Container>
-          <Container className={classes.contentContainer} maxWidth={false}>
-            {missionsInSelectedPeriod &&
-              tabs[currentTab].renderPeriod({
-                missionsInPeriod: missionsInSelectedPeriod,
-                handleMissionClick: date => e =>
-                  handlePeriodChange(e, "mission", date),
-                followingPeriodStart,
-                editActivityEvent,
-                createActivity,
-                editExpenditures,
-                currentMission,
-                validateMission,
-                logComment,
-                cancelComment
-              })}
-          </Container>
+            ))}
+          </Tabs>
+          {periods.length > 0 && (
+            <PeriodCarouselPicker
+              periods={periods}
+              shouldDisplayChipsForPeriods={
+                currentTab === "mission" ? periodsWithNeedForValidation : null
+              }
+              selectedPeriod={selectedPeriod}
+              onPeriodChange={setSelectedPeriod}
+            />
+          )}
         </Container>
-      </Paper>
-    </Slide>
+        <Container className={classes.contentContainer} maxWidth={false}>
+          {missionsInSelectedPeriod &&
+            tabs[currentTab].renderPeriod({
+              missionsInPeriod: missionsInSelectedPeriod,
+              handleMissionClick: date => e =>
+                handlePeriodChange(e, "mission", date),
+              followingPeriodStart,
+              editActivityEvent,
+              createActivity,
+              editExpenditures,
+              currentMission,
+              validateMission,
+              logComment,
+              cancelComment
+            })}
+        </Container>
+      </Container>
+    </Paper>
   );
 }
