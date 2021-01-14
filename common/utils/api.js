@@ -1,12 +1,10 @@
 import React from "react";
 import forEach from "lodash/forEach";
-import { ApolloClient } from "apollo-client";
-import { InMemoryCache } from "apollo-cache-inmemory";
-import { HttpLink } from "apollo-link-http";
-import { onError } from "apollo-link-error";
-import { BatchHttpLink } from "apollo-link-batch-http";
-import { ApolloLink } from "apollo-link";
-import gql from "graphql-tag";
+import { ApolloClient, HttpLink, ApolloLink, gql } from "@apollo/client";
+import ApolloLinkTimeout from "apollo-link-timeout";
+import { InMemoryCache } from "@apollo/client/cache";
+import { onError } from "@apollo/client/link/error";
+import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import * as Sentry from "@sentry/browser";
 import { useStoreSyncedWithLocalStorage, broadCastChannel } from "./store";
 import { isAuthenticationError, isRetryable } from "./errors";
@@ -713,6 +711,7 @@ class Api {
             this.logout();
           }
         }),
+        new ApolloLinkTimeout(0),
         ApolloLink.split(
           operation => {
             return !!operation.getContext().nonPublicApi;
@@ -760,6 +759,19 @@ class Api {
     const url = `${this.apiHost}${endpoint}`;
     options.method = method;
     options.credentials = "same-origin";
+
+    const timeout = options.timeout;
+    if (timeout && typeof AbortController !== "undefined") {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal
+      });
+      clearTimeout(id);
+      return response;
+    }
     return await fetch(url, options);
   }
 
@@ -776,7 +788,9 @@ class Api {
       if (timeToExpire && timeToExpire < 10000) {
         let refreshResponse;
         try {
-          refreshResponse = await this._fetch("POST", "/token/refresh");
+          refreshResponse = await this._fetch("POST", "/token/refresh", {
+            timeout: 8000
+          });
         } catch (err) {
           const newError = new Error(err.message);
           newError.name = "NetworkError";

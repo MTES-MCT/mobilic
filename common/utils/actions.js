@@ -265,7 +265,7 @@ export function ActionsContextProvider({ children }) {
               upd => upd.type === "update" && upd.requestId === requestId
             )
         );
-        if (previousActivity) {
+        if (previousActivity && previousActivity.id !== activity.id) {
           activities.push({ ...previousActivity, endTime: activity.startTime });
           syncScope = a => a.id === previousActivity.id;
         }

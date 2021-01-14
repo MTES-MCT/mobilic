@@ -11,7 +11,8 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.grey[600]
   },
   fieldValue: {
-    fontWeight: props => (props.bold ? "bold" : 500)
+    fontWeight: props => (props.bold ? "bold" : 500),
+    whiteSpace: "inherit"
   },
   actionButton: {
     fontSize: theme.typography.overline.fontSize,

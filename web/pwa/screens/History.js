@@ -157,7 +157,8 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(4)
   },
   fullScreen: {
-    width: "100%"
+    width: "100%",
+    flexGrow: 1
   }
 }));
 

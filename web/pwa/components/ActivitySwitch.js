@@ -116,7 +116,9 @@ export function ActivitySwitch({
       modals.open("driverSelection", {
         team,
         currentDriverId:
-          latestActivity && latestActivity.type === ACTIVITIES.drive.name
+          latestActivity &&
+          !latestActivity.endTime &&
+          latestActivity.type === ACTIVITIES.drive.name
             ? store.userId()
             : undefined,
         currentDriverStartTime: latestActivity ? getTime(latestActivity) : null,

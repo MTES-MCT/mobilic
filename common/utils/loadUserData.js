@@ -9,10 +9,14 @@ export async function loadUserData(api, store) {
   const userId = store.userId();
   if (!userId) return;
   try {
-    const userResponse = await api.graphQlQuery(USER_QUERY, {
-      id: userId,
-      activityAfter: now() - DAY * 183
-    });
+    const userResponse = await api.graphQlQuery(
+      USER_QUERY,
+      {
+        id: userId,
+        activityAfter: now() - DAY * 183
+      },
+      { context: { timeout: 8000 } }
+    );
     await syncUser(userResponse.data.user, api, store);
     await broadCastChannel.postMessage("update");
   } catch (err) {
