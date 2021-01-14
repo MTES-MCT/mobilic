@@ -905,7 +905,11 @@ export function ActionsContextProvider({ children }) {
     };
 
     const updateStore = (store, requestId) => {
-      store.createEntityObject(newComment, "comments", requestId);
+      store.createEntityObject(
+        { ...newComment, receptionTime: Date.now() },
+        "comments",
+        requestId
+      );
       return { missionId };
     };
 
