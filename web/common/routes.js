@@ -165,3 +165,7 @@ export function getFallbackRoute({ userInfo, companies }) {
 export function getAccessibleRoutes(storeData) {
   return ROUTES.filter(r => r.accessible(storeData));
 }
+
+export function isAccessible(path, storeData) {
+  return ROUTES.find(r => path.startsWith(r.path)).accessible(storeData);
+}

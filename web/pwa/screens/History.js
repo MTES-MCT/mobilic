@@ -33,6 +33,7 @@ import { MissionDetails } from "../components/MissionDetails";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import { AccountButton } from "../components/AccountButton";
+import { useLocation, useHistory } from "react-router-dom";
 
 const tabs = {
   mission: {
@@ -172,6 +173,21 @@ export function History({
   logComment,
   cancelComment
 }) {
+  const location = useLocation();
+  const history = useHistory();
+
+  React.useEffect(() => {
+    const queryString = new URLSearchParams(location.search);
+    const mission = queryString.get("mission");
+    if (mission) {
+      const selectedMission = missions.find(m => m.id === parseInt(mission));
+      const missionPeriod = selectedMission
+        ? tabs[currentTab].getPeriod(getTime(selectedMission))
+        : null;
+      if (currentTab === "mission") setSelectedPeriod(missionPeriod);
+    }
+  }, [location]);
+
   const [currentTab, setCurrentTab] = React.useState("mission");
 
   const groupedMissions = groupBy(missions, m =>
@@ -208,7 +224,14 @@ export function History({
     );
     setCurrentTab(newTab);
     setSelectedPeriod(newPeriod);
+    resetLocation();
   }
+
+  const resetLocation = () => {
+    if (location.search) {
+      history.push(location.pathname);
+    }
+  };
 
   const classes = useStyles();
 
@@ -251,7 +274,10 @@ export function History({
                 currentTab === "mission" ? periodsWithNeedForValidation : null
               }
               selectedPeriod={selectedPeriod}
-              onPeriodChange={setSelectedPeriod}
+              onPeriodChange={newp => {
+                setSelectedPeriod(newp);
+                resetLocation();
+              }}
             />
           )}
         </Container>

@@ -708,7 +708,7 @@ class Api {
       link: ApolloLink.from([
         onError(error => {
           if (isAuthenticationError(error)) {
-            this.logout();
+            this.logout({});
           }
         }),
         new ApolloLinkTimeout(0),

@@ -38,10 +38,15 @@ import {
   LoadingScreenContextProvider,
   useLoadingScreen
 } from "common/utils/loading";
-import { getAccessibleRoutes, getFallbackRoute } from "./common/routes";
+import {
+  getAccessibleRoutes,
+  getFallbackRoute,
+  isAccessible
+} from "./common/routes";
 import { ScrollToTop } from "common/utils/scroll";
 import { SnackbarProvider } from "./common/Snackbar";
 import { EnvironmentHeader } from "./common/EnvironmentHeader";
+import { currentUserId } from "common/utils/cookie";
 
 export default function Root() {
   return (
@@ -86,7 +91,9 @@ function _Root() {
     companies
   });
 
-  const loadUserAndRoute = currentPathName =>
+  const [loadedLocation, setLoadedLocation] = React.useState(null);
+
+  const loadUserAndRoute = () => {
     withLoadingScreen(async () => {
       const isSigningUp = location.pathname.startsWith("/signup");
       const queryString = new URLSearchParams(location.search);
@@ -100,23 +107,49 @@ function _Root() {
         await loadUserData(api, store);
       }
       if (!isSigningUp) {
+        // Routing priority :
+        // 1) if there is a next URL (after login) redirect to this one
+        // 2) if current URL is accessible keep it
+        // 3) redirect to fallback
         const nextLocation = queryString.get("next");
-        history.push(
-          nextLocation
-            ? decodeURI(nextLocation)
-            : getFallbackRoute({
-                userInfo: store.userInfo(),
-                companies: store.companies()
-              }),
-          location.state
-        );
+        if (nextLocation) history.replace(nextLocation, location.state);
+        else if (
+          loadedLocation &&
+          isAccessible(loadedLocation, {
+            userInfo: store.userInfo(),
+            companies: store.companies()
+          })
+        ) {
+          history.replace(loadedLocation, location.state);
+          setLoadedLocation(null);
+        } else
+          history.replace(
+            getFallbackRoute({
+              userInfo: store.userInfo(),
+              companies: store.companies()
+            }),
+            location.state
+          );
       }
     });
+  };
 
   React.useEffect(() => {
     if (userId) loadUserAndRoute();
     return () => {};
   }, [userId]);
+
+  React.useEffect(() => {
+    if (
+      !currentUserId() &&
+      (location.pathname.startsWith("/app") ||
+        location.pathname.startsWith("/admin"))
+    )
+      history.replace(
+        "/login?next=" + encodeURIComponent(location.pathname + location.search)
+      );
+    else setLoadedLocation(location.pathname + location.search);
+  }, []);
 
   const routes = getAccessibleRoutes({ userInfo, companies });
 

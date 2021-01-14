@@ -51,7 +51,7 @@ function Authorize({ path, setClientName, setRedirectUri }) {
             setRedirectUri(redirect_uri);
             const isAuthenticated = await api.checkAuthentication();
             if (!isAuthenticated) {
-              history.push(
+              history.replace(
                 `/login?next=${encodeURIComponent(
                   path +
                     "/consent" +
@@ -61,7 +61,7 @@ function Authorize({ path, setClientName, setRedirectUri }) {
                 { clientName: client_name, redirectUri: redirect_uri }
               );
             } else {
-              history.push(path + "/confirm_user" + location.search);
+              history.replace(path + "/confirm_user" + location.search);
             }
           }
         } catch (err) {
