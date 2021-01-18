@@ -48,6 +48,10 @@ export function computeMissionProperties(mission, userId) {
     isComplete:
       mission.activities.length > 0 &&
       !!mission.activities[mission.activities.length - 1].endTime,
+    endTime:
+      mission.activities.length > 0
+        ? mission.activities[mission.activities.length - 1].endTime
+        : null,
     teamChanges: computeTeamChanges(mission.allActivities, userId)
   };
 }

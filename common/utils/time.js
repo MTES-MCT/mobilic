@@ -5,15 +5,15 @@ export const DAY = 86400;
 export const WEEK = 7 * 86400;
 export const HOUR = 3600;
 export const SHORT_MONTHS = [
-  "janv",
+  "jan",
   "fev",
-  "mars",
+  "mar",
   "avr",
   "mai",
   "juin",
   "juil",
-  "aout",
-  "sept",
+  "aou",
+  "sep",
   "oct",
   "nov",
   "dec"
@@ -32,6 +32,8 @@ const MONTHS = [
   "novembre",
   "décembre"
 ];
+
+const SHORT_DAYS = ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"];
 
 export function formatTimer(timerDuration) {
   if (!timerDuration && timerDuration !== 0) return null;
@@ -59,6 +61,11 @@ export function formatDay(unixTimestamp) {
   return `${addZero(date.getDate())}/${addZero(
     date.getMonth() + 1
   )}/${date.getFullYear()}`;
+}
+
+export function formatDayOfWeek(unixTimestamp) {
+  const date = new Date(unixTimestamp * 1000);
+  return SHORT_DAYS[date.getDay()];
 }
 
 export function prettyFormatDay(unixTimestamp, withYear = false) {

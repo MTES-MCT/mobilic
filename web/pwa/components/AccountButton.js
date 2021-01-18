@@ -7,11 +7,15 @@ import { formatPersonName } from "common/utils/coworkers";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";
 import { NavigationMenu } from "../../common/Header";
+import IconButton from "@material-ui/core/IconButton";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 
 const useStyles = makeStyles(theme => ({
   container: {
     width: "100%",
-    textAlign: "right"
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center"
   },
   button: {
     color: darkBackground =>
@@ -39,6 +43,14 @@ export function AccountButton(props) {
 
   return (
     <Box {...mergedProps}>
+      <IconButton
+        onClick={props.onBackButtonClick}
+        className={`${classes.button} no-margin-no-padding ${
+          !props.onBackButtonClick ? "hidden" : ""
+        }`}
+      >
+        <ChevronLeftIcon />
+      </IconButton>
       <Button
         style={{ textTransform: "capitalize" }}
         startIcon={<AccountCircleIcon />}

@@ -81,6 +81,7 @@
 .app-container {
   @extend .container;
   @extend .no-margin-no-padding;
+  max-width: 800px;
 }
 
 .activity-grid-container {

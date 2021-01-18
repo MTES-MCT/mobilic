@@ -93,7 +93,12 @@ function App({ ScreenComponent, loadUser }) {
           cancelComment={actions.cancelComment}
           previousMissionEnd={previousMissionEnd}
           loadUser={loadUser}
-          openHistory={() => history.push(`${path}/history`)}
+          openHistory={(missionId = null, state = null) =>
+            history.push(
+              `${path}/history${missionId ? "?mission=" + missionId : ""}`,
+              state
+            )
+          }
         />
       </Route>
     </Switch>

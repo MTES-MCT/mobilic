@@ -176,6 +176,10 @@ export function History({
   const location = useLocation();
   const history = useHistory();
 
+  const onBackButtonClick = location.state
+    ? () => history.push(location.state.previousPagePath)
+    : null;
+
   React.useEffect(() => {
     const queryString = new URLSearchParams(location.search);
     const mission = queryString.get("mission");
@@ -229,7 +233,7 @@ export function History({
 
   const resetLocation = () => {
     if (location.search) {
-      history.push(location.pathname);
+      history.push(location.pathname, location.state);
     }
   };
 
@@ -250,7 +254,7 @@ export function History({
         disableGutters
         maxWidth="sm"
       >
-        <AccountButton p={2} />
+        <AccountButton p={2} onBackButtonClick={onBackButtonClick} />
         <Container className={classes.periodSelector} maxWidth={false}>
           <Tabs
             value={currentTab}

@@ -86,21 +86,11 @@ export function PeriodCarouselPicker({
 
   // The following effect is intended to handle all these secondary cases. It relies on the following (hacky) heuristics :
   // - all these cases can be identified by a change of the whole list of items.
-  // - furthermore a change in the list always modifies its length
-  // Therefore we allow the effect to run only if the new list has a different length than the previous one
-  // We access the previous list using the tip from https://reactjs.org/docs/hooks-faq.html#how-to-get-the-previous-props-or-state
-
-  const previousPeriodsRef = React.useRef();
-  const previousPeriods = previousPeriodsRef.current;
 
   React.useEffect(() => {
-    if (
-      periods &&
-      (!previousPeriods || previousPeriods.length !== periods.length)
-    ) {
+    if (periods) {
       scrollToSelectedPeriod(selectedPeriod);
     }
-    previousPeriodsRef.current = periods;
   }, [periods, selectedPeriod]);
 
   return (

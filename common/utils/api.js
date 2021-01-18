@@ -927,7 +927,7 @@ class Api {
     } else {
       if (currentUserId()) {
         try {
-          await this._fetch("POST", "/token/logout");
+          await this._fetch("POST", "/token/logout", { timeout: 8000 });
         } catch (err) {
           if (failOnError) throw err;
         }
