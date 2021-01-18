@@ -45,7 +45,14 @@ export function TerminateEmployment({
         }}
       >
         <DialogContent>
-          <Box my={2} className="flex-row-center">
+          <Typography>⚠️⚠️⚠️</Typography>
+          <Typography>
+            Cette opération signale le départ d'un salarié : après la date
+            choisie le salarié ne pourra plus enregistrer de temps de travail
+            pour l'entreprise, ni accéder aux informations de l'entreprise.
+          </Typography>
+          <Typography>⚠️⚠️⚠️</Typography>
+          <Box my={2} mt={4} className="flex-row-center">
             <DatePicker
               label="Date de fin du rattachement"
               value={endDate}
