@@ -118,6 +118,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         }`;
       case "MISSION_ALREADY_VALIDATED_BY_ADMIN":
         return `La mission n'est plus modifiable, elle a été validée par le gestionnaire.`;
+      case "MISSION_ALREADY_VALIDATED_BY_USER":
+        return `L'utilisateur a déjà validé la mission, seul lui ou un gestionnaire peuvent modifier ses activités. `;
       case "INVALID_RESOURCE":
         return "Opération impossible sur cette ressource.";
       case "DUPLICATE_EXPENDITURES":

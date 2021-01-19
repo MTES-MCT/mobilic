@@ -149,7 +149,10 @@ function _Root() {
       history.replace(
         "/login?next=" + encodeURIComponent(location.pathname + location.search)
       );
-    else if (!location.pathname.startsWith("/login"))
+    else if (
+      !location.pathname.startsWith("/login") &&
+      !location.pathname.startsWith("/logout")
+    )
       setLoadedLocation(location.pathname + location.search);
   }, []);
 
