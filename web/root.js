@@ -105,8 +105,6 @@ function _Root() {
 
       if (!document.hidden) {
         await loadUserData(api, store);
-        if (navigator.connection && navigator.connection.effectiveType === "4g")
-          await api.executePendingRequests();
       }
       if (!isSigningUp) {
         // Routing priority :
@@ -133,6 +131,7 @@ function _Root() {
             location.state
           );
       }
+      if (!document.hidden) api.executePendingRequests();
     });
   };
 
