@@ -149,7 +149,7 @@ export function Employees({ companyId, containerRef }) {
       format: (endDate, employment, onFocus) =>
         endDate ? (
           endDate
-        ) : onFocus ? null : (
+        ) : onFocus ? null : employment.id === adminStore.userId ? null : (
           <Button
             variant="outlined"
             color="primary"

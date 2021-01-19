@@ -13,7 +13,8 @@ const useStyles = makeStyles(theme => ({
     textAlign: "left",
     width: "100%",
     display: "flex",
-    alignItems: "flex-start"
+    alignItems: "flex-start",
+    flexShrink: 0
   },
   links: {
     display: "flex"

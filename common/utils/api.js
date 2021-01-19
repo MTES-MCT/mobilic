@@ -731,6 +731,7 @@ class Api {
     this.isCurrentlySubmittingRequests = () =>
       this.nonConcurrentQueryQueue.lock;
     this.responseHandlers = {};
+    window.addEventListener("online", () => this.executePendingRequests());
   }
 
   async graphQlQuery(query, variables, other) {

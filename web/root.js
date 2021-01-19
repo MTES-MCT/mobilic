@@ -105,6 +105,8 @@ function _Root() {
 
       if (!document.hidden) {
         await loadUserData(api, store);
+        if (navigator.connection && navigator.connection.effectiveType === "4g")
+          await api.executePendingRequests();
       }
       if (!isSigningUp) {
         // Routing priority :
@@ -148,7 +150,8 @@ function _Root() {
       history.replace(
         "/login?next=" + encodeURIComponent(location.pathname + location.search)
       );
-    else setLoadedLocation(location.pathname + location.search);
+    else if (!location.pathname.startsWith("/login"))
+      setLoadedLocation(location.pathname + location.search);
   }, []);
 
   const routes = getAccessibleRoutes({ userInfo, companies });

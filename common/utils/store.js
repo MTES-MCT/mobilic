@@ -10,7 +10,6 @@ import * as Sentry from "@sentry/browser";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 import { BroadcastChannel } from "broadcast-channel";
 import { currentUserId } from "./cookie";
-import { now } from "./time";
 
 const STORE_VERSION = 10;
 
@@ -220,7 +219,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             ...prevState[entity],
             {
               ...object,
-              pendingUpdates: [{ requestId, type: "create", time: now() }]
+              pendingUpdates: [{ requestId, type: "create", time: Date.now() }]
             }
           ]
         }),
@@ -237,7 +236,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           [entityObjectId.toString()]: {
             ...object,
             id: entityObjectId,
-            pendingUpdates: [{ requestId, type: "create", time: now() }]
+            pendingUpdates: [{ requestId, type: "create", time: Date.now() }]
           }
         }
       }),
@@ -256,7 +255,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
                   ...value,
                   pendingUpdates: [
                     ...(value.pendingUpdates || []),
-                    { requestId, type: "update", new: update, time: now() }
+                    { requestId, type: "update", new: update, time: Date.now() }
                   ]
                 }
               : value
@@ -276,7 +275,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
                   ...value,
                   pendingUpdates: [
                     ...(value.pendingUpdates || []),
-                    { requestId, type: "delete", time: now() }
+                    { requestId, type: "delete", time: Date.now() }
                   ]
                 }
               : value
