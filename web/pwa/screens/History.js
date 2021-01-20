@@ -5,15 +5,14 @@ import { Container } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import {
-  formatDay,
   getStartOfWeek,
-  WEEK,
   prettyFormatDay,
-  shortPrettyFormatDay
+  getStartOfMonth,
+  SHORT_MONTHS
 } from "common/utils/time";
 import {
   computeMissionKpis,
-  computeWeekKpis,
+  computePeriodKpis,
   WorkTimeSummaryAdditionalInfo,
   WorkTimeSummaryKpiGrid
 } from "../components/WorkTimeSummary";
@@ -34,6 +33,7 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import { AccountButton } from "../components/AccountButton";
 import { useLocation, useHistory } from "react-router-dom";
+import Box from "@material-ui/core/Box";
 
 const tabs = {
   mission: {
@@ -41,7 +41,6 @@ const tabs = {
     value: "mission",
     periodSize: 0,
     getPeriod: date => date,
-    formatPeriod: shortPrettyFormatDay,
     renderPeriod: ({
       missionsInPeriod,
       followingPeriodStart,
@@ -100,14 +99,12 @@ const tabs = {
     value: "week",
     periodSize: 2,
     getPeriod: date => getStartOfWeek(date),
-    formatPeriod: date =>
-      `Semaine du ${formatDay(date)} au ${formatDay(date + WEEK)}`,
     renderPeriod: ({ missionsInPeriod, handleMissionClick }) => (
       <div>
-        <WorkTimeSummaryKpiGrid metrics={computeWeekKpis(missionsInPeriod)} />
+        <WorkTimeSummaryKpiGrid metrics={computePeriodKpis(missionsInPeriod)} />
         <WorkTimeSummaryAdditionalInfo>
           <MissionReviewSection
-            title="Détail par journée"
+            title="Détail par mission"
             className="no-margin-no-padding"
           >
             <List>
@@ -120,6 +117,7 @@ const tabs = {
                     <Link
                       component="button"
                       variant="body1"
+                      style={{ textAlign: "left" }}
                       onClick={e => {
                         e.preventDefault();
                       }}
@@ -138,6 +136,28 @@ const tabs = {
         </WorkTimeSummaryAdditionalInfo>
       </div>
     )
+  },
+  month: {
+    label: "Mois",
+    value: "month",
+    periodSize: 3,
+    getPeriod: date => getStartOfMonth(date),
+    renderPeriod: ({ missionsInPeriod }) => (
+      <div>
+        <WorkTimeSummaryKpiGrid metrics={computePeriodKpis(missionsInPeriod)} />
+      </div>
+    ),
+    formatPeriod: period => {
+      const periodDate = new Date(period * 1000);
+      return (
+        <Box className="flex-column-space-between">
+          <Typography variant="h5">
+            {SHORT_MONTHS[periodDate.getMonth()]}
+          </Typography>
+          <Typography>{periodDate.getFullYear()}</Typography>
+        </Box>
+      );
+    }
   }
 };
 
@@ -282,6 +302,7 @@ export function History({
                 setSelectedPeriod(newp);
                 resetLocation();
               }}
+              renderPeriod={tabs[currentTab].formatPeriod}
             />
           )}
         </Container>

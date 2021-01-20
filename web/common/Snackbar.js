@@ -8,7 +8,7 @@ const SnackbarContext = React.createContext(() => {});
 export const SnackbarProvider = withWidth()(({ children, width }) => {
   const [_open, setOpen] = React.useState(false);
   const [_key, setKey] = React.useState(false);
-  const [_autoHideDuration, setAutoHideDuration] = React.useState(false);
+  const [_autoHideDuration, setAutoHideDuration] = React.useState(0);
   const [_message, setMessage] = React.useState(null);
   const [_severity, setSeverity] = React.useState("info");
 
@@ -20,15 +20,15 @@ export const SnackbarProvider = withWidth()(({ children, width }) => {
     setOpen(true);
   }
 
-  function info(message, key = null, autoHideDuration = null) {
+  function info(message, key = null, autoHideDuration = 0) {
     return alert(message, "info", key, autoHideDuration);
   }
 
-  function error(message, key = null, autoHideDuration = null) {
+  function error(message, key = null, autoHideDuration = 0) {
     return alert(message, "error", key, autoHideDuration);
   }
 
-  function success(message, key = null, autoHideDuration = null) {
+  function success(message, key = null, autoHideDuration = 0) {
     return alert(message, "success", key, autoHideDuration);
   }
 

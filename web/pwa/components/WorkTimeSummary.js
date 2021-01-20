@@ -10,6 +10,7 @@ import Card from "@material-ui/core/Card";
 import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import groupBy from "lodash/groupBy";
+import { EXPENDITURES } from "common/utils/expenditures";
 
 const useStyles = makeStyles(theme => ({
   overviewTimer: {
@@ -23,20 +24,32 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function WorkTimeSummaryKpi({ label, value, subText, hideSubText }) {
+export function WorkTimeSummaryKpi({
+  label,
+  value,
+  subText,
+  hideSubText,
+  render = null
+}) {
   const classes = useStyles();
 
   return (
     <Card>
       <Box px={2} py={1} m={"auto"}>
         <Typography>{label}</Typography>
-        <Typography className={classes.overviewTimer} variant="h1">
-          {value}
-        </Typography>
-        {subText && (
-          <Typography className={hideSubText && "hidden"} variant="caption">
-            {subText}
-          </Typography>
+        {render ? (
+          render()
+        ) : (
+          <>
+            <Typography className={classes.overviewTimer} variant="h1">
+              {value}
+            </Typography>
+            {subText && (
+              <Typography className={hideSubText && "hidden"} variant="caption">
+                {subText}
+              </Typography>
+            )}
+          </>
         )}
       </Box>
     </Card>
@@ -74,11 +87,11 @@ export function WorkTimeSummaryKpiGrid({ metrics }) {
       container
       direction="row"
       justify="center"
-      alignItems={"center"}
+      alignItems={"baseline"}
       spacing={2}
     >
       {metrics.map((metric, index) => (
-        <Grid key={index} item xs>
+        <Grid key={index} item xs={metric.fullWidth ? 12 : true}>
           <WorkTimeSummaryKpi {...metric} />
         </Grid>
       ))}
@@ -108,7 +121,7 @@ export function computeMissionKpis(mission) {
   ];
 }
 
-export function computeWeekKpis(missions) {
+export function computePeriodKpis(missions) {
   const missionsPerDay = groupBy(missions, m => getStartOfDay(getTime(m)));
   const timersPerDay = missions.map(mission =>
     computeTotalActivityDurations(mission.activities)
@@ -123,7 +136,14 @@ export function computeWeekKpis(missions) {
       (weekTimers["totalWork"] || 0) + (timer["totalWork"] || 0);
   });
 
-  return [
+  const expendituresCount = {};
+  missions.forEach(m => {
+    m.expenditures.forEach(e => {
+      expendituresCount[e.type] = (expendituresCount[e.type] || 0) + 1;
+    });
+  });
+
+  const metrics = [
     {
       label: "Jours travaillés",
       value: Object.keys(missionsPerDay).length
@@ -133,4 +153,39 @@ export function computeWeekKpis(missions) {
       value: formatTimer(weekTimers.totalWork)
     }
   ];
+  if (Object.keys(expendituresCount).length > 0)
+    metrics.push({
+      label: "Frais",
+      fullWidth: true,
+      render: () => (
+        <Grid
+          container
+          direction="row"
+          justify="center"
+          alignItems={"center"}
+          spacing={1}
+        >
+          {Object.keys(expendituresCount).map(type => (
+            <Grid key={type} item xs>
+              <Box py={1} m="auto">
+                <Typography
+                  variant="body2"
+                  style={{
+                    textTransform: "capitalize",
+                    fontWeight: "bold",
+                    whiteSpace: "nowrap"
+                  }}
+                >
+                  {EXPENDITURES[type].plural}
+                </Typography>
+                <Typography variant="h4" style={{ fontWeight: "bold" }}>
+                  {expendituresCount[type]}
+                </Typography>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+      )
+    });
+  return metrics;
 }

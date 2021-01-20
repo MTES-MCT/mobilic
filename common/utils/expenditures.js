@@ -9,7 +9,7 @@ export const EXPENDITURES = {
   },
   sleep_over: {
     label: "découchage",
-    plural: "decouchages"
+    plural: "découchages"
   },
   snack: {
     label: "casse-croûte",

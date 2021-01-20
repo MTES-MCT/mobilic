@@ -170,7 +170,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
       </Button>
     </Box>,
     nonValidatedMissions.length > 0 && (
-      <Box className={classes.missionsToValidateList}>
+      <Box key={3} className={classes.missionsToValidateList}>
         <List
           subheader={
             <ListSubheader
@@ -234,7 +234,7 @@ function MissionItem({ mission, openHistory }) {
       onClick={() => openHistory(mission.id, { previousPagePath: "/app" })}
     >
       <ListItemAvatar>
-        <Avatar sizes variant="rounded" className={classes.missionDay}>
+        <Avatar variant="rounded" className={classes.missionDay}>
           <Typography>{formatDayOfWeek(mission.startTime)}</Typography>
           <Typography className="bold">
             {shortPrettyFormatDay(mission.startTime)}
