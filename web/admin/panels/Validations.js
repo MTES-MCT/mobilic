@@ -193,6 +193,22 @@ function _ValidationPanel({ containerRef, width }) {
     }
   ];
 
+  const validationCol = {
+    label: "Validation salarié",
+    name: "validation",
+    format: validation => (
+      <Typography
+        className={`${validation ? classes.successText : classes.warningText}`}
+      >
+        {validation ? "✅ Validé" : "⏳ En attente"}
+      </Typography>
+    ),
+    align: "left",
+    minWidth: 200
+  };
+
+  const columns = tab === 0 ? commonCols : [...commonCols, validationCol];
+
   const nonValidatedByAdminMissions = adminStore.missions
     .filter(m => !m.adminValidation)
     .map(m => {
@@ -272,7 +288,7 @@ function _ValidationPanel({ containerRef, width }) {
         />
       </Tabs>
       <AugmentedVirtualizedTable
-        columns={commonCols}
+        columns={columns}
         entries={
           tab === 0
             ? missionsValidatedByAllWorkers
@@ -362,7 +378,7 @@ function _ValidationPanel({ containerRef, width }) {
                   className="flex-row-center"
                 >
                   {props.columns.map((column, index) => {
-                    const col = commonCols[index];
+                    const col = columns[index];
                     return (
                       <Box
                         className={column.props.className}
