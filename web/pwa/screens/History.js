@@ -1,6 +1,7 @@
 import React from "react";
 import groupBy from "lodash/groupBy";
 import mapValues from "lodash/mapValues";
+import keyBy from "lodash/keyBy";
 import { Container } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -393,8 +394,11 @@ export function History({
           {filledPeriods.length > 0 && (
             <PeriodCarouselPicker
               periods={filledPeriods}
-              shouldDisplayChipsForPeriods={
+              shouldDisplayRedChipsForPeriods={
                 currentTab === "mission" ? periodsWithNeedForValidation : null
+              }
+              shouldDisplayGreenChipsForPeriods={
+                currentTab === "mission" ? keyBy(periods) : null
               }
               selectedPeriod={selectedPeriod}
               onPeriodChange={newp => {

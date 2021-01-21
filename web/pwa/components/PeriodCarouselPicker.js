@@ -51,13 +51,17 @@ const useStyles = makeStyles(theme => ({
   },
   selectedPeriodChip: {
     backgroundColor: theme.palette.primary.contrastText
+  },
+  greenChip: {
+    backgroundColor: theme.palette.success.main
   }
 }));
 
 export function PeriodCarouselPicker({
   selectedPeriod,
   periods,
-  shouldDisplayChipsForPeriods,
+  shouldDisplayRedChipsForPeriods,
+  shouldDisplayGreenChipsForPeriods,
   onPeriodChange,
   renderPeriod
 }) {
@@ -126,13 +130,15 @@ export function PeriodCarouselPicker({
                   scrollToSelectedPeriod(period);
                 }}
               >
-                {shouldDisplayChipsForPeriods &&
-                  shouldDisplayChipsForPeriods[period.toString()] && (
-                    <Box
-                      className={`${classes.periodChip} ${period ===
-                        selectedPeriod && classes.selectedPeriodChip}`}
-                    />
-                  )}
+                {shouldDisplayRedChipsForPeriods &&
+                shouldDisplayRedChipsForPeriods[period.toString()] ? (
+                  <Box className={`${classes.periodChip}`} />
+                ) : shouldDisplayGreenChipsForPeriods &&
+                  shouldDisplayGreenChipsForPeriods[period.toString()] ? (
+                  <Box
+                    className={`${classes.periodChip} ${classes.greenChip}`}
+                  />
+                ) : null}
                 {renderPeriod ? (
                   renderPeriod(period)
                 ) : (
