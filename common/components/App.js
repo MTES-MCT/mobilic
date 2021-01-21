@@ -8,7 +8,7 @@ import {
   linkMissionsWithRelations
 } from "../utils/mission";
 import { History } from "../../web/pwa/screens/History";
-import { now } from "../utils/time";
+import { DAY, getStartOfMonth, now } from "../utils/time";
 import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
 
 function App({ ScreenComponent, loadUser }) {
@@ -42,6 +42,7 @@ function App({ ScreenComponent, loadUser }) {
     .filter(m => m.activities.length > 0);
 
   const missions = sortEvents(unsortedMissions);
+  const historyStart = getStartOfMonth(currentTime - 183 * DAY);
 
   const currentMission =
     missions.length > 0 ? missions[missions.length - 1] : null;
@@ -62,7 +63,9 @@ function App({ ScreenComponent, loadUser }) {
       <Route path={`${path}/history`}>
         <History
           handleBack={() => history.push(path)}
-          missions={missions.filter(m => m.isComplete && m.ended)}
+          missions={missions.filter(
+            m => m.isComplete && m.ended && m.startTime >= historyStart
+          )}
           createActivity={args =>
             actions.pushNewTeamActivityEvent({ ...args, switchMode: false })
           }

@@ -33,7 +33,7 @@ const MONTHS = [
   "décembre"
 ];
 
-const SHORT_DAYS = ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"];
+const SHORT_DAYS = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"];
 
 export function formatTimer(timerDuration) {
   if (!timerDuration && timerDuration !== 0) return null;
@@ -111,16 +111,16 @@ export function getStartOfWeek(unixTimestamp) {
   const sameTimeAtStartOfWeek = new Date(
     (unixTimestamp - daysToSubstract * DAY) * 1000
   );
-  return _startOfDay(sameTimeAtStartOfWeek);
+  return startOfDay(sameTimeAtStartOfWeek);
 }
 
 export function getStartOfMonth(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
   date.setDate(1);
-  return _startOfDay(date);
+  return startOfDay(date);
 }
 
-function _startOfDay(date) {
+export function startOfDay(date) {
   date.setHours(0);
   date.setMinutes(0);
   date.setSeconds(0);
@@ -130,7 +130,7 @@ function _startOfDay(date) {
 
 export function getStartOfDay(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
-  return _startOfDay(date);
+  return startOfDay(date);
 }
 
 export class FrLocalizedUtils extends DateFnsUtils {

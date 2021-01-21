@@ -4,12 +4,13 @@ import Box from "@material-ui/core/Box";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import Typography from "@material-ui/core/Typography";
-import { SHORT_MONTHS } from "common/utils/time";
+import { formatDayOfWeek, shortPrettyFormatDay } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   periodContainer: {
     borderRadius: "16px",
-    position: "relative"
+    position: "relative",
+    whiteSpace: "nowrap"
   },
   selectedPeriod: {
     backgroundColor: theme.palette.primary.main,
@@ -112,7 +113,6 @@ export function PeriodCarouselPicker({
           className={`flex-row ${classes.carousel}`}
         >
           {periods.map(period => {
-            const periodDate = new Date(period * 1000);
             return (
               <Box
                 p={1}
@@ -137,9 +137,11 @@ export function PeriodCarouselPicker({
                   renderPeriod(period)
                 ) : (
                   <Box className="flex-column-space-between">
-                    <Typography variant="h5">{periodDate.getDate()}</Typography>
-                    <Typography>
-                      {SHORT_MONTHS[periodDate.getMonth()]}
+                    <Typography style={{ textTransform: "uppercase" }}>
+                      {formatDayOfWeek(period)}
+                    </Typography>
+                    <Typography className="bold">
+                      {shortPrettyFormatDay(period)}
                     </Typography>
                   </Box>
                 )}

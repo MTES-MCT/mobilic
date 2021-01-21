@@ -8,7 +8,12 @@ import {
   getStartOfWeek,
   prettyFormatDay,
   getStartOfMonth,
-  SHORT_MONTHS
+  SHORT_MONTHS,
+  shortPrettyFormatDay,
+  DAY,
+  startOfDay,
+  WEEK,
+  HOUR
 } from "common/utils/time";
 import {
   computeMissionKpis,
@@ -34,6 +39,7 @@ import Paper from "@material-ui/core/Paper";
 import { AccountButton } from "../components/AccountButton";
 import { useLocation, useHistory } from "react-router-dom";
 import Box from "@material-ui/core/Box";
+import { NoDataImage } from "common/utils/icons";
 
 const tabs = {
   mission: {
@@ -98,6 +104,17 @@ const tabs = {
     label: "Semaine",
     value: "week",
     periodSize: 2,
+    formatPeriod: period => {
+      return (
+        <Box className="flex-column-space-between">
+          <Typography className="bold">
+            {shortPrettyFormatDay(period)}
+          </Typography>
+          <Typography style={{ lineHeight: 0 }}>-</Typography>
+          <Typography>{shortPrettyFormatDay(period + DAY * 7)}</Typography>
+        </Box>
+      );
+    },
     getPeriod: date => getStartOfWeek(date),
     renderPeriod: ({ missionsInPeriod, handleMissionClick }) => (
       <div>
@@ -167,8 +184,13 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.contrastText,
     borderRadius: "24px 24px 0 0",
     flexGrow: 1,
+    flexShrink: 0,
     paddingTop: theme.spacing(4),
     textAlign: "center"
+  },
+  placeholderContainer: {
+    backgroundColor: "inherit",
+    color: theme.palette.grey[500]
   },
   periodSelector: {
     paddingTop: theme.spacing(1),
@@ -179,9 +201,56 @@ const useStyles = makeStyles(theme => ({
   },
   fullScreen: {
     width: "100%",
-    flexGrow: 1
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column"
+  },
+  placeholder: {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center"
   }
 }));
+
+function fillHistoryPeriods(periods, step) {
+  if (!["mission", "month", "week"].includes(step)) return periods;
+
+  const allPeriods = [];
+  let continuousPeriod = startOfDay(new Date(periods[0] * 1000));
+  let index = 0;
+  while (index <= periods.length - 1) {
+    const currentActualPeriod = periods[index];
+    if (continuousPeriod > currentActualPeriod) {
+      allPeriods.push(currentActualPeriod);
+      index = index + 1;
+    } else {
+      let continuousPeriodEnd;
+      if (step === "mission") {
+        continuousPeriodEnd = startOfDay(
+          new Date((continuousPeriod + DAY + HOUR) * 1000)
+        );
+      } else if (step === "week") {
+        continuousPeriodEnd = startOfDay(
+          new Date((continuousPeriod + WEEK + HOUR) * 1000)
+        );
+      } else if (step === "month") {
+        continuousPeriodEnd = getStartOfMonth(continuousPeriod + DAY * 32);
+      }
+
+      if (currentActualPeriod >= continuousPeriodEnd) {
+        if (
+          step !== "mission" ||
+          ![0, 6].includes(new Date(continuousPeriod * 1000).getDay())
+        )
+          allPeriods.push(continuousPeriod);
+      }
+      continuousPeriod = continuousPeriodEnd;
+    }
+  }
+  return allPeriods;
+}
 
 export function History({
   missions = [],
@@ -208,7 +277,10 @@ export function History({
       const missionPeriod = selectedMission
         ? tabs[currentTab].getPeriod(getTime(selectedMission))
         : null;
-      if (currentTab === "mission") setSelectedPeriod(missionPeriod);
+      if (currentTab === "mission") {
+        setSelectedPeriod(missionPeriod);
+        setMissionId(mission);
+      }
     }
   }, [location]);
 
@@ -222,13 +294,26 @@ export function History({
     .map(p => parseInt(p))
     .sort();
 
+  const filledPeriods = fillHistoryPeriods(periods, currentTab);
+
   const [selectedPeriod, setSelectedPeriod] = React.useState(
-    periods[periods.length - 1]
+    filledPeriods[filledPeriods.length - 1]
   );
+  const mission = missions.find(m => getTime(m) === selectedPeriod);
+  const [missionId, setMissionId] = React.useState(mission ? mission.id : null);
 
   React.useEffect(() => {
-    if (!groupedMissions[selectedPeriod])
-      setSelectedPeriod(periods[periods.length - 1]);
+    if (
+      !groupedMissions[selectedPeriod] &&
+      !filledPeriods.includes(selectedPeriod)
+    ) {
+      if (missionId && currentTab === "mission") {
+        const mission = missions.find(m => m.id === missionId);
+        if (mission)
+          setSelectedPeriod(tabs[currentTab].getPeriod(getTime(mission)));
+        else setSelectedPeriod(filledPeriods[filledPeriods.length - 1]);
+      } else setSelectedPeriod(filledPeriods[filledPeriods.length - 1]);
+    }
   }, [missions]);
 
   function handlePeriodChange(e, newTab, selectedDate) {
@@ -236,9 +321,12 @@ export function History({
       tabs[newTab].getPeriod(getTime(m))
     );
 
-    const newPeriods = Object.keys(newGroups)
-      .map(p => parseInt(p))
-      .sort();
+    const newPeriods = fillHistoryPeriods(
+      Object.keys(newGroups)
+        .map(p => parseInt(p))
+        .sort(),
+      newTab
+    );
 
     const newPeriod = findMatchingPeriodInNewScale(
       selectedDate,
@@ -248,6 +336,10 @@ export function History({
     );
     setCurrentTab(newTab);
     setSelectedPeriod(newPeriod);
+    if (newTab === "mission") {
+      const mission = missions.find(m => getTime(m) === newPeriod);
+      setMissionId(mission ? mission.id : null);
+    }
     resetLocation();
   }
 
@@ -260,7 +352,13 @@ export function History({
   const classes = useStyles();
 
   const missionsInSelectedPeriod = groupedMissions[selectedPeriod];
-  const followingPeriodStart = periods.find(p => p > selectedPeriod);
+  let followingPeriodStart = periods.find(p => p > selectedPeriod);
+  if (
+    !followingPeriodStart &&
+    currentMission &&
+    !missions.find(m => m.id === currentMission.id)
+  )
+    followingPeriodStart = getTime(currentMission);
 
   const periodsWithNeedForValidation = mapValues(
     groupedMissions,
@@ -271,6 +369,7 @@ export function History({
     <Paper className={classes.fullScreen}>
       <Container
         className="flex-column full-height"
+        style={{ flexGrow: 1, flexShrink: 0 }}
         disableGutters
         maxWidth="sm"
       >
@@ -291,23 +390,32 @@ export function History({
               />
             ))}
           </Tabs>
-          {periods.length > 0 && (
+          {filledPeriods.length > 0 && (
             <PeriodCarouselPicker
-              periods={periods}
+              periods={filledPeriods}
               shouldDisplayChipsForPeriods={
                 currentTab === "mission" ? periodsWithNeedForValidation : null
               }
               selectedPeriod={selectedPeriod}
               onPeriodChange={newp => {
                 setSelectedPeriod(newp);
+                if (currentTab === "mission") {
+                  const mission = missions.find(m => getTime(m) === newp);
+                  setMissionId(mission ? mission.id : null);
+                }
                 resetLocation();
               }}
               renderPeriod={tabs[currentTab].formatPeriod}
             />
           )}
         </Container>
-        <Container className={classes.contentContainer} maxWidth={false}>
-          {missionsInSelectedPeriod &&
+        <Container
+          className={`${classes.contentContainer} ${
+            missionsInSelectedPeriod ? "" : classes.placeholderContainer
+          }`}
+          maxWidth={false}
+        >
+          {missionsInSelectedPeriod ? (
             tabs[currentTab].renderPeriod({
               missionsInPeriod: missionsInSelectedPeriod,
               handleMissionClick: date => e =>
@@ -320,7 +428,15 @@ export function History({
               validateMission,
               logComment,
               cancelComment
-            })}
+            })
+          ) : (
+            <Box className={classes.placeholder}>
+              <NoDataImage height={100} />
+              <Typography>
+                Aucune mission enregistrée pour la période
+              </Typography>
+            </Box>
+          )}
         </Container>
       </Container>
     </Paper>

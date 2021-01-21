@@ -110,6 +110,8 @@ function _ValidationPanel({ containerRef, width }) {
   const [tab, setTab] = React.useState(0);
   const classes = useStyles({ clickableRow: tab === 0 });
 
+  const ref = React.createRef();
+
   const commonCols = [
     {
       label: "Employé",
@@ -275,7 +277,10 @@ function _ValidationPanel({ containerRef, width }) {
         value={tab}
         indicatorColor="primary"
         textColor="primary"
-        onChange={(e, newTab) => setTab(newTab)}
+        onChange={(e, newTab) => {
+          setTab(newTab);
+          ref.current.recomputeRowHeights();
+        }}
         className={classes.tabContainer}
       >
         <Tab
@@ -294,6 +299,7 @@ function _ValidationPanel({ containerRef, width }) {
             ? missionsValidatedByAllWorkers
             : missionsNotValidatedByAllWorkers
         }
+        ref={ref}
         editable={false}
         rowHeight={(index, mission) =>
           72 + 30 * Object.keys(mission.userStats).length

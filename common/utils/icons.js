@@ -13,6 +13,7 @@ import { ReactComponent as FabNumIcon_ } from "../assets/images/fabnum.svg";
 import _ManagerImage from "../assets/images/manager.png";
 import _WorkerImage from "../assets/images/worker.png";
 import _SoftwareImage from "../assets/images/software1.png";
+import _NoDataImage from "../assets/images/no-data.png";
 
 export function PersonIcon(props) {
   return <SvgIcon {...props} viewBox="0 0 64 64" component={PersonIcon_} />;
@@ -38,6 +39,10 @@ export function RestIcon(props) {
 
 export function ManagerIcon(props) {
   return <SvgIcon {...props} viewBox="0 0 100 100" component={ManagerIcon_} />;
+}
+
+export function NoDataImage(props) {
+  return <img src={_NoDataImage} {...props} />;
 }
 
 export function ManagerImage(props) {

@@ -13,7 +13,7 @@ export async function loadUserData(api, store) {
       USER_QUERY,
       {
         id: userId,
-        activityAfter: now() - DAY * 183
+        activityAfter: now() - DAY * 215
       },
       { context: { timeout: 8000 } }
     );

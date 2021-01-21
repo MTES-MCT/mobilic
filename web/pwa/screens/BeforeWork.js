@@ -235,7 +235,9 @@ function MissionItem({ mission, openHistory }) {
     >
       <ListItemAvatar>
         <Avatar variant="rounded" className={classes.missionDay}>
-          <Typography>{formatDayOfWeek(mission.startTime)}</Typography>
+          <Typography style={{ textTransform: "uppercase" }}>
+            {formatDayOfWeek(mission.startTime)}
+          </Typography>
           <Typography className="bold">
             {shortPrettyFormatDay(mission.startTime)}
           </Typography>
