@@ -104,6 +104,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         )}`;
       case "OVERLAPPING_ACTIVITIES":
         return `L'activité est en chevauchement avec d'autres activités`;
+      case "INVALID_EMAIL_ADDRESS":
+        return `L'adresse email n'est pas valide`;
       case "MISSION_ALREADY_ENDED":
         return `La mission a déjà été terminée${
           graphQLError.extensions.missionEnd
@@ -120,6 +122,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return `La mission n'est plus modifiable, elle a été validée par le gestionnaire.`;
       case "MISSION_ALREADY_VALIDATED_BY_USER":
         return `L'utilisateur a déjà validé la mission, seul lui ou un gestionnaire peuvent modifier ses activités. `;
+      case "NO_ACTIVITIES_TO_VALIDATE":
+        return `Il n'y a pas d'activités à valider`;
       case "INVALID_RESOURCE":
         return "Opération impossible sur cette ressource.";
       case "DUPLICATE_EXPENDITURES":

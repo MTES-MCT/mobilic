@@ -213,6 +213,7 @@ function _ValidationPanel({ containerRef, width }) {
 
   const nonValidatedByAdminMissions = adminStore.missions
     .filter(m => !m.adminValidation)
+    .filter(m => m.activities.length > 0)
     .map(m => {
       const members = uniqBy(
         m.activities.map(a => a.user),

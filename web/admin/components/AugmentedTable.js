@@ -346,8 +346,8 @@ export function AugmentedTable({
                 variant="contained"
                 color="primary"
                 disabled={disableAdd && disableAdd(editingValues)}
-                onClick={() => {
-                  onRowAdd(editingValues);
+                onClick={async () => {
+                  await onRowAdd(editingValues);
                   setEditingRowId(null);
                   afterRowAdd && afterRowAdd();
                 }}
@@ -728,8 +728,8 @@ export const AugmentedVirtualizedTable = React.forwardRef(
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => {
-                    onRowAdd(editingValues);
+                  onClick={async () => {
+                    await onRowAdd(editingValues);
                     setEditingRowId(null);
                   }}
                 >
