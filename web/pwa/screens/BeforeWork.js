@@ -17,9 +17,11 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import {
+  DAY,
   formatDayOfWeek,
   formatTimeOfDay,
-  shortPrettyFormatDay
+  shortPrettyFormatDay,
+  startOfDay
 } from "common/utils/time";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import orderBy from "lodash/orderBy";
@@ -130,9 +132,13 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
 
   const classes = useStyles();
 
+  const currentTime = startOfDay(new Date(Date.now()));
+
   const missionsInHistory = missions.filter(m => m.isComplete && m.ended);
   const nonValidatedMissions = orderBy(
-    missionsInHistory.filter(m => !m.validation),
+    missionsInHistory.filter(
+      m => !m.validation && m.startTime >= currentTime - DAY * 31
+    ),
     ["startTime"],
     ["desc"]
   );
