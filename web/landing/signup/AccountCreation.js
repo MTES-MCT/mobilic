@@ -20,6 +20,7 @@ import { FranceConnectContainer } from "../../common/FranceConnect";
 import { useModals } from "common/utils/modals";
 import { PasswordField } from "common/components/PasswordField";
 import * as Sentry from "@sentry/browser";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -36,12 +37,12 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const history = useHistory();
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
+  const alerts = useSnackbarAlerts();
 
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
   const handleSubmit = async e => {
@@ -100,7 +101,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       Sentry.captureException(err);
       setEmail("");
       setPassword("");
-      setError(formatApiError(err));
+      alerts.error(formatApiError(err), "signup", 6000);
     }
     setLoading(false);
   };
@@ -157,7 +158,6 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                 autoComplete="username"
                 value={email}
                 onChange={e => {
-                  setError("");
                   setEmail(e.target.value.replace(/\s/g, ""));
                 }}
               />
@@ -169,7 +169,6 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                 autoComplete="current-password"
                 value={password}
                 onChange={e => {
-                  setError("");
                   setPassword(e.target.value);
                 }}
               />
@@ -181,7 +180,6 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                 autoComplete="given-name"
                 value={firstName}
                 onChange={e => {
-                  setError("");
                   setFirstName(e.target.value.trimLeft());
                 }}
               />
@@ -193,7 +191,6 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                 autoComplete="family-name"
                 value={lastName}
                 onChange={e => {
-                  setError("");
                   setLastName(e.target.value.trimLeft());
                 }}
               />
@@ -202,14 +199,11 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                   variant="contained"
                   color="primary"
                   type="submit"
-                  disabled={
-                    !email || !password || !firstName || !lastName || !!error
-                  }
+                  disabled={!email || !password || !firstName || !lastName}
                   loading={loading}
                 >
                   M'inscrire
                 </LoadingButton>
-                {error && <Typography color="error">{error}</Typography>}
               </Box>
             </form>
           </Section>

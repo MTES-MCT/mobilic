@@ -32,6 +32,7 @@ import { formatApiError } from "common/utils/errors";
 import CheckIcon from "@material-ui/icons/Check";
 import ScheduleIcon from "@material-ui/icons/Schedule";
 import { Comment } from "../../common/Comment";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -100,8 +101,7 @@ export function MissionDetails({
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
   const userId = store.userId();
-
-  const [submissionError, setSubmissionError] = React.useState(null);
+  const alerts = useSnackbarAlerts();
 
   const coworkers = store.getEntity("coworkers");
 
@@ -268,11 +268,7 @@ export function MissionDetails({
       {!hideValidations && (
         <MissionReviewSection title="">
           {!mission.adminValidation && !mission.validation && (
-            <Box
-              style={{ textAlign: "center" }}
-              pt={2}
-              pb={submissionError ? 0 : 2}
-            >
+            <Box style={{ textAlign: "center" }} pt={2} pb={2}>
               <MainCtaButton
                 style={{ textAlign: "center" }}
                 onClick={async () => {
@@ -281,17 +277,12 @@ export function MissionDetails({
                   } catch (err) {
                     Sentry.captureException(err);
                     console.log(err);
-                    setSubmissionError(err);
+                    alerts.error(formatApiError(err), "validate-mission", 6000);
                   }
                 }}
               >
                 {validationButtonName}
               </MainCtaButton>
-              {submissionError && (
-                <Typography color="error">
-                  {formatApiError(submissionError)}
-                </Typography>
-              )}
             </Box>
           )}
           {mission.validation && (

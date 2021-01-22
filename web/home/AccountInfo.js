@@ -30,6 +30,7 @@ import Divider from "@material-ui/core/Divider";
 import AlertTitle from "@material-ui/lab/AlertTitle";
 import Box from "@material-ui/core/Box";
 import * as Sentry from "@sentry/browser";
+import { useSnackbarAlerts } from "../common/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -67,8 +68,8 @@ function EmploymentInfo({ employment }) {
   const classes = useStyles(employment.isAcknowledged);
 
   const api = useApi();
+  const alerts = useSnackbarAlerts();
 
-  const [error, setError] = React.useState("");
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
 
@@ -88,12 +89,14 @@ function EmploymentInfo({ employment }) {
       await broadCastChannel.postMessage("update");
     } catch (err) {
       Sentry.captureException(err);
-      setError(
+      alerts.error(
         formatApiError(err, graphQLError => {
           if (graphQLErrorMatchesCode(graphQLError, "INVALID_RESOURCE")) {
             return "Opération impossible. Veuillez réessayer ultérieurement.";
           }
-        })
+        }),
+        "validate-employment",
+        6000
       );
     }
   }
@@ -167,7 +170,6 @@ function EmploymentInfo({ employment }) {
               </LoadingButton>
             </Grid>
           </Grid>
-          {error && <Alert severity="error">{error}</Alert>}
         </>
       )}
     </>

@@ -17,6 +17,7 @@ import {
 import { FranceConnectContainer } from "../common/FranceConnect";
 import { PasswordField } from "common/components/PasswordField";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import { useSnackbarAlerts } from "../common/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   forgotPasswordLink: {
@@ -27,11 +28,11 @@ const useStyles = makeStyles(theme => ({
 export default function Login() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
+  const alerts = useSnackbarAlerts();
   const history = useHistory();
   const classes = useStyles();
 
@@ -45,12 +46,14 @@ export default function Login() {
       });
       await store.updateUserIdAndInfo();
     } catch (error) {
-      setError(
+      alerts.error(
         formatApiError(error, graphQLError => {
           if (graphQLErrorMatchesCode(graphQLError, "AUTHENTICATION_ERROR")) {
             return "Identifiants incorrects.";
           }
-        })
+        }),
+        "login",
+        6000
       );
     }
     setLoading(false);
@@ -87,7 +90,6 @@ export default function Login() {
             autoComplete="username"
             value={email}
             onChange={e => {
-              setError("");
               setEmail(e.target.value.replace(/\s/g, ""));
             }}
           />
@@ -98,16 +100,9 @@ export default function Login() {
             autoComplete="current-password"
             value={password}
             onChange={e => {
-              setError("");
               setPassword(e.target.value);
             }}
           />
-          {error && (
-            <Typography align="left" color="error">
-              {error}
-            </Typography>
-          )}
-
           <Box my={4}>
             <LoadingButton
               variant="contained"

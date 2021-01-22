@@ -22,6 +22,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormGroup from "@material-ui/core/FormGroup";
 import * as Sentry from "@sentry/browser";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -63,6 +64,7 @@ export function CompanySignup() {
   const history = useHistory();
   const location = useLocation();
   const store = useStoreSyncedWithLocalStorage();
+  const alerts = useSnackbarAlerts();
 
   const [siren, setSiren] = React.useState("");
   const [usualName, setUsualName] = React.useState("");
@@ -76,8 +78,6 @@ export function CompanySignup() {
     shouldDisplaySignupProgress,
     setShouldDisplaySignupProgress
   ] = React.useState(false);
-
-  const [signupError, setSignupError] = React.useState("");
 
   const [loadingSirenInfo, setLoadingSirenInfo] = React.useState(false);
   const [loadingCompanySignup, setLoadingCompanySignup] = React.useState(false);
@@ -114,7 +114,6 @@ export function CompanySignup() {
     e.preventDefault();
     setApiError("");
     setFacilities(null);
-    setSignupError("");
     setLoadingSirenInfo(true);
     setShowUsualName(false);
     setClaimedRights(false);
@@ -164,7 +163,7 @@ export function CompanySignup() {
       );
     } catch (err) {
       Sentry.captureException(err);
-      setSignupError(formatApiError(err));
+      alerts.error(formatApiError(err), "company-signup", 6000);
     }
     setLoadingCompanySignup(false);
   };
@@ -210,7 +209,6 @@ export function CompanySignup() {
                   value={siren}
                   onChange={e => {
                     setApiError("");
-                    setSignupError("");
                     setFacilities(null);
                     setShowUsualName(false);
                     setClaimedRights(false);
@@ -369,9 +367,6 @@ export function CompanySignup() {
                 >
                   Terminer
                 </LoadingButton>
-                {signupError && (
-                  <Typography color="error">{signupError}</Typography>
-                )}
               </form>
             </Section>
           )}

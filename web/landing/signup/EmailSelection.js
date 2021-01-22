@@ -20,6 +20,7 @@ import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup";
 import { PasswordField } from "common/components/PasswordField";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -38,6 +39,7 @@ export function EmailSelection() {
   const api = useApi();
   const history = useHistory();
   const store = useStoreSyncedWithLocalStorage();
+  const alerts = useSnackbarAlerts();
 
   const userInfo = store.userInfo();
   const modals = useModals();
@@ -47,7 +49,6 @@ export function EmailSelection() {
   const [origEmailSet, setOrigEmailSet] = React.useState(false);
   const [password, setPassword] = React.useState("");
   const [choosePassword, setChoosePassword] = React.useState(false);
-  const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
   const location = useLocation();
@@ -102,7 +103,7 @@ export function EmailSelection() {
     } catch (err) {
       setEmail("");
       setPassword("");
-      setError(formatApiError(err));
+      alerts.error(formatApiError(err), "select-email", 6000);
     }
     setLoading(false);
   };
@@ -155,7 +156,6 @@ export function EmailSelection() {
                 autoComplete="username"
                 value={email}
                 onChange={e => {
-                  setError("");
                   setEmail(e.target.value.replace(/\s/g, ""));
                 }}
               />
@@ -194,7 +194,6 @@ export function EmailSelection() {
                   autoComplete="current-password"
                   value={password}
                   onChange={e => {
-                    setError("");
                     setPassword(e.target.value);
                   }}
                 />
@@ -206,11 +205,10 @@ export function EmailSelection() {
                 color="primary"
                 type="submit"
                 loading={loading}
-                disabled={!email || (choosePassword && !password) || !!error}
+                disabled={!email || (choosePassword && !password)}
               >
                 Continuer
               </LoadingButton>
-              {error && <Typography color="error">{error}</Typography>}
             </Box>
           </form>
         </Container>

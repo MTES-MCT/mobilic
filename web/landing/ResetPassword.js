@@ -20,6 +20,7 @@ import Button from "@material-ui/core/Button";
 import { useLoadingScreen } from "common/utils/loading";
 import { Header } from "../common/Header";
 import { PasswordField } from "common/components/PasswordField";
+import { useSnackbarAlerts } from "../common/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -50,13 +51,13 @@ export function ResetPassword() {
   const location = useLocation();
   const history = useHistory();
   const classes = useStyles();
+  const alerts = useSnackbarAlerts();
   const withLoadingScreen = useLoadingScreen();
 
   const [didSubmitForm, setDidSubmitForm] = React.useState(false);
   const [password, setPassword] = React.useState(null);
   const [passwordCopy, setPasswordCopy] = React.useState(null);
 
-  const [submitError, setSubmitError] = React.useState("");
   const [tokenError, setTokenError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [token, setToken] = React.useState(null);
@@ -90,7 +91,6 @@ export function ResetPassword() {
   const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
-    setSubmitError("");
     try {
       await api.graphQlMutate(
         RESET_PASSWORD_MUTATION,
@@ -103,7 +103,7 @@ export function ResetPassword() {
       setDidSubmitForm(true);
       setLoading(false);
     } catch (err) {
-      setSubmitError(
+      alerts.error(
         formatApiError(err, gqlError => {
           if (graphQLErrorMatchesCode(gqlError, "INVALID_TOKEN")) {
             return "Le lien de réinitialisation est invalide.";
@@ -111,7 +111,9 @@ export function ResetPassword() {
           if (graphQLErrorMatchesCode(gqlError, "EXPIRED_TOKEN")) {
             return "Le lien de réinitialisation a expiré.";
           }
-        })
+        }),
+        "reset-password",
+        6000
       );
       setLoading(false);
     }
@@ -178,7 +180,6 @@ export function ResetPassword() {
                       autoComplete="current-password"
                       value={password}
                       onChange={e => {
-                        setSubmitError("");
                         setPassword(e.target.value);
                       }}
                     />
@@ -212,9 +213,6 @@ export function ResetPassword() {
                       >
                         Valider
                       </LoadingButton>
-                      {submitError && (
-                        <Typography color="error">{submitError}</Typography>
-                      )}
                     </Box>
                   </form>
                 </>
@@ -230,16 +228,15 @@ export function ResetPassword() {
 export function RequestResetPassword() {
   const classes = useStyles();
   const api = useApi();
+  const alerts = useSnackbarAlerts();
 
   const [email, setEmail] = React.useState("");
   const [didSubmitForm, setDidSubmitForm] = React.useState(false);
-  const [submitError, setSubmitError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
 
   const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
-    setSubmitError("");
     try {
       const apiResponse = await api.graphQlMutate(
         REQUEST_RESET_PASSWORD_MUTATION,
@@ -254,7 +251,7 @@ export function RequestResetPassword() {
       setDidSubmitForm(true);
       setLoading(false);
     } catch (err) {
-      setSubmitError(formatApiError(err));
+      alerts.error(formatApiError(err), "request-reset-password", 6000);
       setLoading(false);
     }
   };
@@ -296,7 +293,6 @@ export function RequestResetPassword() {
                     autoComplete="username"
                     value={email}
                     onChange={e => {
-                      setSubmitError("");
                       setEmail(e.target.value.replace(/\s/g, ""));
                     }}
                   />
@@ -310,9 +306,6 @@ export function RequestResetPassword() {
                     >
                       Valider
                     </LoadingButton>
-                    {submitError && (
-                      <Typography color="error">{submitError}</Typography>
-                    )}
                   </Box>
                 </form>
               </>

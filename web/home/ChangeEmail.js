@@ -2,17 +2,18 @@ import React from "react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
 import { formatApiError } from "common/utils/errors";
 import {
   CustomDialogActions,
   CustomDialogTitle
 } from "../common/CustomDialogTitle";
+import { useSnackbarAlerts } from "../common/Snackbar";
 
 export function ChangeEmailModal({ open, handleClose, handleSubmit }) {
   const [email, setEmail] = React.useState("");
-  const [error, setError] = React.useState("");
+
+  const alerts = useSnackbarAlerts();
 
   React.useEffect(() => {
     setEmail("");
@@ -33,7 +34,7 @@ export function ChangeEmailModal({ open, handleClose, handleSubmit }) {
             await handleSubmit(email);
             handleClose();
           } catch (err) {
-            setError(formatApiError(err));
+            alerts.error(formatApiError(err), "change-email", 6000);
           }
         }}
       >
@@ -47,11 +48,9 @@ export function ChangeEmailModal({ open, handleClose, handleSubmit }) {
             autoComplete="username"
             value={email}
             onChange={e => {
-              setError("");
               setEmail(e.target.value.replace(/\s/g, ""));
             }}
           />
-          {error && <Typography color="error">{error}</Typography>}
         </DialogContent>
         <CustomDialogActions>
           <LoadingButton type="submit" disabled={!email} color="primary">
