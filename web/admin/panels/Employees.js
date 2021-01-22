@@ -18,6 +18,10 @@ import Button from "@material-ui/core/Button";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import IconButton from "@material-ui/core/IconButton";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -146,25 +150,7 @@ export function Employees({ companyId, containerRef }) {
     {
       label: "Fin rattachement",
       name: "endDate",
-      format: (endDate, employment, onFocus) =>
-        endDate ? (
-          endDate
-        ) : onFocus ? null : employment.id === adminStore.userId ? null : (
-          <Button
-            variant="outlined"
-            color="primary"
-            size="small"
-            onClick={() =>
-              modals.open("terminateEmployment", {
-                minDate: new Date(employment.startDate),
-                terminateEmployment: async endDate =>
-                  await terminateEmployment(employment.employmentId, endDate)
-              })
-            }
-          >
-            Terminer
-          </Button>
-        ),
+      format: (endDate, employment, onFocus) => (endDate ? endDate : null),
       align: "left",
       minWidth: 130
     },
@@ -183,6 +169,22 @@ export function Employees({ companyId, containerRef }) {
       align: "left",
       sortable: true,
       minWidth: 100
+    },
+    {
+      label: "",
+      name: "actions",
+      format: (_, employment) =>
+        employment.endDate ? null : (
+          <IconButton
+            color="primary"
+            onClick={e => handleActionsClick(e, employment)}
+          >
+            <MoreVertIcon />
+          </IconButton>
+        ),
+      align: "left",
+      baseWidth: 65,
+      minWidth: 65
     }
   ];
 
@@ -211,8 +213,21 @@ export function Employees({ companyId, containerRef }) {
       startDate: e.startDate,
       endDate: e.endDate,
       active: !e.endDate || e.endDate >= today,
-      hasAdminRights: e.hasAdminRights
+      hasAdminRights: e.hasAdminRights ? 1 : 0
     }));
+
+  const [actionMenuAnchorEl, setActionMenuAnchorEl] = React.useState(null);
+  const [employmentActedOn, setEmploymentActedOn] = React.useState(null);
+
+  const handleActionsClick = (event, empl) => {
+    setActionMenuAnchorEl(event.currentTarget);
+    setEmploymentActedOn(empl);
+  };
+
+  const handleActionsMenuClose = () => {
+    setActionMenuAnchorEl(null);
+    setEmploymentActedOn(null);
+  };
 
   return [
     (triggerAddEmployee.value || pendingEmployments.length > 0) && (
@@ -296,6 +311,26 @@ export function Employees({ companyId, containerRef }) {
       maxHeight={"100%"}
       defaultSortBy="startDate"
       attachScrollTo={containerRef.current}
-    />
+    />,
+    <Menu
+      key={5}
+      keepMounted
+      open={Boolean(actionMenuAnchorEl)}
+      onClose={handleActionsMenuClose}
+      anchorEl={actionMenuAnchorEl}
+    >
+      <MenuItem
+        onClick={() => {
+          modals.open("terminateEmployment", {
+            minDate: new Date(employmentActedOn.startDate),
+            terminateEmployment: async endDate =>
+              await terminateEmployment(employmentActedOn.employmentId, endDate)
+          });
+          handleActionsMenuClose();
+        }}
+      >
+        Mettre fin au rattachement
+      </MenuItem>
+    </Menu>
   ];
 }

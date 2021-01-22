@@ -1,12 +1,10 @@
 import React from "react";
 import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
+import { CustomDialogActions, CustomDialogTitle } from "./CustomDialogTitle";
 
 export function ConfirmationModal({
   title,
@@ -17,10 +15,11 @@ export function ConfirmationModal({
 }) {
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle disableTypography>
-        <Typography variant="h4">{title || "Confirmer"}</Typography>
-      </DialogTitle>
-      <DialogActions>
+      <CustomDialogTitle
+        title={title || "Confirmer"}
+        handleClose={handleClose}
+      />
+      <CustomDialogActions>
         {textButtons ? (
           <LoadingButton color="primary" onClick={handleClose}>
             Non
@@ -50,7 +49,7 @@ export function ConfirmationModal({
             <CheckIcon color="primary" />
           </IconButton>
         )}
-      </DialogActions>
+      </CustomDialogActions>
     </Dialog>
   );
 }

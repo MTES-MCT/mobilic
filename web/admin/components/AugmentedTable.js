@@ -370,8 +370,8 @@ export function AugmentedTable({
             <>
               <IconButton
                 className="no-margin-no-padding"
-                onClick={() => {
-                  onRowEdit(entry, { ...editingValues });
+                onClick={async () => {
+                  await onRowEdit(entry, { ...editingValues });
                   setEditingRowId(null);
                 }}
               >
@@ -748,8 +748,8 @@ export const AugmentedVirtualizedTable = React.forwardRef(
               <>
                 <IconButton
                   className="no-margin-no-padding"
-                  onClick={() => {
-                    onRowEdit(entry, { ...editingValues });
+                  onClick={async () => {
+                    await onRowEdit(entry, { ...editingValues });
                     setEditingRowId(null);
                   }}
                 >

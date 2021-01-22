@@ -4,11 +4,8 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import { formatDateTime, formatTimeOfDay, now } from "common/utils/time";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
-import DialogActions from "@material-ui/core/DialogActions";
-import CloseIcon from "@material-ui/icons/Close";
 import CheckIcon from "@material-ui/icons/Check";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
@@ -22,6 +19,10 @@ import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { DateTimePicker } from "./DateTimePicker";
 import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 import Switch from "@material-ui/core/Switch/Switch";
+import {
+  CustomDialogActions,
+  CustomDialogTitle
+} from "../../common/CustomDialogTitle";
 
 export function ActivityRevisionOrCreationModal({
   event,
@@ -249,13 +250,14 @@ export function ActivityRevisionOrCreationModal({
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle disableTypography>
-        <Typography variant="h4">
-          {actionType === "creation"
+      <CustomDialogTitle
+        title={
+          actionType === "creation"
             ? "Nouvelle activité"
-            : "Modifier l'activité"}
-        </Typography>
-      </DialogTitle>
+            : "Modifier l'activité"
+        }
+        handleClose={handleClose}
+      />
       <DialogContent>
         <Box my={2}>
           <Typography>
@@ -383,21 +385,19 @@ export function ActivityRevisionOrCreationModal({
           />
         </Box>
       </DialogContent>
-      <DialogActions>
-        <IconButton onClick={handleClose}>
-          <CloseIcon color="error" />
-        </IconButton>
+      <CustomDialogActions>
         <IconButton
           onClick={() => {
             handleSubmit();
             handleClose();
           }}
+          className="no-margin-no-padding"
           disabled={!canSubmit()}
           color="primary"
         >
           <CheckIcon />
         </IconButton>
-      </DialogActions>
+      </CustomDialogActions>
     </Dialog>
   );
 }

@@ -1,7 +1,6 @@
 import React from "react";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import Typography from "@material-ui/core/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
@@ -11,6 +10,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
 import Button from "@material-ui/core/Button";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { CustomDialogActions } from "../common/CustomDialogTitle";
 
 const useStyles = makeStyles(theme => ({
   p: {
@@ -69,7 +69,7 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
           <CircularProgress color="primary" />
         )}
       </DialogContent>
-      <DialogActions>
+      <CustomDialogActions>
         {handleAccept && (
           <LoadingButton
             variant="contained"
@@ -100,7 +100,7 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
             Fermer
           </Button>
         )}
-      </DialogActions>
+      </CustomDialogActions>
     </Dialog>
   );
 }

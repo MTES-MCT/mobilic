@@ -1,15 +1,17 @@
 import React from "react";
 import Dialog from "@material-ui/core/Dialog";
 import Typography from "@material-ui/core/Typography";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogActions from "@material-ui/core/DialogActions";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import { formatGraphQLError } from "common/utils/errors";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
+import {
+  CustomDialogActions,
+  CustomDialogTitle
+} from "../../common/CustomDialogTitle";
 
 const useStyles = makeStyles(theme => ({
   failureStatusText: {
@@ -35,9 +37,7 @@ export function ApiErrorDialogModal({ open, handleClose, errors = [], title }) {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle disableTypography>
-        <Typography variant="h4">{displayTitle}</Typography>
-      </DialogTitle>
+      <CustomDialogTitle title={displayTitle} handleClose={handleClose} />
       <DialogContent>
         {errors.map((error, index) => (
           <Box mt={2} key={index}>
@@ -81,11 +81,11 @@ export function ApiErrorDialogModal({ open, handleClose, errors = [], title }) {
           </Box>
         ))}
       </DialogContent>
-      <DialogActions>
+      <CustomDialogActions>
         <Button color="primary" onClick={handleClose}>
           Fermer
         </Button>
-      </DialogActions>
+      </CustomDialogActions>
     </Dialog>
   );
 }

@@ -1,15 +1,16 @@
 import React from "react";
 import CheckIcon from "@material-ui/icons/Check";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
 import DialogContent from "@material-ui/core/DialogContent";
 import { Expenditures } from "./Expenditures";
 import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 import Switch from "@material-ui/core/Switch/Switch";
 import Box from "@material-ui/core/Box";
+import {
+  CustomDialogActions,
+  CustomDialogTitle
+} from "../../common/CustomDialogTitle";
 
 export function ExpenditureDialogModal({
   open,
@@ -27,9 +28,7 @@ export function ExpenditureDialogModal({
 
   return (
     <Dialog onClose={handleClose} open={open} fullWidth>
-      <DialogTitle disableTypography>
-        <Typography variant="h4">Editer les frais</Typography>
-      </DialogTitle>
+      <CustomDialogTitle title="Modifier les frais" handleClose={handleClose} />
       <DialogContent>
         <Expenditures
           expenditures={expenditures}
@@ -51,8 +50,9 @@ export function ExpenditureDialogModal({
           </Box>
         )}
       </DialogContent>
-      <DialogActions>
+      <CustomDialogActions>
         <IconButton
+          className="no-margin-no-padding"
           onClick={() => {
             handleSubmit(expenditures, forAllTeam);
             handleClose();
@@ -60,7 +60,7 @@ export function ExpenditureDialogModal({
         >
           <CheckIcon color="primary" />
         </IconButton>
-      </DialogActions>
+      </CustomDialogActions>
     </Dialog>
   );
 }

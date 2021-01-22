@@ -1,13 +1,15 @@
 import React from "react";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Typography from "@material-ui/core/Typography";
 import DialogContent from "@material-ui/core/DialogContent";
 import { DatePicker } from "@material-ui/pickers";
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
 import Box from "@material-ui/core/Box";
 import { LoadingButton } from "common/components/LoadingButton";
 import * as Sentry from "@sentry/browser";
+import {
+  CustomDialogActions,
+  CustomDialogTitle
+} from "../../common/CustomDialogTitle";
 
 export function TerminateEmployment({
   open,
@@ -25,9 +27,10 @@ export function TerminateEmployment({
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle disableTypography>
-        <Typography variant="h4">Fin du rattachement</Typography>
-      </DialogTitle>
+      <CustomDialogTitle
+        handleClose={handleClose}
+        title="Fin du rattachement"
+      />
       <form
         noValidate
         autoComplete="off"
@@ -65,17 +68,17 @@ export function TerminateEmployment({
               animateYearScrolling
             />
           </Box>
-          <DialogActions>
-            <LoadingButton
-              color="primary"
-              variant="contained"
-              type="submit"
-              loading={loading}
-            >
-              Terminer
-            </LoadingButton>
-          </DialogActions>
         </DialogContent>
+        <CustomDialogActions>
+          <LoadingButton
+            color="primary"
+            variant="contained"
+            type="submit"
+            loading={loading}
+          >
+            Mettre fin
+          </LoadingButton>
+        </CustomDialogActions>
       </form>
     </Dialog>
   );

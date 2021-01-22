@@ -1,5 +1,4 @@
 import React from "react";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
 import { formatPersonName } from "common/utils/coworkers";
 import RadioGroup from "@material-ui/core/RadioGroup";
@@ -7,8 +6,8 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import DialogContent from "@material-ui/core/DialogContent";
 import { formatTimer, now } from "common/utils/time";
-import Typography from "@material-ui/core/Typography";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { CustomDialogTitle } from "../../common/CustomDialogTitle";
 
 export function DriverSelectionModal({
   team = [],
@@ -24,11 +23,12 @@ export function DriverSelectionModal({
   const hasTeamMates = team.length > 1;
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle disableTypography>
-        <Typography variant="h4">
-          {hasTeamMates ? "Choisir conducteur" : "Êtes-vous le conducteur ?"}
-        </Typography>
-      </DialogTitle>
+      <CustomDialogTitle
+        title={
+          hasTeamMates ? "Choisir conducteur" : "Êtes-vous le conducteur ?"
+        }
+        handleClose={handleClose}
+      />
       <DialogContent>
         <RadioGroup
           aria-label="driver"
