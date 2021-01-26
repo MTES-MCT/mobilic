@@ -8,7 +8,6 @@ import {
   RESET_PASSWORD_MUTATION,
   useApi
 } from "common/utils/api";
-import Paper from "@material-ui/core/Paper/Paper";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField/TextField";
 import { LoadingButton } from "common/components/LoadingButton";
@@ -21,19 +20,9 @@ import { useLoadingScreen } from "common/utils/loading";
 import { Header } from "../common/Header";
 import { PasswordField } from "common/components/PasswordField";
 import { useSnackbarAlerts } from "../common/Snackbar";
+import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 
 const useStyles = makeStyles(theme => ({
-  container: {
-    padding: theme.spacing(2),
-    paddingTop: theme.spacing(4),
-    margin: "auto",
-    flexGrow: 1
-  },
-  title: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-    textAlign: "center"
-  },
   introText: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
@@ -122,105 +111,103 @@ export function ResetPassword() {
   return (
     <>
       <Header />
-      <Container className={classes.container} maxWidth="md">
+      <PaperContainer>
         {tokenError ? (
           <Typography color="error">{tokenError}</Typography>
         ) : (
-          <Paper>
-            <Container className="centered" maxWidth="sm">
-              {didSubmitForm ? (
-                <Grid
-                  style={{ marginTop: 0 }}
-                  container
-                  spacing={10}
-                  direction="column"
-                  alignItems="center"
-                >
-                  <Grid item xs={12}>
-                    <Typography className={classes.title} variant="h1">
-                      🎉
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography>
-                      Votre mot de passe a bien été réinitialisé !
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Button
-                      color="primary"
-                      variant="contained"
-                      onClick={() => {
-                        history.push("/");
-                      }}
-                    >
-                      Aller dans mon espace
-                    </Button>
-                  </Grid>
-                </Grid>
-              ) : (
-                <>
-                  <Typography className={classes.title} variant="h3">
-                    Réinitialisation du mot de passe
+          <Container className="centered" maxWidth="sm">
+            {didSubmitForm ? (
+              <Grid
+                style={{ marginTop: 0 }}
+                container
+                spacing={10}
+                direction="column"
+                alignItems="center"
+              >
+                <Grid item xs={12}>
+                  <Typography className={classes.title} variant="h1">
+                    🎉
                   </Typography>
-                  <form
-                    className="vertical-form centered"
-                    noValidate
-                    autoComplete="off"
-                    onSubmit={handleSubmit}
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography>
+                    Votre mot de passe a bien été réinitialisé !
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={() => {
+                      history.push("/");
+                    }}
                   >
-                    <Typography className={classes.introText}>
-                      Veuillez choisir un nouveau mot de passe.
-                    </Typography>
-                    <PasswordField
-                      fullWidth
-                      className="vertical-form-text-input"
-                      label="Nouveau mot de passe"
-                      placeholder="Choisissez un mot de passe"
-                      autoComplete="current-password"
-                      value={password}
-                      onChange={e => {
-                        setPassword(e.target.value);
-                      }}
-                    />
-                    <PasswordField
-                      required
-                      fullWidth
-                      label="Confirmez le mot de passe"
-                      className="vertical-form-text-input"
-                      error={
-                        passwordCopy && passwordCopy !== password
-                          ? "Le mot de passe n'est pas identique"
-                          : null
+                    Aller dans mon espace
+                  </Button>
+                </Grid>
+              </Grid>
+            ) : (
+              <>
+                <PaperContainerTitle>
+                  Réinitialisation du mot de passe
+                </PaperContainerTitle>
+                <form
+                  className="vertical-form centered"
+                  noValidate
+                  autoComplete="off"
+                  onSubmit={handleSubmit}
+                >
+                  <Typography className={classes.introText}>
+                    Veuillez choisir un nouveau mot de passe.
+                  </Typography>
+                  <PasswordField
+                    fullWidth
+                    className="vertical-form-text-input"
+                    label="Nouveau mot de passe"
+                    placeholder="Choisissez un mot de passe"
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={e => {
+                      setPassword(e.target.value);
+                    }}
+                  />
+                  <PasswordField
+                    required
+                    fullWidth
+                    label="Confirmez le mot de passe"
+                    className="vertical-form-text-input"
+                    error={
+                      passwordCopy && passwordCopy !== password
+                        ? "Le mot de passe n'est pas identique"
+                        : null
+                    }
+                    value={passwordCopy}
+                    onChange={e => {
+                      setPasswordCopy(e.target.value);
+                    }}
+                  />
+                  <Box my={4}>
+                    <LoadingButton
+                      variant="contained"
+                      color="primary"
+                      type="submit"
+                      disabled={
+                        !token ||
+                        !password ||
+                        !passwordCopy ||
+                        password !== passwordCopy
                       }
-                      value={passwordCopy}
-                      onChange={e => {
-                        setPasswordCopy(e.target.value);
-                      }}
-                    />
-                    <Box my={4}>
-                      <LoadingButton
-                        variant="contained"
-                        color="primary"
-                        type="submit"
-                        disabled={
-                          !token ||
-                          !password ||
-                          !passwordCopy ||
-                          password !== passwordCopy
-                        }
-                        loading={loading}
-                      >
-                        Valider
-                      </LoadingButton>
-                    </Box>
-                  </form>
-                </>
-              )}
-            </Container>
-          </Paper>
+                      loading={loading}
+                    >
+                      Valider
+                    </LoadingButton>
+                  </Box>
+                </form>
+              </>
+            )}
+          </Container>
         )}
-      </Container>
+      </PaperContainer>
     </>
   );
 }
@@ -259,60 +246,58 @@ export function RequestResetPassword() {
   return (
     <>
       <Header />
-      <Container className={classes.container} maxWidth="md">
-        <Paper>
-          <Container className="centered" maxWidth="sm">
-            {didSubmitForm ? (
-              <Typography className={classes.submitText}>
-                Si l'adresse email <strong>{email}</strong> correspond à un
-                compte Mobilic vous allez y recevoir un email pour réinitialiser
-                votre mot de passe.
-              </Typography>
-            ) : (
-              <>
-                <Typography className={classes.title} variant="h3">
-                  Demande de réinitialisation du mot de passe
+      <PaperContainer>
+        <Container className="centered" maxWidth="sm">
+          {didSubmitForm ? (
+            <Typography className={classes.submitText}>
+              Si l'adresse email <strong>{email}</strong> correspond à un compte
+              Mobilic vous allez y recevoir un email pour réinitialiser votre
+              mot de passe.
+            </Typography>
+          ) : (
+            <>
+              <PaperContainerTitle>
+                Demande de réinitialisation du mot de passe
+              </PaperContainerTitle>
+              <form
+                className="vertical-form centered"
+                noValidate
+                autoComplete="off"
+                onSubmit={handleSubmit}
+              >
+                <Typography className={classes.introText}>
+                  Pour réinitialiser votre mot de passe veuillez entrer
+                  l'adresse email avec laquelle vous vous êtes inscrits sur
+                  Mobilic.
                 </Typography>
-                <form
-                  className="vertical-form centered"
-                  noValidate
-                  autoComplete="off"
-                  onSubmit={handleSubmit}
-                >
-                  <Typography className={classes.introText}>
-                    Pour réinitialiser votre mot de passe veuillez entrer
-                    l'adresse email avec laquelle vous vous êtes inscrits sur
-                    Mobilic.
-                  </Typography>
-                  <TextField
-                    required
-                    fullWidth
-                    className="vertical-form-text-input"
-                    label="Adresse email de connexion"
-                    type="email"
-                    autoComplete="username"
-                    value={email}
-                    onChange={e => {
-                      setEmail(e.target.value.replace(/\s/g, ""));
-                    }}
-                  />
-                  <Box my={4}>
-                    <LoadingButton
-                      variant="contained"
-                      color="primary"
-                      type="submit"
-                      disabled={!email}
-                      loading={loading}
-                    >
-                      Valider
-                    </LoadingButton>
-                  </Box>
-                </form>
-              </>
-            )}
-          </Container>
-        </Paper>
-      </Container>
+                <TextField
+                  required
+                  fullWidth
+                  className="vertical-form-text-input"
+                  label="Adresse email de connexion"
+                  type="email"
+                  autoComplete="username"
+                  value={email}
+                  onChange={e => {
+                    setEmail(e.target.value.replace(/\s/g, ""));
+                  }}
+                />
+                <Box my={4}>
+                  <LoadingButton
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                    disabled={!email}
+                    loading={loading}
+                  >
+                    Valider
+                  </LoadingButton>
+                </Box>
+              </form>
+            </>
+          )}
+        </Container>
+      </PaperContainer>
     </>
   );
 }
