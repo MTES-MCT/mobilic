@@ -4,7 +4,6 @@ import {
   useStoreSyncedWithLocalStorage,
   broadCastChannel
 } from "common/utils/store";
-import Paper from "@material-ui/core/Paper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import { formatPersonName } from "common/utils/coworkers";
@@ -31,23 +30,12 @@ import AlertTitle from "@material-ui/lab/AlertTitle";
 import Box from "@material-ui/core/Box";
 import * as Sentry from "@sentry/browser";
 import { useSnackbarAlerts } from "../common/Snackbar";
+import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 
 const useStyles = makeStyles(theme => ({
-  title: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-    textAlign: "center"
-  },
   sectionTitle: {
     marginTop: theme.spacing(4),
     marginBottom: theme.spacing(4)
-  },
-  container: {
-    padding: theme.spacing(2),
-    paddingTop: theme.spacing(4),
-    margin: "auto",
-    flexGrow: 1,
-    textAlign: "left"
   },
   innerContainer: {
     paddingBottom: theme.spacing(6)
@@ -212,142 +200,131 @@ export function Home() {
 
   return [
     <Header key={0} />,
-    <Container key={1} className={classes.container} maxWidth="md">
-      <Paper>
-        <Container
-          className={`centered ${classes.innerContainer}`}
-          maxWidth="sm"
-        >
-          <Typography className={classes.title} variant="h3">
-            Mes informations
-          </Typography>
-
-          <Section title="Moi">
-            <Grid container wrap="wrap" spacing={4}>
-              <Grid item xs={12}>
-                <InfoItem
-                  name="Identifiant Mobilic"
-                  value={userInfo.id}
-                  bold
-                  info={
-                    !primaryEmployment
-                      ? "Cet identifiant est à communiquer à votre employeur afin qu'il vous rattache à l'entreprise"
-                      : ""
-                  }
-                />
-              </Grid>
-              <Grid item sm={6} zeroMinWidth>
-                <InfoItem name="Nom" value={formatPersonName(userInfo)} />
-              </Grid>
-              {userInfo.birthDate && (
-                <Grid item sm={6} zeroMinWidth>
-                  <InfoItem
-                    name="Date de naissance"
-                    value={userInfo.birthDate}
-                  />
-                </Grid>
-              )}
-              <Grid item {...(isActive ? { sm: 6 } : { xs: 12 })} zeroMinWidth>
-                <InfoItem
-                  name="Email"
-                  value={userInfo.email}
-                  actionTitle="Modifier email"
-                  action={() =>
-                    modals.open("changeEmail", {
-                      handleSubmit: async email => {
-                        const apiResponse = await api.graphQlMutate(
-                          CHANGE_EMAIL_MUTATION,
-                          { email },
-                          { context: { nonPublicApi: true } }
-                        );
-                        await store.setUserInfo({
-                          ...store.userInfo(),
-                          ...apiResponse.data.account.changeEmail
-                        });
-                        await broadCastChannel.postMessage("update");
-                      }
-                    })
-                  }
-                  alertComponent={
-                    isActive ? null : (
-                      <Alert severity="error" className={classes.inactiveAlert}>
-                        <AlertTitle className="bold">
-                          Adresse email non activée
-                        </AlertTitle>
-                        Un email d'activation vous a été envoyé à l'adresse
-                        ci-dessus. L'activation est nécessaire pour accéder aux
-                        services Mobilic.
-                      </Alert>
-                    )
-                  }
-                />
-              </Grid>
+    <PaperContainer key={1} style={{ textAlign: "left" }}>
+      <Container className={`centered ${classes.innerContainer}`} maxWidth="sm">
+        <PaperContainerTitle>Mes informations</PaperContainerTitle>
+        <Section title="Moi">
+          <Grid container wrap="wrap" spacing={4}>
+            <Grid item xs={12}>
+              <InfoItem
+                name="Identifiant Mobilic"
+                value={userInfo.id}
+                bold
+                info={
+                  !primaryEmployment
+                    ? "Cet identifiant est à communiquer à votre employeur afin qu'il vous rattache à l'entreprise"
+                    : ""
+                }
+              />
             </Grid>
+            <Grid item sm={6} zeroMinWidth>
+              <InfoItem name="Nom" value={formatPersonName(userInfo)} />
+            </Grid>
+            {userInfo.birthDate && (
+              <Grid item sm={6} zeroMinWidth>
+                <InfoItem name="Date de naissance" value={userInfo.birthDate} />
+              </Grid>
+            )}
+            <Grid item {...(isActive ? { sm: 6 } : { xs: 12 })} zeroMinWidth>
+              <InfoItem
+                name="Email"
+                value={userInfo.email}
+                actionTitle="Modifier email"
+                action={() =>
+                  modals.open("changeEmail", {
+                    handleSubmit: async email => {
+                      const apiResponse = await api.graphQlMutate(
+                        CHANGE_EMAIL_MUTATION,
+                        { email },
+                        { context: { nonPublicApi: true } }
+                      );
+                      await store.setUserInfo({
+                        ...store.userInfo(),
+                        ...apiResponse.data.account.changeEmail
+                      });
+                      await broadCastChannel.postMessage("update");
+                    }
+                  })
+                }
+                alertComponent={
+                  isActive ? null : (
+                    <Alert severity="error" className={classes.inactiveAlert}>
+                      <AlertTitle className="bold">
+                        Adresse email non activée
+                      </AlertTitle>
+                      Un email d'activation vous a été envoyé à l'adresse
+                      ci-dessus. L'activation est nécessaire pour accéder aux
+                      services Mobilic.
+                    </Alert>
+                  )
+                }
+              />
+            </Grid>
+          </Grid>
+        </Section>
+        {isActive && <Divider />}
+        {isActive && (
+          <Section
+            title={
+              employments.length > 1 ? "Mes rattachements" : "Mon entreprise"
+            }
+          >
+            {secondaryEmployments.length > 0 && [
+              <Box mb={6} key={0}>
+                <Accordion
+                  expanded={expandPrimaryCompany}
+                  onChange={() =>
+                    setExpandPrimaryCompany(!expandPrimaryCompany)
+                  }
+                >
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography className="bold">
+                      Entreprise principale
+                      {primaryEmployment
+                        ? ` : ${primaryEmployment.company.name}`
+                        : ""}
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {primaryEmployment ? (
+                      <EmploymentInfo employment={primaryEmployment} />
+                    ) : (
+                      <NoPrimaryEmploymentAlert />
+                    )}
+                  </AccordionDetails>
+                </Accordion>
+              </Box>,
+              ...secondaryEmployments.map(employment => (
+                <Accordion
+                  key={employment.id}
+                  expanded={expandSecondaryCompanies[employment.id]}
+                  onChange={() =>
+                    setExpandSecondaryCompanies(prevState => ({
+                      ...prevState,
+                      [employment.id]: !prevState[employment.id]
+                    }))
+                  }
+                >
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>
+                      Entreprise secondaire : {employment.company.name}
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <EmploymentInfo employment={employment} />
+                  </AccordionDetails>
+                </Accordion>
+              ))
+            ]}
+            {secondaryEmployments.length === 0 && !primaryEmployment && (
+              <NoPrimaryEmploymentAlert />
+            )}
+            {secondaryEmployments.length === 0 && primaryEmployment && (
+              <EmploymentInfo employment={primaryEmployment} />
+            )}
           </Section>
-          <Divider />
-          {isActive && (
-            <Section
-              title={
-                employments.length > 1 ? "Mes rattachements" : "Mon entreprise"
-              }
-            >
-              {secondaryEmployments.length > 0 && [
-                <Box mb={6} key={0}>
-                  <Accordion
-                    expanded={expandPrimaryCompany}
-                    onChange={() =>
-                      setExpandPrimaryCompany(!expandPrimaryCompany)
-                    }
-                  >
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography className="bold">
-                        Entreprise principale
-                        {primaryEmployment
-                          ? ` : ${primaryEmployment.company.name}`
-                          : ""}
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      {primaryEmployment ? (
-                        <EmploymentInfo employment={primaryEmployment} />
-                      ) : (
-                        <NoPrimaryEmploymentAlert />
-                      )}
-                    </AccordionDetails>
-                  </Accordion>
-                </Box>,
-                ...secondaryEmployments.map(employment => (
-                  <Accordion
-                    key={employment.id}
-                    expanded={expandSecondaryCompanies[employment.id]}
-                    onChange={() =>
-                      setExpandSecondaryCompanies(prevState => ({
-                        ...prevState,
-                        [employment.id]: !prevState[employment.id]
-                      }))
-                    }
-                  >
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography>
-                        Entreprise secondaire : {employment.company.name}
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <EmploymentInfo employment={employment} />
-                    </AccordionDetails>
-                  </Accordion>
-                ))
-              ]}
-              {secondaryEmployments.length === 0 && !primaryEmployment && (
-                <NoPrimaryEmploymentAlert />
-              )}
-              {secondaryEmployments.length === 0 && primaryEmployment && (
-                <EmploymentInfo employment={primaryEmployment} />
-              )}
-            </Section>
-          )}
-        </Container>
-      </Paper>
-    </Container>
+        )}
+      </Container>
+    </PaperContainer>
   ];
 }

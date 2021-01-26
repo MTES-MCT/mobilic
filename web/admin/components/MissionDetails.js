@@ -81,7 +81,7 @@ const useStyles = makeStyles(theme => ({
     border: "none"
   },
   userRow: {
-    background: "#ebeff3",
+    background: theme.palette.background.default,
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center"

@@ -5,8 +5,6 @@ import TextField from "@material-ui/core/TextField/TextField";
 import Button from "@material-ui/core/Button";
 import { COMPANY_SIGNUP_MUTATION, SIREN_QUERY, useApi } from "common/utils/api";
 import { useHistory, useLocation } from "react-router-dom";
-import Paper from "@material-ui/core/Paper";
-import SignupStepper from "./SignupStepper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
@@ -23,13 +21,10 @@ import Checkbox from "@material-ui/core/Checkbox";
 import FormGroup from "@material-ui/core/FormGroup";
 import * as Sentry from "@sentry/browser";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import { PaperContainerTitle } from "../../common/PaperContainer";
+import SignupStepper from "./SignupStepper";
 
 const useStyles = makeStyles(theme => ({
-  title: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-    textAlign: "center"
-  },
   formFieldTitle: {
     marginBottom: theme.spacing(1),
     textAlign: "left",
@@ -169,209 +164,192 @@ export function CompanySignup() {
   };
 
   return (
-    <>
-      {shouldDisplaySignupProgress && (
-        <Paper>
-          <SignupStepper activeStep={1} />
-        </Paper>
-      )}
-      <Paper>
-        <Container
-          style={{ paddingBottom: "16px" }}
-          className="centered"
-          maxWidth="sm"
+    <Container
+      style={{ paddingBottom: "16px" }}
+      className="centered"
+      maxWidth="sm"
+    >
+      <SignupStepper activeStep={1} />
+      <PaperContainerTitle>Inscription de l'entreprise</PaperContainerTitle>
+      <Section title="1. Quel est le SIREN de l'entreprise ?">
+        <form
+          className="vertical-form centered"
+          noValidate
+          autoComplete="off"
+          onSubmit={handleSirenSubmit}
         >
-          <Typography className={classes.title} variant="h3">
-            Inscription de l'entreprise
-          </Typography>
-          <Section title="1. Quel est le SIREN de l'entreprise ?">
-            <form
-              className="vertical-form centered"
-              noValidate
-              autoComplete="off"
-              onSubmit={handleSirenSubmit}
-            >
-              <Box
-                className="flex-row-space-between"
-                style={{ alignItems: "baseline" }}
-              >
-                <TextField
-                  error={sirenError}
-                  required
-                  className="vertical-form-text-input"
-                  label="SIREN"
-                  placeholder="123456789"
-                  helperText={
-                    sirenError
-                      ? "L'entrée n'est pas un numéro de SIREN valide"
-                      : ""
-                  }
-                  value={siren}
-                  onChange={e => {
-                    setApiError("");
-                    setFacilities(null);
-                    setShowUsualName(false);
-                    setClaimedRights(false);
-                    const newSirenValue = e.target.value.replace(/\s/g, "");
-                    setSiren(newSirenValue);
-                    setSirenError(!validateSiren(newSirenValue));
-                  }}
-                />
-                <LoadingButton
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  loading={loadingSirenInfo}
-                  disabled={!siren || sirenError}
-                >
-                  Rechercher
-                </LoadingButton>
-              </Box>
-              {apiError && (
-                <Typography display="block" align="left" color="error">
-                  {apiError}
-                </Typography>
-              )}
-              {facilities && (
-                <Typography
-                  display="block"
-                  align="left"
-                  variant="caption"
-                  style={{ fontStyle: "italic" }}
-                >
-                  {facilities.length === 1
-                    ? "1 établissement a été trouvé"
-                    : `${facilities.length} établissements ont été trouvés`}
-                </Typography>
-              )}
-              {apiError && (
-                <Button
-                  className={classes.warningButton}
-                  variant="outlined"
-                  color="secondary"
-                  onClick={() => {
-                    setApiError("");
-                    setShowUsualName(true);
-                  }}
-                >
-                  Continuer sans vérification du SIREN
-                </Button>
-              )}
-            </form>
-          </Section>
-          {facilities && (
-            <Section title="2. Veuillez sélectionner un ou plusieurs établissements">
-              <Grid container spacing={3} wrap="wrap">
-                {facilities.map((facility, index) => (
-                  <Grid item key={index}>
-                    <Button
-                      onClick={() => {
-                        const newFacilities = [...facilities];
-                        newFacilities.splice(index, 1, {
-                          ...facility,
-                          selected: !facility.selected
-                        });
-                        setFacilities(newFacilities);
-                      }}
-                    >
-                      <Card
-                        raised
-                        style={{ textAlign: "left" }}
-                        className={
-                          facility.selected && classes.selectedFacility
-                        }
-                      >
-                        <Box p={2}>
-                          <Typography
-                            variant="h6"
-                            className={classes.facilityName}
-                          >
-                            {facility.company_name}
-                            {facility.name ? ` - ${facility.name}` : ""}
-                          </Typography>
-                          <Typography
-                            variant="caption"
-                            className={classes.facilitySiret}
-                          >
-                            SIRET : {facility.siret}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            className={classes.facilityPostalCode}
-                          >
-                            {facility.postal_code}
-                          </Typography>
-                        </Box>
-                      </Card>
-                    </Button>
-                  </Grid>
-                ))}
-              </Grid>
-              <Button
-                className={classes.verticalFormButton}
-                variant="contained"
-                color="primary"
-                disabled={!facilities.some(f => f.selected)}
-                onClick={() => {
-                  setUsualName(facilities[0].company_name);
-                  setShowUsualName(true);
-                }}
-              >
-                Continuer
-              </Button>
-            </Section>
-          )}
-          {showUsualName && (
-            <Section
-              title={
-                facilities
-                  ? "3. Souhaitez-vous changer le nom usuel de l'entreprise ?"
-                  : "2. Quel est le nom de l'entreprise ?"
+          <Box
+            className="flex-row-space-between"
+            style={{ alignItems: "baseline" }}
+          >
+            <TextField
+              error={sirenError}
+              required
+              className="vertical-form-text-input"
+              label="SIREN"
+              placeholder="123456789"
+              helperText={
+                sirenError ? "L'entrée n'est pas un numéro de SIREN valide" : ""
               }
+              value={siren}
+              onChange={e => {
+                setApiError("");
+                setFacilities(null);
+                setShowUsualName(false);
+                setClaimedRights(false);
+                const newSirenValue = e.target.value.replace(/\s/g, "");
+                setSiren(newSirenValue);
+                setSirenError(!validateSiren(newSirenValue));
+              }}
+            />
+            <LoadingButton
+              variant="contained"
+              color="primary"
+              type="submit"
+              loading={loadingSirenInfo}
+              disabled={!siren || sirenError}
             >
-              <form
-                className="vertical-form centered"
-                noValidate
-                autoComplete="off"
-                onSubmit={handleCompanySignup}
-              >
-                <TextField
-                  fullWidth
-                  className="vertical-form-text-input"
-                  required
-                  label="Nom usuel"
-                  value={usualName}
-                  onChange={e => setUsualName(e.target.value.trimLeft())}
-                />
-                <FormGroup>
-                  <FormControlLabel
-                    style={{ textAlign: "left" }}
-                    control={
-                      <Checkbox
-                        required
-                        color="primary"
-                        checked={claimedRights}
-                        onChange={() => setClaimedRights(!claimedRights)}
-                      />
-                    }
-                    label="J'atteste être habilité(e) à administrer l'entreprise"
-                  />
-                </FormGroup>
-                <LoadingButton
-                  className={classes.verticalFormButton}
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  disabled={!siren || !usualName || !claimedRights}
-                  loading={loadingCompanySignup}
-                >
-                  Terminer
-                </LoadingButton>
-              </form>
-            </Section>
+              Rechercher
+            </LoadingButton>
+          </Box>
+          {apiError && (
+            <Typography display="block" align="left" color="error">
+              {apiError}
+            </Typography>
           )}
-        </Container>
-      </Paper>
-    </>
+          {facilities && (
+            <Typography
+              display="block"
+              align="left"
+              variant="caption"
+              style={{ fontStyle: "italic" }}
+            >
+              {facilities.length === 1
+                ? "1 établissement a été trouvé"
+                : `${facilities.length} établissements ont été trouvés`}
+            </Typography>
+          )}
+          {apiError && (
+            <Button
+              className={classes.warningButton}
+              variant="outlined"
+              color="secondary"
+              onClick={() => {
+                setApiError("");
+                setShowUsualName(true);
+              }}
+            >
+              Continuer sans vérification du SIREN
+            </Button>
+          )}
+        </form>
+      </Section>
+      {facilities && (
+        <Section title="2. Veuillez sélectionner un ou plusieurs établissements">
+          <Grid container spacing={3} wrap="wrap">
+            {facilities.map((facility, index) => (
+              <Grid item key={index}>
+                <Button
+                  onClick={() => {
+                    const newFacilities = [...facilities];
+                    newFacilities.splice(index, 1, {
+                      ...facility,
+                      selected: !facility.selected
+                    });
+                    setFacilities(newFacilities);
+                  }}
+                >
+                  <Card
+                    raised
+                    style={{ textAlign: "left" }}
+                    className={facility.selected && classes.selectedFacility}
+                  >
+                    <Box p={2}>
+                      <Typography variant="h6" className={classes.facilityName}>
+                        {facility.company_name}
+                        {facility.name ? ` - ${facility.name}` : ""}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        className={classes.facilitySiret}
+                      >
+                        SIRET : {facility.siret}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        className={classes.facilityPostalCode}
+                      >
+                        {facility.postal_code}
+                      </Typography>
+                    </Box>
+                  </Card>
+                </Button>
+              </Grid>
+            ))}
+          </Grid>
+          <Button
+            className={classes.verticalFormButton}
+            variant="contained"
+            color="primary"
+            disabled={!facilities.some(f => f.selected)}
+            onClick={() => {
+              setUsualName(facilities[0].company_name);
+              setShowUsualName(true);
+            }}
+          >
+            Continuer
+          </Button>
+        </Section>
+      )}
+      {showUsualName && (
+        <Section
+          title={
+            facilities
+              ? "3. Souhaitez-vous changer le nom usuel de l'entreprise ?"
+              : "2. Quel est le nom de l'entreprise ?"
+          }
+        >
+          <form
+            className="vertical-form centered"
+            noValidate
+            autoComplete="off"
+            onSubmit={handleCompanySignup}
+          >
+            <TextField
+              fullWidth
+              className="vertical-form-text-input"
+              required
+              label="Nom usuel"
+              value={usualName}
+              onChange={e => setUsualName(e.target.value.trimLeft())}
+            />
+            <FormGroup>
+              <FormControlLabel
+                style={{ textAlign: "left" }}
+                control={
+                  <Checkbox
+                    required
+                    color="primary"
+                    checked={claimedRights}
+                    onChange={() => setClaimedRights(!claimedRights)}
+                  />
+                }
+                label="J'atteste être habilité(e) à administrer l'entreprise"
+              />
+            </FormGroup>
+            <LoadingButton
+              className={classes.verticalFormButton}
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={!siren || !usualName || !claimedRights}
+              loading={loadingCompanySignup}
+            >
+              Terminer
+            </LoadingButton>
+          </form>
+        </Section>
+      )}
+    </Container>
   );
 }

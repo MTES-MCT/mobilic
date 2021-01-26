@@ -6,6 +6,7 @@ import { ManagerImage, WorkerImage } from "common/utils/icons";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { LinkButton } from "../../common/LinkButton";
+import { PaperContainerTitle } from "../../common/PaperContainer";
 
 const useStyles = makeStyles(theme => ({
   roleButton: {
@@ -25,12 +26,15 @@ export function RoleSelection() {
   const classes = useStyles();
 
   return [
-    <Box key={0} mb={10}>
-      <Typography variant="h3">Quel est votre métier ?</Typography>
-    </Box>,
+    <PaperContainerTitle key={0}>Quel est votre métier ?</PaperContainerTitle>,
     <Grid
       key={1}
-      style={{ overflowX: "hidden", overflowY: "auto" }}
+      style={{
+        overflowX: "hidden",
+        overflowY: "auto",
+        marginTop: 80,
+        marginBottom: 0
+      }}
       className="centered"
       container
       spacing={5}

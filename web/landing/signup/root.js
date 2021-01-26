@@ -1,8 +1,6 @@
 import React from "react";
-import Container from "@material-ui/core/Container";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { RoleSelection } from "./RoleSelection";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import { AccountCreation } from "./AccountCreation";
 import {
   Switch,
@@ -17,15 +15,7 @@ import { Complete } from "./Complete";
 import { loadEmployeeInvite } from "../../common/loadEmployeeInvite";
 import { useApi } from "common/utils/api";
 import { EmailSelection } from "./EmailSelection";
-
-const useStyles = makeStyles(theme => ({
-  container: {
-    padding: theme.spacing(2),
-    paddingTop: theme.spacing(4),
-    margin: "auto",
-    flexGrow: 1
-  }
-}));
+import { PaperContainer } from "../../common/PaperContainer";
 
 export default function Signup() {
   const store = useStoreSyncedWithLocalStorage();
@@ -43,8 +33,6 @@ export default function Signup() {
       }
     }
   }, [location]);
-
-  const classes = useStyles();
 
   const path = useRouteMatch().path;
 
@@ -66,7 +54,7 @@ export default function Signup() {
   return (
     <>
       <Header />
-      <Container className={classes.container} maxWidth="md">
+      <PaperContainer>
         <Switch>
           {!userId && (
             <Route key="user" path={`${path}/user`}>
@@ -108,7 +96,7 @@ export default function Signup() {
           )}
           <Redirect key="default" from="*" to={defaultRoute()} />
         </Switch>
-      </Container>
+      </PaperContainer>
     </>
   );
 }
