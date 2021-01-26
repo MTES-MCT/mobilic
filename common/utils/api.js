@@ -726,10 +726,10 @@ class Api {
       ]),
       cache: new InMemoryCache()
     });
-    this.refreshTokenQueue = new NonConcurrentExecutionQueue("sameSignal");
+    this.refreshTokenQueue = new NonConcurrentExecutionQueue();
     this.nonConcurrentQueryQueue = new NonConcurrentExecutionQueue();
     this.isCurrentlySubmittingRequests = () =>
-      this.nonConcurrentQueryQueue.lock;
+      this.nonConcurrentQueryQueue.queue.length > 0;
     this.responseHandlers = {};
     window.addEventListener("online", () => this.executePendingRequests());
   }
@@ -822,7 +822,10 @@ class Api {
   }
 
   async _queryWithRefreshToken(query) {
-    await this.refreshTokenQueue.execute(() => this._refreshTokenIfNeeded());
+    await this.refreshTokenQueue.execute(
+      () => this._refreshTokenIfNeeded(),
+      "refreshToken"
+    );
     return await query();
     // No need to catch the refresh-token error since logout is imminent
   }

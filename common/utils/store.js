@@ -73,9 +73,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       this.state[entry] = this.mapper[entry].deserialize(null);
     });
 
-    this.loadFromStorageQueue = new NonConcurrentExecutionQueue(
-      "sameSignalWithRefresh"
-    );
+    this.loadFromStorageQueue = new NonConcurrentExecutionQueue();
     // Async load state from storage
     this.loadFromStorage();
   }
@@ -123,7 +121,9 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   broadcastChannelMessageHandler = msg => {
     if (msg === "update") {
       this.loadFromStorageQueue.execute(
-        async () => await this.loadFromStorage(false)
+        async () => await this.loadFromStorage(false),
+        "load",
+        true
       );
     }
   };

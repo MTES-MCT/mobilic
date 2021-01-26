@@ -61,7 +61,7 @@ export function RedeemInvite() {
           );
         } else await store.updateUserIdAndInfo();
         await broadCastChannel.postMessage("update");
-        history.push("/home");
+        history.push("/");
       } catch (err) {
         Sentry.captureException(err);
         setError(formatApiError(err));

@@ -49,14 +49,14 @@ export function Invite() {
 
     async function onMount() {
       if (token) {
-        await api.logout({
-          postFCLogoutRedirect: `/logout?next=${encodeURIComponent(
-            "/invite?token=" + token
-          )}`
+        withLoadingScreen(async () => {
+          await api.logout({
+            postFCLogoutRedirect: `/logout?next=${encodeURIComponent(
+              "/invite?token=" + token
+            )}`
+          });
+          loadEmployeeInvite(token, store, api, setError);
         });
-        withLoadingScreen(() =>
-          loadEmployeeInvite(token, store, api, setError)
-        );
       } else setError("lien d'invitation manquant");
     }
     onMount();

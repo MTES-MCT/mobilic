@@ -1,9 +1,6 @@
 import React from "react";
-import {
-  broadCastChannel,
-  useStoreSyncedWithLocalStorage
-} from "common/utils/store";
-import { useLocation, useHistory } from "react-router-dom";
+import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useLocation } from "react-router-dom";
 import { ACTIVATE_EMAIL_MUTATION, useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { formatApiError } from "common/utils/errors";
@@ -14,7 +11,6 @@ import * as Sentry from "@sentry/browser";
 
 export function ActivateEmail() {
   const location = useLocation();
-  const history = useHistory();
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
@@ -38,7 +34,7 @@ export function ActivateEmail() {
 
       if (userId) {
         withLoadingScreen(async () => {
-          const isAuthenticated = await api.checkAuthentication();
+          let isAuthenticated = await api.checkAuthentication();
           // If a differrent user is authenticated, logout
           if (isAuthenticated && currentUserId() !== userId) {
             await api.logout({
@@ -46,6 +42,7 @@ export function ActivateEmail() {
                 "/activate_email?token=" + token
               )}`
             });
+            isAuthenticated = false;
           }
           try {
             const apiResponse = await api.graphQlMutate(
@@ -61,8 +58,6 @@ export function ActivateEmail() {
                 ...apiResponse.data.signUp.activateEmail
               });
             }
-            await broadCastChannel.postMessage("update");
-            history.push("/home");
           } catch (err) {
             Sentry.captureException(err);
             console.log(err);

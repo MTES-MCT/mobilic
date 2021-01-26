@@ -11,6 +11,7 @@ import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
 import Button from "@material-ui/core/Button";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { CustomDialogActions } from "../common/CustomDialogTitle";
+import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles(theme => ({
   p: {
@@ -30,8 +31,8 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
   }
 
   React.useEffect(() => {
-    loadCGU();
-  }, []);
+    if (open && !md) loadCGU();
+  }, [open]);
 
   const classes = useStyles();
 
@@ -43,6 +44,7 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
       fullWidth
       fullScreen={isWidthDown("xs", width)}
       maxWidth="md"
+      PaperProps={{ style: { height: "100%" } }}
     >
       <DialogTitle disableTypography>
         <Typography variant="h4">Conditions générales d'utilisation</Typography>
@@ -66,7 +68,9 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
             }}
           />
         ) : (
-          <CircularProgress color="primary" />
+          <Box className="flex-row-center">
+            <CircularProgress color="primary" />
+          </Box>
         )}
       </DialogContent>
       <CustomDialogActions>

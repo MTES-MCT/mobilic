@@ -93,52 +93,45 @@ function _Root() {
 
   const [loadedLocation, setLoadedLocation] = React.useState(null);
 
-  const loadUserAndRoute = () => {
-    withLoadingScreen(async () => {
-      const isSigningUp = location.pathname.startsWith("/signup");
-      const queryString = new URLSearchParams(location.search);
+  const loadUserAndRoute = async () => {
+    const isSigningUp = location.pathname.startsWith("/signup");
+    const isInOauthFlow = location.pathname.startsWith("/oauth");
+    const queryString = new URLSearchParams(location.search);
 
-      const isLoggingOut = location.pathname.startsWith("/logout");
-      if (isLoggingOut) {
-        return;
-      }
-
-      if (!document.hidden) {
-        await loadUserData(api, store);
-      }
-      if (!isSigningUp) {
-        // Routing priority :
-        // 1) if there is a next URL (after login) redirect to this one
-        // 2) if current URL is accessible keep it
-        // 3) redirect to fallback
-        const nextLocation = queryString.get("next");
-        if (nextLocation) history.replace(nextLocation, location.state);
-        else if (
-          loadedLocation &&
-          isAccessible(loadedLocation, {
+    const isLoggingOut = location.pathname.startsWith("/logout");
+    if (isLoggingOut) {
+      return;
+    }
+    if (!document.hidden && !isInOauthFlow) {
+      await loadUserData(api, store);
+    }
+    if (!isSigningUp && !isInOauthFlow) {
+      // Routing priority :
+      // 1) if there is a next URL (after login) redirect to this one
+      // 2) if current URL is accessible keep it
+      // 3) redirect to fallback
+      const nextLocation = queryString.get("next");
+      if (nextLocation) history.replace(nextLocation, location.state);
+      else if (
+        loadedLocation &&
+        isAccessible(loadedLocation, {
+          userInfo: store.userInfo(),
+          companies: store.companies()
+        })
+      ) {
+        history.replace(loadedLocation, location.state);
+      } else
+        history.replace(
+          getFallbackRoute({
             userInfo: store.userInfo(),
             companies: store.companies()
-          })
-        ) {
-          history.replace(loadedLocation, location.state);
-          setLoadedLocation(null);
-        } else
-          history.replace(
-            getFallbackRoute({
-              userInfo: store.userInfo(),
-              companies: store.companies()
-            }),
-            location.state
-          );
-      }
-      if (!document.hidden) api.executePendingRequests();
-    });
+          }),
+          location.state
+        );
+    }
+    setLoadedLocation(null);
+    if (!document.hidden) api.executePendingRequests();
   };
-
-  React.useEffect(() => {
-    if (userId) loadUserAndRoute();
-    return () => {};
-  }, [userId]);
 
   React.useEffect(() => {
     if (
@@ -151,10 +144,25 @@ function _Root() {
       );
     else if (
       !location.pathname.startsWith("/login") &&
-      !location.pathname.startsWith("/logout")
+      !location.pathname.startsWith("/logout") &&
+      !location.pathname.startsWith("/activate_email") &&
+      !location.pathname.startsWith("/redeem_invite") &&
+      !location.pathname.startsWith("/fc-callback")
     )
       setLoadedLocation(location.pathname + location.search);
   }, []);
+
+  React.useEffect(() => {
+    withLoadingScreen(
+      async () => {
+        const latestUserId = store.userId();
+        if (latestUserId) await loadUserAndRoute();
+      },
+      "loadUser",
+      false
+    );
+    return () => {};
+  }, [userId]);
 
   const routes = getAccessibleRoutes({ userInfo, companies });
 
