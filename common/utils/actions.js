@@ -488,6 +488,7 @@ export function ActionsContextProvider({ children }) {
       const _updateMissionStore = async (store, requestId) => {
         const mission = {
           name,
+          context: missionPayload.context || {},
           ended: false
         };
         const missionId = await store.createEntityObject(

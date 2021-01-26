@@ -169,7 +169,7 @@ export function CompanySignup() {
       className="centered"
       maxWidth="sm"
     >
-      <SignupStepper activeStep={1} />
+      {shouldDisplaySignupProgress && <SignupStepper activeStep={1} />}
       <PaperContainerTitle>Inscription de l'entreprise</PaperContainerTitle>
       <Section title="1. Quel est le SIREN de l'entreprise ?">
         <form
