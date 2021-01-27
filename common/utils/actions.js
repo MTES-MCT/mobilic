@@ -76,7 +76,7 @@ export function ActionsContextProvider({ children }) {
     batchable = true
   ) {
     // 1. Store the request and optimistically update the store as if the api responded successfully
-    await store.newRequest(
+    const request = await store.newRequest(
       query,
       variables,
       optimisticStoreUpdate,
@@ -87,7 +87,8 @@ export function ActionsContextProvider({ children }) {
 
     // 2. Execute the request (call API) along with any other pending one
     // await api.nonConcurrentQueryQueue.execute(() => api.executeRequest(request));
-    await api.executePendingRequests();
+    const executionResults = await api.executePendingRequests();
+    return executionResults[request.id.toString()];
   }
 
   const pushNewTeamActivityEvent = async ({
@@ -121,8 +122,9 @@ export function ActionsContextProvider({ children }) {
     });
 
     const userId = store.userId();
+    let baseActivityResult = null;
     if (team.includes(userId)) {
-      await pushNewActivityEvent({
+      baseActivityResult = await pushNewActivityEvent({
         activityType: teamToType[userId],
         missionActivities,
         missionId,
@@ -130,26 +132,29 @@ export function ActionsContextProvider({ children }) {
         userId: userId,
         endTime,
         comment,
-        switchMode
+        switchMode,
+        forceKillSisterActivitiesOnFail: team.length > 1
       });
     }
 
-    await Promise.all(
-      team
-        .filter(id => id !== userId)
-        .map(id =>
-          pushNewActivityEvent({
-            activityType: teamToType[id],
-            missionActivities,
-            missionId,
-            startTime,
-            userId: id,
-            endTime,
-            comment,
-            switchMode
-          })
-        )
-    );
+    if (!baseActivityResult || !baseActivityResult.error) {
+      await Promise.all(
+        team
+          .filter(id => id !== userId)
+          .map(id =>
+            pushNewActivityEvent({
+              activityType: teamToType[id],
+              missionActivities,
+              missionId,
+              startTime,
+              userId: id,
+              endTime,
+              comment,
+              switchMode
+            })
+          )
+      );
+    }
   };
 
   function formatLogActivityError(gqlError, user, selfId) {
@@ -189,7 +194,8 @@ export function ActionsContextProvider({ children }) {
     userId = null,
     endTime = null,
     comment = null,
-    switchMode = true
+    switchMode = true,
+    forceKillSisterActivitiesOnFail = false
   }) => {
     const actualUserId = userId || store.userId();
     const newActivity = {
@@ -231,6 +237,8 @@ export function ActionsContextProvider({ children }) {
         switchMode,
         endTime,
         actualUserId,
+        startTime,
+        forceKillSisterActivitiesOnFail,
         type: activityType
       };
     };
@@ -241,7 +249,7 @@ export function ActionsContextProvider({ children }) {
       updateStore,
       ["activities"],
       "logActivity",
-      true
+      !forceKillSisterActivitiesOnFail
     );
   };
 
@@ -289,16 +297,55 @@ export function ActionsContextProvider({ children }) {
     },
     onError: async (
       error,
-      { actualUserId, activityId: tempActivityId, type }
+      {
+        actualUserId,
+        requestId,
+        activityId: tempActivityId,
+        type,
+        forceKillSisterActivitiesOnFail,
+        startTime
+      }
     ) => {
       // If the log-activity event raises an API error we cancel all the pending requests for the activity
-      const pendingActivityRequests = store
+      let requestsToCancel = store
         .pendingRequests()
         .filter(
           req =>
             (req.variables && req.variables.activityId === tempActivityId) ||
             (req.storeInfo && req.storeInfo.activityId === tempActivityId)
         );
+      // If the activity should not be submitted for team mates because it failed for the main user, cancel the corresponding requests
+      if (forceKillSisterActivitiesOnFail) {
+        let otherRequestsToCancel = store
+          .pendingRequests()
+          .filter(
+            req =>
+              req.apiResponseHandlerName &&
+              req.apiResponseHandlerName === "logActivity" &&
+              req.variables &&
+              req.variables.startTime === startTime &&
+              req.variables.type === type &&
+              req.variables.userId !== actualUserId &&
+              req.id !== requestId
+          );
+        // We should also cancel further requests concerning these non submitted activities
+        const activityIds = otherRequestsToCancel.map(
+          req => req.storeInfo.activityId
+        );
+        otherRequestsToCancel = [
+          ...otherRequestsToCancel,
+          ...store
+            .pendingRequests()
+            .filter(
+              req =>
+                req.variables &&
+                req.variables.activityId &&
+                activityIds.includes(req.variables.activityId)
+            )
+        ];
+        requestsToCancel = [...requestsToCancel, ...otherRequestsToCancel];
+      }
+
       if (isGraphQLError(error)) {
         const user =
           actualUserId === store.userId()
@@ -318,7 +365,7 @@ export function ActionsContextProvider({ children }) {
         });
       }
       await Promise.all(
-        pendingActivityRequests.map(req => store.clearPendingRequest(req))
+        requestsToCancel.map(req => store.clearPendingRequest(req))
       );
     }
   });
@@ -648,7 +695,11 @@ export function ActionsContextProvider({ children }) {
         { ended: true },
         requestId
       );
-      return { userId: actualUserId, missionId };
+      return {
+        userId: actualUserId,
+        missionId,
+        currentActivityId: currentActivity ? currentActivity.id : null
+      };
     };
 
     await Promise.all([
@@ -679,23 +730,39 @@ export function ActionsContextProvider({ children }) {
         a => a.missionId === mission.id
       );
     },
-    onError: (error, { userId, missionId }) => {
+    onError: (error, { userId, missionId, currentActivityId }) => {
       if (
         isGraphQLError(error) &&
         error.graphQLErrors.some(gqle =>
           graphQLErrorMatchesCode(gqle, "MISSION_ALREADY_ENDED")
         )
       ) {
-        store.syncEntity(
-          [
-            {
-              ...store.getEntity("missions")[missionId.toString()],
-              ended: true
-            }
-          ],
-          "missions",
-          m => m.id === missionId
-        );
+        const missionEndTime = error.graphQLErrors.find(gqle =>
+          graphQLErrorMatchesCode(gqle, "MISSION_ALREADY_ENDED")
+        ).extensions.missionEnd.endTime;
+        if (currentActivityId)
+          store.syncEntity(
+            [
+              {
+                ...store.getEntity("activities")[currentActivityId.toString()],
+                endTime: missionEndTime
+              }
+            ],
+            "activities",
+            a => a.id === currentActivityId
+          );
+        if (userId === store.userId()) {
+          store.syncEntity(
+            [
+              {
+                ...store.getEntity("missions")[missionId.toString()],
+                ended: true
+              }
+            ],
+            "missions",
+            m => m.id === missionId
+          );
+        }
       }
       if (isGraphQLError(error)) {
         displayApiErrors({

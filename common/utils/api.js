@@ -836,7 +836,7 @@ class Api {
     // 0. Resolve temporary IDs if they exist
     const identityMap = this.store.identityMap();
     ["storeInfo", "variables"].forEach(requestProp => {
-      ["activityId", "missionId"].forEach(field => {
+      ["activityId", "missionId", "currentActivityId"].forEach(field => {
         if (request[requestProp] && identityMap[request[requestProp][field]]) {
           request[requestProp][field] =
             identityMap[request[requestProp][field]];
@@ -875,8 +875,9 @@ class Api {
   }
 
   async executePendingRequests(failOnError = false) {
-    return this.nonConcurrentQueryQueue.execute(async () => {
+    return await this.nonConcurrentQueryQueue.execute(async () => {
       // 1. Retrieve all pending requests
+      let requestExecutionResults = {};
       let processedRequests = 0;
       while (this.store.pendingRequests().length > 0) {
         let errors = [];
@@ -895,10 +896,12 @@ class Api {
             try {
               await this.executeRequest(request);
               processedRequests = processedRequests + 1;
+              requestExecutionResults[request.id] = { success: true };
             } catch (err) {
               // It is important to wait for ALL the batched request handlers to execute
               // because they are all processed by the API regardless of whether the others fail
               // So we avoid throwing an error here, otherwise the other successful promises could be cancelled
+              requestExecutionResults[request.id] = { error: err };
               errors.push(err);
             }
           })
@@ -914,6 +917,7 @@ class Api {
       if (processedRequests > 0) {
         await broadCastChannel.postMessage("update");
       }
+      return requestExecutionResults;
     });
   }
 
@@ -931,7 +935,10 @@ class Api {
     } else {
       if (currentUserId()) {
         try {
-          await this._fetch("POST", "/token/logout", { timeout: 8000 });
+          await this.nonConcurrentQueryQueue.execute(
+            async () =>
+              await this._fetch("POST", "/token/logout", { timeout: 8000 })
+          );
         } catch (err) {
           if (failOnError) throw err;
         }

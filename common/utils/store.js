@@ -11,7 +11,7 @@ import { NonConcurrentExecutionQueue } from "./concurrency";
 import { BroadcastChannel } from "broadcast-channel";
 import { currentUserId } from "./cookie";
 
-const STORE_VERSION = 10;
+const STORE_VERSION = 11;
 
 export const broadCastChannel = new BroadcastChannel("storeUpdates", {
   webWorkerSupport: false
@@ -330,6 +330,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     const storeInfo = await updateStore(this, requestId);
     const request = {
       id: requestId,
+      userId: this.state.userId,
       query,
       variables,
       watchFields,
@@ -340,6 +341,9 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     await this.pushItemToArray(request, "pendingRequests");
     return request;
   };
+
+  getPendingRequests = () =>
+    this.state.pendingRequests.filter(r => r.userId === this.state.userId);
 
   removeOptimisticUpdateForRequest = (requestId, watchFields) => {
     const _removeUpdateForItem = item => {
