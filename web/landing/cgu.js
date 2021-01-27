@@ -12,6 +12,9 @@ import Button from "@material-ui/core/Button";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { CustomDialogActions } from "../common/CustomDialogTitle";
 import Box from "@material-ui/core/Box";
+import { Header } from "../common/Header";
+import Container from "@material-ui/core/Container";
+import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 
 const useStyles = makeStyles(theme => ({
   p: {
@@ -20,10 +23,27 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
+export function CGU() {
+  return [
+    <Header key={0} />,
+    <PaperContainer key={1}>
+      <PaperContainerTitle>
+        Conditions générales d'utilisation
+      </PaperContainerTitle>
+      <Container
+        maxWidth="false"
+        style={{ textAlign: "left", paddingBottom: 16 }}
+      >
+        <CGUContent />
+      </Container>
+    </PaperContainer>
+  ];
+}
+
+function CGUContent() {
   const [md, setMd] = React.useState(null);
 
-  const store = useStoreSyncedWithLocalStorage();
+  const classes = useStyles();
 
   async function loadCGU() {
     const cguFile = await fetch("/cgu.md");
@@ -31,10 +51,35 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
   }
 
   React.useEffect(() => {
-    if (open && !md) loadCGU();
-  }, [open]);
+    if (!md) loadCGU();
+  }, []);
 
-  const classes = useStyles();
+  return md ? (
+    <ReactMarkdown
+      source={md}
+      renderers={{
+        paragraph: props => (
+          <Typography className={classes.p} variant="body1" {...props} />
+        ),
+        listItem: props => (
+          <Typography
+            component="li"
+            className={classes.p}
+            variant="body1"
+            {...props}
+          />
+        )
+      }}
+    />
+  ) : (
+    <Box className="flex-row-center">
+      <CircularProgress color="primary" />
+    </Box>
+  );
+}
+
+function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
+  const store = useStoreSyncedWithLocalStorage();
 
   return (
     <Dialog
@@ -50,28 +95,7 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
         <Typography variant="h4">Conditions générales d'utilisation</Typography>
       </DialogTitle>
       <DialogContent dividers>
-        {md ? (
-          <ReactMarkdown
-            source={md}
-            renderers={{
-              paragraph: props => (
-                <Typography className={classes.p} variant="body1" {...props} />
-              ),
-              listItem: props => (
-                <Typography
-                  component="li"
-                  className={classes.p}
-                  variant="body1"
-                  {...props}
-                />
-              )
-            }}
-          />
-        ) : (
-          <Box className="flex-row-center">
-            <CircularProgress color="primary" />
-          </Box>
-        )}
+        <CGUContent />
       </DialogContent>
       <CustomDialogActions>
         {handleAccept && (

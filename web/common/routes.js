@@ -15,6 +15,7 @@ import { Logout } from "../landing/logout";
 import { ActivateEmail } from "../landing/signup/ActivateEmail";
 import { RequestResetPassword, ResetPassword } from "../landing/ResetPassword";
 import { ADMIN_VIEWS } from "../admin/utils/navigation";
+import { CGU } from "../landing/cgu";
 
 export const ROUTES = [
   {
@@ -75,6 +76,13 @@ export const ROUTES = [
     label: "Statistiques",
     accessible: () => true,
     component: <Stats />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/cgu",
+    label: "CGU",
+    accessible: () => true,
+    component: <CGU />,
     menuItemFilter: () => false
   },
   {

@@ -237,10 +237,20 @@ function DesktopHeader({ disableMenu }) {
   const routes = getAccessibleRoutes({ userInfo, companies });
 
   const docLinks = () => [
-    <Button key={0} className={classes.docButton} href="/developers/docs/intro">
+    <Button
+      key={0}
+      className={classes.docButton}
+      href="/developers/docs/intro"
+      target="_blank"
+    >
       Espace développeurs
     </Button>,
-    <Button key={1} href="/" className={classes.docButton}>
+    <Button
+      key={1}
+      href="https://faq.mobilic.beta.gouv.fr"
+      target="_blank"
+      className={classes.docButton}
+    >
       Foire aux questions
     </Button>
   ];
