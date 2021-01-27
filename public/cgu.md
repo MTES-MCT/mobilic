@@ -1,4 +1,4 @@
-Mobilic, mobilic.beta.gouv.fr, est un service numérique du Ministère de la transition écologique et solidaire et Ministère de la cohésion des territoires et des relations avec les collectivités territoriales.
+Mobilic, mobilic.beta.gouv.fr, est un service numérique du Ministère de la transition écologique et solidaire et Ministère de la cohésion des territoires et des relations avec les collectivités territoriales. Mobilic c'est vraiment super !
 
 # Présentation du service
 
