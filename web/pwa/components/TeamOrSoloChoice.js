@@ -77,6 +77,30 @@ export function TeamOrSoloChoiceModal({ open, handleClose, handleContinue }) {
               </CardContent>
             </Card>
           </Box>
+          <Typography className={classes.explanationTitle}>
+            Saisie solo
+          </Typography>
+          <Typography className={classes.explanationText}>
+            Je choisis de saisir uniquement mon temps de travail,{" "}
+            <span className="highlight">
+              même si je suis en mission avec d'autres équipiers
+            </span>
+            .
+          </Typography>
+          <Typography className={classes.explanationTitle}>
+            Saisie équipe
+          </Typography>
+          <Typography className={classes.explanationText}>
+            Je choisis de saisir le temps de travail pour moi mais aussi pour
+            mes coéquipiers.
+            <br />
+            ⚠️{" "}
+            <span className="highlight">
+              Je pense à prévenir mes coéquipiers pour éviter qu'ils
+              enregistrent de leur côté du temps de travail sur Mobilic.
+            </span>
+            .
+          </Typography>
         </Container>
       </Container>
     </FunnelModal>
