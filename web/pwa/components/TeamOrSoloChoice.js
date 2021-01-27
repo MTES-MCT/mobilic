@@ -27,6 +27,15 @@ const useStyles = makeStyles(theme => ({
   },
   icon: {
     fontSize: 80
+  },
+  explanationText: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    textAlign: "justify"
+  },
+  explanationTitle: {
+    fontWeight: "bold"
   }
 }));
 
@@ -40,7 +49,7 @@ export function TeamOrSoloChoiceModal({ open, handleClose, handleContinue }) {
           <Typography className={funnelModalClasses.title} variant="h5">
             Pour qui enregistrez-vous le temps de travail&nbsp;?
           </Typography>
-          <Box mt={3} className="flex-row-center">
+          <Box mt={3} mb={6} className="flex-row-center">
             <Card
               className={`${classes.card} ${classes.left}`}
               onClick={() => handleContinue(false)}
@@ -68,6 +77,30 @@ export function TeamOrSoloChoiceModal({ open, handleClose, handleContinue }) {
               </CardContent>
             </Card>
           </Box>
+          <Typography className={classes.explanationTitle}>
+            Saisie solo
+          </Typography>
+          <Typography className={classes.explanationText}>
+            Je choisis de saisir uniquement mon temps de travail,{" "}
+            <span className="highlight">
+              même si je suis en mission avec d'autres équipiers
+            </span>
+            .
+          </Typography>
+          <Typography className={classes.explanationTitle}>
+            Saisie équipe
+          </Typography>
+          <Typography className={classes.explanationText}>
+            Je choisis de saisir le temps de travail pour moi mais aussi pour
+            mes coéquipiers.
+            <br />
+            ⚠️{" "}
+            <span className="highlight">
+              Je pense à prévenir mes coéquipiers pour éviter qu'ils
+              enregistrent de leur côté du temps de travail sur Mobilic.
+            </span>
+            .
+          </Typography>
         </Container>
       </Container>
     </FunnelModal>

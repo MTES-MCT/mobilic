@@ -135,7 +135,7 @@ const tabs = {
                     <Link
                       component="button"
                       variant="body1"
-                      style={{ textAlign: "left" }}
+                      style={{ textAlign: "justify" }}
                       onClick={e => {
                         e.preventDefault();
                       }}

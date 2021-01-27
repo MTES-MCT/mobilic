@@ -64,6 +64,7 @@ export const SnackbarProvider = withWidth()(({ children, width }) => {
           elevation={5}
           variant="filled"
           severity={_severity}
+          style={{ textAlign: "justify" }}
         >
           {_message}
         </Alert>

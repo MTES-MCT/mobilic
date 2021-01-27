@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
   header: {
     backgroundColor: ({ staging }) =>
       staging ? theme.palette.warning.main : theme.palette.success.main,
-    textAlign: "left",
+    textAlign: "justify",
     width: "100%",
     display: "flex",
     alignItems: "flex-start",

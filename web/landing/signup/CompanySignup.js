@@ -213,7 +213,7 @@ export function CompanySignup() {
             </LoadingButton>
           </Box>
           {apiError && (
-            <Typography display="block" align="left" color="error">
+            <Typography display="block" align="justify" color="error">
               {apiError}
             </Typography>
           )}

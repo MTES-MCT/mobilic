@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   introText: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
-    textAlign: "left"
+    textAlign: "justify"
   },
   submitText: {
     paddingTop: theme.spacing(10),

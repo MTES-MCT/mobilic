@@ -68,7 +68,7 @@ export function WorkTimeSummaryAdditionalInfo({
         px={disablePadding ? 0 : 2}
         py={disablePadding ? 0 : 1}
         mx={"auto"}
-        style={{ textAlign: "left" }}
+        style={{ textAlign: "justify" }}
       >
         {React.Children.map(children, (child, index) => [
           child,

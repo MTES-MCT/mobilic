@@ -31,7 +31,7 @@ export function RegulationCheck({ check }) {
         fontSize: "small"
       })}
       <Box pl={1}>
-        <Typography align="left" variant="body2" color="inherit">
+        <Typography align="justify" variant="body2" color="inherit">
           {check.message}
           <span>{` ${emoji}`}</span>
         </Typography>

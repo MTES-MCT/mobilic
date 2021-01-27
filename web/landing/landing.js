@@ -36,7 +36,10 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(6)
   },
   videoHelperText: {
-    paddingBottom: theme.spacing(4)
+    paddingBottom: theme.spacing(4),
+    maxWidth: 600,
+    margin: "auto",
+    textAlign: "justify"
   },
   videoContainer: {
     position: "relative",
@@ -261,7 +264,7 @@ export function Landing() {
                 <p>Directement sur mobile à tout moment</p>
                 <ul
                   style={{
-                    textAlign: "left",
+                    textAlign: "justify",
                     fontSize: "1rem",
                     lineHeight: "1.6"
                   }}
@@ -289,7 +292,7 @@ export function Landing() {
             descriptionContent={
               <ul
                 style={{
-                  textAlign: "left",
+                  textAlign: "justify",
                   fontSize: "1rem",
                   lineHeight: "1.6"
                 }}
@@ -315,7 +318,7 @@ export function Landing() {
             descriptionContent={
               <ul
                 style={{
-                  textAlign: "left",
+                  textAlign: "justify",
                   fontSize: "1rem",
                   lineHeight: "1.6"
                 }}
@@ -372,7 +375,7 @@ function Footer() {
             </Grid>
           </Hidden>
           <Grid item>
-            <Typography align="left">
+            <Typography align="justify">
               Mobilic est un service numérique de l'Etat incubé à la Fabrique
               Numérique du Ministère de la Transition écologique, membre du
               réseau d’incubateurs beta.gouv.fr

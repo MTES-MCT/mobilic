@@ -100,7 +100,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       {isAdmin && <SignupStepper activeStep={0} />}
       <PaperContainerTitle>Création de compte</PaperContainerTitle>
       {employeeInvite && employeeInvite.company && (
-        <Typography align="left">
+        <Typography align="justify">
           Vous avez été invité(e) par{" "}
           <span style={{ fontWeight: "bold" }}>
             {employeeInvite.company.name}

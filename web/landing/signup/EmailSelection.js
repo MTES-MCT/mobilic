@@ -120,7 +120,7 @@ export function EmailSelection() {
         onSubmit={handleSubmit}
       >
         <Section title="1. Adresse email">
-          <Typography align="left" className={classes.text}>
+          <Typography align="justify" className={classes.text}>
             <span className="bold">{userInfo.firstName}</span>, veuillez{" "}
             {origEmail ? (
               <>
@@ -131,7 +131,7 @@ export function EmailSelection() {
               "renseigner votre adresse email"
             )}
           </Typography>
-          <Typography align="left" className={classes.text}>
+          <Typography align="justify" className={classes.text}>
             Mobilic se servira de cette adresse comme point de contact
             uniquement pour vous communiquer des informations indispensables au
             bon fonctionnement du service.
@@ -150,12 +150,12 @@ export function EmailSelection() {
           />
         </Section>
         <Section title="2. Mot de passe (facultatif)">
-          <Typography align="left" className={classes.text}>
+          <Typography align="justify" className={classes.text}>
             Vous pouvez également choisir un mot de passe de connexion si vous
             le souhaitez. Cela vous permettra de vous connecter de manière
             directe en plus de la connexion via FranceConnect.
           </Typography>
-          <Typography align="left" className={classes.text}>
+          <Typography align="justify" className={classes.text}>
             Le nom d'utilisateur associé sera l'adresse email renseignée
             ci-dessus.
           </Typography>

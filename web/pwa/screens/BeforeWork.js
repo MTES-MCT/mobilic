@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
   },
   missionsToValidateList: {
     backgroundColor: theme.palette.background.paper,
-    textAlign: "left",
+    textAlign: "justify",
     marginTop: theme.spacing(2),
     borderRadius: "24px 24px 0 0"
   },

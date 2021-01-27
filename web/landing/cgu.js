@@ -32,7 +32,7 @@ export function CGU() {
       </PaperContainerTitle>
       <Container
         maxWidth="false"
-        style={{ textAlign: "left", paddingBottom: 16 }}
+        style={{ textAlign: "justify", paddingBottom: 16 }}
       >
         <CGUContent />
       </Container>
