@@ -390,12 +390,16 @@ function Footer() {
           </Link>
         </Typography>
         <Typography className={classes.footerLink}>
-          <Link to="/" color="inherit">
+          <Link
+            href="https://faq.mobilic.beta.gouv.fr"
+            target="_blank"
+            color="inherit"
+          >
             Foire aux questions
           </Link>
         </Typography>
         <Typography className={classes.footerLink}>
-          <Link href="/developers/docs/intro" color="inherit">
+          <Link href="/developers/docs/intro" target="_blank" color="inherit">
             Espace développeurs
           </Link>
         </Typography>
