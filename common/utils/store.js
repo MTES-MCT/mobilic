@@ -518,6 +518,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       id: e.company.id,
       name: e.company.name,
       admin: e.hasAdminRights,
+      siren: e.company.siren,
       isPrimary: e.isPrimary
     }));
   };

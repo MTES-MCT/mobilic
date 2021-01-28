@@ -86,6 +86,7 @@ export const COMPANY_SIGNUP_MUTATION = gql`
           company {
             id
             name
+            siren
           }
         }
       }
@@ -112,6 +113,7 @@ export const USER_QUERY = gql`
       primaryCompany {
         id
         name
+        siren
         users {
           id
           firstName
@@ -167,6 +169,7 @@ export const USER_QUERY = gql`
         company {
           id
           name
+          siren
         }
       }
     }
@@ -274,6 +277,7 @@ export const GET_EMPLOYMENT_QUERY = gql`
       company {
         id
         name
+        siren
       }
       userId
       submitter {
@@ -297,6 +301,7 @@ export const REDEEM_INVITE_QUERY = gql`
         company {
           id
           name
+          siren
         }
       }
     }
@@ -381,6 +386,7 @@ export const VALIDATE_EMPLOYMENT_MUTATION = gql`
         company {
           id
           name
+          siren
         }
       }
     }
@@ -398,6 +404,7 @@ export const REJECT_EMPLOYMENT_MUTATION = gql`
         company {
           id
           name
+          siren
         }
       }
     }
@@ -428,6 +435,7 @@ export const TERMINATE_EMPLOYMENT_MUTATION = gql`
         company {
           id
           name
+          siren
         }
         user {
           id

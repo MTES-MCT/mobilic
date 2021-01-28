@@ -20,6 +20,7 @@ export function AdminStoreProvider({ children }) {
       companiesPayload.map(c => ({
         id: c.id,
         name: c.name,
+        siren: c.siren,
         isPrimary: primaryCompany ? c.id === primaryCompany.id : false
       }))
     );
@@ -48,7 +49,7 @@ export function AdminStoreProvider({ children }) {
           c.employments.map(e => ({
             ...e,
             companyId: c.id,
-            company: { id: c.id, name: c.name }
+            company: { id: c.id, name: c.name, siren: c.siren }
           }))
         )
       )

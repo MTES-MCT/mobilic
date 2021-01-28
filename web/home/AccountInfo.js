@@ -96,6 +96,9 @@ function EmploymentInfo({ employment }) {
           <InfoItem name="Entreprise" value={employment.company.name} />
         </Grid>
         <Grid item>
+          <InfoItem name="SIREN" value={employment.company.siren} />
+        </Grid>
+        <Grid item>
           <InfoItem name="Début rattachement" value={employment.startDate} />
         </Grid>
         <Grid item>
