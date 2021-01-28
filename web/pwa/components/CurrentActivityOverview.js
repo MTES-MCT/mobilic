@@ -32,7 +32,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function CurrentActivityOverview({ latestActivity, currentDayStart }) {
+export function CurrentActivityOverview({
+  latestActivity,
+  currentDayStart,
+  currentMission
+}) {
   const classes = useStyles();
   const _now = now();
 
@@ -53,9 +57,8 @@ export function CurrentActivityOverview({ latestActivity, currentDayStart }) {
     currentActivityDuration
   )}`;
 
-  const missionOverviewText = `Mission débutée depuis ${formatTimer(
-    _now - currentDayStart
-  )}`;
+  const missionOverviewText = `Mission ${currentMission.name ||
+    "sans nom"} débutée depuis ${formatTimer(_now - currentDayStart)}`;
 
   return (
     <Box p={2} pb={5} className={classes.overview}>
@@ -73,7 +76,7 @@ export function CurrentActivityOverview({ latestActivity, currentDayStart }) {
         <Typography variant="h2" className={classes.primaryText}>
           {activityOverviewText}
         </Typography>
-        <Typography variant="body2" className={classes.secondaryText}>
+        <Typography className={classes.secondaryText}>
           {missionOverviewText}
         </Typography>
       </Container>

@@ -23,6 +23,7 @@ export function CurrentActivity({
     <CurrentActivityOverview
       key={0}
       currentDayStart={getTime(currentMission.activities[0])}
+      currentMission={currentMission}
       latestActivity={latestActivity}
     />,
     <ActivitySwitch
