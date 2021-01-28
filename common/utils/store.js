@@ -541,7 +541,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             setUserInfo: this.setUserInfo,
             userInfo: () => ({ id: this.state.userId, ...this.state.userInfo }),
             coworkers: () => this.state.coworkers,
-            pendingRequests: () => this.state.pendingRequests,
+            pendingRequests: this.getPendingRequests,
             getEntity: this.getEntity,
             pushItemToArray: this.pushItemToArray,
             setItems: this.setItems,
