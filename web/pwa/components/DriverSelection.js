@@ -20,6 +20,12 @@ export function DriverSelectionModal({
   const store = useStoreSyncedWithLocalStorage();
   const coworkers = store.getEntity("coworkers");
 
+  const [selected, setSelected] = React.useState(null);
+
+  React.useEffect(() => {
+    setSelected(null);
+  }, [open, currentDriverId]);
+
   const hasTeamMates = team.length > 1;
   return (
     <Dialog onClose={handleClose} open={open}>
@@ -33,9 +39,14 @@ export function DriverSelectionModal({
         <RadioGroup
           aria-label="driver"
           name="driver"
-          value={team.findIndex(id => id === currentDriverId)}
-          onChange={e => {
-            handleDriverSelection(parseInt(e.target.value));
+          value={selected || team.findIndex(id => id === currentDriverId)}
+          onChange={async e => {
+            const value = parseInt(e.target.value);
+            setSelected(value);
+            await Promise.all([
+              new Promise(resolve => setTimeout(resolve, 500)),
+              setTimeout(() => handleDriverSelection(value), 0)
+            ]);
             handleClose();
           }}
         >
@@ -61,13 +72,13 @@ export function DriverSelectionModal({
                     }`
                   : "Oui"
               }
+              checked={currentDriverId && teamMateId === currentDriverId}
               disabled={currentDriverId && teamMateId === currentDriverId}
             />
           ))}
           <FormControlLabel
             key={-1}
-            value={-1}
-            checked={false}
+            value={-2}
             control={<Radio />}
             label={hasTeamMates ? "Une autre personne" : "Non"}
           />

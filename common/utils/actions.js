@@ -29,6 +29,7 @@ import {
 import { formatDay, formatTimeOfDay, now, truncateMinute } from "./time";
 import { formatPersonName } from "./coworkers";
 import { useSnackbarAlerts } from "../../web/common/Snackbar";
+import { EXPENDITURES } from "./expenditures";
 
 const ActionsContext = React.createContext(() => {});
 
@@ -43,7 +44,7 @@ export function ActionsContextProvider({ children }) {
     actionDescription,
     overrideFormatGraphQLError = null,
     hasRequestFailed = true,
-    shouldReload = false,
+    shouldProposeRefresh = false,
     isActionDescriptionFemale = false,
     title = null,
     message = null
@@ -54,7 +55,7 @@ export function ActionsContextProvider({ children }) {
         graphQLErrors,
         overrideFormatGraphQLError,
         hasRequestFailed,
-        shouldReload,
+        shouldProposeRefresh,
         isActionDescriptionFemale,
         title,
         message
@@ -63,32 +64,76 @@ export function ActionsContextProvider({ children }) {
         ? [...currentProps.errors, newError]
         : [newError];
 
-      return { ...currentProps, errors: updatedErrors };
+      return {
+        ...currentProps,
+        shouldProposeRefresh:
+          shouldProposeRefresh || currentProps.shouldProposeRefresh,
+        errors: updatedErrors
+      };
     });
   }
 
-  async function submitAction(
+  function submitAction(
     query,
     variables,
     optimisticStoreUpdate,
     watchFields,
     responseHandlerName,
-    batchable = true
+    batchable = true,
+    groupId = null
   ) {
     // 1. Store the request and optimistically update the store as if the api responded successfully
-    const request = await store.newRequest(
+    const time = Date.now();
+    const request = store.newRequest(
       query,
       variables,
       optimisticStoreUpdate,
       watchFields,
       responseHandlerName,
-      batchable
+      batchable,
+      groupId
     );
 
     // 2. Execute the request (call API) along with any other pending one
     // await api.nonConcurrentQueryQueue.execute(() => api.executeRequest(request));
-    const executionResults = await api.executePendingRequests();
-    return executionResults[request.id.toString()];
+    api.executePendingRequests();
+    return api.recentRequestStatuses.get(request.id, time);
+  }
+
+  function graphQLErrorImpliesNotUpToDateData(gqlError) {
+    if (graphQLErrorMatchesCode(gqlError, "OVERLAPPING_MISSIONS")) {
+      return (
+        gqlError.extensions.conflictingMission &&
+        gqlError.extensions.conflictingMission.submitter.id !==
+          store.userId() &&
+        !store.getEntity("missions")[
+          gqlError.extensions.conflictingMission.id.toString()
+        ]
+      );
+    }
+    if (graphQLErrorMatchesCode(gqlError, "MISSION_ALREADY_ENDED")) {
+      return (
+        gqlError.extensions.missionEnd &&
+        gqlError.extensions.missionEnd.submitter.id !== store.userId()
+      );
+    }
+    if (graphQLErrorMatchesCode(gqlError, "OVERLAPPING_ACTIVITIES")) {
+      return (
+        gqlError.extensions.conflictingActivity &&
+        gqlError.extensions.conflictingActivity.submitter.id !==
+          store.userId() &&
+        !store.getEntity("activities")[
+          gqlError.extensions.conflictingActivity.id.toString()
+        ]
+      );
+    }
+  }
+
+  function shouldProposeRefresh(error) {
+    return (
+      isGraphQLError(error) &&
+      error.graphQLErrors.some(e => graphQLErrorImpliesNotUpToDateData(e))
+    );
   }
 
   const pushNewTeamActivityEvent = async ({
@@ -121,10 +166,12 @@ export function ActionsContextProvider({ children }) {
       } else teamToType[id] = activityType;
     });
 
+    const groupId = store.generateId("nextRequestGroupId");
+
     const userId = store.userId();
     let baseActivityResult = null;
     if (team.includes(userId)) {
-      baseActivityResult = await pushNewActivityEvent({
+      baseActivityResult = pushNewActivityEvent({
         activityType: teamToType[userId],
         missionActivities,
         missionId,
@@ -133,56 +180,76 @@ export function ActionsContextProvider({ children }) {
         endTime,
         comment,
         switchMode,
-        forceKillSisterActivitiesOnFail: team.length > 1
+        forceKillSisterActivitiesOnFail: team.length > 1,
+        groupId
       });
     }
 
     if (!baseActivityResult || !baseActivityResult.error) {
-      await Promise.all(
-        team
-          .filter(id => id !== userId)
-          .map(id =>
-            pushNewActivityEvent({
-              activityType: teamToType[id],
-              missionActivities,
-              missionId,
-              startTime,
-              userId: id,
-              endTime,
-              comment,
-              switchMode
-            })
-          )
-      );
+      team
+        .filter(id => id !== userId)
+        .forEach(async id => {
+          pushNewActivityEvent({
+            activityType: teamToType[id],
+            missionActivities,
+            missionId,
+            startTime,
+            userId: id,
+            endTime,
+            comment,
+            switchMode,
+            groupId,
+            immediateSubmit: false
+          });
+        });
     }
   };
 
   function formatLogActivityError(gqlError, user, selfId) {
     if (graphQLErrorMatchesCode(gqlError, "OVERLAPPING_MISSIONS")) {
       if (!user) {
-        return "L'utilisateur a déjà une mission en cours";
+        return "L'utilisateur a déjà une mission en cours.";
       }
       return `${formatNameInGqlError(user, selfId, true)} ${
         user.id === selfId ? "avez" : "a"
       } déjà une mission en cours démarrée par ${formatNameInGqlError(
         gqlError.extensions.conflictingMission.submitter,
         selfId,
-        false
+        false,
+        true
       )} le ${formatDay(
         getTime(gqlError.extensions.conflictingMission)
-      )} à ${formatTimeOfDay(getTime(gqlError.extensions.conflictingMission))}`;
+      )} à ${formatTimeOfDay(
+        getTime(gqlError.extensions.conflictingMission)
+      )}.`;
     }
     if (graphQLErrorMatchesCode(gqlError, "MISSION_ALREADY_ENDED")) {
       if (gqlError.extensions.missionEnd) {
         return `La mission a déjà été terminée par ${formatNameInGqlError(
           gqlError.extensions.missionEnd.submitter,
           selfId,
-          false
-        )} à ${formatTimeOfDay(gqlError.extensions.missionEnd.endTime)}`;
+          false,
+          true
+        )} à ${formatTimeOfDay(gqlError.extensions.missionEnd.endTime)}.`;
       }
     }
     if (graphQLErrorMatchesCode(gqlError, "OVERLAPPING_ACTIVITIES")) {
-      return "L'utilisateur a déjà une activité en cours à ce moment là";
+      return `Conflit avec ${
+        gqlError.extensions.conflictingActivity
+          ? `l'activité ${
+              ACTIVITIES[gqlError.extensions.conflictingActivity.type].label
+            } démarrée le ${formatDay(
+              gqlError.extensions.conflictingActivity.startTime
+            )} à ${formatTimeOfDay(
+              gqlError.extensions.conflictingActivity.startTime
+            )} et enregistrée par ${formatNameInGqlError(
+              gqlError.extensions.conflictingActivity.submitter,
+              selfId,
+              false,
+              true
+            )}`
+          : "d'autres activités de l'utilisateur"
+      }.`;
     }
   }
 
@@ -195,6 +262,7 @@ export function ActionsContextProvider({ children }) {
     endTime = null,
     comment = null,
     switchMode = true,
+    groupId = null,
     forceKillSisterActivitiesOnFail = false
   }) => {
     const actualUserId = userId || store.userId();
@@ -208,7 +276,7 @@ export function ActionsContextProvider({ children }) {
 
     if (comment) newActivity.context = { comment };
 
-    const updateStore = async (store, requestId) => {
+    const updateStore = (store, requestId) => {
       if (switchMode) {
         const currentActivity = missionActivities.find(
           a => a.userId === actualUserId && !a.endTime
@@ -222,7 +290,7 @@ export function ActionsContextProvider({ children }) {
           );
         }
       }
-      const newItemId = await store.createEntityObject(
+      const newItemId = store.createEntityObject(
         {
           ...newActivity,
           startTime: truncateMinute(startTime),
@@ -239,17 +307,19 @@ export function ActionsContextProvider({ children }) {
         actualUserId,
         startTime,
         forceKillSisterActivitiesOnFail,
+        groupId,
         type: activityType
       };
     };
 
-    await submitAction(
+    return await submitAction(
       LOG_ACTIVITY_MUTATION,
       { ...newActivity, switch: switchMode },
       updateStore,
       ["activities"],
       "logActivity",
-      !forceKillSisterActivitiesOnFail
+      !forceKillSisterActivitiesOnFail,
+      groupId
     );
   };
 
@@ -303,6 +373,7 @@ export function ActionsContextProvider({ children }) {
         activityId: tempActivityId,
         type,
         forceKillSisterActivitiesOnFail,
+        groupId,
         startTime
       }
     ) => {
@@ -315,18 +386,11 @@ export function ActionsContextProvider({ children }) {
             (req.storeInfo && req.storeInfo.activityId === tempActivityId)
         );
       // If the activity should not be submitted for team mates because it failed for the main user, cancel the corresponding requests
-      if (forceKillSisterActivitiesOnFail) {
+      if (forceKillSisterActivitiesOnFail && groupId) {
         let otherRequestsToCancel = store
           .pendingRequests()
           .filter(
-            req =>
-              req.apiResponseHandlerName &&
-              req.apiResponseHandlerName === "logActivity" &&
-              req.variables &&
-              req.variables.startTime === startTime &&
-              req.variables.type === type &&
-              req.variables.userId !== actualUserId &&
-              req.id !== requestId
+            req => req.groupId === groupId && req.requestId !== requestId
           );
         // We should also cancel further requests concerning these non submitted activities
         const activityIds = otherRequestsToCancel.map(
@@ -355,13 +419,14 @@ export function ActionsContextProvider({ children }) {
           graphQLErrors: error.graphQLErrors,
           actionDescription: `L'activité ${
             ACTIVITIES[type].label
-          } pour l'utilisateur ${formatPersonName(user)}`,
+          } de ${formatPersonName(user)} à ${formatTimeOfDay(startTime)}`,
           isActionDescriptionFemale: true,
           overrideFormatGraphQLError: gqlError => {
             return formatLogActivityError(gqlError, user, store.userId());
           },
           hasRequestFailed: true,
-          shouldReload: false
+          shouldProposeRefresh:
+            store.userId() === actualUserId && shouldProposeRefresh(error)
         });
       }
       await Promise.all(
@@ -385,36 +450,34 @@ export function ActionsContextProvider({ children }) {
           getTime(a) === getTime(activityEvent) &&
           a.endTime === activityEvent.endTime
       );
-      await Promise.all(
-        activitiesToEdit
-          .filter(a => a.userId === store.userId())
-          .map(a =>
-            editActivityEvent(
-              a,
-              actionType,
-              missionActivities,
-              newStartTime,
-              newEndTime,
-              comment,
-              false
-            )
+      activitiesToEdit
+        .filter(a => a.userId === store.userId())
+        .map(a =>
+          editActivityEvent(
+            a,
+            actionType,
+            missionActivities,
+            newStartTime,
+            newEndTime,
+            comment,
+            false,
+            false
           )
-      );
-      await Promise.all(
-        activitiesToEdit
-          .filter(a => a.userId !== store.userId())
-          .map(a =>
-            editActivityEvent(
-              a,
-              actionType,
-              missionActivities,
-              newStartTime,
-              newEndTime,
-              comment,
-              false
-            )
+        );
+      activitiesToEdit
+        .filter(a => a.userId !== store.userId())
+        .map(a =>
+          editActivityEvent(
+            a,
+            actionType,
+            missionActivities,
+            newStartTime,
+            newEndTime,
+            comment,
+            false,
+            false
           )
-      );
+        );
       return;
     }
 
@@ -501,12 +564,13 @@ export function ActionsContextProvider({ children }) {
           graphQLErrors: error.graphQLErrors,
           actionDescription: `La correction de l'activité ${
             ACTIVITIES[type].label
-          } pour l'utilisateur ${formatPersonName(user)}`,
+          } de ${formatPersonName(user)}`,
           overrideFormatGraphQLError: gqlError => {
             return formatLogActivityError(gqlError, user, selfId);
           },
           hasRequestFailed: true,
-          shouldReload: false,
+          shouldProposeRefresh:
+            selfId === userId && shouldProposeRefresh(error),
           isActionDescriptionFemale: true
         });
       }
@@ -532,13 +596,13 @@ export function ActionsContextProvider({ children }) {
     let updateMissionStore;
 
     const missionIdPromise = new Promise((resolve, reject) => {
-      const _updateMissionStore = async (store, requestId) => {
+      const _updateMissionStore = (store, requestId) => {
         const mission = {
           name,
           context: missionPayload.context || {},
           ended: false
         };
-        const missionId = await store.createEntityObject(
+        const missionId = store.createEntityObject(
           mission,
           "missions",
           requestId
@@ -698,6 +762,7 @@ export function ActionsContextProvider({ children }) {
       return {
         userId: actualUserId,
         missionId,
+        name: mission.name,
         currentActivityId: currentActivity ? currentActivity.id : null
       };
     };
@@ -730,7 +795,7 @@ export function ActionsContextProvider({ children }) {
         a => a.missionId === mission.id
       );
     },
-    onError: (error, { userId, missionId, currentActivityId }) => {
+    onError: (error, { userId, missionId, currentActivityId, name }) => {
       if (
         isGraphQLError(error) &&
         error.graphQLErrors.some(gqle =>
@@ -767,7 +832,7 @@ export function ActionsContextProvider({ children }) {
       if (isGraphQLError(error)) {
         displayApiErrors({
           graphQLErrors: error.graphQLErrors,
-          actionDescription: "La fin de mission",
+          actionDescription: `La fin de la mission ${name ? `${name} ` : ""}`,
           overrideFormatGraphQLError: gqlError => {
             const selfId = store.userId();
             const user =
@@ -777,7 +842,8 @@ export function ActionsContextProvider({ children }) {
             return formatLogActivityError(gqlError, user, selfId);
           },
           hasRequestFailed: true,
-          shouldReload: false,
+          shouldProposeRefresh:
+            userId === store.userId() && shouldProposeRefresh(error),
           isActionDescriptionFemale: true
         });
       }
@@ -882,15 +948,16 @@ export function ActionsContextProvider({ children }) {
   };
 
   const logExpenditure = async ({ type, missionId, userId = null }) => {
+    const actualUserId = userId || store.userId();
     const newExpenditure = {
       type,
       missionId,
-      userId: userId || store.userId()
+      userId: actualUserId
     };
 
     const updateStore = (store, requestId) => {
       store.createEntityObject(newExpenditure, "expenditures", requestId);
-      return { missionId };
+      return { missionId, userId: actualUserId, type };
     };
 
     await submitAction(
@@ -908,8 +975,12 @@ export function ActionsContextProvider({ children }) {
       const expenditure = apiResponse.data.activities.logExpenditure;
       store.syncEntity([expenditure], "expenditures", () => false);
     },
-    onError: error => {
+    onError: (error, { userId, type }) => {
       if (isGraphQLError(error)) {
+        const user =
+          userId === store.userId()
+            ? store.userInfo()
+            : store.getEntity("coworkers")[userId.toString()];
         displayApiErrors({
           graphQLErrors: error.graphQLErrors,
           overrideFormatGraphQLError: gqlError => {
@@ -917,7 +988,9 @@ export function ActionsContextProvider({ children }) {
               return "Un frais de cette nature a déjà été enregistré sur la mission.";
             }
           },
-          actionDescription: "Le frais",
+          actionDescription: `Le ${
+            EXPENDITURES[type].label
+          } de ${formatPersonName(user)}`,
           hasRequestFailed: true,
           shouldReload: false
         });

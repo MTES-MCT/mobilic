@@ -1,6 +1,7 @@
 import { formatPersonName } from "./coworkers";
 import { formatDay, formatTimeOfDay } from "./time";
 import { getTime } from "./events";
+import { ACTIVITIES } from "./activities";
 
 export function isConnectionError(error) {
   return (
@@ -44,10 +45,19 @@ export function isRetryable(error) {
   return isConnectionError(error) || isAuthenticationError(error);
 }
 
-export function formatNameInGqlError(user, selfId, capitalize) {
+export function formatNameInGqlError(
+  user,
+  selfId,
+  capitalize,
+  isObject = false
+) {
   return selfId === user.id
     ? capitalize
-      ? "Vous"
+      ? isObject
+        ? "Vous-même"
+        : "Vous"
+      : isObject
+      ? "vous-même"
       : "vous"
     : formatPersonName(user);
 }
@@ -103,7 +113,20 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
           getTime(graphQLError.extensions.conflictingMission)
         )}`;
       case "OVERLAPPING_ACTIVITIES":
-        return `L'activité est en chevauchement avec d'autres activités`;
+        return `L'activité est en chevauchement avec ${
+          graphQLError.extensions.conflictingActivity
+            ? `l'activité ${
+                ACTIVITIES[graphQLError.extensions.conflictingActivity.type]
+                  .label
+              } démarrée le ${formatDay(
+                graphQLError.extensions.conflictingActivity.startTime
+              )} à ${formatTimeOfDay(
+                graphQLError.extensions.conflictingActivity.startTime
+              )} et enregistrée par ${formatPersonName(
+                graphQLError.extensions.conflictingActivity.submitter
+              )}`
+            : "d'autres activités"
+        }.`;
       case "INVALID_EMAIL_ADDRESS":
         return `L'adresse email n'est pas valide`;
       case "MISSION_ALREADY_ENDED":
@@ -116,8 +139,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
               )} par ${formatPersonName(
                 graphQLError.extensions.missionEnd.submitter
               )}.`
-            : "."
-        }`;
+            : ""
+        }.`;
       case "MISSION_ALREADY_VALIDATED_BY_ADMIN":
         return `La mission n'est plus modifiable, elle a été validée par le gestionnaire.`;
       case "MISSION_ALREADY_VALIDATED_BY_USER":

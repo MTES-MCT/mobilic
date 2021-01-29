@@ -93,7 +93,8 @@ export function ActivitySwitch({
   disableBreak,
   endMission,
   currentMission,
-  pushActivitySwitchEvent
+  pushActivitySwitchEvent,
+  shouldWaitForClickHandler = false
 }) {
   const store = useStoreSyncedWithLocalStorage();
   const classes = useStyles();
@@ -122,8 +123,10 @@ export function ActivitySwitch({
             ? store.userId()
             : undefined,
         currentDriverStartTime: latestActivity ? getTime(latestActivity) : null,
-        handleDriverSelection: driverId =>
-          pushActivitySwitchEvent(activityName, driverId)
+        handleDriverSelection: async driverId =>
+          shouldWaitForClickHandler
+            ? await pushActivitySwitchEvent(activityName, driverId)
+            : pushActivitySwitchEvent(activityName, driverId)
       });
     } else pushActivitySwitchEvent(activityName);
   };

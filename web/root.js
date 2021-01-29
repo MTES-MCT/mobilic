@@ -57,14 +57,14 @@ export default function Root() {
           <ApiContextProvider>
             <MuiPickersUtilsProvider utils={FrLocalizedUtils} locale={frLocale}>
               <SnackbarProvider>
-                <ModalProvider modalDict={MODAL_DICT}>
-                  <LoadingScreenContextProvider>
+                <LoadingScreenContextProvider>
+                  <ModalProvider modalDict={MODAL_DICT}>
                     <ActionsContextProvider>
                       <ScrollToTop />
                       <_Root />
                     </ActionsContextProvider>
-                  </LoadingScreenContextProvider>
-                </ModalProvider>
+                  </ModalProvider>
+                </LoadingScreenContextProvider>
               </SnackbarProvider>
             </MuiPickersUtilsProvider>
           </ApiContextProvider>

@@ -11,6 +11,7 @@ import { isAuthenticationError, isRetryable } from "./errors";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 import { buildFCLogoutUrl } from "./franceConnect";
 import { currentUserId, readCookie, clearUserIdCookie } from "./cookie";
+import { MaxSizeCache } from "./cache";
 
 export const API_HOST = "/api";
 
@@ -635,9 +636,9 @@ export const TERMINATE_VEHICLE_MUTATION = gql`
 `;
 
 export const VALIDATE_MISSION_MUTATION = gql`
-  mutation validateMission($missionId: Int!) {
+  mutation validateMission($missionId: Int!, $userId: Int) {
     activities {
-      validateMission(missionId: $missionId) {
+      validateMission(missionId: $missionId, userId: $userId) {
         mission {
           id
           name
@@ -734,6 +735,7 @@ class Api {
       ]),
       cache: new InMemoryCache()
     });
+    this.recentRequestStatuses = new MaxSizeCache(50);
     this.refreshTokenQueue = new NonConcurrentExecutionQueue();
     this.nonConcurrentQueryQueue = new NonConcurrentExecutionQueue();
     this.isCurrentlySubmittingRequests = () =>
@@ -867,7 +869,9 @@ class Api {
 
       // 4. Remove the temporary updates and the pending request from the pool
       await this.store.clearPendingRequest(request);
+      this.recentRequestStatuses.add(request.id, { success: true });
     } catch (err) {
+      this.recentRequestStatuses.add(request.id, { error: err });
       if (!isRetryable(err)) {
         if (apiResponseHandler.onError)
           await apiResponseHandler.onError(err, request.storeInfo);
@@ -885,7 +889,6 @@ class Api {
   async executePendingRequests(failOnError = false) {
     return await this.nonConcurrentQueryQueue.execute(async () => {
       // 1. Retrieve all pending requests
-      let requestExecutionResults = {};
       let processedRequests = 0;
       while (this.store.pendingRequests().length > 0) {
         let errors = [];
@@ -904,12 +907,10 @@ class Api {
             try {
               await this.executeRequest(request);
               processedRequests = processedRequests + 1;
-              requestExecutionResults[request.id] = { success: true };
             } catch (err) {
               // It is important to wait for ALL the batched request handlers to execute
               // because they are all processed by the API regardless of whether the others fail
               // So we avoid throwing an error here, otherwise the other successful promises could be cancelled
-              requestExecutionResults[request.id] = { error: err };
               errors.push(err);
             }
           })
@@ -925,7 +926,6 @@ class Api {
       if (processedRequests > 0) {
         await broadCastChannel.postMessage("update");
       }
-      return requestExecutionResults;
     });
   }
 

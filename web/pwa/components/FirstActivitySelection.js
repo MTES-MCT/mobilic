@@ -34,6 +34,7 @@ export function FirstActivitySelectionModal({
         team={team}
         pushActivitySwitchEvent={handleActivitySelection}
         disableBreak
+        shouldWaitForClickHandler
       />
       <Box className={classes.bottomFill} />
     </FunnelModal>

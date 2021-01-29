@@ -11,7 +11,7 @@ import { NonConcurrentExecutionQueue } from "./concurrency";
 import { BroadcastChannel } from "broadcast-channel";
 import { currentUserId } from "./cookie";
 
-const STORE_VERSION = 11;
+const STORE_VERSION = 12;
 
 export const broadCastChannel = new BroadcastChannel("storeUpdates", {
   webWorkerSupport: false
@@ -52,11 +52,13 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       activities: Map,
       employments: List,
       comments: Map,
-      pendingRequests: List,
       identityMap: Map,
       missions: Map,
       expenditures: Map,
-      vehicles: Map,
+      vehicles: Map
+    };
+
+    this.secondMapper = {
       nextRequestId: {
         deserialize: value => (value ? parseInt(value) : 1),
         serialize: String.serialize
@@ -64,13 +66,22 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       nextEntityObjectId: {
         deserialize: value => (value ? parseInt(value) : 1),
         serialize: String.serialize
-      }
+      },
+      nextRequestGroupId: {
+        deserialize: value => (value ? parseInt(value) : 1),
+        serialize: String.serialize
+      },
+      pendingRequests: List
     };
 
     // Initialize state with null values
     this.state = {};
+    this.secondState = {};
     Object.keys(this.mapper).forEach(entry => {
       this.state[entry] = this.mapper[entry].deserialize(null);
+    });
+    Object.keys(this.secondMapper).forEach(entry => {
+      this.secondState[entry] = this.secondMapper[entry].deserialize(null);
     });
 
     this.loadFromStorageQueue = new NonConcurrentExecutionQueue();
@@ -92,6 +103,18 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           })
         )
       );
+      this.secondState = Object.fromEntries(
+        await Promise.all(
+          map(this.secondMapper, async (value, entry) => {
+            return [
+              entry,
+              this.secondMapper[entry].deserialize(
+                await this.storage.getItem(entry)
+              )
+            ];
+          })
+        )
+      );
       try {
         await new Promise(resolve =>
           this.setState(
@@ -99,11 +122,14 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
               this.mapper[entry].deserialize(value)
             ),
             () => {
-              if (this.state.pendingRequests.length === 0) {
+              if (this.secondState.pendingRequests.length === 0) {
                 this.setState({
-                  nextRequestId: 1,
-                  nextEntityObject: 1,
                   identityMap: {}
+                });
+                Object.keys(this.secondMapper).forEach(entry => {
+                  this.secondState[entry] = this.secondMapper[
+                    entry
+                  ].deserialize(null);
                 });
               }
               resolve();
@@ -187,18 +213,15 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     );
   };
 
-  _generateId = idStateEntry =>
-    new Promise(resolve => {
-      this.setStoreState(
-        prevState => {
-          resolve(prevState[idStateEntry]);
-          return {
-            [idStateEntry]: prevState[idStateEntry] + 1
-          };
-        },
-        [idStateEntry]
-      );
-    });
+  generateId = idStateEntry => {
+    const id = this.secondState[idStateEntry];
+    this.secondState[idStateEntry] = id + 1;
+    this.storage.setItem(
+      idStateEntry,
+      this.secondMapper[idStateEntry].serialize(id + 1)
+    );
+    return id;
+  };
 
   addToIdentityMap = async (key, value) =>
     new Promise(resolve =>
@@ -211,7 +234,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       )
     );
 
-  createEntityObject = async (object, entity, requestId) => {
+  createEntityObject = (object, entity, requestId) => {
     if (this.mapper[entity] === List) {
       this.setStoreState(
         prevState => ({
@@ -227,8 +250,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       );
       return;
     }
-    const entityObjectId =
-      "temp" + (await this._generateId("nextEntityObjectId"));
+    const entityObjectId = "temp" + this.generateId("nextEntityObjectId");
     this.setStoreState(
       prevState => ({
         [entity]: {
@@ -315,19 +337,28 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       request.id,
       request.watchFields
     );
-    await this.removeItemFromArray(request, "pendingRequests");
+    this.secondState.pendingRequests = this.secondState.pendingRequests.filter(
+      r => r.id !== request.id
+    );
+    this.storage.setItem(
+      "pendingRequests",
+      this.secondMapper["pendingRequests"].serialize(
+        this.secondState.pendingRequests
+      )
+    );
   };
 
-  newRequest = async (
+  newRequest = (
     query,
     variables,
     updateStore,
     watchFields,
     apiResponseHandlerName,
-    batchable = true
+    batchable = true,
+    groupId = null
   ) => {
-    const requestId = await this._generateId("nextRequestId");
-    const storeInfo = await updateStore(this, requestId);
+    const requestId = this.generateId("nextRequestId");
+    const storeInfo = updateStore(this, requestId);
     const request = {
       id: requestId,
       userId: this.state.userId,
@@ -336,14 +367,26 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       watchFields,
       storeInfo,
       apiResponseHandlerName,
-      batchable
+      batchable,
+      groupId
     };
-    await this.pushItemToArray(request, "pendingRequests");
+    this.secondState.pendingRequests = [
+      ...this.secondState.pendingRequests,
+      request
+    ];
+    this.storage.setItem(
+      "pendingRequests",
+      this.secondMapper["pendingRequests"].serialize(
+        this.secondState.pendingRequests
+      )
+    );
     return request;
   };
 
   getPendingRequests = () =>
-    this.state.pendingRequests.filter(r => r.userId === this.state.userId);
+    this.secondState.pendingRequests.filter(
+      r => r.userId === this.state.userId
+    );
 
   removeOptimisticUpdateForRequest = (requestId, watchFields) => {
     const _removeUpdateForItem = item => {
@@ -563,7 +606,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             employeeInvite: () => this.state.employeeInvite,
             hasAcceptedCgu: () => this.state.hasAcceptedCgu,
             clearHasAcceptedCgu: () => this.setState({ hasAcceptedCgu: null }),
-            setHasAcceptedCgu: this.setHasAcceptedCgu
+            setHasAcceptedCgu: this.setHasAcceptedCgu,
+            generateId: this.generateId
           }}
         >
           {this.props.children}

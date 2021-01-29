@@ -41,7 +41,10 @@ export function EndMissionModal({
           onSubmit={async e => {
             e.preventDefault();
             setLoading(true);
-            await handleMissionEnd(expenditures, comment);
+            await Promise.all([
+              new Promise(resolve => setTimeout(resolve, 500)),
+              handleMissionEnd(expenditures, comment)
+            ]);
             handleClose();
             setLoading(false);
           }}

@@ -7,7 +7,6 @@ import { useModals } from "common/utils/modals";
 import Box from "@material-ui/core/Box";
 import { AccountButton } from "../components/AccountButton";
 import { MainCtaButton } from "../components/MainCtaButton";
-import Button from "@material-ui/core/Button";
 import SvgIcon from "@material-ui/core/SvgIcon";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
@@ -25,6 +24,8 @@ import {
 } from "common/utils/time";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import orderBy from "lodash/orderBy";
+import { LoadingButton } from "common/components/LoadingButton";
+import { useLoadingScreen } from "common/utils/loading";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -90,6 +91,7 @@ const useStyles = makeStyles(theme => ({
 export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
+  const withLoadingScreen = useLoadingScreen();
 
   const onEnterNewMissionFunnel = () => {
     modals.open("newMission", {
@@ -102,20 +104,26 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
                 : [store.userId()];
               modals.open("firstActivity", {
                 team,
-                handleActivitySelection: (activityType, driverId) => {
-                  beginNewMission({
-                    firstActivityType: activityType,
-                    driverId,
-                    name: missionInfos.mission,
-                    vehicleId: missionInfos.vehicle
-                      ? missionInfos.vehicle.id
-                      : null,
-                    vehicleRegistrationNumber: missionInfos.vehicle
-                      ? missionInfos.vehicle.registrationNumber
-                      : null,
-                    team
-                  });
-                  modals.closeAll();
+                handleActivitySelection: async (activityType, driverId) => {
+                  await withLoadingScreen(
+                    async () => {
+                      await beginNewMission({
+                        firstActivityType: activityType,
+                        driverId,
+                        name: missionInfos.mission,
+                        vehicleId: missionInfos.vehicle
+                          ? missionInfos.vehicle.id
+                          : null,
+                        vehicleRegistrationNumber: missionInfos.vehicle
+                          ? missionInfos.vehicle.registrationNumber
+                          : null,
+                        team
+                      });
+                      await modals.closeAll();
+                    },
+                    null,
+                    true
+                  );
                 }
               });
             };
@@ -167,13 +175,15 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
       <MainCtaButton onClick={onEnterNewMissionFunnel}>
         Commencer une mission
       </MainCtaButton>
-      <Button
+      <LoadingButton
         style={{ marginTop: 8 }}
         color="primary"
-        onClick={() => openHistory()}
+        onClick={() => {
+          openHistory();
+        }}
       >
         Voir mon historique
-      </Button>
+      </LoadingButton>
     </Box>,
     nonValidatedMissions.length > 0 && (
       <Box key={3} className={classes.missionsToValidateList}>

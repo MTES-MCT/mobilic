@@ -21,7 +21,6 @@ export class NonConcurrentExecutionQueue {
     hasFastImpl,
     refresh
   }) => {
-    await 1;
     let response, error;
     if (!hasFastImpl) {
       try {
@@ -75,7 +74,7 @@ export class NonConcurrentExecutionQueue {
           }
         }
       }
-      this._executeTask(this.queue[0]);
+      setTimeout(() => this._executeTask(this.queue[0]), 0);
     }
 
     if (hasFastImpl)

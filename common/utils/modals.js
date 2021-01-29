@@ -25,22 +25,29 @@ export class ModalProvider extends React.Component {
     });
   };
 
-  close = modalName => {
-    this.setState({
-      [modalName]: { open: false, modalProps: {} }
+  close = modalName =>
+    new Promise(resolve => {
+      this.setState(
+        {
+          [modalName]: { open: false, modalProps: {} }
+        },
+        resolve
+      );
     });
-  };
 
-  closeAll = () => {
-    this.setState(prevState =>
-      Object.fromEntries(
-        Object.keys(this.state).map(modalName => [
-          modalName,
-          { open: false, modalProps: {} }
-        ])
-      )
-    );
-  };
+  closeAll = () =>
+    new Promise(resolve => {
+      this.setState(
+        prevState =>
+          Object.fromEntries(
+            Object.keys(this.state).map(modalName => [
+              modalName,
+              { open: false, modalProps: {} }
+            ])
+          ),
+        resolve
+      );
+    });
 
   render() {
     return (

@@ -2,6 +2,7 @@ import React from "react";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 import Backdrop from "@material-ui/core/Backdrop/Backdrop";
 import { NonConcurrentExecutionQueue } from "./concurrency";
+import Portal from "@material-ui/core/Portal";
 
 const LoadingScreenContext = React.createContext(() => () => {});
 
@@ -32,12 +33,18 @@ export function LoadingScreenContextProvider({ children }) {
   return (
     <LoadingScreenContext.Provider value={withLoadingScreen}>
       {children}
-      <Backdrop
-        open={syncingWithBackendCounter > 0}
-        style={{ zIndex: 5000, backdropFilter: "blur(5px)" }}
-      >
-        <CircularProgress color="primary" />
-      </Backdrop>
+      <Portal>
+        <Backdrop
+          open={syncingWithBackendCounter > 0}
+          style={{
+            position: "fixed",
+            zIndex: 9999,
+            backdropFilter: "blur(5px)"
+          }}
+        >
+          <CircularProgress color="primary" />
+        </Backdrop>
+      </Portal>
     </LoadingScreenContext.Provider>
   );
 }

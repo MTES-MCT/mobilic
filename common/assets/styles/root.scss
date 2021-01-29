@@ -285,3 +285,11 @@
   flex-shrink: 0;
   width: calc(50% - 40px);
 }
+
+.refresh-app-alert {
+  .MuiAlert-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
