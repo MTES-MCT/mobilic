@@ -75,7 +75,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     };
 
     // Initialize state with null values
-    this.state = {};
+    this.state = { _utils: this };
     this.secondState = {};
     Object.keys(this.mapper).forEach(entry => {
       this.state[entry] = this.mapper[entry].deserialize(null);
@@ -383,7 +383,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     return request;
   };
 
-  getPendingRequests = () =>
+  pendingRequests = () =>
     this.secondState.pendingRequests.filter(
       r => r.userId === this.state.userId
     );
@@ -574,48 +574,28 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     await this._removeUserInfo();
   };
 
+  userId = () => this.state.userId;
+
+  userInfo = () => ({ id: this.state.userId, ...this.state.userInfo });
+
+  coworkers = () => this.state.coworkers;
+
+  employeeInvite = () => this.state.employeeInvite;
+
+  hasAcceptedCgu = () => this.state.hasAcceptedCgu;
+
+  clearHasAcceptedCgu = () => this.setState({ hasAcceptedCgu: null });
+
+  identityMap = () => this.state.identityMap;
+
   render() {
     return (
-      <>
-        <StoreSyncedWithLocalStorage.Provider
-          value={{
-            userId: () => this.state.userId,
-            updateUserIdAndInfo: this.updateUserIdAndInfo,
-            companies: this.companies,
-            setUserInfo: this.setUserInfo,
-            userInfo: () => ({ id: this.state.userId, ...this.state.userInfo }),
-            coworkers: () => this.state.coworkers,
-            pendingRequests: this.getPendingRequests,
-            getEntity: this.getEntity,
-            pushItemToArray: this.pushItemToArray,
-            setItems: this.setItems,
-            setStoreState: this.setStoreState,
-            identityMap: () => this.state.identityMap,
-            addToIdentityMap: this.addToIdentityMap,
-            newRequest: this.newRequest,
-            syncEntity: this.syncEntity,
-            clearPendingRequest: this.clearPendingRequest,
-            removeOptimisticUpdateForRequest: this
-              .removeOptimisticUpdateForRequest,
-            updateItemInArray: this.updateItemInArray,
-            createEntityObject: this.createEntityObject,
-            updateEntityObject: this.updateEntityObject,
-            deleteEntityObject: this.deleteEntityObject,
-            setEmployeeInvite: this.setEmployeeInvite,
-            clearEmployeeInvite: this.clearEmployeeInvite,
-            employeeInvite: () => this.state.employeeInvite,
-            hasAcceptedCgu: () => this.state.hasAcceptedCgu,
-            clearHasAcceptedCgu: () => this.setState({ hasAcceptedCgu: null }),
-            setHasAcceptedCgu: this.setHasAcceptedCgu,
-            generateId: this.generateId
-          }}
-        >
-          {this.props.children}
-        </StoreSyncedWithLocalStorage.Provider>
-      </>
+      <StoreSyncedWithLocalStorage.Provider value={this.state}>
+        {this.props.children}
+      </StoreSyncedWithLocalStorage.Provider>
     );
   }
 }
 
 export const useStoreSyncedWithLocalStorage = () =>
-  React.useContext(StoreSyncedWithLocalStorage);
+  React.useContext(StoreSyncedWithLocalStorage)._utils;
