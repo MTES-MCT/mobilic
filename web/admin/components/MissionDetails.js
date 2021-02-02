@@ -40,6 +40,13 @@ import { Comment } from "../../common/Comment";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 import Button from "@material-ui/core/Button";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText/ListItemText";
+import {
+  formatAddressMainText,
+  formatAddressSubText
+} from "common/utils/addresses";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {
@@ -454,7 +461,43 @@ export function MissionDetails({ mission, handleClose, width }) {
       {prettyFormatDay(mission.startTime, true)} (de{" "}
       {formatTimeOfDay(mission.startTime)} à {formatTimeOfDay(mission.endTime)})
     </Typography>,
-    <Section key={2} title="Détail par employé">
+    (mission.endLocation || mission.startLocation) && (
+      <Section key={2} title="Lieux de service">
+        <List dense>
+          <ListItem disableGutters>
+            <ListItemIcon>Début</ListItemIcon>
+            <ListItemText
+              primary={
+                mission.startLocation
+                  ? formatAddressMainText(mission.startLocation)
+                  : null
+              }
+              secondary={
+                mission.startLocation
+                  ? formatAddressSubText(mission.startLocation)
+                  : null
+              }
+            />
+          </ListItem>
+          <ListItem disableGutters>
+            <ListItemIcon>Fin</ListItemIcon>
+            <ListItemText
+              primary={
+                mission.endLocation
+                  ? formatAddressMainText(mission.endLocation)
+                  : null
+              }
+              secondary={
+                mission.endLocation
+                  ? formatAddressSubText(mission.endLocation)
+                  : null
+              }
+            />
+          </ListItem>
+        </List>
+      </Section>
+    ),
+    <Section key={3} title="Détail par employé">
       <AugmentedVirtualizedTable
         headerHeight={30}
         headerClassName={classes.header}
@@ -536,7 +579,7 @@ export function MissionDetails({ mission, handleClose, width }) {
         }}
       />
     </Section>,
-    <Section key={3} title="Observations">
+    <Section key={4} title="Observations">
       <Button
         color="primary"
         variant="outlined"
@@ -562,7 +605,7 @@ export function MissionDetails({ mission, handleClose, width }) {
         ))}
       </List>
     </Section>,
-    <Section key={4} title="" className={classes.validationSection}>
+    <Section key={5} title="" className={classes.validationSection}>
       <LoadingButton
         variant="contained"
         color="primary"
