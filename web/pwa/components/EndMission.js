@@ -7,6 +7,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { MainCtaButton } from "./MainCtaButton";
 import TextField from "@material-ui/core/TextField/TextField";
 import { Expenditures } from "./Expenditures";
+import { AddressField } from "../../common/AddressField";
 
 const useStyles = makeStyles(theme => ({
   commentInput: {
@@ -18,15 +19,26 @@ export function EndMissionModal({
   open,
   handleClose,
   handleMissionEnd,
-  currentExpenditures
+  currentExpenditures,
+  companyAddresses = []
 }) {
   const [expenditures, setExpenditures] = React.useState({});
   const [comment, setComment] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [address, setAddress] = React.useState(false);
+  const [currentPosition, setCurrentPosition] = React.useState(null);
 
   React.useEffect(() => {
     setExpenditures(currentExpenditures || {});
     setComment("");
+    setAddress(null);
+    setCurrentPosition(null);
+
+    if (open) {
+      navigator.geolocation.getCurrentPosition(position => {
+        setCurrentPosition(position);
+      });
+    }
   }, [currentExpenditures, open]);
 
   const funnelModalClasses = useFunnelModalStyles();
@@ -43,7 +55,7 @@ export function EndMissionModal({
             setLoading(true);
             await Promise.all([
               new Promise(resolve => setTimeout(resolve, 500)),
-              handleMissionEnd(expenditures, comment)
+              handleMissionEnd(expenditures, comment, address)
             ]);
             handleClose();
             setLoading(false);
@@ -57,6 +69,19 @@ export function EndMissionModal({
               expenditures={expenditures}
               setExpenditures={setExpenditures}
             />
+            <Typography variant="h5">
+              Quel est le lieu de fin de service&nbsp;? (optionnel)
+            </Typography>
+            <AddressField
+              fullWidth
+              label="Lieu de fin de service"
+              variant="filled"
+              value={address}
+              onChange={setAddress}
+              currentPosition={currentPosition}
+              defaultAddresses={companyAddresses}
+            />
+            <Box my={1} />
             <Typography className={funnelModalClasses.title} variant="h5">
               Avez-vous un commentaire&nbsp;? (optionnel)
             </Typography>

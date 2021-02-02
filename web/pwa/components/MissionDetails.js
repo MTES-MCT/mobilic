@@ -33,6 +33,10 @@ import CheckIcon from "@material-ui/icons/Check";
 import ScheduleIcon from "@material-ui/icons/Schedule";
 import { Comment } from "../../common/Comment";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import {
+  formatAddressMainText,
+  formatAddressSubText
+} from "common/utils/addresses";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -203,6 +207,44 @@ export function MissionDetails({
               </ListItem>
             </List>
           )}
+      </MissionReviewSection>
+      <MissionReviewSection title="Lieux">
+        {(mission.startLocation || mission.endLocation) && (
+          <List dense>
+            <ListItem disableGutters>
+              <ListItemIcon>Début</ListItemIcon>
+              <ListItemText
+                primary={
+                  mission.startLocation
+                    ? formatAddressMainText(mission.startLocation)
+                    : null
+                }
+                secondary={
+                  mission.startLocation
+                    ? formatAddressSubText(mission.startLocation)
+                    : null
+                }
+              />
+            </ListItem>
+            {mission.ended && (
+              <ListItem disableGutters>
+                <ListItemIcon>Fin</ListItemIcon>
+                <ListItemText
+                  primary={
+                    mission.endLocation
+                      ? formatAddressMainText(mission.endLocation)
+                      : null
+                  }
+                  secondary={
+                    mission.endLocation
+                      ? formatAddressSubText(mission.endLocation)
+                      : null
+                  }
+                />
+              </ListItem>
+            )}
+          </List>
+        )}
       </MissionReviewSection>
       {!hideExpenditures && (
         <MissionReviewSection

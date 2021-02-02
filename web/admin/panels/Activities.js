@@ -130,7 +130,7 @@ export function ActivityPanel() {
               min(periodAggregates.map(pa => pa.periodActualStart))
             )} et le ${formatDay(
               max(periodAggregates.map(pa => pa.periodActualEnd))
-            )}`}
+            )} (uniquement les plus récents).`}
         </Typography>
         <WorkTimeTable
           className={classes.workTimeTable}

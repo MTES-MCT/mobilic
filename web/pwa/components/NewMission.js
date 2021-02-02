@@ -6,35 +6,52 @@ import Box from "@material-ui/core/Box";
 import { VehicleInput } from "./VehicleInput";
 import { FunnelModal, useStyles as useFunnelModalStyles } from "./FunnelModal";
 import { MainCtaButton } from "./MainCtaButton";
+import { AddressField } from "../../common/AddressField";
 
-export function NewMissionModal({ open, handleClose, handleContinue }) {
+export function NewMissionModal({
+  open,
+  handleClose,
+  handleContinue,
+  companyAddresses = []
+}) {
   const [mission, setMission] = React.useState("");
   const [vehicle, setVehicle] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
+  const [currentPosition, setCurrentPosition] = React.useState(null);
+  const [address, setAddress] = React.useState(null);
 
   React.useEffect(() => {
     setMission("");
     setVehicle(null);
+    setCurrentPosition(null);
+    setAddress(null);
+
+    if (open) {
+      navigator.geolocation.getCurrentPosition(position => {
+        setCurrentPosition(position);
+      });
+    }
   }, [open]);
 
   const funnelModalClasses = useFunnelModalStyles();
 
   return (
     <FunnelModal open={open} handleBack={handleClose}>
-      <Container className="flex-column-space-between" style={{ flexGrow: 1 }}>
+      <Container>
         <form
           noValidate
           autoComplete="off"
           onSubmit={async e => {
             setLoading(true);
             e.preventDefault();
-            const payLoad = { mission, vehicle };
+            const payLoad = { mission, vehicle, address };
             await handleContinue(payLoad);
             setLoading(false);
           }}
         >
           <Container
             className={`day-info-inputs ${funnelModalClasses.slimContainer}`}
+            style={{ flexShrink: 0 }}
             disableGutters
           >
             <Typography variant="h5">
@@ -47,7 +64,7 @@ export function NewMissionModal({ open, handleClose, handleContinue }) {
               value={mission}
               onChange={e => setMission(e.target.value)}
             />
-            <Box my={2} />
+            <Box my={1} />
             <Typography variant="h5">
               Utilisez-vous un véhicule&nbsp;? (optionnel){" "}
             </Typography>
@@ -56,8 +73,21 @@ export function NewMissionModal({ open, handleClose, handleContinue }) {
               vehicle={vehicle}
               setVehicle={setVehicle}
             />
+            <Box my={1} />
+            <Typography variant="h5">
+              Quel est le lieu de prise de service&nbsp;? (optionnel)
+            </Typography>
+            <AddressField
+              fullWidth
+              label="Lieu de prise de service"
+              variant="filled"
+              value={address}
+              onChange={setAddress}
+              currentPosition={currentPosition}
+              defaultAddresses={companyAddresses}
+            />
           </Container>
-          <Box className="cta-container" mb={4}>
+          <Box className="cta-container" mb={4} mt={2}>
             <MainCtaButton type="submit" loading={loading}>
               Continuer
             </MainCtaButton>

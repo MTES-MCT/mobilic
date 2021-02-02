@@ -15,6 +15,7 @@ import {
   LOG_ACTIVITY_MUTATION,
   LOG_COMMENT_MUTATION,
   LOG_EXPENDITURE_MUTATION,
+  LOG_LOCATION_MUTATION,
   useApi,
   VALIDATE_MISSION_MUTATION
 } from "./api";
@@ -437,6 +438,23 @@ class Actions {
         this.store.syncEntity([], "comments", e => e.id === commentId);
       }
     });
+
+    api.registerResponseHandler("logLocation", {
+      onSuccess: (apiResponse, { missionId, isStart }) => {
+        const location = apiResponse.data.activities.logLocation;
+        const mission = store.getEntity("missions")[missionId.toString()];
+        this.store.syncEntity(
+          [
+            {
+              ...mission,
+              [isStart ? "startLocation" : "endLocation"]: location
+            }
+          ],
+          "missions",
+          m => m.id === missionId
+        );
+      }
+    });
   }
 
   displayApiErrors = async ({
@@ -826,7 +844,8 @@ class Actions {
     team = null,
     vehicleRegistrationNumber = null,
     vehicleId = null,
-    driverId = null
+    driverId = null,
+    startLocation = null
   }) => {
     const missionPayload = {
       name
@@ -876,8 +895,47 @@ class Actions {
         startTime: now(),
         team,
         driverId
-      })
+      }),
+      startLocation
+        ? this.logLocation({
+            address: startLocation,
+            missionId: missionCurrentId,
+            isStart: true
+          })
+        : null
     ]);
+  };
+
+  logLocation = async ({ address, missionId, isStart }) => {
+    const formattedAddress = address.id
+      ? address
+      : { ...address.properties, postalCode: address.properties.postcode };
+
+    const payload = {
+      missionId,
+      type: isStart ? "mission_start_location" : "mission_end_location"
+    };
+    if (address.id) payload.companyKnownAddressId = address.id;
+    else payload.geoApiData = address;
+
+    const updateStore = (store, requestId) => {
+      this.store.updateEntityObject(
+        missionId,
+        "missions",
+        { [isStart ? "startLocation" : "endLocation"]: formattedAddress },
+        requestId
+      );
+      return { missionId, isStart };
+    };
+
+    await this.submitAction(
+      LOG_LOCATION_MUTATION,
+      payload,
+      updateStore,
+      ["missions"],
+      "logLocation",
+      true
+    );
   };
 
   endMissionForTeam = async ({
@@ -885,14 +943,16 @@ class Actions {
     expenditures,
     mission,
     team = [],
-    comment = null
+    comment = null,
+    endLocation = null
   }) => {
     if (team.length === 0)
       return await this.endMission({
         endTime,
         mission,
         expenditures,
-        comment
+        comment,
+        endLocation
       });
 
     const userId = this.store.userId();
@@ -902,7 +962,8 @@ class Actions {
         mission,
         userId,
         expenditures,
-        comment
+        comment,
+        endLocation
       });
     }
 
@@ -925,7 +986,8 @@ class Actions {
     expenditures,
     mission,
     userId = null,
-    comment = null
+    comment = null,
+    endLocation = null
   }) => {
     const missionId = mission.id;
     const actualUserId = userId || this.store.userId();
@@ -975,9 +1037,10 @@ class Actions {
         missionId,
         userId
       ),
-      comment
-        ? this.logComment({ text: comment, missionId })
-        : Promise.resolve(null)
+      comment ? this.logComment({ text: comment, missionId }) : null,
+      endLocation
+        ? this.logLocation({ address: endLocation, missionId, isStart: false })
+        : null
     ]);
   };
 

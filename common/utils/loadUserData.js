@@ -101,6 +101,11 @@ export async function syncUser(userPayload, api, store) {
   primaryCompany &&
     primaryCompany.vehicles &&
     syncActions.push(store.syncEntity(primaryCompany.vehicles, "vehicles"));
+  primaryCompany &&
+    primaryCompany.knownAddresses &&
+    syncActions.push(
+      store.syncEntity(primaryCompany.knownAddresses, "knownAddresses")
+    );
   currentEmployments &&
     syncActions.push(store.syncEntity(currentEmployments, "employments"));
   return await Promise.all(syncActions);

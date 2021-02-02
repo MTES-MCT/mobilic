@@ -11,7 +11,7 @@ import { NonConcurrentExecutionQueue } from "./concurrency";
 import { BroadcastChannel } from "broadcast-channel";
 import { currentUserId } from "./cookie";
 
-const STORE_VERSION = 12;
+const STORE_VERSION = 14;
 
 export const broadCastChannel = new BroadcastChannel("storeUpdates", {
   webWorkerSupport: false
@@ -49,6 +49,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       },
       userInfo: Map,
       coworkers: Map,
+      knownAddresses: List,
       activities: Map,
       employments: List,
       comments: Map,

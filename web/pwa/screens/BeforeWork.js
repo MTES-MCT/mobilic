@@ -95,6 +95,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
 
   const onEnterNewMissionFunnel = () => {
     modals.open("newMission", {
+      companyAddresses: store.getEntity("knownAddresses"),
       handleContinue: missionInfos =>
         modals.open("teamOrSoloChoice", {
           handleContinue: isTeamMode => {
@@ -117,6 +118,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
                         vehicleRegistrationNumber: missionInfos.vehicle
                           ? missionInfos.vehicle.registrationNumber
                           : null,
+                        startLocation: missionInfos.address,
                         team
                       });
                       await modals.closeAll();

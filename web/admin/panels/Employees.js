@@ -30,6 +30,11 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "space-between",
     alignItems: "center"
   },
+  explanation: {
+    marginBottom: theme.spacing(2),
+    fontStyle: "italic",
+    textAlign: "justify"
+  },
   subPanel: {
     padding: theme.spacing(2)
   },
@@ -302,8 +307,12 @@ export function Employees({ companyId, containerRef }) {
         </Button>
       )}
     </Box>,
+    <Typography key={4} className={classes.explanation}>
+      Invitez vos salariés en renseignant leurs adresses mail, afin qu'ils
+      puissent enregistrer du temps de travail pour l'entreprise.
+    </Typography>,
     <AugmentedVirtualizedTable
-      key={4}
+      key={5}
       columns={validEmploymentColumns}
       entries={validEmployments}
       editable={false}
@@ -313,7 +322,7 @@ export function Employees({ companyId, containerRef }) {
       attachScrollTo={containerRef.current}
     />,
     <Menu
-      key={5}
+      key={6}
       keepMounted
       open={Boolean(actionMenuAnchorEl)}
       onClose={handleActionsMenuClose}

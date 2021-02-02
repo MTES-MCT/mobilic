@@ -17,6 +17,8 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
         )
       : null,
     context: missionPayload.context,
+    startLocation: missionPayload.startLocation,
+    endLocation: missionPayload.endLocation,
     ended: missionPayload.ended !== undefined ? missionPayload.ended : true
   };
 }

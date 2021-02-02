@@ -120,6 +120,13 @@ export const USER_QUERY = gql`
           firstName
           lastName
         }
+        knownAddresses {
+          id
+          alias
+          name
+          postalCode
+          city
+        }
         vehicles {
           id
           name
@@ -160,6 +167,18 @@ export const USER_QUERY = gql`
             lastName
           }
         }
+        startLocation {
+          name
+          alias
+          postalCode
+          city
+        }
+        endLocation {
+          name
+          alias
+          postalCode
+          city
+        }
       }
       currentEmployments {
         id
@@ -193,6 +212,13 @@ export const ADMIN_COMPANIES_QUERY = gql`
           firstName
           lastName
         }
+        knownAddresses {
+          id
+          alias
+          name
+          postalCode
+          city
+        }
         workDays(fromDate: $activityAfter, limit: $workDaysLimit) {
           user {
             id
@@ -221,6 +247,18 @@ export const ADMIN_COMPANIES_QUERY = gql`
             id
             type
             userId
+          }
+          startLocation {
+            alias
+            name
+            postalCode
+            city
+          }
+          endLocation {
+            alias
+            name
+            postalCode
+            city
           }
           activities {
             id
@@ -580,6 +618,18 @@ export const END_MISSION_MUTATION = gql`
         id
         name
         context
+        startLocation {
+          alias
+          name
+          postalCode
+          city
+        }
+        endLocation {
+          alias
+          name
+          postalCode
+          city
+        }
         activities {
           id
           type
@@ -588,6 +638,29 @@ export const END_MISSION_MUTATION = gql`
           startTime
           endTime
         }
+      }
+    }
+  }
+`;
+
+export const LOG_LOCATION_MUTATION = gql`
+  mutation logLocation(
+    $companyKnownAddressId: Int
+    $type: LocationEntryTypeEnum!
+    $missionId: Int!
+    $geoApiData: GenericScalar
+  ) {
+    activities {
+      logLocation(
+        companyKnownAddressId: $companyKnownAddressId
+        missionId: $missionId
+        type: $type
+        geoApiData: $geoApiData
+      ) {
+        alias
+        name
+        postalCode
+        city
       }
     }
   }
@@ -635,6 +708,55 @@ export const TERMINATE_VEHICLE_MUTATION = gql`
   }
 `;
 
+export const CREATE_KNOWN_ADDRESS_MUTATION = gql`
+  mutation createKnownAddress(
+    $geoApiData: GenericScalar!
+    $alias: String
+    $companyId: Int!
+  ) {
+    locations {
+      createKnownAddress(
+        geoApiData: $geoApiData
+        alias: $alias
+        companyId: $companyId
+      ) {
+        id
+        name
+        alias
+        postalCode
+        city
+      }
+    }
+  }
+`;
+
+export const EDIT_KNOWN_ADDRESS_MUTATION = gql`
+  mutation editKnownAddress($companyKnownAddressId: Int!, $alias: String) {
+    locations {
+      editKnownAddress(
+        companyKnownAddressId: $companyKnownAddressId
+        alias: $alias
+      ) {
+        id
+        name
+        alias
+        postalCode
+        city
+      }
+    }
+  }
+`;
+
+export const TERMINATE_KNOWN_ADDRESS_MUTATION = gql`
+  mutation terminateKnownAddress($companyKnownAddressId: Int!) {
+    locations {
+      terminateKnownAddress(companyKnownAddressId: $companyKnownAddressId) {
+        success
+      }
+    }
+  }
+`;
+
 export const VALIDATE_MISSION_MUTATION = gql`
   mutation validateMission($missionId: Int!, $userId: Int) {
     activities {
@@ -644,6 +766,18 @@ export const VALIDATE_MISSION_MUTATION = gql`
           id
           name
           context
+          startLocation {
+            alias
+            name
+            postalCode
+            city
+          }
+          endLocation {
+            alias
+            name
+            postalCode
+            city
+          }
         }
       }
     }

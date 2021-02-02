@@ -35,6 +35,11 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     alignItems: "center"
   },
+  explanation: {
+    marginBottom: theme.spacing(2),
+    fontStyle: "italic",
+    textAlign: "justify"
+  },
   container: {
     padding: theme.spacing(2),
     flexShrink: 1,
@@ -293,6 +298,11 @@ function _ValidationPanel({ containerRef, width }) {
           label={`En attente de validation par les salariés (${missionsNotValidatedByAllWorkers.length})`}
         />
       </Tabs>
+      <Typography className={classes.explanation}>
+        {tab === 0
+          ? "Les missions suivantes ont été terminées et validées par le(s) salarié(s) concerné(s) et sont prêtes à être validées par un gestionnaire."
+          : "Les missions suivantes sont terminées mais n'ont pas encore été validées par tous les salariés concernés."}
+      </Typography>
       <AugmentedVirtualizedTable
         columns={columns}
         entries={

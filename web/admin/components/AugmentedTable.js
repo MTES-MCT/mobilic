@@ -221,7 +221,16 @@ class Row extends React.Component {
                     maxWidth: column.maxWidth
                   }}
                 >
-                  {column.boolean ? (
+                  {column.renderEditMode ? (
+                    column.renderEditMode(
+                      editingValues[column.name],
+                      newValue =>
+                        setEditingValues(values => ({
+                          ...values,
+                          [column.name]: newValue
+                        }))
+                    )
+                  ) : column.boolean ? (
                     <Checkbox
                       checked={editingValues[column.name] || false}
                       color="primary"

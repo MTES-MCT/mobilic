@@ -10,6 +10,7 @@ export function AdminStoreProvider({ children }) {
   const [users, setUsers] = React.useState([]);
   const [workDays, setWorkDays] = React.useState([]);
   const [vehicles, setVehicles] = React.useState([]);
+  const [knownAddresses, setKnownAddresses] = React.useState([]);
   const [employments, setEmployments] = React.useState([]);
   const [companies, setCompanies] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
@@ -40,6 +41,13 @@ export function AdminStoreProvider({ children }) {
       flatMap(
         companiesPayload.map(c =>
           c.vehicles.map(v => ({ ...v, companyId: c.id }))
+        )
+      )
+    );
+    setKnownAddresses(
+      flatMap(
+        companiesPayload.map(c =>
+          c.knownAddresses.map(a => ({ ...a, companyId: c.id }))
         )
       )
     );
@@ -74,6 +82,8 @@ export function AdminStoreProvider({ children }) {
         setWorkDays,
         vehicles,
         setVehicles,
+        knownAddresses,
+        setKnownAddresses,
         employments,
         setEmployments,
         missions,
