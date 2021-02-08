@@ -45,7 +45,7 @@ export class NonConcurrentExecutionQueue {
           }));
         } else {
           const indexOfSameTaskEnqueuedDuringRun = this.queue.findIndex(
-            task => task.id === id && !hasFastImpl
+            task => task.id === id && !task.hasFastImpl
           );
           const shouldRefresh = indexOfSameTaskEnqueuedDuringRun > -1;
           if (shouldRefresh) {

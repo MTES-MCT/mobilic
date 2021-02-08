@@ -18,10 +18,10 @@ export async function loadEmployeeInvite(token, store, api, setError) {
     setError(
       formatApiError(err, gqlError => {
         if (graphQLErrorMatchesCode(gqlError, "INVALID_TOKEN")) {
-          return "lien d'invitation invalide";
+          return "le lien d'invitation est invalide";
         }
         if (graphQLErrorMatchesCode(gqlError, "EXPIRED_TOKEN")) {
-          return "lien d'invitation expiré";
+          return "le lien d'invitation a expiré";
         }
       })
     );

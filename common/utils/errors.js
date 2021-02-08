@@ -99,9 +99,9 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
       case "FRANCE_CONNECT_ERROR":
         return "Une erreur est survenue dans l'authentification avec FranceConnect";
       case "INVALID_TOKEN":
-        return "Jeton invalide";
+        return "le lien est invalide";
       case "EXPIRED_TOKEN":
-        return "Jeton expiré";
+        return "le lien a expiré";
       case "EMAIL_ALREADY_REGISTERED":
         return "L'adresse email est déjà utilisée.";
       case "FC_USER_ALREADY_REGISTERED":

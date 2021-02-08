@@ -1,19 +1,22 @@
 import React from "react";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import { ACTIVATE_EMAIL_MUTATION, useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
-import { formatApiError } from "common/utils/errors";
+import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import Typography from "@material-ui/core/Typography";
 import jwt_decode from "jwt-decode";
 import { currentUserId } from "common/utils/cookie";
 import * as Sentry from "@sentry/browser";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 
 export function ActivateEmail() {
   const location = useLocation();
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
+  const alerts = useSnackbarAlerts();
+  const history = useHistory();
 
   const [error, setError] = React.useState("");
 
@@ -60,8 +63,17 @@ export function ActivateEmail() {
             }
           } catch (err) {
             Sentry.captureException(err);
-            console.log(err);
-            setError(formatApiError(err));
+            const errorMessage = formatApiError(err, gqlError => {
+              if (graphQLErrorMatchesCode(gqlError, "INVALID_TOKEN")) {
+                return "Le lien d'activation est invalide.";
+              }
+              if (graphQLErrorMatchesCode(gqlError, "EXPIRED_TOKEN")) {
+                return "Le lien d'activation a expiré.";
+              }
+            });
+            setError(errorMessage);
+            alerts.error(errorMessage, "activation-link-error", 8000);
+            history.push("/");
           }
         });
       }

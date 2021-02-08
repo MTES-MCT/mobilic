@@ -76,7 +76,7 @@ export function RedeemInvite() {
     if (token) {
       redeemInvite(token);
       return () => {};
-    } else setError("Jeton d'invitation manquant");
+    } else setError("Lien d'invitation manquant");
   }, []);
 
   return error ? (

@@ -2,6 +2,7 @@ import React from "react";
 import mapValues from "lodash/mapValues";
 import map from "lodash/map";
 import values from "lodash/values";
+import * as Sentry from "@sentry/browser";
 import find from "lodash/find";
 import { isPendingSubmission, useStoreSyncedWithLocalStorage } from "./store";
 import {
@@ -72,18 +73,24 @@ class Actions {
         }
         this.store.addToIdentityMap(tempActivityId, activity.id);
         if (!endTime) {
-          this.store.syncEntity(
-            [
-              {
-                ...this.store.getEntity("missions")[
-                  activity.missionId.toString()
-                ],
-                ended: false
-              }
-            ],
-            "missions",
-            m => m.id === activity.missionId
-          );
+          const mission = this.store.getEntity("missions")[
+            activity.missionId.toString()
+          ];
+          if (mission && mission.id)
+            this.store.syncEntity(
+              [
+                {
+                  ...mission,
+                  ended: false
+                }
+              ],
+              "missions",
+              m => m.id === activity.missionId
+            );
+          else
+            Sentry.captureMessage(
+              `Warning : No id found for mission ${mission}`
+            );
         }
         this.store.syncEntity(activities, "activities", syncScope, {
           [activity.id]: tempActivityId
@@ -175,18 +182,24 @@ class Actions {
             apiResponse.data.activities.editActivity
           );
           if (!newEndTime) {
-            this.store.syncEntity(
-              [
-                {
-                  ...this.store.getEntity("missions")[
-                    activity.missionId.toString()
-                  ],
-                  ended: false
-                }
-              ],
-              "missions",
-              m => m.id === activity.missionId
-            );
+            const mission = this.store.getEntity("missions")[
+              activity.missionId.toString()
+            ];
+            if (mission && mission.id)
+              this.store.syncEntity(
+                [
+                  {
+                    ...mission,
+                    ended: false
+                  }
+                ],
+                "missions",
+                m => m.id === activity.missionId
+              );
+            else
+              Sentry.captureMessage(
+                `Warning : No id found for mission ${mission}`
+              );
           }
           this.store.syncEntity(
             [activity],
@@ -295,19 +308,26 @@ class Actions {
           const missionEndTime = error.graphQLErrors.find(gqle =>
             graphQLErrorMatchesCode(gqle, "MISSION_ALREADY_ENDED")
           ).extensions.missionEnd.endTime;
-          if (currentActivityId)
-            this.store.syncEntity(
-              [
-                {
-                  ...this.store.getEntity("activities")[
-                    currentActivityId.toString()
-                  ],
-                  endTime: missionEndTime
-                }
-              ],
-              "activities",
-              a => a.id === currentActivityId
-            );
+          if (currentActivityId) {
+            const currentActivity = this.store.getEntity("activities")[
+              currentActivityId.toString()
+            ];
+            if (currentActivity)
+              this.store.syncEntity(
+                [
+                  {
+                    ...currentActivity,
+                    endTime: missionEndTime
+                  }
+                ],
+                "activities",
+                a => a.id === currentActivityId
+              );
+            else
+              Sentry.captureMessage(
+                `Warning : Could not find activity with id ${currentActivityId}`
+              );
+          }
           if (userId === this.store.userId()) {
             this.store.syncEntity(
               [
