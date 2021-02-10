@@ -639,6 +639,7 @@ export const VALIDATE_MISSION_MUTATION = gql`
   mutation validateMission($missionId: Int!, $userId: Int) {
     activities {
       validateMission(missionId: $missionId, userId: $userId) {
+        isAdmin
         mission {
           id
           name

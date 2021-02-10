@@ -367,7 +367,17 @@ class Actions {
       onSuccess: async (apiResponse, { validation }) => {
         const mission = apiResponse.data.activities.validateMission.mission;
         await this.store.syncEntity(
-          [{ ...mission, ended: true, validation }],
+          [
+            {
+              ...mission,
+              ended: true,
+              validation,
+              adminValidation: apiResponse.data.activities.validateMission
+                .isAdmin
+                ? validation
+                : null
+            }
+          ],
           "missions",
           m => m.id === mission.id
         );

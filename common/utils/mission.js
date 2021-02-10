@@ -13,9 +13,7 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
       : null,
     adminValidation: missionPayload.validations
       ? missionPayload.validations.find(
-          v =>
-            v.isAdmin &&
-            (!v.userId || (v.userId === userId && v.submitterId !== userId))
+          v => v.isAdmin && (!v.userId || v.userId === userId)
         )
       : null,
     context: missionPayload.context,

@@ -1,7 +1,6 @@
 import React from "react";
 import groupBy from "lodash/groupBy";
 import mapValues from "lodash/mapValues";
-import keyBy from "lodash/keyBy";
 import { Container } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -365,6 +364,10 @@ export function History({
     groupedMissions,
     ms => !ms[0].validation
   );
+  const periodsWithNeedForAdminValidation = mapValues(
+    groupedMissions,
+    ms => !ms[0].adminValidation
+  );
 
   return (
     <Paper className={classes.fullScreen}>
@@ -397,8 +400,10 @@ export function History({
               shouldDisplayRedChipsForPeriods={
                 currentTab === "mission" ? periodsWithNeedForValidation : null
               }
-              shouldDisplayGreenChipsForPeriods={
-                currentTab === "mission" ? keyBy(periods) : null
+              shouldDisplayOrangeChipsForPeriods={
+                currentTab === "mission"
+                  ? periodsWithNeedForAdminValidation
+                  : null
               }
               selectedPeriod={selectedPeriod}
               onPeriodChange={newp => {
