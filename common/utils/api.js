@@ -865,7 +865,11 @@ class Api {
           new HttpLink({ uri: nonPublicUri, credentials: "same-origin" }),
           ApolloLink.split(
             operation => !!operation.getContext().batchable,
-            new BatchHttpLink({ uri, credentials: "same-origin" }),
+            new BatchHttpLink({
+              uri,
+              credentials: "same-origin",
+              batchInterval: 50
+            }),
             new HttpLink({ uri, credentials: "same-origin" })
           )
         )

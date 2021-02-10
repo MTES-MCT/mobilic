@@ -5,13 +5,13 @@ import pickBy from "lodash/pickBy";
 import mapValues from "lodash/mapValues";
 import values from "lodash/values";
 import map from "lodash/map";
-import maxBy from "lodash/maxBy";
+import orderBy from "lodash/orderBy";
 import * as Sentry from "@sentry/browser";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 import { BroadcastChannel } from "broadcast-channel";
 import { currentUserId } from "./cookie";
 
-const STORE_VERSION = 14;
+const STORE_VERSION = 15;
 
 export const broadCastChannel = new BroadcastChannel("storeUpdates", {
   webWorkerSupport: false
@@ -53,7 +53,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       activities: Map,
       employments: List,
       comments: Map,
-      identityMap: Map,
       missions: Map,
       expenditures: Map,
       vehicles: Map
@@ -68,6 +67,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         deserialize: value => (value ? parseInt(value) : 1),
         serialize: String.serialize
       },
+      identityMap: Map,
       nextRequestGroupId: {
         deserialize: value => (value ? parseInt(value) : 1),
         serialize: String.serialize
@@ -124,13 +124,14 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             ),
             () => {
               if (this.secondState.pendingRequests.length === 0) {
-                this.setState({
-                  identityMap: {}
-                });
                 Object.keys(this.secondMapper).forEach(entry => {
                   this.secondState[entry] = this.secondMapper[
                     entry
                   ].deserialize(null);
+                  this.storage.setItem(
+                    entry,
+                    this.secondMapper[entry].serialize(this.secondState[entry])
+                  );
                 });
               }
               resolve();
@@ -224,16 +225,16 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     return id;
   };
 
-  addToIdentityMap = async (key, value) =>
-    new Promise(resolve =>
-      this.setStoreState(
-        prevState => ({
-          identityMap: { ...prevState.identityMap, [key]: value }
-        }),
-        ["identityMap"],
-        resolve
-      )
+  addToIdentityMap = async (key, value) => {
+    this.secondState.identityMap = {
+      ...this.secondState.identityMap,
+      [key]: value
+    };
+    this.storage.setItem(
+      "identityMap",
+      this.secondMapper["identityMap"].serialize(this.secondState.identityMap)
     );
+  };
 
   createEntityObject = (object, entity, requestId) => {
     if (this.mapper[entity] === List) {
@@ -439,16 +440,17 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     if (!isPendingSubmission(item)) {
       return item;
     }
-    const lastUpdate = maxBy(item.pendingUpdates, upd => upd.time);
-    if (lastUpdate.type === "create") {
-      return item;
-    }
-    if (lastUpdate.type === "delete") {
-      return null;
-    }
-    if (lastUpdate.type === "update") {
-      return { ...item, ...lastUpdate.new };
-    }
+    let updatedItem = item;
+    orderBy(item.pendingUpdates, ["time"]).forEach(upd => {
+      if (updatedItem) {
+        if (upd.type === "delete") {
+          updatedItem = null;
+        } else {
+          updatedItem = { ...updatedItem, ...upd.new };
+        }
+      }
+    });
+    return updatedItem;
   };
 
   syncEntity = (
@@ -587,7 +589,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
   clearHasAcceptedCgu = () => this.setState({ hasAcceptedCgu: null });
 
-  identityMap = () => this.state.identityMap;
+  identityMap = () => this.secondState.identityMap;
 
   render() {
     return (
