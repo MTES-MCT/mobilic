@@ -909,6 +909,8 @@ class Actions {
   logLocation = async ({ address, missionId, isStart }) => {
     const formattedAddress = address.id
       ? address
+      : address.manual
+      ? { manual: address.manual, name: address.name }
       : { ...address.properties, postalCode: address.properties.postcode };
 
     const payload = {
@@ -916,6 +918,7 @@ class Actions {
       type: isStart ? "mission_start_location" : "mission_end_location"
     };
     if (address.id) payload.companyKnownAddressId = address.id;
+    else if (address.manual) payload.manualAddress = address.name;
     else payload.geoApiData = address;
 
     const updateStore = (store, requestId) => {

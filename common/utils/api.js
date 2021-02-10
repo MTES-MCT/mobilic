@@ -649,6 +649,7 @@ export const LOG_LOCATION_MUTATION = gql`
     $type: LocationEntryTypeEnum!
     $missionId: Int!
     $geoApiData: GenericScalar
+    $manualAddress: String
   ) {
     activities {
       logLocation(
@@ -656,6 +657,7 @@ export const LOG_LOCATION_MUTATION = gql`
         missionId: $missionId
         type: $type
         geoApiData: $geoApiData
+        manualAddress: $manualAddress
       ) {
         alias
         name

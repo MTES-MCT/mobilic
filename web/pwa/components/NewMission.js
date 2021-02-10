@@ -54,31 +54,23 @@ export function NewMissionModal({
             style={{ flexShrink: 0 }}
             disableGutters
           >
-            <Typography variant="h5">
-              Votre mission a-t-elle un nom&nbsp;? (optionnel)
+            <Typography variant="h5" className="form-field-title">
+              Votre mission a-t-elle un nom&nbsp;?
             </Typography>
             <TextField
+              required
               fullWidth
               label="Nom de la mission"
               variant="filled"
               value={mission}
               onChange={e => setMission(e.target.value)}
             />
-            <Box my={1} />
-            <Typography variant="h5">
-              Utilisez-vous un véhicule&nbsp;? (optionnel){" "}
-            </Typography>
-            <VehicleInput
-              label="Nom ou immatriculation du véhicule"
-              vehicle={vehicle}
-              setVehicle={setVehicle}
-            />
-            <Box my={1} />
-            <Typography variant="h5">
-              Quel est le lieu de prise de service&nbsp;? (optionnel)
+            <Typography variant="h5" className="form-field-title">
+              Quel est le lieu de prise de service&nbsp;?
             </Typography>
             <AddressField
               fullWidth
+              required
               label="Lieu de prise de service"
               variant="filled"
               value={address}
@@ -86,9 +78,21 @@ export function NewMissionModal({
               currentPosition={currentPosition}
               defaultAddresses={companyAddresses}
             />
+            <Typography variant="h5" className="form-field-title">
+              Utilisez-vous un véhicule&nbsp;?{" "}
+            </Typography>
+            <VehicleInput
+              label="Nom ou immatriculation du véhicule"
+              vehicle={vehicle}
+              setVehicle={setVehicle}
+            />
           </Container>
-          <Box className="cta-container" mb={4} mt={2}>
-            <MainCtaButton type="submit" loading={loading}>
+          <Box className="cta-container" my={4}>
+            <MainCtaButton
+              type="submit"
+              disabled={!address || !mission}
+              loading={loading}
+            >
               Continuer
             </MainCtaButton>
           </Box>

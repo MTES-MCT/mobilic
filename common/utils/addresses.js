@@ -9,5 +9,7 @@ export function formatAddressMainText(address) {
 export function formatAddressSubText(address) {
   return address.properties
     ? `${address.properties.postcode} ${address.properties.city}`
-    : `${address.postalCode} ${address.city}`;
+    : address.postalCode
+    ? `${address.postalCode} ${address.city}`
+    : null;
 }
