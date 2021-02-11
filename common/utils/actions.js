@@ -563,7 +563,8 @@ class Actions {
     endTime = null,
     comment = null,
     driverId = null,
-    switchMode = true
+    switchMode = true,
+    forceNonBatchable = false
   }) => {
     if (team.length === 0)
       return await this.pushNewActivityEvent({
@@ -573,7 +574,8 @@ class Actions {
         startTime,
         endTime,
         comment,
-        switchMode
+        switchMode,
+        forceNonBatchable
       });
 
     const teamToType = {};
@@ -599,6 +601,7 @@ class Actions {
         comment,
         switchMode,
         forceKillSisterActivitiesOnFail: team.length > 1,
+        forceNonBatchable,
         groupId
       });
     }
@@ -681,7 +684,8 @@ class Actions {
     comment = null,
     switchMode = true,
     groupId = null,
-    forceKillSisterActivitiesOnFail = false
+    forceKillSisterActivitiesOnFail = false,
+    forceNonBatchable = false
   }) => {
     const actualUserId = userId || this.store.userId();
     const newActivity = {
@@ -736,7 +740,7 @@ class Actions {
       updateStore,
       ["activities"],
       "logActivity",
-      !forceKillSisterActivitiesOnFail,
+      !forceNonBatchable && !forceKillSisterActivitiesOnFail,
       groupId
     );
   };
@@ -894,7 +898,8 @@ class Actions {
         missionId: missionCurrentId,
         startTime: now(),
         team,
-        driverId
+        driverId,
+        forceNonBatchable: true
       }),
       startLocation
         ? this.logLocation({
