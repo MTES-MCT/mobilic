@@ -68,8 +68,8 @@ function ActivityItem({
                     userComment,
                     forAllTeam
                   ),
-                minStartTime: previousMissionEnd,
-                maxStartTime: nextMissionStart,
+                previousMissionEnd,
+                nextMissionStart,
                 cancellable: true,
                 teamChanges,
                 nullableEndTime: nullableEndTimeInEditActivity

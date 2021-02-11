@@ -10,6 +10,7 @@ import {
   formatDay,
   formatTimeOfDay,
   formatTimer,
+  now,
   prettyFormatDay
 } from "common/utils/time";
 import Divider from "@material-ui/core/Divider";
@@ -146,7 +147,7 @@ export function MissionDetails({ mission, handleClose, width }) {
 
   const [errors, setErrors] = React.useState({});
 
-  const ref = React.createRef();
+  const ref = React.useRef();
 
   if (!mission) return null;
 
@@ -314,9 +315,10 @@ export function MissionDetails({ mission, handleClose, width }) {
         (!entry.id && creatingActivityForUserId === entry.user.id) ? (
           <DateTimePicker
             label="Début"
-            disableFuture
             format="HH:mm"
+            autoValidate
             error={errors.startTime}
+            maxTime={now()}
             setError={e => setErrors({ ...errors, startTime: e })}
             time={editedValues.startTime}
             setTime={t => setEditedValues({ ...editedValues, startTime: t })}
@@ -326,7 +328,7 @@ export function MissionDetails({ mission, handleClose, width }) {
           formatTimeOfDay(time)
         ),
       edit: true,
-      minWidth: 120
+      minWidth: 190
     },
     {
       label: "Fin",
@@ -335,10 +337,11 @@ export function MissionDetails({ mission, handleClose, width }) {
         activityIdToEdit === entry.id ||
         (!entry.id && creatingActivityForUserId === entry.user.id) ? (
           <DateTimePicker
-            disableFuture
             label="Fin"
             time={editedValues.endTime}
             minTime={editedValues.startTime - 1}
+            autoValidate
+            maxTime={now()}
             setTime={t => setEditedValues({ ...editedValues, endTime: t })}
             error={errors.endTime}
             setError={e => setErrors({ ...errors, endTime: e })}
@@ -349,7 +352,7 @@ export function MissionDetails({ mission, handleClose, width }) {
           formatTimeOfDay(time)
         ),
       edit: true,
-      minWidth: 120
+      minWidth: 190
     },
     {
       label: "Durée",

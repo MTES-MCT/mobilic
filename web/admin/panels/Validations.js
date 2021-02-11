@@ -115,7 +115,7 @@ function _ValidationPanel({ containerRef, width }) {
   const [tab, setTab] = React.useState(0);
   const classes = useStyles({ clickableRow: tab === 0 });
 
-  const ref = React.createRef();
+  const ref = React.useRef();
 
   const commonCols = [
     {
@@ -429,8 +429,8 @@ function _ValidationPanel({ containerRef, width }) {
         PaperProps={{
           className: classes.missionModal,
           style: {
-            minWidth: isWidthUp("sm", width) ? 600 : "100vw",
-            maxWidth: isWidthUp("md", width) ? 550 : "100vw"
+            minWidth: isWidthUp("sm", width) ? 740 : "100vw",
+            maxWidth: isWidthUp("md", width) ? 690 : "100vw"
           }
         }}
       >

@@ -79,6 +79,7 @@ export default function Login() {
           <form
             className="vertical-form"
             autoComplete="on"
+            noValidate
             onSubmit={handleSubmit}
           >
             <TextField

@@ -87,7 +87,11 @@ export function NewMissionModal({
             />
           </Container>
           <Box className="cta-container" my={4}>
-            <MainCtaButton type="submit" loading={loading}>
+            <MainCtaButton
+              disabled={!address || !mission}
+              type="submit"
+              loading={loading}
+            >
               Continuer
             </MainCtaButton>
           </Box>

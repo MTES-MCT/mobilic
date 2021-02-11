@@ -1,16 +1,11 @@
 import React from "react";
 import Dialog from "@material-ui/core/Dialog";
-import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import { formatDateTime, formatTimeOfDay, now } from "common/utils/time";
+import { formatDateTime, now } from "common/utils/time";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
-import CheckIcon from "@material-ui/icons/Check";
-import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
-import ToggleButton from "@material-ui/lab/ToggleButton";
 import { ACTIVITIES, TIMEABLE_ACTIVITIES } from "common/utils/activities";
-import useTheme from "@material-ui/core/styles/useTheme";
 import { getTime } from "common/utils/events";
 import uniq from "lodash/uniq";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -23,6 +18,14 @@ import {
   CustomDialogActions,
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
+import Button from "@material-ui/core/Button";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+
+const useStyles = makeStyles(theme => ({
+  formField: {
+    marginBottom: theme.spacing(2)
+  }
+}));
 
 export function ActivityRevisionOrCreationModal({
   event,
@@ -31,16 +34,15 @@ export function ActivityRevisionOrCreationModal({
   open,
   handleClose,
   handleRevisionAction,
-  minStartTime,
-  maxStartTime,
+  previousMissionEnd,
+  nextMissionStart,
   cancellable,
   nullableEndTime = true,
   createActivity
 }) {
-  const theme = useTheme();
   const store = useStoreSyncedWithLocalStorage();
   const coworkers = store.getEntity("coworkers");
-  const [actionType, setActionType] = React.useState(undefined); // "cancel", "revision" or "creation"
+  const [isCreation, setIsCreation] = React.useState(undefined);
 
   const [newActivityType, setNewActivityType] = React.useState(undefined);
   const [newActivityDriverId, setNewActivityDriverId] = React.useState(
@@ -85,7 +87,7 @@ export function ActivityRevisionOrCreationModal({
     };
   }
 
-  function handleSubmit() {
+  function handleSubmit(actionType) {
     if (actionType === "creation") {
       let driverId = null;
       if (requiresDriver()) driverId = newActivityDriverId;
@@ -111,11 +113,11 @@ export function ActivityRevisionOrCreationModal({
     if (event) {
       setNewUserTime(getTime(event));
       setNewUserEndTime(event.endTime);
-      setActionType(undefined);
+      setIsCreation(false);
     } else {
       setNewUserTime(undefined);
       setNewUserEndTime(undefined);
-      setActionType("creation");
+      setIsCreation(true);
     }
     setNewUserEndTimeError("");
     setNewUserTimeError("");
@@ -129,23 +131,19 @@ export function ActivityRevisionOrCreationModal({
     if (newUserTime) {
       let hasStartError = false;
       let hasEndError = false;
-      if (minStartTime && newUserTime < minStartTime) {
+      if (previousMissionEnd && newUserTime < previousMissionEnd) {
         hasStartError = true;
-        setNewUserTimeError(
-          `L'heure doit être après ${formatDateTime(minStartTime)}`
-        );
+        setNewUserTimeError(`Chevauchement avec la mission précédente.`);
       } else if (
-        (maxStartTime && newUserTime > maxStartTime) ||
+        (nextMissionStart && newUserTime > nextMissionStart) ||
         newUserTime > now()
       ) {
         hasStartError = true;
-        setNewUserTimeError(
-          `L'heure doit être avant ${formatDateTime(maxStartTime)}`
-        );
+        setNewUserTimeError(`Chevauchement avec la mission suivante.`);
       }
 
       if (newUserEndTime) {
-        if (newUserEndTime <= newUserTime) {
+        if (newUserEndTime < newUserTime) {
           hasEndError = true;
           setNewUserEndTimeError("La fin doit être après le début");
         } else if (newUserEndTime > now()) {
@@ -198,15 +196,15 @@ export function ActivityRevisionOrCreationModal({
   }, [
     newUserTime,
     newUserEndTime,
-    minStartTime,
-    maxStartTime,
+    previousMissionEnd,
+    nextMissionStart,
     userId,
     teamMode
   ]);
 
   function requiresDriver() {
     return (
-      actionType === "creation" &&
+      isCreation &&
       (newActivityType === ACTIVITIES.drive.name ||
         newActivityType === ACTIVITIES.support.name) &&
       team &&
@@ -214,7 +212,7 @@ export function ActivityRevisionOrCreationModal({
     );
   }
 
-  function canSubmit() {
+  function canSubmit(actionType) {
     if (actionType === "cancel") {
       return !!event;
     }
@@ -248,78 +246,45 @@ export function ActivityRevisionOrCreationModal({
     return false;
   }
 
+  const classes = useStyles();
+
   return (
     <Dialog open={open} onClose={handleClose}>
       <CustomDialogTitle
-        title={
-          actionType === "creation"
-            ? "Nouvelle activité"
-            : "Modifier l'activité"
-        }
+        title={isCreation ? "Nouvelle activité" : "Modifier l'activité"}
         handleClose={handleClose}
       />
-      <DialogContent>
-        <Box my={2}>
+      <DialogContent dividers>
+        <Box my={2} mb={4}>
           <Typography>
             ⚠️ Les modifications seront visibles par votre employeur et par les
             contrôleurs
           </Typography>
         </Box>
-        {event && (
-          <>
-            <Box mb={1}>
-              <Box className="flex-row-flex-start">
-                <Typography className="bold">Activité :&nbsp;</Typography>
-                {ACTIVITIES[event.type].renderIcon({
-                  style: { color: theme.palette[event.type] }
-                })}
-              </Box>
-              <Typography>
-                <span className="bold">Début : </span>
-                {formatTimeOfDay(getTime(event))}
-              </Typography>
-              {event.endTime && (
-                <Typography>
-                  <span className="bold">Fin : </span>
-                  {formatTimeOfDay(event.endTime)}
-                </Typography>
-              )}
-            </Box>
-            <Box m={2} style={{ display: "flex", justifyContent: "center" }}>
-              <ToggleButtonGroup
-                value={actionType}
-                exclusive
-                onChange={(e, newType) => setActionType(newType)}
-              >
-                <ToggleButton disabled={!cancellable} value="cancel">
-                  Supprimer
-                </ToggleButton>
-                <ToggleButton value="revision">Modifier heure</ToggleButton>
-              </ToggleButtonGroup>
-            </Box>
-          </>
-        )}
-        <Box mt={3}>
-          {actionType === "creation" && (
-            <TextField
-              label="Activité"
-              required
-              fullWidth
-              select
-              value={newActivityType}
-              onChange={e => setNewActivityType(e.target.value)}
-            >
-              {Object.keys(TIMEABLE_ACTIVITIES).map(activityName => (
-                <MenuItem key={activityName} value={activityName}>
-                  {TIMEABLE_ACTIVITIES[activityName].label}
-                </MenuItem>
-              ))}
-            </TextField>
-          )}
+        <Box mt={1}>
+          <TextField
+            label="Activité"
+            required
+            fullWidth
+            variant={isCreation ? "filled" : "standard"}
+            className={classes.formField}
+            select
+            disabled={!isCreation}
+            value={isCreation ? newActivityType : event ? event.type : null}
+            onChange={e => setNewActivityType(e.target.value)}
+          >
+            {Object.keys(TIMEABLE_ACTIVITIES).map(activityName => (
+              <MenuItem key={activityName} value={activityName}>
+                {TIMEABLE_ACTIVITIES[activityName].label}
+              </MenuItem>
+            ))}
+          </TextField>
           {requiresDriver() && (
             <TextField
               label="Conducteur"
               required
+              variant="filled"
+              className={classes.formField}
               fullWidth
               select
               value={newActivityDriverId}
@@ -337,31 +302,36 @@ export function ActivityRevisionOrCreationModal({
               </MenuItem>
             </TextField>
           )}
-          {(actionType === "revision" || actionType === "creation") && [
+          <DateTimePicker
+            key={0}
+            label="Début"
+            variant="filled"
+            className={classes.formField}
+            time={newUserTime}
+            setTime={setNewUserTime}
+            error={newUserTimeError}
+            minTime={previousMissionEnd}
+            maxTime={nextMissionStart}
+            required
+            noValidate
+          />
+          {(isCreation || event) && (
             <DateTimePicker
-              key={0}
-              label="Début"
-              time={newUserTime}
-              setTime={setNewUserTime}
-              error={newUserTimeError}
-              required={true}
+              key={1}
+              label="Fin"
+              variant="filled"
+              className={classes.formField}
+              time={newUserEndTime}
+              minTime={newUserTime}
+              maxTime={nextMissionStart}
+              setTime={setNewUserEndTime}
+              error={newUserEndTimeError}
+              clearable={nullableEndTime}
               noValidate
-            />,
-            (actionType === "creation" || event) && (
-              <DateTimePicker
-                key={1}
-                label="Fin"
-                time={newUserEndTime}
-                setTime={setNewUserEndTime}
-                error={newUserEndTimeError}
-                required={true}
-                clearable={nullableEndTime}
-                noValidate
-              />
-            )
-          ]}
+            />
+          )}
         </Box>
-        <Box mt={2}>
+        <Box mt={1}>
           <FormControlLabel
             control={
               <Switch
@@ -374,10 +344,11 @@ export function ActivityRevisionOrCreationModal({
             labelPlacement="end"
           />
         </Box>
-        <Box mt={2}>
+        <Box py={4}>
           <TextField
             label="Raison (optionnelle)"
             fullWidth
+            variant="filled"
             multiline
             rowsMax={10}
             value={userComment}
@@ -386,17 +357,30 @@ export function ActivityRevisionOrCreationModal({
         </Box>
       </DialogContent>
       <CustomDialogActions>
-        <IconButton
+        {!isCreation && event && (
+          <Button
+            variant="outlined"
+            color="primary"
+            disabled={!canSubmit("cancel")}
+            onClick={() => {
+              handleSubmit("cancel");
+              handleClose();
+            }}
+          >
+            Supprimer
+          </Button>
+        )}
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={!canSubmit(isCreation ? "creation" : "revision")}
           onClick={() => {
-            handleSubmit();
+            handleSubmit(isCreation ? "creation" : "revision");
             handleClose();
           }}
-          className="no-margin-no-padding"
-          disabled={!canSubmit()}
-          color="primary"
         >
-          <CheckIcon />
-        </IconButton>
+          {isCreation ? "Créer" : "Modifier heure"}
+        </Button>
       </CustomDialogActions>
     </Dialog>
   );

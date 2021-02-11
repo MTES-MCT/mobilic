@@ -133,8 +133,8 @@ export function MissionDetails({
                       missionActivities: mission.allActivities,
                       missionId: mission.id
                     }),
-                  minStartTime: previousMissionEnd,
-                  maxStartTime: nextMissionStart,
+                  previousMissionEnd,
+                  nextMissionStart,
                   teamChanges,
                   nullableEndTime: nullableEndTimeInEditActivity
                 })

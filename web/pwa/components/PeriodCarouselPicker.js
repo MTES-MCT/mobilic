@@ -66,12 +66,13 @@ export function PeriodCarouselPicker({
   renderPeriod
 }) {
   const classes = useStyles();
-  const baseRef = React.createRef();
+  const baseRef = React.useRef();
 
   const selectedPeriodIdx = periods.findIndex(p => p === selectedPeriod);
   const periodRefs = {};
   periods.forEach(period => {
-    periodRefs[period] = React.createRef();
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    periodRefs[period] = React.useRef();
   });
 
   const scrollToSelectedPeriod = period => {
