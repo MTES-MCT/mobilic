@@ -99,7 +99,8 @@ export function MissionDetails({
   hideValidations,
   validateMission,
   validationButtonName = "Valider et Envoyer",
-  inverseColors = false
+  inverseColors = false,
+  isMissionEnded = true
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -148,6 +149,7 @@ export function MissionDetails({
           previousMissionEnd={previousMissionEnd}
           teamChanges={teamChanges}
           nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
+          isMissionEnded={isMissionEnded}
         />
       </MissionReviewSection>
       <MissionReviewSection

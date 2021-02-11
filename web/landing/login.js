@@ -78,7 +78,6 @@ export default function Login() {
         <Box my={3}>
           <form
             className="vertical-form"
-            noValidate
             autoComplete="on"
             onSubmit={handleSubmit}
           >
@@ -92,6 +91,7 @@ export default function Login() {
               onChange={e => {
                 setEmail(e.target.value.replace(/\s/g, ""));
               }}
+              required
             />
             <PasswordField
               fullWidth
@@ -102,6 +102,7 @@ export default function Login() {
               onChange={e => {
                 setPassword(e.target.value);
               }}
+              required
             />
             <Box my={4}>
               <LoadingButton

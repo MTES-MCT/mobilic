@@ -91,6 +91,7 @@ export function CurrentActivity({
           }
         })
       }
+      isMissionEnded={false}
     />
   ];
 }

@@ -38,7 +38,6 @@ export function EndMissionModal({
     <FunnelModal open={open} handleBack={handleClose}>
       <Container className="flex-column-space-between" style={{ flexGrow: 1 }}>
         <form
-          noValidate
           autoComplete="off"
           onSubmit={async e => {
             e.preventDefault();

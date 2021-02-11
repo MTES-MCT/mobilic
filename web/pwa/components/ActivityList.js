@@ -91,7 +91,8 @@ export function ActivityList({
   allMissionActivities,
   editActivityEvent,
   teamChanges,
-  nullableEndTimeInEditActivity
+  nullableEndTimeInEditActivity,
+  isMissionEnded
 }) {
   // Compute duration and end time for each activity
   const augmentedAndSortedActivities = activities.map(activity => ({
@@ -100,30 +101,43 @@ export function ActivityList({
   }));
 
   sortEvents(augmentedAndSortedActivities).reverse();
+  const latestActivity = augmentedAndSortedActivities[0];
 
   return (
     <List dense>
+      {!isMissionEnded && latestActivity && latestActivity.endTime && (
+        <ListItem disableGutters key={"trailingBreak"}>
+          <ListItemAvatar>
+            <Avatar>{ACTIVITIES.break.renderIcon()}</Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary={`${ACTIVITIES.break.label} - ${formatTimeOfDay(
+              latestActivity.endTime
+            )} - En cours`}
+          />
+        </ListItem>
+      )}
       {augmentedAndSortedActivities.map((activity, index) => {
         let nextActivity;
-        let breakItem;
+        let breakItemBefore;
         if (index < augmentedAndSortedActivities.length - 1) {
           nextActivity = augmentedAndSortedActivities[index + 1];
-        }
-        if (nextActivity && activity.startTime > nextActivity.endTime) {
-          breakItem = (
-            <ListItem disableGutters key={"break" + index}>
-              <ListItemAvatar>
-                <Avatar>{ACTIVITIES.break.renderIcon()}</Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={`${ACTIVITIES.break.label} - ${formatTimeOfDay(
-                  nextActivity.endTime
-                )} - ${formatLongTimer(
-                  getTime(activity) - nextActivity.endTime
-                )}`}
-              />
-            </ListItem>
-          );
+          if (activity.startTime > nextActivity.endTime) {
+            breakItemBefore = (
+              <ListItem disableGutters key={"break" + index}>
+                <ListItemAvatar>
+                  <Avatar>{ACTIVITIES.break.renderIcon()}</Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={`${ACTIVITIES.break.label} - ${formatTimeOfDay(
+                    nextActivity.endTime
+                  )} - ${formatLongTimer(
+                    getTime(activity) - nextActivity.endTime
+                  )}`}
+                />
+              </ListItem>
+            );
+          }
         }
         return [
           <ActivityItem
@@ -136,7 +150,7 @@ export function ActivityList({
             nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
             key={index}
           />,
-          breakItem
+          breakItemBefore
         ];
       })}
     </List>

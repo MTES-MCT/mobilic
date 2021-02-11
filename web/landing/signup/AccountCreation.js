@@ -122,7 +122,6 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       <Section last title="ou via le formulaire d'inscription">
         <form
           className="vertical-form centered"
-          noValidate
           autoComplete="off"
           onSubmit={handleSubmit}
         >

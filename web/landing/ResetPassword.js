@@ -153,7 +153,6 @@ export function ResetPassword() {
                 </PaperContainerTitle>
                 <form
                   className="vertical-form centered"
-                  noValidate
                   autoComplete="off"
                   onSubmit={handleSubmit}
                 >
@@ -170,6 +169,7 @@ export function ResetPassword() {
                     onChange={e => {
                       setPassword(e.target.value);
                     }}
+                    required
                   />
                   <PasswordField
                     required
@@ -261,7 +261,6 @@ export function RequestResetPassword() {
               </PaperContainerTitle>
               <form
                 className="vertical-form centered"
-                noValidate
                 autoComplete="off"
                 onSubmit={handleSubmit}
               >

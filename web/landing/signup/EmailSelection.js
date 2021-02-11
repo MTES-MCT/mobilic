@@ -115,7 +115,6 @@ export function EmailSelection() {
       </PaperContainerTitle>
       <form
         className="vertical-form centered"
-        noValidate
         autoComplete="off"
         onSubmit={handleSubmit}
       >

@@ -39,7 +39,6 @@ export function NewMissionModal({
     <FunnelModal open={open} handleBack={handleClose}>
       <Container>
         <form
-          noValidate
           autoComplete="off"
           onSubmit={async e => {
             setLoading(true);
@@ -88,11 +87,7 @@ export function NewMissionModal({
             />
           </Container>
           <Box className="cta-container" my={4}>
-            <MainCtaButton
-              type="submit"
-              disabled={!address || !mission}
-              loading={loading}
-            >
+            <MainCtaButton type="submit" loading={loading}>
               Continuer
             </MainCtaButton>
           </Box>

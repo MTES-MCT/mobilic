@@ -26,7 +26,6 @@ export function ChangeEmailModal({ open, handleClose, handleSubmit }) {
         title="Nouvelle adresse email"
       />
       <form
-        noValidate
         autoComplete="off"
         onSubmit={async e => {
           e.preventDefault();

@@ -174,7 +174,6 @@ export function CompanySignup() {
       <Section title="1. Quel est le SIREN de l'entreprise ?">
         <form
           className="vertical-form centered"
-          noValidate
           autoComplete="off"
           onSubmit={handleSirenSubmit}
         >
@@ -311,7 +310,6 @@ export function CompanySignup() {
         >
           <form
             className="vertical-form centered"
-            noValidate
             autoComplete="off"
             onSubmit={handleCompanySignup}
           >
