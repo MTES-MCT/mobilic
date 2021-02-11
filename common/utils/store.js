@@ -97,6 +97,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       await this.storage.clear();
       await this.storage.setItem("storeVersion", STORE_VERSION);
     } else {
+      // Load main state from (local) storage
       const stateUpdate = Object.fromEntries(
         await Promise.all(
           map(this.mapper, async (value, entry) => {
@@ -104,17 +105,23 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           })
         )
       );
-      this.secondState = Object.fromEntries(
-        await Promise.all(
-          map(this.secondMapper, async (value, entry) => {
-            return [
+      // Load secondary state from (local) storage, resetting it if possible
+      const pendingRequests = this.secondMapper.pendingRequests.deserialize(
+        await this.storage.getItem("pendingRequests")
+      );
+      await Promise.all(
+        Object.keys(this.secondMapper).map(async entry => {
+          this.secondState[entry] = this.secondMapper[entry].deserialize(
+            await (pendingRequests.length > 0
+              ? this.storage.getItem(entry)
+              : null)
+          );
+          if (pendingRequests.length === 0)
+            this.storage.setItem(
               entry,
-              this.secondMapper[entry].deserialize(
-                await this.storage.getItem(entry)
-              )
-            ];
-          })
-        )
+              this.secondMapper[entry].serialize(this.secondState[entry])
+            );
+        })
       );
       try {
         await new Promise(resolve =>
@@ -122,20 +129,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             mapValues(stateUpdate, (value, entry) =>
               this.mapper[entry].deserialize(value)
             ),
-            () => {
-              if (this.secondState.pendingRequests.length === 0) {
-                Object.keys(this.secondMapper).forEach(entry => {
-                  this.secondState[entry] = this.secondMapper[
-                    entry
-                  ].deserialize(null);
-                  this.storage.setItem(
-                    entry,
-                    this.secondMapper[entry].serialize(this.secondState[entry])
-                  );
-                });
-              }
-              resolve();
-            }
+            resolve
           )
         );
       } catch (err) {
