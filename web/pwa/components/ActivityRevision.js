@@ -20,6 +20,7 @@ import {
 } from "../../common/CustomDialogTitle";
 import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -41,6 +42,7 @@ export function ActivityRevisionOrCreationModal({
   createActivity
 }) {
   const store = useStoreSyncedWithLocalStorage();
+  const modals = useModals();
   const coworkers = store.getEntity("coworkers");
   const [isCreation, setIsCreation] = React.useState(undefined);
 
@@ -229,7 +231,7 @@ export function ActivityRevisionOrCreationModal({
         return (
           !!newActivityType &&
           !!newUserTime &&
-          (nullableEndTime || !newUserEndTime) &&
+          (nullableEndTime || !!newUserEndTime) &&
           !newUserTimeError &&
           !newUserEndTimeError &&
           newActivityDriverId !== undefined
@@ -238,7 +240,7 @@ export function ActivityRevisionOrCreationModal({
       return (
         !!newActivityType &&
         !!newUserTime &&
-        (nullableEndTime || !newUserEndTime) &&
+        (nullableEndTime || !!newUserEndTime) &&
         !newUserTimeError &&
         !newUserEndTimeError
       );
@@ -331,19 +333,21 @@ export function ActivityRevisionOrCreationModal({
             />
           )}
         </Box>
-        <Box mt={1}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={teamMode}
-                onChange={() => setTeamMode(!teamMode)}
-                color="primary"
-              />
-            }
-            label="Pour toute l'équipe"
-            labelPlacement="end"
-          />
-        </Box>
+        {team.length > 1 && (
+          <Box mt={1}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={teamMode}
+                  onChange={() => setTeamMode(!teamMode)}
+                  color="primary"
+                />
+              }
+              label="Pour toute l'équipe"
+              labelPlacement="end"
+            />
+          </Box>
+        )}
         <Box py={4}>
           <TextField
             label="Raison (optionnelle)"
@@ -363,8 +367,14 @@ export function ActivityRevisionOrCreationModal({
             color="primary"
             disabled={!canSubmit("cancel")}
             onClick={() => {
-              handleSubmit("cancel");
-              handleClose();
+              modals.open("confirmation", {
+                title: "Confirmer suppression",
+                textButtons: true,
+                handleConfirm: async () => {
+                  await handleSubmit("cancel");
+                  handleClose();
+                }
+              });
             }}
           >
             Supprimer
