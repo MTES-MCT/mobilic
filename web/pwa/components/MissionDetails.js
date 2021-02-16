@@ -133,6 +133,23 @@ export function MissionDetails({
                       missionActivities: mission.allActivities,
                       missionId: mission.id
                     }),
+                  handleRevisionAction: (
+                    activity,
+                    actionType,
+                    newUserStartTime,
+                    newUserEndTime,
+                    userComment,
+                    forAllTeam
+                  ) =>
+                    editActivityEvent(
+                      activity,
+                      actionType,
+                      mission.allActivities,
+                      newUserStartTime,
+                      newUserEndTime,
+                      userComment,
+                      forAllTeam
+                    ),
                   previousMissionEnd,
                   nextMissionStart,
                   teamChanges,

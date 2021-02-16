@@ -770,7 +770,6 @@ class Actions {
             newStartTime,
             newEndTime,
             comment,
-            false,
             false
           )
         );
@@ -784,7 +783,6 @@ class Actions {
             newStartTime,
             newEndTime,
             comment,
-            false,
             false
           )
         );
@@ -916,7 +914,11 @@ class Actions {
       ? address
       : address.manual
       ? { manual: address.manual, name: address.name }
-      : { ...address.properties, postalCode: address.properties.postcode };
+      : address.properties
+      ? { ...address.properties, postalCode: address.properties.postcode }
+      : typeof address === "string"
+      ? { manual: true, name: address }
+      : null;
 
     const payload = {
       missionId,
