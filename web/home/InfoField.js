@@ -35,7 +35,11 @@ export function InfoItem({
     <Box>
       <Grid container wrap="nowrap" spacing={0} alignItems="flex-start">
         <Grid item>
-          <Typography className={classes.fieldName} variant="overline">
+          <Typography
+            align="left"
+            className={classes.fieldName}
+            variant="overline"
+          >
             {name}
           </Typography>
         </Grid>
@@ -53,7 +57,7 @@ export function InfoItem({
           </Grid>
         )}
       </Grid>
-      <Typography noWrap className={classes.fieldValue}>
+      <Typography noWrap align="left" className={classes.fieldValue}>
         {value}
       </Typography>
       {info && <Alert severity="info">{info}</Alert>}

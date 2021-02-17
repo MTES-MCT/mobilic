@@ -41,7 +41,7 @@ const baseOptions = {
       dark: "#ab2b1e"
     },
     background: {
-      default: "#f3f5f7",
+      default: "#f7f9fa",
       paper: "#fff",
       dark: "#26353f"
     },

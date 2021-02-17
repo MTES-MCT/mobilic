@@ -1,7 +1,7 @@
 import forEach from "lodash/forEach";
 import mapValues from "lodash/mapValues";
 import values from "lodash/values";
-import { getTime } from "./events";
+import { getTime, sortEvents } from "./events";
 import { computeTeamChanges } from "./coworkers";
 
 export function parseMissionPayloadFromBackend(missionPayload, userId) {
@@ -39,19 +39,27 @@ export function linkMissionsWithRelations(missions, relationMap) {
   return values(augmentedMissions);
 }
 
-export function computeMissionProperties(mission, userId) {
+function computeMissionProperties(mission, userId) {
+  const activities = mission.allActivities.filter(a => a.userId === userId);
   return {
+    activities,
+    expenditures: mission.expenditures.filter(e => e.userId === userId),
     startTime:
-      mission.activities.length > 0
-        ? getTime(mission.activities[0])
-        : getTime(mission),
+      activities.length > 0 ? getTime(activities[0]) : getTime(mission),
     isComplete:
-      mission.activities.length > 0 &&
-      !!mission.activities[mission.activities.length - 1].endTime,
+      activities.length > 0 && !!activities[activities.length - 1].endTime,
     endTime:
-      mission.activities.length > 0
-        ? mission.activities[mission.activities.length - 1].endTime
-        : null,
+      activities.length > 0 ? activities[activities.length - 1].endTime : null,
     teamChanges: computeTeamChanges(mission.allActivities, userId)
   };
+}
+
+export function augmentSortAndFilterMissions(missions, userId) {
+  console.log(missions);
+  console.log(userId);
+  return sortEvents(
+    missions
+      .map(m => ({ ...m, ...computeMissionProperties(m, userId) }))
+      .filter(m => m.activities.length > 0)
+  );
 }

@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function EmploymentInfo({ employment }) {
+export function EmploymentInfo({ employment, spacing = 4 }) {
   const classes = useStyles(employment.isAcknowledged);
 
   const api = useApi();
@@ -91,7 +91,7 @@ function EmploymentInfo({ employment }) {
 
   return (
     <>
-      <Grid container wrap="wrap" spacing={4}>
+      <Grid container wrap="wrap" spacing={spacing}>
         <Grid item>
           <InfoItem name="Entreprise" value={employment.company.name} />
         </Grid>

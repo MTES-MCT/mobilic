@@ -99,7 +99,8 @@ function _Root() {
     const queryString = new URLSearchParams(location.search);
 
     const isLoggingOut = location.pathname.startsWith("/logout");
-    if (isLoggingOut) {
+    const isInControl = location.pathname.startsWith("/control");
+    if (isLoggingOut || isInControl) {
       return;
     }
     if (!document.hidden && !isInOauthFlow) {

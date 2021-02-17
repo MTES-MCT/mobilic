@@ -16,6 +16,7 @@ import { ActivateEmail } from "../landing/signup/ActivateEmail";
 import { RequestResetPassword, ResetPassword } from "../landing/ResetPassword";
 import { ADMIN_VIEWS } from "../admin/utils/navigation";
 import { CGU } from "../landing/cgu";
+import { UserRead } from "../control/UserRead";
 
 export const ROUTES = [
   {
@@ -140,6 +141,13 @@ export const ROUTES = [
     label: "Reset password",
     accessible: ({ userInfo }) => !userInfo.id,
     component: <RequestResetPassword />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/control/user-history/:token",
+    label: "Historique de l'utilisateur",
+    accessible: () => true,
+    component: <UserRead />,
     menuItemFilter: () => false
   }
 ];

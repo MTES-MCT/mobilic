@@ -4,7 +4,7 @@ import { sortEvents } from "common/utils/events";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { useActions } from "common/utils/actions";
 import {
-  computeMissionProperties,
+  augmentSortAndFilterMissions,
   linkMissionsWithRelations
 } from "../utils/mission";
 import { History } from "../../web/pwa/screens/History";
@@ -29,19 +29,15 @@ function App({ ScreenComponent, loadUser }) {
   const expenditures = values(store.getEntity("expenditures"));
   const comments = sortEvents(values(store.getEntity("comments")));
 
-  const unsortedMissions = linkMissionsWithRelations(
-    store.getEntity("missions"),
-    {
-      activities: activities.filter(a => a.userId === store.userId()),
+  const missions = augmentSortAndFilterMissions(
+    linkMissionsWithRelations(store.getEntity("missions"), {
       allActivities: activities,
-      expenditures: expenditures.filter(e => e.userId === store.userId()),
+      expenditures: expenditures,
       comments: comments
-    }
-  )
-    .map(m => ({ ...m, ...computeMissionProperties(m, store.userId()) }))
-    .filter(m => m.activities.length > 0);
+    }),
+    store.userId()
+  );
 
-  const missions = sortEvents(unsortedMissions);
   const historyStart = getStartOfMonth(currentTime - 183 * DAY);
 
   const currentMission =

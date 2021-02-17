@@ -35,11 +35,12 @@ import { MissionReviewSection } from "../components/MissionReviewSection";
 import Link from "@material-ui/core/Link";
 import { MissionDetails } from "../components/MissionDetails";
 import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
 import { AccountButton } from "../components/AccountButton";
 import { useLocation, useHistory } from "react-router-dom";
 import Box from "@material-ui/core/Box";
 import { NoDataImage } from "common/utils/icons";
+import Button from "@material-ui/core/Button";
+import { useModals } from "common/utils/modals";
 
 const tabs = {
   mission: {
@@ -56,7 +57,10 @@ const tabs = {
       currentMission,
       validateMission,
       logComment,
-      cancelComment
+      cancelComment,
+      coworkers,
+      vehicles,
+      userId
     }) => {
       const mission = missionsInPeriod[0];
       const missionEnd =
@@ -64,7 +68,10 @@ const tabs = {
       return (
         <div>
           {mission.name && (
-            <WorkTimeSummaryAdditionalInfo disableTopMargin>
+            <WorkTimeSummaryAdditionalInfo
+              disableTopMargin
+              disableBottomMargin={false}
+            >
               <Typography className="bold">
                 Nom de la mission : {mission.name}
               </Typography>
@@ -94,6 +101,9 @@ const tabs = {
               validationButtonName="Valider"
               logComment={logComment}
               cancelComment={cancelComment}
+              coworkers={coworkers}
+              vehicles={vehicles}
+              userId={userId}
             />
           </WorkTimeSummaryAdditionalInfo>
         </div>
@@ -186,7 +196,8 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     flexShrink: 0,
     paddingTop: theme.spacing(4),
-    textAlign: "center"
+    textAlign: "center",
+    paddingBottom: theme.spacing(4)
   },
   placeholderContainer: {
     backgroundColor: "inherit",
@@ -199,11 +210,12 @@ const useStyles = makeStyles(theme => ({
   dayAdditionalInfo: {
     marginTop: theme.spacing(4)
   },
-  fullScreen: {
+  whiteFullScreen: {
     width: "100%",
     flexGrow: 1,
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
+    backgroundColor: theme.palette.background.paper
   },
   placeholder: {
     height: "100%",
@@ -211,6 +223,10 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center"
+  },
+  generateAccessButton: {
+    margin: theme.spacing(2),
+    alignSelf: "flex-start"
   }
 }));
 
@@ -260,10 +276,16 @@ export function History({
   editExpenditures,
   validateMission,
   logComment,
-  cancelComment
+  cancelComment,
+  displayAccountButton = true,
+  displayQRCodeGeneration = true,
+  coworkers = null,
+  vehicles = null,
+  userId = null
 }) {
   const location = useLocation();
   const history = useHistory();
+  const modals = useModals();
 
   const onBackButtonClick = location.state
     ? () => history.push(location.state.previousPagePath)
@@ -370,14 +392,32 @@ export function History({
   );
 
   return (
-    <Paper className={classes.fullScreen}>
+    <Container
+      className={classes.whiteFullScreen}
+      maxWidth={false}
+      disableGutters
+    >
       <Container
         className="flex-column full-height"
         style={{ flexGrow: 1, flexShrink: 0 }}
         disableGutters
         maxWidth="sm"
       >
-        <AccountButton p={2} onBackButtonClick={onBackButtonClick} />
+        {displayAccountButton && (
+          <AccountButton p={2} onBackButtonClick={onBackButtonClick} />
+        )}
+        {displayQRCodeGeneration && (
+          <Button
+            className={classes.generateAccessButton}
+            color="secondary"
+            variant="outlined"
+            onClick={() => {
+              modals.open("userReadQRCode");
+            }}
+          >
+            Donner accès à l'historique
+          </Button>
+        )}
         <Container className={classes.periodSelector} maxWidth={false}>
           <Tabs
             value={currentTab}
@@ -436,7 +476,10 @@ export function History({
               currentMission,
               validateMission,
               logComment,
-              cancelComment
+              cancelComment,
+              coworkers,
+              vehicles,
+              userId
             })
           ) : (
             <Box className={classes.placeholder}>
@@ -448,6 +491,6 @@ export function History({
           )}
         </Container>
       </Container>
-    </Paper>
+    </Container>
   );
 }

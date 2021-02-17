@@ -100,19 +100,22 @@ export function MissionDetails({
   validateMission,
   validationButtonName = "Valider et Envoyer",
   inverseColors = false,
-  isMissionEnded = true
+  isMissionEnded = true,
+  coworkers = null,
+  vehicles = null,
+  userId = null
 }) {
   const classes = useStyles();
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
-  const userId = store.userId();
+  const actualUserId = userId || store.userId();
   const alerts = useSnackbarAlerts();
 
-  const coworkers = store.getEntity("coworkers");
+  const actualCoworkers = coworkers || store.getEntity("coworkers");
 
-  let teamChanges = omit(mission.teamChanges, [userId]);
+  let teamChanges = omit(mission.teamChanges, [actualUserId]);
 
-  const teamAtMissionEnd = [userId, ...resolveTeamAt(teamChanges, now())];
+  const teamAtMissionEnd = [actualUserId, ...resolveTeamAt(teamChanges, now())];
 
   const teamMatesLatestStatuses = computeLatestEnrollmentStatuses(teamChanges);
   const isTeamMode = Object.keys(teamMatesLatestStatuses).length > 0;
@@ -192,8 +195,8 @@ export function MissionDetails({
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    coworkers[tc.userId.toString()]
-                      ? coworkers[tc.userId.toString()].firstName
+                    actualCoworkers[tc.userId.toString()]
+                      ? actualCoworkers[tc.userId.toString()].firstName
                       : "Inconnu"
                   }
                   secondary={formatLatestEnrollmentStatus(tc)}
@@ -216,7 +219,7 @@ export function MissionDetails({
                   primary={
                     mission.context.vehicleId
                       ? getVehicleName(
-                          store.getEntity("vehicles")[
+                          (vehicles || store.getEntity("vehicles"))[
                             mission.context.vehicleId.toString()
                           ]
                         )
@@ -328,7 +331,7 @@ export function MissionDetails({
       )}
       {!hideValidations && (
         <MissionReviewSection title="">
-          {!mission.adminValidation && !mission.validation && (
+          {validateMission && !mission.adminValidation && !mission.validation && (
             <Box style={{ textAlign: "center" }} pt={2} pb={2}>
               <MainCtaButton
                 style={{ textAlign: "center" }}
@@ -346,34 +349,39 @@ export function MissionDetails({
               </MainCtaButton>
             </Box>
           )}
+          <Box
+            color={mission.validation ? "success.main" : "warning.main"}
+            className={classes.validationContainer}
+          >
+            {mission.validation ? (
+              <CheckIcon fontSize="small" color="inherit" />
+            ) : (
+              <ScheduleIcon fontSize="small" color="inherit" />
+            )}
+            <Typography className={classes.validationText}>
+              {mission.validation
+                ? `validée le ${formatDay(mission.validation.receptionTime)}`
+                : "en attente de validation salarié"}
+            </Typography>
+          </Box>
           {mission.validation && (
-            <>
-              <Box color="success.main" className={classes.validationContainer}>
+            <Box
+              color={mission.adminValidation ? "success.main" : "warning.main"}
+              className={classes.validationContainer}
+            >
+              {mission.adminValidation ? (
                 <CheckIcon fontSize="small" color="inherit" />
-                <Typography className={classes.validationText}>
-                  validée le {formatDay(mission.validation.receptionTime)}
-                </Typography>
-              </Box>
-              <Box
-                color={
-                  mission.adminValidation ? "success.main" : "warning.main"
-                }
-                className={classes.validationContainer}
-              >
-                {mission.adminValidation ? (
-                  <CheckIcon fontSize="small" color="inherit" />
-                ) : (
-                  <ScheduleIcon fontSize="small" color="inherit" />
-                )}
-                <Typography className={classes.validationText}>
-                  {mission.adminValidation
-                    ? `validée par le gestionnaire le ${formatDay(
-                        mission.adminValidation.receptionTime
-                      )}`
-                    : "en attente de validation gestionnaire"}
-                </Typography>
-              </Box>
-            </>
+              ) : (
+                <ScheduleIcon fontSize="small" color="inherit" />
+              )}
+              <Typography className={classes.validationText}>
+                {mission.adminValidation
+                  ? `validée par le gestionnaire le ${formatDay(
+                      mission.adminValidation.receptionTime
+                    )}`
+                  : "en attente de validation gestionnaire"}
+              </Typography>
+            </Box>
           )}
         </MissionReviewSection>
       )}

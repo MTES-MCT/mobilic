@@ -1,6 +1,11 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
-import { formatTimeOfDay, formatTimer, getStartOfDay } from "common/utils/time";
+import {
+  formatTimeOfDay,
+  formatTimer,
+  getStartOfDay,
+  now
+} from "common/utils/time";
 import Box from "@material-ui/core/Box";
 import { computeTotalActivityDurations } from "common/utils/metrics";
 import { ACTIVITIES } from "common/utils/activities";
@@ -19,8 +24,10 @@ const useStyles = makeStyles(theme => ({
     fontSize: "200%"
   },
   additionalInfo: {
-    marginTop: disableTopMargin => (disableTopMargin ? 0 : theme.spacing(4)),
-    marginBottom: theme.spacing(4)
+    marginTop: ({ disableTopMargin }) =>
+      disableTopMargin ? 0 : theme.spacing(4),
+    marginBottom: ({ disableBottomMargin }) =>
+      disableBottomMargin ? 0 : theme.spacing(4)
   }
 }));
 
@@ -59,9 +66,10 @@ export function WorkTimeSummaryKpi({
 export function WorkTimeSummaryAdditionalInfo({
   children,
   disableTopMargin = false,
+  disableBottomMargin = true,
   disablePadding = false
 }) {
-  const classes = useStyles(disableTopMargin);
+  const classes = useStyles({ disableTopMargin, disableBottomMargin });
   return (
     <Card className={classes.additionalInfo}>
       <Box
@@ -104,7 +112,7 @@ export function computeMissionKpis(mission) {
   const serviceHourString = `De ${formatTimeOfDay(
     getTime(mission)
   )} à ${formatTimeOfDay(
-    mission.activities[mission.activities.length - 1].endTime
+    mission.activities[mission.activities.length - 1].endTime || now()
   )}`;
   return [
     {

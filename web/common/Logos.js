@@ -7,15 +7,18 @@ import Box from "@material-ui/core/Box";
 import { LinkButton } from "./LinkButton";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
-export function Logos() {
-  const shouldDisplayBothLogos = useMediaQuery("(min-width:350px)");
+export function Logos({ leaveSpaceForMenu = true }) {
+  const shouldDisplayBothLogosAndMenu = useMediaQuery("(min-width:350px)");
+  const shouldDisplayBothLogosWithoutMenu = useMediaQuery("(min-width:300px)");
   const shouldDisplayFullSizeLogo = useMediaQuery(theme =>
     theme.breakpoints.up("sm")
   );
   return (
     <LinkButton style={{ borderRadius: 0, textTransform: "none" }} href="/">
       <Box className="flex-row-flex-start">
-        {shouldDisplayBothLogos && (
+        {(leaveSpaceForMenu
+          ? shouldDisplayBothLogosAndMenu
+          : shouldDisplayBothLogosWithoutMenu) && (
           <Box mr={2}>
             <SvgIcon
               style={{ fontSize: shouldDisplayFullSizeLogo ? 60 : 40 }}

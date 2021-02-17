@@ -196,6 +196,102 @@ export const USER_QUERY = gql`
   }
 `;
 
+export const USER_READ_QUERY = gql`
+  query readUser($token: String!, $activityAfter: TimeStamp) {
+    userFromReadToken(token: $token) {
+      id
+      firstName
+      lastName
+      birthDate
+      email
+      primaryCompany {
+        id
+        name
+        siren
+        vehicles {
+          id
+          name
+        }
+      }
+      missions(fromTime: $activityAfter) {
+        id
+        name
+        validations {
+          submitterId
+          receptionTime
+          isAdmin
+          userId
+        }
+        context
+        expenditures {
+          id
+          type
+          missionId
+          userId
+        }
+        activities {
+          id
+          type
+          missionId
+          startTime
+          endTime
+          userId
+          user {
+            id
+            firstName
+            lastName
+          }
+        }
+        comments {
+          id
+          text
+          missionId
+          receptionTime
+          submitter {
+            id
+            firstName
+            lastName
+          }
+        }
+        startLocation {
+          name
+          alias
+          postalCode
+          city
+        }
+        endLocation {
+          name
+          alias
+          postalCode
+          city
+        }
+      }
+      currentEmployments {
+        id
+        startDate
+        isAcknowledged
+        isPrimary
+        hasAdminRights
+        company {
+          id
+          name
+          siren
+        }
+      }
+    }
+  }
+`;
+
+export const GENERATE_USER_READ_TOKEN_MUTATION = gql`
+  mutation generateReadToken {
+    account {
+      generateReadToken {
+        token
+      }
+    }
+  }
+`;
+
 export const ADMIN_COMPANIES_QUERY = gql`
   query adminCompanies(
     $id: Int!

@@ -1,15 +1,17 @@
 import { getTime } from "./events";
 import { ACTIVITIES } from "./activities";
+import { now } from "./time";
 
-export function computeTotalActivityDurations(activityEvents, until = null) {
+export function computeTotalActivityDurations(activityEvents) {
+  const current = now();
   if (activityEvents.length === 0) return {};
   const actualUntil =
-    until || activityEvents[activityEvents.length - 1].endTime;
+    activityEvents[activityEvents.length - 1].endTime || current;
   const firstEvent = activityEvents[0];
   const timers = { total: actualUntil - getTime(firstEvent) };
   activityEvents.forEach(event => {
     timers[event.type] =
-      (timers[event.type] || 0) + event.endTime - getTime(event);
+      (timers[event.type] || 0) + (event.endTime || current) - getTime(event);
   });
   timers.totalWork =
     (timers[ACTIVITIES.work.name] || 0) +

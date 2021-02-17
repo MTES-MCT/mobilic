@@ -15,6 +15,7 @@ import { ApiErrorDialogModal } from "./pwa/components/ApiErrorDialog";
 import { CGUModal } from "./landing/cgu";
 import { ChangeEmailModal } from "./home/ChangeEmail";
 import { TerminateEmployment } from "./admin/components/TerminateEmployment";
+import { UserReadQRCodeModal } from "./control/UserReadQRCode";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -33,5 +34,6 @@ export const MODAL_DICT = {
   apiErrorDialog: ApiErrorDialogModal,
   cgu: CGUModal,
   changeEmail: ChangeEmailModal,
-  terminateEmployment: TerminateEmployment
+  terminateEmployment: TerminateEmployment,
+  userReadQRCode: UserReadQRCodeModal
 };

@@ -79,7 +79,7 @@ export function PeriodCarouselPicker({
       periodRefs[period].current.scrollIntoView({
         behavior: "smooth",
         inline: "center",
-        block: "center"
+        block: "nearest"
       });
     }
   };

@@ -202,7 +202,7 @@ function MobileHeader({ disableMenu }) {
 
   return (
     <Box className="flex-row-space-between">
-      <Logos />
+      <Logos leaveSpaceForMenu={!disableMenu} />
       {!disableMenu && [
         <IconButton
           key={0}
@@ -257,7 +257,7 @@ function DesktopHeader({ disableMenu }) {
 
   return (
     <Box className="flex-row-space-between">
-      <Logos />
+      <Logos leaveSpaceForMenu={!disableMenu} />
       {store.userId() ? (
         <Box className="flex-row-center" style={{ overflowX: "hidden" }}>
           {!disableMenu && docLinks()}
