@@ -14,7 +14,7 @@ import {
   WorkerImage
 } from "common/utils/icons";
 import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
-import BackgroundImage from "common/assets/images/vans.png";
+import BackgroundImage from "common/assets/images/landing-hero.svg";
 import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
@@ -22,8 +22,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper
   },
   section: {
-    paddingTop: theme.spacing(10),
-    paddingBottom: theme.spacing(10),
+    paddingTop: theme.spacing(7),
+    paddingBottom: theme.spacing(7),
     paddingLeft: theme.spacing(5),
     paddingRight: theme.spacing(5),
     margin: 0
@@ -74,7 +74,8 @@ const useStyles = makeStyles(theme => ({
   },
   bgImage: {
     background: `url(${BackgroundImage}) 50%`,
-    backgroundSize: "cover"
+    backgroundSize: "contain",
+    backgroundRepeat: "none"
   },
   showcase: {
     padding: theme.spacing(2)
@@ -142,36 +143,71 @@ export function Landing() {
   const classes = useStyles();
   return [
     <Header key={1} />,
-    <Container
-      key={2}
-      className={`${classes.section} ${classes.bgImage}`}
-      maxWidth={false}
-    >
-      <Container maxWidth="lg" className={classes.inner}>
-        <Grid container direction="column" alignItems="center" spacing={2}>
-          <Grid item className={classes.whiteSection}>
-            <Typography variant="h2">👋</Typography>
-            <Typography variant="h2">Bienvenue sur Mobilic !</Typography>
-          </Grid>
-          <Hidden xsDown>
-            <Grid item className={classes.whiteSection}>
-              <Box mt={2}>
-                <Typography variant="h3" style={{ fontWeight: "normal" }}>
-                  Le suivi de votre temps de travail : fiable, facile, et rapide
-                </Typography>
-              </Box>
+    <Container key={2} className={`${classes.section}`} maxWidth={false}>
+      <Container maxWidth="md" className={classes.inner}>
+        <Grid container wrap alignItems="center" spacing={1}>
+          <Grid xs container item direction="column" spacing={2}>
+            <Grid item>
+              <Typography align="left" variant="h2">
+                Bienvenue sur Mobilic !
+              </Typography>
             </Grid>
-          </Hidden>
+            <Hidden xsDown>
+              <Grid item>
+                <Box mt={2}>
+                  <Typography
+                    align="left"
+                    variant="h3"
+                    style={{ fontWeight: "normal" }}
+                  >
+                    Le suivi de votre temps de travail : fiable, facile, et
+                    rapide
+                  </Typography>
+                </Box>
+              </Grid>
+            </Hidden>
+          </Grid>
+          <Grid xs item>
+            <img
+              style={{ height: "auto", maxWidth: "100%", minWidth: 300 }}
+              src={BackgroundImage}
+            />
+          </Grid>
         </Grid>
       </Container>
     </Container>,
     <Container
-      key={3}
+      key={4}
       className={`${classes.section} ${classes.whiteSection}`}
       maxWidth={false}
     >
-      <Container maxWidth="lg" className={classes.inner}>
-        <Grid container spacing={10} justify="space-around">
+      <Container maxWidth="md" className={classes.inner}>
+        <Typography variant="h3" className={`${classes.sectionTitle}`}>
+          Mobilic ... 🤔 qu'est-ce que c'est ?
+        </Typography>
+        <Typography className={classes.videoHelperText}>
+          Mobilic est la plateforme gouvernementale qui permet de simplifier le
+          suivi du temps de travail dans le transport routier léger afin de
+          lutter contre le travail illégal.
+        </Typography>
+        <Container maxWidth="sm" disableGutters>
+          <Box className={classes.videoContainer}>
+            <iframe
+              className={classes.videoIframe}
+              frameBorder="0"
+              type="text/html"
+              src="https://www.dailymotion.com/embed/video/x7w86gu"
+              width="100%"
+              height="100%"
+              allowFullScreen
+            ></iframe>
+          </Box>
+        </Container>
+      </Container>
+    </Container>,
+    <Container key={3} className={`${classes.section}`} maxWidth={false}>
+      <Container maxWidth="md" className={classes.inner}>
+        <Grid container spacing={10} justify="space-between">
           <Grid item md={4}>
             <Grid container spacing={2} direction="column" alignItems="stretch">
               <Grid item>
@@ -206,31 +242,6 @@ export function Landing() {
             </Grid>
           </Grid>
         </Grid>
-      </Container>
-    </Container>,
-    <Container key={4} className={classes.section} maxWidth={false}>
-      <Container maxWidth="md" className={classes.inner}>
-        <Typography variant="h3" className={`${classes.sectionTitle}`}>
-          Mobilic ... 🤔 qu'est-ce que c'est ?
-        </Typography>
-        <Typography className={classes.videoHelperText}>
-          Mobilic est la plateforme gouvernementale qui permet de simplifier le
-          suivi du temps de travail dans le transport routier léger afin de
-          lutter contre le travail illégal.
-        </Typography>
-        <Container maxWidth="sm" disableGutters>
-          <Box className={classes.videoContainer}>
-            <iframe
-              className={classes.videoIframe}
-              frameBorder="0"
-              type="text/html"
-              src="https://www.dailymotion.com/embed/video/x7w86gu"
-              width="100%"
-              height="100%"
-              allowFullScreen
-            ></iframe>
-          </Box>
-        </Container>
       </Container>
     </Container>,
     <Container
