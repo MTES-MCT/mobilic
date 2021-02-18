@@ -13,7 +13,8 @@ export function EndMissionModal({
   handleClose,
   handleMissionEnd,
   currentExpenditures,
-  companyAddresses = []
+  companyAddresses = [],
+  currentEndLocation = null
 }) {
   const [expenditures, setExpenditures] = React.useState({});
   const [comment, setComment] = React.useState("");
@@ -29,11 +30,12 @@ export function EndMissionModal({
 
     if (open && navigator.geolocation) {
       setLoading(false);
-      navigator.geolocation.getCurrentPosition(position => {
-        setCurrentPosition(position);
-      });
+      if (!currentEndLocation)
+        navigator.geolocation.getCurrentPosition(position => {
+          setCurrentPosition(position);
+        });
     }
-  }, [currentExpenditures, open]);
+  }, [currentExpenditures, currentEndLocation, open]);
 
   return (
     <FunnelModal open={open} handleBack={handleClose}>
@@ -61,7 +63,8 @@ export function EndMissionModal({
               fullWidth
               label="Lieu de fin de service"
               variant="filled"
-              value={address}
+              value={currentEndLocation ? currentEndLocation : address}
+              disabled={!!currentEndLocation}
               onChange={setAddress}
               currentPosition={currentPosition}
               defaultAddresses={companyAddresses}
@@ -88,7 +91,11 @@ export function EndMissionModal({
             />
           </Container>
           <Box className="cta-container" my={4}>
-            <MainCtaButton type="submit" disabled={!address} loading={loading}>
+            <MainCtaButton
+              type="submit"
+              disabled={!currentEndLocation && !address}
+              loading={loading}
+            >
               Suivant
             </MainCtaButton>
           </Box>

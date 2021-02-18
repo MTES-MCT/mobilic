@@ -175,7 +175,8 @@ export function ActivitySwitch({
                     expenditures,
                     comment,
                     endLocation: address
-                  })
+                  }),
+                currentEndLocation: currentMission.endLocation
               });
             }}
           >

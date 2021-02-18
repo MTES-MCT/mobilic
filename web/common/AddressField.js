@@ -38,6 +38,7 @@ export function AddressField({
   label,
   currentPosition,
   required,
+  disabled = false,
   dynamicMargin = true
 }) {
   const [inputValue, setInputValue] = React.useState("");
@@ -95,6 +96,7 @@ export function AddressField({
       getOptionLabel={option =>
         typeof option === "string" ? option : formatAddressMainText(option)
       }
+      disabled={disabled}
       selectOnFocus
       options={_options}
       autoComplete
