@@ -69,14 +69,17 @@ export async function syncUser(userPayload, api, store) {
   firstName &&
     lastName &&
     syncActions.push(
-      store.setUserInfo({
-        firstName,
-        lastName,
-        email,
-        birthDate,
-        hasConfirmedEmail,
-        hasActivatedEmail
-      })
+      store.setUserInfo(
+        {
+          firstName,
+          lastName,
+          email,
+          birthDate,
+          hasConfirmedEmail,
+          hasActivatedEmail
+        },
+        false
+      )
     );
   missions && syncActions.push(store.syncEntity(missionData, "missions"));
   activities &&
@@ -108,5 +111,6 @@ export async function syncUser(userPayload, api, store) {
     );
   currentEmployments &&
     syncActions.push(store.syncEntity(currentEmployments, "employments"));
-  return await Promise.all(syncActions);
+  store.batchUpdateStore();
+  await Promise.all(syncActions);
 }

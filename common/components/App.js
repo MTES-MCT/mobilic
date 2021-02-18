@@ -20,7 +20,7 @@ function App({ ScreenComponent, loadUser }) {
 
   const [currentTime, setCurrentTime] = React.useState(now());
 
-  // We force re-rendering every 5 sec to update timers
+  // We force re-rendering every X sec to update timers
   React.useEffect(() => {
     setInterval(() => setCurrentTime(now()), 30000);
   }, []);

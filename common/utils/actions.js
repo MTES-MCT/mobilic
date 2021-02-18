@@ -248,7 +248,7 @@ class Actions {
           () => false,
           { [mission.id]: tempMissionId }
         );
-        this.store.setStoreState(
+        this.store.dispatchUpdateAction(
           prevState => ({
             activities: mapValues(prevState.activities, a => ({
               ...a,
@@ -258,7 +258,7 @@ class Actions {
           }),
           ["activities"]
         );
-        this.store.setStoreState(
+        this.store.dispatchUpdateAction(
           prevState => ({
             expenditures: mapValues(prevState.expenditures, e => ({
               ...e,
@@ -367,7 +367,7 @@ class Actions {
     api.registerResponseHandler("validateMission", {
       onSuccess: async (apiResponse, { validation }) => {
         const mission = apiResponse.data.activities.validateMission.mission;
-        await this.store.syncEntity(
+        this.store.syncEntity(
           [
             {
               ...mission,
@@ -556,7 +556,6 @@ class Actions {
 
   pushNewTeamActivityEvent = async ({
     activityType,
-    missionActivities,
     missionId,
     startTime,
     team = [],
@@ -569,7 +568,6 @@ class Actions {
     if (team.length === 0)
       return await this.pushNewActivityEvent({
         activityType,
-        missionActivities,
         missionId,
         startTime,
         endTime,
@@ -593,7 +591,6 @@ class Actions {
     if (team.includes(userId)) {
       baseActivityResult = this.pushNewActivityEvent({
         activityType: teamToType[userId],
-        missionActivities,
         missionId,
         startTime,
         userId: userId,
@@ -612,7 +609,6 @@ class Actions {
         .forEach(async id => {
           this.pushNewActivityEvent({
             activityType: teamToType[id],
-            missionActivities,
             missionId,
             startTime,
             userId: id,
@@ -674,9 +670,8 @@ class Actions {
     }
   };
 
-  pushNewActivityEvent = async ({
+  pushNewActivityEvent = ({
     activityType,
-    missionActivities,
     missionId,
     startTime,
     userId = null,
@@ -699,9 +694,15 @@ class Actions {
     if (comment) newActivity.context = { comment };
 
     const updateStore = (store, requestId) => {
+      const identityMap = store.identityMap();
       if (switchMode) {
-        const currentActivity = missionActivities.find(
-          a => a.userId === actualUserId && !a.endTime
+        const currentActivity = values(store.getEntity("activities")).find(
+          a =>
+            a.userId === actualUserId &&
+            (a.missionId === missionId ||
+              (identityMap[missionId] &&
+                a.missionId === identityMap[missionId])) &&
+            !a.endTime
         );
         if (currentActivity) {
           this.store.updateEntityObject(
@@ -734,7 +735,7 @@ class Actions {
       };
     };
 
-    return await this.submitAction(
+    return this.submitAction(
       LOG_ACTIVITY_MUTATION,
       { ...newActivity, switch: switchMode },
       updateStore,
@@ -748,15 +749,20 @@ class Actions {
   editActivityEvent = async (
     activityEvent,
     actionType,
-    missionActivities,
     newStartTime = null,
     newEndTime = null,
     comment = null,
     forAllTeam = false
   ) => {
+    const identityMap = this.store.identityMap();
     if (forAllTeam) {
-      const activitiesToEdit = missionActivities.filter(
+      const activitiesToEdit = values(
+        this.store.getEntity("activities")
+      ).filter(
         a =>
+          (a.missionId === activityEvent.missionId ||
+            (identityMap[activityEvent.missionId] &&
+              a.missionId === identityMap[activityEvent.missionId])) &&
           getTime(a) === getTime(activityEvent) &&
           a.endTime === activityEvent.endTime
       );
@@ -766,7 +772,6 @@ class Actions {
           this.editActivityEvent(
             a,
             actionType,
-            missionActivities,
             newStartTime,
             newEndTime,
             comment,
@@ -779,7 +784,6 @@ class Actions {
           this.editActivityEvent(
             a,
             actionType,
-            missionActivities,
             newStartTime,
             newEndTime,
             comment,
@@ -857,27 +861,24 @@ class Actions {
     else if (vehicleRegistrationNumber)
       missionPayload.context = { vehicleRegistrationNumber };
 
-    let updateMissionStore;
+    let missionCurrentId;
 
-    const missionIdPromise = new Promise((resolve, reject) => {
-      const _updateMissionStore = (store, requestId) => {
-        const mission = {
-          name,
-          context: missionPayload.context || {},
-          ended: false
-        };
-        const missionId = this.store.createEntityObject(
-          mission,
-          "missions",
-          requestId
-        );
-        resolve(missionId);
-        return { missionId };
+    const updateMissionStore = (store, requestId) => {
+      const mission = {
+        name,
+        context: missionPayload.context || {},
+        ended: false
       };
-      updateMissionStore = _updateMissionStore;
-    });
+      const missionId = this.store.createEntityObject(
+        mission,
+        "missions",
+        requestId
+      );
+      missionCurrentId = missionId;
+      return { missionId };
+    };
 
-    const createMission = this.submitAction(
+    this.submitAction(
       CREATE_MISSION_MUTATION,
       missionPayload,
       updateMissionStore,
@@ -886,27 +887,20 @@ class Actions {
       false
     );
 
-    const missionCurrentId = await missionIdPromise;
-
-    return await Promise.all([
-      createMission,
-      this.pushNewTeamActivityEvent({
-        activityType: firstActivityType,
-        missionActivities: [],
+    this.pushNewTeamActivityEvent({
+      activityType: firstActivityType,
+      missionId: missionCurrentId,
+      startTime: now(),
+      team,
+      driverId,
+      forceNonBatchable: true
+    });
+    startLocation &&
+      this.logLocation({
+        address: startLocation,
         missionId: missionCurrentId,
-        startTime: now(),
-        team,
-        driverId,
-        forceNonBatchable: true
-      }),
-      startLocation
-        ? this.logLocation({
-            address: startLocation,
-            missionId: missionCurrentId,
-            isStart: true
-          })
-        : null
-    ]);
+        isStart: true
+      });
   };
 
   logLocation = async ({ address, missionId, isStart }) => {
@@ -967,7 +961,7 @@ class Actions {
 
     const userId = this.store.userId();
     if (team.includes(userId)) {
-      await this.endMission({
+      this.endMission({
         endTime,
         mission,
         userId,
@@ -977,7 +971,7 @@ class Actions {
       });
     }
 
-    return await Promise.all(
+    return Promise.all(
       team
         .filter(id => id !== userId)
         .map(id =>

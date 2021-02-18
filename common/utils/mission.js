@@ -55,8 +55,6 @@ function computeMissionProperties(mission, userId) {
 }
 
 export function augmentSortAndFilterMissions(missions, userId) {
-  console.log(missions);
-  console.log(userId);
   return sortEvents(
     missions
       .map(m => ({ ...m, ...computeMissionProperties(m, userId) }))

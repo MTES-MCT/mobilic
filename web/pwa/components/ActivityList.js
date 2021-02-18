@@ -62,7 +62,6 @@ function ActivityItem({
                   editActivityEvent(
                     activity,
                     actionType,
-                    allMissionActivities,
                     newUserStartTime,
                     newUserEndTime,
                     userComment,

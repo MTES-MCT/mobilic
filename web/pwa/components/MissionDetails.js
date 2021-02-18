@@ -147,7 +147,6 @@ export function MissionDetails({
                     editActivityEvent(
                       activity,
                       actionType,
-                      mission.allActivities,
                       newUserStartTime,
                       newUserEndTime,
                       userComment,
@@ -349,39 +348,47 @@ export function MissionDetails({
               </MainCtaButton>
             </Box>
           )}
-          <Box
-            color={mission.validation ? "success.main" : "warning.main"}
-            className={classes.validationContainer}
-          >
-            {mission.validation ? (
-              <CheckIcon fontSize="small" color="inherit" />
-            ) : (
-              <ScheduleIcon fontSize="small" color="inherit" />
-            )}
-            <Typography className={classes.validationText}>
-              {mission.validation
-                ? `validée le ${formatDay(mission.validation.receptionTime)}`
-                : "en attente de validation salarié"}
-            </Typography>
-          </Box>
-          {mission.validation && (
-            <Box
-              color={mission.adminValidation ? "success.main" : "warning.main"}
-              className={classes.validationContainer}
-            >
-              {mission.adminValidation ? (
-                <CheckIcon fontSize="small" color="inherit" />
-              ) : (
-                <ScheduleIcon fontSize="small" color="inherit" />
+          {(!validateMission || mission.validation) && (
+            <>
+              <Box
+                color={mission.validation ? "success.main" : "warning.main"}
+                className={classes.validationContainer}
+              >
+                {mission.validation ? (
+                  <CheckIcon fontSize="small" color="inherit" />
+                ) : (
+                  <ScheduleIcon fontSize="small" color="inherit" />
+                )}
+                <Typography className={classes.validationText}>
+                  {mission.validation
+                    ? `validée le ${formatDay(
+                        mission.validation.receptionTime
+                      )}`
+                    : "en attente de validation salarié"}
+                </Typography>
+              </Box>
+              {mission.validation && (
+                <Box
+                  color={
+                    mission.adminValidation ? "success.main" : "warning.main"
+                  }
+                  className={classes.validationContainer}
+                >
+                  {mission.adminValidation ? (
+                    <CheckIcon fontSize="small" color="inherit" />
+                  ) : (
+                    <ScheduleIcon fontSize="small" color="inherit" />
+                  )}
+                  <Typography className={classes.validationText}>
+                    {mission.adminValidation
+                      ? `validée par le gestionnaire le ${formatDay(
+                          mission.adminValidation.receptionTime
+                        )}`
+                      : "en attente de validation gestionnaire"}
+                  </Typography>
+                </Box>
               )}
-              <Typography className={classes.validationText}>
-                {mission.adminValidation
-                  ? `validée par le gestionnaire le ${formatDay(
-                      mission.adminValidation.receptionTime
-                    )}`
-                  : "en attente de validation gestionnaire"}
-              </Typography>
-            </Box>
+            </>
           )}
         </MissionReviewSection>
       )}

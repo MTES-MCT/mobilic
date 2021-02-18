@@ -35,7 +35,6 @@ export function CurrentActivity({
           ? await editActivityEvent(
               latestActivity,
               "revision",
-              currentMission.allActivities,
               getTime(latestActivity),
               now(),
               null,

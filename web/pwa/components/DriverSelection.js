@@ -43,10 +43,8 @@ export function DriverSelectionModal({
           onChange={async e => {
             const value = parseInt(e.target.value);
             setSelected(value);
-            await Promise.all([
-              new Promise(resolve => setTimeout(resolve, 500)),
-              setTimeout(() => handleDriverSelection(value), 0)
-            ]);
+            await new Promise(resolve => setTimeout(resolve, 100));
+            await handleDriverSelection(value);
             handleClose();
           }}
         >

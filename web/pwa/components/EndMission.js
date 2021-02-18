@@ -28,6 +28,7 @@ export function EndMissionModal({
     setCurrentPosition(null);
 
     if (open && navigator.geolocation) {
+      setLoading(false);
       navigator.geolocation.getCurrentPosition(position => {
         setCurrentPosition(position);
       });
@@ -42,12 +43,9 @@ export function EndMissionModal({
           onSubmit={async e => {
             e.preventDefault();
             setLoading(true);
-            await Promise.all([
-              new Promise(resolve => setTimeout(resolve, 500)),
-              handleMissionEnd(expenditures, comment, address)
-            ]);
+            await new Promise(resolve => setTimeout(resolve, 100));
+            await handleMissionEnd(expenditures, comment, address);
             handleClose();
-            setLoading(false);
           }}
         >
           <Container

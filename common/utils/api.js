@@ -1152,6 +1152,7 @@ class Api {
             }
           })
         );
+        this.store.batchUpdateStore();
         if (errors.length > 0) {
           if (failOnError) throw errors[0];
           // We stop early if some errors can lead to a retry, otherwise the execution will be stuck in an infinite loop

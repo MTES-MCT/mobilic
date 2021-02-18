@@ -4,6 +4,8 @@ import keyBy from "lodash/keyBy";
 import pickBy from "lodash/pickBy";
 import mapValues from "lodash/mapValues";
 import values from "lodash/values";
+import flatMap from "lodash/flatMap";
+import uniq from "lodash/uniq";
 import map from "lodash/map";
 import orderBy from "lodash/orderBy";
 import * as Sentry from "@sentry/browser";
@@ -78,6 +80,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     // Initialize state with null values
     this.state = { _utils: this };
     this.secondState = {};
+    this.pendingActions = [];
     Object.keys(this.mapper).forEach(entry => {
       this.state[entry] = this.mapper[entry].deserialize(null);
     });
@@ -164,7 +167,38 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     );
   }
 
-  setStoreState = (stateUpdate, fieldsToSync, callback = () => {}) => {
+  batchUpdateStore = () => {
+    if (this.pendingActions.length > 0) {
+      const stateUpdates = this.pendingActions;
+      this.updateStore(
+        prevState =>
+          stateUpdates.reduce(
+            (state, update) => ({
+              ...state,
+              ...(typeof update.update === "function"
+                ? update.update(state)
+                : update.update)
+            }),
+            prevState
+          ),
+        uniq(flatMap(stateUpdates, upd => upd.fieldsToSync)),
+        () => {
+          stateUpdates.forEach(upd => upd.callback());
+        }
+      );
+      this.pendingActions = [];
+    }
+  };
+
+  dispatchUpdateAction = (stateUpdate, fieldsToSync, callback = () => {}) => {
+    this.pendingActions.push({
+      update: stateUpdate,
+      fieldsToSync,
+      callback
+    });
+  };
+
+  updateStore = (stateUpdate, fieldsToSync, callback = () => {}) => {
     this.setState(stateUpdate, () => {
       fieldsToSync.forEach(field => {
         this.storage.setItem(
@@ -176,38 +210,14 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     });
   };
 
-  setItems = (itemValueMap, callback = () => {}) =>
-    this.setStoreState(itemValueMap, Object.keys(itemValueMap), callback);
-
-  pushItemToArray = (item, arrayField) => {
-    return new Promise(resolve =>
-      this.setStoreState(
-        prevState => ({ [arrayField]: [...prevState[arrayField], item] }),
-        [arrayField],
-        resolve
-      )
-    );
-  };
-
-  updateItemInArray = (updatedItem, arrayField) => {
-    return new Promise(resolve =>
-      this.setStoreState(
-        prevState => {
-          const array = prevState[arrayField];
-          const oldItemVersionIdx = array.findIndex(
-            it => it.id === updatedItem.id
-          );
-          if (oldItemVersionIdx >= 0) {
-            array.splice(oldItemVersionIdx, 1, updatedItem);
-            return { [arrayField]: [...array] };
-          }
-          return {};
-        },
-        [arrayField],
-        resolve
-      )
-    );
-  };
+  setItems = (itemValueMap, callback = () => {}, commitImmediately = true) =>
+    commitImmediately
+      ? this.updateStore(itemValueMap, Object.keys(itemValueMap), callback)
+      : this.dispatchUpdateAction(
+          itemValueMap,
+          Object.keys(itemValueMap),
+          callback
+        );
 
   generateId = idStateEntry => {
     const id = this.secondState[idStateEntry];
@@ -232,7 +242,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
   createEntityObject = (object, entity, requestId) => {
     if (this.mapper[entity] === List) {
-      this.setStoreState(
+      this.dispatchUpdateAction(
         prevState => ({
           [entity]: [
             ...prevState[entity],
@@ -247,7 +257,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       return;
     }
     const entityObjectId = "temp" + this.generateId("nextEntityObjectId");
-    this.setStoreState(
+    this.dispatchUpdateAction(
       prevState => ({
         [entity]: {
           ...prevState[entity],
@@ -264,7 +274,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   };
 
   updateEntityObject = (objectId, entity, update, requestId) =>
-    this.setStoreState(
+    this.dispatchUpdateAction(
       prevState => ({
         [entity]: {
           ...mapValues(prevState[entity], (value, id) =>
@@ -284,7 +294,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     );
 
   deleteEntityObject = (objectId, entity, requestId) =>
-    this.setStoreState(
+    this.dispatchUpdateAction(
       prevState => ({
         [entity]: {
           ...mapValues(prevState[entity], (value, id) =>
@@ -313,21 +323,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     );
   };
 
-  removeItemFromArray = (item, arrayField) =>
-    new Promise((resolve, reject) =>
-      this.setStoreState(
-        prevState => ({
-          [arrayField]: prevState[arrayField].filter(e =>
-            item.id
-              ? item.id !== e.id
-              : JSON.stringify(e) !== JSON.stringify(item)
-          )
-        }),
-        [arrayField],
-        resolve
-      )
-    );
-
   clearPendingRequest = async request => {
     await this.removeOptimisticUpdateForRequest(
       request.id,
@@ -355,6 +350,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   ) => {
     const requestId = this.generateId("nextRequestId");
     const storeInfo = updateStore(this, requestId);
+    this.batchUpdateStore();
     const request = {
       id: requestId,
       userId: this.state.userId,
@@ -407,27 +403,24 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       return item;
     };
 
-    return new Promise(resolve => {
-      this.setStoreState(
-        prevState =>
-          zipObject(
-            watchFields,
-            watchFields.map(entity => {
-              if (this.mapper[entity] === List) {
-                return prevState[entity]
-                  .map(_removeUpdateForItem)
-                  .filter(value => !!value);
-              }
-              return pickBy(
-                mapValues(prevState[entity], _removeUpdateForItem),
-                value => !!value
-              );
-            })
-          ),
-        watchFields,
-        resolve
-      );
-    });
+    this.dispatchUpdateAction(
+      prevState =>
+        zipObject(
+          watchFields,
+          watchFields.map(entity => {
+            if (this.mapper[entity] === List) {
+              return prevState[entity]
+                .map(_removeUpdateForItem)
+                .filter(value => !!value);
+            }
+            return pickBy(
+              mapValues(prevState[entity], _removeUpdateForItem),
+              value => !!value
+            );
+          })
+        ),
+      watchFields
+    );
   };
 
   resolveLastVersionOfItem = item => {
@@ -453,54 +446,51 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     belongsToSyncScope = () => true,
     createdIdMap = {}
   ) =>
-    new Promise(resolve => {
-      this.setStoreState(
-        prevState => {
-          const prevEntityState = prevState[entity];
-          if (this.mapper[entity] === List) {
-            return {
-              [entity]: [
-                ...prevEntityState.filter(
-                  item =>
-                    !belongsToSyncScope(item) ||
-                    (isPendingSubmission(item) &&
-                      item.pendingUpdates.some(upd => upd.type === "create"))
-                ),
-                ...itemsFromApi
-              ]
-            };
-          }
-          itemsFromApi.forEach(item => {
-            const prevEntityMatch =
-              prevEntityState[
-                createdIdMap[item.id]
-                  ? createdIdMap[item.id].toString()
-                  : item.id.toString()
-              ];
-            if (prevEntityMatch && isPendingSubmission(prevEntityMatch)) {
-              item.pendingUpdates = prevEntityMatch.pendingUpdates.filter(
-                upd => upd.type !== "create"
-              );
-            }
-          });
+    this.dispatchUpdateAction(
+      prevState => {
+        const prevEntityState = prevState[entity];
+        if (this.mapper[entity] === List) {
           return {
-            [entity]: {
-              ...pickBy(
-                prevEntityState,
+            [entity]: [
+              ...prevEntityState.filter(
                 item =>
-                  !values(createdIdMap).includes(item.id) &&
-                  (!belongsToSyncScope(item) ||
-                    (isPendingSubmission(item) &&
-                      item.pendingUpdates.some(upd => upd.type === "create")))
+                  !belongsToSyncScope(item) ||
+                  (isPendingSubmission(item) &&
+                    item.pendingUpdates.some(upd => upd.type === "create"))
               ),
-              ...keyBy(itemsFromApi, item => item.id.toString())
-            }
+              ...itemsFromApi
+            ]
           };
-        },
-        [entity],
-        resolve
-      );
-    });
+        }
+        itemsFromApi.forEach(item => {
+          const prevEntityMatch =
+            prevEntityState[
+              createdIdMap[item.id]
+                ? createdIdMap[item.id].toString()
+                : item.id.toString()
+            ];
+          if (prevEntityMatch && isPendingSubmission(prevEntityMatch)) {
+            item.pendingUpdates = prevEntityMatch.pendingUpdates.filter(
+              upd => upd.type !== "create"
+            );
+          }
+        });
+        return {
+          [entity]: {
+            ...pickBy(
+              prevEntityState,
+              item =>
+                !values(createdIdMap).includes(item.id) &&
+                (!belongsToSyncScope(item) ||
+                  (isPendingSubmission(item) &&
+                    item.pendingUpdates.some(upd => upd.type === "create")))
+            ),
+            ...keyBy(itemsFromApi, item => item.id.toString())
+          }
+        };
+      },
+      [entity]
+    );
 
   removeItems = (items, callback = () => {}) => {
     const itemValueMap = {};
@@ -519,14 +509,17 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       })
     ]);
 
-  setUserInfo = ({
-    firstName,
-    lastName,
-    email,
-    birthDate,
-    hasConfirmedEmail,
-    hasActivatedEmail
-  }) =>
+  setUserInfo = (
+    {
+      firstName,
+      lastName,
+      email,
+      birthDate,
+      hasConfirmedEmail,
+      hasActivatedEmail
+    },
+    commitImmediately = true
+  ) =>
     new Promise(resolve =>
       this.setItems(
         {
@@ -539,7 +532,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             hasActivatedEmail
           }
         },
-        resolve
+        resolve,
+        commitImmediately
       )
     );
 

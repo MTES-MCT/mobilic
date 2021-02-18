@@ -91,7 +91,8 @@ function _Root() {
     companies
   });
 
-  const [loadedLocation, setLoadedLocation] = React.useState(null);
+  const loadedLocationRef = React.useRef(null);
+  const loadedLocation = loadedLocationRef.current;
 
   const loadUserAndRoute = async () => {
     const isSigningUp = location.pathname.startsWith("/signup");
@@ -118,7 +119,8 @@ function _Root() {
         isAccessible(loadedLocation, {
           userInfo: store.userInfo(),
           companies: store.companies()
-        })
+        }) &&
+        loadedLocation !== location.pathname + location.search
       ) {
         history.replace(loadedLocation, location.state);
       } else
@@ -130,7 +132,7 @@ function _Root() {
           location.state
         );
     }
-    setLoadedLocation(null);
+    loadedLocationRef.current = null;
     if (!document.hidden) api.executePendingRequests();
   };
 
@@ -150,7 +152,7 @@ function _Root() {
       !location.pathname.startsWith("/redeem_invite") &&
       !location.pathname.startsWith("/fc-callback")
     )
-      setLoadedLocation(location.pathname + location.search);
+      loadedLocationRef.current = location.pathname + location.search;
   }, []);
 
   React.useEffect(() => {
