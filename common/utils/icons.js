@@ -6,13 +6,12 @@ import { ReactComponent as TeamIcon_ } from "../assets/images/Team.svg";
 import { ReactComponent as TruckIcon_ } from "../assets/images/Truck.svg";
 import { ReactComponent as HammerWenchIcon_ } from "../assets/images/Hammer Wench.svg";
 import { ReactComponent as BedIcon_ } from "../assets/images/Bed.svg";
-import { ReactComponent as ManagerIcon_ } from "../assets/images/Manager.svg";
 import { ReactComponent as MtesIcon_ } from "../assets/images/mtes.svg";
 import { ReactComponent as FranceConnectIcon_ } from "../assets/images/FranceConnect.svg";
 import { ReactComponent as FabNumIcon_ } from "../assets/images/fabnum.svg";
-import _ManagerImage from "../assets/images/manager.png";
-import _WorkerImage from "../assets/images/worker.png";
-import _SoftwareImage from "../assets/images/software1.png";
+import _ManagerImage from "../assets/images/Manager.svg";
+import _WorkerImage from "../assets/images/worker.svg";
+import _SoftwareImage from "../assets/images/software.svg";
 import _NoDataImage from "../assets/images/no-data.png";
 
 export function PersonIcon(props) {
@@ -35,10 +34,6 @@ export function WorkIcon(props) {
 
 export function RestIcon(props) {
   return <SvgIcon {...props} viewBox="0 0 64 64" component={BedIcon_} />;
-}
-
-export function ManagerIcon(props) {
-  return <SvgIcon {...props} viewBox="0 0 100 100" component={ManagerIcon_} />;
 }
 
 export function NoDataImage(props) {

@@ -13,7 +13,7 @@ import { NonConcurrentExecutionQueue } from "./concurrency";
 import { BroadcastChannel } from "broadcast-channel";
 import { currentUserId } from "./cookie";
 
-const STORE_VERSION = 15;
+const STORE_VERSION = 16;
 
 export const broadCastChannel = new BroadcastChannel("storeUpdates", {
   webWorkerSupport: false

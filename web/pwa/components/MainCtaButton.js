@@ -1,4 +1,5 @@
 import React from "react";
+import omit from "lodash/omit";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { LoadingButton } from "common/components/LoadingButton";
 
@@ -15,10 +16,10 @@ export function MainCtaButton(props) {
   const classes = useStyles();
   return (
     <LoadingButton
-      className={classes.cta}
+      className={`${classes.cta} ${props.className}`}
       variant="contained"
       color="primary"
-      {...props}
+      {...omit(props, ["className"])}
     />
   );
 }

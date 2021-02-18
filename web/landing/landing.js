@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import { Header } from "../common/Header";
-import { Link, LinkButton } from "../common/LinkButton";
+import { Link } from "../common/LinkButton";
 import Hidden from "@material-ui/core/Hidden";
 import {
   FabNumIcon,
@@ -16,6 +16,7 @@ import {
 import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
 import BackgroundImage from "common/assets/images/landing-hero.svg";
 import { useModals } from "common/utils/modals";
+import { MainCtaButton } from "../pwa/components/MainCtaButton";
 
 const useStyles = makeStyles(theme => ({
   whiteSection: {
@@ -88,6 +89,10 @@ const useStyles = makeStyles(theme => ({
   },
   lightOrange: {
     backgroundColor: theme.palette.warning.light
+  },
+  cta: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2)
   }
 }));
 
@@ -97,8 +102,12 @@ function _Showcase({
   imagePosition,
   descriptionTitle,
   descriptionContent,
+  ctaTarget,
+  ctaLabel,
   width
 }) {
+  const classes = useStyles();
+
   const Image = props => (
     <Grid container direction="column" spacing={1} alignItems="center">
       <Grid item>{image}</Grid>
@@ -114,7 +123,10 @@ function _Showcase({
     <Typography align="left" variant="h4" key={0} className="bold">
       {descriptionTitle}
     </Typography>,
-    <React.Fragment key={1}>{descriptionContent}</React.Fragment>
+    <React.Fragment key={1}>{descriptionContent}</React.Fragment>,
+    <MainCtaButton key={2} className={classes.cta} href={ctaTarget}>
+      {ctaLabel}
+    </MainCtaButton>
   ];
 
   const leftAlignImage = isWidthDown("xs", width) || imagePosition === "left";
@@ -178,7 +190,7 @@ export function Landing() {
     </Container>,
     <Container
       key={4}
-      className={`${classes.section} ${classes.whiteSection}`}
+      className={`${classes.section}  ${classes.whiteSection}`}
       maxWidth={false}
     >
       <Container maxWidth="md" className={classes.inner}>
@@ -205,53 +217,10 @@ export function Landing() {
         </Container>
       </Container>
     </Container>,
-    <Container key={3} className={`${classes.section}`} maxWidth={false}>
-      <Container maxWidth="md" className={classes.inner}>
-        <Grid container spacing={10} justify="space-between">
-          <Grid item md={4}>
-            <Grid container spacing={2} direction="column" alignItems="stretch">
-              <Grid item>
-                <Typography>
-                  Je suis travailleur mobile ou gestionnaire d'une entreprise de
-                  transport
-                </Typography>
-              </Grid>
-              <Grid item>
-                <LinkButton variant="contained" color="primary" href="/signup">
-                  M'inscrire
-                </LinkButton>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item md={4}>
-            <Grid container spacing={2} direction="column" alignItems="stretch">
-              <Grid item style={{ position: "relative" }}>
-                <Typography style={{ position: "absolute", left: 0, right: 0 }}>
-                  J'ai déjà un compte Mobilic
-                </Typography>
-                <Typography className="hidden">
-                  Je suis travailleur mobile ou gestionnaire d'une entreprise de
-                  transport
-                </Typography>
-              </Grid>
-              <Grid item>
-                <LinkButton variant="contained" color="primary" href="/login">
-                  Me connecter
-                </LinkButton>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Container>
-    </Container>,
-    <Container
-      key={5}
-      className={`${classes.section} ${classes.whiteSection}`}
-      maxWidth={false}
-    >
+    <Container key={5} className={`${classes.section}`} maxWidth={false}>
       <Container maxWidth="md" className={classes.inner}>
         <Typography variant="h3" className={`${classes.sectionTitle}`}>
-          A qui ça s'adresse ?
+          A qui s'adresse Mobilic ?
         </Typography>
         <Typography className={classes.videoHelperText}>
           {
@@ -292,6 +261,8 @@ export function Landing() {
                 </ul>
               </div>
             }
+            ctaLabel="M'inscrire comme travailleur mobile"
+            ctaTarget="/signup/user"
           />
         </Box>
         <Box p={2}>
@@ -318,6 +289,8 @@ export function Landing() {
                 </li>
               </ul>
             }
+            ctaLabel="M'inscrire comme gestionnaire"
+            ctaTarget="/signup/admin"
           />
         </Box>
         <Box className={classes.lightBlue} p={2}>
@@ -344,6 +317,8 @@ export function Landing() {
                 </li>
               </ul>
             }
+            ctaLabel="Découvrir l'API"
+            ctaTarget="/developers"
           />
         </Box>
       </Container>
@@ -380,11 +355,9 @@ function Footer() {
           direction="row"
           alignItems="flex-start"
         >
-          <Hidden xsDown>
-            <Grid item>
-              <FabNumIcon scale={0.5} />
-            </Grid>
-          </Hidden>
+          <Grid item>
+            <FabNumIcon scale={0.5} />
+          </Grid>
           <Grid item>
             <Typography align="justify">
               Mobilic est un service numérique de l'Etat incubé à la Fabrique
