@@ -45,14 +45,14 @@ jobs:
           command: |
             if [ $CIRCLE_BRANCH = "prod" ];
             then
-              git push -f git@ssh.osc-fr1.scalingo.com:$SCALINGO_PROD_APP_NAME.git master;
-              git push -f git@ssh.osc-fr1.scalingo.com:$SCALINGO_SANDBOX_APP_NAME.git master;
+              git push -f git@ssh.osc-fr1.scalingo.com:$SCALINGO_PROD_APP_NAME.git $CIRCLE_BRANCH;
+              git push -f git@ssh.osc-fr1.scalingo.com:$SCALINGO_SANDBOX_APP_NAME.git $CIRCLE_BRANCH;
             else
-              git push -f git@ssh.osc-fr1.scalingo.com:$SCALINGO_STAGING_APP_NAME.git master;
+              git push -f git@ssh.osc-fr1.scalingo.com:$SCALINGO_STAGING_APP_NAME.git $CIRCLE_BRANCH;
             fi;
       - run:
           name: Deploy to Heroku
-          command: git push -f https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+          command: git push -f https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git $CIRCLE_BRANCH
 
 
 workflows:
