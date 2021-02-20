@@ -30,7 +30,7 @@ export function EndMissionModal({
 
     if (open && navigator.geolocation) {
       setLoading(false);
-      if (!currentEndLocation)
+      if (!currentEndLocation && navigator.geolocation)
         navigator.geolocation.getCurrentPosition(position => {
           setCurrentPosition(position);
         });
