@@ -27,7 +27,7 @@ export function EndMissionModal({
     setAddress(null);
     setCurrentPosition(null);
 
-    if (open) {
+    if (open && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(position => {
         setCurrentPosition(position);
       });

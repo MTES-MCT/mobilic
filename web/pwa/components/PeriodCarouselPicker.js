@@ -71,8 +71,7 @@ export function PeriodCarouselPicker({
   const selectedPeriodIdx = periods.findIndex(p => p === selectedPeriod);
   const periodRefs = {};
   periods.forEach(period => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    periodRefs[period] = React.useRef();
+    periodRefs[period] = React.createRef();
   });
 
   const scrollToSelectedPeriod = period => {
