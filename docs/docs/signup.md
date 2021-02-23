@@ -7,12 +7,18 @@ L'accès aux services de l'API Mobilic nécessite de disposer d'un compte.
 
 ## Création de compte
 
-Mobilic met à disposition une plate-forme d'inscription qui sert deux objecifs :
+L'inscription se fait sur le site Mobilic, depuis les liens suivants
 
-- inscrire des entreprises
-- inscrire des personnes
+- [https://mobilic.beta.gouv.fr/signup/admin](https://mobilic.beta.gouv.fr/logout?next=/signup/admin) pour créer des comptes correspondant à de vrais utilisateurs sur l'environnement de production
+- [https://sandbox.mobilic.beta.gouv.fr/signup/admin](https://sandbox.mobilic.beta.gouv.fr/logout?next=/signup/admin) pour créer des comptes de test sur l'environnement bac à sable
 
-Il n'y a pas besoin pour un logiciel tiers de gérer cette partie, tout se fera sur la plate-forme. Ce choix a été motivé par deux raisons :
+Il y a 3 étapes à l'inscription :
+
+1. le gestionnaire crée son compte individuel et inscrit son entreprise (depuis les liens ci-dessus).
+2. le gestionnaire invite ses salariés en renseignant leurs adresses email depuis son espace entreprise.
+3. le salarié crée son compte individuel en suivant les instructions contenues dans l'email d'invitation.
+
+Il est à noter que l'inscription ne peut pas se faire directement par API. Ce choix a été motivé par deux raisons :
 
 - Mobilic a besoin de vérifier par une méthode fiable l'identité des personnes qui s'inscrivent
 - Mobilic souhaite que les comptes utilisateurs soient sous la responsabilité des utilisateurs eux-mêmes, et que ce soit eux qui décident d'octroyer aux logiciels métier un droit d'accès via [des protocoles de délégation d'authentification](auth.md)

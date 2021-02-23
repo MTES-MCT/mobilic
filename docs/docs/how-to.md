@@ -17,7 +17,7 @@ Le détail de l'opération sera précisé dans le corps JSON de la requête.
 
 ## Exemple simple
 
-La plupart des actions réalisables sur l'API nécessitent d'être [authentifié](auth.md).
+Toutes les actions réalisables sur l'API nécessitent d'avoir [créé un compte Mobilic](signup.md), et presque toutes requièrent d'être [authentifié](auth.md).
 
 Pour cet exemple basique, nous allons prendre une opération qui ne requiert pas l'authentification : l'opération de `login`.
 
@@ -41,6 +41,8 @@ Pour constituer le corps JSON de la requête, il suffit de mettre le texte de l'
   "query": "mutation {\n  auth {\n    login(email: \"XXX\", password: \"YYY\",) {\n      accessToken\n      refreshToken\n    }\n   }\n}\n"
 }
 ```
+
+> Les valeurs XXX et YYY correspondent respectivement à l'addresse mail et au mot de passe du [compte Mobilic](signup.md), et doivent être remplacées par des valeurs correctes (correspondant à un compte inscrit).
 
 Pour soumettre la requête à l'API il est possible d'utiliser :
 
