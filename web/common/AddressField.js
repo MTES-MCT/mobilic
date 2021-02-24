@@ -9,6 +9,7 @@ import {
   formatAddressMainText,
   formatAddressSubText
 } from "common/utils/addresses";
+import * as Sentry from "@sentry/browser";
 
 const filter = createFilterOptions();
 
@@ -24,9 +25,15 @@ const fetchPlaces = throttle((input, currentPosition = null, callback) => {
       !input && currentPosition ? "reverse" : "search"
     }/?${queryArgs.toString()}`
   )
-    .then(response => response.json())
-    .then(json => json.features || [])
-    .then(places => callback(places));
+    .then(
+      response => response.json(),
+      err => {
+        Sentry.captureException(err);
+        return null;
+      }
+    )
+    .then(json => (json ? json.features || [] : null))
+    .then(places => (places ? callback(places) : null));
 }, 600);
 
 export function AddressField({
