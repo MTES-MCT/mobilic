@@ -48,7 +48,6 @@ export function AddressField({
 
   React.useEffect(() => {
     setLoading(true);
-    let active = true;
 
     if (inputValue === "" && !currentPosition) {
       setOptions(value ? [value] : []);
@@ -57,13 +56,9 @@ export function AddressField({
     }
 
     fetchPlaces(inputValue, currentPosition, results => {
-      if (active) setOptions(results);
+      setOptions(results);
       setLoading(false);
     });
-
-    return () => {
-      active = false;
-    };
   }, [value, inputValue, currentPosition]);
 
   const isSearchingAddress = inputValue && inputValue !== "";
@@ -114,12 +109,12 @@ export function AddressField({
             manual: true,
             name: params.inputValue,
             label: (
-              <>
+              <span>
                 Définir nouvelle adresse
                 <span style={{ fontWeight: "normal" }}>
                   "{params.inputValue}"
                 </span>
-              </>
+              </span>
             )
           });
         }
