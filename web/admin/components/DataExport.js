@@ -65,7 +65,7 @@ export function DataExport({ open, handleClose, companies = [] }) {
             label="Date de début"
             value={minDate}
             format="d MMMM yyyy"
-            maxDate={maxDate}
+            maxDate={maxDate || undefined}
             onChange={setMinDate}
             clearable
             cancelLabel={null}
@@ -80,7 +80,7 @@ export function DataExport({ open, handleClose, companies = [] }) {
             label="Date de fin"
             value={maxDate}
             format="d MMMM yyyy"
-            minDate={minDate}
+            minDate={minDate || undefined}
             onChange={setMaxDate}
             clearable
             cancelLabel={null}
