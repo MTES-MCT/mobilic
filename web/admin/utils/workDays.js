@@ -39,6 +39,10 @@ function computeWorkDayGroupAggregates(workDayGroup) {
     totalWork: totalWorkDuration,
     rest: serviceDuration - totalWorkDuration,
     timers: aggregateTimers,
+    missionNames: workDayGroup.reduce(
+      (acc, wd) => acc.concat(wd.missionNames),
+      []
+    ),
     expenditures: aggregateExpenditures
   };
 }

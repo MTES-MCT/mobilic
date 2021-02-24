@@ -102,6 +102,14 @@ export function WorkTimeTable({ period, workTimeEntries, className }) {
     name: "workedDays",
     minWidth: 150
   };
+  const missionNamesCol = {
+    label: "Mission(s)",
+    name: "missionNames",
+    format: missionNames =>
+      missionNames.filter(name => name && name !== "").join(", "),
+    align: "left",
+    overflowTooltip: true
+  };
   let columns = [];
   if (period === "day") {
     columns = [
@@ -112,6 +120,7 @@ export function WorkTimeTable({ period, workTimeEntries, className }) {
       serviceTimeCol,
       workTimeCol,
       restTimeCol,
+      missionNamesCol,
       expenditureCol
     ];
   } else if (period === "week") {

@@ -321,6 +321,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
             firstName
             lastName
           }
+          missionNames
           startTime
           endTime
           expenditures
