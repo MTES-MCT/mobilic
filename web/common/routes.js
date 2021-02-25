@@ -17,6 +17,7 @@ import { RequestResetPassword, ResetPassword } from "../landing/ResetPassword";
 import { ADMIN_VIEWS } from "../admin/utils/navigation";
 import { CGU } from "../landing/cgu";
 import { UserRead } from "../control/UserRead";
+import { XlsxVerifier } from "../control/VerifyXlsxSignature";
 
 export const ROUTES = [
   {
@@ -148,6 +149,13 @@ export const ROUTES = [
     label: "Historique de l'utilisateur",
     accessible: () => true,
     component: <UserRead />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/control/verify-export",
+    label: "Vérification d'intégrité",
+    accessible: () => true,
+    component: <XlsxVerifier />,
     menuItemFilter: () => false
   }
 ];

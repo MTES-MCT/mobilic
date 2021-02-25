@@ -282,16 +282,6 @@ export const USER_READ_QUERY = gql`
   }
 `;
 
-export const GENERATE_USER_READ_TOKEN_MUTATION = gql`
-  mutation generateReadToken {
-    account {
-      generateReadToken {
-        token
-      }
-    }
-  }
-`;
-
 export const ADMIN_COMPANIES_QUERY = gql`
   query adminCompanies(
     $id: Int!

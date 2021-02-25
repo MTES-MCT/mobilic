@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import QRCode from "qrcode.react";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { CustomDialogTitle } from "../common/CustomDialogTitle";
-import { GENERATE_USER_READ_TOKEN_MUTATION, useApi } from "common/utils/api";
+import { useApi } from "common/utils/api";
 import { formatApiError } from "common/utils/errors";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
@@ -38,12 +38,12 @@ export function UserReadQRCodeModal({ open, handleClose }) {
 
   async function getReadLink() {
     try {
-      const tokenResponse = await api.graphQlMutate(
-        GENERATE_USER_READ_TOKEN_MUTATION,
-        {},
-        { context: { nonPublicApi: true } }
+      const tokenResponse = await api.httpQuery(
+        "POST",
+        "/control/generate-user-read-token"
       );
-      const token = tokenResponse.data.account.generateReadToken.token;
+      const json = await tokenResponse.json();
+      const token = json.token;
       setLink(window.location.origin + "/control/user-history/" + token);
     } catch (err) {
       setError(formatApiError(err));

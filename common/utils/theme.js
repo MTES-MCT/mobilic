@@ -38,7 +38,8 @@ const baseOptions = {
     },
     error: {
       main: "#d63626",
-      dark: "#ab2b1e"
+      dark: "#ab2b1e",
+      light: "#efaca6"
     },
     background: {
       default: "#f7f9fa",
