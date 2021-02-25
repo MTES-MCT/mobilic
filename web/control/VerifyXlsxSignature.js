@@ -54,6 +54,9 @@ const STATUS_MAP = {
 };
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    paddingBottom: theme.spacing(2)
+  },
   text: {
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2)
@@ -193,7 +196,7 @@ export function XlsxVerifier() {
   return [
     <Header key={1} disableMenu />,
     <PaperContainer key={2}>
-      <Container className="centered" maxWidth="sm">
+      <Container className={`centered ${classes.root}`} maxWidth="sm">
         <PaperContainerTitle>Vérification d'intégrité</PaperContainerTitle>
         <Typography align="justify" className={classes.text}>
           Vous pouvez vérifier ici l'intégrité des rapports d'activité générés
