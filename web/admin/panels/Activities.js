@@ -111,7 +111,7 @@ export function ActivityPanel() {
         <Button
           className={classes.exportButton}
           color="primary"
-          onClick={() => modals.open("dataExport", { companies })}
+          onClick={() => modals.open("dataExport", { companies, users })}
           variant="contained"
         >
           Export Excel

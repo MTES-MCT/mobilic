@@ -14,6 +14,7 @@ import {
   CustomDialogActions,
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
+import { EmployeeFilter } from "./EmployeeFilter";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -24,16 +25,18 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function DataExport({ open, handleClose, companies = [] }) {
+export function DataExport({ open, handleClose, companies = [], users = [] }) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const [minDate, setMinDate] = React.useState(null);
   const [maxDate, setMaxDate] = React.useState(null);
 
   const [_companies, setCompanies] = React.useState([]);
+  const [_users, setUsers] = React.useState([]);
 
   React.useEffect(() => {
     setCompanies(companies);
+    setUsers(users);
   }, [open]);
 
   const classes = useStyles();
@@ -54,11 +57,12 @@ export function DataExport({ open, handleClose, companies = [] }) {
           période en spécificant une date de début et/ou une date de fin, et
           filtrer suivant les entreprises.
         </Typography>
-        {_companies.length > 1 && (
-          <Box my={2} className="flex-row-center">
+        <Box my={2} className="flex-row-center">
+          <EmployeeFilter users={_users} setUsers={setUsers} />
+          {_companies.length > 1 && (
             <CompanyFilter companies={_companies} setCompanies={setCompanies} />
-          </Box>
-        )}
+          )}
+        </Box>
         <Box my={2} className="flex-row-center">
           <DatePicker
             className={classes.start}
@@ -99,9 +103,14 @@ export function DataExport({ open, handleClose, companies = [] }) {
           onClick={async e => {
             let selectedCompanies = _companies.filter(c => c.selected);
             if (selectedCompanies.length === 0) selectedCompanies = _companies;
+            let selectedUsers = _users.filter(u => u.selected);
             const queryParams = [
               `company_ids=${selectedCompanies.map(c => c.id).join(",")}`
             ];
+            if (selectedUsers.length > 0)
+              queryParams.push(
+                `user_ids=${selectedUsers.map(u => u.id).join(",")}`
+              );
             if (minDate)
               queryParams.push(
                 `min_date=${minDate.toISOString().slice(0, 10)}`
