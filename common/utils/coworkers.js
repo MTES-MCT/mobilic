@@ -6,7 +6,9 @@ import values from "lodash/values";
 import omitBy from "lodash/omitBy";
 
 export function formatPersonName(coworker) {
-  return coworker ? `${coworker.firstName} ${coworker.lastName}` : "";
+  return coworker && coworker.firstName
+    ? `${coworker.firstName} ${coworker.lastName}`
+    : "";
 }
 
 export function resolveTeamAt(teamChanges, time) {

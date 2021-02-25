@@ -12,6 +12,7 @@ import { useApi } from "common/utils/api";
 import * as Sentry from "@sentry/browser";
 import Alert from "@material-ui/lab/Alert";
 import AlertTitle from "@material-ui/lab/AlertTitle";
+import { useSnackbarAlerts } from "../common/Snackbar";
 
 const STATUS_MAP = {
   SUCCESS: {
@@ -116,11 +117,15 @@ const useStyles = makeStyles(theme => ({
   response: {
     textAlign: "justify",
     marginTop: theme.spacing(2)
+  },
+  placeholder: {
+    padding: theme.spacing(2)
   }
 }));
 
 export function XlsxVerifier() {
   const api = useApi();
+  const alerts = useSnackbarAlerts();
 
   const [loading, setLoading] = React.useState(false);
   const [fileName, setFileName] = React.useState(null);
@@ -163,7 +168,13 @@ export function XlsxVerifier() {
       }
       setLoading(false);
     },
-    onDropRejected: fileRejections => console.log(fileRejections)
+    onDropRejected: fileRejections => {
+      alerts.error(
+        "Fichier invalide. Seuls les fichiers avec extension .xlsx sont acceptés",
+        "rejection",
+        6000
+      );
+    }
   });
 
   const classes = useStyles({
@@ -197,7 +208,7 @@ export function XlsxVerifier() {
           >
             <input {...getInputProps()} />
             {fileName && <DescriptionIcon color="inherit" />}
-            <Typography color="inherit">
+            <Typography className={classes.placeholder} color="inherit">
               {fileName
                 ? fileName
                 : "Déposez votre fichier ici ou cliquez pour choisir un fichier. Seuls les .xlsx sont acceptés."}
