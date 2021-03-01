@@ -46,6 +46,9 @@ const useStyles = makeStyles(theme => ({
   },
   pendingEmployments: {
     marginBottom: theme.spacing(10)
+  },
+  terminatedEmployment: {
+    color: theme.palette.text.disabled
   }
 }));
 
@@ -165,7 +168,7 @@ export function Employees({ companyId, containerRef }) {
       format: active => (
         <Typography
           className={`bold ${
-            active ? classes.successText : classes.warningText
+            active ? classes.successText : classes.terminatedEmployment
           }`}
         >
           {active ? "Actif" : "Terminé"}
@@ -320,6 +323,9 @@ export function Employees({ companyId, containerRef }) {
       maxHeight={"100%"}
       defaultSortBy="startDate"
       attachScrollTo={containerRef.current}
+      rowClassName={(index, row) =>
+        !row.active ? classes.terminatedEmployment : ""
+      }
     />,
     <Menu
       key={6}
