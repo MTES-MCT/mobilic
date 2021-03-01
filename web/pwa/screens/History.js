@@ -485,7 +485,11 @@ export function History({
             <Box className={classes.placeholder}>
               <NoDataImage height={100} />
               <Typography>
-                Aucune mission enregistrée pour la période
+                {currentTab === "mission"
+                  ? "Journée non travaillée"
+                  : currentTab === "week"
+                  ? "Aucune journée travaillée dans la semaine"
+                  : "Aucune journée travaillée dans le mois"}
               </Typography>
             </Box>
           )}
