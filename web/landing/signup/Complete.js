@@ -6,6 +6,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -13,8 +14,16 @@ const useStyles = makeStyles(theme => ({
     textAlign: "center",
     fontSize: "300%"
   },
+  alert: {
+    textAlign: "left",
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2)
+  },
   container: {
     padding: theme.spacing(4)
+  },
+  grid: {
+    marginBottom: 0
   }
 }));
 
@@ -30,7 +39,13 @@ export function Complete({ type }) {
 
   return (
     <Container className={`centered ${classes.container}`} maxWidth="sm">
-      <Grid container spacing={10} direction="column" alignItems="center">
+      <Grid
+        container
+        spacing={8}
+        direction="column"
+        alignItems="center"
+        className={classes.grid}
+      >
         <Grid item xs={12}>
           <Typography className={classes.title} variant="h1">
             🎉
@@ -50,6 +65,24 @@ export function Complete({ type }) {
               Un email d'activation de votre compte vous a été envoyé à
               l'adresse <strong>{store.userInfo().email}</strong>.
             </Typography>
+          )}
+          {type === "user" && (
+            <Alert severity="warning" className={classes.alert}>
+              <Typography>Il est possible que</Typography>
+              <ul style={{ padding: 0 }}>
+                <li>
+                  <Typography>
+                    l'email parvienne avec un léger délai, de l'ordre de
+                    quelques minutes normalement.
+                  </Typography>
+                </li>
+                <li>
+                  <Typography>
+                    l'email atterrisse dans votre courrier indésirable (spams).
+                  </Typography>
+                </li>
+              </ul>
+            </Alert>
           )}
         </Grid>
         <Grid item xs={12}>
