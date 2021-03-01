@@ -14,7 +14,7 @@ import {
   WorkerImage
 } from "common/utils/icons";
 import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
-import BackgroundImage from "common/assets/images/landing-hero.svg";
+import BackgroundImage from "common/assets/images/hero.jpg";
 import { useModals } from "common/utils/modals";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 
@@ -75,8 +75,9 @@ const useStyles = makeStyles(theme => ({
   },
   bgImage: {
     background: `url(${BackgroundImage}) 50%`,
-    backgroundSize: "contain",
-    backgroundRepeat: "none"
+    backgroundSize: "cover",
+    paddingTop: theme.spacing(14),
+    paddingBottom: theme.spacing(14)
   },
   showcase: {
     padding: theme.spacing(2)
@@ -155,36 +156,25 @@ export function Landing() {
   const classes = useStyles();
   return [
     <Header key={1} />,
-    <Container key={2} className={`${classes.section}`} maxWidth={false}>
+    <Container
+      key={2}
+      className={`${classes.section} ${classes.bgImage}`}
+      maxWidth={false}
+    >
       <Container maxWidth="md" className={classes.inner}>
-        <Grid container wrap alignItems="center" spacing={1}>
-          <Grid xs container item direction="column" spacing={2}>
-            <Grid item>
-              <Typography align="left" variant="h2">
-                Bienvenue sur Mobilic !
-              </Typography>
+        <Grid container direction="column" wrap alignItems="center" spacing={1}>
+          <Grid item className={classes.whiteSection}>
+            <Typography variant="h1">Bienvenue sur Mobilic !</Typography>
+          </Grid>
+          <Hidden xsDown>
+            <Grid item className={classes.whiteSection}>
+              <Box mt={2}>
+                <Typography variant="h1" style={{ fontWeight: "normal" }}>
+                  Le suivi de votre temps de travail : fiable, facile, et rapide
+                </Typography>
+              </Box>
             </Grid>
-            <Hidden xsDown>
-              <Grid item>
-                <Box mt={2}>
-                  <Typography
-                    align="left"
-                    variant="h3"
-                    style={{ fontWeight: "normal" }}
-                  >
-                    Le suivi de votre temps de travail : fiable, facile, et
-                    rapide
-                  </Typography>
-                </Box>
-              </Grid>
-            </Hidden>
-          </Grid>
-          <Grid xs item>
-            <img
-              style={{ height: "auto", maxWidth: "100%", minWidth: 300 }}
-              src={BackgroundImage}
-            />
-          </Grid>
+          </Hidden>
         </Grid>
       </Container>
     </Container>,

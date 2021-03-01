@@ -64,7 +64,8 @@ export const ROUTES = [
     label: "Inscription",
     accessible: () => true,
     component: <Signup />,
-    menuItemFilter: ({ userInfo }) => !userInfo.id
+    menuItemFilter: ({ userInfo }) => !userInfo.id,
+    mainCta: true
   },
   {
     path: "/login",

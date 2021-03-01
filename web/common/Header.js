@@ -10,8 +10,6 @@ import { getAccessibleRoutes } from "./routes";
 import { useHistory, useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { Logos } from "./Logos";
-import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
-import ToggleButton from "@material-ui/lab/ToggleButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import useTheme from "@material-ui/core/styles/useTheme";
@@ -25,14 +23,12 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 import CloseIcon from "@material-ui/icons/Close";
 import Link from "@material-ui/core/Link";
 import Tooltip from "@material-ui/core/Tooltip";
+import { MainCtaButton } from "../pwa/components/MainCtaButton";
 
 const useStyles = makeStyles(theme => ({
   navItemButton: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    borderRadius: 0,
-    border: "none",
-    color: theme.palette.text.primary
+    marginLeft: theme.spacing(2),
+    borderRadius: 2
   },
   docButton: {
     textTransform: "none",
@@ -304,34 +300,35 @@ function DesktopHeader({ disableMenu }) {
               orientation="vertical"
               flexItem
             />
-            <ToggleButtonGroup
-              exclusive
-              value={location.pathname}
-              onChange={(e, newPath) => {
-                e.preventDefault();
-                if (newPath && !location.pathname.startsWith(newPath))
-                  history.push(newPath);
-              }}
-            >
-              {routes
-                .filter(
-                  r =>
-                    r.accessible({ userInfo, companies }) &&
-                    (!r.menuItemFilter ||
-                      r.menuItemFilter({ userInfo, companies }))
-                )
-                .map(route => (
-                  <ToggleButton
+            {routes
+              .filter(
+                r =>
+                  r.accessible({ userInfo, companies }) &&
+                  (!r.menuItemFilter ||
+                    r.menuItemFilter({ userInfo, companies }))
+              )
+              .map(route => {
+                const ButtonComponent = route.mainCta
+                  ? MainCtaButton
+                  : props => (
+                      <Button variant="outlined" color="primary" {...props} />
+                    );
+                return (
+                  <ButtonComponent
                     key={route.path}
                     value={route.path}
                     href={route.path}
-                    selected={location.pathname.startsWith(route.path)}
                     className={classes.navItemButton}
+                    onClick={e => {
+                      e.preventDefault();
+                      if (!location.pathname.startsWith(route.path))
+                        history.push(route.path);
+                    }}
                   >
                     {route.label}
-                  </ToggleButton>
-                ))}
-            </ToggleButtonGroup>
+                  </ButtonComponent>
+                );
+              })}
           </Box>
         )
       )}
