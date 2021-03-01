@@ -14,7 +14,7 @@ import {
   WorkerImage
 } from "common/utils/icons";
 import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
-import BackgroundImage from "common/assets/images/hero.jpg";
+import BackgroundImage from "common/assets/images/hero.png";
 import { useModals } from "common/utils/modals";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 
