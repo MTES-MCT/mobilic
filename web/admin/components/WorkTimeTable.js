@@ -52,7 +52,7 @@ export function WorkTimeTable({ period, workTimeEntries, className }) {
     label: "Début",
     name: "startTime",
     format: time => (time ? formatTimeOfDay(time) : null),
-    align: "left",
+    align: "right",
     minWidth: 80
   };
   const endTimeCol = {
@@ -64,7 +64,7 @@ export function WorkTimeTable({ period, workTimeEntries, className }) {
       ) : (
         <span className={classes.warningText}>En cours</span>
       ),
-    align: "left",
+    align: "right",
     minWidth: 80
   };
   const serviceTimeCol = {
@@ -115,12 +115,12 @@ export function WorkTimeTable({ period, workTimeEntries, className }) {
     columns = [
       periodCol,
       employeeCol,
+      missionNamesCol,
       startTimeCol,
       endTimeCol,
       serviceTimeCol,
       workTimeCol,
       restTimeCol,
-      missionNamesCol,
       expenditureCol
     ];
   } else if (period === "week") {
