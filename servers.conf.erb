@@ -20,7 +20,7 @@ server {
     }
 
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
-    add_header Content-Security-Policy "script-src 'self' https://client.crisp.chat" "https://stats.data.gouv.fr";
+    add_header Content-Security-Policy "script-src 'self' https://client.crisp.chat https://stats.data.gouv.fr";
     add_header X-XSS-Protection "1; mode=block";
     add_header Cache-Control $cache_control;
 
