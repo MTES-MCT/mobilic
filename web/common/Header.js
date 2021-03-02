@@ -21,9 +21,9 @@ import List from "@material-ui/core/List";
 import Drawer from "@material-ui/core/Drawer";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import CloseIcon from "@material-ui/icons/Close";
-import Link from "@material-ui/core/Link";
 import Tooltip from "@material-ui/core/Tooltip";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
+import { Link, LinkButton } from "./LinkButton";
 
 const useStyles = makeStyles(theme => ({
   navItemButton: {
@@ -124,7 +124,7 @@ function ListRouteItem({ route, closeDrawer }) {
           classes.selectedNavListItem}`}
         variant="body1"
         color="inherit"
-        href={route.path}
+        to={route.path}
         underline="none"
         onClick={e => {
           e.preventDefault();
@@ -233,22 +233,22 @@ function DesktopHeader({ disableMenu }) {
   const routes = getAccessibleRoutes({ userInfo, companies });
 
   const docLinks = () => [
-    <Button
+    <LinkButton
       key={0}
       className={classes.docButton}
       href="/developers/docs/intro"
       target="_blank"
     >
       Espace développeurs
-    </Button>,
-    <Button
+    </LinkButton>,
+    <LinkButton
       key={1}
       href="https://faq.mobilic.beta.gouv.fr"
       target="_blank"
       className={classes.docButton}
     >
       Foire aux questions
-    </Button>
+    </LinkButton>
   ];
 
   return (

@@ -95,7 +95,7 @@ export function Invite() {
                   <LinkButton
                     color="primary"
                     variant="contained"
-                    href={`/signup/user?token=${employeeInvite.inviteToken}`}
+                    to={`/signup/user?token=${employeeInvite.inviteToken}`}
                   >
                     Je crée un compte
                   </LinkButton>
@@ -104,7 +104,7 @@ export function Invite() {
                   <LinkButton
                     color="primary"
                     variant="outlined"
-                    href={`/login?next=${encodeURIComponent(
+                    to={`/login?next=${encodeURIComponent(
                       "/redeem_invite?token=" + employeeInvite.inviteToken
                     )}`}
                   >

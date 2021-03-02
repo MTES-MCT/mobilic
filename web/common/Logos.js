@@ -14,7 +14,7 @@ export function Logos({ leaveSpaceForMenu = true }) {
     theme.breakpoints.up("sm")
   );
   return (
-    <LinkButton style={{ borderRadius: 0, textTransform: "none" }} href="/">
+    <LinkButton style={{ borderRadius: 0, textTransform: "none" }} to="/">
       <Box className="flex-row-flex-start">
         {(leaveSpaceForMenu
           ? shouldDisplayBothLogosAndMenu

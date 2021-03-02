@@ -430,7 +430,7 @@ function _CompanyPanel({ width, containerRef }) {
             size="small"
             variant="contained"
             color="primary"
-            href="/signup/company"
+            to="/signup/company"
           >
             Inscrire une nouvelle entreprise
           </LinkButton>
