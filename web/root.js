@@ -188,7 +188,9 @@ function _Root() {
     const uid = currentUserId();
     if (uid) pushInstruction("setUserId", uid);
     else pushInstruction("resetUserId");
-    trackPageView();
+    trackPageView({
+      documentTitle: document.domain + document.location.pathname
+    });
   }, [location]);
 
   React.useEffect(() => {
