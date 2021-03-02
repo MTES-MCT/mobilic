@@ -99,7 +99,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: ({ small }) => (small ? "0.75rem" : "inherit")
   },
   cell: {
-    margin: "0 !important",
+    margin: 0,
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
     paddingTop: ({ dense }) => (dense ? theme.spacing(0.5) : theme.spacing(2)),
@@ -577,8 +577,8 @@ const VirtualizedTable = React.forwardRef(
               key={column.name}
               flexGrow={1}
               dataKey={column.name}
-              className={classes.cell}
-              headerClassName={classes.cell}
+              className={`${classes.cell} ${column.className || ""}`}
+              headerClassName={`${classes.cell} ${column.className || ""}`}
               cellDataGetter={({ rowData, dataKey }) => {
                 return rowData[dataKey];
               }}

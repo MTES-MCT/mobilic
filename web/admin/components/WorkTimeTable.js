@@ -15,6 +15,9 @@ const useStyles = makeStyles(theme => ({
   warningText: {
     color: theme.palette.warning.main,
     fontWeight: "bold"
+  },
+  expenditures: {
+    padding: theme.spacing(4)
   }
 }));
 
@@ -94,8 +97,9 @@ export function WorkTimeTable({ period, workTimeEntries, className }) {
     name: "expenditures",
     format: exps => (exps ? formatExpendituresAsOneString(exps) : null),
     align: "left",
-    minWidth: 150,
-    overflowTooltip: true
+    minWidth: 200,
+    overflowTooltip: true,
+    className: classes.expenditures
   };
   const workedDaysCol = {
     label: "Jours travaillés",
