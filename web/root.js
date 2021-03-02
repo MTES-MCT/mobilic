@@ -47,30 +47,55 @@ import { ScrollToTop } from "common/utils/scroll";
 import { SnackbarProvider } from "./common/Snackbar";
 import { EnvironmentHeader } from "./common/EnvironmentHeader";
 import { currentUserId } from "common/utils/cookie";
+import {
+  MatomoProvider,
+  createInstance,
+  useMatomo
+} from "@datapunt/matomo-tracker-react";
+
+const matomo = createInstance({
+  urlBase: "https://stats.data.gouv.fr",
+  siteId: 163,
+  userId: "UID76903202", // optional, default value: `undefined`.
+  trackerUrl: "https://stats.data.gouv.fr/piwik.php", // optional, default value: `${urlBase}matomo.php`
+  srcUrl: "https://stats.data.gouv.fr/piwik.js", // optional, default value: `${urlBase}matomo.js`,
+  disabled: !process.env.REACT_APP_MATOMO,
+  heartBeat: {
+    // optional, enabled by default
+    active: true, // optional, default value: true
+    seconds: 10 // optional, default value: `15
+  },
+  linkTracking: false // optional, default value: true
+});
 
 export default function Root() {
   return (
-    <StoreSyncedWithLocalStorageProvider storage={localStorage}>
-      <Router>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <ApiContextProvider>
-            <MuiPickersUtilsProvider utils={FrLocalizedUtils} locale={frLocale}>
-              <SnackbarProvider>
-                <LoadingScreenContextProvider>
-                  <ModalProvider modalDict={MODAL_DICT}>
-                    <ActionsContextProvider>
-                      <ScrollToTop />
-                      <_Root />
-                    </ActionsContextProvider>
-                  </ModalProvider>
-                </LoadingScreenContextProvider>
-              </SnackbarProvider>
-            </MuiPickersUtilsProvider>
-          </ApiContextProvider>
-        </ThemeProvider>
-      </Router>
-    </StoreSyncedWithLocalStorageProvider>
+    <MatomoProvider value={matomo}>
+      <StoreSyncedWithLocalStorageProvider storage={localStorage}>
+        <Router>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <ApiContextProvider>
+              <MuiPickersUtilsProvider
+                utils={FrLocalizedUtils}
+                locale={frLocale}
+              >
+                <SnackbarProvider>
+                  <LoadingScreenContextProvider>
+                    <ModalProvider modalDict={MODAL_DICT}>
+                      <ActionsContextProvider>
+                        <ScrollToTop />
+                        <_Root />
+                      </ActionsContextProvider>
+                    </ModalProvider>
+                  </LoadingScreenContextProvider>
+                </SnackbarProvider>
+              </MuiPickersUtilsProvider>
+            </ApiContextProvider>
+          </ThemeProvider>
+        </Router>
+      </StoreSyncedWithLocalStorageProvider>
+    </MatomoProvider>
   );
 }
 
@@ -93,6 +118,10 @@ function _Root() {
 
   const loadedLocationRef = React.useRef(null);
   const loadedLocation = loadedLocationRef.current;
+
+  const { enableLinkTracking, pushInstruction, trackPageView } = useMatomo();
+
+  enableLinkTracking();
 
   const loadUserAndRoute = async () => {
     const isSigningUp = location.pathname.startsWith("/signup");
@@ -154,6 +183,13 @@ function _Root() {
     )
       loadedLocationRef.current = location.pathname + location.search;
   }, []);
+
+  React.useEffect(() => {
+    const uid = currentUserId();
+    if (uid) pushInstruction("setUserId", uid);
+    else pushInstruction("resetUserId");
+    trackPageView();
+  }, [location]);
 
   React.useEffect(() => {
     withLoadingScreen(
