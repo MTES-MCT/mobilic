@@ -54,7 +54,7 @@ export function DataExport({ open, handleClose, companies = [], users = [] }) {
         <Typography>
           Par défaut l'export contient l'historique <strong>intégral</strong> de{" "}
           <strong>toutes</strong> vos entreprises. Vous pouvez restreindre la
-          période en spécificant une date de début et/ou une date de fin, et
+          période en spécifiant une date de début et/ou une date de fin, et
           filtrer suivant les entreprises.
         </Typography>
         <Box my={2} className="flex-row-center">

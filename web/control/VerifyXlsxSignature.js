@@ -197,12 +197,15 @@ export function XlsxVerifier() {
     <Header key={1} disableMenu />,
     <PaperContainer key={2}>
       <Container className={`centered ${classes.root}`} maxWidth="sm">
-        <PaperContainerTitle>Vérification d'intégrité</PaperContainerTitle>
+        <PaperContainerTitle>
+          Vérification de l'intégrité d'un fichier
+        </PaperContainerTitle>
         <Typography align="justify" className={classes.text}>
           Vous pouvez vérifier ici l'intégrité des rapports d'activité générés
-          par Mobilic au format Excel (.xlsx). Chaque rapport comporte des
-          informations d'intégrité permettant de déterminer si le fichier a été
-          modifé ou non après sa génération.
+          par Mobilic au format Excel (.xlsx). Un fichier est considéré comme
+          intègre si le fichier n'a subi aucune modification après sa
+          génération. Cela permet de sécuriser que les données du rapport
+          d'activité n'ont pas été modifiées avant de vous le transmettre.
         </Typography>
         <Box className={classes.outer}>
           <Box
