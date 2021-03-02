@@ -55,6 +55,7 @@ export function register(config) {
 }
 
 function registerValidSW(swUrl, config) {
+  const currentServiceWorker = navigator.serviceWorker.controller;
   navigator.serviceWorker
     .register(swUrl)
     .then(registration => {
@@ -70,7 +71,7 @@ function registerValidSW(swUrl, config) {
     });
   navigator.serviceWorker.oncontrollerchange = () => {
     console.log("Detecting new service worker");
-    window.location.reload();
+    if (currentServiceWorker) window.location.reload();
   };
 }
 
