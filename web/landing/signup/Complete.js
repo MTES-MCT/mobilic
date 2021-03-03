@@ -62,7 +62,7 @@ export function Complete({ type }) {
           )}
           {type === "user" && (
             <Typography>
-              Un email d'activation de votre compte vous a été envoyé à
+              Un email de vérification de votre compte vous a été envoyé à
               l'adresse <strong>{store.userInfo().email}</strong>.
             </Typography>
           )}
