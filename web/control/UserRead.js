@@ -128,7 +128,7 @@ export function UserRead() {
       ) : missions ? (
         [
           <Container maxWidth="sm" key={0}>
-            <Typography variant="h5">Infos salarié</Typography>
+            <Typography variant="h5">Informations salarié.e</Typography>
             <Grid container wrap="wrap" spacing={2}>
               <Grid item>
                 <InfoItem name="Nom" value={formatPersonName(userInfo)} />

@@ -72,7 +72,8 @@ export function UserReadQRCodeModal({ open, handleClose }) {
           [
             <Typography align="left" className={classes.qrCodeText} key={0}>
               Vous pouvez consulter l'historique depuis un autre téléphone en
-              scannant le QR code suivant
+              scannant le QR code suivant, à condition d'avoir un accès
+              Internet.
             </Typography>,
             <QRCode value={link} size={180} key={1} />
           ]
