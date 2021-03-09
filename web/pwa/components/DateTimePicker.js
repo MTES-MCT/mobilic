@@ -81,10 +81,9 @@ export function DateTimePicker({
 const NativeDateTimePicker = React.forwardRef(
   ({ time, setTime, minTime, maxTime, ...props }, ref) => {
     React.useEffect(() => {
-      if (ref.current)
-        setTimeout(() => {
-          ref.current.defaultValue = "";
-        }, 0);
+      setTimeout(() => {
+        if (ref.current) ref.current.defaultValue = "";
+      }, 0);
     }, []);
 
     const handleChange = e => {
