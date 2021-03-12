@@ -10,6 +10,7 @@ import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import uniqBy from "lodash/uniqBy";
+import orderBy from "lodash/orderBy";
 import min from "lodash/min";
 import max from "lodash/max";
 import map from "lodash/map";
@@ -106,6 +107,59 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main
   }
 }));
+
+export function computeMissionStats(m) {
+  const activitiesWithUserId = m.activities.map(a => ({
+    ...a,
+    userId: a.user.id
+  }));
+  const members = uniqBy(
+    m.activities.map(a => a.user),
+    u => u.id
+  );
+  const validatorIds = m.validations.map(v => v.submitterId);
+  const validatedByAllMembers = members.every(user =>
+    validatorIds.includes(user.id)
+  );
+  const activitiesByUser = groupBy(activitiesWithUserId, a => a.user.id);
+  const isComplete = activitiesWithUserId.every(a => !!a.endTime);
+  const userStats = mapValues(activitiesByUser, (activities, userId) => {
+    const _activities = orderBy(activities, ["startTime", "endTime"]);
+    const startTime = min(_activities.map(a => a.startTime));
+    const endTime = max(_activities.map(a => a.endTime));
+    const totalWorkDuration = sum(
+      _activities.map(a => a.endTime - a.startTime)
+    );
+    return {
+      activities: _activities,
+      user: members.find(m => m.id.toString() === userId),
+      startTime,
+      endTime,
+      service: endTime - startTime,
+      totalWorkDuration,
+      isComplete,
+      breakDuration: endTime - startTime - totalWorkDuration,
+      expenditureAggs: mapValues(
+        groupBy(
+          m.expenditures.filter(e => e.userId.toString() === userId),
+          e => e.type
+        ),
+        exps => exps.length
+      ),
+      validation: m.validations.find(v => v.submitterId.toString() === userId)
+    };
+  });
+  const startTime = min(m.activities.map(a => a.startTime));
+  const endTime = max(m.activities.map(a => a.endTime));
+  return {
+    ...m,
+    activities: activitiesWithUserId,
+    startTime,
+    endTime,
+    validatedByAllMembers,
+    userStats
+  };
+}
 
 function _ValidationPanel({ containerRef, width }) {
   const api = useApi();
@@ -219,54 +273,7 @@ function _ValidationPanel({ containerRef, width }) {
   const nonValidatedByAdminMissions = adminStore.missions
     .filter(m => !m.adminValidation)
     .filter(m => m.activities.length > 0)
-    .map(m => {
-      const members = uniqBy(
-        m.activities.map(a => a.user),
-        u => u.id
-      );
-      const validatorIds = m.validations.map(v => v.submitterId);
-      const validatedByAllMembers = members.every(user =>
-        validatorIds.includes(user.id)
-      );
-      const activitiesByUser = groupBy(m.activities, a => a.user.id);
-      const isComplete = m.activities.every(a => !!a.endTime);
-      const userStats = mapValues(activitiesByUser, (activities, userId) => {
-        const startTime = min(activities.map(a => a.startTime));
-        const endTime = max(activities.map(a => a.endTime));
-        const totalWorkDuration = sum(
-          activities.map(a => a.endTime - a.startTime)
-        );
-        return {
-          activities,
-          user: members.find(m => m.id.toString() === userId),
-          startTime,
-          endTime,
-          service: endTime - startTime,
-          totalWorkDuration,
-          isComplete,
-          breakDuration: endTime - startTime - totalWorkDuration,
-          expenditureAggs: mapValues(
-            groupBy(
-              m.expenditures.filter(e => e.userId.toString() === userId),
-              e => e.type
-            ),
-            exps => exps.length
-          ),
-          validation: m.validations.find(
-            v => v.submitterId.toString() === userId
-          )
-        };
-      });
-      const startTime = min(m.activities.map(a => a.startTime));
-      const endTime = max(m.activities.map(a => a.endTime));
-      return {
-        ...m,
-        startTime,
-        endTime,
-        validatedByAllMembers,
-        userStats
-      };
-    });
+    .map(computeMissionStats);
 
   const missionsValidatedByAllWorkers = nonValidatedByAdminMissions.filter(
     m => m.validatedByAllMembers

@@ -26,7 +26,12 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
 
-function overwriteOps(allActivities, startTime, endTime, selfId) {
+export function activityOverwriteOps(
+  allActivities,
+  startTime,
+  endTime,
+  selfId
+) {
   const activities = allActivities.filter(a => a.userId === selfId);
 
   const activitiesStartedBeforeEndingInBetween = activities.filter(
@@ -186,7 +191,7 @@ export function ActivityRevisionOrCreationModal({
       if (requiresDriver()) driverId = newActivityDriverId;
 
       if (newActivityType === ACTIVITIES.break.name) {
-        const ops = overwriteOps(
+        const ops = activityOverwriteOps(
           otherActivities,
           newUserTime,
           newUserEndTime,

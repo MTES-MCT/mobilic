@@ -1,6 +1,5 @@
 import React from "react";
 import values from "lodash/values";
-import mapValues from "lodash/mapValues";
 import Box from "@material-ui/core/Box";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
@@ -17,7 +16,7 @@ import Divider from "@material-ui/core/Divider";
 import { AugmentedVirtualizedTable, CellContent } from "./AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
 import { getTime } from "common/utils/events";
-import { ACTIVITIES, TIMEABLE_ACTIVITIES } from "common/utils/activities";
+import { ACTIVITIES } from "common/utils/activities";
 import CheckIcon from "@material-ui/icons/Check";
 import EditIcon from "@material-ui/icons/Edit";
 import { DateTimePicker } from "../../pwa/components/DateTimePicker";
@@ -48,6 +47,8 @@ import {
   formatAddressMainText,
   formatAddressSubText
 } from "common/utils/addresses";
+import { computeMissionStats } from "../panels/Validations";
+import { activityOverwriteOps } from "../../pwa/components/ActivityRevision";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {
@@ -160,13 +161,13 @@ export function MissionDetails({ mission, handleClose, width }) {
   };
 
   async function onCancelActivity(activity) {
-    await api.graphQlMutate(CANCEL_ACTIVITY_MUTATION, {
-      activityId: activity.id
-    });
-    mission.userStats = mapValues(mission.userStats, us => ({
-      ...us,
-      activities: us.activities.filter(a => activity.id !== a.id)
-    }));
+    await api.nonConcurrentQueryQueue.execute(() =>
+      api.graphQlMutate(CANCEL_ACTIVITY_MUTATION, {
+        activityId: activity.id
+      })
+    );
+    mission.activities = mission.activities.filter(a => a.id !== activity.id);
+    Object.assign(mission, computeMissionStats(mission));
     adminStore.setMissions(missions =>
       missions.map(m => ({
         ...m,
@@ -175,27 +176,45 @@ export function MissionDetails({ mission, handleClose, width }) {
     );
   }
 
-  async function onCreateActivity(user, newValues) {
-    const apiResponse = await api.graphQlMutate(LOG_ACTIVITY_MUTATION, {
-      ...newValues,
-      missionId: mission.id,
-      userId: user.id,
-      switch: false
-    });
+  async function onCreateActivity(user, newValues, activities) {
+    if (newValues.type === ACTIVITIES.break.name) {
+      const ops = activityOverwriteOps(
+        activities,
+        newValues.startTime,
+        newValues.endTime,
+        user.id
+      );
+      console.log(activities);
+      console.log(user.id);
+      console.log(ops);
+      return await Promise.all(
+        ops.map(op => {
+          if (op.operation === "cancel") return onCancelActivity(op.activity);
+          if (op.operation === "update")
+            return onEditActivity(op.activity, {
+              startTime: op.startTime,
+              endTime: op.endTime
+            });
+          if (op.operation === "create")
+            return onCreateActivity(user, {
+              type: op.type,
+              startTime: op.startTime,
+              endTime: op.endTime
+            });
+        })
+      );
+    }
+    const apiResponse = await api.nonConcurrentQueryQueue.execute(() =>
+      api.graphQlMutate(LOG_ACTIVITY_MUTATION, {
+        ...newValues,
+        missionId: mission.id,
+        userId: user.id,
+        switch: false
+      })
+    );
     const activity = apiResponse.data.activities.logActivity;
-    mission.userStats = mapValues(mission.userStats, us => ({
-      ...us,
-      activities:
-        us.user.id === user.id
-          ? [
-              ...us.activities,
-              {
-                ...activity,
-                user
-              }
-            ]
-          : us.activities
-    }));
+    mission.activities = [...mission.activities, { ...activity, user }];
+    Object.assign(mission, computeMissionStats(mission));
     adminStore.setMissions(missions =>
       missions.map(m =>
         m.id === mission.id
@@ -209,22 +228,22 @@ export function MissionDetails({ mission, handleClose, width }) {
   }
 
   async function onEditActivity(activity, newValues) {
-    await api.graphQlMutate(EDIT_ACTIVITY_MUTATION, {
-      activityId: activity.id,
-      ...newValues
-    });
-    mission.userStats = mapValues(mission.userStats, us => ({
-      ...us,
-      activities: us.activities.map(a =>
-        a.id === activity.id
-          ? {
-              ...a,
-              startTime: newValues.startTime,
-              endTime: newValues.endTime
-            }
-          : a
-      )
-    }));
+    await api.nonConcurrentQueryQueue.execute(() =>
+      api.graphQlMutate(EDIT_ACTIVITY_MUTATION, {
+        activityId: activity.id,
+        ...newValues
+      })
+    );
+    mission.activities = mission.activities.map(a =>
+      a.id === activity.id
+        ? {
+            ...a,
+            startTime: newValues.startTime,
+            endTime: newValues.endTime
+          }
+        : a
+    );
+    Object.assign(mission, computeMissionStats(mission));
     adminStore.setMissions(missions =>
       missions.map(m => ({
         ...m,
@@ -295,9 +314,9 @@ export function MissionDetails({ mission, handleClose, width }) {
               setEditedValues({ ...editedValues, type: e.target.value })
             }
           >
-            {Object.keys(TIMEABLE_ACTIVITIES).map(activityName => (
+            {Object.keys(ACTIVITIES).map(activityName => (
               <MenuItem key={activityName} value={activityName}>
-                {TIMEABLE_ACTIVITIES[activityName].label}
+                {ACTIVITIES[activityName].label}
               </MenuItem>
             ))}
           </TextField>
@@ -370,11 +389,19 @@ export function MissionDetails({ mission, handleClose, width }) {
           <>
             <IconButton
               className="no-margin-no-padding"
-              disabled={!!errors.startTime || !!errors.endTime}
+              disabled={
+                !!errors.startTime ||
+                !!errors.endTime ||
+                (!activityIdToEdit && !editedValues.type)
+              }
               onClick={withAlerts(async () => {
                 activityIdToEdit
                   ? await onEditActivity(entry, { ...editedValues })
-                  : await onCreateActivity(entry.user, { ...editedValues });
+                  : await onCreateActivity(
+                      entry.user,
+                      { ...editedValues },
+                      mission.activities
+                    );
                 setActivityIdToEdit(null);
                 setCreatingActivityForUserId(null);
                 setEditedValues({});
