@@ -51,7 +51,7 @@ export function PaperContainerTitle(props) {
   return (
     <Typography
       className={`${classes.title} ${props.className || ""}`}
-      variant="h3"
+      variant={props.variant || "h3"}
     >
       {props.children}
     </Typography>

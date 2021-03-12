@@ -5,18 +5,12 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import { Header } from "../common/Header";
-import { Link } from "../common/LinkButton";
 import Hidden from "@material-ui/core/Hidden";
-import {
-  FabNumIcon,
-  ManagerImage,
-  SoftwareImage,
-  WorkerImage
-} from "common/utils/icons";
+import { ManagerImage, SoftwareImage, WorkerImage } from "common/utils/icons";
 import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
 import BackgroundImage from "common/assets/images/hero.png";
-import { useModals } from "common/utils/modals";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
+import { Footer } from "./footer";
 
 const useStyles = makeStyles(theme => ({
   whiteSection: {
@@ -28,10 +22,6 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(5),
     paddingRight: theme.spacing(5),
     margin: 0
-  },
-  darkSection: {
-    backgroundColor: theme.palette.background.dark,
-    color: theme.palette.primary.contrastText
   },
   sectionTitle: {
     paddingBottom: theme.spacing(6)
@@ -63,15 +53,6 @@ const useStyles = makeStyles(theme => ({
   inner: {
     margin: "auto",
     padding: 0
-  },
-  footerLinksSection: {
-    textAlign: "left"
-  },
-  footerLinksSectionTitle: {
-    paddingBottom: theme.spacing(2)
-  },
-  footerLink: {
-    paddingBottom: theme.spacing(1)
   },
   bgImage: {
     background: `url(${BackgroundImage}) 50%`,
@@ -313,89 +294,6 @@ export function Landing() {
         </Box>
       </Container>
     </Container>,
-    <Container
-      key={6}
-      className={`${classes.section} ${classes.darkSection}`}
-      maxWidth={false}
-    >
-      <Container maxWidth="md" className={classes.inner}>
-        <Footer />
-      </Container>
-    </Container>
+    <Footer key={6} />
   ];
-}
-
-function Footer() {
-  const classes = useStyles();
-  const modals = useModals();
-
-  return (
-    <Grid
-      container
-      spacing={10}
-      justify="space-between"
-      alignItems="flex-start"
-    >
-      <Grid item sm={6} container alignItems="center" direction="column">
-        <Grid
-          item
-          container
-          wrap="nowrap"
-          spacing={2}
-          direction="row"
-          alignItems="flex-start"
-        >
-          <Grid item>
-            <FabNumIcon scale={0.5} />
-          </Grid>
-          <Grid item>
-            <Typography align="justify">
-              Mobilic est un service numérique de l'Etat incubé à la Fabrique
-              Numérique du Ministère de la Transition écologique, membre du
-              réseau d’incubateurs beta.gouv.fr
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item className={classes.footerLinksSection}>
-        <Typography variant="h4" className={classes.footerLinksSectionTitle}>
-          A propos de Mobilic
-        </Typography>
-        <Typography className={classes.footerLink}>
-          <Link href="mailto:mobilic@beta.gouv.fr" color="inherit">
-            Nous contacter
-          </Link>
-        </Typography>
-        <Typography className={classes.footerLink}>
-          <Link
-            href="https://faq.mobilic.beta.gouv.fr"
-            target="_blank"
-            color="inherit"
-          >
-            Foire aux questions
-          </Link>
-        </Typography>
-        <Typography className={classes.footerLink}>
-          <Link href="/developers/docs/intro" target="_blank" color="inherit">
-            Espace développeurs
-          </Link>
-        </Typography>
-        <Typography className={classes.footerLink}>
-          <Link to="/stats" color="inherit">
-            Statistiques
-          </Link>
-        </Typography>
-        <Typography className={classes.footerLink}>
-          <Link
-            component="button"
-            color="inherit"
-            onClick={() => modals.open("cgu")}
-            variant="body1"
-          >
-            Conditions générales d'utilisation
-          </Link>
-        </Typography>
-      </Grid>
-    </Grid>
-  );
 }

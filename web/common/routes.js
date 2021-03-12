@@ -18,6 +18,7 @@ import { ADMIN_VIEWS } from "../admin/utils/navigation";
 import { CGU } from "../landing/cgu";
 import { UserRead } from "../control/UserRead";
 import { XlsxVerifier } from "../control/VerifyXlsxSignature";
+import { Partners } from "../landing/partners";
 
 export const ROUTES = [
   {
@@ -157,6 +158,13 @@ export const ROUTES = [
     label: "Vérification d'intégrité",
     accessible: () => true,
     component: <XlsxVerifier />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/partners",
+    label: "Partenaires",
+    accessible: () => true,
+    component: <Partners />,
     menuItemFilter: () => false
   }
 ];
