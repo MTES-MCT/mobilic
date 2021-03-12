@@ -189,7 +189,7 @@ function _Root() {
     if (uid) pushInstruction("setUserId", uid);
     else pushInstruction("resetUserId");
     trackPageView({
-      documentTitle: document.domain + document.location.pathname
+      documentTitle: document.location.pathname
     });
   }, [location]);
 

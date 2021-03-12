@@ -23,7 +23,7 @@ export function LinkButton(props) {
   } else if (otherProps.href.startsWith("/")) {
     buttonProps = {
       onClick: e => {
-        trackLink({ href: document.domain + otherProps.href });
+        trackLink({ href: otherProps.href });
       },
       ...otherProps
     };
@@ -40,7 +40,7 @@ export function Link(props) {
     if (props.href.startsWith("/")) {
       const previousOnClick = props.onClick;
       linkProps.onClick = e => {
-        trackLink({ href: document.domain + props.href });
+        trackLink({ href: props.href });
         if (previousOnClick) previousOnClick(e);
       };
     }

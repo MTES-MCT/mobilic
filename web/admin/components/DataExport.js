@@ -15,6 +15,7 @@ import {
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
 import { EmployeeFilter } from "./EmployeeFilter";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -28,6 +29,7 @@ const useStyles = makeStyles(theme => ({
 export function DataExport({ open, handleClose, companies = [], users = [] }) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
+  const { trackLink } = useMatomo();
   const [minDate, setMinDate] = React.useState(null);
   const [maxDate, setMaxDate] = React.useState(null);
 
@@ -122,6 +124,10 @@ export function DataExport({ open, handleClose, companies = [], users = [] }) {
             const optionalQueryString =
               queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
             e.preventDefault();
+            trackLink({
+              href: `/download_company_activity_report`,
+              linkType: "download"
+            });
             try {
               const response = await api.httpQuery(
                 "POST",
