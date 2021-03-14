@@ -5,6 +5,7 @@ import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { useLoadingScreen } from "common/utils/loading";
 import Typography from "@material-ui/core/Typography";
+import { useHistory } from "react-router-dom";
 
 function removeParamsFromQueryString(qs, params) {
   const qsWithoutQuestionMark = qs.startsWith("?") ? qs.slice(1) : qs;
@@ -19,6 +20,7 @@ export function FranceConnectCallback() {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
+  const history = useHistory();
 
   const [error, setError] = React.useState("");
 
@@ -43,6 +45,7 @@ export function FranceConnectCallback() {
           { context: { nonPublicApi: true } }
         );
         await store.updateUserIdAndInfo();
+        if (create) history.push("/signup/user_login");
       } catch (err) {
         setError(
           formatApiError(err, gqlError => {

@@ -127,7 +127,7 @@ export const ROUTES = [
   {
     path: "/",
     label: "Landing",
-    accessible: ({ userInfo }) => !userInfo.id,
+    accessible: () => true,
     exact: true,
     component: <Landing />,
     menuItemFilter: () => false
@@ -188,9 +188,6 @@ export function getFallbackRoute({ userInfo, companies }) {
   }
   if (userInfo.id && userInfo.hasConfirmedEmail) {
     return "/home";
-  }
-  if (userInfo.id && !userInfo.hasConfirmedEmail) {
-    return "/signup/user_login";
   }
   return "/";
 }

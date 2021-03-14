@@ -152,7 +152,7 @@ function _Root() {
         loadedLocation !== location.pathname + location.search
       ) {
         history.replace(loadedLocation, location.state);
-      } else
+      } else {
         history.replace(
           getFallbackRoute({
             userInfo: store.userInfo(),
@@ -160,6 +160,7 @@ function _Root() {
           }),
           location.state
         );
+      }
     }
     loadedLocationRef.current = null;
     if (!document.hidden) api.executePendingRequests();
@@ -175,6 +176,7 @@ function _Root() {
         "/login?next=" + encodeURIComponent(location.pathname + location.search)
       );
     else if (
+      location.pathname !== "/" &&
       !location.pathname.startsWith("/login") &&
       !location.pathname.startsWith("/logout") &&
       !location.pathname.startsWith("/activate_email") &&

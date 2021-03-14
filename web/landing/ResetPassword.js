@@ -139,7 +139,7 @@ export function ResetPassword() {
                     color="primary"
                     variant="contained"
                     onClick={() => {
-                      history.push("/");
+                      history.push("/home");
                     }}
                   >
                     Aller dans mon espace

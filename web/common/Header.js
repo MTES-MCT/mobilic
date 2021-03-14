@@ -249,7 +249,7 @@ function DesktopHeader({ disableMenu }) {
     >
       Foire aux questions
     </LinkButton>,
-    <LinkButton key={1} to="/partners" className={classes.docButton}>
+    <LinkButton key={2} to="/partners" className={classes.docButton}>
       Partenaires
     </LinkButton>
   ];
