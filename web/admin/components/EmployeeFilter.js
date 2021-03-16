@@ -4,6 +4,7 @@ import { formatPersonName } from "common/utils/coworkers";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
+import orderBy from "lodash/orderBy";
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -40,7 +41,7 @@ export function EmployeeFilter({ users, setUsers }) {
     <Autocomplete
       multiple
       id="employee-filter"
-      options={users}
+      options={orderBy(users, ["firstName", "lastName"], ["asc", "asc"])}
       limitTags={1}
       size="small"
       disableCloseOnSelect
