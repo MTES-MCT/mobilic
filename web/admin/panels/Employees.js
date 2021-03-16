@@ -175,7 +175,6 @@ export function Employees({ companyId, containerRef }) {
         </Typography>
       ),
       align: "left",
-      sortable: true,
       minWidth: 100
     },
     {
@@ -321,7 +320,8 @@ export function Employees({ companyId, containerRef }) {
       editable={false}
       rowHeight={60}
       maxHeight={"100%"}
-      defaultSortBy="startDate"
+      defaultSortBy="name"
+      alwaysSortBy={[["active", "desc"]]}
       attachScrollTo={containerRef.current}
       rowClassName={(index, row) =>
         !row.active ? classes.terminatedEmployment : ""

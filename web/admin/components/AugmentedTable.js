@@ -301,6 +301,7 @@ export function AugmentedTable({
   small = false,
   defaultSortBy = undefined,
   defaultSortType = "asc",
+  alwaysSortBy = [],
   stickyHeader = false,
   className = ""
 }) {
@@ -431,9 +432,16 @@ export function AugmentedTable({
     );
   };
 
-  const sortedEntries =
-    sortBy && sortType ? orderBy(entries, [sortBy], [sortType]) : entries;
+  const sortBys = alwaysSortBy.map(asb => asb[0]);
+  const sortTypes = alwaysSortBy.map(asb => asb[1]);
 
+  if (sortBy && sortType) {
+    sortBys.push(sortBy);
+    sortTypes.push(sortType);
+  }
+
+  const sortedEntries =
+    sortBys.length > 0 ? orderBy(entries, sortBys, sortTypes) : entries;
   const displayedEntries = isAddingRow
     ? [editingValues, ...sortedEntries]
     : sortedEntries;
@@ -673,6 +681,7 @@ export const AugmentedVirtualizedTable = React.forwardRef(
       onRowDelete,
       dense = false,
       defaultSortBy = undefined,
+      alwaysSortBy = [],
       defaultSortType = "asc",
       headerHeight = 60,
       rowHeight = 40,
@@ -830,8 +839,16 @@ export const AugmentedVirtualizedTable = React.forwardRef(
       );
     };
 
+    const sortBys = alwaysSortBy.map(asb => asb[0]);
+    const sortTypes = alwaysSortBy.map(asb => asb[1]);
+
+    if (sortBy && sortType) {
+      sortBys.push(sortBy);
+      sortTypes.push(sortType);
+    }
+
     const sortedEntries =
-      sortBy && sortType ? orderBy(entries, [sortBy], [sortType]) : entries;
+      sortBys.length > 0 ? orderBy(entries, sortBys, sortTypes) : entries;
 
     const displayedEntries = isAddingRow
       ? [editingValues, ...sortedEntries]
