@@ -46,7 +46,8 @@ export function AddressField({
   currentPosition,
   required,
   disabled = false,
-  dynamicMargin = true
+  dynamicMargin = true,
+  allowCreate = true
 }) {
   const [inputValue, setInputValue] = React.useState("");
   const [options, setOptions] = React.useState([]);
@@ -80,7 +81,7 @@ export function AddressField({
   return (
     <Autocomplete
       id="address-field"
-      freeSolo
+      freeSolo={allowCreate}
       style={{
         paddingBottom: dynamicMargin
           ? open
@@ -111,7 +112,7 @@ export function AddressField({
         const filtered = filter(options, params);
 
         // Suggest the creation of a new value
-        if (params.inputValue !== "") {
+        if (allowCreate && params.inputValue !== "") {
           filtered.push({
             manual: true,
             name: params.inputValue,

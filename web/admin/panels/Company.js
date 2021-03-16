@@ -95,6 +95,7 @@ function VehicleAdmin({ companyId }) {
           value={address}
           onChange={onChange}
           dynamicMargin={false}
+          allowCreate={false}
         />
       ),
       create: true,
