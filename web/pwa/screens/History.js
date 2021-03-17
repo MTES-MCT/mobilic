@@ -205,7 +205,14 @@ const tabs = {
             >
               <List>
                 {missionsInPeriod.map(mission => (
-                  <ListItem key={mission.id} style={{ display: "block" }}>
+                  <ListItem
+                    key={mission.id}
+                    style={{
+                      display: "block",
+                      paddingLeft: 0,
+                      paddingRight: 0
+                    }}
+                  >
                     <MissionSummary
                       mission={mission}
                       fromTime={selectedPeriodStart}
