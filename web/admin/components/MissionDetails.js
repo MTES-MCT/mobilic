@@ -184,9 +184,6 @@ export function MissionDetails({ mission, handleClose, width }) {
         newValues.endTime,
         user.id
       );
-      console.log(activities);
-      console.log(user.id);
-      console.log(ops);
       return await Promise.all(
         ops.map(op => {
           if (op.operation === "cancel") return onCancelActivity(op.activity);

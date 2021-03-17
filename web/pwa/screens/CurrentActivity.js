@@ -19,6 +19,12 @@ export function CurrentActivity({
 }) {
   const currentTeam = resolveTeamAt(currentMission.teamChanges, now());
 
+  const setCurrentTime = React.useState(now())[1];
+  // We force re-rendering every X sec to update timers
+  React.useEffect(() => {
+    setInterval(() => setCurrentTime(now()), 30000);
+  }, []);
+
   return [
     <CurrentActivityOverview
       key={0}

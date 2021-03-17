@@ -1,6 +1,7 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
 import {
+  formatDateTime,
   formatTimeOfDay,
   formatTimer,
   getStartOfDay,
@@ -8,14 +9,14 @@ import {
 } from "common/utils/time";
 import Box from "@material-ui/core/Box";
 import { computeTotalActivityDurations } from "common/utils/metrics";
-import { ACTIVITIES } from "common/utils/activities";
 import Divider from "@material-ui/core/Divider";
-import { getTime } from "common/utils/events";
 import Card from "@material-ui/core/Card";
 import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import groupBy from "lodash/groupBy";
+import moment from "moment";
+import omit from "lodash/omit";
 import { EXPENDITURES } from "common/utils/expenditures";
+import { groupMissionsByPeriod } from "common/utils/history";
 
 const useStyles = makeStyles(theme => ({
   overviewTimer: {
@@ -36,12 +37,16 @@ export function WorkTimeSummaryKpi({
   value,
   subText,
   hideSubText,
-  render = null
+  render = null,
+  ...other
 }) {
   const classes = useStyles();
 
   return (
-    <Card>
+    <Card
+      {...omit(other, ["style"])}
+      style={{ textAlign: "center", ...(other.style || {}) }}
+    >
       <Box px={2} py={1} m={"auto"}>
         <Typography>{label}</Typography>
         {render ? (
@@ -67,11 +72,15 @@ export function WorkTimeSummaryAdditionalInfo({
   children,
   disableTopMargin = false,
   disableBottomMargin = true,
-  disablePadding = false
+  disablePadding = false,
+  ...other
 }) {
   const classes = useStyles({ disableTopMargin, disableBottomMargin });
   return (
-    <Card className={classes.additionalInfo}>
+    <Card
+      className={`${classes.additionalInfo} ${other.className || ""}`}
+      {...omit(other, ["className"])}
+    >
       <Box
         px={disablePadding ? 0 : 2}
         py={disablePadding ? 0 : 1}
@@ -89,7 +98,7 @@ export function WorkTimeSummaryAdditionalInfo({
   );
 }
 
-export function WorkTimeSummaryKpiGrid({ metrics }) {
+export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {} }) {
   return (
     <Grid
       container
@@ -100,49 +109,85 @@ export function WorkTimeSummaryKpiGrid({ metrics }) {
     >
       {metrics.map((metric, index) => (
         <Grid key={index} item xs={metric.fullWidth ? 12 : true}>
-          <WorkTimeSummaryKpi {...metric} />
+          <WorkTimeSummaryKpi {...metric} {...cardProps} />
         </Grid>
       ))}
     </Grid>
   );
 }
 
-export function computeMissionKpis(mission) {
-  const dayTimers = computeTotalActivityDurations(mission.activities);
-  const serviceHourString = `De ${formatTimeOfDay(
-    getTime(mission)
-  )} à ${formatTimeOfDay(
-    mission.activities[mission.activities.length - 1].endTime || now()
-  )}`;
+function computeTimesAndDurationsFromActivities(
+  activities,
+  fromTime = null,
+  untilTime = null
+) {
+  const dayTimers = computeTotalActivityDurations(
+    activities,
+    fromTime,
+    untilTime
+  );
+
+  const filteredActivities = activities.filter(
+    a =>
+      (!fromTime || a.endTime > fromTime) &&
+      (!untilTime || a.startTime < untilTime)
+  );
+  const endTime = Math.min(
+    filteredActivities[filteredActivities.length - 1].endTime || now(),
+    untilTime || now()
+  );
+  const startTime = Math.max(filteredActivities[0].startTime, fromTime);
+
+  const serviceHourString =
+    getStartOfDay(startTime) === getStartOfDay(endTime)
+      ? `De ${formatTimeOfDay(startTime)} à ${formatTimeOfDay(endTime)}`
+      : `Du ${formatDateTime(startTime)} au ${formatDateTime(endTime)}`;
+  return {
+    startTime,
+    endTime,
+    serviceHourString,
+    timers: dayTimers
+  };
+}
+
+export function computeMissionKpis(mission, fromTime = null, untilTime = null) {
+  const { timers, serviceHourString } = computeTimesAndDurationsFromActivities(
+    mission.activities,
+    fromTime,
+    untilTime
+  );
+
   return [
     {
-      label: "Amplitude",
-      value: formatTimer(dayTimers.total),
+      label: fromTime ? "Amplitude sur la journée" : "Amplitude",
+      value: formatTimer(timers.total),
       subText: serviceHourString
     },
     {
-      label: "Temps de travail",
-      value: formatTimer(dayTimers.totalWork),
+      label: fromTime ? "Travail sur la journée" : "Temps de travail",
+      value: formatTimer(timers.totalWork),
       subText: serviceHourString,
       hideSubText: true
     }
   ];
 }
 
-export function computePeriodKpis(missions) {
-  const missionsPerDay = groupBy(missions, m => getStartOfDay(getTime(m)));
-  const timersPerDay = missions.map(mission =>
-    computeTotalActivityDurations(mission.activities)
+export function computePeriodKpis(missions, fromTime = null, untilTime = null) {
+  const missionsPerDay = groupMissionsByPeriod(
+    missions,
+    getStartOfDay,
+    moment.duration(1, "days")
   );
-  const weekTimers = {};
-  timersPerDay.forEach(timer => {
-    Object.values(ACTIVITIES).forEach(activity => {
-      weekTimers[activity.name] =
-        (weekTimers[activity.name] || 0) + (timer[activity.name] || 0);
-    });
-    weekTimers["totalWork"] =
-      (weekTimers["totalWork"] || 0) + (timer["totalWork"] || 0);
-  });
+
+  const activities = missions.reduce(
+    (acts, mission) => [...acts, ...mission.activities],
+    []
+  );
+  const { timers, serviceHourString } = computeTimesAndDurationsFromActivities(
+    activities,
+    fromTime,
+    untilTime
+  );
 
   const expendituresCount = {};
   missions.forEach(m => {
@@ -153,16 +198,29 @@ export function computePeriodKpis(missions) {
 
   const metrics = [
     {
-      label: "Jours travaillés",
-      value: Object.keys(missionsPerDay).length
+      name: "service",
+      label: "Amplitude",
+      value: formatTimer(timers.total),
+      subText: serviceHourString
     },
     {
+      name: "workedDays",
+      label: "Jours travaillés",
+      value: Object.keys(missionsPerDay).length,
+      subText: serviceHourString,
+      hideSubText: true
+    },
+    {
+      name: "workTime",
       label: "Temps de travail",
-      value: formatTimer(weekTimers.totalWork)
+      value: formatTimer(timers.totalWork),
+      subText: serviceHourString,
+      hideSubText: true
     }
   ];
   if (Object.keys(expendituresCount).length > 0)
     metrics.push({
+      name: "expenditures",
       label: "Frais",
       fullWidth: true,
       render: () => (

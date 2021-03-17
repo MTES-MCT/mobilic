@@ -18,13 +18,6 @@ function App({ ScreenComponent, loadUser }) {
   const actions = useActions();
   const store = useStoreSyncedWithLocalStorage();
 
-  const [currentTime, setCurrentTime] = React.useState(now());
-
-  // We force re-rendering every X sec to update timers
-  React.useEffect(() => {
-    setInterval(() => setCurrentTime(now()), 30000);
-  }, []);
-
   const activities = sortEvents(values(store.getEntity("activities")));
   const expenditures = values(store.getEntity("expenditures"));
   const comments = sortEvents(values(store.getEntity("comments")));
@@ -38,7 +31,7 @@ function App({ ScreenComponent, loadUser }) {
     store.userId()
   );
 
-  const historyStart = getStartOfMonth(currentTime - 183 * DAY);
+  const historyStart = getStartOfMonth(now() - 183 * DAY);
 
   const currentMission =
     missions.length > 0 ? missions[missions.length - 1] : null;
@@ -75,7 +68,6 @@ function App({ ScreenComponent, loadUser }) {
       </Route>
       <Route path={path}>
         <ScreenComponent
-          currentTime={currentTime}
           missions={missions}
           latestActivity={latestActivity}
           currentMission={currentMission}

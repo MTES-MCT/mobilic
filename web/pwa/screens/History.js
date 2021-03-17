@@ -1,5 +1,4 @@
 import React from "react";
-import groupBy from "lodash/groupBy";
 import mapValues from "lodash/mapValues";
 import { Container } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
@@ -13,7 +12,8 @@ import {
   DAY,
   startOfDay,
   WEEK,
-  HOUR
+  HOUR,
+  getStartOfDay
 } from "common/utils/time";
 import {
   computeMissionKpis,
@@ -26,7 +26,10 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
 import { getTime } from "common/utils/events";
-import { findMatchingPeriodInNewScale } from "common/utils/history";
+import {
+  findMatchingPeriodInNewScale,
+  groupMissionsByPeriod
+} from "common/utils/history";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
 import { RegulationCheck } from "../components/RegulationCheck";
@@ -41,16 +44,79 @@ import Box from "@material-ui/core/Box";
 import { NoDataImage } from "common/utils/icons";
 import Button from "@material-ui/core/Button";
 import { useModals } from "common/utils/modals";
+import moment from "moment";
+import Collapse from "@material-ui/core/Collapse";
+import IconButton from "@material-ui/core/IconButton";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+
+function MissionSummary({
+  mission,
+  fromTime = null,
+  untilTime = null,
+  alternateDisplay = false,
+  children,
+  collapsable = false
+}) {
+  const [open, setOpen] = React.useState(true);
+  const classes = useStyles();
+
+  return (
+    <>
+      {mission.name && (
+        <WorkTimeSummaryAdditionalInfo
+          disableTopMargin
+          disableBottomMargin={false}
+          className={alternateDisplay ? classes.darkCard : ""}
+        >
+          <Box style={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography className="bold">
+              Nom de la mission : {mission.name}
+            </Typography>
+            {collapsable && (
+              <IconButton
+                color="inherit"
+                className="no-margin-no-padding"
+                onClick={() => setOpen(!open)}
+              >
+                {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </IconButton>
+            )}
+          </Box>
+        </WorkTimeSummaryAdditionalInfo>
+      )}
+      <Collapse in={open || !collapsable}>
+        <WorkTimeSummaryKpiGrid
+          metrics={computeMissionKpis(mission, fromTime, untilTime)}
+          cardProps={
+            alternateDisplay
+              ? { elevation: 0, className: classes.alternateCard }
+              : {}
+          }
+        />
+        {children}
+      </Collapse>
+    </>
+  );
+}
 
 const tabs = {
   mission: {
     label: "Mission",
     value: "mission",
-    periodSize: 0,
+    periodLength: moment.duration(0),
     getPeriod: date => date,
+    formatPeriod: (period, missions) => {
+      const mission = missions[0];
+      return (
+        <Box className="flex-column-space-between">
+          <Typography className="bold">{mission.name || "Sans nom"}</Typography>
+          <Typography>{shortPrettyFormatDay(period)}</Typography>
+        </Box>
+      );
+    },
     renderPeriod: ({
       missionsInPeriod,
-      followingPeriodStart,
       editActivityEvent,
       createActivity,
       editExpenditures,
@@ -63,48 +129,122 @@ const tabs = {
       userId
     }) => {
       const mission = missionsInPeriod[0];
-      const missionEnd =
-        mission.activities[mission.activities.length - 1].endTime;
       return (
         <div>
-          {mission.name && (
-            <WorkTimeSummaryAdditionalInfo
-              disableTopMargin
-              disableBottomMargin={false}
-            >
-              <Typography className="bold">
-                Nom de la mission : {mission.name}
-              </Typography>
+          <MissionSummary mission={mission}>
+            <WorkTimeSummaryAdditionalInfo disablePadding>
+              <MissionDetails
+                inverseColors
+                mission={mission}
+                editActivityEvent={
+                  mission.adminValidation ? null : editActivityEvent
+                }
+                createActivity={mission.adminValidation ? null : createActivity}
+                editExpenditures={
+                  mission.adminValidation ? null : editExpenditures
+                }
+                nullableEndTimeInEditActivity={
+                  currentMission ? mission.id === currentMission.id : true
+                }
+                validateMission={validateMission}
+                validationButtonName="Valider"
+                logComment={logComment}
+                cancelComment={cancelComment}
+                coworkers={coworkers}
+                vehicles={vehicles}
+                userId={userId}
+              />
             </WorkTimeSummaryAdditionalInfo>
-          )}
-          <WorkTimeSummaryKpiGrid metrics={computeMissionKpis(mission)} />
+          </MissionSummary>
+        </div>
+      );
+    }
+  },
+  day: {
+    label: "Jour",
+    value: "day",
+    periodLength: moment.duration(1, "days"),
+    getPeriod: date => getStartOfDay(date),
+    renderPeriod: ({
+      missionsInPeriod,
+      selectedPeriodStart,
+      selectedPeriodEnd,
+      followingMissionStart,
+      editActivityEvent,
+      createActivity,
+      editExpenditures,
+      currentMission,
+      validateMission,
+      logComment,
+      cancelComment,
+      coworkers,
+      vehicles,
+      userId
+    }) => {
+      const lastMission = missionsInPeriod[missionsInPeriod.length - 1];
+      const lastMissionEnd =
+        lastMission.activities[lastMission.activities.length - 1].endTime;
+      return (
+        <div>
+          <WorkTimeSummaryKpiGrid
+            metrics={computePeriodKpis(
+              missionsInPeriod,
+              selectedPeriodStart,
+              selectedPeriodEnd
+            ).filter(m => m.name !== "workedDays")}
+          />
           <WorkTimeSummaryAdditionalInfo>
             <RegulationCheck
-              check={checkDayRestRespect(missionEnd, followingPeriodStart)}
+              check={checkDayRestRespect(lastMissionEnd, followingMissionStart)}
             />
           </WorkTimeSummaryAdditionalInfo>
-          <WorkTimeSummaryAdditionalInfo disablePadding>
-            <MissionDetails
-              inverseColors
-              mission={mission}
-              editActivityEvent={
-                mission.adminValidation ? null : editActivityEvent
-              }
-              createActivity={mission.adminValidation ? null : createActivity}
-              editExpenditures={
-                mission.adminValidation ? null : editExpenditures
-              }
-              nullableEndTimeInEditActivity={
-                currentMission ? mission.id === currentMission.id : true
-              }
-              validateMission={validateMission}
-              validationButtonName="Valider"
-              logComment={logComment}
-              cancelComment={cancelComment}
-              coworkers={coworkers}
-              vehicles={vehicles}
-              userId={userId}
-            />
+          <WorkTimeSummaryAdditionalInfo>
+            <MissionReviewSection
+              title="Détail par mission"
+              className="no-margin-no-padding"
+            >
+              <List>
+                {missionsInPeriod.map(mission => (
+                  <ListItem key={mission.id} style={{ display: "block" }}>
+                    <MissionSummary
+                      mission={mission}
+                      fromTime={selectedPeriodStart}
+                      untilTime={selectedPeriodEnd}
+                      alternateDisplay
+                      collapsable
+                    >
+                      <MissionDetails
+                        inverseColors
+                        mission={mission}
+                        editActivityEvent={
+                          mission.adminValidation ? null : editActivityEvent
+                        }
+                        createActivity={
+                          mission.adminValidation ? null : createActivity
+                        }
+                        editExpenditures={
+                          mission.adminValidation ? null : editExpenditures
+                        }
+                        nullableEndTimeInEditActivity={
+                          currentMission
+                            ? mission.id === currentMission.id
+                            : true
+                        }
+                        validateMission={validateMission}
+                        validationButtonName="Valider"
+                        logComment={logComment}
+                        cancelComment={cancelComment}
+                        coworkers={coworkers}
+                        vehicles={vehicles}
+                        userId={userId}
+                        fromTime={selectedPeriodStart}
+                        untilTime={selectedPeriodEnd}
+                      />
+                    </MissionSummary>
+                  </ListItem>
+                ))}
+              </List>
+            </MissionReviewSection>
           </WorkTimeSummaryAdditionalInfo>
         </div>
       );
@@ -113,7 +253,7 @@ const tabs = {
   week: {
     label: "Semaine",
     value: "week",
-    periodSize: 2,
+    periodLength: moment.duration(1, "weeks"),
     formatPeriod: period => {
       return (
         <Box className="flex-column-space-between">
@@ -126,9 +266,20 @@ const tabs = {
       );
     },
     getPeriod: date => getStartOfWeek(date),
-    renderPeriod: ({ missionsInPeriod, handleMissionClick }) => (
+    renderPeriod: ({
+      missionsInPeriod,
+      selectedPeriodStart,
+      selectedPeriodEnd,
+      handleMissionClick
+    }) => (
       <div>
-        <WorkTimeSummaryKpiGrid metrics={computePeriodKpis(missionsInPeriod)} />
+        <WorkTimeSummaryKpiGrid
+          metrics={computePeriodKpis(
+            missionsInPeriod,
+            selectedPeriodStart,
+            selectedPeriodEnd
+          ).filter(m => m.name !== "service")}
+        />
         <WorkTimeSummaryAdditionalInfo>
           <MissionReviewSection
             title="Détail par mission"
@@ -167,11 +318,21 @@ const tabs = {
   month: {
     label: "Mois",
     value: "month",
-    periodSize: 3,
+    periodLength: moment.duration(1, "months"),
     getPeriod: date => getStartOfMonth(date),
-    renderPeriod: ({ missionsInPeriod }) => (
+    renderPeriod: ({
+      missionsInPeriod,
+      selectedPeriodStart,
+      selectedPeriodEnd
+    }) => (
       <div>
-        <WorkTimeSummaryKpiGrid metrics={computePeriodKpis(missionsInPeriod)} />
+        <WorkTimeSummaryKpiGrid
+          metrics={computePeriodKpis(
+            missionsInPeriod,
+            selectedPeriodStart,
+            selectedPeriodEnd
+          ).filter(m => m.name !== "service")}
+        />
       </div>
     ),
     formatPeriod: period => {
@@ -227,11 +388,18 @@ const useStyles = makeStyles(theme => ({
   generateAccessButton: {
     margin: theme.spacing(2),
     alignSelf: "flex-start"
+  },
+  alternateCard: {
+    backgroundColor: theme.palette.background.default
+  },
+  darkCard: {
+    backgroundColor: theme.palette.grey[700],
+    color: theme.palette.primary.contrastText
   }
 }));
 
 function fillHistoryPeriods(periods, step) {
-  if (!["mission", "month", "week"].includes(step)) return periods;
+  if (!["day", "month", "week"].includes(step)) return periods;
 
   const allPeriods = [];
   let continuousPeriod = startOfDay(new Date(periods[0] * 1000));
@@ -243,7 +411,7 @@ function fillHistoryPeriods(periods, step) {
       index = index + 1;
     } else {
       let continuousPeriodEnd;
-      if (step === "mission") {
+      if (step === "day") {
         continuousPeriodEnd = startOfDay(
           new Date((continuousPeriod + DAY + HOUR) * 1000)
         );
@@ -306,10 +474,12 @@ export function History({
     }
   }, [location]);
 
-  const [currentTab, setCurrentTab] = React.useState("mission");
+  const [currentTab, setCurrentTab] = React.useState("day");
 
-  const groupedMissions = groupBy(missions, m =>
-    tabs[currentTab].getPeriod(getTime(m))
+  const groupedMissions = groupMissionsByPeriod(
+    missions,
+    tabs[currentTab].getPeriod,
+    tabs[currentTab].periodLength
   );
 
   const periods = Object.keys(groupedMissions)
@@ -339,8 +509,10 @@ export function History({
   }, [missions]);
 
   function handlePeriodChange(e, newTab, selectedDate) {
-    const newGroups = groupBy(missions, m =>
-      tabs[newTab].getPeriod(getTime(m))
+    const newGroups = groupMissionsByPeriod(
+      missions,
+      tabs[newTab].getPeriod,
+      tabs[newTab].periodLength
     );
 
     const newPeriods = fillHistoryPeriods(
@@ -353,8 +525,8 @@ export function History({
     const newPeriod = findMatchingPeriodInNewScale(
       selectedDate,
       newPeriods,
-      tabs[currentTab].periodSize,
-      tabs[newTab].periodSize
+      tabs[currentTab].periodLength,
+      tabs[newTab].periodLength
     );
     setCurrentTab(newTab);
     setSelectedPeriod(newPeriod);
@@ -374,21 +546,36 @@ export function History({
   const classes = useStyles();
 
   const missionsInSelectedPeriod = groupedMissions[selectedPeriod];
-  let followingPeriodStart = periods.find(p => p > selectedPeriod);
+  const followingPeriodStart = periods.find(p => p > selectedPeriod);
+
+  let followingMissionStart;
+  if (currentTab === "mission") {
+    followingMissionStart = followingPeriodStart;
+    if (
+      !followingMissionStart &&
+      currentMission &&
+      !missions.find(m => m.id === currentMission.id)
+    )
+      followingMissionStart = getTime(currentMission);
+  } else {
+    if (followingPeriodStart) {
+      followingMissionStart = getTime(groupedMissions[followingPeriodStart][0]);
+    }
+  }
+
   if (
-    !followingPeriodStart &&
+    !followingMissionStart &&
+    currentTab === "mission" &&
     currentMission &&
     !missions.find(m => m.id === currentMission.id)
   )
-    followingPeriodStart = getTime(currentMission);
+    followingMissionStart = getTime(currentMission);
 
-  const periodsWithNeedForValidation = mapValues(
-    groupedMissions,
-    ms => !ms[0].validation
+  const periodsWithNeedForValidation = mapValues(groupedMissions, ms =>
+    ms.some(m => !m.validation)
   );
-  const periodsWithNeedForAdminValidation = mapValues(
-    groupedMissions,
-    ms => !ms[0].adminValidation
+  const periodsWithNeedForAdminValidation = mapValues(groupedMissions, ms =>
+    ms.some(m => !m.adminValidation)
   );
 
   return (
@@ -438,10 +625,12 @@ export function History({
             <PeriodCarouselPicker
               periods={filledPeriods}
               shouldDisplayRedChipsForPeriods={
-                currentTab === "mission" ? periodsWithNeedForValidation : null
+                ["mission", "day"].includes(currentTab)
+                  ? periodsWithNeedForValidation
+                  : null
               }
               shouldDisplayOrangeChipsForPeriods={
-                currentTab === "mission"
+                ["mission", "day"].includes(currentTab)
                   ? periodsWithNeedForAdminValidation
                   : null
               }
@@ -455,6 +644,7 @@ export function History({
                 resetLocation();
               }}
               renderPeriod={tabs[currentTab].formatPeriod}
+              periodMissionsGetter={period => groupedMissions[period]}
             />
           )}
         </Container>
@@ -466,10 +656,16 @@ export function History({
         >
           {missionsInSelectedPeriod ? (
             tabs[currentTab].renderPeriod({
+              selectedPeriodStart: selectedPeriod,
+              selectedPeriodEnd:
+                moment
+                  .unix(selectedPeriod)
+                  .add(tabs[currentTab].periodLength)
+                  .unix() - 1,
               missionsInPeriod: missionsInSelectedPeriod,
               handleMissionClick: date => e =>
                 handlePeriodChange(e, "mission", date),
-              followingPeriodStart,
+              followingMissionStart,
               editActivityEvent,
               createActivity,
               editExpenditures,
@@ -485,7 +681,7 @@ export function History({
             <Box className={classes.placeholder}>
               <NoDataImage height={100} />
               <Typography>
-                {currentTab === "mission"
+                {currentTab === "day"
                   ? "Journée non travaillée"
                   : currentTab === "week"
                   ? "Aucune journée travaillée dans la semaine"

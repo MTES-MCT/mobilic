@@ -103,7 +103,9 @@ export function MissionDetails({
   isMissionEnded = true,
   coworkers = null,
   vehicles = null,
-  userId = null
+  userId = null,
+  fromTime = null,
+  untilTime = null
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -115,7 +117,10 @@ export function MissionDetails({
 
   let teamChanges = omit(mission.teamChanges, [actualUserId]);
 
-  const teamAtMissionEnd = [actualUserId, ...resolveTeamAt(teamChanges, now())];
+  const teamAtMissionEnd = [
+    actualUserId,
+    ...resolveTeamAt(teamChanges, Math.min(untilTime || now(), now()))
+  ];
 
   const teamMatesLatestStatuses = computeLatestEnrollmentStatuses(teamChanges);
   const isTeamMode = Object.keys(teamMatesLatestStatuses).length > 0;
@@ -169,6 +174,8 @@ export function MissionDetails({
           teamChanges={teamChanges}
           nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
           isMissionEnded={isMissionEnded}
+          fromTime={fromTime}
+          untilTime={untilTime}
         />
       </MissionReviewSection>
       <MissionReviewSection

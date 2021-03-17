@@ -3,11 +3,14 @@
 // Examples :
 // - when switching from day to week the new period should be the week containing the current day
 // - conversely, when switching from week to day, we decide (arbitrarily) that the new period should be the first (existing) day of the current week
+import { getTime } from "./events";
+import moment from "moment";
+
 export function findMatchingPeriodInNewScale(
   oldPeriod, // the selected period on the old time scale
   newPeriods, // the list of periods on the new time scale
-  oldPeriodScale,
-  newPeriodScale
+  oldPeriodLength,
+  newPeriodLength
 ) {
   let mostRecentNewPeriodIndex = 0; // most recent relatively to the old period
   let newPeriod;
@@ -26,9 +29,33 @@ export function findMatchingPeriodInNewScale(
     mostRecentNewPeriodIndex >= 0 &&
     (oldPeriod === newPeriods[mostRecentNewPeriodIndex] || // case 1
     mostRecentNewPeriodIndex === newPeriods.length - 1 || // case 2
-      newPeriodScale > oldPeriodScale) // case 3
+      newPeriodLength.asSeconds() > oldPeriodLength.asSeconds()) // case 3
   ) {
     newPeriod = newPeriods[mostRecentNewPeriodIndex];
   } else newPeriod = newPeriods[mostRecentNewPeriodIndex + 1];
   return newPeriod;
+}
+
+export function groupMissionsByPeriod(missions, periodStart, periodLength) {
+  const groups = {};
+  missions.forEach(mission => {
+    const firstPeriod = periodStart(getTime(mission));
+    const lastPeriod = periodLength.asSeconds()
+      ? periodStart(mission.activities[mission.activities.length - 1].endTime)
+      : firstPeriod;
+    let currentPeriod = firstPeriod;
+    while (currentPeriod <= lastPeriod) {
+      if (!groups[currentPeriod]) groups[currentPeriod] = [];
+      groups[currentPeriod].push(mission);
+      currentPeriod = moment
+        .unix(currentPeriod)
+        .add(
+          periodLength.asSeconds() > 0
+            ? periodLength
+            : moment.duration(1, "days")
+        )
+        .unix();
+    }
+  });
+  return groups;
 }

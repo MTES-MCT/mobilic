@@ -4,13 +4,28 @@ import ListItem from "@material-ui/core/ListItem";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import { ACTIVITIES } from "common/utils/activities";
-import { formatLongTimer, formatTimeOfDay, now } from "common/utils/time";
+import {
+  formatDateTime,
+  formatLongTimer,
+  formatTimeOfDay,
+  getStartOfDay,
+  now
+} from "common/utils/time";
 import { getTime, sortEvents } from "common/utils/events";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
 import CreateIcon from "@material-ui/icons/Create";
 import { useModals } from "common/utils/modals";
+import { Typography } from "@material-ui/core";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+
+const useStyles = makeStyles(theme => ({
+  infoText: {
+    color: theme.palette.grey[500],
+    fontStyle: "italic"
+  }
+}));
 
 function ActivityItem({
   activity,
@@ -19,9 +34,12 @@ function ActivityItem({
   previousMissionEnd,
   nextMissionStart,
   teamChanges,
-  nullableEndTimeInEditActivity
+  nullableEndTimeInEditActivity,
+  showDates = false
 }) {
   const modals = useModals();
+
+  const datetimeFormatter = showDates ? formatDateTime : formatTimeOfDay;
 
   return (
     <ListItem disableGutters>
@@ -32,11 +50,11 @@ function ActivityItem({
       </ListItemAvatar>
       <ListItemText
         primary={ACTIVITIES[activity.type].label}
-        secondary={`${formatTimeOfDay(getTime(activity))} - ${
-          activity.endTime
-            ? `${formatTimeOfDay(activity.endTime)} - ${formatLongTimer(
-                activity.duration
-              )}`
+        secondary={`${datetimeFormatter(activity.displayedStartTime)} - ${
+          activity.displayedEndTime
+            ? `${datetimeFormatter(
+                activity.displayedEndTime
+              )} - ${formatLongTimer(activity.duration)}`
             : "En cours"
         }`}
         secondaryTypographyProps={{ color: "primary" }}
@@ -91,19 +109,56 @@ export function ActivityList({
   editActivityEvent,
   teamChanges,
   nullableEndTimeInEditActivity,
-  isMissionEnded
+  isMissionEnded,
+  fromTime = null,
+  untilTime = null
 }) {
+  const filteredActivities = activities.filter(
+    a =>
+      (!fromTime || a.endTime > fromTime) &&
+      (!untilTime || a.startTime < untilTime)
+  );
+  const hasActivitiesBeforeMinTime =
+    fromTime && filteredActivities.some(a => a.startTime < fromTime);
+  const hasActivitiesAfterMaxTime =
+    untilTime &&
+    filteredActivities.some(a => !a.endTime || a.endTime > untilTime);
+
   // Compute duration and end time for each activity
-  const augmentedAndSortedActivities = activities.map(activity => ({
-    ...activity,
-    duration: (activity.endTime || now()) - activity.startTime
-  }));
+  const augmentedAndSortedActivities = filteredActivities.map(activity => {
+    const startTime = Math.max(activity.startTime, fromTime);
+    const endTime = untilTime
+      ? Math.min(activity.endTime || now(), untilTime)
+      : activity.endTime;
+    const endTimeOrNow = endTime || now();
+    return {
+      ...activity,
+      displayedStartTime: startTime,
+      displayedEndTime: endTime,
+      endTimeOrNow,
+      duration: endTimeOrNow - startTime
+    };
+  });
+
+  const showDates =
+    getStartOfDay(augmentedAndSortedActivities[0].displayedStartTime) !==
+    getStartOfDay(
+      augmentedAndSortedActivities[augmentedAndSortedActivities.length - 1]
+        .displayedEndTime
+    );
 
   sortEvents(augmentedAndSortedActivities).reverse();
   const latestActivity = augmentedAndSortedActivities[0];
 
+  const classes = useStyles();
+
   return (
     <List dense>
+      {hasActivitiesAfterMaxTime && (
+        <Typography variant="body2" className={classes.infoText}>
+          Les activités après minuit le jour suivant ne sont pas affichées
+        </Typography>
+      )}
       {!isMissionEnded && latestActivity && latestActivity.endTime && (
         <ListItem disableGutters key={"trailingBreak"}>
           <ListItemAvatar>
@@ -148,10 +203,16 @@ export function ActivityList({
             teamChanges={teamChanges}
             nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
             key={index}
+            showDates={showDates}
           />,
           breakItemBefore
         ];
       })}
+      {hasActivitiesBeforeMinTime && (
+        <Typography variant="body2" className={classes.infoText}>
+          Les activités avant minuit le jour précédent ne sont pas affichées
+        </Typography>
+      )}
     </List>
   );
 }

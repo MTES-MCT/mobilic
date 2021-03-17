@@ -63,7 +63,8 @@ export function PeriodCarouselPicker({
   shouldDisplayRedChipsForPeriods,
   shouldDisplayOrangeChipsForPeriods,
   onPeriodChange,
-  renderPeriod
+  renderPeriod,
+  periodMissionsGetter = () => {}
 }) {
   const classes = useStyles();
   const baseRef = React.useRef();
@@ -91,7 +92,6 @@ export function PeriodCarouselPicker({
 
   // The following effect is intended to handle all these secondary cases. It relies on the following (hacky) heuristics :
   // - all these cases can be identified by a change of the whole list of items.
-
   React.useEffect(() => {
     if (periods) {
       scrollToSelectedPeriod(selectedPeriod);
@@ -140,7 +140,7 @@ export function PeriodCarouselPicker({
                   />
                 ) : null}
                 {renderPeriod ? (
-                  renderPeriod(period)
+                  renderPeriod(period, periodMissionsGetter(period))
                 ) : (
                   <Box className="flex-column-space-between">
                     <Typography style={{ textTransform: "uppercase" }}>
