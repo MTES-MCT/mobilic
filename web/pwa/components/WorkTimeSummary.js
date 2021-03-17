@@ -121,22 +121,25 @@ function computeTimesAndDurationsFromActivities(
   fromTime = null,
   untilTime = null
 ) {
-  const dayTimers = computeTotalActivityDurations(
-    activities,
-    fromTime,
-    untilTime
-  );
-
   const filteredActivities = activities.filter(
     a =>
       (!fromTime || a.endTime > fromTime) &&
       (!untilTime || a.startTime < untilTime)
   );
+
+  if (filteredActivities.length === 0) return {};
+
   const endTime = Math.min(
     filteredActivities[filteredActivities.length - 1].endTime || now(),
     untilTime || now()
   );
   const startTime = Math.max(filteredActivities[0].startTime, fromTime);
+
+  const dayTimers = computeTotalActivityDurations(
+    activities,
+    fromTime,
+    untilTime
+  );
 
   const serviceHourString =
     getStartOfDay(startTime) === getStartOfDay(endTime)
@@ -160,12 +163,12 @@ export function computeMissionKpis(mission, fromTime = null, untilTime = null) {
   return [
     {
       label: fromTime ? "Amplitude sur la journée" : "Amplitude",
-      value: formatTimer(timers.total),
+      value: formatTimer(timers ? timers.total : 0),
       subText: serviceHourString
     },
     {
       label: fromTime ? "Travail sur la journée" : "Temps de travail",
-      value: formatTimer(timers.totalWork),
+      value: formatTimer(timers ? timers.totalWork : 0),
       subText: serviceHourString,
       hideSubText: true
     }
@@ -200,7 +203,7 @@ export function computePeriodKpis(missions, fromTime = null, untilTime = null) {
     {
       name: "service",
       label: "Amplitude",
-      value: formatTimer(timers.total),
+      value: formatTimer(timers ? timers.total : 0),
       subText: serviceHourString
     },
     {
@@ -213,7 +216,7 @@ export function computePeriodKpis(missions, fromTime = null, untilTime = null) {
     {
       name: "workTime",
       label: "Temps de travail",
-      value: formatTimer(timers.totalWork),
+      value: formatTimer(timers ? timers.totalWork : 0),
       subText: serviceHourString,
       hideSubText: true
     }

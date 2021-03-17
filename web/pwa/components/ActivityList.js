@@ -141,11 +141,13 @@ export function ActivityList({
   });
 
   const showDates =
-    getStartOfDay(augmentedAndSortedActivities[0].displayedStartTime) !==
-    getStartOfDay(
-      augmentedAndSortedActivities[augmentedAndSortedActivities.length - 1]
-        .displayedEndTime
-    );
+    augmentedAndSortedActivities.length > 0
+      ? getStartOfDay(augmentedAndSortedActivities[0].displayedStartTime) !==
+        getStartOfDay(
+          augmentedAndSortedActivities[augmentedAndSortedActivities.length - 1]
+            .displayedEndTime
+        )
+      : false;
 
   sortEvents(augmentedAndSortedActivities).reverse();
   const latestActivity = augmentedAndSortedActivities[0];
@@ -170,6 +172,11 @@ export function ActivityList({
             )} - En cours`}
           />
         </ListItem>
+      )}
+      {augmentedAndSortedActivities.length === 0 && (
+        <Typography variant="body2" className={classes.infoText}>
+          Pas d'activités sur cette journée
+        </Typography>
       )}
       {augmentedAndSortedActivities.map((activity, index) => {
         let nextActivity;
