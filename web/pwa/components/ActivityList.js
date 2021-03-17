@@ -142,11 +142,15 @@ export function ActivityList({
 
   const showDates =
     augmentedAndSortedActivities.length > 0
-      ? getStartOfDay(augmentedAndSortedActivities[0].displayedStartTime) !==
-        getStartOfDay(
-          augmentedAndSortedActivities[augmentedAndSortedActivities.length - 1]
-            .displayedEndTime
-        )
+      ? !isMissionEnded
+        ? getStartOfDay(augmentedAndSortedActivities[0].displayedStartTime) !==
+          getStartOfDay(now())
+        : getStartOfDay(augmentedAndSortedActivities[0].displayedStartTime) !==
+          getStartOfDay(
+            augmentedAndSortedActivities[
+              augmentedAndSortedActivities.length - 1
+            ].displayedEndTime
+          )
       : false;
 
   sortEvents(augmentedAndSortedActivities).reverse();
