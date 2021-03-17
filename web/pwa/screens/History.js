@@ -63,28 +63,28 @@ function MissionSummary({
 
   return (
     <>
-      {mission.name && (
-        <WorkTimeSummaryAdditionalInfo
-          disableTopMargin
-          disableBottomMargin={false}
-          className={alternateDisplay ? classes.darkCard : ""}
-        >
-          <Box style={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography className="bold">
-              Nom de la mission : {mission.name}
-            </Typography>
-            {collapsable && (
-              <IconButton
-                color="inherit"
-                className="no-margin-no-padding"
-                onClick={() => setOpen(!open)}
-              >
-                {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-              </IconButton>
-            )}
-          </Box>
-        </WorkTimeSummaryAdditionalInfo>
-      )}
+      <WorkTimeSummaryAdditionalInfo
+        disableTopMargin
+        disableBottomMargin={false}
+        className={alternateDisplay ? classes.darkCard : ""}
+      >
+        <Box style={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography className="bold">
+            {mission.name
+              ? `Nom de la mission : ${mission.name}`
+              : "Mission sans nom"}
+          </Typography>
+          {collapsable && (
+            <IconButton
+              color="inherit"
+              className="no-margin-no-padding"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </IconButton>
+          )}
+        </Box>
+      </WorkTimeSummaryAdditionalInfo>
       <Collapse in={open || !collapsable}>
         <WorkTimeSummaryKpiGrid
           metrics={computeMissionKpis(mission, fromTime, untilTime)}
