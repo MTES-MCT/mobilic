@@ -474,7 +474,10 @@ export function History({
     }
   }, [location]);
 
-  const [currentTab, setCurrentTab] = React.useState("day");
+  const queryString = new URLSearchParams(location.search);
+  const [currentTab, setCurrentTab] = React.useState(
+    queryString.get("mission") ? "mission" : "day"
+  );
 
   const groupedMissions = groupMissionsByPeriod(
     missions,
