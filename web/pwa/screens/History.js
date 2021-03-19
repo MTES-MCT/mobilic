@@ -667,11 +667,10 @@ export function History({
           {missionsInSelectedPeriod ? (
             tabs[currentTab].renderPeriod({
               selectedPeriodStart: selectedPeriod,
-              selectedPeriodEnd:
-                moment
-                  .unix(selectedPeriod)
-                  .add(tabs[currentTab].periodLength)
-                  .unix() - 1,
+              selectedPeriodEnd: moment
+                .unix(selectedPeriod)
+                .add(tabs[currentTab].periodLength)
+                .unix(),
               missionsInPeriod: missionsInSelectedPeriod,
               handleMissionClick: date => e =>
                 handlePeriodChange(e, "mission", date),

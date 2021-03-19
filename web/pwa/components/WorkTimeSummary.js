@@ -142,7 +142,7 @@ function computeTimesAndDurationsFromActivities(
   );
 
   const serviceHourString =
-    getStartOfDay(startTime) === getStartOfDay(endTime)
+    getStartOfDay(startTime) === getStartOfDay(endTime - 1)
       ? `De ${formatTimeOfDay(startTime)} à ${formatTimeOfDay(endTime)}`
       : `Du ${formatDateTime(startTime)} au ${formatDateTime(endTime)}`;
   return {

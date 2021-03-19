@@ -149,7 +149,7 @@ export function ActivityList({
           getStartOfDay(
             augmentedAndSortedActivities[
               augmentedAndSortedActivities.length - 1
-            ].displayedEndTime
+            ].displayedEndTime - 1
           )
       : false;
 
