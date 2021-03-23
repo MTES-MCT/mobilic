@@ -72,15 +72,26 @@ const useStyles = makeStyles(theme => ({
   lightOrange: {
     backgroundColor: theme.palette.warning.light
   },
+  subDescription: {
+    fontStyle: "italic"
+  },
   cta: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2)
+  },
+  faqCta: {
+    flexShrink: 0,
+    flexBasis: "auto"
+  },
+  questionTitle: {
+    paddingBottom: theme.spacing(1)
   }
 }));
 
 function _Showcase({
   image,
   imageDescription,
+  imageSubDescription,
   imagePosition,
   descriptionTitle,
   descriptionContent,
@@ -97,6 +108,9 @@ function _Showcase({
         <Typography className="bold" variant="h4" color="primary">
           {imageDescription}
         </Typography>
+        <Typography className={classes.subDescription} variant="body2">
+          {imageSubDescription}
+        </Typography>
       </Grid>
     </Grid>
   );
@@ -111,7 +125,7 @@ function _Showcase({
     </MainCtaButton>
   ];
 
-  const leftAlignImage = isWidthDown("xs", width) || imagePosition === "left";
+  const leftAlignImage = isWidthDown("sm", width) || imagePosition === "left";
 
   return (
     <Grid
@@ -121,10 +135,18 @@ function _Showcase({
       spacing={4}
       justify="space-between"
     >
-      <Grid item xs>
+      <Grid
+        item
+        xs={leftAlignImage ? true : null}
+        sm={leftAlignImage ? null : true}
+      >
         {leftAlignImage ? <Image /> : <Description />}
       </Grid>
-      <Grid item xs>
+      <Grid
+        item
+        sm={leftAlignImage ? true : null}
+        xs={leftAlignImage ? null : true}
+      >
         {leftAlignImage ? <Description /> : <Image />}
       </Grid>
     </Grid>
@@ -169,9 +191,26 @@ export function Landing() {
           Mobilic ... 🤔 qu'est-ce que c'est ?
         </Typography>
         <Typography className={classes.videoHelperText}>
-          Mobilic est la plateforme gouvernementale qui permet de simplifier le
-          suivi du temps de travail dans le transport routier léger afin de
-          lutter contre le travail illégal.
+          Mobilic est la plateforme gouvernementale qui permet de{" "}
+          <strong>simplifier le suivi du temps de travail</strong> dans le
+          transport routier léger et le déménagement afin de lutter contre le
+          travail illégal.
+        </Typography>
+        <Typography className={classes.videoHelperText}>
+          Le livret individuel de contrôle (LIC), qui sert aujourd'hui à
+          l'enregistrement du temps de travail des conducteurs de véhicules
+          utilitaires légers de moins de 3,5 tonnes, et des autres personnels
+          roulants non conducteurs, souffre de problèmes unanimement décriés
+          (praticabilité pour le salarié, lourdeur administrative et de gestion,
+          faible fiabilité pour le contrôle). Avec Mobilic{" "}
+          <a
+            href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000043023481"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            vous n'avez plus besoin du LIC papier
+          </a>{" "}
+          pour respecter vos engagements sociaux.
         </Typography>
         <Container maxWidth="sm" disableGutters>
           <Box className={classes.videoContainer}>
@@ -194,15 +233,23 @@ export function Landing() {
           A qui s'adresse Mobilic ?
         </Typography>
         <Typography className={classes.videoHelperText}>
-          {
-            "Mobilic s'adresse aux différents métiers des entreprises de transport routier qui utilisent des véhicules utilitaires légers (VUL, < 3.5T)."
-          }
+          Mobilic s'adresse aux conducteurs des entreprises de transport routier
+          qui utilisent des véhicules utilitaires légers (VUL, {"<"} 3.5T), et
+          aux autres{" "}
+          <strong>
+            personnels roulants qui sont soumis au livret individuel de contrôle
+            (LIC)
+          </strong>{" "}
+          conformément aux articles R. 3312-19, 2° et R. 3312-58, 2° du code des
+          transports : déménagement, ambulance, messagerie, fret express,
+          transport de personnes.
         </Typography>
         <Box className={`${classes.lightBlue}`} p={2}>
           <Showcase
             image={<WorkerImage height={200} width={200} />}
             imagePosition="left"
             imageDescription="Travailleur mobile"
+            imageSubDescription="Conducteurs et autres personnels roulants"
             descriptionTitle="Suivre simplement mon temps de travail et être mieux informé sur mes droits"
             descriptionContent={
               <div
@@ -212,7 +259,7 @@ export function Landing() {
                   lineHeight: "1.6"
                 }}
               >
-                <p>Directement sur mobile à tout moment</p>
+                <p>Directement depuis mon téléphone</p>
                 <ul
                   style={{
                     textAlign: "justify",
@@ -221,14 +268,10 @@ export function Landing() {
                   }}
                 >
                   <li>
-                    via l’interface de Mobilic (si mon entreprise n’utilise pas
-                    de logiciel)
+                    Enregistrer de manière simple et rapide mon temps de travail
+                    et mes frais
                   </li>
-                  <li style={{ fontStyle: "italic", listStyle: "none" }}>ou</li>
-                  <li>
-                    par l'intermédiaire du logiciel métier de mon entreprise
-                    (connecté à Mobilic)
-                  </li>
+                  <li>Accéder à tout moment à mon relevé d'heures</li>
                 </ul>
               </div>
             }
@@ -241,6 +284,7 @@ export function Landing() {
             image={<ManagerImage height={200} width={200} />}
             imagePosition="right"
             imageDescription="Gestionnaire"
+            imageSubDescription="Responsables d'exploitation, dirigeants"
             descriptionTitle="Gérer facilement le temps de travail des salariés de mon entreprise"
             descriptionContent={
               <ul
@@ -294,6 +338,76 @@ export function Landing() {
         </Box>
       </Container>
     </Container>,
-    <Footer key={6} />
+    <Container
+      key={6}
+      className={`${classes.section} ${classes.whiteSection}`}
+      maxWidth={false}
+    >
+      <Container maxWidth="md" className={classes.inner}>
+        <Typography variant="h3" className={`${classes.sectionTitle}`}>
+          Ce qu'il faut savoir sur Mobilic
+        </Typography>
+        <Grid
+          container
+          spacing={4}
+          alignItems="center"
+          justify="space-between"
+          className={classes.showcase}
+        >
+          <Grid
+            item
+            md
+            container
+            direction="column"
+            spacing={4}
+            alignItems="flex-start"
+            style={{ textAlign: "justify", flexGrow: 100 }}
+          >
+            <Grid item>
+              <Typography variant="h5" className={classes.questionTitle}>
+                Mobilic est-ce que ça fonctionne déjà ?
+              </Typography>
+              <Typography>
+                Oui bien sûr ! Vous pouvez déjà utiliser Mobilic pour
+                enregistrer le temps de travail. Le nom de domaine en
+                “beta.gouv.fr” indique que Mobilic fait partie des startups
+                d'État, des startups publiques développées au sein des
+                Ministères publics.
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Typography variant="h5" className={classes.questionTitle}>
+                Dois-je doublonner avec le LIC papier quand j’utilise Mobilic ?
+              </Typography>
+              <Typography>
+                Non ! Mobilic permet de justifier du respect des exigences
+                fixées dans les articles R. 3312-19 et R. 3312-58 du code des
+                transports Par ailleurs, dans le secteur du déménagement, un{" "}
+                <a
+                  href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000043023481"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  arrêté spécifique
+                </a>{" "}
+                permet de justifier du respect du relevé hebdomadaire d’activité
+                au moyen de Mobilic par dérogation à la présentation sous forme
+                d’un carnet auto-carboné.{" "}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid item xs className={classes.faqCta}>
+            <MainCtaButton
+              href="https://faq.mobilic.beta.gouv.fr"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Consulter la foire aux questions
+            </MainCtaButton>
+          </Grid>
+        </Grid>
+      </Container>
+    </Container>,
+    <Footer key={7} />
   ];
 }

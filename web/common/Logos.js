@@ -1,5 +1,4 @@
 import React from "react";
-import { ReactComponent as MarianneIcon } from "common/assets/images/marianne.svg";
 import { ReactComponent as BetaGouvTextIcon } from "common/assets/images/betagouvfr.svg";
 import SvgIcon from "@material-ui/core/SvgIcon";
 import Typography from "@material-ui/core/Typography";
@@ -8,6 +7,7 @@ import { LinkButton } from "./LinkButton";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { getFallbackRoute } from "./routes";
+import { MarianneIcon } from "common/utils/icons";
 
 export function Logos({ leaveSpaceForMenu = true }) {
   const store = useStoreSyncedWithLocalStorage();
@@ -29,11 +29,9 @@ export function Logos({ leaveSpaceForMenu = true }) {
           ? shouldDisplayBothLogosAndMenu
           : shouldDisplayBothLogosWithoutMenu) && (
           <Box mr={2}>
-            <SvgIcon
+            <MarianneIcon
               style={{ fontSize: shouldDisplayFullSizeLogo ? 60 : 40 }}
-              viewBox="40 40 210 200"
               className="marianne-logo"
-              component={MarianneIcon}
             />
           </Box>
         )}

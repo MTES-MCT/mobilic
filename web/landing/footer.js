@@ -1,7 +1,7 @@
 import React from "react";
 import { useModals } from "common/utils/modals";
 import Grid from "@material-ui/core/Grid";
-import { FabNumIcon } from "common/utils/icons";
+import { FabNumIcon, MarianneIcon } from "common/utils/icons";
 import Typography from "@material-ui/core/Typography";
 import { Link } from "../common/LinkButton";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -51,7 +51,14 @@ export function Footer() {
           justify="space-between"
           alignItems="flex-start"
         >
-          <Grid item sm={6} container alignItems="center" direction="column">
+          <Grid
+            item
+            sm={6}
+            container
+            alignItems="center"
+            spacing={4}
+            direction="column"
+          >
             <Grid
               item
               container
@@ -67,7 +74,28 @@ export function Footer() {
                 <Typography align="justify">
                   Mobilic est un service numérique de l'Etat incubé à la
                   Fabrique Numérique du Ministère de la Transition écologique,
-                  membre du réseau d’incubateurs beta.gouv.fr
+                  membre du réseau d’incubateurs beta.gouv.fr.
+                </Typography>
+              </Grid>
+            </Grid>
+            <Grid
+              item
+              container
+              wrap="nowrap"
+              spacing={2}
+              direction="row"
+              alignItems="flex-start"
+            >
+              <Grid item>
+                <MarianneIcon
+                  style={{ width: 70, height: 70, backgroundColor: "white" }}
+                  htmlColor="black"
+                />
+              </Grid>
+              <Grid item>
+                <Typography align="justify">
+                  Mobilic est une initiative soutenue par la Direction générale
+                  des infrastructures des transports et de la mer (DGITM).
                 </Typography>
               </Grid>
             </Grid>
@@ -88,6 +116,7 @@ export function Footer() {
               <Link
                 href="https://faq.mobilic.beta.gouv.fr"
                 target="_blank"
+                rel="noopener noreferrer"
                 color="inherit"
               >
                 Foire aux questions
@@ -97,6 +126,7 @@ export function Footer() {
               <Link
                 href="/developers/docs/intro"
                 target="_blank"
+                rel="noopener noreferrer"
                 color="inherit"
               >
                 Espace développeurs

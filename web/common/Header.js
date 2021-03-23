@@ -234,17 +234,10 @@ function DesktopHeader({ disableMenu }) {
 
   const docLinks = () => [
     <LinkButton
-      key={0}
-      className={classes.docButton}
-      href="/developers/docs/intro"
-      target="_blank"
-    >
-      Espace développeurs
-    </LinkButton>,
-    <LinkButton
       key={1}
       href="https://faq.mobilic.beta.gouv.fr"
       target="_blank"
+      rel="noopener noreferrer"
       className={classes.docButton}
     >
       Foire aux questions

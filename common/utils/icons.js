@@ -6,9 +6,9 @@ import { ReactComponent as TeamIcon_ } from "../assets/images/Team.svg";
 import { ReactComponent as TruckIcon_ } from "../assets/images/Truck.svg";
 import { ReactComponent as HammerWenchIcon_ } from "../assets/images/Hammer Wench.svg";
 import { ReactComponent as BedIcon_ } from "../assets/images/Bed.svg";
-import { ReactComponent as MtesIcon_ } from "../assets/images/mtes.svg";
 import { ReactComponent as FranceConnectIcon_ } from "../assets/images/FranceConnect.svg";
 import { ReactComponent as FabNumIcon_ } from "../assets/images/fabnum.svg";
+import { ReactComponent as MarianneIcon_ } from "common/assets/images/marianne.svg";
 import _ManagerImage from "../assets/images/Manager.svg";
 import _WorkerImage from "../assets/images/worker.svg";
 import _SoftwareImage from "../assets/images/software.svg";
@@ -34,6 +34,12 @@ export function WorkIcon(props) {
 
 export function RestIcon(props) {
   return <SvgIcon {...props} viewBox="0 0 64 64" component={BedIcon_} />;
+}
+
+export function MarianneIcon(props) {
+  return (
+    <SvgIcon {...props} viewBox="40 40 210 200" component={MarianneIcon_} />
+  );
 }
 
 export function NoDataImage(props) {
@@ -63,21 +69,6 @@ export function FranceConnectIcon(props) {
       {...omit(props, "style")}
       viewBox="0 0 283.5 82.2"
       component={FranceConnectIcon_}
-    />
-  );
-}
-
-export function MtesIcon(props) {
-  return (
-    <SvgIcon
-      style={{
-        width: 358 * (props.scale ? props.scale : 1),
-        height: 79 * (props.scale ? props.scale : 1),
-        ...props.style
-      }}
-      {...omit(props, "style")}
-      viewBox="0 0 358 79"
-      component={MtesIcon_}
     />
   );
 }

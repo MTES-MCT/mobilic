@@ -42,7 +42,7 @@ export function FranceConnectContainer({
           variant="body1"
           href="https://franceconnect.gouv.fr"
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
         >
           Qu'est-ce que FranceConnect ?
         </Link>
