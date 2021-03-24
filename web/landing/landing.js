@@ -271,7 +271,9 @@ export function Landing() {
                     Enregistrer de manière simple et rapide mon temps de travail
                     et mes frais
                   </li>
-                  <li>Accéder à tout moment à mon relevé d'heures</li>
+                  <li>
+                    Accéder à tout moment à mon relevé d'heures et de frais
+                  </li>
                 </ul>
               </div>
             }
@@ -382,7 +384,7 @@ export function Landing() {
               <Typography>
                 Non ! Mobilic permet de justifier du respect des exigences
                 fixées dans les articles R. 3312-19 et R. 3312-58 du code des
-                transports Par ailleurs, dans le secteur du déménagement, un{" "}
+                transports. Par ailleurs, dans le secteur du déménagement, un{" "}
                 <a
                   href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000043023481"
                   target="_blank"
