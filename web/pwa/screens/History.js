@@ -58,7 +58,7 @@ function MissionSummary({
   children,
   collapsable = false
 }) {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const classes = useStyles();
 
   return (
