@@ -475,6 +475,7 @@ export function AugmentedTable({
                         flexDirection:
                           column.align === "right" ? "row-reverse" : "row"
                       }}
+                      hideSortIcon={false}
                     >
                       {column.renderLabel ? column.renderLabel() : column.label}
                     </TableSortLabel>
@@ -828,6 +829,7 @@ export const AugmentedVirtualizedTable = React.forwardRef(
             style={{
               flexDirection: column.align === "right" ? "row-reverse" : "row"
             }}
+            hideSortIcon={false}
           >
             {column.renderLabel ? column.renderLabel() : column.label}
           </TableSortLabel>

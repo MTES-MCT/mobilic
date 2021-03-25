@@ -10,6 +10,11 @@ const baseOptions = {
       root: {
         borderRadius: "20px"
       }
+    },
+    MuiTableSortLabel: {
+      icon: {
+        opacity: 0.3
+      }
     }
   },
   palette: {

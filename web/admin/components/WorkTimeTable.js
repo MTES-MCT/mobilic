@@ -112,6 +112,7 @@ export function WorkTimeTable({ period, workTimeEntries, className }) {
     format: missionNames =>
       missionNames.filter(name => name && name !== "").join(", "),
     align: "left",
+    sortable: true,
     overflowTooltip: true
   };
   let columns = [];
