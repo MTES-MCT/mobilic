@@ -241,10 +241,10 @@ function DesktopHeader({ disableMenu }) {
       className={classes.docButton}
     >
       Foire aux questions
-    </LinkButton>,
-    <LinkButton key={2} to="/partners" className={classes.docButton}>
-      Partenaires
     </LinkButton>
+    /*<LinkButton key={2} to="/partners" className={classes.docButton}>
+      Partenaires
+    </LinkButton>*/
   ];
 
   return (

@@ -45,8 +45,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.warning.light
   },
   cta: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2)
+    marginTop: theme.spacing(4)
   },
   list: {
     listStyleType: "none",
@@ -119,6 +118,24 @@ export function Partners() {
             engagement en matière de responsabilité sociale et environnementale.
           </Typography>
         </Box>
+        <Box my={10}>
+          <Typography variant="h4" className={classes.title}>
+            Ils sont partenaires de Mobilic
+          </Typography>
+          <Grid
+            container
+            justify="space-evenly"
+            alignItems="center"
+            wrap
+            spacing={7}
+          >
+            {imageSrcs.keys().map(src => (
+              <Grid item key={src}>
+                <img src={imageSrcs(src)} height={160} />
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
         <Grid container spacing={8} style={{ textAlign: "justify" }}>
           <Grid item sm={6}>
             <Typography className="bold">
@@ -165,25 +182,10 @@ export function Partners() {
             </ul>
           </Grid>
         </Grid>
-        <Box my={10}>
-          <Typography variant="h4" className={classes.title}>
-            Ils sont partenaires de Mobilic
-          </Typography>
-          <Grid
-            container
-            justify="space-evenly"
-            alignItems="center"
-            wrap
-            spacing={7}
-          >
-            {imageSrcs.keys().map(src => (
-              <Grid item key={src}>
-                <img src={imageSrcs(src)} height={160} />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-        <MainCtaButton href="mailto:mobilic@beta.gouv.fr">
+        <MainCtaButton
+          className={classes.cta}
+          href="mailto:mobilic@beta.gouv.fr"
+        >
           Devenir partenaire
         </MainCtaButton>
       </Container>
