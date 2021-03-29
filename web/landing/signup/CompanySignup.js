@@ -149,6 +149,7 @@ export function CompanySignup() {
       );
       const employment = apiResponse.data.signUp.company.employment;
       store.syncEntity([employment], "employments", () => false);
+      store.batchUpdateStore();
       await broadCastChannel.postMessage("update");
       history.push(
         shouldDisplaySignupProgress

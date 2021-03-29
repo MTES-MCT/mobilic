@@ -59,6 +59,7 @@ export function RedeemInvite() {
             "employments",
             () => false
           );
+          store.batchUpdateStore();
         } else await store.updateUserIdAndInfo();
         await broadCastChannel.postMessage("update");
         history.push("/home");

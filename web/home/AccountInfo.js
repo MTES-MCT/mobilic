@@ -74,6 +74,7 @@ export function EmploymentInfo({ employment, spacing = 4 }) {
         "employments",
         e => e.id === employment.id
       );
+      store.batchUpdateStore();
       await broadCastChannel.postMessage("update");
     } catch (err) {
       Sentry.captureException(err);

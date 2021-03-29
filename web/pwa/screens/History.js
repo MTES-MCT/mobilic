@@ -56,9 +56,10 @@ function MissionSummary({
   untilTime = null,
   alternateDisplay = false,
   children,
-  collapsable = false
+  collapsable = false,
+  defaultOpenCollapse = false
 }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(defaultOpenCollapse);
   const classes = useStyles();
 
   return (
@@ -219,6 +220,7 @@ const tabs = {
                       untilTime={selectedPeriodEnd}
                       alternateDisplay
                       collapsable
+                      defaultOpenCollapse={missionsInPeriod.length === 1}
                     >
                       <MissionDetails
                         inverseColors
