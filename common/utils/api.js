@@ -197,85 +197,93 @@ export const USER_QUERY = gql`
 `;
 
 export const USER_READ_QUERY = gql`
-  query readUser($token: String!, $activityAfter: TimeStamp) {
+  query readUser($token: String!) {
     userFromReadToken(token: $token) {
-      id
-      firstName
-      lastName
-      birthDate
-      email
-      primaryCompany {
-        id
-        name
-        siren
-        vehicles {
-          id
-          name
-        }
+      tokenInfo {
+        creationTime
+        validUntil
+        creationDay
+        historyStartDay
       }
-      missions(fromTime: $activityAfter) {
+      user {
         id
-        name
-        validations {
-          submitterId
-          receptionTime
-          isAdmin
-          userId
-        }
-        context
-        expenditures {
-          id
-          type
-          missionId
-          userId
-        }
-        activities {
-          id
-          type
-          missionId
-          startTime
-          endTime
-          userId
-          user {
-            id
-            firstName
-            lastName
-          }
-        }
-        comments {
-          id
-          text
-          missionId
-          receptionTime
-          submitter {
-            id
-            firstName
-            lastName
-          }
-        }
-        startLocation {
-          name
-          alias
-          postalCode
-          city
-        }
-        endLocation {
-          name
-          alias
-          postalCode
-          city
-        }
-      }
-      currentEmployments {
-        id
-        startDate
-        isAcknowledged
-        isPrimary
-        hasAdminRights
-        company {
+        firstName
+        lastName
+        birthDate
+        email
+        primaryCompany {
           id
           name
           siren
+          vehicles {
+            id
+            name
+          }
+        }
+        missions {
+          id
+          name
+          validations {
+            submitterId
+            receptionTime
+            isAdmin
+            userId
+          }
+          context
+          expenditures {
+            id
+            type
+            missionId
+            userId
+          }
+          activities {
+            id
+            type
+            missionId
+            startTime
+            endTime
+            userId
+            user {
+              id
+              firstName
+              lastName
+            }
+          }
+          comments {
+            id
+            text
+            missionId
+            receptionTime
+            submitter {
+              id
+              firstName
+              lastName
+            }
+          }
+          startLocation {
+            name
+            alias
+            postalCode
+            city
+          }
+          endLocation {
+            name
+            alias
+            postalCode
+            city
+          }
+        }
+        currentEmployments {
+          id
+          startDate
+          isAcknowledged
+          isPrimary
+          hasAdminRights
+          company {
+            id
+            name
+            siren
+          }
         }
       }
     }

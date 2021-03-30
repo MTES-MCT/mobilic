@@ -8,7 +8,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import { useLoadingScreen } from "common/utils/loading";
 import { formatPersonName } from "common/utils/coworkers";
-import { DAY, getStartOfMonth, now } from "common/utils/time";
+import { DAY, formatDateTime, getStartOfMonth, now } from "common/utils/time";
 import {
   augmentSortAndFilterMissions,
   parseMissionPayloadFromBackend
@@ -39,6 +39,7 @@ export function UserRead() {
   const withLoadingScreen = useLoadingScreen();
 
   const [userInfo, setUserInfo] = React.useState(null);
+  const [tokenInfo, setTokenInfo] = React.useState(null);
   const [missions, setMissions] = React.useState(null);
   const [primaryEmployment, setPrimaryEmployment] = React.useState(null);
   const [coworkers, setCoworkers] = React.useState(null);
@@ -56,12 +57,12 @@ export function UserRead() {
             const userResponse = await api.graphQlMutate(
               USER_READ_QUERY,
               {
-                token,
-                activityAfter: now() - DAY * 215
+                token
               },
               { context: { nonPublicApi: true } }
             );
-            const userPayload = userResponse.data.userFromReadToken;
+            const userPayload = userResponse.data.userFromReadToken.user;
+            setTokenInfo(userResponse.data.userFromReadToken.tokenInfo);
             setUserInfo({
               id: userPayload.id,
               firstName: userPayload.firstName,
@@ -131,6 +132,9 @@ export function UserRead() {
             <Typography variant="h5">Informations salarié.e</Typography>
             <Grid container wrap="wrap" spacing={2}>
               <Grid item>
+                <InfoItem name="Identifiant Mobilic" bold value={userInfo.id} />
+              </Grid>
+              <Grid item>
                 <InfoItem name="Nom" value={formatPersonName(userInfo)} />
               </Grid>
               <Grid item>
@@ -159,6 +163,30 @@ export function UserRead() {
             <Typography variant="h5" className={classes.sectionTitle}>
               Historique récent
             </Typography>
+            <Grid container wrap="wrap" spacing={2}>
+              <Grid item>
+                <InfoItem
+                  name="Heure de génération du code"
+                  value={formatDateTime(tokenInfo.creationTime)}
+                />
+              </Grid>
+              <Grid item>
+                <InfoItem
+                  name="Début de l'historique"
+                  value={new Date(Date.parse(tokenInfo.historyStartDay))
+                    .toLocaleString("fr-FR")
+                    .slice(0, 10)}
+                />
+              </Grid>
+              <Grid item>
+                <InfoItem
+                  name="Début de l'historique"
+                  value={new Date(Date.parse(tokenInfo.creationDay))
+                    .toLocaleString("fr-FR")
+                    .slice(0, 10)}
+                />
+              </Grid>
+            </Grid>
           </Container>,
           <History
             key={1}
