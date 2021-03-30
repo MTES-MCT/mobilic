@@ -49,6 +49,7 @@ import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import { ActivityList } from "../components/ActivityList";
 
 function MissionSummary({
   mission,
@@ -182,6 +183,10 @@ const tabs = {
       vehicles,
       userId
     }) => {
+      const activities = [];
+      missionsInPeriod.forEach(mission =>
+        activities.push(...mission.activities)
+      );
       const lastMission = missionsInPeriod[missionsInPeriod.length - 1];
       const lastMissionEnd =
         lastMission.activities[lastMission.activities.length - 1].endTime;
@@ -198,6 +203,19 @@ const tabs = {
             <RegulationCheck
               check={checkDayRestRespect(lastMissionEnd, followingMissionStart)}
             />
+          </WorkTimeSummaryAdditionalInfo>
+          <WorkTimeSummaryAdditionalInfo>
+            <MissionReviewSection
+              title="Activités de la journée"
+              className="no-margin-no-padding"
+            >
+              <ActivityList
+                activities={activities}
+                fromTime={selectedPeriodStart}
+                untilTime={selectedPeriodEnd}
+                isMissionEnded={true}
+              />
+            </MissionReviewSection>
           </WorkTimeSummaryAdditionalInfo>
           <WorkTimeSummaryAdditionalInfo>
             <MissionReviewSection
