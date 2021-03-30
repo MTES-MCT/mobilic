@@ -161,7 +161,7 @@ export function UserRead() {
               </Grid>
             </Grid>
             <Typography variant="h5" className={classes.sectionTitle}>
-              Historique récent
+              Historique récent (60 jours)
             </Typography>
             <Grid container wrap="wrap" spacing={2}>
               <Grid item>

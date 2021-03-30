@@ -60,6 +60,7 @@ const useStyles = makeStyles(theme => ({
 export function PeriodCarouselPicker({
   selectedPeriod,
   periods,
+  shouldDisplayPeriodsInBold = {},
   shouldDisplayRedChipsForPeriods,
   shouldDisplayOrangeChipsForPeriods,
   onPeriodChange,
@@ -143,10 +144,19 @@ export function PeriodCarouselPicker({
                   renderPeriod(period, periodMissionsGetter(period))
                 ) : (
                   <Box className="flex-column-space-between">
-                    <Typography style={{ textTransform: "uppercase" }}>
+                    <Typography
+                      className={
+                        shouldDisplayPeriodsInBold[period] ? "bold" : ""
+                      }
+                      style={{ textTransform: "uppercase" }}
+                    >
                       {formatDayOfWeek(period)}
                     </Typography>
-                    <Typography className="bold">
+                    <Typography
+                      className={
+                        shouldDisplayPeriodsInBold[period] ? "bold" : ""
+                      }
+                    >
                       {shortPrettyFormatDay(period)}
                     </Typography>
                   </Box>

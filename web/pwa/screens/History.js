@@ -263,14 +263,21 @@ const tabs = {
     label: "Semaine",
     value: "week",
     periodLength: moment.duration(1, "weeks"),
-    formatPeriod: period => {
+    formatPeriod: (period, missions) => {
       return (
         <Box className="flex-column-space-between">
-          <Typography className="bold">
+          <Typography className={missions ? "bold" : ""}>
             {shortPrettyFormatDay(period)}
           </Typography>
-          <Typography style={{ lineHeight: 0 }}>-</Typography>
-          <Typography>{shortPrettyFormatDay(period + DAY * 7)}</Typography>
+          <Typography
+            className={missions ? "bold" : ""}
+            style={{ lineHeight: 0 }}
+          >
+            -
+          </Typography>
+          <Typography className={missions ? "bold" : ""}>
+            {shortPrettyFormatDay(period + DAY * 7)}
+          </Typography>
         </Box>
       );
     },
@@ -344,11 +351,14 @@ const tabs = {
         />
       </div>
     ),
-    formatPeriod: period => {
+    formatPeriod: (period, missions) => {
       const periodDate = new Date(period * 1000);
       return (
         <Box className="flex-column-space-between">
-          <Typography variant="h5">
+          <Typography
+            variant="h5"
+            style={{ fontWeight: missions ? "bold" : "normal" }}
+          >
             {SHORT_MONTHS[periodDate.getMonth()]}
           </Typography>
           <Typography>{periodDate.getFullYear()}</Typography>
@@ -590,6 +600,8 @@ export function History({
     ms.some(m => !m.adminValidation)
   );
 
+  const shouldDisplayPeriodsInBold = mapValues(groupedMissions, () => true);
+
   return (
     <Container
       className={classes.whiteFullScreen}
@@ -636,6 +648,7 @@ export function History({
           {filledPeriods.length > 0 && (
             <PeriodCarouselPicker
               periods={filledPeriods}
+              shouldDisplayPeriodsInBold={shouldDisplayPeriodsInBold}
               shouldDisplayRedChipsForPeriods={
                 ["mission", "day"].includes(currentTab)
                   ? periodsWithNeedForValidation
