@@ -19,6 +19,13 @@ import { CGU } from "../landing/cgu";
 import { UserRead } from "../control/UserRead";
 import { XlsxVerifier } from "../control/VerifyXlsxSignature";
 import { Partners } from "../landing/partners";
+import { Redirect, useParams } from "react-router-dom";
+
+function UserReadRedirect() {
+  const { token } = useParams();
+
+  return <Redirect to={`/control/user-history?token=${token}`} />;
+}
 
 export const ROUTES = [
   {
@@ -148,6 +155,13 @@ export const ROUTES = [
   },
   {
     path: "/control/user-history/:token",
+    label: "Historique de l'utilisateur",
+    accessible: () => true,
+    component: <UserReadRedirect />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/control/user-history",
     label: "Historique de l'utilisateur",
     accessible: () => true,
     component: <UserRead />,

@@ -44,7 +44,11 @@ export function UserReadQRCodeModal({ open, handleClose }) {
       );
       const json = await tokenResponse.json();
       const token = json.token;
-      setLink(window.location.origin + "/control/user-history/" + token);
+      setLink(
+        `${
+          window.location.origin
+        }/control/user-history?token=${token}&ts=${Date.now()}`
+      );
     } catch (err) {
       setError(formatApiError(err));
     }

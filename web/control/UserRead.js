@@ -1,6 +1,6 @@
 import React from "react";
 import keyBy from "lodash/keyBy";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useApi, USER_READ_QUERY } from "common/utils/api";
 import { Header } from "../common/Header";
 import Container from "@material-ui/core/Container";
@@ -40,6 +40,7 @@ export function UserRead() {
 
   const [userInfo, setUserInfo] = React.useState(null);
   const [tokenInfo, setTokenInfo] = React.useState(null);
+  const [controlTime, setControlTime] = React.useState(null);
   const [missions, setMissions] = React.useState(null);
   const [primaryEmployment, setPrimaryEmployment] = React.useState(null);
   const [coworkers, setCoworkers] = React.useState(null);
@@ -47,10 +48,12 @@ export function UserRead() {
   const [error, setError] = React.useState("");
   const classes = useStyles();
 
-  const { token } = useParams();
-
   React.useEffect(() => {
     async function onMount() {
+      const queryString = new URLSearchParams(location.search);
+      const token = queryString.get("token");
+      const ts = queryString.get("ts");
+
       if (token) {
         withLoadingScreen(async () => {
           try {
@@ -70,6 +73,7 @@ export function UserRead() {
               birthDate: userPayload.birthDate,
               email: userPayload.email
             });
+            if (ts && ts !== "") setControlTime(ts);
             setMissions(
               augmentSortAndFilterMissions(
                 userPayload.missions.map(m => ({
@@ -107,7 +111,7 @@ export function UserRead() {
             );
           }
         });
-      } else setError("lien d'accès manquant");
+      } else setError("lien d'accès à l'historique du salarié manquant");
     }
     onMount();
   }, [location]);
@@ -166,8 +170,8 @@ export function UserRead() {
             <Grid container wrap="wrap" spacing={2}>
               <Grid item>
                 <InfoItem
-                  name="Heure de génération du code"
-                  value={formatDateTime(tokenInfo.creationTime)}
+                  name="Heure du contrôle"
+                  value={formatDateTime(controlTime || tokenInfo.creationTime)}
                 />
               </Grid>
               <Grid item>
