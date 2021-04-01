@@ -50,7 +50,7 @@ export function CompanyFilter({ companies, setCompanies }) {
             style={{ marginRight: 8 }}
             checked={company.selected || false}
           />
-          {company.name}
+          <span>{company.name}</span>
         </>
       )}
       value={selectedCompanies}

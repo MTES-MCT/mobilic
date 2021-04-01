@@ -52,7 +52,7 @@ export function EmployeeFilter({ users, setUsers }) {
             style={{ marginRight: 8 }}
             checked={option.selected || false}
           />
-          {formatPersonName(option)}
+          <span>{formatPersonName(option)}</span>
         </>
       )}
       value={selectedUsers}
