@@ -180,7 +180,7 @@ export function UserRead() {
               </Grid>
               <Grid item>
                 <InfoItem
-                  name="Début de l'historique"
+                  name="Fin de l'historique"
                   value={new Date(Date.parse(tokenInfo.creationDay))
                     .toLocaleString("fr-FR")
                     .slice(0, 10)}
