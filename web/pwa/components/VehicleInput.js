@@ -6,10 +6,17 @@ import Autocomplete from "@material-ui/lab/Autocomplete/Autocomplete";
 import { createFilterOptions } from "@material-ui/lab/Autocomplete";
 import { getVehicleName } from "common/utils/vehicles";
 
-export function VehicleInput({ label, vehicle, setVehicle }) {
+export function VehicleInput({
+  label,
+  vehicle,
+  setVehicle,
+  disabled = false,
+  companyId = null
+}) {
   const store = useStoreSyncedWithLocalStorage();
 
-  const vehicles = values(store.getEntity("vehicles"));
+  let vehicles = values(store.getEntity("vehicles"));
+  if (companyId) vehicles = vehicles.filter(v => v.companyId === companyId);
   const _filterOptions = createFilterOptions({ stringify: getVehicleName });
   const filterOptions = (options, other) =>
     _filterOptions(options, { inputValue: getVehicleName(vehicle) || "" });
@@ -19,8 +26,9 @@ export function VehicleInput({ label, vehicle, setVehicle }) {
       id="vehicle-booking"
       style={{ width: "100%" }}
       freeSolo
+      disabled={disabled}
       options={vehicles}
-      getOptionLabel={getVehicleName}
+      getOptionLabel={v => getVehicleName(v)}
       value={vehicle}
       filterOptions={filterOptions}
       onInputChange={(event, value) => {

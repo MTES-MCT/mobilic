@@ -12,7 +12,7 @@ export function resolveVehicle(vehicleBooking, store) {
 export function getVehicleName(vehicle, withRegistrationNumber = false) {
   return vehicle
     ? vehicle.name
-      ? withRegistrationNumber
+      ? withRegistrationNumber && vehicle.name !== vehicle.registrationNumber
         ? `${vehicle.name} (${vehicle.registrationNumber})`
         : vehicle.name
       : vehicle.registrationNumber

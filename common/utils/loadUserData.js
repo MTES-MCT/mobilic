@@ -34,8 +34,7 @@ export async function syncUser(userPayload, api, store) {
     hasConfirmedEmail,
     hasActivatedEmail,
     missions,
-    currentEmployments,
-    primaryCompany
+    currentEmployments
   } = userPayload;
 
   const activities = [];
@@ -93,22 +92,29 @@ export async function syncUser(userPayload, api, store) {
   expenditures &&
     syncActions.push(store.syncEntity(expenditures, "expenditures"));
   comments && syncActions.push(store.syncEntity(comments, "comments"));
-  primaryCompany &&
-    primaryCompany.users &&
-    syncActions.push(
-      store.syncEntity(
-        primaryCompany.users.filter(c => c.id !== userPayload.id),
-        "coworkers"
-      )
+  const users = [];
+  const vehicles = [];
+  const knownAddresses = [];
+  currentEmployments.forEach(e => {
+    const company = e.company;
+    company.users.forEach(u => {
+      if (u.id !== userPayload.id) {
+        const userMatch = users.find(u2 => u2.id === u.id);
+        if (!userMatch) {
+          users.push({ ...u, companyIds: [company.id] });
+        } else userMatch.companyIds.push(company.id);
+      }
+    });
+    vehicles.push(
+      ...company.vehicles.map(v => ({ ...v, companyId: company.id }))
     );
-  primaryCompany &&
-    primaryCompany.vehicles &&
-    syncActions.push(store.syncEntity(primaryCompany.vehicles, "vehicles"));
-  primaryCompany &&
-    primaryCompany.knownAddresses &&
-    syncActions.push(
-      store.syncEntity(primaryCompany.knownAddresses, "knownAddresses")
+    knownAddresses.push(
+      ...company.knownAddresses.map(a => ({ ...a, companyId: company.id }))
     );
+  });
+  syncActions.push(store.syncEntity(users, "coworkers"));
+  syncActions.push(store.syncEntity(vehicles, "vehicles"));
+  syncActions.push(store.syncEntity(knownAddresses, "knownAddresses"));
   currentEmployments &&
     syncActions.push(store.syncEntity(currentEmployments, "employments"));
   store.batchUpdateStore();

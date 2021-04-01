@@ -134,6 +134,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
             if (isTeamMode) {
               modals.open("teamSelection", {
                 mission: null,
+                companyId: missionInfos.companyId,
                 handleContinue: handleFirstActivitySelection
               });
             } else handleFirstActivitySelection(null);

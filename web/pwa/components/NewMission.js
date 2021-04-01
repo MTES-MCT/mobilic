@@ -81,7 +81,22 @@ export function NewMissionModal({
                   variant="filled"
                   select
                   value={companyId}
-                  onChange={e => setCompanyId(e.target.value)}
+                  onChange={e => {
+                    const newCompanyId = e.target.value;
+                    if (
+                      newCompanyId &&
+                      vehicle &&
+                      vehicle.companyId !== newCompanyId
+                    )
+                      setVehicle(null);
+                    if (
+                      newCompanyId &&
+                      address &&
+                      address.companyId !== newCompanyId
+                    )
+                      setAddress(null);
+                    setCompanyId(newCompanyId);
+                  }}
                 >
                   {companies.map(company => (
                     <MenuItem key={company.id} value={company.id}>
@@ -97,19 +112,24 @@ export function NewMissionModal({
               fullWidth
               required
               label="Lieu de prise de service"
+              disabled={companies && companies.length > 1 && !companyId}
               variant="filled"
               value={address}
               onChange={setAddress}
               currentPosition={currentPosition}
-              defaultAddresses={companyAddresses}
+              defaultAddresses={companyAddresses.filter(a =>
+                companyId ? a.companyId === companyId : true
+              )}
             />
             <Typography variant="h5" className="form-field-title">
               Utilisez-vous un véhicule&nbsp;?{" "}
             </Typography>
             <VehicleInput
               label="Nom ou immatriculation du véhicule"
+              disabled={companies && companies.length > 1 && !companyId}
               vehicle={vehicle}
               setVehicle={setVehicle}
+              companyId={companyId}
             />
           </Container>
           <Box className="cta-container" my={4}>

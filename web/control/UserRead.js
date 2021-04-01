@@ -1,5 +1,4 @@
 import React from "react";
-import keyBy from "lodash/keyBy";
 import { useLocation } from "react-router-dom";
 import { useApi, USER_READ_QUERY } from "common/utils/api";
 import { Header } from "../common/Header";
@@ -84,10 +83,13 @@ export function UserRead() {
                 userPayload.id
               )
             );
-            if (userPayload.primaryCompany)
-              setVehicles(
-                keyBy(userPayload.primaryCompany.vehicles, v => v.id.toString())
-              );
+            const _vehicles = {};
+            userPayload.currentEmployments.forEach(e => {
+              e.company.vehicles.forEach(v => {
+                _vehicles[v.id.toString()] = v;
+              });
+            });
+            setVehicles(_vehicles);
             const _coworkers = {};
             userPayload.missions.forEach(m => {
               m.activities.forEach(a => {

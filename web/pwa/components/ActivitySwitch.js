@@ -168,7 +168,15 @@ export function ActivitySwitch({
                 currentExpenditures: fromPairs(
                   uniq(currentMission.expenditures.map(e => [e.type, true]))
                 ),
-                companyAddresses: store.getEntity("knownAddresses"),
+                companyAddresses: store
+                  .getEntity("knownAddresses")
+                  .filter(
+                    a =>
+                      a.companyId ===
+                      (currentMission.company
+                        ? currentMission.company.id
+                        : currentMission.companyId)
+                  ),
                 handleMissionEnd: async (expenditures, comment, address) =>
                   await endMission({
                     endTime: missionEndTime,

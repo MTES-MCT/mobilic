@@ -40,6 +40,7 @@ const useStyles = makeStyles(theme => ({
 export function TeamSelectionModal({
   open,
   mission,
+  companyId = null,
   handleClose,
   closeOnContinue = false,
   handleContinue
@@ -52,8 +53,19 @@ export function TeamSelectionModal({
     ? computeLatestEnrollmentStatuses(mission.teamChanges)
     : [];
 
+  const restrictToCompanyId = mission
+    ? mission.company
+      ? mission.company.id
+      : mission.companyId
+    : companyId;
+
   const store = useStoreSyncedWithLocalStorage();
-  const coworkers = values(store.getEntity("coworkers"));
+  let coworkers = values(store.getEntity("coworkers"));
+  if (restrictToCompanyId) {
+    coworkers = coworkers.filter(u =>
+      u.companyIds.includes(restrictToCompanyId)
+    );
+  }
 
   const updatedCoworkersWithMissionEnrollmentStatuses = updatedCoworkers.map(
     coworker => {

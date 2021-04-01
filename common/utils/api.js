@@ -111,27 +111,6 @@ export const USER_QUERY = gql`
       email
       hasConfirmedEmail
       hasActivatedEmail
-      primaryCompany {
-        id
-        name
-        siren
-        users {
-          id
-          firstName
-          lastName
-        }
-        knownAddresses {
-          id
-          alias
-          name
-          postalCode
-          city
-        }
-        vehicles {
-          id
-          name
-        }
-      }
       missions(fromTime: $activityAfter) {
         id
         name
@@ -195,6 +174,23 @@ export const USER_QUERY = gql`
           id
           name
           siren
+          users {
+            id
+            firstName
+            lastName
+          }
+          knownAddresses {
+            id
+            alias
+            name
+            postalCode
+            city
+          }
+          vehicles {
+            id
+            name
+            registrationNumber
+          }
         }
       }
     }
@@ -223,6 +219,7 @@ export const USER_READ_QUERY = gql`
           vehicles {
             id
             name
+            registrationNumber
           }
         }
         missions {
@@ -293,6 +290,11 @@ export const USER_READ_QUERY = gql`
             id
             name
             siren
+            vehicles {
+              id
+              name
+              registrationNumber
+            }
           }
         }
       }
