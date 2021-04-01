@@ -148,6 +148,11 @@ export const USER_QUERY = gql`
           missionId
           userId
         }
+        company {
+          id
+          name
+          siren
+        }
         activities {
           id
           type
@@ -223,6 +228,11 @@ export const USER_READ_QUERY = gql`
         missions {
           id
           name
+          company {
+            id
+            name
+            siren
+          }
           validations {
             submitterId
             receptionTime
@@ -605,6 +615,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         company {
           id
           name
+          siren
         }
         user {
           id
@@ -701,6 +712,11 @@ export const CREATE_MISSION_MUTATION = gql`
         id
         name
         context
+        company {
+          id
+          name
+          siren
+        }
       }
     }
   }
@@ -724,6 +740,11 @@ export const END_MISSION_MUTATION = gql`
           name
           postalCode
           city
+        }
+        company {
+          id
+          name
+          siren
         }
         activities {
           id
@@ -863,6 +884,11 @@ export const VALIDATE_MISSION_MUTATION = gql`
           id
           name
           context
+          company {
+            id
+            name
+            siren
+          }
           startLocation {
             alias
             name

@@ -847,6 +847,7 @@ class Actions {
   beginNewMission = async ({
     name,
     firstActivityType,
+    companyId,
     team = null,
     vehicleRegistrationNumber = null,
     vehicleId = null,
@@ -854,7 +855,8 @@ class Actions {
     startLocation = null
   }) => {
     const missionPayload = {
-      name
+      name,
+      companyId
     };
 
     if (vehicleId) missionPayload.context = { vehicleId };
@@ -866,6 +868,7 @@ class Actions {
     const updateMissionStore = (store, requestId) => {
       const mission = {
         name,
+        companyId,
         context: missionPayload.context || {},
         ended: false
       };

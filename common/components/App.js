@@ -28,7 +28,8 @@ function App({ ScreenComponent, loadUser }) {
       expenditures: expenditures,
       comments: comments
     }),
-    store.userId()
+    store.userId(),
+    store.companies()
   );
 
   const historyStart = getStartOfMonth(now() - 183 * DAY);

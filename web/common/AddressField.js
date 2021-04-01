@@ -34,7 +34,7 @@ const fetchPlaces = throttle((input, currentPosition = null, callback) => {
     )
     .then(json => (json ? json.features || [] : null))
     .then(places => (places ? callback(places) : null));
-}, 600);
+}, 300);
 
 export function AddressField({
   value,

@@ -95,6 +95,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
 
   const onEnterNewMissionFunnel = () => {
     modals.open("newMission", {
+      companies: store.companies(),
       companyAddresses: store.getEntity("knownAddresses"),
       handleContinue: missionInfos =>
         modals.open("teamOrSoloChoice", {
@@ -111,6 +112,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
                       await beginNewMission({
                         firstActivityType: activityType,
                         driverId,
+                        companyId: missionInfos.companyId,
                         name: missionInfos.mission,
                         vehicleId: missionInfos.vehicle
                           ? missionInfos.vehicle.id

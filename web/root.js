@@ -177,6 +177,7 @@ function _Root() {
       );
     else if (
       location.pathname !== "/" &&
+      !location.pathname.startsWith("/control") &&
       !location.pathname.startsWith("/login") &&
       !location.pathname.startsWith("/logout") &&
       !location.pathname.startsWith("/activate_email") &&

@@ -8,6 +8,7 @@ import { CustomDialogTitle } from "../common/CustomDialogTitle";
 import { useApi } from "common/utils/api";
 import { formatApiError } from "common/utils/errors";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import { now } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -47,7 +48,7 @@ export function UserReadQRCodeModal({ open, handleClose }) {
       setLink(
         `${
           window.location.origin
-        }/control/user-history?token=${token}&ts=${Date.now()}`
+        }/control/user-history?token=${token}&ts=${now()}`
       );
     } catch (err) {
       setError(formatApiError(err));

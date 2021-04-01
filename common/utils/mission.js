@@ -8,6 +8,8 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
   return {
     id: missionPayload.id,
     name: missionPayload.name,
+    companyId: missionPayload.companyId,
+    company: missionPayload.company,
     validation: missionPayload.validations
       ? missionPayload.validations.find(v => v.submitterId === userId)
       : null,
@@ -39,9 +41,12 @@ export function linkMissionsWithRelations(missions, relationMap) {
   return values(augmentedMissions);
 }
 
-function computeMissionProperties(mission, userId) {
+function computeMissionProperties(mission, userId, companies) {
+  const company =
+    mission.company || companies.find(c => c.id === mission.companyId);
   const activities = mission.allActivities.filter(a => a.userId === userId);
   return {
+    company,
     activities,
     expenditures: mission.expenditures.filter(e => e.userId === userId),
     startTime:
@@ -54,10 +59,10 @@ function computeMissionProperties(mission, userId) {
   };
 }
 
-export function augmentSortAndFilterMissions(missions, userId) {
+export function augmentSortAndFilterMissions(missions, userId, companies = []) {
   return sortEvents(
     missions
-      .map(m => ({ ...m, ...computeMissionProperties(m, userId) }))
+      .map(m => ({ ...m, ...computeMissionProperties(m, userId, companies) }))
       .filter(m => m.activities.length > 0)
   );
 }

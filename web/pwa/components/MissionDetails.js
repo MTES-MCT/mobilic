@@ -227,7 +227,8 @@ export function MissionDetails({
                       ? getVehicleName(
                           (vehicles || store.getEntity("vehicles"))[
                             mission.context.vehicleId.toString()
-                          ]
+                          ],
+                          true
                         )
                       : mission.context.vehicleRegistrationNumber
                   }
@@ -335,6 +336,17 @@ export function MissionDetails({
           </List>
         </MissionReviewSection>
       )}
+      <MissionReviewSection title="Entreprise">
+        <List dense>
+          <ListItem disableGutters>
+            <ListItemText
+              primary={`${mission.company.name}${
+                mission.company.siren ? ` (SIREN ${mission.company.siren})` : ""
+              }`}
+            />
+          </ListItem>
+        </List>
+      </MissionReviewSection>
       {!hideValidations && (
         <MissionReviewSection title="">
           {validateMission && !mission.adminValidation && !mission.validation && (

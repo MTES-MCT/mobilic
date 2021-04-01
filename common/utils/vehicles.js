@@ -9,8 +9,14 @@ export function resolveVehicle(vehicleBooking, store) {
   return store.getEntity("vehicles")[vehicleBooking.vehicleId.toString()];
 }
 
-export function getVehicleName(vehicle) {
-  return vehicle ? vehicle.name || vehicle.registrationNumber : "";
+export function getVehicleName(vehicle, withRegistrationNumber = false) {
+  return vehicle
+    ? vehicle.name
+      ? withRegistrationNumber
+        ? `${vehicle.name} (${vehicle.registrationNumber})`
+        : vehicle.name
+      : vehicle.registrationNumber
+    : "";
 }
 
 export function formatVehicleBookingTimes(vehicleBooking, endTime) {

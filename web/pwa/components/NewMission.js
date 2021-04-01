@@ -7,15 +7,18 @@ import { VehicleInput } from "./VehicleInput";
 import { FunnelModal, useStyles as useFunnelModalStyles } from "./FunnelModal";
 import { MainCtaButton } from "./MainCtaButton";
 import { AddressField } from "../../common/AddressField";
+import MenuItem from "@material-ui/core/MenuItem";
 
 export function NewMissionModal({
   open,
   handleClose,
   handleContinue,
+  companies,
   companyAddresses = []
 }) {
   const [mission, setMission] = React.useState("");
   const [vehicle, setVehicle] = React.useState(null);
+  const [companyId, setCompanyId] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [currentPosition, setCurrentPosition] = React.useState(null);
   const [address, setAddress] = React.useState(null);
@@ -23,6 +26,7 @@ export function NewMissionModal({
   React.useEffect(() => {
     setMission("");
     setVehicle(null);
+    setCompanyId(companies && companies.length === 1 ? companies[0].id : null);
     setCurrentPosition(null);
     setAddress(null);
 
@@ -43,7 +47,7 @@ export function NewMissionModal({
           onSubmit={async e => {
             setLoading(true);
             e.preventDefault();
-            const payLoad = { mission, vehicle, address };
+            const payLoad = { mission, vehicle, address, companyId };
             await handleContinue(payLoad);
             setLoading(false);
           }}
@@ -54,7 +58,7 @@ export function NewMissionModal({
             disableGutters
           >
             <Typography variant="h5" className="form-field-title">
-              Votre mission a-t-elle un nom&nbsp;?
+              Quel est le nom de la mission&nbsp;?
             </Typography>
             <TextField
               required
@@ -64,6 +68,28 @@ export function NewMissionModal({
               value={mission}
               onChange={e => setMission(e.target.value)}
             />
+            {companies &&
+              companies.length > 1 && [
+                <Typography key={0} variant="h5" className="form-field-title">
+                  Pour quelle entreprise&nbsp;?
+                </Typography>,
+                <TextField
+                  key={1}
+                  label="Entreprise"
+                  required
+                  fullWidth
+                  variant="filled"
+                  select
+                  value={companyId}
+                  onChange={e => setCompanyId(e.target.value)}
+                >
+                  {companies.map(company => (
+                    <MenuItem key={company.id} value={company.id}>
+                      {company.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              ]}
             <Typography variant="h5" className="form-field-title">
               Quel est le lieu de prise de service&nbsp;?
             </Typography>
