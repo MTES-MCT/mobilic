@@ -578,7 +578,7 @@ export function History({
   }
 
   const resetLocation = () => {
-    if (location.search) {
+    if (location.search && location.pathname.startsWith("/app/history")) {
       history.push(location.pathname, location.state);
     }
   };
