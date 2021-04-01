@@ -125,9 +125,9 @@ export function CellContent({ column, cellData, rowData, onFocus }) {
       {column.boolean ? (
         <Checkbox checked={cellData || false} disabled />
       ) : column.format ? (
-        column.format(cellData, rowData, onFocus)
+        <span>{column.format(cellData, rowData, onFocus)}</span>
       ) : cellData ? (
-        cellData
+        <span>{cellData}</span>
       ) : null}
     </CellInnerComponent>
   );
