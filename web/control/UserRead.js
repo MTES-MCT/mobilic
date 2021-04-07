@@ -7,7 +7,13 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import { useLoadingScreen } from "common/utils/loading";
 import { formatPersonName } from "common/utils/coworkers";
-import { DAY, formatDateTime, getStartOfMonth, now } from "common/utils/time";
+import {
+  DAY,
+  formatDateTime,
+  frenchFormatDateString,
+  getStartOfMonth,
+  now
+} from "common/utils/time";
 import {
   augmentSortAndFilterMissions,
   parseMissionPayloadFromBackend
@@ -162,7 +168,11 @@ export function UserRead() {
               <Grid item>
                 <InfoItem
                   name="Invité le"
-                  value={primaryEmployment ? primaryEmployment.startDate : ""}
+                  value={
+                    primaryEmployment
+                      ? frenchFormatDateString(primaryEmployment.startDate)
+                      : ""
+                  }
                 />
               </Grid>
             </Grid>
@@ -170,7 +180,7 @@ export function UserRead() {
               Historique récent (60 jours)
             </Typography>
             <Grid container wrap="wrap" spacing={2}>
-              <Grid item>
+              <Grid item xs={12}>
                 <InfoItem
                   name="Heure du contrôle"
                   value={formatDateTime(controlTime || tokenInfo.creationTime)}
@@ -179,17 +189,13 @@ export function UserRead() {
               <Grid item>
                 <InfoItem
                   name="Début de l'historique"
-                  value={new Date(Date.parse(tokenInfo.historyStartDay))
-                    .toLocaleString("fr-FR")
-                    .slice(0, 10)}
+                  value={frenchFormatDateString(tokenInfo.historyStartDay)}
                 />
               </Grid>
               <Grid item>
                 <InfoItem
                   name="Fin de l'historique"
-                  value={new Date(Date.parse(tokenInfo.creationDay))
-                    .toLocaleString("fr-FR")
-                    .slice(0, 10)}
+                  value={frenchFormatDateString(tokenInfo.creationDay)}
                 />
               </Grid>
             </Grid>

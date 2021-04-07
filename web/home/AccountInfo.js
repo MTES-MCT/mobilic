@@ -31,6 +31,7 @@ import Box from "@material-ui/core/Box";
 import * as Sentry from "@sentry/browser";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
+import { frenchFormatDateString } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   sectionTitle: {
@@ -100,7 +101,10 @@ export function EmploymentInfo({ employment, spacing = 4 }) {
           <InfoItem name="SIREN" value={employment.company.siren} />
         </Grid>
         <Grid item>
-          <InfoItem name="Début rattachement" value={employment.startDate} />
+          <InfoItem
+            name="Début rattachement"
+            value={frenchFormatDateString(employment.startDate)}
+          />
         </Grid>
         <Grid item>
           <InfoItem
@@ -226,7 +230,10 @@ export function Home() {
             </Grid>
             {userInfo.birthDate && (
               <Grid item sm={6} zeroMinWidth>
-                <InfoItem name="Date de naissance" value={userInfo.birthDate} />
+                <InfoItem
+                  name="Date de naissance"
+                  value={frenchFormatDateString(userInfo.birthDate)}
+                />
               </Grid>
             )}
             <Grid item {...(isActive ? { sm: 6 } : { xs: 12 })} zeroMinWidth>

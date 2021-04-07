@@ -22,6 +22,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import IconButton from "@material-ui/core/IconButton";
+import { frenchFormatDateString } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -152,13 +153,14 @@ export function Employees({ companyId, containerRef }) {
       label: "Début rattachement",
       name: "startDate",
       align: "left",
+      format: startDate => frenchFormatDateString(startDate),
       sortable: true,
       minWidth: 130
     },
     {
       label: "Fin rattachement",
       name: "endDate",
-      format: (endDate, employment, onFocus) => (endDate ? endDate : null),
+      format: endDate => (endDate ? frenchFormatDateString(endDate) : null),
       align: "left",
       minWidth: 130
     },

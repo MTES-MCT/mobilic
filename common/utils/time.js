@@ -58,9 +58,7 @@ export function formatTimeOfDay(unixTimestamp) {
 
 export function formatDay(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
-  return `${addZero(date.getDate())}/${addZero(
-    date.getMonth() + 1
-  )}/${date.getFullYear()}`;
+  return date.toLocaleDateString();
 }
 
 export function formatDayOfWeek(unixTimestamp) {
@@ -93,9 +91,7 @@ export function isoFormatDateTime(unixTimestamp) {
 
 export function formatDateTime(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
-  return `${addZero(date.getDate())}/${addZero(
-    date.getMonth() + 1
-  )}/${date.getFullYear()} ${addZero(date.getHours())}:${addZero(
+  return `${date.toLocaleDateString()} ${addZero(date.getHours())}:${addZero(
     date.getMinutes() % 60
   )}`;
 }
@@ -149,4 +145,8 @@ export function truncateMinute(unixTimestamp) {
 
 export function now() {
   return (Date.now() / 1000) >> 0;
+}
+
+export function frenchFormatDateString(isoDateString) {
+  return new Date(isoDateString).toLocaleDateString();
 }
