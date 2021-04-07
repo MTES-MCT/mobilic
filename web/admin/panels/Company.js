@@ -61,14 +61,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function VehicleAdmin({ companyId }) {
+function KnownAddressAdmin({ companyId }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const modals = useModals();
 
-  const [triggerAddVehicle, setTriggerAddVehicle] = React.useState({
-    value: false
-  });
   const [triggerAddLocation, setTriggerAddLocation] = React.useState({
     value: false
   });
@@ -111,25 +108,10 @@ function VehicleAdmin({ companyId }) {
     }
   ];
 
-  const vehicleColumns = [
-    {
-      label: "Immatriculation",
-      name: "registrationNumber",
-      create: true,
-      sortable: true
-    },
-    {
-      label: "Nom usuel",
-      name: "alias",
-      create: true,
-      edit: true,
-      sortable: true
-    }
-  ];
-  const vehicles = adminStore.vehicles.filter(v => v.companyId === companyId);
   const knownAddresses = adminStore.knownAddresses
     .filter(a => a.companyId === companyId)
     .map(a => ({ ...a, address: a }));
+
   return [
     <Box key={0} className={classes.title}>
       <Typography variant="h4">
@@ -231,8 +213,40 @@ function VehicleAdmin({ companyId }) {
           }
         })
       }
-    />,
-    <Box key={3} className={classes.title} mt={4}>
+    />
+  ];
+}
+
+function VehicleAdmin({ companyId }) {
+  const api = useApi();
+  const adminStore = useAdminStore();
+  const modals = useModals();
+
+  const [triggerAddVehicle, setTriggerAddVehicle] = React.useState({
+    value: false
+  });
+
+  const classes = useStyles();
+
+  const vehicleColumns = [
+    {
+      label: "Immatriculation",
+      name: "registrationNumber",
+      create: true,
+      sortable: true
+    },
+    {
+      label: "Nom usuel",
+      name: "alias",
+      create: true,
+      edit: true,
+      sortable: true
+    }
+  ];
+  const vehicles = adminStore.vehicles.filter(v => v.companyId === companyId);
+
+  return [
+    <Box key={3} className={classes.title}>
       <Typography variant="h4">Véhicules ({vehicles.length})</Typography>
       <Button
         variant="contained"
@@ -342,6 +356,11 @@ const COMPANY_SUB_PANELS = [
     label: "Véhicules",
     view: "vehicles",
     component: props => <VehicleAdmin {...props} />
+  },
+  {
+    label: "Adresses",
+    view: "addresses",
+    component: props => <KnownAddressAdmin {...props} />
   }
 ];
 
