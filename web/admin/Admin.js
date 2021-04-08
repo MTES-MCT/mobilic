@@ -111,4 +111,6 @@ function _Admin(props) {
   );
 }
 
-export const Admin = withWidth()(_Admin);
+const Admin = withWidth()(_Admin);
+
+export default Admin;

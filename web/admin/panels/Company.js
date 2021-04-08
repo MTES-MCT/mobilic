@@ -463,4 +463,6 @@ function _CompanyPanel({ width, containerRef }) {
   ];
 }
 
-export const CompanyPanel = withWidth()(_CompanyPanel);
+const CompanyPanel = withWidth()(_CompanyPanel);
+
+export default CompanyPanel;

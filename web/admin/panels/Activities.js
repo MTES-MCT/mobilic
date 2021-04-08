@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ActivityPanel() {
+export default function ActivityPanel() {
   const adminStore = useAdminStore();
   const modals = useModals();
 

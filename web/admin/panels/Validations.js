@@ -450,4 +450,6 @@ function _ValidationPanel({ containerRef, width }) {
   );
 }
 
-export const ValidationPanel = withWidth()(_ValidationPanel);
+const ValidationPanel = withWidth()(_ValidationPanel);
+
+export default ValidationPanel;

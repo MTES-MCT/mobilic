@@ -44,6 +44,7 @@ import {
   createInstance,
   useMatomo
 } from "@datapunt/matomo-tracker-react";
+import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 
 const matomo = createInstance({
   urlBase: "https://stats.data.gouv.fr",
@@ -208,18 +209,19 @@ function _Root() {
         process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
         <EnvironmentHeader />
       )}
-      <Switch>
-        {routes.map(route => (
-          <Route
-            key={route.path}
-            exact={route.exact || false}
-            path={route.path}
-          >
-            {route.component}
-          </Route>
-        ))}
-        <Redirect key="default" from="*" to={fallbackRoute} />
-      </Switch>
+      <React.Suspense fallback={<CircularProgress color="primary" />}>
+        <Switch>
+          {routes.map(route => (
+            <Route
+              key={route.path}
+              exact={route.exact || false}
+              path={route.path}
+              component={route.component}
+            />
+          ))}
+          <Redirect key="default" from="*" to={fallbackRoute} />
+        </Switch>
+      </React.Suspense>
     </>
   );
 }

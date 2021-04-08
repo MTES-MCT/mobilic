@@ -1,7 +1,4 @@
 import React from "react";
-import App from "common/components/App";
-import { AppScreen } from "../pwa/utils/navigation";
-import { Admin } from "../admin/Admin";
 import { Landing } from "../landing/landing";
 import Signup from "../landing/signup/root";
 import Login from "../landing/login";
@@ -32,7 +29,7 @@ export const ROUTES = [
     path: "/fc-callback",
     label: "Callback France Connect",
     accessible: ({ userInfo }) => !userInfo.id,
-    component: <FranceConnectCallback />,
+    component: FranceConnectCallback,
     menuItemFilter: () => false
   },
   {
@@ -40,7 +37,7 @@ export const ROUTES = [
     label: "Saisie de temps",
     accessible: ({ userInfo, companies }) =>
       userInfo.hasActivatedEmail && userInfo.id && companies.length > 0,
-    component: <App ScreenComponent={AppScreen} />,
+    component: React.lazy(() => import("../pwa/utils/navigation")),
     subRoutes: [
       {
         path: "",
@@ -58,20 +55,20 @@ export const ROUTES = [
     label: "Gestion entreprise",
     accessible: ({ userInfo, companies }) =>
       userInfo.hasActivatedEmail && userInfo.id && companies.some(c => c.admin),
-    component: <Admin />,
+    component: React.lazy(() => import("../admin/Admin")),
     subRoutes: ADMIN_VIEWS
   },
   {
     path: "/home",
     label: "Mes informations",
     accessible: ({ userInfo }) => !!userInfo.id,
-    component: <Home />
+    component: Home
   },
   {
     path: "/signup",
     label: "Inscription",
     accessible: () => true,
-    component: <Signup />,
+    component: Signup,
     menuItemFilter: ({ userInfo }) => !userInfo.id,
     mainCta: true
   },
@@ -79,56 +76,56 @@ export const ROUTES = [
     path: "/login",
     label: "Connexion",
     accessible: () => true,
-    component: <Login />,
+    component: Login,
     menuItemFilter: ({ userInfo }) => !userInfo.id
   },
   {
     path: "/stats",
     label: "Statistiques",
     accessible: () => true,
-    component: <Stats />,
+    component: Stats,
     menuItemFilter: () => false
   },
   {
     path: "/cgu",
     label: "CGU",
     accessible: () => true,
-    component: <CGU />,
+    component: CGU,
     menuItemFilter: () => false
   },
   {
     path: "/invite",
     label: "Invitation",
     accessible: () => true,
-    component: <Invite />,
+    component: Invite,
     menuItemFilter: () => false
   },
   {
     path: "/redeem_invite",
     label: "Redeem invite",
     accessible: () => true,
-    component: <RedeemInvite />,
+    component: RedeemInvite,
     menuItemFilter: () => false
   },
   {
     path: "/activate_email",
     label: "Activate email",
     accessible: () => true,
-    component: <ActivateEmail />,
+    component: ActivateEmail,
     menuItemFilter: () => false
   },
   {
     path: "/oauth/authorize",
     label: "OAuth",
     accessible: () => true,
-    component: <OAuth />,
+    component: OAuth,
     menuItemFilter: () => false
   },
   {
     path: "/logout",
     label: "Logout",
     accessible: () => true,
-    component: <Logout />,
+    component: Logout,
     menuItemFilter: () => false
   },
   {
@@ -136,49 +133,49 @@ export const ROUTES = [
     label: "Landing",
     accessible: () => true,
     exact: true,
-    component: <Landing />,
+    component: Landing,
     menuItemFilter: () => false
   },
   {
     path: "/reset_password",
     label: "Reset password",
     accessible: () => true,
-    component: <ResetPassword />,
+    component: ResetPassword,
     menuItemFilter: () => false
   },
   {
     path: "/request_reset_password",
     label: "Reset password",
     accessible: ({ userInfo }) => !userInfo.id,
-    component: <RequestResetPassword />,
+    component: RequestResetPassword,
     menuItemFilter: () => false
   },
   {
     path: "/control/user-history/:token",
     label: "Historique de l'utilisateur",
     accessible: () => true,
-    component: <UserReadRedirect />,
+    component: UserReadRedirect,
     menuItemFilter: () => false
   },
   {
     path: "/control/user-history",
     label: "Historique de l'utilisateur",
     accessible: () => true,
-    component: <UserRead />,
+    component: UserRead,
     menuItemFilter: () => false
   },
   {
     path: "/control/verify-export",
     label: "Vérification d'intégrité",
     accessible: () => true,
-    component: <XlsxVerifier />,
+    component: XlsxVerifier,
     menuItemFilter: () => false
   },
   {
     path: "/partners",
     label: "Partenaires",
     accessible: () => true,
-    component: <Partners />,
+    component: Partners,
     menuItemFilter: () => false
   }
 ];
