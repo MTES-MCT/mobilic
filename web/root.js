@@ -19,7 +19,7 @@ import { ApiContextProvider, useApi } from "common/utils/api";
 import { theme } from "common/utils/theme";
 import { MODAL_DICT } from "./modals";
 import { ThemeProvider } from "@material-ui/styles";
-import { CssBaseline } from "@material-ui/core";
+import CssBaseline from "@material-ui/core/CssBaseline";
 import { loadUserData } from "common/utils/loadUserData";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import frLocale from "date-fns/locale/fr";

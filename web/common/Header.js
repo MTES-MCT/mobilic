@@ -157,6 +157,7 @@ export function NavigationMenu({ open, setOpen }) {
     >
       <Box className={classes.closeNavButton} pt={2}>
         <IconButton
+          aria-label="Fermer"
           onClick={() => setOpen(false)}
           className={classes.closeNavButton}
         >
@@ -178,6 +179,7 @@ export function NavigationMenu({ open, setOpen }) {
         {store.userId() && (
           <ListItem
             button
+            aria-label="Déconnexion"
             className={classes.navListItem}
             onClick={() => api.logout({ failOnError: false })}
             disableGutters
@@ -201,6 +203,7 @@ function MobileHeader({ disableMenu }) {
       <Logos leaveSpaceForMenu={!disableMenu} />
       {!disableMenu && [
         <IconButton
+          aria-label="Menu"
           key={0}
           edge="end"
           onClick={() => setOpenNavDrawer(!openNavDrawer)}
@@ -234,6 +237,7 @@ function DesktopHeader({ disableMenu }) {
 
   const docLinks = () => [
     <LinkButton
+      aria-label="Foire aux questions"
       key={1}
       href="https://faq.mobilic.beta.gouv.fr"
       target="_blank"
@@ -242,7 +246,7 @@ function DesktopHeader({ disableMenu }) {
     >
       Foire aux questions
     </LinkButton>
-    /*<LinkButton key={2} to="/partners" className={classes.docButton}>
+    /*<LinkButton aria-label="Partenaires" key={2} to="/partners" className={classes.docButton}>
       Partenaires
     </LinkButton>*/
   ];
@@ -273,6 +277,7 @@ function DesktopHeader({ disableMenu }) {
           </Tooltip>
           {!disableMenu && [
             <IconButton
+              aria-label="Menu"
               key={0}
               style={{ marginRight: 16 }}
               edge="end"
@@ -311,6 +316,7 @@ function DesktopHeader({ disableMenu }) {
                     );
                 return (
                   <ButtonComponent
+                    aria-label={route.label}
                     key={route.path}
                     value={route.path}
                     href={route.path}

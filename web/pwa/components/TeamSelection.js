@@ -11,7 +11,7 @@ import {
   formatPersonName
 } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import { Box } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
 import { FunnelModal, useStyles as useFunnelModalStyles } from "./FunnelModal";
 import Container from "@material-ui/core/Container";
 import makeStyles from "@material-ui/core/styles/makeStyles";

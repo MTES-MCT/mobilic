@@ -23,7 +23,7 @@ import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import Button from "@material-ui/core/Button";
 import Drawer from "@material-ui/core/Drawer/Drawer";
 import { MissionDetails } from "../components/MissionDetails";
-import { withWidth, isWidthUp } from "@material-ui/core";
+import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import { useSnackbarAlerts } from "../../common/Snackbar";

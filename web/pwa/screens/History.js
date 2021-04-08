@@ -1,6 +1,6 @@
 import React from "react";
 import mapValues from "lodash/mapValues";
-import { Container } from "@material-ui/core";
+import Container from "@material-ui/core/Container";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import {

@@ -14,8 +14,7 @@ import { Header } from "../common/Header";
 import * as Sentry from "@sentry/browser";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { SideMenu } from "./components/SideMenu";
-import { isWidthUp } from "@material-ui/core";
-import withWidth from "@material-ui/core/withWidth";
+import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 
 const useStyles = makeStyles(theme => ({
   container: {
