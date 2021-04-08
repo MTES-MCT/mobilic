@@ -88,6 +88,7 @@
     "resolve-url-loader": "^3.1.1",
     "sass-loader": "8.0.0",
     "semver": "6.3.0",
+    "source-map-explorer": "^2.5.2",
     "style-loader": "1.0.0",
     "terser-webpack-plugin": "2.2.1",
     "ts-pnp": "1.1.5",
@@ -99,6 +100,7 @@
     "workbox-webpack-plugin": "6.0.2"
   },
   "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "node scripts/start.js",
     "start-https": "HTTPS=true node scripts/start.js",
     "build": "INLINE_RUNTIME_CHUNK=false node scripts/build.js && rm build/static/js/*.map && yarn build-doc && yarn inject-doc-build",
@@ -153,7 +155,8 @@
     "lint-staged": "^10.0.7",
     "prettier": "1.19.1",
     "react-hot-loader": "4.12.20",
-    "react-test-renderer": "16.11.0"
+    "react-test-renderer": "16.11.0",
+    "webpack-bundle-analyzer": "^4.4.0"
   },
   "jest": {
     "roots": [

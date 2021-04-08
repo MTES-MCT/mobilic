@@ -56,29 +56,24 @@ const baseOptions = {
     }
   },
   typography: {
-    fontFamily: '"Source Sans Pro", Arial, sans-serif',
+    fontFamily: '"Marianne", Arial, sans-serif',
     h1: {
-      fontFamily: '"Evolventa", "Trebuchet MS", sans-serif',
       fontSize: "2em",
       fontWeight: "bold"
     },
     h2: {
-      fontFamily: '"Evolventa", "Trebuchet MS", sans-serif',
       fontSize: "1.75em",
       fontWeight: "bold"
     },
     h3: {
-      fontFamily: '"Evolventa", "Trebuchet MS", sans-serif',
       fontSize: "1.5em",
       fontWeight: "bold"
     },
     h4: {
-      fontFamily: '"Evolventa", "Trebuchet MS", sans-serif',
       fontSize: "1.25em",
       fontWeight: "bold"
     },
     h5: {
-      fontFamily: '"Evolventa", "Trebuchet MS", sans-serif',
       fontSize: "1.125em",
       fontWeight: "bold"
     },
@@ -87,7 +82,6 @@ const baseOptions = {
       fontWeight: "bold"
     },
     subtitle1: {
-      fontFamily: '"Source Sans Pro", Arial, sans-serif',
       fontWeight: 400,
       color: "#8393a7"
     }

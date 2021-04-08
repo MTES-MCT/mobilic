@@ -8,14 +8,6 @@ import {
   useHistory
 } from "react-router-dom";
 
-import "common/assets/fonts/Evolventa/Evolventa-Bold.ttf";
-import "common/assets/fonts/Evolventa/Evolventa-BoldOblique.ttf";
-import "common/assets/fonts/Evolventa/Evolventa-Oblique.ttf";
-import "common/assets/fonts/Evolventa/Evolventa-Regular.ttf";
-import "common/assets/fonts/Source Sans Pro/SourceSansPro-Bold.otf";
-import "common/assets/fonts/Source Sans Pro/SourceSansPro-It.otf";
-import "common/assets/fonts/Source Sans Pro/SourceSansPro-Regular.otf";
-
 import "./index.css";
 import "common/assets/styles/root.scss";
 
