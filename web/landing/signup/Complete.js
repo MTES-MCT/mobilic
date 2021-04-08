@@ -87,6 +87,7 @@ export function Complete({ type }) {
         </Grid>
         <Grid item xs={12}>
           <Button
+            aria-label="Aller dans mon espace"
             color="primary"
             variant="contained"
             onClick={() => {

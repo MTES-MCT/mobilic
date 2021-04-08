@@ -70,7 +70,7 @@ export function Partners() {
         <PaperContainerTitle>Mobilic, un label ? 🤝</PaperContainerTitle>
         <Grid container direction="row" alignItems="center" spacing={8}>
           <Grid item className={classes.whiteSection}>
-            <img src={BetagouvLogo} height={200} />
+            <img alt="beta.gouv" src={BetagouvLogo} height={200} />
           </Grid>
           <Grid item sm>
             <Typography align="justify">
@@ -131,7 +131,7 @@ export function Partners() {
           >
             {imageSrcs.keys().map(src => (
               <Grid item key={src}>
-                <img src={imageSrcs(src)} height={160} />
+                <img alt={src} src={imageSrcs(src)} height={160} />
               </Grid>
             ))}
           </Grid>
@@ -183,6 +183,7 @@ export function Partners() {
           </Grid>
         </Grid>
         <MainCtaButton
+          aria-label="Devenir partenaire"
           className={classes.cta}
           href="mailto:mobilic@beta.gouv.fr"
         >

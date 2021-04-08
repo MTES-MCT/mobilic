@@ -78,6 +78,7 @@ function MissionSummary({
           </Typography>
           {collapsable && (
             <IconButton
+              aria-label={open ? "Masquer" : "Afficher"}
               color="inherit"
               className="no-margin-no-padding"
               onClick={() => setOpen(!open)}
@@ -637,6 +638,7 @@ export function History({
         )}
         {displayQRCodeGeneration && (
           <Button
+            aria-label="Accès contrôleur"
             className={classes.generateAccessButton}
             color="secondary"
             variant="outlined"

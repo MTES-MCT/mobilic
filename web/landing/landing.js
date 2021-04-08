@@ -120,7 +120,12 @@ function _Showcase({
       {descriptionTitle}
     </Typography>,
     <React.Fragment key={1}>{descriptionContent}</React.Fragment>,
-    <MainCtaButton key={2} className={classes.cta} href={ctaTarget}>
+    <MainCtaButton
+      aria-label={ctaLabel}
+      key={2}
+      className={classes.cta}
+      href={ctaTarget}
+    >
       {ctaLabel}
     </MainCtaButton>
   ];
@@ -215,6 +220,7 @@ export function Landing() {
         <Container maxWidth="sm" disableGutters>
           <Box className={classes.videoContainer}>
             <iframe
+              title="Vidéo présentation Mobilic"
               className={classes.videoIframe}
               frameBorder="0"
               type="text/html"
@@ -400,6 +406,7 @@ export function Landing() {
           </Grid>
           <Grid item xs className={classes.faqCta}>
             <MainCtaButton
+              aria-label="Foire aux questions"
               href="https://faq.mobilic.beta.gouv.fr"
               target="_blank"
               rel="noopener noreferrer"

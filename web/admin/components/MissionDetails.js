@@ -385,6 +385,7 @@ export function MissionDetails({ mission, handleClose, width }) {
         (!id && creatingActivityForUserId === entry.user.id) ? (
           <>
             <IconButton
+              aria-label="Enregistrer modification"
               className="no-margin-no-padding"
               disabled={
                 !!errors.startTime ||
@@ -407,6 +408,7 @@ export function MissionDetails({ mission, handleClose, width }) {
               <CheckIcon fontSize="small" className={classes.saveIcon} />
             </IconButton>
             <IconButton
+              aria-label="Annuler modification"
               className="no-margin-no-padding"
               onClick={() => {
                 setEditedValues(null);
@@ -420,6 +422,7 @@ export function MissionDetails({ mission, handleClose, width }) {
         ) : (
           <>
             <IconButton
+              aria-label="Modifier activité"
               className="no-margin-no-padding"
               color="primary"
               disabled={!!activityIdToEdit || !!creatingActivityForUserId}
@@ -437,6 +440,7 @@ export function MissionDetails({ mission, handleClose, width }) {
               <EditIcon fontSize="small" />
             </IconButton>
             <IconButton
+              aria-label="Supprimer activité"
               className="no-margin-no-padding"
               disabled={!!activityIdToEdit || !!creatingActivityForUserId}
               onClick={() =>
@@ -476,7 +480,11 @@ export function MissionDetails({ mission, handleClose, width }) {
       <Typography variant="h3" className={classes.missionTitle}>
         {mission.name ? mission.name : "Mission sans nom"}
       </Typography>
-      <IconButton className={classes.closeButton} onClick={handleClose}>
+      <IconButton
+        aria-label="Fermer"
+        className={classes.closeButton}
+        onClick={handleClose}
+      >
         <CloseIcon />
       </IconButton>
     </Box>,
@@ -584,6 +592,7 @@ export function MissionDetails({ mission, handleClose, width }) {
                   {formatDay(getTime(userStats.validation))}
                 </Typography>
                 <Button
+                  aria-label="Ajouter une activité"
                   color="primary"
                   variant="outlined"
                   size="small"
@@ -608,6 +617,7 @@ export function MissionDetails({ mission, handleClose, width }) {
     </Section>,
     <Section key={4} title="Observations">
       <Button
+        aria-label="Ajouter une observation"
         color="primary"
         variant="outlined"
         size="small"
@@ -634,6 +644,7 @@ export function MissionDetails({ mission, handleClose, width }) {
     </Section>,
     <Section key={5} title="" className={classes.validationSection}>
       <LoadingButton
+        aria-label="Valider"
         variant="contained"
         color="primary"
         size="small"

@@ -100,6 +100,7 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
       <CustomDialogActions>
         {handleAccept && (
           <LoadingButton
+            aria-label="Accepter"
             variant="contained"
             color="primary"
             onClick={async () => {
@@ -113,6 +114,7 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
         )}
         {handleAccept && (
           <LoadingButton
+            aria-label="Refuser"
             variant="outlined"
             color="primary"
             onClick={async () => {
@@ -124,7 +126,12 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
           </LoadingButton>
         )}
         {!handleAccept && (
-          <Button variant="outlined" color="primary" onClick={handleClose}>
+          <Button
+            aria-label="Fermer"
+            variant="outlined"
+            color="primary"
+            onClick={handleClose}
+          >
             Fermer
           </Button>
         )}

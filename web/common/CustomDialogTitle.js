@@ -32,7 +32,11 @@ export function CustomDialogTitle({ handleClose, title }) {
   return (
     <DialogTitle disableTypography className={classes.container}>
       <Typography variant="h4">{title}</Typography>
-      <IconButton onClick={handleClose} className={classes.button}>
+      <IconButton
+        aria-label="Fermer"
+        onClick={handleClose}
+        className={classes.button}
+      >
         <CloseIcon />
       </IconButton>
     </DialogTitle>

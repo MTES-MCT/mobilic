@@ -75,6 +75,7 @@ export function Consent({ clientName, redirectUri }) {
             <Grid className="centered" container spacing={4} justify="center">
               <Grid item>
                 <LoadingButton
+                  aria-label="Autoriser"
                   color="primary"
                   variant="contained"
                   onClick={() => handleAuthorize(false)}
@@ -84,6 +85,7 @@ export function Consent({ clientName, redirectUri }) {
               </Grid>
               <Grid item>
                 <LoadingButton
+                  aria-label="Refuser"
                   color="primary"
                   variant="outlined"
                   onClick={async () => await handleAuthorize(true)}

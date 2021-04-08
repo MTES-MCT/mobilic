@@ -21,16 +21,21 @@ export function ConfirmationModal({
       />
       <CustomDialogActions>
         {textButtons ? (
-          <LoadingButton color="primary" onClick={handleClose}>
+          <LoadingButton
+            aria-label="Confirmer"
+            color="primary"
+            onClick={handleClose}
+          >
             Non
           </LoadingButton>
         ) : (
-          <IconButton onClick={handleClose}>
+          <IconButton aria-label="Confirmer" onClick={handleClose}>
             <CloseIcon color="error" />
           </IconButton>
         )}
         {textButtons ? (
           <LoadingButton
+            aria-label="Annuler"
             color="primary"
             onClick={async (...args) => {
               await handleConfirm(...args);
@@ -41,6 +46,7 @@ export function ConfirmationModal({
           </LoadingButton>
         ) : (
           <IconButton
+            aria-label="Annuler"
             onClick={(...args) => {
               handleConfirm(...args);
               handleClose();

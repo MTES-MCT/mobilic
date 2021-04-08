@@ -42,7 +42,11 @@ export function RoleSelection() {
       alignItems="stretch"
     >
       <Grid item xs={10} md={4}>
-        <LinkButton to="/signup/user" className={classes.roleButton}>
+        <LinkButton
+          aria-label="Inscription salarié"
+          to="/signup/user"
+          className={classes.roleButton}
+        >
           <Card raised>
             <Box p={2} className="flex-column-space-between">
               <WorkerImage height={150} width={150} />
@@ -54,7 +58,11 @@ export function RoleSelection() {
         </LinkButton>
       </Grid>
       <Grid item xs={10} md={4}>
-        <LinkButton to="/signup/admin" className={classes.roleButton}>
+        <LinkButton
+          aria-label="Inscription gestionnaire"
+          to="/signup/admin"
+          className={classes.roleButton}
+        >
           <Card raised>
             <Box p={2} className="flex-column-space-between">
               <ManagerImage height={150} width={150} />

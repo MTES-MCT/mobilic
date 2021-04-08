@@ -93,6 +93,7 @@ export function Invite() {
               >
                 <Grid item>
                   <LinkButton
+                    aria-label="Inscription"
                     color="primary"
                     variant="contained"
                     to={`/signup/user?token=${employeeInvite.inviteToken}`}
@@ -102,6 +103,7 @@ export function Invite() {
                 </Grid>
                 <Grid item>
                   <LinkButton
+                    aria-label="Rattachement d'un compte existant"
                     color="primary"
                     variant="outlined"
                     to={`/login?next=${encodeURIComponent(

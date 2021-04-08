@@ -367,6 +367,7 @@ function _ValidationPanel({ containerRef, width }) {
                 </Typography>
                 {tab === 0 && (
                   <Button
+                    aria-label="Valider"
                     variant="contained"
                     color="primary"
                     size="small"

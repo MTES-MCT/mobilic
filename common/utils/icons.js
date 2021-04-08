@@ -15,52 +15,91 @@ import _SoftwareImage from "../assets/images/software.svg";
 import _NoDataImage from "../assets/images/no-data.png";
 
 export function PersonIcon(props) {
-  return <SvgIcon {...props} viewBox="0 0 64 64" component={PersonIcon_} />;
+  return (
+    <SvgIcon
+      titleAccess="solo"
+      {...props}
+      viewBox="0 0 64 64"
+      component={PersonIcon_}
+    />
+  );
 }
 
 export function TeamIcon(props) {
-  return <SvgIcon {...props} viewBox="0 0 64 64" component={TeamIcon_} />;
+  return (
+    <SvgIcon
+      titleAccess="équipe"
+      {...props}
+      viewBox="0 0 64 64"
+      component={TeamIcon_}
+    />
+  );
 }
 
 export function TruckIcon(props) {
-  return <SvgIcon {...props} viewBox="0 0 64 64" component={TruckIcon_} />;
+  return (
+    <SvgIcon
+      titleAccess="déplacement"
+      {...props}
+      viewBox="0 0 64 64"
+      component={TruckIcon_}
+    />
+  );
 }
 
 export function WorkIcon(props) {
   return (
-    <SvgIcon {...props} viewBox="0 0 64 64" component={HammerWenchIcon_} />
+    <SvgIcon
+      titleAccess="autre tâche"
+      {...props}
+      viewBox="0 0 64 64"
+      component={HammerWenchIcon_}
+    />
   );
 }
 
 export function RestIcon(props) {
-  return <SvgIcon {...props} viewBox="0 0 64 64" component={BedIcon_} />;
+  return (
+    <SvgIcon
+      titleAccess="pause"
+      {...props}
+      viewBox="0 0 64 64"
+      component={BedIcon_}
+    />
+  );
 }
 
 export function MarianneIcon(props) {
   return (
-    <SvgIcon {...props} viewBox="40 40 210 200" component={MarianneIcon_} />
+    <SvgIcon
+      titleAccess="marianne"
+      {...props}
+      viewBox="40 40 210 200"
+      component={MarianneIcon_}
+    />
   );
 }
 
 export function NoDataImage(props) {
-  return <img src={_NoDataImage} {...props} />;
+  return <img alt="pas de données" src={_NoDataImage} {...props} />;
 }
 
 export function ManagerImage(props) {
-  return <img src={_ManagerImage} {...props} />;
+  return <img alt="gestionnaire" src={_ManagerImage} {...props} />;
 }
 
 export function WorkerImage(props) {
-  return <img src={_WorkerImage} {...props} />;
+  return <img alt="salarié" src={_WorkerImage} {...props} />;
 }
 
 export function SoftwareImage(props) {
-  return <img src={_SoftwareImage} {...props} />;
+  return <img alt="logiciel" src={_SoftwareImage} {...props} />;
 }
 
 export function FranceConnectIcon(props) {
   return (
     <SvgIcon
+      titleAccess="FranceConnect"
       style={{
         width: 283 * (props.scale ? props.scale : 1),
         height: 82 * (props.scale ? props.scale : 1),
@@ -76,6 +115,7 @@ export function FranceConnectIcon(props) {
 export function FabNumIcon(props) {
   return (
     <SvgIcon
+      titleAccess="fabrique numérique"
       style={{
         width: 141 * (props.scale ? props.scale : 1),
         height: 141 * (props.scale ? props.scale : 1),

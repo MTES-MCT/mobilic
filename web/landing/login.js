@@ -107,6 +107,7 @@ export default function Login() {
             />
             <Box my={4}>
               <LoadingButton
+                aria-label="Connexion"
                 variant="contained"
                 color="primary"
                 type="submit"

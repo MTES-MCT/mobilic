@@ -203,6 +203,7 @@ export function CompanySignup() {
               }}
             />
             <LoadingButton
+              aria-label="Rechercher SIREN"
               variant="contained"
               color="primary"
               type="submit"
@@ -231,6 +232,7 @@ export function CompanySignup() {
           )}
           {apiError && (
             <Button
+              aria-label="Continuer sans vérification du SIREN"
               className={classes.warningButton}
               variant="outlined"
               color="secondary"
@@ -288,6 +290,7 @@ export function CompanySignup() {
             ))}
           </Grid>
           <Button
+            aria-label="Continuer"
             className={classes.verticalFormButton}
             variant="contained"
             color="primary"
@@ -337,6 +340,7 @@ export function CompanySignup() {
               />
             </FormGroup>
             <LoadingButton
+              aria-label="Terminer inscription"
               className={classes.verticalFormButton}
               variant="contained"
               color="primary"

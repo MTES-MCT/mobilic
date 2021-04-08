@@ -34,7 +34,7 @@ export function FranceConnectContainer({
         <Typography className={classes.text} variant="body2">
           {helperText}
         </Typography>
-        <Button onClick={onButtonClick}>
+        <Button aria-label="France Connect" onClick={onButtonClick}>
           <FranceConnectIcon className={classes.svg} scale={0.75} />
         </Button>
         <Link

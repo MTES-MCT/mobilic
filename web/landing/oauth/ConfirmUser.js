@@ -48,7 +48,11 @@ export function ConfirmUser({ clientName, redirectUri }) {
         </Typography>
         <Section last>
           <List className={classes.list}>
-            <ListItem button onClick={() => history.push(consentUrl)}>
+            <ListItem
+              button
+              aria-label="Choisir ce compte"
+              onClick={() => history.push(consentUrl)}
+            >
               <ListItemIcon>
                 <AccountCircleIcon color="primary" />
               </ListItemIcon>
@@ -57,6 +61,7 @@ export function ConfirmUser({ clientName, redirectUri }) {
             <Divider component="li" />
             <ListItem
               button
+              aria-label="Choisir un autre compte"
               onClick={async () => {
                 await api.logout({
                   postFCLogoutRedirect: `/logout?next=${encodeURIComponent(
