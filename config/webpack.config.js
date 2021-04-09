@@ -648,6 +648,7 @@ module.exports = function(webpackEnv) {
           clientsClaim: true,
           skipWaiting: true,
           exclude: [/\.map$/, /asset-manifest\.json$/],
+          excludeChunks: ["playground"],
           navigateFallback: publicUrl + "/index.html",
           sourcemap: false,
           navigateFallbackDenylist: [
