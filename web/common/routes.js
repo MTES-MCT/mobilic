@@ -1,7 +1,5 @@
 import React from "react";
 import { Landing } from "../landing/landing";
-import Signup from "../landing/signup/root";
-import Login from "../landing/login";
 import Stats from "../landing/stats";
 import { Home } from "../home/AccountInfo";
 import { Invite } from "../landing/invite";
@@ -68,7 +66,7 @@ export const ROUTES = [
     path: "/signup",
     label: "Inscription",
     accessible: () => true,
-    component: Signup,
+    component: React.lazy(() => import("../landing/signup/root")),
     menuItemFilter: ({ userInfo }) => !userInfo.id,
     mainCta: true
   },
@@ -76,7 +74,7 @@ export const ROUTES = [
     path: "/login",
     label: "Connexion",
     accessible: () => true,
-    component: Login,
+    component: React.lazy(() => import("../landing/login")),
     menuItemFilter: ({ userInfo }) => !userInfo.id
   },
   {
