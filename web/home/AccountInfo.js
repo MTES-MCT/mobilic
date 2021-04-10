@@ -17,12 +17,7 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Alert from "@material-ui/lab/Alert";
 import { LoadingButton } from "common/components/LoadingButton";
-import {
-  CHANGE_EMAIL_MUTATION,
-  REJECT_EMPLOYMENT_MUTATION,
-  useApi,
-  VALIDATE_EMPLOYMENT_MUTATION
-} from "common/utils/api";
+import { useApi } from "common/utils/api";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { useModals } from "common/utils/modals";
 import Divider from "@material-ui/core/Divider";
@@ -32,6 +27,11 @@ import * as Sentry from "@sentry/browser";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 import { frenchFormatDateString } from "common/utils/time";
+import {
+  CHANGE_EMAIL_MUTATION,
+  REJECT_EMPLOYMENT_MUTATION,
+  VALIDATE_EMPLOYMENT_MUTATION
+} from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   sectionTitle: {

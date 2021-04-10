@@ -2,11 +2,7 @@ import React from "react";
 
 import { useLocation, useHistory } from "react-router-dom";
 import { useLoadingScreen } from "common/utils/loading";
-import {
-  GET_EMPLOYMENT_QUERY,
-  REDEEM_INVITE_QUERY,
-  useApi
-} from "common/utils/api";
+import { useApi } from "common/utils/api";
 import {
   broadCastChannel,
   useStoreSyncedWithLocalStorage
@@ -15,6 +11,10 @@ import { formatApiError } from "common/utils/errors";
 import Typography from "@material-ui/core/Typography";
 import { currentUserId } from "common/utils/cookie";
 import * as Sentry from "@sentry/browser";
+import {
+  GET_EMPLOYMENT_QUERY,
+  REDEEM_INVITE_QUERY
+} from "common/utils/apiQueries";
 
 export function RedeemInvite() {
   const location = useLocation();

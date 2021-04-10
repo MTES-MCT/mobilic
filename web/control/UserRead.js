@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { useApi, USER_READ_QUERY } from "common/utils/api";
+import { useApi } from "common/utils/api";
 import { Header } from "../common/Header";
 import Container from "@material-ui/core/Container";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -22,6 +22,7 @@ import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { History } from "../pwa/screens/History";
 import Grid from "@material-ui/core/Grid";
 import { InfoItem } from "../home/InfoField";
+import { USER_READ_QUERY } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   container: {
