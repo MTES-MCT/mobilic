@@ -26,7 +26,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function DataExport({ open, handleClose, companies = [], users = [] }) {
+export default function DataExport({
+  open,
+  handleClose,
+  companies = [],
+  users = []
+}) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const { trackLink } = useMatomo();

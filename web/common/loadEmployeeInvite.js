@@ -1,5 +1,5 @@
-import { GET_EMPLOYMENT_QUERY } from "common/utils/api";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
+import { GET_EMPLOYMENT_QUERY } from "common/utils/apiQueries";
 
 export async function loadEmployeeInvite(token, store, api, setError) {
   try {

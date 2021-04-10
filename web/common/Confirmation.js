@@ -6,7 +6,7 @@ import IconButton from "@material-ui/core/IconButton";
 import { LoadingButton } from "common/components/LoadingButton";
 import { CustomDialogActions, CustomDialogTitle } from "./CustomDialogTitle";
 
-export function ConfirmationModal({
+export default function ConfirmationModal({
   title,
   textButtons,
   open,

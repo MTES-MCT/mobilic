@@ -20,15 +20,7 @@ import { ACTIVITIES } from "common/utils/activities";
 import CheckIcon from "@material-ui/icons/Check";
 import EditIcon from "@material-ui/icons/Edit";
 import { DateTimePicker } from "../../pwa/components/DateTimePicker";
-import {
-  CANCEL_ACTIVITY_MUTATION,
-  CANCEL_COMMENT_MUTATION,
-  EDIT_ACTIVITY_MUTATION,
-  LOG_ACTIVITY_MUTATION,
-  LOG_COMMENT_MUTATION,
-  useApi,
-  VALIDATE_MISSION_MUTATION
-} from "common/utils/api";
+import { useApi } from "common/utils/api";
 import { useAdminStore } from "../utils/store";
 import { LoadingButton } from "common/components/LoadingButton";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -49,6 +41,14 @@ import {
 } from "common/utils/addresses";
 import { computeMissionStats } from "../panels/Validations";
 import { activityOverwriteOps } from "../../pwa/components/ActivityRevision";
+import {
+  CANCEL_ACTIVITY_MUTATION,
+  CANCEL_COMMENT_MUTATION,
+  EDIT_ACTIVITY_MUTATION,
+  LOG_ACTIVITY_MUTATION,
+  LOG_COMMENT_MUTATION,
+  VALIDATE_MISSION_MUTATION
+} from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {

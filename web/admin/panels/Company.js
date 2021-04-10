@@ -1,15 +1,7 @@
 import React from "react";
 import Paper from "@material-ui/core/Paper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import {
-  useApi,
-  CREATE_VEHICLE_MUTATION,
-  EDIT_VEHICLE_MUTATION,
-  TERMINATE_VEHICLE_MUTATION,
-  EDIT_KNOWN_ADDRESS_MUTATION,
-  CREATE_KNOWN_ADDRESS_MUTATION,
-  TERMINATE_KNOWN_ADDRESS_MUTATION
-} from "common/utils/api";
+import { useApi } from "common/utils/api";
 import { useAdminStore } from "../utils/store";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup/ToggleButtonGroup";
@@ -26,6 +18,14 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { AddressField } from "../../common/AddressField";
+import {
+  CREATE_KNOWN_ADDRESS_MUTATION,
+  CREATE_VEHICLE_MUTATION,
+  EDIT_KNOWN_ADDRESS_MUTATION,
+  EDIT_VEHICLE_MUTATION,
+  TERMINATE_KNOWN_ADDRESS_MUTATION,
+  TERMINATE_VEHICLE_MUTATION
+} from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   navigation: {

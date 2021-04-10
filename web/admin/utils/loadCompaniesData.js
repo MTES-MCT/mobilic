@@ -1,5 +1,5 @@
-import { ADMIN_COMPANIES_QUERY } from "common/utils/api";
 import { DAY } from "common/utils/time";
+import { ADMIN_COMPANIES_QUERY } from "common/utils/apiQueries";
 
 export async function loadCompaniesData(api, userId) {
   const companyResponse = await api.graphQlQuery(ADMIN_COMPANIES_QUERY, {

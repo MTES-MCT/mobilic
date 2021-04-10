@@ -1,6 +1,6 @@
 import React from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import { useApi, VALIDATE_MISSION_MUTATION } from "common/utils/api";
+import { useApi } from "common/utils/api";
 import { useAdminStore } from "../utils/store";
 import {
   AugmentedVirtualizedTable,
@@ -28,6 +28,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
+import { VALIDATE_MISSION_MUTATION } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   title: {
