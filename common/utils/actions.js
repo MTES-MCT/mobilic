@@ -5,20 +5,7 @@ import values from "lodash/values";
 import * as Sentry from "@sentry/browser";
 import find from "lodash/find";
 import { isPendingSubmission, useStoreSyncedWithLocalStorage } from "./store";
-import {
-  CANCEL_ACTIVITY_MUTATION,
-  CANCEL_COMMENT_MUTATION,
-  CANCEL_EXPENDITURE_MUTATION,
-  CREATE_MISSION_MUTATION,
-  EDIT_ACTIVITY_MUTATION,
-  END_MISSION_MUTATION,
-  LOG_ACTIVITY_MUTATION,
-  LOG_COMMENT_MUTATION,
-  LOG_EXPENDITURE_MUTATION,
-  LOG_LOCATION_MUTATION,
-  useApi,
-  VALIDATE_MISSION_MUTATION
-} from "./api";
+import { useApi } from "./api";
 import { ACTIVITIES, parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
 import { getTime } from "./events";
@@ -32,6 +19,19 @@ import { formatPersonName } from "./coworkers";
 import { EXPENDITURES } from "./expenditures";
 import { useSnackbarAlerts } from "../../web/common/Snackbar";
 import { useModals } from "./modals";
+import {
+  CANCEL_ACTIVITY_MUTATION,
+  CANCEL_COMMENT_MUTATION,
+  CANCEL_EXPENDITURE_MUTATION,
+  CREATE_MISSION_MUTATION,
+  EDIT_ACTIVITY_MUTATION,
+  END_MISSION_MUTATION,
+  LOG_ACTIVITY_MUTATION,
+  LOG_COMMENT_MUTATION,
+  LOG_EXPENDITURE_MUTATION,
+  LOG_LOCATION_MUTATION,
+  VALIDATE_MISSION_MUTATION
+} from "./apiQueries";
 
 const ActionsContext = React.createContext(() => {});
 

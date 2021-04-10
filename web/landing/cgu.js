@@ -140,4 +140,6 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
   );
 }
 
-export const CGUModal = withWidth()(_CGUModal);
+const CGUModal = withWidth()(_CGUModal);
+
+export default CGUModal;

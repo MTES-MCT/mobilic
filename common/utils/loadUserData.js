@@ -1,9 +1,106 @@
 import * as Sentry from "@sentry/browser";
-import { IS_MISSION_ENDED_QUERY, USER_QUERY } from "./api";
 import { broadCastChannel } from "./store";
 import { parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
 import { DAY, now } from "./time";
+import { IS_MISSION_ENDED_QUERY } from "./apiQueries";
+import { gql } from "@apollo/client/core";
+
+const USER_QUERY = gql`
+  query user($id: Int!, $activityAfter: TimeStamp) {
+    user(id: $id) {
+      id
+      firstName
+      lastName
+      birthDate
+      email
+      hasConfirmedEmail
+      hasActivatedEmail
+      missions(fromTime: $activityAfter) {
+        id
+        name
+        validations {
+          submitterId
+          receptionTime
+          isAdmin
+          userId
+        }
+        context
+        expenditures {
+          id
+          type
+          missionId
+          userId
+        }
+        company {
+          id
+          name
+          siren
+        }
+        activities {
+          id
+          type
+          missionId
+          startTime
+          endTime
+          userId
+        }
+        comments {
+          id
+          text
+          missionId
+          receptionTime
+          submitter {
+            id
+            firstName
+            lastName
+          }
+        }
+        startLocation {
+          name
+          alias
+          postalCode
+          city
+        }
+        endLocation {
+          name
+          alias
+          postalCode
+          city
+        }
+      }
+      currentEmployments {
+        id
+        startDate
+        isAcknowledged
+        isPrimary
+        hasAdminRights
+        company {
+          id
+          name
+          siren
+          users {
+            id
+            firstName
+            lastName
+          }
+          knownAddresses {
+            id
+            alias
+            name
+            postalCode
+            city
+          }
+          vehicles {
+            id
+            name
+            registrationNumber
+          }
+        }
+      }
+    }
+  }
+`;
 
 export async function loadUserData(api, store) {
   const userId = store.userId();

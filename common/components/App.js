@@ -2,7 +2,7 @@ import React from "react";
 import values from "lodash/values";
 import { sortEvents } from "common/utils/events";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import { useActions } from "common/utils/actions";
+import { ActionsContextProvider, useActions } from "common/utils/actions";
 import {
   augmentSortAndFilterMissions,
   linkMissionsWithRelations
@@ -11,7 +11,7 @@ import { History } from "../../web/pwa/screens/History";
 import { DAY, getStartOfMonth, now } from "../utils/time";
 import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
 
-function App({ ScreenComponent, loadUser }) {
+function _App({ ScreenComponent, loadUser }) {
   const { path } = useRouteMatch();
   const history = useHistory();
 
@@ -94,6 +94,14 @@ function App({ ScreenComponent, loadUser }) {
         />
       </Route>
     </Switch>
+  );
+}
+
+function App(props) {
+  return (
+    <ActionsContextProvider>
+      <_App {...props} />
+    </ActionsContextProvider>
   );
 }
 
