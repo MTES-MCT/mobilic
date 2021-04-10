@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function NewTeamMateModal({ open, handleClose, handleSubmit }) {
+export default function NewTeamMateModal({ open, handleClose, handleSubmit }) {
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
 

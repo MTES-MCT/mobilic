@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function FirstActivitySelectionModal({
+export default function FirstActivitySelectionModal({
   open,
   handleClose,
   team = [],

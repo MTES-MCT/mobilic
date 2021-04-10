@@ -2,7 +2,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
-import { useApi, LOGIN_MUTATION } from "common/utils/api";
+import { useApi } from "common/utils/api";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
@@ -19,6 +19,7 @@ import { PasswordField } from "common/components/PasswordField";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
+import { LOGIN_MUTATION } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   forgotPasswordLink: {

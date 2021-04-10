@@ -1,7 +1,7 @@
 import React from "react";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { useLocation, useHistory } from "react-router-dom";
-import { ACTIVATE_EMAIL_MUTATION, useApi } from "common/utils/api";
+import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import Typography from "@material-ui/core/Typography";
@@ -9,6 +9,7 @@ import jwt_decode from "jwt-decode";
 import { currentUserId } from "common/utils/cookie";
 import * as Sentry from "@sentry/browser";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import { ACTIVATE_EMAIL_MUTATION } from "common/utils/apiQueries";
 
 export function ActivateEmail() {
   const location = useLocation();

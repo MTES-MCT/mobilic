@@ -3,7 +3,7 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField/TextField";
 import Button from "@material-ui/core/Button";
-import { COMPANY_SIGNUP_MUTATION, SIREN_QUERY, useApi } from "common/utils/api";
+import { useApi } from "common/utils/api";
 import { useHistory, useLocation } from "react-router-dom";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
@@ -23,6 +23,7 @@ import * as Sentry from "@sentry/browser";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import SignupStepper from "./SignupStepper";
+import { COMPANY_SIGNUP_MUTATION, SIREN_QUERY } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   formFieldTitle: {

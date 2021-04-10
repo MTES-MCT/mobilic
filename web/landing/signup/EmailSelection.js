@@ -2,7 +2,7 @@ import React from "react";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField/TextField";
-import { CONFIRM_FC_EMAIL_MUTATION, useApi } from "common/utils/api";
+import { useApi } from "common/utils/api";
 import { useHistory, useLocation } from "react-router-dom";
 import {
   broadCastChannel,
@@ -21,6 +21,7 @@ import FormGroup from "@material-ui/core/FormGroup";
 import { PasswordField } from "common/components/PasswordField";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
+import { CONFIRM_FC_EMAIL_MUTATION } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   text: {

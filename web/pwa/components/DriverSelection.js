@@ -9,7 +9,7 @@ import { formatTimer, now } from "common/utils/time";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { CustomDialogTitle } from "../../common/CustomDialogTitle";
 
-export function DriverSelectionModal({
+export default function DriverSelectionModal({
   team = [],
   open,
   currentDriverId = undefined,

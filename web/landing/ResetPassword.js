@@ -3,11 +3,7 @@ import Container from "@material-ui/core/Container";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useHistory, useLocation } from "react-router-dom";
-import {
-  REQUEST_RESET_PASSWORD_MUTATION,
-  RESET_PASSWORD_MUTATION,
-  useApi
-} from "common/utils/api";
+import { useApi } from "common/utils/api";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField/TextField";
 import { LoadingButton } from "common/components/LoadingButton";
@@ -21,6 +17,10 @@ import { Header } from "../common/Header";
 import { PasswordField } from "common/components/PasswordField";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
+import {
+  REQUEST_RESET_PASSWORD_MUTATION,
+  RESET_PASSWORD_MUTATION
+} from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   introText: {

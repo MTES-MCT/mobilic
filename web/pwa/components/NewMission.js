@@ -9,7 +9,7 @@ import { MainCtaButton } from "./MainCtaButton";
 import { AddressField } from "../../common/AddressField";
 import MenuItem from "@material-ui/core/MenuItem";
 
-export function NewMissionModal({
+export default function NewMissionModal({
   open,
   handleClose,
   handleContinue,

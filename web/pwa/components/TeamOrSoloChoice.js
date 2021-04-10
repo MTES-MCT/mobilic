@@ -39,7 +39,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function TeamOrSoloChoiceModal({ open, handleClose, handleContinue }) {
+export default function TeamOrSoloChoiceModal({
+  open,
+  handleClose,
+  handleContinue
+}) {
   const classes = useStyles();
   const funnelModalClasses = useFunnelModalStyles();
   return (

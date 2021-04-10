@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ApiErrorDialogModal({
+export default function ApiErrorDialogModal({
   open,
   handleClose,
   errors = [],

@@ -2,7 +2,7 @@ import React from "react";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField/TextField";
-import { useApi, USER_SIGNUP_MUTATION } from "common/utils/api";
+import { useApi } from "common/utils/api";
 import { useHistory } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import SignupStepper from "./SignupStepper";
@@ -20,6 +20,7 @@ import { PasswordField } from "common/components/PasswordField";
 import * as Sentry from "@sentry/browser";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
+import { USER_SIGNUP_MUTATION } from "common/utils/apiQueries";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   const api = useApi();

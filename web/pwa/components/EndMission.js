@@ -8,7 +8,7 @@ import TextField from "@material-ui/core/TextField/TextField";
 import { Expenditures } from "./Expenditures";
 import { AddressField } from "../../common/AddressField";
 
-export function EndMissionModal({
+export default function EndMissionModal({
   open,
   handleClose,
   handleMissionEnd,

@@ -123,7 +123,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ActivityRevisionOrCreationModal({
+export default function ActivityRevisionOrCreationModal({
   event,
   teamChanges = {},
   otherActivities = [],

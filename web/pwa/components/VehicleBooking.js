@@ -15,7 +15,7 @@ import { VehicleInput } from "./VehicleInput";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { resolveVehicle } from "common/utils/vehicles";
 
-export function VehicleBookingModal({
+export default function VehicleBookingModal({
   open,
   currentVehicleBooking,
   handleClose,

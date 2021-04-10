@@ -12,7 +12,7 @@ import {
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
 
-export function ExpenditureDialogModal({
+export default function ExpenditureDialogModal({
   open,
   currentExpenditures,
   hasTeamMates = false,

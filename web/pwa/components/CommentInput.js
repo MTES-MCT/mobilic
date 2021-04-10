@@ -9,7 +9,11 @@ import {
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
 
-export function CommentInputModal({ open, handleClose, handleContinue }) {
+export default function CommentInputModal({
+  open,
+  handleClose,
+  handleContinue
+}) {
   const [text, setText] = React.useState("");
 
   React.useEffect(() => setText(""), [open]);

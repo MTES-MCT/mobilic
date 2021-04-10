@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function TeamSelectionModal({
+export default function TeamSelectionModal({
   open,
   mission,
   companyId = null,

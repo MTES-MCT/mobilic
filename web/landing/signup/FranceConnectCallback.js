@@ -1,11 +1,12 @@
 import React from "react";
 
-import { FRANCE_CONNECT_LOGIN_MUTATION, useApi } from "common/utils/api";
+import { useApi } from "common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { useLoadingScreen } from "common/utils/loading";
 import Typography from "@material-ui/core/Typography";
 import { useHistory } from "react-router-dom";
+import { FRANCE_CONNECT_LOGIN_MUTATION } from "common/utils/apiQueries";
 
 function removeParamsFromQueryString(qs, params) {
   const qsWithoutQuestionMark = qs.startsWith("?") ? qs.slice(1) : qs;
