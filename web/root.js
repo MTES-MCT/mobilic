@@ -18,13 +18,12 @@ import {
 import { ApiContextProvider, useApi } from "common/utils/api";
 import { theme } from "common/utils/theme";
 import { MODAL_DICT } from "./modals";
-import { ThemeProvider } from "@material-ui/styles";
+import ThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { loadUserData } from "common/utils/loadUserData";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import frLocale from "date-fns/locale/fr";
 import { FrLocalizedUtils } from "common/utils/time";
-import { ActionsContextProvider } from "common/utils/actions";
 import { ModalProvider } from "common/utils/modals";
 import {
   LoadingScreenContextProvider,
@@ -76,10 +75,8 @@ export default function Root() {
                 <SnackbarProvider>
                   <LoadingScreenContextProvider>
                     <ModalProvider modalDict={MODAL_DICT}>
-                      <ActionsContextProvider>
-                        <ScrollToTop />
-                        <_Root />
-                      </ActionsContextProvider>
+                      <ScrollToTop />
+                      <_Root />
                     </ModalProvider>
                   </LoadingScreenContextProvider>
                 </SnackbarProvider>
