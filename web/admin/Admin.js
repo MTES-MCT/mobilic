@@ -87,9 +87,11 @@ function __Admin({ width }) {
       >
         <Switch>
           {views.map(view => (
-            <Route key={view.label} path={view.path}>
-              {view.component({ containerRef: ref })}
-            </Route>
+            <Route
+              key={view.label}
+              path={view.path}
+              render={() => <view.component containerRef={ref} />}
+            />
           ))}
           {defaultView && (
             <Redirect key="default" push from="*" to={defaultView.path} />
