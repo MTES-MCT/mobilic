@@ -8,8 +8,8 @@ import { Header } from "../common/Header";
 import Hidden from "@material-ui/core/Hidden";
 import { ManagerImage, SoftwareImage, WorkerImage } from "common/utils/icons";
 import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
-import BackgroundImage from "common/assets/images/hero.png";
-import BackgroundImageSmall from "common/assets/images/hero_small.png";
+import BackgroundImage from "common/assets/images/hero.jpg";
+import BackgroundImageSmall from "common/assets/images/hero_small.jpg";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Footer } from "./footer";
 

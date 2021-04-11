@@ -647,7 +647,12 @@ module.exports = function(webpackEnv) {
         new WorkboxWebpackPlugin.GenerateSW({
           clientsClaim: true,
           skipWaiting: true,
-          exclude: [/\.map$/, /asset-manifest\.json$/, /\.LICENSE$/],
+          exclude: [
+            /\.map$/,
+            /asset-manifest\.json$/,
+            /\.LICENSE$/,
+            /hero.*\.jpg$/
+          ],
           navigateFallback: publicUrl + "/index.html",
           sourcemap: false,
           navigateFallbackDenylist: [
