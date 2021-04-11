@@ -11,7 +11,7 @@ import {
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
 
-export function TerminateEmployment({
+export default function TerminateEmployment({
   open,
   terminateEmployment,
   minDate,

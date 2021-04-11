@@ -10,7 +10,7 @@ import {
 } from "../common/CustomDialogTitle";
 import { useSnackbarAlerts } from "../common/Snackbar";
 
-export function ChangeEmailModal({ open, handleClose, handleSubmit }) {
+export default function ChangeEmailModal({ open, handleClose, handleSubmit }) {
   const [email, setEmail] = React.useState("");
 
   const alerts = useSnackbarAlerts();

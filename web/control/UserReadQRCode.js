@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function UserReadQRCodeModal({ open, handleClose }) {
+export default function UserReadQRCodeModal({ open, handleClose }) {
   const [link, setLink] = React.useState(null);
   const [error, setError] = React.useState(null);
 
