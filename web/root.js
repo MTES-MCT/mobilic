@@ -189,9 +189,9 @@ function _Root() {
   React.useEffect(() => {
     withLoadingScreen(
       async () => {
-        if (userId) await loadUserAndRoute();
+        if (userId && store.userId()) await loadUserAndRoute();
       },
-      "loadUser" + userId,
+      () => (userId && store.userId() ? "loadUser" + store.userId() : null),
       false
     );
     return () => {};

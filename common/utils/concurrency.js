@@ -34,42 +34,70 @@ export class NonConcurrentExecutionQueue {
       this.queue = this.queue.slice(1);
     }
 
+    const actualId = typeof id === "function" ? id() : id;
+
     if (this.queue.length > 0) {
-      if (id && !hasFastImpl) {
+      if (actualId && !hasFastImpl) {
         if (!refresh) {
           this.queue = this.queue.map(task => ({
             ...task,
-            hasFastImpl: task.id === id ? true : task.hasFastImpl,
-            fastRejectWith: task.id === id ? error : task.fastRejectWith,
-            fastResolveWith: task.id === id ? response : task.fastResolveWith
+            hasFastImpl:
+              (typeof task.id === "function" ? task.id() : task.id) === actualId
+                ? true
+                : task.hasFastImpl,
+            fastRejectWith:
+              (typeof task.id === "function" ? task.id() : task.id) === actualId
+                ? error
+                : task.fastRejectWith,
+            fastResolveWith:
+              (typeof task.id === "function" ? task.id() : task.id) === actualId
+                ? response
+                : task.fastResolveWith
           }));
         } else {
           const indexOfSameTaskEnqueuedDuringRun = this.queue.findIndex(
-            task => task.id === id && !task.hasFastImpl
+            task =>
+              (typeof task.id === "function" ? task.id() : task.id) ===
+                actualId && !task.hasFastImpl
           );
           const shouldRefresh = indexOfSameTaskEnqueuedDuringRun > -1;
           if (shouldRefresh) {
             this.queue = this.queue.map((task, index) => ({
               ...task,
               hasFastImpl:
-                task.id === id && index !== indexOfSameTaskEnqueuedDuringRun
+                (typeof task.id === "function" ? task.id() : task.id) ===
+                  actualId && index !== indexOfSameTaskEnqueuedDuringRun
                   ? true
                   : task.hasFastImpl,
               fastRejectWith:
-                task.id === id && index !== indexOfSameTaskEnqueuedDuringRun
+                (typeof task.id === "function" ? task.id() : task.id) ===
+                  actualId && index !== indexOfSameTaskEnqueuedDuringRun
                   ? error
                   : task.fastRejectWith,
               fastResolveWith:
-                task.id === id && index !== indexOfSameTaskEnqueuedDuringRun
+                (typeof task.id === "function" ? task.id() : task.id) ===
+                  actualId && index !== indexOfSameTaskEnqueuedDuringRun
                   ? response
                   : task.fastResolveWith
             }));
           } else {
             this.queue = this.queue.map(task => ({
               ...task,
-              hasFastImpl: task.id === id ? true : task.hasFastImpl,
-              fastRejectWith: task.id === id ? error : task.fastRejectWith,
-              fastResolveWith: task.id === id ? response : task.fastResolveWith
+              hasFastImpl:
+                (typeof task.id === "function" ? task.id() : task.id) ===
+                actualId
+                  ? true
+                  : task.hasFastImpl,
+              fastRejectWith:
+                (typeof task.id === "function" ? task.id() : task.id) ===
+                actualId
+                  ? error
+                  : task.fastRejectWith,
+              fastResolveWith:
+                (typeof task.id === "function" ? task.id() : task.id) ===
+                actualId
+                  ? response
+                  : task.fastResolveWith
             }));
           }
         }
