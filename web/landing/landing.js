@@ -9,6 +9,7 @@ import Hidden from "@material-ui/core/Hidden";
 import { ManagerImage, SoftwareImage, WorkerImage } from "common/utils/icons";
 import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
 import BackgroundImage from "common/assets/images/hero.png";
+import BackgroundImageSmall from "common/assets/images/hero_small.png";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Footer } from "./footer";
 
@@ -56,6 +57,9 @@ const useStyles = makeStyles(theme => ({
   },
   bgImage: {
     background: `url(${BackgroundImage}) 50%`,
+    [theme.breakpoints.down(500)]: {
+      background: `url(${BackgroundImageSmall}) 100%`
+    },
     backgroundSize: "cover",
     paddingTop: theme.spacing(14),
     paddingBottom: theme.spacing(14)
