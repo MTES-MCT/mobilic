@@ -189,11 +189,9 @@ function _Root() {
   React.useEffect(() => {
     withLoadingScreen(
       async () => {
-        const latestUserId = store.userId();
-        window.alert(`${latestUserId} ${currentUserId()}`);
-        if (latestUserId) await loadUserAndRoute();
+        if (userId) await loadUserAndRoute();
       },
-      "loadUser",
+      "loadUser" + userId,
       false
     );
     return () => {};
