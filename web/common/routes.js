@@ -1,11 +1,9 @@
 import React from "react";
 import { Landing } from "../landing/landing";
 import Stats from "../landing/stats";
-import { Home } from "../home/AccountInfo";
 import { Invite } from "../landing/invite";
 import { RedeemInvite } from "../home/RedeemInvite";
 import { FranceConnectCallback } from "../landing/signup/FranceConnectCallback";
-import OAuth from "../landing/oauth/root";
 import { Logout } from "../landing/logout";
 import { ActivateEmail } from "../landing/signup/ActivateEmail";
 import { RequestResetPassword, ResetPassword } from "../landing/ResetPassword";
@@ -60,7 +58,7 @@ export const ROUTES = [
     path: "/home",
     label: "Mes informations",
     accessible: ({ userInfo }) => !!userInfo.id,
-    component: Home
+    component: React.lazy(() => import("../home/AccountInfo"))
   },
   {
     path: "/signup",
@@ -116,7 +114,7 @@ export const ROUTES = [
     path: "/oauth/authorize",
     label: "OAuth",
     accessible: () => true,
-    component: OAuth,
+    component: React.lazy(() => import("../landing/oauth/root")),
     menuItemFilter: () => false
   },
   {
