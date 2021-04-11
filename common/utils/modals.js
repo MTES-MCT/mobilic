@@ -59,21 +59,24 @@ export class ModalProvider extends React.Component {
     return (
       <ModalContext.Provider value={this.interface}>
         {this.props.children}
-        <React.Suspense fallback={<CircularProgress color="primary" />}>
-          {Object.keys(this.props.modalDict)
-            .filter(modalName => this.state[modalName].open)
-            .map((modalName, index) => {
-              const Modal = this.props.modalDict[modalName];
-              return (
+        {Object.keys(this.props.modalDict)
+          .filter(modalName => this.state[modalName].open)
+          .map(modalName => {
+            const Modal = this.props.modalDict[modalName];
+            return (
+              <React.Suspense
+                key={modalName}
+                fallback={<CircularProgress color="primary" />}
+              >
                 <Modal
-                  key={index}
+                  key={modalName}
                   open={!!this.state[modalName].open}
                   handleClose={() => this.close(modalName)}
                   {...this.state[modalName].modalProps}
                 />
-              );
-            })}
-        </React.Suspense>
+              </React.Suspense>
+            );
+          })}
       </ModalContext.Provider>
     );
   }
