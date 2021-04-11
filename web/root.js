@@ -190,6 +190,7 @@ function _Root() {
     withLoadingScreen(
       async () => {
         const latestUserId = store.userId();
+        window.alert(`${latestUserId} ${currentUserId()}`);
         if (latestUserId) await loadUserAndRoute();
       },
       "loadUser",
