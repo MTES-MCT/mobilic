@@ -1,20 +1,22 @@
-import React from "react";
+import Company from "../panels/Company";
+import Activities from "../panels/Activities";
+import Validations from "../panels/Validations";
 
 export const ADMIN_VIEWS = [
   {
     label: "Entreprise(s)",
     path: "/company",
-    component: React.lazy(() => import("../panels/Company")),
+    component: Company,
     isDefault: true
   },
   {
     label: "Activités",
     path: "/activities",
-    component: React.lazy(() => import("../panels/Activities"))
+    component: Activities
   },
   {
     label: "Saisies à valider",
     path: "/validations",
-    component: React.lazy(() => import("../panels/Validations"))
+    component: Validations
   }
 ];

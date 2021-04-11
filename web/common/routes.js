@@ -1,13 +1,15 @@
 import React from "react";
 import { Landing } from "../landing/landing";
+import Login from "../landing/login";
+import Signup from "../landing/signup/root";
 import Stats from "../landing/stats";
+import Home from "../home/AccountInfo";
 import { Invite } from "../landing/invite";
 import { RedeemInvite } from "../home/RedeemInvite";
 import { FranceConnectCallback } from "../landing/signup/FranceConnectCallback";
 import { Logout } from "../landing/logout";
 import { ActivateEmail } from "../landing/signup/ActivateEmail";
 import { RequestResetPassword, ResetPassword } from "../landing/ResetPassword";
-import { ADMIN_VIEWS } from "../admin/utils/navigation";
 import { CGU } from "../landing/cgu";
 import { UserRead } from "../control/UserRead";
 import { XlsxVerifier } from "../control/VerifyXlsxSignature";
@@ -52,19 +54,32 @@ export const ROUTES = [
     accessible: ({ userInfo, companies }) =>
       userInfo.hasActivatedEmail && userInfo.id && companies.some(c => c.admin),
     component: React.lazy(() => import("../admin/Admin")),
-    subRoutes: ADMIN_VIEWS
+    subRoutes: [
+      {
+        path: "/company",
+        label: "Entreprise(s)"
+      },
+      {
+        path: "/activities",
+        label: "Activités"
+      },
+      {
+        label: "Saisies à valider",
+        path: "/validations"
+      }
+    ]
   },
   {
     path: "/home",
     label: "Mes informations",
     accessible: ({ userInfo }) => !!userInfo.id,
-    component: React.lazy(() => import("../home/AccountInfo"))
+    component: Home
   },
   {
     path: "/signup",
     label: "Inscription",
     accessible: () => true,
-    component: React.lazy(() => import("../landing/signup/root")),
+    component: Signup,
     menuItemFilter: ({ userInfo }) => !userInfo.id,
     mainCta: true
   },
@@ -72,7 +87,7 @@ export const ROUTES = [
     path: "/login",
     label: "Connexion",
     accessible: () => true,
-    component: React.lazy(() => import("../landing/login")),
+    component: Login,
     menuItemFilter: ({ userInfo }) => !userInfo.id
   },
   {
