@@ -340,9 +340,15 @@ export function MissionDetails({
         <List dense>
           <ListItem disableGutters>
             <ListItemText
-              primary={`${mission.company.name}${
-                mission.company.siren ? ` (SIREN ${mission.company.siren})` : ""
-              }`}
+              primary={
+                mission.company
+                  ? `${mission.company.name}${
+                      mission.company.siren
+                        ? ` (SIREN ${mission.company.siren})`
+                        : ""
+                    }`
+                  : ""
+              }
             />
           </ListItem>
         </List>

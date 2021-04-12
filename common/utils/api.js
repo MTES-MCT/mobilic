@@ -191,6 +191,7 @@ class Api {
     });
     try {
       // 1. Call the API
+      this.initApolloClientIfNeeded();
       const submit = await this._queryWithRefreshToken(() =>
         this.apolloClient.mutate({
           mutation: request.query,
