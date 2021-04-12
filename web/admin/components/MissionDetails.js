@@ -40,7 +40,7 @@ import {
   formatAddressSubText
 } from "common/utils/addresses";
 import { computeMissionStats } from "../panels/Validations";
-import { activityOverwriteOps } from "../../pwa/components/ActivityRevision";
+import { addBreakOps } from "../../pwa/components/ActivityRevision";
 import {
   CANCEL_ACTIVITY_MUTATION,
   CANCEL_COMMENT_MUTATION,
@@ -178,7 +178,7 @@ export function MissionDetails({ mission, handleClose, width }) {
 
   async function onCreateActivity(user, newValues, activities) {
     if (newValues.type === ACTIVITIES.break.name) {
-      const ops = activityOverwriteOps(
+      const ops = addBreakOps(
         activities,
         newValues.startTime,
         newValues.endTime,

@@ -10,6 +10,8 @@ import { getTime } from "common/utils/events";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
 import max from "lodash/max";
+import maxBy from "lodash/maxBy";
+import minBy from "lodash/minBy";
 import forEach from "lodash/forEach";
 import MenuItem from "@material-ui/core/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
@@ -26,18 +28,20 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
 
-export function activityOverwriteOps(
+export function addBreakOps(
   allActivities,
   startTime,
   endTime,
-  selfId
+  selfId,
+  extendActivities = false
 ) {
   const activities = allActivities.filter(a => a.userId === selfId);
 
   const activitiesStartedBeforeEndingInBetween = activities.filter(
     a =>
       getTime(a) < startTime &&
-      (!endTime || (a.endTime && a.endTime > startTime && a.endTime <= endTime))
+      ((!endTime && (!a.endTime || a.endTime > startTime)) ||
+        (endTime && a.endTime && a.endTime > startTime && a.endTime <= endTime))
   );
   const activitiesPurelyInBetween = activities.filter(
     a =>
@@ -98,22 +102,68 @@ export function activityOverwriteOps(
       endTime: a.endTime
     })
   );
-  activitiesFullyOverlapping.forEach(a =>
-    ops.push(
-      {
-        activity: a,
-        operation: "update",
-        startTime: a.startTime,
-        endTime: startTime
-      },
-      {
-        operation: "create",
-        type: a.type,
-        startTime: endTime,
-        endTime: a.endTime
+  activitiesFullyOverlapping.forEach(a => {
+    if (startTime < endTime)
+      ops.push(
+        {
+          activity: a,
+          operation: "update",
+          startTime: a.startTime,
+          endTime: startTime
+        },
+        {
+          operation: "create",
+          type: a.type,
+          startTime: endTime,
+          endTime: a.endTime
+        }
+      );
+  });
+
+  if (extendActivities) {
+    if (
+      activitiesStartedBeforeEndingInBetween.length +
+        activitiesFullyOverlapping.length ===
+      0
+    ) {
+      const activitiesStartedBefore = activities.filter(
+        a => getTime(a) < startTime
+      );
+      const activityRightBefore =
+        activitiesStartedBefore.length > 0
+          ? maxBy(activitiesStartedBefore, a => a.endTime)
+          : null;
+      if (activityRightBefore && activityRightBefore.endTime < startTime) {
+        ops.push({
+          activity: activityRightBefore,
+          operation: "update",
+          startTime: activityRightBefore.startTime,
+          endTime: startTime
+        });
       }
-    )
-  );
+    }
+    if (
+      activitiesFullyOverlapping.length +
+        activitiesStartedInBetweenEndingAfter.length ===
+      0
+    ) {
+      const activitiesEndedAfter = activities.filter(
+        a => endTime && (!a.endTime || a.endTime > endTime)
+      );
+      const activityRightAfter =
+        activitiesEndedAfter.length > 0
+          ? minBy(activitiesEndedAfter, a => a.startTime)
+          : null;
+      if (activityRightAfter && activityRightAfter.startTime > endTime) {
+        ops.push({
+          activity: activityRightAfter,
+          operation: "update",
+          startTime: endTime,
+          endTime: activityRightAfter.endTime
+        });
+      }
+    }
+  }
   return ops;
 }
 
@@ -161,6 +211,8 @@ export default function ActivityRevisionOrCreationModal({
   const actuallyNullableEndTime =
     nullableEndTime && newActivityType !== ACTIVITIES.break.name;
 
+  const activityType = event ? event.type : newActivityType;
+
   function _getOverlappingActivities(userIds) {
     const overlappingActivities = otherActivities.filter(a => {
       if (event && a.id === event.id) return false;
@@ -186,60 +238,62 @@ export default function ActivityRevisionOrCreationModal({
   }
 
   async function handleSubmit(actionType) {
-    if (actionType === "creation") {
-      let driverId = null;
-      if (requiresDriver()) driverId = newActivityDriverId;
+    if (activityType === ACTIVITIES.break.name) {
+      const ops = addBreakOps(
+        otherActivities,
+        actionType === "cancel" ? event.endTime : newUserTime,
+        actionType === "cancel" ? event.endTime : newUserEndTime,
+        userId,
+        actionType !== "creation"
+      );
+      return await Promise.all(
+        ops.map(op => {
+          if (op.operation === "create")
+            return createActivity({
+              activityType: op.type,
+              startTime: op.startTime,
+              endTime: op.endTime,
+              driverId: op.driverId,
+              userComment,
+              team: teamMode
+                ? uniq([userId, ...resolveTeamAt(teamChanges, op.startTime)])
+                : [userId]
+            });
+          else {
+            return handleRevisionAction(
+              op.activity,
+              op.operation,
+              op.startTime,
+              op.endTime,
+              userComment,
+              teamMode
+            );
+          }
+        })
+      );
+    } else {
+      if (actionType === "creation") {
+        let driverId = null;
+        if (requiresDriver()) driverId = newActivityDriverId;
 
-      if (newActivityType === ACTIVITIES.break.name) {
-        const ops = activityOverwriteOps(
-          otherActivities,
+        await createActivity({
+          activityType: newActivityType,
+          startTime: newUserTime,
+          endTime: newUserEndTime,
+          driverId: driverId,
+          userComment: userComment,
+          team: teamMode ? team : [userId]
+        });
+      } else
+        await handleRevisionAction(
+          event,
+          actionType,
           newUserTime,
           newUserEndTime,
-          userId
+          userComment,
+          teamMode
         );
-        return await Promise.all(
-          ops.map(op => {
-            if (op.operation === "create")
-              return createActivity({
-                activityType: op.type,
-                startTime: op.startTime,
-                endTime: op.endTime,
-                driverId: op.driverId,
-                userComment,
-                team: teamMode
-                  ? uniq([userId, ...resolveTeamAt(teamChanges, op.startTime)])
-                  : [userId]
-              });
-            else {
-              return handleRevisionAction(
-                op.activity,
-                op.operation,
-                op.startTime,
-                op.endTime,
-                userComment,
-                teamMode
-              );
-            }
-          })
-        );
-      }
-
-      await createActivity({
-        activityType: newActivityType,
-        startTime: newUserTime,
-        endTime: newUserEndTime,
-        driverId: driverId,
-        userComment: userComment,
-        team: teamMode ? team : [userId]
-      });
-    } else
-      await handleRevisionAction(
-        actionType,
-        newUserTime,
-        newUserEndTime,
-        userComment,
-        teamMode
-      );
+    }
   }
 
   React.useEffect(() => {
@@ -285,7 +339,7 @@ export default function ActivityRevisionOrCreationModal({
       }
 
       if (!hasStartError && !hasEndError) {
-        if (newActivityType === ACTIVITIES.break.name) {
+        if (activityType === ACTIVITIES.break.name) {
           const userActivities = otherActivities.filter(
             a => a.userId === userId
           );
@@ -351,7 +405,7 @@ export default function ActivityRevisionOrCreationModal({
   }, [
     newUserTime,
     newUserEndTime,
-    newActivityType,
+    activityType,
     previousMissionEnd,
     nextMissionStart,
     userId,

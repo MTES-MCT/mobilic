@@ -40,12 +40,15 @@ function ActivityItem({
   const modals = useModals();
 
   const datetimeFormatter = showDates ? formatDateTime : formatTimeOfDay;
+  const isBreak = activity.type === ACTIVITIES.break.name;
 
   return (
     <ListItem disableGutters>
       <ListItemAvatar>
         <Avatar>
-          {ACTIVITIES[activity.type].renderIcon({ color: "primary" })}
+          {ACTIVITIES[activity.type].renderIcon(
+            isBreak ? {} : { color: "primary" }
+          )}
         </Avatar>
       </ListItemAvatar>
       <ListItemText
@@ -57,7 +60,7 @@ function ActivityItem({
               )} - ${formatLongTimer(activity.duration)}`
             : "En cours"
         }`}
-        secondaryTypographyProps={{ color: "primary" }}
+        secondaryTypographyProps={isBreak ? {} : { color: "primary" }}
       />
       {editActivityEvent && (
         <ListItemSecondaryAction>
@@ -67,10 +70,13 @@ function ActivityItem({
             onClick={() =>
               modals.open("activityRevision", {
                 event: activity,
-                otherActivities: allMissionActivities.filter(
-                  a => getTime(a) !== getTime(activity)
-                ),
+                otherActivities: isBreak
+                  ? allMissionActivities
+                  : allMissionActivities.filter(
+                      a => getTime(a) !== getTime(activity)
+                    ),
                 handleRevisionAction: (
+                  activity,
                   actionType,
                   newUserStartTime,
                   newUserEndTime,
@@ -124,8 +130,24 @@ export function ActivityList({
     untilTime &&
     filteredActivities.some(a => !a.endTime || a.endTime > untilTime);
 
+  // Add breaks
+  const activitiesWithBreaks = [];
+  sortEvents(filteredActivities);
+  filteredActivities.forEach((a, index) => {
+    activitiesWithBreaks.push(a);
+    if (index < filteredActivities.length - 1) {
+      const nextA = filteredActivities[index + 1];
+      if (a.endTime < nextA.startTime)
+        activitiesWithBreaks.push({
+          type: ACTIVITIES.break.name,
+          startTime: a.endTime,
+          endTime: nextA.startTime
+        });
+    }
+  });
+
   // Compute duration and end time for each activity
-  const augmentedAndSortedActivities = filteredActivities.map(activity => {
+  const augmentedAndSortedActivities = activitiesWithBreaks.map(activity => {
     const startTime = Math.max(activity.startTime, fromTime);
     const endTime = untilTime
       ? Math.min(activity.endTime || now(), untilTime)
@@ -153,7 +175,7 @@ export function ActivityList({
           )
       : false;
 
-  sortEvents(augmentedAndSortedActivities).reverse();
+  augmentedAndSortedActivities.reverse();
   const latestActivity = augmentedAndSortedActivities[0];
 
   const classes = useStyles();
@@ -171,7 +193,8 @@ export function ActivityList({
             <Avatar>{ACTIVITIES.break.renderIcon()}</Avatar>
           </ListItemAvatar>
           <ListItemText
-            primary={`${ACTIVITIES.break.label} - ${formatTimeOfDay(
+            primary={ACTIVITIES.break.label}
+            secondary={`${(showDates ? formatDateTime : formatTimeOfDay)(
               latestActivity.endTime
             )} - En cours`}
           />
@@ -182,43 +205,19 @@ export function ActivityList({
           Pas d'activités sur cette journée
         </Typography>
       )}
-      {augmentedAndSortedActivities.map((activity, index) => {
-        let nextActivity;
-        let breakItemBefore;
-        if (index < augmentedAndSortedActivities.length - 1) {
-          nextActivity = augmentedAndSortedActivities[index + 1];
-          if (activity.startTime > nextActivity.endTime) {
-            breakItemBefore = (
-              <ListItem disableGutters key={"break" + index}>
-                <ListItemAvatar>
-                  <Avatar>{ACTIVITIES.break.renderIcon()}</Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={`${ACTIVITIES.break.label} - ${formatTimeOfDay(
-                    nextActivity.endTime
-                  )} - ${formatLongTimer(
-                    getTime(activity) - nextActivity.endTime
-                  )}`}
-                />
-              </ListItem>
-            );
-          }
-        }
-        return [
-          <ActivityItem
-            activity={activity}
-            editActivityEvent={editActivityEvent}
-            allMissionActivities={allMissionActivities}
-            previousMissionEnd={previousMissionEnd}
-            nextMissionStart={nextMissionStart}
-            teamChanges={teamChanges}
-            nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
-            key={index}
-            showDates={showDates}
-          />,
-          breakItemBefore
-        ];
-      })}
+      {augmentedAndSortedActivities.map((activity, index) => (
+        <ActivityItem
+          activity={activity}
+          editActivityEvent={editActivityEvent}
+          allMissionActivities={allMissionActivities}
+          previousMissionEnd={previousMissionEnd}
+          nextMissionStart={nextMissionStart}
+          teamChanges={teamChanges}
+          nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
+          key={activity.id ? "a" + activity.id : index}
+          showDates={showDates}
+        />
+      ))}
       {hasActivitiesBeforeMinTime && (
         <Typography variant="body2" className={classes.infoText}>
           Les activités avant minuit le jour précédent ne sont pas affichées
