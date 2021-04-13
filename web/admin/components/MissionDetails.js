@@ -99,8 +99,7 @@ const useStyles = makeStyles(theme => ({
     borderBottom: "1px solid #ebeff3",
     alignItems: "flex-end",
     height: 50,
-    display: "flex",
-    justifyContent: "center"
+    display: "flex"
   },
   userName: {
     fontWeight: "bold"
@@ -160,7 +159,37 @@ export function MissionDetails({ mission, handleClose, width }) {
     }
   };
 
-  async function onCancelActivity(activity) {
+  async function onCancelActivity(activity, user, activities) {
+    if (activity.type === ACTIVITIES.break.name) {
+      const ops = addBreakOps(
+        activities,
+        activity.endTime,
+        activity.endTime,
+        user.id,
+        true
+      );
+      return await Promise.all(
+        ops.map(op => {
+          if (op.operation === "cancel")
+            return onCancelActivity(op.activity, user);
+          if (op.operation === "update")
+            return onEditActivity(
+              op.activity,
+              {
+                startTime: op.startTime,
+                endTime: op.endTime
+              },
+              user
+            );
+          if (op.operation === "create")
+            return onCreateActivity(user, {
+              type: op.type,
+              startTime: op.startTime,
+              endTime: op.endTime
+            });
+        })
+      );
+    }
     await api.nonConcurrentQueryQueue.execute(() =>
       api.graphQlMutate(CANCEL_ACTIVITY_MUTATION, {
         activityId: activity.id
@@ -186,12 +215,17 @@ export function MissionDetails({ mission, handleClose, width }) {
       );
       return await Promise.all(
         ops.map(op => {
-          if (op.operation === "cancel") return onCancelActivity(op.activity);
+          if (op.operation === "cancel")
+            return onCancelActivity(op.activity, user);
           if (op.operation === "update")
-            return onEditActivity(op.activity, {
-              startTime: op.startTime,
-              endTime: op.endTime
-            });
+            return onEditActivity(
+              op.activity,
+              {
+                startTime: op.startTime,
+                endTime: op.endTime
+              },
+              user
+            );
           if (op.operation === "create")
             return onCreateActivity(user, {
               type: op.type,
@@ -224,7 +258,37 @@ export function MissionDetails({ mission, handleClose, width }) {
     );
   }
 
-  async function onEditActivity(activity, newValues) {
+  async function onEditActivity(activity, newValues, user, activities) {
+    if (activity.type === ACTIVITIES.break.name) {
+      const ops = addBreakOps(
+        activities,
+        newValues.startTime,
+        newValues.endTime,
+        user.id,
+        true
+      );
+      return await Promise.all(
+        ops.map(op => {
+          if (op.operation === "cancel")
+            return onCancelActivity(op.activity, user);
+          if (op.operation === "update")
+            return onEditActivity(
+              op.activity,
+              {
+                startTime: op.startTime,
+                endTime: op.endTime
+              },
+              user
+            );
+          if (op.operation === "create")
+            return onCreateActivity(user, {
+              type: op.type,
+              startTime: op.startTime,
+              endTime: op.endTime
+            });
+        })
+      );
+    }
     await api.nonConcurrentQueryQueue.execute(() =>
       api.graphQlMutate(EDIT_ACTIVITY_MUTATION, {
         activityId: activity.id,
@@ -344,7 +408,7 @@ export function MissionDetails({ mission, handleClose, width }) {
           formatTimeOfDay(time)
         ),
       edit: true,
-      minWidth: 190
+      minWidth: 210
     },
     {
       label: "Fin",
@@ -368,7 +432,7 @@ export function MissionDetails({ mission, handleClose, width }) {
           formatTimeOfDay(time)
         ),
       edit: true,
-      minWidth: 190
+      minWidth: 210
     },
     {
       label: "Durée",
@@ -394,7 +458,12 @@ export function MissionDetails({ mission, handleClose, width }) {
               }
               onClick={withAlerts(async () => {
                 activityIdToEdit
-                  ? await onEditActivity(entry, { ...editedValues })
+                  ? await onEditActivity(
+                      entry,
+                      { ...editedValues },
+                      entry.user,
+                      mission.activities
+                    )
                   : await onCreateActivity(
                       entry.user,
                       { ...editedValues },
@@ -447,7 +516,12 @@ export function MissionDetails({ mission, handleClose, width }) {
                 modals.open("confirmation", {
                   title: "Confirmer suppression de l'activité",
                   handleConfirm: withAlerts(
-                    async () => await onCancelActivity(entry),
+                    async () =>
+                      await onCancelActivity(
+                        entry,
+                        entry.user,
+                        mission.activities
+                      ),
                     activityIdToEdit
                   )
                 })
@@ -461,16 +535,40 @@ export function MissionDetails({ mission, handleClose, width }) {
             </IconButton>
           </>
         ),
-      minWidth: 55,
-      align: "right"
+      minWidth: 100,
+      align: "left"
     }
   ];
 
-  const entries = values(mission.userStats).map(stats =>
-    creatingActivityForUserId === stats.user.id
-      ? { ...stats, activities: [{ user: stats.user }, ...stats.activities] }
-      : stats
-  );
+  const entries = values(mission.userStats).map(stats => {
+    const activitiesWithBreaks = [];
+    stats.activities.forEach((a, index) => {
+      activitiesWithBreaks.push(a);
+      if (index < stats.activities.length - 1) {
+        const nextA = stats.activities[index + 1];
+        if (a.endTime < nextA.startTime)
+          activitiesWithBreaks.push({
+            id: "break" + index,
+            user: stats.user,
+            type: ACTIVITIES.break.name,
+            startTime: a.endTime,
+            endTime: nextA.startTime,
+            duration: nextA.startTime - a.endTime
+          });
+      }
+    });
+    return {
+      ...stats,
+      activities:
+        creatingActivityForUserId === stats.user.id
+          ? [{ user: stats.user }, ...stats.activities]
+          : stats.activities,
+      activitiesWithBreaks:
+        creatingActivityForUserId === stats.user.id
+          ? [{ user: stats.user }, ...activitiesWithBreaks]
+          : activitiesWithBreaks
+    };
+  });
 
   return [
     <Box
@@ -540,7 +638,7 @@ export function MissionDetails({ mission, handleClose, width }) {
         entries={entries}
         editable={false}
         rowHeight={(index, userStats) =>
-          90 + 50 * Object.keys(userStats.activities).length
+          90 + 50 * Object.keys(userStats.activitiesWithBreaks).length
         }
         ref={ref}
         dense
@@ -558,7 +656,7 @@ export function MissionDetails({ mission, handleClose, width }) {
                   {formatPersonName(userStats.user)}
                 </Typography>
               </Box>
-              {userStats.activities.map(activity => {
+              {userStats.activitiesWithBreaks.map(activity => {
                 return (
                   <Box key={activity.id} className={classes.activityRow}>
                     {props.columns.map((column, index) => {

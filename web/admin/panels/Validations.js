@@ -399,9 +399,9 @@ function _ValidationPanel({ containerRef, width }) {
               </Box>
               {map(mission.userStats, (stats, userId) => (
                 <Box
-                  style={{ height: 30 }}
+                  style={{ height: 30, alignItems: "center" }}
                   key={userId}
-                  className="flex-row-center"
+                  className="flex-row"
                 >
                   {props.columns.map((column, index) => {
                     const col = columns[index];
@@ -438,8 +438,8 @@ function _ValidationPanel({ containerRef, width }) {
         PaperProps={{
           className: classes.missionModal,
           style: {
-            minWidth: isWidthUp("sm", width) ? 740 : "100vw",
-            maxWidth: isWidthUp("md", width) ? 690 : "100vw"
+            minWidth: isWidthUp("sm", width) ? 785 : "100vw",
+            maxWidth: isWidthUp("md", width) ? 735 : "100vw"
           }
         }}
       >
