@@ -132,11 +132,11 @@ class Api {
     const accessTokenExpiryTime = parseInt(readCookie("atEat")) || null;
     if (accessTokenExpiryTime) {
       const timeToExpire = accessTokenExpiryTime * 1000 - new Date().getTime();
-      if (timeToExpire && timeToExpire < 10000) {
+      if (timeToExpire && timeToExpire < 20000) {
         let refreshResponse;
         try {
           refreshResponse = await this._fetch("POST", "/token/refresh", {
-            timeout: 8000
+            timeout: 12000
           });
         } catch (err) {
           const newError = new Error(err.message);

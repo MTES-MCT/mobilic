@@ -112,7 +112,7 @@ export async function loadUserData(api, store) {
         id: userId,
         activityAfter: now() - DAY * 215
       },
-      { context: { timeout: 8000 } }
+      { context: { timeout: 12000 } }
     );
     await syncUser(userResponse.data.user, api, store);
     await broadCastChannel.postMessage("update");
