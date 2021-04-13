@@ -153,7 +153,6 @@ function _Root() {
       }
     }
     loadedLocationRef.current = null;
-    if (!document.hidden) api.executePendingRequests();
   };
 
   React.useEffect(() => {

@@ -455,6 +455,8 @@ class Actions {
         );
       }
     });
+
+    window.addEventListener("online", () => api.executePendingRequests());
   }
 
   displayApiErrors = async ({

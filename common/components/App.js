@@ -10,6 +10,7 @@ import {
 import { History } from "../../web/pwa/screens/History";
 import { DAY, getStartOfMonth, now } from "../utils/time";
 import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
+import { useApi } from "../utils/api";
 
 function _App({ ScreenComponent, loadUser }) {
   const { path } = useRouteMatch();
@@ -17,6 +18,11 @@ function _App({ ScreenComponent, loadUser }) {
 
   const actions = useActions();
   const store = useStoreSyncedWithLocalStorage();
+  const api = useApi();
+
+  React.useEffect(() => {
+    if (!document.hidden) api.executePendingRequests();
+  }, []);
 
   const activities = sortEvents(values(store.getEntity("activities")));
   const expenditures = values(store.getEntity("expenditures"));

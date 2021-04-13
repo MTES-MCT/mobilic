@@ -41,7 +41,6 @@ class Api {
     this.isCurrentlySubmittingRequests = () =>
       this.nonConcurrentQueryQueue.queue.length > 0;
     this.responseHandlers = {};
-    window.addEventListener("online", () => this.executePendingRequests());
   }
 
   initApolloClientIfNeeded() {
