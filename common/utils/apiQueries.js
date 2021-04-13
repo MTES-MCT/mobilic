@@ -658,7 +658,7 @@ export const CREATE_VEHICLE_MUTATION = gql`
   }
 `;
 export const EDIT_VEHICLE_MUTATION = gql`
-  mutation($id: Int!, $alias: String!) {
+  mutation($id: Int!, $alias: String) {
     vehicles {
       editVehicle(id: $id, alias: $alias) {
         id
