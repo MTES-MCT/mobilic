@@ -30,6 +30,7 @@ const useStyles = makeStyles(theme => ({
 function ActivityItem({
   activity,
   editActivityEvent,
+  createActivity,
   allMissionActivities,
   previousMissionEnd,
   nextMissionStart,
@@ -91,6 +92,7 @@ function ActivityItem({
                     userComment,
                     forAllTeam
                   ),
+                createActivity,
                 previousMissionEnd,
                 nextMissionStart,
                 cancellable: true,
@@ -113,6 +115,7 @@ export function ActivityList({
   activities,
   allMissionActivities,
   editActivityEvent,
+  createActivity,
   teamChanges,
   nullableEndTimeInEditActivity,
   isMissionEnded,
@@ -209,6 +212,7 @@ export function ActivityList({
         <ActivityItem
           activity={activity}
           editActivityEvent={editActivityEvent}
+          createActivity={createActivity}
           allMissionActivities={allMissionActivities}
           previousMissionEnd={previousMissionEnd}
           nextMissionStart={nextMissionStart}

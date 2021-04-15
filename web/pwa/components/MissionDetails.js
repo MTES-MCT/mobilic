@@ -138,7 +138,6 @@ export function MissionDetails({
                   createActivity: args =>
                     createActivity({
                       ...args,
-                      missionActivities: mission.allActivities,
                       missionId: mission.id
                     }),
                   handleRevisionAction: (
@@ -169,6 +168,12 @@ export function MissionDetails({
           activities={mission.activities}
           allMissionActivities={mission.allActivities}
           editActivityEvent={editActivityEvent}
+          createActivity={args =>
+            createActivity({
+              ...args,
+              missionId: mission.id
+            })
+          }
           nextMissionStart={nextMissionStart}
           previousMissionEnd={previousMissionEnd}
           teamChanges={teamChanges}

@@ -49,7 +49,6 @@ export function CurrentActivity({
           : await pushNewTeamActivityEvent({
               activityType,
               driverId,
-              missionActivities: currentMission.allActivities,
               missionId: currentMission.id,
               team: currentTeam,
               startTime: now()
@@ -80,7 +79,6 @@ export function CurrentActivity({
         updatedCoworkers.forEach(cw => {
           if (cw.enroll) {
             pushNewTeamActivityEvent({
-              missionActivities: currentMission.allActivities,
               activityType: latestActivity ? latestActivity.type : null,
               missionId: currentMission.id,
               startTime: now(),
