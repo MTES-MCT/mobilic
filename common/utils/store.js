@@ -88,13 +88,27 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       this.secondState[entry] = this.secondMapper[entry].deserialize(null);
     });
 
+    this.allowOfflineMode = this.testStorage();
     this.loadFromStorageQueue = new NonConcurrentExecutionQueue();
     // Async load state from storage
     this.loadFromStorage();
   }
 
+  testStorage = () => {
+    try {
+      const testKey = "__test__";
+      this.storage.setItem(testKey, "mobilic");
+      const test = this.storage.getItem(testKey) === "mobilic";
+      this.storage.removeItem(testKey);
+      return test;
+    } catch (err) {
+      Sentry.captureException(err);
+      return false;
+    }
+  };
+
   loadFromStorage = async (resetIfNeeded = true) => {
-    if (!this.storage) return;
+    if (!this.allowOfflineMode) return;
     // Reset storage when breaking backward compatibility
     const storeVersion = parseInt(await this.storage.getItem("storeVersion"));
     if (storeVersion !== STORE_VERSION && resetIfNeeded) {
@@ -201,7 +215,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
   updateStore = (stateUpdate, fieldsToSync, callback = () => {}) => {
     this.setState(stateUpdate, () => {
-      if (this.storage)
+      if (this.allowOfflineMode)
         fieldsToSync.forEach(field => {
           this.storage.setItem(
             field,
@@ -224,7 +238,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   generateId = idStateEntry => {
     const id = this.secondState[idStateEntry];
     this.secondState[idStateEntry] = id + 1;
-    if (this.storage)
+    if (this.allowOfflineMode)
       this.storage.setItem(
         idStateEntry,
         this.secondMapper[idStateEntry].serialize(id + 1)
@@ -237,7 +251,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       ...this.secondState.identityMap,
       [key]: value
     };
-    if (this.storage)
+    if (this.allowOfflineMode)
       this.storage.setItem(
         "identityMap",
         this.secondMapper["identityMap"].serialize(this.secondState.identityMap)
@@ -335,7 +349,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     this.secondState.pendingRequests = this.secondState.pendingRequests.filter(
       r => r.id !== request.id
     );
-    if (this.storage)
+    if (this.allowOfflineMode)
       this.storage.setItem(
         "pendingRequests",
         this.secondMapper["pendingRequests"].serialize(
@@ -371,7 +385,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       ...this.secondState.pendingRequests,
       request
     ];
-    if (this.storage)
+    if (this.allowOfflineMode)
       this.storage.setItem(
         "pendingRequests",
         this.secondMapper["pendingRequests"].serialize(
@@ -503,7 +517,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     items.forEach(item => (itemValueMap[item] = null));
     this.setState(itemValueMap, () => {
       items.forEach(item => {
-        if (this.storage) this.storage.removeItem(item);
+        if (this.allowOfflineMode) this.storage.removeItem(item);
       });
       callback();
     });

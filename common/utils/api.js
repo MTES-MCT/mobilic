@@ -35,6 +35,7 @@ class Api {
     this.uri = `${apiHost}${graphqlPath}`;
     this.nonPublicUri = `${apiHost}/unexposed`;
     this.apolloClient = null;
+    this.displayNonAvailableOfflineModeError = () => {};
     this.recentRequestStatuses = new MaxSizeCache(50);
     this.refreshTokenQueue = new NonConcurrentExecutionQueue();
     this.nonConcurrentQueryQueue = new NonConcurrentExecutionQueue();
@@ -208,9 +209,12 @@ class Api {
       this.recentRequestStatuses.add(request.id, { success: true });
     } catch (err) {
       this.recentRequestStatuses.add(request.id, { error: err });
-      if (!isRetryable(err)) {
+      if (!this.store.allowOfflineMode || !isRetryable(err)) {
         if (apiResponseHandler.onError)
           await apiResponseHandler.onError(err, request.storeInfo);
+        if (isRetryable(err)) {
+          await this.displayNonAvailableOfflineModeError();
+        }
         await this.store.clearPendingRequest(request);
       }
       Sentry.withScope(function(scope) {

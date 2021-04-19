@@ -1257,6 +1257,9 @@ export function ActionsContextProvider({ children }) {
   const modals = useModals();
   const alerts = useSnackbarAlerts();
 
+  api.displayNonAvailableOfflineModeError = () =>
+    modals.open("unavailableOfflineMode");
+
   const actions = React.useState(new Actions(store, api, modals, alerts))[0];
 
   return (

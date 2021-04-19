@@ -16,6 +16,7 @@ import CGUModal from "./landing/cgu";
 import ChangeEmailModal from "./home/ChangeEmail";
 import TerminateEmployment from "./admin/components/TerminateEmployment";
 import UserReadQRCodeModal from "./control/UserReadQRCode";
+import UnavailableOfflineModeModal from "./common/UnavailableOfflineMode";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -35,5 +36,6 @@ export const MODAL_DICT = {
   cgu: CGUModal,
   changeEmail: ChangeEmailModal,
   terminateEmployment: TerminateEmployment,
-  userReadQRCode: UserReadQRCodeModal
+  userReadQRCode: UserReadQRCodeModal,
+  unavailableOfflineMode: UnavailableOfflineModeModal
 };
