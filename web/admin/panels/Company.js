@@ -26,6 +26,8 @@ import {
   TERMINATE_KNOWN_ADDRESS_MUTATION,
   TERMINATE_VEHICLE_MUTATION
 } from "common/utils/apiQueries";
+import { useSnackbarAlerts } from "../../common/Snackbar";
+import { formatApiError } from "common/utils/errors";
 
 const useStyles = makeStyles(theme => ({
   navigation: {
@@ -221,6 +223,7 @@ function VehicleAdmin({ companyId }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const modals = useModals();
+  const alerts = useSnackbarAlerts();
 
   const [triggerAddVehicle, setTriggerAddVehicle] = React.useState({
     value: false
@@ -316,7 +319,7 @@ function VehicleAdmin({ companyId }) {
           ]);
         } catch (err) {
           Sentry.captureException(err);
-          console.log(err);
+          alerts.error(formatApiError(err), "vehicleAlreadyRegistered", 6000);
         }
       }}
       onRowDelete={vehicle =>
