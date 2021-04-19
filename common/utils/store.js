@@ -94,6 +94,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   }
 
   loadFromStorage = async (resetIfNeeded = true) => {
+    if (!this.storage) return;
     // Reset storage when breaking backward compatibility
     const storeVersion = parseInt(await this.storage.getItem("storeVersion"));
     if (storeVersion !== STORE_VERSION && resetIfNeeded) {
@@ -200,12 +201,13 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
   updateStore = (stateUpdate, fieldsToSync, callback = () => {}) => {
     this.setState(stateUpdate, () => {
-      fieldsToSync.forEach(field => {
-        this.storage.setItem(
-          field,
-          this.mapper[field].serialize(this.state[field])
-        );
-      });
+      if (this.storage)
+        fieldsToSync.forEach(field => {
+          this.storage.setItem(
+            field,
+            this.mapper[field].serialize(this.state[field])
+          );
+        });
       callback();
     });
   };
@@ -222,10 +224,11 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   generateId = idStateEntry => {
     const id = this.secondState[idStateEntry];
     this.secondState[idStateEntry] = id + 1;
-    this.storage.setItem(
-      idStateEntry,
-      this.secondMapper[idStateEntry].serialize(id + 1)
-    );
+    if (this.storage)
+      this.storage.setItem(
+        idStateEntry,
+        this.secondMapper[idStateEntry].serialize(id + 1)
+      );
     return id;
   };
 
@@ -234,10 +237,11 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       ...this.secondState.identityMap,
       [key]: value
     };
-    this.storage.setItem(
-      "identityMap",
-      this.secondMapper["identityMap"].serialize(this.secondState.identityMap)
-    );
+    if (this.storage)
+      this.storage.setItem(
+        "identityMap",
+        this.secondMapper["identityMap"].serialize(this.secondState.identityMap)
+      );
   };
 
   createEntityObject = (object, entity, requestId) => {
@@ -331,12 +335,13 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     this.secondState.pendingRequests = this.secondState.pendingRequests.filter(
       r => r.id !== request.id
     );
-    this.storage.setItem(
-      "pendingRequests",
-      this.secondMapper["pendingRequests"].serialize(
-        this.secondState.pendingRequests
-      )
-    );
+    if (this.storage)
+      this.storage.setItem(
+        "pendingRequests",
+        this.secondMapper["pendingRequests"].serialize(
+          this.secondState.pendingRequests
+        )
+      );
   };
 
   newRequest = (
@@ -366,12 +371,13 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       ...this.secondState.pendingRequests,
       request
     ];
-    this.storage.setItem(
-      "pendingRequests",
-      this.secondMapper["pendingRequests"].serialize(
-        this.secondState.pendingRequests
-      )
-    );
+    if (this.storage)
+      this.storage.setItem(
+        "pendingRequests",
+        this.secondMapper["pendingRequests"].serialize(
+          this.secondState.pendingRequests
+        )
+      );
     return request;
   };
 
@@ -496,7 +502,9 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     const itemValueMap = {};
     items.forEach(item => (itemValueMap[item] = null));
     this.setState(itemValueMap, () => {
-      items.forEach(item => this.storage.removeItem(item));
+      items.forEach(item => {
+        if (this.storage) this.storage.removeItem(item);
+      });
       callback();
     });
   };
