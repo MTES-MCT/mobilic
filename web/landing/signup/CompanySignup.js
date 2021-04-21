@@ -36,7 +36,10 @@ const useStyles = makeStyles(theme => ({
     textTransform: "uppercase"
   },
   facilitySiret: {
-    fontStyle: "italic"
+    fontStyle: "italic",
+    fontSize: "80%",
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1)
   },
   facilityPostalCode: {
     fontWeight: "normal"
@@ -268,15 +271,21 @@ export function CompanySignup() {
                     className={facility.selected && classes.selectedFacility}
                   >
                     <Box p={2}>
-                      <Typography variant="h6" className={classes.facilityName}>
+                      <Typography variant="h5" className={classes.facilityName}>
                         {facility.company_name}
                         {facility.name ? ` - ${facility.name}` : ""}
                       </Typography>
                       <Typography
-                        variant="caption"
+                        variant="body2"
                         className={classes.facilitySiret}
                       >
                         SIRET : {facility.siret}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        className={classes.facilitySiret}
+                      >
+                        Code NAF : {facility.activity}
                       </Typography>
                       <Typography
                         variant="body2"

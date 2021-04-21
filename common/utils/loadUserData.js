@@ -79,6 +79,8 @@ const USER_QUERY = gql`
           id
           name
           siren
+          allowTeamMode
+          requireKilometerData
           users {
             id
             firstName

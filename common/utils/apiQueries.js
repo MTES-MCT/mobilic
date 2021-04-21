@@ -85,16 +85,6 @@ export const USER_READ_QUERY = gql`
         lastName
         birthDate
         email
-        primaryCompany {
-          id
-          name
-          siren
-          vehicles {
-            id
-            name
-            registrationNumber
-          }
-        }
         missions {
           id
           name
@@ -185,6 +175,8 @@ export const ADMIN_COMPANIES_QUERY = gql`
       adminedCompanies {
         id
         name
+        allowTeamMode
+        requireKilometerData
         users {
           id
           firstName
@@ -802,6 +794,22 @@ export const CANCEL_COMMENT_MUTATION = gql`
       cancelComment(commentId: $commentId) {
         success
       }
+    }
+  }
+`;
+
+export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
+  mutation editCompanySettings(
+    $allowTeamMode: Boolean
+    $requireKilometerData: Boolean
+  ) {
+    editCompanySettings(
+      allowTeamMode: $allowTeamMode
+      requireKilometerData: $requireKilometerData
+    ) {
+      id
+      allowTeamMode
+      requireKilometerData
     }
   }
 `;

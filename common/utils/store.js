@@ -575,6 +575,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       name: e.company.name,
       admin: e.hasAdminRights,
       siren: e.company.siren,
+      allowTeamMode: e.company.allowTeamMode,
+      requireKilometerData: e.company.requireKilometerData,
       isPrimary: e.isPrimary
     }));
   };
