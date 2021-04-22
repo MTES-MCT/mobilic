@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import { Link } from "../common/LinkButton";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
+import Hidden from "@material-ui/core/Hidden";
 
 const useStyles = makeStyles(theme => ({
   section: {
@@ -31,6 +32,10 @@ const useStyles = makeStyles(theme => ({
   dark: {
     backgroundColor: theme.palette.background.dark,
     color: theme.palette.primary.contrastText
+  },
+  betaGouvLink: {
+    color: "inherit",
+    textDecoration: "underline"
   }
 }));
 
@@ -44,16 +49,16 @@ export function Footer() {
       className={`${classes.section} ${classes.dark}`}
       maxWidth={false}
     >
-      <Container maxWidth="md" className={classes.inner}>
+      <Container maxWidth="lg" className={classes.inner}>
         <Grid
           container
-          spacing={10}
+          spacing={8}
           justify="space-between"
           alignItems="flex-start"
         >
           <Grid
             item
-            sm={6}
+            sm={5}
             container
             alignItems="center"
             spacing={4}
@@ -74,7 +79,16 @@ export function Footer() {
                 <Typography align="justify">
                   Mobilic est un service numérique de l'Etat incubé à la
                   Fabrique Numérique du Ministère de la Transition écologique,
-                  membre du réseau d’incubateurs beta.gouv.fr.
+                  membre du réseau d’incubateurs{" "}
+                  {
+                    <Link
+                      className={classes.betaGouvLink}
+                      href="https://beta.gouv.fr"
+                    >
+                      beta.gouv.fr
+                    </Link>
+                  }
+                  .
                 </Typography>
               </Grid>
             </Grid>
@@ -148,6 +162,22 @@ export function Footer() {
               </Link>
             </Typography>
           </Grid>
+          <Hidden xsDown>
+            <Grid item>
+              <Typography
+                variant="h4"
+                align="left"
+                className={classes.footerLinksSectionTitle}
+              >
+                Mobilic sur smartphone
+              </Typography>
+              <img
+                src="/landing-qrcode.svg"
+                height={150}
+                style={{ float: "left" }}
+              />
+            </Grid>
+          </Hidden>
         </Grid>
       </Container>
     </Container>
