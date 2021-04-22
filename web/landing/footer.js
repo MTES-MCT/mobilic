@@ -161,6 +161,9 @@ export function Footer() {
                 Conditions générales d'utilisation
               </Link>
             </Typography>
+            <Typography className={classes.footerLink}>
+              Accessibilité : non conforme
+            </Typography>
           </Grid>
           <Hidden xsDown>
             <Grid item>
