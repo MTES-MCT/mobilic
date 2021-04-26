@@ -12,6 +12,7 @@ export function CurrentActivity({
   latestActivity,
   currentMission,
   pushNewTeamActivityEvent,
+  updateMissionVehicle,
   editActivityEvent,
   endMissionForTeam,
   endMission,
@@ -36,7 +37,11 @@ export function CurrentActivity({
       key={1}
       team={currentTeam}
       latestActivity={latestActivity}
-      pushActivitySwitchEvent={async (activityType, driverId = null) =>
+      pushActivitySwitchEvent={async (
+        activityType,
+        driverId = null,
+        vehicle = null
+      ) =>
         activityType === ACTIVITIES.break.name
           ? await editActivityEvent(
               latestActivity,
@@ -46,13 +51,18 @@ export function CurrentActivity({
               null,
               true
             )
-          : await pushNewTeamActivityEvent({
-              activityType,
-              driverId,
-              missionId: currentMission.id,
-              team: currentTeam,
-              startTime: now()
-            })
+          : await Promise.all([
+              vehicle
+                ? updateMissionVehicle({ mission: currentMission, vehicle })
+                : Promise.resolve(null),
+              pushNewTeamActivityEvent({
+                activityType,
+                driverId,
+                missionId: currentMission.id,
+                team: currentTeam,
+                startTime: now()
+              })
+            ])
       }
       endMission={async args =>
         await endMissionForTeam({
@@ -62,6 +72,8 @@ export function CurrentActivity({
         })
       }
       currentMission={currentMission}
+      requireVehicle={!currentMission.vehicle}
+      companyId={currentMission.companyId}
     />,
     <Box key={2} pt={3} />,
     <MissionDetails

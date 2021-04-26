@@ -93,6 +93,8 @@ export function ActivitySwitch({
   disableBreak,
   endMission,
   currentMission,
+  companyId,
+  requireVehicle = false,
   pushActivitySwitchEvent,
   shouldWaitForClickHandler = false
 }) {
@@ -116,6 +118,8 @@ export function ActivitySwitch({
     ) {
       modals.open("driverSelection", {
         team,
+        requireVehicle: requireVehicle,
+        companyId: companyId,
         currentDriverId:
           latestActivity &&
           !latestActivity.endTime &&
@@ -123,10 +127,10 @@ export function ActivitySwitch({
             ? store.userId()
             : undefined,
         currentDriverStartTime: latestActivity ? getTime(latestActivity) : null,
-        handleDriverSelection: async driverId =>
+        handleDriverSelection: async (driverId, vehicle) =>
           shouldWaitForClickHandler
-            ? await pushActivitySwitchEvent(activityName, driverId)
-            : pushActivitySwitchEvent(activityName, driverId)
+            ? await pushActivitySwitchEvent(activityName, driverId, vehicle)
+            : pushActivitySwitchEvent(activityName, driverId, vehicle)
       });
     } else pushActivitySwitchEvent(activityName);
   };

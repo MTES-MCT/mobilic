@@ -87,6 +87,7 @@ function _App({ ScreenComponent, loadUser }) {
           logExpenditureForTeam={actions.logExpenditureForTeam}
           cancelExpenditure={actions.cancelExpenditure}
           editExpendituresForTeam={actions.editExpendituresForTeam}
+          updateMissionVehicle={actions.updateMissionVehicle}
           logComment={actions.logComment}
           cancelComment={actions.cancelComment}
           previousMissionEnd={previousMissionEnd}

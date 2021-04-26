@@ -93,53 +93,57 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
 
+  const companies = store.companies();
+  const userId = store.userId();
+
+  function handleFirstActivitySelection(teamMates, missionInfos) {
+    const team = teamMates ? [userId, ...teamMates.map(cw => cw.id)] : [userId];
+    modals.open("firstActivity", {
+      team,
+      handleActivitySelection: async (activityType, driverId, vehicle) => {
+        await withLoadingScreen(
+          async () => {
+            await beginNewMission({
+              firstActivityType: activityType,
+              driverId,
+              companyId: missionInfos.companyId,
+              name: missionInfos.mission,
+              vehicle: vehicle || missionInfos.vehicle || null,
+              startLocation: missionInfos.address,
+              team
+            });
+            await modals.closeAll();
+          },
+          null,
+          true
+        );
+      },
+      requireVehicle: !missionInfos.vehicle,
+      companyId: missionInfos.companyId
+    });
+  }
+
   const onEnterNewMissionFunnel = () => {
     modals.open("newMission", {
-      companies: store.companies(),
+      companies,
       companyAddresses: store.getEntity("knownAddresses"),
-      handleContinue: missionInfos =>
-        modals.open("teamOrSoloChoice", {
-          handleContinue: isTeamMode => {
-            const handleFirstActivitySelection = updatedCoworkers => {
-              const team = updatedCoworkers
-                ? [store.userId(), ...updatedCoworkers.map(cw => cw.id)]
-                : [store.userId()];
-              modals.open("firstActivity", {
-                team,
-                handleActivitySelection: async (activityType, driverId) => {
-                  await withLoadingScreen(
-                    async () => {
-                      await beginNewMission({
-                        firstActivityType: activityType,
-                        driverId,
-                        companyId: missionInfos.companyId,
-                        name: missionInfos.mission,
-                        vehicleId: missionInfos.vehicle
-                          ? missionInfos.vehicle.id
-                          : null,
-                        vehicleRegistrationNumber: missionInfos.vehicle
-                          ? missionInfos.vehicle.registrationNumber
-                          : null,
-                        startLocation: missionInfos.address,
-                        team
-                      });
-                      await modals.closeAll();
-                    },
-                    null,
-                    true
-                  );
-                }
-              });
-            };
-            if (isTeamMode) {
-              modals.open("teamSelection", {
-                mission: null,
-                companyId: missionInfos.companyId,
-                handleContinue: handleFirstActivitySelection
-              });
-            } else handleFirstActivitySelection(null);
-          }
-        })
+      handleContinue: missionInfos => {
+        const company = companies.find(c => c.id === missionInfos.companyId);
+        if (company.allowTeamMode) {
+          modals.open("teamOrSoloChoice", {
+            handleContinue: isTeamMode => {
+              if (isTeamMode) {
+                modals.open("teamSelection", {
+                  mission: null,
+                  companyId: missionInfos.companyId,
+                  handleContinue: teamMates =>
+                    handleFirstActivitySelection(teamMates, missionInfos)
+                });
+              } else handleFirstActivitySelection(null, missionInfos);
+            }
+          });
+        } else handleFirstActivitySelection(null, missionInfos);
+      }
     });
   };
 

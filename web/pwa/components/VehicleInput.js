@@ -11,7 +11,8 @@ export function VehicleInput({
   vehicle,
   setVehicle,
   disabled = false,
-  companyId = null
+  companyId = null,
+  className = null
 }) {
   const store = useStoreSyncedWithLocalStorage();
 
@@ -25,20 +26,25 @@ export function VehicleInput({
     <Autocomplete
       id="vehicle-booking"
       style={{ width: "100%" }}
+      className={className}
       freeSolo
       disabled={disabled}
       options={vehicles}
       getOptionLabel={v => getVehicleName(v)}
       value={vehicle}
       filterOptions={filterOptions}
-      onInputChange={(event, value) => {
-        const newVehicleName = value;
-        const vehicleMatch = vehicles.find(
-          v =>
-            v.name === newVehicleName || v.registrationNumber === newVehicleName
-        );
-        if (vehicleMatch) setVehicle(vehicleMatch);
-        else setVehicle({ registrationNumber: newVehicleName });
+      onInputChange={(event, value, reason) => {
+        if (reason === "clear") setVehicle(null);
+        else {
+          const newVehicleName = value;
+          const vehicleMatch = vehicles.find(
+            v =>
+              v.name === newVehicleName ||
+              v.registrationNumber === newVehicleName
+          );
+          if (vehicleMatch) setVehicle(vehicleMatch);
+          else setVehicle({ registrationNumber: newVehicleName });
+        }
       }}
       renderInput={params => (
         <TextField

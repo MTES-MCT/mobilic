@@ -30,6 +30,7 @@ import {
   LOG_COMMENT_MUTATION,
   LOG_EXPENDITURE_MUTATION,
   LOG_LOCATION_MUTATION,
+  UPDATE_MISSION_VEHICLE_MUTATION,
   VALIDATE_MISSION_MUTATION
 } from "./apiQueries";
 
@@ -456,6 +457,23 @@ class Actions {
       }
     });
 
+    api.registerResponseHandler("updateMissionVehicle", {
+      onSuccess: (apiResponse, { missionId }) => {
+        const vehicle = apiResponse.data.activities.updateMissionVehicle;
+        const mission = store.getEntity("missions")[missionId.toString()];
+        this.store.syncEntity(
+          [
+            {
+              ...mission,
+              vehicle
+            }
+          ],
+          "missions",
+          m => m.id === missionId
+        );
+      }
+    });
+
     window.addEventListener("online", () => api.executePendingRequests());
   }
 
@@ -851,19 +869,16 @@ class Actions {
     firstActivityType,
     companyId,
     team = null,
-    vehicleRegistrationNumber = null,
-    vehicleId = null,
+    vehicle = null,
     driverId = null,
     startLocation = null
   }) => {
     const missionPayload = {
       name,
-      companyId
+      companyId,
+      vehicleId: vehicle ? vehicle.id : null,
+      vehicleRegistrationNumber: vehicle ? vehicle.registrationNumber : null
     };
-
-    if (vehicleId) missionPayload.context = { vehicleId };
-    else if (vehicleRegistrationNumber)
-      missionPayload.context = { vehicleRegistrationNumber };
 
     let missionCurrentId;
 
@@ -871,7 +886,7 @@ class Actions {
       const mission = {
         name,
         companyId,
-        context: missionPayload.context || {},
+        vehicle,
         ended: false
       };
       const missionId = this.store.createEntityObject(
@@ -943,6 +958,28 @@ class Actions {
       updateStore,
       ["missions"],
       "logLocation",
+      true
+    );
+  };
+
+  updateMissionVehicle = async ({ mission, vehicle }) => {
+    const payload = {
+      missionId: mission.id,
+      vehicleId: vehicle.id,
+      vehicleRegistrationNumber: vehicle.registrationNumber
+    };
+
+    const updateStore = (store, requestId) => {
+      store.updateEntityObject(mission.id, "missions", { vehicle }, requestId);
+      return { missionId: mission.id };
+    };
+
+    await this.submitAction(
+      UPDATE_MISSION_VEHICLE_MUTATION,
+      payload,
+      updateStore,
+      ["missions"],
+      "updateMissionVehicle",
       true
     );
   };

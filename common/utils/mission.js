@@ -10,6 +10,7 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     name: missionPayload.name,
     companyId: missionPayload.companyId,
     company: missionPayload.company,
+    vehicle: missionPayload.vehicle,
     validation: missionPayload.validations
       ? missionPayload.validations.find(v => v.submitterId === userId)
       : null,

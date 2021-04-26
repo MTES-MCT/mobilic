@@ -58,6 +58,8 @@ export const COMPANY_SIGNUP_MUTATION = gql`
             id
             name
             siren
+            allowTeamMode
+            requireKilometerData
           }
         }
       }
@@ -98,6 +100,11 @@ export const USER_READ_QUERY = gql`
             receptionTime
             isAdmin
             userId
+          }
+          vehicle {
+            id
+            name
+            registrationNumber
           }
           context
           expenditures {
@@ -256,7 +263,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
         vehicles {
           id
           registrationNumber
-          alias
+          name
         }
         employments {
           id
@@ -555,16 +562,31 @@ export const CREATE_MISSION_MUTATION = gql`
     $name: String
     $companyId: Int
     $context: GenericScalar
+    $vehicleId: Int
+    $vehicleRegistrationNumber: String
   ) {
     activities {
-      createMission(name: $name, companyId: $companyId, context: $context) {
+      createMission(
+        name: $name
+        companyId: $companyId
+        context: $context
+        vehicleId: $vehicleId
+        vehicleRegistrationNumber: $vehicleRegistrationNumber
+      ) {
         id
         name
         context
+        vehicle {
+          id
+          name
+          registrationNumber
+        }
         company {
           id
           name
           siren
+          allowTeamMode
+          requireKilometerData
         }
       }
     }
@@ -577,6 +599,11 @@ export const END_MISSION_MUTATION = gql`
         id
         name
         context
+        vehicle {
+          id
+          name
+          registrationNumber
+        }
         startLocation {
           alias
           name
@@ -593,6 +620,8 @@ export const END_MISSION_MUTATION = gql`
           id
           name
           siren
+          allowTeamMode
+          requireKilometerData
         }
         activities {
           id
@@ -724,10 +753,17 @@ export const VALIDATE_MISSION_MUTATION = gql`
           id
           name
           context
+          vehicle {
+            id
+            name
+            registrationNumber
+          }
           company {
             id
             name
             siren
+            allowTeamMode
+            requireKilometerData
           }
           startLocation {
             alias
@@ -810,6 +846,26 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
       id
       allowTeamMode
       requireKilometerData
+    }
+  }
+`;
+
+export const UPDATE_MISSION_VEHICLE_MUTATION = gql`
+  mutation updateMissionVehicle(
+    $missionId: Int!
+    $vehicleId: Int
+    $vehicleRegistrationNumber: String
+  ) {
+    activities {
+      updateMissionVehicle(
+        missionId: $missionId
+        vehicleId: $vehicleId
+        vehicleRegistrationNumber: $vehicleRegistrationNumber
+      ) {
+        id
+        name
+        registrationNumber
+      }
     }
   }
 `;

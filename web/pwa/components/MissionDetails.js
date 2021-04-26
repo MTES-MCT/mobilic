@@ -73,14 +73,17 @@ function AlternateColors({ children, inverseColors = false }) {
   const secondColor = inverseColors
     ? classes.backgroundNormal
     : classes.backgroundPaper;
-  return React.Children.map(children, (child, index) => (
-    <Box
-      className={index % 2 === 1 ? secondColor : firstColor}
-      mb={index === React.Children.count(children) - 1 ? 2 : 0}
-    >
-      {child}
-    </Box>
-  ));
+  return React.Children.toArray(children)
+    .filter(Boolean)
+    .map((child, index) => (
+      <Box
+        key={index}
+        className={index % 2 === 1 ? secondColor : firstColor}
+        mb={index === React.Children.count(children) - 1 ? 2 : 0}
+      >
+        {child}
+      </Box>
+    ));
 }
 
 export function MissionDetails({
@@ -183,64 +186,59 @@ export function MissionDetails({
           untilTime={untilTime}
         />
       </MissionReviewSection>
-      <MissionReviewSection
-        title={`${isTeamMode ? "Coéquipiers" : "En solo"}`}
-        onEdit={
-          changeTeam
-            ? () =>
-                modals.open("teamSelection", {
-                  mission: mission,
-                  handleContinue: changeTeam,
-                  closeOnContinue: true
-                })
-            : null
-        }
-        editButtonLabel="Changer"
-      >
-        {isTeamMode && (
-          <List dense>
-            {map(teamMatesLatestStatuses, (tc, id) => (
-              <ListItem disableGutters key={id}>
-                <ListItemIcon>
-                  <PersonIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    actualCoworkers[tc.userId.toString()]
-                      ? actualCoworkers[tc.userId.toString()].firstName
-                      : "Inconnu"
-                  }
-                  secondary={formatLatestEnrollmentStatus(tc)}
-                />
-              </ListItem>
-            ))}
-          </List>
-        )}
-      </MissionReviewSection>
-      <MissionReviewSection title="Véhicule">
-        {mission.context &&
-          (mission.context.vehicleId ||
-            mission.context.vehicleRegistrationNumber) && (
+      {isTeamMode || (mission.company && mission.company.allowTeamMode) ? (
+        <MissionReviewSection
+          title={`${isTeamMode ? "Coéquipiers" : "En solo"}`}
+          onEdit={
+            changeTeam
+              ? () =>
+                  modals.open("teamSelection", {
+                    mission: mission,
+                    handleContinue: changeTeam,
+                    closeOnContinue: true
+                  })
+              : null
+          }
+          editButtonLabel="Changer"
+        >
+          {isTeamMode && (
             <List dense>
-              <ListItem disableGutters>
-                <ListItemIcon>
-                  <DriveEtaIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    mission.context.vehicleId
-                      ? getVehicleName(
-                          (vehicles || store.getEntity("vehicles"))[
-                            mission.context.vehicleId.toString()
-                          ],
-                          true
-                        )
-                      : mission.context.vehicleRegistrationNumber
-                  }
-                />
-              </ListItem>
+              {map(teamMatesLatestStatuses, (tc, id) => (
+                <ListItem disableGutters key={id}>
+                  <ListItemIcon>
+                    <PersonIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      actualCoworkers[tc.userId.toString()]
+                        ? actualCoworkers[tc.userId.toString()].firstName
+                        : "Inconnu"
+                    }
+                    secondary={formatLatestEnrollmentStatus(tc)}
+                  />
+                </ListItem>
+              ))}
             </List>
           )}
+        </MissionReviewSection>
+      ) : null}
+      <MissionReviewSection title="Véhicule">
+        {mission.vehicle && (
+          <List dense>
+            <ListItem disableGutters>
+              <ListItemIcon>
+                <DriveEtaIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={
+                  mission.vehicle.id
+                    ? getVehicleName(mission.vehicle, true)
+                    : mission.vehicle.registrationNumber
+                }
+              />
+            </ListItem>
+          </List>
+        )}
       </MissionReviewSection>
       <MissionReviewSection title="Lieux">
         {(mission.startLocation || mission.endLocation) && (
