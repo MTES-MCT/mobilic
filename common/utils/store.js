@@ -246,6 +246,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     return id;
   };
 
+  generateTempEntityObjectId = () => {
+    return "temp" + this.generateId("nextEntityObjectId");
+  };
+
   addToIdentityMap = async (key, value) => {
     this.secondState.identityMap = {
       ...this.secondState.identityMap,
@@ -274,7 +278,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       );
       return;
     }
-    const entityObjectId = "temp" + this.generateId("nextEntityObjectId");
+    const entityObjectId = this.generateTempEntityObjectId();
     this.dispatchUpdateAction(
       prevState => ({
         [entity]: {

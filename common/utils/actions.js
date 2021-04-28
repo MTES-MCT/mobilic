@@ -30,6 +30,7 @@ import {
   LOG_COMMENT_MUTATION,
   LOG_EXPENDITURE_MUTATION,
   LOG_LOCATION_MUTATION,
+  REGISTER_KILOMETER_AT_LOCATION,
   UPDATE_MISSION_VEHICLE_MUTATION,
   VALIDATE_MISSION_MUTATION
 } from "./apiQueries";
@@ -441,7 +442,10 @@ class Actions {
     });
 
     api.registerResponseHandler("logLocation", {
-      onSuccess: (apiResponse, { missionId, isStart }) => {
+      onSuccess: (
+        apiResponse,
+        { missionId, isStart, missionLocationTempId }
+      ) => {
         const location = apiResponse.data.activities.logLocation;
         const mission = store.getEntity("missions")[missionId.toString()];
         this.store.syncEntity(
@@ -454,6 +458,7 @@ class Actions {
           "missions",
           m => m.id === missionId
         );
+        this.store.addToIdentityMap(missionLocationTempId, location.id);
       }
     });
 
@@ -471,6 +476,30 @@ class Actions {
           "missions",
           m => m.id === missionId
         );
+      }
+    });
+
+    api.registerResponseHandler("registerKilometerReading", {
+      onSuccess: (apiResponse, { missionId, isStart, kilometerReading }) => {
+        const success =
+          apiResponse.data.activities.registerKilometerAtLocation.success;
+        if (success) {
+          const locationEntryKey = isStart ? "startLocation" : "endLocation";
+          const mission = store.getEntity("missions")[missionId.toString()];
+          this.store.syncEntity(
+            [
+              {
+                ...mission,
+                [locationEntryKey]: {
+                  ...mission[locationEntryKey],
+                  kilometerReading
+                }
+              }
+            ],
+            "missions",
+            m => m.id === missionId
+          );
+        }
       }
     });
 
@@ -871,7 +900,8 @@ class Actions {
     team = null,
     vehicle = null,
     driverId = null,
-    startLocation = null
+    startLocation = null,
+    kilometerReading = null
   }) => {
     const missionPayload = {
       name,
@@ -919,11 +949,17 @@ class Actions {
       this.logLocation({
         address: startLocation,
         missionId: missionCurrentId,
-        isStart: true
+        isStart: true,
+        kilometerReading
       });
   };
 
-  logLocation = async ({ address, missionId, isStart }) => {
+  logLocation = async ({
+    address,
+    missionId,
+    isStart,
+    kilometerReading = null
+  }) => {
     const formattedAddress = address.id
       ? address
       : address.manual
@@ -936,20 +972,26 @@ class Actions {
 
     const payload = {
       missionId,
-      type: isStart ? "mission_start_location" : "mission_end_location"
+      type: isStart ? "mission_start_location" : "mission_end_location",
+      kilometerReading
     };
     if (address.id) payload.companyKnownAddressId = address.id;
     else if (address.manual) payload.manualAddress = address.name;
     else payload.geoApiData = address;
 
     const updateStore = (store, requestId) => {
+      const tempId = this.store.generateTempEntityObjectId();
       this.store.updateEntityObject(
         missionId,
         "missions",
-        { [isStart ? "startLocation" : "endLocation"]: formattedAddress },
+        {
+          [isStart ? "startLocation" : "endLocation"]: formattedAddress
+            ? { ...formattedAddress, kilometerReading, id: tempId }
+            : null
+        },
         requestId
       );
-      return { missionId, isStart };
+      return { missionId, isStart, missionLocationTempId: tempId };
     };
 
     await this.submitAction(
@@ -958,6 +1000,42 @@ class Actions {
       updateStore,
       ["missions"],
       "logLocation",
+      true
+    );
+  };
+
+  registerKilometerReading = async ({
+    mission,
+    location,
+    isStart,
+    kilometerReading
+  }) => {
+    const payload = {
+      missionLocationId: location.id,
+      kilometerReading
+    };
+
+    const updateStore = (store, requestId) => {
+      store.updateEntityObject(
+        mission.id,
+        "missions",
+        {
+          [isStart ? "startLocation" : "endLocation"]: {
+            ...location,
+            kilometerReading
+          }
+        },
+        requestId
+      );
+      return { isStart, kilometerReading, missionId: mission.id };
+    };
+
+    await this.submitAction(
+      REGISTER_KILOMETER_AT_LOCATION,
+      payload,
+      updateStore,
+      ["missions"],
+      "registerKilometerReading",
       true
     );
   };
@@ -990,7 +1068,8 @@ class Actions {
     mission,
     team = [],
     comment = null,
-    endLocation = null
+    endLocation = null,
+    kilometerReading = null
   }) => {
     if (team.length === 0)
       return await this.endMission({
@@ -998,7 +1077,8 @@ class Actions {
         mission,
         expenditures,
         comment,
-        endLocation
+        endLocation,
+        kilometerReading
       });
 
     const userId = this.store.userId();
@@ -1009,7 +1089,8 @@ class Actions {
         userId,
         expenditures,
         comment,
-        endLocation
+        endLocation,
+        kilometerReading
       });
     }
 
@@ -1033,7 +1114,8 @@ class Actions {
     mission,
     userId = null,
     comment = null,
-    endLocation = null
+    endLocation = null,
+    kilometerReading = null
   }) => {
     const missionId = mission.id;
     const actualUserId = userId || this.store.userId();
@@ -1085,7 +1167,12 @@ class Actions {
       ),
       comment ? this.logComment({ text: comment, missionId }) : null,
       endLocation
-        ? this.logLocation({ address: endLocation, missionId, isStart: false })
+        ? this.logLocation({
+            address: endLocation,
+            missionId,
+            isStart: false,
+            kilometerReading
+          })
         : null
     ]);
   };

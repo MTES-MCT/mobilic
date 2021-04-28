@@ -17,6 +17,7 @@ import ChangeEmailModal from "./home/ChangeEmail";
 import TerminateEmployment from "./admin/components/TerminateEmployment";
 import UserReadQRCodeModal from "./control/UserReadQRCode";
 import UnavailableOfflineModeModal from "./common/UnavailableOfflineMode";
+import KilometerReadingModal from "./pwa/components/KilometerReadingModal";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -37,5 +38,6 @@ export const MODAL_DICT = {
   changeEmail: ChangeEmailModal,
   terminateEmployment: TerminateEmployment,
   userReadQRCode: UserReadQRCodeModal,
-  unavailableOfflineMode: UnavailableOfflineModeModal
+  unavailableOfflineMode: UnavailableOfflineModeModal,
+  kilometerReading: KilometerReadingModal
 };

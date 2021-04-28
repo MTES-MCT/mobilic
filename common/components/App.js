@@ -71,6 +71,7 @@ function _App({ ScreenComponent, loadUser }) {
           validateMission={actions.validateMission}
           logComment={actions.logComment}
           cancelComment={actions.cancelComment}
+          registerKilometerReading={actions.registerKilometerReading}
         />
       </Route>
       <Route path={path}>
@@ -88,6 +89,7 @@ function _App({ ScreenComponent, loadUser }) {
           cancelExpenditure={actions.cancelExpenditure}
           editExpendituresForTeam={actions.editExpendituresForTeam}
           updateMissionVehicle={actions.updateMissionVehicle}
+          registerKilometerReading={actions.registerKilometerReading}
           logComment={actions.logComment}
           cancelComment={actions.cancelComment}
           previousMissionEnd={previousMissionEnd}

@@ -128,6 +128,7 @@ const tabs = {
       logComment,
       cancelComment,
       coworkers,
+      registerKilometerReading,
       vehicles,
       userId
     }) => {
@@ -156,6 +157,9 @@ const tabs = {
                 coworkers={coworkers}
                 vehicles={vehicles}
                 userId={userId}
+                editKilometerReading={
+                  mission.adminValidation ? null : registerKilometerReading
+                }
               />
             </WorkTimeSummaryAdditionalInfo>
           </MissionSummary>
@@ -180,6 +184,7 @@ const tabs = {
       validateMission,
       logComment,
       cancelComment,
+      registerKilometerReading,
       coworkers,
       vehicles,
       userId
@@ -267,6 +272,11 @@ const tabs = {
                         userId={userId}
                         fromTime={selectedPeriodStart}
                         untilTime={selectedPeriodEnd}
+                        editKilometerReading={
+                          mission.adminValidation
+                            ? null
+                            : registerKilometerReading
+                        }
                       />
                     </MissionSummary>
                   </ListItem>

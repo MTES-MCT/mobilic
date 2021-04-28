@@ -31,16 +31,6 @@ export function MissionReviewSection({
         <Typography align="left" className="bold">
           {title}
         </Typography>
-        {displayExpandToggle && (
-          <Button
-            color="primary"
-            size="small"
-            onClick={() => setExpand(!expand)}
-            endIcon={expand ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
-          >
-            {expand ? "Masquer" : "Afficher"}
-          </Button>
-        )}
         {onEdit && (
           <Button
             color="primary"
@@ -50,6 +40,16 @@ export function MissionReviewSection({
             onClick={onEdit}
           >
             {editButtonLabel || "Modifier"}
+          </Button>
+        )}
+        {displayExpandToggle && (
+          <Button
+            color="primary"
+            size="small"
+            onClick={() => setExpand(!expand)}
+            endIcon={expand ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+          >
+            {expand ? "Masquer" : "Afficher"}
           </Button>
         )}
       </Box>

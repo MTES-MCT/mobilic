@@ -1,10 +1,11 @@
 import React from "react";
 import values from "lodash/values";
-import TextField from "@material-ui/core/TextField";
+import TextField from "common/utils/TextField";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import Autocomplete from "@material-ui/lab/Autocomplete/Autocomplete";
 import { createFilterOptions } from "@material-ui/lab/Autocomplete";
 import { getVehicleName } from "common/utils/vehicles";
+import KilometerReadingInput from "./KilometerReadingInput";
 
 export function VehicleInput({
   label,
@@ -12,7 +13,9 @@ export function VehicleInput({
   setVehicle,
   disabled = false,
   companyId = null,
-  className = null
+  className = null,
+  kilometerReading = null,
+  setKilometerReading = null
 }) {
   const store = useStoreSyncedWithLocalStorage();
 
@@ -22,9 +25,10 @@ export function VehicleInput({
   const filterOptions = (options, other) =>
     _filterOptions(options, { inputValue: getVehicleName(vehicle) || "" });
 
-  return (
+  return [
     <Autocomplete
       id="vehicle-booking"
+      key={0}
       style={{ width: "100%" }}
       className={className}
       freeSolo
@@ -54,6 +58,13 @@ export function VehicleInput({
           placeholder="Véhicule"
         />
       )}
-    />
-  );
+    />,
+    setKilometerReading && (
+      <KilometerReadingInput
+        size="small"
+        kilometerReading={kilometerReading}
+        setKilometerReading={setKilometerReading}
+      />
+    )
+  ];
 }

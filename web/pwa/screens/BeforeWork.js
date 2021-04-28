@@ -100,16 +100,23 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
     const team = teamMates ? [userId, ...teamMates.map(cw => cw.id)] : [userId];
     modals.open("firstActivity", {
       team,
-      handleActivitySelection: async (activityType, driverId, vehicle) => {
+      handleActivitySelection: async (
+        activityType,
+        driverId,
+        vehicle,
+        kilometerReading
+      ) => {
         await withLoadingScreen(
           async () => {
             await beginNewMission({
               firstActivityType: activityType,
               driverId,
-              companyId: missionInfos.companyId,
+              companyId: missionInfos.company.id,
               name: missionInfos.mission,
               vehicle: vehicle || missionInfos.vehicle || null,
               startLocation: missionInfos.address,
+              kilometerReading:
+                kilometerReading || missionInfos.kilometerReading,
               team
             });
             await modals.closeAll();
@@ -119,7 +126,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
         );
       },
       requireVehicle: !missionInfos.vehicle,
-      companyId: missionInfos.companyId
+      company: missionInfos.company
     });
   }
 
@@ -128,14 +135,14 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
       companies,
       companyAddresses: store.getEntity("knownAddresses"),
       handleContinue: missionInfos => {
-        const company = companies.find(c => c.id === missionInfos.companyId);
+        const company = companies.find(c => c.id === missionInfos.company.id);
         if (company.allowTeamMode) {
           modals.open("teamOrSoloChoice", {
             handleContinue: isTeamMode => {
               if (isTeamMode) {
                 modals.open("teamSelection", {
                   mission: null,
-                  companyId: missionInfos.companyId,
+                  companyId: missionInfos.company.id,
                   handleContinue: teamMates =>
                     handleFirstActivitySelection(teamMates, missionInfos)
                 });

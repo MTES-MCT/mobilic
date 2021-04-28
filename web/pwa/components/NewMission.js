@@ -1,6 +1,6 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
+import TextField from "common/utils/TextField";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import { VehicleInput } from "./VehicleInput";
@@ -18,17 +18,19 @@ export default function NewMissionModal({
 }) {
   const [mission, setMission] = React.useState("");
   const [vehicle, setVehicle] = React.useState(null);
-  const [companyId, setCompanyId] = React.useState(null);
+  const [company, setCompany] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [currentPosition, setCurrentPosition] = React.useState(null);
   const [address, setAddress] = React.useState(null);
+  const [kilometerReading, setKilometerReading] = React.useState(null);
 
   React.useEffect(() => {
     setMission("");
     setVehicle(null);
-    setCompanyId(companies && companies.length === 1 ? companies[0].id : null);
+    setCompany(companies && companies.length === 1 ? companies[0] : null);
     setCurrentPosition(null);
     setAddress(null);
+    setKilometerReading(null);
 
     if (open && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(position => {
@@ -36,6 +38,10 @@ export default function NewMissionModal({
       });
     }
   }, [open]);
+
+  React.useEffect(() => {
+    if (!vehicle) setKilometerReading(null);
+  }, [vehicle]);
 
   const funnelModalClasses = useFunnelModalStyles();
 
@@ -47,7 +53,13 @@ export default function NewMissionModal({
           onSubmit={async e => {
             setLoading(true);
             e.preventDefault();
-            const payLoad = { mission, vehicle, address, companyId };
+            const payLoad = {
+              mission,
+              vehicle,
+              address,
+              company,
+              kilometerReading
+            };
             await handleContinue(payLoad);
             setLoading(false);
           }}
@@ -80,26 +92,26 @@ export default function NewMissionModal({
                   fullWidth
                   variant="filled"
                   select
-                  value={companyId}
+                  value={company || null}
                   onChange={e => {
-                    const newCompanyId = e.target.value;
+                    const newCompany = e.target.value;
                     if (
-                      newCompanyId &&
+                      newCompany &&
                       vehicle &&
-                      vehicle.companyId !== newCompanyId
+                      vehicle.companyId !== newCompany.id
                     )
                       setVehicle(null);
                     if (
-                      newCompanyId &&
+                      newCompany &&
                       address &&
-                      address.companyId !== newCompanyId
+                      address.companyId !== newCompany.id
                     )
                       setAddress(null);
-                    setCompanyId(newCompanyId);
+                    setCompany(newCompany);
                   }}
                 >
                   {companies.map(company => (
-                    <MenuItem key={company.id} value={company.id}>
+                    <MenuItem key={company.id} value={company}>
                       {company.name}
                     </MenuItem>
                   ))}
@@ -112,13 +124,13 @@ export default function NewMissionModal({
               fullWidth
               required
               label="Lieu de prise de service"
-              disabled={companies && companies.length > 1 && !companyId}
+              disabled={companies && companies.length > 1 && !company}
               variant="filled"
               value={address}
               onChange={setAddress}
               currentPosition={currentPosition}
               defaultAddresses={companyAddresses.filter(a =>
-                companyId ? a.companyId === companyId : true
+                company ? a.companyId === company.id : true
               )}
             />
             <Typography variant="h5" className="form-field-title">
@@ -126,10 +138,16 @@ export default function NewMissionModal({
             </Typography>
             <VehicleInput
               label="Nom ou immatriculation du véhicule"
-              disabled={companies && companies.length > 1 && !companyId}
+              disabled={companies && companies.length > 1 && !company}
               vehicle={vehicle}
               setVehicle={setVehicle}
-              companyId={companyId}
+              companyId={company ? company.id : null}
+              kilometerReading={kilometerReading}
+              setKilometerReading={
+                company && company.requireKilometerData && vehicle
+                  ? setKilometerReading
+                  : null
+              }
             />
           </Container>
           <Box className="cta-container" my={4}>

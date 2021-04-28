@@ -33,7 +33,8 @@ export function MissionReview({
   editExpendituresForTeam,
   previousMissionEnd,
   logComment,
-  cancelComment
+  cancelComment,
+  registerKilometerReading
 }) {
   const missionMetrics = computeMissionKpis(currentMission);
 
@@ -65,6 +66,7 @@ export function MissionReview({
         validateMission={validateMission}
         logComment={logComment}
         cancelComment={cancelComment}
+        editKilometerReading={registerKilometerReading}
       />
     </Container>
   );

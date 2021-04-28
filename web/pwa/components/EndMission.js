@@ -4,9 +4,10 @@ import Box from "@material-ui/core/Box";
 import { FunnelModal } from "./FunnelModal";
 import Container from "@material-ui/core/Container";
 import { MainCtaButton } from "./MainCtaButton";
-import TextField from "@material-ui/core/TextField/TextField";
+import TextField from "common/utils/TextField";
 import { Expenditures } from "./Expenditures";
 import { AddressField } from "../../common/AddressField";
+import KilometerReadingInput from "./KilometerReadingInput";
 
 export default function EndMissionModal({
   open,
@@ -14,12 +15,17 @@ export default function EndMissionModal({
   handleMissionEnd,
   currentExpenditures,
   companyAddresses = [],
+  currentMission,
   currentEndLocation = null
 }) {
   const [expenditures, setExpenditures] = React.useState({});
   const [comment, setComment] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [address, setAddress] = React.useState(false);
+  const [kilometerReading, setKilometerReading] = React.useState(false);
+  const [kilometerReadingError, setKilometerReadingError] = React.useState(
+    null
+  );
   const [currentPosition, setCurrentPosition] = React.useState(null);
 
   React.useEffect(() => {
@@ -27,6 +33,7 @@ export default function EndMissionModal({
     setComment("");
     setAddress(null);
     setCurrentPosition(null);
+    setKilometerReading(null);
 
     if (open && navigator.geolocation) {
       setLoading(false);
@@ -46,7 +53,12 @@ export default function EndMissionModal({
             e.preventDefault();
             setLoading(true);
             await new Promise(resolve => setTimeout(resolve, 100));
-            await handleMissionEnd(expenditures, comment, address);
+            await handleMissionEnd(
+              expenditures,
+              comment,
+              address,
+              kilometerReading
+            );
             handleClose();
           }}
         >
@@ -69,6 +81,22 @@ export default function EndMissionModal({
               currentPosition={currentPosition}
               defaultAddresses={companyAddresses}
             />
+            {currentMission.company &&
+              currentMission.company.requireKilometerData &&
+              currentMission.startLocation &&
+              currentMission.startLocation.kilometerReading && [
+                <Typography key={0} variant="h5" className="form-field-title">
+                  Quel est le relevé kilométrique de fin de service&nbsp;?
+                </Typography>,
+                <KilometerReadingInput
+                  key={1}
+                  kilometerReading={kilometerReading}
+                  minReading={currentMission.startLocation.kilometerReading}
+                  setKilometerReading={setKilometerReading}
+                  error={kilometerReadingError}
+                  setError={setKilometerReadingError}
+                />
+              ]}
             <Typography variant="h5" className="form-field-title">
               Avez-vous eu des frais lors de cette mission&nbsp;?
             </Typography>
@@ -93,7 +121,9 @@ export default function EndMissionModal({
           <Box className="cta-container" my={4}>
             <MainCtaButton
               type="submit"
-              disabled={!currentEndLocation && !address}
+              disabled={
+                (!currentEndLocation && !address) || kilometerReadingError
+              }
               loading={loading}
             >
               Suivant

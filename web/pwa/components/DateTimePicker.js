@@ -4,7 +4,7 @@ import React from "react";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import IconButton from "@material-ui/core/IconButton";
 import { DateTimePicker as MaterialPicker } from "@material-ui/pickers";
-import TextField from "@material-ui/core/TextField";
+import TextField from "common/utils/TextField";
 
 export function DateTimePicker({
   label,

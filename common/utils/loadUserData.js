@@ -25,6 +25,11 @@ const USER_QUERY = gql`
           isAdmin
           userId
         }
+        vehicle {
+          id
+          name
+          registrationNumber
+        }
         context
         expenditures {
           id
@@ -59,16 +64,20 @@ const USER_QUERY = gql`
           }
         }
         startLocation {
+          id
           name
           alias
           postalCode
           city
+          kilometerReading
         }
         endLocation {
+          id
           name
           alias
           postalCode
           city
+          kilometerReading
         }
       }
       currentEmployments {

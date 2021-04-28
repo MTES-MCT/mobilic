@@ -93,7 +93,7 @@ export function ActivitySwitch({
   disableBreak,
   endMission,
   currentMission,
-  companyId,
+  company,
   requireVehicle = false,
   pushActivitySwitchEvent,
   shouldWaitForClickHandler = false
@@ -119,7 +119,7 @@ export function ActivitySwitch({
       modals.open("driverSelection", {
         team,
         requireVehicle: requireVehicle,
-        companyId: companyId,
+        company,
         currentDriverId:
           latestActivity &&
           !latestActivity.endTime &&
@@ -127,10 +127,20 @@ export function ActivitySwitch({
             ? store.userId()
             : undefined,
         currentDriverStartTime: latestActivity ? getTime(latestActivity) : null,
-        handleDriverSelection: async (driverId, vehicle) =>
+        handleDriverSelection: async (driverId, vehicle, kilometerReading) =>
           shouldWaitForClickHandler
-            ? await pushActivitySwitchEvent(activityName, driverId, vehicle)
-            : pushActivitySwitchEvent(activityName, driverId, vehicle)
+            ? await pushActivitySwitchEvent(
+                activityName,
+                driverId,
+                vehicle,
+                kilometerReading
+              )
+            : pushActivitySwitchEvent(
+                activityName,
+                driverId,
+                vehicle,
+                kilometerReading
+              )
       });
     } else pushActivitySwitchEvent(activityName);
   };
@@ -181,14 +191,21 @@ export function ActivitySwitch({
                         ? currentMission.company.id
                         : currentMission.companyId)
                   ),
-                handleMissionEnd: async (expenditures, comment, address) =>
+                handleMissionEnd: async (
+                  expenditures,
+                  comment,
+                  address,
+                  kilometerReading
+                ) =>
                   await endMission({
                     endTime: missionEndTime,
                     expenditures,
                     comment,
-                    endLocation: address
+                    endLocation: address,
+                    kilometerReading
                   }),
-                currentEndLocation: currentMission.endLocation
+                currentEndLocation: currentMission.endLocation,
+                currentMission: currentMission
               });
             }}
           >

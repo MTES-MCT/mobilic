@@ -13,6 +13,7 @@ export function CurrentActivity({
   currentMission,
   pushNewTeamActivityEvent,
   updateMissionVehicle,
+  registerKilometerReading,
   editActivityEvent,
   endMissionForTeam,
   endMission,
@@ -40,7 +41,8 @@ export function CurrentActivity({
       pushActivitySwitchEvent={async (
         activityType,
         driverId = null,
-        vehicle = null
+        vehicle = null,
+        kilometerReading = null
       ) =>
         activityType === ACTIVITIES.break.name
           ? await editActivityEvent(
@@ -55,6 +57,14 @@ export function CurrentActivity({
               vehicle
                 ? updateMissionVehicle({ mission: currentMission, vehicle })
                 : Promise.resolve(null),
+              kilometerReading && currentMission.startLocation
+                ? registerKilometerReading({
+                    mission: currentMission,
+                    location: currentMission.startLocation,
+                    isStart: true,
+                    kilometerReading
+                  })
+                : null,
               pushNewTeamActivityEvent({
                 activityType,
                 driverId,
@@ -73,7 +83,7 @@ export function CurrentActivity({
       }
       currentMission={currentMission}
       requireVehicle={!currentMission.vehicle}
-      companyId={currentMission.companyId}
+      company={currentMission.company}
     />,
     <Box key={2} pt={3} />,
     <MissionDetails
@@ -107,6 +117,7 @@ export function CurrentActivity({
         })
       }
       isMissionEnded={false}
+      editKilometerReading={registerKilometerReading}
     />
   ];
 }

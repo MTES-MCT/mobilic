@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import { now } from "common/utils/time";
 import DialogContent from "@material-ui/core/DialogContent";
-import TextField from "@material-ui/core/TextField";
+import TextField from "common/utils/TextField";
 import { ACTIVITIES, SWITCH_ACTIVITIES } from "common/utils/activities";
 import { getTime } from "common/utils/events";
 import uniq from "lodash/uniq";
@@ -476,7 +476,7 @@ export default function ActivityRevisionOrCreationModal({
             label="Activité"
             required
             fullWidth
-            variant={isCreation ? "filled" : "standard"}
+            variant="filled"
             className={classes.formField}
             select
             disabled={!isCreation}

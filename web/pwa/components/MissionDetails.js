@@ -37,6 +37,7 @@ import {
   formatAddressMainText,
   formatAddressSubText
 } from "common/utils/addresses";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -62,6 +63,9 @@ const useStyles = makeStyles(theme => ({
   },
   commentList: {
     paddingLeft: theme.spacing(3)
+  },
+  kilometerReading: {
+    flexGrow: 0
   }
 }));
 
@@ -108,13 +112,32 @@ export function MissionDetails({
   vehicles = null,
   userId = null,
   fromTime = null,
-  untilTime = null
+  untilTime = null,
+  editKilometerReading = null
 }) {
   const classes = useStyles();
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
   const actualUserId = userId || store.userId();
   const alerts = useSnackbarAlerts();
+
+  function handleEditKilometerReading(location, isStart, minReading) {
+    return () =>
+      modals.open("kilometerReading", {
+        handleKilometerReading: kilometerReading => {
+          if (kilometerReading !== location.kilometerReading)
+            editKilometerReading({
+              mission,
+              location,
+              kilometerReading,
+              isStart
+            });
+        },
+        currentKilometerReading: location.kilometerReading,
+        minReading,
+        isStart
+      });
+  }
 
   const actualCoworkers = coworkers || store.getEntity("coworkers");
 
@@ -257,6 +280,43 @@ export function MissionDetails({
                     : null
                 }
               />
+              {mission.startLocation &&
+              mission.startLocation.kilometerReading ? (
+                <ListItemText
+                  className={classes.kilometerReading}
+                  primary={`km : ${mission.startLocation.kilometerReading}`}
+                  secondary={
+                    <Button
+                      className="no-margin-no-padding"
+                      color="primary"
+                      size="small"
+                      onClick={handleEditKilometerReading(
+                        mission.startLocation,
+                        true
+                      )}
+                    >
+                      Modifier
+                    </Button>
+                  }
+                />
+              ) : editKilometerReading ? (
+                <ListItemText
+                  className={classes.kilometerReading}
+                  disableTypography
+                >
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    size="small"
+                    onClick={handleEditKilometerReading(
+                      mission.startLocation,
+                      true
+                    )}
+                  >
+                    Ajouter km
+                  </Button>
+                </ListItemText>
+              ) : null}
             </ListItem>
             {mission.ended && (
               <ListItem disableGutters>
@@ -273,6 +333,48 @@ export function MissionDetails({
                       : null
                   }
                 />
+                {mission.endLocation && mission.endLocation.kilometerReading ? (
+                  <ListItemText
+                    className={classes.kilometerReading}
+                    primary={`km : ${mission.endLocation.kilometerReading}`}
+                    secondary={
+                      <Button
+                        className="no-margin-no-padding"
+                        color="primary"
+                        size="small"
+                        onClick={handleEditKilometerReading(
+                          mission.endLocation,
+                          false,
+                          mission.startLocation
+                            ? mission.startLocation.kilometerReading
+                            : null
+                        )}
+                      >
+                        Modifier
+                      </Button>
+                    }
+                  />
+                ) : editKilometerReading ? (
+                  <ListItemText
+                    className={classes.kilometerReading}
+                    disableTypography
+                  >
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      onClick={handleEditKilometerReading(
+                        mission.endLocation,
+                        false,
+                        mission.startLocation
+                          ? mission.startLocation.kilometerReading
+                          : null
+                      )}
+                    >
+                      Ajouter km
+                    </Button>
+                  </ListItemText>
+                ) : null}
               </ListItem>
             )}
           </List>

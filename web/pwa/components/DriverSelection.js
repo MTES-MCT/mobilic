@@ -9,19 +9,13 @@ import { formatTimer, now } from "common/utils/time";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { CustomDialogTitle } from "../../common/CustomDialogTitle";
 import { VehicleInput } from "./VehicleInput";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-
-const useStyles = makeStyles(theme => ({
-  vehicleInput: {
-    padding: theme.spacing(3)
-  }
-}));
+import Box from "@material-ui/core/Box";
 
 export default function DriverSelectionModal({
   team = [],
   open,
   requireVehicle = false,
-  companyId = null,
+  company = null,
   currentDriverId = undefined,
   currentDriverStartTime = null,
   handleClose,
@@ -30,14 +24,18 @@ export default function DriverSelectionModal({
   const store = useStoreSyncedWithLocalStorage();
   const coworkers = store.getEntity("coworkers");
 
-  const classes = useStyles();
-
   const [vehicle, setVehicle] = React.useState(null);
+  const [kilometerReading, setKilometerReading] = React.useState(null);
   const [selected, setSelected] = React.useState(null);
 
   React.useEffect(() => {
     setSelected(null);
+    setKilometerReading(null);
   }, [open, currentDriverId]);
+
+  React.useEffect(() => {
+    if (!vehicle) setKilometerReading(null);
+  }, [vehicle]);
 
   const hasTeamMates = team.length > 1;
   return (
@@ -48,14 +46,21 @@ export default function DriverSelectionModal({
           handleClose={handleClose}
           key={0}
         />,
-        <VehicleInput
-          label="Véhicule"
-          vehicle={vehicle}
-          setVehicle={setVehicle}
-          companyId={companyId}
-          className={classes.vehicleInput}
-          key={1}
-        />
+        <Box key={1} px={3} pb={3}>
+          <VehicleInput
+            label="Véhicule"
+            vehicle={vehicle}
+            setVehicle={setVehicle}
+            companyId={company ? company.id : null}
+            key={1}
+            kilometerReading={kilometerReading}
+            setKilometerReading={
+              company && company.requireKilometerData && vehicle
+                ? setKilometerReading
+                : null
+            }
+          />
+        </Box>
       ]}
       <CustomDialogTitle
         title={
@@ -72,7 +77,7 @@ export default function DriverSelectionModal({
             const value = parseInt(e.target.value);
             setSelected(value);
             await new Promise(resolve => setTimeout(resolve, 100));
-            await handleDriverSelection(value, vehicle);
+            await handleDriverSelection(value, vehicle, kilometerReading);
             handleClose();
           }}
         >

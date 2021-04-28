@@ -48,14 +48,14 @@ export function FunnelModal({
       <Container
         maxWidth="sm"
         className="flex-column"
-        style={{ flexGrow: 1, height: "100%", padding: 0 }}
+        style={{ flexGrow: 1, flexShrink: 0, height: "100%", padding: 0 }}
       >
         <Box
           px={2}
           pb={2}
           pt={2}
           className="header-container flex-row-flex-start"
-          style={{ position: "static", width: "100%" }}
+          style={{ position: "static", width: "100%", flexShrink: 0 }}
         >
           <Button
             className={classes.backButton}

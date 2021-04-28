@@ -138,16 +138,20 @@ export const USER_READ_QUERY = gql`
             }
           }
           startLocation {
+            id
             name
             alias
             postalCode
             city
+            kilometerReading
           }
           endLocation {
+            id
             name
             alias
             postalCode
             city
+            kilometerReading
           }
         }
         currentEmployments {
@@ -227,16 +231,20 @@ export const ADMIN_COMPANIES_QUERY = gql`
             userId
           }
           startLocation {
+            id
             alias
             name
             postalCode
             city
+            kilometerReading
           }
           endLocation {
+            id
             alias
             name
             postalCode
             city
+            kilometerReading
           }
           activities {
             id
@@ -605,16 +613,20 @@ export const END_MISSION_MUTATION = gql`
           registrationNumber
         }
         startLocation {
+          id
           alias
           name
           postalCode
           city
+          kilometerReading
         }
         endLocation {
+          id
           alias
           name
           postalCode
           city
+          kilometerReading
         }
         company {
           id
@@ -642,6 +654,7 @@ export const LOG_LOCATION_MUTATION = gql`
     $missionId: Int!
     $geoApiData: GenericScalar
     $manualAddress: String
+    $kilometerReading: Int
   ) {
     activities {
       logLocation(
@@ -650,11 +663,14 @@ export const LOG_LOCATION_MUTATION = gql`
         type: $type
         geoApiData: $geoApiData
         manualAddress: $manualAddress
+        kilometerReading: $kilometerReading
       ) {
+        id
         alias
         name
         postalCode
         city
+        kilometerReading
       }
     }
   }
@@ -766,16 +782,20 @@ export const VALIDATE_MISSION_MUTATION = gql`
             requireKilometerData
           }
           startLocation {
+            id
             alias
             name
             postalCode
             city
+            kilometerReading
           }
           endLocation {
+            id
             alias
             name
             postalCode
             city
+            kilometerReading
           }
         }
       }
@@ -865,6 +885,22 @@ export const UPDATE_MISSION_VEHICLE_MUTATION = gql`
         id
         name
         registrationNumber
+      }
+    }
+  }
+`;
+
+export const REGISTER_KILOMETER_AT_LOCATION = gql`
+  mutation registerKilometerAtLocation(
+    $missionLocationId: Int!
+    $kilometerReading: Int!
+  ) {
+    activities {
+      registerKilometerAtLocation(
+        missionLocationId: $missionLocationId
+        kilometerReading: $kilometerReading
+      ) {
+        success
       }
     }
   }

@@ -22,7 +22,7 @@ export default function FirstActivitySelectionModal({
   team = [],
   handleActivitySelection,
   requireVehicle,
-  companyId
+  company
 }) {
   const classes = useStyles();
   return (
@@ -38,7 +38,7 @@ export default function FirstActivitySelectionModal({
         disableBreak
         shouldWaitForClickHandler
         requireVehicle={requireVehicle}
-        companyId={companyId}
+        company={company}
       />
       <Box className={classes.bottomFill} />
     </FunnelModal>
