@@ -15,6 +15,7 @@ import {
 export default function ExpenditureDialogModal({
   open,
   currentExpenditures,
+  title = null,
   hasTeamMates = false,
   handleClose,
   handleSubmit
@@ -28,7 +29,10 @@ export default function ExpenditureDialogModal({
 
   return (
     <Dialog onClose={handleClose} open={open} fullWidth>
-      <CustomDialogTitle title="Modifier les frais" handleClose={handleClose} />
+      <CustomDialogTitle
+        title={title || "Modifier les frais"}
+        handleClose={handleClose}
+      />
       <DialogContent>
         <Expenditures
           expenditures={expenditures}

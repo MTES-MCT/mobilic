@@ -32,23 +32,21 @@ import { Comment } from "../../common/Comment";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 import Button from "@material-ui/core/Button";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText/ListItemText";
-import {
-  formatAddressMainText,
-  formatAddressSubText
-} from "common/utils/addresses";
 import { computeMissionStats } from "../panels/Validations";
 import { addBreakOps } from "../../pwa/components/ActivityRevision";
 import {
   CANCEL_ACTIVITY_MUTATION,
   CANCEL_COMMENT_MUTATION,
+  CANCEL_EXPENDITURE_MUTATION,
   EDIT_ACTIVITY_MUTATION,
   LOG_ACTIVITY_MUTATION,
   LOG_COMMENT_MUTATION,
+  LOG_EXPENDITURE_MUTATION,
   VALIDATE_MISSION_MUTATION
 } from "common/utils/apiQueries";
+import LocationEntry from "../../pwa/components/LocationEntry";
+import Chip from "@material-ui/core/Chip";
+import { EXPENDITURES } from "common/utils/expenditures";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {
@@ -100,6 +98,9 @@ const useStyles = makeStyles(theme => ({
     alignItems: "flex-end",
     height: 50,
     display: "flex"
+  },
+  expenditureTitle: {
+    paddingLeft: theme.spacing(1)
   },
   userName: {
     fontWeight: "bold"
@@ -318,6 +319,51 @@ export function MissionDetails({ mission, handleClose, width }) {
             : a
         )
       }))
+    );
+  }
+
+  async function onCreateExpenditure(exp, user) {
+    const apiResponse = await api.nonConcurrentQueryQueue.execute(() =>
+      api.graphQlMutate(LOG_EXPENDITURE_MUTATION, {
+        type: exp,
+        userId: user.id,
+        missionId: mission.id
+      })
+    );
+    const expenditure = apiResponse.data.activities.logExpenditure;
+    mission.expenditures.push(expenditure);
+    Object.assign(mission, computeMissionStats(mission));
+    adminStore.setMissions(missions =>
+      missions.map(m =>
+        m.id === mission.id
+          ? {
+              ...m,
+              expenditures: [...m.expenditures, expenditure]
+            }
+          : m
+      )
+    );
+  }
+
+  async function onCancelExpenditure(expenditure) {
+    await api.nonConcurrentQueryQueue.execute(() =>
+      api.graphQlMutate(CANCEL_EXPENDITURE_MUTATION, {
+        expenditureId: expenditure.id
+      })
+    );
+    mission.expenditures = mission.expenditures.filter(
+      e => e.id !== expenditure.id
+    );
+    Object.assign(mission, computeMissionStats(mission));
+    adminStore.setMissions(missions =>
+      missions.map(m =>
+        m.id === mission.id
+          ? {
+              ...m,
+              expenditures: m.expenditures.filter(e => e.id !== expenditure.id)
+            }
+          : m
+      )
     );
   }
 
@@ -597,36 +643,16 @@ export function MissionDetails({ mission, handleClose, width }) {
     (mission.endLocation || mission.startLocation) && (
       <Section key={2} title="Lieux de service">
         <List dense>
-          <ListItem disableGutters>
-            <ListItemIcon>Début</ListItemIcon>
-            <ListItemText
-              primary={
-                mission.startLocation
-                  ? formatAddressMainText(mission.startLocation)
-                  : null
-              }
-              secondary={
-                mission.startLocation
-                  ? formatAddressSubText(mission.startLocation)
-                  : null
-              }
-            />
-          </ListItem>
-          <ListItem disableGutters>
-            <ListItemIcon>Fin</ListItemIcon>
-            <ListItemText
-              primary={
-                mission.endLocation
-                  ? formatAddressMainText(mission.endLocation)
-                  : null
-              }
-              secondary={
-                mission.endLocation
-                  ? formatAddressSubText(mission.endLocation)
-                  : null
-              }
-            />
-          </ListItem>
+          <LocationEntry
+            mission={mission}
+            location={mission.startLocation}
+            isStart={true}
+          />
+          <LocationEntry
+            mission={mission}
+            location={mission.endLocation}
+            isStart={false}
+          />
         </List>
       </Section>
     ),
@@ -638,7 +664,7 @@ export function MissionDetails({ mission, handleClose, width }) {
         entries={entries}
         editable={false}
         rowHeight={(index, userStats) =>
-          90 + 50 * Object.keys(userStats.activitiesWithBreaks).length
+          180 + 50 * Object.keys(userStats.activitiesWithBreaks).length
         }
         ref={ref}
         dense
@@ -651,10 +677,28 @@ export function MissionDetails({ mission, handleClose, width }) {
               className={props.className}
               style={{ ...props.style, display: "block" }}
             >
-              <Box style={{ height: 30 }} px={1} className={classes.userRow}>
+              <Box style={{ height: 40 }} px={1} className={classes.userRow}>
                 <Typography className={classes.userName}>
                   {formatPersonName(userStats.user)}
                 </Typography>
+                <Button
+                  aria-label="Ajouter une activité"
+                  color="primary"
+                  variant="outlined"
+                  size="small"
+                  className={classes.smallTextButton}
+                  disabled={creatingActivityForUserId || activityIdToEdit}
+                  onClick={() => {
+                    setCreatingActivityForUserId(userStats.user.id);
+                    setEditedValues({
+                      startTime: mission.endTime,
+                      endTime: mission.endTime
+                    });
+                    ref.current.recomputeRowHeights();
+                  }}
+                >
+                  Ajouter une activité
+                </Button>
               </Box>
               {userStats.activitiesWithBreaks.map(activity => {
                 return (
@@ -680,33 +724,71 @@ export function MissionDetails({ mission, handleClose, width }) {
                   </Box>
                 );
               })}
+              <Typography
+                className={classes.expenditureTitle}
+                variant="h5"
+                style={{ height: 15, marginTop: 15 }}
+              >
+                Frais
+              </Typography>
               <Box
                 style={{ height: 40, marginTop: 10 }}
                 pl={1}
                 className="flex-row-space-between"
               >
-                <Typography className={classes.validationTime}>
-                  <span style={{ fontStyle: "normal" }}>✅</span> validé le{" "}
-                  {formatDay(getTime(userStats.validation))}
-                </Typography>
+                <Box className={`flex-row`}>
+                  {userStats.expenditureAggs &&
+                    Object.keys(userStats.expenditureAggs).map(exp => {
+                      const expProps = EXPENDITURES[exp];
+                      const expCount = userStats.expenditureAggs[exp];
+                      const label =
+                        expCount > 1
+                          ? `${expCount} ${expProps.plural}`
+                          : expProps.label;
+                      return <Chip key={exp.type} label={label} />;
+                    })}
+                </Box>
                 <Button
-                  aria-label="Ajouter une activité"
+                  aria-label="Modifier les frais"
                   color="primary"
                   variant="outlined"
                   size="small"
                   className={classes.smallTextButton}
                   disabled={creatingActivityForUserId || activityIdToEdit}
                   onClick={() => {
-                    setCreatingActivityForUserId(userStats.user.id);
-                    setEditedValues({
-                      startTime: mission.endTime,
-                      endTime: mission.endTime
+                    modals.open("expenditures", {
+                      currentExpenditures: userStats.expenditureAggs,
+                      title: `Frais pour ${formatPersonName(userStats.user)}`,
+                      handleSubmit: exps => {
+                        const expendituresToCreate = Object.keys(exps).filter(
+                          e => exps[e] && !userStats.expenditureAggs[e]
+                        );
+                        const expendituresToDelete = mission.expenditures.filter(
+                          e => e.userId === userStats.user.id && !exps[e.type]
+                        );
+                        return Promise.all([
+                          ...expendituresToDelete.map(e =>
+                            withAlerts(onCancelExpenditure(e), e.id)
+                          ),
+                          ...expendituresToCreate.map(expType =>
+                            withAlerts(
+                              onCreateExpenditure(expType, userStats.user),
+                              expType
+                            )
+                          )
+                        ]);
+                      }
                     });
-                    ref.current.recomputeRowHeights();
                   }}
                 >
-                  Ajouter une activité
+                  Modifier les frais
                 </Button>
+              </Box>
+              <Box style={{ height: 40, marginTop: 10 }} pl={1}>
+                <Typography className={classes.validationTime}>
+                  <span style={{ fontStyle: "normal" }}>✅</span> validé le{" "}
+                  {formatDay(getTime(userStats.validation))}
+                </Typography>
               </Box>
             </Box>
           );
