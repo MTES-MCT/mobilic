@@ -856,10 +856,12 @@ export const CANCEL_COMMENT_MUTATION = gql`
 
 export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
   mutation editCompanySettings(
+    $companyId: Int!
     $allowTeamMode: Boolean
     $requireKilometerData: Boolean
   ) {
     editCompanySettings(
+      companyId: $companyId
       allowTeamMode: $allowTeamMode
       requireKilometerData: $requireKilometerData
     ) {

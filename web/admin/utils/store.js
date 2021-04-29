@@ -22,6 +22,8 @@ export function AdminStoreProvider({ children }) {
         id: c.id,
         name: c.name,
         siren: c.siren,
+        allowTeamMode: c.allowTeamMode,
+        requireKilometerData: c.requireKilometerData,
         isPrimary: primaryCompany ? c.id === primaryCompany.id : false
       }))
     );
@@ -75,6 +77,7 @@ export function AdminStoreProvider({ children }) {
     <AdminStoreContext.Provider
       value={{
         companies: companies,
+        setCompanies,
         userId: store.userId(),
         users,
         setUsers,

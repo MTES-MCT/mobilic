@@ -53,11 +53,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function Employees({ companyId, containerRef }) {
+export function Employees({ company, containerRef }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const modals = useModals();
   const alerts = useSnackbarAlerts();
+  const companyId = company ? company.id : null;
 
   const [triggerAddEmployee, setTriggerAddEmployee] = React.useState({
     value: false
