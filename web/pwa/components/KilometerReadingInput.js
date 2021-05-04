@@ -15,7 +15,7 @@ export default function KilometerReadingInput({
     if (
       kilometerReading !== null &&
       minReading &&
-      kilometerReading <= minReading &&
+      kilometerReading < minReading &&
       setError
     )
       setError(`Le nombre ne peut pas être en-dessous de ${minReading} km.`);

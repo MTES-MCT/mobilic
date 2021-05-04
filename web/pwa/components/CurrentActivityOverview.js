@@ -57,8 +57,16 @@ export function CurrentActivityOverview({
     currentActivityDuration
   )}`;
 
-  const missionOverviewText = `Mission ${currentMission.name ||
-    "sans nom"} débutée depuis ${formatTimer(_now - currentDayStart)}`;
+  let missionOverviewText = `Mission ${currentMission.name ||
+    "sans nom"} démarrée `;
+
+  if (currentMission.submittedBySomeoneElse) {
+    missionOverviewText =
+      missionOverviewText + `par ${currentMission.submitter.firstName} `;
+  }
+
+  missionOverviewText =
+    missionOverviewText + `depuis ${formatTimer(_now - currentDayStart)}`;
 
   return (
     <Box p={2} pb={5} className={classes.overview}>

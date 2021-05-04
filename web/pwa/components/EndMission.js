@@ -82,21 +82,23 @@ export default function EndMissionModal({
               defaultAddresses={companyAddresses}
             />
             {currentMission.company &&
-              currentMission.company.requireKilometerData &&
-              currentMission.startLocation &&
-              currentMission.startLocation.kilometerReading && [
-                <Typography key={0} variant="h5" className="form-field-title">
-                  Quel est le relevé kilométrique de fin de service&nbsp;?
-                </Typography>,
-                <KilometerReadingInput
-                  key={1}
-                  kilometerReading={kilometerReading}
-                  minReading={currentMission.startLocation.kilometerReading}
-                  setKilometerReading={setKilometerReading}
-                  error={kilometerReadingError}
-                  setError={setKilometerReadingError}
-                />
-              ]}
+            currentMission.company.requireKilometerData &&
+            currentMission.startLocation &&
+            currentMission.startLocation.kilometerReading
+              ? [
+                  <Typography key={0} variant="h5" className="form-field-title">
+                    Quel est le relevé kilométrique de fin de service&nbsp;?
+                  </Typography>,
+                  <KilometerReadingInput
+                    key={1}
+                    kilometerReading={kilometerReading}
+                    minReading={currentMission.startLocation.kilometerReading}
+                    setKilometerReading={setKilometerReading}
+                    error={kilometerReadingError}
+                    setError={setKilometerReadingError}
+                  />
+                ]
+              : null}
             <Typography variant="h5" className="form-field-title">
               Avez-vous eu des frais lors de cette mission&nbsp;?
             </Typography>

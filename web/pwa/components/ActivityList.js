@@ -36,6 +36,7 @@ function ActivityItem({
   nextMissionStart,
   teamChanges,
   nullableEndTimeInEditActivity,
+  allowTeamMode,
   showDates = false
 }) {
   const modals = useModals();
@@ -97,6 +98,7 @@ function ActivityItem({
                 nextMissionStart,
                 cancellable: true,
                 teamChanges,
+                allowTeamMode,
                 nullableEndTime: nullableEndTimeInEditActivity
               })
             }
@@ -117,6 +119,7 @@ export function ActivityList({
   editActivityEvent,
   createActivity,
   teamChanges,
+  allowTeamMode = false,
   nullableEndTimeInEditActivity,
   isMissionEnded,
   fromTime = null,
@@ -217,6 +220,7 @@ export function ActivityList({
           previousMissionEnd={previousMissionEnd}
           nextMissionStart={nextMissionStart}
           teamChanges={teamChanges}
+          allowTeamMode={allowTeamMode}
           nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
           key={activity.id ? "a" + activity.id : index}
           showDates={showDates}

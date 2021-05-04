@@ -3,7 +3,7 @@ import { broadCastChannel } from "./store";
 import { parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
 import { DAY, now } from "./time";
-import { IS_MISSION_ENDED_QUERY } from "./apiQueries";
+import { CURRENT_MISSION_INFO } from "./apiQueries";
 import { gql } from "@apollo/client/core";
 
 const USER_QUERY = gql`
@@ -156,12 +156,11 @@ export async function syncUser(userPayload, api, store) {
   if (missions.length > 0) {
     const latestMission = missions[missions.length - 1];
     try {
-      const isMissionEnded = await api.graphQlQuery(
-        IS_MISSION_ENDED_QUERY,
-        { missionId: latestMission.id },
-        { context: { nonPublicApi: true } }
-      );
-      latestMission.ended = isMissionEnded.data.isMissionEndedForSelf;
+      const latestMissionInfo = await api.graphQlQuery(CURRENT_MISSION_INFO, {
+        id: latestMission.id
+      });
+      latestMission.ended = latestMissionInfo.data.mission.isEndedForSelf;
+      latestMission.submitter = latestMissionInfo.data.mission.submitter;
     } catch (err) {
       Sentry.captureException(err);
       console.log(err);

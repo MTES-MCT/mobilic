@@ -560,11 +560,20 @@ export const EDIT_ACTIVITY_MUTATION = gql`
     }
   }
 `;
-export const IS_MISSION_ENDED_QUERY = gql`
-  query isMissionEnded($missionId: Int!) {
-    isMissionEndedForSelf(missionId: $missionId)
+
+export const CURRENT_MISSION_INFO = gql`
+  query currentMissionInfo($id: Int!) {
+    mission(id: $id) {
+      isEndedForSelf
+      submitter {
+        id
+        firstName
+        lastName
+      }
+    }
   }
 `;
+
 export const CREATE_MISSION_MUTATION = gql`
   mutation createMission(
     $name: String
@@ -611,6 +620,11 @@ export const END_MISSION_MUTATION = gql`
           id
           name
           registrationNumber
+        }
+        submitter {
+          id
+          firstName
+          lastName
         }
         startLocation {
           id
@@ -773,6 +787,11 @@ export const VALIDATE_MISSION_MUTATION = gql`
             id
             name
             registrationNumber
+          }
+          submitter {
+            id
+            firstName
+            lastName
           }
           company {
             id

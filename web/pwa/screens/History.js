@@ -623,7 +623,7 @@ export function History({
     followingMissionStart = getTime(currentMission);
 
   const periodsWithNeedForValidation = mapValues(groupedMissions, ms =>
-    ms.some(m => !m.validation)
+    ms.some(m => !m.validation && !m.adminValidation)
   );
   const periodsWithNeedForAdminValidation = mapValues(groupedMissions, ms =>
     ms.some(m => !m.adminValidation)

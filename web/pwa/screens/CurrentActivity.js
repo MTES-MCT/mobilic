@@ -51,7 +51,7 @@ export function CurrentActivity({
               getTime(latestActivity),
               now(),
               null,
-              true
+              !currentMission.submittedBySomeoneElse
             )
           : await Promise.all([
               vehicle
@@ -69,7 +69,7 @@ export function CurrentActivity({
                 activityType,
                 driverId,
                 missionId: currentMission.id,
-                team: currentTeam,
+                team: currentMission.submittedBySomeoneElse ? [] : currentTeam,
                 startTime: now()
               })
             ])
@@ -77,7 +77,7 @@ export function CurrentActivity({
       endMission={async args =>
         await endMissionForTeam({
           mission: currentMission,
-          team: currentTeam,
+          team: currentMission.submittedBySomeoneElse ? [] : currentTeam,
           ...args
         })
       }

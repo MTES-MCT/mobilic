@@ -109,6 +109,10 @@ const useStyles = makeStyles(theme => ({
     fontStyle: "italic",
     color: theme.palette.success.main
   },
+  nonValidationText: {
+    fontStyle: "italic",
+    color: theme.palette.warning.main
+  },
   row: {
     "&:hover": {
       background: "inherit"
@@ -785,9 +789,19 @@ export function MissionDetails({ mission, handleClose, width }) {
                 </Button>
               </Box>
               <Box style={{ height: 40, marginTop: 10 }} pl={1}>
-                <Typography className={classes.validationTime}>
-                  <span style={{ fontStyle: "normal" }}>✅</span> validé le{" "}
-                  {formatDay(getTime(userStats.validation))}
+                <Typography
+                  className={
+                    userStats.validation
+                      ? classes.validationTime
+                      : classes.nonValidationText
+                  }
+                >
+                  <span style={{ fontStyle: "normal" }}>
+                    {userStats.validation ? "✅" : "⚠️"}
+                  </span>
+                  {userStats.validation
+                    ? ` validé le ${formatDay(getTime(userStats.validation))}`
+                    : " non validé"}
                 </Typography>
               </Box>
             </Box>

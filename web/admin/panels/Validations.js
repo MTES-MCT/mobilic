@@ -18,7 +18,13 @@ import sum from "lodash/sum";
 import groupBy from "lodash/groupBy";
 import mapValues from "lodash/mapValues";
 import Paper from "@material-ui/core/Paper";
-import { formatDay, formatTimeOfDay, formatTimer } from "common/utils/time";
+import {
+  DAY,
+  formatDay,
+  formatTimeOfDay,
+  formatTimer,
+  now
+} from "common/utils/time";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import Button from "@material-ui/core/Button";
 import Drawer from "@material-ui/core/Drawer/Drawer";
@@ -29,6 +35,8 @@ import Tab from "@material-ui/core/Tab";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 import { VALIDATE_MISSION_MUTATION } from "common/utils/apiQueries";
+
+const DEFAULT_WORKER_VALIDATION_TIMEOUT = 7 * DAY;
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -276,11 +284,17 @@ function _ValidationPanel({ containerRef, width }) {
     .filter(m => m.activities.length > 0)
     .map(computeMissionStats);
 
+  const nowTime = now();
+
   const missionsValidatedByAllWorkers = nonValidatedByAdminMissions.filter(
-    m => m.validatedByAllMembers
+    m =>
+      m.validatedByAllMembers ||
+      m.endTime + DEFAULT_WORKER_VALIDATION_TIMEOUT < nowTime
   );
   const missionsNotValidatedByAllWorkers = nonValidatedByAdminMissions.filter(
-    m => !m.validatedByAllMembers
+    m =>
+      !m.validatedByAllMembers &&
+      m.endTime + DEFAULT_WORKER_VALIDATION_TIMEOUT >= nowTime
   );
 
   const [missionOnFocus, setMissionOnFocus] = React.useState(null);

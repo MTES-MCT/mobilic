@@ -5,7 +5,7 @@ import Box from "@material-ui/core/Box";
 import { now } from "common/utils/time";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "common/utils/TextField";
-import { ACTIVITIES, SWITCH_ACTIVITIES } from "common/utils/activities";
+import { ACTIVITIES } from "common/utils/activities";
 import { getTime } from "common/utils/events";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
@@ -182,7 +182,7 @@ export default function ActivityRevisionOrCreationModal({
   handleRevisionAction,
   previousMissionEnd,
   nextMissionStart,
-  cancellable,
+  allowTeamMode = false,
   nullableEndTime = true,
   createActivity
 }) {
@@ -483,9 +483,13 @@ export default function ActivityRevisionOrCreationModal({
             value={isCreation ? newActivityType : event.type}
             onChange={e => setNewActivityType(e.target.value)}
           >
-            {Object.keys(SWITCH_ACTIVITIES).map(activityName => (
-              <MenuItem key={activityName} value={activityName}>
-                {SWITCH_ACTIVITIES[activityName].label}
+            {Object.keys(ACTIVITIES).map(activityName => (
+              <MenuItem
+                disabled={activityName === ACTIVITIES.support.name}
+                key={activityName}
+                value={activityName}
+              >
+                {ACTIVITIES[activityName].label}
               </MenuItem>
             ))}
           </TextField>
@@ -542,7 +546,7 @@ export default function ActivityRevisionOrCreationModal({
             noValidate
           />
         </Box>
-        {team.length > 1 && (
+        {allowTeamMode && team.length > 1 && (
           <Box mt={1}>
             <FormControlLabel
               control={

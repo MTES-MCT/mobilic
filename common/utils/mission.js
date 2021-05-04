@@ -22,7 +22,8 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     context: missionPayload.context,
     startLocation: missionPayload.startLocation,
     endLocation: missionPayload.endLocation,
-    ended: missionPayload.ended !== undefined ? missionPayload.ended : true
+    ended: missionPayload.ended !== undefined ? missionPayload.ended : true,
+    submitter: missionPayload.submitter || null
   };
 }
 
@@ -56,7 +57,8 @@ function computeMissionProperties(mission, userId, companies) {
       activities.length > 0 && !!activities[activities.length - 1].endTime,
     endTime:
       activities.length > 0 ? activities[activities.length - 1].endTime : null,
-    teamChanges: computeTeamChanges(mission.allActivities, userId)
+    teamChanges: computeTeamChanges(mission.allActivities, userId),
+    submittedBySomeoneElse: mission.submitter && mission.submitter.id !== userId
   };
 }
 

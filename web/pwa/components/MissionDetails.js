@@ -34,6 +34,7 @@ import ScheduleIcon from "@material-ui/icons/Schedule";
 import { Comment } from "../../common/Comment";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import LocationEntry from "./LocationEntry";
+import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -62,6 +63,10 @@ const useStyles = makeStyles(theme => ({
   },
   kilometerReading: {
     flexGrow: 0
+  },
+  teamModeAlert: {
+    marginTop: theme.spacing(1),
+    textAlign: "left"
   }
 }));
 
@@ -105,7 +110,6 @@ export function MissionDetails({
   inverseColors = false,
   isMissionEnded = true,
   coworkers = null,
-  vehicles = null,
   userId = null,
   fromTime = null,
   untilTime = null,
@@ -121,13 +125,18 @@ export function MissionDetails({
 
   let teamChanges = omit(mission.teamChanges, [actualUserId]);
 
+  const allowTeamActions =
+    mission.company &&
+    mission.company.allowTeamMode &&
+    !mission.submittedBySomeoneElse;
+
   const teamAtMissionEnd = [
     actualUserId,
     ...resolveTeamAt(teamChanges, Math.min(untilTime || now(), now()))
   ];
 
   const teamMatesLatestStatuses = computeLatestEnrollmentStatuses(teamChanges);
-  const isTeamMode = Object.keys(teamMatesLatestStatuses).length > 0;
+  const hasTeamMates = Object.keys(teamMatesLatestStatuses).length > 0;
 
   return (
     <AlternateColors inverseColors={inverseColors}>
@@ -163,7 +172,8 @@ export function MissionDetails({
                   previousMissionEnd,
                   nextMissionStart,
                   teamChanges,
-                  nullableEndTime: nullableEndTimeInEditActivity
+                  nullableEndTime: nullableEndTimeInEditActivity,
+                  allowTeamMode: allowTeamActions
                 })
             : null
         }
@@ -181,17 +191,18 @@ export function MissionDetails({
           nextMissionStart={nextMissionStart}
           previousMissionEnd={previousMissionEnd}
           teamChanges={teamChanges}
+          allowTeamMode={allowTeamActions}
           nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
           isMissionEnded={isMissionEnded}
           fromTime={fromTime}
           untilTime={untilTime}
         />
       </MissionReviewSection>
-      {isTeamMode || (mission.company && mission.company.allowTeamMode) ? (
+      {hasTeamMates || (mission.company && mission.company.allowTeamMode) ? (
         <MissionReviewSection
-          title={`${isTeamMode ? "Coéquipiers" : "En solo"}`}
+          title={`${hasTeamMates ? "Coéquipiers" : "En solo"}`}
           onEdit={
-            changeTeam
+            allowTeamActions && changeTeam
               ? () =>
                   modals.open("teamSelection", {
                     mission: mission,
@@ -202,8 +213,20 @@ export function MissionDetails({
           }
           editButtonLabel="Changer"
         >
-          {isTeamMode && (
-            <List dense>
+          {hasTeamMates && [
+            changeTeam && (
+              <Alert
+                severity="info"
+                color="warning"
+                key={0}
+                className={classes.teamModeAlert}
+              >
+                {mission.submittedBySomeoneElse
+                  ? `${mission.submitter.firstName} a choisi d'enregistrer le temps de travail pour toute l'équipe. Vous avez la possibilité de modifier les activités et frais vous concernant mais il est conseillé d'attendre la fin de mission pour éviter la double saisie.`
+                  : `Vous avez choisi d'enregistrer le temps de travail pour toute l'équipe. Pensez à les en informer afin d'éviter la double saisie.`}
+              </Alert>
+            ),
+            <List key={1} dense>
               {map(teamMatesLatestStatuses, (tc, id) => (
                 <ListItem disableGutters key={id}>
                   <ListItemIcon>
@@ -220,7 +243,7 @@ export function MissionDetails({
                 </ListItem>
               ))}
             </List>
-          )}
+          ]}
         </MissionReviewSection>
       ) : null}
       <MissionReviewSection title="Véhicule">
@@ -248,14 +271,22 @@ export function MissionDetails({
               mission={mission}
               location={mission.startLocation}
               isStart={true}
-              editKilometerReading={editKilometerReading}
+              editKilometerReading={
+                mission.company && mission.company.requireKilometerReading
+                  ? editKilometerReading
+                  : null
+              }
             />
             {mission.ended && (
               <LocationEntry
                 mission={mission}
                 location={mission.endLocation}
                 isStart={false}
-                editKilometerReading={editKilometerReading}
+                editKilometerReading={
+                  mission.company && mission.company.requireKilometerReading
+                    ? editKilometerReading
+                    : null
+                }
               />
             )}
           </List>
@@ -275,7 +306,8 @@ export function MissionDetails({
                         mission.id,
                         forAllTeam ? teamAtMissionEnd : []
                       ),
-                    hasTeamMates: teamAtMissionEnd.length > 1,
+                    hasTeamMates:
+                      allowTeamActions && teamAtMissionEnd.length > 1,
                     currentExpenditures: fromPairs(
                       uniq(mission.expenditures.map(e => [e.type, true]))
                     )
@@ -359,26 +391,30 @@ export function MissionDetails({
               </MainCtaButton>
             </Box>
           )}
-          {(!validateMission || mission.validation) && (
+          {(!validateMission ||
+            mission.validation ||
+            mission.adminValidation) && (
             <>
-              <Box
-                color={mission.validation ? "success.main" : "warning.main"}
-                className={classes.validationContainer}
-              >
-                {mission.validation ? (
-                  <CheckIcon fontSize="small" color="inherit" />
-                ) : (
-                  <ScheduleIcon fontSize="small" color="inherit" />
-                )}
-                <Typography className={classes.validationText}>
-                  {mission.validation
-                    ? `validée le ${formatDay(
-                        mission.validation.receptionTime
-                      )}`
-                    : "en attente de validation salarié"}
-                </Typography>
-              </Box>
-              {mission.validation && (
+              {!mission.adminValidation && (
+                <Box
+                  color={mission.validation ? "success.main" : "warning.main"}
+                  className={classes.validationContainer}
+                >
+                  {mission.validation ? (
+                    <CheckIcon fontSize="small" color="inherit" />
+                  ) : (
+                    <ScheduleIcon fontSize="small" color="inherit" />
+                  )}
+                  <Typography className={classes.validationText}>
+                    {mission.validation
+                      ? `validée le ${formatDay(
+                          mission.validation.receptionTime
+                        )}`
+                      : "en attente de validation salarié"}
+                  </Typography>
+                </Box>
+              )}
+              {(mission.adminValidation || mission.validation) && (
                 <Box
                   color={
                     mission.adminValidation ? "success.main" : "warning.main"
