@@ -131,7 +131,7 @@ export function Partners() {
           >
             {imageSrcs.keys().map(src => (
               <Grid item key={src}>
-                <img alt={src} src={imageSrcs(src)} height={160} />
+                <img alt={src} src={imageSrcs(src)} height={100} />
               </Grid>
             ))}
           </Grid>
