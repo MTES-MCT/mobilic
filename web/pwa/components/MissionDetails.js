@@ -67,6 +67,9 @@ const useStyles = makeStyles(theme => ({
   teamModeAlert: {
     marginTop: theme.spacing(1),
     textAlign: "left"
+  },
+  kilometers: {
+    paddingTop: theme.spacing(1)
   }
 }));
 
@@ -272,7 +275,9 @@ export function MissionDetails({
               location={mission.startLocation}
               isStart={true}
               editKilometerReading={
-                mission.company && mission.company.requireKilometerReading
+                mission.company &&
+                mission.company.requireKilometerReading &&
+                mission.vehicle
                   ? editKilometerReading
                   : null
               }
@@ -283,7 +288,9 @@ export function MissionDetails({
                 location={mission.endLocation}
                 isStart={false}
                 editKilometerReading={
-                  mission.company && mission.company.requireKilometerReading
+                  mission.company &&
+                  mission.company.requireKilometerReading &&
+                  mission.vehicle
                     ? editKilometerReading
                     : null
                 }
@@ -291,6 +298,19 @@ export function MissionDetails({
             )}
           </List>
         )}
+        {mission.startLocation &&
+          mission.startLocation.kilometerReading &&
+          mission.endLocation &&
+          mission.endLocation.kilometerReading &&
+          mission.endLocation.kilometerReading >=
+            mission.startLocation.kilometerReading && (
+            <Typography className={classes.kilometers}>
+              Distance parcourue :{" "}
+              {mission.endLocation.kilometerReading -
+                mission.startLocation.kilometerReading}{" "}
+              km
+            </Typography>
+          )}
       </MissionReviewSection>
       {!hideExpenditures && (
         <MissionReviewSection

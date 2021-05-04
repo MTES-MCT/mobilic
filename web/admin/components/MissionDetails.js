@@ -132,6 +132,9 @@ const useStyles = makeStyles(theme => ({
   },
   smallTextButton: {
     fontSize: "0.7rem"
+  },
+  kilometers: {
+    paddingTop: theme.spacing(1)
   }
 }));
 
@@ -658,6 +661,19 @@ export function MissionDetails({ mission, handleClose, width }) {
             isStart={false}
           />
         </List>
+        {mission.startLocation &&
+          mission.startLocation.kilometerReading &&
+          mission.endLocation &&
+          mission.endLocation.kilometerReading &&
+          mission.endLocation.kilometerReading >=
+            mission.startLocation.kilometerReading && (
+            <Typography className={classes.kilometers}>
+              Distance parcourue :{" "}
+              {mission.endLocation.kilometerReading -
+                mission.startLocation.kilometerReading}{" "}
+              km
+            </Typography>
+          )}
       </Section>
     ),
     <Section key={3} title="Détail par employé">
