@@ -137,6 +137,11 @@ export function Footer() {
               </Link>
             </Typography>
             <Typography className={classes.footerLink}>
+              <Link to="/partners" color="inherit">
+                Partenaires
+              </Link>
+            </Typography>
+            <Typography className={classes.footerLink}>
               <Link
                 href="/developers/docs/intro"
                 target="_blank"

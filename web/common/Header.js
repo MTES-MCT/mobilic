@@ -245,10 +245,15 @@ function DesktopHeader({ disableMenu }) {
       className={classes.docButton}
     >
       Foire aux questions
-    </LinkButton>
-    /*<LinkButton aria-label="Partenaires" key={2} to="/partners" className={classes.docButton}>
+    </LinkButton>,
+    <LinkButton
+      aria-label="Partenaires"
+      key={2}
+      to="/partners"
+      className={classes.docButton}
+    >
       Partenaires
-    </LinkButton>*/
+    </LinkButton>
   ];
 
   return (
