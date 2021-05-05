@@ -69,7 +69,8 @@ const useStyles = makeStyles(theme => ({
     textAlign: "left"
   },
   kilometers: {
-    paddingTop: theme.spacing(1)
+    paddingTop: theme.spacing(1),
+    textAlign: "left"
   }
 }));
 
@@ -276,7 +277,7 @@ export function MissionDetails({
               isStart={true}
               editKilometerReading={
                 mission.company &&
-                mission.company.requireKilometerReading &&
+                mission.company.requireKilometerData &&
                 mission.vehicle
                   ? editKilometerReading
                   : null
@@ -289,7 +290,7 @@ export function MissionDetails({
                 isStart={false}
                 editKilometerReading={
                   mission.company &&
-                  mission.company.requireKilometerReading &&
+                  mission.company.requireKilometerData &&
                   mission.vehicle
                     ? editKilometerReading
                     : null

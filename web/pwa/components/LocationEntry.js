@@ -26,9 +26,13 @@ export default function LocationEntry({
   const modals = useModals();
 
   let minReading = null;
+  let maxReading = null;
 
   if (!isStart && mission && mission.startLocation)
     minReading = mission.startLocation.kilometerReading;
+
+  if (isStart && mission && mission.endLocation)
+    maxReading = mission.endLocation.kilometerReading;
 
   function handleEditKilometerReading() {
     modals.open("kilometerReading", {
@@ -43,6 +47,7 @@ export default function LocationEntry({
       },
       currentKilometerReading: location.kilometerReading,
       minReading,
+      maxReading,
       isStart
     });
   }

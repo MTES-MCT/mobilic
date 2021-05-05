@@ -12,6 +12,7 @@ export default function KilometerReadingModal({
   open,
   handleKilometerReading,
   minReading = null,
+  maxReading = null,
   currentKilometerReading = null,
   isStart,
   handleClose
@@ -39,6 +40,7 @@ export default function KilometerReadingModal({
           error={error}
           setError={setError}
           minReading={minReading}
+          maxReading={maxReading}
         />
       </DialogContent>
       <CustomDialogActions>

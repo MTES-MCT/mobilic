@@ -7,19 +7,23 @@ export default function KilometerReadingInput({
   kilometerReading,
   setKilometerReading,
   minReading = null,
+  maxReading = null,
   error = null,
   setError = null,
   ...other
 }) {
   React.useEffect(() => {
-    if (
-      kilometerReading !== null &&
-      minReading &&
-      kilometerReading < minReading &&
-      setError
-    )
-      setError(`Le nombre ne peut pas être en-dessous de ${minReading} km.`);
-    else if (setError) setError(null);
+    if (kilometerReading !== null && setError) {
+      if (minReading && kilometerReading < minReading) {
+        setError(`Le nombre ne peut pas être en-dessous de ${minReading} km.`);
+        return;
+      }
+      if (maxReading && kilometerReading > maxReading) {
+        setError(`Le nombre ne peut pas être au-dessus de ${maxReading} km.`);
+        return;
+      }
+    }
+    if (setError) setError(null);
   }, [kilometerReading]);
 
   return (
