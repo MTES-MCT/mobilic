@@ -140,7 +140,7 @@ const tabs = {
       return (
         <div>
           <MissionSummary mission={mission}>
-            <WorkTimeSummaryAdditionalInfo disablePadding disableTopMargin>
+            <WorkTimeSummaryAdditionalInfo disablePadding>
               <MissionDetails
                 inverseColors
                 mission={mission}
