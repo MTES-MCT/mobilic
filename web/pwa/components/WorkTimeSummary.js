@@ -5,6 +5,7 @@ import {
   formatTimeOfDay,
   formatTimer,
   getStartOfDay,
+  LONG_BREAK_DURATION,
   now
 } from "common/utils/time";
 import Box from "@material-ui/core/Box";
@@ -31,6 +32,12 @@ const useStyles = makeStyles(theme => ({
       disableBottomMargin ? 0 : theme.spacing(4)
   }
 }));
+
+function formatRangeString(startTime, endTime) {
+  return getStartOfDay(startTime) === getStartOfDay(endTime - 1)
+    ? `De ${formatTimeOfDay(startTime)} à ${formatTimeOfDay(endTime)}`
+    : `Du ${formatDateTime(startTime)} au ${formatDateTime(endTime)}`;
+}
 
 export function WorkTimeSummaryKpi({
   label,
@@ -135,47 +142,88 @@ function computeTimesAndDurationsFromActivities(
   );
   const startTime = Math.max(filteredActivities[0].startTime, fromTime);
 
+  const innerLongBreaks = [];
+  filteredActivities.forEach((activity, index) => {
+    if (index > 0) {
+      const previousActivity = filteredActivities[index - 1];
+      const breakDuration = activity.startTime - previousActivity.endTime;
+      if (breakDuration >= LONG_BREAK_DURATION) {
+        innerLongBreaks.push({
+          startTime: previousActivity.endTime,
+          endTime: activity.startTime,
+          duration: breakDuration
+        });
+      }
+    }
+  });
+
   const dayTimers = computeTotalActivityDurations(
     activities,
     fromTime,
     untilTime
   );
 
-  const serviceHourString =
-    getStartOfDay(startTime) === getStartOfDay(endTime - 1)
-      ? `De ${formatTimeOfDay(startTime)} à ${formatTimeOfDay(endTime)}`
-      : `Du ${formatDateTime(startTime)} au ${formatDateTime(endTime)}`;
+  const serviceHourString = formatRangeString(startTime, endTime);
+
   return {
     startTime,
     endTime,
     serviceHourString,
-    timers: dayTimers
+    timers: dayTimers,
+    innerLongBreaks
   };
 }
 
-export function computeMissionKpis(mission, fromTime = null, untilTime = null) {
-  const { timers, serviceHourString } = computeTimesAndDurationsFromActivities(
-    mission.activities,
-    fromTime,
-    untilTime
-  );
+export function computeMissionKpis(
+  mission,
+  serviceLabel = "Amplitude",
+  showInnerBreaksInsteadOfService = false
+) {
+  const {
+    timers,
+    serviceHourString,
+    innerLongBreaks
+  } = computeTimesAndDurationsFromActivities(mission.activities);
 
-  return [
-    {
-      label: fromTime ? "Amplitude sur la journée" : "Amplitude",
+  const kpis = [];
+
+  let subText = null;
+  if (showInnerBreaksInsteadOfService && innerLongBreaks.length > 0) {
+    const innerLongBreak = innerLongBreaks[0];
+    subText = formatRangeString(
+      innerLongBreak.startTime,
+      innerLongBreak.endTime
+    );
+    kpis.push({
+      label: "Repos journalier",
+      value: formatTimer(innerLongBreak.duration),
+      subText
+    });
+  } else {
+    subText = serviceHourString;
+    kpis.push({
+      label: serviceLabel,
       value: formatTimer(timers ? timers.total : 0),
-      subText: serviceHourString
-    },
-    {
-      label: fromTime ? "Travail sur la journée" : "Temps de travail",
-      value: formatTimer(timers ? timers.totalWork : 0),
-      subText: serviceHourString,
-      hideSubText: true
-    }
-  ];
+      subText
+    });
+  }
+
+  kpis.push({
+    label: "Temps de travail",
+    value: formatTimer(timers ? timers.totalWork : 0),
+    subText,
+    hideSubText: true
+  });
+
+  return kpis;
 }
 
-export function computePeriodKpis(missions, fromTime = null, untilTime = null) {
+export function computePeriodKpis(
+  missions,
+  fromTime = null,
+  untilTime = null,
+  showInnerBreaksInsteadOfService = false
+) {
   const missionsPerDay = groupMissionsByPeriod(
     missions,
     getStartOfDay,
@@ -186,11 +234,36 @@ export function computePeriodKpis(missions, fromTime = null, untilTime = null) {
     (acts, mission) => [...acts, ...mission.activities],
     []
   );
-  const { timers, serviceHourString } = computeTimesAndDurationsFromActivities(
-    activities,
-    fromTime,
-    untilTime
-  );
+  const {
+    timers,
+    serviceHourString,
+    innerLongBreaks
+  } = computeTimesAndDurationsFromActivities(activities, fromTime, untilTime);
+
+  const kpis = [];
+
+  let subText = null;
+  if (showInnerBreaksInsteadOfService && innerLongBreaks.length > 0) {
+    const innerLongBreak = innerLongBreaks[0];
+    subText = formatRangeString(
+      innerLongBreak.startTime,
+      innerLongBreak.endTime
+    );
+    kpis.push({
+      name: "rest",
+      label: "Repos journalier",
+      value: formatTimer(innerLongBreak.duration),
+      subText
+    });
+  } else {
+    subText = serviceHourString;
+    kpis.push({
+      name: "service",
+      label: "Amplitude",
+      value: formatTimer(timers ? timers.total : 0),
+      subText
+    });
+  }
 
   const expendituresCount = {};
   missions.forEach(m => {
@@ -199,30 +272,24 @@ export function computePeriodKpis(missions, fromTime = null, untilTime = null) {
     });
   });
 
-  const metrics = [
-    {
-      name: "service",
-      label: "Amplitude",
-      value: formatTimer(timers ? timers.total : 0),
-      subText: serviceHourString
-    },
+  kpis.push(
     {
       name: "workedDays",
       label: "Jours travaillés",
       value: Object.keys(missionsPerDay).length,
-      subText: serviceHourString,
+      subText,
       hideSubText: true
     },
     {
       name: "workTime",
       label: "Temps de travail",
       value: formatTimer(timers ? timers.totalWork : 0),
-      subText: serviceHourString,
+      subText,
       hideSubText: true
     }
-  ];
+  );
   if (Object.keys(expendituresCount).length > 0)
-    metrics.push({
+    kpis.push({
       name: "expenditures",
       label: "Frais",
       fullWidth: true,
@@ -256,5 +323,5 @@ export function computePeriodKpis(missions, fromTime = null, untilTime = null) {
         </Grid>
       )
     });
-  return metrics;
+  return kpis;
 }

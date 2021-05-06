@@ -33,7 +33,10 @@ import {
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
 import { RegulationCheck } from "../components/RegulationCheck";
-import { checkDayRestRespect } from "common/utils/regulation";
+import {
+  checkDayRestRespect,
+  RULE_RESPECT_STATUS
+} from "common/utils/regulation";
 import { MissionReviewSection } from "../components/MissionReviewSection";
 import Link from "@material-ui/core/Link";
 import { MissionDetails } from "../components/MissionDetails";
@@ -53,12 +56,11 @@ import { ActivityList } from "../components/ActivityList";
 
 function MissionSummary({
   mission,
-  fromTime = null,
-  untilTime = null,
   alternateDisplay = false,
   children,
   collapsable = false,
-  defaultOpenCollapse = false
+  defaultOpenCollapse = false,
+  showMetrics = true
 }) {
   const [open, setOpen] = React.useState(defaultOpenCollapse);
   const classes = useStyles();
@@ -89,14 +91,16 @@ function MissionSummary({
         </Box>
       </WorkTimeSummaryAdditionalInfo>
       <Collapse in={open || !collapsable}>
-        <WorkTimeSummaryKpiGrid
-          metrics={computeMissionKpis(mission, fromTime, untilTime)}
-          cardProps={
-            alternateDisplay
-              ? { elevation: 0, className: classes.alternateCard }
-              : {}
-          }
-        />
+        {showMetrics && (
+          <WorkTimeSummaryKpiGrid
+            metrics={computeMissionKpis(mission, "Durée", true)}
+            cardProps={
+              alternateDisplay
+                ? { elevation: 0, className: classes.alternateCard }
+                : {}
+            }
+          />
+        )}
         {children}
       </Collapse>
     </>
@@ -136,7 +140,7 @@ const tabs = {
       return (
         <div>
           <MissionSummary mission={mission}>
-            <WorkTimeSummaryAdditionalInfo disablePadding>
+            <WorkTimeSummaryAdditionalInfo disablePadding disableTopMargin>
               <MissionDetails
                 inverseColors
                 mission={mission}
@@ -196,18 +200,30 @@ const tabs = {
       const lastMission = missionsInPeriod[missionsInPeriod.length - 1];
       const lastMissionEnd =
         lastMission.activities[lastMission.activities.length - 1].endTime;
+
+      const metrics = computePeriodKpis(
+        missionsInPeriod,
+        selectedPeriodStart,
+        selectedPeriodEnd,
+        true
+      ).filter(m => m.name !== "workedDays");
+
+      const hasInnerLongBreak =
+        metrics.filter(m => m.name === "rest").length > 0;
+
       return (
         <div>
-          <WorkTimeSummaryKpiGrid
-            metrics={computePeriodKpis(
-              missionsInPeriod,
-              selectedPeriodStart,
-              selectedPeriodEnd
-            ).filter(m => m.name !== "workedDays")}
-          />
+          <WorkTimeSummaryKpiGrid metrics={metrics} />
           <WorkTimeSummaryAdditionalInfo>
             <RegulationCheck
-              check={checkDayRestRespect(lastMissionEnd, followingMissionStart)}
+              check={
+                hasInnerLongBreak
+                  ? {
+                      status: RULE_RESPECT_STATUS.success,
+                      message: "Repos journalier respecté !"
+                    }
+                  : checkDayRestRespect(lastMissionEnd, followingMissionStart)
+              }
             />
           </WorkTimeSummaryAdditionalInfo>
           <WorkTimeSummaryAdditionalInfo>
@@ -240,11 +256,10 @@ const tabs = {
                   >
                     <MissionSummary
                       mission={mission}
-                      fromTime={selectedPeriodStart}
-                      untilTime={selectedPeriodEnd}
                       alternateDisplay
                       collapsable
                       defaultOpenCollapse={missionsInPeriod.length === 1}
+                      showMetrics={false}
                     >
                       <MissionDetails
                         inverseColors

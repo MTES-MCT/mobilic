@@ -35,6 +35,8 @@ const MONTHS = [
 
 const SHORT_DAYS = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"];
 
+export const LONG_BREAK_DURATION = 10 * HOUR;
+
 export function formatTimer(timerDuration) {
   if (!timerDuration && timerDuration !== 0) return null;
   const timerDurationInMinutes = (timerDuration / 60) >> 0;

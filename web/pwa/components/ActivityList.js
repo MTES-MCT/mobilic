@@ -9,6 +9,7 @@ import {
   formatLongTimer,
   formatTimeOfDay,
   getStartOfDay,
+  LONG_BREAK_DURATION,
   now
 } from "common/utils/time";
 import { getTime, sortEvents } from "common/utils/events";
@@ -24,6 +25,9 @@ const useStyles = makeStyles(theme => ({
   infoText: {
     color: theme.palette.grey[500],
     fontStyle: "italic"
+  },
+  longBreak: {
+    color: theme.palette.success.main
   }
 }));
 
@@ -40,21 +44,33 @@ function ActivityItem({
   showDates = false
 }) {
   const modals = useModals();
+  const classes = useStyles();
 
   const datetimeFormatter = showDates ? formatDateTime : formatTimeOfDay;
   const isBreak = activity.type === ACTIVITIES.break.name;
+  const isLongBreak =
+    isBreak && activity.duration && activity.duration >= LONG_BREAK_DURATION;
 
   return (
     <ListItem disableGutters>
       <ListItemAvatar>
         <Avatar>
           {ACTIVITIES[activity.type].renderIcon(
-            isBreak ? {} : { color: "primary" }
+            isLongBreak
+              ? { className: classes.longBreak }
+              : isBreak
+              ? {}
+              : { color: "primary" }
           )}
         </Avatar>
       </ListItemAvatar>
       <ListItemText
-        primary={ACTIVITIES[activity.type].label}
+        primary={
+          isLongBreak ? "Repos journalier" : ACTIVITIES[activity.type].label
+        }
+        primaryTypographyProps={
+          isLongBreak ? { className: classes.longBreak } : {}
+        }
         secondary={`${datetimeFormatter(activity.displayedStartTime)} - ${
           activity.displayedEndTime
             ? `${datetimeFormatter(
@@ -62,7 +78,13 @@ function ActivityItem({
               )} - ${formatLongTimer(activity.duration)}`
             : "En cours"
         }`}
-        secondaryTypographyProps={isBreak ? {} : { color: "primary" }}
+        secondaryTypographyProps={
+          isLongBreak
+            ? { className: classes.longBreak }
+            : isBreak
+            ? {}
+            : { color: "primary" }
+        }
       />
       {editActivityEvent && (
         <ListItemSecondaryAction>
