@@ -188,7 +188,11 @@ export function computeMissionKpis(
   const kpis = [];
 
   let subText = null;
-  if (showInnerBreaksInsteadOfService && innerLongBreaks.length > 0) {
+  if (
+    showInnerBreaksInsteadOfService &&
+    innerLongBreaks &&
+    innerLongBreaks.length > 0
+  ) {
     const innerLongBreak = innerLongBreaks[0];
     subText = formatRangeString(
       innerLongBreak.startTime,
@@ -243,7 +247,11 @@ export function computePeriodKpis(
   const kpis = [];
 
   let subText = null;
-  if (showInnerBreaksInsteadOfService && innerLongBreaks.length > 0) {
+  if (
+    showInnerBreaksInsteadOfService &&
+    innerLongBreaks &&
+    innerLongBreaks.length > 0
+  ) {
     const innerLongBreak = innerLongBreaks[0];
     subText = formatRangeString(
       innerLongBreak.startTime,
