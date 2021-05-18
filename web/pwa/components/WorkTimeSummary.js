@@ -1,6 +1,7 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
 import {
+  DAY,
   formatDateTime,
   formatTimeOfDay,
   formatTimer,
@@ -14,10 +15,9 @@ import Divider from "@material-ui/core/Divider";
 import Card from "@material-ui/core/Card";
 import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import moment from "moment";
 import omit from "lodash/omit";
 import { EXPENDITURES } from "common/utils/expenditures";
-import { groupMissionsByPeriod } from "common/utils/history";
+import { sortEvents } from "common/utils/events";
 
 const useStyles = makeStyles(theme => ({
   overviewTimer: {
@@ -224,20 +224,32 @@ export function computeMissionKpis(
 
 export function computePeriodKpis(
   missions,
-  fromTime = null,
-  untilTime = null,
+  fromTime,
+  untilTime,
   showInnerBreaksInsteadOfService = false
 ) {
-  const missionsPerDay = groupMissionsByPeriod(
-    missions,
-    getStartOfDay,
-    moment.duration(1, "days")
-  );
-
   const activities = missions.reduce(
     (acts, mission) => [...acts, ...mission.activities],
     []
   );
+
+  sortEvents(activities);
+
+  let civilDay = fromTime;
+  let workedDays = 0;
+  let activityIndex = 0;
+
+  while (civilDay < untilTime && activityIndex < activities.length) {
+    const nextDay = civilDay + DAY;
+    const activity = activities[activityIndex];
+
+    if (activity.endTime && activity.endTime <= civilDay) activityIndex++;
+    else if (activity.startTime < nextDay) {
+      workedDays++;
+      civilDay = nextDay;
+    } else civilDay = nextDay;
+  }
+
   const {
     timers,
     serviceHourString,
@@ -284,7 +296,7 @@ export function computePeriodKpis(
     {
       name: "workedDays",
       label: "Jours travaillés",
-      value: Object.keys(missionsPerDay).length,
+      value: workedDays,
       subText,
       hideSubText: true
     },
