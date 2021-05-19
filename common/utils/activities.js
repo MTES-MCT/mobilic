@@ -47,3 +47,15 @@ export function parseActivityPayloadFromBackend(activity) {
     context: activity.context
   };
 }
+
+export function filterActivitiesOverlappingPeriod(
+  activities,
+  periodStart,
+  periodEnd
+) {
+  return activities.filter(
+    a =>
+      (!periodStart || !a.endTime || a.endTime > periodStart) &&
+      (!periodEnd || a.startTime < periodEnd)
+  );
+}

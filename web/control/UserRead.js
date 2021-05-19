@@ -184,7 +184,10 @@ export function UserRead() {
               <Grid item xs={12}>
                 <InfoItem
                   name="Heure du contrôle"
-                  value={formatDateTime(controlTime || tokenInfo.creationTime)}
+                  value={formatDateTime(
+                    controlTime || tokenInfo.creationTime,
+                    true
+                  )}
                 />
               </Grid>
               <Grid item>

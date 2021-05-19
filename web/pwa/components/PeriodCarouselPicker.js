@@ -68,17 +68,14 @@ export function PeriodCarouselPicker({
   periodMissionsGetter = () => {}
 }) {
   const classes = useStyles();
-  const baseRef = React.useRef();
+
+  const periodRef = React.createRef();
 
   const selectedPeriodIdx = periods.findIndex(p => p === selectedPeriod);
-  const periodRefs = {};
-  periods.forEach(period => {
-    periodRefs[period] = React.createRef();
-  });
 
-  const scrollToSelectedPeriod = period => {
-    if (period && periodRefs[period]) {
-      periodRefs[period].current.scrollIntoView({
+  const scrollToSelectedPeriod = () => {
+    if (periodRef.current) {
+      periodRef.current.scrollIntoView({
         behavior: "smooth",
         inline: "center",
         block: "nearest"
@@ -86,18 +83,11 @@ export function PeriodCarouselPicker({
     }
   };
 
-  // Since we want the current selected period to be always visually scrolled to, adding a scrollIntoView in the period click handler is not enough.,
-  // because the period can be modified by other sources than the user click :
-  // - on loading data from the backend or local storage
-  // - when user changes tab (from day to week for instance), this alters both the selected item and the item list in the carousel
-
-  // The following effect is intended to handle all these secondary cases. It relies on the following (hacky) heuristics :
-  // - all these cases can be identified by a change of the whole list of items.
   React.useEffect(() => {
     if (periods) {
-      scrollToSelectedPeriod(selectedPeriod);
+      scrollToSelectedPeriod();
     }
-  }, [periods, selectedPeriod]);
+  }, [periodRef]);
 
   return (
     <Box style={{ position: "relative" }}>
@@ -111,24 +101,18 @@ export function PeriodCarouselPicker({
         >
           <ArrowLeftIcon />
         </Box>
-        <Box
-          ref={baseRef}
-          py={1}
-          mx={1}
-          className={`flex-row ${classes.carousel}`}
-        >
+        <Box py={1} mx={1} className={`flex-row ${classes.carousel}`}>
           {periods.map(period => {
             return (
               <Box
                 p={1}
                 px={2}
-                ref={periodRefs[period]}
+                ref={period === selectedPeriod ? periodRef : null}
                 key={period}
                 className={`${classes.periodContainer} ${period ===
                   selectedPeriod && classes.selectedPeriod}`}
                 onClick={() => {
                   onPeriodChange(period);
-                  scrollToSelectedPeriod(period);
                 }}
               >
                 {shouldDisplayRedChipsForPeriods &&

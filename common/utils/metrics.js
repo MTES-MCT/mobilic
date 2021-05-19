@@ -1,5 +1,5 @@
 import { getTime } from "./events";
-import { ACTIVITIES } from "./activities";
+import { ACTIVITIES, filterActivitiesOverlappingPeriod } from "./activities";
 import { now } from "./time";
 
 export function computeTotalActivityDurations(
@@ -10,10 +10,10 @@ export function computeTotalActivityDurations(
   const current = now();
   if (activityEvents.length === 0) return {};
 
-  const filteredActivityEvents = activityEvents.filter(
-    a =>
-      (!fromTime || a.endTime > fromTime) &&
-      (!untilTime || a.startTime < untilTime)
+  const filteredActivityEvents = filterActivitiesOverlappingPeriod(
+    activityEvents,
+    fromTime,
+    untilTime
   );
 
   const actualUntil = Math.min(

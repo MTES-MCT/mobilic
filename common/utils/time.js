@@ -91,11 +91,13 @@ export function isoFormatDateTime(unixTimestamp) {
   )}T${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
 }
 
-export function formatDateTime(unixTimestamp) {
+export function formatDateTime(unixTimestamp, showYear = false) {
   const date = new Date(unixTimestamp * 1000);
-  return `${date.toLocaleDateString()} ${addZero(date.getHours())}:${addZero(
-    date.getMinutes() % 60
-  )}`;
+  return `${date.toLocaleDateString(undefined, {
+    month: "2-digit",
+    day: "2-digit",
+    year: showYear ? "numeric" : undefined
+  })} ${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
 }
 
 function addZero(n) {

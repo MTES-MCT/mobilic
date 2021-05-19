@@ -25,7 +25,7 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
-import { getTime } from "common/utils/events";
+import { getTime, sortEvents } from "common/utils/events";
 import {
   findMatchingPeriodInNewScale,
   groupMissionsByPeriod
@@ -53,6 +53,12 @@ import IconButton from "@material-ui/core/IconButton";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import { ActivityList } from "../components/ActivityList";
+
+function ItalicWarningTypography(props) {
+  const classes = useStyles();
+
+  return <Typography className={classes.warningText} {...props} />;
+}
 
 function MissionSummary({
   mission,
@@ -91,6 +97,19 @@ function MissionSummary({
         </Box>
       </WorkTimeSummaryAdditionalInfo>
       <Collapse in={open || !collapsable}>
+        {!mission.ended && (
+          <WorkTimeSummaryAdditionalInfo
+            disableTopMargin
+            disableBottomMargin={false}
+            {...(alternateDisplay
+              ? { elevation: 0, className: classes.alternateCard }
+              : {})}
+          >
+            <ItalicWarningTypography>
+              Mission en cours !
+            </ItalicWarningTypography>
+          </WorkTimeSummaryAdditionalInfo>
+        )}
         {showMetrics && (
           <WorkTimeSummaryKpiGrid
             metrics={computeMissionKpis(mission, "Durée", true)}
@@ -154,6 +173,7 @@ const tabs = {
                 nullableEndTimeInEditActivity={
                   currentMission ? mission.id === currentMission.id : true
                 }
+                hideValidations={!mission.ended}
                 validateMission={validateMission}
                 validationButtonName="Valider"
                 logComment={logComment}
@@ -180,7 +200,7 @@ const tabs = {
       missionsInPeriod,
       selectedPeriodStart,
       selectedPeriodEnd,
-      followingMissionStart,
+      nextActivityPeriodStart,
       editActivityEvent,
       createActivity,
       editExpenditures,
@@ -198,8 +218,17 @@ const tabs = {
         activities.push(...mission.activities)
       );
       const lastMission = missionsInPeriod[missionsInPeriod.length - 1];
-      const lastMissionEnd =
-        lastMission.activities[lastMission.activities.length - 1].endTime;
+      const lastMissionActivitiesInPeriod = lastMission.activities.filter(
+        a => a.startTime < selectedPeriodEnd
+      );
+      const lastActivityTime = lastMissionActivitiesInPeriod.find(
+        a => !a.endTime
+      )
+        ? selectedPeriodEnd
+        : Math.min(
+            selectedPeriodEnd,
+            Math.max(...lastMissionActivitiesInPeriod.map(a => a.endTime))
+          );
 
       const metrics = computePeriodKpis(
         missionsInPeriod,
@@ -208,23 +237,31 @@ const tabs = {
         true
       ).filter(m => m.name !== "workedDays");
 
-      const hasInnerLongBreak =
-        metrics.filter(m => m.name === "rest").length > 0;
+      const innerLongBreak = metrics.find(m => m.name === "rest");
 
       return (
         <div>
           <WorkTimeSummaryKpiGrid metrics={metrics} />
           <WorkTimeSummaryAdditionalInfo>
-            <RegulationCheck
-              check={
-                hasInnerLongBreak
-                  ? {
-                      status: RULE_RESPECT_STATUS.success,
-                      message: "Repos journalier respecté !"
-                    }
-                  : checkDayRestRespect(lastMissionEnd, followingMissionStart)
-              }
-            />
+            {lastMission.ended ? (
+              <RegulationCheck
+                check={
+                  innerLongBreak
+                    ? {
+                        status: RULE_RESPECT_STATUS.success,
+                        message: `Repos journalier respecté (${innerLongBreak.value}) !`
+                      }
+                    : checkDayRestRespect(
+                        lastActivityTime,
+                        nextActivityPeriodStart
+                      )
+                }
+              />
+            ) : (
+              <ItalicWarningTypography>
+                Mission en cours !
+              </ItalicWarningTypography>
+            )}
           </WorkTimeSummaryAdditionalInfo>
           <WorkTimeSummaryAdditionalInfo>
             <MissionReviewSection
@@ -235,7 +272,7 @@ const tabs = {
                 activities={activities}
                 fromTime={selectedPeriodStart}
                 untilTime={selectedPeriodEnd}
-                isMissionEnded={true}
+                isMissionEnded={lastMission.ended}
               />
             </MissionReviewSection>
           </WorkTimeSummaryAdditionalInfo>
@@ -278,6 +315,7 @@ const tabs = {
                             ? mission.id === currentMission.id
                             : true
                         }
+                        hideValidations={!mission.ended}
                         validateMission={validateMission}
                         validationButtonName="Valider"
                         logComment={logComment}
@@ -458,6 +496,10 @@ const useStyles = makeStyles(theme => ({
   darkCard: {
     backgroundColor: theme.palette.grey[700],
     color: theme.palette.primary.contrastText
+  },
+  warningText: {
+    fontStyle: "italic",
+    color: theme.palette.warning.main
   }
 }));
 
@@ -518,6 +560,8 @@ export function History({
   const history = useHistory();
   const modals = useModals();
 
+  const [activities, setActivities] = React.useState([]);
+
   const onBackButtonClick = location.state
     ? () => history.push(location.state.previousPagePath)
     : null;
@@ -574,6 +618,15 @@ export function History({
     }
   }, [missions]);
 
+  React.useEffect(() => {
+    const acts = missions.reduce(
+      (acc, mission) => [...acc, ...mission.activities],
+      []
+    );
+    sortEvents(acts);
+    setActivities(acts);
+  }, [missions]);
+
   function handlePeriodChange(e, newTab, selectedDate) {
     const newGroups = groupMissionsByPeriod(
       missions,
@@ -614,28 +667,27 @@ export function History({
   const missionsInSelectedPeriod = groupedMissions[selectedPeriod];
   const followingPeriodStart = periods.find(p => p > selectedPeriod);
 
-  let followingMissionStart;
+  let nextActivityPeriodStart;
   if (currentTab === "mission") {
-    followingMissionStart = followingPeriodStart;
+    nextActivityPeriodStart = followingPeriodStart;
     if (
-      !followingMissionStart &&
+      !nextActivityPeriodStart &&
       currentMission &&
       !missions.find(m => m.id === currentMission.id)
     )
-      followingMissionStart = getTime(currentMission);
+      nextActivityPeriodStart = getTime(currentMission);
   } else {
     if (followingPeriodStart) {
-      followingMissionStart = getTime(groupedMissions[followingPeriodStart][0]);
+      const activitiesAfterPeriod = activities.filter(
+        a => !a.endTime || a.endTime >= followingPeriodStart
+      );
+      if (activitiesAfterPeriod.length !== 0)
+        nextActivityPeriodStart = Math.max(
+          followingPeriodStart,
+          Math.min(...activitiesAfterPeriod.map(a => a.startTime))
+        );
     }
   }
-
-  if (
-    !followingMissionStart &&
-    currentTab === "mission" &&
-    currentMission &&
-    !missions.find(m => m.id === currentMission.id)
-  )
-    followingMissionStart = getTime(currentMission);
 
   const periodsWithNeedForValidation = mapValues(groupedMissions, ms =>
     ms.some(m => !m.validation && !m.adminValidation)
@@ -679,14 +731,14 @@ export function History({
             value={currentTab}
             onChange={(e, tab) => handlePeriodChange(e, tab, selectedPeriod)}
             style={{ flexGrow: 1 }}
-            centered
+            variant="fullWdith"
           >
             {Object.values(tabs).map((tabProps, index) => (
               <Tab
-                key={index}
+                key={index + 1}
                 label={tabProps.label}
                 value={tabProps.value}
-                style={{ flexGrow: 1 }}
+                style={{ flexGrow: 1, flexShrink: 1, minWidth: 0 }}
               />
             ))}
           </Tabs>
@@ -734,7 +786,7 @@ export function History({
               missionsInPeriod: missionsInSelectedPeriod,
               handleMissionClick: date => e =>
                 handlePeriodChange(e, "mission", date),
-              followingMissionStart,
+              nextActivityPeriodStart,
               editActivityEvent,
               createActivity,
               editExpenditures,

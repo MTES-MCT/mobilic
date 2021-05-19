@@ -18,6 +18,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import omit from "lodash/omit";
 import { EXPENDITURES } from "common/utils/expenditures";
 import { sortEvents } from "common/utils/events";
+import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
 
 const useStyles = makeStyles(theme => ({
   overviewTimer: {
@@ -128,10 +129,10 @@ function computeTimesAndDurationsFromActivities(
   fromTime = null,
   untilTime = null
 ) {
-  const filteredActivities = activities.filter(
-    a =>
-      (!fromTime || a.endTime > fromTime) &&
-      (!untilTime || a.startTime < untilTime)
+  const filteredActivities = filterActivitiesOverlappingPeriod(
+    activities,
+    fromTime,
+    untilTime
   );
 
   if (filteredActivities.length === 0) return {};
@@ -243,7 +244,7 @@ export function computePeriodKpis(
     const nextDay = civilDay + DAY;
     const activity = activities[activityIndex];
 
-    if (activity.endTime && activity.endTime <= civilDay) activityIndex++;
+    if (activity.endTime && activity.endTime < civilDay) activityIndex++;
     else if (activity.startTime < nextDay) {
       workedDays++;
       civilDay = nextDay;

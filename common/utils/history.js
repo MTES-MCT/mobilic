@@ -5,6 +5,7 @@
 // - conversely, when switching from week to day, we decide (arbitrarily) that the new period should be the first (existing) day of the current week
 import { getTime } from "./events";
 import moment from "moment";
+import { now } from "./time";
 
 export function findMatchingPeriodInNewScale(
   oldPeriod, // the selected period on the old time scale
@@ -38,11 +39,15 @@ export function findMatchingPeriodInNewScale(
 
 export function groupMissionsByPeriod(missions, periodStart, periodLength) {
   const groups = {};
+  const now1 = now();
   missions.forEach(mission => {
     const firstPeriod = periodStart(getTime(mission));
-    const lastPeriod = periodLength.asSeconds()
-      ? periodStart(mission.activities[mission.activities.length - 1].endTime)
-      : firstPeriod;
+    const lastPeriod =
+      periodLength.asSeconds() > 0
+        ? periodStart(
+            mission.activities[mission.activities.length - 1].endTime || now1
+          )
+        : firstPeriod;
     let currentPeriod = firstPeriod;
     while (currentPeriod <= lastPeriod) {
       if (!groups[currentPeriod]) groups[currentPeriod] = [];

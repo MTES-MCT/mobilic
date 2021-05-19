@@ -3,7 +3,10 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import { ACTIVITIES } from "common/utils/activities";
+import {
+  ACTIVITIES,
+  filterActivitiesOverlappingPeriod
+} from "common/utils/activities";
 import {
   formatDateTime,
   formatLongTimer,
@@ -147,11 +150,12 @@ export function ActivityList({
   fromTime = null,
   untilTime = null
 }) {
-  const filteredActivities = activities.filter(
-    a =>
-      (!fromTime || a.endTime > fromTime) &&
-      (!untilTime || a.startTime < untilTime)
+  const filteredActivities = filterActivitiesOverlappingPeriod(
+    activities,
+    fromTime,
+    untilTime
   );
+
   const hasActivitiesBeforeMinTime =
     fromTime && filteredActivities.some(a => a.startTime < fromTime);
   const hasActivitiesAfterMaxTime =

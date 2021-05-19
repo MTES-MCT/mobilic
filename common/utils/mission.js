@@ -58,6 +58,7 @@ function computeMissionProperties(mission, userId, companies) {
     endTime:
       activities.length > 0 ? activities[activities.length - 1].endTime : null,
     teamChanges: computeTeamChanges(mission.allActivities, userId),
+    ended: mission.ended && activities.every(a => !!a.endTime),
     submittedBySomeoneElse: mission.submitter && mission.submitter.id !== userId
   };
 }
