@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: 0
   },
   title: {
-    marginBottom: theme.spacing(4)
+    marginBottom: theme.spacing(6)
   }
 }));
 
@@ -131,7 +131,7 @@ export function Partners() {
           >
             {imageSrcs.keys().map(src => (
               <Grid item key={src}>
-                <img alt={src} src={imageSrcs(src)} height={100} />
+                <img alt={src} src={imageSrcs(src)} height={80} />
               </Grid>
             ))}
           </Grid>
