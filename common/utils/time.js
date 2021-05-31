@@ -4,6 +4,7 @@ import format from "date-fns/format";
 export const DAY = 86400;
 export const WEEK = 7 * 86400;
 export const HOUR = 3600;
+export const MINUTE = 60;
 export const SHORT_MONTHS = [
   "jan",
   "fev",

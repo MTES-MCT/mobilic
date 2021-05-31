@@ -6,6 +6,7 @@
 import { getTime } from "./events";
 import moment from "moment";
 import { now } from "./time";
+import { filterActivitiesOverlappingPeriod } from "./activities";
 
 export function findMatchingPeriodInNewScale(
   oldPeriod, // the selected period on the old time scale
@@ -50,9 +51,7 @@ export function groupMissionsByPeriod(missions, periodStart, periodLength) {
         : firstPeriod;
     let currentPeriod = firstPeriod;
     while (currentPeriod <= lastPeriod) {
-      if (!groups[currentPeriod]) groups[currentPeriod] = [];
-      groups[currentPeriod].push(mission);
-      currentPeriod = moment
+      const nextPeriod = moment
         .unix(currentPeriod)
         .add(
           periodLength.asSeconds() > 0
@@ -60,6 +59,20 @@ export function groupMissionsByPeriod(missions, periodStart, periodLength) {
             : moment.duration(1, "days")
         )
         .unix();
+
+      if (
+        currentPeriod === lastPeriod ||
+        currentPeriod === firstPeriod ||
+        filterActivitiesOverlappingPeriod(
+          mission.activities,
+          currentPeriod,
+          nextPeriod
+        ).length > 0
+      ) {
+        if (!groups[currentPeriod]) groups[currentPeriod] = [];
+        groups[currentPeriod].push(mission);
+      }
+      currentPeriod = nextPeriod;
     }
   });
   return groups;

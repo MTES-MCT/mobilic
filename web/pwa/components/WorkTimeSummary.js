@@ -124,7 +124,7 @@ export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {} }) {
   );
 }
 
-function computeTimesAndDurationsFromActivities(
+export function computeTimesAndDurationsFromActivities(
   activities,
   fromTime = null,
   untilTime = null
@@ -135,7 +135,15 @@ function computeTimesAndDurationsFromActivities(
     untilTime
   );
 
-  if (filteredActivities.length === 0) return {};
+  if (filteredActivities.length === 0)
+    return {
+      startTime: null,
+      endTime: null,
+      timers: null,
+      innerLongBreaks: [],
+      filteredActivities: [],
+      groupedActivities: []
+    };
 
   const endTime = Math.min(
     filteredActivities[filteredActivities.length - 1].endTime || now(),
@@ -144,6 +152,7 @@ function computeTimesAndDurationsFromActivities(
   const startTime = Math.max(filteredActivities[0].startTime, fromTime);
 
   const innerLongBreaks = [];
+  const groupedActivities = [[filteredActivities[0]]];
   filteredActivities.forEach((activity, index) => {
     if (index > 0) {
       const previousActivity = filteredActivities[index - 1];
@@ -154,7 +163,9 @@ function computeTimesAndDurationsFromActivities(
           endTime: activity.startTime,
           duration: breakDuration
         });
+        groupedActivities.push([]);
       }
+      groupedActivities[groupedActivities.length - 1].push(activity);
     }
   });
 
@@ -164,71 +175,57 @@ function computeTimesAndDurationsFromActivities(
     untilTime
   );
 
-  const serviceHourString = formatRangeString(startTime, endTime);
-
   return {
     startTime,
     endTime,
-    serviceHourString,
     timers: dayTimers,
-    innerLongBreaks
+    innerLongBreaks,
+    filteredActivities,
+    groupedActivities
   };
 }
 
-export function computeMissionKpis(
-  mission,
+export function renderMissionKpis(
+  kpis,
   serviceLabel = "Amplitude",
   showInnerBreaksInsteadOfService = false
 ) {
-  const {
-    timers,
-    serviceHourString,
-    innerLongBreaks
-  } = computeTimesAndDurationsFromActivities(mission.activities);
+  const { timers, startTime, endTime, innerLongBreaks } = kpis;
 
-  const kpis = [];
+  const formattedKpis = [];
 
   let subText = null;
-  if (
-    showInnerBreaksInsteadOfService &&
-    innerLongBreaks &&
-    innerLongBreaks.length > 0
-  ) {
+  if (showInnerBreaksInsteadOfService && innerLongBreaks.length > 0) {
     const innerLongBreak = innerLongBreaks[0];
     subText = formatRangeString(
       innerLongBreak.startTime,
       innerLongBreak.endTime
     );
-    kpis.push({
+    formattedKpis.push({
       label: "Repos journalier",
       value: formatTimer(innerLongBreak.duration),
       subText
     });
   } else {
-    subText = serviceHourString;
-    kpis.push({
+    subText = formatRangeString(startTime, endTime);
+    formattedKpis.push({
       label: serviceLabel,
       value: formatTimer(timers ? timers.total : 0),
       subText
     });
   }
 
-  kpis.push({
+  formattedKpis.push({
     label: "Temps de travail",
     value: formatTimer(timers ? timers.totalWork : 0),
     subText,
     hideSubText: true
   });
 
-  return kpis;
+  return formattedKpis;
 }
 
-export function computePeriodKpis(
-  missions,
-  fromTime,
-  untilTime,
-  showInnerBreaksInsteadOfService = false
-) {
+export function computePeriodStats(missions, fromTime, untilTime) {
   const activities = missions.reduce(
     (acts, mission) => [...acts, ...mission.activities],
     []
@@ -253,38 +250,12 @@ export function computePeriodKpis(
 
   const {
     timers,
-    serviceHourString,
-    innerLongBreaks
+    startTime,
+    endTime,
+    innerLongBreaks,
+    groupedActivities,
+    filteredActivities
   } = computeTimesAndDurationsFromActivities(activities, fromTime, untilTime);
-
-  const kpis = [];
-
-  let subText = null;
-  if (
-    showInnerBreaksInsteadOfService &&
-    innerLongBreaks &&
-    innerLongBreaks.length > 0
-  ) {
-    const innerLongBreak = innerLongBreaks[0];
-    subText = formatRangeString(
-      innerLongBreak.startTime,
-      innerLongBreak.endTime
-    );
-    kpis.push({
-      name: "rest",
-      label: "Repos journalier",
-      value: formatTimer(innerLongBreak.duration),
-      subText
-    });
-  } else {
-    subText = serviceHourString;
-    kpis.push({
-      name: "service",
-      label: "Amplitude",
-      value: formatTimer(timers ? timers.total : 0),
-      subText
-    });
-  }
 
   const expendituresCount = {};
   missions.forEach(m => {
@@ -293,24 +264,65 @@ export function computePeriodKpis(
     });
   });
 
-  kpis.push(
+  return {
+    timers,
+    startTime,
+    endTime,
+    innerLongBreaks,
+    workedDays,
+    expendituresCount,
+    filteredActivities,
+    groupedActivities
+  };
+}
+
+export function renderPeriodKpis(
+  kpis,
+  showInnerBreaksInsteadOfService = false
+) {
+  const formattedKpis = [];
+
+  let subText = null;
+  if (showInnerBreaksInsteadOfService && kpis.innerLongBreaks.length > 0) {
+    const innerLongBreak = kpis.innerLongBreaks[0];
+    subText = formatRangeString(
+      innerLongBreak.startTime,
+      innerLongBreak.endTime
+    );
+    formattedKpis.push({
+      name: "rest",
+      label: "Repos journalier",
+      value: formatTimer(innerLongBreak.duration),
+      subText
+    });
+  } else {
+    subText = formatRangeString(kpis.startTime, kpis.endTime);
+    formattedKpis.push({
+      name: "service",
+      label: "Amplitude",
+      value: formatTimer(kpis.timers ? kpis.timers.total : 0),
+      subText
+    });
+  }
+
+  formattedKpis.push(
     {
       name: "workedDays",
       label: "Jours travaillés",
-      value: workedDays,
+      value: kpis.workedDays,
       subText,
       hideSubText: true
     },
     {
       name: "workTime",
       label: "Temps de travail",
-      value: formatTimer(timers ? timers.totalWork : 0),
+      value: formatTimer(kpis.timers ? kpis.timers.totalWork : 0),
       subText,
       hideSubText: true
     }
   );
-  if (Object.keys(expendituresCount).length > 0)
-    kpis.push({
+  if (Object.keys(kpis.expendituresCount).length > 0)
+    formattedKpis.push({
       name: "expenditures",
       label: "Frais",
       fullWidth: true,
@@ -322,7 +334,7 @@ export function computePeriodKpis(
           alignItems={"center"}
           spacing={1}
         >
-          {Object.keys(expendituresCount).map(type => (
+          {Object.keys(kpis.expendituresCount).map(type => (
             <Grid key={type} item xs>
               <Box py={1} m="auto">
                 <Typography
@@ -336,7 +348,7 @@ export function computePeriodKpis(
                   {EXPENDITURES[type].plural}
                 </Typography>
                 <Typography variant="h4" style={{ fontWeight: "bold" }}>
-                  {expendituresCount[type]}
+                  {kpis.expendituresCount[type]}
                 </Typography>
               </Box>
             </Grid>
@@ -344,5 +356,5 @@ export function computePeriodKpis(
         </Grid>
       )
     });
-  return kpis;
+  return formattedKpis;
 }

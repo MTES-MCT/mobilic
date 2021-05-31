@@ -13,11 +13,14 @@ import {
   startOfDay,
   WEEK,
   HOUR,
-  getStartOfDay
+  getStartOfDay,
+  formatTimer
 } from "common/utils/time";
 import {
-  computeMissionKpis,
-  computePeriodKpis,
+  computePeriodStats,
+  computeTimesAndDurationsFromActivities,
+  renderMissionKpis,
+  renderPeriodKpis,
   WorkTimeSummaryAdditionalInfo,
   WorkTimeSummaryKpiGrid
 } from "../components/WorkTimeSummary";
@@ -34,7 +37,11 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
 import { RegulationCheck } from "../components/RegulationCheck";
 import {
-  checkDayRestRespect,
+  checkMaximumDurationOfUninterruptedWork,
+  checkMaximumDurationOfWork,
+  checkMinimumDurationOfBreak,
+  checkMinimumDurationOfDailyRest,
+  checkMinimumDurationOfWeeklyRest,
   RULE_RESPECT_STATUS
 } from "common/utils/regulation";
 import { MissionReviewSection } from "../components/MissionReviewSection";
@@ -46,6 +53,7 @@ import { useLocation, useHistory } from "react-router-dom";
 import Box from "@material-ui/core/Box";
 import { NoDataImage } from "common/utils/icons";
 import Button from "@material-ui/core/Button";
+import maxBy from "lodash/maxBy";
 import { useModals } from "common/utils/modals";
 import moment from "moment";
 import Collapse from "@material-ui/core/Collapse";
@@ -70,6 +78,8 @@ function MissionSummary({
 }) {
   const [open, setOpen] = React.useState(defaultOpenCollapse);
   const classes = useStyles();
+
+  const kpis = computeTimesAndDurationsFromActivities(mission.activities);
 
   return (
     <>
@@ -112,7 +122,7 @@ function MissionSummary({
         )}
         {showMetrics && (
           <WorkTimeSummaryKpiGrid
-            metrics={computeMissionKpis(mission, "Durée", true)}
+            metrics={renderMissionKpis(kpis, "Durée", true)}
             cardProps={
               alternateDisplay
                 ? { elevation: 0, className: classes.alternateCard }
@@ -213,50 +223,69 @@ const tabs = {
       vehicles,
       userId
     }) => {
-      const activities = [];
-      missionsInPeriod.forEach(mission =>
-        activities.push(...mission.activities)
-      );
       const lastMission = missionsInPeriod[missionsInPeriod.length - 1];
-      const lastMissionActivitiesInPeriod = lastMission.activities.filter(
-        a => a.startTime < selectedPeriodEnd
-      );
-      const lastActivityTime = lastMissionActivitiesInPeriod.find(
-        a => !a.endTime
-      )
-        ? selectedPeriodEnd
-        : Math.min(
-            selectedPeriodEnd,
-            Math.max(...lastMissionActivitiesInPeriod.map(a => a.endTime))
-          );
 
-      const metrics = computePeriodKpis(
+      const stats = computePeriodStats(
         missionsInPeriod,
         selectedPeriodStart,
-        selectedPeriodEnd,
-        true
-      ).filter(m => m.name !== "workedDays");
+        selectedPeriodEnd
+      );
 
-      const innerLongBreak = metrics.find(m => m.name === "rest");
+      const innerLongBreak = stats.innerLongBreaks
+        ? stats.innerLongBreaks[0]
+        : null;
 
       return (
         <div>
-          <WorkTimeSummaryKpiGrid metrics={metrics} />
+          <WorkTimeSummaryKpiGrid
+            metrics={renderPeriodKpis(stats, true).filter(
+              m => m.name !== "workedDays"
+            )}
+          />
           <WorkTimeSummaryAdditionalInfo>
             {lastMission.ended ? (
-              <RegulationCheck
-                check={
-                  innerLongBreak
-                    ? {
-                        status: RULE_RESPECT_STATUS.success,
-                        message: `Repos journalier respecté (${innerLongBreak.value}) !`
-                      }
-                    : checkDayRestRespect(
-                        lastActivityTime,
-                        nextActivityPeriodStart
-                      )
-                }
-              />
+              <>
+                <RegulationCheck
+                  key={0}
+                  check={
+                    innerLongBreak
+                      ? {
+                          status: RULE_RESPECT_STATUS.success,
+                          message: `Repos journalier respecté (${formatTimer(
+                            innerLongBreak.duration
+                          )}) !`
+                        }
+                      : checkMinimumDurationOfDailyRest(
+                          stats.endTime,
+                          nextActivityPeriodStart
+                        )
+                  }
+                />
+                <RegulationCheck
+                  key={1}
+                  check={checkMaximumDurationOfUninterruptedWork(
+                    stats.filteredActivities
+                  )}
+                />
+                <RegulationCheck
+                  key={2}
+                  check={maxBy(
+                    stats.groupedActivities.map(acts =>
+                      checkMaximumDurationOfWork(acts)
+                    ),
+                    r => r.status
+                  )}
+                />
+                <RegulationCheck
+                  key={3}
+                  check={maxBy(
+                    stats.groupedActivities.map(acts =>
+                      checkMinimumDurationOfBreak(acts)
+                    ),
+                    r => r.status
+                  )}
+                />
+              </>
             ) : (
               <ItalicWarningTypography>
                 Mission en cours !
@@ -269,7 +298,7 @@ const tabs = {
               className="no-margin-no-padding"
             >
               <ActivityList
-                activities={activities}
+                activities={stats.filteredActivities}
                 fromTime={selectedPeriodStart}
                 untilTime={selectedPeriodEnd}
                 isMissionEnded={lastMission.ended}
@@ -368,50 +397,64 @@ const tabs = {
       missionsInPeriod,
       selectedPeriodStart,
       selectedPeriodEnd,
-      handleMissionClick
-    }) => (
-      <div>
-        <WorkTimeSummaryKpiGrid
-          metrics={computePeriodKpis(
-            missionsInPeriod,
-            selectedPeriodStart,
-            selectedPeriodEnd
-          ).filter(m => m.name !== "service")}
-        />
-        <WorkTimeSummaryAdditionalInfo>
-          <MissionReviewSection
-            title="Détail par mission"
-            className="no-margin-no-padding"
-          >
-            <List>
-              {missionsInPeriod.map((mission, index) => [
-                <ListItem
-                  key={2 * index}
-                  onClick={handleMissionClick(getTime(mission))}
-                >
-                  <ListItemText disableTypography>
-                    <Link
-                      component="button"
-                      variant="body1"
-                      style={{ textAlign: "justify" }}
-                      onClick={e => {
-                        e.preventDefault();
-                      }}
-                    >
-                      Mission{mission.name ? " " + mission.name : ""} du{" "}
-                      {prettyFormatDay(getTime(mission))}
-                    </Link>
-                  </ListItemText>
-                </ListItem>,
-                index < missionsInPeriod.length - 1 ? (
-                  <Divider key={2 * index + 1} component="li" />
-                ) : null
-              ])}
-            </List>
-          </MissionReviewSection>
-        </WorkTimeSummaryAdditionalInfo>
-      </div>
-    )
+      handleMissionClick,
+      nextActivityPeriodStart
+    }) => {
+      const stats = computePeriodStats(
+        missionsInPeriod,
+        selectedPeriodStart,
+        selectedPeriodEnd
+      );
+      return (
+        <div>
+          <WorkTimeSummaryKpiGrid
+            metrics={renderPeriodKpis(stats).filter(m => m.name !== "service")}
+          />
+          <WorkTimeSummaryAdditionalInfo>
+            <RegulationCheck
+              check={checkMinimumDurationOfWeeklyRest(
+                stats.workedDays,
+                stats.innerLongBreaks,
+                stats.endTime,
+                nextActivityPeriodStart
+              )}
+            />
+          </WorkTimeSummaryAdditionalInfo>
+          <WorkTimeSummaryAdditionalInfo>
+            <MissionReviewSection
+              title="Détail par mission"
+              className="no-margin-no-padding"
+            >
+              <List>
+                {missionsInPeriod.map((mission, index) => [
+                  <ListItem
+                    key={2 * index}
+                    onClick={handleMissionClick(getTime(mission))}
+                  >
+                    <ListItemText disableTypography>
+                      <Link
+                        component="button"
+                        variant="body1"
+                        style={{ textAlign: "justify" }}
+                        onClick={e => {
+                          e.preventDefault();
+                        }}
+                      >
+                        Mission{mission.name ? " " + mission.name : ""} du{" "}
+                        {prettyFormatDay(getTime(mission))}
+                      </Link>
+                    </ListItemText>
+                  </ListItem>,
+                  index < missionsInPeriod.length - 1 ? (
+                    <Divider key={2 * index + 1} component="li" />
+                  ) : null
+                ])}
+              </List>
+            </MissionReviewSection>
+          </WorkTimeSummaryAdditionalInfo>
+        </div>
+      );
+    }
   },
   month: {
     label: "Mois",
@@ -425,10 +468,12 @@ const tabs = {
     }) => (
       <div>
         <WorkTimeSummaryKpiGrid
-          metrics={computePeriodKpis(
-            missionsInPeriod,
-            selectedPeriodStart,
-            selectedPeriodEnd
+          metrics={renderPeriodKpis(
+            computePeriodStats(
+              missionsInPeriod,
+              selectedPeriodStart,
+              selectedPeriodEnd
+            )
           ).filter(m => m.name !== "service")}
         />
       </div>

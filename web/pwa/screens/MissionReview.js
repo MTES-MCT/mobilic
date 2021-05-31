@@ -5,12 +5,13 @@ import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import {
-  computeMissionKpis,
+  renderMissionKpis,
   WorkTimeSummaryKpiGrid
 } from "../components/WorkTimeSummary";
 import { AccountButton } from "../components/AccountButton";
 import { prettyFormatDay } from "common/utils/time";
 import { MissionDetails } from "../components/MissionDetails";
+import { computeTotalActivityDurations } from "common/utils/metrics";
 
 const useStyles = makeStyles(theme => ({
   overviewTimersContainer: {
@@ -36,8 +37,6 @@ export function MissionReview({
   cancelComment,
   registerKilometerReading
 }) {
-  const missionMetrics = computeMissionKpis(currentMission);
-
   const classes = useStyles();
   return (
     <Container style={{ flexGrow: 1 }} className="flex-column" disableGutters>
@@ -53,7 +52,11 @@ export function MissionReview({
             currentMission.name ? currentMission.name : ""
           } du ${prettyFormatDay(getTime(currentMission))}`}
         </Typography>
-        <WorkTimeSummaryKpiGrid metrics={missionMetrics} />
+        <WorkTimeSummaryKpiGrid
+          metrics={renderMissionKpis(
+            computeTotalActivityDurations(currentMission)
+          )}
+        />
       </Box>
       <MissionDetails
         mission={currentMission}
