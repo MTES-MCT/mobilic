@@ -209,7 +209,7 @@ export function renderMissionKpis(
   } else {
     subText = formatRangeString(startTime, endTime);
     formattedKpis.push({
-      label: serviceLabel,
+      label: kpis.innerLongBreaks.length > 0 ? "Durée" : serviceLabel,
       value: formatTimer(timers ? timers.total : 0),
       subText
     });

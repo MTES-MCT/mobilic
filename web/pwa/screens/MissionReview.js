@@ -5,13 +5,13 @@ import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import {
+  computeTimesAndDurationsFromActivities,
   renderMissionKpis,
   WorkTimeSummaryKpiGrid
 } from "../components/WorkTimeSummary";
 import { AccountButton } from "../components/AccountButton";
 import { prettyFormatDay } from "common/utils/time";
 import { MissionDetails } from "../components/MissionDetails";
-import { computeTotalActivityDurations } from "common/utils/metrics";
 
 const useStyles = makeStyles(theme => ({
   overviewTimersContainer: {
@@ -54,7 +54,7 @@ export function MissionReview({
         </Typography>
         <WorkTimeSummaryKpiGrid
           metrics={renderMissionKpis(
-            computeTotalActivityDurations(currentMission)
+            computeTimesAndDurationsFromActivities(currentMission.activities)
           )}
         />
       </Box>
