@@ -16,10 +16,20 @@ import max from "lodash/max";
 import { CompanyFilter } from "../components/CompanyFilter";
 import Typography from "@material-ui/core/Typography";
 import { formatDay } from "common/utils/time";
+import Grid from "@material-ui/core/Grid";
+import MenuItem from "@material-ui/core/MenuItem";
+import Menu from "@material-ui/core/Menu/Menu";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import SvgIcon from "@material-ui/core/SvgIcon";
+import { ReactComponent as ExcelIcon } from "common/assets/images/excel.svg";
+import { ReactComponent as TachoIcon } from "common/assets/images/tacho.svg";
 
 const useStyles = makeStyles(theme => ({
-  exportButton: {
-    marginLeft: theme.spacing(4)
+  filterGrid: {
+    paddingTop: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    flexShrink: 0
   },
   tableTitle: {
     marginBottom: theme.spacing(3),
@@ -47,6 +57,8 @@ export default function ActivityPanel() {
   const [users, setUsers] = React.useState([]);
   const [companies, setCompanies] = React.useState([]);
   const [period, setPeriod] = React.useState("day");
+
+  const [exportMenuAnchorEl, setExportMenuAnchorEl] = React.useState(null);
 
   React.useEffect(() => {
     if (adminStore.companies) {
@@ -97,26 +109,64 @@ export default function ActivityPanel() {
       key={0}
       ref={ref}
     >
-      <Box
-        px={2}
-        pt={2}
-        className="flex-row-space-between"
-        style={{ flexWrap: "wrap", flexShrink: 0 }}
+      <Grid
+        spacing={2}
+        container
+        alignItems="center"
+        justify="space-between"
+        className={classes.filterGrid}
       >
         {companies.length > 1 && (
-          <CompanyFilter companies={companies} setCompanies={setCompanies} />
+          <Grid item>
+            <CompanyFilter companies={companies} setCompanies={setCompanies} />
+          </Grid>
         )}
-        <EmployeeFilter users={users} setUsers={setUsers} />
-        <PeriodToggle period={period} setPeriod={setPeriod} />
-        <Button
-          className={classes.exportButton}
-          color="primary"
-          onClick={() => modals.open("dataExport", { companies, users })}
-          variant="contained"
-        >
-          Export Excel
-        </Button>
-      </Box>
+        <Grid item>
+          <EmployeeFilter users={users} setUsers={setUsers} />
+        </Grid>
+        <Grid item>
+          <PeriodToggle period={period} setPeriod={setPeriod} />
+        </Grid>
+        <Grid item spacing={4}>
+          <Button
+            className={classes.exportButton}
+            color="primary"
+            onClick={e => setExportMenuAnchorEl(e.currentTarget)}
+            variant="contained"
+          >
+            Exporter
+          </Button>
+          <Menu
+            keepMounted
+            open={Boolean(exportMenuAnchorEl)}
+            onClose={() => setExportMenuAnchorEl(null)}
+            anchorEl={exportMenuAnchorEl}
+          >
+            <MenuItem
+              onClick={() => {
+                setExportMenuAnchorEl(null);
+                modals.open("dataExport", { companies, users });
+              }}
+            >
+              <ListItemIcon>
+                <SvgIcon viewBox="0 0 64 64" component={ExcelIcon} />
+              </ListItemIcon>
+              <Typography>Export Excel</Typography>
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                setExportMenuAnchorEl(null);
+                modals.open("tachographExport", { companies, users });
+              }}
+            >
+              <ListItemIcon>
+                <SvgIcon viewBox="0 0 640 512" component={TachoIcon} />
+              </ListItemIcon>
+              <Typography>Export C1B</Typography>
+            </MenuItem>
+          </Menu>
+        </Grid>
+      </Grid>
       <Box
         className={`flex-column ${classes.workTimeTableContainer}`}
         style={{ maxHeight: ref.current ? ref.current.clientHeight : 0 }}

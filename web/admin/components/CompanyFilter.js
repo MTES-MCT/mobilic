@@ -6,8 +6,8 @@ import Checkbox from "@material-ui/core/Checkbox";
 
 const useStyles = makeStyles(theme => ({
   formControl: {
-    margin: theme.spacing(1),
-    width: 250
+    minWidth: 250,
+    maxWidth: 500
   },
   chips: {
     display: "flex",

@@ -45,17 +45,21 @@ export function Consent({ clientName, redirectUri }) {
   const [error, setError] = React.useState("");
 
   async function handleAuthorize(deny = false) {
-    const apiResponse = await api.httpQuery(
-      "GET",
-      `/oauth/authorize${location.search}${deny ? "&deny=true" : ""}`
-    );
-    if (apiResponse.status === 400) {
-      setError("La demande d'autorisation est invalide");
-    } else if (apiResponse.status !== 200) {
-      setError("Erreur dans le traitement de la requête d'autorisation");
-    } else {
+    try {
+      const apiResponse = await api.httpQuery(
+        "GET",
+        `/oauth/authorize${location.search}${deny ? "&deny=true" : ""}`
+      );
       const json = await apiResponse.json();
       window.location.href = json.uri;
+    } catch (err) {
+      if (
+        err.name === "WrongStatusError" &&
+        err.response &&
+        err.response.status === 400
+      )
+        setError("La demande d'autorisation est invalide");
+      else setError("Erreur dans le traitement de la requête d'autorisation");
     }
   }
 

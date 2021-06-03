@@ -158,9 +158,6 @@ export function XlsxVerifier() {
             timeout: 15000
           }
         );
-        if (apiResponse.status !== 200) {
-          setVerifyResponse({ error: "INTERNAL_ERROR" });
-        }
         const json = await apiResponse.json();
         setVerifyResponse(json);
       } catch (err) {

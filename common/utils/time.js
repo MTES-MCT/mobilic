@@ -121,12 +121,16 @@ export function getStartOfMonth(unixTimestamp) {
   return startOfDay(date);
 }
 
-export function startOfDay(date) {
+export function startOfDayAsDate(date) {
   date.setHours(0);
   date.setMinutes(0);
   date.setSeconds(0);
   date.setMilliseconds(0);
-  return (date.getTime() / 1000) >> 0;
+  return date;
+}
+
+export function startOfDay(date) {
+  return (startOfDayAsDate(date).getTime() / 1000) >> 0;
 }
 
 export function getStartOfDay(unixTimestamp) {

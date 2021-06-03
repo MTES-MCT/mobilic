@@ -6,6 +6,7 @@ import { InMemoryCache } from "@apollo/client/cache";
 import { onError } from "@apollo/client/link/error";
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import * as Sentry from "@sentry/browser";
+import omit from "lodash/omit";
 import { broadCastChannel, useStoreSyncedWithLocalStorage } from "./store";
 import { isAuthenticationError, isRetryable } from "./errors";
 import { NonConcurrentExecutionQueue } from "./concurrency";
@@ -107,25 +108,44 @@ class Api {
     options.method = method;
     options.credentials = "same-origin";
 
+    let actualOptions = options;
+    if (options.json) {
+      actualOptions = {
+        ...omit(options, ["json"]),
+        headers: {
+          ...(options.headers || {}),
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(options.json)
+      };
+    }
+
     const timeout = options.timeout;
     if (timeout && typeof AbortController !== "undefined") {
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), timeout);
 
       const response = await fetch(url, {
-        ...options,
+        ...actualOptions,
         signal: controller.signal
       });
       clearTimeout(id);
       return response;
     }
-    return await fetch(url, options);
+    return await fetch(url, actualOptions);
   }
 
   async httpQuery(method, endpoint, options = {}) {
-    return await this._queryWithRefreshToken(() =>
-      this._fetch(method, endpoint, options)
-    );
+    return await this._queryWithRefreshToken(async () => {
+      const response = await this._fetch(method, endpoint, options);
+      if (response.status !== 200) {
+        const error = new Error("Response status is not 200");
+        error.name = "WrongStatusError";
+        error.response = response;
+        throw error;
+      }
+      return response;
+    });
   }
 
   async _refreshTokenIfNeeded() {

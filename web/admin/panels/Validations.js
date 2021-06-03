@@ -97,7 +97,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   tab: {
-    maxWidth: "unset"
+    maxWidth: 400
   },
   tabContainer: {
     marginBottom: theme.spacing(2)
@@ -310,6 +310,7 @@ function _ValidationPanel({ containerRef, width }) {
           ref.current.recomputeRowHeights();
         }}
         className={classes.tabContainer}
+        variant="scrollable"
       >
         <Tab
           className={classes.tab}
