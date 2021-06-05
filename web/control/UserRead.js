@@ -23,6 +23,8 @@ import { History } from "../pwa/screens/History";
 import Grid from "@material-ui/core/Grid";
 import { InfoItem } from "../home/InfoField";
 import { USER_READ_QUERY } from "common/utils/apiQueries";
+import { LoadingButton } from "common/components/LoadingButton";
+import { useSnackbarAlerts } from "../common/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -34,8 +36,8 @@ const useStyles = makeStyles(theme => ({
     textAlign: "left",
     backgroundColor: theme.palette.background.paper
   },
-  sectionTitle: {
-    marginTop: theme.spacing(6)
+  sectionBody: {
+    marginBottom: theme.spacing(6)
   }
 }));
 
@@ -43,6 +45,7 @@ export function UserRead() {
   const location = useLocation();
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
+  const alerts = useSnackbarAlerts();
 
   const [userInfo, setUserInfo] = React.useState(null);
   const [tokenInfo, setTokenInfo] = React.useState(null);
@@ -71,7 +74,10 @@ export function UserRead() {
               { context: { nonPublicApi: true } }
             );
             const userPayload = userResponse.data.userFromReadToken.user;
-            setTokenInfo(userResponse.data.userFromReadToken.tokenInfo);
+            setTokenInfo({
+              ...userResponse.data.userFromReadToken.tokenInfo,
+              token
+            });
             setUserInfo({
               id: userPayload.id,
               firstName: userPayload.firstName,
@@ -143,7 +149,12 @@ export function UserRead() {
         [
           <Container maxWidth="sm" key={0}>
             <Typography variant="h5">Informations salarié.e</Typography>
-            <Grid container wrap="wrap" spacing={2}>
+            <Grid
+              container
+              wrap="wrap"
+              spacing={2}
+              className={classes.sectionBody}
+            >
               <Grid item>
                 <InfoItem name="Identifiant Mobilic" bold value={userInfo.id} />
               </Grid>
@@ -177,10 +188,13 @@ export function UserRead() {
                 />
               </Grid>
             </Grid>
-            <Typography variant="h5" className={classes.sectionTitle}>
-              Historique récent (60 jours)
-            </Typography>
-            <Grid container wrap="wrap" spacing={2}>
+            <Typography variant="h5">Historique récent (60 jours)</Typography>
+            <Grid
+              container
+              wrap="wrap"
+              spacing={2}
+              className={classes.sectionBody}
+            >
               <Grid item xs={12}>
                 <InfoItem
                   name="Heure du contrôle"
@@ -201,6 +215,37 @@ export function UserRead() {
                   name="Fin de l'historique"
                   value={frenchFormatDateString(tokenInfo.creationDay)}
                 />
+              </Grid>
+              <Grid item xs={12}>
+                <LoadingButton
+                  color="primary"
+                  onClick={async () => {
+                    try {
+                      const response = await api.httpQuery(
+                        "POST",
+                        `/users/generate_tachograph_file`,
+                        { json: { token: tokenInfo.token } }
+                      );
+                      const blob = await response.blob();
+                      const link = document.createElement("a");
+                      link.href = window.URL.createObjectURL(blob);
+                      link.download = response.headers
+                        .get("Content-Disposition")
+                        .split("filename=")[1]
+                        .split(";")[0];
+                      link.dispatchEvent(new MouseEvent("click"));
+                    } catch (err) {
+                      alerts.error(
+                        formatApiError(err),
+                        "generate_tachograph_files",
+                        6000
+                      );
+                    }
+                  }}
+                  variant="outlined"
+                >
+                  Télécharger C1B
+                </LoadingButton>
               </Grid>
             </Grid>
           </Container>,
