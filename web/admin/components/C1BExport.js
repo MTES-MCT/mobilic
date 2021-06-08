@@ -229,17 +229,11 @@ export default function C1BExport({
               linkType: "download"
             });
             try {
-              const response = await api.httpQuery(
+              await api.downloadFileHttpQuery(
                 "POST",
                 `/companies/generate_tachograph_files`,
                 { json: options }
               );
-
-              const blob = await response.blob();
-              const link = document.createElement("a");
-              link.href = window.URL.createObjectURL(blob);
-              link.download = "fichiers_C1B.zip";
-              link.dispatchEvent(new MouseEvent("click"));
             } catch (err) {
               alerts.error(
                 formatApiError(err),

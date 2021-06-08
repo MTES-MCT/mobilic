@@ -221,19 +221,11 @@ export function UserRead() {
                   color="primary"
                   onClick={async () => {
                     try {
-                      const response = await api.httpQuery(
+                      await api.downloadFileHttpQuery(
                         "POST",
                         `/users/generate_tachograph_file`,
                         { json: { token: tokenInfo.token } }
                       );
-                      const blob = await response.blob();
-                      const link = document.createElement("a");
-                      link.href = window.URL.createObjectURL(blob);
-                      link.download = response.headers
-                        .get("Content-Disposition")
-                        .split("filename=")[1]
-                        .split(";")[0];
-                      link.dispatchEvent(new MouseEvent("click"));
                     } catch (err) {
                       alerts.error(
                         formatApiError(err),

@@ -13,6 +13,7 @@ import { NonConcurrentExecutionQueue } from "./concurrency";
 import { buildFCLogoutUrl } from "./franceConnect";
 import { clearUserIdCookie, currentUserId, readCookie } from "./cookie";
 import { MaxSizeCache } from "./cache";
+import { saveAs } from "file-saver";
 
 export const API_HOST = "/api";
 
@@ -146,6 +147,16 @@ class Api {
       }
       return response;
     });
+  }
+
+  async downloadFileHttpQuery(method, endpoint, options = {}) {
+    const response = await this.httpQuery(method, endpoint, options);
+    const blob = await response.blob();
+    const fileName = response.headers
+      .get("Content-Disposition")
+      .split("filename=")[1]
+      .split(";")[0];
+    saveAs(blob, fileName);
   }
 
   async _refreshTokenIfNeeded() {

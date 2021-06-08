@@ -170,17 +170,11 @@ export default function ExcelExport({
               linkType: "download"
             });
             try {
-              const response = await api.httpQuery(
+              await api.downloadFileHttpQuery(
                 "POST",
                 `/companies/download_activity_report`,
                 { json: options }
               );
-
-              const blob = await response.blob();
-              const link = document.createElement("a");
-              link.href = window.URL.createObjectURL(blob);
-              link.download = "rapport_activité.xlsx";
-              link.dispatchEvent(new MouseEvent("click"));
             } catch (err) {
               alerts.error(
                 formatApiError(err),
