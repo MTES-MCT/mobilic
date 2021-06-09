@@ -45,6 +45,15 @@ export function formatTimer(timerDuration) {
   return `${timerDurationInHours}h${addZero(timerDurationInMinutes % 60)}`;
 }
 
+export function formatTimerWithSeconds(timerDuration) {
+  if (!timerDuration && timerDuration !== 0) return null;
+  const timerDurationInMinutes = (timerDuration / 60) >> 0;
+  const timerDurationInHours = (timerDurationInMinutes / 60) >> 0;
+  return `${timerDurationInHours}h${addZero(
+    timerDurationInMinutes % 60
+  )}m${addZero(timerDuration % 60)}`;
+}
+
 export function formatLongTimer(timerDuration) {
   if (!timerDuration && timerDuration !== 0) return null;
   const timerDurationInMinutes = (timerDuration / 60) >> 0;

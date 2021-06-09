@@ -2,11 +2,12 @@ import React from "react";
 import Container from "@material-ui/core/Container";
 import { ACTIVITIES } from "common/utils/activities";
 import { getTime } from "common/utils/events";
-import { formatTimer, now } from "common/utils/time";
+import { formatTimer, formatTimerWithSeconds, now } from "common/utils/time";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import { AccountButton } from "./AccountButton";
 import Box from "@material-ui/core/Box";
+import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 
 const useStyles = makeStyles(theme => ({
   accountButtonContainer: {
@@ -37,11 +38,33 @@ export function CurrentActivityOverview({
   currentDayStart,
   currentMission
 }) {
+  const [_now, setNow] = React.useState(now());
   const classes = useStyles();
-  const _now = now();
 
-  const currentActivityDuration =
-    _now - (latestActivity.endTime || getTime(latestActivity));
+  const store = useStoreSyncedWithLocalStorage();
+  const latestActivitySwitchExactTime =
+    store.state.latestActivitySwitchExactTime;
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(now());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const latestActivitySwitchTime =
+    latestActivity.endTime || getTime(latestActivity);
+  const switchTimeDelta = latestActivitySwitchExactTime
+    ? latestActivitySwitchExactTime - latestActivitySwitchTime
+    : 0;
+  const switchTimeToUse =
+    latestActivitySwitchExactTime &&
+    switchTimeDelta >= 0 &&
+    switchTimeDelta <= 60
+      ? latestActivitySwitchExactTime
+      : latestActivitySwitchTime;
+
+  const currentActivityDuration = Math.max(_now - switchTimeToUse, 0);
   let activityOverviewText;
   if (latestActivity.endTime) {
     activityOverviewText = "Vous êtes en pause depuis";
@@ -53,9 +76,10 @@ export function CurrentActivityOverview({
     activityOverviewText = "Autre tâche commencée depuis";
   }
 
-  activityOverviewText = `${activityOverviewText} ${formatTimer(
-    currentActivityDuration
-  )}`;
+  activityOverviewText = `${activityOverviewText} ${(currentActivityDuration >
+    300
+    ? formatTimer
+    : formatTimerWithSeconds)(currentActivityDuration)}`;
 
   let missionOverviewText = `Mission ${currentMission.name ||
     "sans nom"} démarrée `;
@@ -79,7 +103,7 @@ export function CurrentActivityOverview({
         maxWidth={false}
       >
         <Typography className="hidden" variant="h2">
-          Vous êtes en accompagnement depuis 00h 00m
+          Vous êtes en accompagnement depuis 00h 00m00
         </Typography>
         <Typography variant="h2" className={classes.primaryText}>
           {activityOverviewText}

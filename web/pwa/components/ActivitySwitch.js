@@ -127,7 +127,8 @@ export function ActivitySwitch({
             ? store.userId()
             : undefined,
         currentDriverStartTime: latestActivity ? getTime(latestActivity) : null,
-        handleDriverSelection: async (driverId, vehicle, kilometerReading) =>
+        handleDriverSelection: async (driverId, vehicle, kilometerReading) => {
+          store.setState({ latestActivitySwitchExactTime: now() });
           shouldWaitForClickHandler
             ? await pushActivitySwitchEvent(
                 activityName,
@@ -140,9 +141,13 @@ export function ActivitySwitch({
                 driverId,
                 vehicle,
                 kilometerReading
-              )
+              );
+        }
       });
-    } else pushActivitySwitchEvent(activityName);
+    } else {
+      store.setState({ latestActivitySwitchExactTime: now() });
+      pushActivitySwitchEvent(activityName);
+    }
   };
 
   return (
