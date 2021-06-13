@@ -24,6 +24,7 @@ export function AdminStoreProvider({ children }) {
         siren: c.siren,
         allowTeamMode: c.allowTeamMode,
         requireKilometerData: c.requireKilometerData,
+        requireExpenditures: c.requireExpenditures,
         isPrimary: primaryCompany ? c.id === primaryCompany.id : false
       }))
     );

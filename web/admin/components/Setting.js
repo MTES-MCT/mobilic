@@ -5,6 +5,7 @@ import Box from "@material-ui/core/Box";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 import Grid from "@material-ui/core/Grid";
+import Switch from "@material-ui/core/Switch/Switch";
 
 const useStyles = makeStyles(theme => ({
   description: {
@@ -59,5 +60,30 @@ export function Setting({
         </Grid>
       </Grid>
     </Box>
+  );
+}
+
+export function SimpleToggleSetting({
+  label,
+  name,
+  value,
+  description,
+  submitSettingChange
+}) {
+  return (
+    <Setting
+      name={name}
+      label={label}
+      value={value}
+      description={description}
+      descriptionStyle={!value ? { opacity: 0.3 } : {}}
+      submitSettingChange={submitSettingChange}
+      renderInput={(value, handleChange) => (
+        <Switch
+          checked={value}
+          onChange={e => handleChange(e.target.checked)}
+        />
+      )}
+    />
   );
 }

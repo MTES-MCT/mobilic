@@ -21,7 +21,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function WorkTimeTable({ period, workTimeEntries, className }) {
+export function WorkTimeTable({
+  period,
+  workTimeEntries,
+  className,
+  showExpenditures
+}) {
   const classes = useStyles();
 
   let periodLabel, periodFormatter;
@@ -125,9 +130,9 @@ export function WorkTimeTable({ period, workTimeEntries, className }) {
       endTimeCol,
       serviceTimeCol,
       workTimeCol,
-      restTimeCol,
-      expenditureCol
+      restTimeCol
     ];
+    if (showExpenditures) columns.push(expenditureCol);
   } else if (period === "week") {
     columns = [periodCol, employeeCol, workTimeCol, workedDaysCol];
   } else {

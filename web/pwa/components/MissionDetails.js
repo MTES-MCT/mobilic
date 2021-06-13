@@ -313,37 +313,39 @@ export function MissionDetails({
             </Typography>
           )}
       </MissionReviewSection>
-      {!hideExpenditures && (
-        <MissionReviewSection
-          title="Frais"
-          onEdit={
-            editExpenditures
-              ? () =>
-                  modals.open("expenditures", {
-                    handleSubmit: (expenditures, forAllTeam) =>
-                      editExpenditures(
-                        expenditures,
-                        mission.expenditures,
-                        mission.id,
-                        forAllTeam ? teamAtMissionEnd : []
-                      ),
-                    hasTeamMates:
-                      allowTeamActions && teamAtMissionEnd.length > 1,
-                    currentExpenditures: fromPairs(
-                      uniq(mission.expenditures.map(e => [e.type, true]))
-                    )
-                  })
-              : null
-          }
-        >
-          <Box className={`flex-row ${classes.expenditures}`}>
-            {mission.expenditures &&
-              uniqBy(mission.expenditures, e => e.type).map(exp => (
-                <Chip key={exp.type} label={EXPENDITURES[exp.type].label} />
-              ))}
-          </Box>
-        </MissionReviewSection>
-      )}
+      {!hideExpenditures &&
+        (mission.company.requireExpenditures ||
+          mission.expenditures.length > 0) && (
+          <MissionReviewSection
+            title="Frais"
+            onEdit={
+              editExpenditures && mission.company.requireExpenditures
+                ? () =>
+                    modals.open("expenditures", {
+                      handleSubmit: (expenditures, forAllTeam) =>
+                        editExpenditures(
+                          expenditures,
+                          mission.expenditures,
+                          mission.id,
+                          forAllTeam ? teamAtMissionEnd : []
+                        ),
+                      hasTeamMates:
+                        allowTeamActions && teamAtMissionEnd.length > 1,
+                      currentExpenditures: fromPairs(
+                        uniq(mission.expenditures.map(e => [e.type, true]))
+                      )
+                    })
+                : null
+            }
+          >
+            <Box className={`flex-row ${classes.expenditures}`}>
+              {mission.expenditures &&
+                uniqBy(mission.expenditures, e => e.type).map(exp => (
+                  <Chip key={exp.type} label={EXPENDITURES[exp.type].label} />
+                ))}
+            </Box>
+          </MissionReviewSection>
+        )}
       {!hideComments && (
         <MissionReviewSection
           title="Observations"

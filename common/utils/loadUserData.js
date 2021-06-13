@@ -43,6 +43,7 @@ const USER_QUERY = gql`
           siren
           allowTeamMode
           requireKilometerData
+          requireExpenditures
         }
         activities {
           id
@@ -92,6 +93,7 @@ const USER_QUERY = gql`
           siren
           allowTeamMode
           requireKilometerData
+          requireExpenditures
           users {
             id
             firstName

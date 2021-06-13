@@ -180,6 +180,10 @@ function _ValidationPanel({ containerRef, width }) {
 
   const ref = React.useRef();
 
+  const showExpenditures = adminStore.companies.some(
+    c => c.requireExpenditures
+  );
+
   const commonCols = [
     {
       label: "Employé",
@@ -253,7 +257,7 @@ function _ValidationPanel({ containerRef, width }) {
       align: "right",
       minWidth: 100
     },
-    {
+    showExpenditures && {
       label: "Frais",
       name: "expenditureAggs",
       format: exps => (exps ? formatExpendituresAsOneString(exps) : null),
@@ -261,7 +265,7 @@ function _ValidationPanel({ containerRef, width }) {
       minWidth: 150,
       overflowTooltip: true
     }
-  ];
+  ].filter(Boolean);
 
   const validationCol = {
     label: "Validation salarié",

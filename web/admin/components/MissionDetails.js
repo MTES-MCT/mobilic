@@ -167,6 +167,13 @@ export function MissionDetails({ mission, handleClose, width }) {
     }
   };
 
+  const missionCompany = adminStore.companies.find(
+    c => c.id === mission.companyId
+  );
+  const showExpenditures = missionCompany
+    ? missionCompany.requireExpenditures
+    : false;
+
   async function onCancelActivity(activity, user, activities) {
     if (activity.type === ACTIVITIES.break.name) {
       const ops = addBreakOps(
@@ -684,7 +691,9 @@ export function MissionDetails({ mission, handleClose, width }) {
         entries={entries}
         editable={false}
         rowHeight={(index, userStats) =>
-          180 + 50 * Object.keys(userStats.activitiesWithBreaks).length
+          100 +
+          (showExpenditures ? 80 : 0) +
+          50 * Object.keys(userStats.activitiesWithBreaks).length
         }
         ref={ref}
         dense
@@ -744,66 +753,70 @@ export function MissionDetails({ mission, handleClose, width }) {
                   </Box>
                 );
               })}
-              <Typography
-                className={classes.expenditureTitle}
-                variant="h5"
-                style={{ height: 15, marginTop: 15 }}
-              >
-                Frais
-              </Typography>
-              <Box
-                style={{ height: 40, marginTop: 10 }}
-                pl={1}
-                className="flex-row-space-between"
-              >
-                <Box className={`flex-row`}>
-                  {userStats.expenditureAggs &&
-                    Object.keys(userStats.expenditureAggs).map(exp => {
-                      const expProps = EXPENDITURES[exp];
-                      const expCount = userStats.expenditureAggs[exp];
-                      const label =
-                        expCount > 1
-                          ? `${expCount} ${expProps.plural}`
-                          : expProps.label;
-                      return <Chip key={exp.type} label={label} />;
-                    })}
-                </Box>
-                <Button
-                  aria-label="Modifier les frais"
-                  color="primary"
-                  variant="outlined"
-                  size="small"
-                  className={classes.smallTextButton}
-                  disabled={creatingActivityForUserId || activityIdToEdit}
-                  onClick={() => {
-                    modals.open("expenditures", {
-                      currentExpenditures: userStats.expenditureAggs,
-                      title: `Frais pour ${formatPersonName(userStats.user)}`,
-                      handleSubmit: exps => {
-                        const expendituresToCreate = Object.keys(exps).filter(
-                          e => exps[e] && !userStats.expenditureAggs[e]
-                        );
-                        const expendituresToDelete = mission.expenditures.filter(
-                          e => e.userId === userStats.user.id && !exps[e.type]
-                        );
-                        return Promise.all([
-                          ...expendituresToDelete.map(e =>
-                            withAlerts(onCancelExpenditure(e), e.id)
-                          ),
-                          ...expendituresToCreate.map(expType =>
-                            withAlerts(
-                              onCreateExpenditure(expType, userStats.user),
-                              expType
-                            )
-                          )
-                        ]);
-                      }
-                    });
-                  }}
+              {showExpenditures && [
+                <Typography
+                  key={0}
+                  className={classes.expenditureTitle}
+                  variant="h5"
+                  style={{ height: 15, marginTop: 15 }}
                 >
-                  Modifier les frais
-                </Button>
-              </Box>
+                  Frais
+                </Typography>,
+                <Box
+                  key={1}
+                  style={{ height: 40, marginTop: 10 }}
+                  pl={1}
+                  className="flex-row-space-between"
+                >
+                  <Box className={`flex-row`}>
+                    {userStats.expenditureAggs &&
+                      Object.keys(userStats.expenditureAggs).map(exp => {
+                        const expProps = EXPENDITURES[exp];
+                        const expCount = userStats.expenditureAggs[exp];
+                        const label =
+                          expCount > 1
+                            ? `${expCount} ${expProps.plural}`
+                            : expProps.label;
+                        return <Chip key={exp.type} label={label} />;
+                      })}
+                  </Box>
+                  <Button
+                    aria-label="Modifier les frais"
+                    color="primary"
+                    variant="outlined"
+                    size="small"
+                    className={classes.smallTextButton}
+                    disabled={creatingActivityForUserId || activityIdToEdit}
+                    onClick={() => {
+                      modals.open("expenditures", {
+                        currentExpenditures: userStats.expenditureAggs,
+                        title: `Frais pour ${formatPersonName(userStats.user)}`,
+                        handleSubmit: exps => {
+                          const expendituresToCreate = Object.keys(exps).filter(
+                            e => exps[e] && !userStats.expenditureAggs[e]
+                          );
+                          const expendituresToDelete = mission.expenditures.filter(
+                            e => e.userId === userStats.user.id && !exps[e.type]
+                          );
+                          return Promise.all([
+                            ...expendituresToDelete.map(e =>
+                              withAlerts(onCancelExpenditure(e), e.id)
+                            ),
+                            ...expendituresToCreate.map(expType =>
+                              withAlerts(
+                                onCreateExpenditure(expType, userStats.user),
+                                expType
+                              )
+                            )
+                          ]);
+                        }
+                      });
+                    }}
+                  >
+                    Modifier les frais
+                  </Button>
+                </Box>
+              ]}
               <Box style={{ height: 40, marginTop: 10 }} pl={1}>
                 <Typography
                   className={

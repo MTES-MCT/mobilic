@@ -60,6 +60,7 @@ export const COMPANY_SIGNUP_MUTATION = gql`
             siren
             allowTeamMode
             requireKilometerData
+            requireExpenditures
           }
         }
       }
@@ -188,6 +189,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
         name
         allowTeamMode
         requireKilometerData
+        requireExpenditures
         users {
           id
           firstName
@@ -604,6 +606,7 @@ export const CREATE_MISSION_MUTATION = gql`
           siren
           allowTeamMode
           requireKilometerData
+          requireExpenditures
         }
       }
     }
@@ -648,6 +651,7 @@ export const END_MISSION_MUTATION = gql`
           siren
           allowTeamMode
           requireKilometerData
+          requireExpenditures
         }
         activities {
           id
@@ -799,6 +803,7 @@ export const VALIDATE_MISSION_MUTATION = gql`
             siren
             allowTeamMode
             requireKilometerData
+            requireExpenditures
           }
           startLocation {
             id
@@ -878,15 +883,18 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
     $companyId: Int!
     $allowTeamMode: Boolean
     $requireKilometerData: Boolean
+    $requireExpenditures: Boolean
   ) {
     editCompanySettings(
       companyId: $companyId
       allowTeamMode: $allowTeamMode
       requireKilometerData: $requireKilometerData
+      requireExpenditures: $requireExpenditures
     ) {
       id
       allowTeamMode
       requireKilometerData
+      requireExpenditures
     }
   }
 `;

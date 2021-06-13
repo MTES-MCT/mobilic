@@ -99,13 +99,17 @@ export default function EndMissionModal({
                   />
                 ]
               : null}
-            <Typography variant="h5" className="form-field-title">
-              Avez-vous eu des frais lors de cette mission&nbsp;?
-            </Typography>
-            <Expenditures
-              expenditures={expenditures}
-              setExpenditures={setExpenditures}
-            />
+            {currentMission.company.requireExpenditures && (
+              <>
+                <Typography variant="h5" className="form-field-title">
+                  Avez-vous eu des frais lors de cette mission&nbsp;?
+                </Typography>
+                <Expenditures
+                  expenditures={expenditures}
+                  setExpenditures={setExpenditures}
+                />
+              </>
+            )}
             <Typography variant="h5" className="form-field-title">
               Avez-vous un commentaire&nbsp;? (optionnel)
             </Typography>
