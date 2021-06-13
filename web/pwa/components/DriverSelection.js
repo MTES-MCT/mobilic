@@ -55,7 +55,10 @@ export default function DriverSelectionModal({
             key={1}
             kilometerReading={kilometerReading}
             setKilometerReading={
-              company && company.requireKilometerData && vehicle
+              company &&
+              company.settings &&
+              company.settings.requireKilometerData &&
+              vehicle
                 ? setKilometerReading
                 : null
             }

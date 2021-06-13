@@ -1,5 +1,16 @@
 import { gql } from "@apollo/client/core";
 
+export const COMPANY_SETTINGS_FRAGMENT = gql`
+  fragment CompanySettings on Company {
+    settings {
+      allowTeamMode
+      requireKilometerData
+      requireSupportActivity
+      requireExpenditures
+    }
+  }
+`;
+
 export const LOGIN_MUTATION_STRING = `mutation login($email: String!, $password: String!) {
   auth {
     login(email: $email, password: $password) {
@@ -45,6 +56,7 @@ export const CONFIRM_FC_EMAIL_MUTATION = gql`
   }
 `;
 export const COMPANY_SIGNUP_MUTATION = gql`
+  ${COMPANY_SETTINGS_FRAGMENT}
   mutation companySignUp($siren: Int!, $usualName: String!, $sirets: [String]) {
     signUp {
       company(siren: $siren, usualName: $usualName, sirets: $sirets) {
@@ -58,9 +70,7 @@ export const COMPANY_SIGNUP_MUTATION = gql`
             id
             name
             siren
-            allowTeamMode
-            requireKilometerData
-            requireExpenditures
+            ...CompanySettings
           }
         }
       }
@@ -177,6 +187,7 @@ export const USER_READ_QUERY = gql`
   }
 `;
 export const ADMIN_COMPANIES_QUERY = gql`
+  ${COMPANY_SETTINGS_FRAGMENT}
   query adminCompanies(
     $id: Int!
     $activityAfter: Date
@@ -187,9 +198,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
       adminedCompanies {
         id
         name
-        allowTeamMode
-        requireKilometerData
-        requireExpenditures
+        ...CompanySettings
         users {
           id
           firstName
@@ -577,6 +586,7 @@ export const CURRENT_MISSION_INFO = gql`
 `;
 
 export const CREATE_MISSION_MUTATION = gql`
+  ${COMPANY_SETTINGS_FRAGMENT}
   mutation createMission(
     $name: String
     $companyId: Int
@@ -604,15 +614,14 @@ export const CREATE_MISSION_MUTATION = gql`
           id
           name
           siren
-          allowTeamMode
-          requireKilometerData
-          requireExpenditures
+          ...CompanySettings
         }
       }
     }
   }
 `;
 export const END_MISSION_MUTATION = gql`
+  ${COMPANY_SETTINGS_FRAGMENT}
   mutation endMission($endTime: TimeStamp!, $missionId: Int!, $userId: Int) {
     activities {
       endMission(endTime: $endTime, missionId: $missionId, userId: $userId) {
@@ -649,9 +658,7 @@ export const END_MISSION_MUTATION = gql`
           id
           name
           siren
-          allowTeamMode
-          requireKilometerData
-          requireExpenditures
+          ...CompanySettings
         }
         activities {
           id
@@ -779,6 +786,7 @@ export const TERMINATE_KNOWN_ADDRESS_MUTATION = gql`
   }
 `;
 export const VALIDATE_MISSION_MUTATION = gql`
+  ${COMPANY_SETTINGS_FRAGMENT}
   mutation validateMission($missionId: Int!, $userId: Int) {
     activities {
       validateMission(missionId: $missionId, userId: $userId) {
@@ -801,9 +809,7 @@ export const VALIDATE_MISSION_MUTATION = gql`
             id
             name
             siren
-            allowTeamMode
-            requireKilometerData
-            requireExpenditures
+            ...CompanySettings
           }
           startLocation {
             id
@@ -879,22 +885,23 @@ export const CANCEL_COMMENT_MUTATION = gql`
 `;
 
 export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
+  ${COMPANY_SETTINGS_FRAGMENT}
   mutation editCompanySettings(
     $companyId: Int!
     $allowTeamMode: Boolean
     $requireKilometerData: Boolean
     $requireExpenditures: Boolean
+    $requireSupportActivity: Boolean
   ) {
     editCompanySettings(
       companyId: $companyId
       allowTeamMode: $allowTeamMode
       requireKilometerData: $requireKilometerData
       requireExpenditures: $requireExpenditures
+      requireSupportActivity: $requireSupportActivity
     ) {
       id
-      allowTeamMode
-      requireKilometerData
-      requireExpenditures
+      ...CompanySettings
     }
   }
 `;

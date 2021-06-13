@@ -3,10 +3,11 @@ import { broadCastChannel } from "./store";
 import { parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
 import { DAY, now } from "./time";
-import { CURRENT_MISSION_INFO } from "./apiQueries";
+import { COMPANY_SETTINGS_FRAGMENT, CURRENT_MISSION_INFO } from "./apiQueries";
 import { gql } from "@apollo/client/core";
 
 const USER_QUERY = gql`
+  ${COMPANY_SETTINGS_FRAGMENT}
   query user($id: Int!, $activityAfter: TimeStamp) {
     user(id: $id) {
       id
@@ -41,9 +42,7 @@ const USER_QUERY = gql`
           id
           name
           siren
-          allowTeamMode
-          requireKilometerData
-          requireExpenditures
+          ...CompanySettings
         }
         activities {
           id
@@ -91,9 +90,7 @@ const USER_QUERY = gql`
           id
           name
           siren
-          allowTeamMode
-          requireKilometerData
-          requireExpenditures
+          ...CompanySettings
           users {
             id
             firstName

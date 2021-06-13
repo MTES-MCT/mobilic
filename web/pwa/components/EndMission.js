@@ -82,7 +82,8 @@ export default function EndMissionModal({
               defaultAddresses={companyAddresses}
             />
             {currentMission.company &&
-            currentMission.company.requireKilometerData &&
+            currentMission.company.settings &&
+            currentMission.company.settings.requireKilometerData &&
             currentMission.startLocation &&
             currentMission.startLocation.kilometerReading
               ? [
@@ -99,7 +100,9 @@ export default function EndMissionModal({
                   />
                 ]
               : null}
-            {currentMission.company.requireExpenditures && (
+            {(!currentMission.company ||
+              !currentMission.company.settings ||
+              currentMission.company.settings.requireExpenditures) && (
               <>
                 <Typography variant="h5" className="form-field-title">
                   Avez-vous eu des frais lors de cette mission&nbsp;?

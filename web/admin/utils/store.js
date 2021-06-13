@@ -22,9 +22,7 @@ export function AdminStoreProvider({ children }) {
         id: c.id,
         name: c.name,
         siren: c.siren,
-        allowTeamMode: c.allowTeamMode,
-        requireKilometerData: c.requireKilometerData,
-        requireExpenditures: c.requireExpenditures,
+        settings: c.settings,
         isPrimary: primaryCompany ? c.id === primaryCompany.id : false
       }))
     );

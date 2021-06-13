@@ -181,7 +181,7 @@ function _ValidationPanel({ containerRef, width }) {
   const ref = React.useRef();
 
   const showExpenditures = adminStore.companies.some(
-    c => c.requireExpenditures
+    c => c.settings.requireExpenditures
   );
 
   const commonCols = [

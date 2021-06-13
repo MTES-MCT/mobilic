@@ -45,8 +45,18 @@ export default function SettingAdmin({ company }) {
         <SimpleToggleSetting
           name="allowTeamMode"
           label="Mode équipe"
-          value={company.allowTeamMode}
+          value={company.settings.allowTeamMode}
           description="Lors de missions en équipe ce mode donne la possibilité à l'un des équipiers d'enregistrer le temps de travail pour toute l'équipe (au lieu que chacun enregistre son propre temps de travail séparément). Chaque équipier doit toutefois valider individuellement les informations à la fin de la mission."
+          submitSettingChange={submitSettingChange}
+        />
+      </ListItem>
+      <Divider />
+      <ListItem>
+        <SimpleToggleSetting
+          name="requireSupportActivity"
+          label="Temps d'accompagnement"
+          value={company.settings.requireSupportActivity}
+          description="Permet la distinction entre temps de conduite et temps d'accompagnement (c'est le temps passé à bord du véhicule lorsque quelqu'un d'autre conduit). Les travailleurs doivent préciser s'ils sont conducteurs ou non à chaque fois qu'ils sélectionnent l'activité Déplacement. Pour certaines entreprises le temps d'accompagnement est soumis à une rémunération spéciale (dans le déménagement par exemple)."
           submitSettingChange={submitSettingChange}
         />
       </ListItem>
@@ -55,7 +65,7 @@ export default function SettingAdmin({ company }) {
         <SimpleToggleSetting
           name="requireKilometerData"
           label="Saisie du kilométrage"
-          value={company.requireKilometerData}
+          value={company.settings.requireKilometerData}
           description="Exige le relevé du compteur kilométrique du véhicule en début et fin de mission, conformément aux exigences du Livret Individuel de Contrôle. Pour certains secteurs tels que le déménagment cette donnée n'est toutefois plus demandée."
           submitSettingChange={submitSettingChange}
         />
@@ -65,7 +75,7 @@ export default function SettingAdmin({ company }) {
         <SimpleToggleSetting
           name="requireExpenditures"
           label="Saisie des frais"
-          value={company.requireExpenditures}
+          value={company.settings.requireExpenditures}
           description="La gestion des frais de déplacement se fait dans Mobilic. Les travailleurs mobiles saisissent leurs frais en fin de mission et ceux-ci sont rendus visibles pour le gestionnaire (et présents dans les exports des données d'activité)."
           submitSettingChange={submitSettingChange}
         />

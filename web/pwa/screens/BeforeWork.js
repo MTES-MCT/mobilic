@@ -159,7 +159,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
       companyAddresses: store.getEntity("knownAddresses"),
       handleContinue: missionInfos => {
         const company = companies.find(c => c.id === missionInfos.company.id);
-        if (company.allowTeamMode) {
+        if (company.settings.allowTeamMode) {
           modals.open("teamOrSoloChoice", {
             handleContinue: isTeamMode => {
               if (isTeamMode) {

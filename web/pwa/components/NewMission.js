@@ -144,7 +144,10 @@ export default function NewMissionModal({
               companyId={company ? company.id : null}
               kilometerReading={kilometerReading}
               setKilometerReading={
-                company && company.requireKilometerData && vehicle
+                company &&
+                company.settings &&
+                company.settings.requireKilometerData &&
+                vehicle
                   ? setKilometerReading
                   : null
               }

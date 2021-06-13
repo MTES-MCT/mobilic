@@ -170,9 +170,10 @@ export function MissionDetails({ mission, handleClose, width }) {
   const missionCompany = adminStore.companies.find(
     c => c.id === mission.companyId
   );
-  const showExpenditures = missionCompany
-    ? missionCompany.requireExpenditures
-    : false;
+  const showExpenditures =
+    missionCompany && missionCompany.settings
+      ? missionCompany.settings.requireExpenditures
+      : false;
 
   async function onCancelActivity(activity, user, activities) {
     if (activity.type === ACTIVITIES.break.name) {

@@ -101,6 +101,8 @@ export function ActivitySwitch({
   const store = useStoreSyncedWithLocalStorage();
   const classes = useStyles();
   const modals = useModals();
+  const allowSupportActivity =
+    !company || !company.settings || company.settings.requireSupportActivity;
   const handleActivitySwitch = activityName => () => {
     if (
       latestActivity &&
@@ -108,13 +110,15 @@ export function ActivitySwitch({
         (latestActivity.endTime
           ? ACTIVITIES.break.name
           : latestActivity.type) &&
-      activityName !== ACTIVITIES.drive.name &&
-      activityName !== ACTIVITIES.support.name
+      ((activityName !== ACTIVITIES.drive.name &&
+        activityName !== ACTIVITIES.support.name) ||
+        (!allowSupportActivity && team.length <= 1))
     )
       return;
     else if (
-      activityName === ACTIVITIES.drive.name ||
-      activityName === ACTIVITIES.support.name
+      (activityName === ACTIVITIES.drive.name ||
+        activityName === ACTIVITIES.support.name) &&
+      (requireVehicle || allowSupportActivity || team.length > 1)
     ) {
       modals.open("driverSelection", {
         team,

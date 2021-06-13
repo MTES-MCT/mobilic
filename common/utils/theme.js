@@ -26,7 +26,7 @@ const baseOptions = {
       main: "#3184FF",
       light: "#006be6",
       lighter: "#b4e1fa",
-      dark: "#003b80"
+      dark: "#0053b3"
     },
     success: {
       main: "#03bd5b",

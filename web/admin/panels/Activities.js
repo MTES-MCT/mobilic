@@ -186,7 +186,9 @@ export default function ActivityPanel() {
           className={classes.workTimeTable}
           period={period}
           workTimeEntries={periodAggregates}
-          showExpenditures={selectedCompanies.some(c => c.requireExpenditures)}
+          showExpenditures={selectedCompanies.some(
+            c => c.settings.requireExpenditures
+          )}
         />
       </Box>
     </Paper>

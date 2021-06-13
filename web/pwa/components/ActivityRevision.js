@@ -184,6 +184,7 @@ export default function ActivityRevisionOrCreationModal({
   nextMissionStart,
   allowTeamMode = false,
   nullableEndTime = true,
+  allowSupportActivity = true,
   createActivity
 }) {
   const store = useStoreSyncedWithLocalStorage();
@@ -416,7 +417,8 @@ export default function ActivityRevisionOrCreationModal({
     return (
       isCreation &&
       (newActivityType === ACTIVITIES.drive.name ||
-        newActivityType === ACTIVITIES.support.name)
+        newActivityType === ACTIVITIES.support.name) &&
+      (allowSupportActivity || (teamMode && team.length > 1))
     );
   }
 
@@ -483,15 +485,19 @@ export default function ActivityRevisionOrCreationModal({
             value={isCreation ? newActivityType : event.type}
             onChange={e => setNewActivityType(e.target.value)}
           >
-            {Object.keys(ACTIVITIES).map(activityName => (
-              <MenuItem
-                disabled={activityName === ACTIVITIES.support.name}
-                key={activityName}
-                value={activityName}
-              >
-                {ACTIVITIES[activityName].label}
-              </MenuItem>
-            ))}
+            {Object.keys(ACTIVITIES)
+              .filter(a =>
+                allowSupportActivity ? true : a !== ACTIVITIES.support.name
+              )
+              .map(activityName => (
+                <MenuItem
+                  disabled={activityName === ACTIVITIES.support.name}
+                  key={activityName}
+                  value={activityName}
+                >
+                  {ACTIVITIES[activityName].label}
+                </MenuItem>
+              ))}
           </TextField>
           {requiresDriver() && (
             <TextField

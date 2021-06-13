@@ -131,8 +131,14 @@ export function MissionDetails({
 
   const allowTeamActions =
     mission.company &&
-    mission.company.allowTeamMode &&
+    mission.company.settings &&
+    mission.company.settings.allowTeamMode &&
     !mission.submittedBySomeoneElse;
+
+  const allowSupportActivity =
+    !mission.company ||
+    !mission.company.settings ||
+    mission.company.settings.requireSupportActivity;
 
   const teamAtMissionEnd = [
     actualUserId,
@@ -177,7 +183,8 @@ export function MissionDetails({
                   nextMissionStart,
                   teamChanges,
                   nullableEndTime: nullableEndTimeInEditActivity,
-                  allowTeamMode: allowTeamActions
+                  allowTeamMode: allowTeamActions,
+                  allowSupportActivity
                 })
             : null
         }
@@ -202,7 +209,8 @@ export function MissionDetails({
           untilTime={untilTime}
         />
       </MissionReviewSection>
-      {hasTeamMates || (mission.company && mission.company.allowTeamMode) ? (
+      {hasTeamMates ||
+      (mission.company && mission.company.settings.allowTeamMode) ? (
         <MissionReviewSection
           title={`${hasTeamMates ? "Coéquipiers" : "En solo"}`}
           onEdit={
@@ -277,7 +285,8 @@ export function MissionDetails({
               isStart={true}
               editKilometerReading={
                 mission.company &&
-                mission.company.requireKilometerData &&
+                mission.company.settings &&
+                mission.company.settings.requireKilometerData &&
                 mission.vehicle
                   ? editKilometerReading
                   : null
@@ -290,7 +299,8 @@ export function MissionDetails({
                 isStart={false}
                 editKilometerReading={
                   mission.company &&
-                  mission.company.requireKilometerData &&
+                  mission.company.settings &&
+                  mission.company.settings.requireKilometerData &&
                   mission.vehicle
                     ? editKilometerReading
                     : null
@@ -314,12 +324,17 @@ export function MissionDetails({
           )}
       </MissionReviewSection>
       {!hideExpenditures &&
-        (mission.company.requireExpenditures ||
+        (!mission.company ||
+          !mission.company.settings ||
+          mission.company.settings.requireExpenditures ||
           mission.expenditures.length > 0) && (
           <MissionReviewSection
             title="Frais"
             onEdit={
-              editExpenditures && mission.company.requireExpenditures
+              editExpenditures &&
+              (!mission.company ||
+                !mission.company.settings ||
+                mission.company.settings.requireExpenditures)
                 ? () =>
                     modals.open("expenditures", {
                       handleSubmit: (expenditures, forAllTeam) =>
