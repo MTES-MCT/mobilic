@@ -24,6 +24,7 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import SignupStepper from "./SignupStepper";
 import { COMPANY_SIGNUP_MUTATION, SIREN_QUERY } from "common/utils/apiQueries";
+import { Link } from "../../common/LinkButton";
 
 const useStyles = makeStyles(theme => ({
   formFieldTitle: {
@@ -53,6 +54,11 @@ const useStyles = makeStyles(theme => ({
   },
   verticalFormButton: {
     marginTop: theme.spacing(4)
+  },
+  noSirenText: {
+    display: "block",
+    fontStyle: "italic",
+    paddingTop: theme.spacing(6)
   }
 }));
 
@@ -247,6 +253,16 @@ export function CompanySignup() {
             >
               Continuer sans vérification du SIREN
             </Button>
+          )}
+          {(!siren || sirenError) && (
+            <Typography
+              className={classes.noSirenText}
+              align="left"
+              variant="caption"
+            >
+              Vous n'avez pas de numéro SIREN ?{" "}
+              <Link href="mailto:mobilic@beta.gouv.fr">Ecrivez-nous.</Link>
+            </Typography>
           )}
         </form>
       </Section>
