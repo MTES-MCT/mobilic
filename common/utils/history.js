@@ -8,7 +8,7 @@ import moment from "moment";
 import { now } from "./time";
 import { filterActivitiesOverlappingPeriod } from "./activities";
 
-export function findMatchingPeriodInNewScale(
+export function findMatchingPeriodInNewUnit(
   oldPeriod, // the selected period on the old time scale
   newPeriods, // the list of periods on the new time scale
   oldPeriodLength,
@@ -38,14 +38,18 @@ export function findMatchingPeriodInNewScale(
   return newPeriod;
 }
 
-export function groupMissionsByPeriod(missions, periodStart, periodLength) {
+export function groupMissionsByPeriodUnit(
+  missions,
+  periodGetter,
+  periodLength
+) {
   const groups = {};
   const now1 = now();
   missions.forEach(mission => {
-    const firstPeriod = periodStart(getTime(mission));
+    const firstPeriod = periodGetter(getTime(mission));
     const lastPeriod =
       periodLength.asSeconds() > 0
-        ? periodStart(
+        ? periodGetter(
             mission.activities[mission.activities.length - 1].endTime || now1
           )
         : firstPeriod;

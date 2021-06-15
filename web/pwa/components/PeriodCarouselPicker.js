@@ -87,7 +87,7 @@ export function PeriodCarouselPicker({
     if (periods) {
       scrollToSelectedPeriod();
     }
-  }, [periodRef]);
+  }, [periods.length, selectedPeriod]);
 
   return (
     <Box style={{ position: "relative" }}>

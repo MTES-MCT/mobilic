@@ -17,29 +17,28 @@ export const RULE_RESPECT_STATUS = {
   pending: 2
 };
 
-export function checkMinimumDurationOfDailyRest(dayEnd, followingDayStart) {
-  const checkDayRestAt = followingDayStart ? followingDayStart : now();
-  const dayRestDuration = checkDayRestAt - dayEnd;
+export function checkMinimumDurationOfDailyRest(dayStart, previousDayEnd) {
+  if (!previousDayEnd) {
+    return {
+      status: RULE_RESPECT_STATUS.success,
+      message: `Repos journalier respecté !`
+    };
+  }
+  const dayRestDuration = dayStart - previousDayEnd;
   const ruleRespected = dayRestDuration >= LONG_BREAK_DURATION;
   if (ruleRespected) {
     return {
       status: RULE_RESPECT_STATUS.success,
       message: `Repos journalier respecté (${
-        dayRestDuration > 48 * HOUR ? "> 48h" : formatTimer(dayRestDuration)
+        dayRestDuration > 48 * HOUR ? "> 10h" : formatTimer(dayRestDuration)
       }) !`
     };
-  } else if (followingDayStart) {
+  } else {
     return {
       status: RULE_RESPECT_STATUS.failure,
       message: `Repos journalier trop court (${formatTimer(dayRestDuration)}) !`
     };
   }
-  return {
-    status: RULE_RESPECT_STATUS.pending,
-    message: `Repos journalier en cours (encore au moins ${formatTimer(
-      LONG_BREAK_DURATION - dayRestDuration
-    )}) !`
-  };
 }
 
 export function checkMaximumDurationOfUninterruptedWork(activities) {
@@ -128,8 +127,8 @@ export function checkMinimumDurationOfBreak(workDayActivities) {
 export function checkMinimumDurationOfWeeklyRest(
   nWorkedDays,
   longInnerBreaks,
-  weekEnd,
-  nextWeekStart
+  weekStart,
+  previousWeekEnd
 ) {
   if (nWorkedDays > 6)
     return {
@@ -144,25 +143,22 @@ export function checkMinimumDurationOfWeeklyRest(
     ? innerWeeklyRest.duration
     : 0;
 
-  const checkOuterWeeklyRestAt = nextWeekStart || now();
-  const outerWeeklyRestDuration = checkOuterWeeklyRestAt - weekEnd;
+  if (!previousWeekEnd) {
+    return {
+      status: RULE_RESPECT_STATUS.success,
+      message: `Repos hebdomadaire respecté !`
+    };
+  }
+  const outerWeeklyRestDuration = weekStart - previousWeekEnd;
   if (
     !innerWeeklyRestDuration &&
     outerWeeklyRestDuration < DAY + LONG_BREAK_DURATION
   ) {
-    if (nextWeekStart) {
-      return {
-        status: RULE_RESPECT_STATUS.failure,
-        message: `Repos hebdomadaire trop court (${formatTimer(
-          outerWeeklyRestDuration
-        )}) !`
-      };
-    }
     return {
-      status: RULE_RESPECT_STATUS.pending,
-      message: `Repos hebdomadaire en cours (encore ${formatTimer(
-        DAY + LONG_BREAK_DURATION - outerWeeklyRestDuration
-      )})`
+      status: RULE_RESPECT_STATUS.failure,
+      message: `Repos hebdomadaire trop court (${formatTimer(
+        outerWeeklyRestDuration
+      )}) !`
     };
   }
 
@@ -174,7 +170,7 @@ export function checkMinimumDurationOfWeeklyRest(
   return {
     status: RULE_RESPECT_STATUS.success,
     message: `Repos hebdomadaire respecté (${
-      restDuration > 48 * HOUR ? "> 48h" : formatTimer(restDuration)
+      restDuration > 48 * HOUR ? "> 34h" : formatTimer(restDuration)
     }) !`
   };
 }

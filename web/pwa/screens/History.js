@@ -30,8 +30,8 @@ import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
 import { getTime, sortEvents } from "common/utils/events";
 import {
-  findMatchingPeriodInNewScale,
-  groupMissionsByPeriod
+  findMatchingPeriodInNewUnit,
+  groupMissionsByPeriodUnit
 } from "common/utils/history";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
@@ -210,7 +210,7 @@ const tabs = {
       missionsInPeriod,
       selectedPeriodStart,
       selectedPeriodEnd,
-      nextActivityPeriodStart,
+      previousPeriodActivityEnd,
       editActivityEvent,
       createActivity,
       editExpenditures,
@@ -221,7 +221,8 @@ const tabs = {
       registerKilometerReading,
       coworkers,
       vehicles,
-      userId
+      userId,
+      weekMissions
     }) => {
       const lastMission = missionsInPeriod[missionsInPeriod.length - 1];
 
@@ -231,8 +232,34 @@ const tabs = {
         selectedPeriodEnd
       );
 
+      let weekStats = null;
+      let checkNumberOfWorkedDaysInWeek = null;
+      if (new Date(selectedPeriodStart * 1000).getDay() === 0) {
+        const weekStart = getStartOfWeek(selectedPeriodStart);
+        weekStats = computePeriodStats(
+          weekMissions,
+          weekStart,
+          weekStart + WEEK
+        );
+        checkNumberOfWorkedDaysInWeek = checkMinimumDurationOfWeeklyRest(
+          weekStats.workedDays,
+          weekStats.innerLongBreaks,
+          weekStats.startTime,
+          null
+        );
+      }
+
       const innerLongBreak = stats.innerLongBreaks
         ? stats.innerLongBreaks[0]
+        : null;
+
+      const checkBreakRespect = lastMission.ended
+        ? maxBy(
+            stats.groupedActivities.map(acts =>
+              checkMinimumDurationOfBreak(acts)
+            ),
+            r => r.status
+          )
         : null;
 
       return (
@@ -256,16 +283,10 @@ const tabs = {
                           )}) !`
                         }
                       : checkMinimumDurationOfDailyRest(
-                          stats.endTime,
-                          nextActivityPeriodStart
+                          stats.startTime,
+                          previousPeriodActivityEnd
                         )
                   }
-                />
-                <RegulationCheck
-                  key={1}
-                  check={checkMaximumDurationOfUninterruptedWork(
-                    stats.filteredActivities
-                  )}
                 />
                 <RegulationCheck
                   key={2}
@@ -276,15 +297,29 @@ const tabs = {
                     r => r.status
                   )}
                 />
+                <RegulationCheck key={3} check={checkBreakRespect} />
+
                 <RegulationCheck
-                  key={3}
-                  check={maxBy(
-                    stats.groupedActivities.map(acts =>
-                      checkMinimumDurationOfBreak(acts)
-                    ),
-                    r => r.status
-                  )}
+                  key={4}
+                  check={
+                    checkBreakRespect.status === RULE_RESPECT_STATUS.failure
+                      ? {
+                          status: RULE_RESPECT_STATUS.failure,
+                          message: `Travail ininterrompu pendant plus de 6 heures !`
+                        }
+                      : checkMaximumDurationOfUninterruptedWork(
+                          stats.filteredActivities
+                        )
+                  }
                 />
+                {weekStats &&
+                  checkNumberOfWorkedDaysInWeek.status ===
+                    RULE_RESPECT_STATUS.failure && (
+                    <RegulationCheck
+                      key={5}
+                      check={checkNumberOfWorkedDaysInWeek}
+                    />
+                  )}
               </>
             ) : (
               <ItalicWarningTypography>
@@ -398,7 +433,7 @@ const tabs = {
       selectedPeriodStart,
       selectedPeriodEnd,
       handleMissionClick,
-      nextActivityPeriodStart
+      previousPeriodActivityEnd
     }) => {
       const stats = computePeriodStats(
         missionsInPeriod,
@@ -415,8 +450,8 @@ const tabs = {
               check={checkMinimumDurationOfWeeklyRest(
                 stats.workedDays,
                 stats.innerLongBreaks,
-                stats.endTime,
-                nextActivityPeriodStart
+                stats.startTime,
+                previousPeriodActivityEnd
               )}
             />
           </WorkTimeSummaryAdditionalInfo>
@@ -586,6 +621,18 @@ function fillHistoryPeriods(periods, step) {
   return allPeriods;
 }
 
+function computeMissionGroups(missions, periodUnits) {
+  const groupsByPeriodUnit = {};
+  periodUnits.forEach(unit => {
+    groupsByPeriodUnit[unit.value] = groupMissionsByPeriodUnit(
+      missions,
+      unit.getPeriod,
+      unit.periodLength
+    );
+  });
+  return groupsByPeriodUnit;
+}
+
 export function History({
   missions = [],
   currentMission,
@@ -606,6 +653,10 @@ export function History({
   const modals = useModals();
 
   const [activities, setActivities] = React.useState([]);
+  const [
+    missionGroupsByPeriodUnit,
+    setMissionGroupsByPeriodUnit
+  ] = React.useState(computeMissionGroups(missions, Object.values(tabs)));
 
   const onBackButtonClick = location.state
     ? () => history.push(location.state.previousPagePath)
@@ -631,11 +682,7 @@ export function History({
     queryString.get("mission") ? "mission" : "day"
   );
 
-  const groupedMissions = groupMissionsByPeriod(
-    missions,
-    tabs[currentTab].getPeriod,
-    tabs[currentTab].periodLength
-  );
+  const groupedMissions = missionGroupsByPeriodUnit[currentTab];
 
   const periods = Object.keys(groupedMissions)
     .map(p => parseInt(p))
@@ -664,6 +711,9 @@ export function History({
   }, [missions]);
 
   React.useEffect(() => {
+    setMissionGroupsByPeriodUnit(
+      computeMissionGroups(missions, Object.values(tabs))
+    );
     const acts = missions.reduce(
       (acc, mission) => [...acc, ...mission.activities],
       []
@@ -672,12 +722,17 @@ export function History({
     setActivities(acts);
   }, [missions]);
 
+  const missionsGroupedByWeek = missionGroupsByPeriodUnit["week"];
+  const weekPeriod = findMatchingPeriodInNewUnit(
+    selectedPeriod,
+    Object.keys(missionsGroupedByWeek),
+    tabs[currentTab].periodLength,
+    tabs.week.periodLength
+  );
+  const weekMissions = missionsGroupedByWeek[weekPeriod];
+
   function handlePeriodChange(e, newTab, selectedDate) {
-    const newGroups = groupMissionsByPeriod(
-      missions,
-      tabs[newTab].getPeriod,
-      tabs[newTab].periodLength
-    );
+    const newGroups = missionGroupsByPeriodUnit[newTab];
 
     const newPeriods = fillHistoryPeriods(
       Object.keys(newGroups)
@@ -686,7 +741,7 @@ export function History({
       newTab
     );
 
-    const newPeriod = findMatchingPeriodInNewScale(
+    const newPeriod = findMatchingPeriodInNewUnit(
       selectedDate,
       newPeriods,
       tabs[currentTab].periodLength,
@@ -710,29 +765,14 @@ export function History({
   const classes = useStyles();
 
   const missionsInSelectedPeriod = groupedMissions[selectedPeriod];
-  const followingPeriodStart = periods.find(p => p > selectedPeriod);
-
-  let nextActivityPeriodStart;
-  if (currentTab === "mission") {
-    nextActivityPeriodStart = followingPeriodStart;
-    if (
-      !nextActivityPeriodStart &&
-      currentMission &&
-      !missions.find(m => m.id === currentMission.id)
-    )
-      nextActivityPeriodStart = getTime(currentMission);
-  } else {
-    if (followingPeriodStart) {
-      const activitiesAfterPeriod = activities.filter(
-        a => !a.endTime || a.endTime >= followingPeriodStart
-      );
-      if (activitiesAfterPeriod.length !== 0)
-        nextActivityPeriodStart = Math.max(
-          followingPeriodStart,
-          Math.min(...activitiesAfterPeriod.map(a => a.startTime))
-        );
-    }
-  }
+  const activitiesBefore = activities.filter(a => a.startTime < selectedPeriod);
+  const previousPeriodActivityEnd =
+    activitiesBefore.length > 0
+      ? Math.min(
+          selectedPeriod,
+          Math.max(...activitiesBefore.map(a => a.endTime))
+        )
+      : null;
 
   const periodsWithNeedForValidation = mapValues(groupedMissions, ms =>
     ms.some(m => !m.validation && !m.adminValidation)
@@ -831,7 +871,8 @@ export function History({
               missionsInPeriod: missionsInSelectedPeriod,
               handleMissionClick: date => e =>
                 handlePeriodChange(e, "mission", date),
-              nextActivityPeriodStart,
+              weekMissions,
+              previousPeriodActivityEnd,
               editActivityEvent,
               createActivity,
               editExpenditures,
