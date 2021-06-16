@@ -66,7 +66,7 @@ export function AdminStoreProvider({ children }) {
     setMissions(
       flatMap(
         companiesPayload.map(c =>
-          c.missions.map(m => ({ ...m, companyId: c.id }))
+          c.missions.edges.map(m => ({ ...m.node, companyId: c.id }))
         )
       )
     );

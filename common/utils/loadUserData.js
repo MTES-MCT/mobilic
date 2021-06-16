@@ -17,67 +17,71 @@ const USER_QUERY = gql`
       email
       hasConfirmedEmail
       hasActivatedEmail
-      missions(fromTime: $activityAfter) {
-        id
-        name
-        validations {
-          submitterId
-          receptionTime
-          isAdmin
-          userId
-        }
-        vehicle {
-          id
-          name
-          registrationNumber
-        }
-        context
-        expenditures {
-          id
-          type
-          missionId
-          userId
-        }
-        company {
-          id
-          name
-          siren
-          ...CompanySettings
-        }
-        activities {
-          id
-          type
-          missionId
-          startTime
-          endTime
-          userId
-        }
-        comments {
-          id
-          text
-          missionId
-          receptionTime
-          submitter {
+      missions(fromTime: $activityAfter, first: 200) {
+        edges {
+          node {
             id
-            firstName
-            lastName
+            name
+            validations {
+              submitterId
+              receptionTime
+              isAdmin
+              userId
+            }
+            vehicle {
+              id
+              name
+              registrationNumber
+            }
+            context
+            expenditures {
+              id
+              type
+              missionId
+              userId
+            }
+            company {
+              id
+              name
+              siren
+              ...CompanySettings
+            }
+            activities {
+              id
+              type
+              missionId
+              startTime
+              endTime
+              userId
+            }
+            comments {
+              id
+              text
+              missionId
+              receptionTime
+              submitter {
+                id
+                firstName
+                lastName
+              }
+            }
+            startLocation {
+              id
+              name
+              alias
+              postalCode
+              city
+              kilometerReading
+            }
+            endLocation {
+              id
+              name
+              alias
+              postalCode
+              city
+              kilometerReading
+            }
           }
-        }
-        startLocation {
-          id
-          name
-          alias
-          postalCode
-          city
-          kilometerReading
-        }
-        endLocation {
-          id
-          name
-          alias
-          postalCode
-          city
-          kilometerReading
         }
       }
       currentEmployments {
@@ -142,7 +146,7 @@ export async function syncUser(userPayload, api, store) {
     birthDate,
     hasConfirmedEmail,
     hasActivatedEmail,
-    missions,
+    missions: missionsPayload,
     currentEmployments
   } = userPayload;
 
@@ -150,6 +154,7 @@ export async function syncUser(userPayload, api, store) {
   const expenditures = [];
   const missionData = [];
   const comments = [];
+  const missions = missionsPayload.edges.map(e => e.node);
 
   // Get end status for latest mission;
   if (missions.length > 0) {

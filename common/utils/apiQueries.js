@@ -192,7 +192,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
     $id: Int!
     $activityAfter: Date
     $workDaysLimit: Int
-    $nonValidatedMissionsAfter: Date
+    $nonValidatedMissionsAfter: TimeStamp
   ) {
     user(id: $id) {
       adminedCompanies {
@@ -229,53 +229,57 @@ export const ADMIN_COMPANIES_QUERY = gql`
           fromTime: $nonValidatedMissionsAfter
           onlyNonValidatedMissions: true
         ) {
-          id
-          name
-          validations {
-            submitterId
-            receptionTime
-          }
-          context
-          expenditures {
-            id
-            type
-            userId
-          }
-          startLocation {
-            id
-            alias
-            name
-            postalCode
-            city
-            kilometerReading
-          }
-          endLocation {
-            id
-            alias
-            name
-            postalCode
-            city
-            kilometerReading
-          }
-          activities {
-            id
-            type
-            startTime
-            endTime
-            user {
+          edges {
+            node {
               id
-              firstName
-              lastName
-            }
-          }
-          comments {
-            id
-            text
-            receptionTime
-            submitter {
-              id
-              firstName
-              lastName
+              name
+              validations {
+                submitterId
+                receptionTime
+              }
+              context
+              expenditures {
+                id
+                type
+                userId
+              }
+              startLocation {
+                id
+                alias
+                name
+                postalCode
+                city
+                kilometerReading
+              }
+              endLocation {
+                id
+                alias
+                name
+                postalCode
+                city
+                kilometerReading
+              }
+              activities {
+                id
+                type
+                startTime
+                endTime
+                user {
+                  id
+                  firstName
+                  lastName
+                }
+              }
+              comments {
+                id
+                text
+                receptionTime
+                submitter {
+                  id
+                  firstName
+                  lastName
+                }
+              }
             }
           }
         }
