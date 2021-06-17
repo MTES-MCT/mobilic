@@ -84,6 +84,7 @@ export const SIREN_QUERY = gql`
 `;
 
 export const USER_READ_QUERY = gql`
+  ${COMPANY_SETTINGS_FRAGMENT}
   query readUser($token: String!) {
     userFromReadToken(token: $token) {
       tokenInfo {
@@ -99,70 +100,75 @@ export const USER_READ_QUERY = gql`
         birthDate
         email
         missions {
-          id
-          name
-          company {
-            id
-            name
-            siren
-          }
-          validations {
-            submitterId
-            receptionTime
-            isAdmin
-            userId
-          }
-          vehicle {
-            id
-            name
-            registrationNumber
-          }
-          context
-          expenditures {
-            id
-            type
-            missionId
-            userId
-          }
-          activities {
-            id
-            type
-            missionId
-            startTime
-            endTime
-            userId
-            user {
+          edges {
+            node {
               id
-              firstName
-              lastName
+              name
+              company {
+                id
+                name
+                siren
+                ...CompanySettings
+              }
+              validations {
+                submitterId
+                receptionTime
+                isAdmin
+                userId
+              }
+              vehicle {
+                id
+                name
+                registrationNumber
+              }
+              context
+              expenditures {
+                id
+                type
+                missionId
+                userId
+              }
+              activities {
+                id
+                type
+                missionId
+                startTime
+                endTime
+                userId
+                user {
+                  id
+                  firstName
+                  lastName
+                }
+              }
+              comments {
+                id
+                text
+                missionId
+                receptionTime
+                submitter {
+                  id
+                  firstName
+                  lastName
+                }
+              }
+              startLocation {
+                id
+                name
+                alias
+                postalCode
+                city
+                kilometerReading
+              }
+              endLocation {
+                id
+                name
+                alias
+                postalCode
+                city
+                kilometerReading
+              }
             }
-          }
-          comments {
-            id
-            text
-            missionId
-            receptionTime
-            submitter {
-              id
-              firstName
-              lastName
-            }
-          }
-          startLocation {
-            id
-            name
-            alias
-            postalCode
-            city
-            kilometerReading
-          }
-          endLocation {
-            id
-            name
-            alias
-            postalCode
-            city
-            kilometerReading
           }
         }
         currentEmployments {
@@ -175,6 +181,7 @@ export const USER_READ_QUERY = gql`
             id
             name
             siren
+            ...CompanySettings
             vehicles {
               id
               name

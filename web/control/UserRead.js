@@ -88,10 +88,10 @@ export function UserRead() {
             if (ts && ts !== "") setControlTime(ts);
             setMissions(
               augmentSortAndFilterMissions(
-                userPayload.missions.map(m => ({
-                  ...m,
-                  ...parseMissionPayloadFromBackend(m, userPayload.id),
-                  allActivities: m.activities
+                userPayload.missions.edges.map(m => ({
+                  ...m.node,
+                  ...parseMissionPayloadFromBackend(m.node, userPayload.id),
+                  allActivities: m.node.activities
                 })),
                 userPayload.id
               )
@@ -104,8 +104,8 @@ export function UserRead() {
             });
             setVehicles(_vehicles);
             const _coworkers = {};
-            userPayload.missions.forEach(m => {
-              m.activities.forEach(a => {
+            userPayload.missions.edges.forEach(m => {
+              m.node.activities.forEach(a => {
                 _coworkers[a.user.id.toString()] = a.user;
               });
             });
