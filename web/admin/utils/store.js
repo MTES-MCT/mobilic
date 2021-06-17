@@ -34,7 +34,7 @@ export function AdminStoreProvider({ children }) {
     setWorkDays(
       flatMap(
         companiesPayload.map(c =>
-          c.workDays.map(wd => ({ ...wd, companyId: c.id }))
+          c.workDays.edges.map(wd => ({ ...wd.node, companyId: c.id }))
         )
       )
     );

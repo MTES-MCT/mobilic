@@ -211,19 +211,23 @@ export const ADMIN_COMPANIES_QUERY = gql`
           postalCode
           city
         }
-        workDays(fromDate: $activityAfter, limit: $workDaysLimit) {
-          user {
-            id
-            firstName
-            lastName
+        workDays(fromDate: $activityAfter, first: $workDaysLimit) {
+          edges {
+            node {
+              user {
+                id
+                firstName
+                lastName
+              }
+              missionNames
+              startTime
+              endTime
+              expenditures
+              serviceDuration
+              totalWorkDuration
+              activityDurations
+            }
           }
-          missionNames
-          startTime
-          endTime
-          expenditures
-          serviceDuration
-          totalWorkDuration
-          activityDurations
         }
         missions(
           fromTime: $nonValidatedMissionsAfter
