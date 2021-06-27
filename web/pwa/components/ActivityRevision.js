@@ -16,7 +16,7 @@ import forEach from "lodash/forEach";
 import MenuItem from "@material-ui/core/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import { DateTimePicker } from "./DateTimePicker";
+import { DateOrDateTimePicker } from "./DateOrDateTimePicker";
 import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 import Switch from "@material-ui/core/Switch/Switch";
 import {
@@ -524,7 +524,7 @@ export default function ActivityRevisionOrCreationModal({
               </MenuItem>
             </TextField>
           )}
-          <DateTimePicker
+          <DateOrDateTimePicker
             key={0}
             label="Début"
             variant="filled"
@@ -537,7 +537,7 @@ export default function ActivityRevisionOrCreationModal({
             required
             noValidate
           />
-          <DateTimePicker
+          <DateOrDateTimePicker
             key={1}
             label="Fin"
             variant="filled"

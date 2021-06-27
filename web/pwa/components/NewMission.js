@@ -8,20 +8,28 @@ import { FunnelModal, useStyles as useFunnelModalStyles } from "./FunnelModal";
 import { MainCtaButton } from "./MainCtaButton";
 import { AddressField } from "../../common/AddressField";
 import MenuItem from "@material-ui/core/MenuItem";
+import { DateOrDateTimePicker } from "./DateOrDateTimePicker";
 
 export default function NewMissionModal({
   open,
   handleClose,
   handleContinue,
   companies,
-  companyAddresses = []
+  companyAddresses = [],
+  disableCurrentPosition = false,
+  disableKilometerReading = false,
+  withDay = true,
+  withEndLocation = false
 }) {
   const [mission, setMission] = React.useState("");
   const [vehicle, setVehicle] = React.useState(null);
   const [company, setCompany] = React.useState(null);
+  const [day, setDay] = React.useState(null);
+  const [dayError, setDayError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [currentPosition, setCurrentPosition] = React.useState(null);
   const [address, setAddress] = React.useState(null);
+  const [endAddress, setEndAddress] = React.useState(null);
   const [kilometerReading, setKilometerReading] = React.useState(null);
 
   React.useEffect(() => {
@@ -30,9 +38,10 @@ export default function NewMissionModal({
     setCompany(companies && companies.length === 1 ? companies[0] : null);
     setCurrentPosition(null);
     setAddress(null);
+    setEndAddress(null);
     setKilometerReading(null);
 
-    if (open && navigator.geolocation) {
+    if (open && !disableCurrentPosition && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(position => {
         setCurrentPosition(position);
       });
@@ -58,7 +67,9 @@ export default function NewMissionModal({
               vehicle,
               address,
               company,
-              kilometerReading
+              endAddress,
+              kilometerReading,
+              day
             };
             await handleContinue(payLoad);
             setLoading(false);
@@ -80,6 +91,25 @@ export default function NewMissionModal({
               value={mission}
               onChange={e => setMission(e.target.value)}
             />
+            {withDay && [
+              <Typography key={1} variant="h5" className="form-field-title">
+                Quel jour s'est déroulé la mission ?
+              </Typography>,
+              <DateOrDateTimePicker
+                key={2}
+                label="Jour de la mission"
+                value={day}
+                setValue={setDay}
+                variant="filled"
+                isDateTime={false}
+                minValue="2021-06-01"
+                maxValue="2021-06-15"
+                error={dayError}
+                setError={setDayError}
+                required
+                autoValidate
+              />
+            ]}
             {companies &&
               companies.length > 1 && [
                 <Typography key={0} variant="h5" className="form-field-title">
@@ -128,11 +158,32 @@ export default function NewMissionModal({
               variant="filled"
               value={address}
               onChange={setAddress}
-              currentPosition={currentPosition}
+              currentPosition={disableCurrentPosition ? null : currentPosition}
               defaultAddresses={companyAddresses.filter(a =>
                 company ? a.companyId === company.id : true
               )}
             />
+            {withEndLocation && [
+              <Typography key={0} variant="h5" className="form-field-title">
+                Quel est le lieu de fin de service&nbsp;?
+              </Typography>,
+              <AddressField
+                key={1}
+                fullWidth
+                required
+                label="Lieu de fin de service"
+                disabled={companies && companies.length > 1 && !company}
+                variant="filled"
+                value={endAddress}
+                onChange={setEndAddress}
+                currentPosition={
+                  disableCurrentPosition ? null : currentPosition
+                }
+                defaultAddresses={companyAddresses.filter(a =>
+                  company ? a.companyId === company.id : true
+                )}
+              />
+            ]}
             <Typography variant="h5" className="form-field-title">
               Utilisez-vous un véhicule&nbsp;?{" "}
             </Typography>
@@ -144,6 +195,7 @@ export default function NewMissionModal({
               companyId={company ? company.id : null}
               kilometerReading={kilometerReading}
               setKilometerReading={
+                !disableKilometerReading &&
                 company &&
                 company.settings &&
                 company.settings.requireKilometerData &&
@@ -155,7 +207,12 @@ export default function NewMissionModal({
           </Container>
           <Box className="cta-container" my={4}>
             <MainCtaButton
-              disabled={!address || !mission}
+              disabled={
+                !address ||
+                !mission ||
+                (withEndLocation && !endAddress) ||
+                (withDay && (dayError || !day))
+              }
               type="submit"
               loading={loading}
             >

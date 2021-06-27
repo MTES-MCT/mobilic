@@ -246,8 +246,7 @@ export function UserRead() {
             missions={missions.filter(
               m => m.startTime >= getStartOfMonth(now() - 183 * DAY)
             )}
-            displayAccountButton={false}
-            displayQRCodeGeneration={false}
+            displayActions={false}
             coworkers={coworkers}
             vehicles={vehicles}
             userId={userInfo.id}

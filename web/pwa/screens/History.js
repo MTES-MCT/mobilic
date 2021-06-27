@@ -61,6 +61,7 @@ import IconButton from "@material-ui/core/IconButton";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import { ActivityList } from "../components/ActivityList";
+import AddCircleIcon from "@material-ui/icons/AddCircle";
 
 function ItalicWarningTypography(props) {
   const classes = useStyles();
@@ -580,6 +581,15 @@ const useStyles = makeStyles(theme => ({
   warningText: {
     fontStyle: "italic",
     color: theme.palette.warning.main
+  },
+  addMissionContainer: {
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center"
+  },
+  addMissionButton: {
+    paddingLeft: 0,
+    marginLeft: 0
   }
 }));
 
@@ -642,8 +652,7 @@ export function History({
   validateMission,
   logComment,
   cancelComment,
-  displayAccountButton = true,
-  displayQRCodeGeneration = true,
+  displayActions = true,
   coworkers = null,
   vehicles = null,
   userId = null
@@ -795,11 +804,10 @@ export function History({
         disableGutters
         maxWidth="sm"
       >
-        {displayAccountButton && (
-          <AccountButton p={2} onBackButtonClick={onBackButtonClick} />
-        )}
-        {displayQRCodeGeneration && (
+        {displayActions && [
+          <AccountButton p={2} key={1} onBackButtonClick={onBackButtonClick} />,
           <Button
+            key={2}
             aria-label="Accès contrôleur"
             className={classes.generateAccessButton}
             color="secondary"
@@ -809,8 +817,14 @@ export function History({
             }}
           >
             Donner accès à l'historique
-          </Button>
-        )}
+          </Button>,
+          <Box key={3} className={classes.addMissionContainer}>
+            <IconButton color="primary">
+              <AddCircleIcon fontSize="large" />
+            </IconButton>
+            <Typography align="left">Ajouter une mission passée</Typography>
+          </Box>
+        ]}
         <Container className={classes.periodSelector} maxWidth={false}>
           <Tabs
             value={currentTab}

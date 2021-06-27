@@ -8,7 +8,7 @@ import IconButton from "@material-ui/core/IconButton";
 import DialogContent from "@material-ui/core/DialogContent";
 import { formatTimeOfDay, now } from "common/utils/time";
 import { getTime } from "common/utils/events";
-import { DateTimePicker } from "./DateTimePicker";
+import { DateOrDateTimePicker } from "./DateOrDateTimePicker";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { VehicleInput } from "./VehicleInput";
@@ -57,7 +57,7 @@ export default function VehicleBookingModal({
             setVehicle={setVehicle}
           />
           <Box mb={1} />
-          <DateTimePicker
+          <DateOrDateTimePicker
             label="Heure de début"
             time={bookingTime}
             setTime={setBookingTime}
