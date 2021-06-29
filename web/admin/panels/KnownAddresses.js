@@ -46,7 +46,6 @@ export default function KnownAddressAdmin({ company }) {
           label="Adresse"
           value={address}
           onChange={onChange}
-          dynamicMargin={false}
           allowCreate={false}
         />
       ),

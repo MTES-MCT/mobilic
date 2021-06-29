@@ -46,7 +46,6 @@ export function AddressField({
   currentPosition,
   required,
   disabled = false,
-  dynamicMargin = true,
   allowCreate = true
 }) {
   const [inputValue, setInputValue] = React.useState("");
@@ -82,13 +81,6 @@ export function AddressField({
     <Autocomplete
       id="address-field"
       freeSolo={allowCreate}
-      style={{
-        paddingBottom: dynamicMargin
-          ? open
-            ? (_options.length + (isSearchingAddress ? 0 : 3)) * 60
-            : 0
-          : 0
-      }}
       fullWidth={fullWidth}
       groupBy={
         isSearchingAddress
