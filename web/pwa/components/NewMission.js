@@ -18,7 +18,7 @@ export default function NewMissionModal({
   companyAddresses = [],
   disableCurrentPosition = false,
   disableKilometerReading = false,
-  withDay = true,
+  withDay = false,
   withEndLocation = false
 }) {
   const [mission, setMission] = React.useState("");

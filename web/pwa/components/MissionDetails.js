@@ -17,6 +17,7 @@ import omit from "lodash/omit";
 import fromPairs from "lodash/fromPairs";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
+import max from "lodash/max";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useModals } from "common/utils/modals";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
@@ -74,7 +75,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function AlternateColors({ children, inverseColors = false }) {
+export function AlternateColors({ children, inverseColors = false }) {
   const classes = useStyles();
   const firstColor = inverseColors
     ? classes.backgroundPaper
@@ -117,7 +118,9 @@ export function MissionDetails({
   userId = null,
   fromTime = null,
   untilTime = null,
-  editKilometerReading = null
+  editKilometerReading = null,
+  defaultTime = null,
+  disableEmptyActivitiesPlaceHolder = false
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -147,6 +150,11 @@ export function MissionDetails({
 
   const teamMatesLatestStatuses = computeLatestEnrollmentStatuses(teamChanges);
   const hasTeamMates = Object.keys(teamMatesLatestStatuses).length > 0;
+
+  const lastActivityTime =
+    mission.activities.length > 0
+      ? max(mission.activities.map(a => a.endTime || now()))
+      : null;
 
   return (
     <AlternateColors inverseColors={inverseColors}>
@@ -184,7 +192,8 @@ export function MissionDetails({
                   teamChanges,
                   nullableEndTime: nullableEndTimeInEditActivity,
                   allowTeamMode: allowTeamActions,
-                  allowSupportActivity
+                  allowSupportActivity,
+                  defaultTime: lastActivityTime || defaultTime
                 })
             : null
         }
@@ -207,6 +216,7 @@ export function MissionDetails({
           isMissionEnded={isMissionEnded}
           fromTime={fromTime}
           untilTime={untilTime}
+          disableEmptyMessage={disableEmptyActivitiesPlaceHolder}
         />
       </MissionReviewSection>
       {hasTeamMates ||

@@ -3,11 +3,16 @@ import { broadCastChannel } from "./store";
 import { parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
 import { DAY, now } from "./time";
-import { COMPANY_SETTINGS_FRAGMENT, CURRENT_MISSION_INFO } from "./apiQueries";
+import {
+  COMPANY_SETTINGS_FRAGMENT,
+  CURRENT_MISSION_INFO,
+  FULL_MISSION_FRAGMENT
+} from "./apiQueries";
 import { gql } from "@apollo/client/core";
 
 const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
+  ${FULL_MISSION_FRAGMENT}
   query user($id: Int!, $activityAfter: TimeStamp) {
     user(id: $id) {
       id
@@ -20,67 +25,7 @@ const USER_QUERY = gql`
       missions(fromTime: $activityAfter, first: 200) {
         edges {
           node {
-            id
-            name
-            validations {
-              submitterId
-              receptionTime
-              isAdmin
-              userId
-            }
-            vehicle {
-              id
-              name
-              registrationNumber
-            }
-            context
-            expenditures {
-              id
-              type
-              missionId
-              userId
-            }
-            company {
-              id
-              name
-              siren
-              ...CompanySettings
-            }
-            activities {
-              id
-              type
-              missionId
-              startTime
-              endTime
-              userId
-            }
-            comments {
-              id
-              text
-              missionId
-              receptionTime
-              submitter {
-                id
-                firstName
-                lastName
-              }
-            }
-            startLocation {
-              id
-              name
-              alias
-              postalCode
-              city
-              kilometerReading
-            }
-            endLocation {
-              id
-              name
-              alias
-              postalCode
-              city
-              kilometerReading
-            }
+            ...FullMissionData
           }
         }
       }

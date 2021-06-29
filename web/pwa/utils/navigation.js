@@ -1,7 +1,6 @@
 import { BeforeWork } from "../screens/BeforeWork";
 import { CurrentActivity } from "../screens/CurrentActivity";
 import React from "react";
-import Container from "@material-ui/core/Container";
 import { MissionReview } from "../screens/MissionReview";
 import App from "common/components/App";
 
@@ -21,14 +20,6 @@ function _InnerAppScreen(props) {
   } else return <MissionReview {...props} />;
 }
 
-function AppScreen(props) {
-  return [
-    <Container key={0} className="app-container full-height" maxWidth={false}>
-      <_InnerAppScreen {...props} />
-    </Container>
-  ];
-}
-
 export default function ActualApp() {
-  return <App ScreenComponent={AppScreen} />;
+  return <App ScreenComponent={_InnerAppScreen} />;
 }

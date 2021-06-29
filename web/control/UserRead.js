@@ -15,7 +15,7 @@ import {
   now
 } from "common/utils/time";
 import {
-  augmentSortAndFilterMissions,
+  augmentAndSortMissions,
   parseMissionPayloadFromBackend
 } from "common/utils/mission";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
@@ -87,14 +87,14 @@ export function UserRead() {
             });
             if (ts && ts !== "") setControlTime(ts);
             setMissions(
-              augmentSortAndFilterMissions(
+              augmentAndSortMissions(
                 userPayload.missions.edges.map(m => ({
                   ...m.node,
                   ...parseMissionPayloadFromBackend(m.node, userPayload.id),
                   allActivities: m.node.activities
                 })),
                 userPayload.id
-              )
+              ).filter(m => m.activities.length > 0)
             );
             const _vehicles = {};
             userPayload.currentEmployments.forEach(e => {
@@ -137,7 +137,7 @@ export function UserRead() {
       className={classes.container}
       key={2}
       disableGutters
-      maxWidth="sm"
+      maxWidth="md"
     >
       {error ? (
         <Container>
@@ -147,7 +147,7 @@ export function UserRead() {
         </Container>
       ) : missions ? (
         [
-          <Container maxWidth="sm" key={0}>
+          <Container maxWidth="md" key={0}>
             <Typography variant="h5">Informations salarié.e</Typography>
             <Grid
               container

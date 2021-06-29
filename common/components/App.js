@@ -4,13 +4,24 @@ import { sortEvents } from "common/utils/events";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { ActionsContextProvider, useActions } from "common/utils/actions";
 import {
-  augmentSortAndFilterMissions,
+  augmentAndSortMissions,
   linkMissionsWithRelations
 } from "../utils/mission";
 import { History } from "../../web/pwa/screens/History";
-import { DAY, getStartOfMonth, now } from "../utils/time";
 import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
 import { useApi } from "../utils/api";
+import EditPastMission from "../../web/pwa/components/EditPastMission";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import Container from "@material-ui/core/Container";
+
+const useStyles = makeStyles(theme => ({
+  appContainer: {
+    width: "100%",
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column"
+  }
+}));
 
 function _App({ ScreenComponent, loadUser }) {
   const { path } = useRouteMatch();
@@ -28,7 +39,7 @@ function _App({ ScreenComponent, loadUser }) {
   const expenditures = values(store.getEntity("expenditures"));
   const comments = sortEvents(values(store.getEntity("comments")));
 
-  const missions = augmentSortAndFilterMissions(
+  const unfilteredMissions = augmentAndSortMissions(
     linkMissionsWithRelations(store.getEntity("missions"), {
       allActivities: activities,
       expenditures: expenditures,
@@ -38,7 +49,7 @@ function _App({ ScreenComponent, loadUser }) {
     store.companies()
   );
 
-  const historyStart = getStartOfMonth(now() - 183 * DAY);
+  const missions = unfilteredMissions.filter(m => m.activities.length > 0);
 
   const currentMission =
     missions.length > 0 ? missions[missions.length - 1] : null;
@@ -54,55 +65,75 @@ function _App({ ScreenComponent, loadUser }) {
       ? currentMission.activities[currentMission.activities.length - 1]
       : null;
 
+  const classes = useStyles();
+
+  function openHistory(missionId = null, state = null) {
+    history.push(
+      `${path}/history${missionId ? "?mission=" + missionId : ""}`,
+      state
+    );
+  }
+
   return (
-    <Switch>
-      <Route path={`${path}/history`}>
-        <History
-          handleBack={() => history.push(path)}
-          missions={missions.filter(
-            m => m.isComplete && m.ended && m.startTime >= historyStart
-          )}
-          createActivity={args =>
-            actions.pushNewTeamActivityEvent({ ...args, switchMode: false })
-          }
-          editExpenditures={actions.editExpendituresForTeam}
-          editActivityEvent={actions.editActivityEvent}
-          currentMission={currentMission}
-          validateMission={actions.validateMission}
-          logComment={actions.logComment}
-          cancelComment={actions.cancelComment}
-          registerKilometerReading={actions.registerKilometerReading}
-        />
-      </Route>
-      <Route path={path}>
-        <ScreenComponent
-          missions={missions}
-          latestActivity={latestActivity}
-          currentMission={currentMission}
-          pushNewTeamActivityEvent={actions.pushNewTeamActivityEvent}
-          editActivityEvent={actions.editActivityEvent}
-          beginNewMission={actions.beginNewMission}
-          endMissionForTeam={actions.endMissionForTeam}
-          endMission={actions.endMission}
-          validateMission={actions.validateMission}
-          logExpenditureForTeam={actions.logExpenditureForTeam}
-          cancelExpenditure={actions.cancelExpenditure}
-          editExpendituresForTeam={actions.editExpendituresForTeam}
-          updateMissionVehicle={actions.updateMissionVehicle}
-          registerKilometerReading={actions.registerKilometerReading}
-          logComment={actions.logComment}
-          cancelComment={actions.cancelComment}
-          previousMissionEnd={previousMissionEnd}
-          loadUser={loadUser}
-          openHistory={(missionId = null, state = null) =>
-            history.push(
-              `${path}/history${missionId ? "?mission=" + missionId : ""}`,
-              state
-            )
-          }
-        />
-      </Route>
-    </Switch>
+    <Container className={classes.appContainer} maxWidth="md" disableGutters>
+      <Switch>
+        <Route path={`${path}/history`}>
+          <History
+            handleBack={() => history.push(path)}
+            missions={missions.filter(m => m.isComplete && m.ended)}
+            createActivity={args =>
+              actions.pushNewTeamActivityEvent({ ...args, switchMode: false })
+            }
+            createMission={actions.beginNewMission}
+            editExpenditures={actions.editExpendituresForTeam}
+            editActivityEvent={actions.editActivityEvent}
+            currentMission={currentMission}
+            validateMission={actions.validateMission}
+            logComment={actions.logComment}
+            cancelComment={actions.cancelComment}
+            registerKilometerReading={actions.registerKilometerReading}
+          />
+        </Route>
+        <Route path={`${path}/edit_mission`}>
+          <EditPastMission
+            missions={unfilteredMissions}
+            createActivity={args =>
+              actions.pushNewTeamActivityEvent({ ...args, switchMode: false })
+            }
+            editActivityEvent={actions.editActivityEvent}
+            validateMission={actions.validateMission}
+            editExpenditures={actions.editExpendituresForTeam}
+            registerKilometerReading={actions.registerKilometerReading}
+            logComment={actions.logComment}
+            cancelComment={actions.cancelComment}
+            openHistory={openHistory}
+          />
+        </Route>
+        <Route path={path}>
+          <ScreenComponent
+            missions={missions}
+            latestActivity={latestActivity}
+            currentMission={currentMission}
+            pushNewTeamActivityEvent={actions.pushNewTeamActivityEvent}
+            editActivityEvent={actions.editActivityEvent}
+            beginNewMission={actions.beginNewMission}
+            endMissionForTeam={actions.endMissionForTeam}
+            endMission={actions.endMission}
+            validateMission={actions.validateMission}
+            logExpenditureForTeam={actions.logExpenditureForTeam}
+            cancelExpenditure={actions.cancelExpenditure}
+            editExpendituresForTeam={actions.editExpendituresForTeam}
+            updateMissionVehicle={actions.updateMissionVehicle}
+            registerKilometerReading={actions.registerKilometerReading}
+            logComment={actions.logComment}
+            cancelComment={actions.cancelComment}
+            previousMissionEnd={previousMissionEnd}
+            loadUser={loadUser}
+            openHistory={openHistory}
+          />
+        </Route>
+      </Switch>
+    </Container>
   );
 }
 

@@ -11,6 +11,73 @@ export const COMPANY_SETTINGS_FRAGMENT = gql`
   }
 `;
 
+export const FULL_MISSION_FRAGMENT = gql`
+  ${COMPANY_SETTINGS_FRAGMENT}
+  fragment FullMissionData on Mission {
+    id
+    name
+    validations {
+      submitterId
+      receptionTime
+      isAdmin
+      userId
+    }
+    vehicle {
+      id
+      name
+      registrationNumber
+    }
+    context
+    expenditures {
+      id
+      type
+      missionId
+      userId
+    }
+    company {
+      id
+      name
+      siren
+      ...CompanySettings
+    }
+    activities {
+      id
+      type
+      missionId
+      startTime
+      endTime
+      userId
+    }
+    comments {
+      id
+      text
+      missionId
+      receptionTime
+      submitter {
+        id
+        firstName
+        lastName
+      }
+    }
+    startLocation {
+      id
+      name
+      alias
+      postalCode
+      city
+      kilometerReading
+    }
+    endLocation {
+      id
+      name
+      alias
+      postalCode
+      city
+      kilometerReading
+    }
+  }
+`;
+
 export const LOGIN_MUTATION_STRING = `mutation login($email: String!, $password: String!) {
   auth {
     login(email: $email, password: $password) {

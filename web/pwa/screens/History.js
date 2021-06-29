@@ -62,6 +62,10 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import { ActivityList } from "../components/ActivityList";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
+import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { formatApiError } from "common/utils/errors";
+import { useSnackbarAlerts } from "../../common/Snackbar";
+import { useApi } from "common/utils/api";
 
 function ItalicWarningTypography(props) {
   const classes = useStyles();
@@ -655,11 +659,15 @@ export function History({
   displayActions = true,
   coworkers = null,
   vehicles = null,
-  userId = null
+  userId = null,
+  createMission = null
 }) {
   const location = useLocation();
   const history = useHistory();
   const modals = useModals();
+  const store = useStoreSyncedWithLocalStorage();
+  const api = useApi();
+  const alerts = useSnackbarAlerts();
 
   const [activities, setActivities] = React.useState([]);
   const [
@@ -794,123 +802,157 @@ export function History({
 
   return (
     <Container
-      className={classes.whiteFullScreen}
-      maxWidth={false}
+      className="flex-column"
+      style={{ flexGrow: 1, flexShrink: 0 }}
       disableGutters
+      maxWidth="md"
     >
-      <Container
-        className="flex-column full-height"
-        style={{ flexGrow: 1, flexShrink: 0 }}
-        disableGutters
-        maxWidth="sm"
-      >
-        {displayActions && [
-          <AccountButton p={2} key={1} onBackButtonClick={onBackButtonClick} />,
-          <Button
-            key={2}
-            aria-label="Accès contrôleur"
-            className={classes.generateAccessButton}
-            color="secondary"
-            variant="outlined"
-            onClick={() => {
-              modals.open("userReadQRCode");
-            }}
-          >
-            Donner accès à l'historique
-          </Button>,
-          <Box key={3} className={classes.addMissionContainer}>
-            <IconButton color="primary">
-              <AddCircleIcon fontSize="large" />
-            </IconButton>
-            <Typography align="left">Ajouter une mission passée</Typography>
-          </Box>
-        ]}
-        <Container className={classes.periodSelector} maxWidth={false}>
-          <Tabs
-            value={currentTab}
-            onChange={(e, tab) => handlePeriodChange(e, tab, selectedPeriod)}
-            style={{ flexGrow: 1 }}
-            variant="fullWdith"
-          >
-            {Object.values(tabs).map((tabProps, index) => (
-              <Tab
-                key={index + 1}
-                label={tabProps.label}
-                value={tabProps.value}
-                style={{ flexGrow: 1, flexShrink: 1, minWidth: 0 }}
-              />
-            ))}
-          </Tabs>
-          {filledPeriods.length > 0 && (
-            <PeriodCarouselPicker
-              periods={filledPeriods}
-              shouldDisplayPeriodsInBold={shouldDisplayPeriodsInBold}
-              shouldDisplayRedChipsForPeriods={
-                ["mission", "day"].includes(currentTab)
-                  ? periodsWithNeedForValidation
-                  : null
-              }
-              shouldDisplayOrangeChipsForPeriods={
-                ["mission", "day"].includes(currentTab)
-                  ? periodsWithNeedForAdminValidation
-                  : null
-              }
-              selectedPeriod={selectedPeriod}
-              onPeriodChange={newp => {
-                setSelectedPeriod(newp);
-                if (currentTab === "mission") {
-                  const mission = missions.find(m => getTime(m) === newp);
-                  setMissionId(mission ? mission.id : null);
-                }
-                resetLocation();
-              }}
-              renderPeriod={tabs[currentTab].formatPeriod}
-              periodMissionsGetter={period => groupedMissions[period]}
-            />
-          )}
-        </Container>
-        <Container
-          className={`${classes.contentContainer} ${
-            missionsInSelectedPeriod ? "" : classes.placeholderContainer
-          }`}
-          maxWidth={false}
+      {displayActions && [
+        <AccountButton p={2} key={1} onBackButtonClick={onBackButtonClick} />,
+        <Button
+          key={2}
+          aria-label="Accès contrôleur"
+          className={classes.generateAccessButton}
+          color="secondary"
+          variant="outlined"
+          onClick={() => {
+            modals.open("userReadQRCode");
+          }}
         >
-          {missionsInSelectedPeriod ? (
-            tabs[currentTab].renderPeriod({
-              selectedPeriodStart: selectedPeriod,
-              selectedPeriodEnd: moment
-                .unix(selectedPeriod)
-                .add(tabs[currentTab].periodLength)
-                .unix(),
-              missionsInPeriod: missionsInSelectedPeriod,
-              handleMissionClick: date => e =>
-                handlePeriodChange(e, "mission", date),
-              weekMissions,
-              previousPeriodActivityEnd,
-              editActivityEvent,
-              createActivity,
-              editExpenditures,
-              currentMission,
-              validateMission,
-              logComment,
-              cancelComment,
-              coworkers,
-              vehicles,
-              userId
-            })
-          ) : (
-            <Box className={classes.placeholder}>
-              <NoDataImage height={100} />
-              <Typography>
-                {currentTab === "day"
-                  ? "Journée non travaillée"
-                  : currentTab === "week"
-                  ? "Aucune journée travaillée dans la semaine"
-                  : "Aucune journée travaillée dans le mois"}
-              </Typography>
-            </Box>
-          )}
-        </Container>
+          Donner accès à l'historique
+        </Button>,
+        <Box key={3} className={classes.addMissionContainer}>
+          <IconButton
+            color="primary"
+            onClick={() =>
+              modals.open("newMission", {
+                companies: store.companies(),
+                companyAddresses: store.getEntity("knownAddresses"),
+                disableCurrentPosition: true,
+                disableKilometerReading: true,
+                withDay: true,
+                withEndLocation: true,
+                handleContinue: async missionInfos => {
+                  try {
+                    const tempMissionId = await createMission({
+                      companyId: missionInfos.company.id,
+                      name: missionInfos.mission,
+                      vehicle: missionInfos.vehicle,
+                      startLocation: missionInfos.address,
+                      endLocation: missionInfos.endAddress
+                    });
+                    await api.executePendingRequests();
+                    const actualMissionId = store.identityMap()[tempMissionId];
+                    if (!actualMissionId)
+                      alerts.error(
+                        "La mission n'a pas pu être créée",
+                        tempMissionId,
+                        6000
+                      );
+                    else {
+                      history.push(
+                        `/app/edit_mission?mission=${actualMissionId}`,
+                        { day: missionInfos.day }
+                      );
+                      modals.close("newMission");
+                    }
+                  } catch (err) {
+                    alerts.error(formatApiError(err), "create-mission", 6000);
+                  }
+                }
+              })
+            }
+          >
+            <AddCircleIcon fontSize="large" />
+          </IconButton>
+          <Typography align="left">Ajouter une mission passée</Typography>
+        </Box>
+      ]}
+      <Container className={classes.periodSelector} maxWidth={false}>
+        <Tabs
+          value={currentTab}
+          onChange={(e, tab) => handlePeriodChange(e, tab, selectedPeriod)}
+          style={{ flexGrow: 1 }}
+          variant="fullWdith"
+        >
+          {Object.values(tabs).map((tabProps, index) => (
+            <Tab
+              key={index + 1}
+              label={tabProps.label}
+              value={tabProps.value}
+              style={{ flexGrow: 1, flexShrink: 1, minWidth: 0 }}
+            />
+          ))}
+        </Tabs>
+        {filledPeriods.length > 0 && (
+          <PeriodCarouselPicker
+            periods={filledPeriods}
+            shouldDisplayPeriodsInBold={shouldDisplayPeriodsInBold}
+            shouldDisplayRedChipsForPeriods={
+              ["mission", "day"].includes(currentTab)
+                ? periodsWithNeedForValidation
+                : null
+            }
+            shouldDisplayOrangeChipsForPeriods={
+              ["mission", "day"].includes(currentTab)
+                ? periodsWithNeedForAdminValidation
+                : null
+            }
+            selectedPeriod={selectedPeriod}
+            onPeriodChange={newp => {
+              setSelectedPeriod(newp);
+              if (currentTab === "mission") {
+                const mission = missions.find(m => getTime(m) === newp);
+                setMissionId(mission ? mission.id : null);
+              }
+              resetLocation();
+            }}
+            renderPeriod={tabs[currentTab].formatPeriod}
+            periodMissionsGetter={period => groupedMissions[period]}
+          />
+        )}
+      </Container>
+      <Container
+        className={`${classes.contentContainer} ${
+          missionsInSelectedPeriod ? "" : classes.placeholderContainer
+        }`}
+        maxWidth={false}
+      >
+        {missionsInSelectedPeriod ? (
+          tabs[currentTab].renderPeriod({
+            selectedPeriodStart: selectedPeriod,
+            selectedPeriodEnd: moment
+              .unix(selectedPeriod)
+              .add(tabs[currentTab].periodLength)
+              .unix(),
+            missionsInPeriod: missionsInSelectedPeriod,
+            handleMissionClick: date => e =>
+              handlePeriodChange(e, "mission", date),
+            weekMissions,
+            previousPeriodActivityEnd,
+            editActivityEvent,
+            createActivity,
+            editExpenditures,
+            currentMission,
+            validateMission,
+            logComment,
+            cancelComment,
+            coworkers,
+            vehicles,
+            userId
+          })
+        ) : (
+          <Box className={classes.placeholder}>
+            <NoDataImage height={100} />
+            <Typography>
+              {currentTab === "day"
+                ? "Journée non travaillée"
+                : currentTab === "week"
+                ? "Aucune journée travaillée dans la semaine"
+                : "Aucune journée travaillée dans le mois"}
+            </Typography>
+          </Box>
+        )}
       </Container>
     </Container>
   );

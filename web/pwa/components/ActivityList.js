@@ -146,7 +146,8 @@ export function ActivityList({
   nullableEndTimeInEditActivity,
   isMissionEnded,
   fromTime = null,
-  untilTime = null
+  untilTime = null,
+  disableEmptyMessage = false
 }) {
   const filteredActivities = filterActivitiesOverlappingPeriod(
     activities,
@@ -230,7 +231,7 @@ export function ActivityList({
           />
         </ListItem>
       )}
-      {augmentedAndSortedActivities.length === 0 && (
+      {augmentedAndSortedActivities.length === 0 && !disableEmptyMessage && (
         <Typography variant="body2" className={classes.infoText}>
           Pas d'activités sur cette journée
         </Typography>

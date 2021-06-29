@@ -895,13 +895,15 @@ class Actions {
 
   beginNewMission = async ({
     name,
-    firstActivityType,
+    firstActivityType = null,
     companyId,
     team = null,
     vehicle = null,
     driverId = null,
     startLocation = null,
-    kilometerReading = null
+    endLocation = null,
+    kilometerReading = null,
+    endKilometerReading = null
   }) => {
     const missionPayload = {
       name,
@@ -937,14 +939,15 @@ class Actions {
       false
     );
 
-    this.pushNewTeamActivityEvent({
-      activityType: firstActivityType,
-      missionId: missionCurrentId,
-      startTime: now(),
-      team,
-      driverId,
-      forceNonBatchable: true
-    });
+    firstActivityType &&
+      this.pushNewTeamActivityEvent({
+        activityType: firstActivityType,
+        missionId: missionCurrentId,
+        startTime: now(),
+        team,
+        driverId,
+        forceNonBatchable: true
+      });
     startLocation &&
       this.logLocation({
         address: startLocation,
@@ -952,6 +955,15 @@ class Actions {
         isStart: true,
         kilometerReading
       });
+    endLocation &&
+      this.logLocation({
+        address: endLocation,
+        missionId: missionCurrentId,
+        isStart: false,
+        kilometerReading: endKilometerReading
+      });
+
+    return missionCurrentId;
   };
 
   logLocation = async ({

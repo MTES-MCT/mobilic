@@ -185,7 +185,8 @@ export default function ActivityRevisionOrCreationModal({
   allowTeamMode = false,
   nullableEndTime = true,
   allowSupportActivity = true,
-  createActivity
+  createActivity,
+  defaultTime = null
 }) {
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
@@ -302,8 +303,8 @@ export default function ActivityRevisionOrCreationModal({
       setNewUserTime(getTime(event));
       setNewUserEndTime(event.endTime);
     } else {
-      setNewUserTime(null);
-      setNewUserEndTime(null);
+      setNewUserTime(defaultTime);
+      setNewUserEndTime(defaultTime);
     }
     setNewUserEndTimeError("");
     setNewUserTimeError("");
@@ -529,11 +530,11 @@ export default function ActivityRevisionOrCreationModal({
             label="Début"
             variant="filled"
             className={classes.formField}
-            time={newUserTime}
-            setTime={setNewUserTime}
+            value={newUserTime}
+            setValue={setNewUserTime}
             error={newUserTimeError}
-            minTime={previousMissionEnd}
-            maxTime={nextMissionStart}
+            minValue={previousMissionEnd}
+            maxValue={nextMissionStart}
             required
             noValidate
           />
@@ -543,10 +544,10 @@ export default function ActivityRevisionOrCreationModal({
             variant="filled"
             className={classes.formField}
             required={!actuallyNullableEndTime}
-            time={newUserEndTime}
-            minTime={newUserTime}
-            maxTime={nextMissionStart}
-            setTime={setNewUserEndTime}
+            value={newUserEndTime}
+            minValue={newUserTime}
+            maxValue={nextMissionStart}
+            setValue={setNewUserEndTime}
             error={newUserEndTimeError}
             clearable={actuallyNullableEndTime}
             noValidate

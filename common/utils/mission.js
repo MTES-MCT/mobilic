@@ -43,11 +43,12 @@ export function linkMissionsWithRelations(missions, relationMap) {
   return values(augmentedMissions);
 }
 
-function computeMissionProperties(mission, userId, companies) {
+export function augmentMissionWithProperties(mission, userId, companies = []) {
   const company =
     mission.company || companies.find(c => c.id === mission.companyId);
   const activities = mission.allActivities.filter(a => a.userId === userId);
   return {
+    ...mission,
     company,
     activities,
     expenditures: mission.expenditures.filter(e => e.userId === userId),
@@ -63,10 +64,8 @@ function computeMissionProperties(mission, userId, companies) {
   };
 }
 
-export function augmentSortAndFilterMissions(missions, userId, companies = []) {
+export function augmentAndSortMissions(missions, userId, companies = []) {
   return sortEvents(
-    missions
-      .map(m => ({ ...m, ...computeMissionProperties(m, userId, companies) }))
-      .filter(m => m.activities.length > 0)
+    missions.map(m => augmentMissionWithProperties(m, userId, companies))
   );
 }
