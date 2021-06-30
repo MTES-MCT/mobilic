@@ -265,6 +265,8 @@ export function ActivityList({
   augmentedAndSortedActivities.reverse();
   const latestActivity = augmentedAndSortedActivities[0];
 
+  const canDisplayChart = !hideChart && stats.total > 0;
+
   const classes = useStyles();
   const pieData = Object.values(ACTIVITIES)
     .map(a => ({
@@ -278,7 +280,7 @@ export function ActivityList({
 
   return (
     <Container maxWidth={false} disableGutters>
-      {!hideChart && stats.total > 0 && (
+      {canDisplayChart && (
         <Grid component="label" container alignItems="center" spacing={1}>
           <Grid item>
             <Typography
@@ -308,7 +310,7 @@ export function ActivityList({
           </Grid>
         </Grid>
       )}
-      {view === "list" && (
+      {(view === "list" || !canDisplayChart) && (
         <List dense>
           {hasActivitiesAfterMaxTime && (
             <Typography variant="body2" className={classes.infoText}>
@@ -355,7 +357,7 @@ export function ActivityList({
           )}
         </List>
       )}
-      {view === "chart" && (
+      {view === "chart" && canDisplayChart && (
         <ResponsiveContainer
           aspect={1}
           minWidth={200}
