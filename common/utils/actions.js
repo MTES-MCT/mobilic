@@ -20,6 +20,7 @@ import { EXPENDITURES } from "./expenditures";
 import { useSnackbarAlerts } from "../../web/common/Snackbar";
 import { useModals } from "./modals";
 import {
+  buildLogLocationPayloadFromAddress,
   CANCEL_ACTIVITY_MUTATION,
   CANCEL_COMMENT_MUTATION,
   CANCEL_EXPENDITURE_MUTATION,
@@ -982,14 +983,12 @@ class Actions {
       ? { manual: true, name: address }
       : null;
 
-    const payload = {
+    const payload = buildLogLocationPayloadFromAddress(
+      address,
       missionId,
-      type: isStart ? "mission_start_location" : "mission_end_location",
+      isStart,
       kilometerReading
-    };
-    if (address.id) payload.companyKnownAddressId = address.id;
-    else if (address.manual) payload.manualAddress = address.name;
-    else payload.geoApiData = address;
+    );
 
     const updateStore = (store, requestId) => {
       const tempId = this.store.generateTempEntityObjectId();

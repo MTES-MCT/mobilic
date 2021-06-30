@@ -7,8 +7,6 @@ import { useLocation } from "react-router-dom";
 import { useLoadingScreen } from "common/utils/loading";
 import { sortEvents } from "common/utils/events";
 import { prettyFormatDay } from "common/utils/time";
-import { gql } from "@apollo/client/core";
-import { FULL_MISSION_FRAGMENT } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import {
   augmentMissionWithProperties,
@@ -18,6 +16,7 @@ import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { formatApiError } from "common/utils/errors";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { AccountButton } from "./AccountButton";
+import { MISSION_QUERY } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   overview: {
@@ -32,15 +31,6 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(4)
   }
 }));
-
-const MISSION_QUERY = gql`
-  ${FULL_MISSION_FRAGMENT}
-  query mission($id: Int!) {
-    mission(id: $id) {
-      ...FullMissionData
-    }
-  }
-`;
 
 export default function EditPastMission({
   missions,

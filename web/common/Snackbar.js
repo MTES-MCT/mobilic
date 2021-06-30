@@ -2,6 +2,7 @@ import React from "react";
 import MuiSnackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
+import { formatApiError } from "common/utils/errors";
 
 const SnackbarContext = React.createContext(() => {});
 
@@ -40,12 +41,21 @@ export const SnackbarProvider = withWidth()(({ children, width }) => {
     setMessage(null);
   }
 
+  async function withApiErrorHandling(func, name) {
+    try {
+      await func();
+    } catch (err) {
+      error(formatApiError(err), name, 6000);
+    }
+  }
+
   return (
     <SnackbarContext.Provider
       value={{
         info,
         error,
-        success
+        success,
+        withApiErrorHandling
       }}
     >
       {children}

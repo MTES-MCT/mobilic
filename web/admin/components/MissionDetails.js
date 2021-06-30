@@ -19,7 +19,7 @@ import { getTime } from "common/utils/events";
 import { ACTIVITIES } from "common/utils/activities";
 import CheckIcon from "@material-ui/icons/Check";
 import EditIcon from "@material-ui/icons/Edit";
-import { DateTimePicker } from "../../pwa/components/DateTimePicker";
+import { DateOrDateTimePicker } from "../../pwa/components/DateOrDateTimePicker";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../utils/store";
 import { LoadingButton } from "common/components/LoadingButton";
@@ -42,11 +42,13 @@ import {
   LOG_ACTIVITY_MUTATION,
   LOG_COMMENT_MUTATION,
   LOG_EXPENDITURE_MUTATION,
+  MISSION_QUERY,
   VALIDATE_MISSION_MUTATION
 } from "common/utils/apiQueries";
 import LocationEntry from "../../pwa/components/LocationEntry";
 import Chip from "@material-ui/core/Chip";
 import { EXPENDITURES } from "common/utils/expenditures";
+import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {
@@ -138,7 +140,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function MissionDetails({ mission, handleClose, width }) {
+export function MissionDetails({
+  missionId,
+  mission,
+  day,
+  handleClose,
+  width
+}) {
   const classes = useStyles();
 
   const adminStore = useAdminStore();
@@ -157,15 +165,40 @@ export function MissionDetails({ mission, handleClose, width }) {
 
   const ref = React.useRef();
 
-  if (!mission) return null;
+  const [loading, setLoading] = React.useState(false);
+  const [missionLoadError, setMissionLoadError] = React.useState(false);
 
-  const withAlerts = (func, key) => async () => {
+  const [usersToAdd, setUsersToAdd] = React.useState([]);
+
+  async function loadMission() {
+    setLoading(true);
     try {
-      await func();
+      const missionPayload = await api.graphQlQuery(MISSION_QUERY, {
+        id: missionId
+      });
+      adminStore.setMissions(missions => [
+        ...missions,
+        {
+          ...missionPayload.data.mission,
+          companyId: missionPayload.data.mission.company.id
+        }
+      ]);
     } catch (err) {
-      alerts.error(formatApiError(err), key, 6000);
+      setMissionLoadError(formatApiError(err));
     }
-  };
+    setLoading(false);
+  }
+
+  React.useEffect(() => {
+    if (missionId && !mission) {
+      loadMission();
+    }
+  }, [missionId]);
+
+  if (loading) return <CircularProgress color="primary" />;
+  if (missionLoadError)
+    return <Typography color="error">{missionLoadError}</Typography>;
+  if (!mission) return null;
 
   const missionCompany = adminStore.companies.find(
     c => c.id === mission.companyId
@@ -212,7 +245,7 @@ export function MissionDetails({ mission, handleClose, width }) {
       })
     );
     mission.activities = mission.activities.filter(a => a.id !== activity.id);
-    Object.assign(mission, computeMissionStats(mission));
+    Object.assign(mission, computeMissionStats(mission, adminStore.users));
     adminStore.setMissions(missions =>
       missions.map(m => ({
         ...m,
@@ -261,7 +294,7 @@ export function MissionDetails({ mission, handleClose, width }) {
     );
     const activity = apiResponse.data.activities.logActivity;
     mission.activities = [...mission.activities, { ...activity, user }];
-    Object.assign(mission, computeMissionStats(mission));
+    Object.assign(mission, computeMissionStats(mission, adminStore.users));
     adminStore.setMissions(missions =>
       missions.map(m =>
         m.id === mission.id
@@ -272,6 +305,7 @@ export function MissionDetails({ mission, handleClose, width }) {
           : m
       )
     );
+    setUsersToAdd(users => users.filter(u => u.id !== user.id));
   }
 
   async function onEditActivity(activity, newValues, user, activities) {
@@ -320,7 +354,7 @@ export function MissionDetails({ mission, handleClose, width }) {
           }
         : a
     );
-    Object.assign(mission, computeMissionStats(mission));
+    Object.assign(mission, computeMissionStats(mission, adminStore.users));
     adminStore.setMissions(missions =>
       missions.map(m => ({
         ...m,
@@ -347,13 +381,16 @@ export function MissionDetails({ mission, handleClose, width }) {
     );
     const expenditure = apiResponse.data.activities.logExpenditure;
     mission.expenditures.push(expenditure);
-    Object.assign(mission, computeMissionStats(mission));
+    Object.assign(mission, computeMissionStats(mission, adminStore.users));
     adminStore.setMissions(missions =>
       missions.map(m =>
         m.id === mission.id
           ? {
               ...m,
-              expenditures: [...m.expenditures, expenditure]
+              expenditures: [
+                ...m.expenditures.filter(e => e.id !== expenditure.id),
+                expenditure
+              ]
             }
           : m
       )
@@ -369,7 +406,7 @@ export function MissionDetails({ mission, handleClose, width }) {
     mission.expenditures = mission.expenditures.filter(
       e => e.id !== expenditure.id
     );
-    Object.assign(mission, computeMissionStats(mission));
+    Object.assign(mission, computeMissionStats(mission, adminStore.users));
     adminStore.setMissions(missions =>
       missions.map(m =>
         m.id === mission.id
@@ -454,15 +491,15 @@ export function MissionDetails({ mission, handleClose, width }) {
       format: (time, entry) =>
         activityIdToEdit === entry.id ||
         (!entry.id && creatingActivityForUserId === entry.user.id) ? (
-          <DateTimePicker
+          <DateOrDateTimePicker
             label="Début"
             format="HH:mm"
             autoValidate
             error={errors.startTime}
-            maxTime={now()}
+            maxValue={now()}
             setError={e => setErrors({ ...errors, startTime: e })}
-            time={editedValues.startTime}
-            setTime={t => setEditedValues({ ...editedValues, startTime: t })}
+            value={editedValues.startTime}
+            setValue={t => setEditedValues({ ...editedValues, startTime: t })}
             required={true}
           />
         ) : (
@@ -477,13 +514,13 @@ export function MissionDetails({ mission, handleClose, width }) {
       format: (time, entry) =>
         activityIdToEdit === entry.id ||
         (!entry.id && creatingActivityForUserId === entry.user.id) ? (
-          <DateTimePicker
+          <DateOrDateTimePicker
             label="Fin"
-            time={editedValues.endTime}
-            minTime={editedValues.startTime - 1}
+            value={editedValues.endTime}
+            minValue={editedValues.startTime - 1}
             autoValidate
-            maxTime={now()}
-            setTime={t => setEditedValues({ ...editedValues, endTime: t })}
+            maxValue={now()}
+            setValue={t => setEditedValues({ ...editedValues, endTime: t })}
             error={errors.endTime}
             setError={e => setErrors({ ...errors, endTime: e })}
             required={true}
@@ -517,23 +554,25 @@ export function MissionDetails({ mission, handleClose, width }) {
                 !!errors.endTime ||
                 (!activityIdToEdit && !editedValues.type)
               }
-              onClick={withAlerts(async () => {
-                activityIdToEdit
-                  ? await onEditActivity(
-                      entry,
-                      { ...editedValues },
-                      entry.user,
-                      mission.activities
-                    )
-                  : await onCreateActivity(
-                      entry.user,
-                      { ...editedValues },
-                      mission.activities
-                    );
-                setActivityIdToEdit(null);
-                setCreatingActivityForUserId(null);
-                setEditedValues({});
-              }, activityIdToEdit || creatingActivityForUserId)}
+              onClick={async () =>
+                await alerts.withApiErrorHandling(async () => {
+                  activityIdToEdit
+                    ? await onEditActivity(
+                        entry,
+                        { ...editedValues },
+                        entry.user,
+                        mission.activities
+                      )
+                    : await onCreateActivity(
+                        entry.user,
+                        { ...editedValues },
+                        mission.activities
+                      );
+                  setActivityIdToEdit(null);
+                  setCreatingActivityForUserId(null);
+                  setEditedValues({});
+                }, activityIdToEdit || creatingActivityForUserId)
+              }
             >
               <CheckIcon fontSize="small" className={classes.saveIcon} />
             </IconButton>
@@ -576,15 +615,16 @@ export function MissionDetails({ mission, handleClose, width }) {
               onClick={() =>
                 modals.open("confirmation", {
                   title: "Confirmer suppression de l'activité",
-                  handleConfirm: withAlerts(
-                    async () =>
-                      await onCancelActivity(
-                        entry,
-                        entry.user,
-                        mission.activities
-                      ),
-                    activityIdToEdit
-                  )
+                  handleConfirm: () =>
+                    alerts.withApiErrorHandling(
+                      async () =>
+                        await onCancelActivity(
+                          entry,
+                          entry.user,
+                          mission.activities
+                        ),
+                      activityIdToEdit
+                    )
                 })
               }
             >
@@ -601,7 +641,20 @@ export function MissionDetails({ mission, handleClose, width }) {
     }
   ];
 
-  const entries = values(mission.userStats).map(stats => {
+  let entries = values(mission.userStats);
+  const userIdsWithEntries = entries.map(e => e.user.id);
+  usersToAdd.forEach(user => {
+    if (!userIdsWithEntries.includes(user.id)) {
+      entries.push({
+        user,
+        activities: [],
+        activitiesWithBreaks: [],
+        expenditureAggs: {}
+      });
+    }
+  });
+
+  entries = entries.map(stats => {
     const activitiesWithBreaks = [];
     stats.activities.forEach((a, index) => {
       activitiesWithBreaks.push(a);
@@ -631,6 +684,8 @@ export function MissionDetails({ mission, handleClose, width }) {
     };
   });
 
+  entries.sort((e1, e2) => e1.user.id - e2.user.id);
+
   return [
     <Box
       key={0}
@@ -652,8 +707,13 @@ export function MissionDetails({ mission, handleClose, width }) {
       variant="h6"
       className={`${classes.horizontalPadding} ${classes.missionSubTitle}`}
     >
-      {prettyFormatDay(mission.startTime, true)} (de{" "}
-      {formatTimeOfDay(mission.startTime)} à {formatTimeOfDay(mission.endTime)})
+      {mission.startTime
+        ? `${prettyFormatDay(mission.startTime, true)} de (${formatTimeOfDay(
+            mission.startTime
+          )} à ${formatTimeOfDay(mission.endTime)})`
+        : day
+        ? prettyFormatDay(day, true)
+        : ""}
     </Typography>,
     (mission.endLocation || mission.startLocation) && (
       <Section key={2} title="Lieux de service">
@@ -685,6 +745,28 @@ export function MissionDetails({ mission, handleClose, width }) {
       </Section>
     ),
     <Section key={3} title="Détail par employé">
+      <Button
+        aria-label="Ajouter un employé"
+        color="primary"
+        variant="outlined"
+        size="small"
+        style={{ float: "right" }}
+        className={classes.smallTextButton}
+        onClick={() => {
+          modals.open("selectEmployee", {
+            users: adminStore.users.filter(
+              u => u.companyId === mission.companyId
+            ),
+            handleSelect: user =>
+              setUsersToAdd(users => [
+                ...users.filter(u => u.id !== user.id),
+                user
+              ])
+          });
+        }}
+      >
+        Ajouter un employé
+      </Button>
       <AugmentedVirtualizedTable
         headerHeight={30}
         headerClassName={classes.header}
@@ -721,8 +803,8 @@ export function MissionDetails({ mission, handleClose, width }) {
                   onClick={() => {
                     setCreatingActivityForUserId(userStats.user.id);
                     setEditedValues({
-                      startTime: mission.endTime,
-                      endTime: mission.endTime
+                      startTime: mission.endTime || day,
+                      endTime: mission.endTime || day
                     });
                     ref.current.recomputeRowHeights();
                   }}
@@ -781,41 +863,55 @@ export function MissionDetails({ mission, handleClose, width }) {
                         return <Chip key={exp.type} label={label} />;
                       })}
                   </Box>
-                  <Button
-                    aria-label="Modifier les frais"
-                    color="primary"
-                    variant="outlined"
-                    size="small"
-                    className={classes.smallTextButton}
-                    disabled={creatingActivityForUserId || activityIdToEdit}
-                    onClick={() => {
-                      modals.open("expenditures", {
-                        currentExpenditures: userStats.expenditureAggs,
-                        title: `Frais pour ${formatPersonName(userStats.user)}`,
-                        handleSubmit: exps => {
-                          const expendituresToCreate = Object.keys(exps).filter(
-                            e => exps[e] && !userStats.expenditureAggs[e]
-                          );
-                          const expendituresToDelete = mission.expenditures.filter(
-                            e => e.userId === userStats.user.id && !exps[e.type]
-                          );
-                          return Promise.all([
-                            ...expendituresToDelete.map(e =>
-                              withAlerts(onCancelExpenditure(e), e.id)
-                            ),
-                            ...expendituresToCreate.map(expType =>
-                              withAlerts(
-                                onCreateExpenditure(expType, userStats.user),
-                                expType
+                  {userStats.activities.length > 0 && (
+                    <Button
+                      aria-label="Modifier les frais"
+                      color="primary"
+                      variant="outlined"
+                      size="small"
+                      className={classes.smallTextButton}
+                      disabled={creatingActivityForUserId || activityIdToEdit}
+                      onClick={() => {
+                        modals.open("expenditures", {
+                          currentExpenditures: userStats.expenditureAggs,
+                          title: `Frais pour ${formatPersonName(
+                            userStats.user
+                          )}`,
+                          handleSubmit: exps => {
+                            const expendituresToCreate = Object.keys(
+                              exps
+                            ).filter(
+                              e => exps[e] && !userStats.expenditureAggs[e]
+                            );
+                            const expendituresToDelete = mission.expenditures.filter(
+                              e =>
+                                e.userId === userStats.user.id && !exps[e.type]
+                            );
+                            return Promise.all([
+                              ...expendituresToDelete.map(e =>
+                                alerts.withApiErrorHandling(
+                                  () => onCancelExpenditure(e),
+                                  e.id
+                                )
+                              ),
+                              ...expendituresToCreate.map(expType =>
+                                alerts.withApiErrorHandling(
+                                  () =>
+                                    onCreateExpenditure(
+                                      expType,
+                                      userStats.user
+                                    ),
+                                  expType
+                                )
                               )
-                            )
-                          ]);
-                        }
-                      });
-                    }}
-                  >
-                    Modifier les frais
-                  </Button>
+                            ]);
+                          }
+                        });
+                      }}
+                    >
+                      Modifier les frais
+                    </Button>
+                  )}
                 </Box>
               ]}
               <Box style={{ height: 40, marginTop: 10 }} pl={1}>

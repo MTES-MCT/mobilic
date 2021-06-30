@@ -1023,3 +1023,30 @@ export const REGISTER_KILOMETER_AT_LOCATION = gql`
     }
   }
 `;
+
+export const MISSION_QUERY = gql`
+  ${FULL_MISSION_FRAGMENT}
+  query mission($id: Int!) {
+    mission(id: $id) {
+      ...FullMissionData
+    }
+  }
+`;
+
+export function buildLogLocationPayloadFromAddress(
+  address,
+  missionId,
+  isStart,
+  kilometerReading
+) {
+  const payload = {
+    missionId,
+    type: isStart ? "mission_start_location" : "mission_end_location",
+    kilometerReading
+  };
+  if (address.id) payload.companyKnownAddressId = address.id;
+  else if (address.manual) payload.manualAddress = address.name;
+  else payload.geoApiData = address;
+
+  return payload;
+}

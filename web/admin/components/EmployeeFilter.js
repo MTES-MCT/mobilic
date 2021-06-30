@@ -23,11 +23,16 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function EmployeeFilter({ users, setUsers }) {
+export function EmployeeFilter({
+  users,
+  setUsers,
+  multiple = true,
+  handleSelect = null
+}) {
   const classes = useStyles();
 
   const handleChange = (event, value) => {
-    const selectedIds = value.map(u => u.id);
+    const selectedIds = multiple ? value.map(u => u.id) : [value.id];
     setUsers(
       users.map(u => ({
         ...u,
@@ -39,7 +44,7 @@ export function EmployeeFilter({ users, setUsers }) {
   const selectedUsers = users.filter(user => user.selected);
   return (
     <Autocomplete
-      multiple
+      multiple={multiple}
       id="employee-filter"
       options={orderBy(users, ["firstName", "lastName"], ["asc", "asc"])}
       limitTags={1}
@@ -48,22 +53,26 @@ export function EmployeeFilter({ users, setUsers }) {
       getOptionLabel={option => formatPersonName(option)}
       renderOption={option => (
         <>
-          <Checkbox
-            style={{ marginRight: 8 }}
-            checked={option.selected || false}
-          />
+          {multiple && (
+            <Checkbox
+              style={{ marginRight: 8 }}
+              checked={option.selected || false}
+            />
+          )}
           <span>{formatPersonName(option)}</span>
         </>
       )}
       value={selectedUsers}
-      onChange={handleChange}
+      onChange={handleSelect || handleChange}
       renderInput={params => (
         <TextField
           className={classes.formControl}
           {...params}
           variant="outlined"
-          label="Employés"
-          placeholder="Filtrer les employés"
+          label={`Employé${multiple ? "s" : ""}`}
+          placeholder={`${
+            multiple ? "Filtrer les employés" : "Sélectionner un employé"
+          }`}
         />
       )}
     />

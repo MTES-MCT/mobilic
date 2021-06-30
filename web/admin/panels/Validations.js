@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../utils/store";
@@ -117,20 +118,26 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function computeMissionStats(m) {
-  const activitiesWithUserId = m.activities.map(a => ({
-    ...a,
-    userId: a.user.id
-  }));
+export function computeMissionStats(m, users) {
+  const activitiesWithUserId = m.activities
+    .map(a => ({
+      ...a,
+      userId: a.userId || a.user.id,
+      user: a.user || users.find(u => u.id === a.userId)
+    }))
+    .filter(a => !!a.user);
   const members = uniqBy(
-    m.activities.map(a => a.user),
+    activitiesWithUserId.map(a => a.user),
     u => u.id
   );
   const validatorIds = m.validations.map(v => v.submitterId);
   const validatedByAllMembers = members.every(user =>
     validatorIds.includes(user.id)
   );
-  const activitiesByUser = groupBy(activitiesWithUserId, a => a.user.id);
+  const activitiesByUser = groupBy(
+    activitiesWithUserId,
+    a => a.userId || a.user.id
+  );
   const isComplete = activitiesWithUserId.every(a => !!a.endTime);
   const userStats = mapValues(activitiesByUser, (activities, userId) => {
     const _activities = orderBy(activities, ["startTime", "endTime"]);
@@ -174,6 +181,8 @@ function _ValidationPanel({ containerRef, width }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const alerts = useSnackbarAlerts();
+  const location = useLocation();
+  const history = useHistory();
 
   const [tab, setTab] = React.useState(0);
   const classes = useStyles({ clickableRow: tab === 0 });
@@ -283,10 +292,13 @@ function _ValidationPanel({ containerRef, width }) {
 
   const columns = tab === 0 ? commonCols : [...commonCols, validationCol];
 
-  const nonValidatedByAdminMissions = adminStore.missions
+  const allMissions = adminStore.missions.map(m =>
+    computeMissionStats(m, adminStore.users)
+  );
+
+  const nonValidatedByAdminMissions = allMissions
     .filter(m => !m.adminValidation)
-    .filter(m => m.activities.length > 0)
-    .map(computeMissionStats);
+    .filter(m => m.activities.length > 0);
 
   const nowTime = now();
 
@@ -301,7 +313,14 @@ function _ValidationPanel({ containerRef, width }) {
       m.endTime + DEFAULT_WORKER_VALIDATION_TIMEOUT >= nowTime
   );
 
-  const [missionOnFocus, setMissionOnFocus] = React.useState(null);
+  const [missionIdOnFocus, setMissionIdOnFocus] = React.useState(null);
+
+  React.useEffect(() => {
+    const queryString = new URLSearchParams(location.search);
+    const missionId = parseInt(queryString.get("mission"));
+
+    setMissionIdOnFocus(missionId || null);
+  }, [location]);
 
   return (
     <Paper className={classes.container} variant="outlined">
@@ -350,9 +369,7 @@ function _ValidationPanel({ containerRef, width }) {
           tab === 0
             ? ({ event, rowData }) => {
                 event.preventDefault();
-                setMissionOnFocus(
-                  nonValidatedByAdminMissions.find(m => m.id === rowData.id)
-                );
+                setMissionIdOnFocus(rowData.id);
               }
             : null
         }
@@ -361,7 +378,7 @@ function _ValidationPanel({ containerRef, width }) {
             <Box
               key={props.key}
               className={`${classes.row} ${
-                missionOnFocus && mission.id === missionOnFocus.id
+                missionIdOnFocus && mission.id === missionIdOnFocus
                   ? classes.selectedRow
                   : ""
               }`}
@@ -449,9 +466,9 @@ function _ValidationPanel({ containerRef, width }) {
       />
       <Drawer
         anchor="right"
-        open={!!missionOnFocus}
+        open={!!missionIdOnFocus}
         onClose={() => {
-          setMissionOnFocus(null);
+          history.push("/admin/validations");
         }}
         className={classes.missionModalContainer}
         PaperProps={{
@@ -463,8 +480,10 @@ function _ValidationPanel({ containerRef, width }) {
         }}
       >
         <MissionDetails
-          mission={missionOnFocus}
-          handleClose={() => setMissionOnFocus(null)}
+          missionId={missionIdOnFocus}
+          day={location.state ? location.state.day : null}
+          mission={allMissions.find(m => m.id === missionIdOnFocus)}
+          handleClose={() => history.push("/admin/validations")}
         />
       </Drawer>
     </Paper>

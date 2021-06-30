@@ -63,13 +63,17 @@ export function AdminStoreProvider({ children }) {
         )
       )
     );
-    setMissions(
-      flatMap(
+    const newMissionIds = flatMap(
+      companiesPayload.map(c => c.missions.edges.map(m => m.id))
+    );
+    setMissions(missions => [
+      ...missions.filter(m => !newMissionIds.includes(m.id)),
+      ...flatMap(
         companiesPayload.map(c =>
           c.missions.edges.map(m => ({ ...m.node, companyId: c.id }))
         )
       )
-    );
+    ]);
   };
 
   return (
