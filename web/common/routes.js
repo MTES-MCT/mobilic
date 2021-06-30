@@ -15,6 +15,7 @@ import { UserRead } from "../control/UserRead";
 import { XlsxVerifier } from "../control/VerifyXlsxSignature";
 import { Partners } from "../landing/partners";
 import { Redirect, useParams } from "react-router-dom";
+import App from "../pwa/utils/navigation";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -35,7 +36,7 @@ export const ROUTES = [
     label: "Saisie de temps",
     accessible: ({ userInfo, companies }) =>
       userInfo.hasActivatedEmail && userInfo.id && companies.length > 0,
-    component: React.lazy(() => import("../pwa/utils/navigation")),
+    component: <App />,
     subRoutes: [
       {
         path: "",
