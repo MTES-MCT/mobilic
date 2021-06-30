@@ -44,6 +44,8 @@ import {
   useMatomo
 } from "@datapunt/matomo-tracker-react";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
+import { ErrorBoundary } from "react-error-boundary";
+import { ErrorFallback } from "./common/ErrorFallback";
 
 const matomo = createInstance({
   urlBase: "https://stats.data.gouv.fr",
@@ -67,21 +69,23 @@ export default function Root() {
         <Router>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <ApiContextProvider>
-              <MuiPickersUtilsProvider
-                utils={FrLocalizedUtils}
-                locale={frLocale}
-              >
-                <SnackbarProvider>
-                  <LoadingScreenContextProvider>
-                    <ModalProvider modalDict={MODAL_DICT}>
-                      <ScrollToTop />
-                      <_Root />
-                    </ModalProvider>
-                  </LoadingScreenContextProvider>
-                </SnackbarProvider>
-              </MuiPickersUtilsProvider>
-            </ApiContextProvider>
+            <ErrorBoundary FallbackComponent={ErrorFallback}>
+              <ApiContextProvider>
+                <MuiPickersUtilsProvider
+                  utils={FrLocalizedUtils}
+                  locale={frLocale}
+                >
+                  <SnackbarProvider>
+                    <LoadingScreenContextProvider>
+                      <ModalProvider modalDict={MODAL_DICT}>
+                        <ScrollToTop />
+                        <_Root />
+                      </ModalProvider>
+                    </LoadingScreenContextProvider>
+                  </SnackbarProvider>
+                </MuiPickersUtilsProvider>
+              </ApiContextProvider>
+            </ErrorBoundary>
           </ThemeProvider>
         </Router>
       </StoreSyncedWithLocalStorageProvider>
