@@ -120,7 +120,8 @@ export function MissionDetails({
   untilTime = null,
   editKilometerReading = null,
   defaultTime = null,
-  disableEmptyActivitiesPlaceHolder = false
+  disableEmptyActivitiesPlaceHolder = false,
+  forceDisplayEndLocation = false
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -302,7 +303,7 @@ export function MissionDetails({
                   : null
               }
             />
-            {mission.ended && (
+            {(mission.ended || forceDisplayEndLocation) && (
               <LocationEntry
                 mission={mission}
                 location={mission.endLocation}

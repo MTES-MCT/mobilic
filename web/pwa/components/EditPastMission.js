@@ -141,6 +141,7 @@ export default function EditPastMission({
       editKilometerReading={registerKilometerReading}
       defaultTime={day}
       disableEmptyActivitiesPlaceHolder
+      forceDisplayEndLocation
     />
   ];
 }
