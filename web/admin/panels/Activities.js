@@ -70,7 +70,7 @@ const useStyles = makeStyles(theme => ({
   missionTitleContainer: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "flex-start"
+    alignItems: "center"
   }
 }));
 
@@ -239,7 +239,7 @@ export default function ActivityPanel() {
         >
           <Box key={0} p={3} className={classes.missionTitleContainer}>
             <Typography variant="h1" className={classes.missionTitle}>
-              Nouvelle mission
+              Mission passée
             </Typography>
             <IconButton
               aria-label="Fermer"

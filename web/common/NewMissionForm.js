@@ -9,6 +9,7 @@ import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { VehicleInput } from "../pwa/components/VehicleInput";
 import { AddressField } from "./AddressField";
 import { DateOrDateTimePicker } from "../pwa/components/DateOrDateTimePicker";
+import { DAY } from "common/utils/time";
 
 export default function NewMissionForm({
   handleSubmit,
@@ -40,6 +41,8 @@ export default function NewMissionForm({
   }, [vehicle]);
 
   const funnelModalClasses = useFunnelModalStyles();
+
+  const now1 = Date.now();
 
   return (
     <Container>
@@ -88,8 +91,10 @@ export default function NewMissionForm({
               setValue={setDay}
               variant="filled"
               isDateTime={false}
-              minValue="2021-06-01"
-              maxValue="2021-06-15"
+              minValue={new Date(now1 - 30 * DAY * 1000)
+                .toISOString()
+                .slice(0, 10)}
+              maxValue={new Date(now1).toISOString().slice(0, 10)}
               error={dayError}
               setError={setDayError}
               required
