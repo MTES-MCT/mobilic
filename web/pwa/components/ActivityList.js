@@ -11,6 +11,7 @@ import {
   formatDateTime,
   formatLongTimer,
   formatTimeOfDay,
+  formatTimer,
   getStartOfDay,
   LONG_BREAK_DURATION,
   now
@@ -23,6 +24,37 @@ import CreateIcon from "@material-ui/icons/Create";
 import { useModals } from "common/utils/modals";
 import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import Container from "@material-ui/core/Container";
+import { PieChart, Pie, Cell, ResponsiveContainer, LabelList } from "recharts";
+import { computeTotalActivityDurations } from "common/utils/metrics";
+import Grid from "@material-ui/core/Grid";
+import Switch from "@material-ui/core/Switch";
+
+const RADIAN = Math.PI / 180;
+function renderCustomizedLabel(
+  name,
+  { cx, cy, startAngle, endAngle, innerRadius, outerRadius }
+) {
+  if (endAngle - startAngle < 20) return null;
+  let radiusIndex = 0.5;
+  if (endAngle - startAngle < 30) radiusIndex = 0.8;
+  else if (endAngle - startAngle < 40) radiusIndex = 0.7;
+
+  const midAngle = (startAngle + endAngle) / 2;
+  const radius = innerRadius + (outerRadius - innerRadius) * radiusIndex;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN) - 9;
+  const y = cy + radius * Math.sin(-midAngle * RADIAN) - 9;
+
+  return ACTIVITIES[name].renderIcon({
+    x,
+    y,
+    textAnchor: x > cx ? "start" : "end",
+    dominantBaseline: "central",
+    style: { color: "white" },
+    height: 18,
+    width: 18
+  });
+}
 
 const useStyles = makeStyles(theme => ({
   infoText: {
@@ -35,7 +67,22 @@ const useStyles = makeStyles(theme => ({
   avatar: props => ({
     backgroundColor: props.color,
     color: theme.palette.primary.contrastText
-  })
+  }),
+  pieContainer: {
+    maxWidth: 300,
+    margin: "auto"
+  },
+  blurred: {
+    opacity: 0.3
+  },
+  switch: {
+    "& .MuiSwitch-thumb": {
+      color: theme.palette.secondary.main
+    },
+    "& .MuiSwitch-track": {
+      backgroundColor: theme.palette.secondary.main
+    }
+  }
 }));
 
 function ActivityItem({
@@ -147,7 +194,8 @@ export function ActivityList({
   isMissionEnded,
   fromTime = null,
   untilTime = null,
-  disableEmptyMessage = false
+  disableEmptyMessage = false,
+  hideChart = false
 }) {
   const filteredActivities = filterActivitiesOverlappingPeriod(
     activities,
@@ -193,6 +241,12 @@ export function ActivityList({
     };
   });
 
+  const stats = computeTotalActivityDurations(
+    augmentedAndSortedActivities,
+    fromTime,
+    untilTime
+  );
+
   const showDates =
     augmentedAndSortedActivities.length > 0
       ? !isMissionEnded
@@ -206,56 +260,135 @@ export function ActivityList({
           )
       : false;
 
+  const [view, setView] = React.useState("list");
+
   augmentedAndSortedActivities.reverse();
   const latestActivity = augmentedAndSortedActivities[0];
 
   const classes = useStyles();
+  const pieData = Object.values(ACTIVITIES)
+    .map(a => ({
+      title: a.label,
+      value: Math.round((stats[a.name] * 100.0) / stats.total),
+      color: a.color,
+      name: a.name,
+      label: formatTimer(stats[a.name])
+    }))
+    .filter(a => !!a.value);
 
   return (
-    <List dense>
-      {hasActivitiesAfterMaxTime && (
-        <Typography variant="body2" className={classes.infoText}>
-          Les activités après minuit le jour suivant ne sont pas affichées
-        </Typography>
+    <Container maxWidth={false} disableGutters>
+      {!hideChart && stats.total > 0 && (
+        <Grid component="label" container alignItems="center" spacing={1}>
+          <Grid item>
+            <Typography
+              variant="caption"
+              className={view === "chart" && classes.blurred}
+            >
+              Liste
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Switch
+              className={classes.switch}
+              checked={view === "chart"}
+              onChange={() =>
+                setView(view => (view === "chart" ? "list" : "chart"))
+              }
+              name="chart-toggle"
+            />
+          </Grid>
+          <Grid item>
+            <Typography
+              variant="caption"
+              className={view === "list" && classes.blurred}
+            >
+              Graphique
+            </Typography>
+          </Grid>
+        </Grid>
       )}
-      {!isMissionEnded && latestActivity && latestActivity.endTime && (
-        <ListItem disableGutters key={"trailingBreak"}>
-          <ListItemAvatar>
-            <Avatar>{ACTIVITIES.break.renderIcon()}</Avatar>
-          </ListItemAvatar>
-          <ListItemText
-            primary={ACTIVITIES.break.label}
-            secondary={`${(showDates ? formatDateTime : formatTimeOfDay)(
-              latestActivity.endTime
-            )} - En cours`}
-          />
-        </ListItem>
+      {view === "list" && (
+        <List dense>
+          {hasActivitiesAfterMaxTime && (
+            <Typography variant="body2" className={classes.infoText}>
+              Les activités après minuit le jour suivant ne sont pas affichées
+            </Typography>
+          )}
+          {!isMissionEnded && latestActivity && latestActivity.endTime && (
+            <ListItem disableGutters key={"trailingBreak"}>
+              <ListItemAvatar>
+                <Avatar>{ACTIVITIES.break.renderIcon()}</Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={ACTIVITIES.break.label}
+                secondary={`${(showDates ? formatDateTime : formatTimeOfDay)(
+                  latestActivity.endTime
+                )} - En cours`}
+              />
+            </ListItem>
+          )}
+          {augmentedAndSortedActivities.length === 0 && !disableEmptyMessage && (
+            <Typography variant="body2" className={classes.infoText}>
+              Pas d'activités sur cette journée
+            </Typography>
+          )}
+          {augmentedAndSortedActivities.map((activity, index) => (
+            <ActivityItem
+              activity={activity}
+              editActivityEvent={editActivityEvent}
+              createActivity={createActivity}
+              allMissionActivities={allMissionActivities}
+              previousMissionEnd={previousMissionEnd}
+              nextMissionStart={nextMissionStart}
+              teamChanges={teamChanges}
+              allowTeamMode={allowTeamMode}
+              nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
+              key={activity.id ? "a" + activity.id : index}
+              showDates={showDates}
+            />
+          ))}
+          {hasActivitiesBeforeMinTime && (
+            <Typography variant="body2" className={classes.infoText}>
+              Les activités avant minuit le jour précédent ne sont pas affichées
+            </Typography>
+          )}
+        </List>
       )}
-      {augmentedAndSortedActivities.length === 0 && !disableEmptyMessage && (
-        <Typography variant="body2" className={classes.infoText}>
-          Pas d'activités sur cette journée
-        </Typography>
+      {view === "chart" && (
+        <ResponsiveContainer
+          aspect={1}
+          minWidth={200}
+          minHeight={200}
+          maxHeight={300}
+          width="100%"
+          height="100%"
+          className={classes.pieContainer}
+        >
+          <PieChart style={{ margin: "auto", maxHeight: 300, maxWidth: 300 }}>
+            <Pie
+              cx="50%"
+              cy="50%"
+              outerRadius={65}
+              data={pieData}
+              dataKey="value"
+              nameKey="name"
+              label={entry => entry.label}
+            >
+              <LabelList
+                dataKey="label"
+                position="inside"
+                content={entry =>
+                  renderCustomizedLabel(entry.name, entry.viewBox)
+                }
+              />
+              {pieData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
       )}
-      {augmentedAndSortedActivities.map((activity, index) => (
-        <ActivityItem
-          activity={activity}
-          editActivityEvent={editActivityEvent}
-          createActivity={createActivity}
-          allMissionActivities={allMissionActivities}
-          previousMissionEnd={previousMissionEnd}
-          nextMissionStart={nextMissionStart}
-          teamChanges={teamChanges}
-          allowTeamMode={allowTeamMode}
-          nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
-          key={activity.id ? "a" + activity.id : index}
-          showDates={showDates}
-        />
-      ))}
-      {hasActivitiesBeforeMinTime && (
-        <Typography variant="body2" className={classes.infoText}>
-          Les activités avant minuit le jour précédent ne sont pas affichées
-        </Typography>
-      )}
-    </List>
+    </Container>
   );
 }

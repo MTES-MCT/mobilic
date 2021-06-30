@@ -387,7 +387,8 @@ module.exports = function(webpackEnv) {
                         }
                       }
                     }
-                  ]
+                  ],
+                  "recharts"
                 ],
                 // This is a feature of `babel-loader` for webpack (not Babel itself).
                 // It enables caching results in ./node_modules/.cache/babel-loader/
@@ -422,7 +423,8 @@ module.exports = function(webpackEnv) {
                 // code.  Without the options below, debuggers like VSCode
                 // show incorrect code and set breakpoints on the wrong lines.
                 sourceMaps: shouldUseSourceMap,
-                inputSourceMap: shouldUseSourceMap
+                inputSourceMap: shouldUseSourceMap,
+                plugins: ["recharts"]
               }
             },
             // "postcss" loader applies autoprefixer to our CSS.
