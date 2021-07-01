@@ -5,15 +5,15 @@
   "headers": {
     "/**": {
       "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-      "Content-Security-Policy": "script-src 'self'",
+      "Content-Security-Policy": "script-src 'self'; object-src 'none'; default-src 'self'; base-uri 'self'",
       "X-XSS-Protection": "1; mode=block",
       "Cache-Control": "no-cache; max-age=0"
     },
     "/service-worker.js": {
-      "Content-Security-Policy": "script-src 'self' https://storage.googleapis.com"
+      "Content-Security-Policy": "script-src 'self' https://storage.googleapis.com; object-src 'none'; default-src 'self'; base-uri 'self'"
     },
     "/developers/**": {
-      "Content-Security-Policy": "script-src 'self' https://buttons.github.io"
+      "Content-Security-Policy": "script-src 'self' https://buttons.github.io; object-src 'none'; default-src 'self'; base-uri 'self'"
     }
   },
   "proxies": {
