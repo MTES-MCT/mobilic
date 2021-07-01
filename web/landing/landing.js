@@ -177,6 +177,8 @@ export function Landing() {
     return () => window.removeEventListener("resize", updateWidth);
   }, []);
 
+  const ref = React.useRef();
+
   const classes = useStyles({ width });
   return [
     <Header key={1} />,
@@ -224,17 +226,14 @@ export function Landing() {
           pour respecter vos engagements sociaux.
         </Typography>
         <Container maxWidth="sm" disableGutters>
-          <Box className={classes.videoContainer}>
-            <iframe
-              title="Vidéo présentation Mobilic"
-              className={classes.videoIframe}
-              frameBorder="0"
-              type="text/html"
-              src="https://www.dailymotion.com/embed/video/x7w86gu"
-              width="100%"
-              height="100%"
-              allowFullScreen
-            ></iframe>
+          <Box ref={ref} className={classes.videoContainer}>
+            <video
+              controls
+              width={ref.current ? ref.current.offsetWidth : "100%"}
+              height={ref.current ? ref.current.offsetHeight : "100%"}
+            >
+              <source src="/mobilic-overview.mp4" type="video/mp4" />
+            </video>
           </Box>
         </Container>
       </Container>

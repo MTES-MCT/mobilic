@@ -651,7 +651,9 @@ module.exports = function(webpackEnv) {
             /\.map$/,
             /asset-manifest\.json$/,
             /\.LICENSE$/,
-            /hero.*\.jpg$/
+            /hero.*\.jpg$/,
+            /.*partner-logos.*/,
+            /\.mp4/
           ],
           navigateFallback: publicUrl + "/index.html",
           sourcemap: false,
