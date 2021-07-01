@@ -1,5 +1,11 @@
 import React from "react";
-import { Switch, Route, Redirect, useRouteMatch } from "react-router-dom";
+import {
+  Switch,
+  Route,
+  Redirect,
+  useRouteMatch,
+  useLocation
+} from "react-router-dom";
 import Container from "@material-ui/core/Container";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import "./assets/admin.scss";
@@ -10,6 +16,7 @@ import {
   LoadingScreenContextProvider,
   useLoadingScreen
 } from "common/utils/loading";
+
 import { Header } from "../common/Header";
 import * as Sentry from "@sentry/browser";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -43,6 +50,10 @@ function __Admin({ width }) {
   const { path } = useRouteMatch();
 
   const classes = useStyles();
+  const [shouldRefreshData, setShouldRefreshData] = React.useState({
+    value: true
+  });
+  const location = useLocation();
 
   const views = ADMIN_VIEWS.map(view => {
     const absPath = `${path}${view.path}`;
@@ -52,21 +63,35 @@ function __Admin({ width }) {
     };
   });
 
-  async function loadData(userId) {
-    try {
-      const companies = await loadCompaniesData(api, userId);
-      adminStore.sync(companies);
-    } catch (err) {
-      Sentry.captureException(err);
-      console.log(err);
+  async function loadData() {
+    const userId = adminStore.userId;
+    if (userId) {
+      setShouldRefreshData({ value: false });
+      shouldRefreshData.value = false;
+      withLoadingScreen(async () => {
+        try {
+          const companies = await loadCompaniesData(api, userId);
+          adminStore.sync(companies);
+        } catch (err) {
+          Sentry.captureException(err);
+          console.log(err);
+          setShouldRefreshData(true);
+        }
+      });
     }
   }
 
   React.useEffect(() => {
-    if (adminStore.userId) {
-      withLoadingScreen(async () => await loadData(adminStore.userId));
-    }
+    if (shouldRefreshData.value) loadData();
   }, [adminStore.userId]);
+
+  React.useEffect(() => {
+    if (
+      location.pathname.startsWith("/admin/activities") &&
+      shouldRefreshData.value
+    )
+      loadData();
+  }, [location]);
 
   const ref = React.useRef(null);
 
@@ -90,7 +115,14 @@ function __Admin({ width }) {
             <Route
               key={view.label}
               path={view.path}
-              render={() => <view.component containerRef={ref} />}
+              render={() => (
+                <view.component
+                  containerRef={ref}
+                  setShouldRefreshData={val =>
+                    setShouldRefreshData({ value: val })
+                  }
+                />
+              )}
             />
           ))}
           {defaultView && (

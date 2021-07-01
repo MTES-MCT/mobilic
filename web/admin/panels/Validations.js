@@ -177,7 +177,7 @@ export function computeMissionStats(m, users) {
   };
 }
 
-function _ValidationPanel({ containerRef, width }) {
+function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const alerts = useSnackbarAlerts();
@@ -484,6 +484,7 @@ function _ValidationPanel({ containerRef, width }) {
           day={location.state ? location.state.day : null}
           mission={allMissions.find(m => m.id === missionIdOnFocus)}
           handleClose={() => history.push("/admin/validations")}
+          setShouldRefreshActivityPanel={setShouldRefreshData}
         />
       </Drawer>
     </Paper>

@@ -145,7 +145,7 @@ export function MissionDetails({
   mission,
   day,
   handleClose,
-  width
+  setShouldRefreshActivityPanel
 }) {
   const classes = useStyles();
 
@@ -209,6 +209,7 @@ export function MissionDetails({
       : false;
 
   async function onCancelActivity(activity, user, activities) {
+    if (setShouldRefreshActivityPanel) setShouldRefreshActivityPanel(true);
     if (activity.type === ACTIVITIES.break.name) {
       const ops = addBreakOps(
         activities,
@@ -255,6 +256,7 @@ export function MissionDetails({
   }
 
   async function onCreateActivity(user, newValues, activities) {
+    if (setShouldRefreshActivityPanel) setShouldRefreshActivityPanel(true);
     if (newValues.type === ACTIVITIES.break.name) {
       const ops = addBreakOps(
         activities,
@@ -309,6 +311,7 @@ export function MissionDetails({
   }
 
   async function onEditActivity(activity, newValues, user, activities) {
+    if (setShouldRefreshActivityPanel) setShouldRefreshActivityPanel(true);
     if (activity.type === ACTIVITIES.break.name) {
       const ops = addBreakOps(
         activities,
@@ -372,6 +375,7 @@ export function MissionDetails({
   }
 
   async function onCreateExpenditure(exp, user) {
+    if (setShouldRefreshActivityPanel) setShouldRefreshActivityPanel(true);
     const apiResponse = await api.nonConcurrentQueryQueue.execute(() =>
       api.graphQlMutate(LOG_EXPENDITURE_MUTATION, {
         type: exp,
@@ -398,6 +402,7 @@ export function MissionDetails({
   }
 
   async function onCancelExpenditure(expenditure) {
+    if (setShouldRefreshActivityPanel) setShouldRefreshActivityPanel(true);
     await api.nonConcurrentQueryQueue.execute(() =>
       api.graphQlMutate(CANCEL_EXPENDITURE_MUTATION, {
         expenditureId: expenditure.id
