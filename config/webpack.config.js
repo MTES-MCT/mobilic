@@ -645,6 +645,7 @@ module.exports = function(webpackEnv) {
       // the HTML & assets that are part of the Webpack build.
       isEnvProduction &&
         new WorkboxWebpackPlugin.GenerateSW({
+          additionalManifestEntries: [{ url: "/favicon.svg", revision: "1" }],
           clientsClaim: true,
           skipWaiting: true,
           exclude: [
