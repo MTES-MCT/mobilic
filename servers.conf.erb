@@ -38,7 +38,7 @@ server {
 
     location ~ ^/developers/playground$ {
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
-        add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://buttons.github.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com";
+        add_header Content-Security-Policy "script-src 'self' https://buttons.github.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com";
         add_header X-XSS-Protection "1; mode=block";
         add_header Cache-Control "no-cache; max-age=0";
       try_files /api-playground.html @404;
@@ -46,7 +46,7 @@ server {
 
     location ~ ^/developers/.*$ {
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
-        add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://buttons.github.io; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com";
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://buttons.github.io; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com";
         add_header X-XSS-Protection "1; mode=block";
         add_header Cache-Control "no-cache; max-age=0";
       try_files $uri.html $uri $uri/ @404;
@@ -89,7 +89,7 @@ server {
 
     location = /service-worker.js {
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
-        add_header Content-Security-Policy "default-src 'none'; script-src 'self' https://storage.googleapis.com";
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://storage.googleapis.com";
         add_header X-XSS-Protection "1; mode=block";
         add_header Cache-Control "no-cache; max-age=0";
         try_files /service-worker.js @404;
