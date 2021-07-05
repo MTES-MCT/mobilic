@@ -188,6 +188,7 @@ export function Landing() {
           src={
             width < 500 ? BackgroundVerticalImage : BackgroundHorizontalImage
           }
+          alt="Mobilic-hero"
           width="100%"
           height="100%"
           style={{ float: "left" }}

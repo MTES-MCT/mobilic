@@ -32,7 +32,7 @@ export function Logos({ leaveSpaceForMenu = true }) {
           companies: store.companies()
         })}
       >
-        <img viewBox="0 0 367.18 129.5" height={50} src={MobilicLogoWithText} />
+        <img alt="Mobilic" height={45} width={128} src={MobilicLogoWithText} />
       </LinkButton>
     </Box>
   );
