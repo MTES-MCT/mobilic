@@ -17,6 +17,7 @@ import { useLoadingScreen } from "common/utils/loading";
 import { useApi } from "common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { loadUserData } from "common/utils/loadUserData";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   failureStatusText: {
@@ -42,6 +43,7 @@ export default function ApiErrorDialogModal({
   const withLoadingScreen = useLoadingScreen();
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
+  const alerts = useSnackbarAlerts();
 
   const displayTitle = title
     ? title
@@ -70,7 +72,7 @@ export default function ApiErrorDialogModal({
               style={{ marginTop: 16 }}
               onClick={() =>
                 withLoadingScreen(async () => {
-                  await loadUserData(api, store);
+                  await loadUserData(api, store, alerts);
                   handleClose();
                 })
               }

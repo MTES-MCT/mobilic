@@ -35,7 +35,7 @@ import {
   isAccessible
 } from "./common/routes";
 import { ScrollToTop } from "common/utils/scroll";
-import { SnackbarProvider } from "./common/Snackbar";
+import { SnackbarProvider, useSnackbarAlerts } from "./common/Snackbar";
 import { EnvironmentHeader } from "./common/EnvironmentHeader";
 import { currentUserId } from "common/utils/cookie";
 import {
@@ -97,6 +97,7 @@ function _Root() {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
+  const alerts = useSnackbarAlerts();
 
   const userId = store.userId();
   const userInfo = store.userInfo();
@@ -128,7 +129,7 @@ function _Root() {
       return;
     }
     if (!document.hidden && !isInOauthFlow) {
-      await loadUserData(api, store);
+      await loadUserData(api, store, alerts);
     }
     if (!isSigningUp && !isInOauthFlow) {
       // Routing priority :

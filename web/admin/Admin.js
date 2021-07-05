@@ -18,10 +18,10 @@ import {
 } from "common/utils/loading";
 
 import { Header } from "../common/Header";
-import * as Sentry from "@sentry/browser";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { SideMenu } from "./components/SideMenu";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
+import { useSnackbarAlerts } from "../common/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -48,6 +48,7 @@ function __Admin({ width }) {
   const adminStore = useAdminStore();
   const withLoadingScreen = useLoadingScreen();
   const { path } = useRouteMatch();
+  const alerts = useSnackbarAlerts();
 
   const classes = useStyles();
   const [shouldRefreshData, setShouldRefreshData] = React.useState({
@@ -68,16 +69,18 @@ function __Admin({ width }) {
     if (userId) {
       setShouldRefreshData({ value: false });
       shouldRefreshData.value = false;
-      withLoadingScreen(async () => {
-        try {
-          const companies = await loadCompaniesData(api, userId);
-          adminStore.sync(companies);
-        } catch (err) {
-          Sentry.captureException(err);
-          console.log(err);
-          setShouldRefreshData(true);
-        }
-      });
+      withLoadingScreen(
+        async () =>
+          await alerts.withApiErrorHandling(
+            async () => {
+              const companies = await loadCompaniesData(api, userId);
+              adminStore.sync(companies);
+            },
+            "load-companies",
+            null,
+            () => setShouldRefreshData(true)
+          )
+      );
     }
   }
 

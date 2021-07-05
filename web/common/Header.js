@@ -24,6 +24,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import Tooltip from "@material-ui/core/Tooltip";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Link, LinkButton } from "./LinkButton";
+import { useLoadingScreen } from "common/utils/loading";
 
 const useStyles = makeStyles(theme => ({
   navItemButton: {
@@ -143,6 +144,8 @@ export function NavigationMenu({ open, setOpen }) {
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
   const companies = store.companies();
+  const withLoadingScreen = useLoadingScreen();
+  const history = useHistory();
 
   const classes = useStyles();
 
@@ -181,7 +184,12 @@ export function NavigationMenu({ open, setOpen }) {
             button
             aria-label="Déconnexion"
             className={classes.navListItem}
-            onClick={() => api.logout({ failOnError: false })}
+            onClick={() =>
+              withLoadingScreen(async () => {
+                await api.logout({ failOnError: false });
+                history.push("/");
+              })
+            }
             disableGutters
           >
             <ListItemText

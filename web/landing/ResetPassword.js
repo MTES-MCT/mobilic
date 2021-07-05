@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField/TextField";
 import { LoadingButton } from "common/components/LoadingButton";
 import Box from "@material-ui/core/Box";
-import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
+import { graphQLErrorMatchesCode } from "common/utils/errors";
 import jwt_decode from "jwt-decode";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -80,32 +80,29 @@ export function ResetPassword() {
   const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
-    try {
-      await api.graphQlMutate(
-        RESET_PASSWORD_MUTATION,
-        { token, password },
-        {
-          context: { nonPublicApi: true }
+    await alerts.withApiErrorHandling(
+      async () => {
+        await api.graphQlMutate(
+          RESET_PASSWORD_MUTATION,
+          { token, password },
+          {
+            context: { nonPublicApi: true }
+          }
+        );
+        await store.updateUserIdAndInfo();
+        setDidSubmitForm(true);
+      },
+      "reset-password",
+      gqlError => {
+        if (graphQLErrorMatchesCode(gqlError, "INVALID_TOKEN")) {
+          return "Le lien de réinitialisation est invalide.";
         }
-      );
-      await store.updateUserIdAndInfo();
-      setDidSubmitForm(true);
-      setLoading(false);
-    } catch (err) {
-      alerts.error(
-        formatApiError(err, gqlError => {
-          if (graphQLErrorMatchesCode(gqlError, "INVALID_TOKEN")) {
-            return "Le lien de réinitialisation est invalide.";
-          }
-          if (graphQLErrorMatchesCode(gqlError, "EXPIRED_TOKEN")) {
-            return "Le lien de réinitialisation a expiré.";
-          }
-        }),
-        "reset-password",
-        6000
-      );
-      setLoading(false);
-    }
+        if (graphQLErrorMatchesCode(gqlError, "EXPIRED_TOKEN")) {
+          return "Le lien de réinitialisation a expiré.";
+        }
+      }
+    );
+    setLoading(false);
   };
 
   return (
@@ -225,7 +222,7 @@ export function RequestResetPassword() {
   const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
-    try {
+    await alerts.withApiErrorHandling(async () => {
       const apiResponse = await api.graphQlMutate(
         REQUEST_RESET_PASSWORD_MUTATION,
         { mail: email },
@@ -237,11 +234,8 @@ export function RequestResetPassword() {
         throw Error;
       }
       setDidSubmitForm(true);
-      setLoading(false);
-    } catch (err) {
-      alerts.error(formatApiError(err), "request-reset-password", 6000);
-      setLoading(false);
-    }
+    }, "request-reset-password");
+    setLoading(false);
   };
 
   return (

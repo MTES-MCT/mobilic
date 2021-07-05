@@ -63,7 +63,6 @@ import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import { ActivityList } from "../components/ActivityList";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
-import { formatApiError } from "common/utils/errors";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 
@@ -833,7 +832,7 @@ export function History({
                 withDay: true,
                 withEndLocation: true,
                 handleContinue: async missionInfos => {
-                  try {
+                  await alerts.withApiErrorHandling(async () => {
                     const tempMissionId = await createMission({
                       companyId: missionInfos.company.id,
                       name: missionInfos.mission,
@@ -856,9 +855,7 @@ export function History({
                       );
                       modals.close("newMission");
                     }
-                  } catch (err) {
-                    alerts.error(formatApiError(err), "create-mission", 6000);
-                  }
+                  }, "create-mission");
                 }
               })
             }

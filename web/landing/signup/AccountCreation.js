@@ -7,7 +7,6 @@ import { useHistory } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import SignupStepper from "./SignupStepper";
 import Container from "@material-ui/core/Container";
-import { formatApiError } from "common/utils/errors";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Section } from "../../common/Section";
 import {
@@ -17,7 +16,6 @@ import {
 import { FranceConnectContainer } from "../../common/FranceConnect";
 import { useModals } from "common/utils/modals";
 import { PasswordField } from "common/components/PasswordField";
-import * as Sentry from "@sentry/browser";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import { USER_SIGNUP_MUTATION } from "common/utils/apiQueries";
@@ -71,28 +69,31 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
     lastName
   ) => {
     setLoading(true);
-    try {
-      const signupPayload = {
-        email,
-        password,
-        firstName: firstName.trim(),
-        lastName: lastName.trim()
-      };
-      if (employeeInvite) {
-        signupPayload.inviteToken = employeeInvite.inviteToken;
+    await alerts.withApiErrorHandling(
+      async () => {
+        const signupPayload = {
+          email,
+          password,
+          firstName: firstName.trim(),
+          lastName: lastName.trim()
+        };
+        if (employeeInvite) {
+          signupPayload.inviteToken = employeeInvite.inviteToken;
+        }
+        await api.graphQlMutate(USER_SIGNUP_MUTATION, signupPayload, {
+          context: { nonPublicApi: true }
+        });
+        await store.updateUserIdAndInfo();
+        if (isAdmin) history.push("/signup/company?onboarding=true");
+        else history.push("/signup/complete");
+      },
+      "signup",
+      null,
+      () => {
+        setEmail("");
+        setPassword("");
       }
-      await api.graphQlMutate(USER_SIGNUP_MUTATION, signupPayload, {
-        context: { nonPublicApi: true }
-      });
-      await store.updateUserIdAndInfo();
-      if (isAdmin) history.push("/signup/company?onboarding=true");
-      else history.push("/signup/complete");
-    } catch (err) {
-      Sentry.captureException(err);
-      setEmail("");
-      setPassword("");
-      alerts.error(formatApiError(err), "signup", 6000);
-    }
+    );
     setLoading(false);
   };
 

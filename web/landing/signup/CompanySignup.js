@@ -19,7 +19,6 @@ import {
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormGroup from "@material-ui/core/FormGroup";
-import * as Sentry from "@sentry/browser";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import SignupStepper from "./SignupStepper";
@@ -143,7 +142,7 @@ export function CompanySignup() {
   const handleCompanySignup = async e => {
     e.preventDefault();
     setLoadingCompanySignup(true);
-    try {
+    await alerts.withApiErrorHandling(async () => {
       const payload = {
         siren: parseInt(siren),
         usualName: usualName.trim(),
@@ -167,10 +166,7 @@ export function CompanySignup() {
           : "/signup/company_complete",
         { companyName: employment.company.name }
       );
-    } catch (err) {
-      Sentry.captureException(err);
-      alerts.error(formatApiError(err), "company-signup", 6000);
-    }
+    }, "company-signup");
     setLoadingCompanySignup(false);
   };
 

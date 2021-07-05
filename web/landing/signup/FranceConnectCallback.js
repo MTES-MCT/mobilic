@@ -7,6 +7,7 @@ import { useLoadingScreen } from "common/utils/loading";
 import Typography from "@material-ui/core/Typography";
 import { useHistory } from "react-router-dom";
 import { FRANCE_CONNECT_LOGIN_MUTATION } from "common/utils/apiQueries";
+import * as Sentry from "@sentry/browser";
 
 function removeParamsFromQueryString(qs, params) {
   const qsWithoutQuestionMark = qs.startsWith("?") ? qs.slice(1) : qs;
@@ -48,6 +49,7 @@ export function FranceConnectCallback() {
         await store.updateUserIdAndInfo();
         if (create) history.push("/signup/user_login");
       } catch (err) {
+        Sentry.captureException(err);
         setError(
           formatApiError(err, gqlError => {
             if (graphQLErrorMatchesCode(gqlError, "AUTHENTICATION_ERROR")) {

@@ -5,11 +5,11 @@ import { DatePicker } from "@material-ui/pickers";
 import Dialog from "@material-ui/core/Dialog";
 import Box from "@material-ui/core/Box";
 import { LoadingButton } from "common/components/LoadingButton";
-import * as Sentry from "@sentry/browser";
 import {
   CustomDialogActions,
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 
 export default function TerminateEmployment({
   open,
@@ -19,6 +19,8 @@ export default function TerminateEmployment({
 }) {
   const [endDate, setEndDate] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
+
+  const alerts = useSnackbarAlerts();
 
   React.useEffect(() => {
     const today = new Date(Date.now());
@@ -36,14 +38,11 @@ export default function TerminateEmployment({
         autoComplete="off"
         onSubmit={async e => {
           e.preventDefault();
-          try {
-            setLoading(true);
+          setLoading(true);
+          await alerts.withApiErrorHandling(async () => {
             await terminateEmployment(endDate);
             handleClose();
-          } catch (err) {
-            Sentry.captureException(err);
-            console.log(err);
-          }
+          }, "terminate-employment");
           setLoading(false);
         }}
       >

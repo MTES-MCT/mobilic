@@ -18,12 +18,11 @@ import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Alert from "@material-ui/lab/Alert";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useApi } from "common/utils/api";
-import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
+import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { useModals } from "common/utils/modals";
 import Divider from "@material-ui/core/Divider";
 import AlertTitle from "@material-ui/lab/AlertTitle";
 import Box from "@material-ui/core/Box";
-import * as Sentry from "@sentry/browser";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 import { frenchFormatDateString } from "common/utils/time";
@@ -63,32 +62,29 @@ export function EmploymentInfo({ employment, spacing = 4 }) {
   const modals = useModals();
 
   async function handleEmploymentValidation(accept) {
-    try {
-      const apiResponse = await api.graphQlMutate(
-        accept ? VALIDATE_EMPLOYMENT_MUTATION : REJECT_EMPLOYMENT_MUTATION,
-        {
-          employmentId: employment.id
-        }
-      );
-      await store.syncEntity(
-        accept ? [apiResponse.data.employments.validateEmployment] : [],
-        "employments",
-        e => e.id === employment.id
-      );
-      store.batchUpdateStore();
-      await broadCastChannel.postMessage("update");
-    } catch (err) {
-      Sentry.captureException(err);
-      alerts.error(
-        formatApiError(err, graphQLError => {
-          if (graphQLErrorMatchesCode(graphQLError, "INVALID_RESOURCE")) {
-            return "Opération impossible. Veuillez réessayer ultérieurement.";
+    alerts.withApiErrorHandling(
+      async () => {
+        const apiResponse = await api.graphQlMutate(
+          accept ? VALIDATE_EMPLOYMENT_MUTATION : REJECT_EMPLOYMENT_MUTATION,
+          {
+            employmentId: employment.id
           }
-        }),
-        "validate-employment",
-        6000
-      );
-    }
+        );
+        await store.syncEntity(
+          accept ? [apiResponse.data.employments.validateEmployment] : [],
+          "employments",
+          e => e.id === employment.id
+        );
+        store.batchUpdateStore();
+        await broadCastChannel.postMessage("update");
+      },
+      "validate-employment",
+      graphQLError => {
+        if (graphQLErrorMatchesCode(graphQLError, "INVALID_RESOURCE")) {
+          return "Opération impossible. Veuillez réessayer ultérieurement.";
+        }
+      }
+    );
   }
 
   return (

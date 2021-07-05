@@ -9,7 +9,7 @@ import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import Box from "@material-ui/core/Box";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Header } from "../common/Header";
-import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
+import { graphQLErrorMatchesCode } from "common/utils/errors";
 import {
   buildCallbackUrl,
   buildFranceConnectUrl
@@ -41,23 +41,21 @@ export default function Login() {
   const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
-    try {
-      await api.graphQlMutate(LOGIN_MUTATION, {
-        email,
-        password
-      });
-      await store.updateUserIdAndInfo();
-    } catch (error) {
-      alerts.error(
-        formatApiError(error, graphQLError => {
-          if (graphQLErrorMatchesCode(graphQLError, "AUTHENTICATION_ERROR")) {
-            return "Identifiants incorrects.";
-          }
-        }),
-        "login",
-        6000
-      );
-    }
+    await alerts.withApiErrorHandling(
+      async () => {
+        await api.graphQlMutate(LOGIN_MUTATION, {
+          email,
+          password
+        });
+        await store.updateUserIdAndInfo();
+      },
+      "login",
+      graphQLError => {
+        if (graphQLErrorMatchesCode(graphQLError, "AUTHENTICATION_ERROR")) {
+          return "Identifiants incorrects.";
+        }
+      }
+    );
     setLoading(false);
   };
 

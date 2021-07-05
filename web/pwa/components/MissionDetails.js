@@ -27,9 +27,7 @@ import { getVehicleName } from "common/utils/vehicles";
 import { PersonIcon } from "common/utils/icons";
 import { formatDay, getStartOfDay, now } from "common/utils/time";
 import { MainCtaButton } from "./MainCtaButton";
-import * as Sentry from "@sentry/browser";
 import Typography from "@material-ui/core/Typography";
-import { formatApiError } from "common/utils/errors";
 import CheckIcon from "@material-ui/icons/Check";
 import ScheduleIcon from "@material-ui/icons/Schedule";
 import { Comment } from "../../common/Comment";
@@ -427,13 +425,9 @@ export function MissionDetails({
               <MainCtaButton
                 style={{ textAlign: "center" }}
                 onClick={async () => {
-                  try {
+                  await alerts.withApiErrorHandling(async () => {
                     await validateMission(mission);
-                  } catch (err) {
-                    Sentry.captureException(err);
-                    console.log(err);
-                    alerts.error(formatApiError(err), "validate-mission", 6000);
-                  }
+                  }, "validate-mission");
                 }}
               >
                 {validationButtonName}

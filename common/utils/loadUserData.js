@@ -63,10 +63,10 @@ const USER_QUERY = gql`
   }
 `;
 
-export async function loadUserData(api, store) {
+export async function loadUserData(api, store, alerts) {
   const userId = store.userId();
   if (!userId) return;
-  try {
+  await alerts.withApiErrorHandling(async () => {
     const userResponse = await api.graphQlQuery(
       USER_QUERY,
       {
@@ -77,10 +77,7 @@ export async function loadUserData(api, store) {
     );
     await syncUser(userResponse.data.user, api, store);
     await broadCastChannel.postMessage("update");
-  } catch (err) {
-    Sentry.captureException(err);
-    console.log(err);
-  }
+  }, "load-user");
 }
 
 export async function syncUser(userPayload, api, store) {

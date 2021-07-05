@@ -8,7 +8,6 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { LoadingButton } from "common/components/LoadingButton";
 import { CompanyFilter } from "./CompanyFilter";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { formatApiError } from "common/utils/errors";
 import {
   CustomDialogActions,
   CustomDialogTitle
@@ -151,38 +150,33 @@ export default function ExcelExport({
         <LoadingButton
           color="primary"
           variant="contained"
-          onClick={async e => {
-            let selectedCompanies = _companies.filter(c => c.selected);
-            if (selectedCompanies.length === 0) selectedCompanies = _companies;
-            let selectedUsers = _users.filter(u => u.selected);
-            const options = {
-              company_ids: selectedCompanies.map(c => c.id)
-            };
-            if (selectedUsers.length > 0)
-              options["user_ids"] = selectedUsers.map(u => u.id);
-            if (minDate)
-              options["min_date"] = minDate.toISOString().slice(0, 10);
-            if (maxDate)
-              options["max_date"] = maxDate.toISOString().slice(0, 10);
-            e.preventDefault();
-            trackLink({
-              href: `/download_company_activity_report`,
-              linkType: "download"
-            });
-            try {
+          onClick={async e =>
+            await alerts.withApiErrorHandling(async () => {
+              let selectedCompanies = _companies.filter(c => c.selected);
+              if (selectedCompanies.length === 0)
+                selectedCompanies = _companies;
+              let selectedUsers = _users.filter(u => u.selected);
+              const options = {
+                company_ids: selectedCompanies.map(c => c.id)
+              };
+              if (selectedUsers.length > 0)
+                options["user_ids"] = selectedUsers.map(u => u.id);
+              if (minDate)
+                options["min_date"] = minDate.toISOString().slice(0, 10);
+              if (maxDate)
+                options["max_date"] = maxDate.toISOString().slice(0, 10);
+              e.preventDefault();
+              trackLink({
+                href: `/download_company_activity_report`,
+                linkType: "download"
+              });
               await api.downloadFileHttpQuery(
                 "POST",
                 `/companies/download_activity_report`,
                 { json: options }
               );
-            } catch (err) {
-              alerts.error(
-                formatApiError(err),
-                "download_company_report",
-                6000
-              );
-            }
-          }}
+            }, "download-company-report")
+          }
         >
           Télécharger
         </LoadingButton>

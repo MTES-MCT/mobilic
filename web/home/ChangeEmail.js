@@ -3,7 +3,6 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
 import { LoadingButton } from "common/components/LoadingButton";
-import { formatApiError } from "common/utils/errors";
 import {
   CustomDialogActions,
   CustomDialogTitle
@@ -29,12 +28,10 @@ export default function ChangeEmailModal({ open, handleClose, handleSubmit }) {
         autoComplete="off"
         onSubmit={async e => {
           e.preventDefault();
-          try {
+          await alerts.withApiErrorHandling(async () => {
             await handleSubmit(email);
             handleClose();
-          } catch (err) {
-            alerts.error(formatApiError(err), "change-email", 6000);
-          }
+          }, "change-email");
         }}
       >
         <DialogContent>

@@ -11,7 +11,6 @@ import {
 import SignupStepper from "./SignupStepper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
-import { formatApiError } from "common/utils/errors";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Section } from "../../common/Section";
 import { useModals } from "common/utils/modals";
@@ -78,29 +77,33 @@ export function EmailSelection() {
 
   const _createLogin = async (email, password) => {
     setLoading(true);
-    try {
-      const payload = {
-        email
-      };
-      if (password) payload.password = password;
-      const apiResponse = await api.graphQlMutate(
-        CONFIRM_FC_EMAIL_MUTATION,
-        payload,
-        { context: { nonPublicApi: true } }
-      );
+    await alerts.withApiErrorHandling(
+      async () => {
+        const payload = {
+          email
+        };
+        if (password) payload.password = password;
+        const apiResponse = await api.graphQlMutate(
+          CONFIRM_FC_EMAIL_MUTATION,
+          payload,
+          { context: { nonPublicApi: true } }
+        );
 
-      await store.setUserInfo({
-        ...userInfo,
-        ...apiResponse.data.signUp.confirmFcEmail
-      });
-      await broadCastChannel.postMessage("update");
-      if (isAdmin) history.push("/signup/company?onboarding=true");
-      else history.push("/signup/complete");
-    } catch (err) {
-      setEmail("");
-      setPassword("");
-      alerts.error(formatApiError(err), "select-email", 6000);
-    }
+        await store.setUserInfo({
+          ...userInfo,
+          ...apiResponse.data.signUp.confirmFcEmail
+        });
+        await broadCastChannel.postMessage("update");
+        if (isAdmin) history.push("/signup/company?onboarding=true");
+        else history.push("/signup/complete");
+      },
+      "select-email",
+      null,
+      () => {
+        setEmail("");
+        setPassword("");
+      }
+    );
     setLoading(false);
   };
 

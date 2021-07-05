@@ -80,29 +80,25 @@ export function Employees({ company, containerRef }) {
   }
 
   async function terminateEmployment(employmentId, endDate) {
-    try {
-      const employmentResponse = await api.graphQlMutate(
-        TERMINATE_EMPLOYMENT_MUTATION,
-        {
-          employmentId,
-          endDate: endDate.toISOString().slice(0, 10)
-        }
+    const employmentResponse = await api.graphQlMutate(
+      TERMINATE_EMPLOYMENT_MUTATION,
+      {
+        employmentId,
+        endDate: endDate.toISOString().slice(0, 10)
+      }
+    );
+    await adminStore.setEmployments(oldEmployments => {
+      const newEmployments = [...oldEmployments];
+      const employmentIndex = oldEmployments.findIndex(
+        e => e.id === employmentId
       );
-      await adminStore.setEmployments(oldEmployments => {
-        const newEmployments = [...oldEmployments];
-        const employmentIndex = oldEmployments.findIndex(
-          e => e.id === employmentId
-        );
-        if (employmentIndex >= 0)
-          newEmployments[employmentIndex] = {
-            ...employmentResponse.data.employments.terminateEmployment,
-            companyId
-          };
-        return newEmployments;
-      });
-    } catch (err) {
-      alerts.error(formatApiError(err), employmentId, 6000);
-    }
+      if (employmentIndex >= 0)
+        newEmployments[employmentIndex] = {
+          ...employmentResponse.data.employments.terminateEmployment,
+          companyId
+        };
+      return newEmployments;
+    });
   }
 
   const pendingEmploymentColumns = [
@@ -267,7 +263,11 @@ export function Employees({ company, containerRef }) {
           modals.open("confirmation", {
             textButtons: true,
             title: "Confirmer annulation du rattachement",
-            handleConfirm: async () => await cancelEmployment(entry)
+            handleConfirm: async () =>
+              await alerts.withApiErrorHandling(
+                async () => cancelEmployment(entry),
+                "cancel-employment"
+              )
           })
         }
         disableAdd={({ idOrEmail }) => !idOrEmail}

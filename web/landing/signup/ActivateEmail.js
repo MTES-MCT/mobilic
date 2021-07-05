@@ -3,7 +3,7 @@ import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { useLocation, useHistory } from "react-router-dom";
 import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
-import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
+import { graphQLErrorMatchesCode } from "common/utils/errors";
 import Typography from "@material-ui/core/Typography";
 import jwt_decode from "jwt-decode";
 import { currentUserId } from "common/utils/cookie";
@@ -48,34 +48,36 @@ export function ActivateEmail() {
             });
             isAuthenticated = false;
           }
-          try {
-            const apiResponse = await api.graphQlMutate(
-              ACTIVATE_EMAIL_MUTATION,
-              { token },
-              { context: { nonPublicApi: true } }
-            );
-            if (!isAuthenticated) {
-              await store.updateUserIdAndInfo();
-            } else {
-              await store.setUserInfo({
-                ...store.userInfo(),
-                ...apiResponse.data.signUp.activateEmail
-              });
-            }
-          } catch (err) {
-            Sentry.captureException(err);
-            const errorMessage = formatApiError(err, gqlError => {
+          await alerts.withApiErrorHandling(
+            async () => {
+              const apiResponse = await api.graphQlMutate(
+                ACTIVATE_EMAIL_MUTATION,
+                { token },
+                { context: { nonPublicApi: true } }
+              );
+              if (!isAuthenticated) {
+                await store.updateUserIdAndInfo();
+              } else {
+                await store.setUserInfo({
+                  ...store.userInfo(),
+                  ...apiResponse.data.signUp.activateEmail
+                });
+              }
+            },
+            "activate-link",
+            gqlError => {
               if (graphQLErrorMatchesCode(gqlError, "INVALID_TOKEN")) {
                 return "Le lien d'activation est invalide.";
               }
               if (graphQLErrorMatchesCode(gqlError, "EXPIRED_TOKEN")) {
                 return "Le lien d'activation a expiré.";
               }
-            });
-            setError(errorMessage);
-            alerts.error(errorMessage, "activation-link-error", 8000);
-            history.push("/");
-          }
+            },
+            () => {
+              setError("erreur");
+              history.push("/");
+            }
+          );
         });
       }
     }
