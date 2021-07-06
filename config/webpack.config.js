@@ -654,6 +654,7 @@ module.exports = function(webpackEnv) {
             /\.LICENSE$/,
             /hero.*\.jpg$/,
             /.*partner-logos.*/,
+            /.*sponsor-logos.*/,
             /\.mp4/
           ],
           navigateFallback: publicUrl + "/index.html",

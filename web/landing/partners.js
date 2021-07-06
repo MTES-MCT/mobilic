@@ -10,7 +10,13 @@ import { PaperContainerTitle } from "../common/PaperContainer";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import BetagouvLogo from "common/assets/images/betagouvlogo.png";
 
-const imageSrcs = require.context(
+const sponsorsSrcs = require.context(
+  "!url-loader?limit=10000&name=static%2Fsponsor-logos%2F%5Bname%5D.%5Bext%5D!common/assets/images/sponsor-logos",
+  true,
+  /\.(png|jpe?g|svg)$/
+);
+
+const partnersSrcs = require.context(
   "!url-loader?limit=10000&name=static%2Fpartner-logos%2F%5Bname%5D.%5Bext%5D!common/assets/images/partner-logos",
   true,
   /\.(png|jpe?g|svg)$/
@@ -120,6 +126,24 @@ export function Partners() {
         </Box>
         <Box my={10}>
           <Typography variant="h4" className={classes.title}>
+            Ils soutiennent Mobilic
+          </Typography>
+          <Grid
+            container
+            justify="space-evenly"
+            alignItems="center"
+            wrap
+            spacing={7}
+          >
+            {sponsorsSrcs.keys().map(src => (
+              <Grid item key={src}>
+                <img alt={src} src={sponsorsSrcs(src)} height={160} />
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+        <Box my={10}>
+          <Typography variant="h4" className={classes.title}>
             Ils sont partenaires de Mobilic
           </Typography>
           <Grid
@@ -129,9 +153,9 @@ export function Partners() {
             wrap
             spacing={7}
           >
-            {imageSrcs.keys().map(src => (
+            {partnersSrcs.keys().map(src => (
               <Grid item key={src}>
-                <img alt={src} src={imageSrcs(src)} height={80} />
+                <img alt={src} src={partnersSrcs(src)} height={80} />
               </Grid>
             ))}
           </Grid>
