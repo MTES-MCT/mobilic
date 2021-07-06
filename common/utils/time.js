@@ -138,6 +138,14 @@ export function startOfDayAsDate(date) {
   return date;
 }
 
+export function getEndOfDay(unixTimestamp) {
+  const date = new Date(unixTimestamp * 1000);
+  date.setHours(23);
+  date.setMinutes(59);
+  date.setSeconds(59);
+  return (date.getTime() / 1000) >> 0;
+}
+
 export function startOfDay(date) {
   return (startOfDayAsDate(date).getTime() / 1000) >> 0;
 }

@@ -1,6 +1,8 @@
 import {
   formatDateTime,
   frenchFormatDateString,
+  getEndOfDay,
+  getStartOfDay,
   isoFormatDateTime
 } from "common/utils/time";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
@@ -150,8 +152,10 @@ const NativeDateOrDateTimePicker = React.forwardRef(
         value={value ? toBrowserRepresentation(value) : ""}
         inputProps={{
           step: isDateTime ? 60 : 1,
-          min: minValue ? toBrowserRepresentation(minValue) : null,
-          max: maxValue ? toBrowserRepresentation(maxValue) : null
+          min: minValue
+            ? toBrowserRepresentation(getStartOfDay(minValue))
+            : null,
+          max: maxValue ? toBrowserRepresentation(getEndOfDay(maxValue)) : null
         }}
         onChange={handleChange}
         inputRef={ref}
