@@ -7,6 +7,7 @@ import { Link } from "../common/LinkButton";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import Hidden from "@material-ui/core/Hidden";
+import { SocialNetworkPanel } from "../common/Header";
 
 const useStyles = makeStyles(theme => ({
   section: {
@@ -36,6 +37,15 @@ const useStyles = makeStyles(theme => ({
   betaGouvLink: {
     color: "inherit",
     textDecoration: "underline"
+  },
+  socialNetworkContainer: {
+    paddingTop: theme.spacing(5),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center"
+  },
+  socialNetworkTitle: {
+    marginBottom: theme.spacing(1)
   }
 }));
 
@@ -187,6 +197,12 @@ export function Footer() {
             </Grid>
           </Hidden>
         </Grid>
+      </Container>
+      <Container className={classes.socialNetworkContainer}>
+        <Typography className={classes.socialNetworkTitle} variant="caption">
+          Suivez-nous sur les réseaux sociaux !
+        </Typography>
+        <SocialNetworkPanel darkBackground={true} spacing={2} size={36} />
       </Container>
     </Container>
   );

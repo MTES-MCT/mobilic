@@ -6,7 +6,6 @@ import { formatPersonName } from "common/utils/coworkers";
 import IconButton from "@material-ui/core/IconButton";
 import { useApi } from "common/utils/api";
 import { getAccessibleRoutes } from "./routes";
-
 import { useHistory, useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { Logos } from "./Logos";
@@ -25,10 +24,55 @@ import Tooltip from "@material-ui/core/Tooltip";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Link, LinkButton } from "./LinkButton";
 import { useLoadingScreen } from "common/utils/loading";
+import YoutubeIcon from "common/assets/images/youtube.png";
+import LinkedInWhiteIcon from "common/assets/images/linkedin.svg";
+import YoutubeWhiteIcon from "common/assets/images/youtube-white.png";
+import Grid from "@material-ui/core/Grid";
+
+const SOCIAL_NETWORKS = [
+  {
+    name: "LinkedIn",
+    colorLogo: "/linkedin.png",
+    whiteLogo: LinkedInWhiteIcon,
+    link: "https://www.linkedin.com/company/mobilic-beta-gouv"
+  },
+  {
+    name: "YouTube",
+    colorLogo: YoutubeIcon,
+    whiteLogo: YoutubeWhiteIcon,
+    link: "https://www.youtube.com/channel/UCP-V-BN0iMJgwI29NbwTt_w"
+  }
+];
+
+export function SocialNetworkPanel({
+  size = 18,
+  spacing = 1,
+  darkBackground = false
+}) {
+  return (
+    <Grid
+      container
+      spacing={spacing}
+      alignItems="center"
+      style={{ width: "auto" }}
+    >
+      {SOCIAL_NETWORKS.map(sn => (
+        <Grid item key={sn.name}>
+          <IconButton href={sn.link} size="small">
+            <img
+              height={size}
+              alt={sn.name}
+              src={darkBackground ? sn.whiteLogo : sn.colorLogo}
+            />
+          </IconButton>
+        </Grid>
+      ))}
+    </Grid>
+  );
+}
 
 const useStyles = makeStyles(theme => ({
   navItemButton: {
-    marginLeft: theme.spacing(2),
     borderRadius: 2
   },
   docButton: {
@@ -37,7 +81,10 @@ const useStyles = makeStyles(theme => ({
     fontSize: "1rem"
   },
   divider: {
-    margin: theme.spacing(1)
+    marginBottom: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(3)
   },
   navListItem: {
     width: "100%",
@@ -277,6 +324,14 @@ function DesktopHeader({ disableMenu }) {
               flexItem
             />
           )}
+          {!disableMenu && <SocialNetworkPanel />}
+          {!disableMenu && (
+            <Divider
+              className={classes.divider}
+              orientation="vertical"
+              flexItem
+            />
+          )}
           <Tooltip
             interactive
             title={`${formatPersonName(userInfo)}${
@@ -307,43 +362,57 @@ function DesktopHeader({ disableMenu }) {
         </Box>
       ) : (
         !disableMenu && (
-          <Box className="flex-row">
+          <Box className="flex-row-center">
             {docLinks()}
             <Divider
               className={classes.divider}
               orientation="vertical"
               flexItem
             />
-            {routes
-              .filter(
-                r =>
-                  r.accessible({ userInfo, companies }) &&
-                  (!r.menuItemFilter ||
-                    r.menuItemFilter({ userInfo, companies }))
-              )
-              .map(route => {
-                const ButtonComponent = route.mainCta
-                  ? MainCtaButton
-                  : props => (
-                      <Button variant="outlined" color="primary" {...props} />
-                    );
-                return (
-                  <ButtonComponent
-                    aria-label={route.label}
-                    key={route.path}
-                    value={route.path}
-                    href={route.path}
-                    className={classes.navItemButton}
-                    onClick={e => {
-                      e.preventDefault();
-                      if (!location.pathname.startsWith(route.path))
-                        history.push(route.path);
-                    }}
-                  >
-                    {route.label}
-                  </ButtonComponent>
-                );
-              })}
+            <SocialNetworkPanel />
+            <Divider
+              className={classes.divider}
+              orientation="vertical"
+              flexItem
+            />
+            <Grid
+              container
+              style={{ width: "auto" }}
+              spacing={2}
+              alignItems="center"
+            >
+              {routes
+                .filter(
+                  r =>
+                    r.accessible({ userInfo, companies }) &&
+                    (!r.menuItemFilter ||
+                      r.menuItemFilter({ userInfo, companies }))
+                )
+                .map(route => {
+                  const ButtonComponent = route.mainCta
+                    ? MainCtaButton
+                    : props => (
+                        <Button variant="outlined" color="primary" {...props} />
+                      );
+                  return (
+                    <Grid item key={route.path}>
+                      <ButtonComponent
+                        aria-label={route.label}
+                        value={route.path}
+                        href={route.path}
+                        className={classes.navItemButton}
+                        onClick={e => {
+                          e.preventDefault();
+                          if (!location.pathname.startsWith(route.path))
+                            history.push(route.path);
+                        }}
+                      >
+                        {route.label}
+                      </ButtonComponent>
+                    </Grid>
+                  );
+                })}
+            </Grid>
           </Box>
         )
       )}
