@@ -4,8 +4,6 @@ import React from "react";
 import { MissionReview } from "../screens/MissionReview";
 import App from "common/components/App";
 
-console.log(1);
-
 function _InnerAppScreen(props) {
   if (
     !props.latestActivity ||

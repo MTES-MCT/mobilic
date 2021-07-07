@@ -93,7 +93,6 @@ export default function EditPastMission({
 
   React.useEffect(() => {
     if (mission) {
-      console.log(mission);
       const missionMatch = missions.find(m => m.id === mission.id);
       if (missionMatch) setMission(missionMatch);
     }
