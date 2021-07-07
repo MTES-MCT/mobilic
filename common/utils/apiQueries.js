@@ -364,7 +364,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
         vehicles {
           id
           registrationNumber
-          name
+          alias
         }
         employments {
           id
