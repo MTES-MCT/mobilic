@@ -176,3 +176,9 @@ export function now() {
 export function frenchFormatDateString(isoDateString) {
   return new Date(isoDateString).toLocaleDateString();
 }
+
+export function isoFormatLocalDate(date) {
+  return `${date.getFullYear()}-${addZero(date.getMonth() + 1)}-${addZero(
+    date.getDate()
+  )}`;
+}

@@ -18,7 +18,7 @@ import { useMatomo } from "@datapunt/matomo-tracker-react";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Switch from "@material-ui/core/Switch/Switch";
-import { DAY, startOfDayAsDate } from "common/utils/time";
+import { DAY, isoFormatLocalDate, startOfDayAsDate } from "common/utils/time";
 import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles(theme => ({
@@ -218,10 +218,8 @@ export default function C1BExport({
             };
             if (selectedUsers.length > 0)
               options["user_ids"] = selectedUsers.map(u => u.id);
-            if (minDate)
-              options["min_date"] = minDate.toISOString().slice(0, 10);
-            if (maxDate)
-              options["max_date"] = maxDate.toISOString().slice(0, 10);
+            if (minDate) options["min_date"] = isoFormatLocalDate(minDate);
+            if (maxDate) options["max_date"] = isoFormatLocalDate(maxDate);
             options["with_digital_signatures"] = sign;
             e.preventDefault();
             trackLink({

@@ -17,7 +17,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import IconButton from "@material-ui/core/IconButton";
-import { frenchFormatDateString } from "common/utils/time";
+import { frenchFormatDateString, isoFormatLocalDate } from "common/utils/time";
 import {
   CANCEL_EMPLOYMENT_MUTATION,
   CREATE_EMPLOYMENT_MUTATION,
@@ -84,7 +84,7 @@ export function Employees({ company, containerRef }) {
       TERMINATE_EMPLOYMENT_MUTATION,
       {
         employmentId,
-        endDate: endDate.toISOString().slice(0, 10)
+        endDate: isoFormatLocalDate(endDate)
       }
     );
     await adminStore.setEmployments(oldEmployments => {
@@ -208,7 +208,7 @@ export function Employees({ company, containerRef }) {
       id: e.id
     }));
 
-  const today = new Date(Date.now()).toISOString().slice(0, 10);
+  const today = isoFormatLocalDate(new Date());
 
   const validEmployments = companyEmployments
     .filter(e => e.isAcknowledged)

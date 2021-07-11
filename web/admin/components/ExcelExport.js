@@ -15,6 +15,7 @@ import {
 import { EmployeeFilter } from "./EmployeeFilter";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import Grid from "@material-ui/core/Grid";
+import { isoFormatLocalDate } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -161,10 +162,8 @@ export default function ExcelExport({
               };
               if (selectedUsers.length > 0)
                 options["user_ids"] = selectedUsers.map(u => u.id);
-              if (minDate)
-                options["min_date"] = minDate.toISOString().slice(0, 10);
-              if (maxDate)
-                options["max_date"] = maxDate.toISOString().slice(0, 10);
+              if (minDate) options["min_date"] = isoFormatLocalDate(minDate);
+              if (maxDate) options["max_date"] = isoFormatLocalDate(maxDate);
               e.preventDefault();
               trackLink({
                 href: `/download_company_activity_report`,
