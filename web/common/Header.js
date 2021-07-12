@@ -58,7 +58,7 @@ export function SocialNetworkPanel({
     >
       {SOCIAL_NETWORKS.map(sn => (
         <Grid item key={sn.name}>
-          <IconButton href={sn.link} size="small">
+          <IconButton href={sn.link} size="small" target="_blank">
             <img
               height={size}
               alt={sn.name}

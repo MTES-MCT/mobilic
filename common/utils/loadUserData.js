@@ -100,7 +100,7 @@ export async function syncUser(userPayload, api, store) {
 
   // Get end status for latest mission;
   if (missions.length > 0) {
-    const latestMission = missions[missions.length - 1];
+    const latestMission = missions[0];
     try {
       const latestMissionInfo = await api.graphQlQuery(CURRENT_MISSION_INFO, {
         id: latestMission.id
