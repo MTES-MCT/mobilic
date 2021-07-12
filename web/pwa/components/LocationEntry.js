@@ -76,7 +76,7 @@ export default function LocationEntry({
             ) : null
           }
         />
-      ) : editKilometerReading ? (
+      ) : location && editKilometerReading ? (
         <ListItemText className={classes.kilometerReading} disableTypography>
           <Button
             variant="outlined"
