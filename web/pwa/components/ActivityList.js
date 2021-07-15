@@ -14,6 +14,7 @@ import {
   formatTimer,
   getStartOfDay,
   LONG_BREAK_DURATION,
+  MINUTE,
   now
 } from "common/utils/time";
 import { getTime, sortEvents } from "common/utils/events";
@@ -27,8 +28,9 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import { PieChart, Pie, Cell, ResponsiveContainer, LabelList } from "recharts";
 import { computeTotalActivityDurations } from "common/utils/metrics";
-import Grid from "@material-ui/core/Grid";
-import Switch from "@material-ui/core/Switch";
+import { VerticalTimeline } from "common/components/VerticalTimeline";
+import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup/ToggleButtonGroup";
+import ToggleButton from "@material-ui/lab/ToggleButton";
 
 const RADIAN = Math.PI / 180;
 function renderCustomizedLabel(
@@ -68,6 +70,10 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: props.color,
     color: theme.palette.primary.contrastText
   }),
+  toggleContainer: {
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2)
+  },
   pieContainer: {
     maxWidth: 300,
     margin: "auto"
@@ -95,12 +101,11 @@ function ActivityItem({
   teamChanges,
   nullableEndTimeInEditActivity,
   allowTeamMode,
-  showDates = false
+  datetimeFormatter = formatTimeOfDay
 }) {
   const modals = useModals();
   const classes = useStyles({ color: ACTIVITIES[activity.type].color });
 
-  const datetimeFormatter = showDates ? formatDateTime : formatTimeOfDay;
   const isBreak = activity.type === ACTIVITIES.break.name;
   const isLongBreak =
     isBreak && activity.duration && activity.duration >= LONG_BREAK_DURATION;
@@ -197,6 +202,9 @@ export function ActivityList({
   disableEmptyMessage = false,
   hideChart = false
 }) {
+  const ref = React.useRef();
+  const now1 = now();
+
   const filteredActivities = filterActivitiesOverlappingPeriod(
     activities,
     fromTime,
@@ -229,9 +237,9 @@ export function ActivityList({
   const augmentedAndSortedActivities = activitiesWithBreaks.map(activity => {
     const startTime = Math.max(activity.startTime, fromTime);
     const endTime = untilTime
-      ? Math.min(activity.endTime || now(), untilTime)
+      ? Math.min(activity.endTime || now1, untilTime)
       : activity.endTime;
-    const endTimeOrNow = endTime || now();
+    const endTimeOrNow = endTime || now1;
     return {
       ...activity,
       displayedStartTime: startTime,
@@ -260,12 +268,26 @@ export function ActivityList({
           )
       : false;
 
+  const datetimeFormatter = showDates ? formatDateTime : formatTimeOfDay;
+
   const [view, setView] = React.useState("list");
 
-  augmentedAndSortedActivities.reverse();
-  const latestActivity = augmentedAndSortedActivities[0];
+  const latestActivity =
+    augmentedAndSortedActivities[augmentedAndSortedActivities.length - 1];
 
-  const canDisplayChart = !hideChart && stats.total > 0;
+  if (!isMissionEnded && latestActivity && latestActivity.endTime) {
+    augmentedAndSortedActivities.push({
+      type: ACTIVITIES.break.name,
+      startTime: latestActivity.endTime,
+      displayedStartTime: latestActivity.endTime,
+      endTime: null,
+      displayedEndTime: null,
+      endTimeOrNow: now1
+    });
+  }
+
+  const canDisplayChart =
+    !hideChart && stats.total > 0 && stats.total >= MINUTE * 15;
 
   const classes = useStyles();
   const pieData = Object.values(ACTIVITIES)
@@ -279,44 +301,35 @@ export function ActivityList({
     .filter(a => !!a.value);
 
   return (
-    <Container maxWidth={false} disableGutters>
+    <Container ref={ref} maxWidth={false} disableGutters>
       {canDisplayChart && (
-        <Grid component="label" container alignItems="center" spacing={1}>
-          <Grid item>
-            <Typography
-              variant="caption"
-              className={view === "chart" && classes.blurred}
-            >
-              Liste
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Switch
-              className={classes.switch}
-              checked={view === "chart"}
-              onChange={() =>
-                setView(view => (view === "chart" ? "list" : "chart"))
-              }
-              name="chart-toggle"
-            />
-          </Grid>
-          <Grid item>
-            <Typography
-              variant="caption"
-              className={view === "list" && classes.blurred}
-            >
-              Graphique
-            </Typography>
-          </Grid>
-        </Grid>
+        <ToggleButtonGroup
+          className={classes.toggleContainer}
+          value={view}
+          exclusive
+          onChange={(e, newView) => {
+            if (newView) setView(newView);
+          }}
+          size="small"
+        >
+          <ToggleButton key="list" value="list">
+            Liste
+          </ToggleButton>
+          <ToggleButton key="timeline" value="timeline">
+            Frise
+          </ToggleButton>
+          <ToggleButton key="chart" value="chart">
+            Agrégé
+          </ToggleButton>
+        </ToggleButtonGroup>
+      )}
+      {hasActivitiesBeforeMinTime && (
+        <Typography variant="body2" className={classes.infoText}>
+          Les activités avant minuit le jour précédent ne sont pas inclues
+        </Typography>
       )}
       {(view === "list" || !canDisplayChart) && (
         <List dense>
-          {hasActivitiesAfterMaxTime && (
-            <Typography variant="body2" className={classes.infoText}>
-              Les activités après minuit le jour suivant ne sont pas affichées
-            </Typography>
-          )}
           {!isMissionEnded && latestActivity && latestActivity.endTime && (
             <ListItem disableGutters key={"trailingBreak"}>
               <ListItemAvatar>
@@ -324,7 +337,7 @@ export function ActivityList({
               </ListItemAvatar>
               <ListItemText
                 primary={ACTIVITIES.break.label}
-                secondary={`${(showDates ? formatDateTime : formatTimeOfDay)(
+                secondary={`${datetimeFormatter(
                   latestActivity.endTime
                 )} - En cours`}
               />
@@ -347,14 +360,9 @@ export function ActivityList({
               allowTeamMode={allowTeamMode}
               nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
               key={activity.id ? "a" + activity.id : index}
-              showDates={showDates}
+              datetimeFormatter={datetimeFormatter}
             />
           ))}
-          {hasActivitiesBeforeMinTime && (
-            <Typography variant="body2" className={classes.infoText}>
-              Les activités avant minuit le jour précédent ne sont pas affichées
-            </Typography>
-          )}
         </List>
       )}
       {view === "chart" && canDisplayChart && (
@@ -390,6 +398,18 @@ export function ActivityList({
             </Pie>
           </PieChart>
         </ResponsiveContainer>
+      )}
+      {view === "timeline" && canDisplayChart && (
+        <VerticalTimeline
+          datetimeFormatter={datetimeFormatter}
+          width={ref.current.offsetWidth}
+          activities={augmentedAndSortedActivities}
+        />
+      )}
+      {hasActivitiesAfterMaxTime && (
+        <Typography variant="body2" className={classes.infoText}>
+          Les activités après minuit le jour suivant ne sont pas inclues
+        </Typography>
       )}
     </Container>
   );
