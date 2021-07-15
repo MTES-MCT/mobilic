@@ -87,6 +87,7 @@ function _App({ ScreenComponent, loadUser }) {
             createMission={actions.beginNewMission}
             editExpenditures={actions.editExpendituresForTeam}
             editActivityEvent={actions.editActivityEvent}
+            editVehicle={actions.updateMissionVehicle}
             currentMission={currentMission}
             validateMission={actions.validateMission}
             logComment={actions.logComment}
@@ -101,6 +102,7 @@ function _App({ ScreenComponent, loadUser }) {
               actions.pushNewTeamActivityEvent({ ...args, switchMode: false })
             }
             editActivityEvent={actions.editActivityEvent}
+            editVehicle={actions.updateMissionVehicle}
             validateMission={actions.validateMission}
             editExpenditures={actions.editExpendituresForTeam}
             registerKilometerReading={actions.registerKilometerReading}
@@ -120,6 +122,7 @@ function _App({ ScreenComponent, loadUser }) {
             endMissionForTeam={actions.endMissionForTeam}
             endMission={actions.endMission}
             validateMission={actions.validateMission}
+            editVehicle={actions.updateMissionVehicle}
             logExpenditureForTeam={actions.logExpenditureForTeam}
             cancelExpenditure={actions.cancelExpenditure}
             editExpendituresForTeam={actions.editExpendituresForTeam}

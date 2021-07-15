@@ -15,6 +15,7 @@ export function CurrentActivity({
   updateMissionVehicle,
   registerKilometerReading,
   editActivityEvent,
+  editVehicle,
   endMissionForTeam,
   endMission,
   previousMissionEnd
@@ -93,6 +94,7 @@ export function CurrentActivity({
       hideExpenditures
       hideValidations
       hideComments
+      editVehicle={vehicle => editVehicle({ mission: currentMission, vehicle })}
       previousMissionEnd={previousMissionEnd}
       createActivity={args =>
         pushNewTeamActivityEvent({ ...args, switchMode: false })

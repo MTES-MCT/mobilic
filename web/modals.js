@@ -5,7 +5,7 @@ import NewMissionModal from "./pwa/components/NewMission";
 import DriverSelectionModal from "./pwa/components/DriverSelection";
 import CommentInputModal from "./pwa/components/CommentInput";
 import ActivityRevisionOrCreationModal from "./pwa/components/ActivityRevision";
-import VehicleBookingModal from "./pwa/components/VehicleBooking";
+import updateVehicleModal from "./pwa/components/VehicleBooking";
 import ExcelExport from "./admin/components/ExcelExport";
 import C1BExport from "./admin/components/C1BExport";
 import TeamOrSoloChoiceModal from "./pwa/components/TeamOrSoloChoice";
@@ -29,7 +29,7 @@ export const MODAL_DICT = {
   driverSelection: DriverSelectionModal,
   commentInput: CommentInputModal,
   activityRevision: ActivityRevisionOrCreationModal,
-  vehicleBooking: VehicleBookingModal,
+  updateVehicle: updateVehicleModal,
   dataExport: ExcelExport,
   tachographExport: C1BExport,
   teamOrSoloChoice: TeamOrSoloChoiceModal,

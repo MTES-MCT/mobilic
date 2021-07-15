@@ -38,6 +38,7 @@ export default function EditPastMission({
   editActivityEvent,
   validateMission,
   editExpenditures,
+  editVehicle,
   registerKilometerReading,
   logComment,
   cancelComment,
@@ -138,6 +139,7 @@ export default function EditPastMission({
       createActivity={createActivity}
       isMissionEnded={true}
       editKilometerReading={registerKilometerReading}
+      editVehicle={vehicle => editVehicle({ mission, vehicle })}
       defaultTime={day}
       disableEmptyActivitiesPlaceHolder
       forceDisplayEndLocation

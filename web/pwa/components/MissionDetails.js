@@ -99,6 +99,7 @@ export function MissionDetails({
   editActivityEvent,
   nullableEndTimeInEditActivity = true,
   editExpenditures,
+  editVehicle,
   previousMissionEnd,
   nextMissionStart,
   hideExpenditures,
@@ -267,7 +268,20 @@ export function MissionDetails({
           ]}
         </MissionReviewSection>
       ) : null}
-      <MissionReviewSection title="Véhicule">
+      <MissionReviewSection
+        title="Véhicule"
+        onEdit={
+          editVehicle
+            ? () =>
+                modals.open("updateVehicle", {
+                  handleSubmit: editVehicle,
+                  currentVehicle: mission.vehicle,
+                  company: mission.company
+                })
+            : null
+        }
+        editButtonLabel="Modifier"
+      >
         {mission.vehicle && (
           <List dense>
             <ListItem disableGutters>

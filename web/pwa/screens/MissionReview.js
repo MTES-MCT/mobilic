@@ -34,6 +34,7 @@ export function MissionReview({
   editExpendituresForTeam,
   previousMissionEnd,
   logComment,
+  editVehicle,
   cancelComment,
   registerKilometerReading
 }) {
@@ -62,6 +63,9 @@ export function MissionReview({
         mission={currentMission}
         editActivityEvent={editActivityEvent}
         editExpenditures={editExpendituresForTeam}
+        editVehicle={vehicle =>
+          editVehicle({ mission: currentMission, vehicle })
+        }
         previousMissionEnd={previousMissionEnd}
         createActivity={args =>
           pushNewTeamActivityEvent({ ...args, switchMode: false })

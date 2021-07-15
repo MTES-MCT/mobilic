@@ -163,6 +163,7 @@ const tabs = {
       currentMission,
       validateMission,
       logComment,
+      editVehicle,
       cancelComment,
       coworkers,
       registerKilometerReading,
@@ -183,6 +184,11 @@ const tabs = {
                 createActivity={mission.adminValidation ? null : createActivity}
                 editExpenditures={
                   mission.adminValidation ? null : editExpenditures
+                }
+                editVehicle={
+                  mission.adminValidation
+                    ? null
+                    : vehicle => editVehicle({ mission, vehicle })
                 }
                 nullableEndTimeInEditActivity={
                   currentMission ? mission.id === currentMission.id : true
@@ -218,6 +224,7 @@ const tabs = {
       editActivityEvent,
       createActivity,
       editExpenditures,
+      editVehicle,
       currentMission,
       validateMission,
       logComment,
@@ -363,7 +370,7 @@ const tabs = {
                       mission={mission}
                       alternateDisplay
                       collapsable
-                      defaultOpenCollapse={missionsInPeriod.length === 1}
+                      defaultOpenCollapse={false}
                       showMetrics={false}
                     >
                       <MissionDetails
@@ -377,6 +384,11 @@ const tabs = {
                         }
                         editExpenditures={
                           mission.adminValidation ? null : editExpenditures
+                        }
+                        editVehicle={
+                          mission.adminValidation
+                            ? null
+                            : vehicle => editVehicle({ mission, vehicle })
                         }
                         nullableEndTimeInEditActivity={
                           currentMission
@@ -655,6 +667,7 @@ export function History({
   validateMission,
   logComment,
   cancelComment,
+  editVehicle,
   displayActions = true,
   coworkers = null,
   vehicles = null,
@@ -931,6 +944,7 @@ export function History({
             createActivity,
             editExpenditures,
             currentMission,
+            editVehicle,
             validateMission,
             logComment,
             cancelComment,
