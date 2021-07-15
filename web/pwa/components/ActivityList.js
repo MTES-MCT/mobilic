@@ -139,7 +139,7 @@ function ActivityItem({
             : { color: "primary" }
         }
       />
-      {editActivityEvent && (
+      {editActivityEvent && activity.id && (
         <ListItemSecondaryAction>
           <IconButton
             edge="end"
@@ -330,19 +330,6 @@ export function ActivityList({
       )}
       {(view === "list" || !canDisplayChart) && (
         <List dense>
-          {!isMissionEnded && latestActivity && latestActivity.endTime && (
-            <ListItem disableGutters key={"trailingBreak"}>
-              <ListItemAvatar>
-                <Avatar>{ACTIVITIES.break.renderIcon()}</Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={ACTIVITIES.break.label}
-                secondary={`${datetimeFormatter(
-                  latestActivity.endTime
-                )} - En cours`}
-              />
-            </ListItem>
-          )}
           {augmentedAndSortedActivities.length === 0 && !disableEmptyMessage && (
             <Typography variant="body2" className={classes.infoText}>
               Pas d'activités sur cette journée
