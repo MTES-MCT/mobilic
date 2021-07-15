@@ -244,7 +244,7 @@ export function VerticalTimeline({
                 height: 0,
                 width: 4,
                 borderBottom: "solid 1px",
-                top: getYOffsetForTime(h * HOUR),
+                top: getYOffsetForTime(h * subStepDuration),
                 left: -2
               }}
             />
