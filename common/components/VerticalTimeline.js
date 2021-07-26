@@ -224,7 +224,7 @@ export function VerticalTimeline({
           .filter(h => (h * subStepSize) % stepSize === 0)
           .map(h => [
             <Typography
-              key={h}
+              key={`text${h}`}
               align="left"
               variant="caption"
               color="textSecondary"
@@ -238,7 +238,7 @@ export function VerticalTimeline({
               {datetimeFormatter(h * subStepDuration)}
             </Typography>,
             <Box
-              key={h}
+              key={`mark${h}`}
               style={{
                 position: "absolute",
                 height: 0,
@@ -249,7 +249,7 @@ export function VerticalTimeline({
               }}
             />
           ])}
-        {filteredActivities.map(a => {
+        {filteredActivities.map((a, index) => {
           let topOffset = getYOffsetForTime(a.displayedStartTime);
           let rectHeight = getYOffsetForTime(a.endTimeOrNow) - topOffset;
           if (rectHeight <= 4) {
@@ -262,7 +262,7 @@ export function VerticalTimeline({
           const leftOffset = getXOffsetForActivity(a.type);
           return (
             <Box
-              key={a.id}
+              key={a.id || index}
               style={{
                 marginTop: 1,
                 marginBottom: 1,
