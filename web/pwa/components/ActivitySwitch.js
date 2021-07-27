@@ -27,12 +27,15 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 120
   },
   card: props => ({
-    backgroundColor: props.disabled
-      ? theme.palette.background.paper
-      : props.color,
+    backgroundColor:
+      props.colored && !props.disabled
+        ? props.color
+        : theme.palette.background.paper,
     color: props.disabled
       ? theme.palette.grey[500]
-      : theme.palette.primary.contrastText,
+      : props.colored
+      ? theme.palette.primary.contrastText
+      : props.color,
     cursor: props.disabled ? "inherit" : "pointer"
   }),
   cardContent: {
@@ -45,33 +48,36 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0.5)
   },
   cardIcon: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(2),
     flexGrow: 1,
-    flexShrink: "unset",
+    flexShrink: 1,
     width: "auto",
     height: "auto"
   },
   cardText: props => ({
     width: "100%",
     flexShrink: 0,
-    fontWeight: props.current ? "bold" : "normal"
+    fontSize: "75%",
+    fontWeight: props.highlighted ? "bold" : "normal"
   })
 }));
 
 export function ActivitySwitchCard({
   label,
   renderIcon,
-  current,
+  colored,
+  highlighted,
   disabled,
   onClick,
   color
 }) {
-  const classes = useStyles({ current, disabled, color });
+  const classes = useStyles({ colored, highlighted, disabled, color });
   return (
     <Card className={classes.card} onClick={!disabled ? onClick : null} raised>
       <Box className={`${classes.cardContent} flex-column-space-between`}>
         {renderIcon({
-          className: classes.cardIcon
+          className: classes.cardIcon,
+          fontSize: "large"
         })}
         <Typography
           align="center"
@@ -191,7 +197,8 @@ export function ActivitySwitch({
               <ActivitySwitchCard
                 label={activity.label}
                 renderIcon={activity.renderIcon}
-                current={current}
+                colored={current || !latestActivity}
+                highlighted={current}
                 onClick={handleActivitySwitch(activity.name)}
                 disabled={
                   disableBreak && activity.name === ACTIVITIES.break.name

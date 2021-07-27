@@ -6,7 +6,7 @@ export const SWITCH_ACTIVITIES = {
     name: "drive",
     label: "Déplacement",
     renderIcon: props => <TruckIcon {...props} />,
-    color: "#1CE88C",
+    color: "#6BE670",
     canBeFirst: true
   },
   work: {
@@ -20,7 +20,7 @@ export const SWITCH_ACTIVITIES = {
     name: "break",
     label: "Pause",
     renderIcon: props => <RestIcon {...props} />,
-    color: "#AA7AF8"
+    color: "#9A9CF8"
   }
 };
 
@@ -30,7 +30,7 @@ export const ACTIVITIES = {
     name: "support",
     label: "Accompagnement",
     renderIcon: props => <TruckIcon {...props} />,
-    color: "#1CE88C"
+    color: "#6BE670"
   }
 };
 
