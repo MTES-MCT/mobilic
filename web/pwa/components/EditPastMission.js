@@ -5,7 +5,7 @@ import Container from "@material-ui/core/Container";
 import { MissionDetails } from "./MissionDetails";
 import { useLocation } from "react-router-dom";
 import { useLoadingScreen } from "common/utils/loading";
-import { now, prettyFormatDay } from "common/utils/time";
+import { prettyFormatDay } from "common/utils/time";
 import { useApi } from "common/utils/api";
 import { parseMissionPayloadFromBackend } from "common/utils/mission";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
@@ -39,8 +39,7 @@ export default function EditPastMission({
   registerKilometerReading,
   logComment,
   cancelComment,
-  openHistory,
-  endMission
+  openHistory
 }) {
   const location = useLocation();
   const withLoadingScreen = useLoadingScreen();
@@ -148,7 +147,6 @@ export default function EditPastMission({
       cancelComment={cancelComment}
       hideValidations={mission.activities.length === 0}
       validateMission={async m => {
-        await endMission({ mission: m, endTime: now() });
         await validateMission(m);
         if (parseInt(mission.id)) openHistory(mission.id);
       }}
