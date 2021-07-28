@@ -13,7 +13,8 @@ const HEIGHT_FOR_ICON_HEADER = 60;
 const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(2),
-    position: "relative"
+    position: "relative",
+    marginBottom: theme.spacing(1)
   },
   gridContainer: {
     position: "absolute",
@@ -191,7 +192,7 @@ export function VerticalTimeline({
             </Box>
             <Typography
               align="center"
-              style={{ display: "block" }}
+              style={{ display: "block", fontSize: "50%" }}
               noWrap
               variant="caption"
             >
