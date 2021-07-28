@@ -5,18 +5,15 @@ import Container from "@material-ui/core/Container";
 import { MissionDetails } from "./MissionDetails";
 import { useLocation } from "react-router-dom";
 import { useLoadingScreen } from "common/utils/loading";
-import { sortEvents } from "common/utils/events";
-import { prettyFormatDay } from "common/utils/time";
+import { now, prettyFormatDay } from "common/utils/time";
 import { useApi } from "common/utils/api";
-import {
-  augmentMissionWithProperties,
-  parseMissionPayloadFromBackend
-} from "common/utils/mission";
+import { parseMissionPayloadFromBackend } from "common/utils/mission";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { formatApiError } from "common/utils/errors";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { AccountButton } from "./AccountButton";
 import { MISSION_QUERY } from "common/utils/apiQueries";
+import { parseActivityPayloadFromBackend } from "common/utils/activities";
 
 const useStyles = makeStyles(theme => ({
   overview: {
@@ -42,7 +39,8 @@ export default function EditPastMission({
   registerKilometerReading,
   logComment,
   cancelComment,
-  openHistory
+  openHistory,
+  endMission
 }) {
   const location = useLocation();
   const withLoadingScreen = useLoadingScreen();
@@ -72,14 +70,31 @@ export default function EditPastMission({
             const missionResponse = await api.graphQlQuery(MISSION_QUERY, {
               id: submittedMissionId
             });
-            const missionPayload = {
-              ...missionResponse.data.mission,
-              allActivities: sortEvents(missionResponse.data.mission.activities)
-            };
-            missionMatch = {
-              ...parseMissionPayloadFromBackend(missionPayload, userId),
-              ...augmentMissionWithProperties(missionPayload, userId)
-            };
+            const missionResponsePayload = missionResponse.data.mission;
+            store.syncEntity(
+              [parseMissionPayloadFromBackend(missionResponsePayload, userId)],
+              "missions",
+              () => false
+            );
+            store.syncEntity(
+              missionResponsePayload.activities.map(
+                parseActivityPayloadFromBackend
+              ),
+              "activities",
+              () => false
+            );
+            store.syncEntity(
+              missionResponsePayload.expenditures,
+              "expenditures",
+              () => false
+            );
+            store.syncEntity(
+              missionResponsePayload.comments,
+              "comments",
+              () => false
+            );
+            store.batchUpdateStore();
+            missionMatch = missionResponsePayload;
           } catch (err) {
             console.log(err);
             Sentry.captureException(err);
@@ -131,7 +146,9 @@ export default function EditPastMission({
       nullableEndTimeInEditActivity={false}
       logComment={logComment}
       cancelComment={cancelComment}
+      hideValidations={mission.activities.length === 0}
       validateMission={async m => {
+        await endMission({ mission: m, endTime: now() });
         await validateMission(m);
         if (parseInt(mission.id)) openHistory(mission.id);
       }}

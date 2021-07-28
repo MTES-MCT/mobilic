@@ -213,7 +213,12 @@ class Api {
     // 0. Resolve temporary IDs if they exist
     const identityMap = this.store.identityMap();
     ["storeInfo", "variables"].forEach(requestProp => {
-      ["activityId", "missionId", "currentActivityId"].forEach(field => {
+      [
+        "activityId",
+        "missionId",
+        "currentActivityId",
+        "missionLocationId"
+      ].forEach(field => {
         if (request[requestProp] && identityMap[request[requestProp][field]]) {
           request[requestProp][field] =
             identityMap[request[requestProp][field]];

@@ -108,6 +108,7 @@ function _App({ ScreenComponent, loadUser }) {
             registerKilometerReading={actions.registerKilometerReading}
             logComment={actions.logComment}
             cancelComment={actions.cancelComment}
+            endMission={actions.endMission}
             openHistory={openHistory}
           />
         </Route>
