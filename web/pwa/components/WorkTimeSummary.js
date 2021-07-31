@@ -17,7 +17,7 @@ import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import omit from "lodash/omit";
 import { EXPENDITURES } from "common/utils/expenditures";
-import { sortEvents } from "common/utils/events";
+import { getTime, sortEvents } from "common/utils/events";
 import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
 
 const useStyles = makeStyles(theme => ({
@@ -142,7 +142,7 @@ export function computeTimesAndDurationsFromActivities(
       timers: null,
       innerLongBreaks: [],
       filteredActivities: [],
-      groupedActivities: []
+      activityGroups: []
     };
 
   const endTime = Math.min(
@@ -152,21 +152,28 @@ export function computeTimesAndDurationsFromActivities(
   const startTime = Math.max(filteredActivities[0].startTime, fromTime);
 
   const innerLongBreaks = [];
-  const groupedActivities = [[filteredActivities[0]]];
+  const activityGroups = [];
+  let currentActivityGroup;
   filteredActivities.forEach((activity, index) => {
-    if (index > 0) {
-      const previousActivity = filteredActivities[index - 1];
-      const breakDuration = activity.startTime - previousActivity.endTime;
-      if (breakDuration >= LONG_BREAK_DURATION) {
-        innerLongBreaks.push({
-          startTime: previousActivity.endTime,
-          endTime: activity.startTime,
-          duration: breakDuration
-        });
-        groupedActivities.push([]);
-      }
-      groupedActivities[groupedActivities.length - 1].push(activity);
+    const previousActivity = index > 0 ? filteredActivities[index - 1] : null;
+    const breakDuration =
+      index > 0 ? activity.startTime - previousActivity.endTime : -1;
+    if (breakDuration >= LONG_BREAK_DURATION) {
+      innerLongBreaks.push({
+        startTime: previousActivity.endTime,
+        endTime: activity.startTime,
+        duration: breakDuration
+      });
+      currentActivityGroup = null;
     }
+    if (!currentActivityGroup) {
+      currentActivityGroup = { activities: [] };
+      activityGroups.push(currentActivityGroup);
+    }
+    currentActivityGroup.startTime =
+      currentActivityGroup.startTime || activity.startTime;
+    currentActivityGroup.endTime = activity.endTime || untilTime;
+    currentActivityGroup.activities.push(activity);
   });
 
   const dayTimers = computeTotalActivityDurations(
@@ -181,7 +188,7 @@ export function computeTimesAndDurationsFromActivities(
     timers: dayTimers,
     innerLongBreaks,
     filteredActivities,
-    groupedActivities
+    activityGroups
   };
 }
 
@@ -225,12 +232,12 @@ export function renderMissionKpis(
   return formattedKpis;
 }
 
-export function computePeriodStats(missions, fromTime, untilTime) {
-  const activities = missions.reduce(
-    (acts, mission) => [...acts, ...mission.activities],
-    []
-  );
-
+export function splitByLongBreaksAndComputePeriodStats(
+  activities,
+  fromTime,
+  untilTime,
+  missions
+) {
   sortEvents(activities);
 
   let civilDay = fromTime;
@@ -253,16 +260,19 @@ export function computePeriodStats(missions, fromTime, untilTime) {
     startTime,
     endTime,
     innerLongBreaks,
-    groupedActivities,
+    activityGroups,
     filteredActivities
   } = computeTimesAndDurationsFromActivities(activities, fromTime, untilTime);
 
   const expendituresCount = {};
-  missions.forEach(m => {
-    m.expenditures.forEach(e => {
-      expendituresCount[e.type] = (expendituresCount[e.type] || 0) + 1;
+  if (missions)
+    missions.forEach(m => {
+      m.expenditures.forEach(e => {
+        if (getTime(e) >= fromTime && getTime(e) < untilTime) {
+          expendituresCount[e.type] = (expendituresCount[e.type] || 0) + 1;
+        }
+      });
     });
-  });
 
   return {
     timers,
@@ -272,7 +282,7 @@ export function computePeriodStats(missions, fromTime, untilTime) {
     workedDays,
     expendituresCount,
     filteredActivities,
-    groupedActivities
+    activityGroups
   };
 }
 

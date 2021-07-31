@@ -4,12 +4,25 @@ import {
   LONG_BREAK_DURATION,
   now,
   MINUTE,
-  DAY
+  DAY,
+  getStartOfDay
 } from "./time";
 
 const MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK = HOUR * 6;
-const MAXIMUM_DURATION_OF_WORK = HOUR * 12;
+const MAXIMUM_DURATION_OF_DAY_WORK_IN_HOURS = 12;
+const MAXIMUM_DURATION_OF_NIGHT_WORK_IN_HOURS = 10;
 const MINIMUM_DURATION_OF_INDIVIDUAL_BREAK = MINUTE * 15;
+
+export function isNightWork(activity) {
+  if (activity.endTime === activity.startTime) return false;
+  const startTimeAsDateTime = new Date(activity.startTime * 1000);
+  const minuteOfDay =
+    startTimeAsDateTime.getHours() * 60 + startTimeAsDateTime.getMinutes();
+
+  if (minuteOfDay < 300) return true;
+  const nextMidnight = getStartOfDay(activity.startTime + DAY);
+  return (activity.endTime || now()) > nextMidnight;
+}
 
 export const RULE_RESPECT_STATUS = {
   success: 1,
@@ -82,14 +95,24 @@ function computeTotalWorkDuration(workDayActivities) {
 export function checkMaximumDurationOfWork(workDayActivities) {
   const totalWorkDuration = computeTotalWorkDuration(workDayActivities);
 
-  if (totalWorkDuration > MAXIMUM_DURATION_OF_WORK)
+  const nightWork = workDayActivities.some(a => isNightWork(a));
+
+  const maximumTimeInHours = nightWork
+    ? MAXIMUM_DURATION_OF_NIGHT_WORK_IN_HOURS
+    : MAXIMUM_DURATION_OF_DAY_WORK_IN_HOURS;
+
+  if (totalWorkDuration > maximumTimeInHours * HOUR)
     return {
       status: RULE_RESPECT_STATUS.failure,
-      message: "Durée du travail quotidien > 12h !"
+      message: `Durée du travail ${
+        nightWork ? "de nuit" : "quotidien"
+      } > ${maximumTimeInHours}h !`
     };
   return {
     status: RULE_RESPECT_STATUS.success,
-    message: "Durée du travail quotidien < 12h !"
+    message: `Durée du travail ${
+      nightWork ? "de nuit" : "quotidien"
+    } < ${maximumTimeInHours}h !`
   };
 }
 

@@ -5,7 +5,6 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import {
   getStartOfWeek,
-  prettyFormatDay,
   getStartOfMonth,
   SHORT_MONTHS,
   shortPrettyFormatDay,
@@ -13,21 +12,8 @@ import {
   startOfDay,
   WEEK,
   HOUR,
-  getStartOfDay,
-  formatTimer
+  getStartOfDay
 } from "common/utils/time";
-import {
-  computePeriodStats,
-  computeTimesAndDurationsFromActivities,
-  renderMissionKpis,
-  renderPeriodKpis,
-  WorkTimeSummaryAdditionalInfo,
-  WorkTimeSummaryKpiGrid
-} from "../components/WorkTimeSummary";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import List from "@material-ui/core/List";
 import { getTime, sortEvents } from "common/utils/events";
 import {
   findMatchingPeriodInNewUnit,
@@ -35,110 +21,24 @@ import {
 } from "common/utils/history";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
-import { RegulationCheck } from "../components/RegulationCheck";
-import {
-  checkMaximumDurationOfUninterruptedWork,
-  checkMaximumDurationOfWork,
-  checkMinimumDurationOfBreak,
-  checkMinimumDurationOfDailyRest,
-  checkMinimumDurationOfWeeklyRest,
-  RULE_RESPECT_STATUS
-} from "common/utils/regulation";
-import { MissionReviewSection } from "../components/MissionReviewSection";
-import Link from "@material-ui/core/Link";
-import { MissionDetails } from "../components/MissionDetails";
 import Typography from "@material-ui/core/Typography";
 import { AccountButton } from "../components/AccountButton";
 import { useLocation, useHistory } from "react-router-dom";
 import Box from "@material-ui/core/Box";
 import { NoDataImage } from "common/utils/icons";
 import Button from "@material-ui/core/Button";
-import maxBy from "lodash/maxBy";
 import { useModals } from "common/utils/modals";
 import moment from "moment";
-import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import ExpandLessIcon from "@material-ui/icons/ExpandLess";
-import { ActivityList } from "../components/ActivityList";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
-
-function ItalicWarningTypography(props) {
-  const classes = useStyles();
-
-  return <Typography className={classes.warningText} {...props} />;
-}
-
-function MissionSummary({
-  mission,
-  alternateDisplay = false,
-  children,
-  collapsable = false,
-  defaultOpenCollapse = false,
-  showMetrics = true
-}) {
-  const [open, setOpen] = React.useState(defaultOpenCollapse);
-  const classes = useStyles();
-
-  const kpis = computeTimesAndDurationsFromActivities(mission.activities);
-
-  return (
-    <>
-      <WorkTimeSummaryAdditionalInfo
-        disableTopMargin
-        disableBottomMargin={false}
-        className={alternateDisplay ? classes.darkCard : ""}
-      >
-        <Box style={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography className="bold">
-            {mission.name
-              ? `Nom de la mission : ${mission.name}`
-              : "Mission sans nom"}
-          </Typography>
-          {collapsable && (
-            <IconButton
-              aria-label={open ? "Masquer" : "Afficher"}
-              color="inherit"
-              className="no-margin-no-padding"
-              onClick={() => setOpen(!open)}
-            >
-              {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </IconButton>
-          )}
-        </Box>
-      </WorkTimeSummaryAdditionalInfo>
-      <Collapse in={open || !collapsable}>
-        {!mission.ended && (
-          <WorkTimeSummaryAdditionalInfo
-            disableTopMargin
-            disableBottomMargin={false}
-            {...(alternateDisplay
-              ? { elevation: 0, className: classes.alternateCard }
-              : {})}
-          >
-            <ItalicWarningTypography>
-              Mission en cours !
-            </ItalicWarningTypography>
-          </WorkTimeSummaryAdditionalInfo>
-        )}
-        {showMetrics && (
-          <WorkTimeSummaryKpiGrid
-            metrics={renderMissionKpis(kpis, "Durée", true)}
-            cardProps={
-              alternateDisplay
-                ? { elevation: 0, className: classes.alternateCard }
-                : {}
-            }
-          />
-        )}
-        {children}
-      </Collapse>
-    </>
-  );
-}
+import { Mission } from "../components/history/Mission";
+import { Day } from "../components/history/Day";
+import { Week } from "../components/history/Week";
+import { Month } from "../components/history/Month";
+import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
 
 const tabs = {
   mission: {
@@ -155,271 +55,16 @@ const tabs = {
         </Box>
       );
     },
-    renderPeriod: ({
-      missionsInPeriod,
-      editActivityEvent,
-      createActivity,
-      editExpenditures,
-      currentMission,
-      validateMission,
-      logComment,
-      editVehicle,
-      cancelComment,
-      coworkers,
-      registerKilometerReading,
-      vehicles,
-      userId
-    }) => {
-      const mission = missionsInPeriod[0];
-      return (
-        <div>
-          <MissionSummary mission={mission}>
-            <WorkTimeSummaryAdditionalInfo disablePadding>
-              <MissionDetails
-                inverseColors
-                mission={mission}
-                editActivityEvent={
-                  mission.adminValidation ? null : editActivityEvent
-                }
-                createActivity={mission.adminValidation ? null : createActivity}
-                editExpenditures={
-                  mission.adminValidation ? null : editExpenditures
-                }
-                editVehicle={
-                  mission.adminValidation
-                    ? null
-                    : vehicle => editVehicle({ mission, vehicle })
-                }
-                nullableEndTimeInEditActivity={
-                  currentMission ? mission.id === currentMission.id : true
-                }
-                hideValidations={!mission.ended}
-                validateMission={validateMission}
-                validationButtonName="Valider"
-                logComment={logComment}
-                cancelComment={cancelComment}
-                coworkers={coworkers}
-                vehicles={vehicles}
-                userId={userId}
-                editKilometerReading={
-                  mission.adminValidation ? null : registerKilometerReading
-                }
-              />
-            </WorkTimeSummaryAdditionalInfo>
-          </MissionSummary>
-        </div>
-      );
-    }
+    renderPeriod: ({ missionsInPeriod, ...props }) => (
+      <Mission mission={missionsInPeriod[0]} {...props} />
+    )
   },
   day: {
     label: "Jour",
     value: "day",
     periodLength: moment.duration(1, "days"),
     getPeriod: date => getStartOfDay(date),
-    renderPeriod: ({
-      missionsInPeriod,
-      selectedPeriodStart,
-      selectedPeriodEnd,
-      previousPeriodActivityEnd,
-      editActivityEvent,
-      createActivity,
-      editExpenditures,
-      editVehicle,
-      currentMission,
-      validateMission,
-      logComment,
-      cancelComment,
-      registerKilometerReading,
-      coworkers,
-      vehicles,
-      userId,
-      weekMissions
-    }) => {
-      const lastMission = missionsInPeriod[missionsInPeriod.length - 1];
-
-      const stats = computePeriodStats(
-        missionsInPeriod,
-        selectedPeriodStart,
-        selectedPeriodEnd
-      );
-
-      let weekStats = null;
-      let checkNumberOfWorkedDaysInWeek = null;
-      if (new Date(selectedPeriodStart * 1000).getDay() === 0) {
-        const weekStart = getStartOfWeek(selectedPeriodStart);
-        weekStats = computePeriodStats(
-          weekMissions,
-          weekStart,
-          weekStart + WEEK
-        );
-        checkNumberOfWorkedDaysInWeek = checkMinimumDurationOfWeeklyRest(
-          weekStats.workedDays,
-          weekStats.innerLongBreaks,
-          weekStats.startTime,
-          null
-        );
-      }
-
-      const innerLongBreak = stats.innerLongBreaks
-        ? stats.innerLongBreaks[0]
-        : null;
-
-      const checkBreakRespect = lastMission.ended
-        ? maxBy(
-            stats.groupedActivities.map(acts =>
-              checkMinimumDurationOfBreak(acts)
-            ),
-            r => r.status
-          )
-        : null;
-
-      return (
-        <div>
-          <WorkTimeSummaryKpiGrid
-            metrics={renderPeriodKpis(stats, true).filter(
-              m => m.name !== "workedDays"
-            )}
-          />
-          <WorkTimeSummaryAdditionalInfo>
-            {lastMission.ended ? (
-              <>
-                <RegulationCheck
-                  key={0}
-                  check={
-                    innerLongBreak
-                      ? {
-                          status: RULE_RESPECT_STATUS.success,
-                          message: `Repos journalier respecté (${formatTimer(
-                            innerLongBreak.duration
-                          )}) !`
-                        }
-                      : checkMinimumDurationOfDailyRest(
-                          stats.startTime,
-                          previousPeriodActivityEnd
-                        )
-                  }
-                />
-                <RegulationCheck
-                  key={2}
-                  check={maxBy(
-                    stats.groupedActivities.map(acts =>
-                      checkMaximumDurationOfWork(acts)
-                    ),
-                    r => r.status
-                  )}
-                />
-                <RegulationCheck key={3} check={checkBreakRespect} />
-
-                <RegulationCheck
-                  key={4}
-                  check={
-                    checkBreakRespect.status === RULE_RESPECT_STATUS.failure
-                      ? {
-                          status: RULE_RESPECT_STATUS.failure,
-                          message: `Travail ininterrompu pendant plus de 6 heures !`
-                        }
-                      : checkMaximumDurationOfUninterruptedWork(
-                          stats.filteredActivities
-                        )
-                  }
-                />
-                {weekStats &&
-                  checkNumberOfWorkedDaysInWeek.status ===
-                    RULE_RESPECT_STATUS.failure && (
-                    <RegulationCheck
-                      key={5}
-                      check={checkNumberOfWorkedDaysInWeek}
-                    />
-                  )}
-              </>
-            ) : (
-              <ItalicWarningTypography>
-                Mission en cours !
-              </ItalicWarningTypography>
-            )}
-          </WorkTimeSummaryAdditionalInfo>
-          <WorkTimeSummaryAdditionalInfo>
-            <MissionReviewSection
-              title="Activités de la journée"
-              className="no-margin-no-padding"
-            >
-              <ActivityList
-                activities={stats.filteredActivities}
-                fromTime={selectedPeriodStart}
-                untilTime={selectedPeriodEnd}
-                isMissionEnded={lastMission.ended}
-              />
-            </MissionReviewSection>
-          </WorkTimeSummaryAdditionalInfo>
-          <WorkTimeSummaryAdditionalInfo>
-            <MissionReviewSection
-              title="Détail par mission"
-              className="no-margin-no-padding"
-            >
-              <List>
-                {missionsInPeriod.map(mission => (
-                  <ListItem
-                    key={mission.id}
-                    style={{
-                      display: "block",
-                      paddingLeft: 0,
-                      paddingRight: 0
-                    }}
-                  >
-                    <MissionSummary
-                      mission={mission}
-                      alternateDisplay
-                      collapsable
-                      defaultOpenCollapse={false}
-                      showMetrics={false}
-                    >
-                      <MissionDetails
-                        inverseColors
-                        mission={mission}
-                        editActivityEvent={
-                          mission.adminValidation ? null : editActivityEvent
-                        }
-                        createActivity={
-                          mission.adminValidation ? null : createActivity
-                        }
-                        editExpenditures={
-                          mission.adminValidation ? null : editExpenditures
-                        }
-                        editVehicle={
-                          mission.adminValidation
-                            ? null
-                            : vehicle => editVehicle({ mission, vehicle })
-                        }
-                        nullableEndTimeInEditActivity={
-                          currentMission
-                            ? mission.id === currentMission.id
-                            : true
-                        }
-                        hideValidations={!mission.ended}
-                        validateMission={validateMission}
-                        validationButtonName="Valider"
-                        logComment={logComment}
-                        cancelComment={cancelComment}
-                        coworkers={coworkers}
-                        vehicles={vehicles}
-                        userId={userId}
-                        fromTime={selectedPeriodStart}
-                        untilTime={selectedPeriodEnd}
-                        editKilometerReading={
-                          mission.adminValidation
-                            ? null
-                            : registerKilometerReading
-                        }
-                      />
-                    </MissionSummary>
-                  </ListItem>
-                ))}
-              </List>
-            </MissionReviewSection>
-          </WorkTimeSummaryAdditionalInfo>
-        </div>
-      );
-    }
+    renderPeriod: props => <Day {...props} />
   },
   week: {
     label: "Semaine",
@@ -444,91 +89,14 @@ const tabs = {
       );
     },
     getPeriod: date => getStartOfWeek(date),
-    renderPeriod: ({
-      missionsInPeriod,
-      selectedPeriodStart,
-      selectedPeriodEnd,
-      handleMissionClick,
-      previousPeriodActivityEnd
-    }) => {
-      const stats = computePeriodStats(
-        missionsInPeriod,
-        selectedPeriodStart,
-        selectedPeriodEnd
-      );
-      return (
-        <div>
-          <WorkTimeSummaryKpiGrid
-            metrics={renderPeriodKpis(stats).filter(m => m.name !== "service")}
-          />
-          <WorkTimeSummaryAdditionalInfo>
-            <RegulationCheck
-              check={checkMinimumDurationOfWeeklyRest(
-                stats.workedDays,
-                stats.innerLongBreaks,
-                stats.startTime,
-                previousPeriodActivityEnd
-              )}
-            />
-          </WorkTimeSummaryAdditionalInfo>
-          <WorkTimeSummaryAdditionalInfo>
-            <MissionReviewSection
-              title="Détail par mission"
-              className="no-margin-no-padding"
-            >
-              <List>
-                {missionsInPeriod.map((mission, index) => [
-                  <ListItem
-                    key={2 * index}
-                    onClick={handleMissionClick(getTime(mission))}
-                  >
-                    <ListItemText disableTypography>
-                      <Link
-                        component="button"
-                        variant="body1"
-                        style={{ textAlign: "justify" }}
-                        onClick={e => {
-                          e.preventDefault();
-                        }}
-                      >
-                        Mission{mission.name ? " " + mission.name : ""} du{" "}
-                        {prettyFormatDay(getTime(mission))}
-                      </Link>
-                    </ListItemText>
-                  </ListItem>,
-                  index < missionsInPeriod.length - 1 ? (
-                    <Divider key={2 * index + 1} component="li" />
-                  ) : null
-                ])}
-              </List>
-            </MissionReviewSection>
-          </WorkTimeSummaryAdditionalInfo>
-        </div>
-      );
-    }
+    renderPeriod: props => <Week {...props} />
   },
   month: {
     label: "Mois",
     value: "month",
     periodLength: moment.duration(1, "months"),
     getPeriod: date => getStartOfMonth(date),
-    renderPeriod: ({
-      missionsInPeriod,
-      selectedPeriodStart,
-      selectedPeriodEnd
-    }) => (
-      <div>
-        <WorkTimeSummaryKpiGrid
-          metrics={renderPeriodKpis(
-            computePeriodStats(
-              missionsInPeriod,
-              selectedPeriodStart,
-              selectedPeriodEnd
-            )
-          ).filter(m => m.name !== "service")}
-        />
-      </div>
-    ),
+    renderPeriod: props => <Month {...props} />,
     formatPeriod: (period, missions) => {
       const periodDate = new Date(period * 1000);
       return (
@@ -585,17 +153,6 @@ const useStyles = makeStyles(theme => ({
   generateAccessButton: {
     margin: theme.spacing(2),
     alignSelf: "flex-start"
-  },
-  alternateCard: {
-    backgroundColor: theme.palette.background.default
-  },
-  darkCard: {
-    backgroundColor: theme.palette.grey[700],
-    color: theme.palette.primary.contrastText
-  },
-  warningText: {
-    fontStyle: "italic",
-    color: theme.palette.warning.main
   },
   addMissionContainer: {
     display: "flex",
@@ -751,15 +308,6 @@ export function History({
     setActivities(acts);
   }, [missions]);
 
-  const missionsGroupedByWeek = missionGroupsByPeriodUnit["week"];
-  const weekPeriod = findMatchingPeriodInNewUnit(
-    selectedPeriod,
-    Object.keys(missionsGroupedByWeek),
-    tabs[currentTab].periodLength,
-    tabs.week.periodLength
-  );
-  const weekMissions = missionsGroupedByWeek[weekPeriod];
-
   function handlePeriodChange(e, newTab, selectedDate) {
     const newGroups = missionGroupsByPeriodUnit[newTab];
 
@@ -811,6 +359,11 @@ export function History({
   );
 
   const shouldDisplayPeriodsInBold = mapValues(groupedMissions, () => true);
+
+  const selectedPeriodEnd = moment
+    .unix(selectedPeriod)
+    .add(tabs[currentTab].periodLength)
+    .unix();
 
   return (
     <Container
@@ -931,14 +484,20 @@ export function History({
         {missionsInSelectedPeriod ? (
           tabs[currentTab].renderPeriod({
             selectedPeriodStart: selectedPeriod,
-            selectedPeriodEnd: moment
-              .unix(selectedPeriod)
-              .add(tabs[currentTab].periodLength)
-              .unix(),
+            selectedPeriodEnd,
             missionsInPeriod: missionsInSelectedPeriod,
+            activitiesWithNextAndPreviousDay: filterActivitiesOverlappingPeriod(
+              activities,
+              selectedPeriod - DAY,
+              selectedPeriodEnd + DAY
+            ),
             handleMissionClick: date => e =>
               handlePeriodChange(e, "mission", date),
-            weekMissions,
+            weekActivities: filterActivitiesOverlappingPeriod(
+              activities,
+              getStartOfWeek(selectedPeriod) - DAY,
+              getStartOfWeek(selectedPeriod) + WEEK + DAY
+            ),
             previousPeriodActivityEnd,
             editActivityEvent,
             createActivity,
@@ -948,6 +507,7 @@ export function History({
             validateMission,
             logComment,
             cancelComment,
+            activities,
             coworkers,
             vehicles,
             userId
