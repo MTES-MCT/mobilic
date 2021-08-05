@@ -66,7 +66,7 @@ export default function SettingAdmin({ company }) {
           name="requireKilometerData"
           label="Saisie du kilométrage"
           value={company.settings.requireKilometerData}
-          description="Exige le relevé du compteur kilométrique du véhicule en début et fin de mission, conformément aux exigences du Livret Individuel de Contrôle. Pour certains secteurs tels que le déménagment cette donnée n'est toutefois plus demandée."
+          description="Exige le relevé du compteur kilométrique du véhicule en début et fin de mission, conformément aux exigences du Livret Individuel de Contrôle. Pour certains secteurs tels que le déménagement cette donnée n'est toutefois plus demandée."
           submitSettingChange={submitSettingChange}
         />
       </ListItem>

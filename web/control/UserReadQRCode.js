@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
   qrCodeText: {
     alignSelf: "flex-start",
-    paddingBottom: theme.spacing(4)
+    paddingBottom: theme.spacing(6)
   }
 }));
 
@@ -69,16 +69,16 @@ export default function UserReadQRCodeModal({ open, handleClose }) {
       PaperProps={{ style: { height: "100%" } }}
     >
       <CustomDialogTitle
-        title={"Accès à l'historique"}
+        title={"Donner accès à votre historique"}
         handleClose={handleClose}
       />
       <DialogContent className={classes.container}>
         {link ? (
           [
             <Typography align="left" className={classes.qrCodeText} key={0}>
-              Vous pouvez consulter l'historique depuis un autre téléphone en
-              scannant le QR code suivant, à condition d'avoir un accès
-              Internet.
+              En cas de contrôle par des personnes habilitées vous pouvez leur
+              montrer ce QR code qui leur permettra de consulter les données de
+              votre historique.
             </Typography>,
             <QRCode value={link} size={180} key={1} />
           ]

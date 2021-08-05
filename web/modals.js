@@ -20,6 +20,7 @@ import UserReadQRCodeModal from "./control/UserReadQRCode";
 import UnavailableOfflineModeModal from "./common/UnavailableOfflineMode";
 import KilometerReadingModal from "./pwa/components/KilometerReadingModal";
 import SelectEmployeeModal from "./admin/components/SelectEmployee";
+import PDFExport from "./pwa/components/PDFExport";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -32,6 +33,7 @@ export const MODAL_DICT = {
   updateVehicle: updateVehicleModal,
   dataExport: ExcelExport,
   tachographExport: C1BExport,
+  pdfExport: PDFExport,
   teamOrSoloChoice: TeamOrSoloChoiceModal,
   newTeamMate: NewTeamMateModal,
   endMission: EndMissionModal,

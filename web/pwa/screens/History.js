@@ -39,6 +39,8 @@ import { Day } from "../components/history/Day";
 import { Week } from "../components/history/Week";
 import { Month } from "../components/history/Month";
 import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
+import Grid from "@material-ui/core/Grid";
+import GetAppIcon from "@material-ui/icons/GetApp";
 
 const tabs = {
   mission: {
@@ -374,18 +376,29 @@ export function History({
     >
       {displayActions && [
         <AccountButton p={2} key={1} onBackButtonClick={onBackButtonClick} />,
-        <Button
-          key={2}
-          aria-label="Accès contrôleur"
-          className={classes.generateAccessButton}
-          color="secondary"
-          variant="outlined"
-          onClick={() => {
-            modals.open("userReadQRCode");
-          }}
-        >
-          Donner accès à l'historique
-        </Button>,
+        <Grid container key={2} justify="space-between" alignItems="center">
+          <Grid item>
+            <Button
+              aria-label="Accès contrôleur"
+              className={classes.generateAccessButton}
+              color="secondary"
+              variant="outlined"
+              onClick={() => {
+                modals.open("userReadQRCode");
+              }}
+            >
+              Accès contrôleurs
+            </Button>
+          </Grid>
+          <Grid item>
+            <IconButton
+              color="primary"
+              onClick={() => modals.open("pdfExport")}
+            >
+              <GetAppIcon fontSize="large" />
+            </IconButton>
+          </Grid>
+        </Grid>,
         <Box key={3} className={classes.addMissionContainer}>
           <IconButton
             color="primary"

@@ -177,6 +177,15 @@ export function frenchFormatDateString(isoDateString) {
   return new Date(isoDateString).toLocaleDateString();
 }
 
+export function endOfMonthAsDate(date) {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+}
+
+export function startOfMonthAsDate(date) {
+  date.setDate(1);
+  return date;
+}
+
 export function isoFormatLocalDate(date) {
   return `${date.getFullYear()}-${addZero(date.getMonth() + 1)}-${addZero(
     date.getDate()
