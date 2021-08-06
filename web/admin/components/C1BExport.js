@@ -18,7 +18,7 @@ import { useMatomo } from "@datapunt/matomo-tracker-react";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Switch from "@material-ui/core/Switch/Switch";
-import { DAY, isoFormatLocalDate, startOfDayAsDate } from "common/utils/time";
+import { DAY, isoFormatLocalDate } from "common/utils/time";
 import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles(theme => ({
@@ -49,13 +49,15 @@ export default function C1BExport({
   open,
   handleClose,
   companies = [],
-  users = []
+  users = [],
+  defaultMinDate = null,
+  defaultMaxDate = null
 }) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const { trackLink } = useMatomo();
-  const [minDate, setMinDate] = React.useState(null);
-  const [maxDate, setMaxDate] = React.useState(startOfDayAsDate(new Date()));
+  const [minDate, setMinDate] = React.useState(defaultMinDate);
+  const [maxDate, setMaxDate] = React.useState(defaultMaxDate);
   const [sign, setSign] = React.useState(true);
   const [dateRangeError, setDateRangeError] = React.useState(null);
 
@@ -85,6 +87,8 @@ export default function C1BExport({
   React.useEffect(() => {
     setCompanies(companies);
     setUsers(users);
+    setMinDate(defaultMinDate);
+    setMaxDate(defaultMaxDate);
   }, [open]);
 
   const classes = useStyles();

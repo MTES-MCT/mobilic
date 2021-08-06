@@ -17,7 +17,11 @@ import min from "lodash/min";
 import max from "lodash/max";
 import { CompanyFilter } from "../components/CompanyFilter";
 import Typography from "@material-ui/core/Typography";
-import { formatDay, isoFormatLocalDate } from "common/utils/time";
+import {
+  formatDay,
+  isoFormatLocalDate,
+  startOfDayAsDate
+} from "common/utils/time";
 import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu/Menu";
@@ -133,7 +137,8 @@ export default function ActivityPanel() {
   }, [minDate]);
 
   React.useEffect(() => {
-    if (maxDate && (!minDate || minDate > maxDate)) setMinDate(maxDate);
+    if (maxDate && !minDate) setMinDate(minDateOfFetchedData);
+    if (maxDate && minDate && minDate > maxDate) setMinDate(maxDate);
   }, [maxDate]);
 
   const [exportMenuAnchorEl, setExportMenuAnchorEl] = React.useState(null);
@@ -257,7 +262,14 @@ export default function ActivityPanel() {
             <MenuItem
               onClick={() => {
                 setExportMenuAnchorEl(null);
-                modals.open("dataExport", { companies, users });
+                modals.open("dataExport", {
+                  companies,
+                  users,
+                  defaultMinDate: minDate ? new Date(minDate) : null,
+                  defaultMaxDate: maxDate
+                    ? new Date(maxDate)
+                    : startOfDayAsDate(new Date())
+                });
               }}
             >
               <ListItemIcon>
@@ -268,7 +280,14 @@ export default function ActivityPanel() {
             <MenuItem
               onClick={() => {
                 setExportMenuAnchorEl(null);
-                modals.open("tachographExport", { companies, users });
+                modals.open("tachographExport", {
+                  companies,
+                  users,
+                  defaultMinDate: minDate ? new Date(minDate) : null,
+                  defaultMaxDate: maxDate
+                    ? new Date(maxDate)
+                    : startOfDayAsDate(new Date())
+                });
               }}
             >
               <ListItemIcon>

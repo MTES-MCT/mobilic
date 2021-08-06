@@ -41,13 +41,15 @@ export default function ExcelExport({
   open,
   handleClose,
   companies = [],
-  users = []
+  users = [],
+  defaultMinDate = null,
+  defaultMaxDate = null
 }) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const { trackLink } = useMatomo();
-  const [minDate, setMinDate] = React.useState(null);
-  const [maxDate, setMaxDate] = React.useState(null);
+  const [minDate, setMinDate] = React.useState(defaultMinDate);
+  const [maxDate, setMaxDate] = React.useState(defaultMaxDate);
 
   const [_companies, setCompanies] = React.useState([]);
   const [_users, setUsers] = React.useState([]);
@@ -55,6 +57,8 @@ export default function ExcelExport({
   React.useEffect(() => {
     setCompanies(companies);
     setUsers(users);
+    setMinDate(defaultMinDate);
+    setMaxDate(defaultMaxDate);
   }, [open]);
 
   React.useEffect(() => {
