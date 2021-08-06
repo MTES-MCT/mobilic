@@ -57,6 +57,14 @@ export default function ExcelExport({
     setUsers(users);
   }, [open]);
 
+  React.useEffect(() => {
+    if (minDate && maxDate && maxDate < minDate) setMaxDate(minDate);
+  }, [minDate]);
+
+  React.useEffect(() => {
+    if (maxDate && minDate && minDate > maxDate) setMinDate(maxDate);
+  }, [maxDate]);
+
   const classes = useStyles();
 
   return (
@@ -118,7 +126,6 @@ export default function ExcelExport({
               label="Date de début"
               value={minDate}
               format="d MMMM yyyy"
-              maxDate={maxDate || undefined}
               onChange={setMinDate}
               clearable
               cancelLabel={null}
@@ -134,7 +141,6 @@ export default function ExcelExport({
               label="Date de fin"
               value={maxDate}
               format="d MMMM yyyy"
-              minDate={minDate || undefined}
               onChange={setMaxDate}
               clearable
               cancelLabel={null}

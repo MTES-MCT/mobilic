@@ -1,10 +1,11 @@
 import React from "react";
 import {
-  formatDay,
   formatTimeOfDay,
   formatTimer,
   getStartOfWeek,
-  prettyFormatMonth
+  prettyFormatMonth,
+  textualPrettyFormatDay,
+  textualPrettyFormatWeek
 } from "common/utils/time";
 import { formatPersonName } from "common/utils/coworkers";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
@@ -25,17 +26,18 @@ export function WorkTimeTable({
   period,
   workTimeEntries,
   className,
-  showExpenditures
+  showExpenditures,
+  loading
 }) {
   const classes = useStyles();
 
   let periodLabel, periodFormatter;
   if (period === "day") {
     periodLabel = "Date";
-    periodFormatter = formatDay;
+    periodFormatter = textualPrettyFormatDay;
   } else if (period === "week") {
     periodLabel = "Semaine";
-    periodFormatter = ts => formatDay(getStartOfWeek(ts));
+    periodFormatter = ts => textualPrettyFormatWeek(getStartOfWeek(ts));
   } else if (period === "month") {
     periodLabel = "Mois";
     periodFormatter = prettyFormatMonth;
@@ -45,15 +47,6 @@ export function WorkTimeTable({
     name: "workerName",
     sortable: true,
     align: "left",
-    overflowTooltip: true
-  };
-  const periodCol = {
-    label: periodLabel,
-    name: "periodStart",
-    sortable: true,
-    format: periodFormatter,
-    align: "left",
-    minWidth: period === "month" ? 120 : 80,
     overflowTooltip: true
   };
   const startTimeCol = {
@@ -123,7 +116,6 @@ export function WorkTimeTable({
   let columns = [];
   if (period === "day") {
     columns = [
-      periodCol,
       employeeCol,
       missionNamesCol,
       startTimeCol,
@@ -134,9 +126,9 @@ export function WorkTimeTable({
     ];
     if (showExpenditures) columns.push(expenditureCol);
   } else if (period === "week") {
-    columns = [periodCol, employeeCol, workTimeCol, workedDaysCol];
+    columns = [employeeCol, workTimeCol, workedDaysCol];
   } else {
-    columns = [periodCol, employeeCol, workTimeCol, workedDaysCol];
+    columns = [employeeCol, workTimeCol, workedDaysCol];
   }
 
   const preFormattedWorkTimeEntries = workTimeEntries.map(wte => {
@@ -159,6 +151,16 @@ export function WorkTimeTable({
       defaultSortBy="periodStart"
       defaultSortType="desc"
       className={className}
+      groupByColumn={{
+        label: periodLabel,
+        name: "periodStart",
+        sort: "desc",
+        height: 60,
+        format: periodFormatter,
+        minWidth: period === "month" ? 120 : 80,
+        overflowTooltip: true
+      }}
+      loading={loading}
     />
   );
 }

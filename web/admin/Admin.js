@@ -22,6 +22,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { SideMenu } from "./components/SideMenu";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import { useSnackbarAlerts } from "../common/Snackbar";
+import { DAY, isoFormatLocalDate } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -73,8 +74,11 @@ function __Admin({ width }) {
         async () =>
           await alerts.withApiErrorHandling(
             async () => {
-              const companies = await loadCompaniesData(api, userId);
-              adminStore.sync(companies);
+              const minDate = isoFormatLocalDate(
+                new Date(Date.now() - DAY * 1000 * 150)
+              );
+              const companies = await loadCompaniesData(api, userId, minDate);
+              adminStore.sync(companies, minDate);
             },
             "load-companies",
             null,

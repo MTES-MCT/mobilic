@@ -97,7 +97,6 @@ export default function PDFExport({ open, handleClose }) {
               format="MMMM yyyy"
               fullWidth
               onChange={e => {
-                console.log(e);
                 setMinDate(e);
               }}
               clearable

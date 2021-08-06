@@ -45,7 +45,7 @@ export function Comment({ comment, withFullDate, cancelComment }) {
               {" - "}
             </Typography>
             <Typography variant="body2" className={classes.time}>
-              {withFullDate ? `${formatDay(comment.receptionTime)} ` : ""}
+              {withFullDate ? `${formatDay(comment.receptionTime, true)} ` : ""}
               {formatTimeOfDay(comment.receptionTime)}
             </Typography>
           </>

@@ -260,7 +260,34 @@ export const USER_READ_QUERY = gql`
     }
   }
 `;
+
+export const WORK_DAYS_DATA_FRAGMENT = gql`
+  fragment WorkDayData on WorkDayConnection {
+    edges {
+      node {
+        user {
+          id
+          firstName
+          lastName
+        }
+        day
+        missionNames
+        startTime
+        endTime
+        expenditures
+        serviceDuration
+        totalWorkDuration
+        activityDurations
+      }
+    }
+    pageInfo {
+      hasNextPage
+    }
+  }
+`;
+
 export const ADMIN_COMPANIES_QUERY = gql`
+  ${WORK_DAYS_DATA_FRAGMENT}
   ${COMPANY_SETTINGS_FRAGMENT}
   query adminCompanies(
     $id: Int!
@@ -286,22 +313,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
           city
         }
         workDays(fromDate: $activityAfter, first: $workDaysLimit) {
-          edges {
-            node {
-              user {
-                id
-                firstName
-                lastName
-              }
-              missionNames
-              startTime
-              endTime
-              expenditures
-              serviceDuration
-              totalWorkDuration
-              activityDurations
-            }
-          }
+          ...WorkDayData
         }
         missions(
           fromTime: $nonValidatedMissionsAfter
@@ -384,6 +396,21 @@ export const ADMIN_COMPANIES_QUERY = gql`
     }
   }
 `;
+
+export const ADMIN_WORK_DAYS_QUERY = gql`
+  ${WORK_DAYS_DATA_FRAGMENT}
+  query adminCompanies($id: Int!, $activityAfter: Date, $activityBefore: Date) {
+    user(id: $id) {
+      adminedCompanies {
+        id
+        workDays(fromDate: $activityAfter, untilDate: $activityBefore) {
+          ...WorkDayData
+        }
+      }
+    }
+  }
+`;
+
 export const GET_EMPLOYMENT_QUERY = gql`
   query getInvitation($token: String!) {
     employment(token: $token) {

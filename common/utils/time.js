@@ -36,6 +36,16 @@ const MONTHS = [
 
 const SHORT_DAYS = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"];
 
+const DAYS = [
+  "dimanche",
+  "lundi",
+  "mardi",
+  "mercredi",
+  "jeudi",
+  "vendredi",
+  "samedi"
+];
+
 export const LONG_BREAK_DURATION = 10 * HOUR;
 
 export function formatTimer(timerDuration) {
@@ -68,9 +78,17 @@ export function formatTimeOfDay(unixTimestamp) {
   return `${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
 }
 
-export function formatDay(unixTimestamp) {
+function _localFormatDate(date, withYear = false) {
+  return date.toLocaleDateString(undefined, {
+    month: "2-digit",
+    day: "2-digit",
+    year: withYear ? "numeric" : undefined
+  });
+}
+
+export function formatDay(unixTimestamp, withYear = false) {
   const date = new Date(unixTimestamp * 1000);
-  return date.toLocaleDateString();
+  return _localFormatDate(date, withYear);
 }
 
 export function formatDayOfWeek(unixTimestamp) {
@@ -92,6 +110,21 @@ export function prettyFormatMonth(unixTimestamp) {
 export function shortPrettyFormatDay(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
   return `${date.getDate()} ${SHORT_MONTHS[date.getMonth()]}`;
+}
+
+export function textualPrettyFormatDay(unixTimestamp, withYear = false) {
+  const date = new Date(unixTimestamp * 1000);
+  const baseString = `${DAYS[date.getDay()]} ${date.getDate()} ${
+    MONTHS[date.getMonth()]
+  }`;
+  return withYear ? `${baseString} ${date.getFullYear()}` : baseString;
+}
+
+export function textualPrettyFormatWeek(startOfWeek) {
+  const date = new Date(startOfWeek * 1000);
+  return `Semaine du ${_localFormatDate(date)} au ${_localFormatDate(
+    new Date(date.getFullYear(), date.getMonth(), date.getDate() + 6)
+  )}`;
 }
 
 export function isoFormatDateTime(unixTimestamp) {

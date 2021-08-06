@@ -1,4 +1,5 @@
 import React from "react";
+import debounce from "lodash/debounce";
 import { useHistory } from "react-router-dom";
 import { EmployeeFilter } from "../components/EmployeeFilter";
 import Paper from "@material-ui/core/Paper";
@@ -16,7 +17,7 @@ import min from "lodash/min";
 import max from "lodash/max";
 import { CompanyFilter } from "../components/CompanyFilter";
 import Typography from "@material-ui/core/Typography";
-import { formatDay } from "common/utils/time";
+import { formatDay, isoFormatLocalDate } from "common/utils/time";
 import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu/Menu";
@@ -32,10 +33,12 @@ import CloseIcon from "@material-ui/icons/Close";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import {
+  ADMIN_WORK_DAYS_QUERY,
   buildLogLocationPayloadFromAddress,
   CREATE_MISSION_MUTATION,
   LOG_LOCATION_MUTATION
 } from "common/utils/apiQueries";
+import { DatePicker } from "@material-ui/pickers";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -74,6 +77,24 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const onMinDateChange = debounce(
+  async (newMinDate, maxDate, userId, setLoading, addWorkDays, api, alerts) => {
+    if (newMinDate < maxDate) {
+      setLoading(true);
+      await alerts.withApiErrorHandling(async () => {
+        const companiesPayload = await api.graphQlQuery(ADMIN_WORK_DAYS_QUERY, {
+          id: userId,
+          activityAfter: newMinDate,
+          activityBefore: maxDate
+        });
+        addWorkDays(companiesPayload.data.user.adminedCompanies, newMinDate);
+      }, "load-work-days");
+      setLoading(false);
+    }
+  },
+  500
+);
+
 export default function ActivityPanel() {
   const adminStore = useAdminStore();
   const modals = useModals();
@@ -83,8 +104,37 @@ export default function ActivityPanel() {
 
   const [users, setUsers] = React.useState([]);
   const [companies, setCompanies] = React.useState([]);
+  const [minDate, setMinDate] = React.useState(null);
+  const [maxDate, setMaxDate] = React.useState(
+    isoFormatLocalDate(new Date(Date.now()))
+  );
+  const [loading, setLoading] = React.useState(false);
   const [period, setPeriod] = React.useState("day");
   const [openNewMission, setOpenNewMission] = React.useState(false);
+
+  const minDateOfFetchedData = adminStore.minWorkDaysDate;
+
+  React.useEffect(() => {
+    if (minDate !== adminStore.minWorkDaysDate)
+      setMinDate(adminStore.minWorkDaysDate);
+  }, [adminStore.minWorkDaysDate]);
+
+  React.useEffect(() => {
+    if (minDate && (!maxDate || maxDate < minDate)) setMaxDate(minDate);
+    onMinDateChange(
+      minDate,
+      minDateOfFetchedData,
+      adminStore.userId,
+      setLoading,
+      adminStore.addWorkDays,
+      api,
+      alerts
+    );
+  }, [minDate]);
+
+  React.useEffect(() => {
+    if (maxDate && (!minDate || minDate > maxDate)) setMinDate(maxDate);
+  }, [maxDate]);
 
   const [exportMenuAnchorEl, setExportMenuAnchorEl] = React.useState(null);
 
@@ -122,7 +172,9 @@ export default function ActivityPanel() {
   const selectedWorkDays = adminStore.workDays.filter(
     wd =>
       selectedUsers.map(u => u.id).includes(wd.user.id) &&
-      selectedCompanies.map(c => c.id).includes(wd.companyId)
+      selectedCompanies.map(c => c.id).includes(wd.companyId) &&
+      (!minDate || wd.day >= minDate) &&
+      (!maxDate || wd.day <= maxDate)
   );
 
   // TODO : memoize this
@@ -155,7 +207,39 @@ export default function ActivityPanel() {
         <Grid item>
           <PeriodToggle period={period} setPeriod={setPeriod} />
         </Grid>
-        <Grid item spacing={4}>
+        <Grid item>
+          <DatePicker
+            required
+            label="Début"
+            value={new Date(minDate)}
+            size="small"
+            format="d MMMM yyyy"
+            fullWidth
+            onChange={val => setMinDate(isoFormatLocalDate(val))}
+            cancelLabel={null}
+            autoOk
+            disableFuture
+            inputVariant="outlined"
+            animateYearScrolling
+          />
+        </Grid>
+        <Grid item>
+          <DatePicker
+            required
+            label="Fin"
+            value={new Date(maxDate)}
+            format="d MMMM yyyy"
+            fullWidth
+            size="small"
+            onChange={val => setMaxDate(isoFormatLocalDate(val))}
+            cancelLabel={null}
+            autoOk
+            disableFuture
+            inputVariant="outlined"
+            animateYearScrolling
+          />
+        </Grid>
+        <Grid item spacing={3}>
           <Button
             className={classes.exportButton}
             color="primary"
@@ -229,6 +313,7 @@ export default function ActivityPanel() {
           showExpenditures={selectedCompanies.some(
             c => c.settings.requireExpenditures
           )}
+          loading={loading}
         />
         <Drawer
           anchor="right"

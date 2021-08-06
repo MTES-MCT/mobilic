@@ -108,7 +108,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "L'utilisateur est déjà inscrit sur Mobilic.";
       case "OVERLAPPING_MISSIONS":
         return `Vous avez déjà une mission en cours démarrée le ${formatDay(
-          getTime(graphQLError.extensions.conflictingMission)
+          getTime(graphQLError.extensions.conflictingMission),
+          true
         )} à ${formatTimeOfDay(
           getTime(graphQLError.extensions.conflictingMission)
         )}`;
@@ -119,7 +120,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
                 ACTIVITIES[graphQLError.extensions.conflictingActivity.type]
                   .label
               } démarrée le ${formatDay(
-                graphQLError.extensions.conflictingActivity.startTime
+                graphQLError.extensions.conflictingActivity.startTime,
+                true
               )} à ${formatTimeOfDay(
                 graphQLError.extensions.conflictingActivity.startTime
               )} et enregistrée par ${formatPersonName(
@@ -133,7 +135,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return `La mission a déjà été terminée${
           graphQLError.extensions.missionEnd
             ? ` le ${formatDay(
-                graphQLError.extensions.missionEnd.endTime
+                graphQLError.extensions.missionEnd.endTime,
+                true
               )} à ${formatTimeOfDay(
                 graphQLError.extensions.missionEnd.endTime
               )} par ${formatPersonName(

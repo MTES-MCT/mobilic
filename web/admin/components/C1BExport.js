@@ -71,6 +71,14 @@ export default function C1BExport({
     } else setDateRangeError(null);
   }, [minDate, maxDate]);
 
+  React.useEffect(() => {
+    if (minDate && maxDate && maxDate < minDate) setMaxDate(minDate);
+  }, [minDate]);
+
+  React.useEffect(() => {
+    if (maxDate && minDate && minDate > maxDate) setMinDate(maxDate);
+  }, [maxDate]);
+
   const [_companies, setCompanies] = React.useState([]);
   const [_users, setUsers] = React.useState([]);
 
@@ -158,7 +166,6 @@ export default function C1BExport({
               label="Date de début"
               value={minDate}
               format="d MMMM yyyy"
-              maxDate={maxDate || undefined}
               onChange={setMinDate}
               clearable
               cancelLabel={null}
@@ -177,7 +184,6 @@ export default function C1BExport({
               label="Date de fin"
               value={maxDate}
               format="d MMMM yyyy"
-              minDate={minDate || undefined}
               onChange={setMaxDate}
               clearable
               cancelLabel={null}

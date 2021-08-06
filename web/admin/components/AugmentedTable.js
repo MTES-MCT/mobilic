@@ -30,6 +30,8 @@ import "react-virtualized/styles.css";
 import { TextWithOverflowTooltip } from "./TextWithOverflowTooltip";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import KeyboardArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const overflowStyleForMaxWidthCells = {
   overflowX: "hidden",
@@ -105,6 +107,12 @@ const useStyles = makeStyles(theme => ({
     paddingTop: ({ dense }) => (dense ? theme.spacing(0.5) : theme.spacing(2)),
     paddingBottom: ({ dense }) =>
       dense ? theme.spacing(0.5) : theme.spacing(2)
+  },
+  groupRow: {
+    color: theme.palette.primary.main,
+    borderTop: "none",
+    borderBottom: "solid 1px",
+    fontWeight: "bold"
   }
 }));
 
@@ -544,17 +552,21 @@ const VirtualizedTable = React.forwardRef(
       autoHeight = false,
       rowClassName,
       rowRenderer = null,
-      headerClassName
+      headerClassName,
+      groupByColumn = null,
+      toggleCollapseGroups = null
     },
     ref
   ) => {
+    let actualRef = ref || React.useRef();
+
     const minTableWidth =
       columns.reduce((acc, col) => {
         return acc + (col.minWidth || columnDefaultMinWidth);
       }, 0) + (shouldDisplayEditActionsColumn ? columnDefaultMinWidth : 0);
     return (
       <Table
-        ref={ref}
+        ref={actualRef}
         autoHeight={autoHeight}
         className={`table ${classes.table}`}
         width={Math.max(width, minTableWidth)}
@@ -562,9 +574,51 @@ const VirtualizedTable = React.forwardRef(
         headerHeight={headerHeight}
         rowCount={entries.length}
         rowGetter={({ index }) => entries[index]}
-        rowRenderer={props =>
-          rowRenderer ? rowRenderer(props) : defaultTableRowRenderer(props)
-        }
+        rowRenderer={props => {
+          if (props.rowData.__groupKey) {
+            const collapseColumn = props.columns[0];
+            return (
+              <Box
+                onClick={() => {
+                  toggleCollapseGroups(props.rowData.__groupKey);
+                  actualRef.current.recomputeRowHeights();
+                }}
+                key={props.key}
+                style={{ ...props.style, cursor: "pointer" }}
+                className={`flex-row ${classes.groupRow} ${props.className}`}
+              >
+                <Box
+                  className={collapseColumn.props.className}
+                  key={collapseColumn.key}
+                  style={collapseColumn.props.style}
+                  role={collapseColumn.props.role}
+                >
+                  <IconButton size="small" color="inherit">
+                    {props.rowData.__collapsedGroup ? (
+                      <KeyboardArrowRightIcon fontSize="inherit" />
+                    ) : (
+                      <KeyboardArrowDownIcon fontSize="inherit" />
+                    )}
+                  </IconButton>
+                </Box>
+                <Box className={classes.cell}>
+                  {groupByColumn.format(props.rowData.__groupKey)}
+                </Box>
+              </Box>
+            );
+          }
+          if (props.rowData.__endOfGroup)
+            return (
+              <Box
+                key={props.key}
+                style={{ ...props.style }}
+                className={`${props.className}`}
+              />
+            );
+          return rowRenderer
+            ? rowRenderer(props)
+            : defaultTableRowRenderer(props);
+        }}
         rowHeight={
           typeof rowHeight === "number"
             ? rowHeight
@@ -580,6 +634,21 @@ const VirtualizedTable = React.forwardRef(
         scrollTop={scrollTop}
         onRowClick={onRowClick}
       >
+        {groupByColumn && (
+          <Column
+            disableSort
+            dataKey="collapse"
+            className={classes.cell}
+            headerClassName={classes.cell}
+            cellDataGetter={() => 0}
+            cellRenderer={() => ""}
+            headerRenderer={() => ""}
+            style={{ textAlign: "center" }}
+            headerStyle={{ textAlign: "center" }}
+            width={30}
+            minWidth={30}
+          />
+        )}
         {columns.map(column => {
           return (
             <Column
@@ -683,6 +752,7 @@ export const AugmentedVirtualizedTable = React.forwardRef(
       dense = false,
       defaultSortBy = undefined,
       alwaysSortBy = [],
+      groupByColumn = null,
       defaultSortType = "asc",
       headerHeight = 60,
       rowHeight = 40,
@@ -695,7 +765,8 @@ export const AugmentedVirtualizedTable = React.forwardRef(
       rowClassName = () => "",
       rowRenderer = null,
       headerClassName,
-      small
+      small,
+      loading = false
     },
     ref
   ) => {
@@ -707,6 +778,8 @@ export const AugmentedVirtualizedTable = React.forwardRef(
     const [editingRowId, setEditingRowId] = React.useState(null);
     const [editingValues, setEditingValues] = React.useState({});
 
+    const [collapsedGroups, setCollapsedGroups] = React.useState([]);
+
     const classes = useStyles({ dense, clickableRow: !!onRowClick, small });
 
     React.useEffect(() => {
@@ -715,6 +788,14 @@ export const AugmentedVirtualizedTable = React.forwardRef(
         setEditingRowId(0);
       }
     }, [triggerRowAdd]);
+
+    const onToggleCollapseGroup = groupKey => {
+      setCollapsedGroups(cGroups =>
+        cGroups.includes(groupKey)
+          ? cGroups.filter(g => g !== groupKey)
+          : [...cGroups, groupKey]
+      );
+    };
 
     const handleSortTypeChange = column => () => {
       let newSortType = "desc";
@@ -841,8 +922,15 @@ export const AugmentedVirtualizedTable = React.forwardRef(
       );
     };
 
-    const sortBys = alwaysSortBy.map(asb => asb[0]);
-    const sortTypes = alwaysSortBy.map(asb => asb[1]);
+    let sortBys = [],
+      sortTypes = [];
+    if (groupByColumn) {
+      sortBys.push(groupByColumn.name);
+      sortTypes.push(groupByColumn.sort);
+    }
+
+    sortBys.push(...alwaysSortBy.map(asb => asb[0]));
+    sortTypes.push(...alwaysSortBy.map(asb => asb[1]));
 
     if (sortBy && sortType) {
       sortBys.push(sortBy);
@@ -852,9 +940,43 @@ export const AugmentedVirtualizedTable = React.forwardRef(
     const sortedEntries =
       sortBys.length > 0 ? orderBy(entries, sortBys, sortTypes) : entries;
 
+    let sortedEntriesWithGroups = [];
+    if (groupByColumn) {
+      let currentGroupKey = null;
+      sortedEntries.forEach(e => {
+        const groupKey = e[groupByColumn.name];
+        if (!currentGroupKey || groupKey !== currentGroupKey) {
+          if (currentGroupKey && !collapsedGroups.includes(currentGroupKey))
+            sortedEntriesWithGroups.push({ __endOfGroup: true });
+          sortedEntriesWithGroups.push({
+            __groupKey: groupKey,
+            __collapsedGroup: collapsedGroups.includes(groupKey)
+          });
+          currentGroupKey = groupKey;
+        }
+        sortedEntriesWithGroups.push(e);
+      });
+    } else sortedEntriesWithGroups = sortedEntries;
+
     const displayedEntries = isAddingRow
-      ? [editingValues, ...sortedEntries]
-      : sortedEntries;
+      ? [editingValues, ...sortedEntriesWithGroups]
+      : sortedEntriesWithGroups;
+
+    const rowHeightFunc = (index, entry) =>
+      entry.__endOfGroup
+        ? 20
+        : groupByColumn && collapsedGroups.includes(entry[groupByColumn.name])
+        ? 0
+        : typeof rowHeight === "number"
+        ? rowHeight
+        : rowHeight(index, entry);
+
+    const onRowClickFunc = props =>
+      props.rowData.__groupKey
+        ? onToggleCollapseGroup(props.rowData.__groupKey)
+        : onRowClick
+        ? onRowClick(props)
+        : null;
 
     return (
       <Box className={`${className} flex-column`}>
@@ -862,13 +984,11 @@ export const AugmentedVirtualizedTable = React.forwardRef(
           style={{
             height:
               Math.max(
-                (typeof rowHeight === "number"
-                  ? displayedEntries.length * rowHeight
-                  : sum(
-                      displayedEntries.map((entry, index) =>
-                        rowHeight(index, entry)
-                      )
-                    )) + headerHeight,
+                sum(
+                  displayedEntries.map((entry, index) =>
+                    rowHeightFunc(index, entry)
+                  )
+                ) + headerHeight,
                 minHeight
               ) + 16,
             maxHeight,
@@ -876,16 +996,22 @@ export const AugmentedVirtualizedTable = React.forwardRef(
             marginBottom: 1
           }}
         >
+          <CircularProgress
+            style={{
+              position: "absolute",
+              top: headerHeight,
+              visibility: loading ? "visible" : "hidden",
+              zIndex: 9999
+            }}
+            color="primary"
+          />
           {attachScrollTo ? (
             <WindowScroller scrollElement={attachScrollTo}>
-              {({
-                height,
-                isScrolling,
-                registerChild,
-                onChildScroll,
-                scrollTop
-              }) => (
-                <AutoSizer disableHeight>
+              {({ height, registerChild, onChildScroll, scrollTop }) => (
+                <AutoSizer
+                  disableHeight
+                  style={{ filter: loading ? "blur(5px)" : "none" }}
+                >
                   {({ width }) => (
                     <div ref={registerChild}>
                       <VirtualizedTable
@@ -897,7 +1023,7 @@ export const AugmentedVirtualizedTable = React.forwardRef(
                         height={height - 16}
                         minHeight={minHeight}
                         headerHeight={headerHeight}
-                        rowHeight={rowHeight}
+                        rowHeight={rowHeightFunc}
                         isAddingRow={isAddingRow}
                         isRowOnFocus={isRowOnFocus}
                         headerRenderer={_headerRenderer}
@@ -912,10 +1038,12 @@ export const AugmentedVirtualizedTable = React.forwardRef(
                         onScroll={onChildScroll}
                         scrollTop={scrollTop}
                         autoHeight={true}
-                        onRowClick={onRowClick}
+                        onRowClick={onRowClickFunc}
                         rowClassName={rowClassName}
                         rowRenderer={rowRenderer}
                         headerClassName={headerClassName}
+                        groupByColumn={groupByColumn}
+                        toggleCollapseGroups={onToggleCollapseGroup}
                       />
                     </div>
                   )}
@@ -923,7 +1051,7 @@ export const AugmentedVirtualizedTable = React.forwardRef(
               )}
             </WindowScroller>
           ) : (
-            <AutoSizer>
+            <AutoSizer style={{ filter: loading ? "blur(5px)" : "none" }}>
               {({ width, height }) => {
                 return (
                   <VirtualizedTable
@@ -935,8 +1063,8 @@ export const AugmentedVirtualizedTable = React.forwardRef(
                     ref={ref}
                     minHeight={minHeight}
                     headerHeight={headerHeight}
-                    rowHeight={rowHeight}
-                    onRowClick={onRowClick}
+                    rowHeight={rowHeightFunc}
+                    onRowClick={onRowClickFunc}
                     isAddingRow={isAddingRow}
                     isRowOnFocus={isRowOnFocus}
                     headerRenderer={_headerRenderer}
@@ -951,6 +1079,8 @@ export const AugmentedVirtualizedTable = React.forwardRef(
                     rowClassName={rowClassName}
                     rowRenderer={rowRenderer}
                     headerClassName={headerClassName}
+                    groupByColumn={groupByColumn}
+                    toggleCollapseGroups={onToggleCollapseGroup}
                   />
                 );
               }}

@@ -685,7 +685,8 @@ class Actions {
         false,
         true
       )} le ${formatDay(
-        getTime(gqlError.extensions.conflictingMission)
+        getTime(gqlError.extensions.conflictingMission),
+        true
       )} à ${formatTimeOfDay(
         getTime(gqlError.extensions.conflictingMission)
       )}.`;
@@ -706,7 +707,8 @@ class Actions {
           ? `l'activité ${
               ACTIVITIES[gqlError.extensions.conflictingActivity.type].label
             } démarrée le ${formatDay(
-              gqlError.extensions.conflictingActivity.startTime
+              gqlError.extensions.conflictingActivity.startTime,
+              true
             )} à ${formatTimeOfDay(
               gqlError.extensions.conflictingActivity.startTime
             )} et enregistrée par ${formatNameInGqlError(
