@@ -1,8 +1,5 @@
 export class NonConcurrentExecutionQueue {
   constructor() {
-    // Type "classic" : normal queue
-    // Type "sameSignal" : queue containing several copies of a unique task that need only to be run once (in a short time window). When a running task completes the other enqueued tasks should not run but reuse the result of this task
-    // Type "sameSignalWithRefresh" : same as "oneTaskRefresh" except that the task should be run once again if it was enqueued during a run.
     this.queue = [];
   }
 
