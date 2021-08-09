@@ -40,7 +40,7 @@ const SOCIAL_NETWORKS = [
     name: "YouTube",
     colorLogo: YoutubeIcon,
     whiteLogo: YoutubeWhiteIcon,
-    link: "https://www.youtube.com/channel/UCP-V-BN0iMJgwI29NbwTt_w"
+    link: "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg"
   }
 ];
 
