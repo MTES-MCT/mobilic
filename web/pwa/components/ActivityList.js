@@ -319,7 +319,7 @@ export function ActivityList({
             Frise
           </ToggleButton>
           <ToggleButton key="chart" value="chart">
-            Agrégé
+            Global
           </ToggleButton>
         </ToggleButtonGroup>
       )}
