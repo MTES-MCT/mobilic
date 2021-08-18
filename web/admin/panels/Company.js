@@ -28,7 +28,8 @@ export const usePanelStyles = makeStyles(theme => ({
     flexWrap: "wrap"
   },
   subPanel: {
-    padding: theme.spacing(2)
+    padding: theme.spacing(2),
+    textAlign: "left"
   },
   createCompanyButton: {
     marginTop: theme.spacing(1),

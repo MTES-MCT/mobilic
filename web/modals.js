@@ -21,11 +21,13 @@ import UnavailableOfflineModeModal from "./common/UnavailableOfflineMode";
 import KilometerReadingModal from "./pwa/components/KilometerReadingModal";
 import SelectEmployeeModal from "./admin/components/SelectEmployee";
 import PDFExport from "./pwa/components/PDFExport";
+import BatchInvite from "./admin/components/BatchInvite";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
   teamSelection: TeamSelectionModal,
   confirmation: ConfirmationModal,
+  batchInvite: BatchInvite,
   newMission: NewMissionModal,
   driverSelection: DriverSelectionModal,
   commentInput: CommentInputModal,

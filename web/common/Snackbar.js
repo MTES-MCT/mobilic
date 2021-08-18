@@ -34,6 +34,10 @@ export const SnackbarProvider = withWidth()(({ children, width }) => {
     return alert(message, "success", key, autoHideDuration);
   }
 
+  function warning(message, key = null, autoHideDuration = 0) {
+    return alert(message, "warning", key, autoHideDuration);
+  }
+
   function close() {
     setAutoHideDuration(null);
     setOpen(false);
@@ -64,6 +68,7 @@ export const SnackbarProvider = withWidth()(({ children, width }) => {
         info,
         error,
         success,
+        warning,
         withApiErrorHandling
       }}
     >

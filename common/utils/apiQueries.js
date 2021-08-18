@@ -598,6 +598,18 @@ export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
     employments {
       batchCreateWorkerEmployments(companyId: $companyId, mails: $mails) {
         id
+        startDate
+        endDate
+        isAcknowledged
+        isPrimary
+        email
+        hasAdminRights
+        latestInviteEmailTime
+        user {
+          id
+          firstName
+          lastName
+        }
       }
     }
   }

@@ -16,6 +16,7 @@ import {
   now
 } from "common/utils/time";
 import {
+  BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
   CANCEL_EMPLOYMENT_MUTATION,
   CREATE_EMPLOYMENT_MUTATION,
   SEND_EMPLOYMENT_INVITE_REMINDER,
@@ -34,9 +35,6 @@ const useStyles = makeStyles(theme => ({
     fontStyle: "italic",
     textAlign: "justify"
   },
-  subPanel: {
-    padding: theme.spacing(2)
-  },
   successText: {
     color: theme.palette.success.main
   },
@@ -51,6 +49,9 @@ const useStyles = makeStyles(theme => ({
   },
   displayNone: {
     display: "none !important"
+  },
+  batchInviteButton: {
+    marginBottom: theme.spacing(2)
   }
 }));
 
@@ -259,7 +260,51 @@ export function Employees({ company, containerRef }) {
       tableRef.current.isAddingRow &&
       tableRef.current.isAddingRow()) ||
     pendingEmployments.length > 0;
+
   return [
+    <Button
+      key={-1}
+      color="primary"
+      variant="outlined"
+      size="small"
+      className={classes.batchInviteButton}
+      onClick={() =>
+        modals.open("batchInvite", {
+          handleSubmit: async mails => {
+            await alerts.withApiErrorHandling(async () => {
+              const employmentsResponse = await api.graphQlMutate(
+                BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
+                {
+                  companyId,
+                  mails
+                }
+              );
+              const employments =
+                employmentsResponse.data.employments
+                  .batchCreateWorkerEmployments;
+              adminStore.setEmployments(oldEmployments => [
+                ...employments.map(e => ({ ...e, companyId })),
+                ...oldEmployments
+              ]);
+              if (employments.length < mails.length) {
+                alerts.warning(
+                  "Certaines invitations n'ont pu être envoyées, êtes-vous sûr(e) des adresses email ?",
+                  "batch-invite-warning",
+                  6000
+                );
+              } else
+                alerts.success(
+                  "Invitations envoyées !",
+                  "batch-invite-success",
+                  6000
+                );
+            });
+          }
+        })
+      }
+    >
+      Inviter une liste d'emails
+    </Button>,
     <Box
       key={0}
       className={`${showPendingEmployments ? "" : classes.displayNone} ${
