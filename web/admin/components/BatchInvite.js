@@ -44,7 +44,7 @@ export default function BatchInvite({ open, handleClose, handleSubmit }) {
           placeholder={`martin.dupond@gmail.com\ncorinne.robert@outlook.fr\n...`}
           multiline
           rows={10}
-          rowsMax={20}
+          rowsMax={15}
           value={text}
           error={tooManyLinesError}
           helperText={
