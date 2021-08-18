@@ -386,6 +386,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
           isPrimary
           email
           hasAdminRights
+          latestInviteEmailTime
           user {
             id
             firstName
@@ -555,6 +556,7 @@ export const CANCEL_EMPLOYMENT_MUTATION = gql`
     }
   }
 `;
+
 export const TERMINATE_EMPLOYMENT_MUTATION = gql`
   mutation terminateEmployment($employmentId: Int!, $endDate: Date) {
     employments {
@@ -580,6 +582,27 @@ export const TERMINATE_EMPLOYMENT_MUTATION = gql`
     }
   }
 `;
+
+export const SEND_EMPLOYMENT_INVITE_REMINDER = gql`
+  mutation sendInviteReminder($employmentId: Int!) {
+    employments {
+      sendInvitationReminder(employmentId: $employmentId) {
+        success
+      }
+    }
+  }
+`;
+
+export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
+  mutation batchCreateWorkerEmployments($companyId: Int!, $mails: [String]!) {
+    employments {
+      batchCreateWorkerEmployments(companyId: $companyId, mails: $mails) {
+        id
+      }
+    }
+  }
+`;
+
 export const CREATE_EMPLOYMENT_MUTATION = gql`
   mutation createEmployment(
     $userId: Int

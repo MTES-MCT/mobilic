@@ -1,6 +1,6 @@
 import {
   formatDateTime,
-  frenchFormatDateString,
+  frenchFormatDateStringOrTimeStamp,
   getEndOfDay,
   getStartOfDay,
   isoFormatDateTime
@@ -38,7 +38,9 @@ export function DateOrDateTimePicker({
 
   const actualFormat =
     format || (isDateTime ? "dd/MM/yyyy HH:mm" : "dd/MM/yyyy");
-  const displayValue = isDateTime ? formatDateTime : frenchFormatDateString;
+  const displayValue = isDateTime
+    ? formatDateTime
+    : frenchFormatDateStringOrTimeStamp;
 
   const autoValidateValue = () => {
     if (autoValidate) {

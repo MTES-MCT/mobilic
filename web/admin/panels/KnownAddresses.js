@@ -43,6 +43,7 @@ export default function KnownAddressAdmin({ company }) {
         <AddressField
           variant="outlined"
           fullWidth
+          small
           label="Adresse"
           value={address}
           onChange={onChange}
@@ -92,7 +93,6 @@ export default function KnownAddressAdmin({ company }) {
       entries={knownAddresses}
       triggerRowAdd={triggerAddLocation}
       afterRowAdd={() => setTriggerAddLocation({ value: false })}
-      editable={true}
       onRowEdit={async (address, { alias }) => {
         try {
           const apiResponse = await api.graphQlMutate(
@@ -120,7 +120,7 @@ export default function KnownAddressAdmin({ company }) {
           console.log(err);
         }
       }}
-      disableAdd={({ address }) => !address}
+      validateRow={({ address }) => !!address}
       onRowAdd={async ({ address, alias }) => {
         try {
           const apiResponse = await api.graphQlMutate(

@@ -21,10 +21,10 @@
   border-radius: 2px;
   position: relative;
   width: 100%;
-  border-collapse: separate;
+  border-collapse: collapse;
 
   td {
-    border-top: 0.5px solid #ebeff3;
+    color: inherit;
     border-bottom: none;
   }
 

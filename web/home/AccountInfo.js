@@ -25,7 +25,7 @@ import AlertTitle from "@material-ui/lab/AlertTitle";
 import Box from "@material-ui/core/Box";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
-import { frenchFormatDateString } from "common/utils/time";
+import { frenchFormatDateStringOrTimeStamp } from "common/utils/time";
 import {
   CHANGE_EMAIL_MUTATION,
   REJECT_EMPLOYMENT_MUTATION,
@@ -99,7 +99,7 @@ export function EmploymentInfo({ employment, spacing = 4 }) {
         <Grid item>
           <InfoItem
             name="Début rattachement"
-            value={frenchFormatDateString(employment.startDate)}
+            value={frenchFormatDateStringOrTimeStamp(employment.startDate)}
           />
         </Grid>
         <Grid item>
@@ -228,7 +228,7 @@ export default function Home() {
               <Grid item sm={6} zeroMinWidth>
                 <InfoItem
                   name="Date de naissance"
-                  value={frenchFormatDateString(userInfo.birthDate)}
+                  value={frenchFormatDateStringOrTimeStamp(userInfo.birthDate)}
                 />
               </Grid>
             )}

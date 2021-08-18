@@ -46,7 +46,8 @@ export function AddressField({
   currentPosition,
   required,
   disabled = false,
-  allowCreate = true
+  allowCreate = true,
+  small = false
 }) {
   const [inputValue, setInputValue] = React.useState("");
   const [options, setOptions] = React.useState([]);
@@ -100,6 +101,7 @@ export function AddressField({
       clearOnBlur
       blurOnSelect
       value={value}
+      size={small ? "small" : "medium"}
       filterOptions={(options, params) => {
         const filtered = filter(options, params);
 

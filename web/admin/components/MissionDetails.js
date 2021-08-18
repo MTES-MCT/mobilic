@@ -13,17 +13,15 @@ import {
   prettyFormatDay
 } from "common/utils/time";
 import Divider from "@material-ui/core/Divider";
-import { AugmentedVirtualizedTable, CellContent } from "./AugmentedTable";
+import flatMap from "lodash/flatMap";
+import { AugmentedTable } from "./AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
 import { getTime } from "common/utils/events";
 import { ACTIVITIES } from "common/utils/activities";
-import CheckIcon from "@material-ui/icons/Check";
-import EditIcon from "@material-ui/icons/Edit";
 import { DateOrDateTimePicker } from "../../pwa/components/DateOrDateTimePicker";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../utils/store";
 import { LoadingButton } from "common/components/LoadingButton";
-import DeleteIcon from "@material-ui/icons/Delete";
 import { useModals } from "common/utils/modals";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField/TextField";
@@ -49,6 +47,11 @@ import LocationEntry from "../../pwa/components/LocationEntry";
 import Chip from "@material-ui/core/Chip";
 import { EXPENDITURES } from "common/utils/expenditures";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
+import TableCell from "@material-ui/core/TableCell";
+import Switch from "@material-ui/core/Switch/Switch";
+import { VerticalTimeline } from "common/components/VerticalTimeline";
+import Grid from "@material-ui/core/Grid";
+import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {
@@ -130,7 +133,9 @@ const useStyles = makeStyles(theme => ({
   table: {
     "& .ReactVirtualized__Grid__innerScrollContainer": {
       borderBottom: "none"
-    }
+    },
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(6)
   },
   smallTextButton: {
     fontSize: "0.7rem"
@@ -154,12 +159,7 @@ export function MissionDetails({
   const modals = useModals();
   const alerts = useSnackbarAlerts();
 
-  const [activityIdToEdit, setActivityIdToEdit] = React.useState(null);
-  const [
-    creatingActivityForUserId,
-    setCreatingActivityForUserId
-  ] = React.useState(null);
-  const [editedValues, setEditedValues] = React.useState({});
+  const [employeeIdsToInclude, setEmployeeIdsToInclude] = React.useState({});
 
   const [errors, setErrors] = React.useState({});
 
@@ -167,6 +167,8 @@ export function MissionDetails({
 
   const [loading, setLoading] = React.useState(false);
   const [missionLoadError, setMissionLoadError] = React.useState(false);
+
+  const [toggleChartView, setToggleChartView] = React.useState(false);
 
   const [usersToAdd, setUsersToAdd] = React.useState([]);
 
@@ -466,74 +468,65 @@ export function MissionDetails({
     {
       label: "Activité",
       name: "type",
-      format: (type, entry) =>
-        !entry.id && creatingActivityForUserId === entry.user.id ? (
-          <TextField
-            label="Activité"
-            required
-            fullWidth
-            select
-            value={editedValues.type}
-            onChange={e =>
-              setEditedValues({ ...editedValues, type: e.target.value })
-            }
-          >
-            {Object.keys(ACTIVITIES).map(activityName => (
-              <MenuItem key={activityName} value={activityName}>
-                {ACTIVITIES[activityName].label}
-              </MenuItem>
-            ))}
-          </TextField>
-        ) : (
-          ACTIVITIES[type].label
-        ),
+      create: true,
+      format: (type, entry) => ACTIVITIES[type].label,
+      renderEditMode: (type, entry, setType) => (
+        <TextField
+          label="Activité"
+          required
+          fullWidth
+          select
+          value={type}
+          onChange={e => setType(e.target.value)}
+        >
+          {Object.keys(ACTIVITIES).map(activityName => (
+            <MenuItem key={activityName} value={activityName}>
+              {ACTIVITIES[activityName].label}
+            </MenuItem>
+          ))}
+        </TextField>
+      ),
       maxWidth: 185,
       minWidth: 150
     },
     {
       label: "Début",
       name: "startTime",
-      format: (time, entry) =>
-        activityIdToEdit === entry.id ||
-        (!entry.id && creatingActivityForUserId === entry.user.id) ? (
-          <DateOrDateTimePicker
-            label="Début"
-            format="HH:mm"
-            autoValidate
-            error={errors.startTime}
-            maxValue={now()}
-            setError={e => setErrors({ ...errors, startTime: e })}
-            value={editedValues.startTime}
-            setValue={t => setEditedValues({ ...editedValues, startTime: t })}
-            required={true}
-          />
-        ) : (
-          formatTimeOfDay(time)
-        ),
+      format: (time, entry) => formatTimeOfDay(time),
+      renderEditMode: (time, entry, setTime) => (
+        <DateOrDateTimePicker
+          label="Début"
+          format="HH:mm"
+          autoValidate
+          error={errors.startTime}
+          maxValue={now()}
+          setError={e => setErrors({ ...errors, startTime: e })}
+          value={time}
+          setValue={setTime}
+          required={true}
+        />
+      ),
       edit: true,
       minWidth: 210
     },
     {
       label: "Fin",
       name: "endTime",
-      format: (time, entry) =>
-        activityIdToEdit === entry.id ||
-        (!entry.id && creatingActivityForUserId === entry.user.id) ? (
-          <DateOrDateTimePicker
-            label="Fin"
-            value={editedValues.endTime}
-            minValue={editedValues.startTime - 1}
-            autoValidate
-            maxValue={now()}
-            setValue={t => setEditedValues({ ...editedValues, endTime: t })}
-            error={errors.endTime}
-            setError={e => setErrors({ ...errors, endTime: e })}
-            required={true}
-            format="HH:mm"
-          />
-        ) : (
-          formatTimeOfDay(time)
-        ),
+      format: (time, entry) => formatTimeOfDay(time),
+      renderEditMode: (time, entry, setTime) => (
+        <DateOrDateTimePicker
+          label="Fin"
+          value={time}
+          minValue={entry.startTime - 1}
+          autoValidate
+          maxValue={now()}
+          setValue={setTime}
+          error={errors.endTime}
+          setError={e => setErrors({ ...errors, endTime: e })}
+          required={true}
+          format="HH:mm"
+        />
+      ),
       edit: true,
       minWidth: 210
     },
@@ -543,106 +536,6 @@ export function MissionDetails({
       align: "right",
       format: (duration, entry) => formatTimer(entry.endTime - entry.startTime),
       minWidth: 60
-    },
-    {
-      label: "",
-      name: "id",
-      format: (id, entry) =>
-        activityIdToEdit === id ||
-        (!id && creatingActivityForUserId === entry.user.id) ? (
-          <>
-            <IconButton
-              aria-label="Enregistrer modification"
-              className="no-margin-no-padding"
-              disabled={
-                !!errors.startTime ||
-                !!errors.endTime ||
-                (!activityIdToEdit && !editedValues.type)
-              }
-              onClick={async () =>
-                await alerts.withApiErrorHandling(async () => {
-                  activityIdToEdit
-                    ? await onEditActivity(
-                        entry,
-                        { ...editedValues },
-                        entry.user,
-                        mission.activities
-                      )
-                    : await onCreateActivity(
-                        entry.user,
-                        { ...editedValues },
-                        mission.activities
-                      );
-                  setActivityIdToEdit(null);
-                  setCreatingActivityForUserId(null);
-                  setEditedValues({});
-                }, activityIdToEdit || creatingActivityForUserId)
-              }
-            >
-              <CheckIcon fontSize="small" className={classes.saveIcon} />
-            </IconButton>
-            <IconButton
-              aria-label="Annuler modification"
-              className="no-margin-no-padding"
-              onClick={() => {
-                setEditedValues(null);
-                setActivityIdToEdit(null);
-                setCreatingActivityForUserId(null);
-              }}
-            >
-              <CloseIcon fontSize="small" color="error" />
-            </IconButton>
-          </>
-        ) : (
-          <>
-            <IconButton
-              aria-label="Modifier activité"
-              className="no-margin-no-padding"
-              color="primary"
-              disabled={!!activityIdToEdit || !!creatingActivityForUserId}
-              onClick={() => {
-                const initialValues = {};
-                perUserColumns.forEach(column => {
-                  if (column.edit)
-                    initialValues[column.name] = entry[column.name];
-                });
-                setEditedValues(initialValues);
-                setErrors({});
-                setActivityIdToEdit(entry.id);
-              }}
-            >
-              <EditIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              aria-label="Supprimer activité"
-              className="no-margin-no-padding"
-              disabled={!!activityIdToEdit || !!creatingActivityForUserId}
-              onClick={() =>
-                modals.open("confirmation", {
-                  title: "Confirmer suppression de l'activité",
-                  handleConfirm: () =>
-                    alerts.withApiErrorHandling(
-                      async () =>
-                        await onCancelActivity(
-                          entry,
-                          entry.user,
-                          mission.activities
-                        ),
-                      activityIdToEdit
-                    )
-                })
-              }
-            >
-              <DeleteIcon
-                color={
-                  !activityIdToEdit && !creatingActivityForUserId ? "error" : ""
-                }
-              />
-            </IconButton>
-          </>
-        ),
-      minWidth: 100,
-      align: "left"
     }
   ];
 
@@ -669,23 +562,19 @@ export function MissionDetails({
           activitiesWithBreaks.push({
             id: "break" + index,
             user: stats.user,
+            userId: stats.user.id,
             type: ACTIVITIES.break.name,
             startTime: a.endTime,
-            endTime: nextA.startTime,
-            duration: nextA.startTime - a.endTime
+            endTime: nextA.startTime
           });
       }
     });
     return {
       ...stats,
-      activities:
-        creatingActivityForUserId === stats.user.id
-          ? [{ user: stats.user }, ...stats.activities]
-          : stats.activities,
-      activitiesWithBreaks:
-        creatingActivityForUserId === stats.user.id
-          ? [{ user: stats.user }, ...activitiesWithBreaks]
-          : activitiesWithBreaks
+      activitiesWithBreaks: activitiesWithBreaks.map(a => ({
+        ...a,
+        duration: a.endTime - a.startTime
+      }))
     };
   });
 
@@ -763,181 +652,260 @@ export function MissionDetails({
               u => u.companyId === mission.companyId
             ),
             handleSelect: user =>
-              setUsersToAdd(users => [
-                ...users.filter(u => u.id !== user.id),
-                user
-              ])
+              setEmployeeIdsToInclude(users => ({
+                ...users,
+                [user.id]: {
+                  user,
+                  userId: user.id,
+                  startTime: mission.endTime || day,
+                  endTime: mission.endTime || day
+                }
+              }))
           });
         }}
       >
         Ajouter un employé
       </Button>
-      <AugmentedVirtualizedTable
+      <Box py={2} className="flex-row" style={{ alignItems: "center" }}>
+        <Typography variant="body2">Liste</Typography>
+        <Switch
+          checked={toggleChartView}
+          onChange={e => setToggleChartView(e.target.checked)}
+        />
+        <Typography variant="body2">Graphiques</Typography>
+      </Box>
+      <AugmentedTable
         headerHeight={30}
         headerClassName={classes.header}
         columns={perUserColumns}
-        entries={entries}
-        editable={false}
-        rowHeight={(index, userStats) =>
-          100 +
-          (showExpenditures ? 80 : 0) +
-          50 * Object.keys(userStats.activitiesWithBreaks).length
-        }
+        entries={flatMap(
+          entries.map(e => {
+            const rows = [];
+            if (toggleChartView) {
+              rows.push({
+                chart: true,
+                id: `chart_${e.user.id}`,
+                user: e.user,
+                userId: e.user.id,
+                activitiesWithBreaks: e.activitiesWithBreaks
+              });
+            } else rows.push(...e.activitiesWithBreaks);
+            rows.push({
+              id: `expenditures_${e.user.id}`,
+              user: e.user,
+              userId: e.user.id,
+              activities: e.activities,
+              expenditureAggs: e.expenditureAggs,
+              validation: e.validation,
+              lastRow: true
+            });
+            return rows;
+          })
+        )}
+        renderRow={({
+          entry,
+          renderColumn,
+          columns,
+          startRowEdit,
+          terminateRowEdit
+        }) => {
+          if (entry.chart) {
+            return (
+              <>
+                {renderColumn(columns[0])}
+                <TableCell colSpan={100} align="center">
+                  <Grid container alignItems="stretch" justify="center">
+                    <Grid item>
+                      <Typography variant="h6">Frise temporelle</Typography>
+                      <VerticalTimeline
+                        width={300}
+                        activities={entry.activitiesWithBreaks}
+                        datetimeFormatter={formatTimeOfDay}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="h6">Répartition</Typography>
+                      <ActivitiesPieChart
+                        minWidth={300}
+                        maxWidth={300}
+                        activities={entry.activitiesWithBreaks}
+                      />
+                    </Grid>
+                  </Grid>
+                </TableCell>
+              </>
+            );
+          }
+          if (entry.lastRow) {
+            return (
+              <>
+                {renderColumn(columns[0])}
+                <TableCell colSpan={100}>
+                  {showExpenditures && [
+                    <Box key={1} className="flex-row-space-between">
+                      <Box className="flex-row-center" py={1}>
+                        <Typography key={0} variant="h5">
+                          Frais :
+                        </Typography>
+                        <Box className={`flex-row`} px={2}>
+                          {entry.expenditureAggs &&
+                            Object.keys(entry.expenditureAggs).map(exp => {
+                              const expProps = EXPENDITURES[exp];
+                              const expCount = entry.expenditureAggs[exp];
+                              const label =
+                                expCount > 1
+                                  ? `${expCount} ${expProps.plural}`
+                                  : expProps.label;
+                              return (
+                                <Chip
+                                  size="small"
+                                  key={exp.type}
+                                  label={label}
+                                />
+                              );
+                            })}
+                        </Box>
+                      </Box>
+                      {entry.activities.length > 0 && (
+                        <Button
+                          aria-label="Modifier les frais"
+                          color="primary"
+                          size="small"
+                          className={classes.smallTextButton}
+                          onClick={() => {
+                            startRowEdit();
+                            modals.open("expenditures", {
+                              currentExpenditures: entry.expenditureAggs,
+                              title: `Frais pour ${formatPersonName(
+                                entry.user
+                              )}`,
+                              handleSubmit: exps => {
+                                const expendituresToCreate = Object.keys(
+                                  exps
+                                ).filter(
+                                  e => exps[e] && !entry.expenditureAggs[e]
+                                );
+                                const expendituresToDelete = mission.expenditures.filter(
+                                  e =>
+                                    e.userId === entry.user.id && !exps[e.type]
+                                );
+                                return Promise.all([
+                                  ...expendituresToDelete.map(e =>
+                                    alerts.withApiErrorHandling(
+                                      async () => await onCancelExpenditure(e),
+                                      e.id
+                                    )
+                                  ),
+                                  ...expendituresToCreate.map(expType =>
+                                    alerts.withApiErrorHandling(
+                                      async () =>
+                                        await onCreateExpenditure(
+                                          expType,
+                                          entry.user
+                                        ),
+                                      expType
+                                    )
+                                  )
+                                ]).then(() => {
+                                  setTimeout(terminateRowEdit, 0);
+                                });
+                              }
+                            });
+                          }}
+                        >
+                          Modifier les frais
+                        </Button>
+                      )}
+                    </Box>
+                  ]}
+                  <Box>
+                    <Typography
+                      className={
+                        entry.validation
+                          ? classes.validationTime
+                          : classes.nonValidationText
+                      }
+                    >
+                      <span style={{ fontStyle: "normal" }}>
+                        {entry.validation ? "✅" : "⚠️"}
+                      </span>
+                      {entry.validation
+                        ? ` validé le ${formatDay(getTime(entry.validation))}`
+                        : " non validé"}
+                    </Typography>
+                  </Box>
+                </TableCell>
+              </>
+            );
+          }
+        }}
         ref={ref}
-        dense
         rowClassName={() => classes.row}
         className={classes.table}
-        rowRenderer={({ rowData: userStats, ...props }) => {
-          return (
-            <Box
-              key={props.key}
-              className={props.className}
-              style={{ ...props.style, display: "block" }}
-            >
-              <Box style={{ height: 40 }} px={1} className={classes.userRow}>
-                <Typography className={classes.userName}>
-                  {formatPersonName(userStats.user)}
-                </Typography>
-                <Button
-                  aria-label="Ajouter une activité"
-                  color="primary"
-                  variant="outlined"
-                  size="small"
-                  className={classes.smallTextButton}
-                  disabled={creatingActivityForUserId || activityIdToEdit}
-                  onClick={() => {
-                    setCreatingActivityForUserId(userStats.user.id);
-                    setEditedValues({
-                      startTime: mission.endTime || day,
-                      endTime: mission.endTime || day
-                    });
-                    ref.current.recomputeRowHeights();
-                  }}
-                >
-                  Ajouter une activité
-                </Button>
-              </Box>
-              {userStats.activitiesWithBreaks.map(activity => {
-                return (
-                  <Box key={activity.id} className={classes.activityRow}>
-                    {props.columns.map((column, index) => {
-                      const col = perUserColumns[index];
-                      return (
-                        <Box
-                          className={column.props.className}
-                          key={column.key}
-                          style={column.props.style}
-                          role={column.props.role}
-                        >
-                          <CellContent
-                            column={col}
-                            cellData={activity[col.name]}
-                            rowData={activity}
-                            onFocus={false}
-                          />
-                        </Box>
-                      );
-                    })}
-                  </Box>
-                );
-              })}
-              {showExpenditures && [
-                <Typography
-                  key={0}
-                  className={classes.expenditureTitle}
-                  variant="h5"
-                  style={{ height: 15, marginTop: 15 }}
-                >
-                  Frais
-                </Typography>,
-                <Box
-                  key={1}
-                  style={{ height: 40, marginTop: 10 }}
-                  pl={1}
-                  className="flex-row-space-between"
-                >
-                  <Box className={`flex-row`}>
-                    {userStats.expenditureAggs &&
-                      Object.keys(userStats.expenditureAggs).map(exp => {
-                        const expProps = EXPENDITURES[exp];
-                        const expCount = userStats.expenditureAggs[exp];
-                        const label =
-                          expCount > 1
-                            ? `${expCount} ${expProps.plural}`
-                            : expProps.label;
-                        return <Chip key={exp.type} label={label} />;
-                      })}
-                  </Box>
-                  {userStats.activities.length > 0 && (
-                    <Button
-                      aria-label="Modifier les frais"
-                      color="primary"
-                      variant="outlined"
-                      size="small"
-                      className={classes.smallTextButton}
-                      disabled={creatingActivityForUserId || activityIdToEdit}
-                      onClick={() => {
-                        modals.open("expenditures", {
-                          currentExpenditures: userStats.expenditureAggs,
-                          title: `Frais pour ${formatPersonName(
-                            userStats.user
-                          )}`,
-                          handleSubmit: exps => {
-                            const expendituresToCreate = Object.keys(
-                              exps
-                            ).filter(
-                              e => exps[e] && !userStats.expenditureAggs[e]
-                            );
-                            const expendituresToDelete = mission.expenditures.filter(
-                              e =>
-                                e.userId === userStats.user.id && !exps[e.type]
-                            );
-                            return Promise.all([
-                              ...expendituresToDelete.map(e =>
-                                alerts.withApiErrorHandling(
-                                  () => onCancelExpenditure(e),
-                                  e.id
-                                )
-                              ),
-                              ...expendituresToCreate.map(expType =>
-                                alerts.withApiErrorHandling(
-                                  () =>
-                                    onCreateExpenditure(
-                                      expType,
-                                      userStats.user
-                                    ),
-                                  expType
-                                )
-                              )
-                            ]);
-                          }
-                        });
-                      }}
-                    >
-                      Modifier les frais
-                    </Button>
-                  )}
-                </Box>
-              ]}
-              <Box style={{ height: 40, marginTop: 10 }} pl={1}>
-                <Typography
-                  className={
-                    userStats.validation
-                      ? classes.validationTime
-                      : classes.nonValidationText
-                  }
-                >
-                  <span style={{ fontStyle: "normal" }}>
-                    {userStats.validation ? "✅" : "⚠️"}
-                  </span>
-                  {userStats.validation
-                    ? ` validé le ${formatDay(getTime(userStats.validation))}`
-                    : " non validé"}
-                </Typography>
-              </Box>
+        alwaysSortBy={[
+          ["userId", "desc"],
+          ["lastRow", "desc"]
+        ]}
+        groupByColumn={{
+          name: "userId",
+          groupProps: ["user"],
+          format: (value, entry) => (
+            <Box className="flex-row-space-between">
+              <Typography variant="h6" className={classes.missionTitle}>
+                {formatPersonName(entry.user)}
+              </Typography>
+              <Button
+                aria-label="Ajouter une activité"
+                color="primary"
+                size="small"
+                className={classes.smallTextButton}
+                onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  ref.current.newRow({
+                    user: entry.user,
+                    userId: entry.user.id,
+                    startTime: mission.endTime || day,
+                    endTime: mission.endTime || day
+                  });
+                }}
+              >
+                Ajouter une activité
+              </Button>
             </Box>
-          );
+          )
         }}
+        onRowAdd={async entry =>
+          await alerts.withApiErrorHandling(async () => {
+            await onCreateActivity(entry.user, entry, mission.activities);
+          })
+        }
+        onRowEdit={async (entry, newValues) =>
+          await alerts.withApiErrorHandling(async () => {
+            await onEditActivity(
+              entry,
+              newValues,
+              entry.user,
+              mission.activities
+            );
+          })
+        }
+        onRowDelete={entry =>
+          modals.open("confirmation", {
+            title: "Confirmer suppression de l'activité",
+            handleConfirm: () =>
+              alerts.withApiErrorHandling(
+                async () =>
+                  await onCancelActivity(entry, entry.user, mission.activities),
+                entry.id
+              )
+          })
+        }
+        validateRow={entry =>
+          !errors.startTime && !errors.endTime && entry.type
+        }
+        interGroupRowHeight={30}
+        groupKeysToShow={employeeIdsToInclude}
       />
     </Section>,
     <Section key={4} title="Observations">

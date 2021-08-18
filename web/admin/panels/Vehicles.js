@@ -23,9 +23,7 @@ export default function VehicleAdmin({ company }) {
   const alerts = useSnackbarAlerts();
   const companyId = company ? company.id : null;
 
-  const [triggerAddVehicle, setTriggerAddVehicle] = React.useState({
-    value: false
-  });
+  const tableRef = React.useRef();
 
   const classes = usePanelStyles();
 
@@ -53,7 +51,7 @@ export default function VehicleAdmin({ company }) {
         variant="contained"
         size="small"
         color="primary"
-        onClick={() => setTriggerAddVehicle({ value: true })}
+        onClick={() => tableRef.current.newRow()}
       >
         Ajouter un véhicule
       </Button>
@@ -66,9 +64,7 @@ export default function VehicleAdmin({ company }) {
       key={5}
       columns={vehicleColumns}
       entries={vehicles}
-      triggerRowAdd={triggerAddVehicle}
-      afterRowAdd={() => setTriggerAddVehicle({ value: false })}
-      editable={true}
+      ref={tableRef}
       onRowEdit={async (vehicle, { alias }) => {
         try {
           const apiResponse = await api.graphQlMutate(
@@ -96,7 +92,7 @@ export default function VehicleAdmin({ company }) {
           console.log(err);
         }
       }}
-      disableAdd={({ registrationNumber }) => !registrationNumber}
+      validateRow={({ registrationNumber }) => !!registrationNumber}
       onRowAdd={async ({ registrationNumber, alias }) => {
         try {
           const apiResponse = await api.graphQlMutate(

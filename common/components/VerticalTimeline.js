@@ -81,9 +81,15 @@ export function VerticalTimeline({
       : minInterBarWidth;
   const barWidth = barPlusInterBarWidth - interBarWidth;
 
-  const startHour = (filteredActivities[0].displayedStartTime / HOUR) >> 0;
+  const startHour =
+    ((filteredActivities[0].displayedStartTime ||
+      filteredActivities[0].startTime) /
+      HOUR) >>
+    0;
   const endHour =
-    ((filteredActivities[filteredActivities.length - 1].endTimeOrNow / HOUR) >>
+    (((filteredActivities[filteredActivities.length - 1].endTimeOrNow ||
+      filteredActivities[filteredActivities.length - 1].endTime) /
+      HOUR) >>
       0) +
     1;
 
@@ -116,9 +122,12 @@ export function VerticalTimeline({
 
   const subStepDuration = HOUR * subStepSize;
   const startOfDatetimeAxis =
-    filteredActivities[0].displayedStartTime - subStepDuration / 2;
+    (filteredActivities[0].displayedStartTime ||
+      filteredActivities[0].startTime) -
+    subStepDuration / 2;
   const endOfDatetimeAxis =
-    filteredActivities[filteredActivities.length - 1].endTimeOrNow +
+    (filteredActivities[filteredActivities.length - 1].endTimeOrNow ||
+      filteredActivities[filteredActivities.length - 1].endTime) +
     subStepDuration / 2;
   const firstSubStep = ((startOfDatetimeAxis / subStepDuration) >> 0) + 1;
   const lastSubStep = Math.max(
@@ -251,8 +260,11 @@ export function VerticalTimeline({
             />
           ])}
         {filteredActivities.map((a, index) => {
-          let topOffset = getYOffsetForTime(a.displayedStartTime);
-          let rectHeight = getYOffsetForTime(a.endTimeOrNow) - topOffset;
+          let topOffset = getYOffsetForTime(
+            a.displayedStartTime || a.startTime
+          );
+          let rectHeight =
+            getYOffsetForTime(a.endTimeOrNow || a.endTime) - topOffset;
           if (rectHeight <= 4) {
             rectHeight = 2;
             topOffset = topOffset - 1;

@@ -10,7 +10,7 @@ import { formatPersonName } from "common/utils/coworkers";
 import {
   DAY,
   formatDateTime,
-  frenchFormatDateString,
+  frenchFormatDateStringOrTimeStamp,
   getStartOfMonth,
   now
 } from "common/utils/time";
@@ -184,7 +184,9 @@ export function UserRead() {
                   name="Invité le"
                   value={
                     primaryEmployment
-                      ? frenchFormatDateString(primaryEmployment.startDate)
+                      ? frenchFormatDateStringOrTimeStamp(
+                          primaryEmployment.startDate
+                        )
                       : ""
                   }
                 />
@@ -209,13 +211,17 @@ export function UserRead() {
               <Grid item>
                 <InfoItem
                   name="Début de l'historique"
-                  value={frenchFormatDateString(tokenInfo.historyStartDay)}
+                  value={frenchFormatDateStringOrTimeStamp(
+                    tokenInfo.historyStartDay
+                  )}
                 />
               </Grid>
               <Grid item>
                 <InfoItem
                   name="Fin de l'historique"
-                  value={frenchFormatDateString(tokenInfo.creationDay)}
+                  value={frenchFormatDateStringOrTimeStamp(
+                    tokenInfo.creationDay
+                  )}
                 />
               </Grid>
               <Grid item xs={12}>

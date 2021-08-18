@@ -3,10 +3,8 @@ import { useHistory, useLocation } from "react-router-dom";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../utils/store";
-import {
-  AugmentedVirtualizedTable,
-  CellContent
-} from "../components/AugmentedTable";
+import flatMap from "lodash/flatMap";
+import { AugmentedTable } from "../components/AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
@@ -79,18 +77,6 @@ const useStyles = makeStyles(theme => ({
   missionModal: {
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2)
-  },
-  row: {
-    border: "1px solid #c9d3df",
-    borderRadius: 5,
-    marginBottom: 12,
-    "&:focus": {
-      outline: "none"
-    },
-    "&:hover": {
-      background: "#fafbfc",
-      cursor: ({ clickableRow }) => (clickableRow ? "pointer" : "inherit")
-    }
   },
   header: {
     "&:hover": {
@@ -330,7 +316,6 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
         textColor="primary"
         onChange={(e, newTab) => {
           setTab(newTab);
-          ref.current.recomputeRowHeights();
         }}
         className={classes.tabContainer}
         variant="scrollable"
@@ -349,118 +334,102 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
           ? "Les missions suivantes ont été terminées et validées par le(s) salarié(s) concerné(s) et sont prêtes à être validées par un gestionnaire."
           : "Les missions suivantes sont terminées mais n'ont pas encore été validées par tous les salariés concernés."}
       </Typography>
-      <AugmentedVirtualizedTable
+      <AugmentedTable
         columns={columns}
         entries={
           tab === 0
-            ? missionsValidatedByAllWorkers
-            : missionsNotValidatedByAllWorkers
+            ? flatMap(
+                missionsValidatedByAllWorkers.map(m =>
+                  map(m.userStats, us => ({
+                    ...us,
+                    name: m.name,
+                    missionStartTime: m.startTime,
+                    missionId: m.id,
+                    id: `${m.id}${us.user.id}`
+                  }))
+                )
+              )
+            : flatMap(
+                missionsNotValidatedByAllWorkers.map(m =>
+                  map(m.userStats, us => ({
+                    ...us,
+                    name: m.name,
+                    missionStartTime: m.startTime,
+                    missionId: m.id,
+                    id: `${m.id}${us.user.id}`
+                  }))
+                )
+              )
         }
         ref={ref}
-        editable={false}
-        rowHeight={(index, mission) =>
-          72 + 30 * Object.keys(mission.userStats).length
-        }
+        virtualizedRowHeight={entry => (entry.__groupKey ? 50 : 35)}
+        alwaysSortBy={[
+          ["missionStartTime", "desc"],
+          ["missionId", "desc"]
+        ]}
+        interGroupHeight={30}
+        virtualized
         maxHeight={"100%"}
         defaultSortBy="startTime"
         defaultSortType="desc"
         className={classes.virtualizedTableContainer}
-        onRowClick={
+        disableGroupCollapse
+        onRowGroupClick={
           tab === 0
-            ? ({ event, rowData }) => {
-                event.preventDefault();
-                setMissionIdOnFocus(rowData.id);
+            ? entry => {
+                setMissionIdOnFocus(entry.id);
               }
             : null
         }
-        rowRenderer={({ rowData: mission, index, ...props }) => {
-          return (
-            <Box
-              key={props.key}
-              className={`${classes.row} ${
-                missionIdOnFocus && mission.id === missionIdOnFocus
-                  ? classes.selectedRow
-                  : ""
-              }`}
-              style={{
-                ...props.style,
-                display: "block",
-                height: 60 + 30 * Object.keys(mission.userStats).length
-              }}
-              onClick={
-                props.onRowClick
-                  ? e => props.onRowClick({ event: e, rowData: mission })
-                  : null
-              }
-            >
-              <Box
-                style={{ height: 60 }}
-                className="flex-row-space-between"
-                px={1}
-              >
-                <Typography variant="h6" className={classes.missionTitle}>
-                  Mission {mission.name ? mission.name : "sans nom"} du{" "}
-                  {formatDay(mission.startTime)}
-                </Typography>
-                {tab === 0 && (
-                  <Button
-                    aria-label="Valider"
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    onClick={async e => {
-                      e.stopPropagation();
-                      adminStore.setMissions(missions =>
-                        missions.filter(m => m.id !== mission.id)
-                      );
-                      try {
-                        await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
-                          missionId: mission.id
-                        });
-                        alerts.success(
-                          `La mission${
-                            mission.name ? " " + mission.name : ""
-                          } a été validée avec succès !`,
-                          mission.id,
-                          6000
-                        );
-                      } catch (err) {
-                        alerts.error(formatApiError(err), mission.id, 6000);
-                      }
-                    }}
-                  >
-                    Valider
-                  </Button>
-                )}
-              </Box>
-              {map(mission.userStats, (stats, userId) => (
-                <Box
-                  style={{ height: 30, alignItems: "center" }}
-                  key={userId}
-                  className="flex-row"
-                >
-                  {props.columns.map((column, index) => {
-                    const col = columns[index];
-                    return (
-                      <Box
-                        className={column.props.className}
-                        key={column.key}
-                        style={column.props.style}
-                        role={column.props.role}
-                      >
-                        <CellContent
-                          column={col}
-                          cellData={stats[col.name]}
-                          rowData={stats}
-                          onFocus={false}
-                        />
-                      </Box>
+        rowClassName={entry =>
+          `${classes.row} ${
+            missionIdOnFocus && entry.missionId === missionIdOnFocus
+              ? classes.selectedRow
+              : ""
+          }`
+        }
+        groupByColumn={{
+          label: "Mission",
+          name: "missionId",
+          format: (value, entry) => (
+            <Box className="flex-row-space-between">
+              <Typography variant="h6" className={classes.missionTitle}>
+                Mission {entry.name ? entry.name : "sans nom"} du{" "}
+                {formatDay(entry.startTime)}
+              </Typography>
+              {tab === 0 && (
+                <Button
+                  aria-label="Valider"
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  onClick={async e => {
+                    e.stopPropagation();
+                    adminStore.setMissions(missions =>
+                      missions.filter(m => m.id !== entry.id)
                     );
-                  })}
-                </Box>
-              ))}
+                    try {
+                      await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
+                        missionId: entry.id
+                      });
+                      alerts.success(
+                        `La mission${
+                          entry.name ? " " + entry.name : ""
+                        } a été validée avec succès !`,
+                        entry.id,
+                        6000
+                      );
+                    } catch (err) {
+                      alerts.error(formatApiError(err), entry.id, 6000);
+                    }
+                  }}
+                >
+                  Valider
+                </Button>
+              )}
             </Box>
-          );
+          ),
+          groupProps: ["name", "startTime"]
         }}
         headerClassName={`${classes.header} ${classes.row}`}
       />
@@ -474,8 +443,8 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
         PaperProps={{
           className: classes.missionModal,
           style: {
-            minWidth: isWidthUp("sm", width) ? 785 : "100vw",
-            maxWidth: isWidthUp("md", width) ? 735 : "100vw"
+            minWidth: isWidthUp("sm", width) ? 800 : "100vw",
+            maxWidth: isWidthUp("md", width) ? 750 : "100vw"
           }
         }}
       >

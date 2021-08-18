@@ -2,10 +2,7 @@ import React from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../utils/store";
-import {
-  AugmentedTable,
-  AugmentedVirtualizedTable
-} from "../components/AugmentedTable";
+import { AugmentedTable } from "../components/AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
@@ -13,14 +10,15 @@ import Button from "@material-ui/core/Button";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import IconButton from "@material-ui/core/IconButton";
-import { frenchFormatDateString, isoFormatLocalDate } from "common/utils/time";
+import {
+  frenchFormatDateStringOrTimeStamp,
+  isoFormatLocalDate,
+  now
+} from "common/utils/time";
 import {
   CANCEL_EMPLOYMENT_MUTATION,
   CREATE_EMPLOYMENT_MUTATION,
+  SEND_EMPLOYMENT_INVITE_REMINDER,
   TERMINATE_EMPLOYMENT_MUTATION
 } from "common/utils/apiQueries";
 
@@ -50,6 +48,9 @@ const useStyles = makeStyles(theme => ({
   },
   terminatedEmployment: {
     color: theme.palette.text.disabled
+  },
+  displayNone: {
+    display: "none !important"
   }
 }));
 
@@ -60,11 +61,13 @@ export function Employees({ company, containerRef }) {
   const alerts = useSnackbarAlerts();
   const companyId = company ? company.id : null;
 
-  const [triggerAddEmployee, setTriggerAddEmployee] = React.useState({
+  const setForceUpdate = React.useState({
     value: false
-  });
+  })[1];
 
   const classes = useStyles();
+
+  const tableRef = React.useRef();
 
   async function cancelEmployment(employment) {
     try {
@@ -101,25 +104,64 @@ export function Employees({ company, containerRef }) {
     });
   }
 
+  async function sendInvitationReminder(employmentId) {
+    await api.graphQlMutate(SEND_EMPLOYMENT_INVITE_REMINDER, { employmentId });
+    await adminStore.setEmployments(oldEmployments => {
+      const newEmployments = [...oldEmployments];
+      const employmentIndex = oldEmployments.findIndex(
+        e => e.id === employmentId
+      );
+      if (employmentIndex >= 0)
+        newEmployments[employmentIndex].latestInviteEmailTime = now();
+      return newEmployments;
+    });
+    alerts.success("Relance envoyée", employmentId, 6000);
+  }
+
   const pendingEmploymentColumns = [
     {
       label: "Nom",
-      name: "name"
+      name: "name",
+      minWidth: 50,
+      baseWidth: 200,
+      overflowTooltip: true,
+      align: "left"
     },
     {
       label: "Identifiant ou email",
       name: "idOrEmail",
-      create: true
+      create: true,
+      sortable: true,
+      minWidth: 200,
+      baseWidth: 200,
+      overflowTooltip: true,
+      align: "left"
     },
     {
       label: "Administrateur",
       name: "hasAdminRights",
       boolean: true,
-      create: true
+      create: true,
+      minWidth: 160,
+      baseWidth: 160,
+      align: "left"
     },
     {
       label: "Invité le",
-      name: "creationDate"
+      format: dateString =>
+        dateString ? frenchFormatDateStringOrTimeStamp(dateString) : "",
+      sortable: true,
+      name: "creationDate",
+      minWidth: 160,
+      baseWidth: 160,
+      align: "left"
+    },
+    {
+      label: "Dernière relance le",
+      name: "latestInviteEmailDateString",
+      minWidth: 160,
+      baseWidth: 160,
+      align: "left"
     }
   ];
 
@@ -144,22 +186,23 @@ export function Employees({ company, containerRef }) {
       boolean: true,
       align: "left",
       sortable: true,
-      minWidth: 120
+      minWidth: 160
     },
     {
       label: "Début rattachement",
       name: "startDate",
       align: "left",
-      format: startDate => frenchFormatDateString(startDate),
+      format: startDate => frenchFormatDateStringOrTimeStamp(startDate),
       sortable: true,
-      minWidth: 130
+      minWidth: 150
     },
     {
       label: "Fin rattachement",
       name: "endDate",
-      format: endDate => (endDate ? frenchFormatDateString(endDate) : null),
+      format: endDate =>
+        endDate ? frenchFormatDateStringOrTimeStamp(endDate) : null,
       align: "left",
-      minWidth: 130
+      minWidth: 150
     },
     {
       label: "Statut",
@@ -175,22 +218,6 @@ export function Employees({ company, containerRef }) {
       ),
       align: "left",
       minWidth: 100
-    },
-    {
-      label: "",
-      name: "actions",
-      format: (_, employment) =>
-        employment.endDate ? null : (
-          <IconButton
-            color="primary"
-            onClick={e => handleActionsClick(e, employment)}
-          >
-            <MoreVertIcon />
-          </IconButton>
-        ),
-      align: "left",
-      baseWidth: 65,
-      minWidth: 65
     }
   ];
 
@@ -201,10 +228,14 @@ export function Employees({ company, containerRef }) {
   const pendingEmployments = companyEmployments
     .filter(e => !e.isAcknowledged)
     .map(e => ({
+      pending: true,
       idOrEmail: e.user ? e.user.id : e.email,
       name: e.user ? formatPersonName(e.user) : null,
       hasAdminRights: e.hasAdminRights,
       creationDate: e.startDate,
+      latestInviteEmailDateString: frenchFormatDateStringOrTimeStamp(
+        e.latestInviteEmailTime ? e.latestInviteEmailTime * 1000 : e.startDate
+      ),
       id: e.id
     }));
 
@@ -213,6 +244,7 @@ export function Employees({ company, containerRef }) {
   const validEmployments = companyEmployments
     .filter(e => e.isAcknowledged)
     .map(e => ({
+      pending: false,
       id: e.user.id,
       employmentId: e.id,
       name: formatPersonName(e.user),
@@ -222,90 +254,107 @@ export function Employees({ company, containerRef }) {
       hasAdminRights: e.hasAdminRights ? 1 : 0
     }));
 
-  const [actionMenuAnchorEl, setActionMenuAnchorEl] = React.useState(null);
-  const [employmentActedOn, setEmploymentActedOn] = React.useState(null);
-
-  const handleActionsClick = (event, empl) => {
-    setActionMenuAnchorEl(event.currentTarget);
-    setEmploymentActedOn(empl);
-  };
-
-  const handleActionsMenuClose = () => {
-    setActionMenuAnchorEl(null);
-    setEmploymentActedOn(null);
-  };
-
+  const showPendingEmployments =
+    (tableRef.current &&
+      tableRef.current.isAddingRow &&
+      tableRef.current.isAddingRow()) ||
+    pendingEmployments.length > 0;
   return [
-    (triggerAddEmployee.value || pendingEmployments.length > 0) && (
-      <Box key={0} className={classes.title}>
-        <Typography variant="h4">
-          Invitations en attente ({pendingEmployments.length})
-        </Typography>
-        <Button
-          variant="contained"
-          size="small"
-          color="primary"
-          onClick={() => setTriggerAddEmployee({ value: true })}
-          className={classes.actionButton}
-        >
-          Inviter un nouveau salarié
-        </Button>
-      </Box>
-    ),
-    (triggerAddEmployee.value || pendingEmployments.length > 0) && (
-      <AugmentedTable
-        key={1}
-        columns={pendingEmploymentColumns}
-        entries={pendingEmployments}
-        editable={false}
-        className={classes.pendingEmployments}
-        onRowDelete={entry =>
-          modals.open("confirmation", {
-            textButtons: true,
-            title: "Confirmer annulation du rattachement",
-            handleConfirm: async () =>
-              await alerts.withApiErrorHandling(
-                async () => cancelEmployment(entry),
-                "cancel-employment"
-              )
-          })
+    <Box
+      key={0}
+      className={`${showPendingEmployments ? "" : classes.displayNone} ${
+        classes.title
+      }`}
+    >
+      <Typography variant="h4">
+        Invitations en attente ({pendingEmployments.length})
+      </Typography>
+      <Button
+        variant="contained"
+        size="small"
+        color="primary"
+        onClick={() => tableRef.current.newRow()}
+        className={classes.actionButton}
+      >
+        Inviter un nouveau salarié
+      </Button>
+    </Box>,
+    <AugmentedTable
+      key={1}
+      columns={pendingEmploymentColumns}
+      entries={pendingEmployments}
+      ref={tableRef}
+      dense
+      className={`${showPendingEmployments ? "" : classes.displayNone} ${
+        classes.pendingEmployments
+      }`}
+      validateNewRowData={({ idOrEmail }) => !!idOrEmail}
+      forceParentUpdateOnRowAdd={() => setForceUpdate(value => !value)}
+      editActionsColumnMinWidth={180}
+      defaultSortBy={"creationDate"}
+      defaultSortType={"desc"}
+      virtualized
+      virtualizedRowHeight={45}
+      virtualizedMaxHeight={"100%"}
+      virtualizedAttachScrollTo={containerRef.current}
+      onRowAdd={async ({ idOrEmail, hasAdminRights }) => {
+        const payload = {
+          hasAdminRights,
+          companyId
+        };
+        if (/^\d+$/.test(idOrEmail)) {
+          payload.userId = parseInt(idOrEmail);
+        } else {
+          payload.mail = idOrEmail;
         }
-        disableAdd={({ idOrEmail }) => !idOrEmail}
-        triggerRowAdd={triggerAddEmployee}
-        onRowAdd={async ({ idOrEmail, hasAdminRights }) => {
-          const payload = {
-            hasAdminRights,
-            companyId
-          };
-          if (/^\d+$/.test(idOrEmail)) {
-            payload.userId = parseInt(idOrEmail);
-          } else {
-            payload.mail = idOrEmail;
-          }
-          try {
-            const apiResponse = await api.graphQlMutate(
-              CREATE_EMPLOYMENT_MUTATION,
-              payload
+        try {
+          const apiResponse = await api.graphQlMutate(
+            CREATE_EMPLOYMENT_MUTATION,
+            payload
+          );
+          adminStore.setEmployments(oldEmployments => [
+            { ...apiResponse.data.employments.createEmployment, companyId },
+            ...oldEmployments
+          ]);
+        } catch (err) {
+          alerts.error(formatApiError(err), idOrEmail, 6000);
+        }
+      }}
+      customRowActions={[
+        {
+          name: "reminder",
+          label: "Relancer l'invitation",
+          action: async empl => {
+            await alerts.withApiErrorHandling(
+              async () => await sendInvitationReminder(empl.id)
             );
-            adminStore.setEmployments(oldEmployments => [
-              { ...apiResponse.data.employments.createEmployment, companyId },
-              ...oldEmployments
-            ]);
-          } catch (err) {
-            alerts.error(formatApiError(err), idOrEmail, 6000);
           }
-        }}
-        afterRowAdd={() => setTriggerAddEmployee({ value: false })}
-      />
-    ),
+        },
+        {
+          name: "delete",
+          label: "Annuler l'invitation",
+          action: empl => {
+            modals.open("confirmation", {
+              textButtons: true,
+              title: "Confirmer annulation du rattachement",
+              handleConfirm: async () =>
+                await alerts.withApiErrorHandling(
+                  async () => cancelEmployment(empl),
+                  "cancel-employment"
+                )
+            });
+          }
+        }
+      ]}
+    />,
     <Box key={3} className={classes.title}>
       <Typography variant="h4">Employés ({validEmployments.length})</Typography>
-      {pendingEmployments.length === 0 && !triggerAddEmployee.value && (
+      {!showPendingEmployments && (
         <Button
           variant="contained"
           size="small"
           color="primary"
-          onClick={() => setTriggerAddEmployee({ value: true })}
+          onClick={() => tableRef.current.newRow()}
           className={classes.actionButton}
         >
           Inviter un nouveau salarié
@@ -316,39 +365,30 @@ export function Employees({ company, containerRef }) {
       Invitez vos salariés en renseignant leurs adresses mail, afin qu'ils
       puissent enregistrer du temps de travail pour l'entreprise.
     </Typography>,
-    <AugmentedVirtualizedTable
+    <AugmentedTable
       key={5}
       columns={validEmploymentColumns}
       entries={validEmployments}
-      editable={false}
-      rowHeight={60}
-      maxHeight={"100%"}
+      virtualizedRowHeight={45}
+      virtualizedMaxHeight={"100%"}
       defaultSortBy="name"
       alwaysSortBy={[["active", "desc"]]}
-      attachScrollTo={containerRef.current}
-      rowClassName={(index, row) =>
-        !row.active ? classes.terminatedEmployment : ""
-      }
-    />,
-    <Menu
-      key={6}
-      keepMounted
-      open={Boolean(actionMenuAnchorEl)}
-      onClose={handleActionsMenuClose}
-      anchorEl={actionMenuAnchorEl}
-    >
-      <MenuItem
-        onClick={() => {
-          modals.open("terminateEmployment", {
-            minDate: new Date(employmentActedOn.startDate),
-            terminateEmployment: async endDate =>
-              await terminateEmployment(employmentActedOn.employmentId, endDate)
-          });
-          handleActionsMenuClose();
-        }}
-      >
-        Mettre fin au rattachement
-      </MenuItem>
-    </Menu>
+      virtualizedAttachScrollTo={containerRef.current}
+      rowClassName={row => (!row.active ? classes.terminatedEmployment : "")}
+      customRowActions={[
+        {
+          name: "terminate",
+          label: "Mettre fin au rattachement",
+          action: empl => {
+            modals.open("terminateEmployment", {
+              minDate: new Date(empl.startDate),
+              terminateEmployment: async endDate =>
+                await terminateEmployment(empl.employmentId, endDate)
+            });
+          }
+        }
+      ]}
+      virtualized
+    />
   ];
 }

@@ -9,7 +9,7 @@ import {
 } from "common/utils/time";
 import { formatPersonName } from "common/utils/coworkers";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
-import { AugmentedVirtualizedTable } from "./AugmentedTable";
+import { AugmentedTable } from "./AugmentedTable";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
 const useStyles = makeStyles(theme => ({
@@ -142,15 +142,15 @@ export function WorkTimeTable({
   });
 
   return (
-    <AugmentedVirtualizedTable
+    <AugmentedTable
       columns={columns}
       entries={preFormattedWorkTimeEntries}
       dense
-      rowHeight={40}
-      editable={false}
+      virtualizedRowHeight={40}
       defaultSortBy="periodStart"
       defaultSortType="desc"
       className={className}
+      virtualized
       groupByColumn={{
         label: periodLabel,
         name: "periodStart",

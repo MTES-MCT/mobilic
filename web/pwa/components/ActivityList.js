@@ -11,10 +11,8 @@ import {
   formatDateTime,
   formatLongTimer,
   formatTimeOfDay,
-  formatTimer,
   getStartOfDay,
   LONG_BREAK_DURATION,
-  MINUTE,
   now
 } from "common/utils/time";
 import { getTime, sortEvents } from "common/utils/events";
@@ -26,37 +24,10 @@ import { useModals } from "common/utils/modals";
 import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
-import { PieChart, Pie, Cell, ResponsiveContainer, LabelList } from "recharts";
-import { computeTotalActivityDurations } from "common/utils/metrics";
 import { VerticalTimeline } from "common/components/VerticalTimeline";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
-
-const RADIAN = Math.PI / 180;
-function renderCustomizedLabel(
-  name,
-  { cx, cy, startAngle, endAngle, innerRadius, outerRadius }
-) {
-  if (endAngle - startAngle < 20) return null;
-  let radiusIndex = 0.5;
-  if (endAngle - startAngle < 30) radiusIndex = 0.8;
-  else if (endAngle - startAngle < 40) radiusIndex = 0.7;
-
-  const midAngle = (startAngle + endAngle) / 2;
-  const radius = innerRadius + (outerRadius - innerRadius) * radiusIndex;
-  const x = cx + radius * Math.cos(-midAngle * RADIAN) - 9;
-  const y = cy + radius * Math.sin(-midAngle * RADIAN) - 9;
-
-  return ACTIVITIES[name].renderIcon({
-    x,
-    y,
-    textAnchor: x > cx ? "start" : "end",
-    dominantBaseline: "central",
-    style: { color: "white" },
-    height: 18,
-    width: 18
-  });
-}
+import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 
 const useStyles = makeStyles(theme => ({
   infoText: {
@@ -249,12 +220,6 @@ export function ActivityList({
     };
   });
 
-  const stats = computeTotalActivityDurations(
-    augmentedAndSortedActivities,
-    fromTime,
-    untilTime
-  );
-
   const showDates =
     augmentedAndSortedActivities.length > 0
       ? !isMissionEnded
@@ -286,19 +251,9 @@ export function ActivityList({
     });
   }
 
-  const canDisplayChart =
-    !hideChart && stats.total > 0 && stats.total >= MINUTE * 15;
+  const canDisplayChart = !hideChart;
 
   const classes = useStyles();
-  const pieData = Object.values(ACTIVITIES)
-    .map(a => ({
-      title: a.label,
-      value: Math.round((stats[a.name] * 100.0) / stats.total),
-      color: a.color,
-      name: a.name,
-      label: formatTimer(stats[a.name])
-    }))
-    .filter(a => !!a.value);
 
   return (
     <Container ref={ref} maxWidth={false} disableGutters>
@@ -353,38 +308,11 @@ export function ActivityList({
         </List>
       )}
       {view === "chart" && canDisplayChart && (
-        <ResponsiveContainer
-          aspect={1}
-          minWidth={200}
-          minHeight={200}
-          maxHeight={300}
-          width="100%"
-          height="100%"
-          className={classes.pieContainer}
-        >
-          <PieChart style={{ margin: "auto", maxHeight: 300, maxWidth: 300 }}>
-            <Pie
-              cx="50%"
-              cy="50%"
-              outerRadius={65}
-              data={pieData}
-              dataKey="value"
-              nameKey="name"
-              label={entry => entry.label}
-            >
-              <LabelList
-                dataKey="label"
-                position="inside"
-                content={entry =>
-                  renderCustomizedLabel(entry.name, entry.viewBox)
-                }
-              />
-              {pieData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-          </PieChart>
-        </ResponsiveContainer>
+        <ActivitiesPieChart
+          activities={augmentedAndSortedActivities}
+          fromTime={fromTime}
+          untilTime={untilTime}
+        />
       )}
       {view === "timeline" && canDisplayChart && (
         <VerticalTimeline
