@@ -341,7 +341,9 @@ export function Employees({ company, containerRef }) {
       virtualized
       virtualizedRowHeight={45}
       virtualizedMaxHeight={"100%"}
-      virtualizedAttachScrollTo={containerRef.current}
+      virtualizedAttachScrollTo={
+        showPendingEmployments ? containerRef.current : null
+      }
       onRowAdd={async ({ idOrEmail, hasAdminRights }) => {
         const payload = {
           hasAdminRights,
