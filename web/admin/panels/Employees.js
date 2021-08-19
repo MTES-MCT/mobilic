@@ -52,6 +52,9 @@ const useStyles = makeStyles(theme => ({
   },
   batchInviteButton: {
     marginBottom: theme.spacing(2)
+  },
+  hideButton: {
+    marginLeft: theme.spacing(2)
   }
 }));
 
@@ -66,9 +69,14 @@ export function Employees({ company, containerRef }) {
     value: false
   })[1];
 
+  const [hidePendingEmployments, setHidePendingEmployments] = React.useState(
+    false
+  );
+
   const classes = useStyles();
 
-  const tableRef = React.useRef();
+  const pendingEmploymentsTableRef = React.useRef();
+  const validEmploymentsTableRef = React.useRef();
 
   async function cancelEmployment(employment) {
     try {
@@ -255,11 +263,13 @@ export function Employees({ company, containerRef }) {
       hasAdminRights: e.hasAdminRights ? 1 : 0
     }));
 
-  const showPendingEmployments =
-    (tableRef.current &&
-      tableRef.current.isAddingRow &&
-      tableRef.current.isAddingRow()) ||
-    pendingEmployments.length > 0;
+  const isAddingEmployment =
+    pendingEmploymentsTableRef.current &&
+    pendingEmploymentsTableRef.current.isAddingRow &&
+    pendingEmploymentsTableRef.current.isAddingRow();
+
+  const canDisplayPendingEmployments =
+    isAddingEmployment || pendingEmployments.length > 0;
 
   return [
     <Button
@@ -298,6 +308,10 @@ export function Employees({ company, containerRef }) {
                   "batch-invite-success",
                   6000
                 );
+              setTimeout(
+                validEmploymentsTableRef.current.updateScrollPosition,
+                0
+              );
             });
           }
         })
@@ -307,18 +321,37 @@ export function Employees({ company, containerRef }) {
     </Button>,
     <Box
       key={0}
-      className={`${showPendingEmployments ? "" : classes.displayNone} ${
+      className={`${canDisplayPendingEmployments ? "" : classes.displayNone} ${
         classes.title
       }`}
     >
       <Typography variant="h4">
-        Invitations en attente ({pendingEmployments.length})
+        Invitations en attente ({pendingEmployments.length}){" "}
+        {
+          <Button
+            disabled={isAddingEmployment}
+            color="primary"
+            className={classes.hideButton}
+            onClick={() => {
+              setHidePendingEmployments(!hidePendingEmployments);
+              setTimeout(
+                validEmploymentsTableRef.current.updateScrollPosition,
+                0
+              );
+            }}
+          >
+            {hidePendingEmployments ? "Afficher" : "Masquer"}
+          </Button>
+        }
       </Typography>
       <Button
         variant="contained"
         size="small"
         color="primary"
-        onClick={() => tableRef.current.newRow()}
+        onClick={() => {
+          setHidePendingEmployments(false);
+          pendingEmploymentsTableRef.current.newRow();
+        }}
         className={classes.actionButton}
       >
         Inviter un nouveau salarié
@@ -328,11 +361,13 @@ export function Employees({ company, containerRef }) {
       key={1}
       columns={pendingEmploymentColumns}
       entries={pendingEmployments}
-      ref={tableRef}
+      ref={pendingEmploymentsTableRef}
       dense
-      className={`${showPendingEmployments ? "" : classes.displayNone} ${
-        classes.pendingEmployments
-      }`}
+      className={`${
+        canDisplayPendingEmployments && !hidePendingEmployments
+          ? ""
+          : classes.displayNone
+      } ${classes.pendingEmployments}`}
       validateNewRowData={({ idOrEmail }) => !!idOrEmail}
       forceParentUpdateOnRowAdd={() => setForceUpdate(value => !value)}
       editActionsColumnMinWidth={180}
@@ -342,7 +377,7 @@ export function Employees({ company, containerRef }) {
       virtualizedRowHeight={45}
       virtualizedMaxHeight={"100%"}
       virtualizedAttachScrollTo={
-        showPendingEmployments ? containerRef.current : null
+        canDisplayPendingEmployments ? containerRef.current : null
       }
       onRowAdd={async ({ idOrEmail, hasAdminRights }) => {
         const payload = {
@@ -396,12 +431,12 @@ export function Employees({ company, containerRef }) {
     />,
     <Box key={3} className={classes.title}>
       <Typography variant="h4">Employés ({validEmployments.length})</Typography>
-      {!showPendingEmployments && (
+      {!canDisplayPendingEmployments && (
         <Button
           variant="contained"
           size="small"
           color="primary"
-          onClick={() => tableRef.current.newRow()}
+          onClick={() => pendingEmploymentsTableRef.current.newRow()}
           className={classes.actionButton}
         >
           Inviter un nouveau salarié
@@ -418,6 +453,7 @@ export function Employees({ company, containerRef }) {
       entries={validEmployments}
       virtualizedRowHeight={45}
       virtualizedMaxHeight={"100%"}
+      ref={validEmploymentsTableRef}
       defaultSortBy="name"
       alwaysSortBy={[["active", "desc"]]}
       virtualizedAttachScrollTo={containerRef.current}

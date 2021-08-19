@@ -164,7 +164,7 @@ export const AugmentedTable = React.forwardRef(
       defaultSortBy ? defaultSortType : undefined
     );
 
-    const tableRef = ref || React.useRef();
+    const tableRef = React.useRef();
 
     const [editedRowId, setEditedRowId] = React.useState(null);
     const [editedValues, setEditedValues] = React.useState({});
@@ -257,7 +257,11 @@ export const AugmentedTable = React.forwardRef(
 
     React.useImperativeHandle(ref, () => ({
       newRow: initNewRow,
-      isAddingRow: () => isCurrentlyAddingRow
+      isAddingRow: () => isCurrentlyAddingRow,
+      updateScrollPosition: () =>
+        tableRef.current &&
+        tableRef.current.updateScrollPosition &&
+        tableRef.current.updateScrollPosition()
     }));
 
     const onToggleCollapseGroup = groupKey => {
@@ -869,8 +873,17 @@ const VirtualizedTable = React.forwardRef(
     },
     ref
   ) => {
+    const scrollerRef = React.useRef();
+
+    React.useImperativeHandle(ref, () => ({
+      updateScrollPosition: () =>
+        scrollerRef.current &&
+        scrollerRef.current.updatePosition &&
+        scrollerRef.current.updatePosition()
+    }));
+
     return attachScrollTo ? (
-      <WindowScroller scrollElement={attachScrollTo}>
+      <WindowScroller ref={scrollerRef} scrollElement={attachScrollTo}>
         {({ height, registerChild, onChildScroll, scrollTop }) => (
           <AutoSizer
             disableHeight
