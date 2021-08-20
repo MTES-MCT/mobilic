@@ -3,7 +3,6 @@
 **Simplifier le suivi du temps de travail dans le transport routier léger pour lutter contre le travail illégal**
 
 <img height="100px" style="margin-right: 20px" src="./common/assets/images/mobilic-logo-with-text.svg" alt="mobilic-logo"></img>
-<img height="100px" src="./public/ministere-transports-white.svg" alt="ministere-logo"></img>
 
 Dépôt de code (partie front) de la startup d'état **Mobilic** incubée à la Fabrique Numérique du Ministère de la Transition Écologique.
 
@@ -20,10 +19,12 @@ Le projet est divisé en 2 grandes briques distinctes :
 - le front (= le site web Mobilic)
   - Single Page App React.js servie par Nginx (statique)
   - le dépôt est organisé par outil
+
     - `web/pwa` : PWA de saisie des temps pour les salariés (sur mobile)
     - `web/admin` : dashboard de suivi pour les gestionnaires (sur Desktop)
     - `web/control` : divers services pour les corps de contrôle
     - `web/landing` : pages publiques
+    - `web/home` : homepage d'un utilisateur
 - le back (l'API Mobilic)
   - Application Flask servie par Gunicorn avec une API GraphQL
   - [lien vers le dépôt](https://github.com/MTES-MCT/mobilic-api)
@@ -39,9 +40,8 @@ Les serveurs du back et du front sont hébergés chez [Scalingo](https://scaling
 - **dev** pour le développement en local
 - **test** pour les tests
 - **staging**: environnement de recette fonctionnelle, synchronisé avec la branche `master`.
-- **sandbox**: environnement miroir de la prod qui sert d'espace de test pour les utilisateurs de l'API et pour les contrôleurs
-
-* **prod**: environnement de production, synchronisé avec la branche `prod`
+- **prod**: environnement de production, synchronisé avec la branche `prod`
+- **sandbox**: environnement miroir de la prod qui sert d'espace de test pour les utilisateurs de l'API et pour les contrôleurs. Synchronisé lui aussi avec la branche _prod_.
 
 ## Outillage
 
@@ -55,7 +55,7 @@ Les serveurs du back et du front sont hébergés chez [Scalingo](https://scaling
 
 ## Développement local
 
-La partie suivante couvre uniquement le front. Pour le back il faut se rendre dans le dépôt correspondant.
+La partie suivante couvre uniquement le front. Pour le back il faut se rendre dans le [dépôt correspondant](https://github.com/MTES-MCT/mobilic-api).
 
 ### Pré-requis
 
@@ -73,7 +73,7 @@ yarn install
 
 ### Variables d'environnement
 
-Une seule variable pertinente pour le développement locale :
+Une seule variable pertinente pour le développement local :
 
 - `REACT_APP_API_HOST` qui précise l'URL du serveur du back (http://localhost:5000 le plus souvent)
 
@@ -106,7 +106,7 @@ L'image de production sera alors servie à l'adresse http://localhost:3001.
 L'intérêt d'utiliser une image de production plutôt que le serveur de développement est assez anecdotique :
 
 - soit pour évaluer la performance du code
-- soit pour tester le mode offline de la PWA (en effet le serveur de développement ne gère pas le service worker du navigateur).
+- soit pour tester le mode offline de la PWA (en effet le serveur de développement ne permet pas de configurer le service worker du navigateur).
 
 ### Tester la config Nginx
 
@@ -116,7 +116,7 @@ En production l'image générée par `yarn build` est servie par un serveur ngin
 - ajoute les en-tête de réponse, notamment concernant la gestion de cache et la sécurité
 - reverse proxy les requêtes à `/api` vers le serveur du back
 
-Cette couche Nginx est ajoutée via un [buildpack Scalingo](https://doc.scalingo.com/platform/deployment/buildpacks/nginx), qui construit un ficher de config nginx valide à partir des données suivantes [./servers.conf.erb]. Le template utilisé par Scalingo pour le fichier est [ici](https://github.com/Scalingo/nginx-buildpack/blob/master/config/nginx.conf.erb).
+Cette couche Nginx est ajoutée via un [buildpack Scalingo](https://doc.scalingo.com/platform/deployment/buildpacks/nginx), qui construit un ficher de config nginx valide à partir des [données suivantes](./servers.conf.erb). Le template utilisé par Scalingo pour le fichier est [ici](https://github.com/Scalingo/nginx-buildpack/blob/master/config/nginx.conf.erb).
 
 ## Infos complémentaires
 
