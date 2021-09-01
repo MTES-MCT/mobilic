@@ -28,7 +28,11 @@ import TextField from "@material-ui/core/TextField/TextField";
 import List from "@material-ui/core/List";
 import { Comment } from "../../common/Comment";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { formatApiError } from "common/utils/errors";
+import {
+  formatApiError,
+  graphQLErrorMatchesCode,
+  isGraphQLError
+} from "common/utils/errors";
 import Button from "@material-ui/core/Button";
 import { computeMissionStats } from "../panels/Validations";
 import { addBreakOps } from "../../pwa/components/ActivityRevision";
@@ -942,6 +946,7 @@ export function MissionDetails({
         color="primary"
         size="small"
         onClick={async () => {
+          let errorToDisplay = null;
           try {
             await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
               missionId: mission.id
@@ -950,6 +955,19 @@ export function MissionDetails({
               missions.filter(m => m.id !== mission.id)
             );
             handleClose();
+          } catch (err) {
+            if (
+              !(
+                isGraphQLError(err) &&
+                err.graphQLErrors.every(e =>
+                  graphQLErrorMatchesCode(e, "NO_ACTIVITIES_TO_VALIDATE")
+                )
+              )
+            )
+              errorToDisplay = formatApiError(err);
+          }
+          if (errorToDisplay) alerts.error(errorToDisplay, mission.id, 6000);
+          else
             alerts.success(
               `La mission${
                 mission.name ? " " + mission.name : ""
@@ -957,9 +975,6 @@ export function MissionDetails({
               mission.id,
               6000
             );
-          } catch (err) {
-            alerts.error(formatApiError(err), mission.id, 6000);
-          }
         }}
       >
         Valider toute la mission
