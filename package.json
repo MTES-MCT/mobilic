@@ -108,6 +108,7 @@
     "start": "node scripts/start.js",
     "start-https": "HTTPS=true node scripts/start.js",
     "build": "INLINE_RUNTIME_CHUNK=false node scripts/build.js && rm build/static/js/*.map && yarn build-doc && yarn inject-doc-build",
+    "build-with-nginx": "yarn build && scripts/start_nginx.sh",
     "build-doc": "cd docs/website && yarn install && yarn build && cd ../..",
     "inject-doc-build": "rm -rf build/developers && cp -r docs/website/build/api-mobilic-doc build/developers",
     "test": "node scripts/test.js",

@@ -17,6 +17,7 @@ Ce `README` s'adresse aux développeurs informatiques du projet. Pour plus d'inf
 Le projet est divisé en 2 grandes briques distinctes :
 
 - le front (= le site web Mobilic)
+
   - Single Page App React.js servie par Nginx (statique)
   - le dépôt est organisé par outil
 
@@ -25,6 +26,7 @@ Le projet est divisé en 2 grandes briques distinctes :
     - `web/control` : divers services pour les corps de contrôle
     - `web/landing` : pages publiques
     - `web/home` : homepage d'un utilisateur
+
 - le back (l'API Mobilic)
   - Application Flask servie par Gunicorn avec une API GraphQL
   - [lien vers le dépôt](https://github.com/MTES-MCT/mobilic-api)
@@ -108,7 +110,7 @@ L'intérêt d'utiliser une image de production plutôt que le serveur de dévelo
 - soit pour évaluer la performance du code
 - soit pour tester le mode offline de la PWA (en effet le serveur de développement ne permet pas de configurer le service worker du navigateur).
 
-### Tester la config Nginx
+### Tester dans des conditions identiques à la production
 
 En production l'image générée par `yarn build` est servie par un serveur nginx qui effectue en plus les choses suivantes :
 
@@ -116,7 +118,13 @@ En production l'image générée par `yarn build` est servie par un serveur ngin
 - ajoute les en-tête de réponse, notamment concernant la gestion de cache et la sécurité
 - reverse proxy les requêtes à `/api` vers le serveur du back
 
-Cette couche Nginx est ajoutée via un [buildpack Scalingo](https://doc.scalingo.com/platform/deployment/buildpacks/nginx), qui construit un ficher de config nginx valide à partir des [données suivantes](./servers.conf.erb). Le template utilisé par Scalingo pour le fichier est [ici](https://github.com/Scalingo/nginx-buildpack/blob/master/config/nginx.conf.erb).
+Cette couche Nginx est ajoutée via un [buildpack Scalingo](https://doc.scalingo.com/platform/deployment/buildpacks/nginx), qui construit un ficher de config nginx valide à partir des [données suivantes](./servers.conf.erb).
+
+En développement local il est possible d'ajouter cette couche Nginx (avec la même configuration sauf la partie https). La commande suivante permet de créer une image de production puis de la servir via un serveur Nginx :
+
+```sh
+REACT_APP_API_HOST=... yarn build-with-nginx
+```
 
 ## Infos complémentaires
 
