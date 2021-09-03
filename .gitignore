@@ -27,3 +27,6 @@ yarn-error.log*
 
 # Misc infra scripts
 devops
+
+# Local nginx
+nginx/

@@ -13,11 +13,13 @@ server {
 
     port_in_redirect off;
     keepalive_timeout 5;
-    root /app/build/;
+    root <%= ENV['BUILD_FOLDER'] || "/app/build/" %>;
 
-    if ($http_x_forwarded_proto != "https") {
-      return 301 https://$host$request_uri;
-    }
+    <% if not ENV['DISABLE_FORCE_HTTPS'] %>
+        if ($http_x_forwarded_proto != "https") {
+          return 301 https://$host$request_uri;
+        }
+    <% end %>
 
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
     add_header X-Frame-Options "deny";
