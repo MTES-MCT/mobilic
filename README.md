@@ -126,6 +126,11 @@ En développement local il est possible d'ajouter cette couche Nginx (avec la m�
 REACT_APP_API_HOST=... yarn build-with-nginx
 ```
 
+Cette commande nécessite comme pré-requis :
+
+- `nginx` en ligne de commande
+- `erb`, la ligne de commande de Ruby pour remplir des templates
+
 ## Infos complémentaires
 
 Le front a été initialisé avec la boîte à outils [Create React App](https://github.com/facebook/create-react-app).
