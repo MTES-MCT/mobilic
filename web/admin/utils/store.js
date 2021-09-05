@@ -59,7 +59,7 @@ export function AdminStoreProvider({ children }) {
       )
     );
     const newMissionIds = flatMap(
-      companiesPayload.map(c => c.missions.edges.map(m => m.id))
+      companiesPayload.map(c => c.missions.edges.map(m => m.node.id))
     );
     setMissions(missions => [
       ...missions.filter(m => !newMissionIds.includes(m.id)),
