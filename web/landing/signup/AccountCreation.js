@@ -90,9 +90,14 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
         if (employeeInvite) {
           signupPayload.inviteToken = employeeInvite.inviteToken;
         }
-        await api.graphQlMutate(USER_SIGNUP_MUTATION, signupPayload, {
-          context: { nonPublicApi: true }
-        });
+        await api.graphQlMutate(
+          USER_SIGNUP_MUTATION,
+          signupPayload,
+          {
+            context: { nonPublicApi: true }
+          },
+          true
+        );
         await store.updateUserIdAndInfo();
         if (isAdmin) history.push("/signup/company?onboarding=true");
         else history.push("/signup/complete");

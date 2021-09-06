@@ -93,16 +93,19 @@ class Api {
     );
   }
 
-  async graphQlMutate(query, variables, other) {
+  async graphQlMutate(query, variables, other, disableRefreshToken = false) {
     this.initApolloClientIfNeeded();
-    return await this._queryWithRefreshToken(() =>
+    const func = () =>
       this.apolloClient.mutate({
         mutation: query,
         variables: variables,
         fetchPolicy: "no-cache",
         ...other
-      })
-    );
+      });
+    if (disableRefreshToken) {
+      return await func();
+    }
+    return await this._queryWithRefreshToken(func);
   }
 
   async _fetch(queryInfo, options = {}) {
@@ -146,8 +149,8 @@ class Api {
     return await fetch(url, actualOptions);
   }
 
-  async httpQuery(queryInfo, options = {}) {
-    return await this._queryWithRefreshToken(async () => {
+  async httpQuery(queryInfo, options = {}, disableRefreshToken = false) {
+    const func = async () => {
       const response = await this._fetch(queryInfo, options);
       if (response.status !== 200) {
         const error = new Error("Response status is not 200");
@@ -156,7 +159,12 @@ class Api {
         throw error;
       }
       return response;
-    });
+    };
+
+    if (disableRefreshToken) {
+      return await func();
+    }
+    return await this._queryWithRefreshToken(func);
   }
 
   async downloadFileHttpQuery(queryInfo, options = {}) {

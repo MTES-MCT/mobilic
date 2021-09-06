@@ -87,7 +87,8 @@ export function ResetPassword() {
           { token, password },
           {
             context: { nonPublicApi: true }
-          }
+          },
+          true
         );
         await store.updateUserIdAndInfo();
         setDidSubmitForm(true);
@@ -228,7 +229,8 @@ export function RequestResetPassword() {
         { mail: email },
         {
           context: { nonPublicApi: true }
-        }
+        },
+        true
       );
       if (!apiResponse.data.account.requestResetPassword.success) {
         throw Error;
