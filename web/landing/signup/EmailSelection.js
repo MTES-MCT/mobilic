@@ -44,6 +44,9 @@ export function EmailSelection() {
   const [origEmailSet, setOrigEmailSet] = React.useState(false);
   const [password, setPassword] = React.useState("");
   const [choosePassword, setChoosePassword] = React.useState(false);
+  const [subscribeToNewsletter, setSubscribeToNewsletter] = React.useState(
+    true
+  );
   const [loading, setLoading] = React.useState(false);
 
   const location = useLocation();
@@ -88,7 +91,11 @@ export function EmailSelection() {
           payload,
           { context: { nonPublicApi: true } }
         );
-
+        if (subscribeToNewsletter) {
+          await api.httpQuery("POST", "/contacts/subscribe_to_newsletter", {
+            json: { list: "employees" }
+          });
+        }
         await store.setUserInfo({
           ...userInfo,
           ...apiResponse.data.signUp.confirmFcEmail
@@ -135,9 +142,9 @@ export function EmailSelection() {
             )}
           </Typography>
           <Typography align="justify" className={classes.text}>
-            Mobilic se servira de cette adresse comme point de contact
-            uniquement pour vous communiquer des informations indispensables au
-            bon fonctionnement du service.
+            Par défaut Mobilic se servira de cette adresse comme point de
+            contact uniquement pour vous communiquer des informations
+            indispensables au bon fonctionnement du service.
           </Typography>
           <TextField
             required
@@ -151,6 +158,23 @@ export function EmailSelection() {
               setEmail(e.target.value.replace(/\s/g, ""));
             }}
           />
+          <FormGroup style={{ marginTop: 16, marginBottom: 32 }}>
+            <FormControlLabel
+              style={{ alignItems: "flex-start", textAlign: "left" }}
+              control={
+                <Checkbox
+                  required
+                  color="primary"
+                  style={{ paddingTop: 0 }}
+                  checked={subscribeToNewsletter}
+                  onChange={() =>
+                    setSubscribeToNewsletter(!subscribeToNewsletter)
+                  }
+                />
+              }
+              label={`Je souhaite m'inscrire à la newsletter Mobilic pour rester informé par mail des dernières évolutions du produit.`}
+            />
+          </FormGroup>
         </Section>
         <Section title="2. Mot de passe (facultatif)">
           <Typography align="justify" className={classes.text}>

@@ -19,6 +19,9 @@ import { PasswordField } from "common/components/PasswordField";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import { USER_SIGNUP_MUTATION } from "common/utils/apiQueries";
+import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox/Checkbox";
+import FormGroup from "@material-ui/core/FormGroup/FormGroup";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   const api = useApi();
@@ -31,6 +34,9 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [subscribeToNewsletter, setSubscribeToNewsletter] = React.useState(
+    true
+  );
   const [loading, setLoading] = React.useState(false);
 
   const handleSubmit = async e => {
@@ -42,7 +48,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
         email,
         password,
         firstName,
-        lastName
+        lastName,
+        subscribeToNewsletter
       );
     } else {
       modals.open("cgu", {
@@ -53,7 +60,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             email,
             password,
             firstName,
-            lastName
+            lastName,
+            subscribeToNewsletter
           ),
         handleReject: () => {}
       });
@@ -66,7 +74,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
     email,
     password,
     firstName,
-    lastName
+    lastName,
+    subscribeToNewsletter
   ) => {
     setLoading(true);
     await alerts.withApiErrorHandling(
@@ -75,7 +84,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           email,
           password,
           firstName: firstName.trim(),
-          lastName: lastName.trim()
+          lastName: lastName.trim(),
+          subscribeToNewsletter
         };
         if (employeeInvite) {
           signupPayload.inviteToken = employeeInvite.inviteToken;
@@ -172,6 +182,23 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
               setLastName(e.target.value.trimLeft());
             }}
           />
+          <FormGroup style={{ marginTop: 16, marginBottom: 32 }}>
+            <FormControlLabel
+              style={{ alignItems: "flex-start", textAlign: "left" }}
+              control={
+                <Checkbox
+                  required
+                  color="primary"
+                  style={{ paddingTop: 0 }}
+                  checked={subscribeToNewsletter}
+                  onChange={() =>
+                    setSubscribeToNewsletter(!subscribeToNewsletter)
+                  }
+                />
+              }
+              label={`Je souhaite m'inscrire à la newsletter Mobilic pour rester informé par mail des dernières évolutions du produit.`}
+            />
+          </FormGroup>
           <Box my={4}>
             <LoadingButton
               aria-label="Inscription"
