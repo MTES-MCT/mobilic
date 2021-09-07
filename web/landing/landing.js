@@ -11,6 +11,20 @@ import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizon
 import BackgroundVerticalImage from "common/assets/images/landing-hero-vertical.svg";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Footer } from "./footer";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import Card from "@material-ui/core/Card";
+import ButtonBase from "@material-ui/core/ButtonBase";
+import Button from "@material-ui/core/Button";
+import {
+  addZero,
+  formatTimeOfDay,
+  SHORT_DAYS,
+  SHORT_MONTHS
+} from "common/utils/time";
+import * as Sentry from "@sentry/browser";
+import Skeleton from "@material-ui/lab/Skeleton";
+import { useApi } from "common/utils/api";
 
 const useStyles = makeStyles(theme => ({
   whiteSection: {
@@ -34,7 +48,7 @@ const useStyles = makeStyles(theme => ({
   sectionTitle: {
     paddingBottom: theme.spacing(6)
   },
-  videoHelperText: {
+  sectionIntroText: {
     paddingBottom: theme.spacing(4),
     maxWidth: 600,
     margin: "auto",
@@ -91,6 +105,42 @@ const useStyles = makeStyles(theme => ({
   },
   questionTitle: {
     paddingBottom: theme.spacing(1)
+  },
+  webinarCard: {
+    width: "100%",
+    paddingBottom: theme.spacing(1),
+    paddingTop: theme.spacing(1),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    backgroundColor: "inherit"
+  },
+  webinarDateDay: {
+    fontWeight: "bold",
+    fontSize: "120%",
+    lineHeight: 1,
+    letterSpacing: "3px",
+    textTransform: "uppercase"
+  },
+  webinarDateMonth: {
+    fontWeight: "bold",
+    fontSize: "80%",
+    textTransform: "uppercase"
+  },
+  webinarDate: {
+    fontSize: "300%",
+    lineHeight: 1,
+    fontWeight: "bold",
+    color: theme.palette.primary.main
+  },
+  webinarTitle: {
+    textAlign: "left"
+  },
+  webinarButton: {
+    width: "100%",
+    backgroundColor: theme.palette.background.paper,
+    "&:hover": {
+      backgroundColor: theme.palette.grey[200]
+    }
   }
 }));
 
@@ -166,18 +216,32 @@ function _Showcase({
 
 const Showcase = withWidth()(_Showcase);
 
-export function Landing() {
-  const [width, setWidth] = React.useState(window.innerWidth);
-
-  React.useLayoutEffect(() => {
-    function updateWidth() {
-      setWidth(window.innerWidth);
-    }
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, []);
-
+export const Landing = withWidth()(({ width }) => {
   const ref = React.useRef();
+  const api = useApi();
+
+  const [webinars, setWebinars] = React.useState([]);
+
+  async function fetchWebinars() {
+    try {
+      const webinarResponse = await api.httpQuery(
+        "GET",
+        "/next-webinars",
+        {},
+        true
+      );
+      const newWebinars = await webinarResponse.json();
+      setWebinars(newWebinars);
+    } catch (err) {
+      Sentry.captureException(err);
+    }
+  }
+
+  React.useEffect(() => {
+    if (webinars.length === 0) {
+      fetchWebinars();
+    }
+  }, []);
 
   const classes = useStyles({ width });
   return [
@@ -186,7 +250,9 @@ export function Landing() {
       <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
         <img
           src={
-            width < 500 ? BackgroundVerticalImage : BackgroundHorizontalImage
+            isWidthDown("xs", width)
+              ? BackgroundVerticalImage
+              : BackgroundHorizontalImage
           }
           alt="Mobilic-hero"
           width="100%"
@@ -204,13 +270,13 @@ export function Landing() {
         <Typography variant="h3" className={`${classes.sectionTitle}`}>
           Mobilic ... 🤔 qu'est-ce que c'est ?
         </Typography>
-        <Typography className={classes.videoHelperText}>
+        <Typography className={classes.sectionIntroText}>
           Mobilic est la plateforme gouvernementale qui permet de{" "}
           <strong>simplifier le suivi du temps de travail</strong> dans le
           transport routier léger et le déménagement afin de lutter contre le
           travail illégal.
         </Typography>
-        <Typography className={classes.videoHelperText}>
+        <Typography className={classes.sectionIntroText}>
           Le livret individuel de contrôle (LIC), qui sert aujourd'hui à
           l'enregistrement du temps de travail des conducteurs de véhicules
           utilitaires légers de moins de 3,5 tonnes, et des autres personnels
@@ -244,7 +310,7 @@ export function Landing() {
         <Typography variant="h3" className={`${classes.sectionTitle}`}>
           A qui s'adresse Mobilic ?
         </Typography>
-        <Typography className={classes.videoHelperText}>
+        <Typography className={classes.sectionIntroText}>
           Mobilic s'adresse aux conducteurs des entreprises de transport routier
           qui utilisent des véhicules utilitaires légers (VUL, {"<"} 3.5T), et
           aux autres{" "}
@@ -423,6 +489,92 @@ export function Landing() {
         </Grid>
       </Container>
     </Container>,
+    <Container key={7} className={`${classes.section}`} maxWidth={false}>
+      <Container maxWidth="md" className={classes.inner}>
+        <Typography variant="h3" className={`${classes.sectionTitle}`}>
+          Prochains webinaires Mobilic
+        </Typography>
+        <Typography className={classes.sectionIntroText}>
+          Vous pouvez assister à un de nos webinaires pour mieux connaître
+          Mobilic, savoir si Mobilic est adapté à vos besoins et comprendre
+          comment l'utiliser.
+        </Typography>
+        <List>
+          {webinars.length > 0
+            ? webinars.map((webinar, index) => {
+                const webinarDate = new Date(webinar.time * 1000);
+                return (
+                  <ListItem key={index} target="_blank">
+                    <ButtonBase
+                      className={classes.webinarButton}
+                      href={webinar.link}
+                      target="_blank"
+                    >
+                      <Card className={classes.webinarCard}>
+                        <Grid
+                          container
+                          alignItems="center"
+                          spacing={isWidthDown("xs", width) ? 2 : 6}
+                          wrap={isWidthDown("xs", width) ? "wrap" : "nowrap"}
+                        >
+                          <Grid
+                            container
+                            item
+                            xs={6}
+                            sm={"auto"}
+                            direction="column"
+                            alignItems="center"
+                            style={{ maxWidth: 120 }}
+                          >
+                            <Grid item>
+                              <Typography className={classes.webinarDateDay}>
+                                {SHORT_DAYS[webinarDate.getDay()]}
+                              </Typography>
+                            </Grid>
+                            <Grid item>
+                              <Typography className={classes.webinarDate}>
+                                {addZero(webinarDate.getDate())}
+                              </Typography>
+                            </Grid>
+                            <Grid item>
+                              <Typography className={classes.webinarDateMonth}>
+                                {SHORT_MONTHS[webinarDate.getMonth()]}{" "}
+                                {webinarDate.getFullYear()}
+                              </Typography>
+                            </Grid>
+                          </Grid>
+                          <Grid item xs={6} sm={"auto"}>
+                            <Typography>
+                              {formatTimeOfDay(webinar.time)}
+                            </Typography>
+                          </Grid>
+                          <Grid item style={{ flexGrow: 1 }}>
+                            <Typography className={classes.webinarTitle}>
+                              {webinar.title}
+                            </Typography>
+                          </Grid>
+                          <Grid item>
+                            <Button color="primary" style={{ paddingLeft: 0 }}>
+                              M'inscrire
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </Card>
+                    </ButtonBase>
+                  </ListItem>
+                );
+              })
+            : [
+                <ListItem key={-1}>
+                  <Skeleton variant="rect" width="100%" height={100} />
+                </ListItem>,
+                <ListItem key={-2}>
+                  <Skeleton variant="rect" width="100%" height={100} />
+                </ListItem>
+              ]}
+        </List>
+      </Container>
+    </Container>,
     <Footer key={7} />
   ];
-}
+});
