@@ -8,6 +8,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import Hidden from "@material-ui/core/Hidden";
 import { SocialNetworkPanel } from "../common/Header";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles(theme => ({
   section: {
@@ -46,6 +47,18 @@ const useStyles = makeStyles(theme => ({
   },
   socialNetworkTitle: {
     marginBottom: theme.spacing(1)
+  },
+  darkButton: {
+    backgroundColor: "inherit",
+    color: theme.palette.primary.contrastText,
+    borderColor: theme.palette.primary.contrastText,
+    "&:hover": {
+      backgroundColor: theme.palette.background.default,
+      color: theme.palette.text.primary
+    }
+  },
+  nlButtonContainer: {
+    alignSelf: "center"
   }
 }));
 
@@ -66,65 +79,22 @@ export function Footer() {
           justify="space-between"
           alignItems="flex-start"
         >
-          <Grid
-            item
-            sm={5}
-            container
-            alignItems="center"
-            spacing={4}
-            direction="column"
-          >
-            <Grid
-              item
-              container
-              wrap="nowrap"
-              spacing={2}
-              direction="row"
-              alignItems="flex-start"
-            >
+          <Grid item md={4} sm={12}>
+            <Grid container direction="column" alignItems="center" spacing={4}>
               <Grid item>
-                <FabNumIcon scale={0.5} />
-              </Grid>
-              <Grid item>
-                <Typography align="justify">
-                  Mobilic est un service numérique de l'Etat incubé à la
-                  Fabrique Numérique du Ministère de la Transition écologique,
-                  membre du réseau d’incubateurs{" "}
-                  {
-                    <Link
-                      className={classes.betaGouvLink}
-                      href="https://beta.gouv.fr"
-                    >
-                      beta.gouv.fr
-                    </Link>
-                  }
-                  .
+                <Typography variant="h4">
+                  Recevez la newsletter pour rester informé des nouveautés
+                  Mobilic
                 </Typography>
               </Grid>
-            </Grid>
-            <Grid
-              item
-              container
-              wrap="nowrap"
-              spacing={2}
-              direction="row"
-              alignItems="flex-start"
-            >
               <Grid item>
-                <MarianneIcon
-                  style={{ width: 70, height: 70, backgroundColor: "white" }}
-                  htmlColor="black"
-                />
-              </Grid>
-              <Grid item>
-                <Typography align="justify">
-                  Mobilic est une initiative soutenue par la Direction générale
-                  des infrastructures des transports et de la mer (DGITM).
-                </Typography>
+                <Button className={classes.darkButton} variant="outlined">
+                  S'inscrire !
+                </Button>
               </Grid>
             </Grid>
           </Grid>
-          <Grid item className={classes.footerLinksSection}>
+          <Grid md={4} sm={6} item className={classes.footerLinksSection}>
             <Typography
               variant="h4"
               className={classes.footerLinksSectionTitle}
@@ -181,7 +151,7 @@ export function Footer() {
             </Typography>
           </Grid>
           <Hidden xsDown>
-            <Grid item>
+            <Grid md={4} sm={6} item>
               <Typography
                 variant="h4"
                 align="left"
@@ -196,6 +166,61 @@ export function Footer() {
               />
             </Grid>
           </Hidden>
+          <Grid item xs={12} container alignItems="flex-start" spacing={4}>
+            <Grid
+              item
+              container
+              sm={6}
+              xs={12}
+              wrap="nowrap"
+              spacing={2}
+              direction="row"
+              alignItems="flex-start"
+            >
+              <Grid item>
+                <FabNumIcon scale={0.5} />
+              </Grid>
+              <Grid item>
+                <Typography align="justify">
+                  Mobilic est un service numérique de l'Etat incubé à la
+                  Fabrique Numérique du Ministère de la Transition écologique,
+                  membre du réseau d’incubateurs{" "}
+                  {
+                    <Link
+                      className={classes.betaGouvLink}
+                      href="https://beta.gouv.fr"
+                    >
+                      beta.gouv.fr
+                    </Link>
+                  }
+                  .
+                </Typography>
+              </Grid>
+            </Grid>
+            <Grid
+              item
+              container
+              sm={6}
+              xs={12}
+              wrap="nowrap"
+              spacing={2}
+              direction="row"
+              alignItems="flex-start"
+            >
+              <Grid item>
+                <MarianneIcon
+                  style={{ width: 70, height: 70, backgroundColor: "white" }}
+                  htmlColor="black"
+                />
+              </Grid>
+              <Grid item>
+                <Typography align="justify">
+                  Mobilic est une initiative soutenue par la Direction générale
+                  des infrastructures des transports et de la mer (DGITM).
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
         </Grid>
       </Container>
       <Container className={classes.socialNetworkContainer}>
