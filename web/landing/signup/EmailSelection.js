@@ -1,6 +1,7 @@
 import React from "react";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
+import * as Sentry from "@sentry/browser";
 import { useApi } from "common/utils/api";
 import { useHistory, useLocation } from "react-router-dom";
 import {
@@ -91,9 +92,13 @@ export function EmailSelection() {
           { context: { nonPublicApi: true } }
         );
         if (subscribeToNewsletter) {
-          await api.httpQuery("POST", "/contacts/subscribe-to-newsletter", {
-            json: { list: "employees" }
-          });
+          try {
+            await api.httpQuery("POST", "/contacts/subscribe-to-newsletter", {
+              json: { list: "employees" }
+            });
+          } catch (err) {
+            Sentry.captureException(err);
+          }
         }
         await store.setUserInfo({
           ...userInfo,
