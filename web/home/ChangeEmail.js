@@ -1,21 +1,23 @@
 import React from "react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
-import TextField from "@material-ui/core/TextField";
 import { LoadingButton } from "common/components/LoadingButton";
 import {
   CustomDialogActions,
   CustomDialogTitle
 } from "../common/CustomDialogTitle";
 import { useSnackbarAlerts } from "../common/Snackbar";
+import { EmailField } from "../common/EmailField";
 
 export default function ChangeEmailModal({ open, handleClose, handleSubmit }) {
   const [email, setEmail] = React.useState("");
+  const [error, setError] = React.useState(null);
 
   const alerts = useSnackbarAlerts();
 
   React.useEffect(() => {
     setEmail("");
+    setError(null);
   }, [open]);
 
   return (
@@ -35,21 +37,24 @@ export default function ChangeEmailModal({ open, handleClose, handleSubmit }) {
         }}
       >
         <DialogContent>
-          <TextField
+          <EmailField
             required
             fullWidth
             className="vertical-form-text-input"
             label="Email"
-            type="email"
-            autoComplete="username"
             value={email}
-            onChange={e => {
-              setEmail(e.target.value.replace(/\s/g, ""));
-            }}
+            validate
+            setValue={setEmail}
+            error={error}
+            setError={setError}
           />
         </DialogContent>
         <CustomDialogActions>
-          <LoadingButton type="submit" disabled={!email} color="primary">
+          <LoadingButton
+            type="submit"
+            disabled={error || !email}
+            color="primary"
+          >
             Enregistrer
           </LoadingButton>
         </CustomDialogActions>

@@ -1,7 +1,6 @@
 import React from "react";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField/TextField";
 import { useApi } from "common/utils/api";
 import { useHistory, useLocation } from "react-router-dom";
 import {
@@ -19,6 +18,7 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import { CONFIRM_FC_EMAIL_MUTATION } from "common/utils/apiQueries";
 import { CheckboxField } from "../../common/CheckboxField";
+import { EmailField } from "../../common/EmailField";
 
 const useStyles = makeStyles(theme => ({
   text: {
@@ -39,6 +39,7 @@ export function EmailSelection() {
 
   const [isAdmin, setIsAdmin] = React.useState(false);
   const [email, setEmail] = React.useState("");
+  const [emailError, setEmailError] = React.useState(null);
   const [origEmailSet, setOrigEmailSet] = React.useState(false);
   const [password, setPassword] = React.useState("");
   const [choosePassword, setChoosePassword] = React.useState(false);
@@ -144,17 +145,16 @@ export function EmailSelection() {
             contact uniquement pour vous communiquer des informations
             indispensables au bon fonctionnement du service.
           </Typography>
-          <TextField
+          <EmailField
             required
             fullWidth
             className="vertical-form-text-input"
             label="Adresse e-mail"
-            type="email"
-            autoComplete="username"
             value={email}
-            onChange={e => {
-              setEmail(e.target.value.replace(/\s/g, ""));
-            }}
+            setValue={setEmail}
+            validate
+            error={emailError}
+            setError={setEmailError}
           />
           <CheckboxField
             checked={subscribeToNewsletter}
@@ -201,7 +201,7 @@ export function EmailSelection() {
             color="primary"
             type="submit"
             loading={loading}
-            disabled={!email || (choosePassword && !password)}
+            disabled={emailError || !email || (choosePassword && !password)}
           >
             Continuer
           </LoadingButton>
