@@ -20,6 +20,7 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import { USER_SIGNUP_MUTATION } from "common/utils/apiQueries";
 import { CheckboxField } from "../../common/CheckboxField";
+import { EmailField } from "../../common/EmailField";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   const api = useApi();
@@ -31,6 +32,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [subscribeToNewsletter, setSubscribeToNewsletter] = React.useState(
     true
@@ -135,24 +137,22 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           autoComplete="off"
           onSubmit={handleSubmit}
         >
-          <TextField
+          <EmailField
             required
             fullWidth
             className="vertical-form-text-input"
             label="Email"
-            type="email"
-            autoComplete="username"
             value={email}
-            onChange={e => {
-              setEmail(e.target.value.replace(/\s/g, ""));
-            }}
+            setValue={setEmail}
+            validate
+            error={emailError}
+            setError={setEmailError}
           />
           <PasswordField
             required
             fullWidth
             className="vertical-form-text-input"
             label="Choisissez un mot de passe"
-            autoComplete="current-password"
             value={password}
             onChange={e => {
               setPassword(e.target.value);
@@ -191,7 +191,9 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
               variant="contained"
               color="primary"
               type="submit"
-              disabled={!email || !password || !firstName || !lastName}
+              disabled={
+                emailError || !email || !password || !firstName || !lastName
+              }
               loading={loading}
             >
               M'inscrire
