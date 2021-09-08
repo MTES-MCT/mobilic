@@ -14,13 +14,11 @@ import Container from "@material-ui/core/Container";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Section } from "../../common/Section";
 import { useModals } from "common/utils/modals";
-import Checkbox from "@material-ui/core/Checkbox/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
-import FormGroup from "@material-ui/core/FormGroup";
 import { PasswordField } from "common/components/PasswordField";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import { CONFIRM_FC_EMAIL_MUTATION } from "common/utils/apiQueries";
+import { CheckboxField } from "../../common/CheckboxField";
 
 const useStyles = makeStyles(theme => ({
   text: {
@@ -92,7 +90,7 @@ export function EmailSelection() {
           { context: { nonPublicApi: true } }
         );
         if (subscribeToNewsletter) {
-          await api.httpQuery("POST", "/contacts/subscribe_to_newsletter", {
+          await api.httpQuery("POST", "/contacts/subscribe-to-newsletter", {
             json: { list: "employees" }
           });
         }
@@ -158,23 +156,11 @@ export function EmailSelection() {
               setEmail(e.target.value.replace(/\s/g, ""));
             }}
           />
-          <FormGroup style={{ marginTop: 16, marginBottom: 32 }}>
-            <FormControlLabel
-              style={{ alignItems: "flex-start", textAlign: "left" }}
-              control={
-                <Checkbox
-                  required
-                  color="primary"
-                  style={{ paddingTop: 0 }}
-                  checked={subscribeToNewsletter}
-                  onChange={() =>
-                    setSubscribeToNewsletter(!subscribeToNewsletter)
-                  }
-                />
-              }
-              label={`Je souhaite m'inscrire à la newsletter Mobilic pour rester informé par mail des dernières évolutions du produit.`}
-            />
-          </FormGroup>
+          <CheckboxField
+            checked={subscribeToNewsletter}
+            onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
+            label="Je souhaite m'inscrire à la newsletter Mobilic pour rester informé par mail des dernières évolutions du produit"
+          />
         </Section>
         <Section title="2. Mot de passe (facultatif)">
           <Typography align="justify" className={classes.text}>
@@ -186,21 +172,14 @@ export function EmailSelection() {
             Le nom d'utilisateur associé sera l'adresse email renseignée
             ci-dessus.
           </Typography>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  checked={choosePassword}
-                  onChange={() => {
-                    if (choosePassword) setPassword("");
-                    setChoosePassword(!choosePassword);
-                  }}
-                />
-              }
-              label="Choisir un mot de passe"
-            />
-          </FormGroup>
+          <CheckboxField
+            checked={choosePassword}
+            onChange={() => {
+              if (choosePassword) setPassword("");
+              setChoosePassword(!choosePassword);
+            }}
+            label="Choisir un mot de passe"
+          />
           {choosePassword && (
             <PasswordField
               reuired

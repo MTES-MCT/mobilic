@@ -16,14 +16,12 @@ import {
   broadCastChannel,
   useStoreSyncedWithLocalStorage
 } from "common/utils/store";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import FormGroup from "@material-ui/core/FormGroup";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import SignupStepper from "./SignupStepper";
 import { COMPANY_SIGNUP_MUTATION, SIREN_QUERY } from "common/utils/apiQueries";
 import { Link } from "../../common/LinkButton";
+import { CheckboxField } from "../../common/CheckboxField";
 
 const useStyles = makeStyles(theme => ({
   formFieldTitle: {
@@ -347,20 +345,12 @@ export function CompanySignup() {
               value={usualName}
               onChange={e => setUsualName(e.target.value.trimLeft())}
             />
-            <FormGroup>
-              <FormControlLabel
-                style={{ textAlign: "left" }}
-                control={
-                  <Checkbox
-                    required
-                    color="primary"
-                    checked={claimedRights}
-                    onChange={() => setClaimedRights(!claimedRights)}
-                  />
-                }
-                label="J'atteste être habilité(e) à administrer l'entreprise"
-              />
-            </FormGroup>
+            <CheckboxField
+              checked={claimedRights}
+              onChange={() => setClaimedRights(!claimedRights)}
+              label="J'atteste être habilité(e) à administrer l'entreprise"
+              required
+            />
             <LoadingButton
               aria-label="Terminer inscription"
               className={classes.verticalFormButton}
