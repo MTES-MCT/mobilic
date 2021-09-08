@@ -88,7 +88,11 @@ export function Footer() {
                 </Typography>
               </Grid>
               <Grid item>
-                <Button className={classes.darkButton} variant="outlined">
+                <Button
+                  className={classes.darkButton}
+                  variant="outlined"
+                  onClick={() => modals.open("newsletterSubscription")}
+                >
                   S'inscrire !
                 </Button>
               </Grid>
