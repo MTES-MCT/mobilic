@@ -83,7 +83,7 @@ export function Footer() {
             <Grid container direction="column" alignItems="center" spacing={4}>
               <Grid item>
                 <Typography variant="h4">
-                  Recevez la newsletter pour rester informé des nouveautés
+                  Recevez la newsletter pour rester informé(e) des nouveautés
                   Mobilic
                 </Typography>
               </Grid>
