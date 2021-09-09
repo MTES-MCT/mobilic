@@ -13,6 +13,7 @@ import { EmailField } from "../common/EmailField";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { useApi } from "common/utils/api";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import { HTTP_QUERIES } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   caption: {
@@ -60,7 +61,7 @@ export default function NewsletterSubscriptionModal({ open, handleClose }) {
     e.preventDefault();
     setLoading(true);
     await alerts.withApiErrorHandling(async () => {
-      await api.httpQuery("POST", "/contacts/subscribe-to-newsletter", {
+      await api.httpQuery(HTTP_QUERIES.subscribeToNewsletter, {
         json: { list: profile === "others" ? "admins" : profile, email }
       });
       await alerts.success(

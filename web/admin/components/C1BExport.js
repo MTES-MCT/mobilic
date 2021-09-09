@@ -20,6 +20,7 @@ import Box from "@material-ui/core/Box";
 import Switch from "@material-ui/core/Switch/Switch";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
 import Alert from "@material-ui/lab/Alert";
+import { HTTP_QUERIES } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -237,11 +238,9 @@ export default function C1BExport({
               linkType: "download"
             });
             try {
-              await api.downloadFileHttpQuery(
-                "POST",
-                `/companies/generate_tachograph_files`,
-                { json: options }
-              );
+              await api.downloadFileHttpQuery(HTTP_QUERIES.companyC1bExport, {
+                json: options
+              });
             } catch (err) {
               alerts.error(
                 formatApiError(err),

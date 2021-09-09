@@ -21,6 +21,7 @@ import {
   startOfDayAsDate,
   startOfMonthAsDate
 } from "common/utils/time";
+import { HTTP_QUERIES } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -159,11 +160,9 @@ export default function PDFExport({ open, handleClose }) {
               linkType: "download"
             });
             try {
-              await api.downloadFileHttpQuery(
-                "POST",
-                `/users/generate_pdf_export`,
-                { json: options }
-              );
+              await api.downloadFileHttpQuery(HTTP_QUERIES.pdfExport, {
+                json: options
+              });
             } catch (err) {
               alerts.error(formatApiError(err), "generate_pdf_export", 6000);
             }

@@ -9,6 +9,7 @@ import { useApi } from "common/utils/api";
 import { formatApiError } from "common/utils/errors";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { now } from "common/utils/time";
+import { HTTP_QUERIES } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -40,8 +41,7 @@ export default function UserReadQRCodeModal({ open, handleClose }) {
   async function getReadLink() {
     try {
       const tokenResponse = await api.httpQuery(
-        "POST",
-        "/control/generate-user-read-token"
+        HTTP_QUERIES.generateUserReadToken
       );
       const json = await tokenResponse.json();
       const token = json.token;
