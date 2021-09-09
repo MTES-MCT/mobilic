@@ -35,6 +35,8 @@ import {
   UPDATE_MISSION_VEHICLE_MUTATION,
   VALIDATE_MISSION_MUTATION
 } from "./apiQueries";
+import fromPairs from "lodash/fromPairs";
+import uniq from "lodash/uniq";
 
 const ActionsContext = React.createContext(() => {});
 
@@ -1096,7 +1098,7 @@ class Actions {
 
     const userId = this.store.userId();
     if (team.includes(userId)) {
-      this.endMission({
+      await this.endMission({
         endTime,
         mission,
         userId,
@@ -1119,6 +1121,38 @@ class Actions {
           })
         )
     );
+  };
+
+  openEndMissionModal = async ({ mission, team, missionEndTime }) => {
+    this.modals.open("endMission", {
+      currentExpenditures: fromPairs(
+        uniq(mission.expenditures.map(e => [e.type, true]))
+      ),
+      companyAddresses: this.store
+        .getEntity("knownAddresses")
+        .filter(
+          a =>
+            a.companyId ===
+            (mission.company ? mission.company.id : mission.companyId)
+        ),
+      handleMissionEnd: async (
+        expenditures,
+        comment,
+        address,
+        kilometerReading
+      ) =>
+        await this.endMissionForTeam({
+          mission: mission,
+          team: mission.submittedBySomeoneElse ? [] : team,
+          endTime: missionEndTime,
+          expenditures,
+          comment,
+          endLocation: address,
+          kilometerReading
+        }),
+      currentEndLocation: mission.endLocation,
+      currentMission: mission
+    });
   };
 
   endMission = async ({

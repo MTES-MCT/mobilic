@@ -209,7 +209,9 @@ export function ActivitySwitch({
       </Grid>
       {endMission && (
         <Box pt={6} pb={2}>
-          <MainCtaButton onClick={endMission}>Mission terminée</MainCtaButton>
+          <MainCtaButton onClick={() => endMission(now())}>
+            Mission terminée
+          </MainCtaButton>
         </Box>
       )}
     </Box>

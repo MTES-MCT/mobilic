@@ -8,9 +8,6 @@ import Box from "@material-ui/core/Box";
 import { ACTIVITIES } from "common/utils/activities";
 import { now } from "common/utils/time";
 import { useModals } from "common/utils/modals";
-import fromPairs from "lodash/fromPairs";
-import uniq from "lodash/uniq";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 
 export function CurrentActivity({
   latestActivity,
@@ -20,9 +17,9 @@ export function CurrentActivity({
   registerKilometerReading,
   editActivityEvent,
   editVehicle,
-  endMissionForTeam,
   endMission,
-  previousMissionEnd
+  previousMissionEnd,
+  openEndMissionModal
 }) {
   const currentTeam = resolveTeamAt(currentMission.teamChanges, now());
 
@@ -34,46 +31,11 @@ export function CurrentActivity({
 
   const modals = useModals();
 
-  const store = useStoreSyncedWithLocalStorage();
-
-  const clickEndMission = () => {
-    const missionEndTime = now();
-    modals.open("endMission", {
-      currentExpenditures: fromPairs(
-        uniq(currentMission.expenditures.map(e => [e.type, true]))
-      ),
-      companyAddresses: store
-        .getEntity("knownAddresses")
-        .filter(
-          a =>
-            a.companyId ===
-            (currentMission.company
-              ? currentMission.company.id
-              : currentMission.companyId)
-        ),
-      handleMissionEnd: async (
-        expenditures,
-        comment,
-        address,
-        kilometerReading
-      ) =>
-        await endMissionForTeam({
-          mission: currentMission,
-          team: currentMission.submittedBySomeoneElse ? [] : currentTeam,
-          endTime: missionEndTime,
-          expenditures,
-          comment,
-          endLocation: address,
-          kilometerReading
-        }),
-      currentEndLocation: currentMission.endLocation,
-      currentMission: currentMission
-    });
-  };
-
   modals.open("warningEndMissionModal", {
     latestActivity: latestActivity,
-    handleMissionEnd: clickEndMission
+    handleMissionEnd: () => {
+      openEndMissionModal({ mission: currentMission, team: currentTeam });
+    }
   });
 
   return [
@@ -123,7 +85,13 @@ export function CurrentActivity({
               })
             ])
       }
-      endMission={clickEndMission}
+      endMission={endTime => {
+        openEndMissionModal({
+          mission: currentMission,
+          team: currentTeam,
+          missionEndTime: endTime
+        });
+      }}
       currentMission={currentMission}
       requireVehicle={!currentMission.vehicle}
       company={currentMission.company}

@@ -122,6 +122,7 @@ function _App({ ScreenComponent, loadUser }) {
             beginNewMission={actions.beginNewMission}
             endMissionForTeam={actions.endMissionForTeam}
             endMission={actions.endMission}
+            openEndMissionModal={actions.openEndMissionModal}
             validateMission={actions.validateMission}
             editVehicle={actions.updateMissionVehicle}
             logExpenditureForTeam={actions.logExpenditureForTeam}

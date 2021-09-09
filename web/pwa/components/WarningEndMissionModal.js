@@ -12,6 +12,7 @@ import { getActivityStartTimeToUse } from "common/utils/events";
 import { now, formatWarningDurationTime } from "common/utils/time";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { ACTIVITIES } from "common/utils/activities";
+import { MainCtaButton } from "./MainCtaButton";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -60,12 +61,7 @@ export default function WarningEndMissionModal({
 
   const durationToDisplay = formatWarningDurationTime(currentActivityDuration);
   return (
-    <Dialog
-      onClose={dismissModal}
-      open={shouldOpen}
-      handleMissionEnd={handleMissionEnd}
-      scroll="paper"
-    >
+    <Dialog onClose={dismissModal} open={shouldOpen} scroll="paper">
       <CustomDialogTitle
         title={"⚠️ Mission terminée ?"}
         handleClose={handleClose}
@@ -77,24 +73,17 @@ export default function WarningEndMissionModal({
           l'horaire de fin ?
         </Typography>
         <CustomDialogActions>
-          <LoadingButton
-            color="primary"
-            onClick={async () => {
-              handleClose();
-            }}
-          >
+          <LoadingButton color="primary" onClick={dismissModal}>
             Poursuivre la mission
           </LoadingButton>
-          <LoadingButton
-            variant="contained"
-            color="primary"
+          <MainCtaButton
             onClick={() => {
-              handleClose();
+              dismissModal();
               handleMissionEnd();
             }}
           >
             Terminer la mission
-          </LoadingButton>
+          </MainCtaButton>
         </CustomDialogActions>
       </DialogContent>
     </Dialog>
