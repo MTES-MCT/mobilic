@@ -40,7 +40,7 @@ export function EmailSelection() {
 
   const [isAdmin, setIsAdmin] = React.useState(false);
   const [email, setEmail] = React.useState("");
-  const [emailError, setEmailError] = React.useState(null);
+  const [emailError, setEmailError] = React.useState("");
   const [origEmailSet, setOrigEmailSet] = React.useState(false);
   const [password, setPassword] = React.useState("");
   const [choosePassword, setChoosePassword] = React.useState(false);

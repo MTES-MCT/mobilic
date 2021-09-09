@@ -46,9 +46,9 @@ const PROFILES = [
 ];
 
 export default function NewsletterSubscriptionModal({ open, handleClose }) {
-  const [profile, setProfile] = React.useState(null);
+  const [profile, setProfile] = React.useState("");
   const [email, setEmail] = React.useState("");
-  const [emailError, setEmailError] = React.useState(null);
+  const [emailError, setEmailError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
   const api = useApi();
