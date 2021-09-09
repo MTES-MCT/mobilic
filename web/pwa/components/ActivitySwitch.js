@@ -9,8 +9,6 @@ import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";
 import { MainCtaButton } from "./MainCtaButton";
-import fromPairs from "lodash/fromPairs";
-import uniq from "lodash/uniq";
 import { now } from "common/utils/time";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 
@@ -211,42 +209,7 @@ export function ActivitySwitch({
       </Grid>
       {endMission && (
         <Box pt={6} pb={2}>
-          <MainCtaButton
-            onClick={() => {
-              const missionEndTime = now();
-              modals.open("endMission", {
-                currentExpenditures: fromPairs(
-                  uniq(currentMission.expenditures.map(e => [e.type, true]))
-                ),
-                companyAddresses: store
-                  .getEntity("knownAddresses")
-                  .filter(
-                    a =>
-                      a.companyId ===
-                      (currentMission.company
-                        ? currentMission.company.id
-                        : currentMission.companyId)
-                  ),
-                handleMissionEnd: async (
-                  expenditures,
-                  comment,
-                  address,
-                  kilometerReading
-                ) =>
-                  await endMission({
-                    endTime: missionEndTime,
-                    expenditures,
-                    comment,
-                    endLocation: address,
-                    kilometerReading
-                  }),
-                currentEndLocation: currentMission.endLocation,
-                currentMission: currentMission
-              });
-            }}
-          >
-            Mission terminée
-          </MainCtaButton>
+          <MainCtaButton onClick={endMission}>Mission terminée</MainCtaButton>
         </Box>
       )}
     </Box>

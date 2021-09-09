@@ -73,6 +73,18 @@ export function formatLongTimer(timerDuration) {
   } ${timerDurationInMinutes % 60} minutes`;
 }
 
+export function formatWarningDurationTime(timerDurationInSeconds) {
+  if (!timerDurationInSeconds && timerDurationInSeconds !== 0) return null;
+  const timerDurationInMinutes = (timerDurationInSeconds / 60) >> 0;
+  const timerDurationInHours = (timerDurationInMinutes / 60) >> 0;
+  if (timerDurationInHours > 0) {
+    return `${timerDurationInHours} heures`;
+  } else if (timerDurationInMinutes > 0) {
+    return `${timerDurationInMinutes} minutes`;
+  }
+  return `${timerDurationInSeconds} secondes`;
+}
+
 export function formatTimeOfDay(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
   return `${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
