@@ -1114,3 +1114,46 @@ export function buildLogLocationPayloadFromAddress(
 
   return payload;
 }
+
+export const HTTP_QUERIES = {
+  subscribeToNewsletter: {
+    method: "POST",
+    endpoint: "/contacts/subscribe-to-newsletter"
+  },
+  verifyXlsxSignature: {
+    method: "POST",
+    endpoint: "/control/verify-xlsx-signature"
+  },
+  generateUserReadToken: {
+    method: "POST",
+    endpoint: "/control/generate-user-read-token"
+  },
+  refresh: {
+    method: "POST",
+    endpoint: "/token/refresh"
+  },
+  logout: {
+    method: "POST",
+    endpoint: "/token/logout"
+  },
+  excelExport: {
+    method: "POST",
+    endpoint: "/companies/download_activity_report"
+  },
+  userC1bExport: {
+    method: "POST",
+    endpoint: "/users/generate_tachograph_file"
+  },
+  companyC1bExport: {
+    method: "POST",
+    endpoint: "/companies/generate_tachograph_files"
+  },
+  pdfExport: {
+    method: "POST",
+    endpoint: "/users/generate_pdf_export"
+  },
+  oauthAuthorize: {
+    method: "GET",
+    endpoint: "/oauth/authorize"
+  }
+};

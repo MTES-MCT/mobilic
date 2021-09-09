@@ -16,6 +16,7 @@ import { EmployeeFilter } from "./EmployeeFilter";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import Grid from "@material-ui/core/Grid";
 import { isoFormatLocalDate } from "common/utils/time";
+import { HTTP_QUERIES } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -179,11 +180,9 @@ export default function ExcelExport({
                 href: `/download_company_activity_report`,
                 linkType: "download"
               });
-              await api.downloadFileHttpQuery(
-                "POST",
-                `/companies/download_activity_report`,
-                { json: options }
-              );
+              await api.downloadFileHttpQuery(HTTP_QUERIES.excelExport, {
+                json: options
+              });
             }, "download-company-report")
           }
         >

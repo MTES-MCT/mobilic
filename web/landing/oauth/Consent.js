@@ -9,6 +9,7 @@ import Container from "@material-ui/core/Container";
 import { Section } from "../../common/Section";
 import { LoadingButton } from "common/components/LoadingButton";
 import Grid from "@material-ui/core/Grid";
+import { HTTP_QUERIES } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -46,10 +47,9 @@ export function Consent({ clientName, redirectUri }) {
 
   async function handleAuthorize(deny = false) {
     try {
-      const apiResponse = await api.httpQuery(
-        "GET",
-        `/oauth/authorize${location.search}${deny ? "&deny=true" : ""}`
-      );
+      const apiResponse = await api.httpQuery(HTTP_QUERIES.oauthAuthorize, {
+        search: `${location.search}${deny ? "&deny=true" : ""}`
+      });
       const json = await apiResponse.json();
       window.location.href = json.uri;
     } catch (err) {

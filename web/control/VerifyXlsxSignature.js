@@ -13,6 +13,7 @@ import * as Sentry from "@sentry/browser";
 import Alert from "@material-ui/lab/Alert";
 import AlertTitle from "@material-ui/lab/AlertTitle";
 import { useSnackbarAlerts } from "../common/Snackbar";
+import { HTTP_QUERIES } from "common/utils/apiQueries";
 
 const STATUS_MAP = {
   SUCCESS: {
@@ -151,8 +152,7 @@ export function XlsxVerifier() {
       fd.append("xlsx-to-check", file);
       try {
         const apiResponse = await api.httpQuery(
-          "POST",
-          "/control/verify-xlsx-signature",
+          HTTP_QUERIES.verifyXlsxSignature,
           {
             body: fd,
             timeout: 15000

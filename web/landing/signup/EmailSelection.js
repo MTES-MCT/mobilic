@@ -17,7 +17,10 @@ import { useModals } from "common/utils/modals";
 import { PasswordField } from "common/components/PasswordField";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
-import { CONFIRM_FC_EMAIL_MUTATION } from "common/utils/apiQueries";
+import {
+  CONFIRM_FC_EMAIL_MUTATION,
+  HTTP_QUERIES
+} from "common/utils/apiQueries";
 import { CheckboxField } from "../../common/CheckboxField";
 import { EmailField } from "../../common/EmailField";
 
@@ -93,7 +96,7 @@ export function EmailSelection() {
         );
         if (subscribeToNewsletter) {
           try {
-            await api.httpQuery("POST", "/contacts/subscribe-to-newsletter", {
+            await api.httpQuery(HTTP_QUERIES.subscribeToNewsletter, {
               json: { list: "employees" }
             });
           } catch (err) {
