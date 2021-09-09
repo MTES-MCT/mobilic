@@ -16,16 +16,19 @@ export function EmailField({
   React.useEffect(() => {
     if (validate && value && value !== "" && !validateCleanEmailString(value)) {
       setError("Le format de l'adresse n'est pas valide");
-    } else if (error && setError) setError(null);
+    } else if (error && setError) setError("");
   }, [value]);
+
+  const [actualInput, setActualInput] = React.useState(value);
 
   return (
     <TextField
       type="email"
-      value={value}
+      value={actualInput}
       onChange={e => {
         const newValue = e.target.value;
         const cleanValue = newValue ? cleanEmailString(newValue) : newValue;
+        setActualInput(newValue);
         setValue(cleanValue);
       }}
       error={!!error}
