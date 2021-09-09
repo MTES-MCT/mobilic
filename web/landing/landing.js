@@ -215,8 +215,8 @@ export function Landing() {
           l'enregistrement du temps de travail des conducteurs de véhicules
           utilitaires légers de moins de 3,5 tonnes, et des autres personnels
           roulants non conducteurs, souffre de problèmes unanimement décriés
-          (praticabilité pour le salarié, lourdeur administrative et de gestion,
-          faible fiabilité pour le contrôle). Avec Mobilic{" "}
+          (praticabilité pour les salarié(e)s, lourdeur administrative et de
+          gestion, faible fiabilité pour le contrôle). Avec Mobilic{" "}
           <a
             href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000043023481"
             target="_blank"
@@ -262,7 +262,7 @@ export function Landing() {
             imagePosition="left"
             imageDescription="Travailleur mobile"
             imageSubDescription="Conducteurs et autres personnels roulants"
-            descriptionTitle="Suivre simplement mon temps de travail et être mieux informé sur mes droits"
+            descriptionTitle="Suivre simplement mon temps de travail et être mieux informé(e) sur mes droits"
             descriptionContent={
               <div
                 style={{
@@ -298,8 +298,8 @@ export function Landing() {
             image={<ManagerImage height={200} width={200} />}
             imagePosition="right"
             imageDescription="Gestionnaire"
-            imageSubDescription="Responsables d'exploitation, dirigeants"
-            descriptionTitle="Gérer facilement le temps de travail des salariés de mon entreprise"
+            imageSubDescription="Responsables d'exploitation, dirigeant(e)s"
+            descriptionTitle="Gérer facilement le temps de travail des salarié(e)s de mon entreprise"
             descriptionContent={
               <ul
                 style={{
