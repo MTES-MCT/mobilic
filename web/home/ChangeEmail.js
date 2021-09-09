@@ -11,13 +11,13 @@ import { EmailField } from "../common/EmailField";
 
 export default function ChangeEmailModal({ open, handleClose, handleSubmit }) {
   const [email, setEmail] = React.useState("");
-  const [error, setError] = React.useState(null);
+  const [error, setError] = React.useState("");
 
   const alerts = useSnackbarAlerts();
 
   React.useEffect(() => {
     setEmail("");
-    setError(null);
+    setError("");
   }, [open]);
 
   return (
