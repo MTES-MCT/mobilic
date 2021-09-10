@@ -1,6 +1,5 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
 import { useApi } from "common/utils/api";
 import Typography from "@material-ui/core/Typography";
@@ -20,6 +19,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 import { LOGIN_MUTATION } from "common/utils/apiQueries";
+import { EmailField } from "../common/EmailField";
 
 const useStyles = makeStyles(theme => ({
   forgotPasswordLink: {
@@ -81,16 +81,13 @@ export default function Login() {
             noValidate
             onSubmit={handleSubmit}
           >
-            <TextField
+            <EmailField
               fullWidth
               className="vertical-form-text-input"
               label="Email"
-              type="email"
               autoComplete="username"
               value={email}
-              onChange={e => {
-                setEmail(e.target.value.replace(/\s/g, ""));
-              }}
+              setValue={setEmail}
               required
             />
             <PasswordField

@@ -23,6 +23,7 @@ import SelectEmployeeModal from "./admin/components/SelectEmployee";
 import PDFExport from "./pwa/components/PDFExport";
 import BatchInvite from "./admin/components/BatchInvite";
 import WarningEndMissionModal from "./pwa/components/WarningEndMissionModal";
+import NewsletterSubscriptionModal from "./landing/NewsletterSubscription";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -49,5 +50,6 @@ export const MODAL_DICT = {
   unavailableOfflineMode: UnavailableOfflineModeModal,
   kilometerReading: KilometerReadingModal,
   selectEmployee: SelectEmployeeModal,
+  newsletterSubscription: NewsletterSubscriptionModal,
   warningEndMissionModal: WarningEndMissionModal
 };

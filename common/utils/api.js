@@ -14,6 +14,7 @@ import { buildFCLogoutUrl } from "./franceConnect";
 import { clearUserIdCookie, currentUserId, readCookie } from "./cookie";
 import { MaxSizeCache } from "./cache";
 import { saveAs } from "file-saver";
+import { HTTP_QUERIES } from "./apiQueries";
 
 export const API_HOST = "/api";
 
@@ -104,24 +105,33 @@ class Api {
     );
   }
 
-  async _fetch(method, endpoint, options = {}) {
-    const url = `${this.apiHost}${endpoint}`;
+  async _fetch(queryInfo, options = {}) {
+    const method = queryInfo.method;
+    const endpoint = queryInfo.endpoint;
+    let url = `${this.apiHost}${endpoint}`;
     options.method = method;
     options.credentials = "same-origin";
 
     let actualOptions = options;
-    if (options.json) {
+    if (options.search) {
+      url = `${url}${options.search.startsWith("?") ? "" : ""}${
+        options.search
+      }`;
+      actualOptions = omit(options, ["search"]);
+    }
+
+    if (actualOptions.json) {
       actualOptions = {
-        ...omit(options, ["json"]),
+        ...omit(actualOptions, ["json"]),
         headers: {
-          ...(options.headers || {}),
+          ...(actualOptions.headers || {}),
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(options.json)
+        body: JSON.stringify(actualOptions.json)
       };
     }
 
-    const timeout = options.timeout;
+    const timeout = actualOptions.timeout;
     if (timeout && typeof AbortController !== "undefined") {
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), timeout);
@@ -136,9 +146,9 @@ class Api {
     return await fetch(url, actualOptions);
   }
 
-  async httpQuery(method, endpoint, options = {}) {
+  async httpQuery(queryInfo, options = {}) {
     return await this._queryWithRefreshToken(async () => {
-      const response = await this._fetch(method, endpoint, options);
+      const response = await this._fetch(queryInfo, options);
       if (response.status !== 200) {
         const error = new Error("Response status is not 200");
         error.name = "WrongStatusError";
@@ -149,8 +159,8 @@ class Api {
     });
   }
 
-  async downloadFileHttpQuery(method, endpoint, options = {}) {
-    const response = await this.httpQuery(method, endpoint, options);
+  async downloadFileHttpQuery(queryInfo, options = {}) {
+    const response = await this.httpQuery(queryInfo, options);
     const blob = await response.blob();
     const fileName = response.headers
       .get("Content-Disposition")
@@ -166,7 +176,7 @@ class Api {
       if (timeToExpire && timeToExpire < 20000) {
         let refreshResponse;
         try {
-          refreshResponse = await this._fetch("POST", "/token/refresh", {
+          refreshResponse = await this._fetch(HTTP_QUERIES.refresh, {
             timeout: 12000
           });
         } catch (err) {
@@ -322,7 +332,7 @@ class Api {
         try {
           await this.nonConcurrentQueryQueue.execute(
             async () =>
-              await this._fetch("POST", "/token/logout", { timeout: 8000 })
+              await this._fetch(HTTP_QUERIES.logout, { timeout: 8000 })
           );
         } catch (err) {
           if (failOnError) throw err;

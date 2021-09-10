@@ -22,7 +22,7 @@ import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { History } from "../pwa/screens/History";
 import Grid from "@material-ui/core/Grid";
 import { InfoItem } from "../home/InfoField";
-import { USER_READ_QUERY } from "common/utils/apiQueries";
+import { HTTP_QUERIES, USER_READ_QUERY } from "common/utils/apiQueries";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import * as Sentry from "@sentry/browser";
@@ -230,8 +230,7 @@ export function UserRead() {
                   onClick={async () => {
                     try {
                       await api.downloadFileHttpQuery(
-                        "POST",
-                        `/users/generate_tachograph_file`,
+                        HTTP_QUERIES.userC1bExport,
                         { json: { token: tokenInfo.token } }
                       );
                     } catch (err) {

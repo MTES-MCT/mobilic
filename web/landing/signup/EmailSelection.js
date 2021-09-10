@@ -1,7 +1,7 @@
 import React from "react";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField/TextField";
+import * as Sentry from "@sentry/browser";
 import { useApi } from "common/utils/api";
 import { useHistory, useLocation } from "react-router-dom";
 import {
@@ -14,13 +14,15 @@ import Container from "@material-ui/core/Container";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Section } from "../../common/Section";
 import { useModals } from "common/utils/modals";
-import Checkbox from "@material-ui/core/Checkbox/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
-import FormGroup from "@material-ui/core/FormGroup";
 import { PasswordField } from "common/components/PasswordField";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
-import { CONFIRM_FC_EMAIL_MUTATION } from "common/utils/apiQueries";
+import {
+  CONFIRM_FC_EMAIL_MUTATION,
+  HTTP_QUERIES
+} from "common/utils/apiQueries";
+import { CheckboxField } from "../../common/CheckboxField";
+import { EmailField } from "../../common/EmailField";
 
 const useStyles = makeStyles(theme => ({
   text: {
@@ -41,9 +43,13 @@ export function EmailSelection() {
 
   const [isAdmin, setIsAdmin] = React.useState(false);
   const [email, setEmail] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
   const [origEmailSet, setOrigEmailSet] = React.useState(false);
   const [password, setPassword] = React.useState("");
   const [choosePassword, setChoosePassword] = React.useState(false);
+  const [subscribeToNewsletter, setSubscribeToNewsletter] = React.useState(
+    true
+  );
   const [loading, setLoading] = React.useState(false);
 
   const location = useLocation();
@@ -88,7 +94,15 @@ export function EmailSelection() {
           payload,
           { context: { nonPublicApi: true } }
         );
-
+        if (subscribeToNewsletter) {
+          try {
+            await api.httpQuery(HTTP_QUERIES.subscribeToNewsletter, {
+              json: { list: "employees" }
+            });
+          } catch (err) {
+            Sentry.captureException(err);
+          }
+        }
         await store.setUserInfo({
           ...userInfo,
           ...apiResponse.data.signUp.confirmFcEmail
@@ -135,21 +149,25 @@ export function EmailSelection() {
             )}
           </Typography>
           <Typography align="justify" className={classes.text}>
-            Mobilic se servira de cette adresse comme point de contact
-            uniquement pour vous communiquer des informations indispensables au
-            bon fonctionnement du service.
+            Par défaut Mobilic se servira de cette adresse comme point de
+            contact uniquement pour vous communiquer des informations
+            indispensables au bon fonctionnement du service.
           </Typography>
-          <TextField
+          <EmailField
             required
             fullWidth
             className="vertical-form-text-input"
             label="Adresse e-mail"
-            type="email"
-            autoComplete="username"
             value={email}
-            onChange={e => {
-              setEmail(e.target.value.replace(/\s/g, ""));
-            }}
+            setValue={setEmail}
+            validate
+            error={emailError}
+            setError={setEmailError}
+          />
+          <CheckboxField
+            checked={subscribeToNewsletter}
+            onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
+            label="Je souhaite m'inscrire à la newsletter Mobilic pour rester informé par mail des nouveautés du produit"
           />
         </Section>
         <Section title="2. Mot de passe (facultatif)">
@@ -162,21 +180,14 @@ export function EmailSelection() {
             Le nom d'utilisateur associé sera l'adresse email renseignée
             ci-dessus.
           </Typography>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  checked={choosePassword}
-                  onChange={() => {
-                    if (choosePassword) setPassword("");
-                    setChoosePassword(!choosePassword);
-                  }}
-                />
-              }
-              label="Choisir un mot de passe"
-            />
-          </FormGroup>
+          <CheckboxField
+            checked={choosePassword}
+            onChange={() => {
+              if (choosePassword) setPassword("");
+              setChoosePassword(!choosePassword);
+            }}
+            label="Choisir un mot de passe"
+          />
           {choosePassword && (
             <PasswordField
               reuired
@@ -198,7 +209,7 @@ export function EmailSelection() {
             color="primary"
             type="submit"
             loading={loading}
-            disabled={!email || (choosePassword && !password)}
+            disabled={emailError || !email || (choosePassword && !password)}
           >
             Continuer
           </LoadingButton>

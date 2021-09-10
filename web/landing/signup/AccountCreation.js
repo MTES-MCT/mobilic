@@ -19,6 +19,8 @@ import { PasswordField } from "common/components/PasswordField";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import { USER_SIGNUP_MUTATION } from "common/utils/apiQueries";
+import { CheckboxField } from "../../common/CheckboxField";
+import { EmailField } from "../../common/EmailField";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   const api = useApi();
@@ -30,7 +32,11 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [subscribeToNewsletter, setSubscribeToNewsletter] = React.useState(
+    true
+  );
   const [loading, setLoading] = React.useState(false);
 
   const handleSubmit = async e => {
@@ -42,7 +48,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
         email,
         password,
         firstName,
-        lastName
+        lastName,
+        subscribeToNewsletter
       );
     } else {
       modals.open("cgu", {
@@ -53,7 +60,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             email,
             password,
             firstName,
-            lastName
+            lastName,
+            subscribeToNewsletter
           ),
         handleReject: () => {}
       });
@@ -66,7 +74,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
     email,
     password,
     firstName,
-    lastName
+    lastName,
+    subscribeToNewsletter
   ) => {
     setLoading(true);
     await alerts.withApiErrorHandling(
@@ -75,7 +84,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           email,
           password,
           firstName: firstName.trim(),
-          lastName: lastName.trim()
+          lastName: lastName.trim(),
+          subscribeToNewsletter
         };
         if (employeeInvite) {
           signupPayload.inviteToken = employeeInvite.inviteToken;
@@ -127,24 +137,22 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           autoComplete="off"
           onSubmit={handleSubmit}
         >
-          <TextField
+          <EmailField
             required
             fullWidth
             className="vertical-form-text-input"
             label="Email"
-            type="email"
-            autoComplete="username"
             value={email}
-            onChange={e => {
-              setEmail(e.target.value.replace(/\s/g, ""));
-            }}
+            setValue={setEmail}
+            validate
+            error={emailError}
+            setError={setEmailError}
           />
           <PasswordField
             required
             fullWidth
             className="vertical-form-text-input"
             label="Choisissez un mot de passe"
-            autoComplete="current-password"
             value={password}
             onChange={e => {
               setPassword(e.target.value);
@@ -172,13 +180,20 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
               setLastName(e.target.value.trimLeft());
             }}
           />
+          <CheckboxField
+            checked={subscribeToNewsletter}
+            onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
+            label="Je souhaite m'inscrire à la newsletter Mobilic pour rester informé par mail des nouveautés du produit"
+          />
           <Box my={4}>
             <LoadingButton
               aria-label="Inscription"
               variant="contained"
               color="primary"
               type="submit"
-              disabled={!email || !password || !firstName || !lastName}
+              disabled={
+                emailError || !email || !password || !firstName || !lastName
+              }
               loading={loading}
             >
               M'inscrire

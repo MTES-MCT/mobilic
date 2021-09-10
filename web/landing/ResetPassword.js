@@ -5,7 +5,6 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useHistory, useLocation } from "react-router-dom";
 import { useApi } from "common/utils/api";
 import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField/TextField";
 import { LoadingButton } from "common/components/LoadingButton";
 import Box from "@material-ui/core/Box";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
@@ -21,6 +20,7 @@ import {
   REQUEST_RESET_PASSWORD_MUTATION,
   RESET_PASSWORD_MUTATION
 } from "common/utils/apiQueries";
+import { EmailField } from "../common/EmailField";
 
 const useStyles = makeStyles(theme => ({
   introText: {
@@ -264,17 +264,13 @@ export function RequestResetPassword() {
                   l'adresse email avec laquelle vous vous êtes inscrits sur
                   Mobilic.
                 </Typography>
-                <TextField
+                <EmailField
                   required
                   fullWidth
                   className="vertical-form-text-input"
                   label="Adresse email de connexion"
-                  type="email"
-                  autoComplete="username"
                   value={email}
-                  onChange={e => {
-                    setEmail(e.target.value.replace(/\s/g, ""));
-                  }}
+                  setValue={setEmail}
                 />
                 <Box my={4}>
                   <LoadingButton
