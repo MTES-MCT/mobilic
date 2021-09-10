@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center",
     justifyContent: "center"
   },
-  qrCodeText: {
+  warningText: {
     alignSelf: "flex-start",
     paddingBottom: theme.spacing(6)
   }
@@ -67,7 +67,7 @@ export default function WarningEndMissionModal({
         handleClose={handleClose}
       />
       <DialogContent className={classes.container}>
-        <Typography align="left" className={classes.qrCodeText} key={0}>
+        <Typography align="left" className={classes.warningText} key={0}>
           Votre activité "{currentActivityLabel}" dure depuis plus de{" "}
           {durationToDisplay}. Voulez-vous terminer votre mission et ajuster
           l'horaire de fin ?
