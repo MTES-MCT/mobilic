@@ -1135,16 +1135,18 @@ class Actions {
             a.companyId ===
             (mission.company ? mission.company.id : mission.companyId)
         ),
+      missionEndTime: missionEndTime,
       handleMissionEnd: async (
         expenditures,
         comment,
         address,
-        kilometerReading
+        kilometerReading,
+        endTime
       ) =>
         await this.endMissionForTeam({
           mission: mission,
           team: mission.submittedBySomeoneElse ? [] : team,
-          endTime: missionEndTime,
+          endTime,
           expenditures,
           comment,
           endLocation: address,

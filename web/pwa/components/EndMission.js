@@ -8,6 +8,8 @@ import TextField from "common/utils/TextField";
 import { Expenditures } from "./Expenditures";
 import { AddressField } from "../../common/AddressField";
 import KilometerReadingInput from "./KilometerReadingInput";
+import { DateOrDateTimePicker } from "./DateOrDateTimePicker";
+import { now } from "common/utils/time";
 
 export default function EndMissionModal({
   open,
@@ -16,9 +18,11 @@ export default function EndMissionModal({
   currentExpenditures,
   companyAddresses = [],
   currentMission,
-  currentEndLocation = null
+  currentEndLocation = null,
+  missionEndTime
 }) {
   const [expenditures, setExpenditures] = React.useState({});
+  const [endTime, setEndTime] = React.useState(missionEndTime);
   const [comment, setComment] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [address, setAddress] = React.useState(false);
@@ -26,14 +30,24 @@ export default function EndMissionModal({
   const [kilometerReadingError, setKilometerReadingError] = React.useState(
     null
   );
+  const [missionEndTimeError, setMissionEndTimeError] = React.useState("");
   const [currentPosition, setCurrentPosition] = React.useState(null);
 
+  function canSubmit() {
+    return (
+      (currentEndLocation || address) &&
+      !kilometerReadingError &&
+      endTime &&
+      !missionEndTimeError
+    );
+  }
   React.useEffect(() => {
     setExpenditures(currentExpenditures || {});
     setComment("");
     setAddress(null);
     setCurrentPosition(null);
     setKilometerReading(null);
+    setMissionEndTimeError(null);
 
     if (open && navigator.geolocation) {
       setLoading(false);
@@ -43,6 +57,24 @@ export default function EndMissionModal({
         });
     }
   }, [currentExpenditures, currentEndLocation, open]);
+
+  React.useEffect(() => {
+    if (endTime) {
+      let hasEndError = false;
+      if (endTime < currentMission.startTime) {
+        hasEndError = true;
+        setMissionEndTimeError(
+          "L'heure de fin doit être après le début de la mission"
+        );
+      } else if (endTime > now()) {
+        hasEndError = true;
+        setMissionEndTimeError(
+          `L'heure de fin ne peut pas être dans le futur.`
+        );
+      }
+      if (!hasEndError) setMissionEndTimeError("");
+    }
+  }, [endTime]);
 
   return (
     <FunnelModal open={open} handleBack={handleClose}>
@@ -57,7 +89,8 @@ export default function EndMissionModal({
               expenditures,
               comment,
               address,
-              kilometerReading
+              kilometerReading,
+              endTime
             );
             handleClose();
           }}
@@ -67,6 +100,25 @@ export default function EndMissionModal({
             style={{ flexShrink: 0 }}
             disableGutters
           >
+            {!missionEndTime && (
+              <Box key={0}>
+                <Typography variant="h5" className="form-field-title">
+                  Quelle est la date de fin de la mission&nbsp;?
+                </Typography>
+                <DateOrDateTimePicker
+                  key={0}
+                  label="Date de fin"
+                  variant="filled"
+                  value={endTime}
+                  maxValue={now()}
+                  minValue={currentMission.startTime}
+                  error={missionEndTimeError}
+                  setValue={setEndTime}
+                  required
+                  noValidate
+                />
+              </Box>
+            )}
             <Typography variant="h5" className="form-field-title">
               Quel est le lieu de fin de service&nbsp;?
             </Typography>
@@ -130,9 +182,7 @@ export default function EndMissionModal({
           <Box className="cta-container" my={4}>
             <MainCtaButton
               type="submit"
-              disabled={
-                (!currentEndLocation && !address) || kilometerReadingError
-              }
+              disabled={!canSubmit()}
               loading={loading}
             >
               Suivant
