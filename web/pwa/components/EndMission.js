@@ -107,7 +107,7 @@ export default function EndMissionModal({
                 </Typography>
                 <DateOrDateTimePicker
                   key={0}
-                  label="Date de fin"
+                  label="Heure de fin"
                   variant="filled"
                   value={endTime}
                   maxValue={now()}
