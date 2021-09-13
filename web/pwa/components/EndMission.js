@@ -103,7 +103,7 @@ export default function EndMissionModal({
             {!missionEndTime && (
               <Box key={0}>
                 <Typography variant="h5" className="form-field-title">
-                  Quelle est la date de fin de la mission&nbsp;?
+                  Quelle est l'heure de fin de la mission&nbsp;?
                 </Typography>
                 <DateOrDateTimePicker
                   key={0}
