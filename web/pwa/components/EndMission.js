@@ -46,8 +46,8 @@ export default function EndMissionModal({
     setComment("");
     setAddress(null);
     setCurrentPosition(null);
-    setKilometerReading(null);
-    setMissionEndTimeError(null);
+    setKilometerReading("");
+    setMissionEndTimeError("");
 
     if (open && navigator.geolocation) {
       setLoading(false);
