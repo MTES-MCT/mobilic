@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import jwt_decode from "jwt-decode";
 import { currentUserId } from "common/utils/cookie";
 import * as Sentry from "@sentry/browser";
-import { useSnackbarAlerts } from "../../common/Snackbar";
+import { useSnackbarAlerts } from "../common/Snackbar";
 import { ACTIVATE_EMAIL_MUTATION } from "common/utils/apiQueries";
 
 export function ActivateEmail() {
