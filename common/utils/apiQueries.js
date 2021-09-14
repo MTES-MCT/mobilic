@@ -7,6 +7,7 @@ export const COMPANY_SETTINGS_FRAGMENT = gql`
       requireKilometerData
       requireSupportActivity
       requireExpenditures
+      requireMissionName
     }
   }
 `;
@@ -1038,6 +1039,7 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
     $requireKilometerData: Boolean
     $requireExpenditures: Boolean
     $requireSupportActivity: Boolean
+    $requireMissionName: Boolean
   ) {
     editCompanySettings(
       companyId: $companyId
@@ -1045,6 +1047,7 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
       requireKilometerData: $requireKilometerData
       requireExpenditures: $requireExpenditures
       requireSupportActivity: $requireSupportActivity
+      requireMissionName: $requireMissionName
     ) {
       id
       ...CompanySettings
