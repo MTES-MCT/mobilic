@@ -4,7 +4,7 @@ export function getTime(event) {
   return event.startTime || event.receptionTime || event.time;
 }
 
-export function getDuration(activity) {
+export function getCurrentActivityDuration(activity) {
   const activitySwitchTime = activity.endTime || getTime(activity);
   return Math.max(now() - activitySwitchTime, 0);
 }
