@@ -21,10 +21,7 @@ export default function KnownAddressAdmin({ company }) {
   const modals = useModals();
   const companyId = company ? company.id : null;
 
-  const [triggerAddLocation, setTriggerAddLocation] = React.useState({
-    value: false
-  });
-
+  const tableRef = React.useRef();
   const classes = usePanelStyles();
 
   const knownAddressColumns = [
@@ -39,7 +36,7 @@ export default function KnownAddressAdmin({ company }) {
           </span>
         </span>
       ),
-      renderEditMode: (address, onChange) => (
+      renderEditMode: (address, _, onChange) => (
         <AddressField
           variant="outlined"
           fullWidth
@@ -76,7 +73,7 @@ export default function KnownAddressAdmin({ company }) {
         variant="contained"
         size="small"
         color="primary"
-        onClick={() => setTriggerAddLocation({ value: true })}
+        onClick={() => tableRef.current.newRow()}
       >
         Ajouter un lieu
       </Button>
@@ -91,8 +88,7 @@ export default function KnownAddressAdmin({ company }) {
       key={2}
       columns={knownAddressColumns}
       entries={knownAddresses}
-      triggerRowAdd={triggerAddLocation}
-      afterRowAdd={() => setTriggerAddLocation({ value: false })}
+      ref={tableRef}
       onRowEdit={async (address, { alias }) => {
         try {
           const apiResponse = await api.graphQlMutate(
