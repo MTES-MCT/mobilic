@@ -2,11 +2,12 @@ import React from "react";
 import { ActivitySwitch } from "../components/ActivitySwitch";
 import { resolveTeamAt } from "common/utils/coworkers";
 import { CurrentActivityOverview } from "../components/CurrentActivityOverview";
-import { getTime } from "common/utils/events";
+import { getCurrentActivityDuration, getTime } from "common/utils/events";
 import { MissionDetails } from "../components/MissionDetails";
 import Box from "@material-ui/core/Box";
 import { ACTIVITIES } from "common/utils/activities";
 import { now } from "common/utils/time";
+import WarningEndMissionModalContainer from "../components/WarningEndMissionModal/WarningEndMissionModalContainer";
 
 export function CurrentActivity({
   latestActivity,
@@ -16,9 +17,9 @@ export function CurrentActivity({
   registerKilometerReading,
   editActivityEvent,
   editVehicle,
-  endMissionForTeam,
   endMission,
-  previousMissionEnd
+  previousMissionEnd,
+  openEndMissionModal
 }) {
   const currentTeam = resolveTeamAt(currentMission.teamChanges, now());
 
@@ -75,13 +76,14 @@ export function CurrentActivity({
               })
             ])
       }
-      endMission={async args =>
-        await endMissionForTeam({
+      endMission={endTime => {
+        openEndMissionModal({
           mission: currentMission,
-          team: currentMission.submittedBySomeoneElse ? [] : currentTeam,
-          ...args
-        })
-      }
+          team: currentTeam,
+          missionEndTime: endTime,
+          latestActivityStartTime: latestActivity.startTime
+        });
+      }}
       currentMission={currentMission}
       requireVehicle={!currentMission.vehicle}
       company={currentMission.company}
@@ -120,6 +122,14 @@ export function CurrentActivity({
       }
       isMissionEnded={false}
       editKilometerReading={registerKilometerReading}
+    />,
+    <WarningEndMissionModalContainer
+      key={4}
+      currentMission={currentMission}
+      currentTeam={currentTeam}
+      latestActivity={latestActivity}
+      openEndMissionModal={openEndMissionModal}
+      activityDuration={getCurrentActivityDuration(latestActivity)}
     />
   ];
 }

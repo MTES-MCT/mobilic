@@ -1,7 +1,7 @@
 import React from "react";
 import Container from "@material-ui/core/Container";
 import { ACTIVITIES } from "common/utils/activities";
-import { getTime } from "common/utils/events";
+import { getActivityStartTimeToUse } from "common/utils/events";
 import { formatTimer, formatTimerWithSeconds, now } from "common/utils/time";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
@@ -52,19 +52,11 @@ export function CurrentActivityOverview({
     return () => clearInterval(interval);
   }, []);
 
-  const latestActivitySwitchTime =
-    latestActivity.endTime || getTime(latestActivity);
-  const switchTimeDelta = latestActivitySwitchExactTime
-    ? latestActivitySwitchExactTime - latestActivitySwitchTime
-    : 0;
-  const switchTimeToUse =
-    latestActivitySwitchExactTime &&
-    switchTimeDelta >= 0 &&
-    switchTimeDelta <= 60
-      ? latestActivitySwitchExactTime
-      : latestActivitySwitchTime;
-
-  const currentActivityDuration = Math.max(_now - switchTimeToUse, 0);
+  const currentActivityDuration = Math.max(
+    _now -
+      getActivityStartTimeToUse(latestActivity, latestActivitySwitchExactTime),
+    0
+  );
   let activityOverviewText;
   if (latestActivity.endTime) {
     activityOverviewText = "Vous êtes en pause depuis";
