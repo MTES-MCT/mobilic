@@ -14,7 +14,7 @@ import {
   HOUR,
   getStartOfDay
 } from "common/utils/time";
-import { getTime, sortEvents } from "common/utils/events";
+import { sortEvents } from "common/utils/events";
 import {
   findMatchingPeriodInNewUnit,
   groupMissionsByPeriodUnit
@@ -256,7 +256,7 @@ export function History({
     if (mission) {
       const selectedMission = missions.find(m => m.id === parseInt(mission));
       const missionPeriod = selectedMission
-        ? tabs[currentTab].getPeriod(getTime(selectedMission))
+        ? tabs[currentTab].getPeriod(selectedMission.startTime)
         : null;
       if (currentTab === "mission") {
         setSelectedPeriod(missionPeriod);
@@ -281,7 +281,7 @@ export function History({
   const [selectedPeriod, setSelectedPeriod] = React.useState(
     filledPeriods[filledPeriods.length - 1]
   );
-  const mission = missions.find(m => getTime(m) === selectedPeriod);
+  const mission = missions.find(m => m.startTime === selectedPeriod);
   const [missionId, setMissionId] = React.useState(mission ? mission.id : null);
 
   React.useEffect(() => {
@@ -292,7 +292,7 @@ export function History({
       if (missionId && currentTab === "mission") {
         const mission = missions.find(m => m.id === missionId);
         if (mission)
-          setSelectedPeriod(tabs[currentTab].getPeriod(getTime(mission)));
+          setSelectedPeriod(tabs[currentTab].getPeriod(mission.startTime));
         else setSelectedPeriod(filledPeriods[filledPeriods.length - 1]);
       } else setSelectedPeriod(filledPeriods[filledPeriods.length - 1]);
     }
@@ -329,7 +329,7 @@ export function History({
     setCurrentTab(newTab);
     setSelectedPeriod(newPeriod);
     if (newTab === "mission") {
-      const mission = missions.find(m => getTime(m) === newPeriod);
+      const mission = missions.find(m => m.startTime === newPeriod);
       setMissionId(mission ? mission.id : null);
     }
     resetLocation();
@@ -478,7 +478,7 @@ export function History({
             onPeriodChange={newp => {
               setSelectedPeriod(newp);
               if (currentTab === "mission") {
-                const mission = missions.find(m => getTime(m) === newp);
+                const mission = missions.find(m => m.startTime === newp);
                 setMissionId(mission ? mission.id : null);
               }
               resetLocation();

@@ -15,7 +15,7 @@ import {
   LONG_BREAK_DURATION,
   now
 } from "common/utils/time";
-import { getTime, sortEvents } from "common/utils/events";
+import { sortEvents } from "common/utils/events";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
@@ -121,7 +121,7 @@ function ActivityItem({
                 otherActivities: isBreak
                   ? allMissionActivities
                   : allMissionActivities.filter(
-                      a => getTime(a) !== getTime(activity)
+                      a => a.startTime !== activity.startTime
                     ),
                 handleRevisionAction: (
                   activity,

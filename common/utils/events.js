@@ -1,11 +1,11 @@
 import { now } from "./time";
 
-export function getTime(event) {
+function getTime(event) {
   return event.startTime || event.receptionTime || event.time;
 }
 
 export function getCurrentActivityDuration(activity) {
-  const activitySwitchTime = activity.endTime || getTime(activity);
+  const activitySwitchTime = activity.endTime || activity.startTime;
   return Math.max(now() - activitySwitchTime, 0);
 }
 
@@ -18,7 +18,7 @@ export function getActivityStartTimeToUse(
   latestActivitySwitchExactTime
 ) {
   const latestActivitySwitchTime =
-    latestActivity.endTime || getTime(latestActivity);
+    latestActivity.endTime || latestActivity.startTime;
   const switchTimeDelta = latestActivitySwitchExactTime
     ? latestActivitySwitchExactTime - latestActivitySwitchTime
     : 0;

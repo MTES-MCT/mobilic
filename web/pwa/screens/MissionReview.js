@@ -1,5 +1,4 @@
 import React from "react";
-import { getTime } from "common/utils/events";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -51,7 +50,7 @@ export function MissionReview({
           Récapitulatif de la mission
           {` ${
             currentMission.name ? currentMission.name : ""
-          } du ${prettyFormatDay(getTime(currentMission))}`}
+          } du ${prettyFormatDay(currentMission.startTime)}`}
         </Typography>
         <WorkTimeSummaryKpiGrid
           metrics={renderMissionKpis(
