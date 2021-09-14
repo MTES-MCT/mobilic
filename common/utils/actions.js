@@ -8,7 +8,6 @@ import { isPendingSubmission, useStoreSyncedWithLocalStorage } from "./store";
 import { useApi } from "./api";
 import { ACTIVITIES, parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
-import { getTime } from "./events";
 import {
   formatNameInGqlError,
   graphQLErrorMatchesCode,
@@ -687,10 +686,10 @@ class Actions {
         false,
         true
       )} le ${formatDay(
-        getTime(gqlError.extensions.conflictingMission),
+        gqlError.extensions.conflictingMission.receptionTime,
         true
       )} à ${formatTimeOfDay(
-        getTime(gqlError.extensions.conflictingMission)
+        gqlError.extensions.conflictingMission.receptionTime
       )}.`;
     }
     if (graphQLErrorMatchesCode(gqlError, "MISSION_ALREADY_ENDED")) {
@@ -817,7 +816,7 @@ class Actions {
           (a.missionId === activityEvent.missionId ||
             (identityMap[activityEvent.missionId] &&
               a.missionId === identityMap[activityEvent.missionId])) &&
-          getTime(a) === getTime(activityEvent) &&
+          a.startTime === activityEvent.startTime &&
           a.endTime === activityEvent.endTime
       );
       activitiesToEdit

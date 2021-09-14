@@ -3,7 +3,6 @@
 // Examples :
 // - when switching from day to week the new period should be the week containing the current day
 // - conversely, when switching from week to day, we decide (arbitrarily) that the new period should be the first (existing) day of the current week
-import { getTime } from "./events";
 import moment from "moment";
 import { now } from "./time";
 import { filterActivitiesOverlappingPeriod } from "./activities";
@@ -46,7 +45,7 @@ export function groupMissionsByPeriodUnit(
   const groups = {};
   const now1 = now();
   missions.forEach(mission => {
-    const firstPeriod = periodGetter(getTime(mission));
+    const firstPeriod = periodGetter(mission.startTime);
     const lastPeriod =
       periodLength.asSeconds() > 0
         ? periodGetter(

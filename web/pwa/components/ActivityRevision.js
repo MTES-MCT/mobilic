@@ -6,7 +6,6 @@ import { now } from "common/utils/time";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "common/utils/TextField";
 import { ACTIVITIES } from "common/utils/activities";
-import { getTime } from "common/utils/events";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
 import max from "lodash/max";
@@ -39,26 +38,28 @@ export function addBreakOps(
 
   const activitiesStartedBeforeEndingInBetween = activities.filter(
     a =>
-      getTime(a) < startTime &&
+      a.startTime < startTime &&
       ((!endTime && (!a.endTime || a.endTime > startTime)) ||
         (endTime && a.endTime && a.endTime > startTime && a.endTime <= endTime))
   );
   const activitiesPurelyInBetween = activities.filter(
     a =>
-      getTime(a) >= startTime &&
+      a.startTime >= startTime &&
       (!endTime || (a.endTime && a.endTime > startTime && a.endTime <= endTime))
   );
   const activitiesStartedInBetweenEndingAfter = activities.filter(
     a =>
-      getTime(a) >= startTime &&
+      a.startTime >= startTime &&
       endTime &&
-      getTime(a) < endTime &&
+      a.startTime < endTime &&
       (!a.endTime || a.endTime > endTime)
   );
   const activitiesFullyOverlapping = activities
     .filter(
       a =>
-        getTime(a) < startTime && endTime && (!a.endTime || a.endTime > endTime)
+        a.startTime < startTime &&
+        endTime &&
+        (!a.endTime || a.endTime > endTime)
     )
     .map(a => {
       let driverId;
@@ -127,7 +128,7 @@ export function addBreakOps(
       0
     ) {
       const activitiesStartedBefore = activities.filter(
-        a => getTime(a) < startTime
+        a => a.startTime < startTime
       );
       const activityRightBefore =
         activitiesStartedBefore.length > 0
@@ -300,7 +301,7 @@ export default function ActivityRevisionOrCreationModal({
 
   React.useEffect(() => {
     if (event) {
-      setNewUserTime(getTime(event));
+      setNewUserTime(event.startTime);
       setNewUserEndTime(event.endTime);
     } else {
       setNewUserTime(defaultTime);
@@ -346,7 +347,7 @@ export default function ActivityRevisionOrCreationModal({
             a => a.userId === userId
           );
           const earliestActivityStart = min(
-            userActivities.map(a => getTime(a))
+            userActivities.map(a => a.startTime)
           );
           const latestActivityEnd = userActivities.some(a => !a.endTime)
             ? null
@@ -430,7 +431,7 @@ export default function ActivityRevisionOrCreationModal({
     if (actionType === "revision") {
       return (
         event &&
-        (getTime(event) !== newUserTime || event.endTime !== newUserEndTime) &&
+        (event.startTime !== newUserTime || event.endTime !== newUserEndTime) &&
         !newUserTimeError &&
         !newUserEndTimeError
       );

@@ -1,6 +1,5 @@
 import { formatPersonName } from "./coworkers";
 import { formatDay, formatTimeOfDay } from "./time";
-import { getTime } from "./events";
 import { ACTIVITIES } from "./activities";
 
 export function isConnectionError(error) {
@@ -108,10 +107,10 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "L'utilisateur est déjà inscrit sur Mobilic.";
       case "OVERLAPPING_MISSIONS":
         return `Vous avez déjà une mission en cours démarrée le ${formatDay(
-          getTime(graphQLError.extensions.conflictingMission),
+          graphQLError.extensions.conflictingMission.receptionTime,
           true
         )} à ${formatTimeOfDay(
-          getTime(graphQLError.extensions.conflictingMission)
+          graphQLError.extensions.conflictingMission.receptionTime
         )}`;
       case "OVERLAPPING_ACTIVITIES":
         return `L'activité est en chevauchement avec ${
