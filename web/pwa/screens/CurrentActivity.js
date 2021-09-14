@@ -2,12 +2,12 @@ import React from "react";
 import { ActivitySwitch } from "../components/ActivitySwitch";
 import { resolveTeamAt } from "common/utils/coworkers";
 import { CurrentActivityOverview } from "../components/CurrentActivityOverview";
-import { getTime } from "common/utils/events";
+import { getDuration, getTime } from "common/utils/events";
 import { MissionDetails } from "../components/MissionDetails";
 import Box from "@material-ui/core/Box";
 import { ACTIVITIES } from "common/utils/activities";
 import { now } from "common/utils/time";
-import { useModals } from "common/utils/modals";
+import WarningEndMissionModalContainer from "../components/WarningEndMissionModal/WarningEndMissionModalContainer";
 
 export function CurrentActivity({
   latestActivity,
@@ -28,15 +28,6 @@ export function CurrentActivity({
   React.useEffect(() => {
     setInterval(() => setCurrentTime(now()), 30000);
   }, []);
-
-  const modals = useModals();
-
-  modals.open("warningEndMissionModal", {
-    latestActivity: latestActivity,
-    handleMissionEnd: () => {
-      openEndMissionModal({ mission: currentMission, team: currentTeam });
-    }
-  });
 
   return [
     <CurrentActivityOverview
@@ -89,7 +80,8 @@ export function CurrentActivity({
         openEndMissionModal({
           mission: currentMission,
           team: currentTeam,
-          missionEndTime: endTime
+          missionEndTime: endTime,
+          latestActivityStartTime: latestActivity.startTime
         });
       }}
       currentMission={currentMission}
@@ -130,6 +122,14 @@ export function CurrentActivity({
       }
       isMissionEnded={false}
       editKilometerReading={registerKilometerReading}
+    />,
+    <WarningEndMissionModalContainer
+      key={4}
+      currentMission={currentMission}
+      currentTeam={currentTeam}
+      latestActivity={latestActivity}
+      openEndMissionModal={openEndMissionModal}
+      activityDuration={getDuration(latestActivity)}
     />
   ];
 }

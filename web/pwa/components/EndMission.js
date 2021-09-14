@@ -19,7 +19,8 @@ export default function EndMissionModal({
   companyAddresses = [],
   currentMission,
   currentEndLocation = null,
-  missionEndTime
+  missionEndTime,
+  missionMinEndTime
 }) {
   const [expenditures, setExpenditures] = React.useState({});
   const [endTime, setEndTime] = React.useState(missionEndTime);
@@ -61,10 +62,10 @@ export default function EndMissionModal({
   React.useEffect(() => {
     if (endTime) {
       let hasEndError = false;
-      if (endTime < currentMission.startTime) {
+      if (endTime < missionMinEndTime) {
         hasEndError = true;
         setMissionEndTimeError(
-          "L'heure de fin doit être après le début de la mission"
+          "L'heure de fin doit être après le début de la dernière activité."
         );
       } else if (endTime > now()) {
         hasEndError = true;
@@ -111,7 +112,7 @@ export default function EndMissionModal({
                   variant="filled"
                   value={endTime}
                   maxValue={now()}
-                  minValue={currentMission.startTime}
+                  minValue={missionMinEndTime}
                   error={missionEndTimeError}
                   setValue={setEndTime}
                   required

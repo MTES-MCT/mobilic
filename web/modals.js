@@ -22,7 +22,7 @@ import KilometerReadingModal from "./pwa/components/KilometerReadingModal";
 import SelectEmployeeModal from "./admin/components/SelectEmployee";
 import PDFExport from "./pwa/components/PDFExport";
 import BatchInvite from "./admin/components/BatchInvite";
-import WarningEndMissionModal from "./pwa/components/WarningEndMissionModal";
+import WarningEndMissionModal from "./pwa/components/WarningEndMissionModal/WarningEndMissionModal";
 import NewsletterSubscriptionModal from "./landing/NewsletterSubscription";
 
 export const MODAL_DICT = {

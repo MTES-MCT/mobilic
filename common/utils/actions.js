@@ -1123,7 +1123,12 @@ class Actions {
     );
   };
 
-  openEndMissionModal = async ({ mission, team, missionEndTime }) => {
+  openEndMissionModal = async ({
+    mission,
+    team,
+    missionEndTime,
+    latestActivityStartTime
+  }) => {
     this.modals.open("endMission", {
       currentExpenditures: fromPairs(
         uniq(mission.expenditures.map(e => [e.type, true]))
@@ -1153,7 +1158,8 @@ class Actions {
           kilometerReading
         }),
       currentEndLocation: mission.endLocation,
-      currentMission: mission
+      currentMission: mission,
+      missionMinEndTime: latestActivityStartTime
     });
   };
 

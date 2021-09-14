@@ -1,5 +1,12 @@
+import { now } from "./time";
+
 export function getTime(event) {
   return event.startTime || event.receptionTime || event.time;
+}
+
+export function getDuration(activity) {
+  const activitySwitchTime = activity.endTime || getTime(activity);
+  return Math.max(now() - activitySwitchTime, 0);
 }
 
 export function sortEvents(events) {
