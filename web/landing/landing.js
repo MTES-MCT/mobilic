@@ -11,21 +11,7 @@ import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizon
 import BackgroundVerticalImage from "common/assets/images/landing-hero-vertical.svg";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Footer } from "./footer";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import Card from "@material-ui/core/Card";
-import ButtonBase from "@material-ui/core/ButtonBase";
-import Button from "@material-ui/core/Button";
-import {
-  addZero,
-  formatTimeOfDay,
-  SHORT_DAYS,
-  SHORT_MONTHS
-} from "common/utils/time";
-import * as Sentry from "@sentry/browser";
-import Skeleton from "@material-ui/lab/Skeleton";
-import { useApi } from "common/utils/api";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
+import { WebinarList } from "./WebinarList";
 
 const useStyles = makeStyles(theme => ({
   whiteSection: {
@@ -106,42 +92,6 @@ const useStyles = makeStyles(theme => ({
   },
   questionTitle: {
     paddingBottom: theme.spacing(1)
-  },
-  webinarCard: {
-    width: "100%",
-    paddingBottom: theme.spacing(1),
-    paddingTop: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    backgroundColor: "inherit"
-  },
-  webinarDateDay: {
-    fontWeight: "bold",
-    fontSize: "120%",
-    lineHeight: 1,
-    letterSpacing: "3px",
-    textTransform: "uppercase"
-  },
-  webinarDateMonth: {
-    fontWeight: "bold",
-    fontSize: "80%",
-    textTransform: "uppercase"
-  },
-  webinarDate: {
-    fontSize: "300%",
-    lineHeight: 1,
-    fontWeight: "bold",
-    color: theme.palette.primary.main
-  },
-  webinarTitle: {
-    textAlign: "left"
-  },
-  webinarButton: {
-    width: "100%",
-    backgroundColor: theme.palette.background.paper,
-    "&:hover": {
-      backgroundColor: theme.palette.grey[200]
-    }
   }
 }));
 
@@ -219,31 +169,8 @@ const Showcase = withWidth()(_Showcase);
 
 export const Landing = withWidth()(({ width }) => {
   const ref = React.useRef();
-  const api = useApi();
 
-  const [webinars, setWebinars] = React.useState([]);
-  const [cantLoadWebinars, setCantLoadWebinars] = React.useState(false);
-
-  async function fetchWebinars() {
-    try {
-      const webinarResponse = await api.httpQuery(
-        HTTP_QUERIES.webinars,
-        {},
-        true
-      );
-      const newWebinars = await webinarResponse.json();
-      setWebinars(newWebinars);
-    } catch (err) {
-      setCantLoadWebinars(true);
-      Sentry.captureException(err);
-    }
-  }
-
-  React.useEffect(() => {
-    if (webinars.length === 0) {
-      fetchWebinars();
-    }
-  }, []);
+  const [webinarLoadFailed, setWebinarLoadFailed] = React.useState(false);
 
   const classes = useStyles({ width });
   return [
@@ -491,7 +418,7 @@ export const Landing = withWidth()(({ width }) => {
         </Grid>
       </Container>
     </Container>,
-    cantLoadWebinars ? (
+    webinarLoadFailed ? (
       <Box key="webinars" />
     ) : (
       <Container
@@ -508,85 +435,10 @@ export const Landing = withWidth()(({ width }) => {
             Mobilic, savoir si Mobilic est adapté à vos besoins et comprendre
             comment l'utiliser.
           </Typography>
-          <List>
-            {webinars.length > 0
-              ? webinars.slice(0, 10).map((webinar, index) => {
-                  const webinarDate = new Date(webinar.time * 1000);
-                  return (
-                    <ListItem key={index} target="_blank">
-                      <ButtonBase
-                        className={classes.webinarButton}
-                        href={webinar.link}
-                        target="_blank"
-                      >
-                        <Card className={classes.webinarCard}>
-                          <Grid
-                            container
-                            alignItems="center"
-                            spacing={isWidthDown("xs", width) ? 2 : 6}
-                            wrap={isWidthDown("xs", width) ? "wrap" : "nowrap"}
-                          >
-                            <Grid
-                              container
-                              item
-                              xs={6}
-                              sm={"auto"}
-                              direction="column"
-                              alignItems="center"
-                              style={{ maxWidth: 120 }}
-                            >
-                              <Grid item>
-                                <Typography className={classes.webinarDateDay}>
-                                  {SHORT_DAYS[webinarDate.getDay()]}
-                                </Typography>
-                              </Grid>
-                              <Grid item>
-                                <Typography className={classes.webinarDate}>
-                                  {addZero(webinarDate.getDate())}
-                                </Typography>
-                              </Grid>
-                              <Grid item>
-                                <Typography
-                                  className={classes.webinarDateMonth}
-                                >
-                                  {SHORT_MONTHS[webinarDate.getMonth()]}{" "}
-                                  {webinarDate.getFullYear()}
-                                </Typography>
-                              </Grid>
-                            </Grid>
-                            <Grid item xs={6} sm={"auto"}>
-                              <Typography>
-                                {formatTimeOfDay(webinar.time)}
-                              </Typography>
-                            </Grid>
-                            <Grid item style={{ flexGrow: 1 }}>
-                              <Typography className={classes.webinarTitle}>
-                                {webinar.title}
-                              </Typography>
-                            </Grid>
-                            <Grid item>
-                              <Button
-                                color="primary"
-                                style={{ paddingLeft: 0 }}
-                              >
-                                M'inscrire
-                              </Button>
-                            </Grid>
-                          </Grid>
-                        </Card>
-                      </ButtonBase>
-                    </ListItem>
-                  );
-                })
-              : [
-                  <ListItem key={-1}>
-                    <Skeleton variant="rect" width="100%" height={100} />
-                  </ListItem>,
-                  <ListItem key={-2}>
-                    <Skeleton variant="rect" width="100%" height={100} />
-                  </ListItem>
-                ]}
-          </List>
+          <WebinarList
+            webinarLoadFailed={webinarLoadFailed}
+            setWebinarLoadFailed={setWebinarLoadFailed}
+          />
         </Container>
       </Container>
     ),
