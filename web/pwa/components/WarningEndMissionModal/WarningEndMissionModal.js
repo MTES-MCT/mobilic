@@ -43,7 +43,7 @@ export default function WarningEndMissionModal({
     <Dialog onClose={dismiss} open={open} scroll="paper">
       <CustomDialogTitle
         title={"⚠️ Mission terminée ?"}
-        handleClose={handleClose}
+        handleClose={dismiss}
       />
       <DialogContent>
         <Typography align="left" className={classes.warningText} key={0}>
