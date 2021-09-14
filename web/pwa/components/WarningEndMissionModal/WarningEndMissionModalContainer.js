@@ -1,5 +1,5 @@
 import React from "react";
-import { getDuration } from "common/utils/events";
+import { getCurrentActivityDuration } from "common/utils/events";
 import { formatWarningDurationTime } from "common/utils/time";
 import { ACTIVITIES } from "common/utils/activities";
 import { useModals } from "common/utils/modals";
@@ -30,7 +30,8 @@ export default function WarningEndMissionModalContainer({
     };
     if (
       latestActivityIdDurationWarningDismiss !== latestActivity.id &&
-      getDuration(latestActivity) > ACTIVITY_DURATION_WARNING_THRESHOLD
+      getCurrentActivityDuration(latestActivity) >
+        ACTIVITY_DURATION_WARNING_THRESHOLD
     ) {
       modals.open("warningEndMissionModal", {
         dismissModal: dismissWarning,
