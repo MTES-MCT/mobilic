@@ -25,6 +25,7 @@ import {
 import * as Sentry from "@sentry/browser";
 import Skeleton from "@material-ui/lab/Skeleton";
 import { useApi } from "common/utils/api";
+import { HTTP_QUERIES } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   whiteSection: {
@@ -226,8 +227,7 @@ export const Landing = withWidth()(({ width }) => {
   async function fetchWebinars() {
     try {
       const webinarResponse = await api.httpQuery(
-        "GET",
-        "/next-webinars",
+        HTTP_QUERIES.webinars,
         {},
         true
       );

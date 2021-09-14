@@ -1158,5 +1158,9 @@ export const HTTP_QUERIES = {
   oauthAuthorize: {
     method: "GET",
     endpoint: "/oauth/authorize"
+  },
+  webinars: {
+    method: "GET",
+    endpoint: "/next-webinars"
   }
 };
