@@ -129,7 +129,7 @@ export function CurrentActivity({
       currentTeam={currentTeam}
       latestActivity={latestActivity}
       openEndMissionModal={openEndMissionModal}
-      activityDuration={getDuration(latestActivity)}
+      activityDuration={getCurrentActivityDuration(latestActivity)}
     />
   ];
 }
