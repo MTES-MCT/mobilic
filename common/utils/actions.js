@@ -1325,7 +1325,11 @@ class Actions {
     };
 
     const updateStore = (store, requestId) => {
-      this.store.createEntityObject(newExpenditure, "expenditures", requestId);
+      this.store.createEntityObject(
+        { ...newExpenditure, receptionTime: now() },
+        "expenditures",
+        requestId
+      );
       return { missionId, userId: actualUserId, type };
     };
 

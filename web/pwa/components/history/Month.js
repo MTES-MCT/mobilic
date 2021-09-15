@@ -8,7 +8,8 @@ import {
 export function Month({
   activitiesWithNextAndPreviousDay,
   selectedPeriodStart,
-  selectedPeriodEnd
+  selectedPeriodEnd,
+  missionsInPeriod
 }) {
   return (
     <div>
@@ -17,7 +18,8 @@ export function Month({
           splitByLongBreaksAndComputePeriodStats(
             activitiesWithNextAndPreviousDay,
             selectedPeriodStart,
-            selectedPeriodEnd
+            selectedPeriodEnd,
+            missionsInPeriod
           )
         ).filter(m => m.name !== "service")}
       />
