@@ -1,7 +1,6 @@
 import forEach from "lodash/forEach";
 import mapValues from "lodash/mapValues";
 import values from "lodash/values";
-import { sortEvents } from "./events";
 import { computeTeamChanges } from "./coworkers";
 
 export function parseMissionPayloadFromBackend(missionPayload, userId) {
@@ -65,7 +64,7 @@ export function augmentMissionWithProperties(mission, userId, companies = []) {
 }
 
 export function augmentAndSortMissions(missions, userId, companies = []) {
-  return sortEvents(
-    missions.map(m => augmentMissionWithProperties(m, userId, companies))
-  );
+  return missions
+    .map(m => augmentMissionWithProperties(m, userId, companies))
+    .sort((m1, m2) => m1.startTime - m2.startTime);
 }

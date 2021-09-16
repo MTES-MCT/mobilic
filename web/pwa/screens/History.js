@@ -14,7 +14,6 @@ import {
   HOUR,
   getStartOfDay
 } from "common/utils/time";
-import { sortEvents } from "common/utils/events";
 import {
   findMatchingPeriodInNewUnit,
   groupMissionsByPeriodUnit
@@ -38,7 +37,10 @@ import { Mission } from "../components/history/Mission";
 import { Day } from "../components/history/Day";
 import { Week } from "../components/history/Week";
 import { Month } from "../components/history/Month";
-import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
+import {
+  filterActivitiesOverlappingPeriod,
+  sortActivities
+} from "common/utils/activities";
 import Grid from "@material-ui/core/Grid";
 import GetAppIcon from "@material-ui/icons/GetApp";
 
@@ -306,7 +308,7 @@ export function History({
       (acc, mission) => [...acc, ...mission.activities],
       []
     );
-    sortEvents(acts);
+    sortActivities(acts);
     setActivities(acts);
   }, [missions]);
 

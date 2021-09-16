@@ -17,8 +17,10 @@ import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import omit from "lodash/omit";
 import { EXPENDITURES } from "common/utils/expenditures";
-import { sortEvents } from "common/utils/events";
-import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
+import {
+  filterActivitiesOverlappingPeriod,
+  sortActivities
+} from "common/utils/activities";
 
 const useStyles = makeStyles(theme => ({
   overviewTimer: {
@@ -238,7 +240,7 @@ export function splitByLongBreaksAndComputePeriodStats(
   untilTime,
   missions
 ) {
-  sortEvents(activities);
+  sortActivities(activities);
 
   let civilDay = fromTime;
   let workedDays = 0;

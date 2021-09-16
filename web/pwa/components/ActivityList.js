@@ -5,7 +5,8 @@ import Avatar from "@material-ui/core/Avatar";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import {
   ACTIVITIES,
-  filterActivitiesOverlappingPeriod
+  filterActivitiesOverlappingPeriod,
+  sortActivities
 } from "common/utils/activities";
 import {
   formatDateTime,
@@ -15,7 +16,6 @@ import {
   LONG_BREAK_DURATION,
   now
 } from "common/utils/time";
-import { sortEvents } from "common/utils/events";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
@@ -190,7 +190,7 @@ export function ActivityList({
 
   // Add breaks
   const activitiesWithBreaks = [];
-  sortEvents(filteredActivities);
+  sortActivities(filteredActivities);
   filteredActivities.forEach((a, index) => {
     activitiesWithBreaks.push(a);
     if (index < filteredActivities.length - 1) {

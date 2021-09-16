@@ -1,7 +1,9 @@
 import React from "react";
-import { getCurrentActivityDuration } from "common/utils/events";
 import { formatWarningDurationTime } from "common/utils/time";
-import { ACTIVITIES } from "common/utils/activities";
+import {
+  ACTIVITIES,
+  getCurrentActivityDuration
+} from "common/utils/activities";
 import { useModals } from "common/utils/modals";
 
 export default function WarningEndMissionModalContainer({
