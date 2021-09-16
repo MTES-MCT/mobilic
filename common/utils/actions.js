@@ -991,7 +991,7 @@ class Actions {
       address,
       missionId,
       isStart,
-      kilometerReading
+      kilometerReading || null
     );
 
     const updateStore = (store, requestId) => {
@@ -1025,9 +1025,10 @@ class Actions {
     isStart,
     kilometerReading
   }) => {
+    const kilometerReadingOrNull = kilometerReading || null;
     const payload = {
       missionLocationId: location.id,
-      kilometerReading
+      kilometerReading: kilometerReadingOrNull
     };
 
     const updateStore = (store, requestId) => {
@@ -1037,12 +1038,16 @@ class Actions {
         {
           [isStart ? "startLocation" : "endLocation"]: {
             ...location,
-            kilometerReading
+            kilometerReading: kilometerReadingOrNull
           }
         },
         requestId
       );
-      return { isStart, kilometerReading, missionId: mission.id };
+      return {
+        isStart,
+        kilometerReading: kilometerReadingOrNull,
+        missionId: mission.id
+      };
     };
 
     await this.submitAction(
