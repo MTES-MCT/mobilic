@@ -65,7 +65,7 @@ export function Week({
                       e.preventDefault();
                     }}
                   >
-                    Mission{mission.name ? " " + mission.name : ""} du{" "}
+                    Mission {mission.name} du{" "}
                     {prettyFormatDay(getTime(mission))}
                   </Link>
                 </ListItemText>

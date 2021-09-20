@@ -394,8 +394,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
           format: (value, entry) => (
             <Box className="flex-row-space-between">
               <Typography variant="h6" className={classes.missionTitle}>
-                Mission {entry.name ? entry.name : "sans nom"} du{" "}
-                {formatDay(entry.startTime)}
+                Mission {entry.name} du {formatDay(entry.startTime)}
               </Typography>
               {tab === 0 && (
                 <Button

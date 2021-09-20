@@ -14,6 +14,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import { ItalicWarningTypography } from "./ItalicWarningTypography";
+import { prettyFormatDay } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   alternateCard: {
@@ -37,6 +38,7 @@ export function MissionSummary({
   const classes = useStyles();
 
   const kpis = computeTimesAndDurationsFromActivities(mission.activities);
+  const actualDay = mission?.activities[0]?.startTime;
 
   return (
     <>
@@ -49,7 +51,7 @@ export function MissionSummary({
           <Typography className="bold">
             {mission.name
               ? `Nom de la mission : ${mission.name}`
-              : "Mission sans nom"}
+              : `Mission du ${prettyFormatDay(actualDay)}`}
           </Typography>
           {collapsable && (
             <IconButton

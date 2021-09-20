@@ -21,9 +21,9 @@ export default function NewMissionForm({
   withEndLocation = false
 }) {
   const [mission, setMission] = React.useState("");
-  const [vehicle, setVehicle] = React.useState(null);
+  const [vehicle, setVehicle] = React.useState("");
   const [company, setCompany] = React.useState(
-    companies && companies.length === 1 ? companies[0] : null
+    companies && companies.length === 1 ? companies[0] : ""
   );
   const [day, setDay] = React.useState(null);
   const [dayError, setDayError] = React.useState(null);
@@ -33,11 +33,17 @@ export default function NewMissionForm({
   const [kilometerReading, setKilometerReading] = React.useState(null);
 
   React.useEffect(() => {
-    setCompany(companies && companies.length === 1 ? companies[0] : null);
+    setCompany(companies && companies.length === 1 ? companies[0] : "");
   }, [companies]);
 
   React.useEffect(() => {
-    if (!vehicle) setKilometerReading(null);
+    if (vehicle?.companyId) setVehicle("");
+    if (address?.companyId) setAddress("");
+    setMission("");
+  }, [company]);
+
+  React.useEffect(() => {
+    if (!vehicle) setKilometerReading("");
   }, [vehicle]);
 
   const funnelModalClasses = useFunnelModalStyles();
@@ -69,20 +75,47 @@ export default function NewMissionForm({
           style={{ flexShrink: 0 }}
           disableGutters
         >
-          <Typography variant="h5" className="form-field-title">
-            Quel est le nom de la mission&nbsp;?
-          </Typography>
-          <TextField
-            required
-            fullWidth
-            label="Nom de la mission"
-            variant="filled"
-            value={mission}
-            onChange={e => setMission(e.target.value)}
-          />
+          {companies &&
+            companies.length > 1 && [
+              <Typography key={0} variant="h5" className="form-field-title">
+                Pour quelle entreprise&nbsp;?
+              </Typography>,
+              <TextField
+                key={1}
+                label="Entreprise"
+                required
+                fullWidth
+                variant="filled"
+                select
+                value={company || ""}
+                onChange={e => {
+                  setCompany(e.target.value);
+                }}
+              >
+                {companies.map(company => (
+                  <MenuItem key={company.id} value={company}>
+                    {company.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            ]}
+          {company?.settings?.requireMissionName && [
+            <Typography key={1} variant="h5" className="form-field-title">
+              Quel est le nom de la mission&nbsp;?
+            </Typography>,
+            <TextField
+              key={2}
+              required
+              fullWidth
+              label="Nom de la mission"
+              variant="filled"
+              value={mission}
+              onChange={e => setMission(e.target.value)}
+            />
+          ]}
           {withDay && [
             <Typography key={1} variant="h5" className="form-field-title">
-              Quel jour s'est déroulé la mission ?
+              Quel jour s'est déroulée la mission ?
             </Typography>,
             <DateOrDateTimePicker
               key={2}
@@ -99,43 +132,6 @@ export default function NewMissionForm({
               autoValidate
             />
           ]}
-          {companies &&
-            companies.length > 1 && [
-              <Typography key={0} variant="h5" className="form-field-title">
-                Pour quelle entreprise&nbsp;?
-              </Typography>,
-              <TextField
-                key={1}
-                label="Entreprise"
-                required
-                fullWidth
-                variant="filled"
-                select
-                value={company || null}
-                onChange={e => {
-                  const newCompany = e.target.value;
-                  if (
-                    newCompany &&
-                    vehicle &&
-                    vehicle.companyId !== newCompany.id
-                  )
-                    setVehicle(null);
-                  if (
-                    newCompany &&
-                    address &&
-                    address.companyId !== newCompany.id
-                  )
-                    setAddress(null);
-                  setCompany(newCompany);
-                }}
-              >
-                {companies.map(company => (
-                  <MenuItem key={company.id} value={company}>
-                    {company.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            ]}
           <Typography variant="h5" className="form-field-title">
             Quel est le lieu de prise de service&nbsp;?
           </Typography>
@@ -179,7 +175,7 @@ export default function NewMissionForm({
             disabled={companies && companies.length > 1 && !company}
             vehicle={vehicle}
             setVehicle={setVehicle}
-            companyId={company ? company.id : null}
+            companyId={company ? company.id : ""}
             kilometerReading={kilometerReading}
             setKilometerReading={
               !disableKilometerReading &&
@@ -188,7 +184,7 @@ export default function NewMissionForm({
               company.settings.requireKilometerData &&
               vehicle
                 ? setKilometerReading
-                : null
+                : ""
             }
           />
         </Container>
@@ -196,7 +192,7 @@ export default function NewMissionForm({
           <MainCtaButton
             disabled={
               !address ||
-              !mission ||
+              (!mission && company?.settings?.requireMissionName) ||
               (withEndLocation && !endAddress) ||
               (withDay && (dayError || !day))
             }

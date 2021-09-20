@@ -332,6 +332,9 @@ export default function ActivityPanel() {
           showExpenditures={selectedCompanies.some(
             c => c.settings.requireExpenditures
           )}
+          showMissionName={selectedCompanies.some(
+            c => c.settings.requireMissionName
+          )}
           loading={loading}
         />
         <Drawer

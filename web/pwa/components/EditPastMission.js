@@ -131,9 +131,11 @@ export default function EditPastMission({
     <Container key={0} maxWidth={false} className={classes.overview}>
       <AccountButton darkBackground />
       <Typography variant="h1" align="left" className={classes.title}>
-        Mission : {mission.name}
+        {mission.name
+          ? `Mission : ${mission.name}`
+          : `Mission du ${prettyFormatDay(actualDay)}`}
       </Typography>
-      {actualDay && (
+      {actualDay && !!mission.name && (
         <Typography align="left">{prettyFormatDay(actualDay)}</Typography>
       )}
     </Container>,
