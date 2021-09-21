@@ -590,7 +590,9 @@ export function MissionDetails({
       className={`${classes.horizontalPadding} ${classes.missionTitleContainer}`}
     >
       {mission.name ||
-        `Mission du ${prettyFormatDay(mission.startTime, false)}`}
+        (mission.startTime
+          ? `Mission du ${prettyFormatDay(mission.startTime, false)}`
+          : "Détails de la mission")}
       <IconButton
         aria-label="Fermer"
         className={classes.closeButton}
