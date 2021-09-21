@@ -4,7 +4,6 @@ import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import { formatPersonName } from "common/utils/coworkers";
 import IconButton from "@material-ui/core/IconButton";
-import { useApi } from "common/utils/api";
 import { getAccessibleRoutes } from "./routes";
 import { useHistory, useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
@@ -15,7 +14,6 @@ import useTheme from "@material-ui/core/styles/useTheme";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Button from "@material-ui/core/Button";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
 import Drawer from "@material-ui/core/Drawer";
 import ListSubheader from "@material-ui/core/ListSubheader";
@@ -23,7 +21,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import Tooltip from "@material-ui/core/Tooltip";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Link, LinkButton } from "./LinkButton";
-import { useLoadingScreen } from "common/utils/loading";
 import YoutubeIcon from "common/assets/images/youtube.png";
 import LinkedInWhiteIcon from "common/assets/images/linkedin.svg";
 import YoutubeWhiteIcon from "common/assets/images/youtube-white.png";
@@ -96,13 +93,15 @@ const useStyles = makeStyles(theme => ({
     "&:hover": {
       color: theme.palette.primary.main,
       backgroundColor: theme.palette.background.default
-    }
+    },
+    fontWeight: "bold"
   },
   selectedNavListItem: {
     background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.main} 5px, ${theme.palette.background.default} 5px, ${theme.palette.background.default})`
   },
   nestedListSubheader: {
-    paddingLeft: theme.spacing(4)
+    fontSize: "1rem",
+    fontStyle: "italic"
   },
   closeNavButton: {
     display: "flex",
@@ -141,7 +140,6 @@ function ListRouteItem({ route, closeDrawer }) {
 
   return route.subRoutes ? (
     <>
-      <Divider />
       <List
         dense
         key={route.path + "subRoutes"}
@@ -187,12 +185,9 @@ function ListRouteItem({ route, closeDrawer }) {
 }
 
 export function NavigationMenu({ open, setOpen }) {
-  const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
   const companies = store.companies();
-  const withLoadingScreen = useLoadingScreen();
-  const history = useHistory();
 
   const classes = useStyles();
 
@@ -214,6 +209,7 @@ export function NavigationMenu({ open, setOpen }) {
           <CloseIcon />
         </IconButton>
       </Box>
+      <Divider />
       <List dense>
         {routes
           .filter(
@@ -226,25 +222,6 @@ export function NavigationMenu({ open, setOpen }) {
               closeDrawer={() => setOpen(false)}
             />
           ))}
-        {store.userId() && (
-          <ListItem
-            button
-            aria-label="Déconnexion"
-            className={classes.navListItem}
-            onClick={() =>
-              withLoadingScreen(async () => {
-                await api.logout({ failOnError: false });
-                history.push("/");
-              })
-            }
-            disableGutters
-          >
-            <ListItemText
-              primary="Déconnexion"
-              primaryTypographyProps={{ variant: "body1" }}
-            />
-          </ListItem>
-        )}
       </List>
     </Drawer>
   );

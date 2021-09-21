@@ -32,14 +32,14 @@ export const ROUTES = [
   },
   {
     path: "/app",
-    label: "Saisie de temps",
+    label: "Missions",
     accessible: ({ userInfo, companies }) =>
       userInfo.hasActivatedEmail && userInfo.id && companies.length > 0,
     component: React.lazy(() => import("../pwa/utils/navigation")),
     subRoutes: [
       {
         path: "",
-        label: "Saisie",
+        label: "Saisie de temps",
         exact: true
       },
       {
@@ -72,8 +72,31 @@ export const ROUTES = [
   {
     path: "/home",
     label: "Mes informations",
-    accessible: ({ userInfo }) => !!userInfo.id,
+    accessible: () => true,
+    menuItemFilter: () => false,
     component: Home
+  },
+  {
+    path: "/logout",
+    label: "Déconnexion",
+    accessible: () => true,
+    menuItemFilter: () => false,
+    component: Logout
+  },
+  {
+    label: "Mon compte",
+    path: "",
+    accessible: ({ userInfo }) => !!userInfo.id,
+    subRoutes: [
+      {
+        path: "/home",
+        label: "Mes informations"
+      },
+      {
+        path: "/logout",
+        label: "Déconnexion"
+      }
+    ]
   },
   {
     path: "/signup",
