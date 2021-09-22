@@ -46,6 +46,7 @@ import {
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "./common/ErrorFallback";
+import { useAdminStore } from "./admin/utils/store";
 
 const matomo = createInstance({
   urlBase: "https://stats.data.gouv.fr",
@@ -201,7 +202,7 @@ function _Root() {
     return () => {};
   }, [userId]);
 
-  const routes = getAccessibleRoutes({ userInfo, companies });
+  const routes = getAccessibleRoutes({ userInfo, companies }, useAdminStore());
 
   return (
     <>

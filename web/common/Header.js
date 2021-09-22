@@ -25,6 +25,8 @@ import YoutubeIcon from "common/assets/images/youtube.png";
 import LinkedInWhiteIcon from "common/assets/images/linkedin.svg";
 import YoutubeWhiteIcon from "common/assets/images/youtube-white.png";
 import Grid from "@material-ui/core/Grid";
+import { useAdminStore } from "../admin/utils/store";
+import { Badge } from "@material-ui/core";
 
 const SOCIAL_NETWORKS = [
   {
@@ -95,6 +97,9 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.background.default
     },
     fontWeight: "bold"
+  },
+  customBadge: {
+    right: theme.spacing(-2)
   },
   selectedNavListItem: {
     background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.main} 5px, ${theme.palette.background.default} 5px, ${theme.palette.background.default})`
@@ -178,7 +183,14 @@ function ListRouteItem({ route, closeDrawer }) {
           closeDrawer();
         }}
       >
-        {route.label}
+        <Badge
+          invisible={!route.badgeContent}
+          badgeContent={route.badgeContent}
+          color="error"
+          classes={{ badge: classes.customBadge }}
+        >
+          {route.label}
+        </Badge>
       </Link>
     </ListItem>
   );
@@ -191,7 +203,7 @@ export function NavigationMenu({ open, setOpen }) {
 
   const classes = useStyles();
 
-  const routes = getAccessibleRoutes({ userInfo, companies });
+  const routes = getAccessibleRoutes({ userInfo, companies }, useAdminStore());
 
   return (
     <Drawer
@@ -265,7 +277,7 @@ function DesktopHeader({ disableMenu }) {
   const companies = store.companies();
   const primaryCompany = companies.find(c => c.isPrimary);
   const companyName = primaryCompany ? primaryCompany.name : null;
-  const routes = getAccessibleRoutes({ userInfo, companies });
+  const routes = getAccessibleRoutes({ userInfo, companies }, useAdminStore());
 
   const docLinks = () => [
     <LinkButton

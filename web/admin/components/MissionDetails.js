@@ -34,7 +34,6 @@ import {
   isGraphQLError
 } from "common/utils/errors";
 import Button from "@material-ui/core/Button";
-import { computeMissionStats } from "../panels/Validations";
 import { addBreakOps } from "../../pwa/components/ActivityRevision";
 import {
   CANCEL_ACTIVITY_MUTATION,
@@ -56,6 +55,7 @@ import Switch from "@material-ui/core/Switch/Switch";
 import { VerticalTimeline } from "common/components/VerticalTimeline";
 import Grid from "@material-ui/core/Grid";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
+import { computeMissionStats } from "common/utils/mission";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {

@@ -5,6 +5,7 @@ import Link from "@material-ui/core/Link";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { useHistory, useRouteMatch } from "react-router-dom";
+import { Badge } from "@material-ui/core";
 
 const menuItemStyles = makeStyles(theme => ({
   root: {
@@ -19,12 +20,15 @@ const menuItemStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.background.default
     }
   },
+  customBadge: {
+    right: theme.spacing(-2)
+  },
   active: {
     background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.main} 5px, ${theme.palette.background.default} 5px, ${theme.palette.background.default})`
   }
 }));
 
-function MenuItem({ label, path }) {
+function MenuItem({ label, path, badgeContent }) {
   const history = useHistory();
   const classes = menuItemStyles();
   const selected = useRouteMatch(path);
@@ -41,7 +45,14 @@ function MenuItem({ label, path }) {
           history.push(path);
         }}
       >
-        {label}
+        <Badge
+          invisible={!badgeContent}
+          badgeContent={badgeContent}
+          color="error"
+          classes={{ badge: classes.customBadge }}
+        >
+          {label}
+        </Badge>
       </Link>
     </ListItem>
   );
