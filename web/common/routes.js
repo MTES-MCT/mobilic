@@ -243,7 +243,203 @@ export function getFallbackRoute({ userInfo, companies }) {
   return "/";
 }
 
-export function getAccessibleRoutes(storeData, adminStore) {
+export const ROUTES = [
+  {
+    path: "/fc-callback",
+    label: "Callback France Connect",
+    accessible: ({ userInfo }) => !userInfo.id,
+    component: FranceConnectCallback,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/app",
+    label: "Missions",
+    accessible: ({ userInfo, companies }) =>
+      userInfo.hasActivatedEmail && userInfo.id && companies.length > 0,
+    component: React.lazy(() => import("../pwa/utils/navigation")),
+    subRoutes: [
+      {
+        path: "",
+        label: "Saisie de temps",
+        exact: true
+      },
+      {
+        path: "/history",
+        label: "Historique"
+      }
+    ]
+  },
+  {
+    path: "/admin",
+    label: "Gestion entreprise",
+    accessible: ({ userInfo, companies }) =>
+      userInfo.hasActivatedEmail && userInfo.id && companies.some(c => c.admin),
+    component: React.lazy(() => import("../admin/Admin")),
+    subRoutes: [
+      {
+        path: "/company",
+        label: "Entreprise(s)"
+      },
+      {
+        path: "/activities",
+        label: "Activités"
+      },
+      {
+        label: "Saisies à valider",
+        path: "/validations"
+      }
+    ]
+  },
+  {
+    path: "/home",
+    label: "Mes informations",
+    accessible: () => true,
+    menuItemFilter: () => false,
+    component: Home
+  },
+  {
+    path: "/logout",
+    label: "Déconnexion",
+    accessible: () => true,
+    menuItemFilter: () => false,
+    component: Logout
+  },
+  {
+    label: "Mon compte",
+    path: "",
+    accessible: ({ userInfo }) => !!userInfo.id,
+    subRoutes: [
+      {
+        path: "/home",
+        label: "Mes informations"
+      },
+      {
+        path: "/logout",
+        label: "Déconnexion"
+      }
+    ]
+  },
+  {
+    path: "/signup",
+    label: "Inscription",
+    accessible: () => true,
+    component: Signup,
+    menuItemFilter: ({ userInfo }) => !userInfo.id,
+    mainCta: true
+  },
+  {
+    path: "/login",
+    label: "Connexion",
+    accessible: () => true,
+    component: Login,
+    menuItemFilter: ({ userInfo }) => !userInfo.id
+  },
+  {
+    path: "/stats",
+    label: "Statistiques",
+    accessible: () => true,
+    component: Stats,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/cgu",
+    label: "CGU",
+    accessible: () => true,
+    component: CGU,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/invite",
+    label: "Invitation",
+    accessible: () => true,
+    component: Invite,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/redeem_invite",
+    label: "Redeem invite",
+    accessible: () => true,
+    component: RedeemInvite,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/activate_email",
+    label: "Activate email",
+    accessible: () => true,
+    component: ActivateEmail,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/oauth/authorize",
+    label: "OAuth",
+    accessible: () => true,
+    component: React.lazy(() => import("../landing/oauth/root")),
+    menuItemFilter: () => false
+  },
+  {
+    path: "/logout",
+    label: "Logout",
+    accessible: () => true,
+    component: Logout,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/",
+    label: "Landing",
+    accessible: () => true,
+    exact: true,
+    component: Landing,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/reset_password",
+    label: "Reset password",
+    accessible: () => true,
+    component: ResetPassword,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/request_reset_password",
+    label: "Reset password",
+    accessible: ({ userInfo }) => !userInfo.id,
+    component: RequestResetPassword,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/control/user-history/:token",
+    label: "Historique de l'utilisateur",
+    accessible: () => true,
+    component: UserReadRedirect,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/control/user-history",
+    label: "Historique de l'utilisateur",
+    accessible: () => true,
+    component: UserRead,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/control/verify-export",
+    label: "Vérification d'intégrité",
+    accessible: () => true,
+    component: XlsxVerifier,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/partners",
+    label: "Partenaires",
+    accessible: () => true,
+    component: Partners,
+    menuItemFilter: () => false
+  }
+];
+
+export function getAccessibleRoutesSafe(storeData) {
+  return ROUTES.filter(r => r.accessible(storeData));
+}
+
+export function getAccessibleRoutes(storeData, adminStore = {}) {
   return getRoutes(missionsToValidateByAdmin(adminStore)?.length).filter(r =>
     r.accessible(storeData)
   );
