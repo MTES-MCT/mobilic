@@ -22,8 +22,7 @@ import { SideMenu } from "./components/SideMenu";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
-import { getAdminView } from "./utils/navigation";
-import { missionsToValidateByAdmin } from "./selectors/missionSelectors";
+import { ADMIN_VIEWS } from "./utils/navigation";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -58,15 +57,13 @@ function __Admin({ width }) {
   });
   const location = useLocation();
 
-  const views = getAdminView(missionsToValidateByAdmin(adminStore)?.length).map(
-    view => {
-      const absPath = `${path}${view.path}`;
-      return {
-        ...view,
-        path: absPath
-      };
-    }
-  );
+  const views = ADMIN_VIEWS.map(view => {
+    const absPath = `${path}${view.path}`;
+    return {
+      ...view,
+      path: absPath
+    };
+  });
 
   async function loadData() {
     const userId = adminStore.userId;

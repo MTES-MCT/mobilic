@@ -30,7 +30,7 @@ import {
   useLoadingScreen
 } from "common/utils/loading";
 import {
-  getAccessibleRoutesSafe,
+  getAccessibleRoutes,
   getFallbackRoute,
   isAccessible
 } from "./common/routes";
@@ -201,7 +201,7 @@ function _Root() {
     return () => {};
   }, [userId]);
 
-  const routes = getAccessibleRoutesSafe({ userInfo, companies });
+  const routes = getAccessibleRoutes({ userInfo, companies });
 
   return (
     <>

@@ -4,7 +4,7 @@ import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import { formatPersonName } from "common/utils/coworkers";
 import IconButton from "@material-ui/core/IconButton";
-import { getAccessibleRoutes } from "./routes";
+import { getAccessibleRoutes, getBadgeRoutes } from "./routes";
 import { useHistory, useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { Logos } from "./Logos";
@@ -138,6 +138,9 @@ function ListRouteItem({ route, closeDrawer }) {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
+  const badgeContent = getBadgeRoutes(useAdminStore()).find(
+    br => br.path === route.path
+  )?.badgeContent;
 
   const selected = route.exact
     ? location.pathname === route.path
@@ -184,8 +187,8 @@ function ListRouteItem({ route, closeDrawer }) {
         }}
       >
         <Badge
-          invisible={!route.badgeContent}
-          badgeContent={route.badgeContent}
+          invisible={!badgeContent}
+          badgeContent={badgeContent}
           color="error"
           classes={{ badge: classes.customBadge }}
         >
@@ -203,7 +206,7 @@ export function NavigationMenu({ open, setOpen }) {
 
   const classes = useStyles();
 
-  const routes = getAccessibleRoutes({ userInfo, companies }, useAdminStore());
+  const routes = getAccessibleRoutes({ userInfo, companies });
 
   return (
     <Drawer
@@ -277,7 +280,7 @@ function DesktopHeader({ disableMenu }) {
   const companies = store.companies();
   const primaryCompany = companies.find(c => c.isPrimary);
   const companyName = primaryCompany ? primaryCompany.name : null;
-  const routes = getAccessibleRoutes({ userInfo, companies }, useAdminStore());
+  const routes = getAccessibleRoutes({ userInfo, companies });
 
   const docLinks = () => [
     <LinkButton

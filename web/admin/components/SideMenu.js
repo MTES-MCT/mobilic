@@ -6,6 +6,8 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { Badge } from "@material-ui/core";
+import { useAdminStore } from "../utils/store";
+import { getBadgeRoutes } from "../../common/routes";
 
 const menuItemStyles = makeStyles(theme => ({
   root: {
@@ -28,10 +30,13 @@ const menuItemStyles = makeStyles(theme => ({
   }
 }));
 
-function MenuItem({ label, path, badgeContent }) {
+function MenuItem({ label, path }) {
   const history = useHistory();
   const classes = menuItemStyles();
   const selected = useRouteMatch(path);
+  const badgeContent = getBadgeRoutes(useAdminStore()).find(
+    br => br.path === path
+  )?.badgeContent;
   return (
     <ListItem className="no-margin-no-padding">
       <Link
