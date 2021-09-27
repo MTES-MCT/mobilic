@@ -38,7 +38,7 @@ export function MissionSummary({
   const classes = useStyles();
 
   const kpis = computeTimesAndDurationsFromActivities(mission.activities);
-  const actualDay = mission?.activities[0]?.startTime;
+  const actualDay = mission?.startTime;
 
   return (
     <>
