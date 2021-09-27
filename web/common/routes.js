@@ -33,7 +33,7 @@ export const ROUTES = [
   },
   {
     path: "/app",
-    label: "Missions",
+    label: "Mes missions",
     accessible: ({ userInfo, companies }) =>
       userInfo.hasActivatedEmail && userInfo.id && companies.length > 0,
     component: React.lazy(() => import("../pwa/utils/navigation")),
@@ -67,35 +67,6 @@ export const ROUTES = [
       {
         label: "Saisies à valider",
         path: "/validations"
-      }
-    ]
-  },
-  {
-    path: "/home",
-    label: "Mes informations",
-    accessible: () => true,
-    menuItemFilter: () => false,
-    component: Home
-  },
-  {
-    path: "/logout",
-    label: "Déconnexion",
-    accessible: () => true,
-    menuItemFilter: () => false,
-    component: Logout
-  },
-  {
-    label: "Mon compte",
-    path: "",
-    accessible: ({ userInfo }) => !!userInfo.id,
-    subRoutes: [
-      {
-        path: "/home",
-        label: "Mes informations"
-      },
-      {
-        path: "/logout",
-        label: "Déconnexion"
       }
     ]
   },
@@ -212,6 +183,35 @@ export const ROUTES = [
     accessible: () => true,
     component: Partners,
     menuItemFilter: () => false
+  },
+  {
+    path: "/home",
+    label: "Mes informations",
+    accessible: () => true,
+    menuItemFilter: () => false,
+    component: Home
+  },
+  {
+    path: "/logout",
+    label: "Déconnexion",
+    accessible: () => true,
+    menuItemFilter: () => false,
+    component: Logout
+  },
+  {
+    label: "Mon compte",
+    path: "",
+    accessible: ({ userInfo }) => !!userInfo.id,
+    subRoutes: [
+      {
+        path: "/home",
+        label: "Mes informations"
+      },
+      {
+        path: "/logout",
+        label: "Déconnexion"
+      }
+    ]
   }
 ];
 
