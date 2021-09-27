@@ -211,6 +211,8 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
 
   const [missionIdOnFocus, setMissionIdOnFocus] = React.useState(null);
 
+  const missionListToValidateByAdmin = missionsToValidateByAdmin(adminStore);
+
   React.useEffect(() => {
     const queryString = new URLSearchParams(location.search);
     const missionId = parseInt(queryString.get("mission"));
@@ -232,7 +234,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
       >
         <Tab
           className={classes.tab}
-          label={`A valider (${missionsToValidateByAdmin(adminStore)?.length})`}
+          label={`A valider (${missionListToValidateByAdmin?.length})`}
         />
         <Tab
           className={classes.tab}
@@ -251,7 +253,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
         entries={
           tab === 0
             ? flatMap(
-                missionsToValidateByAdmin(adminStore)?.map(m =>
+                missionListToValidateByAdmin?.map(m =>
                   map(m.userStats, us => ({
                     ...us,
                     name: m.name,
