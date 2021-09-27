@@ -43,7 +43,7 @@ export default function NewMissionForm({
   }, [company]);
 
   React.useEffect(() => {
-    if (!vehicle) setKilometerReading("");
+    if (!vehicle) setKilometerReading(null);
   }, [vehicle]);
 
   const funnelModalClasses = useFunnelModalStyles();
