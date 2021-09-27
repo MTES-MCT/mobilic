@@ -26,7 +26,7 @@ import LinkedInWhiteIcon from "common/assets/images/linkedin.svg";
 import YoutubeWhiteIcon from "common/assets/images/youtube-white.png";
 import Grid from "@material-ui/core/Grid";
 import { useAdminStore } from "../admin/utils/store";
-import { Badge } from "@material-ui/core";
+import Badge from "@material-ui/core/Badge";
 
 const SOCIAL_NETWORKS = [
   {

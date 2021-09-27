@@ -2,10 +2,10 @@ import React from "react";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Link from "@material-ui/core/Link";
+import Badge from "@material-ui/core/Badge";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { Badge } from "@material-ui/core";
 import { useAdminStore } from "../utils/store";
 import { getBadgeRoutes } from "../../common/routes";
 
