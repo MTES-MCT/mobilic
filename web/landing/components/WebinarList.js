@@ -59,109 +59,121 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const WebinarList = withWidth()(({ width, setWebinarDisplayError }) => {
-  const classes = useStyles();
-  const api = useApi();
+export const WebinarList = withWidth()(
+  ({ width, setCantDisplayWebinarsBecauseNoneOrError }) => {
+    const classes = useStyles();
+    const api = useApi();
 
-  const [webinars, setWebinars] = React.useState([]);
-  const [webinarsLoaded, setWebinarsLoaded] = React.useState(false);
+    const [webinars, setWebinars] = React.useState([]);
+    const [webinarsLoaded, setWebinarsLoaded] = React.useState(false);
+    const [webinarsLoadError, setWebinarsLoadError] = React.useState(false);
 
-  async function fetchWebinars() {
-    try {
-      const webinarResponse = await api.httpQuery(
-        HTTP_QUERIES.webinars,
-        {},
-        true
-      );
-      const newWebinars = await webinarResponse.json();
-      setWebinars(newWebinars);
-      setWebinarsLoaded(true);
-    } catch (err) {
-      setWebinarDisplayError(true);
-      Sentry.captureException(err);
+    async function fetchWebinars() {
+      try {
+        const webinarResponse = await api.httpQuery(
+          HTTP_QUERIES.webinars,
+          {},
+          true
+        );
+        const newWebinars = await webinarResponse.json();
+        setWebinars(newWebinars);
+        setWebinarsLoaded(true);
+        setWebinarsLoadError(false);
+      } catch (err) {
+        setWebinarsLoadError(true);
+        Sentry.captureException(err);
+      }
     }
-  }
 
-  React.useEffect(() => {
-    if (webinars.length === 0 && !webinarsLoaded) {
-      fetchWebinars();
-    }
-  }, []);
+    React.useEffect(() => {
+      if (webinars.length === 0 && !webinarsLoaded) {
+        fetchWebinars();
+      }
+    }, []);
 
-  if (webinars.length === 0 && webinarsLoaded) return null;
+    React.useEffect(() => {
+      if ((webinarsLoaded && webinars.length === 0) || webinarsLoadError) {
+        setCantDisplayWebinarsBecauseNoneOrError(true);
+      } else setCantDisplayWebinarsBecauseNoneOrError(false);
+    }, [webinars, webinarsLoaded, webinarsLoadError]);
 
-  return (
-    <List>
-      {webinars.length > 0
-        ? webinars.slice(0, 10).map((webinar, index) => {
-            const webinarDate = new Date(webinar.time * 1000);
-            return (
-              <ListItem key={index} target="_blank">
-                <ButtonBase
-                  className={classes.webinarButton}
-                  href={webinar.link}
-                  target="_blank"
-                >
-                  <Card className={classes.webinarCard}>
-                    <Grid
-                      container
-                      alignItems="center"
-                      spacing={isWidthDown("xs", width) ? 2 : 6}
-                      wrap={isWidthDown("xs", width) ? "wrap" : "nowrap"}
-                    >
+    if (webinars.length === 0 && webinarsLoaded) return null;
+
+    return (
+      <List>
+        {webinars.length > 0
+          ? webinars.slice(0, 10).map((webinar, index) => {
+              const webinarDate = new Date(webinar.time * 1000);
+              return (
+                <ListItem key={index} target="_blank">
+                  <ButtonBase
+                    className={classes.webinarButton}
+                    href={webinar.link}
+                    target="_blank"
+                  >
+                    <Card className={classes.webinarCard}>
                       <Grid
                         container
-                        item
-                        xs={6}
-                        sm={"auto"}
-                        direction="column"
                         alignItems="center"
-                        style={{ maxWidth: 120 }}
+                        spacing={isWidthDown("xs", width) ? 2 : 6}
+                        wrap={isWidthDown("xs", width) ? "wrap" : "nowrap"}
                       >
-                        <Grid item>
-                          <Typography className={classes.webinarDateDay}>
-                            {SHORT_DAYS[webinarDate.getDay()]}
+                        <Grid
+                          container
+                          item
+                          xs={6}
+                          sm={"auto"}
+                          direction="column"
+                          alignItems="center"
+                          style={{ maxWidth: 120 }}
+                        >
+                          <Grid item>
+                            <Typography className={classes.webinarDateDay}>
+                              {SHORT_DAYS[webinarDate.getDay()]}
+                            </Typography>
+                          </Grid>
+                          <Grid item>
+                            <Typography className={classes.webinarDate}>
+                              {addZero(webinarDate.getDate())}
+                            </Typography>
+                          </Grid>
+                          <Grid item>
+                            <Typography className={classes.webinarDateMonth}>
+                              {SHORT_MONTHS[webinarDate.getMonth()]}{" "}
+                              {webinarDate.getFullYear()}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                        <Grid item xs={6} sm={"auto"}>
+                          <Typography>
+                            {formatTimeOfDay(webinar.time)}
+                          </Typography>
+                        </Grid>
+                        <Grid item style={{ flexGrow: 1 }}>
+                          <Typography className={classes.webinarTitle}>
+                            {webinar.title}
                           </Typography>
                         </Grid>
                         <Grid item>
-                          <Typography className={classes.webinarDate}>
-                            {addZero(webinarDate.getDate())}
-                          </Typography>
-                        </Grid>
-                        <Grid item>
-                          <Typography className={classes.webinarDateMonth}>
-                            {SHORT_MONTHS[webinarDate.getMonth()]}{" "}
-                            {webinarDate.getFullYear()}
-                          </Typography>
+                          <Button color="primary" style={{ paddingLeft: 0 }}>
+                            M'inscrire
+                          </Button>
                         </Grid>
                       </Grid>
-                      <Grid item xs={6} sm={"auto"}>
-                        <Typography>{formatTimeOfDay(webinar.time)}</Typography>
-                      </Grid>
-                      <Grid item style={{ flexGrow: 1 }}>
-                        <Typography className={classes.webinarTitle}>
-                          {webinar.title}
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Button color="primary" style={{ paddingLeft: 0 }}>
-                          M'inscrire
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </Card>
-                </ButtonBase>
+                    </Card>
+                  </ButtonBase>
+                </ListItem>
+              );
+            })
+          : [
+              <ListItem key={-1}>
+                <Skeleton variant="rect" width="100%" height={100} />
+              </ListItem>,
+              <ListItem key={-2}>
+                <Skeleton variant="rect" width="100%" height={100} />
               </ListItem>
-            );
-          })
-        : [
-            <ListItem key={-1}>
-              <Skeleton variant="rect" width="100%" height={100} />
-            </ListItem>,
-            <ListItem key={-2}>
-              <Skeleton variant="rect" width="100%" height={100} />
-            </ListItem>
-          ]}
-    </List>
-  );
-});
+            ]}
+      </List>
+    );
+  }
+);

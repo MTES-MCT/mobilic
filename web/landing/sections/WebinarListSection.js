@@ -1,14 +1,17 @@
 import React from "react";
-import { LandingSection, useSectionStyles } from "./base";
+import { LandingSection, useSectionStyles } from "./LandingSection";
 import Typography from "@material-ui/core/Typography";
 import { WebinarList } from "../components/WebinarList";
 
 export function WebinarListSection({ className }) {
-  const [webinarDisplayError, setWebinarDisplayError] = React.useState();
+  const [
+    cantDisplayWebinarsBecauseNoneOrError,
+    setCantDisplayWebinarsBecauseNoneOrError
+  ] = React.useState();
 
   const classes = useSectionStyles();
 
-  if (webinarDisplayError) return null;
+  if (cantDisplayWebinarsBecauseNoneOrError) return null;
 
   return (
     <LandingSection title="Prochains webinaires Mobilic" className={className}>
@@ -17,7 +20,11 @@ export function WebinarListSection({ className }) {
         Mobilic, savoir si Mobilic est adapté à vos besoins et comprendre
         comment l'utiliser.
       </Typography>
-      <WebinarList setWebinarDisplayError={setWebinarDisplayError} />
+      <WebinarList
+        setCantDisplayWebinarsBecauseNoneOrError={
+          setCantDisplayWebinarsBecauseNoneOrError
+        }
+      />
     </LandingSection>
   );
 }
