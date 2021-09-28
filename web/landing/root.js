@@ -15,7 +15,7 @@ import {
   LandingSection,
   LandingSectionList,
   useSectionStyles
-} from "./sections/base";
+} from "./sections/LandingSection";
 import { WebinarListSection } from "./sections/WebinarListSection";
 
 const useStyles = makeStyles(theme => ({
