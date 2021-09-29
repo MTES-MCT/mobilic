@@ -10,12 +10,13 @@ import {
 } from "common/utils/coworkers";
 import Box from "@material-ui/core/Box";
 import Chip from "@material-ui/core/Chip";
-import { EXPENDITURES } from "common/utils/expenditures";
+import {
+  EXPENDITURES,
+  regroupExpendituresBySpendingDate
+} from "common/utils/expenditures";
 import React from "react";
 import map from "lodash/map";
 import omit from "lodash/omit";
-import fromPairs from "lodash/fromPairs";
-import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import max from "lodash/max";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -369,9 +370,11 @@ export function MissionDetails({
                         ),
                       hasTeamMates:
                         allowTeamActions && teamAtMissionEnd.length > 1,
-                      currentExpenditures: fromPairs(
-                        uniq(mission.expenditures.map(e => [e.type, true]))
-                      )
+                      currentExpenditures: regroupExpendituresBySpendingDate(
+                        mission.expenditures
+                      ),
+                      missionStartTime: mission.startTime,
+                      missionEndTime: mission.endTime
                     })
                 : null
             }

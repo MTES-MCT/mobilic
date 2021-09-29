@@ -236,3 +236,18 @@ export function isoFormatLocalDate(date) {
     date.getDate()
   )}`;
 }
+
+function addDays(initialDate, daysToAdd) {
+  initialDate.setDate(initialDate.getDate() + daysToAdd);
+  return initialDate;
+}
+
+export function getDaysBetweenTwoDates(startDate, stopDate) {
+  const dateSet = [];
+  let currentDate = startOfDayAsDate(new Date(startDate));
+  while (currentDate <= stopDate) {
+    dateSet.push(startOfDayAsDate(new Date(currentDate)).getTime());
+    currentDate = addDays(currentDate, 1);
+  }
+  return dateSet;
+}

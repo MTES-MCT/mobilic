@@ -9,7 +9,7 @@ import { Expenditures } from "./Expenditures";
 import { AddressField } from "../../common/AddressField";
 import KilometerReadingInput from "./KilometerReadingInput";
 import { DateOrDateTimePicker } from "./DateOrDateTimePicker";
-import { now } from "common/utils/time";
+import { getDaysBetweenTwoDates, now } from "common/utils/time";
 
 export default function EndMissionModal({
   open,
@@ -42,12 +42,13 @@ export default function EndMissionModal({
       !missionEndTimeError
     );
   }
+
   React.useEffect(() => {
     setExpenditures(currentExpenditures || {});
     setComment("");
     setAddress(null);
     setCurrentPosition(null);
-    setKilometerReading("");
+    setKilometerReading(null);
     setMissionEndTimeError("");
 
     if (open && navigator.geolocation) {
@@ -163,6 +164,10 @@ export default function EndMissionModal({
                 <Expenditures
                   expenditures={expenditures}
                   setExpenditures={setExpenditures}
+                  listPossibleSpendingDays={getDaysBetweenTwoDates(
+                    currentMission.startTime * 1000,
+                    endTime * 1000 || Date.now()
+                  )}
                 />
               </>
             )}

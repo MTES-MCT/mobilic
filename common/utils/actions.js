@@ -14,9 +14,18 @@ import {
   graphQLErrorMatchesCode,
   isGraphQLError
 } from "./errors";
-import { formatDay, formatTimeOfDay, now, truncateMinute } from "./time";
+import {
+  formatDay,
+  formatTimeOfDay,
+  now,
+  startOfDayAsDate,
+  truncateMinute
+} from "./time";
 import { formatPersonName } from "./coworkers";
-import { EXPENDITURES } from "./expenditures";
+import {
+  EXPENDITURES,
+  regroupExpendituresBySpendingDate
+} from "./expenditures";
 import { useSnackbarAlerts } from "../../web/common/Snackbar";
 import { useModals } from "./modals";
 import {
@@ -35,8 +44,6 @@ import {
   UPDATE_MISSION_VEHICLE_MUTATION,
   VALIDATE_MISSION_MUTATION
 } from "./apiQueries";
-import fromPairs from "lodash/fromPairs";
-import uniq from "lodash/uniq";
 
 const ActionsContext = React.createContext(() => {});
 
@@ -399,7 +406,12 @@ class Actions {
 
     api.registerResponseHandler("logExpenditure", {
       onSuccess: apiResponse => {
-        const expenditure = apiResponse.data.activities.logExpenditure;
+        const expenditure = {
+          ...apiResponse.data.activities.logExpenditure,
+          spendingDate: startOfDayAsDate(
+            new Date(apiResponse.data.activities.logExpenditure.spendingDate)
+          ).getTime()
+        };
         this.store.syncEntity([expenditure], "expenditures", () => false);
       },
       onError: (error, { userId, type }) => {
@@ -1130,8 +1142,8 @@ class Actions {
     latestActivityStartTime
   }) => {
     this.modals.open("endMission", {
-      currentExpenditures: fromPairs(
-        uniq(mission.expenditures.map(e => [e.type, true]))
+      currentExpenditures: regroupExpendituresBySpendingDate(
+        mission.expenditures
       ),
       companyAddresses: this.store
         .getEntity("knownAddresses")
@@ -1290,15 +1302,30 @@ class Actions {
       e => e.userId === userId || this.store.userId()
     );
     return await Promise.all([
-      ...map(newExpenditures, (checked, type) => {
-        if (checked && !oldUserExpenditures.find(e => e.type === type)) {
-          return this.logExpenditure({ type, missionId, userId });
-        }
-        return Promise.resolve();
+      ...map(newExpenditures, (spendingDates, type) => {
+        return spendingDates?.map(spendingDate => {
+          if (
+            !oldUserExpenditures.find(
+              e => e.type === type && e.spendingDate === spendingDate
+            )
+          ) {
+            return this.logExpenditure({
+              type,
+              missionId,
+              spendingDate,
+              userId
+            });
+          }
+          return Promise.resolve();
+        });
       }),
       ...oldUserExpenditures.map(e => {
         if (
-          !find(newExpenditures, (checked, type) => checked && type === e.type)
+          !find(
+            newExpenditures,
+            (spendingDates, type) =>
+              type === e.type && spendingDates.includes(e.spendingDate)
+          )
         ) {
           return this.cancelExpenditure(e);
         }
@@ -1307,26 +1334,34 @@ class Actions {
     ]);
   };
 
-  logExpenditureForTeam = async ({ type, missionId, team = [] }) => {
+  logExpenditureForTeam = async ({
+    type,
+    missionId,
+    spendingDate,
+    team = []
+  }) => {
     if (team.length === 0) {
-      return this.logExpenditure({ type, missionId });
+      return this.logExpenditure({ type, missionId, spendingDate });
     }
     return Promise.all(
-      team.map(id => this.logExpenditure({ type, missionId, userId: id }))
+      team.map(id =>
+        this.logExpenditure({ type, missionId, spendingDate, userId: id })
+      )
     );
   };
 
-  logExpenditure = async ({ type, missionId, userId = null }) => {
+  logExpenditure = async ({ type, missionId, spendingDate, userId = null }) => {
     const actualUserId = userId || this.store.userId();
     const newExpenditure = {
       type,
       missionId,
-      userId: actualUserId
+      userId: actualUserId,
+      spendingDate: spendingDate / 1000
     };
 
     const updateStore = (store, requestId) => {
       this.store.createEntityObject(newExpenditure, "expenditures", requestId);
-      return { missionId, userId: actualUserId, type };
+      return { missionId, userId: actualUserId, type, spendingDate };
     };
 
     await this.submitAction(

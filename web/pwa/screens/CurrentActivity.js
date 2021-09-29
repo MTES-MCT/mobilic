@@ -84,7 +84,6 @@ export function CurrentActivity({
           latestActivityStartTime: latestActivity.startTime
         });
       }}
-      currentMission={currentMission}
       requireVehicle={!currentMission.vehicle}
       company={currentMission.company}
     />,
