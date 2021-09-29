@@ -676,11 +676,13 @@ class Actions {
   formatLogActivityError = (gqlError, user, selfId) => {
     if (graphQLErrorMatchesCode(gqlError, "OVERLAPPING_MISSIONS")) {
       if (!user) {
-        return "L'utilisateur a déjà une mission en cours.";
+        return "L'utilisateur a déjà une autre mission en cours à ce moment là.";
       }
       return `${formatNameInGqlError(user, selfId, true)} ${
-        user.id === selfId ? "avez" : "a"
-      } déjà une mission en cours démarrée par ${formatNameInGqlError(
+        user.id === selfId ? "êtes" : "est"
+      } à ce moment là déjà dans la mission ${
+        gqlError.extensions.conflictingMission.name
+      } créée par ${formatNameInGqlError(
         gqlError.extensions.conflictingMission.submitter,
         selfId,
         false,
@@ -688,8 +690,6 @@ class Actions {
       )} le ${formatDay(
         gqlError.extensions.conflictingMission.receptionTime,
         true
-      )} à ${formatTimeOfDay(
-        gqlError.extensions.conflictingMission.receptionTime
       )}.`;
     }
     if (graphQLErrorMatchesCode(gqlError, "MISSION_ALREADY_ENDED")) {
