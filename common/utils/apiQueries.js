@@ -142,6 +142,7 @@ export const COMPANY_SIGNUP_MUTATION = gql`
             id
             name
             siren
+            sirets
             ...CompanySettings
           }
         }
@@ -534,6 +535,7 @@ export const VALIDATE_EMPLOYMENT_MUTATION = gql`
           id
           name
           siren
+          sirets
         }
       }
     }
@@ -551,6 +553,7 @@ export const REJECT_EMPLOYMENT_MUTATION = gql`
           id
           name
           siren
+          sirets
         }
       }
     }

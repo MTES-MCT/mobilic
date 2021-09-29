@@ -98,6 +98,12 @@ export function EmploymentInfo({ employment, spacing = 4 }) {
         </Grid>
         <Grid item>
           <InfoItem
+            name="SIRETS"
+            value={employment.company.sirets?.join(", ")}
+          />
+        </Grid>
+        <Grid item>
+          <InfoItem
             name="Début rattachement"
             value={frenchFormatDateStringOrTimeStamp(employment.startDate)}
           />
@@ -292,7 +298,7 @@ export default function Home() {
                         : ""}
                     </Typography>
                   </AccordionSummary>
-                  <AccordionDetails>
+                  <AccordionDetails style={{ display: "block" }}>
                     {primaryEmployment ? (
                       <EmploymentInfo employment={primaryEmployment} />
                     ) : (
@@ -317,7 +323,7 @@ export default function Home() {
                       Entreprise secondaire : {employment.company.name}
                     </Typography>
                   </AccordionSummary>
-                  <AccordionDetails>
+                  <AccordionDetails style={{ display: "block" }}>
                     <EmploymentInfo employment={employment} />
                   </AccordionDetails>
                 </Accordion>
