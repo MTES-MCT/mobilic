@@ -106,11 +106,14 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
       case "FC_USER_ALREADY_REGISTERED":
         return "L'utilisateur est déjà inscrit sur Mobilic.";
       case "OVERLAPPING_MISSIONS":
-        return `Vous avez déjà une mission en cours démarrée le ${formatDay(
+        return `Chevauchement avec la mission ${
+          graphQLError.extensions.conflictingMission.name
+        } créée par ${formatNameInGqlError(
+          graphQLError.extensions.conflictingMission.submitter,
+          store.userId()
+        )} le ${formatDay(
           graphQLError.extensions.conflictingMission.receptionTime,
           true
-        )} à ${formatTimeOfDay(
-          graphQLError.extensions.conflictingMission.receptionTime
         )}`;
       case "OVERLAPPING_ACTIVITIES":
         return `L'activité est en chevauchement avec ${
