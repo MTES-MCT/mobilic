@@ -246,7 +246,7 @@ export function getDaysBetweenTwoDates(startDate, stopDate) {
   const dateSet = [];
   let currentDate = startOfDayAsDate(new Date(startDate));
   while (currentDate <= stopDate) {
-    dateSet.push(startOfDayAsDate(new Date(currentDate)).getTime());
+    dateSet.push(isoFormatLocalDate(new Date(currentDate)));
     currentDate = addDays(currentDate, 1);
   }
   return dateSet;

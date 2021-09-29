@@ -14,13 +14,7 @@ import {
   graphQLErrorMatchesCode,
   isGraphQLError
 } from "./errors";
-import {
-  formatDay,
-  formatTimeOfDay,
-  now,
-  startOfDayAsDate,
-  truncateMinute
-} from "./time";
+import { formatDay, formatTimeOfDay, now, truncateMinute } from "./time";
 import { formatPersonName } from "./coworkers";
 import {
   EXPENDITURES,
@@ -407,10 +401,7 @@ class Actions {
     api.registerResponseHandler("logExpenditure", {
       onSuccess: apiResponse => {
         const expenditure = {
-          ...apiResponse.data.activities.logExpenditure,
-          spendingDate: startOfDayAsDate(
-            new Date(apiResponse.data.activities.logExpenditure.spendingDate)
-          ).getTime()
+          ...apiResponse.data.activities.logExpenditure
         };
         this.store.syncEntity([expenditure], "expenditures", () => false);
       },
@@ -1356,7 +1347,7 @@ class Actions {
       type,
       missionId,
       userId: actualUserId,
-      spendingDate: spendingDate / 1000
+      spendingDate
     };
 
     const updateStore = (store, requestId) => {

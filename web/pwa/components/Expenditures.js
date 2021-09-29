@@ -106,7 +106,10 @@ export function Expenditures({
                           display: "block",
                           className: classes.expenditureText
                         }}
-                        primary={formatDay(spendingDay / 1000, true)}
+                        primary={formatDay(
+                          new Date(spendingDay).getTime() / 1000,
+                          true
+                        )}
                       />
                     </ListItem>
                   );

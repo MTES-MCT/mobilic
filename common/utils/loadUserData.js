@@ -9,7 +9,6 @@ import {
   FULL_MISSION_FRAGMENT
 } from "./apiQueries";
 import { gql } from "@apollo/client/core";
-import { parseExpenditureFromBackend } from "./expenditures";
 
 const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
@@ -115,7 +114,7 @@ export async function syncUser(userPayload, api, store) {
   }
   missions.forEach(mission => {
     activities.push(...mission.activities);
-    expenditures.push(...mission.expenditures.map(parseExpenditureFromBackend));
+    expenditures.push(...mission.expenditures);
     comments.push(...mission.comments);
     missionData.push(parseMissionPayloadFromBackend(mission, store.userId()));
   });

@@ -1,5 +1,3 @@
-import { startOfDayAsDate } from "./time";
-
 export const EXPENDITURES = {
   day_meal: {
     label: "repas",
@@ -21,8 +19,7 @@ export const EXPENDITURES = {
 
 export function parseExpenditureFromBackend(expenditure) {
   return {
-    ...expenditure,
-    spendingDate: startOfDayAsDate(new Date(expenditure.spendingDate)).getTime()
+    ...expenditure
   };
 }
 

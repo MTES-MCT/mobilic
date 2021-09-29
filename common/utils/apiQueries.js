@@ -986,7 +986,7 @@ export const LOG_EXPENDITURE_MUTATION = gql`
     $type: ExpenditureTypeEnum!
     $missionId: Int!
     $userId: Int
-    $spendingDate: TimeStamp!
+    $spendingDate: Date!
   ) {
     activities {
       logExpenditure(
