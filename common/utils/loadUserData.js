@@ -39,6 +39,7 @@ const USER_QUERY = gql`
           id
           name
           siren
+          sirets
           ...CompanySettings
           users {
             id

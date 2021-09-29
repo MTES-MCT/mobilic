@@ -1,5 +1,4 @@
 import React from "react";
-import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Alert from "@material-ui/lab/Alert";
@@ -31,37 +30,39 @@ export function InfoItem({
 }) {
   const classes = useStyles({ bold });
 
-  return (
-    <Box>
-      <Grid container wrap="nowrap" spacing={0} alignItems="flex-start">
-        <Grid item>
-          <Typography
-            align="left"
-            className={classes.fieldName}
-            variant="overline"
-          >
-            {name}
-          </Typography>
-        </Grid>
-        {action && (
-          <Grid item>
-            <Button
-              size="small"
-              color="primary"
-              variant="contained"
-              onClick={action}
-              className={classes.actionButton}
-            >
-              {actionTitle}
-            </Button>
-          </Grid>
-        )}
+  return [
+    <Grid key={1} container wrap="nowrap" spacing={0} alignItems="flex-start">
+      <Grid item>
+        <Typography
+          align="left"
+          className={classes.fieldName}
+          variant="overline"
+        >
+          {name}
+        </Typography>
       </Grid>
-      <Typography noWrap align="left" className={classes.fieldValue}>
-        {value}
-      </Typography>
-      {info && <Alert severity="info">{info}</Alert>}
-      {alertComponent}
-    </Box>
-  );
+      {action && (
+        <Grid item>
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={action}
+            className={classes.actionButton}
+          >
+            {actionTitle}
+          </Button>
+        </Grid>
+      )}
+    </Grid>,
+    <Typography key={2} noWrap align="left" className={classes.fieldValue}>
+      {value}
+    </Typography>,
+    info && (
+      <Alert key={3} severity="info">
+        {info}
+      </Alert>
+    ),
+    alertComponent
+  ];
 }
