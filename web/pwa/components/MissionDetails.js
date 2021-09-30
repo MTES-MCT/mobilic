@@ -12,7 +12,7 @@ import Box from "@material-ui/core/Box";
 import Chip from "@material-ui/core/Chip";
 import {
   EXPENDITURES,
-  regroupExpendituresBySpendingDate
+  regroupExpendituresByType
 } from "common/utils/expenditures";
 import React from "react";
 import map from "lodash/map";
@@ -370,7 +370,7 @@ export function MissionDetails({
                         ),
                       hasTeamMates:
                         allowTeamActions && teamAtMissionEnd.length > 1,
-                      currentExpenditures: regroupExpendituresBySpendingDate(
+                      currentExpenditures: regroupExpendituresByType(
                         mission.expenditures
                       ),
                       missionStartTime: mission.startTime,

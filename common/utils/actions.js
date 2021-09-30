@@ -15,10 +15,7 @@ import {
 } from "./errors";
 import { formatDay, formatTimeOfDay, now, truncateMinute } from "./time";
 import { formatPersonName } from "./coworkers";
-import {
-  EXPENDITURES,
-  regroupExpendituresBySpendingDate
-} from "./expenditures";
+import { EXPENDITURES, regroupExpendituresByType } from "./expenditures";
 import { useSnackbarAlerts } from "../../web/common/Snackbar";
 import { useModals } from "./modals";
 import {
@@ -1137,9 +1134,7 @@ class Actions {
     latestActivityStartTime
   }) => {
     this.modals.open("endMission", {
-      currentExpenditures: regroupExpendituresBySpendingDate(
-        mission.expenditures
-      ),
+      currentExpenditures: regroupExpendituresByType(mission.expenditures),
       companyAddresses: this.store
         .getEntity("knownAddresses")
         .filter(

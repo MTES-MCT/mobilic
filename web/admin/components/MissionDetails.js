@@ -47,7 +47,10 @@ import {
 } from "common/utils/apiQueries";
 import LocationEntry from "../../pwa/components/LocationEntry";
 import Chip from "@material-ui/core/Chip";
-import { EXPENDITURES } from "common/utils/expenditures";
+import {
+  EXPENDITURES,
+  regroupExpendituresByType
+} from "common/utils/expenditures";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 import TableCell from "@material-ui/core/TableCell";
 import Switch from "@material-ui/core/Switch/Switch";
@@ -55,6 +58,8 @@ import { VerticalTimeline } from "common/components/VerticalTimeline";
 import Grid from "@material-ui/core/Grid";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import { computeMissionStats } from "common/utils/mission";
+import map from "lodash/map";
+import find from "lodash/find";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {
@@ -379,13 +384,14 @@ export function MissionDetails({
     );
   }
 
-  async function onCreateExpenditure(exp, user) {
+  async function onCreateExpenditure(exp, user, spendingDate) {
     if (setShouldRefreshActivityPanel) setShouldRefreshActivityPanel(true);
     const apiResponse = await api.nonConcurrentQueryQueue.execute(() =>
       api.graphQlMutate(LOG_EXPENDITURE_MUTATION, {
         type: exp,
         userId: user.id,
-        missionId: mission.id
+        missionId: mission.id,
+        spendingDate: spendingDate
       })
     );
     const expenditure = apiResponse.data.activities.logExpenditure;
@@ -699,6 +705,7 @@ export function MissionDetails({
               user: e.user,
               userId: e.user.id,
               activities: e.activities,
+              expenditures: e.expenditures,
               expenditureAggs: e.expenditureAggs,
               validation: e.validation,
               lastRow: true
@@ -779,37 +786,55 @@ export function MissionDetails({
                           onClick={() => {
                             startRowEdit();
                             modals.open("expenditures", {
-                              currentExpenditures: entry.expenditureAggs,
+                              currentExpenditures: regroupExpendituresByType(
+                                entry.expenditures
+                              ),
                               title: `Frais pour ${formatPersonName(
                                 entry.user
                               )}`,
+                              missionStartTime: mission.startTime,
+                              missionEndTime: mission.endTime,
                               handleSubmit: exps => {
-                                const expendituresToCreate = Object.keys(
-                                  exps
-                                ).filter(
-                                  e => exps[e] && !entry.expenditureAggs[e]
-                                );
-                                const expendituresToDelete = mission.expenditures.filter(
-                                  e =>
-                                    e.userId === entry.user.id && !exps[e.type]
-                                );
                                 return Promise.all([
-                                  ...expendituresToDelete.map(e =>
-                                    alerts.withApiErrorHandling(
-                                      async () => await onCancelExpenditure(e),
-                                      e.id
-                                    )
-                                  ),
-                                  ...expendituresToCreate.map(expType =>
-                                    alerts.withApiErrorHandling(
-                                      async () =>
-                                        await onCreateExpenditure(
-                                          expType,
-                                          entry.user
-                                        ),
-                                      expType
-                                    )
-                                  )
+                                  ...map(exps, (spendingDates, type) => {
+                                    return spendingDates?.map(spendingDate => {
+                                      if (
+                                        !entry.expenditures.find(
+                                          e =>
+                                            e.type === type &&
+                                            e.spendingDate === spendingDate
+                                        )
+                                      ) {
+                                        return alerts.withApiErrorHandling(
+                                          async () =>
+                                            await onCreateExpenditure(
+                                              type,
+                                              entry.user,
+                                              spendingDate
+                                            ),
+                                          type
+                                        );
+                                      }
+                                      return Promise.resolve();
+                                    });
+                                  }),
+                                  ...entry.expenditures.map(e => {
+                                    if (
+                                      !find(
+                                        exps,
+                                        (spendingDates, type) =>
+                                          type === e.type &&
+                                          spendingDates.includes(e.spendingDate)
+                                      )
+                                    ) {
+                                      return alerts.withApiErrorHandling(
+                                        async () =>
+                                          await onCancelExpenditure(e),
+                                        e.id
+                                      );
+                                    }
+                                    return Promise.resolve();
+                                  })
                                 ]).then(() => {
                                   setTimeout(terminateRowEdit, 0);
                                 });

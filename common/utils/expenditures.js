@@ -42,7 +42,7 @@ export function formatExpendituresAsOneString(expenditureCounts) {
     .join(", ");
 }
 
-export function regroupExpendituresBySpendingDate(expenditures) {
+export function regroupExpendituresByType(expenditures) {
   const expendituresReducer = (expObject, expenditure) => {
     if (expenditure.type in expObject) {
       if (!expObject[expenditure.type].includes(expenditure.spendingDate)) {
