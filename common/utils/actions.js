@@ -13,7 +13,13 @@ import {
   graphQLErrorMatchesCode,
   isGraphQLError
 } from "./errors";
-import { formatDay, formatTimeOfDay, now, truncateMinute } from "./time";
+import {
+  formatDay,
+  formatTimeOfDay,
+  now,
+  sameMinute,
+  truncateMinute
+} from "./time";
 import { formatPersonName } from "./coworkers";
 import { EXPENDITURES } from "./expenditures";
 import { useSnackbarAlerts } from "../../web/common/Snackbar";
@@ -177,8 +183,8 @@ class Actions {
     });
 
     api.registerResponseHandler("cancelOrEditActivity", {
-      onSuccess: (apiResponse, { activityId, actionType, newEndTime }) => {
-        if (actionType === "cancel") {
+      onSuccess: (apiResponse, { activityId, shouldCancel, newEndTime }) => {
+        if (shouldCancel) {
           if (apiResponse.data.activities.cancelActivity.success) {
             this.store.syncEntity([], "activities", a => a.id === activityId);
           }
@@ -758,12 +764,15 @@ class Actions {
             !a.endTime
         );
         if (currentActivity) {
-          this.store.updateEntityObject(
-            currentActivity.id,
-            "activities",
-            { endTime: truncateMinute(startTime) },
-            requestId
-          );
+          if (sameMinute(currentActivity.startTime, startTime)) {
+            this.editActivityEvent(currentActivity, "cancel");
+          } else
+            this.store.updateEntityObject(
+              currentActivity.id,
+              "activities",
+              { endTime: truncateMinute(startTime) },
+              requestId
+            );
         }
       }
       const newItemId = this.store.createEntityObject(
@@ -852,14 +861,26 @@ class Actions {
 
     if (comment) payload.context = { comment };
 
-    if (actionType !== "cancel") {
+    let shouldCancel = actionType === "cancel";
+
+    const updatedStartTime = newStartTime || activityEvent.startTime;
+    const updatedEndTime = newEndTime || activityEvent.endTime;
+    if (
+      !payload.removeEndTime &&
+      updatedEndTime &&
+      sameMinute(updatedStartTime, updatedEndTime)
+    ) {
+      shouldCancel = true;
+    }
+
+    if (!shouldCancel) {
       payload.startTime = newStartTime;
       payload.endTime = newEndTime;
       payload.removeEndTime = !newEndTime;
     }
 
     const updateStore = (store, requestId) => {
-      if (actionType === "cancel") {
+      if (shouldCancel) {
         this.store.deleteEntityObject(
           activityEvent.id,
           "activities",
@@ -878,7 +899,7 @@ class Actions {
       }
       return {
         activityId: activityEvent.id,
-        actionType,
+        shouldCancel,
         newEndTime,
         userId: activityEvent.userId,
         type: activityEvent.type
@@ -886,9 +907,7 @@ class Actions {
     };
 
     await this.submitAction(
-      actionType === "cancel"
-        ? CANCEL_ACTIVITY_MUTATION
-        : EDIT_ACTIVITY_MUTATION,
+      shouldCancel ? CANCEL_ACTIVITY_MUTATION : EDIT_ACTIVITY_MUTATION,
       payload,
       updateStore,
       ["activities"],

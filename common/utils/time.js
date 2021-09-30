@@ -236,3 +236,10 @@ export function isoFormatLocalDate(date) {
     date.getDate()
   )}`;
 }
+
+export function sameMinute(unixTimestamp1, unixTimestamp2) {
+  return (
+    new Date(unixTimestamp1 * 1000).toISOString().slice(0, 16) ===
+    new Date(unixTimestamp2 * 1000).toISOString().slice(0, 16)
+  );
+}
