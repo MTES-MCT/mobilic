@@ -156,7 +156,8 @@ export function XlsxVerifier() {
           {
             body: fd,
             timeout: 15000
-          }
+          },
+          true
         );
         const json = await apiResponse.json();
         setVerifyResponse(json);

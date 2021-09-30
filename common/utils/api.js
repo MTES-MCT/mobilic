@@ -18,6 +18,8 @@ import { HTTP_QUERIES } from "./apiQueries";
 
 export const API_HOST = "/api";
 
+const GRAPHQL_MAX_BATCH_SIZE = 10;
+
 const CHECK_MUTATION = gql`
   mutation checkAuthentication {
     auth {
@@ -71,6 +73,8 @@ class Api {
               new BatchHttpLink({
                 uri: this.uri,
                 credentials: "same-origin",
+                batchMax: GRAPHQL_MAX_BATCH_SIZE,
+                batchDebounce: true,
                 batchInterval: 50
               }),
               new HttpLink({ uri: this.uri, credentials: "same-origin" })
@@ -93,16 +97,19 @@ class Api {
     );
   }
 
-  async graphQlMutate(query, variables, other) {
+  async graphQlMutate(query, variables, other, disableRefreshToken = false) {
     this.initApolloClientIfNeeded();
-    return await this._queryWithRefreshToken(() =>
+    const func = () =>
       this.apolloClient.mutate({
         mutation: query,
         variables: variables,
         fetchPolicy: "no-cache",
         ...other
-      })
-    );
+      });
+    if (disableRefreshToken) {
+      return await func();
+    }
+    return await this._queryWithRefreshToken(func);
   }
 
   async _fetch(queryInfo, options = {}) {
@@ -146,8 +153,8 @@ class Api {
     return await fetch(url, actualOptions);
   }
 
-  async httpQuery(queryInfo, options = {}) {
-    return await this._queryWithRefreshToken(async () => {
+  async httpQuery(queryInfo, options = {}, disableRefreshToken = false) {
+    const func = async () => {
       const response = await this._fetch(queryInfo, options);
       if (response.status !== 200) {
         const error = new Error("Response status is not 200");
@@ -156,7 +163,12 @@ class Api {
         throw error;
       }
       return response;
-    });
+    };
+
+    if (disableRefreshToken) {
+      return await func();
+    }
+    return await this._queryWithRefreshToken(func);
   }
 
   async downloadFileHttpQuery(queryInfo, options = {}) {
@@ -282,7 +294,8 @@ class Api {
         const batch = [];
         forEach(pendingRequests, request => {
           // Match Apollo batch size to ensure sequential execution
-          if (request.batchable && batch.length < 10) batch.push(request);
+          if (request.batchable && batch.length < GRAPHQL_MAX_BATCH_SIZE)
+            batch.push(request);
           else {
             if (batch.length === 0) batch.push(request);
             return false;

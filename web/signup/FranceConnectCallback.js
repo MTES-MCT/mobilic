@@ -44,7 +44,8 @@ export function FranceConnectCallback() {
             create: !!create,
             state
           },
-          { context: { nonPublicApi: true } }
+          { context: { nonPublicApi: true } },
+          true
         );
         await store.updateUserIdAndInfo();
         if (create) history.push("/signup/user_login");

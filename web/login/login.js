@@ -43,10 +43,15 @@ export default function Login() {
     setLoading(true);
     await alerts.withApiErrorHandling(
       async () => {
-        await api.graphQlMutate(LOGIN_MUTATION, {
-          email,
-          password
-        });
+        await api.graphQlMutate(
+          LOGIN_MUTATION,
+          {
+            email,
+            password
+          },
+          {},
+          true
+        );
         await store.updateUserIdAndInfo();
       },
       "login",

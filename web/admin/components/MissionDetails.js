@@ -16,7 +16,6 @@ import Divider from "@material-ui/core/Divider";
 import flatMap from "lodash/flatMap";
 import { AugmentedTable } from "./AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
-import { getTime } from "common/utils/events";
 import { ACTIVITIES } from "common/utils/activities";
 import { DateOrDateTimePicker } from "../../pwa/components/DateOrDateTimePicker";
 import { useApi } from "common/utils/api";
@@ -835,7 +834,9 @@ export function MissionDetails({
                         {entry.validation ? "✅" : "⚠️"}
                       </span>
                       {entry.validation
-                        ? ` validé le ${formatDay(getTime(entry.validation))}`
+                        ? ` validé le ${formatDay(
+                            entry.validation.receptionTime
+                          )}`
                         : " non validé"}
                     </Typography>
                   </Box>

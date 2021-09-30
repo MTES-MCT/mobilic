@@ -1,5 +1,4 @@
 import { formatTimeOfDay } from "./time";
-import { getTime } from "./events";
 import map from "lodash/map";
 import mapValues from "lodash/mapValues";
 import values from "lodash/values";
@@ -14,7 +13,7 @@ export function formatPersonName(coworker) {
 export function resolveTeamAt(teamChanges, time) {
   const statusesAtTime = computeLatestEnrollmentStatuses(
     mapValues(teamChanges, statuses =>
-      statuses.filter(s => getTime(s) <= time || s.isInStartingTeam)
+      statuses.filter(s => s.time <= time || s.isInStartingTeam)
     )
   );
   return values(statusesAtTime)
@@ -24,13 +23,13 @@ export function resolveTeamAt(teamChanges, time) {
 
 export function formatLatestEnrollmentStatus(teamChange) {
   return !teamChange.isEnrollment
-    ? `retiré(e) à ${formatTimeOfDay(getTime(teamChange))}`
-    : `ajouté(e) à ${formatTimeOfDay(getTime(teamChange))}`;
+    ? `retiré(e) à ${formatTimeOfDay(teamChange.time)}`
+    : `ajouté(e) à ${formatTimeOfDay(teamChange.time)}`;
 }
 
 export function computeTeamChanges(allMissionSortedActivities, selfId) {
   const missionStart = Math.min(
-    ...allMissionSortedActivities.map(a => getTime(a))
+    ...allMissionSortedActivities.map(a => a.startTime)
   );
   const missionEnd = allMissionSortedActivities.some(a => !a.endTime)
     ? null
@@ -40,9 +39,9 @@ export function computeTeamChanges(allMissionSortedActivities, selfId) {
     const userTimes = startAndEndTimesForUser[a.userId] || {};
     if (
       !startAndEndTimesForUser[a.userId] ||
-      userTimes.startTime > getTime(a)
+      userTimes.startTime > a.startTime
     ) {
-      userTimes.startTime = getTime(a);
+      userTimes.startTime = a.startTime;
     }
     if (
       !startAndEndTimesForUser[a.userId] ||

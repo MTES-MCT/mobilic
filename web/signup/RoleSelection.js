@@ -5,8 +5,8 @@ import Card from "@material-ui/core/Card";
 import { ManagerImage, WorkerImage } from "common/utils/icons";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import { LinkButton } from "../../common/LinkButton";
-import { PaperContainerTitle } from "../../common/PaperContainer";
+import { LinkButton } from "../common/LinkButton";
+import { PaperContainerTitle } from "../common/PaperContainer";
 
 const useStyles = makeStyles(theme => ({
   roleButton: {

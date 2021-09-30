@@ -1,15 +1,15 @@
 import React from "react";
-import { Landing } from "../landing/landing";
-import Login from "../landing/login";
-import Signup from "../landing/signup/root";
+import { Landing } from "../landing/root";
+import Login from "../login/login";
+import Signup from "../signup/root";
 import Stats from "../landing/stats";
 import Home from "../home/AccountInfo";
-import { Invite } from "../landing/invite";
+import { Invite } from "../signup/invite";
 import { RedeemInvite } from "../home/RedeemInvite";
-import { FranceConnectCallback } from "../landing/signup/FranceConnectCallback";
-import { Logout } from "../landing/logout";
-import { ActivateEmail } from "../landing/signup/ActivateEmail";
-import { RequestResetPassword, ResetPassword } from "../landing/ResetPassword";
+import { FranceConnectCallback } from "../signup/FranceConnectCallback";
+import { Logout } from "../login/logout";
+import { ActivateEmail } from "../signup/ActivateEmail";
+import { RequestResetPassword, ResetPassword } from "../login/ResetPassword";
 import { CGU } from "../landing/cgu";
 import { UserRead } from "../control/UserRead";
 import { XlsxVerifier } from "../control/VerifyXlsxSignature";
@@ -32,14 +32,14 @@ export const ROUTES = [
   },
   {
     path: "/app",
-    label: "Saisie de temps",
+    label: "Mes missions",
     accessible: ({ userInfo, companies }) =>
       userInfo.hasActivatedEmail && userInfo.id && companies.length > 0,
     component: React.lazy(() => import("../pwa/utils/navigation")),
     subRoutes: [
       {
         path: "",
-        label: "Saisie",
+        label: "Saisie de temps",
         exact: true
       },
       {
@@ -68,12 +68,6 @@ export const ROUTES = [
         path: "/validations"
       }
     ]
-  },
-  {
-    path: "/home",
-    label: "Mes informations",
-    accessible: ({ userInfo }) => !!userInfo.id,
-    component: Home
   },
   {
     path: "/signup",
@@ -129,7 +123,7 @@ export const ROUTES = [
     path: "/oauth/authorize",
     label: "OAuth",
     accessible: () => true,
-    component: React.lazy(() => import("../landing/oauth/root")),
+    component: React.lazy(() => import("../oauth/root")),
     menuItemFilter: () => false
   },
   {
@@ -188,6 +182,35 @@ export const ROUTES = [
     accessible: () => true,
     component: Partners,
     menuItemFilter: () => false
+  },
+  {
+    path: "/home",
+    label: "Mes informations",
+    accessible: () => true,
+    menuItemFilter: () => false,
+    component: Home
+  },
+  {
+    path: "/logout",
+    label: "Déconnexion",
+    accessible: () => true,
+    menuItemFilter: () => false,
+    component: Logout
+  },
+  {
+    label: "Mon compte",
+    path: "",
+    accessible: ({ userInfo }) => !!userInfo.id,
+    subRoutes: [
+      {
+        path: "/home",
+        label: "Mes informations"
+      },
+      {
+        path: "/logout",
+        label: "Déconnexion"
+      }
+    ]
   }
 ];
 

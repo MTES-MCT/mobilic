@@ -6,7 +6,7 @@ import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import Paper from "@material-ui/core/Paper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
-import { Section } from "../../common/Section";
+import { Section } from "../common/Section";
 import { LoadingButton } from "common/components/LoadingButton";
 import Grid from "@material-ui/core/Grid";
 import { HTTP_QUERIES } from "common/utils/apiQueries";

@@ -34,6 +34,7 @@ export const FULL_MISSION_FRAGMENT = gql`
       type
       missionId
       userId
+      receptionTime
     }
     company {
       id
@@ -197,6 +198,7 @@ export const USER_READ_QUERY = gql`
                 type
                 missionId
                 userId
+                receptionTime
               }
               activities {
                 id
@@ -335,6 +337,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 id
                 type
                 userId
+                receptionTime
               }
               startLocation {
                 id
@@ -1158,5 +1161,9 @@ export const HTTP_QUERIES = {
   oauthAuthorize: {
     method: "GET",
     endpoint: "/oauth/authorize"
+  },
+  webinars: {
+    method: "GET",
+    endpoint: "/next-webinars"
   }
 };

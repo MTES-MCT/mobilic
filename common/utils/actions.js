@@ -8,7 +8,6 @@ import { isPendingSubmission, useStoreSyncedWithLocalStorage } from "./store";
 import { useApi } from "./api";
 import { ACTIVITIES, parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
-import { getTime } from "./events";
 import {
   formatNameInGqlError,
   graphQLErrorMatchesCode,
@@ -677,20 +676,20 @@ class Actions {
   formatLogActivityError = (gqlError, user, selfId) => {
     if (graphQLErrorMatchesCode(gqlError, "OVERLAPPING_MISSIONS")) {
       if (!user) {
-        return "L'utilisateur a déjà une mission en cours.";
+        return "L'utilisateur a déjà une autre mission en cours à ce moment là.";
       }
       return `${formatNameInGqlError(user, selfId, true)} ${
-        user.id === selfId ? "avez" : "a"
-      } déjà une mission en cours démarrée par ${formatNameInGqlError(
+        user.id === selfId ? "êtes" : "est"
+      } à ce moment là déjà dans la mission ${
+        gqlError.extensions.conflictingMission.name
+      } créée par ${formatNameInGqlError(
         gqlError.extensions.conflictingMission.submitter,
         selfId,
         false,
         true
       )} le ${formatDay(
-        getTime(gqlError.extensions.conflictingMission),
+        gqlError.extensions.conflictingMission.receptionTime,
         true
-      )} à ${formatTimeOfDay(
-        getTime(gqlError.extensions.conflictingMission)
       )}.`;
     }
     if (graphQLErrorMatchesCode(gqlError, "MISSION_ALREADY_ENDED")) {
@@ -817,7 +816,7 @@ class Actions {
           (a.missionId === activityEvent.missionId ||
             (identityMap[activityEvent.missionId] &&
               a.missionId === identityMap[activityEvent.missionId])) &&
-          getTime(a) === getTime(activityEvent) &&
+          a.startTime === activityEvent.startTime &&
           a.endTime === activityEvent.endTime
       );
       activitiesToEdit
@@ -991,7 +990,7 @@ class Actions {
       address,
       missionId,
       isStart,
-      kilometerReading
+      kilometerReading || null
     );
 
     const updateStore = (store, requestId) => {
@@ -1025,9 +1024,10 @@ class Actions {
     isStart,
     kilometerReading
   }) => {
+    const kilometerReadingOrNull = kilometerReading || null;
     const payload = {
       missionLocationId: location.id,
-      kilometerReading
+      kilometerReading: kilometerReadingOrNull
     };
 
     const updateStore = (store, requestId) => {
@@ -1037,12 +1037,16 @@ class Actions {
         {
           [isStart ? "startLocation" : "endLocation"]: {
             ...location,
-            kilometerReading
+            kilometerReading: kilometerReadingOrNull
           }
         },
         requestId
       );
-      return { isStart, kilometerReading, missionId: mission.id };
+      return {
+        isStart,
+        kilometerReading: kilometerReadingOrNull,
+        missionId: mission.id
+      };
     };
 
     await this.submitAction(
@@ -1325,7 +1329,11 @@ class Actions {
     };
 
     const updateStore = (store, requestId) => {
-      this.store.createEntityObject(newExpenditure, "expenditures", requestId);
+      this.store.createEntityObject(
+        { ...newExpenditure, receptionTime: now() },
+        "expenditures",
+        requestId
+      );
       return { missionId, userId: actualUserId, type };
     };
 

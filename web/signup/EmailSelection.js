@@ -12,17 +12,17 @@ import SignupStepper from "./SignupStepper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import { LoadingButton } from "common/components/LoadingButton";
-import { Section } from "../../common/Section";
+import { Section } from "../common/Section";
 import { useModals } from "common/utils/modals";
 import { PasswordField } from "common/components/PasswordField";
-import { useSnackbarAlerts } from "../../common/Snackbar";
-import { PaperContainerTitle } from "../../common/PaperContainer";
+import { useSnackbarAlerts } from "../common/Snackbar";
+import { PaperContainerTitle } from "../common/PaperContainer";
 import {
   CONFIRM_FC_EMAIL_MUTATION,
   HTTP_QUERIES
 } from "common/utils/apiQueries";
-import { CheckboxField } from "../../common/CheckboxField";
-import { EmailField } from "../../common/EmailField";
+import { CheckboxField } from "../common/CheckboxField";
+import { EmailField } from "../common/EmailField";
 
 const useStyles = makeStyles(theme => ({
   text: {

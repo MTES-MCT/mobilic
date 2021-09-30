@@ -7,7 +7,7 @@ import Paper from "@material-ui/core/Paper";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
-import { Section } from "../../common/Section";
+import { Section } from "../common/Section";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";

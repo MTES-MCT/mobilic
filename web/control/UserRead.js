@@ -72,7 +72,8 @@ export function UserRead() {
               {
                 token
               },
-              { context: { nonPublicApi: true } }
+              { context: { nonPublicApi: true } },
+              true
             );
             const userPayload = userResponse.data.userFromReadToken.user;
             setTokenInfo({

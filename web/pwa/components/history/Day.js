@@ -268,7 +268,7 @@ export function Day({
                       mission.adminValidation ? null : editExpenditures
                     }
                     editVehicle={
-                      mission.adminValidation
+                      mission.adminValidation || !editVehicle
                         ? null
                         : vehicle => editVehicle({ mission, vehicle })
                     }

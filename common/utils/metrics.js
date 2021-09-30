@@ -1,4 +1,3 @@
-import { getTime } from "./events";
 import { ACTIVITIES, filterActivitiesOverlappingPeriod } from "./activities";
 import { now } from "./time";
 
@@ -22,15 +21,15 @@ export function computeTotalActivityDurations(
     untilTime || current
   );
 
-  const firstEvent = filteredActivityEvents[0];
+  const firstActivity = filteredActivityEvents[0];
   const timers = {
-    total: actualUntil - Math.max(getTime(firstEvent), fromTime)
+    total: actualUntil - Math.max(firstActivity.startTime, fromTime)
   };
-  filteredActivityEvents.forEach(event => {
-    timers[event.type] =
-      (timers[event.type] || 0) +
-      Math.min(event.endTime || current, untilTime || current) -
-      Math.max(getTime(event), fromTime);
+  filteredActivityEvents.forEach(activity => {
+    timers[activity.type] =
+      (timers[activity.type] || 0) +
+      Math.min(activity.endTime || current, untilTime || current) -
+      Math.max(activity.startTime, fromTime);
   });
   timers.totalWork =
     (timers[ACTIVITIES.work.name] || 0) +
