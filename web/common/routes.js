@@ -15,6 +15,7 @@ import { UserRead } from "../control/UserRead";
 import { XlsxVerifier } from "../control/VerifyXlsxSignature";
 import { Partners } from "../landing/partners";
 import { Redirect, useParams } from "react-router-dom";
+import { missionsToValidateByAdmin } from "../admin/selectors/missionSelectors";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -243,4 +244,13 @@ export function getAccessibleRoutes(storeData) {
 
 export function isAccessible(path, storeData) {
   return ROUTES.find(r => path.startsWith(r.path)).accessible(storeData);
+}
+
+export function getBadgeRoutes(adminStore) {
+  return [
+    {
+      path: "/admin/validations",
+      badgeContent: missionsToValidateByAdmin(adminStore)?.length
+    }
+  ];
 }

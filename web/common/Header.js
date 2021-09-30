@@ -4,7 +4,7 @@ import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import { formatPersonName } from "common/utils/coworkers";
 import IconButton from "@material-ui/core/IconButton";
-import { getAccessibleRoutes } from "./routes";
+import { getAccessibleRoutes, getBadgeRoutes } from "./routes";
 import { useHistory, useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { Logos } from "./Logos";
@@ -28,6 +28,8 @@ import TwitterIcon from "common/assets/images/twitter.svg";
 import TwitterWhiteIcon from "common/assets/images/twitter-white.svg";
 
 import Grid from "@material-ui/core/Grid";
+import { useAdminStore } from "../admin/utils/store";
+import Badge from "@material-ui/core/Badge";
 
 const SOCIAL_NETWORKS = [
   {
@@ -105,6 +107,9 @@ const useStyles = makeStyles(theme => ({
     },
     fontWeight: "bold"
   },
+  customBadge: {
+    right: theme.spacing(-2)
+  },
   selectedNavListItem: {
     background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.main} 5px, ${theme.palette.background.default} 5px, ${theme.palette.background.default})`
   },
@@ -142,6 +147,9 @@ function ListRouteItem({ route, closeDrawer }) {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
+  const badgeContent = getBadgeRoutes(useAdminStore()).find(
+    br => br.path === route.path
+  )?.badgeContent;
 
   const selected = route.exact
     ? location.pathname === route.path
@@ -187,7 +195,14 @@ function ListRouteItem({ route, closeDrawer }) {
           closeDrawer();
         }}
       >
-        {route.label}
+        <Badge
+          invisible={!badgeContent}
+          badgeContent={badgeContent}
+          color="error"
+          classes={{ badge: classes.customBadge }}
+        >
+          {route.label}
+        </Badge>
       </Link>
     </ListItem>
   );
