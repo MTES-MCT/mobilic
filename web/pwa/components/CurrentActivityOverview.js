@@ -72,8 +72,7 @@ export function CurrentActivityOverview({
     ? formatTimer
     : formatTimerWithSeconds)(currentActivityDuration)}`;
 
-  let missionOverviewText = `Mission ${currentMission.name ||
-    "sans nom"} démarrée `;
+  let missionOverviewText = `Mission ${currentMission.name} démarrée `;
 
   if (currentMission.submittedBySomeoneElse) {
     missionOverviewText =

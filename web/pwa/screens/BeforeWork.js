@@ -17,6 +17,7 @@ import {
   DAY,
   formatDayOfWeek,
   formatTimeOfDay,
+  prettyFormatDay,
   shortPrettyFormatDay,
   startOfDay
 } from "common/utils/time";
@@ -298,7 +299,8 @@ function MissionItem({ mission, openHistory }) {
         </Avatar>
       </ListItemAvatar>
       <ListItemText
-        primary={`Mission ${mission.name || "sans nom"}`}
+        primary={`Mission ${mission.name ||
+          `du ${prettyFormatDay(mission.startTime)}`}`}
         primaryTypographyProps={{ className: classes.missionName }}
         secondary={`${formatTimeOfDay(mission.startTime)} - ${formatTimeOfDay(
           mission.endTime

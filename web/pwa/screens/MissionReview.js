@@ -48,9 +48,9 @@ export function MissionReview({
           variant="h5"
         >
           Récapitulatif de la mission
-          {` ${
-            currentMission.name ? currentMission.name : ""
-          } du ${prettyFormatDay(currentMission.startTime)}`}
+          {` ${currentMission.name} du ${prettyFormatDay(
+            currentMission.startTime
+          )}`}
         </Typography>
         <WorkTimeSummaryKpiGrid
           metrics={renderMissionKpis(

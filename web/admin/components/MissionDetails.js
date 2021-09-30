@@ -588,9 +588,10 @@ export function MissionDetails({
       key={0}
       className={`${classes.horizontalPadding} ${classes.missionTitleContainer}`}
     >
-      <Typography variant="h3" className={classes.missionTitle}>
-        {mission.name ? mission.name : "Mission sans nom"}
-      </Typography>
+      {mission.name ||
+        (mission.startTime
+          ? `Mission du ${prettyFormatDay(mission.startTime, false)}`
+          : "Détails de la mission")}
       <IconButton
         aria-label="Fermer"
         className={classes.closeButton}
@@ -605,9 +606,9 @@ export function MissionDetails({
       className={`${classes.horizontalPadding} ${classes.missionSubTitle}`}
     >
       {mission.startTime
-        ? `${prettyFormatDay(mission.startTime, true)} de (${formatTimeOfDay(
+        ? `${prettyFormatDay(mission.startTime, true)} de ${formatTimeOfDay(
             mission.startTime
-          )} à ${formatTimeOfDay(mission.endTime)})`
+          )} à ${formatTimeOfDay(mission.endTime)}`
         : day
         ? prettyFormatDay(day, true)
         : ""}
@@ -970,9 +971,7 @@ export function MissionDetails({
           if (errorToDisplay) alerts.error(errorToDisplay, mission.id, 6000);
           else
             alerts.success(
-              `La mission${
-                mission.name ? " " + mission.name : ""
-              } a été validée avec succès !`,
+              `La mission ${mission.name} a été validée avec succès !`,
               mission.id,
               6000
             );

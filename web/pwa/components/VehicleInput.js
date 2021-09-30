@@ -61,6 +61,7 @@ export function VehicleInput({
     />,
     setKilometerReading && (
       <KilometerReadingInput
+        key={1}
         size="small"
         kilometerReading={kilometerReading}
         setKilometerReading={setKilometerReading}

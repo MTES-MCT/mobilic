@@ -80,6 +80,16 @@ export default function SettingAdmin({ company }) {
           submitSettingChange={submitSettingChange}
         />
       </ListItem>
+      <Divider />
+      <ListItem>
+        <SimpleToggleSetting
+          name="requireMissionName"
+          label="Nom de mission obligatoire"
+          value={company.settings.requireMissionName}
+          description="A la création d'une mission, le travailleur mobile doit obligatoirement saisir un nom pour celle-ci. Ce nom sera ensuite repris dans l'interface du gestionnaire pour un suivi plus fin du temps de travail et une meilleure visibilité dans les outils de reporting."
+          submitSettingChange={submitSettingChange}
+        />
+      </ListItem>
     </List>
   ];
 }
