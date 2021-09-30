@@ -1,7 +1,6 @@
 import forEach from "lodash/forEach";
 import mapValues from "lodash/mapValues";
 import values from "lodash/values";
-import { getTime, sortEvents } from "./events";
 import { computeTeamChanges } from "./coworkers";
 import uniqBy from "lodash/uniqBy";
 import groupBy from "lodash/groupBy";
@@ -59,7 +58,7 @@ export function augmentMissionWithProperties(mission, userId, companies = []) {
     activities,
     expenditures: mission.expenditures.filter(e => e.userId === userId),
     startTime:
-      activities.length > 0 ? getTime(activities[0]) : getTime(mission),
+      activities.length > 0 ? activities[0].startTime : mission.receptionTime,
     isComplete:
       activities.length > 0 && !!activities[activities.length - 1].endTime,
     endTime:
@@ -71,9 +70,9 @@ export function augmentMissionWithProperties(mission, userId, companies = []) {
 }
 
 export function augmentAndSortMissions(missions, userId, companies = []) {
-  return sortEvents(
-    missions.map(m => augmentMissionWithProperties(m, userId, companies))
-  );
+  return missions
+    .map(m => augmentMissionWithProperties(m, userId, companies))
+    .sort((m1, m2) => m1.startTime - m2.startTime);
 }
 
 export function computeMissionStats(m, users) {

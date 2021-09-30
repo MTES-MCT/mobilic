@@ -11,17 +11,17 @@ import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import { LoadingButton } from "common/components/LoadingButton";
 import { formatApiError } from "common/utils/errors";
-import { Section } from "../../common/Section";
+import { Section } from "../common/Section";
 import {
   broadCastChannel,
   useStoreSyncedWithLocalStorage
 } from "common/utils/store";
-import { useSnackbarAlerts } from "../../common/Snackbar";
-import { PaperContainerTitle } from "../../common/PaperContainer";
+import { useSnackbarAlerts } from "../common/Snackbar";
+import { PaperContainerTitle } from "../common/PaperContainer";
 import SignupStepper from "./SignupStepper";
 import { COMPANY_SIGNUP_MUTATION, SIREN_QUERY } from "common/utils/apiQueries";
-import { Link } from "../../common/LinkButton";
-import { CheckboxField } from "../../common/CheckboxField";
+import { Link } from "../common/LinkButton";
+import { CheckboxField } from "../common/CheckboxField";
 
 const useStyles = makeStyles(theme => ({
   formFieldTitle: {

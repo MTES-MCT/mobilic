@@ -62,7 +62,7 @@ export function EmploymentInfo({ employment, spacing = 4 }) {
   const modals = useModals();
 
   async function handleEmploymentValidation(accept) {
-    alerts.withApiErrorHandling(
+    await alerts.withApiErrorHandling(
       async () => {
         const apiResponse = await api.graphQlMutate(
           accept ? VALIDATE_EMPLOYMENT_MUTATION : REJECT_EMPLOYMENT_MUTATION,
@@ -140,7 +140,7 @@ export function EmploymentInfo({ employment, spacing = 4 }) {
               <LoadingButton
                 color="primary"
                 variant="contained"
-                onClick={() => handleEmploymentValidation(true)}
+                onClick={async () => await handleEmploymentValidation(true)}
               >
                 Valider le rattachement
               </LoadingButton>

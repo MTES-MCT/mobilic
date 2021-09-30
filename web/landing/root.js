@@ -11,11 +11,14 @@ import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizon
 import BackgroundVerticalImage from "common/assets/images/landing-hero-vertical.svg";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Footer } from "./footer";
+import {
+  LandingSection,
+  LandingSectionList,
+  useSectionStyles
+} from "./sections/LandingSection";
+import { WebinarListSection } from "./sections/WebinarListSection";
 
 const useStyles = makeStyles(theme => ({
-  whiteSection: {
-    backgroundColor: theme.palette.background.paper
-  },
   heroContainer: {
     backgroundColor: "#3184FF",
     padding: 0,
@@ -23,22 +26,6 @@ const useStyles = makeStyles(theme => ({
   },
   heroInner: {
     padding: 0
-  },
-  section: {
-    paddingTop: theme.spacing(7),
-    paddingBottom: theme.spacing(7),
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(5),
-    margin: 0
-  },
-  sectionTitle: {
-    paddingBottom: theme.spacing(6)
-  },
-  videoHelperText: {
-    paddingBottom: theme.spacing(4),
-    maxWidth: 600,
-    margin: "auto",
-    textAlign: "justify"
   },
   videoContainer: {
     position: "relative",
@@ -53,14 +40,6 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
     height: "100%",
     overflow: "hidden"
-  },
-  sectionHPadding: {
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(5)
-  },
-  inner: {
-    margin: "auto",
-    padding: 0
   },
   bgImage: {
     paddingTop: theme.spacing(14),
@@ -166,27 +145,21 @@ function _Showcase({
 
 const Showcase = withWidth()(_Showcase);
 
-export function Landing() {
-  const [width, setWidth] = React.useState(window.innerWidth);
-
-  React.useLayoutEffect(() => {
-    function updateWidth() {
-      setWidth(window.innerWidth);
-    }
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, []);
-
+export const Landing = withWidth()(({ width }) => {
   const ref = React.useRef();
 
   const classes = useStyles({ width });
+  const sectionClasses = useSectionStyles();
+
   return [
     <Header key={1} />,
     <Container key={2} maxWidth={false} className={classes.heroContainer}>
       <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
         <img
           src={
-            width < 500 ? BackgroundVerticalImage : BackgroundHorizontalImage
+            isWidthDown("xs", width)
+              ? BackgroundVerticalImage
+              : BackgroundHorizontalImage
           }
           alt="Mobilic-hero"
           width="100%"
@@ -195,22 +168,15 @@ export function Landing() {
         />
       </Container>
     </Container>,
-    <Container
-      key={4}
-      className={`${classes.section}  ${classes.whiteSection}`}
-      maxWidth={false}
-    >
-      <Container maxWidth="md" className={classes.inner}>
-        <Typography variant="h3" className={`${classes.sectionTitle}`}>
-          Mobilic ... 🤔 qu'est-ce que c'est ?
-        </Typography>
-        <Typography className={classes.videoHelperText}>
+    <LandingSectionList key={3}>
+      <LandingSection title="Mobilic ... 🤔 qu'est-ce que c'est ?">
+        <Typography className={sectionClasses.sectionIntroText}>
           Mobilic est la plateforme gouvernementale qui permet de{" "}
           <strong>simplifier le suivi du temps de travail</strong> dans le
           transport routier léger et le déménagement afin de lutter contre le
           travail illégal.
         </Typography>
-        <Typography className={classes.videoHelperText}>
+        <Typography className={sectionClasses.sectionIntroText}>
           Le livret individuel de contrôle (LIC), qui sert aujourd'hui à
           l'enregistrement du temps de travail des conducteurs de véhicules
           utilitaires légers de moins de 3,5 tonnes, et des autres personnels
@@ -237,14 +203,9 @@ export function Landing() {
             </video>
           </Box>
         </Container>
-      </Container>
-    </Container>,
-    <Container key={5} className={`${classes.section}`} maxWidth={false}>
-      <Container maxWidth="md" className={classes.inner}>
-        <Typography variant="h3" className={`${classes.sectionTitle}`}>
-          A qui s'adresse Mobilic ?
-        </Typography>
-        <Typography className={classes.videoHelperText}>
+      </LandingSection>
+      <LandingSection title="A qui s'adresse Mobilic ?">
+        <Typography className={sectionClasses.sectionIntroText}>
           Mobilic s'adresse aux conducteurs des entreprises de transport routier
           qui utilisent des véhicules utilitaires légers (VUL, {"<"} 3.5T), et
           aux autres{" "}
@@ -350,17 +311,8 @@ export function Landing() {
             ctaTarget="/developers"
           />
         </Box>
-      </Container>
-    </Container>,
-    <Container
-      key={6}
-      className={`${classes.section} ${classes.whiteSection}`}
-      maxWidth={false}
-    >
-      <Container maxWidth="md" className={classes.inner}>
-        <Typography variant="h3" className={`${classes.sectionTitle}`}>
-          Ce qu'il faut savoir sur Mobilic
-        </Typography>
+      </LandingSection>
+      <LandingSection title="Ce qu'il faut savoir sur Mobilic">
         <Grid
           container
           spacing={4}
@@ -421,8 +373,9 @@ export function Landing() {
             </MainCtaButton>
           </Grid>
         </Grid>
-      </Container>
-    </Container>,
-    <Footer key={7} />
+      </LandingSection>
+      <WebinarListSection />
+    </LandingSectionList>,
+    <Footer key={4} />
   ];
-}
+});

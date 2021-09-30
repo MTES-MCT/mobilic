@@ -18,6 +18,8 @@ import { HTTP_QUERIES } from "./apiQueries";
 
 export const API_HOST = "/api";
 
+const GRAPHQL_MAX_BATCH_SIZE = 10;
+
 const CHECK_MUTATION = gql`
   mutation checkAuthentication {
     auth {
@@ -71,6 +73,8 @@ class Api {
               new BatchHttpLink({
                 uri: this.uri,
                 credentials: "same-origin",
+                batchMax: GRAPHQL_MAX_BATCH_SIZE,
+                batchDebounce: true,
                 batchInterval: 50
               }),
               new HttpLink({ uri: this.uri, credentials: "same-origin" })
@@ -290,7 +294,8 @@ class Api {
         const batch = [];
         forEach(pendingRequests, request => {
           // Match Apollo batch size to ensure sequential execution
-          if (request.batchable && batch.length < 10) batch.push(request);
+          if (request.batchable && batch.length < GRAPHQL_MAX_BATCH_SIZE)
+            batch.push(request);
           else {
             if (batch.length === 0) batch.push(request);
             return false;

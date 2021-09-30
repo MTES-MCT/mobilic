@@ -124,8 +124,12 @@ export function AddressField({
         return filtered;
       }}
       onChange={(event, newValue) => {
-        setOptions(newValue ? [newValue, ...options] : options);
-        onChange(newValue);
+        let cleanNewValue = newValue;
+        if (typeof newValue === "string") {
+          cleanNewValue = { manual: true, name: newValue };
+        }
+        setOptions(cleanNewValue ? [cleanNewValue, ...options] : options);
+        onChange(cleanNewValue);
       }}
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);

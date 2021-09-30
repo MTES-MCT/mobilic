@@ -24,6 +24,9 @@ import { Link, LinkButton } from "./LinkButton";
 import YoutubeIcon from "common/assets/images/youtube.png";
 import LinkedInWhiteIcon from "common/assets/images/linkedin.svg";
 import YoutubeWhiteIcon from "common/assets/images/youtube-white.png";
+import TwitterIcon from "common/assets/images/twitter.svg";
+import TwitterWhiteIcon from "common/assets/images/twitter-white.svg";
+
 import Grid from "@material-ui/core/Grid";
 import { useAdminStore } from "../admin/utils/store";
 import Badge from "@material-ui/core/Badge";
@@ -40,6 +43,12 @@ const SOCIAL_NETWORKS = [
     colorLogo: YoutubeIcon,
     whiteLogo: YoutubeWhiteIcon,
     link: "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg"
+  },
+  {
+    name: "Twitter",
+    colorLogo: TwitterIcon,
+    whiteLogo: TwitterWhiteIcon,
+    link: "https://twitter.com/Mobilic_gouv"
   }
 ];
 
