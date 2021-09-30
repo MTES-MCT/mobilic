@@ -16,7 +16,6 @@ import Divider from "@material-ui/core/Divider";
 import flatMap from "lodash/flatMap";
 import { AugmentedTable } from "./AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
-import { getTime } from "common/utils/events";
 import { ACTIVITIES } from "common/utils/activities";
 import { DateOrDateTimePicker } from "../../pwa/components/DateOrDateTimePicker";
 import { useApi } from "common/utils/api";
@@ -34,7 +33,6 @@ import {
   isGraphQLError
 } from "common/utils/errors";
 import Button from "@material-ui/core/Button";
-import { computeMissionStats } from "../panels/Validations";
 import { addBreakOps } from "../../pwa/components/ActivityRevision";
 import {
   CANCEL_ACTIVITY_MUTATION,
@@ -56,6 +54,7 @@ import Switch from "@material-ui/core/Switch/Switch";
 import { VerticalTimeline } from "common/components/VerticalTimeline";
 import Grid from "@material-ui/core/Grid";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
+import { computeMissionStats } from "common/utils/mission";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {
@@ -589,9 +588,10 @@ export function MissionDetails({
       key={0}
       className={`${classes.horizontalPadding} ${classes.missionTitleContainer}`}
     >
-      <Typography variant="h3" className={classes.missionTitle}>
-        {mission.name ? mission.name : "Mission sans nom"}
-      </Typography>
+      {mission.name ||
+        (mission.startTime
+          ? `Mission du ${prettyFormatDay(mission.startTime, false)}`
+          : "Détails de la mission")}
       <IconButton
         aria-label="Fermer"
         className={classes.closeButton}
@@ -606,9 +606,9 @@ export function MissionDetails({
       className={`${classes.horizontalPadding} ${classes.missionSubTitle}`}
     >
       {mission.startTime
-        ? `${prettyFormatDay(mission.startTime, true)} de (${formatTimeOfDay(
+        ? `${prettyFormatDay(mission.startTime, true)} de ${formatTimeOfDay(
             mission.startTime
-          )} à ${formatTimeOfDay(mission.endTime)})`
+          )} à ${formatTimeOfDay(mission.endTime)}`
         : day
         ? prettyFormatDay(day, true)
         : ""}
@@ -834,7 +834,9 @@ export function MissionDetails({
                         {entry.validation ? "✅" : "⚠️"}
                       </span>
                       {entry.validation
-                        ? ` validé le ${formatDay(getTime(entry.validation))}`
+                        ? ` validé le ${formatDay(
+                            entry.validation.receptionTime
+                          )}`
                         : " non validé"}
                     </Typography>
                   </Box>
@@ -969,9 +971,7 @@ export function MissionDetails({
           if (errorToDisplay) alerts.error(errorToDisplay, mission.id, 6000);
           else
             alerts.success(
-              `La mission${
-                mission.name ? " " + mission.name : ""
-              } a été validée avec succès !`,
+              `La mission ${mission.name} a été validée avec succès !`,
               mission.id,
               6000
             );

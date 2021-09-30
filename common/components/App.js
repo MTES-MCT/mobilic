@@ -13,6 +13,7 @@ import { useApi } from "../utils/api";
 import EditPastMission from "../../web/pwa/components/EditPastMission";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
+import { sortActivities } from "../utils/activities";
 
 const useStyles = makeStyles(theme => ({
   appContainer: {
@@ -35,7 +36,7 @@ function _App({ ScreenComponent, loadUser }) {
     if (!document.hidden) api.executePendingRequests();
   }, []);
 
-  const activities = sortEvents(values(store.getEntity("activities")));
+  const activities = sortActivities(values(store.getEntity("activities")));
   const expenditures = values(store.getEntity("expenditures"));
   const comments = sortEvents(values(store.getEntity("comments")));
 

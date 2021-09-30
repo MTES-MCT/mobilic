@@ -34,9 +34,9 @@ const MONTHS = [
   "décembre"
 ];
 
-const SHORT_DAYS = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"];
+export const SHORT_DAYS = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"];
 
-const DAYS = [
+export const DAYS = [
   "dimanche",
   "lundi",
   "mardi",
@@ -155,7 +155,7 @@ export function formatDateTime(unixTimestamp, showYear = false) {
   })} ${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
 }
 
-function addZero(n) {
+export function addZero(n) {
   return n < 10 ? "0" + n : n;
 }
 

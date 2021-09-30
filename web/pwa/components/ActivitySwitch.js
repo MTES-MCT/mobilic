@@ -4,7 +4,6 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import { ACTIVITIES, SWITCH_ACTIVITIES } from "common/utils/activities";
 import { useModals } from "common/utils/modals";
-import { getTime } from "common/utils/events";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";
@@ -133,7 +132,9 @@ export function ActivitySwitch({
           latestActivity.type === ACTIVITIES.drive.name
             ? store.userId()
             : undefined,
-        currentDriverStartTime: latestActivity ? getTime(latestActivity) : null,
+        currentDriverStartTime: latestActivity
+          ? latestActivity.startTime
+          : null,
         handleDriverSelection: async (driverId, vehicle, kilometerReading) => {
           store.setState({ latestActivitySwitchExactTime: now() });
           shouldWaitForClickHandler

@@ -8,22 +8,9 @@ import { AugmentedTable } from "../components/AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import uniqBy from "lodash/uniqBy";
-import orderBy from "lodash/orderBy";
-import min from "lodash/min";
-import max from "lodash/max";
 import map from "lodash/map";
-import sum from "lodash/sum";
-import groupBy from "lodash/groupBy";
-import mapValues from "lodash/mapValues";
 import Paper from "@material-ui/core/Paper";
-import {
-  DAY,
-  formatDay,
-  formatTimeOfDay,
-  formatTimer,
-  now
-} from "common/utils/time";
+import { formatDay, formatTimeOfDay, formatTimer } from "common/utils/time";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import Button from "@material-ui/core/Button";
 import Drawer from "@material-ui/core/Drawer/Drawer";
@@ -34,8 +21,11 @@ import Tab from "@material-ui/core/Tab";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 import { VALIDATE_MISSION_MUTATION } from "common/utils/apiQueries";
-
-const DEFAULT_WORKER_VALIDATION_TIMEOUT = 7 * DAY;
+import {
+  missionsToValidateByAdmin,
+  missionsToValidateByWorkers,
+  missionWithStats
+} from "../selectors/missionSelectors";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -103,65 +93,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main
   }
 }));
-
-export function computeMissionStats(m, users) {
-  const activitiesWithUserId = m.activities
-    .map(a => ({
-      ...a,
-      userId: a.userId || a.user.id,
-      user: a.user || users.find(u => u.id === a.userId)
-    }))
-    .filter(a => !!a.user);
-  const members = uniqBy(
-    activitiesWithUserId.map(a => a.user),
-    u => u.id
-  );
-  const validatorIds = m.validations.map(v => v.submitterId);
-  const validatedByAllMembers = members.every(user =>
-    validatorIds.includes(user.id)
-  );
-  const activitiesByUser = groupBy(
-    activitiesWithUserId,
-    a => a.userId || a.user.id
-  );
-  const isComplete = activitiesWithUserId.every(a => !!a.endTime);
-  const userStats = mapValues(activitiesByUser, (activities, userId) => {
-    const _activities = orderBy(activities, ["startTime", "endTime"]);
-    const startTime = min(_activities.map(a => a.startTime));
-    const endTime = max(_activities.map(a => a.endTime));
-    const totalWorkDuration = sum(
-      _activities.map(a => a.endTime - a.startTime)
-    );
-    return {
-      activities: _activities,
-      user: members.find(m => m.id.toString() === userId),
-      startTime,
-      endTime,
-      service: endTime - startTime,
-      totalWorkDuration,
-      isComplete,
-      breakDuration: endTime - startTime - totalWorkDuration,
-      expenditureAggs: mapValues(
-        groupBy(
-          m.expenditures.filter(e => e.userId.toString() === userId),
-          e => e.type
-        ),
-        exps => exps.length
-      ),
-      validation: m.validations.find(v => v.submitterId.toString() === userId)
-    };
-  });
-  const startTime = min(m.activities.map(a => a.startTime));
-  const endTime = max(m.activities.map(a => a.endTime));
-  return {
-    ...m,
-    activities: activitiesWithUserId,
-    startTime,
-    endTime,
-    validatedByAllMembers,
-    userStats
-  };
-}
 
 function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
   const api = useApi();
@@ -278,28 +209,9 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
 
   const columns = tab === 0 ? commonCols : [...commonCols, validationCol];
 
-  const allMissions = adminStore.missions.map(m =>
-    computeMissionStats(m, adminStore.users)
-  );
-
-  const nonValidatedByAdminMissions = allMissions
-    .filter(m => !m.adminValidation)
-    .filter(m => m.activities.length > 0);
-
-  const nowTime = now();
-
-  const missionsValidatedByAllWorkers = nonValidatedByAdminMissions.filter(
-    m =>
-      m.validatedByAllMembers ||
-      m.endTime + DEFAULT_WORKER_VALIDATION_TIMEOUT < nowTime
-  );
-  const missionsNotValidatedByAllWorkers = nonValidatedByAdminMissions.filter(
-    m =>
-      !m.validatedByAllMembers &&
-      m.endTime + DEFAULT_WORKER_VALIDATION_TIMEOUT >= nowTime
-  );
-
   const [missionIdOnFocus, setMissionIdOnFocus] = React.useState(null);
+
+  const missionListToValidateByAdmin = missionsToValidateByAdmin(adminStore);
 
   React.useEffect(() => {
     const queryString = new URLSearchParams(location.search);
@@ -322,11 +234,13 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
       >
         <Tab
           className={classes.tab}
-          label={`A valider (${missionsValidatedByAllWorkers.length})`}
+          label={`A valider (${missionListToValidateByAdmin?.length})`}
         />
         <Tab
           className={classes.tab}
-          label={`En attente de validation par les salariés (${missionsNotValidatedByAllWorkers.length})`}
+          label={`En attente de validation par les salariés (${
+            missionsToValidateByWorkers(adminStore)?.length
+          })`}
         />
       </Tabs>
       <Typography className={classes.explanation}>
@@ -339,7 +253,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
         entries={
           tab === 0
             ? flatMap(
-                missionsValidatedByAllWorkers.map(m =>
+                missionListToValidateByAdmin?.map(m =>
                   map(m.userStats, us => ({
                     ...us,
                     name: m.name,
@@ -350,7 +264,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
                 )
               )
             : flatMap(
-                missionsNotValidatedByAllWorkers.map(m =>
+                missionsToValidateByWorkers(adminStore)?.map(m =>
                   map(m.userStats, us => ({
                     ...us,
                     name: m.name,
@@ -394,8 +308,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
           format: (value, entry) => (
             <Box className="flex-row-space-between">
               <Typography variant="h6" className={classes.missionTitle}>
-                Mission {entry.name ? entry.name : "sans nom"} du{" "}
-                {formatDay(entry.startTime)}
+                Mission {entry.name} du {formatDay(entry.startTime)}
               </Typography>
               {tab === 0 && (
                 <Button
@@ -451,7 +364,9 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
         <MissionDetails
           missionId={missionIdOnFocus}
           day={location.state ? location.state.day : null}
-          mission={allMissions.find(m => m.id === missionIdOnFocus)}
+          mission={missionWithStats(adminStore)?.find(
+            m => m.id === missionIdOnFocus
+          )}
           handleClose={() => history.push("/admin/validations")}
           setShouldRefreshActivityPanel={setShouldRefreshData}
         />

@@ -4,8 +4,7 @@ import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import { formatPersonName } from "common/utils/coworkers";
 import IconButton from "@material-ui/core/IconButton";
-import { useApi } from "common/utils/api";
-import { getAccessibleRoutes } from "./routes";
+import { getAccessibleRoutes, getBadgeRoutes } from "./routes";
 import { useHistory, useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import { Logos } from "./Logos";
@@ -15,7 +14,6 @@ import useTheme from "@material-ui/core/styles/useTheme";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Button from "@material-ui/core/Button";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
 import Drawer from "@material-ui/core/Drawer";
 import ListSubheader from "@material-ui/core/ListSubheader";
@@ -23,11 +21,15 @@ import CloseIcon from "@material-ui/icons/Close";
 import Tooltip from "@material-ui/core/Tooltip";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Link, LinkButton } from "./LinkButton";
-import { useLoadingScreen } from "common/utils/loading";
 import YoutubeIcon from "common/assets/images/youtube.png";
 import LinkedInWhiteIcon from "common/assets/images/linkedin.svg";
 import YoutubeWhiteIcon from "common/assets/images/youtube-white.png";
+import TwitterIcon from "common/assets/images/twitter.svg";
+import TwitterWhiteIcon from "common/assets/images/twitter-white.svg";
+
 import Grid from "@material-ui/core/Grid";
+import { useAdminStore } from "../admin/utils/store";
+import Badge from "@material-ui/core/Badge";
 
 const SOCIAL_NETWORKS = [
   {
@@ -41,6 +43,12 @@ const SOCIAL_NETWORKS = [
     colorLogo: YoutubeIcon,
     whiteLogo: YoutubeWhiteIcon,
     link: "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg"
+  },
+  {
+    name: "Twitter",
+    colorLogo: TwitterIcon,
+    whiteLogo: TwitterWhiteIcon,
+    link: "https://twitter.com/Mobilic_gouv"
   }
 ];
 
@@ -96,13 +104,18 @@ const useStyles = makeStyles(theme => ({
     "&:hover": {
       color: theme.palette.primary.main,
       backgroundColor: theme.palette.background.default
-    }
+    },
+    fontWeight: "bold"
+  },
+  customBadge: {
+    right: theme.spacing(-2)
   },
   selectedNavListItem: {
     background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.main} 5px, ${theme.palette.background.default} 5px, ${theme.palette.background.default})`
   },
   nestedListSubheader: {
-    paddingLeft: theme.spacing(4)
+    fontSize: "1rem",
+    fontStyle: "italic"
   },
   closeNavButton: {
     display: "flex",
@@ -134,6 +147,9 @@ function ListRouteItem({ route, closeDrawer }) {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
+  const badgeContent = getBadgeRoutes(useAdminStore()).find(
+    br => br.path === route.path
+  )?.badgeContent;
 
   const selected = route.exact
     ? location.pathname === route.path
@@ -141,7 +157,6 @@ function ListRouteItem({ route, closeDrawer }) {
 
   return route.subRoutes ? (
     <>
-      <Divider />
       <List
         dense
         key={route.path + "subRoutes"}
@@ -180,19 +195,23 @@ function ListRouteItem({ route, closeDrawer }) {
           closeDrawer();
         }}
       >
-        {route.label}
+        <Badge
+          invisible={!badgeContent}
+          badgeContent={badgeContent}
+          color="error"
+          classes={{ badge: classes.customBadge }}
+        >
+          {route.label}
+        </Badge>
       </Link>
     </ListItem>
   );
 }
 
 export function NavigationMenu({ open, setOpen }) {
-  const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
   const companies = store.companies();
-  const withLoadingScreen = useLoadingScreen();
-  const history = useHistory();
 
   const classes = useStyles();
 
@@ -214,6 +233,7 @@ export function NavigationMenu({ open, setOpen }) {
           <CloseIcon />
         </IconButton>
       </Box>
+      <Divider />
       <List dense>
         {routes
           .filter(
@@ -226,25 +246,6 @@ export function NavigationMenu({ open, setOpen }) {
               closeDrawer={() => setOpen(false)}
             />
           ))}
-        {store.userId() && (
-          <ListItem
-            button
-            aria-label="Déconnexion"
-            className={classes.navListItem}
-            onClick={() =>
-              withLoadingScreen(async () => {
-                await api.logout({ failOnError: false });
-                history.push("/");
-              })
-            }
-            disableGutters
-          >
-            <ListItemText
-              primary="Déconnexion"
-              primaryTypographyProps={{ variant: "body1" }}
-            />
-          </ListItem>
-        )}
       </List>
     </Drawer>
   );

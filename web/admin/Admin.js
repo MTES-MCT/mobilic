@@ -7,7 +7,6 @@ import {
   useLocation
 } from "react-router-dom";
 import Container from "@material-ui/core/Container";
-import { ADMIN_VIEWS } from "./utils/navigation";
 import "./assets/admin.scss";
 import { loadCompaniesData } from "./utils/loadCompaniesData";
 import { useApi } from "common/utils/api";
@@ -23,6 +22,7 @@ import { SideMenu } from "./components/SideMenu";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
+import { ADMIN_VIEWS } from "./utils/navigation";
 
 const useStyles = makeStyles(theme => ({
   container: {

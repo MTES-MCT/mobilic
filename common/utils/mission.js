@@ -1,8 +1,13 @@
 import forEach from "lodash/forEach";
 import mapValues from "lodash/mapValues";
 import values from "lodash/values";
-import { getTime, sortEvents } from "./events";
 import { computeTeamChanges } from "./coworkers";
+import uniqBy from "lodash/uniqBy";
+import groupBy from "lodash/groupBy";
+import orderBy from "lodash/orderBy";
+import min from "lodash/min";
+import max from "lodash/max";
+import sum from "lodash/sum";
 
 export function parseMissionPayloadFromBackend(missionPayload, userId) {
   return {
@@ -53,7 +58,7 @@ export function augmentMissionWithProperties(mission, userId, companies = []) {
     activities,
     expenditures: mission.expenditures.filter(e => e.userId === userId),
     startTime:
-      activities.length > 0 ? getTime(activities[0]) : getTime(mission),
+      activities.length > 0 ? activities[0].startTime : mission.receptionTime,
     isComplete:
       activities.length > 0 && !!activities[activities.length - 1].endTime,
     endTime:
@@ -65,7 +70,66 @@ export function augmentMissionWithProperties(mission, userId, companies = []) {
 }
 
 export function augmentAndSortMissions(missions, userId, companies = []) {
-  return sortEvents(
-    missions.map(m => augmentMissionWithProperties(m, userId, companies))
+  return missions
+    .map(m => augmentMissionWithProperties(m, userId, companies))
+    .sort((m1, m2) => m1.startTime - m2.startTime);
+}
+
+export function computeMissionStats(m, users) {
+  const activitiesWithUserId = m.activities
+    .map(a => ({
+      ...a,
+      userId: a.userId || a.user.id,
+      user: a.user || users.find(u => u.id === a.userId)
+    }))
+    .filter(a => !!a.user);
+  const members = uniqBy(
+    activitiesWithUserId.map(a => a.user),
+    u => u.id
   );
+  const validatorIds = m.validations.map(v => v.submitterId);
+  const validatedByAllMembers = members.every(user =>
+    validatorIds.includes(user.id)
+  );
+  const activitiesByUser = groupBy(
+    activitiesWithUserId,
+    a => a.userId || a.user.id
+  );
+  const isComplete = activitiesWithUserId.every(a => !!a.endTime);
+  const userStats = mapValues(activitiesByUser, (activities, userId) => {
+    const _activities = orderBy(activities, ["startTime", "endTime"]);
+    const startTime = min(_activities.map(a => a.startTime));
+    const endTime = max(_activities.map(a => a.endTime));
+    const totalWorkDuration = sum(
+      _activities.map(a => a.endTime - a.startTime)
+    );
+    return {
+      activities: _activities,
+      user: members.find(m => m.id.toString() === userId),
+      startTime,
+      endTime,
+      service: endTime - startTime,
+      totalWorkDuration,
+      isComplete,
+      breakDuration: endTime - startTime - totalWorkDuration,
+      expenditureAggs: mapValues(
+        groupBy(
+          m.expenditures.filter(e => e.userId.toString() === userId),
+          e => e.type
+        ),
+        exps => exps.length
+      ),
+      validation: m.validations.find(v => v.submitterId.toString() === userId)
+    };
+  });
+  const startTime = min(m.activities.map(a => a.startTime));
+  const endTime = max(m.activities.map(a => a.endTime));
+  return {
+    ...m,
+    activities: activitiesWithUserId,
+    startTime,
+    endTime,
+    validatedByAllMembers,
+    userStats
+  };
 }

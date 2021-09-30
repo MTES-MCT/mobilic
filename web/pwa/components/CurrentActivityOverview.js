@@ -1,7 +1,6 @@
 import React from "react";
 import Container from "@material-ui/core/Container";
-import { ACTIVITIES } from "common/utils/activities";
-import { getActivityStartTimeToUse } from "common/utils/events";
+import { ACTIVITIES, getActivityStartTimeToUse } from "common/utils/activities";
 import { formatTimer, formatTimerWithSeconds, now } from "common/utils/time";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
@@ -73,8 +72,7 @@ export function CurrentActivityOverview({
     ? formatTimer
     : formatTimerWithSeconds)(currentActivityDuration)}`;
 
-  let missionOverviewText = `Mission ${currentMission.name ||
-    "sans nom"} démarrée `;
+  let missionOverviewText = `Mission ${currentMission.name} démarrée `;
 
   if (currentMission.submittedBySomeoneElse) {
     missionOverviewText =

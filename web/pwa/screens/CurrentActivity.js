@@ -2,10 +2,12 @@ import React from "react";
 import { ActivitySwitch } from "../components/ActivitySwitch";
 import { resolveTeamAt } from "common/utils/coworkers";
 import { CurrentActivityOverview } from "../components/CurrentActivityOverview";
-import { getCurrentActivityDuration, getTime } from "common/utils/events";
 import { MissionDetails } from "../components/MissionDetails";
 import Box from "@material-ui/core/Box";
-import { ACTIVITIES } from "common/utils/activities";
+import {
+  ACTIVITIES,
+  getCurrentActivityDuration
+} from "common/utils/activities";
 import { now } from "common/utils/time";
 import WarningEndMissionModalContainer from "../components/WarningEndMissionModal/WarningEndMissionModalContainer";
 
@@ -32,7 +34,7 @@ export function CurrentActivity({
   return [
     <CurrentActivityOverview
       key={0}
-      currentDayStart={getTime(currentMission.activities[0])}
+      currentDayStart={currentMission.activities[0].startTime}
       currentMission={currentMission}
       latestActivity={latestActivity}
     />,
@@ -50,7 +52,7 @@ export function CurrentActivity({
           ? await editActivityEvent(
               latestActivity,
               "revision",
-              getTime(latestActivity),
+              latestActivity.startTime,
               now(),
               null,
               !currentMission.submittedBySomeoneElse

@@ -10,7 +10,6 @@ import { checkMinimumDurationOfWeeklyRest } from "common/utils/regulation";
 import { MissionReviewSection } from "../MissionReviewSection";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import { getTime } from "common/utils/events";
 import ListItemText from "@material-ui/core/ListItemText/ListItemText";
 import Link from "@material-ui/core/Link";
 import { prettyFormatDay } from "common/utils/time";
@@ -54,7 +53,7 @@ export function Week({
             {missionsInPeriod.map((mission, index) => [
               <ListItem
                 key={2 * index}
-                onClick={handleMissionClick(getTime(mission))}
+                onClick={handleMissionClick(mission.startTime)}
               >
                 <ListItemText disableTypography>
                   <Link
@@ -65,8 +64,8 @@ export function Week({
                       e.preventDefault();
                     }}
                   >
-                    Mission{mission.name ? " " + mission.name : ""} du{" "}
-                    {prettyFormatDay(getTime(mission))}
+                    Mission {mission.name} du{" "}
+                    {prettyFormatDay(mission.startTime)}
                   </Link>
                 </ListItemText>
               </ListItem>,

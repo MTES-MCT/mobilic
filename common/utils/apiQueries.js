@@ -7,6 +7,7 @@ export const COMPANY_SETTINGS_FRAGMENT = gql`
       requireKilometerData
       requireSupportActivity
       requireExpenditures
+      requireMissionName
     }
   }
 `;
@@ -33,6 +34,7 @@ export const FULL_MISSION_FRAGMENT = gql`
       type
       missionId
       userId
+      receptionTime
       spendingDate
     }
     company {
@@ -198,6 +200,7 @@ export const USER_READ_QUERY = gql`
                 missionId
                 userId
                 spendingDate
+                receptionTime
               }
               activities {
                 id
@@ -336,6 +339,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 id
                 type
                 userId
+                receptionTime
                 spendingDate
               }
               startLocation {
@@ -1048,6 +1052,7 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
     $requireKilometerData: Boolean
     $requireExpenditures: Boolean
     $requireSupportActivity: Boolean
+    $requireMissionName: Boolean
   ) {
     editCompanySettings(
       companyId: $companyId
@@ -1055,6 +1060,7 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
       requireKilometerData: $requireKilometerData
       requireExpenditures: $requireExpenditures
       requireSupportActivity: $requireSupportActivity
+      requireMissionName: $requireMissionName
     ) {
       id
       ...CompanySettings
@@ -1165,5 +1171,9 @@ export const HTTP_QUERIES = {
   oauthAuthorize: {
     method: "GET",
     endpoint: "/oauth/authorize"
+  },
+  webinars: {
+    method: "GET",
+    endpoint: "/next-webinars"
   }
 };

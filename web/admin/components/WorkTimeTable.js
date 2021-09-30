@@ -27,6 +27,7 @@ export function WorkTimeTable({
   workTimeEntries,
   className,
   showExpenditures,
+  showMissionName,
   loading
 }) {
   const classes = useStyles();
@@ -115,15 +116,26 @@ export function WorkTimeTable({
   };
   let columns = [];
   if (period === "day") {
-    columns = [
-      employeeCol,
-      missionNamesCol,
-      startTimeCol,
-      endTimeCol,
-      serviceTimeCol,
-      workTimeCol,
-      restTimeCol
-    ];
+    if (showMissionName) {
+      columns = [
+        employeeCol,
+        missionNamesCol,
+        startTimeCol,
+        endTimeCol,
+        serviceTimeCol,
+        workTimeCol,
+        restTimeCol
+      ];
+    } else {
+      columns = [
+        employeeCol,
+        startTimeCol,
+        endTimeCol,
+        serviceTimeCol,
+        workTimeCol,
+        restTimeCol
+      ];
+    }
     if (showExpenditures) columns.push(expenditureCol);
   } else if (period === "week") {
     columns = [employeeCol, workTimeCol, workedDaysCol];

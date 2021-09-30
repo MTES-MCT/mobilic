@@ -8,19 +8,19 @@ import { useStoreSyncedWithLocalStorage } from "common/utils/store";
 import SignupStepper from "./SignupStepper";
 import Container from "@material-ui/core/Container";
 import { LoadingButton } from "common/components/LoadingButton";
-import { Section } from "../../common/Section";
+import { Section } from "../common/Section";
 import {
   buildCallbackUrl,
   buildFranceConnectUrl
 } from "common/utils/franceConnect";
-import { FranceConnectContainer } from "../../common/FranceConnect";
+import { FranceConnectContainer } from "../common/FranceConnect";
 import { useModals } from "common/utils/modals";
 import { PasswordField } from "common/components/PasswordField";
-import { useSnackbarAlerts } from "../../common/Snackbar";
-import { PaperContainerTitle } from "../../common/PaperContainer";
+import { useSnackbarAlerts } from "../common/Snackbar";
+import { PaperContainerTitle } from "../common/PaperContainer";
 import { USER_SIGNUP_MUTATION } from "common/utils/apiQueries";
-import { CheckboxField } from "../../common/CheckboxField";
-import { EmailField } from "../../common/EmailField";
+import { CheckboxField } from "../common/CheckboxField";
+import { EmailField } from "../common/EmailField";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   const api = useApi();
