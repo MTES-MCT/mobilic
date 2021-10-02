@@ -16,7 +16,10 @@ import Divider from "@material-ui/core/Divider";
 import flatMap from "lodash/flatMap";
 import { AugmentedTable } from "./AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
-import { ACTIVITIES } from "common/utils/activities";
+import {
+  ACTIVITIES,
+  convertBreakIntoActivityOperations
+} from "common/utils/activities";
 import { DateOrDateTimePicker } from "../../pwa/components/DateOrDateTimePicker";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../utils/store";
@@ -33,7 +36,6 @@ import {
   isGraphQLError
 } from "common/utils/errors";
 import Button from "@material-ui/core/Button";
-import { addBreakOps } from "../../pwa/components/ActivityRevision";
 import {
   CANCEL_ACTIVITY_MUTATION,
   CANCEL_COMMENT_MUTATION,
@@ -216,7 +218,7 @@ export function MissionDetails({
   async function onCancelActivity(activity, user, activities) {
     if (setShouldRefreshActivityPanel) setShouldRefreshActivityPanel(true);
     if (activity.type === ACTIVITIES.break.name) {
-      const ops = addBreakOps(
+      const ops = convertBreakIntoActivityOperations(
         activities,
         activity.endTime,
         activity.endTime,
@@ -263,7 +265,7 @@ export function MissionDetails({
   async function onCreateActivity(user, newValues, activities) {
     if (setShouldRefreshActivityPanel) setShouldRefreshActivityPanel(true);
     if (newValues.type === ACTIVITIES.break.name) {
-      const ops = addBreakOps(
+      const ops = convertBreakIntoActivityOperations(
         activities,
         newValues.startTime,
         newValues.endTime,
@@ -318,7 +320,7 @@ export function MissionDetails({
   async function onEditActivity(activity, newValues, user, activities) {
     if (setShouldRefreshActivityPanel) setShouldRefreshActivityPanel(true);
     if (activity.type === ACTIVITIES.break.name) {
-      const ops = addBreakOps(
+      const ops = convertBreakIntoActivityOperations(
         activities,
         newValues.startTime,
         newValues.endTime,
@@ -520,7 +522,7 @@ export function MissionDetails({
         <DateOrDateTimePicker
           label="Fin"
           value={time}
-          minValue={entry.startTime - 1}
+          minValue={entry.startTime + 1}
           autoValidate
           maxValue={now()}
           setValue={setTime}

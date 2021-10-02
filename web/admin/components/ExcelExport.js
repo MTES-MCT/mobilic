@@ -17,6 +17,7 @@ import { useMatomo } from "@datapunt/matomo-tracker-react";
 import Grid from "@material-ui/core/Grid";
 import { isoFormatLocalDate } from "common/utils/time";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
+import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -61,14 +62,6 @@ export default function ExcelExport({
     setMinDate(defaultMinDate);
     setMaxDate(defaultMaxDate);
   }, [open]);
-
-  React.useEffect(() => {
-    if (minDate && maxDate && maxDate < minDate) setMaxDate(minDate);
-  }, [minDate]);
-
-  React.useEffect(() => {
-    if (maxDate && minDate && minDate > maxDate) setMinDate(maxDate);
-  }, [maxDate]);
 
   const classes = useStyles();
 
@@ -126,36 +119,44 @@ export default function ExcelExport({
           >
             <EmployeeFilter users={_users} setUsers={setUsers} />
           </Grid>
-          <Grid item sm={6}>
-            <DatePicker
-              label="Date de début"
-              value={minDate}
-              format="d MMMM yyyy"
-              onChange={setMinDate}
-              clearable
-              cancelLabel={null}
-              clearLabel="Annuler"
-              autoOk
-              disableFuture
-              inputVariant="outlined"
-              animateYearScrolling
-            />
-          </Grid>
-          <Grid item sm={6}>
-            <DatePicker
-              label="Date de fin"
-              value={maxDate}
-              format="d MMMM yyyy"
-              onChange={setMaxDate}
-              clearable
-              cancelLabel={null}
-              clearLabel="Annuler"
-              autoOk
-              disableFuture
-              inputVariant="outlined"
-              animateYearScrolling
-            />
-          </Grid>
+          <DateOrDateTimeRangeSelectionContext
+            start={minDate}
+            setStart={setMinDate}
+            end={maxDate}
+            setEnd={setMaxDate}
+            nullableBounds
+          >
+            <Grid item sm={6}>
+              <DatePicker
+                label="Date de début"
+                value={minDate}
+                format="d MMMM yyyy"
+                onChange={setMinDate}
+                clearable
+                cancelLabel={null}
+                clearLabel="Annuler"
+                autoOk
+                disableFuture
+                inputVariant="outlined"
+                animateYearScrolling
+              />
+            </Grid>
+            <Grid item sm={6}>
+              <DatePicker
+                label="Date de fin"
+                value={maxDate}
+                format="d MMMM yyyy"
+                onChange={setMaxDate}
+                clearable
+                cancelLabel={null}
+                clearLabel="Annuler"
+                autoOk
+                disableFuture
+                inputVariant="outlined"
+                animateYearScrolling
+              />
+            </Grid>
+          </DateOrDateTimeRangeSelectionContext>
         </Grid>
       </DialogContent>
       <CustomDialogActions>
