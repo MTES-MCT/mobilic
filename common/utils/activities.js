@@ -97,34 +97,48 @@ export function getActivityStartTimeToUse(
     : latestActivitySwitchTime;
 }
 
-export function convertBreakIntoActivityOperations(
-  allActivities,
+function getActivitiesStartedBeforeEndingInBetween(
+  activities,
   startTime,
-  endTime,
-  selfId,
-  extendActivities = false
+  endTime
 ) {
-  const activities = allActivities.filter(a => a.userId === selfId);
-
-  const activitiesStartedBeforeEndingInBetween = activities.filter(
+  return activities.filter(
     a =>
       a.startTime < startTime &&
       ((!endTime && (!a.endTime || a.endTime > startTime)) ||
         (endTime && a.endTime && a.endTime > startTime && a.endTime <= endTime))
   );
-  const activitiesPurelyInBetween = activities.filter(
+}
+
+function getActivitiesPurelyInBetween(activities, startTime, endTime) {
+  return activities.filter(
     a =>
       a.startTime >= startTime &&
       (!endTime || (a.endTime && a.endTime > startTime && a.endTime <= endTime))
   );
-  const activitiesStartedInBetweenEndingAfter = activities.filter(
+}
+
+function getActivitiesStartedInBetweenEndingAfter(
+  activities,
+  startTime,
+  endTime
+) {
+  return activities.filter(
     a =>
       a.startTime >= startTime &&
       endTime &&
       a.startTime < endTime &&
       (!a.endTime || a.endTime > endTime)
   );
-  const activitiesFullyOverlapping = activities
+}
+
+function getActivitiesFullyOverlapping(
+  activities,
+  startTime,
+  endTime,
+  allActivities
+) {
+  return activities
     .filter(
       a =>
         a.startTime < startTime &&
@@ -149,6 +163,92 @@ export function convertBreakIntoActivityOperations(
       }
       return { ...a, driverId };
     });
+}
+
+function extendExistingActivitiesToPeriodBoundariesOps(
+  activities,
+  startTime,
+  endTime,
+  activitiesStartedBeforeEndingInBetween,
+  activitiesStartedInBetweenEndingAfter,
+  activitiesFullyOverlapping
+) {
+  const ops = [];
+  if (
+    activitiesStartedBeforeEndingInBetween.length +
+      activitiesFullyOverlapping.length ===
+    0
+  ) {
+    const activitiesStartedBefore = activities.filter(
+      a => a.startTime < startTime
+    );
+    const activityRightBefore =
+      activitiesStartedBefore.length > 0
+        ? maxBy(activitiesStartedBefore, a => a.endTime)
+        : null;
+    if (activityRightBefore && activityRightBefore.endTime < startTime) {
+      ops.push({
+        activity: activityRightBefore,
+        operation: "update",
+        startTime: activityRightBefore.startTime,
+        endTime: startTime
+      });
+    }
+  }
+  if (
+    activitiesFullyOverlapping.length +
+      activitiesStartedInBetweenEndingAfter.length ===
+    0
+  ) {
+    const activitiesEndedAfter = activities.filter(
+      a => endTime && (!a.endTime || a.endTime > endTime)
+    );
+    const activityRightAfter =
+      activitiesEndedAfter.length > 0
+        ? minBy(activitiesEndedAfter, a => a.startTime)
+        : null;
+    if (activityRightAfter && activityRightAfter.startTime > endTime) {
+      ops.push({
+        activity: activityRightAfter,
+        operation: "update",
+        startTime: endTime,
+        endTime: activityRightAfter.endTime
+      });
+    }
+  }
+  return ops;
+}
+
+export function convertBreakIntoActivityOperations(
+  allActivities,
+  startTime,
+  endTime,
+  userId,
+  extendActivities = false
+) {
+  const activities = allActivities.filter(a => a.userId === userId);
+
+  const activitiesStartedBeforeEndingInBetween = getActivitiesStartedBeforeEndingInBetween(
+    activities,
+    startTime,
+    endTime
+  );
+  const activitiesPurelyInBetween = getActivitiesPurelyInBetween(
+    activities,
+    startTime,
+    endTime
+  );
+  const activitiesStartedInBetweenEndingAfter = getActivitiesStartedInBetweenEndingAfter(
+    activities,
+    startTime,
+    endTime
+  );
+  const activitiesFullyOverlapping = getActivitiesFullyOverlapping(
+    activities,
+    startTime,
+    endTime,
+    allActivities
+  );
 
   let ops = [];
   activitiesStartedBeforeEndingInBetween.forEach(a =>
@@ -192,48 +292,15 @@ export function convertBreakIntoActivityOperations(
   });
 
   if (extendActivities) {
-    if (
-      activitiesStartedBeforeEndingInBetween.length +
-        activitiesFullyOverlapping.length ===
-      0
-    ) {
-      const activitiesStartedBefore = activities.filter(
-        a => a.startTime < startTime
-      );
-      const activityRightBefore =
-        activitiesStartedBefore.length > 0
-          ? maxBy(activitiesStartedBefore, a => a.endTime)
-          : null;
-      if (activityRightBefore && activityRightBefore.endTime < startTime) {
-        ops.push({
-          activity: activityRightBefore,
-          operation: "update",
-          startTime: activityRightBefore.startTime,
-          endTime: startTime
-        });
-      }
-    }
-    if (
-      activitiesFullyOverlapping.length +
-        activitiesStartedInBetweenEndingAfter.length ===
-      0
-    ) {
-      const activitiesEndedAfter = activities.filter(
-        a => endTime && (!a.endTime || a.endTime > endTime)
-      );
-      const activityRightAfter =
-        activitiesEndedAfter.length > 0
-          ? minBy(activitiesEndedAfter, a => a.startTime)
-          : null;
-      if (activityRightAfter && activityRightAfter.startTime > endTime) {
-        ops.push({
-          activity: activityRightAfter,
-          operation: "update",
-          startTime: endTime,
-          endTime: activityRightAfter.endTime
-        });
-      }
-    }
+    ops.push(
+      ...extendExistingActivitiesToPeriodBoundariesOps(
+        activities,
+        startTime,
+        activitiesStartedBeforeEndingInBetween,
+        activitiesStartedInBetweenEndingAfter,
+        activitiesFullyOverlapping
+      )
+    );
   }
   return ops;
 }
