@@ -33,10 +33,15 @@ const useStyles = makeStyles(theme => ({
   },
   daysList: {
     paddingTop: 0,
+    paddingBottom: theme.spacing(2),
     paddingLeft: theme.spacing(4)
   },
   expenditureText: {
     textTransform: "capitalize"
+  },
+  dayCheckbox: {
+    paddingTop: theme.spacing(0.75),
+    paddingBottom: theme.spacing(0.75)
   }
 }));
 
@@ -99,7 +104,11 @@ export function Expenditures({
                         });
                       }}
                     >
-                      <Checkbox checked={isDaySelected} color="default" />
+                      <Checkbox
+                        checked={isDaySelected}
+                        color="default"
+                        className={classes.dayCheckbox}
+                      />
                       <ListItemText
                         primaryTypographyProps={{
                           noWrap: true,

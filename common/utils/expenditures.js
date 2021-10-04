@@ -39,7 +39,7 @@ export function formatExpendituresAsOneString(expenditureCounts) {
     .join(", ");
 }
 
-export function regroupExpendituresByType(expenditures) {
+export function regroupExpendituresSpendingDateByType(expenditures) {
   const expendituresReducer = (expObject, expenditure) => {
     if (expenditure.type in expObject) {
       if (!expObject[expenditure.type].includes(expenditure.spendingDate)) {
@@ -54,7 +54,7 @@ export function regroupExpendituresByType(expenditures) {
 }
 
 export function editUserExpenditures(
-  newExpenditures,
+  newExpendituresDatesByType,
   oldUserExpenditures,
   missionId,
   createExpenditure,
@@ -62,8 +62,8 @@ export function editUserExpenditures(
   userId = null
 ) {
   return Promise.all([
-    ...map(newExpenditures, (spendingDates, type) => {
-      return spendingDates?.map(spendingDate => {
+    ...map(newExpendituresDatesByType, (spendingDates, type) => {
+      return spendingDates.map(spendingDate => {
         if (
           !oldUserExpenditures.find(
             e => e.type === type && e.spendingDate === spendingDate
@@ -82,7 +82,7 @@ export function editUserExpenditures(
     ...oldUserExpenditures.map(e => {
       if (
         !find(
-          newExpenditures,
+          newExpendituresDatesByType,
           (spendingDates, type) =>
             type === e.type && spendingDates.includes(e.spendingDate)
         )

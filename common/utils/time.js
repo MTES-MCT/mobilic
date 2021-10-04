@@ -237,17 +237,17 @@ export function isoFormatLocalDate(date) {
   )}`;
 }
 
-function addDays(initialDate, daysToAdd) {
+function addDaysToDate(initialDate, daysToAdd) {
   initialDate.setDate(initialDate.getDate() + daysToAdd);
   return initialDate;
 }
 
 export function getDaysBetweenTwoDates(startDate, stopDate) {
   const dateSet = [];
-  let currentDate = startOfDayAsDate(new Date(startDate));
-  while (currentDate <= stopDate) {
+  let currentDate = startOfDayAsDate(new Date(startDate * 1000));
+  while (currentDate <= stopDate * 1000) {
     dateSet.push(isoFormatLocalDate(new Date(currentDate)));
-    currentDate = addDays(currentDate, 1);
+    currentDate = addDaysToDate(currentDate, 1);
   }
   return dateSet;
 }

@@ -50,7 +50,7 @@ import Chip from "@material-ui/core/Chip";
 import {
   editUserExpenditures,
   EXPENDITURES,
-  regroupExpendituresByType
+  regroupExpendituresSpendingDateByType
 } from "common/utils/expenditures";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 import TableCell from "@material-ui/core/TableCell";
@@ -791,7 +791,7 @@ export function MissionDetails({
                           onClick={() => {
                             startRowEdit();
                             modals.open("expenditures", {
-                              currentExpenditures: regroupExpendituresByType(
+                              currentExpenditures: regroupExpendituresSpendingDateByType(
                                 entry.expenditures
                               ),
                               title: `Frais pour ${formatPersonName(

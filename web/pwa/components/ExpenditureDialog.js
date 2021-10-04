@@ -11,7 +11,7 @@ import {
   CustomDialogActions,
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
-import { getDaysBetweenTwoDates } from "common/utils/time";
+import { getDaysBetweenTwoDates, now } from "common/utils/time";
 
 export default function ExpenditureDialogModal({
   open,
@@ -41,8 +41,8 @@ export default function ExpenditureDialogModal({
           expenditures={expenditures}
           setExpenditures={setExpenditures}
           listPossibleSpendingDays={getDaysBetweenTwoDates(
-            missionStartTime * 1000,
-            missionEndTime * 1000 || Date.now()
+            missionStartTime,
+            missionEndTime || now()
           )}
         />
         {hasTeamMates && (

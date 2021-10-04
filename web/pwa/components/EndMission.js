@@ -48,7 +48,7 @@ export default function EndMissionModal({
     setComment("");
     setAddress(null);
     setCurrentPosition(null);
-    setKilometerReading(null);
+    setKilometerReading("");
     setMissionEndTimeError("");
 
     if (open && navigator.geolocation) {
@@ -165,8 +165,8 @@ export default function EndMissionModal({
                   expenditures={expenditures}
                   setExpenditures={setExpenditures}
                   listPossibleSpendingDays={getDaysBetweenTwoDates(
-                    currentMission.startTime * 1000,
-                    endTime * 1000 || Date.now()
+                    currentMission.startTime,
+                    currentMission.endTime || endTime || now()
                   )}
                 />
               </>

@@ -12,7 +12,7 @@ import Box from "@material-ui/core/Box";
 import Chip from "@material-ui/core/Chip";
 import {
   EXPENDITURES,
-  regroupExpendituresByType
+  regroupExpendituresSpendingDateByType
 } from "common/utils/expenditures";
 import React from "react";
 import map from "lodash/map";
@@ -156,6 +156,12 @@ export function MissionDetails({
     mission.activities.length > 0
       ? max(mission.activities.map(a => a.endTime || now()))
       : null;
+
+  const expenditureForPeriod = mission.expenditures?.filter(
+    exp =>
+      (!fromTime || new Date(exp.spendingDate).getTime() / 1000 >= fromTime) &&
+      (!untilTime || new Date(exp.spendingDate).getTime() / 1000 < untilTime)
+  );
 
   return (
     <AlternateColors inverseColors={inverseColors}>
@@ -370,7 +376,7 @@ export function MissionDetails({
                         ),
                       hasTeamMates:
                         allowTeamActions && teamAtMissionEnd.length > 1,
-                      currentExpenditures: regroupExpendituresByType(
+                      currentExpenditures: regroupExpendituresSpendingDateByType(
                         mission.expenditures
                       ),
                       missionStartTime: mission.startTime,
@@ -380,8 +386,8 @@ export function MissionDetails({
             }
           >
             <Box className={`flex-row ${classes.expenditures}`}>
-              {mission.expenditures &&
-                uniqBy(mission.expenditures, e => e.type).map(exp => (
+              {expenditureForPeriod &&
+                uniqBy(expenditureForPeriod, e => e.type).map(exp => (
                   <Chip key={exp.type} label={EXPENDITURES[exp.type].label} />
                 ))}
             </Box>

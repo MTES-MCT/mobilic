@@ -16,7 +16,7 @@ import { formatPersonName } from "./coworkers";
 import {
   editUserExpenditures,
   EXPENDITURES,
-  regroupExpendituresByType
+  regroupExpendituresSpendingDateByType
 } from "./expenditures";
 import { useSnackbarAlerts } from "../../web/common/Snackbar";
 import { useModals } from "./modals";
@@ -398,9 +398,7 @@ class Actions {
 
     api.registerResponseHandler("logExpenditure", {
       onSuccess: apiResponse => {
-        const expenditure = {
-          ...apiResponse.data.activities.logExpenditure
-        };
+        const expenditure = apiResponse.data.activities.logExpenditure;
         this.store.syncEntity([expenditure], "expenditures", () => false);
       },
       onError: (error, { userId, type }) => {
@@ -1136,7 +1134,9 @@ class Actions {
     latestActivityStartTime
   }) => {
     this.modals.open("endMission", {
-      currentExpenditures: regroupExpendituresByType(mission.expenditures),
+      currentExpenditures: regroupExpendituresSpendingDateByType(
+        mission.expenditures
+      ),
       companyAddresses: this.store
         .getEntity("knownAddresses")
         .filter(
