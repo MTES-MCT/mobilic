@@ -22,6 +22,7 @@ const USER_QUERY = gql`
       email
       hasConfirmedEmail
       hasActivatedEmail
+      disabledWarnings
       missions(fromTime: $activityAfter, first: 200) {
         edges {
           node {
@@ -89,6 +90,7 @@ export async function syncUser(userPayload, api, store) {
     birthDate,
     hasConfirmedEmail,
     hasActivatedEmail,
+    disabledWarnings,
     missions: missionsPayload,
     currentEmployments
   } = userPayload;
@@ -131,7 +133,8 @@ export async function syncUser(userPayload, api, store) {
           email,
           birthDate,
           hasConfirmedEmail,
-          hasActivatedEmail
+          hasActivatedEmail,
+          disabledWarnings
         },
         false
       )
