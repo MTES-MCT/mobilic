@@ -64,7 +64,6 @@ export function groupMissionsByPeriodUnit(
         .unix();
 
       if (
-        currentPeriod === lastPeriod ||
         currentPeriod === firstPeriod ||
         filterActivitiesOverlappingPeriod(
           mission.activities,
