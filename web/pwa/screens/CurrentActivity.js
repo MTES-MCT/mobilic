@@ -34,7 +34,7 @@ export function CurrentActivity({
   return [
     <CurrentActivityOverview
       key={0}
-      currentDayStart={currentMission.activities[0].startTime}
+      currentDayStart={currentMission.startTime}
       currentMission={currentMission}
       latestActivity={latestActivity}
     />,

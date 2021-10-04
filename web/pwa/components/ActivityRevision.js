@@ -2,16 +2,16 @@ import React from "react";
 import Dialog from "@material-ui/core/Dialog";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import { now } from "common/utils/time";
+import { now, sameMinute } from "common/utils/time";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "common/utils/TextField";
-import { ACTIVITIES } from "common/utils/activities";
+import {
+  ACTIVITIES,
+  convertBreakIntoActivityOperations
+} from "common/utils/activities";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
 import max from "lodash/max";
-import maxBy from "lodash/maxBy";
-import minBy from "lodash/minBy";
-import forEach from "lodash/forEach";
 import MenuItem from "@material-ui/core/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/utils/store";
@@ -26,147 +26,6 @@ import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
-
-export function addBreakOps(
-  allActivities,
-  startTime,
-  endTime,
-  selfId,
-  extendActivities = false
-) {
-  const activities = allActivities.filter(a => a.userId === selfId);
-
-  const activitiesStartedBeforeEndingInBetween = activities.filter(
-    a =>
-      a.startTime < startTime &&
-      ((!endTime && (!a.endTime || a.endTime > startTime)) ||
-        (endTime && a.endTime && a.endTime > startTime && a.endTime <= endTime))
-  );
-  const activitiesPurelyInBetween = activities.filter(
-    a =>
-      a.startTime >= startTime &&
-      (!endTime || (a.endTime && a.endTime > startTime && a.endTime <= endTime))
-  );
-  const activitiesStartedInBetweenEndingAfter = activities.filter(
-    a =>
-      a.startTime >= startTime &&
-      endTime &&
-      a.startTime < endTime &&
-      (!a.endTime || a.endTime > endTime)
-  );
-  const activitiesFullyOverlapping = activities
-    .filter(
-      a =>
-        a.startTime < startTime &&
-        endTime &&
-        (!a.endTime || a.endTime > endTime)
-    )
-    .map(a => {
-      let driverId;
-      if ([ACTIVITIES.drive.name, ACTIVITIES.support.name].includes(a.type)) {
-        const siblingActivities = allActivities.filter(
-          a1 =>
-            a1.userId !== a.userId &&
-            a1.startTime === a.startTime &&
-            a1.endTime === a.endTime
-        );
-
-        driverId = -1;
-        forEach(siblingActivities, a1 => {
-          if (a1.type === ACTIVITIES.drive.name) driverId = a1.userId;
-          return false;
-        });
-      }
-      return { ...a, driverId };
-    });
-
-  let ops = [];
-  activitiesStartedBeforeEndingInBetween.forEach(a =>
-    ops.push({
-      activity: a,
-      operation: "update",
-      startTime: a.startTime,
-      endTime: startTime
-    })
-  );
-  activitiesPurelyInBetween.forEach(a =>
-    ops.push({
-      activity: a,
-      operation: "cancel"
-    })
-  );
-  activitiesStartedInBetweenEndingAfter.forEach(a =>
-    ops.push({
-      activity: a,
-      operation: "update",
-      startTime: endTime,
-      endTime: a.endTime
-    })
-  );
-  activitiesFullyOverlapping.forEach(a => {
-    if (startTime < endTime)
-      ops.push(
-        {
-          activity: a,
-          operation: "update",
-          startTime: a.startTime,
-          endTime: startTime
-        },
-        {
-          operation: "create",
-          type: a.type,
-          startTime: endTime,
-          endTime: a.endTime
-        }
-      );
-  });
-
-  if (extendActivities) {
-    if (
-      activitiesStartedBeforeEndingInBetween.length +
-        activitiesFullyOverlapping.length ===
-      0
-    ) {
-      const activitiesStartedBefore = activities.filter(
-        a => a.startTime < startTime
-      );
-      const activityRightBefore =
-        activitiesStartedBefore.length > 0
-          ? maxBy(activitiesStartedBefore, a => a.endTime)
-          : null;
-      if (activityRightBefore && activityRightBefore.endTime < startTime) {
-        ops.push({
-          activity: activityRightBefore,
-          operation: "update",
-          startTime: activityRightBefore.startTime,
-          endTime: startTime
-        });
-      }
-    }
-    if (
-      activitiesFullyOverlapping.length +
-        activitiesStartedInBetweenEndingAfter.length ===
-      0
-    ) {
-      const activitiesEndedAfter = activities.filter(
-        a => endTime && (!a.endTime || a.endTime > endTime)
-      );
-      const activityRightAfter =
-        activitiesEndedAfter.length > 0
-          ? minBy(activitiesEndedAfter, a => a.startTime)
-          : null;
-      if (activityRightAfter && activityRightAfter.startTime > endTime) {
-        ops.push({
-          activity: activityRightAfter,
-          operation: "update",
-          startTime: endTime,
-          endTime: activityRightAfter.endTime
-        });
-      }
-    }
-  }
-  return ops;
-}
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -242,7 +101,7 @@ export default function ActivityRevisionOrCreationModal({
 
   async function handleSubmit(actionType) {
     if (activityType === ACTIVITIES.break.name) {
-      const ops = addBreakOps(
+      const ops = convertBreakIntoActivityOperations(
         otherActivities,
         actionType === "cancel" ? event.endTime : newUserTime,
         actionType === "cancel" ? event.endTime : newUserEndTime,
@@ -332,13 +191,16 @@ export default function ActivityRevisionOrCreationModal({
       }
 
       if (newUserEndTime) {
-        if (newUserEndTime < newUserTime) {
+        if (
+          newUserEndTime <= newUserTime ||
+          sameMinute(newUserEndTime, newUserTime)
+        ) {
           hasEndError = true;
           setNewUserEndTimeError("La fin doit être après le début");
-        } else if (newUserEndTime > now()) {
-          hasEndError = true;
-          setNewUserEndTimeError(`L'heure ne peut pas être dans le futur.`);
         }
+      } else if (newUserEndTime > now()) {
+        hasEndError = true;
+        setNewUserEndTimeError(`L'heure ne peut pas être dans le futur.`);
       }
 
       if (!hasStartError && !hasEndError) {

@@ -131,6 +131,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
               )}`
             : "d'autres activités"
         }.`;
+      case "EMPTY_ACTIVITY_DURATION":
+        return `L'heure de fin de l'activité doit être strictement après l'heure de début`;
       case "INVALID_EMAIL_ADDRESS":
         return `L'adresse email n'est pas valide`;
       case "MISSION_ALREADY_ENDED":
