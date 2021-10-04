@@ -2,7 +2,7 @@ import React from "react";
 import Dialog from "@material-ui/core/Dialog";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import { now } from "common/utils/time";
+import { now, sameMinute } from "common/utils/time";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "common/utils/TextField";
 import {
@@ -26,7 +26,6 @@ import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
-import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -191,7 +190,15 @@ export default function ActivityRevisionOrCreationModal({
         setNewUserTimeError(`L'heure ne peut pas être dans le futur.`);
       }
 
-      if (newUserEndTime && newUserEndTime > now()) {
+      if (newUserEndTime) {
+        if (
+          newUserEndTime <= newUserTime ||
+          sameMinute(newUserEndTime, newUserTime)
+        ) {
+          hasEndError = true;
+          setNewUserEndTimeError("La fin doit être après le début");
+        }
+      } else if (newUserEndTime > now()) {
         hasEndError = true;
         setNewUserEndTimeError(`L'heure ne peut pas être dans le futur.`);
       }
@@ -381,42 +388,33 @@ export default function ActivityRevisionOrCreationModal({
               </MenuItem>
             </TextField>
           )}
-          <DateOrDateTimeRangeSelectionContext
-            start={newUserTime}
-            setStart={setNewUserTime}
-            end={newUserEndTime}
-            setEnd={setNewUserEndTime}
-            nullableBounds
-            minRangeSize={60}
-          >
-            <DateOrDateTimePicker
-              key={0}
-              label="Début"
-              variant="filled"
-              className={classes.formField}
-              value={newUserTime}
-              setValue={setNewUserTime}
-              error={newUserTimeError}
-              minValue={previousMissionEnd}
-              maxValue={nextMissionStart}
-              required
-              noValidate
-            />
-            <DateOrDateTimePicker
-              key={1}
-              label="Fin"
-              variant="filled"
-              className={classes.formField}
-              required={!actuallyNullableEndTime}
-              value={newUserEndTime}
-              minValue={newUserTime}
-              maxValue={nextMissionStart}
-              setValue={setNewUserEndTime}
-              error={newUserEndTimeError}
-              clearable={actuallyNullableEndTime}
-              noValidate
-            />
-          </DateOrDateTimeRangeSelectionContext>
+          <DateOrDateTimePicker
+            key={0}
+            label="Début"
+            variant="filled"
+            className={classes.formField}
+            value={newUserTime}
+            setValue={setNewUserTime}
+            error={newUserTimeError}
+            minValue={previousMissionEnd}
+            maxValue={nextMissionStart}
+            required
+            noValidate
+          />
+          <DateOrDateTimePicker
+            key={1}
+            label="Fin"
+            variant="filled"
+            className={classes.formField}
+            required={!actuallyNullableEndTime}
+            value={newUserEndTime}
+            minValue={newUserTime}
+            maxValue={nextMissionStart}
+            setValue={setNewUserEndTime}
+            error={newUserEndTimeError}
+            clearable={actuallyNullableEndTime}
+            noValidate
+          />
         </Box>
         {allowTeamMode && team.length > 1 && (
           <Box mt={1}>
