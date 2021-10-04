@@ -117,16 +117,10 @@ export function Mission({
           <MissionDetails
             inverseColors
             mission={mission}
-            editActivityEvent={
-              mission.adminValidation ? null : editActivityEvent
-            }
-            createActivity={mission.adminValidation ? null : createActivity}
-            editExpenditures={mission.adminValidation ? null : editExpenditures}
-            editVehicle={
-              mission.adminValidation
-                ? null
-                : vehicle => editVehicle({ mission, vehicle })
-            }
+            editActivityEvent={editActivityEvent}
+            createActivity={createActivity}
+            editExpenditures={editExpenditures}
+            editVehicle={vehicle => editVehicle({ mission, vehicle })}
             nullableEndTimeInEditActivity={
               currentMission ? mission.id === currentMission.id : true
             }
@@ -138,9 +132,7 @@ export function Mission({
             coworkers={coworkers}
             vehicles={vehicles}
             userId={userId}
-            editKilometerReading={
-              mission.adminValidation ? null : registerKilometerReading
-            }
+            editKilometerReading={registerKilometerReading}
           />
         </WorkTimeSummaryAdditionalInfo>
       </MissionSummary>
