@@ -163,13 +163,15 @@ export function MissionDetails({
       (!untilTime || new Date(exp.spendingDate).getTime() / 1000 < untilTime)
   );
 
+  const disableActions = mission.validation || mission.adminValidation;
+
   return (
     <AlternateColors inverseColors={inverseColors}>
       <MissionReviewSection
         title="Activités"
         editButtonLabel="Ajouter"
         onEdit={
-          createActivity
+          createActivity && !disableActions
             ? () =>
                 modals.open("activityRevision", {
                   otherActivities: mission.allActivities,
@@ -208,7 +210,7 @@ export function MissionDetails({
         <ActivityList
           activities={mission.activities}
           allMissionActivities={mission.allActivities}
-          editActivityEvent={editActivityEvent}
+          editActivityEvent={!disableActions ? editActivityEvent : null}
           createActivity={args =>
             createActivity({
               ...args,
@@ -231,7 +233,7 @@ export function MissionDetails({
         <MissionReviewSection
           title={`${hasTeamMates ? "Coéquipiers" : "En solo"}`}
           onEdit={
-            allowTeamActions && changeTeam
+            allowTeamActions && changeTeam && !disableActions
               ? () =>
                   modals.open("teamSelection", {
                     mission: mission,
@@ -278,7 +280,7 @@ export function MissionDetails({
       <MissionReviewSection
         title="Véhicule"
         onEdit={
-          editVehicle
+          editVehicle && !disableActions
             ? () =>
                 modals.open("updateVehicle", {
                   handleSubmit: editVehicle,
@@ -317,7 +319,8 @@ export function MissionDetails({
                 mission.company &&
                 mission.company.settings &&
                 mission.company.settings.requireKilometerData &&
-                mission.vehicle
+                mission.vehicle &&
+                !disableActions
                   ? editKilometerReading
                   : null
               }
@@ -331,7 +334,8 @@ export function MissionDetails({
                   mission.company &&
                   mission.company.settings &&
                   mission.company.settings.requireKilometerData &&
-                  mission.vehicle
+                  mission.vehicle &&
+                  !disableActions
                     ? editKilometerReading
                     : null
                 }
@@ -364,7 +368,8 @@ export function MissionDetails({
               editExpenditures &&
               (!mission.company ||
                 !mission.company.settings ||
-                mission.company.settings.requireExpenditures)
+                mission.company.settings.requireExpenditures) &&
+              !disableActions
                 ? () =>
                     modals.open("expenditures", {
                       handleSubmit: (expenditures, forAllTeam) =>

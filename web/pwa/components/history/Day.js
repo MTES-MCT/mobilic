@@ -258,20 +258,10 @@ export function Day({
                   <MissionDetails
                     inverseColors
                     mission={mission}
-                    editActivityEvent={
-                      mission.adminValidation ? null : editActivityEvent
-                    }
-                    createActivity={
-                      mission.adminValidation ? null : createActivity
-                    }
-                    editExpenditures={
-                      mission.adminValidation ? null : editExpenditures
-                    }
-                    editVehicle={
-                      mission.adminValidation || !editVehicle
-                        ? null
-                        : vehicle => editVehicle({ mission, vehicle })
-                    }
+                    editActivityEvent={editActivityEvent}
+                    createActivity={createActivity}
+                    editExpenditures={editExpenditures}
+                    editVehicle={vehicle => editVehicle({ mission, vehicle })}
                     nullableEndTimeInEditActivity={
                       currentMission ? mission.id === currentMission.id : true
                     }
@@ -285,9 +275,7 @@ export function Day({
                     userId={userId}
                     fromTime={selectedPeriodStart}
                     untilTime={selectedPeriodEnd}
-                    editKilometerReading={
-                      mission.adminValidation ? null : registerKilometerReading
-                    }
+                    editKilometerReading={registerKilometerReading}
                   />
                 </MissionSummary>
               </ListItem>
