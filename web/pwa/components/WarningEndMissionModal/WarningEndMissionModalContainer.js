@@ -43,7 +43,8 @@ export default function WarningEndMissionModalContainer({
           openEndMissionModal({
             mission: currentMission,
             team: currentTeam,
-            latestActivityStartTime: latestActivity.startTime
+            latestActivityEndOrStartTime:
+              latestActivity.endTime || latestActivity.startTime
           });
         }
       });

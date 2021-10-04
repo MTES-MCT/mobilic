@@ -1131,7 +1131,7 @@ class Actions {
     mission,
     team,
     missionEndTime,
-    latestActivityStartTime
+    latestActivityEndOrStartTime
   }) => {
     this.modals.open("endMission", {
       currentExpenditures: regroupExpendituresSpendingDateByType(
@@ -1163,7 +1163,7 @@ class Actions {
         }),
       currentEndLocation: mission.endLocation,
       currentMission: mission,
-      missionMinEndTime: latestActivityStartTime
+      missionMinEndTime: latestActivityEndOrStartTime
     });
   };
 
