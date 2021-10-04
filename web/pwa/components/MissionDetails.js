@@ -102,7 +102,7 @@ export function AlternateColors({ children, inverseColors = false }) {
 // Checkbox component that is controlled by parent values but have as well an internal state.
 // This is a hack allowing the component to be passed to a modal and properly rerender with user input (thanks to internal state) while also updating the controlled parent value.
 // We need to do that because the component is passed to the modal as "static" prop and would not otherwise re-render with changes to its own props.
-function CustomCheckbox({ setChecked, checked }) {
+function CustomCheckbox({ setChecked, checked, ...props }) {
   const [internalChecked, setInternalChecked] = React.useState(checked);
 
   React.useEffect(() => {
@@ -113,6 +113,7 @@ function CustomCheckbox({ setChecked, checked }) {
     <Checkbox
       checked={internalChecked}
       onChange={() => setInternalChecked(!internalChecked)}
+      {...props}
     />
   );
 }
