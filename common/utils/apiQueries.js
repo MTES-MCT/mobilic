@@ -1120,6 +1120,16 @@ export const MISSION_QUERY = gql`
   }
 `;
 
+export const DISABLE_VALIDATION_WARNING_MUTATION = gql`
+  mutation disableValidationWarning {
+    account {
+      disableWarning(warningName: "employee-validation") {
+        success
+      }
+    }
+  }
+`;
+
 export function buildLogLocationPayloadFromAddress(
   address,
   missionId,

@@ -5,10 +5,14 @@ import Dialog from "@material-ui/core/Dialog";
 import IconButton from "@material-ui/core/IconButton";
 import { LoadingButton } from "common/components/LoadingButton";
 import { CustomDialogActions, CustomDialogTitle } from "./CustomDialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
 
 export default function ConfirmationModal({
   title,
   textButtons,
+  confirmButtonLabel,
+  cancelButtonLabel,
+  content = null,
   open,
   handleClose,
   handleConfirm
@@ -19,30 +23,32 @@ export default function ConfirmationModal({
         title={title || "Confirmer"}
         handleClose={handleClose}
       />
+      {content && <DialogContent>{content}</DialogContent>}
       <CustomDialogActions>
-        {textButtons ? (
+        {cancelButtonLabel || textButtons ? (
           <LoadingButton
             aria-label="Confirmer"
             color="primary"
             onClick={handleClose}
           >
-            Non
+            {cancelButtonLabel || "Non"}
           </LoadingButton>
         ) : (
           <IconButton aria-label="Confirmer" onClick={handleClose}>
             <CloseIcon color="error" />
           </IconButton>
         )}
-        {textButtons ? (
+        {confirmButtonLabel || textButtons ? (
           <LoadingButton
             aria-label="Annuler"
             color="primary"
+            variant="contained"
             onClick={async (...args) => {
               await handleConfirm(...args);
               handleClose();
             }}
           >
-            Oui
+            {confirmButtonLabel || "Oui"}
           </LoadingButton>
         ) : (
           <IconButton
