@@ -1,3 +1,6 @@
+import map from "lodash/map";
+import find from "lodash/find";
+
 export const EXPENDITURES = {
   day_meal: {
     label: "repas",
@@ -16,12 +19,6 @@ export const EXPENDITURES = {
     plural: "casse-croûtes"
   }
 };
-
-export function parseExpenditureFromBackend(expenditure) {
-  return {
-    ...expenditure
-  };
-}
 
 function computeExpenditureLabel(expenditureType, expCount) {
   switch (expCount) {
@@ -54,4 +51,45 @@ export function regroupExpendituresByType(expenditures) {
     return expObject;
   };
   return expenditures.reduce(expendituresReducer, {});
+}
+
+export function editUserExpenditures(
+  newExpenditures,
+  oldUserExpenditures,
+  missionId,
+  createExpenditure,
+  cancelExpenditure,
+  userId = null
+) {
+  return Promise.all([
+    ...map(newExpenditures, (spendingDates, type) => {
+      return spendingDates?.map(spendingDate => {
+        if (
+          !oldUserExpenditures.find(
+            e => e.type === type && e.spendingDate === spendingDate
+          )
+        ) {
+          return createExpenditure({
+            type,
+            missionId,
+            spendingDate,
+            userId
+          });
+        }
+        return Promise.resolve();
+      });
+    }),
+    ...oldUserExpenditures.map(e => {
+      if (
+        !find(
+          newExpenditures,
+          (spendingDates, type) =>
+            type === e.type && spendingDates.includes(e.spendingDate)
+        )
+      ) {
+        return cancelExpenditure({ expenditure: e });
+      }
+      return Promise.resolve();
+    })
+  ]);
 }

@@ -48,6 +48,7 @@ import {
 import LocationEntry from "../../pwa/components/LocationEntry";
 import Chip from "@material-ui/core/Chip";
 import {
+  editUserExpenditures,
   EXPENDITURES,
   regroupExpendituresByType
 } from "common/utils/expenditures";
@@ -58,8 +59,6 @@ import { VerticalTimeline } from "common/components/VerticalTimeline";
 import Grid from "@material-ui/core/Grid";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import { computeMissionStats } from "common/utils/mission";
-import map from "lodash/map";
-import find from "lodash/find";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {
@@ -384,55 +383,61 @@ export function MissionDetails({
     );
   }
 
-  async function onCreateExpenditure(exp, user, spendingDate) {
-    if (setShouldRefreshActivityPanel) setShouldRefreshActivityPanel(true);
-    const apiResponse = await api.nonConcurrentQueryQueue.execute(() =>
-      api.graphQlMutate(LOG_EXPENDITURE_MUTATION, {
-        type: exp,
-        userId: user.id,
-        missionId: mission.id,
-        spendingDate: spendingDate
-      })
-    );
-    const expenditure = apiResponse.data.activities.logExpenditure;
-    mission.expenditures.push(expenditure);
-    Object.assign(mission, computeMissionStats(mission, adminStore.users));
-    adminStore.setMissions(missions =>
-      missions.map(m =>
-        m.id === mission.id
-          ? {
-              ...m,
-              expenditures: [
-                ...m.expenditures.filter(e => e.id !== expenditure.id),
-                expenditure
-              ]
-            }
-          : m
-      )
-    );
+  async function createExpenditure({ type, spendingDate, userId = null }) {
+    return await alerts.withApiErrorHandling(async () => {
+      if (setShouldRefreshActivityPanel) setShouldRefreshActivityPanel(true);
+      const apiResponse = await api.nonConcurrentQueryQueue.execute(() =>
+        api.graphQlMutate(LOG_EXPENDITURE_MUTATION, {
+          type,
+          userId,
+          missionId: mission.id,
+          spendingDate: spendingDate
+        })
+      );
+      const expenditure = apiResponse.data.activities.logExpenditure;
+      mission.expenditures.push(expenditure);
+      Object.assign(mission, computeMissionStats(mission, adminStore.users));
+      adminStore.setMissions(missions =>
+        missions.map(m =>
+          m.id === mission.id
+            ? {
+                ...m,
+                expenditures: [
+                  ...m.expenditures.filter(e => e.id !== expenditure.id),
+                  expenditure
+                ]
+              }
+            : m
+        )
+      );
+    }, type);
   }
 
-  async function onCancelExpenditure(expenditure) {
-    if (setShouldRefreshActivityPanel) setShouldRefreshActivityPanel(true);
-    await api.nonConcurrentQueryQueue.execute(() =>
-      api.graphQlMutate(CANCEL_EXPENDITURE_MUTATION, {
-        expenditureId: expenditure.id
-      })
-    );
-    mission.expenditures = mission.expenditures.filter(
-      e => e.id !== expenditure.id
-    );
-    Object.assign(mission, computeMissionStats(mission, adminStore.users));
-    adminStore.setMissions(missions =>
-      missions.map(m =>
-        m.id === mission.id
-          ? {
-              ...m,
-              expenditures: m.expenditures.filter(e => e.id !== expenditure.id)
-            }
-          : m
-      )
-    );
+  async function cancelExpenditure({ expenditure }) {
+    return await alerts.withApiErrorHandling(async () => {
+      if (setShouldRefreshActivityPanel) setShouldRefreshActivityPanel(true);
+      await api.nonConcurrentQueryQueue.execute(() =>
+        api.graphQlMutate(CANCEL_EXPENDITURE_MUTATION, {
+          expenditureId: expenditure.id
+        })
+      );
+      mission.expenditures = mission.expenditures.filter(
+        e => e.id !== expenditure.id
+      );
+      Object.assign(mission, computeMissionStats(mission, adminStore.users));
+      adminStore.setMissions(missions =>
+        missions.map(m =>
+          m.id === mission.id
+            ? {
+                ...m,
+                expenditures: m.expenditures.filter(
+                  e => e.id !== expenditure.id
+                )
+              }
+            : m
+        )
+      );
+    }, expenditure.id);
   }
 
   async function onCreateComment(text) {
@@ -795,48 +800,15 @@ export function MissionDetails({
                               missionStartTime: mission.startTime,
                               missionEndTime: mission.endTime,
                               handleSubmit: exps => {
-                                return Promise.all([
-                                  ...map(exps, (spendingDates, type) => {
-                                    return spendingDates?.map(spendingDate => {
-                                      if (
-                                        !entry.expenditures.find(
-                                          e =>
-                                            e.type === type &&
-                                            e.spendingDate === spendingDate
-                                        )
-                                      ) {
-                                        return alerts.withApiErrorHandling(
-                                          async () =>
-                                            await onCreateExpenditure(
-                                              type,
-                                              entry.user,
-                                              spendingDate
-                                            ),
-                                          type
-                                        );
-                                      }
-                                      return Promise.resolve();
-                                    });
-                                  }),
-                                  ...entry.expenditures.map(e => {
-                                    if (
-                                      !find(
-                                        exps,
-                                        (spendingDates, type) =>
-                                          type === e.type &&
-                                          spendingDates.includes(e.spendingDate)
-                                      )
-                                    ) {
-                                      return alerts.withApiErrorHandling(
-                                        async () =>
-                                          await onCancelExpenditure(e),
-                                        e.id
-                                      );
-                                    }
-                                    return Promise.resolve();
-                                  })
-                                ]).then(() => {
-                                  setTimeout(terminateRowEdit, 0);
+                                return editUserExpenditures(
+                                  exps,
+                                  entry.expenditures,
+                                  mission.id,
+                                  createExpenditure,
+                                  cancelExpenditure,
+                                  entry.user?.id
+                                ).then(() => {
+                                  setTimeout(terminateRowEdit, 300);
                                 });
                               }
                             });
