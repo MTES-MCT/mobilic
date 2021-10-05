@@ -5,96 +5,126 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText/ListItemText";
 import List from "@material-ui/core/List";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import RemoveIcon from "@material-ui/icons/Remove";
-import AddIcon from "@material-ui/icons/Add";
-import IconButton from "@material-ui/core/IconButton";
+import { formatDay } from "common/utils/time";
+import Box from "@material-ui/core/Box";
+import { Collapse } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   expenditure: {
     paddingTop: 0,
     paddingBottom: 0,
-    marginTop: theme.spacing(0.5),
-    marginBottom: theme.spacing(0.5),
+    marginTop: theme.spacing(0.25),
+    marginBottom: theme.spacing(0.25),
     backgroundColor: theme.palette.background.default,
-    borderRadius: 4
+    borderRadius: 4,
+    display: "flex",
+    alignItems: "center",
+    width: "100%"
   },
   selected: {
     backgroundColor: theme.palette.primary.lighter
   },
+  singleExpenditure: {
+    paddingTop: 0,
+    paddingBottom: 0,
+    marginTop: theme.spacing(0.25),
+    marginBottom: theme.spacing(0.25),
+    display: "block"
+  },
+  daysList: {
+    paddingTop: 0,
+    paddingBottom: theme.spacing(2),
+    paddingLeft: theme.spacing(4)
+  },
   expenditureText: {
     textTransform: "capitalize"
+  },
+  dayCheckbox: {
+    paddingTop: theme.spacing(0.75),
+    paddingBottom: theme.spacing(0.75)
   }
 }));
 
 export function Expenditures({
   expenditures,
   setExpenditures,
-  allowMultiple = false,
-  maxCount = null
+  listPossibleSpendingDays
 }) {
   const classes = useStyles();
   return (
     <List>
-      {Object.entries(EXPENDITURES).map(([expenditure, { label, plural }]) => {
-        const expCount = expenditures[expenditure] || 0;
+      {Object.entries(EXPENDITURES).map(([expenditure, { label }]) => {
+        const expCount = expenditures[expenditure]?.length || 0;
         return (
           <ListItem
             disableGutters
-            className={`${classes.expenditure} ${expCount > 0 &&
-              classes.selected}`}
             key={expenditure}
-            onClick={
-              allowMultiple
-                ? null
-                : () => {
-                    setExpenditures({
-                      ...expenditures,
-                      [expenditure]: expCount > 0 ? 0 : 1
-                    });
-                  }
-            }
+            className={classes.singleExpenditure}
           >
-            {allowMultiple ? (
-              <IconButton>
-                <RemoveIcon
-                  onClick={() =>
-                    setExpenditures({
-                      ...expenditures,
-                      [expenditure]: expCount > 0 ? expCount - 1 : 0
-                    })
-                  }
-                />
-              </IconButton>
-            ) : (
-              <Checkbox checked={!!expenditures[expenditure]} color="default" />
-            )}
-            <ListItemText
-              primaryTypographyProps={{
-                noWrap: true,
-                display: "block",
-                className: classes.expenditureText
+            <Box
+              className={`${classes.expenditure} ${expCount > 0 &&
+                classes.selected}`}
+              onClick={() => {
+                setExpenditures({
+                  ...expenditures,
+                  [expenditure]: expCount > 0 ? [] : listPossibleSpendingDays
+                });
               }}
-              primary={
-                allowMultiple
-                  ? `${expCount} ${expCount > 1 ? plural : label}`
-                  : label
-              }
-            />
-            {allowMultiple && (
-              <IconButton>
-                <AddIcon
-                  onClick={() =>
-                    setExpenditures({
-                      ...expenditures,
-                      [expenditure]:
-                        maxCount && expCount === maxCount
-                          ? expCount
-                          : expCount + 1
-                    })
-                  }
-                />
-              </IconButton>
-            )}
+            >
+              <Checkbox checked={expCount > 0} color="default" />
+              <ListItemText
+                primaryTypographyProps={{
+                  noWrap: true,
+                  display: "block",
+                  className: classes.expenditureText
+                }}
+                primary={label}
+              />
+            </Box>
+            <Collapse in={listPossibleSpendingDays.length > 1 && expCount > 0}>
+              <List className={classes.daysList}>
+                {listPossibleSpendingDays.map(spendingDay => {
+                  const isDaySelected = !!expenditures[expenditure]?.includes(
+                    spendingDay
+                  );
+                  return (
+                    <ListItem
+                      disableGutters
+                      className={`${classes.expenditure} ${isDaySelected &&
+                        classes.selected}`}
+                      key={spendingDay}
+                      onClick={() => {
+                        setExpenditures({
+                          ...expenditures,
+                          [expenditure]: isDaySelected
+                            ? expenditures[expenditure].filter(
+                                day => day !== spendingDay
+                              )
+                            : [...expenditures[expenditure], spendingDay]
+                        });
+                      }}
+                    >
+                      <Checkbox
+                        checked={isDaySelected}
+                        color="default"
+                        className={classes.dayCheckbox}
+                      />
+                      <ListItemText
+                        primaryTypographyProps={{
+                          noWrap: true,
+                          display: "block",
+                          className: classes.expenditureText
+                        }}
+                        primary={formatDay(
+                          new Date(spendingDay).getTime() / 1000,
+                          true
+                        )}
+                      />
+                    </ListItem>
+                  );
+                })}
+              </List>
+            </Collapse>
           </ListItem>
         );
       })}

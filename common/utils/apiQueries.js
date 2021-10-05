@@ -35,6 +35,7 @@ export const FULL_MISSION_FRAGMENT = gql`
       missionId
       userId
       receptionTime
+      spendingDate
     }
     company {
       id
@@ -198,6 +199,7 @@ export const USER_READ_QUERY = gql`
                 type
                 missionId
                 userId
+                spendingDate
                 receptionTime
               }
               activities {
@@ -338,6 +340,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 type
                 userId
                 receptionTime
+                spendingDate
               }
               startLocation {
                 id
@@ -987,13 +990,20 @@ export const LOG_EXPENDITURE_MUTATION = gql`
     $type: ExpenditureTypeEnum!
     $missionId: Int!
     $userId: Int
+    $spendingDate: Date!
   ) {
     activities {
-      logExpenditure(type: $type, missionId: $missionId, userId: $userId) {
+      logExpenditure(
+        type: $type
+        missionId: $missionId
+        userId: $userId
+        spendingDate: $spendingDate
+      ) {
         id
         type
         missionId
         userId
+        spendingDate
       }
     }
   }

@@ -1,9 +1,7 @@
 import React from "react";
 import mapValues from "lodash/mapValues";
-import map from "lodash/map";
 import values from "lodash/values";
 import * as Sentry from "@sentry/browser";
-import find from "lodash/find";
 import { isPendingSubmission, useStoreSyncedWithLocalStorage } from "./store";
 import { useApi } from "./api";
 import { ACTIVITIES, parseActivityPayloadFromBackend } from "./activities";
@@ -21,7 +19,11 @@ import {
   truncateMinute
 } from "./time";
 import { formatPersonName } from "./coworkers";
-import { EXPENDITURES } from "./expenditures";
+import {
+  editUserExpenditures,
+  EXPENDITURES,
+  regroupExpendituresSpendingDateByType
+} from "./expenditures";
 import { useSnackbarAlerts } from "../../web/common/Snackbar";
 import { useModals } from "./modals";
 import {
@@ -40,8 +42,6 @@ import {
   UPDATE_MISSION_VEHICLE_MUTATION,
   VALIDATE_MISSION_MUTATION
 } from "./apiQueries";
-import fromPairs from "lodash/fromPairs";
-import uniq from "lodash/uniq";
 
 const ActionsContext = React.createContext(() => {});
 
@@ -1150,11 +1150,11 @@ class Actions {
     mission,
     team,
     missionEndTime,
-    latestActivityStartTime
+    latestActivityEndOrStartTime
   }) => {
     this.modals.open("endMission", {
-      currentExpenditures: fromPairs(
-        uniq(mission.expenditures.map(e => [e.type, true]))
+      currentExpenditures: regroupExpendituresSpendingDateByType(
+        mission.expenditures
       ),
       companyAddresses: this.store
         .getEntity("knownAddresses")
@@ -1182,7 +1182,7 @@ class Actions {
         }),
       currentEndLocation: mission.endLocation,
       currentMission: mission,
-      missionMinEndTime: latestActivityStartTime
+      missionMinEndTime: latestActivityEndOrStartTime
     });
   };
 
@@ -1312,39 +1312,39 @@ class Actions {
     const oldUserExpenditures = oldMissionExpenditures.filter(
       e => e.userId === userId || this.store.userId()
     );
-    return await Promise.all([
-      ...map(newExpenditures, (checked, type) => {
-        if (checked && !oldUserExpenditures.find(e => e.type === type)) {
-          return this.logExpenditure({ type, missionId, userId });
-        }
-        return Promise.resolve();
-      }),
-      ...oldUserExpenditures.map(e => {
-        if (
-          !find(newExpenditures, (checked, type) => checked && type === e.type)
-        ) {
-          return this.cancelExpenditure(e);
-        }
-        return Promise.resolve();
-      })
-    ]);
-  };
-
-  logExpenditureForTeam = async ({ type, missionId, team = [] }) => {
-    if (team.length === 0) {
-      return this.logExpenditure({ type, missionId });
-    }
-    return Promise.all(
-      team.map(id => this.logExpenditure({ type, missionId, userId: id }))
+    return await editUserExpenditures(
+      newExpenditures,
+      oldUserExpenditures,
+      missionId,
+      this.logExpenditure,
+      this.cancelExpenditure,
+      userId
     );
   };
 
-  logExpenditure = async ({ type, missionId, userId = null }) => {
+  logExpenditureForTeam = async ({
+    type,
+    missionId,
+    spendingDate,
+    team = []
+  }) => {
+    if (team.length === 0) {
+      return this.logExpenditure({ type, missionId, spendingDate });
+    }
+    return Promise.all(
+      team.map(id =>
+        this.logExpenditure({ type, missionId, spendingDate, userId: id })
+      )
+    );
+  };
+
+  logExpenditure = async ({ type, missionId, spendingDate, userId = null }) => {
     const actualUserId = userId || this.store.userId();
     const newExpenditure = {
       type,
       missionId,
-      userId: actualUserId
+      userId: actualUserId,
+      spendingDate
     };
 
     const updateStore = (store, requestId) => {
@@ -1353,7 +1353,7 @@ class Actions {
         "expenditures",
         requestId
       );
-      return { missionId, userId: actualUserId, type };
+      return { missionId, userId: actualUserId, type, spendingDate };
     };
 
     await this.submitAction(
@@ -1366,33 +1366,29 @@ class Actions {
     );
   };
 
-  cancelExpenditure = async expenditureToCancel => {
-    if (isPendingSubmission(expenditureToCancel)) {
+  cancelExpenditure = async ({ expenditure }) => {
+    if (isPendingSubmission(expenditure)) {
       if (
         this.api.isCurrentlySubmittingRequests() ||
-        expenditureToCancel.pendingUpdates.some(upd => upd.type === "delete")
+        expenditure.pendingUpdates.some(upd => upd.type === "delete")
       )
         return;
 
       const pendingCreationRequest = this.store
         .pendingRequests()
-        .find(r => r.id === expenditureToCancel.pendingUpdates[0].requestId);
+        .find(r => r.id === expenditure.pendingUpdates[0].requestId);
       if (pendingCreationRequest)
         return await this.store.clearPendingRequest(pendingCreationRequest);
     }
 
     const updateStore = (store, requestId) => {
-      this.store.deleteEntityObject(
-        expenditureToCancel.id,
-        "expenditures",
-        requestId
-      );
-      return { expenditureId: expenditureToCancel.id };
+      this.store.deleteEntityObject(expenditure.id, "expenditures", requestId);
+      return { expenditureId: expenditure.id };
     };
 
     await this.submitAction(
       CANCEL_EXPENDITURE_MUTATION,
-      { expenditureId: expenditureToCancel.id },
+      { expenditureId: expenditure.id },
       updateStore,
       ["expenditures"],
       "cancelExpenditure",

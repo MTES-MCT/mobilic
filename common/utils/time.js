@@ -243,3 +243,18 @@ export function sameMinute(unixTimestamp1, unixTimestamp2) {
     new Date(unixTimestamp2 * 1000).toISOString().slice(0, 16)
   );
 }
+
+function addDaysToDate(initialDate, daysToAdd) {
+  initialDate.setDate(initialDate.getDate() + daysToAdd);
+  return initialDate;
+}
+
+export function getDaysBetweenTwoDates(startDate, stopDate) {
+  const dateSet = [];
+  let currentDate = startOfDayAsDate(new Date(startDate * 1000));
+  while (currentDate <= stopDate * 1000) {
+    dateSet.push(isoFormatLocalDate(new Date(currentDate)));
+    currentDate = addDaysToDate(currentDate, 1);
+  }
+  return dateSet;
+}

@@ -95,7 +95,6 @@ export function ActivitySwitch({
   latestActivity,
   disableBreak,
   endMission,
-  currentMission,
   company,
   requireVehicle = false,
   pushActivitySwitchEvent,

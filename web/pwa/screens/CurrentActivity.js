@@ -83,10 +83,10 @@ export function CurrentActivity({
           mission: currentMission,
           team: currentTeam,
           missionEndTime: endTime,
-          latestActivityStartTime: latestActivity.startTime
+          latestActivityEndOrStartTime:
+            latestActivity.endTime || latestActivity.startTime
         });
       }}
-      currentMission={currentMission}
       requireVehicle={!currentMission.vehicle}
       company={currentMission.company}
     />,

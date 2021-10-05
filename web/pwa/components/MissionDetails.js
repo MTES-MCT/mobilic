@@ -10,12 +10,13 @@ import {
 } from "common/utils/coworkers";
 import Box from "@material-ui/core/Box";
 import Chip from "@material-ui/core/Chip";
-import { EXPENDITURES } from "common/utils/expenditures";
+import {
+  EXPENDITURES,
+  regroupExpendituresSpendingDateByType
+} from "common/utils/expenditures";
 import React from "react";
 import map from "lodash/map";
 import omit from "lodash/omit";
-import fromPairs from "lodash/fromPairs";
-import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import max from "lodash/max";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -155,6 +156,12 @@ export function MissionDetails({
     mission.activities.length > 0
       ? max(mission.activities.map(a => a.endTime || now()))
       : null;
+
+  const expenditureForPeriod = mission.expenditures?.filter(
+    exp =>
+      (!fromTime || new Date(exp.spendingDate).getTime() / 1000 >= fromTime) &&
+      (!untilTime || new Date(exp.spendingDate).getTime() / 1000 < untilTime)
+  );
 
   return (
     <AlternateColors inverseColors={inverseColors}>
@@ -369,16 +376,18 @@ export function MissionDetails({
                         ),
                       hasTeamMates:
                         allowTeamActions && teamAtMissionEnd.length > 1,
-                      currentExpenditures: fromPairs(
-                        uniq(mission.expenditures.map(e => [e.type, true]))
-                      )
+                      currentExpenditures: regroupExpendituresSpendingDateByType(
+                        mission.expenditures
+                      ),
+                      missionStartTime: mission.startTime,
+                      missionEndTime: mission.endTime
                     })
                 : null
             }
           >
             <Box className={`flex-row ${classes.expenditures}`}>
-              {mission.expenditures &&
-                uniqBy(mission.expenditures, e => e.type).map(exp => (
+              {expenditureForPeriod &&
+                uniqBy(expenditureForPeriod, e => e.type).map(exp => (
                   <Chip key={exp.type} label={EXPENDITURES[exp.type].label} />
                 ))}
             </Box>
