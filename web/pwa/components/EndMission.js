@@ -167,11 +167,11 @@ export default function EndMissionModal({
               </>
             )}
             <Typography variant="h5" className="form-field-title">
-              Avez-vous un commentaire&nbsp;? (optionnel)
+              Avez-vous une observation&nbsp;? (optionnel)
             </Typography>
             <TextField
               fullWidth
-              label="Commentaire"
+              label="Observation"
               variant="filled"
               multiline
               rows={4}
