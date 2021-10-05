@@ -152,7 +152,11 @@ export const COMPANY_SIGNUP_MUTATION = gql`
 `;
 export const SIREN_QUERY = gql`
   query sirenInfo($siren: Int!) {
-    sirenInfo(siren: $siren)
+    sirenInfo(siren: $siren) {
+      registrationStatus
+      legalUnit
+      facilities
+    }
   }
 `;
 

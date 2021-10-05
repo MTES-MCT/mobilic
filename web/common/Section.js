@@ -13,15 +13,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function Section(props) {
+export const Section = React.forwardRef((props, ref) => {
   const classes = useStyles();
 
   return (
-    <Box my={6} mb={props.last ? 0 : 6} className={classes.section}>
+    <Box ref={ref} my={6} mb={props.last ? 0 : 6} className={classes.section}>
       <Typography className={classes.sectionTitle} variant="h5">
         {props.title}
       </Typography>
       {props.children}
     </Box>
   );
-}
+});

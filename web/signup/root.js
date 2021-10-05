@@ -9,13 +9,13 @@ import {
   useRouteMatch,
   useLocation
 } from "react-router-dom";
-import { Header } from "../common/Header";
-import { CompanySignup } from "./CompanySignup";
 import { Complete } from "./Complete";
 import { loadEmployeeInvite } from "../common/loadEmployeeInvite";
 import { useApi } from "common/utils/api";
 import { EmailSelection } from "./EmailSelection";
 import { PaperContainer } from "../common/PaperContainer";
+import { Header } from "../common/Header";
+import { CompanySignup } from "./company/CompanySignup";
 
 export default function Signup() {
   const store = useStoreSyncedWithLocalStorage();
