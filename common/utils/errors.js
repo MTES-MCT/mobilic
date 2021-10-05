@@ -89,6 +89,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "Vous n'êtes pas autorisé(e) à effectuer cette opération.";
       case "INACCESSIBLE_SIREN":
         return `Aucun établissement n'a été trouvé pour ce SIREN. Vérifiez que le numéro est bon et que l'entreprise est commercialement diffusible.`;
+      case "SIREN_ALREADY_SIGNED_UP":
+        return `L'entreprise a déjà été inscrite. Veuillez vous rapprocher de vos collaborateurs administrateurs pour y être rattaché(e)`;
       case "SIRET_ALREADY_SIGNED_UP":
         return `L'établissement a déjà été inscrit. Veuillez vous rapprocher de vos collaborateurs administrateurs pour y être rattaché(e)`;
       case "UNAVAILABLE_SIREN_API":
