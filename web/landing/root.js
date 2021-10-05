@@ -214,8 +214,8 @@ export const Landing = withWidth()(({ width }) => {
             (LIC)
           </strong>{" "}
           conformément aux articles R. 3312-19, 2° et R. 3312-58, 2° du code des
-          transports : déménagement, ambulance, messagerie, fret express,
-          transport de personnes.
+          transports : déménagement, messagerie, fret express, transport de
+          personnes.
         </Typography>
         <Box className={`${classes.lightBlue}`} p={2}>
           <Showcase
