@@ -35,10 +35,6 @@ import { Comment } from "../../common/Comment";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import LocationEntry from "./LocationEntry";
 import Alert from "@material-ui/lab/Alert";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import { useApi } from "common/utils/api";
-import { DISABLE_VALIDATION_WARNING_MUTATION } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -99,25 +95,6 @@ export function AlternateColors({ children, inverseColors = false }) {
     ));
 }
 
-// Checkbox component that is controlled by parent values but have as well an internal state.
-// This is a hack allowing the component to be passed to a modal and properly rerender with user input (thanks to internal state) while also updating the controlled parent value.
-// We need to do that because the component is passed to the modal as "static" prop and would not otherwise re-render with changes to its own props.
-function CustomCheckbox({ setChecked, checked, ...props }) {
-  const [internalChecked, setInternalChecked] = React.useState(checked);
-
-  React.useEffect(() => {
-    setChecked(internalChecked);
-  }, [internalChecked]);
-
-  return (
-    <Checkbox
-      checked={internalChecked}
-      onChange={() => setInternalChecked(!internalChecked)}
-      {...props}
-    />
-  );
-}
-
 export function MissionDetails({
   mission,
   editActivityEvent,
@@ -148,13 +125,10 @@ export function MissionDetails({
 }) {
   const classes = useStyles();
   const modals = useModals();
-  const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
   const actualUserId = userId || store.userId();
   const alerts = useSnackbarAlerts();
-
-  const disableValidationWarning = React.useRef(false);
 
   const actualCoworkers = coworkers || store.getEntity("coworkers");
 
@@ -206,43 +180,14 @@ export function MissionDetails({
         title: "Confirmer la validation",
         confirmButtonLabel: "Valider",
         cancelButtonLabel: "Annuler",
+        disableWarningName: "employee-validation",
         content: (
-          <>
-            <Typography gutterBottom>
-              ⚠️ Une fois la mission validée vous ne pourrez plus y apporter de
-              modifications.
-            </Typography>
-            <FormControlLabel
-              control={
-                <CustomCheckbox
-                  checked={!!disableValidationWarning.current}
-                  setChecked={value => {
-                    disableValidationWarning.current = value;
-                  }}
-                  size="small"
-                />
-              }
-              label={
-                <Typography variant="caption">
-                  Ne plus afficher ce message
-                </Typography>
-              }
-            />
-          </>
+          <Typography gutterBottom>
+            ⚠️ Une fois la mission validée vous ne pourrez plus y apporter de
+            modifications.
+          </Typography>
         ),
-        handleConfirm: async () => {
-          try {
-            if (disableValidationWarning.current) {
-              await api.graphQlMutate(
-                DISABLE_VALIDATION_WARNING_MUTATION,
-                {},
-                { context: { nonPublicApi: true } }
-              );
-            }
-          } finally {
-            await actualValidationFunc();
-          }
-        }
+        handleConfirm: actualValidationFunc
       });
     } else await actualValidationFunc();
   }

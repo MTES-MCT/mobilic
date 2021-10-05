@@ -1120,10 +1120,10 @@ export const MISSION_QUERY = gql`
   }
 `;
 
-export const DISABLE_VALIDATION_WARNING_MUTATION = gql`
-  mutation disableValidationWarning {
+export const DISABLE_WARNING_MUTATION = gql`
+  mutation disableValidationWarning($warningName: WarningToDisableTypeEnum!) {
     account {
-      disableWarning(warningName: "employee-validation") {
+      disableWarning(warningName: $warningName) {
         success
       }
     }
