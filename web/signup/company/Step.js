@@ -1,6 +1,14 @@
 import { Section } from "../../common/Section";
 import React from "react";
 
+/*
+  Step logic for company signup, or for any process that can be decomposed in steps.
+
+  Each step has its own `complete` prop that represents the completion status of the step.
+  The sequence of steps (`Steps` component) is responsible for displaying the relevant steps, based on their completion : it hides steps that are after the currently non completed step.
+
+  Upon completion of a step a re-render of the `Steps` component is triggered (via `reportNewCompletionStatus`) so that it can update the displayed steps
+ */
 export function Step({
   name,
   title,
