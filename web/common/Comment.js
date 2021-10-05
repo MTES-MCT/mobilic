@@ -60,7 +60,7 @@ export function Comment({ comment, withFullDate, cancelComment }) {
               edge="end"
               onClick={() =>
                 modals.open("confirmation", {
-                  title: "Confirmer suppression du commentaire",
+                  title: "Confirmer suppression de l'observation",
                   handleConfirm: () => cancelComment(comment)
                 })
               }
