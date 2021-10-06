@@ -10,7 +10,14 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import map from "lodash/map";
 import Paper from "@material-ui/core/Paper";
-import { formatDay, formatTimeOfDay, formatTimer } from "common/utils/time";
+import {
+  formatDateTime,
+  formatDay,
+  formatTimeOfDay,
+  formatTimer,
+  getStartOfDay,
+  now
+} from "common/utils/time";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import Button from "@material-ui/core/Button";
 import Drawer from "@material-ui/core/Drawer/Drawer";
@@ -110,6 +117,8 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
     c => c.settings.requireExpenditures
   );
 
+  const now1 = now();
+
   const commonCols = [
     {
       label: "Employé",
@@ -124,7 +133,8 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
       label: "Début",
       name: "startTime",
       align: "left",
-      format: formatTimeOfDay,
+      format: (time, entry) =>
+        (entry.multipleDays ? formatDateTime : formatTimeOfDay)(time),
       minWidth: 80
     },
     {
@@ -133,7 +143,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
       align: "left",
       format: (time, entry) =>
         entry.isComplete ? (
-          formatTimeOfDay(time)
+          (entry.multipleDays ? formatDateTime : formatTimeOfDay)(time)
         ) : (
           <span className={classes.warningText}>
             <strong>En cours</strong>
@@ -259,7 +269,10 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
                     name: m.name,
                     missionStartTime: m.startTime,
                     missionId: m.id,
-                    id: `${m.id}${us.user.id}`
+                    id: `${m.id}${us.user.id}`,
+                    multipleDays:
+                      getStartOfDay(m.startTime) !==
+                      getStartOfDay(m.endTime ? m.endTime - 1 : now1)
                   }))
                 )
               )
@@ -270,7 +283,10 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
                     name: m.name,
                     missionStartTime: m.startTime,
                     missionId: m.id,
-                    id: `${m.id}${us.user.id}`
+                    id: `${m.id}${us.user.id}`,
+                    multipleDays:
+                      getStartOfDay(m.startTime) !==
+                      getStartOfDay(m.endTime ? m.endTime - 1 : now1)
                   }))
                 )
               )

@@ -485,7 +485,7 @@ export function MissionDetails({
   const doesMissionSpanOnMultipleDays =
     mission.startTime &&
     mission.endTime &&
-    getStartOfDay(mission.startTime) !== getStartOfDay(mission.endTime);
+    getStartOfDay(mission.startTime) !== getStartOfDay(mission.endTime - 1);
   const dateTimeFormatter = doesMissionSpanOnMultipleDays
     ? value => formatDateTime(value, true)
     : formatTimeOfDay;
