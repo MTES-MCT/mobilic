@@ -6,9 +6,11 @@ import CloseIcon from "@material-ui/icons/Close";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import {
+  formatDateTime,
   formatDay,
   formatTimeOfDay,
   formatTimer,
+  getStartOfDay,
   now,
   prettyFormatDay
 } from "common/utils/time";
@@ -480,6 +482,14 @@ export function MissionDetails({
     );
   }
 
+  const doesMissionSpanOnMultipleDays =
+    mission.startTime &&
+    mission.endTime &&
+    getStartOfDay(mission.startTime) !== getStartOfDay(mission.endTime);
+  const dateTimeFormatter = doesMissionSpanOnMultipleDays
+    ? value => formatDateTime(value, true)
+    : formatTimeOfDay;
+
   const perUserColumns = [
     {
       label: "Activité",
@@ -508,7 +518,7 @@ export function MissionDetails({
     {
       label: "Début",
       name: "startTime",
-      format: (time, entry) => formatTimeOfDay(time),
+      format: (time, entry) => dateTimeFormatter(time),
       renderEditMode: (time, entry, setTime) => (
         <DateOrDateTimePicker
           label="Début"
@@ -528,7 +538,7 @@ export function MissionDetails({
     {
       label: "Fin",
       name: "endTime",
-      format: (time, entry) => formatTimeOfDay(time),
+      format: (time, entry) => dateTimeFormatter(time),
       renderEditMode: (time, entry, setTime) => (
         <DateOrDateTimePicker
           label="Fin"
@@ -601,10 +611,12 @@ export function MissionDetails({
       key={0}
       className={`${classes.horizontalPadding} ${classes.missionTitleContainer}`}
     >
-      {mission.name ||
-        (mission.startTime
-          ? `Mission du ${prettyFormatDay(mission.startTime, false)}`
-          : "Détails de la mission")}
+      <Typography variant="h3" className={classes.missionTitle}>
+        {mission.name ||
+          (mission.startTime
+            ? `Mission du ${prettyFormatDay(mission.startTime, false)}`
+            : "Détails de la mission")}
+      </Typography>
       <IconButton
         aria-label="Fermer"
         className={classes.closeButton}
@@ -618,10 +630,16 @@ export function MissionDetails({
       variant="h6"
       className={`${classes.horizontalPadding} ${classes.missionSubTitle}`}
     >
-      {mission.startTime
-        ? `${prettyFormatDay(mission.startTime, true)} de ${formatTimeOfDay(
-            mission.startTime
-          )} à ${formatTimeOfDay(mission.endTime)}`
+      {doesMissionSpanOnMultipleDays
+        ? `Du ${dateTimeFormatter(mission.startTime)} au ${dateTimeFormatter(
+            mission.endTime
+          )}`
+        : mission.startTime
+        ? `${
+            !mission.name ? prettyFormatDay(mission.startTime, true) : ""
+          } de ${dateTimeFormatter(mission.startTime)} à ${dateTimeFormatter(
+            mission.endTime
+          )}`
         : day
         ? prettyFormatDay(day, true)
         : ""}
@@ -834,7 +852,8 @@ export function MissionDetails({
                       </span>
                       {entry.validation
                         ? ` validé le ${formatDay(
-                            entry.validation.receptionTime
+                            entry.validation.receptionTime,
+                            true
                           )}`
                         : " non validé"}
                     </Typography>
