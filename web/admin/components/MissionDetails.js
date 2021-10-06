@@ -487,7 +487,7 @@ export function MissionDetails({
     mission.endTime &&
     getStartOfDay(mission.startTime) !== getStartOfDay(mission.endTime - 1);
   const dateTimeFormatter = doesMissionSpanOnMultipleDays
-    ? value => formatDateTime(value, true)
+    ? formatDateTime
     : formatTimeOfDay;
 
   const perUserColumns = [
