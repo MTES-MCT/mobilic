@@ -368,7 +368,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     updateStore,
     watchFields,
     apiResponseHandlerName,
-    batchable = true,
     groupId = null
   ) => {
     const requestId = this.generateId("nextRequestId");
@@ -382,7 +381,6 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       watchFields,
       storeInfo,
       apiResponseHandlerName,
-      batchable,
       groupId
     };
     this.secondState.pendingRequests = [

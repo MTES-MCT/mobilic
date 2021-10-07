@@ -554,7 +554,6 @@ class Actions {
     optimisticStoreUpdate,
     watchFields,
     responseHandlerName,
-    batchable = true,
     groupId = null
   ) => {
     // 1. Store the request and optimistically update the store as if the api responded successfully
@@ -565,7 +564,6 @@ class Actions {
       optimisticStoreUpdate,
       watchFields,
       responseHandlerName,
-      batchable,
       groupId
     );
 
@@ -803,7 +801,6 @@ class Actions {
       updateStore,
       ["activities"],
       "logActivity",
-      !forceNonBatchable && !forceKillSisterActivitiesOnFail,
       groupId
     );
   };
@@ -911,8 +908,7 @@ class Actions {
       payload,
       updateStore,
       ["activities"],
-      "cancelOrEditActivity",
-      !activityEvent.id.toString().startsWith("temp")
+      "cancelOrEditActivity"
     );
   };
 
@@ -958,8 +954,7 @@ class Actions {
       missionPayload,
       updateMissionStore,
       ["missions"],
-      "beginMission",
-      false
+      "beginMission"
     );
 
     firstActivityType &&
@@ -1032,8 +1027,7 @@ class Actions {
       payload,
       updateStore,
       ["missions"],
-      "logLocation",
-      true
+      "logLocation"
     );
   };
 
@@ -1073,8 +1067,7 @@ class Actions {
       payload,
       updateStore,
       ["missions"],
-      "registerKilometerReading",
-      true
+      "registerKilometerReading"
     );
   };
 
@@ -1095,8 +1088,7 @@ class Actions {
       payload,
       updateStore,
       ["missions"],
-      "updateMissionVehicle",
-      true
+      "updateMissionVehicle"
     );
   };
 
@@ -1234,8 +1226,7 @@ class Actions {
         endMissionPayload,
         updateStore,
         ["activities", "missions"],
-        "endMission",
-        true
+        "endMission"
       ),
       this.editExpenditures(
         expenditures,
@@ -1361,8 +1352,7 @@ class Actions {
       newExpenditure,
       updateStore,
       ["expenditures"],
-      "logExpenditure",
-      true
+      "logExpenditure"
     );
   };
 
@@ -1391,8 +1381,7 @@ class Actions {
       { expenditureId: expenditure.id },
       updateStore,
       ["expenditures"],
-      "cancelExpenditure",
-      true
+      "cancelExpenditure"
     );
   };
 
@@ -1417,8 +1406,7 @@ class Actions {
       newComment,
       updateStore,
       ["comments"],
-      "logComment",
-      true
+      "logComment"
     );
   };
 
@@ -1447,8 +1435,7 @@ class Actions {
       { commentId: commentToCancel.id },
       updateStore,
       ["comments"],
-      "cancelComment",
-      true
+      "cancelComment"
     );
   };
 }

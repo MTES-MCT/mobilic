@@ -240,8 +240,7 @@ class Api {
       const submit = await this._queryWithRefreshToken(() =>
         this.apolloClient.mutate({
           mutation: request.query,
-          variables: request.variables,
-          context: { batchable: request.batchable }
+          variables: request.variables
         })
       );
       // 3. Commit the persistent changes to the store
