@@ -947,7 +947,7 @@ export const TERMINATE_KNOWN_ADDRESS_MUTATION = gql`
 `;
 export const VALIDATE_MISSION_MUTATION = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
-  mutation validateMission($missionId: Int!, $userId: Int) {
+  mutation validateMission($missionId: In!, $userId: Int) {
     activities {
       validateMission(missionId: $missionId, userId: $userId) {
         isAdmin
