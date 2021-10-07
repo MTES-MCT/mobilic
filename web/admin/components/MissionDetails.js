@@ -153,6 +153,9 @@ const useStyles = makeStyles(theme => ({
   },
   kilometers: {
     paddingTop: theme.spacing(1)
+  },
+  warningText: {
+    color: theme.palette.warning.main
   }
 }));
 
@@ -538,7 +541,14 @@ export function MissionDetails({
     {
       label: "Fin",
       name: "endTime",
-      format: (time, entry) => dateTimeFormatter(time),
+      format: (time, entry) =>
+        time ? (
+          dateTimeFormatter(time)
+        ) : (
+          <span className={classes.warningText}>
+            <strong>En cours</strong>
+          </span>
+        ),
       renderEditMode: (time, entry, setTime) => (
         <DateOrDateTimePicker
           label="Fin"
@@ -560,7 +570,8 @@ export function MissionDetails({
       label: "Durée",
       name: "duration",
       align: "right",
-      format: (duration, entry) => formatTimer(entry.endTime - entry.startTime),
+      format: (duration, entry) =>
+        formatTimer((entry.endTime || now()) - entry.startTime),
       minWidth: 60
     }
   ];
