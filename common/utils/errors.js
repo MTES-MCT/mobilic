@@ -150,6 +150,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
               )}.`
             : ""
         }.`;
+      case "MISSION_STILL_RUNNING":
+        return `La mission ne peut pas être validée car il y a des activités en cours`;
       case "MISSION_ALREADY_VALIDATED_BY_ADMIN":
         return `La mission n'est plus modifiable, elle a été validée par le gestionnaire.`;
       case "MISSION_ALREADY_VALIDATED_BY_USER":

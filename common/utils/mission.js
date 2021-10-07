@@ -110,7 +110,7 @@ export function computeMissionStats(m, users) {
       endTime,
       service: endTime - startTime,
       totalWorkDuration,
-      isComplete,
+      isComplete: _activities.every(a => !!a.endTime),
       breakDuration: endTime - startTime - totalWorkDuration,
       expenditures: m.expenditures,
       expenditureAggs: mapValues(
@@ -130,6 +130,7 @@ export function computeMissionStats(m, users) {
     activities: activitiesWithUserId,
     startTime,
     endTime,
+    isComplete,
     validatedByAllMembers,
     userStats
   };

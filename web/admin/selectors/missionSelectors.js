@@ -2,7 +2,7 @@ import { createSelector } from "reselect";
 import { DAY, now } from "common/utils/time";
 import { computeMissionStats } from "common/utils/mission";
 
-const DEFAULT_WORKER_VALIDATION_TIMEOUT = 7 * DAY;
+const DEFAULT_WORKER_VALIDATION_TIMEOUT = 10 * DAY;
 
 const missionsSelector = state => state.missions;
 const usersSelector = state => state.users;
@@ -10,13 +10,13 @@ const usersSelector = state => state.users;
 const missionNotValidatedByAdmin = missionWithStat =>
   !missionWithStat.adminValidation && missionWithStat.activities.length > 0;
 
-const missionsValidatedByAllWorkers = missionWithStat =>
+const missionsValidatedByAllWorkersOrOld = missionWithStat =>
   missionWithStat.validatedByAllMembers ||
-  missionWithStat.endTime + DEFAULT_WORKER_VALIDATION_TIMEOUT < now();
+  missionWithStat.startTime + DEFAULT_WORKER_VALIDATION_TIMEOUT < now();
 
 const missionsNotValidatedByAllWorkers = missionWithStats =>
   !missionWithStats.validatedByAllMembers &&
-  missionWithStats.endTime + DEFAULT_WORKER_VALIDATION_TIMEOUT >= now();
+  missionWithStats.startTime + DEFAULT_WORKER_VALIDATION_TIMEOUT >= now();
 
 export const missionWithStats = createSelector(
   missionsSelector,
@@ -30,7 +30,7 @@ export const missionsToValidateByAdmin = createSelector(
   missions =>
     missions
       ?.filter(missionNotValidatedByAdmin)
-      .filter(missionsValidatedByAllWorkers)
+      .filter(missionsValidatedByAllWorkersOrOld)
 );
 
 export const missionsToValidateByWorkers = createSelector(
