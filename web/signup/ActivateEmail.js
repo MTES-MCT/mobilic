@@ -7,9 +7,10 @@ import { graphQLErrorMatchesCode } from "common/utils/errors";
 import Typography from "@material-ui/core/Typography";
 import jwt_decode from "jwt-decode";
 import { currentUserId } from "common/utils/cookie";
-import * as Sentry from "@sentry/browser";
+
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { ACTIVATE_EMAIL_MUTATION } from "common/utils/apiQueries";
+import { captureSentryException } from "common/utils/sentry";
 
 export function ActivateEmail() {
   const location = useLocation();
@@ -32,7 +33,7 @@ export function ActivateEmail() {
         const decodedToken = jwt_decode(token);
         userId = decodedToken["user_id"];
       } catch (err) {
-        Sentry.captureException(err);
+        captureSentryException(err);
         setError("Jeton d'activation invalide");
       }
 

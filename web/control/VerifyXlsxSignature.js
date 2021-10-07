@@ -9,11 +9,12 @@ import Box from "@material-ui/core/Box";
 import DescriptionIcon from "@material-ui/icons/Description";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 import { useApi } from "common/utils/api";
-import * as Sentry from "@sentry/browser";
+
 import Alert from "@material-ui/lab/Alert";
 import AlertTitle from "@material-ui/lab/AlertTitle";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
+import { captureSentryException } from "common/utils/sentry";
 
 const STATUS_MAP = {
   SUCCESS: {
@@ -162,7 +163,7 @@ export function XlsxVerifier() {
         const json = await apiResponse.json();
         setVerifyResponse(json);
       } catch (err) {
-        Sentry.captureException(err);
+        captureSentryException(err);
         if (err.name === "NetworkError" || err.name === "AbortError") {
           setVerifyResponse({ error: "NETWORK_ERROR" });
         } else setVerifyResponse({ error: "INTERNAL_ERROR" });

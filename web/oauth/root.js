@@ -16,7 +16,7 @@ import { ConfirmUser } from "./ConfirmUser";
 import { useLoadingScreen } from "common/utils/loading";
 import { Consent } from "./Consent";
 import Typography from "@material-ui/core/Typography";
-import * as Sentry from "@sentry/browser";
+import { captureSentryException } from "common/utils/sentry";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -65,7 +65,7 @@ function Authorize({ path, setClientName, setRedirectUri }) {
             }
           }
         } catch (err) {
-          Sentry.captureException(err);
+          captureSentryException(err);
           setError("Erreur lors de la connexion avec le serveur");
         }
       }

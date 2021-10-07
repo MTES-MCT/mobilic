@@ -25,7 +25,7 @@ import { InfoItem } from "../home/InfoField";
 import { HTTP_QUERIES, USER_READ_QUERY } from "common/utils/apiQueries";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../common/Snackbar";
-import * as Sentry from "@sentry/browser";
+import { captureSentryException } from "common/utils/sentry";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -116,7 +116,7 @@ export function UserRead() {
               userPayload.currentEmployments.find(e => e.isPrimary)
             );
           } catch (err) {
-            Sentry.captureException(err);
+            captureSentryException(err);
             setError(
               formatApiError(err, gqlError => {
                 if (graphQLErrorMatchesCode(gqlError, "INVALID_TOKEN")) {

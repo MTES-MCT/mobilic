@@ -8,10 +8,11 @@ import flatMap from "lodash/flatMap";
 import uniq from "lodash/uniq";
 import map from "lodash/map";
 import orderBy from "lodash/orderBy";
-import * as Sentry from "@sentry/browser";
+
 import { NonConcurrentExecutionQueue } from "./concurrency";
 import { BroadcastChannel } from "broadcast-channel";
 import { currentUserId } from "./cookie";
+import { captureSentryException } from "./sentry";
 
 const STORE_VERSION = 16;
 
@@ -102,7 +103,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       this.storage.removeItem(testKey);
       return test;
     } catch (err) {
-      Sentry.captureException(err);
+      captureSentryException(err);
       return false;
     }
   };
@@ -151,8 +152,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           )
         );
       } catch (err) {
-        Sentry.captureException(err);
-        console.log(err);
+        captureSentryException(err);
       }
     }
     this._updateUserId();

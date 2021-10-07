@@ -12,9 +12,10 @@ import {
   EDIT_VEHICLE_MUTATION,
   TERMINATE_VEHICLE_MUTATION
 } from "common/utils/apiQueries";
-import * as Sentry from "@sentry/browser";
+
 import { formatApiError } from "common/utils/errors";
 import { usePanelStyles } from "./Company";
+import { captureSentryException } from "common/utils/sentry";
 
 export default function VehicleAdmin({ company }) {
   const api = useApi();
@@ -88,8 +89,7 @@ export default function VehicleAdmin({ company }) {
             return newVehicles;
           });
         } catch (err) {
-          Sentry.captureException(err);
-          console.log(err);
+          captureSentryException(err);
         }
       }}
       validateRow={({ registrationNumber }) => !!registrationNumber}
@@ -112,7 +112,7 @@ export default function VehicleAdmin({ company }) {
             ...oldVehicles
           ]);
         } catch (err) {
-          Sentry.captureException(err);
+          captureSentryException(err);
           alerts.error(formatApiError(err), "vehicleAlreadyRegistered", 6000);
         }
       }}
@@ -133,8 +133,7 @@ export default function VehicleAdmin({ company }) {
                 oldVehicles.filter(v => v.id !== vehicle.id)
               );
             } catch (err) {
-              Sentry.captureException(err);
-              console.log(err);
+              captureSentryException(err);
             }
           }
         })

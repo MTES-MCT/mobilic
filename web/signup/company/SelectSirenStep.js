@@ -75,7 +75,6 @@ export function SelectSirenStep({
   return (
     <Step
       reset={() => {
-        console.log("Resetting");
         resetApiResponse();
         setSiren("");
         setSirenFormatError("");

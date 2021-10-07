@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/browser";
 import { broadCastChannel } from "./store";
 import { parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
@@ -9,6 +8,7 @@ import {
   FULL_MISSION_FRAGMENT
 } from "./apiQueries";
 import { gql } from "@apollo/client/core";
+import { captureSentryException } from "./sentry";
 
 const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
@@ -111,8 +111,7 @@ export async function syncUser(userPayload, api, store) {
       latestMission.ended = latestMissionInfo.data.mission.isEndedForSelf;
       latestMission.submitter = latestMissionInfo.data.mission.submitter;
     } catch (err) {
-      Sentry.captureException(err);
-      console.log(err);
+      captureSentryException(err);
     }
   }
   missions.forEach(mission => {

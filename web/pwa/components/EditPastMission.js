@@ -1,6 +1,6 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
-import * as Sentry from "@sentry/browser";
+
 import Container from "@material-ui/core/Container";
 import { MissionDetails } from "./MissionDetails";
 import { useLocation } from "react-router-dom";
@@ -14,6 +14,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { AccountButton } from "./AccountButton";
 import { MISSION_QUERY } from "common/utils/apiQueries";
 import { parseActivityPayloadFromBackend } from "common/utils/activities";
+import { captureSentryException } from "common/utils/sentry";
 
 const useStyles = makeStyles(theme => ({
   overview: {
@@ -95,8 +96,7 @@ export default function EditPastMission({
             store.batchUpdateStore();
             missionMatch = missionResponsePayload;
           } catch (err) {
-            console.log(err);
-            Sentry.captureException(err);
+            captureSentryException(err);
             setError(formatApiError(err));
           }
         }

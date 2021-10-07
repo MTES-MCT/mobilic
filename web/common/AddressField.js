@@ -9,7 +9,7 @@ import {
   formatAddressMainText,
   formatAddressSubText
 } from "common/utils/addresses";
-import * as Sentry from "@sentry/browser";
+import { captureSentryException } from "common/utils/sentry";
 
 const filter = createFilterOptions();
 
@@ -28,7 +28,7 @@ const fetchPlaces = throttle((input, currentPosition = null, callback) => {
     .then(
       response => response.json(),
       err => {
-        Sentry.captureException(err);
+        captureSentryException(err);
         return null;
       }
     )

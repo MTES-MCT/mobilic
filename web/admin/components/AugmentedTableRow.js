@@ -31,7 +31,6 @@ export function AugmentedTableRowCellContent({
         label={column.label}
         value={cellData || ""}
         onChange={e => {
-          console.log(e.target.value);
           setCellData(e.target.value);
         }}
       />

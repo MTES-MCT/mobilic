@@ -12,8 +12,9 @@ import {
   EDIT_KNOWN_ADDRESS_MUTATION,
   TERMINATE_KNOWN_ADDRESS_MUTATION
 } from "common/utils/apiQueries";
-import * as Sentry from "@sentry/browser";
+
 import { usePanelStyles } from "./Company";
+import { captureSentryException } from "common/utils/sentry";
 
 export default function KnownAddressAdmin({ company }) {
   const api = useApi();
@@ -112,8 +113,7 @@ export default function KnownAddressAdmin({ company }) {
             return newAddresses;
           });
         } catch (err) {
-          Sentry.captureException(err);
-          console.log(err);
+          captureSentryException(err);
         }
       }}
       validateRow={({ address }) => !!address}
@@ -136,8 +136,7 @@ export default function KnownAddressAdmin({ company }) {
             ...oldAddresses
           ]);
         } catch (err) {
-          Sentry.captureException(err);
-          console.log(err);
+          captureSentryException(err);
         }
       }}
       onRowDelete={address =>
@@ -157,8 +156,7 @@ export default function KnownAddressAdmin({ company }) {
                 oldAddresses.filter(a => a.id !== address.id)
               );
             } catch (err) {
-              Sentry.captureException(err);
-              console.log(err);
+              captureSentryException(err);
             }
           }
         })

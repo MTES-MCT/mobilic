@@ -15,10 +15,11 @@ import Button from "@material-ui/core/Button";
 import Skeleton from "@material-ui/lab/Skeleton";
 import List from "@material-ui/core/List";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
-import * as Sentry from "@sentry/browser";
+
 import { useApi } from "common/utils/api";
 import withWidth from "@material-ui/core/withWidth";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import { captureSentryException } from "common/utils/sentry";
 
 const useStyles = makeStyles(theme => ({
   webinarCard: {
@@ -81,7 +82,7 @@ export const WebinarList = withWidth()(
         setWebinarsLoadError(false);
       } catch (err) {
         setWebinarsLoadError(true);
-        Sentry.captureException(err);
+        captureSentryException(err);
       }
     }
 

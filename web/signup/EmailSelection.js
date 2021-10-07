@@ -1,7 +1,7 @@
 import React from "react";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import * as Sentry from "@sentry/browser";
+
 import { useApi } from "common/utils/api";
 import { useHistory, useLocation } from "react-router-dom";
 import {
@@ -23,6 +23,7 @@ import {
 } from "common/utils/apiQueries";
 import { CheckboxField } from "../common/CheckboxField";
 import { EmailField } from "../common/EmailField";
+import { captureSentryException } from "common/utils/sentry";
 
 const useStyles = makeStyles(theme => ({
   text: {
@@ -100,7 +101,7 @@ export function EmailSelection() {
               json: { list: "employees" }
             });
           } catch (err) {
-            Sentry.captureException(err);
+            captureSentryException(err);
           }
         }
         await store.setUserInfo({

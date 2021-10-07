@@ -10,11 +10,12 @@ import {
 import { formatApiError } from "common/utils/errors";
 import Typography from "@material-ui/core/Typography";
 import { currentUserId } from "common/utils/cookie";
-import * as Sentry from "@sentry/browser";
+
 import {
   GET_EMPLOYMENT_QUERY,
   REDEEM_INVITE_QUERY
 } from "common/utils/apiQueries";
+import { captureSentryException } from "common/utils/sentry";
 
 export function RedeemInvite() {
   const location = useLocation();
@@ -64,7 +65,7 @@ export function RedeemInvite() {
         await broadCastChannel.postMessage("update");
         history.push("/home");
       } catch (err) {
-        Sentry.captureException(err);
+        captureSentryException(err);
         setError(formatApiError(err));
       }
     });

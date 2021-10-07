@@ -15,6 +15,7 @@ import { clearUserIdCookie, currentUserId, readCookie } from "./cookie";
 import { MaxSizeCache } from "./cache";
 import { saveAs } from "file-saver";
 import { HTTP_QUERIES } from "./apiQueries";
+import { captureSentryException } from "./sentry";
 
 export const API_HOST = "/api";
 
@@ -278,7 +279,7 @@ class Api {
       Sentry.withScope(function(scope) {
         scope.setTag("request_query", JSON.stringify(request.query));
         scope.setTag("request_variables", JSON.stringify(request.variables));
-        Sentry.captureException(err);
+        captureSentryException(err);
       });
       throw err;
     }
