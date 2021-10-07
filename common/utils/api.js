@@ -1,10 +1,8 @@
 import React from "react";
-import forEach from "lodash/forEach";
 import { ApolloClient, ApolloLink, gql, HttpLink } from "@apollo/client";
 import ApolloLinkTimeout from "apollo-link-timeout";
 import { InMemoryCache } from "@apollo/client/cache";
 import { onError } from "@apollo/client/link/error";
-import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import * as Sentry from "@sentry/browser";
 import omit from "lodash/omit";
 import { broadCastChannel, useStoreSyncedWithLocalStorage } from "./store";
@@ -18,8 +16,6 @@ import { HTTP_QUERIES } from "./apiQueries";
 import { captureSentryException } from "./sentry";
 
 export const API_HOST = "/api";
-
-const GRAPHQL_MAX_BATCH_SIZE = 10;
 
 const CHECK_MUTATION = gql`
   mutation checkAuthentication {
@@ -69,17 +65,7 @@ class Api {
               uri: this.nonPublicUri,
               credentials: "same-origin"
             }),
-            ApolloLink.split(
-              operation => !!operation.getContext().batchable,
-              new BatchHttpLink({
-                uri: this.uri,
-                credentials: "same-origin",
-                batchMax: GRAPHQL_MAX_BATCH_SIZE,
-                batchDebounce: true,
-                batchInterval: 50
-              }),
-              new HttpLink({ uri: this.uri, credentials: "same-origin" })
-            )
+            new HttpLink({ uri: this.uri, credentials: "same-origin" })
           )
         ]),
         cache: new InMemoryCache()
@@ -285,45 +271,25 @@ class Api {
     }
   }
 
-  async executePendingRequests(failOnError = false) {
+  async executePendingRequests() {
     return await this.nonConcurrentQueryQueue.execute(async () => {
       // 1. Retrieve all pending requests
       let processedRequests = 0;
       while (this.store.pendingRequests().length > 0) {
         let errors = [];
-        const pendingRequests = this.store.pendingRequests();
-        const batch = [];
-        forEach(pendingRequests, request => {
-          // Match Apollo batch size to ensure sequential execution
-          if (request.batchable && batch.length < GRAPHQL_MAX_BATCH_SIZE)
-            batch.push(request);
-          else {
-            if (batch.length === 0) batch.push(request);
-            return false;
-          }
-        });
-        await Promise.all(
-          batch.map(async request => {
-            try {
-              await this.executeRequest(request);
-              processedRequests = processedRequests + 1;
-            } catch (err) {
-              // It is important to wait for ALL the batched request handlers to execute
-              // because they are all processed by the API regardless of whether the others fail
-              // So we avoid throwing an error here, otherwise the other successful promises could be cancelled
-              errors.push(err);
-            }
-          })
-        );
-        this.store.batchUpdateStore();
-        if (errors.length > 0) {
-          if (failOnError) throw errors[0];
-          // We stop early if some errors can lead to a retry, otherwise the execution will be stuck in an infinite loop
-          if (errors.some(e => isRetryable(e))) {
-            break;
-          }
+        const request = this.store.pendingRequests()[0];
+        try {
+          await this.executeRequest(request);
+          processedRequests = processedRequests + 1;
+        } catch (err) {
+          errors.push(err);
+        }
+        // We stop early if some errors can lead to a retry, otherwise the execution will be stuck in an infinite loop
+        if (errors.some(e => isRetryable(e))) {
+          break;
         }
       }
+      this.store.batchUpdateStore();
       if (processedRequests > 0) {
         await broadCastChannel.postMessage("update");
       }
