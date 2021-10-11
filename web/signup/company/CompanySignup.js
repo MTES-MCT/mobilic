@@ -78,7 +78,7 @@ export function CompanySignup() {
         { context: { nonPublicApi: true } }
       );
       const employment = apiResponse.data.signUp.company.employment;
-      store.syncEntity([employment], "employments", () => false);
+      store.createEntityObject(employment, "employments");
       store.batchUpdateStore();
       await broadCastChannel.postMessage("update");
       history.push(

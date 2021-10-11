@@ -3,18 +3,19 @@ import zipObject from "lodash/zipObject";
 import keyBy from "lodash/keyBy";
 import pickBy from "lodash/pickBy";
 import mapValues from "lodash/mapValues";
-import values from "lodash/values";
 import flatMap from "lodash/flatMap";
 import uniq from "lodash/uniq";
 import map from "lodash/map";
 import orderBy from "lodash/orderBy";
+import omit from "lodash/omit";
+import merge from "lodash/merge";
 
 import { NonConcurrentExecutionQueue } from "./concurrency";
 import { BroadcastChannel } from "broadcast-channel";
 import { currentUserId } from "./cookie";
 import { captureSentryException } from "./sentry";
 
-const STORE_VERSION = 16;
+const STORE_VERSION = 17;
 
 export const broadCastChannel = new BroadcastChannel("storeUpdates", {
   webWorkerSupport: false
@@ -262,75 +263,147 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       );
   };
 
-  createEntityObject = (object, entity, requestId) => {
+  createEntityObject = (objects, entity, pendingRequestId) => {
+    const objectList = Array.isArray(objects) ? objects : [objects];
+
     if (this.mapper[entity] === List) {
       this.dispatchUpdateAction(
         prevState => ({
           [entity]: [
             ...prevState[entity],
-            {
+            ...objectList.map(object => ({
               ...object,
-              pendingUpdates: [{ requestId, type: "create", time: Date.now() }]
-            }
+              ...(!pendingRequestId
+                ? {}
+                : {
+                    pendingUpdates: [
+                      {
+                        requestId: pendingRequestId,
+                        type: "create",
+                        time: Date.now()
+                      }
+                    ]
+                  })
+            }))
           ]
         }),
         [entity]
       );
       return;
     }
-    const entityObjectId = this.generateTempEntityObjectId();
+
+    let objectsWithId = objectList;
+    if (pendingRequestId) {
+      objectsWithId = objectList.map(object => ({
+        ...object,
+        id: this.generateTempEntityObjectId(),
+        pendingUpdates: [
+          { requestId: pendingRequestId, type: "create", time: Date.now() }
+        ]
+      }));
+    }
+
+    const objectIds = objectsWithId.map(object => object.id);
+    const storeUpdatePayload = zipObject(
+      objectIds.map(id => id.toString()),
+      objectsWithId
+    );
+
     this.dispatchUpdateAction(
       prevState => ({
         [entity]: {
           ...prevState[entity],
-          [entityObjectId.toString()]: {
-            ...object,
-            id: entityObjectId,
-            pendingUpdates: [{ requestId, type: "create", time: Date.now() }]
-          }
+          ...mapValues(storeUpdatePayload, object => {
+            const previousObject = prevState[entity][object.id.toString()];
+            if (!previousObject || !isPendingSubmission(previousObject))
+              return object;
+            else
+              return {
+                ...object,
+                pendingUpdates: [
+                  ...(previousObject.pendingUpdates || []),
+                  ...(object.pendingUpdates || [])
+                ]
+              };
+          })
         }
       }),
       [entity]
     );
-    return entityObjectId;
+    return Array.isArray(objects) ? objectIds : objectIds[0];
   };
 
-  updateEntityObject = (objectId, entity, update, requestId) =>
-    this.dispatchUpdateAction(
-      prevState => ({
-        [entity]: {
-          ...mapValues(prevState[entity], (value, id) =>
-            id === objectId.toString()
-              ? {
-                  ...value,
-                  pendingUpdates: [
-                    ...(value.pendingUpdates || []),
-                    { requestId, type: "update", new: update, time: Date.now() }
-                  ]
-                }
-              : value
-          )
+  updateEntityObject = ({
+    objectId,
+    entity,
+    update,
+    pendingRequestId,
+    createOrReplace = false,
+    deepMerge = false
+  }) => {
+    function getUpdatedObject(value) {
+      let object = createOrReplace ? {} : { ...value };
+      if (isPendingSubmission(value) || pendingRequestId) {
+        object.pendingUpdates = value.pendingUpdates || [];
+        if (pendingRequestId)
+          object.pendingUpdates.push({
+            requestId: pendingRequestId,
+            type: "update",
+            new: update,
+            time: Date.now()
+          });
+      }
+      if (!pendingRequestId) {
+        if (deepMerge) merge(object, update);
+        else object = { ...object, ...update };
+      }
+
+      return object;
+    }
+
+    return this.dispatchUpdateAction(
+      prevState => {
+        const objectKey = objectId.toString();
+        const newEntity = omit(prevState[entity], objectKey);
+
+        const previousObject = prevState[entity][objectKey];
+        if (previousObject || createOrReplace) {
+          const newObject = getUpdatedObject(previousObject || {});
+          newEntity[
+            newObject.id ? newObject.id.toString() : objectKey
+          ] = newObject;
         }
-      }),
+
+        return {
+          [entity]: newEntity
+        };
+      },
       [entity]
     );
+  };
 
-  deleteEntityObject = (objectId, entity, requestId) =>
+  deleteEntityObject = (objectId, entity, pendingRequestId) =>
     this.dispatchUpdateAction(
       prevState => ({
-        [entity]: {
-          ...mapValues(prevState[entity], (value, id) =>
-            id === objectId.toString()
-              ? {
-                  ...value,
-                  pendingUpdates: [
-                    ...(value.pendingUpdates || []),
-                    { requestId, type: "delete", time: Date.now() }
-                  ]
-                }
-              : value
-          )
-        }
+        [entity]: !pendingRequestId
+          ? omit(prevState[entity], objectId.toString())
+          : {
+              ...mapValues(prevState[entity], (value, id) =>
+                id === objectId.toString()
+                  ? {
+                      ...value,
+                      pendingUpdates: [
+                        ...(value.pendingUpdates || []),
+                        {
+                          requestId: pendingRequestId,
+                          type: "delete",
+                          time: Date.now()
+                        }
+                      ]
+                    }
+                  : value
+              )
+            }
       }),
       [entity]
     );
@@ -411,7 +484,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         if (
           item.pendingUpdates.some(
             upd => upd.requestId === requestId && upd.type === "create"
-          )
+          ) &&
+          (!item.id || item.id.toString().startsWith("temp"))
         ) {
           return null;
         }
@@ -462,12 +536,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     return updatedItem;
   };
 
-  syncEntity = (
-    itemsFromApi,
-    entity,
-    belongsToSyncScope = () => true,
-    createdIdMap = {}
-  ) =>
+  syncEntity = (itemsFromApi, entity, belongsToSyncScope = () => true) =>
     this.dispatchUpdateAction(
       prevState => {
         const prevEntityState = prevState[entity];
@@ -485,12 +554,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           };
         }
         itemsFromApi.forEach(item => {
-          const prevEntityMatch =
-            prevEntityState[
-              createdIdMap[item.id]
-                ? createdIdMap[item.id].toString()
-                : item.id.toString()
-            ];
+          const prevEntityMatch = prevEntityState[item.id.toString()];
           if (prevEntityMatch && isPendingSubmission(prevEntityMatch)) {
             item.pendingUpdates = prevEntityMatch.pendingUpdates.filter(
               upd => upd.type !== "create"
@@ -502,10 +566,9 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             ...pickBy(
               prevEntityState,
               item =>
-                !values(createdIdMap).includes(item.id) &&
-                (!belongsToSyncScope(item) ||
-                  (isPendingSubmission(item) &&
-                    item.pendingUpdates.some(upd => upd.type === "create")))
+                !belongsToSyncScope(item) ||
+                (isPendingSubmission(item) &&
+                  item.pendingUpdates.some(upd => upd.type === "create"))
             ),
             ...keyBy(itemsFromApi, item => item.id.toString())
           }

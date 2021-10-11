@@ -70,11 +70,15 @@ export function EmploymentInfo({ employment, spacing = 4 }) {
             employmentId: employment.id
           }
         );
-        await store.syncEntity(
-          accept ? [apiResponse.data.employments.validateEmployment] : [],
-          "employments",
-          e => e.id === employment.id
-        );
+        if (accept) {
+          await store.updateEntityObject({
+            objectId: employment.id,
+            entity: "employments",
+            update: apiResponse.data.employments.validateEmployment,
+            createOrReplace: true
+          });
+        } else await store.deleteEntityObject(employment.id, "employments");
+
         store.batchUpdateStore();
         await broadCastChannel.postMessage("update");
       },
