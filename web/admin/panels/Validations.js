@@ -1,6 +1,5 @@
 import React from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../utils/store";
 import flatMap from "lodash/flatMap";
@@ -31,75 +30,10 @@ import { VALIDATE_MISSION_MUTATION } from "common/utils/apiQueries";
 import {
   missionsToValidateByAdmin,
   missionsToValidateByWorkers,
+  missionsValidatedByAdmin,
   missionWithStats
 } from "../selectors/missionSelectors";
-
-const useStyles = makeStyles(theme => ({
-  title: {
-    textAlign: "left",
-    marginBottom: theme.spacing(2),
-    display: "flex",
-    alignItems: "center"
-  },
-  explanation: {
-    marginBottom: theme.spacing(2),
-    fontStyle: "italic",
-    textAlign: "justify"
-  },
-  container: {
-    padding: theme.spacing(2),
-    flexShrink: 1,
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    overflowY: "hidden"
-  },
-  subPanel: {
-    padding: theme.spacing(2)
-  },
-  successText: {
-    color: theme.palette.success.main
-  },
-  warningText: {
-    color: theme.palette.warning.main
-  },
-  virtualizedTableContainer: {
-    maxHeight: "100%",
-    flexShrink: 1,
-    overflowY: "hidden"
-  },
-  collapseWrapper: {
-    maxHeight: "100%"
-  },
-  missionModal: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2)
-  },
-  header: {
-    "&:hover": {
-      cursor: "inherit !important"
-    }
-  },
-  tab: {
-    maxWidth: 400
-  },
-  tabContainer: {
-    marginBottom: theme.spacing(2)
-  },
-  validatedRow: {
-    backgroundColor: theme.palette.success.light,
-    "&:hover": {
-      backgroundColor: theme.palette.success.light
-    }
-  },
-  selectedRow: {
-    background: theme.palette.primary.lighter
-  },
-  missionTitle: {
-    textTransform: "uppercase",
-    color: theme.palette.primary.main
-  }
-}));
+import { useStyles } from "../components/styles/ValidationsStyle";
 
 function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
   const api = useApi();
@@ -109,6 +43,8 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
   const history = useHistory();
 
   const [tab, setTab] = React.useState(0);
+  const [tableEntries, setTableEntries] = React.useState([]);
+  const [tableColumns, setTableColumns] = React.useState([]);
   const classes = useStyles({ clickableRow: tab === 0 });
 
   const ref = React.useRef();
@@ -203,7 +139,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
     }
   ].filter(Boolean);
 
-  const validationCol = {
+  const validationEmployeeCol = {
     label: "Validation salarié",
     name: "validation",
     format: validation => (
@@ -217,11 +153,60 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
     minWidth: 200
   };
 
-  const columns = tab === 0 ? commonCols : [...commonCols, validationCol];
+  const validationAdminCol = {
+    label: "Date de validation",
+    name: "adminValidation",
+    format: adminValidation => (
+      <Typography>{formatDay(adminValidation.receptionTime, true)}</Typography>
+    ),
+    align: "left",
+    minWidth: 200
+  };
 
   const [missionIdOnFocus, setMissionIdOnFocus] = React.useState(null);
 
-  const missionListToValidateByAdmin = missionsToValidateByAdmin(adminStore);
+  const missionsToTableEntries = missions =>
+    flatMap(
+      missions?.map(m =>
+        map(m.userStats, us => ({
+          ...us,
+          name: m.name,
+          missionStartTime: m.startTime,
+          missionId: m.id,
+          id: `${m.id}${us.user.id}`,
+          adminValidation: m.adminValidation,
+          multipleDays:
+            getStartOfDay(m.startTime) !==
+            getStartOfDay(m.endTime ? m.endTime - 1 : now1)
+        }))
+      )
+    );
+
+  React.useEffect(() => {
+    switch (tab) {
+      case 0:
+        setTableEntries(
+          missionsToTableEntries(missionsToValidateByAdmin(adminStore))
+        );
+        setTableColumns(commonCols);
+        break;
+      case 1:
+        setTableEntries(
+          missionsToTableEntries(missionsToValidateByWorkers(adminStore))
+        );
+        setTableColumns([...commonCols, validationEmployeeCol]);
+        break;
+      case 2:
+        setTableEntries(
+          missionsToTableEntries(missionsValidatedByAdmin(adminStore))
+        );
+        setTableColumns([...commonCols, validationAdminCol]);
+        break;
+      default:
+        setTableColumns([]);
+        setTableEntries([]);
+    }
+  }, [tab, adminStore.missions]);
 
   React.useEffect(() => {
     const queryString = new URLSearchParams(location.search);
@@ -244,7 +229,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
       >
         <Tab
           className={classes.tab}
-          label={`A valider (${missionListToValidateByAdmin?.length})`}
+          label={`A valider (${missionsToValidateByAdmin(adminStore)?.length})`}
         />
         <Tab
           className={classes.tab}
@@ -252,45 +237,24 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
             missionsToValidateByWorkers(adminStore)?.length
           })`}
         />
+        <Tab
+          className={classes.tab}
+          label={`Missions validées (${
+            missionsValidatedByAdmin(adminStore)?.length
+          })`}
+        />
       </Tabs>
       <Typography className={classes.explanation}>
-        {tab === 0
-          ? "Les missions suivantes ont été terminées et validées par le(s) salarié(s) concerné(s) et sont prêtes à être validées par un gestionnaire."
-          : "Les missions suivantes sont terminées mais n'ont pas encore été validées par tous les salariés concernés."}
+        {tab === 0 &&
+          "Les missions suivantes ont été terminées et validées par le(s) salarié(s) concerné(s) et sont prêtes à être validées par un gestionnaire."}
+        {tab === 1 &&
+          "Les missions suivantes sont terminées mais n'ont pas encore été validées par tous les salariés concernés."}
+        {tab === 2 &&
+          "Les missions suivantes ont été validées par le(s) salarié(s) concerné(s) et un gestionnaire."}
       </Typography>
       <AugmentedTable
-        columns={columns}
-        entries={
-          tab === 0
-            ? flatMap(
-                missionListToValidateByAdmin?.map(m =>
-                  map(m.userStats, us => ({
-                    ...us,
-                    name: m.name,
-                    missionStartTime: m.startTime,
-                    missionId: m.id,
-                    id: `${m.id}${us.user.id}`,
-                    multipleDays:
-                      getStartOfDay(m.startTime) !==
-                      getStartOfDay(m.endTime ? m.endTime - 1 : now1)
-                  }))
-                )
-              )
-            : flatMap(
-                missionsToValidateByWorkers(adminStore)?.map(m =>
-                  map(m.userStats, us => ({
-                    ...us,
-                    name: m.name,
-                    missionStartTime: m.startTime,
-                    missionId: m.id,
-                    id: `${m.id}${us.user.id}`,
-                    multipleDays:
-                      getStartOfDay(m.startTime) !==
-                      getStartOfDay(m.endTime ? m.endTime - 1 : now1)
-                  }))
-                )
-              )
-        }
+        columns={tableColumns}
+        entries={tableEntries}
         ref={ref}
         virtualizedRowHeight={entry => (entry.__groupKey ? 50 : 35)}
         alwaysSortBy={[
@@ -334,13 +298,16 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
                   size="small"
                   onClick={async e => {
                     e.stopPropagation();
-                    adminStore.setMissions(missions =>
-                      missions.filter(m => m.id !== entry.id)
-                    );
                     try {
-                      await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
-                        missionId: entry.id
-                      });
+                      const apiResponse = await api.graphQlMutate(
+                        VALIDATE_MISSION_MUTATION,
+                        {
+                          missionId: entry.id
+                        }
+                      );
+                      const validation =
+                        apiResponse.data.activities.validateMission;
+                      adminStore.saveMissionValidation(validation);
                       alerts.success(
                         `La mission${
                           entry.name ? " " + entry.name : ""

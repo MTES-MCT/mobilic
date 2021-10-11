@@ -10,6 +10,9 @@ const usersSelector = state => state.users;
 const missionNotValidatedByAdmin = missionWithStat =>
   !missionWithStat.adminValidation && missionWithStat.activities.length > 0;
 
+const missionValidatedByAdmin = missionWithStat =>
+  missionWithStat.adminValidation && missionWithStat.activities.length > 0;
+
 const missionsValidatedByAllWorkersOrOld = missionWithStat =>
   missionWithStat.validatedByAllMembers ||
   missionWithStat.startTime + DEFAULT_WORKER_VALIDATION_TIMEOUT < now();
@@ -31,6 +34,11 @@ export const missionsToValidateByAdmin = createSelector(
     missions
       ?.filter(missionNotValidatedByAdmin)
       .filter(missionsValidatedByAllWorkersOrOld)
+);
+
+export const missionsValidatedByAdmin = createSelector(
+  missionWithStats,
+  missions => missions?.filter(missionValidatedByAdmin)
 );
 
 export const missionsToValidateByWorkers = createSelector(

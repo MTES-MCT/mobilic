@@ -132,6 +132,7 @@ export function computeMissionStats(m, users) {
     endTime,
     isComplete,
     validatedByAllMembers,
-    userStats
+    userStats,
+    adminValidation: m.validations ? m.validations.find(v => v.isAdmin) : {}
   };
 }
