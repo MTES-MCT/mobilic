@@ -1,7 +1,6 @@
 import React from "react";
 import mapValues from "lodash/mapValues";
 import values from "lodash/values";
-import * as Sentry from "@sentry/browser";
 import { isPendingSubmission, useStoreSyncedWithLocalStorage } from "./store";
 import { useApi } from "./api";
 import { ACTIVITIES, parseActivityPayloadFromBackend } from "./activities";
@@ -60,52 +59,46 @@ class Actions {
         const activity = parseActivityPayloadFromBackend(
           apiResponse.data.activities.logActivity
         );
-        const activities = [activity];
-        let syncScope = a => false;
         if (switchMode) {
-          const previousActivity = values(
-            this.store.getEntity("activities")
-          ).find(
-            a =>
-              a.userId === activity.userId &&
-              a.id !== tempActivityId &&
-              isPendingSubmission(a) &&
-              a.pendingUpdates.some(
-                upd => upd.type === "update" && upd.requestId === requestId
-              )
+          this.store.dispatchUpdateAction(
+            prevState => {
+              const previousActivity = values(prevState.activities)
+                .map(this.store.resolveLastVersionOfItem)
+                .filter(Boolean)
+                .find(
+                  a =>
+                    a.userId === activity.userId &&
+                    a.id !== tempActivityId &&
+                    isPendingSubmission(a) &&
+                    a.pendingUpdates.some(
+                      upd =>
+                        upd.type === "update" && upd.requestId === requestId
+                    )
+                );
+              return previousActivity
+                ? {
+                    activities: {
+                      ...prevState.activities,
+                      [previousActivity.id.toString()]: {
+                        ...previousActivity,
+                        endTime: activity.startTime
+                      }
+                    }
+                  }
+                : {};
+            },
+            ["activities"]
           );
-          if (previousActivity && previousActivity.id !== activity.id) {
-            activities.push({
-              ...previousActivity,
-              endTime: activity.startTime
-            });
-            syncScope = a => a.id === previousActivity.id;
-          }
         }
         this.store.addToIdentityMap(tempActivityId, activity.id);
         if (!endTime) {
-          const mission = this.store.getEntity("missions")[
-            activity.missionId.toString()
-          ];
-          if (mission && mission.id)
-            this.store.syncEntity(
-              [
-                {
-                  ...mission,
-                  ended: false
-                }
-              ],
-              "missions",
-              m => m.id === activity.missionId
-            );
-          else
-            Sentry.captureMessage(
-              `Warning : No id found for mission ${mission}`
-            );
+          this.store.updateEntityObject({
+            objectId: activity.missionId,
+            entity: "missions",
+            update: { ended: false }
+          });
         }
-        this.store.syncEntity(activities, "activities", syncScope, {
-          [activity.id]: tempActivityId
-        });
+        this.store.createEntityObject(activity, "activities");
       },
       onError: async (
         error,
@@ -186,37 +179,24 @@ class Actions {
       onSuccess: (apiResponse, { activityId, shouldCancel, newEndTime }) => {
         if (shouldCancel) {
           if (apiResponse.data.activities.cancelActivity.success) {
-            this.store.syncEntity([], "activities", a => a.id === activityId);
+            this.store.deleteEntityObject(activityId, "activities");
           }
         } else {
           const activity = parseActivityPayloadFromBackend(
             apiResponse.data.activities.editActivity
           );
-          if (!newEndTime) {
-            const mission = this.store.getEntity("missions")[
-              activity.missionId.toString()
-            ];
-            if (mission && mission.id)
-              this.store.syncEntity(
-                [
-                  {
-                    ...mission,
-                    ended: false
-                  }
-                ],
-                "missions",
-                m => m.id === activity.missionId
-              );
-            else
-              Sentry.captureMessage(
-                `Warning : No id found for mission ${mission}`
-              );
-          }
-          this.store.syncEntity(
-            [activity],
-            "activities",
-            a => a.id === activity.id
-          );
+          if (!newEndTime)
+            this.store.updateEntityObject({
+              objectId: activity.missionId,
+              entity: "missions",
+              update: { ended: false }
+            });
+          this.store.updateEntityObject({
+            objectId: activity.id,
+            entity: "activities",
+            update: activity,
+            createOrReplace: true
+          });
         }
       },
       onError: (error, { userId, type }) => {
@@ -247,17 +227,15 @@ class Actions {
       onSuccess: (apiResponse, { missionId: tempMissionId }) => {
         const mission = apiResponse.data.activities.createMission;
         this.store.addToIdentityMap(tempMissionId, mission.id);
-        this.store.syncEntity(
-          [
-            parseMissionPayloadFromBackend(
-              { ...mission, ended: false },
-              this.store.userId()
-            )
-          ],
-          "missions",
-          () => false,
-          { [mission.id]: tempMissionId }
-        );
+        this.store.updateEntityObject({
+          objectId: tempMissionId,
+          entity: "missions",
+          update: parseMissionPayloadFromBackend(
+            { ...mission, ended: false },
+            this.store.userId()
+          ),
+          createOrReplace: true
+        });
         this.store.dispatchUpdateAction(
           prevState => ({
             activities: mapValues(prevState.activities, a => ({
@@ -291,18 +269,19 @@ class Actions {
         await Promise.all(
           pendingMissionRequests.map(req => this.store.clearPendingRequest(req))
         );
-        this.store.syncEntity([], "missions", m => m.id === tempMissionId);
+        this.store.deleteEntityObject(tempMissionId, "missions");
       }
     });
 
     api.registerResponseHandler("endMission", {
       onSuccess: apiResponse => {
         const mission = apiResponse.data.activities.endMission;
-        this.store.syncEntity(
-          [{ ...parseMissionPayloadFromBackend(mission), ended: true }],
-          "missions",
-          m => m.id === mission.id
-        );
+        this.store.updateEntityObject({
+          objectId: mission.id,
+          entity: "missions",
+          update: { ...parseMissionPayloadFromBackend(mission), ended: true },
+          createOrReplace: true
+        });
         this.store.syncEntity(
           mission.activities.map(parseActivityPayloadFromBackend),
           "activities",
@@ -320,36 +299,18 @@ class Actions {
             graphQLErrorMatchesCode(gqle, "MISSION_ALREADY_ENDED")
           ).extensions.missionEnd.endTime;
           if (currentActivityId) {
-            const currentActivity = this.store.getEntity("activities")[
-              currentActivityId.toString()
-            ];
-            if (currentActivity)
-              this.store.syncEntity(
-                [
-                  {
-                    ...currentActivity,
-                    endTime: missionEndTime
-                  }
-                ],
-                "activities",
-                a => a.id === currentActivityId
-              );
-            else
-              Sentry.captureMessage(
-                `Warning : Could not find activity with id ${currentActivityId}`
-              );
+            this.store.updateEntityObject({
+              objectId: currentActivityId,
+              entity: "activities",
+              update: { endTime: missionEndTime }
+            });
           }
           if (userId === this.store.userId()) {
-            this.store.syncEntity(
-              [
-                {
-                  ...this.store.getEntity("missions")[missionId.toString()],
-                  ended: true
-                }
-              ],
-              "missions",
-              m => m.id === missionId
-            );
+            this.store.updateEntityObject({
+              objectId: missionId,
+              entity: "missions",
+              update: { ended: true }
+            });
           }
         }
         if (isGraphQLError(error)) {
@@ -377,21 +338,18 @@ class Actions {
     api.registerResponseHandler("validateMission", {
       onSuccess: async (apiResponse, { validation }) => {
         const mission = apiResponse.data.activities.validateMission.mission;
-        this.store.syncEntity(
-          [
-            {
-              ...mission,
-              ended: true,
-              validation,
-              adminValidation: apiResponse.data.activities.validateMission
-                .isAdmin
-                ? validation
-                : null
-            }
-          ],
-          "missions",
-          m => m.id === mission.id
-        );
+        this.store.updateEntityObject({
+          objectId: mission.id,
+          entity: "missions",
+          update: {
+            ...mission,
+            ended: true,
+            validation,
+            adminValidation: apiResponse.data.activities.validateMission.isAdmin
+              ? validation
+              : null
+          }
+        });
         this.alerts.success(
           `La mission${
             mission.name ? " " + mission.name : ""
@@ -405,7 +363,7 @@ class Actions {
     api.registerResponseHandler("logExpenditure", {
       onSuccess: apiResponse => {
         const expenditure = apiResponse.data.activities.logExpenditure;
-        this.store.syncEntity([expenditure], "expenditures", () => false);
+        this.store.createEntityObject(expenditure, "expenditures");
       },
       onError: (error, { userId, type }) => {
         if (isGraphQLError(error)) {
@@ -432,20 +390,20 @@ class Actions {
 
     api.registerResponseHandler("cancelExpenditure", {
       onSuccess: (apiResponse, { expenditureId }) => {
-        this.store.syncEntity([], "expenditures", e => e.id === expenditureId);
+        this.store.deleteEntityObject(expenditureId, "expenditures");
       }
     });
 
     api.registerResponseHandler("logComment", {
       onSuccess: apiResponse => {
         const comment = apiResponse.data.activities.logComment;
-        this.store.syncEntity([comment], "comments", () => false);
+        this.store.createEntityObject(comment, "comments");
       }
     });
 
     api.registerResponseHandler("cancelComment", {
       onSuccess: (apiResponse, { commentId }) => {
-        this.store.syncEntity([], "comments", e => e.id === commentId);
+        this.store.deleteEntityObject(commentId, "comments");
       }
     });
 
@@ -455,17 +413,11 @@ class Actions {
         { missionId, isStart, missionLocationTempId }
       ) => {
         const location = apiResponse.data.activities.logLocation;
-        const mission = store.getEntity("missions")[missionId.toString()];
-        this.store.syncEntity(
-          [
-            {
-              ...mission,
-              [isStart ? "startLocation" : "endLocation"]: location
-            }
-          ],
-          "missions",
-          m => m.id === missionId
-        );
+        this.store.updateEntityObject({
+          objectId: missionId,
+          entity: "missions",
+          update: { [isStart ? "startLocation" : "endLocation"]: location }
+        });
         this.store.addToIdentityMap(missionLocationTempId, location.id);
       }
     });
@@ -473,17 +425,11 @@ class Actions {
     api.registerResponseHandler("updateMissionVehicle", {
       onSuccess: (apiResponse, { missionId }) => {
         const vehicle = apiResponse.data.activities.updateMissionVehicle;
-        const mission = store.getEntity("missions")[missionId.toString()];
-        this.store.syncEntity(
-          [
-            {
-              ...mission,
-              vehicle
-            }
-          ],
-          "missions",
-          m => m.id === missionId
-        );
+        this.store.updateEntityObject({
+          objectId: missionId,
+          entity: "missions",
+          update: { vehicle }
+        });
       }
     });
 
@@ -493,20 +439,16 @@ class Actions {
           apiResponse.data.activities.registerKilometerAtLocation.success;
         if (success) {
           const locationEntryKey = isStart ? "startLocation" : "endLocation";
-          const mission = store.getEntity("missions")[missionId.toString()];
-          this.store.syncEntity(
-            [
-              {
-                ...mission,
-                [locationEntryKey]: {
-                  ...mission[locationEntryKey],
-                  kilometerReading
-                }
+          this.store.updateEntityObject({
+            objectId: missionId,
+            entity: "missions",
+            update: {
+              [locationEntryKey]: {
+                kilometerReading
               }
-            ],
-            "missions",
-            m => m.id === missionId
-          );
+            },
+            deepMerge: true
+          });
         }
       }
     });
@@ -765,12 +707,12 @@ class Actions {
           if (sameMinute(currentActivity.startTime, startTime)) {
             this.editActivityEvent(currentActivity, "cancel");
           } else
-            this.store.updateEntityObject(
-              currentActivity.id,
-              "activities",
-              { endTime: truncateMinute(startTime) },
-              requestId
-            );
+            this.store.updateEntityObject({
+              objectId: currentActivity.id,
+              entity: "activities",
+              update: { endTime: truncateMinute(startTime) },
+              pendingRequestId: requestId
+            });
         }
       }
       const newItemId = this.store.createEntityObject(
@@ -884,15 +826,15 @@ class Actions {
           requestId
         );
       } else {
-        this.store.updateEntityObject(
-          activityEvent.id,
-          "activities",
-          {
+        this.store.updateEntityObject({
+          objectId: activityEvent.id,
+          entity: "activities",
+          update: {
             startTime: truncateMinute(newStartTime),
             endTime: newEndTime ? truncateMinute(newEndTime) : null
           },
-          requestId
-        );
+          pendingRequestId: requestId
+        });
       }
       return {
         activityId: activityEvent.id,
@@ -1009,16 +951,16 @@ class Actions {
 
     const updateStore = (store, requestId) => {
       const tempId = this.store.generateTempEntityObjectId();
-      this.store.updateEntityObject(
-        missionId,
-        "missions",
-        {
+      this.store.updateEntityObject({
+        objectId: missionId,
+        entity: "missions",
+        update: {
           [isStart ? "startLocation" : "endLocation"]: formattedAddress
             ? { ...formattedAddress, kilometerReading, id: tempId }
             : null
         },
-        requestId
-      );
+        pendingRequestId: requestId
+      });
       return { missionId, isStart, missionLocationTempId: tempId };
     };
 
@@ -1044,17 +986,17 @@ class Actions {
     };
 
     const updateStore = (store, requestId) => {
-      store.updateEntityObject(
-        mission.id,
-        "missions",
-        {
+      store.updateEntityObject({
+        objectId: mission.id,
+        entity: "missions",
+        update: {
           [isStart ? "startLocation" : "endLocation"]: {
             ...location,
             kilometerReading: kilometerReadingOrNull
           }
         },
-        requestId
-      );
+        pendingRequestId: requestId
+      });
       return {
         isStart,
         kilometerReading: kilometerReadingOrNull,
@@ -1079,7 +1021,12 @@ class Actions {
     };
 
     const updateStore = (store, requestId) => {
-      store.updateEntityObject(mission.id, "missions", { vehicle }, requestId);
+      store.updateEntityObject({
+        objectId: mission.id,
+        entity: "missions",
+        update: { vehicle },
+        pendingRequestId: requestId
+      });
       return { missionId: mission.id };
     };
 
@@ -1199,19 +1146,19 @@ class Actions {
         a => a.userId === actualUserId && !a.endTime
       );
       if (currentActivity) {
-        this.store.updateEntityObject(
-          currentActivity.id,
-          "activities",
-          { endTime: truncateMinute(endTime) },
-          requestId
-        );
+        this.store.updateEntityObject({
+          objectId: currentActivity.id,
+          entity: "activities",
+          update: { endTime: truncateMinute(endTime) },
+          pendingRequestId: requestId
+        });
       }
-      this.store.updateEntityObject(
-        missionId,
-        "missions",
-        { ended: true },
-        requestId
-      );
+      this.store.updateEntityObject({
+        objectId: missionId,
+        entity: "missions",
+        update: { ended: true },
+        pendingRequestId: requestId
+      });
       return {
         userId: actualUserId,
         missionId,
@@ -1256,7 +1203,12 @@ class Actions {
     const update = { ended: true, validation };
 
     const updateStore = (store, requestId) => {
-      this.store.updateEntityObject(mission.id, "missions", update, requestId);
+      this.store.updateEntityObject({
+        objectId: mission.id,
+        entity: "missions",
+        update,
+        pendingRequestId: requestId
+      });
       return { validation };
     };
 

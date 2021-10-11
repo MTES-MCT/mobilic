@@ -71,27 +71,23 @@ export default function EditPastMission({
               id: submittedMissionId
             });
             const missionResponsePayload = missionResponse.data.mission;
-            store.syncEntity(
-              [parseMissionPayloadFromBackend(missionResponsePayload, userId)],
-              "missions",
-              () => false
+            store.createEntityObject(
+              parseMissionPayloadFromBackend(missionResponsePayload, userId),
+              "missions"
             );
-            store.syncEntity(
+            store.createEntityObject(
               missionResponsePayload.activities.map(
                 parseActivityPayloadFromBackend
               ),
-              "activities",
-              () => false
+              "activities"
             );
-            store.syncEntity(
+            store.createEntityObject(
               missionResponsePayload.expenditures,
-              "expenditures",
-              () => false
+              "expenditures"
             );
-            store.syncEntity(
+            store.createEntityObject(
               missionResponsePayload.comments,
-              "comments",
-              () => false
+              "comments"
             );
             store.batchUpdateStore();
             missionMatch = missionResponsePayload;

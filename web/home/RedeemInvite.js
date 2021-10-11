@@ -55,10 +55,9 @@ export function RedeemInvite() {
           { context: { nonPublicApi: true } }
         );
         if (!shouldLoadUser) {
-          await store.syncEntity(
-            [apiResponse.data.signUp.redeemInvite],
-            "employments",
-            () => false
+          await store.createEntityObject(
+            apiResponse.data.signUp.redeemInvite,
+            "employments"
           );
           store.batchUpdateStore();
         } else await store.updateUserIdAndInfo();

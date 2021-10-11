@@ -275,17 +275,12 @@ class Api {
       // 1. Retrieve all pending requests
       let processedRequests = 0;
       while (this.store.pendingRequests().length > 0) {
-        let errors = [];
-        const request = this.store.pendingRequests()[0];
         try {
-          await this.executeRequest(request);
+          await this.executeRequest(this.store.pendingRequests()[0]);
           processedRequests = processedRequests + 1;
         } catch (err) {
-          errors.push(err);
-        }
-        // We stop early if some errors can lead to a retry, otherwise the execution will be stuck in an infinite loop
-        if (errors.some(e => isRetryable(e))) {
-          break;
+          // We stop early if the error can lead to a retry, otherwise the execution will be stuck in an infinite loop
+          if (isRetryable(err)) break;
         }
       }
       this.store.batchUpdateStore();
