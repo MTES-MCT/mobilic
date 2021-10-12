@@ -296,6 +296,7 @@ export function convertBreakIntoActivityOperations(
       ...extendExistingActivitiesToPeriodBoundariesOps(
         activities,
         startTime,
+        endTime,
         activitiesStartedBeforeEndingInBetween,
         activitiesStartedInBetweenEndingAfter,
         activitiesFullyOverlapping
