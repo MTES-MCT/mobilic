@@ -90,7 +90,7 @@ export function computeMissionStats(m, users) {
   const validatorIds = m.validations.map(v => v.submitterId);
   const adminValidatorIds = m.validations
     .filter(v => v.isAdmin)
-    .map(v => v.submitterId);
+    .map(v => v.userId);
   const validatedByAllMembers = members.every(user =>
     validatorIds.includes(user.id)
   );
