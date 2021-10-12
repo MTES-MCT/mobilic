@@ -157,7 +157,9 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
     label: "Date de validation",
     name: "adminValidation",
     format: adminValidation => (
-      <Typography>{formatDay(adminValidation.receptionTime, true)}</Typography>
+      <Typography>
+        {adminValidation ? formatDay(adminValidation.receptionTime, true) : ""}
+      </Typography>
     ),
     align: "left",
     minWidth: 200

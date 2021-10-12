@@ -336,6 +336,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 submitterId
                 receptionTime
                 isAdmin
+                userId
               }
               context
               expenditures {
