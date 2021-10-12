@@ -16,6 +16,19 @@ export function AdminStoreProvider({ children }) {
   const [missions, setMissions] = React.useState([]);
   const [minWorkDaysCursor, setMinWorkDaysCursor] = React.useState(null);
 
+  const saveMissionValidation = validation => {
+    setMissions(missions =>
+      missions.map(m =>
+        m.id === validation.mission.id
+          ? {
+              ...m,
+              validations: [...m.validations, validation]
+            }
+          : m
+      )
+    );
+  };
+
   const sync = (companiesPayload, minDate) => {
     const primaryCompany = store.companies().find(c => c.isPrimary);
     setCompanies(
@@ -126,6 +139,7 @@ export function AdminStoreProvider({ children }) {
         setEmployments,
         missions,
         setMissions,
+        saveMissionValidation,
         sync,
         addWorkDays,
         minWorkDaysDate: minWorkDaysCursor

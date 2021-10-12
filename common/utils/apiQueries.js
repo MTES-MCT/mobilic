@@ -305,7 +305,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
     $id: Int!
     $activityAfter: Date
     $workDaysLimit: Int
-    $nonValidatedMissionsAfter: TimeStamp
+    $endedMissionsAfter: TimeStamp
   ) {
     user(id: $id) {
       adminedCompanies {
@@ -327,10 +327,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
         workDays(fromDate: $activityAfter, first: $workDaysLimit) {
           ...WorkDayData
         }
-        missions(
-          fromTime: $nonValidatedMissionsAfter
-          onlyNonValidatedMissions: true
-        ) {
+        missions(fromTime: $endedMissionsAfter, onlyEndedMissions: true) {
           edges {
             node {
               id
@@ -338,6 +335,8 @@ export const ADMIN_COMPANIES_QUERY = gql`
               validations {
                 submitterId
                 receptionTime
+                isAdmin
+                userId
               }
               context
               expenditures {
@@ -951,6 +950,8 @@ export const VALIDATE_MISSION_MUTATION = gql`
     activities {
       validateMission(missionId: $missionId, userId: $userId) {
         isAdmin
+        submitterId
+        receptionTime
         mission {
           id
           name
