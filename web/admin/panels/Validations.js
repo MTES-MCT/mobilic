@@ -156,9 +156,11 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
   const validationAdminCol = {
     label: "Date de validation",
     name: "adminValidation",
-    format: adminValidation => (
+    format: adminGlobalValidation => (
       <Typography>
-        {adminValidation ? formatDay(adminValidation.receptionTime, true) : ""}
+        {adminGlobalValidation
+          ? formatDay(adminGlobalValidation.receptionTime, true)
+          : ""}
       </Typography>
     ),
     align: "left",
@@ -176,7 +178,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
           missionStartTime: m.startTime,
           missionId: m.id,
           id: `${m.id}${us.user.id}`,
-          adminValidation: m.adminValidation,
+          adminValidation: m.adminGlobalValidation,
           multipleDays:
             getStartOfDay(m.startTime) !==
             getStartOfDay(m.endTime ? m.endTime - 1 : now1)

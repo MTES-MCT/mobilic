@@ -409,7 +409,7 @@ export function MissionDetails({
           m.id === mission.id
             ? {
                 ...m,
-                expenditures: [...mission.expenditures]
+                expenditures: mission.expenditures
               }
             : m
         )

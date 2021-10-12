@@ -88,14 +88,14 @@ export function computeMissionStats(m, users) {
     u => u.id
   );
   const validatorIds = m.validations.map(v => v.submitterId);
-  const adminValidatorIds = m.validations
+  const adminValidatedForMemberIds = m.validations
     .filter(v => v.isAdmin)
     .map(v => v.userId);
   const validatedByAllMembers = members.every(user =>
     validatorIds.includes(user.id)
   );
-  const validatedAdminByAllMembers = members.every(user =>
-    adminValidatorIds.includes(user.id)
+  const validatedByAdminForAllMembers = members.every(user =>
+    adminValidatedForMemberIds.includes(user.id)
   );
   const activitiesByUser = groupBy(
     activitiesWithUserId,
@@ -138,9 +138,9 @@ export function computeMissionStats(m, users) {
     endTime,
     isComplete,
     validatedByAllMembers,
-    validatedAdminByAllMembers,
+    validatedByAdminForAllMembers,
     userStats,
-    adminValidation: m.validations
+    adminGlobalValidation: m.validations
       ? m.validations.find(v => v.isAdmin && !v.userId)
       : {}
   };

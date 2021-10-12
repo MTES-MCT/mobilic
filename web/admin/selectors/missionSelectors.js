@@ -8,13 +8,13 @@ const missionsSelector = state => state.missions;
 const usersSelector = state => state.users;
 
 const missionNotValidatedByAdmin = missionWithStat =>
-  !missionWithStat.adminValidation &&
-  !missionWithStat.validatedAdminByAllMembers &&
+  !missionWithStat.adminGlobalValidation &&
+  !missionWithStat.validatedByAdminForAllMembers &&
   missionWithStat.activities.length > 0;
 
 const missionValidatedByAdmin = missionWithStat =>
-  (missionWithStat.adminValidation ||
-    missionWithStat.validatedAdminByAllMembers) &&
+  (missionWithStat.adminGlobalValidation ||
+    missionWithStat.validatedByAdminForAllMembers) &&
   missionWithStat.activities.length > 0;
 
 const missionsValidatedByAllWorkersOrOld = missionWithStat =>
