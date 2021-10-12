@@ -8,7 +8,14 @@ const missionsSelector = state => state.missions;
 const usersSelector = state => state.users;
 
 const missionNotValidatedByAdmin = missionWithStat =>
-  !missionWithStat.adminValidation && missionWithStat.activities.length > 0;
+  !missionWithStat.adminGlobalValidation &&
+  !missionWithStat.validatedByAdminForAllMembers &&
+  missionWithStat.activities.length > 0;
+
+const missionValidatedByAdmin = missionWithStat =>
+  (missionWithStat.adminGlobalValidation ||
+    missionWithStat.validatedByAdminForAllMembers) &&
+  missionWithStat.activities.length > 0;
 
 const missionsValidatedByAllWorkersOrOld = missionWithStat =>
   missionWithStat.validatedByAllMembers ||
@@ -31,6 +38,11 @@ export const missionsToValidateByAdmin = createSelector(
     missions
       ?.filter(missionNotValidatedByAdmin)
       .filter(missionsValidatedByAllWorkersOrOld)
+);
+
+export const missionsValidatedByAdmin = createSelector(
+  missionWithStats,
+  missions => missions?.filter(missionValidatedByAdmin)
 );
 
 export const missionsToValidateByWorkers = createSelector(

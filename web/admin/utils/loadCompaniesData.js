@@ -6,7 +6,7 @@ export async function loadCompaniesData(api, userId, minDate) {
     id: userId,
     activityAfter: minDate,
     workDaysLimit: 10000,
-    nonValidatedMissionsAfter: getStartOfDay(now() - DAY * 31)
+    endedMissionsAfter: getStartOfDay(now() - DAY * 31)
   });
   return companyResponse.data.user.adminedCompanies;
 }

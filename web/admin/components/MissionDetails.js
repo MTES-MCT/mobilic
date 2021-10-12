@@ -409,10 +409,7 @@ export function MissionDetails({
           m.id === mission.id
             ? {
                 ...m,
-                expenditures: [
-                  ...m.expenditures.filter(e => e.id !== expenditure.id),
-                  expenditure
-                ]
+                expenditures: mission.expenditures
               }
             : m
         )
@@ -979,12 +976,14 @@ export function MissionDetails({
         onClick={async () => {
           let errorToDisplay = null;
           try {
-            await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
-              missionId: mission.id
-            });
-            adminStore.setMissions(missions =>
-              missions.filter(m => m.id !== mission.id)
+            const apiResponse = await api.graphQlMutate(
+              VALIDATE_MISSION_MUTATION,
+              {
+                missionId: mission.id
+              }
             );
+            const validation = apiResponse.data.activities.validateMission;
+            adminStore.saveMissionValidation(validation);
             handleClose();
           } catch (err) {
             if (
