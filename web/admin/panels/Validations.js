@@ -252,7 +252,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
         {tab === 1 &&
           "Les missions suivantes sont terminées mais n'ont pas encore été validées par tous les salariés concernés."}
         {tab === 2 &&
-          "Les missions suivantes ont été validées par le(s) salarié(s) concerné(s) et un gestionnaire."}
+          "Les missions suivantes ont été validées par salarié(s) gestionnaire. Elles ne sont plus modifiables."}
       </Typography>
       <AugmentedTable
         columns={tableColumns}
