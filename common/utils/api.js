@@ -140,6 +140,16 @@ class Api {
     return await fetch(url, actualOptions);
   }
 
+  async _parseJson(response) {
+    try {
+      return await response.json();
+    } catch {
+      const error = Error("Could not parse JSON");
+      error.name = "ServerParseError";
+      throw error;
+    }
+  }
+
   async httpQuery(queryInfo, options = {}, disableRefreshToken = false) {
     const func = async () => {
       const response = await this._fetch(queryInfo, options);
@@ -156,6 +166,15 @@ class Api {
       return await func();
     }
     return await this._queryWithRefreshToken(func);
+  }
+
+  async jsonHttpQuery(queryInfo, options = {}, disableRefreshToken = false) {
+    const response = await this.httpQuery(
+      queryInfo,
+      options,
+      disableRefreshToken
+    );
+    return await this._parseJson(response);
   }
 
   async downloadFileHttpQuery(queryInfo, options = {}) {
@@ -194,9 +213,18 @@ class Api {
           if (hasFcToken) {
             window.location.href = buildFCLogoutUrl("/");
           }
-          const errorMessage = refreshResponse.json().error;
-          const error = new Error(errorMessage);
-          error.name = "RefreshTokenError";
+          let error;
+          let errorName =
+            refreshResponse.status === 401
+              ? "InvalidRefreshToken"
+              : "UnexpectedRefreshTokenError";
+          try {
+            error = new Error((await this._parseJson(refreshResponse))?.error);
+            error.name = errorName;
+          } catch (e) {
+            error = e;
+          }
+          error._refreshTokenFailed = true;
           throw error;
         }
       }

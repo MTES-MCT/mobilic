@@ -71,12 +71,11 @@ export const WebinarList = withWidth()(
 
     async function fetchWebinars() {
       try {
-        const webinarResponse = await api.httpQuery(
+        const newWebinars = await api.jsonHttpQuery(
           HTTP_QUERIES.webinars,
           {},
           true
         );
-        const newWebinars = await webinarResponse.json();
         setWebinars(newWebinars);
         setWebinarsLoaded(true);
         setWebinarsLoadError(false);

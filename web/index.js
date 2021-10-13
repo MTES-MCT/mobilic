@@ -9,7 +9,7 @@ if (process.env.REACT_APP_SENTRY_URL && process.env.REACT_APP_SENTRY_RELEASE) {
   Sentry.init({
     dsn: process.env.REACT_APP_SENTRY_URL,
     release: process.env.REACT_APP_SENTRY_RELEASE,
-    environment: process.env.REACT_APP_SENTRY_ENVIRONMENT
+    environment: process.env.REACT_APP_SENTRY_ENVIRONMENT || "dev"
   });
 }
 

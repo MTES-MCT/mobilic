@@ -40,10 +40,7 @@ export default function UserReadQRCodeModal({ open, handleClose }) {
 
   async function getReadLink() {
     try {
-      const tokenResponse = await api.httpQuery(
-        HTTP_QUERIES.generateUserReadToken
-      );
-      const json = await tokenResponse.json();
+      const json = await api.jsonHttpQuery(HTTP_QUERIES.generateUserReadToken);
       const token = json.token;
       setLink(
         `${

@@ -97,7 +97,7 @@ export function EmailSelection() {
         );
         if (subscribeToNewsletter) {
           try {
-            await api.httpQuery(HTTP_QUERIES.subscribeToNewsletter, {
+            await api.jsonHttpQuery(HTTP_QUERIES.subscribeToNewsletter, {
               json: { list: "employees" }
             });
           } catch (err) {

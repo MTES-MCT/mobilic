@@ -61,7 +61,7 @@ export default function NewsletterSubscriptionModal({ open, handleClose }) {
     e.preventDefault();
     setLoading(true);
     await alerts.withApiErrorHandling(async () => {
-      await api.httpQuery(HTTP_QUERIES.subscribeToNewsletter, {
+      await api.jsonHttpQuery(HTTP_QUERIES.subscribeToNewsletter, {
         json: { list: profile === "others" ? "admins" : profile, email }
       });
       await alerts.success(

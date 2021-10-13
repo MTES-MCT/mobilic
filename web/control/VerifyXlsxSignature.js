@@ -152,7 +152,7 @@ export function XlsxVerifier() {
       const fd = new FormData();
       fd.append("xlsx-to-check", file);
       try {
-        const apiResponse = await api.httpQuery(
+        const json = await api.jsonHttpQuery(
           HTTP_QUERIES.verifyXlsxSignature,
           {
             body: fd,
@@ -160,7 +160,6 @@ export function XlsxVerifier() {
           },
           true
         );
-        const json = await apiResponse.json();
         setVerifyResponse(json);
       } catch (err) {
         captureSentryException(err);
