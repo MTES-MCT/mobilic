@@ -162,6 +162,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "Opération impossible sur cette ressource.";
       case "DUPLICATE_EXPENDITURES":
         return "Vous avez déjà enregistré un frais de cette nature sur la mission.";
+      case "EXPENDITURE_DATE_NOT_INCLUDED_IN_MISSION_RANGE":
+        return "Impossible d'ajouter un frais à cette date là.";
       case "OVERLAPPING_EMPLOYMENTS":
         if (graphQLError.extensions.overlapType === "company") {
           return "L'utilisateur est déjà rattaché à l'entreprise.";
