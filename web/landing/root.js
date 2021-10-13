@@ -374,7 +374,7 @@ export const Landing = withWidth()(({ width }) => {
           </Grid>
         </Grid>
       </LandingSection>
-      <WebinarListSection />
+      {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
     </LandingSectionList>,
     <Footer key={4} />
   ];
