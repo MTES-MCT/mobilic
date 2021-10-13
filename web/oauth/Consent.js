@@ -47,10 +47,9 @@ export function Consent({ clientName, redirectUri }) {
 
   async function handleAuthorize(deny = false) {
     try {
-      const apiResponse = await api.httpQuery(HTTP_QUERIES.oauthAuthorize, {
+      const json = await api.jsonHttpQuery(HTTP_QUERIES.oauthAuthorize, {
         search: `${location.search}${deny ? "&deny=true" : ""}`
       });
-      const json = await apiResponse.json();
       window.location.href = json.uri;
     } catch (err) {
       if (

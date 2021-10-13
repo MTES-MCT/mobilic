@@ -6,7 +6,7 @@ const ERROR_NAMES_TO_FILTER_OUT = [
   "WrongStatusError",
   "AbortError",
   "TimeoutError",
-  "RefreshTokenError"
+  "InvalidRefreshToken"
 ];
 
 const ERROR_MESSAGES_TO_FILTER_OUT = [
@@ -21,6 +21,10 @@ export function captureSentryException(err, context) {
     !ERROR_NAMES_TO_FILTER_OUT.includes(err.name) &&
     !ERROR_MESSAGES_TO_FILTER_OUT.includes(err.message)
   ) {
-    Sentry.captureException(err, context);
+    let loggedError = err;
+    if (err.networkError) loggedError = err.networkError;
+    if (loggedError.name === "ServerParseError")
+      loggedError.message = "Could not parse JSON";
+    Sentry.captureException(loggedError, context);
   }
 }

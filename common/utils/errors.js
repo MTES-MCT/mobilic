@@ -32,7 +32,7 @@ export function formatApiError(error, overrideFormatGraphQLError) {
 
 export function isAuthenticationError(error) {
   return (
-    error.name === "RefreshTokenError" ||
+    error._refreshTokenFailed ||
     (isGraphQLError(error) &&
       error.graphQLErrors.some(
         err => err.extensions && err.extensions.code === "AUTHENTICATION_ERROR"
