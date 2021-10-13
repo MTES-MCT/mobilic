@@ -693,27 +693,13 @@ class Actions {
     if (comment) newActivity.context = { comment };
 
     const updateStore = (store, requestId) => {
-      const identityMap = store.identityMap();
       if (switchMode) {
-        const currentActivity = values(store.getEntity("activities")).find(
-          a =>
-            a.userId === actualUserId &&
-            (a.missionId === missionId ||
-              (identityMap[missionId] &&
-                a.missionId === identityMap[missionId])) &&
-            !a.endTime
+        this._findAndCloseCurrentActivity(
+          actualUserId,
+          missionId,
+          startTime,
+          requestId
         );
-        if (currentActivity) {
-          if (sameMinute(currentActivity.startTime, startTime)) {
-            this.editActivityEvent(currentActivity, "cancel");
-          } else
-            this.store.updateEntityObject({
-              objectId: currentActivity.id,
-              entity: "activities",
-              update: { endTime: truncateMinute(startTime) },
-              pendingRequestId: requestId
-            });
-        }
       }
       const newItemId = this.store.createEntityObject(
         {
@@ -1125,6 +1111,36 @@ class Actions {
     });
   };
 
+  _findAndCloseCurrentActivity = (
+    userId,
+    missionId,
+    endTime,
+    pendingRequestId
+  ) => {
+    const identityMap = this.store.identityMap();
+
+    const currentActivity = values(this.store.getEntity("activities")).find(
+      a =>
+        a.userId === userId &&
+        (a.missionId === missionId ||
+          (identityMap[missionId] && a.missionId === identityMap[missionId])) &&
+        !a.endTime
+    );
+
+    if (currentActivity) {
+      if (sameMinute(currentActivity.startTime, endTime)) {
+        this.editActivityEvent(currentActivity, "cancel");
+      } else
+        this.store.updateEntityObject({
+          objectId: currentActivity.id,
+          entity: "activities",
+          update: { endTime: truncateMinute(endTime) },
+          pendingRequestId
+        });
+    }
+    return currentActivity;
+  };
+
   endMission = async ({
     endTime,
     expenditures,
@@ -1142,17 +1158,13 @@ class Actions {
       userId: actualUserId
     };
     const updateStore = (store, requestId) => {
-      const currentActivity = values(this.store.getEntity("activities")).find(
-        a => a.userId === actualUserId && !a.endTime
+      const currentActivity = this._findAndCloseCurrentActivity(
+        actualUserId,
+        missionId,
+        endTime,
+        requestId
       );
-      if (currentActivity) {
-        this.store.updateEntityObject({
-          objectId: currentActivity.id,
-          entity: "activities",
-          update: { endTime: truncateMinute(endTime) },
-          pendingRequestId: requestId
-        });
-      }
+
       this.store.updateEntityObject({
         objectId: missionId,
         entity: "missions",
