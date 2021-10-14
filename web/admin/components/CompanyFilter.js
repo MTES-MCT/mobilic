@@ -3,6 +3,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
+import { useFilter } from "../utils/filter";
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -23,18 +24,8 @@ const useStyles = makeStyles(theme => ({
 
 export function CompanyFilter({ companies, setCompanies }) {
   const classes = useStyles();
+  const [selectedCompanies, handleChange] = useFilter(companies, setCompanies);
 
-  const handleChange = (event, value) => {
-    const selectedIds = value.map(c => c.id);
-    setCompanies(
-      companies.map(c => ({
-        ...c,
-        selected: selectedIds.includes(c.id)
-      }))
-    );
-  };
-
-  const selectedCompanies = companies.filter(c => c.selected);
   return (
     <Autocomplete
       multiple

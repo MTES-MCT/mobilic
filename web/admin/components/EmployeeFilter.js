@@ -5,6 +5,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import orderBy from "lodash/orderBy";
+import { useFilter } from "../utils/filter";
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -30,18 +31,8 @@ export function EmployeeFilter({
   handleSelect = null
 }) {
   const classes = useStyles();
+  const [selectedUsers, handleChange] = useFilter(users, setUsers);
 
-  const handleChange = (event, value) => {
-    const selectedIds = multiple ? value.map(u => u.id) : [value.id];
-    setUsers(
-      users.map(u => ({
-        ...u,
-        selected: selectedIds.includes(u.id)
-      }))
-    );
-  };
-
-  const selectedUsers = users.filter(user => user.selected);
   return (
     <Autocomplete
       multiple={multiple}

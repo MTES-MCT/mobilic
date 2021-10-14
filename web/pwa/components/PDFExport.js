@@ -22,7 +22,7 @@ import {
   startOfMonthAsDate
 } from "common/utils/time";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
-import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
+import { useDateOrDateTimeRangeSelection } from "common/utils/dateRangeSelection";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -68,6 +68,13 @@ export default function PDFExport({ open, handleClose }) {
     } else setDateRangeError(null);
   }, [minDate, maxDate]);
 
+  useDateOrDateTimeRangeSelection({
+    start: minDate,
+    setStart: setMinDate,
+    end: maxDate,
+    setEnd: setMaxDate
+  });
+
   const classes = useStyles();
 
   return (
@@ -83,55 +90,48 @@ export default function PDFExport({ open, handleClose }) {
           choix.
         </Typography>
         <Grid spacing={4} container className={classes.grid}>
-          <DateOrDateTimeRangeSelectionContext
-            start={minDate}
-            setStart={setMinDate}
-            end={maxDate}
-            setEnd={setMaxDate}
-          >
-            <Grid item sm={6} xs={12}>
-              <DatePicker
-                required
-                label="Mois de début"
-                value={minDate}
-                format="MMMM yyyy"
-                fullWidth
-                onChange={e => {
-                  setMinDate(e);
-                }}
-                cancelLabel={null}
-                autoOk
-                disableFuture
-                inputVariant="outlined"
-                animateYearScrolling
-                error={!!dateRangeError}
-                helperText={dateRangeError}
-                openTo={"month"}
-                views={["year", "month"]}
-              />
-            </Grid>
-            <Grid item sm={6} xs={12}>
-              <DatePicker
-                required
-                label="Mois de fin"
-                value={maxDate}
-                format="MMMM yyyy"
-                fullWidth
-                onChange={e => {
-                  setMaxDate(e);
-                }}
-                cancelLabel={null}
-                autoOk
-                disableFuture
-                inputVariant="outlined"
-                animateYearScrolling
-                error={!!dateRangeError}
-                helperText={dateRangeError}
-                openTo={"month"}
-                views={["year", "month"]}
-              />
-            </Grid>
-          </DateOrDateTimeRangeSelectionContext>
+          <Grid item sm={6} xs={12}>
+            <DatePicker
+              required
+              label="Mois de début"
+              value={minDate}
+              format="MMMM yyyy"
+              fullWidth
+              onChange={e => {
+                setMinDate(e);
+              }}
+              cancelLabel={null}
+              autoOk
+              disableFuture
+              inputVariant="outlined"
+              animateYearScrolling
+              error={!!dateRangeError}
+              helperText={dateRangeError}
+              openTo={"month"}
+              views={["year", "month"]}
+            />
+          </Grid>
+          <Grid item sm={6} xs={12}>
+            <DatePicker
+              required
+              label="Mois de fin"
+              value={maxDate}
+              format="MMMM yyyy"
+              fullWidth
+              onChange={e => {
+                setMaxDate(e);
+              }}
+              cancelLabel={null}
+              autoOk
+              disableFuture
+              inputVariant="outlined"
+              animateYearScrolling
+              error={!!dateRangeError}
+              helperText={dateRangeError}
+              openTo={"month"}
+              views={["year", "month"]}
+            />
+          </Grid>
         </Grid>
       </DialogContent>
       <CustomDialogActions>

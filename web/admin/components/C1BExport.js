@@ -21,7 +21,7 @@ import Switch from "@material-ui/core/Switch/Switch";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
 import Alert from "@material-ui/lab/Alert";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
-import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
+import { useDateOrDateTimeRangeSelection } from "common/utils/dateRangeSelection";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -84,6 +84,14 @@ export default function C1BExport({
     setMinDate(defaultMinDate);
     setMaxDate(defaultMaxDate);
   }, [open]);
+
+  useDateOrDateTimeRangeSelection({
+    start: minDate,
+    setStart: setMinDate,
+    end: maxDate,
+    setEnd: setMaxDate,
+    nullableBounds: false
+  });
 
   const classes = useStyles();
 
@@ -158,46 +166,38 @@ export default function C1BExport({
           >
             <EmployeeFilter users={_users} setUsers={setUsers} />
           </Grid>
-          <DateOrDateTimeRangeSelectionContext
-            start={minDate}
-            setStart={setMinDate}
-            end={maxDate}
-            setEnd={setMaxDate}
-            nullableBounds={false}
-          >
-            <Grid item sm={6}>
-              <DatePicker
-                required
-                label="Date de début"
-                value={minDate}
-                format="d MMMM yyyy"
-                onChange={setMinDate}
-                cancelLabel={null}
-                autoOk
-                disableFuture
-                inputVariant="outlined"
-                animateYearScrolling
-                error={!!dateRangeError}
-                helperText={dateRangeError}
-              />
-            </Grid>
-            <Grid item sm={6}>
-              <DatePicker
-                required
-                label="Date de fin"
-                value={maxDate}
-                format="d MMMM yyyy"
-                onChange={setMaxDate}
-                cancelLabel={null}
-                autoOk
-                disableFuture
-                inputVariant="outlined"
-                animateYearScrolling
-                error={!!dateRangeError}
-                helperText={dateRangeError}
-              />
-            </Grid>
-          </DateOrDateTimeRangeSelectionContext>
+          <Grid item sm={6}>
+            <DatePicker
+              required
+              label="Date de début"
+              value={minDate}
+              format="d MMMM yyyy"
+              onChange={setMinDate}
+              cancelLabel={null}
+              autoOk
+              disableFuture
+              inputVariant="outlined"
+              animateYearScrolling
+              error={!!dateRangeError}
+              helperText={dateRangeError}
+            />
+          </Grid>
+          <Grid item sm={6}>
+            <DatePicker
+              required
+              label="Date de fin"
+              value={maxDate}
+              format="d MMMM yyyy"
+              onChange={setMaxDate}
+              cancelLabel={null}
+              autoOk
+              disableFuture
+              inputVariant="outlined"
+              animateYearScrolling
+              error={!!dateRangeError}
+              helperText={dateRangeError}
+            />
+          </Grid>
           <Grid item xs={12}>
             <Box className={classes.switchContainer}>
               <Switch
