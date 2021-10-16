@@ -10,6 +10,9 @@ export function RegulationCheck({ check }) {
   let color;
   let icon;
   let emoji;
+
+  if (!check) return null;
+
   if (check.status === RULE_RESPECT_STATUS.success) {
     color = "success.main";
     icon = props => <CheckIcon {...props} />;

@@ -21,6 +21,8 @@ import {
   filterActivitiesOverlappingPeriod,
   sortActivities
 } from "common/utils/activities";
+import Skeleton from "@material-ui/lab/Skeleton";
+import { InfoCard, MetricCard } from "./InfoCard";
 
 const useStyles = makeStyles(theme => ({
   overviewTimer: {
@@ -42,47 +44,12 @@ function formatRangeString(startTime, endTime) {
     : `Du ${formatDateTime(startTime)} au ${formatDateTime(endTime)}`;
 }
 
-export function WorkTimeSummaryKpi({
-  label,
-  value,
-  subText,
-  hideSubText,
-  render = null,
-  ...other
-}) {
-  const classes = useStyles();
-
-  return (
-    <Card
-      {...omit(other, ["style"])}
-      style={{ textAlign: "center", ...(other.style || {}) }}
-    >
-      <Box px={2} py={1} m={"auto"}>
-        <Typography>{label}</Typography>
-        {render ? (
-          render()
-        ) : (
-          <>
-            <Typography className={classes.overviewTimer} variant="h1">
-              {value}
-            </Typography>
-            {subText && (
-              <Typography className={hideSubText && "hidden"} variant="caption">
-                {subText}
-              </Typography>
-            )}
-          </>
-        )}
-      </Box>
-    </Card>
-  );
-}
-
 export function WorkTimeSummaryAdditionalInfo({
   children,
   disableTopMargin = false,
   disableBottomMargin = true,
   disablePadding = false,
+  loading = false,
   ...other
 }) {
   const classes = useStyles({ disableTopMargin, disableBottomMargin });
@@ -97,18 +64,22 @@ export function WorkTimeSummaryAdditionalInfo({
         mx={"auto"}
         style={{ textAlign: "justify" }}
       >
-        {React.Children.map(children, (child, index) => [
-          child,
-          index < React.Children.count(children) - 1 ? (
-            <Divider key={index} />
-          ) : null
-        ])}
+        {loading ? (
+          <Skeleton rect width="100%" height={200} />
+        ) : (
+          React.Children.map(children, (child, index) => [
+            child,
+            index < React.Children.count(children) - 1 ? (
+              <Divider key={index} />
+            ) : null
+          ])
+        )}
       </Box>
     </Card>
   );
 }
 
-export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {} }) {
+export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {}, loading }) {
   return (
     <Grid
       container
@@ -117,11 +88,20 @@ export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {} }) {
       alignItems={"baseline"}
       spacing={2}
     >
-      {metrics.map((metric, index) => (
-        <Grid key={index} item xs={metric.fullWidth ? 12 : true}>
-          <WorkTimeSummaryKpi {...metric} {...cardProps} />
-        </Grid>
-      ))}
+      {metrics.map((metric, index) => {
+        const CardComponent = metric.render ? InfoCard : MetricCard;
+        return (
+          <Grid key={index} item xs={metric.fullWidth ? 12 : true}>
+            <CardComponent
+              {...omit(metric, "render")}
+              {...cardProps}
+              loading={loading}
+            >
+              {metric.render && metric.render()}
+            </CardComponent>
+          </Grid>
+        );
+      })}
     </Grid>
   );
 }
