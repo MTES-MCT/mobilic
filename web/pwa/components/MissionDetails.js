@@ -97,6 +97,7 @@ export function AlternateColors({ children, inverseColors = false }) {
 
 export function MissionDetails({
   mission,
+  activities = null,
   editActivityEvent,
   nullableEndTimeInEditActivity = true,
   editExpenditures,
@@ -153,9 +154,13 @@ export function MissionDetails({
   const teamMatesLatestStatuses = computeLatestEnrollmentStatuses(teamChanges);
   const hasTeamMates = Object.keys(teamMatesLatestStatuses).length > 0;
 
+  const userActivities = activities
+    ? activities.filter(a => a.userId === actualUserId)
+    : mission.activities;
+
   const lastActivityTime =
-    mission.activities.length > 0
-      ? max(mission.activities.map(a => a.endTime || now()))
+    userActivities.length > 0
+      ? max(userActivities.map(a => a.endTime || now()))
       : null;
 
   const expenditureForPeriod = mission.expenditures?.filter(
@@ -235,7 +240,7 @@ export function MissionDetails({
         }
       >
         <ActivityList
-          activities={mission.activities}
+          activities={userActivities}
           allMissionActivities={mission.allActivities}
           editActivityEvent={!disableActions ? editActivityEvent : null}
           createActivity={args =>

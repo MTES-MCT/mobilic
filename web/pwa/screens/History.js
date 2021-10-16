@@ -60,7 +60,7 @@ const tabs = {
       );
     },
     renderPeriod: ({ missionsInPeriod, ...props }) => (
-      <Mission mission={missionsInPeriod[0]} {...props} />
+      <Mission mission={missionsInPeriod[0]} collapsable={false} {...props} />
     )
   },
   day: {
@@ -241,6 +241,8 @@ export function History({
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
   const alerts = useSnackbarAlerts();
+
+  const actualUserId = userId || store.userId();
 
   const [activities, setActivities] = React.useState([]);
   const [
@@ -525,7 +527,7 @@ export function History({
             activities,
             coworkers,
             vehicles,
-            userId
+            userId: actualUserId
           })
         ) : (
           <Box className={classes.placeholder}>
