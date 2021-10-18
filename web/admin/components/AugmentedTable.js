@@ -115,8 +115,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
     borderTop: "none",
     borderBottom: "solid 1px",
-    fontWeight: "bold",
-    cursor: "pointer !important"
+    fontWeight: "bold"
   },
   collapsed: { height: 0, display: "none" }
 }));
