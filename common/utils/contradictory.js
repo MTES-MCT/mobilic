@@ -23,7 +23,11 @@ function versionOfEventAt(event, time) {
   return event;
 }
 
-function getChangesPerEventSinceTime(currentEvents, eventsWithHistory, time) {
+export function getChangesPerEventSinceTime(
+  currentEvents,
+  eventsWithHistory,
+  time
+) {
   let changesPerEventId = fromPairs(
     currentEvents.map(a => [a.id.toString(), { current: a }])
   );
@@ -34,9 +38,9 @@ function getChangesPerEventSinceTime(currentEvents, eventsWithHistory, time) {
         current: event.dismissedAt ? null : event
       };
     }
-    const eventChanges = changesPerEventId[event.id.toString()];
+    const eventChange = changesPerEventId[event.id.toString()];
 
-    const currentVersion = eventChanges.current;
+    const currentVersion = eventChange.current;
     const previousVersion = versionOfEventAt(event, time);
     let changeType = null;
     let changeTime = null;
@@ -49,28 +53,27 @@ function getChangesPerEventSinceTime(currentEvents, eventsWithHistory, time) {
         changeType = "DELETE";
         changeTime = previousVersion.dismissedAt;
       } else if (
-        currentVersion.startTime !== previousVersion.endTime ||
+        currentVersion.startTime !== previousVersion.startTime ||
         currentVersion.endTime !== previousVersion.endTime
       ) {
         changeType = "UPDATE";
       }
     }
 
-    eventChanges.previous = previousVersion;
-    eventChanges.change = changeType;
-    eventChanges.time = event.lastUpdateTime || changeTime;
+    eventChange.previous = previousVersion;
+    eventChange.change = changeType;
+    eventChange.time = event.lastUpdateTime || changeTime;
+    eventChange.submitter = event.submitter;
+    eventChange.submitterId = event.submitter
+      ? event.submitter.id
+      : event.submitterId;
+    eventChange.userId = event.user ? event.user.id : event.userId;
   });
 
   return changesPerEventId;
 }
 
-export function getEventVersionsAtTime(currentEvents, eventsWithHistory, time) {
-  const changesPerEvent = getChangesPerEventSinceTime(
-    currentEvents,
-    eventsWithHistory,
-    time
-  );
-
+export function getEventVersionsAtTime(changesPerEvent) {
   return values(changesPerEvent)
     .map(x => {
       if (!x.change) return x.current;
