@@ -23,8 +23,12 @@ export function captureSentryException(err, context) {
   ) {
     let loggedError = err;
     if (err.networkError) loggedError = err.networkError;
-    if (loggedError.name === "ServerParseError")
-      loggedError.message = "Could not parse JSON";
-    Sentry.captureException(loggedError, context);
+    Sentry.withScope(function(scope) {
+      if (loggedError.name === "ServerParseError") {
+        loggedError.message = "Could not parse JSON";
+        scope.setContext("response", { body: loggedError._text });
+      }
+      Sentry.captureException(loggedError, context);
+    });
   }
 }
