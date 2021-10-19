@@ -3,12 +3,12 @@ import find from "lodash/find";
 
 export const EXPENDITURES = {
   day_meal: {
-    label: "repas",
-    plural: "repas"
+    label: "repas midi",
+    plural: "repas midi"
   },
   night_meal: {
-    label: `repas${"\u00A0"}nuit`,
-    plural: `repas${"\u00A0"}nuit`
+    label: `repas${"\u00A0"}soir`,
+    plural: `repas${"\u00A0"}soir`
   },
   sleep_over: {
     label: "découché",
