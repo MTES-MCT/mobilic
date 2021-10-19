@@ -52,13 +52,12 @@ export function ContradictoryChanges({ mission, userId }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
 
-  // eslint-disable-next-line no-unused-vars
-  const [_, changesHistory, loadingEmployeeVersion] = useToggleContradictory(
-    open,
-    setOpen,
-    [mission],
-    mission.allActivities
-  );
+  const [
+    // eslint-disable-next-line no-unused-vars
+    _,
+    changesHistory,
+    loadingEmployeeVersion
+  ] = useToggleContradictory(open, setOpen, [mission]);
 
   const userChangesHistory = changesHistory.filter(c => c.userId === userId);
 

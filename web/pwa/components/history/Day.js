@@ -50,9 +50,15 @@ export function Day({
   const [activitiesToUse, _, loadingEmployeeVersion] = useToggleContradictory(
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion,
-    missionsInPeriod,
-    activitiesWithNextAndPreviousDay
+    missionsInPeriod
   );
+
+  const userActivitiesToUse = [
+    ...activitiesToUse.filter(a => a.userId === userId),
+    ...activitiesWithNextAndPreviousDay.filter(
+      a => !missionsInPeriod.map(m => m.id).includes(a.missionId)
+    )
+  ];
 
   React.useEffect(() => {
     if (
@@ -76,9 +82,7 @@ export function Day({
         />
       )}
       <DaySummary
-        activitiesWithNextAndPreviousDay={activitiesToUse.filter(
-          a => a.userId === userId
-        )}
+        activitiesWithNextAndPreviousDay={userActivitiesToUse}
         isDayEnded={true}
         dayStart={selectedPeriodStart}
         weekActivities={weekActivities}
