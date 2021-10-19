@@ -5,9 +5,16 @@ import ListItem from "@material-ui/core/ListItem";
 import { Mission } from "./Mission";
 import { Box } from "@material-ui/core";
 import { DaySummary } from "./DaySummary";
-import Switch from "@material-ui/core/Switch/Switch";
 import { useToggleContradictory } from "./toggleContradictory";
 import { InfoCard, useInfoCardStyles } from "../InfoCard";
+import { ContradictorySwitch } from "../ContradictorySwitch";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+
+export const useStyles = makeStyles(theme => ({
+  contradictorySwitch: {
+    marginBottom: theme.spacing(1)
+  }
+}));
 
 export function Day({
   missionsInPeriod,
@@ -29,6 +36,7 @@ export function Day({
   weekActivities
 }) {
   const infoCardStyles = useInfoCardStyles();
+  const classes = useStyles();
 
   const [
     shouldDisplayInitialEmployeeVersion,
@@ -38,7 +46,8 @@ export function Day({
     mission => mission.adminValidation && mission.validation
   );
 
-  const [activitiesToUse, loadingEmployeeVersion] = useToggleContradictory(
+  // eslint-disable-next-line no-unused-vars
+  const [activitiesToUse, _, loadingEmployeeVersion] = useToggleContradictory(
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion,
     missionsInPeriod,
@@ -56,10 +65,13 @@ export function Day({
   return (
     <Box>
       {shouldDisplayContradictoryVersionsToggle && (
-        <Switch
-          checked={shouldDisplayInitialEmployeeVersion}
-          onChange={e =>
-            setShouldDisplayInitialEmployeeVersion(e.target.checked)
+        <ContradictorySwitch
+          className={classes.contradictorySwitch}
+          shouldDisplayInitialEmployeeVersion={
+            shouldDisplayInitialEmployeeVersion
+          }
+          setShouldDisplayInitialEmployeeVersion={
+            setShouldDisplayInitialEmployeeVersion
           }
         />
       )}

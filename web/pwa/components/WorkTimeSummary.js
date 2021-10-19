@@ -11,72 +11,19 @@ import {
 } from "common/utils/time";
 import Box from "@material-ui/core/Box";
 import { computeTotalActivityDurations } from "common/utils/metrics";
-import Divider from "@material-ui/core/Divider";
-import Card from "@material-ui/core/Card";
 import Grid from "@material-ui/core/Grid";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import omit from "lodash/omit";
 import { EXPENDITURES } from "common/utils/expenditures";
 import {
   filterActivitiesOverlappingPeriod,
   sortActivities
 } from "common/utils/activities";
-import Skeleton from "@material-ui/lab/Skeleton";
 import { InfoCard, MetricCard } from "./InfoCard";
-
-const useStyles = makeStyles(theme => ({
-  overviewTimer: {
-    padding: theme.spacing(1),
-    fontWeight: "bold",
-    fontSize: "200%"
-  },
-  additionalInfo: {
-    marginTop: ({ disableTopMargin }) =>
-      disableTopMargin ? 0 : theme.spacing(4),
-    marginBottom: ({ disableBottomMargin }) =>
-      disableBottomMargin ? 0 : theme.spacing(4)
-  }
-}));
 
 function formatRangeString(startTime, endTime) {
   return getStartOfDay(startTime) === getStartOfDay(endTime - 1)
     ? `De ${formatTimeOfDay(startTime)} à ${formatTimeOfDay(endTime)}`
     : `Du ${formatDateTime(startTime)} au ${formatDateTime(endTime)}`;
-}
-
-export function WorkTimeSummaryAdditionalInfo({
-  children,
-  disableTopMargin = false,
-  disableBottomMargin = true,
-  disablePadding = false,
-  loading = false,
-  ...other
-}) {
-  const classes = useStyles({ disableTopMargin, disableBottomMargin });
-  return (
-    <Card
-      className={`${classes.additionalInfo} ${other.className || ""}`}
-      {...omit(other, ["className"])}
-    >
-      <Box
-        px={disablePadding ? 0 : 2}
-        py={disablePadding ? 0 : 1}
-        mx={"auto"}
-        style={{ textAlign: "justify" }}
-      >
-        {loading ? (
-          <Skeleton rect width="100%" height={200} />
-        ) : (
-          React.Children.map(children, (child, index) => [
-            child,
-            index < React.Children.count(children) - 1 ? (
-              <Divider key={index} />
-            ) : null
-          ])
-        )}
-      </Box>
-    </Card>
-  );
 }
 
 export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {}, loading }) {
