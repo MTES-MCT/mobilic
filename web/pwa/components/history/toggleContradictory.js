@@ -1,8 +1,8 @@
 import React from "react";
 import {
   getChangesHistory,
-  getChangesPerEventSinceTime,
   getContradictoryInfoForMission,
+  getEventChangesSinceTime,
   getEventVersionsAtTime
 } from "common/utils/contradictory";
 import flatMap from "lodash/flatMap";
@@ -13,8 +13,7 @@ import { useSnackbarAlerts } from "../../../common/Snackbar";
 export function useToggleContradictory(
   shouldDisplayInitialEmployeeVersion,
   setShouldDisplayInitialEmployeeVersion,
-  missions,
-  activities
+  missions
 ) {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
@@ -41,35 +40,25 @@ export function useToggleContradictory(
             await getContradictoryInfoForMission(m, api, store)
           ])
         );
-        const changesPerActivitiesAndMissions = contradictoryInfo.map(ci => {
+        const activitiesChangesPerMission = contradictoryInfo.map(ci => {
           const mission = ci[0];
           const missionActivitiesWithHistory = ci[1].activities;
-          const changesPerEvent = getChangesPerEventSinceTime(
-            activities.filter(a => a.missionId === mission.id),
+          const eventChanges = getEventChangesSinceTime(
             missionActivitiesWithHistory,
             mission.validation.receptionTime
           );
           return [
-            getEventVersionsAtTime(changesPerEvent),
-            getChangesHistory(changesPerEvent)
+            getEventVersionsAtTime(eventChanges),
+            getChangesHistory(eventChanges)
           ];
         });
-        const employeeActivityVersionsOnDayMissions = flatMap(
-          changesPerActivitiesAndMissions.map(x => x[0])
+        setEmployeeActivityVersions(
+          flatMap(activitiesChangesPerMission.map(x => x[0]))
         );
-        const changesHistoryOnDayMissions = flatMap(
-          changesPerActivitiesAndMissions.map(x => x[1])
-        );
-
-        const employeeActivityVersions = [
-          ...employeeActivityVersionsOnDayMissions,
-          ...activities.filter(
-            a => !missions.map(m => m.id).includes(a.missionId)
-          )
-        ];
-        setEmployeeActivityVersions(employeeActivityVersions);
         setChangesHistory(
-          changesHistoryOnDayMissions.sort((c1, c2) => c1.time - c2.time)
+          flatMap(activitiesChangesPerMission.map(x => x[1])).sort(
+            (c1, c2) => c1.time - c2.time
+          )
         );
       },
       "fetch-contradictory",
@@ -94,7 +83,9 @@ export function useToggleContradictory(
   }, [missions.map(m => m.id).reduce((a, b) => a + b)]);
 
   return [
-    shouldDisplayInitialEmployeeVersion ? employeeActivityVersions : activities,
+    shouldDisplayInitialEmployeeVersion
+      ? employeeActivityVersions
+      : flatMap(missions, m => m.allActivities || m.activities),
     changesHistory,
     loadingEmployeeVersion
   ];

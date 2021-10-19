@@ -75,12 +75,15 @@ export function Mission({
       );
   }, [controlledShouldDisplayInitialEmployeeVersion]);
 
-  // eslint-disable-next-line no-unused-vars
-  const [activitiesToUse, _, loadingEmployeeVersion] = useToggleContradictory(
+  const [
+    activitiesToUse,
+    // eslint-disable-next-line no-unused-vars
+    _,
+    loadingEmployeeVersion
+  ] = useToggleContradictory(
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion,
-    [mission],
-    mission.allActivities
+    [mission]
   );
 
   const userActivitiesToUse = activitiesToUse.filter(a => a.userId === userId);
