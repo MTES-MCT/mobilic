@@ -46,9 +46,9 @@ export function Event({
         primary={
           <>
             <Typography variant="body2" className={classes.submitter}>
-              {submitterId
-                ? formatPersonName(store.userInfo())
-                : formatPersonName(submitter)}
+              {submitter
+                ? formatPersonName(submitter)
+                : formatPersonName(store.userInfo())}
               {" - "}
             </Typography>
             <Typography variant="body2" className={classes.time}>

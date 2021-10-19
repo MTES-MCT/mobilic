@@ -1,7 +1,4 @@
 import maxBy from "lodash/maxBy";
-import fromPairs from "lodash/fromPairs";
-import values from "lodash/values";
-import forEach from "lodash/forEach";
 import { ACTIVITIES_AND_EXPENDITURES_HISTORY_ON_MISSION_QUERY } from "./apiQueries";
 
 function versionOfEventAt(event, time) {
@@ -23,24 +20,9 @@ function versionOfEventAt(event, time) {
   return event;
 }
 
-export function getChangesPerEventSinceTime(
-  currentEvents,
-  eventsWithHistory,
-  time
-) {
-  let changesPerEventId = fromPairs(
-    currentEvents.map(a => [a.id.toString(), { current: a }])
-  );
-
-  eventsWithHistory.forEach(event => {
-    if (!changesPerEventId[event.id.toString()]) {
-      changesPerEventId[event.id.toString()] = {
-        current: event.dismissedAt ? null : event
-      };
-    }
-    const eventChange = changesPerEventId[event.id.toString()];
-
-    const currentVersion = eventChange.current;
+export function getEventChangesSinceTime(eventsWithHistory, time) {
+  return eventsWithHistory.map(event => {
+    const currentVersion = event.dismissedAt ? null : event;
     const previousVersion = versionOfEventAt(event, time);
     let changeType = null;
     let changeTime = null;
@@ -60,21 +42,26 @@ export function getChangesPerEventSinceTime(
       }
     }
 
-    eventChange.previous = previousVersion;
-    eventChange.change = changeType;
-    eventChange.time = event.lastUpdateTime || changeTime;
-    eventChange.submitter = event.submitter;
-    eventChange.submitterId = event.submitter
-      ? event.submitter.id
-      : event.submitterId;
-    eventChange.userId = event.user ? event.user.id : event.userId;
-  });
+    const changeSubmitter =
+      event.dismissAuthor ||
+      (event.versions && event.versions.length > 0
+        ? maxBy(event.versions, v => v.receptionTime).submitter
+        : event.submitter);
 
-  return changesPerEventId;
+    return {
+      previous: previousVersion,
+      current: currentVersion,
+      change: changeType,
+      time: event.lastUpdateTime || changeTime,
+      submitter: changeSubmitter,
+      submitterId: changeSubmitter.id,
+      userId: event.user ? event.user.id : event.userId
+    };
+  });
 }
 
-export function getEventVersionsAtTime(changesPerEvent) {
-  return values(changesPerEvent)
+export function getEventVersionsAtTime(eventChanges) {
+  return eventChanges
     .map(x => {
       if (!x.change) return x.current;
       return x.previous;
@@ -82,9 +69,9 @@ export function getEventVersionsAtTime(changesPerEvent) {
     .filter(Boolean);
 }
 
-export function getChangesHistory(changesPerEvent) {
+export function getChangesHistory(eventChanges) {
   const changesHistory = [];
-  forEach(changesPerEvent, x => {
+  eventChanges.forEach(x => {
     if (x.change) changesHistory.push(x);
   });
   return changesHistory.sort((c1, c2) => c1.time - c2.time);
