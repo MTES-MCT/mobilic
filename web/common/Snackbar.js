@@ -55,9 +55,9 @@ export const SnackbarProvider = withWidth()(({ children, width }) => {
     try {
       await func();
     } catch (err) {
+      error(formatApiError(err, overrideFormatError), name, 6000);
       if (!isGraphQLError(err)) captureSentryException(err);
       if (onError) onError(err);
-      error(formatApiError(err, overrideFormatError), name, 6000);
     }
   }
 

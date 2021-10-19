@@ -31,10 +31,11 @@ import { MainCtaButton } from "./MainCtaButton";
 import Typography from "@material-ui/core/Typography";
 import CheckIcon from "@material-ui/icons/Check";
 import ScheduleIcon from "@material-ui/icons/Schedule";
-import { Comment } from "../../common/Comment";
+import { Event } from "../../common/Event";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import LocationEntry from "./LocationEntry";
 import Alert from "@material-ui/lab/Alert";
+import { ContradictoryChanges } from "./ContradictoryChanges";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -447,10 +448,13 @@ export function MissionDetails({
           <List dense className={classes.commentList}>
             {mission.comments
               ? mission.comments.map(comment => (
-                  <Comment
+                  <Event
                     key={comment.id}
-                    comment={comment}
-                    cancelComment={cancelComment}
+                    text={comment.text}
+                    time={comment.receptionTime}
+                    submitterId={comment.submitterId}
+                    submitter={comment.submitter}
+                    cancel={cancelComment ? () => cancelComment(comment) : null}
                     withFullDate={
                       getStartOfDay(comment.receptionTime) !==
                       getStartOfDay(mission.startTime)
@@ -494,7 +498,7 @@ export function MissionDetails({
             mission.validation ||
             mission.adminValidation) && (
             <>
-              {!mission.adminValidation && (
+              {(mission.validation || !mission.adminValidation) && (
                 <Box
                   color={mission.validation ? "success.main" : "warning.main"}
                   className={classes.validationContainer}
@@ -533,6 +537,9 @@ export function MissionDetails({
                       : "en attente de validation gestionnaire"}
                   </Typography>
                 </Box>
+              )}
+              {mission.adminValidation && mission.validation && (
+                <ContradictoryChanges mission={mission} userId={actualUserId} />
               )}
             </>
           )}

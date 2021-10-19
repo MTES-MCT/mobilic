@@ -1,5 +1,7 @@
 import React from "react";
 import {
+  getChangesHistory,
+  getChangesPerEventSinceTime,
   getContradictoryInfoForMission,
   getEventVersionsAtTime
 } from "common/utils/contradictory";
@@ -26,6 +28,8 @@ export function useToggleContradictory(
     setEmployeeActivityVersions
   ] = React.useState([]);
 
+  const [changesHistory, setChangesHistory] = React.useState([]);
+
   async function switchToEmployeeVersion() {
     setLoadingEmployeeVersion(true);
 
@@ -37,18 +41,26 @@ export function useToggleContradictory(
             await getContradictoryInfoForMission(m, api, store)
           ])
         );
+        const changesPerActivitiesAndMissions = contradictoryInfo.map(ci => {
+          const mission = ci[0];
+          const missionActivitiesWithHistory = ci[1].activities;
+          const changesPerEvent = getChangesPerEventSinceTime(
+            activities.filter(a => a.missionId === mission.id),
+            missionActivitiesWithHistory,
+            mission.validation.receptionTime
+          );
+          return [
+            getEventVersionsAtTime(changesPerEvent),
+            getChangesHistory(changesPerEvent)
+          ];
+        });
         const employeeActivityVersionsOnDayMissions = flatMap(
-          contradictoryInfo,
-          ci => {
-            const mission = ci[0];
-            const missionActivitiesWithHistory = ci[1].activities;
-            return getEventVersionsAtTime(
-              activities.filter(a => a.missionId === mission.id),
-              missionActivitiesWithHistory,
-              mission.validation.receptionTime
-            );
-          }
+          changesPerActivitiesAndMissions.map(x => x[0])
         );
+        const changesHistoryOnDayMissions = flatMap(
+          changesPerActivitiesAndMissions.map(x => x[1])
+        );
+
         const employeeActivityVersions = [
           ...employeeActivityVersionsOnDayMissions,
           ...activities.filter(
@@ -56,6 +68,9 @@ export function useToggleContradictory(
           )
         ];
         setEmployeeActivityVersions(employeeActivityVersions);
+        setChangesHistory(
+          changesHistoryOnDayMissions.sort((c1, c2) => c1.time - c2.time)
+        );
       },
       "fetch-contradictory",
       null,
@@ -80,6 +95,7 @@ export function useToggleContradictory(
 
   return [
     shouldDisplayInitialEmployeeVersion ? employeeActivityVersions : activities,
+    changesHistory,
     loadingEmployeeVersion
   ];
 }

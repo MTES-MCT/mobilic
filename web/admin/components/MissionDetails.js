@@ -30,7 +30,7 @@ import { useModals } from "common/utils/modals";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField/TextField";
 import List from "@material-ui/core/List";
-import { Comment } from "../../common/Comment";
+import { Event } from "../../common/Event";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import {
   formatApiError,
@@ -958,11 +958,14 @@ export function MissionDetails({
       </Button>
       <List className={classes.comments}>
         {mission.comments.map(comment => (
-          <Comment
+          <Event
             key={comment.id}
-            comment={comment}
+            text={comment.text}
+            time={comment.receptionTime}
+            submitter={comment.submitter}
+            submitterId={comment.submitterId}
             withFullDate={true}
-            cancelComment={onDeleteComment}
+            cancel={onDeleteComment ? () => onDeleteComment(comment) : null}
           />
         ))}
       </List>

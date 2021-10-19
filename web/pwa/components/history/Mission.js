@@ -16,7 +16,7 @@ import { ItalicWarningTypography } from "./ItalicWarningTypography";
 import { prettyFormatDay } from "common/utils/time";
 import { InfoCard, useInfoCardStyles } from "../InfoCard";
 import { useToggleContradictory } from "./toggleContradictory";
-import Switch from "@material-ui/core/Switch/Switch";
+import { ContradictorySwitch } from "../ContradictorySwitch";
 
 const useStyles = makeStyles(theme => ({
   alternateCard: {
@@ -25,6 +25,11 @@ const useStyles = makeStyles(theme => ({
   darkCard: {
     backgroundColor: theme.palette.grey[700],
     color: theme.palette.primary.contrastText
+  },
+  contradictorySwitch: {
+    marginBottom: ({ showMetrics }) => (showMetrics ? theme.spacing(1) : 0),
+    paddingRight: ({ showMetrics }) => (showMetrics ? 0 : theme.spacing(2)),
+    paddingLeft: ({ showMetrics }) => (showMetrics ? 0 : theme.spacing(2))
   }
 }));
 
@@ -70,7 +75,8 @@ export function Mission({
       );
   }, [controlledShouldDisplayInitialEmployeeVersion]);
 
-  const [activitiesToUse, loadingEmployeeVersion] = useToggleContradictory(
+  // eslint-disable-next-line no-unused-vars
+  const [activitiesToUse, _, loadingEmployeeVersion] = useToggleContradictory(
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion,
     [mission],
@@ -79,7 +85,7 @@ export function Mission({
 
   const userActivitiesToUse = activitiesToUse.filter(a => a.userId === userId);
 
-  const classes = useStyles();
+  const classes = useStyles({ showMetrics });
   const infoCardStyles = useInfoCardStyles();
 
   const kpis = computeTimesAndDurationsFromActivities(userActivitiesToUse);
@@ -152,10 +158,13 @@ export function Mission({
           </InfoCard>
         )}
         {shouldDisplayContradictoryVersionsToggle && (
-          <Switch
-            checked={shouldDisplayInitialEmployeeVersion}
-            onChange={e =>
-              setShouldDisplayInitialEmployeeVersion(e.target.checked)
+          <ContradictorySwitch
+            className={classes.contradictorySwitch}
+            shouldDisplayInitialEmployeeVersion={
+              shouldDisplayInitialEmployeeVersion
+            }
+            setShouldDisplayInitialEmployeeVersion={
+              setShouldDisplayInitialEmployeeVersion
             }
           />
         )}

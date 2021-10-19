@@ -28,7 +28,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function Comment({ comment, withFullDate, cancelComment }) {
+export function Event({
+  text,
+  submitter,
+  submitterId,
+  time,
+  withFullDate,
+  cancel
+}) {
   const classes = useStyles();
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
@@ -39,36 +46,35 @@ export function Comment({ comment, withFullDate, cancelComment }) {
         primary={
           <>
             <Typography variant="body2" className={classes.submitter}>
-              {comment.submitterId
+              {submitterId
                 ? formatPersonName(store.userInfo())
-                : formatPersonName(comment.submitter)}
+                : formatPersonName(submitter)}
               {" - "}
             </Typography>
             <Typography variant="body2" className={classes.time}>
-              {withFullDate ? `${formatDay(comment.receptionTime, true)} ` : ""}
-              {formatTimeOfDay(comment.receptionTime)}
+              {withFullDate ? `${formatDay(time, true)} ` : ""}
+              {formatTimeOfDay(time)}
             </Typography>
           </>
         }
-        secondary={comment.text}
+        secondary={text}
         secondaryTypographyProps={{ className: classes.text }}
       />
-      {cancelComment &&
-        (comment.submitterId || comment.submitter.id) === store.userId() && (
-          <ListItemSecondaryAction>
-            <IconButton
-              edge="end"
-              onClick={() =>
-                modals.open("confirmation", {
-                  title: "Confirmer suppression de l'observation",
-                  handleConfirm: () => cancelComment(comment)
-                })
-              }
-            >
-              <DeleteIcon color="error" />
-            </IconButton>
-          </ListItemSecondaryAction>
-        )}
+      {cancel && (submitterId || submitter.id) === store.userId() && (
+        <ListItemSecondaryAction>
+          <IconButton
+            edge="end"
+            onClick={() =>
+              modals.open("confirmation", {
+                title: "Confirmer suppression de l'observation",
+                handleConfirm: cancel
+              })
+            }
+          >
+            <DeleteIcon color="error" />
+          </IconButton>
+        </ListItemSecondaryAction>
+      )}
     </ListItem>
   );
 }

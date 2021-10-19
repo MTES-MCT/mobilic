@@ -2,7 +2,6 @@ import React from "react";
 import {
   splitByLongBreaksAndComputePeriodStats,
   renderPeriodKpis,
-  WorkTimeSummaryAdditionalInfo,
   WorkTimeSummaryKpiGrid
 } from "../WorkTimeSummary";
 import { RegulationCheck } from "../RegulationCheck";
@@ -14,6 +13,7 @@ import ListItemText from "@material-ui/core/ListItemText/ListItemText";
 import Link from "@material-ui/core/Link";
 import { prettyFormatDay } from "common/utils/time";
 import Divider from "@material-ui/core/Divider";
+import { InfoCard, useInfoCardStyles } from "../InfoCard";
 
 export function Week({
   missionsInPeriod,
@@ -23,6 +23,8 @@ export function Week({
   handleMissionClick,
   previousPeriodActivityEnd
 }) {
+  const infoCardStyles = useInfoCardStyles();
+
   const stats = splitByLongBreaksAndComputePeriodStats(
     activitiesWithNextAndPreviousDay,
     selectedPeriodStart,
@@ -34,7 +36,7 @@ export function Week({
       <WorkTimeSummaryKpiGrid
         metrics={renderPeriodKpis(stats).filter(m => m.name !== "service")}
       />
-      <WorkTimeSummaryAdditionalInfo>
+      <InfoCard className={infoCardStyles.topMargin}>
         <RegulationCheck
           check={checkMinimumDurationOfWeeklyRest(
             stats.workedDays,
@@ -43,8 +45,8 @@ export function Week({
             previousPeriodActivityEnd
           )}
         />
-      </WorkTimeSummaryAdditionalInfo>
-      <WorkTimeSummaryAdditionalInfo>
+      </InfoCard>
+      <InfoCard className={infoCardStyles.topMargin}>
         <MissionReviewSection
           title="Détail par mission"
           className="no-margin-no-padding"
@@ -75,7 +77,7 @@ export function Week({
             ])}
           </List>
         </MissionReviewSection>
-      </WorkTimeSummaryAdditionalInfo>
+      </InfoCard>
     </div>
   );
 }
