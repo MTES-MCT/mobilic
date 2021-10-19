@@ -146,6 +146,7 @@ class Api {
     } catch {
       const error = Error("Could not parse JSON");
       error.name = "ServerParseError";
+      error._text = await response.text();
       throw error;
     }
   }
@@ -290,8 +291,10 @@ class Api {
         await this.store.clearPendingRequest(request);
       }
       Sentry.withScope(function(scope) {
-        scope.setTag("request_query", JSON.stringify(request.query));
-        scope.setTag("request_variables", JSON.stringify(request.variables));
+        scope.setContext("request", {
+          query: JSON.stringify(request.query),
+          variables: request.variables
+        });
         captureSentryException(err);
       });
       throw err;
