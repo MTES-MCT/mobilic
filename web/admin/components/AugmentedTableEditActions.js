@@ -55,7 +55,6 @@ export function AugmentedTableEditActions({
         <IconButton
           size="small"
           className="no-margin-no-padding"
-          color="success"
           disabled={invalidRow}
           onClick={async () => {
             if (isEditingRow) await onRowEdit(entry, { ...editedValues });

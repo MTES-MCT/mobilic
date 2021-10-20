@@ -755,7 +755,7 @@ export function MissionDetails({
         }) => {
           if (entry.chart) {
             return (
-              <>
+              <React.Fragment key={entry.id}>
                 {renderColumn(columns[0])}
                 <TableCell colSpan={100} align="center">
                   <Grid container alignItems="stretch" justify="center">
@@ -777,12 +777,12 @@ export function MissionDetails({
                     </Grid>
                   </Grid>
                 </TableCell>
-              </>
+              </React.Fragment>
             );
           }
           if (entry.lastRow) {
             return (
-              <>
+              <React.Fragment key={entry.id}>
                 {renderColumn(columns[0])}
                 <TableCell colSpan={100}>
                   {showExpenditures && [
@@ -801,11 +801,7 @@ export function MissionDetails({
                                   ? `${expCount} ${expProps.plural}`
                                   : expProps.label;
                               return (
-                                <Chip
-                                  size="small"
-                                  key={exp.type}
-                                  label={label}
-                                />
+                                <Chip size="small" key={exp} label={label} />
                               );
                             })}
                         </Box>
@@ -867,7 +863,7 @@ export function MissionDetails({
                     </Typography>
                   </Box>
                 </TableCell>
-              </>
+              </React.Fragment>
             );
           }
         }}

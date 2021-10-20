@@ -244,7 +244,7 @@ export default function ActivityPanel() {
             animateYearScrolling
           />
         </Grid>
-        <Grid item spacing={3}>
+        <Grid item>
           <Button
             className={classes.exportButton}
             color="primary"
