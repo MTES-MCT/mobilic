@@ -402,7 +402,7 @@ export function Employees({ company, containerRef }) {
           alerts.error(formatApiError(err), idOrEmail, 6000);
         }
       }}
-      customRowActions={[
+      customRowActions={() => [
         {
           name: "reminder",
           label: "Relancer l'invitation",
@@ -458,19 +458,23 @@ export function Employees({ company, containerRef }) {
       alwaysSortBy={[["active", "desc"]]}
       virtualizedAttachScrollTo={containerRef.current}
       rowClassName={row => (!row.active ? classes.terminatedEmployment : "")}
-      customRowActions={[
-        {
-          name: "terminate",
-          label: "Mettre fin au rattachement",
-          action: empl => {
-            modals.open("terminateEmployment", {
-              minDate: new Date(empl.startDate),
-              terminateEmployment: async endDate =>
-                await terminateEmployment(empl.employmentId, endDate)
-            });
-          }
-        }
-      ]}
+      customRowActions={entry =>
+        !entry.endDate
+          ? [
+              {
+                name: "terminate",
+                label: "Mettre fin au rattachement",
+                action: empl => {
+                  modals.open("terminateEmployment", {
+                    minDate: new Date(empl.startDate),
+                    terminateEmployment: async endDate =>
+                      await terminateEmployment(empl.employmentId, endDate)
+                  });
+                }
+              }
+            ]
+          : null
+      }
       virtualized
     />
   ];

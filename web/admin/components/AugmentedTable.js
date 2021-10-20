@@ -291,7 +291,11 @@ export const AugmentedTable = React.forwardRef(
           columns={columns}
           isAddingRow={isAddingRow}
           isEditingRow={isEditingRow}
-          onCustomActionsClick={customRowActions ? onCustomActionsClick : null}
+          onCustomActionsClick={
+            customRowActions && customRowActions(entry)
+              ? onCustomActionsClick
+              : null
+          }
           onRowAdd={onRowAdd}
           onRowEdit={onRowEdit}
           onRowDelete={onRowDelete}
@@ -600,17 +604,19 @@ export const AugmentedTable = React.forwardRef(
             onClose={handleCustomActionsClose}
             anchorEl={actionMenuAnchorEl}
           >
-            {customRowActions.map(cra => (
-              <MenuItem
-                key={cra.name}
-                onClick={async () => {
-                  await cra.action(entryActedOn);
-                  handleCustomActionsClose();
-                }}
-              >
-                {cra.label}
-              </MenuItem>
-            ))}
+            {((entryActedOn ? customRowActions(entryActedOn) : null) || []).map(
+              cra => (
+                <MenuItem
+                  key={cra.name}
+                  onClick={async () => {
+                    await cra.action(entryActedOn);
+                    handleCustomActionsClose();
+                  }}
+                >
+                  {cra.label}
+                </MenuItem>
+              )
+            )}
           </Menu>
         )}
       </Box>
