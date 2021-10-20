@@ -32,7 +32,7 @@ export function TextWithOverflowTooltip({ text, children, alwaysShow }) {
 
   return (
     <Tooltip
-      title={text || children}
+      title={text || children || ""}
       interactive
       disableHoverListener={!alwaysShow && !hoverStatus}
     >

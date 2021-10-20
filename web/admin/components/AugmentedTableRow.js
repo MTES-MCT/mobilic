@@ -18,7 +18,7 @@ export function AugmentedTableRowCellContent({
       return (
         <Checkbox
           size="small"
-          checked={cellData || false}
+          checked={!!cellData}
           color="primary"
           onChange={e => setCellData(e.target.checked)}
         />
@@ -44,14 +44,16 @@ export function AugmentedTableRowCellContent({
     ? {
         text: column.formatTooltipContent
           ? column.formatTooltipContent(cellData, rowData)
-          : null,
+          : column.format
+          ? column.format(cellData, rowData)
+          : cellData || "",
         alwaysShow: column.alwaysShowTooltip
       }
     : {};
   return (
     <CellInnerComponent {...cellInnerComponentProps}>
       {column.boolean ? (
-        <Checkbox size="small" checked={cellData || false} disabled />
+        <Checkbox size="small" checked={!!cellData} disabled />
       ) : column.format ? (
         <span>{column.format(cellData, rowData)}</span>
       ) : cellData ? (
