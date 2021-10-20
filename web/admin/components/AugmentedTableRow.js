@@ -2,6 +2,7 @@ import React from "react";
 import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 import TextField from "@material-ui/core/TextField/TextField";
 import { TextWithOverflowTooltip } from "./TextWithOverflowTooltip";
+import isEqual from "lodash/isEqual";
 
 export function AugmentedTableRowCellContent({
   column,
@@ -102,6 +103,7 @@ export const AugmentedTableRow = React.memo(
     if (prevProps.isEditingRow !== props.isEditingRow) return false;
     if (prevProps.isAddingRow !== props.isAddingRow) return false;
     if (prevProps.isEditingRow || prevProps.isAddingRow) return false;
+    if (!isEqual(prevProps.entry, props.entry)) return false;
     return true;
   }
 );
