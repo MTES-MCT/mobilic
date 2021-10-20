@@ -60,6 +60,7 @@ export default function TerminateEmployment({
               value={endDate}
               format="d MMMM yyyy"
               minDate={minDate}
+              disablePast
               onChange={setEndDate}
               cancelLabel={null}
               autoOk
