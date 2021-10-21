@@ -30,14 +30,12 @@ export function AdminStoreProvider({ children }) {
   };
 
   const sync = (companiesPayload, minDate) => {
-    const primaryCompany = store.companies().find(c => c.isPrimary);
     setCompanies(
       companiesPayload.map(c => ({
         id: c.id,
         name: c.name,
         siren: c.siren,
-        settings: c.settings,
-        isPrimary: primaryCompany ? c.id === primaryCompany.id : false
+        settings: c.settings
       }))
     );
     setUsers(

@@ -57,7 +57,7 @@ export function UserRead() {
   const [tokenInfo, setTokenInfo] = React.useState(null);
   const [controlTime, setControlTime] = React.useState(null);
   const [missions, setMissions] = React.useState(null);
-  const [primaryEmployment, setPrimaryEmployment] = React.useState(null);
+  const [employments, setEmployments] = React.useState(null);
   const [coworkers, setCoworkers] = React.useState(null);
   const [vehicles, setVehicles] = React.useState(null);
   const [error, setError] = React.useState("");
@@ -147,9 +147,7 @@ export function UserRead() {
             });
           });
           setCoworkers(_coworkers);
-          setPrimaryEmployment(
-            userPayload.currentEmployments.find(e => e.isPrimary)
-          );
+          setEmployments(userPayload.currentEmployments);
         });
       });
     }
@@ -188,27 +186,21 @@ export function UserRead() {
               <Grid item>
                 <InfoItem
                   name="Entreprise"
-                  value={
-                    primaryEmployment ? primaryEmployment.company.name : ""
-                  }
+                  value={employments ? employments.company.name : ""}
                 />
               </Grid>
               <Grid item>
                 <InfoItem
                   name="SIREN"
-                  value={
-                    primaryEmployment ? primaryEmployment.company.siren : ""
-                  }
+                  value={employments ? employments.company.siren : ""}
                 />
               </Grid>
               <Grid item>
                 <InfoItem
                   name="Invité le"
                   value={
-                    primaryEmployment
-                      ? frenchFormatDateStringOrTimeStamp(
-                          primaryEmployment.startDate
-                        )
+                    employments
+                      ? frenchFormatDateStringOrTimeStamp(employments.startDate)
                       : ""
                   }
                 />

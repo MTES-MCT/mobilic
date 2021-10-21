@@ -103,8 +103,7 @@ function _CompanyPanel({ width, containerRef }) {
 
   React.useEffect(() => {
     if (companies && companies.length > 0) {
-      let defaultCompany = companies.find(c => c.isPrimary);
-      if (!defaultCompany) defaultCompany = companies[0];
+      const defaultCompany = companies[0];
       setCompany(defaultCompany);
     } else setCompany(null);
   }, [companies]);

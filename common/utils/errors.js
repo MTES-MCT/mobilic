@@ -168,9 +168,6 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         if (graphQLError.extensions.overlapType === "company") {
           return "L'utilisateur est déjà rattaché à l'entreprise.";
         }
-        if (graphQLError.extensions.overlapType === "primary") {
-          return "L'utilisateur a déjà une entreprise de rattachement principale";
-        }
         return "L'utilisateur a un rattachement existant qui n'est pas compatible.";
       case "VEHICLE_ALREADY_REGISTERED":
         return "Il existe déjà un véhicule enregistré avec cette immatriculation";
