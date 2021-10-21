@@ -5,8 +5,9 @@ import Avatar from "@material-ui/core/Avatar";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import {
   ACTIVITIES,
-  filterActivitiesOverlappingPeriod,
-  sortActivities
+  addBreakToActivityList,
+  computeDurationAndTime,
+  filterActivitiesOverlappingPeriod
 } from "common/utils/activities";
 import {
   formatDateTime,
@@ -189,36 +190,14 @@ export function ActivityList({
     filteredActivities.some(a => !a.endTime || a.endTime > untilTime);
 
   // Add breaks
-  const activitiesWithBreaks = [];
-  sortActivities(filteredActivities);
-  filteredActivities.forEach((a, index) => {
-    activitiesWithBreaks.push(a);
-    if (index < filteredActivities.length - 1) {
-      const nextA = filteredActivities[index + 1];
-      if (a.endTime < nextA.startTime)
-        activitiesWithBreaks.push({
-          type: ACTIVITIES.break.name,
-          startTime: a.endTime,
-          endTime: nextA.startTime
-        });
-    }
-  });
+  const activitiesWithBreaks = addBreakToActivityList(filteredActivities);
 
   // Compute duration and end time for each activity
-  const augmentedAndSortedActivities = activitiesWithBreaks.map(activity => {
-    const startTime = Math.max(activity.startTime, fromTime);
-    const endTime = untilTime
-      ? Math.min(activity.endTime || now1, untilTime)
-      : activity.endTime;
-    const endTimeOrNow = endTime || now1;
-    return {
-      ...activity,
-      displayedStartTime: startTime,
-      displayedEndTime: endTime,
-      endTimeOrNow,
-      duration: endTimeOrNow - startTime
-    };
-  });
+  const augmentedAndSortedActivities = computeDurationAndTime(
+    activitiesWithBreaks,
+    fromTime,
+    untilTime
+  );
 
   const showDates =
     augmentedAndSortedActivities.length > 0

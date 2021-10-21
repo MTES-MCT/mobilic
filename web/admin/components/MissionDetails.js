@@ -63,6 +63,7 @@ import { VerticalTimeline } from "common/components/VerticalTimeline";
 import Grid from "@material-ui/core/Grid";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import { computeMissionStats } from "common/utils/mission";
+import { missionWithStats } from "../selectors/missionSelectors";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {
@@ -161,7 +162,6 @@ const useStyles = makeStyles(theme => ({
 
 export function MissionDetails({
   missionId,
-  mission,
   day,
   handleClose,
   setShouldRefreshActivityPanel
@@ -175,6 +175,8 @@ export function MissionDetails({
 
   const [employeeIdsToInclude, setEmployeeIdsToInclude] = React.useState({});
 
+  const [mission, setMission] = React.useState(null);
+
   const [errors, setErrors] = React.useState({});
 
   const ref = React.useRef();
@@ -187,28 +189,32 @@ export function MissionDetails({
   const [usersToAdd, setUsersToAdd] = React.useState([]);
 
   async function loadMission() {
-    setLoading(true);
-    try {
-      const missionPayload = await api.graphQlQuery(MISSION_QUERY, {
-        id: missionId
-      });
-      adminStore.setMissions(missions => [
-        ...missions,
-        {
+    const alreadyFetchedMission = missionWithStats(adminStore)?.find(
+      m => m.id === missionId
+    );
+    if (alreadyFetchedMission) {
+      setMission(alreadyFetchedMission);
+    } else {
+      setLoading(true);
+      try {
+        const missionPayload = await api.graphQlQuery(MISSION_QUERY, {
+          id: missionId
+        });
+        const apiMission = {
           ...missionPayload.data.mission,
           companyId: missionPayload.data.mission.company.id
-        }
-      ]);
-    } catch (err) {
-      setMissionLoadError(formatApiError(err));
+        };
+        adminStore.setMissions(missions => [...missions, apiMission]);
+        setMission(computeMissionStats(apiMission, adminStore.users));
+      } catch (err) {
+        setMissionLoadError(formatApiError(err));
+      }
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   React.useEffect(() => {
-    if (missionId && !mission) {
-      loadMission();
-    }
+    loadMission();
   }, [missionId]);
 
   if (loading) return <CircularProgress color="primary" />;
