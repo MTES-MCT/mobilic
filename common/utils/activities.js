@@ -305,3 +305,39 @@ export function convertBreakIntoActivityOperations(
   }
   return ops;
 }
+
+export function addBreakToActivityList(activities) {
+  const activitiesWithBreaks = [];
+  sortActivities(activities);
+  activities.forEach((a, index) => {
+    activitiesWithBreaks.push(a);
+    if (index < activities.length - 1) {
+      const nextA = activities[index + 1];
+      if (a.endTime < nextA.startTime)
+        activitiesWithBreaks.push({
+          type: ACTIVITIES.break.name,
+          startTime: a.endTime,
+          endTime: nextA.startTime
+        });
+    }
+  });
+  return activitiesWithBreaks;
+}
+
+export function computeDurationAndTime(activities, fromTime, untilTime) {
+  const dateNow = now();
+  return activities.map(activity => {
+    const startTime = Math.max(activity.startTime, fromTime);
+    const endTime = untilTime
+      ? Math.min(activity.endTime || dateNow, untilTime)
+      : activity.endTime;
+    const endTimeOrNow = endTime || dateNow;
+    return {
+      ...activity,
+      displayedStartTime: startTime,
+      displayedEndTime: endTime,
+      endTimeOrNow,
+      duration: endTimeOrNow - startTime
+    };
+  });
+}

@@ -30,8 +30,7 @@ import { VALIDATE_MISSION_MUTATION } from "common/utils/apiQueries";
 import {
   missionsToValidateByAdmin,
   missionsToValidateByWorkers,
-  missionsValidatedByAdmin,
-  missionWithStats
+  missionsValidatedByAdmin
 } from "../selectors/missionSelectors";
 import { useStyles } from "../components/styles/ValidationsStyle";
 
@@ -351,9 +350,6 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
         <MissionDetails
           missionId={missionIdOnFocus}
           day={location.state ? location.state.day : null}
-          mission={missionWithStats(adminStore)?.find(
-            m => m.id === missionIdOnFocus
-          )}
           handleClose={() => history.push("/admin/validations")}
           setShouldRefreshActivityPanel={setShouldRefreshData}
         />

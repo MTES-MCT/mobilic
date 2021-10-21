@@ -43,6 +43,7 @@ import {
   LOG_LOCATION_MUTATION
 } from "common/utils/apiQueries";
 import { DatePicker } from "@material-ui/pickers";
+import withWidth from "@material-ui/core/withWidth";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -99,7 +100,7 @@ const onMinDateChange = debounce(
   500
 );
 
-export default function ActivityPanel() {
+function _ActivityPanel({ width }) {
   const adminStore = useAdminStore();
   const modals = useModals();
   const alerts = useSnackbarAlerts();
@@ -244,7 +245,7 @@ export default function ActivityPanel() {
             animateYearScrolling
           />
         </Grid>
-        <Grid item spacing={3}>
+        <Grid item>
           <Button
             className={classes.exportButton}
             color="primary"
@@ -336,6 +337,7 @@ export default function ActivityPanel() {
             c => c.settings.requireMissionName
           )}
           loading={loading}
+          width={width}
         />
         <Drawer
           anchor="right"
@@ -416,3 +418,7 @@ export default function ActivityPanel() {
     </Paper>
   ];
 }
+
+const ActivitiesPanel = withWidth()(_ActivityPanel);
+
+export default ActivitiesPanel;
