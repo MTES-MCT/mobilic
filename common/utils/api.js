@@ -17,13 +17,11 @@ import { captureSentryException } from "./sentry";
 
 export const API_HOST = "/api";
 
-const CHECK_MUTATION = gql`
-  mutation checkAuthentication {
-    auth {
-      check {
-        success
-        userId
-      }
+const CHECK_AUTH_QUERY = gql`
+  query checkAuthentication {
+    checkAuth {
+      success
+      userId
     }
   }
 `;
@@ -57,6 +55,15 @@ class Api {
             }
           }),
           new ApolloLinkTimeout(0),
+          new ApolloLink((operation, forward) => {
+            operation.setContext(({ headers = {} }) => ({
+              headers: {
+                ...headers,
+                ...(this.getImpersonationHeaders() || {})
+              }
+            }));
+            return forward(operation);
+          }),
           ApolloLink.split(
             operation => {
               return !!operation.getContext().nonPublicApi;
@@ -82,6 +89,13 @@ class Api {
         ...other
       })
     );
+  }
+
+  getImpersonationHeaders() {
+    const impersonationTokenStack = this.store.state.impersonationTokenStack;
+    if (impersonationTokenStack && impersonationTokenStack.length > 0)
+      return { "Impersonation-Token": impersonationTokenStack[0] };
+    return null;
   }
 
   async graphQlMutate(query, variables, other, disableRefreshToken = false) {
@@ -153,6 +167,13 @@ class Api {
 
   async httpQuery(queryInfo, options = {}, disableRefreshToken = false) {
     const func = async () => {
+      const impersonationHeaders = this.getImpersonationHeaders();
+      if (impersonationHeaders) {
+        options.headers = {
+          ...(options.headers || {}),
+          ...impersonationHeaders
+        };
+      }
       const response = await this._fetch(queryInfo, options);
       if (response.status !== 200) {
         const error = new Error("Response status is not 200");
@@ -353,8 +374,8 @@ class Api {
     const userId = currentUserId();
     if (!userId) return false;
     try {
-      const response = await this.graphQlQuery(CHECK_MUTATION);
-      return response.data.auth.check.userId === userId;
+      const response = await this.graphQlQuery(CHECK_AUTH_QUERY);
+      return response.data.checkAuth.userId === userId;
     } catch (err) {
       return false;
     }
