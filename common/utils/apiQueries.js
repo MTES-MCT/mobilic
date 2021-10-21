@@ -195,7 +195,6 @@ export const COMPANY_SIGNUP_MUTATION = gql`
           id
           startDate
           isAcknowledged
-          isPrimary
           hasAdminRights
           company {
             id
@@ -317,7 +316,6 @@ export const USER_READ_QUERY = gql`
         id
         startDate
         isAcknowledged
-        isPrimary
         hasAdminRights
         company {
           id
@@ -458,7 +456,6 @@ export const ADMIN_COMPANIES_QUERY = gql`
           startDate
           endDate
           isAcknowledged
-          isPrimary
           email
           hasAdminRights
           latestInviteEmailTime
@@ -492,7 +489,6 @@ export const GET_EMPLOYMENT_QUERY = gql`
     employment(token: $token) {
       id
       startDate
-      isPrimary
       hasAdminRights
       company {
         id
@@ -514,7 +510,6 @@ export const REDEEM_INVITE_QUERY = gql`
       redeemInvite(token: $token) {
         id
         startDate
-        isPrimary
         isAcknowledged
         hasAdminRights
         company {
@@ -594,7 +589,6 @@ export const VALIDATE_EMPLOYMENT_MUTATION = gql`
         id
         startDate
         isAcknowledged
-        isPrimary
         hasAdminRights
         company {
           id
@@ -642,7 +636,6 @@ export const TERMINATE_EMPLOYMENT_MUTATION = gql`
         startDate
         endDate
         isAcknowledged
-        isPrimary
         email
         hasAdminRights
         company {
@@ -678,7 +671,6 @@ export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
         startDate
         endDate
         isAcknowledged
-        isPrimary
         email
         hasAdminRights
         latestInviteEmailTime
@@ -710,7 +702,6 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         startDate
         endDate
         isAcknowledged
-        isPrimary
         email
         hasAdminRights
         company {

@@ -34,7 +34,6 @@ const USER_QUERY = gql`
         id
         startDate
         isAcknowledged
-        isPrimary
         hasAdminRights
         company {
           id

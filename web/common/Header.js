@@ -287,8 +287,8 @@ function DesktopHeader({ disableMenu }) {
   const classes = useStyles();
   const userInfo = store.userInfo();
   const companies = store.companies();
-  const primaryCompany = companies.find(c => c.isPrimary);
-  const companyName = primaryCompany ? primaryCompany.name : null;
+  const company = companies.length === 1 ? companies[0] : null;
+  const companyName = company ? company.name : null;
   const routes = getAccessibleRoutes({ userInfo, companies });
 
   const docLinks = () => [

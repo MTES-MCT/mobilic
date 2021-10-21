@@ -364,14 +364,23 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     return this.dispatchUpdateAction(
       prevState => {
         const objectKey = objectId.toString();
-        const newEntity = omit(prevState[entity], objectKey);
+        const newEntity =
+          this.mapper[entity] === List
+            ? prevState[entity].filter(item => item.id !== objectId)
+            : omit(prevState[entity], objectKey);
 
-        const previousObject = prevState[entity][objectKey];
+        const previousObject =
+          this.mapper[entity] === List
+            ? prevState[entity].find(item => item.id === objectId)
+            : prevState[entity][objectKey];
         if (previousObject || createOrReplace) {
           const newObject = getUpdatedObject(previousObject || {});
-          newEntity[
-            newObject.id ? newObject.id.toString() : objectKey
-          ] = newObject;
+          if (this.mapper[entity] === List) {
+            newEntity.push(newObject);
+          } else
+            newEntity[
+              newObject.id ? newObject.id.toString() : objectKey
+            ] = newObject;
         }
 
         return {
@@ -386,7 +395,9 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     this.dispatchUpdateAction(
       prevState => ({
         [entity]: !pendingRequestId
-          ? omit(prevState[entity], objectId.toString())
+          ? this.mapper[entity] === List
+            ? prevState[entity].filter(item => item.id !== objectId)
+            : omit(prevState[entity], objectId.toString())
           : {
               ...mapValues(prevState[entity], (value, id) =>
                 id === objectId.toString()
@@ -642,8 +653,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       name: e.company.name,
       admin: e.hasAdminRights,
       siren: e.company.siren,
-      settings: e.company.settings,
-      isPrimary: e.isPrimary
+      settings: e.company.settings
     }));
   };
 
