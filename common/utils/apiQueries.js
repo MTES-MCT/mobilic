@@ -219,112 +219,115 @@ export const SIREN_QUERY = gql`
   }
 `;
 
+export const USER_READ_TOKEN_QUERY = gql`
+  query readUserToken($token: String!) {
+    userReadToken(token: $token) {
+      creationTime
+      validUntil
+      creationDay
+      historyStartDay
+    }
+  }
+`;
+
 export const USER_READ_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
-  query readUser($token: String!) {
-    userFromReadToken(token: $token) {
-      tokenInfo {
-        creationTime
-        validUntil
-        creationDay
-        historyStartDay
-      }
-      user {
-        id
-        firstName
-        lastName
-        birthDate
-        email
-        missions {
-          edges {
-            node {
-              id
-              name
-              company {
-                id
-                name
-                siren
-                ...CompanySettings
-              }
-              validations {
-                submitterId
-                receptionTime
-                isAdmin
-                userId
-              }
-              vehicle {
-                id
-                name
-                registrationNumber
-              }
-              context
-              expenditures {
-                id
-                type
-                missionId
-                userId
-                spendingDate
-                receptionTime
-              }
-              activities {
-                id
-                type
-                missionId
-                startTime
-                endTime
-                userId
-                user {
-                  id
-                  firstName
-                  lastName
-                }
-              }
-              comments {
-                id
-                text
-                missionId
-                receptionTime
-                submitter {
-                  id
-                  firstName
-                  lastName
-                }
-              }
-              startLocation {
-                id
-                name
-                alias
-                postalCode
-                city
-                kilometerReading
-              }
-              endLocation {
-                id
-                name
-                alias
-                postalCode
-                city
-                kilometerReading
-              }
-            }
-          }
-        }
-        currentEmployments {
-          id
-          startDate
-          isAcknowledged
-          isPrimary
-          hasAdminRights
-          company {
+  query readUser {
+    me {
+      id
+      firstName
+      lastName
+      birthDate
+      email
+      missions {
+        edges {
+          node {
             id
             name
-            siren
-            ...CompanySettings
-            vehicles {
+            company {
+              id
+              name
+              siren
+              ...CompanySettings
+            }
+            validations {
+              submitterId
+              receptionTime
+              isAdmin
+              userId
+            }
+            vehicle {
               id
               name
               registrationNumber
             }
+            context
+            expenditures {
+              id
+              type
+              missionId
+              userId
+              spendingDate
+              receptionTime
+            }
+            activities {
+              id
+              type
+              missionId
+              startTime
+              endTime
+              userId
+              user {
+                id
+                firstName
+                lastName
+              }
+            }
+            comments {
+              id
+              text
+              missionId
+              receptionTime
+              submitter {
+                id
+                firstName
+                lastName
+              }
+            }
+            startLocation {
+              id
+              name
+              alias
+              postalCode
+              city
+              kilometerReading
+            }
+            endLocation {
+              id
+              name
+              alias
+              postalCode
+              city
+              kilometerReading
+            }
+          }
+        }
+      }
+      currentEmployments {
+        id
+        startDate
+        isAcknowledged
+        isPrimary
+        hasAdminRights
+        company {
+          id
+          name
+          siren
+          ...CompanySettings
+          vehicles {
+            id
+            name
+            registrationNumber
           }
         }
       }

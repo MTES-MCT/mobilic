@@ -22,10 +22,15 @@ import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { History } from "../pwa/screens/History";
 import Grid from "@material-ui/core/Grid";
 import { InfoItem } from "../home/InfoField";
-import { HTTP_QUERIES, USER_READ_QUERY } from "common/utils/apiQueries";
+import {
+  HTTP_QUERIES,
+  USER_READ_QUERY,
+  USER_READ_TOKEN_QUERY
+} from "common/utils/apiQueries";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { captureSentryException } from "common/utils/sentry";
+import { useImpersonation } from "./utils/impersonation";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -58,81 +63,97 @@ export function UserRead() {
   const [error, setError] = React.useState("");
   const classes = useStyles();
 
-  React.useEffect(() => {
-    async function onMount() {
-      const queryString = new URLSearchParams(location.search);
-      const token = queryString.get("token");
-      const ts = queryString.get("ts");
+  const impersonatingUser = useImpersonation(
+    tokenInfo ? tokenInfo.token : null
+  );
 
-      if (token) {
-        withLoadingScreen(async () => {
-          try {
-            const userResponse = await api.graphQlMutate(
-              USER_READ_QUERY,
-              {
-                token
-              },
-              { context: { nonPublicApi: true } },
-              true
-            );
-            const userPayload = userResponse.data.userFromReadToken.user;
-            setTokenInfo({
-              ...userResponse.data.userFromReadToken.tokenInfo,
+  React.useEffect(() => {
+    const queryString = new URLSearchParams(location.search);
+    const token = queryString.get("token");
+    const ts = queryString.get("ts");
+
+    if (token) {
+      withLoadingScreen(async () => {
+        try {
+          const tokenResponse = await api.graphQlMutate(
+            USER_READ_TOKEN_QUERY,
+            {
               token
-            });
-            setUserInfo({
-              id: userPayload.id,
-              firstName: userPayload.firstName,
-              lastName: userPayload.lastName,
-              birthDate: userPayload.birthDate,
-              email: userPayload.email
-            });
-            if (ts && ts !== "") setControlTime(ts);
-            setMissions(
-              augmentAndSortMissions(
-                userPayload.missions.edges.map(m => ({
-                  ...m.node,
-                  ...parseMissionPayloadFromBackend(m.node, userPayload.id),
-                  allActivities: m.node.activities
-                })),
-                userPayload.id
-              ).filter(m => m.activities.length > 0)
-            );
-            const _vehicles = {};
-            userPayload.currentEmployments.forEach(e => {
-              e.company.vehicles.forEach(v => {
-                _vehicles[v.id.toString()] = v;
-              });
-            });
-            setVehicles(_vehicles);
-            const _coworkers = {};
-            userPayload.missions.edges.forEach(m => {
-              m.node.activities.forEach(a => {
-                _coworkers[a.user.id.toString()] = a.user;
-              });
-            });
-            setCoworkers(_coworkers);
-            setPrimaryEmployment(
-              userPayload.currentEmployments.find(e => e.isPrimary)
-            );
-          } catch (err) {
-            captureSentryException(err);
-            setError(
-              formatApiError(err, gqlError => {
-                if (graphQLErrorMatchesCode(gqlError, "INVALID_TOKEN")) {
-                  return "le lien d'accès à l'historique du salarié est invalide.";
-                }
-                if (graphQLErrorMatchesCode(gqlError, "EXPIRED_TOKEN")) {
-                  return "le lien d'accès à l'historique du salarié a expiré.";
-                }
-              })
-            );
-          }
-        });
-      } else setError("lien d'accès à l'historique du salarié manquant");
+            },
+            { context: { nonPublicApi: true } },
+            true
+          );
+          setTokenInfo({
+            ...tokenResponse.data.userReadToken,
+            token
+          });
+        } catch (err) {
+          captureSentryException(err);
+          setError(
+            formatApiError(err, gqlError => {
+              if (graphQLErrorMatchesCode(gqlError, "INVALID_TOKEN")) {
+                return "le lien d'accès à l'historique du salarié est invalide.";
+              }
+              if (graphQLErrorMatchesCode(gqlError, "EXPIRED_TOKEN")) {
+                return "le lien d'accès à l'historique du salarié a expiré.";
+              }
+            })
+          );
+        }
+      });
     }
-    onMount();
+    if (ts && ts !== "") setControlTime(ts);
   }, [location]);
+
+  React.useEffect(() => {
+    if (impersonatingUser) {
+      withLoadingScreen(async () => {
+        await alerts.withApiErrorHandling(async () => {
+          const userResponse = await api.graphQlMutate(
+            USER_READ_QUERY,
+            null,
+            null,
+            true
+          );
+          const userPayload = userResponse.data.me;
+          setUserInfo({
+            id: userPayload.id,
+            firstName: userPayload.firstName,
+            lastName: userPayload.lastName,
+            birthDate: userPayload.birthDate,
+            email: userPayload.email
+          });
+          setMissions(
+            augmentAndSortMissions(
+              userPayload.missions.edges.map(m => ({
+                ...m.node,
+                ...parseMissionPayloadFromBackend(m.node, userPayload.id),
+                allActivities: m.node.activities
+              })),
+              userPayload.id
+            ).filter(m => m.activities.length > 0)
+          );
+          const _vehicles = {};
+          userPayload.currentEmployments.forEach(e => {
+            e.company.vehicles.forEach(v => {
+              _vehicles[v.id.toString()] = v;
+            });
+          });
+          setVehicles(_vehicles);
+          const _coworkers = {};
+          userPayload.missions.edges.forEach(m => {
+            m.node.activities.forEach(a => {
+              _coworkers[a.user.id.toString()] = a.user;
+            });
+          });
+          setCoworkers(_coworkers);
+          setPrimaryEmployment(
+            userPayload.currentEmployments.find(e => e.isPrimary)
+          );
+        });
+      });
+    }
+  }, [impersonatingUser]);
 
   return [
     <Header key={1} disableMenu />,
