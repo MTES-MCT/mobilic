@@ -23,19 +23,27 @@ import IconButton from "@material-ui/core/IconButton";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import Collapse from "@material-ui/core/Collapse";
+import useTheme from "@material-ui/core/styles/useTheme";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
     fontWeight: "bold"
   },
-  employmentStatus: {
-    color: isAcknowledged =>
-      isAcknowledged ? theme.palette.success.main : theme.palette.warning.main
-  },
   buttonContainer: {
     padding: theme.spacing(2)
   }
 }));
+
+function employmentStatusAndColor(employment, theme) {
+  const today = new Date().toISOString().slice(0, 10);
+  if (!employment.isAcknowledged)
+    return ["À valider", theme.palette.warning.main];
+  if (employment.startDate > today)
+    return ["À venir", theme.palette.warning.main];
+  if (employment.endDate && employment.endDate < today)
+    return ["Terminé", theme.palette.error.main];
+  return ["Actif", theme.palette.success.main];
+}
 
 export function EmploymentInfoCard({
   employment,
@@ -47,7 +55,7 @@ export function EmploymentInfoCard({
 }) {
   const [open, setOpen] = React.useState(defaultOpen);
 
-  const classes = useStyles(employment.isAcknowledged);
+  const classes = useStyles();
 
   const api = useApi();
   const alerts = useSnackbarAlerts();
@@ -85,23 +93,51 @@ export function EmploymentInfoCard({
     );
   }
 
+  const [status, statusColor] = employmentStatusAndColor(
+    employment,
+    useTheme()
+  );
+
   return (
     <InfoCard variant="outlined">
-      <Grid container spacing={1} alignItems="center" justify="space-between">
+      <Grid
+        container
+        spacing={2}
+        alignItems="center"
+        justify="space-between"
+        wrap="nowrap"
+      >
         <Grid item>
           <Typography className={classes.companyName}>
             {employment.company.name}
           </Typography>
         </Grid>
-        <Grid item>
-          <IconButton
-            aria-label={open ? "Masquer" : "Afficher"}
-            color="inherit"
-            className="no-margin-no-padding"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </IconButton>
+        <Grid
+          item
+          container
+          spacing={1}
+          alignItems="center"
+          justify="space-between"
+          wrap="nowrap"
+          style={{ width: "auto" }}
+        >
+          {!hideStatus && (
+            <Grid item>
+              <Typography style={{ color: statusColor, fontWeight: "bold" }}>
+                {status}
+              </Typography>
+            </Grid>
+          )}
+          <Grid item>
+            <IconButton
+              aria-label={open ? "Masquer" : "Afficher"}
+              color="inherit"
+              className="no-margin-no-padding"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </IconButton>
+          </Grid>
         </Grid>
       </Grid>
       <Collapse in={open}>
@@ -121,6 +157,16 @@ export function EmploymentInfoCard({
               value={frenchFormatDateStringOrTimeStamp(employment.startDate)}
             />
           </Grid>
+          <Grid item>
+            <InfoItem
+              name="Fin rattachement"
+              value={
+                employment.endDate
+                  ? frenchFormatDateStringOrTimeStamp(employment.endDate)
+                  : ""
+              }
+            />
+          </Grid>
           {!hideRole && (
             <Grid item>
               <InfoItem
@@ -130,19 +176,6 @@ export function EmploymentInfoCard({
                     ? "Gestionnaire"
                     : "Travailleur mobile"
                 }
-              />
-            </Grid>
-          )}
-          {!hideStatus && (
-            <Grid item>
-              <InfoItem
-                name="Statut rattachement"
-                value={
-                  <span className={classes.employmentStatus}>
-                    {employment.isAcknowledged ? "Accepté" : "En attente"}
-                  </span>
-                }
-                bold
               />
             </Grid>
           )}
