@@ -60,7 +60,7 @@ export function getEventChangesSinceTime(eventsWithHistory, time) {
   });
 }
 
-export function getEventVersionsAtTime(eventChanges) {
+export function getPreviousVersionsOfEvents(eventChanges) {
   return eventChanges
     .map(x => {
       if (!x.change) return x.current;
