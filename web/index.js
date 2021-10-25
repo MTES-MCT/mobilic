@@ -1,17 +1,11 @@
 import "core-js";
 import ReactDOM from "react-dom";
 import * as serviceWorker from "./serviceWorker";
-import * as Sentry from "@sentry/browser";
 import React from "react";
 import Root from "./root";
+import { initSentry } from "common/utils/sentry";
 
-if (process.env.REACT_APP_SENTRY_URL && process.env.REACT_APP_SENTRY_RELEASE) {
-  Sentry.init({
-    dsn: process.env.REACT_APP_SENTRY_URL,
-    release: process.env.REACT_APP_SENTRY_RELEASE,
-    environment: process.env.REACT_APP_SENTRY_ENVIRONMENT || "dev"
-  });
-}
+initSentry();
 
 // Crisp button
 if (process.env.REACT_APP_CRISP_WEBSITE_ID) {
