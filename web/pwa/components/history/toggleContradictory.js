@@ -3,7 +3,7 @@ import {
   getChangesHistory,
   getContradictoryInfoForMission,
   getEventChangesSinceTime,
-  getEventVersionsAtTime
+  getPreviousVersionsOfEvents
 } from "common/utils/contradictory";
 import flatMap from "lodash/flatMap";
 import { useApi } from "common/utils/api";
@@ -48,7 +48,7 @@ export function useToggleContradictory(
             mission.validation.receptionTime
           );
           return [
-            getEventVersionsAtTime(eventChanges),
+            getPreviousVersionsOfEvents(eventChanges),
             getChangesHistory(eventChanges)
           ];
         });
