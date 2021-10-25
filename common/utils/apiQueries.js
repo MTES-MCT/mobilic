@@ -312,7 +312,7 @@ export const USER_READ_QUERY = gql`
           }
         }
       }
-      currentEmployments {
+      employments {
         id
         startDate
         isAcknowledged
