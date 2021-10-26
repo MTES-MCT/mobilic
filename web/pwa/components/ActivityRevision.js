@@ -197,10 +197,10 @@ export default function ActivityRevisionOrCreationModal({
         ) {
           hasEndError = true;
           setNewUserEndTimeError("La fin doit être après le début");
+        } else if (newUserEndTime > now()) {
+          hasEndError = true;
+          setNewUserEndTimeError(`L'heure ne peut pas être dans le futur.`);
         }
-      } else if (newUserEndTime > now()) {
-        hasEndError = true;
-        setNewUserEndTimeError(`L'heure ne peut pas être dans le futur.`);
       }
 
       if (!hasStartError && !hasEndError) {
