@@ -10,6 +10,7 @@ import {
 import { gql } from "@apollo/client/core";
 import { captureSentryException } from "./sentry";
 import values from "lodash/values";
+import flatten from "lodash/flatten";
 import { EMPLOYMENT_STATUS, getEmploymentsStatus } from "./employments";
 
 const USER_QUERY = gql`
@@ -193,7 +194,7 @@ export async function syncUser(userPayload, api, store) {
   syncActions.push(store.syncEntity(knownAddresses, "knownAddresses"));
   employments &&
     syncActions.push(
-      store.syncEntity(values(employmentsPerCompanyId), "employments")
+      store.syncEntity(flatten(values(employmentsPerCompanyId)), "employments")
     );
   store.batchUpdate();
   await Promise.all(syncActions);
