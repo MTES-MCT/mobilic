@@ -3,7 +3,7 @@ import MobilicLogoWithText from "common/assets/images/mobilic-logo-with-text.svg
 import Box from "@material-ui/core/Box";
 import { LinkButton } from "./LinkButton";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { getFallbackRoute } from "./routes";
 import { MarianneIcon } from "common/utils/icons";
 

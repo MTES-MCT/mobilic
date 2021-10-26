@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useLocation } from "react-router-dom";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { useApi } from "common/utils/api";
 import { Header } from "../common/Header";
 import Container from "@material-ui/core/Container";

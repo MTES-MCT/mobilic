@@ -1,4 +1,4 @@
-import { broadCastChannel } from "./store";
+import { broadCastChannel } from "../store/store";
 import { parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
 import { DAY, now } from "./time";
@@ -9,6 +9,8 @@ import {
 } from "./apiQueries";
 import { gql } from "@apollo/client/core";
 import { captureSentryException } from "./sentry";
+import values from "lodash/values";
+import { EMPLOYMENT_STATUS, getEmploymentsStatus } from "./employments";
 
 const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
@@ -30,7 +32,7 @@ const USER_QUERY = gql`
           }
         }
       }
-      currentEmployments {
+      employments(includePending: true) {
         id
         startDate
         isAcknowledged
@@ -91,7 +93,7 @@ export async function syncUser(userPayload, api, store) {
     hasActivatedEmail,
     disabledWarnings,
     missions: missionsPayload,
-    currentEmployments
+    employments
   } = userPayload;
 
   const activities = [];
@@ -152,28 +154,47 @@ export async function syncUser(userPayload, api, store) {
   const users = [];
   const vehicles = [];
   const knownAddresses = [];
-  currentEmployments.forEach(e => {
+
+  const employmentsPerCompanyId = {};
+
+  employments.forEach(e => {
     const company = e.company;
-    company.users.forEach(u => {
-      if (u.id !== userPayload.id) {
-        const userMatch = users.find(u2 => u2.id === u.id);
-        if (!userMatch) {
-          users.push({ ...u, companyIds: [company.id] });
-        } else userMatch.companyIds.push(company.id);
-      }
-    });
-    vehicles.push(
-      ...company.vehicles.map(v => ({ ...v, companyId: company.id }))
-    );
-    knownAddresses.push(
-      ...company.knownAddresses.map(a => ({ ...a, companyId: company.id }))
-    );
+    if (!employmentsPerCompanyId[company.id]) {
+      company.users.forEach(u => {
+        if (u.id !== userPayload.id) {
+          const userMatch = users.find(u2 => u2.id === u.id);
+          if (!userMatch) {
+            users.push({ ...u, companyIds: [company.id] });
+          } else userMatch.companyIds.push(company.id);
+        }
+      });
+      vehicles.push(
+        ...company.vehicles.map(v => ({ ...v, companyId: company.id }))
+      );
+      knownAddresses.push(
+        ...company.knownAddresses.map(a => ({ ...a, companyId: company.id }))
+      );
+      employmentsPerCompanyId[company.id] = [e];
+    } else {
+      const exisitingEmployment = employmentsPerCompanyId[company.id][0];
+      const existingEmploymentStatus = getEmploymentsStatus(
+        exisitingEmployment
+      );
+      const status = getEmploymentsStatus(e);
+      if (
+        existingEmploymentStatus === EMPLOYMENT_STATUS.pending &&
+        status === EMPLOYMENT_STATUS.active
+      )
+        employmentsPerCompanyId[company.id].push(e);
+    }
   });
   syncActions.push(store.syncEntity(users, "coworkers"));
   syncActions.push(store.syncEntity(vehicles, "vehicles"));
   syncActions.push(store.syncEntity(knownAddresses, "knownAddresses"));
-  currentEmployments &&
-    syncActions.push(store.syncEntity(currentEmployments, "employments"));
-  store.batchUpdateStore();
+  employments &&
+    syncActions.push(
+      store.syncEntity(values(employmentsPerCompanyId), "employments")
+    );
+  store.batchUpdate();
   await Promise.all(syncActions);
 }

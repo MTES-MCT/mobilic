@@ -90,7 +90,7 @@ export async function getContradictoryInfoForMission(mission, api, store) {
       entity: "missions",
       update: { contradictoryInfo }
     });
-    store.batchUpdateStore();
+    store.batchUpdate();
     mission.contradictoryInfo = contradictoryInfo;
   }
   return mission.contradictoryInfo;

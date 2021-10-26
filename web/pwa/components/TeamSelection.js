@@ -10,7 +10,7 @@ import {
   formatLatestEnrollmentStatus,
   formatPersonName
 } from "common/utils/coworkers";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import Box from "@material-ui/core/Box";
 import { FunnelModal, useStyles as useFunnelModalStyles } from "./FunnelModal";
 import Container from "@material-ui/core/Container";

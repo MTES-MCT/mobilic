@@ -9,7 +9,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
 import Button from "@material-ui/core/Button";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { CustomDialogActions } from "../common/CustomDialogTitle";
 import Box from "@material-ui/core/Box";
 import { Header } from "../common/Header";

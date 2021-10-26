@@ -2,7 +2,7 @@ import React from "react";
 import {
   broadCastChannel,
   useStoreSyncedWithLocalStorage
-} from "common/utils/store";
+} from "common/store/store";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import { formatPersonName } from "common/utils/coworkers";

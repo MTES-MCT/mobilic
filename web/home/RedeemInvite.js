@@ -6,7 +6,7 @@ import { useApi } from "common/utils/api";
 import {
   broadCastChannel,
   useStoreSyncedWithLocalStorage
-} from "common/utils/store";
+} from "common/store/store";
 import { formatApiError } from "common/utils/errors";
 import Typography from "@material-ui/core/Typography";
 import { currentUserId } from "common/utils/cookie";
@@ -59,7 +59,7 @@ export function RedeemInvite() {
             apiResponse.data.signUp.redeemInvite,
             "employments"
           );
-          store.batchUpdateStore();
+          store.batchUpdate();
         } else await store.updateUserIdAndInfo();
         await broadCastChannel.postMessage("update");
         history.push("/home");

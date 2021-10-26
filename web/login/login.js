@@ -4,7 +4,7 @@ import Container from "@material-ui/core/Container";
 import { useApi } from "common/utils/api";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import Box from "@material-ui/core/Box";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Header } from "../common/Header";

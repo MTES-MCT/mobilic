@@ -1,7 +1,7 @@
 import React from "react";
 import omit from "lodash/omit";
 import Button from "@material-ui/core/Button";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { formatPersonName } from "common/utils/coworkers";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";

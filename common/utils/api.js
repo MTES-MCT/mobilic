@@ -5,7 +5,10 @@ import { InMemoryCache } from "@apollo/client/cache";
 import { onError } from "@apollo/client/link/error";
 import * as Sentry from "@sentry/browser";
 import omit from "lodash/omit";
-import { broadCastChannel, useStoreSyncedWithLocalStorage } from "./store";
+import {
+  broadCastChannel,
+  useStoreSyncedWithLocalStorage
+} from "../store/store";
 import { isAuthenticationError, isRetryable } from "./errors";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 import { buildFCLogoutUrl } from "./franceConnect";
@@ -326,7 +329,7 @@ class Api {
           if (isRetryable(err)) break;
         }
       }
-      this.store.batchUpdateStore();
+      this.store.batchUpdate();
       if (processedRequests > 0) {
         await broadCastChannel.postMessage("update");
       }

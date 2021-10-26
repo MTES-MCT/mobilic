@@ -3,7 +3,7 @@ import { useSnackbarAlerts } from "./Snackbar";
 import {
   broadCastChannel,
   useStoreSyncedWithLocalStorage
-} from "common/utils/store";
+} from "common/store/store";
 import { useModals } from "common/utils/modals";
 import {
   REJECT_EMPLOYMENT_MUTATION,
@@ -24,6 +24,10 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import Collapse from "@material-ui/core/Collapse";
 import useTheme from "@material-ui/core/styles/useTheme";
+import {
+  EMPLOYMENT_STATUS,
+  getEmploymentsStatus
+} from "common/utils/employments";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
@@ -34,15 +38,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function employmentStatusAndColor(employment, theme) {
-  const today = new Date().toISOString().slice(0, 10);
-  if (!employment.isAcknowledged)
-    return ["À valider", theme.palette.warning.main];
-  if (employment.startDate > today)
-    return ["À venir", theme.palette.warning.main];
-  if (employment.endDate && employment.endDate < today)
-    return ["Terminé", theme.palette.error.main];
-  return ["Actif", theme.palette.success.main];
+function EMPLOYMENT_STATUS_TO_TEXT_AND_COLOR(theme) {
+  return {
+    [EMPLOYMENT_STATUS.active]: ["Actif", theme.palette.success.main],
+    [EMPLOYMENT_STATUS.pending]: ["À valider", theme.palette.warning.main],
+    [EMPLOYMENT_STATUS.future]: ["À venir", theme.palette.warning.main],
+    [EMPLOYMENT_STATUS.ended]: ["Terminé", theme.palette.error.main]
+  };
 }
 
 export function EmploymentInfoCard({
@@ -81,7 +83,7 @@ export function EmploymentInfoCard({
           });
         } else await store.deleteEntityObject(employment.id, "employments");
 
-        store.batchUpdateStore();
+        store.batchUpdate();
         await broadCastChannel.postMessage("update");
       },
       "validate-employment",
@@ -93,10 +95,11 @@ export function EmploymentInfoCard({
     );
   }
 
-  const [status, statusColor] = employmentStatusAndColor(
-    employment,
+  const status = getEmploymentsStatus(employment);
+
+  const [statusText, statusColor] = EMPLOYMENT_STATUS_TO_TEXT_AND_COLOR(
     useTheme()
-  );
+  )[status];
 
   return (
     <InfoCard variant="outlined">
@@ -124,7 +127,7 @@ export function EmploymentInfoCard({
           {!hideStatus && (
             <Grid item>
               <Typography style={{ color: statusColor, fontWeight: "bold" }}>
-                {status}
+                {statusText}
               </Typography>
             </Grid>
           )}
@@ -180,7 +183,13 @@ export function EmploymentInfoCard({
             </Grid>
           )}
         </Grid>
-        {!hideStatus && !hideActions && !employment.isAcknowledged && (
+        {!hideStatus && !hideActions && status === EMPLOYMENT_STATUS.ended && (
+          <Alert severity="warning">
+            L'entreprise a mis un terme à votre rattachement. Vous ne pouvez
+            plus saisir de temps de travail pour cette entreprise.
+          </Alert>
+        )}
+        {!hideStatus && !hideActions && status === EMPLOYMENT_STATUS.pending && (
           <>
             <Alert severity="info">
               La validation du rattachement vous donnera le droit d'enregistrer

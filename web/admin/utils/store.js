@@ -1,5 +1,5 @@
 import React from "react";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import flatMap from "lodash/flatMap";
 
 const AdminStoreContext = React.createContext(() => {});

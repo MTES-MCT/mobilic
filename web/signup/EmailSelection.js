@@ -7,7 +7,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import {
   broadCastChannel,
   useStoreSyncedWithLocalStorage
-} from "common/utils/store";
+} from "common/store/store";
 import SignupStepper from "./SignupStepper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";

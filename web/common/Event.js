@@ -1,5 +1,5 @@
 import React from "react";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText/ListItemText";
 import { formatDay, formatTimeOfDay } from "common/utils/time";

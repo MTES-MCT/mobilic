@@ -2,7 +2,7 @@ import React from "react";
 import Typography from "@material-ui/core/Typography";
 import { useApi } from "common/utils/api";
 import { useHistory, useLocation } from "react-router-dom";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import Paper from "@material-ui/core/Paper";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import makeStyles from "@material-ui/core/styles/makeStyles";

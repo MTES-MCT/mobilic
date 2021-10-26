@@ -8,7 +8,7 @@ import { useLoadingScreen } from "common/utils/loading";
 import { prettyFormatDay } from "common/utils/time";
 import { useApi } from "common/utils/api";
 import { parseMissionPayloadFromBackend } from "common/utils/mission";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { formatApiError } from "common/utils/errors";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { AccountButton } from "./AccountButton";
@@ -89,7 +89,7 @@ export default function EditPastMission({
               missionResponsePayload.comments,
               "comments"
             );
-            store.batchUpdateStore();
+            store.batchUpdate();
             missionMatch = missionResponsePayload;
           } catch (err) {
             captureSentryException(err);

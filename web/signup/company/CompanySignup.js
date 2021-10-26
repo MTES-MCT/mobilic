@@ -5,7 +5,7 @@ import Container from "@material-ui/core/Container";
 import {
   broadCastChannel,
   useStoreSyncedWithLocalStorage
-} from "common/utils/store";
+} from "common/store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import SignupStepper from "../SignupStepper";
@@ -79,7 +79,7 @@ export function CompanySignup() {
       );
       const employment = apiResponse.data.signUp.company.employment;
       store.createEntityObject(employment, "employments");
-      store.batchUpdateStore();
+      store.batchUpdate();
       await broadCastChannel.postMessage("update");
       history.push(
         shouldDisplaySignupProgress
