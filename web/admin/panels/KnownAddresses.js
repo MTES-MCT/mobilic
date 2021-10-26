@@ -15,6 +15,7 @@ import {
 
 import { usePanelStyles } from "./Company";
 import { captureSentryException } from "common/utils/sentry";
+import { buildBackendPayloadForAddress } from "common/utils/addresses";
 
 export default function KnownAddressAdmin({ company }) {
   const api = useApi();
@@ -45,7 +46,6 @@ export default function KnownAddressAdmin({ company }) {
           label="Adresse"
           value={address}
           onChange={onChange}
-          allowCreate={false}
         />
       ),
       create: true,
@@ -122,9 +122,9 @@ export default function KnownAddressAdmin({ company }) {
           const apiResponse = await api.graphQlMutate(
             CREATE_KNOWN_ADDRESS_MUTATION,
             {
-              geoApiData: address,
               alias,
-              companyId
+              companyId,
+              ...buildBackendPayloadForAddress(address)
             },
             { context: { nonPublicApi: true } }
           );

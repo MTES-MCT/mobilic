@@ -46,7 +46,6 @@ export function AddressField({
   currentPosition,
   required,
   disabled = false,
-  allowCreate = true,
   small = false
 }) {
   const [inputValue, setInputValue] = React.useState("");
@@ -81,7 +80,7 @@ export function AddressField({
   return (
     <Autocomplete
       id="address-field"
-      freeSolo={allowCreate}
+      freeSolo
       fullWidth={fullWidth}
       groupBy={
         isSearchingAddress
@@ -106,7 +105,7 @@ export function AddressField({
         const filtered = filter(options, params);
 
         // Suggest the creation of a new value
-        if (allowCreate && params.inputValue !== "") {
+        if (params.inputValue !== "") {
           filtered.push({
             manual: true,
             name: params.inputValue,
