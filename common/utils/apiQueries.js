@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client/core";
+import { buildBackendPayloadForAddress } from "./addresses";
 
 export const ACTIVITIES_AND_EXPENDITURES_HISTORY_ON_MISSION_QUERY = gql`
   query activitiesAndExpendituresHistory($missionId: Int!) {
@@ -958,13 +959,15 @@ export const TERMINATE_VEHICLE_MUTATION = gql`
 `;
 export const CREATE_KNOWN_ADDRESS_MUTATION = gql`
   mutation createKnownAddress(
-    $geoApiData: GenericScalar!
+    $geoApiData: GenericScalar
+    $manualAddress: String
     $alias: String
     $companyId: Int!
   ) {
     locations {
       createKnownAddress(
         geoApiData: $geoApiData
+        manualAddress: $manualAddress
         alias: $alias
         companyId: $companyId
       ) {
@@ -1200,11 +1203,11 @@ export function buildLogLocationPayloadFromAddress(
     type: isStart ? "mission_start_location" : "mission_end_location",
     kilometerReading
   };
-  if (address.id) payload.companyKnownAddressId = address.id;
-  else if (address.manual) payload.manualAddress = address.name;
-  else payload.geoApiData = address;
 
-  return payload;
+  return {
+    ...payload,
+    ...buildBackendPayloadForAddress(address)
+  };
 }
 
 export const HTTP_QUERIES = {

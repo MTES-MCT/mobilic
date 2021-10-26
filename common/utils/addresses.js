@@ -13,3 +13,10 @@ export function formatAddressSubText(address) {
     ? `${address.postalCode} ${address.city}`
     : null;
 }
+
+export function buildBackendPayloadForAddress(address) {
+  if (address.id) return { companyKnownAddressId: address.id };
+  else if (address.manual || typeof address === "string")
+    return { manualAddress: address.name };
+  else return { geoApiData: address };
+}
