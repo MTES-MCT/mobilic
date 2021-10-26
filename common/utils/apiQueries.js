@@ -801,7 +801,7 @@ export const CREATE_MISSION_MUTATION = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   mutation createMission(
     $name: String
-    $companyId: Int
+    $companyId: Int!
     $context: GenericScalar
     $vehicleId: Int
     $vehicleRegistrationNumber: String
