@@ -1,5 +1,5 @@
 import React from "react";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 
 export function useImpersonation(token) {
   const store = useStoreSyncedWithLocalStorage();

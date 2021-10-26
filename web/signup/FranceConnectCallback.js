@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useApi } from "common/utils/api";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { useLoadingScreen } from "common/utils/loading";
 import Typography from "@material-ui/core/Typography";

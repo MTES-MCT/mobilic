@@ -7,7 +7,7 @@ import {
 } from "common/utils/contradictory";
 import flatMap from "lodash/flatMap";
 import { useApi } from "common/utils/api";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 
 export function useToggleContradictory(

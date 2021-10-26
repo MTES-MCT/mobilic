@@ -15,7 +15,7 @@ import {
 import Alert from "@material-ui/lab/Alert";
 import { useLoadingScreen } from "common/utils/loading";
 import { useApi } from "common/utils/api";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { loadUserData } from "common/utils/loadUserData";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 

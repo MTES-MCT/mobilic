@@ -14,7 +14,7 @@ import min from "lodash/min";
 import max from "lodash/max";
 import MenuItem from "@material-ui/core/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { DateOrDateTimePicker } from "./DateOrDateTimePicker";
 import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 import Switch from "@material-ui/core/Switch/Switch";

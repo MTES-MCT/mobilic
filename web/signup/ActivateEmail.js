@@ -1,5 +1,5 @@
 import React from "react";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { useLocation, useHistory } from "react-router-dom";
 import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";

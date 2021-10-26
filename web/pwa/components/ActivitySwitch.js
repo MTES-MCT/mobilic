@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import { ACTIVITIES, SWITCH_ACTIVITIES } from "common/utils/activities";
 import { useModals } from "common/utils/modals";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";
 import { MainCtaButton } from "./MainCtaButton";

@@ -6,7 +6,7 @@ import { formatPersonName } from "common/utils/coworkers";
 import IconButton from "@material-ui/core/IconButton";
 import { getAccessibleRoutes, getBadgeRoutes } from "./routes";
 import { useHistory, useLocation } from "react-router-dom";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { Logos } from "./Logos";
 import MenuIcon from "@material-ui/icons/Menu";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";

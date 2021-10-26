@@ -21,7 +21,7 @@ import uniqBy from "lodash/uniqBy";
 import max from "lodash/max";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useModals } from "common/utils/modals";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { getVehicleName } from "common/utils/vehicles";

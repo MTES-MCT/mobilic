@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField/TextField";
 import { useApi } from "common/utils/api";
 import { useHistory } from "react-router-dom";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import SignupStepper from "./SignupStepper";
 import Container from "@material-ui/core/Container";
 import { LoadingButton } from "common/components/LoadingButton";

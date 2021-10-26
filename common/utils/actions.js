@@ -1,7 +1,6 @@
 import React from "react";
-import mapValues from "lodash/mapValues";
 import values from "lodash/values";
-import { isPendingSubmission, useStoreSyncedWithLocalStorage } from "./store";
+import { useStoreSyncedWithLocalStorage } from "../store/store";
 import { useApi } from "./api";
 import { ACTIVITIES, parseActivityPayloadFromBackend } from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
@@ -41,6 +40,7 @@ import {
   UPDATE_MISSION_VEHICLE_MUTATION,
   VALIDATE_MISSION_MUTATION
 } from "./apiQueries";
+import { hasPendingUpdates } from "../store/offline";
 
 const ActionsContext = React.createContext(() => {});
 
@@ -60,32 +60,10 @@ class Actions {
           apiResponse.data.activities.logActivity
         );
         if (switchMode) {
-          this.store.dispatchUpdateAction(
-            prevState => {
-              const previousActivity = values(prevState.activities)
-                .map(this.store.resolveLastVersionOfItem)
-                .filter(Boolean)
-                .find(
-                  a =>
-                    a.userId === activity.userId &&
-                    a.id !== tempActivityId &&
-                    isPendingSubmission(a) &&
-                    a.pendingUpdates.some(
-                      upd =>
-                        upd.type === "update" && upd.requestId === requestId
-                    )
-                );
-              return previousActivity
-                ? {
-                    activities: {
-                      ...prevState.activities,
-                      [previousActivity.id.toString()]: {
-                        ...previousActivity,
-                        endTime: activity.startTime
-                      }
-                    }
-                  }
-                : {};
+          this.store.dispatch(
+            {
+              type: "closeCurrentActivity",
+              payload: { activity, tempActivityId, requestId }
             },
             ["activities"]
           );
@@ -236,25 +214,12 @@ class Actions {
           ),
           createOrReplace: true
         });
-        this.store.dispatchUpdateAction(
-          prevState => ({
-            activities: mapValues(prevState.activities, a => ({
-              ...a,
-              missionId:
-                a.missionId === tempMissionId ? mission.id : a.missionId
-            }))
-          }),
-          ["activities"]
-        );
-        this.store.dispatchUpdateAction(
-          prevState => ({
-            expenditures: mapValues(prevState.expenditures, e => ({
-              ...e,
-              missionId:
-                e.missionId === tempMissionId ? mission.id : e.missionId
-            }))
-          }),
-          ["expenditures"]
+        this.store.dispatch(
+          {
+            type: "removeTemporaryMissionId",
+            payload: { tempMissionId, missionId: mission.id }
+          },
+          ["activities", "expenditures"]
         );
       },
       onError: async (error, { missionId: tempMissionId }) => {
@@ -1321,7 +1286,7 @@ class Actions {
   };
 
   cancelExpenditure = async ({ expenditure }) => {
-    if (isPendingSubmission(expenditure)) {
+    if (hasPendingUpdates(expenditure)) {
       if (
         this.api.isCurrentlySubmittingRequests() ||
         expenditure.pendingUpdates.some(upd => upd.type === "delete")
@@ -1375,7 +1340,7 @@ class Actions {
   };
 
   cancelComment = async commentToCancel => {
-    if (isPendingSubmission(commentToCancel)) {
+    if (hasPendingUpdates(commentToCancel)) {
       if (
         this.api.isCurrentlySubmittingRequests() ||
         commentToCancel.pendingUpdates.some(upd => upd.type === "delete")

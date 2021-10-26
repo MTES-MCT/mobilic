@@ -1,7 +1,7 @@
 import React from "react";
 import values from "lodash/values";
 import { sortEvents } from "common/utils/events";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { ActionsContextProvider, useActions } from "common/utils/actions";
 import {
   augmentAndSortMissions,

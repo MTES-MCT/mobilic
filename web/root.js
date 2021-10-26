@@ -14,7 +14,7 @@ import "common/assets/styles/root.scss";
 import {
   StoreSyncedWithLocalStorageProvider,
   useStoreSyncedWithLocalStorage
-} from "common/utils/store";
+} from "common/store/store";
 import { ApiContextProvider, useApi } from "common/utils/api";
 import { theme } from "common/utils/theme";
 import { MODAL_DICT } from "./modals";

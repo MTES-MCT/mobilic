@@ -6,7 +6,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import DialogContent from "@material-ui/core/DialogContent";
 import { formatTimer, now } from "common/utils/time";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { CustomDialogTitle } from "../../common/CustomDialogTitle";
 import { VehicleInput } from "./VehicleInput";
 import Box from "@material-ui/core/Box";

@@ -6,7 +6,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import { AccountButton } from "./AccountButton";
 import Box from "@material-ui/core/Box";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 
 const useStyles = makeStyles(theme => ({
   accountButtonContainer: {

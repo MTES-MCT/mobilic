@@ -1,7 +1,7 @@
 import React from "react";
 import values from "lodash/values";
 import TextField from "common/utils/TextField";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import Autocomplete from "@material-ui/lab/Autocomplete/Autocomplete";
 import { createFilterOptions } from "@material-ui/lab/Autocomplete";
 import { getVehicleName } from "common/utils/vehicles";

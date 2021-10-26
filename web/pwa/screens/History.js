@@ -30,7 +30,7 @@ import { useModals } from "common/utils/modals";
 import moment from "moment";
 import IconButton from "@material-ui/core/IconButton";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
-import { useStoreSyncedWithLocalStorage } from "common/utils/store";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { Mission } from "../components/history/Mission";
