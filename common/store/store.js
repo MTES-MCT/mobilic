@@ -162,7 +162,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       : [actionOrActions];
 
     this.setState(
-      state => actions.reduce(rootReducer, state),
+      state => {
+        const newState = actions.reduce(rootReducer, state);
+        return newState;
+      },
       () => {
         if (this.allowOfflineMode)
           fieldsToSync.forEach(field => {

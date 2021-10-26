@@ -41,7 +41,7 @@ export function addPendingCreate(item, pendingRequestId) {
 }
 
 export function addPendingEdit(item, pendingRequestId, changes) {
-  addPendingVersion(item, "update", pendingRequestId, { new: changes });
+  return addPendingVersion(item, "update", pendingRequestId, { new: changes });
 }
 
 export function addPendingDelete(item, pendingRequestId) {

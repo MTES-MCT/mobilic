@@ -45,6 +45,7 @@ export function createItemsReducer(state, { items, entity, pendingRequestId }) {
                 ...(item.pendingUpdates || [])
               ]
             };
+          return acc;
         },
         {}
       )
@@ -112,8 +113,10 @@ export function deleteItemReducer(state, { id, entity, pendingRequestId }) {
       ? state[entity].map(item =>
           item.id === id ? addPendingDelete(item, pendingRequestId) : item
         )
-      : mapValues(state[entity], (item, id) =>
-          id === id.toString() ? addPendingDelete(item, pendingRequestId) : item
+      : mapValues(state[entity], (item, id_) =>
+          id_ === id.toString()
+            ? addPendingDelete(item, pendingRequestId)
+            : item
         )
   };
 }
