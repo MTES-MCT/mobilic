@@ -20,8 +20,7 @@ const ERROR_MESSAGES_TO_FILTER_OUT = [
 export function captureSentryException(err, context) {
   if (
     !isConnectionError(err) &&
-    !ERROR_NAMES_TO_FILTER_OUT.includes(err.name) &&
-    !ERROR_MESSAGES_TO_FILTER_OUT.includes(err.message)
+    !ERROR_NAMES_TO_FILTER_OUT.includes(err.name)
   ) {
     let loggedError = err;
     if (err.networkError) loggedError = err.networkError;
