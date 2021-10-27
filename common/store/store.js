@@ -2,6 +2,7 @@ import React from "react";
 import mapValues from "lodash/mapValues";
 import flatMap from "lodash/flatMap";
 import uniq from "lodash/uniq";
+import uniqBy from "lodash/uniqBy";
 import map from "lodash/map";
 
 import { NonConcurrentExecutionQueue } from "../utils/concurrency";
@@ -9,8 +10,9 @@ import { BroadcastChannel } from "broadcast-channel";
 import { currentUserId } from "../utils/cookie";
 import { captureSentryException } from "../utils/sentry";
 import { LOCAL_STORAGE_SCHEMA, NON_PERSISTENT_SCHEMA } from "./schemas";
-import { entitySelector } from "./selectors";
+import { employmentSelector, entitySelector } from "./selectors";
 import { rootReducer } from "./reducers/root";
+import { EMPLOYMENT_STATUS, getEmploymentsStatus } from "../utils/employments";
 
 const STORE_VERSION = 17;
 
@@ -403,16 +405,19 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   setHasAcceptedCgu = () => this.setState({ hasAcceptedCgu: true });
 
   companies = () => {
-    const employments = this.getEntity("employments").filter(
-      e => e.isAcknowledged
+    const employments = employmentSelector(this.state).filter(
+      e => getEmploymentsStatus(e) === EMPLOYMENT_STATUS.active
     );
-    return employments.map(e => ({
-      id: e.company.id,
-      name: e.company.name,
-      admin: e.hasAdminRights,
-      siren: e.company.siren,
-      settings: e.company.settings
-    }));
+    return uniqBy(
+      employments.map(e => ({
+        id: e.company.id,
+        name: e.company.name,
+        admin: e.hasAdminRights,
+        siren: e.company.siren,
+        settings: e.company.settings
+      })),
+      c => c.id
+    );
   };
 
   _updateUserId = async () =>

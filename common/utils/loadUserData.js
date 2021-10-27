@@ -36,6 +36,20 @@ const USER_QUERY = gql`
       employments(includePending: true) {
         id
         startDate
+        endDate
+        isAcknowledged
+        hasAdminRights
+        company {
+          id
+          name
+          siren
+          sirets
+          ...CompanySettings
+        }
+      }
+      currentEmployments {
+        id
+        startDate
         isAcknowledged
         hasAdminRights
         company {
@@ -94,7 +108,8 @@ export async function syncUser(userPayload, api, store) {
     hasActivatedEmail,
     disabledWarnings,
     missions: missionsPayload,
-    employments
+    employments,
+    currentEmployments
   } = userPayload;
 
   const activities = [];
@@ -156,25 +171,28 @@ export async function syncUser(userPayload, api, store) {
   const vehicles = [];
   const knownAddresses = [];
 
-  const employmentsPerCompanyId = {};
+  currentEmployments.forEach(e => {
+    const company = e.company;
+    company.users.forEach(u => {
+      if (u.id !== userPayload.id) {
+        const userMatch = users.find(u2 => u2.id === u.id);
+        if (!userMatch) {
+          users.push({ ...u, companyIds: [company.id] });
+        } else userMatch.companyIds.push(company.id);
+      }
+    });
+    vehicles.push(
+      ...company.vehicles.map(v => ({ ...v, companyId: company.id }))
+    );
+    knownAddresses.push(
+      ...company.knownAddresses.map(a => ({ ...a, companyId: company.id }))
+    );
+  });
 
+  const employmentsPerCompanyId = {};
   employments.forEach(e => {
     const company = e.company;
     if (!employmentsPerCompanyId[company.id]) {
-      company.users.forEach(u => {
-        if (u.id !== userPayload.id) {
-          const userMatch = users.find(u2 => u2.id === u.id);
-          if (!userMatch) {
-            users.push({ ...u, companyIds: [company.id] });
-          } else userMatch.companyIds.push(company.id);
-        }
-      });
-      vehicles.push(
-        ...company.vehicles.map(v => ({ ...v, companyId: company.id }))
-      );
-      knownAddresses.push(
-        ...company.knownAddresses.map(a => ({ ...a, companyId: company.id }))
-      );
       employmentsPerCompanyId[company.id] = [e];
     } else {
       const exisitingEmployment = employmentsPerCompanyId[company.id][0];

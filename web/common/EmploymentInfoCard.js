@@ -35,6 +35,9 @@ const useStyles = makeStyles(theme => ({
   },
   buttonContainer: {
     padding: theme.spacing(2)
+  },
+  ended: {
+    opacity: 0.5
   }
 }));
 
@@ -102,7 +105,10 @@ export function EmploymentInfoCard({
   )[status];
 
   return (
-    <InfoCard variant="outlined">
+    <InfoCard
+      variant="outlined"
+      className={status === EMPLOYMENT_STATUS.ended ? classes.ended : ""}
+    >
       <Grid
         container
         spacing={2}
