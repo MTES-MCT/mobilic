@@ -19,6 +19,7 @@ import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 import { frenchFormatDateStringOrTimeStamp } from "common/utils/time";
 import { CHANGE_EMAIL_MUTATION } from "common/utils/apiQueries";
 import { EmploymentInfoCard } from "../common/EmploymentInfoCard";
+import { employmentSelector } from "common/store/selectors";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
@@ -47,7 +48,7 @@ export default function Home() {
 
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
-  const employments = store.getEntity("employments");
+  const employments = employmentSelector(store.state);
 
   const modals = useModals();
 
