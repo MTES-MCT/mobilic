@@ -15,6 +15,8 @@ import Drawer from "@material-ui/core/Drawer/Drawer";
 import { isWidthUp } from "@material-ui/core/withWidth";
 import Box from "@material-ui/core/Box";
 import { WorkTimeDetails } from "./WorkTimeDetails";
+import SvgIcon from "@material-ui/core/SvgIcon";
+import { ChevronRight } from "@material-ui/icons";
 
 const useStyles = makeStyles(theme => ({
   warningText: {
@@ -128,6 +130,15 @@ export function WorkTimeTable({
     sortable: true,
     overflowTooltip: true
   };
+  const pictoCol = {
+    label: "+ d'infos",
+    name: "id",
+    format: () => <SvgIcon viewBox="0 0 24 24" component={ChevronRight} />,
+    sortable: false,
+    align: "center",
+    overflowTooltip: true
+  };
+
   let columns = [];
   if (period === "day") {
     if (showMissionName) {
@@ -151,6 +162,7 @@ export function WorkTimeTable({
       ];
     }
     if (showExpenditures) columns.push(expenditureCol);
+    columns.push(pictoCol);
   } else if (period === "week") {
     columns = [employeeCol, workTimeCol, workedDaysCol];
   } else {

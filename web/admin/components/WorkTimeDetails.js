@@ -11,13 +11,15 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import { useStyles } from "./styles/WorkTimeDetailsStyle";
-import { Card, Grid } from "@material-ui/core";
+import { Accordion, AccordionDetails, Card, Grid } from "@material-ui/core";
 import Chip from "@material-ui/core/Chip";
 import { VerticalTimeline } from "common/components/VerticalTimeline";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import {
+  ACTIVITIES,
   addBreakToActivityList,
-  computeDurationAndTime
+  computeDurationAndTime,
+  filterActivitiesOverlappingPeriod
 } from "common/utils/activities";
 import { MissionDetails } from "./MissionDetails";
 import SvgIcon from "@material-ui/core/SvgIcon";
@@ -26,14 +28,22 @@ import {
   DAY,
   formatTimeOfDay,
   formatTimer,
-  prettyFormatDay
+  getStartOfWeek,
+  now,
+  prettyFormatDay,
+  WEEK
 } from "common/utils/time";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { DayRegulationInfo } from "../../common/DayRegulationInfo";
 
 export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
   const classes = useStyles();
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
-  const [activities, setActivities] = React.useState([]);
+  const [dayActivities, setDayActivities] = React.useState([]);
+  const [weekActivities, setWeekActivities] = React.useState([]);
+  const [activitiesOver3Days, setActivitiesOver3Days] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
   const [missionDrawerOpen, setMissionDrawerOpen] = React.useState(false);
   const [missionIdOnFocus, setMissionIdOnFocus] = React.useState(null);
@@ -73,6 +83,45 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
     overflowTooltip: true
   };
 
+  const listActivitiesCol = [
+    {
+      label: "Activité",
+      name: "type",
+      format: (type, entry) => ACTIVITIES[type].label,
+      maxWidth: 185,
+      minWidth: 150
+    },
+    {
+      label: "Début",
+      name: "displayedStartTime",
+      format: (time, entry) => formatTimeOfDay(time),
+      minWidth: 210
+    },
+    {
+      label: "Fin",
+      name: "displayedEndTime",
+      format: (time, entry) =>
+        time ? (
+          formatTimeOfDay(time)
+        ) : (
+          <span className={classes.warningText}>
+            <strong>En cours</strong>
+          </span>
+        ),
+      minWidth: 210
+    },
+    {
+      label: "Durée",
+      name: "duration",
+      align: "right",
+      format: (duration, entry) =>
+        formatTimer(
+          (entry.displayedEndTime || now()) - entry.displayedStartTime
+        ),
+      minWidth: 60
+    }
+  ];
+
   const showMissionName = missions.some(mission => mission.name);
   const missionTableColumns = showMissionName ? [nameMissionCol] : [];
   missionTableColumns.push(
@@ -91,11 +140,20 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
   const hasExpenditure = !!Object.values(
     workTimeEntry.expenditures || {}
   )?.find(expCount => expCount > 0);
+
   React.useEffect(() => {
     withLoadingScreen(async () => {
       const apiResponse = await api.graphQlQuery(USER_WORK_DAY_QUERY, {
-        activityAfter: workTimeEntry.periodActualStart,
-        activityBefore: workTimeEntry.periodActualEnd,
+        activityAfter: Math.min(
+          getStartOfWeek(workTimeEntry.periodActualStart),
+          workTimeEntry.periodActualStart - DAY
+        ),
+        activityBefore: Math.max(
+          getStartOfWeek(workTimeEntry.periodActualEnd) + WEEK,
+          workTimeEntry.periodActualEnd + DAY
+        ),
+        missionAfter: workTimeEntry.periodActualStart,
+        missionBefore: workTimeEntry.periodActualEnd,
         userId: workTimeEntry.user.id
       });
       const allActivities = apiResponse.data.user.activities.edges.map(
@@ -104,8 +162,31 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
       const allMissions = apiResponse.data.user.missions.edges.map(
         nodeMission => nodeMission.node
       );
+
+      setWeekActivities(
+        filterActivitiesOverlappingPeriod(
+          allActivities,
+          getStartOfWeek(workTimeEntry.periodActualStart),
+          getStartOfWeek(workTimeEntry.periodActualEnd) + WEEK
+        )
+      );
+
+      setActivitiesOver3Days(
+        filterActivitiesOverlappingPeriod(
+          allActivities,
+          workTimeEntry.periodActualStart - DAY,
+          workTimeEntry.periodActualEnd + DAY
+        )
+      );
+
+      const activitiesOfDay = filterActivitiesOverlappingPeriod(
+        allActivities,
+        workTimeEntry.periodActualStart,
+        workTimeEntry.periodActualEnd
+      );
+
       // Add breaks
-      const activitiesWithBreaks = addBreakToActivityList(allActivities);
+      const activitiesWithBreaks = addBreakToActivityList(activitiesOfDay);
       // Compute duration and end time for each activity
       const augmentedAndSortedActivities = computeDurationAndTime(
         activitiesWithBreaks,
@@ -113,7 +194,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
         periodEnd.getTime() / 1000
       );
 
-      setActivities(augmentedAndSortedActivities);
+      setDayActivities(augmentedAndSortedActivities);
       setMissions(missionsToTableEntries(allMissions));
     });
   }, [workTimeEntry]);
@@ -161,7 +242,14 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
       </Grid>
       <Grid item xs={8}>
         <Card className={classes.cardLegalThreshold} variant="outlined">
-          Alertes règlementaires
+          <Typography variant="h3" className={classes.legalInfoTitle}>
+            Seuils réglementaires
+          </Typography>
+          <DayRegulationInfo
+            activitiesOverCurrentPastAndNextDay={activitiesOver3Days}
+            weekActivities={weekActivities}
+            dayStart={workTimeEntry.periodStart}
+          />
         </Card>
       </Grid>
     </Grid>,
@@ -181,7 +269,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
               return (
                 expCount > 0 && (
                   <Chip
-                    key={exp.type}
+                    key={exp}
                     className={classes.chipExpenditure}
                     label={label}
                   />
@@ -195,7 +283,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
       <Typography variant="h3" className={classes.activitiesTitle}>
         Activités de la journée
       </Typography>
-      {activities.length > 0 && (
+      {dayActivities.length > 0 && (
         <Grid
           container
           key={2}
@@ -206,18 +294,39 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
             <Typography variant="h6">Frise temporelle</Typography>
             <VerticalTimeline
               width={300}
-              activities={activities}
+              activities={dayActivities}
               datetimeFormatter={formatTimeOfDay}
             />
           </Grid>
           <Grid item xs={8}>
             <Typography variant="h6">Répartition</Typography>
             <ActivitiesPieChart
-              activities={activities}
+              activities={dayActivities}
               fromTime={workTimeEntry.periodStart}
               untilTime={periodEnd.getTime() / 1000}
               maxWidth={500}
             />
+          </Grid>
+          <Grid item xs={12}>
+            <Accordion
+              elevation={0}
+              className={classes.listActivitiesAccordion}
+            >
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                className={classes.listActivitiesAccordionSummary}
+              >
+                <Typography className="bold">Liste des activités</Typography>
+              </AccordionSummary>
+              <AccordionDetails
+                className={classes.listActivitiesAccordionDetail}
+              >
+                <AugmentedTable
+                  columns={listActivitiesCol}
+                  entries={dayActivities}
+                />
+              </AccordionDetails>
+            </Accordion>
           </Grid>
         </Grid>
       )}

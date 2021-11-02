@@ -362,6 +362,8 @@ export const USER_WORK_DAY_QUERY = gql`
   query workDayDetail(
     $activityBefore: TimeStamp
     $activityAfter: TimeStamp
+    $missionBefore: TimeStamp
+    $missionAfter: TimeStamp
     $userId: Int!
   ) {
     user(id: $userId) {
@@ -375,7 +377,7 @@ export const USER_WORK_DAY_QUERY = gql`
           }
         }
       }
-      missions(fromTime: $activityAfter, untilTime: $activityBefore) {
+      missions(fromTime: $missionAfter, untilTime: $missionBefore) {
         edges {
           node {
             id
