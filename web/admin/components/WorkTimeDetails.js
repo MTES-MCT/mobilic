@@ -98,7 +98,6 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
         activityBefore: workTimeEntry.periodActualEnd,
         userId: workTimeEntry.user.id
       });
-      console.log("apiResponse", apiResponse);
       const allActivities = apiResponse.data.user.activities.edges.map(
         nodeAct => nodeAct.node
       );
@@ -120,8 +119,8 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
   }, [workTimeEntry]);
 
   return [
-    <Box key={0} className={classes.missionTitleContainer}>
-      <Typography variant="h3" className={classes.missionTitle}>
+    <Box key={0} className={classes.workTimeDetailsTitleContainer}>
+      <Typography variant="h3" className={classes.workTimeDetailsTitle}>
         Détail de la journée du{" "}
         {prettyFormatDay(workTimeEntry.periodActualStart, true)}
       </Typography>

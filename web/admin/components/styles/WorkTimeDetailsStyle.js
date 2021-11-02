@@ -48,5 +48,17 @@ export const useStyles = makeStyles(theme => ({
   missionDrawer: {
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2)
+  },
+  workTimeDetailsTitleContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start"
+  },
+  closeButton: {
+    padding: 0
+  },
+  workTimeDetailsTitle: {
+    textOverflow: "ellipsis",
+    marginRight: theme.spacing(4)
   }
 }));
