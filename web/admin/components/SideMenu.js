@@ -2,12 +2,12 @@ import React from "react";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Link from "@material-ui/core/Link";
-import Badge from "@material-ui/core/Badge";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { useAdminStore } from "../utils/store";
 import { getBadgeRoutes } from "../../common/routes";
+import { TextWithBadge } from "../../common/TextWithBadge";
 
 const menuItemStyles = makeStyles(theme => ({
   root: {
@@ -21,9 +21,6 @@ const menuItemStyles = makeStyles(theme => ({
       color: theme.palette.primary.main,
       backgroundColor: theme.palette.background.default
     }
-  },
-  customBadge: {
-    right: theme.spacing(-2)
   },
   active: {
     background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.main} 5px, ${theme.palette.background.default} 5px, ${theme.palette.background.default})`
@@ -50,14 +47,13 @@ function MenuItem({ label, path }) {
           history.push(path);
         }}
       >
-        <Badge
+        <TextWithBadge
           invisible={!badgeContent}
           badgeContent={badgeContent}
           color="error"
-          classes={{ badge: classes.customBadge }}
         >
           {label}
-        </Badge>
+        </TextWithBadge>
       </Link>
     </ListItem>
   );

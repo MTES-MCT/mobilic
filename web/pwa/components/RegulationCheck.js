@@ -3,8 +3,9 @@ import CheckIcon from "@material-ui/icons/Check";
 import WarningIcon from "@material-ui/icons/Warning";
 import ScheduleIcon from "@material-ui/icons/Schedule";
 import Typography from "@material-ui/core/Typography";
-import { RULE_RESPECT_STATUS } from "common/utils/regulation";
+import { RULE_RESPECT_STATUS } from "common/utils/regulation/rules";
 import Box from "@material-ui/core/Box";
+import { ALERT_TYPE_PROPS } from "common/utils/regulation/alertTypes";
 
 export function RegulationCheck({ check }) {
   let color;
@@ -26,6 +27,10 @@ export function RegulationCheck({ check }) {
     icon = props => <WarningIcon {...props} />;
     emoji = "😢";
   }
+
+  const alertProps = ALERT_TYPE_PROPS[check.rule];
+  const message = alertProps.format(check.status, check.extra);
+
   return (
     <Box color={color} py={1} className="flex-row">
       {icon({
@@ -35,7 +40,7 @@ export function RegulationCheck({ check }) {
       })}
       <Box pl={1}>
         <Typography align="justify" variant="body2" color="inherit">
-          {check.message}
+          {message}
           <span>{` ${emoji}`}</span>
         </Typography>
       </Box>

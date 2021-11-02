@@ -5,7 +5,7 @@ import {
   WorkTimeSummaryKpiGrid
 } from "../WorkTimeSummary";
 import { RegulationCheck } from "../RegulationCheck";
-import { checkMinimumDurationOfWeeklyRest } from "common/utils/regulation";
+import { checkMinimumDurationOfWeeklyRest } from "common/utils/regulation/rules";
 import { MissionReviewSection } from "../MissionReviewSection";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";

@@ -56,6 +56,7 @@ export function EmploymentInfoCard({
   hideRole = false,
   hideStatus = false,
   hideActions = false,
+  lightenIfEnded = true,
   defaultOpen = false
 }) {
   const [open, setOpen] = React.useState(defaultOpen);
@@ -107,7 +108,11 @@ export function EmploymentInfoCard({
   return (
     <InfoCard
       variant="outlined"
-      className={status === EMPLOYMENT_STATUS.ended ? classes.ended : ""}
+      className={
+        status === EMPLOYMENT_STATUS.ended && lightenIfEnded
+          ? classes.ended
+          : ""
+      }
     >
       <Grid
         container
@@ -115,6 +120,8 @@ export function EmploymentInfoCard({
         alignItems="center"
         justify="space-between"
         wrap="nowrap"
+        style={{ cursor: "pointer" }}
+        onClick={() => setOpen(!open)}
       >
         <Grid item>
           <Typography className={classes.companyName}>
@@ -142,7 +149,6 @@ export function EmploymentInfoCard({
               aria-label={open ? "Masquer" : "Afficher"}
               color="inherit"
               className="no-margin-no-padding"
-              onClick={() => setOpen(!open)}
             >
               {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </IconButton>

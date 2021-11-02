@@ -14,3 +14,22 @@ export function getEmploymentsStatus(employment) {
     return EMPLOYMENT_STATUS.ended;
   return EMPLOYMENT_STATUS.active;
 }
+
+export function orderEmployments(employments) {
+  return employments.sort((e1, e2) => {
+    const status1 = getEmploymentsStatus(e1);
+    const status2 = getEmploymentsStatus(e2);
+
+    if (
+      status1 === EMPLOYMENT_STATUS.ended &&
+      status2 !== EMPLOYMENT_STATUS.ended
+    )
+      return 1;
+    if (
+      status1 !== EMPLOYMENT_STATUS.ended &&
+      status2 === EMPLOYMENT_STATUS.ended
+    )
+      return -1;
+    return e1.startDate < e2.startDate ? 1 : -1;
+  });
+}
