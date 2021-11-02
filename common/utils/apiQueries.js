@@ -312,7 +312,7 @@ export const USER_READ_QUERY = gql`
           }
         }
       }
-      employments {
+      currentEmployments {
         id
         startDate
         isAcknowledged
@@ -327,6 +327,19 @@ export const USER_READ_QUERY = gql`
             name
             registrationNumber
           }
+        }
+      }
+      employments {
+        id
+        startDate
+        isAcknowledged
+        hasAdminRights
+        endDate
+        company {
+          id
+          name
+          siren
+          ...CompanySettings
         }
       }
     }

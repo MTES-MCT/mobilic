@@ -29,7 +29,7 @@ import TwitterWhiteIcon from "common/assets/images/twitter-white.svg";
 
 import Grid from "@material-ui/core/Grid";
 import { useAdminStore } from "../admin/utils/store";
-import Badge from "@material-ui/core/Badge";
+import { TextWithBadge } from "./TextWithBadge";
 
 const SOCIAL_NETWORKS = [
   {
@@ -106,9 +106,6 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.background.default
     },
     fontWeight: "bold"
-  },
-  customBadge: {
-    right: theme.spacing(-2)
   },
   selectedNavListItem: {
     background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.main} 5px, ${theme.palette.background.default} 5px, ${theme.palette.background.default})`
@@ -195,14 +192,13 @@ function ListRouteItem({ route, closeDrawer }) {
           closeDrawer();
         }}
       >
-        <Badge
+        <TextWithBadge
           invisible={!badgeContent}
           badgeContent={badgeContent}
           color="error"
-          classes={{ badge: classes.customBadge }}
         >
           {route.label}
-        </Badge>
+        </TextWithBadge>
       </Link>
     </ListItem>
   );

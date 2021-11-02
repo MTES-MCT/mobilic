@@ -5,6 +5,7 @@ import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import Typography from "@material-ui/core/Typography";
 import { formatDayOfWeek, shortPrettyFormatDay } from "common/utils/time";
+import { PERIOD_STATUSES } from "common/utils/history/computePeriodStatuses";
 
 const useStyles = makeStyles(theme => ({
   periodContainer: {
@@ -60,9 +61,7 @@ const useStyles = makeStyles(theme => ({
 export function PeriodCarouselPicker({
   selectedPeriod,
   periods,
-  shouldDisplayPeriodsInBold = {},
-  shouldDisplayRedChipsForPeriods,
-  shouldDisplayOrangeChipsForPeriods,
+  periodStatuses,
   onPeriodChange,
   renderPeriod,
   periodMissionsGetter = () => {}
@@ -70,8 +69,7 @@ export function PeriodCarouselPicker({
   const classes = useStyles();
 
   const periodRef = React.createRef();
-
-  const selectedPeriodIdx = periods.findIndex(p => p === selectedPeriod);
+  const [selectedPeriodIdx, setSelectedPeriodIdx] = React.useState(0);
 
   const scrollToSelectedPeriod = () => {
     if (periodRef.current) {
@@ -84,6 +82,7 @@ export function PeriodCarouselPicker({
   };
 
   React.useEffect(() => {
+    setSelectedPeriodIdx(periods.findIndex(p => p === selectedPeriod));
     if (periods) {
       scrollToSelectedPeriod();
     }
@@ -103,6 +102,7 @@ export function PeriodCarouselPicker({
         </Box>
         <Box py={1} mx={1} className={`flex-row ${classes.carousel}`}>
           {periods.map(period => {
+            const periodStatus = periodStatuses[period.toString()];
             return (
               <Box
                 p={1}
@@ -115,11 +115,9 @@ export function PeriodCarouselPicker({
                   onPeriodChange(period);
                 }}
               >
-                {shouldDisplayRedChipsForPeriods &&
-                shouldDisplayRedChipsForPeriods[period.toString()] ? (
+                {periodStatus === PERIOD_STATUSES.notValidated ? (
                   <Box className={`${classes.periodChip}`} />
-                ) : shouldDisplayOrangeChipsForPeriods &&
-                  shouldDisplayOrangeChipsForPeriods[period.toString()] ? (
+                ) : periodStatus === PERIOD_STATUSES.notValidatedByAdmin ? (
                   <Box
                     className={`${classes.periodChip} ${classes.orangeChip}`}
                   />
@@ -129,18 +127,12 @@ export function PeriodCarouselPicker({
                 ) : (
                   <Box className="flex-column-space-between">
                     <Typography
-                      className={
-                        shouldDisplayPeriodsInBold[period] ? "bold" : ""
-                      }
+                      className={periodStatus ? "bold" : ""}
                       style={{ textTransform: "uppercase" }}
                     >
                       {formatDayOfWeek(period)}
                     </Typography>
-                    <Typography
-                      className={
-                        shouldDisplayPeriodsInBold[period] ? "bold" : ""
-                      }
-                    >
+                    <Typography className={periodStatus ? "bold" : ""}>
                       {shortPrettyFormatDay(period)}
                     </Typography>
                   </Box>

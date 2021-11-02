@@ -1,23 +1,15 @@
 import React from "react";
-import mapValues from "lodash/mapValues";
 import Container from "@material-ui/core/Container";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import {
   getStartOfWeek,
-  getStartOfMonth,
   SHORT_MONTHS,
   shortPrettyFormatDay,
   DAY,
-  startOfDay,
-  WEEK,
-  HOUR,
-  getStartOfDay
+  WEEK
 } from "common/utils/time";
-import {
-  findMatchingPeriodInNewUnit,
-  groupMissionsByPeriodUnit
-} from "common/utils/history";
+import { useGroupMissionsAndExtractActivities } from "common/utils/history/groupByPeriodUnit";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
 import Typography from "@material-ui/core/Typography";
@@ -37,21 +29,20 @@ import { Mission } from "../components/history/Mission";
 import { Day } from "../components/history/Day";
 import { Week } from "../components/history/Week";
 import { Month } from "../components/history/Month";
-import {
-  filterActivitiesOverlappingPeriod,
-  sortActivities
-} from "common/utils/activities";
+import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
 import Grid from "@material-ui/core/Grid";
 import GetAppIcon from "@material-ui/icons/GetApp";
+import { useSelectPeriod } from "common/utils/history/changePeriod";
+import { PERIOD_UNITS } from "common/utils/history/periodUnits";
+import { useComputePeriodStatuses } from "common/utils/history/computePeriodStatuses";
 
 const tabs = {
   mission: {
     label: "Mission",
     value: "mission",
-    periodLength: moment.duration(0),
-    getPeriod: date => date,
+    ...PERIOD_UNITS.mission,
     formatPeriod: (period, missions) => {
-      const mission = missions[0];
+      const mission = missions ? missions[0] : {};
       return (
         <Box className="flex-column-space-between">
           <Typography className="bold">{mission.name || "Sans nom"}</Typography>
@@ -66,14 +57,13 @@ const tabs = {
   day: {
     label: "Jour",
     value: "day",
-    periodLength: moment.duration(1, "days"),
-    getPeriod: date => getStartOfDay(date),
+    ...PERIOD_UNITS.day,
     renderPeriod: props => <Day {...props} />
   },
   week: {
     label: "Semaine",
     value: "week",
-    periodLength: moment.duration(1, "weeks"),
+    ...PERIOD_UNITS.week,
     formatPeriod: (period, missions) => {
       return (
         <Box className="flex-column-space-between">
@@ -92,14 +82,12 @@ const tabs = {
         </Box>
       );
     },
-    getPeriod: date => getStartOfWeek(date),
     renderPeriod: props => <Week {...props} />
   },
   month: {
     label: "Mois",
     value: "month",
-    periodLength: moment.duration(1, "months"),
-    getPeriod: date => getStartOfMonth(date),
+    ...PERIOD_UNITS.month,
     renderPeriod: props => <Month {...props} />,
     formatPeriod: (period, missions) => {
       const periodDate = new Date(period * 1000);
@@ -169,56 +157,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function fillHistoryPeriods(periods, step) {
-  if (!["day", "month", "week"].includes(step)) return periods;
-
-  const allPeriods = [];
-  let continuousPeriod = startOfDay(new Date(periods[0] * 1000));
-  let index = 0;
-  while (index <= periods.length - 1) {
-    const currentActualPeriod = periods[index];
-    if (continuousPeriod > currentActualPeriod) {
-      allPeriods.push(currentActualPeriod);
-      index = index + 1;
-    } else {
-      let continuousPeriodEnd;
-      if (step === "day") {
-        continuousPeriodEnd = startOfDay(
-          new Date((continuousPeriod + DAY + HOUR) * 1000)
-        );
-      } else if (step === "week") {
-        continuousPeriodEnd = startOfDay(
-          new Date((continuousPeriod + WEEK + HOUR) * 1000)
-        );
-      } else if (step === "month") {
-        continuousPeriodEnd = getStartOfMonth(continuousPeriod + DAY * 32);
-      }
-
-      if (currentActualPeriod >= continuousPeriodEnd) {
-        if (
-          step !== "mission" ||
-          ![0, 6].includes(new Date(continuousPeriod * 1000).getDay())
-        )
-          allPeriods.push(continuousPeriod);
-      }
-      continuousPeriod = continuousPeriodEnd;
-    }
-  }
-  return allPeriods;
-}
-
-function computeMissionGroups(missions, periodUnits) {
-  const groupsByPeriodUnit = {};
-  periodUnits.forEach(unit => {
-    groupsByPeriodUnit[unit.value] = groupMissionsByPeriodUnit(
-      missions,
-      unit.getPeriod,
-      unit.periodLength
-    );
-  });
-  return groupsByPeriodUnit;
-}
-
 export function History({
   missions = [],
   currentMission,
@@ -233,7 +171,8 @@ export function History({
   coworkers = null,
   vehicles = null,
   userId = null,
-  createMission = null
+  createMission = null,
+  openPeriod = null
 }) {
   const location = useLocation();
   const history = useHistory();
@@ -244,100 +183,72 @@ export function History({
 
   const actualUserId = userId || store.userId();
 
-  const [activities, setActivities] = React.useState([]);
-  const [
-    missionGroupsByPeriodUnit,
-    setMissionGroupsByPeriodUnit
-  ] = React.useState(computeMissionGroups(missions, Object.values(tabs)));
-
   const onBackButtonClick = location.state
     ? () => history.push(location.state.previousPagePath)
     : null;
-
-  React.useEffect(() => {
-    const queryString = new URLSearchParams(location.search);
-    const mission = queryString.get("mission");
-    if (mission) {
-      const selectedMission = missions.find(m => m.id === parseInt(mission));
-      const missionPeriod = selectedMission
-        ? tabs[currentTab].getPeriod(selectedMission.startTime)
-        : null;
-      if (currentTab === "mission") {
-        setSelectedPeriod(missionPeriod);
-        setMissionId(mission);
-      }
-    }
-  }, [location]);
 
   const queryString = new URLSearchParams(location.search);
   const [currentTab, setCurrentTab] = React.useState(
     queryString.get("mission") ? "mission" : "day"
   );
 
-  const groupedMissions = missionGroupsByPeriodUnit[currentTab];
+  const [
+    missionGroupsByPeriodUnit,
+    activities
+  ] = useGroupMissionsAndExtractActivities(missions, Object.values(tabs));
+  const [
+    selectedPeriod,
+    goToPeriod,
+    goToMission,
+    periodsByPeriodUnit
+  ] = useSelectPeriod(missionGroupsByPeriodUnit, currentTab);
+  const periodStatuses = useComputePeriodStatuses(missionGroupsByPeriodUnit);
 
-  const periods = Object.keys(groupedMissions)
-    .map(p => parseInt(p))
-    .sort();
-
-  const filledPeriods = fillHistoryPeriods(periods, currentTab);
-
-  const [selectedPeriod, setSelectedPeriod] = React.useState(
-    filledPeriods[filledPeriods.length - 1]
-  );
-  const mission = missions.find(m => m.startTime === selectedPeriod);
-  const [missionId, setMissionId] = React.useState(mission ? mission.id : null);
-
-  React.useEffect(() => {
-    if (
-      !groupedMissions[selectedPeriod] &&
-      !filledPeriods.includes(selectedPeriod)
-    ) {
-      if (missionId && currentTab === "mission") {
-        const mission = missions.find(m => m.id === missionId);
-        if (mission)
-          setSelectedPeriod(tabs[currentTab].getPeriod(mission.startTime));
-        else setSelectedPeriod(filledPeriods[filledPeriods.length - 1]);
-      } else setSelectedPeriod(filledPeriods[filledPeriods.length - 1]);
-    }
-  }, [missions]);
-
-  React.useEffect(() => {
-    setMissionGroupsByPeriodUnit(
-      computeMissionGroups(missions, Object.values(tabs))
-    );
-    const acts = missions.reduce(
-      (acc, mission) => [...acc, ...mission.activities],
-      []
-    );
-    sortActivities(acts);
-    setActivities(acts);
-  }, [missions]);
+  const groupedMissions = missionGroupsByPeriodUnit[currentTab] || {};
+  const periods = periodsByPeriodUnit[currentTab] || [];
 
   function handlePeriodChange(e, newTab, selectedDate) {
-    const newGroups = missionGroupsByPeriodUnit[newTab];
-
-    const newPeriods = fillHistoryPeriods(
-      Object.keys(newGroups)
-        .map(p => parseInt(p))
-        .sort(),
-      newTab
-    );
-
-    const newPeriod = findMatchingPeriodInNewUnit(
-      selectedDate,
-      newPeriods,
-      tabs[currentTab].periodLength,
-      tabs[newTab].periodLength
-    );
     setCurrentTab(newTab);
-    setSelectedPeriod(newPeriod);
-    if (newTab === "mission") {
-      const mission = missions.find(m => m.startTime === newPeriod);
-      setMissionId(mission ? mission.id : null);
-    }
+    goToPeriod(newTab, selectedDate);
     resetLocation();
   }
+
+  React.useEffect(() => {
+    let params = openPeriod;
+    if (!params) {
+      const queryString = new URLSearchParams(location.search);
+      params = {};
+      for (let pair of queryString.entries()) {
+        params[pair[0]] = pair[1];
+      }
+    }
+    const periodUnit = Object.keys(params).find(unit =>
+      Object.keys(PERIOD_UNITS).includes(unit)
+    );
+    if (periodUnit === "mission") {
+      const missionId = parseInt(params[periodUnit]);
+      if (missionId) {
+        setCurrentTab("mission");
+        goToMission(missionId);
+      }
+    } else if (periodUnit) {
+      let ts = null;
+      try {
+        const date = new Date(
+          parseInt(params[periodUnit].slice(0, 4)),
+          parseInt(params[periodUnit].slice(5, 7)) - 1,
+          parseInt(params[periodUnit].slice(8, 10))
+        );
+        ts = (date.getTime() / 1000) >> 0;
+      } catch {
+        ts = null;
+      }
+      if (ts) {
+        setCurrentTab(periodUnit);
+        goToPeriod(periodUnit, ts);
+      }
+    }
+  }, [location, openPeriod]);
 
   const resetLocation = () => {
     if (location.search && location.pathname.startsWith("/app/history")) {
@@ -348,7 +259,9 @@ export function History({
   const classes = useStyles();
 
   const missionsInSelectedPeriod = groupedMissions[selectedPeriod];
-  const activitiesBefore = activities.filter(a => a.startTime < selectedPeriod);
+  const activitiesBefore = selectedPeriod
+    ? activities.filter(a => a.startTime < selectedPeriod)
+    : [];
   const previousPeriodActivityEnd =
     activitiesBefore.length > 0
       ? Math.min(
@@ -356,15 +269,6 @@ export function History({
           Math.max(...activitiesBefore.map(a => a.endTime))
         )
       : null;
-
-  const periodsWithNeedForValidation = mapValues(groupedMissions, ms =>
-    ms.some(m => !m.validation && !m.adminValidation)
-  );
-  const periodsWithNeedForAdminValidation = mapValues(groupedMissions, ms =>
-    ms.some(m => !m.adminValidation)
-  );
-
-  const shouldDisplayPeriodsInBold = mapValues(groupedMissions, () => true);
 
   const selectedPeriodEnd = moment
     .unix(selectedPeriod)
@@ -464,29 +368,15 @@ export function History({
             />
           ))}
         </Tabs>
-        {filledPeriods.length > 0 && (
+        {periods.length > 0 && (
           <PeriodCarouselPicker
-            periods={filledPeriods}
-            shouldDisplayPeriodsInBold={shouldDisplayPeriodsInBold}
-            shouldDisplayRedChipsForPeriods={
-              ["mission", "day"].includes(currentTab)
-                ? periodsWithNeedForValidation
-                : null
-            }
-            shouldDisplayOrangeChipsForPeriods={
-              ["mission", "day"].includes(currentTab)
-                ? periodsWithNeedForAdminValidation
-                : null
-            }
+            periods={periods}
             selectedPeriod={selectedPeriod}
             onPeriodChange={newp => {
-              setSelectedPeriod(newp);
-              if (currentTab === "mission") {
-                const mission = missions.find(m => m.startTime === newp);
-                setMissionId(mission ? mission.id : null);
-              }
+              goToPeriod(currentTab, newp);
               resetLocation();
             }}
+            periodStatuses={periodStatuses[currentTab] || {}}
             renderPeriod={tabs[currentTab].formatPeriod}
             periodMissionsGetter={period => groupedMissions[period]}
           />

@@ -4,8 +4,12 @@
 // - when switching from day to week the new period should be the week containing the current day
 // - conversely, when switching from week to day, we decide (arbitrarily) that the new period should be the first (existing) day of the current week
 import moment from "moment";
-import { now } from "./time";
-import { filterActivitiesOverlappingPeriod } from "./activities";
+import { now } from "../time";
+import {
+  filterActivitiesOverlappingPeriod,
+  sortActivities
+} from "../activities";
+import React from "react";
 
 export function findMatchingPeriodInNewUnit(
   oldPeriod, // the selected period on the old time scale
@@ -37,11 +41,10 @@ export function findMatchingPeriodInNewUnit(
   return newPeriod;
 }
 
-export function groupMissionsByPeriodUnit(
-  missions,
-  periodGetter,
-  periodLength
-) {
+export function groupMissionsByPeriodUnit(missions, unit) {
+  const periodGetter = unit.getPeriod;
+  const periodLength = unit.periodLength;
+
   const groups = {};
   const now1 = now();
   missions.forEach(mission => {
@@ -78,4 +81,33 @@ export function groupMissionsByPeriodUnit(
     }
   });
   return groups;
+}
+
+function computeMissionGroups(missions, periodProps) {
+  const groupsByPeriodUnit = {};
+  periodProps.forEach(unit => {
+    groupsByPeriodUnit[unit.value] = groupMissionsByPeriodUnit(missions, unit);
+  });
+  return groupsByPeriodUnit;
+}
+
+export function useGroupMissionsAndExtractActivities(missions, periodProps) {
+  const [activities, setActivities] = React.useState([]);
+
+  const [
+    missionGroupsByPeriodUnit,
+    setMissionGroupsByPeriodUnit
+  ] = React.useState({});
+
+  React.useEffect(() => {
+    setMissionGroupsByPeriodUnit(computeMissionGroups(missions, periodProps));
+    const acts = missions.reduce(
+      (acc, mission) => [...acc, ...mission.activities],
+      []
+    );
+    sortActivities(acts);
+    setActivities(acts);
+  }, [missions]);
+
+  return [missionGroupsByPeriodUnit, activities];
 }

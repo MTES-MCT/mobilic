@@ -1,12 +1,12 @@
 import {
-  formatTimer,
   HOUR,
   LONG_BREAK_DURATION,
   now,
   MINUTE,
   DAY,
   getStartOfDay
-} from "./time";
+} from "../time";
+import { ALERT_TYPES } from "./alertTypes";
 
 const MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK = HOUR * 6;
 const MAXIMUM_DURATION_OF_DAY_WORK_IN_HOURS = 12;
@@ -30,30 +30,6 @@ export const RULE_RESPECT_STATUS = {
   pending: 2
 };
 
-export function checkMinimumDurationOfDailyRest(dayStart, previousDayEnd) {
-  if (!previousDayEnd) {
-    return {
-      status: RULE_RESPECT_STATUS.success,
-      message: `Repos journalier respecté !`
-    };
-  }
-  const dayRestDuration = dayStart - previousDayEnd;
-  const ruleRespected = dayRestDuration >= LONG_BREAK_DURATION;
-  if (ruleRespected) {
-    return {
-      status: RULE_RESPECT_STATUS.success,
-      message: `Repos journalier respecté (${
-        dayRestDuration > 48 * HOUR ? "> 10h" : formatTimer(dayRestDuration)
-      }) !`
-    };
-  } else {
-    return {
-      status: RULE_RESPECT_STATUS.failure,
-      message: `Repos journalier trop court (${formatTimer(dayRestDuration)}) !`
-    };
-  }
-}
-
 export function checkMaximumDurationOfUninterruptedWork(activities) {
   const now1 = now();
   let currentUninterruptedWorkDuration = 0;
@@ -76,12 +52,12 @@ export function checkMaximumDurationOfUninterruptedWork(activities) {
   if (currentUninterruptedWorkDuration > MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK)
     return {
       status: RULE_RESPECT_STATUS.failure,
-      message: `Travail ininterrompu pendant plus de 6 heures !`
+      rule: ALERT_TYPES.maximumUninterruptedWorkTime
     };
 
   return {
     status: RULE_RESPECT_STATUS.success,
-    message: "Durée maximale de travail ininterrompu < 6h !"
+    rule: ALERT_TYPES.maximumUninterruptedWorkTime
   };
 }
 
@@ -101,18 +77,16 @@ export function checkMaximumDurationOfWork(workDayActivities) {
     ? MAXIMUM_DURATION_OF_NIGHT_WORK_IN_HOURS
     : MAXIMUM_DURATION_OF_DAY_WORK_IN_HOURS;
 
-  if (totalWorkDuration > maximumTimeInHours * HOUR)
-    return {
-      status: RULE_RESPECT_STATUS.failure,
-      message: `Durée du travail ${
-        nightWork ? "de nuit" : "quotidien"
-      } > ${maximumTimeInHours}h !`
-    };
   return {
-    status: RULE_RESPECT_STATUS.success,
-    message: `Durée du travail ${
-      nightWork ? "de nuit" : "quotidien"
-    } < ${maximumTimeInHours}h !`
+    status:
+      totalWorkDuration > maximumTimeInHours * HOUR
+        ? RULE_RESPECT_STATUS.failure
+        : RULE_RESPECT_STATUS.success,
+    rule: ALERT_TYPES.maximumWorkDayTime,
+    extra: {
+      nightWork,
+      maximumTimeInHours
+    }
   };
 }
 
@@ -133,17 +107,23 @@ export function checkMinimumDurationOfBreak(workDayActivities) {
     if (totalWorkDuration <= 9 * HOUR && totalBreakTime < 30 * MINUTE)
       return {
         status: RULE_RESPECT_STATUS.failure,
-        message: "Temps de pause < 30 mins !"
+        rule: ALERT_TYPES.minimumWorkDayBreak,
+        extra: {
+          minimumTimeInMinutes: 30
+        }
       };
     if (totalWorkDuration > 9 * HOUR && totalBreakTime < 45 * MINUTE)
       return {
         status: RULE_RESPECT_STATUS.failure,
-        message: "Temps de pause < 45 mins !"
+        rule: ALERT_TYPES.minimumWorkDayBreak,
+        extra: {
+          minimumTimeInMinutes: 45
+        }
       };
   }
   return {
     status: RULE_RESPECT_STATUS.success,
-    message: "Temps de pause respecté !"
+    rule: ALERT_TYPES.minimumWorkDayBreak
   };
 }
 
@@ -156,7 +136,10 @@ export function checkMinimumDurationOfWeeklyRest(
   if (nWorkedDays > 6)
     return {
       status: RULE_RESPECT_STATUS.failure,
-      message: "7 jours travaillés dans la semaine !"
+      rule: ALERT_TYPES.maximumWorkedDaysInWeek,
+      extra: {
+        tooManyDays: true
+      }
     };
 
   const innerWeeklyRest = longInnerBreaks.find(
@@ -169,7 +152,7 @@ export function checkMinimumDurationOfWeeklyRest(
   if (!previousWeekEnd) {
     return {
       status: RULE_RESPECT_STATUS.success,
-      message: `Repos hebdomadaire respecté !`
+      rule: ALERT_TYPES.maximumWorkedDaysInWeek
     };
   }
   const outerWeeklyRestDuration = weekStart - previousWeekEnd;
@@ -179,9 +162,10 @@ export function checkMinimumDurationOfWeeklyRest(
   ) {
     return {
       status: RULE_RESPECT_STATUS.failure,
-      message: `Repos hebdomadaire trop court (${formatTimer(
-        outerWeeklyRestDuration
-      )}) !`
+      rule: ALERT_TYPES.maximumWorkedDaysInWeek,
+      extra: {
+        restDuration: outerWeeklyRestDuration
+      }
     };
   }
 
@@ -192,8 +176,9 @@ export function checkMinimumDurationOfWeeklyRest(
 
   return {
     status: RULE_RESPECT_STATUS.success,
-    message: `Repos hebdomadaire respecté (${
-      restDuration > 48 * HOUR ? "> 34h" : formatTimer(restDuration)
-    }) !`
+    rule: ALERT_TYPES.maximumWorkedDaysInWeek,
+    extra: {
+      restDuration: restDuration
+    }
   };
 }

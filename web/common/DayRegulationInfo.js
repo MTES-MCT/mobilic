@@ -6,12 +6,11 @@ import {
   checkMinimumDurationOfWeeklyRest,
   isNightWork,
   RULE_RESPECT_STATUS
-} from "common/utils/regulation";
+} from "common/utils/regulation/rules";
 import Chip from "@material-ui/core/Chip";
 import { RegulationCheck } from "../pwa/components/RegulationCheck";
 import {
   DAY,
-  formatTimer,
   getStartOfWeek,
   LONG_BREAK_DURATION,
   WEEK
@@ -21,6 +20,7 @@ import React from "react";
 import { splitByLongBreaksAndComputePeriodStats } from "../pwa/components/WorkTimeSummary";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
+import { ALERT_TYPES } from "common/utils/regulation/alertTypes";
 
 const useStyles = makeStyles(theme => ({
   chip: {
@@ -68,7 +68,7 @@ export function DayRegulationInfo({
   );
 
   const dailyRestRespected = activityGroupsToTakeIntoAccount
-    .filter(group => group.endTime <= dayEnd)
+    .filter(group => group.endTime <= dayEnd || group.startTime < dayStart)
     .every(
       group => group.endTime - group.startTime <= DAY - LONG_BREAK_DURATION
     );
@@ -117,24 +117,18 @@ export function DayRegulationInfo({
       ) && <Chip className={classes.chip} label="Travail de nuit" />}
       <RegulationCheck
         key={0}
-        check={
-          dailyRestRespected
-            ? {
-                status: RULE_RESPECT_STATUS.success,
-                message: `Repos journalier respecté ${
-                  statsOverCurrentPastAndNextDays.innerLongBreaks.length > 0
-                    ? `(${formatTimer(
-                        statsOverCurrentPastAndNextDays.innerLongBreaks[0]
-                          .duration
-                      )})`
-                    : ""
-                } !`
-              }
-            : {
-                status: RULE_RESPECT_STATUS.failure,
-                message: `Repos journalier trop court !`
-              }
-        }
+        check={{
+          status: dailyRestRespected
+            ? RULE_RESPECT_STATUS.success
+            : RULE_RESPECT_STATUS.failure,
+          rule: ALERT_TYPES.minimumDailyRest,
+          extra: {
+            restDuration:
+              statsOverCurrentPastAndNextDays.innerLongBreaks.length > 0
+                ? statsOverCurrentPastAndNextDays.innerLongBreaks[0].duration
+                : null
+          }
+        }}
       />
       <RegulationCheck
         key={2}
@@ -154,7 +148,7 @@ export function DayRegulationInfo({
           checkBreakRespect.status === RULE_RESPECT_STATUS.failure
             ? {
                 status: RULE_RESPECT_STATUS.failure,
-                message: `Travail ininterrompu pendant plus de 6 heures !`
+                rule: ALERT_TYPES.maximumUninterruptedWorkTime
               }
             : checkMaximumDurationOfUninterruptedWork(onlyCurrentDayActivities)
         }

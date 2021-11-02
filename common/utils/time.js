@@ -231,7 +231,9 @@ export function startOfMonthAsDate(date) {
   return date;
 }
 
-export function isoFormatLocalDate(date) {
+export function isoFormatLocalDate(dateOrTs) {
+  const date =
+    typeof dateOrTs === "number" ? new Date(dateOrTs * 1000) : dateOrTs;
   return `${date.getFullYear()}-${addZero(date.getMonth() + 1)}-${addZero(
     date.getDate()
   )}`;

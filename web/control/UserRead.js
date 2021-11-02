@@ -3,49 +3,60 @@ import { useLocation } from "react-router-dom";
 import { useApi } from "common/utils/api";
 import { Header } from "../common/Header";
 import Container from "@material-ui/core/Container";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import { useLoadingScreen } from "common/utils/loading";
-import { formatPersonName } from "common/utils/coworkers";
-import {
-  DAY,
-  formatDateTime,
-  frenchFormatDateStringOrTimeStamp,
-  getStartOfMonth,
-  now
-} from "common/utils/time";
 import {
   augmentAndSortMissions,
   parseMissionPayloadFromBackend
 } from "common/utils/mission";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
-import { History } from "../pwa/screens/History";
-import Grid from "@material-ui/core/Grid";
-import { InfoItem } from "../home/InfoField";
 import {
-  HTTP_QUERIES,
   USER_READ_QUERY,
   USER_READ_TOKEN_QUERY
 } from "common/utils/apiQueries";
-import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { captureSentryException } from "common/utils/sentry";
 import { useImpersonation } from "./utils/impersonation";
+import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
+import WarningAmberOutlinedIcon from "@material-ui/icons/WarningOutlined";
+import HistoryOutlinedIcon from "@material-ui/icons/HistoryOutlined";
+import { UserReadTabs } from "./components/UserReadTabs";
+import { orderEmployments } from "common/utils/employments";
+import { UserReadInfo } from "./components/UserReadInfo";
+import { UserReadHistory } from "./components/UserReadHistory";
+import { TextWithBadge } from "../common/TextWithBadge";
+import { UserReadAlerts } from "./components/UserReadAlerts";
+import { computeAlerts } from "common/utils/regulation/computeAlerts";
 
-const useStyles = makeStyles(theme => ({
-  container: {
-    paddingTop: theme.spacing(4),
-    margin: "auto",
-    flexGrow: 1,
-    flexShrink: 0,
-    maxWidth: "100%",
-    textAlign: "left",
-    backgroundColor: theme.palette.background.paper
-  },
-  sectionBody: {
-    marginBottom: theme.spacing(6)
-  }
-}));
+function getTabs(alertsNumber) {
+  return [
+    {
+      name: "info",
+      label: "Informations",
+      icon: <InfoOutlinedIcon />,
+      component: UserReadInfo
+    },
+    {
+      name: "alerts",
+      label: (
+        <TextWithBadge
+          badgeContent={alertsNumber || 0}
+          color={alertsNumber ? "error" : "success"}
+        >
+          Alertes
+        </TextWithBadge>
+      ),
+      icon: <WarningAmberOutlinedIcon />,
+      component: UserReadAlerts
+    },
+    {
+      name: "history",
+      label: "Historique",
+      icon: <HistoryOutlinedIcon />,
+      component: UserReadHistory
+    }
+  ];
+}
 
 export function UserRead() {
   const location = useLocation();
@@ -57,11 +68,13 @@ export function UserRead() {
   const [tokenInfo, setTokenInfo] = React.useState(null);
   const [controlTime, setControlTime] = React.useState(null);
   const [missions, setMissions] = React.useState(null);
-  const [employments, setEmployments] = React.useState(null);
+  const [employments, setEmployments] = React.useState([]);
   const [coworkers, setCoworkers] = React.useState(null);
   const [vehicles, setVehicles] = React.useState(null);
+  const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
+  const [groupedAlerts, setGroupedAlerts] = React.useState([]);
+
   const [error, setError] = React.useState("");
-  const classes = useStyles();
 
   const impersonatingUser = useImpersonation(
     tokenInfo ? tokenInfo.token : null
@@ -123,15 +136,22 @@ export function UserRead() {
             birthDate: userPayload.birthDate,
             email: userPayload.email
           });
-          setMissions(
-            augmentAndSortMissions(
-              userPayload.missions.edges.map(m => ({
-                ...m.node,
-                ...parseMissionPayloadFromBackend(m.node, userPayload.id),
-                allActivities: m.node.activities
-              })),
-              userPayload.id
-            ).filter(m => m.activities.length > 0)
+          const missions_ = augmentAndSortMissions(
+            userPayload.missions.edges.map(m => ({
+              ...m.node,
+              ...parseMissionPayloadFromBackend(m.node, userPayload.id),
+              allActivities: m.node.activities
+            })),
+            userPayload.id
+          ).filter(m => m.activities.length > 0);
+
+          setMissions(missions_);
+          setGroupedAlerts(
+            computeAlerts(
+              missions_,
+              (new Date(tokenInfo.historyStartDay).getTime() / 1000) >> 0,
+              (new Date(tokenInfo.creationDay) / 1000) >> 0
+            )
           );
           const _vehicles = {};
           userPayload.currentEmployments.forEach(e => {
@@ -147,133 +167,42 @@ export function UserRead() {
             });
           });
           setCoworkers(_coworkers);
-          setEmployments(userPayload.currentEmployments);
+          setEmployments(orderEmployments(userPayload.employments));
         });
       });
     }
   }, [impersonatingUser]);
 
+  const alertNumber = groupedAlerts.reduce(
+    (acc, group) => acc + group.alerts.length,
+    0
+  );
+  const TABS = getTabs(alertNumber);
+
   return [
     <Header key={1} disableMenu />,
-    <Container
-      className={classes.container}
-      key={2}
-      disableGutters
-      maxWidth="md"
-    >
-      {error ? (
-        <Container>
-          <Typography align="center" key={0} color="error">
-            Impossible d'accéder à la page : {error}
-          </Typography>
-        </Container>
-      ) : missions ? (
-        [
-          <Container maxWidth="md" key={0}>
-            <Typography variant="h5">Informations salarié.e</Typography>
-            <Grid
-              container
-              wrap="wrap"
-              spacing={2}
-              className={classes.sectionBody}
-            >
-              <Grid item>
-                <InfoItem name="Identifiant Mobilic" bold value={userInfo.id} />
-              </Grid>
-              <Grid item>
-                <InfoItem name="Nom" value={formatPersonName(userInfo)} />
-              </Grid>
-              <Grid item>
-                <InfoItem
-                  name="Entreprise"
-                  value={employments ? employments.company.name : ""}
-                />
-              </Grid>
-              <Grid item>
-                <InfoItem
-                  name="SIREN"
-                  value={employments ? employments.company.siren : ""}
-                />
-              </Grid>
-              <Grid item>
-                <InfoItem
-                  name="Invité le"
-                  value={
-                    employments
-                      ? frenchFormatDateStringOrTimeStamp(employments.startDate)
-                      : ""
-                  }
-                />
-              </Grid>
-            </Grid>
-            <Typography variant="h5">Historique récent (60 jours)</Typography>
-            <Grid
-              container
-              wrap="wrap"
-              spacing={2}
-              className={classes.sectionBody}
-            >
-              <Grid item xs={12}>
-                <InfoItem
-                  name="Heure du contrôle"
-                  value={formatDateTime(
-                    controlTime || tokenInfo.creationTime,
-                    true
-                  )}
-                />
-              </Grid>
-              <Grid item>
-                <InfoItem
-                  name="Début de l'historique"
-                  value={frenchFormatDateStringOrTimeStamp(
-                    tokenInfo.historyStartDay
-                  )}
-                />
-              </Grid>
-              <Grid item>
-                <InfoItem
-                  name="Fin de l'historique"
-                  value={frenchFormatDateStringOrTimeStamp(
-                    tokenInfo.creationDay
-                  )}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <LoadingButton
-                  color="primary"
-                  onClick={async () => {
-                    try {
-                      await api.downloadFileHttpQuery(
-                        HTTP_QUERIES.userC1bExport,
-                        { json: { token: tokenInfo.token } }
-                      );
-                    } catch (err) {
-                      alerts.error(
-                        formatApiError(err),
-                        "generate_tachograph_files",
-                        6000
-                      );
-                    }
-                  }}
-                  variant="outlined"
-                >
-                  Télécharger C1B
-                </LoadingButton>
-              </Grid>
-            </Grid>
-          </Container>,
-          <History
-            key={1}
-            missions={missions.filter(
-              m => m.startTime >= getStartOfMonth(now() - 183 * DAY)
-            )}
-            displayActions={false}
-            coworkers={coworkers}
-            vehicles={vehicles}
-            userId={userInfo.id}
-          />
-        ]
-      ) : null}
-    </Container>
+    error ? (
+      <Container>
+        <Typography align="center" key={0} color="error">
+          Impossible d'accéder à la page : {error}
+        </Typography>
+      </Container>
+    ) : missions ? (
+      <UserReadTabs
+        key={1}
+        tabs={TABS}
+        groupedAlerts={groupedAlerts}
+        alertNumber={alertNumber}
+        userInfo={userInfo}
+        tokenInfo={tokenInfo}
+        controlTime={controlTime}
+        missions={missions}
+        employments={employments}
+        coworkers={coworkers}
+        vehicles={vehicles}
+        periodOnFocus={periodOnFocus}
+        setPeriodOnFocus={setPeriodOnFocus}
+      />
+    ) : null
   ];
 }
