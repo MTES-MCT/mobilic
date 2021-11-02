@@ -63,7 +63,10 @@ import { VerticalTimeline } from "common/components/VerticalTimeline";
 import Grid from "@material-ui/core/Grid";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import { computeMissionStats } from "common/utils/mission";
-import { missionWithStats } from "../selectors/missionSelectors";
+import {
+  missionValidatedByAdmin,
+  missionWithStats
+} from "../selectors/missionSelectors";
 
 const useStyles = makeStyles(theme => ({
   missionTitleContainer: {
@@ -221,6 +224,7 @@ export function MissionDetails({
   if (missionLoadError)
     return <Typography color="error">{missionLoadError}</Typography>;
   if (!mission) return null;
+  const readOnlyMission = missionValidatedByAdmin(mission);
 
   const missionCompany = adminStore.companies.find(
     c => c.id === mission.companyId
@@ -688,33 +692,35 @@ export function MissionDetails({
       </Section>
     ),
     <Section key={3} title="Détail par employé">
-      <Button
-        aria-label="Ajouter un employé"
-        color="primary"
-        variant="outlined"
-        size="small"
-        style={{ float: "right" }}
-        className={classes.smallTextButton}
-        onClick={() => {
-          modals.open("selectEmployee", {
-            users: adminStore.users.filter(
-              u => u.companyId === mission.companyId
-            ),
-            handleSelect: user =>
-              setEmployeeIdsToInclude(users => ({
-                ...users,
-                [user.id]: {
-                  user,
-                  userId: user.id,
-                  startTime: mission.endTime || day,
-                  endTime: mission.endTime || day
-                }
-              }))
-          });
-        }}
-      >
-        Ajouter un employé
-      </Button>
+      {!readOnlyMission && (
+        <Button
+          aria-label="Ajouter un employé"
+          color="primary"
+          variant="outlined"
+          size="small"
+          style={{ float: "right" }}
+          className={classes.smallTextButton}
+          onClick={() => {
+            modals.open("selectEmployee", {
+              users: adminStore.users.filter(
+                u => u.companyId === mission.companyId
+              ),
+              handleSelect: user =>
+                setEmployeeIdsToInclude(users => ({
+                  ...users,
+                  [user.id]: {
+                    user,
+                    userId: user.id,
+                    startTime: mission.endTime || day,
+                    endTime: mission.endTime || day
+                  }
+                }))
+            });
+          }}
+        >
+          Ajouter un employé
+        </Button>
+      )}
       <Box py={2} className="flex-row" style={{ alignItems: "center" }}>
         <Typography variant="body2">Liste</Typography>
         <Switch
@@ -816,7 +822,7 @@ export function MissionDetails({
                             })}
                         </Box>
                       </Box>
-                      {entry.activities.length > 0 && (
+                      {entry.activities.length > 0 && !readOnlyMission && (
                         <Button
                           aria-label="Modifier les frais"
                           color="primary"
@@ -892,24 +898,26 @@ export function MissionDetails({
               <Typography variant="h6" className={classes.missionTitle}>
                 {formatPersonName(entry.user)}
               </Typography>
-              <Button
-                aria-label="Ajouter une activité"
-                color="primary"
-                size="small"
-                className={classes.smallTextButton}
-                onClick={e => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  ref.current.newRow({
-                    user: entry.user,
-                    userId: entry.user.id,
-                    startTime: mission.endTime || day,
-                    endTime: mission.endTime || day
-                  });
-                }}
-              >
-                Ajouter une activité
-              </Button>
+              {!readOnlyMission && (
+                <Button
+                  aria-label="Ajouter une activité"
+                  color="primary"
+                  size="small"
+                  className={classes.smallTextButton}
+                  onClick={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    ref.current.newRow({
+                      user: entry.user,
+                      userId: entry.user.id,
+                      startTime: mission.endTime || day,
+                      endTime: mission.endTime || day
+                    });
+                  }}
+                >
+                  Ajouter une activité
+                </Button>
+              )}
             </Box>
           )
         }}
@@ -918,26 +926,36 @@ export function MissionDetails({
             await onCreateActivity(entry.user, entry, mission.activities);
           })
         }
-        onRowEdit={async (entry, newValues) =>
-          await alerts.withApiErrorHandling(async () => {
-            await onEditActivity(
-              entry,
-              newValues,
-              entry.user,
-              mission.activities
-            );
-          })
+        onRowEdit={
+          !readOnlyMission
+            ? async (entry, newValues) =>
+                await alerts.withApiErrorHandling(async () => {
+                  await onEditActivity(
+                    entry,
+                    newValues,
+                    entry.user,
+                    mission.activities
+                  );
+                })
+            : undefined
         }
-        onRowDelete={entry =>
-          modals.open("confirmation", {
-            title: "Confirmer suppression de l'activité",
-            handleConfirm: () =>
-              alerts.withApiErrorHandling(
-                async () =>
-                  await onCancelActivity(entry, entry.user, mission.activities),
-                entry.id
-              )
-          })
+        onRowDelete={
+          !readOnlyMission
+            ? entry =>
+                modals.open("confirmation", {
+                  title: "Confirmer suppression de l'activité",
+                  handleConfirm: () =>
+                    alerts.withApiErrorHandling(
+                      async () =>
+                        await onCancelActivity(
+                          entry,
+                          entry.user,
+                          mission.activities
+                        ),
+                      entry.id
+                    )
+                })
+            : undefined
         }
         validateRow={entry =>
           !errors.startTime && !errors.endTime && entry.type
@@ -947,21 +965,23 @@ export function MissionDetails({
       />
     </Section>,
     <Section key={4} title="Observations">
-      <Button
-        aria-label="Ajouter une observation"
-        color="primary"
-        variant="outlined"
-        size="small"
-        style={{ float: "right" }}
-        className={classes.smallTextButton}
-        onClick={() => {
-          modals.open("commentInput", {
-            handleContinue: onCreateComment
-          });
-        }}
-      >
-        Ajouter une observation
-      </Button>
+      {!readOnlyMission && (
+        <Button
+          aria-label="Ajouter une observation"
+          color="primary"
+          variant="outlined"
+          size="small"
+          style={{ float: "right" }}
+          className={classes.smallTextButton}
+          onClick={() => {
+            modals.open("commentInput", {
+              handleContinue: onCreateComment
+            });
+          }}
+        >
+          Ajouter une observation
+        </Button>
+      )}
       <List className={classes.comments}>
         {mission.comments.map(comment => (
           <Event
@@ -977,45 +997,47 @@ export function MissionDetails({
       </List>
     </Section>,
     <Section key={5} title="" className={classes.validationSection}>
-      <LoadingButton
-        aria-label="Valider"
-        variant="contained"
-        color="primary"
-        size="small"
-        onClick={async () => {
-          let errorToDisplay = null;
-          try {
-            const apiResponse = await api.graphQlMutate(
-              VALIDATE_MISSION_MUTATION,
-              {
-                missionId: mission.id
-              }
-            );
-            const validation = apiResponse.data.activities.validateMission;
-            adminStore.saveMissionValidation(validation);
-            handleClose();
-          } catch (err) {
-            if (
-              !(
-                isGraphQLError(err) &&
-                err.graphQLErrors.every(e =>
-                  graphQLErrorMatchesCode(e, "NO_ACTIVITIES_TO_VALIDATE")
+      {!readOnlyMission && (
+        <LoadingButton
+          aria-label="Valider"
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={async () => {
+            let errorToDisplay = null;
+            try {
+              const apiResponse = await api.graphQlMutate(
+                VALIDATE_MISSION_MUTATION,
+                {
+                  missionId: mission.id
+                }
+              );
+              const validation = apiResponse.data.activities.validateMission;
+              adminStore.saveMissionValidation(validation);
+              handleClose();
+            } catch (err) {
+              if (
+                !(
+                  isGraphQLError(err) &&
+                  err.graphQLErrors.every(e =>
+                    graphQLErrorMatchesCode(e, "NO_ACTIVITIES_TO_VALIDATE")
+                  )
                 )
               )
-            )
-              errorToDisplay = formatApiError(err);
-          }
-          if (errorToDisplay) alerts.error(errorToDisplay, mission.id, 6000);
-          else
-            alerts.success(
-              `La mission ${mission.name} a été validée avec succès !`,
-              mission.id,
-              6000
-            );
-        }}
-      >
-        Valider toute la mission
-      </LoadingButton>
+                errorToDisplay = formatApiError(err);
+            }
+            if (errorToDisplay) alerts.error(errorToDisplay, mission.id, 6000);
+            else
+              alerts.success(
+                `La mission ${mission.name} a été validée avec succès !`,
+                mission.id,
+                6000
+              );
+          }}
+        >
+          Valider toute la mission
+        </LoadingButton>
+      )}
     </Section>
   ];
 }

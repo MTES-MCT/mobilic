@@ -12,7 +12,7 @@ const missionNotValidatedByAdmin = missionWithStat =>
   !missionWithStat.validatedByAdminForAllMembers &&
   missionWithStat.activities.length > 0;
 
-const missionValidatedByAdmin = missionWithStat =>
+export const missionValidatedByAdmin = missionWithStat =>
   (missionWithStat.adminGlobalValidation ||
     missionWithStat.validatedByAdminForAllMembers) &&
   missionWithStat.activities.length > 0;
