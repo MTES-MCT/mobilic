@@ -24,12 +24,11 @@ const STATUS_MAP = {
   INTERNAL_ERROR: {
     title: "ERREUR INTERNE",
     desc:
-      "La vérification d'intégrité n'a pas pu être effectuée à cause d'une erreur interne. Veuillez réessayer ultérieurement."
+      "La vérification d'intégrité n'a pas pu être effectuée à cause d'une erreur interne. Veuillez réessayer plus tard."
   },
   NETWORK_ERROR: {
     title: "ERREUR DE CONNEXION",
-    desc:
-      "Le serveur Mobilic semble injoignable. Veuillez réessayer ultérieurement."
+    desc: "Le serveur Mobilic semble injoignable. Veuillez réessayer plus tard."
   },
   MISSING_FILE: {
     title: "PAS DE FICHIER",
@@ -51,7 +50,7 @@ const STATUS_MAP = {
   UNAVAILABLE: {
     title: "SERVICE NON DISPONIBLE",
     desc:
-      "Impossible d'effectuer la vérification d'intégrité, veuillez réessayer ultérieurement."
+      "Impossible d'effectuer la vérification d'intégrité, veuillez réessayer plus tard."
   }
 };
 

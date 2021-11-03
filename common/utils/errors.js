@@ -14,7 +14,7 @@ export function formatApiError(error, overrideFormatGraphQLError) {
   try {
     if (isConnectionError(error)) {
       formattedError =
-        "Impossible de se connecter au serveur. Veuillez réessayer ultérieurement.";
+        "Pas de connection Internet. Veuillez réessayer plus tard.";
     } else if (isGraphQLError(error)) {
       const formattedGraphQLErrors = error.graphQLErrors
         .map(e => formatGraphQLError(e, overrideFormatGraphQLError))
@@ -27,7 +27,7 @@ export function formatApiError(error, overrideFormatGraphQLError) {
   }
   return formattedError
     ? formattedError
-    : "Une erreur est survenue. Veuillez réessayer ultérieurement.";
+    : "Une erreur est survenue. Veuillez réessayer plus tard.";
 }
 
 export function isAuthenticationError(error) {
@@ -94,7 +94,7 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
       case "SIRET_ALREADY_SIGNED_UP":
         return `L'établissement a déjà été inscrit. Veuillez vous rapprocher de vos collaborateurs administrateurs pour y être rattaché(e)`;
       case "UNAVAILABLE_SIREN_API":
-        return `Recherche impossible actuellement. Veuillez réessayer ultérieurement.`;
+        return `Recherche impossible actuellement. Veuillez réessayer plus tard.`;
       case "NO_SIREN_API_CREDENTIALS":
         return "Recherche impossible.";
       case "FRANCE_CONNECT_ERROR":
