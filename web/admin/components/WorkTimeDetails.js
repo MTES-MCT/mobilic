@@ -1,7 +1,10 @@
 import React from "react";
 import { EXPENDITURES } from "common/utils/expenditures";
 import { AugmentedTable } from "./AugmentedTable";
-import Drawer from "@material-ui/core/Drawer/Drawer";
+import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
+import Card from "@material-ui/core/Card";
+import Grid from "@material-ui/core/Grid";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
 import { isWidthUp } from "@material-ui/core/withWidth";
 import Box from "@material-ui/core/Box";
 import { useApi } from "common/utils/api";
@@ -10,7 +13,6 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import { useStyles } from "./styles/WorkTimeDetailsStyle";
-import { Accordion, AccordionDetails, Card, Grid } from "@material-ui/core";
 import Chip from "@material-ui/core/Chip";
 import { VerticalTimeline } from "common/components/VerticalTimeline";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
@@ -36,6 +38,7 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { DayRegulationInfo } from "../../common/DayRegulationInfo";
 import Skeleton from "@material-ui/lab/Skeleton";
+import Accordion from "@material-ui/core/Accordion";
 
 export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
   const classes = useStyles();
@@ -284,9 +287,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
       <Typography variant="h3" className={classes.activitiesTitle}>
         Activités de la journée
       </Typography>
-      {loading && (
-        <Skeleton variant={"rectangular"} width="100%" height={300} />
-      )}
+      {loading && <Skeleton variant={"rect"} width="100%" height={300} />}
       {dayActivities.length > 0 && !loading && (
         <Grid
           container
@@ -336,9 +337,10 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
       )}
     </Card>,
     <Card key={5} className={classes.cardExpenditures} variant="outlined">
-      <Drawer
+      <SwipeableDrawer
         anchor="right"
         open={!!missionDrawerOpen}
+        onOpen={() => setMissionDrawerOpen(true)}
         onClose={() => setMissionDrawerOpen(false)}
         PaperProps={{
           className: classes.missionDrawer,
@@ -353,13 +355,11 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
           missionId={missionIdOnFocus}
           handleClose={() => setMissionDrawerOpen(false)}
         />
-      </Drawer>
+      </SwipeableDrawer>
       <Typography variant="h3" className={classes.activitiesTitle}>
         Missions de la journée
       </Typography>
-      {loading && (
-        <Skeleton variant={"rectangular"} width="100%" height={200} />
-      )}
+      {loading && <Skeleton variant={"rect"} width="100%" height={200} />}
       {!loading && missions.length > 0 && (
         <AugmentedTable
           columns={missionTableColumns}
