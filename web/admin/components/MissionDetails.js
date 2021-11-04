@@ -965,23 +965,21 @@ export function MissionDetails({
       />
     </Section>,
     <Section key={4} title="Observations">
-      {!readOnlyMission && (
-        <Button
-          aria-label="Ajouter une observation"
-          color="primary"
-          variant="outlined"
-          size="small"
-          style={{ float: "right" }}
-          className={classes.smallTextButton}
-          onClick={() => {
-            modals.open("commentInput", {
-              handleContinue: onCreateComment
-            });
-          }}
-        >
-          Ajouter une observation
-        </Button>
-      )}
+      <Button
+        aria-label="Ajouter une observation"
+        color="primary"
+        variant="outlined"
+        size="small"
+        style={{ float: "right" }}
+        className={classes.smallTextButton}
+        onClick={() => {
+          modals.open("commentInput", {
+            handleContinue: onCreateComment
+          });
+        }}
+      >
+        Ajouter une observation
+      </Button>
       <List className={classes.comments}>
         {mission.comments.map(comment => (
           <Event
