@@ -69,6 +69,7 @@ export const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(4)
   },
   listActivitiesAccordion: {
+    overflow: "visible",
     border: `1px solid ${theme.palette.divider}`,
     "&:not(:last-child)": {
       borderBottom: 0
@@ -88,6 +89,7 @@ export const useStyles = makeStyles(theme => ({
     }
   },
   listActivitiesAccordionDetail: {
+    overflowY: "scroll",
     padding: theme.spacing(2),
     borderTop: "1px solid rgba(0, 0, 0, .125)"
   }

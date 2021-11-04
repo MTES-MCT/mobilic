@@ -220,7 +220,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
       </Typography>
     </Box>,
     <Grid container key={2} spacing={2} className={classes.workTimeRecapCards}>
-      <Grid item xs={4}>
+      <Grid item xs={12} sm={4}>
         <Card
           className={`${classes.cardRecapKPI} ${classes.cardRecapAmplitude}`}
           variant="outlined"
@@ -241,7 +241,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
           </Typography>
         </Card>
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={12} sm={8}>
         <Card className={classes.cardLegalThreshold} variant="outlined">
           <Typography variant="h3" className={classes.legalInfoTitle}>
             Seuils réglementaires
@@ -294,7 +294,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
           spacing={2}
           className={classes.workTimeRecapCards}
         >
-          <Grid item xs={4}>
+          <Grid item xs={12} sm={4}>
             <Typography variant="h6">Frise temporelle</Typography>
             <VerticalTimeline
               width={300}
@@ -302,7 +302,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
               datetimeFormatter={formatTimeOfDay}
             />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={12} sm={8}>
             <Typography variant="h6">Répartition</Typography>
             <ActivitiesPieChart
               activities={dayActivities}
