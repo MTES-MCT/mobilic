@@ -1,5 +1,5 @@
 import React from "react";
-import { ApolloClient, ApolloLink, gql, HttpLink } from "@apollo/client";
+import { ApolloClient, ApolloLink, HttpLink } from "@apollo/client";
 import ApolloLinkTimeout from "apollo-link-timeout";
 import { InMemoryCache } from "@apollo/client/cache";
 import { onError } from "@apollo/client/link/error";
@@ -12,19 +12,10 @@ import { buildFCLogoutUrl } from "./franceConnect";
 import { clearUserIdCookie, currentUserId, readCookie } from "./cookie";
 import { MaxSizeCache } from "./cache";
 import { saveAs } from "file-saver";
-import { HTTP_QUERIES } from "./apiQueries";
+import { CHECK_AUTH_QUERY, HTTP_QUERIES } from "./apiQueries";
 import { captureSentryException } from "./sentry";
 
 export const API_HOST = "/api";
-
-const CHECK_AUTH_QUERY = gql`
-  query checkAuthentication {
-    checkAuth {
-      success
-      userId
-    }
-  }
-`;
 
 const ApiContext = React.createContext(() => {});
 
