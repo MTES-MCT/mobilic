@@ -1259,3 +1259,12 @@ export const HTTP_QUERIES = {
     endpoint: "/next-webinars"
   }
 };
+
+export const CHECK_AUTH_QUERY = gql`
+  query checkAuthentication {
+    checkAuth {
+      success
+      userId
+    }
+  }
+`;
