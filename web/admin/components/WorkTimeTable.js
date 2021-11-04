@@ -11,12 +11,12 @@ import { formatPersonName } from "common/utils/coworkers";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import { AugmentedTable } from "./AugmentedTable";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import Drawer from "@material-ui/core/Drawer/Drawer";
 import { isWidthUp } from "@material-ui/core/withWidth";
 import Box from "@material-ui/core/Box";
 import { WorkTimeDetails } from "./WorkTimeDetails";
 import SvgIcon from "@material-ui/core/SvgIcon";
 import { ChevronRight } from "@material-ui/icons";
+import { SwipeableDrawer } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   warningText: {
@@ -181,10 +181,11 @@ export function WorkTimeTable({
 
   return (
     <Box>
-      <Drawer
+      <SwipeableDrawer
         key={0}
         anchor="right"
         open={!!wordDayDrawerOpen}
+        onOpen={() => setWordDayDrawerOpen(true)}
         onClose={() => {
           setWordDayDrawerOpen(false);
         }}
@@ -204,7 +205,7 @@ export function WorkTimeTable({
           }}
           width={width}
         />
-      </Drawer>
+      </SwipeableDrawer>
       <AugmentedTable
         key={2}
         columns={columns}
