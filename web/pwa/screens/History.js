@@ -453,7 +453,7 @@ export function History({
           value={currentTab}
           onChange={(e, tab) => handlePeriodChange(e, tab, selectedPeriod)}
           style={{ flexGrow: 1 }}
-          variant="fullWdith"
+          variant="fullWidth"
         >
           {Object.values(tabs).map((tabProps, index) => (
             <Tab

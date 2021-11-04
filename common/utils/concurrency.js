@@ -1,25 +1,57 @@
+import mapValues from "lodash/mapValues";
+
 export class NonConcurrentExecutionQueue {
   constructor() {
-    this.queue = [];
+    this.queues = { main: [] };
   }
 
-  _enqueueTask = (func, id, refresh) =>
-    new Promise((resolve, reject) => {
-      this.queue.push({ func, id, resolve, reject, refresh });
+  _enqueueTask = (func, queueName, cacheKey, refresh) => {
+    const queue = this.queues[queueName];
+    return new Promise((resolve, reject) => {
+      queue.push({ func, cacheKey, resolve, reject, refresh });
     });
+  };
 
-  _executeTask = async ({
-    func,
-    id,
-    resolve,
-    reject,
-    fastResolveWith,
-    fastRejectWith,
-    hasFastImpl,
-    refresh
-  }) => {
+  _cacheTaskResult = (queueName, cacheKey, result, error) => {
+    const queue = this.queues[queueName];
+    this.queues[queueName] = queue.map(task => {
+      let updatedTask = task;
+      if (task.cacheKey === cacheKey && !task.refresh) {
+        updatedTask = {
+          ...task,
+          hasCachedComputation: true,
+          cachedError: error,
+          cachedResult: result
+        };
+      }
+      return updatedTask;
+    });
+  };
+
+  _executeNext = async queueName => {
+    const nextTask = this.queues[queueName][0];
+    if (!nextTask) return;
+    const {
+      func,
+      cacheKey,
+      resolve,
+      reject,
+      cachedResult,
+      cachedError,
+      hasCachedComputation
+    } = nextTask;
+
+    // Avoid running other tasks with the same cache key
+    if (cacheKey && !hasCachedComputation) {
+      this.queues[queueName] = this.queues[queueName].map(task => ({
+        ...task,
+        refresh: task.cacheKey === cacheKey ? false : task.refresh
+      }));
+    }
+
+    // Execute task if result not cached
     let response, error;
-    if (!hasFastImpl) {
+    if (!hasCachedComputation) {
       try {
         response = await func();
       } catch (err) {
@@ -27,98 +59,37 @@ export class NonConcurrentExecutionQueue {
       }
     }
 
-    if (this.queue.length > 0) {
-      this.queue = this.queue.slice(1);
+    // Remove task from queue
+    this.queues[queueName] = this.queues[queueName].slice(1);
+
+    // Cache task results
+    if (cacheKey && !hasCachedComputation) {
+      this._cacheTaskResult(queueName, cacheKey, response, error);
     }
 
-    const actualId = typeof id === "function" ? id() : id;
+    // Start next task
+    setTimeout(() => this._executeNext(queueName), 0);
 
-    if (this.queue.length > 0) {
-      if (actualId && !hasFastImpl) {
-        if (!refresh) {
-          this.queue = this.queue.map(task => ({
-            ...task,
-            hasFastImpl:
-              (typeof task.id === "function" ? task.id() : task.id) === actualId
-                ? true
-                : task.hasFastImpl,
-            fastRejectWith:
-              (typeof task.id === "function" ? task.id() : task.id) === actualId
-                ? error
-                : task.fastRejectWith,
-            fastResolveWith:
-              (typeof task.id === "function" ? task.id() : task.id) === actualId
-                ? response
-                : task.fastResolveWith
-          }));
-        } else {
-          const indexOfSameTaskEnqueuedDuringRun = this.queue.findIndex(
-            task =>
-              (typeof task.id === "function" ? task.id() : task.id) ===
-                actualId && !task.hasFastImpl
-          );
-          const shouldRefresh = indexOfSameTaskEnqueuedDuringRun > -1;
-          if (shouldRefresh) {
-            this.queue = this.queue.map((task, index) => ({
-              ...task,
-              hasFastImpl:
-                (typeof task.id === "function" ? task.id() : task.id) ===
-                  actualId && index !== indexOfSameTaskEnqueuedDuringRun
-                  ? true
-                  : task.hasFastImpl,
-              fastRejectWith:
-                (typeof task.id === "function" ? task.id() : task.id) ===
-                  actualId && index !== indexOfSameTaskEnqueuedDuringRun
-                  ? error
-                  : task.fastRejectWith,
-              fastResolveWith:
-                (typeof task.id === "function" ? task.id() : task.id) ===
-                  actualId && index !== indexOfSameTaskEnqueuedDuringRun
-                  ? response
-                  : task.fastResolveWith
-            }));
-          } else {
-            this.queue = this.queue.map(task => ({
-              ...task,
-              hasFastImpl:
-                (typeof task.id === "function" ? task.id() : task.id) ===
-                actualId
-                  ? true
-                  : task.hasFastImpl,
-              fastRejectWith:
-                (typeof task.id === "function" ? task.id() : task.id) ===
-                actualId
-                  ? error
-                  : task.fastRejectWith,
-              fastResolveWith:
-                (typeof task.id === "function" ? task.id() : task.id) ===
-                actualId
-                  ? response
-                  : task.fastResolveWith
-            }));
-          }
-        }
-      }
-      setTimeout(() => this._executeTask(this.queue[0]), 0);
+    if (hasCachedComputation) {
+      return cachedError ? reject(cachedError) : resolve(cachedResult);
     }
-
-    if (hasFastImpl)
-      return fastRejectWith ? reject(fastRejectWith) : resolve(fastResolveWith);
     return error ? reject(error) : resolve(response);
   };
 
-  execute = async (func, id = null, refresh = false) => {
-    const shouldRunImmediately = this.queue.length === 0;
-    const task = this._enqueueTask(func, id, refresh);
+  execute = async (
+    func,
+    { cacheKey = null, queueName = "main", refresh = false } = {}
+  ) => {
+    if (!this.queues[queueName]) this.queues[queueName] = [];
+    const shouldRunImmediately = this.queues[queueName].length === 0;
+    const task = this._enqueueTask(func, queueName, cacheKey, refresh);
     if (shouldRunImmediately) {
-      this._executeTask(this.queue[0]);
+      this._executeNext(queueName);
     }
     return await task;
   };
 
   clear = () => {
-    if (this.queue.length > 0) {
-      this.queue = this.queue.slice(0, 1);
-    } else this.queue = [];
+    this.queues = mapValues(this.queues, queue => queue.slice(0, 1));
   };
 }

@@ -11,6 +11,7 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 
 export function useToggleContradictory(
+  shouldCompute,
   shouldDisplayInitialEmployeeVersion,
   setShouldDisplayInitialEmployeeVersion,
   missions
@@ -19,9 +20,14 @@ export function useToggleContradictory(
   const store = useStoreSyncedWithLocalStorage();
   const alerts = useSnackbarAlerts();
 
-  const [loadingEmployeeVersion, setLoadingEmployeeVersion] = React.useState(
-    false
-  );
+  const [
+    hasComputedContradictory,
+    setHasComputedContradictory
+  ] = React.useState(false);
+  const [
+    isComputingContradictory,
+    setIsComputingContradictory
+  ] = React.useState(false);
   const [
     employeeActivityVersions,
     setEmployeeActivityVersions
@@ -29,8 +35,8 @@ export function useToggleContradictory(
 
   const [changesHistory, setChangesHistory] = React.useState([]);
 
-  async function switchToEmployeeVersion() {
-    setLoadingEmployeeVersion(true);
+  async function computeContradictory() {
+    setIsComputingContradictory(true);
 
     await alerts.withApiErrorHandling(
       async () => {
@@ -60,25 +66,28 @@ export function useToggleContradictory(
             (c1, c2) => c1.time - c2.time
           )
         );
+        setHasComputedContradictory(true);
       },
       "fetch-contradictory",
       null,
       () => setShouldDisplayInitialEmployeeVersion(false)
     );
-    setLoadingEmployeeVersion(false);
+    setIsComputingContradictory(false);
   }
 
   React.useEffect(() => {
     if (
-      shouldDisplayInitialEmployeeVersion &&
-      employeeActivityVersions.length === 0
+      !hasComputedContradictory &&
+      !isComputingContradictory &&
+      shouldCompute
     ) {
-      switchToEmployeeVersion();
+      computeContradictory();
     }
-  }, [shouldDisplayInitialEmployeeVersion]);
+  }, [hasComputedContradictory, shouldCompute]);
 
   React.useEffect(() => {
     setShouldDisplayInitialEmployeeVersion(false);
+    setHasComputedContradictory(false);
     setEmployeeActivityVersions([]);
   }, [missions.map(m => m.id).reduce((a, b) => a + b)]);
 
@@ -87,6 +96,7 @@ export function useToggleContradictory(
       ? employeeActivityVersions
       : flatMap(missions, m => m.allActivities || m.activities),
     changesHistory,
-    loadingEmployeeVersion
+    isComputingContradictory,
+    hasComputedContradictory
   ];
 }

@@ -29,6 +29,7 @@ export function RedeemInvite() {
   async function redeemInvite(token) {
     await withLoadingScreen(async () => {
       try {
+        const isAuthenticated = await api.checkAuthentication();
         const userId = currentUserId();
         const employment = await api.graphQlQuery(
           GET_EMPLOYMENT_QUERY,
@@ -38,8 +39,12 @@ export function RedeemInvite() {
           { context: { nonPublicApi: true } }
         );
         const employmentUserId = employment.data.employment.userId;
-        let shouldLoadUser = !userId;
-        if (employmentUserId && employmentUserId !== userId) {
+        let shouldLoadUser = !isAuthenticated || !userId;
+        if (
+          employmentUserId &&
+          isAuthenticated &&
+          employmentUserId !== userId
+        ) {
           await api.logout({
             postFCLogoutRedirect: `/logout?next=${encodeURIComponent(
               "/redeem_invite?token=" + token
