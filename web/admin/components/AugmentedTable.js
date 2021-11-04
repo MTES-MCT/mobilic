@@ -83,7 +83,10 @@ const useStyles = makeStyles(theme => ({
     }
   },
   interGroupRow: {
-    height: ({ interGroupRowHeight }) => interGroupRowHeight
+    height: ({ interGroupRowHeight }) => interGroupRowHeight,
+    "&:hover": {
+      cursor: "default"
+    }
   },
   selected: {
     background: theme.palette.primary.lighter

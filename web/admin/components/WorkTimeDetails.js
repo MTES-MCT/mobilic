@@ -6,7 +6,6 @@ import { isWidthUp } from "@material-ui/core/withWidth";
 import Box from "@material-ui/core/Box";
 import { useApi } from "common/utils/api";
 import { USER_WORK_DAY_QUERY } from "common/utils/apiQueries";
-import { useLoadingScreen } from "common/utils/loading";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
@@ -36,17 +35,18 @@ import {
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { DayRegulationInfo } from "../../common/DayRegulationInfo";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
   const classes = useStyles();
   const api = useApi();
-  const withLoadingScreen = useLoadingScreen();
   const [dayActivities, setDayActivities] = React.useState([]);
   const [weekActivities, setWeekActivities] = React.useState([]);
   const [activitiesOver3Days, setActivitiesOver3Days] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
   const [missionDrawerOpen, setMissionDrawerOpen] = React.useState(false);
   const [missionIdOnFocus, setMissionIdOnFocus] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
 
   const periodEnd = new Date(workTimeEntry.periodStart * 1000 + DAY * 1000);
 
@@ -142,7 +142,8 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
   )?.find(expCount => expCount > 0);
 
   React.useEffect(() => {
-    withLoadingScreen(async () => {
+    setLoading(true);
+    (async () => {
       const apiResponse = await api.graphQlQuery(USER_WORK_DAY_QUERY, {
         activityAfter: Math.min(
           getStartOfWeek(workTimeEntry.periodActualStart),
@@ -162,6 +163,20 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
       const allMissions = apiResponse.data.user.missions.edges.map(
         nodeMission => nodeMission.node
       );
+      const activitiesOfDay = filterActivitiesOverlappingPeriod(
+        allActivities,
+        workTimeEntry.periodActualStart,
+        workTimeEntry.periodActualEnd
+      );
+
+      // Add breaks
+      const activitiesWithBreaks = addBreakToActivityList(activitiesOfDay);
+      // Compute duration and end time for each activity
+      const augmentedAndSortedActivities = computeDurationAndTime(
+        activitiesWithBreaks,
+        workTimeEntry.periodStart,
+        periodEnd.getTime() / 1000
+      );
 
       setWeekActivities(
         filterActivitiesOverlappingPeriod(
@@ -179,24 +194,10 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
         )
       );
 
-      const activitiesOfDay = filterActivitiesOverlappingPeriod(
-        allActivities,
-        workTimeEntry.periodActualStart,
-        workTimeEntry.periodActualEnd
-      );
-
-      // Add breaks
-      const activitiesWithBreaks = addBreakToActivityList(activitiesOfDay);
-      // Compute duration and end time for each activity
-      const augmentedAndSortedActivities = computeDurationAndTime(
-        activitiesWithBreaks,
-        workTimeEntry.periodStart,
-        periodEnd.getTime() / 1000
-      );
-
       setDayActivities(augmentedAndSortedActivities);
       setMissions(missionsToTableEntries(allMissions));
-    });
+      setLoading(false);
+    })();
   }, [workTimeEntry]);
 
   return [
@@ -283,7 +284,10 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
       <Typography variant="h3" className={classes.activitiesTitle}>
         Activités de la journée
       </Typography>
-      {dayActivities.length > 0 && (
+      {loading && (
+        <Skeleton variant={"rectangular"} width="100%" height={300} />
+      )}
+      {dayActivities.length > 0 && !loading && (
         <Grid
           container
           key={2}
@@ -353,7 +357,10 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
       <Typography variant="h3" className={classes.activitiesTitle}>
         Missions de la journée
       </Typography>
-      {missions.length > 0 && (
+      {loading && (
+        <Skeleton variant={"rectangular"} width="100%" height={200} />
+      )}
+      {!loading && missions.length > 0 && (
         <AugmentedTable
           columns={missionTableColumns}
           entries={missions}
