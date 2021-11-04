@@ -42,12 +42,18 @@ export function Day({
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion
   ] = React.useState(false);
-  const shouldDisplayContradictoryVersionsToggle = missionsInPeriod.every(
+  const canDisplayContradictoryVersions = missionsInPeriod.every(
     mission => mission.adminValidation && mission.validation
   );
 
   // eslint-disable-next-line no-unused-vars
-  const [activitiesToUse, _, loadingEmployeeVersion] = useToggleContradictory(
+  const [
+    activitiesToUse,
+    changes,
+    loadingEmployeeVersion,
+    hasComputedContradictory
+  ] = useToggleContradictory(
+    canDisplayContradictoryVersions,
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion,
     missionsInPeriod
@@ -61,26 +67,23 @@ export function Day({
   ];
 
   React.useEffect(() => {
-    if (
-      !shouldDisplayContradictoryVersionsToggle &&
-      shouldDisplayInitialEmployeeVersion
-    )
+    if (!canDisplayContradictoryVersions && shouldDisplayInitialEmployeeVersion)
       setShouldDisplayInitialEmployeeVersion(false);
-  }, [shouldDisplayContradictoryVersionsToggle]);
+  }, [canDisplayContradictoryVersions]);
 
   return (
     <Box>
-      {shouldDisplayContradictoryVersionsToggle && (
-        <ContradictorySwitch
-          className={classes.contradictorySwitch}
-          shouldDisplayInitialEmployeeVersion={
-            shouldDisplayInitialEmployeeVersion
-          }
-          setShouldDisplayInitialEmployeeVersion={
-            setShouldDisplayInitialEmployeeVersion
-          }
-        />
-      )}
+      <ContradictorySwitch
+        contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
+        emptyContradictory={hasComputedContradictory && changes.length === 0}
+        className={classes.contradictorySwitch}
+        shouldDisplayInitialEmployeeVersion={
+          shouldDisplayInitialEmployeeVersion
+        }
+        setShouldDisplayInitialEmployeeVersion={
+          setShouldDisplayInitialEmployeeVersion
+        }
+      />
       <DaySummary
         activitiesWithNextAndPreviousDay={userActivitiesToUse}
         isDayEnded={true}

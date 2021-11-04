@@ -61,14 +61,14 @@ export function Mission({
     setShouldDisplayInitialEmployeeVersion
   ] = React.useState(false);
 
-  const shouldDisplayContradictoryVersionsToggle =
+  const canDisplayContradictoryVersions =
     mission.adminValidation && mission.validation;
 
   React.useEffect(() => {
     if (
       shouldDisplayInitialEmployeeVersion !==
         controlledShouldDisplayInitialEmployeeVersion &&
-      shouldDisplayContradictoryVersionsToggle
+      canDisplayContradictoryVersions
     )
       setShouldDisplayInitialEmployeeVersion(
         controlledShouldDisplayInitialEmployeeVersion
@@ -77,10 +77,11 @@ export function Mission({
 
   const [
     activitiesToUse,
-    // eslint-disable-next-line no-unused-vars
-    _,
-    loadingEmployeeVersion
+    changes,
+    loadingEmployeeVersion,
+    hasComputedContradictory
   ] = useToggleContradictory(
+    canDisplayContradictoryVersions,
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion,
     [mission]
@@ -160,17 +161,17 @@ export function Mission({
             </ItalicWarningTypography>
           </InfoCard>
         )}
-        {shouldDisplayContradictoryVersionsToggle && (
-          <ContradictorySwitch
-            className={classes.contradictorySwitch}
-            shouldDisplayInitialEmployeeVersion={
-              shouldDisplayInitialEmployeeVersion
-            }
-            setShouldDisplayInitialEmployeeVersion={
-              setShouldDisplayInitialEmployeeVersion
-            }
-          />
-        )}
+        <ContradictorySwitch
+          contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
+          emptyContradictory={changes.length === 0 && hasComputedContradictory}
+          className={classes.contradictorySwitch}
+          shouldDisplayInitialEmployeeVersion={
+            shouldDisplayInitialEmployeeVersion
+          }
+          setShouldDisplayInitialEmployeeVersion={
+            setShouldDisplayInitialEmployeeVersion
+          }
+        />
         {showMetrics && (
           <WorkTimeSummaryKpiGrid
             loading={loadingEmployeeVersion}

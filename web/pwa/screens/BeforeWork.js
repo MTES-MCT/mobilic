@@ -145,7 +145,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
             });
             await modals.closeAll();
           },
-          null,
+          {},
           true
         );
       },

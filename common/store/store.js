@@ -117,8 +117,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     if (msg === "update") {
       this.loadFromStorageQueue.execute(
         async () => await this.loadFromStorage(false),
-        "load",
-        true
+        { cacheKey: "load", refresh: true }
       );
     }
   };

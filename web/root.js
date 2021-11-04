@@ -194,7 +194,7 @@ function _Root() {
       async () => {
         if (userId && store.userId()) await loadUserAndRoute();
       },
-      () => (userId && store.userId() ? "loadUser" + store.userId() : null),
+      { cacheKey: "loadUser" + userId },
       false
     );
     return () => {};

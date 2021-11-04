@@ -16,12 +16,12 @@ export function LoadingScreenContextProvider({ children }) {
     setSyncingWithBackendCounter
   ] = React.useState(0); // We use a counter instead of a boolean because multiple syncs can run simultaneously
 
-  const withLoadingScreen = async (sync, id = null, nonBlocking = false) => {
+  const withLoadingScreen = async (sync, options = {}, nonBlocking = false) => {
     setSyncingWithBackendCounter(currentCounter => currentCounter + 1);
     try {
       if (nonBlocking) await sync();
       else {
-        await loadingFunctionsQueue.execute(sync, id);
+        await loadingFunctionsQueue.execute(sync, options);
       }
       setSyncingWithBackendCounter(currentCounter => currentCounter - 1);
     } catch (err) {

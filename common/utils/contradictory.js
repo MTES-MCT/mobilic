@@ -1,5 +1,6 @@
 import maxBy from "lodash/maxBy";
 import { ACTIVITIES_AND_EXPENDITURES_HISTORY_ON_MISSION_QUERY } from "./apiQueries";
+import { NonConcurrentExecutionQueue } from "./concurrency";
 
 function versionOfEventAt(event, time) {
   if (event.receptionTime && event.receptionTime > time) return null;
@@ -77,21 +78,28 @@ export function getChangesHistory(eventChanges) {
   return changesHistory.sort((c1, c2) => c1.time - c2.time);
 }
 
+const contradictoryFetchQueue = new NonConcurrentExecutionQueue();
+
 export async function getContradictoryInfoForMission(mission, api, store) {
   if (!mission.contradictoryInfo) {
-    const contradictoryInfo = (
-      await api.graphQlMutate(
-        ACTIVITIES_AND_EXPENDITURES_HISTORY_ON_MISSION_QUERY,
-        { missionId: mission.id }
-      )
-    ).data.mission;
-    store.updateEntityObject({
-      objectId: mission.id,
-      entity: "missions",
-      update: { contradictoryInfo }
-    });
-    store.batchUpdate();
-    mission.contradictoryInfo = contradictoryInfo;
+    await contradictoryFetchQueue.execute(
+      async () => {
+        const contradictoryInfo = (
+          await api.graphQlMutate(
+            ACTIVITIES_AND_EXPENDITURES_HISTORY_ON_MISSION_QUERY,
+            { missionId: mission.id }
+          )
+        ).data.mission;
+        store.updateEntityObject({
+          objectId: mission.id,
+          entity: "missions",
+          update: { contradictoryInfo }
+        });
+        store.batchUpdate();
+        mission.contradictoryInfo = contradictoryInfo;
+      },
+      { cacheKey: mission.id, queueName: mission.id }
+    );
   }
   return mission.contradictoryInfo;
 }

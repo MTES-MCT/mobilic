@@ -56,25 +56,30 @@ export function ContradictoryChanges({ mission, userId }) {
     // eslint-disable-next-line no-unused-vars
     _,
     changesHistory,
-    loadingEmployeeVersion
-  ] = useToggleContradictory(open, setOpen, [mission]);
+    loadingEmployeeVersion,
+    hasComputedContradictory
+  ] = useToggleContradictory(true, open, setOpen, [mission]);
 
   const userChangesHistory = changesHistory.filter(c => c.userId === userId);
 
   return (
     <>
       <Box mt={1} style={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography className="bold">Voir le contradictoire</Typography>
-        <IconButton
-          aria-label={open ? "Masquer" : "Afficher"}
-          color="inherit"
-          className="no-margin-no-padding"
-          onClick={() => setOpen(!open)}
-        >
-          {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </IconButton>
+        <Typography className="bold">Modifications gestionnaire</Typography>
+        {(!hasComputedContradictory || changesHistory.length > 0) && (
+          <IconButton
+            aria-label={open ? "Masquer" : "Afficher"}
+            color="inherit"
+            className="no-margin-no-padding"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </IconButton>
+        )}
       </Box>
-      <Collapse in={open}>
+      <Collapse
+        in={open || (changesHistory.length === 0 && hasComputedContradictory)}
+      >
         {loadingEmployeeVersion ? (
           <Skeleton rect width="100%" height={100} />
         ) : userChangesHistory.length === 0 ? (

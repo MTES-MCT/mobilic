@@ -252,10 +252,9 @@ class Api {
   }
 
   async _queryWithRefreshToken(query) {
-    await this.refreshTokenQueue.execute(
-      () => this._refreshTokenIfNeeded(),
-      "refreshToken"
-    );
+    await this.refreshTokenQueue.execute(() => this._refreshTokenIfNeeded(), {
+      cacheKey: "refreshToken"
+    });
     return await query();
     // No need to catch the refresh-token error since logout is imminent
   }
