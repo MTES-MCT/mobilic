@@ -29,10 +29,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function NoPrimaryEmploymentAlert() {
+function NoEmploymentAlert() {
   return (
     <Alert severity="warning">
-      Vous n'avez pas d'entreprise de rattachement principale et{" "}
+      Vous n'avez aucune entreprise à laquelle vous êtes rattaché(e) et{" "}
       <span className="bold">
         vous ne pouvez donc pas enregistrer de temps de travail
       </span>
@@ -143,7 +143,7 @@ export default function Home() {
                 ))}
               </Grid>
             ) : (
-              <NoPrimaryEmploymentAlert />
+              <NoEmploymentAlert />
             )}
           </Section>
         )}
