@@ -40,7 +40,7 @@ export function UserReadAlerts({
       {groupedAlerts.length > 0 ? (
         <List>
           {groupedAlerts.map(group => (
-            <ListItem key={group.infringementLabel}>
+            <ListItem key={group.infringementLabel} disableGutters>
               <AlertGroup
                 {...group}
                 setPeriodOnFocus={setPeriodOnFocus}
