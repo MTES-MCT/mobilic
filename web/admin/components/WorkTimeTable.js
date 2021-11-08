@@ -11,6 +11,10 @@ import { formatPersonName } from "common/utils/coworkers";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import { AugmentedTable } from "./AugmentedTable";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import { isWidthUp } from "@material-ui/core/withWidth";
+import { WorkTimeDetails } from "./WorkTimeDetails";
+import { ChevronRight } from "@material-ui/icons";
+import { SwipeableDrawer } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   warningText: {
@@ -19,6 +23,12 @@ const useStyles = makeStyles(theme => ({
   },
   expenditures: {
     padding: theme.spacing(4)
+  },
+  workTimeModal: {
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    paddingRight: theme.spacing(4),
+    paddingLeft: theme.spacing(4)
   }
 }));
 
@@ -28,8 +38,12 @@ export function WorkTimeTable({
   className,
   showExpenditures,
   showMissionName,
-  loading
+  loading,
+  width
 }) {
+  const [workdayOnFocus, setWorkdayOnFocus] = React.useState(null);
+  const [wordDayDrawerOpen, setWordDayDrawerOpen] = React.useState(false);
+
   const classes = useStyles();
 
   let periodLabel, periodFormatter;
@@ -114,6 +128,15 @@ export function WorkTimeTable({
     sortable: true,
     overflowTooltip: true
   };
+  const pictoCol = {
+    label: "+ d'infos",
+    name: "id",
+    format: () => <ChevronRight color="primary" />,
+    sortable: false,
+    align: "center",
+    overflowTooltip: true
+  };
+
   let columns = [];
   if (period === "day") {
     if (showMissionName) {
@@ -137,6 +160,7 @@ export function WorkTimeTable({
       ];
     }
     if (showExpenditures) columns.push(expenditureCol);
+    columns.push(pictoCol);
   } else if (period === "week") {
     columns = [employeeCol, workTimeCol, workedDaysCol];
   } else {
@@ -154,25 +178,58 @@ export function WorkTimeTable({
   });
 
   return (
-    <AugmentedTable
-      columns={columns}
-      entries={preFormattedWorkTimeEntries}
-      dense
-      virtualizedRowHeight={40}
-      defaultSortBy="periodStart"
-      defaultSortType="desc"
-      className={className}
-      virtualized
-      groupByColumn={{
-        label: periodLabel,
-        name: "periodStart",
-        sort: "desc",
-        height: 60,
-        format: periodFormatter,
-        minWidth: period === "month" ? 120 : 80,
-        overflowTooltip: true
-      }}
-      loading={loading}
-    />
+    <>
+      <SwipeableDrawer
+        key={0}
+        anchor="right"
+        open={!!wordDayDrawerOpen}
+        onOpen={() => setWordDayDrawerOpen(true)}
+        onClose={() => {
+          setWordDayDrawerOpen(false);
+        }}
+        PaperProps={{
+          className: classes.workTimeModal,
+          style: {
+            minWidth: isWidthUp("md", width) ? 830 : "100vw",
+            maxWidth: isWidthUp("md", width) ? 780 : "100vw"
+          }
+        }}
+      >
+        <WorkTimeDetails
+          key={1}
+          workTimeEntry={workdayOnFocus}
+          handleClose={() => {
+            setWordDayDrawerOpen(false);
+          }}
+          width={width}
+        />
+      </SwipeableDrawer>
+      <AugmentedTable
+        key={2}
+        columns={columns}
+        entries={preFormattedWorkTimeEntries}
+        dense
+        virtualizedRowHeight={40}
+        defaultSortBy="periodStart"
+        defaultSortType="desc"
+        className={className}
+        virtualized
+        onRowClick={entry => {
+          if (!entry.day) return false;
+          setWorkdayOnFocus(entry);
+          setWordDayDrawerOpen(true);
+        }}
+        groupByColumn={{
+          label: periodLabel,
+          name: "periodStart",
+          sort: "desc",
+          height: 60,
+          format: periodFormatter,
+          minWidth: period === "month" ? 120 : 80,
+          overflowTooltip: true
+        }}
+        loading={loading}
+      />
+    </>
   );
 }

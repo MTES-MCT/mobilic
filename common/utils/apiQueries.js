@@ -358,6 +358,43 @@ export const WORK_DAYS_DATA_FRAGMENT = gql`
   }
 `;
 
+export const USER_WORK_DAY_QUERY = gql`
+  query workDayDetail(
+    $activityBefore: TimeStamp
+    $activityAfter: TimeStamp
+    $missionBefore: TimeStamp
+    $missionAfter: TimeStamp
+    $userId: Int!
+  ) {
+    user(id: $userId) {
+      activities(fromTime: $activityAfter, untilTime: $activityBefore) {
+        edges {
+          node {
+            id
+            type
+            startTime
+            endTime
+          }
+        }
+      }
+      missions(fromTime: $missionAfter, untilTime: $missionBefore) {
+        edges {
+          node {
+            id
+            name
+            startLocation {
+              name
+            }
+            endLocation {
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const ADMIN_COMPANIES_QUERY = gql`
   ${WORK_DAYS_DATA_FRAGMENT}
   ${COMPANY_SETTINGS_FRAGMENT}
