@@ -1,5 +1,6 @@
 import { Map, String, List } from "./types";
 
+// What is stored in local storage and how to read/write to it
 export const LOCAL_STORAGE_SCHEMA = {
   userId: {
     deserialize: value => (value ? parseInt(value) : value),
