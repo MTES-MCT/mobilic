@@ -21,7 +21,7 @@ const missionsValidatedByAllWorkersOrOld = missionWithStat =>
   missionWithStat.validatedByAllMembers ||
   missionWithStat.startTime + DEFAULT_WORKER_VALIDATION_TIMEOUT < now();
 
-const missionsNotValidatedByAllWorkers = missionWithStats =>
+export const missionsNotValidatedByAllWorkers = missionWithStats =>
   !missionWithStats.validatedByAllMembers &&
   missionWithStats.startTime + DEFAULT_WORKER_VALIDATION_TIMEOUT >= now();
 

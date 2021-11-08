@@ -5,7 +5,7 @@ import Avatar from "@material-ui/core/Avatar";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import {
   ACTIVITIES,
-  addBreakToActivityList,
+  addBreaksToActivityList,
   computeDurationAndTime,
   filterActivitiesOverlappingPeriod
 } from "common/utils/activities";
@@ -190,7 +190,7 @@ export function ActivityList({
     filteredActivities.some(a => !a.endTime || a.endTime > untilTime);
 
   // Add breaks
-  const activitiesWithBreaks = addBreakToActivityList(filteredActivities);
+  const activitiesWithBreaks = addBreaksToActivityList(filteredActivities);
 
   // Compute duration and end time for each activity
   const augmentedAndSortedActivities = computeDurationAndTime(

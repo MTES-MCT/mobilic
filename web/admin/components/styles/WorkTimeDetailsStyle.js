@@ -91,5 +91,12 @@ export const useStyles = makeStyles(theme => ({
     overflowX: "auto",
     padding: theme.spacing(2),
     borderTop: "1px solid rgba(0, 0, 0, .125)"
+  },
+  noExpenditureLabel: {
+    color: theme.palette.grey[500],
+    fontStyle: "italic"
+  },
+  activitiesTableContainer: {
+    width: "100%"
   }
 }));

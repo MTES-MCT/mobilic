@@ -18,7 +18,7 @@ import { VerticalTimeline } from "common/components/VerticalTimeline";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import {
   ACTIVITIES,
-  addBreakToActivityList,
+  addBreaksToActivityList,
   computeDurationAndTime,
   filterActivitiesOverlappingPeriod
 } from "common/utils/activities";
@@ -125,6 +125,8 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
     }
   ];
 
+  const periodActualEnd = workTimeEntry.periodActualEnd || now();
+
   const showMissionName = missions.some(mission => mission.name);
   const missionTableColumns = showMissionName ? [nameMissionCol] : [];
   missionTableColumns.push(
@@ -153,11 +155,11 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
           workTimeEntry.periodActualStart - DAY
         ),
         activityBefore: Math.max(
-          getStartOfWeek(workTimeEntry.periodActualEnd) + WEEK,
-          workTimeEntry.periodActualEnd + DAY
+          getStartOfWeek(periodActualEnd) + WEEK,
+          periodActualEnd + DAY
         ),
         missionAfter: workTimeEntry.periodActualStart,
-        missionBefore: workTimeEntry.periodActualEnd,
+        missionBefore: periodActualEnd,
         userId: workTimeEntry.user.id
       });
       const allActivities = apiResponse.data.user.activities.edges.map(
@@ -169,11 +171,11 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
       const activitiesOfDay = filterActivitiesOverlappingPeriod(
         allActivities,
         workTimeEntry.periodActualStart,
-        workTimeEntry.periodActualEnd
+        periodActualEnd
       );
 
       // Add breaks
-      const activitiesWithBreaks = addBreakToActivityList(activitiesOfDay);
+      const activitiesWithBreaks = addBreaksToActivityList(activitiesOfDay);
       // Compute duration and end time for each activity
       const augmentedAndSortedActivities = computeDurationAndTime(
         activitiesWithBreaks,
@@ -185,7 +187,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
         filterActivitiesOverlappingPeriod(
           allActivities,
           getStartOfWeek(workTimeEntry.periodActualStart),
-          getStartOfWeek(workTimeEntry.periodActualEnd) + WEEK
+          getStartOfWeek(periodActualEnd) + WEEK
         )
       );
 
@@ -193,7 +195,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
         filterActivitiesOverlappingPeriod(
           allActivities,
           workTimeEntry.periodActualStart - DAY,
-          workTimeEntry.periodActualEnd + DAY
+          periodActualEnd + DAY
         )
       );
 
@@ -262,25 +264,27 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
         Frais de la journée
       </Typography>
       <Box className={`flex-row`}>
-        {hasExpenditure
-          ? Object.keys(workTimeEntry.expenditures).map(exp => {
-              const expProps = EXPENDITURES[exp];
-              const expCount = workTimeEntry.expenditures[exp];
-              const label =
-                expCount > 1
-                  ? `${expCount} ${expProps.plural}`
-                  : expProps.label;
-              return (
-                expCount > 0 && (
-                  <Chip
-                    key={exp}
-                    className={classes.chipExpenditure}
-                    label={label}
-                  />
-                )
-              );
-            })
-          : "Aucun Frais n'a été enregistré pour cette journée"}
+        {hasExpenditure ? (
+          Object.keys(workTimeEntry.expenditures).map(exp => {
+            const expProps = EXPENDITURES[exp];
+            const expCount = workTimeEntry.expenditures[exp];
+            const label =
+              expCount > 1 ? `${expCount} ${expProps.plural}` : expProps.label;
+            return (
+              expCount > 0 && (
+                <Chip
+                  key={exp}
+                  className={classes.chipExpenditure}
+                  label={label}
+                />
+              )
+            );
+          })
+        ) : (
+          <Typography className={classes.noExpenditureLabel}>
+            Aucun Frais n'a été enregistré pour cette journée
+          </Typography>
+        )}
       </Box>
     </Card>,
     <Card key={4} className={classes.cardExpenditures} variant="outlined">
@@ -329,6 +333,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
                 <AugmentedTable
                   columns={listActivitiesCol}
                   entries={dayActivities}
+                  className={classes.activitiesTableContainer}
                 />
               </AccordionDetails>
             </Accordion>
@@ -345,7 +350,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
         PaperProps={{
           className: classes.missionDrawer,
           style: {
-            minWidth: isWidthUp("sm", width) ? 800 : "100vw",
+            minWidth: isWidthUp("md", width) ? 800 : "100vw",
             maxWidth: isWidthUp("md", width) ? 750 : "100vw"
           }
         }}

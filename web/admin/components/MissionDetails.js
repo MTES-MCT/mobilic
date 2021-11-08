@@ -64,6 +64,7 @@ import Grid from "@material-ui/core/Grid";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import { computeMissionStats } from "common/utils/mission";
 import {
+  missionsNotValidatedByAllWorkers,
   missionValidatedByAdmin,
   missionWithStats
 } from "../selectors/missionSelectors";
@@ -224,7 +225,9 @@ export function MissionDetails({
   if (missionLoadError)
     return <Typography color="error">{missionLoadError}</Typography>;
   if (!mission) return null;
-  const readOnlyMission = missionValidatedByAdmin(mission);
+  const readOnlyMission =
+    missionValidatedByAdmin(mission) ||
+    missionsNotValidatedByAllWorkers(mission);
 
   const missionCompany = adminStore.companies.find(
     c => c.id === mission.companyId
