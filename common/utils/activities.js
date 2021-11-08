@@ -306,7 +306,7 @@ export function convertBreakIntoActivityOperations(
   return ops;
 }
 
-export function addBreakToActivityList(activities) {
+export function addBreaksToActivityList(activities) {
   const activitiesWithBreaks = [];
   sortActivities(activities);
   activities.forEach((a, index) => {

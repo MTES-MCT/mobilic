@@ -12,9 +12,7 @@ import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import { AugmentedTable } from "./AugmentedTable";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { isWidthUp } from "@material-ui/core/withWidth";
-import Box from "@material-ui/core/Box";
 import { WorkTimeDetails } from "./WorkTimeDetails";
-import SvgIcon from "@material-ui/core/SvgIcon";
 import { ChevronRight } from "@material-ui/icons";
 import { SwipeableDrawer } from "@material-ui/core";
 
@@ -133,7 +131,7 @@ export function WorkTimeTable({
   const pictoCol = {
     label: "+ d'infos",
     name: "id",
-    format: () => <SvgIcon viewBox="0 0 24 24" component={ChevronRight} />,
+    format: () => <ChevronRight color="primary" />,
     sortable: false,
     align: "center",
     overflowTooltip: true
@@ -180,7 +178,7 @@ export function WorkTimeTable({
   });
 
   return (
-    <Box>
+    <>
       <SwipeableDrawer
         key={0}
         anchor="right"
@@ -192,7 +190,7 @@ export function WorkTimeTable({
         PaperProps={{
           className: classes.workTimeModal,
           style: {
-            minWidth: isWidthUp("sm", width) ? 830 : "100vw",
+            minWidth: isWidthUp("md", width) ? 830 : "100vw",
             maxWidth: isWidthUp("md", width) ? 780 : "100vw"
           }
         }}
@@ -232,6 +230,6 @@ export function WorkTimeTable({
         }}
         loading={loading}
       />
-    </Box>
+    </>
   );
 }
