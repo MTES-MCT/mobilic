@@ -41,6 +41,7 @@ import {
   VALIDATE_MISSION_MUTATION
 } from "./apiQueries";
 import { hasPendingUpdates } from "../store/offline";
+import { ACTIONS } from "../store/reducers/root";
 
 const ActionsContext = React.createContext(() => {});
 
@@ -62,7 +63,7 @@ class Actions {
         if (switchMode) {
           this.store.dispatch(
             {
-              type: "closeCurrentActivity",
+              type: ACTIONS.closeCurrentActivity,
               payload: { activity, tempActivityId, requestId }
             },
             ["activities"]
@@ -216,7 +217,7 @@ class Actions {
         });
         this.store.dispatch(
           {
-            type: "removeTemporaryMissionId",
+            type: ACTIONS.removeTemporaryMissionId,
             payload: { tempMissionId, missionId: mission.id }
           },
           ["activities", "expenditures"]
