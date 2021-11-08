@@ -31,6 +31,9 @@ const useStyles = makeStyles(theme => ({
   exportButton: {
     textAlign: "center",
     marginTop: theme.spacing(2)
+  },
+  companies: {
+    marginBottom: theme.spacing(2)
   }
 }));
 
@@ -57,7 +60,7 @@ export function UserReadInfo({
           <InfoItem name="Nom" value={formatPersonName(userInfo)} />
         </Grid>
       </Grid>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h5" className={classes.companies}>
         Entreprises
       </Typography>
       <Grid

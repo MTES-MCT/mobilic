@@ -1,19 +1,28 @@
 import React from "react";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import ExpandLessIcon from "@material-ui/icons/ExpandLess";
-import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-import Collapse from "@material-ui/core/Collapse/Collapse";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import { RegulatoryAlert } from "./RegulatoryAlert";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Grid from "@material-ui/core/Grid";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
 
 const useStyles = makeStyles(theme => {
   return {
     container: {
-      width: "100%"
+      width: "100%",
+      border: "none"
+    },
+    summary: {
+      paddingLeft: 0,
+      paddingRight: 0
+    },
+    details: {
+      padding: 0,
+      display: "block"
     },
     collapseToggle: {
       padding: 0,
@@ -36,8 +45,7 @@ const useStyles = makeStyles(theme => {
     },
     description: {
       fontStyle: "italic",
-      color: theme.palette.grey[600],
-      paddingTop: theme.spacing(1)
+      color: theme.palette.grey[600]
     }
   };
 });
@@ -52,63 +60,46 @@ export function AlertGroup({
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
 
-  function toggleOpen() {
-    setOpen(!open);
-  }
-
   return (
-    <Grid
-      container
-      spacing={2}
-      alignItems="flex-start"
-      justify="flex-start"
-      wrap="nowrap"
+    <Accordion
+      expanded={open}
+      onChange={(event, open_) => setOpen(open_)}
+      variant="outlined"
+      className={classes.container}
     >
-      <Grid item>
-        <IconButton
-          aria-label={open ? "Masquer" : "Afficher"}
-          color="inherit"
-          className={classes.collapseToggle}
-          onClick={toggleOpen}
-        >
-          {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </IconButton>
-      </Grid>
-      <Grid item style={{ flexGrow: 1 }}>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        className={classes.summary}
+      >
         <Grid
           container
           spacing={2}
-          wrap="nowrap"
+          alignItems="center"
           justify="space-between"
-          alignItems="flex-start"
+          wrap="nowrap"
         >
-          <Grid
-            item
-            onClick={() => setOpen(!open)}
-            toggleOpen
-            style={{ cursor: "pointer" }}
-          >
+          <Grid item>
             <Typography className="bold">{infringementLabel}</Typography>
           </Grid>
           <Grid item>
             <span className={classes.alertNumber}>{alerts.length}</span>
           </Grid>
         </Grid>
-        <Collapse in={open}>
-          <Typography className={classes.description}>{description}</Typography>
-          <List>
-            {alerts.map((a, index) => (
-              <ListItem key={index} disableGutters>
-                <RegulatoryAlert
-                  alert={a}
-                  setPeriodOnFocus={setPeriodOnFocus}
-                  setTab={setTab}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </Collapse>
-      </Grid>
-    </Grid>
+      </AccordionSummary>
+      <AccordionDetails className={classes.details}>
+        <Typography className={classes.description}>{description}</Typography>
+        <List>
+          {alerts.map((a, index) => (
+            <ListItem key={index} disableGutters>
+              <RegulatoryAlert
+                alert={a}
+                setPeriodOnFocus={setPeriodOnFocus}
+                setTab={setTab}
+              />
+            </ListItem>
+          ))}
+        </List>
+      </AccordionDetails>
+    </Accordion>
   );
 }

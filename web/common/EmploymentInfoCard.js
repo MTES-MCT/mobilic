@@ -17,21 +17,21 @@ import Alert from "@material-ui/lab/Alert";
 import { LoadingButton } from "common/components/LoadingButton";
 import React from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import { InfoCard } from "../pwa/components/InfoCard";
 import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import ExpandLessIcon from "@material-ui/icons/ExpandLess";
-import Collapse from "@material-ui/core/Collapse";
 import useTheme from "@material-ui/core/styles/useTheme";
 import {
   EMPLOYMENT_STATUS,
   getEmploymentsStatus
 } from "common/utils/employments";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
-    fontWeight: "bold"
+    fontWeight: "bold",
+    overflowWrap: "anywhere"
   },
   buttonContainer: {
     padding: theme.spacing(2)
@@ -106,37 +106,29 @@ export function EmploymentInfoCard({
   )[status];
 
   return (
-    <InfoCard
+    <Accordion
       variant="outlined"
+      expanded={open}
+      onChange={(event, open_) => setOpen(open_)}
       className={
         status === EMPLOYMENT_STATUS.ended && lightenIfEnded
           ? classes.ended
           : ""
       }
     >
-      <Grid
-        container
-        spacing={2}
-        alignItems="center"
-        justify="space-between"
-        wrap="nowrap"
-        style={{ cursor: "pointer" }}
-        onClick={() => setOpen(!open)}
-      >
-        <Grid item>
-          <Typography className={classes.companyName}>
-            {employment.company.name}
-          </Typography>
-        </Grid>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Grid
-          item
           container
           spacing={1}
           alignItems="center"
           justify="space-between"
           wrap="nowrap"
-          style={{ width: "auto" }}
         >
+          <Grid item>
+            <Typography className={classes.companyName}>
+              {employment.company.name}
+            </Typography>
+          </Grid>
           {!hideStatus && (
             <Grid item>
               <Typography style={{ color: statusColor, fontWeight: "bold" }}>
@@ -144,18 +136,9 @@ export function EmploymentInfoCard({
               </Typography>
             </Grid>
           )}
-          <Grid item>
-            <IconButton
-              aria-label={open ? "Masquer" : "Afficher"}
-              color="inherit"
-              className="no-margin-no-padding"
-            >
-              {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </IconButton>
-          </Grid>
         </Grid>
-      </Grid>
-      <Collapse in={open}>
+      </AccordionSummary>
+      <AccordionDetails>
         <Grid container wrap="wrap" spacing={spacing}>
           <Grid item>
             <InfoItem name="SIREN" value={employment.company.siren} />
@@ -241,7 +224,7 @@ export function EmploymentInfoCard({
             </Grid>
           </>
         )}
-      </Collapse>
-    </InfoCard>
+      </AccordionDetails>
+    </Accordion>
   );
 }

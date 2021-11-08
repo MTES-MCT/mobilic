@@ -29,7 +29,7 @@ export function RegulationCheck({ check }) {
   }
 
   const alertProps = ALERT_TYPE_PROPS[check.rule];
-  const message = alertProps.format(check.status, check.extra);
+  const message = alertProps.format(check.status, check.extra || {});
 
   return (
     <Box color={color} py={1} className="flex-row">
