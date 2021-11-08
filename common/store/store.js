@@ -11,7 +11,7 @@ import { currentUserId } from "../utils/cookie";
 import { captureSentryException } from "../utils/sentry";
 import { LOCAL_STORAGE_SCHEMA, NON_PERSISTENT_SCHEMA } from "./schemas";
 import { employmentSelector, entitySelector } from "./selectors";
-import { rootReducer } from "./reducers/root";
+import { ACTIONS, rootReducer } from "./reducers/root";
 import { EMPLOYMENT_STATUS, getEmploymentsStatus } from "../utils/employments";
 
 const STORE_VERSION = 17;
@@ -182,7 +182,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   };
 
   setItems = (itemValueMap, callback = () => {}, commitImmediately = true) => {
-    const action = { type: "basicUpdate", payload: itemValueMap };
+    const action = { type: ACTIONS.basicUpdate, payload: itemValueMap };
     commitImmediately
       ? this.update(action, Object.keys(itemValueMap), callback)
       : this.dispatch(action, Object.keys(itemValueMap), callback);
@@ -229,7 +229,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
     this.dispatch(
       {
-        type: "create",
+        type: ACTIONS.create,
         payload: { items: objectList, entity, pendingRequestId }
       },
       [entity]
@@ -250,7 +250,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   }) => {
     return this.dispatch(
       {
-        type: "update",
+        type: ACTIONS.update,
         payload: {
           id: objectId,
           entity,
@@ -266,7 +266,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
   deleteEntityObject = (objectId, entity, pendingRequestId) =>
     this.dispatch(
-      { type: "delete", payload: { id: objectId, entity, pendingRequestId } },
+      {
+        type: ACTIONS.delete,
+        payload: { id: objectId, entity, pendingRequestId }
+      },
       [entity]
     );
 
@@ -332,7 +335,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   removeOptimisticUpdateForRequest = (requestId, watchFields) => {
     this.dispatch(
       {
-        type: "removeOptimistic",
+        type: ACTIONS.removeOptimistic,
         payload: { requestId, entities: watchFields }
       },
       watchFields
@@ -342,7 +345,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   syncEntity = (itemsFromApi, entity, belongsToSyncScope = () => true) =>
     this.dispatch(
       {
-        type: "sync",
+        type: ACTIONS.sync,
         payload: { items: itemsFromApi, entity, belongsToSyncScope }
       },
       [entity]
