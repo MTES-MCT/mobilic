@@ -13,15 +13,9 @@ import AccordionDetails from "@material-ui/core/AccordionDetails";
 const useStyles = makeStyles(theme => {
   return {
     container: {
-      width: "100%",
-      border: "none"
-    },
-    summary: {
-      paddingLeft: 0,
-      paddingRight: 0
+      width: "100%"
     },
     details: {
-      padding: 0,
       display: "block"
     },
     collapseToggle: {
@@ -67,10 +61,7 @@ export function AlertGroup({
       variant="outlined"
       className={classes.container}
     >
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        className={classes.summary}
-      >
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Grid
           container
           spacing={2}
