@@ -154,7 +154,7 @@ export function UserRead() {
             )
           );
           const _vehicles = {};
-          userPayload.currentEmployments.forEach(e => {
+          userPayload.employments.forEach(e => {
             e.company.vehicles.forEach(v => {
               _vehicles[v.id.toString()] = v;
             });
