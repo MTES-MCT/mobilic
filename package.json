@@ -57,7 +57,7 @@
     "fs-extra": "^8.1.0",
     "graphiql": "^1.4.7",
     "graphql": "^15.0.0",
-    "graphql-playground-react": "^1.7.23",
+    "graphql-playground-react": "^1.7.28",
     "html-webpack-plugin": "4.0.0-beta.5",
     "http-proxy-middleware": "^1.0.5",
     "husky": "^4.2.5",
