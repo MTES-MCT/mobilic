@@ -312,23 +312,6 @@ export const USER_READ_QUERY = gql`
           }
         }
       }
-      currentEmployments {
-        id
-        startDate
-        isAcknowledged
-        hasAdminRights
-        company {
-          id
-          name
-          siren
-          ...CompanySettings
-          vehicles {
-            id
-            name
-            registrationNumber
-          }
-        }
-      }
       employments {
         id
         startDate
@@ -339,7 +322,13 @@ export const USER_READ_QUERY = gql`
           id
           name
           siren
+          sirets
           ...CompanySettings
+          vehicles {
+            id
+            name
+            registrationNumber
+          }
         }
       }
     }
