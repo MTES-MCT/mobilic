@@ -122,6 +122,7 @@ export default function Home() {
             )}
             <Grid item {...(isActive ? { sm: 6 } : { xs: 12 })} zeroMinWidth>
               <InfoItem
+                data-qa="emailInfoItem"
                 name="Email"
                 value={userInfo.email}
                 actionTitle="Modifier email"
@@ -207,6 +208,7 @@ export default function Home() {
                             size="small"
                             color="primary"
                             variant="contained"
+                            data-qa="resendActivationEmailButton"
                             onClick={resendActivationEmail}
                           >
                             Renvoyer l'email d'activation
