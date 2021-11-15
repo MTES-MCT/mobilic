@@ -173,7 +173,7 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "Il existe déjà un véhicule enregistré avec cette immatriculation";
       case "ACTIVATION_EMAIL_DELAY_ERROR":
         return "Un mail d'activation a récemment été envoyé. Vérifiez votre boîte mail.";
-      case "EMAIL_SENDING_ERROR":
+      case "MAILJET_ERROR":
         return "Erreur lors de l'envoi du mail. Veuillez réessayer plus tard.";
       default:
         return null;
