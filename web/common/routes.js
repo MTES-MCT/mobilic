@@ -3,7 +3,7 @@ import { Landing } from "../landing/root";
 import Login from "../login/login";
 import Signup from "../signup/root";
 import Stats from "../landing/stats";
-import Home from "../home/AccountInfo";
+import Home from "../home/AccountInfo/AccountInfo";
 import { Invite } from "../signup/invite";
 import { RedeemInvite } from "../home/RedeemInvite";
 import { FranceConnectCallback } from "../signup/FranceConnectCallback";
