@@ -62,7 +62,10 @@ import Switch from "@material-ui/core/Switch/Switch";
 import { VerticalTimeline } from "common/components/VerticalTimeline";
 import Grid from "@material-ui/core/Grid";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
-import { computeMissionStats } from "common/utils/mission";
+import {
+  computeMissionStats,
+  missionCreatedByAdmin
+} from "common/utils/mission";
 import {
   missionsNotValidatedByAllWorkers,
   missionValidatedByAdmin,
@@ -225,9 +228,11 @@ export function MissionDetails({
   if (missionLoadError)
     return <Typography color="error">{missionLoadError}</Typography>;
   if (!mission) return null;
+
   const readOnlyMission =
     missionValidatedByAdmin(mission) ||
-    missionsNotValidatedByAllWorkers(mission);
+    (missionsNotValidatedByAllWorkers(mission) &&
+      !missionCreatedByAdmin(mission, adminStore.employments));
 
   const missionCompany = adminStore.companies.find(
     c => c.id === mission.companyId
