@@ -10,6 +10,47 @@ import { PaperContainerTitle } from "../common/PaperContainer";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import BetagouvLogo from "common/assets/images/betagouvlogo.png";
 
+// This condition actually should detect if it's a Node environment
+if (typeof require.context === "undefined") {
+  const fs = require("fs");
+  const path = require("path");
+
+  require.context = (
+    base = ".",
+    scanSubDirectories = false,
+    regularExpression = /\.js$/
+  ) => {
+    const files = {};
+
+    function readDirectory(directory) {
+      fs.readdirSync(directory).forEach(file => {
+        const fullPath = path.resolve(directory, file);
+
+        if (fs.statSync(fullPath).isDirectory()) {
+          if (scanSubDirectories) readDirectory(fullPath);
+          return;
+        }
+
+        if (!regularExpression.test(fullPath)) return;
+
+        files[fullPath] = true;
+      });
+    }
+
+    readDirectory(
+      path.resolve(__dirname, "../../common/assets/images/sponsor-logos")
+    );
+
+    function Module(file) {
+      return require(file);
+    }
+
+    Module.keys = () => Object.keys(files);
+
+    return Module;
+  };
+}
+
 const sponsorsSrcs = require.context(
   "!url-loader?limit=10000&name=static%2Fsponsor-logos%2F%5Bname%5D.%5Bext%5D!common/assets/images/sponsor-logos",
   true,
