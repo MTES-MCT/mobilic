@@ -171,6 +171,10 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "L'utilisateur a un rattachement existant qui n'est pas compatible.";
       case "VEHICLE_ALREADY_REGISTERED":
         return "Il existe déjà un véhicule enregistré avec cette immatriculation";
+      case "ACTIVATION_EMAIL_DELAY_ERROR":
+        return "Un mail d'activation a récemment été envoyé. Vérifiez votre boîte mail.";
+      case "MAILJET_ERROR":
+        return "Erreur lors de l'envoi du mail. Veuillez réessayer plus tard.";
       default:
         return null;
     }

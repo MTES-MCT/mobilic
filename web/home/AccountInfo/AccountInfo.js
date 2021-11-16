@@ -6,27 +6,27 @@ import {
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import { formatPersonName } from "common/utils/coworkers";
-import { Header } from "../common/Header";
-import { Section } from "../common/Section";
+import { Header } from "../../common/Header";
+import { Section } from "../../common/Section";
 import Grid from "@material-ui/core/Grid";
-import { InfoItem } from "./InfoField";
+import { InfoItem } from "../InfoField";
 import Alert from "@material-ui/lab/Alert";
 import { useApi } from "common/utils/api";
 import { useModals } from "common/utils/modals";
 import Divider from "@material-ui/core/Divider";
-import AlertTitle from "@material-ui/lab/AlertTitle";
-import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
+import {
+  PaperContainer,
+  PaperContainerTitle
+} from "../../common/PaperContainer";
 import { frenchFormatDateStringOrTimeStamp } from "common/utils/time";
 import { CHANGE_EMAIL_MUTATION } from "common/utils/apiQueries";
-import { EmploymentInfoCard } from "../common/EmploymentInfoCard";
+import { EmploymentInfoCard } from "../../common/EmploymentInfoCard";
 import { employmentSelector } from "common/store/selectors";
+import AlertEmailNotActivated from "./AlertEmailNotActivated";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
     paddingBottom: theme.spacing(6)
-  },
-  inactiveAlert: {
-    marginTop: theme.spacing(2)
   }
 }));
 
@@ -49,7 +49,6 @@ export default function Home() {
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
   const employments = employmentSelector(store.state);
-
   const modals = useModals();
 
   const userInfo = store.userInfo();
@@ -87,6 +86,7 @@ export default function Home() {
             )}
             <Grid item {...(isActive ? { sm: 6 } : { xs: 12 })} zeroMinWidth>
               <InfoItem
+                data-qa="emailInfoItem"
                 name="Email"
                 value={userInfo.email}
                 actionTitle="Modifier email"
@@ -108,14 +108,7 @@ export default function Home() {
                 }
                 alertComponent={
                   isActive ? null : (
-                    <Alert severity="error" className={classes.inactiveAlert}>
-                      <AlertTitle className="bold">
-                        Adresse email non activée
-                      </AlertTitle>
-                      Un email d'activation vous a été envoyé à l'adresse
-                      ci-dessus. L'activation est nécessaire pour accéder aux
-                      services Mobilic.
-                    </Alert>
+                    <AlertEmailNotActivated email={userInfo.email} />
                   )
                 }
               />
