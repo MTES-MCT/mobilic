@@ -76,6 +76,7 @@ export const FULL_MISSION_FRAGMENT = gql`
   fragment FullMissionData on Mission {
     id
     name
+    submitterId
     validations {
       submitterId
       receptionTime
