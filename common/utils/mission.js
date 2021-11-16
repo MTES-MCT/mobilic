@@ -148,6 +148,9 @@ export function computeMissionStats(m, users) {
 
 export function missionCreatedByAdmin(mission, employments) {
   return employments.some(
-    e => e.hasAdminRights && e.user.id === mission.submitterId
+    e =>
+      e.hasAdminRights &&
+      e.user.id === mission.submitterId &&
+      mission.companyId === e.companyId
   );
 }
