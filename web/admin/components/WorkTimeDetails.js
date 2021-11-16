@@ -282,7 +282,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
           })
         ) : (
           <Typography className={classes.noExpenditureLabel}>
-            Aucun Frais n'a été enregistré pour cette journée
+            Aucun frais n'a été enregistré pour cette journée
           </Typography>
         )}
       </Box>
