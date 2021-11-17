@@ -190,8 +190,7 @@ export function WorkTimeTable({
         PaperProps={{
           className: classes.workTimeModal,
           style: {
-            minWidth: isWidthUp("md", width) ? 830 : "100vw",
-            maxWidth: isWidthUp("md", width) ? 780 : "100vw"
+            width: isWidthUp("md", width) ? 830 : "100vw"
           }
         }}
       >

@@ -282,8 +282,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
             PaperProps={{
               className: classes.missionDrawer,
               style: {
-                minWidth: isWidthUp("md", width) ? 800 : "100vw",
-                maxWidth: isWidthUp("md", width) ? 750 : "100vw"
+                width: isWidthUp("md", width) ? 800 : "100vw"
               }
             }}
           >
