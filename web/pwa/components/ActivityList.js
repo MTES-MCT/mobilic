@@ -10,12 +10,11 @@ import {
   filterActivitiesOverlappingPeriod
 } from "common/utils/activities";
 import {
-  formatDateTime,
   formatLongTimer,
   formatTimeOfDay,
-  getStartOfDay,
   LONG_BREAK_DURATION,
-  now
+  now,
+  useDateTimeFormatter
 } from "common/utils/time";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
@@ -199,20 +198,10 @@ export function ActivityList({
     untilTime
   );
 
-  const showDates =
-    augmentedAndSortedActivities.length > 0
-      ? !isMissionEnded
-        ? getStartOfDay(augmentedAndSortedActivities[0].displayedStartTime) !==
-          getStartOfDay(now())
-        : getStartOfDay(augmentedAndSortedActivities[0].displayedStartTime) !==
-          getStartOfDay(
-            augmentedAndSortedActivities[
-              augmentedAndSortedActivities.length - 1
-            ].displayedEndTime - 1
-          )
-      : false;
-
-  const datetimeFormatter = showDates ? formatDateTime : formatTimeOfDay;
+  const datetimeFormatter = useDateTimeFormatter(
+    augmentedAndSortedActivities,
+    !isMissionEnded
+  );
 
   const [view, setView] = React.useState("list");
 

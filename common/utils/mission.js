@@ -118,14 +118,7 @@ export function computeMissionStats(m, users) {
       totalWorkDuration,
       isComplete: _activities.every(a => !!a.endTime),
       breakDuration: endTime - startTime - totalWorkDuration,
-      expenditures: m.expenditures,
-      expenditureAggs: mapValues(
-        groupBy(
-          m.expenditures.filter(e => e.userId.toString() === userId),
-          e => e.type
-        ),
-        exps => exps.length
-      ),
+      expenditures: m.expenditures.filter(e => e.userId.toString() === userId),
       validation: m.validations.find(v => v.submitterId.toString() === userId)
     };
   });

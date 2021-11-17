@@ -10,7 +10,7 @@ import Container from "@material-ui/core/Container";
 import "./assets/admin.scss";
 import { loadCompaniesData } from "./utils/loadCompaniesData";
 import { useApi } from "common/utils/api";
-import { AdminStoreProvider, useAdminStore } from "./utils/store";
+import { AdminStoreProvider, useAdminStore } from "./store/store";
 import {
   LoadingScreenContextProvider,
   useLoadingScreen
@@ -23,6 +23,7 @@ import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
 import { ADMIN_VIEWS } from "./utils/navigation";
+import { ADMIN_ACTIONS } from "./store/reducers/root";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -78,7 +79,10 @@ function __Admin({ width }) {
                 new Date(Date.now() - DAY * 1000 * 150)
               );
               const companies = await loadCompaniesData(api, userId, minDate);
-              adminStore.sync(companies, minDate);
+              adminStore.dispatch({
+                type: ADMIN_ACTIONS.syncStore,
+                payload: { companiesPayload: companies, minDate }
+              });
             },
             "load-companies",
             null,

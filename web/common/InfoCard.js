@@ -21,33 +21,43 @@ export const useInfoCardStyles = makeStyles(theme => ({
 
 export function InfoCard({
   title,
+  titleProps = {},
   loading = false,
   children,
-  disablePadding,
-  center = false,
+  px = 2,
+  py = 1,
+  textAlign = "justify",
   ...other
 }) {
   return (
     <Card {...other}>
-      <Box
-        px={disablePadding ? 0 : 2}
-        py={disablePadding ? 0 : 1}
-        m={"auto"}
-        style={{ textAlign: center ? "center" : "justify" }}
-      >
-        {title && <Typography>{title}</Typography>}
+      <Box px={px} py={py} m={"auto"} style={{ textAlign }}>
+        {title && <Typography {...titleProps}>{title}</Typography>}
         {loading ? <Skeleton rect width="100%" height={100} /> : children}
       </Box>
     </Card>
   );
 }
 
-export function MetricCard({ label, value, subText, hideSubText, ...other }) {
+export function MetricCard({
+  label,
+  value,
+  subText,
+  hideSubText,
+  titleProps = {},
+  valueProps = {},
+  ...other
+}) {
   const classes = useInfoCardStyles();
 
   return (
-    <InfoCard title={label} center {...other}>
-      <Typography className={classes.value} variant="h1">
+    <InfoCard
+      title={label}
+      textAlign="center"
+      {...other}
+      titleProps={titleProps}
+    >
+      <Typography className={classes.value} variant="h1" {...valueProps}>
         {value}
       </Typography>
       {subText && (

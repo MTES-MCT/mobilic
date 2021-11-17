@@ -9,7 +9,7 @@ import { MissionReviewSection } from "../MissionReviewSection";
 import { ActivityList } from "../ActivityList";
 import React from "react";
 import { DAY } from "common/utils/time";
-import { InfoCard, useInfoCardStyles } from "../InfoCard";
+import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 
 export function DaySummary({
   isDayEnded,

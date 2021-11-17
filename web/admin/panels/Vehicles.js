@@ -1,6 +1,6 @@
 import React from "react";
 import { useApi } from "common/utils/api";
-import { useAdminStore } from "../utils/store";
+import { useAdminStore } from "../store/store";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import Box from "@material-ui/core/Box";
@@ -16,6 +16,7 @@ import {
 import { formatApiError } from "common/utils/errors";
 import { usePanelStyles } from "./Company";
 import { captureSentryException } from "common/utils/sentry";
+import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 export default function VehicleAdmin({ company }) {
   const api = useApi();
@@ -76,17 +77,13 @@ export default function VehicleAdmin({ company }) {
             },
             { context: { nonPublicApi: true } }
           );
-          adminStore.setVehicles(oldVehicles => {
-            const newVehicles = [...oldVehicles];
-            const vehicleIndex = oldVehicles.findIndex(
-              v => v.id === vehicle.id
-            );
-            if (vehicleIndex >= 0)
-              newVehicles[vehicleIndex] = {
-                ...apiResponse.data.vehicles.editVehicle,
-                companyId: companyId
-              };
-            return newVehicles;
+          adminStore.dispatch({
+            type: ADMIN_ACTIONS.update,
+            payload: {
+              id: vehicle.id,
+              entity: "vehicles",
+              update: apiResponse.data.vehicles.editVehicle
+            }
           });
         } catch (err) {
           captureSentryException(err);
@@ -104,13 +101,18 @@ export default function VehicleAdmin({ company }) {
             },
             { context: { nonPublicApi: true } }
           );
-          adminStore.setVehicles(oldVehicles => [
-            {
-              ...apiResponse.data.vehicles.createVehicle,
-              companyId: companyId
-            },
-            ...oldVehicles
-          ]);
+          adminStore.dispatch({
+            type: ADMIN_ACTIONS.create,
+            payload: {
+              entity: "vehicles",
+              items: [
+                {
+                  ...apiResponse.data.vehicles.createVehicle,
+                  companyId
+                }
+              ]
+            }
+          });
         } catch (err) {
           captureSentryException(err);
           alerts.error(formatApiError(err), "vehicleAlreadyRegistered", 6000);
@@ -129,9 +131,10 @@ export default function VehicleAdmin({ company }) {
                 },
                 { context: { nonPublicApi: true } }
               );
-              adminStore.setVehicles(oldVehicles =>
-                oldVehicles.filter(v => v.id !== vehicle.id)
-              );
+              adminStore.dispatch({
+                type: ADMIN_ACTIONS.delete,
+                payload: { id: vehicle.id, entity: "vehicles" }
+              });
             } catch (err) {
               captureSentryException(err);
             }

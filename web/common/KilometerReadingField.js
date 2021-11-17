@@ -3,7 +3,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import SpeedIcon from "@material-ui/icons/Speed";
 import TextField from "common/utils/TextField";
 
-export default function KilometerReadingInput({
+export default function KilometerReadingField({
   kilometerReading,
   setKilometerReading,
   minReading = null,

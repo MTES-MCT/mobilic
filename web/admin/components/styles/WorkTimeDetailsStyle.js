@@ -10,46 +10,32 @@ export const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(6)
   },
-  workTimeRecapCards: {
-    textAlign: "center",
-    paddingBottom: theme.spacing(2)
+  regulatoryAlertCard: {
+    height: "100%"
   },
   cardRecapKPI: {
-    textAlign: "center",
-    padding: theme.spacing(2),
-    height: "50%",
     display: "flex",
+    height: "100%",
     justifyContent: "center",
     flexDirection: "column"
   },
+  cardRecapKPIContainer: {
+    flexGrow: 1
+  },
   cardRecapAmplitude: {
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(2)
   },
   amplitudeText: {
     marginTop: theme.spacing(1),
     fontSize: "1.75em"
   },
-  cardLegalThreshold: {
-    textAlign: "left",
-    height: `calc(100% + ${theme.spacing(3)}px)`,
-    padding: theme.spacing(2)
-  },
-  cardExpenditures: {
-    marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3),
-    padding: theme.spacing(2),
-    overflow: "revert"
-  },
-  legalInfoTitle: {
-    paddingBottom: theme.spacing(2)
-  },
-  expendituresTitle: {
+  cardTitlePadding: {
     paddingBottom: theme.spacing(2)
   },
   chipExpenditure: {
     marginRight: theme.spacing(2)
   },
-  activitiesTitle: {
+  cardTitleLongPadding: {
     paddingBottom: theme.spacing(4)
   },
   missionDrawer: {

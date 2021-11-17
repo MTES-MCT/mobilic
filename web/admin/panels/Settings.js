@@ -8,7 +8,8 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import { SimpleToggleSetting } from "../components/Setting";
 import Divider from "@material-ui/core/Divider";
-import { useAdminStore } from "../utils/store";
+import { useAdminStore } from "../store/store";
+import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 export default function SettingAdmin({ company }) {
   const api = useApi();
@@ -21,16 +22,10 @@ export default function SettingAdmin({ company }) {
       { context: { nonPublicApi: true } }
     );
     const payload = response.data.editCompanySettings;
-    adminStore.setCompanies(
-      adminStore.companies.map(c =>
-        c.id === payload.id
-          ? {
-              ...c,
-              ...payload
-            }
-          : c
-      )
-    );
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.update,
+      payload: { id: company.id, entity: "companies", update: payload }
+    });
   }
 
   const classes = usePanelStyles();

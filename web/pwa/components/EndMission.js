@@ -7,7 +7,7 @@ import { MainCtaButton } from "./MainCtaButton";
 import TextField from "common/utils/TextField";
 import { Expenditures } from "./Expenditures";
 import { AddressField } from "../../common/AddressField";
-import KilometerReadingInput from "./KilometerReadingInput";
+import KilometerReadingField from "../../common/KilometerReadingField";
 import { DateOrDateTimePicker } from "./DateOrDateTimePicker";
 import { getDaysBetweenTwoDates, now } from "common/utils/time";
 
@@ -144,7 +144,7 @@ export default function EndMissionModal({
                   <Typography key={0} variant="h5" className="form-field-title">
                     Quel est le relevé kilométrique de fin de service&nbsp;?
                   </Typography>,
-                  <KilometerReadingInput
+                  <KilometerReadingField
                     key={1}
                     kilometerReading={kilometerReading}
                     minReading={currentMission.startLocation.kilometerReading}

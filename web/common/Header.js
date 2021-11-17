@@ -28,7 +28,7 @@ import TwitterIcon from "common/assets/images/twitter.svg";
 import TwitterWhiteIcon from "common/assets/images/twitter-white.svg";
 
 import Grid from "@material-ui/core/Grid";
-import { useAdminStore } from "../admin/utils/store";
+import { useAdminStore } from "../admin/store/store";
 import { TextWithBadge } from "./TextWithBadge";
 
 const SOCIAL_NETWORKS = [

@@ -18,7 +18,7 @@ import {
   filterActivitiesOverlappingPeriod,
   sortActivities
 } from "common/utils/activities";
-import { InfoCard, MetricCard } from "./InfoCard";
+import { InfoCard, MetricCard } from "../../common/InfoCard";
 
 function formatRangeString(startTime, endTime) {
   return getStartOfDay(startTime) === getStartOfDay(endTime - 1)

@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useApi } from "common/utils/api";
-import { useAdminStore } from "../utils/store";
+import { useAdminStore } from "../store/store";
 import flatMap from "lodash/flatMap";
 import { AugmentedTable } from "../components/AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
@@ -33,6 +33,7 @@ import {
   missionsValidatedByAdmin
 } from "../selectors/missionSelectors";
 import { useStyles } from "../components/styles/ValidationsStyle";
+import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
   const api = useApi();
@@ -130,7 +131,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
     },
     showExpenditures && {
       label: "Frais",
-      name: "expenditureAggs",
+      name: "expenditures",
       format: exps => (exps ? formatExpendituresAsOneString(exps) : null),
       align: "left",
       minWidth: 150,
@@ -310,7 +311,10 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
                       );
                       const validation =
                         apiResponse.data.activities.validateMission;
-                      adminStore.saveMissionValidation(validation);
+                      adminStore.dispatch({
+                        type: ADMIN_ACTIONS.validateMission,
+                        payload: { validation }
+                      });
                       alerts.success(
                         `La mission${
                           entry.name ? " " + entry.name : ""
@@ -342,8 +346,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
         PaperProps={{
           className: classes.missionModal,
           style: {
-            minWidth: isWidthUp("sm", width) ? 800 : "100vw",
-            maxWidth: isWidthUp("md", width) ? 750 : "100vw"
+            width: isWidthUp("md", width) ? 850 : "100vw"
           }
         }}
       >

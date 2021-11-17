@@ -5,7 +5,7 @@ import Link from "@material-ui/core/Link";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import useTheme from "@material-ui/core/styles/useTheme";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { useAdminStore } from "../utils/store";
+import { useAdminStore } from "../store/store";
 import { getBadgeRoutes } from "../../common/routes";
 import { TextWithBadge } from "../../common/TextWithBadge";
 

@@ -13,7 +13,7 @@ import ListItemText from "@material-ui/core/ListItemText/ListItemText";
 import Link from "@material-ui/core/Link";
 import { prettyFormatDay } from "common/utils/time";
 import Divider from "@material-ui/core/Divider";
-import { InfoCard, useInfoCardStyles } from "../InfoCard";
+import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 
 export function Week({
   missionsInPeriod,

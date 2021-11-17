@@ -8,7 +8,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import { formatTimer, now } from "common/utils/time";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { CustomDialogTitle } from "../../common/CustomDialogTitle";
-import { VehicleInput } from "./VehicleInput";
+import { VehicleFieldForApp } from "./VehicleFieldForApp";
 import Box from "@material-ui/core/Box";
 
 export default function DriverSelectionModal({
@@ -47,7 +47,7 @@ export default function DriverSelectionModal({
           key={0}
         />,
         <Box key={1} px={3} pb={3}>
-          <VehicleInput
+          <VehicleFieldForApp
             label="Véhicule"
             vehicle={vehicle}
             setVehicle={setVehicle}
