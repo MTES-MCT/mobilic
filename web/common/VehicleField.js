@@ -15,6 +15,7 @@ export function VehicleField({
   className = null,
   kilometerReading = null,
   setKilometerReading = null,
+  fullWidth = false,
   ...other
 }) {
   const _filterOptions = createFilterOptions({ stringify: getVehicleName });
@@ -24,6 +25,7 @@ export function VehicleField({
   return [
     <Autocomplete
       id="vehicle-booking"
+      fullWidth={fullWidth}
       key={0}
       className={className}
       freeSolo={allowCreate}

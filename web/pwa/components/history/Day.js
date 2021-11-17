@@ -9,6 +9,7 @@ import { useToggleContradictory } from "./toggleContradictory";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { ContradictorySwitch } from "../ContradictorySwitch";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
 
 export const useStyles = makeStyles(theme => ({
   contradictorySwitch: {
@@ -56,7 +57,8 @@ export function Day({
     canDisplayContradictoryVersions,
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion,
-    missionsInPeriod
+    missionsInPeriod.map(m => [m, m.validation?.receptionTime]),
+    useCacheContradictoryInfoInPwaStore()
   );
 
   const userActivitiesToUse = [

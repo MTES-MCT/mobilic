@@ -172,6 +172,7 @@ export default function NewMissionForm({
           </Typography>
           <VehicleFieldForApp
             label="Nom ou immatriculation du véhicule"
+            fullWidth
             disabled={companies && companies.length > 1 && !company}
             vehicle={vehicle}
             setVehicle={setVehicle}

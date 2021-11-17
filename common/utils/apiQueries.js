@@ -110,6 +110,11 @@ export const FULL_MISSION_FRAGMENT = gql`
       startTime
       endTime
       userId
+      user {
+        id
+        firstName
+        lastName
+      }
     }
     comments {
       id

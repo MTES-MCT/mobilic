@@ -272,13 +272,9 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
         defaultSortType="desc"
         className={classes.virtualizedTableContainer}
         disableGroupCollapse
-        onRowGroupClick={
-          tab === 0
-            ? entry => {
-                setMissionIdOnFocus(entry.id);
-              }
-            : null
-        }
+        onRowGroupClick={entry => {
+          setMissionIdOnFocus(entry.id);
+        }}
         rowClassName={entry =>
           `${classes.row} ${
             missionIdOnFocus && entry.missionId === missionIdOnFocus

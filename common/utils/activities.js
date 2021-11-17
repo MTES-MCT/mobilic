@@ -330,9 +330,10 @@ export function computeDurationAndTime(activities, fromTime, untilTime) {
     const startTime = fromTime
       ? Math.max(activity.startTime, fromTime)
       : activity.startTime;
-    const endTime = untilTime
-      ? Math.min(activity.endTime || dateNow, untilTime)
-      : activity.endTime;
+    const endTime =
+      untilTime && untilTime < dateNow
+        ? Math.min(activity.endTime || dateNow, untilTime)
+        : activity.endTime;
     const endTimeOrNow = endTime || dateNow;
     return {
       ...activity,

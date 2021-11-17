@@ -7,17 +7,16 @@ import {
 } from "common/utils/contradictory";
 import flatMap from "lodash/flatMap";
 import { useApi } from "common/utils/api";
-import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 
 export function useToggleContradictory(
   shouldCompute,
   shouldDisplayInitialEmployeeVersion,
   setShouldDisplayInitialEmployeeVersion,
-  missions
+  missionsWithValidationTimes,
+  cacheInStore
 ) {
   const api = useApi();
-  const store = useStoreSyncedWithLocalStorage();
   const alerts = useSnackbarAlerts();
 
   const [
@@ -41,17 +40,16 @@ export function useToggleContradictory(
     await alerts.withApiErrorHandling(
       async () => {
         const contradictoryInfo = await Promise.all(
-          missions.map(async m => [
-            m,
-            await getContradictoryInfoForMission(m, api, store)
+          missionsWithValidationTimes.map(async m => [
+            ...m,
+            await getContradictoryInfoForMission(m[0], api, cacheInStore)
           ])
         );
         const activitiesChangesPerMission = contradictoryInfo.map(ci => {
-          const mission = ci[0];
-          const missionActivitiesWithHistory = ci[1].activities;
+          const missionActivitiesWithHistory = ci[2].activities;
           const eventChanges = getEventChangesSinceTime(
             missionActivitiesWithHistory,
-            mission.validation.receptionTime
+            ci[1]
           );
           return [
             getPreviousVersionsOfEvents(eventChanges),
@@ -89,12 +87,15 @@ export function useToggleContradictory(
     setShouldDisplayInitialEmployeeVersion(false);
     setHasComputedContradictory(false);
     setEmployeeActivityVersions([]);
-  }, [missions.map(m => m.id).reduce((a, b) => a + b)]);
+  }, [missionsWithValidationTimes.map(m => m[0].id).reduce((a, b) => a + b)]);
 
   return [
     shouldDisplayInitialEmployeeVersion
       ? employeeActivityVersions
-      : flatMap(missions, m => m.allActivities || m.activities),
+      : flatMap(
+          missionsWithValidationTimes,
+          m => m[0].allActivities || m[0].activities
+        ),
     changesHistory,
     isComputingContradictory,
     hasComputedContradictory

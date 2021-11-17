@@ -10,57 +10,12 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import { AugmentedTable } from "./AugmentedTable";
 import { MissionInfoCard } from "./MissionInfoCard";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import { ACTIVITIES } from "common/utils/activities";
 import TextField from "@material-ui/core/TextField/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import { DateOrDateTimePicker } from "../../pwa/components/DateOrDateTimePicker";
 import Button from "@material-ui/core/Button";
-
-const useStyles = makeStyles(theme => ({
-  listActivitiesAccordion: {
-    border: `1px solid ${theme.palette.divider}`,
-    "&:not(:last-child)": {
-      borderBottom: 0
-    },
-    "&:before": {
-      display: "none"
-    }
-  },
-  listActivitiesAccordionSummary: {
-    backgroundColor: "rgba(0, 0, 0, .03)",
-    flexDirection: "row-reverse",
-    "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
-      transform: "rotate(90deg)"
-    },
-    "& .MuiAccordionSummary-content": {
-      marginLeft: theme.spacing(1)
-    }
-  },
-  listActivitiesAccordionDetail: {
-    display: "block",
-    overflowX: "auto",
-    padding: theme.spacing(2),
-    borderTop: "1px solid rgba(0, 0, 0, .125)"
-  },
-  activitiesTableContainer: {
-    width: "100%"
-  },
-  warningText: {
-    color: theme.palette.warning.main,
-    fontWeight: "bold"
-  },
-  noActivitiesText: {
-    color: theme.palette.grey[500],
-    fontStyle: "italic"
-  },
-  chartContainer: {
-    textAlign: "center"
-  },
-  addActivityButton: {
-    float: "right"
-  }
-}));
+import { useActivitiesCardStyles } from "./styles/ActivitiesCardStyle";
 
 export function ActivitiesCard({
   activities,
@@ -74,9 +29,10 @@ export function ActivitiesCard({
   untilTime,
   datetimeFormatter = formatTimeOfDay
 }) {
-  const classes = useStyles();
+  const classes = useActivitiesCardStyles();
   const ref = React.useRef();
 
+  // Augmented Table needs its rows to have unique id
   const activitiesWithIds = activities.map(a => ({
     ...a,
     id: a.id || `${a.type}${a.startTime}`

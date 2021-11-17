@@ -36,6 +36,7 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import LocationEntry from "./LocationEntry";
 import Alert from "@material-ui/lab/Alert";
 import { ContradictoryChanges } from "./ContradictoryChanges";
+import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -171,6 +172,8 @@ export function MissionDetails({
   );
 
   const disableActions = mission.validation || mission.adminValidation;
+
+  const cacheContradictoryInfoInPwaStore = useCacheContradictoryInfoInPwaStore();
 
   async function handleMissionValidation() {
     const actualValidationFunc = async () => {
@@ -539,7 +542,12 @@ export function MissionDetails({
                 </Box>
               )}
               {mission.adminValidation && mission.validation && (
-                <ContradictoryChanges mission={mission} userId={actualUserId} />
+                <ContradictoryChanges
+                  mission={mission}
+                  since={mission.validation.receptionTime}
+                  userId={actualUserId}
+                  cacheInStore={cacheContradictoryInfoInPwaStore}
+                />
               )}
             </>
           )}

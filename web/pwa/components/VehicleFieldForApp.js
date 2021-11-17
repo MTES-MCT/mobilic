@@ -11,7 +11,8 @@ export function VehicleFieldForApp({
   disabled = false,
   className = null,
   kilometerReading = null,
-  setKilometerReading = null
+  setKilometerReading = null,
+  ...other
 }) {
   const store = useStoreSyncedWithLocalStorage();
 
@@ -28,6 +29,7 @@ export function VehicleFieldForApp({
       className={className}
       kilometerReading={kilometerReading}
       setKilometerReading={setKilometerReading}
+      {...other}
     />
   );
 }
