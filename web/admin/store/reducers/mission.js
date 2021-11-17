@@ -11,4 +11,3 @@ export function validateMissionReducer(state, { validation }) {
   }
   return state;
 }
-//

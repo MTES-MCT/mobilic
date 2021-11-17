@@ -1,5 +1,6 @@
 import Card from "@material-ui/core/Card/Card";
 import Box from "@material-ui/core/Box";
+import omit from "lodash/omit";
 import Typography from "@material-ui/core/Typography";
 import Skeleton from "@material-ui/lab/Skeleton";
 import React from "react";
@@ -57,7 +58,11 @@ export function MetricCard({
       {...other}
       titleProps={titleProps}
     >
-      <Typography className={classes.value} variant="h1" {...valueProps}>
+      <Typography
+        className={`${classes.value} ${valueProps.className}`}
+        variant="h1"
+        {...omit(valueProps, ["className"])}
+      >
         {value}
       </Typography>
       {subText && (

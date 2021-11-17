@@ -1,6 +1,9 @@
 import maxBy from "lodash/maxBy";
 import { ACTIVITIES_AND_EXPENDITURES_HISTORY_ON_MISSION_QUERY } from "./apiQueries";
 import { NonConcurrentExecutionQueue } from "./concurrency";
+import { ADMIN_ACTIONS } from "../../web/admin/store/reducers/root";
+import { useStoreSyncedWithLocalStorage } from "../store/store";
+import { useAdminStore } from "../../web/admin/store/store";
 
 function versionOfEventAt(event, time) {
   if (event.receptionTime && event.receptionTime > time) return null;
@@ -80,7 +83,11 @@ export function getChangesHistory(eventChanges) {
 
 const contradictoryFetchQueue = new NonConcurrentExecutionQueue();
 
-export async function getContradictoryInfoForMission(mission, api, store) {
+export async function getContradictoryInfoForMission(
+  mission,
+  api,
+  cacheInStore
+) {
   if (!mission.contradictoryInfo) {
     await contradictoryFetchQueue.execute(
       async () => {
@@ -90,16 +97,45 @@ export async function getContradictoryInfoForMission(mission, api, store) {
             { missionId: mission.id }
           )
         ).data.mission;
-        store.updateEntityObject({
-          objectId: mission.id,
-          entity: "missions",
-          update: { contradictoryInfo }
-        });
-        store.batchUpdate();
+        cacheInStore(mission, contradictoryInfo);
         mission.contradictoryInfo = contradictoryInfo;
       },
       { cacheKey: mission.id, queueName: mission.id }
     );
   }
   return mission.contradictoryInfo;
+}
+
+function cacheInPwaStore(mission, contradictoryInfo, store) {
+  store.updateEntityObject({
+    objectId: mission.id,
+    entity: "missions",
+    update: { contradictoryInfo }
+  });
+  store.batchUpdate();
+}
+
+function cacheInAdminStore(mission, contradictoryInfo, adminStore) {
+  adminStore.dispatch({
+    type: ADMIN_ACTIONS.update,
+    payload: {
+      id: mission.id,
+      entity: "missions",
+      update: { contradictoryInfo }
+    }
+  });
+}
+
+export function useCacheContradictoryInfoInPwaStore() {
+  const store = useStoreSyncedWithLocalStorage();
+
+  return (mission, contradictoryInfo) =>
+    cacheInPwaStore(mission, contradictoryInfo, store);
+}
+
+export function useCacheContradictoryInfoInAdminStore() {
+  const adminStore = useAdminStore();
+
+  return (mission, contradictoryInfo) =>
+    cacheInAdminStore(mission, contradictoryInfo, adminStore);
 }

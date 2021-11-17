@@ -19,6 +19,9 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import { MissionValidationInfo } from "./MissionValidationInfo";
 import Hidden from "@material-ui/core/Hidden";
+import { MissionInfoCard } from "./MissionInfoCard";
+import { ContradictoryChanges } from "../../pwa/components/ContradictoryChanges";
+import { useCacheContradictoryInfoInAdminStore } from "common/utils/contradictory";
 
 const useStyles = makeStyles(theme => ({
   cardRecapKPIContainer: {
@@ -29,6 +32,10 @@ const useStyles = makeStyles(theme => ({
   },
   workDurationCaption: {
     color: theme.palette.grey[500]
+  },
+  runningMissionText: {
+    color: theme.palette.warning.main,
+    fontWeight: "bold"
   }
 }));
 
@@ -64,6 +71,8 @@ export function MissionEmployeeCard({
     false
   );
 
+  const cacheContradictoryInfoInAdminStore = useCacheContradictoryInfoInAdminStore();
+
   return (
     <Accordion
       variant="outlined"
@@ -85,6 +94,18 @@ export function MissionEmployeeCard({
             </Grid>
             {!open &&
               activities.length > 0 && [
+                !stats.isComplete && (
+                  <Hidden xsDown key={0}>
+                    <Grid item>
+                      <Typography
+                        variant="caption"
+                        className={`${classes.workDurationCaption} ${classes.runningMissionText}`}
+                      >
+                        En cours
+                      </Typography>
+                    </Grid>
+                  </Hidden>
+                ),
                 <Hidden xsDown key={1}>
                   <Grid item>
                     <Typography
@@ -112,7 +133,7 @@ export function MissionEmployeeCard({
                         variant="caption"
                         className={classes.workDurationCaption}
                       >
-                        Fin : {datetimeFormatter(stats.endTime)}
+                        Fin : {datetimeFormatter(stats.endTimeOrNow)}
                       </Typography>
                     </Grid>
                   </Hidden>
@@ -144,29 +165,51 @@ export function MissionEmployeeCard({
             <Grid xs={12} sm={6} item className={classes.cardRecapKPIContainer}>
               <MetricCard
                 className={classes.cardRecapKPI}
-                center
+                textAlign="center"
                 py={2}
                 variant="outlined"
                 title="Amplitude"
                 value={formatTimer(stats.service)}
-                valueProps={{ variant: "body1" }}
+                valueProps={{
+                  variant: "body1",
+                  className: !stats.isComplete ? classes.runningMissionText : ""
+                }}
                 subText={
-                  stats.startTime
-                    ? `de ${datetimeFormatter(stats.startTime)} à
-                  ${datetimeFormatter(stats.endTime)}`
-                    : ""
+                  stats.startTime ? (
+                    <span>
+                      de {datetimeFormatter(stats.startTime)} à{" "}
+                      {datetimeFormatter(stats.endTimeOrNow)}{" "}
+                      {!stats.isComplete ? (
+                        <span className={classes.runningMissionText}>
+                          (en cours)
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </span>
+                  ) : (
+                    ""
+                  )
                 }
               />
             </Grid>
             <Grid xs={12} sm={6} item className={classes.cardRecapKPIContainer}>
               <MetricCard
                 className={classes.cardRecapKPI}
-                center
+                textAlign="center"
                 py={2}
                 variant="outlined"
                 title="Temps de travail"
                 value={formatTimer(stats.totalWorkDuration)}
-                valueProps={{ variant: "body1" }}
+                valueProps={{
+                  variant: "body1",
+                  className: !stats.isComplete ? classes.runningMissionText : ""
+                }}
+                subText={
+                  !stats.isComplete ? (
+                    <span className={classes.runningMissionText}>En cours</span>
+                  ) : null
+                }
               />
             </Grid>
           </Grid>
@@ -191,6 +234,18 @@ export function MissionEmployeeCard({
                 minSpendingDate={stats.startTime}
                 maxSpendingDate={stats.endTime}
               />
+            </Grid>
+          )}
+          {mission.adminGlobalValidation && stats.validation && (
+            <Grid item xs={12}>
+              <MissionInfoCard>
+                <ContradictoryChanges
+                  mission={mission}
+                  since={stats.validation.receptionTime}
+                  userId={user.id}
+                  cacheInStore={cacheContradictoryInfoInAdminStore}
+                />
+              </MissionInfoCard>
             </Grid>
           )}
         </Grid>

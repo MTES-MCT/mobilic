@@ -69,8 +69,8 @@ export function ExpendituresCard({
               expCount > 1 ? `${expCount} ${expProps.plural}` : expProps.label;
             return (
               expCount > 0 && (
-                <Grid item>
-                  <Chip key={exp} label={label} />
+                <Grid item key={exp}>
+                  <Chip label={label} />
                 </Grid>
               )
             );

@@ -189,34 +189,56 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
             <MetricCard
               loading={loading}
               className={`${classes.cardRecapKPI}`}
-              center
+              textAlign="center"
               py={2}
               variant="outlined"
               titleProps={{ variant: "h3" }}
               title="Amplitude"
               value={formatTimer(workTimeEntry.service)}
               valueProps={{
-                className: classes.amplitudeText,
+                className: `${classes.amplitudeText} ${
+                  !workTimeEntry.endTime ? classes.runningMissionText : ""
+                }`,
                 variant: "body1"
               }}
-              subText={`de ${formatTimeOfDay(workTimeEntry.startTime)} à
-                ${formatTimeOfDay(workTimeEntry.endTime)}`}
+              subText={
+                <span>
+                  de {formatTimeOfDay(workTimeEntry.startTime)} à{" "}
+                  {formatTimeOfDay(workTimeEntry.endTime)}{" "}
+                  {!workTimeEntry.endTime ? (
+                    <span className={classes.runningMissionText}>
+                      (en cours)
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </span>
+              }
             />
           </Grid>
           <Grid item className={classes.cardRecapKPIContainer}>
             <MetricCard
               className={classes.cardRecapKPI}
               loading={loading}
-              center
+              textAlign="center"
               py={2}
               variant="outlined"
               titleProps={{ variant: "h3" }}
               title="Temps de travail"
               value={formatTimer(workTimeEntry.totalWork)}
               valueProps={{
-                className: classes.amplitudeText,
+                className: `${classes.amplitudeText} ${
+                  !workTimeEntry.endTime ? classes.runningMissionText : ""
+                }`,
                 variant: "body1"
               }}
+              subText={
+                !workTimeEntry.endTime ? (
+                  <span className={classes.runningMissionText}>En cours</span>
+                ) : (
+                  ""
+                )
+              }
             />
           </Grid>
         </Grid>

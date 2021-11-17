@@ -359,6 +359,7 @@ export const AugmentedTable = React.forwardRef(
         ...columnsToRender.map(renderColumn),
         virtualized ? (
           <Box
+            key="groupBy"
             className={classes.cell}
             style={{ textAlign: "left", fontWeight: "bold", flexGrow: 100 }}
           >
@@ -370,6 +371,7 @@ export const AugmentedTable = React.forwardRef(
             colSpan="100"
             className={classes.cell}
             style={{ fontWeight: "bold" }}
+            key="groupBy"
           >
             {groupByColumn.format(groupKey, entry)}
           </TableCell>

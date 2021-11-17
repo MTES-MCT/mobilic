@@ -8,6 +8,7 @@ import orderBy from "lodash/orderBy";
 import min from "lodash/min";
 import max from "lodash/max";
 import sum from "lodash/sum";
+import { now } from "./time";
 
 export function parseMissionPayloadFromBackend(missionPayload, userId) {
   return {
@@ -76,6 +77,7 @@ export function augmentAndSortMissions(missions, userId, companies = []) {
 }
 
 export function computeMissionStats(m, users) {
+  const now1 = now();
   const activitiesWithUserId = m.activities
     .map(a => ({
       ...a,
@@ -104,31 +106,35 @@ export function computeMissionStats(m, users) {
   const isComplete = activitiesWithUserId.every(a => !!a.endTime);
   const userStats = mapValues(activitiesByUser, (activities, userId) => {
     const _activities = orderBy(activities, ["startTime", "endTime"]);
+    const isComplete = _activities.every(a => !!a.endTime);
     const startTime = min(_activities.map(a => a.startTime));
-    const endTime = max(_activities.map(a => a.endTime));
+    const endTime = isComplete ? max(_activities.map(a => a.endTime)) : null;
+    const endTimeOrNow = endTime || now1;
     const totalWorkDuration = sum(
-      _activities.map(a => a.endTime - a.startTime)
+      _activities.map(a => (a.endTime || now1) - a.startTime)
     );
     return {
       activities: _activities,
       user: members.find(m => m.id.toString() === userId),
       startTime,
       endTime,
-      service: endTime - startTime,
+      endTimeOrNow,
+      service: endTimeOrNow - startTime,
       totalWorkDuration,
       isComplete: _activities.every(a => !!a.endTime),
-      breakDuration: endTime - startTime - totalWorkDuration,
+      breakDuration: endTimeOrNow - startTime - totalWorkDuration,
       expenditures: m.expenditures.filter(e => e.userId.toString() === userId),
       validation: m.validations.find(v => v.submitterId.toString() === userId)
     };
   });
   const startTime = min(m.activities.map(a => a.startTime));
-  const endTime = max(m.activities.map(a => a.endTime));
+  const endTime = isComplete ? max(m.activities.map(a => a.endTime)) : null;
   return {
     ...m,
     activities: activitiesWithUserId,
     startTime,
     endTime,
+    endTimeOrNow: endTime || now1,
     isComplete,
     validatedByAllMembers,
     validatedByAdminForAllMembers,

@@ -36,7 +36,8 @@ export const missionsToValidateByAdmin = createSelector(
   missionWithStats,
   missions =>
     missions
-      ?.filter(missionNotValidatedByAdmin)
+      ?.filter(m => m.isComplete)
+      .filter(missionNotValidatedByAdmin)
       .filter(missionsValidatedByAllWorkersOrOld)
 );
 
@@ -49,6 +50,7 @@ export const missionsToValidateByWorkers = createSelector(
   missionWithStats,
   missions =>
     missions
-      ?.filter(missionNotValidatedByAdmin)
+      ?.filter(m => m.isComplete)
+      .filter(missionNotValidatedByAdmin)
       .filter(missionsNotValidatedByAllWorkers)
 );

@@ -2,7 +2,11 @@ import React from "react";
 import Collapse from "@material-ui/core/Collapse/Collapse";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import { formatTimeOfDay } from "common/utils/time";
+import {
+  formatDateTime,
+  formatTimeOfDay,
+  getStartOfDay
+} from "common/utils/time";
 import IconButton from "@material-ui/core/IconButton";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
@@ -22,33 +26,43 @@ export const useStyles = makeStyles(theme => ({
 }));
 
 function getChangeText(change) {
+  const datetimeFormatter =
+    getStartOfDay(change.current.startTime) ===
+      getStartOfDay(change.current.endTime) &&
+    getStartOfDay(change.previous.startTime) ===
+      getStartOfDay(change.previous.endTime) &&
+    getStartOfDay(change.current.startTime) ===
+      getStartOfDay(change.current.startTime)
+      ? formatTimeOfDay
+      : formatDateTime;
+
   switch (change.change) {
     case "CREATE":
       return `a ajouté l'activité ${
         ACTIVITIES[change.current.type].label
-      } de ${formatTimeOfDay(change.current.startTime)} à ${formatTimeOfDay(
+      } de ${datetimeFormatter(change.current.startTime)} à ${datetimeFormatter(
         change.current.endTime
       )}`;
     case "DELETE":
       return `a supprimé l'activité ${
         ACTIVITIES[change.current.type].label
-      } de ${formatTimeOfDay(change.current.startTime)} à ${formatTimeOfDay(
+      } de ${datetimeFormatter(change.current.startTime)} à ${datetimeFormatter(
         change.current.endTime
       )}`;
     case "UPDATE":
       return `a modifié la période de l'activité ${
         ACTIVITIES[change.current.type].label
-      } de ${formatTimeOfDay(change.previous.startTime)} - ${formatTimeOfDay(
-        change.previous.endTime
-      )} à ${formatTimeOfDay(change.current.startTime)} - ${formatTimeOfDay(
-        change.current.endTime
-      )}`;
+      } de ${datetimeFormatter(
+        change.previous.startTime
+      )} - ${datetimeFormatter(change.previous.endTime)} à ${datetimeFormatter(
+        change.current.startTime
+      )} - ${datetimeFormatter(change.current.endTime)}`;
     default:
       return "changement inconnu.";
   }
 }
 
-export function ContradictoryChanges({ mission, userId }) {
+export function ContradictoryChanges({ mission, since, userId, cacheInStore }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
 
@@ -58,7 +72,13 @@ export function ContradictoryChanges({ mission, userId }) {
     changesHistory,
     loadingEmployeeVersion,
     hasComputedContradictory
-  ] = useToggleContradictory(true, open, setOpen, [mission]);
+  ] = useToggleContradictory(
+    true,
+    open,
+    setOpen,
+    [[mission, since]],
+    cacheInStore
+  );
 
   const userChangesHistory = changesHistory.filter(c => c.userId === userId);
 

@@ -3,7 +3,6 @@ import values from "lodash/values";
 import Box from "@material-ui/core/Box";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import {
   formatDateTime,
@@ -44,111 +43,8 @@ import { useMissionActions } from "../utils/missionActions";
 import { useMissionWithStats } from "../utils/missionWithStats";
 import { MissionDetailsSection } from "./MissionDetailsSection";
 import { MissionTitle } from "./MissionTitle";
-
-const useStyles = makeStyles(theme => ({
-  missionTitleContainer: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start"
-  },
-  closeButton: {
-    padding: 0
-  },
-  missionTitle: {
-    textOverflow: "ellipsis",
-    marginRight: theme.spacing(4)
-  },
-  missionOverallTimes: {
-    marginTop: theme.spacing(2),
-    color: theme.palette.grey[700],
-    marginBottom: theme.spacing(4),
-    display: "block"
-  },
-  horizontalPadding: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
-  },
-  sectionTitle: {
-    marginBottom: theme.spacing(2)
-  },
-  missionSubTitle: {
-    fontWeight: 200,
-    display: "block"
-  },
-  saveIcon: {
-    color: theme.palette.success.main
-  },
-  header: {
-    background: "inherit",
-    border: "none"
-  },
-  userRow: {
-    background: theme.palette.background.default,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center"
-  },
-  activityRow: {
-    borderBottom: "1px solid #ebeff3",
-    alignItems: "flex-end",
-    height: 50,
-    display: "flex"
-  },
-  expenditureTitle: {
-    paddingLeft: theme.spacing(1)
-  },
-  userName: {
-    fontWeight: "bold"
-  },
-  validationTime: {
-    fontStyle: "italic",
-    color: theme.palette.success.main
-  },
-  nonValidationText: {
-    fontStyle: "italic",
-    color: theme.palette.warning.main
-  },
-  row: {
-    "&:hover": {
-      background: "inherit"
-    }
-  },
-  validationSection: {
-    textAlign: "center",
-    paddingTop: theme.spacing(4)
-  },
-  comments: {
-    paddingLeft: theme.spacing(3)
-  },
-  table: {
-    width: 100,
-    "& .ReactVirtualized__Grid__innerScrollContainer": {
-      borderBottom: "none"
-    },
-    paddingTop: theme.spacing(3),
-    paddingBottom: theme.spacing(6)
-  },
-  smallTextButton: {
-    fontSize: "0.7rem"
-  },
-  kilometers: {
-    paddingBottom: theme.spacing(4)
-  },
-  warningText: {
-    color: theme.palette.warning.main
-  },
-  vehicle: {
-    flexShrink: 0,
-    marginRight: theme.spacing(2)
-  },
-  employeeCard: {
-    width: "100%"
-  },
-  noCommentText: {
-    fontStyle: "italic",
-    color: theme.palette.grey[500]
-  }
-}));
+import { MissionValidationInfo } from "./MissionValidationInfo";
+import { useMissionDetailsStyles } from "./styles/MissionDetailsStyle";
 
 export function MissionDetails({
   missionId,
@@ -156,7 +52,7 @@ export function MissionDetails({
   handleClose,
   setShouldRefreshActivityPanel
 }) {
-  const classes = useStyles();
+  const classes = useMissionDetailsStyles();
 
   const adminStore = useAdminStore();
   const api = useApi();
@@ -229,14 +125,15 @@ export function MissionDetails({
       : false;
 
   const showKilometerReading =
-    mission.vehicle && missionCompany.settings
+    mission.vehicle && missionCompany && missionCompany.settings
       ? missionCompany.settings.requireKilometerData
       : false;
 
   const doesMissionSpanOnMultipleDays =
     mission.startTime &&
-    mission.endTime &&
-    getStartOfDay(mission.startTime) !== getStartOfDay(mission.endTime - 1);
+    mission.endTimeOrNow &&
+    getStartOfDay(mission.startTime) !==
+      getStartOfDay(mission.endTimeOrNow - 1);
   const dateTimeFormatter = doesMissionSpanOnMultipleDays
     ? formatDateTime
     : formatTimeOfDay;
@@ -290,9 +187,19 @@ export function MissionDetails({
         {mission.name && (mission.startTime || day) && (
           <Typography variant="h6" className={classes.missionSubTitle}>
             Du {textualPrettyFormatDay(mission.startTime || day)}
-            {doesMissionSpanOnMultipleDays
-              ? ` au ${textualPrettyFormatDay(mission.endTime)}`
-              : ""}
+            {doesMissionSpanOnMultipleDays ? (
+              <span>
+                {" "}
+                au {textualPrettyFormatDay(mission.endTimeOrNow)}{" "}
+                {mission.isComplete ? (
+                  ""
+                ) : (
+                  <span className={classes.runningMissionText}>(en cours)</span>
+                )}
+              </span>
+            ) : (
+              ""
+            )}
           </Typography>
         )}
       </Box>
@@ -304,7 +211,7 @@ export function MissionDetails({
           vehicle={mission.vehicle}
           editVehicle={!readOnlyMission ? missionActions.updateVehicle : null}
           vehicles={adminStore.vehicles.filter(
-            v => v.companyId === missionCompany.id
+            v => missionCompany && v.companyId === missionCompany.id
           )}
         />
       </Box>
@@ -331,7 +238,7 @@ export function MissionDetails({
             }
             showKm={showKilometerReading}
             defaultAddresses={adminStore.knownAddresses.filter(
-              a => a.companyId === missionCompany.id
+              a => missionCompany && a.companyId === missionCompany.id
             )}
             maxKmReading={mission.endLocation?.kilometerReading}
           />
@@ -340,7 +247,16 @@ export function MissionDetails({
           <Typography variant="h5">Fin</Typography>
           <MissionLocationInfo
             location={mission.endLocation}
-            time={dateTimeFormatter(mission.endTime)}
+            time={
+              <span>
+                {dateTimeFormatter(mission.endTimeOrNow)}{" "}
+                {mission.isComplete ? (
+                  ""
+                ) : (
+                  <span className={classes.runningMissionText}>(en cours)</span>
+                )}
+              </span>
+            }
             editLocation={
               !readOnlyMission
                 ? address =>
@@ -358,7 +274,7 @@ export function MissionDetails({
             }
             showKm={showKilometerReading}
             defaultAddresses={adminStore.knownAddresses.filter(
-              a => a.companyId === missionCompany.id
+              a => missionCompany && a.companyId === missionCompany.id
             )}
             minKmReading={mission.startLocation?.kilometerReading}
           />
@@ -501,15 +417,22 @@ export function MissionDetails({
       </MissionDetailsSection>
       <MissionDetailsSection
         key={5}
-        title=""
+        title="Validation gestionnaire"
         className={classes.validationSection}
       >
-        {!readOnlyMission && (
+        {mission.adminGlobalValidation || readOnlyMission ? (
+          <MissionValidationInfo
+            validation={mission.adminGlobalValidation}
+            isAdmin
+            className={classes.adminValidation}
+          />
+        ) : (
           <LoadingButton
             aria-label="Valider"
             variant="contained"
             color="primary"
             size="small"
+            className={classes.validationButton}
             onClick={async () => {
               let errorToDisplay = null;
               try {

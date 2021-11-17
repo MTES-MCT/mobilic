@@ -59,12 +59,14 @@ export function MissionLocationInfo({
         <EditableMissionInfo
           fullWidth
           value={location}
-          format={address => (
-            <span>
-              {formatAddressMainText(address)}{" "}
-              <span>{formatAddressSubText(address)}</span>
-            </span>
-          )}
+          format={address =>
+            address ? (
+              <span>
+                {formatAddressMainText(address)}{" "}
+                <span>{formatAddressSubText(address)}</span>
+              </span>
+            ) : null
+          }
           renderEditMode={(newAddress, setNewAddress) => (
             <AddressField
               value={newAddress}

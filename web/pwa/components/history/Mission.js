@@ -17,6 +17,7 @@ import { prettyFormatDay } from "common/utils/time";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { useToggleContradictory } from "./toggleContradictory";
 import { ContradictorySwitch } from "../ContradictorySwitch";
+import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
 
 const useStyles = makeStyles(theme => ({
   alternateCard: {
@@ -84,7 +85,8 @@ export function Mission({
     canDisplayContradictoryVersions,
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion,
-    [mission]
+    [[mission, mission.validation?.receptionTime]],
+    useCacheContradictoryInfoInPwaStore()
   );
 
   const userActivitiesToUse = activitiesToUse.filter(a => a.userId === userId);
