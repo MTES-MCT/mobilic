@@ -260,3 +260,17 @@ export function getDaysBetweenTwoDates(startDate, stopDate) {
   }
   return dateSet;
 }
+
+export function useDateTimeFormatter(activities, useNowAsEnd) {
+  const showDates =
+    activities.length > 0
+      ? useNowAsEnd
+        ? getStartOfDay(activities[0].displayedStartTime) !==
+          getStartOfDay(now())
+        : getStartOfDay(activities[0].displayedStartTime) !==
+          getStartOfDay(activities[activities.length - 1].displayedEndTime - 1)
+      : false;
+
+  const datetimeFormatter = showDates ? formatDateTime : formatTimeOfDay;
+  return datetimeFormatter;
+}

@@ -1,7 +1,7 @@
 import React from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useApi } from "common/utils/api";
-import { useAdminStore } from "../utils/store";
+import { useAdminStore } from "../store/store";
 import { AugmentedTable } from "../components/AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@material-ui/core/Typography";
@@ -22,6 +22,7 @@ import {
   SEND_EMPLOYMENT_INVITE_REMINDER,
   TERMINATE_EMPLOYMENT_MUTATION
 } from "common/utils/apiQueries";
+import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -83,9 +84,10 @@ export function Employees({ company, containerRef }) {
       await api.graphQlMutate(CANCEL_EMPLOYMENT_MUTATION, {
         employmentId: employment.id
       });
-      await adminStore.setEmployments(oldEmployments =>
-        oldEmployments.filter(e => e.id !== employment.id)
-      );
+      await adminStore.dispatch({
+        type: ADMIN_ACTIONS.delete,
+        payload: { id: employment.id, entity: "employments" }
+      });
     } catch (err) {
       alerts.error(formatApiError(err), employment.id, 6000);
     }
@@ -99,30 +101,28 @@ export function Employees({ company, containerRef }) {
         endDate: isoFormatLocalDate(endDate)
       }
     );
-    await adminStore.setEmployments(oldEmployments => {
-      const newEmployments = [...oldEmployments];
-      const employmentIndex = oldEmployments.findIndex(
-        e => e.id === employmentId
-      );
-      if (employmentIndex >= 0)
-        newEmployments[employmentIndex] = {
+    await adminStore.dispatch({
+      type: ADMIN_ACTIONS.update,
+      payload: {
+        id: employmentId,
+        entity: "employments",
+        update: {
           ...employmentResponse.data.employments.terminateEmployment,
           companyId
-        };
-      return newEmployments;
+        }
+      }
     });
   }
 
   async function sendInvitationReminder(employmentId) {
     await api.graphQlMutate(SEND_EMPLOYMENT_INVITE_REMINDER, { employmentId });
-    await adminStore.setEmployments(oldEmployments => {
-      const newEmployments = [...oldEmployments];
-      const employmentIndex = oldEmployments.findIndex(
-        e => e.id === employmentId
-      );
-      if (employmentIndex >= 0)
-        newEmployments[employmentIndex].latestInviteEmailTime = now();
-      return newEmployments;
+    await adminStore.dispatch({
+      type: ADMIN_ACTIONS.update,
+      payload: {
+        id: employmentId,
+        entity: "employments",
+        update: { latestInviteEmailTime: now() }
+      }
     });
     alerts.success("Relance envoyée", employmentId, 6000);
   }
@@ -292,10 +292,13 @@ export function Employees({ company, containerRef }) {
               const employments =
                 employmentsResponse.data.employments
                   .batchCreateWorkerEmployments;
-              adminStore.setEmployments(oldEmployments => [
-                ...employments.map(e => ({ ...e, companyId })),
-                ...oldEmployments
-              ]);
+              adminStore.dispatch({
+                type: ADMIN_ACTIONS.create,
+                payload: {
+                  items: employments.map(e => ({ ...e, companyId })),
+                  entity: "employments"
+                }
+              });
               if (employments.length < mails.length) {
                 alerts.warning(
                   "Certaines invitations n'ont pu être envoyées, êtes-vous sûr(e) des adresses email ?",
@@ -394,10 +397,15 @@ export function Employees({ company, containerRef }) {
             CREATE_EMPLOYMENT_MUTATION,
             payload
           );
-          adminStore.setEmployments(oldEmployments => [
-            { ...apiResponse.data.employments.createEmployment, companyId },
-            ...oldEmployments
-          ]);
+          adminStore.dispatch({
+            type: ADMIN_ACTIONS.create,
+            payload: {
+              items: [
+                { ...apiResponse.data.employments.createEmployment, companyId }
+              ],
+              entity: "employments"
+            }
+          });
         } catch (err) {
           alerts.error(formatApiError(err), idOrEmail, 6000);
         }

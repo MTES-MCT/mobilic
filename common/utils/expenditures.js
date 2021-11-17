@@ -31,12 +31,22 @@ function computeExpenditureLabel(expenditureType, expCount) {
   }
 }
 
-export function formatExpendituresAsOneString(expenditureCounts) {
+export function formatExpendituresAsOneString(expenditures) {
+  const expenditureCounts = Array.isArray(expenditures)
+    ? countExpendituresByType(expenditures)
+    : expenditures;
   return Object.keys(expenditureCounts)
     .filter(type => expenditureCounts[type] > 0)
     .map(type => computeExpenditureLabel(type, expenditureCounts[type]))
     .sort()
     .join(", ");
+}
+
+export function countExpendituresByType(expenditures) {
+  return expenditures.reduce((acc, expenditure) => {
+    acc[expenditure.type] = (acc[expenditure.type] || 0) + 1;
+    return acc;
+  }, {});
 }
 
 export function regroupExpendituresSpendingDateByType(expenditures) {

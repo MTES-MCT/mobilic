@@ -43,7 +43,7 @@ function computeWorkDayGroupAggregates(workDayGroup) {
       (acc, wd) => acc.concat(wd.missionNames),
       []
     ),
-    expenditures: aggregateExpenditures
+    expenditureAggs: aggregateExpenditures
   };
 }
 

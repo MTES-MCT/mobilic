@@ -107,7 +107,7 @@ export function WorkTimeTable({
   };
   const expenditureCol = {
     label: "Frais",
-    name: "expenditures",
+    name: "expenditureAggs",
     format: exps => (exps ? formatExpendituresAsOneString(exps) : null),
     align: "left",
     minWidth: 200,

@@ -4,7 +4,7 @@ import { computeMissionStats } from "common/utils/mission";
 
 const DEFAULT_WORKER_VALIDATION_TIMEOUT = 10 * DAY;
 
-const missionsSelector = state => state.missions;
+export const missionsSelector = state => state.missions;
 const usersSelector = state => state.users;
 
 const missionNotValidatedByAdmin = missionWithStat =>

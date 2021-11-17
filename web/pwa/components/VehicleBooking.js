@@ -3,7 +3,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import { VehicleInput } from "./VehicleInput";
+import { VehicleFieldForApp } from "./VehicleFieldForApp";
 import {
   CustomDialogActions,
   CustomDialogTitle
@@ -36,7 +36,7 @@ export default function UpdateVehicleModal({
             la mission.
           </Typography>
         </Box>
-        <VehicleInput
+        <VehicleFieldForApp
           label="Nom ou immatriculation du véhicule"
           vehicle={vehicle}
           setVehicle={setVehicle}

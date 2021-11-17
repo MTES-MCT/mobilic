@@ -1,6 +1,6 @@
 import React from "react";
 import { useApi } from "common/utils/api";
-import { useAdminStore } from "../utils/store";
+import { useAdminStore } from "../store/store";
 import { useModals } from "common/utils/modals";
 import { AddressField } from "../../common/AddressField";
 import Box from "@material-ui/core/Box";
@@ -16,6 +16,7 @@ import {
 import { usePanelStyles } from "./Company";
 import { captureSentryException } from "common/utils/sentry";
 import { buildBackendPayloadForAddress } from "common/utils/addresses";
+import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 export default function KnownAddressAdmin({ company }) {
   const api = useApi();
@@ -100,17 +101,16 @@ export default function KnownAddressAdmin({ company }) {
             },
             { context: { nonPublicApi: true } }
           );
-          adminStore.setKnownAddresses(oldAddresses => {
-            const newAddresses = [...oldAddresses];
-            const addressIndex = oldAddresses.findIndex(
-              a => a.id === address.id
-            );
-            if (addressIndex >= 0)
-              newAddresses[addressIndex] = {
+          adminStore.dispatch({
+            type: ADMIN_ACTIONS.update,
+            payload: {
+              id: address.id,
+              entity: "knownAddresses",
+              update: {
                 ...apiResponse.data.locations.editKnownAddress,
-                companyId: companyId
-              };
-            return newAddresses;
+                companyId
+              }
+            }
           });
         } catch (err) {
           captureSentryException(err);
@@ -128,13 +128,18 @@ export default function KnownAddressAdmin({ company }) {
             },
             { context: { nonPublicApi: true } }
           );
-          adminStore.setKnownAddresses(oldAddresses => [
-            {
-              ...apiResponse.data.locations.createKnownAddress,
-              companyId: companyId
-            },
-            ...oldAddresses
-          ]);
+          adminStore.dispatch({
+            type: ADMIN_ACTIONS.create,
+            payload: {
+              entity: "knownAddresses",
+              items: [
+                {
+                  ...apiResponse.data.locations.createKnownAddress,
+                  companyId
+                }
+              ]
+            }
+          });
         } catch (err) {
           captureSentryException(err);
         }
@@ -152,9 +157,10 @@ export default function KnownAddressAdmin({ company }) {
                 },
                 { context: { nonPublicApi: true } }
               );
-              adminStore.setKnownAddresses(oldAddresses =>
-                oldAddresses.filter(a => a.id !== address.id)
-              );
+              adminStore.dispatch({
+                type: ADMIN_ACTIONS.delete,
+                payload: { id: address.id, entity: "knownAddresses" }
+              });
             } catch (err) {
               captureSentryException(err);
             }

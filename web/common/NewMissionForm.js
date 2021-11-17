@@ -6,7 +6,7 @@ import Box from "@material-ui/core/Box";
 import { useStyles as useFunnelModalStyles } from "../pwa/components/FunnelModal";
 import MenuItem from "@material-ui/core/MenuItem";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
-import { VehicleInput } from "../pwa/components/VehicleInput";
+import { VehicleFieldForApp } from "../pwa/components/VehicleFieldForApp";
 import { AddressField } from "./AddressField";
 import { DateOrDateTimePicker } from "../pwa/components/DateOrDateTimePicker";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
@@ -170,7 +170,7 @@ export default function NewMissionForm({
           <Typography variant="h5" className="form-field-title">
             Utilisez-vous un véhicule&nbsp;?{" "}
           </Typography>
-          <VehicleInput
+          <VehicleFieldForApp
             label="Nom ou immatriculation du véhicule"
             disabled={companies && companies.length > 1 && !company}
             vehicle={vehicle}

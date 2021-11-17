@@ -5,7 +5,7 @@ import {
   CustomDialogActions,
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
-import KilometerReadingInput from "./KilometerReadingInput";
+import KilometerReadingField from "../../common/KilometerReadingField";
 import { LoadingButton } from "common/components/LoadingButton";
 
 export default function KilometerReadingModal({
@@ -34,7 +34,7 @@ export default function KilometerReadingModal({
         handleClose={handleClose}
       />
       <DialogContent>
-        <KilometerReadingInput
+        <KilometerReadingField
           kilometerReading={kilometerReading}
           setKilometerReading={setKilometerReading}
           error={error}

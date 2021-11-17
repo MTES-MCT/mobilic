@@ -6,7 +6,7 @@ import { Mission } from "./Mission";
 import { Box } from "@material-ui/core";
 import { DaySummary } from "./DaySummary";
 import { useToggleContradictory } from "./toggleContradictory";
-import { InfoCard, useInfoCardStyles } from "../InfoCard";
+import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { ContradictorySwitch } from "../ContradictorySwitch";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 

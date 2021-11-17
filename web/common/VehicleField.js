@@ -1,26 +1,22 @@
 import React from "react";
-import values from "lodash/values";
 import TextField from "common/utils/TextField";
-import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import Autocomplete from "@material-ui/lab/Autocomplete/Autocomplete";
 import { createFilterOptions } from "@material-ui/lab/Autocomplete";
 import { getVehicleName } from "common/utils/vehicles";
-import KilometerReadingInput from "./KilometerReadingInput";
+import KilometerReadingField from "./KilometerReadingField";
 
-export function VehicleInput({
+export function VehicleField({
   label,
   vehicle,
   setVehicle,
+  vehicles,
+  allowCreate = true,
   disabled = false,
-  companyId = null,
   className = null,
   kilometerReading = null,
-  setKilometerReading = null
+  setKilometerReading = null,
+  ...other
 }) {
-  const store = useStoreSyncedWithLocalStorage();
-
-  let vehicles = values(store.getEntity("vehicles"));
-  if (companyId) vehicles = vehicles.filter(v => v.companyId === companyId);
   const _filterOptions = createFilterOptions({ stringify: getVehicleName });
   const filterOptions = (options, other) =>
     _filterOptions(options, { inputValue: getVehicleName(vehicle) || "" });
@@ -29,9 +25,8 @@ export function VehicleInput({
     <Autocomplete
       id="vehicle-booking"
       key={0}
-      style={{ width: "100%" }}
       className={className}
-      freeSolo
+      freeSolo={allowCreate}
       disabled={disabled}
       options={vehicles}
       getOptionLabel={v => getVehicleName(v)}
@@ -56,11 +51,12 @@ export function VehicleInput({
           variant="filled"
           label={label}
           placeholder="Véhicule"
+          {...other}
         />
       )}
     />,
     setKilometerReading && (
-      <KilometerReadingInput
+      <KilometerReadingField
         key={1}
         size="small"
         kilometerReading={kilometerReading}

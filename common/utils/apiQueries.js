@@ -438,7 +438,11 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 isAdmin
                 userId
               }
-              context
+              vehicle {
+                id
+                name
+                registrationNumber
+              }
               expenditures {
                 id
                 type
@@ -941,6 +945,7 @@ export const LOG_LOCATION_MUTATION = gql`
     $geoApiData: GenericScalar
     $manualAddress: String
     $kilometerReading: Int
+    $overrideExisting: Boolean
   ) {
     activities {
       logLocation(
@@ -950,6 +955,7 @@ export const LOG_LOCATION_MUTATION = gql`
         geoApiData: $geoApiData
         manualAddress: $manualAddress
         kilometerReading: $kilometerReading
+        overrideExisting: $overrideExisting
       ) {
         id
         alias
@@ -1000,6 +1006,7 @@ export const TERMINATE_VEHICLE_MUTATION = gql`
     }
   }
 `;
+
 export const CREATE_KNOWN_ADDRESS_MUTATION = gql`
   mutation createKnownAddress(
     $geoApiData: GenericScalar
@@ -1230,6 +1237,17 @@ export const DISABLE_WARNING_MUTATION = gql`
     account {
       disableWarning(warningName: $warningName) {
         success
+      }
+    }
+  }
+`;
+
+export const CHANGE_MISSION_NAME_MUTATION = gql`
+  mutation changeMissionName($name: String!, $missionId: Int!) {
+    activities {
+      changeMissionName(name: $name, missionId: $missionId) {
+        id
+        name
       }
     }
   }

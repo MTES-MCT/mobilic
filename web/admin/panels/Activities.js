@@ -9,7 +9,7 @@ import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { WorkTimeTable } from "../components/WorkTimeTable";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
-import { useAdminStore } from "../utils/store";
+import { useAdminStore } from "../store/store";
 import { useModals } from "common/utils/modals";
 import uniqBy from "lodash/uniqBy";
 import uniq from "lodash/uniq";
@@ -44,6 +44,7 @@ import {
 } from "common/utils/apiQueries";
 import { DatePicker } from "@material-ui/pickers";
 import withWidth from "@material-ui/core/withWidth";
+import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -131,7 +132,11 @@ function _ActivityPanel({ width }) {
       minDateOfFetchedData,
       adminStore.userId,
       setLoading,
-      adminStore.addWorkDays,
+      (companiesPayload, newMinDate) =>
+        adminStore.dispatch({
+          type: ADMIN_ACTIONS.addWorkDays,
+          payload: { companiesPayload, minDate: newMinDate }
+        }),
       api,
       alerts
     );

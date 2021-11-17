@@ -327,7 +327,9 @@ export function addBreaksToActivityList(activities) {
 export function computeDurationAndTime(activities, fromTime, untilTime) {
   const dateNow = now();
   return activities.map(activity => {
-    const startTime = Math.max(activity.startTime, fromTime);
+    const startTime = fromTime
+      ? Math.max(activity.startTime, fromTime)
+      : activity.startTime;
     const endTime = untilTime
       ? Math.min(activity.endTime || dateNow, untilTime)
       : activity.endTime;

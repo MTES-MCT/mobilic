@@ -14,7 +14,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import { ItalicWarningTypography } from "./ItalicWarningTypography";
 import { prettyFormatDay } from "common/utils/time";
-import { InfoCard, useInfoCardStyles } from "../InfoCard";
+import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { useToggleContradictory } from "./toggleContradictory";
 import { ContradictorySwitch } from "../ContradictorySwitch";
 
@@ -187,7 +187,8 @@ export function Mission({
           <InfoCard
             className={infoCardStyles.topMargin}
             loading={loadingEmployeeVersion}
-            disablePadding
+            px={0}
+            py={0}
           >
             {MissionDetailsComponent}
           </InfoCard>
