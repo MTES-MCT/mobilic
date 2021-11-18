@@ -63,7 +63,7 @@ export default function AlertEmailNotActivated({ email }) {
         </ListItem>
         <ListItem disableGutters dense className={classes.emailCheckItem}>
           <ListItemIcon className={classes.emailCheckIcon}>👉</ListItemIcon>
-          <ListItemText primary="Pour recevoir nos emails sans encombres, vous pouvez ajouter mobilic@beta.gouv.fr à votre liste de contacts" />
+          <ListItemText primary="Pour recevoir nos emails sans encombre, vous pouvez ajouter mobilic@beta.gouv.fr à votre liste de contacts" />
         </ListItem>
         <ListItem disableGutters dense className={classes.emailCheckItem}>
           <ListItemIcon className={classes.emailCheckIcon}>👉</ListItemIcon>

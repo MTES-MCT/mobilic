@@ -280,13 +280,13 @@ exports[`Home should render the Home correctly when email is not activated 1`] =
                                                                         </div>
                                                                       </ForwardRef(ListItemIcon)>
                                                                     </WithStyles(ForwardRef(ListItemIcon))>
-                                                                    <WithStyles(ForwardRef(ListItemText)) primary=\\"Pour recevoir nos emails sans encombres, vous pouvez ajouter mobilic@beta.gouv.fr à votre liste de contacts\\">
-                                                                      <ForwardRef(ListItemText) classes={{...}} primary=\\"Pour recevoir nos emails sans encombres, vous pouvez ajouter mobilic@beta.gouv.fr à votre liste de contacts\\">
+                                                                    <WithStyles(ForwardRef(ListItemText)) primary=\\"Pour recevoir nos emails sans encombre, vous pouvez ajouter mobilic@beta.gouv.fr à votre liste de contacts\\">
+                                                                      <ForwardRef(ListItemText) classes={{...}} primary=\\"Pour recevoir nos emails sans encombre, vous pouvez ajouter mobilic@beta.gouv.fr à votre liste de contacts\\">
                                                                         <div className=\\"MuiListItemText-root MuiListItemText-dense\\">
                                                                           <WithStyles(ForwardRef(Typography)) variant=\\"body2\\" className=\\"MuiListItemText-primary\\" component=\\"span\\" display=\\"block\\">
                                                                             <ForwardRef(Typography) classes={{...}} variant=\\"body2\\" className=\\"MuiListItemText-primary\\" component=\\"span\\" display=\\"block\\">
                                                                               <span className=\\"MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock\\">
-                                                                                Pour recevoir nos emails sans encombres, vous pouvez ajouter mobilic@beta.gouv.fr à votre liste de contacts
+                                                                                Pour recevoir nos emails sans encombre, vous pouvez ajouter mobilic@beta.gouv.fr à votre liste de contacts
                                                                               </span>
                                                                             </ForwardRef(Typography)>
                                                                           </WithStyles(ForwardRef(Typography))>
