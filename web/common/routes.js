@@ -16,6 +16,8 @@ import { XlsxVerifier } from "../control/VerifyXlsxSignature";
 import { Partners } from "../landing/partners";
 import { Redirect, useParams } from "react-router-dom";
 import { missionsToValidateByAdmin } from "../admin/selectors/missionSelectors";
+import { ResourcePage } from "../landing/ResourcePage/ResourcePage";
+import { AdminResourcePage } from "../landing/ResourcePage/AdminResourcePage";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -182,6 +184,20 @@ export const ROUTES = [
     label: "Partenaires",
     accessible: () => true,
     component: Partners,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/resources/home",
+    label: "Ressources",
+    accessible: () => true,
+    component: ResourcePage,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/resources/admin",
+    label: "Ressources Gestionnaire",
+    accessible: () => true,
+    component: AdminResourcePage,
     menuItemFilter: () => false
   },
   {
