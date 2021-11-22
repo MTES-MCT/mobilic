@@ -221,7 +221,9 @@ export function MissionDetails({
   }
 
   React.useEffect(() => {
-    loadMission();
+    if (missionId) {
+      loadMission();
+    }
   }, [missionId]);
 
   if (loading) return <CircularProgress color="primary" />;
