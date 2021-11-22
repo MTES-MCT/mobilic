@@ -6,21 +6,12 @@ import {
 } from "common/utils/addresses";
 import { AddressField } from "../../common/AddressField";
 import KilometerReadingField from "../../common/KilometerReadingField";
-import Typography from "@material-ui/core/Typography";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItem from "@material-ui/core/ListItem";
 import List from "@material-ui/core/List";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import LocationIcon from "@material-ui/icons/LocationOn";
 import Tooltip from "@material-ui/core/Tooltip";
-
-const useStyles = makeStyles(theme => ({
-  warningText: {
-    color: theme.palette.warning.main,
-    fontWeight: "bold"
-  }
-}));
 
 export function MissionLocationInfo({
   location,
@@ -34,8 +25,6 @@ export function MissionLocationInfo({
 }) {
   const [kmError, setKmError] = React.useState(null);
 
-  const classes = useStyles();
-
   return (
     <List>
       <ListItem disableGutters>
@@ -44,11 +33,7 @@ export function MissionLocationInfo({
             <AccessTimeIcon />
           </ListItemIcon>
         </Tooltip>
-        {time ? (
-          <Typography>{time}</Typography>
-        ) : (
-          <Typography className={classes.warningText}>En cours</Typography>
-        )}
+        {time}
       </ListItem>
       <ListItem disableGutters>
         <Tooltip title="Lieu">
@@ -93,8 +78,8 @@ export function MissionLocationInfo({
               <KilometerReadingField
                 kilometerReading={newKm}
                 setKilometerReading={setNewKm}
-                minKmReading={minKmReading}
-                maxKmReading={maxKmReading}
+                minReading={minKmReading}
+                maxReading={maxKmReading}
                 error={kmError}
                 setError={setKmError}
                 variant="outlined"
