@@ -129,6 +129,8 @@ export function MissionDetails({
       ? missionCompany.settings.requireKilometerData
       : false;
 
+  const editableMissionName = missionCompany?.settings?.requireMissionName;
+
   const doesMissionSpanOnMultipleDays =
     mission.startTime &&
     mission.endTimeOrNow &&
@@ -168,7 +170,7 @@ export function MissionDetails({
               name={mission.name}
               startTime={mission.startTime}
               onEdit={
-                !readOnlyMission
+                !readOnlyMission && editableMissionName
                   ? newName => missionActions.changeName(newName)
                   : null
               }
@@ -220,7 +222,9 @@ export function MissionDetails({
           <Typography variant="h5">Début</Typography>
           <MissionLocationInfo
             location={mission.startLocation}
-            time={dateTimeFormatter(mission.startTime)}
+            time={
+              mission.startTime ? dateTimeFormatter(mission.startTime) : null
+            }
             editLocation={
               !readOnlyMission
                 ? address =>
@@ -248,14 +252,18 @@ export function MissionDetails({
           <MissionLocationInfo
             location={mission.endLocation}
             time={
-              <span>
-                {dateTimeFormatter(mission.endTimeOrNow)}{" "}
-                {mission.isComplete ? (
-                  ""
-                ) : (
-                  <span className={classes.runningMissionText}>(en cours)</span>
-                )}
-              </span>
+              mission.startTime ? (
+                <span>
+                  {dateTimeFormatter(mission.endTimeOrNow)}{" "}
+                  {mission.isComplete ? (
+                    ""
+                  ) : (
+                    <span className={classes.runningMissionText}>
+                      (en cours)
+                    </span>
+                  )}
+                </span>
+              ) : null
             }
             editLocation={
               !readOnlyMission
@@ -380,6 +388,7 @@ export function MissionDetails({
                   setUsersToAdd(users => users.filter(u => u.id !== e.user.id))
                 }
                 defaultOpen={entries.length === 1}
+                day={day}
               />
             </ListItem>
           ))}

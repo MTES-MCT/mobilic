@@ -342,7 +342,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
         PaperProps={{
           className: classes.missionModal,
           style: {
-            width: isWidthUp("md", width) ? 850 : "100vw"
+            width: isWidthUp("md", width) ? 900 : "100vw"
           }
         }}
       >
