@@ -45,6 +45,7 @@ import { MissionDetailsSection } from "./MissionDetailsSection";
 import { MissionTitle } from "./MissionTitle";
 import { MissionValidationInfo } from "./MissionValidationInfo";
 import { useMissionDetailsStyles } from "./styles/MissionDetailsStyle";
+import { missionCreatedByAdmin } from "common/utils/mission";
 
 export function MissionDetails({
   missionId,
@@ -114,7 +115,8 @@ export function MissionDetails({
   const readOnlyMission =
     missionValidatedByAdmin(mission) ||
     (missionsNotValidatedByAllWorkers(mission) &&
-      !missionCreatedByAdmin(mission, adminStore.employments));
+      !missionCreatedByAdmin(mission, adminStore.employments) &&
+      mission.activities.every(a => a.submitterId !== adminStore.userId));
 
   const missionCompany = adminStore.companies.find(
     c => c.id === mission.companyId

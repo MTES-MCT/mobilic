@@ -110,6 +110,7 @@ export const FULL_MISSION_FRAGMENT = gql`
       startTime
       endTime
       userId
+      submitterId
       user {
         id
         firstName
@@ -437,6 +438,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
             node {
               id
               name
+              submitterId
               validations {
                 submitterId
                 receptionTime
@@ -481,6 +483,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                   firstName
                   lastName
                 }
+                submitterId
               }
               comments {
                 id
