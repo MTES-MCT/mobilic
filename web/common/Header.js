@@ -289,6 +289,15 @@ function DesktopHeader({ disableMenu }) {
 
   const docLinks = () => [
     <LinkButton
+      aria-label="Documentation"
+      key={1}
+      href="/resources/home"
+      rel="noopener noreferrer"
+      className={classes.docButton}
+    >
+      Documentation
+    </LinkButton>,
+    <LinkButton
       aria-label="Foire aux questions"
       key={1}
       href="https://faq.mobilic.beta.gouv.fr"

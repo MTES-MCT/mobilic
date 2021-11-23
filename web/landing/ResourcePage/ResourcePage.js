@@ -10,11 +10,7 @@ import { Card } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import { LinkButton } from "../../common/LinkButton";
 import { FaqCard } from "./FaqCard";
-import {
-  ManagerImage,
-  MobilicBlueImage,
-  WorkerImage
-} from "common/utils/icons";
+import { ControlerImage, ManagerImage, WorkerImage } from "common/utils/icons";
 
 const useStyles = makeStyles(theme => ({
   whiteSection: {
@@ -30,7 +26,8 @@ const useStyles = makeStyles(theme => ({
   inner: {
     margin: "auto",
     padding: 0,
-    textAlign: "left"
+    textAlign: "left",
+    flexGrow: 1
   },
   title: {
     marginBottom: theme.spacing(6)
@@ -46,16 +43,19 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2)
   },
   linkRole: {
-    textTransform: "none"
+    textTransform: "none",
+    width: "100%"
   },
   roleCard: {
     borderRadius: 10,
     padding: theme.spacing(2),
     backgroundColor: theme.palette.grey[100],
+    borderColor: theme.palette.primary.main,
     textAlign: "center",
     display: "flex",
     justifyContent: "center",
-    flexDirection: "column"
+    flexDirection: "column",
+    width: "100%"
   },
   roleImage: {
     display: "block",
@@ -73,7 +73,7 @@ export function ResourcePage() {
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth={false}
     >
-      <Container maxWidth="md" className={classes.inner}>
+      <Container maxWidth="lg" className={classes.inner}>
         <PaperContainerTitle variant="h1" className={classes.title}>
           Bienvenue sur la page ressources
         </PaperContainerTitle>
@@ -83,33 +83,26 @@ export function ResourcePage() {
         <Typography className={classes.resourceHeadParagraph}>
           Les questions les plus fréquentes :
         </Typography>
-        <Grid container direction="row" alignItems="center" spacing={8}>
-          <Grid item xs={12} sm={6}>
+        <Grid container direction="row" alignItems="stretch" spacing={8}>
+          <Grid item xs={12} sm={4}>
             <FaqCard
               question="Qu'est ce que Mobilic ?"
               answer="Mobilic est un service numérique qui permet l’enregistrement, le suivi et le contrôle du temps des travailleurs mobiles."
               link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <FaqCard
-              question="Qu'est ce que Mobilic ?"
-              answer="Mobilic est un service numérique qui permet l’enregistrement, le suivi et le contrôle du temps des travailleurs mobiles."
-              link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
+              question="Comment installer Mobilic ?"
+              answer="Mobilic est un site web pouvant s'installer comme une application sur les téléphones Android et iPhone."
+              link="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <FaqCard
-              question="Qu'est ce que Mobilic ?"
-              answer="Mobilic est un service numérique qui permet l’enregistrement, le suivi et le contrôle du temps des travailleurs mobiles."
-              link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <FaqCard
-              question="Qu'est ce que Mobilic ?"
-              answer="Mobilic est un service numérique qui permet l’enregistrement, le suivi et le contrôle du temps des travailleurs mobiles."
-              link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
+              question="Qui a accès aux données Mobilic ?"
+              answer="L'accès aux données salariés de Mobilic est strictement encadré."
+              link="https://faq.mobilic.beta.gouv.fr/public/securite-et-confidentialite-des-donnees/acces-aux-donnees"
             />
           </Grid>
         </Grid>
@@ -129,7 +122,7 @@ export function ResourcePage() {
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth={false}
     >
-      <Container maxWidth="md" className={classes.inner}>
+      <Container maxWidth="lg" className={classes.inner}>
         <Typography variant={"h3"} className={classes.resourceSubtitle}>
           Nous mettons à la disposition des usagers de Mobilic des ressources
           pour apprendre à utiliser Mobilic
@@ -162,7 +155,7 @@ export function ResourcePage() {
           <Grid item xs={12} sm={4}>
             <LinkButton to="/signup/admin" className={classes.linkRole}>
               <Card variant="outlined" className={classes.roleCard}>
-                <MobilicBlueImage
+                <ControlerImage
                   height={150}
                   width={150}
                   className={classes.roleImage}
@@ -179,40 +172,40 @@ export function ResourcePage() {
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth={false}
     >
-      <Container maxWidth="md" className={classes.inner}>
+      <Container maxWidth="lg" className={classes.inner}>
         <Typography variant={"h3"} className={classes.resourceSubtitle}>
           Je cherche des informations sur la réglementation en vigueur dans le
           transport léger
         </Typography>
-        <Grid container direction="row" alignItems="center" spacing={8}>
-          <Grid item xs={12} sm={6}>
+        <Grid container direction="row" alignItems="stretch" spacing={8}>
+          <Grid item xs={12} sm={4}>
             <FaqCard
               question="Durée du travail quotidien"
               answer="Un travailleur ne doit pas dépasser XX heures de travail par jour."
               link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <FaqCard
               question="Repos journalier"
               answer="Un salarié doit respecter un minimum de XXX heures entre deux jours de travail"
               link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <FaqCard
               question="Temps de pause quotidien"
               answer="Mobilic est un service numérique qui permet l’enregistrement, le suivi et le contrôle du temps des travailleurs mobiles."
               link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <FaqCard
-              question="Durée max de travail ininterrompu"
-              answer="Un salarié ne peux travailler plus de XX heures sans prendre de pause."
-              link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
-            />
-          </Grid>
+          {/*<Grid item xs={12} sm={6}>*/}
+          {/*  <FaqCard*/}
+          {/*    question="Durée max de travail ininterrompu"*/}
+          {/*    answer="Un salarié ne peux travailler plus de XX heures sans prendre de pause."*/}
+          {/*    link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"*/}
+          {/*  />*/}
+          {/*</Grid>*/}
         </Grid>
         <Button
           color="primary"
