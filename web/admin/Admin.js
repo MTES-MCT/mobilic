@@ -24,6 +24,7 @@ import { useSnackbarAlerts } from "../common/Snackbar";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
+import { MissionDrawerContextProvider } from "./components/MissionDrawer";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -56,6 +57,7 @@ function __Admin({ width }) {
   const [shouldRefreshData, setShouldRefreshData] = React.useState({
     value: true
   });
+
   const location = useLocation();
 
   const views = ADMIN_VIEWS.map(view => {
@@ -106,42 +108,50 @@ function __Admin({ width }) {
 
   const ref = React.useRef(null);
 
+  const shouldRefreshDataSetter = val => setShouldRefreshData({ value: val });
+
   const defaultView = views.find(view => view.isDefault);
   return [
     <Header key={0} />,
-    <Container
+    <MissionDrawerContextProvider
       key={1}
-      maxWidth={false}
-      disableGutters
-      className={classes.container}
+      width={width}
+      setShouldRefreshData={shouldRefreshDataSetter}
     >
-      {isWidthUp("md", width) && <SideMenu views={views} />}
       <Container
-        className={`scrollable ${classes.panelContainer}`}
+        key={1}
         maxWidth={false}
-        ref={ref}
+        disableGutters
+        className={classes.container}
       >
-        <Switch>
-          {views.map(view => (
-            <Route
-              key={view.label}
-              path={view.path}
-              render={() => (
-                <view.component
-                  containerRef={ref}
-                  setShouldRefreshData={val =>
-                    setShouldRefreshData({ value: val })
-                  }
-                />
-              )}
-            />
-          ))}
-          {defaultView && (
-            <Redirect key="default" push from="*" to={defaultView.path} />
-          )}
-        </Switch>
+        {isWidthUp("md", width) && <SideMenu views={views} />}
+        <Container
+          className={`scrollable ${classes.panelContainer}`}
+          maxWidth={false}
+          ref={ref}
+        >
+          <Switch>
+            {views.map(view => (
+              <Route
+                key={view.label}
+                path={view.path}
+                render={() => (
+                  <view.component
+                    containerRef={ref}
+                    setShouldRefreshData={val =>
+                      setShouldRefreshData(shouldRefreshDataSetter)
+                    }
+                  />
+                )}
+              />
+            ))}
+            {defaultView && (
+              <Redirect key="default" push from="*" to={defaultView.path} />
+            )}
+          </Switch>
+        </Container>
       </Container>
-    </Container>
+    </MissionDrawerContextProvider>
   ];
 }
 

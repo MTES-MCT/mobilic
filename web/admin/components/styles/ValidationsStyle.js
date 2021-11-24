@@ -64,5 +64,11 @@ export const useStyles = makeStyles(theme => ({
   missionTitle: {
     textTransform: "uppercase",
     color: theme.palette.primary.main
+  },
+  companyName: {
+    fontSize: "100%",
+    fontWeight: "normal",
+    textTransform: "none",
+    color: theme.palette.grey[500]
   }
 }));
