@@ -33,6 +33,7 @@ import {
 import { useStyles } from "../components/styles/ValidationsStyle";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMissionDrawer } from "../components/MissionDrawer";
+import { CompanyFilter } from "../components/CompanyFilter";
 
 function _ValidationPanel() {
   const api = useApi();
@@ -47,6 +48,17 @@ function _ValidationPanel() {
 
   const [missionIdOnFocus, openMission] = useMissionDrawer();
   const companies = adminStore.companies;
+
+  const [companiesWithSelection, setCompaniesWithSelection] = React.useState(
+    []
+  );
+
+  React.useEffect(() => setCompaniesWithSelection(companies), [companies]);
+
+  const selectedCompanyIds = (companiesWithSelection.some(c => c.selected)
+    ? companiesWithSelection.filter(c => c.selected)
+    : companiesWithSelection
+  ).map(c => c.id);
 
   const ref = React.useRef();
 
@@ -168,6 +180,9 @@ function _ValidationPanel() {
     minWidth: 200
   };
 
+  const selectedCompanyFilter = missions =>
+    missions.filter(m => selectedCompanyIds.includes(m.companyId));
+
   const missionsToTableEntries = missions =>
     flatMap(
       missions?.map(m =>
@@ -190,19 +205,25 @@ function _ValidationPanel() {
     switch (tab) {
       case 0:
         setTableEntries(
-          missionsToTableEntries(missionsToValidateByAdmin(adminStore))
+          missionsToTableEntries(
+            selectedCompanyFilter(missionsToValidateByAdmin(adminStore))
+          )
         );
         setTableColumns(commonCols);
         break;
       case 1:
         setTableEntries(
-          missionsToTableEntries(missionsToValidateByWorkers(adminStore))
+          missionsToTableEntries(
+            selectedCompanyFilter(missionsToValidateByWorkers(adminStore))
+          )
         );
         setTableColumns([...commonCols, validationEmployeeCol]);
         break;
       case 2:
         setTableEntries(
-          missionsToTableEntries(missionsValidatedByAdmin(adminStore))
+          missionsToTableEntries(
+            selectedCompanyFilter(missionsValidatedByAdmin(adminStore))
+          )
         );
         setTableColumns([...commonCols, validationAdminCol]);
         break;
@@ -210,7 +231,7 @@ function _ValidationPanel() {
         setTableColumns([]);
         setTableEntries([]);
     }
-  }, [tab, adminStore.missions]);
+  }, [tab, adminStore.missions, companiesWithSelection]);
 
   React.useEffect(() => {
     const queryString = new URLSearchParams(location.search);
@@ -221,6 +242,11 @@ function _ValidationPanel() {
 
   return (
     <Paper className={classes.container} variant="outlined">
+      <CompanyFilter
+        companies={companiesWithSelection}
+        setCompanies={setCompaniesWithSelection}
+        className={classes.companyFilter}
+      />
       <Tabs
         value={tab}
         indicatorColor="primary"
@@ -233,18 +259,21 @@ function _ValidationPanel() {
       >
         <Tab
           className={classes.tab}
-          label={`A valider (${missionsToValidateByAdmin(adminStore)?.length})`}
+          label={`A valider (${
+            selectedCompanyFilter(missionsToValidateByAdmin(adminStore))?.length
+          })`}
         />
         <Tab
           className={classes.tab}
           label={`En attente de validation par les salariés (${
-            missionsToValidateByWorkers(adminStore)?.length
+            selectedCompanyFilter(missionsToValidateByWorkers(adminStore))
+              ?.length
           })`}
         />
         <Tab
           className={classes.tab}
           label={`Missions validées (${
-            missionsValidatedByAdmin(adminStore)?.length
+            selectedCompanyFilter(missionsValidatedByAdmin(adminStore))?.length
           })`}
         />
       </Tabs>

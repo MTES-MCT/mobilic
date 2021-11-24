@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function CompanyFilter({ companies, setCompanies }) {
+export function CompanyFilter({ companies, setCompanies, className }) {
   const classes = useStyles();
 
   const handleChange = (event, value) => {
@@ -43,6 +43,7 @@ export function CompanyFilter({ companies, setCompanies }) {
       disableCloseOnSelect
       limitTags={1}
       size="small"
+      className={className}
       getOptionLabel={company => company.name}
       renderOption={company => (
         <>
