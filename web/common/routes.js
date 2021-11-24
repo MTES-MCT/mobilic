@@ -18,6 +18,8 @@ import { Redirect, useParams } from "react-router-dom";
 import { missionsToValidateByAdmin } from "../admin/selectors/missionSelectors";
 import { ResourcePage } from "../landing/ResourcePage/ResourcePage";
 import { AdminResourcePage } from "../landing/ResourcePage/AdminResourcePage";
+import { DriverResourcePage } from "../landing/ResourcePage/DriverResourcePage";
+import { ControllerResourcePage } from "../landing/ResourcePage/ControllerResourcePage";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -191,6 +193,20 @@ export const ROUTES = [
     label: "Ressources",
     accessible: () => true,
     component: ResourcePage,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/resources/driver",
+    label: "Ressources",
+    accessible: () => true,
+    component: DriverResourcePage,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/resources/controller",
+    label: "Ressources",
+    accessible: () => true,
+    component: ControllerResourcePage,
     menuItemFilter: () => false
   },
   {

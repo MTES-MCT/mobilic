@@ -290,7 +290,7 @@ function DesktopHeader({ disableMenu }) {
   const docLinks = () => [
     <LinkButton
       aria-label="Documentation"
-      key={1}
+      key={0}
       href="/resources/home"
       rel="noopener noreferrer"
       className={classes.docButton}
