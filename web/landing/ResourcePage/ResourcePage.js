@@ -6,11 +6,11 @@ import Grid from "@material-ui/core/Grid";
 import { Header } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
-import { Card } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import { LinkButton } from "../../common/LinkButton";
 import { FaqCard } from "./FaqCard";
-import { ControlerImage, ManagerImage, WorkerImage } from "common/utils/icons";
+import { ControllerImage, ManagerImage, WorkerImage } from "common/utils/icons";
+import Box from "@material-ui/core/Box";
+import { IconCard } from "./IconCard";
 
 const useStyles = makeStyles(theme => ({
   whiteSection: {
@@ -33,9 +33,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(6)
   },
   resourceSubtitle: {
-    marginBottom: theme.spacing(3)
-  },
-  resourceHeadParagraph: {
     marginBottom: theme.spacing(3)
   },
   faqButton: {
@@ -75,34 +72,31 @@ export function ResourcePage() {
     >
       <Container maxWidth="lg" className={classes.inner}>
         <PaperContainerTitle variant="h1" className={classes.title}>
-          Bienvenue sur la page ressources
+          Bienvenue sur la page documentation
         </PaperContainerTitle>
         <Typography variant={"h3"} className={classes.resourceSubtitle}>
-          Je découvre Mobilic et je souhaite savoir comment ça fonctionne
-        </Typography>
-        <Typography className={classes.resourceHeadParagraph}>
-          Les questions les plus fréquentes :
+          Je découvre Mobilic
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={8}>
           <Grid item xs={12} sm={4}>
             <FaqCard
               question="Qu'est ce que Mobilic ?"
-              answer="Mobilic est un service numérique qui permet l’enregistrement, le suivi et le contrôle du temps des travailleurs mobiles."
-              link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
+              answer="Mobilic est un outil numérique de saisie et de suivi du temps de travail."
+              link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes"
             />
           </Grid>
           <Grid item xs={12} sm={4}>
             <FaqCard
-              question="Comment installer Mobilic ?"
-              answer="Mobilic est un site web pouvant s'installer comme une application sur les téléphones Android et iPhone."
-              link="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg"
+              question="Qui est concerné par Mobilic ?"
+              answer="Toutes les entreprises de transport léger et de déménagement."
+              link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes"
             />
           </Grid>
           <Grid item xs={12} sm={4}>
             <FaqCard
-              question="Qui a accès aux données Mobilic ?"
-              answer="L'accès aux données salariés de Mobilic est strictement encadré."
-              link="https://faq.mobilic.beta.gouv.fr/public/securite-et-confidentialite-des-donnees/acces-aux-donnees"
+              question="Est-il possible de remplacer le livret individuel de contrôle par Mobilic ?"
+              answer="Oui, si vous utilisez Mobilic, vous n'avez pas besoin de continuer à remplir le LIC."
+              link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/securite-et-confidentialite-des-donnees"
             />
           </Grid>
         </Grid>
@@ -113,7 +107,7 @@ export function ResourcePage() {
           variant={"outlined"}
           href="https://faq.mobilic.beta.gouv.fr/public/"
         >
-          Accéder à la FAQ
+          En savoir plus sur Mobilic
         </Button>
       </Container>
     </Container>,
@@ -124,45 +118,29 @@ export function ResourcePage() {
     >
       <Container maxWidth="lg" className={classes.inner}>
         <Typography variant={"h3"} className={classes.resourceSubtitle}>
-          Nous mettons à la disposition des usagers de Mobilic des ressources
-          pour apprendre à utiliser Mobilic
+          Je cherche de la documentation pour m'aider à utiliser Mobilic
         </Typography>
         <Grid container direction="row" alignItems="center" spacing={8}>
           <Grid item xs={12} sm={4}>
-            <LinkButton to="/resources/admin" className={classes.linkRole}>
-              <Card variant="outlined" className={classes.roleCard}>
-                <ManagerImage
-                  height={150}
-                  width={150}
-                  className={classes.roleImage}
-                />
-                <Typography>Documentation gestionnaire</Typography>
-              </Card>
-            </LinkButton>
+            <IconCard
+              link="/resources/admin"
+              description="Documentation gestionnaire"
+              IconComponent={ManagerImage}
+            />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <LinkButton to="/signup/admin" className={classes.linkRole}>
-              <Card variant="outlined" className={classes.roleCard}>
-                <WorkerImage
-                  height={150}
-                  width={150}
-                  className={classes.roleImage}
-                />
-                <Typography>Documentation travailleur mobile</Typography>
-              </Card>
-            </LinkButton>
+            <IconCard
+              link="/resources/driver"
+              description="Documentation travailleur mobile"
+              IconComponent={WorkerImage}
+            />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <LinkButton to="/signup/admin" className={classes.linkRole}>
-              <Card variant="outlined" className={classes.roleCard}>
-                <ControlerImage
-                  height={150}
-                  width={150}
-                  className={classes.roleImage}
-                />
-                <Typography>Documentation contrôleur</Typography>
-              </Card>
-            </LinkButton>
+            <IconCard
+              link="/resources/controller"
+              description="Documentation contrôleur"
+              IconComponent={ControllerImage}
+            />
           </Grid>
         </Grid>
       </Container>
@@ -180,22 +158,38 @@ export function ResourcePage() {
         <Grid container direction="row" alignItems="stretch" spacing={8}>
           <Grid item xs={12} sm={4}>
             <FaqCard
-              question="Durée du travail quotidien"
-              answer="Un travailleur ne doit pas dépasser XX heures de travail par jour."
+              question="Durée maximale de travail sans interruption"
+              answer={
+                <Box>
+                  Les chauffeurs de véhicules légers ne peuvent pas conduire
+                  plus de <b>6 heures d'affilée.</b>
+                </Box>
+              }
               link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
             />
           </Grid>
           <Grid item xs={12} sm={4}>
             <FaqCard
-              question="Repos journalier"
-              answer="Un salarié doit respecter un minimum de XXX heures entre deux jours de travail"
+              question="Durée maximale de travail journalier"
+              answer={
+                <Box>
+                  Sauf cas exceptionnel, les salariés du transport léger ne
+                  peuvent pas travailler plus de <b>12 heures par jour</b>.
+                </Box>
+              }
               link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
             />
           </Grid>
           <Grid item xs={12} sm={4}>
             <FaqCard
-              question="Temps de pause quotidien"
-              answer="Mobilic est un service numérique qui permet l’enregistrement, le suivi et le contrôle du temps des travailleurs mobiles."
+              question="Durée maximale d'une journée de travail en partie effectuée de nuit"
+              answer={
+                <Box>
+                  Dans le transport léger, lorsqu'une partie des tâches est
+                  effectuée de nuit, le travail journalier ne peut pas dépasser{" "}
+                  <b>10 heures</b>.
+                </Box>
+              }
               link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
             />
           </Grid>

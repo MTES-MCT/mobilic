@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function AdminResourcePage() {
+export function DriverResourcePage() {
   const classes = useStyles();
 
   return [
@@ -56,55 +56,21 @@ export function AdminResourcePage() {
           <Link color="inherit" href="/resources/home">
             Documentation
           </Link>
-          <Typography>Gestionnaire</Typography>
+          <Typography>Travailleur mobile</Typography>
         </Breadcrumbs>
         <PaperContainerTitle variant="h1" className={classes.title}>
-          Je suis gestionnaire
+          Je suis travailleur mobile
         </PaperContainerTitle>
         <Typography variant={"h3"} className={classes.resourceSubtitle}>
           Je souhaite apprendre à utiliser Mobilic
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={8}>
-          <Grid item xs={12} sm={8}>
-            <Grid container direction="row" alignItems="center" spacing={8}>
-              <Grid item xs={12} sm={6}>
-                <VideoCard
-                  description="Vous inscrire sur Mobilic"
-                  youtubeUrl={"https://www.youtube.com/embed/vu-0wkydqzs"}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <VideoCard
-                  description="Utiliser l'interface gestionnaire"
-                  youtubeUrl={"https://www.youtube.com/embed/_USTJ2SHhUQ"}
-                />
-              </Grid>
-            </Grid>
-            <Button
-              color="primary"
-              size="small"
-              className={classes.faqButton}
-              variant={"outlined"}
-              href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos"
-            >
-              Voir toutes les vidéos
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item sm={4}>
             <IconCard
-              link="https://drive.google.com/file/d/1BfmB66cauWFDGewOUWmx8JcNc3UKQlve/view?usp=sharing"
+              link="https://drive.google.com/drive/folders/1IVzAKkQfKOtl4HPOt0-JpO-uAPzLlCZb"
               description="Notice d'utilisation"
               IconComponent={PdfFileImage}
             />
-            <Button
-              color="primary"
-              size="small"
-              className={classes.faqButton}
-              variant={"outlined"}
-              href="https://drive.google.com/drive/folders/1xc1tvfWNoTksyuIANnUXvUh9RrD1utHF"
-            >
-              Voir toutes les notices
-            </Button>
           </Grid>
         </Grid>
       </Container>
@@ -115,9 +81,6 @@ export function AdminResourcePage() {
       maxWidth={false}
     >
       <Container maxWidth="lg" className={classes.inner}>
-        <Typography variant={"h3"} className={classes.resourceSubtitle}>
-          Je cherche une notice d'utilisation pour mes salariés
-        </Typography>
         <Grid container direction="row" alignItems="center" spacing={8}>
           <Grid item xs={12} sm={4}>
             <VideoCard
@@ -147,7 +110,7 @@ export function AdminResourcePage() {
               size="small"
               className={classes.faqButton}
               variant={"outlined"}
-              href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg"
+              href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos"
             >
               Voir toutes les vidéos
             </Button>

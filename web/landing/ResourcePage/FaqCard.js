@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import { Card } from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import { ChevronRight } from "@material-ui/icons";
-import { Link, LinkButton } from "../../common/LinkButton";
+import { LinkButton } from "../../common/LinkButton";
 import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles(theme => ({
@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
   faqCardAnswer: {
     marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(1)
   },
   faqCardDivider: {
     marginBottom: theme.spacing(1)
@@ -40,6 +40,13 @@ const useStyles = makeStyles(theme => ({
   },
   dummy: {
     height: theme.spacing(6)
+  },
+  linkMoreInfo: {
+    color: theme.palette.primary.main,
+    fontSize: "0.875rem",
+    "&:hover": {
+      textDecoration: "underline"
+    }
   }
 }));
 
@@ -54,10 +61,10 @@ export function FaqCard({ question, answer, link }) {
         <Box className={classes.dummy}></Box>
         <Box className={classes.moreInfoBlock}>
           <Divider className={classes.faqCardDivider} />
-          <Link href={link}>
+          <Typography className={classes.linkMoreInfo}>
             Plus d'infos
             <ChevronRight className={classes.faqCardButtonIcon} />
-          </Link>
+          </Typography>
         </Box>
       </Card>
     </LinkButton>
