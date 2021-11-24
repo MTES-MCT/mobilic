@@ -15,6 +15,10 @@ import { isWidthUp } from "@material-ui/core/withWidth";
 import { WorkTimeDetails } from "./WorkTimeDetails";
 import { ChevronRight } from "@material-ui/icons";
 import { SwipeableDrawer } from "@material-ui/core";
+import { useAdminStore } from "../utils/store";
+import { MissionNamesList } from "./MissionNamesList";
+import { useMissionDrawer } from "./MissionDrawer";
+import { JoinedText } from "./JoinedText";
 
 const useStyles = makeStyles(theme => ({
   warningText: {
@@ -41,8 +45,13 @@ export function WorkTimeTable({
   loading,
   width
 }) {
+  const adminStore = useAdminStore();
+  const companies = adminStore.companies;
+
   const [workdayOnFocus, setWorkdayOnFocus] = React.useState(null);
   const [wordDayDrawerOpen, setWordDayDrawerOpen] = React.useState(false);
+
+  const openMission = useMissionDrawer()[1];
 
   const classes = useStyles();
 
@@ -119,11 +128,24 @@ export function WorkTimeTable({
     name: "workedDays",
     minWidth: 150
   };
-  const missionNamesCol = {
+  const missionNamesCol = showMissionName && {
     label: "Mission(s)",
     name: "missionNames",
-    format: missionNames =>
-      missionNames.filter(name => name && name !== "").join(", "),
+    format: missionNames => (
+      <MissionNamesList missionNames={missionNames} openMission={openMission} />
+    ),
+    align: "left",
+    sortable: true,
+    overflowTooltip: true
+  };
+  const companyNamesCol = companies.length > 1 && {
+    label: "Entreprise(s)",
+    name: "companyIds",
+    format: companyIds => (
+      <JoinedText joinWith=", ">
+        {companyIds.map(cid => companies.find(c => c.id === cid).name)}
+      </JoinedText>
+    ),
     align: "left",
     sortable: true,
     overflowTooltip: true
@@ -139,26 +161,16 @@ export function WorkTimeTable({
 
   let columns = [];
   if (period === "day") {
-    if (showMissionName) {
-      columns = [
-        employeeCol,
-        missionNamesCol,
-        startTimeCol,
-        endTimeCol,
-        serviceTimeCol,
-        workTimeCol,
-        restTimeCol
-      ];
-    } else {
-      columns = [
-        employeeCol,
-        startTimeCol,
-        endTimeCol,
-        serviceTimeCol,
-        workTimeCol,
-        restTimeCol
-      ];
-    }
+    columns = [
+      employeeCol,
+      missionNamesCol,
+      companyNamesCol,
+      startTimeCol,
+      endTimeCol,
+      serviceTimeCol,
+      workTimeCol,
+      restTimeCol
+    ];
     if (showExpenditures) columns.push(expenditureCol);
     columns.push(pictoCol);
   } else if (period === "week") {
@@ -166,6 +178,8 @@ export function WorkTimeTable({
   } else {
     columns = [employeeCol, workTimeCol, workedDaysCol];
   }
+
+  columns = columns.filter(Boolean);
 
   const preFormattedWorkTimeEntries = workTimeEntries.map(wte => {
     const base = {
@@ -197,6 +211,7 @@ export function WorkTimeTable({
         <WorkTimeDetails
           key={1}
           workTimeEntry={workdayOnFocus}
+          openMission={openMission}
           handleClose={() => {
             setWordDayDrawerOpen(false);
           }}

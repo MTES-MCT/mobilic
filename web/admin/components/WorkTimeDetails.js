@@ -1,8 +1,6 @@
 import React from "react";
 import { AugmentedTable } from "./AugmentedTable";
-import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Grid from "@material-ui/core/Grid";
-import { isWidthUp } from "@material-ui/core/withWidth";
 import Box from "@material-ui/core/Box";
 import { useApi } from "common/utils/api";
 import { USER_WORK_DAY_QUERY } from "common/utils/apiQueries";
@@ -15,7 +13,6 @@ import {
   computeDurationAndTime,
   filterActivitiesOverlappingPeriod
 } from "common/utils/activities";
-import { MissionDetails } from "./MissionDetails";
 import SvgIcon from "@material-ui/core/SvgIcon";
 import { ChevronRight } from "@material-ui/icons";
 import {
@@ -34,15 +31,13 @@ import { MissionInfoCard } from "./MissionInfoCard";
 import { ExpendituresCard } from "./ExpendituresCard";
 import { ActivitiesCard } from "./ActivitiesCard";
 
-export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
+export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   const classes = useStyles();
   const api = useApi();
   const [dayActivities, setDayActivities] = React.useState([]);
   const [weekActivities, setWeekActivities] = React.useState([]);
   const [activitiesOver3Days, setActivitiesOver3Days] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
-  const [missionDrawerOpen, setMissionDrawerOpen] = React.useState(false);
-  const [missionIdOnFocus, setMissionIdOnFocus] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
 
   const periodEnd = new Date(workTimeEntry.periodStart * 1000 + DAY * 1000);
@@ -274,32 +269,12 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, width }) {
       </Grid>
       <Grid item xs={12}>
         <MissionInfoCard title="Missions de la journée" extraPaddingBelowTitle>
-          <SwipeableDrawer
-            anchor="right"
-            open={!!missionDrawerOpen}
-            onOpen={() => setMissionDrawerOpen(true)}
-            onClose={() => setMissionDrawerOpen(false)}
-            PaperProps={{
-              className: classes.missionDrawer,
-              style: {
-                width: isWidthUp("md", width) ? 800 : "100vw"
-              }
-            }}
-          >
-            <MissionDetails
-              width={width}
-              missionId={missionIdOnFocus}
-              handleClose={() => setMissionDrawerOpen(false)}
-            />
-          </SwipeableDrawer>
-          {loading && <Skeleton variant={"rect"} width="100%" height={200} />}
-          {!loading && missions.length > 0 && (
+          {missions.length > 0 && (
             <AugmentedTable
               columns={missionTableColumns}
               entries={missions}
               onRowClick={entry => {
-                setMissionIdOnFocus(entry.id);
-                setMissionDrawerOpen(true);
+                openMission(entry.id);
               }}
             />
           )}

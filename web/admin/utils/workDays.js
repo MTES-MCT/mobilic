@@ -3,6 +3,7 @@ import {
   getStartOfMonth,
   getStartOfWeek
 } from "common/utils/time";
+import uniq from "lodash/uniq";
 
 function computeWorkDayGroupAggregates(workDayGroup) {
   const aggregateTimers = {};
@@ -39,9 +40,10 @@ function computeWorkDayGroupAggregates(workDayGroup) {
     totalWork: totalWorkDuration,
     rest: serviceDuration - totalWorkDuration,
     timers: aggregateTimers,
+    companyIds: uniq(workDayGroup.map(wd => wd.companyId)),
     missionNames: workDayGroup.reduce(
-      (acc, wd) => acc.concat(wd.missionNames),
-      []
+      (acc, wd) => Object.assign(acc, wd.missionNames),
+      {}
     ),
     expenditureAggs: aggregateExpenditures
   };

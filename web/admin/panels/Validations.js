@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
 import flatMap from "lodash/flatMap";
@@ -19,9 +19,7 @@ import {
 } from "common/utils/time";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import Button from "@material-ui/core/Button";
-import Drawer from "@material-ui/core/Drawer/Drawer";
-import { MissionDetails } from "../components/MissionDetails";
-import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
+import withWidth from "@material-ui/core/withWidth";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -34,18 +32,21 @@ import {
 } from "../selectors/missionSelectors";
 import { useStyles } from "../components/styles/ValidationsStyle";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
+import { useMissionDrawer } from "../components/MissionDrawer";
 
-function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
+function _ValidationPanel() {
   const api = useApi();
   const adminStore = useAdminStore();
   const alerts = useSnackbarAlerts();
   const location = useLocation();
-  const history = useHistory();
 
   const [tab, setTab] = React.useState(0);
   const [tableEntries, setTableEntries] = React.useState([]);
   const [tableColumns, setTableColumns] = React.useState([]);
   const classes = useStyles({ clickableRow: tab === 0 });
+
+  const [missionIdOnFocus, openMission] = useMissionDrawer();
+  const companies = adminStore.companies;
 
   const ref = React.useRef();
 
@@ -167,8 +168,6 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
     minWidth: 200
   };
 
-  const [missionIdOnFocus, setMissionIdOnFocus] = React.useState(null);
-
   const missionsToTableEntries = missions =>
     flatMap(
       missions?.map(m =>
@@ -177,6 +176,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
           name: m.name,
           missionStartTime: m.startTime,
           missionId: m.id,
+          companyId: m.companyId,
           id: `${m.id}${us.user.id}`,
           adminValidation: m.adminGlobalValidation,
           multipleDays:
@@ -216,7 +216,7 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
     const queryString = new URLSearchParams(location.search);
     const missionId = parseInt(queryString.get("mission"));
 
-    setMissionIdOnFocus(missionId || null);
+    openMission(missionId || null);
   }, [location]);
 
   return (
@@ -272,9 +272,13 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
         defaultSortType="desc"
         className={classes.virtualizedTableContainer}
         disableGroupCollapse
-        onRowGroupClick={entry => {
-          setMissionIdOnFocus(entry.id);
-        }}
+        onRowGroupClick={
+          tab === 0
+            ? entry => {
+                openMission(entry.id);
+              }
+            : null
+        }
         rowClassName={entry =>
           `${classes.row} ${
             missionIdOnFocus && entry.missionId === missionIdOnFocus
@@ -288,7 +292,11 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
           format: (value, entry) => (
             <Box className="flex-row-space-between">
               <Typography variant="h6" className={classes.missionTitle}>
-                Mission {entry.name} du {formatDay(entry.startTime)}
+                Mission {entry.name} du {formatDay(entry.startTime)}{" "}
+                <span className={classes.companyName}>
+                  (entreprise :{" "}
+                  {companies.find(c => c.id === entry.companyId).name})
+                </span>
               </Typography>
               {tab === 0 && (
                 <Button
@@ -328,31 +336,10 @@ function _ValidationPanel({ containerRef, width, setShouldRefreshData }) {
               )}
             </Box>
           ),
-          groupProps: ["name", "startTime"]
+          groupProps: ["name", "startTime", "companyId"]
         }}
         headerClassName={`${classes.header} ${classes.row}`}
       />
-      <Drawer
-        anchor="right"
-        open={!!missionIdOnFocus}
-        onClose={() => {
-          history.push("/admin/validations");
-        }}
-        className={classes.missionModalContainer}
-        PaperProps={{
-          className: classes.missionModal,
-          style: {
-            width: isWidthUp("md", width) ? 900 : "100vw"
-          }
-        }}
-      >
-        <MissionDetails
-          missionId={missionIdOnFocus}
-          day={location.state ? location.state.day : null}
-          handleClose={() => history.push("/admin/validations")}
-          setShouldRefreshActivityPanel={setShouldRefreshData}
-        />
-      </Drawer>
     </Paper>
   );
 }
