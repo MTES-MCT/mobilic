@@ -70,5 +70,9 @@ export const useStyles = makeStyles(theme => ({
     fontWeight: "normal",
     textTransform: "none",
     color: theme.palette.grey[500]
+  },
+  companyFilter: {
+    alignSelf: "flex-start",
+    maxWidth: 400
   }
 }));
