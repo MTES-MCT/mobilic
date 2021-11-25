@@ -9,9 +9,9 @@ import { PaperContainerTitle } from "../../common/PaperContainer";
 import Button from "@material-ui/core/Button";
 import { VideoCard } from "./VideoCard";
 import { Breadcrumbs } from "@material-ui/core";
-import { PdfFileImage } from "common/utils/icons";
-import { IconCard } from "./IconCard";
 import Link from "@material-ui/core/Link";
+import { SlideshareCard } from "./SlideshareCard";
+import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles(theme => ({
   whiteSection: {
@@ -65,37 +65,38 @@ export function AdminResourcePage() {
           Je souhaite apprendre à utiliser Mobilic
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={8}>
-          <Grid item xs={12} sm={8}>
-            <Grid container direction="row" alignItems="center" spacing={8}>
-              <Grid item xs={12} sm={6}>
-                <VideoCard
-                  description="Vous inscrire sur Mobilic"
-                  youtubeUrl={"https://www.youtube.com/embed/vu-0wkydqzs"}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <VideoCard
-                  description="Utiliser l'interface gestionnaire"
-                  youtubeUrl={"https://www.youtube.com/embed/_USTJ2SHhUQ"}
-                />
-              </Grid>
-            </Grid>
-            <Button
-              color="primary"
-              size="small"
-              className={classes.faqButton}
-              variant={"outlined"}
-              href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos"
-            >
-              Voir toutes les vidéos
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <IconCard
-              link="https://drive.google.com/file/d/1BfmB66cauWFDGewOUWmx8JcNc3UKQlve/view?usp=sharing"
-              description="Notice d'utilisation"
-              IconComponent={PdfFileImage}
+          <Grid item xs={12} sm={6}>
+            <VideoCard
+              description="Vous inscrire sur Mobilic"
+              youtubeUrl={"https://www.youtube.com/embed/vu-0wkydqzs"}
             />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <VideoCard
+              description="Utiliser l'interface gestionnaire"
+              youtubeUrl={"https://www.youtube.com/embed/_USTJ2SHhUQ"}
+            />
+          </Grid>
+        </Grid>
+        <Button
+          color="primary"
+          size="small"
+          className={classes.faqButton}
+          variant={"outlined"}
+          href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos"
+          target="_blank"
+        >
+          Voir toutes les vidéos
+        </Button>
+        <Grid container direction="row" alignItems="stretch" spacing={8}>
+          <Grid item xs={12} sm={6}>
+            <Box>
+              <SlideshareCard
+                description="Notice d'utilisation"
+                slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/aAXbQsYxSxbPrk/"
+                downloadLink="https://drive.google.com/uc?id=1BfmB66cauWFDGewOUWmx8JcNc3UKQlve&export=download"
+              />
+            </Box>
             <Button
               color="primary"
               size="small"
@@ -119,37 +120,58 @@ export function AdminResourcePage() {
           Je cherche une notice d'utilisation pour mes salariés
         </Typography>
         <Grid container direction="row" alignItems="center" spacing={8}>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <VideoCard
               description="Inscription sur Mobilic"
               youtubeUrl={"https://www.youtube.com/embed/sWG_jcE0amk"}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <VideoCard
               description="Télécharger Mobilic sur Android"
               youtubeUrl={"https://www.youtube.com/embed/g-XNdxVVjO8"}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <VideoCard
               description="Télécharger Mobilic sur iPhone"
               youtubeUrl={"https://www.youtube.com/embed/DMVKSGxoMzU"}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <VideoCard
               description="Utiliser Mobilic au quotidien"
               youtubeUrl={"https://www.youtube.com/embed/xj6PhWxKR5k"}
             />
+          </Grid>
+        </Grid>
+        <Button
+          color="primary"
+          size="small"
+          className={classes.faqButton}
+          variant={"outlined"}
+          href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg"
+          target="_blank"
+        >
+          Voir toutes les vidéos
+        </Button>
+        <Grid container direction="row" alignItems="stretch" spacing={8}>
+          <Grid item xs={12} sm={6}>
+            <Box>
+              <SlideshareCard
+                description="Notice d'utilisation"
+                slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/743smHvXdavjgR/"
+                downloadLink="https://drive.google.com/uc?id=1CNxnoMupJ5RQKdS7ryB9I8nWxPz8u8xB&export=download"
+              />
+            </Box>
             <Button
               color="primary"
               size="small"
               className={classes.faqButton}
               variant={"outlined"}
-              href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg"
+              href="https://drive.google.com/drive/folders/1xc1tvfWNoTksyuIANnUXvUh9RrD1utHF"
             >
-              Voir toutes les vidéos
+              Voir toutes les notices
             </Button>
           </Grid>
         </Grid>

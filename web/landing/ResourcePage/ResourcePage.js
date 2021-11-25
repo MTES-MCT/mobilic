@@ -165,7 +165,8 @@ export function ResourcePage() {
                   plus de <b>6 heures d'affilée.</b>
                 </Box>
               }
-              link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
+              link="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000026054561"
+              moreInfoText="Article L.3312-2 du code des transports"
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -177,7 +178,8 @@ export function ResourcePage() {
                   peuvent pas travailler plus de <b>12 heures par jour</b>.
                 </Box>
               }
-              link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
+              link="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033450339"
+              moreInfoText="Article R.3312-51 du code des transports"
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -190,16 +192,10 @@ export function ResourcePage() {
                   <b>10 heures</b>.
                 </Box>
               }
-              link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"
+              link="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033021297"
+              moreInfoText="Article L3312-1 du code des transports"
             />
           </Grid>
-          {/*<Grid item xs={12} sm={6}>*/}
-          {/*  <FaqCard*/}
-          {/*    question="Durée max de travail ininterrompu"*/}
-          {/*    answer="Un salarié ne peux travailler plus de XX heures sans prendre de pause."*/}
-          {/*    link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes#a-quoi-sert-mobilic"*/}
-          {/*  />*/}
-          {/*</Grid>*/}
         </Grid>
         <Button
           color="primary"
