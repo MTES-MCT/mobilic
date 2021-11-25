@@ -9,9 +9,9 @@ import { PaperContainerTitle } from "../../common/PaperContainer";
 import Button from "@material-ui/core/Button";
 import { VideoCard } from "./VideoCard";
 import { Breadcrumbs } from "@material-ui/core";
-import { PdfFileImage } from "common/utils/icons";
-import { IconCard } from "./IconCard";
 import Link from "@material-ui/core/Link";
+import Box from "@material-ui/core/Box";
+import { SlideshareCard } from "./SlideshareCard";
 
 const useStyles = makeStyles(theme => ({
   whiteSection: {
@@ -65,12 +65,14 @@ export function DriverResourcePage() {
           Je souhaite apprendre à utiliser Mobilic
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={8}>
-          <Grid item sm={4}>
-            <IconCard
-              link="https://drive.google.com/drive/folders/1IVzAKkQfKOtl4HPOt0-JpO-uAPzLlCZb"
-              description="Notice d'utilisation"
-              IconComponent={PdfFileImage}
-            />
+          <Grid item xs={12} sm={6}>
+            <Box>
+              <SlideshareCard
+                description="Notice d'utilisation"
+                slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/743smHvXdavjgR/"
+                downloadLink="https://drive.google.com/uc?id=1CNxnoMupJ5RQKdS7ryB9I8nWxPz8u8xB&export=download"
+              />
+            </Box>
           </Grid>
         </Grid>
       </Container>
@@ -82,40 +84,40 @@ export function DriverResourcePage() {
     >
       <Container maxWidth="lg" className={classes.inner}>
         <Grid container direction="row" alignItems="center" spacing={8}>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <VideoCard
               description="Inscription sur Mobilic"
               youtubeUrl={"https://www.youtube.com/embed/sWG_jcE0amk"}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <VideoCard
               description="Télécharger Mobilic sur Android"
               youtubeUrl={"https://www.youtube.com/embed/g-XNdxVVjO8"}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <VideoCard
               description="Télécharger Mobilic sur iPhone"
               youtubeUrl={"https://www.youtube.com/embed/DMVKSGxoMzU"}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <VideoCard
               description="Utiliser Mobilic au quotidien"
               youtubeUrl={"https://www.youtube.com/embed/xj6PhWxKR5k"}
             />
-            <Button
-              color="primary"
-              size="small"
-              className={classes.faqButton}
-              variant={"outlined"}
-              href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos"
-            >
-              Voir toutes les vidéos
-            </Button>
           </Grid>
         </Grid>
+        <Button
+          color="primary"
+          size="small"
+          className={classes.faqButton}
+          variant={"outlined"}
+          href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos"
+        >
+          Voir toutes les vidéos
+        </Button>
       </Container>
     </Container>,
     <Footer key={4} />

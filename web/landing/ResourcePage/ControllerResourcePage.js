@@ -7,9 +7,10 @@ import { Header } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import { Breadcrumbs } from "@material-ui/core";
-import { PdfFileImage } from "common/utils/icons";
-import { IconCard } from "./IconCard";
 import Link from "@material-ui/core/Link";
+import { SlideshareCard } from "./SlideshareCard";
+import Button from "@material-ui/core/Button";
+import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles(theme => ({
   whiteSection: {
@@ -35,7 +36,7 @@ const useStyles = makeStyles(theme => ({
   },
   faqButton: {
     float: "right",
-    marginTop: theme.spacing(2)
+    top: theme.spacing(2)
   }
 }));
 
@@ -63,12 +64,24 @@ export function ControllerResourcePage() {
           Je souhaite apprendre à utiliser Mobilic
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={8}>
-          <Grid item sm={3}>
-            <IconCard
-              link="https://drive.google.com/drive/folders/1aE9sb8durZEtc4r_ixRwjQVgx4mcq8o_"
-              description="Notice d'utilisation"
-              IconComponent={PdfFileImage}
-            />
+          <Grid item sm={6}>
+            <Box>
+              <SlideshareCard
+                description="Notice d'utilisation"
+                slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/xMyGOhLCCvjosE/"
+                downloadLink="https://drive.google.com/uc?id=1yT9wet3o6QQDB2AbFJM-ES7zxS-5LyY9&export=download"
+              />
+            </Box>
+            <Button
+              color="primary"
+              size="small"
+              className={classes.faqButton}
+              variant={"outlined"}
+              href="https://drive.google.com/drive/folders/1b87UFjE7BL-nk-dQy_Seghs1gcgBB-A8"
+              target="_blank"
+            >
+              Voir toutes les notices
+            </Button>
           </Grid>
         </Grid>
       </Container>
@@ -84,11 +97,11 @@ export function ControllerResourcePage() {
           entreprises que je contrôle
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={8}>
-          <Grid item sm={3}>
-            <IconCard
-              link="https://drive.google.com/drive/folders/1aE9sb8durZEtc4r_ixRwjQVgx4mcq8o_"
+          <Grid item sm={6}>
+            <SlideshareCard
               description="Brochure"
-              IconComponent={PdfFileImage}
+              slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/4SH8rJFBbPCEhW/"
+              downloadLink="https://drive.google.com/uc?id=13bk6z4fgZ9RUvNjf-T1eufoZ_JQEAw_Y&export=download"
             />
           </Grid>
         </Grid>

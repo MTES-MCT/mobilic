@@ -50,11 +50,16 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function FaqCard({ question, answer, link }) {
+export function FaqCard({ question, answer, link, moreInfoText }) {
   const classes = useStyles();
 
   return (
-    <LinkButton href={link} className={classes.linkWholeCard} color="primary">
+    <LinkButton
+      href={link}
+      className={classes.linkWholeCard}
+      color="primary"
+      target="_blank"
+    >
       <Card variant="outlined" className={classes.faqCard}>
         <Typography variant={"h4"}>{question}</Typography>
         <Typography className={classes.faqCardAnswer}>{answer}</Typography>
@@ -62,7 +67,7 @@ export function FaqCard({ question, answer, link }) {
         <Box className={classes.moreInfoBlock}>
           <Divider className={classes.faqCardDivider} />
           <Typography className={classes.linkMoreInfo}>
-            Plus d'infos
+            {moreInfoText || "Plus d'infos"}
             <ChevronRight className={classes.faqCardButtonIcon} />
           </Typography>
         </Box>
