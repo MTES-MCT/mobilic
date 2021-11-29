@@ -95,6 +95,8 @@ function SubNavigationToggle({ view, setView }) {
 
 function _CompanyPanel({ width, containerRef }) {
   const [view, setView] = React.useState("employees");
+
+  const [selectedCompanyId, setSelectedCompanyId] = React.useState(null);
   const [company, setCompany] = React.useState(null);
 
   const adminStore = useAdminStore();
@@ -102,9 +104,12 @@ function _CompanyPanel({ width, containerRef }) {
   const companies = adminStore.companies;
 
   React.useEffect(() => {
-    if (companies && companies.length > 0) {
+    if (!selectedCompanyId && companies && companies.length > 0) {
       const defaultCompany = companies[0];
+      setSelectedCompanyId(defaultCompany.id);
       setCompany(defaultCompany);
+    } else if (selectedCompanyId && companies) {
+      setCompany(companies.find(c => c.id === selectedCompanyId));
     } else setCompany(null);
   }, [companies]);
 
@@ -141,9 +146,10 @@ function _CompanyPanel({ width, containerRef }) {
               select
               label="Entreprise"
               value={company ? company.id : 0}
-              onChange={e =>
-                setCompany(companies.find(c => c.id === e.target.value))
-              }
+              onChange={e => {
+                setSelectedCompanyId(e.target.value);
+                setCompany(companies.find(c => c.id === e.target.value));
+              }}
               helperText="Voir une autre entreprise"
             >
               {companies.map(c => (
