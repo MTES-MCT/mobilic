@@ -33,7 +33,7 @@ export function IconCard({ description, IconComponent, link }) {
   const classes = useStyles();
 
   return (
-    <LinkButton href={link} className={classes.linkWholeCard} color="primary">
+    <LinkButton to={link} className={classes.linkWholeCard} color="primary">
       <Card variant="outlined" className={classes.iconCard}>
         <IconComponent height={150} width={150} className={classes.icon} />
         <Typography>{description}</Typography>

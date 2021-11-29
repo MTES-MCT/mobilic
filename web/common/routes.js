@@ -190,28 +190,28 @@ export const ROUTES = [
   },
   {
     path: "/resources/home",
-    label: "Ressources",
+    label: "Documentation",
     accessible: () => true,
     component: ResourcePage,
     menuItemFilter: () => false
   },
   {
     path: "/resources/driver",
-    label: "Ressources",
+    label: "Documentation travailleur mobile",
     accessible: () => true,
     component: DriverResourcePage,
     menuItemFilter: () => false
   },
   {
     path: "/resources/controller",
-    label: "Ressources",
+    label: "Documentation contrôleur",
     accessible: () => true,
     component: ControllerResourcePage,
     menuItemFilter: () => false
   },
   {
     path: "/resources/admin",
-    label: "Ressources Gestionnaire",
+    label: "Documentation Gestionnaire",
     accessible: () => true,
     component: AdminResourcePage,
     menuItemFilter: () => false

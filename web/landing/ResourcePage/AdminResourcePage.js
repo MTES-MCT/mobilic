@@ -9,7 +9,7 @@ import { PaperContainerTitle } from "../../common/PaperContainer";
 import Button from "@material-ui/core/Button";
 import { VideoCard } from "./VideoCard";
 import { Breadcrumbs } from "@material-ui/core";
-import Link from "@material-ui/core/Link";
+import { Link } from "../../common/LinkButton";
 import { SlideshareCard } from "./SlideshareCard";
 import Box from "@material-ui/core/Box";
 
@@ -53,7 +53,7 @@ export function AdminResourcePage() {
     >
       <Container maxWidth="lg" className={classes.inner}>
         <Breadcrumbs>
-          <Link color="inherit" href="/resources/home">
+          <Link color="inherit" to="/resources/home">
             Documentation
           </Link>
           <Typography>Gestionnaire</Typography>

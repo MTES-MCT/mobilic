@@ -12,7 +12,6 @@ import { ReactComponent as FranceConnectIcon_ } from "../assets/images/FranceCon
 import { ReactComponent as FabNumIcon_ } from "../assets/images/fabnum.svg";
 import { ReactComponent as MarianneIcon_ } from "common/assets/images/marianne.svg";
 import _ManagerImage from "../assets/images/Manager.svg";
-import _MobilicBlueIcon from "../assets/images/mobilic-logo-white-on-blue.svg";
 import _WorkerImage from "../assets/images/worker.svg";
 import _SoftwareImage from "../assets/images/software.svg";
 import _ControllerImage from "../assets/images/controller1.png";
@@ -154,19 +153,6 @@ export function FabNumIcon(props) {
       {...omit(props, "style")}
       viewBox="0 0 141.73 141.73"
       component={FabNumIcon_}
-    />
-  );
-}
-
-export function MobilicBlueImage(props) {
-  return (
-    <img
-      alt="Mobilic"
-      src={_MobilicBlueIcon}
-      {...props}
-      style={{
-        padding: "15px"
-      }}
     />
   );
 }

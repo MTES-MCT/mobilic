@@ -9,7 +9,6 @@ import { PaperContainerTitle } from "../../common/PaperContainer";
 import Button from "@material-ui/core/Button";
 import { FaqCard } from "./FaqCard";
 import { ControllerImage, ManagerImage, WorkerImage } from "common/utils/icons";
-import Box from "@material-ui/core/Box";
 import { IconCard } from "./IconCard";
 
 const useStyles = makeStyles(theme => ({
@@ -106,6 +105,7 @@ export function ResourcePage() {
           className={classes.faqButton}
           variant={"outlined"}
           href="https://faq.mobilic.beta.gouv.fr/public/"
+          target="_blank"
         >
           En savoir plus sur Mobilic
         </Button>
@@ -160,10 +160,10 @@ export function ResourcePage() {
             <FaqCard
               question="Durée maximale de travail sans interruption"
               answer={
-                <Box>
+                <>
                   Les chauffeurs de véhicules légers ne peuvent pas conduire
                   plus de <b>6 heures d'affilée.</b>
-                </Box>
+                </>
               }
               link="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000026054561"
               moreInfoText="Article L.3312-2 du code des transports"
@@ -173,10 +173,10 @@ export function ResourcePage() {
             <FaqCard
               question="Durée maximale de travail journalier"
               answer={
-                <Box>
+                <>
                   Sauf cas exceptionnel, les salariés du transport léger ne
                   peuvent pas travailler plus de <b>12 heures par jour</b>.
-                </Box>
+                </>
               }
               link="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033450339"
               moreInfoText="Article R.3312-51 du code des transports"
@@ -186,11 +186,11 @@ export function ResourcePage() {
             <FaqCard
               question="Durée maximale d'une journée de travail en partie effectuée de nuit"
               answer={
-                <Box>
+                <>
                   Dans le transport léger, lorsqu'une partie des tâches est
                   effectuée de nuit, le travail journalier ne peut pas dépasser{" "}
                   <b>10 heures</b>.
-                </Box>
+                </>
               }
               link="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033021297"
               moreInfoText="Article L3312-1 du code des transports"

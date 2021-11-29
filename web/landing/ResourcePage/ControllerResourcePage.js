@@ -7,7 +7,7 @@ import { Header } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import { Breadcrumbs } from "@material-ui/core";
-import Link from "@material-ui/core/Link";
+import { Link } from "../../common/LinkButton";
 import { SlideshareCard } from "./SlideshareCard";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
@@ -52,7 +52,7 @@ export function ControllerResourcePage() {
     >
       <Container maxWidth="lg" className={classes.inner}>
         <Breadcrumbs>
-          <Link color="inherit" href="/resources/home">
+          <Link color="inherit" to="/resources/home">
             Documentation
           </Link>
           <Typography>Contrôleur</Typography>
