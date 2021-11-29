@@ -3,18 +3,9 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import { Card } from "@material-ui/core";
 import { Link } from "../../common/LinkButton";
+import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
 
 const useStyles = makeStyles(theme => ({
-  slideshareCard: {
-    borderRadius: 10,
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.grey[100],
-    borderColor: theme.palette.primary.main,
-    height: "100%"
-  },
-  description: {
-    marginBottom: theme.spacing(3)
-  },
   downloadLink: {
     color: theme.palette.primary.main,
     paddingLeft: theme.spacing(2)
@@ -28,10 +19,11 @@ export function SlideshareCard({
   customHeight
 }) {
   const classes = useStyles();
+  const commonCardsClasses = resourceCardsClasses();
 
   return (
-    <Card variant="outlined" className={classes.slideshareCard}>
-      <Typography variant={"h4"} className={classes.description}>
+    <Card variant="outlined" className={commonCardsClasses.card}>
+      <Typography variant={"h4"} className={commonCardsClasses.description}>
         {description}
         <Link className={classes.downloadLink} href={downloadLink}>
           Télécharger

@@ -1,6 +1,5 @@
 import React from "react";
 import Container from "@material-ui/core/Container";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import { Header } from "../../common/Header";
@@ -10,57 +9,10 @@ import Button from "@material-ui/core/Button";
 import { FaqCard } from "./FaqCard";
 import { ControllerImage, ManagerImage, WorkerImage } from "common/utils/icons";
 import { IconCard } from "./IconCard";
-
-const useStyles = makeStyles(theme => ({
-  whiteSection: {
-    backgroundColor: theme.palette.background.paper
-  },
-  container: {
-    paddingTop: theme.spacing(3),
-    paddingBottom: theme.spacing(7),
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(5),
-    margin: 0
-  },
-  inner: {
-    margin: "auto",
-    padding: 0,
-    textAlign: "left",
-    flexGrow: 1
-  },
-  title: {
-    marginBottom: theme.spacing(6)
-  },
-  resourceSubtitle: {
-    marginBottom: theme.spacing(3)
-  },
-  faqButton: {
-    float: "right",
-    marginTop: theme.spacing(2)
-  },
-  linkRole: {
-    textTransform: "none",
-    width: "100%"
-  },
-  roleCard: {
-    borderRadius: 10,
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.grey[100],
-    borderColor: theme.palette.primary.main,
-    textAlign: "center",
-    display: "flex",
-    justifyContent: "center",
-    flexDirection: "column",
-    width: "100%"
-  },
-  roleImage: {
-    display: "block",
-    margin: "auto"
-  }
-}));
+import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 
 export function ResourcePage() {
-  const classes = useStyles();
+  const classes = resourcePagesClasses();
 
   return [
     <Header key={1} />,
@@ -76,7 +28,7 @@ export function ResourcePage() {
         <Typography variant={"h3"} className={classes.resourceSubtitle}>
           Je découvre Mobilic
         </Typography>
-        <Grid container direction="row" alignItems="stretch" spacing={8}>
+        <Grid container direction="row" alignItems="stretch" spacing={10}>
           <Grid item xs={12} sm={4}>
             <FaqCard
               question="Qu'est ce que Mobilic ?"
@@ -102,7 +54,7 @@ export function ResourcePage() {
         <Button
           color="primary"
           size="small"
-          className={classes.faqButton}
+          className={classes.viewAllButton}
           variant={"outlined"}
           href="https://faq.mobilic.beta.gouv.fr/public/"
           target="_blank"
@@ -120,7 +72,7 @@ export function ResourcePage() {
         <Typography variant={"h3"} className={classes.resourceSubtitle}>
           Je cherche de la documentation pour m'aider à utiliser Mobilic
         </Typography>
-        <Grid container direction="row" alignItems="center" spacing={8}>
+        <Grid container direction="row" alignItems="center" spacing={10}>
           <Grid item xs={12} sm={4}>
             <IconCard
               link="/resources/admin"
@@ -155,7 +107,7 @@ export function ResourcePage() {
           Je cherche des informations sur la réglementation en vigueur dans le
           transport léger
         </Typography>
-        <Grid container direction="row" alignItems="stretch" spacing={8}>
+        <Grid container direction="row" alignItems="stretch" spacing={10}>
           <Grid item xs={12} sm={4}>
             <FaqCard
               question="Durée maximale de travail sans interruption"
@@ -200,9 +152,9 @@ export function ResourcePage() {
         <Button
           color="primary"
           size="small"
-          className={classes.faqButton}
+          className={classes.viewAllButton}
           variant={"outlined"}
-          href="https://faq.mobilic.beta.gouv.fr/public/"
+          href="https://www.ecologie.gouv.fr/temps-travail-des-conducteurs-routiers-transport-marchandises"
         >
           Voir tous les seuils réglementaires
         </Button>

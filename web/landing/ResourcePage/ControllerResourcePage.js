@@ -1,6 +1,5 @@
 import React from "react";
 import Container from "@material-ui/core/Container";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import { Header } from "../../common/Header";
@@ -11,37 +10,10 @@ import { Link } from "../../common/LinkButton";
 import { SlideshareCard } from "./SlideshareCard";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
-
-const useStyles = makeStyles(theme => ({
-  whiteSection: {
-    backgroundColor: theme.palette.background.paper
-  },
-  container: {
-    paddingTop: theme.spacing(3),
-    paddingBottom: theme.spacing(7),
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(5),
-    margin: 0
-  },
-  inner: {
-    margin: "auto",
-    padding: 0,
-    textAlign: "left"
-  },
-  title: {
-    marginBottom: theme.spacing(6)
-  },
-  resourceSubtitle: {
-    marginBottom: theme.spacing(3)
-  },
-  faqButton: {
-    float: "right",
-    top: theme.spacing(2)
-  }
-}));
+import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 
 export function ControllerResourcePage() {
-  const classes = useStyles();
+  const classes = resourcePagesClasses();
 
   return [
     <Header key={1} />,
@@ -63,7 +35,7 @@ export function ControllerResourcePage() {
         <Typography variant={"h3"} className={classes.resourceSubtitle}>
           Je souhaite apprendre à utiliser Mobilic
         </Typography>
-        <Grid container direction="row" alignItems="stretch" spacing={8}>
+        <Grid container direction="row" alignItems="stretch" spacing={10}>
           <Grid item sm={6}>
             <Box>
               <SlideshareCard
@@ -75,7 +47,7 @@ export function ControllerResourcePage() {
             <Button
               color="primary"
               size="small"
-              className={classes.faqButton}
+              className={classes.viewAllButton}
               variant={"outlined"}
               href="https://drive.google.com/drive/folders/1b87UFjE7BL-nk-dQy_Seghs1gcgBB-A8"
               target="_blank"
@@ -96,7 +68,7 @@ export function ControllerResourcePage() {
           Je souhaite diffuser Mobilic auprès de mes collègues et des
           entreprises que je contrôle
         </Typography>
-        <Grid container direction="row" alignItems="stretch" spacing={8}>
+        <Grid container direction="row" alignItems="stretch" spacing={10}>
           <Grid item sm={6}>
             <SlideshareCard
               description="Brochure"

@@ -123,6 +123,9 @@ const useStyles = makeStyles(theme => ({
   },
   userName: {
     maxWidth: 500
+  },
+  desktopHeader: {
+    flexWrap: "wrap"
   }
 }));
 
@@ -317,7 +320,7 @@ function DesktopHeader({ disableMenu }) {
   ];
 
   return (
-    <Box className="flex-row-space-between">
+    <Box className={`flex-row-space-between ${classes.desktopHeader}`}>
       <Logos leaveSpaceForMenu={!disableMenu} />
       {store.userId() ? (
         <Box className="flex-row-center" style={{ overflowX: "hidden" }}>

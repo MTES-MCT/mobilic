@@ -6,28 +6,15 @@ import Divider from "@material-ui/core/Divider";
 import { ChevronRight } from "@material-ui/icons";
 import { LinkButton } from "../../common/LinkButton";
 import Box from "@material-ui/core/Box";
+import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
 
 const useStyles = makeStyles(theme => ({
-  faqCard: {
-    borderRadius: 10,
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.grey[100],
-    borderColor: theme.palette.primary.main,
-    height: "100%"
-  },
   faqCardAnswer: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1)
   },
   faqCardDivider: {
     marginBottom: theme.spacing(1)
-  },
-  linkWholeCard: {
-    textTransform: "none",
-    height: "100%",
-    "& .MuiButton-label": {
-      height: "100%"
-    }
   },
   faqCardButtonIcon: {
     verticalAlign: "middle"
@@ -52,15 +39,16 @@ const useStyles = makeStyles(theme => ({
 
 export function FaqCard({ question, answer, link, moreInfoText }) {
   const classes = useStyles();
+  const commonCardsClasses = resourceCardsClasses();
 
   return (
     <LinkButton
       href={link}
-      className={classes.linkWholeCard}
+      className={commonCardsClasses.linkWholeCard}
       color="primary"
       target="_blank"
     >
-      <Card variant="outlined" className={classes.faqCard}>
+      <Card variant="outlined" className={commonCardsClasses.card}>
         <Typography variant={"h4"}>{question}</Typography>
         <Typography className={classes.faqCardAnswer}>{answer}</Typography>
         <Box className={classes.dummy}></Box>
