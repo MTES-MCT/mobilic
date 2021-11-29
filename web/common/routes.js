@@ -16,6 +16,10 @@ import { XlsxVerifier } from "../control/VerifyXlsxSignature";
 import { Partners } from "../landing/partners";
 import { Redirect, useParams } from "react-router-dom";
 import { missionsToValidateByAdmin } from "../admin/selectors/missionSelectors";
+import { ResourcePage } from "../landing/ResourcePage/ResourcePage";
+import { AdminResourcePage } from "../landing/ResourcePage/AdminResourcePage";
+import { DriverResourcePage } from "../landing/ResourcePage/DriverResourcePage";
+import { ControllerResourcePage } from "../landing/ResourcePage/ControllerResourcePage";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -182,6 +186,34 @@ export const ROUTES = [
     label: "Partenaires",
     accessible: () => true,
     component: Partners,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/resources/home",
+    label: "Documentation",
+    accessible: () => true,
+    component: ResourcePage,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/resources/driver",
+    label: "Documentation travailleur mobile",
+    accessible: () => true,
+    component: DriverResourcePage,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/resources/controller",
+    label: "Documentation contrôleur",
+    accessible: () => true,
+    component: ControllerResourcePage,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/resources/admin",
+    label: "Documentation Gestionnaire",
+    accessible: () => true,
+    component: AdminResourcePage,
     menuItemFilter: () => false
   },
   {

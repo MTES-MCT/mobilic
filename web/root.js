@@ -142,8 +142,7 @@ function _Root() {
         isAccessible(loadedLocation, {
           userInfo: store.userInfo(),
           companies: store.companies()
-        }) &&
-        loadedLocation !== location.pathname + location.search
+        })
       ) {
         history.replace(loadedLocation, location.state);
       } else {

@@ -14,6 +14,7 @@ import { ReactComponent as MarianneIcon_ } from "common/assets/images/marianne.s
 import _ManagerImage from "../assets/images/Manager.svg";
 import _WorkerImage from "../assets/images/worker.svg";
 import _SoftwareImage from "../assets/images/software.svg";
+import _ControllerImage from "../assets/images/controller1.png";
 import _NoDataImage from "../assets/images/no-data.png";
 
 export function MobilicLogoFilledIcon(props) {
@@ -118,6 +119,10 @@ export function WorkerImage(props) {
 
 export function SoftwareImage(props) {
   return <img alt="logiciel" src={_SoftwareImage} {...props} />;
+}
+
+export function ControllerImage(props) {
+  return <img alt="controleur" src={_ControllerImage} {...props} />;
 }
 
 export function FranceConnectIcon(props) {

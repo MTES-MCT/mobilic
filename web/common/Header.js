@@ -123,6 +123,9 @@ const useStyles = makeStyles(theme => ({
   },
   userName: {
     maxWidth: 500
+  },
+  desktopHeader: {
+    flexWrap: "wrap"
   }
 }));
 
@@ -289,6 +292,14 @@ function DesktopHeader({ disableMenu }) {
 
   const docLinks = () => [
     <LinkButton
+      aria-label="Documentation"
+      key={0}
+      to="/resources/home"
+      className={classes.docButton}
+    >
+      Documentation
+    </LinkButton>,
+    <LinkButton
       aria-label="Foire aux questions"
       key={1}
       href="https://faq.mobilic.beta.gouv.fr"
@@ -309,7 +320,7 @@ function DesktopHeader({ disableMenu }) {
   ];
 
   return (
-    <Box className="flex-row-space-between">
+    <Box className={`flex-row-space-between ${classes.desktopHeader}`}>
       <Logos leaveSpaceForMenu={!disableMenu} />
       {store.userId() ? (
         <Box className="flex-row-center" style={{ overflowX: "hidden" }}>
