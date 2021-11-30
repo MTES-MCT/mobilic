@@ -11,6 +11,7 @@ export function MissionNamesList({ missionNames, openMission }) {
     <JoinedText joinWith=", ">
       {map(filteredMissionNames, (name, id) => (
         <Link
+          key={id}
           onClick={e => {
             e.stopPropagation();
             openMission(id);
