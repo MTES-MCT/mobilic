@@ -31,12 +31,14 @@ export function MissionDrawerContextProvider({
       <SwipeableDrawer
         anchor="right"
         open={!!missionIdOnFocus}
+        disableSwipeToOpen
+        disableDiscovery
         onOpen={() => {}}
         onClose={() => setMissionIdOnFocus(null)}
         PaperProps={{
           className: classes.missionDrawer,
           style: {
-            width: isWidthUp("md", width) ? 800 : "100vw"
+            width: isWidthUp("md", width) ? 860 : "100vw"
           }
         }}
       >

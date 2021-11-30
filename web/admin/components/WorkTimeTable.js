@@ -15,10 +15,10 @@ import { isWidthUp } from "@material-ui/core/withWidth";
 import { WorkTimeDetails } from "./WorkTimeDetails";
 import { ChevronRight } from "@material-ui/icons";
 import { SwipeableDrawer } from "@material-ui/core";
-import { useAdminStore } from "../utils/store";
 import { MissionNamesList } from "./MissionNamesList";
 import { useMissionDrawer } from "./MissionDrawer";
 import { JoinedText } from "./JoinedText";
+import { useAdminStore } from "../store/store";
 
 const useStyles = makeStyles(theme => ({
   warningText: {
@@ -198,13 +198,15 @@ export function WorkTimeTable({
         anchor="right"
         open={!!wordDayDrawerOpen}
         onOpen={() => setWordDayDrawerOpen(true)}
+        disableDiscovery
+        disableSwipeToOpen
         onClose={() => {
           setWordDayDrawerOpen(false);
         }}
         PaperProps={{
           className: classes.workTimeModal,
           style: {
-            width: isWidthUp("md", width) ? 830 : "100vw"
+            width: isWidthUp("md", width) ? 885 : "100vw"
           }
         }}
       >
