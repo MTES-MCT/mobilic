@@ -25,7 +25,6 @@ import {
   WEEK
 } from "common/utils/time";
 import { DayRegulationInfo } from "../../common/DayRegulationInfo";
-import Skeleton from "@material-ui/lab/Skeleton";
 import { MetricCard } from "../../common/InfoCard";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ExpendituresCard } from "./ExpendituresCard";
