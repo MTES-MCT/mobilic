@@ -324,10 +324,14 @@ function _ValidationPanel() {
             <Box className="flex-row-space-between">
               <Typography variant="h6" className={classes.missionTitle}>
                 Mission {entry.name} du {formatDay(entry.startTime)}{" "}
-                <span className={classes.companyName}>
-                  (entreprise :{" "}
-                  {companies.find(c => c.id === entry.companyId).name})
-                </span>
+                {companies.length > 1 ? (
+                  <span className={classes.companyName}>
+                    (entreprise :{" "}
+                    {companies.find(c => c.id === entry.companyId).name})
+                  </span>
+                ) : (
+                  ""
+                )}
               </Typography>
               {tab === 0 && (
                 <LoadingButton
