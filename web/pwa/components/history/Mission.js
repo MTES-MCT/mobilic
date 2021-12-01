@@ -5,7 +5,6 @@ import {
   WorkTimeSummaryKpiGrid
 } from "../WorkTimeSummary";
 import { MissionDetails } from "../MissionDetails";
-import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import Collapse from "@material-ui/core/Collapse/Collapse";
@@ -18,6 +17,8 @@ import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { useToggleContradictory } from "./toggleContradictory";
 import { ContradictorySwitch } from "../ContradictorySwitch";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
+import GetAppIcon from "@material-ui/icons/GetApp";
+import Grid from "@material-ui/core/Grid";
 
 const useStyles = makeStyles(theme => ({
   alternateCard: {
@@ -31,6 +32,11 @@ const useStyles = makeStyles(theme => ({
     marginBottom: ({ showMetrics }) => (showMetrics ? theme.spacing(1) : 0),
     paddingRight: ({ showMetrics }) => (showMetrics ? 0 : theme.spacing(2)),
     paddingLeft: ({ showMetrics }) => (showMetrics ? 0 : theme.spacing(2))
+  },
+  buttonContainer: {
+    display: "flex",
+    flexWrap: "nowrap",
+    flexShrink: 0
   }
 }));
 
@@ -77,10 +83,12 @@ export function Mission({
   }, [controlledShouldDisplayInitialEmployeeVersion]);
 
   const [
-    activitiesToUse,
-    changes,
+    missionResourcesToUse,
+    // eslint-disable-next-line no-unused-vars
+    _,
     loadingEmployeeVersion,
-    hasComputedContradictory
+    hasComputedContradictory,
+    contradictoryIsEmpty
   ] = useToggleContradictory(
     canDisplayContradictoryVersions,
     shouldDisplayInitialEmployeeVersion,
@@ -89,7 +97,12 @@ export function Mission({
     useCacheContradictoryInfoInPwaStore()
   );
 
-  const userActivitiesToUse = activitiesToUse.filter(a => a.userId === userId);
+  const userActivitiesToUse = missionResourcesToUse.activities.filter(
+    a => a.userId === userId
+  );
+  const userExpendituresToUse = missionResourcesToUse.expenditures.filter(
+    a => a.userId === userId
+  );
 
   const classes = useStyles({ showMetrics });
   const infoCardStyles = useInfoCardStyles();
@@ -101,6 +114,7 @@ export function Mission({
     <MissionDetails
       inverseColors
       activities={userActivitiesToUse}
+      expenditures={userExpendituresToUse}
       mission={mission}
       editActivityEvent={editActivityEvent}
       createActivity={createActivity}
@@ -129,24 +143,46 @@ export function Mission({
         className={`${alternateDisplay ? classes.darkCard : ""} ${
           infoCardStyles.bottomMargin
         }`}
+        textAlign="left"
       >
-        <Box style={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography className="bold">
-            {mission.name
-              ? `Nom de la mission : ${mission.name}`
-              : `Mission du ${prettyFormatDay(actualDay)}`}
-          </Typography>
-          {collapsable && (
+        <Grid
+          container
+          spacing={2}
+          justify="space-between"
+          alignItems="center"
+          wrap="nowrap"
+          onClick={() => setOpen(!open)}
+        >
+          <Grid item>
+            <Typography className="bold">
+              {mission.name
+                ? `Nom de la mission : ${mission.name}`
+                : `Mission du ${prettyFormatDay(actualDay)}`}
+            </Typography>
+          </Grid>
+          <Grid item className={classes.buttonContainer}>
             <IconButton
-              aria-label={open ? "Masquer" : "Afficher"}
-              color="inherit"
+              color={alternateDisplay ? "inherit" : "primary"}
               className="no-margin-no-padding"
-              onClick={() => setOpen(!open)}
+              style={{ marginRight: 16 }}
+              onClick={e => {
+                e.stopPropagation();
+                console.log("Downloading mission");
+              }}
             >
-              {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              <GetAppIcon />
             </IconButton>
-          )}
-        </Box>
+            {collapsable && (
+              <IconButton
+                aria-label={open ? "Masquer" : "Afficher"}
+                color="inherit"
+                className="no-margin-no-padding"
+              >
+                {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </IconButton>
+            )}
+          </Grid>
+        </Grid>
       </InfoCard>
       <Collapse in={open || !collapsable}>
         {!mission.ended && (
@@ -165,7 +201,7 @@ export function Mission({
         )}
         <ContradictorySwitch
           contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
-          emptyContradictory={changes.length === 0 && hasComputedContradictory}
+          emptyContradictory={contradictoryIsEmpty && hasComputedContradictory}
           className={classes.contradictorySwitch}
           shouldDisplayInitialEmployeeVersion={
             shouldDisplayInitialEmployeeVersion

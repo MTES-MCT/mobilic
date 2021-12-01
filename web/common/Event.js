@@ -10,6 +10,8 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import { formatPersonName } from "common/utils/coworkers";
 import { useModals } from "common/utils/modals";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import Avatar from "@material-ui/core/Avatar";
 
 const useStyles = makeStyles(theme => ({
   submitter: {
@@ -34,6 +36,8 @@ export function Event({
   submitterId,
   time,
   withFullDate,
+  icon = null,
+  iconClassName = null,
   cancel
 }) {
   const classes = useStyles();
@@ -42,6 +46,11 @@ export function Event({
 
   return (
     <ListItem disableGutters>
+      {icon && (
+        <ListItemAvatar>
+          <Avatar className={iconClassName}>{icon}</Avatar>
+        </ListItemAvatar>
+      )}
       <ListItemText
         primary={
           <>

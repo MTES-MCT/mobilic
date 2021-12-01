@@ -2,11 +2,6 @@ import React from "react";
 import Collapse from "@material-ui/core/Collapse/Collapse";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import {
-  formatDateTime,
-  formatTimeOfDay,
-  getStartOfDay
-} from "common/utils/time";
 import IconButton from "@material-ui/core/IconButton";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
@@ -15,56 +10,38 @@ import { useToggleContradictory } from "./history/toggleContradictory";
 import Skeleton from "@material-ui/lab/Skeleton";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { Event } from "../../common/Event";
-import { ACTIVITIES } from "common/utils/activities";
+import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import ArrowDownward from "@material-ui/icons/ArrowDownward";
+import { MISSION_RESOURCE_TYPES } from "common/utils/contradictory";
+import { getChangeIconAndText } from "../../common/logEvent";
 
 export const useStyles = makeStyles(theme => ({
   noChangesText: {
     marginTop: theme.spacing(1),
     color: theme.palette.grey[600],
     fontStyle: "italic"
+  },
+  employeeChange: {
+    backgroundColor: theme.palette.primary.light
+  },
+  adminChange: {
+    backgroundColor: theme.palette.warning.main
+  },
+  validation: {
+    backgroundColor: theme.palette.success.main
+  },
+  arrow: {
+    marginBottom: theme.spacing(-1)
   }
 }));
 
-function getChangeText(change) {
-  const datetimeFormatter =
-    !change.current ||
-    !change.previous ||
-    (getStartOfDay(change.current?.startTime) ===
-      getStartOfDay(change.current?.endTime) &&
-      getStartOfDay(change.previous?.startTime) ===
-        getStartOfDay(change.previous?.endTime) &&
-      getStartOfDay(change.current?.startTime) ===
-        getStartOfDay(change.current?.startTime))
-      ? formatTimeOfDay
-      : formatDateTime;
-
-  switch (change.change) {
-    case "CREATE":
-      return `a ajouté l'activité ${
-        ACTIVITIES[change.current.type].label
-      } de ${datetimeFormatter(change.current.startTime)} à ${datetimeFormatter(
-        change.current.endTime
-      )}`;
-    case "DELETE":
-      return `a supprimé l'activité ${
-        ACTIVITIES[change.current.type].label
-      } de ${datetimeFormatter(change.current.startTime)} à ${datetimeFormatter(
-        change.current.endTime
-      )}`;
-    case "UPDATE":
-      return `a modifié la période de l'activité ${
-        ACTIVITIES[change.current.type].label
-      } de ${datetimeFormatter(
-        change.previous.startTime
-      )} - ${datetimeFormatter(change.previous.endTime)} à ${datetimeFormatter(
-        change.current.startTime
-      )} - ${datetimeFormatter(change.current.endTime)}`;
-    default:
-      return "changement inconnu.";
-  }
-}
-
-export function ContradictoryChanges({ mission, since, userId, cacheInStore }) {
+export function ContradictoryChanges({
+  mission,
+  validationTime,
+  showEventsBeforeValidation = true,
+  userId,
+  cacheInStore
+}) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
 
@@ -72,58 +49,109 @@ export function ContradictoryChanges({ mission, since, userId, cacheInStore }) {
     // eslint-disable-next-line no-unused-vars
     _,
     changesHistory,
-    loadingEmployeeVersion,
-    hasComputedContradictory
+    loadingEmployeeVersion
   ] = useToggleContradictory(
     true,
     open,
     setOpen,
-    [[mission, since]],
+    [[mission, validationTime]],
     cacheInStore
   );
 
-  const userChangesHistory = changesHistory.filter(c => c.userId === userId);
+  const userChangesHistory = changesHistory
+    .filter(c => c.userId === userId || !c.userId)
+    .sort((c1, c2) => c2.time - c1.time);
+  const userChangesAfterValidation = userChangesHistory.filter(
+    c => c.time > validationTime
+  );
+  const userChangesBeforeValidation = userChangesHistory.filter(
+    c => c.time <= validationTime
+  );
 
   return (
     <>
-      <Box mt={1} style={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography className="bold">Modifications gestionnaire</Typography>
-        {(!hasComputedContradictory || changesHistory.length > 0) && (
-          <IconButton
-            aria-label={open ? "Masquer" : "Afficher"}
-            color="inherit"
-            className="no-margin-no-padding"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </IconButton>
-        )}
-      </Box>
-      <Collapse
-        in={open || (changesHistory.length === 0 && hasComputedContradictory)}
+      <Box
+        mt={1}
+        style={{ display: "flex", justifyContent: "space-between" }}
+        onClick={() => setOpen(!open)}
       >
+        <Typography className="bold">Historique de saisie</Typography>
+        <IconButton
+          aria-label={open ? "Masquer" : "Afficher"}
+          color="inherit"
+          className="no-margin-no-padding"
+        >
+          {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        </IconButton>
+      </Box>
+      <Collapse in={open}>
         {loadingEmployeeVersion ? (
           <Skeleton rect width="100%" height={100} />
-        ) : userChangesHistory.length === 0 ? (
-          <Typography className={classes.noChangesText}>
-            Il n'y a pas eu de modifications apportées par le gestionnaire
-          </Typography>
         ) : (
-          <List dense>
-            {userChangesHistory.map(change => {
-              return (
-                <Event
-                  key={(change.previous || change.current).id}
-                  text={getChangeText(change)}
-                  submitter={change.submitter}
-                  submitterId={change.submitterId}
-                  time={change.time}
-                  withFullDate={true}
-                />
-              );
-            })}
-          </List>
+          <>
+            {userChangesAfterValidation.filter(
+              ({ type }) => type !== MISSION_RESOURCE_TYPES.validation
+            ).length === 0 ? (
+              <Typography className={classes.noChangesText}>
+                Il n'y a pas eu de modifications apportées par le gestionnaire
+              </Typography>
+            ) : (
+              <List dense>
+                {userChangesAfterValidation.map(change => {
+                  const { icon, text } = getChangeIconAndText(change);
+                  return (
+                    <Event
+                      key={`${(change.after || change.before).id}${
+                        change.time
+                      }`}
+                      icon={icon}
+                      iconClassName={
+                        change.resourceType ===
+                        MISSION_RESOURCE_TYPES.validation
+                          ? classes.validation
+                          : classes.adminChange
+                      }
+                      text={text}
+                      submitter={change.submitter}
+                      submitterId={change.submitterId}
+                      time={change.time}
+                      withFullDate={true}
+                    />
+                  );
+                })}
+              </List>
+            )}
+          </>
         )}
+        <Typography variant="caption" style={{ textTransform: "uppercase" }}>
+          <ArrowUpwardIcon className={classes.arrow} /> Modifications
+          gestionnaire
+        </Typography>
+        <hr style={{ height: 1, width: "100%", borderTop: "dotted 1px" }} />
+        <Typography variant="caption" style={{ textTransform: "uppercase" }}>
+          <ArrowDownward className={classes.arrow} /> Saisie salarié
+        </Typography>
+        <List dense>
+          {userChangesBeforeValidation.map(change => {
+            const { icon, text } = getChangeIconAndText(change);
+            return (
+              <Event
+                key={`${(change.after || change.before).id}${change.time}`}
+                icon={icon}
+                text={text}
+                iconClassName={
+                  change.resourceType === MISSION_RESOURCE_TYPES.validation
+                    ? classes.validation
+                    : classes.employeeChange
+                }
+                submitter={change.submitter}
+                submitterId={change.submitterId}
+                time={change.time}
+                withFullDate={true}
+              />
+            );
+          })}
+        </List>
       </Collapse>
     </>
   );
