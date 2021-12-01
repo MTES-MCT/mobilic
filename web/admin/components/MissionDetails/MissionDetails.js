@@ -48,6 +48,7 @@ import { useMissionDetailsStyles } from "./MissionDetailsStyle";
 import { missionCreatedByAdmin } from "common/utils/mission";
 import { Alert } from "@material-ui/lab";
 import { WarningModificationMission } from "./WarningModificationMission";
+import Button from "@material-ui/core/Button";
 
 export function MissionDetails({
   missionId,
@@ -208,6 +209,9 @@ export function MissionDetails({
             )}
           </Typography>
         )}
+        <Button color="primary" variant="outlined" size="small">
+          Télécharger les détails de la mission
+        </Button>
       </Box>
       {!readOnlyMission && <WarningModificationMission />}
       <Box className="flex-row" pb={4} style={{ alignItems: "center" }}>

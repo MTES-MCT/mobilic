@@ -1,9 +1,15 @@
 import { gql } from "@apollo/client/core";
 import { buildBackendPayloadForAddress } from "./addresses";
 
-export const ACTIVITIES_AND_EXPENDITURES_HISTORY_ON_MISSION_QUERY = gql`
+export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
   query activitiesAndExpendituresHistory($missionId: Int!) {
     mission(id: $missionId) {
+      receptionTime
+      submitter {
+        id
+        firstName
+        lastName
+      }
       activities(includeDismissedActivities: true) {
         id
         type
@@ -54,6 +60,48 @@ export const ACTIVITIES_AND_EXPENDITURES_HISTORY_ON_MISSION_QUERY = gql`
           firstName
           lastName
         }
+      }
+      validations {
+        id
+        isAdmin
+        userId
+        receptionTime
+        missionId
+        submitter {
+          id
+          firstName
+          lastName
+        }
+      }
+      startLocation {
+        id
+        receptionTime
+        submitter {
+          id
+          firstName
+          lastName
+        }
+        missionId
+        name
+        alias
+        postalCode
+        city
+        kilometerReading
+      }
+      endLocation {
+        id
+        receptionTime
+        submitter {
+          id
+          firstName
+          lastName
+        }
+        missionId
+        name
+        alias
+        postalCode
+        city
+        kilometerReading
       }
     }
   }
