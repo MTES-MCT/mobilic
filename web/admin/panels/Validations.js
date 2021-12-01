@@ -18,7 +18,6 @@ import {
   now
 } from "common/utils/time";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
-import Button from "@material-ui/core/Button";
 import withWidth from "@material-ui/core/withWidth";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -34,6 +33,7 @@ import { useStyles } from "../components/styles/ValidationsStyle";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMissionDrawer } from "../components/MissionDrawer";
 import { CompanyFilter } from "../components/CompanyFilter";
+import { LoadingButton } from "common/components/LoadingButton";
 
 function _ValidationPanel() {
   const api = useApi();
@@ -242,11 +242,13 @@ function _ValidationPanel() {
 
   return (
     <Paper className={classes.container} variant="outlined">
-      <CompanyFilter
-        companies={companiesWithSelection}
-        setCompanies={setCompaniesWithSelection}
-        className={classes.companyFilter}
-      />
+      {companies.length > 1 && (
+        <CompanyFilter
+          companies={companiesWithSelection}
+          setCompanies={setCompaniesWithSelection}
+          className={classes.companyFilter}
+        />
+      )}
       <Tabs
         value={tab}
         indicatorColor="primary"
@@ -328,7 +330,7 @@ function _ValidationPanel() {
                 </span>
               </Typography>
               {tab === 0 && (
-                <Button
+                <LoadingButton
                   aria-label="Valider"
                   variant="contained"
                   color="primary"
@@ -361,7 +363,7 @@ function _ValidationPanel() {
                   }}
                 >
                   Valider
-                </Button>
+                </LoadingButton>
               )}
             </Box>
           ),
