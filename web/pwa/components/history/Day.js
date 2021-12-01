@@ -47,12 +47,13 @@ export function Day({
     mission => mission.adminValidation && mission.validation
   );
 
-  // eslint-disable-next-line no-unused-vars
   const [
-    activitiesToUse,
-    changes,
+    missionResourcesToUse,
+    // eslint-disable-next-line no-unused-vars
+    _,
     loadingEmployeeVersion,
-    hasComputedContradictory
+    hasComputedContradictory,
+    contradictoryIsEmpty
   ] = useToggleContradictory(
     canDisplayContradictoryVersions,
     shouldDisplayInitialEmployeeVersion,
@@ -62,7 +63,7 @@ export function Day({
   );
 
   const userActivitiesToUse = [
-    ...activitiesToUse.filter(a => a.userId === userId),
+    ...missionResourcesToUse.activities.filter(a => a.userId === userId),
     ...activitiesWithNextAndPreviousDay.filter(
       a => !missionsInPeriod.map(m => m.id).includes(a.missionId)
     )
@@ -77,7 +78,7 @@ export function Day({
     <Box>
       <ContradictorySwitch
         contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
-        emptyContradictory={hasComputedContradictory && changes.length === 0}
+        emptyContradictory={hasComputedContradictory && contradictoryIsEmpty}
         className={classes.contradictorySwitch}
         shouldDisplayInitialEmployeeVersion={
           shouldDisplayInitialEmployeeVersion

@@ -1,127 +1,184 @@
 import maxBy from "lodash/maxBy";
-import { ACTIVITIES_AND_EXPENDITURES_HISTORY_ON_MISSION_QUERY } from "./apiQueries";
+import flatMap from "lodash/flatMap";
+import { ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY } from "./apiQueries";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 import { ADMIN_ACTIONS } from "../../web/admin/store/reducers/root";
 import { useStoreSyncedWithLocalStorage } from "../store/store";
 import { useAdminStore } from "../../web/admin/store/store";
 
-function versionOfEventAt(event, time) {
-  if (event.receptionTime && event.receptionTime > time) return null;
-  if (event.dismissedAt && event.dismissedAt <= time) return null;
+export const MISSION_RESOURCE_TYPES = {
+  activity: "activity",
+  expenditure: "expenditure",
+  startLocation: "startLocation",
+  endLocation: "endLocation",
+  validation: "validation"
+};
+
+function allEventsForResource(resource, resourceType) {
+  const events = [];
+
+  if (resource.versions) {
+    resource.versions.sort((v1, v2) => v1.receptionTime - v2.receptionTime);
+  }
+
+  const userId = resource.user ? resource.user.id : resource.userId;
+
+  if (resource.receptionTime) {
+    events.push({
+      time: resource.receptionTime,
+      type: "CREATE",
+      resourceType,
+      before: null,
+      after: resource.versions
+        ? { ...resource, ...resource.versions[0] }
+        : resource,
+      submitter: resource.submitter,
+      submitterId: resource.submitterId,
+      userId
+    });
+  }
+
+  if (resource.dismissedAt) {
+    events.push({
+      time: resource.dismissedAt,
+      type: "DELETE",
+      resourceType,
+      before: resource,
+      after: null,
+      submitter: resource.dismissAuthor,
+      submitterId: resource.dismissAuthor.id,
+      userId
+    });
+  }
+
+  if (resource.versions && resource.versions.length > 1) {
+    resource.versions.slice(1).forEach((version, index) => {
+      events.push({
+        time: version.receptionTime,
+        type: "UPDATE",
+        resourceType,
+        before: { ...resource, ...resource.versions[index] },
+        after: { ...resource, ...version },
+        submitter: version.submitter,
+        submitterId: version.submitter.id,
+        userId
+      });
+    });
+  }
+
+  return events;
+}
+
+function versionOfResourceAt(resource, time) {
+  if (resource.receptionTime && resource.receptionTime > time) return null;
+  if (resource.dismissedAt && resource.dismissedAt <= time) return null;
   if (
-    event.lastUpdateTime &&
-    event.lastUpdateTime > time &&
-    event.versions &&
-    event.versions.length > 0
+    resource.lastUpdateTime &&
+    resource.lastUpdateTime > time &&
+    resource.versions &&
+    resource.versions.length > 0
   ) {
     const versionAtTime =
       maxBy(
-        event.versions.filter(v => v.receptionTime <= time),
+        resource.versions.filter(v => v.receptionTime <= time),
         v => v.receptionTime
       ) || {};
-    return { ...event, ...versionAtTime };
+    return { ...resource, ...versionAtTime };
   }
-  return event;
+  return resource;
 }
 
-export function getEventChangesSinceTime(eventsWithHistory, time) {
-  return eventsWithHistory.map(event => {
-    const currentVersion = event.dismissedAt ? null : event;
-    const previousVersion = versionOfEventAt(event, time);
-    let changeType = null;
-    let changeTime = null;
-
-    if (previousVersion || currentVersion) {
-      if (!previousVersion) {
-        changeType = "CREATE";
-        changeTime = currentVersion.receptionTime;
-      } else if (!currentVersion) {
-        changeType = "DELETE";
-        changeTime = previousVersion.dismissedAt;
-      } else if (
-        currentVersion.startTime !== previousVersion.startTime ||
-        currentVersion.endTime !== previousVersion.endTime
-      ) {
-        changeType = "UPDATE";
-      }
-    }
-
-    const changeSubmitter =
-      event.dismissAuthor ||
-      (event.versions && event.versions.length > 0
-        ? maxBy(event.versions, v => v.receptionTime).submitter
-        : event.submitter);
-
-    return {
-      previous: previousVersion,
-      current: currentVersion,
-      change: changeType,
-      time: event.lastUpdateTime || changeTime,
-      submitter: changeSubmitter,
-      submitterId: changeSubmitter.id,
-      userId: event.user ? event.user.id : event.userId
-    };
-  });
+function buildEventsHistory(resources) {
+  const history = flatMap(resources, ({ resource, type }) =>
+    allEventsForResource(resource, type)
+  );
+  history.sort((c1, c2) => c2.time - c1.time);
+  return history;
 }
 
-export function getPreviousVersionsOfEvents(eventChanges) {
-  return eventChanges
-    .map(x => {
-      if (!x.change) return x.current;
-      return x.previous;
-    })
-    .filter(Boolean);
+export function getVersionsOfResourcesAt(resources, time) {
+  return resources
+    .map(({ resource, type }) => ({
+      resource: versionOfResourceAt(resource, time),
+      type
+    }))
+    .filter(({ resource }) => Boolean(resource));
 }
 
-export function getChangesHistory(eventChanges) {
-  const changesHistory = [];
-  eventChanges.forEach(x => {
-    if (x.change) changesHistory.push(x);
-  });
-  return changesHistory.sort((c1, c2) => c1.time - c2.time);
-}
+const missionResourcesWithHistoryFetchQueue = new NonConcurrentExecutionQueue();
 
-const contradictoryFetchQueue = new NonConcurrentExecutionQueue();
-
-export async function getContradictoryInfoForMission(
+export async function getResourcesAndHistoryForMission(
   mission,
   api,
   cacheInStore
 ) {
-  if (!mission.contradictoryInfo) {
-    await contradictoryFetchQueue.execute(
+  if (!mission.resourcesWithHistory) {
+    await missionResourcesWithHistoryFetchQueue.execute(
       async () => {
-        const contradictoryInfo = (
-          await api.graphQlMutate(
-            ACTIVITIES_AND_EXPENDITURES_HISTORY_ON_MISSION_QUERY,
-            { missionId: mission.id }
-          )
+        const apiResponse = (
+          await api.graphQlMutate(ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY, {
+            missionId: mission.id
+          })
         ).data.mission;
-        cacheInStore(mission, contradictoryInfo);
-        mission.contradictoryInfo = contradictoryInfo;
+
+        let resources = [];
+        resources.push(
+          ...apiResponse.activities.map(a => ({
+            resource: a,
+            type: MISSION_RESOURCE_TYPES.activity
+          }))
+        );
+        resources.push(
+          ...apiResponse.expenditures.map(e => ({
+            resource: e,
+            type: MISSION_RESOURCE_TYPES.expenditure
+          }))
+        );
+        resources.push(
+          ...apiResponse.validations.map(v => ({
+            resource: v,
+            type: MISSION_RESOURCE_TYPES.validation
+          }))
+        );
+        resources.push({
+          resource: apiResponse.startLocation,
+          type: MISSION_RESOURCE_TYPES.startLocation
+        });
+        resources.push({
+          resource: apiResponse.endLocation,
+          type: MISSION_RESOURCE_TYPES.endLocation
+        });
+
+        resources = resources.filter(({ resource }) => Boolean(resource));
+        const history = buildEventsHistory(resources);
+
+        const resourcesWithHistory = { resources, history };
+
+        cacheInStore(mission, resourcesWithHistory);
+        mission.resourcesWithHistory = resourcesWithHistory;
       },
       { cacheKey: mission.id, queueName: mission.id }
     );
   }
-  return mission.contradictoryInfo;
+  return mission.resourcesWithHistory;
 }
 
-function cacheInPwaStore(mission, contradictoryInfo, store) {
+function cacheInPwaStore(mission, resourcesWithHistory, store) {
   store.updateEntityObject({
     objectId: mission.id,
     entity: "missions",
-    update: { contradictoryInfo }
+    update: { resourcesWithHistory }
   });
   store.batchUpdate();
 }
 
-function cacheInAdminStore(mission, contradictoryInfo, adminStore) {
+function cacheInAdminStore(mission, resourcesWithHistory, adminStore) {
   adminStore.dispatch({
     type: ADMIN_ACTIONS.update,
     payload: {
       id: mission.id,
       entity: "missions",
-      update: { contradictoryInfo }
+      update: { resourcesWithHistory }
     }
   });
 }
@@ -129,13 +186,13 @@ function cacheInAdminStore(mission, contradictoryInfo, adminStore) {
 export function useCacheContradictoryInfoInPwaStore() {
   const store = useStoreSyncedWithLocalStorage();
 
-  return (mission, contradictoryInfo) =>
-    cacheInPwaStore(mission, contradictoryInfo, store);
+  return (mission, resourcesWithHistory) =>
+    cacheInPwaStore(mission, resourcesWithHistory, store);
 }
 
 export function useCacheContradictoryInfoInAdminStore() {
   const adminStore = useAdminStore();
 
-  return (mission, contradictoryInfo) =>
-    cacheInAdminStore(mission, contradictoryInfo, adminStore);
+  return (mission, resourcesWithHistory) =>
+    cacheInAdminStore(mission, resourcesWithHistory, adminStore);
 }

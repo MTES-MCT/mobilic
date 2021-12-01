@@ -101,6 +101,7 @@ export function AlternateColors({ children, inverseColors = false }) {
 export function MissionDetails({
   mission,
   activities = null,
+  expenditures = null,
   editActivityEvent,
   nullableEndTimeInEditActivity = true,
   editExpenditures,
@@ -161,12 +162,16 @@ export function MissionDetails({
     ? activities.filter(a => a.userId === actualUserId)
     : mission.activities;
 
+  const userExpenditures = expenditures
+    ? expenditures.filter(e => e.userId === actualUserId)
+    : mission.expenditures;
+
   const lastActivityTime =
     userActivities.length > 0
       ? max(userActivities.map(a => a.endTime || now()))
       : null;
 
-  const expenditureForPeriod = mission.expenditures?.filter(
+  const expenditureForPeriod = userExpenditures?.filter(
     exp =>
       (!fromTime || new Date(exp.spendingDate).getTime() / 1000 >= fromTime) &&
       (!untilTime || new Date(exp.spendingDate).getTime() / 1000 < untilTime)
@@ -547,7 +552,7 @@ export function MissionDetails({
               {mission.adminValidation && mission.validation && (
                 <ContradictoryChanges
                   mission={mission}
-                  since={mission.validation.receptionTime}
+                  validationTime={mission.validation.receptionTime}
                   userId={actualUserId}
                   cacheInStore={cacheContradictoryInfoInPwaStore}
                 />
