@@ -3,6 +3,7 @@ import mapValues from "lodash/mapValues";
 export class NonConcurrentExecutionQueue {
   constructor() {
     this.queues = { main: [] };
+    this.runningQueues = {};
   }
 
   _enqueueTask = (func, queueName, cacheKey, refresh) => {
@@ -29,6 +30,8 @@ export class NonConcurrentExecutionQueue {
   };
 
   _executeNext = async queueName => {
+    if (this.runningQueues[queueName]) return;
+
     const nextTask = this.queues[queueName][0];
     if (!nextTask) return;
     const {
@@ -40,6 +43,8 @@ export class NonConcurrentExecutionQueue {
       cachedError,
       hasCachedComputation
     } = nextTask;
+
+    this.runningQueues[queueName] = true;
 
     // Avoid running other tasks with the same cache key
     if (cacheKey && !hasCachedComputation) {
@@ -67,6 +72,8 @@ export class NonConcurrentExecutionQueue {
       this._cacheTaskResult(queueName, cacheKey, response, error);
     }
 
+    this.runningQueues[queueName] = false;
+
     // Start next task
     setTimeout(() => this._executeNext(queueName), 0);
 
@@ -81,11 +88,8 @@ export class NonConcurrentExecutionQueue {
     { cacheKey = null, queueName = "main", refresh = false } = {}
   ) => {
     if (!this.queues[queueName]) this.queues[queueName] = [];
-    const shouldRunImmediately = this.queues[queueName].length === 0;
     const task = this._enqueueTask(func, queueName, cacheKey, refresh);
-    if (shouldRunImmediately) {
-      this._executeNext(queueName);
-    }
+    this._executeNext(queueName);
     return await task;
   };
 
