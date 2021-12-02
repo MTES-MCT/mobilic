@@ -1,6 +1,6 @@
 import React from "react";
 import { isWidthUp } from "@material-ui/core";
-import { MissionDetails } from "./MissionDetails";
+import { MissionDetails } from "./MissionDetails/MissionDetails";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useLocation } from "react-router-dom";

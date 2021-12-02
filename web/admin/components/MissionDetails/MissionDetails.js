@@ -11,12 +11,12 @@ import {
   textualPrettyFormatDay
 } from "common/utils/time";
 import { useApi } from "common/utils/api";
-import { useAdminStore } from "../store/store";
+import { useAdminStore } from "../../store/store";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useModals } from "common/utils/modals";
 import List from "@material-ui/core/List";
-import { Event } from "../../common/Event";
-import { useSnackbarAlerts } from "../../common/Snackbar";
+import { Event } from "../../../common/Event";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
 import {
   formatApiError,
   graphQLErrorMatchesCode,
@@ -33,19 +33,21 @@ import {
   missionsNotValidatedByAllWorkers,
   missionsSelector,
   missionValidatedByAdmin
-} from "../selectors/missionSelectors";
-import { MissionVehicleInfo } from "./MissionVehicleInfo";
-import { MissionLocationInfo } from "./MissionLocationInfo";
-import { MissionEmployeeCard } from "./MissionEmployeeCard";
+} from "../../selectors/missionSelectors";
+import { MissionVehicleInfo } from "../MissionVehicleInfo";
+import { MissionLocationInfo } from "../MissionLocationInfo";
+import { MissionEmployeeCard } from "../MissionEmployeeCard";
 import ListItem from "@material-ui/core/ListItem";
-import { ADMIN_ACTIONS } from "../store/reducers/root";
-import { useMissionActions } from "../utils/missionActions";
-import { useMissionWithStats } from "../utils/missionWithStats";
-import { MissionDetailsSection } from "./MissionDetailsSection";
-import { MissionTitle } from "./MissionTitle";
-import { MissionValidationInfo } from "./MissionValidationInfo";
-import { useMissionDetailsStyles } from "./styles/MissionDetailsStyle";
+import { ADMIN_ACTIONS } from "../../store/reducers/root";
+import { useMissionActions } from "../../utils/missionActions";
+import { useMissionWithStats } from "../../utils/missionWithStats";
+import { MissionDetailsSection } from "../MissionDetailsSection";
+import { MissionTitle } from "../MissionTitle";
+import { MissionValidationInfo } from "../MissionValidationInfo";
+import { useMissionDetailsStyles } from "./MissionDetailsStyle";
 import { missionCreatedByAdmin } from "common/utils/mission";
+import { Alert } from "@material-ui/lab";
+import { WarningModificationMission } from "./WarningModificationMission";
 
 export function MissionDetails({
   missionId,
@@ -159,7 +161,7 @@ export function MissionDetails({
 
   return (
     <Box p={2}>
-      <Box pb={6}>
+      <Box pb={2}>
         <Grid
           container
           spacing={2}
@@ -207,6 +209,7 @@ export function MissionDetails({
           </Typography>
         )}
       </Box>
+      <WarningModificationMission />
       <Box className="flex-row" pb={4} style={{ alignItems: "center" }}>
         <Typography variant="h5" className={classes.vehicle}>
           Véhicule :
@@ -438,50 +441,59 @@ export function MissionDetails({
             className={classes.adminValidation}
           />
         ) : (
-          <LoadingButton
-            aria-label="Valider"
-            variant="contained"
-            color="primary"
-            size="small"
-            className={classes.validationButton}
-            onClick={async () => {
-              let errorToDisplay = null;
-              try {
-                const apiResponse = await api.graphQlMutate(
-                  VALIDATE_MISSION_MUTATION,
-                  {
-                    missionId: mission.id
-                  }
-                );
-                const validation = apiResponse.data.activities.validateMission;
-                adminStore.dispatch({
-                  type: ADMIN_ACTIONS.validateMission,
-                  payload: { validation }
-                });
-                handleClose();
-              } catch (err) {
-                if (
-                  !(
-                    isGraphQLError(err) &&
-                    err.graphQLErrors.every(e =>
-                      graphQLErrorMatchesCode(e, "NO_ACTIVITIES_TO_VALIDATE")
+          <Box>
+            <Alert severity="info">
+              <Typography className={classes.validationWarningText}>
+                Il ne vous sera plus possible de modifier les données après
+                validation.
+              </Typography>
+            </Alert>
+            <LoadingButton
+              aria-label="Valider"
+              variant="contained"
+              color="primary"
+              size="small"
+              className={classes.validationButton}
+              onClick={async () => {
+                let errorToDisplay = null;
+                try {
+                  const apiResponse = await api.graphQlMutate(
+                    VALIDATE_MISSION_MUTATION,
+                    {
+                      missionId: mission.id
+                    }
+                  );
+                  const validation =
+                    apiResponse.data.activities.validateMission;
+                  adminStore.dispatch({
+                    type: ADMIN_ACTIONS.validateMission,
+                    payload: { validation }
+                  });
+                  handleClose();
+                } catch (err) {
+                  if (
+                    !(
+                      isGraphQLError(err) &&
+                      err.graphQLErrors.every(e =>
+                        graphQLErrorMatchesCode(e, "NO_ACTIVITIES_TO_VALIDATE")
+                      )
                     )
                   )
-                )
-                  errorToDisplay = formatApiError(err);
-              }
-              if (errorToDisplay)
-                alerts.error(errorToDisplay, mission.id, 6000);
-              else
-                alerts.success(
-                  `La mission ${mission.name} a été validée avec succès !`,
-                  mission.id,
-                  6000
-                );
-            }}
-          >
-            Valider toute la mission
-          </LoadingButton>
+                    errorToDisplay = formatApiError(err);
+                }
+                if (errorToDisplay)
+                  alerts.error(errorToDisplay, mission.id, 6000);
+                else
+                  alerts.success(
+                    `La mission ${mission.name} a été validée avec succès !`,
+                    mission.id,
+                    6000
+                  );
+              }}
+            >
+              Valider toute la mission
+            </LoadingButton>
+          </Box>
         )}
       </MissionDetailsSection>
     </Box>
