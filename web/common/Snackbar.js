@@ -2,7 +2,11 @@ import React from "react";
 import MuiSnackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
-import { formatApiError, isGraphQLError } from "common/utils/errors";
+import {
+  formatApiError,
+  isConnectionError,
+  isGraphQLError
+} from "common/utils/errors";
 import { captureSentryException } from "common/utils/sentry";
 
 const SnackbarContext = React.createContext(() => {});
@@ -50,14 +54,16 @@ export const SnackbarProvider = withWidth()(({ children, width }) => {
     func,
     name,
     overrideFormatError = null,
-    onError = null
+    onError = null,
+    hideNetworkErrors = false
   ) {
     try {
       await func();
     } catch (err) {
       if (!isGraphQLError(err)) captureSentryException(err);
       if (onError) onError(err);
-      error(formatApiError(err, overrideFormatError), name, 6000);
+      if (!isConnectionError(err) || !hideNetworkErrors)
+        error(formatApiError(err, overrideFormatError), name, 6000);
     }
   }
 

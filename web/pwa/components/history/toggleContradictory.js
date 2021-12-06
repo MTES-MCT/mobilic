@@ -2,7 +2,8 @@ import React from "react";
 import {
   getResourcesAndHistoryForMission,
   getVersionsOfResourcesAt,
-  MISSION_RESOURCE_TYPES
+  MISSION_RESOURCE_TYPES,
+  orderLogEvents
 } from "common/utils/contradictory";
 import flatMap from "lodash/flatMap";
 import { useApi } from "common/utils/api";
@@ -23,6 +24,10 @@ export function useToggleContradictory(
     setHasComputedContradictory
   ] = React.useState(false);
 
+  const [
+    contradictoryComputationError,
+    setContradictoryComputationError
+  ] = React.useState(null);
   const [contradictoryIsEmpty, setContradictoryIsEmpty] = React.useState(false);
 
   const [
@@ -32,12 +37,13 @@ export function useToggleContradictory(
   const [
     employeeMissionResourceVersions,
     setEmployeeMissionResourceVersions
-  ] = React.useState([]);
+  ] = React.useState({});
 
   const [eventsHistory, setEventsHistory] = React.useState([]);
 
   async function computeContradictory() {
     setIsComputingContradictory(true);
+    setContradictoryComputationError(null);
 
     await alerts.withApiErrorHandling(
       async () => {
@@ -68,16 +74,16 @@ export function useToggleContradictory(
           resourceChangesPerMission.map(x => x.employeeVersions)
         );
         setEmployeeMissionResourceVersions({
-          activities: allResourceVersionsAtEmployeeTime.filter(
-            ({ type }) => type === MISSION_RESOURCE_TYPES.activity
-          ),
-          expenditures: allResourceVersionsAtEmployeeTime.filter(
-            ({ type }) => type === MISSION_RESOURCE_TYPES.expenditure
-          )
+          activities: allResourceVersionsAtEmployeeTime
+            .filter(({ type }) => type === MISSION_RESOURCE_TYPES.activity)
+            .map(r => r.resource),
+          expenditures: allResourceVersionsAtEmployeeTime
+            .filter(({ type }) => type === MISSION_RESOURCE_TYPES.expenditure)
+            .map(r => r.resource)
         });
         setEventsHistory(
           flatMap(resourceChangesPerMission.map(x => x.history)).sort(
-            (c1, c2) => c1.time - c2.time
+            orderLogEvents
           )
         );
         setHasComputedContradictory(true);
@@ -87,7 +93,11 @@ export function useToggleContradictory(
       },
       "fetch-contradictory",
       null,
-      () => setShouldDisplayInitialEmployeeVersion(false)
+      error => {
+        setContradictoryComputationError(error);
+        setShouldDisplayInitialEmployeeVersion(false);
+      },
+      true
     );
     setIsComputingContradictory(false);
   }
@@ -105,7 +115,7 @@ export function useToggleContradictory(
   React.useEffect(() => {
     setShouldDisplayInitialEmployeeVersion(false);
     setHasComputedContradictory(false);
-    setEmployeeMissionResourceVersions([]);
+    setEmployeeMissionResourceVersions({});
   }, [missionsWithValidationTimes.map(m => m[0].id).reduce((a, b) => a + b)]);
 
   return [
@@ -122,6 +132,7 @@ export function useToggleContradictory(
     eventsHistory,
     isComputingContradictory,
     hasComputedContradictory,
-    contradictoryIsEmpty
+    contradictoryIsEmpty,
+    contradictoryComputationError
   ];
 }
