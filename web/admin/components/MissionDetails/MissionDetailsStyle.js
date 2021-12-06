@@ -38,5 +38,12 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   runningMissionText: {
     color: theme.palette.warning.main,
     fontWeight: "bold"
+  },
+  validationWarningText: {
+    alignItems: "baseline",
+    fontStyle: "italic",
+    padding: 0,
+    fontSize: "0.875rem",
+    textAlign: "left"
   }
 }));

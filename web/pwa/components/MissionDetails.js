@@ -37,6 +37,7 @@ import LocationEntry from "./LocationEntry";
 import Alert from "@material-ui/lab/Alert";
 import { ContradictoryChanges } from "./ContradictoryChanges";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
+import { DISMISSABLE_WARNINGS } from "../../admin/utils/dismissableWarnings";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -183,13 +184,15 @@ export function MissionDetails({
     };
     if (
       !userInfo.disabledWarnings ||
-      !userInfo.disabledWarnings.includes("employee-validation")
+      !userInfo.disabledWarnings.includes(
+        DISMISSABLE_WARNINGS.EMPLOYEE_MISSION_VALIDATION
+      )
     ) {
       modals.open("confirmation", {
         title: "Confirmer la validation",
         confirmButtonLabel: "Valider",
         cancelButtonLabel: "Annuler",
-        disableWarningName: "employee-validation",
+        disableWarningName: DISMISSABLE_WARNINGS.EMPLOYEE_MISSION_VALIDATION,
         content: (
           <Typography gutterBottom>
             ⚠️ Une fois la mission validée vous ne pourrez plus y apporter de
