@@ -18,17 +18,11 @@ export function WarningModificationMission() {
   const api = useApi();
 
   const [modificationAlertOpen, setModificationAlertOpen] = React.useState(
-    false
+    !userInfo.disabledWarnings ||
+      !userInfo.disabledWarnings.includes(
+        DISMISSABLE_WARNINGS.ADMIN_MISSION_MODIFICATION
+      )
   );
-
-  React.useEffect(() => {
-    setModificationAlertOpen(
-      !userInfo.disabledWarnings ||
-        !userInfo.disabledWarnings.includes(
-          DISMISSABLE_WARNINGS.ADMIN_MISSION_MODIFICATION
-        )
-    );
-  }, []);
 
   async function handleDismissWarning() {
     try {
@@ -50,7 +44,7 @@ export function WarningModificationMission() {
   }
 
   return (
-    <Collapse in={modificationAlertOpen}>
+    <Collapse in={modificationAlertOpen} data-qa="modificationWarningCollapse">
       <Alert key={0} severity="info" className={classes.modificationAlert}>
         <List disablePadding>
           <ListItem
