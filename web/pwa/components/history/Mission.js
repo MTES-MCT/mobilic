@@ -88,7 +88,8 @@ export function Mission({
     _,
     loadingEmployeeVersion,
     hasComputedContradictory,
-    contradictoryIsEmpty
+    contradictoryIsEmpty,
+    contradictoryComputationError
   ] = useToggleContradictory(
     canDisplayContradictoryVersions,
     shouldDisplayInitialEmployeeVersion,
@@ -209,6 +210,8 @@ export function Mission({
           setShouldDisplayInitialEmployeeVersion={
             setShouldDisplayInitialEmployeeVersion
           }
+          contradictoryComputationError={contradictoryComputationError}
+          disabled={loadingEmployeeVersion}
         />
         {showMetrics && (
           <WorkTimeSummaryKpiGrid
