@@ -494,7 +494,7 @@ export function MissionDetails({
         </List>
       </MissionReviewSection>
       {!hideValidations && (
-        <MissionReviewSection title="">
+        <MissionReviewSection title={!validateMission ? "Validation" : ""}>
           {validateMission && !mission.adminValidation && !mission.validation && (
             <Box style={{ textAlign: "center" }} pt={2} pb={2}>
               <MainCtaButton
@@ -549,14 +549,12 @@ export function MissionDetails({
                   </Typography>
                 </Box>
               )}
-              {mission.adminValidation && mission.validation && (
-                <ContradictoryChanges
-                  mission={mission}
-                  validationTime={mission.validation.receptionTime}
-                  userId={actualUserId}
-                  cacheInStore={cacheContradictoryInfoInPwaStore}
-                />
-              )}
+              <ContradictoryChanges
+                mission={mission}
+                validationTime={mission.validation.receptionTime}
+                userId={actualUserId}
+                cacheInStore={cacheContradictoryInfoInPwaStore}
+              />
             </>
           )}
         </MissionReviewSection>

@@ -53,7 +53,8 @@ export function Day({
     _,
     loadingEmployeeVersion,
     hasComputedContradictory,
-    contradictoryIsEmpty
+    contradictoryIsEmpty,
+    contradictoryComputationError
   ] = useToggleContradictory(
     canDisplayContradictoryVersions,
     shouldDisplayInitialEmployeeVersion,
@@ -78,6 +79,7 @@ export function Day({
     <Box>
       <ContradictorySwitch
         contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
+        disabled={loadingEmployeeVersion}
         emptyContradictory={hasComputedContradictory && contradictoryIsEmpty}
         className={classes.contradictorySwitch}
         shouldDisplayInitialEmployeeVersion={
@@ -86,6 +88,7 @@ export function Day({
         setShouldDisplayInitialEmployeeVersion={
           setShouldDisplayInitialEmployeeVersion
         }
+        contradictoryComputationError={contradictoryComputationError}
       />
       <DaySummary
         activitiesWithNextAndPreviousDay={userActivitiesToUse}

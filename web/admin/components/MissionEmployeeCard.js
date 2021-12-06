@@ -242,6 +242,7 @@ export function MissionEmployeeCard({
                 <ContradictoryChanges
                   mission={mission}
                   validationTime={stats.validation.receptionTime}
+                  showEventsBeforeValidation={false}
                   userId={user.id}
                   cacheInStore={cacheContradictoryInfoInAdminStore}
                 />

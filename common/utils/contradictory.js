@@ -6,6 +6,18 @@ import { ADMIN_ACTIONS } from "../../web/admin/store/reducers/root";
 import { useStoreSyncedWithLocalStorage } from "../store/store";
 import { useAdminStore } from "../../web/admin/store/store";
 
+const DIFFERENT_RESOURCES_EVENT_TYPE_ORDER = {
+  DELETE: 1,
+  UPDATE: 2,
+  CREATE: 3
+};
+
+const SAME_RESOURCES_EVENT_TYPE_ORDER = {
+  CREATE: 1,
+  UPDATE: 2,
+  DELETE: 3
+};
+
 export const MISSION_RESOURCE_TYPES = {
   activity: "activity",
   expenditure: "expenditure",
@@ -13,6 +25,33 @@ export const MISSION_RESOURCE_TYPES = {
   endLocation: "endLocation",
   validation: "validation"
 };
+
+const RESOURCE_TYPE_ORDER = {
+  [MISSION_RESOURCE_TYPES.startLocation]: 1,
+  [MISSION_RESOURCE_TYPES.activity]: 2,
+  [MISSION_RESOURCE_TYPES.endLocation]: 3,
+  [MISSION_RESOURCE_TYPES.expenditure]: 4,
+  [MISSION_RESOURCE_TYPES.validation]: 5
+};
+
+export function orderLogEvents(event1, event2) {
+  const timeDiff = event2.time - event1.time;
+  if (timeDiff !== 0) return timeDiff;
+  if (event1.resourceType !== event2.resourceType)
+    return (
+      RESOURCE_TYPE_ORDER[event2.resourceType] -
+      RESOURCE_TYPE_ORDER[event1.resourceType]
+    );
+  if (event1.resourceId && event1.resourceId === event2.resourceId)
+    return (
+      SAME_RESOURCES_EVENT_TYPE_ORDER[event2.type] -
+      SAME_RESOURCES_EVENT_TYPE_ORDER[event1.type]
+    );
+  return (
+    DIFFERENT_RESOURCES_EVENT_TYPE_ORDER[event2.type] -
+    DIFFERENT_RESOURCES_EVENT_TYPE_ORDER[event1.type]
+  );
+}
 
 function allEventsForResource(resource, resourceType) {
   const events = [];
@@ -25,6 +64,7 @@ function allEventsForResource(resource, resourceType) {
 
   if (resource.receptionTime) {
     events.push({
+      resourceId: resource.id,
       time: resource.receptionTime,
       type: "CREATE",
       resourceType,
@@ -40,6 +80,7 @@ function allEventsForResource(resource, resourceType) {
 
   if (resource.dismissedAt) {
     events.push({
+      resourceId: resource.id,
       time: resource.dismissedAt,
       type: "DELETE",
       resourceType,
@@ -54,6 +95,7 @@ function allEventsForResource(resource, resourceType) {
   if (resource.versions && resource.versions.length > 1) {
     resource.versions.slice(1).forEach((version, index) => {
       events.push({
+        resourceId: resource.id,
         time: version.receptionTime,
         type: "UPDATE",
         resourceType,
@@ -92,7 +134,7 @@ function buildEventsHistory(resources) {
   const history = flatMap(resources, ({ resource, type }) =>
     allEventsForResource(resource, type)
   );
-  history.sort((c1, c2) => c2.time - c1.time);
+  history.sort(orderLogEvents);
   return history;
 }
 
