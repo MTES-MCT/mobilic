@@ -1364,6 +1364,10 @@ export const HTTP_QUERIES = {
     method: "POST",
     endpoint: "/users/generate_pdf_export"
   },
+  missionExport: {
+    method: "POST",
+    endpoint: "/users/generate_mission_export"
+  },
   oauthAuthorize: {
     method: "GET",
     endpoint: "/oauth/authorize"
