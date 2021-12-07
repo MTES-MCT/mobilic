@@ -19,6 +19,11 @@ import { ContradictorySwitch } from "../ContradictorySwitch";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import Grid from "@material-ui/core/Grid";
+import { HTTP_QUERIES } from "common/utils/apiQueries";
+import { formatApiError } from "common/utils/errors";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
+import { useApi } from "common/utils/api";
 
 const useStyles = makeStyles(theme => ({
   alternateCard: {
@@ -67,6 +72,10 @@ export function Mission({
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion
   ] = React.useState(false);
+
+  const api = useApi();
+  const { trackLink } = useMatomo();
+  const alerts = useSnackbarAlerts();
 
   const canDisplayContradictoryVersions =
     mission.adminValidation && mission.validation;
@@ -166,9 +175,24 @@ export function Mission({
               color={alternateDisplay ? "inherit" : "primary"}
               className="no-margin-no-padding"
               style={{ marginRight: 16 }}
-              onClick={e => {
+              onClick={async e => {
                 e.stopPropagation();
-                console.log("Downloading mission");
+                e.preventDefault();
+                trackLink({
+                  href: `/generate_mission_export`,
+                  linkType: "download"
+                });
+                try {
+                  await api.downloadFileHttpQuery(HTTP_QUERIES.missionExport, {
+                    json: { mission_id: mission.id, user_id: userId }
+                  });
+                } catch (err) {
+                  alerts.error(
+                    formatApiError(err),
+                    "generate_mission_export",
+                    6000
+                  );
+                }
               }}
             >
               <GetAppIcon />
