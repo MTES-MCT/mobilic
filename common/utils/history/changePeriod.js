@@ -29,7 +29,7 @@ export function useSelectPeriod(missionGroupsByPeriodUnit, initialPeriodUnit) {
   function updateStateWithNewPeriod(newPeriod, newPeriodUnit) {
     setSelectedPeriod(newPeriod);
     setOldPeriodUnit(newPeriodUnit);
-    if (newPeriodUnit === "mission") {
+    if (newPeriodUnit === "mission" && newPeriod) {
       setMissionId(
         missionGroupsByPeriodUnit[newPeriodUnit][newPeriod.toString()][0].id
       );
