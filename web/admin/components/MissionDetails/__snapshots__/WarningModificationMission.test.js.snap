@@ -8,7 +8,7 @@ exports[`WarningModificationMission should render the WarningModificationMission
         <WithStyles(ForwardRef(ListItemIcon)) className=\\"makeStyles-validationWarningIcon-1\\">
           👉
         </WithStyles(ForwardRef(ListItemIcon))>
-        <WithStyles(ForwardRef(ListItemText)) primary=\\"Les modifications sont enregistrées et apparaitront en cas de contrôle.\\" />
+        <WithStyles(ForwardRef(ListItemText)) primary=\\"Les modifications sont enregistrées et apparaîtront en cas de contrôle.\\" />
       </WithStyles(ForwardRef(ListItem))>
       <WithStyles(ForwardRef(ListItem)) disableGutters={true} dense={true} className=\\"makeStyles-modificationWarningItem-2\\">
         <WithStyles(ForwardRef(ListItemIcon)) className=\\"makeStyles-validationWarningIcon-1\\">
