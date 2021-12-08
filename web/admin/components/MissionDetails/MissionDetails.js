@@ -210,7 +210,11 @@ export function MissionDetails({
         )}
       </Box>
       {!readOnlyMission && <WarningModificationMission />}
-      <Box className="flex-row" pb={4} style={{ alignItems: "center" }}>
+      <Box
+        className="flex-row"
+        pb={4}
+        style={{ alignItems: "center", paddingTop: "30px" }}
+      >
         <Typography variant="h5" className={classes.vehicle}>
           Véhicule :
         </Typography>
