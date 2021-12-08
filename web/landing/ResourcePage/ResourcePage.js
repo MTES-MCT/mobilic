@@ -113,7 +113,7 @@ export function ResourcePage() {
               question="Durée maximale de travail sans interruption"
               answer={
                 <>
-                  Les chauffeurs de véhicules légers ne peuvent pas conduire
+                  Les chauffeurs de véhicules légers ne peuvent pas travailler
                   plus de <b>6 heures d'affilée.</b>
                 </>
               }
