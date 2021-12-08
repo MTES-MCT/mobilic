@@ -1,7 +1,17 @@
 export function createItemsReducer(state, { items, entity }) {
   return {
     ...state,
-    [entity]: [...items, ...state[entity]]
+    [entity]: [
+      ...items,
+      ...state[entity].filter(
+        it =>
+          !it.id ||
+          !items
+            .map(i => i.id)
+            .filter(Boolean)
+            .includes(it.id)
+      )
+    ]
   };
 }
 

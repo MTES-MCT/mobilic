@@ -79,14 +79,12 @@ const useStyles = makeStyles(theme => ({
   },
   clickableRow: {
     "&:hover": {
-      cursor: "pointer"
+      cursor: "pointer",
+      backgroundColor: "#b4e1fa"
     }
   },
   interGroupRow: {
-    height: ({ interGroupRowHeight }) => interGroupRowHeight,
-    "&:hover": {
-      cursor: "default"
-    }
+    height: ({ interGroupRowHeight }) => interGroupRowHeight
   },
   selected: {
     background: theme.palette.primary.lighter
@@ -118,7 +116,8 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
     borderTop: "none",
     borderBottom: "solid 1px",
-    fontWeight: "bold"
+    fontWeight: "bold",
+    cursor: "pointer"
   },
   collapsed: { height: 0, display: "none" }
 }));
@@ -687,7 +686,9 @@ function MaterialUITable({
               isAddingRow={isRowBeingAdded}
               isEditingRow={isRowUnderEdit}
               rowClassName={`${classes.row} ${
-                onRowClickFunc ? classes.clickableRow : ""
+                onRowClickFunc && !entry.__groupKey && !entry.__endOfGroup
+                  ? classes.clickableRow
+                  : ""
               } ${rowClassName(entry)}`}
               renderCell={renderCell}
               renderRow={renderRow}
@@ -804,7 +805,11 @@ const _VirtualizedTable = React.forwardRef(
         rowClassName={({ index }) =>
           index >= 0
             ? `${classes.row} ${
-                onRowClick(entries[index]) ? classes.clickableRow : ""
+                onRowClick(entries[index]) &&
+                !entries[index].__groupKey &&
+                !entries[index].__endOfGroup
+                  ? classes.clickableRow
+                  : ""
               } ${rowClassName && rowClassName(entries[index])}`
             : `${classes.header} ${headerClassName ? headerClassName : ""}`
         }
