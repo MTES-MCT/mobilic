@@ -1,8 +1,5 @@
 import React from "react";
 import TextField from "common/utils/TextField";
-import Autocomplete, {
-  createFilterOptions
-} from "@material-ui/lab/Autocomplete";
 import throttle from "lodash/throttle";
 import ListItemText from "@material-ui/core/ListItemText";
 import {
@@ -10,8 +7,7 @@ import {
   formatAddressSubText
 } from "common/utils/addresses";
 import { captureSentryException } from "common/utils/sentry";
-
-const filter = createFilterOptions();
+import { Autocomplete } from "@material-ui/lab";
 
 const fetchPlaces = throttle((input, currentPosition = null, callback) => {
   let queryArgs = new URLSearchParams();
@@ -20,6 +16,7 @@ const fetchPlaces = throttle((input, currentPosition = null, callback) => {
     queryArgs.append("lat", currentPosition.coords.latitude);
     queryArgs.append("lon", currentPosition.coords.longitude);
   }
+
   fetch(
     `https://api-adresse.data.gouv.fr/${
       !input && currentPosition ? "reverse" : "search"
@@ -102,7 +99,7 @@ export function AddressField({
       value={value}
       size={small ? "small" : "medium"}
       filterOptions={(options, params) => {
-        const filtered = filter(options, params);
+        const filtered = [...options];
 
         // Suggest the creation of a new value
         if (params.inputValue !== "") {
@@ -127,7 +124,9 @@ export function AddressField({
         if (typeof newValue === "string") {
           cleanNewValue = { manual: true, name: newValue };
         }
-        setOptions(cleanNewValue ? [cleanNewValue, ...options] : options);
+        setOptions(options =>
+          cleanNewValue ? [cleanNewValue, ...options] : options
+        );
         onChange(cleanNewValue);
       }}
       onInputChange={(event, newInputValue) => {
