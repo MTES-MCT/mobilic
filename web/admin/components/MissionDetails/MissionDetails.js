@@ -161,7 +161,7 @@ export function MissionDetails({
 
   return (
     <Box p={2}>
-      <Box pb={2}>
+      <Box pb={2} style={{ paddingBottom: "30px" }}>
         <Grid
           container
           spacing={2}
@@ -209,7 +209,7 @@ export function MissionDetails({
           </Typography>
         )}
       </Box>
-      <WarningModificationMission />
+      {!readOnlyMission && <WarningModificationMission />}
       <Box className="flex-row" pb={4} style={{ alignItems: "center" }}>
         <Typography variant="h5" className={classes.vehicle}>
           Véhicule :

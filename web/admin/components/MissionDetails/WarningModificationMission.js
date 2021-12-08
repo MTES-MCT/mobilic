@@ -55,7 +55,7 @@ export function WarningModificationMission() {
             <ListItemIcon className={classes.validationWarningIcon}>
               👉
             </ListItemIcon>
-            <ListItemText primary="Les modifications sont enregistrées et apparaitront en cas de contrôle." />
+            <ListItemText primary="Les modifications sont enregistrées et apparaîtront en cas de contrôle." />
           </ListItem>
           <ListItem
             disableGutters

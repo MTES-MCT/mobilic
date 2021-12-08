@@ -59,7 +59,7 @@ export function ResourcePage() {
           href="https://faq.mobilic.beta.gouv.fr/public/"
           target="_blank"
         >
-          En savoir plus sur Mobilic
+          Accéder à la FAQ
         </Button>
       </Container>
     </Container>,
@@ -113,7 +113,7 @@ export function ResourcePage() {
               question="Durée maximale de travail sans interruption"
               answer={
                 <>
-                  Les chauffeurs de véhicules légers ne peuvent pas conduire
+                  Les chauffeurs de véhicules légers ne peuvent pas travailler
                   plus de <b>6 heures d'affilée.</b>
                 </>
               }
@@ -155,6 +155,7 @@ export function ResourcePage() {
           className={classes.viewAllButton}
           variant={"outlined"}
           href="https://www.ecologie.gouv.fr/temps-travail-des-conducteurs-routiers-transport-marchandises"
+          target="_blank"
         >
           Voir tous les seuils réglementaires
         </Button>

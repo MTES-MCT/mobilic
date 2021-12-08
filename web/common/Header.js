@@ -294,7 +294,8 @@ function DesktopHeader({ disableMenu }) {
     <LinkButton
       aria-label="Documentation"
       key={0}
-      to="/resources/home"
+      href="/resources/home"
+      target="_blank"
       className={classes.docButton}
     >
       Documentation
