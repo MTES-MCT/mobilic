@@ -110,7 +110,7 @@ function ActivityItem({
             : { color: "primary" }
         }
       />
-      {editActivityEvent && activity.id && (
+      {editActivityEvent && (
         <ListItemSecondaryAction>
           <IconButton
             edge="end"
