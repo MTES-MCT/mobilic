@@ -162,6 +162,7 @@ function _Root() {
     if (
       !currentUserId() &&
       (location.pathname.startsWith("/app") ||
+        location.pathname.startsWith("/home") ||
         location.pathname.startsWith("/admin"))
     )
       history.replace(

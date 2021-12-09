@@ -10,6 +10,7 @@ import {
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import { graphQLErrorMatchesCode } from "common/utils/errors";
 
 export default function TerminateEmployment({
   open,
@@ -39,10 +40,18 @@ export default function TerminateEmployment({
         onSubmit={async e => {
           e.preventDefault();
           setLoading(true);
-          await alerts.withApiErrorHandling(async () => {
-            await terminateEmployment(endDate);
-            handleClose();
-          }, "terminate-employment");
+          await alerts.withApiErrorHandling(
+            async () => {
+              await terminateEmployment(endDate);
+              handleClose();
+            },
+            "terminate-employment",
+            gqlError => {
+              if (graphQLErrorMatchesCode(gqlError, "INVALID_INPUTS")) {
+                return "Impossible de terminer à cette date. Vérifiez que le rattachement n'est pas déjà terminé et que le salarié n'a pas d'activités après la date choisie.";
+              }
+            }
+          );
           setLoading(false);
         }}
       >
