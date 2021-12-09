@@ -111,16 +111,16 @@ async function executeActivityOps(api, mission, ops, user) {
           mission,
           op.activity,
           {
-            startTime: op.startTime,
-            endTime: op.endTime
+            displayedStartTime: op.startTime,
+            displayedEndTime: op.endTime
           },
           user
         );
       if (op.operation === "create")
         return createActivity(api, mission, user, {
           type: op.type,
-          startTime: op.startTime,
-          endTime: op.endTime
+          displayedStartTime: op.startTime,
+          displayedEndTime: op.endTime
         });
     })
   );
