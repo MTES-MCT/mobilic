@@ -97,6 +97,14 @@ export function getActivityStartTimeToUse(
     : latestActivitySwitchTime;
 }
 
+function startedStrictlyBefore(activity, time) {
+  return !time || activity.startTime < time;
+}
+
+function endedStrictlyAfter(activity, time) {
+  return time && (!activity.endTime || activity.endTime > time);
+}
+
 function getActivitiesStartedBeforeEndingInBetween(
   activities,
   startTime,
@@ -104,17 +112,15 @@ function getActivitiesStartedBeforeEndingInBetween(
 ) {
   return activities.filter(
     a =>
-      a.startTime < startTime &&
-      ((!endTime && (!a.endTime || a.endTime > startTime)) ||
-        (endTime && a.endTime && a.endTime > startTime && a.endTime <= endTime))
+      startedStrictlyBefore(a, startTime) &&
+      (!a.endTime || endedStrictlyAfter(a, startTime)) &&
+      !endedStrictlyAfter(a, endTime)
   );
 }
 
-function getActivitiesPurelyInBetween(activities, startTime, endTime) {
+function getActivitiesStrictlyInBetween(activities, startTime, endTime) {
   return activities.filter(
-    a =>
-      a.startTime >= startTime &&
-      (!endTime || (a.endTime && a.endTime > startTime && a.endTime <= endTime))
+    a => !startedStrictlyBefore(a, startTime) && !endedStrictlyAfter(a, endTime)
   );
 }
 
@@ -125,14 +131,13 @@ function getActivitiesStartedInBetweenEndingAfter(
 ) {
   return activities.filter(
     a =>
-      a.startTime >= startTime &&
-      endTime &&
-      a.startTime < endTime &&
-      (!a.endTime || a.endTime > endTime)
+      !startedStrictlyBefore(a, startTime) &&
+      startedStrictlyBefore(a, endTime) &&
+      endedStrictlyAfter(a, endTime)
   );
 }
 
-function getActivitiesFullyOverlapping(
+function getActivitiesStrictlyOverlapping(
   activities,
   startTime,
   endTime,
@@ -140,10 +145,7 @@ function getActivitiesFullyOverlapping(
 ) {
   return activities
     .filter(
-      a =>
-        a.startTime < startTime &&
-        endTime &&
-        (!a.endTime || a.endTime > endTime)
+      a => startedStrictlyBefore(a, startTime) && endedStrictlyAfter(a, endTime)
     )
     .map(a => {
       let driverId;
@@ -180,13 +182,16 @@ function extendExistingActivitiesToPeriodBoundariesOps(
     0
   ) {
     const activitiesStartedBefore = activities.filter(
-      a => a.startTime < startTime
+      a => !startTime || a.startTime < startTime
     );
     const activityRightBefore =
       activitiesStartedBefore.length > 0
         ? maxBy(activitiesStartedBefore, a => a.endTime)
         : null;
-    if (activityRightBefore && activityRightBefore.endTime < startTime) {
+    if (
+      activityRightBefore &&
+      (!startTime || activityRightBefore.endTime < startTime)
+    ) {
       ops.push({
         activity: activityRightBefore,
         operation: "update",
@@ -233,7 +238,7 @@ export function convertBreakIntoActivityOperations(
     startTime,
     endTime
   );
-  const activitiesPurelyInBetween = getActivitiesPurelyInBetween(
+  const activitiesPurelyInBetween = getActivitiesStrictlyInBetween(
     activities,
     startTime,
     endTime
@@ -243,7 +248,7 @@ export function convertBreakIntoActivityOperations(
     startTime,
     endTime
   );
-  const activitiesFullyOverlapping = getActivitiesFullyOverlapping(
+  const activitiesFullyOverlapping = getActivitiesStrictlyOverlapping(
     activities,
     startTime,
     endTime,
