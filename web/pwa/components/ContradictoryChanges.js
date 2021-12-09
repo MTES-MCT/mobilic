@@ -27,12 +27,14 @@ export const useStyles = makeStyles(theme => ({
 
 function getChangeText(change) {
   const datetimeFormatter =
-    getStartOfDay(change.current.startTime) ===
-      getStartOfDay(change.current.endTime) &&
-    getStartOfDay(change.previous.startTime) ===
-      getStartOfDay(change.previous.endTime) &&
-    getStartOfDay(change.current.startTime) ===
-      getStartOfDay(change.current.startTime)
+    !change.current ||
+    !change.previous ||
+    (getStartOfDay(change.current?.startTime) ===
+      getStartOfDay(change.current?.endTime) &&
+      getStartOfDay(change.previous?.startTime) ===
+        getStartOfDay(change.previous?.endTime) &&
+      getStartOfDay(change.current?.startTime) ===
+        getStartOfDay(change.current?.startTime))
       ? formatTimeOfDay
       : formatDateTime;
 
