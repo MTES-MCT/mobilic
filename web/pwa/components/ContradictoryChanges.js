@@ -1,10 +1,6 @@
 import React from "react";
-import Collapse from "@material-ui/core/Collapse/Collapse";
-import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import List from "@material-ui/core/List";
 import { useToggleContradictory } from "./history/toggleContradictory";
 import Skeleton from "@material-ui/lab/Skeleton";
@@ -21,6 +17,8 @@ import {
   now
 } from "common/utils/time";
 import { isConnectionError } from "common/utils/errors";
+import { Accordion, AccordionDetails } from "@material-ui/core";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
 
 export const useStyles = makeStyles(theme => ({
   noChangesText: {
@@ -40,6 +38,23 @@ export const useStyles = makeStyles(theme => ({
   },
   arrow: {
     marginBottom: theme.spacing(-1)
+  },
+  collapse: {
+    display: "block",
+    background: "inherit",
+    padding: 0
+  },
+  accordion: {
+    "&::before": {
+      content: "none"
+    },
+    "&.Mui-disabled": {
+      background: "inherit"
+    },
+    background: "inherit"
+  },
+  accordionTitle: {
+    padding: 0
   }
 }));
 
@@ -88,27 +103,28 @@ export function ContradictoryChanges({
       : formatDateTime;
 
   return (
-    <>
-      <Box
-        mt={1}
-        style={{ display: "flex", justifyContent: "space-between" }}
-        onClick={contradictoryComputationError ? null : () => setOpen(!open)}
+    <Accordion
+      elevation={0}
+      className={classes.accordion}
+      expanded={open || contradictoryComputationError}
+      disabled={contradictoryComputationError}
+      onChange={
+        contradictoryComputationError
+          ? null
+          : (e, newValue) => setOpen(newValue)
+      }
+    >
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        className={classes.accordionTitle}
       >
         <Typography className="bold">
           {showEventsBeforeValidation
             ? "Historique de saisie"
             : "Modifications gestionnaire"}
         </Typography>
-        <IconButton
-          aria-label={open ? "Masquer" : "Afficher"}
-          color="inherit"
-          disabled={contradictoryComputationError}
-          className="no-margin-no-padding"
-        >
-          {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </IconButton>
-      </Box>
-      <Collapse in={open || contradictoryComputationError}>
+      </AccordionSummary>
+      <AccordionDetails className={classes.collapse}>
         {loadingEmployeeVersion ? (
           <Skeleton rect width="100%" height={100} />
         ) : contradictoryComputationError ? (
@@ -204,7 +220,7 @@ export function ContradictoryChanges({
               })}
             </List>
           ]}
-      </Collapse>
-    </>
+      </AccordionDetails>
+    </Accordion>
   );
 }
