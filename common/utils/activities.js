@@ -44,6 +44,12 @@ export const TIMEABLE_ACTIVITIES = {
   support: ACTIVITIES.support
 };
 
+export const ACTIVITIES_OPERATIONS = {
+  create: "create",
+  update: "update",
+  cancel: "cancel"
+};
+
 export function parseActivityPayloadFromBackend(activity) {
   return {
     id: activity.id,
@@ -194,7 +200,7 @@ function extendExistingActivitiesToPeriodBoundariesOps(
     ) {
       ops.push({
         activity: activityRightBefore,
-        operation: "update",
+        operation: ACTIVITIES_OPERATIONS.update,
         startTime: activityRightBefore.startTime,
         endTime: startTime
       });
@@ -215,7 +221,7 @@ function extendExistingActivitiesToPeriodBoundariesOps(
     if (activityRightAfter && activityRightAfter.startTime > endTime) {
       ops.push({
         activity: activityRightAfter,
-        operation: "update",
+        operation: ACTIVITIES_OPERATIONS.update,
         startTime: endTime,
         endTime: activityRightAfter.endTime
       });
@@ -259,7 +265,7 @@ export function convertBreakIntoActivityOperations(
   activitiesStartedBeforeEndingInBetween.forEach(a =>
     ops.push({
       activity: a,
-      operation: "update",
+      operation: ACTIVITIES_OPERATIONS.update,
       startTime: a.startTime,
       endTime: startTime
     })
@@ -267,13 +273,13 @@ export function convertBreakIntoActivityOperations(
   activitiesPurelyInBetween.forEach(a =>
     ops.push({
       activity: a,
-      operation: "cancel"
+      operation: ACTIVITIES_OPERATIONS.cancel
     })
   );
   activitiesStartedInBetweenEndingAfter.forEach(a =>
     ops.push({
       activity: a,
-      operation: "update",
+      operation: ACTIVITIES_OPERATIONS.update,
       startTime: endTime,
       endTime: a.endTime
     })
@@ -283,12 +289,12 @@ export function convertBreakIntoActivityOperations(
       ops.push(
         {
           activity: a,
-          operation: "update",
+          operation: ACTIVITIES_OPERATIONS.update,
           startTime: a.startTime,
           endTime: startTime
         },
         {
-          operation: "create",
+          operation: ACTIVITIES_OPERATIONS.create,
           type: a.type,
           startTime: endTime,
           endTime: a.endTime

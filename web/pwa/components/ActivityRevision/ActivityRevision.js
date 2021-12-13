@@ -2,11 +2,12 @@ import React from "react";
 import Dialog from "@material-ui/core/Dialog";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import { now, sameMinute } from "common/utils/time";
+import { now, sameMinute, truncateMinute } from "common/utils/time";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "common/utils/TextField";
 import {
   ACTIVITIES,
+  ACTIVITIES_OPERATIONS,
   convertBreakIntoActivityOperations
 } from "common/utils/activities";
 import uniq from "lodash/uniq";
@@ -15,17 +16,19 @@ import max from "lodash/max";
 import MenuItem from "@material-ui/core/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import { DateOrDateTimePicker } from "./DateOrDateTimePicker";
+import { DateOrDateTimePicker } from "../DateOrDateTimePicker";
 import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 import Switch from "@material-ui/core/Switch/Switch";
 import {
   CustomDialogActions,
   CustomDialogTitle
-} from "../../common/CustomDialogTitle";
+} from "../../../common/CustomDialogTitle";
 import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
+import OverlappedActivityList from "./OverlappedActivityList";
+import _ from "lodash";
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -75,86 +78,82 @@ export default function ActivityRevisionOrCreationModal({
 
   const activityType = event ? event.type : newActivityType;
 
-  function _getOverlappingActivities(userIds) {
-    const overlappingActivities = otherActivities.filter(a => {
-      if (event && a.id === event.id) return false;
-      if (!userIds.includes(a.userId)) return false;
-      return (
-        (!newUserEndTime || a.startTime < newUserEndTime) &&
-        (!a.endTime || a.endTime > newUserTime)
+  async function changeActivities(sideEffectOperations, actionType) {
+    await Promise.all(
+      sideEffectOperations.map(op => {
+        if (op.operation === ACTIVITIES_OPERATIONS.create) {
+          return createActivity({
+            activityType: op.type,
+            startTime: op.startTime,
+            endTime: op.endTime,
+            driverId: op.driverId,
+            userComment,
+            team: teamMode
+              ? uniq([userId, ...resolveTeamAt(teamChanges, op.startTime)])
+              : [userId]
+          });
+        } else {
+          return handleRevisionAction(
+            op.activity,
+            op.operation,
+            op.startTime,
+            op.endTime,
+            userComment,
+            teamMode
+          );
+        }
+      })
+    );
+    if (actionType === "creation") {
+      let driverId = null;
+      if (requiresDriver()) driverId = newActivityDriverId;
+      await createActivity({
+        activityType: newActivityType,
+        startTime: newUserTime,
+        endTime: newUserEndTime,
+        driverId: driverId,
+        userComment: userComment,
+        team: teamMode ? team : [userId]
+      });
+    } else {
+      await handleRevisionAction(
+        event,
+        actionType,
+        newUserTime,
+        newUserEndTime,
+        userComment,
+        teamMode
       );
-    });
-    return {
-      start: overlappingActivities.filter(
-        a =>
-          a.startTime <= newUserTime && (!a.endTime || a.endTime >= newUserTime)
-      ),
-      end: overlappingActivities.filter(
-        a =>
-          !(
-            a.startTime <= newUserTime &&
-            (!a.endTime || a.endTime >= newUserTime)
-          )
-      )
-    };
+    }
   }
 
   async function handleSubmit(actionType) {
-    if (activityType === ACTIVITIES.break.name) {
-      const ops = convertBreakIntoActivityOperations(
-        otherActivities,
-        actionType === "cancel" ? event.endTime : newUserTime,
-        actionType === "cancel" ? event.endTime : newUserEndTime,
-        userId,
-        actionType !== "creation"
-      );
-      return await Promise.all(
-        ops.map(op => {
-          if (op.operation === "create")
-            return createActivity({
-              activityType: op.type,
-              startTime: op.startTime,
-              endTime: op.endTime,
-              driverId: op.driverId,
-              userComment,
-              team: teamMode
-                ? uniq([userId, ...resolveTeamAt(teamChanges, op.startTime)])
-                : [userId]
-            });
-          else {
-            return handleRevisionAction(
-              op.activity,
-              op.operation,
-              op.startTime,
-              op.endTime,
-              userComment,
-              teamMode
-            );
-          }
-        })
-      );
-    } else {
-      if (actionType === "creation") {
-        let driverId = null;
-        if (requiresDriver()) driverId = newActivityDriverId;
+    const ops = convertBreakIntoActivityOperations(
+      otherActivities,
+      actionType === ACTIVITIES_OPERATIONS.cancel ? event.endTime : newUserTime,
+      actionType === ACTIVITIES_OPERATIONS.cancel
+        ? event.endTime
+        : newUserEndTime,
+      userId,
+      false
+    );
+    console.log("ops", ops);
 
-        await createActivity({
-          activityType: newActivityType,
-          startTime: newUserTime,
-          endTime: newUserEndTime,
-          driverId: driverId,
-          userComment: userComment,
-          team: teamMode ? team : [userId]
-        });
-      } else
-        await handleRevisionAction(
-          event,
-          actionType,
-          newUserTime,
-          newUserEndTime,
-          userComment,
-          teamMode
-        );
+    if (ops.length > 0) {
+      modals.open("confirmation", {
+        title: "Confirmer la modification d'autres activités",
+        textButtons: true,
+        confirmButtonLabel: "OK",
+        cancelButtonLabel: "Annuler",
+        content: <OverlappedActivityList activitiesOperations={ops} />,
+        handleConfirm: async () => {
+          await changeActivities(ops, actionType);
+          handleClose();
+        }
+      });
+    } else {
+      await changeActivities(ops, actionType);
+      handleClose();
     }
   }
 
@@ -226,40 +225,6 @@ export default function ActivityRevisionOrCreationModal({
             setNewUserEndTimeError(
               `La journée ne peut pas terminer par une pause.`
             );
-          }
-        } else {
-          const overlappingActivities = _getOverlappingActivities(
-            teamMode ? team : [userId]
-          );
-          if (overlappingActivities.start.length > 0) {
-            hasStartError = true;
-            if (overlappingActivities.start.some(a => a.userId === userId)) {
-              setNewUserTimeError(
-                `Conflit avec l'activité ${
-                  ACTIVITIES[overlappingActivities.start[0].type].label
-                }`
-              );
-            } else
-              setNewUserTimeError(
-                `Conflit avec l'activité ${
-                  ACTIVITIES[overlappingActivities.start[0].type].label
-                } pour les coéquipiers`
-              );
-          }
-          if (overlappingActivities.end.length > 0) {
-            hasEndError = true;
-            if (overlappingActivities.end.some(a => a.userId === userId)) {
-              setNewUserEndTimeError(
-                `Conflit avec l'activité ${
-                  ACTIVITIES[overlappingActivities.end[0].type].label
-                }`
-              );
-            } else
-              setNewUserEndTimeError(
-                `Conflit avec l'activité ${
-                  ACTIVITIES[overlappingActivities.end[0].type].label
-                } pour les coéquipiers`
-              );
           }
         }
       }
@@ -394,7 +359,7 @@ export default function ActivityRevisionOrCreationModal({
             variant="filled"
             className={classes.formField}
             value={newUserTime}
-            setValue={setNewUserTime}
+            setValue={_.flow([truncateMinute, setNewUserTime])}
             error={newUserTimeError}
             minValue={previousMissionEnd}
             maxValue={nextMissionStart}
@@ -410,7 +375,7 @@ export default function ActivityRevisionOrCreationModal({
             value={newUserEndTime}
             minValue={newUserTime}
             maxValue={nextMissionStart}
-            setValue={setNewUserEndTime}
+            setValue={_.flow([truncateMinute, setNewUserEndTime])}
             error={newUserEndTimeError}
             clearable={actuallyNullableEndTime}
             noValidate
@@ -469,7 +434,6 @@ export default function ActivityRevisionOrCreationModal({
           disabled={!canSubmit(isCreation ? "creation" : "revision")}
           onClick={async () => {
             await handleSubmit(isCreation ? "creation" : "revision");
-            handleClose();
           }}
         >
           {isCreation ? "Créer" : "Modifier heure"}

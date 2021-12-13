@@ -211,7 +211,7 @@ export class FrLocalizedUtils extends DateFnsUtils {
 }
 
 export function truncateMinute(unixTimestamp) {
-  return unixTimestamp - (unixTimestamp % 60);
+  return !unixTimestamp ? null : unixTimestamp - (unixTimestamp % 60);
 }
 
 export function now() {

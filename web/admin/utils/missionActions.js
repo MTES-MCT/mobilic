@@ -1,5 +1,6 @@
 import {
   ACTIVITIES,
+  ACTIVITIES_OPERATIONS,
   convertBreakIntoActivityOperations
 } from "common/utils/activities";
 import {
@@ -103,9 +104,9 @@ async function editActivity(
 async function executeActivityOps(api, mission, ops, user) {
   return await Promise.all(
     ops.map(op => {
-      if (op.operation === "cancel")
+      if (op.operation === ACTIVITIES_OPERATIONS.cancel)
         return cancelActivity(api, mission, op.activity, user);
-      if (op.operation === "update")
+      if (op.operation === ACTIVITIES_OPERATIONS.update)
         return editActivity(
           api,
           mission,
@@ -116,7 +117,7 @@ async function executeActivityOps(api, mission, ops, user) {
           },
           user
         );
-      if (op.operation === "create")
+      if (op.operation === ACTIVITIES_OPERATIONS.create)
         return createActivity(api, mission, user, {
           type: op.type,
           displayedStartTime: op.startTime,
