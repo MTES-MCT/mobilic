@@ -5,26 +5,91 @@
     {
       "src": "favicon.svg",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any"
     },
     {
-      "src": "logo180.png",
+      "src": "logos/logo180.png",
       "type": "image/png",
-      "sizes": "180x180"
+      "sizes": "180x180",
+      "purpose": "any"
     },
     {
-      "src": "logo192.png",
+      "src": "logos/logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any"
     },
     {
-      "src": "logo512.png",
+      "src": "logos/logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "logos/logo48-maskable.png",
+      "type": "image/png",
+      "sizes": "48x48",
+      "purpose": "maskable"
+    },
+    {
+      "src": "logos/logo72-maskable.png",
+      "type": "image/png",
+      "sizes": "72x72",
+      "purpose": "maskable"
+    },
+    {
+      "src": "logos/logo96-maskable.png",
+      "type": "image/png",
+      "sizes": "96x96",
+      "purpose": "maskable"
+    },
+    {
+      "src": "logos/logo128-maskable.png",
+      "type": "image/png",
+      "sizes": "128x128",
+      "purpose": "maskable"
+    },
+    {
+      "src": "logos/logo192-maskable.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "logos/logo384-maskable.png",
+      "type": "image/png",
+      "sizes": "384x384",
+      "purpose": "maskable"
+    },
+    {
+      "src": "logos/logo512-maskable.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ],
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#3184FF",
-  "background_color": "#3184FF"
+  "background_color": "#3184FF",
+  "orientation": "portrait",
+  "description": "Outil d'enregistrement du temps de travail dans le transport routier léger.",
+  "screenshots": [
+    {
+      "src": "screenshots/app-landing.png",
+      "type": "image/png",
+      "sizes": "375x667"
+    },
+    {
+      "src": "screenshots/app-during-work.png",
+      "type": "image/png",
+      "sizes": "375x667"
+    },
+    {
+      "src": "screenshots/app-history.png",
+      "type": "image/png",
+      "sizes": "375x667"
+    }
+  ]
 }
