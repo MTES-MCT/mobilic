@@ -5,6 +5,7 @@ import Avatar from "@material-ui/core/Avatar";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import {
   ACTIVITIES,
+  ACTIVITIES_OPERATIONS,
   addBreaksToActivityList,
   computeDurationAndTime,
   filterActivitiesOverlappingPeriod
@@ -95,13 +96,39 @@ function ActivityItem({
         primaryTypographyProps={
           isLongBreak ? { className: classes.longBreak } : {}
         }
-        secondary={`${datetimeFormatter(activity.displayedStartTime)} - ${
-          activity.displayedEndTime
-            ? `${datetimeFormatter(
+        secondary={
+          <>
+            <Typography
+              style={
+                activity.operation?.type === ACTIVITIES_OPERATIONS.update
+                  ? { textDecoration: "line-through" }
+                  : {}
+              }
+            >
+              {`${datetimeFormatter(activity.displayedStartTime)} - ${
                 activity.displayedEndTime
-              )} - ${formatLongTimer(activity.duration)}`
-            : "En cours"
-        }`}
+                  ? `${datetimeFormatter(
+                      activity.displayedEndTime
+                    )} - ${formatLongTimer(activity.duration)}`
+                  : "En cours"
+              }`}
+            </Typography>
+            {activity.operation?.type === ACTIVITIES_OPERATIONS.update && (
+              <Typography>
+                {`${datetimeFormatter(activity.operation.startTime)} - ${
+                  activity.operation.endTime
+                    ? `${datetimeFormatter(
+                        activity.operation.endTime
+                      )} - ${formatLongTimer(
+                        activity.operation.endTime -
+                          activity.operation.startTime
+                      )}`
+                    : "En cours"
+                }`}
+              </Typography>
+            )}
+          </>
+        }
         secondaryTypographyProps={
           isLongBreak
             ? { className: classes.longBreak }

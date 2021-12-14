@@ -104,7 +104,7 @@ export default function ActivityRevisionOrCreationModal({
         }
       })
     );
-    if (actionType === "creation") {
+    if (actionType === ACTIVITIES_OPERATIONS.create) {
       let driverId = null;
       if (requiresDriver()) driverId = newActivityDriverId;
       await createActivity({
@@ -115,7 +115,7 @@ export default function ActivityRevisionOrCreationModal({
         userComment: userComment,
         team: teamMode ? team : [userId]
       });
-    } else {
+    } else if (activityType !== ACTIVITIES.break.name) {
       await handleRevisionAction(
         event,
         actionType,
@@ -135,9 +135,8 @@ export default function ActivityRevisionOrCreationModal({
         ? event.endTime
         : newUserEndTime,
       userId,
-      false
+      activityType === ACTIVITIES.break.name
     );
-    console.log("ops", ops);
 
     if (ops.length > 0) {
       modals.open("confirmation", {
@@ -252,10 +251,10 @@ export default function ActivityRevisionOrCreationModal({
   }
 
   function canSubmit(actionType) {
-    if (actionType === "cancel") {
-      return !!event;
+    if (actionType === ACTIVITIES_OPERATIONS.cancel) {
+      return !!event && activityType !== ACTIVITIES.break.name;
     }
-    if (actionType === "revision") {
+    if (actionType === ACTIVITIES_OPERATIONS.update) {
       return (
         event &&
         (event.startTime !== newUserTime || event.endTime !== newUserEndTime) &&
@@ -263,7 +262,7 @@ export default function ActivityRevisionOrCreationModal({
         !newUserEndTimeError
       );
     }
-    if (actionType === "creation") {
+    if (actionType === ACTIVITIES_OPERATIONS.create) {
       if (requiresDriver()) {
         return (
           !!newActivityType &&
@@ -413,13 +412,13 @@ export default function ActivityRevisionOrCreationModal({
           <Button
             variant="outlined"
             color="primary"
-            disabled={!canSubmit("cancel")}
+            disabled={!canSubmit(ACTIVITIES_OPERATIONS.cancel)}
             onClick={() => {
               modals.open("confirmation", {
                 title: "Confirmer suppression",
                 textButtons: true,
                 handleConfirm: async () => {
-                  await handleSubmit("cancel");
+                  await handleSubmit(ACTIVITIES_OPERATIONS.cancel);
                   handleClose();
                 }
               });
@@ -431,9 +430,19 @@ export default function ActivityRevisionOrCreationModal({
         <LoadingButton
           variant="contained"
           color="primary"
-          disabled={!canSubmit(isCreation ? "creation" : "revision")}
+          disabled={
+            !canSubmit(
+              isCreation
+                ? ACTIVITIES_OPERATIONS.create
+                : ACTIVITIES_OPERATIONS.update
+            )
+          }
           onClick={async () => {
-            await handleSubmit(isCreation ? "creation" : "revision");
+            await handleSubmit(
+              isCreation
+                ? ACTIVITIES_OPERATIONS.create
+                : ACTIVITIES_OPERATIONS.update
+            );
           }}
         >
           {isCreation ? "Créer" : "Modifier heure"}

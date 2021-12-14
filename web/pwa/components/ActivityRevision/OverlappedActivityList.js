@@ -7,10 +7,26 @@ import { ACTIVITIES_OPERATIONS } from "common/utils/activities";
 export default function OverlappedActivityList({ activitiesOperations }) {
   const activitiesToCancel = activitiesOperations
     .filter(op => op.operation === ACTIVITIES_OPERATIONS.cancel)
-    .map(op => op.activity);
+    .map(op => {
+      return {
+        ...op.activity,
+        operation: {
+          type: ACTIVITIES_OPERATIONS.cancel
+        }
+      };
+    });
   const activitiesToUpdate = activitiesOperations
     .filter(op => op.operation === ACTIVITIES_OPERATIONS.update)
-    .map(op => op.activity);
+    .map(op => {
+      return {
+        ...op.activity,
+        operation: {
+          type: op.operation,
+          startTime: op.startTime,
+          endTime: op.endTime
+        }
+      };
+    });
   return (
     <Box>
       {activitiesToUpdate.length > 0 && (
