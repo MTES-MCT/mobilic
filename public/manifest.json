@@ -71,8 +71,8 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#3184FF",
-  "background_color": "#3184FF",
+  "theme_color": "#3284FF",
+  "background_color": "#3284FF",
   "orientation": "portrait",
   "description": "Outil d'enregistrement du temps de travail dans le transport routier léger.",
   "screenshots": [
