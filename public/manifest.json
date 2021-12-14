@@ -79,17 +79,17 @@
     {
       "src": "screenshots/app-landing.png",
       "type": "image/png",
-      "sizes": "375x667"
+      "sizes": "666x1186"
     },
     {
       "src": "screenshots/app-during-work.png",
       "type": "image/png",
-      "sizes": "375x667"
+      "sizes": "670x1188"
     },
     {
       "src": "screenshots/app-history.png",
       "type": "image/png",
-      "sizes": "375x667"
+      "sizes": "672x1200"
     }
   ]
 }
