@@ -358,7 +358,7 @@ export function MissionDetails({
                           entry,
                           newValues,
                           e.user,
-                          mission.activities
+                          mission.activities.filter(a => a.id !== entry.id)
                         )
                     : null
                 }

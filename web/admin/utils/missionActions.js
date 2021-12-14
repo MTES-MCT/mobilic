@@ -23,46 +23,47 @@ import { useAdminStore } from "../store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 
 async function cancelActivity(api, mission, activity, user, activities) {
-  if (activity.type === ACTIVITIES.break.name) {
-    const ops = convertBreakIntoActivityOperations(
-      activities,
-      activity.endTime,
-      activity.endTime,
-      user.id,
-      true
-    );
-    return await executeActivityOps(api, mission, ops, user);
-  }
-  await api.nonConcurrentQueryQueue.execute(() =>
-    api.graphQlMutate(CANCEL_ACTIVITY_MUTATION, {
-      activityId: activity.id
-    })
+  const ops = convertBreakIntoActivityOperations(
+    activities,
+    activity.endTime,
+    activity.endTime,
+    user.id,
+    activity.type === ACTIVITIES.break.name
   );
-  mission.activities = mission.activities.filter(a => a.id !== activity.id);
+  await executeActivityOps(api, mission, ops, user);
+  if (activity.type !== ACTIVITIES.break.name) {
+    await api.nonConcurrentQueryQueue.execute(() =>
+      api.graphQlMutate(CANCEL_ACTIVITY_MUTATION, {
+        activityId: activity.id
+      })
+    );
+    mission.activities = mission.activities.filter(a => a.id !== activity.id);
+  }
 }
 
 async function createActivity(api, mission, user, newValues, activities) {
-  if (newValues.type === ACTIVITIES.break.name) {
-    const ops = convertBreakIntoActivityOperations(
-      activities,
-      newValues.displayedStartTime,
-      newValues.displayedEndTime,
-      user.id
-    );
-    return await executeActivityOps(api, mission, ops, user);
-  }
-  const apiResponse = await api.nonConcurrentQueryQueue.execute(() =>
-    api.graphQlMutate(LOG_ACTIVITY_MUTATION, {
-      type: newValues.type,
-      startTime: newValues.displayedStartTime,
-      endTime: newValues.displayedEndTime,
-      missionId: mission.id,
-      userId: user.id,
-      switch: false
-    })
+  const ops = convertBreakIntoActivityOperations(
+    activities,
+    newValues.displayedStartTime,
+    newValues.displayedEndTime,
+    user.id,
+    newValues.type === ACTIVITIES.break.name
   );
-  const activity = apiResponse.data.activities.logActivity;
-  mission.activities = [...mission.activities, { ...activity, user }];
+  await executeActivityOps(api, mission, ops, user);
+  if (newValues.type !== ACTIVITIES.break.name) {
+    const apiResponse = await api.nonConcurrentQueryQueue.execute(() =>
+      api.graphQlMutate(LOG_ACTIVITY_MUTATION, {
+        type: newValues.type,
+        startTime: newValues.displayedStartTime,
+        endTime: newValues.displayedEndTime,
+        missionId: mission.id,
+        userId: user.id,
+        switch: false
+      })
+    );
+    const activity = apiResponse.data.activities.logActivity;
+    mission.activities = [...mission.activities, { ...activity, user }];
+  }
 }
 
 async function editActivity(
@@ -73,32 +74,33 @@ async function editActivity(
   user,
   activities
 ) {
-  if (activity.type === ACTIVITIES.break.name) {
-    const ops = convertBreakIntoActivityOperations(
-      activities,
-      newValues.displayedStartTime,
-      newValues.displayedEndTime,
-      user.id,
-      true
+  const ops = convertBreakIntoActivityOperations(
+    activities,
+    newValues.displayedStartTime,
+    newValues.displayedEndTime,
+    user.id,
+    activity.type === ACTIVITIES.break.name
+  );
+  await executeActivityOps(api, mission, ops, user);
+
+  if (activity.type !== ACTIVITIES.break.name) {
+    await api.nonConcurrentQueryQueue.execute(() =>
+      api.graphQlMutate(EDIT_ACTIVITY_MUTATION, {
+        activityId: activity.id,
+        startTime: newValues.displayedStartTime,
+        endTime: newValues.displayedEndTime
+      })
     );
-    return await executeActivityOps(api, mission, ops, user);
+    mission.activities = mission.activities.map(a =>
+      a.id === activity.id
+        ? {
+            ...a,
+            startTime: newValues.displayedStartTime,
+            endTime: newValues.displayedEndTime
+          }
+        : a
+    );
   }
-  await api.nonConcurrentQueryQueue.execute(() =>
-    api.graphQlMutate(EDIT_ACTIVITY_MUTATION, {
-      activityId: activity.id,
-      startTime: newValues.displayedStartTime,
-      endTime: newValues.displayedEndTime
-    })
-  );
-  mission.activities = mission.activities.map(a =>
-    a.id === activity.id
-      ? {
-          ...a,
-          startTime: newValues.displayedStartTime,
-          endTime: newValues.displayedEndTime
-        }
-      : a
-  );
 }
 
 async function executeActivityOps(api, mission, ops, user) {
@@ -115,7 +117,8 @@ async function executeActivityOps(api, mission, ops, user) {
             displayedStartTime: op.startTime,
             displayedEndTime: op.endTime
           },
-          user
+          user,
+          []
         );
       if (op.operation === ACTIVITIES_OPERATIONS.create)
         return createActivity(api, mission, user, {
