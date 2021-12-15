@@ -48,6 +48,7 @@ import { useMissionDetailsStyles } from "./MissionDetailsStyle";
 import { missionCreatedByAdmin } from "common/utils/mission";
 import { Alert } from "@material-ui/lab";
 import { WarningModificationMission } from "./WarningModificationMission";
+import { ACTIVITIES } from "common/utils/activities";
 
 export function MissionDetails({
   missionId,
@@ -343,36 +344,42 @@ export function MissionDetails({
                 showExpenditures={showExpenditures}
                 onCreateActivity={
                   !readOnlyMission
-                    ? async entry =>
-                        await missionActions.createActivity(
-                          e.user,
-                          entry,
-                          mission.activities
-                        )
+                    ? () =>
+                        modals.open("activityRevision", {
+                          otherActivities: mission.activities,
+                          createActivity: async args =>
+                            await missionActions.createSingleActivity({
+                              ...args,
+                              user: e.user
+                            }),
+                          handleRevisionAction:
+                            missionActions.editSingleActivity,
+                          nullableEndTime: false,
+                          defaultTime: mission.startTime,
+                          forcedUser: e.user
+                        })
                     : null
                 }
                 onEditActivity={
                   !readOnlyMission
-                    ? async (entry, newValues) =>
-                        await missionActions.editActivity(
-                          entry,
-                          newValues,
-                          e.user,
-                          mission.activities.filter(a => a.id !== entry.id)
-                        )
-                    : null
-                }
-                onDeleteActivity={
-                  !readOnlyMission
-                    ? entry =>
-                        modals.open("confirmation", {
-                          title: "Confirmer suppression de l'activité",
-                          handleConfirm: async () =>
-                            await missionActions.cancelActivity(
-                              entry,
-                              e.user,
-                              mission.activities
-                            )
+                    ? async entry =>
+                        modals.open("activityRevision", {
+                          event: entry,
+                          otherActivities:
+                            entry.type === ACTIVITIES.break.name
+                              ? mission.activities
+                              : mission.activities.filter(
+                                  a => a.startTime !== entry.startTime
+                                ),
+                          handleRevisionAction:
+                            missionActions.editSingleActivity,
+                          createActivity: async args =>
+                            await missionActions.createSingleActivity({
+                              ...args,
+                              user: e.user
+                            }),
+                          nullableEndTime: false,
+                          forcedUser: e.user
                         })
                     : null
                 }

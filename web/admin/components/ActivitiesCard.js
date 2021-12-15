@@ -16,12 +16,13 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { DateOrDateTimePicker } from "../../pwa/components/DateOrDateTimePicker";
 import Button from "@material-ui/core/Button";
 import { useActivitiesCardStyles } from "./styles/ActivitiesCardStyle";
+import SvgIcon from "@material-ui/core/SvgIcon";
+import EditIcon from "@material-ui/icons/Edit";
 
 export function ActivitiesCard({
   activities,
   onCreateActivity,
   onEditActivity,
-  onDeleteActivity,
   day,
   title,
   loading,
@@ -130,6 +131,29 @@ export function ActivitiesCard({
     }
   ];
 
+  const editPictoCol = {
+    label: "",
+    name: "id",
+    format: (id, entry) => (
+      <SvgIcon
+        cursor={"pointer"}
+        color={"primary"}
+        viewBox="0 0 24 24"
+        component={EditIcon}
+        onClick={e => {
+          e.stopPropagation();
+          onEditActivity(entry);
+        }}
+      />
+    ),
+    sortable: false,
+    align: "center",
+    overflowTooltip: true
+  };
+  if (onEditActivity) {
+    activityColumns.push(editPictoCol);
+  }
+
   return (
     <MissionInfoCard title={title} extraPaddingBelowTitle loading={loading}>
       <Grid container key={2} spacing={2}>
@@ -174,12 +198,7 @@ export function ActivitiesCard({
                   onClick={e => {
                     e.preventDefault();
                     e.stopPropagation();
-                    ref.current.newRow({
-                      displayedStartTime:
-                        activities[activities.length - 1]?.endTime || day,
-                      displayedEndTime:
-                        activities[activities.length - 1]?.endTime || day
-                    });
+                    onCreateActivity();
                   }}
                 >
                   Ajouter une activité
@@ -188,9 +207,6 @@ export function ActivitiesCard({
               <AugmentedTable
                 columns={activityColumns}
                 ref={ref}
-                onRowAdd={onCreateActivity}
-                onRowEdit={onEditActivity}
-                onRowDelete={onDeleteActivity}
                 validateRow={entry =>
                   !activityErrors.displayedStartTime &&
                   !activityErrors.displayedEndTime &&

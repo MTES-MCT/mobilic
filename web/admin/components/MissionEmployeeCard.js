@@ -45,7 +45,6 @@ export function MissionEmployeeCard({
   user,
   onCreateActivity,
   onEditActivity,
-  onDeleteActivity,
   day,
   showExpenditures,
   onEditExpenditures,
@@ -218,7 +217,6 @@ export function MissionEmployeeCard({
               activities={augmentedAndSortedActivities}
               onCreateActivity={onCreateActivity}
               onEditActivity={onEditActivity}
-              onDeleteActivity={onDeleteActivity}
               day={day}
               title="Activités"
               datetimeFormatter={datetimeFormatter}

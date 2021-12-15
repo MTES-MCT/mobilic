@@ -1,8 +1,4 @@
-import {
-  ACTIVITIES,
-  ACTIVITIES_OPERATIONS,
-  convertBreakIntoActivityOperations
-} from "common/utils/activities";
+import { ACTIVITIES_OPERATIONS } from "common/utils/activities";
 import {
   buildLogLocationPayloadFromAddress,
   CANCEL_ACTIVITY_MUTATION,
@@ -21,113 +17,73 @@ import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import { sameMinute } from "common/utils/time";
 
-async function cancelActivity(api, mission, activity, user, activities) {
-  const ops = convertBreakIntoActivityOperations(
-    activities,
-    activity.endTime,
-    activity.endTime,
-    user.id,
-    activity.type === ACTIVITIES.break.name
+async function createSingleActivity(api, mission, modalArgs) {
+  const apiResponse = await api.nonConcurrentQueryQueue.execute(() =>
+    api.graphQlMutate(LOG_ACTIVITY_MUTATION, {
+      type: modalArgs.activityType,
+      startTime: modalArgs.startTime,
+      endTime: modalArgs.endTime,
+      missionId: mission.id,
+      userId: modalArgs.user.id,
+      switch: false,
+      context: modalArgs.userComment
+    })
   );
-  await executeActivityOps(api, mission, ops, user);
-  if (activity.type !== ACTIVITIES.break.name) {
-    await api.nonConcurrentQueryQueue.execute(() =>
-      api.graphQlMutate(CANCEL_ACTIVITY_MUTATION, {
-        activityId: activity.id
-      })
-    );
-    mission.activities = mission.activities.filter(a => a.id !== activity.id);
-  }
+  const activity = apiResponse.data.activities.logActivity;
+  mission.activities = [
+    ...mission.activities,
+    { ...activity, user: modalArgs.user }
+  ];
 }
 
-async function createActivity(api, mission, user, newValues, activities) {
-  const ops = convertBreakIntoActivityOperations(
-    activities,
-    newValues.displayedStartTime,
-    newValues.displayedEndTime,
-    user.id,
-    newValues.type === ACTIVITIES.break.name
-  );
-  await executeActivityOps(api, mission, ops, user);
-  if (newValues.type !== ACTIVITIES.break.name) {
-    const apiResponse = await api.nonConcurrentQueryQueue.execute(() =>
-      api.graphQlMutate(LOG_ACTIVITY_MUTATION, {
-        type: newValues.type,
-        startTime: newValues.displayedStartTime,
-        endTime: newValues.displayedEndTime,
-        missionId: mission.id,
-        userId: user.id,
-        switch: false
-      })
-    );
-    const activity = apiResponse.data.activities.logActivity;
-    mission.activities = [...mission.activities, { ...activity, user }];
-  }
-}
-
-async function editActivity(
+async function editSingleActivity(
   api,
   mission,
   activity,
-  newValues,
-  user,
-  activities
+  actionType,
+  newStartTime,
+  newEndTime,
+  userComment
 ) {
-  const ops = convertBreakIntoActivityOperations(
-    activities,
-    newValues.displayedStartTime,
-    newValues.displayedEndTime,
-    user.id,
-    activity.type === ACTIVITIES.break.name
-  );
-  await executeActivityOps(api, mission, ops, user);
+  console.log("editSingleActivity", activity);
+  console.log("actionType", actionType);
+  const payload = {
+    activityId: activity.id
+  };
+  if (userComment) payload.context = { userComment };
 
-  if (activity.type !== ACTIVITIES.break.name) {
-    await api.nonConcurrentQueryQueue.execute(() =>
-      api.graphQlMutate(EDIT_ACTIVITY_MUTATION, {
-        activityId: activity.id,
-        startTime: newValues.displayedStartTime,
-        endTime: newValues.displayedEndTime
-      })
-    );
-    mission.activities = mission.activities.map(a =>
-      a.id === activity.id
-        ? {
-            ...a,
-            startTime: newValues.displayedStartTime,
-            endTime: newValues.displayedEndTime
-          }
-        : a
-    );
+  let shouldCancel = actionType === ACTIVITIES_OPERATIONS.cancel;
+
+  const updatedStartTime = newStartTime || activity.startTime;
+  const updatedEndTime = newEndTime || activity.endTime;
+  if (updatedEndTime && sameMinute(updatedStartTime, updatedEndTime)) {
+    shouldCancel = true;
   }
-}
+  if (!shouldCancel) {
+    payload.startTime = newStartTime;
+    payload.endTime = newEndTime;
+    payload.removeEndTime = !newEndTime;
+  }
 
-async function executeActivityOps(api, mission, ops, user) {
-  return await Promise.all(
-    ops.map(op => {
-      if (op.operation === ACTIVITIES_OPERATIONS.cancel)
-        return cancelActivity(api, mission, op.activity, user);
-      if (op.operation === ACTIVITIES_OPERATIONS.update)
-        return editActivity(
-          api,
-          mission,
-          op.activity,
-          {
-            displayedStartTime: op.startTime,
-            displayedEndTime: op.endTime
-          },
-          user,
-          []
-        );
-      if (op.operation === ACTIVITIES_OPERATIONS.create)
-        return createActivity(api, mission, user, {
-          type: op.type,
-          displayedStartTime: op.startTime,
-          displayedEndTime: op.endTime
-        });
-    })
+  await api.nonConcurrentQueryQueue.execute(() =>
+    api.graphQlMutate(
+      shouldCancel ? CANCEL_ACTIVITY_MUTATION : EDIT_ACTIVITY_MUTATION,
+      payload
+    )
   );
+  console.log("AVANT", mission.activities);
+  mission.activities = mission.activities.map(a =>
+    a.id === activity.id
+      ? {
+          ...a,
+          startTime: newStartTime,
+          endTime: newEndTime
+        }
+      : a
+  );
+  console.log("APRES", mission.activities);
 }
 
 async function createExpenditure(
@@ -237,6 +193,7 @@ const missionActionWrapper = (
       setShouldRefreshActivityPanel(true);
     }
     await action(api, mission, ...args);
+    console.log("AVANT SETMISSION", mission);
     setMission({ ...mission });
     adminStore.dispatch({
       type: ADMIN_ACTIONS.update,
@@ -264,9 +221,8 @@ export function useMissionActions(
   );
 
   return {
-    createActivity: missionActionsDecorator(createActivity),
-    editActivity: missionActionsDecorator(editActivity),
-    cancelActivity: missionActionsDecorator(cancelActivity),
+    createSingleActivity: missionActionsDecorator(createSingleActivity),
+    editSingleActivity: missionActionsDecorator(editSingleActivity),
     createExpenditure: missionActionsDecorator(createExpenditure),
     cancelExpenditure: missionActionsDecorator(cancelExpenditure),
     createComment: missionActionsDecorator(createComment, false),

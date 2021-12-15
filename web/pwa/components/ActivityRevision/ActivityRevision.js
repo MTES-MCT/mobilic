@@ -49,7 +49,8 @@ export default function ActivityRevisionOrCreationModal({
   nullableEndTime = true,
   allowSupportActivity = true,
   createActivity,
-  defaultTime = null
+  defaultTime = null,
+  forcedUser = null
 }) {
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
@@ -67,7 +68,7 @@ export default function ActivityRevisionOrCreationModal({
 
   const [userComment, setUserComment] = React.useState("");
 
-  const userId = store.userId();
+  const userId = forcedUser?.id || store.userId();
   const team = newUserTime
     ? uniq([userId, ...resolveTeamAt(teamChanges, newUserTime)])
     : [userId];
