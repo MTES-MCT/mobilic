@@ -75,15 +75,19 @@ async function editSingleActivity(
       payload
     )
   );
-  mission.activities = mission.activities.map(a =>
-    a.id === activity.id
-      ? {
-          ...a,
-          startTime: newStartTime,
-          endTime: newEndTime
-        }
-      : a
-  );
+  if (shouldCancel) {
+    mission.activities = mission.activities.filter(a => a.id !== activity.id);
+  } else {
+    mission.activities = mission.activities.map(a =>
+      a.id === activity.id
+        ? {
+            ...a,
+            startTime: newStartTime,
+            endTime: newEndTime
+          }
+        : a
+    );
+  }
 }
 
 async function createExpenditure(
