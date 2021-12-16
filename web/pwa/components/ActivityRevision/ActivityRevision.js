@@ -50,7 +50,8 @@ export default function ActivityRevisionOrCreationModal({
   allowSupportActivity = true,
   createActivity,
   defaultTime = null,
-  forcedUser = null
+  forcedUser = null,
+  displayWarningMessage = true
 }) {
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
@@ -296,12 +297,14 @@ export default function ActivityRevisionOrCreationModal({
         handleClose={handleClose}
       />
       <DialogContent dividers>
-        <Box my={2} mb={4}>
-          <Typography>
-            ⚠️ Les modifications seront visibles par votre employeur et par les
-            contrôleurs
-          </Typography>
-        </Box>
+        {displayWarningMessage && (
+          <Box my={2} mb={4}>
+            <Typography>
+              ⚠️ Les modifications seront visibles par votre employeur et par
+              les contrôleurs
+            </Typography>
+          </Box>
+        )}
         <Box mt={1}>
           <TextField
             label="Activité"

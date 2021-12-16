@@ -20,16 +20,20 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { sameMinute } from "common/utils/time";
 
 async function createSingleActivity(api, mission, modalArgs) {
+  const payload = {
+    type: modalArgs.activityType,
+    startTime: modalArgs.startTime,
+    endTime: modalArgs.endTime,
+    missionId: mission.id,
+    userId: modalArgs.user.id,
+    switch: false
+  };
+
+  if (modalArgs.userComment)
+    payload.context = { userComment: modalArgs.userComment };
+
   const apiResponse = await api.nonConcurrentQueryQueue.execute(() =>
-    api.graphQlMutate(LOG_ACTIVITY_MUTATION, {
-      type: modalArgs.activityType,
-      startTime: modalArgs.startTime,
-      endTime: modalArgs.endTime,
-      missionId: mission.id,
-      userId: modalArgs.user.id,
-      switch: false,
-      context: modalArgs.userComment
-    })
+    api.graphQlMutate(LOG_ACTIVITY_MUTATION, payload)
   );
   const activity = apiResponse.data.activities.logActivity;
   mission.activities = [
@@ -47,8 +51,6 @@ async function editSingleActivity(
   newEndTime,
   userComment
 ) {
-  console.log("editSingleActivity", activity);
-  console.log("actionType", actionType);
   const payload = {
     activityId: activity.id
   };
@@ -73,7 +75,6 @@ async function editSingleActivity(
       payload
     )
   );
-  console.log("AVANT", mission.activities);
   mission.activities = mission.activities.map(a =>
     a.id === activity.id
       ? {
@@ -83,7 +84,6 @@ async function editSingleActivity(
         }
       : a
   );
-  console.log("APRES", mission.activities);
 }
 
 async function createExpenditure(
@@ -193,7 +193,6 @@ const missionActionWrapper = (
       setShouldRefreshActivityPanel(true);
     }
     await action(api, mission, ...args);
-    console.log("AVANT SETMISSION", mission);
     setMission({ ...mission });
     adminStore.dispatch({
       type: ADMIN_ACTIONS.update,

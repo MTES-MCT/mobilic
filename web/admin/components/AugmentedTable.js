@@ -680,7 +680,6 @@ const MaterialUITable = React.forwardRef(
             return (
               <AugmentedTableRow
                 key={id}
-                id={id}
                 columns={columns}
                 entry={
                   isRowUnderEdit || isRowBeingAdded
@@ -777,7 +776,6 @@ const _VirtualizedTable = React.forwardRef(
             return props.columns[columnIndex];
           }
 
-          const id = rowId(props.rowData);
           const isRowUnderEdit = isEditingRow(props.rowData);
           const isRowBeingAdded = isAddingRow(props.rowData);
           const onRowClickFunc = onRowClick(props.rowData);
@@ -785,7 +783,6 @@ const _VirtualizedTable = React.forwardRef(
           return (
             <AugmentedTableRow
               key={props.key}
-              id={id}
               columns={columns}
               entry={
                 isRowUnderEdit || isRowBeingAdded
@@ -802,7 +799,6 @@ const _VirtualizedTable = React.forwardRef(
               )}
               renderCellContainer={renderCellContainer}
               onRowClick={onRowClickFunc}
-              rowWidth={width}
             />
           );
         }}

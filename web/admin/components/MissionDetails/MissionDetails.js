@@ -356,7 +356,8 @@ export function MissionDetails({
                             missionActions.editSingleActivity,
                           nullableEndTime: false,
                           defaultTime: mission.startTime,
-                          forcedUser: e.user
+                          forcedUser: e.user,
+                          displayWarningMessage: false
                         })
                     : null
                 }
@@ -379,7 +380,8 @@ export function MissionDetails({
                               user: e.user
                             }),
                           nullableEndTime: false,
-                          forcedUser: e.user
+                          forcedUser: e.user,
+                          displayWarningMessage: false
                         })
                     : null
                 }

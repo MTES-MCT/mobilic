@@ -87,7 +87,7 @@ export function ActivitiesCard({
         />
       ),
       edit: true,
-      minWidth: 210
+      minWidth: 130
     },
     {
       label: "Fin",
@@ -117,7 +117,7 @@ export function ActivitiesCard({
         />
       ),
       edit: true,
-      minWidth: 210
+      minWidth: 130
     },
     {
       label: "Durée",
