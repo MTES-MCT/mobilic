@@ -106,26 +106,28 @@ export default function ActivityRevisionOrCreationModal({
         }
       })
     );
-    if (actionType === ACTIVITIES_OPERATIONS.create) {
-      let driverId = null;
-      if (requiresDriver()) driverId = newActivityDriverId;
-      await createActivity({
-        activityType: newActivityType,
-        startTime: newUserTime,
-        endTime: newUserEndTime,
-        driverId: driverId,
-        userComment: userComment,
-        team: teamMode ? team : [userId]
-      });
-    } else if (activityType !== ACTIVITIES.break.name) {
-      await handleRevisionAction(
-        event,
-        actionType,
-        newUserTime,
-        newUserEndTime,
-        userComment,
-        teamMode
-      );
+    if (activityType !== ACTIVITIES.break.name) {
+      if (actionType === ACTIVITIES_OPERATIONS.create) {
+        let driverId = null;
+        if (requiresDriver()) driverId = newActivityDriverId;
+        await createActivity({
+          activityType: newActivityType,
+          startTime: newUserTime,
+          endTime: newUserEndTime,
+          driverId: driverId,
+          userComment: userComment,
+          team: teamMode ? team : [userId]
+        });
+      } else {
+        await handleRevisionAction(
+          event,
+          actionType,
+          newUserTime,
+          newUserEndTime,
+          userComment,
+          teamMode
+        );
+      }
     }
   }
 
