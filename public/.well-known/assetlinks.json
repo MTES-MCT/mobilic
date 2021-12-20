@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "fr.gouv.beta.mobilic.staging.twa",
+      "sha256_cert_fingerprints": [
+        "D1:5B:63:F4:30:57:BC:D3:F3:BC:C7:27:27:EA:F1:6D:58:FC:0E:C6:F7:A4:82:C9:6C:1E:E1:79:97:19:66:55"
+      ]
+    }
+  }
+]
