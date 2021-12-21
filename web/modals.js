@@ -4,7 +4,7 @@ import ConfirmationModal from "./common/Confirmation";
 import NewMissionModal from "./pwa/components/NewMission";
 import DriverSelectionModal from "./pwa/components/DriverSelection";
 import CommentInputModal from "./pwa/components/CommentInput";
-import ActivityRevisionOrCreationModal from "./pwa/components/ActivityRevision";
+import ActivityRevisionOrCreationModal from "./pwa/components/ActivityRevision/ActivityRevision";
 import updateVehicleModal from "./pwa/components/VehicleBooking";
 import ExcelExport from "./admin/components/ExcelExport";
 import C1BExport from "./admin/components/C1BExport";
