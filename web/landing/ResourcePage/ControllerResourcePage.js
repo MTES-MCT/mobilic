@@ -40,8 +40,8 @@ export function ControllerResourcePage() {
             <Box>
               <SlideshareCard
                 description="Notice d'utilisation"
-                slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/xMyGOhLCCvjosE/"
-                downloadLink="https://drive.google.com/uc?id=1yT9wet3o6QQDB2AbFJM-ES7zxS-5LyY9&export=download"
+                slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/IFxeyHjtJwJuiY/"
+                downloadLink="https://drive.google.com/uc?id=1prafJTJ5Q6uAFW5XQu-nUgB7d61ID-g7&export=download"
               />
             </Box>
             <Button
