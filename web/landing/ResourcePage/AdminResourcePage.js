@@ -65,8 +65,8 @@ export function AdminResourcePage() {
             <Box>
               <SlideshareCard
                 description="Notice d'utilisation"
-                slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/aAXbQsYxSxbPrk/"
-                downloadLink="https://drive.google.com/uc?id=1BfmB66cauWFDGewOUWmx8JcNc3UKQlve&export=download"
+                slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/ekolaAOzyCYqo2/"
+                downloadLink="https://drive.google.com/uc?id=1Hjvv8idh38t2L-sOfRirtKtovxZsvXP9&export=download"
               />
             </Box>
             <Button
@@ -132,8 +132,8 @@ export function AdminResourcePage() {
             <Box>
               <SlideshareCard
                 description="Notice d'utilisation"
-                slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/743smHvXdavjgR/"
-                downloadLink="https://drive.google.com/uc?id=1CNxnoMupJ5RQKdS7ryB9I8nWxPz8u8xB&export=download"
+                slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/mloxFeuB3sLZon/"
+                downloadLink="https://drive.google.com/uc?id=1vSuHhFWAoF2ozXV02u8xMwtcnhmttCs-&export=download"
               />
             </Box>
             <Button
