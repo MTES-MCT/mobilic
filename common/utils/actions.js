@@ -2,7 +2,11 @@ import React from "react";
 import values from "lodash/values";
 import { useStoreSyncedWithLocalStorage } from "../store/store";
 import { useApi } from "./api";
-import { ACTIVITIES, parseActivityPayloadFromBackend } from "./activities";
+import {
+  ACTIVITIES,
+  ACTIVITIES_OPERATIONS,
+  parseActivityPayloadFromBackend
+} from "./activities";
 import { parseMissionPayloadFromBackend } from "./mission";
 import {
   formatNameInGqlError,
@@ -752,7 +756,7 @@ class Actions {
 
     if (comment) payload.context = { comment };
 
-    let shouldCancel = actionType === "cancel";
+    let shouldCancel = actionType === ACTIVITIES_OPERATIONS.cancel;
 
     const updatedStartTime = newStartTime || activityEvent.startTime;
     const updatedEndTime = newEndTime || activityEvent.endTime;
@@ -1095,7 +1099,7 @@ class Actions {
 
     if (currentActivity) {
       if (sameMinute(currentActivity.startTime, endTime)) {
-        this.editActivityEvent(currentActivity, "cancel");
+        this.editActivityEvent(currentActivity, ACTIVITIES_OPERATIONS.cancel);
       } else
         this.store.updateEntityObject({
           objectId: currentActivity.id,

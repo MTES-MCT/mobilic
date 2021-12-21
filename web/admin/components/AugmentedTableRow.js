@@ -61,47 +61,34 @@ export function AugmentedTableRowCellContent({
   );
 }
 
-export const AugmentedTableRow = React.memo(
-  ({
-    columns,
-    id,
-    entry,
-    isAddingRow,
-    isEditingRow,
-    renderRow,
-    renderRowContainer,
-    renderCell,
-    renderCellContainer,
-    rowClassName,
-    onRowClick,
-    rowWidth
-  }) => {
-    function renderColumn(column) {
-      return renderCellContainer(
-        column,
-        renderCell(entry, column, isAddingRow, isEditingRow)
-      );
-    }
-
-    return renderRowContainer({
-      className: rowClassName,
-      onClick: onRowClick,
-      children: renderRow({
-        entry,
-        columns,
-        renderColumn,
-        isAddingRow,
-        isEditingRow
-      })
-    });
-  },
-  (prevProps, props) => {
-    if (prevProps.id !== props.id) return false;
-    if (prevProps.rowWidth !== props.rowWidth) return false;
-    if (prevProps.rowClassName !== props.rowClassName) return false;
-    if (prevProps.isEditingRow !== props.isEditingRow) return false;
-    if (prevProps.isAddingRow !== props.isAddingRow) return false;
-    if (prevProps.isEditingRow || prevProps.isAddingRow) return false;
-    return true;
+export function AugmentedTableRow({
+  columns,
+  entry,
+  isAddingRow,
+  isEditingRow,
+  renderRow,
+  renderRowContainer,
+  renderCell,
+  renderCellContainer,
+  rowClassName,
+  onRowClick
+}) {
+  function renderColumn(column) {
+    return renderCellContainer(
+      column,
+      renderCell(entry, column, isAddingRow, isEditingRow)
+    );
   }
-);
+
+  return renderRowContainer({
+    className: rowClassName,
+    onClick: onRowClick,
+    children: renderRow({
+      entry,
+      columns,
+      renderColumn,
+      isAddingRow,
+      isEditingRow
+    })
+  });
+}

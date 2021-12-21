@@ -6,6 +6,7 @@ import { MissionDetails } from "../components/MissionDetails";
 import Box from "@material-ui/core/Box";
 import {
   ACTIVITIES,
+  ACTIVITIES_OPERATIONS,
   getCurrentActivityDuration
 } from "common/utils/activities";
 import { now } from "common/utils/time";
@@ -51,7 +52,7 @@ export function CurrentActivity({
         activityType === ACTIVITIES.break.name
           ? await editActivityEvent(
               latestActivity,
-              "revision",
+              ACTIVITIES_OPERATIONS.update,
               latestActivity.startTime,
               now(),
               null,

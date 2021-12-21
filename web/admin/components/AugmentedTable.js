@@ -622,105 +622,109 @@ export const AugmentedTable = React.forwardRef(
   }
 );
 
-function MaterialUITable({
-  columns,
-  entries,
-  isEditingRow,
-  isAddingRow,
-  editedValues,
-  renderHeaderCell,
-  renderRow,
-  renderCell,
-  dense = false,
-  classes,
-  rowClassName,
-  headerClassName,
-  onRowClick = null,
-  loading = false,
-  rowId
-}) {
-  return (
-    <MaterialTable
-      stickyHeader={false}
-      className={`table ${classes.table}`}
-      size={dense ? "small" : "medium"}
-      style={{ filter: loading ? "blur(5px)" : "none" }}
-    >
-      <TableHead>
-        <TableRow
-          className={`${classes.header} ${
-            headerClassName ? headerClassName : ""
-          }`}
-        >
-          {columns.map(column => (
-            <TableCell
-              key={column.name}
-              align={column.align || "left"}
-              style={{
-                minWidth: column.minWidth,
-                maxWidth: column.maxWidth
-              }}
-            >
-              {renderHeaderCell(column)}
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {entries.map((entry, index) => {
-          const id = rowId(entry);
-          const isRowUnderEdit = isEditingRow(entry);
-          const isRowBeingAdded = isAddingRow(entry);
-          const onRowClickFunc = onRowClick(entry);
-
-          return (
-            <AugmentedTableRow
-              key={id}
-              id={id}
-              columns={columns}
-              entry={
-                isRowUnderEdit || isRowBeingAdded
-                  ? { ...entry, ...editedValues }
-                  : entry
-              }
-              isAddingRow={isRowBeingAdded}
-              isEditingRow={isRowUnderEdit}
-              rowClassName={`${classes.row} ${
-                onRowClickFunc && !entry.__groupKey && !entry.__endOfGroup
-                  ? classes.clickableRow
-                  : ""
-              } ${rowClassName(entry)}`}
-              renderCell={renderCell}
-              renderRow={renderRow}
-              renderRowContainer={props => <TableRow hover {...props} />}
-              renderCellContainer={(column, children) => {
-                let cellStyle = {
+const MaterialUITable = React.forwardRef(
+  (
+    {
+      columns,
+      entries,
+      isEditingRow,
+      isAddingRow,
+      editedValues,
+      renderHeaderCell,
+      renderRow,
+      renderCell,
+      dense = false,
+      classes,
+      rowClassName,
+      headerClassName,
+      onRowClick = null,
+      loading = false,
+      rowId
+    },
+    ref
+  ) => {
+    return (
+      <MaterialTable
+        stickyHeader={false}
+        className={`table ${classes.table}`}
+        size={dense ? "small" : "medium"}
+        style={{ filter: loading ? "blur(5px)" : "none" }}
+      >
+        <TableHead>
+          <TableRow
+            className={`${classes.header} ${
+              headerClassName ? headerClassName : ""
+            }`}
+          >
+            {columns.map(column => (
+              <TableCell
+                key={column.name}
+                align={column.align || "left"}
+                style={{
                   minWidth: column.minWidth,
                   maxWidth: column.maxWidth
-                };
-                if (column.maxWidth)
-                  cellStyle = {
-                    ...cellStyle,
-                    ...overflowStyleForMaxWidthCells
+                }}
+              >
+                {renderHeaderCell(column)}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {entries.map((entry, index) => {
+            const id = rowId(entry);
+            const isRowUnderEdit = isEditingRow(entry);
+            const isRowBeingAdded = isAddingRow(entry);
+            const onRowClickFunc = onRowClick(entry);
+
+            return (
+              <AugmentedTableRow
+                key={id}
+                columns={columns}
+                entry={
+                  isRowUnderEdit || isRowBeingAdded
+                    ? { ...entry, ...editedValues }
+                    : entry
+                }
+                isAddingRow={isRowBeingAdded}
+                isEditingRow={isRowUnderEdit}
+                rowClassName={`${classes.row} ${
+                  onRowClickFunc && !entry.__groupKey && !entry.__endOfGroup
+                    ? classes.clickableRow
+                    : ""
+                } ${rowClassName(entry)}`}
+                renderCell={renderCell}
+                renderRow={renderRow}
+                renderRowContainer={props => <TableRow hover {...props} />}
+                renderCellContainer={(column, children) => {
+                  let cellStyle = {
+                    minWidth: column.minWidth,
+                    maxWidth: column.maxWidth
                   };
-                return (
-                  <TableCell
-                    key={column.name}
-                    align={column.align || "left"}
-                    style={cellStyle}
-                  >
-                    {children}
-                  </TableCell>
-                );
-              }}
-              onRowClick={onRowClickFunc}
-            />
-          );
-        })}
-      </TableBody>
-    </MaterialTable>
-  );
-}
+                  if (column.maxWidth)
+                    cellStyle = {
+                      ...cellStyle,
+                      ...overflowStyleForMaxWidthCells
+                    };
+                  return (
+                    <TableCell
+                      key={column.name}
+                      align={column.align || "left"}
+                      style={cellStyle}
+                    >
+                      {children}
+                    </TableCell>
+                  );
+                }}
+                onRowClick={onRowClickFunc}
+              />
+            );
+          })}
+        </TableBody>
+      </MaterialTable>
+    );
+  }
+);
 
 const _VirtualizedTable = React.forwardRef(
   (
@@ -772,7 +776,6 @@ const _VirtualizedTable = React.forwardRef(
             return props.columns[columnIndex];
           }
 
-          const id = rowId(props.rowData);
           const isRowUnderEdit = isEditingRow(props.rowData);
           const isRowBeingAdded = isAddingRow(props.rowData);
           const onRowClickFunc = onRowClick(props.rowData);
@@ -780,7 +783,6 @@ const _VirtualizedTable = React.forwardRef(
           return (
             <AugmentedTableRow
               key={props.key}
-              id={id}
               columns={columns}
               entry={
                 isRowUnderEdit || isRowBeingAdded
@@ -797,7 +799,6 @@ const _VirtualizedTable = React.forwardRef(
               )}
               renderCellContainer={renderCellContainer}
               onRowClick={onRowClickFunc}
-              rowWidth={width}
             />
           );
         }}
