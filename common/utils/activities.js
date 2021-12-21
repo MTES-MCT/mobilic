@@ -229,8 +229,7 @@ function extendExistingActivitiesToPeriodBoundariesOps(
   }
   return ops;
 }
-
-export function convertBreakIntoActivityOperations(
+export function convertNewActivityIntoActivityOperations(
   allActivities,
   startTime,
   endTime,

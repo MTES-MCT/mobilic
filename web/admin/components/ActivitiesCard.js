@@ -44,7 +44,6 @@ export function ActivitiesCard({
     {
       label: "Activité",
       name: "type",
-      create: true,
       format: type => ACTIVITIES[type].label,
       renderEditMode: (type, entry, setType) => (
         <TextField
@@ -86,7 +85,6 @@ export function ActivitiesCard({
           required={true}
         />
       ),
-      edit: true,
       minWidth: 130
     },
     {
@@ -116,7 +114,6 @@ export function ActivitiesCard({
           }
         />
       ),
-      edit: true,
       minWidth: 130
     },
     {

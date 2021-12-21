@@ -8,7 +8,7 @@ import TextField from "common/utils/TextField";
 import {
   ACTIVITIES,
   ACTIVITIES_OPERATIONS,
-  convertBreakIntoActivityOperations
+  convertNewActivityIntoActivityOperations
 } from "common/utils/activities";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
@@ -132,7 +132,7 @@ export default function ActivityRevisionOrCreationModal({
   }
 
   async function handleSubmit(actionType) {
-    const ops = convertBreakIntoActivityOperations(
+    const ops = convertNewActivityIntoActivityOperations(
       otherActivities,
       actionType === ACTIVITIES_OPERATIONS.cancel ? event.endTime : newUserTime,
       actionType === ACTIVITIES_OPERATIONS.cancel
