@@ -17,7 +17,9 @@ export const resourcePagesClasses = makeStyles(theme => ({
     textAlign: "left"
   },
   title: {
-    marginBottom: theme.spacing(6)
+    marginBottom: theme.spacing(6),
+    maxWidth: 600,
+    margin: "auto"
   },
   resourceSubtitle: {
     marginBottom: theme.spacing(3)

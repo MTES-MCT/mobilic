@@ -154,7 +154,7 @@ export function ResourcePage() {
           size="small"
           className={classes.viewAllButton}
           variant={"outlined"}
-          href="https://www.ecologie.gouv.fr/temps-travail-des-conducteurs-routiers-transport-marchandises"
+          href="/resources/regulations"
           target="_blank"
         >
           Voir tous les seuils réglementaires

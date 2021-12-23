@@ -20,6 +20,7 @@ import { ResourcePage } from "../landing/ResourcePage/ResourcePage";
 import { AdminResourcePage } from "../landing/ResourcePage/AdminResourcePage";
 import { DriverResourcePage } from "../landing/ResourcePage/DriverResourcePage";
 import { ControllerResourcePage } from "../landing/ResourcePage/ControllerResourcePage";
+import { RegulationPage } from "../landing/ResourcePage/RegulationPage";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -214,6 +215,13 @@ export const ROUTES = [
     label: "Documentation Gestionnaire",
     accessible: () => true,
     component: AdminResourcePage,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/resources/regulations",
+    label: "Réglementation",
+    accessible: () => true,
+    component: RegulationPage,
     menuItemFilter: () => false
   },
   {
