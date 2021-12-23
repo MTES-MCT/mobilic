@@ -117,12 +117,14 @@ export const RegulationDrawer = withWidth()(
                 </ul>
               </Section>
             )}
-            <Section title="Articles de loi">
-              <RegulationArticlesBlock
-                className={classes.definitionList}
-                articles={rule.articles}
-              />
-            </Section>
+            {rule.articles && (
+              <Section title="Articles de loi">
+                <RegulationArticlesBlock
+                  className={classes.definitionList}
+                  articles={rule.articles}
+                />
+              </Section>
+            )}
           </Container>
         )}
       </SwipeableDrawer>
