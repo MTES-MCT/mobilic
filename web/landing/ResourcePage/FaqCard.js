@@ -7,6 +7,7 @@ import { ChevronRight } from "@material-ui/icons";
 import { LinkButton } from "../../common/LinkButton";
 import Box from "@material-ui/core/Box";
 import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
+import ButtonBase from "@material-ui/core/ButtonBase";
 
 const useStyles = makeStyles(theme => ({
   faqCardAnswer: {
@@ -34,19 +35,30 @@ const useStyles = makeStyles(theme => ({
     "&:hover": {
       textDecoration: "underline"
     }
+  },
+  button: {
+    textAlign: "left"
   }
 }));
 
-export function FaqCard({ question, answer, link, moreInfoText }) {
+export function FaqCard({ question, answer, link, moreInfoText, onClick }) {
   const classes = useStyles();
   const commonCardsClasses = resourceCardsClasses();
 
+  let buttonActionProps = { onClick };
+  let ButtonComponent = ButtonBase;
+  if (link) {
+    buttonActionProps = { href: link, target: "_blank" };
+    ButtonComponent = LinkButton;
+  }
+
   return (
-    <LinkButton
-      href={link}
-      className={commonCardsClasses.linkWholeCard}
+    <ButtonComponent
+      className={`${commonCardsClasses.linkWholeCard} ${
+        !link ? classes.button : ""
+      }`}
       color="primary"
-      target="_blank"
+      {...buttonActionProps}
     >
       <Card variant="outlined" className={commonCardsClasses.card}>
         <Typography variant={"h4"}>{question}</Typography>
@@ -60,6 +72,6 @@ export function FaqCard({ question, answer, link, moreInfoText }) {
           </Typography>
         </Box>
       </Card>
-    </LinkButton>
+    </ButtonComponent>
   );
 }
