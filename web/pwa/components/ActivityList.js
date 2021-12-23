@@ -90,15 +90,17 @@ function ActivityItem({
         </Avatar>
       </ListItemAvatar>
       <ListItemText
+        disableTypography
         primary={
-          isLongBreak ? "Repos journalier" : ACTIVITIES[activity.type].label
-        }
-        primaryTypographyProps={
-          isLongBreak ? { className: classes.longBreak } : {}
+          <Typography className={isLongBreak ? classes.longBreak : ""}>
+            {isLongBreak ? "Repos journalier" : ACTIVITIES[activity.type].label}
+          </Typography>
         }
         secondary={
           <>
             <Typography
+              color={!isBreak ? "primary" : "textSecondary"}
+              className={isLongBreak ? classes.longBreak : ""}
               style={
                 activity.operation?.type === ACTIVITIES_OPERATIONS.update
                   ? { textDecoration: "line-through" }
@@ -114,7 +116,7 @@ function ActivityItem({
               }`}
             </Typography>
             {activity.operation?.type === ACTIVITIES_OPERATIONS.update && (
-              <Typography>
+              <Typography color="primary">
                 {`${datetimeFormatter(activity.operation.startTime)} - ${
                   activity.operation.endTime
                     ? `${datetimeFormatter(
@@ -128,13 +130,6 @@ function ActivityItem({
               </Typography>
             )}
           </>
-        }
-        secondaryTypographyProps={
-          isLongBreak
-            ? { className: classes.longBreak }
-            : isBreak
-            ? {}
-            : { color: "primary" }
         }
       />
       {editActivityEvent && (
