@@ -11,6 +11,9 @@ import {
 } from "common/utils/activities";
 import { now } from "common/utils/time";
 import WarningEndMissionModalContainer from "../components/WarningEndMissionModal/WarningEndMissionModalContainer";
+import { useModals } from "common/utils/modals";
+import Typography from "@material-ui/core/Typography";
+import { missionLastLessThanAMinute } from "common/utils/mission";
 
 export function CurrentActivity({
   latestActivity,
@@ -25,12 +28,42 @@ export function CurrentActivity({
   openEndMissionModal
 }) {
   const currentTeam = resolveTeamAt(currentMission.teamChanges, now());
+  const modals = useModals();
 
   const setCurrentTime = React.useState(now())[1];
   // We force re-rendering every X sec to update timers
   React.useEffect(() => {
     setInterval(() => setCurrentTime(now()), 30000);
   }, []);
+
+  const beginBreak = async () => {
+    await editActivityEvent(
+      latestActivity,
+      ACTIVITIES_OPERATIONS.update,
+      latestActivity.startTime,
+      now(),
+      null,
+      !currentMission.submittedBySomeoneElse
+    );
+  };
+
+  const beginBreakIfPossible = async () => {
+    if (missionLastLessThanAMinute(currentMission)) {
+      modals.open("confirmation", {
+        textButtons: true,
+        content: (
+          <Typography gutterBottom>
+            ⚠️ La première activité ayant duré moins d'une minute, passer en
+            pause maintenant annulera votre mission en cours.
+          </Typography>
+        ),
+        title: "Confirmer la pause",
+        handleConfirm: beginBreak
+      });
+    } else {
+      await beginBreak();
+    }
+  };
 
   return [
     <CurrentActivityOverview
@@ -50,14 +83,7 @@ export function CurrentActivity({
         kilometerReading = null
       ) =>
         activityType === ACTIVITIES.break.name
-          ? await editActivityEvent(
-              latestActivity,
-              ACTIVITIES_OPERATIONS.update,
-              latestActivity.startTime,
-              now(),
-              null,
-              !currentMission.submittedBySomeoneElse
-            )
+          ? beginBreakIfPossible()
           : await Promise.all([
               vehicle
                 ? updateMissionVehicle({ mission: currentMission, vehicle })

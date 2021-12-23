@@ -9,6 +9,7 @@ import min from "lodash/min";
 import max from "lodash/max";
 import sum from "lodash/sum";
 import { now } from "./time";
+import { getCurrentActivityDuration } from "./activities";
 
 export function parseMissionPayloadFromBackend(missionPayload, userId) {
   return {
@@ -151,5 +152,12 @@ export function missionCreatedByAdmin(mission, employments) {
       e.hasAdminRights &&
       e.user.id === mission.submitterId &&
       mission.companyId === e.companyId
+  );
+}
+
+export function missionLastLessThanAMinute(mission) {
+  return (
+    mission.activities?.length === 1 &&
+    getCurrentActivityDuration(mission.activities[0]) < 60
   );
 }
