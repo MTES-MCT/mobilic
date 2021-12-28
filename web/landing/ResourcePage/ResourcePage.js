@@ -10,9 +10,14 @@ import { FaqCard } from "./FaqCard";
 import { ControllerImage, ManagerImage, WorkerImage } from "common/utils/icons";
 import { IconCard } from "./IconCard";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
+import { LinkButton } from "../../common/LinkButton";
+import { RegulationCard } from "./RegulationCard";
+import { CARD_RULES } from "./RegulationPage";
+import { RegulationDrawer } from "./RegulationDrawer";
 
 export function ResourcePage() {
   const classes = resourcePagesClasses();
+  const [ruleOnFocus, setRuleOnFocus] = React.useState(null);
 
   return [
     <Header key={1} />,
@@ -108,57 +113,29 @@ export function ResourcePage() {
           transport léger
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={10}>
-          <Grid item xs={12} sm={4}>
-            <FaqCard
-              question="Durée maximale de travail sans interruption"
-              answer={
-                <>
-                  Les chauffeurs de véhicules légers ne peuvent pas travailler
-                  plus de <b>6 heures d'affilée.</b>
-                </>
-              }
-              link="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000026054561"
-              moreInfoText="Article L.3312-2 du code des transports"
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <FaqCard
-              question="Durée maximale de travail journalier"
-              answer={
-                <>
-                  Sauf cas exceptionnel, les salariés du transport léger ne
-                  peuvent pas travailler plus de <b>12 heures par jour</b>.
-                </>
-              }
-              link="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033450339"
-              moreInfoText="Article R.3312-51 du code des transports"
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <FaqCard
-              question="Durée maximale d'une journée de travail en partie effectuée de nuit"
-              answer={
-                <>
-                  Dans le transport léger, lorsqu'une partie des tâches est
-                  effectuée de nuit, le travail journalier ne peut pas dépasser{" "}
-                  <b>10 heures</b>.
-                </>
-              }
-              link="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033021297"
-              moreInfoText="Article L3312-1 du code des transports"
-            />
-          </Grid>
+          {CARD_RULES.slice(0, 3).map((rule, index) => (
+            <Grid item xs={12} sm={4} key={index}>
+              <RegulationCard
+                rule={rule}
+                onClick={() => setRuleOnFocus(rule)}
+              />
+            </Grid>
+          ))}
+          <RegulationDrawer
+            open={!!ruleOnFocus}
+            rule={ruleOnFocus}
+            handleClose={() => setRuleOnFocus(null)}
+          />
         </Grid>
-        <Button
+        <LinkButton
           color="primary"
           size="small"
           className={classes.viewAllButton}
           variant={"outlined"}
-          href="/resources/regulations"
-          target="_blank"
+          to="/resources/regulations"
         >
           Voir tous les seuils réglementaires
-        </Button>
+        </LinkButton>
       </Container>
     </Container>,
     <Footer key={5} />
