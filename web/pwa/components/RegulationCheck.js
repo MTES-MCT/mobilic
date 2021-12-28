@@ -2,12 +2,15 @@ import React from "react";
 import CheckIcon from "@material-ui/icons/Check";
 import WarningIcon from "@material-ui/icons/Warning";
 import ScheduleIcon from "@material-ui/icons/Schedule";
-import Typography from "@material-ui/core/Typography";
 import { RULE_RESPECT_STATUS } from "common/utils/regulation/rules";
 import Box from "@material-ui/core/Box";
 import { ALERT_TYPE_PROPS } from "common/utils/regulation/alertTypes";
+import { Link } from "../../common/LinkButton";
+import { useRegulationDrawer } from "../../landing/ResourcePage/RegulationDrawer";
 
-export function RegulationCheck({ check }) {
+export function RegulationCheck({ check, rule }) {
+  const openRegulationDrawer = useRegulationDrawer();
+
   let color;
   let icon;
   let emoji;
@@ -39,10 +42,17 @@ export function RegulationCheck({ check }) {
         fontSize: "small"
       })}
       <Box pl={1}>
-        <Typography align="justify" variant="body2" color="inherit">
+        <Link
+          variant="body2"
+          color="inherit"
+          onClick={e => {
+            e.preventDefault();
+            openRegulationDrawer(rule, true);
+          }}
+        >
           {message}
           <span>{` ${emoji}`}</span>
-        </Typography>
+        </Link>
       </Box>
     </Box>
   );

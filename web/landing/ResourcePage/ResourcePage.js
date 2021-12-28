@@ -13,11 +13,9 @@ import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { LinkButton } from "../../common/LinkButton";
 import { RegulationCard } from "./RegulationCard";
 import { CARD_RULES } from "./RegulationPage";
-import { RegulationDrawer } from "./RegulationDrawer";
 
 export function ResourcePage() {
   const classes = resourcePagesClasses();
-  const [ruleOnFocus, setRuleOnFocus] = React.useState(null);
 
   return [
     <Header key={1} />,
@@ -113,19 +111,13 @@ export function ResourcePage() {
           transport léger
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={10}>
-          {CARD_RULES.slice(0, 3).map((rule, index) => (
-            <Grid item xs={12} sm={4} key={index}>
-              <RegulationCard
-                rule={rule}
-                onClick={() => setRuleOnFocus(rule)}
-              />
-            </Grid>
-          ))}
-          <RegulationDrawer
-            open={!!ruleOnFocus}
-            rule={ruleOnFocus}
-            handleClose={() => setRuleOnFocus(null)}
-          />
+          {Object.values(CARD_RULES)
+            .slice(0, 3)
+            .map((rule, index) => (
+              <Grid item xs={12} sm={4} key={index}>
+                <RegulationCard rule={rule} />
+              </Grid>
+            ))}
         </Grid>
         <LinkButton
           color="primary"

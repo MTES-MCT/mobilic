@@ -1,7 +1,7 @@
 import React from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import Typography from "@material-ui/core/Typography";
 import { FaqCard } from "./FaqCard";
+import { useRegulationDrawer } from "./RegulationDrawer";
 
 const useStyles = makeStyles(theme => ({
   rule: {
@@ -10,14 +10,17 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function RegulationCard({ rule, onClick }) {
+export function RegulationCard({ rule }) {
   const classes = useStyles();
+
+  const openRegulationDrawer = useRegulationDrawer();
 
   return (
     <FaqCard
       question={rule.name}
-      answer={<Typography className={classes.rule}>{rule.rule}</Typography>}
-      onClick={onClick}
+      answer={rule.rule}
+      answerClassName={classes.rule}
+      onClick={() => openRegulationDrawer(rule, false)}
     />
   );
 }

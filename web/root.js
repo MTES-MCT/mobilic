@@ -45,6 +45,7 @@ import {
 } from "@datapunt/matomo-tracker-react";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 import { ErrorBoundary } from "./common/ErrorFallback";
+import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
 
 const matomo = createInstance({
   urlBase: "https://stats.data.gouv.fr",
@@ -77,8 +78,10 @@ export default function Root() {
                   <SnackbarProvider>
                     <LoadingScreenContextProvider>
                       <ModalProvider modalDict={MODAL_DICT}>
-                        <ScrollToTop />
-                        <_Root />
+                        <RegulationDrawerContextProvider>
+                          <ScrollToTop />
+                          <_Root />
+                        </RegulationDrawerContextProvider>
                       </ModalProvider>
                     </LoadingScreenContextProvider>
                   </SnackbarProvider>
