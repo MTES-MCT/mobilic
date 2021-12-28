@@ -21,6 +21,7 @@ import { splitByLongBreaksAndComputePeriodStats } from "../pwa/components/WorkTi
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
 import { ALERT_TYPES } from "common/utils/regulation/alertTypes";
+import { CARD_RULES } from "../landing/ResourcePage/RegulationPage";
 
 const useStyles = makeStyles(theme => ({
   chip: {
@@ -129,6 +130,7 @@ export function DayRegulationInfo({
                 : null
           }
         }}
+        rule={CARD_RULES.dailyRest}
       />
       <RegulationCheck
         key={2}
@@ -138,8 +140,13 @@ export function DayRegulationInfo({
           ),
           r => r.status
         )}
+        rule={CARD_RULES.dailyWork}
       />
-      <RegulationCheck key={3} check={checkBreakRespect} />
+      <RegulationCheck
+        key={3}
+        check={checkBreakRespect}
+        rule={CARD_RULES.dailyRest}
+      />
 
       <RegulationCheck
         key={4}
@@ -152,11 +159,16 @@ export function DayRegulationInfo({
               }
             : checkMaximumDurationOfUninterruptedWork(onlyCurrentDayActivities)
         }
+        rule={CARD_RULES.dailyRest}
       />
       {weekStats &&
         checkNumberOfWorkedDaysInWeek.status ===
           RULE_RESPECT_STATUS.failure && (
-          <RegulationCheck key={5} check={checkNumberOfWorkedDaysInWeek} />
+          <RegulationCheck
+            key={5}
+            check={checkNumberOfWorkedDaysInWeek}
+            rule={CARD_RULES.weeklyRest}
+          />
         )}
     </>
   );

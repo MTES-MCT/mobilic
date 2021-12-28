@@ -1,5 +1,10 @@
 import React from "react";
-import { isWidthDown, withWidth } from "@material-ui/core";
+import {
+  Accordion,
+  AccordionDetails,
+  isWidthDown,
+  withWidth
+} from "@material-ui/core";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Grid from "@material-ui/core/Grid";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
@@ -9,6 +14,9 @@ import Container from "@material-ui/core/Container";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Box from "@material-ui/core/Box";
 import { RegulationArticlesBlock } from "./RegulationLegalArticle";
+import { Alert } from "@material-ui/lab";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 export const useStyles = makeStyles(theme => ({
   container: {
@@ -38,6 +46,38 @@ export const useStyles = makeStyles(theme => ({
   },
   definition: {
     marginBottom: theme.spacing(1)
+  },
+  computationDetails: {
+    marginBottom: theme.spacing(2)
+  },
+  collapse: {
+    display: "block",
+    background: "inherit",
+    padding: 0,
+    marginTop: theme.spacing(2)
+  },
+  accordion: {
+    "&::before": {
+      content: "none"
+    },
+    "&.Mui-disabled": {
+      background: "inherit"
+    },
+    background: "inherit"
+  },
+  accordionTitle: {
+    padding: 0,
+    fontWeight: "bold",
+    minHeight: "unset",
+    margin: 0,
+    "& .MuiAccordionSummary-content": {
+      margin: 0
+    },
+    "&.Mui-expanded": {
+      minHeight: "unset",
+      margin: 0,
+      backgroundColor: "inherit"
+    }
   }
 }));
 
@@ -60,75 +100,111 @@ function Section({ title, children, className }) {
   );
 }
 
-export const RegulationDrawer = withWidth()(
-  ({ rule, width, open, handleClose }) => {
+const RegulationDrawerContext = React.createContext(() => {});
+
+export const RegulationDrawerContextProvider = withWidth()(
+  ({ width, children }) => {
     const classes = useStyles();
 
+    const [rule, setRule] = React.useState(null);
+    const [
+      displayComputationDetails,
+      setDisplayComputationDetails
+    ] = React.useState(false);
+
+    function openDrawer(rule_, shouldDisplayComputationDetails = false) {
+      setRule(rule_);
+      setDisplayComputationDetails(shouldDisplayComputationDetails);
+    }
+
     return (
-      <SwipeableDrawer
-        anchor="right"
-        open={open}
-        disableSwipeToOpen
-        disableDiscovery
-        onOpen={() => {}}
-        onClose={handleClose}
-        PaperProps={{
-          style: {
-            width: isWidthDown("xs", width) ? "100vw" : 400
-          }
-        }}
-      >
-        {rule && (
-          <Container maxWidth={false} className={classes.container}>
-            <Grid
-              container
-              spacing={2}
-              alignItems="center"
-              wrap="nowrap"
-              className={`${classes.title} ${classes.horizontalPadding}`}
-            >
-              <Grid item>
-                <IconButton
-                  onClick={handleClose}
-                  className="no-margin-no-padding"
-                >
-                  <ChevronLeftIcon viewBox="6 0 24 24" />
-                </IconButton>
+      <RegulationDrawerContext.Provider value={openDrawer}>
+        {children}
+        <SwipeableDrawer
+          anchor="right"
+          open={!!rule}
+          disableSwipeToOpen
+          disableDiscovery
+          onOpen={() => {}}
+          onClose={() => setRule(null)}
+          PaperProps={{
+            style: {
+              width: isWidthDown("xs", width) ? "100vw" : 400
+            }
+          }}
+        >
+          {rule && (
+            <Container maxWidth={false} className={classes.container}>
+              <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                wrap="nowrap"
+                className={`${classes.title} ${classes.horizontalPadding}`}
+              >
+                <Grid item>
+                  <IconButton
+                    onClick={() => setRule(null)}
+                    className="no-margin-no-padding"
+                  >
+                    <ChevronLeftIcon viewBox="6 0 24 24" />
+                  </IconButton>
+                </Grid>
+                <Grid item>
+                  <Typography variant="h3">{rule.name}</Typography>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Typography variant="h3">{rule.name}</Typography>
-              </Grid>
-            </Grid>
-            <Section className={classes.details}>
-              <Typography variant="body2">{rule.details}</Typography>
-            </Section>
-            {rule.definitions && rule.definitions.length > 0 && (
-              <Section className={classes.definitions} title="Définitions">
-                <ul className={classes.definitionList}>
-                  {rule.definitions.map((def, index) => (
-                    <li key={index}>
-                      <Typography
-                        variant="body2"
-                        className={classes.definition}
+              <Section className={classes.details}>
+                {displayComputationDetails && rule.computation && (
+                  <Alert severity="info" className={classes.computationDetails}>
+                    <Accordion elevation={0} className={classes.accordion}>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        IconButtonProps={{ className: "no-margin-no-padding" }}
+                        className={classes.accordionTitle}
                       >
-                        <span className="bold">{def.name}</span> : {def.content}
-                      </Typography>
-                    </li>
-                  ))}
-                </ul>
+                        Méthode de calcul
+                      </AccordionSummary>
+                      <AccordionDetails className={classes.collapse}>
+                        {rule.computation}
+                      </AccordionDetails>
+                    </Accordion>
+                  </Alert>
+                )}
+                <Typography variant="body2">{rule.details}</Typography>
               </Section>
-            )}
-            {rule.articles && (
-              <Section title="Articles de loi">
-                <RegulationArticlesBlock
-                  className={classes.definitionList}
-                  articles={rule.articles}
-                />
-              </Section>
-            )}
-          </Container>
-        )}
-      </SwipeableDrawer>
+              {rule.definitions && rule.definitions.length > 0 && (
+                <Section className={classes.definitions} title="Définitions">
+                  <ul className={classes.definitionList}>
+                    {rule.definitions.map((def, index) => (
+                      <li key={index}>
+                        <Typography
+                          variant="body2"
+                          className={classes.definition}
+                        >
+                          <span className="bold">{def.name}</span> :{" "}
+                          {def.content}
+                        </Typography>
+                      </li>
+                    ))}
+                  </ul>
+                </Section>
+              )}
+              {rule.articles && (
+                <Section title="Articles de loi">
+                  <RegulationArticlesBlock
+                    className={classes.definitionList}
+                    articles={rule.articles}
+                  />
+                </Section>
+              )}
+            </Container>
+          )}
+        </SwipeableDrawer>
+      </RegulationDrawerContext.Provider>
     );
   }
 );
+
+export const useRegulationDrawer = () =>
+  React.useContext(RegulationDrawerContext);

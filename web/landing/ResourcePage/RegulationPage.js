@@ -9,7 +9,6 @@ import { Breadcrumbs } from "@material-ui/core";
 import { Link } from "../../common/LinkButton";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { RegulationCard } from "./RegulationCard";
-import { RegulationDrawer } from "./RegulationDrawer";
 import {
   LEGAL_ARTICLES,
   RegulationLegalArticleLink
@@ -30,8 +29,8 @@ export function Emphasis(props) {
   );
 }
 
-export const CARD_RULES = [
-  {
+export const CARD_RULES = {
+  dailyWork: {
     name: "Durée du travail quotidien",
     rule: (
       <span>
@@ -75,9 +74,23 @@ export const CARD_RULES = [
       LEGAL_ARTICLES.dailyWork,
       LEGAL_ARTICLES.dailyWorkDuringNight,
       LEGAL_ARTICLES.amplitude
-    ]
+    ],
+    computation: (
+      <span>
+        Pour vérifier le respect de la règle Mobilic prend en compte le temps de
+        travail total depuis le dernier repos journalier/hebdomadaire (au moins
+        10 heures) avant la journée et le premier repos après.
+        <br /> <br />
+        Le temps de travail total peut donc éventuellement intégrer des
+        activités du jour précédent ou du jour suivant. <br />
+        <br />
+        Dans le cas d'un repos journalier au milieu de la journée Mobilic divise
+        le total en deux (avant et après le repos) et vérifie le respect sur
+        chacune des durées.
+      </span>
+    )
   },
-  {
+  dailyRest: {
     name: "Pause et repos quotidiens",
     rule: (
       <span>
@@ -124,9 +137,28 @@ export const CARD_RULES = [
       </span>
     ),
     definitions: [DEFINITIONS.amplitude],
-    articles: [LEGAL_ARTICLES.break, LEGAL_ARTICLES.dailyRest]
+    articles: [LEGAL_ARTICLES.break, LEGAL_ARTICLES.dailyRest],
+    computation: (
+      <span>
+        Pour vérifier le respect de la règle Mobilic prend en compte toutes les
+        activités depuis le dernier repos journalier/hebdomadaire (au moins 10
+        heures) avant la journée et le premier repos après.
+        <br /> <br />
+        Il peut donc y avoir des activités du jour précédent ou du jour suivant.
+        <br /> <br />
+        Mobilic vérifie que l'amplitude totale des activités ne dépasse pas 14
+        heures (pour assurer qu'il y a bien un repos de 10 heures toutes les 24
+        heures) et vérifie le respect des temps de pauses en fonction du temps
+        de travail total.
+        <br />
+        <br />
+        En cas de repos journalier au milieu de la journée Mobilic effectue ces
+        vérifications sur le groupe d'activités avant le repos et sur celui
+        après.
+      </span>
+    )
   },
-  {
+  weeklyWork: {
     name: "Durée du travail hebdomadaire",
     rule: (
       <span>
@@ -192,7 +224,7 @@ export const CARD_RULES = [
     definitions: [DEFINITIONS.longDistance],
     articles: [LEGAL_ARTICLES.weeklyWork]
   },
-  {
+  weeklyRest: {
     name: "Repos hebdomadaire",
     rule: (
       <span>
@@ -214,9 +246,23 @@ export const CARD_RULES = [
         quotidien, soit <Emphasis>34 heures</Emphasis>.
       </span>
     ),
-    articles: [LEGAL_ARTICLES.weeklyRest1, LEGAL_ARTICLES.weeklyRest2]
+    articles: [LEGAL_ARTICLES.weeklyRest1, LEGAL_ARTICLES.weeklyRest2],
+    computation: (
+      <span>
+        Pour vérifier le respect de la règle Mobilic considère toutes les
+        activités de la semaine et s'assure qu'il y a au moins un jour sans
+        aucune activité entre 0h00 et 23h59.
+        <br />
+        <br />
+        Mobilic vérifie également qu'au-moins 34 heures se sont écoulées entre
+        la dernière activité de la semaine précédente et la première activité de
+        la semaine, ou alors qu'un repos d'au-moins 34 heures a été pris au
+        milieu de la semaine. <br />
+        <br />
+      </span>
+    )
   },
-  {
+  nightBonus: {
     name: "Primes de nuit",
     rule: (
       <span>
@@ -243,7 +289,7 @@ export const CARD_RULES = [
     ),
     articles: [LEGAL_ARTICLES.nightBonus]
   },
-  {
+  holidays: {
     name: "Dimanches et jours fériés",
     rule: (
       <span>
@@ -264,7 +310,7 @@ export const CARD_RULES = [
       </span>
     )
   }
-];
+};
 
 const useStyles = makeStyles(theme => ({
   ruleScope: {
@@ -276,7 +322,6 @@ const useStyles = makeStyles(theme => ({
 
 export function RegulationPage() {
   const classes = resourcePagesClasses();
-  const [ruleOnFocus, setRuleOnFocus] = React.useState(null);
 
   const otherClasses = useStyles();
 
@@ -305,21 +350,13 @@ export function RegulationPage() {
           messagerie, ...) ne sont pas précisées.
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={6}>
-          {CARD_RULES.map((rule, index) => (
+          {Object.values(CARD_RULES).map((rule, index) => (
             <Grid item xs={12} sm={4} key={index}>
-              <RegulationCard
-                rule={rule}
-                onClick={() => setRuleOnFocus(rule)}
-              />
+              <RegulationCard rule={rule} />
             </Grid>
           ))}
         </Grid>
       </Container>
-      <RegulationDrawer
-        open={!!ruleOnFocus}
-        rule={ruleOnFocus}
-        handleClose={() => setRuleOnFocus(null)}
-      />
     </Container>,
     <Footer key={4} />
   ];
