@@ -3,9 +3,10 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "fr.gouv.beta.mobilic.staging.twa",
+      "package_name": "fr.gouv.beta.mobilic.twa",
       "sha256_cert_fingerprints": [
-        "D1:5B:63:F4:30:57:BC:D3:F3:BC:C7:27:27:EA:F1:6D:58:FC:0E:C6:F7:A4:82:C9:6C:1E:E1:79:97:19:66:55"
+        "34:57:A6:F0:0C:70:B7:CA:71:29:DD:F8:F9:16:58:63:64:87:9B:F2:47:25:A8:7B:13:35:74:CC:9E:F9:AA:7C",
+        "E3:FA:35:56:23:AC:C3:8A:FC:45:EC:65:13:8B:0F:87:20:26:50:74:B3:49:39:69:80:AE:65:99:64:D4:92:A2"
       ]
     }
   }
