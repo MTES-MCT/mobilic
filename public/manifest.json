@@ -82,6 +82,11 @@
       "sizes": "666x1186"
     },
     {
+      "src": "screenshots/app-mission-context.png",
+      "type": "image/png",
+      "sizes": "668x1190"
+    },
+    {
       "src": "screenshots/app-during-work.png",
       "type": "image/png",
       "sizes": "670x1188"
