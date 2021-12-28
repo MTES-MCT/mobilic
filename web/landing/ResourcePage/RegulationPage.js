@@ -29,7 +29,7 @@ export function Emphasis(props) {
   );
 }
 
-const CARD_RULES = [
+export const CARD_RULES = [
   {
     name: "Durée du travail quotidien",
     rule: (

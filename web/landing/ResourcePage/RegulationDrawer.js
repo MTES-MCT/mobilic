@@ -15,7 +15,8 @@ export const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(2),
     paddingLeft: 0,
     paddingRight: 0,
-    paddingBottom: theme.spacing(2)
+    paddingBottom: theme.spacing(2),
+    overflowX: "hidden"
   },
   horizontalPadding: {
     paddingRight: theme.spacing(2),
@@ -30,7 +31,7 @@ export const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
     marginBottom: theme.spacing(3),
-    backgroundColor: "rgba(224, 224, 224, 0.5)"
+    backgroundColor: theme.palette.grey[200]
   },
   definitionList: {
     paddingInlineStart: theme.spacing(2)
