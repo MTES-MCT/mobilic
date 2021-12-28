@@ -15,6 +15,7 @@ import {
   RegulationLegalArticleLink
 } from "./RegulationLegalArticle";
 import { DEFINITIONS } from "./RegulationDefinition";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
 export function Emphasis(props) {
   return (
@@ -265,9 +266,19 @@ export const CARD_RULES = [
   }
 ];
 
+const useStyles = makeStyles(theme => ({
+  ruleScope: {
+    fontStyle: "italic",
+    display: "block",
+    marginBottom: theme.spacing(2)
+  }
+}));
+
 export function RegulationPage() {
   const classes = resourcePagesClasses();
   const [ruleOnFocus, setRuleOnFocus] = React.useState(null);
+
+  const otherClasses = useStyles();
 
   return [
     <Header key={1} />,
@@ -286,6 +297,13 @@ export function RegulationPage() {
         <PaperContainerTitle variant="h1" className={classes.title}>
           La réglementation du temps de travail dans le transport routier léger
         </PaperContainerTitle>
+        <Typography variant="caption" className={otherClasses.ruleScope}>
+          Les règles suivantes concernent le personnel roulant soumis au livret
+          individuel de contrôle et ne sont pas forcément applicables aux autres
+          personnels des entreprises de transport routier. Par ailleurs les
+          dérogations ou règles propres à chaque secteur (déménagement,
+          messagerie, ...) ne sont pas précisées.
+        </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={6}>
           {CARD_RULES.map((rule, index) => (
             <Grid item xs={12} sm={4} key={index}>
