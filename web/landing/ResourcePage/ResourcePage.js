@@ -36,21 +36,21 @@ export function ResourcePage() {
             <FaqCard
               question="Qu'est ce que Mobilic ?"
               answer="Mobilic est un outil numérique de saisie et de suivi du temps de travail."
-              link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes"
+              link="https://faq.mobilic.beta.gouv.fr/comprendre-ce-quest-mobilic/vos-questions-recurrentes"
             />
           </Grid>
           <Grid item xs={12} sm={4}>
             <FaqCard
               question="Qui est concerné par Mobilic ?"
               answer="Toutes les entreprises de transport léger et de déménagement."
-              link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/vos-questions-recurrentes"
+              link="https://faq.mobilic.beta.gouv.fr/comprendre-ce-quest-mobilic/vos-questions-recurrentes"
             />
           </Grid>
           <Grid item xs={12} sm={4}>
             <FaqCard
               question="Est-il possible de remplacer le livret individuel de contrôle par Mobilic ?"
               answer="Oui, si vous utilisez Mobilic, vous n'avez pas besoin de continuer à remplir le LIC."
-              link="https://faq.mobilic.beta.gouv.fr/public/comprendre-ce-quest-mobilic/securite-et-confidentialite-des-donnees"
+              link="https://faq.mobilic.beta.gouv.fr/comprendre-ce-quest-mobilic/securite-et-confidentialite-des-donnees"
             />
           </Grid>
         </Grid>
@@ -59,7 +59,7 @@ export function ResourcePage() {
           size="small"
           className={classes.viewAllButton}
           variant={"outlined"}
-          href="https://faq.mobilic.beta.gouv.fr/public/"
+          href="https://faq.mobilic.beta.gouv.fr/"
           target="_blank"
         >
           Accéder à la FAQ
