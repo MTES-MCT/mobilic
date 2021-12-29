@@ -11,8 +11,8 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 
 const useStyles = makeStyles(theme => ({
   faqCardAnswer: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1)
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2)
   },
   faqCardDivider: {
     marginBottom: theme.spacing(1)
@@ -41,14 +41,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function FaqCard({
-  question,
-  answer,
-  link,
-  moreInfoText,
-  onClick,
-  answerClassName
-}) {
+export function FaqCard({ question, answer, link, moreInfoText, onClick }) {
   const classes = useStyles();
   const commonCardsClasses = resourceCardsClasses();
 
@@ -69,9 +62,7 @@ export function FaqCard({
     >
       <Card variant="outlined" className={commonCardsClasses.card}>
         <Typography variant={"h4"}>{question}</Typography>
-        <Typography className={`${classes.faqCardAnswer} ${answerClassName}`}>
-          {answer}
-        </Typography>
+        <Typography className={classes.faqCardAnswer}>{answer}</Typography>
         <Box className={classes.dummy}></Box>
         <Box className={classes.moreInfoBlock}>
           <Divider className={classes.faqCardDivider} />

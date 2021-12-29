@@ -14,7 +14,6 @@ import Link from "@material-ui/core/Link";
 import { prettyFormatDay } from "common/utils/time";
 import Divider from "@material-ui/core/Divider";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
-import { CARD_RULES } from "../../../landing/ResourcePage/RegulationPage";
 
 export function Week({
   missionsInPeriod,
@@ -45,7 +44,6 @@ export function Week({
             stats.startTime,
             previousPeriodActivityEnd
           )}
-          rule={CARD_RULES.weeklyRest}
         />
       </InfoCard>
       <InfoCard className={infoCardStyles.topMargin}>

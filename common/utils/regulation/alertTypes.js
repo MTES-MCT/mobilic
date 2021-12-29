@@ -1,5 +1,6 @@
 import { RULE_RESPECT_STATUS } from "./rules";
 import { formatTimer, HOUR } from "../time";
+import { REGULATION_RULES } from "../../../web/landing/ResourcePage/RegulationPage";
 
 export const ALERT_TYPES = {
   minimumDailyRest: "minimumDailyRest",
@@ -21,7 +22,8 @@ export const ALERT_TYPE_PROPS = {
       } ${restDuration ? `(${formatTimer(restDuration)})` : ""} !`,
     infringementLabel: "Non-respect(s) du repos quotidien",
     description:
-      "La durée du repos quotidien est d'au-moins 10h toutes les 24h (article R. 3312-53, 2° du code des transports)"
+      "La durée du repos quotidien est d'au-moins 10h toutes les 24h (article R. 3312-53, 2° du code des transports)",
+    rule: REGULATION_RULES.dailyRest
   },
   [ALERT_TYPES.maximumWorkDayTime]: {
     format: (status, { nightWork, maximumTimeInHours }) =>
@@ -31,7 +33,8 @@ export const ALERT_TYPE_PROPS = {
     infringementLabel:
       "Dépassement(s) de la durée maximale du travail quotidien",
     description:
-      "La durée du travail quotidien est limitée à 12h (article R. 3312-a51 du code des transports)"
+      "La durée du travail quotidien est limitée à 12h (article R. 3312-a51 du code des transports)",
+    rule: REGULATION_RULES.dailyWork
   },
   [ALERT_TYPES.minimumWorkDayBreak]: {
     format: (status, { minimumTimeInMinutes }) =>
@@ -42,7 +45,8 @@ export const ALERT_TYPE_PROPS = {
       } !`,
     infringementLabel: "Non-respect(s) du temps de pause",
     description:
-      "Lorsque le temps de travail dépasse 6h le temps de pause minimal est de 30 minutes (article L3312-2 du code des transports). Lorsque le temps de travail dépasse 9h le temps de pause minimal passe à 45 minutes. Le temps de pause peut être réparti en périodes d'au-moins 15 minutes."
+      "Lorsque le temps de travail dépasse 6h le temps de pause minimal est de 30 minutes (article L3312-2 du code des transports). Lorsque le temps de travail dépasse 9h le temps de pause minimal passe à 45 minutes. Le temps de pause peut être réparti en périodes d'au-moins 15 minutes.",
+    rule: REGULATION_RULES.dailyRest
   },
   [ALERT_TYPES.maximumUninterruptedWorkTime]: {
     format: status =>
@@ -52,7 +56,8 @@ export const ALERT_TYPE_PROPS = {
     infringementLabel:
       "Dépassement(s) de la durée maximale du travail ininterrompu",
     description:
-      "Lorsque le temps de travail dépasse 6h il doit être interrompu par un temps de pause (article L3312-2 du code des transports)"
+      "Lorsque le temps de travail dépasse 6h il doit être interrompu par un temps de pause (article L3312-2 du code des transports)",
+    rule: REGULATION_RULES.dailyRest
   },
   [ALERT_TYPES.maximumWorkedDaysInWeek]: {
     format: (status, { restDuration, tooManyDays }) =>
@@ -69,6 +74,7 @@ export const ALERT_TYPE_PROPS = {
           } !`,
     infringementLabel: "Non-respect(s) du repos hebdomadaire",
     description:
-      "Il est interdit de travailler plus de six jours dans la semaine (article L. 3132-1 du code du travail). Le repos hebdomadaire doit durer au minimum 34h (article L. 3132-2 du code du travail)"
+      "Il est interdit de travailler plus de six jours dans la semaine (article L. 3132-1 du code du travail). Le repos hebdomadaire doit durer au minimum 34h (article L. 3132-2 du code du travail)",
+    rule: REGULATION_RULES.weeklyRest
   }
 };

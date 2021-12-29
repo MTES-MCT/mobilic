@@ -29,7 +29,7 @@ export function Emphasis(props) {
   );
 }
 
-export const CARD_RULES = {
+export const REGULATION_RULES = {
   dailyWork: {
     name: "Durée du travail quotidien",
     rule: (
@@ -350,7 +350,7 @@ export function RegulationPage() {
           messagerie, ...) ne sont pas précisées.
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={6}>
-          {Object.values(CARD_RULES).map((rule, index) => (
+          {Object.values(REGULATION_RULES).map((rule, index) => (
             <Grid item xs={12} sm={4} key={index}>
               <RegulationCard rule={rule} />
             </Grid>
