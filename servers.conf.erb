@@ -50,14 +50,8 @@ server {
       try_files /api-playground.html @404;
     }
 
-    location ~ ^/developers/.*$ {
-        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
-        add_header X-Frame-Options "deny";
-        add_header X-Content-Type-Options "nosniff";
-        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://buttons.github.io; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com";
-        add_header X-XSS-Protection "1; mode=block";
-        add_header Cache-Control "no-cache; max-age=0";
-      try_files $uri.html $uri $uri/ @404;
+    location ~ ^/developers.*$ {
+       return 301 https://developers.mobilic.beta.gouv.fr;
     }
 
     location ~ ^/.*$ {
@@ -82,17 +76,6 @@ server {
       proxy_hide_header Cache-Control;
 
       proxy_redirect $upstream_endpoint_0 /api/;
-    }
-
-
-    # fallback redirects named match
-
-    location = /developers {
-      return 301 /developers/docs/intro;
-    }
-
-    location = /developers/ {
-      return 301 /developers/docs/intro;
     }
 
     location = /service-worker.js {
