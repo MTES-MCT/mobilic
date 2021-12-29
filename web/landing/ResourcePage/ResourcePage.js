@@ -12,7 +12,7 @@ import { IconCard } from "./IconCard";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { LinkButton } from "../../common/LinkButton";
 import { RegulationCard } from "./RegulationCard";
-import { CARD_RULES } from "./RegulationPage";
+import { REGULATION_RULES } from "./RegulationPage";
 
 export function ResourcePage() {
   const classes = resourcePagesClasses();
@@ -111,7 +111,7 @@ export function ResourcePage() {
           transport léger
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={10}>
-          {Object.values(CARD_RULES)
+          {Object.values(REGULATION_RULES)
             .slice(0, 3)
             .map((rule, index) => (
               <Grid item xs={12} sm={4} key={index}>

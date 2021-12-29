@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function RegulationCheck({ check, rule }) {
+export function RegulationCheck({ check }) {
   const openRegulationDrawer = useRegulationDrawer();
 
   const classes = useStyles();
@@ -36,6 +36,7 @@ export function RegulationCheck({ check, rule }) {
   }
 
   const alertProps = ALERT_TYPE_PROPS[check.rule];
+  const rule = alertProps.rule;
   const message = alertProps.format(check.status, check.extra || {});
 
   return (
