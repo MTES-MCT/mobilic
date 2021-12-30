@@ -551,7 +551,7 @@ export function MissionDetails({
               )}
               <ContradictoryChanges
                 mission={mission}
-                validationTime={mission.validation.receptionTime}
+                validationTime={mission.validation?.receptionTime}
                 userId={actualUserId}
                 cacheInStore={cacheContradictoryInfoInPwaStore}
               />

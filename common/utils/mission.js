@@ -8,8 +8,10 @@ import orderBy from "lodash/orderBy";
 import min from "lodash/min";
 import max from "lodash/max";
 import sum from "lodash/sum";
-import { now } from "./time";
+import { HOUR, now } from "./time";
 import { getCurrentActivityDuration } from "./activities";
+
+export const DEFAULT_LAST_ACTIVITY_TOO_LONG = 10 * HOUR;
 
 export function parseMissionPayloadFromBackend(missionPayload, userId) {
   return {
@@ -109,6 +111,7 @@ export function computeMissionStats(m, users) {
     const _activities = orderBy(activities, ["startTime", "endTime"]);
     const isComplete = _activities.every(a => !!a.endTime);
     const startTime = min(_activities.map(a => a.startTime));
+    const lastUpdatedActivityTime = max(_activities.map(a => a.lastUpdateTime));
     const endTime = isComplete ? max(_activities.map(a => a.endTime)) : null;
     const endTimeOrNow = endTime || now1;
     const totalWorkDuration = sum(
@@ -118,6 +121,7 @@ export function computeMissionStats(m, users) {
       activities: _activities,
       user: members.find(m => m.id.toString() === userId),
       startTime,
+      lastUpdatedActivityTime,
       endTime,
       endTimeOrNow,
       service: endTimeOrNow - startTime,
@@ -130,6 +134,10 @@ export function computeMissionStats(m, users) {
   });
   const startTime = min(m.activities.map(a => a.startTime));
   const endTime = isComplete ? max(m.activities.map(a => a.endTime)) : null;
+  const missionNotUpdatedForTooLong = values(userStats).some(
+    userStat =>
+      userStat.lastUpdatedActivityTime < now() - DEFAULT_LAST_ACTIVITY_TOO_LONG
+  );
   return {
     ...m,
     activities: activitiesWithUserId,
@@ -140,6 +148,7 @@ export function computeMissionStats(m, users) {
     validatedByAllMembers,
     validatedByAdminForAllMembers,
     userStats,
+    missionNotUpdatedForTooLong,
     adminGlobalValidation: m.validations
       ? m.validations.find(v => v.isAdmin && !v.userId)
       : {}

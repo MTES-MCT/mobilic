@@ -45,7 +45,10 @@ import { MissionDetailsSection } from "../MissionDetailsSection";
 import { MissionTitle } from "../MissionTitle";
 import { MissionValidationInfo } from "../MissionValidationInfo";
 import { useMissionDetailsStyles } from "./MissionDetailsStyle";
-import { missionCreatedByAdmin } from "common/utils/mission";
+import {
+  DEFAULT_LAST_ACTIVITY_TOO_LONG,
+  missionCreatedByAdmin
+} from "common/utils/mission";
 import { Alert } from "@material-ui/lab";
 import { WarningModificationMission } from "./WarningModificationMission";
 import { ACTIVITIES } from "common/utils/activities";
@@ -119,7 +122,8 @@ export function MissionDetails({
     missionValidatedByAdmin(mission) ||
     (missionsNotValidatedByAllWorkers(mission) &&
       !missionCreatedByAdmin(mission, adminStore.employments) &&
-      mission.activities.every(a => a.submitterId !== adminStore.userId));
+      mission.activities.every(a => a.submitterId !== adminStore.userId) &&
+      !mission.missionNotUpdatedForTooLong);
 
   const missionCompany = adminStore.companies.find(
     c => c.id === mission.companyId
@@ -211,6 +215,13 @@ export function MissionDetails({
         )}
       </Box>
       {!readOnlyMission && <WarningModificationMission />}
+      {!readOnlyMission && mission.missionNotUpdatedForTooLong && (
+        <Alert severity="warning" className={classes.missionTooLongWarning}>
+          Vous pouvez modifier et valider cette mission car votre salarié n'a
+          pas fait de modification dessus depuis plus de{" "}
+          {DEFAULT_LAST_ACTIVITY_TOO_LONG / 3600} heures.
+        </Alert>
+      )}
       <Box className="flex-row" pb={4} style={{ alignItems: "center" }}>
         <Typography variant="h5" className={classes.vehicle}>
           Véhicule :

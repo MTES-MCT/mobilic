@@ -481,7 +481,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
         workDays(fromDate: $activityAfter, first: $workDaysLimit) {
           ...WorkDayData
         }
-        missions(fromTime: $endedMissionsAfter, onlyEndedMissions: true) {
+        missions(fromTime: $endedMissionsAfter, onlyEndedMissions: false) {
           edges {
             node {
               id
@@ -526,6 +526,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 type
                 startTime
                 endTime
+                lastUpdateTime
                 user {
                   id
                   firstName
