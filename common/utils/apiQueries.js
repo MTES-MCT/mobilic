@@ -159,6 +159,7 @@ export const FULL_MISSION_FRAGMENT = gql`
       endTime
       userId
       submitterId
+      lastModificationBy
       user {
         id
         firstName

@@ -18,6 +18,7 @@ import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { sameMinute } from "common/utils/time";
+import { currentUserId } from "common/utils/cookie";
 
 async function createSingleActivity(api, mission, modalArgs) {
   const payload = {
@@ -83,7 +84,8 @@ async function editSingleActivity(
         ? {
             ...a,
             startTime: newStartTime,
-            endTime: newEndTime
+            endTime: newEndTime,
+            lastModificationBy: currentUserId()
           }
         : a
     );

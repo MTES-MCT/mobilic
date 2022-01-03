@@ -47,7 +47,8 @@ import { MissionValidationInfo } from "../MissionValidationInfo";
 import { useMissionDetailsStyles } from "./MissionDetailsStyle";
 import {
   DEFAULT_LAST_ACTIVITY_TOO_LONG,
-  missionCreatedByAdmin
+  missionCreatedByAdmin,
+  missionLastUpdatedByAdmin
 } from "common/utils/mission";
 import { Alert } from "@material-ui/lab";
 import { WarningModificationMission } from "./WarningModificationMission";
@@ -122,6 +123,7 @@ export function MissionDetails({
     missionValidatedByAdmin(mission) ||
     (missionsNotValidatedByAllWorkers(mission) &&
       !missionCreatedByAdmin(mission, adminStore.employments) &&
+      !missionLastUpdatedByAdmin(mission, adminStore.employments) &&
       mission.activities.every(a => a.submitterId !== adminStore.userId) &&
       !mission.missionNotUpdatedForTooLong);
 

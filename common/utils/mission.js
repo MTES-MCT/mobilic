@@ -111,7 +111,9 @@ export function computeMissionStats(m, users) {
     const _activities = orderBy(activities, ["startTime", "endTime"]);
     const isComplete = _activities.every(a => !!a.endTime);
     const startTime = min(_activities.map(a => a.startTime));
-    const lastActivityStartTime = max(_activities.map(a => a.startTime));
+    const lastActivity = _activities[_activities.length - 1];
+    const lastActivityStartTime = lastActivity.startTime;
+    const lastActivitySubmitterId = lastActivity.lastModificationBy;
     const runningActivityStartTime = isComplete ? null : lastActivityStartTime;
     const endTime = isComplete ? max(_activities.map(a => a.endTime)) : null;
     const endTimeOrNow = endTime || now1;
@@ -130,7 +132,8 @@ export function computeMissionStats(m, users) {
       isComplete: _activities.every(a => !!a.endTime),
       breakDuration: endTimeOrNow - startTime - totalWorkDuration,
       expenditures: m.expenditures.filter(e => e.userId.toString() === userId),
-      validation: m.validations.find(v => v.submitterId.toString() === userId)
+      validation: m.validations.find(v => v.submitterId.toString() === userId),
+      lastActivitySubmitterId
     };
   });
   const startTime = min(m.activities.map(a => a.startTime));
@@ -163,6 +166,16 @@ export function missionCreatedByAdmin(mission, employments) {
       e.hasAdminRights &&
       e.user.id === mission.submitterId &&
       mission.companyId === e.companyId
+  );
+}
+export function missionLastUpdatedByAdmin(mission, employments) {
+  return employments.some(
+    e =>
+      e.hasAdminRights &&
+      mission.companyId === e.companyId &&
+      values(mission.userStats).some(
+        us => us.lastActivitySubmitterId === e.user.id
+      )
   );
 }
 
