@@ -19,6 +19,7 @@ import { MissionNamesList } from "./MissionNamesList";
 import { useMissionDrawer } from "./MissionDrawer";
 import { JoinedText } from "./JoinedText";
 import { useAdminStore } from "../store/store";
+import { WorkDayEndTime } from "./WorkDayEndTime";
 
 const useStyles = makeStyles(theme => ({
   warningText: {
@@ -83,14 +84,15 @@ export function WorkTimeTable({
   const endTimeCol = {
     label: "Fin",
     name: "endTime",
-    format: time =>
-      time ? (
-        formatTimeOfDay(time)
-      ) : (
-        <span className={classes.warningText}>En cours</span>
-      ),
+    format: (time, entry) => (
+      <WorkDayEndTime
+        endTime={time}
+        dayAggregate={entry}
+        openMission={openMission}
+      />
+    ),
     align: "right",
-    minWidth: 80
+    minWidth: 100
   };
   const serviceTimeCol = {
     label: "Amplitude",

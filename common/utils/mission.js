@@ -111,7 +111,8 @@ export function computeMissionStats(m, users) {
     const _activities = orderBy(activities, ["startTime", "endTime"]);
     const isComplete = _activities.every(a => !!a.endTime);
     const startTime = min(_activities.map(a => a.startTime));
-    const lastUpdatedActivityTime = max(_activities.map(a => a.lastUpdateTime));
+    const lastActivityStartTime = max(_activities.map(a => a.startTime));
+    const runningActivityStartTime = isComplete ? null : lastActivityStartTime;
     const endTime = isComplete ? max(_activities.map(a => a.endTime)) : null;
     const endTimeOrNow = endTime || now1;
     const totalWorkDuration = sum(
@@ -121,7 +122,7 @@ export function computeMissionStats(m, users) {
       activities: _activities,
       user: members.find(m => m.id.toString() === userId),
       startTime,
-      lastUpdatedActivityTime,
+      runningActivityStartTime,
       endTime,
       endTimeOrNow,
       service: endTimeOrNow - startTime,
@@ -136,7 +137,8 @@ export function computeMissionStats(m, users) {
   const endTime = isComplete ? max(m.activities.map(a => a.endTime)) : null;
   const missionNotUpdatedForTooLong = values(userStats).some(
     userStat =>
-      userStat.lastUpdatedActivityTime < now() - DEFAULT_LAST_ACTIVITY_TOO_LONG
+      userStat.runningActivityStartTime &&
+      userStat.runningActivityStartTime < now() - DEFAULT_LAST_ACTIVITY_TOO_LONG
   );
   return {
     ...m,

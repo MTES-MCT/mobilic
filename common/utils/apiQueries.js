@@ -402,6 +402,7 @@ export const WORK_DAYS_DATA_FRAGMENT = gql`
         day
         missionNames
         startTime
+        lastActivityStartTime
         endTime
         expenditures
         serviceDuration

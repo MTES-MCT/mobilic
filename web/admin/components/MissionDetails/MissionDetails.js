@@ -217,8 +217,8 @@ export function MissionDetails({
       {!readOnlyMission && <WarningModificationMission />}
       {!readOnlyMission && mission.missionNotUpdatedForTooLong && (
         <Alert severity="warning" className={classes.missionTooLongWarning}>
-          Vous pouvez modifier et valider cette mission car votre salarié n'a
-          pas fait de modification dessus depuis plus de{" "}
+          Vous pouvez modifier et valider cette mission car la dernière activité
+          de votre salarié dure depuis plus de{" "}
           {DEFAULT_LAST_ACTIVITY_TOO_LONG / 3600} heures.
         </Alert>
       )}
