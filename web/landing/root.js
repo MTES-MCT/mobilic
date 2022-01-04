@@ -204,6 +204,7 @@ export const Landing = withWidth()(({ width }) => {
           </Box>
         </Container>
       </LandingSection>
+      {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
       <LandingSection title="A qui s'adresse Mobilic ?">
         <Typography className={sectionClasses.sectionIntroText}>
           Mobilic s'adresse aux conducteurs des entreprises de transport routier
@@ -374,7 +375,6 @@ export const Landing = withWidth()(({ width }) => {
           </Grid>
         </Grid>
       </LandingSection>
-      {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
     </LandingSectionList>,
     <Footer key={4} />
   ];
