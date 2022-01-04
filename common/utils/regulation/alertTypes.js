@@ -1,6 +1,6 @@
 import { RULE_RESPECT_STATUS } from "./rules";
 import { formatTimer, HOUR } from "../time";
-import { REGULATION_RULES } from "../../../web/landing/ResourcePage/RegulationPage";
+import { REGULATION_RULES } from "../../../web/landing/ResourcePage/RegulationRules";
 
 export const ALERT_TYPES = {
   minimumDailyRest: "minimumDailyRest",
