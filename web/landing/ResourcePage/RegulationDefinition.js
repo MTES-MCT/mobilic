@@ -3,7 +3,7 @@ import {
   LEGAL_ARTICLES,
   RegulationLegalArticleLink
 } from "./RegulationLegalArticle";
-import { Emphasis } from "./RegulationPage";
+import { Emphasis } from "./Emphasis";
 
 export const DEFINITIONS = {
   amplitude: {

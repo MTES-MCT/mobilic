@@ -12,7 +12,7 @@ import { IconCard } from "./IconCard";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { LinkButton } from "../../common/LinkButton";
 import { RegulationCard } from "./RegulationCard";
-import { REGULATION_RULES } from "./RegulationPage";
+import { REGULATION_RULES } from "./RegulationRules";
 
 export function ResourcePage() {
   const classes = resourcePagesClasses();
