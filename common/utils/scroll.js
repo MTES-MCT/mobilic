@@ -8,7 +8,8 @@ function _ScrollToTop({ history }) {
       if (
         el &&
         el.scrollTo &&
-        history.location.pathname !== "/resources/regulations"
+        (history.location.pathname !== "/resources/regulations" ||
+          history.location.search === "")
       )
         el.scrollTo(0, 0);
     });
