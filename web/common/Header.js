@@ -4,7 +4,7 @@ import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import { formatPersonName } from "common/utils/coworkers";
 import IconButton from "@material-ui/core/IconButton";
-import { getAccessibleRoutes, getBadgeRoutes } from "./routes";
+import { getAccessibleRoutes, getBadgeRoutes, RESOURCES_ROUTE } from "./routes";
 import { useHistory, useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { Logos } from "./Logos";
@@ -172,7 +172,7 @@ function ListRouteItem({ route, closeDrawer }) {
       >
         {route.subRoutes.map(subRoute => (
           <ListRouteItem
-            key={subRoute.path}
+            key={subRoute.path || subRoute.label}
             route={{ ...subRoute, path: `${route.path}${subRoute.path}` }}
             closeDrawer={closeDrawer}
           />
@@ -181,18 +181,22 @@ function ListRouteItem({ route, closeDrawer }) {
       <Divider />
     </>
   ) : (
-    <ListItem key={route.path} disableGutters>
+    <ListItem key={route.path || route.label} disableGutters>
       <Link
         className={`${classes.navListItem} ${selected &&
           classes.selectedNavListItem}`}
         variant="body1"
         color="inherit"
         to={route.path}
+        href={route.href}
+        target={route.target}
         underline="none"
         onClick={e => {
-          e.preventDefault();
-          if (!selected) history.push(route.path);
-          closeDrawer();
+          if (!route.href && !route.target) {
+            e.preventDefault();
+            if (!selected) history.push(route.path);
+            closeDrawer();
+          }
         }}
       >
         <TextWithBadge
@@ -215,6 +219,7 @@ export function NavigationMenu({ open, setOpen }) {
   const classes = useStyles();
 
   const routes = getAccessibleRoutes({ userInfo, companies });
+  routes.push(RESOURCES_ROUTE);
 
   return (
     <Drawer
@@ -240,7 +245,7 @@ export function NavigationMenu({ open, setOpen }) {
           )
           .map(route => (
             <ListRouteItem
-              key={route.path}
+              key={route.path || route.href}
               route={route}
               closeDrawer={() => setOpen(false)}
             />
