@@ -63,7 +63,9 @@ export function RegulationPage() {
           individuel de contrôle et ne sont pas forcément applicables aux autres
           personnels des entreprises de transport routier. Par ailleurs les
           dérogations ou règles propres à chaque secteur (déménagement,
-          messagerie, ...) ne sont pas précisées.
+          messagerie, ...) ne sont pas précisées. Les conducteurs soumis au
+          règlement (CE) n°561/2006 sont par ailleurs soumis aux seuils de ce
+          règlement.
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={6}>
           {Object.values(REGULATION_RULES).map((rule, index) => (

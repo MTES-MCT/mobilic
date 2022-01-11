@@ -22,20 +22,18 @@ export const REGULATION_RULES = {
     ),
     details: (
       <span>
-        Sauf cas exceptionnel, le salarié ne peut pas travailler plus de{" "}
-        <Emphasis>12 heures</Emphasis> dans l'amplitude journalière. <br />{" "}
-        <br />
-        L'amplitude est quant à elle limitée à <Emphasis>
-          14 heures
-        </Emphasis>{" "}
-        car le salarié doit prendre au moins 10 heures consécutives de repos
-        quotidien toutes les 24 heures.
+        En principe, en transport routier de marchandises, le salarié ne peut
+        pas travailler plus de <Emphasis>12 heures</Emphasis> dans l'amplitude
+        journalière. <br /> <br />
+        En transport routier de marchandises, l'amplitude est quant à elle
+        limitée à <Emphasis>14 heures</Emphasis> car le salarié doit prendre au
+        moins 10 heures consécutives de repos quotidien toutes les 24 heures.
         <br />
         <br />
-        Si le salarié est un travailleur de nuit <strong>ou</strong> si une
-        partie du travail de la journée s'effectue entre{" "}
-        <Emphasis>minuit et 5 heures</Emphasis>, la durée maximale du travail
-        est réduite à <Emphasis>10 heures</Emphasis> (
+        En principe, si le salarié est un travailleur de nuit{" "}
+        <strong>ou</strong> si une partie du travail de la journée s'effectue
+        entre <Emphasis>minuit et 5 heures</Emphasis>, la durée maximale du
+        travail est réduite à <Emphasis>10 heures</Emphasis> (
         <RegulationLegalArticleLink
           article={LEGAL_ARTICLES.dailyWorkDuringNight}
           shortLabel

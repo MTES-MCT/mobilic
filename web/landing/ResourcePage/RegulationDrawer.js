@@ -191,7 +191,7 @@ export const RegulationDrawerContextProvider = withWidth()(
                 </Section>
               )}
               {rule.articles && (
-                <Section title="Articles de loi">
+                <Section title="Réglementation">
                   <RegulationArticlesBlock
                     className={classes.definitionList}
                     articles={rule.articles}
