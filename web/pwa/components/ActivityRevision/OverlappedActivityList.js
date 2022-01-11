@@ -27,6 +27,9 @@ export default function OverlappedActivityList({ activitiesOperations }) {
         }
       };
     });
+  const activitiesToCreate = activitiesOperations.filter(
+    op => op.operation === ACTIVITIES_OPERATIONS.create
+  );
   return (
     <Box>
       {activitiesToUpdate.length > 0 && (
@@ -46,6 +49,16 @@ export default function OverlappedActivityList({ activitiesOperations }) {
           <Typography>Les activités suivantes seront supprimées</Typography>
           <ActivityList
             activities={activitiesToCancel}
+            hideChart
+            isMissionEnded
+          />
+        </Box>
+      )}
+      {activitiesToCreate.length > 0 && (
+        <Box data-qa="listActivitiesToCreate">
+          <Typography>Les activités suivantes seront créées</Typography>
+          <ActivityList
+            activities={activitiesToCreate}
             hideChart
             isMissionEnded
           />
