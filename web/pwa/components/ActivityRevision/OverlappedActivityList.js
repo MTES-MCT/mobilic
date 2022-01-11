@@ -56,7 +56,7 @@ export default function OverlappedActivityList({ activitiesOperations }) {
       )}
       {activitiesToCreate.length > 0 && (
         <Box data-qa="listActivitiesToCreate">
-          <Typography>Les activités suivantes seront créées</Typography>
+          <Typography>L'activité suivante sera créée</Typography>
           <ActivityList
             activities={activitiesToCreate}
             hideChart
