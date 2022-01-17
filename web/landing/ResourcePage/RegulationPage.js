@@ -65,7 +65,8 @@ export function RegulationPage() {
           dérogations ou règles propres à chaque secteur (déménagement,
           messagerie, ...) ne sont pas précisées. Les conducteurs soumis au
           règlement (CE) n°561/2006 sont par ailleurs soumis aux seuils de ce
-          règlement.
+          règlement pour les dispositions en matière de durée des repos et de
+          temps de conduite.
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={6}>
           {Object.values(REGULATION_RULES).map((rule, index) => (

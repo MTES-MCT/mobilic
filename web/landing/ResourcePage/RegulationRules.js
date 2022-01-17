@@ -27,7 +27,8 @@ export const REGULATION_RULES = {
         journalière. <br /> <br />
         En transport routier de marchandises, l'amplitude est quant à elle
         limitée à <Emphasis>14 heures</Emphasis> car le salarié doit prendre au
-        moins 10 heures consécutives de repos quotidien toutes les 24 heures.
+        moins 10 heures consécutives de repos quotidien sur toute période de 24
+        heures.
         <br />
         <br />
         En principe, si le salarié est un travailleur de nuit{" "}
@@ -274,19 +275,23 @@ export const REGULATION_RULES = {
     name: "Dimanches et jours fériés",
     rule: (
       <span>
-        Les heures travaillées pendant un dimanche ou un jour férié sont
-        rémunérées <Emphasis>avec majoration</Emphasis>.<br />
+        Selon l'ancienneté, les heures travaillées pendant un dimanche ou un
+        jour férié sont rémunérées <Emphasis>avec majoration</Emphasis> ou au
+        moyen <Emphasis>d'une prime forfaitaire</Emphasis>.
         <br />
-        Le taux de majoration n'est pas le même suivant que le temps de travai
+        <br />
+        Le montant de la prime n'est pas le même suivant que le temps de travail
         dépasse ou non <Emphasis>3 heures</Emphasis>.
       </span>
     ),
     details: (
       <span>
-        Les heures travaillées pendant un dimanche ou un jour férié sont
-        rémunérées <Emphasis>avec majoration</Emphasis>.<br />
+        Selon l'ancienneté, les heures travaillées pendant un dimanche ou un
+        jour férié sont rémunérées <Emphasis>avec majoration</Emphasis> ou au
+        moyen <Emphasis>d'une prime forfaitaire</Emphasis>.
         <br />
-        Le taux de majoration n'est pas le même suivant que le temps de travai
+        <br />
+        Le montant de la prime n'est pas le même suivant que le temps de travail
         dépasse ou non <Emphasis>3 heures</Emphasis>.
       </span>
     )
