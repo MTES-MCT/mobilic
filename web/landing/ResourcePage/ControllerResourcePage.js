@@ -11,6 +11,7 @@ import { SlideshareCard } from "./SlideshareCard";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
+import { VideoCard } from "./VideoCard";
 
 export function ControllerResourcePage() {
   const classes = resourcePagesClasses();
@@ -53,6 +54,24 @@ export function ControllerResourcePage() {
               target="_blank"
             >
               Voir toutes les notices
+            </Button>
+          </Grid>
+          <Grid item sm={6}>
+            <Box>
+              <VideoCard
+                description="Effectuer un contrôle en bord de route"
+                youtubeUrl={"https://www.youtube.com/embed/K6weRB_k7HA"}
+              />
+            </Box>
+            <Button
+              color="primary"
+              size="small"
+              className={classes.viewAllButton}
+              variant={"outlined"}
+              href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos"
+              target="_blank"
+            >
+              Voir toutes les vidéos
             </Button>
           </Grid>
         </Grid>
