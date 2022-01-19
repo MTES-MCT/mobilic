@@ -11,8 +11,8 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 
 const useStyles = makeStyles(theme => ({
   faqCardAnswer: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1)
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2)
   },
   faqCardDivider: {
     marginBottom: theme.spacing(1)

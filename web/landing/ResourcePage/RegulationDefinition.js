@@ -3,7 +3,7 @@ import {
   LEGAL_ARTICLES,
   RegulationLegalArticleLink
 } from "./RegulationLegalArticle";
-import { Emphasis } from "./RegulationPage";
+import { Emphasis } from "./Emphasis";
 
 export const DEFINITIONS = {
   amplitude: {
@@ -64,7 +64,9 @@ export const DEFINITIONS = {
     name: "Longue distance",
     content: (
       <span>
-        lorsque le salarié effectue au moins 6 découchés par mois (article{" "}
+        lorsque le salarié effectue au moins 6 découchés par mois (hors
+        déménagement) ou 40 découchés par an (pour le secteur du déménagement)
+        (article{" "}
         <RegulationLegalArticleLink
           article={LEGAL_ARTICLES.longDistance}
           shortLabel

@@ -5,7 +5,13 @@ function _ScrollToTop({ history }) {
   React.useEffect(() => {
     const unlisten = history.listen(() => {
       const el = document.getElementById("root");
-      if (el && el.scrollTo) el.scrollTo(0, 0);
+      if (
+        el &&
+        el.scrollTo &&
+        (history.location.pathname !== "/resources/regulations" ||
+          history.location.search === "")
+      )
+        el.scrollTo(0, 0);
     });
     return () => {
       unlisten();

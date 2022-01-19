@@ -136,7 +136,7 @@ export function Footer() {
             </Typography>
             <Typography className={classes.footerLink}>
               <Link
-                href="/developers/docs/intro"
+                href="https://developers.mobilic.beta.gouv.fr"
                 target="_blank"
                 rel="noopener noreferrer"
                 color="inherit"

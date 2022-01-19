@@ -99,7 +99,7 @@ export function MarianneIcon(props) {
     <SvgIcon
       titleAccess="marianne"
       {...props}
-      viewBox="40 40 210 200"
+      viewBox="0 0 130 115"
       component={MarianneIcon_}
     />
   );

@@ -86,7 +86,7 @@ export const LEGAL_ARTICLES = {
 
 export function RegulationLegalArticleLink({ article, shortLabel = false }) {
   return (
-    <Link href={article.url}>
+    <Link href={article.url} target="_blank">
       {article.label
         ? article.label
         : !shortLabel

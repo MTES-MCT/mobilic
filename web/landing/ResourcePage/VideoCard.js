@@ -13,7 +13,7 @@ export function VideoCard({ youtubeUrl, description }) {
       </Typography>
       <iframe
         width="100%"
-        height="280"
+        height="356"
         src={youtubeUrl}
         title="YouTube video player"
         frameBorder="0"

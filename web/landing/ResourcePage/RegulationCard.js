@@ -1,23 +1,18 @@
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Typography from "@material-ui/core/Typography";
 import { FaqCard } from "./FaqCard";
+import { useRegulationDrawer } from "./RegulationDrawer";
 
-const useStyles = makeStyles(theme => ({
-  rule: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2)
-  }
-}));
-
-export function RegulationCard({ rule, onClick }) {
-  const classes = useStyles();
+export function RegulationCard({ rule, onClick = () => {} }) {
+  const openRegulationDrawer = useRegulationDrawer();
 
   return (
     <FaqCard
       question={rule.name}
-      answer={<Typography className={classes.rule}>{rule.rule}</Typography>}
-      onClick={onClick}
+      answer={rule.rule}
+      onClick={() => {
+        onClick();
+        openRegulationDrawer(rule, false);
+      }}
     />
   );
 }
