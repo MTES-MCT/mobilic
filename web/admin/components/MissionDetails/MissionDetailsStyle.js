@@ -45,5 +45,8 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
     padding: 0,
     fontSize: "0.875rem",
     textAlign: "left"
+  },
+  missionTooLongWarning: {
+    marginBottom: theme.spacing(3)
   }
 }));

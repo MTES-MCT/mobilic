@@ -107,7 +107,7 @@ export default function Home() {
                   })
                 }
                 alertComponent={
-                  isActive ? null : (
+                  isActive || !userInfo.email ? null : (
                     <AlertEmailNotActivated email={userInfo.email} />
                   )
                 }

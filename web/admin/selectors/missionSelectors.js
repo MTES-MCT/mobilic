@@ -34,11 +34,14 @@ export const missionWithStats = createSelector(
 
 export const missionsToValidateByAdmin = createSelector(
   missionWithStats,
-  missions =>
-    missions
-      ?.filter(m => m.isComplete)
-      .filter(missionNotValidatedByAdmin)
-      .filter(missionsValidatedByAllWorkersOrOld)
+  missions => {
+    return missions?.filter(
+      m =>
+        ((m.isComplete && missionsValidatedByAllWorkersOrOld(m)) ||
+          m.missionNotUpdatedForTooLong) &&
+        missionNotValidatedByAdmin(m)
+    );
+  }
 );
 
 export const missionsValidatedByAdmin = createSelector(

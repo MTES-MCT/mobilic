@@ -45,7 +45,8 @@ function computeWorkDayGroupAggregates(workDayGroup) {
       (acc, wd) => Object.assign(acc, wd.missionNames),
       {}
     ),
-    expenditureAggs: aggregateExpenditures
+    expenditureAggs: aggregateExpenditures,
+    lastActivityStartTime: workDayGroup[0].lastActivityStartTime
   };
 }
 

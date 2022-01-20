@@ -8,8 +8,10 @@ import orderBy from "lodash/orderBy";
 import min from "lodash/min";
 import max from "lodash/max";
 import sum from "lodash/sum";
-import { now } from "./time";
+import { HOUR, now } from "./time";
 import { getCurrentActivityDuration } from "./activities";
+
+export const DEFAULT_LAST_ACTIVITY_TOO_LONG = 10 * HOUR;
 
 export function parseMissionPayloadFromBackend(missionPayload, userId) {
   return {
@@ -109,6 +111,10 @@ export function computeMissionStats(m, users) {
     const _activities = orderBy(activities, ["startTime", "endTime"]);
     const isComplete = _activities.every(a => !!a.endTime);
     const startTime = min(_activities.map(a => a.startTime));
+    const lastActivity = _activities[_activities.length - 1];
+    const lastActivityStartTime = lastActivity.startTime;
+    const lastActivitySubmitterId = lastActivity.lastModificationBy;
+    const runningActivityStartTime = isComplete ? null : lastActivityStartTime;
     const endTime = isComplete ? max(_activities.map(a => a.endTime)) : null;
     const endTimeOrNow = endTime || now1;
     const totalWorkDuration = sum(
@@ -118,6 +124,7 @@ export function computeMissionStats(m, users) {
       activities: _activities,
       user: members.find(m => m.id.toString() === userId),
       startTime,
+      runningActivityStartTime,
       endTime,
       endTimeOrNow,
       service: endTimeOrNow - startTime,
@@ -125,11 +132,17 @@ export function computeMissionStats(m, users) {
       isComplete: _activities.every(a => !!a.endTime),
       breakDuration: endTimeOrNow - startTime - totalWorkDuration,
       expenditures: m.expenditures.filter(e => e.userId.toString() === userId),
-      validation: m.validations.find(v => v.submitterId.toString() === userId)
+      validation: m.validations.find(v => v.submitterId.toString() === userId),
+      lastActivitySubmitterId
     };
   });
   const startTime = min(m.activities.map(a => a.startTime));
   const endTime = isComplete ? max(m.activities.map(a => a.endTime)) : null;
+  const missionNotUpdatedForTooLong = values(userStats).some(
+    userStat =>
+      userStat.runningActivityStartTime &&
+      userStat.runningActivityStartTime < now() - DEFAULT_LAST_ACTIVITY_TOO_LONG
+  );
   return {
     ...m,
     activities: activitiesWithUserId,
@@ -140,6 +153,7 @@ export function computeMissionStats(m, users) {
     validatedByAllMembers,
     validatedByAdminForAllMembers,
     userStats,
+    missionNotUpdatedForTooLong,
     adminGlobalValidation: m.validations
       ? m.validations.find(v => v.isAdmin && !v.userId)
       : {}
@@ -152,6 +166,16 @@ export function missionCreatedByAdmin(mission, employments) {
       e.hasAdminRights &&
       e.user.id === mission.submitterId &&
       mission.companyId === e.companyId
+  );
+}
+export function missionLastUpdatedByAdmin(mission, employments) {
+  return employments.some(
+    e =>
+      e.hasAdminRights &&
+      mission.companyId === e.companyId &&
+      values(mission.userStats).some(
+        us => us.lastActivitySubmitterId === e.user.id
+      )
   );
 }
 

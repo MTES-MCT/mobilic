@@ -26,7 +26,11 @@ describe("Home", () => {
 
   it("should render the Home correctly when email is not activated", () => {
     const emailActivatedUserInfo = () => {
-      return { id: "1234", hasActivatedEmail: false };
+      return {
+        id: "1234",
+        hasActivatedEmail: false,
+        email: "testemail@yopmail.com"
+      };
     };
     const customProps = { userInfo: emailActivatedUserInfo };
     const wrapper = setup(customProps);
@@ -46,12 +50,30 @@ describe("Home", () => {
 
   it("should render the Home component with AlertEmailNotActivated message if email is not activated", () => {
     const emailActivatedUserInfo = () => {
-      return { id: "1234", hasActivatedEmail: false };
+      return {
+        id: "1234",
+        hasActivatedEmail: false,
+        email: "testemail@yopmail.com"
+      };
     };
     const customProps = { userInfo: emailActivatedUserInfo };
 
     const wrapper = setup(customProps);
     const alertComponent = wrapper.find('[data-qa="emailInfoItem"]');
     expect(alertComponent.exists(AlertEmailNotActivated)).toBeTruthy();
+  });
+
+  it("should render the Home component with AlertEmailNotActivated message if email is not activated", () => {
+    const emailActivatedUserInfo = () => {
+      return {
+        id: "1234",
+        hasActivatedEmail: false
+      };
+    };
+    const customProps = { userInfo: emailActivatedUserInfo };
+
+    const wrapper = setup(customProps);
+    const alertComponent = wrapper.find('[data-qa="emailInfoItem"]');
+    expect(alertComponent.exists(AlertEmailNotActivated)).toBeFalsy();
   });
 });

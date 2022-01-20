@@ -159,6 +159,7 @@ export const FULL_MISSION_FRAGMENT = gql`
       endTime
       userId
       submitterId
+      lastModificationBy
       user {
         id
         firstName
@@ -402,6 +403,7 @@ export const WORK_DAYS_DATA_FRAGMENT = gql`
         day
         missionNames
         startTime
+        lastActivityStartTime
         endTime
         expenditures
         serviceDuration
@@ -481,7 +483,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
         workDays(fromDate: $activityAfter, first: $workDaysLimit) {
           ...WorkDayData
         }
-        missions(fromTime: $endedMissionsAfter, onlyEndedMissions: true) {
+        missions(fromTime: $endedMissionsAfter, onlyEndedMissions: false) {
           edges {
             node {
               id
@@ -526,6 +528,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 type
                 startTime
                 endTime
+                lastUpdateTime
                 user {
                   id
                   firstName

@@ -128,7 +128,7 @@ exports[`Home should render the Home correctly when email is not activated 1`] =
                                   <WithStyles(ForwardRef(Grid)) item={true} xs={12} zeroMinWidth={true}>
                                     <ForwardRef(Grid) classes={{...}} item={true} xs={12} zeroMinWidth={true}>
                                       <div className=\\"MuiGrid-root MuiGrid-item MuiGrid-zeroMinWidth MuiGrid-grid-xs-12\\">
-                                        <InfoItem data-qa=\\"emailInfoItem\\" name=\\"Email\\" value={[undefined]} actionTitle=\\"Modifier email\\" action={[Function: action]} alertComponent={{...}}>
+                                        <InfoItem data-qa=\\"emailInfoItem\\" name=\\"Email\\" value=\\"testemail@yopmail.com\\" actionTitle=\\"Modifier email\\" action={[Function: action]} alertComponent={{...}}>
                                           <WithStyles(ForwardRef(Grid)) container={true} wrap=\\"nowrap\\" spacing={0} alignItems=\\"flex-start\\">
                                             <ForwardRef(Grid) classes={{...}} container={true} wrap=\\"nowrap\\" spacing={0} alignItems=\\"flex-start\\">
                                               <div className=\\"MuiGrid-root MuiGrid-container MuiGrid-wrap-xs-nowrap MuiGrid-align-items-xs-flex-start\\">
@@ -176,10 +176,12 @@ exports[`Home should render the Home correctly when email is not activated 1`] =
                                           </WithStyles(ForwardRef(Grid))>
                                           <WithStyles(ForwardRef(Typography)) noWrap={true} align=\\"left\\" className=\\"makeStyles-fieldValue-9 makeStyles-fieldValue-13\\">
                                             <ForwardRef(Typography) classes={{...}} noWrap={true} align=\\"left\\" className=\\"makeStyles-fieldValue-9 makeStyles-fieldValue-13\\">
-                                              <p className=\\"MuiTypography-root makeStyles-fieldValue-9 makeStyles-fieldValue-13 MuiTypography-body1 MuiTypography-noWrap MuiTypography-alignLeft\\" />
+                                              <p className=\\"MuiTypography-root makeStyles-fieldValue-9 makeStyles-fieldValue-13 MuiTypography-body1 MuiTypography-noWrap MuiTypography-alignLeft\\">
+                                                testemail@yopmail.com
+                                              </p>
                                             </ForwardRef(Typography)>
                                           </WithStyles(ForwardRef(Typography))>
-                                          <AlertEmailNotActivated email={[undefined]}>
+                                          <AlertEmailNotActivated email=\\"testemail@yopmail.com\\">
                                             <WithStyles(ForwardRef(Alert)) severity=\\"error\\" className=\\"makeStyles-inactiveAlert-14\\">
                                               <ForwardRef(Alert) classes={{...}} severity=\\"error\\" className=\\"makeStyles-inactiveAlert-14\\">
                                                 <WithStyles(ForwardRef(Paper)) role=\\"alert\\" square={true} elevation={0} className=\\"MuiAlert-root MuiAlert-standardError makeStyles-inactiveAlert-14\\">
