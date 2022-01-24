@@ -30,7 +30,8 @@ import { editUserExpenditures } from "common/utils/expenditures";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 import Grid from "@material-ui/core/Grid";
 import {
-  missionsNotValidatedByAllWorkers,
+  missionHasActivities,
+  missionHasAtLeastOneWorkerValidationAndNotAdmin,
   missionsSelector,
   missionValidatedByAdmin
 } from "../../selectors/missionSelectors";
@@ -120,8 +121,8 @@ export function MissionDetails({
   if (!mission) return null;
 
   const readOnlyMission =
-    missionValidatedByAdmin(mission) ||
-    (missionsNotValidatedByAllWorkers(mission) &&
+    (missionValidatedByAdmin(mission) && missionHasActivities(mission)) ||
+    (missionHasAtLeastOneWorkerValidationAndNotAdmin(mission) &&
       !missionCreatedByAdmin(mission, adminStore.employments) &&
       !missionLastUpdatedByAdmin(mission, adminStore.employments) &&
       mission.activities.every(a => a.submitterId !== adminStore.userId) &&

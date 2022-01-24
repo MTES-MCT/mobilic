@@ -136,7 +136,8 @@ export function MissionEmployeeCard({
                       </Typography>
                     </Grid>
                   </Hidden>
-                )
+                ),
+                stats.validation ? "✅" : "⚠️"
               ]}
           </Grid>
           {activities.length === 0 && (
