@@ -1122,6 +1122,7 @@ export const VALIDATE_MISSION_MUTATION = gql`
         isAdmin
         submitterId
         receptionTime
+        userId
         mission {
           id
           name

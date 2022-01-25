@@ -361,18 +361,24 @@ function _ValidationPanel() {
                   onClick={async e => {
                     e.stopPropagation();
                     try {
-                      const apiResponse = await api.graphQlMutate(
-                        VALIDATE_MISSION_MUTATION,
-                        {
-                          missionId: entry.id
-                        }
-                      );
-                      const validation =
-                        apiResponse.data.activities.validateMission;
-                      adminStore.dispatch({
-                        type: ADMIN_ACTIONS.validateMission,
-                        payload: { validation }
-                      });
+                      for (const entryToValidate1 of entriesToValidateByAdmin.filter(
+                        entryToValidate =>
+                          entryToValidate.missionId === entry.id
+                      )) {
+                        const apiResponse = await api.graphQlMutate(
+                          VALIDATE_MISSION_MUTATION,
+                          {
+                            missionId: entry.id,
+                            userId: entryToValidate1.user.id
+                          }
+                        );
+                        const validation =
+                          apiResponse.data.activities.validateMission;
+                        adminStore.dispatch({
+                          type: ADMIN_ACTIONS.validateMission,
+                          payload: { validation }
+                        });
+                      }
                       alerts.success(
                         `La mission${
                           entry.name ? " " + entry.name : ""

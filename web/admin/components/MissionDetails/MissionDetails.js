@@ -122,7 +122,7 @@ export function MissionDetails({
 
   const readOnlyMission =
     (missionValidatedByAdmin(mission) && missionHasActivities(mission)) ||
-    (missionHasAtLeastOneWorkerValidationAndNotAdmin(mission) &&
+    (!missionHasAtLeastOneWorkerValidationAndNotAdmin(mission) &&
       !missionCreatedByAdmin(mission, adminStore.employments) &&
       !missionLastUpdatedByAdmin(mission, adminStore.employments) &&
       mission.activities.every(a => a.submitterId !== adminStore.userId) &&
