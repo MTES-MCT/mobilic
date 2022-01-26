@@ -152,7 +152,6 @@ export function computeMissionStats(m, users) {
       lastActivitySubmitterId
     };
   });
-
   const missionNotUpdatedForTooLong = values(userStats).some(
     userStat =>
       userStat.runningActivityStartTime &&
@@ -179,7 +178,7 @@ export function missionCreatedByAdmin(mission, employments) {
   return employments.some(
     e =>
       e.hasAdminRights &&
-      e.user.id === mission.submitterId &&
+      e.user?.id === mission.submitterId &&
       mission.companyId === e.companyId
   );
 }
