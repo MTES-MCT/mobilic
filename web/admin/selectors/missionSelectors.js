@@ -12,14 +12,10 @@ export const missionWithStats = createSelector(
     missions?.map(mission => computeMissionStats(mission, users))
 );
 
-export const missionHasActivities = missionWithStat =>
-  missionWithStat.activities.length > 0;
-
-export const missionValidatedByAdmin = missionWithStat =>
-  missionWithStat.adminGlobalValidation ||
-  missionWithStat.validatedByAdminForAllMembers;
-
 export const missionHasAtLeastOneWorkerValidationAndNotAdmin = missionWithStat =>
   values(missionWithStat.userStats).some(
     us => us.workerValidation && !us.adminValidation
   );
+
+export const missionHasAtLeastOneAdminValidation = missionWithStat =>
+  values(missionWithStat.userStats).some(us => us.adminValidation);

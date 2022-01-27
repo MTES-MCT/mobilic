@@ -1,5 +1,4 @@
 import React from "react";
-import values from "lodash/values";
 import Box from "@material-ui/core/Box";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
@@ -30,10 +29,9 @@ import { editUserExpenditures } from "common/utils/expenditures";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 import Grid from "@material-ui/core/Grid";
 import {
-  missionHasActivities,
+  missionHasAtLeastOneAdminValidation,
   missionHasAtLeastOneWorkerValidationAndNotAdmin,
-  missionsSelector,
-  missionValidatedByAdmin
+  missionsSelector
 } from "../../selectors/missionSelectors";
 import { MissionVehicleInfo } from "../MissionVehicleInfo";
 import { MissionLocationInfo } from "../MissionLocationInfo";
@@ -54,6 +52,10 @@ import {
 import { Alert } from "@material-ui/lab";
 import { WarningModificationMission } from "./WarningModificationMission";
 import { ACTIVITIES } from "common/utils/activities";
+import {
+  entryToBeValidatedByAdmin,
+  missionToValidationEntries
+} from "../../selectors/validationEntriesSelectors";
 
 export function MissionDetails({
   missionId,
@@ -70,6 +72,8 @@ export function MissionDetails({
 
   const [mission_, setMission] = React.useState(null);
 
+  const [workerEntries, setWorkerEntries] = React.useState([]);
+
   const missionActions = useMissionActions(
     mission_,
     setMission,
@@ -81,6 +85,12 @@ export function MissionDetails({
   const [missionLoadError, setMissionLoadError] = React.useState(false);
 
   const [usersToAdd, setUsersToAdd] = React.useState([]);
+
+  const [
+    hasAtLeastAWorkerToValidate,
+    setHasAtLeastAWorkerToValidate
+  ] = React.useState(false);
+  const [userIdsWithEntries, setUserIdsWithEntries] = React.useState(false);
 
   async function loadMission() {
     const alreadyFetchedMission = missionsSelector(adminStore)?.find(
@@ -114,19 +124,50 @@ export function MissionDetails({
     if (missionId) loadMission();
   }, [missionId]);
 
+  React.useEffect(() => {
+    setHasAtLeastAWorkerToValidate(
+      workerEntries.some(workerEntry =>
+        entryToBeValidatedByAdmin(workerEntry, adminMayOverrideValidation)
+      )
+    );
+  }, [workerEntries]);
+
+  React.useEffect(() => {
+    if (mission) {
+      const entries = missionToValidationEntries(mission);
+      entries.sort((e1, e2) => e1.user.id - e2.user.id);
+      const userIdsInMission = entries.map(e => e.user.id);
+      usersToAdd.forEach(user => {
+        if (!userIdsInMission.includes(user.id)) {
+          entries.unshift({
+            user,
+            activities: [],
+            activitiesWithBreaks: [],
+            expenditures: []
+          });
+        }
+      });
+      setUserIdsWithEntries(userIdsInMission);
+      setWorkerEntries(entries);
+    }
+  }, [mission, usersToAdd]);
+
   if (loading) return <CircularProgress color="primary" />;
   if (missionLoadError)
     return <Typography color="error">{missionLoadError}</Typography>;
 
   if (!mission) return null;
 
-  const readOnlyMission =
-    (missionValidatedByAdmin(mission) && missionHasActivities(mission)) ||
-    (!missionHasAtLeastOneWorkerValidationAndNotAdmin(mission) &&
-      !missionCreatedByAdmin(mission, adminStore.employments) &&
-      !missionLastUpdatedByAdmin(mission, adminStore.employments) &&
-      mission.activities.every(a => a.submitterId !== adminStore.userId) &&
-      !mission.missionNotUpdatedForTooLong);
+  const adminMayOverrideValidation =
+    mission.missionTooOld ||
+    mission.missionNotUpdatedForTooLong ||
+    missionCreatedByAdmin(mission, adminStore.employments) ||
+    missionLastUpdatedByAdmin(mission, adminStore.employments);
+
+  const globalFieldsEditable =
+    !missionHasAtLeastOneAdminValidation(mission) &&
+    (missionHasAtLeastOneWorkerValidationAndNotAdmin(mission) ||
+      adminMayOverrideValidation);
 
   const missionCompany = adminStore.companies.find(
     c => c.id === mission.companyId
@@ -152,21 +193,6 @@ export function MissionDetails({
     ? formatDateTime
     : formatTimeOfDay;
 
-  let entries = values(mission.userStats);
-  const userIdsWithEntries = entries.map(e => e.user.id);
-  usersToAdd.forEach(user => {
-    if (!userIdsWithEntries.includes(user.id)) {
-      entries.unshift({
-        user,
-        activities: [],
-        activitiesWithBreaks: [],
-        expenditures: []
-      });
-    }
-  });
-
-  entries.sort((e1, e2) => e1.user.id - e2.user.id);
-
   return (
     <Box p={2}>
       <Box pb={2} style={{ paddingBottom: "30px" }}>
@@ -182,7 +208,7 @@ export function MissionDetails({
               name={mission.name}
               startTime={mission.startTime}
               onEdit={
-                !readOnlyMission && editableMissionName
+                globalFieldsEditable && editableMissionName
                   ? newName => missionActions.changeName(newName)
                   : null
               }
@@ -217,8 +243,8 @@ export function MissionDetails({
           </Typography>
         )}
       </Box>
-      {!readOnlyMission && <WarningModificationMission />}
-      {!readOnlyMission && mission.missionNotUpdatedForTooLong && (
+      {globalFieldsEditable && <WarningModificationMission />}
+      {globalFieldsEditable && mission.missionNotUpdatedForTooLong && (
         <Alert severity="warning" className={classes.missionTooLongWarning}>
           Vous pouvez modifier et valider cette mission car la dernière activité
           de votre salarié dure depuis plus de{" "}
@@ -231,7 +257,9 @@ export function MissionDetails({
         </Typography>
         <MissionVehicleInfo
           vehicle={mission.vehicle}
-          editVehicle={!readOnlyMission ? missionActions.updateVehicle : null}
+          editVehicle={
+            globalFieldsEditable ? missionActions.updateVehicle : null
+          }
           vehicles={adminStore.vehicles.filter(
             v => missionCompany && v.companyId === missionCompany.id
           )}
@@ -246,7 +274,7 @@ export function MissionDetails({
               mission.startTime ? dateTimeFormatter(mission.startTime) : null
             }
             editLocation={
-              !readOnlyMission
+              globalFieldsEditable
                 ? address =>
                     missionActions.updateLocation(
                       address,
@@ -256,7 +284,7 @@ export function MissionDetails({
                 : null
             }
             editKm={
-              !readOnlyMission
+              globalFieldsEditable
                 ? km => missionActions.updateKilometerReading(km, true)
                 : null
             }
@@ -286,7 +314,7 @@ export function MissionDetails({
               ) : null
             }
             editLocation={
-              !readOnlyMission
+              globalFieldsEditable
                 ? address =>
                     missionActions.updateLocation(
                       address,
@@ -296,7 +324,7 @@ export function MissionDetails({
                 : null
             }
             editKm={
-              !readOnlyMission
+              globalFieldsEditable
                 ? km => missionActions.updateKilometerReading(km, false)
                 : null
             }
@@ -329,7 +357,7 @@ export function MissionDetails({
         title="Détail par employé"
         actionButtonLabel="Ajouter un employé"
         action={
-          !readOnlyMission
+          globalFieldsEditable
             ? () => {
                 modals.open("selectEmployee", {
                   users: adminStore.users.filter(
@@ -349,7 +377,7 @@ export function MissionDetails({
         }
       >
         <List>
-          {entries.map(e => (
+          {workerEntries.map(e => (
             <ListItem key={e.user.id} disableGutters>
               <MissionEmployeeCard
                 className={classes.employeeCard}
@@ -357,7 +385,8 @@ export function MissionDetails({
                 user={e.user}
                 showExpenditures={showExpenditures}
                 onCreateActivity={
-                  !readOnlyMission
+                  entryToBeValidatedByAdmin(e, adminMayOverrideValidation) ||
+                  !e.activities
                     ? () =>
                         modals.open("activityRevision", {
                           otherActivities: mission.activities,
@@ -376,7 +405,8 @@ export function MissionDetails({
                     : null
                 }
                 onEditActivity={
-                  !readOnlyMission
+                  entryToBeValidatedByAdmin(e, adminMayOverrideValidation) ||
+                  !e.activities
                     ? async entry =>
                         modals.open("activityRevision", {
                           event: entry,
@@ -400,7 +430,8 @@ export function MissionDetails({
                     : null
                 }
                 onEditExpenditures={
-                  !readOnlyMission
+                  entryToBeValidatedByAdmin(e, adminMayOverrideValidation) ||
+                  !e.activities
                     ? (newExps, oldExps) =>
                         editUserExpenditures(
                           newExps,
@@ -415,7 +446,7 @@ export function MissionDetails({
                 removeUser={() =>
                   setUsersToAdd(users => users.filter(u => u.id !== e.user.id))
                 }
-                defaultOpen={entries.length === 1}
+                defaultOpen={workerEntries.length === 1}
                 day={day}
               />
             </ListItem>
@@ -457,7 +488,7 @@ export function MissionDetails({
         title="Validation gestionnaire"
         className={classes.validationSection}
       >
-        {mission.adminGlobalValidation || readOnlyMission ? (
+        {!hasAtLeastAWorkerToValidate ? (
           <MissionValidationInfo
             validation={mission.adminGlobalValidation}
             isAdmin

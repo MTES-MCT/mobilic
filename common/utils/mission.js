@@ -188,7 +188,7 @@ export function missionLastUpdatedByAdmin(mission, employments) {
       e.hasAdminRights &&
       mission.companyId === e.companyId &&
       values(mission.userStats).some(
-        us => us.lastActivitySubmitterId === e.user.id
+        us => us.lastActivitySubmitterId === e.user?.id
       )
   );
 }

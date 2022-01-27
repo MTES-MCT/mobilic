@@ -7,32 +7,33 @@ import { missionWithStats } from "./missionSelectors";
 export const missionsToTableEntries = createSelector(
   missionWithStats,
   missions => {
-    const now1 = now();
-    return flatMap(
-      missions?.map(m =>
-        map(m.userStats, us => ({
-          ...us,
-          missionTooOld: m.missionTooOld,
-          missionNotUpdatedForTooLong: m.missionNotUpdatedForTooLong,
-          name: m.name,
-          missionStartTime: m.startTime,
-          missionId: m.id,
-          companyId: m.companyId,
-          id: `${m.id}${us.user.id}`,
-          multipleDays:
-            getStartOfDay(m.startTime) !==
-            getStartOfDay(m.endTime ? m.endTime - 1 : now1)
-        }))
-      )
-    );
+    return flatMap(missions?.map(m => missionToValidationEntries(m)));
   }
 );
 
-export const entryToBeValidatedByAdmin = tableEntry =>
+export const missionToValidationEntries = mission =>
+  map(mission.userStats, us => ({
+    ...us,
+    missionTooOld: mission.missionTooOld,
+    missionNotUpdatedForTooLong: mission.missionNotUpdatedForTooLong,
+    name: mission.name,
+    missionStartTime: mission.startTime,
+    missionId: mission.id,
+    companyId: mission.companyId,
+    id: `${mission.id}${us.user.id}`,
+    multipleDays:
+      getStartOfDay(mission.startTime) !==
+      getStartOfDay(mission.endTime ? mission.endTime - 1 : now())
+  }));
+
+export const entryToBeValidatedByAdmin = (tableEntry, adminCanBypass = false) =>
   !tableEntry.adminValidation &&
-  (tableEntry.workerValidation ||
-    tableEntry.missionTooOld ||
-    tableEntry.missionNotUpdatedForTooLong);
+  (entryValidatedByWorkerOrOutdated(tableEntry) || adminCanBypass);
 
 export const entryToBeValidatedByWorker = tableEntry =>
   !tableEntry.adminValidation && !tableEntry.workerValidation;
+
+const entryValidatedByWorkerOrOutdated = tableEntry =>
+  tableEntry.workerValidation ||
+  tableEntry.missionTooOld ||
+  tableEntry.missionNotUpdatedForTooLong;
