@@ -16,11 +16,7 @@ import { useModals } from "common/utils/modals";
 import List from "@material-ui/core/List";
 import { Event } from "../../../common/Event";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
-import {
-  formatApiError,
-  graphQLErrorMatchesCode,
-  isGraphQLError
-} from "common/utils/errors";
+import { formatApiError } from "common/utils/errors";
 import {
   MISSION_QUERY,
   VALIDATE_MISSION_MUTATION
@@ -508,41 +504,42 @@ export function MissionDetails({
               color="primary"
               size="small"
               className={classes.validationButton}
-              onClick={async () => {
-                let errorToDisplay = null;
-                try {
-                  const apiResponse = await api.graphQlMutate(
-                    VALIDATE_MISSION_MUTATION,
-                    {
-                      missionId: mission.id
-                    }
-                  );
-                  const validation =
-                    apiResponse.data.activities.validateMission;
-                  adminStore.dispatch({
-                    type: ADMIN_ACTIONS.validateMission,
-                    payload: { validation }
-                  });
-                  handleClose();
-                } catch (err) {
-                  if (
-                    !(
-                      isGraphQLError(err) &&
-                      err.graphQLErrors.every(e =>
-                        graphQLErrorMatchesCode(e, "NO_ACTIVITIES_TO_VALIDATE")
+              onClick={async e => {
+                e.stopPropagation();
+                await Promise.all(
+                  workerEntries
+                    .filter(workerEntry =>
+                      entryToBeValidatedByAdmin(
+                        workerEntry,
+                        adminMayOverrideValidation
                       )
                     )
-                  )
-                    errorToDisplay = formatApiError(err);
-                }
-                if (errorToDisplay)
-                  alerts.error(errorToDisplay, mission.id, 6000);
-                else
-                  alerts.success(
-                    `La mission ${mission.name} a été validée avec succès !`,
-                    mission.id,
-                    6000
-                  );
+                    .map(async workerEntryToValidate => {
+                      const apiResponse = await api.graphQlMutate(
+                        VALIDATE_MISSION_MUTATION,
+                        {
+                          missionId: mission.id,
+                          userId: workerEntryToValidate.user.id
+                        }
+                      );
+                      const validation =
+                        apiResponse.data.activities.validateMission;
+                      adminStore.dispatch({
+                        type: ADMIN_ACTIONS.validateMission,
+                        payload: { validation }
+                      });
+                    })
+                )
+                  .then(results => {
+                    alerts.success(
+                      `La mission ${mission.name} a été validée avec succès !`,
+                      mission.id,
+                      6000
+                    );
+                  })
+                  .catch(err => {
+                    alerts.error(formatApiError(err), mission.id, 6000);
+                  });
               }}
             >
               Valider toute la mission
