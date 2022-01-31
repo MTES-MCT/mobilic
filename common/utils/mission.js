@@ -1,7 +1,7 @@
 import forEach from "lodash/forEach";
 import mapValues from "lodash/mapValues";
 import values from "lodash/values";
-import { computeTeamChanges } from "./coworkers";
+import { computeTeamChanges, formatPersonName } from "./coworkers";
 import uniqBy from "lodash/uniqBy";
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
@@ -22,7 +22,9 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     company: missionPayload.company,
     vehicle: missionPayload.vehicle,
     validation: missionPayload.validations
-      ? missionPayload.validations.find(v => v.submitterId === userId)
+      ? missionPayload.validations.find(
+          v => (!v.userId && v.submitterId === userId) || v.userId === userId
+        )
       : null,
     adminValidation: missionPayload.validations
       ? missionPayload.validations.find(
@@ -198,4 +200,19 @@ export function missionLastLessThanAMinute(mission) {
     mission.activities?.length === 1 &&
     getCurrentActivityDuration(mission.activities[0]) < 60
   );
+}
+
+export function adminValidations(mission) {
+  return mission?.validations
+    ?.filter(validation => validation.isAdmin || !validation.userId)
+    .map(validation => {
+      if (!validation.userId) {
+        return validation;
+      } else {
+        const userStats = values(mission.userStats).find(
+          us => us.user.id === validation.userId
+        );
+        return { ...validation, workerName: formatPersonName(userStats.user) };
+      }
+    });
 }

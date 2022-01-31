@@ -38,9 +38,9 @@ import { useMissionActions } from "../../utils/missionActions";
 import { useMissionWithStats } from "../../utils/missionWithStats";
 import { MissionDetailsSection } from "../MissionDetailsSection";
 import { MissionTitle } from "../MissionTitle";
-import { MissionValidationInfo } from "../MissionValidationInfo";
 import { useMissionDetailsStyles } from "./MissionDetailsStyle";
 import {
+  adminValidations,
   DEFAULT_LAST_ACTIVITY_TOO_LONG,
   missionCreatedByAdmin,
   missionLastUpdatedByAdmin
@@ -52,6 +52,7 @@ import {
   entryToBeValidatedByAdmin,
   missionToValidationEntries
 } from "../../selectors/validationEntriesSelectors";
+import { AdminValidationInfo } from "../AdminValidationInfo";
 
 export function MissionDetails({
   missionId,
@@ -484,13 +485,11 @@ export function MissionDetails({
         title="Validation gestionnaire"
         className={classes.validationSection}
       >
-        {!hasAtLeastAWorkerToValidate ? (
-          <MissionValidationInfo
-            validation={mission.adminGlobalValidation}
-            isAdmin
-            className={classes.adminValidation}
-          />
-        ) : (
+        <AdminValidationInfo
+          adminValidations={adminValidations(mission)}
+          className={classes.adminValidation}
+        />
+        {hasAtLeastAWorkerToValidate && (
           <Box>
             <Alert severity="info">
               <Typography className={classes.validationWarningText}>
@@ -528,6 +527,8 @@ export function MissionDetails({
                         type: ADMIN_ACTIONS.validateMission,
                         payload: { validation }
                       });
+                      handleClose();
+                      await loadMission();
                     })
                 )
                   .then(results => {

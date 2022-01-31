@@ -235,7 +235,7 @@ export function MissionEmployeeCard({
               />
             </Grid>
           )}
-          {mission.adminGlobalValidation && stats.validation && (
+          {stats.adminValidation && stats.validation && (
             <Grid item xs={12}>
               <MissionInfoCard>
                 <ContradictoryChanges
