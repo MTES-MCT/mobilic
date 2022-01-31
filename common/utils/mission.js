@@ -21,11 +21,7 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     companyId: missionPayload.companyId,
     company: missionPayload.company,
     vehicle: missionPayload.vehicle,
-    validation: missionPayload.validations
-      ? missionPayload.validations.find(
-          v => (!v.userId && v.submitterId === userId) || v.userId === userId
-        )
-      : null,
+    validation: getWorkerValidationForUser(missionPayload.validations, userId),
     adminValidation: missionPayload.validations
       ? missionPayload.validations.find(
           v => v.isAdmin && (!v.userId || v.userId === userId)
@@ -38,6 +34,13 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     submitter: missionPayload.submitter || null
   };
 }
+
+const getWorkerValidationForUser = (validations, userId) =>
+  validations?.find(
+    v =>
+      (!v.userId && v.submitterId === userId) ||
+      (v.userId === userId && (!v.isAdmin || v.submitterId === v.userId))
+  );
 
 export function linkMissionsWithRelations(missions, relationMap) {
   const augmentedMissions = mapValues(missions, m => ({
@@ -120,6 +123,7 @@ export function computeMissionStats(m, users) {
   const missionTooOld = startTime + DEFAULT_WORKER_VALIDATION_TIMEOUT < now();
 
   const userStats = mapValues(activitiesByUser, (activities, userId) => {
+    const user = members.find(m => m.id.toString() === userId);
     const _activities = orderBy(activities, ["startTime", "endTime"]);
     const isComplete = _activities.every(a => !!a.endTime);
     const startTime = min(_activities.map(a => a.startTime));
@@ -134,7 +138,7 @@ export function computeMissionStats(m, users) {
     );
     return {
       activities: _activities,
-      user: members.find(m => m.id.toString() === userId),
+      user: user,
       startTime,
       runningActivityStartTime,
       endTime,
@@ -144,13 +148,10 @@ export function computeMissionStats(m, users) {
       isComplete: _activities.every(a => !!a.endTime),
       breakDuration: endTimeOrNow - startTime - totalWorkDuration,
       expenditures: m.expenditures.filter(e => e.userId.toString() === userId),
-      validation: m.validations.find(v => v.userId?.toString() === userId),
       adminValidation:
         m.validations.find(v => v.userId?.toString() === userId && v.isAdmin) ||
         adminGlobalValidation,
-      workerValidation: m.validations.find(
-        v => v.userId?.toString() === userId && !v.isAdmin
-      ),
+      workerValidation: getWorkerValidationForUser(m.validations, user?.id),
       lastActivitySubmitterId
     };
   });

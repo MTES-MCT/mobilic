@@ -137,7 +137,7 @@ export function MissionEmployeeCard({
                     </Grid>
                   </Hidden>
                 ),
-                stats.validation ? "✅" : "⚠️"
+                stats.workerValidation ? "✅" : "⚠️"
               ]}
           </Grid>
           {activities.length === 0 && (
@@ -159,7 +159,7 @@ export function MissionEmployeeCard({
       <AccordionDetails style={{ display: "block" }}>
         <Grid container spacing={2} direction="column" wrap="nowrap">
           <Grid item>
-            <MissionValidationInfo validation={stats.validation} />
+            <MissionValidationInfo validation={stats.workerValidation} />
           </Grid>
           <Grid item container spacing={2} alignItems="stretch">
             <Grid xs={12} sm={6} item className={classes.cardRecapKPIContainer}>
@@ -235,12 +235,12 @@ export function MissionEmployeeCard({
               />
             </Grid>
           )}
-          {stats.adminValidation && stats.validation && (
+          {stats.adminValidation && stats.workerValidation && (
             <Grid item xs={12}>
               <MissionInfoCard>
                 <ContradictoryChanges
                   mission={mission}
-                  validationTime={stats.validation.receptionTime}
+                  validationTime={stats.workerValidation.receptionTime}
                   showEventsBeforeValidation={false}
                   userId={user.id}
                   cacheInStore={cacheContradictoryInfoInAdminStore}
