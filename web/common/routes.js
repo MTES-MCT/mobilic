@@ -15,12 +15,17 @@ import { UserRead } from "../control/UserRead";
 import { XlsxVerifier } from "../control/VerifyXlsxSignature";
 import { Partners } from "../landing/partners";
 import { Redirect, useParams } from "react-router-dom";
-import { missionsToValidateByAdmin } from "../admin/selectors/missionSelectors";
 import { ResourcePage } from "../landing/ResourcePage/ResourcePage";
 import { AdminResourcePage } from "../landing/ResourcePage/AdminResourcePage";
 import { DriverResourcePage } from "../landing/ResourcePage/DriverResourcePage";
 import { ControllerResourcePage } from "../landing/ResourcePage/ControllerResourcePage";
 import { RegulationPage } from "../landing/ResourcePage/RegulationPage";
+import {
+  entryToBeValidatedByAdmin,
+  missionsToTableEntries
+} from "../admin/selectors/validationEntriesSelectors";
+import size from "lodash/size";
+import groupBy from "lodash/groupBy";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -306,10 +311,13 @@ export function isAccessible(path, storeData) {
 }
 
 export function getBadgeRoutes(adminStore) {
+  const entries = missionsToTableEntries(adminStore).filter(entry =>
+    entryToBeValidatedByAdmin(entry)
+  );
   return [
     {
       path: "/admin/validations",
-      badgeContent: missionsToValidateByAdmin(adminStore)?.length
+      badgeContent: size(groupBy(entries, "missionId"))
     }
   ];
 }

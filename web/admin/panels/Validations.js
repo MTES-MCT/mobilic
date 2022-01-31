@@ -2,20 +2,17 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
-import flatMap from "lodash/flatMap";
+import size from "lodash/size";
 import { AugmentedTable } from "../components/AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import map from "lodash/map";
 import Paper from "@material-ui/core/Paper";
 import {
   formatDateTime,
   formatDay,
   formatTimeOfDay,
-  formatTimer,
-  getStartOfDay,
-  now
+  formatTimer
 } from "common/utils/time";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import withWidth from "@material-ui/core/withWidth";
@@ -24,16 +21,17 @@ import Tab from "@material-ui/core/Tab";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 import { VALIDATE_MISSION_MUTATION } from "common/utils/apiQueries";
-import {
-  missionsToValidateByAdmin,
-  missionsToValidateByWorkers,
-  missionsValidatedByAdmin
-} from "../selectors/missionSelectors";
 import { useStyles } from "../components/styles/ValidationsStyle";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMissionDrawer } from "../components/MissionDrawer";
 import { CompanyFilter } from "../components/CompanyFilter";
 import { LoadingButton } from "common/components/LoadingButton";
+import {
+  entryToBeValidatedByAdmin,
+  entryToBeValidatedByWorker,
+  missionsToTableEntries
+} from "../selectors/validationEntriesSelectors";
+import groupBy from "lodash/groupBy";
 
 function _ValidationPanel() {
   const api = useApi();
@@ -44,6 +42,29 @@ function _ValidationPanel() {
   const [tab, setTab] = React.useState(0);
   const [tableEntries, setTableEntries] = React.useState([]);
   const [tableColumns, setTableColumns] = React.useState([]);
+  const [
+    entriesToValidateByAdmin,
+    setEntriesToValidateByAdmin
+  ] = React.useState([]);
+  const [
+    entriesToValidateByWorker,
+    setEntriesToValidateByWorker
+  ] = React.useState([]);
+  const [entriesValidatedByAdmin, setEntriesValidatedByAdmin] = React.useState(
+    []
+  );
+  const [
+    nbMissionsToValidateByAdmin,
+    setNbMissionsToValidateByAdmin
+  ] = React.useState(0);
+  const [
+    nbMissionsToValidateByWorker,
+    setNbMissionsToValidateByWorker
+  ] = React.useState(0);
+  const [
+    nbMissionsValidatedByAdmin,
+    setNbMissionsValidatedByAdmin
+  ] = React.useState(0);
   const classes = useStyles({ clickableRow: tab === 0 });
 
   const [missionIdOnFocus, openMission] = useMissionDrawer();
@@ -65,8 +86,6 @@ function _ValidationPanel() {
   const showExpenditures = adminStore.companies.some(
     c => c.settings.requireExpenditures
   );
-
-  const now1 = now();
 
   const commonCols = [
     {
@@ -180,58 +199,69 @@ function _ValidationPanel() {
     minWidth: 200
   };
 
-  const selectedCompanyFilter = missions =>
-    missions.filter(m => selectedCompanyIds.includes(m.companyId));
+  const selectedCompanyFilter = validationEntry =>
+    selectedCompanyIds.includes(validationEntry.companyId);
 
-  const missionsToTableEntries = missions =>
-    flatMap(
-      missions?.map(m =>
-        map(m.userStats, us => ({
-          ...us,
-          name: m.name,
-          missionStartTime: m.startTime,
-          missionId: m.id,
-          companyId: m.companyId,
-          id: `${m.id}${us.user.id}`,
-          adminValidation: m.adminGlobalValidation,
-          multipleDays:
-            getStartOfDay(m.startTime) !==
-            getStartOfDay(m.endTime ? m.endTime - 1 : now1)
-        }))
-      )
+  React.useEffect(() => {
+    setEntriesToValidateByAdmin(
+      missionsToTableEntries(adminStore)
+        .filter(entry => entryToBeValidatedByAdmin(entry))
+        .filter(selectedCompanyFilter)
     );
+    setEntriesToValidateByWorker(
+      missionsToTableEntries(adminStore)
+        .filter(entryToBeValidatedByWorker)
+        .filter(selectedCompanyFilter)
+    );
+    setEntriesValidatedByAdmin(
+      missionsToTableEntries(adminStore)
+        .filter(tableEntry => tableEntry.adminValidation)
+        .filter(selectedCompanyFilter)
+    );
+  }, [adminStore.missions, companiesWithSelection]);
+
+  React.useEffect(() => {
+    setNbMissionsToValidateByAdmin(
+      size(groupBy(entriesToValidateByAdmin, "missionId"))
+    );
+  }, [entriesToValidateByAdmin]);
+
+  React.useEffect(() => {
+    setNbMissionsToValidateByWorker(
+      size(groupBy(entriesToValidateByWorker, "missionId"))
+    );
+  }, [entriesToValidateByWorker]);
+
+  React.useEffect(() => {
+    setNbMissionsValidatedByAdmin(
+      size(groupBy(entriesValidatedByAdmin, "missionId"))
+    );
+  }, [entriesValidatedByAdmin]);
 
   React.useEffect(() => {
     switch (tab) {
       case 0:
-        setTableEntries(
-          missionsToTableEntries(
-            selectedCompanyFilter(missionsToValidateByAdmin(adminStore))
-          )
-        );
+        setTableEntries(entriesToValidateByAdmin);
         setTableColumns(commonCols);
         break;
       case 1:
-        setTableEntries(
-          missionsToTableEntries(
-            selectedCompanyFilter(missionsToValidateByWorkers(adminStore))
-          )
-        );
+        setTableEntries(entriesToValidateByWorker);
         setTableColumns([...commonCols, validationEmployeeCol]);
         break;
       case 2:
-        setTableEntries(
-          missionsToTableEntries(
-            selectedCompanyFilter(missionsValidatedByAdmin(adminStore))
-          )
-        );
+        setTableEntries(entriesValidatedByAdmin);
         setTableColumns([...commonCols, validationAdminCol]);
         break;
       default:
         setTableColumns([]);
         setTableEntries([]);
     }
-  }, [tab, adminStore.missions, companiesWithSelection]);
+  }, [
+    tab,
+    entriesToValidateByAdmin,
+    entriesToValidateByWorker,
+    entriesValidatedByAdmin
+  ]);
 
   React.useEffect(() => {
     const queryString = new URLSearchParams(location.search);
@@ -261,22 +291,15 @@ function _ValidationPanel() {
       >
         <Tab
           className={classes.tab}
-          label={`A valider (${
-            selectedCompanyFilter(missionsToValidateByAdmin(adminStore))?.length
-          })`}
+          label={`A valider (${nbMissionsToValidateByAdmin})`}
         />
         <Tab
           className={classes.tab}
-          label={`En attente de validation par les salariés (${
-            selectedCompanyFilter(missionsToValidateByWorkers(adminStore))
-              ?.length
-          })`}
+          label={`En attente de validation par les salariés (${nbMissionsToValidateByWorker})`}
         />
         <Tab
           className={classes.tab}
-          label={`Missions validées (${
-            selectedCompanyFilter(missionsValidatedByAdmin(adminStore))?.length
-          })`}
+          label={`Missions validées (${nbMissionsValidatedByAdmin})`}
         />
       </Tabs>
       <Typography className={classes.explanation}>
@@ -338,18 +361,24 @@ function _ValidationPanel() {
                   onClick={async e => {
                     e.stopPropagation();
                     try {
-                      const apiResponse = await api.graphQlMutate(
-                        VALIDATE_MISSION_MUTATION,
-                        {
-                          missionId: entry.id
-                        }
-                      );
-                      const validation =
-                        apiResponse.data.activities.validateMission;
-                      adminStore.dispatch({
-                        type: ADMIN_ACTIONS.validateMission,
-                        payload: { validation }
-                      });
+                      for (const entryToValidate1 of entriesToValidateByAdmin.filter(
+                        entryToValidate =>
+                          entryToValidate.missionId === entry.id
+                      )) {
+                        const apiResponse = await api.graphQlMutate(
+                          VALIDATE_MISSION_MUTATION,
+                          {
+                            missionId: entry.id,
+                            userId: entryToValidate1.user.id
+                          }
+                        );
+                        const validation =
+                          apiResponse.data.activities.validateMission;
+                        adminStore.dispatch({
+                          type: ADMIN_ACTIONS.validateMission,
+                          payload: { validation }
+                        });
+                      }
                       alerts.success(
                         `La mission${
                           entry.name ? " " + entry.name : ""

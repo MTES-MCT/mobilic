@@ -1,29 +1,9 @@
 import { createSelector } from "reselect";
-import { DAY, now } from "common/utils/time";
 import { computeMissionStats } from "common/utils/mission";
-
-const DEFAULT_WORKER_VALIDATION_TIMEOUT = 10 * DAY;
+import values from "lodash/values";
 
 export const missionsSelector = state => state.missions;
 const usersSelector = state => state.users;
-
-const missionNotValidatedByAdmin = missionWithStat =>
-  !missionWithStat.adminGlobalValidation &&
-  !missionWithStat.validatedByAdminForAllMembers &&
-  missionWithStat.activities.length > 0;
-
-export const missionValidatedByAdmin = missionWithStat =>
-  (missionWithStat.adminGlobalValidation ||
-    missionWithStat.validatedByAdminForAllMembers) &&
-  missionWithStat.activities.length > 0;
-
-const missionsValidatedByAllWorkersOrOld = missionWithStat =>
-  missionWithStat.validatedByAllMembers ||
-  missionWithStat.startTime + DEFAULT_WORKER_VALIDATION_TIMEOUT < now();
-
-export const missionsNotValidatedByAllWorkers = missionWithStats =>
-  !missionWithStats.validatedByAllMembers &&
-  missionWithStats.startTime + DEFAULT_WORKER_VALIDATION_TIMEOUT >= now();
 
 export const missionWithStats = createSelector(
   missionsSelector,
@@ -32,28 +12,10 @@ export const missionWithStats = createSelector(
     missions?.map(mission => computeMissionStats(mission, users))
 );
 
-export const missionsToValidateByAdmin = createSelector(
-  missionWithStats,
-  missions => {
-    return missions?.filter(
-      m =>
-        ((m.isComplete && missionsValidatedByAllWorkersOrOld(m)) ||
-          m.missionNotUpdatedForTooLong) &&
-        missionNotValidatedByAdmin(m)
-    );
-  }
-);
+export const missionHasAtLeastOneWorkerValidationAndNotAdmin = missionWithStat =>
+  values(missionWithStat.userStats).some(
+    us => us.workerValidation && !us.adminValidation
+  );
 
-export const missionsValidatedByAdmin = createSelector(
-  missionWithStats,
-  missions => missions?.filter(missionValidatedByAdmin)
-);
-
-export const missionsToValidateByWorkers = createSelector(
-  missionWithStats,
-  missions =>
-    missions
-      ?.filter(m => m.isComplete)
-      .filter(missionNotValidatedByAdmin)
-      .filter(missionsNotValidatedByAllWorkers)
-);
+export const missionHasAtLeastOneAdminValidation = missionWithStat =>
+  values(missionWithStat.userStats).some(us => us.adminValidation);

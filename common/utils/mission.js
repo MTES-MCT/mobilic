@@ -1,17 +1,18 @@
 import forEach from "lodash/forEach";
 import mapValues from "lodash/mapValues";
 import values from "lodash/values";
-import { computeTeamChanges } from "./coworkers";
+import { computeTeamChanges, formatPersonName } from "./coworkers";
 import uniqBy from "lodash/uniqBy";
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
 import min from "lodash/min";
 import max from "lodash/max";
 import sum from "lodash/sum";
-import { HOUR, now } from "./time";
+import { DAY, HOUR, now } from "./time";
 import { getCurrentActivityDuration } from "./activities";
 
 export const DEFAULT_LAST_ACTIVITY_TOO_LONG = 10 * HOUR;
+export const DEFAULT_WORKER_VALIDATION_TIMEOUT = 10 * DAY;
 
 export function parseMissionPayloadFromBackend(missionPayload, userId) {
   return {
@@ -20,9 +21,7 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     companyId: missionPayload.companyId,
     company: missionPayload.company,
     vehicle: missionPayload.vehicle,
-    validation: missionPayload.validations
-      ? missionPayload.validations.find(v => v.submitterId === userId)
-      : null,
+    validation: getWorkerValidationForUser(missionPayload.validations, userId),
     adminValidation: missionPayload.validations
       ? missionPayload.validations.find(
           v => v.isAdmin && (!v.userId || v.userId === userId)
@@ -35,6 +34,13 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     submitter: missionPayload.submitter || null
   };
 }
+
+const getWorkerValidationForUser = (validations, userId) =>
+  validations?.find(
+    v =>
+      (!v.userId && v.submitterId === userId) ||
+      (v.userId === userId && (!v.isAdmin || v.submitterId === v.userId))
+  );
 
 export function linkMissionsWithRelations(missions, relationMap) {
   const augmentedMissions = mapValues(missions, m => ({
@@ -92,7 +98,7 @@ export function computeMissionStats(m, users) {
     activitiesWithUserId.map(a => a.user),
     u => u.id
   );
-  const validatorIds = m.validations.map(v => v.submitterId);
+  const validatorIds = m.validations.map(v => v.userId);
   const adminValidatedForMemberIds = m.validations
     .filter(v => v.isAdmin)
     .map(v => v.userId);
@@ -106,8 +112,18 @@ export function computeMissionStats(m, users) {
     activitiesWithUserId,
     a => a.userId || a.user.id
   );
+  const adminGlobalValidation = m.validations
+    ? m.validations.find(v => !v.userId)
+    : {};
+
   const isComplete = activitiesWithUserId.every(a => !!a.endTime);
+  const startTime = min(m.activities.map(a => a.startTime));
+  const endTime = isComplete ? max(m.activities.map(a => a.endTime)) : null;
+
+  const missionTooOld = startTime + DEFAULT_WORKER_VALIDATION_TIMEOUT < now();
+
   const userStats = mapValues(activitiesByUser, (activities, userId) => {
+    const user = members.find(m => m.id.toString() === userId);
     const _activities = orderBy(activities, ["startTime", "endTime"]);
     const isComplete = _activities.every(a => !!a.endTime);
     const startTime = min(_activities.map(a => a.startTime));
@@ -122,7 +138,7 @@ export function computeMissionStats(m, users) {
     );
     return {
       activities: _activities,
-      user: members.find(m => m.id.toString() === userId),
+      user: user,
       startTime,
       runningActivityStartTime,
       endTime,
@@ -132,17 +148,19 @@ export function computeMissionStats(m, users) {
       isComplete: _activities.every(a => !!a.endTime),
       breakDuration: endTimeOrNow - startTime - totalWorkDuration,
       expenditures: m.expenditures.filter(e => e.userId.toString() === userId),
-      validation: m.validations.find(v => v.submitterId.toString() === userId),
+      adminValidation:
+        m.validations.find(v => v.userId?.toString() === userId && v.isAdmin) ||
+        adminGlobalValidation,
+      workerValidation: getWorkerValidationForUser(m.validations, user?.id),
       lastActivitySubmitterId
     };
   });
-  const startTime = min(m.activities.map(a => a.startTime));
-  const endTime = isComplete ? max(m.activities.map(a => a.endTime)) : null;
   const missionNotUpdatedForTooLong = values(userStats).some(
     userStat =>
       userStat.runningActivityStartTime &&
       userStat.runningActivityStartTime < now() - DEFAULT_LAST_ACTIVITY_TOO_LONG
   );
+
   return {
     ...m,
     activities: activitiesWithUserId,
@@ -154,9 +172,8 @@ export function computeMissionStats(m, users) {
     validatedByAdminForAllMembers,
     userStats,
     missionNotUpdatedForTooLong,
-    adminGlobalValidation: m.validations
-      ? m.validations.find(v => v.isAdmin && !v.userId)
-      : {}
+    missionTooOld,
+    adminGlobalValidation
   };
 }
 
@@ -174,7 +191,7 @@ export function missionLastUpdatedByAdmin(mission, employments) {
       e.hasAdminRights &&
       mission.companyId === e.companyId &&
       values(mission.userStats).some(
-        us => us.lastActivitySubmitterId === e.user.id
+        us => us.lastActivitySubmitterId === e.user?.id
       )
   );
 }
@@ -184,4 +201,19 @@ export function missionLastLessThanAMinute(mission) {
     mission.activities?.length === 1 &&
     getCurrentActivityDuration(mission.activities[0]) < 60
   );
+}
+
+export function adminValidations(mission) {
+  return mission?.validations
+    ?.filter(validation => validation.isAdmin || !validation.userId)
+    .map(validation => {
+      if (!validation.userId) {
+        return validation;
+      } else {
+        const userStats = values(mission.userStats).find(
+          us => us.user.id === validation.userId
+        );
+        return { ...validation, workerName: formatPersonName(userStats.user) };
+      }
+    });
 }

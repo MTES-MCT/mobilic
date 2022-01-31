@@ -14,11 +14,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function MissionValidationInfo({
-  validation,
-  className,
-  isAdmin = false
-}) {
+export function MissionValidationInfo({ validation, className }) {
   const classes = useStyles();
 
   return (
@@ -29,14 +25,8 @@ export function MissionValidationInfo({
     >
       <span style={{ fontStyle: "normal" }}>{validation ? "✅" : "⚠️"}</span>
       {validation
-        ? `${
-            isAdmin ? "validé par un gestionnaire" : "a validé"
-          } le ${formatDay(validation.receptionTime, true)}`
-        : `${
-            isAdmin
-              ? "en attente de validation gestionnaire"
-              : "n'a pas encore validé la mission"
-          }`}
+        ? `a validé le ${formatDay(validation.receptionTime, true)}`
+        : `n'a pas encore validé la mission`}
     </Typography>
   );
 }
