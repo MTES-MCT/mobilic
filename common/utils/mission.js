@@ -11,7 +11,7 @@ import sum from "lodash/sum";
 import { DAY, HOUR, now } from "./time";
 import { getCurrentActivityDuration } from "./activities";
 
-export const DEFAULT_LAST_ACTIVITY_TOO_LONG = 10 * HOUR;
+export const DEFAULT_LAST_ACTIVITY_TOO_LONG = 24 * HOUR;
 export const DEFAULT_WORKER_VALIDATION_TIMEOUT = 10 * DAY;
 
 export function parseMissionPayloadFromBackend(missionPayload, userId) {

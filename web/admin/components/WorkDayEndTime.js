@@ -3,6 +3,7 @@ import React from "react";
 import { formatTimeOfDay, now } from "common/utils/time";
 import { DEFAULT_LAST_ACTIVITY_TOO_LONG } from "common/utils/mission";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles(theme => ({
   warningText: {
@@ -35,7 +36,12 @@ export function WorkDayEndTime({ endTime, dayAggregate, openMission }) {
         openMission(lastMissionId());
       }}
     >
-      <span className={classes.errorText}>En cours ⚠</span>
+      <Tooltip
+        title={`Activité en cours depuis plus de ${DEFAULT_LAST_ACTIVITY_TOO_LONG /
+          3600} heures`}
+      >
+        <span className={classes.errorText}>En cours ⚠</span>
+      </Tooltip>
     </Link>
   );
 }

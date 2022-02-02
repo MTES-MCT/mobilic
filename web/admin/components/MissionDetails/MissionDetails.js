@@ -26,7 +26,7 @@ import CircularProgress from "@material-ui/core/CircularProgress/CircularProgres
 import Grid from "@material-ui/core/Grid";
 import {
   missionHasAtLeastOneAdminValidation,
-  missionHasAtLeastOneWorkerValidationAndNotAdmin,
+  missionHasAtLeastOneWorkerValidation,
   missionsSelector
 } from "../../selectors/missionSelectors";
 import { MissionVehicleInfo } from "../MissionVehicleInfo";
@@ -172,7 +172,7 @@ export function MissionDetails({
 
   const globalFieldsEditable =
     !missionHasAtLeastOneAdminValidation(mission) &&
-    (missionHasAtLeastOneWorkerValidationAndNotAdmin(mission) ||
+    (missionHasAtLeastOneWorkerValidation(mission) ||
       adminMayOverrideValidation);
 
   const missionCompany = adminStore.companies.find(
