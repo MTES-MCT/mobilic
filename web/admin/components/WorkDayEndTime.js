@@ -3,7 +3,7 @@ import React from "react";
 import { formatTimeOfDay, now } from "common/utils/time";
 import { DEFAULT_LAST_ACTIVITY_TOO_LONG } from "common/utils/mission";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import { Tooltip } from "@material-ui/core";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles(theme => ({
   warningText: {
