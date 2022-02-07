@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2020, Ministère de la Transition écoloqique
+Copyright (c) 2020, Ministère de la Transition écologique
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
