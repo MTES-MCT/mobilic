@@ -79,6 +79,9 @@ export function Employees({ company, containerRef }) {
   const pendingEmploymentsTableRef = React.useRef();
   const validEmploymentsTableRef = React.useRef();
 
+  const updateValidListScrollPosition = () =>
+    setTimeout(validEmploymentsTableRef?.current?.updateScrollPosition, 0);
+
   async function cancelEmployment(employment) {
     try {
       await api.graphQlMutate(CANCEL_EMPLOYMENT_MUTATION, {
@@ -365,6 +368,7 @@ export function Employees({ company, containerRef }) {
       columns={pendingEmploymentColumns}
       entries={pendingEmployments}
       ref={pendingEmploymentsTableRef}
+      onScroll={updateValidListScrollPosition}
       dense
       className={`${
         canDisplayPendingEmployments && !hidePendingEmployments

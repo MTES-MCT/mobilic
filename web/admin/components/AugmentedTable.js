@@ -156,6 +156,7 @@ export const AugmentedTable = React.forwardRef(
       editActionsColumnMinWidth = 70,
       forceParentUpdateOnRowAdd = null,
       groupKeysToShow = null,
+      onScroll,
       interGroupRowHeight = DEFAULT_INTER_GROUP_ROW_HEIGHT
     },
     ref
@@ -565,7 +566,8 @@ export const AugmentedTable = React.forwardRef(
       loading,
       rowClassName: rowClassNameFunc,
       classes,
-      onRowClick: onRowClickFunc
+      onRowClick: onRowClickFunc,
+      onScroll: onScroll
     };
 
     return (
@@ -747,6 +749,7 @@ const _VirtualizedTable = React.forwardRef(
       headerHeight,
       rowHeightFunc,
       onScroll = () => {},
+      onScrollAction = () => {},
       scrollTop = null,
       autoHeight = false,
       rowId
@@ -814,7 +817,10 @@ const _VirtualizedTable = React.forwardRef(
               } ${rowClassName && rowClassName(entries[index])}`
             : `${classes.header} ${headerClassName ? headerClassName : ""}`
         }
-        onScroll={onScroll}
+        onScroll={args => {
+          onScroll(args);
+          onScrollAction(args);
+        }}
         scrollTop={scrollTop}
         onRowClick={({ rowData }) => onRowClick(rowData)()}
       >
@@ -879,6 +885,7 @@ const VirtualizedTable = React.forwardRef(
       headerClassName,
       loading,
       classes,
+      onScroll = () => {},
       rowId
     },
     ref
@@ -916,6 +923,9 @@ const VirtualizedTable = React.forwardRef(
                   renderHeaderCell={renderHeaderCell}
                   editedValues={editedValues}
                   onScroll={onChildScroll}
+                  onScrollAction={() => {
+                    onScroll();
+                  }}
                   scrollTop={scrollTop}
                   autoHeight={true}
                   onRowClick={onRowClick}
