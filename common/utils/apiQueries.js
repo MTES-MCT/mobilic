@@ -20,6 +20,7 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
         receptionTime
         lastUpdateTime
         dismissedAt
+        lastModificationBy
         submitter {
           id
           firstName
@@ -332,6 +333,7 @@ export const USER_READ_QUERY = gql`
               startTime
               endTime
               userId
+              lastModificationBy
               user {
                 id
                 firstName
@@ -529,6 +531,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 startTime
                 endTime
                 lastUpdateTime
+                lastModificationBy
                 user {
                   id
                   firstName
@@ -891,6 +894,7 @@ export const EDIT_ACTIVITY_MUTATION = gql`
         userId
         startTime
         endTime
+        lastModificationBy
       }
     }
   }
