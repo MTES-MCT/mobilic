@@ -1,7 +1,6 @@
 import maxBy from "lodash/maxBy";
 import flatMap from "lodash/flatMap";
 import { ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY } from "./apiQueries";
-import { NonConcurrentExecutionQueue } from "./concurrency";
 import { ADMIN_ACTIONS } from "../../web/admin/store/reducers/root";
 import { useStoreSyncedWithLocalStorage } from "../store/store";
 import { useAdminStore } from "../../web/admin/store/store";
@@ -147,60 +146,53 @@ export function getVersionsOfResourcesAt(resources, time) {
     .filter(({ resource }) => Boolean(resource));
 }
 
-const missionResourcesWithHistoryFetchQueue = new NonConcurrentExecutionQueue();
-
 export async function getResourcesAndHistoryForMission(
   mission,
   api,
   cacheInStore
 ) {
   if (!mission.resourcesWithHistory) {
-    await missionResourcesWithHistoryFetchQueue.execute(
-      async () => {
-        const apiResponse = (
-          await api.graphQlMutate(ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY, {
-            missionId: mission.id
-          })
-        ).data.mission;
+    const apiResponse = (
+      await api.graphQlMutate(ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY, {
+        missionId: mission.id
+      })
+    ).data.mission;
 
-        let resources = [];
-        resources.push(
-          ...apiResponse.activities.map(a => ({
-            resource: a,
-            type: MISSION_RESOURCE_TYPES.activity
-          }))
-        );
-        resources.push(
-          ...apiResponse.expenditures.map(e => ({
-            resource: e,
-            type: MISSION_RESOURCE_TYPES.expenditure
-          }))
-        );
-        resources.push(
-          ...apiResponse.validations.map(v => ({
-            resource: v,
-            type: MISSION_RESOURCE_TYPES.validation
-          }))
-        );
-        resources.push({
-          resource: apiResponse.startLocation,
-          type: MISSION_RESOURCE_TYPES.startLocation
-        });
-        resources.push({
-          resource: apiResponse.endLocation,
-          type: MISSION_RESOURCE_TYPES.endLocation
-        });
-
-        resources = resources.filter(({ resource }) => Boolean(resource));
-        const history = buildEventsHistory(resources);
-
-        const resourcesWithHistory = { resources, history };
-
-        cacheInStore(mission, resourcesWithHistory);
-        mission.resourcesWithHistory = resourcesWithHistory;
-      },
-      { cacheKey: mission.id, queueName: mission.id }
+    let resources = [];
+    resources.push(
+      ...apiResponse.activities.map(a => ({
+        resource: a,
+        type: MISSION_RESOURCE_TYPES.activity
+      }))
     );
+    resources.push(
+      ...apiResponse.expenditures.map(e => ({
+        resource: e,
+        type: MISSION_RESOURCE_TYPES.expenditure
+      }))
+    );
+    resources.push(
+      ...apiResponse.validations.map(v => ({
+        resource: v,
+        type: MISSION_RESOURCE_TYPES.validation
+      }))
+    );
+    resources.push({
+      resource: apiResponse.startLocation,
+      type: MISSION_RESOURCE_TYPES.startLocation
+    });
+    resources.push({
+      resource: apiResponse.endLocation,
+      type: MISSION_RESOURCE_TYPES.endLocation
+    });
+
+    resources = resources.filter(({ resource }) => Boolean(resource));
+    const history = buildEventsHistory(resources);
+
+    const resourcesWithHistory = { resources, history };
+
+    cacheInStore(mission, resourcesWithHistory);
+    mission.resourcesWithHistory = resourcesWithHistory;
   }
   return mission.resourcesWithHistory;
 }

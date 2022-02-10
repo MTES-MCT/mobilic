@@ -15,12 +15,8 @@ import { LoadingButton } from "common/components/LoadingButton";
 import { useModals } from "common/utils/modals";
 import List from "@material-ui/core/List";
 import { Event } from "../../../common/Event";
-import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
-import {
-  MISSION_QUERY,
-  VALIDATE_MISSION_MUTATION
-} from "common/utils/apiQueries";
+import { MISSION_QUERY } from "common/utils/apiQueries";
 import { editUserExpenditures } from "common/utils/expenditures";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 import Grid from "@material-ui/core/Grid";
@@ -65,7 +61,6 @@ export function MissionDetails({
   const adminStore = useAdminStore();
   const api = useApi();
   const modals = useModals();
-  const alerts = useSnackbarAlerts();
 
   const [mission_, setMission] = React.useState(null);
 
@@ -136,7 +131,6 @@ export function MissionDetails({
   }, [workerEntries, adminMayOverrideValidation]);
 
   React.useEffect(() => {
-    console.log("adminStore", adminStore);
     if (mission) {
       setAdminMayOverrideValidation(
         mission.missionTooOld ||
@@ -167,7 +161,6 @@ export function MissionDetails({
   }, [mission, usersToAdd]);
 
   React.useEffect(() => {
-    console.log("adminMayOverrideValidation", adminMayOverrideValidation);
     setGlobalFieldsEditable(
       !missionHasAtLeastOneAdminValidation(mission) &&
         (entriesToValidate?.length > 0 || adminMayOverrideValidation)
@@ -557,38 +550,9 @@ export function MissionDetails({
               className={classes.validationButton}
               onClick={async e => {
                 e.stopPropagation();
-                await Promise.all(
-                  entriesToValidate.map(async workerEntryToValidate => {
-                    const apiResponse = await api.graphQlMutate(
-                      VALIDATE_MISSION_MUTATION,
-                      {
-                        missionId: mission.id,
-                        userId: workerEntryToValidate.user.id
-                      }
-                    );
-                    const validation =
-                      apiResponse.data.activities.validateMission;
-                    adminStore.dispatch({
-                      type: ADMIN_ACTIONS.validateMission,
-                      payload: { validation }
-                    });
-                    setMission({
-                      ...mission_,
-                      validations: [...mission_.validations, validation]
-                    });
-                  })
-                )
-                  .then(() => {
-                    handleClose();
-                    alerts.success(
-                      `La mission ${mission.name} a été validée avec succès !`,
-                      mission.id,
-                      6000
-                    );
-                  })
-                  .catch(err => {
-                    alerts.error(formatApiError(err), mission.id, 6000);
-                  });
+                entriesToValidate.map(workerEntryToValidate => {
+                  missionActions.validateMission(workerEntryToValidate.user.id);
+                });
               }}
             >
               Valider les saisies
