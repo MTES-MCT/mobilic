@@ -11,7 +11,8 @@ import {
   LOG_EXPENDITURE_MUTATION,
   LOG_LOCATION_MUTATION,
   REGISTER_KILOMETER_AT_LOCATION,
-  UPDATE_MISSION_VEHICLE_MUTATION
+  UPDATE_MISSION_VEHICLE_MUTATION,
+  VALIDATE_MISSION_MUTATION
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useApi } from "common/utils/api";
@@ -129,6 +130,15 @@ async function createComment(api, mission, text) {
   mission.comments.push(comment);
 }
 
+async function validateMission(api, mission, userToValidate) {
+  const apiResponse = await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
+    missionId: mission.id,
+    userId: userToValidate
+  });
+  const validation = apiResponse.data.activities.validateMission;
+  mission.validations.push(validation);
+}
+
 async function deleteComment(api, mission, comment) {
   await api.graphQlMutate(CANCEL_COMMENT_MUTATION, {
     commentId: comment.id
@@ -230,6 +240,7 @@ export function useMissionActions(
     editSingleActivity: missionActionsDecorator(editSingleActivity),
     createExpenditure: missionActionsDecorator(createExpenditure),
     cancelExpenditure: missionActionsDecorator(cancelExpenditure),
+    validateMission: missionActionsDecorator(validateMission),
     createComment: missionActionsDecorator(createComment, false),
     deleteComment: missionActionsDecorator(deleteComment, false),
     changeName: missionActionsDecorator(changeName),

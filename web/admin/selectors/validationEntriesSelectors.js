@@ -26,9 +26,15 @@ export const missionToValidationEntries = mission =>
       getStartOfDay(mission.endTime ? mission.endTime - 1 : now())
   }));
 
-export const entryToBeValidatedByAdmin = (tableEntry, adminCanBypass = false) =>
+export const entryToBeValidatedByAdmin = (
+  tableEntry,
+  currentUserId,
+  adminCanBypass = false
+) =>
   !tableEntry.adminValidation &&
-  (entryValidatedByWorkerOrOutdated(tableEntry) || adminCanBypass);
+  (entryValidatedByWorkerOrOutdated(tableEntry) ||
+    tableEntry.lastActivitySubmitterId === currentUserId ||
+    adminCanBypass);
 
 export const entryToBeValidatedByWorker = tableEntry =>
   !tableEntry.adminValidation && !tableEntry.workerValidation;

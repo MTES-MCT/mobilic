@@ -48,5 +48,16 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   },
   missionTooLongWarning: {
     marginBottom: theme.spacing(3)
+  },
+  userToValidateEntry: {
+    alignItems: "baseline"
+  },
+  userToValidateIcon: {
+    color: "rgb(85, 21, 15)",
+    minWidth: theme.spacing(5)
+  },
+  entriesToValidate: {
+    textAlign: "left",
+    marginTop: theme.spacing(2)
   }
 }));

@@ -12,8 +12,5 @@ export const missionWithStats = createSelector(
     missions?.map(mission => computeMissionStats(mission, users))
 );
 
-export const missionHasAtLeastOneWorkerValidation = missionWithStat =>
-  values(missionWithStat.userStats).some(us => us.workerValidation);
-
 export const missionHasAtLeastOneAdminValidation = missionWithStat =>
-  values(missionWithStat.userStats).some(us => us.adminValidation);
+  values(missionWithStat?.userStats).some(us => us.adminValidation);
