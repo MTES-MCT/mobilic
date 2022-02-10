@@ -34,7 +34,8 @@ export const entryToBeValidatedByAdmin = (
   !tableEntry.adminValidation &&
   (entryValidatedByWorkerOrOutdated(tableEntry) ||
     tableEntry.lastActivitySubmitterId === currentUserId ||
-    adminCanBypass);
+    adminCanBypass ||
+    tableEntry.activities?.length === 0);
 
 export const entryToBeValidatedByWorker = tableEntry =>
   !tableEntry.adminValidation && !tableEntry.workerValidation;

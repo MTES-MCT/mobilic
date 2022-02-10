@@ -205,7 +205,7 @@ function _ValidationPanel() {
   React.useEffect(() => {
     setEntriesToValidateByAdmin(
       missionsToTableEntries(adminStore)
-        .filter(entry => entryToBeValidatedByAdmin(entry))
+        .filter(entry => entryToBeValidatedByAdmin(entry, adminStore.userId))
         .filter(selectedCompanyFilter)
     );
     setEntriesToValidateByWorker(

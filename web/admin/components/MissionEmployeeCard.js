@@ -49,7 +49,8 @@ export function MissionEmployeeCard({
   showExpenditures,
   onEditExpenditures,
   removeUser,
-  defaultOpen = false
+  defaultOpen = false,
+  displayIcon = true
 }) {
   const stats = mission.userStats[user.id.toString()] || {};
   const activities = stats.activities || [];
@@ -137,7 +138,9 @@ export function MissionEmployeeCard({
                     </Grid>
                   </Hidden>
                 ),
-                stats.workerValidation ? "✅" : "⚠️"
+                displayIcon && !stats.workerValidation && !stats.adminValidation
+                  ? "⏳"
+                  : ""
               ]}
           </Grid>
           {activities.length === 0 && (
@@ -160,6 +163,9 @@ export function MissionEmployeeCard({
         <Grid container spacing={2} direction="column" wrap="nowrap">
           <Grid item>
             <MissionValidationInfo validation={stats.workerValidation} />
+          </Grid>
+          <Grid item>
+            <MissionValidationInfo validation={stats.adminValidation} isAdmin />
           </Grid>
           <Grid item container spacing={2} alignItems="stretch">
             <Grid xs={12} sm={6} item className={classes.cardRecapKPIContainer}>

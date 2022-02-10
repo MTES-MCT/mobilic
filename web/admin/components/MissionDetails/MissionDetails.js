@@ -35,7 +35,6 @@ import { MissionDetailsSection } from "../MissionDetailsSection";
 import { MissionTitle } from "../MissionTitle";
 import { useMissionDetailsStyles } from "./MissionDetailsStyle";
 import {
-  adminValidations,
   DEFAULT_LAST_ACTIVITY_TOO_LONG,
   missionCreatedByAdmin
 } from "common/utils/mission";
@@ -46,9 +45,8 @@ import {
   entryToBeValidatedByAdmin,
   missionToValidationEntries
 } from "../../selectors/validationEntriesSelectors";
-import { AdminValidationInfo } from "../AdminValidationInfo";
-import { ListItemIcon, ListItemText } from "@material-ui/core";
-import { formatPersonName } from "common/utils/coworkers";
+import { partition } from "lodash/collection";
+import Button from "@material-ui/core/Button";
 
 export function MissionDetails({
   missionId,
@@ -83,7 +81,17 @@ export function MissionDetails({
 
   const [usersToAdd, setUsersToAdd] = React.useState([]);
 
-  const [entriesToValidate, setEntriesToValidate] = React.useState([]);
+  const [
+    entriesToValidateByAdmin,
+    setEntriesToValidateByAdmin
+  ] = React.useState([]);
+  const [
+    entriesToValidateByWorker,
+    setEntriesToValidateByWorker
+  ] = React.useState([]);
+  const [entriesValidatedByAdmin, setEntriesValidatedByAdmin] = React.useState(
+    []
+  );
   const [userIdsWithEntries, setUserIdsWithEntries] = React.useState(false);
 
   async function loadMission() {
@@ -119,15 +127,20 @@ export function MissionDetails({
   }, [missionId]);
 
   React.useEffect(() => {
-    setEntriesToValidate(
-      workerEntries.filter(workerEntry =>
-        entryToBeValidatedByAdmin(
-          workerEntry,
-          adminStore.userId,
-          adminMayOverrideValidation
-        )
+    const partitionedList = partition(workerEntries, workerEntry =>
+      entryToBeValidatedByAdmin(
+        workerEntry,
+        adminStore.userId,
+        adminMayOverrideValidation
       )
     );
+    setEntriesToValidateByAdmin(partitionedList[0]);
+    const partitionedNoRequiredActionList = partition(
+      partitionedList[1],
+      workerEntry => workerEntry.adminValidation
+    );
+    setEntriesValidatedByAdmin(partitionedNoRequiredActionList[0]);
+    setEntriesToValidateByWorker(partitionedNoRequiredActionList[1]);
   }, [workerEntries, adminMayOverrideValidation]);
 
   React.useEffect(() => {
@@ -163,9 +176,9 @@ export function MissionDetails({
   React.useEffect(() => {
     setGlobalFieldsEditable(
       !missionHasAtLeastOneAdminValidation(mission) &&
-        (entriesToValidate?.length > 0 || adminMayOverrideValidation)
+        (entriesToValidateByAdmin?.length > 0 || adminMayOverrideValidation)
     );
-  }, [entriesToValidate, adminMayOverrideValidation]);
+  }, [entriesToValidateByAdmin, adminMayOverrideValidation]);
 
   if (loading) return <CircularProgress color="primary" />;
   if (missionLoadError)
@@ -340,142 +353,34 @@ export function MissionDetails({
           />
         </Grid>
       </Grid>
-      {showKilometerReading &&
-        mission.startLocation &&
-        mission.startLocation.kilometerReading &&
-        mission.endLocation &&
-        mission.endLocation.kilometerReading &&
-        mission.endLocation.kilometerReading >=
-          mission.startLocation.kilometerReading && (
-          <Typography variant="h5" className={classes.kilometers}>
-            Distance parcourue :{" "}
-            <span style={{ fontSize: "1rem", fontWeight: "normal" }}>
-              {mission.endLocation.kilometerReading -
-                mission.startLocation.kilometerReading}{" "}
-              km
-            </span>
-          </Typography>
-        )}
-      <MissionDetailsSection
-        key={3}
-        title="Détail par employé"
-        actionButtonLabel="Ajouter un employé"
-        action={
-          globalFieldsEditable
-            ? () => {
-                modals.open("selectEmployee", {
-                  users: adminStore.users.filter(
-                    u =>
-                      u.companyId === mission.companyId &&
-                      !userIdsWithEntries.includes(u.id) &&
-                      !usersToAdd.map(u2 => u2.id).includes(u.id)
-                  ),
-                  handleSelect: user =>
-                    setUsersToAdd(users => [
-                      ...users.filter(u => u.id !== user.id),
-                      user
-                    ])
+      <Box
+        pb={4}
+        style={{ alignItems: "center" }}
+        className={classes.observationSection}
+      >
+        <Grid container spacing={2} justify="space-between" alignItems="center">
+          <Grid item>
+            <Typography variant="h5" className={classes.vehicle}>
+              Observations
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Button
+              aria-label="Ajouter une observation"
+              color="primary"
+              variant="outlined"
+              size="small"
+              className={classes.smallTextButton}
+              onClick={() => {
+                modals.open("commentInput", {
+                  handleContinue: missionActions.createComment
                 });
-              }
-            : null
-        }
-      >
-        <List>
-          {workerEntries.map(e => (
-            <ListItem key={e.user.id} disableGutters>
-              <MissionEmployeeCard
-                className={classes.employeeCard}
-                mission={mission}
-                user={e.user}
-                showExpenditures={showExpenditures}
-                onCreateActivity={
-                  entryToBeValidatedByAdmin(
-                    e,
-                    adminStore.userId,
-                    adminMayOverrideValidation
-                  ) || !e.activities
-                    ? () =>
-                        modals.open("activityRevision", {
-                          otherActivities: mission.activities,
-                          createActivity: async args =>
-                            await missionActions.createSingleActivity({
-                              ...args,
-                              user: e.user
-                            }),
-                          handleRevisionAction:
-                            missionActions.editSingleActivity,
-                          nullableEndTime: false,
-                          defaultTime: mission.startTime,
-                          forcedUser: e.user,
-                          displayWarningMessage: false
-                        })
-                    : null
-                }
-                onEditActivity={
-                  entryToBeValidatedByAdmin(
-                    e,
-                    adminStore.userId,
-                    adminMayOverrideValidation
-                  ) || !e.activities
-                    ? async entry =>
-                        modals.open("activityRevision", {
-                          event: entry,
-                          otherActivities:
-                            entry.type === ACTIVITIES.break.name
-                              ? mission.activities
-                              : mission.activities.filter(
-                                  a => a.startTime !== entry.startTime
-                                ),
-                          handleRevisionAction:
-                            missionActions.editSingleActivity,
-                          createActivity: async args =>
-                            await missionActions.createSingleActivity({
-                              ...args,
-                              user: e.user
-                            }),
-                          nullableEndTime: false,
-                          forcedUser: e.user,
-                          displayWarningMessage: false
-                        })
-                    : null
-                }
-                onEditExpenditures={
-                  entryToBeValidatedByAdmin(
-                    e,
-                    adminStore.userId,
-                    adminMayOverrideValidation
-                  ) || !e.activities
-                    ? (newExps, oldExps) =>
-                        editUserExpenditures(
-                          newExps,
-                          oldExps,
-                          mission.id,
-                          missionActions.createExpenditure,
-                          missionActions.cancelExpenditure,
-                          e.user.id
-                        )
-                    : null
-                }
-                removeUser={() =>
-                  setUsersToAdd(users => users.filter(u => u.id !== e.user.id))
-                }
-                defaultOpen={workerEntries.length === 1}
-                day={day}
-              />
-            </ListItem>
-          ))}
-        </List>
-      </MissionDetailsSection>
-      <MissionDetailsSection
-        key={4}
-        title="Observations"
-        actionButtonLabel="Ajouter une observation"
-        action={() => {
-          modals.open("commentInput", {
-            handleContinue: missionActions.createComment
-          });
-        }}
-      >
+              }}
+            >
+              Ajouter une observation
+            </Button>
+          </Grid>
+        </Grid>
         {mission.comments.length > 0 ? (
           <List className={classes.comments}>
             {mission.comments.map(comment => (
@@ -495,81 +400,207 @@ export function MissionDetails({
             Aucune observation sur cette mission
           </Typography>
         )}
-      </MissionDetailsSection>
-      {entriesToValidate?.length > 0 && (
+      </Box>
+      {showKilometerReading &&
+        mission.startLocation &&
+        mission.startLocation.kilometerReading &&
+        mission.endLocation &&
+        mission.endLocation.kilometerReading &&
+        mission.endLocation.kilometerReading >=
+          mission.startLocation.kilometerReading && (
+          <Typography variant="h5" className={classes.kilometers}>
+            Distance parcourue :{" "}
+            <span style={{ fontSize: "1rem", fontWeight: "normal" }}>
+              {mission.endLocation.kilometerReading -
+                mission.startLocation.kilometerReading}{" "}
+              km
+            </span>
+          </Typography>
+        )}
+      {(entriesToValidateByAdmin?.length > 0 ||
+        workerEntries?.length === 0) && (
         <MissionDetailsSection
-          key={5}
-          title="Validation gestionnaire"
+          key={3}
+          title="Saisies à valider"
+          actionButtonLabel="Ajouter un employé"
           className={classes.validationSection}
+          action={
+            globalFieldsEditable
+              ? () => {
+                  modals.open("selectEmployee", {
+                    users: adminStore.users.filter(
+                      u =>
+                        u.companyId === mission.companyId &&
+                        !userIdsWithEntries.includes(u.id) &&
+                        !usersToAdd.map(u2 => u2.id).includes(u.id)
+                    ),
+                    handleSelect: user =>
+                      setUsersToAdd(users => [
+                        ...users.filter(u => u.id !== user.id),
+                        user
+                      ])
+                  });
+                }
+              : null
+          }
         >
-          <Box>
-            <Alert severity="info">
-              <Typography className={classes.validationWarningText}>
-                Il ne vous sera plus possible de modifier les données après
-                validation.
-              </Typography>
-            </Alert>
-            <Typography className={classes.entriesToValidate}>
-              Les saisies suivantes sont à valider :
-              <List disablePadding>
-                {globalFieldsEditable && (
-                  <ListItem
-                    dense
-                    className={classes.userToValidateEntry}
-                    key={entriesToValidate.user?.id}
-                  >
-                    <ListItemIcon className={classes.userToValidateIcon}>
-                      👉
-                    </ListItemIcon>
-                    <ListItemText primary="Données globales de la mission (Lieux, véhicule...)" />
-                  </ListItem>
-                )}
-                {entriesToValidate?.map(entryToValidate => (
-                  <ListItem
-                    dense
-                    className={classes.userToValidateEntry}
-                    key={entriesToValidate.user?.id}
-                  >
-                    <ListItemIcon className={classes.userToValidateIcon}>
-                      👉
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={`Temps de travail de ${formatPersonName(
-                        entryToValidate.user
-                      )}`}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </Typography>
-            <LoadingButton
-              aria-label="Valider"
-              variant="contained"
-              color="primary"
-              size="small"
-              className={classes.validationButton}
-              onClick={async e => {
-                e.stopPropagation();
-                entriesToValidate.map(workerEntryToValidate => {
-                  missionActions.validateMission(workerEntryToValidate.user.id);
-                });
-              }}
-            >
-              Valider les saisies
-            </LoadingButton>
-          </Box>
+          <List>
+            {entriesToValidateByAdmin.map(e => (
+              <ListItem key={e.user.id} disableGutters>
+                <MissionEmployeeCard
+                  className={classes.employeeCard}
+                  mission={mission}
+                  user={e.user}
+                  showExpenditures={showExpenditures}
+                  onCreateActivity={
+                    entryToBeValidatedByAdmin(
+                      e,
+                      adminStore.userId,
+                      adminMayOverrideValidation
+                    ) || !e.activities
+                      ? () =>
+                          modals.open("activityRevision", {
+                            otherActivities: mission.activities,
+                            createActivity: async args =>
+                              await missionActions.createSingleActivity({
+                                ...args,
+                                user: e.user
+                              }),
+                            handleRevisionAction:
+                              missionActions.editSingleActivity,
+                            nullableEndTime: false,
+                            defaultTime: mission.startTime,
+                            forcedUser: e.user,
+                            displayWarningMessage: false
+                          })
+                      : null
+                  }
+                  onEditActivity={
+                    entryToBeValidatedByAdmin(
+                      e,
+                      adminStore.userId,
+                      adminMayOverrideValidation
+                    ) || !e.activities
+                      ? async entry =>
+                          modals.open("activityRevision", {
+                            event: entry,
+                            otherActivities:
+                              entry.type === ACTIVITIES.break.name
+                                ? mission.activities
+                                : mission.activities.filter(
+                                    a => a.startTime !== entry.startTime
+                                  ),
+                            handleRevisionAction:
+                              missionActions.editSingleActivity,
+                            createActivity: async args =>
+                              await missionActions.createSingleActivity({
+                                ...args,
+                                user: e.user
+                              }),
+                            nullableEndTime: false,
+                            forcedUser: e.user,
+                            displayWarningMessage: false
+                          })
+                      : null
+                  }
+                  onEditExpenditures={
+                    entryToBeValidatedByAdmin(
+                      e,
+                      adminStore.userId,
+                      adminMayOverrideValidation
+                    ) || !e.activities
+                      ? (newExps, oldExps) =>
+                          editUserExpenditures(
+                            newExps,
+                            oldExps,
+                            mission.id,
+                            missionActions.createExpenditure,
+                            missionActions.cancelExpenditure,
+                            e.user.id
+                          )
+                      : null
+                  }
+                  removeUser={() =>
+                    setUsersToAdd(users =>
+                      users.filter(u => u.id !== e.user.id)
+                    )
+                  }
+                  defaultOpen={workerEntries.length === 1}
+                  day={day}
+                  displayIcon={false}
+                />
+              </ListItem>
+            ))}
+          </List>
+          {entriesToValidateByAdmin?.length > 0 && (
+            <Box>
+              <Alert severity="info">
+                <Typography className={classes.validationWarningText}>
+                  Il ne vous sera plus possible de modifier les données après
+                  validation, y compris les données globales de la mission
+                  (Lieux, Véhicules).
+                </Typography>
+              </Alert>
+              <LoadingButton
+                aria-label="Valider"
+                variant="contained"
+                color="primary"
+                size="small"
+                className={classes.validationButton}
+                onClick={async e => {
+                  e.stopPropagation();
+                  entriesToValidateByAdmin.map(workerEntryToValidate => {
+                    missionActions.validateMission(
+                      workerEntryToValidate.user.id
+                    );
+                  });
+                }}
+              >
+                Valider les saisies
+              </LoadingButton>
+            </Box>
+          )}
         </MissionDetailsSection>
       )}
-      {adminValidations(mission)?.length > 0 && (
-        <MissionDetailsSection
-          key={6}
-          title="Historique des Validations gestionnaire"
-          className={classes.validationSection}
-        >
-          <AdminValidationInfo
-            adminValidations={adminValidations(mission)}
-            className={classes.adminValidation}
-          />
+      {entriesToValidateByWorker?.length > 0 && (
+        <MissionDetailsSection key={6} title="Saisies en cours">
+          <Alert severity="info">
+            <Typography className={classes.validationWarningText}>
+              Vous aurez accès à la validation de ces saisies lorsque le salarié
+              les aura validées.
+            </Typography>
+          </Alert>
+          <List>
+            {entriesToValidateByWorker.map(e => (
+              <ListItem key={e.user.id} disableGutters>
+                <MissionEmployeeCard
+                  className={classes.employeeCard}
+                  mission={mission}
+                  user={e.user}
+                  showExpenditures={showExpenditures}
+                  day={day}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </MissionDetailsSection>
+      )}
+      {entriesValidatedByAdmin?.length > 0 && (
+        <MissionDetailsSection key={7} title="Saisies validées">
+          <List>
+            {entriesValidatedByAdmin.map(e => (
+              <ListItem key={e.user.id} disableGutters>
+                <MissionEmployeeCard
+                  className={classes.employeeCard}
+                  mission={mission}
+                  user={e.user}
+                  showExpenditures={showExpenditures}
+                  day={day}
+                  displayIcon={false}
+                />
+              </ListItem>
+            ))}
+          </List>
         </MissionDetailsSection>
       )}
     </Box>
