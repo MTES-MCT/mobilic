@@ -312,7 +312,7 @@ export function isAccessible(path, storeData) {
 
 export function getBadgeRoutes(adminStore) {
   const entries = missionsToTableEntries(adminStore).filter(entry =>
-    entryToBeValidatedByAdmin(entry)
+    entryToBeValidatedByAdmin(entry, adminStore?.userId)
   );
   return [
     {

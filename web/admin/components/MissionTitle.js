@@ -8,7 +8,7 @@ export function MissionTitle({ name, startTime, onEdit }) {
     <EditableMissionInfo
       value={name}
       format={() =>
-        name ||
+        `Mission ${name}` ||
         (startTime
           ? `Mission du ${prettyFormatDay(startTime, false)}`
           : "Détails de la mission")

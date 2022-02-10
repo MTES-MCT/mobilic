@@ -859,6 +859,7 @@ export const LOG_ACTIVITY_MUTATION = gql`
         missionId
         startTime
         endTime
+        lastModificationBy
       }
     }
   }
@@ -995,6 +996,7 @@ export const END_MISSION_MUTATION = gql`
           userId
           startTime
           endTime
+          lastModificationBy
         }
       }
     }

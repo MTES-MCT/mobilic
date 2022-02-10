@@ -1,7 +1,7 @@
 import forEach from "lodash/forEach";
 import mapValues from "lodash/mapValues";
 import values from "lodash/values";
-import { computeTeamChanges, formatPersonName } from "./coworkers";
+import { computeTeamChanges } from "./coworkers";
 import uniqBy from "lodash/uniqBy";
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
@@ -201,19 +201,4 @@ export function missionLastLessThanAMinute(mission) {
     mission.activities?.length === 1 &&
     getCurrentActivityDuration(mission.activities[0]) < 60
   );
-}
-
-export function adminValidations(mission) {
-  return mission?.validations
-    ?.filter(validation => validation.isAdmin || !validation.userId)
-    .map(validation => {
-      if (!validation.userId) {
-        return validation;
-      } else {
-        const userStats = values(mission.userStats).find(
-          us => us.user.id === validation.userId
-        );
-        return { ...validation, workerName: formatPersonName(userStats.user) };
-      }
-    });
 }

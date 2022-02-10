@@ -15,6 +15,11 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   comments: {
     paddingLeft: theme.spacing(3)
   },
+  observationSection: {
+    flexDirection: "row",
+    backgroundColor: theme.palette.background.default,
+    paddingTop: theme.spacing(2)
+  },
   kilometers: {
     paddingBottom: theme.spacing(4)
   },
@@ -49,15 +54,7 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   missionTooLongWarning: {
     marginBottom: theme.spacing(3)
   },
-  userToValidateEntry: {
-    alignItems: "baseline"
-  },
-  userToValidateIcon: {
-    color: "rgb(85, 21, 15)",
-    minWidth: theme.spacing(5)
-  },
-  entriesToValidate: {
-    textAlign: "left",
-    marginTop: theme.spacing(2)
+  smallTextButton: {
+    fontSize: "0.7rem"
   }
 }));
