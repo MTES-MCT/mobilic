@@ -55,37 +55,46 @@ export default function C1BExport({
   defaultMinDate = null,
   defaultMaxDate = null
 }) {
+  const MAX_RANGE_DAYS = 60;
+
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const { trackLink } = useMatomo();
+  const classes = useStyles();
+
   const [minDate, setMinDate] = React.useState(defaultMinDate);
   const [maxDate, setMaxDate] = React.useState(defaultMaxDate);
   const [sign, setSign] = React.useState(true);
   const [dateRangeError, setDateRangeError] = React.useState(null);
+  const [_companies, setCompanies] = React.useState([]);
+  const [_users, setUsers] = React.useState([]);
+
+  const invalidDateRange = (minDate, maxDate) =>
+    maxDate &&
+    minDate &&
+    maxDate.getTime() - minDate.getTime() > MAX_RANGE_DAYS * DAY * 1000;
 
   React.useEffect(() => {
-    if (
-      maxDate &&
-      minDate &&
-      maxDate.getTime() - minDate.getTime() > 60 * DAY * 1000
-    ) {
+    if (invalidDateRange(minDate, maxDate)) {
       setDateRangeError(
-        "La période sélectionnée doit être inférieure à 60 jours !"
+        `La période sélectionnée doit être inférieure à ${MAX_RANGE_DAYS} jours !`
       );
     } else setDateRangeError(null);
   }, [minDate, maxDate]);
 
-  const [_companies, setCompanies] = React.useState([]);
-  const [_users, setUsers] = React.useState([]);
-
   React.useEffect(() => {
     setCompanies(companies);
     setUsers(users);
-    setMinDate(defaultMinDate);
+
+    if (invalidDateRange(defaultMinDate, defaultMaxDate)) {
+      setMinDate(
+        new Date(defaultMaxDate.getTime() - MAX_RANGE_DAYS * DAY * 1000)
+      );
+    } else {
+      setMinDate(defaultMinDate);
+    }
     setMaxDate(defaultMaxDate);
   }, [open]);
-
-  const classes = useStyles();
 
   return (
     <Dialog onClose={handleClose} open={open} maxWidth="md">
