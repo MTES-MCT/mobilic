@@ -20,7 +20,7 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
         receptionTime
         lastUpdateTime
         dismissedAt
-        lastModificationBy
+        lastSubmitterId
         submitter {
           id
           firstName
@@ -160,7 +160,7 @@ export const FULL_MISSION_FRAGMENT = gql`
       endTime
       userId
       submitterId
-      lastModificationBy
+      lastSubmitterId
       user {
         id
         firstName
@@ -333,7 +333,7 @@ export const USER_READ_QUERY = gql`
               startTime
               endTime
               userId
-              lastModificationBy
+              lastSubmitterId
               user {
                 id
                 firstName
@@ -531,7 +531,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 startTime
                 endTime
                 lastUpdateTime
-                lastModificationBy
+                lastSubmitterId
                 user {
                   id
                   firstName
@@ -859,7 +859,7 @@ export const LOG_ACTIVITY_MUTATION = gql`
         missionId
         startTime
         endTime
-        lastModificationBy
+        lastSubmitterId
       }
     }
   }
@@ -895,7 +895,7 @@ export const EDIT_ACTIVITY_MUTATION = gql`
         userId
         startTime
         endTime
-        lastModificationBy
+        lastSubmitterId
       }
     }
   }
@@ -996,7 +996,7 @@ export const END_MISSION_MUTATION = gql`
           userId
           startTime
           endTime
-          lastModificationBy
+          lastSubmitterId
         }
       }
     }

@@ -86,7 +86,7 @@ async function editSingleActivity(
             ...a,
             startTime: newStartTime,
             endTime: newEndTime,
-            lastModificationBy: currentUserId()
+            lastSubmitterId: currentUserId()
           }
         : a
     );

@@ -129,7 +129,7 @@ export function computeMissionStats(m, users) {
     const startTime = min(_activities.map(a => a.startTime));
     const lastActivity = _activities[_activities.length - 1];
     const lastActivityStartTime = lastActivity.startTime;
-    const lastActivitySubmitterId = lastActivity.lastModificationBy;
+    const lastActivitySubmitterId = lastActivity.lastSubmitterId;
     const runningActivityStartTime = isComplete ? null : lastActivityStartTime;
     const endTime = isComplete ? max(_activities.map(a => a.endTime)) : null;
     const endTimeOrNow = endTime || now1;
@@ -183,16 +183,6 @@ export function missionCreatedByAdmin(mission, employments) {
       e.hasAdminRights &&
       e.user?.id === mission.submitterId &&
       mission.companyId === e.companyId
-  );
-}
-export function missionLastUpdatedByAdmin(mission, employments) {
-  return employments.some(
-    e =>
-      e.hasAdminRights &&
-      mission.companyId === e.companyId &&
-      values(mission.userStats).some(
-        us => us.lastActivitySubmitterId === e.user?.id
-      )
   );
 }
 
