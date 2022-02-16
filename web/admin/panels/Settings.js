@@ -58,6 +58,16 @@ export default function SettingAdmin({ company }) {
       <Divider />
       <ListItem>
         <SimpleToggleSetting
+          name="allowTransfers"
+          label="Temps de liaison"
+          value={company.settings.allowTransfers}
+          description="Ce mode vous permet d'ajouter les trajets annexes des salariés pour chaque mission, le cas échéant (par exemple un aller en train)."
+          submitSettingChange={submitSettingChange}
+        />
+      </ListItem>
+      <Divider />
+      <ListItem>
+        <SimpleToggleSetting
           name="requireKilometerData"
           label="Saisie du kilométrage"
           value={company.settings.requireKilometerData}
