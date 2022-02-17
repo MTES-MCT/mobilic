@@ -48,6 +48,7 @@ export default function ActivityRevisionOrCreationModal({
   allowTeamMode = false,
   nullableEndTime = true,
   allowSupportActivity = true,
+  allowTransfers,
   createActivity,
   defaultTime = null,
   forcedUser = null,
@@ -322,6 +323,9 @@ export default function ActivityRevisionOrCreationModal({
             {Object.keys(ACTIVITIES)
               .filter(a =>
                 allowSupportActivity ? true : a !== ACTIVITIES.support.name
+              )
+              .filter(a =>
+                allowTransfers ? true : a !== ACTIVITIES.transfer.name
               )
               .map(activityName => (
                 <MenuItem

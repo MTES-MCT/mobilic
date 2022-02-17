@@ -199,6 +199,9 @@ export function MissionDetails({
       ? missionCompany.settings.requireKilometerData
       : false;
 
+  // not sure about the syntax ??
+  const allowTransfers = missionCompany?.settings?.allowTransfers || false;
+
   const editableMissionName = missionCompany?.settings?.requireMissionName;
 
   const doesMissionSpanOnMultipleDays =
@@ -468,6 +471,7 @@ export function MissionDetails({
                               }),
                             handleRevisionAction:
                               missionActions.editSingleActivity,
+                            allowTransfers,
                             nullableEndTime: false,
                             defaultTime: mission.startTime,
                             forcedUser: e.user,

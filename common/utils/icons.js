@@ -7,6 +7,7 @@ import { ReactComponent as PersonIcon_ } from "../assets/images/User.svg";
 import { ReactComponent as TeamIcon_ } from "../assets/images/Team.svg";
 import { ReactComponent as TruckIcon_ } from "../assets/images/Truck2.svg";
 import { ReactComponent as HammerWenchIcon_ } from "../assets/images/Work.svg";
+import { ReactComponent as TrainIcon_ } from "../assets/images/Train.svg";
 import { ReactComponent as BedIcon_ } from "../assets/images/Bed2.svg";
 import { ReactComponent as FranceConnectIcon_ } from "../assets/images/FranceConnect.svg";
 import { ReactComponent as FabNumIcon_ } from "../assets/images/fabnum.svg";
@@ -68,6 +69,17 @@ export function TruckIcon(props) {
       {...props}
       viewBox="0 0 246.14 157.79"
       component={TruckIcon_}
+    />
+  );
+}
+
+export function TransferIcon(props) {
+  return (
+    <SvgIcon
+      titleAccess="temps de liaison"
+      {...props}
+      viewBox="-1 -1 22 23"
+      component={TrainIcon_}
     />
   );
 }
