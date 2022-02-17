@@ -9,7 +9,7 @@ import min from "lodash/min";
 import max from "lodash/max";
 import sum from "lodash/sum";
 import { DAY, HOUR, now } from "./time";
-import { getCurrentActivityDuration } from "./activities";
+import { ACTIVITIES, getCurrentActivityDuration } from "./activities";
 
 export const DEFAULT_LAST_ACTIVITY_TOO_LONG = 24 * HOUR;
 export const DEFAULT_WORKER_VALIDATION_TIMEOUT = 10 * DAY;
@@ -134,7 +134,9 @@ export function computeMissionStats(m, users) {
     const endTime = isComplete ? max(_activities.map(a => a.endTime)) : null;
     const endTimeOrNow = endTime || now1;
     const totalWorkDuration = sum(
-      _activities.map(a => (a.endTime || now1) - a.startTime)
+      _activities
+        .filter(a => a.type !== ACTIVITIES.transfer.name)
+        .map(a => (a.endTime || now1) - a.startTime)
     );
     return {
       activities: _activities,

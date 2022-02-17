@@ -38,7 +38,7 @@ export const ACTIVITIES = {
   },
   transfer: {
     name: "transfer",
-    label: "Liaison",
+    label: "Temps de liaison",
     renderIcon: props => <TransferIcon {...props} />,
     color: "#417DC4"
   }
