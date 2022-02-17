@@ -133,10 +133,13 @@ export function computeMissionStats(m, users) {
     const runningActivityStartTime = isComplete ? null : lastActivityStartTime;
     const endTime = isComplete ? max(_activities.map(a => a.endTime)) : null;
     const endTimeOrNow = endTime || now1;
-    const totalWorkDuration = sum(
+    const transferDuration = sum(
       _activities
-        .filter(a => a.type !== ACTIVITIES.transfer.name)
+        .filter(a => a.type === ACTIVITIES.transfer.name)
         .map(a => (a.endTime || now1) - a.startTime)
+    );
+    const totalWorkDuration = sum(
+      _activities.map(a => (a.endTime || now1) - a.startTime)
     );
     return {
       activities: _activities,
@@ -146,7 +149,7 @@ export function computeMissionStats(m, users) {
       endTime,
       endTimeOrNow,
       service: endTimeOrNow - startTime,
-      totalWorkDuration,
+      totalWorkDuration: totalWorkDuration - transferDuration,
       isComplete: _activities.every(a => !!a.endTime),
       breakDuration: endTimeOrNow - startTime - totalWorkDuration,
       expenditures: m.expenditures.filter(e => e.userId.toString() === userId),
