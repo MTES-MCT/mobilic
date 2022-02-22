@@ -13801,13 +13801,6 @@ react-router@^4.3.1:
     prop-types "^15.6.1"
     warning "^4.0.1"
 
-react-scrollable-picker@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/react-scrollable-picker/-/react-scrollable-picker-1.0.2.tgz#872f6c766752177f1b308e1748c02b90c5f6ab60"
-  integrity sha512-e6uKlRJGiqOMXkZLtkn92s6veFc9pWx2fY/nScbqAuSF8JRVv1q0AEXbSyLpI51SWYEUdIo7uBu7ISsDBZWEaA==
-  dependencies:
-    prop-types "^15.6.0"
-
 react-shallow-renderer@^16.13.1:
   version "16.14.1"
   resolved "https://registry.yarnpkg.com/react-shallow-renderer/-/react-shallow-renderer-16.14.1.tgz#bf0d02df8a519a558fd9b8215442efa5c840e124"
