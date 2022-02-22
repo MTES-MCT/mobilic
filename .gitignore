@@ -30,3 +30,7 @@ devops
 
 # Local nginx
 nginx/
+
+# yarn
+.yarn/releases
+.yarnrc

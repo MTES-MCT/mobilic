@@ -61,8 +61,8 @@ La partie suivante couvre uniquement le front. Pour le back il faut se rendre da
 
 ### Pré-requis
 
-- [Node](https://nodejs.org/en/) 12.12
-- [Yarn](https://yarnpkg.com/) 1.19
+- [Node](https://nodejs.org/en/) >= 14
+- [Yarn](https://yarnpkg.com/) >=1.19
 - Eventuellement [Nginx](https://fr.wikipedia.org/wiki/NGINX) pour reproduire à l'identique l'environnement de production. Facultatif pour le développement local.
 
 ### Installation
