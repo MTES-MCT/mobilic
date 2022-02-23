@@ -1,3 +1,4 @@
+import { ACTIVITIES } from "../activities";
 import {
   HOUR,
   LONG_BREAK_DURATION,
@@ -34,29 +35,33 @@ export function checkMaximumDurationOfUninterruptedWork(activities) {
   const now1 = now();
   let currentUninterruptedWorkDuration = 0;
   let latestWorkTime = null;
-  activities.every(a => {
-    if (!latestWorkTime || a.startTime > latestWorkTime) {
-      currentUninterruptedWorkDuration = 0;
-    }
-    currentUninterruptedWorkDuration =
-      currentUninterruptedWorkDuration + (a.endTime || now1) - a.startTime;
-    if (
-      currentUninterruptedWorkDuration > MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK
-    ) {
-      return false;
-    }
-    latestWorkTime = a.endTime;
-    return true;
-  });
 
-  if (currentUninterruptedWorkDuration > MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK)
-    return {
-      status: RULE_RESPECT_STATUS.failure,
-      rule: ALERT_TYPES.maximumUninterruptedWorkTime
-    };
+  // consider all activities excluding transfers
+  // exit loop if we find a consecutive series of activites with span time > MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK
+  activities
+    .filter(a => a.type !== ACTIVITIES.transfer.name)
+    .every(a => {
+      if (!latestWorkTime || a.startTime > latestWorkTime) {
+        currentUninterruptedWorkDuration = 0;
+      }
+      currentUninterruptedWorkDuration =
+        currentUninterruptedWorkDuration + (a.endTime || now1) - a.startTime;
+      if (
+        currentUninterruptedWorkDuration >
+        MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK
+      ) {
+        return false;
+      }
+      latestWorkTime = a.endTime;
+      return true;
+    });
 
+  const isRuleBroken =
+    currentUninterruptedWorkDuration > MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK;
   return {
-    status: RULE_RESPECT_STATUS.success,
+    status: isRuleBroken
+      ? RULE_RESPECT_STATUS.failure
+      : RULE_RESPECT_STATUS.success,
     rule: ALERT_TYPES.maximumUninterruptedWorkTime
   };
 }
@@ -69,6 +74,7 @@ function computeTotalWorkDuration(workDayActivities) {
 }
 
 export function checkMaximumDurationOfWork(workDayActivities) {
+  //daily amplitude (includes transfers)
   const totalWorkDuration = computeTotalWorkDuration(workDayActivities);
 
   const nightWork = workDayActivities.some(a => isNightWork(a));
