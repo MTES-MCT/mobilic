@@ -10,7 +10,7 @@ export async function loadCompaniesData(api, userId, minDate) {
       workDaysLimit: 10000,
       endedMissionsAfter: getStartOfDay(now() - DAY * 31)
     },
-    { context: { timeout: process.env.REACT_APP_API_HOST || 60000 } }
+    { context: { timeout: process.env.REACT_APP_TIMEOUT || 60000 } }
   );
   return companyResponse.data.user.adminedCompanies;
 }
