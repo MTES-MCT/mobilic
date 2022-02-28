@@ -74,7 +74,6 @@ function computeAmplitude(workDayActivities) {
 }
 
 export function checkMaximumDurationOfWork(workDayActivities) {
-  //daily amplitude (includes transfers)
   const dailyAmplitude = computeAmplitude(workDayActivities);
 
   const nightWork = workDayActivities.some(a => isNightWork(a));
