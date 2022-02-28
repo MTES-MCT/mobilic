@@ -150,6 +150,7 @@ export function computeMissionStats(m, users) {
       endTimeOrNow,
       service: endTimeOrNow - startTime,
       totalWorkDuration: totalWorkDuration - transferDuration,
+      transferDuration,
       isComplete: _activities.every(a => !!a.endTime),
       breakDuration: endTimeOrNow - startTime - totalWorkDuration,
       expenditures: m.expenditures.filter(e => e.userId.toString() === userId),

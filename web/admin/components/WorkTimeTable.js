@@ -116,6 +116,13 @@ export function WorkTimeTable({
     align: "right",
     minWidth: 100
   };
+  const transferTimeCol = {
+    label: "Liaison",
+    name: "transferDuration",
+    format: time => (time ? formatTimer(time) : null),
+    align: "right",
+    minWidth: 100
+  };
   const expenditureCol = {
     label: "Frais",
     name: "expenditureAggs",
@@ -171,6 +178,7 @@ export function WorkTimeTable({
       endTimeCol,
       serviceTimeCol,
       workTimeCol,
+      transferTimeCol,
       restTimeCol
     ];
     if (showExpenditures) columns.push(expenditureCol);
