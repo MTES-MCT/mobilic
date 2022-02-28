@@ -66,7 +66,7 @@ export function checkMaximumDurationOfUninterruptedWork(activities) {
   };
 }
 
-function computeTotalWorkDuration(workDayActivities) {
+function computeAmplitude(workDayActivities) {
   const now1 = now();
   return workDayActivities
     .map(a => (a.endTime || now1) - a.startTime)
@@ -75,7 +75,7 @@ function computeTotalWorkDuration(workDayActivities) {
 
 export function checkMaximumDurationOfWork(workDayActivities) {
   //daily amplitude (includes transfers)
-  const totalWorkDuration = computeTotalWorkDuration(workDayActivities);
+  const dailyAmplitude = computeAmplitude(workDayActivities);
 
   const nightWork = workDayActivities.some(a => isNightWork(a));
 
@@ -85,7 +85,7 @@ export function checkMaximumDurationOfWork(workDayActivities) {
 
   return {
     status:
-      totalWorkDuration > maximumTimeInHours * HOUR
+      dailyAmplitude > maximumTimeInHours * HOUR
         ? RULE_RESPECT_STATUS.failure
         : RULE_RESPECT_STATUS.success,
     rule: ALERT_TYPES.maximumWorkDayTime,
@@ -97,9 +97,9 @@ export function checkMaximumDurationOfWork(workDayActivities) {
 }
 
 export function checkMinimumDurationOfBreak(workDayActivities) {
-  const totalWorkDuration = computeTotalWorkDuration(workDayActivities);
+  const dailyAmplitude = computeAmplitude(workDayActivities);
 
-  if (totalWorkDuration > 6 * HOUR) {
+  if (dailyAmplitude > 6 * HOUR) {
     let totalBreakTime = 0;
     let latestWorkTime = null;
     workDayActivities.forEach(a => {
@@ -110,7 +110,7 @@ export function checkMinimumDurationOfBreak(workDayActivities) {
         totalBreakTime = totalBreakTime + a.startTime - latestWorkTime;
       latestWorkTime = a.endTime;
     });
-    if (totalWorkDuration <= 9 * HOUR && totalBreakTime < 30 * MINUTE)
+    if (dailyAmplitude <= 9 * HOUR && totalBreakTime < 30 * MINUTE)
       return {
         status: RULE_RESPECT_STATUS.failure,
         rule: ALERT_TYPES.minimumWorkDayBreak,
@@ -118,7 +118,7 @@ export function checkMinimumDurationOfBreak(workDayActivities) {
           minimumTimeInMinutes: 30
         }
       };
-    if (totalWorkDuration > 9 * HOUR && totalBreakTime < 45 * MINUTE)
+    if (dailyAmplitude > 9 * HOUR && totalBreakTime < 45 * MINUTE)
       return {
         status: RULE_RESPECT_STATUS.failure,
         rule: ALERT_TYPES.minimumWorkDayBreak,
