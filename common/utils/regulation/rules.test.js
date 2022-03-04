@@ -9,22 +9,14 @@ import {
   MAXIMUM_DURATION_OF_DAY_WORK_IN_HOURS,
   MAXIMUM_DURATION_OF_NIGHT_WORK_IN_HOURS,
   MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK,
-  RULE_RESPECT_STATUS
+  RULE_RESPECT_STATUS,
+  START_DAY_WORK_HOUR
 } from "./rules";
 
 const getUnixTimestamp = (year, month, day, hours, minutes) => {
-  const dateZeroUtc = new Date();
-  dateZeroUtc.setFullYear(year);
-  dateZeroUtc.setMonth(month);
-  dateZeroUtc.setDate(day);
-  dateZeroUtc.setHours(hours);
-  dateZeroUtc.setMinutes(minutes);
-  dateZeroUtc.setSeconds(0);
-  dateZeroUtc.setMilliseconds(0);
-  const dateUtc = new Date(
-    dateZeroUtc.getTime() + dateZeroUtc.getTimezoneOffset() * 60000
-  );
-  return dateUtc.getTime() / 1000;
+  // month -1 because of how Date works
+  const timeMs = new Date(year, month - 1, day, hours, minutes).getTime();
+  return timeMs / 1000;
 };
 
 describe("rules", () => {
@@ -166,8 +158,8 @@ describe("rules", () => {
       const activitiy = {
         id: 1,
         type: ACTIVITIES.drive.name,
-        startTime: getUnixTimestamp(2022, 3, 1, 4, 30),
-        endTime: getUnixTimestamp(2022, 3, 1, 6, 0)
+        startTime: getUnixTimestamp(2022, 3, 1, START_DAY_WORK_HOUR - 1, 30),
+        endTime: getUnixTimestamp(2022, 3, 1, START_DAY_WORK_HOUR + 1, 0)
       };
       const result = isNightWork(activitiy);
       expect(result).toBe(true);
@@ -326,12 +318,47 @@ describe("rules", () => {
       expect(result.rule).toBe(ALERT_TYPES.maximumWorkDayTime);
     });
 
-    it("should fail if we work more than daily limit even with breaks in between", () => {
+    it("should succeed if we work exactly daily limit time", () => {
       const durationEachWorkInHours = Math.ceil(
         MAXIMUM_DURATION_OF_DAY_WORK_IN_HOURS / 3
       );
       const startTime1 = getUnixTimestamp(2022, 3, 1, 6, 0);
       const endTime1 = startTime1 + durationEachWorkInHours * HOUR;
+      const startTime2 = endTime1 + HOUR;
+      const endTime2 = startTime2 + durationEachWorkInHours * HOUR;
+      const startTime3 = endTime2 + HOUR;
+      const endTime3 = startTime3 + durationEachWorkInHours * HOUR;
+      const activities = [
+        {
+          id: 1,
+          type: ACTIVITIES.drive.name,
+          startTime: startTime1,
+          endTime: endTime1
+        },
+        {
+          id: 2,
+          type: ACTIVITIES.drive.name,
+          startTime: startTime2,
+          endTime: endTime2
+        },
+        {
+          id: 3,
+          type: ACTIVITIES.drive.name,
+          startTime: startTime3,
+          endTime: endTime3
+        }
+      ];
+      const result = checkMaximumDurationOfWork(activities);
+      expect(result.status).toBe(RULE_RESPECT_STATUS.success);
+      expect(result.rule).toBe(ALERT_TYPES.maximumWorkDayTime);
+    });
+
+    it("should fail if we work more than daily limit even with breaks in between", () => {
+      const durationEachWorkInHours = Math.ceil(
+        MAXIMUM_DURATION_OF_DAY_WORK_IN_HOURS / 3
+      );
+      const startTime1 = getUnixTimestamp(2022, 3, 1, 6, 0);
+      const endTime1 = startTime1 + (durationEachWorkInHours + 1) * HOUR;
       const startTime2 = endTime1 + HOUR;
       const endTime2 = startTime2 + durationEachWorkInHours * HOUR;
       const startTime3 = endTime2 + HOUR;

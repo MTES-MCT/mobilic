@@ -12,6 +12,7 @@ import { ALERT_TYPES } from "./alertTypes";
 export const MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK = HOUR * 6;
 export const MAXIMUM_DURATION_OF_DAY_WORK_IN_HOURS = 12;
 export const MAXIMUM_DURATION_OF_NIGHT_WORK_IN_HOURS = 10;
+export const START_DAY_WORK_HOUR = 5;
 const MINIMUM_DURATION_OF_INDIVIDUAL_BREAK = MINUTE * 15;
 
 export function isNightWork(activity) {
@@ -21,7 +22,7 @@ export function isNightWork(activity) {
   const minuteOfDay =
     startTimeAsDateTime.getHours() * 60 + startTimeAsDateTime.getMinutes();
 
-  if (minuteOfDay < 300) return true;
+  if (minuteOfDay < 60 * START_DAY_WORK_HOUR) return true;
   const nextMidnight = getStartOfDay(activity.startTime + DAY);
   return (activity.endTime || now()) > nextMidnight;
 }
@@ -84,11 +85,11 @@ export function checkMaximumDurationOfWork(workDayActivities) {
     ? MAXIMUM_DURATION_OF_NIGHT_WORK_IN_HOURS
     : MAXIMUM_DURATION_OF_DAY_WORK_IN_HOURS;
 
+  const isRuleBroken = totalEffectiveWork > maximumTimeInHours * HOUR;
   return {
-    status:
-      totalEffectiveWork > maximumTimeInHours * HOUR
-        ? RULE_RESPECT_STATUS.failure
-        : RULE_RESPECT_STATUS.success,
+    status: isRuleBroken
+      ? RULE_RESPECT_STATUS.failure
+      : RULE_RESPECT_STATUS.success,
     rule: ALERT_TYPES.maximumWorkDayTime,
     extra: {
       nightWork,
