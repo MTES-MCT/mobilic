@@ -20,7 +20,6 @@ export function AdminStoreProvider({ children }) {
   });
 
   function dispatch(action) {
-    console.log("dispatch", action);
     setState(st => adminRootReducer(st, action));
   }
 

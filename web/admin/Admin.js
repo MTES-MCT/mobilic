@@ -71,11 +71,10 @@ function __Admin({ width }) {
   async function loadData() {
     const userId = adminStore.userId;
     const companyId = adminStore.companyId;
-    // const companyId = undefined;
-    console.log(companyId);
     if (userId) {
-      // setShouldRefreshData({ value: false });
-      // shouldRefreshData.value = false;
+      // what is this ?
+      setShouldRefreshData({ value: false });
+      shouldRefreshData.value = false;
       withLoadingScreen(
         async () =>
           await alerts.withApiErrorHandling(
@@ -103,10 +102,12 @@ function __Admin({ width }) {
   }
 
   React.useEffect(() => {
-    console.log("adminStore.companyId", adminStore.companyId);
-    console.log(shouldRefreshData);
     if (shouldRefreshData.value) loadData();
-  }, [adminStore.userId, adminStore.companyId]);
+  }, [adminStore.userId]);
+
+  React.useEffect(() => {
+    loadData();
+  }, [adminStore.companyId]);
 
   React.useEffect(() => {
     if (
