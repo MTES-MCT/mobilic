@@ -1,6 +1,6 @@
 import React from "react";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
 import { LoadingButton } from "common/components/LoadingButton";
 import {
   CustomDialogActions,

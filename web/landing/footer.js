@@ -1,14 +1,14 @@
 import React from "react";
 import { useModals } from "common/utils/modals";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { FabNumIcon, MarianneIcon } from "common/utils/icons";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { Link } from "../common/LinkButton";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Container from "@material-ui/core/Container";
-import Hidden from "@material-ui/core/Hidden";
+import { makeStyles } from "@mui/styles";
+import Container from "@mui/material/Container";
+import Hidden from "@mui/material/Hidden";
 import { SocialNetworkPanel } from "../common/Header";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 
 const useStyles = makeStyles(theme => ({
   section: {
@@ -76,7 +76,7 @@ export function Footer() {
         <Grid
           container
           spacing={8}
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="flex-start"
         >
           <Grid item md={4} sm={12}>

@@ -1,6 +1,6 @@
 import React from "react";
 import { LandingSection, useSectionStyles } from "./LandingSection";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { WebinarList } from "../components/WebinarList";
 
 export function WebinarListSection({ className }) {

@@ -1,7 +1,7 @@
 import React from "react";
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import {
   Switch,
   Route,
@@ -15,7 +15,7 @@ import { API_HOST, useApi } from "common/utils/api";
 import { ConfirmUser } from "./ConfirmUser";
 import { useLoadingScreen } from "common/utils/loading";
 import { Consent } from "./Consent";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { captureSentryException } from "common/utils/sentry";
 
 const useStyles = makeStyles(theme => ({
@@ -99,7 +99,7 @@ export default function OAuth() {
     <>
       <Header disableMenu={true} />
       <Container className={classes.container} maxWidth="sm">
-        <Switch>
+        <Switch color="secondary">
           {userId && (
             <Route key="consent" path={`${path}/consent`}>
               <Consent clientName={clientName} redirectUri={redirectUri} />

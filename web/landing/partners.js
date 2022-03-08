@@ -1,9 +1,9 @@
 import React from "react";
-import Container from "@material-ui/core/Container";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
+import Container from "@mui/material/Container";
+import { makeStyles } from "@mui/styles";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import { Header } from "../common/Header";
 import { Footer } from "./footer";
 import { PaperContainerTitle } from "../common/PaperContainer";
@@ -171,7 +171,7 @@ export function Partners() {
           </Typography>
           <Grid
             container
-            justify="space-evenly"
+            justifyContent="space-evenly"
             alignItems="center"
             wrap
             spacing={7}
@@ -189,7 +189,7 @@ export function Partners() {
           </Typography>
           <Grid
             container
-            justify="space-evenly"
+            justifyContent="space-evenly"
             alignItems="center"
             wrap
             spacing={7}

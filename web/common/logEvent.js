@@ -7,11 +7,11 @@ import {
   formatAddressMainText,
   formatAddressSubText
 } from "common/utils/addresses";
-import HighlightOffIcon from "@material-ui/icons/Close";
-import CheckIcon from "@material-ui/icons/Check";
-import LocationOnIcon from "@material-ui/icons/LocationOn";
-import EuroIcon from "@material-ui/icons/Euro";
-import EditIcon from "@material-ui/icons/Edit";
+import HighlightOffIcon from "@mui/icons-material/Close";
+import CheckIcon from "@mui/icons-material/Check";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import EuroIcon from "@mui/icons-material/Euro";
+import EditIcon from "@mui/icons-material/Edit";
 
 function changeResourceAsText(change) {
   switch (change.resourceType) {

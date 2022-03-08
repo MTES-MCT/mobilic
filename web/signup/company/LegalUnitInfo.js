@@ -1,8 +1,8 @@
 import React from "react";
-import Card from "@material-ui/core/Card";
-import Grid from "@material-ui/core/Grid";
+import Card from "@mui/material/Card";
+import Grid from "@mui/material/Grid";
 import { InfoItem } from "../../home/InfoField";
-import CardContent from "@material-ui/core/CardContent";
+import CardContent from "@mui/material/CardContent";
 
 export function LegalUnitInfo({ legalUnit }) {
   return (

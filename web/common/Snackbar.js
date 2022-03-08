@@ -1,7 +1,8 @@
 import React from "react";
-import MuiSnackbar from "@material-ui/core/Snackbar";
-import Alert from "@material-ui/lab/Alert";
-import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
+import MuiSnackbar from "@mui/material/Snackbar";
+import useTheme from "@mui/styles/useTheme";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import Alert from "@mui/material/Alert";
 import {
   formatApiError,
   isConnectionError,
@@ -9,14 +10,21 @@ import {
 } from "common/utils/errors";
 import { captureSentryException } from "common/utils/sentry";
 
+function useIsWidthUp(breakpoint) {
+  const theme = useTheme();
+  return useMediaQuery(theme.breakpoints.up(breakpoint));
+}
+
 const SnackbarContext = React.createContext(() => {});
 
-export const SnackbarProvider = withWidth()(({ children, width }) => {
+export const SnackbarProvider = ({ children }) => {
   const [_open, setOpen] = React.useState(false);
   const [_key, setKey] = React.useState(false);
   const [_autoHideDuration, setAutoHideDuration] = React.useState(0);
   const [_message, setMessage] = React.useState(null);
   const [_severity, setSeverity] = React.useState("info");
+
+  const isSmUp = useIsWidthUp("sm");
 
   function alert(message, severity, key, autoHideDuration) {
     setMessage(message);
@@ -82,7 +90,7 @@ export const SnackbarProvider = withWidth()(({ children, width }) => {
         key={_key}
         open={_open}
         anchorOrigin={{
-          horizontal: isWidthUp("sm", width) ? "left" : "center",
+          horizontal: isSmUp ? "left" : "center",
           vertical: "bottom"
         }}
         autoHideDuration={_autoHideDuration}
@@ -100,6 +108,6 @@ export const SnackbarProvider = withWidth()(({ children, width }) => {
       </MuiSnackbar>
     </SnackbarContext.Provider>
   );
-});
+};
 
 export const useSnackbarAlerts = () => React.useContext(SnackbarContext);

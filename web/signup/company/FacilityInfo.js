@@ -1,8 +1,8 @@
-import Typography from "@material-ui/core/Typography";
-import Card from "@material-ui/core/Card/Card";
+import Typography from "@mui/material/Typography";
+import Card from "@mui/material/Card";
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import CardContent from "@material-ui/core/CardContent";
+import { makeStyles } from "@mui/styles";
+import CardContent from "@mui/material/CardContent";
 
 const useStyles = makeStyles(theme => ({
   facilityName: {

@@ -1,8 +1,8 @@
 import React from "react";
-import { Collapse, ListItemIcon, ListItemText } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+import { Collapse, ListItemIcon, ListItemText } from "@mui/material";
+import { Alert } from "@mui/lab";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 import { Link } from "../../../common/LinkButton";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { DISMISSABLE_WARNINGS } from "../../utils/dismissableWarnings";

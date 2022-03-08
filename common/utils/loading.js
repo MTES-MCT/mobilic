@@ -1,8 +1,8 @@
 import React from "react";
-import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
-import Backdrop from "@material-ui/core/Backdrop/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
+import Backdrop from "@mui/material/Backdrop";
 import { NonConcurrentExecutionQueue } from "./concurrency";
-import Portal from "@material-ui/core/Portal";
+import Portal from "@mui/material/Portal";
 
 const LoadingScreenContext = React.createContext(() => () => {});
 

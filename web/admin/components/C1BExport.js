@@ -1,10 +1,11 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import DialogContent from "@material-ui/core/DialogContent";
-import { DatePicker } from "@material-ui/pickers";
-import Dialog from "@material-ui/core/Dialog";
+import Typography from "@mui/material/Typography";
+import DialogContent from "@mui/material/DialogContent";
+import DatePicker from "@mui/lab/DatePicker";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
 import { useApi } from "common/utils/api";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "common/components/LoadingButton";
 import { CompanyFilter } from "./CompanyFilter";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -15,11 +16,11 @@ import {
 } from "../../common/CustomDialogTitle";
 import { EmployeeFilter } from "./EmployeeFilter";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import Switch from "@material-ui/core/Switch/Switch";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Switch from "@mui/material/Switch";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
-import Alert from "@material-ui/lab/Alert";
+import Alert from "@mui/material/Alert";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
 
@@ -177,9 +178,8 @@ export default function C1BExport({
             <Grid item sm={6}>
               <DatePicker
                 required
-                label="Date de début"
                 value={minDate}
-                format="d MMMM yyyy"
+                inputFormat="d MMMM yyyy"
                 onChange={setMinDate}
                 cancelLabel={null}
                 autoOk
@@ -187,15 +187,20 @@ export default function C1BExport({
                 inputVariant="outlined"
                 animateYearScrolling
                 error={!!dateRangeError}
-                helperText={dateRangeError}
+                renderInput={props => (
+                  <TextField
+                    variant="standard"
+                    label="Date de début"
+                    helperText={dateRangeError}
+                  />
+                )}
               />
             </Grid>
             <Grid item sm={6}>
               <DatePicker
                 required
-                label="Date de fin"
                 value={maxDate}
-                format="d MMMM yyyy"
+                inputFormat="d MMMM yyyy"
                 onChange={setMaxDate}
                 cancelLabel={null}
                 autoOk
@@ -203,13 +208,20 @@ export default function C1BExport({
                 inputVariant="outlined"
                 animateYearScrolling
                 error={!!dateRangeError}
-                helperText={dateRangeError}
+                renderInput={props => (
+                  <TextField
+                    variant="standard"
+                    label="Date de fin"
+                    helperText={dateRangeError}
+                  />
+                )}
               />
             </Grid>
           </DateOrDateTimeRangeSelectionContext>
           <Grid item xs={12}>
             <Box className={classes.switchContainer}>
               <Switch
+                color="secondary"
                 checked={sign}
                 onChange={e => setSign(e.target.checked)}
               />

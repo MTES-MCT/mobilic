@@ -1,20 +1,20 @@
 import React from "react";
 import values from "lodash/values";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Typography from "@material-ui/core/Typography";
-import Checkbox from "@material-ui/core/Checkbox";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Typography from "@mui/material/Typography";
+import Checkbox from "@mui/material/Checkbox";
 import {
   computeLatestEnrollmentStatuses,
   formatLatestEnrollmentStatus,
   formatPersonName
 } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { FunnelModal, useStyles as useFunnelModalStyles } from "./FunnelModal";
-import Container from "@material-ui/core/Container";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Container from "@mui/material/Container";
+import { makeStyles } from "@mui/styles";
 import { MainCtaButton } from "./MainCtaButton";
 
 const useStyles = makeStyles(theme => ({

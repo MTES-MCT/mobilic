@@ -1,11 +1,11 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import Container from "@material-ui/core/Container";
-import Box from "@material-ui/core/Box";
-import CardContent from "@material-ui/core/CardContent";
-import Card from "@material-ui/core/Card/Card";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
+import CardContent from "@mui/material/CardContent";
+import Card from "@mui/material/Card";
 import { FunnelModal, useStyles as useFunnelModalStyles } from "./FunnelModal";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { PersonIcon, TeamIcon } from "common/utils/icons";
 
 const useStyles = makeStyles(theme => ({

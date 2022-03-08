@@ -1,14 +1,14 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { useApi } from "common/utils/api";
 import { useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import Paper from "@material-ui/core/Paper";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Container from "@material-ui/core/Container";
+import Paper from "@mui/material/Paper";
+import { makeStyles } from "@mui/styles";
+import Container from "@mui/material/Container";
 import { Section } from "../common/Section";
 import { LoadingButton } from "common/components/LoadingButton";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
@@ -75,7 +75,12 @@ export function Consent({ clientName, redirectUri }) {
           </Typography>
           <Typography>{store.userInfo().email}</Typography>
           <Section last>
-            <Grid className="centered" container spacing={4} justify="center">
+            <Grid
+              className="centered"
+              container
+              spacing={4}
+              justifyContent="center"
+            >
               <Grid item>
                 <LoadingButton
                   aria-label="Autoriser"

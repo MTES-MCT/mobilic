@@ -3,7 +3,7 @@ import { ActivitySwitch } from "../components/ActivitySwitch";
 import { resolveTeamAt } from "common/utils/coworkers";
 import { CurrentActivityOverview } from "../components/CurrentActivityOverview";
 import { MissionDetails } from "../components/MissionDetails";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import {
   ACTIVITIES,
   ACTIVITIES_OPERATIONS,
@@ -12,7 +12,7 @@ import {
 import { now } from "common/utils/time";
 import WarningEndMissionModalContainer from "../components/WarningEndMissionModal/WarningEndMissionModalContainer";
 import { useModals } from "common/utils/modals";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { missionLastLessThanAMinute } from "common/utils/mission";
 
 export function CurrentActivity({

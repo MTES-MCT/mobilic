@@ -2,7 +2,7 @@ import React from "react";
 import { getVehicleName } from "common/utils/vehicles";
 import { VehicleField } from "../../common/VehicleField";
 import { EditableMissionInfo } from "./EditableMissionInfo";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 
 export const useStyles = makeStyles(theme => ({
   placeholder: {

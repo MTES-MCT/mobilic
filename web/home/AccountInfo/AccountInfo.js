@@ -3,17 +3,17 @@ import {
   broadCastChannel,
   useStoreSyncedWithLocalStorage
 } from "common/store/store";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Container from "@material-ui/core/Container";
+import { makeStyles } from "@mui/styles";
+import Container from "@mui/material/Container";
 import { formatPersonName } from "common/utils/coworkers";
 import { Header } from "../../common/Header";
 import { Section } from "../../common/Section";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { InfoItem } from "../InfoField";
-import Alert from "@material-ui/lab/Alert";
+import Alert from "@mui/material/Alert";
 import { useApi } from "common/utils/api";
 import { useModals } from "common/utils/modals";
-import Divider from "@material-ui/core/Divider";
+import Divider from "@mui/material/Divider";
 import {
   PaperContainer,
   PaperContainerTitle

@@ -1,8 +1,8 @@
 import React from "react";
-import Dialog from "@material-ui/core/Dialog";
-import Alert from "@material-ui/lab/Alert";
-import AlertTitle from "@material-ui/lab/AlertTitle";
-import Typography from "@material-ui/core/Typography";
+import Dialog from "@mui/material/Dialog";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import Typography from "@mui/material/Typography";
 
 export default function UnavailableOfflineModeModal({ open, handleClose }) {
   return (

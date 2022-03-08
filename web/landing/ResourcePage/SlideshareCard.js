@@ -1,7 +1,7 @@
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Typography from "@material-ui/core/Typography";
-import { Card } from "@material-ui/core";
+import { makeStyles } from "@mui/styles";
+import Typography from "@mui/material/Typography";
+import { Card } from "@mui/material";
 import { Link } from "../../common/LinkButton";
 import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
 

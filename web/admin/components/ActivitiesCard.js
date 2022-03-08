@@ -1,23 +1,23 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import { VerticalTimeline } from "common/components/VerticalTimeline";
 import { formatTimeOfDay, formatTimer, now } from "common/utils/time";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
-import Accordion from "@material-ui/core/Accordion";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import AccordionDetails from "@mui/material/AccordionDetails";
 import { AugmentedTable } from "./AugmentedTable";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ACTIVITIES } from "common/utils/activities";
-import TextField from "@material-ui/core/TextField/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import { DateOrDateTimePicker } from "../../pwa/components/DateOrDateTimePicker";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { useActivitiesCardStyles } from "./styles/ActivitiesCardStyle";
-import SvgIcon from "@material-ui/core/SvgIcon";
-import EditIcon from "@material-ui/icons/Edit";
+import SvgIcon from "@mui/material/SvgIcon";
+import EditIcon from "@mui/icons-material/Edit";
 
 export function ActivitiesCard({
   activities,
@@ -47,6 +47,7 @@ export function ActivitiesCard({
       format: type => ACTIVITIES[type].label,
       renderEditMode: (type, entry, setType) => (
         <TextField
+          variant="standard"
           label="Activité"
           required
           fullWidth
@@ -74,6 +75,7 @@ export function ActivitiesCard({
           format={
             datetimeFormatter === formatTimeOfDay ? "HH:mm" : "dd/MM HH:mm"
           }
+          variant="standard"
           autoValidate
           error={activityErrors.displayedStartTime}
           maxValue={now()}
@@ -112,6 +114,7 @@ export function ActivitiesCard({
           format={
             datetimeFormatter === formatTimeOfDay ? "HH:mm" : "dd/MM HH:mm"
           }
+          variant="standard"
         />
       ),
       minWidth: 130

@@ -1,5 +1,5 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import {
   DAY,
   formatDateTime,
@@ -9,9 +9,9 @@ import {
   LONG_BREAK_DURATION,
   now
 } from "common/utils/time";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { computeTotalActivityDurations } from "common/utils/metrics";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import omit from "lodash/omit";
 import { EXPENDITURES } from "common/utils/expenditures";
 import {
@@ -31,7 +31,7 @@ export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {}, loading }) {
     <Grid
       container
       direction="row"
-      justify="center"
+      justifyContent="center"
       alignItems={"baseline"}
       spacing={2}
     >
@@ -269,7 +269,7 @@ export function renderPeriodKpis(
         <Grid
           container
           direction="row"
-          justify="center"
+          justifyContent="center"
           alignItems={"center"}
           spacing={1}
         >

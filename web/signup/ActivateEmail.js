@@ -4,7 +4,7 @@ import { useLocation, useHistory } from "react-router-dom";
 import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import jwt_decode from "jwt-decode";
 import { currentUserId } from "common/utils/cookie";
 

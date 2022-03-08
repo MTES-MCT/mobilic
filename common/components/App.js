@@ -11,8 +11,8 @@ import { History } from "../../web/pwa/screens/History";
 import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
 import { useApi } from "../utils/api";
 import EditPastMission from "../../web/pwa/components/EditPastMission";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Container from "@material-ui/core/Container";
+import { makeStyles } from "@mui/styles";
+import Container from "@mui/material/Container";
 import { sortActivities } from "../utils/activities";
 
 const useStyles = makeStyles(theme => ({
@@ -77,7 +77,7 @@ function _App({ ScreenComponent, loadUser }) {
 
   return (
     <Container className={classes.appContainer} maxWidth="md" disableGutters>
-      <Switch>
+      <Switch color="secondary">
         <Route path={`${path}/history`}>
           <History
             handleBack={() => history.push(path)}

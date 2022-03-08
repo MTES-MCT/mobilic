@@ -1,7 +1,7 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { useHistory, Link as RouterLink } from "react-router-dom";
-import MaterialLink from "@material-ui/core/Link";
+import MaterialLink from "@mui/material/Link";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 export function LinkButton(props) {

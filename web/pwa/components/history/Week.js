@@ -7,12 +7,12 @@ import {
 import { RegulationCheck } from "../RegulationCheck";
 import { checkMinimumDurationOfWeeklyRest } from "common/utils/regulation/rules";
 import { MissionReviewSection } from "../MissionReviewSection";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText/ListItemText";
-import Link from "@material-ui/core/Link";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Link from "@mui/material/Link";
 import { prettyFormatDay } from "common/utils/time";
-import Divider from "@material-ui/core/Divider";
+import Divider from "@mui/material/Divider";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 
 export function Week({

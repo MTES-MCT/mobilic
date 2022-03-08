@@ -1,19 +1,24 @@
-import { createMuiTheme, responsiveFontSizes } from "@material-ui/core/styles";
-import red from "@material-ui/core/colors/red";
-import green from "@material-ui/core/colors/green";
-import cyan from "@material-ui/core/colors/cyan";
-import teal from "@material-ui/core/colors/teal";
+import {
+  createTheme,
+  adaptV4Theme,
+  responsiveFontSizes
+} from "@mui/material/styles";
+import { red, green, cyan, teal } from "@mui/material/colors";
 
 const baseOptions = {
-  overrides: {
+  components: {
     MuiButton: {
-      root: {
-        borderRadius: "20px"
+      styleOverrides: {
+        root: {
+          borderRadius: "20px"
+        }
       }
     },
     MuiTableSortLabel: {
-      icon: {
-        opacity: 0.3
+      styleOverrides: {
+        icon: {
+          opacity: 0.3
+        }
       }
     }
   },
@@ -88,7 +93,9 @@ const baseOptions = {
   }
 };
 
-export const createTheme = (extraOptions = {}) =>
-  responsiveFontSizes(createMuiTheme({ ...baseOptions, ...extraOptions }));
+export const createResponsiveTheme = (extraOptions = {}) =>
+  responsiveFontSizes(
+    createTheme(adaptV4Theme({ ...baseOptions, ...extraOptions }))
+  );
 
-export const theme = createTheme();
+export const theme = createResponsiveTheme();

@@ -1,13 +1,13 @@
 import React from "react";
 import TextField from "common/utils/TextField";
 import throttle from "lodash/throttle";
-import ListItemText from "@material-ui/core/ListItemText";
+import ListItemText from "@mui/material/ListItemText";
 import {
   formatAddressMainText,
   formatAddressSubText
 } from "common/utils/addresses";
 import { captureSentryException } from "common/utils/sentry";
-import { Autocomplete } from "@material-ui/lab";
+import { Autocomplete } from "@mui/lab";
 
 const fetchPlaces = throttle((input, currentPosition = null, callback) => {
   let queryArgs = new URLSearchParams();
@@ -152,8 +152,9 @@ export function AddressField({
       onClose={() => {
         setOpen(false);
       }}
-      renderOption={option => (
+      renderOption={(props, option) => (
         <ListItemText
+          {...props}
           primary={option.manual ? option.label : formatAddressMainText(option)}
           primaryTypographyProps={{ className: "bold" }}
           secondary={formatAddressSubText(option)}

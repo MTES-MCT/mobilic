@@ -10,23 +10,23 @@ import {
   VALIDATE_EMPLOYMENT_MUTATION
 } from "common/utils/apiQueries";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { InfoItem } from "../home/InfoField";
 import { frenchFormatDateStringOrTimeStamp } from "common/utils/time";
-import Alert from "@material-ui/lab/Alert";
+import Alert from "@mui/material/Alert";
 import { LoadingButton } from "common/components/LoadingButton";
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Typography from "@material-ui/core/Typography";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import useTheme from "@material-ui/core/styles/useTheme";
+import { makeStyles } from "@mui/styles";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import useTheme from "@mui/styles/useTheme";
 import {
   EMPLOYMENT_STATUS,
   getEmploymentsStatus
 } from "common/utils/employments";
-import Accordion from "@material-ui/core/Accordion";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
@@ -121,7 +121,7 @@ export function EmploymentInfoCard({
           container
           spacing={1}
           alignItems="center"
-          justify="space-between"
+          justifyContent="space-between"
           wrap="nowrap"
         >
           <Grid item>
@@ -193,7 +193,7 @@ export function EmploymentInfoCard({
             <Grid
               className={classes.buttonContainer}
               container
-              justify="space-evenly"
+              justifyContent="space-evenly"
               spacing={2}
             >
               <Grid item>

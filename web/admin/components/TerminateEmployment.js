@@ -1,9 +1,10 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import DialogContent from "@material-ui/core/DialogContent";
-import { DatePicker } from "@material-ui/pickers";
-import Dialog from "@material-ui/core/Dialog";
-import Box from "@material-ui/core/Box";
+import Typography from "@mui/material/Typography";
+import DialogContent from "@mui/material/DialogContent";
+import DatePicker from "@mui/lab/DatePicker";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import Box from "@mui/material/Box";
 import { LoadingButton } from "common/components/LoadingButton";
 import {
   CustomDialogActions,
@@ -65,15 +66,20 @@ export default function TerminateEmployment({
           <Typography>⚠️⚠️⚠️</Typography>
           <Box my={2} mt={4} className="flex-row-center">
             <DatePicker
-              label="Date de fin du rattachement"
               value={endDate}
-              format="d MMMM yyyy"
+              inputFormat="d MMMM yyyy"
               minDate={minDate}
               onChange={setEndDate}
               cancelLabel={null}
               autoOk
               inputVariant="outlined"
               animateYearScrolling
+              renderInput={props => (
+                <TextField
+                  variant="standard"
+                  label="Date de fin du rattachement"
+                />
+              )}
             />
           </Box>
         </DialogContent>

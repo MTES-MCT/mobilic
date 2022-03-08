@@ -1,6 +1,6 @@
 import { Cell, PieChart, LabelList, Pie, ResponsiveContainer } from "recharts";
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { ACTIVITIES } from "../utils/activities";
 import { formatTimer } from "../utils/time";
 import { computeTotalActivityDurations } from "../utils/metrics";

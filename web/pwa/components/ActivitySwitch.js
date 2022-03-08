@@ -1,15 +1,15 @@
 import React from "react";
-import Card from "@material-ui/core/Card";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
+import Card from "@mui/material/Card";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
 import { ACTIVITIES, SWITCH_ACTIVITIES } from "common/utils/activities";
 import { useModals } from "common/utils/modals";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Box from "@material-ui/core/Box";
+import { makeStyles } from "@mui/styles";
+import Box from "@mui/material/Box";
 import { MainCtaButton } from "./MainCtaButton";
 import { now } from "common/utils/time";
-import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -163,7 +163,7 @@ export function ActivitySwitch({
       <Grid
         container
         direction="row"
-        justify="center"
+        justifyContent="center"
         alignItems={"center"}
         spacing={2}
       >

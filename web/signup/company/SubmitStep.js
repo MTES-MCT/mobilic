@@ -1,8 +1,8 @@
-import TextField from "@material-ui/core/TextField/TextField";
+import TextField from "@mui/material/TextField";
 import { CheckboxField } from "../../common/CheckboxField";
 import { LoadingButton } from "common/components/LoadingButton";
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { Step } from "./Step";
 
 const useStyles = makeStyles(theme => ({
@@ -31,6 +31,7 @@ export function SubmitStep({
       >
         <TextField
           fullWidth
+          variant="standard"
           required
           label="Nom usuel"
           value={companyName}

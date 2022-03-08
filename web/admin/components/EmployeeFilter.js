@@ -1,9 +1,9 @@
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { formatPersonName } from "common/utils/coworkers";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import TextField from "@material-ui/core/TextField";
-import Checkbox from "@material-ui/core/Checkbox";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import Checkbox from "@mui/material/Checkbox";
 import orderBy from "lodash/orderBy";
 
 const useStyles = makeStyles(theme => ({
@@ -51,16 +51,17 @@ export function EmployeeFilter({
       size="small"
       disableCloseOnSelect
       getOptionLabel={option => formatPersonName(option)}
-      renderOption={option => (
-        <>
+      renderOption={(props, option) => (
+        <li {...props}>
           {multiple && (
             <Checkbox
+              color="secondary"
               style={{ marginRight: 8 }}
               checked={option.selected || false}
             />
           )}
           <span>{formatPersonName(option)}</span>
-        </>
+        </li>
       )}
       value={selectedUsers}
       onChange={handleSelect || handleChange}
@@ -68,7 +69,6 @@ export function EmployeeFilter({
         <TextField
           className={classes.formControl}
           {...params}
-          variant="outlined"
           label={`Employé${multiple ? "s" : ""}`}
           placeholder={`${
             multiple ? "Filtrer les employés" : "Sélectionner un employé"

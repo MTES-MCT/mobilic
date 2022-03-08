@@ -2,11 +2,13 @@ import React from "react";
 import debounce from "lodash/debounce";
 import { useHistory } from "react-router-dom";
 import { EmployeeFilter } from "../components/EmployeeFilter";
-import Paper from "@material-ui/core/Paper";
+import Paper from "@mui/material/Paper";
 import { PeriodToggle } from "../components/PeriodToggle";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import { makeStyles } from "@mui/styles";
+import useTheme from "@mui/styles/useTheme";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { WorkTimeTable } from "../components/WorkTimeTable";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
 import { useAdminStore } from "../store/store";
@@ -16,24 +18,24 @@ import uniq from "lodash/uniq";
 import min from "lodash/min";
 import max from "lodash/max";
 import { CompanyFilter } from "../components/CompanyFilter";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import {
   formatDay,
   isoFormatLocalDate,
   startOfDayAsDate
 } from "common/utils/time";
-import Grid from "@material-ui/core/Grid";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu/Menu";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import SvgIcon from "@material-ui/core/SvgIcon";
+import Grid from "@mui/material/Grid";
+import MenuItem from "@mui/material/MenuItem";
+import Menu from "@mui/material/Menu";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import SvgIcon from "@mui/material/SvgIcon";
 import { ReactComponent as ExcelIcon } from "common/assets/images/excel.svg";
 import { ReactComponent as TachoIcon } from "common/assets/images/tacho.svg";
 import { LoadingButton } from "common/components/LoadingButton";
-import Drawer from "@material-ui/core/Drawer/Drawer";
+import Drawer from "@mui/material/Drawer";
 import NewMissionForm from "../../common/NewMissionForm";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import {
@@ -42,8 +44,8 @@ import {
   CREATE_MISSION_MUTATION,
   LOG_LOCATION_MUTATION
 } from "common/utils/apiQueries";
-import { DatePicker } from "@material-ui/pickers";
-import withWidth from "@material-ui/core/withWidth";
+import DatePicker from "@mui/lab/DatePicker";
+import TextField from "@mui/material/TextField";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 const useStyles = makeStyles(theme => ({
@@ -83,6 +85,23 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+/**
+ * Be careful using this hook. It only works because the number of
+ * breakpoints in theme is static. It will break once you change the number of
+ * breakpoints. See https://reactjs.org/docs/hooks-rules.html#only-call-hooks-at-the-top-level
+ */
+function useWidth() {
+  const theme = useTheme();
+  const keys = [...theme.breakpoints.keys].reverse();
+  return (
+    keys.reduce((output, key) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const matches = useMediaQuery(theme.breakpoints.up(key));
+      return !output && matches ? key : output;
+    }, null) || "xs"
+  );
+}
+
 const onMinDateChange = debounce(
   async (newMinDate, maxDate, userId, setLoading, addWorkDays, api, alerts) => {
     if (newMinDate < maxDate) {
@@ -101,7 +120,7 @@ const onMinDateChange = debounce(
   500
 );
 
-function _ActivityPanel({ width }) {
+function ActivitiesPanel() {
   const adminStore = useAdminStore();
   const modals = useModals();
   const alerts = useSnackbarAlerts();
@@ -191,6 +210,7 @@ function _ActivityPanel({ width }) {
   // TODO : memoize this
   const periodAggregates = aggregateWorkDayPeriods(selectedWorkDays, period);
   const ref = React.useRef(null);
+  const width = useWidth();
 
   const classes = useStyles();
   return [
@@ -204,7 +224,7 @@ function _ActivityPanel({ width }) {
         spacing={2}
         container
         alignItems="center"
-        justify="space-between"
+        justifyContent="space-between"
         className={classes.filterGrid}
       >
         {companies.length > 1 && (
@@ -221,10 +241,9 @@ function _ActivityPanel({ width }) {
         <Grid item>
           <DatePicker
             required
-            label="Début"
             value={new Date(minDate)}
             size="small"
-            format="d MMMM yyyy"
+            inputFormat="d MMMM yyyy"
             fullWidth
             onChange={val => setMinDate(isoFormatLocalDate(val))}
             cancelLabel={null}
@@ -232,14 +251,16 @@ function _ActivityPanel({ width }) {
             disableFuture
             inputVariant="outlined"
             animateYearScrolling
+            renderInput={props => (
+              <TextField variant="standard" label="Début" />
+            )}
           />
         </Grid>
         <Grid item>
           <DatePicker
             required
-            label="Fin"
             value={new Date(maxDate)}
-            format="d MMMM yyyy"
+            inputFormat="d MMMM yyyy"
             fullWidth
             size="small"
             onChange={val => setMaxDate(isoFormatLocalDate(val))}
@@ -248,6 +269,7 @@ function _ActivityPanel({ width }) {
             disableFuture
             inputVariant="outlined"
             animateYearScrolling
+            renderInput={props => <TextField variant="standard" label="Fin" />}
           />
         </Grid>
         <Grid item>
@@ -423,7 +445,5 @@ function _ActivityPanel({ width }) {
     </Paper>
   ];
 }
-
-const ActivitiesPanel = withWidth()(_ActivityPanel);
 
 export default ActivitiesPanel;

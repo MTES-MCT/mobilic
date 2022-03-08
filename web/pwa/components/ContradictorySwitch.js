@@ -1,8 +1,8 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import Switch from "@material-ui/core/Switch/Switch";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Switch from "@mui/material/Switch";
+import { makeStyles } from "@mui/styles";
 import { isConnectionError } from "common/utils/errors";
 
 const useStyles = makeStyles(theme => ({
@@ -53,6 +53,7 @@ export function ContradictorySwitch({
           </Grid>
           <Grid item>
             <Switch
+              color="secondary"
               disabled={disabled}
               checked={shouldDisplayInitialEmployeeVersion}
               onChange={e =>

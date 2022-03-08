@@ -1,9 +1,9 @@
 import React from "react";
-import CheckIcon from "@material-ui/icons/Check";
-import Dialog from "@material-ui/core/Dialog";
-import IconButton from "@material-ui/core/IconButton";
-import DialogContent from "@material-ui/core/DialogContent";
-import TextField from "@material-ui/core/TextField";
+import CheckIcon from "@mui/icons-material/Check";
+import Dialog from "@mui/material/Dialog";
+import IconButton from "@mui/material/IconButton";
+import DialogContent from "@mui/material/DialogContent";
+import TextField from "@mui/material/TextField";
 import {
   CustomDialogActions,
   CustomDialogTitle
@@ -27,9 +27,10 @@ export default function CommentInputModal({
       <DialogContent>
         <TextField
           fullWidth
+          variant="standard"
           label="Message"
           multiline
-          rowsMax="10"
+          maxRows={10}
           value={text}
           onChange={e => setText(e.target.value)}
         />

@@ -1,6 +1,6 @@
 import React from "react";
-import Checkbox from "@material-ui/core/Checkbox/Checkbox";
-import TextField from "@material-ui/core/TextField/TextField";
+import Checkbox from "@mui/material/Checkbox";
+import TextField from "@mui/material/TextField";
 import { TextWithOverflowTooltip } from "./TextWithOverflowTooltip";
 
 export function AugmentedTableRowCellContent({
@@ -19,14 +19,12 @@ export function AugmentedTableRowCellContent({
         <Checkbox
           size="small"
           checked={cellData || false}
-          color="primary"
           onChange={e => setCellData(e.target.checked)}
         />
       );
     return (
       <TextField
         fullWidth
-        variant="outlined"
         size="small"
         label={column.label}
         value={cellData || ""}
@@ -51,7 +49,12 @@ export function AugmentedTableRowCellContent({
   return (
     <CellInnerComponent {...cellInnerComponentProps}>
       {column.boolean ? (
-        <Checkbox size="small" checked={cellData || false} disabled />
+        <Checkbox
+          color="secondary"
+          size="small"
+          checked={cellData || false}
+          disabled
+        />
       ) : column.format ? (
         <span>{column.format(cellData, rowData)}</span>
       ) : cellData ? (

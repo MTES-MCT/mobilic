@@ -1,6 +1,3 @@
-import DateFnsUtils from "@date-io/date-fns";
-import format from "date-fns/format";
-
 export const DAY = 86400;
 export const WEEK = 7 * 86400;
 export const HOUR = 3600;
@@ -198,16 +195,6 @@ export function startOfDay(date) {
 export function getStartOfDay(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
   return startOfDay(date);
-}
-
-export class FrLocalizedUtils extends DateFnsUtils {
-  getDatePickerHeaderText(date) {
-    return format(date, "d MMM", { locale: this.locale });
-  }
-
-  getDateTimePickerHeaderText(date) {
-    return format(date, "d MMM", { locale: this.locale });
-  }
 }
 
 export function truncateMinute(unixTimestamp) {

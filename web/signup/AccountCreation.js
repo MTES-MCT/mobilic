@@ -1,12 +1,12 @@
 import React from "react";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField/TextField";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
 import { useApi } from "common/utils/api";
 import { useHistory } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import SignupStepper from "./SignupStepper";
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Section } from "../common/Section";
 import {
@@ -166,6 +166,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           <TextField
             required
             fullWidth
+            variant="standard"
             className="vertical-form-text-input"
             label="Prénom"
             autoComplete="given-name"
@@ -177,6 +178,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           <TextField
             required
             fullWidth
+            variant="standard"
             className="vertical-form-text-input"
             label="Nom"
             autoComplete="family-name"

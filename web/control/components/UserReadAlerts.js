@@ -1,13 +1,13 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import Alert from "@material-ui/lab/Alert/Alert";
-import Box from "@material-ui/core/Box";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
+import Box from "@mui/material/Box";
+import { makeStyles } from "@mui/styles";
 import { Link } from "../../common/LinkButton";
-import Container from "@material-ui/core/Container";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import List from "@material-ui/core/List";
+import Container from "@mui/material/Container";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import List from "@mui/material/List";
 import { AlertGroup } from "./AlertGroup";
 
 const useStyles = makeStyles(theme => ({

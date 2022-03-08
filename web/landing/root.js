@@ -1,12 +1,13 @@
 import React from "react";
-import Container from "@material-ui/core/Container";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
+import Container from "@mui/material/Container";
+import { makeStyles } from "@mui/styles";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import { Header } from "../common/Header";
 import { ManagerImage, SoftwareImage, WorkerImage } from "common/utils/icons";
-import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
+import useTheme from "@mui/styles/useTheme";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizontal.svg";
 import BackgroundVerticalImage from "common/assets/images/landing-hero-vertical.svg";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
@@ -73,7 +74,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function _Showcase({
+function useIsWidthDown(breakpoint) {
+  const theme = useTheme();
+  return useMediaQuery(theme.breakpoints.down(breakpoint));
+}
+
+function Showcase({
   image,
   imageDescription,
   imageSubDescription,
@@ -115,7 +121,8 @@ function _Showcase({
     </MainCtaButton>
   ];
 
-  const leftAlignImage = isWidthDown("sm", width) || imagePosition === "left";
+  const isMdDown = useIsWidthDown("md");
+  const leftAlignImage = isMdDown || imagePosition === "left";
 
   return (
     <Grid
@@ -123,7 +130,7 @@ function _Showcase({
       alignItems="center"
       direction="row"
       spacing={4}
-      justify="space-between"
+      justifyContent="space-between"
     >
       <Grid
         item
@@ -143,24 +150,19 @@ function _Showcase({
   );
 }
 
-const Showcase = withWidth()(_Showcase);
-
-export const Landing = withWidth()(({ width }) => {
+export const Landing = () => {
   const ref = React.useRef();
 
-  const classes = useStyles({ width });
+  const classes = useStyles();
   const sectionClasses = useSectionStyles();
+  const isSmDown = useIsWidthDown("sm");
 
   return [
     <Header key={1} />,
     <Container key={2} maxWidth={false} className={classes.heroContainer}>
       <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
         <img
-          src={
-            isWidthDown("xs", width)
-              ? BackgroundVerticalImage
-              : BackgroundHorizontalImage
-          }
+          src={isSmDown ? BackgroundVerticalImage : BackgroundHorizontalImage}
           alt="Mobilic-hero"
           width="100%"
           height="100%"
@@ -318,7 +320,7 @@ export const Landing = withWidth()(({ width }) => {
           container
           spacing={4}
           alignItems="center"
-          justify="space-between"
+          justifyContent="space-between"
           className={classes.showcase}
         >
           <Grid
@@ -378,4 +380,4 @@ export const Landing = withWidth()(({ width }) => {
     </LandingSectionList>,
     <Footer key={4} />
   ];
-});
+};

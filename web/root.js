@@ -18,12 +18,11 @@ import {
 import { ApiContextProvider, useApi } from "common/utils/api";
 import { theme } from "common/utils/theme";
 import { MODAL_DICT } from "./modals";
-import ThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
-import CssBaseline from "@material-ui/core/CssBaseline";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 import { loadUserData } from "common/utils/loadUserData";
-import { MuiPickersUtilsProvider } from "@material-ui/pickers";
-import frLocale from "date-fns/locale/fr";
-import { FrLocalizedUtils } from "common/utils/time";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { ModalProvider } from "common/utils/modals";
 import {
   LoadingScreenContextProvider,
@@ -43,7 +42,7 @@ import {
   createInstance,
   useMatomo
 } from "@datapunt/matomo-tracker-react";
-import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
+import CircularProgress from "@mui/material/CircularProgress";
 import { ErrorBoundary } from "./common/ErrorFallback";
 import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
 
@@ -71,10 +70,7 @@ export default function Root() {
             <CssBaseline />
             <ErrorBoundary>
               <ApiContextProvider>
-                <MuiPickersUtilsProvider
-                  utils={FrLocalizedUtils}
-                  locale={frLocale}
-                >
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <SnackbarProvider>
                     <LoadingScreenContextProvider>
                       <ModalProvider modalDict={MODAL_DICT}>
@@ -85,7 +81,7 @@ export default function Root() {
                       </ModalProvider>
                     </LoadingScreenContextProvider>
                   </SnackbarProvider>
-                </MuiPickersUtilsProvider>
+                </LocalizationProvider>
               </ApiContextProvider>
             </ErrorBoundary>
           </ThemeProvider>
@@ -212,7 +208,7 @@ function _Root() {
         <EnvironmentHeader />
       )}
       <React.Suspense fallback={<CircularProgress color="primary" />}>
-        <Switch>
+        <Switch color="secondary">
           {routes.map(route => (
             <Route
               key={route.path}

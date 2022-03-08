@@ -4,13 +4,13 @@ import { useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { useApi } from "common/utils/api";
 import { Header } from "../common/Header";
-import Container from "@material-ui/core/Container";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
+import Container from "@mui/material/Container";
+import { makeStyles } from "@mui/styles";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import { useLoadingScreen } from "common/utils/loading";
 import { formatPersonName } from "common/utils/coworkers";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { loadEmployeeInvite } from "../common/loadEmployeeInvite";
 import { LinkButton } from "../common/LinkButton";
 
@@ -88,7 +88,7 @@ export function Invite() {
                 key={2}
                 className={classes.buttonContainer}
                 container
-                justify="space-evenly"
+                justifyContent="space-evenly"
                 spacing={2}
               >
                 <Grid item>

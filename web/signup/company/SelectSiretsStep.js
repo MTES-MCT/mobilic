@@ -1,8 +1,8 @@
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import React from "react";
 import { Step } from "./Step";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@mui/styles";
+import Grid from "@mui/material/Grid";
 import { FacilityInfo } from "./FacilityInfo";
 
 const useStyles = makeStyles(theme => ({

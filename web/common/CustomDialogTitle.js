@@ -1,10 +1,10 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import DialogTitle from "@material-ui/core/DialogTitle/DialogTitle";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import DialogActions from "@material-ui/core/DialogActions";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import DialogTitle from "@mui/material/DialogTitle";
+import { makeStyles } from "@mui/styles";
+import DialogActions from "@mui/material/DialogActions";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -30,8 +30,10 @@ const useStyles = makeStyles(theme => ({
 export function CustomDialogTitle({ handleClose, title }) {
   const classes = useStyles();
   return (
-    <DialogTitle disableTypography className={classes.container}>
-      <Typography variant="h4">{title}</Typography>
+    <DialogTitle className={classes.container}>
+      <Typography variant="h4" component="span">
+        {title}
+      </Typography>
       {handleClose && (
         <IconButton
           aria-label="Fermer"

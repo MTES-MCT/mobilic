@@ -1,20 +1,20 @@
 import React from "react";
 import { AugmentedTable } from "./AugmentedTable";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 import { useApi } from "common/utils/api";
 import { USER_WORK_DAY_QUERY } from "common/utils/apiQueries";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 import { useStyles } from "./styles/WorkTimeDetailsStyle";
 import {
   addBreaksToActivityList,
   computeDurationAndTime,
   filterActivitiesOverlappingPeriod
 } from "common/utils/activities";
-import SvgIcon from "@material-ui/core/SvgIcon";
-import { ChevronRight } from "@material-ui/icons";
+import SvgIcon from "@mui/material/SvgIcon";
+import { ChevronRight } from "@mui/icons-material";
 import {
   DAY,
   formatTimeOfDay,
@@ -170,7 +170,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
       </Typography>
     </Box>,
     <Grid container key={2} spacing={3} direction="column" wrap="nowrap">
-      <Grid item container spacing={2} justify="space-between">
+      <Grid item container spacing={2} justifyContent="space-between">
         <Grid
           item
           sm={4}

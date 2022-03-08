@@ -1,8 +1,8 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import { FunnelModal } from "./FunnelModal";
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 import { MainCtaButton } from "./MainCtaButton";
 import TextField from "common/utils/TextField";
 import { Expenditures } from "./Expenditures";
@@ -179,8 +179,8 @@ export default function EndMissionModal({
               label="Observation"
               variant="filled"
               multiline
-              rows={4}
-              rowsMax="10"
+              minRows={4}
+              maxRows={10}
               value={comment}
               onChange={e => setComment(e.target.value)}
             />

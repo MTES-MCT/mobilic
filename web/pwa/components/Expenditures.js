@@ -1,13 +1,13 @@
 import React from "react";
-import Checkbox from "@material-ui/core/Checkbox";
+import Checkbox from "@mui/material/Checkbox";
 import { EXPENDITURES } from "common/utils/expenditures";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText/ListItemText";
-import List from "@material-ui/core/List";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import List from "@mui/material/List";
+import { makeStyles } from "@mui/styles";
 import { formatDay } from "common/utils/time";
-import Box from "@material-ui/core/Box";
-import { Collapse } from "@material-ui/core";
+import Box from "@mui/material/Box";
+import { Collapse } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   expenditure: {

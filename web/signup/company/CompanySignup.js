@@ -1,7 +1,7 @@
 import React from "react";
 import { useApi } from "common/utils/api";
 import { useHistory, useLocation } from "react-router-dom";
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 import {
   broadCastChannel,
   useStoreSyncedWithLocalStorage

@@ -1,10 +1,11 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import DialogContent from "@material-ui/core/DialogContent";
-import { DatePicker } from "@material-ui/pickers";
-import Dialog from "@material-ui/core/Dialog";
+import Typography from "@mui/material/Typography";
+import DialogContent from "@mui/material/DialogContent";
+import DatePicker from "@mui/lab/DatePicker";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
 import { useApi } from "common/utils/api";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "common/components/LoadingButton";
 import { CompanyFilter } from "./CompanyFilter";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -14,7 +15,7 @@ import {
 } from "../../common/CustomDialogTitle";
 import { EmployeeFilter } from "./EmployeeFilter";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { isoFormatLocalDate } from "common/utils/time";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
@@ -128,9 +129,8 @@ export default function ExcelExport({
           >
             <Grid item sm={6}>
               <DatePicker
-                label="Date de début"
                 value={minDate}
-                format="d MMMM yyyy"
+                inputFormat="d MMMM yyyy"
                 onChange={setMinDate}
                 clearable
                 cancelLabel={null}
@@ -139,13 +139,15 @@ export default function ExcelExport({
                 disableFuture
                 inputVariant="outlined"
                 animateYearScrolling
+                renderInput={props => (
+                  <TextField variant="standard" label="Date de début" />
+                )}
               />
             </Grid>
             <Grid item sm={6}>
               <DatePicker
-                label="Date de fin"
                 value={maxDate}
-                format="d MMMM yyyy"
+                inputFormat="d MMMM yyyy"
                 onChange={setMaxDate}
                 clearable
                 cancelLabel={null}
@@ -154,6 +156,9 @@ export default function ExcelExport({
                 disableFuture
                 inputVariant="outlined"
                 animateYearScrolling
+                renderInput={props => (
+                  <TextField variant="standard" label="Date de fin" />
+                )}
               />
             </Grid>
           </DateOrDateTimeRangeSelectionContext>

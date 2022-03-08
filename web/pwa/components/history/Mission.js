@@ -5,20 +5,20 @@ import {
   WorkTimeSummaryKpiGrid
 } from "../WorkTimeSummary";
 import { MissionDetails } from "../MissionDetails";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import Collapse from "@material-ui/core/Collapse/Collapse";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import Collapse from "@mui/material/Collapse";
+import { makeStyles } from "@mui/styles";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { ItalicWarningTypography } from "./ItalicWarningTypography";
 import { prettyFormatDay } from "common/utils/time";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { useToggleContradictory } from "./toggleContradictory";
 import { ContradictorySwitch } from "../ContradictorySwitch";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
-import GetAppIcon from "@material-ui/icons/GetApp";
-import Grid from "@material-ui/core/Grid";
+import GetAppIcon from "@mui/icons-material/GetApp";
+import Grid from "@mui/material/Grid";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
@@ -158,7 +158,7 @@ export function Mission({
         <Grid
           container
           spacing={2}
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
           wrap="nowrap"
           onClick={() => setOpen(!open)}

@@ -1,16 +1,13 @@
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import AppBar from "@material-ui/core/AppBar";
-import TabPanel from "@material-ui/lab/TabPanel";
-import TabContext from "@material-ui/lab/TabContext";
-import Container from "@material-ui/core/Container";
+import { makeStyles } from "@mui/styles";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import AppBar from "@mui/material/AppBar";
+import TabPanel from "@mui/lab/TabPanel";
+import TabContext from "@mui/lab/TabContext";
+import Container from "@mui/material/Container";
 
 const useStyles = makeStyles(theme => ({
-  container: {
-    zIndex: 0
-  },
   sectionBody: {
     marginBottom: theme.spacing(6)
   },
@@ -41,17 +38,17 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
   }, [tab]);
 
   const classes = useStyles();
-
   return (
     <>
       <TabContext value={tab}>
-        <AppBar className={classes.container} position="static">
+        <AppBar enableColorOnDark position="static">
           <Tabs
             value={tab}
             onChange={(e, t) => setTab(t)}
             aria-label="user read tabs"
             centered
             variant="fullWidth"
+            indicatorColor="primary"
             textColor="inherit"
           >
             {tabs.map(t => (

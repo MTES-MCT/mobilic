@@ -1,5 +1,5 @@
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
 import { InfoItem } from "../../home/InfoField";
 import { formatPersonName } from "common/utils/coworkers";
 import { EmploymentInfoCard } from "../../common/EmploymentInfoCard";
@@ -10,12 +10,12 @@ import {
 import { LoadingButton } from "common/components/LoadingButton";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 import React from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { Link } from "../../common/LinkButton";
 
 const useStyles = makeStyles(theme => ({
@@ -106,7 +106,7 @@ export function UserReadInfo({
       </Grid>
       <Grid
         container
-        justify="center"
+        justifyContent="center"
         alignItems="center"
         spacing={6}
         className={classes.linkButtons}

@@ -1,4 +1,4 @@
-import TextField from "@material-ui/core/TextField/TextField";
+import TextField from "@mui/material/TextField";
 import React from "react";
 import {
   cleanEmailString,
@@ -33,6 +33,7 @@ export function EmailField({
       }}
       error={!!error}
       helperText={error}
+      variant="standard"
       {...props}
     />
   );

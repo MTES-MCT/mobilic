@@ -1,7 +1,7 @@
 import React from "react";
-import Container from "@material-ui/core/Container";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+import Container from "@mui/material/Container";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import {
   getStartOfWeek,
   SHORT_MONTHS,
@@ -10,18 +10,18 @@ import {
   WEEK
 } from "common/utils/time";
 import { useGroupMissionsAndExtractActivities } from "common/utils/history/groupByPeriodUnit";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { AccountButton } from "../components/AccountButton";
 import { useLocation, useHistory } from "react-router-dom";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { NoDataImage } from "common/utils/icons";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { useModals } from "common/utils/modals";
 import moment from "moment";
-import IconButton from "@material-ui/core/IconButton";
-import AddCircleIcon from "@material-ui/icons/AddCircle";
+import IconButton from "@mui/material/IconButton";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
@@ -30,8 +30,8 @@ import { Day } from "../components/history/Day";
 import { Week } from "../components/history/Week";
 import { Month } from "../components/history/Month";
 import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
-import Grid from "@material-ui/core/Grid";
-import GetAppIcon from "@material-ui/icons/GetApp";
+import Grid from "@mui/material/Grid";
+import GetAppIcon from "@mui/icons-material/GetApp";
 import { useSelectPeriod } from "common/utils/history/changePeriod";
 import { PERIOD_UNITS } from "common/utils/history/periodUnits";
 import { useComputePeriodStatuses } from "common/utils/history/computePeriodStatuses";
@@ -284,7 +284,12 @@ export function History({
     >
       {displayActions && [
         <AccountButton p={2} key={1} onBackButtonClick={onBackButtonClick} />,
-        <Grid container key={2} justify="space-between" alignItems="center">
+        <Grid
+          container
+          key={2}
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Grid item>
             <Button
               aria-label="Accès contrôleur"
@@ -358,6 +363,8 @@ export function History({
           onChange={(e, tab) => handlePeriodChange(e, tab, selectedPeriod)}
           style={{ flexGrow: 1 }}
           variant="fullWidth"
+          indicatorColor="primary"
+          textColor="inherit"
         >
           {Object.values(tabs).map((tabProps, index) => (
             <Tab

@@ -8,7 +8,7 @@ import {
   useStoreSyncedWithLocalStorage
 } from "common/store/store";
 import { formatApiError } from "common/utils/errors";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { currentUserId } from "common/utils/cookie";
 
 import {

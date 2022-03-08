@@ -1,19 +1,19 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { useApi } from "common/utils/api";
 import { useHistory, useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import Paper from "@material-ui/core/Paper";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Container from "@material-ui/core/Container";
+import Paper from "@mui/material/Paper";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { makeStyles } from "@mui/styles";
+import Container from "@mui/material/Container";
 import { Section } from "../common/Section";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import AccountCircleOutlinedIcon from "@material-ui/icons/AccountCircleOutlined";
-import ListItemText from "@material-ui/core/ListItemText";
-import Divider from "@material-ui/core/Divider";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import ListItemText from "@mui/material/ListItemText";
+import Divider from "@mui/material/Divider";
 
 const useStyles = makeStyles(theme => ({
   title: {

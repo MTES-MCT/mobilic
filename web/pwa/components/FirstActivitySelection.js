@@ -1,8 +1,8 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { FunnelModal } from "./FunnelModal";
-import Box from "@material-ui/core/Box";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Box from "@mui/material/Box";
+import { makeStyles } from "@mui/styles";
 import { ActivitySwitch } from "./ActivitySwitch";
 
 const useStyles = makeStyles(theme => ({

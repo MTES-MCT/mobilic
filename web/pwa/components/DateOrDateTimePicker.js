@@ -5,14 +5,12 @@ import {
   getStartOfDay,
   isoFormatDateTime
 } from "common/utils/time";
-import HighlightOffIcon from "@material-ui/icons/HighlightOff";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import React from "react";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import IconButton from "@material-ui/core/IconButton";
-import {
-  DateTimePicker as MaterialDateTimePicker,
-  DatePicker as MaterialDatePicker
-} from "@material-ui/pickers";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import DateTimePicker from "@mui/lab/DateTimePicker";
+import DatePicker from "@mui/lab/DatePicker";
 import TextField from "common/utils/TextField";
 
 export function DateOrDateTimePicker({
@@ -174,6 +172,8 @@ function MaterialUIDateOrDateTimePicker({
   maxValue,
   minValue,
   format,
+  label,
+  helperText,
   ...props
 }) {
   const handleChange = val => {
@@ -191,12 +191,13 @@ function MaterialUIDateOrDateTimePicker({
   const customProps = isDateTime
     ? { ampm: false, minTime: minValue, maxTime: maxValue }
     : { minDate: minValue, maxDate: maxValue };
-  const MaterialPicker = isDateTime
-    ? MaterialDateTimePicker
-    : MaterialDatePicker;
+  const MaterialPicker = isDateTime ? DateTimePicker : DatePicker;
 
   return (
     <MaterialPicker
+      renderInput={props => (
+        <TextField variant="standard" label={label} helperText={helperText} />
+      )}
       autoOk={true}
       value={value ? toMaterialUIRepresentation(value) : ""}
       inputProps={{
@@ -208,7 +209,7 @@ function MaterialUIDateOrDateTimePicker({
           ? ["date", "month", "hours", "minutes"]
           : ["year", "month", "date"]
       }
-      format={format}
+      inputFormat={format}
       onChange={handleChange}
       inputVariant={props.variant}
       {...customProps}

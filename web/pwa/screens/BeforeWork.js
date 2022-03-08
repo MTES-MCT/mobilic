@@ -1,18 +1,18 @@
 import React from "react";
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 import { PlaceHolder } from "../../common/PlaceHolder";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { useModals } from "common/utils/modals";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { AccountButton } from "../components/AccountButton";
 import { MainCtaButton } from "../components/MainCtaButton";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Avatar from "@material-ui/core/Avatar";
-import ListItemText from "@material-ui/core/ListItemText";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import Avatar from "@mui/material/Avatar";
+import ListItemText from "@mui/material/ListItemText";
 import {
   DAY,
   formatDayOfWeek,
@@ -21,7 +21,7 @@ import {
   shortPrettyFormatDay,
   startOfDay
 } from "common/utils/time";
-import ListSubheader from "@material-ui/core/ListSubheader";
+import ListSubheader from "@mui/material/ListSubheader";
 import orderBy from "lodash/orderBy";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useLoadingScreen } from "common/utils/loading";

@@ -1,5 +1,5 @@
 import React from "react";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
+import TableSortLabel from "@mui/material/TableSortLabel";
 
 export function AugmentedTableHeaderCellContent({
   column,

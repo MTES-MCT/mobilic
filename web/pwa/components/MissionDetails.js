@@ -1,15 +1,15 @@
 import { MissionReviewSection } from "./MissionReviewSection";
-import DriveEtaIcon from "@material-ui/icons/DriveEta";
+import DriveEtaIcon from "@mui/icons-material/DriveEta";
 import { ActivityList } from "./ActivityList";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 import {
   computeLatestEnrollmentStatuses,
   formatLatestEnrollmentStatus,
   resolveTeamAt
 } from "common/utils/coworkers";
-import Box from "@material-ui/core/Box";
-import Chip from "@material-ui/core/Chip";
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
 import {
   EXPENDITURES,
   regroupExpendituresSpendingDateByType
@@ -19,22 +19,22 @@ import map from "lodash/map";
 import omit from "lodash/omit";
 import uniqBy from "lodash/uniqBy";
 import max from "lodash/max";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { useModals } from "common/utils/modals";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 import { getVehicleName } from "common/utils/vehicles";
 import { PersonIcon } from "common/utils/icons";
 import { formatDay, getStartOfDay, now } from "common/utils/time";
 import { MainCtaButton } from "./MainCtaButton";
-import Typography from "@material-ui/core/Typography";
-import CheckIcon from "@material-ui/icons/Check";
-import ScheduleIcon from "@material-ui/icons/Schedule";
+import Typography from "@mui/material/Typography";
+import CheckIcon from "@mui/icons-material/Check";
+import ScheduleIcon from "@mui/icons-material/Schedule";
 import { Event } from "../../common/Event";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import LocationEntry from "./LocationEntry";
-import Alert from "@material-ui/lab/Alert";
+import Alert from "@mui/material/Alert";
 import { ContradictoryChanges } from "./ContradictoryChanges";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
 import { DISMISSABLE_WARNINGS } from "../../admin/utils/dismissableWarnings";

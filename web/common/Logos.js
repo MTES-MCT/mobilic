@@ -1,8 +1,8 @@
 import React from "react";
 import MobilicLogoWithText from "common/assets/images/mobilic-logo-with-text.svg";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { LinkButton } from "./LinkButton";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { getFallbackRoute } from "./routes";
 import { MarianneIcon } from "common/utils/icons";

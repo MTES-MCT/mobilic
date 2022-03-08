@@ -1,14 +1,14 @@
 import React from "react";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import Typography from "@material-ui/core/Typography";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Typography from "@mui/material/Typography";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 import { RegulatoryAlert } from "./RegulatoryAlert";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Grid from "@material-ui/core/Grid";
-import Accordion from "@material-ui/core/Accordion";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
+import { makeStyles } from "@mui/styles";
+import Grid from "@mui/material/Grid";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
 
 const useStyles = makeStyles(theme => {
   return {
@@ -66,7 +66,7 @@ export function AlertGroup({
           container
           spacing={2}
           alignItems="center"
-          justify="space-between"
+          justifyContent="space-between"
           wrap="nowrap"
         >
           <Grid item>

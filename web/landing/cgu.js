@@ -1,19 +1,20 @@
 import React from "react";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import Typography from "@material-ui/core/Typography";
+import DialogTitle from "@mui/material/DialogTitle";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import Typography from "@mui/material/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
 import ReactMarkdown from "react-markdown";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import withWidth, { isWidthDown } from "@material-ui/core/withWidth";
-import Button from "@material-ui/core/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import { makeStyles } from "@mui/styles";
+import useTheme from "@mui/styles/useTheme";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import Button from "@mui/material/Button";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { CustomDialogActions } from "../common/CustomDialogTitle";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { Header } from "../common/Header";
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 
 const useStyles = makeStyles(theme => ({
@@ -78,8 +79,14 @@ function CGUContent() {
   );
 }
 
-function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
+function useIsWidthDown(breakpoint) {
+  const theme = useTheme();
+  return useMediaQuery(theme.breakpoints.down(breakpoint));
+}
+
+function CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
   const store = useStoreSyncedWithLocalStorage();
+  const isSmDown = useIsWidthDown("sm");
 
   return (
     <Dialog
@@ -87,7 +94,7 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
       open={open}
       scroll="paper"
       fullWidth
-      fullScreen={isWidthDown("xs", width)}
+      fullScreen={isSmDown}
       maxWidth="md"
       PaperProps={{ style: { height: "100%" } }}
     >
@@ -139,7 +146,5 @@ function _CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
     </Dialog>
   );
 }
-
-const CGUModal = withWidth()(_CGUModal);
 
 export default CGUModal;

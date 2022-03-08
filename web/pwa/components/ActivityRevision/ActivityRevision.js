@@ -1,9 +1,9 @@
 import React from "react";
-import Dialog from "@material-ui/core/Dialog";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
+import Dialog from "@mui/material/Dialog";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import { now, sameMinute, truncateMinute } from "common/utils/time";
-import DialogContent from "@material-ui/core/DialogContent";
+import DialogContent from "@mui/material/DialogContent";
 import TextField from "common/utils/TextField";
 import {
   ACTIVITIES,
@@ -13,18 +13,18 @@ import {
 import uniq from "lodash/uniq";
 import min from "lodash/min";
 import max from "lodash/max";
-import MenuItem from "@material-ui/core/MenuItem";
+import MenuItem from "@mui/material/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { DateOrDateTimePicker } from "../DateOrDateTimePicker";
-import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
-import Switch from "@material-ui/core/Switch/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
 import {
   CustomDialogActions,
   CustomDialogTitle
 } from "../../../common/CustomDialogTitle";
-import Button from "@material-ui/core/Button";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Button from "@mui/material/Button";
+import { makeStyles } from "@mui/styles";
 import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
 import OverlappedActivityList from "./OverlappedActivityList";
@@ -393,7 +393,6 @@ export default function ActivityRevisionOrCreationModal({
                 <Switch
                   checked={teamMode}
                   onChange={() => setTeamMode(!teamMode)}
-                  color="primary"
                 />
               }
               label="Pour toute l'équipe"
@@ -407,7 +406,7 @@ export default function ActivityRevisionOrCreationModal({
             fullWidth
             variant="filled"
             multiline
-            rowsMax={10}
+            maxRows={10}
             value={userComment}
             onChange={e => setUserComment(e.target.value)}
           />

@@ -1,15 +1,15 @@
 import React from "react";
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
 import { Header } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
-import { Breadcrumbs } from "@material-ui/core";
+import { Breadcrumbs } from "@mui/material";
 import { Link } from "../../common/LinkButton";
 import { SlideshareCard } from "./SlideshareCard";
-import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { VideoCard } from "./VideoCard";
 

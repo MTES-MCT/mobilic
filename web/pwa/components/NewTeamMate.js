@@ -1,14 +1,14 @@
 import React from "react";
-import CheckIcon from "@material-ui/icons/Check";
-import CloseIcon from "@material-ui/icons/Close";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import IconButton from "@material-ui/core/IconButton";
-import DialogContent from "@material-ui/core/DialogContent";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
+import DialogTitle from "@mui/material/DialogTitle";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import IconButton from "@mui/material/IconButton";
+import DialogContent from "@mui/material/DialogContent";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles(theme => ({
   lastNameField: {
@@ -29,8 +29,10 @@ export default function NewTeamMateModal({ open, handleClose, handleSubmit }) {
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle disableTypography>
-        <Typography variant="h4">Nouveau coéquipier</Typography>
+      <DialogTitle>
+        <Typography variant="h4" component="span">
+          Nouveau coéquipier
+        </Typography>
       </DialogTitle>
       <form
         noValidate

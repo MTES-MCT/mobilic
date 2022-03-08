@@ -1,14 +1,14 @@
 import React from "react";
 import { MissionReviewSection } from "../MissionReviewSection";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 import { Mission } from "./Mission";
-import { Box } from "@material-ui/core";
+import { Box } from "@mui/material";
 import { DaySummary } from "./DaySummary";
 import { useToggleContradictory } from "./toggleContradictory";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { ContradictorySwitch } from "../ContradictorySwitch";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
 
 export const useStyles = makeStyles(theme => ({

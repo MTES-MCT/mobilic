@@ -1,15 +1,15 @@
 import React from "react";
-import Dialog from "@material-ui/core/Dialog";
+import Dialog from "@mui/material/Dialog";
 import { formatPersonName } from "common/utils/coworkers";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Radio from "@material-ui/core/Radio";
-import DialogContent from "@material-ui/core/DialogContent";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import DialogContent from "@mui/material/DialogContent";
 import { formatTimer, now } from "common/utils/time";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { CustomDialogTitle } from "../../common/CustomDialogTitle";
 import { VehicleFieldForApp } from "./VehicleFieldForApp";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 
 export default function DriverSelectionModal({
   team = [],
@@ -89,7 +89,7 @@ export default function DriverSelectionModal({
             <FormControlLabel
               key={index}
               value={teamMateId}
-              control={<Radio />}
+              control={<Radio color="secondary" />}
               label={
                 hasTeamMates
                   ? `${
@@ -117,7 +117,7 @@ export default function DriverSelectionModal({
           <FormControlLabel
             key={-1}
             value={-2}
-            control={<Radio />}
+            control={<Radio color="secondary" />}
             label={hasTeamMates ? "Une autre personne" : "Non"}
             disabled={requireVehicle && !vehicle}
           />

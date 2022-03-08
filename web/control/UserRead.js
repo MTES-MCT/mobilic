@@ -2,8 +2,8 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import { useApi } from "common/utils/api";
 import { Header } from "../common/Header";
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
 import { useLoadingScreen } from "common/utils/loading";
 import {
   augmentAndSortMissions,
@@ -17,9 +17,9 @@ import {
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { captureSentryException } from "common/utils/sentry";
 import { useImpersonation } from "./utils/impersonation";
-import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
-import WarningAmberOutlinedIcon from "@material-ui/icons/WarningOutlined";
-import HistoryOutlinedIcon from "@material-ui/icons/HistoryOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import WarningAmberOutlinedIcon from "@mui/icons-material/WarningOutlined";
+import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import { UserReadTabs } from "./components/UserReadTabs";
 import { orderEmployments } from "common/utils/employments";
 import { UserReadInfo } from "./components/UserReadInfo";

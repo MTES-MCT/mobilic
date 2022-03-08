@@ -1,10 +1,10 @@
-import Card from "@material-ui/core/Card/Card";
-import Box from "@material-ui/core/Box";
+import Card from "@mui/material/Card";
+import Box from "@mui/material/Box";
 import omit from "lodash/omit";
-import Typography from "@material-ui/core/Typography";
-import Skeleton from "@material-ui/lab/Skeleton";
+import Typography from "@mui/material/Typography";
+import Skeleton from "@mui/material/Skeleton";
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 
 export const useInfoCardStyles = makeStyles(theme => ({
   value: {

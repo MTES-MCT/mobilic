@@ -1,10 +1,11 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import DialogContent from "@material-ui/core/DialogContent";
-import { DatePicker } from "@material-ui/pickers";
-import Dialog from "@material-ui/core/Dialog";
+import Typography from "@mui/material/Typography";
+import DialogContent from "@mui/material/DialogContent";
+import DatePicker from "@mui/lab/DatePicker";
+import Dialog from "@mui/material/Dialog";
+import TextField from "@mui/material/TextField";
 import { useApi } from "common/utils/api";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
@@ -13,7 +14,7 @@ import {
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import {
   DAY,
   endOfMonthAsDate,
@@ -92,9 +93,15 @@ export default function PDFExport({ open, handleClose }) {
             <Grid item sm={6} xs={12}>
               <DatePicker
                 required
-                label="Mois de début"
+                renderInput={props => (
+                  <TextField
+                    variant="standard"
+                    label="Mois de début"
+                    helperText={dateRangeError}
+                  />
+                )}
                 value={minDate}
-                format="MMMM yyyy"
+                inputFormat="MMMM yyyy"
                 fullWidth
                 onChange={e => {
                   setMinDate(e);
@@ -105,7 +112,6 @@ export default function PDFExport({ open, handleClose }) {
                 inputVariant="outlined"
                 animateYearScrolling
                 error={!!dateRangeError}
-                helperText={dateRangeError}
                 openTo={"month"}
                 views={["year", "month"]}
               />
@@ -113,9 +119,15 @@ export default function PDFExport({ open, handleClose }) {
             <Grid item sm={6} xs={12}>
               <DatePicker
                 required
-                label="Mois de fin"
+                renderInput={props => (
+                  <TextField
+                    variant="standard"
+                    label="Mois de fin"
+                    helperText={dateRangeError}
+                  />
+                )}
                 value={maxDate}
-                format="MMMM yyyy"
+                inputFormat="MMMM yyyy"
                 fullWidth
                 onChange={e => {
                   setMaxDate(e);
@@ -126,7 +138,6 @@ export default function PDFExport({ open, handleClose }) {
                 inputVariant="outlined"
                 animateYearScrolling
                 error={!!dateRangeError}
-                helperText={dateRangeError}
                 openTo={"month"}
                 views={["year", "month"]}
               />
