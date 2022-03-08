@@ -38,6 +38,9 @@ const useStyles = makeStyles(theme => ({
   },
   ended: {
     opacity: 0.5
+  },
+  employmentDetails: {
+    display: "block"
   }
 }));
 
@@ -138,7 +141,7 @@ export function EmploymentInfoCard({
           )}
         </Grid>
       </AccordionSummary>
-      <AccordionDetails>
+      <AccordionDetails className={classes.employmentDetails}>
         <Grid container wrap="wrap" spacing={spacing}>
           <Grid item>
             <InfoItem name="SIREN" value={employment.company.siren} />
