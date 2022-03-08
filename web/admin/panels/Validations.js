@@ -87,6 +87,10 @@ function _ValidationPanel() {
     c => c.settings.requireExpenditures
   );
 
+  const allowTransfers = adminStore.companies.some(
+    c => c.settings.allowTransfers
+  );
+
   const commonCols = [
     {
       label: "Employé",
@@ -136,6 +140,20 @@ function _ValidationPanel() {
     {
       label: "Travail",
       name: "totalWorkDuration",
+      format: (time, entry) =>
+        entry.isComplete ? (
+          formatTimer(time)
+        ) : (
+          <span className={classes.warningText}>
+            <strong>En cours</strong>
+          </span>
+        ),
+      align: "right",
+      minWidth: 100
+    },
+    allowTransfers && {
+      label: "Liaison",
+      name: "transferDuration",
       format: (time, entry) =>
         entry.isComplete ? (
           formatTimer(time)

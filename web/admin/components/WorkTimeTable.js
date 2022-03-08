@@ -102,7 +102,7 @@ export function WorkTimeTable({
     minWidth: 100
   };
   const workTimeCol = {
-    label: "Temps de travail",
+    label: "Travail",
     name: "totalWork",
     sortable: true,
     format: formatTimer,
@@ -110,8 +110,15 @@ export function WorkTimeTable({
     minWidth: 120
   };
   const restTimeCol = {
-    label: "Temps de repos",
+    label: "Repos",
     name: "rest",
+    format: time => (time ? formatTimer(time) : null),
+    align: "right",
+    minWidth: 100
+  };
+  const transferTimeCol = {
+    label: "Liaison",
+    name: "transferDuration",
     format: time => (time ? formatTimer(time) : null),
     align: "right",
     minWidth: 100
@@ -171,6 +178,7 @@ export function WorkTimeTable({
       endTimeCol,
       serviceTimeCol,
       workTimeCol,
+      transferTimeCol,
       restTimeCol
     ];
     if (showExpenditures) columns.push(expenditureCol);

@@ -48,6 +48,7 @@ export default function ActivityRevisionOrCreationModal({
   allowTeamMode = false,
   nullableEndTime = true,
   allowSupportActivity = true,
+  allowTransfers = false,
   createActivity,
   defaultTime = null,
   forcedUser = null,
@@ -290,6 +291,17 @@ export default function ActivityRevisionOrCreationModal({
     return false;
   }
 
+  const filterOutSupport = activity =>
+    allowSupportActivity ? true : activity !== ACTIVITIES.support.name;
+  const filterOutTransfer = activity =>
+    allowTransfers ? true : activity !== ACTIVITIES.transfer.name;
+
+  const filteredActivities = () => {
+    return Object.keys(ACTIVITIES).filter(
+      a => filterOutSupport(a) && filterOutTransfer(a)
+    );
+  };
+
   const classes = useStyles();
 
   return (
@@ -319,19 +331,15 @@ export default function ActivityRevisionOrCreationModal({
             value={isCreation ? newActivityType : event.type}
             onChange={e => setNewActivityType(e.target.value)}
           >
-            {Object.keys(ACTIVITIES)
-              .filter(a =>
-                allowSupportActivity ? true : a !== ACTIVITIES.support.name
-              )
-              .map(activityName => (
-                <MenuItem
-                  disabled={activityName === ACTIVITIES.support.name}
-                  key={activityName}
-                  value={activityName}
-                >
-                  {ACTIVITIES[activityName].label}
-                </MenuItem>
-              ))}
+            {filteredActivities().map(activityName => (
+              <MenuItem
+                disabled={activityName === ACTIVITIES.support.name}
+                key={activityName}
+                value={activityName}
+              >
+                {ACTIVITIES[activityName].label}
+              </MenuItem>
+            ))}
           </TextField>
           {requiresDriver() && (
             <TextField

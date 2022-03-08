@@ -1,3 +1,4 @@
+import { ACTIVITIES } from "../activities";
 import {
   HOUR,
   LONG_BREAK_DURATION,
@@ -8,18 +9,20 @@ import {
 } from "../time";
 import { ALERT_TYPES } from "./alertTypes";
 
-const MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK = HOUR * 6;
-const MAXIMUM_DURATION_OF_DAY_WORK_IN_HOURS = 12;
-const MAXIMUM_DURATION_OF_NIGHT_WORK_IN_HOURS = 10;
+export const MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK = HOUR * 6;
+export const MAXIMUM_DURATION_OF_DAY_WORK_IN_HOURS = 12;
+export const MAXIMUM_DURATION_OF_NIGHT_WORK_IN_HOURS = 10;
+export const START_DAY_WORK_HOUR = 5;
 const MINIMUM_DURATION_OF_INDIVIDUAL_BREAK = MINUTE * 15;
 
 export function isNightWork(activity) {
+  if (activity.type === ACTIVITIES.transfer.name) return false;
   if (activity.endTime === activity.startTime) return false;
   const startTimeAsDateTime = new Date(activity.startTime * 1000);
   const minuteOfDay =
     startTimeAsDateTime.getHours() * 60 + startTimeAsDateTime.getMinutes();
 
-  if (minuteOfDay < 300) return true;
+  if (minuteOfDay < 60 * START_DAY_WORK_HOUR) return true;
   const nextMidnight = getStartOfDay(activity.startTime + DAY);
   return (activity.endTime || now()) > nextMidnight;
 }
@@ -34,42 +37,45 @@ export function checkMaximumDurationOfUninterruptedWork(activities) {
   const now1 = now();
   let currentUninterruptedWorkDuration = 0;
   let latestWorkTime = null;
-  activities.every(a => {
-    if (!latestWorkTime || a.startTime > latestWorkTime) {
-      currentUninterruptedWorkDuration = 0;
-    }
-    currentUninterruptedWorkDuration =
-      currentUninterruptedWorkDuration + (a.endTime || now1) - a.startTime;
-    if (
-      currentUninterruptedWorkDuration > MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK
-    ) {
-      return false;
-    }
-    latestWorkTime = a.endTime;
-    return true;
-  });
 
-  if (currentUninterruptedWorkDuration > MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK)
-    return {
-      status: RULE_RESPECT_STATUS.failure,
-      rule: ALERT_TYPES.maximumUninterruptedWorkTime
-    };
+  // consider all activities excluding transfers
+  // exit loop if we find a consecutive series of activites with span time > MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK
+  const isRuleBroken = !activities
+    .filter(a => a.type !== ACTIVITIES.transfer.name)
+    .every(a => {
+      if (!latestWorkTime || a.startTime > latestWorkTime) {
+        currentUninterruptedWorkDuration = 0;
+      }
+      currentUninterruptedWorkDuration =
+        currentUninterruptedWorkDuration + (a.endTime || now1) - a.startTime;
+      if (
+        currentUninterruptedWorkDuration >
+        MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK
+      ) {
+        return false;
+      }
+      latestWorkTime = a.endTime;
+      return true;
+    });
 
   return {
-    status: RULE_RESPECT_STATUS.success,
+    status: isRuleBroken
+      ? RULE_RESPECT_STATUS.failure
+      : RULE_RESPECT_STATUS.success,
     rule: ALERT_TYPES.maximumUninterruptedWorkTime
   };
 }
 
-function computeTotalWorkDuration(workDayActivities) {
+function dailyTotalEffectiveWork(workDayActivities) {
   const now1 = now();
   return workDayActivities
+    .filter(a => a.type !== ACTIVITIES.transfer.name)
     .map(a => (a.endTime || now1) - a.startTime)
     .reduce((acc, value) => acc + value, 0);
 }
 
 export function checkMaximumDurationOfWork(workDayActivities) {
-  const totalWorkDuration = computeTotalWorkDuration(workDayActivities);
+  const totalEffectiveWork = dailyTotalEffectiveWork(workDayActivities);
 
   const nightWork = workDayActivities.some(a => isNightWork(a));
 
@@ -77,11 +83,11 @@ export function checkMaximumDurationOfWork(workDayActivities) {
     ? MAXIMUM_DURATION_OF_NIGHT_WORK_IN_HOURS
     : MAXIMUM_DURATION_OF_DAY_WORK_IN_HOURS;
 
+  const isRuleBroken = totalEffectiveWork > maximumTimeInHours * HOUR;
   return {
-    status:
-      totalWorkDuration > maximumTimeInHours * HOUR
-        ? RULE_RESPECT_STATUS.failure
-        : RULE_RESPECT_STATUS.success,
+    status: isRuleBroken
+      ? RULE_RESPECT_STATUS.failure
+      : RULE_RESPECT_STATUS.success,
     rule: ALERT_TYPES.maximumWorkDayTime,
     extra: {
       nightWork,
@@ -91,9 +97,9 @@ export function checkMaximumDurationOfWork(workDayActivities) {
 }
 
 export function checkMinimumDurationOfBreak(workDayActivities) {
-  const totalWorkDuration = computeTotalWorkDuration(workDayActivities);
+  const totalEffectiveWork = dailyTotalEffectiveWork(workDayActivities);
 
-  if (totalWorkDuration > 6 * HOUR) {
+  if (totalEffectiveWork > 6 * HOUR) {
     let totalBreakTime = 0;
     let latestWorkTime = null;
     workDayActivities.forEach(a => {
@@ -104,7 +110,7 @@ export function checkMinimumDurationOfBreak(workDayActivities) {
         totalBreakTime = totalBreakTime + a.startTime - latestWorkTime;
       latestWorkTime = a.endTime;
     });
-    if (totalWorkDuration <= 9 * HOUR && totalBreakTime < 30 * MINUTE)
+    if (totalEffectiveWork <= 9 * HOUR && totalBreakTime < 30 * MINUTE)
       return {
         status: RULE_RESPECT_STATUS.failure,
         rule: ALERT_TYPES.minimumWorkDayBreak,
@@ -112,7 +118,7 @@ export function checkMinimumDurationOfBreak(workDayActivities) {
           minimumTimeInMinutes: 30
         }
       };
-    if (totalWorkDuration > 9 * HOUR && totalBreakTime < 45 * MINUTE)
+    if (totalEffectiveWork > 9 * HOUR && totalBreakTime < 45 * MINUTE)
       return {
         status: RULE_RESPECT_STATUS.failure,
         rule: ALERT_TYPES.minimumWorkDayBreak,
