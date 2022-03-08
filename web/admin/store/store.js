@@ -8,6 +8,7 @@ export function AdminStoreProvider({ children }) {
   const store = useStoreSyncedWithLocalStorage();
 
   const [state, setState] = React.useState({
+    companyId: undefined,
     users: [],
     workDays: [],
     vehicles: [],
@@ -19,6 +20,7 @@ export function AdminStoreProvider({ children }) {
   });
 
   function dispatch(action) {
+    console.log("dispatch", action);
     setState(st => adminRootReducer(st, action));
   }
 

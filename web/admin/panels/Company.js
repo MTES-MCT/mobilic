@@ -15,6 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import VehicleAdmin from "./Vehicles";
 import KnownAddressAdmin from "./KnownAddresses";
 import SettingAdmin from "./Settings";
+import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 export const usePanelStyles = makeStyles(theme => ({
   navigation: {
@@ -96,7 +97,7 @@ function SubNavigationToggle({ view, setView }) {
 function _CompanyPanel({ width, containerRef }) {
   const [view, setView] = React.useState("employees");
 
-  const [selectedCompanyId, setSelectedCompanyId] = React.useState(null);
+  // const [selectedCompanyId, setSelectedCompanyId] = React.useState(null);
   const [company, setCompany] = React.useState(null);
 
   const adminStore = useAdminStore();
@@ -104,13 +105,18 @@ function _CompanyPanel({ width, containerRef }) {
   const companies = adminStore.companies;
 
   React.useEffect(() => {
-    if (!selectedCompanyId && companies && companies.length > 0) {
-      const defaultCompany = companies[0];
-      setSelectedCompanyId(defaultCompany.id);
-      setCompany(defaultCompany);
-    } else if (selectedCompanyId && companies) {
-      setCompany(companies.find(c => c.id === selectedCompanyId));
-    } else setCompany(null);
+    if (adminStore.companyId && companies && companies.length > 0) {
+      setCompany(companies.find(c => c.id === adminStore.companyId));
+    } else {
+      setCompany(null);
+    }
+    // if (!selectedCompanyId && companies && companies.length > 0) {
+    //   const defaultCompany = companies[0];
+    //   setSelectedCompanyId(defaultCompany.id);
+    //   setCompany(defaultCompany);
+    // } else if (selectedCompanyId && companies) {
+    //   setCompany(companies.find(c => c.id === selectedCompanyId));
+    // } else setCompany(null);
   }, [companies]);
 
   const classes = usePanelStyles({ width });
@@ -147,9 +153,15 @@ function _CompanyPanel({ width, containerRef }) {
               label="Entreprise"
               value={company ? company.id : 0}
               onChange={e => {
-                setSelectedCompanyId(e.target.value);
-                setCompany(companies.find(c => c.id === e.target.value));
+                adminStore.dispatch({
+                  type: ADMIN_ACTIONS.updateCompanyId,
+                  payload: { companyId: e.target.value }
+                });
               }}
+              // onChange={e => {
+              //   setSelectedCompanyId(e.target.value);
+              //   setCompany(companies.find(c => c.id === e.target.value));
+              // }}
               helperText="Voir une autre entreprise"
             >
               {companies.map(c => (

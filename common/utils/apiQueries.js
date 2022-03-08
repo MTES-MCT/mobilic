@@ -464,9 +464,18 @@ export const ADMIN_COMPANIES_QUERY = gql`
     $activityAfter: Date
     $workDaysLimit: Int
     $endedMissionsAfter: TimeStamp
+    $onlyFirst: Boolean
+    $companyIds: [Int]
   ) {
-    user(id: $id) {
-      adminedCompanies {
+    allAdminedCompanies: user(id: $id) {
+      adminedCompanies(onlyFirst: false) {
+        id
+        name
+        ...CompanySettings
+      }
+    }
+    selectedAdminedCompanies: user(id: $id) {
+      adminedCompanies(onlyFirst: $onlyFirst, companyIds: $companyIds) {
         id
         name
         ...CompanySettings
@@ -575,6 +584,17 @@ export const ADMIN_COMPANIES_QUERY = gql`
     }
   }
 `;
+
+// export const ADMIN_COMPANIES_QUERY = gql`
+//   query adminCompanies($id: Int!) {
+//     user(id: $id) {
+//       adminedCompanies {
+//         id
+//         name
+//       }
+//     }
+//   }
+// `;
 
 export const ADMIN_WORK_DAYS_QUERY = gql`
   ${WORK_DAYS_DATA_FRAGMENT}
