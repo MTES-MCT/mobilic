@@ -61,7 +61,7 @@ export default function SettingAdmin({ company }) {
           name="allowTransfers"
           label="Temps de liaison"
           value={company.settings.allowTransfers}
-          description="Durée des trajets vers et au retour des lieux de chantier de déménagement au moyen du train, du ferry de l'autocar ou de l'avion (heure de départ - heure d'arrivée). Ces temps de liaison ne sont pas comptabilisés dans le temps de travail effectif"
+          description="Durée des trajets vers et au retour des lieux de chantier de déménagement au moyen du train, du ferry de l'autocar ou de l'avion (heure de départ - heure d'arrivée). Ces temps de liaison ne sont pas comptabilisés dans le temps de travail effectif."
           submitSettingChange={submitSettingChange}
         />
       </ListItem>

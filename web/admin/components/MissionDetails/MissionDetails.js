@@ -199,7 +199,6 @@ export function MissionDetails({
       ? missionCompany.settings.requireKilometerData
       : false;
 
-  // not sure about the syntax ??
   const allowTransfers = missionCompany?.settings?.allowTransfers || false;
 
   const editableMissionName = missionCompany?.settings?.requireMissionName;
@@ -501,6 +500,7 @@ export function MissionDetails({
                                 ...args,
                                 user: e.user
                               }),
+                            allowTransfers,
                             nullableEndTime: false,
                             forcedUser: e.user,
                             displayWarningMessage: false

@@ -102,7 +102,7 @@ export function WorkTimeTable({
     minWidth: 100
   };
   const workTimeCol = {
-    label: "Temps de travail",
+    label: "Travail",
     name: "totalWork",
     sortable: true,
     format: formatTimer,
@@ -110,7 +110,7 @@ export function WorkTimeTable({
     minWidth: 120
   };
   const restTimeCol = {
-    label: "Temps de repos",
+    label: "Repos",
     name: "rest",
     format: time => (time ? formatTimer(time) : null),
     align: "right",

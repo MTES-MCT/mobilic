@@ -1,3 +1,4 @@
+import { ACTIVITIES } from "common/utils/activities";
 import {
   getStartOfDay,
   getStartOfMonth,
@@ -20,7 +21,7 @@ function computeWorkDayGroupAggregates(workDayGroup) {
     });
     serviceDuration = serviceDuration + wd.serviceDuration;
     totalWorkDuration = totalWorkDuration + wd.totalWorkDuration;
-    transferDuration = aggregateTimers["transfer"] || 0;
+    transferDuration = aggregateTimers[ACTIVITIES.transfer.name] || 0;
     if (wd.expenditures) {
       Object.keys(wd.expenditures).forEach(exp => {
         aggregateExpenditures[exp] =

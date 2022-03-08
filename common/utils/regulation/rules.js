@@ -39,7 +39,7 @@ export function checkMaximumDurationOfUninterruptedWork(activities) {
 
   // consider all activities excluding transfers
   // exit loop if we find a consecutive series of activites with span time > MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK
-  activities
+  const isRuleBroken = !activities
     .filter(a => a.type !== ACTIVITIES.transfer.name)
     .every(a => {
       if (!latestWorkTime || a.startTime > latestWorkTime) {
@@ -57,8 +57,6 @@ export function checkMaximumDurationOfUninterruptedWork(activities) {
       return true;
     });
 
-  const isRuleBroken =
-    currentUninterruptedWorkDuration > MAXIMUM_DURATION_OF_UNINTERRUPTED_WORK;
   return {
     status: isRuleBroken
       ? RULE_RESPECT_STATUS.failure
