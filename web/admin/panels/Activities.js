@@ -15,7 +15,6 @@ import uniqBy from "lodash/uniqBy";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
 import max from "lodash/max";
-import { CompanyFilter } from "../components/CompanyFilter";
 import Typography from "@material-ui/core/Typography";
 import {
   formatDay,
@@ -207,11 +206,6 @@ function _ActivityPanel({ width }) {
         justify="space-between"
         className={classes.filterGrid}
       >
-        {companies.length > 1 && (
-          <Grid item>
-            <CompanyFilter companies={companies} setCompanies={setCompanies} />
-          </Grid>
-        )}
         <Grid item>
           <EmployeeFilter users={users} setUsers={setUsers} />
         </Grid>

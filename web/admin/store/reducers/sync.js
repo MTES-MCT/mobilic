@@ -2,22 +2,12 @@ import flatMap from "lodash/flatMap";
 import { addWorkDaysReducer } from "./workDays";
 
 export function syncStoreReducer(state, { companiesPayload, minDate }) {
-  console.log("syncStoreReducer", companiesPayload);
   const stateWithWorkDays = addWorkDaysReducer(state, {
     companiesPayload: companiesPayload.selectedAdminedCompanies,
     minDate,
     reset: true
   });
-  const newMissionIds = flatMap(
-    companiesPayload.selectedAdminedCompanies.map(c =>
-      c.missions.edges.map(m => m.node.id)
-    )
-  );
 
-  console.log(
-    "companiesPayload.selectedAdminedCompanies[0].id",
-    companiesPayload.selectedAdminedCompanies[0].id
-  );
   return {
     ...stateWithWorkDays,
     companyId: companiesPayload.selectedAdminedCompanies[0].id,
@@ -52,7 +42,6 @@ export function syncStoreReducer(state, { companiesPayload, minDate }) {
       )
     ),
     missions: [
-      ...stateWithWorkDays.missions.filter(m => !newMissionIds.includes(m.id)),
       ...flatMap(
         companiesPayload.selectedAdminedCompanies.map(c =>
           c.missions.edges.map(m => ({ ...m.node, companyId: c.id }))

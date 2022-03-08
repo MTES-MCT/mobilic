@@ -30,6 +30,8 @@ import TwitterWhiteIcon from "common/assets/images/twitter-white.svg";
 import Grid from "@material-ui/core/Grid";
 import { useAdminStore } from "../admin/store/store";
 import { TextWithBadge } from "./TextWithBadge";
+import { MenuItem, TextField } from "@material-ui/core";
+import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 
 const SOCIAL_NETWORKS = [
   {
@@ -87,6 +89,11 @@ const useStyles = makeStyles(theme => ({
     textTransform: "none",
     borderRadius: 0,
     fontSize: "1rem"
+  },
+  companyDrowndown: {
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
+    maxWidth: 500
   },
   divider: {
     marginBottom: theme.spacing(1),
@@ -282,6 +289,7 @@ function MobileHeader({ disableMenu }) {
 
 function DesktopHeader({ disableMenu }) {
   const store = useStoreSyncedWithLocalStorage();
+  const adminStore = useAdminStore();
 
   const location = useLocation();
   const history = useHistory();
@@ -291,7 +299,7 @@ function DesktopHeader({ disableMenu }) {
   const classes = useStyles();
   const userInfo = store.userInfo();
   const companies = store.companies();
-  const company = companies.length === 1 ? companies[0] : null;
+  const company = companies.find(c => c.id === adminStore.companyId);
   const companyName = company ? company.name : null;
   const routes = getAccessibleRoutes({ userInfo, companies });
 
@@ -354,9 +362,28 @@ function DesktopHeader({ disableMenu }) {
           >
             <Typography noWrap variant="body1" className={classes.userName}>
               {formatPersonName(userInfo)}
-              {companyName ? ` - ${companyName}` : ""}
             </Typography>
           </Tooltip>
+          {companies && companies.length > 1 && (
+            <TextField
+              id="select-company-id"
+              className={classes.companyDrowndown}
+              select
+              value={company ? company.id : 0}
+              onChange={e => {
+                adminStore.dispatch({
+                  type: ADMIN_ACTIONS.updateCompanyId,
+                  payload: { companyId: e.target.value }
+                });
+              }}
+            >
+              {companies.map(c => (
+                <MenuItem key={c.id} value={c.id}>
+                  {c.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
           {!disableMenu && [
             <IconButton
               aria-label="Menu"

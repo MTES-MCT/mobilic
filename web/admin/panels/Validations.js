@@ -24,7 +24,6 @@ import { VALIDATE_MISSION_MUTATION } from "common/utils/apiQueries";
 import { useStyles } from "../components/styles/ValidationsStyle";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMissionDrawer } from "../components/MissionDrawer";
-import { CompanyFilter } from "../components/CompanyFilter";
 import { LoadingButton } from "common/components/LoadingButton";
 import {
   entryToBeValidatedByAdmin,
@@ -70,16 +69,16 @@ function _ValidationPanel() {
   const [missionIdOnFocus, openMission] = useMissionDrawer();
   const companies = adminStore.companies;
 
-  const [companiesWithSelection, setCompaniesWithSelection] = React.useState(
-    []
-  );
+  // const [companiesWithSelection, setCompaniesWithSelection] = React.useState(
+  //   []
+  // );
 
-  React.useEffect(() => setCompaniesWithSelection(companies), [companies]);
+  // React.useEffect(() => setCompaniesWithSelection(companies), [companies]);
 
-  const selectedCompanyIds = (companiesWithSelection.some(c => c.selected)
-    ? companiesWithSelection.filter(c => c.selected)
-    : companiesWithSelection
-  ).map(c => c.id);
+  // const selectedCompanyIds = (companiesWithSelection.some(c => c.selected)
+  //   ? companiesWithSelection.filter(c => c.selected)
+  //   : companiesWithSelection
+  // ).map(c => c.id);
 
   const ref = React.useRef();
 
@@ -199,26 +198,27 @@ function _ValidationPanel() {
     minWidth: 200
   };
 
-  const selectedCompanyFilter = validationEntry =>
-    selectedCompanyIds.includes(validationEntry.companyId);
+  // const selectedCompanyFilter = validationEntry =>
+  //   selectedCompanyIds.includes(validationEntry.companyId);
 
   React.useEffect(() => {
     setEntriesToValidateByAdmin(
-      missionsToTableEntries(adminStore)
-        .filter(entry => entryToBeValidatedByAdmin(entry, adminStore.userId))
-        .filter(selectedCompanyFilter)
+      missionsToTableEntries(adminStore).filter(entry =>
+        entryToBeValidatedByAdmin(entry, adminStore.userId)
+      )
+      // .filter(selectedCompanyFilter)
     );
     setEntriesToValidateByWorker(
-      missionsToTableEntries(adminStore)
-        .filter(entryToBeValidatedByWorker)
-        .filter(selectedCompanyFilter)
+      missionsToTableEntries(adminStore).filter(entryToBeValidatedByWorker)
+      // .filter(selectedCompanyFilter)
     );
     setEntriesValidatedByAdmin(
-      missionsToTableEntries(adminStore)
-        .filter(tableEntry => tableEntry.adminValidation)
-        .filter(selectedCompanyFilter)
+      missionsToTableEntries(adminStore).filter(
+        tableEntry => tableEntry.adminValidation
+      )
+      // .filter(selectedCompanyFilter)
     );
-  }, [adminStore.missions, companiesWithSelection]);
+  }, [adminStore.missions]);
 
   React.useEffect(() => {
     setNbMissionsToValidateByAdmin(
@@ -272,13 +272,6 @@ function _ValidationPanel() {
 
   return (
     <Paper className={classes.container} variant="outlined">
-      {companies.length > 1 && (
-        <CompanyFilter
-          companies={companiesWithSelection}
-          setCompanies={setCompaniesWithSelection}
-          className={classes.companyFilter}
-        />
-      )}
       <Tabs
         value={tab}
         indicatorColor="primary"
