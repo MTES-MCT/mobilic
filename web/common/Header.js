@@ -30,8 +30,9 @@ import TwitterWhiteIcon from "common/assets/images/twitter-white.svg";
 import Grid from "@material-ui/core/Grid";
 import { useAdminStore } from "../admin/store/store";
 import { TextWithBadge } from "./TextWithBadge";
-import { MenuItem, TextField } from "@material-ui/core";
+import { MenuItem } from "@material-ui/core";
 import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
+import TextField from "common/utils/TextField";
 
 const SOCIAL_NETWORKS = [
   {
@@ -365,6 +366,8 @@ function DesktopHeader({ disableMenu }) {
             </Typography>
           </Tooltip>
           {companies && companies.length > 1 && (
+            // Modified common/utils/TextField to accept children so we can use it here
+            // Good idea ? Should we do this everywhere ?
             <TextField
               id="select-company-id"
               className={classes.companyDrowndown}
