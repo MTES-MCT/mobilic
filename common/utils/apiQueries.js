@@ -114,6 +114,7 @@ export const COMPANY_SETTINGS_FRAGMENT = gql`
       allowTeamMode
       requireKilometerData
       requireSupportActivity
+      allowTransfers
       requireExpenditures
       requireMissionName
     }
@@ -1257,6 +1258,7 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
     $requireKilometerData: Boolean
     $requireExpenditures: Boolean
     $requireSupportActivity: Boolean
+    $allowTransfers: Boolean
     $requireMissionName: Boolean
   ) {
     editCompanySettings(
@@ -1265,6 +1267,7 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
       requireKilometerData: $requireKilometerData
       requireExpenditures: $requireExpenditures
       requireSupportActivity: $requireSupportActivity
+      allowTransfers: $allowTransfers
       requireMissionName: $requireMissionName
     ) {
       id

@@ -1,3 +1,4 @@
+import { ACTIVITIES } from "common/utils/activities";
 import {
   getStartOfDay,
   getStartOfMonth,
@@ -10,6 +11,7 @@ function computeWorkDayGroupAggregates(workDayGroup) {
   const aggregateExpenditures = {};
   let serviceDuration = 0;
   let totalWorkDuration = 0;
+  let transferDuration = 0;
   let minStartTime;
   let maxEndTime;
   workDayGroup.forEach(wd => {
@@ -19,6 +21,7 @@ function computeWorkDayGroupAggregates(workDayGroup) {
     });
     serviceDuration = serviceDuration + wd.serviceDuration;
     totalWorkDuration = totalWorkDuration + wd.totalWorkDuration;
+    transferDuration = aggregateTimers[ACTIVITIES.transfer.name] || 0;
     if (wd.expenditures) {
       Object.keys(wd.expenditures).forEach(exp => {
         aggregateExpenditures[exp] =
@@ -38,7 +41,8 @@ function computeWorkDayGroupAggregates(workDayGroup) {
     workedDays: workDayGroup.length,
     service: serviceDuration,
     totalWork: totalWorkDuration,
-    rest: serviceDuration - totalWorkDuration,
+    transferDuration,
+    rest: serviceDuration - totalWorkDuration - transferDuration,
     timers: aggregateTimers,
     companyIds: uniq(workDayGroup.map(wd => wd.companyId)),
     missionNames: workDayGroup.reduce(
