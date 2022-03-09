@@ -1,7 +1,14 @@
 import { gql } from "@apollo/client/core";
 import { buildBackendPayloadForAddress } from "./addresses";
+import {
+  COMPANY_SETTINGS_FRAGMENT,
+  FRAGMENT_LOCATION_FULL,
+  FULL_MISSION_FRAGMENT,
+  WORK_DAYS_DATA_FRAGMENT
+} from "./apiFragments";
 
 export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
+  ${FRAGMENT_LOCATION_FULL}
   query activitiesAndExpendituresHistory($missionId: Int!) {
     mission(id: $missionId) {
       receptionTime
@@ -75,7 +82,7 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
         }
       }
       startLocation {
-        id
+        ...FullLocation
         receptionTime
         submitter {
           id
@@ -83,14 +90,9 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
           lastName
         }
         missionId
-        name
-        alias
-        postalCode
-        city
-        kilometerReading
       }
       endLocation {
-        id
+        ...FullLocation
         receptionTime
         submitter {
           id
@@ -98,102 +100,7 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
           lastName
         }
         missionId
-        name
-        alias
-        postalCode
-        city
-        kilometerReading
       }
-    }
-  }
-`;
-
-export const COMPANY_SETTINGS_FRAGMENT = gql`
-  fragment CompanySettings on Company {
-    settings {
-      allowTeamMode
-      requireKilometerData
-      requireSupportActivity
-      allowTransfers
-      requireExpenditures
-      requireMissionName
-    }
-  }
-`;
-
-export const FULL_MISSION_FRAGMENT = gql`
-  ${COMPANY_SETTINGS_FRAGMENT}
-  fragment FullMissionData on Mission {
-    id
-    name
-    submitterId
-    validations {
-      submitterId
-      receptionTime
-      isAdmin
-      userId
-    }
-    vehicle {
-      id
-      name
-      registrationNumber
-    }
-    context
-    expenditures {
-      id
-      type
-      missionId
-      userId
-      receptionTime
-      spendingDate
-    }
-    company {
-      id
-      name
-      siren
-      ...CompanySettings
-    }
-    activities {
-      id
-      type
-      missionId
-      startTime
-      endTime
-      userId
-      submitterId
-      lastSubmitterId
-      user {
-        id
-        firstName
-        lastName
-      }
-    }
-    comments {
-      id
-      text
-      missionId
-      receptionTime
-      submitter {
-        id
-        firstName
-        lastName
-      }
-    }
-    startLocation {
-      id
-      name
-      alias
-      postalCode
-      city
-      kilometerReading
-    }
-    endLocation {
-      id
-      name
-      alias
-      postalCode
-      city
-      kilometerReading
     }
   }
 `;
@@ -289,6 +196,7 @@ export const USER_READ_TOKEN_QUERY = gql`
 
 export const USER_READ_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
+  ${FRAGMENT_LOCATION_FULL}
   query readUser {
     me {
       id
@@ -353,20 +261,10 @@ export const USER_READ_QUERY = gql`
               }
             }
             startLocation {
-              id
-              name
-              alias
-              postalCode
-              city
-              kilometerReading
+              ...FullLocation
             }
             endLocation {
-              id
-              name
-              alias
-              postalCode
-              city
-              kilometerReading
+              ...FullLocation
             }
           }
         }
@@ -390,32 +288,6 @@ export const USER_READ_QUERY = gql`
           }
         }
       }
-    }
-  }
-`;
-
-export const WORK_DAYS_DATA_FRAGMENT = gql`
-  fragment WorkDayData on WorkDayConnection {
-    edges {
-      node {
-        user {
-          id
-          firstName
-          lastName
-        }
-        day
-        missionNames
-        startTime
-        lastActivityStartTime
-        endTime
-        expenditures
-        serviceDuration
-        totalWorkDuration
-        activityDurations
-      }
-    }
-    pageInfo {
-      hasNextPage
     }
   }
 `;
@@ -460,6 +332,7 @@ export const USER_WORK_DAY_QUERY = gql`
 export const ADMIN_COMPANIES_QUERY = gql`
   ${WORK_DAYS_DATA_FRAGMENT}
   ${COMPANY_SETTINGS_FRAGMENT}
+  ${FRAGMENT_LOCATION_FULL}
   query adminCompanies(
     $id: Int!
     $activityAfter: Date
@@ -520,20 +393,10 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 spendingDate
               }
               startLocation {
-                id
-                alias
-                name
-                postalCode
-                city
-                kilometerReading
+                ...FullLocation
               }
               endLocation {
-                id
-                alias
-                name
-                postalCode
-                city
-                kilometerReading
+                ...FullLocation
               }
               activities {
                 id
@@ -585,17 +448,6 @@ export const ADMIN_COMPANIES_QUERY = gql`
     }
   }
 `;
-
-// export const ADMIN_COMPANIES_QUERY = gql`
-//   query adminCompanies($id: Int!) {
-//     user(id: $id) {
-//       adminedCompanies {
-//         id
-//         name
-//       }
-//     }
-//   }
-// `;
 
 export const ADMIN_WORK_DAYS_QUERY = gql`
   ${WORK_DAYS_DATA_FRAGMENT}
@@ -972,6 +824,7 @@ export const CREATE_MISSION_MUTATION = gql`
 `;
 export const END_MISSION_MUTATION = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
+  ${FRAGMENT_LOCATION_FULL}
   mutation endMission($endTime: TimeStamp!, $missionId: Int!, $userId: Int) {
     activities {
       endMission(endTime: $endTime, missionId: $missionId, userId: $userId) {
@@ -989,20 +842,10 @@ export const END_MISSION_MUTATION = gql`
           lastName
         }
         startLocation {
-          id
-          alias
-          name
-          postalCode
-          city
-          kilometerReading
+          ...FullLocation
         }
         endLocation {
-          id
-          alias
-          name
-          postalCode
-          city
-          kilometerReading
+          ...FullLocation
         }
         company {
           id
@@ -1024,6 +867,7 @@ export const END_MISSION_MUTATION = gql`
   }
 `;
 export const LOG_LOCATION_MUTATION = gql`
+  ${FRAGMENT_LOCATION_FULL}
   mutation logLocation(
     $companyKnownAddressId: Int
     $type: LocationEntryTypeEnum!
@@ -1043,12 +887,7 @@ export const LOG_LOCATION_MUTATION = gql`
         kilometerReading: $kilometerReading
         overrideExisting: $overrideExisting
       ) {
-        id
-        alias
-        name
-        postalCode
-        city
-        kilometerReading
+        ...FullLocation
       }
     }
   }
@@ -1143,6 +982,7 @@ export const TERMINATE_KNOWN_ADDRESS_MUTATION = gql`
 `;
 export const VALIDATE_MISSION_MUTATION = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
+  ${FRAGMENT_LOCATION_FULL}
   mutation validateMission($missionId: Int!, $userId: Int) {
     activities {
       validateMission(missionId: $missionId, userId: $userId) {
@@ -1171,20 +1011,10 @@ export const VALIDATE_MISSION_MUTATION = gql`
             ...CompanySettings
           }
           startLocation {
-            id
-            alias
-            name
-            postalCode
-            city
-            kilometerReading
+            ...FullLocation
           }
           endLocation {
-            id
-            alias
-            name
-            postalCode
-            city
-            kilometerReading
+            ...FullLocation
           }
         }
       }
