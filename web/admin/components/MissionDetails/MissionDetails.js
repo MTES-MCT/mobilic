@@ -200,6 +200,8 @@ export function MissionDetails({
       : false;
 
   const allowTransfers = missionCompany?.settings?.allowTransfers || false;
+  const allowSupportActivity =
+    missionCompany?.settings?.requireSupportActivity || false;
 
   const editableMissionName = missionCompany?.settings?.requireMissionName;
 
@@ -471,6 +473,7 @@ export function MissionDetails({
                             handleRevisionAction:
                               missionActions.editSingleActivity,
                             allowTransfers,
+                            allowSupportActivity,
                             nullableEndTime: false,
                             defaultTime: mission.startTime,
                             forcedUser: e.user,
@@ -501,6 +504,7 @@ export function MissionDetails({
                                 user: e.user
                               }),
                             allowTransfers,
+                            allowSupportActivity,
                             nullableEndTime: false,
                             forcedUser: e.user,
                             displayWarningMessage: false
