@@ -43,6 +43,7 @@ export function WorkTimeTable({
   className,
   showExpenditures,
   showMissionName,
+  showTransfers,
   loading,
   width
 }) {
@@ -137,7 +138,7 @@ export function WorkTimeTable({
     name: "workedDays",
     minWidth: 150
   };
-  const missionNamesCol = showMissionName && {
+  const missionNamesCol = {
     label: "Mission(s)",
     name: "missionNames",
     format: missionNames => (
@@ -147,7 +148,7 @@ export function WorkTimeTable({
     sortable: true,
     overflowTooltip: true
   };
-  const companyNamesCol = companies.length > 1 && {
+  const companyNamesCol = {
     label: "Entreprise(s)",
     name: "companyIds",
     format: companyIds => (
@@ -172,13 +173,13 @@ export function WorkTimeTable({
   if (period === "day") {
     columns = [
       employeeCol,
-      missionNamesCol,
-      companyNamesCol,
+      showMissionName && missionNamesCol,
+      companies.length > 1 && companyNamesCol,
       startTimeCol,
       endTimeCol,
       serviceTimeCol,
       workTimeCol,
-      transferTimeCol,
+      showTransfers && transferTimeCol,
       restTimeCol
     ];
     if (showExpenditures) columns.push(expenditureCol);

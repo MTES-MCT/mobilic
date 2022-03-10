@@ -69,26 +69,11 @@ function _ValidationPanel() {
   const [missionIdOnFocus, openMission] = useMissionDrawer();
   const companies = adminStore.companies;
 
-  // const [companiesWithSelection, setCompaniesWithSelection] = React.useState(
-  //   []
-  // );
-
-  // React.useEffect(() => setCompaniesWithSelection(companies), [companies]);
-
-  // const selectedCompanyIds = (companiesWithSelection.some(c => c.selected)
-  //   ? companiesWithSelection.filter(c => c.selected)
-  //   : companiesWithSelection
-  // ).map(c => c.id);
-
   const ref = React.useRef();
 
-  const showExpenditures = adminStore.companies.some(
-    c => c.settings.requireExpenditures
-  );
+  const showExpenditures = adminStore.settings.requireExpenditures;
 
-  const allowTransfers = adminStore.companies.some(
-    c => c.settings.allowTransfers
-  );
+  const allowTransfers = adminStore.settings.allowTransfers;
 
   const commonCols = [
     {
@@ -216,25 +201,19 @@ function _ValidationPanel() {
     minWidth: 200
   };
 
-  // const selectedCompanyFilter = validationEntry =>
-  //   selectedCompanyIds.includes(validationEntry.companyId);
-
   React.useEffect(() => {
     setEntriesToValidateByAdmin(
       missionsToTableEntries(adminStore).filter(entry =>
         entryToBeValidatedByAdmin(entry, adminStore.userId)
       )
-      // .filter(selectedCompanyFilter)
     );
     setEntriesToValidateByWorker(
       missionsToTableEntries(adminStore).filter(entryToBeValidatedByWorker)
-      // .filter(selectedCompanyFilter)
     );
     setEntriesValidatedByAdmin(
       missionsToTableEntries(adminStore).filter(
         tableEntry => tableEntry.adminValidation
       )
-      // .filter(selectedCompanyFilter)
     );
   }, [adminStore.missions]);
 

@@ -330,13 +330,12 @@ export const USER_WORK_DAY_QUERY = gql`
 `;
 
 export const ADMIN_COMPANIES_LIST_QUERY = gql`
-  ${COMPANY_SETTINGS_FRAGMENT}
   query adminCompaniesList($id: Int!) {
     user(id: $id) {
       adminedCompanies {
         id
         name
-        ...CompanySettings
+        siren
       }
     }
   }

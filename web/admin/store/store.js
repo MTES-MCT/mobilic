@@ -12,6 +12,7 @@ export function AdminStoreProvider({ children }) {
     users: [],
     workDays: [],
     vehicles: [],
+    settings: [],
     knownAddresses: [],
     employments: [],
     companies: [],

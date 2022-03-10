@@ -166,15 +166,8 @@ function _ActivityPanel({ width }) {
   if (selectedCompanies.length === 0) selectedCompanies = companies;
 
   React.useEffect(() => {
-    setUsers(
-      uniqBy(
-        adminStore.users.filter(u =>
-          selectedCompanies.map(c => c.id).includes(u.companyId)
-        ),
-        u => u.id
-      )
-    );
-  }, [companies, adminStore.users]);
+    setUsers(uniqBy(adminStore.users, u => u.id));
+  }, [adminStore.users]);
 
   let selectedUsers = users.filter(u => u.selected);
   if (selectedUsers.length === 0) selectedUsers = users;
@@ -182,7 +175,6 @@ function _ActivityPanel({ width }) {
   const selectedWorkDays = adminStore.workDays.filter(
     wd =>
       selectedUsers.map(u => u.id).includes(wd.user.id) &&
-      selectedCompanies.map(c => c.id).includes(wd.companyId) &&
       (!minDate || wd.day >= minDate) &&
       (!maxDate || wd.day <= maxDate)
   );
@@ -329,12 +321,9 @@ function _ActivityPanel({ width }) {
           className={classes.workTimeTable}
           period={period}
           workTimeEntries={periodAggregates}
-          showExpenditures={selectedCompanies.some(
-            c => c.settings.requireExpenditures
-          )}
-          showMissionName={selectedCompanies.some(
-            c => c.settings.requireMissionName
-          )}
+          showExpenditures={adminStore.settings.requireExpenditures}
+          showMissionName={adminStore.settings.requireMissionName}
+          showTransfers={adminStore.settings.allowTransfers}
           loading={loading}
           width={width}
         />
