@@ -178,10 +178,11 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
       case "ACTIVITY_TIME_IN_FUTURE":
         return `La date de ${
           graphQLError.extensions.eventName === "Start" ? "début" : "fin"
-        } de l'activité renseignée est ${((graphQLError.extensions.eventTime -
-          graphQLError.extensions.receptionTime) /
-          60) >>
-          0} minutes dans le futur. Veuillez vérifier l'heure de votre téléphone.`;
+        } de l'activité renseignée est ${Math.floor(
+          (graphQLError.extensions.eventTime -
+            graphQLError.extensions.receptionTime) /
+            60
+        )} minutes dans le futur. Veuillez vérifier l'heure de votre téléphone.`;
       default:
         return null;
     }
