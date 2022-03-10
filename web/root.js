@@ -18,8 +18,11 @@ import {
 import { ApiContextProvider, useApi } from "common/utils/api";
 import { theme } from "common/utils/theme";
 import { MODAL_DICT } from "./modals";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
+import {
+  ThemeProvider,
+  StyledEngineProvider,
+  CssBaseline
+} from "@mui/material";
 import { loadUserData } from "common/utils/loadUserData";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
@@ -66,25 +69,27 @@ export default function Root() {
     <MatomoProvider value={matomo}>
       <StoreSyncedWithLocalStorageProvider storage={localStorage}>
         <Router>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <ErrorBoundary>
-              <ApiContextProvider>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <SnackbarProvider>
-                    <LoadingScreenContextProvider>
-                      <ModalProvider modalDict={MODAL_DICT}>
-                        <RegulationDrawerContextProvider>
-                          <ScrollToTop />
-                          <_Root />
-                        </RegulationDrawerContextProvider>
-                      </ModalProvider>
-                    </LoadingScreenContextProvider>
-                  </SnackbarProvider>
-                </LocalizationProvider>
-              </ApiContextProvider>
-            </ErrorBoundary>
-          </ThemeProvider>
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <ErrorBoundary>
+                <ApiContextProvider>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <SnackbarProvider>
+                      <LoadingScreenContextProvider>
+                        <ModalProvider modalDict={MODAL_DICT}>
+                          <RegulationDrawerContextProvider>
+                            <ScrollToTop />
+                            <_Root />
+                          </RegulationDrawerContextProvider>
+                        </ModalProvider>
+                      </LoadingScreenContextProvider>
+                    </SnackbarProvider>
+                  </LocalizationProvider>
+                </ApiContextProvider>
+              </ErrorBoundary>
+            </ThemeProvider>
+          </StyledEngineProvider>
         </Router>
       </StoreSyncedWithLocalStorageProvider>
     </MatomoProvider>

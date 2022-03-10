@@ -1,12 +1,13 @@
-import {
-  createTheme,
-  adaptV4Theme,
-  responsiveFontSizes
-} from "@mui/material/styles";
+import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 import { red, green, cyan, teal } from "@mui/material/colors";
 
-const baseOptions = {
+const customOptions = {
   components: {
+    MuiLink: {
+      defaultProps: {
+        underline: "always"
+      }
+    },
     MuiButton: {
       styleOverrides: {
         root: {
@@ -93,9 +94,4 @@ const baseOptions = {
   }
 };
 
-export const createResponsiveTheme = (extraOptions = {}) =>
-  responsiveFontSizes(
-    createTheme(adaptV4Theme({ ...baseOptions, ...extraOptions }))
-  );
-
-export const theme = createResponsiveTheme();
+export const theme = responsiveFontSizes(createTheme(customOptions));
