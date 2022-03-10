@@ -163,6 +163,7 @@ export function ResetPassword() {
                     label="Nouveau mot de passe"
                     placeholder="Choisissez un mot de passe"
                     autoComplete="current-password"
+                    variant="standard"
                     value={password}
                     onChange={e => {
                       setPassword(e.target.value);
@@ -174,6 +175,7 @@ export function ResetPassword() {
                     fullWidth
                     label="Confirmez le mot de passe"
                     className="vertical-form-text-input"
+                    variant="standard"
                     error={
                       passwordCopy && passwordCopy !== password
                         ? "Le mot de passe n'est pas identique"

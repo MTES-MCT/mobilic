@@ -158,6 +158,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             fullWidth
             className="vertical-form-text-input"
             label="Choisissez un mot de passe"
+            variant="standard"
             value={password}
             onChange={e => {
               setPassword(e.target.value);

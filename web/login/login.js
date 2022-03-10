@@ -99,6 +99,7 @@ export default function Login() {
               fullWidth
               className="vertical-form-text-input"
               label="Mot de passe"
+              variant="standard"
               autoComplete="current-password"
               value={password}
               onChange={e => {
