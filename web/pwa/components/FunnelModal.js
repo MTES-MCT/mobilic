@@ -18,10 +18,6 @@ export const useStyles = makeStyles(theme => ({
   slimContainer: {
     maxWidth: 400
   },
-  backButton: {
-    color: theme.palette.primary.main,
-    borderColor: theme.palette.primary.main
-  },
   container: {
     backgroundColor: darkBackground =>
       darkBackground
@@ -58,8 +54,8 @@ export function FunnelModal({
           style={{ position: "static", width: "100%", flexShrink: 0 }}
         >
           <Button
-            className={classes.backButton}
-            variant="contained"
+            variant="outlined"
+            color="primary"
             disableElevation
             startIcon={<ChevronLeftIcon />}
             onClick={handleBack}
