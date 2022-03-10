@@ -196,7 +196,11 @@ function MaterialUIDateOrDateTimePicker({
   return (
     <MaterialPicker
       renderInput={props => (
-        <TextField variant="standard" label={label} helperText={helperText} />
+        <TextField
+          variant={props.variant}
+          label={label}
+          helperText={helperText}
+        />
       )}
       autoOk={true}
       value={value ? toMaterialUIRepresentation(value) : ""}
@@ -211,7 +215,6 @@ function MaterialUIDateOrDateTimePicker({
       }
       inputFormat={format}
       onChange={handleChange}
-      inputVariant={props.variant}
       {...customProps}
       {...props}
     />

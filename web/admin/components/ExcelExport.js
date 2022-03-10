@@ -133,14 +133,13 @@ export default function ExcelExport({
                 inputFormat="d MMMM yyyy"
                 onChange={setMinDate}
                 clearable
-                cancelLabel={null}
-                clearLabel="Annuler"
+                cancelText={null}
+                clearText="Annuler"
                 autoOk
                 disableFuture
-                inputVariant="outlined"
                 animateYearScrolling
                 renderInput={props => (
-                  <TextField variant="standard" label="Date de début" />
+                  <TextField variant="outlined" label="Date de début" />
                 )}
               />
             </Grid>
@@ -150,14 +149,13 @@ export default function ExcelExport({
                 inputFormat="d MMMM yyyy"
                 onChange={setMaxDate}
                 clearable
-                cancelLabel={null}
-                clearLabel="Annuler"
+                cancelText={null}
+                clearText="Annuler"
                 autoOk
                 disableFuture
-                inputVariant="outlined"
                 animateYearScrolling
                 renderInput={props => (
-                  <TextField variant="standard" label="Date de fin" />
+                  <TextField variant="outlined" label="Date de fin" />
                 )}
               />
             </Grid>

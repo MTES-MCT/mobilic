@@ -92,10 +92,10 @@ export default function PDFExport({ open, handleClose }) {
           >
             <Grid item sm={6} xs={12}>
               <DatePicker
-                required
                 renderInput={props => (
                   <TextField
-                    variant="standard"
+                    required
+                    variant="outlined"
                     label="Mois de début"
                     helperText={dateRangeError}
                   />
@@ -106,10 +106,9 @@ export default function PDFExport({ open, handleClose }) {
                 onChange={e => {
                   setMinDate(e);
                 }}
-                cancelLabel={null}
+                cancelText={null}
                 autoOk
                 disableFuture
-                inputVariant="outlined"
                 animateYearScrolling
                 error={!!dateRangeError}
                 openTo={"month"}
@@ -118,12 +117,13 @@ export default function PDFExport({ open, handleClose }) {
             </Grid>
             <Grid item sm={6} xs={12}>
               <DatePicker
-                required
                 renderInput={props => (
                   <TextField
-                    variant="standard"
+                    required
+                    variant="outlined"
                     label="Mois de fin"
                     helperText={dateRangeError}
+                    error={!!dateRangeError}
                   />
                 )}
                 value={maxDate}
@@ -132,12 +132,10 @@ export default function PDFExport({ open, handleClose }) {
                 onChange={e => {
                   setMaxDate(e);
                 }}
-                cancelLabel={null}
+                cancelText={null}
                 autoOk
                 disableFuture
-                inputVariant="outlined"
                 animateYearScrolling
-                error={!!dateRangeError}
                 openTo={"month"}
                 views={["year", "month"]}
               />

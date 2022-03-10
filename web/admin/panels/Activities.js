@@ -240,36 +240,34 @@ function ActivitiesPanel() {
         </Grid>
         <Grid item>
           <DatePicker
-            required
             value={new Date(minDate)}
             size="small"
             inputFormat="d MMMM yyyy"
             fullWidth
             onChange={val => setMinDate(isoFormatLocalDate(val))}
-            cancelLabel={null}
+            cancelText={null}
             autoOk
             disableFuture
-            inputVariant="outlined"
             animateYearScrolling
             renderInput={props => (
-              <TextField variant="standard" label="Début" />
+              <TextField required variant="outlined" label="Début" />
             )}
           />
         </Grid>
         <Grid item>
           <DatePicker
-            required
             value={new Date(maxDate)}
             inputFormat="d MMMM yyyy"
             fullWidth
             size="small"
             onChange={val => setMaxDate(isoFormatLocalDate(val))}
-            cancelLabel={null}
+            cancelText={null}
             autoOk
             disableFuture
-            inputVariant="outlined"
             animateYearScrolling
-            renderInput={props => <TextField variant="standard" label="Fin" />}
+            renderInput={props => (
+              <TextField required variant="outlined" label="Fin" />
+            )}
           />
         </Grid>
         <Grid item>

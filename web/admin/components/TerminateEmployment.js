@@ -70,13 +70,12 @@ export default function TerminateEmployment({
               inputFormat="d MMMM yyyy"
               minDate={minDate}
               onChange={setEndDate}
-              cancelLabel={null}
+              cancelText={null}
               autoOk
-              inputVariant="outlined"
               animateYearScrolling
               renderInput={props => (
                 <TextField
-                  variant="standard"
+                  variant="outlined"
                   label="Date de fin du rattachement"
                 />
               )}

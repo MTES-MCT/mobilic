@@ -177,19 +177,18 @@ export default function C1BExport({
           >
             <Grid item sm={6}>
               <DatePicker
-                required
                 value={minDate}
                 inputFormat="d MMMM yyyy"
                 onChange={setMinDate}
-                cancelLabel={null}
+                cancelText={null}
                 autoOk
                 disableFuture
-                inputVariant="outlined"
                 animateYearScrolling
                 error={!!dateRangeError}
                 renderInput={props => (
                   <TextField
-                    variant="standard"
+                    required
+                    variant="outlined"
                     label="Date de début"
                     helperText={dateRangeError}
                   />
@@ -198,19 +197,18 @@ export default function C1BExport({
             </Grid>
             <Grid item sm={6}>
               <DatePicker
-                required
                 value={maxDate}
                 inputFormat="d MMMM yyyy"
                 onChange={setMaxDate}
-                cancelLabel={null}
+                cancelText={null}
                 autoOk
                 disableFuture
-                inputVariant="outlined"
                 animateYearScrolling
                 error={!!dateRangeError}
                 renderInput={props => (
                   <TextField
-                    variant="standard"
+                    required
+                    variant="outlined"
                     label="Date de fin"
                     helperText={dateRangeError}
                   />
