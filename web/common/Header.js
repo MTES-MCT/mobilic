@@ -30,9 +30,9 @@ import TwitterWhiteIcon from "common/assets/images/twitter-white.svg";
 import Grid from "@material-ui/core/Grid";
 import { useAdminStore } from "../admin/store/store";
 import { TextWithBadge } from "./TextWithBadge";
-import { MenuItem } from "@material-ui/core";
 import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 import TextField from "common/utils/TextField";
+import { MenuItem } from "@material-ui/core";
 
 const SOCIAL_NETWORKS = [
   {
@@ -86,15 +86,15 @@ const useStyles = makeStyles(theme => ({
   navItemButton: {
     borderRadius: 2
   },
-  docButton: {
-    textTransform: "none",
-    borderRadius: 0,
-    fontSize: "1rem"
-  },
   companyDrowndown: {
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(2),
     maxWidth: 500
+  },
+  docButton: {
+    textTransform: "none",
+    borderRadius: 0,
+    fontSize: "1rem"
   },
   divider: {
     marginBottom: theme.spacing(1),
@@ -263,12 +263,57 @@ export function NavigationMenu({ open, setOpen }) {
   );
 }
 
+const HeaderCompaniesDropdown = () => {
+  const store = useStoreSyncedWithLocalStorage();
+  const adminStore = useAdminStore();
+
+  const companies = store.companies();
+  const company = companies.find(c => c.id === adminStore.companyId);
+
+  const classes = useStyles();
+
+  if (!companies || companies.length <= 1) {
+    return null;
+  }
+
+  return (
+    // Modified common/utils/TextField to accept children so we can use it here
+    // Good idea ? Should we do this everywhere ?
+    <TextField
+      id="select-company-id"
+      className={classes.companyDrowndown}
+      select
+      value={company ? company.id : 0}
+      onChange={e => {
+        adminStore.dispatch({
+          type: ADMIN_ACTIONS.updateCompanyId,
+          payload: { companyId: e.target.value }
+        });
+      }}
+    >
+      {companies
+        .sort((c1, c2) =>
+          c1.name.localeCompare(c2.name, undefined, {
+            numeric: true,
+            sensitivity: "base"
+          })
+        )
+        .map(c => (
+          <MenuItem key={c.id} value={c.id}>
+            {c.name}
+          </MenuItem>
+        ))}
+    </TextField>
+  );
+};
+
 function MobileHeader({ disableMenu }) {
   const [openNavDrawer, setOpenNavDrawer] = React.useState(false);
 
   return (
     <Box className="flex-row-space-between">
       <Logos leaveSpaceForMenu={!disableMenu} />
+      <HeaderCompaniesDropdown />
       {!disableMenu && [
         <IconButton
           aria-label="Menu"
@@ -365,28 +410,7 @@ function DesktopHeader({ disableMenu }) {
               {formatPersonName(userInfo)}
             </Typography>
           </Tooltip>
-          {companies && companies.length > 1 && (
-            // Modified common/utils/TextField to accept children so we can use it here
-            // Good idea ? Should we do this everywhere ?
-            <TextField
-              id="select-company-id"
-              className={classes.companyDrowndown}
-              select
-              value={company ? company.id : 0}
-              onChange={e => {
-                adminStore.dispatch({
-                  type: ADMIN_ACTIONS.updateCompanyId,
-                  payload: { companyId: e.target.value }
-                });
-              }}
-            >
-              {companies.map(c => (
-                <MenuItem key={c.id} value={c.id}>
-                  {c.name}
-                </MenuItem>
-              ))}
-            </TextField>
-          )}
+          <HeaderCompaniesDropdown />
           {!disableMenu && [
             <IconButton
               aria-label="Menu"
