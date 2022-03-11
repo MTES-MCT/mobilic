@@ -48,6 +48,14 @@ export const DAYS = [
 
 export const LONG_BREAK_DURATION = 10 * HOUR;
 
+const TODAY = new Date();
+
+export const FIRST_DAY_OF_CURRENT_MONTH = new Date(
+  TODAY.getFullYear(),
+  TODAY.getMonth(),
+  1
+);
+
 export function formatTimer(timerDuration) {
   if (!timerDuration && timerDuration !== 0) return null;
   const timerDurationInMinutes = (timerDuration / 60) >> 0;
