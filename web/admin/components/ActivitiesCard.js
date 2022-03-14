@@ -154,30 +154,11 @@ export function ActivitiesCard({
   return (
     <MissionInfoCard title={title} extraPaddingBelowTitle loading={loading}>
       <Grid container key={2} spacing={2}>
-        {activities.length > 0 && [
-          <Grid key={1} item xs={12} sm={4} className={classes.chartContainer}>
-            <Typography variant="h6">Frise temporelle</Typography>
-            <VerticalTimeline
-              width={300}
-              activities={activities}
-              datetimeFormatter={datetimeFormatter}
-            />
-          </Grid>,
-          <Grid key={2} item xs={12} sm={8} className={classes.chartContainer}>
-            <Typography variant="h6">Répartition</Typography>
-            <ActivitiesPieChart
-              activities={activities}
-              fromTime={fromTime}
-              untilTime={untilTime}
-              maxWidth={500}
-            />
-          </Grid>
-        ]}
         <Grid item xs={12}>
           <Accordion
             elevation={0}
             className={classes.listActivitiesAccordion}
-            defaultExpanded={activities.length === 0}
+            defaultExpanded={true}
           >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
@@ -215,6 +196,25 @@ export function ActivitiesCard({
             </AccordionDetails>
           </Accordion>
         </Grid>
+        {activities.length > 0 && [
+          <Grid key={1} item xs={12} sm={4} className={classes.chartContainer}>
+            <Typography variant="h6">Frise temporelle</Typography>
+            <VerticalTimeline
+              width={300}
+              activities={activities}
+              datetimeFormatter={datetimeFormatter}
+            />
+          </Grid>,
+          <Grid key={2} item xs={12} sm={8} className={classes.chartContainer}>
+            <Typography variant="h6">Répartition</Typography>
+            <ActivitiesPieChart
+              activities={activities}
+              fromTime={fromTime}
+              untilTime={untilTime}
+              maxWidth={500}
+            />
+          </Grid>
+        ]}
       </Grid>
     </MissionInfoCard>
   );
