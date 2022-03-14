@@ -29,6 +29,12 @@ export const useActivitiesCardStyles = makeStyles(theme => ({
   activitiesTableContainer: {
     width: "100%"
   },
+  listActivitiesTitle: {
+    marginBottom: theme.spacing(2)
+  },
+  listActivitiesGrid: {
+    marginBottom: theme.spacing(2)
+  },
   warningText: {
     color: theme.palette.warning.main,
     fontWeight: "bold"

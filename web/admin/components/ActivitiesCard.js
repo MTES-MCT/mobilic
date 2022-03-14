@@ -19,6 +19,8 @@ import { useActivitiesCardStyles } from "./styles/ActivitiesCardStyle";
 import SvgIcon from "@material-ui/core/SvgIcon";
 import EditIcon from "@material-ui/icons/Edit";
 
+const NB_ACTIVITIES_ACCORDION = 6;
+
 export function ActivitiesCard({
   activities,
   onCreateActivity,
@@ -151,50 +153,75 @@ export function ActivitiesCard({
     activityColumns.push(editPictoCol);
   }
 
+  const ACTIVITIES_TITLE = "Liste des activités";
+  const AddActivityButton = () => (
+    <Button
+      aria-label="Ajouter une activité"
+      color="primary"
+      size="small"
+      className={classes.addActivityButton}
+      onClick={e => {
+        e.preventDefault();
+        e.stopPropagation();
+        onCreateActivity();
+      }}
+    >
+      Ajouter une activité
+    </Button>
+  );
+
+  const ActivitiesTable = () => (
+    <AugmentedTable
+      columns={activityColumns}
+      ref={ref}
+      validateRow={entry =>
+        !activityErrors.displayedStartTime &&
+        !activityErrors.displayedEndTime &&
+        entry.type
+      }
+      entries={activitiesWithIds}
+      className={classes.activitiesTableContainer}
+    />
+  );
+
+  const ActivitiesAccordion = () => (
+    <Accordion
+      elevation={0}
+      className={classes.listActivitiesAccordion}
+      defaultExpanded={true}
+    >
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        className={classes.listActivitiesAccordionSummary}
+      >
+        <Typography className="bold">{ACTIVITIES_TITLE}</Typography>
+      </AccordionSummary>
+      <AccordionDetails className={classes.listActivitiesAccordionDetail}>
+        {onCreateActivity && <AddActivityButton />}
+        <ActivitiesTable />
+      </AccordionDetails>
+    </Accordion>
+  );
+
+  const ActivitiesGrid = () => (
+    <Grid key={1} item xs={12} className={classes.listActivitiesGrid}>
+      <Typography variant="h5" className={classes.listActivitiesTitle}>
+        {ACTIVITIES_TITLE}
+      </Typography>
+      {onCreateActivity && <AddActivityButton />}
+      <ActivitiesTable />
+    </Grid>
+  );
+
   return (
     <MissionInfoCard title={title} extraPaddingBelowTitle loading={loading}>
       <Grid container key={2} spacing={2}>
         <Grid item xs={12}>
-          <Accordion
-            elevation={0}
-            className={classes.listActivitiesAccordion}
-            defaultExpanded={true}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              className={classes.listActivitiesAccordionSummary}
-            >
-              <Typography className="bold">Liste des activités</Typography>
-            </AccordionSummary>
-            <AccordionDetails className={classes.listActivitiesAccordionDetail}>
-              {onCreateActivity && (
-                <Button
-                  aria-label="Ajouter une activité"
-                  color="primary"
-                  size="small"
-                  className={classes.addActivityButton}
-                  onClick={e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onCreateActivity();
-                  }}
-                >
-                  Ajouter une activité
-                </Button>
-              )}
-              <AugmentedTable
-                columns={activityColumns}
-                ref={ref}
-                validateRow={entry =>
-                  !activityErrors.displayedStartTime &&
-                  !activityErrors.displayedEndTime &&
-                  entry.type
-                }
-                entries={activitiesWithIds}
-                className={classes.activitiesTableContainer}
-              />
-            </AccordionDetails>
-          </Accordion>
+          {activities.length >= NB_ACTIVITIES_ACCORDION ? (
+            <ActivitiesAccordion />
+          ) : (
+            <ActivitiesGrid />
+          )}
         </Grid>
         {activities.length > 0 && [
           <Grid key={1} item xs={12} sm={4} className={classes.chartContainer}>
