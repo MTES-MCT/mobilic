@@ -4,10 +4,6 @@ import Typography from "@material-ui/core/Typography";
 import { VerticalTimeline } from "common/components/VerticalTimeline";
 import { formatTimeOfDay, formatTimer, now } from "common/utils/time";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
-import Accordion from "@material-ui/core/Accordion";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
 import { AugmentedTable } from "./AugmentedTable";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ACTIVITIES } from "common/utils/activities";
@@ -151,50 +147,40 @@ export function ActivitiesCard({
     activityColumns.push(editPictoCol);
   }
 
+  const AddActivityButton = () => (
+    <Button
+      aria-label="Ajouter une activité"
+      color="primary"
+      size="small"
+      className={classes.addActivityButton}
+      onClick={e => {
+        e.preventDefault();
+        e.stopPropagation();
+        onCreateActivity();
+      }}
+    >
+      Ajouter une activité
+    </Button>
+  );
+
   return (
     <MissionInfoCard title={title} extraPaddingBelowTitle loading={loading}>
       <Grid container key={2} spacing={2}>
         <Grid item xs={12}>
-          <Accordion
-            elevation={0}
-            className={classes.listActivitiesAccordion}
-            defaultExpanded={true}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              className={classes.listActivitiesAccordionSummary}
-            >
-              <Typography className="bold">Liste des activités</Typography>
-            </AccordionSummary>
-            <AccordionDetails className={classes.listActivitiesAccordionDetail}>
-              {onCreateActivity && (
-                <Button
-                  aria-label="Ajouter une activité"
-                  color="primary"
-                  size="small"
-                  className={classes.addActivityButton}
-                  onClick={e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onCreateActivity();
-                  }}
-                >
-                  Ajouter une activité
-                </Button>
-              )}
-              <AugmentedTable
-                columns={activityColumns}
-                ref={ref}
-                validateRow={entry =>
-                  !activityErrors.displayedStartTime &&
-                  !activityErrors.displayedEndTime &&
-                  entry.type
-                }
-                entries={activitiesWithIds}
-                className={classes.activitiesTableContainer}
-              />
-            </AccordionDetails>
-          </Accordion>
+          <Grid key={1} item xs={12} className={classes.listActivitiesGrid}>
+            {onCreateActivity && <AddActivityButton />}
+            <AugmentedTable
+              columns={activityColumns}
+              ref={ref}
+              validateRow={entry =>
+                !activityErrors.displayedStartTime &&
+                !activityErrors.displayedEndTime &&
+                entry.type
+              }
+              entries={activitiesWithIds}
+              className={classes.activitiesTableContainer}
+            />
+          </Grid>
         </Grid>
         {activities.length > 0 && [
           <Grid key={1} item xs={12} sm={4} className={classes.chartContainer}>
