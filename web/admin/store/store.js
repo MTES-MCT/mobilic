@@ -8,9 +8,11 @@ export function AdminStoreProvider({ children }) {
   const store = useStoreSyncedWithLocalStorage();
 
   const [state, setState] = React.useState({
+    companyId: undefined,
     users: [],
     workDays: [],
     vehicles: [],
+    settings: [],
     knownAddresses: [],
     employments: [],
     companies: [],

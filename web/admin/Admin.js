@@ -70,7 +70,9 @@ function __Admin({ width }) {
 
   async function loadData() {
     const userId = adminStore.userId;
+    const companyId = adminStore.companyId;
     if (userId) {
+      // what is this ?
       setShouldRefreshData({ value: false });
       shouldRefreshData.value = false;
       withLoadingScreen(
@@ -80,7 +82,12 @@ function __Admin({ width }) {
               const minDate = isoFormatLocalDate(
                 new Date(Date.now() - DAY * 1000 * 150)
               );
-              const companies = await loadCompaniesData(api, userId, minDate);
+              const companies = await loadCompaniesData(
+                api,
+                userId,
+                minDate,
+                companyId
+              );
               adminStore.dispatch({
                 type: ADMIN_ACTIONS.syncStore,
                 payload: { companiesPayload: companies, minDate }
@@ -97,6 +104,10 @@ function __Admin({ width }) {
   React.useEffect(() => {
     if (shouldRefreshData.value) loadData();
   }, [adminStore.userId]);
+
+  React.useEffect(() => {
+    loadData();
+  }, [adminStore.companyId]);
 
   React.useEffect(() => {
     if (

@@ -30,6 +30,9 @@ import TwitterWhiteIcon from "common/assets/images/twitter-white.svg";
 import Grid from "@material-ui/core/Grid";
 import { useAdminStore } from "../admin/store/store";
 import { TextWithBadge } from "./TextWithBadge";
+import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
+import TextField from "common/utils/TextField";
+import { MenuItem } from "@material-ui/core";
 
 const SOCIAL_NETWORKS = [
   {
@@ -82,6 +85,11 @@ export function SocialNetworkPanel({
 const useStyles = makeStyles(theme => ({
   navItemButton: {
     borderRadius: 2
+  },
+  companyDrowndown: {
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
+    maxWidth: 500
   },
   docButton: {
     textTransform: "none",
@@ -255,12 +263,57 @@ export function NavigationMenu({ open, setOpen }) {
   );
 }
 
+const HeaderCompaniesDropdown = () => {
+  const store = useStoreSyncedWithLocalStorage();
+  const adminStore = useAdminStore();
+
+  const companies = store.companies();
+  const company = companies.find(c => c.id === adminStore.companyId);
+
+  const classes = useStyles();
+
+  if (!companies || companies.length <= 1) {
+    return null;
+  }
+
+  return (
+    // Modified common/utils/TextField to accept children so we can use it here
+    // Good idea ? Should we do this everywhere ?
+    <TextField
+      id="select-company-id"
+      className={classes.companyDrowndown}
+      select
+      value={company ? company.id : 0}
+      onChange={e => {
+        adminStore.dispatch({
+          type: ADMIN_ACTIONS.updateCompanyId,
+          payload: { companyId: e.target.value }
+        });
+      }}
+    >
+      {companies
+        .sort((c1, c2) =>
+          c1.name.localeCompare(c2.name, undefined, {
+            numeric: true,
+            sensitivity: "base"
+          })
+        )
+        .map(c => (
+          <MenuItem key={c.id} value={c.id}>
+            {c.name}
+          </MenuItem>
+        ))}
+    </TextField>
+  );
+};
+
 function MobileHeader({ disableMenu }) {
   const [openNavDrawer, setOpenNavDrawer] = React.useState(false);
 
   return (
     <Box className="flex-row-space-between">
       <Logos leaveSpaceForMenu={!disableMenu} />
+      <HeaderCompaniesDropdown />
       {!disableMenu && [
         <IconButton
           aria-label="Menu"
@@ -282,6 +335,7 @@ function MobileHeader({ disableMenu }) {
 
 function DesktopHeader({ disableMenu }) {
   const store = useStoreSyncedWithLocalStorage();
+  const adminStore = useAdminStore();
 
   const location = useLocation();
   const history = useHistory();
@@ -291,7 +345,7 @@ function DesktopHeader({ disableMenu }) {
   const classes = useStyles();
   const userInfo = store.userInfo();
   const companies = store.companies();
-  const company = companies.length === 1 ? companies[0] : null;
+  const company = companies.find(c => c.id === adminStore.companyId);
   const companyName = company ? company.name : null;
   const routes = getAccessibleRoutes({ userInfo, companies });
 
@@ -354,9 +408,9 @@ function DesktopHeader({ disableMenu }) {
           >
             <Typography noWrap variant="body1" className={classes.userName}>
               {formatPersonName(userInfo)}
-              {companyName ? ` - ${companyName}` : ""}
             </Typography>
           </Tooltip>
+          <HeaderCompaniesDropdown />
           {!disableMenu && [
             <IconButton
               aria-label="Menu"
