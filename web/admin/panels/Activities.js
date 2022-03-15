@@ -152,10 +152,9 @@ function _ActivityPanel({ width }) {
     if (adminStore.companies) {
       const newCompaniesWithCurrentSelectionStatus = adminStore.companies.map(
         company => {
-          const companyMatch = companies.find(c => c.id === company.id);
-          return companyMatch
-            ? { ...company, selected: companyMatch.selected }
-            : company;
+          return company.id === adminStore.companyId
+            ? { ...company, selected: true }
+            : { ...company, selected: false };
         }
       );
       setCompanies(newCompaniesWithCurrentSelectionStatus);
