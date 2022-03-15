@@ -272,7 +272,7 @@ const HeaderCompaniesDropdown = () => {
 
   const classes = useStyles();
 
-  if (!companies || companies.length <= 1) {
+  if (!companies || companies.length <= 1 || !company) {
     return null;
   }
 
