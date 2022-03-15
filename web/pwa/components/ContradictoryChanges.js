@@ -126,7 +126,7 @@ export function ContradictoryChanges({
       </AccordionSummary>
       <AccordionDetails className={classes.collapse}>
         {loadingEmployeeVersion ? (
-          <Skeleton rect width="100%" height={100} />
+          <Skeleton variant="rectangular" width="100%" height={100} />
         ) : contradictoryComputationError ? (
           <Typography className={classes.noChangesText}>
             {isConnectionError(contradictoryComputationError)

@@ -34,7 +34,11 @@ export function InfoCard({
     <Card {...other}>
       <Box px={px} py={py} m={"auto"} style={{ textAlign }}>
         {title && <Typography {...titleProps}>{title}</Typography>}
-        {loading ? <Skeleton rect width="100%" height={100} /> : children}
+        {loading ? (
+          <Skeleton variant="rectangular" width="100%" height={100} />
+        ) : (
+          children
+        )}
       </Box>
     </Card>
   );
