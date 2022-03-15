@@ -4,10 +4,6 @@ import Typography from "@material-ui/core/Typography";
 import { VerticalTimeline } from "common/components/VerticalTimeline";
 import { formatTimeOfDay, formatTimer, now } from "common/utils/time";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
-import Accordion from "@material-ui/core/Accordion";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
 import { AugmentedTable } from "./AugmentedTable";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ACTIVITIES } from "common/utils/activities";
@@ -18,8 +14,6 @@ import Button from "@material-ui/core/Button";
 import { useActivitiesCardStyles } from "./styles/ActivitiesCardStyle";
 import SvgIcon from "@material-ui/core/SvgIcon";
 import EditIcon from "@material-ui/icons/Edit";
-
-const NB_ACTIVITIES_ACCORDION = 6;
 
 export function ActivitiesCard({
   activities,
@@ -153,7 +147,6 @@ export function ActivitiesCard({
     activityColumns.push(editPictoCol);
   }
 
-  const ACTIVITIES_TITLE = "Liste des activités";
   const AddActivityButton = () => (
     <Button
       aria-label="Ajouter une activité"
@@ -170,58 +163,27 @@ export function ActivitiesCard({
     </Button>
   );
 
-  const ActivitiesTable = () => (
-    <AugmentedTable
-      columns={activityColumns}
-      ref={ref}
-      validateRow={entry =>
-        !activityErrors.displayedStartTime &&
-        !activityErrors.displayedEndTime &&
-        entry.type
-      }
-      entries={activitiesWithIds}
-      className={classes.activitiesTableContainer}
-    />
-  );
-
-  const ActivitiesAccordion = () => (
-    <Accordion
-      elevation={0}
-      className={classes.listActivitiesAccordion}
-      defaultExpanded={true}
-    >
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        className={classes.listActivitiesAccordionSummary}
-      >
-        <Typography className="bold">{ACTIVITIES_TITLE}</Typography>
-      </AccordionSummary>
-      <AccordionDetails className={classes.listActivitiesAccordionDetail}>
-        {onCreateActivity && <AddActivityButton />}
-        <ActivitiesTable />
-      </AccordionDetails>
-    </Accordion>
-  );
-
-  const ActivitiesGrid = () => (
-    <Grid key={1} item xs={12} className={classes.listActivitiesGrid}>
-      <Typography variant="h5" className={classes.listActivitiesTitle}>
-        {ACTIVITIES_TITLE}
-      </Typography>
-      {onCreateActivity && <AddActivityButton />}
-      <ActivitiesTable />
-    </Grid>
-  );
-
   return (
     <MissionInfoCard title={title} extraPaddingBelowTitle loading={loading}>
       <Grid container key={2} spacing={2}>
         <Grid item xs={12}>
-          {activities.length >= NB_ACTIVITIES_ACCORDION ? (
-            <ActivitiesAccordion />
-          ) : (
-            <ActivitiesGrid />
-          )}
+          <Grid key={1} item xs={12} className={classes.listActivitiesGrid}>
+            <Typography variant="h5" className={classes.listActivitiesTitle}>
+              Liste des activités
+            </Typography>
+            {onCreateActivity && <AddActivityButton />}
+            <AugmentedTable
+              columns={activityColumns}
+              ref={ref}
+              validateRow={entry =>
+                !activityErrors.displayedStartTime &&
+                !activityErrors.displayedEndTime &&
+                entry.type
+              }
+              entries={activitiesWithIds}
+              className={classes.activitiesTableContainer}
+            />
+          </Grid>
         </Grid>
         {activities.length > 0 && [
           <Grid key={1} item xs={12} sm={4} className={classes.chartContainer}>
