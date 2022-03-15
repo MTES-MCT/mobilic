@@ -143,15 +143,9 @@ export function DayRegulationInfo({
 
       <RegulationCheck
         key={4}
-        check={
-          checkBreakRespect &&
-          checkBreakRespect.status === RULE_RESPECT_STATUS.failure
-            ? {
-                status: RULE_RESPECT_STATUS.failure,
-                rule: ALERT_TYPES.maximumUninterruptedWorkTime
-              }
-            : checkMaximumDurationOfUninterruptedWork(onlyCurrentDayActivities)
-        }
+        check={checkMaximumDurationOfUninterruptedWork(
+          onlyCurrentDayActivities
+        )}
       />
       {weekStats &&
         checkNumberOfWorkedDaysInWeek.status ===

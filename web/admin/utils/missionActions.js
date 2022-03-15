@@ -1,4 +1,4 @@
-import { ACTIVITIES_OPERATIONS } from "common/utils/activities";
+import { ACTIVITIES, ACTIVITIES_OPERATIONS } from "common/utils/activities";
 import {
   buildLogLocationPayloadFromAddress,
   CANCEL_ACTIVITY_MUTATION,
@@ -22,8 +22,16 @@ import { sameMinute } from "common/utils/time";
 import { currentUserId } from "common/utils/cookie";
 
 async function createSingleActivity(api, mission, modalArgs) {
+  let activityType = modalArgs.activityType;
+  if (
+    modalArgs.activityType === ACTIVITIES.drive.name &&
+    modalArgs.driverId &&
+    modalArgs.user.id !== modalArgs.driverId
+  ) {
+    activityType = ACTIVITIES.support.name;
+  }
   const payload = {
-    type: modalArgs.activityType,
+    type: activityType,
     startTime: modalArgs.startTime,
     endTime: modalArgs.endTime,
     missionId: mission.id,

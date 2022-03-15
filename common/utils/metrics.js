@@ -35,6 +35,8 @@ export function computeTotalActivityDurations(
     (timers[ACTIVITIES.work.name] || 0) +
     (timers[ACTIVITIES.drive.name] || 0) +
     (timers[ACTIVITIES.support.name] || 0);
-  timers[ACTIVITIES.break.name] = timers.total - timers.totalWork;
+  timers.transfer = timers[ACTIVITIES.transfer.name] || 0;
+  timers[ACTIVITIES.break.name] =
+    timers.total - timers.totalWork - timers.transfer;
   return timers;
 }

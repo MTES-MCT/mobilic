@@ -250,7 +250,7 @@ export function NavigationMenu({ open, setOpen }) {
           )
           .map(route => (
             <ListRouteItem
-              key={route.path || route.href}
+              key={route.path || route.label}
               route={route}
               closeDrawer={() => setOpen(false)}
             />

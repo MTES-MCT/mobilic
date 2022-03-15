@@ -175,6 +175,14 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "Un mail d'activation a récemment été envoyé. Vérifiez votre boîte mail.";
       case "MAILJET_ERROR":
         return "Erreur lors de l'envoi du mail. Veuillez réessayer plus tard.";
+      case "ACTIVITY_TIME_IN_FUTURE":
+        return `La date de ${
+          graphQLError.extensions.eventName === "Start" ? "début" : "fin"
+        } de l'activité renseignée est ${Math.floor(
+          (graphQLError.extensions.eventTime -
+            graphQLError.extensions.receptionTime) /
+            60
+        )} minutes dans le futur. Veuillez vérifier l'heure de votre téléphone.`;
       default:
         return null;
     }

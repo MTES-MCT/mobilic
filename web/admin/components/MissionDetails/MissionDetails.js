@@ -199,6 +199,10 @@ export function MissionDetails({
       ? missionCompany.settings.requireKilometerData
       : false;
 
+  const allowTransfers = missionCompany?.settings?.allowTransfers || false;
+  const allowSupportActivity =
+    missionCompany?.settings?.requireSupportActivity || false;
+
   const editableMissionName = missionCompany?.settings?.requireMissionName;
 
   const doesMissionSpanOnMultipleDays =
@@ -473,6 +477,8 @@ export function MissionDetails({
                               }),
                             handleRevisionAction:
                               missionActions.editSingleActivity,
+                            allowTransfers,
+                            allowSupportActivity,
                             nullableEndTime: false,
                             defaultTime: mission.startTime,
                             forcedUser: e.user,
@@ -502,6 +508,8 @@ export function MissionDetails({
                                 ...args,
                                 user: e.user
                               }),
+                            allowTransfers,
+                            allowSupportActivity,
                             nullableEndTime: false,
                             forcedUser: e.user,
                             displayWarningMessage: false
