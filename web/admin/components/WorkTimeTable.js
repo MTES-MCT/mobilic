@@ -215,7 +215,7 @@ export function WorkTimeTable({
         PaperProps={{
           className: classes.workTimeModal,
           sx: {
-            width: { md: 885, lg: "100vw" }
+            width: { xs: "100vw", md: 885 }
           }
         }}
       >
