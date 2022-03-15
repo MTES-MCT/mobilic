@@ -168,9 +168,6 @@ export function ActivitiesCard({
       <Grid container key={2} spacing={2}>
         <Grid item xs={12}>
           <Grid key={1} item xs={12} className={classes.listActivitiesGrid}>
-            <Typography variant="h5" className={classes.listActivitiesTitle}>
-              Liste des activités
-            </Typography>
             {onCreateActivity && <AddActivityButton />}
             <AugmentedTable
               columns={activityColumns}

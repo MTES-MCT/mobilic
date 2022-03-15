@@ -6,11 +6,8 @@ export const useActivitiesCardStyles = makeStyles(theme => ({
     maxHeight: 450,
     overflow: "auto"
   },
-  listActivitiesTitle: {
-    marginBottom: theme.spacing(2)
-  },
   listActivitiesGrid: {
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(5)
   },
   warningText: {
     color: theme.palette.warning.main,
