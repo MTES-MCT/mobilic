@@ -18,6 +18,7 @@ import {
 import {
   BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
   CANCEL_EMPLOYMENT_MUTATION,
+  CHANGE_EMPLOYEE_ROLE,
   CREATE_EMPLOYMENT_MUTATION,
   SEND_EMPLOYMENT_INVITE_REMINDER,
   TERMINATE_EMPLOYMENT_MUTATION
@@ -94,6 +95,22 @@ export function Employees({ company, containerRef }) {
     } catch (err) {
       alerts.error(formatApiError(err), employment.id, 6000);
     }
+  }
+
+  async function changeEmployeeRole(employmentId, hasAdminRights) {
+    const employmentResponse = await api.graphQlMutate(CHANGE_EMPLOYEE_ROLE, {
+      employmentId,
+      hasAdminRights
+    });
+    console.log("employmentResponse", employmentResponse);
+  }
+
+  async function giveAdminPermission(employmentId) {
+    await changeEmployeeRole(employmentId, true);
+  }
+
+  async function giveWorkerPermission(employmentId) {
+    await changeEmployeeRole(employmentId, false);
   }
 
   async function terminateEmployment(employmentId, endDate) {
@@ -274,6 +291,38 @@ export function Employees({ company, containerRef }) {
   const canDisplayPendingEmployments =
     isAddingEmployment || pendingEmployments.length > 0;
 
+  const customActionsAcceptedEmployment = employment => {
+    if (!employment) {
+      return [];
+    }
+    const customActions = [];
+    if (employment.hasAdminRights) {
+      customActions.push({
+        name: "setAdmin",
+        label: "Passer en rôle gestionnaire",
+        action: giveAdminPermission(employment.id)
+      });
+    } else {
+      customActions.push({
+        name: "setWorker",
+        label: "Passer en rôle salarié",
+        action: giveWorkerPermission(employment.id)
+      });
+    }
+    customActions.push({
+      name: "terminate",
+      label: "Mettre fin au rattachement",
+      action: empl => {
+        modals.open("terminateEmployment", {
+          minDate: new Date(empl.startDate),
+          terminateEmployment: async endDate =>
+            await terminateEmployment(empl.employmentId, endDate)
+        });
+      }
+    });
+    return customActions;
+  };
+
   return [
     <Button
       key={-1}
@@ -414,7 +463,7 @@ export function Employees({ company, containerRef }) {
           alerts.error(formatApiError(err), idOrEmail, 6000);
         }
       }}
-      customRowActions={[
+      customRowActions={() => [
         {
           name: "reminder",
           label: "Relancer l'invitation",
@@ -470,19 +519,7 @@ export function Employees({ company, containerRef }) {
       alwaysSortBy={[["active", "desc"]]}
       virtualizedAttachScrollTo={containerRef.current}
       rowClassName={row => (!row.active ? classes.terminatedEmployment : "")}
-      customRowActions={[
-        {
-          name: "terminate",
-          label: "Mettre fin au rattachement",
-          action: empl => {
-            modals.open("terminateEmployment", {
-              minDate: new Date(empl.startDate),
-              terminateEmployment: async endDate =>
-                await terminateEmployment(empl.employmentId, endDate)
-            });
-          }
-        }
-      ]}
+      customRowActions={customActionsAcceptedEmployment}
       virtualized
     />
   ];
