@@ -8,8 +8,8 @@ import MenuItem from "@mui/material/MenuItem";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { VehicleFieldForApp } from "../pwa/components/VehicleFieldForApp";
 import { AddressField } from "./AddressField";
-import { DateOrDateTimePicker } from "../pwa/components/DateOrDateTimePicker";
-import { DAY, isoFormatLocalDate } from "common/utils/time";
+import MobileDatePicker from "@mui/lab/MobileDatePicker";
+import { DAY } from "common/utils/time";
 
 export default function NewMissionForm({
   handleSubmit,
@@ -26,7 +26,6 @@ export default function NewMissionForm({
     companies && companies.length === 1 ? companies[0] : ""
   );
   const [day, setDay] = React.useState(null);
-  const [dayError, setDayError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [address, setAddress] = React.useState(null);
   const [endAddress, setEndAddress] = React.useState(null);
@@ -48,7 +47,8 @@ export default function NewMissionForm({
 
   const funnelModalClasses = useFunnelModalStyles();
 
-  const now1 = Date.now();
+  const today = Date.now();
+  const minDate = new Date(today - 30 * DAY * 1000);
 
   return (
     <Container>
@@ -117,19 +117,20 @@ export default function NewMissionForm({
             <Typography key={1} variant="h5" className="form-field-title">
               Quel jour s'est déroulée la mission ?
             </Typography>,
-            <DateOrDateTimePicker
+            <MobileDatePicker
               key={2}
               label="Jour de la mission"
               value={day}
-              setValue={setDay}
-              variant="filled"
-              isDateTime={false}
-              minValue={isoFormatLocalDate(new Date(now1 - 30 * DAY * 1000))}
-              maxValue={isoFormatLocalDate(new Date(now1))}
-              error={dayError}
-              setError={setDayError}
-              required
-              autoValidate
+              onChange={setDay}
+              cancelText={null}
+              disableCloseOnSelect={false}
+              showToolbar={false}
+              disableMaskedInput={true}
+              minDate={minDate}
+              maxDate={today}
+              renderInput={props => (
+                <TextField {...props} required variant="filled" />
+              )}
             />
           ]}
           <Typography variant="h5" className="form-field-title">
@@ -195,7 +196,7 @@ export default function NewMissionForm({
               !address ||
               (!mission && company?.settings?.requireMissionName) ||
               (withEndLocation && !endAddress) ||
-              (withDay && (dayError || !day))
+              (withDay && !day)
             }
             type="submit"
             loading={loading}

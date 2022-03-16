@@ -2,7 +2,7 @@ import React from "react";
 import Dialog from "@mui/material/Dialog";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { now, sameMinute, truncateMinute } from "common/utils/time";
+import { now, sameMinute } from "common/utils/time";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "common/utils/TextField";
 import {
@@ -16,7 +16,7 @@ import max from "lodash/max";
 import MenuItem from "@mui/material/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import { DateOrDateTimePicker } from "../DateOrDateTimePicker";
+import MobileDateTimePicker from "@mui/lab/MobileDateTimePicker";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import {
@@ -28,7 +28,6 @@ import { makeStyles } from "@mui/styles";
 import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
 import OverlappedActivityList from "./OverlappedActivityList";
-import _ from "lodash";
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -302,6 +301,9 @@ export default function ActivityRevisionOrCreationModal({
     );
   };
 
+  const fromDate = date => date.getTime() / 1000;
+  const toDate = time => new Date(time * 1000);
+
   const classes = useStyles();
 
   return (
@@ -366,32 +368,55 @@ export default function ActivityRevisionOrCreationModal({
               </MenuItem>
             </TextField>
           )}
-          <DateOrDateTimePicker
+          <MobileDateTimePicker
             key={0}
             label="Début"
-            variant="filled"
-            className={classes.formField}
-            value={newUserTime}
-            setValue={_.flow([truncateMinute, setNewUserTime])}
-            error={newUserTimeError}
-            minValue={previousMissionEnd}
-            maxValue={nextMissionStart}
-            required
-            noValidate
+            value={newUserTime ? toDate(newUserTime) : null}
+            onChange={value => setNewUserTime(value ? fromDate(value) : null)}
+            minDateTime={toDate(previousMissionEnd)}
+            maxDateTime={toDate(nextMissionStart)}
+            cancelText={null}
+            disableCloseOnSelect={false}
+            showToolbar={false}
+            disableIgnoringDatePartForTimeValidation={true}
+            renderInput={props => (
+              <TextField
+                {...props}
+                fullWidth
+                required
+                className={classes.formField}
+                variant="filled"
+                error={!!newUserTimeError}
+                helperText={newUserTimeError}
+              />
+            )}
           />
-          <DateOrDateTimePicker
+          <MobileDateTimePicker
             key={1}
             label="Fin"
-            variant="filled"
-            className={classes.formField}
-            required={!actuallyNullableEndTime}
-            value={newUserEndTime}
-            minValue={newUserTime}
-            maxValue={nextMissionStart}
-            setValue={_.flow([truncateMinute, setNewUserEndTime])}
-            error={newUserEndTimeError}
+            value={newUserEndTime ? toDate(newUserEndTime) : null}
+            onChange={value =>
+              setNewUserEndTime(value ? fromDate(value) : null)
+            }
+            minDateTime={toDate(newUserTime)}
+            maxDateTime={toDate(nextMissionStart)}
+            cancelText={null}
+            disableCloseOnSelect={false}
+            showToolbar={false}
+            disableIgnoringDatePartForTimeValidation={true}
             clearable={actuallyNullableEndTime}
-            noValidate
+            clearText="Annuler"
+            renderInput={props => (
+              <TextField
+                {...props}
+                fullWidth
+                required={!actuallyNullableEndTime}
+                className={classes.formField}
+                variant="filled"
+                error={!!newUserEndTimeError}
+                helperText={newUserEndTimeError}
+              />
+            )}
           />
         </Box>
         {allowTeamMode && team.length > 1 && (
