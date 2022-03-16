@@ -106,7 +106,7 @@ function _CompanyPanel({ width, containerRef }) {
     } else {
       setCompany(null);
     }
-  }, [companies]);
+  }, [companies, adminStore.companyId]);
 
   const classes = usePanelStyles({ width });
   const subPanel = COMPANY_SUB_PANELS.find(sp => sp.view === view);
