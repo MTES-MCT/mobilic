@@ -1,7 +1,7 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import { formatPersonName } from "common/utils/coworkers";
-import Autocomplete from "@mui/material/Autocomplete";
+import { Autocomplete } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
 import orderBy from "lodash/orderBy";

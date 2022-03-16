@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
-import Autocomplete from "@mui/material/Autocomplete";
+import { Autocomplete } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
 
