@@ -6,6 +6,7 @@ import Paper from "@mui/material/Paper";
 import { PeriodToggle } from "../components/PeriodToggle";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import useTheme from "@mui/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -17,8 +18,6 @@ import uniqBy from "lodash/uniqBy";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
 import max from "lodash/max";
-import { CompanyFilter } from "../components/CompanyFilter";
-import Typography from "@mui/material/Typography";
 import {
   formatDay,
   isoFormatLocalDate,
@@ -173,12 +172,10 @@ function ActivitiesPanel() {
   React.useEffect(() => {
     if (adminStore.companies) {
       const newCompaniesWithCurrentSelectionStatus = adminStore.companies.map(
-        company => {
-          const companyMatch = companies.find(c => c.id === company.id);
-          return companyMatch
-            ? { ...company, selected: companyMatch.selected }
-            : company;
-        }
+        company => ({
+          ...company,
+          selected: company.id === adminStore.companyId
+        })
       );
       setCompanies(newCompaniesWithCurrentSelectionStatus);
     }
@@ -188,15 +185,8 @@ function ActivitiesPanel() {
   if (selectedCompanies.length === 0) selectedCompanies = companies;
 
   React.useEffect(() => {
-    setUsers(
-      uniqBy(
-        adminStore.users.filter(u =>
-          selectedCompanies.map(c => c.id).includes(u.companyId)
-        ),
-        u => u.id
-      )
-    );
-  }, [companies, adminStore.users]);
+    setUsers(uniqBy(adminStore.users, u => u.id));
+  }, [adminStore.users]);
 
   let selectedUsers = users.filter(u => u.selected);
   if (selectedUsers.length === 0) selectedUsers = users;
@@ -204,7 +194,6 @@ function ActivitiesPanel() {
   const selectedWorkDays = adminStore.workDays.filter(
     wd =>
       selectedUsers.map(u => u.id).includes(wd.user.id) &&
-      selectedCompanies.map(c => c.id).includes(wd.companyId) &&
       (!minDate || wd.day >= minDate) &&
       (!maxDate || wd.day <= maxDate)
   );
@@ -229,11 +218,6 @@ function ActivitiesPanel() {
         justifyContent="space-between"
         className={classes.filterGrid}
       >
-        {companies.length > 1 && (
-          <Grid item>
-            <CompanyFilter companies={companies} setCompanies={setCompanies} />
-          </Grid>
-        )}
         <Grid item>
           <EmployeeFilter users={users} setUsers={setUsers} />
         </Grid>
@@ -359,12 +343,9 @@ function ActivitiesPanel() {
           className={classes.workTimeTable}
           period={period}
           workTimeEntries={periodAggregates}
-          showExpenditures={selectedCompanies.some(
-            c => c.settings.requireExpenditures
-          )}
-          showMissionName={selectedCompanies.some(
-            c => c.settings.requireMissionName
-          )}
+          showExpenditures={adminStore.settings.requireExpenditures}
+          showMissionName={adminStore.settings.requireMissionName}
+          showTransfers={adminStore.settings.allowTransfers}
           loading={loading}
           width={width}
         />

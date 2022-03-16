@@ -5,8 +5,6 @@ import { useAdminStore } from "../store/store";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Employees } from "./Employees";
-import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
 import Grid from "@mui/material/Grid";
 import { LinkButton } from "../../common/LinkButton";
 import Box from "@mui/material/Box";
@@ -100,7 +98,6 @@ function SubNavigationToggle({ view, setView }) {
 function CompanyPanel({ width, containerRef }) {
   const [view, setView] = React.useState("employees");
 
-  const [selectedCompanyId, setSelectedCompanyId] = React.useState(null);
   const [company, setCompany] = React.useState(null);
 
   const adminStore = useAdminStore();
@@ -108,13 +105,11 @@ function CompanyPanel({ width, containerRef }) {
   const companies = adminStore.companies;
 
   React.useEffect(() => {
-    if (!selectedCompanyId && companies && companies.length > 0) {
-      const defaultCompany = companies[0];
-      setSelectedCompanyId(defaultCompany.id);
-      setCompany(defaultCompany);
-    } else if (selectedCompanyId && companies) {
-      setCompany(companies.find(c => c.id === selectedCompanyId));
-    } else setCompany(null);
+    if (adminStore.companyId && companies && companies.length > 0) {
+      setCompany(companies.find(c => c.id === adminStore.companyId));
+    } else {
+      setCompany(null);
+    }
   }, [companies]);
 
   const classes = usePanelStyles({ width });
@@ -143,28 +138,6 @@ function CompanyPanel({ width, containerRef }) {
             <SubNavigationToggle view={view} setView={setView} />
           </Box>
         </Grid>
-        {companies && companies.length > 1 && (
-          <Grid item>
-            <TextField
-              id="select-company-id"
-              variant="standard"
-              select
-              label="Entreprise"
-              value={company ? company.id : 0}
-              onChange={e => {
-                setSelectedCompanyId(e.target.value);
-                setCompany(companies.find(c => c.id === e.target.value));
-              }}
-              helperText="Voir une autre entreprise"
-            >
-              {companies.map(c => (
-                <MenuItem key={c.id} value={c.id}>
-                  {c.name}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-        )}
         <Grid item>
           <LinkButton
             className={classes.createCompanyButton}
