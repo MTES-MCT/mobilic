@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import DialogContent from "@mui/material/DialogContent";
-import DatePicker from "@mui/lab/DatePicker";
+import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import { useApi } from "common/utils/api";
@@ -57,6 +57,7 @@ export default function C1BExport({
   defaultMaxDate = null
 }) {
   const MAX_RANGE_DAYS = 60;
+  const today = new Date();
 
   const api = useApi();
   const alerts = useSnackbarAlerts();
@@ -176,40 +177,42 @@ export default function C1BExport({
             nullableBounds={false}
           >
             <Grid item sm={6}>
-              <DatePicker
+              <MobileDatePicker
+                label="Date de début"
                 value={minDate}
                 inputFormat="d MMMM yyyy"
                 onChange={setMinDate}
                 cancelText={null}
-                autoOk
-                disableFuture
-                animateYearScrolling
-                error={!!dateRangeError}
+                showToolbar={false}
+                disableMaskedInput={true}
+                maxDate={today}
                 renderInput={props => (
                   <TextField
+                    {...props}
                     required
                     variant="outlined"
-                    label="Date de début"
+                    error={!!dateRangeError}
                     helperText={dateRangeError}
                   />
                 )}
               />
             </Grid>
             <Grid item sm={6}>
-              <DatePicker
+              <MobileDatePicker
+                label="Date de fin"
                 value={maxDate}
                 inputFormat="d MMMM yyyy"
                 onChange={setMaxDate}
                 cancelText={null}
-                autoOk
-                disableFuture
-                animateYearScrolling
-                error={!!dateRangeError}
+                showToolbar={false}
+                disableMaskedInput={true}
+                maxDate={today}
                 renderInput={props => (
                   <TextField
+                    {...props}
                     required
                     variant="outlined"
-                    label="Date de fin"
+                    error={!!dateRangeError}
                     helperText={dateRangeError}
                   />
                 )}

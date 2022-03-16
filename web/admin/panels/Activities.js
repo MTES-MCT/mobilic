@@ -44,7 +44,7 @@ import {
   CREATE_MISSION_MUTATION,
   LOG_LOCATION_MUTATION
 } from "common/utils/apiQueries";
-import DatePicker from "@mui/lab/DatePicker";
+import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import TextField from "@mui/material/TextField";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 
@@ -138,6 +138,8 @@ function ActivitiesPanel() {
   const [openNewMission, setOpenNewMission] = React.useState(false);
 
   const minDateOfFetchedData = adminStore.minWorkDaysDate;
+
+  const today = new Date();
 
   React.useEffect(() => {
     if (minDate !== adminStore.minWorkDaysDate)
@@ -239,34 +241,34 @@ function ActivitiesPanel() {
           <PeriodToggle period={period} setPeriod={setPeriod} />
         </Grid>
         <Grid item>
-          <DatePicker
-            value={new Date(minDate)}
-            size="small"
+          <MobileDatePicker
+            label="Début"
+            value={minDate}
             inputFormat="d MMMM yyyy"
             fullWidth
-            onChange={val => setMinDate(isoFormatLocalDate(val))}
+            showToolbar={false}
+            disableMaskedInput={true}
+            onChange={setMinDate}
             cancelText={null}
-            autoOk
-            disableFuture
-            animateYearScrolling
+            maxDate={today}
             renderInput={props => (
-              <TextField required variant="outlined" label="Début" />
+              <TextField {...props} required variant="outlined" size="small" />
             )}
           />
         </Grid>
         <Grid item>
-          <DatePicker
-            value={new Date(maxDate)}
+          <MobileDatePicker
+            label="Fin"
+            value={maxDate}
             inputFormat="d MMMM yyyy"
             fullWidth
-            size="small"
-            onChange={val => setMaxDate(isoFormatLocalDate(val))}
+            showToolbar={false}
+            disableMaskedInput={true}
+            onChange={setMaxDate}
             cancelText={null}
-            autoOk
-            disableFuture
-            animateYearScrolling
+            maxDate={today}
             renderInput={props => (
-              <TextField required variant="outlined" label="Fin" />
+              <TextField {...props} required variant="outlined" size="small" />
             )}
           />
         </Grid>

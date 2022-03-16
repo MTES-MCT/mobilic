@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import DialogContent from "@mui/material/DialogContent";
-import DatePicker from "@mui/lab/DatePicker";
+import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import { useApi } from "common/utils/api";
@@ -56,6 +56,8 @@ export default function ExcelExport({
 
   const [_companies, setCompanies] = React.useState([]);
   const [_users, setUsers] = React.useState([]);
+
+  const today = new Date();
 
   React.useEffect(() => {
     setCompanies(companies);
@@ -128,34 +130,36 @@ export default function ExcelExport({
             nullableBounds
           >
             <Grid item sm={6}>
-              <DatePicker
+              <MobileDatePicker
+                label="Date de début"
                 value={minDate}
                 inputFormat="d MMMM yyyy"
                 onChange={setMinDate}
                 clearable
                 cancelText={null}
                 clearText="Annuler"
-                autoOk
-                disableFuture
-                animateYearScrolling
+                showToolbar={false}
+                disableMaskedInput={true}
+                maxDate={today}
                 renderInput={props => (
-                  <TextField variant="outlined" label="Date de début" />
+                  <TextField {...props} variant="outlined" />
                 )}
               />
             </Grid>
             <Grid item sm={6}>
-              <DatePicker
+              <MobileDatePicker
+                label="Date de fin"
                 value={maxDate}
                 inputFormat="d MMMM yyyy"
                 onChange={setMaxDate}
                 clearable
                 cancelText={null}
                 clearText="Annuler"
-                autoOk
-                disableFuture
-                animateYearScrolling
+                showToolbar={false}
+                disableMaskedInput={true}
+                maxDate={today}
                 renderInput={props => (
-                  <TextField variant="outlined" label="Date de fin" />
+                  <TextField {...props} variant="outlined" />
                 )}
               />
             </Grid>

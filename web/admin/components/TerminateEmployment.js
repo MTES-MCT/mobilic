@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import DialogContent from "@mui/material/DialogContent";
-import DatePicker from "@mui/lab/DatePicker";
+import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import Box from "@mui/material/Box";
@@ -23,9 +23,9 @@ export default function TerminateEmployment({
   const [loading, setLoading] = React.useState(false);
 
   const alerts = useSnackbarAlerts();
+  const today = new Date();
 
   React.useEffect(() => {
-    const today = new Date(Date.now());
     setEndDate(minDate && minDate > today ? minDate : today);
   }, [minDate]);
 
@@ -65,20 +65,17 @@ export default function TerminateEmployment({
           </Typography>
           <Typography>⚠️⚠️⚠️</Typography>
           <Box my={2} mt={4} className="flex-row-center">
-            <DatePicker
+            <MobileDatePicker
+              label="Date de fin du rattachement"
               value={endDate}
               inputFormat="d MMMM yyyy"
               minDate={minDate}
               onChange={setEndDate}
               cancelText={null}
-              autoOk
-              animateYearScrolling
-              renderInput={props => (
-                <TextField
-                  variant="outlined"
-                  label="Date de fin du rattachement"
-                />
-              )}
+              showToolbar={false}
+              disableMaskedInput={true}
+              maxDate={today}
+              renderInput={props => <TextField {...props} variant="outlined" />}
             />
           </Box>
         </DialogContent>

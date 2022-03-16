@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import DialogContent from "@mui/material/DialogContent";
-import DatePicker from "@mui/lab/DatePicker";
+import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import Dialog from "@mui/material/Dialog";
 import TextField from "@mui/material/TextField";
 import { useApi } from "common/utils/api";
@@ -57,6 +57,8 @@ export default function PDFExport({ open, handleClose }) {
   const [maxDate, setMaxDate] = React.useState(startOfDayAsDate(new Date()));
   const [dateRangeError, setDateRangeError] = React.useState(null);
 
+  const today = new Date();
+
   React.useEffect(() => {
     if (
       maxDate &&
@@ -91,53 +93,51 @@ export default function PDFExport({ open, handleClose }) {
             setEnd={setMaxDate}
           >
             <Grid item sm={6} xs={12}>
-              <DatePicker
-                renderInput={props => (
-                  <TextField
-                    required
-                    variant="outlined"
-                    label="Mois de début"
-                    helperText={dateRangeError}
-                  />
-                )}
+              <MobileDatePicker
+                label="Mois de début"
                 value={minDate}
                 inputFormat="MMMM yyyy"
                 fullWidth
-                onChange={e => {
-                  setMinDate(e);
-                }}
-                cancelText={null}
-                autoOk
-                disableFuture
-                animateYearScrolling
-                error={!!dateRangeError}
+                onChange={setMinDate}
                 openTo={"month"}
                 views={["year", "month"]}
+                cancelText={null}
+                showToolbar={false}
+                disableMaskedInput={true}
+                maxDate={today}
+                renderInput={props => (
+                  <TextField
+                    {...props}
+                    required
+                    variant="outlined"
+                    error={!!dateRangeError}
+                    helperText={dateRangeError}
+                  />
+                )}
               />
             </Grid>
             <Grid item sm={6} xs={12}>
-              <DatePicker
+              <MobileDatePicker
+                label="Mois de fin"
+                value={maxDate}
+                inputFormat="MMMM yyyy"
+                fullWidth
+                onChange={setMaxDate}
+                openTo={"month"}
+                views={["year", "month"]}
+                cancelText={null}
+                showToolbar={false}
+                disableMaskedInput={true}
+                maxDate={today}
                 renderInput={props => (
                   <TextField
+                    {...props}
                     required
                     variant="outlined"
-                    label="Mois de fin"
                     helperText={dateRangeError}
                     error={!!dateRangeError}
                   />
                 )}
-                value={maxDate}
-                inputFormat="MMMM yyyy"
-                fullWidth
-                onChange={e => {
-                  setMaxDate(e);
-                }}
-                cancelText={null}
-                autoOk
-                disableFuture
-                animateYearScrolling
-                openTo={"month"}
-                views={["year", "month"]}
               />
             </Grid>
           </DateOrDateTimeRangeSelectionContext>
