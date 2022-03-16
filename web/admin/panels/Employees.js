@@ -98,11 +98,25 @@ export function Employees({ company, containerRef }) {
   }
 
   async function changeEmployeeRole(employmentId, hasAdminRights) {
-    const employmentResponse = await api.graphQlMutate(CHANGE_EMPLOYEE_ROLE, {
-      employmentId,
-      hasAdminRights
-    });
-    console.log("employmentResponse", employmentResponse);
+    try {
+      const employmentResponse = await api.graphQlMutate(CHANGE_EMPLOYEE_ROLE, {
+        employmentId,
+        hasAdminRights
+      });
+      await adminStore.dispatch({
+        type: ADMIN_ACTIONS.update,
+        payload: {
+          id: employmentId,
+          entity: "employments",
+          update: {
+            ...employmentResponse.data.employments.changeEmployeeRole,
+            companyId
+          }
+        }
+      });
+    } catch (err) {
+      alerts.error(formatApiError(err), employmentId, 6000);
+    }
   }
 
   async function giveAdminPermission(employmentId) {
@@ -210,9 +224,9 @@ export function Employees({ company, containerRef }) {
       minWidth: 100
     },
     {
-      label: "Administrateur",
+      label: "Rôle",
       name: "hasAdminRights",
-      boolean: true,
+      format: hasAdminRights => (hasAdminRights ? "Gestionnaire" : "Salarié"),
       align: "left",
       sortable: true,
       minWidth: 160
@@ -291,22 +305,22 @@ export function Employees({ company, containerRef }) {
   const canDisplayPendingEmployments =
     isAddingEmployment || pendingEmployments.length > 0;
 
-  const customActionsAcceptedEmployment = employment => {
+  const customActionsValidEmployment = employment => {
     if (!employment) {
       return [];
     }
     const customActions = [];
-    if (employment.hasAdminRights) {
+    if (!employment.hasAdminRights) {
       customActions.push({
         name: "setAdmin",
         label: "Passer en rôle gestionnaire",
-        action: giveAdminPermission(employment.id)
+        action: empl => giveAdminPermission(empl.employmentId)
       });
     } else {
       customActions.push({
         name: "setWorker",
         label: "Passer en rôle salarié",
-        action: giveWorkerPermission(employment.id)
+        action: empl => giveWorkerPermission(empl.employmentId)
       });
     }
     customActions.push({
@@ -519,7 +533,7 @@ export function Employees({ company, containerRef }) {
       alwaysSortBy={[["active", "desc"]]}
       virtualizedAttachScrollTo={containerRef.current}
       rowClassName={row => (!row.active ? classes.terminatedEmployment : "")}
-      customRowActions={customActionsAcceptedEmployment}
+      customRowActions={customActionsValidEmployment}
       virtualized
     />
   ];
