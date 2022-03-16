@@ -3,6 +3,7 @@ import {
   ADMIN_COMPANIES_LIST_QUERY,
   ADMIN_COMPANIES_QUERY
 } from "common/utils/apiQueries";
+import { sortBy } from "lodash/collection";
 
 export async function loadCompaniesData(api, userId, minDate, companyId) {
   const companiesListResponse = await api.graphQlQuery(
@@ -12,9 +13,12 @@ export async function loadCompaniesData(api, userId, minDate, companyId) {
     }
   );
 
-  const companyIds = companyId
-    ? [companyId]
-    : [companiesListResponse.data.user.adminedCompanies[0].id];
+  const sortedCompaniesByName = sortBy(
+    companiesListResponse.data.user.adminedCompanies,
+    "name"
+  );
+
+  const companyIds = companyId ? [companyId] : [sortedCompaniesByName[0].id];
 
   const companyResponse = await api.graphQlQuery(
     ADMIN_COMPANIES_QUERY,
