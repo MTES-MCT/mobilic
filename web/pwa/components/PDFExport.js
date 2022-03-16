@@ -102,6 +102,7 @@ export default function PDFExport({ open, handleClose }) {
                 openTo={"month"}
                 views={["year", "month"]}
                 cancelText={null}
+                disableCloseOnSelect={false}
                 showToolbar={false}
                 disableMaskedInput={true}
                 maxDate={today}
@@ -126,6 +127,7 @@ export default function PDFExport({ open, handleClose }) {
                 openTo={"month"}
                 views={["year", "month"]}
                 cancelText={null}
+                disableCloseOnSelect={false}
                 showToolbar={false}
                 disableMaskedInput={true}
                 maxDate={today}

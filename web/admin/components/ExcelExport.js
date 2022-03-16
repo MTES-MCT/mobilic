@@ -138,6 +138,7 @@ export default function ExcelExport({
                 clearable
                 cancelText={null}
                 clearText="Annuler"
+                disableCloseOnSelect={false}
                 showToolbar={false}
                 disableMaskedInput={true}
                 maxDate={today}
@@ -155,6 +156,7 @@ export default function ExcelExport({
                 clearable
                 cancelText={null}
                 clearText="Annuler"
+                disableCloseOnSelect={false}
                 showToolbar={false}
                 disableMaskedInput={true}
                 maxDate={today}

@@ -72,6 +72,7 @@ export default function TerminateEmployment({
               minDate={minDate}
               onChange={setEndDate}
               cancelText={null}
+              disableCloseOnSelect={false}
               showToolbar={false}
               disableMaskedInput={true}
               maxDate={today}

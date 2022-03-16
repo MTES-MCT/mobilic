@@ -183,6 +183,7 @@ export default function C1BExport({
                 inputFormat="d MMMM yyyy"
                 onChange={setMinDate}
                 cancelText={null}
+                disableCloseOnSelect={false}
                 showToolbar={false}
                 disableMaskedInput={true}
                 maxDate={today}
@@ -204,6 +205,7 @@ export default function C1BExport({
                 inputFormat="d MMMM yyyy"
                 onChange={setMaxDate}
                 cancelText={null}
+                disableCloseOnSelect={false}
                 showToolbar={false}
                 disableMaskedInput={true}
                 maxDate={today}

@@ -246,6 +246,7 @@ function ActivitiesPanel() {
             value={minDate}
             inputFormat="d MMMM yyyy"
             fullWidth
+            disableCloseOnSelect={false}
             showToolbar={false}
             disableMaskedInput={true}
             onChange={setMinDate}
@@ -262,6 +263,7 @@ function ActivitiesPanel() {
             value={maxDate}
             inputFormat="d MMMM yyyy"
             fullWidth
+            disableCloseOnSelect={false}
             showToolbar={false}
             disableMaskedInput={true}
             onChange={setMaxDate}
