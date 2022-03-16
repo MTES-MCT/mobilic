@@ -151,12 +151,10 @@ function _ActivityPanel({ width }) {
   React.useEffect(() => {
     if (adminStore.companies) {
       const newCompaniesWithCurrentSelectionStatus = adminStore.companies.map(
-        company => {
-          const companyMatch = companies.find(c => c.id === company.id);
-          return companyMatch
-            ? { ...company, selected: companyMatch.selected }
-            : company;
-        }
+        company => ({
+          ...company,
+          selected: company.id === adminStore.companyId
+        })
       );
       setCompanies(newCompaniesWithCurrentSelectionStatus);
     }
