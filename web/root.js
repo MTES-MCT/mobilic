@@ -24,6 +24,7 @@ import {
   CssBaseline
 } from "@mui/material";
 import { loadUserData } from "common/utils/loadUserData";
+import frLocale from "date-fns/locale/fr";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { ModalProvider } from "common/utils/modals";
@@ -74,7 +75,10 @@ export default function Root() {
               <CssBaseline />
               <ErrorBoundary>
                 <ApiContextProvider>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <LocalizationProvider
+                    dateAdapter={AdapterDateFns}
+                    locale={frLocale}
+                  >
                     <SnackbarProvider>
                       <LoadingScreenContextProvider>
                         <ModalProvider modalDict={MODAL_DICT}>
