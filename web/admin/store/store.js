@@ -41,3 +41,21 @@ export function AdminStoreProvider({ children }) {
 }
 
 export const useAdminStore = () => React.useContext(AdminStoreContext);
+
+export const useAdminCompanies = () => {
+  const adminStore = useAdminStore();
+
+  const [company, setCompany] = React.useState(null);
+
+  const companies = adminStore.companies;
+
+  React.useEffect(() => {
+    if (adminStore.companyId && companies && companies.length > 0) {
+      setCompany(companies.find(c => c.id === adminStore.companyId));
+    } else {
+      setCompany(null);
+    }
+  }, [companies, adminStore.companyId]);
+
+  return [companies, company];
+};
