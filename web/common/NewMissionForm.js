@@ -10,29 +10,52 @@ import { VehicleFieldForApp } from "../pwa/components/VehicleFieldForApp";
 import { AddressField } from "./AddressField";
 import { DateOrDateTimePicker } from "../pwa/components/DateOrDateTimePicker";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
-import { useAdminStore } from "../admin/store/store";
 
 export default function NewMissionForm({
   handleSubmit,
   companies,
-  company,
   companyAddresses = [],
   currentPosition = null,
   disableKilometerReading = false,
   withDay = false,
-  withEndLocation = false
+  withEndLocation = false,
+  companyId = null,
+  overrideSettings = null
 }) {
+  const getInitialCompany = () => {
+    if (companyId) {
+      return companies.find(c => c.id === companyId);
+    }
+    if (companies && companies.length === 1) {
+      return companies[0];
+    }
+    return "";
+  };
   const [mission, setMission] = React.useState("");
   const [vehicle, setVehicle] = React.useState("");
-
-  const adminStore = useAdminStore();
-
+  const [company, setCompany] = React.useState(getInitialCompany());
+  const [settings, setSettings] = React.useState(overrideSettings);
   const [day, setDay] = React.useState(null);
   const [dayError, setDayError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [address, setAddress] = React.useState(null);
   const [endAddress, setEndAddress] = React.useState(null);
   const [kilometerReading, setKilometerReading] = React.useState(null);
+
+  // React.useEffect(() => {
+  //   setCompany(getInitialCompany());
+  // }, [companyId, companies]);
+
+  React.useEffect(() => {
+    if (vehicle?.companyId) setVehicle("");
+    if (address?.companyId) setAddress("");
+
+    if (company && company.settings) {
+      setSettings(company.settings);
+    }
+
+    setMission("");
+  }, [company]);
 
   React.useEffect(() => {
     if (!vehicle) setKilometerReading(null);
@@ -80,7 +103,10 @@ export default function NewMissionForm({
                 variant="filled"
                 select
                 value={company || ""}
-                disabled
+                onChange={e => {
+                  setCompany(e.target.value);
+                }}
+                disabled={!!companyId}
               >
                 {companies.map(company => (
                   <MenuItem key={company.id} value={company}>
@@ -89,7 +115,7 @@ export default function NewMissionForm({
                 ))}
               </TextField>
             ]}
-          {adminStore.settings.requireMissionName && [
+          {settings?.requireMissionName && [
             <Typography key={1} variant="h5" className="form-field-title">
               Quel est le nom de la mission&nbsp;?
             </Typography>,
@@ -170,7 +196,7 @@ export default function NewMissionForm({
             kilometerReading={kilometerReading}
             setKilometerReading={
               !disableKilometerReading &&
-              adminStore.settings.requireKilometerData &&
+              settings?.requireKilometerData &&
               vehicle
                 ? setKilometerReading
                 : ""
@@ -181,7 +207,7 @@ export default function NewMissionForm({
           <MainCtaButton
             disabled={
               !address ||
-              (!mission && adminStore.settings.requireMissionName) ||
+              (!mission && settings?.requireMissionName) ||
               (withEndLocation && !endAddress) ||
               (withDay && (dayError || !day))
             }

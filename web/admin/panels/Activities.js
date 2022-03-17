@@ -102,12 +102,11 @@ const onMinDateChange = debounce(
 
 function _ActivityPanel({ width }) {
   const adminStore = useAdminStore();
+  const [adminCompanies] = useAdminCompanies();
   const modals = useModals();
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const history = useHistory();
-
-  const [, currentCompany] = useAdminCompanies();
 
   const [users, setUsers] = React.useState([]);
   const [companies, setCompanies] = React.useState([]);
@@ -151,8 +150,8 @@ function _ActivityPanel({ width }) {
   const [exportMenuAnchorEl, setExportMenuAnchorEl] = React.useState(null);
 
   React.useEffect(() => {
-    if (adminStore.companies) {
-      const newCompaniesWithCurrentSelectionStatus = adminStore.companies.map(
+    if (adminCompanies) {
+      const newCompaniesWithCurrentSelectionStatus = adminCompanies.map(
         company => ({
           ...company,
           selected: company.id === adminStore.companyId
@@ -160,7 +159,7 @@ function _ActivityPanel({ width }) {
       );
       setCompanies(newCompaniesWithCurrentSelectionStatus);
     }
-  }, [adminStore.companies]);
+  }, [adminCompanies]);
 
   let selectedCompanies = companies.filter(c => c.selected);
   if (selectedCompanies.length === 0) selectedCompanies = companies;
@@ -349,8 +348,9 @@ function _ActivityPanel({ width }) {
             </IconButton>
           </Box>
           <NewMissionForm
-            companies={adminStore.companies}
-            company={currentCompany}
+            companies={adminCompanies}
+            companyId={adminStore.companyId}
+            overrideSettings={adminStore.settings}
             companyAddresses={adminStore.knownAddresses}
             currentPosition={null}
             disableKilometerReading={true}
