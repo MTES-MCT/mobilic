@@ -36,7 +36,7 @@
     "camelcase": "^5.3.1",
     "case-sensitive-paths-webpack-plugin": "^2.2.0",
     "classnames": "^2.2.6",
-    "common": "^0.1.0",
+    "common": "0.1.0",
     "copy-webpack-plugin": "^6.4.0",
     "core-js": "^3.8.1",
     "css-loader": "^3.2.0",

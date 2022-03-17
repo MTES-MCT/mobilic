@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@apollo/client": "^3.4.10",
+    "@apollo/client": "^3.5.10",
     "@date-io/date-fns": "1.x",
-    "@material-ui/icons": "^4.5.1",
+    "@mui/icons-material": "^5.4.2",
     "apollo-link-timeout": "^4.0.0",
     "classnames": "^2.2.6",
     "date-fns": "^2.11.1",
