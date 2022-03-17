@@ -9,7 +9,7 @@ import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { WorkTimeTable } from "../components/WorkTimeTable";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
-import { useAdminStore } from "../store/store";
+import { useAdminStore, useAdminCompanies } from "../store/store";
 import { useModals } from "common/utils/modals";
 import uniqBy from "lodash/uniqBy";
 import uniq from "lodash/uniq";
@@ -106,6 +106,8 @@ function _ActivityPanel({ width }) {
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const history = useHistory();
+
+  const [, currentCompany] = useAdminCompanies();
 
   const [users, setUsers] = React.useState([]);
   const [companies, setCompanies] = React.useState([]);
@@ -348,6 +350,7 @@ function _ActivityPanel({ width }) {
           </Box>
           <NewMissionForm
             companies={adminStore.companies}
+            company={currentCompany}
             companyAddresses={adminStore.knownAddresses}
             currentPosition={null}
             disableKilometerReading={true}
