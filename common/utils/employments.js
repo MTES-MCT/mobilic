@@ -5,6 +5,11 @@ export const EMPLOYMENT_STATUS = {
   pending: "pending"
 };
 
+export const EMPLOYMENT_ROLE = {
+  employee: "Travailleur mobile",
+  admin: "Gestionnaire"
+};
+
 export function getEmploymentsStatus(employment) {
   if (!employment.isAcknowledged) return EMPLOYMENT_STATUS.pending;
 

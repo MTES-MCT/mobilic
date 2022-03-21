@@ -24,6 +24,9 @@ import {
   TERMINATE_EMPLOYMENT_MUTATION
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
+import TextField from "@material-ui/core/TextField/TextField";
+import MenuItem from "@material-ui/core/MenuItem";
+import { EMPLOYMENT_ROLE } from "common/utils/employments";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -181,13 +184,30 @@ export function Employees({ company, containerRef }) {
       align: "left"
     },
     {
-      label: "Administrateur",
+      label: "Rôle",
       name: "hasAdminRights",
-      boolean: true,
       create: true,
       minWidth: 160,
       baseWidth: 160,
-      align: "left"
+      align: "left",
+      required: true,
+      format: hasAdminRights =>
+        hasAdminRights ? EMPLOYMENT_ROLE.admin : EMPLOYMENT_ROLE.employee,
+      renderEditMode: (type, entry, setType) => (
+        <TextField
+          required
+          fullWidth
+          select
+          value={type}
+          onChange={e => setType(e.target.value)}
+        >
+          {Object.keys(EMPLOYMENT_ROLE).map(role => (
+            <MenuItem key={role} value={EMPLOYMENT_ROLE[role]}>
+              {EMPLOYMENT_ROLE[role]}
+            </MenuItem>
+          ))}
+        </TextField>
+      )
     },
     {
       label: "Invité le",
@@ -226,7 +246,8 @@ export function Employees({ company, containerRef }) {
     {
       label: "Rôle",
       name: "hasAdminRights",
-      format: hasAdminRights => (hasAdminRights ? "Gestionnaire" : "Salarié"),
+      format: hasAdminRights =>
+        hasAdminRights ? EMPLOYMENT_ROLE.admin : EMPLOYMENT_ROLE.employee,
       align: "left",
       sortable: true,
       minWidth: 160
@@ -319,7 +340,7 @@ export function Employees({ company, containerRef }) {
     } else {
       customActions.push({
         name: "setWorker",
-        label: "Passer en rôle salarié",
+        label: "Passer en rôle travailleur mobile",
         action: empl => giveWorkerPermission(empl.employmentId)
       });
     }
@@ -438,7 +459,9 @@ export function Employees({ company, containerRef }) {
           ? ""
           : classes.displayNone
       } ${classes.pendingEmployments}`}
-      validateNewRowData={({ idOrEmail }) => !!idOrEmail}
+      validateRow={({ idOrEmail, hasAdminRights }) =>
+        !!idOrEmail && !!hasAdminRights
+      }
       forceParentUpdateOnRowAdd={() => setForceUpdate(value => !value)}
       editActionsColumnMinWidth={180}
       defaultSortBy={"creationDate"}
@@ -451,7 +474,7 @@ export function Employees({ company, containerRef }) {
       }
       onRowAdd={async ({ idOrEmail, hasAdminRights }) => {
         const payload = {
-          hasAdminRights,
+          hasAdminRights: hasAdminRights === EMPLOYMENT_ROLE.admin,
           companyId
         };
         if (/^\d+$/.test(idOrEmail)) {
