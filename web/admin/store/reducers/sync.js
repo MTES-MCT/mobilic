@@ -14,7 +14,8 @@ export function updateCompaniesListReducer(state, { companiesPayload }) {
     companies: companiesPayload.map(c => ({
       id: c.id,
       name: c.name,
-      siren: c.siren
+      siren: c.siren,
+      settings: c.settings
     }))
   };
 }
