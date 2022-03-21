@@ -42,10 +42,6 @@ export default function NewMissionForm({
   const [endAddress, setEndAddress] = React.useState(null);
   const [kilometerReading, setKilometerReading] = React.useState(null);
 
-  // React.useEffect(() => {
-  //   setCompany(getInitialCompany());
-  // }, [companyId, companies]);
-
   React.useEffect(() => {
     if (vehicle?.companyId) setVehicle("");
     if (address?.companyId) setAddress("");
