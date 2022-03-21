@@ -18,13 +18,23 @@ export default function NewMissionForm({
   currentPosition = null,
   disableKilometerReading = false,
   withDay = false,
-  withEndLocation = false
+  withEndLocation = false,
+  companyId = null,
+  overrideSettings = null
 }) {
+  const getInitialCompany = () => {
+    if (companyId) {
+      return companies.find(c => c.id === companyId);
+    }
+    if (companies && companies.length === 1) {
+      return companies[0];
+    }
+    return "";
+  };
   const [mission, setMission] = React.useState("");
   const [vehicle, setVehicle] = React.useState("");
-  const [company, setCompany] = React.useState(
-    companies && companies.length === 1 ? companies[0] : ""
-  );
+  const [company, setCompany] = React.useState(getInitialCompany());
+  const [settings, setSettings] = React.useState(overrideSettings);
   const [day, setDay] = React.useState(null);
   const [dayError, setDayError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
@@ -33,12 +43,13 @@ export default function NewMissionForm({
   const [kilometerReading, setKilometerReading] = React.useState(null);
 
   React.useEffect(() => {
-    setCompany(companies && companies.length === 1 ? companies[0] : "");
-  }, [companies]);
-
-  React.useEffect(() => {
     if (vehicle?.companyId) setVehicle("");
     if (address?.companyId) setAddress("");
+
+    if (company && company.settings) {
+      setSettings(company.settings);
+    }
+
     setMission("");
   }, [company]);
 
@@ -91,6 +102,7 @@ export default function NewMissionForm({
                 onChange={e => {
                   setCompany(e.target.value);
                 }}
+                disabled={!!companyId}
               >
                 {companies.map(company => (
                   <MenuItem key={company.id} value={company}>
@@ -99,7 +111,7 @@ export default function NewMissionForm({
                 ))}
               </TextField>
             ]}
-          {company?.settings?.requireMissionName && [
+          {settings?.requireMissionName && [
             <Typography key={1} variant="h5" className="form-field-title">
               Quel est le nom de la mission&nbsp;?
             </Typography>,
@@ -180,9 +192,7 @@ export default function NewMissionForm({
             kilometerReading={kilometerReading}
             setKilometerReading={
               !disableKilometerReading &&
-              company &&
-              company.settings &&
-              company.settings.requireKilometerData &&
+              settings?.requireKilometerData &&
               vehicle
                 ? setKilometerReading
                 : ""
@@ -193,7 +203,7 @@ export default function NewMissionForm({
           <MainCtaButton
             disabled={
               !address ||
-              (!mission && company?.settings?.requireMissionName) ||
+              (!mission && settings?.requireMissionName) ||
               (withEndLocation && !endAddress) ||
               (withDay && (dayError || !day))
             }

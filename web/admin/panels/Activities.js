@@ -9,7 +9,7 @@ import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { WorkTimeTable } from "../components/WorkTimeTable";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
-import { useAdminStore } from "../store/store";
+import { useAdminStore, useAdminCompanies } from "../store/store";
 import { useModals } from "common/utils/modals";
 import uniqBy from "lodash/uniqBy";
 import uniq from "lodash/uniq";
@@ -102,6 +102,7 @@ const onMinDateChange = debounce(
 
 function _ActivityPanel({ width }) {
   const adminStore = useAdminStore();
+  const [adminCompanies] = useAdminCompanies();
   const modals = useModals();
   const alerts = useSnackbarAlerts();
   const api = useApi();
@@ -149,8 +150,8 @@ function _ActivityPanel({ width }) {
   const [exportMenuAnchorEl, setExportMenuAnchorEl] = React.useState(null);
 
   React.useEffect(() => {
-    if (adminStore.companies) {
-      const newCompaniesWithCurrentSelectionStatus = adminStore.companies.map(
+    if (adminCompanies) {
+      const newCompaniesWithCurrentSelectionStatus = adminCompanies.map(
         company => ({
           ...company,
           selected: company.id === adminStore.companyId
@@ -158,7 +159,7 @@ function _ActivityPanel({ width }) {
       );
       setCompanies(newCompaniesWithCurrentSelectionStatus);
     }
-  }, [adminStore.companies]);
+  }, [adminCompanies]);
 
   let selectedCompanies = companies.filter(c => c.selected);
   if (selectedCompanies.length === 0) selectedCompanies = companies;
@@ -347,7 +348,9 @@ function _ActivityPanel({ width }) {
             </IconButton>
           </Box>
           <NewMissionForm
-            companies={adminStore.companies}
+            companies={adminCompanies}
+            companyId={adminStore.companyId}
+            overrideSettings={adminStore.settings}
             companyAddresses={adminStore.knownAddresses}
             currentPosition={null}
             disableKilometerReading={true}
