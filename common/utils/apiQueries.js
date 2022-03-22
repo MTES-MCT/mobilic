@@ -125,6 +125,7 @@ export const USER_SIGNUP_MUTATION = gql`
     $lastName: String!
     $inviteToken: String
     $subscribeToNewsletter: Boolean
+    $isEmployee: Boolean
   ) {
     signUp {
       user(
@@ -134,6 +135,7 @@ export const USER_SIGNUP_MUTATION = gql`
         lastName: $lastName
         inviteToken: $inviteToken
         subscribeToNewsletter: $subscribeToNewsletter
+        isEmployee: $isEmployee
       ) {
         accessToken
         refreshToken
