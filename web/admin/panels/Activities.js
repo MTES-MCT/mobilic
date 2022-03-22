@@ -83,14 +83,24 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const onMinDateChange = debounce(
-  async (newMinDate, maxDate, userId, setLoading, addWorkDays, api, alerts) => {
+  async (
+    newMinDate,
+    maxDate,
+    userId,
+    companyId,
+    setLoading,
+    addWorkDays,
+    api,
+    alerts
+  ) => {
     if (newMinDate < maxDate) {
       setLoading(true);
       await alerts.withApiErrorHandling(async () => {
         const companiesPayload = await api.graphQlQuery(ADMIN_WORK_DAYS_QUERY, {
           id: userId,
           activityAfter: newMinDate,
-          activityBefore: maxDate
+          activityBefore: maxDate,
+          companyIds: [companyId]
         });
         addWorkDays(companiesPayload.data.user.adminedCompanies, newMinDate);
       }, "load-work-days");
@@ -131,6 +141,7 @@ function _ActivityPanel({ width }) {
       minDate,
       minDateOfFetchedData,
       adminStore.userId,
+      adminStore.companyId,
       setLoading,
       (companiesPayload, newMinDate) =>
         adminStore.dispatch({
