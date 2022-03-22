@@ -201,9 +201,9 @@ export function Employees({ company, containerRef }) {
           value={type}
           onChange={e => setType(e.target.value)}
         >
-          {Object.keys(EMPLOYMENT_ROLE).map(role => (
-            <MenuItem key={role} value={EMPLOYMENT_ROLE[role]}>
-              {EMPLOYMENT_ROLE[role]}
+          {Object.entries(EMPLOYMENT_ROLE).map(([role, label]) => (
+            <MenuItem key={role} value={label}>
+              {label}
             </MenuItem>
           ))}
         </TextField>
@@ -334,13 +334,13 @@ export function Employees({ company, containerRef }) {
     if (!employment.hasAdminRights) {
       customActions.push({
         name: "setAdmin",
-        label: "Passer en rôle gestionnaire",
+        label: `Passer en rôle ${EMPLOYMENT_ROLE.admin}`,
         action: empl => giveAdminPermission(empl.employmentId)
       });
     } else {
       customActions.push({
         name: "setWorker",
-        label: "Passer en rôle travailleur mobile",
+        label: `Passer en rôle ${EMPLOYMENT_ROLE.employee}`,
         action: empl => giveWorkerPermission(empl.employmentId)
       });
     }
