@@ -655,6 +655,20 @@ export const SEND_EMPLOYMENT_INVITE_REMINDER = gql`
   }
 `;
 
+export const CHANGE_EMPLOYEE_ROLE = gql`
+  mutation changeEmployeeRole($employmentId: Int!, $hasAdminRights: Boolean!) {
+    employments {
+      changeEmployeeRole(
+        employmentId: $employmentId
+        hasAdminRights: $hasAdminRights
+      ) {
+        id
+        hasAdminRights
+      }
+    }
+  }
+`;
+
 export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
   mutation batchCreateWorkerEmployments($companyId: Int!, $mails: [String]!) {
     employments {
