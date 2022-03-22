@@ -294,15 +294,17 @@ function _ActivityPanel({ width }) {
         style={{ maxHeight: ref.current ? ref.current.clientHeight : 0 }}
       >
         <Typography align="left" variant="h6">
-          {`${periodAggregates.length} résultats ${periodAggregates.length >
-            0 &&
-            `pour ${
-              uniq(periodAggregates.map(pa => pa.user.id)).length
-            } employé(s) entre le ${formatDay(
-              min(periodAggregates.map(pa => pa.periodActualStart))
-            )} et le ${formatDay(
-              max(periodAggregates.map(pa => pa.periodActualEnd))
-            )} (uniquement les plus récents).`}`}
+          {`${periodAggregates.length} résultats${
+            periodAggregates.length > 0
+              ? ` pour ${
+                  uniq(periodAggregates.map(pa => pa.user.id)).length
+                } employé(s) entre le ${formatDay(
+                  min(periodAggregates.map(pa => pa.periodActualStart))
+                )} et le ${formatDay(
+                  max(periodAggregates.map(pa => pa.periodActualEnd))
+                )} (uniquement les plus récents).`
+              : "."
+          }`}
         </Typography>
         <LoadingButton
           style={{ marginTop: 8, alignSelf: "flex-start" }}
