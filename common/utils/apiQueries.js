@@ -457,9 +457,14 @@ export const ADMIN_COMPANIES_QUERY = gql`
 
 export const ADMIN_WORK_DAYS_QUERY = gql`
   ${WORK_DAYS_DATA_FRAGMENT}
-  query adminCompanies($id: Int!, $activityAfter: Date, $activityBefore: Date) {
+  query adminCompanies(
+    $id: Int!
+    $activityAfter: Date
+    $activityBefore: Date
+    $companyIds: [Int]
+  ) {
     user(id: $id) {
-      adminedCompanies {
+      adminedCompanies(companyIds: $companyIds) {
         id
         workDays(fromDate: $activityAfter, untilDate: $activityBefore) {
           ...WorkDayData
