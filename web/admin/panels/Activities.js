@@ -9,13 +9,12 @@ import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { WorkTimeTable } from "../components/WorkTimeTable";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
-import { useAdminStore } from "../store/store";
+import { useAdminStore, useAdminCompanies } from "../store/store";
 import { useModals } from "common/utils/modals";
 import uniqBy from "lodash/uniqBy";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
 import max from "lodash/max";
-import { CompanyFilter } from "../components/CompanyFilter";
 import Typography from "@material-ui/core/Typography";
 import {
   formatDay,
@@ -84,14 +83,24 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const onMinDateChange = debounce(
-  async (newMinDate, maxDate, userId, setLoading, addWorkDays, api, alerts) => {
+  async (
+    newMinDate,
+    maxDate,
+    userId,
+    companyId,
+    setLoading,
+    addWorkDays,
+    api,
+    alerts
+  ) => {
     if (newMinDate < maxDate) {
       setLoading(true);
       await alerts.withApiErrorHandling(async () => {
         const companiesPayload = await api.graphQlQuery(ADMIN_WORK_DAYS_QUERY, {
           id: userId,
           activityAfter: newMinDate,
-          activityBefore: maxDate
+          activityBefore: maxDate,
+          companyIds: [companyId]
         });
         addWorkDays(companiesPayload.data.user.adminedCompanies, newMinDate);
       }, "load-work-days");
@@ -103,6 +112,7 @@ const onMinDateChange = debounce(
 
 function _ActivityPanel({ width }) {
   const adminStore = useAdminStore();
+  const [adminCompanies] = useAdminCompanies();
   const modals = useModals();
   const alerts = useSnackbarAlerts();
   const api = useApi();
@@ -131,6 +141,7 @@ function _ActivityPanel({ width }) {
       minDate,
       minDateOfFetchedData,
       adminStore.userId,
+      adminStore.companyId,
       setLoading,
       (companiesPayload, newMinDate) =>
         adminStore.dispatch({
@@ -150,32 +161,23 @@ function _ActivityPanel({ width }) {
   const [exportMenuAnchorEl, setExportMenuAnchorEl] = React.useState(null);
 
   React.useEffect(() => {
-    if (adminStore.companies) {
-      const newCompaniesWithCurrentSelectionStatus = adminStore.companies.map(
-        company => {
-          const companyMatch = companies.find(c => c.id === company.id);
-          return companyMatch
-            ? { ...company, selected: companyMatch.selected }
-            : company;
-        }
+    if (adminCompanies) {
+      const newCompaniesWithCurrentSelectionStatus = adminCompanies.map(
+        company => ({
+          ...company,
+          selected: company.id === adminStore.companyId
+        })
       );
       setCompanies(newCompaniesWithCurrentSelectionStatus);
     }
-  }, [adminStore.companies]);
+  }, [adminCompanies]);
 
   let selectedCompanies = companies.filter(c => c.selected);
   if (selectedCompanies.length === 0) selectedCompanies = companies;
 
   React.useEffect(() => {
-    setUsers(
-      uniqBy(
-        adminStore.users.filter(u =>
-          selectedCompanies.map(c => c.id).includes(u.companyId)
-        ),
-        u => u.id
-      )
-    );
-  }, [companies, adminStore.users]);
+    setUsers(uniqBy(adminStore.users, u => u.id));
+  }, [adminStore.users]);
 
   let selectedUsers = users.filter(u => u.selected);
   if (selectedUsers.length === 0) selectedUsers = users;
@@ -183,7 +185,6 @@ function _ActivityPanel({ width }) {
   const selectedWorkDays = adminStore.workDays.filter(
     wd =>
       selectedUsers.map(u => u.id).includes(wd.user.id) &&
-      selectedCompanies.map(c => c.id).includes(wd.companyId) &&
       (!minDate || wd.day >= minDate) &&
       (!maxDate || wd.day <= maxDate)
   );
@@ -207,11 +208,6 @@ function _ActivityPanel({ width }) {
         justify="space-between"
         className={classes.filterGrid}
       >
-        {companies.length > 1 && (
-          <Grid item>
-            <CompanyFilter companies={companies} setCompanies={setCompanies} />
-          </Grid>
-        )}
         <Grid item>
           <EmployeeFilter users={users} setUsers={setUsers} />
         </Grid>
@@ -309,15 +305,17 @@ function _ActivityPanel({ width }) {
         style={{ maxHeight: ref.current ? ref.current.clientHeight : 0 }}
       >
         <Typography align="left" variant="h6">
-          {`${periodAggregates.length} résultats ${periodAggregates.length >
-            0 &&
-            `pour ${
-              uniq(periodAggregates.map(pa => pa.user.id)).length
-            } employé(s) entre le ${formatDay(
-              min(periodAggregates.map(pa => pa.periodActualStart))
-            )} et le ${formatDay(
-              max(periodAggregates.map(pa => pa.periodActualEnd))
-            )} (uniquement les plus récents).`}`}
+          {`${periodAggregates.length} résultats${
+            periodAggregates.length > 0
+              ? ` pour ${
+                  uniq(periodAggregates.map(pa => pa.user.id)).length
+                } employé(s) entre le ${formatDay(
+                  min(periodAggregates.map(pa => pa.periodActualStart))
+                )} et le ${formatDay(
+                  max(periodAggregates.map(pa => pa.periodActualEnd))
+                )} (uniquement les plus récents).`
+              : "."
+          }`}
         </Typography>
         <LoadingButton
           style={{ marginTop: 8, alignSelf: "flex-start" }}
@@ -335,12 +333,9 @@ function _ActivityPanel({ width }) {
           className={classes.workTimeTable}
           period={period}
           workTimeEntries={periodAggregates}
-          showExpenditures={selectedCompanies.some(
-            c => c.settings.requireExpenditures
-          )}
-          showMissionName={selectedCompanies.some(
-            c => c.settings.requireMissionName
-          )}
+          showExpenditures={adminStore.settings.requireExpenditures}
+          showMissionName={adminStore.settings.requireMissionName}
+          showTransfers={adminStore.settings.allowTransfers}
           loading={loading}
           width={width}
         />
@@ -366,7 +361,9 @@ function _ActivityPanel({ width }) {
             </IconButton>
           </Box>
           <NewMissionForm
-            companies={adminStore.companies}
+            companies={adminCompanies}
+            companyId={adminStore.companyId}
+            overrideSettings={adminStore.settings}
             companyAddresses={adminStore.knownAddresses}
             currentPosition={null}
             disableKilometerReading={true}

@@ -18,7 +18,7 @@ import { SwipeableDrawer } from "@material-ui/core";
 import { MissionNamesList } from "./MissionNamesList";
 import { useMissionDrawer } from "./MissionDrawer";
 import { JoinedText } from "./JoinedText";
-import { useAdminStore } from "../store/store";
+import { useAdminCompanies } from "../store/store";
 import { WorkDayEndTime } from "./WorkDayEndTime";
 
 const useStyles = makeStyles(theme => ({
@@ -43,11 +43,11 @@ export function WorkTimeTable({
   className,
   showExpenditures,
   showMissionName,
+  showTransfers,
   loading,
   width
 }) {
-  const adminStore = useAdminStore();
-  const companies = adminStore.companies;
+  const [companies] = useAdminCompanies();
 
   const [workdayOnFocus, setWorkdayOnFocus] = React.useState(null);
   const [wordDayDrawerOpen, setWordDayDrawerOpen] = React.useState(false);
@@ -137,7 +137,7 @@ export function WorkTimeTable({
     name: "workedDays",
     minWidth: 150
   };
-  const missionNamesCol = showMissionName && {
+  const missionNamesCol = {
     label: "Mission(s)",
     name: "missionNames",
     format: missionNames => (
@@ -147,7 +147,7 @@ export function WorkTimeTable({
     sortable: true,
     overflowTooltip: true
   };
-  const companyNamesCol = companies.length > 1 && {
+  const companyNamesCol = {
     label: "Entreprise(s)",
     name: "companyIds",
     format: companyIds => (
@@ -172,13 +172,13 @@ export function WorkTimeTable({
   if (period === "day") {
     columns = [
       employeeCol,
-      missionNamesCol,
-      companyNamesCol,
+      showMissionName && missionNamesCol,
+      companies.length > 1 && companyNamesCol,
       startTimeCol,
       endTimeCol,
       serviceTimeCol,
       workTimeCol,
-      transferTimeCol,
+      showTransfers && transferTimeCol,
       restTimeCol
     ];
     if (showExpenditures) columns.push(expenditureCol);

@@ -4,14 +4,14 @@ import { parseMissionPayloadFromBackend } from "./mission";
 import { DAY, now } from "./time";
 import {
   COMPANY_SETTINGS_FRAGMENT,
-  CURRENT_MISSION_INFO,
   FULL_MISSION_FRAGMENT
-} from "./apiQueries";
+} from "./apiFragments";
 import { gql } from "@apollo/client/core";
 import { captureSentryException } from "./sentry";
 import values from "lodash/values";
 import flatten from "lodash/flatten";
 import { EMPLOYMENT_STATUS, getEmploymentsStatus } from "./employments";
+import { CURRENT_MISSION_INFO } from "./apiQueries";
 
 const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}

@@ -19,6 +19,8 @@ export default function TextField(props) {
       {...props}
       InputProps={InputProps}
       InputLabelProps={InputLabelProps}
-    />
+    >
+      {props.children}
+    </MaterialUITextField>
   );
 }

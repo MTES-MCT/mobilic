@@ -6,12 +6,17 @@ import {
 } from "./expenditure";
 import { validateMissionReducer } from "./mission";
 import { addWorkDaysReducer } from "./workDays";
-import { syncStoreReducer } from "./sync";
+import {
+  updateCompaniesListReducer,
+  updateCompanyDetailsReducer,
+  updateCompanyIdReducer
+} from "./sync";
 import {
   createItemsReducer,
   deleteItemReducer,
   updateItemReducer
 } from "./crud";
+import { updateSettingsReducer } from "./settings";
 
 export const ADMIN_ACTIONS = {
   createOrSyncActivity: createOrSyncActivityReducer,
@@ -20,10 +25,13 @@ export const ADMIN_ACTIONS = {
   deleteExpenditure: deleteExpenditureReducer,
   validateMission: validateMissionReducer,
   addWorkDays: addWorkDaysReducer,
-  syncStore: syncStoreReducer,
   create: createItemsReducer,
   update: updateItemReducer,
-  delete: deleteItemReducer
+  updateSettings: updateSettingsReducer,
+  delete: deleteItemReducer,
+  updateCompanyDetails: updateCompanyDetailsReducer,
+  updateCompaniesList: updateCompaniesListReducer,
+  updateCompanyId: updateCompanyIdReducer
 };
 
 const ADMIN_REDUCERS = {};

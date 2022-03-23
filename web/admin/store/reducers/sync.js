@@ -1,24 +1,36 @@
 import flatMap from "lodash/flatMap";
 import { addWorkDaysReducer } from "./workDays";
 
-export function syncStoreReducer(state, { companiesPayload, minDate }) {
+export function updateCompanyIdReducer(state, { companyId }) {
+  return {
+    ...state,
+    companyId
+  };
+}
+
+export function updateCompaniesListReducer(state, { companiesPayload }) {
+  return {
+    ...state,
+    companies: companiesPayload.map(c => ({
+      id: c.id,
+      name: c.name,
+      siren: c.siren
+    }))
+  };
+}
+
+export function updateCompanyDetailsReducer(
+  state,
+  { companiesPayload, minDate }
+) {
   const stateWithWorkDays = addWorkDaysReducer(state, {
     companiesPayload,
     minDate,
     reset: true
   });
-  const newMissionIds = flatMap(
-    companiesPayload.map(c => c.missions.edges.map(m => m.node.id))
-  );
 
   return {
     ...stateWithWorkDays,
-    companies: companiesPayload.map(c => ({
-      id: c.id,
-      name: c.name,
-      siren: c.siren,
-      settings: c.settings
-    })),
     users: flatMap(
       companiesPayload.map(c => c.users.map(u => ({ ...u, companyId: c.id })))
     ),
@@ -27,6 +39,7 @@ export function syncStoreReducer(state, { companiesPayload, minDate }) {
         c.vehicles.map(v => ({ ...v, companyId: c.id }))
       )
     ),
+    settings: companiesPayload[0].settings,
     knownAddresses: flatMap(
       companiesPayload.map(c =>
         c.knownAddresses.map(a => ({ ...a, companyId: c.id }))
@@ -42,7 +55,6 @@ export function syncStoreReducer(state, { companiesPayload, minDate }) {
       )
     ),
     missions: [
-      ...stateWithWorkDays.missions.filter(m => !newMissionIds.includes(m.id)),
       ...flatMap(
         companiesPayload.map(c =>
           c.missions.edges.map(m => ({ ...m.node, companyId: c.id }))
