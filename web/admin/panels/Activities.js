@@ -11,7 +11,6 @@ import { WorkTimeTable } from "../components/WorkTimeTable";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
 import { useAdminStore, useAdminCompanies } from "../store/store";
 import { useModals } from "common/utils/modals";
-import uniqBy from "lodash/uniqBy";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
 import max from "lodash/max";
@@ -118,22 +117,43 @@ function _ActivityPanel({ width }) {
   const api = useApi();
   const history = useHistory();
 
-  const [users, setUsers] = React.useState([]);
+  const [users, setUsers] = React.useState(adminStore.activitiesSettings.users);
   const [companies, setCompanies] = React.useState([]);
-  const [minDate, setMinDate] = React.useState(null);
+  const [minDate, setMinDate] = React.useState(
+    adminStore.activitiesSettings.minDate
+  );
   const [maxDate, setMaxDate] = React.useState(
-    isoFormatLocalDate(new Date(Date.now()))
+    adminStore.activitiesSettings.maxDate
   );
   const [loading, setLoading] = React.useState(false);
-  const [period, setPeriod] = React.useState("day");
+  const [period, setPeriod] = React.useState(
+    adminStore.activitiesSettings.period
+  );
   const [openNewMission, setOpenNewMission] = React.useState(false);
 
   const minDateOfFetchedData = adminStore.minWorkDaysDate;
 
   React.useEffect(() => {
-    if (minDate !== adminStore.minWorkDaysDate)
-      setMinDate(adminStore.minWorkDaysDate);
-  }, [adminStore.minWorkDaysDate]);
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateActivitiesSettings,
+      payload: { period }
+    });
+  }, [period]);
+
+  React.useEffect(() => {
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateActivitiesSettings,
+      payload: { users }
+    });
+  }, [users]);
+
+  React.useEffect(() => {
+    setUsers(adminStore.activitiesSettings.users);
+  }, [adminStore.activitiesSettings.users]);
+
+  React.useEffect(() => {
+    setMinDate(adminStore.activitiesSettings.minDate);
+  }, [adminStore.activitiesSettings.minDate]);
 
   React.useEffect(() => {
     if (minDate && (!maxDate || maxDate < minDate)) setMaxDate(minDate);
@@ -148,14 +168,23 @@ function _ActivityPanel({ width }) {
           type: ADMIN_ACTIONS.addWorkDays,
           payload: { companiesPayload, minDate: newMinDate }
         }),
+
       api,
       alerts
     );
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateActivitiesSettings,
+      payload: { minDate }
+    });
   }, [minDate]);
 
   React.useEffect(() => {
     if (maxDate && !minDate) setMinDate(minDateOfFetchedData);
     if (maxDate && minDate && minDate > maxDate) setMinDate(maxDate);
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateActivitiesSettings,
+      payload: { maxDate }
+    });
   }, [maxDate]);
 
   const [exportMenuAnchorEl, setExportMenuAnchorEl] = React.useState(null);
@@ -174,10 +203,6 @@ function _ActivityPanel({ width }) {
 
   let selectedCompanies = companies.filter(c => c.selected);
   if (selectedCompanies.length === 0) selectedCompanies = companies;
-
-  React.useEffect(() => {
-    setUsers(uniqBy(adminStore.users, u => u.id));
-  }, [adminStore.users]);
 
   let selectedUsers = users.filter(u => u.selected);
   if (selectedUsers.length === 0) selectedUsers = users;

@@ -1,5 +1,6 @@
 import flatMap from "lodash/flatMap";
 import { addWorkDaysReducer } from "./workDays";
+import uniqBy from "lodash/uniqBy";
 
 export function updateCompanyIdReducer(state, { companyId }) {
   return {
@@ -29,11 +30,13 @@ export function updateCompanyDetailsReducer(
     reset: true
   });
 
+  const users = flatMap(
+    companiesPayload.map(c => c.users.map(u => ({ ...u, companyId: c.id })))
+  );
+
   return {
     ...stateWithWorkDays,
-    users: flatMap(
-      companiesPayload.map(c => c.users.map(u => ({ ...u, companyId: c.id })))
-    ),
+    users,
     vehicles: flatMap(
       companiesPayload.map(c =>
         c.vehicles.map(v => ({ ...v, companyId: c.id }))
@@ -60,6 +63,11 @@ export function updateCompanyDetailsReducer(
           c.missions.edges.map(m => ({ ...m.node, companyId: c.id }))
         )
       )
-    ]
+    ],
+    activitiesSettings: {
+      ...state.activitiesSettings,
+      users: uniqBy(users, u => u.id),
+      minDate
+    }
   };
 }
