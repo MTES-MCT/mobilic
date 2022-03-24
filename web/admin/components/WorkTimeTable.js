@@ -20,6 +20,7 @@ import { useMissionDrawer } from "./MissionDrawer";
 import { JoinedText } from "./JoinedText";
 import { useAdminCompanies } from "../store/store";
 import { WorkDayEndTime } from "./WorkDayEndTime";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 const useStyles = makeStyles(theme => ({
   warningText: {
@@ -53,6 +54,8 @@ export function WorkTimeTable({
   const [wordDayDrawerOpen, setWordDayDrawerOpen] = React.useState(false);
 
   const openMission = useMissionDrawer()[1];
+
+  const { trackEvent } = useMatomo();
 
   const classes = useStyles();
 
@@ -242,6 +245,11 @@ export function WorkTimeTable({
         virtualized
         onRowClick={entry => {
           if (!entry.day) return false;
+          trackEvent({
+            category: "admin-navigation",
+            action: "open-workday-drawer",
+            name: "Drawer WorkDay"
+          });
           setWorkdayOnFocus(entry);
           setWordDayDrawerOpen(true);
         }}

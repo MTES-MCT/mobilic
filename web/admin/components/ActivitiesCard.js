@@ -14,6 +14,7 @@ import Button from "@material-ui/core/Button";
 import { useActivitiesCardStyles } from "./styles/ActivitiesCardStyle";
 import SvgIcon from "@material-ui/core/SvgIcon";
 import EditIcon from "@material-ui/icons/Edit";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 export function ActivitiesCard({
   activities,
@@ -28,6 +29,7 @@ export function ActivitiesCard({
 }) {
   const classes = useActivitiesCardStyles();
   const ref = React.useRef();
+  const { trackEvent } = useMatomo();
 
   // Augmented Table needs its rows to have unique id
   const activitiesWithIds = activities.map(a => ({
@@ -135,6 +137,11 @@ export function ActivitiesCard({
         component={EditIcon}
         onClick={e => {
           e.stopPropagation();
+          trackEvent({
+            category: "admin-mission-action",
+            action: "edit-activity",
+            name: "Edition activité dans volet Mission"
+          });
           onEditActivity(entry);
         }}
       />
@@ -156,6 +163,11 @@ export function ActivitiesCard({
       onClick={e => {
         e.preventDefault();
         e.stopPropagation();
+        trackEvent({
+          category: "admin-mission-action",
+          action: "add-activity",
+          name: "Ajout activité dans volet Mission"
+        });
         onCreateActivity();
       }}
     >

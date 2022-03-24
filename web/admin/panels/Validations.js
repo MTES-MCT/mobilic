@@ -31,12 +31,35 @@ import {
   missionsToTableEntries
 } from "../selectors/validationEntriesSelectors";
 import groupBy from "lodash/groupBy";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+
+const VALIDATION_TABS = [
+  {
+    label: "A valider",
+    explanation:
+      "Les missions suivantes ont été terminées et validées par le(s) salarié(s) concerné(s) et sont prêtes à être validées par un gestionnaire.",
+    matomoName: "Onglet Validation Admin"
+  },
+  {
+    label: "En attente de validation par les salariés",
+    explanation:
+      "Les missions suivantes sont terminées mais n'ont pas encore été validées par tous les salariés concernés.",
+    matomoName: "Onglet Validation Salarié"
+  },
+  {
+    label: "Missions validées",
+    explanation:
+      "Les missions suivantes ont été validées par salarié(s) et gestionnaire. Elles ne sont plus modifiables.",
+    matomoName: "Onglet Validées"
+  }
+];
 
 function _ValidationPanel() {
   const api = useApi();
   const adminStore = useAdminStore();
   const alerts = useSnackbarAlerts();
   const location = useLocation();
+  const { trackEvent } = useMatomo();
 
   const [tab, setTab] = React.useState(0);
   const [tableEntries, setTableEntries] = React.useState([]);
@@ -274,6 +297,10 @@ function _ValidationPanel() {
         indicatorColor="primary"
         textColor="primary"
         onChange={(e, newTab) => {
+          trackEvent({
+            category: "change-validation-tab",
+            action: VALIDATION_TABS[newTab].matomoName
+          });
           setTab(newTab);
         }}
         className={classes.tabContainer}
@@ -281,24 +308,19 @@ function _ValidationPanel() {
       >
         <Tab
           className={classes.tab}
-          label={`A valider (${nbMissionsToValidateByAdmin})`}
+          label={`${VALIDATION_TABS[0].label} (${nbMissionsToValidateByAdmin})`}
         />
         <Tab
           className={classes.tab}
-          label={`En attente de validation par les salariés (${nbMissionsToValidateByWorker})`}
+          label={`${VALIDATION_TABS[1].label} (${nbMissionsToValidateByWorker})`}
         />
         <Tab
           className={classes.tab}
-          label={`Missions validées (${nbMissionsValidatedByAdmin})`}
+          label={`${VALIDATION_TABS[2].label} (${nbMissionsValidatedByAdmin})`}
         />
       </Tabs>
       <Typography className={classes.explanation}>
-        {tab === 0 &&
-          "Les missions suivantes ont été terminées et validées par le(s) salarié(s) concerné(s) et sont prêtes à être validées par un gestionnaire."}
-        {tab === 1 &&
-          "Les missions suivantes sont terminées mais n'ont pas encore été validées par tous les salariés concernés."}
-        {tab === 2 &&
-          "Les missions suivantes ont été validées par salarié(s) et gestionnaire. Elles ne sont plus modifiables."}
+        {VALIDATION_TABS[tab].explanation}
       </Typography>
       <AugmentedTable
         columns={tableColumns}
@@ -317,6 +339,11 @@ function _ValidationPanel() {
         className={classes.virtualizedTableContainer}
         disableGroupCollapse
         onRowGroupClick={entry => {
+          trackEvent({
+            category: "admin-navigation",
+            action: "open-mission-drawer",
+            name: "Drawer Mission via tableau Validation"
+          });
           openMission(entry.id);
         }}
         rowClassName={entry =>
@@ -350,6 +377,11 @@ function _ValidationPanel() {
                   size="small"
                   onClick={async e => {
                     e.stopPropagation();
+                    trackEvent({
+                      category: "admin-mission-action",
+                      action: "validate-mission",
+                      name: "Validation dans tableau Validation"
+                    });
                     try {
                       for (const entryToValidate1 of entriesToValidateByAdmin.filter(
                         entryToValidate =>
