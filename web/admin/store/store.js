@@ -1,7 +1,7 @@
 import React from "react";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { adminRootReducer } from "./reducers/root";
-import { isoFormatLocalDate } from "common/utils/time";
+import { getStartOfMonth, isoFormatLocalDate, now } from "common/utils/time";
 
 const AdminStoreContext = React.createContext(() => {});
 
@@ -23,7 +23,7 @@ export function AdminStoreProvider({ children }) {
       period: "day",
       users: [],
       maxDate: isoFormatLocalDate(new Date(Date.now())),
-      minDate: null
+      minDate: isoFormatLocalDate(getStartOfMonth(now()))
     }
   });
 

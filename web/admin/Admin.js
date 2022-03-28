@@ -24,7 +24,6 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { SideMenu } from "./components/SideMenu";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import { useSnackbarAlerts } from "../common/Snackbar";
-import { getStartOfMonth, isoFormatLocalDate, now } from "common/utils/time";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
 import { MissionDrawerContextProvider } from "./components/MissionDrawer";
@@ -109,7 +108,7 @@ function __Admin({ width }) {
         async () =>
           await alerts.withApiErrorHandling(
             async () => {
-              const minDate = isoFormatLocalDate(getStartOfMonth(now()));
+              const minDate = adminStore.activitiesFilters.minDate;
               const companies = await loadCompanyDetails(
                 api,
                 userId,
