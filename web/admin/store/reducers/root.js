@@ -17,7 +17,7 @@ import {
   updateItemReducer
 } from "./crud";
 import { updateSettingsReducer } from "./settings";
-import { updateActivitiesSettingsReducer } from "./activitiesSettings";
+import { updateActivitiesFiltersReducer } from "./activitiesFilters";
 
 export const ADMIN_ACTIONS = {
   createOrSyncActivity: createOrSyncActivityReducer,
@@ -33,7 +33,7 @@ export const ADMIN_ACTIONS = {
   updateCompanyDetails: updateCompanyDetailsReducer,
   updateCompaniesList: updateCompaniesListReducer,
   updateCompanyId: updateCompanyIdReducer,
-  updateActivitiesSettings: updateActivitiesSettingsReducer
+  updateActivitiesFilters: updateActivitiesFiltersReducer
 };
 
 const ADMIN_REDUCERS = {};

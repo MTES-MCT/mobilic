@@ -64,8 +64,8 @@ export function updateCompanyDetailsReducer(
         )
       )
     ],
-    activitiesSettings: {
-      ...state.activitiesSettings,
+    activitiesFilters: {
+      ...state.activitiesFilters,
       users: uniqBy(users, u => u.id),
       minDate
     }

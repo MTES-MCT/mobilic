@@ -19,7 +19,7 @@ export function AdminStoreProvider({ children }) {
     companies: [],
     missions: [],
     minWorkDaysCursor: [],
-    activitiesSettings: {
+    activitiesFilters: {
       period: "day",
       users: [],
       maxDate: isoFormatLocalDate(new Date(Date.now())),

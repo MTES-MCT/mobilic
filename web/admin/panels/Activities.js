@@ -117,17 +117,17 @@ function _ActivityPanel({ width }) {
   const api = useApi();
   const history = useHistory();
 
-  const [users, setUsers] = React.useState(adminStore.activitiesSettings.users);
+  const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
   const [companies, setCompanies] = React.useState([]);
   const [minDate, setMinDate] = React.useState(
-    adminStore.activitiesSettings.minDate
+    adminStore.activitiesFilters.minDate
   );
   const [maxDate, setMaxDate] = React.useState(
-    adminStore.activitiesSettings.maxDate
+    adminStore.activitiesFilters.maxDate
   );
   const [loading, setLoading] = React.useState(false);
   const [period, setPeriod] = React.useState(
-    adminStore.activitiesSettings.period
+    adminStore.activitiesFilters.period
   );
   const [openNewMission, setOpenNewMission] = React.useState(false);
 
@@ -135,25 +135,25 @@ function _ActivityPanel({ width }) {
 
   React.useEffect(() => {
     adminStore.dispatch({
-      type: ADMIN_ACTIONS.updateActivitiesSettings,
+      type: ADMIN_ACTIONS.updateActivitiesFilters,
       payload: { period }
     });
   }, [period]);
 
   React.useEffect(() => {
     adminStore.dispatch({
-      type: ADMIN_ACTIONS.updateActivitiesSettings,
+      type: ADMIN_ACTIONS.updateActivitiesFilters,
       payload: { users }
     });
   }, [users]);
 
   React.useEffect(() => {
-    setUsers(adminStore.activitiesSettings.users);
-  }, [adminStore.activitiesSettings.users]);
+    setUsers(adminStore.activitiesFilters.users);
+  }, [adminStore.activitiesFilters.users]);
 
   React.useEffect(() => {
-    setMinDate(adminStore.activitiesSettings.minDate);
-  }, [adminStore.activitiesSettings.minDate]);
+    setMinDate(adminStore.activitiesFilters.minDate);
+  }, [adminStore.activitiesFilters.minDate]);
 
   React.useEffect(() => {
     if (minDate && (!maxDate || maxDate < minDate)) setMaxDate(minDate);
@@ -173,7 +173,7 @@ function _ActivityPanel({ width }) {
       alerts
     );
     adminStore.dispatch({
-      type: ADMIN_ACTIONS.updateActivitiesSettings,
+      type: ADMIN_ACTIONS.updateActivitiesFilters,
       payload: { minDate }
     });
   }, [minDate]);
@@ -182,7 +182,7 @@ function _ActivityPanel({ width }) {
     if (maxDate && !minDate) setMinDate(minDateOfFetchedData);
     if (maxDate && minDate && minDate > maxDate) setMinDate(maxDate);
     adminStore.dispatch({
-      type: ADMIN_ACTIONS.updateActivitiesSettings,
+      type: ADMIN_ACTIONS.updateActivitiesFilters,
       payload: { maxDate }
     });
   }, [maxDate]);
