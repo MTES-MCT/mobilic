@@ -48,6 +48,7 @@ import {
 import { partition } from "lodash/collection";
 import Button from "@material-ui/core/Button";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { VALIDATE_MISSION_IN_MISSION_PANEL } from "common/utils/matomoTags";
 
 export function MissionDetails({
   missionId,
@@ -551,11 +552,7 @@ export function MissionDetails({
                 className={classes.validationButton}
                 onClick={async e => {
                   e.stopPropagation();
-                  trackEvent({
-                    category: "admin-mission-action",
-                    action: "validate-mission",
-                    name: "Validation dans volet mission"
-                  });
+                  trackEvent(VALIDATE_MISSION_IN_MISSION_PANEL);
                   entriesToValidateByAdmin.map(workerEntryToValidate => {
                     missionActions.validateMission(
                       workerEntryToValidate.user.id

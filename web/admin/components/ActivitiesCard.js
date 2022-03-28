@@ -15,6 +15,10 @@ import { useActivitiesCardStyles } from "./styles/ActivitiesCardStyle";
 import SvgIcon from "@material-ui/core/SvgIcon";
 import EditIcon from "@material-ui/icons/Edit";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import {
+  ADD_ACTIVITY_IN_MISSION_PANEL,
+  EDIT_ACTIVITY_IN_MISSION_PANEL
+} from "common/utils/matomoTags";
 
 export function ActivitiesCard({
   activities,
@@ -137,11 +141,7 @@ export function ActivitiesCard({
         component={EditIcon}
         onClick={e => {
           e.stopPropagation();
-          trackEvent({
-            category: "admin-mission-action",
-            action: "edit-activity",
-            name: "Edition activité dans volet Mission"
-          });
+          trackEvent(EDIT_ACTIVITY_IN_MISSION_PANEL);
           onEditActivity(entry);
         }}
       />
@@ -163,11 +163,7 @@ export function ActivitiesCard({
       onClick={e => {
         e.preventDefault();
         e.stopPropagation();
-        trackEvent({
-          category: "admin-mission-action",
-          action: "add-activity",
-          name: "Ajout activité dans volet Mission"
-        });
+        trackEvent(ADD_ACTIVITY_IN_MISSION_PANEL);
         onCreateActivity();
       }}
     >

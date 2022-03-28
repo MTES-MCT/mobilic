@@ -4,6 +4,7 @@ import { Link } from "../../common/LinkButton";
 import React from "react";
 import { JoinedText } from "./JoinedText";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { OPEN_MISSION_DRAWER_IN_ACTIVITY_PANEL } from "common/utils/matomoTags";
 
 export function MissionNamesList({ missionNames, openMission }) {
   const filteredMissionNames = pickBy(missionNames, (name, id) => !!name);
@@ -16,11 +17,7 @@ export function MissionNamesList({ missionNames, openMission }) {
           key={id}
           onClick={e => {
             e.stopPropagation();
-            trackEvent({
-              category: "admin-navigation",
-              action: "open-mission-drawer",
-              name: "Drawer Mission dans tableau Activités"
-            });
+            trackEvent(OPEN_MISSION_DRAWER_IN_ACTIVITY_PANEL);
             openMission(id);
           }}
         >

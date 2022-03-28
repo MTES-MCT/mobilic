@@ -45,6 +45,11 @@ import { DatePicker } from "@material-ui/pickers";
 import withWidth from "@material-ui/core/withWidth";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import {
+  ADMIN_ADD_MISSION,
+  ADMIN_EXPORT_C1B,
+  ADMIN_EXPORT_EXCEL
+} from "common/utils/matomoTags";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -266,11 +271,7 @@ function _ActivityPanel({ width }) {
             <MenuItem
               onClick={() => {
                 setExportMenuAnchorEl(null);
-                trackEvent({
-                  category: "admin-export",
-                  action: "export-excel",
-                  name: "Export Excel"
-                });
+                trackEvent(ADMIN_EXPORT_EXCEL);
                 modals.open("dataExport", {
                   companies,
                   users,
@@ -289,11 +290,7 @@ function _ActivityPanel({ width }) {
             <MenuItem
               onClick={() => {
                 setExportMenuAnchorEl(null);
-                trackEvent({
-                  category: "admin-export",
-                  action: "export-c1b",
-                  name: "Export C1B"
-                });
+                trackEvent(ADMIN_EXPORT_C1B);
                 modals.open("tachographExport", {
                   companies,
                   users,
@@ -336,11 +333,7 @@ function _ActivityPanel({ width }) {
           size="small"
           className={classes.subButton}
           onClick={() => {
-            trackEvent({
-              category: "admin-mission-action",
-              action: "add-new-mission",
-              name: "Création d'une nouvelle mission"
-            });
+            trackEvent(ADMIN_ADD_MISSION);
             setOpenNewMission(true);
           }}
         >

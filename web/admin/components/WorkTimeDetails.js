@@ -30,6 +30,7 @@ import { MissionInfoCard } from "./MissionInfoCard";
 import { ExpendituresCard } from "./ExpendituresCard";
 import { ActivitiesCard } from "./ActivitiesCard";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL } from "common/utils/matomoTags";
 
 export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   const classes = useStyles();
@@ -275,11 +276,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
               columns={missionTableColumns}
               entries={missions}
               onRowClick={entry => {
-                trackEvent({
-                  category: "admin-navigation",
-                  action: "open-mission-drawer",
-                  name: "Drawer Mission via panel WorkDay"
-                });
+                trackEvent(OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL);
                 openMission(entry.id);
               }}
             />

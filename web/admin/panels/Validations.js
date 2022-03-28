@@ -32,6 +32,11 @@ import {
 } from "../selectors/validationEntriesSelectors";
 import groupBy from "lodash/groupBy";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import {
+  CHANGE_VALIDATION_TAB,
+  OPEN_MISSION_DRAWER_IN_VALIDATION_PANEL,
+  VALIDATE_MISSION_IN_VALIDATION_PANEL
+} from "common/utils/matomoTags";
 
 const VALIDATION_TABS = [
   {
@@ -297,10 +302,7 @@ function _ValidationPanel() {
         indicatorColor="primary"
         textColor="primary"
         onChange={(e, newTab) => {
-          trackEvent({
-            category: "change-validation-tab",
-            action: VALIDATION_TABS[newTab].matomoName
-          });
+          trackEvent(CHANGE_VALIDATION_TAB(VALIDATION_TABS[newTab].matomoName));
           setTab(newTab);
         }}
         className={classes.tabContainer}
@@ -339,11 +341,7 @@ function _ValidationPanel() {
         className={classes.virtualizedTableContainer}
         disableGroupCollapse
         onRowGroupClick={entry => {
-          trackEvent({
-            category: "admin-navigation",
-            action: "open-mission-drawer",
-            name: "Drawer Mission via tableau Validation"
-          });
+          trackEvent(OPEN_MISSION_DRAWER_IN_VALIDATION_PANEL);
           openMission(entry.id);
         }}
         rowClassName={entry =>
@@ -377,11 +375,7 @@ function _ValidationPanel() {
                   size="small"
                   onClick={async e => {
                     e.stopPropagation();
-                    trackEvent({
-                      category: "admin-mission-action",
-                      action: "validate-mission",
-                      name: "Validation dans tableau Validation"
-                    });
+                    trackEvent(VALIDATE_MISSION_IN_VALIDATION_PANEL);
                     try {
                       for (const entryToValidate1 of entriesToValidateByAdmin.filter(
                         entryToValidate =>

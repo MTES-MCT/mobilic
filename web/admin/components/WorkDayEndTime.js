@@ -5,6 +5,7 @@ import { DEFAULT_LAST_ACTIVITY_TOO_LONG } from "common/utils/mission";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Tooltip from "@material-ui/core/Tooltip";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { OPEN_MISSION_DRAWER_WITH_ACTIVITY_TOO_LONG } from "common/utils/matomoTags";
 
 const useStyles = makeStyles(theme => ({
   warningText: {
@@ -36,11 +37,7 @@ export function WorkDayEndTime({ endTime, dayAggregate, openMission }) {
       key={lastMissionId()}
       onClick={e => {
         e.stopPropagation();
-        trackEvent({
-          category: "admin-navigation",
-          action: "open-mission-drawer",
-          name: "Drawer Mission via activité trop longue"
-        });
+        trackEvent(OPEN_MISSION_DRAWER_WITH_ACTIVITY_TOO_LONG);
         openMission(lastMissionId());
       }}
     >

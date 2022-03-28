@@ -21,6 +21,7 @@ import { JoinedText } from "./JoinedText";
 import { useAdminCompanies } from "../store/store";
 import { WorkDayEndTime } from "./WorkDayEndTime";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
 
 const useStyles = makeStyles(theme => ({
   warningText: {
@@ -245,11 +246,7 @@ export function WorkTimeTable({
         virtualized
         onRowClick={entry => {
           if (!entry.day) return false;
-          trackEvent({
-            category: "admin-navigation",
-            action: "open-workday-drawer",
-            name: "Drawer WorkDay"
-          });
+          trackEvent(OPEN_WORKDAY_DRAWER);
           setWorkdayOnFocus(entry);
           setWordDayDrawerOpen(true);
         }}
