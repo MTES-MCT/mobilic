@@ -358,9 +358,7 @@ function _ActivityPanel({ width }) {
           className={classes.workTimeTable}
           period={period}
           workTimeEntries={periodAggregates}
-          showExpenditures={adminStore.settings.requireExpenditures}
           showMissionName={adminStore.settings.requireMissionName}
-          showTransfers={adminStore.settings.allowTransfers}
           loading={loading}
           width={width}
         />

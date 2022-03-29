@@ -17,8 +17,6 @@ import { ChevronRight } from "@material-ui/icons";
 import { SwipeableDrawer } from "@material-ui/core";
 import { MissionNamesList } from "./MissionNamesList";
 import { useMissionDrawer } from "./MissionDrawer";
-import { JoinedText } from "./JoinedText";
-import { useAdminCompanies } from "../store/store";
 import { WorkDayEndTime } from "./WorkDayEndTime";
 
 const useStyles = makeStyles(theme => ({
@@ -41,14 +39,10 @@ export function WorkTimeTable({
   period,
   workTimeEntries,
   className,
-  showExpenditures,
   showMissionName,
-  showTransfers,
   loading,
   width
 }) {
-  const [companies] = useAdminCompanies();
-
   const [workdayOnFocus, setWorkdayOnFocus] = React.useState(null);
   const [wordDayDrawerOpen, setWordDayDrawerOpen] = React.useState(false);
 
@@ -94,13 +88,6 @@ export function WorkTimeTable({
     align: "right",
     minWidth: 100
   };
-  const serviceTimeCol = {
-    label: "Amplitude",
-    name: "service",
-    format: formatTimer,
-    align: "right",
-    minWidth: 100
-  };
   const workTimeCol = {
     label: "Travail",
     name: "totalWork",
@@ -112,13 +99,6 @@ export function WorkTimeTable({
   const restTimeCol = {
     label: "Repos",
     name: "rest",
-    format: time => (time ? formatTimer(time) : null),
-    align: "right",
-    minWidth: 100
-  };
-  const transferTimeCol = {
-    label: "Liaison",
-    name: "transferDuration",
     format: time => (time ? formatTimer(time) : null),
     align: "right",
     minWidth: 100
@@ -147,18 +127,6 @@ export function WorkTimeTable({
     sortable: true,
     overflowTooltip: true
   };
-  const companyNamesCol = {
-    label: "Entreprise(s)",
-    name: "companyIds",
-    format: companyIds => (
-      <JoinedText joinWith=", ">
-        {companyIds.map(cid => companies.find(c => c.id === cid).name)}
-      </JoinedText>
-    ),
-    align: "left",
-    sortable: true,
-    overflowTooltip: true
-  };
   const pictoCol = {
     label: "+ d'infos",
     name: "id",
@@ -173,20 +141,16 @@ export function WorkTimeTable({
     columns = [
       employeeCol,
       showMissionName && missionNamesCol,
-      companies.length > 1 && companyNamesCol,
       startTimeCol,
       endTimeCol,
-      serviceTimeCol,
       workTimeCol,
-      showTransfers && transferTimeCol,
       restTimeCol
     ];
-    if (showExpenditures) columns.push(expenditureCol);
     columns.push(pictoCol);
   } else if (period === "week") {
-    columns = [employeeCol, workTimeCol, workedDaysCol];
+    columns = [employeeCol, workTimeCol, workedDaysCol, expenditureCol];
   } else {
-    columns = [employeeCol, workTimeCol, workedDaysCol];
+    columns = [employeeCol, workTimeCol, workedDaysCol, expenditureCol];
   }
 
   columns = columns.filter(Boolean);
