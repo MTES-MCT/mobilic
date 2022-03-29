@@ -8,7 +8,10 @@ import {
 } from "react-router-dom";
 import Container from "@mui/material/Container";
 import "./assets/admin.scss";
-import { loadCompaniesData } from "./utils/loadCompaniesData";
+import {
+  loadCompaniesList,
+  loadCompanyDetails
+} from "./utils/loadCompaniesData";
 import { useApi } from "common/utils/api";
 import { AdminStoreProvider, useAdminStore } from "./store/store";
 import {
@@ -22,7 +25,6 @@ import useTheme from "@mui/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { SideMenu } from "./components/SideMenu";
 import { useSnackbarAlerts } from "../common/Snackbar";
-import { DAY, isoFormatLocalDate } from "common/utils/time";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
 import { MissionDrawerContextProvider } from "./components/MissionDrawer";
@@ -93,32 +95,29 @@ function _Admin() {
     };
   });
 
-  async function loadData() {
+  async function loadDataCompaniesList() {
     const userId = adminStore.userId;
-    const companyId = adminStore.companyId;
     if (userId) {
-      // what is this ?
       setShouldRefreshData({ value: false });
       shouldRefreshData.value = false;
       withLoadingScreen(
         async () =>
           await alerts.withApiErrorHandling(
             async () => {
-              const minDate = isoFormatLocalDate(
-                new Date(Date.now() - DAY * 1000 * 150)
-              );
-              const companies = await loadCompaniesData(
-                api,
-                userId,
-                minDate,
-                companyId
-              );
+              const companies = await loadCompaniesList(api, userId);
               adminStore.dispatch({
-                type: ADMIN_ACTIONS.syncStore,
-                payload: { companiesPayload: companies, minDate }
+                type: ADMIN_ACTIONS.updateCompaniesList,
+                payload: { companiesPayload: companies }
+              });
+
+              const companyId = companies[0].id;
+
+              adminStore.dispatch({
+                type: ADMIN_ACTIONS.updateCompanyId,
+                payload: { companyId: companyId }
               });
             },
-            "load-companies",
+            "load-companies-list",
             null,
             () => setShouldRefreshData(true)
           )
@@ -126,21 +125,48 @@ function _Admin() {
     }
   }
 
-  React.useEffect(() => {
-    if (shouldRefreshData.value) loadData();
-  }, [adminStore.userId]);
+  async function loadDataCompanyDetails() {
+    const userId = adminStore.userId;
+    const companyId = adminStore.companyId;
+    if (userId && companyId) {
+      withLoadingScreen(
+        async () =>
+          await alerts.withApiErrorHandling(
+            async () => {
+              const minDate = adminStore.activitiesFilters.minDate;
+              const companies = await loadCompanyDetails(
+                api,
+                userId,
+                minDate,
+                companyId
+              );
+              adminStore.dispatch({
+                type: ADMIN_ACTIONS.updateCompanyDetails,
+                payload: { companiesPayload: companies, minDate }
+              });
+            },
+            "load-company-details",
+            null
+          )
+      );
+    }
+  }
 
   React.useEffect(() => {
-    loadData();
-  }, [adminStore.companyId]);
+    if (shouldRefreshData.value) loadDataCompaniesList();
+  }, [adminStore.userId]);
 
   React.useEffect(() => {
     if (
       location.pathname.startsWith("/admin/activities") &&
       shouldRefreshData.value
     )
-      loadData();
+      loadDataCompaniesList();
   }, [location]);
+
+  React.useEffect(() => {
+    if (adminStore.companyId) loadDataCompanyDetails();
+  }, [adminStore.companyId]);
 
   const ref = React.useRef(null);
 

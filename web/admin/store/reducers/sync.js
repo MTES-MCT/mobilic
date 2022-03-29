@@ -1,39 +1,55 @@
 import flatMap from "lodash/flatMap";
 import { addWorkDaysReducer } from "./workDays";
+import uniqBy from "lodash/uniqBy";
 
-export function syncStoreReducer(state, { companiesPayload, minDate }) {
+export function updateCompanyIdReducer(state, { companyId }) {
+  return {
+    ...state,
+    companyId
+  };
+}
+
+export function updateCompaniesListReducer(state, { companiesPayload }) {
+  return {
+    ...state,
+    companies: companiesPayload.map(c => ({
+      id: c.id,
+      name: c.name,
+      siren: c.siren
+    }))
+  };
+}
+
+export function updateCompanyDetailsReducer(
+  state,
+  { companiesPayload, minDate }
+) {
   const stateWithWorkDays = addWorkDaysReducer(state, {
-    companiesPayload: companiesPayload.selectedAdminedCompanies,
+    companiesPayload,
     minDate,
     reset: true
   });
 
+  const users = flatMap(
+    companiesPayload.map(c => c.users.map(u => ({ ...u, companyId: c.id })))
+  );
+
   return {
     ...stateWithWorkDays,
-    companyId: companiesPayload.selectedAdminedCompanies[0].id,
-    companies: companiesPayload.allAdminedCompanies.map(c => ({
-      id: c.id,
-      name: c.name,
-      siren: c.siren,
-      settings: c.settings
-    })),
-    users: flatMap(
-      companiesPayload.selectedAdminedCompanies.map(c =>
-        c.users.map(u => ({ ...u, companyId: c.id }))
-      )
-    ),
+    users,
     vehicles: flatMap(
-      companiesPayload.selectedAdminedCompanies.map(c =>
+      companiesPayload.map(c =>
         c.vehicles.map(v => ({ ...v, companyId: c.id }))
       )
     ),
+    settings: companiesPayload[0].settings,
     knownAddresses: flatMap(
-      companiesPayload.selectedAdminedCompanies.map(c =>
+      companiesPayload.map(c =>
         c.knownAddresses.map(a => ({ ...a, companyId: c.id }))
       )
     ),
     employments: flatMap(
-      companiesPayload.selectedAdminedCompanies.map(c =>
+      companiesPayload.map(c =>
         c.employments.map(e => ({
           ...e,
           companyId: c.id,
@@ -43,10 +59,15 @@ export function syncStoreReducer(state, { companiesPayload, minDate }) {
     ),
     missions: [
       ...flatMap(
-        companiesPayload.selectedAdminedCompanies.map(c =>
+        companiesPayload.map(c =>
           c.missions.edges.map(m => ({ ...m.node, companyId: c.id }))
         )
       )
-    ]
+    ],
+    activitiesFilters: {
+      ...state.activitiesFilters,
+      users: uniqBy(users, u => u.id),
+      minDate
+    }
   };
 }

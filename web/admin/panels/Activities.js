@@ -12,9 +12,8 @@ import useTheme from "@mui/styles/useTheme";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { WorkTimeTable } from "../components/WorkTimeTable";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
-import { useAdminStore } from "../store/store";
+import { useAdminStore, useAdminCompanies } from "../store/store";
 import { useModals } from "common/utils/modals";
-import uniqBy from "lodash/uniqBy";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
 import max from "lodash/max";
@@ -102,14 +101,24 @@ function useWidth() {
 }
 
 const onMinDateChange = debounce(
-  async (newMinDate, maxDate, userId, setLoading, addWorkDays, api, alerts) => {
+  async (
+    newMinDate,
+    maxDate,
+    userId,
+    companyId,
+    setLoading,
+    addWorkDays,
+    api,
+    alerts
+  ) => {
     if (newMinDate < maxDate) {
       setLoading(true);
       await alerts.withApiErrorHandling(async () => {
         const companiesPayload = await api.graphQlQuery(ADMIN_WORK_DAYS_QUERY, {
           id: userId,
           activityAfter: newMinDate,
-          activityBefore: maxDate
+          activityBefore: maxDate,
+          companyIds: [companyId]
         });
         addWorkDays(companiesPayload.data.user.adminedCompanies, newMinDate);
       }, "load-work-days");
@@ -121,19 +130,24 @@ const onMinDateChange = debounce(
 
 function ActivitiesPanel() {
   const adminStore = useAdminStore();
+  const [adminCompanies] = useAdminCompanies();
   const modals = useModals();
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const history = useHistory();
 
-  const [users, setUsers] = React.useState([]);
+  const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
   const [companies, setCompanies] = React.useState([]);
-  const [minDate, setMinDate] = React.useState(null);
+  const [minDate, setMinDate] = React.useState(
+    adminStore.activitiesFilters.minDate
+  );
   const [maxDate, setMaxDate] = React.useState(
-    isoFormatLocalDate(new Date(Date.now()))
+    adminStore.activitiesFilters.maxDate
   );
   const [loading, setLoading] = React.useState(false);
-  const [period, setPeriod] = React.useState("day");
+  const [period, setPeriod] = React.useState(
+    adminStore.activitiesFilters.period
+  );
   const [openNewMission, setOpenNewMission] = React.useState(false);
 
   const minDateOfFetchedData = adminStore.minWorkDaysDate;
@@ -141,9 +155,26 @@ function ActivitiesPanel() {
   const today = new Date();
 
   React.useEffect(() => {
-    if (minDate !== adminStore.minWorkDaysDate)
-      setMinDate(adminStore.minWorkDaysDate);
-  }, [adminStore.minWorkDaysDate]);
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateActivitiesFilters,
+      payload: { period }
+    });
+  }, [period]);
+
+  React.useEffect(() => {
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateActivitiesFilters,
+      payload: { users }
+    });
+  }, [users]);
+
+  React.useEffect(() => {
+    setUsers(adminStore.activitiesFilters.users);
+  }, [adminStore.activitiesFilters.users]);
+
+  React.useEffect(() => {
+    setMinDate(adminStore.activitiesFilters.minDate);
+  }, [adminStore.activitiesFilters.minDate]);
 
   React.useEffect(() => {
     if (minDate && (!maxDate || maxDate < minDate)) setMaxDate(minDate);
@@ -151,27 +182,37 @@ function ActivitiesPanel() {
       minDate,
       minDateOfFetchedData,
       adminStore.userId,
+      adminStore.companyId,
       setLoading,
       (companiesPayload, newMinDate) =>
         adminStore.dispatch({
           type: ADMIN_ACTIONS.addWorkDays,
           payload: { companiesPayload, minDate: newMinDate }
         }),
+
       api,
       alerts
     );
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateActivitiesFilters,
+      payload: { minDate }
+    });
   }, [minDate]);
 
   React.useEffect(() => {
     if (maxDate && !minDate) setMinDate(minDateOfFetchedData);
     if (maxDate && minDate && minDate > maxDate) setMinDate(maxDate);
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateActivitiesFilters,
+      payload: { maxDate }
+    });
   }, [maxDate]);
 
   const [exportMenuAnchorEl, setExportMenuAnchorEl] = React.useState(null);
 
   React.useEffect(() => {
-    if (adminStore.companies) {
-      const newCompaniesWithCurrentSelectionStatus = adminStore.companies.map(
+    if (adminCompanies) {
+      const newCompaniesWithCurrentSelectionStatus = adminCompanies.map(
         company => ({
           ...company,
           selected: company.id === adminStore.companyId
@@ -179,14 +220,10 @@ function ActivitiesPanel() {
       );
       setCompanies(newCompaniesWithCurrentSelectionStatus);
     }
-  }, [adminStore.companies]);
+  }, [adminCompanies]);
 
   let selectedCompanies = companies.filter(c => c.selected);
   if (selectedCompanies.length === 0) selectedCompanies = companies;
-
-  React.useEffect(() => {
-    setUsers(uniqBy(adminStore.users, u => u.id));
-  }, [adminStore.users]);
 
   let selectedUsers = users.filter(u => u.selected);
   if (selectedUsers.length === 0) selectedUsers = users;
@@ -317,15 +354,17 @@ function ActivitiesPanel() {
         style={{ maxHeight: ref.current ? ref.current.clientHeight : 0 }}
       >
         <Typography align="left" variant="h6">
-          {`${periodAggregates.length} résultats ${periodAggregates.length >
-            0 &&
-            `pour ${
-              uniq(periodAggregates.map(pa => pa.user.id)).length
-            } employé(s) entre le ${formatDay(
-              min(periodAggregates.map(pa => pa.periodActualStart))
-            )} et le ${formatDay(
-              max(periodAggregates.map(pa => pa.periodActualEnd))
-            )} (uniquement les plus récents).`}`}
+          {`${periodAggregates.length} résultats${
+            periodAggregates.length > 0
+              ? ` pour ${
+                  uniq(periodAggregates.map(pa => pa.user.id)).length
+                } employé(s) entre le ${formatDay(
+                  min(periodAggregates.map(pa => pa.periodActualStart))
+                )} et le ${formatDay(
+                  max(periodAggregates.map(pa => pa.periodActualEnd))
+                )} (uniquement les plus récents).`
+              : "."
+          }`}
         </Typography>
         <LoadingButton
           style={{ marginTop: 8, alignSelf: "flex-start" }}
@@ -371,7 +410,9 @@ function ActivitiesPanel() {
             </IconButton>
           </Box>
           <NewMissionForm
-            companies={adminStore.companies}
+            companies={adminCompanies}
+            companyId={adminStore.companyId}
+            overrideSettings={adminStore.settings}
             companyAddresses={adminStore.knownAddresses}
             currentPosition={null}
             disableKilometerReading={true}

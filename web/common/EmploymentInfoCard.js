@@ -21,6 +21,7 @@ import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import useTheme from "@mui/styles/useTheme";
 import {
+  EMPLOYMENT_ROLE,
   EMPLOYMENT_STATUS,
   getEmploymentsStatus
 } from "common/utils/employments";
@@ -174,8 +175,8 @@ export function EmploymentInfoCard({
                 name="Rôle"
                 value={
                   employment.hasAdminRights
-                    ? "Gestionnaire"
-                    : "Travailleur mobile"
+                    ? EMPLOYMENT_ROLE.admin
+                    : EMPLOYMENT_ROLE.employee
                 }
               />
             </Grid>

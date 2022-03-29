@@ -18,11 +18,15 @@ import {
 import {
   BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
   CANCEL_EMPLOYMENT_MUTATION,
+  CHANGE_EMPLOYEE_ROLE,
   CREATE_EMPLOYMENT_MUTATION,
   SEND_EMPLOYMENT_INVITE_REMINDER,
   TERMINATE_EMPLOYMENT_MUTATION
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
+import TextField from "@material-ui/core/TextField/TextField";
+import MenuItem from "@material-ui/core/MenuItem";
+import { EMPLOYMENT_ROLE } from "common/utils/employments";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -96,6 +100,36 @@ export function Employees({ company, containerRef }) {
     }
   }
 
+  async function changeEmployeeRole(employmentId, hasAdminRights) {
+    try {
+      const employmentResponse = await api.graphQlMutate(CHANGE_EMPLOYEE_ROLE, {
+        employmentId,
+        hasAdminRights
+      });
+      await adminStore.dispatch({
+        type: ADMIN_ACTIONS.update,
+        payload: {
+          id: employmentId,
+          entity: "employments",
+          update: {
+            ...employmentResponse.data.employments.changeEmployeeRole,
+            companyId
+          }
+        }
+      });
+    } catch (err) {
+      alerts.error(formatApiError(err), employmentId, 6000);
+    }
+  }
+
+  async function giveAdminPermission(employmentId) {
+    await changeEmployeeRole(employmentId, true);
+  }
+
+  async function giveWorkerPermission(employmentId) {
+    await changeEmployeeRole(employmentId, false);
+  }
+
   async function terminateEmployment(employmentId, endDate) {
     const employmentResponse = await api.graphQlMutate(
       TERMINATE_EMPLOYMENT_MUTATION,
@@ -150,13 +184,30 @@ export function Employees({ company, containerRef }) {
       align: "left"
     },
     {
-      label: "Administrateur",
+      label: "Rôle",
       name: "hasAdminRights",
-      boolean: true,
       create: true,
       minWidth: 160,
       baseWidth: 160,
-      align: "left"
+      align: "left",
+      required: true,
+      format: hasAdminRights =>
+        hasAdminRights ? EMPLOYMENT_ROLE.admin : EMPLOYMENT_ROLE.employee,
+      renderEditMode: (type, entry, setType) => (
+        <TextField
+          required
+          fullWidth
+          select
+          value={type}
+          onChange={e => setType(e.target.value)}
+        >
+          {Object.entries(EMPLOYMENT_ROLE).map(([role, label]) => (
+            <MenuItem key={role} value={label}>
+              {label}
+            </MenuItem>
+          ))}
+        </TextField>
+      )
     },
     {
       label: "Invité le",
@@ -193,9 +244,10 @@ export function Employees({ company, containerRef }) {
       minWidth: 100
     },
     {
-      label: "Administrateur",
+      label: "Rôle",
       name: "hasAdminRights",
-      boolean: true,
+      format: hasAdminRights =>
+        hasAdminRights ? EMPLOYMENT_ROLE.admin : EMPLOYMENT_ROLE.employee,
       align: "left",
       sortable: true,
       minWidth: 160
@@ -273,6 +325,38 @@ export function Employees({ company, containerRef }) {
 
   const canDisplayPendingEmployments =
     isAddingEmployment || pendingEmployments.length > 0;
+
+  const customActionsValidEmployment = employment => {
+    if (!employment) {
+      return [];
+    }
+    const customActions = [];
+    if (!employment.hasAdminRights) {
+      customActions.push({
+        name: "setAdmin",
+        label: `Passer en rôle ${EMPLOYMENT_ROLE.admin}`,
+        action: empl => giveAdminPermission(empl.employmentId)
+      });
+    } else {
+      customActions.push({
+        name: "setWorker",
+        label: `Passer en rôle ${EMPLOYMENT_ROLE.employee}`,
+        action: empl => giveWorkerPermission(empl.employmentId)
+      });
+    }
+    customActions.push({
+      name: "terminate",
+      label: "Mettre fin au rattachement",
+      action: empl => {
+        modals.open("terminateEmployment", {
+          minDate: new Date(empl.startDate),
+          terminateEmployment: async endDate =>
+            await terminateEmployment(empl.employmentId, endDate)
+        });
+      }
+    });
+    return customActions;
+  };
 
   return [
     <Button
@@ -375,7 +459,9 @@ export function Employees({ company, containerRef }) {
           ? ""
           : classes.displayNone
       } ${classes.pendingEmployments}`}
-      validateNewRowData={({ idOrEmail }) => !!idOrEmail}
+      validateRow={({ idOrEmail, hasAdminRights }) =>
+        !!idOrEmail && !!hasAdminRights
+      }
       forceParentUpdateOnRowAdd={() => setForceUpdate(value => !value)}
       editActionsColumnMinWidth={180}
       defaultSortBy={"creationDate"}
@@ -388,7 +474,7 @@ export function Employees({ company, containerRef }) {
       }
       onRowAdd={async ({ idOrEmail, hasAdminRights }) => {
         const payload = {
-          hasAdminRights,
+          hasAdminRights: hasAdminRights === EMPLOYMENT_ROLE.admin,
           companyId
         };
         if (/^\d+$/.test(idOrEmail)) {
@@ -414,7 +500,7 @@ export function Employees({ company, containerRef }) {
           alerts.error(formatApiError(err), idOrEmail, 6000);
         }
       }}
-      customRowActions={[
+      customRowActions={() => [
         {
           name: "reminder",
           label: "Relancer l'invitation",
@@ -470,19 +556,7 @@ export function Employees({ company, containerRef }) {
       alwaysSortBy={[["active", "desc"]]}
       virtualizedAttachScrollTo={containerRef.current}
       rowClassName={row => (!row.active ? classes.terminatedEmployment : "")}
-      customRowActions={[
-        {
-          name: "terminate",
-          label: "Mettre fin au rattachement",
-          action: empl => {
-            modals.open("terminateEmployment", {
-              minDate: new Date(empl.startDate),
-              terminateEmployment: async endDate =>
-                await terminateEmployment(empl.employmentId, endDate)
-            });
-          }
-        }
-      ]}
+      customRowActions={customActionsValidEmployment}
       virtualized
     />
   ];

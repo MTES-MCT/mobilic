@@ -125,6 +125,7 @@ export const USER_SIGNUP_MUTATION = gql`
     $lastName: String!
     $inviteToken: String
     $subscribeToNewsletter: Boolean
+    $isEmployee: Boolean
   ) {
     signUp {
       user(
@@ -134,6 +135,7 @@ export const USER_SIGNUP_MUTATION = gql`
         lastName: $lastName
         inviteToken: $inviteToken
         subscribeToNewsletter: $subscribeToNewsletter
+        isEmployee: $isEmployee
       ) {
         accessToken
         refreshToken
@@ -455,9 +457,14 @@ export const ADMIN_COMPANIES_QUERY = gql`
 
 export const ADMIN_WORK_DAYS_QUERY = gql`
   ${WORK_DAYS_DATA_FRAGMENT}
-  query adminCompanies($id: Int!, $activityAfter: Date, $activityBefore: Date) {
+  query adminCompanies(
+    $id: Int!
+    $activityAfter: Date
+    $activityBefore: Date
+    $companyIds: [Int]
+  ) {
     user(id: $id) {
-      adminedCompanies {
+      adminedCompanies(companyIds: $companyIds) {
         id
         workDays(fromDate: $activityAfter, untilDate: $activityBefore) {
           ...WorkDayData
@@ -650,6 +657,20 @@ export const SEND_EMPLOYMENT_INVITE_REMINDER = gql`
     employments {
       sendInvitationReminder(employmentId: $employmentId) {
         success
+      }
+    }
+  }
+`;
+
+export const CHANGE_EMPLOYEE_ROLE = gql`
+  mutation changeEmployeeRole($employmentId: Int!, $hasAdminRights: Boolean!) {
+    employments {
+      changeEmployeeRole(
+        employmentId: $employmentId
+        hasAdminRights: $hasAdminRights
+      ) {
+        id
+        hasAdminRights
       }
     }
   }

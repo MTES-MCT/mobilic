@@ -85,7 +85,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           password,
           firstName: firstName.trim(),
           lastName: lastName.trim(),
-          subscribeToNewsletter
+          subscribeToNewsletter,
+          isEmployee: !isAdmin
         };
         if (employeeInvite) {
           signupPayload.inviteToken = employeeInvite.inviteToken;

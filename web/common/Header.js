@@ -27,7 +27,7 @@ import YoutubeWhiteIcon from "common/assets/images/youtube-white.png";
 import TwitterIcon from "common/assets/images/twitter.svg";
 import TwitterWhiteIcon from "common/assets/images/twitter-white.svg";
 import Grid from "@mui/material/Grid";
-import { useAdminStore } from "../admin/store/store";
+import { useAdminStore, useAdminCompanies } from "../admin/store/store";
 import { TextWithBadge } from "./TextWithBadge";
 import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 import TextField from "common/utils/TextField";
@@ -268,11 +268,8 @@ export function NavigationMenu({ open, setOpen }) {
 }
 
 const HeaderCompaniesDropdown = () => {
-  const store = useStoreSyncedWithLocalStorage();
   const adminStore = useAdminStore();
-
-  const companies = store.companies();
-  const company = companies.find(c => c.id === adminStore.companyId);
+  const [companies, company] = useAdminCompanies();
 
   const classes = useStyles();
 
@@ -295,18 +292,11 @@ const HeaderCompaniesDropdown = () => {
         });
       }}
     >
-      {companies
-        .sort((c1, c2) =>
-          c1.name.localeCompare(c2.name, undefined, {
-            numeric: true,
-            sensitivity: "base"
-          })
-        )
-        .map(c => (
-          <MenuItem key={c.id} value={c.id}>
-            {c.name}
-          </MenuItem>
-        ))}
+      {companies.map(c => (
+        <MenuItem key={c.id} value={c.id}>
+          {c.name}
+        </MenuItem>
+      ))}
     </TextField>
   );
 };

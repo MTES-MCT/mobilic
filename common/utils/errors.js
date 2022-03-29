@@ -183,6 +183,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
             graphQLError.extensions.receptionTime) /
             60
         )} minutes dans le futur. Veuillez vérifier l'heure de votre téléphone.`;
+      case "USER_SELF_CHANGE_ROLE":
+        return "La modification de votre rôle ne peut être effectuée que par un autre gestionnaire.";
       default:
         return null;
     }

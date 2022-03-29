@@ -186,24 +186,16 @@ export function MissionDetails({
 
   if (!mission) return null;
 
+  const adminSettings = adminStore.settings;
+
   const missionCompany = adminStore.companies.find(
     c => c.id === mission.companyId
   );
-  const showExpenditures =
-    missionCompany && missionCompany.settings
-      ? missionCompany.settings.requireExpenditures
-      : false;
-
-  const showKilometerReading =
-    mission.vehicle && missionCompany && missionCompany.settings
-      ? missionCompany.settings.requireKilometerData
-      : false;
-
-  const allowTransfers = missionCompany?.settings?.allowTransfers || false;
-  const allowSupportActivity =
-    missionCompany?.settings?.requireSupportActivity || false;
-
-  const editableMissionName = missionCompany?.settings?.requireMissionName;
+  const showExpenditures = adminSettings.requireExpenditures;
+  const showKilometerReading = adminSettings.requireKilometerData;
+  const allowTransfers = adminSettings.allowTransfers;
+  const allowSupportActivity = adminSettings.requireSupportActivity;
+  const editableMissionName = adminSettings.requireMissionName;
 
   const doesMissionSpanOnMultipleDays =
     mission.startTime &&

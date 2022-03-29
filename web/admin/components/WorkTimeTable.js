@@ -17,7 +17,7 @@ import { SwipeableDrawer } from "@mui/material";
 import { MissionNamesList } from "./MissionNamesList";
 import { useMissionDrawer } from "./MissionDrawer";
 import { JoinedText } from "./JoinedText";
-import { useAdminStore } from "../store/store";
+import { useAdminCompanies } from "../store/store";
 import { WorkDayEndTime } from "./WorkDayEndTime";
 
 const useStyles = makeStyles(theme => ({
@@ -46,8 +46,7 @@ export function WorkTimeTable({
   loading,
   width
 }) {
-  const adminStore = useAdminStore();
-  const companies = adminStore.companies;
+  const [companies] = useAdminCompanies();
 
   const [workdayOnFocus, setWorkdayOnFocus] = React.useState(null);
   const [wordDayDrawerOpen, setWordDayDrawerOpen] = React.useState(false);

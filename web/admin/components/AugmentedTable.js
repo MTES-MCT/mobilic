@@ -606,7 +606,7 @@ export const AugmentedTable = React.forwardRef(
             onClose={handleCustomActionsClose}
             anchorEl={actionMenuAnchorEl}
           >
-            {customRowActions.map(cra => (
+            {customRowActions(entryActedOn).map(cra => (
               <MenuItem
                 key={cra.name}
                 onClick={async () => {

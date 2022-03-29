@@ -1,7 +1,7 @@
 import React from "react";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
-import { useAdminStore } from "../store/store";
+import { useAdminCompanies } from "../store/store";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Employees } from "./Employees";
@@ -98,19 +98,7 @@ function SubNavigationToggle({ view, setView }) {
 function CompanyPanel({ width, containerRef }) {
   const [view, setView] = React.useState("employees");
 
-  const [company, setCompany] = React.useState(null);
-
-  const adminStore = useAdminStore();
-
-  const companies = adminStore.companies;
-
-  React.useEffect(() => {
-    if (adminStore.companyId && companies && companies.length > 0) {
-      setCompany(companies.find(c => c.id === adminStore.companyId));
-    } else {
-      setCompany(null);
-    }
-  }, [companies]);
+  const [, company] = useAdminCompanies();
 
   const classes = usePanelStyles({ width });
   const subPanel = COMPANY_SUB_PANELS.find(sp => sp.view === view);

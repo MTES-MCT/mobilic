@@ -5,7 +5,7 @@ import {
 } from "common/utils/apiQueries";
 import { sortBy } from "lodash/collection";
 
-export async function loadCompaniesData(api, userId, minDate, companyId) {
+export async function loadCompaniesList(api, userId) {
   const companiesListResponse = await api.graphQlQuery(
     ADMIN_COMPANIES_LIST_QUERY,
     {
@@ -18,7 +18,11 @@ export async function loadCompaniesData(api, userId, minDate, companyId) {
     "name"
   );
 
-  const companyIds = companyId ? [companyId] : [sortedCompaniesByName[0].id];
+  return sortedCompaniesByName;
+}
+
+export async function loadCompanyDetails(api, userId, minDate, companyId) {
+  const companyIds = [companyId];
 
   const companyResponse = await api.graphQlQuery(
     ADMIN_COMPANIES_QUERY,
@@ -31,8 +35,6 @@ export async function loadCompaniesData(api, userId, minDate, companyId) {
     },
     { context: { timeout: process.env.REACT_APP_TIMEOUT_MS || 60000 } }
   );
-  return {
-    allAdminedCompanies: companiesListResponse.data.user.adminedCompanies,
-    selectedAdminedCompanies: companyResponse.data.user.adminedCompanies
-  };
+
+  return companyResponse.data.user.adminedCompanies;
 }
