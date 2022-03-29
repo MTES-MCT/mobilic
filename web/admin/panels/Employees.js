@@ -184,15 +184,14 @@ export function Employees({ company, containerRef }) {
       align: "left"
     },
     {
-      label: "Rôle",
+      label: "Accès gestionnaire",
       name: "hasAdminRights",
       create: true,
       minWidth: 160,
       baseWidth: 160,
       align: "left",
       required: true,
-      format: hasAdminRights =>
-        hasAdminRights ? EMPLOYMENT_ROLE.admin : EMPLOYMENT_ROLE.employee,
+      format: hasAdminRights => (hasAdminRights ? "Oui" : "Non"),
       renderEditMode: (type, entry, setType) => (
         <TextField
           required
@@ -201,11 +200,12 @@ export function Employees({ company, containerRef }) {
           value={type}
           onChange={e => setType(e.target.value)}
         >
-          {Object.entries(EMPLOYMENT_ROLE).map(([role, label]) => (
-            <MenuItem key={role} value={label}>
-              {label}
-            </MenuItem>
-          ))}
+          <MenuItem key={0} value={EMPLOYMENT_ROLE.admin}>
+            Oui
+          </MenuItem>
+          <MenuItem key={1} value={EMPLOYMENT_ROLE.employee}>
+            Non
+          </MenuItem>
         </TextField>
       )
     },
@@ -244,10 +244,9 @@ export function Employees({ company, containerRef }) {
       minWidth: 100
     },
     {
-      label: "Rôle",
+      label: "Accès gestionnaire",
       name: "hasAdminRights",
-      format: hasAdminRights =>
-        hasAdminRights ? EMPLOYMENT_ROLE.admin : EMPLOYMENT_ROLE.employee,
+      format: hasAdminRights => (hasAdminRights ? "Oui" : "Non"),
       align: "left",
       sortable: true,
       minWidth: 160
@@ -334,13 +333,13 @@ export function Employees({ company, containerRef }) {
     if (!employment.hasAdminRights) {
       customActions.push({
         name: "setAdmin",
-        label: `Passer en rôle ${EMPLOYMENT_ROLE.admin}`,
+        label: "Donner accès gestionnaire",
         action: empl => giveAdminPermission(empl.employmentId)
       });
     } else {
       customActions.push({
         name: "setWorker",
-        label: `Passer en rôle ${EMPLOYMENT_ROLE.employee}`,
+        label: "Retirer accès gestionnaire",
         action: empl => giveWorkerPermission(empl.employmentId)
       });
     }
