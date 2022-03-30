@@ -1,6 +1,7 @@
 export const MATOMO_CATEGORIES = {
   ADMIN_MISSION_ACTION: "admin-mission-action",
   ADMIN_NAVIGATION: "admin-navigation",
+  ADMIN_ACTIVITY_FILTER: "admin-activity-filter",
   ADMIN_EXPORT: "admin-export"
 };
 
@@ -71,10 +72,28 @@ export const OPEN_WORKDAY_DRAWER = {
 
 export const ACTIVITY_FILTER_PERIOD = newPeriod => {
   return {
-    category: MATOMO_CATEGORIES.ADMIN_NAVIGATION,
-    action: "filter-period-activities",
+    category: MATOMO_CATEGORIES.ADMIN_ACTIVITY_FILTER,
+    action: "filter-activities-period",
     name: `Activités par "${newPeriod}"`
   };
+};
+
+export const ACTIVITY_FILTER_MIN_DATE = {
+  category: MATOMO_CATEGORIES.ADMIN_ACTIVITY_FILTER,
+  action: "filter-activities-min-date",
+  name: "Changement date de début vue Activités"
+};
+
+export const ACTIVITY_FILTER_MAX_DATE = {
+  category: MATOMO_CATEGORIES.ADMIN_ACTIVITY_FILTER,
+  action: "filter-activities-max-date",
+  name: "Changement date de fin vue Activités"
+};
+
+export const ACTIVITY_FILTER_EMPLOYEE = {
+  category: MATOMO_CATEGORIES.ADMIN_ACTIVITY_FILTER,
+  action: "filter-activities-employee",
+  name: "Changement filtre employé dans vue Activités"
 };
 
 export const ADMIN_EXPORT_EXCEL = {

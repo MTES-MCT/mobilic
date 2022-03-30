@@ -46,6 +46,9 @@ import withWidth from "@material-ui/core/withWidth";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
+  ACTIVITY_FILTER_EMPLOYEE,
+  ACTIVITY_FILTER_MAX_DATE,
+  ACTIVITY_FILTER_MIN_DATE,
   ADMIN_ADD_MISSION,
   ADMIN_EXPORT_C1B,
   ADMIN_EXPORT_EXCEL
@@ -186,6 +189,15 @@ function _ActivityPanel({ width }) {
     setUsers(uniqBy(adminStore.users, u => u.id));
   }, [adminStore.users]);
 
+  React.useEffect(() => {
+    if (minDate !== adminStore.minWorkDaysDate)
+      setMinDate(adminStore.minWorkDaysDate);
+  }, [adminStore.minWorkDaysDate]);
+
+  React.useEffect(() => {
+    trackEvent(ACTIVITY_FILTER_EMPLOYEE);
+  }, [users]);
+
   let selectedUsers = users.filter(u => u.selected);
   if (selectedUsers.length === 0) selectedUsers = users;
 
@@ -229,7 +241,10 @@ function _ActivityPanel({ width }) {
             size="small"
             format="d MMMM yyyy"
             fullWidth
-            onChange={val => setMinDate(isoFormatLocalDate(val))}
+            onChange={val => {
+              trackEvent(ACTIVITY_FILTER_MIN_DATE);
+              setMinDate(isoFormatLocalDate(val));
+            }}
             cancelLabel={null}
             autoOk
             disableFuture
@@ -245,7 +260,10 @@ function _ActivityPanel({ width }) {
             format="d MMMM yyyy"
             fullWidth
             size="small"
-            onChange={val => setMaxDate(isoFormatLocalDate(val))}
+            onChange={val => {
+              trackEvent(ACTIVITY_FILTER_MAX_DATE);
+              setMaxDate(isoFormatLocalDate(val));
+            }}
             cancelLabel={null}
             autoOk
             disableFuture
