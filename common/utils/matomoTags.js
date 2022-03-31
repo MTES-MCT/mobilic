@@ -22,6 +22,12 @@ export const ADD_ACTIVITY_IN_MISSION_PANEL = {
   name: "Ajout activité dans volet Mission"
 };
 
+export const ADD_EMPLOYEE_IN_MISSION_PANEL = {
+  category: MATOMO_CATEGORIES.ADMIN_MISSION_ACTION,
+  action: "add-employee",
+  name: "Ajout employé dans volet Mission"
+};
+
 export const VALIDATE_MISSION_IN_MISSION_PANEL = {
   category: MATOMO_CATEGORIES.ADMIN_MISSION_ACTION,
   action: MATOMO_ACTIONS.VALIDATE_MISSION,

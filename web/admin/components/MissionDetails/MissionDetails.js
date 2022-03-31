@@ -48,7 +48,10 @@ import {
 import { partition } from "lodash/collection";
 import Button from "@material-ui/core/Button";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-import { VALIDATE_MISSION_IN_MISSION_PANEL } from "common/utils/matomoTags";
+import {
+  ADD_EMPLOYEE_IN_MISSION_PANEL,
+  VALIDATE_MISSION_IN_MISSION_PANEL
+} from "common/utils/matomoTags";
 
 export function MissionDetails({
   missionId,
@@ -426,6 +429,7 @@ export function MissionDetails({
           action={
             globalFieldsEditable
               ? () => {
+                  trackEvent(ADD_EMPLOYEE_IN_MISSION_PANEL);
                   modals.open("selectEmployee", {
                     users: adminStore.users.filter(
                       u =>
