@@ -215,11 +215,6 @@ function _ActivityPanel({ width }) {
   if (selectedCompanies.length === 0) selectedCompanies = companies;
 
   React.useEffect(() => {
-    if (minDate !== adminStore.minWorkDaysDate)
-      setMinDate(adminStore.minWorkDaysDate);
-  }, [adminStore.minWorkDaysDate]);
-
-  React.useEffect(() => {
     trackEvent(ACTIVITY_FILTER_EMPLOYEE);
   }, [users]);
 
