@@ -4,6 +4,8 @@ import { formatTimeOfDay, now } from "common/utils/time";
 import { DEFAULT_LAST_ACTIVITY_TOO_LONG } from "common/utils/mission";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Tooltip from "@material-ui/core/Tooltip";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { OPEN_MISSION_DRAWER_WITH_ACTIVITY_TOO_LONG } from "common/utils/matomoTags";
 
 const useStyles = makeStyles(theme => ({
   warningText: {
@@ -24,6 +26,8 @@ export function WorkDayEndTime({ endTime, dayAggregate, openMission }) {
       Object.keys(dayAggregate.missionNames).length - 1
     ];
   const classes = useStyles();
+  const { trackEvent } = useMatomo();
+
   return endTime ? (
     formatTimeOfDay(endTime)
   ) : !isLastActivityTooLong() ? (
@@ -33,6 +37,7 @@ export function WorkDayEndTime({ endTime, dayAggregate, openMission }) {
       key={lastMissionId()}
       onClick={e => {
         e.stopPropagation();
+        trackEvent(OPEN_MISSION_DRAWER_WITH_ACTIVITY_TOO_LONG);
         openMission(lastMissionId());
       }}
     >

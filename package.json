@@ -12,7 +12,7 @@
   "dependencies": {
     "@babel/core": "7.7.4",
     "@babel/runtime": "^7.6.2",
-    "@datapunt/matomo-tracker-react": "^0.4.0",
+    "@datapunt/matomo-tracker-react": "0.5.1",
     "@date-io/date-fns": "1.x",
     "@material-ui/core": "^4.9.0",
     "@material-ui/icons": "^4.5.1",

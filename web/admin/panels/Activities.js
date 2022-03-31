@@ -43,6 +43,15 @@ import {
 import { DatePicker } from "@material-ui/pickers";
 import withWidth from "@material-ui/core/withWidth";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import {
+  ACTIVITY_FILTER_EMPLOYEE,
+  ACTIVITY_FILTER_MAX_DATE,
+  ACTIVITY_FILTER_MIN_DATE,
+  ADMIN_ADD_MISSION,
+  ADMIN_EXPORT_C1B,
+  ADMIN_EXPORT_EXCEL
+} from "common/utils/matomoTags";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -116,6 +125,7 @@ function _ActivityPanel({ width }) {
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const history = useHistory();
+  const { trackEvent } = useMatomo();
 
   const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
   const [companies, setCompanies] = React.useState([]);
@@ -204,6 +214,10 @@ function _ActivityPanel({ width }) {
   let selectedCompanies = companies.filter(c => c.selected);
   if (selectedCompanies.length === 0) selectedCompanies = companies;
 
+  React.useEffect(() => {
+    trackEvent(ACTIVITY_FILTER_EMPLOYEE);
+  }, [users]);
+
   let selectedUsers = users.filter(u => u.selected);
   if (selectedUsers.length === 0) selectedUsers = users;
 
@@ -247,7 +261,10 @@ function _ActivityPanel({ width }) {
             size="small"
             format="d MMMM yyyy"
             fullWidth
-            onChange={val => setMinDate(isoFormatLocalDate(val))}
+            onChange={val => {
+              trackEvent(ACTIVITY_FILTER_MIN_DATE);
+              setMinDate(isoFormatLocalDate(val));
+            }}
             cancelLabel={null}
             autoOk
             disableFuture
@@ -263,7 +280,10 @@ function _ActivityPanel({ width }) {
             format="d MMMM yyyy"
             fullWidth
             size="small"
-            onChange={val => setMaxDate(isoFormatLocalDate(val))}
+            onChange={val => {
+              trackEvent(ACTIVITY_FILTER_MAX_DATE);
+              setMaxDate(isoFormatLocalDate(val));
+            }}
             cancelLabel={null}
             autoOk
             disableFuture
@@ -289,6 +309,7 @@ function _ActivityPanel({ width }) {
             <MenuItem
               onClick={() => {
                 setExportMenuAnchorEl(null);
+                trackEvent(ADMIN_EXPORT_EXCEL);
                 modals.open("dataExport", {
                   companies,
                   users,
@@ -307,6 +328,7 @@ function _ActivityPanel({ width }) {
             <MenuItem
               onClick={() => {
                 setExportMenuAnchorEl(null);
+                trackEvent(ADMIN_EXPORT_C1B);
                 modals.open("tachographExport", {
                   companies,
                   users,
@@ -349,6 +371,7 @@ function _ActivityPanel({ width }) {
           size="small"
           className={classes.subButton}
           onClick={() => {
+            trackEvent(ADMIN_ADD_MISSION);
             setOpenNewMission(true);
           }}
         >
