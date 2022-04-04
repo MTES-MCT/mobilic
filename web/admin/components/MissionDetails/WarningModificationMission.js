@@ -1,6 +1,5 @@
 import React from "react";
-import { Collapse, ListItemIcon, ListItemText } from "@mui/material";
-import { Alert } from "@mui/lab";
+import { Collapse, ListItemIcon, ListItemText, Alert } from "@mui/material";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { Link } from "../../../common/LinkButton";

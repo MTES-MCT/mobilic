@@ -1,5 +1,5 @@
 import React from "react";
-import { Accordion, AccordionDetails } from "@mui/material";
+import { Accordion, AccordionDetails, Alert } from "@mui/material";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Grid from "@mui/material/Grid";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -9,7 +9,6 @@ import Container from "@mui/material/Container";
 import { makeStyles } from "@mui/styles";
 import Box from "@mui/material/Box";
 import { RegulationArticlesBlock } from "./RegulationLegalArticle";
-import { Alert } from "@mui/lab";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 

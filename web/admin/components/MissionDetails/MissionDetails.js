@@ -38,7 +38,7 @@ import {
   DEFAULT_LAST_ACTIVITY_TOO_LONG,
   missionCreatedByAdmin
 } from "common/utils/mission";
-import { Alert } from "@mui/lab";
+import { Alert } from "@mui/material";
 import { WarningModificationMission } from "./WarningModificationMission";
 import { ACTIVITIES } from "common/utils/activities";
 import {

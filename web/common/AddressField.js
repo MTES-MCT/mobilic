@@ -2,12 +2,12 @@ import React from "react";
 import TextField from "common/utils/TextField";
 import throttle from "lodash/throttle";
 import ListItemText from "@mui/material/ListItemText";
+import Autocomplete from "@mui/material/Autocomplete";
 import {
   formatAddressMainText,
   formatAddressSubText
 } from "common/utils/addresses";
 import { captureSentryException } from "common/utils/sentry";
-import { Autocomplete } from "@mui/lab";
 
 const fetchPlaces = throttle((input, currentPosition = null, callback) => {
   let queryArgs = new URLSearchParams();
