@@ -6,7 +6,7 @@ import {
   COMPANY_SETTINGS_FRAGMENT,
   FULL_MISSION_FRAGMENT
 } from "./apiFragments";
-import { gql } from "@apollo/client/core";
+import { gql } from "graphql-tag";
 import { captureSentryException } from "./sentry";
 import values from "lodash/values";
 import flatten from "lodash/flatten";

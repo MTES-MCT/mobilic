@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client/core";
+import { gql } from "graphql-tag";
 
 export const COMPANY_SETTINGS_FRAGMENT = gql`
   fragment CompanySettings on Company {
