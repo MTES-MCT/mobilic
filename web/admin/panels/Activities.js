@@ -17,11 +17,7 @@ import { useModals } from "common/utils/modals";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
 import max from "lodash/max";
-import {
-  formatDay,
-  isoFormatLocalDate,
-  startOfDayAsDate
-} from "common/utils/time";
+import { formatDay, startOfDayAsDate } from "common/utils/time";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
