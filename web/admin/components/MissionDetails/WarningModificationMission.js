@@ -43,8 +43,13 @@ export function WarningModificationMission() {
   }
 
   return (
-    <Collapse in={modificationAlertOpen} data-qa="modificationWarningCollapse">
-      <Alert key={0} severity="info" className={classes.modificationAlert}>
+    <Collapse in={modificationAlertOpen}>
+      <Alert
+        key={0}
+        severity="info"
+        className={classes.modificationAlert}
+        data-testid="warningAlert"
+      >
         <List disablePadding>
           <ListItem
             disableGutters
@@ -70,7 +75,7 @@ export function WarningModificationMission() {
         <Link
           className={classes.dismissModificationAlert}
           to="/#"
-          data-qa="dismissMissionModificationWarningLink"
+          data-testid="dismissMissionModificationWarningLink"
           onClick={e => {
             e.preventDefault();
             handleDismissWarning();

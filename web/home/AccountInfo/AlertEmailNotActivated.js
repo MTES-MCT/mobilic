@@ -75,7 +75,7 @@ export default function AlertEmailNotActivated({ email }) {
             size="small"
             color="primary"
             variant="contained"
-            data-qa="resendActivationEmailButton"
+            data-testid="resendActivationEmailButton"
             onClick={resendActivationEmail}
           >
             Renvoyer l'email d'activation

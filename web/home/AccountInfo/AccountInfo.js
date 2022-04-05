@@ -86,7 +86,7 @@ export default function Home() {
             )}
             <Grid item {...(isActive ? { sm: 6 } : { xs: 12 })} zeroMinWidth>
               <InfoItem
-                data-qa="emailInfoItem"
+                data-testid="emailInfoItem"
                 name="Email"
                 value={userInfo.email}
                 actionTitle="Modifier email"
@@ -108,7 +108,10 @@ export default function Home() {
                 }
                 alertComponent={
                   isActive || !userInfo.email ? null : (
-                    <AlertEmailNotActivated email={userInfo.email} />
+                    <AlertEmailNotActivated
+                      email={userInfo.email}
+                      data-testid="alertEmailNotActivated"
+                    />
                   )
                 }
               />
