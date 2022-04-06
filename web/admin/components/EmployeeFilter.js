@@ -75,7 +75,7 @@ export function EmployeeFilter({
               ? selectedUsers.length === 0
                 ? "Tous les salariés"
                 : ""
-              : "Tous les salariés"
+              : "Sélectionner un salarié"
           }`}
         />
       )}
