@@ -424,7 +424,7 @@ export function MissionDetails({
         <MissionDetailsSection
           key={3}
           title="Saisies à valider"
-          actionButtonLabel="Ajouter un employé"
+          actionButtonLabel="Ajouter un salarié"
           className={classes.validationSection}
           action={
             globalFieldsEditable

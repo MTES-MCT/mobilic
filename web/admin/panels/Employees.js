@@ -527,7 +527,7 @@ export function Employees({ company, containerRef }) {
       ]}
     />,
     <Box key={3} className={classes.title}>
-      <Typography variant="h4">Employés ({validEmployments.length})</Typography>
+      <Typography variant="h4">Salariés ({validEmployments.length})</Typography>
       {!canDisplayPendingEmployments && (
         <Button
           variant="contained"
