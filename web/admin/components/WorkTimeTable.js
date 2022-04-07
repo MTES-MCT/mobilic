@@ -72,7 +72,7 @@ export function WorkTimeTable({
     periodFormatter = prettyFormatMonth;
   }
   const employeeCol = {
-    label: "Employé",
+    label: "Salarié",
     name: "workerName",
     sortable: true,
     align: "left",

@@ -105,7 +105,7 @@ function _ValidationPanel() {
 
   const commonCols = [
     {
-      label: "Employé",
+      label: "Salarié",
       name: "user",
       align: "left",
       minWidth: 200,

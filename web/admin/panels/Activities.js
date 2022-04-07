@@ -356,7 +356,7 @@ function _ActivityPanel({ width }) {
             periodAggregates.length > 0
               ? ` pour ${
                   uniq(periodAggregates.map(pa => pa.user.id)).length
-                } employé(s) entre le ${formatDay(
+                } salarié(s) entre le ${formatDay(
                   min(periodAggregates.map(pa => pa.periodActualStart))
                 )} et le ${formatDay(
                   max(periodAggregates.map(pa => pa.periodActualEnd))

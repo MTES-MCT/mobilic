@@ -145,11 +145,9 @@ export default function C1BExport({
         </Typography>
         <Typography>
           Les données d'activité sont limitées à une{" "}
-          <strong>période qui ne peut pas dépasser 60 jours</strong>. Par défaut
-          les fichiers générés contiendront les données d'activité sur la
-          période considérée de <strong>tous</strong> les travailleurs de{" "}
-          <strong>toutes</strong> vos entreprises. Vous pouvez limiter la liste
-          à certaines entreprises et/ou à certains salariés.
+          <strong>période qui ne peut pas dépasser 60 jours</strong>. Vous
+          pouvez limiter la liste à certaines entreprises et/ou à certains
+          salariés.
         </Typography>
         <Grid spacing={4} container className={classes.grid}>
           {_companies.length > 1 && (

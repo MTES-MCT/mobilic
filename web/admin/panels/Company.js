@@ -52,7 +52,7 @@ export const usePanelStyles = makeStyles(theme => ({
 
 const COMPANY_SUB_PANELS = [
   {
-    label: "Employés",
+    label: "Salariés",
     view: "employees",
     component: props => <Employees {...props} />
   },
