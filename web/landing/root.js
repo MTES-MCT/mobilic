@@ -6,8 +6,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { Header } from "../common/Header";
 import { ManagerImage, SoftwareImage, WorkerImage } from "common/utils/icons";
-import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import { useIsWidthDown } from "common/utils/useWidth";
 import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizontal.svg";
 import BackgroundVerticalImage from "common/assets/images/landing-hero-vertical.svg";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
@@ -73,11 +72,6 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(1)
   }
 }));
-
-function useIsWidthDown(breakpoint) {
-  const theme = useTheme();
-  return useMediaQuery(theme.breakpoints.down(breakpoint));
-}
 
 function Showcase({
   image,

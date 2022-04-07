@@ -21,8 +21,7 @@ import {
 
 import { Header } from "../common/Header";
 import { makeStyles } from "@mui/styles";
-import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import { useIsWidthUp, useWidth } from "common/utils/useWidth";
 import { SideMenu } from "./components/SideMenu";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { ADMIN_VIEWS } from "./utils/navigation";
@@ -48,28 +47,6 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(1)
   }
 }));
-
-/**
- * Be careful using this hook. It only works because the number of
- * breakpoints in theme is static. It will break once you change the number of
- * breakpoints. See https://reactjs.org/docs/hooks-rules.html#only-call-hooks-at-the-top-level
- */
-function useWidth() {
-  const theme = useTheme();
-  const keys = [...theme.breakpoints.keys].reverse();
-  return (
-    keys.reduce((output, key) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const matches = useMediaQuery(theme.breakpoints.up(key));
-      return !output && matches ? key : output;
-    }, null) || "xs"
-  );
-}
-
-function useIsWidthUp(breakpoint) {
-  const theme = useTheme();
-  return useMediaQuery(theme.breakpoints.up(breakpoint));
-}
 
 function _Admin() {
   const api = useApi();

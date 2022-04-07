@@ -10,7 +10,7 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { Logos } from "./Logos";
 import MenuIcon from "@mui/icons-material/Menu";
 import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import { useIsWidthUp } from "common/utils/useWidth";
 import { makeStyles } from "@mui/styles";
 import Button from "@mui/material/Button";
 import ListItem from "@mui/material/ListItem";
@@ -135,11 +135,6 @@ const useStyles = makeStyles(theme => ({
     flexWrap: "wrap"
   }
 }));
-
-function useIsWidthUp(breakpoint) {
-  const theme = useTheme();
-  return useMediaQuery(theme.breakpoints.up(breakpoint));
-}
 
 function HeaderContainer(props) {
   const theme = useTheme();

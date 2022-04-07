@@ -1,7 +1,6 @@
 import React from "react";
 import MuiSnackbar from "@mui/material/Snackbar";
-import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import { useIsWidthUp } from "common/utils/useWidth";
 import Alert from "@mui/material/Alert";
 import {
   formatApiError,
@@ -9,11 +8,6 @@ import {
   isGraphQLError
 } from "common/utils/errors";
 import { captureSentryException } from "common/utils/sentry";
-
-function useIsWidthUp(breakpoint) {
-  const theme = useTheme();
-  return useMediaQuery(theme.breakpoints.up(breakpoint));
-}
 
 const SnackbarContext = React.createContext(() => {});
 
