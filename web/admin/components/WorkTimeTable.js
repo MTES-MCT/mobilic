@@ -40,6 +40,7 @@ export function WorkTimeTable({
   workTimeEntries,
   className,
   showMissionName,
+  showExpenditures,
   loading,
   width
 }) {
@@ -144,13 +145,16 @@ export function WorkTimeTable({
       startTimeCol,
       endTimeCol,
       workTimeCol,
-      restTimeCol
+      restTimeCol,
+      pictoCol
     ];
-    columns.push(pictoCol);
-  } else if (period === "week") {
-    columns = [employeeCol, workTimeCol, workedDaysCol, expenditureCol];
   } else {
-    columns = [employeeCol, workTimeCol, workedDaysCol, expenditureCol];
+    columns = [
+      employeeCol,
+      workTimeCol,
+      workedDaysCol,
+      showExpenditures && expenditureCol
+    ];
   }
 
   columns = columns.filter(Boolean);
