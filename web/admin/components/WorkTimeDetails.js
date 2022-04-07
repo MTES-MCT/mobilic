@@ -29,6 +29,8 @@ import { MetricCard } from "../../common/InfoCard";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ExpendituresCard } from "./ExpendituresCard";
 import { ActivitiesCard } from "./ActivitiesCard";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL } from "common/utils/matomoTags";
 
 export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   const classes = useStyles();
@@ -38,6 +40,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   const [activitiesOver3Days, setActivitiesOver3Days] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const { trackEvent } = useMatomo();
 
   const periodEnd = new Date(workTimeEntry.periodStart * 1000 + DAY * 1000);
 
@@ -273,6 +276,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
               columns={missionTableColumns}
               entries={missions}
               onRowClick={entry => {
+                trackEvent(OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL);
                 openMission(entry.id);
               }}
             />

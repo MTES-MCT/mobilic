@@ -62,7 +62,9 @@ export function CompanyFilter({ companies, setCompanies, className }) {
           className={classes.formControl}
           {...params}
           label="Entreprises"
-          placeholder="Filtrer les entreprises"
+          placeholder={`${
+            selectedCompanies.length === 0 ? "Toutes les entreprises" : ""
+          }`}
         />
       )}
     />

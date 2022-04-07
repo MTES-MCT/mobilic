@@ -47,6 +47,11 @@ import {
 } from "../../selectors/validationEntriesSelectors";
 import { partition } from "lodash/collection";
 import Button from "@mui/material/Button";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import {
+  ADD_EMPLOYEE_IN_MISSION_PANEL,
+  VALIDATE_MISSION_IN_MISSION_PANEL
+} from "common/utils/matomoTags";
 
 export function MissionDetails({
   missionId,
@@ -59,6 +64,7 @@ export function MissionDetails({
   const adminStore = useAdminStore();
   const api = useApi();
   const modals = useModals();
+  const { trackEvent } = useMatomo();
 
   const [mission_, setMission] = React.useState(null);
 
@@ -423,11 +429,12 @@ export function MissionDetails({
         <MissionDetailsSection
           key={3}
           title="Saisies à valider"
-          actionButtonLabel="Ajouter un employé"
+          actionButtonLabel="Ajouter un salarié"
           className={classes.validationSection}
           action={
             globalFieldsEditable
               ? () => {
+                  trackEvent(ADD_EMPLOYEE_IN_MISSION_PANEL);
                   modals.open("selectEmployee", {
                     users: adminStore.users.filter(
                       u =>
@@ -554,6 +561,7 @@ export function MissionDetails({
                 className={classes.validationButton}
                 onClick={async e => {
                   e.stopPropagation();
+                  trackEvent(VALIDATE_MISSION_IN_MISSION_PANEL);
                   entriesToValidateByAdmin.map(workerEntryToValidate => {
                     missionActions.validateMission(
                       workerEntryToValidate.user.id

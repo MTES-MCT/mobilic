@@ -41,6 +41,15 @@ import {
 import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import TextField from "@mui/material/TextField";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import {
+  ACTIVITY_FILTER_EMPLOYEE,
+  ACTIVITY_FILTER_MAX_DATE,
+  ACTIVITY_FILTER_MIN_DATE,
+  ADMIN_ADD_MISSION,
+  ADMIN_EXPORT_C1B,
+  ADMIN_EXPORT_EXCEL
+} from "common/utils/matomoTags";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -131,6 +140,7 @@ function ActivitiesPanel() {
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const history = useHistory();
+  const { trackEvent } = useMatomo();
 
   const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
   const [companies, setCompanies] = React.useState([]);
@@ -221,6 +231,10 @@ function ActivitiesPanel() {
   let selectedCompanies = companies.filter(c => c.selected);
   if (selectedCompanies.length === 0) selectedCompanies = companies;
 
+  React.useEffect(() => {
+    trackEvent(ACTIVITY_FILTER_EMPLOYEE);
+  }, [users]);
+
   let selectedUsers = users.filter(u => u.selected);
   if (selectedUsers.length === 0) selectedUsers = users;
 
@@ -266,7 +280,10 @@ function ActivitiesPanel() {
             disableCloseOnSelect={false}
             showToolbar={false}
             disableMaskedInput={true}
-            onChange={setMinDate}
+            onChange={val => {
+              trackEvent(ACTIVITY_FILTER_MIN_DATE);
+              setMinDate(val);
+            }}
             cancelText={null}
             maxDate={today}
             renderInput={props => (
@@ -283,7 +300,10 @@ function ActivitiesPanel() {
             disableCloseOnSelect={false}
             showToolbar={false}
             disableMaskedInput={true}
-            onChange={setMaxDate}
+            onChange={val => {
+              trackEvent(ACTIVITY_FILTER_MAX_DATE);
+              setMaxDate(val);
+            }}
             cancelText={null}
             maxDate={today}
             renderInput={props => (
@@ -309,6 +329,7 @@ function ActivitiesPanel() {
             <MenuItem
               onClick={() => {
                 setExportMenuAnchorEl(null);
+                trackEvent(ADMIN_EXPORT_EXCEL);
                 modals.open("dataExport", {
                   companies,
                   users,
@@ -327,6 +348,7 @@ function ActivitiesPanel() {
             <MenuItem
               onClick={() => {
                 setExportMenuAnchorEl(null);
+                trackEvent(ADMIN_EXPORT_C1B);
                 modals.open("tachographExport", {
                   companies,
                   users,
@@ -354,7 +376,7 @@ function ActivitiesPanel() {
             periodAggregates.length > 0
               ? ` pour ${
                   uniq(periodAggregates.map(pa => pa.user.id)).length
-                } employé(s) entre le ${formatDay(
+                } salarié(s) entre le ${formatDay(
                   min(periodAggregates.map(pa => pa.periodActualStart))
                 )} et le ${formatDay(
                   max(periodAggregates.map(pa => pa.periodActualEnd))
@@ -369,6 +391,7 @@ function ActivitiesPanel() {
           size="small"
           className={classes.subButton}
           onClick={() => {
+            trackEvent(ADMIN_ADD_MISSION);
             setOpenNewMission(true);
           }}
         >
