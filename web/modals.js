@@ -24,6 +24,7 @@ import PDFExport from "./pwa/components/PDFExport";
 import BatchInvite from "./admin/components/BatchInvite";
 import WarningEndMissionModal from "./pwa/components/WarningEndMissionModal/WarningEndMissionModal";
 import NewsletterSubscriptionModal from "./landing/NewsletterSubscription";
+import GeolocPermissionInfoModal from "./pwa/components/GeolocPermissionInfoModal";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -51,5 +52,6 @@ export const MODAL_DICT = {
   kilometerReading: KilometerReadingModal,
   selectEmployee: SelectEmployeeModal,
   newsletterSubscription: NewsletterSubscriptionModal,
-  warningEndMissionModal: WarningEndMissionModal
+  warningEndMissionModal: WarningEndMissionModal,
+  geolocPermissionInfoModal: GeolocPermissionInfoModal
 };
