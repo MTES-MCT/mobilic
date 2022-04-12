@@ -23,6 +23,10 @@ const formatWebpackMessages = require("react-dev-utils/formatWebpackMessages");
 const printHostingInstructions = require("react-dev-utils/printHostingInstructions");
 const FileSizeReporter = require("react-dev-utils/FileSizeReporter");
 const printBuildError = require("react-dev-utils/printBuildError");
+const parseArgs = require("minimist");
+
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
 
 const measureFileSizesBeforeBuild =
   FileSizeReporter.measureFileSizesBeforeBuild;
@@ -140,6 +144,12 @@ function build(previousFileSizes) {
   }
 
   console.log("Creating an optimized production build...");
+
+  const args = parseArgs(process.argv.slice(2));
+  if (args.analyze) {
+    console.log("And analyze bundle...");
+    config.plugins.push(new BundleAnalyzerPlugin());
+  }
 
   const compiler = webpack(config);
   return new Promise((resolve, reject) => {

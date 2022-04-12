@@ -112,6 +112,7 @@
     "start": "node scripts/start.js",
     "start-https": "HTTPS=true node scripts/start.js",
     "build": "INLINE_RUNTIME_CHUNK=false node scripts/build.js && rm build/static/js/*.map",
+    "build-analyze": "INLINE_RUNTIME_CHUNK=false node scripts/build.js --analyze",
     "build-with-nginx": "yarn build && scripts/start_nginx.sh",
     "test": "node scripts/test.js",
     "lint": "eslint --ext .js,.jsx ./"
