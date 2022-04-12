@@ -19,6 +19,8 @@ import { useMissionDrawer } from "./MissionDrawer";
 import { JoinedText } from "./JoinedText";
 import { useAdminCompanies } from "../store/store";
 import { WorkDayEndTime } from "./WorkDayEndTime";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
 
 const useStyles = makeStyles(theme => ({
   warningText: {
@@ -53,6 +55,8 @@ export function WorkTimeTable({
 
   const openMission = useMissionDrawer()[1];
 
+  const { trackEvent } = useMatomo();
+
   const classes = useStyles();
 
   let periodLabel, periodFormatter;
@@ -67,7 +71,7 @@ export function WorkTimeTable({
     periodFormatter = prettyFormatMonth;
   }
   const employeeCol = {
-    label: "Employé",
+    label: "Salarié",
     name: "workerName",
     sortable: true,
     align: "left",
@@ -241,6 +245,7 @@ export function WorkTimeTable({
         virtualized
         onRowClick={entry => {
           if (!entry.day) return false;
+          trackEvent(OPEN_WORKDAY_DRAWER);
           setWorkdayOnFocus(entry);
           setWordDayDrawerOpen(true);
         }}

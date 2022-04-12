@@ -13,7 +13,7 @@ export default function SelectEmployeeModal({
   return (
     <Dialog onClose={handleClose} open={open}>
       <CustomDialogTitle
-        title="Sélectionner un employé"
+        title="Sélectionner un salarié"
         handleClose={handleClose}
       />
       <DialogContent>

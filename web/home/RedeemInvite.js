@@ -60,10 +60,12 @@ export function RedeemInvite() {
           { context: { nonPublicApi: true } }
         );
         if (!shouldLoadUser) {
-          await store.createEntityObject(
-            apiResponse.data.signUp.redeemInvite,
-            "employments"
-          );
+          await store.updateEntityObject({
+            objectId: employment.data.employment.id,
+            entity: "employments",
+            update: apiResponse.data.signUp.redeemInvite,
+            createOrReplace: true
+          });
           store.batchUpdate();
         } else await store.updateUserIdAndInfo();
         await broadCastChannel.postMessage("update");

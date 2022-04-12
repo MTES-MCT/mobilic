@@ -7,8 +7,7 @@ import { LoadingButton } from "common/components/LoadingButton";
 import ReactMarkdown from "react-markdown";
 import CircularProgress from "@mui/material/CircularProgress";
 import { makeStyles } from "@mui/styles";
-import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import { useIsWidthDown } from "common/utils/useWidth";
 import Button from "@mui/material/Button";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { CustomDialogActions } from "../common/CustomDialogTitle";
@@ -77,11 +76,6 @@ function CGUContent() {
       <CircularProgress color="primary" />
     </Box>
   );
-}
-
-function useIsWidthDown(breakpoint) {
-  const theme = useTheme();
-  return useMediaQuery(theme.breakpoints.down(breakpoint));
 }
 
 function CGUModal({ open, handleClose, handleAccept, handleReject, width }) {

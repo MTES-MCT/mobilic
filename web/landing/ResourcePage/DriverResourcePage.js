@@ -41,8 +41,8 @@ export function DriverResourcePage() {
             <Box>
               <SlideshareCard
                 description="Notice d'utilisation"
-                slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/mloxFeuB3sLZon/"
-                downloadLink="https://drive.google.com/uc?id=1vSuHhFWAoF2ozXV02u8xMwtcnhmttCs-&export=download"
+                slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/acEhSEf8PbwBCK/"
+                downloadLink="https://drive.google.com/uc?id=1Dy5hZosWwKGDHziksKC2OnTHoJx4YCbN&export=download"
               />
             </Box>
           </Grid>

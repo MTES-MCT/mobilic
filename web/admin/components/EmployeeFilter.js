@@ -69,9 +69,13 @@ export function EmployeeFilter({
         <TextField
           className={classes.formControl}
           {...params}
-          label={`Employé${multiple ? "s" : ""}`}
+          label={`Salarié${multiple ? "s" : ""}`}
           placeholder={`${
-            multiple ? "Filtrer les employés" : "Sélectionner un employé"
+            multiple
+              ? selectedUsers.length === 0
+                ? "Tous les salariés"
+                : ""
+              : "Sélectionner un salarié"
           }`}
         />
       )}
