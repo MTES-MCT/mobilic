@@ -8,6 +8,16 @@ import {
   formatAddressSubText
 } from "common/utils/addresses";
 import { captureSentryException } from "common/utils/sentry";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import Button from "@mui/material/Button";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles(theme => ({
+  geolocationButton: {
+    marginLeft: theme.spacing(3),
+    textTransform: "none"
+  }
+}));
 
 const fetchPlaces = throttle((input, currentPosition = null, callback) => {
   let queryArgs = new URLSearchParams();
@@ -43,10 +53,22 @@ export function AddressField({
   currentPosition,
   required,
   disabled = false,
-  small = false
+  small = false,
+  askCurrentPosition = () => {},
+  disableGeolocation = true
 }) {
+  const detaultOptions = () => {
+    const companyAddresses = [
+      ...(defaultAddresses || []).map(a => ({ ...a, default: true }))
+    ];
+    if (!disableGeolocation && !currentPosition) {
+      companyAddresses.unshift({ activateLocation: true, default: false });
+    }
+    return companyAddresses;
+  };
+
   const [inputValue, setInputValue] = React.useState("");
-  const [options, setOptions] = React.useState([]);
+  const [options, setOptions] = React.useState(detaultOptions());
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
@@ -54,25 +76,22 @@ export function AddressField({
     setLoading(true);
 
     if (inputValue === "" && !currentPosition) {
-      setOptions(value ? [value] : []);
-      setLoading(false);
-      return undefined;
+      setOptions(value ? [value] : detaultOptions());
+    } else {
+      fetchPlaces(inputValue, currentPosition, results => {
+        if (inputValue === "") {
+          setOptions(results.concat(detaultOptions()));
+        } else {
+          setOptions(results);
+        }
+        setLoading(false);
+      });
     }
-
-    fetchPlaces(inputValue, currentPosition, results => {
-      setOptions(results);
-      setLoading(false);
-    });
   }, [value, inputValue, currentPosition]);
 
-  const isSearchingAddress = inputValue && inputValue !== "";
+  const classes = useStyles();
 
-  const _options = isSearchingAddress
-    ? options
-    : [
-        ...options,
-        ...(defaultAddresses || []).map(a => ({ ...a, default: true }))
-      ];
+  const isSearchingAddress = inputValue && inputValue !== "";
 
   return (
     <Autocomplete
@@ -90,7 +109,7 @@ export function AddressField({
       }
       disabled={disabled}
       selectOnFocus
-      options={_options}
+      options={options}
       autoComplete
       includeInputInList
       filterSelectedOptions
@@ -100,7 +119,6 @@ export function AddressField({
       size={small ? "small" : "medium"}
       filterOptions={(options, params) => {
         const filtered = [...options];
-
         // Suggest the creation of a new value
         if (params.inputValue !== "") {
           filtered.push({
@@ -116,7 +134,6 @@ export function AddressField({
             )
           });
         }
-
         return filtered;
       }}
       onChange={(event, newValue) => {
@@ -152,14 +169,28 @@ export function AddressField({
       onClose={() => {
         setOpen(false);
       }}
-      renderOption={(props, option) => (
-        <ListItemText
-          {...props}
-          primary={option.manual ? option.label : formatAddressMainText(option)}
-          primaryTypographyProps={{ className: "bold" }}
-          secondary={formatAddressSubText(option)}
-        />
-      )}
+      renderOption={(props, option) =>
+        option.activateLocation ? (
+          <Button
+            startIcon={<LocationOnIcon />}
+            variant="outlined"
+            className={classes.geolocationButton}
+            disableElevation
+            onClick={e => askCurrentPosition()}
+          >
+            Activer la géolocalisation
+          </Button>
+        ) : (
+          <ListItemText
+            {...props}
+            primary={
+              option.manual ? option.label : formatAddressMainText(option)
+            }
+            primaryTypographyProps={{ className: "bold" }}
+            secondary={formatAddressSubText(option)}
+          />
+        )
+      }
     />
   );
 }

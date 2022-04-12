@@ -4,6 +4,7 @@ import NewMissionForm from "../../common/NewMissionForm";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { DISMISSABLE_WARNINGS } from "../../admin/utils/dismissableWarnings";
 import { useModals } from "common/utils/modals";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 
 export default function NewMissionModal({
   open,
@@ -21,12 +22,32 @@ export default function NewMissionModal({
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
   const modals = useModals();
+  const alerts = useSnackbarAlerts();
 
-  const askLocationPermission = () => {
+  const askCurrentPosition = () => {
     if (open && !disableCurrentPosition && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(position => {
-        setCurrentPosition(position);
-      });
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          setCurrentPosition(position);
+        },
+        error => {
+          switch (error.code) {
+            case 1:
+              alerts.error(
+                "L'autorisation de localisation a été refusée. Pour l'activer, allez dans les paramètres de sécurité de votre navigateur.",
+                {},
+                6000
+              );
+              break;
+            default:
+              alerts.error(
+                "La localisation est momentanément indisponible sur le téléphone. Veuillez réessayer plus tard.",
+                {},
+                6000
+              );
+          }
+        }
+      );
     }
   };
 
@@ -38,7 +59,10 @@ export default function NewMissionModal({
           DISMISSABLE_WARNINGS.EMPLOYEE_GEOLOCATION_INFORMATION
         )
       ) {
-        modals.open("geolocPermissionInfoModal", { askLocationPermission });
+        modals.open("geolocPermissionInfoModal", {
+          askCurrentPosition,
+          disableGeolocation: { disableCurrentPosition }
+        });
       }
     }
   }, [open]);
@@ -53,6 +77,7 @@ export default function NewMissionModal({
         disableKilometerReading={disableKilometerReading}
         withDay={withDay}
         withEndLocation={withEndLocation}
+        askCurrentPosition={askCurrentPosition}
       />
     </FunnelModal>
   );

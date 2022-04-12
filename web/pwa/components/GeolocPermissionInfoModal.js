@@ -18,7 +18,7 @@ import { captureSentryException } from "common/utils/sentry";
 export default function GeolocPermissionInfoModal({
   open,
   handleClose,
-  askLocationPermission
+  askCurrentPosition
 }) {
   const useStyles = makeStyles(theme => ({
     container: {
@@ -112,7 +112,7 @@ export default function GeolocPermissionInfoModal({
 
   const acceptGeoLocation = async () => {
     await disableWarning();
-    askLocationPermission();
+    askCurrentPosition();
     handleClose();
   };
 
