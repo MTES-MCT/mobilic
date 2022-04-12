@@ -14,6 +14,7 @@ import { DISMISSABLE_WARNINGS } from "../../admin/utils/dismissableWarnings";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { captureSentryException } from "common/utils/sentry";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 
 export default function GeolocPermissionInfoModal({
   open,
@@ -92,9 +93,18 @@ export default function GeolocPermissionInfoModal({
   });
   const classes = useStyles();
   const api = useApi();
+  const store = useStoreSyncedWithLocalStorage();
 
   async function disableWarning() {
     try {
+      await store.setUserInfo({
+        ...store.userInfo(),
+        disabledWarnings: store
+          .userInfo()
+          .disabledWarnings.concat([
+            DISMISSABLE_WARNINGS.EMPLOYEE_GEOLOCATION_INFORMATION
+          ])
+      });
       await api.graphQlMutate(
         DISABLE_WARNING_MUTATION,
         { warningName: DISMISSABLE_WARNINGS.EMPLOYEE_GEOLOCATION_INFORMATION },

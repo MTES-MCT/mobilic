@@ -5,6 +5,7 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { DISMISSABLE_WARNINGS } from "../../admin/utils/dismissableWarnings";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import { setCurrentLocation } from "common/utils/location";
 
 export default function NewMissionModal({
   open,
@@ -24,30 +25,9 @@ export default function NewMissionModal({
   const modals = useModals();
   const alerts = useSnackbarAlerts();
 
-  const askCurrentPosition = () => {
-    if (open && !disableCurrentPosition && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          setCurrentPosition(position);
-        },
-        error => {
-          switch (error.code) {
-            case 1:
-              alerts.error(
-                "L'autorisation de localisation a été refusée. Pour l'activer, allez dans les paramètres de sécurité de votre navigateur.",
-                {},
-                6000
-              );
-              break;
-            default:
-              alerts.error(
-                "La localisation est momentanément indisponible sur le téléphone. Veuillez réessayer plus tard.",
-                {},
-                6000
-              );
-          }
-        }
-      );
+  const askCurrentPosition = (askedByUser = true) => {
+    if (open && !disableCurrentPosition) {
+      setCurrentLocation(setCurrentPosition, alerts, askedByUser);
     }
   };
 
@@ -63,6 +43,8 @@ export default function NewMissionModal({
           askCurrentPosition,
           disableGeolocation: { disableCurrentPosition }
         });
+      } else {
+        askCurrentPosition(false);
       }
     }
   }, [open]);

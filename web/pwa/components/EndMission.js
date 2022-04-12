@@ -10,6 +10,8 @@ import { AddressField } from "../../common/AddressField";
 import KilometerReadingField from "../../common/KilometerReadingField";
 import MobileDateTimePicker from "@mui/lab/MobileDateTimePicker";
 import { getDaysBetweenTwoDates, now } from "common/utils/time";
+import { setCurrentLocation } from "common/utils/location";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 
 export default function EndMissionModal({
   open,
@@ -39,6 +41,13 @@ export default function EndMissionModal({
   function canSubmit() {
     return (currentEndLocation || address) && !kilometerReadingError && endTime;
   }
+  const alerts = useSnackbarAlerts();
+
+  const askCurrentPosition = (askedByUser = true) => {
+    if (open) {
+      setCurrentLocation(setCurrentPosition, alerts, askedByUser);
+    }
+  };
 
   React.useEffect(() => {
     setExpenditures(currentExpenditures || {});
@@ -47,12 +56,11 @@ export default function EndMissionModal({
     setCurrentPosition(null);
     setKilometerReading("");
 
-    if (open && navigator.geolocation) {
+    if (open) {
       setLoading(false);
-      if (!currentEndLocation && navigator.geolocation)
-        navigator.geolocation.getCurrentPosition(position => {
-          setCurrentPosition(position);
-        });
+      if (!currentEndLocation) {
+        askCurrentPosition(false);
+      }
     }
   }, [currentExpenditures, currentEndLocation, open]);
 
@@ -115,6 +123,7 @@ export default function EndMissionModal({
               onChange={setAddress}
               currentPosition={currentPosition}
               defaultAddresses={companyAddresses}
+              disableGeolocation={false}
             />
             {currentMission.company &&
             currentMission.company.settings &&
