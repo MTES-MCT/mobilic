@@ -183,6 +183,7 @@ export function AddressField({
         ) : (
           <ListItemText
             {...props}
+            style={{ display: "block" }}
             primary={
               option.manual ? option.label : formatAddressMainText(option)
             }
