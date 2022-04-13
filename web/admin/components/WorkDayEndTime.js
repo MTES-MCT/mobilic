@@ -35,6 +35,7 @@ export function WorkDayEndTime({ endTime, dayAggregate, openMission }) {
   ) : (
     <Link
       key={lastMissionId()}
+      to="#"
       onClick={e => {
         e.stopPropagation();
         trackEvent(OPEN_MISSION_DRAWER_WITH_ACTIVITY_TOO_LONG);
