@@ -105,7 +105,7 @@ export default function GeolocPermissionInfoModal({
             DISMISSABLE_WARNINGS.EMPLOYEE_GEOLOCATION_INFORMATION
           ])
       });
-      await api.graphQlMutate(
+      api.graphQlMutate(
         DISABLE_WARNING_MUTATION,
         { warningName: DISMISSABLE_WARNINGS.EMPLOYEE_GEOLOCATION_INFORMATION },
         { context: { nonPublicApi: true } }
@@ -149,7 +149,10 @@ export default function GeolocPermissionInfoModal({
         </IconButton>
         <Box className={classes.locationExplanation}>
           <Typography className={classes.sharePositionText}>
-            👋 Partagez votre position géographique
+            <span role="img" aria-label="hello">
+              👋
+            </span>{" "}
+            Partagez votre position géographique
           </Typography>
           <Typography className={`${classes.facilitateText} bold`}>
             afin de faciliter la saisie de votre lieu de prise et de fin de
@@ -162,7 +165,7 @@ export default function GeolocPermissionInfoModal({
           data-testid="geoloc-modal-alert-info"
         >
           <Typography className={classes.informationText}>
-            Rassurez vous, vous trajet ne seront pas géolocalisés et votre
+            Rassurez-vous, vos trajets ne seront pas géolocalisés et votre
             accord sera toujours demandé !
           </Typography>
         </Alert>
