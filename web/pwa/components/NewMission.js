@@ -40,11 +40,8 @@ export default function NewMissionModal({
         )
       ) {
         modals.open("geolocPermissionInfoModal", {
-          askCurrentPosition,
-          disableGeolocation: { disableCurrentPosition }
+          askCurrentPosition
         });
-      } else {
-        askCurrentPosition(false);
       }
     }
   }, [open]);

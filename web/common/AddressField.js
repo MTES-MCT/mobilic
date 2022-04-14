@@ -8,14 +8,27 @@ import {
   formatAddressSubText
 } from "common/utils/addresses";
 import { captureSentryException } from "common/utils/sentry";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Button from "@mui/material/Button";
 import { makeStyles } from "@mui/styles";
+import { MyLocation } from "@mui/icons-material";
+import { Alert } from "@mui/material";
+import Box from "@mui/material/Box";
 
 const useStyles = makeStyles(theme => ({
   geolocationButton: {
     marginLeft: theme.spacing(3),
     textTransform: "none"
+  },
+  geolocationAlert: {
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(3),
+    marginTop: theme.spacing(1),
+    fontSize: "0.75em"
+  },
+  addressOption: {
+    display: "block",
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(3)
   }
 }));
 
@@ -171,19 +184,24 @@ export function AddressField({
       }}
       renderOption={(props, option) =>
         option.activateLocation ? (
-          <Button
-            startIcon={<LocationOnIcon />}
-            variant="outlined"
-            className={classes.geolocationButton}
-            disableElevation
-            onClick={e => askCurrentPosition()}
-          >
-            Activer la géolocalisation
-          </Button>
+          <Box>
+            <Button
+              startIcon={<MyLocation />}
+              variant="outlined"
+              className={classes.geolocationButton}
+              disableElevation
+              onClick={e => askCurrentPosition()}
+            >
+              Utiliser ma position actuelle
+            </Button>
+            <Alert severity="info" className={classes.geolocationAlert}>
+              Vos déplacements ne seront pas géolocalisés
+            </Alert>
+          </Box>
         ) : (
           <ListItemText
             {...props}
-            style={{ display: "block" }}
+            className={classes.addressOption}
             primary={
               option.manual ? option.label : formatAddressMainText(option)
             }

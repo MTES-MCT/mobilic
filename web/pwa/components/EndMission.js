@@ -123,6 +123,7 @@ export default function EndMissionModal({
               onChange={setAddress}
               currentPosition={currentPosition}
               defaultAddresses={companyAddresses}
+              askCurrentPosition={askCurrentPosition}
               disableGeolocation={false}
             />
             {currentMission.company &&
