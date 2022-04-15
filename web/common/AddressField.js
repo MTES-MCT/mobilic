@@ -146,19 +146,18 @@ export function AddressField({
       noOptionsText="Pas de résultats"
       loadingText="Chargement..."
       open={open}
-      onOpen={() => {
-        setOpen(true);
-      }}
-      onClose={() => {
-        setOpen(false);
-      }}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
       renderOption={(props, option) => (
-        <ListItemText
-          {...props}
-          primary={option.manual ? option.label : formatAddressMainText(option)}
-          primaryTypographyProps={{ className: "bold" }}
-          secondary={formatAddressSubText(option)}
-        />
+        <li {...props}>
+          <ListItemText
+            primary={
+              option.manual ? option.label : formatAddressMainText(option)
+            }
+            primaryTypographyProps={{ className: "bold" }}
+            secondary={formatAddressSubText(option)}
+          />
+        </li>
       )}
     />
   );
