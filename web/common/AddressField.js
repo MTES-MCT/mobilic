@@ -5,7 +5,8 @@ import ListItemText from "@mui/material/ListItemText";
 import Autocomplete from "@mui/material/Autocomplete";
 import {
   formatAddressMainText,
-  formatAddressSubText
+  formatAddressSubText,
+  formatKey
 } from "common/utils/addresses";
 import { captureSentryException } from "common/utils/sentry";
 
@@ -149,7 +150,7 @@ export function AddressField({
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
       renderOption={(props, option) => (
-        <li {...props}>
+        <li {...props} key={formatKey(option)}>
           <ListItemText
             primary={
               option.manual ? option.label : formatAddressMainText(option)
