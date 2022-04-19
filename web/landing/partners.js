@@ -191,7 +191,6 @@ export function Partners() {
             container
             justifyContent="space-evenly"
             alignItems="center"
-            wrap
             spacing={7}
           >
             {partnersSrcs.keys().map(src => (
