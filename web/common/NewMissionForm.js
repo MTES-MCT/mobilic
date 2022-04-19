@@ -137,7 +137,6 @@ export default function NewMissionForm({
               onChange={setDay}
               cancelText={null}
               disableCloseOnSelect={false}
-              showToolbar={false}
               disableMaskedInput={true}
               minDate={minDate}
               maxDate={today}

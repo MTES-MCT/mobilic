@@ -139,7 +139,6 @@ export default function ExcelExport({
                 cancelText={null}
                 clearText="Annuler"
                 disableCloseOnSelect={false}
-                showToolbar={false}
                 disableMaskedInput={true}
                 maxDate={today}
                 renderInput={props => (
@@ -157,7 +156,6 @@ export default function ExcelExport({
                 cancelText={null}
                 clearText="Annuler"
                 disableCloseOnSelect={false}
-                showToolbar={false}
                 disableMaskedInput={true}
                 maxDate={today}
                 renderInput={props => (

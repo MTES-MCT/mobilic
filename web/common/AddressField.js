@@ -5,7 +5,8 @@ import ListItemText from "@mui/material/ListItemText";
 import Autocomplete from "@mui/material/Autocomplete";
 import {
   formatAddressMainText,
-  formatAddressSubText
+  formatAddressSubText,
+  formatKey
 } from "common/utils/addresses";
 import { captureSentryException } from "common/utils/sentry";
 import Button from "@mui/material/Button";
@@ -24,12 +25,12 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(3),
     marginTop: theme.spacing(1),
     fontSize: "0.75em"
-  },
-  addressOption: {
-    display: "block",
-    marginLeft: theme.spacing(3),
-    marginRight: theme.spacing(3)
   }
+  // addressOption: {
+  //   display: "block",
+  //   marginLeft: theme.spacing(3),
+  //   marginRight: theme.spacing(3)
+  // }
 }));
 
 const fetchPlaces = throttle((input, currentPosition = null, callback) => {
@@ -176,12 +177,8 @@ export function AddressField({
       noOptionsText="Pas de résultats"
       loadingText="Chargement..."
       open={open}
-      onOpen={() => {
-        setOpen(true);
-      }}
-      onClose={() => {
-        setOpen(false);
-      }}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
       renderOption={(props, option) =>
         option.activateLocation ? (
           <Box>
@@ -199,15 +196,19 @@ export function AddressField({
             </Alert>
           </Box>
         ) : (
-          <ListItemText
+          <li
             {...props}
-            className={classes.addressOption}
-            primary={
-              option.manual ? option.label : formatAddressMainText(option)
-            }
-            primaryTypographyProps={{ className: "bold" }}
-            secondary={formatAddressSubText(option)}
-          />
+            key={formatKey(option)}
+            //className={classes.addressOption}
+          >
+            <ListItemText
+              primary={
+                option.manual ? option.label : formatAddressMainText(option)
+              }
+              primaryTypographyProps={{ className: "bold" }}
+              secondary={formatAddressSubText(option)}
+            />
+          </li>
         )
       }
     />

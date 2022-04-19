@@ -73,7 +73,6 @@ export default function TerminateEmployment({
               onChange={setEndDate}
               cancelText={null}
               disableCloseOnSelect={false}
-              showToolbar={false}
               disableMaskedInput={true}
               maxDate={today}
               renderInput={props => <TextField {...props} variant="outlined" />}

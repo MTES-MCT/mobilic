@@ -182,7 +182,6 @@ export default function C1BExport({
                 onChange={setMinDate}
                 cancelText={null}
                 disableCloseOnSelect={false}
-                showToolbar={false}
                 disableMaskedInput={true}
                 maxDate={today}
                 renderInput={props => (
@@ -204,7 +203,6 @@ export default function C1BExport({
                 onChange={setMaxDate}
                 cancelText={null}
                 disableCloseOnSelect={false}
-                showToolbar={false}
                 disableMaskedInput={true}
                 maxDate={today}
                 renderInput={props => (
