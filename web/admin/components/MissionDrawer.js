@@ -15,7 +15,6 @@ const MissionDrawerContext = React.createContext(() => {});
 
 export function MissionDrawerContextProvider({
   children,
-  width,
   setShouldRefreshData
 }) {
   const location = useLocation();

@@ -8,7 +8,7 @@ import TextField from "common/utils/TextField";
 import { Expenditures } from "./Expenditures";
 import { AddressField } from "../../common/AddressField";
 import KilometerReadingField from "../../common/KilometerReadingField";
-import MobileDateTimePicker from "@mui/lab/MobileDateTimePicker";
+import DateTimePicker from "@mui/lab/DateTimePicker";
 import { getDaysBetweenTwoDates, now } from "common/utils/time";
 
 export default function EndMissionModal({
@@ -85,14 +85,14 @@ export default function EndMissionModal({
                 <Typography variant="h5" className="form-field-title">
                   Quelle est l'heure de fin de la mission&nbsp;?
                 </Typography>
-                <MobileDateTimePicker
+                <DateTimePicker
                   key={0}
                   label="Heure de fin"
+                  openTo="hours"
                   value={endTime ? toDate(endTime) : null}
                   onChange={value => setEndTime(value ? fromDate(value) : null)}
                   cancelText={null}
                   disableCloseOnSelect={false}
-                  showToolbar={false}
                   minDateTime={toDate(missionMinEndTime)}
                   maxDateTime={toDate(now())}
                   disableIgnoringDatePartForTimeValidation={true}

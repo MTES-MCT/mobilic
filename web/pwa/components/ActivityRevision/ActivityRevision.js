@@ -16,7 +16,7 @@ import max from "lodash/max";
 import MenuItem from "@mui/material/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import MobileDateTimePicker from "@mui/lab/MobileDateTimePicker";
+import DateTimePicker from "@mui/lab/DateTimePicker";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import {
@@ -368,16 +368,16 @@ export default function ActivityRevisionOrCreationModal({
               </MenuItem>
             </TextField>
           )}
-          <MobileDateTimePicker
+          <DateTimePicker
             key={0}
             label="Début"
+            openTo="hours"
             value={newUserTime ? toDate(newUserTime) : null}
             onChange={value => setNewUserTime(value ? fromDate(value) : null)}
             minDateTime={toDate(previousMissionEnd)}
             maxDateTime={toDate(nextMissionStart)}
             cancelText={null}
             disableCloseOnSelect={false}
-            showToolbar={false}
             disableIgnoringDatePartForTimeValidation={true}
             renderInput={props => (
               <TextField
@@ -391,9 +391,10 @@ export default function ActivityRevisionOrCreationModal({
               />
             )}
           />
-          <MobileDateTimePicker
+          <DateTimePicker
             key={1}
             label="Fin"
+            openTo="hours"
             value={newUserEndTime ? toDate(newUserEndTime) : null}
             onChange={value =>
               setNewUserEndTime(value ? fromDate(value) : null)
@@ -402,7 +403,6 @@ export default function ActivityRevisionOrCreationModal({
             maxDateTime={toDate(nextMissionStart)}
             cancelText={null}
             disableCloseOnSelect={false}
-            showToolbar={false}
             disableIgnoringDatePartForTimeValidation={true}
             clearable={actuallyNullableEndTime}
             clearText="Annuler"

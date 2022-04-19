@@ -260,7 +260,6 @@ function ActivitiesPanel() {
             inputFormat="d MMMM yyyy"
             fullWidth
             disableCloseOnSelect={false}
-            showToolbar={false}
             disableMaskedInput={true}
             onChange={val => {
               trackEvent(ACTIVITY_FILTER_MIN_DATE);
@@ -280,7 +279,6 @@ function ActivitiesPanel() {
             inputFormat="d MMMM yyyy"
             fullWidth
             disableCloseOnSelect={false}
-            showToolbar={false}
             disableMaskedInput={true}
             onChange={val => {
               trackEvent(ACTIVITY_FILTER_MAX_DATE);
