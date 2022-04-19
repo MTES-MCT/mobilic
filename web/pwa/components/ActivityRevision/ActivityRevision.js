@@ -17,6 +17,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import DateTimePicker from "@mui/lab/DateTimePicker";
+import ClockIcon from "@mui/icons-material/AccessTime";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import {
@@ -379,6 +380,7 @@ export default function ActivityRevisionOrCreationModal({
             cancelText={null}
             disableCloseOnSelect={false}
             disableIgnoringDatePartForTimeValidation={true}
+            components={{ OpenPickerIcon: ClockIcon }}
             renderInput={props => (
               <TextField
                 {...props}
@@ -406,6 +408,7 @@ export default function ActivityRevisionOrCreationModal({
             disableIgnoringDatePartForTimeValidation={true}
             clearable={actuallyNullableEndTime}
             clearText="Annuler"
+            components={{ OpenPickerIcon: ClockIcon }}
             renderInput={props => (
               <TextField
                 {...props}

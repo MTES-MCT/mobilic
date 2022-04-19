@@ -9,6 +9,7 @@ import { Expenditures } from "./Expenditures";
 import { AddressField } from "../../common/AddressField";
 import KilometerReadingField from "../../common/KilometerReadingField";
 import DateTimePicker from "@mui/lab/DateTimePicker";
+import ClockIcon from "@mui/icons-material/AccessTime";
 import { getDaysBetweenTwoDates, now } from "common/utils/time";
 
 export default function EndMissionModal({
@@ -96,6 +97,7 @@ export default function EndMissionModal({
                   minDateTime={toDate(missionMinEndTime)}
                   maxDateTime={toDate(now())}
                   disableIgnoringDatePartForTimeValidation={true}
+                  components={{ OpenPickerIcon: ClockIcon }}
                   renderInput={props => (
                     <TextField {...props} fullWidth required variant="filled" />
                   )}
