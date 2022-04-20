@@ -26,11 +26,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     fontSize: "0.75em"
   }
-  // addressOption: {
-  //   display: "block",
-  //   marginLeft: theme.spacing(3),
-  //   marginRight: theme.spacing(3)
-  // }
 }));
 
 const fetchPlaces = throttle((input, currentPosition = null, callback) => {
@@ -101,7 +96,7 @@ export function AddressField({
         setLoading(false);
       });
     }
-  }, [value, inputValue, currentPosition]);
+  }, [value, inputValue, currentPosition, defaultAddresses]);
 
   const classes = useStyles();
 
@@ -196,11 +191,7 @@ export function AddressField({
             </Alert>
           </Box>
         ) : (
-          <li
-            {...props}
-            key={formatKey(option)}
-            //className={classes.addressOption}
-          >
+          <li {...props} key={formatKey(option)}>
             <ListItemText
               primary={
                 option.manual ? option.label : formatAddressMainText(option)
