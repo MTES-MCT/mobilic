@@ -57,6 +57,7 @@ export default function NewMissionModal({
         withDay={withDay}
         withEndLocation={withEndLocation}
         askCurrentPosition={askCurrentPosition}
+        disableGeolocation={disableCurrentPosition}
       />
     </FunnelModal>
   );

@@ -82,11 +82,10 @@ export function AddressField({
   const [open, setOpen] = React.useState(false);
 
   React.useEffect(() => {
-    setLoading(true);
-
     if (inputValue === "" && !currentPosition) {
       setOptions(value ? [value] : detaultOptions());
     } else {
+      setLoading(true);
       fetchPlaces(inputValue, currentPosition, results => {
         if (inputValue === "") {
           setOptions(results.concat(detaultOptions()));
