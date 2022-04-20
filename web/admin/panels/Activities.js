@@ -16,7 +16,11 @@ import { useModals } from "common/utils/modals";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
 import max from "lodash/max";
-import { formatDay, startOfDayAsDate } from "common/utils/time";
+import {
+  formatDay,
+  isoFormatLocalDate,
+  startOfDayAsDate
+} from "common/utils/time";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
@@ -263,7 +267,7 @@ function ActivitiesPanel() {
             disableMaskedInput={true}
             onChange={val => {
               trackEvent(ACTIVITY_FILTER_MIN_DATE);
-              setMinDate(val);
+              setMinDate(isoFormatLocalDate(val));
             }}
             cancelText={null}
             maxDate={today}
@@ -282,7 +286,7 @@ function ActivitiesPanel() {
             disableMaskedInput={true}
             onChange={val => {
               trackEvent(ACTIVITY_FILTER_MAX_DATE);
-              setMaxDate(val);
+              setMaxDate(isoFormatLocalDate(val));
             }}
             cancelText={null}
             maxDate={today}
