@@ -47,10 +47,18 @@ export const useStyles = makeStyles(theme => ({
     }
   },
   tab: {
-    maxWidth: 400
+    maxWidth: 400,
+    paddingRight: theme.spacing(4)
   },
   tabContainer: {
     marginBottom: theme.spacing(2)
+  },
+  customBadge: {
+    "& .MuiBadge-badge": {
+      right: theme.spacing(-2),
+      top: theme.spacing(1),
+      color: "white"
+    }
   },
   validatedRow: {
     backgroundColor: theme.palette.success.light,

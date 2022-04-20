@@ -36,6 +36,7 @@ import {
   OPEN_MISSION_DRAWER_IN_VALIDATION_PANEL,
   VALIDATE_MISSION_IN_VALIDATION_PANEL
 } from "common/utils/matomoTags";
+import Badge from "@mui/material/Badge";
 
 const VALIDATION_TABS = [
   {
@@ -309,15 +310,39 @@ function ValidationPanel() {
       >
         <Tab
           className={classes.tab}
-          label={`${VALIDATION_TABS[0].label} (${nbMissionsToValidateByAdmin})`}
+          label={
+            <Badge
+              badgeContent={nbMissionsToValidateByAdmin}
+              color="error"
+              className={classes.customBadge}
+            >
+              {VALIDATION_TABS[0].label}
+            </Badge>
+          }
         />
         <Tab
           className={classes.tab}
-          label={`${VALIDATION_TABS[1].label} (${nbMissionsToValidateByWorker})`}
+          label={
+            <Badge
+              badgeContent={nbMissionsToValidateByWorker}
+              color="warning"
+              className={classes.customBadge}
+            >
+              {VALIDATION_TABS[1].label}
+            </Badge>
+          }
         />
         <Tab
           className={classes.tab}
-          label={`${VALIDATION_TABS[2].label} (${nbMissionsValidatedByAdmin})`}
+          label={
+            <Badge
+              badgeContent={nbMissionsValidatedByAdmin}
+              color="success"
+              className={classes.customBadge}
+            >
+              {VALIDATION_TABS[2].label}
+            </Badge>
+          }
         />
       </Tabs>
       <Typography className={classes.explanation}>
