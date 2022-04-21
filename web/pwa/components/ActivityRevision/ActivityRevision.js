@@ -376,7 +376,7 @@ export default function ActivityRevisionOrCreationModal({
             value={newUserTime ? toDate(newUserTime) : null}
             onChange={value => setNewUserTime(value ? fromDate(value) : null)}
             minDateTime={toDate(previousMissionEnd)}
-            maxDateTime={toDate(nextMissionStart)}
+            maxDateTime={new Date()}
             cancelText={null}
             disableCloseOnSelect={false}
             disableIgnoringDatePartForTimeValidation={true}
@@ -402,7 +402,7 @@ export default function ActivityRevisionOrCreationModal({
               setNewUserEndTime(value ? fromDate(value) : null)
             }
             minDateTime={toDate(newUserTime)}
-            maxDateTime={toDate(nextMissionStart)}
+            maxDateTime={new Date()}
             cancelText={null}
             disableCloseOnSelect={false}
             disableIgnoringDatePartForTimeValidation={true}
