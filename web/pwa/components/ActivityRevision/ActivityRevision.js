@@ -44,7 +44,6 @@ export default function ActivityRevisionOrCreationModal({
   handleClose,
   handleRevisionAction,
   previousMissionEnd,
-  nextMissionStart,
   allowTeamMode = false,
   nullableEndTime = true,
   allowSupportActivity = true,
@@ -185,9 +184,6 @@ export default function ActivityRevisionOrCreationModal({
       if (previousMissionEnd && newUserTime < previousMissionEnd) {
         hasStartError = true;
         setNewUserTimeError(`Chevauchement avec la mission précédente.`);
-      } else if (nextMissionStart && newUserTime > nextMissionStart) {
-        hasStartError = true;
-        setNewUserTimeError(`Chevauchement avec la mission suivante.`);
       } else if (newUserTime > now()) {
         hasStartError = true;
         setNewUserTimeError(`L'heure ne peut pas être dans le futur.`);
@@ -241,7 +237,6 @@ export default function ActivityRevisionOrCreationModal({
     newUserEndTime,
     activityType,
     previousMissionEnd,
-    nextMissionStart,
     userId,
     teamMode
   ]);
