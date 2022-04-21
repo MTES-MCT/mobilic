@@ -1,9 +1,9 @@
 import React from "react";
-import Dialog from "@material-ui/core/Dialog";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import { now, sameMinute, truncateMinute } from "common/utils/time";
-import DialogContent from "@material-ui/core/DialogContent";
+import Dialog from "@mui/material/Dialog";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import { now, sameMinute } from "common/utils/time";
+import DialogContent from "@mui/material/DialogContent";
 import TextField from "common/utils/TextField";
 import {
   ACTIVITIES,
@@ -13,22 +13,22 @@ import {
 import uniq from "lodash/uniq";
 import min from "lodash/min";
 import max from "lodash/max";
-import MenuItem from "@material-ui/core/MenuItem";
+import MenuItem from "@mui/material/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import { DateOrDateTimePicker } from "../DateOrDateTimePicker";
-import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
-import Switch from "@material-ui/core/Switch/Switch";
+import DateTimePicker from "@mui/lab/DateTimePicker";
+import ClockIcon from "@mui/icons-material/AccessTime";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
 import {
   CustomDialogActions,
   CustomDialogTitle
 } from "../../../common/CustomDialogTitle";
-import Button from "@material-ui/core/Button";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Button from "@mui/material/Button";
+import { makeStyles } from "@mui/styles";
 import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
 import OverlappedActivityList from "./OverlappedActivityList";
-import _ from "lodash";
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -302,6 +302,9 @@ export default function ActivityRevisionOrCreationModal({
     );
   };
 
+  const fromDate = date => date.getTime() / 1000;
+  const toDate = time => new Date(time * 1000);
+
   const classes = useStyles();
 
   return (
@@ -366,32 +369,57 @@ export default function ActivityRevisionOrCreationModal({
               </MenuItem>
             </TextField>
           )}
-          <DateOrDateTimePicker
+          <DateTimePicker
             key={0}
             label="Début"
-            variant="filled"
-            className={classes.formField}
-            value={newUserTime}
-            setValue={_.flow([truncateMinute, setNewUserTime])}
-            error={newUserTimeError}
-            minValue={previousMissionEnd}
-            maxValue={nextMissionStart}
-            required
-            noValidate
+            openTo="hours"
+            value={newUserTime ? toDate(newUserTime) : null}
+            onChange={value => setNewUserTime(value ? fromDate(value) : null)}
+            minDateTime={toDate(previousMissionEnd)}
+            maxDateTime={toDate(nextMissionStart)}
+            cancelText={null}
+            disableCloseOnSelect={false}
+            disableIgnoringDatePartForTimeValidation={true}
+            components={{ OpenPickerIcon: ClockIcon }}
+            renderInput={props => (
+              <TextField
+                {...props}
+                fullWidth
+                required
+                className={classes.formField}
+                variant="filled"
+                error={!!newUserTimeError}
+                helperText={newUserTimeError}
+              />
+            )}
           />
-          <DateOrDateTimePicker
+          <DateTimePicker
             key={1}
             label="Fin"
-            variant="filled"
-            className={classes.formField}
-            required={!actuallyNullableEndTime}
-            value={newUserEndTime}
-            minValue={newUserTime}
-            maxValue={nextMissionStart}
-            setValue={_.flow([truncateMinute, setNewUserEndTime])}
-            error={newUserEndTimeError}
+            openTo="hours"
+            value={newUserEndTime ? toDate(newUserEndTime) : null}
+            onChange={value =>
+              setNewUserEndTime(value ? fromDate(value) : null)
+            }
+            minDateTime={toDate(newUserTime)}
+            maxDateTime={toDate(nextMissionStart)}
+            cancelText={null}
+            disableCloseOnSelect={false}
+            disableIgnoringDatePartForTimeValidation={true}
             clearable={actuallyNullableEndTime}
-            noValidate
+            clearText="Annuler"
+            components={{ OpenPickerIcon: ClockIcon }}
+            renderInput={props => (
+              <TextField
+                {...props}
+                fullWidth
+                required={!actuallyNullableEndTime}
+                className={classes.formField}
+                variant="filled"
+                error={!!newUserEndTimeError}
+                helperText={newUserEndTimeError}
+              />
+            )}
           />
         </Box>
         {allowTeamMode && team.length > 1 && (
@@ -401,7 +429,6 @@ export default function ActivityRevisionOrCreationModal({
                 <Switch
                   checked={teamMode}
                   onChange={() => setTeamMode(!teamMode)}
-                  color="primary"
                 />
               }
               label="Pour toute l'équipe"
@@ -415,7 +442,7 @@ export default function ActivityRevisionOrCreationModal({
             fullWidth
             variant="filled"
             multiline
-            rowsMax={10}
+            maxRows={10}
             value={userComment}
             onChange={e => setUserComment(e.target.value)}
           />

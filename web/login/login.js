@@ -1,11 +1,11 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 import { useApi } from "common/utils/api";
-import Typography from "@material-ui/core/Typography";
-import Link from "@material-ui/core/Link";
+import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Header } from "../common/Header";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
@@ -15,7 +15,7 @@ import {
 } from "common/utils/franceConnect";
 import { FranceConnectContainer } from "../common/FranceConnect";
 import { PasswordField } from "common/components/PasswordField";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 import { LOGIN_MUTATION } from "common/utils/apiQueries";
@@ -99,6 +99,7 @@ export default function Login() {
               fullWidth
               className="vertical-form-text-input"
               label="Mot de passe"
+              variant="standard"
               autoComplete="current-password"
               value={password}
               onChange={e => {

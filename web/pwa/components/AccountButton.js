@@ -1,13 +1,13 @@
 import React from "react";
 import omit from "lodash/omit";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { formatPersonName } from "common/utils/coworkers";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Box from "@material-ui/core/Box";
+import { makeStyles } from "@mui/styles";
+import Box from "@mui/material/Box";
 import { NavigationMenu } from "../../common/Header";
-import IconButton from "@material-ui/core/IconButton";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import IconButton from "@mui/material/IconButton";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { MobilicLogoFilledIcon } from "common/utils/icons";
 import Marianne from "common/assets/images/marianne-small.svg";
 

@@ -2,8 +2,8 @@ import { Link } from "../../common/LinkButton";
 import React from "react";
 import { formatTimeOfDay, now } from "common/utils/time";
 import { DEFAULT_LAST_ACTIVITY_TOO_LONG } from "common/utils/mission";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Tooltip from "@material-ui/core/Tooltip";
+import { makeStyles } from "@mui/styles";
+import Tooltip from "@mui/material/Tooltip";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { OPEN_MISSION_DRAWER_WITH_ACTIVITY_TOO_LONG } from "common/utils/matomoTags";
 
@@ -35,6 +35,7 @@ export function WorkDayEndTime({ endTime, dayAggregate, openMission }) {
   ) : (
     <Link
       key={lastMissionId()}
+      to="#"
       onClick={e => {
         e.stopPropagation();
         trackEvent(OPEN_MISSION_DRAWER_WITH_ACTIVITY_TOO_LONG);
@@ -44,6 +45,7 @@ export function WorkDayEndTime({ endTime, dayAggregate, openMission }) {
       <Tooltip
         title={`Activité en cours depuis plus de ${DEFAULT_LAST_ACTIVITY_TOO_LONG /
           3600} heures`}
+        disableInteractive
       >
         <span className={classes.errorText}>En cours ⚠</span>
       </Tooltip>

@@ -1,13 +1,13 @@
 import React from "react";
 import { useApi } from "common/utils/api";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { EDIT_COMPANY_SETTINGS_MUTATION } from "common/utils/apiQueries";
 import { usePanelStyles } from "./Company";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 import { SimpleToggleSetting } from "../components/Setting";
-import Divider from "@material-ui/core/Divider";
+import Divider from "@mui/material/Divider";
 import { useAdminStore } from "../store/store";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 

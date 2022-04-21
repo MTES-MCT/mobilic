@@ -1,16 +1,14 @@
 import React from "react";
-import Paper from "@material-ui/core/Paper";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Paper from "@mui/material/Paper";
+import { makeStyles } from "@mui/styles";
 import { useAdminCompanies } from "../store/store";
-
-import ToggleButton from "@material-ui/lab/ToggleButton";
-import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup/ToggleButtonGroup";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Employees } from "./Employees";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { LinkButton } from "../../common/LinkButton";
-import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import VehicleAdmin from "./Vehicles";
 import KnownAddressAdmin from "./KnownAddresses";
 import SettingAdmin from "./Settings";
@@ -20,11 +18,16 @@ export const usePanelStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1),
     padding: theme.spacing(2),
     flexShrink: 0,
-    position: ({ width }) => (isWidthUp("md", width) ? "sticky" : "static"),
     top: "0",
     zIndex: 500,
     textAlign: "left",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
+    [theme.breakpoints.up("md")]: {
+      position: "sticky"
+    },
+    [theme.breakpoints.down("lg")]: {
+      position: "static"
+    }
   },
   subPanel: {
     padding: theme.spacing(2),
@@ -92,7 +95,7 @@ function SubNavigationToggle({ view, setView }) {
   );
 }
 
-function _CompanyPanel({ width, containerRef }) {
+function CompanyPanel({ width, containerRef }) {
   const [view, setView] = React.useState("employees");
 
   const [, company] = useAdminCompanies();
@@ -111,7 +114,7 @@ function _CompanyPanel({ width, containerRef }) {
       <Grid
         container
         spacing={5}
-        justify="space-between"
+        justifyContent="space-between"
         alignItems="center"
         style={{ flex: "1 1 auto" }}
       >
@@ -141,7 +144,5 @@ function _CompanyPanel({ width, containerRef }) {
     </Paper>
   ];
 }
-
-const CompanyPanel = withWidth()(_CompanyPanel);
 
 export default CompanyPanel;

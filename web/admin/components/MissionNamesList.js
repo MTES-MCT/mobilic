@@ -15,6 +15,7 @@ export function MissionNamesList({ missionNames, openMission }) {
       {map(filteredMissionNames, (name, id) => (
         <Link
           key={id}
+          to="#"
           onClick={e => {
             e.stopPropagation();
             trackEvent(OPEN_MISSION_DRAWER_IN_ACTIVITY_PANEL);

@@ -1,13 +1,13 @@
 import React from "react";
-import ListItemIcon from "@material-ui/core/ListItemIcon/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 import {
   formatAddressMainText,
   formatAddressSubText
 } from "common/utils/addresses";
-import Button from "@material-ui/core/Button";
-import ListItem from "@material-ui/core/ListItem";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Button from "@mui/material/Button";
+import ListItem from "@mui/material/ListItem";
+import { makeStyles } from "@mui/styles";
 import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({

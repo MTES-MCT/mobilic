@@ -4,12 +4,12 @@ import {
   EXPENDITURES,
   regroupExpendituresSpendingDateByType
 } from "common/utils/expenditures";
-import Chip from "@material-ui/core/Chip";
-import Typography from "@material-ui/core/Typography";
+import Chip from "@mui/material/Chip";
+import Typography from "@mui/material/Typography";
 import { MissionInfoCard } from "./MissionInfoCard";
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Grid from "@mui/material/Grid";
+import { makeStyles } from "@mui/styles";
 import { useModals } from "common/utils/modals";
 
 export const useStyles = makeStyles(theme => ({

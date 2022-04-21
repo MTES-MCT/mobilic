@@ -1,11 +1,11 @@
 import React from "react";
-import Dialog from "@material-ui/core/Dialog/Dialog";
-import Box from "@material-ui/core/Box";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import Slide from "@material-ui/core/Slide/Slide";
-import Button from "@material-ui/core/Button";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Container from "@material-ui/core/Container";
+import Dialog from "@mui/material/Dialog";
+import Box from "@mui/material/Box";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import Slide from "@mui/material/Slide";
+import Button from "@mui/material/Button";
+import { makeStyles } from "@mui/styles";
+import Container from "@mui/material/Container";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -17,10 +17,6 @@ export const useStyles = makeStyles(theme => ({
   },
   slimContainer: {
     maxWidth: 400
-  },
-  backButton: {
-    color: theme.palette.primary.main,
-    borderColor: theme.palette.primary.main
   },
   container: {
     backgroundColor: darkBackground =>
@@ -58,8 +54,8 @@ export function FunnelModal({
           style={{ position: "static", width: "100%", flexShrink: 0 }}
         >
           <Button
-            className={classes.backButton}
-            variant="contained"
+            variant="outlined"
+            color="primary"
             disableElevation
             startIcon={<ChevronLeftIcon />}
             onClick={handleBack}

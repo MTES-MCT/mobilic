@@ -1,7 +1,7 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 import { MissionDetails } from "./MissionDetails";
 import { useLocation } from "react-router-dom";
 import { useLoadingScreen } from "common/utils/loading";
@@ -10,7 +10,7 @@ import { useApi } from "common/utils/api";
 import { parseMissionPayloadFromBackend } from "common/utils/mission";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { formatApiError } from "common/utils/errors";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { AccountButton } from "./AccountButton";
 import { MISSION_QUERY } from "common/utils/apiQueries";
 import { parseActivityPayloadFromBackend } from "common/utils/activities";

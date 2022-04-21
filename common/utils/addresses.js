@@ -1,3 +1,11 @@
+export function formatKey(address) {
+  return address.properties
+    ? address.properties.id
+    : address.id
+    ? address.id
+    : address.name;
+}
+
 export function formatAddressMainText(address) {
   return address.properties
     ? address.properties.name

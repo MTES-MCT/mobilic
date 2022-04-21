@@ -1,15 +1,15 @@
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { SirenInputField } from "./SirenInputField";
 import { LoadingButton } from "common/components/LoadingButton";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import { Link } from "../../common/LinkButton";
 import React from "react";
 import { Step } from "./Step";
 import { SIREN_QUERY } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { LegalUnitInfo } from "./LegalUnitInfo";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
 
 const useStyles = makeStyles(theme => ({

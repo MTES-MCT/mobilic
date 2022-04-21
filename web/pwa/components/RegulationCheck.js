@@ -1,11 +1,11 @@
 import React from "react";
 import { RULE_RESPECT_STATUS } from "common/utils/regulation/rules";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { ALERT_TYPE_PROPS } from "common/utils/regulation/alertTypes";
 import { Link } from "../../common/LinkButton";
 import { useRegulationDrawer } from "../../landing/ResourcePage/RegulationDrawer";
-import { ChevronRight } from "@material-ui/icons";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { ChevronRight } from "@mui/icons-material";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles(theme => ({
   moreInfoIcon: {

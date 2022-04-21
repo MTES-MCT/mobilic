@@ -1,4 +1,4 @@
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import {
   checkMaximumDurationOfUninterruptedWork,
   checkMaximumDurationOfWork,
@@ -7,7 +7,7 @@ import {
   isNightWork,
   RULE_RESPECT_STATUS
 } from "common/utils/regulation/rules";
-import Chip from "@material-ui/core/Chip";
+import Chip from "@mui/material/Chip";
 import { RegulationCheck } from "../pwa/components/RegulationCheck";
 import {
   DAY,
@@ -18,7 +18,7 @@ import {
 import maxBy from "lodash/maxBy";
 import React from "react";
 import { splitByLongBreaksAndComputePeriodStats } from "../pwa/components/WorkTimeSummary";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
 import { ALERT_TYPES } from "common/utils/regulation/alertTypes";
 

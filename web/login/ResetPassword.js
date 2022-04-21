@@ -1,16 +1,16 @@
 import React from "react";
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { useHistory, useLocation } from "react-router-dom";
 import { useApi } from "common/utils/api";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import jwt_decode from "jwt-decode";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 import { useLoadingScreen } from "common/utils/loading";
 import { Header } from "../common/Header";
 import { PasswordField } from "common/components/PasswordField";
@@ -163,6 +163,7 @@ export function ResetPassword() {
                     label="Nouveau mot de passe"
                     placeholder="Choisissez un mot de passe"
                     autoComplete="current-password"
+                    variant="standard"
                     value={password}
                     onChange={e => {
                       setPassword(e.target.value);
@@ -174,6 +175,7 @@ export function ResetPassword() {
                     fullWidth
                     label="Confirmez le mot de passe"
                     className="vertical-form-text-input"
+                    variant="standard"
                     error={
                       passwordCopy && passwordCopy !== password
                         ? "Le mot de passe n'est pas identique"

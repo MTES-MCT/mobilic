@@ -1,9 +1,9 @@
 import React from "react";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import Link from "@material-ui/core/Link";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import useTheme from "@material-ui/core/styles/useTheme";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Link from "@mui/material/Link";
+import { makeStyles } from "@mui/styles";
+import useTheme from "@mui/styles/useTheme";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { useAdminStore } from "../store/store";
 import { getBadgeRoutes } from "../../common/routes";

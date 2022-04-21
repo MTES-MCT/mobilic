@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
-import Tooltip from "@material-ui/core/Tooltip";
-import Box from "@material-ui/core/Box";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Tooltip from "@mui/material/Tooltip";
+import Box from "@mui/material/Box";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles(theme => ({
   popper: {
@@ -43,7 +43,6 @@ export function TextWithOverflowTooltip({ text, children, alwaysShow }) {
   return (
     <Tooltip
       title={text || children}
-      interactive
       disableHoverListener={!alwaysShow && !hoverStatus}
       PopperProps={{ className: classes.popper }}
     >

@@ -1,6 +1,6 @@
 import React from "react";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 import { useApi } from "common/utils/api";
 import { useHistory, useLocation } from "react-router-dom";
@@ -9,8 +9,8 @@ import {
   useStoreSyncedWithLocalStorage
 } from "common/store/store";
 import SignupStepper from "./SignupStepper";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Container from "@material-ui/core/Container";
+import { makeStyles } from "@mui/styles";
+import Container from "@mui/material/Container";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Section } from "../common/Section";
 import { useModals } from "common/utils/modals";
@@ -191,11 +191,12 @@ export function EmailSelection() {
           />
           {choosePassword && (
             <PasswordField
-              reuired
+              required
               fullWidth
               className="vertical-form-text-input"
               label="Choisissez un mot de passe"
               autoComplete="current-password"
+              variant="standard"
               value={password}
               onChange={e => {
                 setPassword(e.target.value);

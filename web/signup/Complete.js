@@ -1,12 +1,12 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { useHistory, useLocation } from "react-router-dom";
-import Button from "@material-ui/core/Button";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
+import Button from "@mui/material/Button";
+import { makeStyles } from "@mui/styles";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import Alert from "@material-ui/lab/Alert";
+import Alert from "@mui/material/Alert";
 
 const useStyles = makeStyles(theme => ({
   title: {

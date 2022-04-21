@@ -1,8 +1,8 @@
 import React from "react";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { VehicleFieldForApp } from "./VehicleFieldForApp";
 import {
   CustomDialogActions,

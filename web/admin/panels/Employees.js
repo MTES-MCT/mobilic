@@ -1,12 +1,14 @@
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
 import { AugmentedTable } from "../components/AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
@@ -24,8 +26,6 @@ import {
   TERMINATE_EMPLOYMENT_MUTATION
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
-import TextField from "@material-ui/core/TextField/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
 import { EMPLOYMENT_ROLE } from "common/utils/employments";
 
 const useStyles = makeStyles(theme => ({

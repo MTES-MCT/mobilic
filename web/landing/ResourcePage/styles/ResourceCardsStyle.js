@@ -1,4 +1,4 @@
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 
 export const resourceCardsClasses = makeStyles(theme => ({
   card: {
@@ -16,9 +16,6 @@ export const resourceCardsClasses = makeStyles(theme => ({
     padding: 0,
     textTransform: "none",
     height: "100%",
-    width: "100%",
-    "& .MuiButton-label": {
-      height: "100%"
-    }
+    width: "100%"
   }
 }));

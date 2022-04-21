@@ -1,4 +1,4 @@
-import SvgIcon from "@material-ui/core/SvgIcon";
+import SvgIcon from "@mui/material/SvgIcon";
 import React from "react";
 import omit from "lodash/omit";
 import { ReactComponent as MobilicFilledIcon_ } from "../assets/images/mobilic-logo-filled.svg";

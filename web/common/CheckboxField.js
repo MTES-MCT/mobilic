@@ -1,8 +1,8 @@
 import React from "react";
-import FormGroup from "@material-ui/core/FormGroup/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox/Checkbox";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -27,7 +27,6 @@ export function CheckboxField({ checked, required, onChange, label }) {
         control={
           <Checkbox
             required={required}
-            color="primary"
             className={classes.checkbox}
             checked={checked}
             onChange={onChange}

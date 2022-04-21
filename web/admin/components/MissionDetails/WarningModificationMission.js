@@ -1,8 +1,7 @@
 import React from "react";
-import { Collapse, ListItemIcon, ListItemText } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+import { Collapse, ListItemIcon, ListItemText, Alert } from "@mui/material";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 import { Link } from "../../../common/LinkButton";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { DISMISSABLE_WARNINGS } from "../../utils/dismissableWarnings";
@@ -44,8 +43,13 @@ export function WarningModificationMission() {
   }
 
   return (
-    <Collapse in={modificationAlertOpen} data-qa="modificationWarningCollapse">
-      <Alert key={0} severity="info" className={classes.modificationAlert}>
+    <Collapse in={modificationAlertOpen}>
+      <Alert
+        key={0}
+        severity="info"
+        className={classes.modificationAlert}
+        data-testid="warningAlert"
+      >
         <List disablePadding>
           <ListItem
             disableGutters
@@ -71,7 +75,7 @@ export function WarningModificationMission() {
         <Link
           className={classes.dismissModificationAlert}
           to="/#"
-          data-qa="dismissMissionModificationWarningLink"
+          data-testid="dismissMissionModificationWarningLink"
           onClick={e => {
             e.preventDefault();
             handleDismissWarning();

@@ -10,11 +10,10 @@ import {
 import { formatPersonName } from "common/utils/coworkers";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import { AugmentedTable } from "./AugmentedTable";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import { isWidthUp } from "@material-ui/core/withWidth";
+import { makeStyles } from "@mui/styles";
 import { WorkTimeDetails } from "./WorkTimeDetails";
-import { ChevronRight } from "@material-ui/icons";
-import { SwipeableDrawer } from "@material-ui/core";
+import { ChevronRight } from "@mui/icons-material";
+import { SwipeableDrawer } from "@mui/material";
 import { MissionNamesList } from "./MissionNamesList";
 import { useMissionDrawer } from "./MissionDrawer";
 import { WorkDayEndTime } from "./WorkDayEndTime";
@@ -187,8 +186,8 @@ export function WorkTimeTable({
         }}
         PaperProps={{
           className: classes.workTimeModal,
-          style: {
-            width: isWidthUp("md", width) ? 885 : "100vw"
+          sx: {
+            width: { xs: "100vw", md: 885 }
           }
         }}
       >

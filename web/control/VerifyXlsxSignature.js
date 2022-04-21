@@ -1,17 +1,17 @@
 import React from "react";
 import { useDropzone } from "react-dropzone";
 import { Header } from "../common/Header";
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Box from "@material-ui/core/Box";
-import DescriptionIcon from "@material-ui/icons/Description";
-import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
+import { makeStyles } from "@mui/styles";
+import Box from "@mui/material/Box";
+import DescriptionIcon from "@mui/icons-material/Description";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useApi } from "common/utils/api";
 
-import Alert from "@material-ui/lab/Alert";
-import AlertTitle from "@material-ui/lab/AlertTitle";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";

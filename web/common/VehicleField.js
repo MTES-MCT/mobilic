@@ -1,7 +1,6 @@
 import React from "react";
 import TextField from "common/utils/TextField";
-import Autocomplete from "@material-ui/lab/Autocomplete/Autocomplete";
-import { createFilterOptions } from "@material-ui/lab/Autocomplete";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import { getVehicleName } from "common/utils/vehicles";
 import KilometerReadingField from "./KilometerReadingField";
 

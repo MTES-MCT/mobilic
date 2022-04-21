@@ -1,9 +1,9 @@
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import React from "react";
-import Box from "@material-ui/core/Box";
-import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
-import ArrowRightIcon from "@material-ui/icons/ArrowRight";
-import Typography from "@material-ui/core/Typography";
+import Box from "@mui/material/Box";
+import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import Typography from "@mui/material/Typography";
 import { formatDayOfWeek, shortPrettyFormatDay } from "common/utils/time";
 import { PERIOD_STATUSES } from "common/utils/history/computePeriodStatuses";
 

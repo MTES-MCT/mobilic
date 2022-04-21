@@ -1,8 +1,8 @@
 import React from "react";
-import Box from "@material-ui/core/Box";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import Typography from "@material-ui/core/Typography";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import Typography from "@mui/material/Typography";
 import {
   formatDateTime,
   formatTimeOfDay,
@@ -13,13 +13,13 @@ import { useApi } from "common/utils/api";
 import { useAdminStore } from "../../store/store";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useModals } from "common/utils/modals";
-import List from "@material-ui/core/List";
+import List from "@mui/material/List";
 import { Event } from "../../../common/Event";
 import { formatApiError } from "common/utils/errors";
 import { MISSION_QUERY } from "common/utils/apiQueries";
 import { editUserExpenditures } from "common/utils/expenditures";
-import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
-import Grid from "@material-ui/core/Grid";
+import CircularProgress from "@mui/material/CircularProgress";
+import Grid from "@mui/material/Grid";
 import {
   missionHasAtLeastOneAdminValidation,
   missionsSelector
@@ -27,7 +27,7 @@ import {
 import { MissionVehicleInfo } from "../MissionVehicleInfo";
 import { MissionLocationInfo } from "../MissionLocationInfo";
 import { MissionEmployeeCard } from "../MissionEmployeeCard";
-import ListItem from "@material-ui/core/ListItem";
+import ListItem from "@mui/material/ListItem";
 import { ADMIN_ACTIONS } from "../../store/reducers/root";
 import { useMissionActions } from "../../utils/missionActions";
 import { useMissionWithStats } from "../../utils/missionWithStats";
@@ -38,7 +38,7 @@ import {
   DEFAULT_LAST_ACTIVITY_TOO_LONG,
   missionCreatedByAdmin
 } from "common/utils/mission";
-import { Alert } from "@material-ui/lab";
+import { Alert } from "@mui/material";
 import { WarningModificationMission } from "./WarningModificationMission";
 import { ACTIVITIES } from "common/utils/activities";
 import {
@@ -46,7 +46,7 @@ import {
   missionToValidationEntries
 } from "../../selectors/validationEntriesSelectors";
 import { partition } from "lodash/collection";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
   ADD_EMPLOYEE_IN_MISSION_PANEL,
@@ -218,7 +218,7 @@ export function MissionDetails({
         <Grid
           container
           spacing={2}
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
           wrap="nowrap"
         >
@@ -284,7 +284,7 @@ export function MissionDetails({
           )}
         />
       </Box>
-      <Grid container justify="space-between" spacing={4}>
+      <Grid container justifyContent="space-between" spacing={4}>
         <Grid item xs={12} sm={6}>
           <Typography variant="h5">Début</Typography>
           <MissionLocationInfo
@@ -360,7 +360,12 @@ export function MissionDetails({
         style={{ alignItems: "center" }}
         className={classes.observationSection}
       >
-        <Grid container spacing={2} justify="space-between" alignItems="center">
+        <Grid
+          container
+          spacing={2}
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Grid item>
             <Typography variant="h5" className={classes.vehicle}>
               Observations

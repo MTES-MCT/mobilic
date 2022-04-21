@@ -1,13 +1,13 @@
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Typography from "@material-ui/core/Typography";
-import { Card } from "@material-ui/core";
-import Divider from "@material-ui/core/Divider";
-import { ChevronRight } from "@material-ui/icons";
+import { makeStyles } from "@mui/styles";
+import Typography from "@mui/material/Typography";
+import { Card } from "@mui/material";
+import Divider from "@mui/material/Divider";
+import { ChevronRight } from "@mui/icons-material";
 import { LinkButton } from "../../common/LinkButton";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
-import ButtonBase from "@material-ui/core/ButtonBase";
+import ButtonBase from "@mui/material/ButtonBase";
 
 const useStyles = makeStyles(theme => ({
   faqCardAnswer: {

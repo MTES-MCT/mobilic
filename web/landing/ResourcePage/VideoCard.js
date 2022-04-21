@@ -1,6 +1,6 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import { Card } from "@material-ui/core";
+import Typography from "@mui/material/Typography";
+import { Card } from "@mui/material";
 import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
 
 export function VideoCard({ youtubeUrl, description }) {

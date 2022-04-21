@@ -1,14 +1,14 @@
 import React from "react";
-import CheckIcon from "@material-ui/icons/Check";
-import CloseIcon from "@material-ui/icons/Close";
-import Dialog from "@material-ui/core/Dialog";
-import IconButton from "@material-ui/core/IconButton";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
+import Dialog from "@mui/material/Dialog";
+import IconButton from "@mui/material/IconButton";
 import { LoadingButton } from "common/components/LoadingButton";
 import { CustomDialogActions, CustomDialogTitle } from "./CustomDialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import Typography from "@material-ui/core/Typography";
-import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
+import DialogContent from "@mui/material/DialogContent";
+import Typography from "@mui/material/Typography";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 import { useApi } from "common/utils/api";
 import { DISABLE_WARNING_MUTATION } from "common/utils/apiQueries";
 
@@ -57,6 +57,7 @@ export default function ConfirmationModal({
             <FormControlLabel
               control={
                 <Checkbox
+                  color="secondary"
                   checked={shouldDisableWarning}
                   onChange={e => setShouldDisableWarning(e.target.checked)}
                   size="small"

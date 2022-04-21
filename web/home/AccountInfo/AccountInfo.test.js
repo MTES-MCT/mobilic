@@ -1,12 +1,24 @@
 import React from "react";
-import { mount } from "enzyme";
+import { render, screen } from "@testing-library/react";
 import Home from "./AccountInfo";
 import * as store from "common/store/store";
-import AlertEmailNotActivated from "./AlertEmailNotActivated";
+import { createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material";
 
-let storeSpy;
+jest.mock("apollo-link-timeout", () => () => {});
+jest.mock("../../common/Header", () => ({
+  Header: () => <div>Mock</div>
+}));
+jest.mock("../../common/EmploymentInfoCard", () => ({
+  EmploymentInfoCard: () => <div>Mock</div>
+}));
+jest.mock("./AlertEmailNotActivated", () => props => (
+  <div {...props}>Mock</div>
+));
 
-describe("Home", () => {
+describe("<Home />", () => {
+  let storeSpy;
+
   beforeAll(() => {
     storeSpy = jest.spyOn(store, "useStoreSyncedWithLocalStorage");
   });
@@ -19,12 +31,19 @@ describe("Home", () => {
     storeSpy.mockReturnValue({
       state: { employments: [] },
       userInfo: mockUserInfo,
+      companies: () => [],
       ...propsOverwrite
     });
-    return mount(<Home />);
+
+    const theme = createTheme();
+    return render(
+      <ThemeProvider theme={theme}>
+        <Home />
+      </ThemeProvider>
+    );
   };
 
-  it("should render the Home correctly when email is not activated", () => {
+  it("should render without crashing", () => {
     const emailActivatedUserInfo = () => {
       return {
         id: "1234",
@@ -32,23 +51,21 @@ describe("Home", () => {
         email: "testemail@yopmail.com"
       };
     };
-    const customProps = { userInfo: emailActivatedUserInfo };
-    const wrapper = setup(customProps);
-    expect(wrapper.debug()).toMatchSnapshot();
+
+    setup({ userInfo: emailActivatedUserInfo });
+    expect(screen).toBeDefined();
   });
 
-  it("should render the Home component without AlertEmailNotActivated component if email is activated", () => {
+  it("should render without AlertEmailNotActivated if email is activated", () => {
     const emailActivatedUserInfo = () => {
       return { id: "1234", hasActivatedEmail: true };
     };
-    const customProps = { userInfo: emailActivatedUserInfo };
 
-    const wrapper = setup(customProps);
-    const alertComponent = wrapper.find('[data-qa="emailInfoItem"]');
-    expect(alertComponent.exists(AlertEmailNotActivated)).toBeFalsy();
+    const wrapper = setup({ userInfo: emailActivatedUserInfo });
+    expect(wrapper.queryByTestId("alertEmailNotActivated")).toBeFalsy();
   });
 
-  it("should render the Home component with AlertEmailNotActivated message if email is not activated", () => {
+  it("should render with AlertEmailNotActivated if email is not activated", () => {
     const emailActivatedUserInfo = () => {
       return {
         id: "1234",
@@ -56,24 +73,20 @@ describe("Home", () => {
         email: "testemail@yopmail.com"
       };
     };
-    const customProps = { userInfo: emailActivatedUserInfo };
 
-    const wrapper = setup(customProps);
-    const alertComponent = wrapper.find('[data-qa="emailInfoItem"]');
-    expect(alertComponent.exists(AlertEmailNotActivated)).toBeTruthy();
+    const wrapper = setup({ userInfo: emailActivatedUserInfo });
+    expect(wrapper.queryByTestId("alertEmailNotActivated")).toBeTruthy();
   });
 
-  it("should render the Home component with AlertEmailNotActivated message if email is not activated", () => {
+  it("should render without AlertEmailNotActivated if email is undefined", () => {
     const emailActivatedUserInfo = () => {
       return {
         id: "1234",
         hasActivatedEmail: false
       };
     };
-    const customProps = { userInfo: emailActivatedUserInfo };
 
-    const wrapper = setup(customProps);
-    const alertComponent = wrapper.find('[data-qa="emailInfoItem"]');
-    expect(alertComponent.exists(AlertEmailNotActivated)).toBeFalsy();
+    const wrapper = setup({ userInfo: emailActivatedUserInfo });
+    expect(wrapper.queryByTestId("alertEmailNotActivated")).toBeFalsy();
   });
 });

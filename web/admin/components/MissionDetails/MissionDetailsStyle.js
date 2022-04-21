@@ -1,4 +1,4 @@
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 
 export const useMissionDetailsStyles = makeStyles(theme => ({
   closeButton: {

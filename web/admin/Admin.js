@@ -6,7 +6,7 @@ import {
   useRouteMatch,
   useLocation
 } from "react-router-dom";
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 import "./assets/admin.scss";
 import {
   loadCompaniesList,
@@ -20,9 +20,9 @@ import {
 } from "common/utils/loading";
 
 import { Header } from "../common/Header";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
+import { useIsWidthUp, useWidth } from "common/utils/useWidth";
 import { SideMenu } from "./components/SideMenu";
-import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function __Admin({ width }) {
+function _Admin() {
   const api = useApi();
   const adminStore = useAdminStore();
   const withLoadingScreen = useLoadingScreen();
@@ -61,6 +61,8 @@ function __Admin({ width }) {
   });
 
   const location = useLocation();
+  const width = useWidth();
+  const isMdUp = useIsWidthUp("md");
 
   const views = ADMIN_VIEWS.map(view => {
     const absPath = `${path}${view.path}`;
@@ -161,13 +163,13 @@ function __Admin({ width }) {
         disableGutters
         className={classes.container}
       >
-        {isWidthUp("md", width) && <SideMenu views={views} />}
+        {isMdUp && <SideMenu views={views} />}
         <Container
           className={`scrollable ${classes.panelContainer}`}
           maxWidth={false}
           ref={ref}
         >
-          <Switch>
+          <Switch color="secondary">
             {views.map(view => (
               <Route
                 key={view.label}
@@ -192,16 +194,12 @@ function __Admin({ width }) {
   ];
 }
 
-function _Admin(props) {
+export default function Admin(props) {
   return (
     <LoadingScreenContextProvider>
       <AdminStoreProvider>
-        <__Admin {...props} />
+        <_Admin {...props} />
       </AdminStoreProvider>
     </LoadingScreenContextProvider>
   );
 }
-
-const Admin = withWidth()(_Admin);
-
-export default Admin;

@@ -1,18 +1,18 @@
 import React from "react";
-import Dialog from "@material-ui/core/Dialog";
-import Typography from "@material-ui/core/Typography";
-import DialogContent from "@material-ui/core/DialogContent";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+import Dialog from "@mui/material/Dialog";
+import Typography from "@mui/material/Typography";
+import DialogContent from "@mui/material/DialogContent";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 import { formatGraphQLError } from "common/utils/errors";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
+import { makeStyles } from "@mui/styles";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import {
   CustomDialogActions,
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
-import Alert from "@material-ui/lab/Alert";
+import Alert from "@mui/material/Alert";
 import { useLoadingScreen } from "common/utils/loading";
 import { useApi } from "common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";

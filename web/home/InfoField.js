@@ -1,9 +1,9 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Alert from "@material-ui/lab/Alert";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+import Typography from "@mui/material/Typography";
+import { makeStyles } from "@mui/styles";
+import Alert from "@mui/material/Alert";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 
 const useStyles = makeStyles(theme => ({
   fieldName: {

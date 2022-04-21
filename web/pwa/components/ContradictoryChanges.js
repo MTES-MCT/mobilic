@@ -1,13 +1,13 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import List from "@material-ui/core/List";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import List from "@mui/material/List";
 import { useToggleContradictory } from "./history/toggleContradictory";
-import Skeleton from "@material-ui/lab/Skeleton";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Skeleton from "@mui/material/Skeleton";
+import { makeStyles } from "@mui/styles";
 import { Event } from "../../common/Event";
-import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
-import ArrowDownward from "@material-ui/icons/ArrowDownward";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownward from "@mui/icons-material/ArrowDownward";
 import { MISSION_RESOURCE_TYPES } from "common/utils/contradictory";
 import { getChangeIconAndText } from "../../common/logEvent";
 import {
@@ -17,8 +17,8 @@ import {
   now
 } from "common/utils/time";
 import { isConnectionError } from "common/utils/errors";
-import { Accordion, AccordionDetails } from "@material-ui/core";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
+import { Accordion, AccordionDetails } from "@mui/material";
+import AccordionSummary from "@mui/material/AccordionSummary";
 
 export const useStyles = makeStyles(theme => ({
   noChangesText: {
@@ -126,7 +126,7 @@ export function ContradictoryChanges({
       </AccordionSummary>
       <AccordionDetails className={classes.collapse}>
         {loadingEmployeeVersion ? (
-          <Skeleton rect width="100%" height={100} />
+          <Skeleton variant="rectangular" width="100%" height={100} />
         ) : contradictoryComputationError ? (
           <Typography className={classes.noChangesText}>
             {isConnectionError(contradictoryComputationError)

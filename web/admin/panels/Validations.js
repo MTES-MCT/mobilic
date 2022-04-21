@@ -5,9 +5,9 @@ import { useAdminStore } from "../store/store";
 import size from "lodash/size";
 import { AugmentedTable } from "../components/AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import Paper from "@material-ui/core/Paper";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
 import {
   formatDateTime,
   formatDay,
@@ -15,9 +15,8 @@ import {
   formatTimer
 } from "common/utils/time";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
-import withWidth from "@material-ui/core/withWidth";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 import { VALIDATE_MISSION_MUTATION } from "common/utils/apiQueries";
@@ -59,7 +58,7 @@ const VALIDATION_TABS = [
   }
 ];
 
-function _ValidationPanel() {
+function ValidationPanel() {
   const api = useApi();
   const adminStore = useAdminStore();
   const alerts = useSnackbarAlerts();
@@ -419,7 +418,5 @@ function _ValidationPanel() {
     </Paper>
   );
 }
-
-const ValidationPanel = withWidth()(_ValidationPanel);
 
 export default ValidationPanel;

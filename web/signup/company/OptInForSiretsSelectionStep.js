@@ -1,10 +1,10 @@
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import React from "react";
 import { Step } from "./Step";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Radio from "@material-ui/core/Radio";
+import { makeStyles } from "@mui/styles";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -53,13 +53,13 @@ export function OptInForSiretsSelectionStep({
         <FormControlLabel
           className={classes.radioButton}
           value={"no"}
-          control={<Radio />}
+          control={<Radio color="secondary" />}
           label="Je souhaite gérer dans Mobilic l'unité légale comme un tout. Je n'ai pas besoin de créer plusieurs entreprises Mobilic associées à ce SIREN (recommandé)."
         />
         <FormControlLabel
           className={classes.radioButton}
           value={"yes"}
-          control={<Radio />}
+          control={<Radio color="secondary" />}
           label="J'ai besoin de séparer la gestion de mes établissements. Je crée plusieurs entreprises Mobilic correspondant chacune à un ou plusieurs de mes établissements."
         />
       </RadioGroup>

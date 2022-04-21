@@ -1,6 +1,6 @@
 import React from "react";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import SpeedIcon from "@material-ui/icons/Speed";
+import InputAdornment from "@mui/material/InputAdornment";
+import SpeedIcon from "@mui/icons-material/Speed";
 import TextField from "common/utils/TextField";
 
 export default function KilometerReadingField({

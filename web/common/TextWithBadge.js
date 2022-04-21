@@ -1,6 +1,6 @@
-import Badge from "@material-ui/core/Badge";
+import Badge from "@mui/material/Badge";
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles(theme => ({
   customBadge: {

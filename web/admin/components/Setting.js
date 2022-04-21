@@ -1,11 +1,11 @@
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
+import { makeStyles } from "@mui/styles";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
-import Grid from "@material-ui/core/Grid";
-import Switch from "@material-ui/core/Switch/Switch";
+import Grid from "@mui/material/Grid";
+import Switch from "@mui/material/Switch";
 
 const useStyles = makeStyles(theme => ({
   description: {
@@ -80,6 +80,7 @@ export function SimpleToggleSetting({
       submitSettingChange={submitSettingChange}
       renderInput={(value, handleChange) => (
         <Switch
+          color="secondary"
           checked={value}
           onChange={e => handleChange(e.target.checked)}
         />

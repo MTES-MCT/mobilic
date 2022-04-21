@@ -1,15 +1,15 @@
-import AlertTitle from "@material-ui/lab/AlertTitle";
-import Typography from "@material-ui/core/Typography";
-import List from "@material-ui/core/List";
-import { ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
-import Alert from "@material-ui/lab/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import Typography from "@mui/material/Typography";
+import List from "@mui/material/List";
+import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
 import React from "react";
 import { RESEND_ACTIVATION_EMAIL } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 
 export default function AlertEmailNotActivated({ email }) {
   const useStyles = makeStyles(theme => ({
@@ -75,7 +75,7 @@ export default function AlertEmailNotActivated({ email }) {
             size="small"
             color="primary"
             variant="contained"
-            data-qa="resendActivationEmailButton"
+            data-testid="resendActivationEmailButton"
             onClick={resendActivationEmail}
           >
             Renvoyer l'email d'activation

@@ -1,9 +1,9 @@
 import React from "react";
 import uniq from "lodash/uniq";
 import { HOUR } from "../utils/time";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import { makeStyles } from "@mui/styles";
 import { ACTIVITIES } from "../utils/activities";
 
 const ORDERED_SCALES_IN_HOURS = [0.5, 1, 2, 3, 4, 6, 12, 24];

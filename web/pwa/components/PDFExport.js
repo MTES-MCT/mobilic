@@ -1,10 +1,11 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import DialogContent from "@material-ui/core/DialogContent";
-import { DatePicker } from "@material-ui/pickers";
-import Dialog from "@material-ui/core/Dialog";
+import Typography from "@mui/material/Typography";
+import DialogContent from "@mui/material/DialogContent";
+import MobileDatePicker from "@mui/lab/MobileDatePicker";
+import Dialog from "@mui/material/Dialog";
+import TextField from "@mui/material/TextField";
 import { useApi } from "common/utils/api";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
@@ -13,7 +14,7 @@ import {
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import {
   DAY,
   endOfMonthAsDate,
@@ -56,6 +57,8 @@ export default function PDFExport({ open, handleClose }) {
   const [maxDate, setMaxDate] = React.useState(startOfDayAsDate(new Date()));
   const [dateRangeError, setDateRangeError] = React.useState(null);
 
+  const today = new Date();
+
   React.useEffect(() => {
     if (
       maxDate &&
@@ -90,45 +93,51 @@ export default function PDFExport({ open, handleClose }) {
             setEnd={setMaxDate}
           >
             <Grid item sm={6} xs={12}>
-              <DatePicker
-                required
+              <MobileDatePicker
                 label="Mois de début"
                 value={minDate}
-                format="MMMM yyyy"
+                inputFormat="MMMM yyyy"
                 fullWidth
-                onChange={e => {
-                  setMinDate(e);
-                }}
-                cancelLabel={null}
-                autoOk
-                disableFuture
-                inputVariant="outlined"
-                animateYearScrolling
-                error={!!dateRangeError}
-                helperText={dateRangeError}
+                onChange={setMinDate}
                 openTo={"month"}
                 views={["year", "month"]}
+                cancelText={null}
+                disableCloseOnSelect={false}
+                disableMaskedInput={true}
+                maxDate={today}
+                renderInput={props => (
+                  <TextField
+                    {...props}
+                    required
+                    variant="outlined"
+                    error={!!dateRangeError}
+                    helperText={dateRangeError}
+                  />
+                )}
               />
             </Grid>
             <Grid item sm={6} xs={12}>
-              <DatePicker
-                required
+              <MobileDatePicker
                 label="Mois de fin"
                 value={maxDate}
-                format="MMMM yyyy"
+                inputFormat="MMMM yyyy"
                 fullWidth
-                onChange={e => {
-                  setMaxDate(e);
-                }}
-                cancelLabel={null}
-                autoOk
-                disableFuture
-                inputVariant="outlined"
-                animateYearScrolling
-                error={!!dateRangeError}
-                helperText={dateRangeError}
+                onChange={setMaxDate}
                 openTo={"month"}
                 views={["year", "month"]}
+                cancelText={null}
+                disableCloseOnSelect={false}
+                disableMaskedInput={true}
+                maxDate={today}
+                renderInput={props => (
+                  <TextField
+                    {...props}
+                    required
+                    variant="outlined"
+                    helperText={dateRangeError}
+                    error={!!dateRangeError}
+                  />
+                )}
               />
             </Grid>
           </DateOrDateTimeRangeSelectionContext>

@@ -1,24 +1,24 @@
 import React from "react";
-import Box from "@material-ui/core/Box";
-import Divider from "@material-ui/core/Divider";
-import Typography from "@material-ui/core/Typography";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
 import { formatPersonName } from "common/utils/coworkers";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import { getAccessibleRoutes, getBadgeRoutes, RESOURCES_ROUTE } from "./routes";
 import { useHistory, useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { Logos } from "./Logos";
-import MenuIcon from "@material-ui/icons/Menu";
-import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
-import useTheme from "@material-ui/core/styles/useTheme";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Button from "@material-ui/core/Button";
-import ListItem from "@material-ui/core/ListItem";
-import List from "@material-ui/core/List";
-import Drawer from "@material-ui/core/Drawer";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import CloseIcon from "@material-ui/icons/Close";
-import Tooltip from "@material-ui/core/Tooltip";
+import MenuIcon from "@mui/icons-material/Menu";
+import useTheme from "@mui/styles/useTheme";
+import { useIsWidthUp } from "common/utils/useWidth";
+import { makeStyles } from "@mui/styles";
+import Button from "@mui/material/Button";
+import ListItem from "@mui/material/ListItem";
+import List from "@mui/material/List";
+import Drawer from "@mui/material/Drawer";
+import ListSubheader from "@mui/material/ListSubheader";
+import CloseIcon from "@mui/icons-material/Close";
+import Tooltip from "@mui/material/Tooltip";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Link, LinkButton } from "./LinkButton";
 import YoutubeIcon from "common/assets/images/youtube.png";
@@ -26,13 +26,12 @@ import LinkedInWhiteIcon from "common/assets/images/linkedin.svg";
 import YoutubeWhiteIcon from "common/assets/images/youtube-white.png";
 import TwitterIcon from "common/assets/images/twitter.svg";
 import TwitterWhiteIcon from "common/assets/images/twitter-white.svg";
-
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { useAdminStore, useAdminCompanies } from "../admin/store/store";
 import { TextWithBadge } from "./TextWithBadge";
 import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 import TextField from "common/utils/TextField";
-import { MenuItem } from "@material-ui/core";
+import { MenuItem } from "@mui/material";
 
 const SOCIAL_NETWORKS = [
   {
@@ -391,7 +390,6 @@ function DesktopHeader({ disableMenu }) {
             />
           )}
           <Tooltip
-            interactive
             title={`${formatPersonName(userInfo)}${
               companyName ? " - " + companyName : ""
             }`}
@@ -478,10 +476,11 @@ function DesktopHeader({ disableMenu }) {
   );
 }
 
-function _Header({ width, disableMenu }) {
+function _Header({ disableMenu }) {
+  const isMdUp = useIsWidthUp("md");
   return (
     <HeaderContainer>
-      {isWidthUp("md", width) ? (
+      {isMdUp ? (
         <DesktopHeader disableMenu={disableMenu} />
       ) : (
         <MobileHeader disableMenu={disableMenu} />
@@ -490,4 +489,4 @@ function _Header({ width, disableMenu }) {
   );
 }
 
-export const Header = withWidth()(_Header);
+export const Header = _Header;

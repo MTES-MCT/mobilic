@@ -24,9 +24,14 @@ yarn-error.log*
 
 # IDE
 .idea
+.vscode
 
 # Misc infra scripts
 devops
 
 # Local nginx
 nginx/
+
+# yarn
+.yarn/releases
+.yarnrc

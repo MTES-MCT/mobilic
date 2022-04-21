@@ -2,11 +2,13 @@ import React from "react";
 import debounce from "lodash/debounce";
 import { useHistory } from "react-router-dom";
 import { EmployeeFilter } from "../components/EmployeeFilter";
-import Paper from "@material-ui/core/Paper";
+import Paper from "@mui/material/Paper";
 import { PeriodToggle } from "../components/PeriodToggle";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import { makeStyles } from "@mui/styles";
+import { useWidth } from "common/utils/useWidth";
 import { WorkTimeTable } from "../components/WorkTimeTable";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
 import { useAdminStore, useAdminCompanies } from "../store/store";
@@ -14,24 +16,23 @@ import { useModals } from "common/utils/modals";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
 import max from "lodash/max";
-import Typography from "@material-ui/core/Typography";
 import {
   formatDay,
   isoFormatLocalDate,
   startOfDayAsDate
 } from "common/utils/time";
-import Grid from "@material-ui/core/Grid";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu/Menu";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import SvgIcon from "@material-ui/core/SvgIcon";
+import Grid from "@mui/material/Grid";
+import MenuItem from "@mui/material/MenuItem";
+import Menu from "@mui/material/Menu";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import SvgIcon from "@mui/material/SvgIcon";
 import { ReactComponent as ExcelIcon } from "common/assets/images/excel.svg";
 import { ReactComponent as TachoIcon } from "common/assets/images/tacho.svg";
 import { LoadingButton } from "common/components/LoadingButton";
-import Drawer from "@material-ui/core/Drawer/Drawer";
+import Drawer from "@mui/material/Drawer";
 import NewMissionForm from "../../common/NewMissionForm";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import {
@@ -40,8 +41,8 @@ import {
   CREATE_MISSION_MUTATION,
   LOG_LOCATION_MUTATION
 } from "common/utils/apiQueries";
-import { DatePicker } from "@material-ui/pickers";
-import withWidth from "@material-ui/core/withWidth";
+import MobileDatePicker from "@mui/lab/MobileDatePicker";
+import TextField from "@mui/material/TextField";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
@@ -118,7 +119,7 @@ const onMinDateChange = debounce(
   500
 );
 
-function _ActivityPanel({ width }) {
+function ActivitiesPanel() {
   const adminStore = useAdminStore();
   const [adminCompanies] = useAdminCompanies();
   const modals = useModals();
@@ -142,6 +143,8 @@ function _ActivityPanel({ width }) {
   const [openNewMission, setOpenNewMission] = React.useState(false);
 
   const minDateOfFetchedData = adminStore.minWorkDaysDate;
+
+  const today = new Date();
 
   React.useEffect(() => {
     adminStore.dispatch({
@@ -231,6 +234,7 @@ function _ActivityPanel({ width }) {
   // TODO : memoize this
   const periodAggregates = aggregateWorkDayPeriods(selectedWorkDays, period);
   const ref = React.useRef(null);
+  const width = useWidth();
 
   const classes = useStyles();
   return [
@@ -244,7 +248,7 @@ function _ActivityPanel({ width }) {
         spacing={2}
         container
         alignItems="center"
-        justify="space-between"
+        justifyContent="space-between"
         className={classes.filterGrid}
       >
         <Grid item>
@@ -254,41 +258,41 @@ function _ActivityPanel({ width }) {
           <PeriodToggle period={period} setPeriod={setPeriod} />
         </Grid>
         <Grid item>
-          <DatePicker
-            required
+          <MobileDatePicker
             label="Début"
-            value={new Date(minDate)}
-            size="small"
-            format="d MMMM yyyy"
+            value={minDate}
+            inputFormat="d MMMM yyyy"
             fullWidth
+            disableCloseOnSelect={false}
+            disableMaskedInput={true}
             onChange={val => {
               trackEvent(ACTIVITY_FILTER_MIN_DATE);
               setMinDate(isoFormatLocalDate(val));
             }}
-            cancelLabel={null}
-            autoOk
-            disableFuture
-            inputVariant="outlined"
-            animateYearScrolling
+            cancelText={null}
+            maxDate={today}
+            renderInput={props => (
+              <TextField {...props} required variant="outlined" size="small" />
+            )}
           />
         </Grid>
         <Grid item>
-          <DatePicker
-            required
+          <MobileDatePicker
             label="Fin"
-            value={new Date(maxDate)}
-            format="d MMMM yyyy"
+            value={maxDate}
+            inputFormat="d MMMM yyyy"
             fullWidth
-            size="small"
+            disableCloseOnSelect={false}
+            disableMaskedInput={true}
             onChange={val => {
               trackEvent(ACTIVITY_FILTER_MAX_DATE);
               setMaxDate(isoFormatLocalDate(val));
             }}
-            cancelLabel={null}
-            autoOk
-            disableFuture
-            inputVariant="outlined"
-            animateYearScrolling
+            cancelText={null}
+            maxDate={today}
+            renderInput={props => (
+              <TextField {...props} required variant="outlined" size="small" />
+            )}
           />
         </Grid>
         <Grid item>
@@ -467,7 +471,5 @@ function _ActivityPanel({ width }) {
     </Paper>
   ];
 }
-
-const ActivitiesPanel = withWidth()(_ActivityPanel);
 
 export default ActivitiesPanel;

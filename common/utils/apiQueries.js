@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client/core";
+import { gql } from "graphql-tag";
 import { buildBackendPayloadForAddress } from "./addresses";
 import {
   COMPANY_SETTINGS_FRAGMENT,

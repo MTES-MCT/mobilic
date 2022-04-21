@@ -1,9 +1,9 @@
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles(theme => ({
   sectionTitle: {
@@ -28,7 +28,7 @@ export function MissionDetailsSection({
       <Grid
         container
         spacing={2}
-        justify="space-between"
+        justifyContent="space-between"
         alignItems="center"
         className={classes.sectionTitle}
       >

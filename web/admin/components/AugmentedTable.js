@@ -2,28 +2,28 @@ import React from "react";
 import orderBy from "lodash/orderBy";
 import forEach from "lodash/forEach";
 import sum from "lodash/sum";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import TableBody from "@material-ui/core/TableBody";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import IconButton from "@material-ui/core/IconButton";
-import Box from "@material-ui/core/Box";
-import TableContainer from "@material-ui/core/TableContainer";
-import MaterialTable from "@material-ui/core/Table";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import TableBody from "@mui/material/TableBody";
+import { makeStyles } from "@mui/styles";
+import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
+import TableContainer from "@mui/material/TableContainer";
+import MaterialTable from "@mui/material/Table";
 import { Table, AutoSizer, Column, WindowScroller } from "react-virtualized";
 import "react-virtualized/styles.css";
-import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-import KeyboardArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import CircularProgress from "@mui/material/CircularProgress";
 import { AugmentedTableHeaderCellContent } from "./AugmentedTableHeaderCellContent";
 import {
   AugmentedTableRow,
   AugmentedTableRowCellContent
 } from "./AugmentedTableRow";
 import { AugmentedTableEditActions } from "./AugmentedTableEditActions";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Menu from "@mui/material/Menu";
 
 const overflowStyleForMaxWidthCells = {
   overflowX: "hidden",

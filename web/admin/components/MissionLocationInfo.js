@@ -6,12 +6,12 @@ import {
 } from "common/utils/addresses";
 import { AddressField } from "../../common/AddressField";
 import KilometerReadingField from "../../common/KilometerReadingField";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItem from "@material-ui/core/ListItem";
-import List from "@material-ui/core/List";
-import AccessTimeIcon from "@material-ui/icons/AccessTime";
-import LocationIcon from "@material-ui/icons/LocationOn";
-import Tooltip from "@material-ui/core/Tooltip";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItem from "@mui/material/ListItem";
+import List from "@mui/material/List";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import LocationIcon from "@mui/icons-material/LocationOn";
+import Tooltip from "@mui/material/Tooltip";
 
 export function MissionLocationInfo({
   location,
@@ -28,7 +28,7 @@ export function MissionLocationInfo({
   return (
     <List>
       <ListItem disableGutters>
-        <Tooltip title="Heure">
+        <Tooltip title="Heure" disableInteractive>
           <ListItemIcon>
             <AccessTimeIcon />
           </ListItemIcon>
@@ -36,7 +36,7 @@ export function MissionLocationInfo({
         {time}
       </ListItem>
       <ListItem disableGutters>
-        <Tooltip title="Lieu">
+        <Tooltip title="Lieu" disableInteractive>
           <ListItemIcon>
             <LocationIcon />
           </ListItemIcon>
@@ -68,7 +68,7 @@ export function MissionLocationInfo({
       </ListItem>
       {showKm && location && (
         <ListItem disableGutters>
-          <Tooltip title="Relevé kilométrique du véhicule">
+          <Tooltip title="Relevé kilométrique du véhicule" disableInteractive>
             <ListItemIcon>KM</ListItemIcon>
           </Tooltip>
           <EditableMissionInfo

@@ -1,8 +1,7 @@
 import React from "react";
-import { isWidthUp } from "@material-ui/core";
 import { MissionDetails } from "./MissionDetails/MissionDetails";
-import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import { makeStyles } from "@mui/styles";
 import { useLocation } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
@@ -16,7 +15,6 @@ const MissionDrawerContext = React.createContext(() => {});
 
 export function MissionDrawerContextProvider({
   children,
-  width,
   setShouldRefreshData
 }) {
   const location = useLocation();
@@ -37,8 +35,8 @@ export function MissionDrawerContextProvider({
         onClose={() => setMissionIdOnFocus(null)}
         PaperProps={{
           className: classes.missionDrawer,
-          style: {
-            width: isWidthUp("md", width) ? 860 : "100vw"
+          sx: {
+            width: { xs: "100vw", md: 860 }
           }
         }}
       >

@@ -1,8 +1,8 @@
 import React from "react";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import Avatar from "@material-ui/core/Avatar";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Avatar from "@mui/material/Avatar";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
 import {
   ACTIVITIES,
   ACTIVITIES_OPERATIONS,
@@ -17,17 +17,17 @@ import {
   now,
   useDateTimeFormatter
 } from "common/utils/time";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import IconButton from "@material-ui/core/IconButton";
-import CreateIcon from "@material-ui/icons/Create";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
+import IconButton from "@mui/material/IconButton";
+import CreateIcon from "@mui/icons-material/Create";
 import { useModals } from "common/utils/modals";
-import Typography from "@material-ui/core/Typography";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Container from "@material-ui/core/Container";
+import Typography from "@mui/material/Typography";
+import { makeStyles } from "@mui/styles";
+import Container from "@mui/material/Container";
 import { VerticalTimeline } from "common/components/VerticalTimeline";
-import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup/ToggleButtonGroup";
-import ToggleButton from "@material-ui/lab/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import ToggleButton from "@mui/material/ToggleButton";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 
 const useStyles = makeStyles(theme => ({

@@ -1,18 +1,18 @@
 import React from "react";
-import Dialog from "@material-ui/core/Dialog";
+import Dialog from "@mui/material/Dialog";
 import { LoadingButton } from "common/components/LoadingButton";
 import {
   CustomDialogActions,
   CustomDialogTitle
 } from "../common/CustomDialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import MenuItem from "@material-ui/core/MenuItem";
+import DialogContent from "@mui/material/DialogContent";
+import MenuItem from "@mui/material/MenuItem";
 import TextField from "common/utils/TextField";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { EmailField } from "../common/EmailField";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { useApi } from "common/utils/api";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
@@ -99,6 +99,7 @@ export default function NewsletterSubscriptionModal({ open, handleClose }) {
           />
           <TextField
             label="Profil"
+            variant="standard"
             required
             fullWidth
             select

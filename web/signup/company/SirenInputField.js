@@ -1,4 +1,4 @@
-import TextField from "@material-ui/core/TextField/TextField";
+import TextField from "@mui/material/TextField";
 import React from "react";
 
 function validateSirenString(string) {
@@ -35,6 +35,7 @@ export function SirenInputField({
       error={error}
       required
       className={className}
+      variant="standard"
       label="SIREN"
       placeholder="123456789"
       helperText={error ? "L'entrée n'est pas un numéro de SIREN valide" : ""}

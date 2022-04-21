@@ -1,7 +1,7 @@
 import React from "react";
 import omit from "lodash/omit";
-import Button from "@material-ui/core/Button";
-import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export function LoadingButton(props) {
   const [loading, setLoading] = React.useState(false);

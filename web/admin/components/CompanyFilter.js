@@ -1,8 +1,8 @@
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import TextField from "@material-ui/core/TextField";
-import Checkbox from "@material-ui/core/Checkbox";
+import { makeStyles } from "@mui/styles";
+import { Autocomplete } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import Checkbox from "@mui/material/Checkbox";
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -45,14 +45,15 @@ export function CompanyFilter({ companies, setCompanies, className }) {
       size="small"
       className={className}
       getOptionLabel={company => company.name}
-      renderOption={company => (
-        <>
+      renderOption={(props, company) => (
+        <li {...props}>
           <Checkbox
+            color="secondary"
             style={{ marginRight: 8 }}
             checked={company.selected || false}
           />
           <span>{company.name}</span>
-        </>
+        </li>
       )}
       value={selectedCompanies}
       onChange={handleChange}
@@ -60,7 +61,6 @@ export function CompanyFilter({ companies, setCompanies, className }) {
         <TextField
           className={classes.formControl}
           {...params}
-          variant="outlined"
           label="Entreprises"
           placeholder={`${
             selectedCompanies.length === 0 ? "Toutes les entreprises" : ""

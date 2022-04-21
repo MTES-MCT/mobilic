@@ -1,13 +1,13 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import DialogContent from "@material-ui/core/DialogContent";
-import Dialog from "@material-ui/core/Dialog";
+import Typography from "@mui/material/Typography";
+import DialogContent from "@mui/material/DialogContent";
+import Dialog from "@mui/material/Dialog";
 import { LoadingButton } from "common/components/LoadingButton";
 import {
   CustomDialogActions,
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
-import TextField from "@material-ui/core/TextField/TextField";
+import TextField from "@mui/material/TextField";
 
 export default function BatchInvite({ open, handleClose, handleSubmit }) {
   const [text, setText] = React.useState("");
@@ -39,12 +39,11 @@ export default function BatchInvite({ open, handleClose, handleSubmit }) {
         </Typography>
         <TextField
           fullWidth
-          variant="outlined"
           label="Adresses email"
           placeholder={`martin.dupond@gmail.com\ncorinne.robert@outlook.fr\n...`}
           multiline
-          rows={10}
-          rowsMax={15}
+          minRows={10}
+          maxRows={15}
           value={text}
           error={tooManyLinesError}
           helperText={

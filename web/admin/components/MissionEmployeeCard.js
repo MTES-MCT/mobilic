@@ -1,11 +1,11 @@
 import React from "react";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import Accordion from "@material-ui/core/Accordion";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import Accordion from "@mui/material/Accordion";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { formatPersonName } from "common/utils/coworkers";
-import Typography from "@material-ui/core/Typography";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import Grid from "@material-ui/core/Grid";
+import Typography from "@mui/material/Typography";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Grid from "@mui/material/Grid";
 import { MetricCard } from "../../common/InfoCard";
 import { formatTimer, useDateTimeFormatter } from "common/utils/time";
 import { ExpendituresCard } from "./ExpendituresCard";
@@ -14,11 +14,11 @@ import {
   addBreaksToActivityList,
   computeDurationAndTime
 } from "common/utils/activities";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
+import { makeStyles } from "@mui/styles";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 import { MissionValidationInfo } from "./MissionValidationInfo";
-import Hidden from "@material-ui/core/Hidden";
+import Hidden from "@mui/material/Hidden";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ContradictoryChanges } from "../../pwa/components/ContradictoryChanges";
 import { useCacheContradictoryInfoInAdminStore } from "common/utils/contradictory";
@@ -84,7 +84,7 @@ export function MissionEmployeeCard({
         <Grid
           container
           spacing={3}
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
           wrap="nowrap"
         >

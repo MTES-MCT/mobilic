@@ -50,6 +50,14 @@
     "import/no-mutable-exports": "error",
     "import/first": "error",
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "off"
+    "react-hooks/exhaustive-deps": "off",
+    // To improve dev startup time
+    // https://mui.com/guides/minimizing-bundle-size/#development-environment
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": ["@mui/*/*/*", "!@mui/material/test-utils/*"]
+      }
+    ]
   }
 }

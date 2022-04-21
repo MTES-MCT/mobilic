@@ -1,15 +1,20 @@
 import React from "react";
-import { shallow } from "enzyme";
+import { render, screen, fireEvent } from "@testing-library/react";
 import * as api from "common/utils/api";
 import { DISABLE_WARNING_MUTATION } from "common/utils/apiQueries";
 import { WarningModificationMission } from "./WarningModificationMission";
 import * as store from "common/store/store";
 import { DISMISSABLE_WARNINGS } from "../../utils/dismissableWarnings";
+import { createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material";
+import { BrowserRouter } from "react-router-dom";
 
-let graphQlSpy;
-let storeSpy;
+jest.mock("apollo-link-timeout", () => () => {});
 
 describe("WarningModificationMission", () => {
+  let graphQlSpy;
+  let storeSpy;
+
   beforeAll(() => {
     const apiSpy = jest.spyOn(api, "useApi");
     apiSpy.mockReturnValue({
@@ -27,44 +32,45 @@ describe("WarningModificationMission", () => {
       userInfo: mockUserInfo,
       ...propsOverwrite
     });
-    return shallow(<WarningModificationMission />);
+
+    const theme = createTheme();
+
+    return render(
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+          <WarningModificationMission />
+        </BrowserRouter>
+      </ThemeProvider>
+    );
   };
 
-  it("should render the WarningModificationMission correctly ", () => {
-    const wrapper = setup();
-    expect(wrapper.debug()).toMatchSnapshot();
+  it("should render without crashing", () => {
+    setup();
+    expect(screen).toBeDefined();
   });
 
-  it("should not render the Warning Alert if it has already been dismissed", () => {
+  it("should not render Warning Alert if it has already been dismissed", () => {
     const mockUserInfo = () => {
       return {
         disabledWarnings: [DISMISSABLE_WARNINGS.ADMIN_MISSION_MODIFICATION]
       };
     };
-    const customUserInfo = {
-      userInfo: mockUserInfo
-    };
-    const wrapper = setup(customUserInfo);
-    expect(
-      wrapper.find('[data-qa="modificationWarningCollapse"]').prop("in")
-    ).toBeFalsy();
+    const wrapper = setup({ userInfo: mockUserInfo });
+    expect(wrapper.getByTestId("warningAlert")).not.toBeVisible();
   });
 
-  it("should render the Warning Alert if it has never been dismissed", () => {
+  it("should render Warning Alert if it has never been dismissed", () => {
     const wrapper = setup();
-    expect(
-      wrapper.find('[data-qa="modificationWarningCollapse"]').prop("in")
-    ).toBeTruthy();
+    expect(wrapper.getByTestId("warningAlert")).toBeVisible();
   });
 
-  it("should call the dismiss warning api if the link is cliclked", () => {
+  it("should call the dismiss warning api if the link is clicked", () => {
     const wrapper = setup();
 
-    const dismissWarningMessage = wrapper.find(
-      '[data-qa="dismissMissionModificationWarningLink"]'
+    const dismissWarningMessage = wrapper.getByTestId(
+      "dismissMissionModificationWarningLink"
     );
-
-    dismissWarningMessage.props().onClick({ preventDefault: () => {} });
+    fireEvent.click(dismissWarningMessage);
 
     expect(graphQlSpy).toHaveBeenCalledWith(
       DISABLE_WARNING_MUTATION,

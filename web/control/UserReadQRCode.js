@@ -1,13 +1,13 @@
 import React from "react";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import Typography from "@material-ui/core/Typography";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import Typography from "@mui/material/Typography";
 import QRCode from "qrcode.react";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import CircularProgress from "@mui/material/CircularProgress";
 import { CustomDialogTitle } from "../common/CustomDialogTitle";
 import { useApi } from "common/utils/api";
 import { formatApiError } from "common/utils/errors";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import { now } from "common/utils/time";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 

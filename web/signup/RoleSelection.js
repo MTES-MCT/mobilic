@@ -1,10 +1,10 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Card from "@material-ui/core/Card";
+import Grid from "@mui/material/Grid";
+import { makeStyles } from "@mui/styles";
+import Card from "@mui/material/Card";
 import { ManagerImage, WorkerImage } from "common/utils/icons";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { LinkButton } from "../common/LinkButton";
 import { PaperContainerTitle } from "../common/PaperContainer";
 
@@ -38,7 +38,7 @@ export function RoleSelection() {
       className="centered"
       container
       spacing={5}
-      justify="space-around"
+      justifyContent="space-around"
       alignItems="stretch"
     >
       <Grid item xs={10} md={4}>

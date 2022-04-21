@@ -1,6 +1,6 @@
 import React from "react";
-import ToggleButton from "@material-ui/lab/ToggleButton";
-import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup/ToggleButtonGroup";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { ACTIVITY_FILTER_PERIOD } from "common/utils/matomoTags";
 

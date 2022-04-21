@@ -55,7 +55,7 @@ export default function Signup() {
     <>
       <Header />
       <PaperContainer>
-        <Switch>
+        <Switch color="secondary">
           {!userId && (
             <Route key="user" path={`${path}/user`}>
               <AccountCreation

@@ -1,11 +1,11 @@
 import omit from "lodash/omit";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import React from "react";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Card from "@material-ui/core/Card";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import Skeleton from "@material-ui/lab/Skeleton";
+import { makeStyles } from "@mui/styles";
+import Card from "@mui/material/Card";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import Skeleton from "@mui/material/Skeleton";
 
 export const useStyles = makeStyles(theme => ({
   container: {
@@ -43,7 +43,7 @@ export function MissionInfoCard({
           container
           spacing={2}
           wrap="nowrap"
-          justify="space-between"
+          justifyContent="space-between"
           alignItems="center"
           className={`${classes.titleContainer} ${extraPaddingBelowTitle &&
             classes.extraPadding}`}
@@ -63,7 +63,7 @@ export function MissionInfoCard({
         </Grid>
       )}
       {loading ? (
-        <Skeleton variant={"rect"} width="100%" height={300} />
+        <Skeleton variant="rectangular" width="100%" height={300} />
       ) : (
         children
       )}

@@ -1,11 +1,11 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { FranceConnectIcon } from "common/utils/icons";
-import Link from "@material-ui/core/Link";
-import Box from "@material-ui/core/Box";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Typography from "@material-ui/core/Typography";
-import Card from "@material-ui/core/Card";
+import Link from "@mui/material/Link";
+import Box from "@mui/material/Box";
+import { makeStyles } from "@mui/styles";
+import Typography from "@mui/material/Typography";
+import Card from "@mui/material/Card";
 
 const useStyles = makeStyles(theme => ({
   svg: {

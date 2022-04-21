@@ -1,19 +1,16 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import { VerticalTimeline } from "common/components/VerticalTimeline";
 import { formatTimeOfDay, formatTimer, now } from "common/utils/time";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import { AugmentedTable } from "./AugmentedTable";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ACTIVITIES } from "common/utils/activities";
-import TextField from "@material-ui/core/TextField/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
-import { DateOrDateTimePicker } from "../../pwa/components/DateOrDateTimePicker";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { useActivitiesCardStyles } from "./styles/ActivitiesCardStyle";
-import SvgIcon from "@material-ui/core/SvgIcon";
-import EditIcon from "@material-ui/icons/Edit";
+import SvgIcon from "@mui/material/SvgIcon";
+import EditIcon from "@mui/icons-material/Edit";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
   ADD_ACTIVITY_IN_MISSION_PANEL,
@@ -40,29 +37,12 @@ export function ActivitiesCard({
     ...a,
     id: a.id || `${a.type}${a.startTime}`
   }));
-  const [activityErrors, setActivityErrors] = React.useState({});
 
   const activityColumns = [
     {
       label: "Activité",
       name: "type",
       format: type => ACTIVITIES[type].label,
-      renderEditMode: (type, entry, setType) => (
-        <TextField
-          label="Activité"
-          required
-          fullWidth
-          select
-          value={type}
-          onChange={e => setType(e.target.value)}
-        >
-          {Object.keys(ACTIVITIES).map(activityName => (
-            <MenuItem key={activityName} value={activityName}>
-              {ACTIVITIES[activityName].label}
-            </MenuItem>
-          ))}
-        </TextField>
-      ),
       maxWidth: 185,
       minWidth: 150
     },
@@ -70,23 +50,6 @@ export function ActivitiesCard({
       label: "Début",
       name: "displayedStartTime",
       format: time => datetimeFormatter(time),
-      renderEditMode: (time, entry, setTime) => (
-        <DateOrDateTimePicker
-          label="Début"
-          format={
-            datetimeFormatter === formatTimeOfDay ? "HH:mm" : "dd/MM HH:mm"
-          }
-          autoValidate
-          error={activityErrors.displayedStartTime}
-          maxValue={now()}
-          setError={e =>
-            setActivityErrors({ ...activityErrors, displayedStartTime: e })
-          }
-          value={time}
-          setValue={setTime}
-          required={true}
-        />
-      ),
       minWidth: 130
     },
     {
@@ -98,24 +61,6 @@ export function ActivitiesCard({
         ) : (
           <span className={classes.warningText}>En cours</span>
         ),
-      renderEditMode: (time, entry, setTime) => (
-        <DateOrDateTimePicker
-          label="Fin"
-          value={time}
-          minValue={entry.displayedStartTime + 1}
-          autoValidate
-          maxValue={now()}
-          setValue={setTime}
-          error={activityErrors.displayedEndTime}
-          setError={e =>
-            setActivityErrors({ ...activityErrors, displayedEndTime: e })
-          }
-          required={true}
-          format={
-            datetimeFormatter === formatTimeOfDay ? "HH:mm" : "dd/MM HH:mm"
-          }
-        />
-      ),
       minWidth: 130
     },
     {
@@ -180,11 +125,7 @@ export function ActivitiesCard({
             <AugmentedTable
               columns={activityColumns}
               ref={ref}
-              validateRow={entry =>
-                !activityErrors.displayedStartTime &&
-                !activityErrors.displayedEndTime &&
-                entry.type
-              }
+              validateRow={entry => entry.type}
               entries={activitiesWithIds}
               className={classes.activitiesTableContainer}
             />

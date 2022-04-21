@@ -1,12 +1,12 @@
 import React from "react";
-import Container from "@material-ui/core/Container";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
+import Container from "@mui/material/Container";
+import { makeStyles } from "@mui/styles";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 
 const useStyles = makeStyles(theme => ({
   container: {
-    [theme.breakpoints.down("md")]: {
+    [theme.breakpoints.down("lg")]: {
       padding: 0
     },
     [theme.breakpoints.up("md")]: {
@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: "center"
   },
   paper: {
-    [theme.breakpoints.down("md")]: {
+    [theme.breakpoints.down("lg")]: {
       border: "none",
       borderRadius: 0
     },
