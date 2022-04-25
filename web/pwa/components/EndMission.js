@@ -11,6 +11,8 @@ import KilometerReadingField from "../../common/KilometerReadingField";
 import DateTimePicker from "@mui/lab/DateTimePicker";
 import ClockIcon from "@mui/icons-material/AccessTime";
 import { getDaysBetweenTwoDates, now } from "common/utils/time";
+import { setCurrentLocation } from "common/utils/location";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 
 export default function EndMissionModal({
   open,
@@ -40,6 +42,13 @@ export default function EndMissionModal({
   function canSubmit() {
     return (currentEndLocation || address) && !kilometerReadingError && endTime;
   }
+  const alerts = useSnackbarAlerts();
+
+  const askCurrentPosition = (askedByUser = true) => {
+    if (open) {
+      setCurrentLocation(setCurrentPosition, alerts, askedByUser);
+    }
+  };
 
   React.useEffect(() => {
     setExpenditures(currentExpenditures || {});
@@ -48,12 +57,11 @@ export default function EndMissionModal({
     setCurrentPosition(null);
     setKilometerReading("");
 
-    if (open && navigator.geolocation) {
+    if (open) {
       setLoading(false);
-      if (!currentEndLocation && navigator.geolocation)
-        navigator.geolocation.getCurrentPosition(position => {
-          setCurrentPosition(position);
-        });
+      if (!currentEndLocation) {
+        askCurrentPosition(false);
+      }
     }
   }, [currentExpenditures, currentEndLocation, open]);
 
@@ -95,7 +103,7 @@ export default function EndMissionModal({
                   cancelText={null}
                   disableCloseOnSelect={false}
                   minDateTime={toDate(missionMinEndTime)}
-                  maxDateTime={toDate(now())}
+                  maxDateTime={new Date()}
                   disableIgnoringDatePartForTimeValidation={true}
                   components={{ OpenPickerIcon: ClockIcon }}
                   renderInput={props => (
@@ -117,6 +125,8 @@ export default function EndMissionModal({
               onChange={setAddress}
               currentPosition={currentPosition}
               defaultAddresses={companyAddresses}
+              askCurrentPosition={askCurrentPosition}
+              disableGeolocation={false}
             />
             {currentMission.company &&
             currentMission.company.settings &&

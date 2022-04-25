@@ -387,7 +387,6 @@ function ActivitiesPanel() {
           workTimeEntries={periodAggregates}
           showExpenditures={adminStore.settings.requireExpenditures}
           showMissionName={adminStore.settings.requireMissionName}
-          showTransfers={adminStore.settings.allowTransfers}
           loading={loading}
           width={width}
         />
@@ -418,6 +417,7 @@ function ActivitiesPanel() {
             overrideSettings={adminStore.settings}
             companyAddresses={adminStore.knownAddresses}
             currentPosition={null}
+            disableGeolocation={true}
             disableKilometerReading={true}
             withDay={true}
             withEndLocation={true}
