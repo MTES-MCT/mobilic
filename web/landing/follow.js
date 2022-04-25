@@ -4,7 +4,7 @@ import { useModals } from "common/utils/modals";
 export function Follow() {
   const modals = useModals();
   return (
-    <div className="fr-follow fr-container">
+    <div className="fr-follow">
       <div className="fr-container">
         <div className="fr-grid-row">
           <div className="fr-col-12 fr-col-md-8">
