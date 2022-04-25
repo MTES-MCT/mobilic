@@ -44,7 +44,6 @@ export default function ActivityRevisionOrCreationModal({
   handleClose,
   handleRevisionAction,
   previousMissionEnd,
-  nextMissionStart,
   allowTeamMode = false,
   nullableEndTime = true,
   allowSupportActivity = true,
@@ -185,9 +184,6 @@ export default function ActivityRevisionOrCreationModal({
       if (previousMissionEnd && newUserTime < previousMissionEnd) {
         hasStartError = true;
         setNewUserTimeError(`Chevauchement avec la mission précédente.`);
-      } else if (nextMissionStart && newUserTime > nextMissionStart) {
-        hasStartError = true;
-        setNewUserTimeError(`Chevauchement avec la mission suivante.`);
       } else if (newUserTime > now()) {
         hasStartError = true;
         setNewUserTimeError(`L'heure ne peut pas être dans le futur.`);
@@ -241,7 +237,6 @@ export default function ActivityRevisionOrCreationModal({
     newUserEndTime,
     activityType,
     previousMissionEnd,
-    nextMissionStart,
     userId,
     teamMode
   ]);
@@ -376,7 +371,7 @@ export default function ActivityRevisionOrCreationModal({
             value={newUserTime ? toDate(newUserTime) : null}
             onChange={value => setNewUserTime(value ? fromDate(value) : null)}
             minDateTime={toDate(previousMissionEnd)}
-            maxDateTime={toDate(nextMissionStart)}
+            maxDateTime={new Date()}
             cancelText={null}
             disableCloseOnSelect={false}
             disableIgnoringDatePartForTimeValidation={true}
@@ -402,7 +397,7 @@ export default function ActivityRevisionOrCreationModal({
               setNewUserEndTime(value ? fromDate(value) : null)
             }
             minDateTime={toDate(newUserTime)}
-            maxDateTime={toDate(nextMissionStart)}
+            maxDateTime={new Date()}
             cancelText={null}
             disableCloseOnSelect={false}
             disableIgnoringDatePartForTimeValidation={true}

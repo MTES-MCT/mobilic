@@ -103,7 +103,7 @@ export default function EndMissionModal({
                   cancelText={null}
                   disableCloseOnSelect={false}
                   minDateTime={toDate(missionMinEndTime)}
-                  maxDateTime={toDate(now())}
+                  maxDateTime={new Date()}
                   disableIgnoringDatePartForTimeValidation={true}
                   components={{ OpenPickerIcon: ClockIcon }}
                   renderInput={props => (

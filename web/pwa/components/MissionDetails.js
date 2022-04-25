@@ -107,7 +107,6 @@ export function MissionDetails({
   editExpenditures,
   editVehicle,
   previousMissionEnd,
-  nextMissionStart,
   hideExpenditures,
   hideComments,
   logComment,
@@ -241,7 +240,6 @@ export function MissionDetails({
                       forAllTeam
                     ),
                   previousMissionEnd,
-                  nextMissionStart,
                   teamChanges,
                   nullableEndTime: nullableEndTimeInEditActivity,
                   allowTeamMode: allowTeamActions,
@@ -261,7 +259,6 @@ export function MissionDetails({
               missionId: mission.id
             })
           }
-          nextMissionStart={nextMissionStart}
           previousMissionEnd={previousMissionEnd}
           teamChanges={teamChanges}
           allowTeamMode={allowTeamActions}
