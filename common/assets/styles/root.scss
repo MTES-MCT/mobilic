@@ -187,3 +187,28 @@
     color: white;
   }
 }
+
+// override dsfr style for mui compatibility
+[href] {
+  box-shadow: none;
+  background-image: none;
+}
+
+hr {
+  padding: 0;
+  background-image: none;
+}
+
+// style needed because text is centered in #root
+.fr-footer, .fr-follow {
+  text-align: left;
+}
+
+.fr-footer__logo {
+  max-width: 175px;
+  max-height: 133px;
+}
+
+.fr-footer__content-desc {
+  display: flex;
+}

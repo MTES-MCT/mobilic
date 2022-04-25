@@ -61,6 +61,7 @@ const customOptions = {
       primary: "#26353f"
     }
   },
+  // TODO: use dsfr style instead of mui
   typography: {
     fontFamily: '"Marianne", Arial, sans-serif',
     h1: {
