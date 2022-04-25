@@ -35,7 +35,7 @@ Le projet est divisé en 2 grandes briques distinctes :
 
 ## Infrastructure
 
-Les serveurs du back et du front sont hébergés chez [Scalingo](https://scalingo.com/). La base de données est quant à elle chez [OVH](https://www.ovh.com/fr/).
+Les serveurs du back et du front ainsi que la base de données sont hébergés chez [Scalingo](https://scalingo.com/).
 
 ## Environnements
 

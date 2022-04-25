@@ -99,13 +99,6 @@ export default function ExcelExport({
         <Typography variant="h5" className={classes.subTitle}>
           Options
         </Typography>
-        <Typography>
-          Par défaut le rapport contient l'historique <strong>intégral</strong>{" "}
-          de <strong>tous</strong> les travailleurs de <strong>toutes</strong>{" "}
-          vos entreprises. Vous pouvez restreindre la période en spécifiant une
-          date de début et/ou une date de fin. Vous pouvez également limiter
-          l'historique à certaines entreprises et/ou certains salariés.
-        </Typography>
         <Grid spacing={4} container className={classes.grid}>
           {_companies.length > 1 && (
             <Grid item sm={6} className={classes.flexGrow}>
