@@ -334,15 +334,7 @@ function ValidationPanel() {
         />
         <Tab
           className={classes.tab}
-          label={
-            <Badge
-              badgeContent={nbMissionsValidatedByAdmin}
-              color="success"
-              className={classes.customBadge}
-            >
-              {VALIDATION_TABS[2].label}
-            </Badge>
-          }
+          label={`${VALIDATION_TABS[2].label} (${nbMissionsValidatedByAdmin})`}
         />
       </Tabs>
       <Typography className={classes.explanation}>
