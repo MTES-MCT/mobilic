@@ -94,7 +94,7 @@ Quelles données sont collectées ?
 
 Le responsable du traitement de vos données personnelles est le ministère de la transition écologique, de la cohésion des territoires et de la mer (Direction générale des infrastructures, des transports et de la mer).
 
-Les données sont hébergées en France chez le fournisseur OVH.
+Les données sont hébergées en France sur la plateforme Scalingo.
 
 ## Quelles utilisations des données collectées ?
 

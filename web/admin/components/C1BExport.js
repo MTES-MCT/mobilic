@@ -143,13 +143,11 @@ export default function C1BExport({
           </Typography>
         </Alert>
         <Typography variant="h5" className={classes.subTitle}>
-          Paramètres
+          Options
         </Typography>
         <Typography>
           Les données d'activité sont limitées à une{" "}
-          <strong>période qui ne peut pas dépasser 60 jours</strong>. Vous
-          pouvez limiter la liste à certaines entreprises et/ou à certains
-          salariés.
+          <strong>période qui ne peut pas dépasser 60 jours</strong>.
         </Typography>
         <Grid spacing={4} container className={classes.grid}>
           {_companies.length > 1 && (
