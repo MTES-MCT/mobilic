@@ -12,12 +12,12 @@ import {
   Link
 } from "@dataesr/react-dsfr";
 import { Follow } from "./follow";
-import Hidden from "@mui/material/Hidden";
+// import Hidden from "@mui/material/Hidden";
 import FranceRelanceLogo from "common/assets/images/sponsor-logos/france_relance.png";
 import NextGenerationEULogo from "common/assets/images/sponsor-logos/next_generation_eu.png";
-import CSDLogo from "common/assets/images/sponsor-logos/csd.jpg";
-import DemenagerFacileLogo from "common/assets/images/sponsor-logos/demenager-facile.png";
-import OTRELogo from "common/assets/images/sponsor-logos/otre.png";
+// import CSDLogo from "common/assets/images/sponsor-logos/csd.jpg";
+// import DemenagerFacileLogo from "common/assets/images/sponsor-logos/demenager-facile.png";
+// import OTRELogo from "common/assets/images/sponsor-logos/otre.png";
 import { FabNumIcon } from "common/utils/icons";
 
 export function Footer() {
@@ -26,25 +26,30 @@ export function Footer() {
       <Follow />
       <DSFooter>
         <FooterBody
-          description={
-            <>
-              <span>
-                Mobilic est un service numérique de l’Etat, soutenue par la
-                Direction générale des infrastructures des transports et de la
-                mer (DGITM), incubé à la Fabrique Numérique du Ministère de la
-                Transition écologique, membre du réseau d’incubateurs
-                beta.gouv.fr.
-              </span>
-              <Hidden smDown>
-                <img
-                  src="/landing-qrcode.svg"
-                  height={120}
-                  alt="QR Code pour accéder à mobilic sur smartphone"
-                  style={{ padding: "0 4px" }}
-                />
-              </Hidden>
-            </>
-          }
+          description="Mobilic est un service numérique de l’Etat, soutenue par la
+              Direction générale des infrastructures des transports et de la
+              mer (DGITM), incubé à la Fabrique Numérique du Ministère de la
+              Transition écologique, membre du réseau d’incubateurs
+              beta.gouv.fr."
+          // description={
+          //   <>
+          //     <span>
+          //       Mobilic est un service numérique de l’Etat, soutenue par la
+          //       Direction générale des infrastructures des transports et de la
+          //       mer (DGITM), incubé à la Fabrique Numérique du Ministère de la
+          //       Transition écologique, membre du réseau d’incubateurs
+          //       beta.gouv.fr.
+          //     </span>
+          //     <Hidden smDown>
+          //       <img
+          //         src="/landing-qrcode.svg"
+          //         height={120}
+          //         alt="QR Code pour accéder à mobilic sur smartphone"
+          //         style={{ padding: "0 4px" }}
+          //       />
+          //     </Hidden>
+          //   </>
+          // }
         >
           <Logo>Ministère de la Transition écologique</Logo>
           <FooterOperator>
@@ -65,7 +70,6 @@ export function Footer() {
         </FooterBody>
         <FooterPartners>
           <FooterPartnersLogo
-            isMain
             imageSrc={FranceRelanceLogo}
             imageAlt="France Relance"
           />
@@ -73,7 +77,7 @@ export function Footer() {
             imageSrc={NextGenerationEULogo}
             imageAlt="Financé par NextGeneration EU"
           />
-          <FooterPartnersLogo
+          {/* <FooterPartnersLogo
             imageSrc={CSDLogo}
             imageAlt="Chambre syndicale du déménagement"
           />
@@ -84,7 +88,7 @@ export function Footer() {
           <FooterPartnersLogo
             imageSrc={OTRELogo}
             imageAlt="OTRE - Faisons route ensemble"
-          />
+          /> */}
         </FooterPartners>
         <FooterBottom>
           <FooterLink>Accessibilité : non conforme</FooterLink>
@@ -96,7 +100,7 @@ export function Footer() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Espace développeurs
+            Documentation API
           </FooterLink>
         </FooterBottom>
       </DSFooter>
