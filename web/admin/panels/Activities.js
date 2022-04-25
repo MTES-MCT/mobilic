@@ -417,6 +417,7 @@ function ActivitiesPanel() {
             overrideSettings={adminStore.settings}
             companyAddresses={adminStore.knownAddresses}
             currentPosition={null}
+            disableGeolocation={true}
             disableKilometerReading={true}
             withDay={true}
             withEndLocation={true}
