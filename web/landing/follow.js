@@ -32,15 +32,16 @@ export function Follow() {
                 <br /> sur les réseaux sociaux
               </p>
               <ul className="fr-btns-group">
-                {/* <li>
+                <li>
                   <a
-                    className="fr-btn--facebook fr-btn"
-                    href=""
+                    className="fr-link fr-fi-facebook-circle-fill link--no-title"
+                    href="https://www.facebook.com/Mobilic-115289304492481"
                     target="_blank"
+                    rel="noreferrer"
                   >
                     facebook
                   </a>
-                </li> */}
+                </li>
                 <li>
                   <a
                     className="fr-link fr-fi-twitter-fill link--no-title"
