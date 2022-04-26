@@ -11,6 +11,7 @@ import {
   Logo,
   Link
 } from "@dataesr/react-dsfr";
+import { useModals } from "common/utils/modals";
 import { Follow } from "./follow";
 // import Hidden from "@mui/material/Hidden";
 import FranceRelanceLogo from "common/assets/images/sponsor-logos/france_relance.png";
@@ -21,6 +22,7 @@ import NextGenerationEULogo from "common/assets/images/sponsor-logos/next_genera
 import { FabNumIcon } from "common/utils/icons";
 
 export function Footer() {
+  const modals = useModals();
   return (
     <>
       <Follow />
@@ -92,8 +94,9 @@ export function Footer() {
         </FooterPartners>
         <FooterBottom>
           <FooterLink>Accessibilité : non conforme</FooterLink>
-          {/* CGU : onClick={() => modals.open("cgu")} */}
-          <FooterLink href="/">Conditions générales d'utilisation</FooterLink>
+          <FooterLink href="#" onClick={() => modals.open("cgu")}>
+            Conditions générales d'utilisation
+          </FooterLink>
           <FooterLink href="/stats">Statistiques</FooterLink>
           <FooterLink
             href="https://developers.mobilic.beta.gouv.fr"
