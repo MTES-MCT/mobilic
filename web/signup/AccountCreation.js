@@ -192,7 +192,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           <CheckboxField
             checked={subscribeToNewsletter}
             onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
-            label="Je souhaite m'inscrire à la newsletter Mobilic pour rester informé par mail des nouveautés du produit"
+            label="Je souhaite m'abonner à la lettre d'information de Mobilic pour rester informé par mail des nouveautés du produit"
           />
           <Box my={4}>
             <LoadingButton
