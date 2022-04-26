@@ -88,10 +88,6 @@ function ValidationPanel() {
     nbMissionsToValidateByWorker,
     setNbMissionsToValidateByWorker
   ] = React.useState(0);
-  const [
-    nbMissionsValidatedByAdmin,
-    setNbMissionsValidatedByAdmin
-  ] = React.useState(0);
   const classes = useStyles({ clickableRow: tab === 0 });
 
   const [missionIdOnFocus, openMission] = useMissionDrawer();
@@ -258,12 +254,6 @@ function ValidationPanel() {
   }, [entriesToValidateByWorker]);
 
   React.useEffect(() => {
-    setNbMissionsValidatedByAdmin(
-      size(groupBy(entriesValidatedByAdmin, "missionId"))
-    );
-  }, [entriesValidatedByAdmin]);
-
-  React.useEffect(() => {
     switch (tab) {
       case 0:
         setTableEntries(entriesToValidateByAdmin);
@@ -309,7 +299,7 @@ function ValidationPanel() {
         variant="scrollable"
       >
         <Tab
-          className={classes.tab}
+          className={classes.tabWithBadge}
           label={
             <Badge
               badgeContent={nbMissionsToValidateByAdmin}
@@ -321,7 +311,7 @@ function ValidationPanel() {
           }
         />
         <Tab
-          className={classes.tab}
+          className={classes.tabWithBadge}
           label={
             <Badge
               badgeContent={nbMissionsToValidateByWorker}
@@ -332,10 +322,7 @@ function ValidationPanel() {
             </Badge>
           }
         />
-        <Tab
-          className={classes.tab}
-          label={`${VALIDATION_TABS[2].label} (${nbMissionsValidatedByAdmin})`}
-        />
+        <Tab className={classes.tab} label={VALIDATION_TABS[2].label} />
       </Tabs>
       <Typography className={classes.explanation}>
         {VALIDATION_TABS[tab].explanation}

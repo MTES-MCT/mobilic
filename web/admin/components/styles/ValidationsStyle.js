@@ -47,6 +47,9 @@ export const useStyles = makeStyles(theme => ({
     }
   },
   tab: {
+    maxWidth: 400
+  },
+  tabWithBadge: {
     maxWidth: 400,
     paddingRight: theme.spacing(4)
   },
