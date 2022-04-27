@@ -383,7 +383,6 @@ function ActivitiesPanel() {
           workTimeEntries={periodAggregates}
           showExpenditures={adminStore.settings.requireExpenditures}
           showMissionName={adminStore.settings.requireMissionName}
-          showTransfers={adminStore.settings.allowTransfers}
           loading={loading}
           width={width}
         />
