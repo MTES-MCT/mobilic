@@ -4,6 +4,10 @@ import DialogContent from "@mui/material/DialogContent";
 import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
+import FormControl from "@mui/material/FormControl";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 import { useApi } from "common/utils/api";
 import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "common/components/LoadingButton";
@@ -53,6 +57,7 @@ export default function ExcelExport({
   const { trackLink } = useMatomo();
   const [minDate, setMinDate] = React.useState(defaultMinDate);
   const [maxDate, setMaxDate] = React.useState(defaultMaxDate);
+  const [isOneFileByEmployee, setIsOneFileByEmployee] = React.useState(false);
 
   const [_companies, setCompanies] = React.useState([]);
   const [_users, setUsers] = React.useState([]);
@@ -104,7 +109,8 @@ export default function ExcelExport({
           de <strong>tous</strong> les travailleurs de <strong>toutes</strong>{" "}
           vos entreprises. Vous pouvez restreindre la période en spécifiant une
           date de début et/ou une date de fin. Vous pouvez également limiter
-          l'historique à certaines entreprises et/ou certains salariés.
+          l'historique à certaines entreprises et/ou certains salariés et
+          obtenir un fichier global ou individuel par salarié.
         </Typography>
         <Grid spacing={4} container className={classes.grid}>
           {_companies.length > 1 && (
@@ -164,6 +170,22 @@ export default function ExcelExport({
               />
             </Grid>
           </DateOrDateTimeRangeSelectionContext>
+          <Grid item sm={12} className={classes.flexGrow}>
+            <FormControl component="fieldset" variant="standard">
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isOneFileByEmployee}
+                      onChange={e => setIsOneFileByEmployee(e.target.checked)}
+                      name="oneFileByEmployee"
+                    />
+                  }
+                  label="Générer un fichier unique par employé pour la période concernée"
+                />
+              </FormGroup>
+            </FormControl>
+          </Grid>
         </Grid>
       </DialogContent>
       <CustomDialogActions>
@@ -177,7 +199,8 @@ export default function ExcelExport({
                 selectedCompanies = _companies;
               let selectedUsers = _users.filter(u => u.selected);
               const options = {
-                company_ids: selectedCompanies.map(c => c.id)
+                company_ids: selectedCompanies.map(c => c.id),
+                one_file_by_employee: isOneFileByEmployee
               };
               if (selectedUsers.length > 0)
                 options["user_ids"] = selectedUsers.map(u => u.id);
