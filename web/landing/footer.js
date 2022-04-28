@@ -16,9 +16,6 @@ import { Follow } from "./follow";
 // import Hidden from "@mui/material/Hidden";
 import FranceRelanceLogo from "common/assets/images/sponsor-logos/france_relance.png";
 import NextGenerationEULogo from "common/assets/images/sponsor-logos/next_generation_eu.png";
-// import CSDLogo from "common/assets/images/sponsor-logos/csd.jpg";
-// import DemenagerFacileLogo from "common/assets/images/sponsor-logos/demenager-facile.png";
-// import OTRELogo from "common/assets/images/sponsor-logos/otre.png";
 import { FabNumIcon } from "common/utils/icons";
 
 export function Footer() {
@@ -53,7 +50,7 @@ export function Footer() {
           //   </>
           // }
         >
-          <Logo>Ministère de la Transition écologique</Logo>
+          <Logo>République Française</Logo>
           <FooterOperator>
             <FabNumIcon />
           </FooterOperator>
@@ -79,18 +76,6 @@ export function Footer() {
             imageSrc={NextGenerationEULogo}
             imageAlt="Financé par NextGeneration EU"
           />
-          {/* <FooterPartnersLogo
-            imageSrc={CSDLogo}
-            imageAlt="Chambre syndicale du déménagement"
-          />
-          <FooterPartnersLogo
-            imageSrc={DemenagerFacileLogo}
-            imageAlt="Déménager Facile"
-          />
-          <FooterPartnersLogo
-            imageSrc={OTRELogo}
-            imageAlt="OTRE - Faisons route ensemble"
-          /> */}
         </FooterPartners>
         <FooterBottom>
           <FooterLink>Accessibilité : non conforme</FooterLink>

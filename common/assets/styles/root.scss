@@ -199,10 +199,13 @@ hr {
   background-image: none;
 }
 
-// style needed because text is centered in #root
 .fr-footer, .fr-follow {
-  text-align: left;
+  text-align: left; // style needed because text is centered in #root
   width: 100%;
+}
+
+.fr-footer__brand {
+  max-width: 175px;
 }
 
 .fr-footer__logo {
