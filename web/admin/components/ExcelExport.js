@@ -4,6 +4,7 @@ import DialogContent from "@mui/material/DialogContent";
 import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
+import FormControl from "@mui/material/FormControl";
 import { useApi } from "common/utils/api";
 import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "common/components/LoadingButton";
@@ -19,6 +20,7 @@ import Grid from "@mui/material/Grid";
 import { isoFormatLocalDate } from "common/utils/time";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
+import { CheckboxField } from "../../common/CheckboxField";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -53,6 +55,7 @@ export default function ExcelExport({
   const { trackLink } = useMatomo();
   const [minDate, setMinDate] = React.useState(defaultMinDate);
   const [maxDate, setMaxDate] = React.useState(defaultMaxDate);
+  const [isOneFileByEmployee, setIsOneFileByEmployee] = React.useState(false);
 
   const [_companies, setCompanies] = React.useState([]);
   const [_users, setUsers] = React.useState([]);
@@ -157,6 +160,16 @@ export default function ExcelExport({
               />
             </Grid>
           </DateOrDateTimeRangeSelectionContext>
+          <Grid item sm={12} className={classes.flexGrow}>
+            <FormControl component="fieldset" variant="standard">
+              <CheckboxField
+                checked={isOneFileByEmployee}
+                onChange={e => setIsOneFileByEmployee(e.target.checked)}
+                label="Générer un fichier unique par employé pour la période concernée"
+                required={false}
+              />
+            </FormControl>
+          </Grid>
         </Grid>
       </DialogContent>
       <CustomDialogActions>
@@ -170,7 +183,8 @@ export default function ExcelExport({
                 selectedCompanies = _companies;
               let selectedUsers = _users.filter(u => u.selected);
               const options = {
-                company_ids: selectedCompanies.map(c => c.id)
+                company_ids: selectedCompanies.map(c => c.id),
+                one_file_by_employee: isOneFileByEmployee
               };
               if (selectedUsers.length > 0)
                 options["user_ids"] = selectedUsers.map(u => u.id);
