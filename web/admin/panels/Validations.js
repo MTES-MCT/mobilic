@@ -36,6 +36,7 @@ import {
   OPEN_MISSION_DRAWER_IN_VALIDATION_PANEL,
   VALIDATE_MISSION_IN_VALIDATION_PANEL
 } from "common/utils/matomoTags";
+import Badge from "@mui/material/Badge";
 
 const VALIDATION_TABS = [
   {
@@ -86,10 +87,6 @@ function ValidationPanel() {
   const [
     nbMissionsToValidateByWorker,
     setNbMissionsToValidateByWorker
-  ] = React.useState(0);
-  const [
-    nbMissionsValidatedByAdmin,
-    setNbMissionsValidatedByAdmin
   ] = React.useState(0);
   const classes = useStyles({ clickableRow: tab === 0 });
 
@@ -257,12 +254,6 @@ function ValidationPanel() {
   }, [entriesToValidateByWorker]);
 
   React.useEffect(() => {
-    setNbMissionsValidatedByAdmin(
-      size(groupBy(entriesValidatedByAdmin, "missionId"))
-    );
-  }, [entriesValidatedByAdmin]);
-
-  React.useEffect(() => {
     switch (tab) {
       case 0:
         setTableEntries(entriesToValidateByAdmin);
@@ -308,17 +299,30 @@ function ValidationPanel() {
         variant="scrollable"
       >
         <Tab
-          className={classes.tab}
-          label={`${VALIDATION_TABS[0].label} (${nbMissionsToValidateByAdmin})`}
+          className={classes.tabWithBadge}
+          label={
+            <Badge
+              badgeContent={nbMissionsToValidateByAdmin}
+              color="error"
+              className={classes.customBadge}
+            >
+              {VALIDATION_TABS[0].label}
+            </Badge>
+          }
         />
         <Tab
-          className={classes.tab}
-          label={`${VALIDATION_TABS[1].label} (${nbMissionsToValidateByWorker})`}
+          className={classes.tabWithBadge}
+          label={
+            <Badge
+              badgeContent={nbMissionsToValidateByWorker}
+              color="warning"
+              className={classes.customBadge}
+            >
+              {VALIDATION_TABS[1].label}
+            </Badge>
+          }
         />
-        <Tab
-          className={classes.tab}
-          label={`${VALIDATION_TABS[2].label} (${nbMissionsValidatedByAdmin})`}
-        />
+        <Tab className={classes.tab} label={VALIDATION_TABS[2].label} />
       </Tabs>
       <Typography className={classes.explanation}>
         {VALIDATION_TABS[tab].explanation}

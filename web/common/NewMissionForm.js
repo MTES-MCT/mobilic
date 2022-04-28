@@ -20,7 +20,9 @@ export default function NewMissionForm({
   withDay = false,
   withEndLocation = false,
   companyId = null,
-  overrideSettings = null
+  overrideSettings = null,
+  askCurrentPosition = () => {},
+  disableGeolocation = false
 }) {
   const getInitialCompany = () => {
     if (companyId) {
@@ -159,6 +161,8 @@ export default function NewMissionForm({
             defaultAddresses={companyAddresses.filter(a =>
               company ? a.companyId === company.id : true
             )}
+            askCurrentPosition={askCurrentPosition}
+            disableGeolocation={disableGeolocation}
           />
           {withEndLocation && [
             <Typography key={0} variant="h5" className="form-field-title">
@@ -177,6 +181,7 @@ export default function NewMissionForm({
               defaultAddresses={companyAddresses.filter(a =>
                 company ? a.companyId === company.id : true
               )}
+              disableGeolocation={true}
             />
           ]}
           <Typography variant="h5" className="form-field-title">

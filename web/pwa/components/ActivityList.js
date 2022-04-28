@@ -69,7 +69,6 @@ function ActivityItem({
   createActivity,
   allMissionActivities,
   previousMissionEnd,
-  nextMissionStart,
   teamChanges,
   nullableEndTimeInEditActivity,
   allowTeamMode,
@@ -163,7 +162,6 @@ function ActivityItem({
                   ),
                 createActivity,
                 previousMissionEnd,
-                nextMissionStart,
                 cancellable: true,
                 teamChanges,
                 allowTeamMode,
@@ -181,7 +179,6 @@ function ActivityItem({
 
 export function ActivityList({
   previousMissionEnd,
-  nextMissionStart,
   activities,
   allMissionActivities,
   editActivityEvent,
@@ -287,7 +284,6 @@ export function ActivityList({
               createActivity={createActivity}
               allMissionActivities={allMissionActivities}
               previousMissionEnd={previousMissionEnd}
-              nextMissionStart={nextMissionStart}
               teamChanges={teamChanges}
               allowTeamMode={allowTeamMode}
               nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
