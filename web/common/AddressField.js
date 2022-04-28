@@ -14,6 +14,7 @@ import { makeStyles } from "@mui/styles";
 import { MyLocation } from "@mui/icons-material";
 import { Alert } from "@mui/material";
 import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const useStyles = makeStyles(theme => ({
   geolocationButton: {
@@ -176,15 +177,26 @@ export function AddressField({
       renderOption={(props, option) =>
         option.activateLocation ? (
           <Box>
-            <Button
-              startIcon={<MyLocation />}
-              variant="outlined"
-              className={classes.geolocationButton}
-              disableElevation
-              onClick={e => askCurrentPosition()}
-            >
-              Utiliser ma position actuelle
-            </Button>
+            {!loading ? (
+              <Button
+                startIcon={<MyLocation />}
+                variant="outlined"
+                className={classes.geolocationButton}
+                disableElevation
+                onClick={e => {
+                  setLoading(true);
+                  askCurrentPosition();
+                }}
+              >
+                Utiliser ma position actuelle
+              </Button>
+            ) : (
+              <CircularProgress
+                color="inherit"
+                size={20}
+                className={classes.geolocationButton}
+              />
+            )}
             <Alert severity="info" className={classes.geolocationAlert}>
               Vos déplacements ne seront pas géolocalisés
             </Alert>
