@@ -5,9 +5,6 @@ import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import FormControl from "@mui/material/FormControl";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import { useApi } from "common/utils/api";
 import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "common/components/LoadingButton";
@@ -23,6 +20,7 @@ import Grid from "@mui/material/Grid";
 import { isoFormatLocalDate } from "common/utils/time";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
+import { CheckboxField } from "../../common/CheckboxField";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -172,18 +170,12 @@ export default function ExcelExport({
           </DateOrDateTimeRangeSelectionContext>
           <Grid item sm={12} className={classes.flexGrow}>
             <FormControl component="fieldset" variant="standard">
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={isOneFileByEmployee}
-                      onChange={e => setIsOneFileByEmployee(e.target.checked)}
-                      name="oneFileByEmployee"
-                    />
-                  }
-                  label="Générer un fichier unique par employé pour la période concernée"
-                />
-              </FormGroup>
+              <CheckboxField
+                checked={isOneFileByEmployee}
+                onChange={e => setIsOneFileByEmployee(e.target.checked)}
+                label="Générer un fichier unique par employé pour la période concernée"
+                required={false}
+              />
             </FormControl>
           </Grid>
         </Grid>
