@@ -305,7 +305,7 @@ export const Landing = () => {
               </ul>
             }
             ctaLabel="Découvrir l'API"
-            ctaTarget="/developers"
+            ctaTarget="https://developers.mobilic.beta.gouv.fr/"
           />
         </Box>
       </LandingSection>
