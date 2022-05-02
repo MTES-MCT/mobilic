@@ -299,7 +299,9 @@ function ValidationPanel() {
         variant="scrollable"
       >
         <Tab
-          className={classes.tabWithBadge}
+          className={
+            nbMissionsToValidateByAdmin > 0 ? classes.tabWithBadge : classes.tab
+          }
           label={
             <Badge
               badgeContent={nbMissionsToValidateByAdmin}
@@ -311,7 +313,11 @@ function ValidationPanel() {
           }
         />
         <Tab
-          className={classes.tabWithBadge}
+          className={
+            nbMissionsToValidateByWorker > 0
+              ? classes.tabWithBadge
+              : classes.tab
+          }
           label={
             <Badge
               badgeContent={nbMissionsToValidateByWorker}
