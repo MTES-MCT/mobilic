@@ -72,10 +72,6 @@ const customOptions = {
     h6: {
       fontSize: "1em",
       fontWeight: "bold"
-    },
-    subtitle1: {
-      fontWeight: 400,
-      color: "#8393a7"
     }
   }
 };
