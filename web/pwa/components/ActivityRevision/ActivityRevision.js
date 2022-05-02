@@ -391,7 +391,7 @@ export default function ActivityRevisionOrCreationModal({
           <DateTimePicker
             key={1}
             label="Fin"
-            openTo="hours"
+            openTo={newUserEndTime ? "hours" : "day"}
             value={newUserEndTime ? toDate(newUserEndTime) : null}
             onChange={value =>
               setNewUserEndTime(value ? fromDate(value) : null)
@@ -403,7 +403,9 @@ export default function ActivityRevisionOrCreationModal({
             disableIgnoringDatePartForTimeValidation={true}
             clearable={actuallyNullableEndTime}
             clearText="Annuler"
-            components={{ OpenPickerIcon: ClockIcon }}
+            components={
+              newUserEndTime ? { OpenPickerIcon: ClockIcon } : undefined
+            }
             renderInput={props => (
               <TextField
                 {...props}
