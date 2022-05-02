@@ -38,20 +38,6 @@ const customOptions = {
       main: "#03bd5b",
       light: "#daf5e7"
     },
-    info: {
-      main: "#006be6",
-      light: "#b4e1fa"
-    },
-    warning: {
-      main: "#ff9947",
-      light: "#fff0e4",
-      dark: "#cc5c00"
-    },
-    error: {
-      main: "#d63626",
-      dark: "#ab2b1e",
-      light: "#efaca6"
-    },
     background: {
       default: "#f7f9fa",
       paper: "#fff",
