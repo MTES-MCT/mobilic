@@ -34,10 +34,6 @@ const customOptions = {
       lighter: "#b4e1fa",
       dark: "#0053b3"
     },
-    success: {
-      main: "#03bd5b",
-      light: "#daf5e7"
-    },
     background: {
       default: "#f7f9fa",
       paper: "#fff",
