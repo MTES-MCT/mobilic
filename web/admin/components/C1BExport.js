@@ -54,7 +54,8 @@ export default function C1BExport({
   companies = [],
   users = [],
   defaultMinDate = null,
-  defaultMaxDate = null
+  defaultMaxDate = null,
+  defaultCompany
 }) {
   const MAX_RANGE_DAYS = 60;
   const today = new Date();
@@ -85,7 +86,11 @@ export default function C1BExport({
   }, [minDate, maxDate]);
 
   React.useEffect(() => {
-    setCompanies(companies);
+    setCompanies(
+      companies.map(c => {
+        return { ...c, selected: c.id === defaultCompany.id };
+      })
+    );
     setUsers(users);
 
     if (invalidDateRange(defaultMinDate, defaultMaxDate)) {
