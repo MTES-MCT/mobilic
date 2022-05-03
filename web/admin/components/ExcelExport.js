@@ -8,7 +8,6 @@ import FormControl from "@mui/material/FormControl";
 import { useApi } from "common/utils/api";
 import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "common/components/LoadingButton";
-import { CompanyFilter } from "./CompanyFilter";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import {
   CustomDialogActions,
@@ -21,6 +20,7 @@ import { isoFormatLocalDate } from "common/utils/time";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
 import { CheckboxField } from "../../common/CheckboxField";
+import { Autocomplete } from "@mui/lab";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -45,6 +45,7 @@ const useStyles = makeStyles(theme => ({
 export default function ExcelExport({
   open,
   handleClose,
+  defaultCompany,
   companies = [],
   users = [],
   defaultMinDate = null,
@@ -57,13 +58,12 @@ export default function ExcelExport({
   const [maxDate, setMaxDate] = React.useState(defaultMaxDate);
   const [isOneFileByEmployee, setIsOneFileByEmployee] = React.useState(false);
 
-  const [_companies, setCompanies] = React.useState([]);
+  const [selectedCompany, setSelectedCompany] = React.useState(defaultCompany);
   const [_users, setUsers] = React.useState([]);
 
   const today = new Date();
 
   React.useEffect(() => {
-    setCompanies(companies);
     setUsers(users);
     setMinDate(defaultMinDate);
     setMaxDate(defaultMaxDate);
@@ -103,18 +103,26 @@ export default function ExcelExport({
           Options
         </Typography>
         <Grid spacing={4} container className={classes.grid}>
-          {_companies.length > 1 && (
+          {companies.length > 1 && (
             <Grid item sm={6} className={classes.flexGrow}>
-              <CompanyFilter
-                companies={_companies}
-                setCompanies={setCompanies}
+              <Autocomplete
+                size="small"
+                label="Entreprise"
+                options={companies}
+                defaultValue={defaultCompany}
+                getOptionLabel={c => c.name}
+                disableClearable
+                onChange={(_, newValue) => setSelectedCompany(newValue)}
+                renderInput={params => (
+                  <TextField {...params} label="Entreprise" />
+                )}
               />
             </Grid>
           )}
           <Grid
             item
             className={classes.flexGrow}
-            sm={_companies.length > 1 ? 6 : 12}
+            sm={companies.length > 1 ? 6 : 12}
           >
             <EmployeeFilter users={_users} setUsers={setUsers} />
           </Grid>
@@ -178,12 +186,9 @@ export default function ExcelExport({
           variant="contained"
           onClick={async e =>
             await alerts.withApiErrorHandling(async () => {
-              let selectedCompanies = _companies.filter(c => c.selected);
-              if (selectedCompanies.length === 0)
-                selectedCompanies = _companies;
               let selectedUsers = _users.filter(u => u.selected);
               const options = {
-                company_ids: selectedCompanies.map(c => c.id),
+                company_ids: [selectedCompany.id],
                 one_file_by_employee: isOneFileByEmployee
               };
               if (selectedUsers.length > 0)
