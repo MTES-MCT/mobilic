@@ -146,43 +146,71 @@
   -o-animation: fadeIn 3s;
   -ms-animation: fadeIn 3s;
 }
-.fade-in-image:before {
-    content: "";
-	float: left;
-	padding-top: 41%;
 
-    @media (max-width: 500px) {
-      padding-top: 120%;
-    }
+.fade-in-image:before {
+  content: "";
+  float: left;
+  padding-top: 41%;
+
+  @media (max-width: 500px) {
+    padding-top: 120%;
+  }
 }
+
 @keyframes fadeIn {
-  0% {opacity:0;}
-  100% {opacity:1;}
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 @-moz-keyframes fadeIn {
-  0% {opacity:0;}
-  100% {opacity:1;}
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 @-webkit-keyframes fadeIn {
-  0% {opacity:0;}
-  100% {opacity:1;}
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 @-o-keyframes fadeIn {
-  0% {opacity:0;}
-  100% {opacity:1;}
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 @-ms-keyframes fadeIn {
-  0% {opacity:0;}
-  100% {opacity:1;}
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .PrivatePickersToolbar-root {
   background-color: #3284ff;
   color: white;
+
   .MuiTypography-root {
     color: white;
   }
@@ -194,12 +222,17 @@
   background-image: none;
 }
 
+body {
+  --link-blank-content: none;
+}
+
 hr {
   padding: 0;
   background-image: none;
 }
 
-.fr-footer, .fr-follow {
+.fr-footer,
+.fr-follow {
   text-align: left; // style needed because text is centered in #root
   width: 100%;
 }
