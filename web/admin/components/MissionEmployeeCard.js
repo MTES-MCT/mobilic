@@ -17,7 +17,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { MissionValidationInfo } from "./MissionValidationInfo";
+import { MissionValidationInfo } from "../../common/MissionValidationInfo";
 import Hidden from "@mui/material/Hidden";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ContradictoryChanges } from "../../pwa/components/ContradictoryChanges";
@@ -85,10 +85,9 @@ export function MissionEmployeeCard({
           container
           spacing={3}
           justifyContent="space-between"
-          alignItems="center"
           wrap="nowrap"
         >
-          <Grid item container spacing={3} alignItems="center" wrap="nowrap">
+          <Grid item container spacing={3} wrap="nowrap">
             <Grid item>
               <Typography>{formatPersonName(user)}</Typography>
             </Grid>
@@ -138,9 +137,15 @@ export function MissionEmployeeCard({
                     </Grid>
                   </Hidden>
                 ),
-                displayIcon && !stats.workerValidation && !stats.adminValidation
-                  ? "⏳"
-                  : ""
+                displayIcon &&
+                !stats.workerValidation &&
+                !stats.adminValidation ? (
+                  <Grid key={4} item>
+                    <span role="img" aria-label="en attente de validation">
+                      ⏳
+                    </span>
+                  </Grid>
+                ) : null
               ]}
           </Grid>
           {activities.length === 0 && (

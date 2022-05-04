@@ -97,7 +97,7 @@ export default function EndMissionModal({
                 <DateTimePicker
                   key={0}
                   label="Heure de fin"
-                  openTo="hours"
+                  openTo={endTime ? "hours" : "day"}
                   value={endTime ? toDate(endTime) : null}
                   onChange={value => setEndTime(value ? fromDate(value) : null)}
                   cancelText={null}
@@ -105,7 +105,9 @@ export default function EndMissionModal({
                   minDateTime={toDate(missionMinEndTime)}
                   maxDateTime={new Date()}
                   disableIgnoringDatePartForTimeValidation={true}
-                  components={{ OpenPickerIcon: ClockIcon }}
+                  components={
+                    endTime ? { OpenPickerIcon: ClockIcon } : undefined
+                  }
                   renderInput={props => (
                     <TextField {...props} fullWidth required variant="filled" />
                   )}
