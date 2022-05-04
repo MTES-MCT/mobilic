@@ -333,6 +333,7 @@ function ActivitiesPanel() {
                 trackEvent(ADMIN_EXPORT_C1B);
                 modals.open("tachographExport", {
                   companies,
+                  defaultCompany: company,
                   users,
                   defaultMinDate: minDate ? new Date(minDate) : null,
                   defaultMaxDate: maxDate
