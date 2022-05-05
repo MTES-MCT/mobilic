@@ -74,22 +74,9 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(5),
     margin: 0
   },
-  darkSection: {
-    backgroundColor: theme.palette.background.dark,
-    color: theme.palette.primary.contrastText
-  },
   inner: {
     margin: "auto",
     padding: 0
-  },
-  lightBlue: {
-    backgroundColor: theme.palette.info.light
-  },
-  lightGreen: {
-    backgroundColor: theme.palette.success.light
-  },
-  lightOrange: {
-    backgroundColor: theme.palette.warning.light
   },
   cta: {
     marginTop: theme.spacing(4)
