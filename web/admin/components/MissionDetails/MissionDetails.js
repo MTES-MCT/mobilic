@@ -479,7 +479,7 @@ export function MissionDetails({
                             allowTransfers,
                             allowSupportActivity,
                             nullableEndTime: false,
-                            defaultTime: mission.startTime,
+                            defaultTime: mission.startTime || day,
                             forcedUser: e.user,
                             displayWarningMessage: false
                           })
