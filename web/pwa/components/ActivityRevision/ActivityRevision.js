@@ -166,7 +166,7 @@ export default function ActivityRevisionOrCreationModal({
       setNewUserEndTime(event.endTime);
     } else {
       setNewUserTime(defaultTime);
-      setNewUserEndTime(defaultTime);
+      setNewUserEndTime(null);
     }
     setNewUserEndTimeError("");
     setNewUserTimeError("");
@@ -223,7 +223,7 @@ export default function ActivityRevisionOrCreationModal({
           if (latestActivityEnd && newUserEndTime >= latestActivityEnd) {
             hasEndError = true;
             setNewUserEndTimeError(
-              `La journée ne peut pas terminer par une pause.`
+              `La journée ne peut pas se terminer par une pause.`
             );
           }
         }
@@ -232,14 +232,7 @@ export default function ActivityRevisionOrCreationModal({
       if (!hasStartError) setNewUserTimeError("");
       if (!hasEndError) setNewUserEndTimeError("");
     }
-  }, [
-    newUserTime,
-    newUserEndTime,
-    activityType,
-    previousMissionEnd,
-    userId,
-    teamMode
-  ]);
+  }, [newUserTime, newUserEndTime, activityType, previousMissionEnd, userId]);
 
   function requiresDriver() {
     return (
@@ -367,7 +360,7 @@ export default function ActivityRevisionOrCreationModal({
           <DateTimePicker
             key={0}
             label="Début"
-            openTo="hours"
+            openTo={newUserTime ? "hours" : "day"}
             value={newUserTime ? toDate(newUserTime) : null}
             onChange={value => setNewUserTime(value ? fromDate(value) : null)}
             minDateTime={toDate(previousMissionEnd)}
@@ -375,7 +368,7 @@ export default function ActivityRevisionOrCreationModal({
             cancelText={null}
             disableCloseOnSelect={false}
             disableIgnoringDatePartForTimeValidation={true}
-            components={{ OpenPickerIcon: ClockIcon }}
+            components={newUserTime ? { OpenPickerIcon: ClockIcon } : undefined}
             renderInput={props => (
               <TextField
                 {...props}
