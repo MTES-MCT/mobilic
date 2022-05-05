@@ -69,7 +69,6 @@ export function EmployeeFilter({
         <TextField
           className={classes.formControl}
           {...params}
-          label={`Salarié${multiple ? "s" : ""}`}
           placeholder={`${
             multiple
               ? selectedUsers.length === 0
