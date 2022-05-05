@@ -446,11 +446,15 @@ export default function ActivityRevisionOrCreationModal({
             disabled={!canSubmit(ACTIVITIES_OPERATIONS.cancel)}
             onClick={() => {
               modals.open("confirmation", {
-                title:
-                  otherActivities?.length > 0
-                    ? "Confirmer suppression"
-                    : "En supprimant la seule activité d'une mission, vous annulerez la mission.",
-                textButtons: true,
+                title: "Confirmer la suppression",
+                content: (!otherActivities || otherActivities.length === 0) && (
+                  <Alert severity="warning">
+                    En supprimant la seule activité d'une mission, vous
+                    annulerez la mission.
+                  </Alert>
+                ),
+                cancelButtonLabel: "Annuler",
+                confirmButtonLabel: "Valider",
                 handleConfirm: async () => {
                   await handleSubmit(ACTIVITIES_OPERATIONS.cancel);
                   handleClose();
