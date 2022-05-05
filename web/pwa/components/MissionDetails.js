@@ -197,10 +197,10 @@ export function MissionDetails({
         cancelButtonLabel: "Annuler",
         disableWarningName: DISMISSABLE_WARNINGS.EMPLOYEE_MISSION_VALIDATION,
         content: (
-          <Typography gutterBottom>
-            ⚠️ Une fois la mission validée vous ne pourrez plus y apporter de
+          <Alert severity="warning">
+            Une fois la mission validée vous ne pourrez plus y apporter de
             modifications.
-          </Typography>
+          </Alert>
         ),
         handleConfirm: actualValidationFunc
       });

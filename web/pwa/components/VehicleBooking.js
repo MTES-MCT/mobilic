@@ -2,7 +2,7 @@ import React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
 import { VehicleFieldForApp } from "./VehicleFieldForApp";
 import {
   CustomDialogActions,
@@ -31,10 +31,10 @@ export default function UpdateVehicleModal({
       />
       <DialogContent>
         <Box my={2}>
-          <Typography>
-            ⚠️ Le nouveau véhicule remplacera l'ancien sur toute la période de
-            la mission.
-          </Typography>
+          <Alert severity="warning">
+            Le nouveau véhicule remplacera l'ancien sur toute la période de la
+            mission.
+          </Alert>
         </Box>
         <VehicleFieldForApp
           label="Nom ou immatriculation du véhicule"

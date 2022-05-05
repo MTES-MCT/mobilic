@@ -1,6 +1,6 @@
 import React from "react";
 import Dialog from "@mui/material/Dialog";
-import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import { now, sameMinute } from "common/utils/time";
 import DialogContent from "@mui/material/DialogContent";
@@ -311,10 +311,10 @@ export default function ActivityRevisionOrCreationModal({
       <DialogContent dividers>
         {displayWarningMessage && (
           <Box my={2} mb={4}>
-            <Typography>
-              ⚠️ Les modifications seront visibles par votre employeur et par
-              les contrôleurs
-            </Typography>
+            <Alert severity="warning">
+              Les modifications seront visibles par votre employeur et par les
+              contrôleurs
+            </Alert>
           </Box>
         )}
         <Box mt={1}>
