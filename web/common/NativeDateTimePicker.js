@@ -99,6 +99,9 @@ export function NativeDateTimePicker({
           ? toBrowserRepresentation(getEndOfDay(maxDateTime))
           : null
       }}
+      InputLabelProps={{
+        shrink: true
+      }}
       onChange={handleChange}
       inputRef={ref}
       {...props}

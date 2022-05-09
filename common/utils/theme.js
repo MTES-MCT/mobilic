@@ -1,5 +1,5 @@
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
-import { red, green, cyan, teal } from "@mui/material/colors";
+import { red } from "@mui/material/colors";
 
 const customOptions = {
   components: {
@@ -24,9 +24,10 @@ const customOptions = {
     }
   },
   palette: {
-    work: teal[300],
-    break: green[400],
-    drive: cyan[500],
+    work: "#F3A817",
+    break: "#9A9CF8",
+    drive: "#6BE670",
+    transfer: "#417DC4",
     rest: red[600],
     primary: {
       main: "#3284FF",
