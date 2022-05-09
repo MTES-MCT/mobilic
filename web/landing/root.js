@@ -33,29 +33,11 @@ const useStyles = makeStyles(theme => ({
     height: 0,
     overflow: "hidden"
   },
-  videoIframe: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    width: "100%",
-    height: "100%",
-    overflow: "hidden"
-  },
-  bgImage: {
-    paddingTop: theme.spacing(14),
-    paddingBottom: theme.spacing(14)
-  },
   showcase: {
     padding: theme.spacing(2)
   },
   lightBlue: {
-    backgroundColor: theme.palette.info.light
-  },
-  lightGreen: {
-    backgroundColor: theme.palette.success.light
-  },
-  lightOrange: {
-    backgroundColor: theme.palette.warning.light
+    backgroundColor: "#b4e1fa"
   },
   subDescription: {
     fontStyle: "italic"

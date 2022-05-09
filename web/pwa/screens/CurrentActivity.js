@@ -12,7 +12,7 @@ import {
 import { now } from "common/utils/time";
 import WarningEndMissionModalContainer from "../components/WarningEndMissionModal/WarningEndMissionModalContainer";
 import { useModals } from "common/utils/modals";
-import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
 import { missionLastLessThanAMinute } from "common/utils/mission";
 
 export function CurrentActivity({
@@ -52,10 +52,10 @@ export function CurrentActivity({
       modals.open("confirmation", {
         textButtons: true,
         content: (
-          <Typography gutterBottom>
-            ⚠️ La première activité ayant duré moins d'une minute, passer en
-            pause maintenant annulera votre mission en cours.
-          </Typography>
+          <Alert severity="warning">
+            La première activité ayant duré moins d'une minute, passer en pause
+            maintenant annulera votre mission en cours.
+          </Alert>
         ),
         title: "Confirmer la pause",
         handleConfirm: beginBreak
