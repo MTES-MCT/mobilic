@@ -125,8 +125,6 @@ export default function EndMissionModal({
                   required
                   variant="filled"
                   error={missionEndTimeError}
-                  setError={setMissionEndTimeError}
-                  noValidate
                 />
               </Box>
             )}

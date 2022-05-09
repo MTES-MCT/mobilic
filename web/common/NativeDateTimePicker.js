@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  formatDateTime,
   getEndOfDay,
   getStartOfDay,
   isoFormatDateTime
@@ -17,15 +16,12 @@ export function NativeDateTimePicker({
   error,
   variant,
   className,
-  setError,
   minDateTime,
   maxDateTime,
   fullWidth = true,
   required = false,
   disabled = false,
-  noValidate,
-  clearable = false,
-  autoValidate = false
+  clearable = false
 }) {
   const ref = React.useRef();
 
@@ -35,25 +31,9 @@ export function NativeDateTimePicker({
     }, 0);
   }, []);
 
-  const displayValue = formatDateTime;
-
-  const autoValidateValue = () => {
-    if (autoValidate) {
-      if (minDateTime && value <= minDateTime) {
-        setError(`L'heure doit être après ${displayValue(minDateTime)}`);
-      } else if (maxDateTime && value >= maxDateTime) {
-        setError(`L'heure doit être avant ${displayValue(maxDateTime)}`);
-      } else setError("");
-    }
-    return () => {};
-  };
-
-  React.useEffect(autoValidateValue, [value, minDateTime, maxDateTime]);
-
   const props = {
     label,
     className,
-    noValidate,
     variant,
     required,
     disabled,

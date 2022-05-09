@@ -366,8 +366,6 @@ export default function ActivityRevisionOrCreationModal({
             className={classes.formField}
             variant="filled"
             error={newUserTimeError}
-            setError={setNewUserTimeError}
-            noValidate
           />
           <NativeDateTimePicker
             key={1}
@@ -380,9 +378,7 @@ export default function ActivityRevisionOrCreationModal({
             className={classes.formField}
             variant="filled"
             error={newUserEndTimeError}
-            setError={setNewUserEndTimeError}
             clearable={actuallyNullableEndTime}
-            noValidate
           />
         </Box>
         {allowTeamMode && team.length > 1 && (
