@@ -8,8 +8,7 @@ import TextField from "common/utils/TextField";
 import { Expenditures } from "./Expenditures";
 import { AddressField } from "../../common/AddressField";
 import KilometerReadingField from "../../common/KilometerReadingField";
-import DateTimePicker from "@mui/lab/DateTimePicker";
-import ClockIcon from "@mui/icons-material/AccessTime";
+import { NativeDateTimePicker } from "../../common/NativeDateTimePicker";
 import { getDaysBetweenTwoDates, now } from "common/utils/time";
 import { setCurrentLocation } from "common/utils/location";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -34,13 +33,16 @@ export default function EndMissionModal({
   const [kilometerReadingError, setKilometerReadingError] = React.useState(
     null
   );
+  const [missionEndTimeError, setMissionEndTimeError] = React.useState("");
   const [currentPosition, setCurrentPosition] = React.useState(null);
 
-  const fromDate = date => date.getTime() / 1000;
-  const toDate = time => new Date(time * 1000);
-
   function canSubmit() {
-    return (currentEndLocation || address) && !kilometerReadingError && endTime;
+    return (
+      (currentEndLocation || address) &&
+      !kilometerReadingError &&
+      endTime &&
+      !missionEndTimeError
+    );
   }
   const alerts = useSnackbarAlerts();
 
@@ -56,6 +58,7 @@ export default function EndMissionModal({
     setAddress(null);
     setCurrentPosition(null);
     setKilometerReading("");
+    setMissionEndTimeError("");
 
     if (open) {
       setLoading(false);
@@ -64,6 +67,24 @@ export default function EndMissionModal({
       }
     }
   }, [currentExpenditures, currentEndLocation, open]);
+
+  React.useEffect(() => {
+    if (endTime) {
+      let hasEndError = false;
+      if (endTime < missionMinEndTime) {
+        hasEndError = true;
+        setMissionEndTimeError(
+          "L'heure de fin doit être après le début de la dernière activité."
+        );
+      } else if (endTime > now()) {
+        hasEndError = true;
+        setMissionEndTimeError(
+          "L'heure de fin ne peut pas être dans le futur."
+        );
+      }
+      if (!hasEndError) setMissionEndTimeError("");
+    }
+  }, [endTime]);
 
   return (
     <FunnelModal open={open} handleBack={handleClose}>
@@ -94,23 +115,18 @@ export default function EndMissionModal({
                 <Typography variant="h5" className="form-field-title">
                   Quelle est l'heure de fin de la mission&nbsp;?
                 </Typography>
-                <DateTimePicker
+                <NativeDateTimePicker
                   key={0}
                   label="Heure de fin"
-                  openTo={endTime ? "hours" : "day"}
-                  value={endTime ? toDate(endTime) : null}
-                  onChange={value => setEndTime(value ? fromDate(value) : null)}
-                  cancelText={null}
-                  disableCloseOnSelect={false}
-                  minDateTime={toDate(missionMinEndTime)}
-                  maxDateTime={new Date()}
-                  disableIgnoringDatePartForTimeValidation={true}
-                  components={
-                    endTime ? { OpenPickerIcon: ClockIcon } : undefined
-                  }
-                  renderInput={props => (
-                    <TextField {...props} fullWidth required variant="filled" />
-                  )}
+                  value={endTime}
+                  setValue={setEndTime}
+                  minDateTime={missionMinEndTime}
+                  maxDateTime={now()}
+                  required
+                  variant="filled"
+                  error={missionEndTimeError}
+                  setError={setMissionEndTimeError}
+                  noValidate
                 />
               </Box>
             )}
