@@ -217,8 +217,11 @@
 }
 
 // override dsfr style for mui compatibility
-[href] {
+[href]:not(.fr-breadcrumb__link) {
   box-shadow: none;
+}
+
+[href] {
   background-image: none;
 }
 
