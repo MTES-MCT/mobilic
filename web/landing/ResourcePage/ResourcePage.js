@@ -104,7 +104,7 @@ export function ResourcePage() {
           </Grid>
           <Grid item xs={12} sm={3}>
             <IconCard
-              link="https://developers.mobilic.beta.gouv.fr"
+              href="https://developers.mobilic.beta.gouv.fr"
               description="Documentation API"
               IconComponent={SoftwareImage}
             />
