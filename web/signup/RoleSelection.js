@@ -27,21 +27,8 @@ export function RoleSelection() {
 
   return [
     <PaperContainerTitle key={0}>Quel est votre métier ?</PaperContainerTitle>,
-    <Grid
-      key={1}
-      style={{
-        overflowX: "hidden",
-        overflowY: "auto",
-        marginTop: 80,
-        marginBottom: 0
-      }}
-      className="centered"
-      container
-      spacing={5}
-      justifyContent="space-around"
-      alignItems="stretch"
-    >
-      <Grid item xs={10} md={4}>
+    <Grid key={1} container justifyContent="space-evenly">
+      <Grid item>
         <LinkButton
           aria-label="Inscription salarié"
           to="/signup/user"
@@ -57,7 +44,7 @@ export function RoleSelection() {
           </Card>
         </LinkButton>
       </Grid>
-      <Grid item xs={10} md={4}>
+      <Grid item>
         <LinkButton
           aria-label="Inscription gestionnaire"
           to="/signup/admin"

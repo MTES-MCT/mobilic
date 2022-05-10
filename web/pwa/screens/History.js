@@ -294,7 +294,7 @@ export function History({
             <Button
               aria-label="Accès contrôleur"
               className={classes.generateAccessButton}
-              color="secondary"
+              color="error"
               variant="outlined"
               onClick={() => {
                 modals.open("userReadQRCode");

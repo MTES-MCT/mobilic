@@ -121,7 +121,7 @@ const onMinDateChange = debounce(
 
 function ActivitiesPanel() {
   const adminStore = useAdminStore();
-  const [adminCompanies] = useAdminCompanies();
+  const [adminCompanies, company] = useAdminCompanies();
   const modals = useModals();
   const alerts = useSnackbarAlerts();
   const api = useApi();
@@ -213,9 +213,6 @@ function ActivitiesPanel() {
       setCompanies(newCompaniesWithCurrentSelectionStatus);
     }
   }, [adminCompanies]);
-
-  let selectedCompanies = companies.filter(c => c.selected);
-  if (selectedCompanies.length === 0) selectedCompanies = companies;
 
   React.useEffect(() => {
     trackEvent(ACTIVITY_FILTER_EMPLOYEE);
@@ -317,6 +314,7 @@ function ActivitiesPanel() {
                 modals.open("dataExport", {
                   companies,
                   users,
+                  defaultCompany: company,
                   defaultMinDate: minDate ? new Date(minDate) : null,
                   defaultMaxDate: maxDate
                     ? new Date(maxDate)
@@ -335,6 +333,7 @@ function ActivitiesPanel() {
                 trackEvent(ADMIN_EXPORT_C1B);
                 modals.open("tachographExport", {
                   companies,
+                  defaultCompany: company,
                   users,
                   defaultMinDate: minDate ? new Date(minDate) : null,
                   defaultMaxDate: maxDate

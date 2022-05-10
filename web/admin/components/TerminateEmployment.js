@@ -1,5 +1,5 @@
 import React from "react";
-import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
 import DialogContent from "@mui/material/DialogContent";
 import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import TextField from "@mui/material/TextField";
@@ -57,13 +57,11 @@ export default function TerminateEmployment({
         }}
       >
         <DialogContent>
-          <Typography>⚠️⚠️⚠️</Typography>
-          <Typography>
+          <Alert severity="warning">
             Cette opération signale le départ d'un salarié : après la date
             choisie le salarié ne pourra plus enregistrer de temps de travail
             pour l'entreprise, ni accéder aux informations de l'entreprise.
-          </Typography>
-          <Typography>⚠️⚠️⚠️</Typography>
+          </Alert>
           <Box my={2} mt={4} className="flex-row-center">
             <MobileDatePicker
               label="Date de fin du rattachement"

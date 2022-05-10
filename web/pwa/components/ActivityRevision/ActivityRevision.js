@@ -1,8 +1,8 @@
 import React from "react";
 import Dialog from "@mui/material/Dialog";
-import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
-import { now, sameMinute } from "common/utils/time";
+import { now, sameMinute, truncateMinute } from "common/utils/time";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "common/utils/TextField";
 import {
@@ -16,8 +16,7 @@ import max from "lodash/max";
 import MenuItem from "@mui/material/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import DateTimePicker from "@mui/lab/DateTimePicker";
-import ClockIcon from "@mui/icons-material/AccessTime";
+import { NativeDateTimePicker } from "../../../common/NativeDateTimePicker";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import {
@@ -29,6 +28,7 @@ import { makeStyles } from "@mui/styles";
 import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
 import OverlappedActivityList from "./OverlappedActivityList";
+import _ from "lodash";
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -166,7 +166,7 @@ export default function ActivityRevisionOrCreationModal({
       setNewUserEndTime(event.endTime);
     } else {
       setNewUserTime(defaultTime);
-      setNewUserEndTime(defaultTime);
+      setNewUserEndTime(null);
     }
     setNewUserEndTimeError("");
     setNewUserTimeError("");
@@ -223,7 +223,7 @@ export default function ActivityRevisionOrCreationModal({
           if (latestActivityEnd && newUserEndTime >= latestActivityEnd) {
             hasEndError = true;
             setNewUserEndTimeError(
-              `La journée ne peut pas terminer par une pause.`
+              `La journée ne peut pas se terminer par une pause.`
             );
           }
         }
@@ -232,14 +232,7 @@ export default function ActivityRevisionOrCreationModal({
       if (!hasStartError) setNewUserTimeError("");
       if (!hasEndError) setNewUserEndTimeError("");
     }
-  }, [
-    newUserTime,
-    newUserEndTime,
-    activityType,
-    previousMissionEnd,
-    userId,
-    teamMode
-  ]);
+  }, [newUserTime, newUserEndTime, activityType, previousMissionEnd, userId]);
 
   function requiresDriver() {
     return (
@@ -297,9 +290,6 @@ export default function ActivityRevisionOrCreationModal({
     );
   };
 
-  const fromDate = date => date.getTime() / 1000;
-  const toDate = time => new Date(time * 1000);
-
   const classes = useStyles();
 
   return (
@@ -311,10 +301,10 @@ export default function ActivityRevisionOrCreationModal({
       <DialogContent dividers>
         {displayWarningMessage && (
           <Box my={2} mb={4}>
-            <Typography>
-              ⚠️ Les modifications seront visibles par votre employeur et par
-              les contrôleurs
-            </Typography>
+            <Alert severity="warning">
+              Les modifications seront visibles par votre employeur et par les
+              contrôleurs
+            </Alert>
           </Box>
         )}
         <Box mt={1}>
@@ -364,57 +354,31 @@ export default function ActivityRevisionOrCreationModal({
               </MenuItem>
             </TextField>
           )}
-          <DateTimePicker
+          <NativeDateTimePicker
             key={0}
             label="Début"
-            openTo="hours"
-            value={newUserTime ? toDate(newUserTime) : null}
-            onChange={value => setNewUserTime(value ? fromDate(value) : null)}
-            minDateTime={toDate(previousMissionEnd)}
-            maxDateTime={new Date()}
-            cancelText={null}
-            disableCloseOnSelect={false}
-            disableIgnoringDatePartForTimeValidation={true}
-            components={{ OpenPickerIcon: ClockIcon }}
-            renderInput={props => (
-              <TextField
-                {...props}
-                fullWidth
-                required
-                className={classes.formField}
-                variant="filled"
-                error={!!newUserTimeError}
-                helperText={newUserTimeError}
-              />
-            )}
+            value={newUserTime}
+            setValue={_.flow([truncateMinute, setNewUserTime])}
+            minDateTime={previousMissionEnd}
+            maxDateTime={now()}
+            fullWidth
+            required
+            className={classes.formField}
+            variant="filled"
+            error={newUserTimeError}
           />
-          <DateTimePicker
+          <NativeDateTimePicker
             key={1}
             label="Fin"
-            openTo="hours"
-            value={newUserEndTime ? toDate(newUserEndTime) : null}
-            onChange={value =>
-              setNewUserEndTime(value ? fromDate(value) : null)
-            }
-            minDateTime={toDate(newUserTime)}
-            maxDateTime={new Date()}
-            cancelText={null}
-            disableCloseOnSelect={false}
-            disableIgnoringDatePartForTimeValidation={true}
+            value={newUserEndTime}
+            setValue={_.flow([truncateMinute, setNewUserEndTime])}
+            minDateTime={newUserTime}
+            maxDateTime={now()}
+            required={!actuallyNullableEndTime}
+            className={classes.formField}
+            variant="filled"
+            error={newUserEndTimeError}
             clearable={actuallyNullableEndTime}
-            clearText="Annuler"
-            components={{ OpenPickerIcon: ClockIcon }}
-            renderInput={props => (
-              <TextField
-                {...props}
-                fullWidth
-                required={!actuallyNullableEndTime}
-                className={classes.formField}
-                variant="filled"
-                error={!!newUserEndTimeError}
-                helperText={newUserEndTimeError}
-              />
-            )}
           />
         </Box>
         {allowTeamMode && team.length > 1 && (
@@ -451,11 +415,15 @@ export default function ActivityRevisionOrCreationModal({
             disabled={!canSubmit(ACTIVITIES_OPERATIONS.cancel)}
             onClick={() => {
               modals.open("confirmation", {
-                title:
-                  otherActivities?.length > 0
-                    ? "Confirmer suppression"
-                    : "En supprimant la seule activité d'une mission, vous annulerez la mission.",
-                textButtons: true,
+                title: "Confirmer la suppression",
+                content: (!otherActivities || otherActivities.length === 0) && (
+                  <Alert severity="warning">
+                    En supprimant la seule activité d'une mission, vous
+                    annulerez la mission.
+                  </Alert>
+                ),
+                cancelButtonLabel: "Annuler",
+                confirmButtonLabel: "Valider",
                 handleConfirm: async () => {
                   await handleSubmit(ACTIVITIES_OPERATIONS.cancel);
                   handleClose();

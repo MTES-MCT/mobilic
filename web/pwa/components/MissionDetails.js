@@ -26,11 +26,10 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { getVehicleName } from "common/utils/vehicles";
 import { PersonIcon } from "common/utils/icons";
-import { formatDay, getStartOfDay, now } from "common/utils/time";
+import { getStartOfDay, now } from "common/utils/time";
 import { MainCtaButton } from "./MainCtaButton";
 import Typography from "@mui/material/Typography";
-import CheckIcon from "@mui/icons-material/Check";
-import ScheduleIcon from "@mui/icons-material/Schedule";
+import { MissionValidationInfo } from "../../common/MissionValidationInfo";
 import { Event } from "../../common/Event";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import LocationEntry from "./LocationEntry";
@@ -198,10 +197,10 @@ export function MissionDetails({
         cancelButtonLabel: "Annuler",
         disableWarningName: DISMISSABLE_WARNINGS.EMPLOYEE_MISSION_VALIDATION,
         content: (
-          <Typography gutterBottom>
-            ⚠️ Une fois la mission validée vous ne pourrez plus y apporter de
+          <Alert severity="warning">
+            Une fois la mission validée vous ne pourrez plus y apporter de
             modifications.
-          </Typography>
+          </Alert>
         ),
         handleConfirm: actualValidationFunc
       });
@@ -506,46 +505,11 @@ export function MissionDetails({
             mission.validation ||
             mission.adminValidation) && (
             <>
-              {(mission.validation || !mission.adminValidation) && (
-                <Box
-                  color={mission.validation ? "success.main" : "warning.main"}
-                  className={classes.validationContainer}
-                >
-                  {mission.validation ? (
-                    <CheckIcon fontSize="small" color="inherit" />
-                  ) : (
-                    <ScheduleIcon fontSize="small" color="inherit" />
-                  )}
-                  <Typography className={classes.validationText}>
-                    {mission.validation
-                      ? `validée le ${formatDay(
-                          mission.validation.receptionTime
-                        )}`
-                      : "en attente de validation salarié"}
-                  </Typography>
-                </Box>
-              )}
-              {(mission.adminValidation || mission.validation) && (
-                <Box
-                  color={
-                    mission.adminValidation ? "success.main" : "warning.main"
-                  }
-                  className={classes.validationContainer}
-                >
-                  {mission.adminValidation ? (
-                    <CheckIcon fontSize="small" color="inherit" />
-                  ) : (
-                    <ScheduleIcon fontSize="small" color="inherit" />
-                  )}
-                  <Typography className={classes.validationText}>
-                    {mission.adminValidation
-                      ? `validée par le gestionnaire le ${formatDay(
-                          mission.adminValidation.receptionTime
-                        )}`
-                      : "en attente de validation gestionnaire"}
-                  </Typography>
-                </Box>
-              )}
+              <MissionValidationInfo validation={mission.validation} />
+              <MissionValidationInfo
+                validation={mission.adminValidation}
+                isAdmin
+              />
               <ContradictoryChanges
                 mission={mission}
                 validationTime={mission.validation?.receptionTime}
