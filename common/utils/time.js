@@ -209,6 +209,14 @@ export function frenchFormatDateStringOrTimeStamp(isoDateString) {
   return new Date(isoDateString).toLocaleDateString();
 }
 
+export function isDateInCurrentMonth(date) {
+  const today = new Date();
+  return (
+    today.getMonth() === date.getMonth() &&
+    today.getFullYear() === date.getFullYear()
+  );
+}
+
 export function endOfMonthAsDate(date) {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0);
 }
