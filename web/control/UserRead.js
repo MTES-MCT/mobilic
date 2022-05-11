@@ -27,6 +27,7 @@ import { UserReadHistory } from "./components/UserReadHistory";
 import { TextWithBadge } from "../common/TextWithBadge";
 import { UserReadAlerts } from "./components/UserReadAlerts";
 import { computeAlerts } from "common/utils/regulation/computeAlerts";
+import { getDaysBetweenTwoDates } from "common/utils/time";
 
 function getTabs(alertsNumber) {
   return [
@@ -73,6 +74,7 @@ export function UserRead() {
   const [vehicles, setVehicles] = React.useState(null);
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
   const [groupedAlerts, setGroupedAlerts] = React.useState([]);
+  const [workingDays, setWorkingDays] = React.useState(new Set([]));
 
   const [error, setError] = React.useState("");
 
@@ -146,6 +148,15 @@ export function UserRead() {
           ).filter(m => m.activities.length > 0);
 
           setMissions(missions_);
+
+          const userWorkingDays = new Set([]);
+          missions_.forEach(mission =>
+            getDaysBetweenTwoDates(
+              mission.startTime,
+              mission.endTime || tokenInfo.creationDay
+            ).forEach(day => userWorkingDays.add(day))
+          );
+          setWorkingDays(userWorkingDays);
           setGroupedAlerts(
             computeAlerts(
               missions_,
@@ -202,6 +213,7 @@ export function UserRead() {
         vehicles={vehicles}
         periodOnFocus={periodOnFocus}
         setPeriodOnFocus={setPeriodOnFocus}
+        workingDaysNumber={workingDays.size}
       />
     ) : null
   ];
