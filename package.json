@@ -20,7 +20,7 @@
     "@mui/lab": "^5.0.0-alpha.70",
     "@mui/material": "^5.4.3",
     "@mui/styles": "^5.4.2",
-    "@sentry/browser": "^5.15.5",
+    "@sentry/browser": "^6.19.7",
     "@sentry/react": "^6.13.3",
     "@svgr/webpack": "^4.3.3",
     "@testing-library/jest-dom": "^4.2.4",
@@ -42,7 +42,6 @@
     "css-loader": "^3.2.0",
     "csv-stringify": "^5.3.6",
     "date-fns": "^2.11.1",
-    "docusaurus": "^1.14.4",
     "dotenv": "^8.2.0",
     "dotenv-expand": "^5.1.0",
     "enzyme": "^3.11.0",
@@ -106,6 +105,10 @@
     "webpack-dev-server": "^3.9.0",
     "webpack-manifest-plugin": "^2.2.0",
     "workbox-webpack-plugin": "^6.0.2"
+  },
+  "resolutions": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",

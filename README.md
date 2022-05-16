@@ -146,7 +146,6 @@ Il utilise donc les technologies suivantes :
 
 - `config` qui contient les fichiers de config générés par create-react-app et notamment le fichier de config Webpack.
 - `common` qui contient surtout le JS fonctionnel (peu de JSX ou de composants React) et des fichiers image.
-- `docs` qui contient le site [Docusaurus](https://docusaurus.io/) pour la documentation de l'API
 - `public` qui contient les fichiers servis statiquement (html, images, ...)
 - `scripts` qui contient les scripts create-react-app, notamment `start`et `build`
 - `web` qui contient le JS des différents outils (PWA, dashboard, contrôle, landing, ...)
