@@ -1332,13 +1332,13 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
-"@dataesr/react-dsfr@^1.1.11":
-  version "1.1.11"
-  resolved "https://registry.yarnpkg.com/@dataesr/react-dsfr/-/react-dsfr-1.1.11.tgz#a2b20fad952b7e9bfdb41c7a36f886ffae8a1d79"
-  integrity sha512-MJWkX/JMQ0p8NHU7hPxoORC202Kq8fFdzNay+1g1b7jUxWnPqqYkyHxTh++R7BJy1BbL8VPjuJzoYd3bRCUUDg==
+"@dataesr/react-dsfr@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@dataesr/react-dsfr/-/react-dsfr-2.2.2.tgz#688ccb689a9f75296f62bd5d4fd7761ae54fe3e5"
+  integrity sha512-Ac3RPUFpYKWG9S2mXphhBovvra/P/svOPqKGxKxEc6p7vzEbsZ54i1U1wMqOyssq5UcqQAiCD4cIMWQD9uXz/g==
   dependencies:
     "@babel/runtime" "^7.16.3"
-    "@gouvfr/dsfr" "1.3.1"
+    "@gouvfr/dsfr" "1.5.0"
     classnames "^2.3.1"
     html-react-parser "^1.4.0"
     prop-types "^15.7.2"
@@ -1530,15 +1530,10 @@
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.3.tgz#555193ab2e3bb3b6adc3d551c9c030d9e860daf6"
   integrity sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==
 
-"@gouvfr/dsfr@1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@gouvfr/dsfr/-/dsfr-1.3.1.tgz#fdee185b0fa84c930120a2ea46626462786dd455"
-  integrity sha512-11TYlm2nqJVN7VezjManBNUy/O3o/nJ5X9F1N6wkstf0x0N6Ucmtys4yTCPdC036AHqQj7X3v/OwIuvSUDOx5A==
-
-"@gouvfr/dsfr@^1.4.1":
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/@gouvfr/dsfr/-/dsfr-1.4.1.tgz#71289a18a36f775d5dff46eefb9fc59cb19d6954"
-  integrity sha512-vYWqWall1p+UcyhFr/U/c6Xq4R/vh3Jk+9OEnRufUDiXi18G/mtshweJQLVpPaVMGDIK0EUEAUpd3kdD0D/x9w==
+"@gouvfr/dsfr@1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@gouvfr/dsfr/-/dsfr-1.5.0.tgz#a627d7a9772e48aa42614e8e8bc292542a114df6"
+  integrity sha512-RboR8xAUV3sxF3qsM67ZxQPgBoE1+fLbv8f4LmGrmEJEsx0yLVAQxu51ALFcPMEop6qPgwaAIh7B4FxLyfTZlw==
 
 "@graphiql/toolkit@^0.4.2":
   version "0.4.2"
