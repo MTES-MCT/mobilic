@@ -107,6 +107,10 @@
     "webpack-manifest-plugin": "^2.2.0",
     "workbox-webpack-plugin": "^6.0.2"
   },
+  "resolutions": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "node scripts/start.js",
