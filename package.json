@@ -42,7 +42,6 @@
     "css-loader": "^3.2.0",
     "csv-stringify": "^5.3.6",
     "date-fns": "^2.11.1",
-    "docusaurus": "^1.14.4",
     "dotenv": "^8.2.0",
     "dotenv-expand": "^5.1.0",
     "enzyme": "^3.11.0",
