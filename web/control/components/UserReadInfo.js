@@ -43,6 +43,7 @@ export function UserReadInfo({
   tokenInfo,
   controlTime,
   alertNumber,
+  workingDaysNumber,
   setTab
 }) {
   const alerts = useSnackbarAlerts();
@@ -83,7 +84,7 @@ export function UserReadInfo({
           </Grid>
         ))}
       </Grid>
-      <Typography variant="h5">Historique récent (60 jours)</Typography>
+      <Typography variant="h5">Historique récent (28 jours)</Typography>
       <Grid container wrap="wrap" spacing={2}>
         <Grid item>
           <InfoItem
@@ -112,7 +113,9 @@ export function UserReadInfo({
         className={classes.linkButtons}
       >
         <Grid item xs={6} style={{ textAlign: "center" }}>
-          <Typography>Nombre de journées enregistrées : 28</Typography>
+          <Typography>
+            Nombre de journées enregistrées : {workingDaysNumber}
+          </Typography>
           <Link
             color="primary"
             variant="body1"
