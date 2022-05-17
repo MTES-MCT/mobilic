@@ -217,16 +217,12 @@
 }
 
 // override dsfr style for mui compatibility
-[href]:not(.fr-breadcrumb__link) {
-  box-shadow: none;
-}
-
-[href] {
-  background-image: none;
-}
-
 body {
   --link-blank-content: none;
+}
+
+[href]:not(.fr-breadcrumb__link) {
+  --underline-img: none;
 }
 
 hr {
@@ -247,4 +243,27 @@ hr {
 .fr-footer__logo {
   max-width: 175px;
   max-height: 133px;
+}
+
+.MuiButton {
+  &-contained:hover {
+    --hover-tint: #0053b3;
+  }
+
+  &-outlined:hover,
+  &-text:hover {
+    --hover-tint: rgba(50, 132, 255, 0.04);
+  }
+
+  &-contained:active {
+    --active-tint: #0053b3;
+  }
+}
+
+.MuiTab-root:hover {
+  --hover-tint: inherit;
+}
+
+.MuiTab-root:active {
+  --active-tint: inherit;
 }

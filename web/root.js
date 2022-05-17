@@ -46,7 +46,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { ErrorBoundary } from "./common/ErrorFallback";
 import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
 
-import "@gouvfr/dsfr/dist/dsfr/dsfr.min.css";
+import "@gouvfr/dsfr/dist/dsfr.min.css";
 import "common/assets/styles/root.scss"; // should be imported after dsfr
 
 const matomo = createInstance({
