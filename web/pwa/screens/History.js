@@ -431,10 +431,10 @@ export function History({
             <NoDataImage height={100} />
             <Typography>
               {currentTab === "day"
-                ? "Journée non travaillée"
+                ? "Journée non renseignée"
                 : currentTab === "week"
-                ? "Aucune journée travaillée dans la semaine"
-                : "Aucune journée travaillée dans le mois"}
+                ? "Aucune journée renseignée dans la semaine"
+                : "Aucune journée renseignée dans le mois"}
             </Typography>
           </Box>
         )}

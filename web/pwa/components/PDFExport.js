@@ -18,6 +18,7 @@ import Grid from "@mui/material/Grid";
 import {
   DAY,
   endOfMonthAsDate,
+  isDateInCurrentMonth,
   isoFormatLocalDate,
   startOfDayAsDate,
   startOfMonthAsDate
@@ -154,10 +155,13 @@ export default function PDFExport({ open, handleClose }) {
               options["min_date"] = isoFormatLocalDate(
                 startOfMonthAsDate(minDate)
               );
-            if (maxDate)
+            if (maxDate) {
               options["max_date"] = isoFormatLocalDate(
-                endOfMonthAsDate(maxDate)
+                isDateInCurrentMonth(maxDate)
+                  ? new Date()
+                  : endOfMonthAsDate(maxDate)
               );
+            }
             e.preventDefault();
             trackLink({
               href: `/generate_pdf_export`,
