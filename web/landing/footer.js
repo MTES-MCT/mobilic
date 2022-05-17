@@ -13,8 +13,7 @@ import {
 } from "@dataesr/react-dsfr";
 import { useModals } from "common/utils/modals";
 import { Follow } from "./follow";
-// import Hidden from "@mui/material/Hidden";
-import FranceRelanceLogo from "common/assets/images/sponsor-logos/france_relance.png";
+import FranceRelanceLogo from "common/assets/images/sponsor-logos/france_relance.jpg";
 import NextGenerationEULogo from "common/assets/images/sponsor-logos/next_generation_eu.png";
 import { FabNumIcon } from "common/utils/icons";
 
@@ -30,25 +29,6 @@ export function Footer() {
               mer (DGITM), incubé à la Fabrique Numérique du Ministère de la
               Transition écologique, membre du réseau d’incubateurs
               beta.gouv.fr."
-          // description={
-          //   <>
-          //     <span>
-          //       Mobilic est un service numérique de l’Etat, soutenue par la
-          //       Direction générale des infrastructures des transports et de la
-          //       mer (DGITM), incubé à la Fabrique Numérique du Ministère de la
-          //       Transition écologique, membre du réseau d’incubateurs
-          //       beta.gouv.fr.
-          //     </span>
-          //     <Hidden smDown>
-          //       <img
-          //         src="/landing-qrcode.svg"
-          //         height={120}
-          //         alt="QR Code pour accéder à mobilic sur smartphone"
-          //         style={{ padding: "0 4px" }}
-          //       />
-          //     </Hidden>
-          //   </>
-          // }
         >
           <Logo>République Française</Logo>
           <FooterOperator>
