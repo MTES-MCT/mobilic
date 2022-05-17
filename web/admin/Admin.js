@@ -106,6 +106,7 @@ function _Admin() {
     const userId = adminStore.userId;
     const companyId = adminStore.companyId;
     if (userId && companyId) {
+      setShouldRefreshData({ value: false });
       withLoadingScreen(
         async () =>
           await alerts.withApiErrorHandling(
@@ -138,7 +139,11 @@ function _Admin() {
       location.pathname.startsWith("/admin/activities") &&
       shouldRefreshData.value
     )
-      loadDataCompaniesList();
+      if (adminStore.companyId) {
+        loadDataCompanyDetails();
+      } else {
+        loadDataCompaniesList();
+      }
   }, [location]);
 
   React.useEffect(() => {
