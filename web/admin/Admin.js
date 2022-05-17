@@ -76,7 +76,6 @@ function _Admin() {
     const userId = adminStore.userId;
     if (userId) {
       setShouldRefreshData({ value: false });
-      shouldRefreshData.value = false;
       withLoadingScreen(
         async () =>
           await alerts.withApiErrorHandling(
