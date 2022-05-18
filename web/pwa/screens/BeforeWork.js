@@ -5,7 +5,6 @@ import Typography from "@mui/material/Typography";
 import { useModals } from "common/utils/modals";
 import Box from "@mui/material/Box";
 import { AccountButton } from "../components/AccountButton";
-import { MainCtaButton } from "../components/MainCtaButton";
 import { makeStyles } from "@mui/styles";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import List from "@mui/material/List";
@@ -99,7 +98,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.primary.main,
     "&:hover": {
-      backgroundColor: theme.palette.background.default
+      "--hover-tint": theme.palette.background.default,
+      color: theme.palette.primary.main
     },
     marginTop: theme.spacing(2)
   },
@@ -207,12 +207,13 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
         <Typography className={`${classes.promiseText} bold`}>
           Fiable, facile et rapide !
         </Typography>
-        <MainCtaButton
+        <LoadingButton
+          variant="contained"
           className={classes.ctaButton}
           onClick={onEnterNewMissionFunnel}
         >
           Commencer une mission
-        </MainCtaButton>
+        </LoadingButton>
         <LoadingButton
           style={{ marginTop: 8 }}
           className={classes.subButton}
