@@ -43,7 +43,7 @@
 }
 
 #root {
-  @extend .container;
+  @extend .flex-column;
   @extend .no-margin-no-padding;
   align-items: center;
   text-align: center;
