@@ -5,8 +5,7 @@ import Grid from "@mui/material/Grid";
 import { Header } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
-import { Breadcrumbs } from "@mui/material";
-import { Link } from "../../common/LinkButton";
+import { Breadcrumb, BreadcrumbItem } from "@dataesr/react-dsfr";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { RegulationCard } from "./RegulationCard";
 import { makeStyles } from "@mui/styles";
@@ -49,12 +48,10 @@ export function RegulationPage() {
       maxWidth={false}
     >
       <Container maxWidth="lg" className={classes.inner}>
-        <Breadcrumbs>
-          <Link color="inherit" to="/resources/home">
-            Documentation
-          </Link>
-          <Typography>Réglementation</Typography>
-        </Breadcrumbs>
+        <Breadcrumb>
+          <BreadcrumbItem href="/resources/home">Documentation</BreadcrumbItem>
+          <BreadcrumbItem>Réglementation</BreadcrumbItem>
+        </Breadcrumb>
         <PaperContainerTitle variant="h1" className={classes.title}>
           La réglementation du temps de travail dans le transport routier léger
         </PaperContainerTitle>

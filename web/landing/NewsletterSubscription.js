@@ -65,7 +65,7 @@ export default function NewsletterSubscriptionModal({ open, handleClose }) {
         json: { list: profile === "others" ? "admins" : profile, email }
       });
       await alerts.success(
-        "Inscription à la Newsletter réussie !",
+        "Abonnement à la lettre d'information réussie !",
         "subscribe-to-nl",
         6000
       );
@@ -79,12 +79,12 @@ export default function NewsletterSubscriptionModal({ open, handleClose }) {
       <form autoComplete="off" onSubmit={handleSubmit}>
         <CustomDialogTitle
           handleClose={handleClose}
-          title="Inscription à la newsletter"
+          title="Abonnement à la lettre d'information"
         />
         <DialogContent>
           <Typography>
-            Veuillez renseigner votre adresse email pour vous inscrire à notre
-            newsletter
+            Veuillez renseigner votre adresse email pour vous abonner à notre
+            lettre d'information
           </Typography>
           <EmailField
             required
@@ -113,20 +113,20 @@ export default function NewsletterSubscriptionModal({ open, handleClose }) {
             ))}
           </TextField>
           <Typography variant="caption" className={classes.caption}>
-            Vous pouvez vous désinscrire à tout moment en cliquant sur le lien
+            Vous pouvez vous désabonner à tout moment en cliquant sur le lien
             présent dans nos emails.
           </Typography>
         </DialogContent>
         <CustomDialogActions>
           <LoadingButton
-            aria-label="Inscription"
+            aria-label="Abonnement"
             color="primary"
             type="submit"
             variant="contained"
             disabled={emailError || !email || !profile}
             loading={loading}
           >
-            Inscription
+            Abonnement
           </LoadingButton>
         </CustomDialogActions>
       </form>

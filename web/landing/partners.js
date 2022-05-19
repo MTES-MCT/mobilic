@@ -196,8 +196,9 @@ export function Partners() {
               <li>
                 <Typography>
                   ✅ Mise en visibilité lors des diverses communications de
-                  l’équipe Mobilic (newsletter, présentations) et via le
-                  référencement sur le site Mobilic via la page "Partenaires".
+                  l’équipe Mobilic (lettre d'information, présentations) et via
+                  le référencement sur le site Mobilic via la page
+                  "Partenaires".
                 </Typography>
               </li>
               <li>

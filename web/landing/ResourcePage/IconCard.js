@@ -16,13 +16,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function IconCard({ description, IconComponent, link }) {
+export function IconCard({ description, IconComponent, link, href }) {
   const classes = useStyles();
   const commonCardsClasses = resourceCardsClasses();
 
   return (
     <LinkButton
       to={link}
+      href={href}
       className={commonCardsClasses.linkWholeCard}
       color="primary"
     >

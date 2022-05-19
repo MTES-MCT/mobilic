@@ -168,7 +168,7 @@ export function EmailSelection() {
           <CheckboxField
             checked={subscribeToNewsletter}
             onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
-            label="Je souhaite m'inscrire à la newsletter Mobilic pour rester informé par mail des nouveautés du produit"
+            label="Je souhaite m'abonner à la lettre d'information de Mobilic pour rester informé par mail des nouveautés du produit"
           />
         </Section>
         <Section title="2. Mot de passe (facultatif)">

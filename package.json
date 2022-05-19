@@ -12,6 +12,7 @@
   "dependencies": {
     "@babel/core": "^7.7.4",
     "@babel/runtime": "^7.6.2",
+    "@dataesr/react-dsfr": "^2.2.2",
     "@datapunt/matomo-tracker-react": "0.5.1",
     "@date-io/date-fns": "1.x",
     "@emotion/react": "^11.8.1",

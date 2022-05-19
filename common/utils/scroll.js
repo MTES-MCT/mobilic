@@ -4,14 +4,12 @@ import { withRouter } from "react-router-dom";
 function _ScrollToTop({ history }) {
   React.useEffect(() => {
     const unlisten = history.listen(() => {
-      const el = document.getElementById("root");
       if (
-        el &&
-        el.scrollTo &&
-        (history.location.pathname !== "/resources/regulations" ||
-          history.location.search === "")
-      )
-        el.scrollTo(0, 0);
+        history.location.pathname !== "/resources/regulations" ||
+        history.location.search === ""
+      ) {
+        window.scrollTo(0, 0);
+      }
     });
     return () => {
       unlisten();

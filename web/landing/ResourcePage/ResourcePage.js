@@ -7,7 +7,12 @@ import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import Button from "@mui/material/Button";
 import { FaqCard } from "./FaqCard";
-import { ControllerImage, ManagerImage, WorkerImage } from "common/utils/icons";
+import {
+  ControllerImage,
+  ManagerImage,
+  WorkerImage,
+  SoftwareImage
+} from "common/utils/icons";
 import { IconCard } from "./IconCard";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { LinkButton } from "../../common/LinkButton";
@@ -75,26 +80,33 @@ export function ResourcePage() {
         <Typography variant={"h3"} className={classes.resourceSubtitle}>
           Je cherche de la documentation pour m'aider à utiliser Mobilic
         </Typography>
-        <Grid container direction="row" alignItems="center" spacing={10}>
-          <Grid item xs={12} sm={4}>
+        <Grid container direction="row" alignItems="stretch" spacing={10}>
+          <Grid item xs={12} sm={3}>
             <IconCard
               link="/resources/admin"
               description="Documentation gestionnaire"
               IconComponent={ManagerImage}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={3}>
             <IconCard
               link="/resources/driver"
               description="Documentation travailleur mobile"
               IconComponent={WorkerImage}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={3}>
             <IconCard
               link="/resources/controller"
               description="Documentation contrôleur"
               IconComponent={ControllerImage}
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <IconCard
+              href="https://developers.mobilic.beta.gouv.fr"
+              description="Documentation API"
+              IconComponent={SoftwareImage}
             />
           </Grid>
         </Grid>
