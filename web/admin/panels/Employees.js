@@ -340,12 +340,14 @@ export function Employees({ company, containerRef }) {
       customActions.push({
         name: "setWorker",
         label: "Retirer accès gestionnaire",
+        disabled: employment.id === adminStore.userId,
         action: empl => giveWorkerPermission(empl.employmentId)
       });
     }
     customActions.push({
       name: "terminate",
       label: "Mettre fin au rattachement",
+      disabled: employment.id === adminStore.userId,
       action: empl => {
         modals.open("terminateEmployment", {
           minDate: new Date(empl.startDate),
