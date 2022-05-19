@@ -1,0 +1,35 @@
+@font-face {
+  font-family: "Marianne";
+  src: url("~common/assets/fonts/Marianne/Marianne-Regular.otf");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Marianne";
+  src: url("~common/assets/fonts/Marianne/Marianne-Bold.otf");
+  font-weight: 800;
+  font-display: swap;
+}
+
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Marianne", Arial, sans-serif;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+  padding: 0;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}

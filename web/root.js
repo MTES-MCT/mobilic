@@ -46,8 +46,9 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { ErrorBoundary } from "./common/ErrorFallback";
 import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
 
-import "@gouvfr/dsfr/dist/dsfr.min.css";
-import "common/assets/styles/root.scss"; // should be imported after dsfr
+import "@gouvfr/dsfr/dist/dsfr.min.css"; // dsfr should be imported before custom styles
+import "./index.css";
+import "common/assets/styles/root.scss";
 
 const matomo = createInstance({
   urlBase: "https://stats.data.gouv.fr",
