@@ -7,6 +7,7 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import Alert from "@mui/material/Alert";
+import Emoji from "../common/Emoji";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -48,7 +49,7 @@ export function Complete({ type }) {
       >
         <Grid item xs={12}>
           <Typography className={classes.title} variant="h1">
-            🎉
+            <Emoji emoji="🎉" ariaLabel="Succès" />
           </Typography>
         </Grid>
         <Grid item xs={12}>

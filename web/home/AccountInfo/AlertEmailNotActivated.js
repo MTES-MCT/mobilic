@@ -10,6 +10,7 @@ import { formatApiError } from "common/utils/errors";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { makeStyles } from "@mui/styles";
+import Emoji from "../../common/Emoji";
 
 export default function AlertEmailNotActivated({ email }) {
   const useStyles = makeStyles(theme => ({
@@ -54,19 +55,27 @@ export default function AlertEmailNotActivated({ email }) {
       </Typography>
       <List disablePadding>
         <ListItem disableGutters dense className={classes.emailCheckItem}>
-          <ListItemIcon className={classes.emailCheckIcon}>👉</ListItemIcon>
+          <ListItemIcon className={classes.emailCheckIcon}>
+            <Emoji emoji="👉" ariaLabel="Information" />
+          </ListItemIcon>
           <ListItemText primary="Il peut mettre quelques minutes à arriver, merci pour votre patience" />
         </ListItem>
         <ListItem disableGutters dense className={classes.emailCheckItem}>
-          <ListItemIcon className={classes.emailCheckIcon}>👉</ListItemIcon>
+          <ListItemIcon className={classes.emailCheckIcon}>
+            <Emoji emoji="👉" ariaLabel="Information" />
+          </ListItemIcon>
           <ListItemText primary="Merci de vérifier vos spams" />
         </ListItem>
         <ListItem disableGutters dense className={classes.emailCheckItem}>
-          <ListItemIcon className={classes.emailCheckIcon}>👉</ListItemIcon>
+          <ListItemIcon className={classes.emailCheckIcon}>
+            <Emoji emoji="👉" ariaLabel="Information" />
+          </ListItemIcon>
           <ListItemText primary="Pour recevoir nos emails sans encombre, vous pouvez ajouter mobilic@beta.gouv.fr à votre liste de contacts" />
         </ListItem>
         <ListItem disableGutters dense className={classes.emailCheckItem}>
-          <ListItemIcon className={classes.emailCheckIcon}>👉</ListItemIcon>
+          <ListItemIcon className={classes.emailCheckIcon}>
+            <Emoji emoji="👉" ariaLabel="Information" />
+          </ListItemIcon>
           <ListItemText primary="Si vous n'avez pas reçu l'email de confirmation au bout d'une demi-heure, vous pouvez le renvoyer en cliquant sur le bouton ci dessous :" />
         </ListItem>
         <ListItem disableGutters dense className={classes.emailCheckItem}>
