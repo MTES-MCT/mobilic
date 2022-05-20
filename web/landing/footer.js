@@ -30,7 +30,7 @@ export function Footer() {
               Transition écologique, membre du réseau d’incubateurs
               beta.gouv.fr."
         >
-          <Logo>République Française</Logo>
+          <Logo href={null}>République Française</Logo>
           <FooterOperator>
             <FabNumIcon />
           </FooterOperator>
