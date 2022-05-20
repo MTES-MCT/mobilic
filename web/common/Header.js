@@ -22,6 +22,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Link, LinkButton } from "./LinkButton";
 import YoutubeIcon from "common/assets/images/youtube.png";
+import FacebookIcon from "common/assets/images/facebook.png";
 import LinkedInWhiteIcon from "common/assets/images/linkedin.svg";
 import YoutubeWhiteIcon from "common/assets/images/youtube-white.png";
 import TwitterIcon from "common/assets/images/twitter.svg";
@@ -34,6 +35,12 @@ import TextField from "common/utils/TextField";
 import { MenuItem } from "@mui/material";
 
 const SOCIAL_NETWORKS = [
+  {
+    name: "Facebook",
+    colorLogo: FacebookIcon,
+    whiteLogo: FacebookIcon,
+    link: "https://www.facebook.com/Mobilic-115289304492481"
+  },
   {
     name: "LinkedIn",
     colorLogo: "/linkedin.png",
