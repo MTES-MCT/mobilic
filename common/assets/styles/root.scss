@@ -217,8 +217,8 @@
 }
 
 // override dsfr style for mui compatibility
-body {
-  --link-blank-content: none;
+[target=_blank]:after {
+  display: none;
 }
 
 [href]:not(.fr-breadcrumb__link) {
