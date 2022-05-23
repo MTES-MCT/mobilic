@@ -25,12 +25,14 @@ export function Footer() {
       <DSFooter>
         <FooterBody
           description="Mobilic est un service numérique de l’Etat, soutenue par la
-              Direction générale des infrastructures des transports et de la
-              mer (DGITM), incubé à la Fabrique Numérique du Ministère de la
+              Direction générale des infrastructures, des transports et des mobilités 
+              (DGITM), incubé à la Fabrique Numérique du Ministère de la
               Transition écologique, membre du réseau d’incubateurs
               beta.gouv.fr."
         >
-          <Logo>République Française</Logo>
+          <Logo hrefTitle="Retour à l’accueil" splitCharacter={10}>
+            République Française
+          </Logo>
           <FooterOperator>
             <FabNumIcon />
           </FooterOperator>

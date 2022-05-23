@@ -54,7 +54,7 @@ export function UserReadAlerts({
           Il n'y a aucune alerte réglementaire sur la période
         </Typography>
       )}
-      <Divider className={classes.divider} />
+      <Divider className={`hr-unstyled ${classes.divider}`} />
       <Alert severity="warning">
         <Typography gutterBottom>
           Les données collectées par Mobilic sont déclaratives et sont donc

@@ -217,15 +217,15 @@
 }
 
 // override dsfr style for mui compatibility
-body {
-  --link-blank-content: none;
+[target=_blank]:after {
+  display: none;
 }
 
 [href]:not(.fr-breadcrumb__link) {
   --underline-img: none;
 }
 
-hr {
+.hr-unstyled {
   padding: 0;
   background-image: none;
 }
@@ -234,10 +234,6 @@ hr {
 .fr-follow {
   text-align: left; // style needed because text is centered in #root
   width: 100%;
-}
-
-.fr-footer__brand {
-  max-width: 175px;
 }
 
 .fr-footer__logo {

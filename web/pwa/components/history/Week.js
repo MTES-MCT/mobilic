@@ -72,7 +72,11 @@ export function Week({
                 </ListItemText>
               </ListItem>,
               index < missionsInPeriod.length - 1 ? (
-                <Divider key={2 * index + 1} component="li" />
+                <Divider
+                  key={2 * index + 1}
+                  component="li"
+                  className="hr-unstyled"
+                />
               ) : null
             ])}
           </List>

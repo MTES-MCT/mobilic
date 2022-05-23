@@ -22,6 +22,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Link, LinkButton } from "./LinkButton";
 import YoutubeIcon from "common/assets/images/youtube.png";
+import FacebookIcon from "common/assets/images/facebook.png";
 import LinkedInWhiteIcon from "common/assets/images/linkedin.svg";
 import YoutubeWhiteIcon from "common/assets/images/youtube-white.png";
 import TwitterIcon from "common/assets/images/twitter.svg";
@@ -34,6 +35,12 @@ import TextField from "common/utils/TextField";
 import { MenuItem } from "@mui/material";
 
 const SOCIAL_NETWORKS = [
+  {
+    name: "Facebook",
+    colorLogo: FacebookIcon,
+    whiteLogo: FacebookIcon,
+    link: "https://www.facebook.com/Mobilic-115289304492481"
+  },
   {
     name: "LinkedIn",
     colorLogo: "/linkedin.png",
@@ -145,7 +152,7 @@ function HeaderContainer(props) {
       style={{ backgroundColor: theme.palette.background.paper }}
     >
       <Box py={1} {...props}></Box>
-      <Divider className="full-width-divider" />
+      <Divider className="full-width-divider hr-unstyled" />
     </Box>
   );
 }
@@ -185,7 +192,7 @@ function ListRouteItem({ route, closeDrawer }) {
           />
         ))}
       </List>
-      <Divider />
+      <Divider className="hr-unstyled" />
     </>
   ) : (
     <ListItem key={route.path || route.label} disableGutters>
@@ -244,7 +251,7 @@ export function NavigationMenu({ open, setOpen }) {
           <CloseIcon />
         </IconButton>
       </Box>
-      <Divider />
+      <Divider className="hr-unstyled" />
       <List dense>
         {routes
           .filter(
@@ -376,7 +383,7 @@ function DesktopHeader({ disableMenu }) {
           {!disableMenu && docLinks()}
           {!disableMenu && (
             <Divider
-              className={classes.divider}
+              className={`hr-unstyled ${classes.divider}`}
               orientation="vertical"
               flexItem
             />
@@ -384,7 +391,7 @@ function DesktopHeader({ disableMenu }) {
           {!disableMenu && <SocialNetworkPanel />}
           {!disableMenu && (
             <Divider
-              className={classes.divider}
+              className={`hr-unstyled ${classes.divider}`}
               orientation="vertical"
               flexItem
             />
@@ -421,13 +428,13 @@ function DesktopHeader({ disableMenu }) {
           <Box className="flex-row-center">
             {docLinks()}
             <Divider
-              className={classes.divider}
+              className={`hr-unstyled ${classes.divider}`}
               orientation="vertical"
               flexItem
             />
             <SocialNetworkPanel />
             <Divider
-              className={classes.divider}
+              className={`hr-unstyled ${classes.divider}`}
               orientation="vertical"
               flexItem
             />
