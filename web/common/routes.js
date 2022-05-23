@@ -26,6 +26,8 @@ import {
 } from "../admin/selectors/validationEntriesSelectors";
 import size from "lodash/size";
 import groupBy from "lodash/groupBy";
+import LoginController from "../login/login-controller";
+import { AgentConnectCallback } from "../signup/AgentConnectCallback";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -58,6 +60,13 @@ export const ROUTES = [
     label: "Callback France Connect",
     accessible: ({ userInfo }) => !userInfo.id,
     component: FranceConnectCallback,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/ac-callback",
+    label: "Callback Agent Connect",
+    accessible: ({ userInfo }) => !userInfo.id,
+    component: AgentConnectCallback,
     menuItemFilter: () => false
   },
   {
@@ -112,6 +121,13 @@ export const ROUTES = [
     label: "Connexion",
     accessible: () => true,
     component: Login,
+    menuItemFilter: ({ userInfo }) => !userInfo.id
+  },
+  {
+    path: "/login-controller",
+    label: "Connexion Agent",
+    accessible: () => true,
+    component: LoginController,
     menuItemFilter: ({ userInfo }) => !userInfo.id
   },
   {
