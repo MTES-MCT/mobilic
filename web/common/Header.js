@@ -152,7 +152,7 @@ function HeaderContainer(props) {
       style={{ backgroundColor: theme.palette.background.paper }}
     >
       <Box py={1} {...props}></Box>
-      <Divider className="full-width-divider" />
+      <Divider className="full-width-divider hr-unstyled" />
     </Box>
   );
 }
@@ -192,7 +192,7 @@ function ListRouteItem({ route, closeDrawer }) {
           />
         ))}
       </List>
-      <Divider />
+      <Divider className="hr-unstyled" />
     </>
   ) : (
     <ListItem key={route.path || route.label} disableGutters>
@@ -251,7 +251,7 @@ export function NavigationMenu({ open, setOpen }) {
           <CloseIcon />
         </IconButton>
       </Box>
-      <Divider />
+      <Divider className="hr-unstyled" />
       <List dense>
         {routes
           .filter(
@@ -383,7 +383,7 @@ function DesktopHeader({ disableMenu }) {
           {!disableMenu && docLinks()}
           {!disableMenu && (
             <Divider
-              className={classes.divider}
+              className={`hr-unstyled ${classes.divider}`}
               orientation="vertical"
               flexItem
             />
@@ -391,7 +391,7 @@ function DesktopHeader({ disableMenu }) {
           {!disableMenu && <SocialNetworkPanel />}
           {!disableMenu && (
             <Divider
-              className={classes.divider}
+              className={`hr-unstyled ${classes.divider}`}
               orientation="vertical"
               flexItem
             />
@@ -428,13 +428,13 @@ function DesktopHeader({ disableMenu }) {
           <Box className="flex-row-center">
             {docLinks()}
             <Divider
-              className={classes.divider}
+              className={`hr-unstyled ${classes.divider}`}
               orientation="vertical"
               flexItem
             />
             <SocialNetworkPanel />
             <Divider
-              className={classes.divider}
+              className={`hr-unstyled ${classes.divider}`}
               orientation="vertical"
               flexItem
             />

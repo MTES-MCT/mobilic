@@ -35,7 +35,7 @@ export default function SettingAdmin({ company }) {
       <Typography variant="h4">Paramètres</Typography>
     </Box>,
     <List key={4}>
-      <Divider />
+      <Divider className="hr-unstyled" />
       <ListItem>
         <SimpleToggleSetting
           name="allowTeamMode"
@@ -45,7 +45,7 @@ export default function SettingAdmin({ company }) {
           submitSettingChange={submitSettingChange}
         />
       </ListItem>
-      <Divider />
+      <Divider className="hr-unstyled" />
       <ListItem>
         <SimpleToggleSetting
           name="requireSupportActivity"
@@ -55,7 +55,7 @@ export default function SettingAdmin({ company }) {
           submitSettingChange={submitSettingChange}
         />
       </ListItem>
-      <Divider />
+      <Divider className="hr-unstyled" />
       <ListItem>
         <SimpleToggleSetting
           name="allowTransfers"
@@ -65,7 +65,7 @@ export default function SettingAdmin({ company }) {
           submitSettingChange={submitSettingChange}
         />
       </ListItem>
-      <Divider />
+      <Divider className="hr-unstyled" />
       <ListItem>
         <SimpleToggleSetting
           name="requireKilometerData"
@@ -75,7 +75,7 @@ export default function SettingAdmin({ company }) {
           submitSettingChange={submitSettingChange}
         />
       </ListItem>
-      <Divider />
+      <Divider className="hr-unstyled" />
       <ListItem>
         <SimpleToggleSetting
           name="requireExpenditures"
@@ -85,7 +85,7 @@ export default function SettingAdmin({ company }) {
           submitSettingChange={submitSettingChange}
         />
       </ListItem>
-      <Divider />
+      <Divider className="hr-unstyled" />
       <ListItem>
         <SimpleToggleSetting
           name="requireMissionName"

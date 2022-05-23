@@ -65,7 +65,7 @@ export function FaqCard({ question, answer, link, moreInfoText, onClick }) {
         <Typography className={classes.faqCardAnswer}>{answer}</Typography>
         <Box className={classes.dummy}></Box>
         <Box className={classes.moreInfoBlock}>
-          <Divider className={classes.faqCardDivider} />
+          <Divider className={`hr-unstyled ${classes.faqCardDivider}`} />
           <Typography className={classes.linkMoreInfo}>
             {moreInfoText || "Plus d'infos"}
             <ChevronRight className={classes.faqCardButtonIcon} />

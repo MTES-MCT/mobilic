@@ -187,6 +187,7 @@ export function ContradictoryChanges({
             <hr
               key={1}
               style={{ height: 1, width: "100%", borderTop: "dotted 1px" }}
+              className="hr-unstyled"
             />,
             <Typography
               key={2}

@@ -118,7 +118,7 @@ export default function Home() {
             </Grid>
           </Grid>
         </Section>
-        {isActive && <Divider />}
+        {isActive && <Divider className="hr-unstyled" />}
         {isActive && (
           <Section
             title={

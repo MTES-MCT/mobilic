@@ -58,7 +58,7 @@ export function ConfirmUser({ clientName, redirectUri }) {
               </ListItemIcon>
               <ListItemText primary={userInfo.email} />
             </ListItem>
-            <Divider component="li" />
+            <Divider component="li" className="hr-unstyled" />
             <ListItem
               button
               aria-label="Choisir un autre compte"
