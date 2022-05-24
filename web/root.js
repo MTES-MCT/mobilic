@@ -35,7 +35,6 @@ import {
 } from "./common/routes";
 import { ScrollToTop } from "common/utils/scroll";
 import { SnackbarProvider, useSnackbarAlerts } from "./common/Snackbar";
-import { EnvironmentHeader } from "./common/EnvironmentHeader";
 import { currentUserId } from "common/utils/cookie";
 import {
   MatomoProvider,
@@ -211,24 +210,18 @@ function _Root() {
   const routes = getAccessibleRoutes({ userInfo, companies });
 
   return (
-    <>
-      {(process.env.REACT_APP_SENTRY_ENVIRONMENT === "staging" ||
-        process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
-        <EnvironmentHeader />
-      )}
-      <React.Suspense fallback={<CircularProgress color="primary" />}>
-        <Switch color="secondary">
-          {routes.map(route => (
-            <Route
-              key={route.path}
-              exact={route.exact || false}
-              path={route.path}
-              component={route.component}
-            />
-          ))}
-          <Redirect key="default" from="*" to={fallbackRoute} />
-        </Switch>
-      </React.Suspense>
-    </>
+    <React.Suspense fallback={<CircularProgress color="primary" />}>
+      <Switch color="secondary">
+        {routes.map(route => (
+          <Route
+            key={route.path}
+            exact={route.exact || false}
+            path={route.path}
+            component={route.component}
+          />
+        ))}
+        <Redirect key="default" from="*" to={fallbackRoute} />
+      </Switch>
+    </React.Suspense>
   );
 }

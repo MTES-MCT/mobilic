@@ -33,6 +33,7 @@ import { TextWithBadge } from "./TextWithBadge";
 import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 import TextField from "common/utils/TextField";
 import { MenuItem } from "@mui/material";
+import { EnvironmentHeader } from "./EnvironmentHeader";
 
 const SOCIAL_NETWORKS = [
   {
@@ -151,6 +152,10 @@ function HeaderContainer(props) {
       className="header-container"
       style={{ backgroundColor: theme.palette.background.paper }}
     >
+      {(process.env.REACT_APP_SENTRY_ENVIRONMENT === "staging" ||
+        process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
+        <EnvironmentHeader />
+      )}
       <Box py={1} {...props}></Box>
       <Divider className="full-width-divider hr-unstyled" />
     </Box>
