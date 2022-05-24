@@ -4,22 +4,21 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import Typography from "@mui/material/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
-import ReactMarkdown from "react-markdown";
-import CircularProgress from "@mui/material/CircularProgress";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthDown } from "common/utils/useWidth";
 import Button from "@mui/material/Button";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { CustomDialogActions } from "../common/CustomDialogTitle";
-import Box from "@mui/material/Box";
 import { Header } from "../common/Header";
 import Container from "@mui/material/Container";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 
 const useStyles = makeStyles(theme => ({
-  p: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1)
+  container: {
+    padding: theme.spacing(4),
+    paddingBottom: theme.spacing(1),
+    margin: "auto",
+    height: "100%"
   }
 }));
 
@@ -41,44 +40,23 @@ export function CGU() {
 }
 
 function CGUContent() {
-  const [md, setMd] = React.useState(null);
-
   const classes = useStyles();
 
-  async function loadCGU() {
-    const cguFile = await fetch("/cgu.md");
-    setMd(await cguFile.text());
-  }
-
-  React.useEffect(() => {
-    if (!md) loadCGU();
-  }, []);
-
-  return md ? (
-    <ReactMarkdown
-      source={md}
-      renderers={{
-        paragraph: props => (
-          <Typography className={classes.p} variant="body1" {...props} />
-        ),
-        listItem: props => (
-          <Typography
-            component="li"
-            className={classes.p}
-            variant="body1"
-            {...props}
-          />
-        )
-      }}
-    />
-  ) : (
-    <Box className="flex-row-center">
-      <CircularProgress color="primary" />
-    </Box>
+  return (
+    <Container key={2} className={classes.container} maxWidth={false}>
+      <iframe
+        title="Conditions Générales d'Utilisation"
+        src="https://cgu.mobilic.beta.gouv.fr"
+        frameBorder="0"
+        width="100%"
+        height="100%"
+        allowTransparency
+      ></iframe>
+    </Container>
   );
 }
 
-function CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
+function CGUModal({ open, handleClose, handleAccept, handleReject }) {
   const store = useStoreSyncedWithLocalStorage();
   const isSmDown = useIsWidthDown("sm");
 
@@ -89,7 +67,7 @@ function CGUModal({ open, handleClose, handleAccept, handleReject, width }) {
       scroll="paper"
       fullWidth
       fullScreen={isSmDown}
-      maxWidth="md"
+      maxWidth="lg"
       PaperProps={{ style: { height: "100%" } }}
     >
       <DialogTitle disableTypography>
