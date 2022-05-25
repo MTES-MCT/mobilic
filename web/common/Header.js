@@ -36,12 +36,6 @@ import { MenuItem } from "@mui/material";
 
 const SOCIAL_NETWORKS = [
   {
-    name: "Facebook",
-    colorLogo: FacebookIcon,
-    whiteLogo: FacebookIcon,
-    link: "https://www.facebook.com/Mobilic-115289304492481"
-  },
-  {
     name: "LinkedIn",
     colorLogo: "/linkedin.png",
     whiteLogo: LinkedInWhiteIcon,
@@ -58,6 +52,12 @@ const SOCIAL_NETWORKS = [
     colorLogo: TwitterIcon,
     whiteLogo: TwitterWhiteIcon,
     link: "https://twitter.com/Mobilic_gouv"
+  },
+  {
+    name: "Facebook",
+    colorLogo: FacebookIcon,
+    whiteLogo: FacebookIcon,
+    link: "https://www.facebook.com/Mobilic-115289304492481"
   }
 ];
 
