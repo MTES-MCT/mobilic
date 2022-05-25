@@ -18,6 +18,10 @@ import {
 } from "./crud";
 import { updateSettingsReducer } from "./settings";
 import { updateActivitiesFiltersReducer } from "./activitiesFilters";
+import {
+  addVirtualActivityReducer,
+  removeAllVirtualActivitiesReducer
+} from "./virtualActivities";
 
 export const ADMIN_ACTIONS = {
   createOrSyncActivity: createOrSyncActivityReducer,
@@ -33,7 +37,9 @@ export const ADMIN_ACTIONS = {
   updateCompanyDetails: updateCompanyDetailsReducer,
   updateCompaniesList: updateCompaniesListReducer,
   updateCompanyId: updateCompanyIdReducer,
-  updateActivitiesFilters: updateActivitiesFiltersReducer
+  updateActivitiesFilters: updateActivitiesFiltersReducer,
+  addVirtualActivity: addVirtualActivityReducer,
+  removeAllVirtualActivities: removeAllVirtualActivitiesReducer
 };
 
 const ADMIN_REDUCERS = {};
