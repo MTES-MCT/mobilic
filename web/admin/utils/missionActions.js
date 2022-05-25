@@ -51,6 +51,10 @@ async function createSingleActivity(api, mission, modalArgs) {
     ...mission.activities,
     { ...activity, user: modalArgs.user }
   ];
+  return {
+    action: "CREATE",
+    payload
+  };
 }
 
 async function editSingleActivity(
@@ -217,7 +221,15 @@ const missionActionWrapper = (
     if (shouldRefreshActivityPanel) {
       setShouldRefreshActivityPanel(true);
     }
-    await action(api, mission, ...args);
+    const resultAction = await action(api, mission, ...args);
+    if (resultAction) {
+      adminStore.dispatch({
+        type: ADMIN_ACTIONS.addVirtualActivity,
+        payload: {
+          virtualActivity: resultAction
+        }
+      });
+    }
     setMission({ ...mission });
     adminStore.dispatch({
       type: ADMIN_ACTIONS.update,
