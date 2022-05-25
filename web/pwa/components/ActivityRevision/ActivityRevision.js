@@ -308,27 +308,37 @@ export default function ActivityRevisionOrCreationModal({
           </Box>
         )}
         <Box mt={1}>
-          <TextField
-            label="Activité"
-            required
-            fullWidth
-            variant="filled"
-            className={classes.formField}
-            select
-            disabled={!isCreation}
-            value={isCreation ? newActivityType : event.type}
-            onChange={e => setNewActivityType(e.target.value)}
-          >
-            {filteredActivities().map(activityName => (
-              <MenuItem
-                disabled={activityName === ACTIVITIES.support.name}
-                key={activityName}
-                value={activityName}
-              >
-                {ACTIVITIES[activityName].label}
-              </MenuItem>
-            ))}
-          </TextField>
+          {isCreation ? (
+            <TextField
+              label="Activité"
+              required
+              fullWidth
+              variant="filled"
+              className={classes.formField}
+              select
+              value={newActivityType}
+              onChange={e => setNewActivityType(e.target.value)}
+            >
+              {filteredActivities().map(activityName => (
+                <MenuItem
+                  disabled={activityName === ACTIVITIES.support.name}
+                  key={activityName}
+                  value={activityName}
+                >
+                  {ACTIVITIES[activityName].label}
+                </MenuItem>
+              ))}
+            </TextField>
+          ) : (
+            <TextField
+              label="Activité"
+              fullWidth
+              variant="filled"
+              className={classes.formField}
+              disabled={true}
+              value={ACTIVITIES[event.type].label}
+            />
+          )}
           {requiresDriver() && (
             <TextField
               label="Conducteur"

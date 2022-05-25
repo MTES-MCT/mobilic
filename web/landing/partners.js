@@ -9,6 +9,7 @@ import { Footer } from "./footer";
 import { PaperContainerTitle } from "../common/PaperContainer";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import BetagouvLogo from "common/assets/images/betagouvlogo.png";
+import Emoji from "../common/Emoji";
 
 // This condition actually should detect if it's a Node environment
 if (typeof require.context === "undefined") {
@@ -101,7 +102,9 @@ export function Partners() {
       maxWidth={false}
     >
       <Container maxWidth="md" className={classes.inner}>
-        <PaperContainerTitle>Mobilic, un label ? 🤝</PaperContainerTitle>
+        <PaperContainerTitle>
+          Mobilic, un label ? <Emoji emoji="🤝" ariaLabel="Partenariat" />
+        </PaperContainerTitle>
         <Grid container direction="row" alignItems="center" spacing={8}>
           <Grid item className={classes.whiteSection}>
             <img alt="beta.gouv" src={BetagouvLogo} height={200} />
@@ -195,22 +198,24 @@ export function Partners() {
             <ul className={classes.list}>
               <li>
                 <Typography>
-                  ✅ Mise en visibilité lors des diverses communications de
-                  l’équipe Mobilic (lettre d'information, présentations) et via
-                  le référencement sur le site Mobilic via la page
-                  "Partenaires".
+                  <Emoji emoji="✅" ariaLabel="Avantage" /> Mise en visibilité
+                  lors des diverses communications de l’équipe Mobilic (lettre
+                  d'information, présentations) et via le référencement sur le
+                  site Mobilic via la page "Partenaires".
                 </Typography>
               </li>
               <li>
                 <Typography>
-                  ✅ Participation à des ateliers exclusifs sur le produit à
-                  travers notre comité produit restreint.
+                  <Emoji emoji="✅" ariaLabel="Avantage" /> Participation à des
+                  ateliers exclusifs sur le produit à travers notre comité
+                  produit restreint.
                 </Typography>
               </li>
               <li>
                 <Typography>
-                  ✅ Accès à des informations privilégiées sur l'avancement et
-                  les évolutions autour du produit.
+                  <Emoji emoji="✅" ariaLabel="Avantage" /> Accès à des
+                  informations privilégiées sur l'avancement et les évolutions
+                  autour du produit.
                 </Typography>
               </li>
             </ul>
@@ -220,15 +225,16 @@ export function Partners() {
             <ul className={classes.list}>
               <li>
                 <Typography>
-                  👉 L’entreprise utilise Mobilic activement, c’est à dire que
-                  plus 75% de ses salariés l’utilisent pour suivre leur temps de
-                  travail.
+                  <Emoji emoji="👉" ariaLabel="Information" /> L’entreprise
+                  utilise Mobilic activement, c’est à dire que plus 75% de ses
+                  salariés l’utilisent pour suivre leur temps de travail.
                 </Typography>
               </li>
               <li>
                 <Typography>
-                  👉 L’entreprise s’engage “moralement” à donner du feedback sur
-                  l’utilisation et l’amélioration de l’outil.
+                  <Emoji emoji="👉" ariaLabel="Information" /> L’entreprise
+                  s’engage “moralement” à donner du feedback sur l’utilisation
+                  et l’amélioration de l’outil.
                 </Typography>
               </li>
             </ul>

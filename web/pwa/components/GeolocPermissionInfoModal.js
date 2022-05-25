@@ -15,6 +15,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { captureSentryException } from "common/utils/sentry";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
+import Emoji from "../../common/Emoji";
 
 export default function GeolocPermissionInfoModal({
   open,
@@ -149,10 +150,8 @@ export default function GeolocPermissionInfoModal({
         </IconButton>
         <Box className={classes.locationExplanation}>
           <Typography className={classes.sharePositionText}>
-            <span role="img" aria-label="hello">
-              👋
-            </span>{" "}
-            Partagez votre position géographique
+            <Emoji emoji="👋" ariaLabel="Bonjour" /> Partagez votre position
+            géographique
           </Typography>
           <Typography className={`${classes.facilitateText} bold`}>
             afin de faciliter la saisie de votre lieu de prise et de fin de
