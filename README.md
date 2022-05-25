@@ -11,6 +11,7 @@ Ce `README` s'adresse aux développeurs informatiques du projet. Pour plus d'inf
 - [Site web](https://mobilic.beta.gouv.fr)
 - [FAQ](https://faq.mobilic.beta.gouv.fr/)
 - [Documentation technique de l'API](https://mobilic.beta.gouv.fr/developers)
+- [Conditions d'interfaçage](https://developers.mobilic.beta.gouv.fr/conditions-dinterfacage)
 
 ## Architecture logicielle
 
