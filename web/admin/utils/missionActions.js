@@ -36,7 +36,8 @@ async function createSingleActivity(api, mission, modalArgs) {
     endTime: modalArgs.endTime,
     missionId: mission.id,
     userId: modalArgs.user.id,
-    switch: false
+    switch: false,
+    virtual: true
   };
 
   if (modalArgs.userComment)

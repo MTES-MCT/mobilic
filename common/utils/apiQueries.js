@@ -740,6 +740,7 @@ export const LOG_ACTIVITY_MUTATION = gql`
     $userId: Int
     $context: GenericScalar
     $switch: Boolean
+    $virtual: Boolean
   ) {
     activities {
       logActivity(
@@ -750,6 +751,7 @@ export const LOG_ACTIVITY_MUTATION = gql`
         userId: $userId
         context: $context
         switch: $switch
+        virtual: $virtual
       ) {
         id
         type
