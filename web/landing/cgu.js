@@ -11,10 +11,9 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { CustomDialogActions } from "../common/CustomDialogTitle";
 import { Header } from "../common/Header";
 import Container from "@mui/material/Container";
-import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 
 const useStyles = makeStyles(theme => ({
-  container: {
+  frameContainer: {
     padding: theme.spacing(4),
     paddingBottom: theme.spacing(1),
     margin: "auto",
@@ -23,27 +22,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function CGU() {
-  return [
-    <Header key={0} />,
-    <PaperContainer key={1}>
-      <PaperContainerTitle>
-        Conditions générales d'utilisation
-      </PaperContainerTitle>
-      <Container
-        maxWidth="false"
-        style={{ textAlign: "justify", paddingBottom: 16 }}
-      >
-        <CGUContent />
-      </Container>
-    </PaperContainer>
-  ];
+  return [<Header key={0} />, <CGUContent key={1} />];
 }
 
 function CGUContent() {
   const classes = useStyles();
 
   return (
-    <Container key={2} className={classes.container} maxWidth={false}>
+    <Container key={2} className={classes.frameContainer} maxWidth={false}>
       <iframe
         title="Conditions Générales d'Utilisation"
         src="https://cgu.mobilic.beta.gouv.fr"
