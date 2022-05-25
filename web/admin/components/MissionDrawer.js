@@ -3,6 +3,10 @@ import { MissionDetails } from "./MissionDetails/MissionDetails";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { makeStyles } from "@mui/styles";
 import { useLocation } from "react-router-dom";
+import { useModals } from "common/utils/modals";
+import { Alert } from "@mui/material";
+import { useAdminStore } from "../store/store";
+import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 const useStyles = makeStyles(theme => ({
   missionDrawer: {
@@ -18,9 +22,40 @@ export function MissionDrawerContextProvider({
   setShouldRefreshData
 }) {
   const location = useLocation();
+  const modals = useModals();
 
   const classes = useStyles();
   const [missionIdOnFocus, setMissionIdOnFocus] = React.useState(null);
+
+  const adminStore = useAdminStore();
+
+  const reset = () => {
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.removeAllVirtualActivities
+    });
+    setMissionIdOnFocus(null);
+  };
+
+  const onClose = () => {
+    if (adminStore.virtualActivities.length > 0) {
+      modals.open("confirmation", {
+        title: "Êtes-vous sûr de vouloir fermer ?",
+        confirmButtonLabel: "Fermer",
+        cancelButtonLabel: "Annuler",
+        content: (
+          <Alert severity="warning">
+            Si vous fermez cette mission, les modifications non validées seront
+            perdues.
+          </Alert>
+        ),
+        handleConfirm: () => {
+          reset();
+        }
+      });
+    } else {
+      reset();
+    }
+  };
 
   return (
     <MissionDrawerContext.Provider
@@ -32,7 +67,7 @@ export function MissionDrawerContextProvider({
         disableSwipeToOpen
         disableDiscovery
         onOpen={() => {}}
-        onClose={() => setMissionIdOnFocus(null)}
+        onClose={onClose}
         PaperProps={{
           className: classes.missionDrawer,
           sx: {
@@ -43,7 +78,7 @@ export function MissionDrawerContextProvider({
         <MissionDetails
           missionId={missionIdOnFocus}
           day={location.state ? location.state.day : null}
-          handleClose={() => setMissionIdOnFocus(null)}
+          handleClose={onClose}
           setShouldRefreshActivityPanel={setShouldRefreshData}
         />
       </SwipeableDrawer>
