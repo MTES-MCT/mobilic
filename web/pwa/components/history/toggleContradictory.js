@@ -47,6 +47,7 @@ export function useToggleContradictory(
 
     await alerts.withApiErrorHandling(
       async () => {
+        await api.executePendingRequests();
         const resourcesWithValidationTimeAndHistory = await Promise.all(
           missionsWithValidationTimes.map(async m => [
             ...m,
