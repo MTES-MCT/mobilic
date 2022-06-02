@@ -107,6 +107,10 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "L'adresse email est déjà utilisée.";
       case "FC_USER_ALREADY_REGISTERED":
         return "L'utilisateur est déjà inscrit sur Mobilic.";
+      case "ACTIVITY_EXIST_AFTER_EMPLOYMENT_END_DATE":
+        return "Impossible de terminer à cette date. Vérifiez que le salarié n'a pas d'activités après la date choisie.";
+      case "EMPLOYMENT_ALREADY_TERMINATED":
+        return "Opération impossible, une date de fin a déjà été renseignée pour ce rattachement.";
       case "OVERLAPPING_MISSIONS":
         return `Chevauchement avec la mission ${
           graphQLError.extensions.conflictingMission.name
