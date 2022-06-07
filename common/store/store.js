@@ -367,7 +367,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       new Promise(resolve => {
         this.setItems({ userInfo: {}, employments: [] }, resolve);
       }),
-      await this.storage.clear()
+      this.storage.clear()
     ]);
 
   setUserInfo = (
