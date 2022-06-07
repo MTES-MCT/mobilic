@@ -205,6 +205,10 @@ export function now() {
   return (Date.now() / 1000) >> 0;
 }
 
+export function nowMilliseconds() {
+  return Date.now() / 1000;
+}
+
 export function frenchFormatDateStringOrTimeStamp(isoDateString) {
   return new Date(isoDateString).toLocaleDateString();
 }

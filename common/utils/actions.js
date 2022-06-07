@@ -17,6 +17,7 @@ import {
   formatDay,
   formatTimeOfDay,
   now,
+  nowMilliseconds,
   sameMinute,
   truncateMinute
 } from "./time";
@@ -658,7 +659,7 @@ class Actions {
       startTime,
       endTime,
       userId: actualUserId,
-      creationTime: Date.now() / 1000
+      creationTime: nowMilliseconds()
     };
 
     if (comment) newActivity.context = { comment };
@@ -753,7 +754,7 @@ class Actions {
 
     const payload = {
       activityId: activityEvent.id,
-      creationTime: Date.now() / 1000
+      creationTime: nowMilliseconds()
     };
 
     if (comment) payload.context = { comment };
@@ -829,7 +830,7 @@ class Actions {
       companyId,
       vehicleId: vehicle ? vehicle.id : null,
       vehicleRegistrationNumber: vehicle ? vehicle.registrationNumber : null,
-      creationTime: Date.now() / 1000
+      creationTime: nowMilliseconds()
     };
 
     let missionCurrentId;
@@ -1129,7 +1130,7 @@ class Actions {
       endTime,
       missionId,
       userId: actualUserId,
-      creationTime: Date.now() / 1000
+      creationTime: nowMilliseconds()
     };
     const updateStore = (store, requestId) => {
       const currentActivity = this._findAndCloseCurrentActivity(
@@ -1184,8 +1185,7 @@ class Actions {
     const validation = {
       receptionTime: now(),
       submitterId: userId,
-      userId: userId,
-      creationTime: Date.now() / 1000
+      userId: userId
     };
     const update = { ended: true, validation };
 
@@ -1204,7 +1204,7 @@ class Actions {
       {
         missionId: mission.id,
         userId: this.store.userId(),
-        creationTime: Date.now() / 1000
+        creationTime: nowMilliseconds()
       },
       updateStore,
       ["missions"],
@@ -1279,7 +1279,7 @@ class Actions {
       missionId,
       userId: actualUserId,
       spendingDate,
-      creationTime: Date.now() / 1000
+      creationTime: nowMilliseconds()
     };
 
     const updateStore = (store, requestId) => {

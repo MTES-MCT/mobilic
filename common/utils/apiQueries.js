@@ -6,6 +6,7 @@ import {
   FULL_MISSION_FRAGMENT,
   WORK_DAYS_DATA_FRAGMENT
 } from "./apiFragments";
+import { nowMilliseconds } from "./time";
 
 export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
   ${FRAGMENT_LOCATION_FULL}
@@ -1243,7 +1244,7 @@ export function buildLogLocationPayloadFromAddress(
     missionId,
     type: isStart ? "mission_start_location" : "mission_end_location",
     kilometerReading,
-    creationTime: Date.now() / 1000
+    creationTime: nowMilliseconds()
   };
 
   return {
