@@ -49,7 +49,7 @@ export default function TerminateEmployment({
             "terminate-employment",
             gqlError => {
               if (graphQLErrorMatchesCode(gqlError, "INVALID_INPUTS")) {
-                return "Impossible de terminer à cette date. Vérifiez que le rattachement n'est pas déjà terminé et que le salarié n'a pas d'activités après la date choisie.";
+                return "Impossible de terminer à cette date. La date de fin du rattachement doit être postérieure à la date de début.";
               }
             }
           );
