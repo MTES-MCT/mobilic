@@ -8,7 +8,10 @@ import Link from "@mui/material/Link";
 const useStyles = makeStyles(theme => ({
   header: {
     width: "100%",
-    textAlign: "left"
+    textAlign: "left",
+    position: "sticky",
+    top: "0",
+    zIndex: "2000"
   }
 }));
 
