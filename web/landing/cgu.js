@@ -29,7 +29,7 @@ function CGUContent() {
   const classes = useStyles();
 
   return (
-    <Container key={2} className={classes.frameContainer} maxWidth={false}>
+    <Container className={classes.frameContainer} maxWidth={false}>
       <iframe
         title="Conditions Générales d'Utilisation"
         src="https://cgu.mobilic.beta.gouv.fr"
