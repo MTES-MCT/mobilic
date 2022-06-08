@@ -34,7 +34,7 @@ export function EnvironmentHeader() {
         >
           Lien vers Mobilic
         </Link>
-        {staging ? (
+        {staging && (
           <Link
             variant="body1"
             href="https://sandbox.mobilic.beta.gouv.fr"
@@ -42,15 +42,6 @@ export function EnvironmentHeader() {
             rel="noopener"
           >
             Lien vers le bac à sable
-          </Link>
-        ) : (
-          <Link
-            variant="body1"
-            href="https://staging.mobilic.beta.gouv.fr"
-            target="_blank"
-            rel="noopener"
-          >
-            Lien vers la recette
           </Link>
         )}
       </Stack>
