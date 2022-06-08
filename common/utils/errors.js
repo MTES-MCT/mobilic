@@ -185,6 +185,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         )} minutes dans le futur. Veuillez vérifier l'heure de votre téléphone.`;
       case "USER_SELF_CHANGE_ROLE":
         return "La modification de votre rôle ne peut être effectuée que par un autre gestionnaire.";
+      case "USER_SELF_TERMINATE_EMPLOYMENT":
+        return "L'action de mettre fin à votre rattachement ne peut être effectuée que par un autre gestionnaire.";
       default:
         return null;
     }
