@@ -609,7 +609,7 @@ export const AugmentedTable = React.forwardRef(
             {customRowActions(entryActedOn).map(cra => (
               <MenuItem
                 key={cra.name}
-                disabled={cra.disabled || false}
+                disabled={cra.disabled}
                 onClick={async () => {
                   await cra.action(entryActedOn);
                   handleCustomActionsClose();
