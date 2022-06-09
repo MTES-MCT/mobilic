@@ -4,6 +4,7 @@ import TextField from "common/utils/TextField";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import { useStyles as useFunnelModalStyles } from "../pwa/components/FunnelModal";
+import MenuItem from "@mui/material/MenuItem";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { VehicleFieldForApp } from "../pwa/components/VehicleFieldForApp";
 import { AddressField } from "./AddressField";
@@ -32,10 +33,9 @@ export default function NewMissionForm({
     }
     return "";
   };
-
-  const company = getInitialCompany();
   const [mission, setMission] = React.useState("");
   const [vehicle, setVehicle] = React.useState("");
+  const [company, setCompany] = React.useState(getInitialCompany());
   const [settings, setSettings] = React.useState(overrideSettings);
   const [day, setDay] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
@@ -96,11 +96,22 @@ export default function NewMissionForm({
               <TextField
                 key={1}
                 label="Entreprise"
+                required
                 fullWidth
                 variant="filled"
-                value={company.name}
-                disabled={true}
-              />
+                select
+                value={company || ""}
+                onChange={e => {
+                  setCompany(e.target.value);
+                }}
+                disabled={!!companyId}
+              >
+                {companies.map(company => (
+                  <MenuItem key={company.id} value={company}>
+                    {company.name}
+                  </MenuItem>
+                ))}
+              </TextField>
             ]}
           {settings?.requireMissionName && [
             <Typography key={1} variant="h5" className="form-field-title">
