@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: "left",
     position: "sticky",
     top: "0",
-    zIndex: "2000"
+    zIndex: "1100" // needs to be > 1000 (activity switch) and < 1200 (close menu button)
   }
 }));
 
