@@ -88,8 +88,8 @@ export function ControllerResourcePage() {
           <Grid item sm={6}>
             <SlideshareCard
               description="Brochure"
-              slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/4SH8rJFBbPCEhW/"
-              downloadLink="https://drive.google.com/uc?id=13bk6z4fgZ9RUvNjf-T1eufoZ_JQEAw_Y&export=download"
+              slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/HQst1i4BajjQVg/"
+              downloadLink="https://drive.google.com/uc?id=1mNR2levAhZd8-MGaidRe035Xj0Fa3dRO&export=download"
             />
           </Grid>
         </Grid>
