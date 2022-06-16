@@ -34,26 +34,6 @@ export function Follow() {
               <ul className="fr-btns-group">
                 <li>
                   <a
-                    className="fr-btn--facebook fr-btn"
-                    href="https://www.facebook.com/Mobilic-115289304492481"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    facebook
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className="fr-btn--twitter fr-btn"
-                    href="https://twitter.com/Mobilic_gouv"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    twitter
-                  </a>
-                </li>
-                <li>
-                  <a
                     className="fr-btn--linkedin fr-btn"
                     href="https://www.linkedin.com/company/mobilic-beta-gouv"
                     target="_blank"
@@ -70,6 +50,26 @@ export function Follow() {
                     rel="noreferrer"
                   >
                     youtube
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="fr-btn--twitter fr-btn"
+                    href="https://twitter.com/Mobilic_gouv"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    twitter
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="fr-btn--facebook fr-btn"
+                    href="https://www.facebook.com/Mobilic-115289304492481"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    facebook
                   </a>
                 </li>
               </ul>
