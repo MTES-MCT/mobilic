@@ -221,6 +221,10 @@
   display: none !important;
 }
 
+.MuiSelect-nativeInput:disabled {
+  opacity: 0;
+}
+
 [href]:not(.fr-breadcrumb__link) {
   --underline-img: none;
 }
