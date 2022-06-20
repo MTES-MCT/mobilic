@@ -740,7 +740,6 @@ export const LOG_ACTIVITY_MUTATION = gql`
     $userId: Int
     $context: GenericScalar
     $switch: Boolean
-    $virtual: Boolean
   ) {
     activities {
       logActivity(
@@ -751,7 +750,6 @@ export const LOG_ACTIVITY_MUTATION = gql`
         userId: $userId
         context: $context
         switch: $switch
-        virtual: $virtual
       ) {
         id
         type
@@ -789,6 +787,21 @@ export const EDIT_ACTIVITY_MUTATION = gql`
         context: $context
         removeEndTime: $removeEndTime
       ) {
+        id
+        type
+        missionId
+        userId
+        startTime
+        endTime
+        lastSubmitterId
+      }
+    }
+  }
+`;
+export const BULK_ACTIVITY_MUTATION = gql`
+  mutation bulkActivities($items: [BulkActivityItem], $virtual: Boolean) {
+    activities {
+      bulkActivities(items: $items, virtual: $virtual) {
         id
         type
         missionId

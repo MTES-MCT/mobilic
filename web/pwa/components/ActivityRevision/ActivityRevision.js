@@ -49,6 +49,7 @@ export default function ActivityRevisionOrCreationModal({
   allowSupportActivity = true,
   allowTransfers = false,
   createActivity,
+  handleSeveralActions,
   defaultTime = null,
   forcedUser = null,
   displayWarningMessage = true
@@ -81,10 +82,11 @@ export default function ActivityRevisionOrCreationModal({
   const activityType = event ? event.type : newActivityType;
 
   async function changeActivities(sideEffectOperations, actionType) {
-    await Promise.all(
-      sideEffectOperations.map(op => {
-        if (op.operation === ACTIVITIES_OPERATIONS.create) {
-          return createActivity({
+    const actionsToDo = sideEffectOperations.map(op => {
+      if (op.operation === ACTIVITIES_OPERATIONS.create) {
+        return {
+          type: "create",
+          payload: {
             activityType: op.type,
             startTime: op.startTime,
             endTime: op.endTime,
@@ -92,42 +94,56 @@ export default function ActivityRevisionOrCreationModal({
             userComment,
             team: teamMode
               ? uniq([userId, ...resolveTeamAt(teamChanges, op.startTime)])
-              : [userId]
-          });
-        } else {
-          return handleRevisionAction(
-            op.activity,
-            op.operation,
-            op.startTime,
-            op.endTime,
+              : [userId],
+            user: forcedUser
+          }
+        };
+      } else {
+        return {
+          type: "update",
+          payload: {
+            activity: op.activity,
+            activityType: op.operation,
+            newStartTime: op.startTime,
+            newEndTime: op.endTime,
             userComment,
             teamMode
-          );
-        }
-      })
-    );
+          }
+        };
+      }
+    });
+
     if (activityType !== ACTIVITIES.break.name) {
       if (actionType === ACTIVITIES_OPERATIONS.create) {
         let driverId = null;
         if (requiresDriver()) driverId = newActivityDriverId;
-        await createActivity({
-          activityType: newActivityType,
-          startTime: newUserTime,
-          endTime: newUserEndTime,
-          driverId: driverId,
-          userComment: userComment,
-          team: teamMode ? team : [userId]
+        actionsToDo.push({
+          type: "create",
+          payload: {
+            activityType: newActivityType,
+            startTime: newUserTime,
+            endTime: newUserEndTime,
+            driverId: driverId,
+            userComment: userComment,
+            team: teamMode ? team : [userId],
+            user: forcedUser
+          }
         });
       } else {
-        await handleRevisionAction(
-          event,
-          actionType,
-          newUserTime,
-          newUserEndTime,
-          userComment,
-          teamMode
-        );
+        actionsToDo.push({
+          type: "update",
+          payload: {
+            activity: event,
+            actionType,
+            newStartTime: newUserTime,
+            newEndTime: newUserEndTime,
+            userComment,
+            teamMode
+          }
+        });
       }
+
+      await handleSeveralActions(actionsToDo);
     }
   }
 
