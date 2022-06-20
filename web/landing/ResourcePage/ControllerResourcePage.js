@@ -11,6 +11,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { VideoCard } from "./VideoCard";
+import { RESOURCES_DOCUMENT } from "./ResourcePage";
 
 export function ControllerResourcePage() {
   const classes = resourcePagesClasses();
@@ -38,8 +39,12 @@ export function ControllerResourcePage() {
             <Box>
               <SlideshareCard
                 description="Notice d'utilisation"
-                slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/IFxeyHjtJwJuiY/"
-                downloadLink="https://drive.google.com/uc?id=1prafJTJ5Q6uAFW5XQu-nUgB7d61ID-g7&export=download"
+                slideshareUrl={
+                  RESOURCES_DOCUMENT.noticeUtilisation.controleur.slideshare
+                }
+                downloadLink={
+                  RESOURCES_DOCUMENT.noticeUtilisation.controleur.download
+                }
               />
             </Box>
             <Button
@@ -88,8 +93,8 @@ export function ControllerResourcePage() {
           <Grid item sm={6}>
             <SlideshareCard
               description="Brochure"
-              slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/HQst1i4BajjQVg/"
-              downloadLink="https://drive.google.com/uc?id=1mNR2levAhZd8-MGaidRe035Xj0Fa3dRO&export=download"
+              slideshareUrl={RESOURCES_DOCUMENT.brochure.slideshare}
+              downloadLink={RESOURCES_DOCUMENT.brochure.download}
             />
           </Grid>
         </Grid>
