@@ -360,7 +360,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
         id
         name
         ...CompanySettings
-        users {
+        users(fromDate: $activityAfter) {
           id
           firstName
           lastName
@@ -467,6 +467,11 @@ export const ADMIN_WORK_DAYS_QUERY = gql`
     user(id: $id) {
       adminedCompanies(companyIds: $companyIds) {
         id
+        users(fromDate: $activityAfter) {
+          id
+          firstName
+          lastName
+        }
         workDays(fromDate: $activityAfter, untilDate: $activityBefore) {
           ...WorkDayData
         }
