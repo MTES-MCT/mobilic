@@ -50,6 +50,25 @@ const callBulkActivities = async (api, virtualActivities, virtual) => {
   );
 };
 
+export const applyExpenditureActions = async (api, expenditureActions) => {
+  for (const expenditureAction of expenditureActions) {
+    if (expenditureAction.action === "create") {
+      await api.nonConcurrentQueryQueue.execute(() =>
+        api.graphQlMutate(LOG_EXPENDITURE_MUTATION, {
+          ...expenditureAction.payload
+        })
+      );
+    }
+    if (expenditureAction.action === "cancel") {
+      await api.nonConcurrentQueryQueue.execute(() =>
+        api.graphQlMutate(CANCEL_EXPENDITURE_MUTATION, {
+          ...expenditureAction.payload
+        })
+      );
+    }
+  }
+};
+
 const getPayloadCreate = (args, mission) => {
   let activityType = args.activityType;
   if (
@@ -294,24 +313,37 @@ async function createExpenditure(
   adminStore,
   { type, spendingDate, userId = null }
 ) {
-  const apiResponse = await api.nonConcurrentQueryQueue.execute(() =>
-    api.graphQlMutate(LOG_EXPENDITURE_MUTATION, {
-      type,
-      userId,
-      missionId: mission.id,
-      spendingDate: spendingDate
-    })
-  );
-  const expenditure = apiResponse.data.activities.logExpenditure;
-  mission.expenditures.push(expenditure);
+  const expenditure = {
+    type,
+    userId,
+    missionId: mission.id,
+    spendingDate: spendingDate
+  };
+  adminStore.dispatch({
+    type: ADMIN_ACTIONS.addVirtualExpenditureAction,
+    payload: {
+      virtualExpenditureAction: {
+        action: "create",
+        payload: expenditure
+      }
+    }
+  });
+  mission.expenditures.push({
+    ...expenditure,
+    id: uuidv4()
+  });
 }
 
 async function cancelExpenditure(api, mission, adminStore, { expenditure }) {
-  await api.nonConcurrentQueryQueue.execute(() =>
-    api.graphQlMutate(CANCEL_EXPENDITURE_MUTATION, {
-      expenditureId: expenditure.id
-    })
-  );
+  adminStore.dispatch({
+    type: ADMIN_ACTIONS.addVirtualExpenditureAction,
+    payload: {
+      virtualExpenditureAction: {
+        action: "cancel",
+        payload: { expenditureId: expenditure.id }
+      }
+    }
+  });
   mission.expenditures = mission.expenditures.filter(
     e => e.id !== expenditure.id
   );

@@ -37,7 +37,10 @@ export function MissionDrawerContextProvider({
   };
 
   const onClose = () => {
-    if (adminStore.virtualActivities.length > 0) {
+    if (
+      adminStore.virtualActivities.length > 0 ||
+      adminStore.virtualExpenditureActions.length > 0
+    ) {
       modals.open("confirmation", {
         title: "Êtes-vous sûr de vouloir fermer ?",
         confirmButtonLabel: "Fermer",
