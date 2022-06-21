@@ -30,11 +30,11 @@ export default function DriverSelectionModal({
 
   React.useEffect(() => {
     setSelected(null);
-    setKilometerReading(null);
+    setKilometerReading("");
   }, [open, currentDriverId]);
 
   React.useEffect(() => {
-    if (!vehicle) setKilometerReading(null);
+    if (!vehicle) setKilometerReading("");
   }, [vehicle]);
 
   const hasTeamMates = team.length > 1;
