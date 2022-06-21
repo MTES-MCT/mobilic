@@ -17,6 +17,8 @@ import {
   useSectionStyles
 } from "./sections/LandingSection";
 import { WebinarListSection } from "./sections/WebinarListSection";
+import { Card } from "@mui/material";
+import { resourceCardsClasses } from "./ResourcePage/styles/ResourceCardsStyle";
 
 const useStyles = makeStyles(theme => ({
   heroContainer: {
@@ -54,6 +56,17 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(1)
   }
 }));
+
+const videos = [
+  {
+    title: "Mobilic, qu'est-ce que c'est ?",
+    id: "GEfgicbfX4s"
+  },
+  {
+    title: "Mobilic est-il conforme à la réglementation ?",
+    id: "0XxaLFvi4Ic"
+  }
+];
 
 function Showcase({
   image,
@@ -130,6 +143,7 @@ export const Landing = () => {
   const ref = React.useRef();
 
   const classes = useStyles();
+  const commonCardsClasses = resourceCardsClasses();
   const sectionClasses = useSectionStyles();
   const isSmDown = useIsWidthDown("sm");
 
@@ -170,16 +184,34 @@ export const Landing = () => {
           </a>{" "}
           pour respecter vos engagements sociaux.
         </Typography>
-        <Container maxWidth="sm" disableGutters>
-          <Box ref={ref} className={classes.videoContainer}>
-            <video
-              controls
-              width={ref.current ? ref.current.offsetWidth : "100%"}
-              height={ref.current ? ref.current.offsetHeight : "100%"}
-            >
-              <source src="/mobilic-overview.mp4" type="video/mp4" />
-            </video>
-          </Box>
+        <Container maxWidth="md" disableGutters>
+          <Grid container spacing={2}>
+            {videos.map(video => (
+              <Grid item xs={12} lg={6} key={video.id}>
+                <Card variant="outlined" className={commonCardsClasses.card}>
+                  <Typography
+                    variant={"h5"}
+                    className={commonCardsClasses.description}
+                  >
+                    {video.title}
+                  </Typography>
+                  <div ref={ref}>
+                    <iframe
+                      title={video.title}
+                      width={ref.current ? ref.current.offsetWidth : "100%"}
+                      height={
+                        ref.current
+                          ? (ref.current.offsetWidth * 9) / 16
+                          : "100%"
+                      }
+                      src={`https://www.youtube.com/embed/${video.id}`}
+                      frameBorder="0"
+                    ></iframe>
+                  </div>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
         </Container>
       </LandingSection>
       {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
