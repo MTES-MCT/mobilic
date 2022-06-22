@@ -17,8 +17,8 @@ import {
   useSectionStyles
 } from "./sections/LandingSection";
 import { WebinarListSection } from "./sections/WebinarListSection";
-import { Card } from "@mui/material";
-import { resourceCardsClasses } from "./ResourcePage/styles/ResourceCardsStyle";
+import { VideoCard } from "./ResourcePage/VideoCard";
+import { resourcePagesClasses } from "./ResourcePage/styles/ResourcePagesStyle";
 
 const useStyles = makeStyles(theme => ({
   heroContainer: {
@@ -140,12 +140,10 @@ function Showcase({
 }
 
 export const Landing = () => {
-  const ref = React.useRef();
-
   const classes = useStyles();
-  const commonCardsClasses = resourceCardsClasses();
   const sectionClasses = useSectionStyles();
   const isSmDown = useIsWidthDown("sm");
+  const resourceClasses = resourcePagesClasses();
 
   return [
     <Header key={1} />,
@@ -184,34 +182,22 @@ export const Landing = () => {
           </a>{" "}
           pour respecter vos engagements sociaux.
         </Typography>
-        <Container maxWidth="md" disableGutters>
-          <Grid container spacing={2}>
-            {videos.map(video => (
-              <Grid item xs={12} lg={6} key={video.id}>
-                <Card variant="outlined" className={commonCardsClasses.card}>
-                  <Typography
-                    variant={"h5"}
-                    className={commonCardsClasses.description}
-                  >
-                    {video.title}
-                  </Typography>
-                  <div ref={ref}>
-                    <iframe
-                      title={video.title}
-                      width={ref.current ? ref.current.offsetWidth : "100%"}
-                      height={
-                        ref.current
-                          ? (ref.current.offsetWidth * 9) / 16
-                          : "100%"
-                      }
-                      src={`https://www.youtube.com/embed/${video.id}`}
-                      frameBorder="0"
-                    ></iframe>
-                  </div>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+        <Container
+          className={`${resourceClasses.whiteSection}`}
+          maxWidth={false}
+        >
+          <Container maxWidth="lg" className={resourceClasses.inner}>
+            <Grid container direction="row" alignItems="center" spacing={1}>
+              {videos.map(video => (
+                <Grid key={video.id} item xs={12} sm={6}>
+                  <VideoCard
+                    description={video.title}
+                    youtubeUrl={`https://www.youtube.com/embed/${video.id}`}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Container>
         </Container>
       </LandingSection>
       {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
