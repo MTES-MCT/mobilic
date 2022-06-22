@@ -17,6 +17,7 @@ import {
   formatDay,
   formatTimeOfDay,
   now,
+  nowMilliseconds,
   sameMinute,
   truncateMinute
 } from "./time";
@@ -657,7 +658,8 @@ class Actions {
       missionId,
       startTime,
       endTime,
-      userId: actualUserId
+      userId: actualUserId,
+      creationTime: nowMilliseconds()
     };
 
     if (comment) newActivity.context = { comment };
@@ -751,7 +753,8 @@ class Actions {
     }
 
     const payload = {
-      activityId: activityEvent.id
+      activityId: activityEvent.id,
+      creationTime: nowMilliseconds()
     };
 
     if (comment) payload.context = { comment };
@@ -826,7 +829,8 @@ class Actions {
       name,
       companyId,
       vehicleId: vehicle ? vehicle.id : null,
-      vehicleRegistrationNumber: vehicle ? vehicle.registrationNumber : null
+      vehicleRegistrationNumber: vehicle ? vehicle.registrationNumber : null,
+      creationTime: nowMilliseconds()
     };
 
     let missionCurrentId;
@@ -1125,7 +1129,8 @@ class Actions {
     const endMissionPayload = {
       endTime,
       missionId,
-      userId: actualUserId
+      userId: actualUserId,
+      creationTime: nowMilliseconds()
     };
     const updateStore = (store, requestId) => {
       const currentActivity = this._findAndCloseCurrentActivity(
@@ -1196,7 +1201,11 @@ class Actions {
 
     await this.submitAction(
       VALIDATE_MISSION_MUTATION,
-      { missionId: mission.id, userId: this.store.userId() },
+      {
+        missionId: mission.id,
+        userId: this.store.userId(),
+        creationTime: nowMilliseconds()
+      },
       updateStore,
       ["missions"],
       "validateMission"
@@ -1269,7 +1278,8 @@ class Actions {
       type,
       missionId,
       userId: actualUserId,
-      spendingDate
+      spendingDate,
+      creationTime: nowMilliseconds()
     };
 
     const updateStore = (store, requestId) => {

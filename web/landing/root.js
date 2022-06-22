@@ -17,6 +17,8 @@ import {
   useSectionStyles
 } from "./sections/LandingSection";
 import { WebinarListSection } from "./sections/WebinarListSection";
+import { VideoCard } from "./ResourcePage/VideoCard";
+import { resourcePagesClasses } from "./ResourcePage/styles/ResourcePagesStyle";
 
 const useStyles = makeStyles(theme => ({
   heroContainer: {
@@ -54,6 +56,17 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(1)
   }
 }));
+
+const videos = [
+  {
+    title: "Mobilic, qu'est-ce que c'est ?",
+    id: "GEfgicbfX4s"
+  },
+  {
+    title: "Mobilic est-il conforme à la réglementation ?",
+    id: "0XxaLFvi4Ic"
+  }
+];
 
 function Showcase({
   image,
@@ -127,11 +140,10 @@ function Showcase({
 }
 
 export const Landing = () => {
-  const ref = React.useRef();
-
   const classes = useStyles();
   const sectionClasses = useSectionStyles();
   const isSmDown = useIsWidthDown("sm");
+  const resourceClasses = resourcePagesClasses();
 
   return [
     <Header key={1} />,
@@ -170,16 +182,22 @@ export const Landing = () => {
           </a>{" "}
           pour respecter vos engagements sociaux.
         </Typography>
-        <Container maxWidth="sm" disableGutters>
-          <Box ref={ref} className={classes.videoContainer}>
-            <video
-              controls
-              width={ref.current ? ref.current.offsetWidth : "100%"}
-              height={ref.current ? ref.current.offsetHeight : "100%"}
-            >
-              <source src="/mobilic-overview.mp4" type="video/mp4" />
-            </video>
-          </Box>
+        <Container
+          className={`${resourceClasses.whiteSection}`}
+          maxWidth={false}
+        >
+          <Container maxWidth="lg" className={resourceClasses.inner}>
+            <Grid container direction="row" alignItems="center" spacing={1}>
+              {videos.map(video => (
+                <Grid key={video.id} item xs={12} sm={6}>
+                  <VideoCard
+                    description={video.title}
+                    youtubeUrl={`https://www.youtube.com/embed/${video.id}`}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Container>
         </Container>
       </LandingSection>
       {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}

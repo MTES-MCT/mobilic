@@ -6,6 +6,7 @@ import {
   FULL_MISSION_FRAGMENT,
   WORK_DAYS_DATA_FRAGMENT
 } from "./apiFragments";
+import { nowMilliseconds } from "./time";
 
 export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
   ${FRAGMENT_LOCATION_FULL}
@@ -359,7 +360,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
         id
         name
         ...CompanySettings
-        users {
+        users(fromDate: $activityAfter) {
           id
           firstName
           lastName
@@ -466,6 +467,11 @@ export const ADMIN_WORK_DAYS_QUERY = gql`
     user(id: $id) {
       adminedCompanies(companyIds: $companyIds) {
         id
+        users(fromDate: $activityAfter) {
+          id
+          firstName
+          lastName
+        }
         workDays(fromDate: $activityAfter, untilDate: $activityBefore) {
           ...WorkDayData
         }
@@ -736,6 +742,7 @@ export const LOG_ACTIVITY_MUTATION = gql`
     $type: ActivityTypeEnum!
     $startTime: TimeStamp!
     $endTime: TimeStamp
+    $creationTime: TimeStamp
     $missionId: Int!
     $userId: Int
     $context: GenericScalar
@@ -746,6 +753,7 @@ export const LOG_ACTIVITY_MUTATION = gql`
         type: $type
         startTime: $startTime
         endTime: $endTime
+        creationTime: $creationTime
         missionId: $missionId
         userId: $userId
         context: $context
@@ -763,9 +771,17 @@ export const LOG_ACTIVITY_MUTATION = gql`
   }
 `;
 export const CANCEL_ACTIVITY_MUTATION = gql`
-  mutation cancelActivity($activityId: Int!, $context: GenericScalar) {
+  mutation cancelActivity(
+    $activityId: Int!
+    $context: GenericScalar
+    $creationTime: TimeStamp
+  ) {
     activities {
-      cancelActivity(activityId: $activityId, context: $context) {
+      cancelActivity(
+        activityId: $activityId
+        context: $context
+        creationTime: $creationTime
+      ) {
         success
       }
     }
@@ -778,6 +794,7 @@ export const EDIT_ACTIVITY_MUTATION = gql`
     $startTime: TimeStamp
     $endTime: TimeStamp
     $removeEndTime: Boolean
+    $creationTime: TimeStamp
   ) {
     activities {
       editActivity(
@@ -786,6 +803,7 @@ export const EDIT_ACTIVITY_MUTATION = gql`
         endTime: $endTime
         context: $context
         removeEndTime: $removeEndTime
+        creationTime: $creationTime
       ) {
         id
         type
@@ -835,6 +853,7 @@ export const CREATE_MISSION_MUTATION = gql`
     $context: GenericScalar
     $vehicleId: Int
     $vehicleRegistrationNumber: String
+    $creationTime: TimeStamp
   ) {
     activities {
       createMission(
@@ -843,6 +862,7 @@ export const CREATE_MISSION_MUTATION = gql`
         context: $context
         vehicleId: $vehicleId
         vehicleRegistrationNumber: $vehicleRegistrationNumber
+        creationTime: $creationTime
       ) {
         id
         name
@@ -865,9 +885,19 @@ export const CREATE_MISSION_MUTATION = gql`
 export const END_MISSION_MUTATION = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
-  mutation endMission($endTime: TimeStamp!, $missionId: Int!, $userId: Int) {
+  mutation endMission(
+    $endTime: TimeStamp!
+    $missionId: Int!
+    $userId: Int
+    $creationTime: TimeStamp
+  ) {
     activities {
-      endMission(endTime: $endTime, missionId: $missionId, userId: $userId) {
+      endMission(
+        endTime: $endTime
+        missionId: $missionId
+        userId: $userId
+        creationTime: $creationTime
+      ) {
         id
         name
         context
@@ -916,6 +946,7 @@ export const LOG_LOCATION_MUTATION = gql`
     $manualAddress: String
     $kilometerReading: Int
     $overrideExisting: Boolean
+    $creationTime: TimeStamp
   ) {
     activities {
       logLocation(
@@ -926,6 +957,7 @@ export const LOG_LOCATION_MUTATION = gql`
         manualAddress: $manualAddress
         kilometerReading: $kilometerReading
         overrideExisting: $overrideExisting
+        creationTime: $creationTime
       ) {
         ...FullLocation
       }
@@ -1023,9 +1055,17 @@ export const TERMINATE_KNOWN_ADDRESS_MUTATION = gql`
 export const VALIDATE_MISSION_MUTATION = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
-  mutation validateMission($missionId: Int!, $userId: Int) {
+  mutation validateMission(
+    $missionId: Int!
+    $userId: Int
+    $creationTime: TimeStamp
+  ) {
     activities {
-      validateMission(missionId: $missionId, userId: $userId) {
+      validateMission(
+        missionId: $missionId
+        userId: $userId
+        creationTime: $creationTime
+      ) {
         isAdmin
         submitterId
         receptionTime
@@ -1067,6 +1107,7 @@ export const LOG_EXPENDITURE_MUTATION = gql`
     $missionId: Int!
     $userId: Int
     $spendingDate: Date!
+    $creationTime: TimeStamp
   ) {
     activities {
       logExpenditure(
@@ -1074,6 +1115,7 @@ export const LOG_EXPENDITURE_MUTATION = gql`
         missionId: $missionId
         userId: $userId
         spendingDate: $spendingDate
+        creationTime: $creationTime
       ) {
         id
         type
@@ -1221,7 +1263,8 @@ export function buildLogLocationPayloadFromAddress(
   const payload = {
     missionId,
     type: isStart ? "mission_start_location" : "mission_end_location",
-    kilometerReading
+    kilometerReading,
+    creationTime: nowMilliseconds()
   };
 
   return {

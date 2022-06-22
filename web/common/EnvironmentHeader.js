@@ -1,81 +1,53 @@
 import React from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import Stack from "@mui/material/Stack";
 import { makeStyles } from "@mui/styles";
 import Link from "@mui/material/Link";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 
 const useStyles = makeStyles(theme => ({
   header: {
-    backgroundColor: ({ staging }) =>
-      staging ? theme.palette.warning.main : theme.palette.success.main,
-    textAlign: "justify",
     width: "100%",
-    display: "flex",
-    alignItems: "flex-start",
-    flexShrink: 0
-  },
-  links: {
-    display: "flex"
-  },
-  inner: {
-    flexGrow: 1
-  },
-  closeButton: {
-    padding: 0,
-    paddingTop: 2
+    textAlign: "left",
+    position: "sticky",
+    top: "0",
+    zIndex: "1100" // needs to be > 1000 (activity switch) and < 1200 (close menu button)
   }
 }));
 
 export function EnvironmentHeader() {
-  const [open, setOpen] = React.useState(true);
-
   const staging = process.env.REACT_APP_SENTRY_ENVIRONMENT === "staging";
 
   const classes = useStyles({ staging });
 
-  if (!open) return null;
-
   return (
-    <Box py={1} px={2} className={classes.header}>
-      <Box className={classes.inner}>
+    <Alert severity={staging ? "warning" : "error"} className={classes.header}>
+      <AlertTitle>
+        {staging
+          ? "Vous êtes sur l'environnement de recette Mobilic, utilisé uniquement en interne pour tester les nouvelles fonctionnalités. Le bon fonctionnement du service n'est pas garanti."
+          : 'Vous êtes sur l\'environnement "bac à sable" Mobilic, qui sert de démo du service.'}
+      </AlertTitle>
+      <Stack direction={{ xs: "column", sm: "row" }}>
+        <Link
+          variant="body1"
+          href="https://mobilic.beta.gouv.fr"
+          target="_blank"
+          rel="noopener"
+          style={{ marginRight: 16 }}
+        >
+          Lien vers Mobilic
+        </Link>
         {staging && (
-          <Typography>
-            Vous êtes sur l'environnement de recette Mobilic, utilisé uniquement
-            en interne pour tester les nouvelles fonctionnalités. Le bon
-            fonctionnement du service <strong>n'est pas garanti</strong>.
-          </Typography>
-        )}
-        {!staging && (
-          <Typography>
-            Vous êtes sur l'environnement "bac à sable" Mobilic, qui sert de
-            démo du service.
-          </Typography>
-        )}
-        <Box className={classes.links}>
           <Link
             variant="body1"
-            href="https://mobilic.beta.gouv.fr"
-            style={{ marginRight: 16 }}
+            href="https://sandbox.mobilic.beta.gouv.fr"
+            target="_blank"
+            rel="noopener"
           >
-            Lien vers Mobilic
+            Lien vers le bac à sable
           </Link>
-          {staging && (
-            <Link variant="body1" href="https://sandbox.mobilic.beta.gouv.fr">
-              Lien vers le bac à sable
-            </Link>
-          )}
-          {!staging && (
-            <Link variant="body1" href="https://staging.mobilic.beta.gouv.fr">
-              Lien vers la recette
-            </Link>
-          )}
-        </Box>
-      </Box>
-      <IconButton className={classes.closeButton}>
-        <CloseIcon onClick={() => setOpen(false)} />
-      </IconButton>
-    </Box>
+        )}
+      </Stack>
+    </Alert>
   );
 }

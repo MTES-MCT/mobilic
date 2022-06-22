@@ -99,6 +99,7 @@ const onMinDateChange = debounce(
     companyId,
     setLoading,
     addWorkDays,
+    addUsers,
     api,
     alerts
   ) => {
@@ -112,6 +113,7 @@ const onMinDateChange = debounce(
           companyIds: [companyId]
         });
         addWorkDays(companiesPayload.data.user.adminedCompanies, newMinDate);
+        addUsers(companiesPayload.data.user.adminedCompanies);
       }, "load-work-days");
       setLoading(false);
     }
@@ -181,7 +183,11 @@ function ActivitiesPanel() {
           type: ADMIN_ACTIONS.addWorkDays,
           payload: { companiesPayload, minDate: newMinDate }
         }),
-
+      companiesPayload =>
+        adminStore.dispatch({
+          type: ADMIN_ACTIONS.addUsers,
+          payload: { companiesPayload }
+        }),
       api,
       alerts
     );

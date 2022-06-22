@@ -19,6 +19,35 @@ import { LinkButton } from "../../common/LinkButton";
 import { RegulationCard } from "./RegulationCard";
 import { REGULATION_RULES } from "./RegulationRules";
 
+export const RESOURCES_DOCUMENT = {
+  noticeUtilisation: {
+    gestionnaire: {
+      slideshare:
+        "https://www.slideshare.net/slideshow/embed_code/key/EtMNcl6DQ1nInI/",
+      download:
+        "https://drive.google.com/uc?id=10Z0jmuGUzwcUYNSXesBaJ0SVprR5P2bX&export=download"
+    },
+    salarie: {
+      slideshare:
+        "https://www.slideshare.net/slideshow/embed_code/key/1kEIdSBN2HJMdN/",
+      download:
+        "https://drive.google.com/uc?id=1uXGIUnxTfTOCKhbU5xQ9Eunr0U3RhaKT&export=download"
+    },
+    controleur: {
+      slideshare:
+        "https://www.slideshare.net/slideshow/embed_code/key/5GlE9F9kO5lM6o/",
+      download:
+        "https://drive.google.com/uc?id=1cQQ5gScNLgs_leo3qibmlWHBObrSjTyW&export=download"
+    }
+  },
+  brochure: {
+    slideshare:
+      "https://www.slideshare.net/slideshow/embed_code/key/HQst1i4BajjQVg/",
+    download:
+      "https://drive.google.com/uc?id=1mNR2levAhZd8-MGaidRe035Xj0Fa3dRO&export=download"
+  }
+};
+
 export function ResourcePage() {
   const classes = resourcePagesClasses();
 

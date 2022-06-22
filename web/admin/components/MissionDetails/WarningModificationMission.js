@@ -9,6 +9,7 @@ import { useWarningModificationMissionStyles } from "./WarningModificationMissio
 import { DISABLE_WARNING_MUTATION } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
 import { useApi } from "common/utils/api";
+import Emoji from "../../../common/Emoji";
 
 export function WarningModificationMission() {
   const store = useStoreSyncedWithLocalStorage();
@@ -57,7 +58,7 @@ export function WarningModificationMission() {
             className={classes.modificationWarningItem}
           >
             <ListItemIcon className={classes.validationWarningIcon}>
-              👉
+              <Emoji emoji="👉" ariaLabel="Information" />
             </ListItemIcon>
             <ListItemText primary="Les modifications sont enregistrées et apparaîtront en cas de contrôle." />
           </ListItem>
@@ -67,7 +68,7 @@ export function WarningModificationMission() {
             className={classes.modificationWarningItem}
           >
             <ListItemIcon className={classes.validationWarningIcon}>
-              👉
+              <Emoji emoji="👉" ariaLabel="Information" />
             </ListItemIcon>
             <ListItemText primary="En cas de modification des saisies, le salarié recevra une notification." />
           </ListItem>

@@ -21,6 +21,7 @@ import {
   RESET_PASSWORD_MUTATION
 } from "common/utils/apiQueries";
 import { EmailField } from "../common/EmailField";
+import Emoji from "../common/Emoji";
 
 const useStyles = makeStyles(theme => ({
   introText: {
@@ -124,7 +125,7 @@ export function ResetPassword() {
               >
                 <Grid item xs={12}>
                   <Typography className={classes.title} variant="h1">
-                    🎉
+                    <Emoji emoji="🎉" ariaLabel="Succès" />
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>

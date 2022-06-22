@@ -107,6 +107,10 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "L'adresse email est déjà utilisée.";
       case "FC_USER_ALREADY_REGISTERED":
         return "L'utilisateur est déjà inscrit sur Mobilic.";
+      case "ACTIVITY_EXIST_AFTER_EMPLOYMENT_END_DATE":
+        return "Détachement impossible à cette date. Vérifiez que le salarié n'a pas d'activités en cours ou d'activités après la date choisie.";
+      case "EMPLOYMENT_ALREADY_TERMINATED":
+        return "Opération impossible, une date de fin a déjà été renseignée pour ce rattachement.";
       case "OVERLAPPING_MISSIONS":
         return `Chevauchement avec la mission ${
           graphQLError.extensions.conflictingMission.name
@@ -185,6 +189,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         )} minutes dans le futur. Veuillez vérifier l'heure de votre téléphone.`;
       case "USER_SELF_CHANGE_ROLE":
         return "La modification de votre rôle ne peut être effectuée que par un autre gestionnaire.";
+      case "USER_SELF_TERMINATE_EMPLOYMENT":
+        return "L'action de mettre fin à votre rattachement ne peut être effectuée que par un autre gestionnaire.";
       default:
         return null;
     }

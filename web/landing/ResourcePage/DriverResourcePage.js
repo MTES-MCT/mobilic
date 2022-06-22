@@ -11,6 +11,7 @@ import { Breadcrumb, BreadcrumbItem } from "@dataesr/react-dsfr";
 import Box from "@mui/material/Box";
 import { SlideshareCard } from "./SlideshareCard";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
+import { RESOURCES_DOCUMENT } from "./ResourcePage";
 
 export function DriverResourcePage() {
   const classes = resourcePagesClasses();
@@ -38,8 +39,12 @@ export function DriverResourcePage() {
             <Box>
               <SlideshareCard
                 description="Notice d'utilisation"
-                slideshareUrl="https://www.slideshare.net/slideshow/embed_code/key/acEhSEf8PbwBCK/"
-                downloadLink="https://drive.google.com/uc?id=1Dy5hZosWwKGDHziksKC2OnTHoJx4YCbN&export=download"
+                slideshareUrl={
+                  RESOURCES_DOCUMENT.noticeUtilisation.salarie.slideshare
+                }
+                downloadLink={
+                  RESOURCES_DOCUMENT.noticeUtilisation.salarie.download
+                }
               />
             </Box>
           </Grid>

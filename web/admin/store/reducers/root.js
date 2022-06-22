@@ -26,6 +26,7 @@ import {
   addVirtualExpenditureActionReducer,
   removeAllVirtualExpenditureActionsReducer
 } from "./virtualExpenditureActions";
+import { addUsersReducer } from "./users";
 
 export const ADMIN_ACTIONS = {
   createOrSyncActivity: createOrSyncActivityReducer,
@@ -45,7 +46,8 @@ export const ADMIN_ACTIONS = {
   addVirtualActivity: addVirtualActivityReducer,
   removeAllVirtualActivities: removeAllVirtualActivitiesReducer,
   addVirtualExpenditureAction: addVirtualExpenditureActionReducer,
-  removeAllVirtualExpenditureActions: removeAllVirtualExpenditureActionsReducer
+  removeAllVirtualExpenditureActions: removeAllVirtualExpenditureActionsReducer,
+  addUsers: addUsersReducer
 };
 
 const ADMIN_REDUCERS = {};

@@ -22,6 +22,7 @@ import Hidden from "@mui/material/Hidden";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ContradictoryChanges } from "../../pwa/components/ContradictoryChanges";
 import { useCacheContradictoryInfoInAdminStore } from "common/utils/contradictory";
+import Emoji from "../../common/Emoji";
 
 const useStyles = makeStyles(theme => ({
   cardRecapKPIContainer: {
@@ -141,9 +142,7 @@ export function MissionEmployeeCard({
                 !stats.workerValidation &&
                 !stats.adminValidation ? (
                   <Grid key={4} item>
-                    <span role="img" aria-label="en attente de validation">
-                      ⏳
-                    </span>
+                    <Emoji emoji="⏳" ariaLabel="En attente de validation" />
                   </Grid>
                 ) : null
               ]}
