@@ -8,7 +8,7 @@ export function VideoCard({ youtubeUrl, description }) {
 
   return (
     <Card variant="outlined" className={classes.card}>
-      <Typography variant={"h4"} className={classes.description}>
+      <Typography variant={"h5"} className={classes.description}>
         {description}
       </Typography>
       <iframe
