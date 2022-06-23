@@ -123,8 +123,6 @@ const getPayloadUpdate = (
 };
 
 async function severalActionsActivity(api, mission, adminStore, modalArgs) {
-  console.log("apply several changes to a mission", modalArgs);
-
   let tmpVirtualActivities = adminStore.virtualActivities;
   const toDispatch = [];
 
