@@ -183,7 +183,8 @@ function _Root() {
       !location.pathname.startsWith("/logout") &&
       !location.pathname.startsWith("/activate_email") &&
       !location.pathname.startsWith("/redeem_invite") &&
-      !location.pathname.startsWith("/fc-callback")
+      !location.pathname.startsWith("/fc-callback") &&
+      !location.pathname.startsWith("/ac-callback")
     )
       loadedLocationRef.current = location.pathname + location.search;
   }, []);

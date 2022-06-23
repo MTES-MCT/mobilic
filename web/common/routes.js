@@ -124,11 +124,11 @@ export const ROUTES = [
     menuItemFilter: ({ userInfo }) => !userInfo.id
   },
   {
-    path: "/login-controller",
+    path: "/controller-login",
     label: "Connexion Agent",
     accessible: () => true,
     component: LoginController,
-    menuItemFilter: ({ userInfo }) => !userInfo.id
+    menuItemFilter: () => false
   },
   {
     path: "/stats",
