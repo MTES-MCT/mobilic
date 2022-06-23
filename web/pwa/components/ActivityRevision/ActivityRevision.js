@@ -87,7 +87,7 @@ export default function ActivityRevisionOrCreationModal({
         return {
           type: "create",
           payload: {
-            activityType: op.type,
+            actionType: op.type,
             startTime: op.startTime,
             endTime: op.endTime,
             driverId: op.driverId,
@@ -103,7 +103,7 @@ export default function ActivityRevisionOrCreationModal({
           type: "update",
           payload: {
             activity: op.activity,
-            activityType: op.operation,
+            actionType: op.operation,
             newStartTime: op.startTime,
             newEndTime: op.endTime,
             userComment,
