@@ -644,6 +644,7 @@ module.exports = function(webpackEnv) {
           additionalManifestEntries: [{ url: "/favicon.svg", revision: "1" }],
           clientsClaim: true,
           skipWaiting: true,
+          maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
           exclude: [
             /\.map$/,
             /asset-manifest\.json$/,
