@@ -22,8 +22,9 @@ import { currentUserId } from "common/utils/cookie";
 import { reduceVirtualActivities } from "../store/reducers/virtualActivities";
 
 const validateBulkActivities = async (api, virtualActivities) => {
-  console.log("validate", virtualActivities);
-  return await callBulkActivities(api, virtualActivities, true);
+  if (virtualActivities.length > 0) {
+    return await callBulkActivities(api, virtualActivities, true);
+  }
 };
 
 export const applyBulkActivities = async (api, virtualActivities) => {
