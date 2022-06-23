@@ -20,14 +20,18 @@ export const reduceVirtualActivities = (previousArray, newVirtualActivity) => {
       if (
         previousArray.find(v => v.activityId === newVirtualActivity.activityId)
       ) {
-        return previousArray.map(prevEntry =>
-          prevEntry.id === newVirtualActivity.activityId
-            ? {
-                ...prevEntry,
-                ...newVirtualActivity
-              }
-            : prevEntry
-        );
+        return previousArray.map(prevEntry => {
+          if (prevEntry.activityId !== newVirtualActivity.activityId) {
+            return prevEntry;
+          }
+          let entry = prevEntry;
+          for (const key of Object.keys(entry.payload)) {
+            if (newVirtualActivity.payload[key]) {
+              entry.payload[key] = newVirtualActivity.payload[key];
+            }
+          }
+          return entry;
+        });
       } else {
         return [...previousArray, newVirtualActivity];
       }
