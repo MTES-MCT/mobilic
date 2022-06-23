@@ -647,6 +647,7 @@ module.exports = function(webpackEnv) {
           exclude: [
             /\.map$/,
             /asset-manifest\.json$/,
+            /index.html/,
             /\.LICENSE$/,
             /hero.*\.jpg$/,
             /.*partner-logos.*/,
