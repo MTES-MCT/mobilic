@@ -38,7 +38,7 @@ export const getPayloadFromVirtualExpenditures = expenditureActions => {
   return {
     expendituresCancelIds: expenditureActions
       .filter(expenditureAction => expenditureAction.action === "cancel")
-      .map(expenditureAction => expenditureAction.payload),
+      .map(expenditureAction => expenditureAction.payload.expenditureId),
     expendituresInputs: expenditureActions
       .filter(expenditureAction => expenditureAction.action === "create")
       .map(expenditureAction => expenditureAction.payload)
