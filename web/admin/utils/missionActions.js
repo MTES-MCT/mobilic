@@ -21,34 +21,30 @@ import { sameMinute } from "common/utils/time";
 import { currentUserId } from "common/utils/cookie";
 import { reduceVirtualActivities } from "../store/reducers/virtualActivities";
 
-const validateBulkActivities = async (api, virtualActivities) => {
+const testBulkActivities = async (api, virtualActivities) => {
   if (virtualActivities.length > 0) {
-    return await callBulkActivities(api, virtualActivities, true);
+    return await api.nonConcurrentQueryQueue.execute(() =>
+      api.graphQlMutate(BULK_ACTIVITY_MUTATION, {
+        items: virtualActivities.map(virtualActivity => {
+          const verb =
+            virtualActivity.action === "CREATE"
+              ? "log"
+              : virtualActivity.action === "EDIT"
+              ? "edit"
+              : "cancel";
+
+          return {
+            [verb]: { ...virtualActivity.payload }
+          };
+        })
+      })
+    );
   }
 };
 
 export const applyBulkActivities = async (api, virtualActivities) => {
-  return await callBulkActivities(api, virtualActivities, false);
-};
-
-const callBulkActivities = async (api, virtualActivities, virtual) => {
-  return await api.nonConcurrentQueryQueue.execute(() =>
-    api.graphQlMutate(BULK_ACTIVITY_MUTATION, {
-      items: virtualActivities.map(virtualActivity => {
-        const verb =
-          virtualActivity.action === "CREATE"
-            ? "log"
-            : virtualActivity.action === "EDIT"
-            ? "edit"
-            : "cancel";
-
-        return {
-          [verb]: { ...virtualActivity.payload }
-        };
-      }),
-      virtual
-    })
-  );
+  // do differently
+  // return await callBulkActivities(api, virtualActivities, false);
 };
 
 export const applyExpenditureActions = async (api, expenditureActions) => {
@@ -149,7 +145,7 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
       });
 
       // check ok
-      await validateBulkActivities(api, tmpVirtualActivities);
+      await testBulkActivities(api, tmpVirtualActivities);
 
       // update
       if (shouldCancel) {
@@ -188,10 +184,7 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
       });
 
       // check ok
-      const apiResponse = await validateBulkActivities(
-        api,
-        tmpVirtualActivities
-      );
+      const apiResponse = await testBulkActivities(api, tmpVirtualActivities);
 
       // apply changes
       const activity = apiResponse.data.activities.bulkActivities;
@@ -224,7 +217,7 @@ async function createSingleActivity(api, mission, adminStore, modalArgs) {
     activityId: uuidv4()
   };
   // let's validate adding new virtual activity would be ok
-  const apiResponse = await validateBulkActivities(
+  const apiResponse = await testBulkActivities(
     api,
     reduceVirtualActivities(adminStore.virtualActivities, tmpNewVirtualActivity)
   );
@@ -271,7 +264,7 @@ async function editSingleActivity(
       payload,
       activityId: activity.id
     };
-    await validateBulkActivities(
+    await testBulkActivities(
       api,
       reduceVirtualActivities(
         adminStore.virtualActivities,

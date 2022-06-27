@@ -817,9 +817,9 @@ export const EDIT_ACTIVITY_MUTATION = gql`
   }
 `;
 export const BULK_ACTIVITY_MUTATION = gql`
-  mutation bulkActivities($items: [BulkActivityItem], $virtual: Boolean) {
+  mutation bulkActivities($items: [BulkActivityItem]) {
     activities {
-      bulkActivities(items: $items, virtual: $virtual) {
+      bulkActivities(items: $items) {
         id
         type
         missionId
