@@ -299,18 +299,20 @@ async function createExpenditure(
     missionId: mission.id,
     spendingDate: spendingDate
   };
+  const newId = uuidv4();
   adminStore.dispatch({
     type: ADMIN_ACTIONS.addVirtualExpenditureAction,
     payload: {
       virtualExpenditureAction: {
         action: "create",
-        payload: expenditure
+        payload: expenditure,
+        expenditureId: newId
       }
     }
   });
   mission.expenditures.push({
     ...expenditure,
-    id: uuidv4()
+    id: newId
   });
 }
 
