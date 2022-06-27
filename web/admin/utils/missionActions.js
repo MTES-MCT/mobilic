@@ -3,10 +3,8 @@ import { ACTIVITIES, ACTIVITIES_OPERATIONS } from "common/utils/activities";
 import {
   buildLogLocationPayloadFromAddress,
   CANCEL_COMMENT_MUTATION,
-  CANCEL_EXPENDITURE_MUTATION,
   CHANGE_MISSION_NAME_MUTATION,
   LOG_COMMENT_MUTATION,
-  LOG_EXPENDITURE_MUTATION,
   LOG_LOCATION_MUTATION,
   REGISTER_KILOMETER_AT_LOCATION,
   UPDATE_MISSION_VEHICLE_MUTATION,
@@ -21,51 +19,41 @@ import { sameMinute } from "common/utils/time";
 import { currentUserId } from "common/utils/cookie";
 import { reduceVirtualActivities } from "../store/reducers/virtualActivities";
 
+export const getPayloadFromVirtualActivities = virtualActivities => {
+  return virtualActivities.map(virtualActivity => {
+    const verb =
+      virtualActivity.action === "CREATE"
+        ? "log"
+        : virtualActivity.action === "EDIT"
+        ? "edit"
+        : "cancel";
+
+    return {
+      [verb]: { ...virtualActivity.payload }
+    };
+  });
+};
+
+export const getPayloadFromVirtualExpenditures = expenditureActions => {
+  return {
+    expendituresCancelIds: expenditureActions
+      .filter(expenditureAction => expenditureAction.action === "cancel")
+      .map(expenditureAction => expenditureAction.payload),
+    expendituresInputs: expenditureActions
+      .filter(expenditureAction => expenditureAction.action === "create")
+      .map(expenditureAction => expenditureAction.payload)
+  };
+};
+
 const testBulkActivities = async (api, virtualActivities) => {
   if (virtualActivities.length > 0) {
     return await api.nonConcurrentQueryQueue.execute(() =>
       api.graphQlMutate(BULK_ACTIVITY_MUTATION, {
-        items: virtualActivities.map(virtualActivity => {
-          const verb =
-            virtualActivity.action === "CREATE"
-              ? "log"
-              : virtualActivity.action === "EDIT"
-              ? "edit"
-              : "cancel";
-
-          return {
-            [verb]: { ...virtualActivity.payload }
-          };
-        })
+        items: getPayloadFromVirtualActivities(virtualActivities)
       })
     );
   }
 };
-
-export const applyBulkActivities = async (api, virtualActivities) => {
-  // do differently
-  // return await callBulkActivities(api, virtualActivities, false);
-};
-
-export const applyExpenditureActions = async (api, expenditureActions) => {
-  for (const expenditureAction of expenditureActions) {
-    if (expenditureAction.action === "create") {
-      await api.nonConcurrentQueryQueue.execute(() =>
-        api.graphQlMutate(LOG_EXPENDITURE_MUTATION, {
-          ...expenditureAction.payload
-        })
-      );
-    }
-    if (expenditureAction.action === "cancel") {
-      await api.nonConcurrentQueryQueue.execute(() =>
-        api.graphQlMutate(CANCEL_EXPENDITURE_MUTATION, {
-          ...expenditureAction.payload
-        })
-      );
-    }
-  }
-};
-
 const getPayloadCreate = (args, mission) => {
   let activityType = args.activityType;
   if (
@@ -353,7 +341,11 @@ async function createComment(api, mission, adminStore, text) {
 async function validateMission(api, mission, adminStore, userToValidate) {
   const apiResponse = await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
     missionId: mission.id,
-    userId: userToValidate
+    userId: userToValidate,
+    activityItems: getPayloadFromVirtualActivities(
+      adminStore.virtualActivities
+    ),
+    ...getPayloadFromVirtualExpenditures(adminStore.virtualExpenditureActions)
   });
   const validation = apiResponse.data.activities.validateMission;
   mission.validations.push(validation);

@@ -29,11 +29,7 @@ import { MissionLocationInfo } from "../MissionLocationInfo";
 import { MissionEmployeeCard } from "../MissionEmployeeCard";
 import ListItem from "@mui/material/ListItem";
 import { ADMIN_ACTIONS } from "../../store/reducers/root";
-import {
-  applyBulkActivities,
-  useMissionActions,
-  applyExpenditureActions
-} from "../../utils/missionActions";
+import { useMissionActions } from "../../utils/missionActions";
 import { useMissionWithStats } from "../../utils/missionWithStats";
 import { MissionDetailsSection } from "../MissionDetailsSection";
 import { MissionTitle } from "../MissionTitle";
@@ -133,32 +129,10 @@ export function MissionDetails({
   }
 
   const onValidate = async () => {
-    if (
-      adminStore.virtualActivities.length > 0 ||
-      adminStore.virtualExpenditureActions.length > 0
-    ) {
-      await submitVirtualActivitiesAndExpenditureActions();
-    }
+    setLoading(true);
     entriesToValidateByAdmin.map(workerEntryToValidate => {
       missionActions.validateMission(workerEntryToValidate.user.id);
     });
-  };
-
-  const submitVirtualActivitiesAndExpenditureActions = async () => {
-    setLoading(true);
-    try {
-      if (adminStore.virtualActivities.length > 0) {
-        await applyBulkActivities(api, adminStore.virtualActivities);
-      }
-      if (adminStore.virtualExpenditureActions.length > 0) {
-        await applyExpenditureActions(
-          api,
-          adminStore.virtualExpenditureActions
-        );
-      }
-    } catch (err) {
-      setMissionLoadError(formatApiError(err));
-    }
     adminStore.dispatch({
       type: ADMIN_ACTIONS.removeAllVirtualActivities
     });

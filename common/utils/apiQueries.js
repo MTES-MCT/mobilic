@@ -1059,12 +1059,18 @@ export const VALIDATE_MISSION_MUTATION = gql`
     $missionId: Int!
     $userId: Int
     $creationTime: TimeStamp
+    $activityItems: [BulkActivityItem]
+    $expendituresCancelIds: [Int]
+    $expendituresInputs: [BulkExpenditureItem]
   ) {
     activities {
       validateMission(
         missionId: $missionId
         userId: $userId
         creationTime: $creationTime
+        activityItems: $activityItems
+        expendituresCancelIds: $expendituresCancelIds
+        expendituresInputs: $expendituresInputs
       ) {
         isAdmin
         submitterId
