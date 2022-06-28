@@ -50,6 +50,7 @@ export default function ActivityRevisionOrCreationModal({
   allowTransfers = false,
   createActivity,
   handleSeveralActions,
+  adminMode = false,
   defaultTime = null,
   forcedUser = null,
   displayWarningMessage = true
@@ -82,6 +83,63 @@ export default function ActivityRevisionOrCreationModal({
   const activityType = event ? event.type : newActivityType;
 
   async function changeActivities(sideEffectOperations, actionType) {
+    adminMode
+      ? await changeActivitiesAdmin(sideEffectOperations, actionType)
+      : await changeActivitiesEmployee(sideEffectOperations, actionType);
+  }
+
+  async function changeActivitiesEmployee(sideEffectOperations, actionType) {
+    await Promise.all(
+      sideEffectOperations.map(op => {
+        if (op.operation === ACTIVITIES_OPERATIONS.create) {
+          return createActivity({
+            activityType: op.type,
+            startTime: op.startTime,
+            endTime: op.endTime,
+            driverId: op.driverId,
+            userComment,
+            team: teamMode
+              ? uniq([userId, ...resolveTeamAt(teamChanges, op.startTime)])
+              : [userId]
+          });
+        } else {
+          return handleRevisionAction(
+            op.activity,
+            op.operation,
+            op.startTime,
+            op.endTime,
+            userComment,
+            teamMode
+          );
+        }
+      })
+    );
+    if (activityType !== ACTIVITIES.break.name) {
+      if (actionType === ACTIVITIES_OPERATIONS.create) {
+        let driverId = null;
+        if (requiresDriver()) driverId = newActivityDriverId;
+        await createActivity({
+          activityType: newActivityType,
+          startTime: newUserTime,
+          endTime: newUserEndTime,
+          driverId: driverId,
+          userComment: userComment,
+          team: teamMode ? team : [userId]
+        });
+      } else {
+        await handleRevisionAction(
+          event,
+          actionType,
+          newUserTime,
+          newUserEndTime,
+          userComment,
+          teamMode
+        );
+      }
+    }
+  }
+
+  async function changeActivitiesAdmin(sideEffectOperations, actionType) {
     const actionsToDo = sideEffectOperations.map(op => {
       if (op.operation === ACTIVITIES_OPERATIONS.create) {
         return {

@@ -492,6 +492,7 @@ export function MissionDetails({
                               missionActions.editSingleActivity,
                             handleSeveralActions:
                               missionActions.severalActionsActivity,
+                            adminMode: true,
                             allowTransfers,
                             allowSupportActivity,
                             nullableEndTime: false,
@@ -525,6 +526,7 @@ export function MissionDetails({
                               }),
                             handleSeveralActions:
                               missionActions.severalActionsActivity,
+                            adminMode: true,
                             allowTransfers,
                             allowSupportActivity,
                             nullableEndTime: false,
