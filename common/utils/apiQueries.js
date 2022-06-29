@@ -816,18 +816,16 @@ export const EDIT_ACTIVITY_MUTATION = gql`
     }
   }
 `;
-export const BULK_ACTIVITY_MUTATION = gql`
-  mutation bulkActivities($items: [BulkActivityItem]) {
-    activities {
-      bulkActivities(items: $items) {
-        id
-        type
-        missionId
-        userId
-        startTime
-        endTime
-        lastSubmitterId
-      }
+export const BULK_ACTIVITY_QUERY = gql`
+  query bulkActivity($items: [BulkActivityItem]) {
+    output(items: $items) {
+      id
+      type
+      missionId
+      userId
+      startTime
+      endTime
+      lastSubmitterId
     }
   }
 `;

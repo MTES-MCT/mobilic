@@ -9,7 +9,7 @@ import {
   REGISTER_KILOMETER_AT_LOCATION,
   UPDATE_MISSION_VEHICLE_MUTATION,
   VALIDATE_MISSION_MUTATION,
-  BULK_ACTIVITY_MUTATION
+  BULK_ACTIVITY_QUERY
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useApi } from "common/utils/api";
@@ -48,7 +48,7 @@ export const getPayloadFromVirtualExpenditures = expenditureActions => {
 const testBulkActivities = async (api, virtualActivities) => {
   if (virtualActivities.length > 0) {
     return await api.nonConcurrentQueryQueue.execute(() =>
-      api.graphQlMutate(BULK_ACTIVITY_MUTATION, {
+      api.graphQlQuery(BULK_ACTIVITY_QUERY, {
         items: getPayloadFromVirtualActivities(virtualActivities)
       })
     );
@@ -175,7 +175,7 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
       const apiResponse = await testBulkActivities(api, tmpVirtualActivities);
 
       // apply changes
-      const activity = apiResponse.data.activities.bulkActivities;
+      const activity = apiResponse.data.output;
       mission.activities = [
         ...mission.activities,
         { ...activity, user: modalArgs.user }
