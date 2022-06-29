@@ -50,9 +50,10 @@ export function addVirtualActivityReducer(state, { virtualActivity }) {
   };
 }
 
-export function removeAllVirtualActivitiesReducer(state) {
+export function resetVirtualReducer(state) {
   return {
     ...state,
-    virtualActivities: []
+    virtualActivities: [],
+    virtualExpenditureActions: []
   };
 }

@@ -23,10 +23,3 @@ export function addVirtualExpenditureActionReducer(
     ]
   };
 }
-
-export function removeAllVirtualExpenditureActionsReducer(state) {
-  return {
-    ...state,
-    virtualExpenditureActions: []
-  };
-}

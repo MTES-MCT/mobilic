@@ -20,12 +20,9 @@ import { updateSettingsReducer } from "./settings";
 import { updateActivitiesFiltersReducer } from "./activitiesFilters";
 import {
   addVirtualActivityReducer,
-  removeAllVirtualActivitiesReducer
+  resetVirtualReducer
 } from "./virtualActivities";
-import {
-  addVirtualExpenditureActionReducer,
-  removeAllVirtualExpenditureActionsReducer
-} from "./virtualExpenditureActions";
+import { addVirtualExpenditureActionReducer } from "./virtualExpenditureActions";
 import { addUsersReducer } from "./users";
 
 export const ADMIN_ACTIONS = {
@@ -44,9 +41,8 @@ export const ADMIN_ACTIONS = {
   updateCompanyId: updateCompanyIdReducer,
   updateActivitiesFilters: updateActivitiesFiltersReducer,
   addVirtualActivity: addVirtualActivityReducer,
-  removeAllVirtualActivities: removeAllVirtualActivitiesReducer,
   addVirtualExpenditureAction: addVirtualExpenditureActionReducer,
-  removeAllVirtualExpenditureActions: removeAllVirtualExpenditureActionsReducer,
+  resetVirtual: resetVirtualReducer,
   addUsers: addUsersReducer
 };
 

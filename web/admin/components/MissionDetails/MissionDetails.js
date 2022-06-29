@@ -134,10 +134,7 @@ export function MissionDetails({
       missionActions.validateMission(workerEntryToValidate.user.id);
     });
     adminStore.dispatch({
-      type: ADMIN_ACTIONS.removeAllVirtualActivities
-    });
-    adminStore.dispatch({
-      type: ADMIN_ACTIONS.removeAllVirtualExpenditureActions
+      type: ADMIN_ACTIONS.resetVirtual
     });
     setLoading(false);
   };

@@ -31,7 +31,7 @@ export function MissionDrawerContextProvider({
 
   const reset = () => {
     adminStore.dispatch({
-      type: ADMIN_ACTIONS.removeAllVirtualActivities
+      type: ADMIN_ACTIONS.resetVirtual
     });
     setMissionIdOnFocus(null);
   };
