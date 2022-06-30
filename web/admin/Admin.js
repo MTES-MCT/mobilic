@@ -137,6 +137,10 @@ function _Admin() {
     }
   }
 
+  async function onCloseDrawer() {
+    if (shouldRefreshData.value) refreshData();
+  }
+
   React.useEffect(() => {
     if (shouldRefreshData.value) loadDataCompaniesList();
   }, [adminStore.userId]);
@@ -164,7 +168,7 @@ function _Admin() {
       key={1}
       width={width}
       setShouldRefreshData={shouldRefreshDataSetter}
-      refreshData={refreshData}
+      onCloseDrawer={onCloseDrawer}
     >
       <Container
         key={1}

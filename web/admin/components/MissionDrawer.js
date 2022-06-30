@@ -20,7 +20,7 @@ const MissionDrawerContext = React.createContext(() => {});
 export function MissionDrawerContextProvider({
   children,
   setShouldRefreshData,
-  refreshData
+  onCloseDrawer
 }) {
   const location = useLocation();
   const modals = useModals();
@@ -35,7 +35,7 @@ export function MissionDrawerContextProvider({
       type: ADMIN_ACTIONS.resetVirtual
     });
     setMissionIdOnFocus(null);
-    refreshData();
+    onCloseDrawer();
   };
 
   const onClose = () => {
