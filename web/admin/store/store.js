@@ -3,6 +3,17 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { adminRootReducer } from "./reducers/root";
 import { getStartOfMonth, isoFormatLocalDate, now } from "common/utils/time";
 
+export const VIRTUAL_ACTIVITIES_ACTIONS = {
+  create: "create",
+  edit: "edit",
+  cancel: "cancel"
+};
+
+export const VIRTUAL_EXPENDITURES_ACTIONS = {
+  create: "create",
+  cancel: "cancel"
+};
+
 const AdminStoreContext = React.createContext(() => {});
 
 export function AdminStoreProvider({ children }) {

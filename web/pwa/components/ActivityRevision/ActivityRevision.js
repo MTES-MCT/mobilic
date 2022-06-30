@@ -29,6 +29,7 @@ import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
 import OverlappedActivityList from "./OverlappedActivityList";
 import _ from "lodash";
+import { VIRTUAL_ACTIVITIES_ACTIONS } from "../../../admin/store/store";
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -143,7 +144,7 @@ export default function ActivityRevisionOrCreationModal({
     const actionsToDo = sideEffectOperations.map(op => {
       if (op.operation === ACTIVITIES_OPERATIONS.create) {
         return {
-          type: "create",
+          type: VIRTUAL_ACTIVITIES_ACTIONS.create,
           payload: {
             actionType: op.type,
             startTime: op.startTime,
@@ -158,7 +159,7 @@ export default function ActivityRevisionOrCreationModal({
         };
       } else {
         return {
-          type: "update",
+          type: VIRTUAL_ACTIVITIES_ACTIONS.edit,
           payload: {
             activity: op.activity,
             actionType: op.operation,
@@ -176,7 +177,7 @@ export default function ActivityRevisionOrCreationModal({
         let driverId = null;
         if (requiresDriver()) driverId = newActivityDriverId;
         actionsToDo.push({
-          type: "create",
+          type: VIRTUAL_ACTIVITIES_ACTIONS.create,
           payload: {
             activityType: newActivityType,
             startTime: newUserTime,
@@ -189,7 +190,7 @@ export default function ActivityRevisionOrCreationModal({
         });
       } else {
         actionsToDo.push({
-          type: "update",
+          type: VIRTUAL_ACTIVITIES_ACTIONS.edit,
           payload: {
             activity: event,
             actionType,

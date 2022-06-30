@@ -13,7 +13,11 @@ import {
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useApi } from "common/utils/api";
-import { useAdminStore } from "../store/store";
+import {
+  useAdminStore,
+  VIRTUAL_ACTIVITIES_ACTIONS,
+  VIRTUAL_EXPENDITURES_ACTIONS
+} from "../store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { sameMinute } from "common/utils/time";
 import { currentUserId } from "common/utils/cookie";
@@ -22,9 +26,9 @@ import { reduceVirtualActivities } from "../store/reducers/virtualActivities";
 export const getPayloadFromVirtualActivities = virtualActivities => {
   return virtualActivities.map(virtualActivity => {
     const verb =
-      virtualActivity.action === "CREATE"
+      virtualActivity.action === VIRTUAL_ACTIVITIES_ACTIONS.create
         ? "log"
-        : virtualActivity.action === "EDIT"
+        : virtualActivity.action === VIRTUAL_ACTIVITIES_ACTIONS.edit
         ? "edit"
         : "cancel";
 
@@ -37,10 +41,16 @@ export const getPayloadFromVirtualActivities = virtualActivities => {
 export const getPayloadFromVirtualExpenditures = expenditureActions => {
   return {
     expendituresCancelIds: expenditureActions
-      .filter(expenditureAction => expenditureAction.action === "cancel")
+      .filter(
+        expenditureAction =>
+          expenditureAction.action === VIRTUAL_EXPENDITURES_ACTIONS.cancel
+      )
       .map(expenditureAction => expenditureAction.payload.expenditureId),
     expendituresInputs: expenditureActions
-      .filter(expenditureAction => expenditureAction.action === "create")
+      .filter(
+        expenditureAction =>
+          expenditureAction.action === VIRTUAL_EXPENDITURES_ACTIONS.create
+      )
       .map(expenditureAction => expenditureAction.payload)
   };
 };
@@ -111,7 +121,7 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
   const toDispatch = [];
 
   for (const arg of modalArgs) {
-    if (arg.type === "update") {
+    if (arg.type === VIRTUAL_ACTIVITIES_ACTIONS.edit) {
       const {
         activity,
         actionType,
@@ -127,7 +137,9 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
         userComment
       );
       tmpVirtualActivities = reduceVirtualActivities(tmpVirtualActivities, {
-        action: shouldCancel ? "CANCEL" : "EDIT",
+        action: shouldCancel
+          ? VIRTUAL_ACTIVITIES_ACTIONS.cancel
+          : VIRTUAL_ACTIVITIES_ACTIONS.edit,
         payload,
         activityId: activity.id
       });
@@ -156,17 +168,19 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
         type: ADMIN_ACTIONS.addVirtualActivity,
         payload: {
           virtualActivity: {
-            action: shouldCancel ? "CANCEL" : "EDIT",
+            action: shouldCancel
+              ? VIRTUAL_ACTIVITIES_ACTIONS.cancel
+              : VIRTUAL_ACTIVITIES_ACTIONS.edit,
             payload,
             activityId: activity.id
           }
         }
       });
     }
-    if (arg.type === "create") {
+    if (arg.type === VIRTUAL_ACTIVITIES_ACTIONS.create) {
       const payload = getPayloadCreate(arg.payload, mission);
       tmpVirtualActivities = reduceVirtualActivities(tmpVirtualActivities, {
-        action: "CREATE",
+        action: VIRTUAL_ACTIVITIES_ACTIONS.create,
         payload,
         activityId: uuidv4()
       });
@@ -184,7 +198,7 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
         type: ADMIN_ACTIONS.addVirtualActivity,
         payload: {
           virtualActivity: {
-            action: "CREATE",
+            action: VIRTUAL_ACTIVITIES_ACTIONS.create,
             payload,
             activityId: activity.id
           }
@@ -200,7 +214,7 @@ async function createSingleActivity(api, mission, adminStore, modalArgs) {
   const payload = getPayloadCreate(modalArgs, mission);
 
   const tmpNewVirtualActivity = {
-    action: "CREATE",
+    action: VIRTUAL_ACTIVITIES_ACTIONS.create,
     payload,
     activityId: uuidv4()
   };
@@ -219,7 +233,7 @@ async function createSingleActivity(api, mission, adminStore, modalArgs) {
     type: ADMIN_ACTIONS.addVirtualActivity,
     payload: {
       virtualActivity: {
-        action: "CREATE",
+        action: VIRTUAL_ACTIVITIES_ACTIONS.create,
         payload,
         activityId: activity.id
       }
@@ -248,7 +262,7 @@ async function editSingleActivity(
   if (!shouldCancel) {
     // check if edit is ok or not
     const tmpNewVirtualActivity = {
-      action: "EDIT",
+      action: VIRTUAL_ACTIVITIES_ACTIONS.edit,
       payload,
       activityId: activity.id
     };
@@ -279,7 +293,9 @@ async function editSingleActivity(
     type: ADMIN_ACTIONS.addVirtualActivity,
     payload: {
       virtualActivity: {
-        action: shouldCancel ? "CANCEL" : "EDIT",
+        action: shouldCancel
+          ? VIRTUAL_ACTIVITIES_ACTIONS.cancel
+          : VIRTUAL_ACTIVITIES_ACTIONS.edit,
         payload,
         activityId: activity.id
       }
@@ -304,7 +320,7 @@ async function createExpenditure(
     type: ADMIN_ACTIONS.addVirtualExpenditureAction,
     payload: {
       virtualExpenditureAction: {
-        action: "create",
+        action: VIRTUAL_EXPENDITURES_ACTIONS.create,
         payload: expenditure,
         expenditureId: newId
       }
@@ -321,7 +337,7 @@ async function cancelExpenditure(api, mission, adminStore, { expenditure }) {
     type: ADMIN_ACTIONS.addVirtualExpenditureAction,
     payload: {
       virtualExpenditureAction: {
-        action: "cancel",
+        action: VIRTUAL_EXPENDITURES_ACTIONS.cancel,
         payload: { expenditureId: expenditure.id }
       }
     }

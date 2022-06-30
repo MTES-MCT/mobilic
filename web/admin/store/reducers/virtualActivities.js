@@ -1,8 +1,10 @@
+import { VIRTUAL_ACTIVITIES_ACTIONS } from "../store";
+
 export const reduceVirtualActivities = (previousArray, newVirtualActivity) => {
   switch (newVirtualActivity.action) {
-    case "CREATE":
+    case VIRTUAL_ACTIVITIES_ACTIONS.create:
       return [...previousArray, newVirtualActivity];
-    case "CANCEL":
+    case VIRTUAL_ACTIVITIES_ACTIONS.cancel:
       if (
         previousArray.find(v => v.activityId === newVirtualActivity.activityId)
       ) {
@@ -16,7 +18,7 @@ export const reduceVirtualActivities = (previousArray, newVirtualActivity) => {
         // need to cancel existing activity
         return [...previousArray, newVirtualActivity];
       }
-    case "EDIT":
+    case VIRTUAL_ACTIVITIES_ACTIONS.edit:
       if (
         previousArray.find(v => v.activityId === newVirtualActivity.activityId)
       ) {

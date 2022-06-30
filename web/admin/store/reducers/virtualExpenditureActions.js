@@ -1,9 +1,11 @@
+import { VIRTUAL_EXPENDITURES_ACTIONS } from "../store";
+
 export function addVirtualExpenditureActionReducer(
   state,
   { virtualExpenditureAction }
 ) {
   if (
-    virtualExpenditureAction.action === "cancel" &&
+    virtualExpenditureAction.action === VIRTUAL_EXPENDITURES_ACTIONS.cancel &&
     state.virtualExpenditureActions.find(
       v => v.expenditureId === virtualExpenditureAction.payload.expenditureId
     )
