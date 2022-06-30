@@ -129,6 +129,14 @@ function _Admin() {
     }
   }
 
+  async function refreshData() {
+    if (adminStore.companyId) {
+      loadDataCompanyDetails();
+    } else {
+      loadDataCompaniesList();
+    }
+  }
+
   React.useEffect(() => {
     if (shouldRefreshData.value) loadDataCompaniesList();
   }, [adminStore.userId]);
@@ -138,11 +146,7 @@ function _Admin() {
       location.pathname.startsWith("/admin/activities") &&
       shouldRefreshData.value
     )
-      if (adminStore.companyId) {
-        loadDataCompanyDetails();
-      } else {
-        loadDataCompaniesList();
-      }
+      refreshData();
   }, [location]);
 
   React.useEffect(() => {
@@ -160,6 +164,7 @@ function _Admin() {
       key={1}
       width={width}
       setShouldRefreshData={shouldRefreshDataSetter}
+      refreshData={refreshData}
     >
       <Container
         key={1}
