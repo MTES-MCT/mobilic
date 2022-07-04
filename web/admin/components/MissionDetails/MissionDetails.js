@@ -484,8 +484,11 @@ export function MissionDetails({
                               }),
                             handleRevisionAction:
                               missionActions.editSingleActivity,
-                            handleSeveralActions:
-                              missionActions.severalActionsActivity,
+                            handleSeveralActions: actions =>
+                              missionActions.severalActionsActivity({
+                                actions,
+                                user: e.user
+                              }),
                             adminMode: true,
                             allowTransfers,
                             allowSupportActivity,
@@ -518,8 +521,11 @@ export function MissionDetails({
                                 ...args,
                                 user: e.user
                               }),
-                            handleSeveralActions:
-                              missionActions.severalActionsActivity,
+                            handleSeveralActions: actions =>
+                              missionActions.severalActionsActivity({
+                                actions,
+                                user: e.user
+                              }),
                             adminMode: true,
                             allowTransfers,
                             allowSupportActivity,

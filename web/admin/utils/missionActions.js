@@ -120,7 +120,7 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
   let tmpVirtualActivities = adminStore.virtualActivities;
   const toDispatch = [];
 
-  for (const arg of modalArgs) {
+  for (const arg of modalArgs.actions) {
     if (arg.type === VIRTUAL_ACTIVITIES_ACTIONS.edit) {
       const {
         activity,
