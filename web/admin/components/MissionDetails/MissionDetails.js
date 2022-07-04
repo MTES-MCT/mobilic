@@ -133,9 +133,6 @@ export function MissionDetails({
     entriesToValidateByAdmin.map(workerEntryToValidate => {
       missionActions.validateMission(workerEntryToValidate.user.id);
     });
-    adminStore.dispatch({
-      type: ADMIN_ACTIONS.resetVirtual
-    });
     setLoading(false);
   };
 

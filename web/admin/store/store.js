@@ -37,7 +37,8 @@ export function AdminStoreProvider({ children }) {
       minDate: isoFormatLocalDate(getStartOfMonth(now()))
     },
     virtualActivities: [],
-    virtualExpenditureActions: []
+    virtualExpenditureActions: [],
+    originalMissions: []
   });
 
   function dispatch(action) {

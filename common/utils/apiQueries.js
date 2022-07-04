@@ -1053,6 +1053,7 @@ export const TERMINATE_KNOWN_ADDRESS_MUTATION = gql`
 export const VALIDATE_MISSION_MUTATION = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
+  ${FULL_MISSION_FRAGMENT}
   mutation validateMission(
     $missionId: Int!
     $userId: Int
@@ -1075,31 +1076,7 @@ export const VALIDATE_MISSION_MUTATION = gql`
         receptionTime
         userId
         mission {
-          id
-          name
-          context
-          vehicle {
-            id
-            name
-            registrationNumber
-          }
-          submitter {
-            id
-            firstName
-            lastName
-          }
-          company {
-            id
-            name
-            siren
-            ...CompanySettings
-          }
-          startLocation {
-            ...FullLocation
-          }
-          endLocation {
-            ...FullLocation
-          }
+          ...FullMissionData
         }
       }
     }

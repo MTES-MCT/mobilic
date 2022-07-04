@@ -19,8 +19,7 @@ const MissionDrawerContext = React.createContext(() => {});
 
 export function MissionDrawerContextProvider({
   children,
-  setShouldRefreshData,
-  onCloseDrawer
+  setShouldRefreshData
 }) {
   const location = useLocation();
   const modals = useModals();
@@ -30,13 +29,27 @@ export function MissionDrawerContextProvider({
 
   const adminStore = useAdminStore();
 
-  const reset = () => {
+  const reset = (revert = false) => {
     adminStore.dispatch({
       type: ADMIN_ACTIONS.resetVirtual
     });
+    if (revert) {
+      adminStore.dispatch({
+        type: ADMIN_ACTIONS.revertMissionToOriginalValues,
+        payload: { missionId: missionIdOnFocus }
+      });
+    }
     setMissionIdOnFocus(null);
-    onCloseDrawer();
   };
+
+  React.useEffect(() => {
+    if (missionIdOnFocus) {
+      adminStore.dispatch({
+        type: ADMIN_ACTIONS.putAsideOriginalMissions,
+        payload: { missionId: missionIdOnFocus }
+      });
+    }
+  }, [missionIdOnFocus]);
 
   const onClose = () => {
     if (
@@ -54,7 +67,7 @@ export function MissionDrawerContextProvider({
           </Alert>
         ),
         handleConfirm: () => {
-          reset();
+          reset(true);
         }
       });
     } else {

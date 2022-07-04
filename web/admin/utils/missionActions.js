@@ -365,7 +365,16 @@ async function validateMission(api, mission, adminStore, userToValidate) {
     ),
     ...getPayloadFromVirtualExpenditures(adminStore.virtualExpenditureActions)
   });
+  adminStore.dispatch({
+    type: ADMIN_ACTIONS.resetVirtual
+  });
   const validation = apiResponse.data.activities.validateMission;
+  mission.activies = [
+    ...apiResponse.data.activities.validateMission.mission.activities
+  ];
+  mission.expenditures = [
+    ...apiResponse.data.activities.validateMission.mission.expenditures
+  ];
   mission.validations.push(validation);
 }
 
