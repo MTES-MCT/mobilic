@@ -146,7 +146,7 @@ export default function ActivityRevisionOrCreationModal({
         return {
           type: VIRTUAL_ACTIVITIES_ACTIONS.create,
           payload: {
-            actionType: op.type,
+            activityType: op.type,
             startTime: op.startTime,
             endTime: op.endTime,
             driverId: op.driverId,
