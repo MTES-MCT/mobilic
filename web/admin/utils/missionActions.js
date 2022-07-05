@@ -369,7 +369,7 @@ async function validateMission(api, mission, adminStore, userToValidate) {
     type: ADMIN_ACTIONS.resetVirtual
   });
   const validation = apiResponse.data.activities.validateMission;
-  mission.activies = [
+  mission.activities = [
     ...apiResponse.data.activities.validateMission.mission.activities
   ];
   mission.expenditures = [
