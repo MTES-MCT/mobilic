@@ -141,7 +141,6 @@ export default function ActivityRevisionOrCreationModal({
   }
 
   async function changeActivitiesAdmin(sideEffectOperations, actionType) {
-    console.log("changeActivitiesAdmin", sideEffectOperations, actionType);
     const actionsToDo = sideEffectOperations.map(op => {
       if (op.operation === ACTIVITIES_OPERATIONS.create) {
         return {
