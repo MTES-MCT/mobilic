@@ -182,7 +182,8 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
       tmpVirtualActivities = reduceVirtualActivities(tmpVirtualActivities, {
         action: VIRTUAL_ACTIVITIES_ACTIONS.create,
         payload,
-        activityId: uuidv4()
+        activityId: uuidv4(),
+        virtual: true
       });
 
       // check ok
@@ -200,7 +201,8 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
           virtualActivity: {
             action: VIRTUAL_ACTIVITIES_ACTIONS.create,
             payload,
-            activityId: activity.id
+            activityId: activity.id,
+            virtual: true
           }
         }
       });
