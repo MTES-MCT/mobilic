@@ -29,6 +29,7 @@ import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
 import OverlappedActivityList from "./OverlappedActivityList";
 import _ from "lodash";
+import { VIRTUAL_ACTIVITIES_ACTIONS } from "../../../admin/store/store";
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -49,6 +50,8 @@ export default function ActivityRevisionOrCreationModal({
   allowSupportActivity = true,
   allowTransfers = false,
   createActivity,
+  handleSeveralActions,
+  adminMode = false,
   defaultTime = null,
   forcedUser = null,
   displayWarningMessage = true
@@ -81,6 +84,12 @@ export default function ActivityRevisionOrCreationModal({
   const activityType = event ? event.type : newActivityType;
 
   async function changeActivities(sideEffectOperations, actionType) {
+    adminMode
+      ? await changeActivitiesAdmin(sideEffectOperations, actionType)
+      : await changeActivitiesEmployee(sideEffectOperations, actionType);
+  }
+
+  async function changeActivitiesEmployee(sideEffectOperations, actionType) {
     await Promise.all(
       sideEffectOperations.map(op => {
         if (op.operation === ACTIVITIES_OPERATIONS.create) {
@@ -129,6 +138,71 @@ export default function ActivityRevisionOrCreationModal({
         );
       }
     }
+  }
+
+  async function changeActivitiesAdmin(sideEffectOperations, actionType) {
+    const actionsToDo = sideEffectOperations.map(op => {
+      if (op.operation === ACTIVITIES_OPERATIONS.create) {
+        return {
+          type: VIRTUAL_ACTIVITIES_ACTIONS.create,
+          payload: {
+            activityType: op.type,
+            startTime: op.startTime,
+            endTime: op.endTime,
+            driverId: op.driverId,
+            userComment,
+            team: teamMode
+              ? uniq([userId, ...resolveTeamAt(teamChanges, op.startTime)])
+              : [userId],
+            user: forcedUser
+          }
+        };
+      } else {
+        return {
+          type: VIRTUAL_ACTIVITIES_ACTIONS.edit,
+          payload: {
+            activity: op.activity,
+            actionType: op.operation,
+            newStartTime: op.startTime,
+            newEndTime: op.endTime,
+            userComment,
+            teamMode
+          }
+        };
+      }
+    });
+
+    if (activityType !== ACTIVITIES.break.name) {
+      if (actionType === ACTIVITIES_OPERATIONS.create) {
+        let driverId = null;
+        if (requiresDriver()) driverId = newActivityDriverId;
+        actionsToDo.push({
+          type: VIRTUAL_ACTIVITIES_ACTIONS.create,
+          payload: {
+            activityType: newActivityType,
+            startTime: newUserTime,
+            endTime: newUserEndTime,
+            driverId: driverId,
+            userComment: userComment,
+            team: teamMode ? team : [userId],
+            user: forcedUser
+          }
+        });
+      } else {
+        actionsToDo.push({
+          type: VIRTUAL_ACTIVITIES_ACTIONS.edit,
+          payload: {
+            activity: event,
+            actionType,
+            newStartTime: newUserTime,
+            newEndTime: newUserEndTime,
+            userComment,
+            teamMode
+          }
+        });
+      }
+    }
+    await handleSeveralActions(actionsToDo);
   }
 
   async function handleSubmit(actionType) {

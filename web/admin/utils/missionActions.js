@@ -1,14 +1,10 @@
-import { ACTIVITIES, ACTIVITIES_OPERATIONS } from "common/utils/activities";
+import { v4 as uuidv4 } from "uuid";
 import {
   buildLogLocationPayloadFromAddress,
-  CANCEL_ACTIVITY_MUTATION,
+  BULK_ACTIVITY_QUERY,
   CANCEL_COMMENT_MUTATION,
-  CANCEL_EXPENDITURE_MUTATION,
   CHANGE_MISSION_NAME_MUTATION,
-  EDIT_ACTIVITY_MUTATION,
-  LOG_ACTIVITY_MUTATION,
   LOG_COMMENT_MUTATION,
-  LOG_EXPENDITURE_MUTATION,
   LOG_LOCATION_MUTATION,
   REGISTER_KILOMETER_AT_LOCATION,
   UPDATE_MISSION_VEHICLE_MUTATION,
@@ -16,120 +12,172 @@ import {
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useApi } from "common/utils/api";
-import { useAdminStore } from "../store/store";
+import {
+  useAdminStore,
+  VIRTUAL_ACTIVITIES_ACTIONS,
+  VIRTUAL_EXPENDITURES_ACTIONS
+} from "../store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { sameMinute } from "common/utils/time";
 import { currentUserId } from "common/utils/cookie";
+import { reduceVirtualActivities } from "../store/reducers/virtualActivities";
+import {
+  getPayloadCreateActivity,
+  getPayloadFromVirtualActivities,
+  getPayloadFromVirtualExpenditures,
+  getPayloadUpdateActivity
+} from "./virtualPayloads";
 
-async function createSingleActivity(api, mission, modalArgs) {
-  let activityType = modalArgs.activityType;
-  if (
-    modalArgs.activityType === ACTIVITIES.drive.name &&
-    modalArgs.driverId &&
-    modalArgs.user.id !== modalArgs.driverId
-  ) {
-    activityType = ACTIVITIES.support.name;
-  }
-  const payload = {
-    type: activityType,
-    startTime: modalArgs.startTime,
-    endTime: modalArgs.endTime,
-    missionId: mission.id,
-    userId: modalArgs.user.id,
-    switch: false
-  };
-
-  if (modalArgs.userComment)
-    payload.context = { userComment: modalArgs.userComment };
-
-  const apiResponse = await api.nonConcurrentQueryQueue.execute(() =>
-    api.graphQlMutate(LOG_ACTIVITY_MUTATION, payload)
-  );
-  const activity = apiResponse.data.activities.logActivity;
-  mission.activities = [
-    ...mission.activities,
-    { ...activity, user: modalArgs.user }
-  ];
-}
-
-async function editSingleActivity(
-  api,
-  mission,
-  activity,
-  actionType,
-  newStartTime,
-  newEndTime,
-  userComment
-) {
-  const payload = {
-    activityId: activity.id
-  };
-  if (userComment) payload.context = { userComment };
-
-  let shouldCancel = actionType === ACTIVITIES_OPERATIONS.cancel;
-
-  const updatedStartTime = newStartTime || activity.startTime;
-  const updatedEndTime = newEndTime || activity.endTime;
-  if (updatedEndTime && sameMinute(updatedStartTime, updatedEndTime)) {
-    shouldCancel = true;
-  }
-  if (!shouldCancel) {
-    payload.startTime = newStartTime;
-    payload.endTime = newEndTime;
-    payload.removeEndTime = !newEndTime;
-  }
-
-  await api.nonConcurrentQueryQueue.execute(() =>
-    api.graphQlMutate(
-      shouldCancel ? CANCEL_ACTIVITY_MUTATION : EDIT_ACTIVITY_MUTATION,
-      payload
-    )
-  );
-  if (shouldCancel) {
-    mission.activities = mission.activities.filter(a => a.id !== activity.id);
-  } else {
-    mission.activities = mission.activities.map(a =>
-      a.id === activity.id
-        ? {
-            ...a,
-            startTime: newStartTime,
-            endTime: newEndTime,
-            lastSubmitterId: currentUserId()
-          }
-        : a
+const testBulkActivities = async (api, virtualActivities) => {
+  if (virtualActivities.length > 0) {
+    return await api.nonConcurrentQueryQueue.execute(() =>
+      api.graphQlQuery(BULK_ACTIVITY_QUERY, {
+        items: getPayloadFromVirtualActivities(virtualActivities)
+      })
     );
   }
+};
+
+async function severalActionsActivity(api, mission, adminStore, modalArgs) {
+  let tmpVirtualActivities = adminStore.virtualActivities;
+  const toDispatch = [];
+
+  for (const arg of modalArgs.actions) {
+    if (arg.type === VIRTUAL_ACTIVITIES_ACTIONS.edit) {
+      const {
+        activity,
+        actionType,
+        newStartTime,
+        newEndTime,
+        userComment
+      } = arg.payload;
+      const { payload, shouldCancel } = getPayloadUpdateActivity(
+        activity,
+        actionType,
+        newStartTime,
+        newEndTime,
+        userComment
+      );
+      tmpVirtualActivities = reduceVirtualActivities(tmpVirtualActivities, {
+        action: shouldCancel
+          ? VIRTUAL_ACTIVITIES_ACTIONS.cancel
+          : VIRTUAL_ACTIVITIES_ACTIONS.edit,
+        payload,
+        activityId: activity.id
+      });
+
+      // check ok
+      await testBulkActivities(api, tmpVirtualActivities);
+
+      // update
+      if (shouldCancel) {
+        mission.activities = mission.activities.filter(
+          a => a.id !== activity.id
+        );
+      } else {
+        mission.activities = mission.activities.map(a =>
+          a.id === activity.id
+            ? {
+                ...a,
+                startTime: newStartTime,
+                endTime: newEndTime,
+                lastSubmitterId: currentUserId()
+              }
+            : a
+        );
+      }
+      toDispatch.push({
+        type: ADMIN_ACTIONS.addVirtualActivity,
+        payload: {
+          virtualActivity: {
+            action: shouldCancel
+              ? VIRTUAL_ACTIVITIES_ACTIONS.cancel
+              : VIRTUAL_ACTIVITIES_ACTIONS.edit,
+            payload,
+            activityId: activity.id
+          }
+        }
+      });
+    }
+    if (arg.type === VIRTUAL_ACTIVITIES_ACTIONS.create) {
+      const payload = getPayloadCreateActivity(arg.payload, mission);
+      tmpVirtualActivities = reduceVirtualActivities(tmpVirtualActivities, {
+        action: VIRTUAL_ACTIVITIES_ACTIONS.create,
+        payload,
+        activityId: uuidv4(),
+        virtual: true
+      });
+
+      // check ok
+      const apiResponse = await testBulkActivities(api, tmpVirtualActivities);
+
+      // apply changes
+      const activity = apiResponse.data.output;
+      mission.activities = [
+        ...mission.activities,
+        { ...activity, user: modalArgs.user }
+      ];
+      toDispatch.push({
+        type: ADMIN_ACTIONS.addVirtualActivity,
+        payload: {
+          virtualActivity: {
+            action: VIRTUAL_ACTIVITIES_ACTIONS.create,
+            payload,
+            activityId: activity.id,
+            virtual: true
+          }
+        }
+      });
+    }
+  }
+
+  toDispatch.forEach(payload => adminStore.dispatch(payload));
 }
 
 async function createExpenditure(
   api,
   mission,
+  adminStore,
   { type, spendingDate, userId = null }
 ) {
-  const apiResponse = await api.nonConcurrentQueryQueue.execute(() =>
-    api.graphQlMutate(LOG_EXPENDITURE_MUTATION, {
-      type,
-      userId,
-      missionId: mission.id,
-      spendingDate: spendingDate
-    })
-  );
-  const expenditure = apiResponse.data.activities.logExpenditure;
-  mission.expenditures.push(expenditure);
+  const expenditure = {
+    type,
+    userId,
+    missionId: mission.id,
+    spendingDate: spendingDate
+  };
+  const newId = uuidv4();
+  adminStore.dispatch({
+    type: ADMIN_ACTIONS.addVirtualExpenditureAction,
+    payload: {
+      virtualExpenditureAction: {
+        action: VIRTUAL_EXPENDITURES_ACTIONS.create,
+        payload: expenditure,
+        expenditureId: newId
+      }
+    }
+  });
+  mission.expenditures.push({
+    ...expenditure,
+    id: newId
+  });
 }
 
-async function cancelExpenditure(api, mission, { expenditure }) {
-  await api.nonConcurrentQueryQueue.execute(() =>
-    api.graphQlMutate(CANCEL_EXPENDITURE_MUTATION, {
-      expenditureId: expenditure.id
-    })
-  );
+async function cancelExpenditure(api, mission, adminStore, { expenditure }) {
+  adminStore.dispatch({
+    type: ADMIN_ACTIONS.addVirtualExpenditureAction,
+    payload: {
+      virtualExpenditureAction: {
+        action: VIRTUAL_EXPENDITURES_ACTIONS.cancel,
+        payload: { expenditureId: expenditure.id }
+      }
+    }
+  });
   mission.expenditures = mission.expenditures.filter(
     e => e.id !== expenditure.id
   );
 }
 
-async function createComment(api, mission, text) {
+async function createComment(api, mission, adminStore, text) {
   const apiResponse = await api.graphQlMutate(LOG_COMMENT_MUTATION, {
     text,
     missionId: mission.id
@@ -138,23 +186,36 @@ async function createComment(api, mission, text) {
   mission.comments.push(comment);
 }
 
-async function validateMission(api, mission, userToValidate) {
+async function validateMission(api, mission, adminStore, userToValidate) {
   const apiResponse = await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
     missionId: mission.id,
-    userId: userToValidate
+    userId: userToValidate,
+    activityItems: getPayloadFromVirtualActivities(
+      adminStore.virtualActivities
+    ),
+    ...getPayloadFromVirtualExpenditures(adminStore.virtualExpenditureActions)
+  });
+  adminStore.dispatch({
+    type: ADMIN_ACTIONS.resetVirtual
   });
   const validation = apiResponse.data.activities.validateMission;
+  mission.activities = [
+    ...apiResponse.data.activities.validateMission.mission.activities
+  ];
+  mission.expenditures = [
+    ...apiResponse.data.activities.validateMission.mission.expenditures
+  ];
   mission.validations.push(validation);
 }
 
-async function deleteComment(api, mission, comment) {
+async function deleteComment(api, mission, adminStore, comment) {
   await api.graphQlMutate(CANCEL_COMMENT_MUTATION, {
     commentId: comment.id
   });
   mission.comments = mission.comments.filter(c => c.id !== comment.id);
 }
 
-async function changeName(api, mission, name) {
+async function changeName(api, mission, adminStore, name) {
   await api.graphQlMutate(CHANGE_MISSION_NAME_MUTATION, {
     missionId: mission.id,
     name
@@ -162,7 +223,7 @@ async function changeName(api, mission, name) {
   mission.name = name;
 }
 
-async function updateVehicle(api, mission, vehicle) {
+async function updateVehicle(api, mission, adminStore, vehicle) {
   await api.graphQlMutate(UPDATE_MISSION_VEHICLE_MUTATION, {
     missionId: mission.id,
     vehicleId: vehicle.id,
@@ -174,6 +235,7 @@ async function updateVehicle(api, mission, vehicle) {
 async function updateLocation(
   api,
   mission,
+  adminStore,
   address,
   isStart,
   kilometerReading
@@ -193,7 +255,13 @@ async function updateLocation(
     apiResponse.data.activities.logLocation;
 }
 
-async function updateKilometerReading(api, mission, kilometerReading, isStart) {
+async function updateKilometerReading(
+  api,
+  mission,
+  adminStore,
+  kilometerReading,
+  isStart
+) {
   await api.graphQlMutate(REGISTER_KILOMETER_AT_LOCATION, {
     missionLocationId: mission[isStart ? "startLocation" : "endLocation"].id,
     kilometerReading
@@ -216,7 +284,7 @@ const missionActionWrapper = (
     if (shouldRefreshActivityPanel) {
       setShouldRefreshActivityPanel(true);
     }
-    await action(api, mission, ...args);
+    await action(api, mission, adminStore, ...args);
     setMission({ ...mission });
     adminStore.dispatch({
       type: ADMIN_ACTIONS.update,
@@ -244,8 +312,7 @@ export function useMissionActions(
   );
 
   return {
-    createSingleActivity: missionActionsDecorator(createSingleActivity),
-    editSingleActivity: missionActionsDecorator(editSingleActivity),
+    severalActionsActivity: missionActionsDecorator(severalActionsActivity),
     createExpenditure: missionActionsDecorator(createExpenditure),
     cancelExpenditure: missionActionsDecorator(cancelExpenditure),
     validateMission: missionActionsDecorator(validateMission),
