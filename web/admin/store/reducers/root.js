@@ -4,7 +4,11 @@ import {
   createExpenditureReducer,
   deleteExpenditureReducer
 } from "./expenditure";
-import { validateMissionReducer } from "./mission";
+import {
+  putAsideOriginalMissionsReducer,
+  revertMissionToOriginalValuesReducer,
+  validateMissionReducer
+} from "./mission";
 import { addWorkDaysReducer } from "./workDays";
 import {
   updateCompaniesListReducer,
@@ -43,7 +47,9 @@ export const ADMIN_ACTIONS = {
   addVirtualActivity: addVirtualActivityReducer,
   addVirtualExpenditureAction: addVirtualExpenditureActionReducer,
   resetVirtual: resetVirtualReducer,
-  addUsers: addUsersReducer
+  addUsers: addUsersReducer,
+  putAsideOriginalMissions: putAsideOriginalMissionsReducer,
+  revertMissionToOriginalValues: revertMissionToOriginalValuesReducer
 };
 
 const ADMIN_REDUCERS = {};

@@ -1,15 +1,14 @@
 import { v4 as uuidv4 } from "uuid";
-import { ACTIVITIES, ACTIVITIES_OPERATIONS } from "common/utils/activities";
 import {
   buildLogLocationPayloadFromAddress,
+  BULK_ACTIVITY_QUERY,
   CANCEL_COMMENT_MUTATION,
   CHANGE_MISSION_NAME_MUTATION,
   LOG_COMMENT_MUTATION,
   LOG_LOCATION_MUTATION,
   REGISTER_KILOMETER_AT_LOCATION,
   UPDATE_MISSION_VEHICLE_MUTATION,
-  VALIDATE_MISSION_MUTATION,
-  BULK_ACTIVITY_QUERY
+  VALIDATE_MISSION_MUTATION
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useApi } from "common/utils/api";
@@ -19,41 +18,14 @@ import {
   VIRTUAL_EXPENDITURES_ACTIONS
 } from "../store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { sameMinute } from "common/utils/time";
 import { currentUserId } from "common/utils/cookie";
 import { reduceVirtualActivities } from "../store/reducers/virtualActivities";
-
-export const getPayloadFromVirtualActivities = virtualActivities => {
-  return virtualActivities.map(virtualActivity => {
-    const verb =
-      virtualActivity.action === VIRTUAL_ACTIVITIES_ACTIONS.create
-        ? "log"
-        : virtualActivity.action === VIRTUAL_ACTIVITIES_ACTIONS.edit
-        ? "edit"
-        : "cancel";
-
-    return {
-      [verb]: { ...virtualActivity.payload }
-    };
-  });
-};
-
-export const getPayloadFromVirtualExpenditures = expenditureActions => {
-  return {
-    expendituresCancelIds: expenditureActions
-      .filter(
-        expenditureAction =>
-          expenditureAction.action === VIRTUAL_EXPENDITURES_ACTIONS.cancel
-      )
-      .map(expenditureAction => expenditureAction.payload.expenditureId),
-    expendituresInputs: expenditureActions
-      .filter(
-        expenditureAction =>
-          expenditureAction.action === VIRTUAL_EXPENDITURES_ACTIONS.create
-      )
-      .map(expenditureAction => expenditureAction.payload)
-  };
-};
+import {
+  getPayloadCreateActivity,
+  getPayloadFromVirtualActivities,
+  getPayloadFromVirtualExpenditures,
+  getPayloadUpdateActivity
+} from "./virtualPayloads";
 
 const testBulkActivities = async (api, virtualActivities) => {
   if (virtualActivities.length > 0) {
@@ -64,63 +36,12 @@ const testBulkActivities = async (api, virtualActivities) => {
     );
   }
 };
-const getPayloadCreate = (args, mission) => {
-  let activityType = args.activityType;
-  if (
-    args.activityType === ACTIVITIES.drive.name &&
-    args.driverId &&
-    args.user.id !== args.driverId
-  ) {
-    activityType = ACTIVITIES.support.name;
-  }
-  const payload = {
-    type: activityType,
-    startTime: args.startTime,
-    endTime: args.endTime,
-    missionId: mission.id,
-    userId: args.user.id,
-    switch: false
-  };
-  if (args.userComment) payload.context = { userComment: args.userComment };
-  return payload;
-};
-
-const getPayloadUpdate = (
-  activity,
-  actionType,
-  newStartTime,
-  newEndTime,
-  userComment
-) => {
-  const activityId = activity.id;
-  const payload = {
-    activityId
-  };
-  if (userComment) payload.context = { userComment };
-  let shouldCancel = actionType === ACTIVITIES_OPERATIONS.cancel;
-
-  const updatedStartTime = newStartTime || activity.startTime;
-  const updatedEndTime = newEndTime || activity.endTime;
-  if (updatedEndTime && sameMinute(updatedStartTime, updatedEndTime)) {
-    shouldCancel = true;
-  }
-
-  if (!shouldCancel) {
-    payload.startTime = newStartTime;
-    payload.endTime = newEndTime;
-    payload.removeEndTime = !newEndTime;
-  }
-  return {
-    payload,
-    shouldCancel
-  };
-};
 
 async function severalActionsActivity(api, mission, adminStore, modalArgs) {
   let tmpVirtualActivities = adminStore.virtualActivities;
   const toDispatch = [];
 
-  for (const arg of modalArgs) {
+  for (const arg of modalArgs.actions) {
     if (arg.type === VIRTUAL_ACTIVITIES_ACTIONS.edit) {
       const {
         activity,
@@ -129,7 +50,7 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
         newEndTime,
         userComment
       } = arg.payload;
-      const { payload, shouldCancel } = getPayloadUpdate(
+      const { payload, shouldCancel } = getPayloadUpdateActivity(
         activity,
         actionType,
         newStartTime,
@@ -178,11 +99,12 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
       });
     }
     if (arg.type === VIRTUAL_ACTIVITIES_ACTIONS.create) {
-      const payload = getPayloadCreate(arg.payload, mission);
+      const payload = getPayloadCreateActivity(arg.payload, mission);
       tmpVirtualActivities = reduceVirtualActivities(tmpVirtualActivities, {
         action: VIRTUAL_ACTIVITIES_ACTIONS.create,
         payload,
-        activityId: uuidv4()
+        activityId: uuidv4(),
+        virtual: true
       });
 
       // check ok
@@ -200,7 +122,8 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
           virtualActivity: {
             action: VIRTUAL_ACTIVITIES_ACTIONS.create,
             payload,
-            activityId: activity.id
+            activityId: activity.id,
+            virtual: true
           }
         }
       });
@@ -208,99 +131,6 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
   }
 
   toDispatch.forEach(payload => adminStore.dispatch(payload));
-}
-
-async function createSingleActivity(api, mission, adminStore, modalArgs) {
-  const payload = getPayloadCreate(modalArgs, mission);
-
-  const tmpNewVirtualActivity = {
-    action: VIRTUAL_ACTIVITIES_ACTIONS.create,
-    payload,
-    activityId: uuidv4()
-  };
-  // let's validate adding new virtual activity would be ok
-  const apiResponse = await testBulkActivities(
-    api,
-    reduceVirtualActivities(adminStore.virtualActivities, tmpNewVirtualActivity)
-  );
-  const activity = apiResponse.data.activities.bulkActivities;
-  mission.activities = [
-    ...mission.activities,
-    { ...activity, user: modalArgs.user }
-  ];
-
-  adminStore.dispatch({
-    type: ADMIN_ACTIONS.addVirtualActivity,
-    payload: {
-      virtualActivity: {
-        action: VIRTUAL_ACTIVITIES_ACTIONS.create,
-        payload,
-        activityId: activity.id
-      }
-    }
-  });
-}
-
-async function editSingleActivity(
-  api,
-  mission,
-  adminStore,
-  activity,
-  actionType,
-  newStartTime,
-  newEndTime,
-  userComment
-) {
-  const { payload, shouldCancel } = getPayloadUpdate(
-    activity,
-    actionType,
-    newStartTime,
-    newEndTime,
-    userComment
-  );
-
-  if (!shouldCancel) {
-    // check if edit is ok or not
-    const tmpNewVirtualActivity = {
-      action: VIRTUAL_ACTIVITIES_ACTIONS.edit,
-      payload,
-      activityId: activity.id
-    };
-    await testBulkActivities(
-      api,
-      reduceVirtualActivities(
-        adminStore.virtualActivities,
-        tmpNewVirtualActivity
-      )
-    );
-  }
-
-  if (shouldCancel) {
-    mission.activities = mission.activities.filter(a => a.id !== activity.id);
-  } else {
-    mission.activities = mission.activities.map(a =>
-      a.id === activity.id
-        ? {
-            ...a,
-            startTime: newStartTime,
-            endTime: newEndTime,
-            lastSubmitterId: currentUserId()
-          }
-        : a
-    );
-  }
-  adminStore.dispatch({
-    type: ADMIN_ACTIONS.addVirtualActivity,
-    payload: {
-      virtualActivity: {
-        action: shouldCancel
-          ? VIRTUAL_ACTIVITIES_ACTIONS.cancel
-          : VIRTUAL_ACTIVITIES_ACTIONS.edit,
-        payload,
-        activityId: activity.id
-      }
-    }
-  });
 }
 
 async function createExpenditure(
@@ -365,7 +195,16 @@ async function validateMission(api, mission, adminStore, userToValidate) {
     ),
     ...getPayloadFromVirtualExpenditures(adminStore.virtualExpenditureActions)
   });
+  adminStore.dispatch({
+    type: ADMIN_ACTIONS.resetVirtual
+  });
   const validation = apiResponse.data.activities.validateMission;
+  mission.activities = [
+    ...apiResponse.data.activities.validateMission.mission.activities
+  ];
+  mission.expenditures = [
+    ...apiResponse.data.activities.validateMission.mission.expenditures
+  ];
   mission.validations.push(validation);
 }
 
@@ -473,8 +312,6 @@ export function useMissionActions(
   );
 
   return {
-    createSingleActivity: missionActionsDecorator(createSingleActivity),
-    editSingleActivity: missionActionsDecorator(editSingleActivity),
     severalActionsActivity: missionActionsDecorator(severalActionsActivity),
     createExpenditure: missionActionsDecorator(createExpenditure),
     cancelExpenditure: missionActionsDecorator(cancelExpenditure),

@@ -19,7 +19,7 @@ export function MissionNamesList({ missionNames, openMission }) {
           onClick={e => {
             e.stopPropagation();
             trackEvent(OPEN_MISSION_DRAWER_IN_ACTIVITY_PANEL);
-            openMission(id);
+            openMission(parseInt(id));
           }}
         >
           {name}

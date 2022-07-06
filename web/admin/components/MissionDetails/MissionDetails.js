@@ -133,9 +133,6 @@ export function MissionDetails({
     entriesToValidateByAdmin.map(workerEntryToValidate => {
       missionActions.validateMission(workerEntryToValidate.user.id);
     });
-    adminStore.dispatch({
-      type: ADMIN_ACTIONS.resetVirtual
-    });
     setLoading(false);
   };
 
@@ -480,15 +477,11 @@ export function MissionDetails({
                       ? () =>
                           modals.open("activityRevision", {
                             otherActivities: mission.activities,
-                            createActivity: async args =>
-                              await missionActions.createSingleActivity({
-                                ...args,
+                            handleSeveralActions: actions =>
+                              missionActions.severalActionsActivity({
+                                actions,
                                 user: e.user
                               }),
-                            handleRevisionAction:
-                              missionActions.editSingleActivity,
-                            handleSeveralActions:
-                              missionActions.severalActionsActivity,
                             adminMode: true,
                             allowTransfers,
                             allowSupportActivity,
@@ -514,15 +507,11 @@ export function MissionDetails({
                                 : mission.activities.filter(
                                     a => a.startTime !== entry.startTime
                                   ),
-                            handleRevisionAction:
-                              missionActions.editSingleActivity,
-                            createActivity: async args =>
-                              await missionActions.createSingleActivity({
-                                ...args,
+                            handleSeveralActions: actions =>
+                              missionActions.severalActionsActivity({
+                                actions,
                                 user: e.user
                               }),
-                            handleSeveralActions:
-                              missionActions.severalActionsActivity,
                             adminMode: true,
                             allowTransfers,
                             allowSupportActivity,
