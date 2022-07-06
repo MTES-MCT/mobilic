@@ -1,15 +1,14 @@
 import { v4 as uuidv4 } from "uuid";
-import { ACTIVITIES, ACTIVITIES_OPERATIONS } from "common/utils/activities";
 import {
   buildLogLocationPayloadFromAddress,
+  BULK_ACTIVITY_QUERY,
   CANCEL_COMMENT_MUTATION,
   CHANGE_MISSION_NAME_MUTATION,
   LOG_COMMENT_MUTATION,
   LOG_LOCATION_MUTATION,
   REGISTER_KILOMETER_AT_LOCATION,
   UPDATE_MISSION_VEHICLE_MUTATION,
-  VALIDATE_MISSION_MUTATION,
-  BULK_ACTIVITY_QUERY
+  VALIDATE_MISSION_MUTATION
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useApi } from "common/utils/api";
@@ -19,34 +18,14 @@ import {
   VIRTUAL_EXPENDITURES_ACTIONS
 } from "../store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { sameMinute } from "common/utils/time";
 import { currentUserId } from "common/utils/cookie";
 import { reduceVirtualActivities } from "../store/reducers/virtualActivities";
-
-export const getPayloadFromVirtualActivities = virtualActivities => {
-  return virtualActivities.map(virtualActivity => ({
-    [virtualActivity.action.backendVerb]: {
-      ...virtualActivity.payload
-    }
-  }));
-};
-
-export const getPayloadFromVirtualExpenditures = expenditureActions => {
-  return {
-    expendituresCancelIds: expenditureActions
-      .filter(
-        expenditureAction =>
-          expenditureAction.action === VIRTUAL_EXPENDITURES_ACTIONS.cancel
-      )
-      .map(expenditureAction => expenditureAction.payload.expenditureId),
-    expendituresInputs: expenditureActions
-      .filter(
-        expenditureAction =>
-          expenditureAction.action === VIRTUAL_EXPENDITURES_ACTIONS.create
-      )
-      .map(expenditureAction => expenditureAction.payload)
-  };
-};
+import {
+  getPayloadCreateActivity,
+  getPayloadFromVirtualActivities,
+  getPayloadFromVirtualExpenditures,
+  getPayloadUpdateActivity
+} from "./virtualPayloads";
 
 const testBulkActivities = async (api, virtualActivities) => {
   if (virtualActivities.length > 0) {
@@ -56,57 +35,6 @@ const testBulkActivities = async (api, virtualActivities) => {
       })
     );
   }
-};
-const getPayloadCreate = (args, mission) => {
-  let activityType = args.activityType;
-  if (
-    args.activityType === ACTIVITIES.drive.name &&
-    args.driverId &&
-    args.user.id !== args.driverId
-  ) {
-    activityType = ACTIVITIES.support.name;
-  }
-  const payload = {
-    type: activityType,
-    startTime: args.startTime,
-    endTime: args.endTime,
-    missionId: mission.id,
-    userId: args.user.id,
-    switch: false
-  };
-  if (args.userComment) payload.context = { userComment: args.userComment };
-  return payload;
-};
-
-const getPayloadUpdate = (
-  activity,
-  actionType,
-  newStartTime,
-  newEndTime,
-  userComment
-) => {
-  const activityId = activity.id;
-  const payload = {
-    activityId
-  };
-  if (userComment) payload.context = { userComment };
-  let shouldCancel = actionType === ACTIVITIES_OPERATIONS.cancel;
-
-  const updatedStartTime = newStartTime || activity.startTime;
-  const updatedEndTime = newEndTime || activity.endTime;
-  if (updatedEndTime && sameMinute(updatedStartTime, updatedEndTime)) {
-    shouldCancel = true;
-  }
-
-  if (!shouldCancel) {
-    payload.startTime = newStartTime;
-    payload.endTime = newEndTime;
-    payload.removeEndTime = !newEndTime;
-  }
-  return {
-    payload,
-    shouldCancel
-  };
 };
 
 async function severalActionsActivity(api, mission, adminStore, modalArgs) {
@@ -122,7 +50,7 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
         newEndTime,
         userComment
       } = arg.payload;
-      const { payload, shouldCancel } = getPayloadUpdate(
+      const { payload, shouldCancel } = getPayloadUpdateActivity(
         activity,
         actionType,
         newStartTime,
@@ -171,7 +99,7 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
       });
     }
     if (arg.type === VIRTUAL_ACTIVITIES_ACTIONS.create) {
-      const payload = getPayloadCreate(arg.payload, mission);
+      const payload = getPayloadCreateActivity(arg.payload, mission);
       tmpVirtualActivities = reduceVirtualActivities(tmpVirtualActivities, {
         action: VIRTUAL_ACTIVITIES_ACTIONS.create,
         payload,
