@@ -477,13 +477,6 @@ export function MissionDetails({
                       ? () =>
                           modals.open("activityRevision", {
                             otherActivities: mission.activities,
-                            createActivity: async args =>
-                              await missionActions.createSingleActivity({
-                                ...args,
-                                user: e.user
-                              }),
-                            handleRevisionAction:
-                              missionActions.editSingleActivity,
                             handleSeveralActions: actions =>
                               missionActions.severalActionsActivity({
                                 actions,
@@ -514,13 +507,6 @@ export function MissionDetails({
                                 : mission.activities.filter(
                                     a => a.startTime !== entry.startTime
                                   ),
-                            handleRevisionAction:
-                              missionActions.editSingleActivity,
-                            createActivity: async args =>
-                              await missionActions.createSingleActivity({
-                                ...args,
-                                user: e.user
-                              }),
                             handleSeveralActions: actions =>
                               missionActions.severalActionsActivity({
                                 actions,

@@ -4,9 +4,9 @@ import { adminRootReducer } from "./reducers/root";
 import { getStartOfMonth, isoFormatLocalDate, now } from "common/utils/time";
 
 export const VIRTUAL_ACTIVITIES_ACTIONS = {
-  create: "create",
-  edit: "edit",
-  cancel: "cancel"
+  create: { backendVerb: "log" },
+  edit: { backendVerb: "edit" },
+  cancel: { backendVerb: "cancel" }
 };
 
 export const VIRTUAL_EXPENDITURES_ACTIONS = {
