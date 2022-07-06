@@ -118,7 +118,7 @@ describe("virtualActivities", () => {
       const res = reduceVirtualActivities(prevArray, activity);
 
       expect(res.length).toBe(2);
-      expect(res[1]).toMatchObject({
+      expect(res[0]).toMatchObject({
         action: VIRTUAL_ACTIVITIES_ACTIONS.cancel,
         activityId: 6457
       });
