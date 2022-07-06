@@ -74,6 +74,7 @@ const USER_QUERY = gql`
             id
             name
             registrationNumber
+            lastKilometerReading
           }
         }
       }
