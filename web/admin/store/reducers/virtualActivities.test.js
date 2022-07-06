@@ -118,7 +118,7 @@ describe("virtualActivities", () => {
       const res = reduceVirtualActivities(prevArray, activity);
 
       expect(res.length).toBe(2);
-      expect(res[1]).toMatchObject({
+      expect(res[0]).toMatchObject({
         action: VIRTUAL_ACTIVITIES_ACTIONS.cancel,
         activityId: 6457
       });
@@ -127,6 +127,27 @@ describe("virtualActivities", () => {
       const prevArray = [
         {
           action: VIRTUAL_ACTIVITIES_ACTIONS.create,
+          payload: drivePayload,
+          activityId: 6454,
+          virtual: true
+        }
+      ];
+      const activity = {
+        action: VIRTUAL_ACTIVITIES_ACTIONS.cancel,
+        payload: {
+          activityId: 6454
+        },
+        activityId: 6454
+      };
+
+      const res = reduceVirtualActivities(prevArray, activity);
+
+      expect(res.length).toBe(0);
+    });
+    it("should keep the cancel action when canceling an edited existing activity", () => {
+      const prevArray = [
+        {
+          action: VIRTUAL_ACTIVITIES_ACTIONS.edit,
           payload: drivePayload,
           activityId: 6454
         }
@@ -141,7 +162,11 @@ describe("virtualActivities", () => {
 
       const res = reduceVirtualActivities(prevArray, activity);
 
-      expect(res.length).toBe(0);
+      expect(res.length).toBe(1);
+      expect(res[0]).toMatchObject({
+        action: VIRTUAL_ACTIVITIES_ACTIONS.cancel,
+        activityId: 6454
+      });
     });
   });
 });
