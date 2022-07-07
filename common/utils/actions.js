@@ -880,7 +880,8 @@ class Actions {
         address: endLocation,
         missionId: missionCurrentId,
         isStart: false,
-        kilometerReading: endKilometerReading
+        kilometerReading: endKilometerReading,
+        vehicleId: vehicle?.id
       });
 
     return missionCurrentId;
@@ -890,7 +891,8 @@ class Actions {
     address,
     missionId,
     isStart,
-    kilometerReading = null
+    kilometerReading = null,
+    vehicleId = null
   }) => {
     const formattedAddress = address.id
       ? address
@@ -921,6 +923,16 @@ class Actions {
         },
         pendingRequestId: requestId
       });
+      if (!isStart && kilometerReading && vehicleId) {
+        store.updateEntityObject({
+          objectId: vehicleId,
+          entity: "vehicles",
+          update: {
+            lastKilometerReading: kilometerReading
+          },
+          pendingRequestId: requestId
+        });
+      }
       return { missionId, isStart, missionLocationTempId: tempId };
     };
 
@@ -957,6 +969,16 @@ class Actions {
         },
         pendingRequestId: requestId
       });
+      if (!isStart && mission.vehicle && kilometerReading) {
+        store.updateEntityObject({
+          objectId: mission.vehicle.id,
+          entity: "vehicles",
+          update: {
+            lastKilometerReading: kilometerReading
+          },
+          pendingRequestId: requestId
+        });
+      }
       return {
         isStart,
         kilometerReading: kilometerReadingOrNull,
@@ -1174,7 +1196,8 @@ class Actions {
             address: endLocation,
             missionId,
             isStart: false,
-            kilometerReading
+            kilometerReading,
+            vehicleId: mission.vehicle?.id
           })
         : null
     ]);

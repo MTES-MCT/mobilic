@@ -4,7 +4,11 @@ import {
   createExpenditureReducer,
   deleteExpenditureReducer
 } from "./expenditure";
-import { validateMissionReducer } from "./mission";
+import {
+  putAsideOriginalMissionsReducer,
+  revertMissionToOriginalValuesReducer,
+  validateMissionReducer
+} from "./mission";
 import { addWorkDaysReducer } from "./workDays";
 import {
   updateCompaniesListReducer,
@@ -18,6 +22,11 @@ import {
 } from "./crud";
 import { updateSettingsReducer } from "./settings";
 import { updateActivitiesFiltersReducer } from "./activitiesFilters";
+import {
+  addVirtualActivityReducer,
+  resetVirtualReducer
+} from "./virtualActivities";
+import { addVirtualExpenditureActionReducer } from "./virtualExpenditureActions";
 import { addUsersReducer } from "./users";
 
 export const ADMIN_ACTIONS = {
@@ -35,7 +44,12 @@ export const ADMIN_ACTIONS = {
   updateCompaniesList: updateCompaniesListReducer,
   updateCompanyId: updateCompanyIdReducer,
   updateActivitiesFilters: updateActivitiesFiltersReducer,
-  addUsers: addUsersReducer
+  addVirtualActivity: addVirtualActivityReducer,
+  addVirtualExpenditureAction: addVirtualExpenditureActionReducer,
+  resetVirtual: resetVirtualReducer,
+  addUsers: addUsersReducer,
+  putAsideOriginalMissions: putAsideOriginalMissionsReducer,
+  revertMissionToOriginalValues: revertMissionToOriginalValuesReducer
 };
 
 const ADMIN_REDUCERS = {};

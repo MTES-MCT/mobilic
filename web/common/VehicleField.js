@@ -12,7 +12,7 @@ export function VehicleField({
   allowCreate = true,
   disabled = false,
   className = null,
-  kilometerReading = null,
+  kilometerReading = "",
   setKilometerReading = null,
   fullWidth = false,
   ...other
@@ -20,6 +20,16 @@ export function VehicleField({
   const _filterOptions = createFilterOptions({ stringify: getVehicleName });
   const filterOptions = (options, other) =>
     _filterOptions(options, { inputValue: getVehicleName(vehicle) || "" });
+
+  React.useEffect(() => {
+    if (setKilometerReading) {
+      if (vehicle.lastKilometerReading) {
+        setKilometerReading(vehicle.lastKilometerReading);
+      } else {
+        setKilometerReading("");
+      }
+    }
+  }, [vehicle]);
 
   return [
     <Autocomplete

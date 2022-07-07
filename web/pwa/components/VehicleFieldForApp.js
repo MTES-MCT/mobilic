@@ -10,7 +10,7 @@ export function VehicleFieldForApp({
   companyId = null,
   disabled = false,
   className = null,
-  kilometerReading = null,
+  kilometerReading = "",
   setKilometerReading = null,
   ...other
 }) {
