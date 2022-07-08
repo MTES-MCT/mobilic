@@ -53,7 +53,8 @@ class Api {
             operation.setContext(({ headers = {} }) => ({
               headers: {
                 ...headers,
-                ...(this.getImpersonationHeaders() || {})
+                ...(this.getImpersonationHeaders() || {}),
+                "X-CSRF-TOKEN": readCookie("csrf_access_token")
               }
             }));
             return forward(operation);
@@ -168,6 +169,10 @@ class Api {
           ...impersonationHeaders
         };
       }
+      options.headers = {
+        ...options.headers,
+        "X-CSRF-TOKEN": readCookie("csrf_access_token")
+      };
       const response = await this._fetch(queryInfo, options);
       if (response.status !== 200) {
         const error = new Error("Response status is not 200");
@@ -211,7 +216,8 @@ class Api {
         let refreshResponse;
         try {
           refreshResponse = await this._fetch(HTTP_QUERIES.refresh, {
-            timeout: 12000
+            timeout: 12000,
+            headers: { "X-CSRF-TOKEN": readCookie("csrf_refresh_token") }
           });
         } catch (err) {
           const newError = new Error(err.message);
@@ -351,7 +357,10 @@ class Api {
         try {
           await this.nonConcurrentQueryQueue.execute(
             async () =>
-              await this._fetch(HTTP_QUERIES.logout, { timeout: 8000 })
+              await this._fetch(HTTP_QUERIES.logout, {
+                timeout: 8000,
+                headers: { "X-CSRF-TOKEN": readCookie("csrf_refresh_token") }
+              })
           );
         } catch (err) {
           if (failOnError) throw err;
