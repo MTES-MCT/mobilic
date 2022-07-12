@@ -50,6 +50,7 @@ import { RegulationDrawerContextProvider } from "./landing/ResourcePage/Regulati
 import "@gouvfr/dsfr/dist/dsfr.min.css"; // dsfr should be imported before custom styles
 import "./index.css";
 import "common/assets/styles/root.scss";
+import { loadControllerUserData } from "./controller/utils/loadControllerUserData";
 
 const matomo = createInstance({
   urlBase: "https://stats.data.gouv.fr",
@@ -132,7 +133,7 @@ function _Root() {
   const loadControllerAndRoute = async () => {
     const queryString = new URLSearchParams(location.search);
 
-    // await loadControllerData(api, store, alerts);
+    await loadControllerUserData(api, store, alerts);
 
     const nextLocation = queryString.get("next");
     if (nextLocation) {

@@ -374,6 +374,24 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       this.storage.clear()
     ]);
 
+  setControllerInfo = (
+    { firstName, lastName, email },
+    commitImmediately = true
+  ) =>
+    new Promise(resolve =>
+      this.setItems(
+        {
+          controllerInfo: {
+            firstName,
+            lastName,
+            email
+          }
+        },
+        resolve,
+        commitImmediately
+      )
+    );
+
   setUserInfo = (
     {
       firstName,
