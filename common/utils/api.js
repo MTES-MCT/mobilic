@@ -108,7 +108,6 @@ class Api {
   }
 
   async _fetch(queryInfo, options = {}) {
-    console.log("queryInfo", queryInfo);
     const method = queryInfo.method;
     const endpoint = queryInfo.endpoint;
     let url = `${this.apiHost}${endpoint}`;
@@ -161,7 +160,6 @@ class Api {
   }
 
   async httpQuery(queryInfo, options = {}, disableRefreshToken = false) {
-    console.log("options", options);
     const func = async () => {
       const impersonationHeaders = this.getImpersonationHeaders();
       if (impersonationHeaders) {
@@ -170,6 +168,9 @@ class Api {
           ...impersonationHeaders
         };
       }
+      options.headers = {
+        ...options.headers
+      };
       const response = await this._fetch(queryInfo, options);
       if (response.status !== 200) {
         const error = new Error("Response status is not 200");
@@ -187,7 +188,6 @@ class Api {
   }
 
   async jsonHttpQuery(queryInfo, options = {}, disableRefreshToken = false) {
-    console.log("options2", options);
     const response = await this.httpQuery(
       queryInfo,
       options,
@@ -263,7 +263,6 @@ class Api {
   }
 
   async executeRequest(request) {
-    console.log("request", request);
     const apiResponseHandler =
       this.responseHandlers[request.apiResponseHandlerName] || {};
     // 0. Resolve temporary IDs if they exist
@@ -355,7 +354,9 @@ class Api {
         try {
           await this.nonConcurrentQueryQueue.execute(
             async () =>
-              await this._fetch(HTTP_QUERIES.logout, { timeout: 8000 })
+              await this._fetch(HTTP_QUERIES.logout, {
+                timeout: 8000
+              })
           );
         } catch (err) {
           if (failOnError) throw err;

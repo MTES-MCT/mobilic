@@ -28,6 +28,7 @@ import size from "lodash/size";
 import groupBy from "lodash/groupBy";
 import LoginController from "../login/login-controller";
 import { AgentConnectCallback } from "../signup/AgentConnectCallback";
+import { ControllerHome } from "../controller/components/ControllerHome";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -54,18 +55,20 @@ export const RESOURCES_ROUTE = {
   ]
 };
 
+export const CONTROLLER_ROUTE_PREFIX = "/controller";
+
 export const ROUTES = [
   {
     path: "/fc-callback",
     label: "Callback France Connect",
-    accessible: ({ userInfo }) => !userInfo.id,
+    accessible: ({ userInfo }) => !userInfo?.id,
     component: FranceConnectCallback,
     menuItemFilter: () => false
   },
   {
     path: "/ac-callback",
     label: "Callback Agent Connect",
-    accessible: ({ userInfo }) => !userInfo.id,
+    accessible: ({ controllerInfo }) => !controllerInfo?.id,
     component: AgentConnectCallback,
     menuItemFilter: () => false
   },
@@ -73,7 +76,7 @@ export const ROUTES = [
     path: "/app",
     label: "Mes missions",
     accessible: ({ userInfo, companies }) =>
-      userInfo.hasActivatedEmail && userInfo.id && companies.length > 0,
+      userInfo?.hasActivatedEmail && userInfo?.id && companies?.length > 0,
     component: React.lazy(() => import("../pwa/utils/navigation")),
     subRoutes: [
       {
@@ -91,7 +94,9 @@ export const ROUTES = [
     path: "/admin",
     label: "Gestion entreprise",
     accessible: ({ userInfo, companies }) =>
-      userInfo.hasActivatedEmail && userInfo.id && companies.some(c => c.admin),
+      userInfo?.hasActivatedEmail &&
+      userInfo?.id &&
+      companies?.some(c => c.admin),
     component: React.lazy(() => import("../admin/Admin")),
     subRoutes: [
       {
@@ -113,7 +118,8 @@ export const ROUTES = [
     label: "Inscription",
     accessible: () => true,
     component: Signup,
-    menuItemFilter: ({ userInfo }) => !userInfo.id,
+    menuItemFilter: ({ userInfo, controllerInfo }) =>
+      !userInfo?.id && !controllerInfo?.id,
     mainCta: true
   },
   {
@@ -121,7 +127,8 @@ export const ROUTES = [
     label: "Connexion",
     accessible: () => true,
     component: Login,
-    menuItemFilter: ({ userInfo }) => !userInfo.id
+    menuItemFilter: ({ userInfo, controllerInfo }) =>
+      !userInfo?.id && !controllerInfo?.id
   },
   {
     path: "/controller-login",
@@ -197,8 +204,18 @@ export const ROUTES = [
   {
     path: "/request_reset_password",
     label: "Reset password",
-    accessible: ({ userInfo }) => !userInfo.id,
+    accessible: ({ userInfo, controllerInfo }) =>
+      !userInfo?.id && !controllerInfo?.id,
     component: RequestResetPassword,
+    menuItemFilter: () => false
+  },
+  {
+    path: CONTROLLER_ROUTE_PREFIX + "/home",
+    label: "Accueil contrôleur",
+    accessible: ({ controllerInfo }) => {
+      return !controllerInfo?.id;
+    },
+    component: ControllerHome,
     menuItemFilter: () => false
   },
   {
@@ -281,7 +298,8 @@ export const ROUTES = [
   {
     label: "Mon compte",
     path: "",
-    accessible: ({ userInfo }) => !!userInfo.id,
+    accessible: ({ userInfo, controllerInfo }) =>
+      !!userInfo?.id && !controllerInfo?.id,
     subRoutes: [
       {
         path: "/home",
@@ -295,7 +313,7 @@ export const ROUTES = [
   }
 ];
 
-export function getFallbackRoute({ userInfo, companies }) {
+export function getFallbackRoute({ userInfo, companies, controllerInfo }) {
   if (
     userInfo.id &&
     userInfo.hasConfirmedEmail &&
@@ -314,6 +332,9 @@ export function getFallbackRoute({ userInfo, companies }) {
   }
   if (userInfo.id && userInfo.hasConfirmedEmail) {
     return "/home";
+  }
+  if (controllerInfo?.id) {
+    return CONTROLLER_ROUTE_PREFIX + "/home";
   }
   return "/";
 }

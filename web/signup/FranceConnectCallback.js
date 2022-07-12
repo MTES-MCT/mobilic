@@ -9,7 +9,7 @@ import { useHistory } from "react-router-dom";
 import { FRANCE_CONNECT_LOGIN_MUTATION } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
 
-function removeParamsFromQueryString(qs, params) {
+export function removeParamsFromQueryString(qs, params) {
   const qsWithoutQuestionMark = qs.startsWith("?") ? qs.slice(1) : qs;
   const filteredQsParams = qsWithoutQuestionMark
     .split("&")

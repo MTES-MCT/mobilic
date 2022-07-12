@@ -157,7 +157,7 @@ function HeaderContainer(props) {
   );
 }
 
-function ListRouteItem({ route, closeDrawer }) {
+export function ListRouteItem({ route, closeDrawer }) {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();

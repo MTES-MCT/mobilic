@@ -29,6 +29,7 @@ import {
   useLoadingScreen
 } from "common/utils/loading";
 import {
+  CONTROLLER_ROUTE_PREFIX,
   getAccessibleRoutes,
   getFallbackRoute,
   isAccessible
@@ -36,7 +37,7 @@ import {
 import { ScrollToTop } from "common/utils/scroll";
 import { SnackbarProvider, useSnackbarAlerts } from "./common/Snackbar";
 import { EnvironmentHeader } from "./common/EnvironmentHeader";
-import { currentUserId } from "common/utils/cookie";
+import { currentControllerId, currentUserId } from "common/utils/cookie";
 import {
   MatomoProvider,
   createInstance,
@@ -107,7 +108,9 @@ function _Root() {
   const alerts = useSnackbarAlerts();
 
   const userId = store.userId();
+  const controllerId = store.controllerId();
   const userInfo = store.userInfo();
+  const controllerInfo = store.controllerInfo();
   const companies = store.companies();
 
   const location = useLocation();
@@ -115,7 +118,8 @@ function _Root() {
 
   const fallbackRoute = getFallbackRoute({
     userInfo,
-    companies
+    companies,
+    controllerInfo
   });
 
   const loadedLocationRef = React.useRef(null);
@@ -124,6 +128,27 @@ function _Root() {
   const { enableLinkTracking, pushInstruction, trackPageView } = useMatomo();
 
   enableLinkTracking();
+
+  const loadControllerAndRoute = async () => {
+    const queryString = new URLSearchParams(location.search);
+
+    // await loadControllerData(api, store, alerts);
+
+    const nextLocation = queryString.get("next");
+    if (nextLocation) {
+      history.replace(nextLocation, location.state);
+    } else if (
+      loadedLocation &&
+      isAccessible(loadedLocation, {
+        controllerInfo: store.controllerInfo()
+      })
+    ) {
+      history.replace(loadedLocation, location.state);
+    } else {
+      history.replace(fallbackRoute, location.state);
+    }
+    loadedLocationRef.current = null;
+  };
 
   const loadUserAndRoute = async () => {
     const isSigningUp = location.pathname.startsWith("/signup");
@@ -154,13 +179,7 @@ function _Root() {
       ) {
         history.replace(loadedLocation, location.state);
       } else {
-        history.replace(
-          getFallbackRoute({
-            userInfo: store.userInfo(),
-            companies: store.companies()
-          }),
-          location.state
-        );
+        history.replace(fallbackRoute, location.state);
       }
     }
     loadedLocationRef.current = null;
@@ -172,21 +191,31 @@ function _Root() {
       (location.pathname.startsWith("/app") ||
         location.pathname.startsWith("/home") ||
         location.pathname.startsWith("/admin"))
-    )
+    ) {
       history.replace(
         "/login?next=" + encodeURIComponent(location.pathname + location.search)
       );
-    else if (
+    } else if (
+      !currentControllerId() &&
+      location.pathname.startsWith(CONTROLLER_ROUTE_PREFIX + "/")
+    ) {
+      history.replace(
+        "/controller-login?next=" +
+          encodeURIComponent(location.pathname + location.search)
+      );
+    } else if (
       location.pathname !== "/" &&
-      !location.pathname.startsWith("/control") &&
+      (!location.pathname.startsWith("/control") ||
+        location.pathname.startsWith(CONTROLLER_ROUTE_PREFIX)) &&
       !location.pathname.startsWith("/login") &&
       !location.pathname.startsWith("/logout") &&
       !location.pathname.startsWith("/activate_email") &&
       !location.pathname.startsWith("/redeem_invite") &&
       !location.pathname.startsWith("/fc-callback") &&
       !location.pathname.startsWith("/ac-callback")
-    )
+    ) {
       loadedLocationRef.current = location.pathname + location.search;
+    }
   }, []);
 
   React.useEffect(() => {
@@ -208,6 +237,18 @@ function _Root() {
     );
     return () => {};
   }, [userId]);
+
+  React.useEffect(() => {
+    withLoadingScreen(
+      async () => {
+        if (controllerId && store.controllerId())
+          await loadControllerAndRoute();
+      },
+      { cacheKey: "loadController" + controllerId },
+      false
+    );
+    return () => {};
+  }, [controllerId]);
 
   const routes = getAccessibleRoutes({ userInfo, companies });
 

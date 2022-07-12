@@ -7,7 +7,7 @@ import map from "lodash/map";
 
 import { NonConcurrentExecutionQueue } from "../utils/concurrency";
 import { BroadcastChannel } from "broadcast-channel";
-import { currentUserId } from "../utils/cookie";
+import { currentControllerId, currentUserId } from "../utils/cookie";
 import { captureSentryException } from "../utils/sentry";
 import { LOCAL_STORAGE_SCHEMA, NON_PERSISTENT_SCHEMA } from "./schemas";
 import { employmentSelector, entitySelector } from "./selectors";
@@ -110,7 +110,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         captureSentryException(err);
       }
     }
-    this._updateUserId();
+    await this._updateUserId();
+    await this._updateControllerId();
   };
 
   broadcastChannelMessageHandler = msg => {
@@ -361,11 +362,14 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     });
   };
 
-  _removeUserInfo = async () =>
+  _removeUserAndControllerInfo = async () =>
     await Promise.all([
       new Promise(resolve => this.removeItems(["hasAcceptedCgu"], resolve)),
       new Promise(resolve => {
         this.setItems({ userInfo: {}, employments: [] }, resolve);
+      }),
+      new Promise(resolve => {
+        this.setItems({ controllerInfo: {} }, resolve);
       }),
       this.storage.clear()
     ]);
@@ -426,14 +430,31 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   _updateUserId = async () =>
     new Promise(resolve => this.setItems({ userId: currentUserId() }, resolve));
 
+  _updateControllerId = async () =>
+    new Promise(resolve =>
+      this.setItems({ controllerId: currentControllerId() }, resolve)
+    );
+
+  updateControllerIdAndInfo = async () => {
+    await this._updateControllerId();
+    await this._removeUserAndControllerInfo();
+  };
+
   updateUserIdAndInfo = async () => {
     await this._updateUserId();
-    await this._removeUserInfo();
+    await this._removeUserAndControllerInfo();
   };
 
   userId = () => this.state.userId;
 
+  controllerId = () => this.state.controllerId;
+
   userInfo = () => ({ id: this.state.userId, ...this.state.userInfo });
+
+  controllerInfo = () => ({
+    id: this.state.controllerId,
+    ...this.state.controllerInfo
+  });
 
   coworkers = () => this.state.coworkers;
 
