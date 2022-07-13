@@ -180,7 +180,13 @@ function _Root() {
       ) {
         history.replace(loadedLocation, location.state);
       } else {
-        history.replace(fallbackRoute, location.state);
+        history.replace(
+          getFallbackRoute({
+            userInfo: store.userInfo(),
+            companies: store.companies()
+          }),
+          location.state
+        );
       }
     }
     loadedLocationRef.current = null;

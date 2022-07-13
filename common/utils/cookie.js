@@ -16,3 +16,7 @@ export function currentControllerId() {
 export function clearUserIdCookie() {
   document.cookie = "userId=;";
 }
+
+export function clearControllerIdCookie() {
+  document.cookie = "controllerId=;";
+}

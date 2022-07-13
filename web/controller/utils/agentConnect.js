@@ -9,3 +9,9 @@ export function buildAgentConnectUrl(redirectUri) {
     redirectUri
   )}`;
 }
+
+export function buildAgentConnectLogoutUrl(redirectPath = "/logout") {
+  return `${API_HOST}/ac/logout?post_logout_redirect_uri=${encodeURIComponent(
+    window.location.origin + redirectPath
+  )}`;
+}

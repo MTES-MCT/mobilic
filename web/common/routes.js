@@ -292,7 +292,7 @@ export const ROUTES = [
     path: "/logout",
     label: "Déconnexion",
     accessible: () => true,
-    menuItemFilter: () => false,
+    menuItemFilter: ({ controllerInfo }) => !!controllerInfo?.id,
     component: Logout
   },
   {
