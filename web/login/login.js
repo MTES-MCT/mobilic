@@ -166,7 +166,7 @@ export default function Login() {
             </Box>
           </form>
         </Box>
-        {process.env.REACT_APP_SHOW_CONTROLLER_APP && (
+        {process.env.REACT_APP_SHOW_CONTROLLER_APP === "1" && (
           <>
             <DividerWithText className={classes.dividerAgentConnect}>
               OU
