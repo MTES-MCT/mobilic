@@ -539,9 +539,7 @@ export const AugmentedTable = React.forwardRef(
       height:
         Math.max(
           sum(
-            displayedEntries.map((entry, index) =>
-              virtualizedRowHeightFunc(index, entry)
-            )
+            displayedEntries.map((entry, _) => virtualizedRowHeightFunc(entry))
           ) + virtualizedHeaderHeight,
           virtualizedMinHeight
         ) + 16,

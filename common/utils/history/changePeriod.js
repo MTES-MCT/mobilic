@@ -11,7 +11,7 @@ function getPeriodListFromMissionGroups(missionGroupsByPeriodUnit, periodUnit) {
   return fillHistoryPeriods(
     Object.keys(missionGroupsByPeriodUnit[periodUnit])
       .map(p => parseInt(p))
-      .sort(),
+      .sort((a, b) => a - b),
     periodUnit
   );
 }
