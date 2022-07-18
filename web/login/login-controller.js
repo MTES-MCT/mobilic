@@ -45,7 +45,8 @@ export default function LoginController() {
       <Container className="centered" maxWidth="xs">
         <PaperContainerTitle>Connexion Contrôleur</PaperContainerTitle>
         <Typography>
-          Je me connecte avec mon identifiant Cerbère grâce à AgentConnect
+          Je me connecte avec mon identifiant Cerbère grâce à{" "}
+          <b>AgentConnect</b>
         </Typography>
         <Button
           aria-label="Agent Connect"

@@ -314,24 +314,24 @@ export const ROUTES = [
 ];
 
 export function getFallbackRoute({ userInfo, companies, controllerInfo }) {
-  if (
-    userInfo.id &&
-    userInfo.hasConfirmedEmail &&
-    userInfo.hasActivatedEmail &&
-    companies.some(c => c.admin)
-  ) {
-    return "/admin";
-  }
-  if (
-    userInfo.id &&
-    userInfo.hasConfirmedEmail &&
-    userInfo.hasActivatedEmail &&
-    companies.length > 0
-  ) {
-    return "/app";
-  }
-  if (userInfo.id && userInfo.hasConfirmedEmail) {
-    return "/home";
+  if (userInfo?.id) {
+    if (
+      userInfo.hasConfirmedEmail &&
+      userInfo.hasActivatedEmail &&
+      companies.some(c => c.admin)
+    ) {
+      return "/admin";
+    }
+    if (
+      userInfo.hasConfirmedEmail &&
+      userInfo.hasActivatedEmail &&
+      companies.length > 0
+    ) {
+      return "/app";
+    }
+    if (userInfo.hasConfirmedEmail) {
+      return "/home";
+    }
   }
   if (controllerInfo?.id) {
     return CONTROLLER_ROUTE_PREFIX + "/home";

@@ -366,10 +366,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     await Promise.all([
       new Promise(resolve => this.removeItems(["hasAcceptedCgu"], resolve)),
       new Promise(resolve => {
-        this.setItems({ userInfo: {}, employments: [] }, resolve);
-      }),
-      new Promise(resolve => {
-        this.setItems({ controllerInfo: {} }, resolve);
+        this.setItems(
+          { userInfo: {}, employments: [], controllerInfo: {} },
+          resolve
+        );
       }),
       this.storage.clear()
     ]);

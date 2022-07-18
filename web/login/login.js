@@ -86,7 +86,7 @@ export default function Login() {
           Connexion
         </PaperContainerTitle>
         <PaperContainerTitle variant="h3">
-          Connexion Gestionnaires et Salariés
+          Connexion Entreprises et Salariés
         </PaperContainerTitle>
         <FranceConnectContainer
           mt={2}
@@ -174,7 +174,9 @@ export default function Login() {
             <PaperContainerTitle variant="h3">
               Connexion Contrôleurs
             </PaperContainerTitle>
-            <Typography>Vous êtes Agent public de l'Etat ?</Typography>
+            <Typography paragraph={true}>
+              Vous êtes Agent public de l'Etat ?
+            </Typography>
             <Button
               aria-label="Connexion contrôleur"
               value="/controller-login"
