@@ -544,7 +544,7 @@ export const AugmentedTable = React.forwardRef(
             )
           ) + virtualizedHeaderHeight,
           virtualizedMinHeight
-        ) + 16,
+        ) + 34,
       maxHeight: virtualizedMaxHeight,
       marginBottom: 1,
       overflowY: "hidden"
@@ -764,13 +764,14 @@ const _VirtualizedTable = React.forwardRef(
         acc + 10 + (col.minWidth || VIRTUALIZED_TABLE_COLUMN_DEFAULT_MIN_WIDTH)
       );
     }, 0);
+    const actualHeight = Math.max(height, minHeight);
     return (
       <Table
         ref={actualRef}
         autoHeight={autoHeight}
         className={`table ${classes.table}`}
         width={Math.max(width, minTableWidth)}
-        height={Math.max(height, minHeight)}
+        height={actualHeight}
         headerHeight={headerHeight}
         rowCount={entries.length}
         rowGetter={({ index }) => entries[index]}
