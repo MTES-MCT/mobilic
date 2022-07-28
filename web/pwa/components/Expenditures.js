@@ -67,7 +67,8 @@ export function Expenditures({
               onClick={() => {
                 setExpenditures({
                   ...expenditures,
-                  [expenditure]: expCount > 0 ? [] : listPossibleSpendingDays
+                  [expenditure]:
+                    expCount > 0 ? [] : listPossibleSpendingDays.slice(0, 1)
                 });
               }}
             >
