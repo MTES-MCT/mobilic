@@ -1,4 +1,5 @@
 import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
 import React from "react";
 import { Step } from "./Step";
 import { makeStyles } from "@mui/styles";
@@ -20,6 +21,11 @@ const useStyles = makeStyles(theme => ({
   radioButton: {
     textAlign: "left",
     marginBottom: theme.spacing(2)
+  },
+  siretName: {
+    minWidth: 200,
+    maxWidth: 450,
+    marginBottom: theme.spacing(2)
   }
 }));
 
@@ -30,7 +36,9 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
   return (
     <Step
       reset={() => {
-        setFacilities(fs => fs.map(f => ({ ...f, selected: false })));
+        setFacilities(fs =>
+          fs.map(f => ({ ...f, selected: false, usualName: f.name }))
+        );
         setHasValidatedChoice(false);
       }}
       complete={hasValidatedChoice && facilities.some(f => f.selected)}
@@ -57,6 +65,25 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                 alreadyRegistered={facility.registered}
               />
             </Button>
+            {facility.selected && (
+              <TextField
+                variant="standard"
+                className={classes.siretName}
+                required
+                label="Nom usuel"
+                value={facility.usualName}
+                onChange={e => {
+                  setHasValidatedChoice(false);
+                  setFacilities(
+                    facilities.map(f =>
+                      f.siret === facility.siret
+                        ? { ...f, usualName: e.target.value }
+                        : f
+                    )
+                  );
+                }}
+              />
+            )}
           </Grid>
         ))}
       </Grid>
