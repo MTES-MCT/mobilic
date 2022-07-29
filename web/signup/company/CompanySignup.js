@@ -111,7 +111,7 @@ export function CompanySignup() {
         {facilities.length > 1 && !sirenPartiallyRegistered && (
           <OptInForSiretsSelectionStep
             name="opt-in-for-sirets-selection"
-            title="Souhaitez-vous inscrire l'unité légale toute entière ou en partie ?"
+            title="Gérez-vous plusieurs établissements au sein de cette entreprise ?"
             shouldSelectSirets={shouldSelectSirets}
             setShouldSelectSirets={setShouldSelectSirets}
           />
