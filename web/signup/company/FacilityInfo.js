@@ -36,7 +36,7 @@ export function FacilityInfo({ facility, selected, alreadyRegistered }) {
     <Card
       raised
       style={{ textAlign: "left" }}
-      className={selected && classes.selectedFacility}
+      className={selected ? classes.selectedFacility : ""}
     >
       <CardContent>
         <Typography variant="h5" gutterBottom>
