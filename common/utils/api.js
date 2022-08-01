@@ -116,9 +116,7 @@ class Api {
 
     let actualOptions = options;
     if (options.search) {
-      url = `${url}${options.search.startsWith("?") ? "" : ""}${
-        options.search
-      }`;
+      url = `${url}${options.search}`;
       actualOptions = omit(options, ["search"]);
     }
 
