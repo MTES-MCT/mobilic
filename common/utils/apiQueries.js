@@ -816,6 +816,19 @@ export const EDIT_ACTIVITY_MUTATION = gql`
     }
   }
 `;
+export const BULK_ACTIVITY_QUERY = gql`
+  query bulkActivity($items: [BulkActivityItem]) {
+    output(items: $items) {
+      id
+      type
+      missionId
+      userId
+      startTime
+      endTime
+      lastSubmitterId
+    }
+  }
+`;
 
 export const CURRENT_MISSION_INFO = gql`
   query currentMissionInfo($id: Int!) {
@@ -1040,47 +1053,30 @@ export const TERMINATE_KNOWN_ADDRESS_MUTATION = gql`
 export const VALIDATE_MISSION_MUTATION = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
+  ${FULL_MISSION_FRAGMENT}
   mutation validateMission(
     $missionId: Int!
     $userId: Int
     $creationTime: TimeStamp
+    $activityItems: [BulkActivityItem]
+    $expendituresCancelIds: [Int]
+    $expendituresInputs: [BulkExpenditureItem]
   ) {
     activities {
       validateMission(
         missionId: $missionId
         userId: $userId
         creationTime: $creationTime
+        activityItems: $activityItems
+        expendituresCancelIds: $expendituresCancelIds
+        expendituresInputs: $expendituresInputs
       ) {
         isAdmin
         submitterId
         receptionTime
         userId
         mission {
-          id
-          name
-          context
-          vehicle {
-            id
-            name
-            registrationNumber
-          }
-          submitter {
-            id
-            firstName
-            lastName
-          }
-          company {
-            id
-            name
-            siren
-            ...CompanySettings
-          }
-          startLocation {
-            ...FullLocation
-          }
-          endLocation {
-            ...FullLocation
-          }
+          ...FullMissionData
         }
       }
     }

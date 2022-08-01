@@ -41,7 +41,7 @@ export default function NewMissionForm({
   const [loading, setLoading] = React.useState(false);
   const [address, setAddress] = React.useState(null);
   const [endAddress, setEndAddress] = React.useState(null);
-  const [kilometerReading, setKilometerReading] = React.useState(null);
+  const [kilometerReading, setKilometerReading] = React.useState("");
 
   React.useEffect(() => {
     if (vehicle?.companyId) setVehicle("");
@@ -55,7 +55,7 @@ export default function NewMissionForm({
   }, [company]);
 
   React.useEffect(() => {
-    if (!vehicle) setKilometerReading(null);
+    if (!vehicle) setKilometerReading("");
   }, [vehicle]);
 
   const funnelModalClasses = useFunnelModalStyles();
@@ -200,7 +200,7 @@ export default function NewMissionForm({
               settings?.requireKilometerData &&
               vehicle
                 ? setKilometerReading
-                : ""
+                : null
             }
           />
         </Container>

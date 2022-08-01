@@ -14,9 +14,9 @@ import { useAdminStore } from "../../store/store";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useModals } from "common/utils/modals";
 import List from "@mui/material/List";
+import { MISSION_QUERY } from "common/utils/apiQueries";
 import { Event } from "../../../common/Event";
 import { formatApiError } from "common/utils/errors";
-import { MISSION_QUERY } from "common/utils/apiQueries";
 import { editUserExpenditures } from "common/utils/expenditures";
 import CircularProgress from "@mui/material/CircularProgress";
 import Grid from "@mui/material/Grid";
@@ -127,6 +127,14 @@ export function MissionDetails({
       setLoading(false);
     }
   }
+
+  const onValidate = async () => {
+    setLoading(true);
+    entriesToValidateByAdmin.map(workerEntryToValidate => {
+      missionActions.validateMission(workerEntryToValidate.user.id);
+    });
+    setLoading(false);
+  };
 
   React.useEffect(() => {
     if (missionId) loadMission();
@@ -469,13 +477,12 @@ export function MissionDetails({
                       ? () =>
                           modals.open("activityRevision", {
                             otherActivities: mission.activities,
-                            createActivity: async args =>
-                              await missionActions.createSingleActivity({
-                                ...args,
+                            handleSeveralActions: actions =>
+                              missionActions.severalActionsActivity({
+                                actions,
                                 user: e.user
                               }),
-                            handleRevisionAction:
-                              missionActions.editSingleActivity,
+                            adminMode: true,
                             allowTransfers,
                             allowSupportActivity,
                             nullableEndTime: false,
@@ -500,13 +507,12 @@ export function MissionDetails({
                                 : mission.activities.filter(
                                     a => a.startTime !== entry.startTime
                                   ),
-                            handleRevisionAction:
-                              missionActions.editSingleActivity,
-                            createActivity: async args =>
-                              await missionActions.createSingleActivity({
-                                ...args,
+                            handleSeveralActions: actions =>
+                              missionActions.severalActionsActivity({
+                                actions,
                                 user: e.user
                               }),
+                            adminMode: true,
                             allowTransfers,
                             allowSupportActivity,
                             nullableEndTime: false,
@@ -562,11 +568,7 @@ export function MissionDetails({
                 onClick={async e => {
                   e.stopPropagation();
                   trackEvent(VALIDATE_MISSION_IN_MISSION_PANEL);
-                  entriesToValidateByAdmin.map(workerEntryToValidate => {
-                    missionActions.validateMission(
-                      workerEntryToValidate.user.id
-                    );
-                  });
+                  onValidate();
                 }}
               >
                 Valider les saisies
