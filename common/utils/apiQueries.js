@@ -176,6 +176,28 @@ export const COMPANY_SIGNUP_MUTATION = gql`
     }
   }
 `;
+export const COMPANIES_SIGNUP_MUTATION = gql`
+  ${COMPANY_SETTINGS_FRAGMENT}
+  mutation companiesSignUp($siren: Int!, $companies: [CompanySiret]!) {
+    signUp {
+      companies(siren: $siren, companies: $companies) {
+        employment {
+          id
+          startDate
+          isAcknowledged
+          hasAdminRights
+          company {
+            id
+            name
+            siren
+            sirets
+            ...CompanySettings
+          }
+        }
+      }
+    }
+  }
+`;
 export const SIREN_QUERY = gql`
   query sirenInfo($siren: Int!) {
     sirenInfo(siren: $siren) {
