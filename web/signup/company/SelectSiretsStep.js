@@ -1,6 +1,6 @@
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import React from "react";
+import React, { useMemo } from "react";
 import { Step } from "./Step";
 import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
@@ -23,8 +23,8 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2)
   },
   siretName: {
-    minWidth: 200,
-    maxWidth: 450,
+    minWidth: 350,
+    maxWidth: 500,
     marginBottom: theme.spacing(2)
   }
 }));
@@ -33,15 +33,30 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
   const [hasValidatedChoice, setHasValidatedChoice] = React.useState(false);
   const classes = useStyles();
 
+  const selectedSirets = useMemo(() => facilities.filter(f => f.selected), [
+    facilities
+  ]);
+  const areFacilitiesCorrectlySet = useMemo(() => {
+    if (selectedSirets.length === 0) {
+      return false;
+    }
+    const selectedNames = selectedSirets.map(f => f.usualName);
+
+    // no value should be empty
+    if (selectedNames.filter(Boolean).length < selectedNames.length) {
+      return false;
+    }
+    // values should be unique
+    return [...new Set(selectedNames)].length === selectedNames.length;
+  }, [facilities]);
+
   return (
     <Step
       reset={() => {
-        setFacilities(fs =>
-          fs.map(f => ({ ...f, selected: false, usualName: f.name }))
-        );
+        setFacilities(fs => fs.map(f => ({ ...f, selected: false })));
         setHasValidatedChoice(false);
       }}
-      complete={hasValidatedChoice && facilities.some(f => f.selected)}
+      complete={hasValidatedChoice && areFacilitiesCorrectlySet}
       {...props}
     >
       <Grid container key={2} spacing={3} wrap="wrap">
@@ -93,7 +108,7 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
           className={classes.verticalFormButton}
           variant="contained"
           color="primary"
-          disabled={!facilities.some(f => f.selected)}
+          disabled={!areFacilitiesCorrectlySet}
           onClick={() => setHasValidatedChoice(true)}
         >
           Continuer
