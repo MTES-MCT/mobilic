@@ -48,7 +48,10 @@ export function CompanySignup() {
   }, [location]);
 
   React.useEffect(() => {
-    if (sirenInfo && sirenInfo.facilities) setFacilities(sirenInfo.facilities);
+    if (sirenInfo && sirenInfo.facilities)
+      setFacilities(
+        sirenInfo.facilities.map(f => ({ ...f, usualName: f.name }))
+      );
     else setFacilities([]);
   }, [sirenInfo]);
 
