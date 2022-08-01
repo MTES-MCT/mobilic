@@ -13,30 +13,38 @@ const useStyles = makeStyles(theme => ({
 
 export function SubmitStep({
   handleSubmit,
+  loading,
   companyName,
   setCompanyName,
-  loading,
   ...props
 }) {
   const [claimedRights, setClaimedRights] = React.useState(false);
 
   const classes = useStyles();
 
+  const usingCompanyName = !!setCompanyName;
+
   return (
-    <Step reset={() => setCompanyName("")} complete={companyName} {...props}>
+    <Step
+      reset={usingCompanyName ? () => setCompanyName("") : () => {}}
+      complete={!usingCompanyName || companyName}
+      {...props}
+    >
       <form
         className="vertical-form centered"
         autoComplete="off"
         onSubmit={handleSubmit}
       >
-        <TextField
-          fullWidth
-          variant="standard"
-          required
-          label="Nom usuel"
-          value={companyName}
-          onChange={e => setCompanyName(e.target.value.trimLeft())}
-        />
+        {usingCompanyName && (
+          <TextField
+            fullWidth
+            variant="standard"
+            required={usingCompanyName}
+            label="Nom usuel"
+            value={companyName}
+            onChange={e => setCompanyName(e.target.value.trimLeft())}
+          />
+        )}
         <CheckboxField
           checked={claimedRights}
           onChange={() => setClaimedRights(!claimedRights)}
@@ -49,7 +57,7 @@ export function SubmitStep({
           variant="contained"
           color="primary"
           type="submit"
-          disabled={!companyName || !claimedRights}
+          disabled={!claimedRights || (usingCompanyName && !companyName)}
           loading={loading}
         >
           Terminer
