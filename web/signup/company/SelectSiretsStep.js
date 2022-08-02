@@ -6,6 +6,7 @@ import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
 import { FacilityInfo } from "./FacilityInfo";
 import AlreadyRegisteredSirets from "./AlreadyRegisteredSirets";
+import Stack from "@mui/material/Stack";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -90,45 +91,47 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
           <Grid container key={2} spacing={3} wrap="wrap">
             {facilities.map((facility, index) => (
               <Grid item key={facility.siret}>
-                <Button
-                  onClick={() => {
-                    setHasValidatedChoice(false);
-                    const newFacilities = [...facilities];
-                    newFacilities.splice(index, 1, {
-                      ...facility,
-                      selected: !facility.selected
-                    });
-                    setFacilities(newFacilities);
-                  }}
-                  disabled={facility.registered}
-                >
-                  <FacilityInfo
-                    facility={facility}
-                    selected={facility.selected}
-                    alreadyRegistered={facility.registered}
-                  />
-                </Button>
-                {facility.selected && (
-                  <TextField
-                    variant="standard"
-                    className={classes.siretName}
-                    required
-                    label="Nom usuel"
-                    value={facility.usualName}
-                    onChange={e => {
+                <Stack direction="column" alignItems="flex-start" spacing={0}>
+                  <Button
+                    onClick={() => {
                       setHasValidatedChoice(false);
-                      setFacilities(
-                        facilities.map(f =>
-                          f.siret === facility.siret
-                            ? { ...f, usualName: e.target.value }
-                            : f
-                        )
-                      );
+                      const newFacilities = [...facilities];
+                      newFacilities.splice(index, 1, {
+                        ...facility,
+                        selected: !facility.selected
+                      });
+                      setFacilities(newFacilities);
                     }}
-                    error={!!getFacilityError(facility)}
-                    helperText={getFacilityError(facility)}
-                  />
-                )}
+                    disabled={facility.registered}
+                  >
+                    <FacilityInfo
+                      facility={facility}
+                      selected={facility.selected}
+                      alreadyRegistered={facility.registered}
+                    />
+                  </Button>
+                  {facility.selected && (
+                    <TextField
+                      variant="standard"
+                      className={classes.siretName}
+                      required
+                      label="Nom usuel"
+                      value={facility.usualName}
+                      onChange={e => {
+                        setHasValidatedChoice(false);
+                        setFacilities(
+                          facilities.map(f =>
+                            f.siret === facility.siret
+                              ? { ...f, usualName: e.target.value }
+                              : f
+                          )
+                        );
+                      }}
+                      error={!!getFacilityError(facility)}
+                      helperText={getFacilityError(facility)}
+                    />
+                  )}
+                </Stack>
               </Grid>
             ))}
           </Grid>
