@@ -48,7 +48,23 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
     }
     // values should be unique
     return [...new Set(selectedNames)].length === selectedNames.length;
-  }, [facilities]);
+  }, [selectedSirets]);
+
+  const getFacilityError = useMemo(() => {
+    return facility => {
+      if (!facility.usualName) {
+        return "Veuillez entrer un nom pour cette entreprise";
+      }
+
+      if (
+        selectedSirets.filter(f => f.usualName === facility.usualName).length >
+        1
+      ) {
+        return "Ce nom est utilisé plusieurs fois";
+      }
+      return null;
+    };
+  }, [selectedSirets]);
 
   return (
     <Step
@@ -97,6 +113,8 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                     )
                   );
                 }}
+                error={!!getFacilityError(facility)}
+                helperText={getFacilityError(facility)}
               />
             )}
           </Grid>
