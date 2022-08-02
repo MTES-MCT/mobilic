@@ -1,24 +1,19 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import { useHistory, useLocation } from "react-router-dom";
-import Button from "@mui/material/Button";
+import { useLocation } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import Alert from "@mui/material/Alert";
 import Emoji from "../common/Emoji";
+import AlertEmailDelay from "../common/AlertEmailDelay";
+import ButtonGoHome from "../common/ButtonGoHome";
 
 const useStyles = makeStyles(theme => ({
   title: {
     paddingTop: theme.spacing(4),
     textAlign: "center",
     fontSize: "300%"
-  },
-  alert: {
-    textAlign: "left",
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2)
   },
   container: {
     padding: theme.spacing(4)
@@ -33,7 +28,6 @@ export function Complete({ type }) {
 
   const store = useStoreSyncedWithLocalStorage();
 
-  const history = useHistory();
   const location = useLocation();
 
   const companyName = location.state ? location.state.companyName : null;
@@ -67,36 +61,10 @@ export function Complete({ type }) {
               l'adresse <strong>{store.userInfo().email}</strong>.
             </Typography>
           )}
-          {type === "user" && (
-            <Alert severity="warning" className={classes.alert}>
-              <Typography>Il est possible que</Typography>
-              <ul style={{ padding: 0 }}>
-                <li>
-                  <Typography>
-                    l'email parvienne avec un léger délai, de l'ordre de
-                    quelques minutes normalement.
-                  </Typography>
-                </li>
-                <li>
-                  <Typography>
-                    l'email atterrisse dans votre courrier indésirable (spams).
-                  </Typography>
-                </li>
-              </ul>
-            </Alert>
-          )}
+          {type === "user" && <AlertEmailDelay />}
         </Grid>
         <Grid item xs={12}>
-          <Button
-            aria-label="Aller dans mon espace"
-            color="primary"
-            variant="contained"
-            onClick={() => {
-              history.push("/home");
-            }}
-          >
-            Aller dans mon espace
-          </Button>
+          <ButtonGoHome />
         </Grid>
       </Grid>
     </Container>
