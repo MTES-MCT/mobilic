@@ -75,8 +75,7 @@ export function CompanySignup() {
     await alerts.withApiErrorHandling(async () => {
       const payload = {
         siren: parseInt(siren),
-        usualName: usualName.trim(),
-        sirets: []
+        usualName: usualName.trim()
       };
       const apiResponse = await api.graphQlMutate(
         COMPANY_SIGNUP_MUTATION,
