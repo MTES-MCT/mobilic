@@ -116,7 +116,6 @@ export function CompanySignup() {
         payload,
         { context: { nonPublicApi: true } }
       );
-      console.log(apiResponse.data);
       const employments = apiResponse.data.signUp.companies.map(
         c => c.employment
       );
