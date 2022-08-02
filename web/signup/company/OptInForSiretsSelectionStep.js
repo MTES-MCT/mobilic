@@ -54,13 +54,13 @@ export function OptInForSiretsSelectionStep({
           className={classes.radioButton}
           value={"no"}
           control={<Radio color="secondary" />}
-          label="Non, je souhaite inscrire une seule unité légale (recommandé)."
+          label="Non, je souhaite inscrire une seule unité légale."
         />
         <FormControlLabel
           className={classes.radioButton}
           value={"yes"}
           control={<Radio color="secondary" />}
-          label="Oui, je souhaite inscrire plusieurs établissements pour les gérer de manière distincte"
+          label="Oui, je souhaite inscrire plusieurs établissements pour les gérer de manière distincte."
         />
       </RadioGroup>
       {!hasValidatedChoice && !shouldSelectSirets && (
