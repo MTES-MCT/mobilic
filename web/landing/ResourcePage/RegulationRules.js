@@ -42,11 +42,7 @@ export const REGULATION_RULES = {
         ).
       </span>
     ),
-    definitions: [
-      DEFINITIONS.amplitude,
-      DEFINITIONS.nightWork,
-      DEFINITIONS.nightWorker
-    ],
+    definitions: [DEFINITIONS.amplitude, DEFINITIONS.nightWorker],
     articles: [
       LEGAL_ARTICLES.dailyWork,
       LEGAL_ARTICLES.dailyWorkDuringNight,

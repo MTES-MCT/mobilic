@@ -16,19 +16,6 @@ export const DEFINITIONS = {
       </span>
     )
   },
-  nightWork: {
-    name: "Travail de nuit",
-    content: (
-      <span>
-        entre <Emphasis>22 heures et 5 heures</Emphasis> (
-        <RegulationLegalArticleLink
-          article={LEGAL_ARTICLES.nightWork}
-          shortLabel
-        />
-        ).
-      </span>
-    )
-  },
   nightWorker: {
     name: "Travailleur de nuit",
     content: (
