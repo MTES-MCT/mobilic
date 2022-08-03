@@ -28,7 +28,7 @@ import size from "lodash/size";
 import groupBy from "lodash/groupBy";
 import LoginController from "../login/login-controller";
 import { AgentConnectCallback } from "../signup/AgentConnectCallback";
-import { ControllerHome } from "../controller/components/ControllerHome";
+import { ControllerHome } from "../controller/components/home/ControllerHome";
 
 function UserReadRedirect() {
   const { token } = useParams();

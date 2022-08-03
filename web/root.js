@@ -48,6 +48,9 @@ import { ErrorBoundary } from "./common/ErrorFallback";
 import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
 
 import "@gouvfr/dsfr/dist/dsfr.min.css"; // dsfr should be imported before custom styles
+import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
+import "@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css";
+import "remixicon/fonts/remixicon.css";
 import "./index.css";
 import "common/assets/styles/root.scss";
 import { loadControllerUserData } from "./controller/utils/loadControllerUserData";
