@@ -6,7 +6,12 @@ export const LOCAL_STORAGE_SCHEMA = {
     deserialize: value => (value ? parseInt(value) : value),
     serialize: String.serialize
   },
+  controllerId: {
+    deserialize: value => (value ? parseInt(value) : value),
+    serialize: String.serialize
+  },
   userInfo: Map,
+  controllerInfo: Map,
   coworkers: Map,
   knownAddresses: List,
   activities: Map,

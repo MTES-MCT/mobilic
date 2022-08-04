@@ -20,10 +20,24 @@ import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 import { LOGIN_MUTATION } from "common/utils/apiQueries";
 import { EmailField } from "../common/EmailField";
+import { DividerWithText } from "../common/DividerWithText";
+import Button from "@mui/material/Button";
 
 const useStyles = makeStyles(theme => ({
   forgotPasswordLink: {
     marginBottom: theme.spacing(2)
+  },
+  dividerAgentConnect: {
+    borderBottomColor: theme.palette.primary.main,
+    color: theme.palette.primary.main
+  },
+  mainTitle: {
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2)
+  },
+  loginControllerButton: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(4)
   }
 }));
 
@@ -68,9 +82,14 @@ export default function Login() {
     <Header key={1} />,
     <PaperContainer key={2}>
       <Container className="centered" maxWidth="xs">
-        <PaperContainerTitle>Connexion</PaperContainerTitle>
+        <PaperContainerTitle variant="h1" className={classes.mainTitle}>
+          Connexion
+        </PaperContainerTitle>
+        <PaperContainerTitle variant="h3">
+          Connexion Entreprises et Salariés
+        </PaperContainerTitle>
         <FranceConnectContainer
-          mt={6}
+          mt={2}
           mb={3}
           onButtonClick={() => {
             const callbackUrl = buildCallbackUrl();
@@ -79,7 +98,7 @@ export default function Login() {
           helperText="FranceConnect est la solution proposée par l’État pour simplifier la connexion à vos services en ligne. Vous pouvez vous connecter à votre compte via FranceConnect."
         />
         <Typography>ou</Typography>
-        <Box my={3}>
+        <Box my={1}>
           <form
             className="vertical-form"
             autoComplete="on"
@@ -107,7 +126,7 @@ export default function Login() {
               }}
               required
             />
-            <Box my={4}>
+            <Box my={2}>
               <LoadingButton
                 aria-label="Connexion"
                 variant="contained"
@@ -119,7 +138,7 @@ export default function Login() {
                 Me connecter
               </LoadingButton>
             </Box>
-            <Box mt={2}>
+            <Box mt={5}>
               <Typography className={classes.forgotPasswordLink}>
                 <Link
                   href="/request_reset_password"
@@ -147,6 +166,32 @@ export default function Login() {
             </Box>
           </form>
         </Box>
+        {process.env.REACT_APP_SHOW_CONTROLLER_APP === "1" && (
+          <>
+            <DividerWithText className={classes.dividerAgentConnect}>
+              OU
+            </DividerWithText>
+            <PaperContainerTitle variant="h3">
+              Connexion Contrôleurs
+            </PaperContainerTitle>
+            <Typography paragraph={true}>
+              Vous êtes Agent public de l'Etat ?
+            </Typography>
+            <Button
+              aria-label="Connexion contrôleur"
+              value="/controller-login"
+              variant="contained"
+              href="/controller-login"
+              onClick={e => {
+                e.preventDefault();
+                history.push("/controller-login");
+              }}
+              className={classes.loginControllerButton}
+            >
+              Je me connecte à mon espace dédié
+            </Button>
+          </>
+        )}
       </Container>
     </PaperContainer>
   ];

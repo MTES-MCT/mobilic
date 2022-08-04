@@ -587,6 +587,25 @@ export const FRANCE_CONNECT_LOGIN_MUTATION = gql`
     }
   }
 `;
+export const AGENT_CONNECT_LOGIN_MUTATION = gql`
+  mutation agentConnectLogin(
+    $authorizationCode: String!
+    $originalRedirectUri: String!
+    $state: String!
+  ) {
+    auth {
+      agentConnectLogin(
+        authorizationCode: $authorizationCode
+        originalRedirectUri: $originalRedirectUri
+        state: $state
+      ) {
+        accessToken
+        refreshToken
+        acToken
+      }
+    }
+  }
+`;
 export const VALIDATE_EMPLOYMENT_MUTATION = gql`
   mutation validateEmployment($employmentId: Int!) {
     employments {

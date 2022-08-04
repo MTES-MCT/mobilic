@@ -29,6 +29,7 @@ export function Logos({ leaveSpaceForMenu = true }) {
         style={{ borderRadius: 0, textTransform: "none" }}
         to={getFallbackRoute({
           userInfo: store.userInfo(),
+          controllerInfo: store.controllerInfo(),
           companies: store.companies()
         })}
       >
