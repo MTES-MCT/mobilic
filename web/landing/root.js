@@ -19,6 +19,8 @@ import {
 import { WebinarListSection } from "./sections/WebinarListSection";
 import { VideoCard } from "./ResourcePage/VideoCard";
 import { resourcePagesClasses } from "./ResourcePage/styles/ResourcePagesStyle";
+import { Alert } from "@mui/material";
+import { Link } from "../common/LinkButton";
 
 const useStyles = makeStyles(theme => ({
   heroContainer: {
@@ -148,6 +150,14 @@ export const Landing = () => {
   return [
     <Header key={1} />,
     <Container key={2} maxWidth={false} className={classes.heroContainer}>
+      {process.env.REACT_APP_SHOW_CONTROLLER_APP === "1" && (
+        <Alert severity="info">
+          Accès Agent Public :{" "}
+          <Link variant="login controleur" to="/controller-login">
+            se connecter à mon espace
+          </Link>
+        </Alert>
+      )}
       <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
         <img
           src={isSmDown ? BackgroundVerticalImage : BackgroundHorizontalImage}
