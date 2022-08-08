@@ -9,7 +9,10 @@ import {
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import SignupStepper from "../SignupStepper";
-import { COMPANY_SIGNUP_MUTATION } from "common/utils/apiQueries";
+import {
+  COMPANY_SIGNUP_MUTATION,
+  COMPANIES_SIGNUP_MUTATION
+} from "common/utils/apiQueries";
 import { SubmitStep } from "./SubmitStep";
 import { SelectSirenStep } from "./SelectSirenStep";
 import { Steps } from "./Step";
@@ -34,6 +37,9 @@ export function CompanySignup() {
     sirenInfo.registrationStatus &&
     sirenInfo.registrationStatus === "partially_registered";
 
+  const willRegisterSeveralSirets =
+    shouldSelectSirets || sirenPartiallyRegistered;
+
   const [
     shouldDisplaySignupProgress,
     setShouldDisplaySignupProgress
@@ -48,7 +54,10 @@ export function CompanySignup() {
   }, [location]);
 
   React.useEffect(() => {
-    if (sirenInfo && sirenInfo.facilities) setFacilities(sirenInfo.facilities);
+    if (sirenInfo && sirenInfo.facilities)
+      setFacilities(
+        sirenInfo.facilities.map(f => ({ ...f, usualName: f.name }))
+      );
     else setFacilities([]);
   }, [sirenInfo]);
 
@@ -66,12 +75,8 @@ export function CompanySignup() {
     await alerts.withApiErrorHandling(async () => {
       const payload = {
         siren: parseInt(siren),
-        usualName: usualName.trim(),
-        sirets: []
+        usualName: usualName.trim()
       };
-      if (facilities && facilities.some(f => f.selected)) {
-        payload.sirets = facilities.filter(f => f.selected).map(f => f.siret);
-      }
       const apiResponse = await api.graphQlMutate(
         COMPANY_SIGNUP_MUTATION,
         payload,
@@ -86,6 +91,42 @@ export function CompanySignup() {
           ? "/signup/complete"
           : "/signup/company_complete",
         { companyName: employment.company.name }
+      );
+    }, "company-signup");
+    setLoadingCompanySignup(false);
+  };
+
+  const handleCompaniesSignup = async e => {
+    e.preventDefault();
+    setLoadingCompanySignup(true);
+    await alerts.withApiErrorHandling(async () => {
+      const payload = {
+        siren: parseInt(siren),
+        companies: facilities
+          .filter(f => f.selected)
+          .map(f => {
+            return {
+              siret: f.siret,
+              usualName: f.usualName
+            };
+          })
+      };
+      const apiResponse = await api.graphQlMutate(
+        COMPANIES_SIGNUP_MUTATION,
+        payload,
+        { context: { nonPublicApi: true } }
+      );
+      const employments = apiResponse.data.signUp.companies.map(
+        c => c.employment
+      );
+      store.createEntityObject(employments, "employments");
+      store.batchUpdate();
+      await broadCastChannel.postMessage("update");
+      history.push(
+        shouldDisplaySignupProgress
+          ? "/signup/complete"
+          : "/signup/company_complete",
+        { companyName: employments[0].company.name }
       );
     }, "company-signup");
     setLoadingCompanySignup(false);
@@ -111,12 +152,12 @@ export function CompanySignup() {
         {facilities.length > 1 && !sirenPartiallyRegistered && (
           <OptInForSiretsSelectionStep
             name="opt-in-for-sirets-selection"
-            title="Souhaitez-vous inscrire l'unité légale toute entière ou en partie ?"
+            title="Gérez-vous plusieurs établissements au sein de cette entreprise ?"
             shouldSelectSirets={shouldSelectSirets}
             setShouldSelectSirets={setShouldSelectSirets}
           />
         )}
-        {(shouldSelectSirets || sirenPartiallyRegistered) && (
+        {willRegisterSeveralSirets && (
           <SelectSiretsStep
             name="select-sirets"
             title="Veuillez sélectionner un ou plusieurs établissements"
@@ -124,14 +165,23 @@ export function CompanySignup() {
             setFacilities={setFacilities}
           />
         )}
-        <SubmitStep
-          name="finalize"
-          title="Quel est le nom de l'entreprise ?"
-          companyName={usualName}
-          setCompanyName={setUsualName}
-          handleSubmit={handleCompanySignup}
-          loading={loadingCompanySignup}
-        />
+        {willRegisterSeveralSirets ? (
+          <SubmitStep
+            name="finalize"
+            title="Attestation d'habilitation"
+            handleSubmit={handleCompaniesSignup}
+            loading={loadingCompanySignup}
+          />
+        ) : (
+          <SubmitStep
+            name="finalize"
+            title="Quel est le nom de l'entreprise ?"
+            companyName={usualName}
+            setCompanyName={setUsualName}
+            handleSubmit={handleCompanySignup}
+            loading={loadingCompanySignup}
+          />
+        )}
       </Steps>
     </Container>
   );
