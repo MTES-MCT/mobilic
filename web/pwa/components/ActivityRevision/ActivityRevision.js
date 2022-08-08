@@ -54,7 +54,8 @@ export default function ActivityRevisionOrCreationModal({
   adminMode = false,
   defaultTime = null,
   forcedUser = null,
-  displayWarningMessage = true
+  displayWarningMessage = true,
+  handleCancelMission = null
 }) {
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
@@ -73,6 +74,9 @@ export default function ActivityRevisionOrCreationModal({
   const [userComment, setUserComment] = React.useState("");
 
   const userId = forcedUser?.id || store.userId();
+  const otherUserActivities = otherActivities.filter(
+    act => act.userId === userId
+  );
   const team = newUserTime
     ? uniq([userId, ...resolveTeamAt(teamChanges, newUserTime)])
     : [userId];
@@ -278,15 +282,12 @@ export default function ActivityRevisionOrCreationModal({
 
       if (!hasStartError && !hasEndError) {
         if (activityType === ACTIVITIES.break.name) {
-          const userActivities = otherActivities.filter(
-            a => a.userId === userId
-          );
           const earliestActivityStart = min(
-            userActivities.map(a => a.startTime)
+            otherUserActivities.map(a => a.startTime)
           );
-          const latestActivityEnd = userActivities.some(a => !a.endTime)
+          const latestActivityEnd = otherUserActivities.some(a => !a.endTime)
             ? null
-            : max(userActivities.map(a => a.endTime));
+            : max(otherUserActivities.map(a => a.endTime));
 
           if (newUserTime <= earliestActivityStart) {
             hasStartError = true;
@@ -490,7 +491,8 @@ export default function ActivityRevisionOrCreationModal({
             onClick={() => {
               modals.open("confirmation", {
                 title: "Confirmer la suppression",
-                content: (!otherActivities || otherActivities.length === 0) && (
+                content: (!otherUserActivities ||
+                  otherUserActivities.length === 0) && (
                   <Alert severity="warning">
                     En supprimant la seule activité d'une mission, vous
                     annulerez la mission.
@@ -499,7 +501,14 @@ export default function ActivityRevisionOrCreationModal({
                 cancelButtonLabel: "Annuler",
                 confirmButtonLabel: "Valider",
                 handleConfirm: async () => {
-                  await handleSubmit(ACTIVITIES_OPERATIONS.cancel);
+                  if (
+                    handleCancelMission &&
+                    (!otherUserActivities || otherUserActivities.length === 0)
+                  ) {
+                    await handleCancelMission();
+                  } else {
+                    await handleSubmit(ACTIVITIES_OPERATIONS.cancel);
+                  }
                   handleClose();
                 }
               });
