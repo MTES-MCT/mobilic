@@ -90,7 +90,7 @@ export function CompanySignup() {
         shouldDisplaySignupProgress
           ? "/signup/complete"
           : "/signup/company_complete",
-        { companyName: employment.company.name }
+        { companiesName: [employment.company.name] }
       );
     }, "company-signup");
     setLoadingCompanySignup(false);
@@ -126,7 +126,9 @@ export function CompanySignup() {
         shouldDisplaySignupProgress
           ? "/signup/complete"
           : "/signup/company_complete",
-        { companyName: employments[0].company.name }
+        {
+          companiesName: employments.map(employment => employment.company.name)
+        }
       );
     }, "company-signup");
     setLoadingCompanySignup(false);
