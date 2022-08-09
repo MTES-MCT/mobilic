@@ -495,7 +495,8 @@ export default function ActivityRevisionOrCreationModal({
                   otherUserActivities.length === 0) && (
                   <Alert severity="warning">
                     En supprimant la seule activité d'une mission, vous
-                    annulerez la mission.
+                    annulerez la mission. Vous ne pourrez plus y apporter de
+                    modifications.
                   </Alert>
                 ),
                 cancelButtonLabel: "Annuler",
