@@ -42,12 +42,12 @@ export function ControllerHome() {
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth="xl"
     >
-      <h2 className={classes.titleHello} key={1}>
+      <h3 className={classes.titleHello} key={1}>
         Bonjour, {controllerUserInfo.firstName} !
-      </h2>
-      <h3 className={classes.newControl} key={2}>
-        Nouveau contrôle
       </h3>
+      <h4 className={classes.newControl} key={2}>
+        Nouveau contrôle
+      </h4>
       <Grid container direction="row" alignItems="stretch" spacing={3}>
         <Grid item xs={12} sm={4}>
           <ControllerHomeCard
@@ -63,13 +63,13 @@ export function ControllerHome() {
         </Grid>
         <Grid item xs={12} sm={4}>
           <ControllerHomeCard
-            text={"Horaire de service présenté"}
-            icon={"ri-book-read-line ri-xl"}
+            text={"Pas de LIC à bord"}
+            icon={"fr-icon-alarm-warning-line fr-icon--lg"}
           />
         </Grid>
       </Grid>
       <a className={classNames(classes.noLicLink, "fr-link")} href="#">
-        Pas de LIC à bord ?
+        Un horaire de service est présenté ?
       </a>
     </Container>
   ];
