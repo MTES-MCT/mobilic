@@ -3,6 +3,7 @@ import {
   buildLogLocationPayloadFromAddress,
   BULK_ACTIVITY_QUERY,
   CANCEL_COMMENT_MUTATION,
+  CANCEL_MISSION_MUTATION,
   CHANGE_MISSION_NAME_MUTATION,
   LOG_COMMENT_MUTATION,
   LOG_LOCATION_MUTATION,
@@ -208,6 +209,20 @@ async function validateMission(api, mission, adminStore, userToValidate) {
   mission.validations.push(validation);
 }
 
+async function cancelMission(api, mission, adminStore, args) {
+  const user = args.user;
+  const apiResponse = await api.graphQlMutate(CANCEL_MISSION_MUTATION, {
+    missionId: mission.id,
+    userId: user.id
+  });
+  adminStore.dispatch({
+    type: ADMIN_ACTIONS.resetVirtual
+  });
+  mission.activities = [
+    ...apiResponse.data.activities.cancelMission.activities
+  ];
+}
+
 async function deleteComment(api, mission, adminStore, comment) {
   await api.graphQlMutate(CANCEL_COMMENT_MUTATION, {
     commentId: comment.id
@@ -316,6 +331,7 @@ export function useMissionActions(
     createExpenditure: missionActionsDecorator(createExpenditure),
     cancelExpenditure: missionActionsDecorator(cancelExpenditure),
     validateMission: missionActionsDecorator(validateMission),
+    cancelMission: missionActionsDecorator(cancelMission),
     createComment: missionActionsDecorator(createComment, false),
     deleteComment: missionActionsDecorator(deleteComment, false),
     changeName: missionActionsDecorator(changeName),
