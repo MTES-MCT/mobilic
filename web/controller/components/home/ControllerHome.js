@@ -43,7 +43,7 @@ export function ControllerHome() {
       maxWidth="xl"
     >
       <h3 className={classes.titleHello} key={1}>
-        Bonjour, {controllerUserInfo.firstName} !
+        Bonjour, {controllerUserInfo.firstName}
       </h3>
       <h4 className={classes.newControl} key={2}>
         Nouveau contrôle
