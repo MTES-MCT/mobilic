@@ -89,7 +89,6 @@
     "react-router-dom": "^5.1.2",
     "react-virtualized": "^9.22.2",
     "recharts": "^2.1.5",
-    "remixicon": "^2.5.0",
     "reselect": "^4.0.0",
     "resolve": "^1.12.2",
     "resolve-url-loader": "^3.1.1",

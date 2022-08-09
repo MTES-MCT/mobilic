@@ -16,7 +16,7 @@ import _ManagerImage from "../assets/images/Manager.svg";
 import _WorkerImage from "../assets/images/worker.svg";
 import _SoftwareImage from "../assets/images/software.svg";
 import _ControllerImage from "../assets/images/controller1.png";
-import _AgentConnectImage from "../assets/images/agentconnect.png";
+import _AgentConnectImage from "../assets/images/agentconnect.svg";
 import _NoDataImage from "../assets/images/no-data.png";
 
 export function MobilicLogoFilledIcon(props) {
@@ -139,7 +139,7 @@ export function ControllerImage(props) {
 }
 
 export function AgentConnectImage(props) {
-  return <img alt="agent-connect" src={_AgentConnectImage} {...props} />;
+  return <img alt="agent connect" src={_AgentConnectImage} {...props} />;
 }
 
 export function FranceConnectIcon(props) {

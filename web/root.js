@@ -50,7 +50,7 @@ import { RegulationDrawerContextProvider } from "./landing/ResourcePage/Regulati
 import "@gouvfr/dsfr/dist/dsfr.min.css"; // dsfr should be imported before custom styles
 import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
 import "@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css";
-import "remixicon/fonts/remixicon.css";
+import "@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css";
 import "./index.css";
 import "common/assets/styles/root.scss";
 import { loadControllerUserData } from "./controller/utils/loadControllerUserData";

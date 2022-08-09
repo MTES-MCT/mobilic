@@ -58,7 +58,7 @@ export function ControllerHome() {
         <Grid item xs={12} sm={4}>
           <ControllerHomeCard
             text={"LIC papier présenté"}
-            icon={"ri-book-open-line ri-xl"}
+            icon={"fr-icon-draft-line fr-icon--lg"}
           />
         </Grid>
         <Grid item xs={12} sm={4}>
