@@ -37,7 +37,7 @@ export function ControllerHomeCard({ text, icon, link, onClick }) {
   let buttonActionProps = { onClick };
   let ButtonComponent = ButtonBase;
   if (link) {
-    buttonActionProps = { href: link, target: "_blank" };
+    buttonActionProps = { to: link };
     ButtonComponent = LinkButton;
   }
 

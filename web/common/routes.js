@@ -29,6 +29,7 @@ import groupBy from "lodash/groupBy";
 import LoginController from "../login/login-controller";
 import { AgentConnectCallback } from "../signup/AgentConnectCallback";
 import { ControllerHome } from "../controller/components/home/ControllerHome";
+import { ControllerScanQRCode } from "../controller/components/scanQRCode/ControllerScanQRCode";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -222,9 +223,18 @@ export const ROUTES = [
     path: CONTROLLER_ROUTE_PREFIX + "/history",
     label: "Historique des contrôles",
     accessible: ({ controllerInfo }) => {
-      return controllerInfo?.id;
+      return !!controllerInfo?.id;
     },
     component: ControllerHome,
+    menuItemFilter: () => false
+  },
+  {
+    path: CONTROLLER_ROUTE_PREFIX + "/scan",
+    label: "Scan QR Code",
+    accessible: ({ controllerInfo }) => {
+      return !!controllerInfo?.id;
+    },
+    component: ControllerScanQRCode,
     menuItemFilter: () => false
   },
   {

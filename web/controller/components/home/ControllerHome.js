@@ -6,6 +6,7 @@ import Container from "@mui/material/Container";
 import { ControllerHomeCard } from "./ControllerHomeCard";
 import Grid from "@mui/material/Grid";
 import classNames from "classnames";
+import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -53,6 +54,7 @@ export function ControllerHome() {
           <ControllerHomeCard
             text={"QR code Mobilic présenté"}
             icon={"fr-icon-qr-code-line fr-icon--lg"}
+            link={CONTROLLER_ROUTE_PREFIX + "/scan"}
           />
         </Grid>
         <Grid item xs={12} sm={4}>
