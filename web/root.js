@@ -260,7 +260,7 @@ function _Root() {
     return () => {};
   }, [controllerId]);
 
-  const routes = getAccessibleRoutes({ userInfo, companies });
+  const routes = getAccessibleRoutes({ userInfo, companies, controllerInfo });
 
   return (
     <>

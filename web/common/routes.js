@@ -211,12 +211,37 @@ export const ROUTES = [
   },
   {
     path: CONTROLLER_ROUTE_PREFIX + "/home",
-    label: "Accueil contrôleur",
+    label: "Nouveau contrôle",
     accessible: ({ controllerInfo }) => {
-      return !controllerInfo?.id;
+      return controllerInfo?.id;
     },
     component: ControllerHome,
     menuItemFilter: () => false
+  },
+  {
+    path: CONTROLLER_ROUTE_PREFIX + "/history",
+    label: "Historique des contrôles",
+    accessible: ({ controllerInfo }) => {
+      return controllerInfo?.id;
+    },
+    component: ControllerHome,
+    menuItemFilter: () => false
+  },
+  {
+    label: "Contrôles",
+    path: "",
+    accessible: ({ controllerInfo }) => !!controllerInfo?.id,
+    menuItemFilter: () => true,
+    subRoutes: [
+      {
+        path: CONTROLLER_ROUTE_PREFIX + "/home",
+        label: "Nouveau contrôle"
+      },
+      {
+        path: CONTROLLER_ROUTE_PREFIX + "/history",
+        label: "Historique des contrôles"
+      }
+    ]
   },
   {
     path: "/control/user-history/:token",
@@ -289,13 +314,6 @@ export const ROUTES = [
     component: Home
   },
   {
-    path: "/logout",
-    label: "Déconnexion",
-    accessible: () => true,
-    menuItemFilter: ({ controllerInfo }) => !!controllerInfo?.id,
-    component: Logout
-  },
-  {
     label: "Mon compte",
     path: "",
     accessible: ({ userInfo, controllerInfo }) =>
@@ -310,6 +328,43 @@ export const ROUTES = [
         label: "Déconnexion"
       }
     ]
+  },
+  {
+    label: "Resources",
+    path: "",
+    accessible: ({ controllerInfo }) => !!controllerInfo?.id,
+    menuItemFilter: () => true,
+    subRoutes: [
+      {
+        path: "/resources/controller",
+        target: "_blank",
+        label: "Documentation"
+      },
+      {
+        href:
+          "https://mobilic.gitbook.io/mobilic-faq-dediee-aux-corps-de-controle/",
+        target: "_blank",
+        label: "Foire aux questions"
+      },
+      {
+        href: "https://mobilic.gitbook.io/natinf-expliques/",
+        target: "_blank",
+        label: "NATINFS expliqués"
+      },
+      {
+        href:
+          "https://tchap.gouv.fr/#/room/#SupportMobilicYNhe5wcTWWb:agent.dinum.tchap.gouv.fr",
+        target: "_blank",
+        label: "Support"
+      }
+    ]
+  },
+  {
+    path: "/logout",
+    label: "Déconnexion",
+    accessible: ({ controllerInfo }) => !!controllerInfo?.id,
+    menuItemFilter: () => true,
+    component: Logout
   }
 ];
 

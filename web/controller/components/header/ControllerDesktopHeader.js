@@ -8,8 +8,9 @@ import { makeStyles } from "@mui/styles";
 import Divider from "@mui/material/Divider";
 import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@mui/material/Typography";
-import { NavigationMenu, SocialNetworkPanel } from "../../../common/Header";
+import { SocialNetworkPanel } from "../../../common/Header";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
+import { ControllerNavigationMenu } from "./ControllerNavigationMenu";
 
 const useStyles = makeStyles(theme => ({
   docButton: {
@@ -95,7 +96,7 @@ export function ControllerDesktopHeader() {
         >
           <MenuIcon />
         </IconButton>
-        <NavigationMenu
+        <ControllerNavigationMenu
           key={1}
           open={openNavDrawer}
           setOpen={setOpenNavDrawer}
