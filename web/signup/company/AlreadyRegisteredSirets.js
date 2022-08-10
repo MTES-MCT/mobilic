@@ -17,7 +17,7 @@ const AlreadyRegisteredSirets = () => {
       container
       spacing={2}
       direction="column"
-      alignItems="center"
+      alignItems="left"
       className={classes.grid}
     >
       <Grid item xs={12}>

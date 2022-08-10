@@ -23,6 +23,20 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const getCompaniesText = companiesName => {
+  if (!companiesName) {
+    return "L'entreprise a été créée avec succès !";
+  }
+
+  if (companiesName.length == 1) {
+    return `L'entreprise ${companiesName[0]} a été créée avec succès !`;
+  }
+
+  return `Les entreprises ${companiesName.join(
+    ", "
+  )} ont été créées avec succès !`;
+};
+
 export function Complete({ type }) {
   const classes = useStyles();
 
@@ -30,7 +44,7 @@ export function Complete({ type }) {
 
   const location = useLocation();
 
-  const companyName = location.state ? location.state.companyName : null;
+  const companiesName = location.state ? location.state.companiesName : null;
 
   return (
     <Container className={`centered ${classes.container}`} maxWidth="sm">
@@ -50,10 +64,7 @@ export function Complete({ type }) {
           {type === "user" ? (
             <Typography>L'inscription s'est terminée avec succès !</Typography>
           ) : (
-            <Typography>
-              L'entreprise {companyName ? <strong>{companyName} </strong> : ""}a
-              été créée avec succès !
-            </Typography>
+            <Typography>{getCompaniesText(companiesName)}</Typography>
           )}
           {type === "user" && (
             <Typography>
