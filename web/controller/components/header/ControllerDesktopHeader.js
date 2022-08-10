@@ -42,7 +42,7 @@ export function ControllerDesktopHeader() {
     <LinkButton
       aria-label="Documentation"
       key={0}
-      href="/resources/home"
+      href="/resources/controller"
       target="_blank"
       className={classes.docButton}
     >
@@ -51,7 +51,7 @@ export function ControllerDesktopHeader() {
     <LinkButton
       aria-label="Foire aux questions"
       key={1}
-      href="https://faq.mobilic.beta.gouv.fr"
+      href="https://mobilic.gitbook.io/mobilic-faq-dediee-aux-corps-de-controle/"
       target="_blank"
       rel="noopener noreferrer"
       className={classes.docButton}
@@ -60,8 +60,9 @@ export function ControllerDesktopHeader() {
     </LinkButton>,
     <LinkButton
       aria-label="NATINF expliqués"
+      target="_blank"
       key={2}
-      to="/natinf"
+      href="https://mobilic.gitbook.io/natinf-expliques/"
       className={classes.docButton}
     >
       NATINF expliqués
