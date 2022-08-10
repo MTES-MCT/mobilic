@@ -229,16 +229,16 @@ export const ROUTES = [
   },
   {
     label: "Contrôles",
-    path: "",
+    path: CONTROLLER_ROUTE_PREFIX,
     accessible: ({ controllerInfo }) => !!controllerInfo?.id,
     menuItemFilter: () => true,
     subRoutes: [
       {
-        path: CONTROLLER_ROUTE_PREFIX + "/home",
+        path: "/home",
         label: "Nouveau contrôle"
       },
       {
-        path: CONTROLLER_ROUTE_PREFIX + "/history",
+        path: "/history",
         label: "Historique des contrôles"
       }
     ]
