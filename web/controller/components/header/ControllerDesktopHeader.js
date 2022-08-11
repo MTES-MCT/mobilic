@@ -61,6 +61,7 @@ export function ControllerDesktopHeader() {
     <LinkButton
       aria-label="NATINF expliqués"
       target="_blank"
+      rel="noopener noreferrer"
       key={2}
       href="https://mobilic.gitbook.io/natinf-expliques/"
       className={classes.docButton}
