@@ -11,12 +11,18 @@ import { LoadingButton } from "common/components/LoadingButton";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import Container from "@mui/material/Container";
-import React from "react";
+import React, { useMemo } from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
 import Box from "@mui/material/Box";
 import { Link } from "../../common/LinkButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import DriveEtaIcon from "@mui/icons-material/DirectionsCar";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Alert from "@mui/material/Alert";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -32,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: "center",
     marginTop: theme.spacing(2)
   },
-  companies: {
+  subSectionBody: {
     marginBottom: theme.spacing(2)
   }
 }));
@@ -44,24 +50,59 @@ export function UserReadInfo({
   controlTime,
   alertNumber,
   workingDaysNumber,
-  setTab
+  setTab,
+  missions
 }) {
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const classes = useStyles();
 
+  const currentMission = useMemo(
+    () => missions.find(mission => mission.ended === false),
+    [missions]
+  );
+
   return (
     <Container maxWidth="md" className={classes.container}>
-      <Typography variant="h5">Informations salarié.e</Typography>
-      <Grid container wrap="wrap" spacing={2} className={classes.sectionBody}>
-        <Grid item>
-          <InfoItem name="Identifiant Mobilic" bold value={userInfo.id} />
+      <Grid container spacing={2} className={classes.sectionBody}>
+        <Grid item md={6}>
+          <Typography variant="h5">Informations salarié.e</Typography>
+          <Grid
+            container
+            wrap="wrap"
+            spacing={2}
+            className={classes.subSectionBody}
+          >
+            <Grid item>
+              <InfoItem name="Identifiant Mobilic" bold value={userInfo.id} />
+            </Grid>
+            <Grid item>
+              <InfoItem name="Nom" value={formatPersonName(userInfo)} />
+            </Grid>
+          </Grid>
+          {!currentMission && (
+            <Alert severity="warning">
+              Le salarié n'a aucune saisie en cours ajourd'hui.
+            </Alert>
+          )}
         </Grid>
-        <Grid item>
-          <InfoItem name="Nom" value={formatPersonName(userInfo)} />
+        <Grid item md={6}>
+          <Typography variant="h5">Véhicule en cours d'utilisation</Typography>
+          <List dense>
+            <ListItem disableGutters>
+              <ListItemIcon>
+                <DriveEtaIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={
+                  currentMission?.vehicle?.registrationNumber || "Non renseigné"
+                }
+              />
+            </ListItem>
+          </List>
         </Grid>
       </Grid>
-      <Typography variant="h5" className={classes.companies}>
+      <Typography variant="h5" className={classes.subSectionBody}>
         Entreprises
       </Typography>
       <Grid
