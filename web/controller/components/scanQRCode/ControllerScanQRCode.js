@@ -7,6 +7,8 @@ import { Alert } from "@mui/material";
 import { QrReader } from "react-qr-reader";
 import Grid from "@mui/material/Grid";
 import useTheme from "@mui/styles/useTheme";
+import Link from "react-router-dom/es/Link";
+import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -17,9 +19,12 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     textAlign: "left"
   },
+  linkHome: {
+    textAlign: "left"
+  },
   titleScan: {
     textAlign: "center",
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(2)
   },
   whiteSection: {
     backgroundColor: theme.palette.background.paper
@@ -44,13 +49,22 @@ export function ControllerScanQRCode() {
   return [
     <ControllerHeader key={0} />,
     <Container
-      key={2}
+      key={20}
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth="xl"
     >
-      <h3 className={classes.titleScan} key={1}>
-        Scannez un QR Code Mobilic
-      </h3>
+      <Link
+        className={classNames(
+          classes.linkHome,
+          "fr-link",
+          "fr-fi-arrow-left-line",
+          "fr-link--icon-left"
+        )}
+        to={CONTROLLER_ROUTE_PREFIX + "/home"}
+      >
+        Accueil
+      </Link>
+      <h3 className={classes.titleScan}>Scannez un QR Code Mobilic</h3>
       <Alert severity="info" className={classes.missionTooLongWarning}>
         Plusieurs personnes sont à bord du VUL ? Scannez un premier QR code (ex{" "}
         : conducteur) puis procédez à un nouveau contrôle (ex : accompagnateur)
