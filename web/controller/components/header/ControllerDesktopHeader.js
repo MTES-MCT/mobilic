@@ -8,8 +8,9 @@ import { makeStyles } from "@mui/styles";
 import Divider from "@mui/material/Divider";
 import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@mui/material/Typography";
-import { NavigationMenu, SocialNetworkPanel } from "../../../common/Header";
+import { SocialNetworkPanel } from "../../../common/Header";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
+import { ControllerNavigationMenu } from "./ControllerNavigationMenu";
 
 const useStyles = makeStyles(theme => ({
   docButton: {
@@ -41,7 +42,7 @@ export function ControllerDesktopHeader() {
     <LinkButton
       aria-label="Documentation"
       key={0}
-      href="/resources/home"
+      href="/resources/controller"
       target="_blank"
       className={classes.docButton}
     >
@@ -50,7 +51,7 @@ export function ControllerDesktopHeader() {
     <LinkButton
       aria-label="Foire aux questions"
       key={1}
-      href="https://faq.mobilic.beta.gouv.fr"
+      href="https://mobilic.gitbook.io/mobilic-faq-dediee-aux-corps-de-controle/"
       target="_blank"
       rel="noopener noreferrer"
       className={classes.docButton}
@@ -59,8 +60,10 @@ export function ControllerDesktopHeader() {
     </LinkButton>,
     <LinkButton
       aria-label="NATINF expliqués"
+      target="_blank"
+      rel="noopener noreferrer"
       key={2}
-      to="/natinf"
+      href="https://mobilic.gitbook.io/natinf-expliques/"
       className={classes.docButton}
     >
       NATINF expliqués
@@ -95,7 +98,7 @@ export function ControllerDesktopHeader() {
         >
           <MenuIcon />
         </IconButton>
-        <NavigationMenu
+        <ControllerNavigationMenu
           key={1}
           open={openNavDrawer}
           setOpen={setOpenNavDrawer}

@@ -1,7 +1,7 @@
 import React from "react";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import CloseIcon from "@mui/icons-material/Close";
-import { getAccessibleRoutes, RESOURCES_ROUTE } from "../../../common/routes";
+import { getAccessibleRoutes } from "../../../common/routes";
 import Drawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -27,7 +27,6 @@ export function ControllerNavigationMenu({ open, setOpen }) {
   const classes = useStyles();
 
   const routes = getAccessibleRoutes({ controllerInfo });
-  routes.push(RESOURCES_ROUTE);
 
   return (
     <Drawer
