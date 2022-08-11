@@ -40,6 +40,9 @@ const useStyles = makeStyles(theme => ({
   },
   cameraGridContainer: {
     marginTop: theme.spacing(6)
+  },
+  scanSeveralCodes: {
+    marginTop: theme.spacing(2)
   }
 }));
 export function ControllerScanQRCode() {
@@ -65,10 +68,6 @@ export function ControllerScanQRCode() {
         Accueil
       </Link>
       <h3 className={classes.titleScan}>Scannez un QR Code Mobilic</h3>
-      <Alert severity="info" className={classes.missionTooLongWarning}>
-        Plusieurs personnes sont à bord du VUL ? Scannez un premier QR code (ex{" "}
-        : conducteur) puis procédez à un nouveau contrôle (ex : accompagnateur)
-      </Alert>
       <Grid
         container
         justifyContent="center"
@@ -96,6 +95,10 @@ export function ControllerScanQRCode() {
           </div>
         </Grid>
       </Grid>
+      <Alert severity="info" className={classes.scanSeveralCodes}>
+        Plusieurs personnes sont à bord du VUL ? Scannez un premier QR code (ex{" "}
+        : conducteur) puis procédez à un nouveau contrôle (ex : accompagnateur)
+      </Alert>
       <a className={classNames(classes.noQRCodeLink, "fr-link")} href="#">
         Le salarié ne trouve pas son QR code ?
       </a>
