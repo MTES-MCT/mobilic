@@ -191,6 +191,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "La modification de votre rôle ne peut être effectuée que par un autre gestionnaire.";
       case "USER_SELF_TERMINATE_EMPLOYMENT":
         return "L'action de mettre fin à votre rattachement ne peut être effectuée que par un autre gestionnaire.";
+      case "INVALID_CONTROL_TOKEN":
+        return "Le QR Code n'a pas été reconnu par Mobilic.";
       default:
         return null;
     }

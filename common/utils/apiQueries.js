@@ -1299,6 +1299,15 @@ export const CHANGE_MISSION_NAME_MUTATION = gql`
   }
 `;
 
+export const CONTROLLER_SCAN_CODE = gql`
+  mutation controllerScanCode($jwtToken: String!) {
+    controllerScanCode(jwtToken: $jwtToken) {
+      id
+      validFrom
+    }
+  }
+`;
+
 export function buildLogLocationPayloadFromAddress(
   address,
   missionId,
