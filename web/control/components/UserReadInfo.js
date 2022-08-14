@@ -21,7 +21,6 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import DriveEtaIcon from "@mui/icons-material/DirectionsCar";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import Alert from "@mui/material/Alert";
 
 const useStyles = makeStyles(theme => ({
@@ -40,6 +39,11 @@ const useStyles = makeStyles(theme => ({
   },
   subSectionBody: {
     marginBottom: theme.spacing(2)
+  },
+  fieldValue: {
+    fontWeight: 500,
+    fontSize: "1rem",
+    whiteSpace: "inherit"
   }
 }));
 
@@ -57,7 +61,7 @@ export function UserReadInfo({
   const api = useApi();
   const classes = useStyles();
 
-  const currentMission = useMemo(
+  const missionInProgress = useMemo(
     () => missions.find(mission => mission.ended === false),
     [missions]
   );
@@ -80,7 +84,7 @@ export function UserReadInfo({
               <InfoItem name="Nom" value={formatPersonName(userInfo)} />
             </Grid>
           </Grid>
-          {!currentMission && (
+          {!missionInProgress && (
             <Alert severity="warning">
               Le salarié n'a aucune saisie en cours aujourd'hui.
             </Alert>
@@ -93,11 +97,10 @@ export function UserReadInfo({
               <ListItemIcon>
                 <DriveEtaIcon />
               </ListItemIcon>
-              <ListItemText
-                primary={
-                  currentMission?.vehicle?.registrationNumber || "Non renseigné"
-                }
-              />
+              <Typography noWrap align="left" className={classes.fieldValue}>
+                {missionInProgress?.vehicle?.registrationNumber ||
+                  "Non renseigné"}
+              </Typography>
             </ListItem>
           </List>
         </Grid>
