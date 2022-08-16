@@ -148,11 +148,21 @@ export function ControllerScanQRCode() {
         </Grid>
       </Grid>
       <Alert severity="info" className={classes.scanSeveralCodes}>
-        Plusieurs personnes sont à bord du VUL ? Scannez un premier QR code (ex{" "}
+        Plusieurs personnes sont à bord du VUL ? Scannez un premier QR Code (ex{" "}
         : conducteur) puis procédez à un nouveau contrôle (ex : accompagnateur)
       </Alert>
-      <a className={classNames(classes.noQRCodeLink, "fr-link")} href="#">
-        Le salarié ne trouve pas son QR code ?
+      <a
+        className={classNames(
+          classes.noQRCodeLink,
+          "fr-link",
+          "fr-link--icon-right",
+          "fr-fi-external-link-line"
+        )}
+        target="_blank"
+        href="https://faq.mobilic.beta.gouv.fr/securite-et-confidentialite-des-donnees/modalites-de-controle"
+        rel="noopener noreferrer"
+      >
+        Le salarié ne trouve pas son QR Code ?
       </a>
     </Container>
   ];

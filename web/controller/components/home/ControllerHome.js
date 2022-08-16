@@ -52,7 +52,7 @@ export function ControllerHome() {
       <Grid container direction="row" alignItems="stretch" spacing={3}>
         <Grid item xs={12} sm={4}>
           <ControllerHomeCard
-            text={"QR code Mobilic présenté"}
+            text={"QR Code Mobilic présenté"}
             icon={"fr-icon-qr-code-line fr-icon--lg"}
             link={CONTROLLER_ROUTE_PREFIX + "/scan"}
           />
