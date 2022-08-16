@@ -46,6 +46,9 @@ const useStyles = makeStyles(theme => ({
     fontWeight: "bold",
     color: theme.palette.primary.main
   },
+  webinarTime: {
+    fontWeight: "bold"
+  },
   webinarTitle: {
     textAlign: "left"
   },
@@ -112,6 +115,7 @@ export const WebinarList = ({ setCantDisplayWebinarsBecauseNoneOrError }) => {
                     <Grid
                       container
                       alignItems="center"
+                      spacing={1}
                       sx={{
                         spacing: { xs: 2, sm: 6 },
                         wrap: { xs: "wrap", sm: "nowrap" }
@@ -144,7 +148,9 @@ export const WebinarList = ({ setCantDisplayWebinarsBecauseNoneOrError }) => {
                         </Grid>
                       </Grid>
                       <Grid item xs={6} sm={"auto"}>
-                        <Typography>{formatTimeOfDay(webinar.time)}</Typography>
+                        <Typography className={classes.webinarTime}>
+                          {formatTimeOfDay(webinar.time)}
+                        </Typography>
                       </Grid>
                       <Grid item style={{ flexGrow: 1 }}>
                         <Typography className={classes.webinarTitle}>
