@@ -86,7 +86,7 @@ export function UserReadInfo({
           </Grid>
           {!missionInProgress && (
             <Alert severity="warning">
-              Le salarié n'a aucune saisie en cours aujourd'hui.
+              Le salarié n'a aucune saisie en cours aujourd'hui ou est en pause.
             </Alert>
           )}
         </Grid>
