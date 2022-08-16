@@ -74,7 +74,7 @@ export function CompanySignup() {
     setLoadingCompanySignup(true);
     await alerts.withApiErrorHandling(async () => {
       const payload = {
-        siren: parseInt(siren),
+        siren: siren,
         usualName: usualName.trim()
       };
       const apiResponse = await api.graphQlMutate(
@@ -101,7 +101,7 @@ export function CompanySignup() {
     setLoadingCompanySignup(true);
     await alerts.withApiErrorHandling(async () => {
       const payload = {
-        siren: parseInt(siren),
+        siren: siren,
         companies: facilities
           .filter(f => f.selected)
           .map(f => {

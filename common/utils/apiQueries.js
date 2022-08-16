@@ -156,7 +156,7 @@ export const CONFIRM_FC_EMAIL_MUTATION = gql`
 `;
 export const COMPANY_SIGNUP_MUTATION = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
-  mutation companySignUp($siren: Int!, $usualName: String!) {
+  mutation companySignUp($siren: String!, $usualName: String!) {
     signUp {
       company(siren: $siren, usualName: $usualName) {
         employment {
@@ -178,7 +178,7 @@ export const COMPANY_SIGNUP_MUTATION = gql`
 `;
 export const COMPANIES_SIGNUP_MUTATION = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
-  mutation companiesSignUp($siren: Int!, $companies: [CompanySiret]!) {
+  mutation companiesSignUp($siren: String!, $companies: [CompanySiret]!) {
     signUp {
       companies(siren: $siren, companies: $companies) {
         employment {
@@ -199,7 +199,7 @@ export const COMPANIES_SIGNUP_MUTATION = gql`
   }
 `;
 export const SIREN_QUERY = gql`
-  query sirenInfo($siren: Int!) {
+  query sirenInfo($siren: String!) {
     sirenInfo(siren: $siren) {
       registrationStatus
       legalUnit
