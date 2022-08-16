@@ -156,9 +156,31 @@ export const CONFIRM_FC_EMAIL_MUTATION = gql`
 `;
 export const COMPANY_SIGNUP_MUTATION = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
-  mutation companySignUp($siren: Int!, $usualName: String!, $sirets: [String]) {
+  mutation companySignUp($siren: String!, $usualName: String!) {
     signUp {
-      company(siren: $siren, usualName: $usualName, sirets: $sirets) {
+      company(siren: $siren, usualName: $usualName) {
+        employment {
+          id
+          startDate
+          isAcknowledged
+          hasAdminRights
+          company {
+            id
+            name
+            siren
+            sirets
+            ...CompanySettings
+          }
+        }
+      }
+    }
+  }
+`;
+export const COMPANIES_SIGNUP_MUTATION = gql`
+  ${COMPANY_SETTINGS_FRAGMENT}
+  mutation companiesSignUp($siren: String!, $companies: [CompanySiret]!) {
+    signUp {
+      companies(siren: $siren, companies: $companies) {
         employment {
           id
           startDate
@@ -177,7 +199,7 @@ export const COMPANY_SIGNUP_MUTATION = gql`
   }
 `;
 export const SIREN_QUERY = gql`
-  query sirenInfo($siren: Int!) {
+  query sirenInfo($siren: String!) {
     sirenInfo(siren: $siren) {
       registrationStatus
       legalUnit
@@ -587,6 +609,25 @@ export const FRANCE_CONNECT_LOGIN_MUTATION = gql`
     }
   }
 `;
+export const AGENT_CONNECT_LOGIN_MUTATION = gql`
+  mutation agentConnectLogin(
+    $authorizationCode: String!
+    $originalRedirectUri: String!
+    $state: String!
+  ) {
+    auth {
+      agentConnectLogin(
+        authorizationCode: $authorizationCode
+        originalRedirectUri: $originalRedirectUri
+        state: $state
+      ) {
+        accessToken
+        refreshToken
+        acToken
+      }
+    }
+  }
+`;
 export const VALIDATE_EMPLOYMENT_MUTATION = gql`
   mutation validateEmployment($employmentId: Int!) {
     employments {
@@ -783,6 +824,29 @@ export const CANCEL_ACTIVITY_MUTATION = gql`
         creationTime: $creationTime
       ) {
         success
+      }
+    }
+  }
+`;
+export const CANCEL_MISSION_MUTATION = gql`
+  mutation cancelMission($missionId: Int!, $userId: Int!) {
+    activities {
+      cancelMission(missionId: $missionId, userId: $userId) {
+        activities {
+          id
+          type
+          missionId
+          startTime
+          endTime
+          userId
+          submitterId
+          lastSubmitterId
+          user {
+            id
+            firstName
+            lastName
+          }
+        }
       }
     }
   }

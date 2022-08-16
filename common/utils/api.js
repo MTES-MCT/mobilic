@@ -12,11 +12,18 @@ import {
 import { isAuthenticationError, isRetryable } from "./errors";
 import { NonConcurrentExecutionQueue } from "./concurrency";
 import { buildFCLogoutUrl } from "./franceConnect";
-import { clearUserIdCookie, currentUserId, readCookie } from "./cookie";
+import {
+  clearControllerIdCookie,
+  clearUserIdCookie,
+  currentControllerId,
+  currentUserId,
+  readCookie
+} from "./cookie";
 import { MaxSizeCache } from "./cache";
 import { saveAs } from "file-saver";
 import { CHECK_AUTH_QUERY, HTTP_QUERIES } from "./apiQueries";
 import { captureSentryException } from "./sentry";
+import { buildAgentConnectLogoutUrl } from "../../web/controller/utils/agentConnect";
 
 export const API_HOST = "/api";
 
@@ -166,6 +173,9 @@ class Api {
           ...impersonationHeaders
         };
       }
+      options.headers = {
+        ...options.headers
+      };
       const response = await this._fetch(queryInfo, options);
       if (response.status !== 200) {
         const error = new Error("Response status is not 200");
@@ -224,8 +234,11 @@ class Api {
           this.nonConcurrentQueryQueue.clear();
           await broadCastChannel.postMessage("update");
           const hasFcToken = readCookie("hasFc") || false;
+          const hasAcToken = readCookie("hasAc") || false;
           if (hasFcToken) {
             window.location.href = buildFCLogoutUrl("/");
+          } else if (hasAcToken) {
+            window.location.href = buildAgentConnectLogoutUrl("/");
           }
           let error;
           let errorName =
@@ -337,6 +350,7 @@ class Api {
     this.refreshTokenQueue.clear();
     this.nonConcurrentQueryQueue.clear();
     const hasFcToken = readCookie("hasFc") || false;
+    const hasAcToken = readCookie("hasAc") || false;
     if (hasFcToken) {
       window.location.href = buildFCLogoutUrl(postFCLogoutRedirect);
       // Effectively stop JS execution
@@ -344,17 +358,26 @@ class Api {
         setTimeout(resolve, 5000)
       );
       await waitUntilLocationChange;
+    } else if (hasAcToken) {
+      window.location.href = buildAgentConnectLogoutUrl(postFCLogoutRedirect);
+      const waitUntilLocationChange = new Promise(resolve =>
+        setTimeout(resolve, 5000)
+      );
+      await waitUntilLocationChange;
     } else {
-      if (currentUserId()) {
+      if (currentUserId() || currentControllerId()) {
         try {
           await this.nonConcurrentQueryQueue.execute(
             async () =>
-              await this._fetch(HTTP_QUERIES.logout, { timeout: 8000 })
+              await this._fetch(HTTP_QUERIES.logout, {
+                timeout: 8000
+              })
           );
         } catch (err) {
           if (failOnError) throw err;
         }
         clearUserIdCookie();
+        clearControllerIdCookie();
         await this.store.updateUserIdAndInfo();
         await broadCastChannel.postMessage("update");
       }

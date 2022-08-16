@@ -225,7 +225,7 @@
   opacity: 0;
 }
 
-[href]:not(.fr-breadcrumb__link) {
+[href]:not(.fr-breadcrumb__link, .fr-link) {
   --underline-img: none;
 }
 

@@ -54,13 +54,13 @@ export function OptInForSiretsSelectionStep({
           className={classes.radioButton}
           value={"no"}
           control={<Radio color="secondary" />}
-          label="Je souhaite gérer dans Mobilic l'unité légale comme un tout. Je n'ai pas besoin de créer plusieurs entreprises Mobilic associées à ce SIREN (recommandé)."
+          label="Non, je souhaite inscrire une seule unité légale."
         />
         <FormControlLabel
           className={classes.radioButton}
           value={"yes"}
           control={<Radio color="secondary" />}
-          label="J'ai besoin de séparer la gestion de mes établissements. Je crée plusieurs entreprises Mobilic correspondant chacune à un ou plusieurs de mes établissements."
+          label="Oui, je souhaite inscrire plusieurs établissements pour les gérer de manière distincte."
         />
       </RadioGroup>
       {!hasValidatedChoice && !shouldSelectSirets && (

@@ -517,7 +517,13 @@ export function MissionDetails({
                             allowSupportActivity,
                             nullableEndTime: false,
                             forcedUser: e.user,
-                            displayWarningMessage: false
+                            displayWarningMessage: false,
+                            handleCancelMission: async () => {
+                              await missionActions.cancelMission({
+                                user: e.user
+                              });
+                              handleClose();
+                            }
                           })
                       : null
                   }
