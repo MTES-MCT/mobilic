@@ -11,11 +11,11 @@ import Link from "react-router-dom/es/Link";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import { CONTROLLER_SCAN_CODE } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
-import { formatApiError } from "common/utils/errors";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { prettyFormatDayHour } from "common/utils/time";
 import { useHistory } from "react-router-dom";
 import { useLoadingScreen } from "common/utils/loading";
+import Typography from "@mui/material/Typography";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   },
   titleScan: {
     textAlign: "center",
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(3)
   },
   whiteSection: {
     backgroundColor: theme.palette.background.paper
@@ -46,10 +46,12 @@ const useStyles = makeStyles(theme => ({
     borderRadius: theme.spacing(3)
   },
   cameraGridContainer: {
-    marginTop: theme.spacing(6)
+    paddingRight: theme.spacing(3),
+    paddingLeft: theme.spacing(3),
+    marginTop: theme.spacing(2)
   },
   scanSeveralCodes: {
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(3)
   }
 }));
 export function ControllerScanQRCode() {
@@ -83,14 +85,14 @@ export function ControllerScanQRCode() {
         const controlResponse = apiResponse.data.controllerScanCode;
         alerts.success(
           `Le contrôle ${controlResponse.id} du ${prettyFormatDayHour(
-            controlResponse.validFrom
+            controlResponse.qrCodeGenerationTime
           )} a été enregistré avec succès.`,
           "0",
           6000
         );
         history.push(CONTROLLER_ROUTE_PREFIX + "/home");
       } catch (err) {
-        alerts.error(formatApiError(err), scannedCode, 6000);
+        history.push(CONTROLLER_ROUTE_PREFIX + "/scan_error");
       }
     });
   };
@@ -114,6 +116,10 @@ export function ControllerScanQRCode() {
         Accueil
       </Link>
       <h3 className={classes.titleScan}>Scannez un QR Code Mobilic</h3>
+      <Typography>
+        Afin d'accéder à l'historique de 28 jours du salarié, positionnez son QR
+        Code dans le cadre.
+      </Typography>
       <Grid
         container
         justifyContent="center"

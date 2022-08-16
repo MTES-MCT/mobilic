@@ -1303,7 +1303,7 @@ export const CONTROLLER_SCAN_CODE = gql`
   mutation controllerScanCode($jwtToken: String!) {
     controllerScanCode(jwtToken: $jwtToken) {
       id
-      validFrom
+      qrCodeGenerationTime
     }
   }
 `;
