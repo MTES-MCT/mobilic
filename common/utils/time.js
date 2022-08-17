@@ -129,6 +129,12 @@ export function textualPrettyFormatDay(unixTimestamp, withYear = false) {
   return withYear ? `${baseString} ${date.getFullYear()}` : baseString;
 }
 
+export function prettyFormatDayHour(unixTimestamp) {
+  const date = new Date(unixTimestamp * 1000);
+  return `${date.getDate()}/${date.getMonth() +
+    1} à ${date.getHours()}:${date.getMinutes()}`;
+}
+
 export function textualPrettyFormatWeek(startOfWeek) {
   const date = new Date(startOfWeek * 1000);
   return `Semaine du ${_localFormatDate(date)} au ${_localFormatDate(
