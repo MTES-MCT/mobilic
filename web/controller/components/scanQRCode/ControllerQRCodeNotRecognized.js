@@ -1,5 +1,4 @@
 import React from "react";
-import { ControllerHeader } from "../header/ControllerHeader";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import classNames from "classnames";
@@ -7,6 +6,7 @@ import { Alert } from "@mui/material";
 import Link from "react-router-dom/es/Link";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import Typography from "@mui/material/Typography";
+import { Header } from "../../../common/Header";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -35,7 +35,7 @@ export function ControllerQRCodeNotRecognized() {
   const classes = useStyles();
 
   return [
-    <ControllerHeader key={0} />,
+    <Header key={0} />,
     <Container
       key={20}
       className={`${classes.container} ${classes.whiteSection}`}

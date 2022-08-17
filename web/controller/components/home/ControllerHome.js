@@ -1,5 +1,4 @@
 import React from "react";
-import { ControllerHeader } from "../header/ControllerHeader";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
@@ -7,6 +6,7 @@ import { ControllerHomeCard } from "./ControllerHomeCard";
 import Grid from "@mui/material/Grid";
 import classNames from "classnames";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
+import { Header } from "../../../common/Header";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -37,7 +37,7 @@ export function ControllerHome() {
   const store = useStoreSyncedWithLocalStorage();
   const controllerUserInfo = store.controllerInfo();
   return [
-    <ControllerHeader key={0} />,
+    <Header key={0} />,
     <Container
       key={2}
       className={`${classes.container} ${classes.whiteSection}`}

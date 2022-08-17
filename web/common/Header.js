@@ -33,6 +33,7 @@ import { TextWithBadge } from "./TextWithBadge";
 import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 import TextField from "common/utils/TextField";
 import { MenuItem } from "@mui/material";
+import { ControllerHeader } from "../controller/components/header/ControllerHeader";
 
 const SOCIAL_NETWORKS = [
   {
@@ -484,8 +485,12 @@ function DesktopHeader({ disableMenu }) {
 }
 
 function _Header({ disableMenu }) {
+  const store = useStoreSyncedWithLocalStorage();
+  const controllerId = store.controllerId();
   const isMdUp = useIsWidthUp("md");
-  return (
+  return controllerId ? (
+    <ControllerHeader />
+  ) : (
     <HeaderContainer>
       {isMdUp ? (
         <DesktopHeader disableMenu={disableMenu} />
