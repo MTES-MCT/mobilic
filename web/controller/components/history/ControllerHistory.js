@@ -1,5 +1,11 @@
 import React from "react";
-import { Accordion, AccordionItem, Table } from "@dataesr/react-dsfr";
+import { Table } from "@dataesr/react-dsfr";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+import { makeStyles } from "@mui/styles";
 
 const dummyHistoControls = ["Jeudi 16 juin 2022", "Vendredi 17 juin 2022"].map(
   date => ({
@@ -33,18 +39,47 @@ const columns = [
   { name: "vehicle", label: "Véhicule" }
 ];
 
+const useStyles = makeStyles(theme => ({
+  icon: {
+    fontSize: "0.9rem",
+    color: "#3284FE"
+  },
+  summary: {
+    color: "#3284FE",
+    borderBottom: "1px solid #3284FE",
+    flexDirection: "row-reverse",
+    "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+      transform: "rotate(90deg)"
+    },
+    "& .MuiAccordionSummary-content": {
+      marginLeft: theme.spacing(1)
+    }
+  },
+  details: {
+    padding: 0
+  }
+}));
+
 export function ControllerHistory() {
-  return (
-    <Accordion size="lg" color="#3284FE">
-      {dummyHistoControls.map(histo => (
-        <AccordionItem title={histo.date} key={histo.date}>
-          <Table
-            rowKey={x => x.id}
-            data={histo.entries}
-            columns={columns}
-          ></Table>
-        </AccordionItem>
-      ))}
+  const classes = useStyles();
+
+  return dummyHistoControls.map(histo => (
+    <Accordion key={`entries_${histo.date}`} disableGutters elevation={0}>
+      <AccordionSummary
+        aria-controls="panel1d-content"
+        id="panel1d-header"
+        expandIcon={<ArrowForwardIosSharpIcon className={classes.icon} />}
+        className={classes.summary}
+      >
+        <Typography>{histo.date}</Typography>
+      </AccordionSummary>
+      <AccordionDetails className={classes.details}>
+        <Table
+          rowKey={x => x.id}
+          data={histo.entries}
+          columns={columns}
+        ></Table>
+      </AccordionDetails>
     </Accordion>
-  );
+  ));
 }

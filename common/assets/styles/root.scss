@@ -221,6 +221,19 @@
   display: none !important;
 }
 
+// override dsfr tables
+.fr-table {
+  padding: 0
+}
+
+.fr-table tbody {
+  background-color: var(--background-contrast-grey);
+}
+
+.fr-table td {
+  border-bottom: 1px solid #E5E5E5;
+}
+
 .MuiSelect-nativeInput:disabled {
   opacity: 0;
 }

@@ -6,6 +6,7 @@ import Container from "@mui/material/Container";
 import { ControllerHomeCard } from "./ControllerHomeCard";
 import Grid from "@mui/material/Grid";
 import classNames from "classnames";
+import { ControllerHistory } from "../history/ControllerHistory";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -73,6 +74,7 @@ export function ControllerHome() {
       </a>
       {/* Maquette figma: font 18px => vs h5 or h4 are bigger */}
       <h5 className={classes.newControl}>Historique des contrôles récents</h5>
+      <ControllerHistory />
     </Container>
   ];
 }
