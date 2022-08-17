@@ -62,6 +62,19 @@ export function ControllerScanQRCode() {
   const alerts = useSnackbarAlerts();
   const withLoadingScreen = useLoadingScreen();
 
+  React.useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then(function(stream) {})
+      .catch(function(err) {
+        alerts.error(
+          "L'autorisation d'utiliser la caméra a été refusée. Pour l'activer, allez dans les paramètres de votre navigateur.",
+          {},
+          6000
+        );
+      });
+  }, []);
+
   const getNewTokenFromOldQRCode = scannedCode => {
     if (
       scannedCode.startsWith(`${window.location.origin}/control/user-history`)
