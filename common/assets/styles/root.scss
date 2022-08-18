@@ -272,7 +272,7 @@
   --border-color: #3284ff;   /* color of the border */
   --border-width: 60px;  /* width of border */
   --border-radius: 32px;  /* radius */
-  z-index: 2000;
+  z-index: 0;
 
   padding: var(--border-thickness); /* space for the border */
 
@@ -290,6 +290,5 @@
           linear-gradient(-90deg,#000 calc(2*var(--border-thickness)),#0000 0) var(--border-thickness) 50%/100% calc(100% - 2*var(--border-width)) repeat-x,
           linear-gradient(#000 0 0) content-box,
           linear-gradient(#000 0 0);
-  -webkit-mask-composite: destination-out;
   mask-composite: exclude;
 }

@@ -62,17 +62,31 @@ export function ControllerScanQRCode() {
   const alerts = useSnackbarAlerts();
   const withLoadingScreen = useLoadingScreen();
 
+  const displayCameraDeniedAlert = () => {
+    alerts.error(
+      "L'autorisation d'utiliser la caméra a été refusée. Pour l'activer, allez dans les paramètres de votre navigateur.",
+      {},
+      6000
+    );
+  };
+
+  const managePermissionState = state => {
+    if (state === "denied") {
+      displayCameraDeniedAlert();
+    }
+  };
+
+  const isPermissionDeniedOnSafari = error => error?.name === "NotAllowedError";
+
   React.useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then(function(stream) {})
-      .catch(function(err) {
-        alerts.error(
-          "L'autorisation d'utiliser la caméra a été refusée. Pour l'activer, allez dans les paramètres de votre navigateur.",
-          {},
-          6000
-        );
+    if (navigator.permissions) {
+      navigator.permissions.query({ name: "camera" }).then(res => {
+        managePermissionState(res.state);
+        res.onchange = () => {
+          managePermissionState(res.state);
+        };
       });
+    }
   }, []);
 
   const getNewTokenFromOldQRCode = scannedCode => {
@@ -152,6 +166,9 @@ export function ControllerScanQRCode() {
                 }
 
                 if (error) {
+                  if (isPermissionDeniedOnSafari(error)) {
+                    displayCameraDeniedAlert();
+                  }
                   console.info(error);
                 }
               }}
