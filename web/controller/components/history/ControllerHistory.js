@@ -6,6 +6,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { makeStyles } from "@mui/styles";
+import { useIsWidthUp } from "common/utils/useWidth";
 
 import { prettyFormatDay, formatTimeOfDay } from "common/utils/time";
 import groupBy from "lodash/groupBy";
@@ -41,6 +42,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ControllerHistory({ controls }) {
+  const isMdUp = useIsWidthUp("md");
   const controlsByDate = useMemo(() => {
     const controlsGroupedByDate = groupBy(controls, control =>
       prettyFormatDay(control.qrCodeGenerationTime, true)
@@ -75,6 +77,7 @@ export function ControllerHistory({ controls }) {
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
         <Table
+          className={`fr-table--bordered ${isMdUp && "fr-table--layout-fixed"}`}
           rowKey={x => x.id}
           data={histo.entries}
           columns={columns}
