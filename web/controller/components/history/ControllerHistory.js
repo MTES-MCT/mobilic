@@ -60,7 +60,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControllerHistory() {
+export function ControllerHistory({ controls }) {
   const classes = useStyles();
 
   return dummyHistoControls.map(histo => (

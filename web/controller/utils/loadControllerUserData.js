@@ -8,6 +8,12 @@ const CONTROLLER_USER_QUERY = gql`
       firstName
       lastName
       email
+      controls {
+        id
+        controlType
+        userId
+        qrCodeGenerationTime
+      }
     }
   }
 `;
@@ -29,7 +35,7 @@ export async function loadControllerUserData(api, store, alerts) {
 }
 
 async function syncControllerUser(controllerUserPayload, api, store) {
-  const { firstName, lastName, email } = controllerUserPayload;
+  const { firstName, lastName, email, controls } = controllerUserPayload;
   const syncActions = [];
   firstName &&
     lastName &&
@@ -38,7 +44,8 @@ async function syncControllerUser(controllerUserPayload, api, store) {
         {
           firstName,
           lastName,
-          email
+          email,
+          controls
         },
         false
       )

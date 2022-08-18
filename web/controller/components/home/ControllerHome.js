@@ -74,7 +74,7 @@ export function ControllerHome() {
       </a>
       {/* Maquette figma: font 18px => vs h5 or h4 are bigger */}
       <h5 className={classes.newControl}>Historique des contrôles récents</h5>
-      <ControllerHistory />
+      <ControllerHistory controls={controllerUserInfo.controls} />
     </Container>
   ];
 }
