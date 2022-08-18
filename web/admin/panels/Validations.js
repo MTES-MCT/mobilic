@@ -91,7 +91,6 @@ function ValidationPanel() {
   const classes = useStyles({ clickableRow: tab === 0 });
 
   const [missionIdOnFocus, openMission] = useMissionDrawer();
-  const companies = adminStore.companies;
 
   const ref = React.useRef();
 
@@ -366,15 +365,7 @@ function ValidationPanel() {
           format: (value, entry) => (
             <Box className="flex-row-space-between">
               <Typography variant="h6" className={classes.missionTitle}>
-                Mission {entry.name} du {formatDay(entry.startTime)}{" "}
-                {companies.length > 1 ? (
-                  <span className={classes.companyName}>
-                    (entreprise :{" "}
-                    {companies.find(c => c.id === entry.companyId).name})
-                  </span>
-                ) : (
-                  ""
-                )}
+                Mission {entry.name} du {formatDay(entry.startTime)}
               </Typography>
               {tab === 0 && (
                 <LoadingButton
@@ -421,7 +412,7 @@ function ValidationPanel() {
               )}
             </Box>
           ),
-          groupProps: ["name", "startTime", "companyId"]
+          groupProps: ["name", "startTime"]
         }}
         headerClassName={`${classes.header} ${classes.row}`}
       />
