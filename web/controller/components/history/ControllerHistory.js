@@ -57,7 +57,8 @@ export function ControllerHistory({ controls }) {
           vehicle: "1234ABC01",
           company: "nom XYZ",
           time: formatTimeOfDay(control.qrCodeGenerationTime),
-          type: control.controlType
+          type: control.controlType,
+          nbDays: "2 jours"
         }))
       });
     }
