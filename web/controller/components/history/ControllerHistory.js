@@ -7,13 +7,16 @@ import Typography from "@mui/material/Typography";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { makeStyles } from "@mui/styles";
 
-import { prettyFormatDay } from "common/utils/time";
+import { prettyFormatDay, formatTimeOfDay } from "common/utils/time";
 import groupBy from "lodash/groupBy";
 
 const columns = [
   { name: "company", label: "Nom entreprise" },
   { name: "employee", label: "Salarié" },
-  { name: "vehicle", label: "Véhicule" }
+  { name: "vehicle", label: "Véhicule" },
+  { name: "time", label: "Heure" },
+  { name: "type", label: "Type" },
+  { name: "nbDays", label: "Jours contrôlés" }
 ];
 
 const useStyles = makeStyles(theme => ({
@@ -50,7 +53,9 @@ export function ControllerHistory({ controls }) {
           id: idx,
           employee: `${control.user.firstName} ${control.user.lastName}`,
           vehicle: "1234ABC01",
-          company: "nom XYZ"
+          company: "nom XYZ",
+          time: formatTimeOfDay(control.qrCodeGenerationTime),
+          type: control.controlType
         }))
       });
     }
