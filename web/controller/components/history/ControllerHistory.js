@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Table } from "@dataesr/react-dsfr";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -7,31 +7,8 @@ import Typography from "@mui/material/Typography";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { makeStyles } from "@mui/styles";
 
-const dummyHistoControls = ["Jeudi 16 juin 2022", "Vendredi 17 juin 2022"].map(
-  date => ({
-    date,
-    entries: [
-      {
-        id: 1,
-        company: "nom XYZ",
-        employee: "Emile Dafont",
-        vehicle: "1234ABC01"
-      },
-      {
-        id: 2,
-        company: "nom XYZ",
-        employee: "Léa Moti",
-        vehicle: "1234ABC01"
-      },
-      {
-        id: 3,
-        company: "nom XYZ",
-        employee: "Johan Guirec",
-        vehicle: "1234ABC01"
-      }
-    ]
-  })
-);
+import { prettyFormatDay } from "common/utils/time";
+import groupBy from "lodash/groupBy";
 
 const columns = [
   { name: "company", label: "Nom entreprise" },
@@ -61,9 +38,27 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ControllerHistory({ controls }) {
+  const controlsByDate = useMemo(() => {
+    const controlsGroupedByDate = groupBy(controls, control =>
+      prettyFormatDay(control.qrCodeGenerationTime, true)
+    );
+    let res = [];
+    for (const date in controlsGroupedByDate) {
+      res.push({
+        date,
+        entries: controlsGroupedByDate[date].map((control, idx) => ({
+          id: idx,
+          employee: `${control.user.firstName} ${control.user.lastName}`,
+          vehicle: "1234ABC01",
+          company: "nom XYZ"
+        }))
+      });
+    }
+    return res;
+  }, [controls]);
   const classes = useStyles();
 
-  return dummyHistoControls.map(histo => (
+  return controlsByDate.map(histo => (
     <Accordion key={`entries_${histo.date}`} disableGutters elevation={0}>
       <AccordionSummary
         aria-controls="panel1d-content"

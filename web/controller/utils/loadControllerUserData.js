@@ -11,7 +11,10 @@ const CONTROLLER_USER_QUERY = gql`
       controls {
         id
         controlType
-        userId
+        user {
+          firstName
+          lastName
+        }
         qrCodeGenerationTime
       }
     }
