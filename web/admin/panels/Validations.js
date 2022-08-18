@@ -412,7 +412,7 @@ function ValidationPanel() {
               )}
             </Box>
           ),
-          groupProps: ["name", "startTime", "companyId"]
+          groupProps: ["name", "startTime"]
         }}
         headerClassName={`${classes.header} ${classes.row}`}
       />
