@@ -7,6 +7,8 @@ import Grid from "@mui/material/Grid";
 import classNames from "classnames";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import { Header } from "../../../common/Header";
+import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
+import { useLocation } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -35,7 +37,15 @@ const useStyles = makeStyles(theme => ({
 export function ControllerHome() {
   const classes = useStyles();
   const store = useStoreSyncedWithLocalStorage();
+  const location = useLocation();
   const controllerUserInfo = store.controllerInfo();
+
+  const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
+
+  React.useEffect(() => {
+    setControlIdOnFocus(location.state?.controlId);
+  }, []);
+
   return [
     <Header key={0} />,
     <Container
@@ -43,6 +53,10 @@ export function ControllerHome() {
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth="xl"
     >
+      <ControllerControlDrawer
+        controlId={controlIdOnFocus}
+        onClose={() => setControlIdOnFocus(null)}
+      />
       <h3 className={classes.titleHello} key={1}>
         Bonjour, {controllerUserInfo.firstName}
       </h3>

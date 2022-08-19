@@ -132,7 +132,7 @@ export function textualPrettyFormatDay(unixTimestamp, withYear = false) {
 export function prettyFormatDayHour(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
   return `${date.getDate()}/${date.getMonth() +
-    1} à ${date.getHours()}:${date.getMinutes()}`;
+    1}/${date.getFullYear()} à ${date.getHours()}:${date.getMinutes()}`;
 }
 
 export function textualPrettyFormatWeek(startOfWeek) {
