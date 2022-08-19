@@ -8,7 +8,11 @@ import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthUp } from "common/utils/useWidth";
 
-import { prettyFormatDay, formatTimeOfDay } from "common/utils/time";
+import {
+  prettyFormatDay,
+  formatTimeOfDay,
+  startOfDayAsDate
+} from "common/utils/time";
 import groupBy from "lodash/groupBy";
 
 const columns = [
@@ -45,23 +49,28 @@ export function ControllerHistory({ controls }) {
   const isMdUp = useIsWidthUp("md");
   const controlsByDate = useMemo(() => {
     const controlsGroupedByDate = groupBy(controls, control =>
-      prettyFormatDay(control.qrCodeGenerationTime, true)
+      startOfDayAsDate(new Date(control.qrCodeGenerationTime * 1000))
     );
     let res = [];
     for (const date in controlsGroupedByDate) {
       res.push({
         date,
+        prettyDate: prettyFormatDay(
+          controlsGroupedByDate[date][0].qrCodeGenerationTime,
+          true
+        ),
         entries: controlsGroupedByDate[date].map((control, idx) => ({
           id: idx,
           employee: `${control.user.firstName} ${control.user.lastName}`,
-          vehicle: "1234ABC01",
-          company: "nom XYZ",
+          vehicle: control.vehicleRegistrationNumber,
+          company: control.companyName,
           time: formatTimeOfDay(control.qrCodeGenerationTime),
           type: control.controlType,
           nbDays: "2 jours"
         }))
       });
     }
+    res.sort((histo1, histo2) => new Date(histo2.date) - new Date(histo1.date));
     return res;
   }, [controls]);
   const classes = useStyles();
@@ -74,7 +83,7 @@ export function ControllerHistory({ controls }) {
         expandIcon={<ArrowForwardIosSharpIcon className={classes.icon} />}
         className={classes.summary}
       >
-        <Typography>{histo.date}</Typography>
+        <Typography>{histo.prettyDate}</Typography>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
         <Table
