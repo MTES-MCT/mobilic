@@ -193,6 +193,10 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "L'action de mettre fin à votre rattachement ne peut être effectuée que par un autre gestionnaire.";
       case "INVALID_CONTROL_TOKEN":
         return "Le QR Code n'a pas été reconnu par Mobilic.";
+      case "ACTIVITY_BEFORE_EMPLOYMENT_EMPLOYEE":
+        return "Vous ne pouvez pas enregistrer des activités à une date antérieure à celle de votre rattachement.";
+      case "ACTIVITY_BEFORE_EMPLOYMENT_ADMIN":
+        return "Vous ne pouvez pas enregistrer des activités à une date antérieure à celle du rattachement du salarié sélectionné.";
       default:
         return null;
     }
