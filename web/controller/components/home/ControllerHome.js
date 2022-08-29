@@ -42,7 +42,7 @@ export function ControllerHome() {
   return [
     <Header key={0} />,
     <Container
-      key={2}
+      key={1}
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth="xl"
     >
