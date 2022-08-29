@@ -60,6 +60,12 @@ export const LEGAL_ARTICLES = {
       "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033020112/",
     code: CODES.work
   },
+  calendarWeek: {
+    name: "L.3122-1",
+    url:
+      "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006902494/2008-05-01",
+    code: CODES.work
+  },
   longDistance: {
     name: "D.3312-36",
     url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033450305",
