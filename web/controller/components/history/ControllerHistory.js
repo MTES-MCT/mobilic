@@ -70,7 +70,9 @@ export function ControllerHistory({ controls }) {
         }))
       });
     }
-    res.sort((histo1, histo2) => new Date(histo2.date) - new Date(histo1.date));
+    res.sort(
+      (control1, control2) => new Date(control2.date) - new Date(control1.date)
+    );
     return res;
   }, [controls]);
   const classes = useStyles();
