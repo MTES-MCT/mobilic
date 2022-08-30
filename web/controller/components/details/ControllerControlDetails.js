@@ -6,7 +6,11 @@ import {
   augmentAndSortMissions,
   parseMissionPayloadFromBackend
 } from "common/utils/mission";
-import { getDaysBetweenTwoDates } from "common/utils/time";
+import {
+  getDaysBetweenTwoDates,
+  jsToUnixTimestamp,
+  unixToJSTimestamp
+} from "common/utils/time";
 import { computeAlerts } from "common/utils/regulation/computeAlerts";
 import { orderEmployments } from "common/utils/employments";
 import { useApi } from "common/utils/api";
@@ -86,8 +90,10 @@ export function ControllerControlDetails({ controlId, onClose }) {
           setGroupedAlerts(
             computeAlerts(
               missions_,
-              (new Date(controlData.historyStartDate).getTime() / 1000) >> 0,
-              (new Date(controlData.qrCodeGenerationTime) / 1000) >> 0
+              jsToUnixTimestamp(
+                new Date(controlData.historyStartDate).getTime()
+              ),
+              controlData.qrCodeGenerationTime
             )
           );
           const _coworkers = {};
@@ -101,7 +107,9 @@ export function ControllerControlDetails({ controlId, onClose }) {
 
           // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
           setLegacyTokenInfo({
-            creationDay: new Date(controlData.qrCodeGenerationTime * 1000),
+            creationDay: new Date(
+              unixToJSTimestamp(controlData.qrCodeGenerationTime)
+            ),
             historyStartDay: controlData.historyStartDate,
             creationTime: controlData.creationTime
           });

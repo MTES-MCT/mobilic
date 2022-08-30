@@ -279,3 +279,11 @@ export function useDateTimeFormatter(activities, useNowAsEnd) {
   const datetimeFormatter = showDates ? formatDateTime : formatTimeOfDay;
   return datetimeFormatter;
 }
+
+export function jsToUnixTimestamp(jsTimestamp) {
+  return (jsTimestamp / 1000) >> 0;
+}
+
+export function unixToJSTimestamp(unixTimestamp) {
+  return unixTimestamp * 1000;
+}

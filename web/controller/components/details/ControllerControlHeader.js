@@ -45,7 +45,7 @@ export function ControllerControlHeader({
       </Box>
       <h5>Contrôle #{controlId}</h5>
       <Typography>
-        Date et heure du contrôle: <b>{prettyFormatDayHour(controlDate)}</b>
+        Date et heure du contrôle : <b>{prettyFormatDayHour(controlDate)}</b>
       </Typography>
     </Container>
   ) : (
