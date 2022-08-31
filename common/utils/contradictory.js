@@ -1,6 +1,9 @@
 import maxBy from "lodash/maxBy";
 import flatMap from "lodash/flatMap";
-import { ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY } from "./apiQueries";
+import {
+  ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY,
+  CONTROLLER_READ_MISSION_DETAILS
+} from "./apiQueries";
 import { ADMIN_ACTIONS } from "../../web/admin/store/reducers/root";
 import { useStoreSyncedWithLocalStorage } from "../store/store";
 import { useAdminStore } from "../../web/admin/store/store";
@@ -146,17 +149,36 @@ export function getVersionsOfResourcesAt(resources, time) {
     .filter(({ resource }) => Boolean(resource));
 }
 
+async function retrieveResourcesAsUser(api, missionId) {
+  return (
+    await api.graphQlMutate(ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY, {
+      missionId
+    })
+  ).data.mission;
+}
+
+async function retrieveResourcesAsController(api, missionId, controlId) {
+  const apiResponse = await api.graphQlMutate(
+    CONTROLLER_READ_MISSION_DETAILS,
+    {
+      missionId,
+      controlId
+    },
+    { context: { nonPublicApi: true } }
+  );
+  return apiResponse.data.controlData.missions[0];
+}
+
 export async function getResourcesAndHistoryForMission(
   mission,
   api,
-  cacheInStore
+  cacheInStore,
+  controlId = null
 ) {
   if (!mission.resourcesWithHistory) {
-    const apiResponse = (
-      await api.graphQlMutate(ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY, {
-        missionId: mission.id
-      })
-    ).data.mission;
+    const apiResponse = !controlId
+      ? await retrieveResourcesAsUser(api, mission.id)
+      : await retrieveResourcesAsController(api, mission.id, controlId);
 
     let resources = [];
     resources.push(

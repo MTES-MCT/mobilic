@@ -141,6 +141,7 @@ export function ControllerControlDetails({ controlId, onClose }) {
       setPeriodOnFocus={setPeriodOnFocus}
       workingDaysNumber={workingDays.size}
       allowC1BExport={false}
+      controlId={controlId}
     />
   ];
 }

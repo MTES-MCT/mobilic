@@ -34,7 +34,8 @@ export function Day({
   coworkers,
   vehicles,
   userId,
-  weekActivities
+  weekActivities,
+  controlId = null
 }) {
   const infoCardStyles = useInfoCardStyles();
   const classes = useStyles();
@@ -60,7 +61,8 @@ export function Day({
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion,
     missionsInPeriod.map(m => [m, m.validation?.receptionTime]),
-    useCacheContradictoryInfoInPwaStore()
+    useCacheContradictoryInfoInPwaStore(),
+    controlId
   );
 
   const userActivitiesToUse = [
@@ -135,6 +137,7 @@ export function Day({
                   controlledShouldDisplayInitialEmployeeVersion={
                     shouldDisplayInitialEmployeeVersion
                   }
+                  controlId={controlId}
                 />
               </ListItem>
             ))}
