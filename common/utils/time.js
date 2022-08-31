@@ -132,7 +132,7 @@ export function textualPrettyFormatDay(unixTimestamp, withYear = false) {
 export function prettyFormatDayHour(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
   return `${date.getDate()}/${date.getMonth() +
-    1} à ${date.getHours()}:${date.getMinutes()}`;
+    1}/${date.getFullYear()} à ${date.getHours()}:${date.getMinutes()}`;
 }
 
 export function textualPrettyFormatWeek(startOfWeek) {
@@ -278,4 +278,12 @@ export function useDateTimeFormatter(activities, useNowAsEnd) {
 
   const datetimeFormatter = showDates ? formatDateTime : formatTimeOfDay;
   return datetimeFormatter;
+}
+
+export function jsToUnixTimestamp(jsTimestamp) {
+  return (jsTimestamp / 1000) >> 0;
+}
+
+export function unixToJSTimestamp(unixTimestamp) {
+  return unixTimestamp * 1000;
 }

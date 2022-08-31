@@ -55,7 +55,8 @@ export function UserReadInfo({
   alertNumber,
   workingDaysNumber,
   setTab,
-  missions
+  missions,
+  allowC1BExport = true
 }) {
   const alerts = useSnackbarAlerts();
   const api = useApi();
@@ -187,31 +188,33 @@ export function UserReadInfo({
           </Link>
         </Grid>
       </Grid>
-      <Box className={classes.exportButton}>
-        <LoadingButton
-          color="primary"
-          className={classes.exportButton}
-          onClick={async () => {
-            try {
-              await api.downloadFileHttpQuery(HTTP_QUERIES.userC1bExport, {
-                json: {
-                  min_date: tokenInfo.historyStartDay,
-                  max_date: tokenInfo.creationDay
-                }
-              });
-            } catch (err) {
-              alerts.error(
-                formatApiError(err),
-                "generate_tachograph_files",
-                6000
-              );
-            }
-          }}
-          variant="outlined"
-        >
-          Télécharger C1B
-        </LoadingButton>
-      </Box>
+      {allowC1BExport && (
+        <Box className={classes.exportButton}>
+          <LoadingButton
+            color="primary"
+            className={classes.exportButton}
+            onClick={async () => {
+              try {
+                await api.downloadFileHttpQuery(HTTP_QUERIES.userC1bExport, {
+                  json: {
+                    min_date: tokenInfo.historyStartDay,
+                    max_date: tokenInfo.creationDay
+                  }
+                });
+              } catch (err) {
+                alerts.error(
+                  formatApiError(err),
+                  "generate_tachograph_files",
+                  6000
+                );
+              }
+            }}
+            variant="outlined"
+          >
+            Télécharger C1B
+          </LoadingButton>
+        </Box>
+      )}
     </Container>
   );
 }

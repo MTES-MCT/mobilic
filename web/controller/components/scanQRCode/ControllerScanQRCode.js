@@ -117,7 +117,9 @@ export function ControllerScanQRCode() {
           "0",
           6000
         );
-        history.push(CONTROLLER_ROUTE_PREFIX + "/home");
+        history.push(CONTROLLER_ROUTE_PREFIX + "/home", {
+          controlId: controlResponse.id
+        });
       } catch (err) {
         history.push(CONTROLLER_ROUTE_PREFIX + "/scan_error");
       }
