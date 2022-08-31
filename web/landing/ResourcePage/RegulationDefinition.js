@@ -61,5 +61,19 @@ export const DEFINITIONS = {
         du code des transports).
       </span>
     )
+  },
+  calendarWeek: {
+    name: "Semaine civile",
+    content: (
+      <span>
+        elle débute le lundi à 0 heure et se termine le dimanche à 24 heures.
+        (article{" "}
+        <RegulationLegalArticleLink
+          article={LEGAL_ARTICLES.calendarWeek}
+          shortLabel
+        />{" "}
+        du code du travail).
+      </span>
+    )
   }
 };

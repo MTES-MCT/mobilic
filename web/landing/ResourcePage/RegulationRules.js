@@ -222,6 +222,7 @@ export const REGULATION_RULES = {
         quotidien, soit <Emphasis>34 heures</Emphasis>.
       </span>
     ),
+    definitions: [DEFINITIONS.calendarWeek],
     articles: [LEGAL_ARTICLES.weeklyRest1, LEGAL_ARTICLES.weeklyRest2],
     computation: (
       <span>
