@@ -66,7 +66,7 @@ export function ControllerHistory({ controls }) {
           company: control.companyName,
           time: formatTimeOfDay(control.qrCodeGenerationTime),
           type: control.controlType,
-          nbDays: "2 jours" // TODO: this is a hard coded value that needs to be removed
+          nbDays: ""
         }))
       });
     }
