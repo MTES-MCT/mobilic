@@ -72,8 +72,7 @@ export function ControllerHome() {
       <a className={classNames(classes.noLicLink, "fr-link")} href="#">
         Un horaire de service est présenté ?
       </a>
-      {/* Maquette figma: font 18px => vs h5 or h4 are bigger */}
-      <h5 className={classes.newControl}>Historique des contrôles récents</h5>
+      <h4 className={classes.newControl}>Historique des contrôles récents</h4>
       <ControllerHistory controls={controllerUserInfo.controls} />
     </Container>
   ];
