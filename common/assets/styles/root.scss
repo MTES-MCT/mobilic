@@ -231,6 +231,10 @@
   background-color: var(--background-contrast-grey);
 }
 
+.fr-table th {
+  min-width: 125px;
+}
+
 .MuiSelect-nativeInput:disabled {
   opacity: 0;
 }
