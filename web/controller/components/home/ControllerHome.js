@@ -1,11 +1,15 @@
-import React from "react";
-import { ControllerHeader } from "../header/ControllerHeader";
+import React, { useState } from "react";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import { ControllerHomeCard } from "./ControllerHomeCard";
 import Grid from "@mui/material/Grid";
 import classNames from "classnames";
+import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
+import { Header } from "../../../common/Header";
+import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
+import { useLocation } from "react-router-dom";
+import { Modal, ModalTitle, ModalContent } from "@dataesr/react-dsfr";
 import { ControllerHistory } from "../history/ControllerHistory";
 
 const useStyles = makeStyles(theme => ({
@@ -35,14 +39,27 @@ const useStyles = makeStyles(theme => ({
 export function ControllerHome() {
   const classes = useStyles();
   const store = useStoreSyncedWithLocalStorage();
+  const location = useLocation();
   const controllerUserInfo = store.controllerInfo();
+  const [modal, setModal] = useState({ isOpen: false, parcours: "" });
+
+  const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
+
+  React.useEffect(() => {
+    setControlIdOnFocus(location.state?.controlId);
+  }, []);
+
   return [
-    <ControllerHeader key={0} />,
+    <Header key={0} />,
     <Container
-      key={2}
+      key={1}
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth="xl"
     >
+      <ControllerControlDrawer
+        controlId={controlIdOnFocus}
+        onClose={() => setControlIdOnFocus(null)}
+      />
       <h3 className={classes.titleHello} key={1}>
         Bonjour, {controllerUserInfo.firstName}
       </h3>
@@ -52,20 +69,27 @@ export function ControllerHome() {
       <Grid container direction="row" alignItems="stretch" spacing={3}>
         <Grid item xs={12} sm={4}>
           <ControllerHomeCard
-            text={"QR code Mobilic présenté"}
+            text={"QR Code Mobilic présenté"}
             icon={"fr-icon-qr-code-line fr-icon--lg"}
+            link={CONTROLLER_ROUTE_PREFIX + "/scan"}
           />
         </Grid>
         <Grid item xs={12} sm={4}>
           <ControllerHomeCard
             text={"LIC papier présenté"}
             icon={"fr-icon-draft-line fr-icon--lg"}
+            onClick={() =>
+              setModal({ isOpen: true, parcours: "d'un LIC papier" })
+            }
           />
         </Grid>
         <Grid item xs={12} sm={4}>
           <ControllerHomeCard
             text={"Pas de LIC à bord"}
             icon={"fr-icon-alarm-warning-line fr-icon--lg"}
+            onClick={() =>
+              setModal({ isOpen: true, parcours: '"Pas de LIC à bord"' })
+            }
           />
         </Grid>
       </Grid>
@@ -74,6 +98,17 @@ export function ControllerHome() {
       </a>
       <h4 className={classes.newControl}>Historique des contrôles récents</h4>
       <ControllerHistory controls={controllerUserInfo.controls} />
-    </Container>
+    </Container>,
+    <Modal
+      key={2}
+      isOpen={modal.isOpen}
+      hide={() => setModal({ isOpen: false, parcours: "" })}
+    >
+      <ModalTitle>En cours de construction</ModalTitle>
+      <ModalContent>
+        Le parcours de contrôle {modal.parcours} dans votre interface Mobilic
+        est en cours de conception.
+      </ModalContent>
+    </Modal>
   ];
 }

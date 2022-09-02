@@ -42,10 +42,11 @@ export default function UserReadQRCodeModal({ open, handleClose }) {
     try {
       const json = await api.jsonHttpQuery(HTTP_QUERIES.generateUserReadToken);
       const token = json.token;
+      const controlToken = json.controlToken;
       setLink(
         `${
           window.location.origin
-        }/control/user-history?token=${token}&ts=${now()}`
+        }/control/user-history?token=${token}&ts=${now()}&controlToken=${controlToken}`
       );
     } catch (err) {
       setError(formatApiError(err));

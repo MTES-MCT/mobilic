@@ -280,3 +280,29 @@
 .MuiTab-root:active {
   --active-tint: inherit;
 }
+
+.camera-box {
+  --border-thickness: 8px;
+  --border-color: #3284ff;   /* color of the border */
+  --border-width: 60px;  /* width of border */
+  --border-radius: 32px;  /* radius */
+  z-index: 0;
+
+  padding: var(--border-thickness); /* space for the border */
+
+  position:relative;
+}
+.camera-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--border-color,red);
+  padding: var(--border-thickness);
+  border-radius: var(--border-radius);
+  -webkit-mask:
+          linear-gradient(  0deg,#000 calc(2*var(--border-thickness)),#0000 0) 50% var(--border-thickness)/calc(100% - 2*var(--border-width)) 100% repeat-y,
+          linear-gradient(-90deg,#000 calc(2*var(--border-thickness)),#0000 0) var(--border-thickness) 50%/100% calc(100% - 2*var(--border-width)) repeat-x,
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
