@@ -2,32 +2,29 @@ import React from "react";
 
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
+import { getTimezone, TIMEZONES } from "common/utils/timezones";
 
-const TIMEZONES = [
-  "Europe/Paris",
-  "America/Martinique",
-  "America/Guadeloupe",
-  "Indian/Reunion",
-  "America/Guyana"
-];
-
-const TimezoneSelect = ({ timezone, setTimezone }) => (
-  <TextField
-    required
-    select
-    className="vertical-form-text-input"
-    label="Fuseau Horaire"
-    value={timezone}
-    onChange={e => {
-      setTimezone(e.target.value);
-    }}
-  >
-    {TIMEZONES.map(timezone => (
-      <MenuItem key={`timezone__${timezone}`} value={timezone}>
-        {timezone}
-      </MenuItem>
-    ))}
-  </TextField>
-);
+const TimezoneSelect = ({ currentTimezone, setTimezone }) => {
+  return (
+    <TextField
+      required
+      select
+      fullWidth
+      className="vertical-form-text-input"
+      style={{ textAlign: "left" }}
+      label="Fuseau Horaire"
+      value={currentTimezone.name}
+      onChange={e => {
+        setTimezone(getTimezone(e.target.value));
+      }}
+    >
+      {TIMEZONES.map(({ name, label }) => (
+        <MenuItem key={`timezone__${name}`} value={name}>
+          {label}
+        </MenuItem>
+      ))}
+    </TextField>
+  );
+};
 
 export default TimezoneSelect;

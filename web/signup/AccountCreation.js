@@ -22,6 +22,7 @@ import { USER_SIGNUP_MUTATION } from "common/utils/apiQueries";
 import { CheckboxField } from "../common/CheckboxField";
 import { EmailField } from "../common/EmailField";
 import TimezoneSelect from "../common/TimezoneSelect";
+import { getClientTimezone } from "common/utils/timezones";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   const api = useApi();
@@ -36,7 +37,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const [emailError, setEmailError] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [selectedTimezone, setSelectedTimezone] = React.useState(
-    Intl.DateTimeFormat().resolvedOptions().timeZone
+    getClientTimezone()
   );
   const [subscribeToNewsletter, setSubscribeToNewsletter] = React.useState(
     true
@@ -194,7 +195,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             }}
           />
           <TimezoneSelect
-            timezone={selectedTimezone}
+            currentTimezone={selectedTimezone}
             setTimezone={setSelectedTimezone}
           />
           <CheckboxField
