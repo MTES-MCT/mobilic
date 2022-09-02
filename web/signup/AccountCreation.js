@@ -21,6 +21,7 @@ import { PaperContainerTitle } from "../common/PaperContainer";
 import { USER_SIGNUP_MUTATION } from "common/utils/apiQueries";
 import { CheckboxField } from "../common/CheckboxField";
 import { EmailField } from "../common/EmailField";
+import TimezoneSelect from "../common/TimezoneSelect";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   const api = useApi();
@@ -34,6 +35,9 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const [email, setEmail] = React.useState("");
   const [emailError, setEmailError] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [selectedTimezone, setSelectedTimezone] = React.useState(
+    Intl.DateTimeFormat().resolvedOptions().timeZone
+  );
   const [subscribeToNewsletter, setSubscribeToNewsletter] = React.useState(
     true
   );
@@ -188,6 +192,10 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             onChange={e => {
               setLastName(e.target.value.trimLeft());
             }}
+          />
+          <TimezoneSelect
+            timezone={selectedTimezone}
+            setTimezone={setSelectedTimezone}
           />
           <CheckboxField
             checked={subscribeToNewsletter}
