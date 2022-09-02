@@ -54,7 +54,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
         password,
         firstName,
         lastName,
-        subscribeToNewsletter
+        subscribeToNewsletter,
+        selectedTimezone.name
       );
     } else {
       modals.open("cgu", {
@@ -66,7 +67,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             password,
             firstName,
             lastName,
-            subscribeToNewsletter
+            subscribeToNewsletter,
+            selectedTimezone.name
           ),
         handleReject: () => {}
       });
@@ -80,7 +82,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
     password,
     firstName,
     lastName,
-    subscribeToNewsletter
+    subscribeToNewsletter,
+    timezone
   ) => {
     setLoading(true);
     await alerts.withApiErrorHandling(
@@ -91,7 +94,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           firstName: firstName.trim(),
           lastName: lastName.trim(),
           subscribeToNewsletter,
-          isEmployee: !isAdmin
+          isEmployee: !isAdmin,
+          timezoneName: timezone
         };
         if (employeeInvite) {
           signupPayload.inviteToken = employeeInvite.inviteToken;

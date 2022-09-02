@@ -127,6 +127,7 @@ export const USER_SIGNUP_MUTATION = gql`
     $inviteToken: String
     $subscribeToNewsletter: Boolean
     $isEmployee: Boolean
+    $timezoneName: String
   ) {
     signUp {
       user(
@@ -137,6 +138,7 @@ export const USER_SIGNUP_MUTATION = gql`
         inviteToken: $inviteToken
         subscribeToNewsletter: $subscribeToNewsletter
         isEmployee: $isEmployee
+        timezoneName: $timezoneName
       ) {
         accessToken
         refreshToken
