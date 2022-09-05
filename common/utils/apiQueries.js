@@ -1408,6 +1408,24 @@ export const CONTROLLER_SCAN_CODE = gql`
   }
 `;
 
+export const CONTROLLER_USER_CONTROLS_QUERY = gql`
+  query controllerUser($id: Int!) {
+    controllerUser(id: $id) {
+      controls {
+        id
+        controlType
+        user {
+          firstName
+          lastName
+        }
+        qrCodeGenerationTime
+        companyName
+        vehicleRegistrationNumber
+      }
+    }
+  }
+`;
+
 export function buildLogLocationPayloadFromAddress(
   address,
   missionId,

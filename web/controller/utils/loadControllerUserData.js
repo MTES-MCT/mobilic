@@ -8,17 +8,6 @@ const CONTROLLER_USER_QUERY = gql`
       firstName
       lastName
       email
-      controls {
-        id
-        controlType
-        user {
-          firstName
-          lastName
-        }
-        qrCodeGenerationTime
-        companyName
-        vehicleRegistrationNumber
-      }
     }
   }
 `;
@@ -40,17 +29,17 @@ export async function loadControllerUserData(api, store, alerts) {
 }
 
 async function syncControllerUser(controllerUserPayload, api, store) {
-  const { firstName, lastName, email, controls } = controllerUserPayload;
+  const { id, firstName, lastName, email } = controllerUserPayload;
   const syncActions = [];
   firstName &&
     lastName &&
     syncActions.push(
       store.setControllerInfo(
         {
+          id,
           firstName,
           lastName,
-          email,
-          controls
+          email
         },
         false
       )
