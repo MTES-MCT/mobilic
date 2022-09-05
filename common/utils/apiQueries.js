@@ -147,9 +147,17 @@ export const USER_SIGNUP_MUTATION = gql`
   }
 `;
 export const CONFIRM_FC_EMAIL_MUTATION = gql`
-  mutation confirmFcEmail($email: String!, $password: String) {
+  mutation confirmFcEmail(
+    $email: String!
+    $password: String
+    $timezoneName: String
+  ) {
     signUp {
-      confirmFcEmail(email: $email, password: $password) {
+      confirmFcEmail(
+        email: $email
+        password: $password
+        timezoneName: $timezoneName
+      ) {
         email
         hasConfirmedEmail
       }
