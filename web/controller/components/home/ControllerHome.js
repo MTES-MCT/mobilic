@@ -119,7 +119,10 @@ export function ControllerHome() {
         Un horaire de service est présenté ?
       </a>
       <h4 className={classes.newControl}>Historique des contrôles récents</h4>
-      <ControllerHistory controls={controls} />
+      <ControllerHistory
+        controls={controls}
+        setControlIdOnFocus={setControlIdOnFocus}
+      />
     </Container>,
     <Modal
       key={2}

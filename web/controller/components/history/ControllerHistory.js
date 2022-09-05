@@ -1,12 +1,10 @@
 import React, { useMemo } from "react";
-import { Table } from "@dataesr/react-dsfr";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { makeStyles } from "@mui/styles";
-import { useIsWidthUp } from "common/utils/useWidth";
 
 import {
   prettyFormatDay,
@@ -14,15 +12,7 @@ import {
   startOfDayAsDate
 } from "common/utils/time";
 import groupBy from "lodash/groupBy";
-
-const columns = [
-  { name: "company", label: "Nom entreprise" },
-  { name: "employee", label: "Salarié" },
-  { name: "vehicle", label: "Véhicule" },
-  { name: "time", label: "Heure" },
-  { name: "type", label: "Type" },
-  { name: "nbDays", label: "Jours contrôlés" }
-];
+import ControlsTable from "../table/ControlsTable";
 
 const useStyles = makeStyles(theme => ({
   icon: {
@@ -45,8 +35,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControllerHistory({ controls }) {
-  const isMdUp = useIsWidthUp("md");
+export function ControllerHistory({ controls, setControlIdOnFocus }) {
   const controlsByDate = useMemo(() => {
     const controlsGroupedByDate = groupBy(controls, control =>
       startOfDayAsDate(new Date(control.qrCodeGenerationTime * 1000))
@@ -60,7 +49,7 @@ export function ControllerHistory({ controls }) {
           true
         ),
         entries: controlsGroupedByDate[date].map((control, idx) => ({
-          id: idx,
+          id: control.id,
           employee: `${control.user.firstName} ${control.user.lastName}`,
           vehicle: control.vehicleRegistrationNumber,
           company: control.companyName,
@@ -88,12 +77,10 @@ export function ControllerHistory({ controls }) {
         <Typography>{histo.prettyDate}</Typography>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
-        <Table
-          className={`fr-table--bordered ${isMdUp && "fr-table--layout-fixed"}`}
-          rowKey={x => x.id}
-          data={histo.entries}
-          columns={columns}
-        ></Table>
+        <ControlsTable
+          entries={histo.entries}
+          onRowClick={setControlIdOnFocus}
+        />
       </AccordionDetails>
     </Accordion>
   ));

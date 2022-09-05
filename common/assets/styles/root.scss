@@ -229,6 +229,10 @@
 
 .fr-table tbody {
   background-color: var(--background-contrast-grey);
+
+  tr {
+    cursor: pointer;
+  }
 }
 
 .fr-table th {
