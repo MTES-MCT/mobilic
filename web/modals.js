@@ -15,6 +15,7 @@ import ExpenditureDialogModal from "./pwa/components/ExpenditureDialog";
 import ApiErrorDialogModal from "./pwa/components/ApiErrorDialog";
 import CGUModal from "./landing/cgu";
 import ChangeEmailModal from "./home/ChangeEmail";
+import ChangeTimezoneModal from "./home/ChangeTimezone";
 import TerminateEmployment from "./admin/components/TerminateEmployment";
 import UserReadQRCodeModal from "./control/UserReadQRCode";
 import UnavailableOfflineModeModal from "./common/UnavailableOfflineMode";
@@ -46,6 +47,7 @@ export const MODAL_DICT = {
   apiErrorDialog: ApiErrorDialogModal,
   cgu: CGUModal,
   changeEmail: ChangeEmailModal,
+  changeTimezone: ChangeTimezoneModal,
   terminateEmployment: TerminateEmployment,
   userReadQRCode: UserReadQRCodeModal,
   unavailableOfflineMode: UnavailableOfflineModeModal,

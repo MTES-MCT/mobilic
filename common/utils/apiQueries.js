@@ -660,6 +660,15 @@ export const CHANGE_EMAIL_MUTATION = gql`
     }
   }
 `;
+export const CHANGE_TIMEZONE_MUTATION = gql`
+  mutation changeTimezone($timezoneName: String!) {
+    account {
+      changeTimezone(timezoneName: $timezoneName) {
+        timezoneName
+      }
+    }
+  }
+`;
 export const RESEND_ACTIVATION_EMAIL = gql`
   mutation resendActivationEmail($email: String!) {
     account {

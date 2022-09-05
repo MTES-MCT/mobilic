@@ -19,3 +19,7 @@ export const getTimezone = timezoneName => {
     TIMEZONES.find(timezone => timezone.name === timezoneName) || TIMEZONES[0]
   );
 };
+
+export const getTimezonePrettyName = timezoneName => {
+  return getTimezone(timezoneName).label;
+};
