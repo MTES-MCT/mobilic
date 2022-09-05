@@ -13,6 +13,7 @@ import { Modal, ModalTitle, ModalContent } from "@dataesr/react-dsfr";
 import { ControllerHistory } from "../history/ControllerHistory";
 import { useApi } from "common/utils/api";
 import { CONTROLLER_USER_CONTROLS_QUERY } from "common/utils/apiQueries";
+import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -53,7 +54,8 @@ export function ControllerHome() {
     const res = await api.graphQlQuery(
       CONTROLLER_USER_CONTROLS_QUERY,
       {
-        id: controllerId
+        id: controllerId,
+        fromDate: isoFormatLocalDate(addDaysToDate(new Date(), -14))
       },
 
       { context: { nonPublicApi: true } }
