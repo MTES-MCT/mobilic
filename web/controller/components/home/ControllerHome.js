@@ -10,10 +10,9 @@ import { Header } from "../../../common/Header";
 import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
 import { useLocation } from "react-router-dom";
 import { Modal, ModalTitle, ModalContent } from "@dataesr/react-dsfr";
-import { ControllerHistory } from "../history/ControllerHistory";
-import { useApi } from "common/utils/api";
-import { CONTROLLER_USER_CONTROLS_QUERY } from "common/utils/apiQueries";
-import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
+import { ControlsList } from "../list/ControlsList";
+import { useLoadControls } from "../../utils/loadControls";
+import { addDaysToDate } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -42,7 +41,6 @@ const useStyles = makeStyles(theme => ({
 export function ControllerHome() {
   const classes = useStyles();
   const store = useStoreSyncedWithLocalStorage();
-  const api = useApi();
   const location = useLocation();
   const controllerUserInfo = store.controllerInfo();
   const [modal, setModal] = useState({ isOpen: false, parcours: "" });
@@ -50,21 +48,13 @@ export function ControllerHome() {
   const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
 
   const [controls, setControls] = React.useState([]);
-  const loadControls = async controllerId => {
-    const res = await api.graphQlQuery(
-      CONTROLLER_USER_CONTROLS_QUERY,
-      {
-        id: controllerId,
-        fromDate: isoFormatLocalDate(addDaysToDate(new Date(), -14))
-      },
-
-      { context: { nonPublicApi: true } }
-    );
-    setControls(res.data.controllerUser.controls);
-  };
+  const loadControls = useLoadControls();
 
   React.useEffect(() => {
-    loadControls(controllerUserInfo.id);
+    loadControls({
+      controllerId: controllerUserInfo.id,
+      fromDate: addDaysToDate(new Date(), -14)
+    }).then(controls => setControls(controls));
   }, []);
 
   React.useEffect(() => {
@@ -119,7 +109,7 @@ export function ControllerHome() {
         Un horaire de service est présenté ?
       </a>
       <h4 className={classes.newControl}>Historique des contrôles récents</h4>
-      <ControllerHistory
+      <ControlsList
         controls={controls}
         setControlIdOnFocus={setControlIdOnFocus}
       />

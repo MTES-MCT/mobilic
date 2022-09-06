@@ -2,7 +2,12 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import { Header } from "../../../common/Header";
-import { ControllerHistoryFilters } from "./Filters";
+import { ControllerHistoryFilters, CONTROL_TYPES } from "./Filters";
+import { useLoadControls } from "../../utils/loadControls";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
+import { ControlsList } from "../list/ControlsList";
+import { useLocation } from "react-router-dom";
+import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -20,6 +25,30 @@ const useStyles = makeStyles(theme => ({
 
 export function ControllerHistory() {
   const classes = useStyles();
+  const store = useStoreSyncedWithLocalStorage();
+  const controllerUserInfo = store.controllerInfo();
+
+  const location = useLocation();
+  const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
+
+  React.useEffect(() => {
+    setControlIdOnFocus(location.state?.controlId);
+  }, []);
+
+  const [controlFilters, setControlFilters] = React.useState({
+    type: CONTROL_TYPES[0].value,
+    fromDate: new Date(),
+    toDate: new Date()
+  });
+  const [controls, setControls] = React.useState([]);
+  const loadControls = useLoadControls();
+
+  React.useEffect(() => {
+    loadControls({
+      controllerId: controllerUserInfo.id,
+      ...controlFilters
+    }).then(controls => setControls(controls));
+  }, [controlFilters]);
   return [
     <Header key={0} />,
     <Container
@@ -27,11 +56,18 @@ export function ControllerHistory() {
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth="xl"
     >
+      <ControllerControlDrawer
+        controlId={controlIdOnFocus}
+        onClose={() => setControlIdOnFocus(null)}
+      />
       <h1>Historique des contrôles</h1>
       <div>
-        <ControllerHistoryFilters />
+        <ControllerHistoryFilters
+          controlFilters={controlFilters}
+          setControlFilters={setControlFilters}
+        />
       </div>
-      <div>Controles</div>
+      <ControlsList controls={controls} clickOnRow={setControlIdOnFocus} />
     </Container>
   ];
 }

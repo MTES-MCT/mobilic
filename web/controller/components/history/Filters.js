@@ -10,10 +10,11 @@ import TextField from "@mui/material/TextField";
 import { PeriodToggle } from "../../../admin/components/PeriodToggle";
 import { isoFormatLocalDate } from "common/utils/time";
 
-const CONTROL_TYPES = [
+export const CONTROL_TYPES = [
   { value: "mobilic", label: "Mobilic" },
   { value: "other", label: "Autre" }
 ];
+
 const useStyles = makeStyles(theme => ({
   filterGrid: {
     paddingTop: theme.spacing(2),
@@ -25,13 +26,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControllerHistoryFilters() {
+export function ControllerHistoryFilters({
+  controlFilters,
+  setControlFilters
+}) {
   const classes = useStyles();
 
   const today = new Date();
-  const [fromDate, setFromDate] = React.useState(new Date());
-  const [toDate, setToDate] = React.useState(new Date());
-  const [controlType, setControlType] = React.useState(CONTROL_TYPES[0].value);
   const [period, setPeriod] = React.useState("day");
 
   return (
@@ -53,8 +54,13 @@ export function ControllerHistoryFilters() {
               { value: "mobilic", label: "Mobilic" },
               { value: "other", label: "Autre" }
             ]}
-            selected={controlType}
-            onChange={e => setControlType(e.target.value)}
+            selected={controlFilters.type}
+            onChange={e =>
+              setControlFilters(prevFilters => ({
+                ...prevFilters,
+                type: e.target.value
+              }))
+            }
           />
         </div>
       </Grid>
@@ -64,13 +70,16 @@ export function ControllerHistoryFilters() {
       <Grid item>
         <MobileDatePicker
           label="Début"
-          value={fromDate}
+          value={controlFilters.fromDate}
           inputFormat="d MMMM yyyy"
           fullWidth
           disableCloseOnSelect={false}
           disableMaskedInput={true}
           onChange={val => {
-            setFromDate(isoFormatLocalDate(val));
+            setControlFilters(prevFilters => ({
+              ...prevFilters,
+              fromDate: isoFormatLocalDate(val)
+            }));
           }}
           cancelText={null}
           maxDate={today}
@@ -82,13 +91,16 @@ export function ControllerHistoryFilters() {
       <Grid item>
         <MobileDatePicker
           label="Fin"
-          value={toDate}
+          value={controlFilters.toDate}
           inputFormat="d MMMM yyyy"
           fullWidth
           disableCloseOnSelect={false}
           disableMaskedInput={true}
           onChange={val => {
-            setToDate(isoFormatLocalDate(val));
+            setControlFilters(prevFilters => ({
+              ...prevFilters,
+              toDate: isoFormatLocalDate(val)
+            }));
           }}
           cancelText={null}
           maxDate={today}
