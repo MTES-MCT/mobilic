@@ -31,6 +31,7 @@ import { AgentConnectCallback } from "../signup/AgentConnectCallback";
 import { ControllerHome } from "../controller/components/home/ControllerHome";
 import { ControllerScanQRCode } from "../controller/components/scanQRCode/ControllerScanQRCode";
 import { ControllerQRCodeNotRecognized } from "../controller/components/scanQRCode/ControllerQRCodeNotRecognized";
+import { ControllerHistory } from "../controller/components/history/ControllerHistory";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -226,7 +227,7 @@ export const ROUTES = [
     accessible: ({ controllerInfo }) => {
       return !!controllerInfo?.id;
     },
-    component: ControllerHome,
+    component: ControllerHistory,
     menuItemFilter: () => false
   },
   {
