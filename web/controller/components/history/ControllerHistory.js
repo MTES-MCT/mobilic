@@ -1,6 +1,7 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
 import { Header } from "../../../common/Header";
 import { ControllerHistoryFilters, CONTROL_TYPES } from "./Filters";
 import { useLoadControls } from "../../utils/loadControls";
@@ -61,12 +62,19 @@ export function ControllerHistory() {
         onClose={() => setControlIdOnFocus(null)}
       />
       <h1>Historique des contrôles</h1>
-      <div>
+      <Box
+        sx={{
+          marginBottom: theme => ({
+            xs: theme.spacing(2),
+            md: theme.spacing(12)
+          })
+        }}
+      >
         <ControllerHistoryFilters
           controlFilters={controlFilters}
           setControlFilters={setControlFilters}
         />
-      </div>
+      </Box>
       <ControlsList controls={controls} clickOnRow={setControlIdOnFocus} />
     </Container>
   ];
