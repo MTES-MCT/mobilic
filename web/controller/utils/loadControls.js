@@ -1,5 +1,4 @@
 import { useApi } from "common/utils/api";
-import { isoFormatLocalDate } from "common/utils/time";
 
 import { CONTROLLER_USER_CONTROLS_QUERY } from "common/utils/apiQueries";
 
@@ -11,7 +10,7 @@ export const useLoadControls = () => {
       CONTROLLER_USER_CONTROLS_QUERY,
       {
         id: controllerId,
-        fromDate: isoFormatLocalDate(fromDate)
+        fromDate: fromDate
       },
 
       { context: { nonPublicApi: true } }

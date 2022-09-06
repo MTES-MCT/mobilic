@@ -12,7 +12,7 @@ import { useLocation } from "react-router-dom";
 import { Modal, ModalTitle, ModalContent } from "@dataesr/react-dsfr";
 import { ControlsList } from "../list/ControlsList";
 import { useLoadControls } from "../../utils/loadControls";
-import { addDaysToDate } from "common/utils/time";
+import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -53,7 +53,7 @@ export function ControllerHome() {
   React.useEffect(() => {
     loadControls({
       controllerId: controllerUserInfo.id,
-      fromDate: addDaysToDate(new Date(), -14)
+      fromDate: isoFormatLocalDate(addDaysToDate(new Date(), -14))
     }).then(controls => setControls(controls));
   }, []);
 
