@@ -9,6 +9,7 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { ControlsList } from "../list/ControlsList";
 import { useLocation } from "react-router-dom";
 import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
+import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -38,8 +39,8 @@ export function ControllerHistory() {
 
   const [controlFilters, setControlFilters] = React.useState({
     type: CONTROL_TYPES[0].value,
-    fromDate: new Date(),
-    toDate: new Date()
+    fromDate: isoFormatLocalDate(addDaysToDate(new Date(), -2)),
+    toDate: isoFormatLocalDate(new Date())
   });
   const [controls, setControls] = React.useState([]);
   const loadControls = useLoadControls();
