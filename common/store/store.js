@@ -375,13 +375,14 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     ]);
 
   setControllerInfo = (
-    { firstName, lastName, email },
+    { id, firstName, lastName, email },
     commitImmediately = true
   ) =>
     new Promise(resolve =>
       this.setItems(
         {
           controllerInfo: {
+            id,
             firstName,
             lastName,
             email
