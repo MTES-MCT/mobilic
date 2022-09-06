@@ -1,7 +1,8 @@
 import React from "react";
-import Container from "@mui/material/Container";
 import { makeStyles } from "@mui/styles";
+import Container from "@mui/material/Container";
 import { Header } from "../../../common/Header";
+import { ControllerHistoryFilters } from "./Filters";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -27,7 +28,9 @@ export function ControllerHistory() {
       maxWidth="xl"
     >
       <h1>Historique des contrôles</h1>
-      <div>Filtres et export</div>
+      <div>
+        <ControllerHistoryFilters />
+      </div>
       <div>Controles</div>
     </Container>
   ];
