@@ -29,13 +29,14 @@ export async function loadControllerUserData(api, store, alerts) {
 }
 
 async function syncControllerUser(controllerUserPayload, api, store) {
-  const { firstName, lastName, email } = controllerUserPayload;
+  const { id, firstName, lastName, email } = controllerUserPayload;
   const syncActions = [];
   firstName &&
     lastName &&
     syncActions.push(
       store.setControllerInfo(
         {
+          id,
           firstName,
           lastName,
           email

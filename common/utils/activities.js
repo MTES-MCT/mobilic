@@ -34,7 +34,7 @@ export const ACTIVITIES = {
     name: "support",
     label: "Accompagnement",
     renderIcon: props => <TruckIcon {...props} />,
-    color: "#6BE670"
+    color: "#219358"
   },
   transfer: {
     name: "transfer",

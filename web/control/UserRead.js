@@ -29,7 +29,7 @@ import { UserReadAlerts } from "./components/UserReadAlerts";
 import { computeAlerts } from "common/utils/regulation/computeAlerts";
 import { getDaysBetweenTwoDates } from "common/utils/time";
 
-function getTabs(alertsNumber) {
+export function getTabs(alertsNumber) {
   return [
     {
       name: "info",

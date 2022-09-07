@@ -219,6 +219,106 @@ export const USER_READ_TOKEN_QUERY = gql`
   }
 `;
 
+export const CONTROLLER_READ_CONTROL_DATA = gql`
+  ${COMPANY_SETTINGS_FRAGMENT}
+  ${FRAGMENT_LOCATION_FULL}
+  query readControlData($controlId: Int!) {
+    controlData(controlId: $controlId) {
+      id
+      creationTime
+      qrCodeGenerationTime
+      historyStartDate
+      missions {
+        id
+        name
+        company {
+          id
+          name
+          siren
+          ...CompanySettings
+        }
+        validations {
+          submitterId
+          receptionTime
+          isAdmin
+          userId
+        }
+        vehicle {
+          id
+          name
+          registrationNumber
+        }
+        context
+        expenditures {
+          id
+          type
+          missionId
+          userId
+          spendingDate
+          receptionTime
+        }
+        activities {
+          id
+          type
+          missionId
+          startTime
+          endTime
+          userId
+          lastSubmitterId
+          user {
+            id
+            firstName
+            lastName
+          }
+        }
+        comments {
+          id
+          text
+          missionId
+          receptionTime
+          submitter {
+            id
+            firstName
+            lastName
+          }
+        }
+        startLocation {
+          ...FullLocation
+        }
+        endLocation {
+          ...FullLocation
+        }
+      }
+      employments {
+        id
+        startDate
+        isAcknowledged
+        hasAdminRights
+        endDate
+        company {
+          id
+          name
+          siren
+          sirets
+          ...CompanySettings
+          vehicles {
+            id
+            name
+            registrationNumber
+          }
+        }
+      }
+      user {
+        id
+        firstName
+        lastName
+        birthDate
+        email
+      }
+    }
+  }
+`;
+
 export const USER_READ_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
@@ -1294,6 +1394,33 @@ export const CHANGE_MISSION_NAME_MUTATION = gql`
       changeMissionName(name: $name, missionId: $missionId) {
         id
         name
+      }
+    }
+  }
+`;
+
+export const CONTROLLER_SCAN_CODE = gql`
+  mutation controllerScanCode($jwtToken: String!) {
+    controllerScanCode(jwtToken: $jwtToken) {
+      id
+      qrCodeGenerationTime
+    }
+  }
+`;
+
+export const CONTROLLER_USER_CONTROLS_QUERY = gql`
+  query controllerUser($id: Int!, $fromDate: Date) {
+    controllerUser(id: $id) {
+      controls(fromDate: $fromDate) {
+        id
+        controlType
+        user {
+          firstName
+          lastName
+        }
+        qrCodeGenerationTime
+        companyName
+        vehicleRegistrationNumber
       }
     }
   }
