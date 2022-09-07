@@ -11,6 +11,7 @@ import { ControlsList } from "../list/ControlsList";
 import { useLocation } from "react-router-dom";
 import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
 import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
+import Typography from "@mui/material/Typography";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -70,7 +71,9 @@ export function ControllerHistory() {
         controlId={controlIdOnFocus}
         onClose={() => setControlIdOnFocus(null)}
       />
-      <h1>Historique des contrôles</h1>
+      <Typography sx={{ typography: { xs: "h3", sm: "h1" } }}>
+        Historique des contrôles
+      </Typography>
       <Box
         sx={{
           marginBottom: theme => ({
