@@ -63,8 +63,11 @@ export function UserReadInfo({
   const classes = useStyles();
 
   const missionInProgress = useMemo(
-    () => missions.find(mission => mission.ended === false),
-    [missions]
+    () =>
+      missions.find(
+        mission => mission.ended === false || mission.endTime === controlTime
+      ),
+    [missions, controlTime]
   );
 
   return (
