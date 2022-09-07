@@ -8,7 +8,7 @@ import Grid from "@mui/material/Grid";
 import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import TextField from "@mui/material/TextField";
 import { PeriodToggle } from "../../../admin/components/PeriodToggle";
-import { isoFormatLocalDate } from "common/utils/time";
+import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 
 export const CONTROL_TYPES = [
   { value: "mobilic", label: "Mobilic" },
@@ -33,6 +33,7 @@ export function ControllerHistoryFilters({
   const classes = useStyles();
 
   const today = new Date();
+  const oneYearAgo = addDaysToDate(new Date(), -365);
   const [period, setPeriod] = React.useState("day");
 
   return (
@@ -83,6 +84,7 @@ export function ControllerHistoryFilters({
             }));
           }}
           cancelText={null}
+          minDate={oneYearAgo}
           maxDate={today}
           renderInput={props => (
             <TextField {...props} required variant="outlined" size="small" />
