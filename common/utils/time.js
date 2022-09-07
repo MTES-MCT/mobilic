@@ -251,7 +251,7 @@ export function sameMinute(unixTimestamp1, unixTimestamp2) {
   );
 }
 
-function addDaysToDate(initialDate, daysToAdd) {
+export function addDaysToDate(initialDate, daysToAdd) {
   initialDate.setDate(initialDate.getDate() + daysToAdd);
   return initialDate;
 }
