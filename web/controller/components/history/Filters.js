@@ -28,13 +28,14 @@ const useStyles = makeStyles(theme => ({
 export function ControllerHistoryFilters({
   controlFilters,
   setControlFilters,
+  period,
+  setPeriod,
   onClickExport
 }) {
   const classes = useStyles();
 
   const today = new Date();
   const oneYearAgo = addDaysToDate(new Date(), -365);
-  const [period, setPeriod] = React.useState("day");
 
   return (
     <Grid

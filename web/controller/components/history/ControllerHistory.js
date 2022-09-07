@@ -46,6 +46,7 @@ export function ControllerHistory() {
     toDate: isoFormatLocalDate(new Date())
   });
   const [controls, setControls] = React.useState([]);
+  const [period, setPeriod] = React.useState("day");
   const loadControls = useLoadControls();
 
   React.useEffect(() => {
@@ -85,10 +86,16 @@ export function ControllerHistory() {
         <ControllerHistoryFilters
           controlFilters={controlFilters}
           setControlFilters={setControlFilters}
+          period={period}
+          setPeriod={setPeriod}
           onClickExport={() => setModalOpened(true)}
         />
       </Box>
-      <ControlsList controls={controls} clickOnRow={setControlIdOnFocus} />
+      <ControlsList
+        controls={controls}
+        period={period}
+        clickOnRow={setControlIdOnFocus}
+      />
     </Container>
   ];
 }
