@@ -28,7 +28,8 @@ const useStyles = makeStyles(theme => ({
 
 export function ControllerHistoryFilters({
   controlFilters,
-  setControlFilters
+  setControlFilters,
+  onClickExport
 }) {
   const classes = useStyles();
 
@@ -110,7 +111,9 @@ export function ControllerHistoryFilters({
         />
       </Grid>
       <Grid item>
-        <ButtonDsfr title="Exporter">Exporter</ButtonDsfr>
+        <ButtonDsfr title="Exporter" onClick={onClickExport}>
+          Exporter
+        </ButtonDsfr>
       </Grid>
     </Grid>
   );

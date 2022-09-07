@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
+import { Modal, ModalTitle, ModalContent } from "@dataesr/react-dsfr";
 import { Header } from "../../../common/Header";
 import { ControllerHistoryFilters, CONTROL_TYPES } from "./Filters";
 import { useLoadControls } from "../../utils/loadControls";
@@ -29,6 +30,7 @@ export function ControllerHistory() {
   const classes = useStyles();
   const store = useStoreSyncedWithLocalStorage();
   const controllerUserInfo = store.controllerInfo();
+  const [modalOpened, setModalOpened] = useState(false);
 
   const location = useLocation();
   const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
@@ -58,6 +60,12 @@ export function ControllerHistory() {
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth="xl"
     >
+      <Modal isOpen={modalOpened} hide={() => setModalOpened(false)}>
+        <ModalTitle>En cours de construction</ModalTitle>
+        <ModalContent>
+          L'export de vos contrôles est en cours de construction.
+        </ModalContent>
+      </Modal>
       <ControllerControlDrawer
         controlId={controlIdOnFocus}
         onClose={() => setControlIdOnFocus(null)}
@@ -74,6 +82,7 @@ export function ControllerHistory() {
         <ControllerHistoryFilters
           controlFilters={controlFilters}
           setControlFilters={setControlFilters}
+          onClickExport={() => setModalOpened(true)}
         />
       </Box>
       <ControlsList controls={controls} clickOnRow={setControlIdOnFocus} />
