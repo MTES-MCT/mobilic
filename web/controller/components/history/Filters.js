@@ -21,7 +21,6 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
     alignItems: "end",
-    justifyContent: "center",
     flexShrink: 0
   }
 }));
@@ -43,6 +42,7 @@ export function ControllerHistoryFilters({
       alignItems="center"
       justifyContent="space-between"
       className={classes.filterGrid}
+      sx={{ justifyContent: { xs: "left", md: "center" } }}
     >
       <Grid item>
         <div className="fr-select-group">
