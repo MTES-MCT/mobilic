@@ -76,11 +76,17 @@ export function ControllerHistoryFilters({
           fullWidth
           disableCloseOnSelect={false}
           disableMaskedInput={true}
-          onChange={val => {
-            setControlFilters(prevFilters => ({
-              ...prevFilters,
-              fromDate: isoFormatLocalDate(val)
-            }));
+          onChange={newFromDate => {
+            setControlFilters(prevFilters => {
+              return {
+                ...prevFilters,
+                fromDate: isoFormatLocalDate(newFromDate),
+                toDate:
+                  newFromDate > new Date(prevFilters.toDate)
+                    ? isoFormatLocalDate(newFromDate)
+                    : prevFilters.toDate
+              };
+            });
           }}
           cancelText={null}
           minDate={oneYearAgo}
@@ -98,11 +104,17 @@ export function ControllerHistoryFilters({
           fullWidth
           disableCloseOnSelect={false}
           disableMaskedInput={true}
-          onChange={val => {
-            setControlFilters(prevFilters => ({
-              ...prevFilters,
-              toDate: isoFormatLocalDate(val)
-            }));
+          onChange={newToDate => {
+            setControlFilters(prevFilters => {
+              return {
+                ...prevFilters,
+                toDate: isoFormatLocalDate(newToDate),
+                fromDate:
+                  newToDate < new Date(prevFilters.fromDate)
+                    ? isoFormatLocalDate(newToDate)
+                    : prevFilters.fromDate
+              };
+            });
           }}
           cancelText={null}
           maxDate={today}
