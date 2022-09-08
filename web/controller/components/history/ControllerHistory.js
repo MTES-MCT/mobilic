@@ -46,7 +46,7 @@ export function ControllerHistory() {
     toDate: isoFormatLocalDate(new Date())
   });
   const [period, setPeriod] = React.useState("day");
-  const [controls, loadControls] = useLoadControls();
+  const [controls, loadControls, loadingControls] = useLoadControls();
 
   React.useEffect(() => {
     loadControls({
@@ -94,6 +94,7 @@ export function ControllerHistory() {
         <ControlsList
           controls={controls}
           period={period}
+          loading={loadingControls}
           clickOnRow={setControlIdOnFocus}
         />
       )}

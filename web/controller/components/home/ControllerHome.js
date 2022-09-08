@@ -47,7 +47,7 @@ export function ControllerHome() {
 
   const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
 
-  const [controls, loadControls] = useLoadControls();
+  const [controls, loadControls, loadingControls] = useLoadControls();
 
   React.useEffect(() => {
     loadControls({
@@ -111,6 +111,7 @@ export function ControllerHome() {
       <h4 className={classes.newControl}>Historique des contrôles récents</h4>
       <ControlsList
         controls={controls}
+        loading={loadingControls}
         setControlIdOnFocus={setControlIdOnFocus}
       />
     </Container>,

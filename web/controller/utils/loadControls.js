@@ -8,6 +8,7 @@ export const useLoadControls = () => {
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const [controls, setControls] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
 
   const loadControls = async ({
     controllerId,
@@ -15,6 +16,7 @@ export const useLoadControls = () => {
     toDate,
     controlsType
   }) => {
+    setLoading(true);
     await alerts.withApiErrorHandling(async () => {
       const result = await api.graphQlQuery(
         CONTROLLER_USER_CONTROLS_QUERY,
@@ -28,8 +30,9 @@ export const useLoadControls = () => {
         { context: { nonPublicApi: true } }
       );
       setControls(result.data.controllerUser.controls);
+      setLoading(false);
     });
   };
 
-  return [controls, loadControls];
+  return [controls, loadControls, loading];
 };

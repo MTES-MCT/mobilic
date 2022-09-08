@@ -17,6 +17,7 @@ import {
 } from "common/utils/time";
 import groupBy from "lodash/groupBy";
 import ControlsTable from "../list/table/ControlsTable";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const useStyles = makeStyles(theme => ({
   icon: {
@@ -65,7 +66,12 @@ const getPrettyDate = (date, period) => {
   }
 };
 
-export function ControlsList({ controls, clickOnRow, period = "day" }) {
+export function ControlsList({
+  controls,
+  loading,
+  clickOnRow,
+  period = "day"
+}) {
   const controlsByPeriod = useMemo(() => {
     const controlsGroupedByPeriod = groupBy(controls, control =>
       getGroupByKey(new Date(control.qrCodeGenerationTime * 1000), period)
@@ -93,19 +99,28 @@ export function ControlsList({ controls, clickOnRow, period = "day" }) {
   }, [controls, period]);
   const classes = useStyles();
 
-  return controlsByPeriod.map(histo => (
-    <Accordion key={`entries_${histo.date}`} disableGutters elevation={0}>
-      <AccordionSummary
-        aria-controls="panel1d-content"
-        id="panel1d-header"
-        expandIcon={<ArrowForwardIosSharpIcon className={classes.icon} />}
-        className={classes.summary}
-      >
-        <Typography>{histo.prettyDate}</Typography>
-      </AccordionSummary>
-      <AccordionDetails className={classes.details}>
-        <ControlsTable entries={histo.entries} onRowClick={clickOnRow} />
-      </AccordionDetails>
-    </Accordion>
-  ));
+  return loading ? (
+    <CircularProgress
+      style={{
+        zIndex: 9999
+      }}
+      color="primary"
+    />
+  ) : (
+    controlsByPeriod.map(histo => (
+      <Accordion key={`entries_${histo.date}`} disableGutters elevation={0}>
+        <AccordionSummary
+          aria-controls="panel1d-content"
+          id="panel1d-header"
+          expandIcon={<ArrowForwardIosSharpIcon className={classes.icon} />}
+          className={classes.summary}
+        >
+          <Typography>{histo.prettyDate}</Typography>
+        </AccordionSummary>
+        <AccordionDetails className={classes.details}>
+          <ControlsTable entries={histo.entries} onRowClick={clickOnRow} />
+        </AccordionDetails>
+      </Accordion>
+    ))
+  );
 }
