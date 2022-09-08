@@ -45,15 +45,14 @@ export function ControllerHistory() {
     fromDate: isoFormatLocalDate(addDaysToDate(new Date(), -2)),
     toDate: isoFormatLocalDate(new Date())
   });
-  const [controls, setControls] = React.useState([]);
   const [period, setPeriod] = React.useState("day");
-  const loadControls = useLoadControls();
+  const [controls, loadControls] = useLoadControls();
 
   React.useEffect(() => {
     loadControls({
       controllerId: controllerUserInfo.id,
       ...controlFilters
-    }).then(controls => setControls(controls));
+    });
   }, [controlFilters]);
   return [
     <Header key={0} />,

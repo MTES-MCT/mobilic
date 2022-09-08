@@ -47,15 +47,14 @@ export function ControllerHome() {
 
   const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
 
-  const [controls, setControls] = React.useState([]);
-  const loadControls = useLoadControls();
+  const [controls, loadControls] = useLoadControls();
 
   React.useEffect(() => {
     loadControls({
       controllerId: controllerUserInfo.id,
       fromDate: isoFormatLocalDate(addDaysToDate(new Date(), -14)),
       controlsType: "mobilic"
-    }).then(controls => setControls(controls));
+    });
   }, []);
 
   React.useEffect(() => {
