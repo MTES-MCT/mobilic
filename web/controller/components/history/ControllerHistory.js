@@ -91,11 +91,13 @@ export function ControllerHistory() {
           onClickExport={() => setModalOpened(true)}
         />
       </Box>
-      <ControlsList
-        controls={controls}
-        period={period}
-        clickOnRow={setControlIdOnFocus}
-      />
+      {controls && controls.length > 0 && (
+        <ControlsList
+          controls={controls}
+          period={period}
+          clickOnRow={setControlIdOnFocus}
+        />
+      )}
     </Container>
   ];
 }
