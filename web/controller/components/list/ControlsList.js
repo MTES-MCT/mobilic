@@ -7,13 +7,13 @@ import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { makeStyles } from "@mui/styles";
 
 import {
-  prettyFormatDay,
   formatTimeOfDay,
   startOfDayAsDate,
   startOfMonthAsDate,
-  textualPrettyFormatWeek,
   startOfWeekAsDate,
-  prettyFormatMonth
+  prettyFormatMonthFromDate,
+  prettyFormatDayFromDate,
+  prettyFormatWeekFromDate
 } from "common/utils/time";
 import groupBy from "lodash/groupBy";
 import ControlsTable from "../list/table/ControlsTable";
@@ -55,11 +55,11 @@ const getGroupByKey = (date, period) => {
 const getPrettyDate = (date, period) => {
   switch (period) {
     case "day":
-      return prettyFormatDay(date, true);
+      return prettyFormatDayFromDate(date, true);
     case "week":
-      return textualPrettyFormatWeek(date);
+      return prettyFormatWeekFromDate(date);
     case "month":
-      return prettyFormatMonth(date);
+      return prettyFormatMonthFromDate(date);
     default:
       return;
   }
@@ -74,10 +74,7 @@ export function ControlsList({ controls, clickOnRow, period = "day" }) {
     for (const date in controlsGroupedByPeriod) {
       res.push({
         date,
-        prettyDate: getPrettyDate(
-          controlsGroupedByPeriod[date][0].qrCodeGenerationTime,
-          period
-        ),
+        prettyDate: getPrettyDate(new Date(date), period),
         entries: controlsGroupedByPeriod[date].map(control => ({
           id: control.id,
           employee: `${control.user.firstName} ${control.user.lastName}`,
