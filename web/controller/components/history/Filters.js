@@ -12,7 +12,8 @@ import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 
 export const CONTROL_TYPES = [
   { value: "mobilic", label: "Mobilic" },
-  { value: "other", label: "Autre" }
+  { value: "lic_papier", label: "LIC Papier" },
+  { value: "sans_lic", label: "Pas de LIC" }
 ];
 
 const useStyles = makeStyles(theme => ({
@@ -53,15 +54,12 @@ export function ControllerHistoryFilters({
           </label>
           <SelectDsfr
             id="select-type"
-            options={[
-              { value: "mobilic", label: "Mobilic" },
-              { value: "other", label: "Autre" }
-            ]}
-            selected={controlFilters.type}
+            options={CONTROL_TYPES}
+            selected={controlFilters.controlsType}
             onChange={e =>
               setControlFilters(prevFilters => ({
                 ...prevFilters,
-                type: e.target.value
+                controlsType: e.target.value
               }))
             }
           />

@@ -53,7 +53,8 @@ export function ControllerHome() {
   React.useEffect(() => {
     loadControls({
       controllerId: controllerUserInfo.id,
-      fromDate: isoFormatLocalDate(addDaysToDate(new Date(), -14))
+      fromDate: isoFormatLocalDate(addDaysToDate(new Date(), -14)),
+      controlsType: "mobilic"
     }).then(controls => setControls(controls));
   }, []);
 

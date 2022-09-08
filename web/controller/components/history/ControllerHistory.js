@@ -41,7 +41,7 @@ export function ControllerHistory() {
   }, []);
 
   const [controlFilters, setControlFilters] = React.useState({
-    type: CONTROL_TYPES[0].value,
+    controlsType: CONTROL_TYPES[0].value,
     fromDate: isoFormatLocalDate(addDaysToDate(new Date(), -2)),
     toDate: isoFormatLocalDate(new Date())
   });
