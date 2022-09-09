@@ -186,9 +186,21 @@ export function Mission({
                   linkType: "download"
                 });
                 try {
-                  await api.downloadFileHttpQuery(HTTP_QUERIES.missionExport, {
-                    json: { mission_id: mission.id, user_id: userId }
-                  });
+                  if (controlId) {
+                    await api.downloadFileHttpQuery(
+                      HTTP_QUERIES.missionControlExport,
+                      {
+                        json: { mission_id: mission.id, control_id: controlId }
+                      }
+                    );
+                  } else {
+                    await api.downloadFileHttpQuery(
+                      HTTP_QUERIES.missionExport,
+                      {
+                        json: { mission_id: mission.id, user_id: userId }
+                      }
+                    );
+                  }
                 } catch (err) {
                   alerts.error(
                     formatApiError(err),

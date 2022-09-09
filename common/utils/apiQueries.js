@@ -1586,6 +1586,10 @@ export const HTTP_QUERIES = {
     method: "POST",
     endpoint: "/users/generate_mission_export"
   },
+  missionControlExport: {
+    method: "POST",
+    endpoint: "/users/generate_mission_control_export"
+  },
   oauthAuthorize: {
     method: "GET",
     endpoint: "/oauth/authorize"
