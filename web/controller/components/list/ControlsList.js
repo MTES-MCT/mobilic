@@ -45,7 +45,7 @@ const getGroupByKey = (date, period) => {
     case "week":
       return startOfWeekAsDate(date);
     case "month":
-      return startOfMonthAsDate(date);
+      return startOfDayAsDate(startOfMonthAsDate(date));
     default:
       return;
   }
