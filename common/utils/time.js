@@ -105,6 +105,20 @@ export function formatDayOfWeek(unixTimestamp) {
   return SHORT_DAYS[date.getDay()];
 }
 
+export function getPrettyDateByperiod(date, period) {
+  const dateAsUnixTimestamp = date.getTime() / 1000;
+  switch (period) {
+    case "day":
+      return prettyFormatDay(dateAsUnixTimestamp, true);
+    case "week":
+      return textualPrettyFormatWeek(dateAsUnixTimestamp);
+    case "month":
+      return prettyFormatMonth(dateAsUnixTimestamp);
+    default:
+      return;
+  }
+}
+
 export function prettyFormatDay(unixTimestamp, withYear = false) {
   const date = new Date(unixTimestamp * 1000);
   const baseString = `${date.getDate()} ${MONTHS[date.getMonth()]}`;
@@ -234,6 +248,10 @@ export function endOfMonthAsDate(date) {
 export function startOfMonthAsDate(date) {
   date.setDate(1);
   return date;
+}
+
+export function startOfWeekAsDate(date) {
+  return new Date(getStartOfWeek(date.getTime() / 1000) * 1000);
 }
 
 export function isoFormatLocalDate(dateOrTs) {

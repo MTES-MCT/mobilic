@@ -1409,9 +1409,9 @@ export const CONTROLLER_SCAN_CODE = gql`
 `;
 
 export const CONTROLLER_USER_CONTROLS_QUERY = gql`
-  query controllerUser($id: Int!, $fromDate: Date) {
+  query controllerUser($id: Int!, $fromDate: Date, $toDate: Date) {
     controllerUser(id: $id) {
-      controls(fromDate: $fromDate) {
+      controls(fromDate: $fromDate, toDate: $toDate) {
         id
         controlType
         user {
@@ -1419,6 +1419,7 @@ export const CONTROLLER_USER_CONTROLS_QUERY = gql`
           lastName
         }
         qrCodeGenerationTime
+        creationTime
         companyName
         vehicleRegistrationNumber
       }

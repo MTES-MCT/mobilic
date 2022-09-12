@@ -1,87 +1,102 @@
-import React, { useMemo } from "react";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import Typography from "@mui/material/Typography";
-import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
-
-import {
-  prettyFormatDay,
-  formatTimeOfDay,
-  startOfDayAsDate
-} from "common/utils/time";
-import groupBy from "lodash/groupBy";
-import ControlsTable from "../table/ControlsTable";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
+import { Modal, ModalTitle, ModalContent } from "@dataesr/react-dsfr";
+import { Header } from "../../../common/Header";
+import { ControllerHistoryFilters } from "./ControllerHistoryFilters";
+import { useLoadControls } from "../../utils/loadControls";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
+import { ControlsList } from "../list/ControlsList";
+import { useLocation } from "react-router-dom";
+import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
+import { isoFormatLocalDate, startOfMonthAsDate } from "common/utils/time";
+import Typography from "@mui/material/Typography";
 
 const useStyles = makeStyles(theme => ({
-  icon: {
-    fontSize: "0.9rem",
-    color: "#3284FE"
+  container: {
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(7),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    margin: 0,
+    textAlign: "center"
   },
-  summary: {
-    color: "#3284FE",
-    borderBottom: "1px solid #3284FE",
-    flexDirection: "row-reverse",
-    "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
-      transform: "rotate(90deg)"
-    },
-    "& .MuiAccordionSummary-content": {
-      marginLeft: theme.spacing(1)
-    }
-  },
-  details: {
-    padding: 0
+  whiteSection: {
+    backgroundColor: theme.palette.background.paper
   }
 }));
 
-export function ControllerHistory({ controls, setControlIdOnFocus }) {
-  const controlsByDate = useMemo(() => {
-    const controlsGroupedByDate = groupBy(controls, control =>
-      startOfDayAsDate(new Date(control.qrCodeGenerationTime * 1000))
-    );
-    let res = [];
-    for (const date in controlsGroupedByDate) {
-      res.push({
-        date,
-        prettyDate: prettyFormatDay(
-          controlsGroupedByDate[date][0].qrCodeGenerationTime,
-          true
-        ),
-        entries: controlsGroupedByDate[date].map((control, idx) => ({
-          id: control.id,
-          employee: `${control.user.firstName} ${control.user.lastName}`,
-          vehicle: control.vehicleRegistrationNumber,
-          company: control.companyName,
-          time: formatTimeOfDay(control.qrCodeGenerationTime),
-          type: control.controlType,
-          nbDays: ""
-        }))
-      });
-    }
-    res.sort(
-      (control1, control2) => new Date(control2.date) - new Date(control1.date)
-    );
-    return res;
-  }, [controls]);
+export function ControllerHistory() {
   const classes = useStyles();
+  const store = useStoreSyncedWithLocalStorage();
+  const controllerUserInfo = store.controllerInfo();
+  const [modalOpened, setModalOpened] = useState(false);
 
-  return controlsByDate.map(histo => (
-    <Accordion key={`entries_${histo.date}`} disableGutters elevation={0}>
-      <AccordionSummary
-        aria-controls="panel1d-content"
-        id="panel1d-header"
-        expandIcon={<ArrowForwardIosSharpIcon className={classes.icon} />}
-        className={classes.summary}
+  const location = useLocation();
+  const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
+
+  React.useEffect(() => {
+    setControlIdOnFocus(location.state?.controlId);
+  }, []);
+
+  const [controlFilters, setControlFilters] = React.useState({
+    fromDate: isoFormatLocalDate(startOfMonthAsDate(new Date())),
+    toDate: isoFormatLocalDate(new Date())
+  });
+  const [period, setPeriod] = React.useState("day");
+  const [controls, loadControls, loadingControls] = useLoadControls();
+
+  React.useEffect(() => {
+    loadControls({
+      controllerId: controllerUserInfo.id,
+      ...controlFilters
+    });
+  }, [controlFilters]);
+  return [
+    <Header key={0} />,
+    <Container
+      key={1}
+      className={`${classes.container} ${classes.whiteSection}`}
+      maxWidth="xl"
+    >
+      <Modal isOpen={modalOpened} hide={() => setModalOpened(false)}>
+        <ModalTitle>En cours de construction</ModalTitle>
+        <ModalContent>
+          L'export de vos contrôles est en cours de construction.
+        </ModalContent>
+      </Modal>
+      <ControllerControlDrawer
+        controlId={controlIdOnFocus}
+        onClose={() => setControlIdOnFocus(null)}
+      />
+      <Typography sx={{ typography: { xs: "h3", sm: "h1" } }}>
+        Historique des contrôles
+      </Typography>
+      <Box
+        sx={{
+          marginBottom: theme => ({
+            xs: theme.spacing(2),
+            md: theme.spacing(12)
+          })
+        }}
       >
-        <Typography>{histo.prettyDate}</Typography>
-      </AccordionSummary>
-      <AccordionDetails className={classes.details}>
-        <ControlsTable
-          entries={histo.entries}
-          onRowClick={setControlIdOnFocus}
+        <ControllerHistoryFilters
+          controlFilters={controlFilters}
+          setControlFilters={setControlFilters}
+          period={period}
+          setPeriod={setPeriod}
+          onClickExport={() => setModalOpened(true)}
         />
-      </AccordionDetails>
-    </Accordion>
-  ));
+      </Box>
+      {controls && controls.length > 0 && (
+        <ControlsList
+          controls={controls}
+          period={period}
+          loading={loadingControls}
+          clickOnRow={setControlIdOnFocus}
+        />
+      )}
+    </Container>
+  ];
 }
