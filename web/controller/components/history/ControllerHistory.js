@@ -4,7 +4,10 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import { Modal, ModalTitle, ModalContent } from "@dataesr/react-dsfr";
 import { Header } from "../../../common/Header";
-import { ControllerHistoryFilters, CONTROL_TYPES } from "./Filters";
+import {
+  ControllerHistoryFilters,
+  CONTROL_TYPES
+} from "./ControllerHistoryFilters";
 import { useLoadControls } from "../../utils/loadControls";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { ControlsList } from "../list/ControlsList";
