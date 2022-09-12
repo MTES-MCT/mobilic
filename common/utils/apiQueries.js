@@ -1428,6 +1428,7 @@ export const CONTROLLER_USER_CONTROLS_QUERY = gql`
           lastName
         }
         qrCodeGenerationTime
+        creationTime
         companyName
         vehicleRegistrationNumber
       }

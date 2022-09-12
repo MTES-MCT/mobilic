@@ -74,7 +74,7 @@ export function ControlsList({
 }) {
   const controlsByPeriod = useMemo(() => {
     const controlsGroupedByPeriod = groupBy(controls, control =>
-      getGroupByKey(new Date(control.qrCodeGenerationTime * 1000), period)
+      getGroupByKey(new Date(control.creationTime * 1000), period)
     );
     let res = [];
     for (const date in controlsGroupedByPeriod) {
@@ -86,7 +86,7 @@ export function ControlsList({
           employee: `${control.user.firstName} ${control.user.lastName}`,
           vehicle: control.vehicleRegistrationNumber,
           company: control.companyName,
-          time: formatTimeOfDay(control.qrCodeGenerationTime),
+          time: formatTimeOfDay(control.creationTime),
           type: control.controlType,
           nbDays: ""
         }))
