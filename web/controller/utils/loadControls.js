@@ -10,12 +10,7 @@ export const useLoadControls = () => {
   const [controls, setControls] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
-  const loadControls = async ({
-    controllerId,
-    fromDate,
-    toDate,
-    controlsType
-  }) => {
+  const loadControls = async ({ controllerId, fromDate, toDate }) => {
     setLoading(true);
     await alerts.withApiErrorHandling(async () => {
       const result = await api.graphQlQuery(
@@ -23,8 +18,7 @@ export const useLoadControls = () => {
         {
           id: controllerId,
           fromDate,
-          toDate,
-          controlsType
+          toDate
         },
 
         { context: { nonPublicApi: true } }

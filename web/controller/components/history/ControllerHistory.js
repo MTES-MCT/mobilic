@@ -4,10 +4,7 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import { Modal, ModalTitle, ModalContent } from "@dataesr/react-dsfr";
 import { Header } from "../../../common/Header";
-import {
-  ControllerHistoryFilters,
-  CONTROL_TYPES
-} from "./ControllerHistoryFilters";
+import { ControllerHistoryFilters } from "./ControllerHistoryFilters";
 import { useLoadControls } from "../../utils/loadControls";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { ControlsList } from "../list/ControlsList";
@@ -44,7 +41,6 @@ export function ControllerHistory() {
   }, []);
 
   const [controlFilters, setControlFilters] = React.useState({
-    controlsType: CONTROL_TYPES[0].value,
     fromDate: isoFormatLocalDate(startOfMonthAsDate(new Date())),
     toDate: isoFormatLocalDate(new Date())
   });

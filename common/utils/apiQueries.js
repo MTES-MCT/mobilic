@@ -1409,18 +1409,9 @@ export const CONTROLLER_SCAN_CODE = gql`
 `;
 
 export const CONTROLLER_USER_CONTROLS_QUERY = gql`
-  query controllerUser(
-    $id: Int!
-    $fromDate: Date
-    $toDate: Date
-    $controlsType: String
-  ) {
+  query controllerUser($id: Int!, $fromDate: Date, $toDate: Date) {
     controllerUser(id: $id) {
-      controls(
-        fromDate: $fromDate
-        toDate: $toDate
-        controlsType: $controlsType
-      ) {
+      controls(fromDate: $fromDate, toDate: $toDate) {
         id
         controlType
         user {
