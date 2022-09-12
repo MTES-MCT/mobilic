@@ -105,16 +105,18 @@ export function formatDayOfWeek(unixTimestamp) {
   return SHORT_DAYS[date.getDay()];
 }
 
-export function prettyFormatDayFromDate(date, withYear = false) {
-  return prettyFormatDay(date.getTime() / 1000, withYear);
-}
-
-export function prettyFormatWeekFromDate(date) {
-  return textualPrettyFormatWeek(date.getTime() / 1000);
-}
-
-export function prettyFormatMonthFromDate(date) {
-  return prettyFormatMonth(date.getTime() / 1000);
+export function getPrettyDateByperiod(date, period) {
+  const dateAsUnixTimestamp = date.getTime() / 1000;
+  switch (period) {
+    case "day":
+      return prettyFormatDay(dateAsUnixTimestamp, true);
+    case "week":
+      return textualPrettyFormatWeek(dateAsUnixTimestamp);
+    case "month":
+      return prettyFormatMonth(dateAsUnixTimestamp);
+    default:
+      return;
+  }
 }
 
 export function prettyFormatDay(unixTimestamp, withYear = false) {

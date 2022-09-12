@@ -11,9 +11,7 @@ import {
   startOfDayAsDate,
   startOfMonthAsDate,
   startOfWeekAsDate,
-  prettyFormatMonthFromDate,
-  prettyFormatDayFromDate,
-  prettyFormatWeekFromDate
+  getPrettyDateByperiod
 } from "common/utils/time";
 import groupBy from "lodash/groupBy";
 import ControlsTable from "../list/table/ControlsTable";
@@ -53,19 +51,6 @@ const getGroupByKey = (date, period) => {
   }
 };
 
-const getPrettyDate = (date, period) => {
-  switch (period) {
-    case "day":
-      return prettyFormatDayFromDate(date, true);
-    case "week":
-      return prettyFormatWeekFromDate(date);
-    case "month":
-      return prettyFormatMonthFromDate(date);
-    default:
-      return;
-  }
-};
-
 export function ControlsList({
   controls,
   loading,
@@ -80,7 +65,7 @@ export function ControlsList({
     for (const date in controlsGroupedByPeriod) {
       res.push({
         date,
-        prettyDate: getPrettyDate(new Date(date), period),
+        prettyDate: getPrettyDateByperiod(new Date(date), period),
         entries: controlsGroupedByPeriod[date].map(control => ({
           id: control.id,
           employee: `${control.user.firstName} ${control.user.lastName}`,
