@@ -13,7 +13,7 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { ControlsList } from "../list/ControlsList";
 import { useLocation } from "react-router-dom";
 import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
-import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
+import { isoFormatLocalDate, startOfMonthAsDate } from "common/utils/time";
 import Typography from "@mui/material/Typography";
 
 const useStyles = makeStyles(theme => ({
@@ -45,7 +45,7 @@ export function ControllerHistory() {
 
   const [controlFilters, setControlFilters] = React.useState({
     controlsType: CONTROL_TYPES[0].value,
-    fromDate: isoFormatLocalDate(addDaysToDate(new Date(), -2)),
+    fromDate: isoFormatLocalDate(startOfMonthAsDate(new Date())),
     toDate: isoFormatLocalDate(new Date())
   });
   const [period, setPeriod] = React.useState("day");
