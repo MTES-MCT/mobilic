@@ -343,7 +343,7 @@ export const AugmentedTable = React.forwardRef(
         <AugmentedTableHeaderCellContent
           column={column}
           onSortTypeChange={handleSortTypeChange}
-          sorted={sortBy === column.name}
+          sorted={sortBy === (column.propertyForSorting || column.name)}
           desc={sortType}
         />
       );

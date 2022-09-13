@@ -12,7 +12,7 @@ export function AugmentedTableHeaderCellContent({
       <TableSortLabel
         active={sorted}
         direction={sorted ? desc : "desc"}
-        onClick={onSortTypeChange(column.name)}
+        onClick={onSortTypeChange(column.propertyForSorting || column.name)}
         style={{
           flexDirection: column.align === "right" ? "row-reverse" : "row"
         }}
