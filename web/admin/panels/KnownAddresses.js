@@ -91,6 +91,7 @@ export default function KnownAddressAdmin({ company }) {
       columns={knownAddressColumns}
       entries={knownAddresses}
       ref={tableRef}
+      className={classes.knownAdressesTable}
       onRowEdit={async (address, { alias }) => {
         try {
           const apiResponse = await api.graphQlMutate(
