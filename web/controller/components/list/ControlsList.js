@@ -103,7 +103,11 @@ export function ControlsList({
           <Typography>{histo.prettyDate}</Typography>
         </AccordionSummary>
         <AccordionDetails className={classes.details}>
-          <ControlsTable entries={histo.entries} onRowClick={clickOnRow} />
+          <ControlsTable
+            entries={histo.entries}
+            onRowClick={clickOnRow}
+            period={period}
+          />
         </AccordionDetails>
       </Accordion>
     ))

@@ -1,16 +1,22 @@
 import React from "react";
 import { useIsWidthUp } from "common/utils/useWidth";
 
-const columns = [
-  { name: "company", label: "Nom entreprise" },
-  { name: "employee", label: "Salarié" },
-  { name: "vehicle", label: "Véhicule" },
-  { name: "time", label: "Heure" },
-  { name: "type", label: "Type" },
-  { name: "nbDays", label: "Jours contrôlés" }
-];
+const ControlsTable = ({ entries, onRowClick, period = "day" }) => {
+  const columns = React.useMemo(
+    () => [
+      { name: "company", label: "Nom entreprise" },
+      { name: "employee", label: "Salarié" },
+      { name: "vehicle", label: "Véhicule" },
+      {
+        name: "formattedTime",
+        label: period === "day" ? "Heure" : "Date & Heure"
+      },
+      { name: "type", label: "Type" },
+      { name: "nbDays", label: "Jours contrôlés" }
+    ],
+    [period]
+  );
 
-const ControlsTable = ({ entries, onRowClick }) => {
   const isMdUp = useIsWidthUp("md");
   return (
     <div
