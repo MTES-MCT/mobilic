@@ -67,6 +67,7 @@ export default function VehicleAdmin({ company }) {
       columns={vehicleColumns}
       entries={vehicles}
       ref={tableRef}
+      className={classes.vehiclesTable}
       onRowEdit={async (vehicle, { alias }) => {
         try {
           const apiResponse = await api.graphQlMutate(
