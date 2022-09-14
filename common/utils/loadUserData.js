@@ -190,6 +190,13 @@ export async function syncUser(userPayload, api, store) {
     );
   });
 
+  const sortedKnownAdresses = knownAddresses.sort((a1, a2) =>
+    a1.alias.localeCompare(a2.alias, undefined, {
+      numeric: true,
+      sensitivity: "base"
+    })
+  );
+
   const employmentsPerCompanyId = {};
   employments.forEach(e => {
     const company = e.company;
@@ -210,7 +217,7 @@ export async function syncUser(userPayload, api, store) {
   });
   syncActions.push(store.syncEntity(users, "coworkers"));
   syncActions.push(store.syncEntity(vehicles, "vehicles"));
-  syncActions.push(store.syncEntity(knownAddresses, "knownAddresses"));
+  syncActions.push(store.syncEntity(sortedKnownAdresses, "knownAddresses"));
   employments &&
     syncActions.push(
       store.syncEntity(flatten(values(employmentsPerCompanyId)), "employments")

@@ -45,7 +45,14 @@ export function updateCompanyDetailsReducer(
     settings: companiesPayload[0].settings,
     knownAddresses: flatMap(
       companiesPayload.map(c =>
-        c.knownAddresses.map(a => ({ ...a, companyId: c.id }))
+        c.knownAddresses
+          .map(a => ({ ...a, companyId: c.id }))
+          .sort((a1, a2) =>
+            a1.alias.localeCompare(a2.alias, undefined, {
+              numeric: true,
+              sensitivity: "base"
+            })
+          )
       )
     ),
     employments: flatMap(
