@@ -31,6 +31,7 @@ export default function KnownAddressAdmin({ company }) {
     {
       label: "Adresse",
       name: "address",
+      propertyForSorting: "lowerCaseAddress",
       format: address => (
         <span>
           <span className="bold">{address.name}</span>{" "}
@@ -64,7 +65,7 @@ export default function KnownAddressAdmin({ company }) {
 
   const knownAddresses = adminStore.knownAddresses
     .filter(a => a.companyId === companyId)
-    .map(a => ({ ...a, address: a }));
+    .map(a => ({ ...a, address: a, lowerCaseAddress: a.name?.toLowerCase() }));
 
   return [
     <Box key={0} className={classes.title}>
@@ -91,6 +92,8 @@ export default function KnownAddressAdmin({ company }) {
       columns={knownAddressColumns}
       entries={knownAddresses}
       ref={tableRef}
+      defaultSortBy="lowerCaseAddress"
+      className={classes.knownAddressesTable}
       onRowEdit={async (address, { alias }) => {
         try {
           const apiResponse = await api.graphQlMutate(

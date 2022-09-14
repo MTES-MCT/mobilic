@@ -50,6 +50,12 @@ export const usePanelStyles = makeStyles(theme => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center"
+  },
+  vehiclesTable: {
+    marginRight: theme.spacing(10)
+  },
+  knownAddressesTable: {
+    marginRight: theme.spacing(10)
   }
 }));
 
