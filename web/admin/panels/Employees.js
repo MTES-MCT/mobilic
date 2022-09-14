@@ -47,7 +47,11 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.warning.main
   },
   pendingEmployments: {
-    marginBottom: theme.spacing(10)
+    marginBottom: theme.spacing(10),
+    marginRight: theme.spacing(10)
+  },
+  acceptedEmployments: {
+    marginRight: theme.spacing(10)
   },
   terminatedEmployment: {
     color: theme.palette.text.disabled
@@ -551,6 +555,7 @@ export function Employees({ company, containerRef }) {
       columns={validEmploymentColumns}
       entries={validEmployments}
       virtualizedRowHeight={45}
+      className={classes.acceptedEmployments}
       virtualizedMaxHeight={"100%"}
       ref={validEmploymentsTableRef}
       defaultSortBy="name"

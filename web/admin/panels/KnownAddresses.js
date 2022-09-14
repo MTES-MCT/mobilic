@@ -93,6 +93,7 @@ export default function KnownAddressAdmin({ company }) {
       entries={knownAddresses}
       ref={tableRef}
       defaultSortBy="lowerCaseAddress"
+      className={classes.knownAddressesTable}
       onRowEdit={async (address, { alias }) => {
         try {
           const apiResponse = await api.graphQlMutate(
