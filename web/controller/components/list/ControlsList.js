@@ -73,7 +73,7 @@ export function ControlsList({
           company: control.companyName,
           time: formatTimeOfDay(control.creationTime),
           type: control.controlType,
-          nbDays: ""
+          nbControlledDays: control.nbControlledDays
         }))
       });
     }

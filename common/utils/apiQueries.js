@@ -1422,6 +1422,7 @@ export const CONTROLLER_USER_CONTROLS_QUERY = gql`
         creationTime
         companyName
         vehicleRegistrationNumber
+        nbControlledDays
       }
     }
   }

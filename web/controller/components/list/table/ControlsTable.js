@@ -7,7 +7,7 @@ const columns = [
   { name: "vehicle", label: "Véhicule" },
   { name: "time", label: "Heure" },
   { name: "type", label: "Type" },
-  { name: "nbDays", label: "Jours contrôlés" }
+  { name: "nbControlledDays", label: "Jours contrôlés" }
 ];
 
 const ControlsTable = ({ entries, onRowClick }) => {
