@@ -191,7 +191,7 @@ export async function syncUser(userPayload, api, store) {
   });
 
   const sortedKnownAdresses = knownAddresses.sort((a1, a2) =>
-    a1.alias.localeCompare(a2.alias, undefined, {
+    (a1.alias || a1.name).localeCompare(a2.alias || a2.name, undefined, {
       numeric: true,
       sensitivity: "base"
     })

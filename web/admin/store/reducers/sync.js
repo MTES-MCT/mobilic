@@ -48,10 +48,14 @@ export function updateCompanyDetailsReducer(
         c.knownAddresses
           .map(a => ({ ...a, companyId: c.id }))
           .sort((a1, a2) =>
-            a1.alias.localeCompare(a2.alias, undefined, {
-              numeric: true,
-              sensitivity: "base"
-            })
+            (a1.alias || a1.name).localeCompare(
+              a2.alias || a2.name,
+              undefined,
+              {
+                numeric: true,
+                sensitivity: "base"
+              }
+            )
           )
       )
     ),
