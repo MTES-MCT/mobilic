@@ -228,6 +228,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       creationTime
       qrCodeGenerationTime
       historyStartDate
+      nbControlledDays
       missions {
         id
         name
