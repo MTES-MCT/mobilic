@@ -12,7 +12,7 @@ const ControlsTable = ({ entries, onRowClick, period = "day" }) => {
         label: period === "day" ? "Heure" : "Date & Heure"
       },
       { name: "type", label: "Type" },
-      { name: "nbDays", label: "Jours contrôlés" }
+      { name: "nbControlledDays", label: "Jours contrôlés" }
     ],
     [period]
   );

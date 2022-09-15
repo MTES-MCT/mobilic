@@ -328,6 +328,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       creationTime
       qrCodeGenerationTime
       historyStartDate
+      nbControlledDays
       missions {
         id
         name
@@ -1522,6 +1523,7 @@ export const CONTROLLER_USER_CONTROLS_QUERY = gql`
         creationTime
         companyName
         vehicleRegistrationNumber
+        nbControlledDays
       }
     }
   }

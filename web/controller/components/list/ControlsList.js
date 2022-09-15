@@ -79,7 +79,7 @@ export function ControlsList({
                 ? `${formatDay(control.creationTime)} - `
                 : "") + formatTimeOfDay(control.creationTime),
             type: control.controlType,
-            nbDays: ""
+            nbControlledDays: control.nbControlledDays
           }))
           .sort((control1, control2) => control2.time - control1.time)
       });
