@@ -63,7 +63,8 @@ export function ContradictoryChanges({
   validationTime,
   showEventsBeforeValidation = true,
   userId,
-  cacheInStore
+  cacheInStore,
+  controlId = null
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
@@ -73,7 +74,8 @@ export function ContradictoryChanges({
     open,
     setOpen,
     [[mission, validationTime || now()]],
-    cacheInStore
+    cacheInStore,
+    controlId
   );
 
   const changesHistory = contradictoryInfo[1];

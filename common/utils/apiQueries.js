@@ -219,6 +219,106 @@ export const USER_READ_TOKEN_QUERY = gql`
   }
 `;
 
+export const CONTROLLER_READ_MISSION_DETAILS = gql`
+  ${FRAGMENT_LOCATION_FULL}
+  query readMissionControlData($controlId: Int!, $missionId: Int!) {
+    controlData(controlId: $controlId) {
+      missions(missionId: $missionId) {
+        receptionTime
+        submitter {
+          id
+          firstName
+          lastName
+        }
+        activities(includeDismissedActivities: true) {
+          id
+          type
+          missionId
+          startTime
+          endTime
+          userId
+          receptionTime
+          lastUpdateTime
+          dismissedAt
+          lastSubmitterId
+          submitter {
+            id
+            firstName
+            lastName
+          }
+          dismissAuthor {
+            id
+            firstName
+            lastName
+          }
+          versions {
+            id
+            startTime
+            endTime
+            receptionTime
+            submitter {
+              id
+              firstName
+              lastName
+            }
+          }
+        }
+        expenditures(includeDismissedExpenditures: true) {
+          id
+          type
+          missionId
+          userId
+          receptionTime
+          spendingDate
+          dismissedAt
+          submitter {
+            id
+            firstName
+            lastName
+          }
+          dismissAuthor {
+            id
+            firstName
+            lastName
+          }
+        }
+        validations {
+          id
+          isAdmin
+          userId
+          receptionTime
+          missionId
+          submitter {
+            id
+            firstName
+            lastName
+          }
+        }
+        startLocation {
+          ...FullLocation
+          receptionTime
+          submitter {
+            id
+            firstName
+            lastName
+          }
+          missionId
+        }
+        endLocation {
+          ...FullLocation
+          receptionTime
+          submitter {
+            id
+            firstName
+            lastName
+          }
+          missionId
+        }
+      }
+    }
+  }
+`;
+
 export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
@@ -1486,6 +1586,10 @@ export const HTTP_QUERIES = {
   missionExport: {
     method: "POST",
     endpoint: "/users/generate_mission_export"
+  },
+  missionControlExport: {
+    method: "POST",
+    endpoint: "/users/generate_mission_control_export"
   },
   oauthAuthorize: {
     method: "GET",

@@ -17,6 +17,7 @@ import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { ControllerControlHeader } from "./ControllerControlHeader";
+import orderBy from "lodash/orderBy";
 
 export function ControllerControlDetails({ controlId, onClose }) {
   const [tabs, setTabs] = React.useState(getTabs(0));
@@ -74,7 +75,7 @@ export function ControllerControlDetails({ controlId, onClose }) {
             controlData.missions.map(m => ({
               ...m,
               ...parseMissionPayloadFromBackend(m, controlData.user.id),
-              allActivities: m.activities
+              allActivities: orderBy(m.activities, ["startTime", "endTime"])
             })),
             controlData.user.id
           ).filter(m => m.activities.length > 0);
@@ -141,6 +142,7 @@ export function ControllerControlDetails({ controlId, onClose }) {
       setPeriodOnFocus={setPeriodOnFocus}
       workingDaysNumber={workingDays.size}
       allowC1BExport={false}
+      controlId={controlId}
     />
   ];
 }

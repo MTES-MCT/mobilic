@@ -14,7 +14,8 @@ export function useToggleContradictory(
   shouldDisplayInitialEmployeeVersion,
   setShouldDisplayInitialEmployeeVersion,
   missionsWithValidationTimes,
-  cacheInStore
+  cacheInStore,
+  controlId = null
 ) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
@@ -51,7 +52,12 @@ export function useToggleContradictory(
         const resourcesWithValidationTimeAndHistory = await Promise.all(
           missionsWithValidationTimes.map(async m => [
             ...m,
-            await getResourcesAndHistoryForMission(m[0], api, cacheInStore)
+            await getResourcesAndHistoryForMission(
+              m[0],
+              api,
+              cacheInStore,
+              controlId
+            )
           ])
         );
         const resourceChangesPerMission = resourcesWithValidationTimeAndHistory.map(
