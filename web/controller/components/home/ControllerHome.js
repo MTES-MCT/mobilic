@@ -112,7 +112,7 @@ export function ControllerHome() {
       <ControlsList
         controls={controls}
         loading={loadingControls}
-        setControlIdOnFocus={setControlIdOnFocus}
+        clickOnRow={setControlIdOnFocus}
       />
     </Container>,
     <Modal
