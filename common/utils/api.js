@@ -238,7 +238,7 @@ class Api {
           if (hasFcToken) {
             window.location.href = buildFCLogoutUrl("/");
           } else if (hasAcToken) {
-            window.location.href = buildAgentConnectLogoutUrl("/");
+            window.location.href = buildAgentConnectLogoutUrl("/logout");
           }
           let error;
           let errorName =
