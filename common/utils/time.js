@@ -305,3 +305,7 @@ export function jsToUnixTimestamp(jsTimestamp) {
 export function unixToJSTimestamp(unixTimestamp) {
   return unixTimestamp * 1000;
 }
+
+export function roundUnixTimestampToMinute(unixTimestamp) {
+  return Math.floor(unixTimestamp / 60) * 60;
+}
