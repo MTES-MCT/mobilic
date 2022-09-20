@@ -38,7 +38,8 @@ export function Event({
   withFullDate,
   icon = null,
   iconClassName = null,
-  cancel
+  cancel,
+  iconBackgroundColor = null
 }) {
   const classes = useStyles();
   const store = useStoreSyncedWithLocalStorage();
@@ -48,7 +49,12 @@ export function Event({
     <ListItem disableGutters>
       {icon && (
         <ListItemAvatar>
-          <Avatar className={iconClassName}>{icon}</Avatar>
+          <Avatar
+            className={iconClassName}
+            style={{ backgroundColor: iconBackgroundColor }}
+          >
+            {icon}
+          </Avatar>
         </ListItemAvatar>
       )}
       <ListItemText

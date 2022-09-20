@@ -2,9 +2,13 @@ import React from "react";
 import Alert from "@mui/material/Alert";
 import { formatDay } from "common/utils/time";
 
-export function MissionValidationInfo({ validation, isAdmin = false }) {
+export function MissionValidationInfo({
+  validation,
+  isAdmin = false,
+  className
+}) {
   return (
-    <Alert severity={validation ? "success" : "warning"}>
+    <Alert severity={validation ? "success" : "warning"} className={className}>
       {validation
         ? `validé ${
             isAdmin ? "par un gestionnaire" : "par le salarié"

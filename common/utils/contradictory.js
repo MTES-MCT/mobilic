@@ -29,15 +29,15 @@ export const MISSION_RESOURCE_TYPES = {
 };
 
 const RESOURCE_TYPE_ORDER = {
-  [MISSION_RESOURCE_TYPES.startLocation]: 1,
-  [MISSION_RESOURCE_TYPES.activity]: 2,
+  [MISSION_RESOURCE_TYPES.startLocation]: 5,
+  [MISSION_RESOURCE_TYPES.activity]: 4,
   [MISSION_RESOURCE_TYPES.endLocation]: 3,
-  [MISSION_RESOURCE_TYPES.expenditure]: 4,
-  [MISSION_RESOURCE_TYPES.validation]: 5
+  [MISSION_RESOURCE_TYPES.expenditure]: 2,
+  [MISSION_RESOURCE_TYPES.validation]: 1
 };
 
 export function orderLogEvents(event1, event2) {
-  const timeDiff = event2.time - event1.time;
+  const timeDiff = event1.time - event2.time;
   if (timeDiff !== 0) return timeDiff;
   if (event1.resourceType !== event2.resourceType)
     return (
