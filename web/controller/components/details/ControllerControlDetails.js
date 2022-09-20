@@ -26,6 +26,11 @@ export function ControllerControlDetails({ controlId, onClose }) {
   const [nbWorkingDays, setNbWorkingDays] = React.useState(0);
   const [coworkers, setCoworkers] = React.useState([]);
   const [qrCodeGenerationTime, setQrCodeGenerationTime] = React.useState([]);
+  const [companyName, setCompanyName] = React.useState(null);
+  const [
+    vehicleRegistrationNumber,
+    setVehicleRegistrationNumber
+  ] = React.useState(null);
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
   const [legacyTokenInfo, setLegacyTokenInfo] = React.useState({});
 
@@ -94,6 +99,8 @@ export function ControllerControlDetails({ controlId, onClose }) {
           });
           setCoworkers(_coworkers);
           setQrCodeGenerationTime(controlData.qrCodeGenerationTime);
+          setCompanyName(controlData.companyName);
+          setVehicleRegistrationNumber(controlData.vehicleRegistrationNumber);
 
           // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
           setLegacyTokenInfo({
@@ -132,6 +139,8 @@ export function ControllerControlDetails({ controlId, onClose }) {
       workingDaysNumber={nbWorkingDays}
       allowC1BExport={false}
       controlId={controlId}
+      companyName={companyName}
+      vehicleRegistrationNumber={vehicleRegistrationNumber}
     />
   ];
 }

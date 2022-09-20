@@ -11,7 +11,7 @@ import { LoadingButton } from "common/components/LoadingButton";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import Container from "@mui/material/Container";
-import React, { useMemo } from "react";
+import React from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
@@ -55,20 +55,13 @@ export function UserReadInfo({
   alertNumber,
   workingDaysNumber,
   setTab,
-  missions,
-  allowC1BExport = true
+  allowC1BExport = true,
+  companyName,
+  vehicleRegistrationNumber
 }) {
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const classes = useStyles();
-
-  const missionInProgress = useMemo(
-    () =>
-      missions.find(
-        mission => mission.ended === false || mission.endTime === controlTime
-      ),
-    [missions, controlTime]
-  );
 
   return (
     <Container maxWidth="md" className={classes.container}>
@@ -88,10 +81,9 @@ export function UserReadInfo({
               <InfoItem name="Nom" value={formatPersonName(userInfo)} />
             </Grid>
           </Grid>
-          {!missionInProgress && (
+          {!companyName && (
             <Alert severity="warning">
-              Le salarié n'avait aucune saisie en cours au moment du contrôle ou
-              était en pause.
+              Le salarié n'avait aucune saisie en cours au moment du contrôle.
             </Alert>
           )}
         </Grid>
@@ -103,8 +95,7 @@ export function UserReadInfo({
                 <DriveEtaIcon />
               </ListItemIcon>
               <Typography noWrap align="left" className={classes.fieldValue}>
-                {missionInProgress?.vehicle?.registrationNumber ||
-                  "Non renseigné"}
+                {vehicleRegistrationNumber || "Non renseigné"}
               </Typography>
             </ListItem>
           </List>
