@@ -229,7 +229,9 @@ class Api {
         if (refreshResponse.status !== 200) {
           // User is logged out from the API, update local store
           clearUserIdCookie();
+          clearControllerIdCookie();
           await this.store.updateUserIdAndInfo();
+          await this.store.updateControllerIdAndInfo();
           this.refreshTokenQueue.clear();
           this.nonConcurrentQueryQueue.clear();
           await broadCastChannel.postMessage("update");
@@ -379,6 +381,7 @@ class Api {
         clearUserIdCookie();
         clearControllerIdCookie();
         await this.store.updateUserIdAndInfo();
+        await this.store.updateControllerIdAndInfo();
         await broadCastChannel.postMessage("update");
       }
     }
