@@ -7,7 +7,8 @@ export const MATOMO_CATEGORIES = {
 
 export const MATOMO_ACTIONS = {
   OPEN_MISSION_DRAWER: "open-mission-drawer",
-  VALIDATE_MISSION: "validate-mission"
+  VALIDATE_MISSION: "validate-mission",
+  CANCEL_UPDATE_MISSION: "cancel-update-mission"
 };
 
 export const EDIT_ACTIVITY_IN_MISSION_PANEL = {
@@ -120,4 +121,16 @@ export const CHANGE_VALIDATION_TAB = tagName => {
     action: "change-validation-tab",
     name: tagName
   };
+};
+
+export const CANCEL_UPDATE_MISSION = {
+  category: MATOMO_CATEGORIES.ADMIN_MISSION_ACTION,
+  action: MATOMO_ACTIONS.CANCEL_UPDATE_MISSION,
+  name: "Annulation de modification de mission"
+};
+
+export const OPEN_CANCEL_UPDATE_MISSION = {
+  category: MATOMO_CATEGORIES.ADMIN_NAVIGATION,
+  action: "open-cancel-mission",
+  name: "Affichage pop up annulation modification mission"
 };
