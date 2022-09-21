@@ -11,7 +11,8 @@ import {
   startOfDayAsDate,
   startOfMonthAsDate,
   startOfWeekAsDate,
-  getPrettyDateByperiod
+  getPrettyDateByperiod,
+  formatDay
 } from "common/utils/time";
 import groupBy from "lodash/groupBy";
 import ControlsTable from "../list/table/ControlsTable";
@@ -66,20 +67,24 @@ export function ControlsList({
       res.push({
         date,
         prettyDate: getPrettyDateByperiod(new Date(date), period),
-        entries: controlsGroupedByPeriod[date].map(control => ({
-          id: control.id,
-          employee: `${control.user.firstName} ${control.user.lastName}`,
-          vehicle: control.vehicleRegistrationNumber,
-          company: control.companyName,
-          time: formatTimeOfDay(control.creationTime),
-          type: control.controlType,
-          nbDays: ""
-        }))
+        entries: controlsGroupedByPeriod[date]
+          .map(control => ({
+            id: control.id,
+            employee: `${control.user.firstName} ${control.user.lastName}`,
+            vehicle: control.vehicleRegistrationNumber,
+            company: control.companyName,
+            time: control.creationTime,
+            formattedTime:
+              (period !== "day"
+                ? `${formatDay(control.creationTime)} - `
+                : "") + formatTimeOfDay(control.creationTime),
+            type: control.controlType,
+            nbControlledDays: control.nbControlledDays
+          }))
+          .sort((control1, control2) => control2.time - control1.time)
       });
     }
-    res.sort(
-      (control1, control2) => new Date(control2.date) - new Date(control1.date)
-    );
+    res.sort((group1, group2) => new Date(group2.date) - new Date(group1.date));
     return res;
   }, [controls, period]);
   const classes = useStyles();
@@ -103,7 +108,11 @@ export function ControlsList({
           <Typography>{histo.prettyDate}</Typography>
         </AccordionSummary>
         <AccordionDetails className={classes.details}>
-          <ControlsTable entries={histo.entries} onRowClick={clickOnRow} />
+          <ControlsTable
+            entries={histo.entries}
+            onRowClick={clickOnRow}
+            period={period}
+          />
         </AccordionDetails>
       </Accordion>
     ))

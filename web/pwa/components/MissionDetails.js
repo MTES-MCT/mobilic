@@ -124,7 +124,8 @@ export function MissionDetails({
   editKilometerReading = null,
   defaultTime = null,
   disableEmptyActivitiesPlaceHolder = false,
-  forceDisplayEndLocation = false
+  forceDisplayEndLocation = false,
+  controlId = null
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -515,6 +516,7 @@ export function MissionDetails({
                 validationTime={mission.validation?.receptionTime}
                 userId={actualUserId}
                 cacheInStore={cacheContradictoryInfoInPwaStore}
+                controlId={controlId}
               />
             </>
           )}

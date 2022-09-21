@@ -65,7 +65,8 @@ export function Mission({
   fromTime,
   untilTime,
   registerKilometerReading,
-  controlledShouldDisplayInitialEmployeeVersion = false
+  controlledShouldDisplayInitialEmployeeVersion = false,
+  controlId = null
 }) {
   const [open, setOpen] = React.useState(defaultOpenCollapse);
   const [
@@ -104,7 +105,8 @@ export function Mission({
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion,
     [[mission, mission.validation?.receptionTime]],
-    useCacheContradictoryInfoInPwaStore()
+    useCacheContradictoryInfoInPwaStore(),
+    controlId
   );
 
   const userActivitiesToUse = missionResourcesToUse.activities.filter(
@@ -144,6 +146,7 @@ export function Mission({
       fromTime={fromTime}
       untilTime={untilTime}
       editKilometerReading={registerKilometerReading}
+      controlId={controlId}
     />
   );
 
@@ -183,9 +186,21 @@ export function Mission({
                   linkType: "download"
                 });
                 try {
-                  await api.downloadFileHttpQuery(HTTP_QUERIES.missionExport, {
-                    json: { mission_id: mission.id, user_id: userId }
-                  });
+                  if (controlId) {
+                    await api.downloadFileHttpQuery(
+                      HTTP_QUERIES.missionControlExport,
+                      {
+                        json: { mission_id: mission.id, control_id: controlId }
+                      }
+                    );
+                  } else {
+                    await api.downloadFileHttpQuery(
+                      HTTP_QUERIES.missionExport,
+                      {
+                        json: { mission_id: mission.id, user_id: userId }
+                      }
+                    );
+                  }
                 } catch (err) {
                   alerts.error(
                     formatApiError(err),

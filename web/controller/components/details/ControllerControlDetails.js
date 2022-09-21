@@ -6,17 +6,14 @@ import {
   augmentAndSortMissions,
   parseMissionPayloadFromBackend
 } from "common/utils/mission";
-import {
-  getDaysBetweenTwoDates,
-  jsToUnixTimestamp,
-  unixToJSTimestamp
-} from "common/utils/time";
+import { jsToUnixTimestamp, unixToJSTimestamp } from "common/utils/time";
 import { computeAlerts } from "common/utils/regulation/computeAlerts";
 import { orderEmployments } from "common/utils/employments";
 import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { ControllerControlHeader } from "./ControllerControlHeader";
+import orderBy from "lodash/orderBy";
 
 export function ControllerControlDetails({ controlId, onClose }) {
   const [tabs, setTabs] = React.useState(getTabs(0));
@@ -26,9 +23,14 @@ export function ControllerControlDetails({ controlId, onClose }) {
   const [employments, setEmployments] = React.useState([]);
   const [vehicles, setVehicles] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
-  const [workingDays, setWorkingDays] = React.useState([]);
+  const [nbWorkingDays, setNbWorkingDays] = React.useState(0);
   const [coworkers, setCoworkers] = React.useState([]);
   const [qrCodeGenerationTime, setQrCodeGenerationTime] = React.useState([]);
+  const [companyName, setCompanyName] = React.useState(null);
+  const [
+    vehicleRegistrationNumber,
+    setVehicleRegistrationNumber
+  ] = React.useState(null);
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
   const [legacyTokenInfo, setLegacyTokenInfo] = React.useState({});
 
@@ -74,19 +76,12 @@ export function ControllerControlDetails({ controlId, onClose }) {
             controlData.missions.map(m => ({
               ...m,
               ...parseMissionPayloadFromBackend(m, controlData.user.id),
-              allActivities: m.activities
+              allActivities: orderBy(m.activities, ["startTime", "endTime"])
             })),
             controlData.user.id
           ).filter(m => m.activities.length > 0);
           setMissions(missions_);
-          const userWorkingDays = new Set([]);
-          missions_.forEach(mission =>
-            getDaysBetweenTwoDates(
-              mission.startTime,
-              mission.endTime || controlData.qrCodeGenerationTime
-            ).forEach(day => userWorkingDays.add(day))
-          );
-          setWorkingDays(userWorkingDays);
+          setNbWorkingDays(controlData.nbControlledDays || 0);
           setGroupedAlerts(
             computeAlerts(
               missions_,
@@ -104,6 +99,8 @@ export function ControllerControlDetails({ controlId, onClose }) {
           });
           setCoworkers(_coworkers);
           setQrCodeGenerationTime(controlData.qrCodeGenerationTime);
+          setCompanyName(controlData.companyName);
+          setVehicleRegistrationNumber(controlData.vehicleRegistrationNumber);
 
           // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
           setLegacyTokenInfo({
@@ -139,8 +136,11 @@ export function ControllerControlDetails({ controlId, onClose }) {
       vehicles={vehicles}
       periodOnFocus={periodOnFocus}
       setPeriodOnFocus={setPeriodOnFocus}
-      workingDaysNumber={workingDays.size}
+      workingDaysNumber={nbWorkingDays}
       allowC1BExport={false}
+      controlId={controlId}
+      companyName={companyName}
+      vehicleRegistrationNumber={vehicleRegistrationNumber}
     />
   ];
 }

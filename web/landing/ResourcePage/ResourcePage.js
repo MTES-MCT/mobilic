@@ -23,7 +23,7 @@ export const RESOURCES_DOCUMENT = {
   noticeUtilisation: {
     gestionnaire: {
       slideshare:
-        "https://www.slideshare.net/slideshow/embed_code/key/BRUT9NAkdppMbB/",
+        "https://www.slideshare.net/slideshow/embed_code/key/49BC4voN7KwujD/",
       download:
         "https://drive.google.com/uc?id=1zMOcX8qp-FO46ZIZWuNZgj10t9FLJsk3&export=download"
     },
@@ -42,9 +42,9 @@ export const RESOURCES_DOCUMENT = {
   },
   brochure: {
     slideshare:
-      "https://www.slideshare.net/slideshow/embed_code/key/HQst1i4BajjQVg/",
+      "https://www.slideshare.net/slideshow/embed_code/key/8hjPh7eM8CXire/",
     download:
-      "https://drive.google.com/uc?id=1mNR2levAhZd8-MGaidRe035Xj0Fa3dRO&export=download"
+      "https://drive.google.com/uc?id=1u9RbbyMNEVEMuBZUP0CjjnN4QBqn4Esj&export=download"
   }
 };
 

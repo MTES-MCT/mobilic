@@ -172,7 +172,8 @@ export function History({
   vehicles = null,
   userId = null,
   createMission = null,
-  openPeriod = null
+  openPeriod = null,
+  controlId = null
 }) {
   const location = useLocation();
   const history = useHistory();
@@ -424,7 +425,8 @@ export function History({
             activities,
             coworkers,
             vehicles,
-            userId: actualUserId
+            userId: actualUserId,
+            controlId: controlId
           })
         ) : (
           <Box className={classes.placeholder}>
