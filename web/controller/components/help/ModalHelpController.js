@@ -18,7 +18,7 @@ export function HelpController() {
         linkTo="https://app.gitbook.com/o/-MMKfijmgB1Sviz-n2vh/s/5P00lZMB3lX6eHmhKqiJ/"
       />
       <ControllerHelpCard
-        icon="fr-icon-git-repository-fill"
+        icon="fr-icon-git-repository-fill fr-icon--lg"
         title="Documentation"
         description="Comment utiliser Mobilic ?"
       />
