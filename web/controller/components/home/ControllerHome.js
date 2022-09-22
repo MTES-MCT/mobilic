@@ -59,7 +59,7 @@ export function ControllerHome() {
   const location = useLocation();
   const controllerUserInfo = store.controllerInfo();
   const [modal, setModal] = useState({ isOpen: false, parcours: "" });
-  const [showHelpModal, setShowHelpModal] = useState(true);
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
   const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
 
@@ -151,7 +151,12 @@ export function ControllerHome() {
         est en cours de conception.
       </ModalContent>
     </Modal>,
-    <Modal key={3} isOpen={showHelpModal} hide={() => setShowHelpModal(false)}>
+    <Modal
+      key={3}
+      isOpen={showHelpModal}
+      hide={() => setShowHelpModal(false)}
+      size="lg"
+    >
       <ModalTitle>Besoin d'aide ?</ModalTitle>
       <ModalContent>
         <HelpController />

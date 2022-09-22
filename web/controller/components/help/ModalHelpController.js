@@ -21,11 +21,13 @@ export function HelpController() {
         icon="fr-icon-git-repository-fill fr-icon--lg"
         title="Documentation"
         description="Comment utiliser Mobilic ?"
+        linkTo="https://app.gitbook.com/o/-MMKfijmgB1Sviz-n2vh/s/5P00lZMB3lX6eHmhKqiJ/"
       />
       <ControllerHelpCard
-        icon="fr-icon-question-answer-fill fr-icon--lg"
+        icon="fr-icon-question-answer-line fr-icon--lg"
         title="Messagerie instantanée"
         description="Échangez avec l’équipe Mobilic et d’autres CTT sur notre forum Tchap !"
+        linkTo="https://app.gitbook.com/o/-MMKfijmgB1Sviz-n2vh/s/5P00lZMB3lX6eHmhKqiJ/"
       />
     </Stack>
   );
