@@ -8,7 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { VehicleFieldForApp } from "../pwa/components/VehicleFieldForApp";
 import { AddressField } from "./AddressField";
-import MobileDatePicker from "@mui/lab/MobileDatePicker";
+import { MobileDatePicker } from "@mui/x-date-pickers";
 import { DAY } from "common/utils/time";
 
 export default function NewMissionForm({

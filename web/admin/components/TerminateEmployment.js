@@ -1,7 +1,6 @@
 import React from "react";
 import Alert from "@mui/material/Alert";
 import DialogContent from "@mui/material/DialogContent";
-import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import Box from "@mui/material/Box";
@@ -12,6 +11,7 @@ import {
 } from "../../common/CustomDialogTitle";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
+import { MobileDatePicker } from "@mui/x-date-pickers";
 
 export default function TerminateEmployment({
   open,
