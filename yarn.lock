@@ -7743,7 +7743,7 @@ html-react-parser@^1.4.0:
     react-property "2.0.0"
     style-to-js "1.1.1"
 
-html-webpack-plugin@^4.0.0-beta.5:
+html-webpack-plugin@^4.5.1:
   version "4.5.2"
   resolved "https://registry.yarnpkg.com/html-webpack-plugin/-/html-webpack-plugin-4.5.2.tgz#76fc83fa1a0f12dd5f7da0404a54e2699666bc12"
   integrity sha512-q5oYdzjKUIPQVjOosjgvCHQOv9Ett9CYYHlgvJeXG0qQvdSojnBq4vAdQBwn1+yGveAwHCoe/rMR86ozX3+c2A==
