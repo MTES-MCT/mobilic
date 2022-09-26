@@ -218,6 +218,7 @@ function _Root() {
       (!location.pathname.startsWith("/control") ||
         location.pathname.startsWith(CONTROLLER_ROUTE_PREFIX)) &&
       !location.pathname.startsWith("/login") &&
+      !location.pathname.startsWith("/controller-login") &&
       !location.pathname.startsWith("/logout") &&
       !location.pathname.startsWith("/activate_email") &&
       !location.pathname.startsWith("/redeem_invite") &&

@@ -8,11 +8,15 @@ import Typography from "@mui/material/Typography";
 import { AGENT_CONNECT_LOGIN_MUTATION } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
 import { removeParamsFromQueryString } from "./FranceConnectCallback";
+import { useSnackbarAlerts } from "../common/Snackbar";
+import { useHistory } from "react-router-dom";
 
 export function AgentConnectCallback() {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
+  const alerts = useSnackbarAlerts();
+  const history = useHistory();
 
   const [error, setError] = React.useState("");
 
@@ -32,13 +36,16 @@ export function AgentConnectCallback() {
         await store.updateControllerIdAndInfo();
       } catch (err) {
         captureSentryException(err);
-        setError(
+        alerts.error(
           formatApiError(err, gqlError => {
             if (graphQLErrorMatchesCode(gqlError, "AUTHENTICATION_ERROR")) {
               return "Erreur lors de la connexion à Mobilic, veuillez réessayer plus tard.";
             }
-          })
+          }),
+          "",
+          6000
         );
+        history.push("/controller-login");
       }
     });
   }
