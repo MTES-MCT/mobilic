@@ -41,7 +41,7 @@ import {
   CREATE_MISSION_MUTATION,
   LOG_LOCATION_MUTATION
 } from "common/utils/apiQueries";
-import MobileDatePicker from "@mui/lab/MobileDatePicker";
+import { MobileDatePicker } from "@mui/x-date-pickers";
 import TextField from "@mui/material/TextField";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMatomo } from "@datapunt/matomo-tracker-react";

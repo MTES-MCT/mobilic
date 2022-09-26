@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import { Button as ButtonDsfr } from "@dataesr/react-dsfr";
 import Grid from "@mui/material/Grid";
-import MobileDatePicker from "@mui/lab/MobileDatePicker";
+import { MobileDatePicker } from "@mui/x-date-pickers";
 import TextField from "@mui/material/TextField";
 import { PeriodToggle } from "../../../admin/components/PeriodToggle";
 import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
