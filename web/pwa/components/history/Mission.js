@@ -24,6 +24,7 @@ import { formatApiError } from "common/utils/errors";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useApi } from "common/utils/api";
+import { MissionValidationInfo } from "../../../common/MissionValidationInfo";
 
 const useStyles = makeStyles(theme => ({
   alternateCard: {
@@ -42,6 +43,10 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexWrap: "nowrap",
     flexShrink: 0
+  },
+  employeeValidation: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1)
   }
 }));
 
@@ -238,6 +243,18 @@ export function Mission({
               Mission en cours !
             </ItalicWarningTypography>
           </InfoCard>
+        )}
+        {(!validateMission ||
+          mission.validation ||
+          mission.adminValidation) && (
+          <>
+            <MissionValidationInfo validation={mission.validation} />
+            <MissionValidationInfo
+              className={classes.employeeValidation}
+              validation={mission.adminValidation}
+              isAdmin
+            />
+          </>
         )}
         <ContradictorySwitch
           contradictoryNotYetAvailable={!canDisplayContradictoryVersions}

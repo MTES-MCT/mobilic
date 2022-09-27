@@ -6,8 +6,6 @@ import { useToggleContradictory } from "./history/toggleContradictory";
 import Skeleton from "@mui/material/Skeleton";
 import { makeStyles } from "@mui/styles";
 import { Event } from "../../common/Event";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import ArrowDownward from "@mui/icons-material/ArrowDownward";
 import { MISSION_RESOURCE_TYPES } from "common/utils/contradictory";
 import { getChangeIconAndText } from "../../common/logEvent";
 import {
@@ -27,13 +25,13 @@ export const useStyles = makeStyles(theme => ({
     fontStyle: "italic",
     marginBottom: theme.spacing(1)
   },
-  employeeChange: {
-    backgroundColor: theme.palette.primary.light
+  missionEvent: {
+    backgroundColor: theme.palette.primary.main
   },
-  adminChange: {
+  updateActivityEvent: {
     backgroundColor: theme.palette.warning.main
   },
-  validation: {
+  validationEvent: {
     backgroundColor: theme.palette.success.main
   },
   arrow: {
@@ -78,19 +76,27 @@ export function ContradictoryChanges({
     controlId
   );
 
+  const iconClassName = (event, color = null) => {
+    if (
+      event.resourceType === MISSION_RESOURCE_TYPES.activity &&
+      event.type !== "CREATE"
+    ) {
+      return classes.updateActivityEvent;
+    }
+    if (event.resourceType === MISSION_RESOURCE_TYPES.validation) {
+      return classes.validationEvent;
+    }
+    return classes.missionEvent;
+  };
+
   const changesHistory = contradictoryInfo[1];
   const loadingEmployeeVersion = contradictoryInfo[2];
   const contradictoryComputationError = contradictoryInfo[5];
 
   const userChangesHistory = changesHistory.filter(
-    c => c.userId === userId || !c.userId
-  );
-
-  const userChangesAfterValidation = userChangesHistory.filter(
-    c => c.time > (validationTime || now())
-  );
-  const userChangesBeforeValidation = userChangesHistory.filter(
-    c => c.time <= (validationTime || now())
+    c =>
+      (c.userId === userId || !c.userId) &&
+      (showEventsBeforeValidation || c.time >= (validationTime || now()))
   );
 
   const minStartTime = Math.min(
@@ -120,11 +126,7 @@ export function ContradictoryChanges({
         expandIcon={<ExpandMoreIcon />}
         className={classes.accordionTitle}
       >
-        <Typography className="bold">
-          {showEventsBeforeValidation
-            ? "Historique de saisie"
-            : "Modifications gestionnaire"}
-        </Typography>
+        <Typography className="bold">Historique de saisie</Typography>
       </AccordionSummary>
       <AccordionDetails className={classes.collapse}>
         {loadingEmployeeVersion ? (
@@ -137,70 +139,9 @@ export function ContradictoryChanges({
           </Typography>
         ) : (
           <>
-            {userChangesAfterValidation.filter(
-              ({ type }) => type !== MISSION_RESOURCE_TYPES.validation
-            ).length === 0 ? (
-              <Typography className={classes.noChangesText}>
-                {validationTime
-                  ? "Il n'y a pas de modifications du gestionnaire pour le moment"
-                  : "Il n'y a pas eu de modifications apportées par le gestionnaire"}
-              </Typography>
-            ) : (
-              <List dense>
-                {userChangesAfterValidation.map(change => {
-                  const { icon, text } = getChangeIconAndText(
-                    change,
-                    datetimeFormatter
-                  );
-                  return (
-                    <Event
-                      key={`${(change.after || change.before).id}${
-                        change.time
-                      }`}
-                      icon={icon}
-                      iconClassName={
-                        change.resourceType ===
-                        MISSION_RESOURCE_TYPES.validation
-                          ? classes.validation
-                          : classes.adminChange
-                      }
-                      text={text}
-                      submitter={change.submitter}
-                      submitterId={change.submitterId}
-                      time={change.time}
-                      withFullDate={true}
-                    />
-                  );
-                })}
-              </List>
-            )}
-          </>
-        )}
-        {!contradictoryComputationError &&
-          showEventsBeforeValidation && [
-            <Typography
-              key={0}
-              variant="caption"
-              style={{ textTransform: "uppercase" }}
-            >
-              <ArrowUpwardIcon className={classes.arrow} /> Modifications
-              gestionnaire
-            </Typography>,
-            <hr
-              key={1}
-              style={{ height: 1, width: "100%", borderTop: "dotted 1px" }}
-              className="hr-unstyled"
-            />,
-            <Typography
-              key={2}
-              variant="caption"
-              style={{ textTransform: "uppercase" }}
-            >
-              <ArrowDownward className={classes.arrow} /> Saisie salarié
-            </Typography>,
-            <List key={3} dense>
-              {userChangesBeforeValidation.map(change => {
-                const { icon, text } = getChangeIconAndText(
+            <List dense>
+              {userChangesHistory.map(change => {
+                const { icon, text, color } = getChangeIconAndText(
                   change,
                   datetimeFormatter
                 );
@@ -208,21 +149,19 @@ export function ContradictoryChanges({
                   <Event
                     key={`${(change.after || change.before).id}${change.time}`}
                     icon={icon}
+                    iconClassName={iconClassName(change)}
                     text={text}
-                    iconClassName={
-                      change.resourceType === MISSION_RESOURCE_TYPES.validation
-                        ? classes.validation
-                        : classes.employeeChange
-                    }
                     submitter={change.submitter}
                     submitterId={change.submitterId}
                     time={change.time}
                     withFullDate={true}
+                    iconBackgroundColor={color}
                   />
                 );
               })}
             </List>
-          ]}
+          </>
+        )}
       </AccordionDetails>
     </Accordion>
   );

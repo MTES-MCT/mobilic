@@ -121,7 +121,8 @@ export function getChangeIconAndText(change, datetimeFormatter) {
         case MISSION_RESOURCE_TYPES.activity:
           return {
             icon: ACTIVITIES[change.after.type].renderIcon(),
-            text: activityChangeText(change, datetimeFormatter)
+            text: activityChangeText(change, datetimeFormatter),
+            color: ACTIVITIES[change.after.type].color
           };
         case MISSION_RESOURCE_TYPES.expenditure:
           return {
@@ -141,5 +142,7 @@ export function getChangeIconAndText(change, datetimeFormatter) {
         default:
           return "";
       }
+    default:
+      return "";
   }
 }
