@@ -41,13 +41,13 @@ const useStyles = makeStyles(theme => ({
   helpButton: {
     textTransform: "none",
     position: "fixed",
-    bottom: "30px",
-    right: "30px",
+    bottom: theme.spacing(4),
+    right: theme.spacing(4),
     zIndex: 99,
     fontSize: "1.2rem",
     [theme.breakpoints.up("md")]: {
-      right: "140px",
-      top: "480px",
+      right: theme.spacing(10),
+      top: theme.spacing(60),
       bottom: "auto"
     }
   }
