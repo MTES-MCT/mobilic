@@ -29,6 +29,22 @@ export function MissionDrawerContextProvider({
 
   const adminStore = useAdminStore();
 
+  const handleCloseTab = ev => {
+    if (
+      adminStore.virtualActivities.length > 0 ||
+      adminStore.virtualExpenditureActions.length > 0
+    ) {
+      ev.preventDefault();
+      return (ev.returnValue =
+        "Des modifications sur la mission n'ont pas été enregistrées. Voulez vous quitter?");
+    }
+  };
+
+  React.useEffect(() => {
+    window.addEventListener("beforeunload", handleCloseTab);
+    return () => window.removeEventListener("beforeunload", handleCloseTab);
+  }, [adminStore.virtualActivities, adminStore.virtualExpenditureActions]);
+
   const reset = (revert = false) => {
     adminStore.dispatch({
       type: ADMIN_ACTIONS.resetVirtual
