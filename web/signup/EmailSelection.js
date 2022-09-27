@@ -24,6 +24,8 @@ import {
 import { CheckboxField } from "../common/CheckboxField";
 import { EmailField } from "../common/EmailField";
 import { captureSentryException } from "common/utils/sentry";
+import TimezoneSelect from "../common/TimezoneSelect";
+import { getClientTimezone } from "common/utils/timezones";
 
 const useStyles = makeStyles(theme => ({
   text: {
@@ -44,6 +46,9 @@ export function EmailSelection() {
 
   const [isAdmin, setIsAdmin] = React.useState(false);
   const [email, setEmail] = React.useState("");
+  const [selectedTimezone, setSelectedTimezone] = React.useState(
+    getClientTimezone()
+  );
   const [emailError, setEmailError] = React.useState("");
   const [origEmailSet, setOrigEmailSet] = React.useState(false);
   const [password, setPassword] = React.useState("");
@@ -72,22 +77,31 @@ export function EmailSelection() {
   const handleSubmit = async e => {
     e.preventDefault();
     if (store.hasAcceptedCgu()) {
-      await _createLogin(email, choosePassword ? password : null);
+      await _createLogin(
+        email,
+        choosePassword ? password : null,
+        selectedTimezone.name
+      );
     } else {
       modals.open("cgu", {
         handleAccept: async () =>
-          await _createLogin(email, choosePassword ? password : null),
+          await _createLogin(
+            email,
+            choosePassword ? password : null,
+            selectedTimezone.name
+          ),
         handleReject: () => {}
       });
     }
   };
 
-  const _createLogin = async (email, password) => {
+  const _createLogin = async (email, password, timezone) => {
     setLoading(true);
     await alerts.withApiErrorHandling(
       async () => {
         const payload = {
-          email
+          email,
+          timezoneName: timezone
         };
         if (password) payload.password = password;
         const apiResponse = await api.graphQlMutate(
@@ -203,6 +217,15 @@ export function EmailSelection() {
               }}
             />
           )}
+        </Section>
+        <Section title="3. Fuseau horaire">
+          <Typography align="justify" className={classes.text}>
+            Modifiez votre fuseau horaire si besoin.
+          </Typography>
+          <TimezoneSelect
+            currentTimezone={selectedTimezone}
+            setTimezone={setSelectedTimezone}
+          />
         </Section>
         <Box my={4}>
           <LoadingButton

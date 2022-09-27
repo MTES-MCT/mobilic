@@ -21,6 +21,8 @@ import { PaperContainerTitle } from "../common/PaperContainer";
 import { USER_SIGNUP_MUTATION } from "common/utils/apiQueries";
 import { CheckboxField } from "../common/CheckboxField";
 import { EmailField } from "../common/EmailField";
+import TimezoneSelect from "../common/TimezoneSelect";
+import { getClientTimezone } from "common/utils/timezones";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   const api = useApi();
@@ -34,6 +36,9 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const [email, setEmail] = React.useState("");
   const [emailError, setEmailError] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [selectedTimezone, setSelectedTimezone] = React.useState(
+    getClientTimezone()
+  );
   const [subscribeToNewsletter, setSubscribeToNewsletter] = React.useState(
     true
   );
@@ -49,7 +54,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
         password,
         firstName,
         lastName,
-        subscribeToNewsletter
+        subscribeToNewsletter,
+        selectedTimezone.name
       );
     } else {
       modals.open("cgu", {
@@ -61,7 +67,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             password,
             firstName,
             lastName,
-            subscribeToNewsletter
+            subscribeToNewsletter,
+            selectedTimezone.name
           ),
         handleReject: () => {}
       });
@@ -75,7 +82,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
     password,
     firstName,
     lastName,
-    subscribeToNewsletter
+    subscribeToNewsletter,
+    timezone
   ) => {
     setLoading(true);
     await alerts.withApiErrorHandling(
@@ -86,7 +94,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           firstName: firstName.trim(),
           lastName: lastName.trim(),
           subscribeToNewsletter,
-          isEmployee: !isAdmin
+          isEmployee: !isAdmin,
+          timezoneName: timezone
         };
         if (employeeInvite) {
           signupPayload.inviteToken = employeeInvite.inviteToken;
@@ -188,6 +197,10 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             onChange={e => {
               setLastName(e.target.value.trimLeft());
             }}
+          />
+          <TimezoneSelect
+            currentTimezone={selectedTimezone}
+            setTimezone={setSelectedTimezone}
           />
           <CheckboxField
             checked={subscribeToNewsletter}
