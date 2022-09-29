@@ -13,6 +13,8 @@ import { Modal, ModalTitle, ModalContent } from "@dataesr/react-dsfr";
 import { ControlsList } from "../list/ControlsList";
 import { useLoadControls } from "../../utils/loadControls";
 import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
+import Button from "@mui/material/Button";
+import { HelpController } from "../help/ModalHelpController";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -35,6 +37,18 @@ const useStyles = makeStyles(theme => ({
   },
   noLicLink: {
     marginTop: theme.spacing(4)
+  },
+  helpButton: {
+    textTransform: "none",
+    position: "fixed",
+    bottom: theme.spacing(4),
+    right: theme.spacing(4),
+    zIndex: 99,
+    fontSize: "1.2rem",
+    [theme.breakpoints.up("md")]: {
+      right: theme.spacing(10),
+      bottom: theme.spacing(10)
+    }
   }
 }));
 
@@ -44,6 +58,7 @@ export function ControllerHome() {
   const location = useLocation();
   const controllerUserInfo = store.controllerInfo();
   const [modal, setModal] = useState({ isOpen: false, parcours: "" });
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
   const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
 
@@ -109,6 +124,15 @@ export function ControllerHome() {
         Un horaire de service est présenté ?
       </a>
       <h4 className={classes.newControl}>Historique des contrôles récents</h4>
+      <Button
+        size="small"
+        color="primary"
+        variant="contained"
+        onClick={() => setShowHelpModal(true)}
+        className={classes.helpButton}
+      >
+        Besoin d'aide ?
+      </Button>
       <ControlsList
         controls={controls}
         loading={loadingControls}
@@ -124,6 +148,17 @@ export function ControllerHome() {
       <ModalContent>
         Le parcours de contrôle {modal.parcours} dans votre interface Mobilic
         est en cours de conception.
+      </ModalContent>
+    </Modal>,
+    <Modal
+      key={3}
+      isOpen={showHelpModal}
+      hide={() => setShowHelpModal(false)}
+      size="lg"
+    >
+      <ModalTitle>Besoin d'aide ?</ModalTitle>
+      <ModalContent>
+        <HelpController />
       </ModalContent>
     </Modal>
   ];
