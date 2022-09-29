@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   desktopHeaderContainer: {
@@ -36,13 +37,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ExportButton = classes => (
+const ExportButton = (classes, modals) => (
   <Button
     color="primary"
     variant="outlined"
     size="small"
     className={classes.batchInviteButton}
-    onClick={() => {}}
+    onClick={() => {
+      modals.open("controllerExportExcelOne");
+    }}
   >
     Exporter le contrôle
   </Button>
@@ -53,6 +56,7 @@ export function ControllerControlHeader({
   controlDate,
   onCloseDrawer
 }) {
+  const modals = useModals();
   const classes = useStyles();
   const isOnDesktop = useIsWidthUp("md");
   return isOnDesktop ? (
@@ -75,7 +79,7 @@ export function ControllerControlHeader({
         <Typography>
           Date et heure du contrôle : <b>{prettyFormatDayHour(controlDate)}</b>
         </Typography>
-        {ExportButton(classes)}
+        {ExportButton(classes, modals)}
       </Box>
     </Container>
   ) : (
@@ -93,7 +97,7 @@ export function ControllerControlHeader({
         >
           Accueil
         </Link>
-        {ExportButton(classes)}
+        {ExportButton(classes, modals)}
       </Box>
     </Container>
   );
