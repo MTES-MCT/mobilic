@@ -37,14 +37,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ExportButton = (classes, modals) => (
+const ExportButton = (classes, modals, controlId) => (
   <Button
     color="primary"
     variant="outlined"
     size="small"
     className={classes.batchInviteButton}
     onClick={() => {
-      modals.open("controllerExportExcelOne");
+      modals.open("controllerExportExcelOne", { controlId });
     }}
   >
     Exporter le contrôle
@@ -79,7 +79,7 @@ export function ControllerControlHeader({
         <Typography>
           Date et heure du contrôle : <b>{prettyFormatDayHour(controlDate)}</b>
         </Typography>
-        {ExportButton(classes, modals)}
+        {ExportButton(classes, modals, controlId)}
       </Box>
     </Container>
   ) : (
@@ -97,7 +97,7 @@ export function ControllerControlHeader({
         >
           Accueil
         </Link>
-        {ExportButton(classes, modals)}
+        {ExportButton(classes, modals, controlId)}
       </Box>
     </Container>
   );
