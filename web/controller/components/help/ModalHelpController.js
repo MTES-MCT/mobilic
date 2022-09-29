@@ -34,13 +34,13 @@ export function HelpController() {
         }
         title="NATINF expliqués"
         description="Comprendre les codes associés aux seuils réglementaires"
-        linkTo="https://app.gitbook.com/invite/-MMKfijmgB1Sviz-n2vh/DgrUI15YCohwADMt91bF"
+        linkTo="https://mobilic.gitbook.io/natinf-expliques/"
       />
       <ControllerHelpCard
         iconComponent={getDSFRIconComponent("fr-icon-question-fill", classes)}
         title="FAQ"
         description="Trouvez les réponses à vos questions"
-        linkTo="https://app.gitbook.com/o/-MMKfijmgB1Sviz-n2vh/s/5P00lZMB3lX6eHmhKqiJ/"
+        linkTo="https://mobilic.gitbook.io/mobilic-faq-dediee-aux-corps-de-controle/"
       />
       <ControllerHelpCard
         iconComponent={getDSFRIconComponent(
