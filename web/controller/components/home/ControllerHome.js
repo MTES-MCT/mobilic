@@ -47,8 +47,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: "1.2rem",
     [theme.breakpoints.up("md")]: {
       right: theme.spacing(10),
-      top: theme.spacing(60),
-      bottom: "auto"
+      bottom: theme.spacing(10)
     }
   }
 }));
