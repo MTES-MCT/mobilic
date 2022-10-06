@@ -26,7 +26,7 @@ import {
 import { EmploymentInfoCard } from "../../common/EmploymentInfoCard";
 import { employmentSelector } from "common/store/selectors";
 import AlertEmailNotActivated from "./AlertEmailNotActivated";
-import { getTimezonePrettyName } from "common/utils/timezones";
+import { getTimezone, getTimezonePrettyName } from "common/utils/timezones";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
@@ -123,11 +123,12 @@ export default function Home() {
             <Grid item xs={12} zeroMinWidth>
               <InfoItem
                 data-testid="timezoneInfoItem"
-                name="Timezone"
+                name="Fuseau horaire"
                 value={getTimezonePrettyName(userInfo.timezoneName)}
                 actionTitle="Modifier fuseau horaire"
                 action={() =>
                   modals.open("changeTimezone", {
+                    defaultValue: getTimezone(userInfo.timezoneName),
                     handleSubmit: async timezone => {
                       const apiResponse = await api.graphQlMutate(
                         CHANGE_TIMEZONE_MUTATION,

@@ -13,10 +13,11 @@ import TimezoneSelect from "../common/TimezoneSelect";
 export default function ChangeTimezoneModal({
   open,
   handleClose,
-  handleSubmit
+  handleSubmit,
+  defaultValue
 }) {
   const [selectedTimezone, setSelectedTimezone] = React.useState(
-    getClientTimezone()
+    defaultValue || getClientTimezone()
   );
   const alerts = useSnackbarAlerts();
 
