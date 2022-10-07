@@ -41,8 +41,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: "bold"
   },
   linkAdminBypassValidation: {
-    fontSize: "0.875rem",
-    verticalAlign: "sub"
+    fontSize: "0.875rem"
   }
 }));
 
