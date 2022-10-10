@@ -119,6 +119,7 @@ export default function VehicleAdmin({ company }) {
           alerts.error(formatApiError(err), "vehicleAlreadyRegistered", 6000);
         }
       }}
+      defaultSortBy="registrationNumber"
       onRowDelete={vehicle =>
         modals.open("confirmation", {
           textButtons: true,
