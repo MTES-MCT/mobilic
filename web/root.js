@@ -21,8 +21,7 @@ import {
 } from "@mui/material";
 import { loadUserData } from "common/utils/loadUserData";
 import frLocale from "date-fns/locale/fr";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { ModalProvider } from "common/utils/modals";
 import {
   LoadingScreenContextProvider,
@@ -51,9 +50,13 @@ import "@gouvfr/dsfr/dist/dsfr.min.css"; // dsfr should be imported before custo
 import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
 import "@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css";
 import "@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css";
+import "@gouvfr/dsfr/dist/utility/icons/icons-development/icons-development.min.css";
+import "@gouvfr/dsfr/dist/utility/icons/icons-communication/icons-communication.min.css";
+import "@gouvfr/dsfr/dist/utility/icons/icons-others/icons-others.min.css";
 import "./index.css";
 import "common/assets/styles/root.scss";
 import { loadControllerUserData } from "./controller/utils/loadControllerUserData";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 
 const matomo = createInstance({
   urlBase: "https://stats.data.gouv.fr",
@@ -82,7 +85,7 @@ export default function Root() {
                 <ApiContextProvider>
                   <LocalizationProvider
                     dateAdapter={AdapterDateFns}
-                    locale={frLocale}
+                    adapterLocale={frLocale}
                   >
                     <SnackbarProvider>
                       <LoadingScreenContextProvider>
@@ -218,6 +221,7 @@ function _Root() {
       (!location.pathname.startsWith("/control") ||
         location.pathname.startsWith(CONTROLLER_ROUTE_PREFIX)) &&
       !location.pathname.startsWith("/login") &&
+      !location.pathname.startsWith("/controller-login") &&
       !location.pathname.startsWith("/logout") &&
       !location.pathname.startsWith("/activate_email") &&
       !location.pathname.startsWith("/redeem_invite") &&

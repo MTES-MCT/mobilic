@@ -23,6 +23,8 @@ import { MissionInfoCard } from "./MissionInfoCard";
 import { ContradictoryChanges } from "../../pwa/components/ContradictoryChanges";
 import { useCacheContradictoryInfoInAdminStore } from "common/utils/contradictory";
 import Emoji from "../../common/Emoji";
+import { Alert } from "@mui/material";
+import classNames from "classnames";
 
 const useStyles = makeStyles(theme => ({
   cardRecapKPIContainer: {
@@ -37,6 +39,9 @@ const useStyles = makeStyles(theme => ({
   runningMissionText: {
     color: theme.palette.warning.main,
     fontWeight: "bold"
+  },
+  linkAdminBypassValidation: {
+    fontSize: "0.875rem"
   }
 }));
 
@@ -66,6 +71,9 @@ export function MissionEmployeeCard({
   const augmentedAndSortedActivities = computeDurationAndTime(
     activitiesWithBreaks
   );
+
+  const isAdminBypassingEmployeeValidation =
+    !stats.workerValidation && (onCreateActivity || stats.adminValidation);
 
   const datetimeFormatter = useDateTimeFormatter(
     augmentedAndSortedActivities,
@@ -166,7 +174,24 @@ export function MissionEmployeeCard({
       <AccordionDetails style={{ display: "block" }}>
         <Grid container spacing={2} direction="column" wrap="nowrap">
           <Grid item>
-            <MissionValidationInfo validation={stats.workerValidation} />
+            {isAdminBypassingEmployeeValidation ? (
+              <Alert severity="warning">
+                La validation par le salarié n'a pas eu lieu pour{" "}
+                <a
+                  href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic/suivi-et-validation-du-temps-de-travail#en-tant-que-gestionnaire-je-peux-uniquement-modifier-et-valider-les-missions-validees-par-les-salari"
+                  className={classNames(
+                    "fr-link fr-icon-external-link-line fr-link--icon-right",
+                    classes.linkAdminBypassValidation
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  l'une des raisons suivantes
+                </a>
+              </Alert>
+            ) : (
+              <MissionValidationInfo validation={stats.workerValidation} />
+            )}
           </Grid>
           <Grid item>
             <MissionValidationInfo validation={stats.adminValidation} isAdmin />

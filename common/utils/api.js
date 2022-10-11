@@ -229,7 +229,9 @@ class Api {
         if (refreshResponse.status !== 200) {
           // User is logged out from the API, update local store
           clearUserIdCookie();
+          clearControllerIdCookie();
           await this.store.updateUserIdAndInfo();
+          await this.store.updateControllerIdAndInfo();
           this.refreshTokenQueue.clear();
           this.nonConcurrentQueryQueue.clear();
           await broadCastChannel.postMessage("update");
@@ -238,7 +240,7 @@ class Api {
           if (hasFcToken) {
             window.location.href = buildFCLogoutUrl("/");
           } else if (hasAcToken) {
-            window.location.href = buildAgentConnectLogoutUrl("/");
+            window.location.href = buildAgentConnectLogoutUrl("/logout");
           }
           let error;
           let errorName =
@@ -379,6 +381,7 @@ class Api {
         clearUserIdCookie();
         clearControllerIdCookie();
         await this.store.updateUserIdAndInfo();
+        await this.store.updateControllerIdAndInfo();
         await broadCastChannel.postMessage("update");
       }
     }

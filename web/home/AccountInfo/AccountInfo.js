@@ -19,10 +19,14 @@ import {
   PaperContainerTitle
 } from "../../common/PaperContainer";
 import { frenchFormatDateStringOrTimeStamp } from "common/utils/time";
-import { CHANGE_EMAIL_MUTATION } from "common/utils/apiQueries";
+import {
+  CHANGE_EMAIL_MUTATION,
+  CHANGE_TIMEZONE_MUTATION
+} from "common/utils/apiQueries";
 import { EmploymentInfoCard } from "../../common/EmploymentInfoCard";
 import { employmentSelector } from "common/store/selectors";
 import AlertEmailNotActivated from "./AlertEmailNotActivated";
+import { getTimezone, getTimezonePrettyName } from "common/utils/timezones";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
@@ -113,6 +117,32 @@ export default function Home() {
                       data-testid="alertEmailNotActivated"
                     />
                   )
+                }
+              />
+            </Grid>
+            <Grid item xs={12} zeroMinWidth>
+              <InfoItem
+                data-testid="timezoneInfoItem"
+                name="Fuseau horaire"
+                value={getTimezonePrettyName(userInfo.timezoneName)}
+                actionTitle="Modifier fuseau horaire"
+                action={() =>
+                  modals.open("changeTimezone", {
+                    defaultValue: getTimezone(userInfo.timezoneName),
+                    handleSubmit: async timezone => {
+                      const apiResponse = await api.graphQlMutate(
+                        CHANGE_TIMEZONE_MUTATION,
+                        { timezoneName: timezone.name },
+                        { context: { nonPublicApi: true } }
+                      );
+                      await store.setUserInfo({
+                        ...store.userInfo(),
+                        timezoneName:
+                          apiResponse.data.account.changeTimezone.timezoneName
+                      });
+                      await broadCastChannel.postMessage("update");
+                    }
+                  })
                 }
               />
             </Grid>

@@ -29,7 +29,6 @@ import { PersonIcon } from "common/utils/icons";
 import { getStartOfDay, now } from "common/utils/time";
 import { MainCtaButton } from "./MainCtaButton";
 import Typography from "@mui/material/Typography";
-import { MissionValidationInfo } from "../../common/MissionValidationInfo";
 import { Event } from "../../common/Event";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import LocationEntry from "./LocationEntry";
@@ -505,20 +504,13 @@ export function MissionDetails({
           {(!validateMission ||
             mission.validation ||
             mission.adminValidation) && (
-            <>
-              <MissionValidationInfo validation={mission.validation} />
-              <MissionValidationInfo
-                validation={mission.adminValidation}
-                isAdmin
-              />
-              <ContradictoryChanges
-                mission={mission}
-                validationTime={mission.validation?.receptionTime}
-                userId={actualUserId}
-                cacheInStore={cacheContradictoryInfoInPwaStore}
-                controlId={controlId}
-              />
-            </>
+            <ContradictoryChanges
+              mission={mission}
+              validationTime={mission.validation?.receptionTime}
+              userId={actualUserId}
+              cacheInStore={cacheContradictoryInfoInPwaStore}
+              controlId={controlId}
+            />
           )}
         </MissionReviewSection>
       )}

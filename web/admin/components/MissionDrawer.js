@@ -7,6 +7,11 @@ import { useModals } from "common/utils/modals";
 import { Alert } from "@mui/material";
 import { useAdminStore } from "../store/store";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
+import {
+  CANCEL_UPDATE_MISSION,
+  OPEN_CANCEL_UPDATE_MISSION
+} from "common/utils/matomoTags";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 const useStyles = makeStyles(theme => ({
   missionDrawer: {
@@ -28,6 +33,23 @@ export function MissionDrawerContextProvider({
   const [missionIdOnFocus, setMissionIdOnFocus] = React.useState(null);
 
   const adminStore = useAdminStore();
+  const { trackEvent } = useMatomo();
+
+  const handleCloseTab = ev => {
+    if (
+      adminStore.virtualActivities.length > 0 ||
+      adminStore.virtualExpenditureActions.length > 0
+    ) {
+      ev.preventDefault();
+      return (ev.returnValue =
+        "Des modifications sur la mission n'ont pas été enregistrées. Voulez vous quitter?");
+    }
+  };
+
+  React.useEffect(() => {
+    window.addEventListener("beforeunload", handleCloseTab);
+    return () => window.removeEventListener("beforeunload", handleCloseTab);
+  }, [adminStore.virtualActivities, adminStore.virtualExpenditureActions]);
 
   const reset = (revert = false) => {
     adminStore.dispatch({
@@ -56,6 +78,7 @@ export function MissionDrawerContextProvider({
       adminStore.virtualActivities.length > 0 ||
       adminStore.virtualExpenditureActions.length > 0
     ) {
+      trackEvent(OPEN_CANCEL_UPDATE_MISSION);
       modals.open("confirmation", {
         title: "Êtes-vous sûr de vouloir fermer ?",
         confirmButtonLabel: "Fermer",
@@ -67,6 +90,7 @@ export function MissionDrawerContextProvider({
           </Alert>
         ),
         handleConfirm: () => {
+          trackEvent(CANCEL_UPDATE_MISSION);
           reset(true);
         }
       });

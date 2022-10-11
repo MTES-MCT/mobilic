@@ -121,3 +121,15 @@ export const CHANGE_VALIDATION_TAB = tagName => {
     name: tagName
   };
 };
+
+export const CANCEL_UPDATE_MISSION = {
+  category: MATOMO_CATEGORIES.ADMIN_MISSION_ACTION,
+  action: "cancel-update-mission",
+  name: "Annulation de modification de mission"
+};
+
+export const OPEN_CANCEL_UPDATE_MISSION = {
+  category: MATOMO_CATEGORIES.ADMIN_NAVIGATION,
+  action: "open-cancel-mission",
+  name: "Affichage pop up annulation modification mission"
+};

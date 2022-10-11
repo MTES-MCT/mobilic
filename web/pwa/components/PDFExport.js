@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import DialogContent from "@mui/material/DialogContent";
-import MobileDatePicker from "@mui/lab/MobileDatePicker";
+import { MobileDatePicker } from "@mui/x-date-pickers";
 import Dialog from "@mui/material/Dialog";
 import TextField from "@mui/material/TextField";
 import { useApi } from "common/utils/api";
