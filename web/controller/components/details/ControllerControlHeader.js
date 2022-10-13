@@ -18,6 +18,9 @@ const useStyles = makeStyles(theme => ({
   },
   linkHomeDesktop: {
     cursor: "pointer"
+  },
+  mobileHeaderContainer: {
+    marginBottom: theme.spacing(2)
   }
 }));
 
