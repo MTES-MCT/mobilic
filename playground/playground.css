@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+  overflow: hidden;
+}
+#root {
+  height: 100vh;
+}
+
+.graphiql-container {
+  height: calc(100vh - 50px) !important;
+}
