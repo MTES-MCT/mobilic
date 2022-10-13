@@ -1621,6 +1621,10 @@ export const HTTP_QUERIES = {
   webinars: {
     method: "GET",
     endpoint: "/next-webinars"
+  },
+  controlExcelExport: {
+    method: "POST",
+    endpoint: "/controllers/download_control_report"
   }
 };
 

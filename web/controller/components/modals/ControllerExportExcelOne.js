@@ -8,6 +8,10 @@ import {
 } from "@dataesr/react-dsfr";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
+import { useApi } from "common/utils/api";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
+import { HTTP_QUERIES } from "common/utils/apiQueries";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 const useStyles = makeStyles(theme => ({
   modalFooter: {
@@ -17,6 +21,9 @@ const useStyles = makeStyles(theme => ({
 
 export default function ExportExcelOne({ open, handleClose, controlId }) {
   const classes = useStyles();
+  const api = useApi();
+  const alerts = useSnackbarAlerts();
+  const { trackLink } = useMatomo();
   return (
     <Modal isOpen={open} hide={handleClose} size="lg">
       <ModalTitle>Exportez le contrôle #{controlId}</ModalTitle>
@@ -41,7 +48,20 @@ export default function ExportExcelOne({ open, handleClose, controlId }) {
         <Button
           title="téléchargement"
           className={classes.modalFooter}
-          onClick={() => {}}
+          onClick={async () =>
+            await alerts.withApiErrorHandling(async () => {
+              const options = {
+                control_id: controlId
+              };
+              trackLink({
+                href: `/download_company_activity_report`,
+                linkType: "download"
+              });
+              await api.downloadFileHttpQuery(HTTP_QUERIES.controlExcelExport, {
+                json: options
+              });
+            }, "download-control-export")
+          }
         >
           Télécharger
         </Button>
