@@ -75,15 +75,12 @@ export function UserReadInfo({
             className={classes.subSectionBody}
           >
             <Grid item>
-              <InfoItem name="Identifiant Mobilic" bold value={userInfo.id} />
-            </Grid>
-            <Grid item>
               <InfoItem name="Nom" value={formatPersonName(userInfo)} />
             </Grid>
           </Grid>
           {!companyName && (
             <Alert severity="warning">
-              Le salarié n'avait aucune saisie en cours au moment du contrôle.
+              Aucune saisie en cours au moment du contrôle
             </Alert>
           )}
         </Grid>

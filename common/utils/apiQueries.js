@@ -518,6 +518,7 @@ export const USER_READ_QUERY = gql`
           name
           siren
           sirets
+          legalName
           ...CompanySettings
           vehicles {
             id

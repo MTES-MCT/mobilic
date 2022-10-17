@@ -136,7 +136,9 @@ export function Mission({
       editActivityEvent={editActivityEvent}
       createActivity={createActivity}
       editExpenditures={editExpenditures}
-      editVehicle={vehicle => editVehicle({ mission, vehicle })}
+      editVehicle={
+        editVehicle ? vehicle => editVehicle({ mission, vehicle }) : null
+      }
       nullableEndTimeInEditActivity={
         currentMission ? mission.id === currentMission.id : true
       }
