@@ -2,8 +2,6 @@
 User-agent: *
 Disallow: /developers/
 Disallow: /oauth/
-Disallow: /api/fc/
 Disallow: /fc-callback
-Disallow: /api/ac/
 Disallow: /ac-callback
 

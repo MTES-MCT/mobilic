@@ -130,7 +130,7 @@ export function EmploymentInfoCard({
         >
           <Grid item>
             <Typography className={classes.companyName}>
-              {employment.company.name}
+              {employment.company.legalName || employment.company.name}
             </Typography>
           </Grid>
           {!hideStatus && (

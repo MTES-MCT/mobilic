@@ -33,6 +33,9 @@ const useStyles = makeStyles(theme => ({
       paddingLeft: theme.spacing(2),
       paddingRight: theme.spacing(2),
       paddingBottom: "none"
+    },
+    mobileHeaderContainer: {
+      marginBottom: theme.spacing(2)
     }
   }
 }));
@@ -71,7 +74,7 @@ export function ControllerControlHeader({
           )}
           onClick={onCloseDrawer}
         >
-          Accueil
+          Fermer
         </Typography>
       </Box>
       <h5>Contrôle #{controlId}</h5>
@@ -95,7 +98,7 @@ export function ControllerControlHeader({
           )}
           onClick={onCloseDrawer}
         >
-          Accueil
+          Fermer
         </Link>
         {ExportButton(classes, modals, controlId)}
       </Box>

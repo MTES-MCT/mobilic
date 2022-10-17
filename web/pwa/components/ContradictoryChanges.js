@@ -77,10 +77,7 @@ export function ContradictoryChanges({
   );
 
   const iconClassName = (event, color = null) => {
-    if (
-      event.resourceType === MISSION_RESOURCE_TYPES.activity &&
-      event.type !== "CREATE"
-    ) {
+    if (event.type !== "CREATE") {
       return classes.updateActivityEvent;
     }
     if (event.resourceType === MISSION_RESOURCE_TYPES.validation) {

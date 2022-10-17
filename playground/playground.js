@@ -1,24 +1,29 @@
+import { createGraphiQLFetcher } from "@graphiql/toolkit";
+import { GraphiQL } from "graphiql";
 import React from "react";
 import ReactDOM from "react-dom";
-import map from "lodash/map";
 import "./playground.css";
-import { Provider } from "react-redux";
-import { Playground, store } from "graphql-playground-react";
+import map from "lodash/map";
+
+import "graphiql/graphiql.css";
 
 const ENVS = {
   prod: {
-    host: "https://api.mobilic.beta.gouv.fr",
+    host: "https://api.mobilic.beta.gouv.fr/graphql",
     color: "#ff9947",
     label: "PRODUCTION"
   },
   sandbox: {
-    host: "https://api.sandbox.mobilic.beta.gouv.fr",
+    host: "https://api.sandbox.mobilic.beta.gouv.fr/graphql",
     color: "#03bd5b",
     label: "BAC A SABLE"
   }
 };
 
-ReactDOM.render(<Playgrounds />, document.getElementById("root"));
+const fetcher = host =>
+  createGraphiQLFetcher({
+    url: host
+  });
 
 function Playgrounds() {
   const [env, setEnv] = React.useState("sandbox");
@@ -64,8 +69,8 @@ function Playgrounds() {
         ))}
       </div>
     </div>,
-    <Provider key={1} store={store}>
-      <Playground endpoint={ENVS[env].host + "/graphql"} />
-    </Provider>
+    <GraphiQL key={1} query={""} fetcher={fetcher(ENVS[env].host)} />
   ];
 }
+
+ReactDOM.render(<Playgrounds />, document.getElementById("root"));

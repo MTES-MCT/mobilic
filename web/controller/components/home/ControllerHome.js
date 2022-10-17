@@ -4,7 +4,6 @@ import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import { ControllerHomeCard } from "./ControllerHomeCard";
 import Grid from "@mui/material/Grid";
-import classNames from "classnames";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import { Header } from "../../../common/Header";
 import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
@@ -36,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper
   },
   noLicLink: {
-    marginTop: theme.spacing(4)
+    marginTop: theme.spacing(2)
   },
   helpButton: {
     textTransform: "none",
@@ -120,9 +119,11 @@ export function ControllerHome() {
           />
         </Grid>
       </Grid>
-      <a className={classNames(classes.noLicLink, "fr-link")} href="#">
-        Un horaire de service est présenté ?
-      </a>
+      <div className={classes.noLicLink}>
+        <a className="fr-link" href="#">
+          Un horaire de service est présenté ?
+        </a>
+      </div>
       <h4 className={classes.newControl}>Historique des contrôles récents</h4>
       <Button
         size="small"

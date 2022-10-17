@@ -23,9 +23,9 @@ export const RESOURCES_DOCUMENT = {
   noticeUtilisation: {
     gestionnaire: {
       slideshare:
-        "https://www.slideshare.net/slideshow/embed_code/key/49BC4voN7KwujD/",
+        "https://www.slideshare.net/slideshow/embed_code/key/4ionudhjzhSaBV/",
       download:
-        "https://drive.google.com/uc?id=1zMOcX8qp-FO46ZIZWuNZgj10t9FLJsk3&export=download"
+        "https://drive.google.com/uc?id=133TOYQrMlXWf9_7owZqXqKZcFfDwpuRY&export=download"
     },
     salarie: {
       slideshare:
