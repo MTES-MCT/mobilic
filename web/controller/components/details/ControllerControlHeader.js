@@ -43,7 +43,7 @@ export function ControllerControlHeader({
           )}
           onClick={onCloseDrawer}
         >
-          Accueil
+          Fermer
         </Typography>
       </Box>
       <h5>Contrôle #{controlId}</h5>
@@ -63,7 +63,7 @@ export function ControllerControlHeader({
         )}
         onClick={onCloseDrawer}
       >
-        Accueil
+        Fermer
       </Link>
     </Container>
   );
