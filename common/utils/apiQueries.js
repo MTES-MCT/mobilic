@@ -348,6 +348,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
           id
           name
           siren
+          legalName
           ...CompanySettings
         }
         validations {
@@ -413,6 +414,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
           name
           siren
           sirets
+          legalName
           ...CompanySettings
           vehicles {
             id
