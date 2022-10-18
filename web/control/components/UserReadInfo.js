@@ -20,6 +20,7 @@ import { Link } from "../../common/LinkButton";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import DriveEtaIcon from "@mui/icons-material/DirectionsCar";
+import BusinessIcon from "@mui/icons-material/Business";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Alert from "@mui/material/Alert";
 
@@ -67,7 +68,7 @@ export function UserReadInfo({
     <Container maxWidth="md" className={classes.container}>
       <Grid container spacing={2} className={classes.sectionBody}>
         <Grid item md={6}>
-          <Typography variant="h5">Informations salarié.e</Typography>
+          <Typography variant="h5">Informations salarié(e)</Typography>
           <Grid
             container
             wrap="wrap"
@@ -84,22 +85,32 @@ export function UserReadInfo({
             </Alert>
           )}
         </Grid>
-        <Grid item md={6}>
-          <Typography variant="h5">Véhicule en cours d'utilisation</Typography>
-          <List dense>
-            <ListItem disableGutters>
-              <ListItemIcon>
-                <DriveEtaIcon />
-              </ListItemIcon>
-              <Typography noWrap align="left" className={classes.fieldValue}>
-                {vehicleRegistrationNumber || "Non renseigné"}
-              </Typography>
-            </ListItem>
-          </List>
-        </Grid>
+        {companyName && (
+          <Grid item md={6}>
+            <Typography variant="h5">Mission lors du contrôle</Typography>
+            <List dense>
+              <ListItem disableGutters>
+                <ListItemIcon>
+                  <DriveEtaIcon />
+                </ListItemIcon>
+                <Typography noWrap align="left" className={classes.fieldValue}>
+                  {vehicleRegistrationNumber || "Non renseigné"}
+                </Typography>
+              </ListItem>
+              <ListItem disableGutters>
+                <ListItemIcon>
+                  <BusinessIcon />
+                </ListItemIcon>
+                <Typography noWrap align="left" className={classes.fieldValue}>
+                  {companyName}
+                </Typography>
+              </ListItem>
+            </List>
+          </Grid>
+        )}
       </Grid>
       <Typography variant="h5" className={classes.subSectionBody}>
-        Entreprises
+        Entreprise(s) de rattachement
       </Typography>
       <Grid
         container
