@@ -14,9 +14,9 @@ export function currentControllerId() {
 }
 
 export function clearUserIdCookie() {
-  document.cookie = "userId=;";
+  document.cookie = "userId=;secure;";
 }
 
 export function clearControllerIdCookie() {
-  document.cookie = "controllerId=;";
+  document.cookie = "controllerId=;secure;";
 }
