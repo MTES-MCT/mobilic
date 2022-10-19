@@ -52,6 +52,7 @@ import "@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css";
 import "@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css";
 import "@gouvfr/dsfr/dist/utility/icons/icons-development/icons-development.min.css";
 import "@gouvfr/dsfr/dist/utility/icons/icons-communication/icons-communication.min.css";
+import "@gouvfr/dsfr/dist/utility/icons/icons-others/icons-others.min.css";
 import "@gouvfr/dsfr/dist/utility/colors/colors.min.css";
 import "./index.css";
 import "common/assets/styles/root.scss";

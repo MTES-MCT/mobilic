@@ -7,9 +7,6 @@ import Typography from "@mui/material/Typography";
 import { MobilicQrCode } from "common/utils/icons";
 
 const useStyles = makeStyles(theme => ({
-  icon: {
-    color: theme.palette.primary.main
-  },
   content: {
     marginTop: theme.spacing(4)
   },
@@ -25,13 +22,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const getDSFRIconComponent = (iconName, classes) => (
-  <span
-    className={classNames(`${iconName} fr-icon--lg`, classes.icon)}
-    aria-hidden="true"
-  ></span>
-);
-
 export function InfoHoraireServiceController() {
   const classes = useStyles();
 
@@ -42,9 +32,9 @@ export function InfoHoraireServiceController() {
       </Typography>
       <div className={classes.helpCard}>
         <ControllerHelpCard
-          iconComponent={getDSFRIconComponent("fr-icon-question-fill", classes)}
+          iconName="fr-icon-question-fill"
           title="FAQ"
-          description="Les horaires de service sont-ils recevavbles ?"
+          description="Les horaires de service sont-ils recevables ?"
           linkTo="https://mobilic.gitbook.io/mobilic-faq-dediee-aux-corps-de-controle/#les-horaires-de-service-sont-ils-recevables"
         />
       </div>
