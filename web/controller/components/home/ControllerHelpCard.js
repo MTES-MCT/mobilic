@@ -5,7 +5,7 @@ import classNames from "classnames";
 
 const useStyles = makeStyles(theme => ({
   card: {
-    padding: theme.spacing(4)
+    padding: theme.spacing(3)
   }
 }));
 

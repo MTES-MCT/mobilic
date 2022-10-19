@@ -17,6 +17,7 @@ import _WorkerImage from "../assets/images/worker.svg";
 import _SoftwareImage from "../assets/images/software.svg";
 import _ControllerImage from "../assets/images/controller1.png";
 import _AgentConnectImage from "../assets/images/agentconnect.svg";
+import _MobilicQrCode from "../assets/images/mobilic-qrcode.svg";
 import _NoDataImage from "../assets/images/no-data.png";
 
 export function MobilicLogoFilledIcon(props) {
@@ -172,4 +173,8 @@ export function FabNumIcon(props) {
       component={FabNumIcon_}
     />
   );
+}
+
+export function MobilicQrCode(props) {
+  return <img alt="Mobilic" src={_MobilicQrCode} {...props} />;
 }

@@ -14,6 +14,7 @@ import { useLoadControls } from "../../utils/loadControls";
 import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 import Button from "@mui/material/Button";
 import { HelpController } from "../help/ModalHelpController";
+import { InfoHoraireServiceController } from "./InfoHoraireServiceController";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -58,6 +59,7 @@ export function ControllerHome() {
   const controllerUserInfo = store.controllerInfo();
   const [modal, setModal] = useState({ isOpen: false, parcours: "" });
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showHoraireServiceModal, setShowHoraireServiceModal] = useState(false);
 
   const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
 
@@ -120,7 +122,11 @@ export function ControllerHome() {
         </Grid>
       </Grid>
       <div className={classes.noLicLink}>
-        <a className="fr-link" href="#">
+        <a
+          className="fr-link"
+          href="#"
+          onClick={() => setShowHoraireServiceModal(true)}
+        >
           Un horaire de service est présenté ?
         </a>
       </div>
@@ -160,6 +166,19 @@ export function ControllerHome() {
       <ModalTitle>Besoin d'aide ?</ModalTitle>
       <ModalContent>
         <HelpController />
+      </ModalContent>
+    </Modal>,
+    <Modal
+      key={4}
+      isOpen={showHoraireServiceModal}
+      hide={() => setShowHoraireServiceModal(false)}
+      size="lg"
+    >
+      <ModalTitle>
+        Un horaire de service m'est présenté à la place du LIC
+      </ModalTitle>
+      <ModalContent>
+        <InfoHoraireServiceController />
       </ModalContent>
     </Modal>
   ];
