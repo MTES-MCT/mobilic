@@ -44,7 +44,7 @@ export function InfoHoraireServiceController() {
       </p>
     </Stack>,
     <Stack
-      key={0}
+      key={1}
       spacing={2}
       className={classNames(
         "fr-background-alt--blue-france",

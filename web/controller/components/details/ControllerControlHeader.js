@@ -3,7 +3,7 @@ import { makeStyles } from "@mui/styles";
 import { useIsWidthUp } from "common/utils/useWidth";
 import { prettyFormatDayHour } from "common/utils/time";
 import classNames from "classnames";
-import Link from "react-router-dom/es/Link";
+import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
