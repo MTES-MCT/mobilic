@@ -13,7 +13,7 @@ import { ControlsList } from "../list/ControlsList";
 import { useLoadControls } from "../../utils/loadControls";
 import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 import Button from "@mui/material/Button";
-import { HelpController } from "../help/ModalHelpController";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -55,9 +55,9 @@ export function ControllerHome() {
   const classes = useStyles();
   const store = useStoreSyncedWithLocalStorage();
   const location = useLocation();
+  const modals = useModals();
   const controllerUserInfo = store.controllerInfo();
   const [modal, setModal] = useState({ isOpen: false, parcours: "" });
-  const [showHelpModal, setShowHelpModal] = useState(false);
 
   const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
 
@@ -129,7 +129,7 @@ export function ControllerHome() {
         size="small"
         color="primary"
         variant="contained"
-        onClick={() => setShowHelpModal(true)}
+        onClick={() => modals.open("controllerHelp")}
         className={classes.helpButton}
       >
         Besoin d'aide ?
@@ -149,17 +149,6 @@ export function ControllerHome() {
       <ModalContent>
         Le parcours de contrôle {modal.parcours} dans votre interface Mobilic
         est en cours de conception.
-      </ModalContent>
-    </Modal>,
-    <Modal
-      key={3}
-      isOpen={showHelpModal}
-      hide={() => setShowHelpModal(false)}
-      size="lg"
-    >
-      <ModalTitle>Besoin d'aide ?</ModalTitle>
-      <ModalContent>
-        <HelpController />
       </ModalContent>
     </Modal>
   ];
