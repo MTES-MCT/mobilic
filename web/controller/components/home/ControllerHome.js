@@ -16,6 +16,7 @@ import Button from "@mui/material/Button";
 import { HelpController } from "../help/ModalHelpController";
 import { InfoHoraireServiceController } from "./InfoHoraireServiceController";
 import classNames from "classnames";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -62,6 +63,7 @@ export function ControllerHome() {
   const classes = useStyles();
   const store = useStoreSyncedWithLocalStorage();
   const location = useLocation();
+  const modals = useModals();
   const controllerUserInfo = store.controllerInfo();
   const [modal, setModal] = useState({ isOpen: false, parcours: "" });
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -146,7 +148,7 @@ export function ControllerHome() {
         size="small"
         color="primary"
         variant="contained"
-        onClick={() => setShowHelpModal(true)}
+        onClick={() => modals.open("controllerHelp")}
         className={classes.helpButton}
       >
         Besoin d'aide ?
