@@ -13,6 +13,9 @@ import { ControlsList } from "../list/ControlsList";
 import { useLoadControls } from "../../utils/loadControls";
 import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 import Button from "@mui/material/Button";
+import { HelpController } from "../help/ModalHelpController";
+import { InfoHoraireServiceController } from "./InfoHoraireServiceController";
+import classNames from "classnames";
 import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
@@ -28,14 +31,19 @@ const useStyles = makeStyles(theme => ({
     textAlign: "center",
     marginTop: theme.spacing(3)
   },
-  newControl: {
+  newControlText: {
     marginTop: theme.spacing(7)
   },
   whiteSection: {
     backgroundColor: theme.palette.background.paper
   },
+  newControlButton: {
+    marginBottom: theme.spacing(2)
+  },
   noLicLink: {
-    marginTop: theme.spacing(2)
+    width: "fit-content",
+    cursor: "pointer",
+    textDecoration: "underline"
   },
   helpButton: {
     textTransform: "none",
@@ -58,6 +66,8 @@ export function ControllerHome() {
   const modals = useModals();
   const controllerUserInfo = store.controllerInfo();
   const [modal, setModal] = useState({ isOpen: false, parcours: "" });
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showHoraireServiceModal, setShowHoraireServiceModal] = useState(false);
 
   const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
 
@@ -89,10 +99,16 @@ export function ControllerHome() {
       <h3 className={classes.titleHello} key={1}>
         Bonjour, {controllerUserInfo.firstName}
       </h3>
-      <h4 className={classes.newControl} key={2}>
+      <h4 className={classes.newControlText} key={2}>
         Nouveau contrôle
       </h4>
-      <Grid container direction="row" alignItems="stretch" spacing={3}>
+      <Grid
+        container
+        direction="row"
+        alignItems="stretch"
+        spacing={3}
+        className={classes.newControlButton}
+      >
         <Grid item xs={12} sm={4}>
           <ControllerHomeCard
             text={"QR Code Mobilic présenté"}
@@ -119,12 +135,15 @@ export function ControllerHome() {
           />
         </Grid>
       </Grid>
-      <div className={classes.noLicLink}>
-        <a className="fr-link" href="#">
-          Un horaire de service est présenté ?
-        </a>
+      <div
+        className={classNames(classes.noLicLink, "fr-link")}
+        onClick={() => setShowHoraireServiceModal(true)}
+      >
+        Un horaire de service est présenté ?
       </div>
-      <h4 className={classes.newControl}>Historique des contrôles récents</h4>
+      <h4 className={classes.newControlText}>
+        Historique des contrôles récents
+      </h4>
       <Button
         size="small"
         color="primary"
@@ -149,6 +168,30 @@ export function ControllerHome() {
       <ModalContent>
         Le parcours de contrôle {modal.parcours} dans votre interface Mobilic
         est en cours de conception.
+      </ModalContent>
+    </Modal>,
+    <Modal
+      key={3}
+      isOpen={showHelpModal}
+      hide={() => setShowHelpModal(false)}
+      size="lg"
+    >
+      <ModalTitle>Besoin d'aide ?</ModalTitle>
+      <ModalContent>
+        <HelpController />
+      </ModalContent>
+    </Modal>,
+    <Modal
+      key={4}
+      isOpen={showHoraireServiceModal}
+      hide={() => setShowHoraireServiceModal(false)}
+      size="lg"
+    >
+      <ModalTitle>
+        Un horaire de service m'est présenté à la place du LIC
+      </ModalTitle>
+      <ModalContent>
+        <InfoHoraireServiceController />
       </ModalContent>
     </Modal>
   ];
