@@ -4,6 +4,9 @@ const { setup } = require("./util");
 
 module.exports = setup({
   devServer: {
+    client: {
+      overlay: false
+    },
     historyApiFallback: true,
     proxy: {
       "/api": {
