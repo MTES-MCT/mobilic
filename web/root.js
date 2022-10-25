@@ -57,7 +57,7 @@ import "@gouvfr/dsfr/dist/utility/colors/colors.min.css";
 import "./index.css";
 import "common/assets/styles/root.scss";
 import { loadControllerUserData } from "./controller/utils/loadControllerUserData";
-import { LocalizationProvider } from "@mui/x-date-pickers";
+import { LocalizationProvider, frFR } from "@mui/x-date-pickers";
 
 const matomo = createInstance({
   urlBase: "https://stats.data.gouv.fr",
@@ -87,6 +87,10 @@ export default function Root() {
                   <LocalizationProvider
                     dateAdapter={AdapterDateFns}
                     adapterLocale={frLocale}
+                    localeText={
+                      frFR.components.MuiLocalizationProvider.defaultProps
+                        .localeText
+                    }
                   >
                     <SnackbarProvider>
                       <LoadingScreenContextProvider>
