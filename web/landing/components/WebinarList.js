@@ -152,7 +152,7 @@ export const WebinarList = ({ setCantDisplayWebinarsBecauseNoneOrError }) => {
                           {formatTimeOfDay(webinar.time)}
                         </Typography>
                       </Grid>
-                      <Grid item style={{ flexGrow: 1 }}>
+                      <Grid item style={{ flexGrow: 1, maxWidth: 620 }}>
                         <Typography className={classes.webinarTitle}>
                           {webinar.title}
                         </Typography>

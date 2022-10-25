@@ -26,6 +26,8 @@ import BatchInvite from "./admin/components/BatchInvite";
 import WarningEndMissionModal from "./pwa/components/WarningEndMissionModal/WarningEndMissionModal";
 import NewsletterSubscriptionModal from "./landing/NewsletterSubscription";
 import GeolocPermissionInfoModal from "./pwa/components/GeolocPermissionInfoModal";
+import ControllerHelp from "./controller/components/modals/ControllerHelp";
+import ExportExcelOne from "./controller/components/modals/ControllerExportExcelOne";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -55,5 +57,7 @@ export const MODAL_DICT = {
   selectEmployee: SelectEmployeeModal,
   newsletterSubscription: NewsletterSubscriptionModal,
   warningEndMissionModal: WarningEndMissionModal,
-  geolocPermissionInfoModal: GeolocPermissionInfoModal
+  geolocPermissionInfoModal: GeolocPermissionInfoModal,
+  controllerExportExcelOne: ExportExcelOne,
+  controllerHelp: ControllerHelp
 };

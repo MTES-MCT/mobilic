@@ -329,6 +329,53 @@ export function Employees({ company, containerRef }) {
   const canDisplayPendingEmployments =
     isAddingEmployment || pendingEmployments.length > 0;
 
+  const customActionsPendingEmployment = employment => {
+    if (!employment) {
+      return [];
+    }
+    const customActions = [
+      {
+        name: "reminder",
+        label: "Relancer l'invitation",
+        action: async empl => {
+          await alerts.withApiErrorHandling(async () =>
+            sendInvitationReminder(empl.id)
+          );
+        }
+      },
+      {
+        name: "delete",
+        label: "Annuler l'invitation",
+        action: empl => {
+          modals.open("confirmation", {
+            textButtons: true,
+            title: "Confirmer annulation du rattachement",
+            handleConfirm: async () =>
+              alerts.withApiErrorHandling(
+                async () => cancelEmployment(empl),
+                "cancel-employment"
+              )
+          });
+        }
+      }
+    ];
+    if (!employment.hasAdminRights) {
+      customActions.push({
+        name: "setAdmin",
+        label: "Donner accès gestionnaire",
+        action: empl => giveAdminPermission(empl.id)
+      });
+    } else {
+      customActions.push({
+        name: "setWorker",
+        label: "Retirer accès gestionnaire",
+        disabled: employment.id === adminStore.userId,
+        action: empl => giveWorkerPermission(empl.id)
+      });
+    }
+    return customActions;
+  };
+
   const customActionsValidEmployment = employment => {
     if (!employment) {
       return [];
@@ -356,7 +403,7 @@ export function Employees({ company, containerRef }) {
         modals.open("terminateEmployment", {
           minDate: new Date(empl.startDate),
           terminateEmployment: async endDate =>
-            await terminateEmployment(empl.employmentId, endDate)
+            terminateEmployment(empl.employmentId, endDate)
         });
       }
     });
@@ -505,32 +552,7 @@ export function Employees({ company, containerRef }) {
           alerts.error(formatApiError(err), idOrEmail, 6000);
         }
       }}
-      customRowActions={() => [
-        {
-          name: "reminder",
-          label: "Relancer l'invitation",
-          action: async empl => {
-            await alerts.withApiErrorHandling(
-              async () => await sendInvitationReminder(empl.id)
-            );
-          }
-        },
-        {
-          name: "delete",
-          label: "Annuler l'invitation",
-          action: empl => {
-            modals.open("confirmation", {
-              textButtons: true,
-              title: "Confirmer annulation du rattachement",
-              handleConfirm: async () =>
-                await alerts.withApiErrorHandling(
-                  async () => cancelEmployment(empl),
-                  "cancel-employment"
-                )
-            });
-          }
-        }
-      ]}
+      customRowActions={customActionsPendingEmployment}
     />,
     <Box key={3} className={classes.title}>
       <Typography variant="h4">Salariés ({validEmployments.length})</Typography>

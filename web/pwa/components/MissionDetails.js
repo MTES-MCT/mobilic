@@ -489,9 +489,11 @@ export function MissionDetails({
           </ListItem>
         </List>
       </MissionReviewSection>
-      {!hideValidations && (
-        <MissionReviewSection title={!validateMission ? "Validation" : ""}>
-          {validateMission && !mission.adminValidation && !mission.validation && (
+      {!hideValidations &&
+        validateMission &&
+        !mission.adminValidation &&
+        !mission.validation && (
+          <MissionReviewSection title="Validation">
             <Box style={{ textAlign: "center" }} pt={2} pb={2}>
               <MainCtaButton
                 style={{ textAlign: "center" }}
@@ -500,10 +502,11 @@ export function MissionDetails({
                 {validationButtonName}
               </MainCtaButton>
             </Box>
-          )}
-          {(!validateMission ||
-            mission.validation ||
-            mission.adminValidation) && (
+          </MissionReviewSection>
+        )}
+      {!hideValidations &&
+        (!validateMission || mission.validation || mission.adminValidation) && (
+          <MissionReviewSection>
             <ContradictoryChanges
               mission={mission}
               validationTime={mission.validation?.receptionTime}
@@ -511,9 +514,8 @@ export function MissionDetails({
               cacheInStore={cacheContradictoryInfoInPwaStore}
               controlId={controlId}
             />
-          )}
-        </MissionReviewSection>
-      )}
+          </MissionReviewSection>
+        )}
     </AlternateColors>
   );
 }

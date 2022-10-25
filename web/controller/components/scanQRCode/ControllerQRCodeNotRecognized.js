@@ -3,7 +3,7 @@ import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import classNames from "classnames";
 import { Alert } from "@mui/material";
-import Link from "react-router-dom/es/Link";
+import { Link } from "react-router-dom";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import Typography from "@mui/material/Typography";
 import { Header } from "../../../common/Header";
