@@ -11,8 +11,11 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { MobileDatePicker } from "@mui/x-date-pickers";
+import { useApi } from "common/utils/api";
+import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 import React from "react";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   modalFooter: {
@@ -37,6 +40,8 @@ export default function ControllerExportC1BAll({
     toDate: null
   }
 }) {
+  const alerts = useSnackbarAlerts();
+  const api = useApi();
   const classes = useStyles();
 
   const [exportFilter, setExportFilter] = React.useState(controlFilters);
@@ -144,7 +149,18 @@ export default function ControllerExportC1BAll({
         </Grid>
       </ModalContent>
       <ModalFooter>
-        <Button className={classes.modalFooter} onClick={() => {}}>
+        <Button
+          title="téléchargement"
+          className={classes.modalFooter}
+          onClick={async () => {
+            alerts.withApiErrorHandling(async () => {
+              const options = {};
+              await api.downloadFileHttpQuery(HTTP_QUERIES.controlExcelExport, {
+                json: options
+              });
+            }, "download-control-c1b");
+          }}
+        >
           Générer
         </Button>
       </ModalFooter>
