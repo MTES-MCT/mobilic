@@ -154,8 +154,11 @@ export default function ControllerExportC1BAll({
           className={classes.modalFooter}
           onClick={async () => {
             alerts.withApiErrorHandling(async () => {
-              const options = {};
-              await api.downloadFileHttpQuery(HTTP_QUERIES.controlExcelExport, {
+              const options = {
+                min_date: controlFilters.fromDate,
+                max_date: controlFilters.toDate
+              };
+              await api.downloadFileHttpQuery(HTTP_QUERIES.controlC1BExport, {
                 json: options
               });
             }, "download-control-c1b");
