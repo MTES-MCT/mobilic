@@ -26,9 +26,6 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(2),
     paddingRight: theme.spacing(2),
     flexShrink: 0
-  },
-  datePicker: {
-    zIndex: 10000 // This is not working ATM
   }
 }));
 
@@ -85,7 +82,6 @@ export default function ControllerExportC1BAll({
         >
           <Grid item sm={6}>
             <MobileDatePicker
-              className={classes.datePicker}
               label="Début"
               value={exportFilter.fromDate}
               inputFormat="d MMMM yyyy"
@@ -117,7 +113,6 @@ export default function ControllerExportC1BAll({
           </Grid>
           <Grid item sm={6}>
             <MobileDatePicker
-              className={classes.datePicker}
               label="Fin"
               value={exportFilter.toDate}
               inputFormat="d MMMM yyyy"
