@@ -1631,7 +1631,7 @@ export const HTTP_QUERIES = {
   },
   controlC1BExport: {
     method: "POST",
-    endpoint: "/controllers/download_control_c1b"
+    endpoint: "/controllers/generate_tachograph_files"
   }
 };
 
