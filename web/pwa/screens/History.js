@@ -125,16 +125,6 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(2)
   },
-  dayAdditionalInfo: {
-    marginTop: theme.spacing(4)
-  },
-  whiteFullScreen: {
-    width: "100%",
-    flexGrow: 1,
-    display: "flex",
-    flexDirection: "column",
-    backgroundColor: theme.palette.background.paper
-  },
   placeholder: {
     height: "100%",
     display: "flex",
@@ -146,14 +136,10 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(2),
     alignSelf: "flex-start"
   },
-  addMissionContainer: {
+  accessControlContainer: {
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "center"
-  },
-  addMissionButton: {
-    paddingLeft: 0,
-    marginLeft: 0
   }
 }));
 
@@ -285,78 +271,91 @@ export function History({
     >
       {displayActions && [
         <AccountButton p={2} key={1} onBackButtonClick={onBackButtonClick} />,
+        <Box key={2} className={classes.accessControlContainer}>
+          <Button
+            aria-label="Accès contrôleur"
+            className={classes.generateAccessButton}
+            color="error"
+            variant="outlined"
+            onClick={() => {
+              modals.open("userReadQRCode");
+            }}
+          >
+            Accès contrôleurs
+          </Button>
+        </Box>,
         <Grid
           container
-          key={2}
+          key={3}
+          direction="row"
           justifyContent="space-between"
           alignItems="center"
         >
-          <Grid item>
-            <Button
-              aria-label="Accès contrôleur"
-              className={classes.generateAccessButton}
-              color="error"
-              variant="outlined"
-              onClick={() => {
-                modals.open("userReadQRCode");
-              }}
+          <Grid container item direction="row" alignItems="center" sm={6}>
+            <IconButton
+              color="primary"
+              onClick={() =>
+                modals.open("newMission", {
+                  companies: store.companies(),
+                  companyAddresses: store.getEntity("knownAddresses"),
+                  disableCurrentPosition: true,
+                  disableKilometerReading: true,
+                  withDay: true,
+                  withEndLocation: true,
+                  handleContinue: async missionInfos => {
+                    await alerts.withApiErrorHandling(async () => {
+                      const tempMissionId = await createMission({
+                        companyId: missionInfos.company.id,
+                        name: missionInfos.mission,
+                        vehicle: missionInfos.vehicle,
+                        startLocation: missionInfos.address,
+                        endLocation: missionInfos.endAddress
+                      });
+                      await api.executePendingRequests();
+                      const actualMissionId = store.identityMap()[
+                        tempMissionId
+                      ];
+                      if (!actualMissionId)
+                        alerts.error(
+                          "La mission n'a pas pu être créée",
+                          tempMissionId,
+                          6000
+                        );
+                      else {
+                        history.push(
+                          `/app/edit_mission?mission=${actualMissionId}`,
+                          { day: missionInfos.day }
+                        );
+                        modals.close("newMission");
+                      }
+                    }, "create-mission");
+                  }
+                })
+              }
             >
-              Accès contrôleurs
-            </Button>
+              <AddCircleIcon fontSize="large" />
+            </IconButton>
+            <Typography align="left">Ajouter une mission passée</Typography>
           </Grid>
-          <Grid item>
+          <Grid
+            container
+            item
+            direction="row"
+            alignItems="center"
+            justifyContent={{ sm: "flex-end" }}
+            sm={6}
+          >
             <IconButton
               color="primary"
               onClick={() => modals.open("pdfExport")}
             >
               <GetAppIcon fontSize="large" />
             </IconButton>
+            <Typography align="left" mr={2}>
+              Télécharger un relevé d'heures
+            </Typography>
           </Grid>
-        </Grid>,
-        <Box key={3} className={classes.addMissionContainer}>
-          <IconButton
-            color="primary"
-            onClick={() =>
-              modals.open("newMission", {
-                companies: store.companies(),
-                companyAddresses: store.getEntity("knownAddresses"),
-                disableCurrentPosition: true,
-                disableKilometerReading: true,
-                withDay: true,
-                withEndLocation: true,
-                handleContinue: async missionInfos => {
-                  await alerts.withApiErrorHandling(async () => {
-                    const tempMissionId = await createMission({
-                      companyId: missionInfos.company.id,
-                      name: missionInfos.mission,
-                      vehicle: missionInfos.vehicle,
-                      startLocation: missionInfos.address,
-                      endLocation: missionInfos.endAddress
-                    });
-                    await api.executePendingRequests();
-                    const actualMissionId = store.identityMap()[tempMissionId];
-                    if (!actualMissionId)
-                      alerts.error(
-                        "La mission n'a pas pu être créée",
-                        tempMissionId,
-                        6000
-                      );
-                    else {
-                      history.push(
-                        `/app/edit_mission?mission=${actualMissionId}`,
-                        { day: missionInfos.day }
-                      );
-                      modals.close("newMission");
-                    }
-                  }, "create-mission");
-                }
-              })
-            }
-          >
-            <AddCircleIcon fontSize="large" />
-          </IconButton>
-          <Typography align="left">Ajouter une mission passée</Typography>
-        </Box>
+        </Grid>
       ]}
       <Container className={classes.periodSelector} maxWidth={false}>
         <Tabs
