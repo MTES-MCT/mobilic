@@ -10,12 +10,6 @@ export function isConnectionError(error) {
 }
 
 export function formatApiError(error, overrideFormatGraphQLError) {
-  console.log("formatApiError#error: ", error);
-  console.log(
-    "formatApiError#overrideFormatGraphQLError: ",
-    overrideFormatGraphQLError
-  );
-
   let formattedError;
   try {
     if (isConnectionError(error)) {

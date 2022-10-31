@@ -62,7 +62,6 @@ export const SnackbarProvider = ({ children }) => {
     try {
       await func();
     } catch (err) {
-      console.log(err);
       if (!isGraphQLError(err)) captureSentryException(err);
       if (onError) onError(err);
       if (!isConnectionError(err) || !hideNetworkErrors)
