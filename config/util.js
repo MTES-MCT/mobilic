@@ -1,9 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 const path = require("path");
-const fs = require("graceful-fs");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { marked } = require("marked");
 
 module.exports = {
   setup(config) {
@@ -28,47 +25,6 @@ module.exports = {
         res.sendFile(filename);
       });
     };
-    const renderer = new marked.Renderer();
-    const heading = renderer.heading;
-    const markedOptions = {
-      gfm: true,
-      tables: true,
-      breaks: false,
-      pedantic: false,
-      sanitize: false,
-      sanitizer: null,
-      mangle: true,
-      smartLists: false,
-      silent: false,
-      langPrefix: "lang-",
-      smartypants: false,
-      headerPrefix: "",
-      renderer,
-      xhtml: false
-    };
-    const readme = fs.readFileSync("README.md", "utf-8");
-
-    let exampleTitle = "";
-
-    renderer.heading = function headingProxy(text, level, raw, slugger) {
-      if (level === 1 && !exampleTitle) {
-        exampleTitle = text;
-      }
-
-      return heading.call(this, text, level, raw, slugger);
-    };
-
-    marked.setOptions(markedOptions);
-
-    marked(readme, { renderer });
-
-    result.plugins.push(
-      new HtmlWebpackPlugin({
-        filename: "index.html",
-        template: path.join(__dirname, ".assets/layout.html"),
-        title: exampleTitle
-      })
-    );
 
     if (result.devServer.setupMiddlewares) {
       const proxy = result.devServer.setupMiddlewares;
