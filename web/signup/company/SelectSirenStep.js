@@ -160,6 +160,7 @@ export function SelectSirenStep({
               <Link
                 href="https://annuaire-entreprises.data.gouv.fr/"
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 Trouvez facilement le numéro SIREN de votre entreprise
               </Link>
