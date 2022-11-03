@@ -161,7 +161,8 @@ export default function ControllerExportC1BAll({
             alerts.withApiErrorHandling(async () => {
               const options = {
                 min_date: controlFilters.fromDate,
-                max_date: controlFilters.toDate
+                max_date: controlFilters.toDate,
+                with_digital_signatures: sign
               };
               await api.downloadFileHttpQuery(HTTP_QUERIES.controlC1BExport, {
                 json: options
