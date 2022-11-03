@@ -19,10 +19,14 @@ const useStyles = makeStyles(theme => ({
   noSirenText: {
     display: "block",
     fontStyle: "italic",
-    paddingTop: theme.spacing(6)
+    paddingTop: theme.spacing(4)
   },
   sirenResultText: {
     marginTop: theme.spacing(4)
+  },
+  findSirenText: {
+    display: "block",
+    paddingTop: theme.spacing(4)
   }
 }));
 
@@ -147,14 +151,28 @@ export function SelectSirenStep({
             </Button>
           )}
         {(!siren || sirenFormatError) && (
-          <Typography
-            className={classes.noSirenText}
-            align="left"
-            variant="caption"
-          >
-            Vous n'avez pas de numéro SIREN ?{" "}
-            <Link href="mailto:mobilic@beta.gouv.fr">Ecrivez-nous.</Link>
-          </Typography>
+          <>
+            <Typography
+              className={classes.findSirenText}
+              align="left"
+              variant="caption"
+            >
+              <Link
+                href="https://annuaire-entreprises.data.gouv.fr/"
+                target="_blank"
+              >
+                Trouvez facilement le numéro SIREN de votre entreprise
+              </Link>
+            </Typography>
+            <Typography
+              className={classes.noSirenText}
+              align="left"
+              variant="caption"
+            >
+              Vous n'avez pas de numéro SIREN ?{" "}
+              <Link href="mailto:mobilic@beta.gouv.fr">Ecrivez-nous.</Link>
+            </Typography>
+          </>
         )}
       </form>
     </Step>
