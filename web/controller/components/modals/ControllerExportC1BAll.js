@@ -16,6 +16,7 @@ import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 import React from "react";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
+import SignFilesCheckbox from "../../../common/SignFiles";
 
 const useStyles = makeStyles(theme => ({
   modalFooter: {
@@ -45,6 +46,7 @@ export default function ControllerExportC1BAll({
   const classes = useStyles();
 
   const [exportFilter, setExportFilter] = React.useState(controlFilters);
+  const [sign, setSign] = React.useState(true);
 
   const today = new Date();
   const oneYearAgo = addDaysToDate(new Date(), -365);
@@ -145,6 +147,9 @@ export default function ControllerExportC1BAll({
                 />
               )}
             />
+          </Grid>
+          <Grid item xs={12}>
+            <SignFilesCheckbox sign={sign} setSign={setSign} />
           </Grid>
         </Grid>
       </ModalContent>
