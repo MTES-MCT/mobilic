@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     flexShrink: 0,
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "start"
   },
   qrCodeText: {
     alignSelf: "flex-start",
