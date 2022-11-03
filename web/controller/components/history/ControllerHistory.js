@@ -1,17 +1,16 @@
-import React, { useState } from "react";
-import { makeStyles } from "@mui/styles";
-import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import { Modal, ModalTitle, ModalContent } from "@dataesr/react-dsfr";
-import { Header } from "../../../common/Header";
-import { ControllerHistoryFilters } from "./ControllerHistoryFilters";
-import { useLoadControls } from "../../utils/loadControls";
-import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import { ControlsList } from "../list/ControlsList";
-import { useLocation } from "react-router-dom";
-import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
-import { isoFormatLocalDate, startOfMonthAsDate } from "common/utils/time";
+import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
+import { makeStyles } from "@mui/styles";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
+import { isoFormatLocalDate, startOfMonthAsDate } from "common/utils/time";
+import React from "react";
+import { useLocation } from "react-router-dom";
+import { Header } from "../../../common/Header";
+import { useLoadControls } from "../../utils/loadControls";
+import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
+import { ControlsList } from "../list/ControlsList";
+import { ControllerHistoryFilters } from "./ControllerHistoryFilters";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -31,7 +30,6 @@ export function ControllerHistory() {
   const classes = useStyles();
   const store = useStoreSyncedWithLocalStorage();
   const controllerUserInfo = store.controllerInfo();
-  const [modalOpened, setModalOpened] = useState(false);
 
   const location = useLocation();
   const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
@@ -60,12 +58,6 @@ export function ControllerHistory() {
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth="xl"
     >
-      <Modal isOpen={modalOpened} hide={() => setModalOpened(false)}>
-        <ModalTitle>En cours de construction</ModalTitle>
-        <ModalContent>
-          L'export de vos contrôles est en cours de construction.
-        </ModalContent>
-      </Modal>
       <ControllerControlDrawer
         controlId={controlIdOnFocus}
         onClose={() => setControlIdOnFocus(null)}
@@ -86,7 +78,6 @@ export function ControllerHistory() {
           setControlFilters={setControlFilters}
           period={period}
           setPeriod={setPeriod}
-          onClickExport={() => setModalOpened(true)}
         />
       </Box>
       {controls && controls.length > 0 && (

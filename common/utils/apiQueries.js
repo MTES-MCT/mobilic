@@ -1628,6 +1628,10 @@ export const HTTP_QUERIES = {
   controlExcelExport: {
     method: "POST",
     endpoint: "/controllers/download_control_report"
+  },
+  controlC1BExport: {
+    method: "POST",
+    endpoint: "/controllers/generate_tachograph_files"
   }
 };
 
