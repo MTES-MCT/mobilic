@@ -50,6 +50,7 @@ export default function DriverSelectionModal({
           <VehicleFieldForApp
             label="Véhicule"
             fullWidth
+            required
             vehicle={vehicle}
             setVehicle={setVehicle}
             companyId={company ? company.id : null}
