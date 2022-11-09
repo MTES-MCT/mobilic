@@ -70,8 +70,6 @@ export default function ControllerExportC1BAll({
         </p>
         <Alert severity="warning">
           Seuls les contrôles de type "Mobilic" seront exportés au format C1B.
-          Les données des contrôles "LIC papier", "Horaire de service" et "pas
-          de LIC" peuvent être exportées au format excel.
         </Alert>
         <Typography variant="h4" className={classes.subtitle}>
           Options
