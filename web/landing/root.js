@@ -7,8 +7,6 @@ import Grid from "@mui/material/Grid";
 import { Header } from "../common/Header";
 import { ManagerImage, SoftwareImage, WorkerImage } from "common/utils/icons";
 import { useIsWidthDown } from "common/utils/useWidth";
-import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizontal.svg";
-import BackgroundVerticalImage from "common/assets/images/landing-hero-vertical.svg";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Footer } from "./footer";
 import {
@@ -19,18 +17,9 @@ import {
 import { WebinarListSection } from "./sections/WebinarListSection";
 import { VideoCard } from "./ResourcePage/VideoCard";
 import { resourcePagesClasses } from "./ResourcePage/styles/ResourcePagesStyle";
-import { Alert } from "@mui/material";
-import { Link } from "../common/LinkButton";
+import { IntroSection } from "./sections/IntroSection";
 
 const useStyles = makeStyles(theme => ({
-  heroContainer: {
-    backgroundColor: "#3184FF",
-    padding: 0,
-    margin: 0
-  },
-  heroInner: {
-    padding: 0
-  },
   videoContainer: {
     position: "relative",
     paddingBottom: "56.25%",
@@ -144,30 +133,11 @@ function Showcase({
 export const Landing = () => {
   const classes = useStyles();
   const sectionClasses = useSectionStyles();
-  const isSmDown = useIsWidthDown("sm");
   const resourceClasses = resourcePagesClasses();
 
   return [
     <Header key={1} />,
-    <Container key={2} maxWidth={false} className={classes.heroContainer}>
-      {process.env.REACT_APP_SHOW_CONTROLLER_APP === "1" && (
-        <Alert severity="info">
-          Accès Agent Public :{" "}
-          <Link variant="login controleur" to="/controller-login">
-            se connecter à mon espace
-          </Link>
-        </Alert>
-      )}
-      <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
-        <img
-          src={isSmDown ? BackgroundVerticalImage : BackgroundHorizontalImage}
-          alt="Mobilic-hero"
-          width="100%"
-          height="100%"
-          style={{ float: "left" }}
-        />
-      </Container>
-    </Container>,
+    <IntroSection key={2} />,
     <LandingSectionList key={3}>
       <LandingSection title="Mobilic ... 🤔 qu'est-ce que c'est ?">
         <Typography className={sectionClasses.sectionIntroText}>
