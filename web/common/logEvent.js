@@ -12,6 +12,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import EuroIcon from "@mui/icons-material/Euro";
 import EditIcon from "@mui/icons-material/Edit";
+import { formatDateTimeLiteral } from "common/utils/time";
 
 function changeResourceAsText(change) {
   switch (change.resourceType) {
@@ -40,46 +41,46 @@ function changeResourceAsText(change) {
   }
 }
 
-function activityChangeText(change, datetimeFormatter) {
+function activityChangeText(change) {
   switch (change.type) {
     case "DELETE":
       return `a supprimé ${changeResourceAsText(change)} ${
         change.before.endTime
-          ? `de ${datetimeFormatter(
+          ? `du ${formatDateTimeLiteral(
               change.before.startTime
-            )} à ${datetimeFormatter(change.before.endTime)}`
-          : `démarrée à ${datetimeFormatter(change.before.startTime)}`
+            )} au ${formatDateTimeLiteral(change.before.endTime)}`
+          : `démarrée le ${formatDateTimeLiteral(change.before.startTime)}`
       }`;
     case "CREATE":
       return change.after.endTime
-        ? `a ajouté ${changeResourceAsText(change)} de ${datetimeFormatter(
+        ? `a ajouté ${changeResourceAsText(change)} du ${formatDateTimeLiteral(
             change.after.startTime
-          )} à ${datetimeFormatter(change.after.endTime)}`
+          )} au ${formatDateTimeLiteral(change.after.endTime)}`
         : `s'est mis en ${
             ACTIVITIES[change.after.type].label
-          } à ${datetimeFormatter(change.after.startTime)}`;
+          } le ${formatDateTimeLiteral(change.after.startTime)}`;
     case "UPDATE":
       return !change.after.endTime && !change.before.endTime
         ? `a décalé le début de ${changeResourceAsText(
             change
-          )} de ${datetimeFormatter(
+          )} du ${formatDateTimeLiteral(
             change.before.startTime
-          )} à ${datetimeFormatter(change.after.startTime)}`
+          )} au ${formatDateTimeLiteral(change.after.startTime)}`
         : change.before.endTime && !change.after.endTime
         ? `a repris ${changeResourceAsText(change)}`
         : !change.before.endTime && change.after.endTime
-        ? `a mis fin à ${changeResourceAsText(change)} à ${datetimeFormatter(
-            change.after.endTime
-          )}`
+        ? `a mis fin à ${changeResourceAsText(
+            change
+          )} le ${formatDateTimeLiteral(change.after.endTime)}`
         : `a modifié la période de ${changeResourceAsText(
             change
-          )} de ${datetimeFormatter(
+          )} de ${formatDateTimeLiteral(
             change.before.startTime
-          )} - ${datetimeFormatter(
+          )} - ${formatDateTimeLiteral(
             change.before.endTime
-          )} à ${datetimeFormatter(
+          )} à ${formatDateTimeLiteral(
             change.after.startTime
-          )} - ${datetimeFormatter(change.after.endTime)}`;
+          )} - ${formatDateTimeLiteral(change.after.endTime)}`;
     default:
       return "";
   }
