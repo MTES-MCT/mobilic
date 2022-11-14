@@ -17,12 +17,11 @@ import {
 import { EmployeeFilter } from "./EmployeeFilter";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Switch from "@mui/material/Switch";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
 import Alert from "@mui/material/Alert";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
+import SignFilesCheckbox from "../../common/SignFiles";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -221,17 +220,7 @@ export default function C1BExport({
             </Grid>
           </DateOrDateTimeRangeSelectionContext>
           <Grid item xs={12}>
-            <Box className={classes.switchContainer}>
-              <Switch
-                color="secondary"
-                checked={sign}
-                onChange={e => setSign(e.target.checked)}
-              />
-              <Typography style={sign ? {} : { opacity: 0.3 }}>
-                Ajouter des signatures numériques aux fichiers pour prouver leur
-                intégrité
-              </Typography>
-            </Box>
+            <SignFilesCheckbox sign={sign} setSign={setSign} />
           </Grid>
         </Grid>
       </DialogContent>

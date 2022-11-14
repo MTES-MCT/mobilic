@@ -378,7 +378,7 @@ export default function ActivityRevisionOrCreationModal({
           <Box my={2} mb={4}>
             <Alert severity="warning">
               Les modifications seront visibles par votre employeur et par les
-              contrôleurs
+              contrôleurs (en cas de contrôle en bord de route ou en entreprise)
             </Alert>
           </Box>
         )}

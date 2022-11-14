@@ -70,6 +70,9 @@ const customOptions = {
       fontSize: "1em",
       fontWeight: "bold"
     }
+  },
+  zIndex: {
+    modal: 2000
   }
 };
 

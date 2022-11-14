@@ -203,7 +203,7 @@ class Api {
 
   async downloadFileHttpQuery(queryInfo, options = {}) {
     const response = await this.httpQuery(queryInfo, options);
-    const blob = await response.blob();
+    const blob = await response.blob().catch(err => console.log(err));
     const fileName = response.headers
       .get("Content-Disposition")
       .split("filename=")[1]

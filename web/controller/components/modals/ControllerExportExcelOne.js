@@ -47,7 +47,7 @@ export default function ExportExcelOne({ open, handleClose, controlId }) {
           title="téléchargement"
           className={classes.modalFooter}
           onClick={async () =>
-            await alerts.withApiErrorHandling(async () => {
+            alerts.withApiErrorHandling(async () => {
               const options = {
                 control_id: controlId
               };
