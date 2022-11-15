@@ -86,14 +86,14 @@ function activityChangeText(change) {
   }
 }
 
-export function getChangeIconAndText(change, datetimeFormatter) {
+export function getChangeIconAndText(change) {
   switch (change.type) {
     case "DELETE":
       switch (change.resourceType) {
         case MISSION_RESOURCE_TYPES.activity:
           return {
             icon: <HighlightOffIcon />,
-            text: activityChangeText(change, datetimeFormatter)
+            text: activityChangeText(change)
           };
         default:
           return {
@@ -122,7 +122,7 @@ export function getChangeIconAndText(change, datetimeFormatter) {
         case MISSION_RESOURCE_TYPES.activity:
           return {
             icon: ACTIVITIES[change.after.type].renderIcon(),
-            text: activityChangeText(change, datetimeFormatter),
+            text: activityChangeText(change),
             color: ACTIVITIES[change.after.type].color
           };
         case MISSION_RESOURCE_TYPES.expenditure:
@@ -138,7 +138,7 @@ export function getChangeIconAndText(change, datetimeFormatter) {
         case MISSION_RESOURCE_TYPES.activity:
           return {
             icon: <EditIcon />,
-            text: activityChangeText(change, datetimeFormatter)
+            text: activityChangeText(change)
           };
         default:
           return "";
