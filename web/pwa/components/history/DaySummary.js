@@ -10,12 +10,14 @@ import { ActivityList } from "../ActivityList";
 import React from "react";
 import { DAY } from "common/utils/time";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
+import { DayRegulatoryAlerts } from "../../../common/DayRegulatoryAlerts";
 
 export function DaySummary({
   isDayEnded,
   activitiesWithNextAndPreviousDay,
   weekActivities,
   dayStart,
+  regulationComputation,
   loading = false
 }) {
   const dayEnd = dayStart + DAY;
@@ -48,6 +50,11 @@ export function DaySummary({
           <ItalicWarningTypography>Mission en cours !</ItalicWarningTypography>
         )}
       </InfoCard>
+      {regulationComputation && (
+        <InfoCard loading={loading} className={infoCardStyles.topMargin}>
+          <DayRegulatoryAlerts regulationComputation={regulationComputation} />
+        </InfoCard>
+      )}
       <InfoCard className={infoCardStyles.topMargin}>
         <MissionReviewSection
           title="Activités de la journée"

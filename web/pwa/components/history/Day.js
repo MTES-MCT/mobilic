@@ -10,6 +10,11 @@ import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { ContradictorySwitch } from "../ContradictorySwitch";
 import { makeStyles } from "@mui/styles";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
+import { SubmitterType } from "common/utils/regulation/alertTypes";
+import {
+  getAlertComputationVersion,
+  getLatestAlertComputationVersion
+} from "common/utils/regulation/alertVersions";
 
 export const useStyles = makeStyles(theme => ({
   contradictorySwitch: {
@@ -22,6 +27,7 @@ export function Day({
   activitiesWithNextAndPreviousDay,
   selectedPeriodStart,
   selectedPeriodEnd,
+  regulationComputationsInPeriod,
   editActivityEvent,
   createActivity,
   editExpenditures,
@@ -72,6 +78,27 @@ export function Day({
     )
   ];
 
+  const regulationComputationToUse = () => {
+    if (
+      !canDisplayContradictoryVersions ||
+      contradictoryComputationError ||
+      (hasComputedContradictory && contradictoryIsEmpty)
+    ) {
+      // No contradictory => use latest version
+      return getLatestAlertComputationVersion(regulationComputationsInPeriod);
+    }
+    if (shouldDisplayInitialEmployeeVersion) {
+      return getAlertComputationVersion(
+        regulationComputationsInPeriod,
+        SubmitterType.EMPLOYEE
+      );
+    }
+    return getAlertComputationVersion(
+      regulationComputationsInPeriod,
+      SubmitterType.ADMIN
+    );
+  };
+
   React.useEffect(() => {
     if (!canDisplayContradictoryVersions && shouldDisplayInitialEmployeeVersion)
       setShouldDisplayInitialEmployeeVersion(false);
@@ -97,6 +124,7 @@ export function Day({
         isDayEnded={true}
         dayStart={selectedPeriodStart}
         weekActivities={weekActivities}
+        regulationComputation={regulationComputationToUse}
         loading={loadingEmployeeVersion}
       />
       <InfoCard className={infoCardStyles.topMargin}>

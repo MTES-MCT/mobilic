@@ -8,12 +8,13 @@ import {
 } from "common/utils/mission";
 import { jsToUnixTimestamp, unixToJSTimestamp } from "common/utils/time";
 import { computeAlerts } from "common/utils/regulation/computeAlerts";
+import { getLatestAlertComputationVersion } from "common/utils/regulation/alertVersions";
 import { orderEmployments } from "common/utils/employments";
 import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { ControllerControlHeader } from "./ControllerControlHeader";
-import orderBy from "lodash/orderBy";
+import _ from "lodash";
 
 export function ControllerControlDetails({ controlId, onClose }) {
   const [controlData, setControlData] = React.useState({});
@@ -70,7 +71,7 @@ export function ControllerControlDetails({ controlId, onClose }) {
         controlData.missions.map(m => ({
           ...m,
           ...parseMissionPayloadFromBackend(m, controlData.user.id),
-          allActivities: orderBy(m.activities, ["startTime", "endTime"])
+          allActivities: _.orderBy(m.activities, ["startTime", "endTime"])
         })),
         controlData.user.id
       ).filter(m => m.activities.length > 0);
@@ -90,9 +91,27 @@ export function ControllerControlDetails({ controlId, onClose }) {
         controlData.qrCodeGenerationTime
       );
       setGroupedAlerts(_groupedAlerts);
-      setAlertNumber(
-        _groupedAlerts.reduce((acc, group) => acc + group.alerts.length, 0)
+
+      // TODO to remove >>>>
+      const prevAlertNumber = _groupedAlerts.reduce(
+        (acc, group) => acc + group.alerts.length,
+        0
       );
+      console.log("prevAlertNumber ", prevAlertNumber);
+      // TODO to remove <<<<
+
+      const alertComputationGroupedPerDay = _.groupBy(
+        controlData.regulationComputations,
+        "day"
+      );
+      const _alertNumber = Object.values(alertComputationGroupedPerDay)
+        .map(
+          alertComputation =>
+            getLatestAlertComputationVersion(alertComputation)?.alerts
+              ?.length || 0
+        )
+        .reduce((sum, value) => sum + value, 0);
+      setAlertNumber(_alertNumber);
     } else {
       setMissions([]);
       setCoworkers([]);
@@ -111,7 +130,8 @@ export function ControllerControlDetails({ controlId, onClose }) {
     <UserReadTabs
       key={1}
       tabs={getTabs(alertNumber)}
-      groupedAlerts={groupedAlerts}
+      regulationComputations={controlData.regulationComputations}
+      groupedAlerts={groupedAlerts} // TODO to remove <<<
       alertNumber={alertNumber}
       userInfo={controlData.user}
       tokenInfo={legacyTokenInfo}

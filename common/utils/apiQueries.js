@@ -430,6 +430,20 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
         birthDate
         email
       }
+      regulationComputations {
+        day
+        submitterType
+        alerts {
+          regulationCheck {
+            type
+            label
+            description
+            regulationRule
+            unit
+          }
+          extra
+        }
+      }
     }
   }
 `;

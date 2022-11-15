@@ -7,7 +7,8 @@ import {
   SHORT_MONTHS,
   shortPrettyFormatDay,
   DAY,
-  WEEK
+  WEEK,
+  isoFormatLocalDate
 } from "common/utils/time";
 import { useGroupMissionsAndExtractActivities } from "common/utils/history/groupByPeriodUnit";
 import { makeStyles } from "@mui/styles";
@@ -159,7 +160,8 @@ export function History({
   userId = null,
   createMission = null,
   openPeriod = null,
-  controlId = null
+  controlId = null,
+  regulationComputationsPerPeriod = []
 }) {
   const location = useLocation();
   const history = useHistory();
@@ -261,6 +263,10 @@ export function History({
     .unix(selectedPeriod)
     .add(tabs[currentTab].periodLength)
     .unix();
+
+  const regulationComputationsInPeriod = selectedPeriod
+    ? regulationComputationsPerPeriod[isoFormatLocalDate(selectedPeriod)]
+    : [];
 
   return (
     <Container
@@ -400,6 +406,7 @@ export function History({
             selectedPeriodStart: selectedPeriod,
             selectedPeriodEnd,
             missionsInPeriod: missionsInSelectedPeriod,
+            regulationComputationsInPeriod,
             activitiesWithNextAndPreviousDay: filterActivitiesOverlappingPeriod(
               activities,
               selectedPeriod - DAY,

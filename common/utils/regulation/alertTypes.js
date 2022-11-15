@@ -2,6 +2,11 @@ import { RULE_RESPECT_STATUS } from "./rules";
 import { formatTimer, HOUR } from "../time";
 import { REGULATION_RULES } from "../../../web/landing/ResourcePage/RegulationRules";
 
+export const SubmitterType = {
+  EMPLOYEE: "employee",
+  ADMIN: "admin"
+};
+
 export const ALERT_TYPES = {
   minimumDailyRest: "minimumDailyRest",
   maximumWorkDayTime: "maximumWorkDayTime",
