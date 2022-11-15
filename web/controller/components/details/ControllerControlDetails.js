@@ -16,36 +16,24 @@ import { ControllerControlHeader } from "./ControllerControlHeader";
 import orderBy from "lodash/orderBy";
 
 export function ControllerControlDetails({ controlId, onClose }) {
-  const [tabs, setTabs] = React.useState(getTabs(0));
+  const [controlData, setControlData] = React.useState({});
   const [alertNumber, setAlertNumber] = React.useState(0);
   const [groupedAlerts, setGroupedAlerts] = React.useState([]);
-  const [userInfo, setUserInfo] = React.useState({});
   const [employments, setEmployments] = React.useState([]);
   const [vehicles, setVehicles] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
-  const [nbWorkingDays, setNbWorkingDays] = React.useState(0);
   const [coworkers, setCoworkers] = React.useState([]);
-  const [qrCodeGenerationTime, setQrCodeGenerationTime] = React.useState([]);
-  const [companyName, setCompanyName] = React.useState(null);
-  const [
-    vehicleRegistrationNumber,
-    setVehicleRegistrationNumber
-  ] = React.useState(null);
-  const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
-  const [legacyTokenInfo, setLegacyTokenInfo] = React.useState({});
 
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
 
-  React.useEffect(() => {
-    const nbAlerts = groupedAlerts.reduce(
-      (acc, group) => acc + group.alerts.length,
-      0
-    );
-    setAlertNumber(nbAlerts);
-    setTabs(getTabs(nbAlerts));
-  }, [groupedAlerts]);
+  // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
+  const legacyTokenInfo = {
+    creationDay: new Date(unixToJSTimestamp(controlData.qrCodeGenerationTime)),
+    historyStartDay: controlData.historyStartDate,
+    creationTime: controlData.creationTime
+  };
 
   React.useEffect(() => {
     if (controlId) {
@@ -56,64 +44,52 @@ export function ControllerControlDetails({ controlId, onClose }) {
             { controlId },
             { context: { nonPublicApi: true } }
           );
-          const controlData = apiResponse.data.controlData;
-          setUserInfo({
-            id: controlData.user.id,
-            firstName: controlData.user.firstName,
-            lastName: controlData.user.lastName,
-            birthDate: controlData.user.birthDate,
-            email: controlData.user.email
-          });
-          setEmployments(orderEmployments(controlData.employments));
+          const _controlData = apiResponse.data.controlData;
+          setControlData(_controlData);
+
+          setEmployments(orderEmployments(_controlData.employments));
           const _vehicles = {};
-          controlData.employments.forEach(e => {
+          _controlData.employments.forEach(e => {
             e.company.vehicles.forEach(v => {
               _vehicles[v.id.toString()] = v;
             });
           });
           setVehicles(_vehicles);
-          const missions_ = augmentAndSortMissions(
-            controlData.missions.map(m => ({
+          const _missions = augmentAndSortMissions(
+            _controlData.missions.map(m => ({
               ...m,
-              ...parseMissionPayloadFromBackend(m, controlData.user.id),
+              ...parseMissionPayloadFromBackend(m, _controlData.user.id),
               allActivities: orderBy(m.activities, ["startTime", "endTime"])
             })),
-            controlData.user.id
+            _controlData.user.id
           ).filter(m => m.activities.length > 0);
-          setMissions(missions_);
-          setNbWorkingDays(controlData.nbControlledDays || 0);
+          setMissions(_missions);
           setGroupedAlerts(
             computeAlerts(
-              missions_,
+              _missions,
               jsToUnixTimestamp(
-                new Date(controlData.historyStartDate).getTime()
+                new Date(_controlData.historyStartDate).getTime()
               ),
-              controlData.qrCodeGenerationTime
+              _controlData.qrCodeGenerationTime
             )
           );
           const _coworkers = {};
-          controlData.missions.forEach(m => {
+          _controlData.missions.forEach(m => {
             m.activities.forEach(a => {
               _coworkers[a.user.id.toString()] = a.user;
             });
           });
           setCoworkers(_coworkers);
-          setQrCodeGenerationTime(controlData.qrCodeGenerationTime);
-          setCompanyName(controlData.companyName);
-          setVehicleRegistrationNumber(controlData.vehicleRegistrationNumber);
-
-          // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
-          setLegacyTokenInfo({
-            creationDay: new Date(
-              unixToJSTimestamp(controlData.qrCodeGenerationTime)
-            ),
-            historyStartDay: controlData.historyStartDate,
-            creationTime: controlData.creationTime
-          });
         });
       });
     }
   }, [controlId]);
+
+  React.useEffect(() => {
+    setAlertNumber(
+      groupedAlerts.reduce((acc, group) => acc + group.alerts.length, 0)
+    );
+  }, [groupedAlerts]);
 
   return [
     <ControllerControlHeader
@@ -124,23 +100,21 @@ export function ControllerControlDetails({ controlId, onClose }) {
     />,
     <UserReadTabs
       key={1}
-      tabs={tabs}
+      tabs={getTabs(alertNumber)}
       groupedAlerts={groupedAlerts}
       alertNumber={alertNumber}
-      userInfo={userInfo}
+      userInfo={controlData.user}
       tokenInfo={legacyTokenInfo}
-      controlTime={qrCodeGenerationTime}
+      controlTime={controlData.qrCodeGenerationTime}
       missions={missions}
       employments={employments}
       coworkers={coworkers}
       vehicles={vehicles}
-      periodOnFocus={periodOnFocus}
-      setPeriodOnFocus={setPeriodOnFocus}
-      workingDaysNumber={nbWorkingDays}
+      workingDaysNumber={controlData.nbControlledDays || 0}
       allowC1BExport={false}
       controlId={controlId}
-      companyName={companyName}
-      vehicleRegistrationNumber={vehicleRegistrationNumber}
+      companyName={controlData.companyName}
+      vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
     />
   ];
 }
