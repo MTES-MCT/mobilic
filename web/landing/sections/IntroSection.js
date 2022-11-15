@@ -14,15 +14,13 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     margin: 0
   },
-  heroInnerDesktop: {
+  heroInner: {
     padding: 0,
     textAlign: "left",
-    marginTop: theme.spacing(5)
-  },
-  heroInnerMobile: {
-    padding: 0,
-    textAlign: "left",
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(5),
+    [theme.breakpoints.down("sm")]: {
+      marginTop: theme.spacing(2)
+    }
   },
   underlineBlue: {
     backgroundColor: "rgba(49, 132, 255, 0.2)"
@@ -30,52 +28,48 @@ const useStyles = makeStyles(theme => ({
   leftBlockIntro: {
     marginLeft: theme.spacing(2)
   },
+  textTitle: {
+    [theme.breakpoints.down("sm")]: {
+      marginRight: theme.spacing(3)
+    }
+  },
   textIntro: {
     fontWeight: "normal",
-    marginTop: theme.spacing(0.5)
+    marginTop: theme.spacing(0.5),
+    [theme.breakpoints.down("sm")]: {
+      marginRight: theme.spacing(3)
+    }
   },
-  explanationDesktop: {
+  explanation: {
     fontSize: "1.25em",
-    marginTop: theme.spacing(10)
+    marginTop: theme.spacing(10),
+    [theme.breakpoints.down("sm")]: {
+      marginTop: theme.spacing(2),
+      marginRight: theme.spacing(3)
+    }
   },
-  explanationMobile: {
-    fontSize: "1.25em",
-    marginTop: theme.spacing(2)
+  phoneImageContainer: {
+    marginTop: theme.spacing(-14),
+    [theme.breakpoints.down("sm")]: {
+      marginTop: theme.spacing(3),
+      marginBottom: theme.spacing(3)
+    }
   },
-  phoneImageContainerDesktop: {
-    marginTop: theme.spacing(-14)
-  },
-  phoneImageContainerMobile: {
-    marginTop: theme.spacing(2)
-  },
-  phoneImageDesktop: {
+  phoneImage: {
     float: "left",
-    marginLeft: theme.spacing(3)
-  },
-  phoneImageMobile: {
-    float: "left",
-    marginLeft: theme.spacing(-2)
+    marginLeft: theme.spacing(3),
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: theme.spacing(-2)
+    }
   }
 }));
 
 export function IntroSection() {
   const classes = useStyles();
   const PhoneImageComponent = () => (
-    <Grid
-      item
-      xs={12}
-      sm={6}
-      lg={8}
-      className={
-        !isSmDown
-          ? classes.phoneImageContainerDesktop
-          : classes.phoneImageContainerMobile
-      }
-    >
+    <Grid item xs={12} sm={6} lg={8} className={classes.phoneImageContainer}>
       <img
-        className={
-          !isSmDown ? classes.phoneImageDesktop : classes.phoneImageMobile
-        }
+        className={classes.phoneImage}
         src={isSmDown ? BackgroundVerticalImage : BackgroundHorizontalImage}
         alt="Mobilic-hero"
         width="100%"
@@ -85,11 +79,7 @@ export function IntroSection() {
   );
   const Explanation = () => (
     <Grid item xs={12} sm={6} lg={4}>
-      <Typography
-        className={
-          !isSmDown ? classes.explanationDesktop : classes.explanationMobile
-        }
-      >
+      <Typography className={classes.explanation}>
         Mobilic est une alternative numérique au livret individuel de contrôle
         (LIC) pour l'ensemble des{" "}
         <span className={"bold"}>
@@ -112,15 +102,10 @@ export function IntroSection() {
           </Link>
         </Alert>
       )}
-      <Container
-        maxWidth="xl"
-        className={`fade-in-image ${
-          !isSmDown ? classes.heroInnerDesktop : classes.heroInnerMobile
-        }`}
-      >
+      <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
         <Grid container direction="row" className={classes.leftBlockIntro}>
           <Grid item xs={12} marginTop={4}>
-            <Typography className="bold" variant="h1">
+            <Typography className={classes.textTitle} variant="h1">
               La plateforme numérique gouvernementale
             </Typography>
             <Typography className={classes.textIntro} variant="h2">
