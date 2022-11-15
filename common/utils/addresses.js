@@ -19,7 +19,7 @@ export function formatAddressSubText(address) {
     ? `${address.properties.postcode} ${address.properties.city}`
     : address.postalCode
     ? `${address.postalCode} ${address.city}`
-    : null;
+    : "";
 }
 
 export function buildBackendPayloadForAddress(address) {
