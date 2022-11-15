@@ -44,52 +44,62 @@ export function ControllerControlDetails({ controlId, onClose }) {
             { controlId },
             { context: { nonPublicApi: true } }
           );
-          const _controlData = apiResponse.data.controlData;
-          setControlData(_controlData);
-
-          setEmployments(orderEmployments(_controlData.employments));
-          const _vehicles = {};
-          _controlData.employments.forEach(e => {
-            e.company.vehicles.forEach(v => {
-              _vehicles[v.id.toString()] = v;
-            });
-          });
-          setVehicles(_vehicles);
-          const _missions = augmentAndSortMissions(
-            _controlData.missions.map(m => ({
-              ...m,
-              ...parseMissionPayloadFromBackend(m, _controlData.user.id),
-              allActivities: orderBy(m.activities, ["startTime", "endTime"])
-            })),
-            _controlData.user.id
-          ).filter(m => m.activities.length > 0);
-          setMissions(_missions);
-          setGroupedAlerts(
-            computeAlerts(
-              _missions,
-              jsToUnixTimestamp(
-                new Date(_controlData.historyStartDate).getTime()
-              ),
-              _controlData.qrCodeGenerationTime
-            )
-          );
-          const _coworkers = {};
-          _controlData.missions.forEach(m => {
-            m.activities.forEach(a => {
-              _coworkers[a.user.id.toString()] = a.user;
-            });
-          });
-          setCoworkers(_coworkers);
+          setControlData(apiResponse.data.controlData);
         });
       });
     }
   }, [controlId]);
 
   React.useEffect(() => {
-    setAlertNumber(
-      groupedAlerts.reduce((acc, group) => acc + group.alerts.length, 0)
-    );
-  }, [groupedAlerts]);
+    if (controlData.employments) {
+      setEmployments(orderEmployments(controlData.employments));
+      const _vehicles = {};
+      controlData.employments.forEach(e => {
+        e.company.vehicles.forEach(v => {
+          _vehicles[v.id.toString()] = v;
+        });
+      });
+      setVehicles(_vehicles);
+    } else {
+      setEmployments([]);
+      setVehicles([]);
+    }
+
+    if (controlData.missions) {
+      const _missions = augmentAndSortMissions(
+        controlData.missions.map(m => ({
+          ...m,
+          ...parseMissionPayloadFromBackend(m, controlData.user.id),
+          allActivities: orderBy(m.activities, ["startTime", "endTime"])
+        })),
+        controlData.user.id
+      ).filter(m => m.activities.length > 0);
+      setMissions(_missions);
+
+      const _coworkers = {};
+      controlData.missions.forEach(m => {
+        m.activities.forEach(a => {
+          _coworkers[a.user.id.toString()] = a.user;
+        });
+      });
+      setCoworkers(_coworkers);
+
+      const _groupedAlerts = computeAlerts(
+        _missions,
+        jsToUnixTimestamp(new Date(controlData.historyStartDate).getTime()),
+        controlData.qrCodeGenerationTime
+      );
+      setGroupedAlerts(_groupedAlerts);
+      setAlertNumber(
+        _groupedAlerts.reduce((acc, group) => acc + group.alerts.length, 0)
+      );
+    } else {
+      setMissions([]);
+      setCoworkers([]);
+      setGroupedAlerts([]);
+      setAlertNumber(0);
+    }
+  }, [controlData]);
 
   return [
     <ControllerControlHeader
