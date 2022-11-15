@@ -62,11 +62,14 @@ const useStyles = makeStyles(theme => ({
 const videos = [
   {
     title: "Mobilic, qu'est-ce que c'est ?",
-    id: "GEfgicbfX4s"
+    videoKey: "resources/videos/accueil/accueil-qu-est-ce-que-mobilic.mp4",
+    posterKey:
+      "resources/videos/accueil/accueil-qu-est-ce-que-mobilic-preview.png"
   },
   {
     title: "Mobilic est-il conforme à la réglementation ?",
-    id: "0XxaLFvi4Ic"
+    videoKey: "resources/videos/accueil/accueil-reglementaire.mp4",
+    posterKey: "resources/videos/accueil/accueil-reglementaire-preview.png"
   }
 ];
 
@@ -199,10 +202,11 @@ export const Landing = () => {
           <Container maxWidth="lg" className={resourceClasses.inner}>
             <Grid container direction="row" alignItems="center" spacing={1}>
               {videos.map(video => (
-                <Grid key={video.id} item xs={12} sm={6}>
+                <Grid key={video.url} item xs={12} sm={6}>
                   <VideoCard
                     description={video.title}
-                    youtubeUrl={`https://www.youtube.com/embed/${video.id}`}
+                    videoKey={video.videoKey}
+                    posterKey={video.posterKey}
                   />
                 </Grid>
               ))}

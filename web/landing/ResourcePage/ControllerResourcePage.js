@@ -62,7 +62,7 @@ export function ControllerResourcePage() {
             <Box>
               <VideoCard
                 description="Effectuer un contrôle en bord de route"
-                youtubeUrl={"https://www.youtube.com/embed/K6weRB_k7HA"}
+                videoKey="resources/videos/controleurs/tuto-controleur-v6.mp4"
               />
             </Box>
             <Button
