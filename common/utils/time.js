@@ -163,13 +163,27 @@ export function isoFormatDateTime(unixTimestamp) {
   )}T${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
 }
 
-export function formatDateTime(unixTimestamp, showYear = false) {
+export function formatDateTime(
+  unixTimestamp,
+  showYear = false,
+  separator = " "
+) {
   const date = new Date(unixTimestamp * 1000);
-  return `${date.toLocaleDateString(undefined, {
-    month: "2-digit",
-    day: "2-digit",
-    year: showYear ? "numeric" : undefined
-  })} ${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
+  return [
+    date.toLocaleDateString(undefined, {
+      month: "2-digit",
+      day: "2-digit",
+      year: showYear ? "numeric" : undefined
+    }),
+    separator,
+    addZero(date.getHours()),
+    ":",
+    addZero(date.getMinutes() % 60)
+  ].join("");
+}
+
+export function formatDateTimeLiteral(unixTimestamp, showYear = false) {
+  return formatDateTime(unixTimestamp, showYear, " à ");
 }
 
 export function addZero(n) {
