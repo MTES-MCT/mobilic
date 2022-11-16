@@ -3,11 +3,11 @@ import Typography from "@mui/material/Typography";
 import { Card } from "@mui/material";
 import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
 
+const s3Root =
+  "https://storage.gra.cloud.ovh.net/v1/AUTH_8a2f745174054ce1b5ee7c6e79601088/mobilic/";
+
 export function VideoCard({ videoKey, description, posterKey }) {
   const classes = resourceCardsClasses();
-
-  const s3Root =
-    "https://storage.gra.cloud.ovh.net/v1/AUTH_8a2f745174054ce1b5ee7c6e79601088/mobilic/";
 
   return (
     <Card variant="outlined" className={classes.card}>

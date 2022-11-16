@@ -202,7 +202,7 @@ export const Landing = () => {
           <Container maxWidth="lg" className={resourceClasses.inner}>
             <Grid container direction="row" alignItems="center" spacing={1}>
               {videos.map(video => (
-                <Grid key={video.url} item xs={12} sm={6}>
+                <Grid key={video.videoKey} item xs={12} sm={6}>
                   <VideoCard
                     description={video.title}
                     videoKey={video.videoKey}
