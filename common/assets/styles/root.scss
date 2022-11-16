@@ -247,6 +247,10 @@
   --underline-img: none;
 }
 
+video:not([href])[controls] {
+  cursor: pointer;
+}
+
 .hr-unstyled {
   padding: 0;
   background-image: none;
