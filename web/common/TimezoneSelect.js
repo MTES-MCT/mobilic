@@ -10,8 +10,7 @@ const TimezoneSelect = ({ currentTimezone, setTimezone }) => {
         required
         select
         fullWidth
-        className="vertical-form-text-input"
-        style={{ textAlign: "left" }}
+        className="timezone-select"
         label="Fuseau Horaire"
         value={currentTimezone.name}
         onChange={e => {

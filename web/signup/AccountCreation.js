@@ -23,6 +23,7 @@ import { CheckboxField } from "../common/CheckboxField";
 import { EmailField } from "../common/EmailField";
 import TimezoneSelect from "../common/TimezoneSelect";
 import { getClientTimezone } from "common/utils/timezones";
+import { WayHeardOfMobilic } from "../common/WayHeardOfMobilic";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   const api = useApi();
@@ -36,6 +37,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const [email, setEmail] = React.useState("");
   const [emailError, setEmailError] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [wayHeardOfMobilic, setWayHeardOfMobilic] = React.useState("");
   const [selectedTimezone, setSelectedTimezone] = React.useState(
     getClientTimezone()
   );
@@ -55,7 +57,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
         firstName,
         lastName,
         subscribeToNewsletter,
-        selectedTimezone.name
+        selectedTimezone.name,
+        wayHeardOfMobilic
       );
     } else {
       modals.open("cgu", {
@@ -68,7 +71,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             firstName,
             lastName,
             subscribeToNewsletter,
-            selectedTimezone.name
+            selectedTimezone.name,
+            wayHeardOfMobilic
           ),
         handleReject: () => {}
       });
@@ -83,7 +87,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
     firstName,
     lastName,
     subscribeToNewsletter,
-    timezone
+    timezone,
+    wayHeardOfMobilic
   ) => {
     setLoading(true);
     await alerts.withApiErrorHandling(
@@ -95,7 +100,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           lastName: lastName.trim(),
           subscribeToNewsletter,
           isEmployee: !isAdmin,
-          timezoneName: timezone
+          timezoneName: timezone,
+          wayHeardOfMobilic: wayHeardOfMobilic
         };
         if (employeeInvite) {
           signupPayload.inviteToken = employeeInvite.inviteToken;
@@ -202,6 +208,12 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             currentTimezone={selectedTimezone}
             setTimezone={setSelectedTimezone}
           />
+          {isAdmin && (
+            <WayHeardOfMobilic
+              setWayHeardOfMobilicValue={setWayHeardOfMobilic}
+            />
+          )}
+
           <CheckboxField
             checked={subscribeToNewsletter}
             onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}

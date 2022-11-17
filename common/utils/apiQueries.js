@@ -128,6 +128,7 @@ export const USER_SIGNUP_MUTATION = gql`
     $subscribeToNewsletter: Boolean
     $isEmployee: Boolean
     $timezoneName: String
+    $wayHeardOfMobilic: String
   ) {
     signUp {
       user(
@@ -139,6 +140,7 @@ export const USER_SIGNUP_MUTATION = gql`
         subscribeToNewsletter: $subscribeToNewsletter
         isEmployee: $isEmployee
         timezoneName: $timezoneName
+        wayHeardOfMobilic: $wayHeardOfMobilic
       ) {
         accessToken
         refreshToken
@@ -151,12 +153,14 @@ export const CONFIRM_FC_EMAIL_MUTATION = gql`
     $email: String!
     $password: String
     $timezoneName: String
+    $wayHeardOfMobilic: String
   ) {
     signUp {
       confirmFcEmail(
         email: $email
         password: $password
         timezoneName: $timezoneName
+        wayHeardOfMobilic: $wayHeardOfMobilic
       ) {
         email
         hasConfirmedEmail

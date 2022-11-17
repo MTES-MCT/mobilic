@@ -110,6 +110,12 @@
   margin-bottom: 2vh !important;
 }
 
+.timezone-select {
+  @extend .vertical-form-text-input;
+  margin-top: 2vh !important;
+  text-align: left;
+}
+
 .day-info-inputs {
   @extend .flex-column;
   justify-content: space-evenly;

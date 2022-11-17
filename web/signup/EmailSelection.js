@@ -26,6 +26,7 @@ import { EmailField } from "../common/EmailField";
 import { captureSentryException } from "common/utils/sentry";
 import TimezoneSelect from "../common/TimezoneSelect";
 import { getClientTimezone } from "common/utils/timezones";
+import { WayHeardOfMobilic } from "../common/WayHeardOfMobilic";
 
 const useStyles = makeStyles(theme => ({
   text: {
@@ -46,6 +47,7 @@ export function EmailSelection() {
 
   const [isAdmin, setIsAdmin] = React.useState(false);
   const [email, setEmail] = React.useState("");
+  const [wayHeardOfMobilic, setWayHeardOfMobilic] = React.useState("");
   const [selectedTimezone, setSelectedTimezone] = React.useState(
     getClientTimezone()
   );
@@ -80,7 +82,8 @@ export function EmailSelection() {
       await _createLogin(
         email,
         choosePassword ? password : null,
-        selectedTimezone.name
+        selectedTimezone.name,
+        wayHeardOfMobilic
       );
     } else {
       modals.open("cgu", {
@@ -88,20 +91,22 @@ export function EmailSelection() {
           await _createLogin(
             email,
             choosePassword ? password : null,
-            selectedTimezone.name
+            selectedTimezone.name,
+            wayHeardOfMobilic
           ),
         handleReject: () => {}
       });
     }
   };
 
-  const _createLogin = async (email, password, timezone) => {
+  const _createLogin = async (email, password, timezone, wayHeardOfMobilic) => {
     setLoading(true);
     await alerts.withApiErrorHandling(
       async () => {
         const payload = {
           email,
-          timezoneName: timezone
+          timezoneName: timezone,
+          wayHeardOfMobilic: wayHeardOfMobilic
         };
         if (password) payload.password = password;
         const apiResponse = await api.graphQlMutate(
@@ -227,6 +232,13 @@ export function EmailSelection() {
             setTimezone={setSelectedTimezone}
           />
         </Section>
+        {isAdmin && (
+          <Section title="4. Informations complémentaires">
+            <WayHeardOfMobilic
+              setWayHeardOfMobilicValue={setWayHeardOfMobilic}
+            />
+          </Section>
+        )}
         <Box my={4}>
           <LoadingButton
             aria-label="Continuer"
