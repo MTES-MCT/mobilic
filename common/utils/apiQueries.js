@@ -960,11 +960,11 @@ export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
         startDate
         endDate
         isAcknowledged
-        email
         hasAdminRights
         latestInviteEmailTime
         user {
           id
+          email
           firstName
           lastName
         }
@@ -991,7 +991,6 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         startDate
         endDate
         isAcknowledged
-        email
         hasAdminRights
         company {
           id
@@ -1000,6 +999,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         }
         user {
           id
+          email
           firstName
           lastName
         }
