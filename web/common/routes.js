@@ -54,6 +54,11 @@ export const RESOURCES_ROUTE = {
       label: "Foire aux questions",
       target: "_blank",
       href: "https://faq.mobilic.beta.gouv.fr/"
+    },
+    {
+      path: "/partners",
+      target: "_blank",
+      label: "Partenaires"
     }
   ]
 };
