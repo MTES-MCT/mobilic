@@ -911,7 +911,6 @@ export const TERMINATE_EMPLOYMENT_MUTATION = gql`
         startDate
         endDate
         isAcknowledged
-        email
         hasAdminRights
         company {
           id
@@ -920,6 +919,7 @@ export const TERMINATE_EMPLOYMENT_MUTATION = gql`
         }
         user {
           id
+          email
           firstName
           lastName
         }
