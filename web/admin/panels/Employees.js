@@ -317,7 +317,6 @@ export function Employees({ company, containerRef }) {
 
   const today = isoFormatLocalDate(new Date());
 
-  console.log(companyEmployments);
   const validEmployments = companyEmployments
     .filter(e => e.isAcknowledged)
     .map(e => ({
