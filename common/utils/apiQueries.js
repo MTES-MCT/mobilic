@@ -684,13 +684,13 @@ export const ADMIN_COMPANIES_QUERY = gql`
           startDate
           endDate
           isAcknowledged
-          email
           hasAdminRights
           latestInviteEmailTime
           user {
             id
             firstName
             lastName
+            email
           }
         }
       }

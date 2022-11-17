@@ -245,7 +245,16 @@ export function Employees({ company, containerRef }) {
       label: "Identifiant",
       name: "id",
       align: "left",
-      minWidth: 100
+      minWidth: 160,
+      baseWidth: 160
+    },
+    {
+      label: "Email",
+      name: "email",
+      align: "left",
+      sortable: true,
+      minWidth: 200,
+      overflowTooltip: true
     },
     {
       label: "Accès gestionnaire",
@@ -284,7 +293,7 @@ export function Employees({ company, containerRef }) {
         </Typography>
       ),
       align: "left",
-      minWidth: 100
+      minWidth: 80
     }
   ];
 
@@ -308,11 +317,13 @@ export function Employees({ company, containerRef }) {
 
   const today = isoFormatLocalDate(new Date());
 
+  console.log(companyEmployments);
   const validEmployments = companyEmployments
     .filter(e => e.isAcknowledged)
     .map(e => ({
       pending: false,
       id: e.user.id,
+      email: e.user.email,
       employmentId: e.id,
       name: formatPersonName(e.user),
       startDate: e.startDate,
