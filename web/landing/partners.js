@@ -97,6 +97,18 @@ const useStyles = makeStyles(theme => ({
     },
     gap: theme.spacing(4),
     alignItems: "center"
+  },
+  sponsorImage: {
+    height: 80,
+    [theme.breakpoints.up("md")]: {
+      height: 160
+    }
+  },
+  partnerImage: {
+    height: 60,
+    [theme.breakpoints.up("md")]: {
+      height: 80
+    }
   }
 }));
 
@@ -172,11 +184,15 @@ export function Partners() {
             container
             justifyContent="space-evenly"
             alignItems="center"
-            spacing={7}
+            spacing={{ xs: 2, sm: 4, md: 7 }}
           >
             {sponsorsSrcs.keys().map(src => (
               <Grid item key={src}>
-                <img alt={src} src={sponsorsSrcs(src)} height={160} />
+                <img
+                  alt={src}
+                  src={sponsorsSrcs(src)}
+                  className={classes.sponsorImage}
+                />
               </Grid>
             ))}
           </Grid>
@@ -189,11 +205,15 @@ export function Partners() {
             container
             justifyContent="space-evenly"
             alignItems="center"
-            spacing={7}
+            spacing={{ xs: 2, sm: 4, md: 7 }}
           >
             {partnersSrcs.keys().map(src => (
               <Grid item key={src}>
-                <img alt={src} src={partnersSrcs(src)} height={80} />
+                <img
+                  alt={src}
+                  src={partnersSrcs(src)}
+                  className={classes.partnerImage}
+                />
               </Grid>
             ))}
           </Grid>
