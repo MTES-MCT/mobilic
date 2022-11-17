@@ -45,11 +45,16 @@ export function Day({
 }) {
   const infoCardStyles = useInfoCardStyles();
   const classes = useStyles();
+  const [
+    regulationComputationToUse,
+    setRegulationComputationToUse
+  ] = React.useState([]);
 
   const [
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion
   ] = React.useState(false);
+
   const canDisplayContradictoryVersions = missionsInPeriod.every(
     mission => mission.adminValidation && mission.validation
   );
@@ -78,26 +83,39 @@ export function Day({
     )
   ];
 
-  const regulationComputationToUse = () => {
+  React.useEffect(() => {
     if (
       !canDisplayContradictoryVersions ||
       contradictoryComputationError ||
       (hasComputedContradictory && contradictoryIsEmpty)
     ) {
       // No contradictory => use latest version
-      return getLatestAlertComputationVersion(regulationComputationsInPeriod);
-    }
-    if (shouldDisplayInitialEmployeeVersion) {
-      return getAlertComputationVersion(
-        regulationComputationsInPeriod,
-        SubmitterType.EMPLOYEE
+      setRegulationComputationToUse(
+        getLatestAlertComputationVersion(regulationComputationsInPeriod)
+      );
+    } else if (shouldDisplayInitialEmployeeVersion) {
+      setRegulationComputationToUse(
+        getAlertComputationVersion(
+          regulationComputationsInPeriod,
+          SubmitterType.EMPLOYEE
+        )
+      );
+    } else {
+      setRegulationComputationToUse(
+        getAlertComputationVersion(
+          regulationComputationsInPeriod,
+          SubmitterType.ADMIN
+        )
       );
     }
-    return getAlertComputationVersion(
-      regulationComputationsInPeriod,
-      SubmitterType.ADMIN
-    );
-  };
+  }, [
+    regulationComputationsInPeriod,
+    canDisplayContradictoryVersions,
+    hasComputedContradictory,
+    contradictoryIsEmpty,
+    contradictoryComputationError,
+    shouldDisplayInitialEmployeeVersion
+  ]);
 
   React.useEffect(() => {
     if (!canDisplayContradictoryVersions && shouldDisplayInitialEmployeeVersion)

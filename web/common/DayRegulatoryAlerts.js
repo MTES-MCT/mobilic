@@ -18,16 +18,21 @@ export function DayRegulatoryAlerts({ regulationComputation }) {
   const classes = useStyles();
 
   const regulationCheck = alertType => {
-    const a = regulationComputation.alerts?.find(
-      a => a.check.type === alertType
-    );
+    let alert = null;
+    if (regulationComputation.alerts) {
+      alert = regulationComputation.alerts.find(
+        a => a.regulationCheck?.type === alertType
+      );
+    }
     return (
       <RegulationCheck
         key={alertType}
         check={{
-          status: a ? RULE_RESPECT_STATUS.failure : RULE_RESPECT_STATUS.success,
+          status: alert
+            ? RULE_RESPECT_STATUS.failure
+            : RULE_RESPECT_STATUS.success,
           rule: alertType,
-          extra: a ? a.extra : null
+          extra: alert ? alert.extra : null
         }}
       />
     );
@@ -48,7 +53,7 @@ export function DayRegulatoryAlerts({ regulationComputation }) {
   ) : (
     <Typography className={classes.infoText} variant="body2">
       Les seuils réglementaires ne sont pas encore calculés. Ils apparaîtront
-      site à la validation du salarié.
+      suite à la validation du salarié.
     </Typography>
   );
 }
