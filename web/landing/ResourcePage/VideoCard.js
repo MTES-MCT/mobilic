@@ -15,8 +15,9 @@ export function VideoCard({ videoKey, description, posterKey }) {
         {description}
       </Typography>
       <video
+        style={{ maxHeight: 356 }}
         controls
-        height="356"
+        height="auto"
         width="100%"
         poster={posterKey ? s3Root + posterKey : null}
       >
