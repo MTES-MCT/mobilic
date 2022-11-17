@@ -88,6 +88,15 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     marginBottom: theme.spacing(6)
+  },
+  logoSection: {
+    display: "flex",
+    flexDirection: "column",
+    [theme.breakpoints.up("md")]: {
+      flexDirection: "row"
+    },
+    gap: theme.spacing(4),
+    alignItems: "center"
   }
 }));
 
@@ -102,26 +111,26 @@ export function Partners() {
       maxWidth={false}
     >
       <Container maxWidth="md" className={classes.inner}>
-        <PaperContainerTitle>
-          Mobilic, un label ? <Emoji emoji="🤝" ariaLabel="Partenariat" />
-        </PaperContainerTitle>
-        <Grid container direction="row" alignItems="center" spacing={8}>
-          <Grid item className={classes.whiteSection}>
+        <Box>
+          <PaperContainerTitle>
+            Mobilic, un label ? <Emoji emoji="🤝" ariaLabel="Partenariat" />
+          </PaperContainerTitle>
+        </Box>
+        <Box className={classes.logoSection}>
+          <Box className={classes.whiteSection}>
             <img alt="beta.gouv" src={BetagouvLogo} height={200} />
-          </Grid>
-          <Grid item sm>
-            <Typography align="justify">
-              Mobilic s’est fixé comme mission principale de{" "}
-              <strong>
-                lutter contre le travail illégal dans le transport léger
-              </strong>
-              . Cette mission, complexe et ambitieuse, comprend à ce titre un
-              double objectif: garantir aux salariés le respect de leurs droits
-              mais également limiter la concurrence déloyale très souvent
-              permise par le dumping social.
-            </Typography>
-          </Grid>
-        </Grid>
+          </Box>
+          <Typography align="justify">
+            Mobilic s’est fixé comme mission principale de{" "}
+            <strong>
+              lutter contre le travail illégal dans le transport léger
+            </strong>
+            . Cette mission, complexe et ambitieuse, comprend à ce titre un
+            double objectif: garantir aux salariés le respect de leurs droits
+            mais également limiter la concurrence déloyale très souvent permise
+            par le dumping social.
+          </Typography>
+        </Box>
         <Box my={10} style={{ textAlign: "justify" }}>
           <Typography variant="h4" className={classes.title}>
             Les entreprises partenaires de Mobilic: des entreprises
