@@ -75,14 +75,16 @@ export function augmentMissionWithProperties(mission, userId, companies = []) {
       activities.length > 0 ? activities[activities.length - 1].endTime : null,
     teamChanges: computeTeamChanges(mission.allActivities, userId),
     ended: mission.ended && activities.every(a => !!a.endTime),
-    submittedBySomeoneElse: mission.submitter && mission.submitter.id !== userId
+    submittedBySomeoneElse:
+      mission.submitter && mission.submitter.id !== userId,
+    lastActivityStartTime: activities[activities.length - 1]?.startTime
   };
 }
 
 export function augmentAndSortMissions(missions, userId, companies = []) {
   return missions
     .map(m => augmentMissionWithProperties(m, userId, companies))
-    .sort((m1, m2) => m1.startTime - m2.startTime);
+    .sort((m1, m2) => m1.lastActivityStartTime - m2.lastActivityStartTime);
 }
 
 export function computeMissionStats(m, users) {
