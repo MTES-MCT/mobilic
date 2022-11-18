@@ -81,7 +81,7 @@ function _App({ ScreenComponent, loadUser }) {
         <Route path={`${path}/history`}>
           <History
             handleBack={() => history.push(path)}
-            missions={missions.filter(m => m.isComplete && m.ended)}
+            missions={missions}
             createActivity={args =>
               actions.pushNewTeamActivityEvent({ ...args, switchMode: false })
             }
