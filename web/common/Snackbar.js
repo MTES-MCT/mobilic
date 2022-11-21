@@ -87,6 +87,7 @@ export const SnackbarProvider = ({ children }) => {
           horizontal: isSmUp ? "left" : "center",
           vertical: "bottom"
         }}
+        style={{ zIndex: 3000 }}
         autoHideDuration={_autoHideDuration}
         onClose={close}
       >

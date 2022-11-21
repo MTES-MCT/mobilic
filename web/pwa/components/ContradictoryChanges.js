@@ -124,7 +124,9 @@ export function ContradictoryChanges({
                 const { icon, text, color } = getChangeIconAndText(change);
                 return (
                   <Event
-                    key={`${(change.after || change.before).id}${change.time}`}
+                    key={`${(change.after || change.before).id}${change.time}${
+                      change.resourceType
+                    }`}
                     icon={icon}
                     iconClassName={iconClassName(change)}
                     text={text}

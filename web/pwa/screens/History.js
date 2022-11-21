@@ -315,13 +315,13 @@ export function History({
                       const actualMissionId = store.identityMap()[
                         tempMissionId
                       ];
-                      if (!actualMissionId)
+                      if (!actualMissionId) {
                         alerts.error(
-                          "La mission n'a pas pu être créée",
+                          "La mission n'a pas pu être créée. Vérifiez votre connexion internet, vous ne pouvez pas créer de mission passée sans être connecté.",
                           tempMissionId,
                           6000
                         );
-                      else {
+                      } else {
                         history.push(
                           `/app/edit_mission?mission=${actualMissionId}`,
                           { day: missionInfos.day }
