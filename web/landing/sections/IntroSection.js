@@ -8,6 +8,21 @@ import { Link } from "../../common/LinkButton";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthDown } from "common/utils/useWidth";
+import { VideoCard } from "../ResourcePage/VideoCard";
+
+const videos = [
+  {
+    title: "Mobilic, qu'est-ce que c'est ?",
+    videoKey: "resources/videos/accueil/accueil-qu-est-ce-que-mobilic.mp4",
+    posterKey:
+      "resources/videos/accueil/accueil-qu-est-ce-que-mobilic-preview.png"
+  },
+  {
+    title: "Mobilic est-il conforme à la réglementation ?",
+    videoKey: "resources/videos/accueil/accueil-reglementaire.mp4",
+    posterKey: "resources/videos/accueil/accueil-reglementaire-preview.png"
+  }
+];
 
 const useStyles = makeStyles(theme => ({
   heroContainer: {
@@ -55,8 +70,16 @@ const useStyles = makeStyles(theme => ({
       marginRight: theme.spacing(6)
     }
   },
+  objective: {
+    fontWeight: "bold",
+    fontSize: "1em",
+    marginTop: theme.spacing(3)
+  },
   phoneImageContainer: {
-    marginTop: theme.spacing(-14),
+    marginTop: theme.spacing(-18),
+    [theme.breakpoints.down("lg")]: {
+      marginTop: theme.spacing(-10)
+    },
     [theme.breakpoints.down("md")]: {
       marginTop: theme.spacing(3),
       marginBottom: theme.spacing(3)
@@ -65,8 +88,16 @@ const useStyles = makeStyles(theme => ({
   phoneImage: {
     float: "left",
     marginLeft: theme.spacing(3),
+    maxWidth: "900px",
     [theme.breakpoints.down("sm")]: {
       marginLeft: theme.spacing(-2)
+    }
+  },
+  videoSection: {
+    marginTop: theme.spacing(5),
+    [theme.breakpoints.down("sm")]: {
+      paddingRight: theme.spacing(3.5),
+      marginLeft: theme.spacing(1)
     }
   }
 }));
@@ -93,6 +124,9 @@ export function IntroSection() {
           entreprises concernées par la réglementation de suivi du temps de
           travail dans le transport léger et dans le déménagement (-3.5T)
         </span>
+        <Typography className={classes.objective}>
+          L'objectif : faciliter l'application de la réglementation !
+        </Typography>
       </Typography>
     </Grid>
   );
@@ -136,6 +170,19 @@ export function IntroSection() {
               <PhoneImageComponent />
             </>
           )}
+        </Grid>
+      </Container>
+      <Container maxWidth="md" className={classes.videoSection}>
+        <Grid container direction="row" alignItems="center" spacing={1}>
+          {videos.map(video => (
+            <Grid key={video.videoKey} item xs={12} sm={6}>
+              <VideoCard
+                description={video.title}
+                videoKey={video.videoKey}
+                posterKey={video.posterKey}
+              />
+            </Grid>
+          ))}
         </Grid>
       </Container>
     </Container>

@@ -1,5 +1,4 @@
 import React from "react";
-import Container from "@mui/material/Container";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -15,8 +14,6 @@ import {
   useSectionStyles
 } from "./sections/LandingSection";
 import { WebinarListSection } from "./sections/WebinarListSection";
-import { VideoCard } from "./ResourcePage/VideoCard";
-import { resourcePagesClasses } from "./ResourcePage/styles/ResourcePagesStyle";
 import { IntroSection } from "./sections/IntroSection";
 
 const useStyles = makeStyles(theme => ({
@@ -47,20 +44,6 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(1)
   }
 }));
-
-const videos = [
-  {
-    title: "Mobilic, qu'est-ce que c'est ?",
-    videoKey: "resources/videos/accueil/accueil-qu-est-ce-que-mobilic.mp4",
-    posterKey:
-      "resources/videos/accueil/accueil-qu-est-ce-que-mobilic-preview.png"
-  },
-  {
-    title: "Mobilic est-il conforme à la réglementation ?",
-    videoKey: "resources/videos/accueil/accueil-reglementaire.mp4",
-    posterKey: "resources/videos/accueil/accueil-reglementaire-preview.png"
-  }
-];
 
 function Showcase({
   image,
@@ -136,54 +119,11 @@ function Showcase({
 export const Landing = () => {
   const classes = useStyles();
   const sectionClasses = useSectionStyles();
-  const resourceClasses = resourcePagesClasses();
 
   return [
     <Header key={1} />,
     <IntroSection key={2} />,
     <LandingSectionList key={3}>
-      <LandingSection title="Mobilic ... 🤔 qu'est-ce que c'est ?">
-        <Typography className={sectionClasses.sectionIntroText}>
-          Mobilic est la plateforme gouvernementale qui permet de{" "}
-          <strong>simplifier le suivi du temps de travail</strong> dans le
-          transport routier léger et le déménagement afin de lutter contre le
-          travail illégal.
-        </Typography>
-        <Typography className={sectionClasses.sectionIntroText}>
-          Le livret individuel de contrôle (LIC), qui sert aujourd'hui à
-          l'enregistrement du temps de travail des conducteurs de véhicules
-          utilitaires légers de moins de 3,5 tonnes, et des autres personnels
-          roulants non conducteurs, souffre de problèmes unanimement décriés
-          (praticabilité pour les salarié(e)s, lourdeur administrative et de
-          gestion, faible fiabilité pour le contrôle). Avec Mobilic{" "}
-          <a
-            href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000043023481"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            vous n'avez plus besoin du LIC papier
-          </a>{" "}
-          pour respecter vos engagements sociaux.
-        </Typography>
-        <Container
-          className={`${resourceClasses.whiteSection}`}
-          maxWidth={false}
-        >
-          <Container maxWidth="lg" className={resourceClasses.inner}>
-            <Grid container direction="row" alignItems="center" spacing={1}>
-              {videos.map(video => (
-                <Grid key={video.videoKey} item xs={12} sm={6}>
-                  <VideoCard
-                    description={video.title}
-                    videoKey={video.videoKey}
-                    posterKey={video.posterKey}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          </Container>
-        </Container>
-      </LandingSection>
       {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
       <LandingSection title="A qui s'adresse Mobilic ?">
         <Typography className={sectionClasses.sectionIntroText}>
