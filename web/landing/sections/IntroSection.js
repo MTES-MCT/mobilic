@@ -1,8 +1,8 @@
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import React from "react";
-import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizontal.svg";
-import BackgroundVerticalImage from "common/assets/images/landing-hero-vertical.svg";
+import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizontal.png";
+import BackgroundVerticalImage from "common/assets/images/landing-hero-vertical.jpg";
 import { Alert } from "@mui/material";
 import { Link } from "../../common/LinkButton";
 import Grid from "@mui/material/Grid";
@@ -26,7 +26,13 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: "rgba(49, 132, 255, 0.2)"
   },
   leftBlockIntro: {
-    marginLeft: theme.spacing(2)
+    marginLeft: theme.spacing(12),
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: theme.spacing(2)
+    },
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: theme.spacing(2)
+    }
   },
   textTitle: {
     [theme.breakpoints.down("sm")]: {
@@ -45,12 +51,13 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(10),
     [theme.breakpoints.down("sm")]: {
       marginTop: theme.spacing(2),
-      marginRight: theme.spacing(3)
+      marginLeft: theme.spacing(3),
+      marginRight: theme.spacing(6)
     }
   },
   phoneImageContainer: {
     marginTop: theme.spacing(-14),
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("md")]: {
       marginTop: theme.spacing(3),
       marginBottom: theme.spacing(3)
     }
@@ -73,7 +80,7 @@ export function IntroSection() {
         src={isSmDown ? BackgroundVerticalImage : BackgroundHorizontalImage}
         alt="Mobilic-hero"
         width="100%"
-        height="100%"
+        height="auto"
       />
     </Grid>
   );
