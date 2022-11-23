@@ -130,7 +130,7 @@ export function ControllerControlDetails({ controlId, onClose }) {
     <UserReadTabs
       key={1}
       tabs={getTabs(alertNumber)}
-      regulationComputations={controlData.regulationComputations}
+      regulationComputations={controlData.regulationComputationsByDay}
       groupedAlerts={groupedAlerts} // TODO to remove <<<
       alertNumber={alertNumber}
       userInfo={controlData.user}

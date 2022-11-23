@@ -265,7 +265,9 @@ export function History({
     .unix();
 
   const regulationComputationsInPeriod = selectedPeriod
-    ? regulationComputationsPerPeriod[isoFormatLocalDate(selectedPeriod)]
+    ? regulationComputationsPerPeriod.find(
+        item => item.day === isoFormatLocalDate(selectedPeriod)
+      ).regulationComputations
     : [];
 
   return (

@@ -2,7 +2,6 @@ import Typography from "@mui/material/Typography";
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import { RULE_RESPECT_STATUS } from "common/utils/regulation/rules";
-import { ALERT_TYPES } from "common/utils/regulation//alertTypes";
 import { RegulationCheck } from "../pwa/components/RegulationCheck";
 
 const useStyles = makeStyles(theme => ({
@@ -14,29 +13,21 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const renderRegulationCheck = regulationCheck => (
+  <RegulationCheck
+    key={regulationCheck.type}
+    check={{
+      status: regulationCheck.alert
+        ? RULE_RESPECT_STATUS.failure
+        : RULE_RESPECT_STATUS.success,
+      rule: regulationCheck.type,
+      extra: regulationCheck.alert?.extra
+    }}
+  />
+);
+
 export function DayRegulatoryAlerts({ regulationComputation }) {
   const classes = useStyles();
-
-  const regulationCheck = alertType => {
-    let alert = null;
-    if (regulationComputation.alerts) {
-      alert = regulationComputation.alerts.find(
-        a => a.regulationCheck?.type === alertType
-      );
-    }
-    return (
-      <RegulationCheck
-        key={alertType}
-        check={{
-          status: alert
-            ? RULE_RESPECT_STATUS.failure
-            : RULE_RESPECT_STATUS.success,
-          rule: alertType,
-          extra: alert ? alert.extra : null
-        }}
-      />
-    );
-  };
 
   return regulationComputation ? (
     <>
@@ -44,11 +35,10 @@ export function DayRegulatoryAlerts({ regulationComputation }) {
         Les seuils affichés prennent en compte le temps de travail du jour
         suivant et du jour précédent.
       </Typography>
+      {regulationComputation.regulationChecks?.map(regulationCheck =>
+        renderRegulationCheck(regulationCheck)
+      )}
       {/* <Chip className={classes.chip} label="Travail de nuit" /> */}
-      {regulationCheck(ALERT_TYPES.minimumDailyRest)}
-      {regulationCheck(ALERT_TYPES.maximumWorkDayTime)}
-      {regulationCheck(ALERT_TYPES.minimumWorkDayBreak)}
-      {regulationCheck(ALERT_TYPES.maximumUninterruptedWorkTime)}
     </>
   ) : (
     <Typography className={classes.infoText} variant="body2">

@@ -1,7 +1,6 @@
 import React from "react";
 import { History } from "../../pwa/screens/History";
 import { DAY, getStartOfMonth, now } from "common/utils/time";
-import _ from "lodash";
 
 export function UserReadHistory({
   missions,
@@ -24,7 +23,7 @@ export function UserReadHistory({
       userId={userInfo.id}
       openPeriod={periodOnFocus}
       controlId={controlId}
-      regulationComputationsPerPeriod={_.groupBy(regulationComputations, "day")}
+      regulationComputationsPerPeriod={regulationComputations}
     />
   );
 }
