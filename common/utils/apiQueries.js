@@ -689,9 +689,9 @@ export const ADMIN_COMPANIES_QUERY = gql`
           latestInviteEmailTime
           user {
             id
+            email
             firstName
             lastName
-            email
           }
         }
       }
