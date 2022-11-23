@@ -9,6 +9,7 @@ import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
 import { AlertGroup } from "./AlertGroup";
+import { getLatestAlertComputationVersion } from "common/utils/regulation/alertVersions";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -31,15 +32,56 @@ const useStyles = makeStyles(theme => ({
 export function UserReadAlerts({
   setTab,
   groupedAlerts = [],
-  setPeriodOnFocus
+  setPeriodOnFocus,
+  regulationComputations
 }) {
   const classes = useStyles();
+
+  const newVersionGroupedAlerts = regulationComputations.reduce((arr, item) => {
+    const breachedRegulationChecks = getLatestAlertComputationVersion(
+      item.regulationComputations
+    ).regulationChecks.filter(regulationCheck => !!regulationCheck.alert);
+    console.log(breachedRegulationChecks);
+    for (const breachedRegCheck of breachedRegulationChecks) {
+      let checkInArray = arr.find(
+        item => item.infringementLabel === breachedRegCheck.label
+      );
+      if (checkInArray) {
+        checkInArray.alerts.push(breachedRegCheck.alert);
+      } else {
+        arr.push({
+          infringementLabel: breachedRegCheck.label,
+          description: breachedRegCheck.description,
+          alerts: [breachedRegCheck.alert]
+        });
+      }
+    }
+    return arr;
+  }, []);
 
   return (
     <Container maxWidth="md" className={classes.container}>
       {groupedAlerts.length > 0 ? (
         <List>
           {groupedAlerts.map(group => (
+            <ListItem key={group.infringementLabel} disableGutters>
+              <AlertGroup
+                {...group}
+                setPeriodOnFocus={setPeriodOnFocus}
+                setTab={setTab}
+              />
+            </ListItem>
+          ))}
+        </List>
+      ) : (
+        <Typography className={classes.italicInfo}>
+          Il n'y a aucune alerte réglementaire sur la période
+        </Typography>
+      )}
+      <Divider className={`hr-unstyled ${classes.divider}`} />
+      {newVersionGroupedAlerts.length > 0 ? (
+        <List>
+          {newVersionGroupedAlerts.map(group => (
             <ListItem key={group.infringementLabel} disableGutters>
               <AlertGroup
                 {...group}
