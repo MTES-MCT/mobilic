@@ -100,17 +100,15 @@ export function ControllerControlDetails({ controlId, onClose }) {
       console.log("prevAlertNumber ", prevAlertNumber);
       // TODO to remove <<<<
 
-      const alertComputationGroupedPerDay = _.groupBy(
-        controlData.regulationComputations,
-        "day"
+      const _alertNumber = controlData.regulationComputationsByDay.reduce(
+        (total, item) =>
+          total +
+          getLatestAlertComputationVersion(
+            item.regulationComputations
+          ).regulationChecks.filter(regulationCheck => !!regulationCheck.alert)
+            .length,
+        0
       );
-      const _alertNumber = Object.values(alertComputationGroupedPerDay)
-        .map(
-          alertComputation =>
-            getLatestAlertComputationVersion(alertComputation)?.alerts
-              ?.length || 0
-        )
-        .reduce((sum, value) => sum + value, 0);
       setAlertNumber(_alertNumber);
     } else {
       setMissions([]);
