@@ -689,6 +689,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
           latestInviteEmailTime
           user {
             id
+            email
             firstName
             lastName
           }
@@ -920,6 +921,7 @@ export const TERMINATE_EMPLOYMENT_MUTATION = gql`
         }
         user {
           id
+          email
           firstName
           lastName
         }
@@ -965,6 +967,7 @@ export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
         latestInviteEmailTime
         user {
           id
+          email
           firstName
           lastName
         }
@@ -1000,6 +1003,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         }
         user {
           id
+          email
           firstName
           lastName
         }
