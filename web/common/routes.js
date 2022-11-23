@@ -57,7 +57,6 @@ export const RESOURCES_ROUTE = {
     },
     {
       path: "/partners",
-      target: "_blank",
       label: "Partenaires"
     }
   ]
