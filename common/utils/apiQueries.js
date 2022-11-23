@@ -684,6 +684,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
           startDate
           endDate
           isAcknowledged
+          email
           hasAdminRights
           latestInviteEmailTime
           user {
@@ -911,6 +912,7 @@ export const TERMINATE_EMPLOYMENT_MUTATION = gql`
         startDate
         endDate
         isAcknowledged
+        email
         hasAdminRights
         company {
           id
@@ -960,6 +962,7 @@ export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
         startDate
         endDate
         isAcknowledged
+        email
         hasAdminRights
         latestInviteEmailTime
         user {
@@ -991,6 +994,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         startDate
         endDate
         isAcknowledged
+        email
         hasAdminRights
         company {
           id
