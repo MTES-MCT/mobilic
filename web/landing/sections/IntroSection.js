@@ -125,7 +125,8 @@ export function IntroSection() {
           travail dans le transport léger et dans le déménagement (-3.5T)
         </span>
         <Typography className={classes.objective}>
-          L'objectif : faciliter l'application de la réglementation !
+          L'objectif : faciliter l'application{" "}
+          <span style={{ whiteSpace: "nowrap" }}>de la réglementation !</span>
         </Typography>
       </Typography>
     </Grid>
