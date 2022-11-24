@@ -83,3 +83,33 @@ export const ALERT_TYPE_PROPS = {
     rule: REGULATION_RULES.weeklyRest
   }
 };
+
+export const ALERT_TYPE_PROPS_SIMPLER = {
+  [ALERT_TYPES.minimumDailyRest]: {
+    successMessage: () => "Repos journalier respecté",
+    errorMessage: (_, label) => label,
+    rule: REGULATION_RULES.dailyRest
+  },
+  [ALERT_TYPES.maximumWorkDayTime]: {
+    successMessage: () => "Durée du travail quotidien respectée",
+    errorMessage: ({ night_work, max_time_in_hours }, label) =>
+      `${label} (${max_time_in_hours}h)${night_work ? " Travail de nuit" : ""}`,
+    rule: REGULATION_RULES.dailyWork
+  },
+  [ALERT_TYPES.minimumWorkDayBreak]: {
+    successMessage: () => "Temps de pause respecté",
+    errorMessage: ({ min_time_in_minutes }, label) =>
+      `${label} (${min_time_in_minutes}m)`,
+    rule: REGULATION_RULES.dailyRest
+  },
+  [ALERT_TYPES.maximumUninterruptedWorkTime]: {
+    successMessage: () => "Durée maximale de travail ininterrompu respectée",
+    errorMessage: (_, label) => label,
+    rule: REGULATION_RULES.dailyRest
+  },
+  [ALERT_TYPES.maximumWorkedDaysInWeek]: {
+    successMessage: () => "Repos hebdomadaire respecté",
+    errorMessage: (_, label) => label,
+    rule: REGULATION_RULES.weeklyRest
+  }
+};

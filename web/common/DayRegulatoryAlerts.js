@@ -1,8 +1,7 @@
 import Typography from "@mui/material/Typography";
 import React from "react";
 import { makeStyles } from "@mui/styles";
-import { RULE_RESPECT_STATUS } from "common/utils/regulation/rules";
-import { RegulationCheck } from "../pwa/components/RegulationCheck";
+import { SimplerRegulationCheck } from "../pwa/components/SimplerRegulationCheck";
 
 const useStyles = makeStyles(theme => ({
   infoText: {
@@ -14,15 +13,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const renderRegulationCheck = regulationCheck => (
-  <RegulationCheck
+  <SimplerRegulationCheck
     key={regulationCheck.type}
-    check={{
-      status: regulationCheck.alert
-        ? RULE_RESPECT_STATUS.failure
-        : RULE_RESPECT_STATUS.success,
-      rule: regulationCheck.type,
-      extra: regulationCheck.alert?.extra
-    }}
+    regulationCheck={regulationCheck}
   />
 );
 
