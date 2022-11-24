@@ -41,7 +41,6 @@ export function UserReadAlerts({
     const breachedRegulationChecks = getLatestAlertComputationVersion(
       item.regulationComputations
     ).regulationChecks.filter(regulationCheck => !!regulationCheck.alert);
-    console.log(breachedRegulationChecks);
     for (const breachedRegCheck of breachedRegulationChecks) {
       let checkInArray = arr.find(
         item => item.infringementLabel === breachedRegCheck.label
