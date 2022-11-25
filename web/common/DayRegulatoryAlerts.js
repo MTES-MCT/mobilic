@@ -22,7 +22,7 @@ const renderRegulationCheck = regulationCheck => (
 export function DayRegulatoryAlerts({ regulationComputation }) {
   const classes = useStyles();
 
-  return regulationComputation && regulationComputation.length > 0 ? (
+  return regulationComputation ? (
     <>
       <Typography className={classes.infoText} variant="body2">
         Les seuils affichés prennent en compte le temps de travail du jour
