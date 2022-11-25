@@ -24,6 +24,7 @@ export function ControllerControlDetails({ controlId, onClose }) {
   const [vehicles, setVehicles] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
   const [coworkers, setCoworkers] = React.useState([]);
+  const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
 
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
@@ -138,6 +139,8 @@ export function ControllerControlDetails({ controlId, onClose }) {
       employments={employments}
       coworkers={coworkers}
       vehicles={vehicles}
+      periodOnFocus={periodOnFocus}
+      setPeriodOnFocus={setPeriodOnFocus}
       workingDaysNumber={controlData.nbControlledDays || 0}
       allowC1BExport={false}
       controlId={controlId}
