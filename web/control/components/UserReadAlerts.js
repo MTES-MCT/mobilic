@@ -30,15 +30,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function UserReadAlerts({
-  setTab,
-  groupedAlerts = [],
-  setPeriodOnFocus,
+const getGroupedAlerts = regulationComputations =>
   regulationComputations
-}) {
-  const classes = useStyles();
-
-  const newVersionGroupedAlerts = regulationComputations
     ? regulationComputations.reduce((arr, item) => {
         const timestamp = jsToUnixTimestamp(new Date(item.day).getTime());
 
@@ -62,6 +55,19 @@ export function UserReadAlerts({
         return arr;
       }, [])
     : [];
+
+export function UserReadAlerts({
+  setTab,
+  groupedAlerts = [],
+  setPeriodOnFocus,
+  regulationComputationsByDay,
+  regulationComputationsByWeek
+}) {
+  const classes = useStyles();
+
+  const newVersionGroupedAlerts = getGroupedAlerts(
+    regulationComputationsByDay
+  ).concat(getGroupedAlerts(regulationComputationsByWeek));
 
   return (
     <Container maxWidth="md" className={classes.container}>

@@ -161,7 +161,8 @@ export function History({
   createMission = null,
   openPeriod = null,
   controlId = null,
-  regulationComputationsPerPeriod = []
+  regulationComputationsByDay = [],
+  regulationComputationsByWeek = []
 }) {
   const location = useLocation();
   const history = useHistory();
@@ -268,9 +269,14 @@ export function History({
     if (!selectedPeriod) {
       return [];
     }
-    const periodElement = regulationComputationsPerPeriod.find(
-      item => item.day === isoFormatLocalDate(selectedPeriod)
-    );
+    const periodElement =
+      currentTab === "week"
+        ? regulationComputationsByWeek.find(
+            item => item.day === isoFormatLocalDate(selectedPeriod)
+          )
+        : regulationComputationsByDay.find(
+            item => item.day === isoFormatLocalDate(selectedPeriod)
+          );
     return periodElement ? periodElement.regulationComputations : [];
   })();
 

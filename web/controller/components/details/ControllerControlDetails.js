@@ -16,6 +16,17 @@ import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { ControllerControlHeader } from "./ControllerControlHeader";
 import _ from "lodash";
 
+const computeNumberOfAlerts = computations =>
+  computations.reduce(
+    (total, item) =>
+      total +
+      getLatestAlertComputationVersion(
+        item.regulationComputations
+      ).regulationChecks.filter(regulationCheck => !!regulationCheck.alert)
+        .length,
+    0
+  );
+
 export function ControllerControlDetails({ controlId, onClose }) {
   const [controlData, setControlData] = React.useState({});
   const [alertNumber, setAlertNumber] = React.useState(0);
@@ -101,15 +112,9 @@ export function ControllerControlDetails({ controlId, onClose }) {
       console.log("prevAlertNumber ", prevAlertNumber);
       // TODO to remove <<<<
 
-      const _alertNumber = controlData.regulationComputationsByDay.reduce(
-        (total, item) =>
-          total +
-          getLatestAlertComputationVersion(
-            item.regulationComputations
-          ).regulationChecks.filter(regulationCheck => !!regulationCheck.alert)
-            .length,
-        0
-      );
+      const _alertNumber =
+        computeNumberOfAlerts(controlData.computationsByDay) +
+        computeNumberOfAlerts(controlData.computationsByWeek);
       setAlertNumber(_alertNumber);
     } else {
       setMissions([]);
@@ -129,7 +134,8 @@ export function ControllerControlDetails({ controlId, onClose }) {
     <UserReadTabs
       key={1}
       tabs={getTabs(alertNumber)}
-      regulationComputations={controlData.regulationComputationsByDay}
+      regulationComputationsByDay={controlData.computationsByDay}
+      regulationComputationsByWeek={controlData.computationsByWeek}
       groupedAlerts={groupedAlerts} // TODO to remove <<<
       alertNumber={alertNumber}
       userInfo={controlData.user}

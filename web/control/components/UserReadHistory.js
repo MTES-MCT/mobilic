@@ -9,7 +9,8 @@ export function UserReadHistory({
   userInfo,
   periodOnFocus,
   controlId,
-  regulationComputations
+  regulationComputationsByDay,
+  regulationComputationsByWeek
 }) {
   return (
     <History
@@ -23,7 +24,8 @@ export function UserReadHistory({
       userId={userInfo.id}
       openPeriod={periodOnFocus}
       controlId={controlId}
-      regulationComputationsPerPeriod={regulationComputations}
+      regulationComputationsByDay={regulationComputationsByDay}
+      regulationComputationsByWeek={regulationComputationsByWeek}
     />
   );
 }
