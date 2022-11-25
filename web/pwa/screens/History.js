@@ -264,11 +264,15 @@ export function History({
     .add(tabs[currentTab].periodLength)
     .unix();
 
-  const regulationComputationsInPeriod = selectedPeriod
-    ? regulationComputationsPerPeriod.find(
-        item => item.day === isoFormatLocalDate(selectedPeriod)
-      ).regulationComputations
-    : [];
+  const regulationComputationsInPeriod = (function() {
+    if (!selectedPeriod) {
+      return [];
+    }
+    const periodElement = regulationComputationsPerPeriod.find(
+      item => item.day === isoFormatLocalDate(selectedPeriod)
+    );
+    return periodElement ? periodElement.regulationComputations : [];
+  })();
 
   return (
     <Container
