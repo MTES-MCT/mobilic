@@ -10,7 +10,7 @@ import { ActivityList } from "../ActivityList";
 import React from "react";
 import { DAY } from "common/utils/time";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
-import { DayRegulatoryAlerts } from "../../../common/DayRegulatoryAlerts";
+import { DayRegulatoryAlerts } from "../../../regulatory/DayRegulatoryAlerts";
 
 export function DaySummary({
   isDayEnded,

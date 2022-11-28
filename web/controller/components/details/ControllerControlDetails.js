@@ -112,9 +112,9 @@ export function ControllerControlDetails({ controlId, onClose }) {
       console.log("prevAlertNumber ", prevAlertNumber);
       // TODO to remove <<<<
 
-      const _alertNumber =
-        computeNumberOfAlerts(controlData.computationsByDay) +
-        computeNumberOfAlerts(controlData.computationsByWeek);
+      const _alertNumber = computeNumberOfAlerts(
+        controlData.regulationComputationsByDay
+      );
       setAlertNumber(_alertNumber);
     } else {
       setMissions([]);
@@ -134,8 +134,7 @@ export function ControllerControlDetails({ controlId, onClose }) {
     <UserReadTabs
       key={1}
       tabs={getTabs(alertNumber)}
-      regulationComputationsByDay={controlData.computationsByDay}
-      regulationComputationsByWeek={controlData.computationsByWeek}
+      regulationComputationsByDay={controlData.regulationComputationsByDay}
       groupedAlerts={groupedAlerts} // TODO to remove <<<
       alertNumber={alertNumber}
       userInfo={controlData.user}

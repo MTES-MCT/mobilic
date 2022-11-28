@@ -430,29 +430,12 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
         birthDate
         email
       }
-      computationsByWeek: regulationComputationsByUnit(unit: "week") {
+      regulationComputationsByDay {
         day
         regulationComputations {
           day
           submitterType
-          regulationChecks(unit: "week") {
-            type
-            label
-            description
-            regulationRule
-            unit
-            alert {
-              extra
-            }
-          }
-        }
-      }
-      computationsByDay: regulationComputationsByUnit(unit: "day") {
-        day
-        regulationComputations {
-          day
-          submitterType
-          regulationChecks(unit: "day") {
+          regulationChecks {
             type
             label
             description

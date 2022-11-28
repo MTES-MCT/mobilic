@@ -92,8 +92,8 @@ export const ALERT_TYPE_PROPS_SIMPLER = {
   },
   [ALERT_TYPES.maximumWorkDayTime]: {
     successMessage: () => "Durée du travail quotidien respectée",
-    errorMessage: ({ night_work, max_time_in_hours }, label) =>
-      `${label} (${max_time_in_hours}h)${night_work ? " Travail de nuit" : ""}`,
+    errorMessage: ({ max_time_in_hours }, label) =>
+      `${label} (${max_time_in_hours}h)`,
     rule: REGULATION_RULES.dailyWork
   },
   [ALERT_TYPES.minimumWorkDayBreak]: {

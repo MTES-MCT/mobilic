@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -161,8 +161,7 @@ export function History({
   createMission = null,
   openPeriod = null,
   controlId = null,
-  regulationComputationsByDay = [],
-  regulationComputationsByWeek = []
+  regulationComputationsByDay = []
 }) {
   const location = useLocation();
   const history = useHistory();
@@ -265,20 +264,15 @@ export function History({
     .add(tabs[currentTab].periodLength)
     .unix();
 
-  const regulationComputationsInPeriod = (function() {
+  const regulationComputationsInPeriod = useMemo(() => {
     if (!selectedPeriod) {
       return [];
     }
-    const periodElement =
-      currentTab === "week"
-        ? regulationComputationsByWeek.find(
-            item => item.day === isoFormatLocalDate(selectedPeriod)
-          )
-        : regulationComputationsByDay.find(
-            item => item.day === isoFormatLocalDate(selectedPeriod)
-          );
+    const periodElement = regulationComputationsByDay.find(
+      item => item.day === isoFormatLocalDate(selectedPeriod)
+    );
     return periodElement ? periodElement.regulationComputations : [];
-  })();
+  }, [selectedPeriod, regulationComputationsByDay]);
 
   return (
     <Container

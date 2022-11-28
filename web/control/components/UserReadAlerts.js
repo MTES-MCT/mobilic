@@ -60,14 +60,11 @@ export function UserReadAlerts({
   setTab,
   groupedAlerts = [],
   setPeriodOnFocus,
-  regulationComputationsByDay,
-  regulationComputationsByWeek
+  regulationComputationsByDay
 }) {
   const classes = useStyles();
 
-  const newVersionGroupedAlerts = getGroupedAlerts(
-    regulationComputationsByDay
-  ).concat(getGroupedAlerts(regulationComputationsByWeek));
+  const newVersionGroupedAlerts = getGroupedAlerts(regulationComputationsByDay);
 
   return (
     <Container maxWidth="md" className={classes.container}>
