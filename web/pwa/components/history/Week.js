@@ -17,6 +17,7 @@ import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { getLatestAlertComputationVersion } from "common/utils/regulation/alertVersions";
 import { RegulatoryTextNotCalculatedYet } from "../../../regulatory/RegulatoryText";
 import { renderRegulationCheck } from "../../../regulatory/RegulatoryAlertRender";
+import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 
 export function Week({
   missionsInPeriod,
@@ -57,7 +58,9 @@ export function Week({
       <InfoCard className={infoCardStyles.topMargin}>
         {regulationComputation ? (
           regulationComputation.regulationChecks
-            ?.filter(regulationCheck => regulationCheck.unit === "week")
+            ?.filter(
+              regulationCheck => regulationCheck.unit === PERIOD_UNITS.WEEK
+            )
             .map(regulationCheck => renderRegulationCheck(regulationCheck))
         ) : (
           <RegulatoryTextNotCalculatedYet />

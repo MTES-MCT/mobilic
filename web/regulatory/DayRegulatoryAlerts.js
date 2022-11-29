@@ -1,3 +1,4 @@
+import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 import React from "react";
 import { renderRegulationCheck } from "./RegulatoryAlertRender";
 import {
@@ -10,7 +11,7 @@ export function DayRegulatoryAlerts({ regulationComputation }) {
     <>
       <RegulatoryTextDayBeforeAndAfter />
       {regulationComputation.regulationChecks
-        ?.filter(regulationCheck => regulationCheck.unit === "day")
+        ?.filter(regulationCheck => regulationCheck.unit === PERIOD_UNITS.DAY)
         .map(regulationCheck => renderRegulationCheck(regulationCheck))}
     </>
   ) : (
