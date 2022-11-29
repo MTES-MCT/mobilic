@@ -253,7 +253,7 @@ export function Employees({ company, containerRef }) {
       name: "email",
       align: "left",
       sortable: true,
-      minWidth: 200,
+      minWidth: 320,
       overflowTooltip: true
     },
     {
