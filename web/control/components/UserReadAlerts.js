@@ -9,8 +9,7 @@ import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
 import { AlertGroup } from "./AlertGroup";
-import { getLatestAlertComputationVersion } from "common/utils/regulation/alertVersions";
-import { jsToUnixTimestamp } from "common/utils/time";
+import { getAlertsGroupedByDay } from "common/utils/regulation/groupAlertsByDay";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -30,32 +29,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const getGroupedAlerts = regulationComputations =>
-  regulationComputations
-    ? regulationComputations.reduce((arr, item) => {
-        const timestamp = jsToUnixTimestamp(new Date(item.day).getTime());
-
-        const breachedRegulationChecks = getLatestAlertComputationVersion(
-          item.regulationComputations
-        ).regulationChecks.filter(regulationCheck => !!regulationCheck.alert);
-        for (const breachedRegCheck of breachedRegulationChecks) {
-          let checkInArray = arr.find(
-            item => item.infringementLabel === breachedRegCheck.label
-          );
-          if (checkInArray) {
-            checkInArray.alerts.push({ day: timestamp });
-          } else {
-            arr.push({
-              infringementLabel: breachedRegCheck.label,
-              description: breachedRegCheck.description,
-              alerts: [{ day: timestamp }]
-            });
-          }
-        }
-        return arr;
-      }, [])
-    : [];
-
 export function UserReadAlerts({
   setTab,
   groupedAlerts = [],
@@ -64,7 +37,9 @@ export function UserReadAlerts({
 }) {
   const classes = useStyles();
 
-  const newVersionGroupedAlerts = getGroupedAlerts(regulationComputationsByDay);
+  const newVersionGroupedAlerts = getAlertsGroupedByDay(
+    regulationComputationsByDay
+  );
 
   return (
     <Container maxWidth="md" className={classes.container}>
