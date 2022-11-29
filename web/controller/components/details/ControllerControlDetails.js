@@ -104,14 +104,6 @@ export function ControllerControlDetails({ controlId, onClose }) {
       );
       setGroupedAlerts(_groupedAlerts);
 
-      // TODO to remove >>>>
-      const prevAlertNumber = _groupedAlerts.reduce(
-        (acc, group) => acc + group.alerts.length,
-        0
-      );
-      console.log("prevAlertNumber ", prevAlertNumber);
-      // TODO to remove <<<<
-
       const _alertNumber = computeNumberOfAlerts(
         controlData.regulationComputationsByDay
       );
