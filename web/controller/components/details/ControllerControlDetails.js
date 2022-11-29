@@ -8,28 +8,16 @@ import {
 } from "common/utils/mission";
 import { jsToUnixTimestamp, unixToJSTimestamp } from "common/utils/time";
 import { computeAlerts } from "common/utils/regulation/computeAlerts";
-import { getLatestAlertComputationVersion } from "common/utils/regulation/alertVersions";
 import { orderEmployments } from "common/utils/employments";
 import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { ControllerControlHeader } from "./ControllerControlHeader";
 import _ from "lodash";
-
-const computeNumberOfAlerts = computations =>
-  computations.reduce(
-    (total, item) =>
-      total +
-      getLatestAlertComputationVersion(
-        item.regulationComputations
-      ).regulationChecks.filter(regulationCheck => !!regulationCheck.alert)
-        .length,
-    0
-  );
+import { computeNumberOfAlerts } from "common/utils/regulation/computeNumberOfAlerts";
 
 export function ControllerControlDetails({ controlId, onClose }) {
   const [controlData, setControlData] = React.useState({});
-  const [alertNumber, setAlertNumber] = React.useState(0);
   const [groupedAlerts, setGroupedAlerts] = React.useState([]);
   const [employments, setEmployments] = React.useState([]);
   const [vehicles, setVehicles] = React.useState([]);
@@ -103,17 +91,18 @@ export function ControllerControlDetails({ controlId, onClose }) {
         controlData.qrCodeGenerationTime
       );
       setGroupedAlerts(_groupedAlerts);
-
-      const _alertNumber = computeNumberOfAlerts(
-        controlData.regulationComputationsByDay
-      );
-      setAlertNumber(_alertNumber);
     } else {
       setMissions([]);
       setCoworkers([]);
       setGroupedAlerts([]);
-      setAlertNumber(0);
     }
+  }, [controlData]);
+
+  const alertNumber = React.useMemo(() => {
+    if (!controlData || !controlData.regulationComputationsByDay) {
+      return 0;
+    }
+    return computeNumberOfAlerts(controlData.regulationComputationsByDay);
   }, [controlData]);
 
   return [
