@@ -116,3 +116,23 @@ export const WORK_DAYS_DATA_FRAGMENT = gql`
     }
   }
 `;
+
+export const REGULATION_COMPUTATIONS_FRAGMENT = gql`
+  fragment RegulationComputations on RegulationComputationByDayOutput {
+    day
+    regulationComputations {
+      day
+      submitterType
+      regulationChecks {
+        type
+        label
+        description
+        regulationRule
+        unit
+        alert {
+          extra
+        }
+      }
+    }
+  }
+`;

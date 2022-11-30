@@ -4,6 +4,7 @@ import {
   COMPANY_SETTINGS_FRAGMENT,
   FRAGMENT_LOCATION_FULL,
   FULL_MISSION_FRAGMENT,
+  REGULATION_COMPUTATIONS_FRAGMENT,
   WORK_DAYS_DATA_FRAGMENT
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
@@ -332,6 +333,7 @@ export const CONTROLLER_READ_MISSION_DETAILS = gql`
 export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
+  ${REGULATION_COMPUTATIONS_FRAGMENT}
   query readControlData($controlId: Int!) {
     controlData(controlId: $controlId) {
       id
@@ -431,45 +433,29 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
         email
       }
       regulationComputationsByDay {
-        day
-        regulationComputations {
-          day
-          submitterType
-          regulationChecks {
-            type
-            label
-            description
-            regulationRule
-            unit
-            alert {
-              extra
-            }
-          }
-        }
+        ...RegulationComputations
+      }
+    }
+  }
+`;
+
+export const USER_READ_REGULATION_COMPUTATIONS_QUERY = gql`
+  ${REGULATION_COMPUTATIONS_FRAGMENT}
+  query getUserAlerts($userId: Int!, $fromDate: Date, $toDate: Date) {
+    user(id: $userId) {
+      regulationComputationsByDay(fromDate: $fromDate, toDate: $toDate) {
+        ...RegulationComputations
       }
     }
   }
 `;
 
 export const ME_READ_REGULATION_COMPUTATIONS_QUERY = gql`
-  query getMyAlerts($fromDate: TimeStamp) {
+  ${REGULATION_COMPUTATIONS_FRAGMENT}
+  query getMyAlerts($fromDate: Date) {
     me {
       regulationComputationsByDay(fromDate: $fromDate) {
-        day
-        regulationComputations {
-          day
-          submitterType
-          regulationChecks {
-            type
-            label
-            description
-            regulationRule
-            unit
-            alert {
-              extra
-            }
-          }
-        }
+        ...RegulationComputations
       }
     }
   }
