@@ -190,7 +190,7 @@ async function createComment(api, mission, adminStore, text) {
 async function validateMission(api, mission, adminStore, userToValidate) {
   const apiResponse = await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
     missionId: mission.id,
-    userId: userToValidate,
+    usersIds: userToValidate,
     activityItems: getPayloadFromVirtualActivities(
       adminStore.virtualActivities
     ),
@@ -199,14 +199,10 @@ async function validateMission(api, mission, adminStore, userToValidate) {
   adminStore.dispatch({
     type: ADMIN_ACTIONS.resetVirtual
   });
-  const validation = apiResponse.data.activities.validateMission;
-  mission.activities = [
-    ...apiResponse.data.activities.validateMission.mission.activities
-  ];
-  mission.expenditures = [
-    ...apiResponse.data.activities.validateMission.mission.expenditures
-  ];
-  mission.validations.push(validation);
+  const missionResponse = apiResponse.data.activities.validateMission;
+  mission.activities = [...missionResponse.activities];
+  mission.expenditures = [...missionResponse.expenditures];
+  mission.validations = [...missionResponse.validations];
 }
 
 async function cancelMission(api, mission, adminStore, args) {
