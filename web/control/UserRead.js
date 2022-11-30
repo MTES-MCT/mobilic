@@ -28,7 +28,7 @@ import { TextWithBadge } from "../common/TextWithBadge";
 import { UserReadAlerts } from "./components/UserReadAlerts";
 import { computeAlerts } from "common/utils/regulation/computeAlerts";
 import { getDaysBetweenTwoDates } from "common/utils/time";
-import { useGetUserRegulationComputationsByDay } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
+import { useGetCurrentUserRegulationComputationsByDay } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
 
 export function getTabs(alertsNumber) {
   return [
@@ -79,7 +79,7 @@ export function UserRead() {
   const [
     regulationComputationsByDay,
     alertNumber
-  ] = useGetUserRegulationComputationsByDay();
+  ] = useGetCurrentUserRegulationComputationsByDay();
 
   const [error, setError] = React.useState("");
 

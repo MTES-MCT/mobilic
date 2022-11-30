@@ -1,12 +1,15 @@
 import React from "react";
 import { useSnackbarAlerts } from "../../../web/common/Snackbar";
 import { useApi } from "../api";
-import { ME_READ_REGULATION_COMPUTATIONS_QUERY } from "../apiQueries";
+import {
+  ME_READ_REGULATION_COMPUTATIONS_QUERY,
+  USER_READ_REGULATION_COMPUTATIONS_QUERY
+} from "../apiQueries";
 import { useLoadingScreen } from "../loading";
 import { DAY, now } from "../time";
 import { computeNumberOfAlerts } from "./computeNumberOfAlerts";
 
-export const useGetUserRegulationComputationsByDay = () => {
+export const useGetCurrentUserRegulationComputationsByDay = () => {
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
@@ -17,12 +20,11 @@ export const useGetUserRegulationComputationsByDay = () => {
   React.useEffect(() => {
     withLoadingScreen(async () => {
       await alerts.withApiErrorHandling(async () => {
-        const apiResponse = await api.graphQlMutate(
+        const apiResponse = await api.graphQlQuery(
           ME_READ_REGULATION_COMPUTATIONS_QUERY,
           {
             fromDate: now() - DAY * 215
-          },
-          { context: { nonPublicApi: false } }
+          }
         );
 
         setRegulationComputationsByDay(
@@ -40,4 +42,37 @@ export const useGetUserRegulationComputationsByDay = () => {
   }, [regulationComputationsByDay]);
 
   return [regulationComputationsByDay, alertNumber];
+};
+
+export const useGetUserRegulationComputationsForDate = (userId, date) => {
+  const api = useApi();
+  const withLoadingScreen = useLoadingScreen();
+  const alerts = useSnackbarAlerts();
+  const [regulationComputations, setRegulationComputations] = React.useState(
+    []
+  );
+  React.useEffect(() => {
+    withLoadingScreen(async () => {
+      await alerts.withApiErrorHandling(async () => {
+        const apiResponse = await api.graphQlQuery(
+          USER_READ_REGULATION_COMPUTATIONS_QUERY,
+          {
+            userId,
+            fromDate: date,
+            toDate: date
+          }
+        );
+        const { regulationComputationsByDay } = apiResponse.data.user;
+        if (regulationComputationsByDay.length !== 1) {
+          setRegulationComputations([]);
+        } else {
+          setRegulationComputations(
+            regulationComputationsByDay[0].regulationComputations
+          );
+        }
+      });
+    });
+  }, []);
+
+  return regulationComputations;
 };
