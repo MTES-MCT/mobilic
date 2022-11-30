@@ -451,6 +451,30 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
   }
 `;
 
+export const ME_READ_REGULATION_COMPUTATIONS_QUERY = gql`
+  query getMyAlerts($fromDate: TimeStamp) {
+    me {
+      regulationComputationsByDay(fromDate: $fromDate) {
+        day
+        regulationComputations {
+          day
+          submitterType
+          regulationChecks {
+            type
+            label
+            description
+            regulationRule
+            unit
+            alert {
+              extra
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const USER_READ_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
