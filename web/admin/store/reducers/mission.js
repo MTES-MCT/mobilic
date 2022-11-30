@@ -1,12 +1,12 @@
 import { createItemsReducer, updateItemReducer } from "./crud";
 
-export function validateMissionReducer(state, { validation }) {
-  const mission = state.missions.find(m => m.id === validation.mission.id);
+export function validateMissionReducer(state, { missionResponse }) {
+  const mission = state.missions.find(m => m.id === missionResponse.id);
   if (mission) {
     return updateItemReducer(state, {
       id: mission.id,
       entity: "missions",
-      update: { validations: [...mission.validations, validation] }
+      update: { validations: missionResponse.validations }
     });
   }
   return state;

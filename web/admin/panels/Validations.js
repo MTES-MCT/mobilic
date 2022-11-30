@@ -377,24 +377,27 @@ function ValidationPanel() {
                     e.stopPropagation();
                     trackEvent(VALIDATE_MISSION_IN_VALIDATION_PANEL);
                     try {
-                      for (const entryToValidate1 of entriesToValidateByAdmin.filter(
-                        entryToValidate =>
-                          entryToValidate.missionId === entry.id
-                      )) {
-                        const apiResponse = await api.graphQlMutate(
-                          VALIDATE_MISSION_MUTATION,
-                          {
-                            missionId: entry.id,
-                            userId: entryToValidate1.user.id
-                          }
+                      const usersToValidate = entriesToValidateByAdmin
+                        .filter(
+                          entryToValidate =>
+                            entryToValidate.missionId === entry.id
+                        )
+                        .map(
+                          workerEntryToValidate => workerEntryToValidate.user.id
                         );
-                        const validation =
-                          apiResponse.data.activities.validateMission;
-                        adminStore.dispatch({
-                          type: ADMIN_ACTIONS.validateMission,
-                          payload: { validation }
-                        });
-                      }
+                      const apiResponse = await api.graphQlMutate(
+                        VALIDATE_MISSION_MUTATION,
+                        {
+                          missionId: entry.id,
+                          usersIds: usersToValidate
+                        }
+                      );
+                      const missionResponse =
+                        apiResponse.data.activities.validateMission;
+                      adminStore.dispatch({
+                        type: ADMIN_ACTIONS.validateMission,
+                        payload: { missionResponse }
+                      });
                       alerts.success(
                         `La mission${
                           entry.name ? " " + entry.name : ""
