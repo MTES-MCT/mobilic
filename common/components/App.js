@@ -14,6 +14,7 @@ import EditPastMission from "../../web/pwa/components/EditPastMission";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import { sortActivities } from "../utils/activities";
+import { useGetUserRegulationComputationsByDay } from "../utils/regulation/useGetUserRegulationComputationsByDay";
 
 const useStyles = makeStyles(theme => ({
   appContainer: {
@@ -35,6 +36,8 @@ function _App({ ScreenComponent, loadUser }) {
   React.useEffect(() => {
     if (!document.hidden) api.executePendingRequests();
   }, []);
+
+  const [regulationComputationsByDay] = useGetUserRegulationComputationsByDay();
 
   const activities = sortActivities(values(store.getEntity("activities")));
   const expenditures = values(store.getEntity("expenditures"));
@@ -94,6 +97,7 @@ function _App({ ScreenComponent, loadUser }) {
             logComment={actions.logComment}
             cancelComment={actions.cancelComment}
             registerKilometerReading={actions.registerKilometerReading}
+            regulationComputationsByDay={regulationComputationsByDay}
           />
         </Route>
         <Route path={`${path}/edit_mission`}>
