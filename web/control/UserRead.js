@@ -28,6 +28,7 @@ import { TextWithBadge } from "../common/TextWithBadge";
 import { UserReadAlerts } from "./components/UserReadAlerts";
 import { computeAlerts } from "common/utils/regulation/computeAlerts";
 import { getDaysBetweenTwoDates } from "common/utils/time";
+import { useGetUserRegulationComputationsByDay } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
 
 export function getTabs(alertsNumber) {
   return [
@@ -75,6 +76,10 @@ export function UserRead() {
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
   const [groupedAlerts, setGroupedAlerts] = React.useState([]);
   const [workingDays, setWorkingDays] = React.useState(new Set([]));
+  const [
+    regulationComputationsByDay,
+    alertNumber
+  ] = useGetUserRegulationComputationsByDay();
 
   const [error, setError] = React.useState("");
 
@@ -184,10 +189,6 @@ export function UserRead() {
     }
   }, [impersonatingUser]);
 
-  const alertNumber = groupedAlerts.reduce(
-    (acc, group) => acc + group.alerts.length,
-    0
-  );
   const TABS = getTabs(alertNumber);
 
   return [
@@ -214,6 +215,7 @@ export function UserRead() {
         periodOnFocus={periodOnFocus}
         setPeriodOnFocus={setPeriodOnFocus}
         workingDaysNumber={workingDays.size}
+        regulationComputationsByDay={regulationComputationsByDay}
       />
     ) : null
   ];
