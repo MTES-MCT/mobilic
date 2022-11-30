@@ -307,25 +307,25 @@ class Actions {
     });
 
     api.registerResponseHandler("validateMission", {
-      onSuccess: async (apiResponse, { validation }) => {
-        const mission = apiResponse.data.activities.validateMission.mission;
+      onSuccess: async apiResponse => {
+        const userId = this.store.userId();
+        const missionResponse = apiResponse.data.activities.validateMission;
+        const parsedMission = parseMissionPayloadFromBackend(
+          missionResponse,
+          userId
+        );
         this.store.updateEntityObject({
-          objectId: mission.id,
+          objectId: missionResponse.id,
           entity: "missions",
           update: {
-            ...mission,
-            ended: true,
-            validation,
-            adminValidation: apiResponse.data.activities.validateMission.isAdmin
-              ? validation
-              : null
+            ...parsedMission
           }
         });
         this.alerts.success(
           `La mission${
-            mission.name ? " " + mission.name : ""
+            missionResponse.name ? " " + missionResponse.name : ""
           } a été validée avec succès !`,
-          mission.id,
+          missionResponse.id,
           6000
         );
       }
@@ -1226,7 +1226,7 @@ class Actions {
       VALIDATE_MISSION_MUTATION,
       {
         missionId: mission.id,
-        userId: this.store.userId(),
+        usersIds: [this.store.userId()],
         creationTime: nowMilliseconds()
       },
       updateStore,
