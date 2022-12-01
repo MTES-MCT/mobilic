@@ -3,6 +3,7 @@ import { useSnackbarAlerts } from "../../../web/common/Snackbar";
 import { useApi } from "../api";
 import { USER_READ_REGULATION_COMPUTATIONS_QUERY } from "../apiQueries";
 import { useLoadingScreen } from "../loading";
+import { DEFAULT_NB_DAYS_MISSIONS_HISTORY } from "../mission";
 import { DAY, isoFormatLocalDate, now } from "../time";
 import { computeNumberOfAlerts } from "./computeNumberOfAlerts";
 
@@ -21,7 +22,9 @@ export const useGetUserRegulationComputationsByDay = userId => {
           USER_READ_REGULATION_COMPUTATIONS_QUERY,
           {
             userId,
-            fromDate: isoFormatLocalDate(now() - DAY * 215)
+            fromDate: isoFormatLocalDate(
+              now() - DAY * DEFAULT_NB_DAYS_MISSIONS_HISTORY
+            )
           }
         );
 
