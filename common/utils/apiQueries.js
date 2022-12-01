@@ -454,17 +454,6 @@ export const USER_READ_REGULATION_COMPUTATIONS_QUERY = gql`
   }
 `;
 
-export const ME_READ_REGULATION_COMPUTATIONS_QUERY = gql`
-  ${REGULATION_COMPUTATIONS_FRAGMENT}
-  query getMyAlerts($fromDate: Date) {
-    me {
-      regulationComputationsByDay(fromDate: $fromDate) {
-        ...RegulationComputations
-      }
-    }
-  }
-`;
-
 export const USER_READ_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}

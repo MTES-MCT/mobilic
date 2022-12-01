@@ -1,15 +1,12 @@
 import React from "react";
 import { useSnackbarAlerts } from "../../../web/common/Snackbar";
 import { useApi } from "../api";
-import {
-  ME_READ_REGULATION_COMPUTATIONS_QUERY,
-  USER_READ_REGULATION_COMPUTATIONS_QUERY
-} from "../apiQueries";
+import { USER_READ_REGULATION_COMPUTATIONS_QUERY } from "../apiQueries";
 import { useLoadingScreen } from "../loading";
-import { DAY, now } from "../time";
+import { DAY, isoFormatLocalDate, now } from "../time";
 import { computeNumberOfAlerts } from "./computeNumberOfAlerts";
 
-export const useGetCurrentUserRegulationComputationsByDay = () => {
+export const useGetUserRegulationComputationsByDay = userId => {
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
@@ -21,14 +18,15 @@ export const useGetCurrentUserRegulationComputationsByDay = () => {
     withLoadingScreen(async () => {
       await alerts.withApiErrorHandling(async () => {
         const apiResponse = await api.graphQlQuery(
-          ME_READ_REGULATION_COMPUTATIONS_QUERY,
+          USER_READ_REGULATION_COMPUTATIONS_QUERY,
           {
-            fromDate: now() - DAY * 215
+            userId,
+            fromDate: isoFormatLocalDate(now() - DAY * 215)
           }
         );
 
         setRegulationComputationsByDay(
-          apiResponse.data.me.regulationComputationsByDay
+          apiResponse.data.user.regulationComputationsByDay
         );
       });
     });
