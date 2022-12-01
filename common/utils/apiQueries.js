@@ -441,7 +441,11 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
 
 export const USER_READ_REGULATION_COMPUTATIONS_QUERY = gql`
   ${REGULATION_COMPUTATIONS_FRAGMENT}
-  query getUserAlerts($userId: Int!, $fromDate: Date, $toDate: Date) {
+  query getUserRegulationComputations(
+    $userId: Int!
+    $fromDate: Date
+    $toDate: Date
+  ) {
     user(id: $userId) {
       regulationComputationsByDay(fromDate: $fromDate, toDate: $toDate) {
         ...RegulationComputations
