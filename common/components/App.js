@@ -37,7 +37,9 @@ function _App({ ScreenComponent, loadUser }) {
     if (!document.hidden) api.executePendingRequests();
   }, []);
 
-  const [regulationComputationsByDay] = useGetUserRegulationComputationsByDay();
+  const [regulationComputationsByDay] = useGetUserRegulationComputationsByDay(
+    store.userId()
+  );
 
   const activities = sortActivities(values(store.getEntity("activities")));
   const expenditures = values(store.getEntity("expenditures"));

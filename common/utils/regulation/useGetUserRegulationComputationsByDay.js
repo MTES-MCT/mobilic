@@ -1,12 +1,12 @@
 import React from "react";
 import { useSnackbarAlerts } from "../../../web/common/Snackbar";
 import { useApi } from "../api";
-import { ME_READ_REGULATION_COMPUTATIONS_QUERY } from "../apiQueries";
+import { USER_READ_REGULATION_COMPUTATIONS_QUERY } from "../apiQueries";
 import { useLoadingScreen } from "../loading";
-import { DAY, now } from "../time";
+import { DAY, isoFormatLocalDate, now } from "../time";
 import { computeNumberOfAlerts } from "./computeNumberOfAlerts";
 
-export const useGetUserRegulationComputationsByDay = () => {
+export const useGetUserRegulationComputationsByDay = userId => {
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
@@ -17,16 +17,16 @@ export const useGetUserRegulationComputationsByDay = () => {
   React.useEffect(() => {
     withLoadingScreen(async () => {
       await alerts.withApiErrorHandling(async () => {
-        const apiResponse = await api.graphQlMutate(
-          ME_READ_REGULATION_COMPUTATIONS_QUERY,
+        const apiResponse = await api.graphQlQuery(
+          USER_READ_REGULATION_COMPUTATIONS_QUERY,
           {
-            fromDate: now() - DAY * 215
-          },
-          { context: { nonPublicApi: false } }
+            userId,
+            fromDate: isoFormatLocalDate(now() - DAY * 215)
+          }
         );
 
         setRegulationComputationsByDay(
-          apiResponse.data.me.regulationComputationsByDay
+          apiResponse.data.user.regulationComputationsByDay
         );
       });
     });
@@ -40,4 +40,40 @@ export const useGetUserRegulationComputationsByDay = () => {
   }, [regulationComputationsByDay]);
 
   return [regulationComputationsByDay, alertNumber];
+};
+
+export const useGetUserRegulationComputationsForDate = (
+  userId,
+  date,
+  setLoading
+) => {
+  const api = useApi();
+  const alerts = useSnackbarAlerts();
+  const [regulationComputations, setRegulationComputations] = React.useState(
+    []
+  );
+  React.useEffect(async () => {
+    await alerts.withApiErrorHandling(async () => {
+      setLoading(true);
+      const apiResponse = await api.graphQlQuery(
+        USER_READ_REGULATION_COMPUTATIONS_QUERY,
+        {
+          userId,
+          fromDate: date,
+          toDate: date
+        }
+      );
+      const { regulationComputationsByDay } = apiResponse.data.user;
+      if (regulationComputationsByDay.length !== 1) {
+        setRegulationComputations([]);
+      } else {
+        setRegulationComputations(
+          regulationComputationsByDay[0].regulationComputations
+        );
+        setLoading(false);
+      }
+    });
+  }, []);
+
+  return regulationComputations;
 };
