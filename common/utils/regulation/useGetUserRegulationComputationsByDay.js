@@ -42,33 +42,36 @@ export const useGetUserRegulationComputationsByDay = userId => {
   return [regulationComputationsByDay, alertNumber];
 };
 
-export const useGetUserRegulationComputationsForDate = (userId, date) => {
+export const useGetUserRegulationComputationsForDate = (
+  userId,
+  date,
+  setLoading
+) => {
   const api = useApi();
-  const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
   const [regulationComputations, setRegulationComputations] = React.useState(
     []
   );
-  React.useEffect(() => {
-    withLoadingScreen(async () => {
-      await alerts.withApiErrorHandling(async () => {
-        const apiResponse = await api.graphQlQuery(
-          USER_READ_REGULATION_COMPUTATIONS_QUERY,
-          {
-            userId,
-            fromDate: date,
-            toDate: date
-          }
-        );
-        const { regulationComputationsByDay } = apiResponse.data.user;
-        if (regulationComputationsByDay.length !== 1) {
-          setRegulationComputations([]);
-        } else {
-          setRegulationComputations(
-            regulationComputationsByDay[0].regulationComputations
-          );
+  React.useEffect(async () => {
+    await alerts.withApiErrorHandling(async () => {
+      setLoading(true);
+      const apiResponse = await api.graphQlQuery(
+        USER_READ_REGULATION_COMPUTATIONS_QUERY,
+        {
+          userId,
+          fromDate: date,
+          toDate: date
         }
-      });
+      );
+      const { regulationComputationsByDay } = apiResponse.data.user;
+      if (regulationComputationsByDay.length !== 1) {
+        setRegulationComputations([]);
+      } else {
+        setRegulationComputations(
+          regulationComputationsByDay[0].regulationComputations
+        );
+        setLoading(false);
+      }
     });
   }, []);
 

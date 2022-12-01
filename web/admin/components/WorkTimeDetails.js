@@ -44,11 +44,13 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   const [activitiesOver3Days, setActivitiesOver3Days] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const [loadingRegulation, setLoadingRegulation] = React.useState(false);
   const { trackEvent } = useMatomo();
 
   const regulationComputations = useGetUserRegulationComputationsForDate(
     workTimeEntry.user.id,
-    isoFormatLocalDate(workTimeEntry.periodActualStart)
+    isoFormatLocalDate(workTimeEntry.periodActualStart),
+    setLoadingRegulation
   );
   const regulationComputation = useMemo(
     () => getLatestAlertComputationVersion(regulationComputations),
@@ -269,7 +271,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
       <Grid item xs={12}>
         <MissionInfoCard
           title="Seuils réglementaires"
-          loading={loading}
+          loading={loadingRegulation}
           className={classes.regulatoryAlertCard}
         >
           <div>Nouvelles alertes</div>
