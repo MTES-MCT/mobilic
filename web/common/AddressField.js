@@ -29,28 +29,36 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const API_ADRESSE_MIN_SEARCHABLE_CHARACTER = 3;
+const isInputSearchable = input =>
+  input?.length >= API_ADRESSE_MIN_SEARCHABLE_CHARACTER;
+
 const fetchPlaces = throttle((input, currentPosition = null, callback) => {
   let queryArgs = new URLSearchParams();
-  if (input && input !== "") queryArgs.append("q", input);
+  if (isInputSearchable(input)) queryArgs.append("q", input);
   if (currentPosition && currentPosition.coords) {
     queryArgs.append("lat", currentPosition.coords.latitude);
     queryArgs.append("lon", currentPosition.coords.longitude);
   }
 
-  fetch(
-    `https://api-adresse.data.gouv.fr/${
-      !input && currentPosition ? "reverse" : "search"
-    }/?${queryArgs.toString()}`
-  )
-    .then(
-      response => response.json(),
-      err => {
-        captureSentryException(err);
-        return null;
-      }
+  if (Array.from(queryArgs).length > 0) {
+    fetch(
+      `https://api-adresse.data.gouv.fr/${
+        !isInputSearchable(input) && currentPosition ? "reverse" : "search"
+      }/?${queryArgs.toString()}`
     )
-    .then(json => (json ? json.features || [] : null))
-    .then(places => (places ? callback(places) : null));
+      .then(
+        response => response.json(),
+        err => {
+          captureSentryException(err);
+          return null;
+        }
+      )
+      .then(json => (json ? json.features || [] : []))
+      .then(places => (places ? callback(places) : callback([])));
+  } else {
+    callback([]);
+  }
 }, 300);
 
 export function AddressField({
@@ -88,8 +96,8 @@ export function AddressField({
     } else {
       setLoading(true);
       fetchPlaces(inputValue, currentPosition, results => {
-        if (inputValue === "") {
-          setOptions(results.concat(detaultOptions()));
+        if (!isInputSearchable(inputValue)) {
+          setOptions(results?.concat(detaultOptions()));
         } else {
           setOptions(results);
         }
@@ -100,21 +108,21 @@ export function AddressField({
 
   const classes = useStyles();
 
-  const isSearchingAddress = inputValue && inputValue !== "";
-
   return (
     <Autocomplete
       id="address-field"
       freeSolo
       fullWidth={fullWidth}
       groupBy={
-        isSearchingAddress
+        isInputSearchable(inputValue)
           ? null
           : option =>
               option.default ? "Adresses enregistrées" : "Adresses proches"
       }
       getOptionLabel={option =>
-        typeof option === "string" ? option : formatAddressMainText(option)
+        typeof option === "string"
+          ? option
+          : formatAddressMainText(option) || ""
       }
       disabled={disabled}
       selectOnFocus
@@ -176,20 +184,25 @@ export function AddressField({
       onClose={() => setOpen(false)}
       renderOption={(props, option) =>
         option.activateLocation ? (
-          <Box>
+          <Box key={"activateLocation"}>
             {!loading ? (
-              <Button
-                startIcon={<MyLocation />}
-                variant="outlined"
-                className={classes.geolocationButton}
-                disableElevation
-                onClick={e => {
-                  setLoading(true);
-                  askCurrentPosition();
-                }}
-              >
-                Utiliser ma position actuelle
-              </Button>
+              <>
+                <Button
+                  startIcon={<MyLocation />}
+                  variant="outlined"
+                  className={classes.geolocationButton}
+                  disableElevation
+                  onClick={e => {
+                    setLoading(true);
+                    askCurrentPosition();
+                  }}
+                >
+                  Utiliser ma position actuelle
+                </Button>
+                <Alert severity="info" className={classes.geolocationAlert}>
+                  Vos déplacements ne seront pas géolocalisés
+                </Alert>
+              </>
             ) : (
               <CircularProgress
                 color="inherit"
@@ -197,9 +210,6 @@ export function AddressField({
                 className={classes.geolocationButton}
               />
             )}
-            <Alert severity="info" className={classes.geolocationAlert}>
-              Vos déplacements ne seront pas géolocalisés
-            </Alert>
           </Box>
         ) : (
           <li {...props} key={formatKey(option)}>
