@@ -186,18 +186,23 @@ export function AddressField({
         option.activateLocation ? (
           <Box key={"activateLocation"}>
             {!loading ? (
-              <Button
-                startIcon={<MyLocation />}
-                variant="outlined"
-                className={classes.geolocationButton}
-                disableElevation
-                onClick={e => {
-                  setLoading(true);
-                  askCurrentPosition();
-                }}
-              >
-                Utiliser ma position actuelle
-              </Button>
+              <>
+                <Button
+                  startIcon={<MyLocation />}
+                  variant="outlined"
+                  className={classes.geolocationButton}
+                  disableElevation
+                  onClick={e => {
+                    setLoading(true);
+                    askCurrentPosition();
+                  }}
+                >
+                  Utiliser ma position actuelle
+                </Button>
+                <Alert severity="info" className={classes.geolocationAlert}>
+                  Vos déplacements ne seront pas géolocalisés
+                </Alert>
+              </>
             ) : (
               <CircularProgress
                 color="inherit"
@@ -205,9 +210,6 @@ export function AddressField({
                 className={classes.geolocationButton}
               />
             )}
-            <Alert severity="info" className={classes.geolocationAlert}>
-              Vos déplacements ne seront pas géolocalisés
-            </Alert>
           </Box>
         ) : (
           <li {...props} key={formatKey(option)}>
