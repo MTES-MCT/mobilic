@@ -45,13 +45,9 @@ function activityChangeText(change) {
   const changeSentences = [];
   switch (change.type) {
     case "DELETE":
-      return `a supprimé ${changeResourceAsText(change)} ${
-        change.before.endTime
-          ? `du ${formatDateTimeLiteral(
-              change.before.startTime
-            )} au ${formatDateTimeLiteral(change.before.endTime)}`
-          : `démarrée le ${formatDateTimeLiteral(change.before.startTime)}`
-      }`;
+      return `a supprimé ${changeResourceAsText(
+        change
+      )} démarrée le ${formatDateTimeLiteral(change.before.startTime)}`;
     case "CREATE":
       return change.after.endTime
         ? `a ajouté ${changeResourceAsText(change)} du ${formatDateTimeLiteral(
@@ -63,7 +59,11 @@ function activityChangeText(change) {
     case "UPDATE":
       if (change.after.endTime !== change.before.endTime) {
         if (!change.after.endTime) {
-          changeSentences.push(`a repris ${changeResourceAsText(change)}`);
+          changeSentences.push(
+            `a repris ${changeResourceAsText(
+              change
+            )} le ${formatDateTimeLiteral(change.time)}`
+          );
         } else if (!change.before.endTime) {
           changeSentences.push(
             `a mis fin à ${changeResourceAsText(
