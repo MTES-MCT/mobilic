@@ -1,5 +1,4 @@
 import React from "react";
-import Container from "@mui/material/Container";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -7,8 +6,6 @@ import Grid from "@mui/material/Grid";
 import { Header } from "../common/Header";
 import { ManagerImage, SoftwareImage, WorkerImage } from "common/utils/icons";
 import { useIsWidthDown } from "common/utils/useWidth";
-import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizontal.svg";
-import BackgroundVerticalImage from "common/assets/images/landing-hero-vertical.svg";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Footer } from "./footer";
 import {
@@ -17,20 +14,9 @@ import {
   useSectionStyles
 } from "./sections/LandingSection";
 import { WebinarListSection } from "./sections/WebinarListSection";
-import { VideoCard } from "./ResourcePage/VideoCard";
-import { resourcePagesClasses } from "./ResourcePage/styles/ResourcePagesStyle";
-import { Alert } from "@mui/material";
-import { Link } from "../common/LinkButton";
+import { IntroSection } from "./sections/IntroSection";
 
 const useStyles = makeStyles(theme => ({
-  heroContainer: {
-    backgroundColor: "#3184FF",
-    padding: 0,
-    margin: 0
-  },
-  heroInner: {
-    padding: 0
-  },
   videoContainer: {
     position: "relative",
     paddingBottom: "56.25%",
@@ -58,17 +44,6 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(1)
   }
 }));
-
-const videos = [
-  {
-    title: "Mobilic, qu'est-ce que c'est ?",
-    id: "GEfgicbfX4s"
-  },
-  {
-    title: "Mobilic est-il conforme à la réglementation ?",
-    id: "0XxaLFvi4Ic"
-  }
-];
 
 function Showcase({
   image,
@@ -144,72 +119,11 @@ function Showcase({
 export const Landing = () => {
   const classes = useStyles();
   const sectionClasses = useSectionStyles();
-  const isSmDown = useIsWidthDown("sm");
-  const resourceClasses = resourcePagesClasses();
 
   return [
     <Header key={1} />,
-    <Container key={2} maxWidth={false} className={classes.heroContainer}>
-      {process.env.REACT_APP_SHOW_CONTROLLER_APP === "1" && (
-        <Alert severity="info">
-          Accès Agent Public :{" "}
-          <Link variant="login controleur" to="/controller-login">
-            se connecter à mon espace
-          </Link>
-        </Alert>
-      )}
-      <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
-        <img
-          src={isSmDown ? BackgroundVerticalImage : BackgroundHorizontalImage}
-          alt="Mobilic-hero"
-          width="100%"
-          height="100%"
-          style={{ float: "left" }}
-        />
-      </Container>
-    </Container>,
+    <IntroSection key={2} />,
     <LandingSectionList key={3}>
-      <LandingSection title="Mobilic ... 🤔 qu'est-ce que c'est ?">
-        <Typography className={sectionClasses.sectionIntroText}>
-          Mobilic est la plateforme gouvernementale qui permet de{" "}
-          <strong>simplifier le suivi du temps de travail</strong> dans le
-          transport routier léger et le déménagement afin de lutter contre le
-          travail illégal.
-        </Typography>
-        <Typography className={sectionClasses.sectionIntroText}>
-          Le livret individuel de contrôle (LIC), qui sert aujourd'hui à
-          l'enregistrement du temps de travail des conducteurs de véhicules
-          utilitaires légers de moins de 3,5 tonnes, et des autres personnels
-          roulants non conducteurs, souffre de problèmes unanimement décriés
-          (praticabilité pour les salarié(e)s, lourdeur administrative et de
-          gestion, faible fiabilité pour le contrôle). Avec Mobilic{" "}
-          <a
-            href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000043023481"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            vous n'avez plus besoin du LIC papier
-          </a>{" "}
-          pour respecter vos engagements sociaux.
-        </Typography>
-        <Container
-          className={`${resourceClasses.whiteSection}`}
-          maxWidth={false}
-        >
-          <Container maxWidth="lg" className={resourceClasses.inner}>
-            <Grid container direction="row" alignItems="center" spacing={1}>
-              {videos.map(video => (
-                <Grid key={video.id} item xs={12} sm={6}>
-                  <VideoCard
-                    description={video.title}
-                    youtubeUrl={`https://www.youtube.com/embed/${video.id}`}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          </Container>
-        </Container>
-      </LandingSection>
       {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
       <LandingSection title="A qui s'adresse Mobilic ?">
         <Typography className={sectionClasses.sectionIntroText}>

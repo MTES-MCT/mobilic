@@ -38,13 +38,13 @@ export function AdminResourcePage() {
           <Grid item xs={12} sm={6}>
             <VideoCard
               description="Vous inscrire sur Mobilic"
-              youtubeUrl={"https://www.youtube.com/embed/vu-0wkydqzs"}
+              videoKey="resources/videos/gestionnaires/gestionnaire-inscription.mp4"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <VideoCard
               description="Utiliser l'interface gestionnaire"
-              youtubeUrl={"https://www.youtube.com/embed/_USTJ2SHhUQ"}
+              videoKey="resources/videos/gestionnaires/gestionnaire-utilisation.mp4"
             />
           </Grid>
         </Grid>
@@ -97,25 +97,25 @@ export function AdminResourcePage() {
           <Grid item xs={12} sm={6}>
             <VideoCard
               description="Inscription sur Mobilic"
-              youtubeUrl={"https://www.youtube.com/embed/sWG_jcE0amk"}
+              videoKey="resources/videos/salaries/salarie-inscription.mp4"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <VideoCard
               description="Télécharger Mobilic sur Android"
-              youtubeUrl={"https://www.youtube.com/embed/g-XNdxVVjO8"}
+              videoKey="resources/videos/salaries/salarie-installation-appli-android.mp4"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <VideoCard
               description="Télécharger Mobilic sur iPhone"
-              youtubeUrl={"https://www.youtube.com/embed/DMVKSGxoMzU"}
+              videoKey="resources/videos/salaries/salarie-installation-appli-iphone.mp4"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <VideoCard
               description="Utiliser Mobilic au quotidien"
-              youtubeUrl={"https://www.youtube.com/embed/xj6PhWxKR5k"}
+              videoKey="resources/videos/salaries/salarie-usage-quotidien.mp4"
             />
           </Grid>
         </Grid>

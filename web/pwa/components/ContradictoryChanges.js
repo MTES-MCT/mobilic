@@ -8,12 +8,7 @@ import { makeStyles } from "@mui/styles";
 import { Event } from "../../common/Event";
 import { MISSION_RESOURCE_TYPES } from "common/utils/contradictory";
 import { getChangeIconAndText } from "../../common/logEvent";
-import {
-  formatDateTime,
-  formatTimeOfDay,
-  getStartOfDay,
-  now
-} from "common/utils/time";
+import { now } from "common/utils/time";
 import { isConnectionError } from "common/utils/errors";
 import { Accordion, AccordionDetails } from "@mui/material";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -95,18 +90,6 @@ export function ContradictoryChanges({
       (c.userId === userId || !c.userId) &&
       (showEventsBeforeValidation || c.time >= (validationTime || now()))
   );
-
-  const minStartTime = Math.min(
-    ...userChangesHistory.map(c => c.after?.startTime).filter(Boolean)
-  );
-  const maxEndTime = Math.max(
-    ...userChangesHistory.map(c => c.after?.endTime).filter(Boolean)
-  );
-  const datetimeFormatter =
-    getStartOfDay(minStartTime) === getStartOfDay(maxEndTime)
-      ? formatTimeOfDay
-      : formatDateTime;
-
   return (
     <Accordion
       elevation={0}
@@ -137,24 +120,21 @@ export function ContradictoryChanges({
         ) : (
           <>
             <List dense>
-              {userChangesHistory.map(change => {
-                const { icon, text, color } = getChangeIconAndText(
-                  change,
-                  datetimeFormatter
-                );
-                return (
+              {userChangesHistory.map(userChange => {
+                const changes = getChangeIconAndText(userChange);
+                return changes.map(({ icon, text, color }) => (
                   <Event
-                    key={`${(change.after || change.before).id}${change.time}`}
+                    key={`${(userChange.after || userChange.before).id}${text}`}
                     icon={icon}
-                    iconClassName={iconClassName(change)}
+                    iconClassName={iconClassName(userChange)}
                     text={text}
-                    submitter={change.submitter}
-                    submitterId={change.submitterId}
-                    time={change.time}
+                    submitter={userChange.submitter}
+                    submitterId={userChange.submitterId}
+                    time={userChange.time}
                     withFullDate={true}
                     iconBackgroundColor={color}
                   />
-                );
+                ));
               })}
             </List>
           </>

@@ -12,6 +12,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import EuroIcon from "@mui/icons-material/Euro";
 import EditIcon from "@mui/icons-material/Edit";
+import { formatDateTimeLiteral } from "common/utils/time";
 
 function changeResourceAsText(change) {
   switch (change.resourceType) {
@@ -40,109 +41,134 @@ function changeResourceAsText(change) {
   }
 }
 
-function activityChangeText(change, datetimeFormatter) {
+function activityChangeText(change) {
+  const changeSentences = [];
   switch (change.type) {
     case "DELETE":
-      return `a supprimé ${changeResourceAsText(change)} ${
-        change.before.endTime
-          ? `de ${datetimeFormatter(
-              change.before.startTime
-            )} à ${datetimeFormatter(change.before.endTime)}`
-          : `démarrée à ${datetimeFormatter(change.before.startTime)}`
-      }`;
+      return [
+        `a supprimé ${changeResourceAsText(
+          change
+        )} démarrée le ${formatDateTimeLiteral(change.before.startTime)}`
+      ];
     case "CREATE":
       return change.after.endTime
-        ? `a ajouté ${changeResourceAsText(change)} de ${datetimeFormatter(
-            change.after.startTime
-          )} à ${datetimeFormatter(change.after.endTime)}`
-        : `s'est mis en ${
-            ACTIVITIES[change.after.type].label
-          } à ${datetimeFormatter(change.after.startTime)}`;
+        ? [
+            `a ajouté ${changeResourceAsText(
+              change
+            )} du ${formatDateTimeLiteral(
+              change.after.startTime
+            )} au ${formatDateTimeLiteral(change.after.endTime)}`
+          ]
+        : [
+            `s'est mis en ${
+              ACTIVITIES[change.after.type].label
+            } le ${formatDateTimeLiteral(change.after.startTime)}`
+          ];
     case "UPDATE":
-      return !change.after.endTime && !change.before.endTime
-        ? `a décalé le début de ${changeResourceAsText(
+      if (change.after.endTime !== change.before.endTime) {
+        if (!change.after.endTime) {
+          changeSentences.push(
+            `a repris ${changeResourceAsText(
+              change
+            )} le ${formatDateTimeLiteral(change.time)}`
+          );
+        } else if (!change.before.endTime) {
+          changeSentences.push(
+            `a mis fin à ${changeResourceAsText(
+              change
+            )} le ${formatDateTimeLiteral(change.after.endTime)}`
+          );
+        } else {
+          changeSentences.push(
+            `a décalé la fin de ${changeResourceAsText(
+              change
+            )} du ${formatDateTimeLiteral(
+              change.before.endTime
+            )} au ${formatDateTimeLiteral(change.after.endTime)}`
+          );
+        }
+      }
+      if (change.after.startTime !== change.before.startTime) {
+        changeSentences.push(
+          `a décalé le début de ${changeResourceAsText(
             change
-          )} de ${datetimeFormatter(
+          )} du ${formatDateTimeLiteral(
             change.before.startTime
-          )} à ${datetimeFormatter(change.after.startTime)}`
-        : change.before.endTime && !change.after.endTime
-        ? `a repris ${changeResourceAsText(change)}`
-        : !change.before.endTime && change.after.endTime
-        ? `a mis fin à ${changeResourceAsText(change)} à ${datetimeFormatter(
-            change.after.endTime
-          )}`
-        : `a modifié la période de ${changeResourceAsText(
-            change
-          )} de ${datetimeFormatter(
-            change.before.startTime
-          )} - ${datetimeFormatter(
-            change.before.endTime
-          )} à ${datetimeFormatter(
-            change.after.startTime
-          )} - ${datetimeFormatter(change.after.endTime)}`;
+          )} au ${formatDateTimeLiteral(change.after.startTime)}`
+        );
+      }
+      return changeSentences;
     default:
-      return "";
+      return [""];
   }
 }
 
-export function getChangeIconAndText(change, datetimeFormatter) {
+export function getChangeIconAndText(change) {
   switch (change.type) {
     case "DELETE":
       switch (change.resourceType) {
         case MISSION_RESOURCE_TYPES.activity:
-          return {
+          return activityChangeText(change).map(text => ({
             icon: <HighlightOffIcon />,
-            text: activityChangeText(change, datetimeFormatter)
-          };
+            text: text
+          }));
         default:
-          return {
-            icon: <HighlightOffIcon />,
-            text: `a supprimé ${changeResourceAsText(change)}`
-          };
+          return [
+            {
+              icon: <HighlightOffIcon />,
+              text: `a supprimé ${changeResourceAsText(change)}`
+            }
+          ];
       }
     case "CREATE":
       switch (change.resourceType) {
         case MISSION_RESOURCE_TYPES.validation:
-          return { icon: <CheckIcon />, text: `a validé la mission` };
+          return [{ icon: <CheckIcon />, text: `a validé la mission` }];
         case MISSION_RESOURCE_TYPES.startLocation:
-          return {
-            icon: <LocationOnIcon />,
-            text: `a indiqué comme lieu de début de service : ${formatAddressMainText(
-              change.after
-            )} ${formatAddressSubText(change.after)}`
-          };
+          return [
+            {
+              icon: <LocationOnIcon />,
+              text: `a indiqué comme lieu de début de service : ${formatAddressMainText(
+                change.after
+              )} ${formatAddressSubText(change.after)}`
+            }
+          ];
         case MISSION_RESOURCE_TYPES.endLocation:
-          return {
-            icon: <LocationOnIcon />,
-            text: `a indiqué comme lieu de fin de service : ${formatAddressMainText(
-              change.after
-            )} ${formatAddressSubText(change.after)}`
-          };
+          return [
+            {
+              icon: <LocationOnIcon />,
+              text: `a indiqué comme lieu de fin de service : ${formatAddressMainText(
+                change.after
+              )} ${formatAddressSubText(change.after)}`
+            }
+          ];
         case MISSION_RESOURCE_TYPES.activity:
-          return {
+          return activityChangeText(change).map(text => ({
             icon: ACTIVITIES[change.after.type].renderIcon(),
-            text: activityChangeText(change, datetimeFormatter),
-            color: ACTIVITIES[change.after.type].color
-          };
+            color: ACTIVITIES[change.after.type].color,
+            text: text
+          }));
         case MISSION_RESOURCE_TYPES.expenditure:
-          return {
-            icon: <EuroIcon />,
-            text: `a ajouté ${changeResourceAsText(change)}`
-          };
+          return [
+            {
+              icon: <EuroIcon />,
+              text: `a ajouté ${changeResourceAsText(change)}`
+            }
+          ];
         default:
-          return "";
+          return [""];
       }
     case "UPDATE":
       switch (change.resourceType) {
         case MISSION_RESOURCE_TYPES.activity:
-          return {
+          return activityChangeText(change).map(text => ({
             icon: <EditIcon />,
-            text: activityChangeText(change, datetimeFormatter)
-          };
+            text: text
+          }));
         default:
-          return "";
+          return [""];
       }
     default:
-      return "";
+      return [""];
   }
 }

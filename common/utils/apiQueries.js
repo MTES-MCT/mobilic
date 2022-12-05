@@ -128,6 +128,7 @@ export const USER_SIGNUP_MUTATION = gql`
     $subscribeToNewsletter: Boolean
     $isEmployee: Boolean
     $timezoneName: String
+    $wayHeardOfMobilic: String
   ) {
     signUp {
       user(
@@ -139,6 +140,7 @@ export const USER_SIGNUP_MUTATION = gql`
         subscribeToNewsletter: $subscribeToNewsletter
         isEmployee: $isEmployee
         timezoneName: $timezoneName
+        wayHeardOfMobilic: $wayHeardOfMobilic
       ) {
         accessToken
         refreshToken
@@ -151,12 +153,14 @@ export const CONFIRM_FC_EMAIL_MUTATION = gql`
     $email: String!
     $password: String
     $timezoneName: String
+    $wayHeardOfMobilic: String
   ) {
     signUp {
       confirmFcEmail(
         email: $email
         password: $password
         timezoneName: $timezoneName
+        wayHeardOfMobilic: $wayHeardOfMobilic
       ) {
         email
         hasConfirmedEmail
@@ -685,6 +689,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
           latestInviteEmailTime
           user {
             id
+            email
             firstName
             lastName
           }
@@ -916,6 +921,7 @@ export const TERMINATE_EMPLOYMENT_MUTATION = gql`
         }
         user {
           id
+          email
           firstName
           lastName
         }
@@ -961,6 +967,7 @@ export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
         latestInviteEmailTime
         user {
           id
+          email
           firstName
           lastName
         }
@@ -996,6 +1003,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         }
         user {
           id
+          email
           firstName
           lastName
         }

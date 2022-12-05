@@ -3,7 +3,10 @@ import Typography from "@mui/material/Typography";
 import { Card } from "@mui/material";
 import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
 
-export function VideoCard({ youtubeUrl, description }) {
+const s3Root =
+  "https://storage.gra.cloud.ovh.net/v1/AUTH_8a2f745174054ce1b5ee7c6e79601088/mobilic/";
+
+export function VideoCard({ videoKey, description, posterKey }) {
   const classes = resourceCardsClasses();
 
   return (
@@ -11,15 +14,19 @@ export function VideoCard({ youtubeUrl, description }) {
       <Typography variant={"h5"} className={classes.description}>
         {description}
       </Typography>
-      <iframe
+      <video
+        style={{ maxHeight: 356 }}
+        controls
+        height="auto"
         width="100%"
-        height="356"
-        src={youtubeUrl}
-        title="YouTube video player"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      />
+        poster={posterKey ? s3Root + posterKey : null}
+      >
+        <source src={s3Root + videoKey} type="video/mp4" />
+        <p>
+          Votre navigateur ne prend pas en charge les vidéos HTML5. Voici{" "}
+          <a href={s3Root + videoKey}>un lien pour télécharger la vidéo</a>
+        </p>
+      </video>
     </Card>
   );
 }
