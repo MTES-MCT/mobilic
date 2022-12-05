@@ -50,7 +50,10 @@ export function DaySummary({
           <ItalicWarningTypography>Mission en cours !</ItalicWarningTypography>
         )}
       </InfoCard>
-      <InfoCard loading={loading} className={infoCardStyles.topMargin}>
+      <InfoCard
+        loading={loading || !regulationComputation}
+        className={infoCardStyles.topMargin}
+      >
         <DayRegulatoryAlerts regulationComputation={regulationComputation} />
       </InfoCard>
       <InfoCard className={infoCardStyles.topMargin}>
