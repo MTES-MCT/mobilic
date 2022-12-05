@@ -120,23 +120,21 @@ export function ContradictoryChanges({
         ) : (
           <>
             <List dense>
-              {userChangesHistory.map(change => {
-                const { icon, text, color } = getChangeIconAndText(change);
-                return (
+              {userChangesHistory.map(userChange => {
+                const changes = getChangeIconAndText(userChange);
+                return changes.map(({ icon, text, color }) => (
                   <Event
-                    key={`${(change.after || change.before).id}${change.time}${
-                      change.resourceType
-                    }`}
+                    key={`${(userChange.after || userChange.before).id}${text}`}
                     icon={icon}
-                    iconClassName={iconClassName(change)}
+                    iconClassName={iconClassName(userChange)}
                     text={text}
-                    submitter={change.submitter}
-                    submitterId={change.submitterId}
-                    time={change.time}
+                    submitter={userChange.submitter}
+                    submitterId={userChange.submitterId}
+                    time={userChange.time}
                     withFullDate={true}
                     iconBackgroundColor={color}
                   />
-                );
+                ));
               })}
             </List>
           </>
