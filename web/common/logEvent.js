@@ -45,17 +45,25 @@ function activityChangeText(change) {
   const changeSentences = [];
   switch (change.type) {
     case "DELETE":
-      return `a supprimé ${changeResourceAsText(
-        change
-      )} démarrée le ${formatDateTimeLiteral(change.before.startTime)}`;
+      return [
+        `a supprimé ${changeResourceAsText(
+          change
+        )} démarrée le ${formatDateTimeLiteral(change.before.startTime)}`
+      ];
     case "CREATE":
       return change.after.endTime
-        ? `a ajouté ${changeResourceAsText(change)} du ${formatDateTimeLiteral(
-            change.after.startTime
-          )} au ${formatDateTimeLiteral(change.after.endTime)}`
-        : `s'est mis en ${
-            ACTIVITIES[change.after.type].label
-          } le ${formatDateTimeLiteral(change.after.startTime)}`;
+        ? [
+            `a ajouté ${changeResourceAsText(
+              change
+            )} du ${formatDateTimeLiteral(
+              change.after.startTime
+            )} au ${formatDateTimeLiteral(change.after.endTime)}`
+          ]
+        : [
+            `s'est mis en ${
+              ACTIVITIES[change.after.type].label
+            } le ${formatDateTimeLiteral(change.after.startTime)}`
+          ];
     case "UPDATE":
       if (change.after.endTime !== change.before.endTime) {
         if (!change.after.endTime) {
@@ -100,12 +108,10 @@ export function getChangeIconAndText(change) {
     case "DELETE":
       switch (change.resourceType) {
         case MISSION_RESOURCE_TYPES.activity:
-          return [
-            {
-              icon: <HighlightOffIcon />,
-              text: activityChangeText(change)
-            }
-          ];
+          return activityChangeText(change).map(text => ({
+            icon: <HighlightOffIcon />,
+            text: text
+          }));
         default:
           return [
             {
@@ -137,13 +143,11 @@ export function getChangeIconAndText(change) {
             }
           ];
         case MISSION_RESOURCE_TYPES.activity:
-          return [
-            {
-              icon: ACTIVITIES[change.after.type].renderIcon(),
-              text: activityChangeText(change),
-              color: ACTIVITIES[change.after.type].color
-            }
-          ];
+          return activityChangeText(change).map(text => ({
+            icon: ACTIVITIES[change.after.type].renderIcon(),
+            color: ACTIVITIES[change.after.type].color,
+            text: text
+          }));
         case MISSION_RESOURCE_TYPES.expenditure:
           return [
             {
