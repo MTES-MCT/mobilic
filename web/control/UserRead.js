@@ -199,7 +199,17 @@ export function UserRead() {
     setAlertNumber(res.alertNumber);
   }, [userInfo]);
 
-  const TABS = getTabs(alertNumber);
+  const legacyAlertNumber = groupedAlerts.reduce(
+    (acc, group) => acc + group.alerts.length,
+    0
+  );
+
+  const usedAlertNumber =
+    process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1"
+      ? alertNumber
+      : legacyAlertNumber;
+
+  const TABS = getTabs(usedAlertNumber);
 
   return [
     <Header key={1} disableMenu />,
@@ -214,7 +224,7 @@ export function UserRead() {
         key={1}
         tabs={TABS}
         groupedAlerts={groupedAlerts}
-        alertNumber={alertNumber}
+        alertNumber={usedAlertNumber}
         userInfo={userInfo}
         tokenInfo={tokenInfo}
         controlTime={controlTime}
