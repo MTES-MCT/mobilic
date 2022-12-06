@@ -28,9 +28,9 @@ import { TextWithBadge } from "../common/TextWithBadge";
 import { UserReadAlerts } from "./components/UserReadAlerts";
 import { computeAlerts } from "common/utils/regulation/computeAlerts";
 import { getDaysBetweenTwoDates } from "common/utils/time";
-import { getRegulationComputationsAndAlertsNumber } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
+import { getRegulationComputationsAndAlertNumber } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
 
-export function getTabs(alertsNumber) {
+export function getTabs(alertNumber) {
   return [
     {
       name: "info",
@@ -42,8 +42,8 @@ export function getTabs(alertsNumber) {
       name: "alerts",
       label: (
         <TextWithBadge
-          badgeContent={alertsNumber || 0}
-          color={alertsNumber ? "error" : "success"}
+          badgeContent={alertNumber || 0}
+          color={alertNumber ? "error" : "success"}
         >
           Alertes
         </TextWithBadge>
@@ -80,7 +80,7 @@ export function UserRead() {
     regulationComputationsByDay,
     setRegulationComputationsByDay
   ] = React.useState([]);
-  const [alertsNumber, setAlertsNumber] = React.useState(0);
+  const [alertNumber, setAlertNumber] = React.useState(0);
 
   const [error, setError] = React.useState("");
 
@@ -194,15 +194,12 @@ export function UserRead() {
     if (!userInfo || !userInfo.id) {
       return;
     }
-    const res = await getRegulationComputationsAndAlertsNumber(
-      api,
-      userInfo.id
-    );
+    const res = await getRegulationComputationsAndAlertNumber(api, userInfo.id);
     setRegulationComputationsByDay(res.regulationComputationsByDay);
-    setAlertsNumber(res.alertsNumber);
+    setAlertNumber(res.alertNumber);
   }, [userInfo]);
 
-  const TABS = getTabs(alertsNumber);
+  const TABS = getTabs(alertNumber);
 
   return [
     <Header key={1} disableMenu />,
@@ -217,7 +214,7 @@ export function UserRead() {
         key={1}
         tabs={TABS}
         groupedAlerts={groupedAlerts}
-        alertNumber={alertsNumber}
+        alertNumber={alertNumber}
         userInfo={userInfo}
         tokenInfo={tokenInfo}
         controlTime={controlTime}

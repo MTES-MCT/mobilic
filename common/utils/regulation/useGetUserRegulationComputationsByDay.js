@@ -15,7 +15,7 @@ const queryUserRegulationComputations = async (api, payload) => {
   return apiResponse;
 };
 
-export const getRegulationComputationsAndAlertsNumber = async (api, userId) => {
+export const getRegulationComputationsAndAlertNumber = async (api, userId) => {
   const apiResponse = await queryUserRegulationComputations(api, {
     userId,
     fromDate: isoFormatLocalDate(now() - DAY * DEFAULT_NB_DAYS_MISSIONS_HISTORY)
@@ -23,11 +23,11 @@ export const getRegulationComputationsAndAlertsNumber = async (api, userId) => {
 
   const { regulationComputationsByDay } = apiResponse?.data?.user;
 
-  let alertsNumber = 0;
+  let alertNumber = 0;
   if (regulationComputationsByDay) {
-    alertsNumber = computeNumberOfAlerts(regulationComputationsByDay);
+    alertNumber = computeNumberOfAlerts(regulationComputationsByDay);
   }
-  return { regulationComputationsByDay, alertsNumber };
+  return { regulationComputationsByDay, alertNumber };
 };
 
 export const useGetUserRegulationComputationsByDay = userId => {
@@ -42,7 +42,7 @@ export const useGetUserRegulationComputationsByDay = userId => {
   React.useEffect(() => {
     withLoadingScreen(async () => {
       await alerts.withApiErrorHandling(async () => {
-        const apiResponse = await getRegulationComputationsAndAlertsNumber(
+        const apiResponse = await getRegulationComputationsAndAlertNumber(
           api,
           userId
         );
