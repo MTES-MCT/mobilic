@@ -15,12 +15,12 @@ const videos = [
     title: "Mobilic, qu'est-ce que c'est ?",
     videoKey: "resources/videos/accueil/accueil-qu-est-ce-que-mobilic.mp4",
     posterKey:
-      "resources/videos/accueil/accueil-qu-est-ce-que-mobilic-preview.png"
+      "resources/videos/accueil/accueil-qu-est-ce-que-mobilic-preview.jpg"
   },
   {
     title: "Mobilic est-il conforme à la réglementation ?",
     videoKey: "resources/videos/accueil/accueil-reglementaire.mp4",
-    posterKey: "resources/videos/accueil/accueil-reglementaire-preview.png"
+    posterKey: "resources/videos/accueil/accueil-reglementaire-preview.jpg"
   }
 ];
 
