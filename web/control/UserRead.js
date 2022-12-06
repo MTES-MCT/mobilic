@@ -28,8 +28,7 @@ import { TextWithBadge } from "../common/TextWithBadge";
 import { UserReadAlerts } from "./components/UserReadAlerts";
 import { computeAlerts } from "common/utils/regulation/computeAlerts";
 import { getDaysBetweenTwoDates } from "common/utils/time";
-import { currentUserId } from "common/utils/cookie";
-import { useGetUserRegulationComputationsByDay } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
+import { getRegulationComputationsAndAlertsNumber } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
 
 export function getTabs(alertsNumber) {
   return [
@@ -79,8 +78,9 @@ export function UserRead() {
   const [workingDays, setWorkingDays] = React.useState(new Set([]));
   const [
     regulationComputationsByDay,
-    alertNumber
-  ] = useGetUserRegulationComputationsByDay(currentUserId());
+    setRegulationComputationsByDay
+  ] = React.useState([]);
+  const [alertsNumber, setAlertsNumber] = React.useState(0);
 
   const [error, setError] = React.useState("");
 
@@ -190,7 +190,19 @@ export function UserRead() {
     }
   }, [impersonatingUser]);
 
-  const TABS = getTabs(alertNumber);
+  React.useEffect(async () => {
+    if (!userInfo || !userInfo.id) {
+      return;
+    }
+    const res = await getRegulationComputationsAndAlertsNumber(
+      api,
+      userInfo.id
+    );
+    setRegulationComputationsByDay(res.regulationComputationsByDay);
+    setAlertsNumber(res.alertsNumber);
+  }, [userInfo]);
+
+  const TABS = getTabs(alertsNumber);
 
   return [
     <Header key={1} disableMenu />,
@@ -205,7 +217,7 @@ export function UserRead() {
         key={1}
         tabs={TABS}
         groupedAlerts={groupedAlerts}
-        alertNumber={alertNumber}
+        alertNumber={alertsNumber}
         userInfo={userInfo}
         tokenInfo={tokenInfo}
         controlTime={controlTime}

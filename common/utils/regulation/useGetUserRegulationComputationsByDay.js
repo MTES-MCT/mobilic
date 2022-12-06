@@ -7,6 +7,29 @@ import { DEFAULT_NB_DAYS_MISSIONS_HISTORY } from "../mission";
 import { DAY, isoFormatLocalDate, now } from "../time";
 import { computeNumberOfAlerts } from "./computeNumberOfAlerts";
 
+const queryUserRegulationComputations = async (api, payload) => {
+  const apiResponse = await api.graphQlQuery(
+    USER_READ_REGULATION_COMPUTATIONS_QUERY,
+    payload
+  );
+  return apiResponse;
+};
+
+export const getRegulationComputationsAndAlertsNumber = async (api, userId) => {
+  const apiResponse = await queryUserRegulationComputations(api, {
+    userId,
+    fromDate: isoFormatLocalDate(now() - DAY * DEFAULT_NB_DAYS_MISSIONS_HISTORY)
+  });
+
+  const { regulationComputationsByDay } = apiResponse?.data?.user;
+
+  let alertsNumber = 0;
+  if (regulationComputationsByDay) {
+    alertsNumber = computeNumberOfAlerts(regulationComputationsByDay);
+  }
+  return { regulationComputationsByDay, alertsNumber };
+};
+
 export const useGetUserRegulationComputationsByDay = userId => {
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
@@ -15,34 +38,24 @@ export const useGetUserRegulationComputationsByDay = userId => {
     regulationComputationsByDay,
     setRegulationComputationsByDay
   ] = React.useState([]);
+
   React.useEffect(() => {
     withLoadingScreen(async () => {
       await alerts.withApiErrorHandling(async () => {
-        const apiResponse = await api.graphQlQuery(
-          USER_READ_REGULATION_COMPUTATIONS_QUERY,
-          {
-            userId,
-            fromDate: isoFormatLocalDate(
-              now() - DAY * DEFAULT_NB_DAYS_MISSIONS_HISTORY
-            )
-          }
+        const apiResponse = await getRegulationComputationsAndAlertsNumber(
+          api,
+          userId
         );
-
-        setRegulationComputationsByDay(
-          apiResponse.data.user.regulationComputationsByDay
-        );
+        if (apiResponse.regulationComputationsByDay) {
+          setRegulationComputationsByDay(
+            apiResponse.regulationComputationsByDay
+          );
+        }
       });
     });
   }, []);
 
-  const alertNumber = React.useMemo(() => {
-    if (!regulationComputationsByDay) {
-      return 0;
-    }
-    return computeNumberOfAlerts(regulationComputationsByDay);
-  }, [regulationComputationsByDay]);
-
-  return [regulationComputationsByDay, alertNumber];
+  return regulationComputationsByDay;
 };
 
 export const useGetUserRegulationComputationsForDate = (

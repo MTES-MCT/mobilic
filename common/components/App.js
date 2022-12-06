@@ -37,7 +37,7 @@ function _App({ ScreenComponent, loadUser }) {
     if (!document.hidden) api.executePendingRequests();
   }, []);
 
-  const [regulationComputationsByDay] = useGetUserRegulationComputationsByDay(
+  const regulationComputationsByDay = useGetUserRegulationComputationsByDay(
     store.userId()
   );
 
