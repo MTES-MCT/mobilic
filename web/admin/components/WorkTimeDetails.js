@@ -268,16 +268,20 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
           </MissionInfoCard>
         </Grid>
       </Grid>
-      <Grid item xs={12}>
-        <MissionInfoCard
-          title="Seuils réglementaires"
-          loading={loadingRegulation}
-          className={classes.regulatoryAlertCard}
-        >
-          <div>Nouvelles alertes</div>
-          <DayRegulatoryAlerts regulationComputation={regulationComputation} />
-        </MissionInfoCard>
-      </Grid>
+      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
+        <Grid item xs={12}>
+          <MissionInfoCard
+            title="Seuils réglementaires"
+            loading={loadingRegulation}
+            className={classes.regulatoryAlertCard}
+          >
+            <div>Nouvelles alertes</div>
+            <DayRegulatoryAlerts
+              regulationComputation={regulationComputation}
+            />
+          </MissionInfoCard>
+        </Grid>
+      )}
       <Grid item xs={12}>
         <ExpendituresCard
           title="Frais de la journée"
