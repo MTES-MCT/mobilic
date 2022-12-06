@@ -130,9 +130,10 @@ export function MissionDetails({
 
   const onValidate = async () => {
     setLoading(true);
-    entriesToValidateByAdmin.map(workerEntryToValidate => {
-      missionActions.validateMission(workerEntryToValidate.user.id);
-    });
+    const usersToValidate = entriesToValidateByAdmin.map(
+      workerEntryToValidate => workerEntryToValidate.user.id
+    );
+    await missionActions.validateMission(usersToValidate);
     setLoading(false);
   };
 

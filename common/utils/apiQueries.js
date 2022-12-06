@@ -1353,7 +1353,7 @@ export const VALIDATE_MISSION_MUTATION = gql`
   ${FULL_MISSION_FRAGMENT}
   mutation validateMission(
     $missionId: Int!
-    $userId: Int
+    $usersIds: [Int]!
     $creationTime: TimeStamp
     $activityItems: [BulkActivityItem]
     $expendituresCancelIds: [Int]
@@ -1362,19 +1362,13 @@ export const VALIDATE_MISSION_MUTATION = gql`
     activities {
       validateMission(
         missionId: $missionId
-        userId: $userId
+        usersIds: $usersIds
         creationTime: $creationTime
         activityItems: $activityItems
         expendituresCancelIds: $expendituresCancelIds
         expendituresInputs: $expendituresInputs
       ) {
-        isAdmin
-        submitterId
-        receptionTime
-        userId
-        mission {
-          ...FullMissionData
-        }
+        ...FullMissionData
       }
     }
   }
