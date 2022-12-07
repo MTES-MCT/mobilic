@@ -2,6 +2,7 @@ import React from "react";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
 import { useModals } from "common/utils/modals";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 import { AddressField } from "../../common/AddressField";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -20,6 +21,7 @@ import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 export default function KnownAddressAdmin({ company }) {
   const api = useApi();
+  const alerts = useSnackbarAlerts();
   const adminStore = useAdminStore();
   const modals = useModals();
   const companyId = company ? company.id : null;
@@ -121,7 +123,7 @@ export default function KnownAddressAdmin({ company }) {
       }}
       validateRow={({ address }) => !!address}
       onRowAdd={async ({ address, alias }) => {
-        try {
+        await alerts.withApiErrorHandling(async () => {
           const apiResponse = await api.graphQlMutate(
             CREATE_KNOWN_ADDRESS_MUTATION,
             {
@@ -143,9 +145,7 @@ export default function KnownAddressAdmin({ company }) {
               ]
             }
           });
-        } catch (err) {
-          captureSentryException(err);
-        }
+        }, "create-known-address");
       }}
       onRowDelete={address =>
         modals.open("confirmation", {

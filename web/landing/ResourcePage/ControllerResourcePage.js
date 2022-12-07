@@ -32,7 +32,57 @@ export function ControllerResourcePage() {
           Je suis contrôleur
         </PaperContainerTitle>
         <Typography variant={"h3"} className={classes.resourceSubtitle}>
-          Je souhaite apprendre à utiliser Mobilic
+          Je suis contrôleur des transports terrestres et je souhaite apprendre
+          à utiliser Mobilic
+        </Typography>
+        <Grid container direction="row" alignItems="stretch" spacing={10}>
+          <Grid item sm={6}>
+            <Box>
+              <SlideshareCard
+                description="Notice d'utilisation"
+                slideshareUrl={
+                  RESOURCES_DOCUMENT.noticeUtilisation.controleurConnected
+                    .slideshare
+                }
+                downloadLink={
+                  RESOURCES_DOCUMENT.noticeUtilisation.controleurConnected
+                    .download
+                }
+              />
+            </Box>
+            <Button
+              color="primary"
+              size="small"
+              className={classes.viewAllButton}
+              variant={"outlined"}
+              href="https://drive.google.com/drive/folders/1b87UFjE7BL-nk-dQy_Seghs1gcgBB-A8"
+              target="_blank"
+            >
+              Voir toutes les notices
+            </Button>
+          </Grid>
+          <Grid item sm={6}>
+            <Box>
+              <VideoCard
+                description="Effectuer un contrôle en bord de route"
+                videoKey="resources/videos/controleurs/tuto-nouvelle-interface-controle-v4.mp4"
+              />
+            </Box>
+            <Button
+              color="primary"
+              size="small"
+              className={classes.viewAllButton}
+              variant={"outlined"}
+              href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos"
+              target="_blank"
+            >
+              Voir toutes les vidéos
+            </Button>
+          </Grid>
+        </Grid>
+        <Typography variant={"h3"} className={classes.itAgentResourceSubtitle}>
+          Je suis inspecteur du travail ou agent de police et je souhaite
+          apprendre à utiliser Mobilic
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={10}>
           <Grid item sm={6}>

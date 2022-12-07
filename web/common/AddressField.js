@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 
 const API_ADRESSE_MIN_SEARCHABLE_CHARACTER = 3;
 const isInputSearchable = input =>
-  input?.length >= API_ADRESSE_MIN_SEARCHABLE_CHARACTER;
+  input?.trim()?.length >= API_ADRESSE_MIN_SEARCHABLE_CHARACTER;
 
 const fetchPlaces = throttle((input, currentPosition = null, callback) => {
   let queryArgs = new URLSearchParams();
