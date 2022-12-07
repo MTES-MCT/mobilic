@@ -24,6 +24,10 @@ export const resourcePagesClasses = makeStyles(theme => ({
   resourceSubtitle: {
     marginBottom: theme.spacing(3)
   },
+  itAgentResourceSubtitle: {
+    marginTop: theme.spacing(8),
+    marginBottom: theme.spacing(3)
+  },
   viewAllButton: {
     float: "right",
     marginTop: theme.spacing(2)
