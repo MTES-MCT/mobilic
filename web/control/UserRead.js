@@ -28,8 +28,9 @@ import { TextWithBadge } from "../common/TextWithBadge";
 import { UserReadAlerts } from "./components/UserReadAlerts";
 import { computeAlerts } from "common/utils/regulation/computeAlerts";
 import { getDaysBetweenTwoDates } from "common/utils/time";
+import { getRegulationComputationsAndAlertNumber } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
 
-export function getTabs(alertsNumber) {
+export function getTabs(alertNumber) {
   return [
     {
       name: "info",
@@ -41,8 +42,8 @@ export function getTabs(alertsNumber) {
       name: "alerts",
       label: (
         <TextWithBadge
-          badgeContent={alertsNumber || 0}
-          color={alertsNumber ? "error" : "success"}
+          badgeContent={alertNumber || 0}
+          color={alertNumber ? "error" : "success"}
         >
           Alertes
         </TextWithBadge>
@@ -75,6 +76,11 @@ export function UserRead() {
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
   const [groupedAlerts, setGroupedAlerts] = React.useState([]);
   const [workingDays, setWorkingDays] = React.useState(new Set([]));
+  const [
+    regulationComputationsByDay,
+    setRegulationComputationsByDay
+  ] = React.useState([]);
+  const [alertNumber, setAlertNumber] = React.useState(0);
 
   const [error, setError] = React.useState("");
 
@@ -184,11 +190,26 @@ export function UserRead() {
     }
   }, [impersonatingUser]);
 
-  const alertNumber = groupedAlerts.reduce(
+  React.useEffect(async () => {
+    if (!userInfo || !userInfo.id) {
+      return;
+    }
+    const res = await getRegulationComputationsAndAlertNumber(api, userInfo.id);
+    setRegulationComputationsByDay(res.regulationComputationsByDay);
+    setAlertNumber(res.alertNumber);
+  }, [userInfo]);
+
+  const legacyAlertNumber = groupedAlerts.reduce(
     (acc, group) => acc + group.alerts.length,
     0
   );
-  const TABS = getTabs(alertNumber);
+
+  const usedAlertNumber =
+    process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1"
+      ? alertNumber
+      : legacyAlertNumber;
+
+  const TABS = getTabs(usedAlertNumber);
 
   return [
     <Header key={1} disableMenu />,
@@ -203,7 +224,7 @@ export function UserRead() {
         key={1}
         tabs={TABS}
         groupedAlerts={groupedAlerts}
-        alertNumber={alertNumber}
+        alertNumber={usedAlertNumber}
         userInfo={userInfo}
         tokenInfo={tokenInfo}
         controlTime={controlTime}
@@ -214,6 +235,7 @@ export function UserRead() {
         periodOnFocus={periodOnFocus}
         setPeriodOnFocus={setPeriodOnFocus}
         workingDaysNumber={workingDays.size}
+        regulationComputationsByDay={regulationComputationsByDay}
       />
     ) : null
   ];

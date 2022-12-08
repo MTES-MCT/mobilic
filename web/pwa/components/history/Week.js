@@ -55,17 +55,19 @@ export function Week({
           )}
         />
       </InfoCard>
-      <InfoCard className={infoCardStyles.topMargin}>
-        {regulationComputation ? (
-          regulationComputation.regulationChecks
-            ?.filter(
-              regulationCheck => regulationCheck.unit === PERIOD_UNITS.WEEK
-            )
-            .map(regulationCheck => renderRegulationCheck(regulationCheck))
-        ) : (
-          <RegulatoryTextNotCalculatedYet />
-        )}
-      </InfoCard>
+      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
+        <InfoCard className={infoCardStyles.topMargin}>
+          {regulationComputation ? (
+            regulationComputation.regulationChecks
+              ?.filter(
+                regulationCheck => regulationCheck.unit === PERIOD_UNITS.WEEK
+              )
+              .map(regulationCheck => renderRegulationCheck(regulationCheck))
+          ) : (
+            <RegulatoryTextNotCalculatedYet />
+          )}
+        </InfoCard>
+      )}
       <InfoCard className={infoCardStyles.topMargin}>
         <MissionReviewSection
           title="Détail par mission"

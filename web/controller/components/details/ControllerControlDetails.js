@@ -24,6 +24,7 @@ export function ControllerControlDetails({ controlId, onClose }) {
   const [missions, setMissions] = React.useState([]);
   const [coworkers, setCoworkers] = React.useState([]);
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
+  const [legacyAlertNumber, setLegacyAlertNumber] = React.useState(0);
 
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
@@ -98,12 +99,23 @@ export function ControllerControlDetails({ controlId, onClose }) {
     }
   }, [controlData]);
 
+  React.useEffect(() => {
+    setLegacyAlertNumber(
+      groupedAlerts.reduce((acc, group) => acc + group.alerts.length, 0)
+    );
+  }, [groupedAlerts]);
+
   const alertNumber = React.useMemo(() => {
     if (!controlData || !controlData.regulationComputationsByDay) {
       return 0;
     }
     return computeNumberOfAlerts(controlData.regulationComputationsByDay);
   }, [controlData]);
+
+  const usedAlertNumber =
+    process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1"
+      ? alertNumber
+      : legacyAlertNumber;
 
   return [
     <ControllerControlHeader
@@ -114,10 +126,10 @@ export function ControllerControlDetails({ controlId, onClose }) {
     />,
     <UserReadTabs
       key={1}
-      tabs={getTabs(alertNumber)}
+      tabs={getTabs(usedAlertNumber)}
       regulationComputationsByDay={controlData.regulationComputationsByDay}
       groupedAlerts={groupedAlerts} // TODO to remove <<<
-      alertNumber={alertNumber}
+      alertNumber={usedAlertNumber}
       userInfo={controlData.user}
       tokenInfo={legacyTokenInfo}
       controlTime={controlData.qrCodeGenerationTime}

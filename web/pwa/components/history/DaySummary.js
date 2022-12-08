@@ -50,9 +50,14 @@ export function DaySummary({
           <ItalicWarningTypography>Mission en cours !</ItalicWarningTypography>
         )}
       </InfoCard>
-      <InfoCard loading={loading} className={infoCardStyles.topMargin}>
-        <DayRegulatoryAlerts regulationComputation={regulationComputation} />
-      </InfoCard>
+      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
+        <InfoCard
+          loading={loading || !regulationComputation}
+          className={infoCardStyles.topMargin}
+        >
+          <DayRegulatoryAlerts regulationComputation={regulationComputation} />
+        </InfoCard>
+      )}
       <InfoCard className={infoCardStyles.topMargin}>
         <MissionReviewSection
           title="Activités de la journée"

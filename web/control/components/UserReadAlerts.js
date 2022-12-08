@@ -60,24 +60,29 @@ export function UserReadAlerts({
           Il n'y a aucune alerte réglementaire sur la période
         </Typography>
       )}
-      <Divider className={`hr-unstyled ${classes.divider}`} />
-      {newVersionGroupedAlerts.length > 0 ? (
-        <List>
-          {newVersionGroupedAlerts.map(group => (
-            <ListItem key={group.infringementLabel} disableGutters>
-              <AlertGroup
-                {...group}
-                setPeriodOnFocus={setPeriodOnFocus}
-                setTab={setTab}
-              />
-            </ListItem>
-          ))}
-        </List>
-      ) : (
-        <Typography className={classes.italicInfo}>
-          Il n'y a aucune alerte réglementaire sur la période
-        </Typography>
+      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
+        <>
+          <Divider className={`hr-unstyled ${classes.divider}`} />
+          {newVersionGroupedAlerts.length > 0 ? (
+            <List>
+              {newVersionGroupedAlerts.map(group => (
+                <ListItem key={group.infringementLabel} disableGutters>
+                  <AlertGroup
+                    {...group}
+                    setPeriodOnFocus={setPeriodOnFocus}
+                    setTab={setTab}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <Typography className={classes.italicInfo}>
+              Il n'y a aucune alerte réglementaire sur la période
+            </Typography>
+          )}
+        </>
       )}
+
       <Divider className={`hr-unstyled ${classes.divider}`} />
       <Alert severity="warning">
         <Typography gutterBottom>
