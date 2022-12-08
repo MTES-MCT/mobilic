@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
   agentConnectLink: {
     whiteSpace: "nowrap"
   },
-  agentConnecAlert: {
+  agentConnectAlert: {
     textAlign: "left"
   },
   underlineBlue: {
@@ -143,7 +143,7 @@ export function IntroSection() {
   return (
     <Container maxWidth={false} className={classes.heroContainer}>
       {process.env.REACT_APP_SHOW_CONTROLLER_APP === "1" && (
-        <Alert severity="info" className={classes.agentConnecAlert}>
+        <Alert severity="info" className={classes.agentConnectAlert}>
           Accès Agent Public :{" "}
           <Link variant="login controleur" to="/controller-login">
             <span className={classes.agentConnectLink}>
