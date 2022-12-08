@@ -10,6 +10,7 @@ import { captureSentryException } from "common/utils/sentry";
 import { removeParamsFromQueryString } from "./FranceConnectCallback";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { useHistory } from "react-router-dom";
+import { Link } from "../common/LinkButton";
 
 export function AgentConnectCallback() {
   const api = useApi();
@@ -19,6 +20,7 @@ export function AgentConnectCallback() {
   const history = useHistory();
 
   const [error, setError] = React.useState("");
+  const MESSAGE_WHEN_USER_ABORT_CONNEXION = "User auth aborted";
 
   async function retrieveAgentConnectInfo(code, callbackURL, state) {
     await withLoadingScreen(async () => {
@@ -54,6 +56,7 @@ export function AgentConnectCallback() {
     const queryString = new URLSearchParams(window.location.search);
     const code = queryString.get("code");
     const state = queryString.get("state");
+    const errorDescription = queryString.get("error_description");
     const newQS = removeParamsFromQueryString(window.location.search, [
       "code",
       "state"
@@ -64,8 +67,17 @@ export function AgentConnectCallback() {
       (newQS.length > 0 ? `?${newQS}` : "");
     if (code) {
       retrieveAgentConnectInfo(code, callBackUrl, state);
-    } else setError("Paramètres invalides");
+    } else if (errorDescription === MESSAGE_WHEN_USER_ABORT_CONNEXION) {
+      history.push("/");
+    } else {
+      setError("Paramètres invalides");
+    }
   }, []);
 
-  return error ? <Typography color="error">{error}</Typography> : null;
+  return error ? (
+    <>
+      <Typography color="error">{error}</Typography>
+      <Link href={window.location.origin}>Retourner à la page d'accueil</Link>
+    </>
+  ) : null;
 }
