@@ -8,7 +8,8 @@ export function UserReadHistory({
   vehicles,
   userInfo,
   periodOnFocus,
-  controlId
+  controlId,
+  regulationComputationsByDay
 }) {
   return (
     <History
@@ -22,6 +23,7 @@ export function UserReadHistory({
       userId={userInfo.id}
       openPeriod={periodOnFocus}
       controlId={controlId}
+      regulationComputationsByDay={regulationComputationsByDay}
     />
   );
 }

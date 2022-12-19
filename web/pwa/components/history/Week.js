@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   splitByLongBreaksAndComputePeriodStats,
   renderPeriodKpis,
@@ -14,6 +14,10 @@ import Link from "@mui/material/Link";
 import { prettyFormatDay } from "common/utils/time";
 import Divider from "@mui/material/Divider";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
+import { getLatestAlertComputationVersion } from "common/utils/regulation/alertVersions";
+import { RegulatoryTextNotCalculatedYet } from "../../../regulatory/RegulatoryText";
+import { renderRegulationCheck } from "../../../regulatory/RegulatoryAlertRender";
+import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 
 export function Week({
   missionsInPeriod,
@@ -21,10 +25,15 @@ export function Week({
   selectedPeriodStart,
   selectedPeriodEnd,
   handleMissionClick,
-  previousPeriodActivityEnd
+  previousPeriodActivityEnd,
+  regulationComputationsInPeriod
 }) {
   const infoCardStyles = useInfoCardStyles();
 
+  const regulationComputation = useMemo(
+    () => getLatestAlertComputationVersion(regulationComputationsInPeriod),
+    [regulationComputationsInPeriod]
+  );
   const stats = splitByLongBreaksAndComputePeriodStats(
     activitiesWithNextAndPreviousDay,
     selectedPeriodStart,
@@ -46,6 +55,19 @@ export function Week({
           )}
         />
       </InfoCard>
+      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
+        <InfoCard className={infoCardStyles.topMargin}>
+          {regulationComputation ? (
+            regulationComputation.regulationChecks
+              ?.filter(
+                regulationCheck => regulationCheck.unit === PERIOD_UNITS.WEEK
+              )
+              .map(regulationCheck => renderRegulationCheck(regulationCheck))
+          ) : (
+            <RegulatoryTextNotCalculatedYet />
+          )}
+        </InfoCard>
+      )}
       <InfoCard className={infoCardStyles.topMargin}>
         <MissionReviewSection
           title="Détail par mission"

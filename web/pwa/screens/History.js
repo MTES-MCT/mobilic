@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -7,7 +7,8 @@ import {
   SHORT_MONTHS,
   shortPrettyFormatDay,
   DAY,
-  WEEK
+  WEEK,
+  isoFormatLocalDate
 } from "common/utils/time";
 import { useGroupMissionsAndExtractActivities } from "common/utils/history/groupByPeriodUnit";
 import { makeStyles } from "@mui/styles";
@@ -159,7 +160,8 @@ export function History({
   userId = null,
   createMission = null,
   openPeriod = null,
-  controlId = null
+  controlId = null,
+  regulationComputationsByDay = []
 }) {
   const location = useLocation();
   const history = useHistory();
@@ -261,6 +263,16 @@ export function History({
     .unix(selectedPeriod)
     .add(tabs[currentTab].periodLength)
     .unix();
+
+  const regulationComputationsInPeriod = useMemo(() => {
+    if (!selectedPeriod) {
+      return [];
+    }
+    const periodElement = regulationComputationsByDay.find(
+      item => item.day === isoFormatLocalDate(selectedPeriod)
+    );
+    return periodElement ? periodElement.regulationComputations : [];
+  }, [selectedPeriod, regulationComputationsByDay]);
 
   return (
     <Container
@@ -400,6 +412,7 @@ export function History({
             selectedPeriodStart: selectedPeriod,
             selectedPeriodEnd,
             missionsInPeriod: missionsInSelectedPeriod,
+            regulationComputationsInPeriod,
             activitiesWithNextAndPreviousDay: filterActivitiesOverlappingPeriod(
               activities,
               selectedPeriod - DAY,

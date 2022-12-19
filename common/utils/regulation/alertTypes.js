@@ -2,6 +2,11 @@ import { RULE_RESPECT_STATUS } from "./rules";
 import { formatTimer, HOUR } from "../time";
 import { REGULATION_RULES } from "../../../web/landing/ResourcePage/RegulationRules";
 
+export const SubmitterType = {
+  EMPLOYEE: "employee",
+  ADMIN: "admin"
+};
+
 export const ALERT_TYPES = {
   minimumDailyRest: "minimumDailyRest",
   maximumWorkDayTime: "maximumWorkDayTime",
@@ -75,6 +80,36 @@ export const ALERT_TYPE_PROPS = {
     infringementLabel: "Non-respect(s) du repos hebdomadaire",
     description:
       "Il est interdit de travailler plus de six jours dans la semaine (article L. 3132-1 du code du travail). Le repos hebdomadaire doit durer au minimum 34h (article L. 3132-2 du code du travail)",
+    rule: REGULATION_RULES.weeklyRest
+  }
+};
+
+export const ALERT_TYPE_PROPS_SIMPLER = {
+  [ALERT_TYPES.minimumDailyRest]: {
+    successMessage: () => "Repos journalier respecté",
+    errorMessage: (_, label) => label,
+    rule: REGULATION_RULES.dailyRest
+  },
+  [ALERT_TYPES.maximumWorkDayTime]: {
+    successMessage: () => "Durée du travail quotidien respectée",
+    errorMessage: ({ max_time_in_hours }, label) =>
+      `${label} (${max_time_in_hours}h)`,
+    rule: REGULATION_RULES.dailyWork
+  },
+  [ALERT_TYPES.minimumWorkDayBreak]: {
+    successMessage: () => "Temps de pause respecté",
+    errorMessage: ({ min_time_in_minutes }, label) =>
+      `${label} (${min_time_in_minutes}m)`,
+    rule: REGULATION_RULES.dailyRest
+  },
+  [ALERT_TYPES.maximumUninterruptedWorkTime]: {
+    successMessage: () => "Durée maximale de travail ininterrompu respectée",
+    errorMessage: (_, label) => label,
+    rule: REGULATION_RULES.dailyRest
+  },
+  [ALERT_TYPES.maximumWorkedDaysInWeek]: {
+    successMessage: () => "Repos hebdomadaire respecté",
+    errorMessage: (_, label) => label,
     rule: REGULATION_RULES.weeklyRest
   }
 };
