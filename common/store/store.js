@@ -283,6 +283,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     this.nonPersistentState.pendingRequests = this.nonPersistentState.pendingRequests.filter(
       r => r.id !== request.id
     );
+    this.batchUpdate();
     if (this.allowOfflineMode)
       this.storage.setItem(
         "pendingRequests",
