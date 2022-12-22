@@ -19,7 +19,8 @@ export const LOCAL_STORAGE_SCHEMA = {
   comments: Map,
   missions: Map,
   expenditures: Map,
-  vehicles: Map
+  vehicles: Map,
+  regulationComputationsByDay: List
 };
 
 export const NON_PERSISTENT_SCHEMA = {
