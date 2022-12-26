@@ -7,7 +7,6 @@ import {
 } from "./RegulatoryText";
 
 export function WeekRegulatoryAlerts({ regulationComputation }) {
-  console.log(regulationComputation);
   return regulationComputation ? (
     <>
       <RegulatoryTextWeekBeforeAndAfter />
