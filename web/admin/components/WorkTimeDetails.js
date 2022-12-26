@@ -35,6 +35,7 @@ import { OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL } from "common/utils/matomoTags";
 import { DayRegulatoryAlerts } from "../../regulatory/DayRegulatoryAlerts";
 import { useGetUserRegulationComputationsForDate } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
 import { getLatestAlertComputationVersion } from "common/utils/regulation/alertVersions";
+import { WeekRegulatoryAlerts } from "../../regulatory/WeekRegulatoryAlerts";
 
 export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   const classes = useStyles();
@@ -275,10 +276,20 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
             loading={loadingRegulation}
             className={classes.regulatoryAlertCard}
           >
-            <div>Nouvelles alertes</div>
+            <div>Alertes quotidiennes</div>
             <DayRegulatoryAlerts
               regulationComputation={regulationComputation}
             />
+            {getStartOfWeek(workTimeEntry.periodStart) ===
+              workTimeEntry.periodStart && (
+              <>
+                <br></br>
+                <div>Alertes hebdomadaires</div>
+                <WeekRegulatoryAlerts
+                  regulationComputation={regulationComputation}
+                />
+              </>
+            )}
           </MissionInfoCard>
         </Grid>
       )}

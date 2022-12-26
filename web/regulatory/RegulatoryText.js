@@ -22,6 +22,17 @@ export function RegulatoryTextDayBeforeAndAfter() {
   );
 }
 
+export function RegulatoryTextWeekBeforeAndAfter() {
+  const classes = useStyles();
+
+  return (
+    <Typography className={classes.infoText} variant="body2">
+      Les seuils hebdomadaires prennent en compte le temps de travail de la
+      semaine complète.
+    </Typography>
+  );
+}
+
 export function RegulatoryTextNotCalculatedYet() {
   const classes = useStyles();
   return (
