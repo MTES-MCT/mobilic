@@ -92,14 +92,12 @@ export const ALERT_TYPE_PROPS_SIMPLER = {
   },
   [ALERT_TYPES.maximumWorkDayTime]: {
     successMessage: () => "Durée du travail quotidien respectée",
-    errorMessage: ({ max_time_in_hours }, label) =>
-      `${label} (${max_time_in_hours}h)`,
+    errorMessage: (_, label) => label,
     rule: REGULATION_RULES.dailyWork
   },
   [ALERT_TYPES.minimumWorkDayBreak]: {
     successMessage: () => "Temps de pause respecté",
-    errorMessage: ({ min_time_in_minutes }, label) =>
-      `${label} (${min_time_in_minutes}m)`,
+    errorMessage: (_, label) => label,
     rule: REGULATION_RULES.dailyRest
   },
   [ALERT_TYPES.maximumUninterruptedWorkTime]: {
