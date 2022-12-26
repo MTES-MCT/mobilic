@@ -61,13 +61,16 @@ export function formatTimerWithSeconds(timerDuration) {
   )}m${addZero(timerDuration % 60)}`;
 }
 
+const pluralize = (count, noun, suffix = "s") =>
+  `${count} ${noun}${count > 1 ? suffix : ""}`;
+
 export function formatLongTimer(timerDuration) {
   if (!timerDuration && timerDuration !== 0) return null;
   const timerDurationInMinutes = (timerDuration / 60) >> 0;
   const timerDurationInHours = (timerDurationInMinutes / 60) >> 0;
   return `${
-    timerDurationInHours ? timerDurationInHours + " heures" : ""
-  } ${timerDurationInMinutes % 60} minutes`;
+    timerDurationInHours ? pluralize(timerDurationInHours, "heure") : ""
+  } ${pluralize(timerDurationInMinutes % 60, "minute")}`;
 }
 
 export function formatWarningDurationTime(timerDurationInSeconds) {
@@ -75,11 +78,11 @@ export function formatWarningDurationTime(timerDurationInSeconds) {
   const timerDurationInMinutes = (timerDurationInSeconds / 60) >> 0;
   const timerDurationInHours = (timerDurationInMinutes / 60) >> 0;
   if (timerDurationInHours > 0) {
-    return `${timerDurationInHours} heures`;
+    return pluralize(timerDurationInHours, "heure");
   } else if (timerDurationInMinutes > 0) {
-    return `${timerDurationInMinutes} minutes`;
+    return pluralize(timerDurationInMinutes, "minute");
   }
-  return `${timerDurationInSeconds} secondes`;
+  return pluralize(timerDurationInSeconds, "seconde");
 }
 
 export function formatTimeOfDay(unixTimestamp) {
