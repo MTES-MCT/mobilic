@@ -573,7 +573,11 @@ export function Employees({ company, containerRef }) {
           variant="contained"
           size="small"
           color="primary"
-          onClick={() => pendingEmploymentsTableRef.current.newRow()}
+          onClick={() =>
+            pendingEmploymentsTableRef.current.newRow({
+              hasAdminRights: EMPLOYMENT_ROLE.employee
+            })
+          }
           className={classes.actionButton}
         >
           Inviter un nouveau salarié
