@@ -502,7 +502,9 @@ export function Employees({ company, containerRef }) {
         color="primary"
         onClick={() => {
           setHidePendingEmployments(false);
-          pendingEmploymentsTableRef.current.newRow();
+          pendingEmploymentsTableRef.current.newRow({
+            hasAdminRights: EMPLOYMENT_ROLE.employee
+          });
         }}
         className={classes.actionButton}
       >
