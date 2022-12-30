@@ -14,7 +14,6 @@ import EditPastMission from "../../web/pwa/components/EditPastMission";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import { sortActivities } from "../utils/activities";
-import { useGetUserRegulationComputationsByDay } from "../utils/regulation/useGetUserRegulationComputationsByDay";
 
 const useStyles = makeStyles(theme => ({
   appContainer: {
@@ -37,8 +36,8 @@ function _App({ ScreenComponent, loadUser }) {
     if (!document.hidden) api.executePendingRequests();
   }, []);
 
-  const regulationComputationsByDay = useGetUserRegulationComputationsByDay(
-    store.userId()
+  const regulationComputationsByDay = values(
+    store.getEntity("regulationComputationsByDay")
   );
 
   const activities = sortActivities(values(store.getEntity("activities")));

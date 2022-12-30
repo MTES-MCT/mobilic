@@ -7,15 +7,20 @@ import {
   ACTIVITIES_OPERATIONS,
   parseActivityPayloadFromBackend
 } from "./activities";
-import { parseMissionPayloadFromBackend } from "./mission";
+import {
+  DEFAULT_NB_DAYS_MISSIONS_HISTORY,
+  parseMissionPayloadFromBackend
+} from "./mission";
 import {
   formatNameInGqlError,
   graphQLErrorMatchesCode,
   isGraphQLError
 } from "./errors";
 import {
+  DAY,
   formatDay,
   formatTimeOfDay,
+  isoFormatLocalDate,
   now,
   nowMilliseconds,
   sameMinute,
@@ -43,6 +48,7 @@ import {
   LOG_LOCATION_MUTATION,
   REGISTER_KILOMETER_AT_LOCATION,
   UPDATE_MISSION_VEHICLE_MUTATION,
+  USER_READ_REGULATION_COMPUTATIONS_QUERY,
   VALIDATE_MISSION_MUTATION
 } from "./apiQueries";
 import { hasPendingUpdates } from "../store/offline";
@@ -303,6 +309,16 @@ class Actions {
             isActionDescriptionFemale: true
           });
         }
+      }
+    });
+
+    api.registerResponseHandler("updateRegulationComputations", {
+      onSuccess: async apiResponse => {
+        const regulationComputations =
+          apiResponse.data.user.regulationComputationsByDay;
+        this.store.setItems({
+          regulationComputationsByDay: regulationComputations
+        });
       }
     });
 
@@ -1232,6 +1248,19 @@ class Actions {
       updateStore,
       ["missions"],
       "validateMission"
+    );
+
+    await this.submitAction(
+      USER_READ_REGULATION_COMPUTATIONS_QUERY,
+      {
+        userId,
+        fromDate: isoFormatLocalDate(
+          now() - DAY * DEFAULT_NB_DAYS_MISSIONS_HISTORY
+        )
+      },
+      () => {},
+      [],
+      "updateRegulationComputations"
     );
   };
 
