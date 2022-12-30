@@ -57,8 +57,8 @@ export const useGetUserRegulationComputationsForDate = (
         setRegulationComputations(
           regulationComputationsByDay[0].regulationComputations
         );
-        setLoading(false);
       }
+      setLoading(false);
     });
   }, []);
 
