@@ -185,6 +185,7 @@ export function EmploymentInfoCard({
           {!hideActions && (
             <Grid item xs="12">
               <ThirdPartyEmploymentAccess
+                employmentId={employment.id}
                 clients={employment.authorizedClients}
               />
             </Grid>
