@@ -52,6 +52,10 @@ const USER_QUERY = gql`
         endDate
         isAcknowledged
         hasAdminRights
+        authorizedClients {
+          id
+          name
+        }
         company {
           id
           name

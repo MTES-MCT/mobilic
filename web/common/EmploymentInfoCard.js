@@ -28,6 +28,7 @@ import {
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
+import ThirdPartyEmploymentAccess from "./ThirdPartyEmploymentAccess";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
@@ -181,7 +182,15 @@ export function EmploymentInfoCard({
               />
             </Grid>
           )}
+          {!hideActions && (
+            <Grid item xs="12">
+              <ThirdPartyEmploymentAccess
+                clients={employment.authorizedClients}
+              />
+            </Grid>
+          )}
         </Grid>
+
         {!hideStatus && !hideActions && status === EMPLOYMENT_STATUS.ended && (
           <Alert severity="warning">
             L'entreprise a mis un terme à votre rattachement. Vous ne pouvez
