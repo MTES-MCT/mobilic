@@ -1525,6 +1525,15 @@ export const MISSION_QUERY = gql`
   }
 `;
 
+export const OAUTH_TOKEN_QUERY = gql`
+  query userOAuthToken($userId: Int!) {
+    oauthAccessTokens(userId: $userId) {
+      clientName
+      token
+    }
+  }
+`;
+
 export const DISABLE_WARNING_MUTATION = gql`
   mutation disableValidationWarning($warningName: WarningToDisableTypeEnum!) {
     account {
