@@ -41,7 +41,7 @@ class Api {
     this.refreshTokenQueue = new NonConcurrentExecutionQueue();
     this.nonConcurrentQueryQueue = new NonConcurrentExecutionQueue();
     this.isCurrentlySubmittingRequests = () =>
-      this.nonConcurrentQueryQueue.queue.length > 0;
+      this.nonConcurrentQueryQueue.queue?.length > 0;
     this.responseHandlers = {};
   }
 

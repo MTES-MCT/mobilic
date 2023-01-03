@@ -39,6 +39,8 @@ export default function ConfirmationModal({
           { context: { nonPublicApi: true } }
         );
       }
+    } catch {
+      // Do nothing, if this call fails, modal should be closed anyway
     } finally {
       await handleConfirm(...args);
     }
