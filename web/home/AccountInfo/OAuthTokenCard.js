@@ -9,19 +9,20 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import { InfoItem } from "../InfoField";
 import Button from "@mui/material/Button";
 import classNames from "classnames";
+import { REVOKE_OAUTH_TOKEN_MUTATION } from "common/utils/apiQueries";
+import { currentUserId } from "common/utils/cookie";
+import { useApi } from "common/utils/api";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 
 const useStyles = makeStyles(theme => ({
-  companyName: {
+  clientName: {
     fontWeight: "bold",
     overflowWrap: "anywhere"
   },
   buttonContainer: {
     padding: theme.spacing(2)
   },
-  ended: {
-    opacity: 0.5
-  },
-  employmentDetails: {
+  clientDetails: {
     display: "block"
   },
   tokenText: {
@@ -35,45 +36,28 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function OAuthTokenCard({ accessTokenInfo }) {
-  const [open, setOpen] = React.useState(false);
+export function OAuthTokenCard({ accessTokenInfo, setAccessTokens }) {
+  const [open, setOpen] = React.useState(accessTokenInfo?.open || false);
 
   const classes = useStyles();
 
-  // const api = useApi();
-  // const alerts = useSnackbarAlerts();
-  //
-  // const store = useStoreSyncedWithLocalStorage();
-  //
-  // async function handleEmploymentValidation(accept) {
-  //   await alerts.withApiErrorHandling(
-  //     async () => {
-  //       const apiResponse = await api.graphQlMutate(
-  //         accept ? VALIDATE_EMPLOYMENT_MUTATION : REJECT_EMPLOYMENT_MUTATION,
-  //         {
-  //           employmentId: employment.id
-  //         }
-  //       );
-  //       if (accept) {
-  //         await store.updateEntityObject({
-  //           objectId: employment.id,
-  //           entity: "employments",
-  //           update: apiResponse.data.employments.validateEmployment,
-  //           createOrReplace: true
-  //         });
-  //       } else await store.deleteEntityObject(employment.id, "employments");
-  //
-  //       store.batchUpdate();
-  //       await broadCastChannel.postMessage("update");
-  //     },
-  //     "validate-employment",
-  //     graphQLError => {
-  //       if (graphQLErrorMatchesCode(graphQLError, "INVALID_RESOURCE")) {
-  //         return "Opération impossible. Veuillez réessayer ultérieurement.";
-  //       }
-  //     }
-  //   );
-  // }
+  const api = useApi();
+  const alerts = useSnackbarAlerts();
+
+  const onRevokeToken = async tokenId => {
+    await alerts.withApiErrorHandling(async () => {
+      const apiResponse = await api.graphQlMutate(
+        REVOKE_OAUTH_TOKEN_MUTATION,
+        {
+          userId: currentUserId(),
+          tokenId: tokenId
+        },
+        { context: { nonPublicApi: true } }
+      );
+      setAccessTokens(apiResponse.data.revokeOauthToken);
+      alerts.success("La clé API a été supprimée avec succès", "", 6000);
+    });
+  };
 
   return (
     <Accordion
@@ -90,23 +74,25 @@ export function OAuthTokenCard({ accessTokenInfo }) {
           wrap="nowrap"
         >
           <Grid item>
-            <Typography className={classes.companyName}>
+            <Typography className={classes.clientName}>
               {accessTokenInfo.clientName}
             </Typography>
           </Grid>
         </Grid>
       </AccordionSummary>
-      <AccordionDetails className={classes.employmentDetails}>
+      <AccordionDetails className={classes.clientDetails}>
         <Grid container wrap="wrap">
-          <Grid item xs={12} sm={8}>
+          <Grid item xs={12} sm={8} mb={2}>
             <InfoItem name="CLÉ API" value={accessTokenInfo.token} />
           </Grid>
-          <Grid item xs={12} sm={4} className={classes.buttonAddKey}>
+          <Grid item xs={12} sm={4}>
             <Button
               size="small"
               color="primary"
               variant="outlined"
-              onClick={() => {}}
+              onClick={() => {
+                onRevokeToken(accessTokenInfo.id);
+              }}
               className={classes.actionButton}
             >
               Supprimer la clé

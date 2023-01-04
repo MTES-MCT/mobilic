@@ -1528,8 +1528,30 @@ export const MISSION_QUERY = gql`
 export const OAUTH_TOKEN_QUERY = gql`
   query userOAuthToken($userId: Int!) {
     oauthAccessTokens(userId: $userId) {
+      id
+      token
+      clientName
+    }
+  }
+`;
+
+export const CREATE_OAUTH_TOKEN_MUTATION = gql`
+  mutation createOauthToken($userId: Int!, $clientId: Int!) {
+    createOauthToken(userId: $userId, clientId: $clientId) {
+      id
+      token
+      clientName
+      clientId
+    }
+  }
+`;
+
+export const REVOKE_OAUTH_TOKEN_MUTATION = gql`
+  mutation revokeOauthToken($userId: Int!, $tokenId: Int!) {
+    revokeOauthToken(userId: $userId, tokenId: $tokenId) {
       clientName
       token
+      id
     }
   }
 `;
