@@ -97,7 +97,6 @@ const ThirdPartyEmploymentAccess = ({ employmentId, clients }) => {
           </Button>
         </div>
       ))}
-      {/* </div> */}
     </>
   );
 };
