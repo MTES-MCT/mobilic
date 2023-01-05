@@ -1696,3 +1696,11 @@ export const CHECK_AUTH_QUERY = gql`
     }
   }
 `;
+
+export const DISMISS_THIRD_PARTY_EMPLOYMENT_TOKEN_MUTATION = gql`
+  mutation dismissEmploymentToken($employmentId: Int!, $clientId: Int!) {
+    dismissEmploymentToken(employmentId: $employmentId, clientId: $clientId) {
+      success
+    }
+  }
+`;
