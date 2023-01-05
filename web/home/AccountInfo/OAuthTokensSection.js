@@ -43,6 +43,9 @@ const useStyles = makeStyles(theme => ({
   },
   addNewTokenExplanation: {
     fontSize: "0.875rem"
+  },
+  alreadyGeneratedKeysTitle: {
+    color: theme.palette.grey[600]
   }
 }));
 
@@ -72,25 +75,39 @@ export function OAuthTokenSection() {
   }, []);
 
   const onValidateNewClientId = async () => {
-    await alerts.withApiErrorHandling(async () => {
-      const apiResponse = await api.graphQlMutate(
-        CREATE_OAUTH_TOKEN_MUTATION,
-        {
-          userId: currentUserId(),
-          clientId: newClientId
-        },
-        { context: { nonPublicApi: true } }
-      );
-      const apiAccessTokens = apiResponse.data.createOauthToken;
-      const processedApiAccessTokens = apiAccessTokens.map(at =>
-        at.clientId?.toString() === newClientId ? { ...at, open: true } : at
-      );
-      setAccessTokens([]);
-      setAccessTokens(processedApiAccessTokens);
-      setNewClientId("");
-      setNewTokenSectionVisible(false);
-      alerts.success("La clé API a été ajoutée avec succès", "", 6000);
-    });
+    if (isNaN(newClientId)) {
+      alerts.error("La clé API renseignée n'est pas correcte", "", 6000);
+    } else {
+      await alerts.withApiErrorHandling(async () => {
+        const apiResponse = await api.graphQlMutate(
+          CREATE_OAUTH_TOKEN_MUTATION,
+          {
+            userId: currentUserId(),
+            clientId: newClientId
+          },
+          { context: { nonPublicApi: true } }
+        );
+        const apiAccessTokens = apiResponse.data.createOauthToken;
+        const processedApiAccessTokens = apiAccessTokens.map(at =>
+          at.clientId?.toString() === newClientId ? { ...at, open: true } : at
+        );
+        const newKeyCreated =
+          accessTokens?.length !== processedApiAccessTokens?.length;
+        setAccessTokens([]);
+        setAccessTokens(processedApiAccessTokens);
+        setNewClientId("");
+        setNewTokenSectionVisible(false);
+        if (newKeyCreated) {
+          alerts.success("La clé API a été ajoutée avec succès", "", 6000);
+        } else {
+          alerts.success(
+            "Une clé API valide existe déjà pour ce logiciel ",
+            "",
+            6000
+          );
+        }
+      });
+    }
   };
 
   return (
@@ -127,7 +144,7 @@ export function OAuthTokenSection() {
                 </Alert>
               </Grid>
               <Grid item xs={12}>
-                <Typography>client_ID</Typography>
+                <Typography>client_id</Typography>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -177,14 +194,25 @@ export function OAuthTokenSection() {
         {loadingAccessTokens ? (
           <Skeleton variant="rectangular" width="100%" height={100} />
         ) : (
-          accessTokens.map(at => (
-            <Grid item xs={12} key={at.token} mb={2}>
-              <OAuthTokenCard
-                accessTokenInfo={at}
-                setAccessTokens={setAccessTokens}
-              />
-            </Grid>
-          ))
+          <>
+            {accessTokens.length > 0 && (
+              <Typography
+                align="left"
+                className={classes.alreadyGeneratedKeysTitle}
+                variant="overline"
+              >
+                CLÉ(S) API GÉNÉRÉE(S)
+              </Typography>
+            )}
+            {accessTokens.map(at => (
+              <Grid item xs={12} key={at.token} mb={2}>
+                <OAuthTokenCard
+                  accessTokenInfo={at}
+                  setAccessTokens={setAccessTokens}
+                />
+              </Grid>
+            ))}
+          </>
         )}
       </Grid>
     </Box>

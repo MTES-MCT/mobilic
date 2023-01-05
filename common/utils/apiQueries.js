@@ -1547,8 +1547,8 @@ export const CREATE_OAUTH_TOKEN_MUTATION = gql`
 `;
 
 export const REVOKE_OAUTH_TOKEN_MUTATION = gql`
-  mutation revokeOauthToken($userId: Int!, $tokenId: Int!) {
-    revokeOauthToken(userId: $userId, tokenId: $tokenId) {
+  mutation revokeOauthToken($tokenId: Int!) {
+    revokeOauthToken(tokenId: $tokenId) {
       clientName
       token
       id

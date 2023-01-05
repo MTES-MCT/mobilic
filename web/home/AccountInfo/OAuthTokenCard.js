@@ -10,7 +10,6 @@ import { InfoItem } from "../InfoField";
 import Button from "@mui/material/Button";
 import classNames from "classnames";
 import { REVOKE_OAUTH_TOKEN_MUTATION } from "common/utils/apiQueries";
-import { currentUserId } from "common/utils/cookie";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 
@@ -49,7 +48,6 @@ export function OAuthTokenCard({ accessTokenInfo, setAccessTokens }) {
       const apiResponse = await api.graphQlMutate(
         REVOKE_OAUTH_TOKEN_MUTATION,
         {
-          userId: currentUserId(),
           tokenId: tokenId
         },
         { context: { nonPublicApi: true } }
