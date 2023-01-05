@@ -1525,6 +1525,37 @@ export const MISSION_QUERY = gql`
   }
 `;
 
+export const OAUTH_TOKEN_QUERY = gql`
+  query userOAuthToken($userId: Int!) {
+    oauthAccessTokens(userId: $userId) {
+      id
+      token
+      clientName
+    }
+  }
+`;
+
+export const CREATE_OAUTH_TOKEN_MUTATION = gql`
+  mutation createOauthToken($userId: Int!, $clientId: Int!) {
+    createOauthToken(userId: $userId, clientId: $clientId) {
+      id
+      token
+      clientName
+      clientId
+    }
+  }
+`;
+
+export const REVOKE_OAUTH_TOKEN_MUTATION = gql`
+  mutation revokeOauthToken($tokenId: Int!) {
+    revokeOauthToken(tokenId: $tokenId) {
+      clientName
+      token
+      id
+    }
+  }
+`;
+
 export const DISABLE_WARNING_MUTATION = gql`
   mutation disableValidationWarning($warningName: WarningToDisableTypeEnum!) {
     account {
