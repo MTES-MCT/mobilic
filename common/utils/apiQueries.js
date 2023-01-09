@@ -606,6 +606,19 @@ export const ADMIN_COMPANIES_LIST_QUERY = gql`
   }
 `;
 
+export const THIRD_PARTY_CLIENTS_COMPANY_QUERY = gql`
+  query thirdPartyClientsCompany($userId: Int!, $companyIds: [Int]) {
+    user(id: $userId) {
+      adminedCompanies(companyIds: $companyIds) {
+        authorizedClients {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
 export const ADMIN_COMPANIES_QUERY = gql`
   ${WORK_DAYS_DATA_FRAGMENT}
   ${COMPANY_SETTINGS_FRAGMENT}
@@ -1701,6 +1714,15 @@ export const DISMISS_THIRD_PARTY_EMPLOYMENT_TOKEN_MUTATION = gql`
   mutation dismissEmploymentToken($employmentId: Int!, $clientId: Int!) {
     dismissEmploymentToken(employmentId: $employmentId, clientId: $clientId) {
       success
+    }
+  }
+`;
+
+export const DISMISS_THIRD_PARTY_COMPANY_TOKEN_MUTATION = gql`
+  mutation dismissCompanyToken($companyId: Int!, $clientId: Int!) {
+    dismissCompanyToken(companyId: $companyId, clientId: $clientId) {
+      id
+      name
     }
   }
 `;

@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import VehicleAdmin from "./Vehicles";
 import KnownAddressAdmin from "./KnownAddresses";
 import SettingAdmin from "./Settings";
+import CompanyApiPanel from "./CompanyApiPanel";
 
 export const usePanelStyles = makeStyles(theme => ({
   navigation: {
@@ -79,6 +80,11 @@ const COMPANY_SUB_PANELS = [
     label: "Paramètres",
     view: "settings",
     component: props => <SettingAdmin {...props} />
+  },
+  {
+    label: "API",
+    view: "api",
+    component: props => <CompanyApiPanel {...props} />
   }
 ];
 
