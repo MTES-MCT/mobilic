@@ -1726,3 +1726,12 @@ export const DISMISS_THIRD_PARTY_COMPANY_TOKEN_MUTATION = gql`
     }
   }
 `;
+
+export const GENERATE_THIRD_PARTY_COMPANY_TOKEN_MUTATION = gql`
+  mutation generateCompanyToken($companyId: Int!, $clientId: Int!) {
+    generateCompanyToken(companyId: $companyId, clientId: $clientId) {
+      id
+      name
+    }
+  }
+`;

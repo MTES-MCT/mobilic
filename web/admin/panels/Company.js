@@ -57,6 +57,25 @@ export const usePanelStyles = makeStyles(theme => ({
   },
   knownAddressesTable: {
     marginRight: theme.spacing(10)
+  },
+  buttonAddToken: {
+    textAlign: "right"
+  },
+  addNewTokenSection: {
+    marginBottom: theme.spacing(4)
+  },
+  addNewTokenAlert: {
+    marginBottom: theme.spacing(2)
+  },
+  addNewTokenExplanation: {
+    fontSize: "0.875rem"
+  },
+  validateNewClientIdButton: {
+    marginRight: theme.spacing(2)
+  },
+  newClientIdField: {
+    paddingRight: theme.spacing(2),
+    marginBottom: theme.spacing(2)
   }
 }));
 
