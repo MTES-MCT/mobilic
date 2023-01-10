@@ -355,7 +355,7 @@ export const ROUTES = [
     ]
   },
   {
-    label: "Resources",
+    label: "Ressources",
     path: "",
     accessible: ({ controllerInfo }) => !!controllerInfo?.id,
     menuItemFilter: () => true,
