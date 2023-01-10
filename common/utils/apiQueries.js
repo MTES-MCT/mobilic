@@ -1735,3 +1735,12 @@ export const GENERATE_THIRD_PARTY_COMPANY_TOKEN_MUTATION = gql`
     }
   }
 `;
+
+export const OAUTH_CLIENT_QUERY = gql`
+  query oauthClient($clientId: Int!) {
+    oauthClient(clientId: $clientId) {
+      id
+      name
+    }
+  }
+`;

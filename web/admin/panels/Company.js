@@ -76,6 +76,9 @@ export const usePanelStyles = makeStyles(theme => ({
   newClientIdField: {
     paddingRight: theme.spacing(2),
     marginBottom: theme.spacing(2)
+  },
+  toggleButton: {
+    minWidth: theme.spacing(13)
   }
 }));
 
@@ -108,6 +111,7 @@ const COMPANY_SUB_PANELS = [
 ];
 
 function SubNavigationToggle({ view, setView }) {
+  const classes = usePanelStyles();
   return (
     <ToggleButtonGroup
       value={view}
@@ -118,7 +122,11 @@ function SubNavigationToggle({ view, setView }) {
       size="small"
     >
       {COMPANY_SUB_PANELS.map(panelInfos => (
-        <ToggleButton key={panelInfos.view} value={panelInfos.view}>
+        <ToggleButton
+          key={panelInfos.view}
+          value={panelInfos.view}
+          className={classes.toggleButton}
+        >
           {panelInfos.label}
         </ToggleButton>
       ))}

@@ -47,7 +47,7 @@ export default function ConfirmationModal({
   }
 
   return (
-    <Dialog onClose={handleClose} open={open}>
+    <Dialog onClose={handleClose} open={open} maxWidth={"md"}>
       <CustomDialogTitle
         title={title || "Confirmer"}
         handleClose={handleClose}
