@@ -110,7 +110,7 @@ export default function CompanyApiPanel({ company }) {
                 <ul>
                   <li>Rattacher des salariés à l'entreprise</li>
                   <li>
-                    effectuer des actions pour le compte de salariés (suite à
+                    Effectuer des actions pour le compte de salariés (suite à
                     leur confirmation d'autorisation d'accès)
                   </li>
                 </ul>
