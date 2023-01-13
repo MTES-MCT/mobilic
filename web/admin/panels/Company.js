@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import VehicleAdmin from "./Vehicles";
 import KnownAddressAdmin from "./KnownAddresses";
 import SettingAdmin from "./Settings";
+import CompanyApiPanel from "./CompanyApiPanel";
 
 export const usePanelStyles = makeStyles(theme => ({
   navigation: {
@@ -56,6 +57,28 @@ export const usePanelStyles = makeStyles(theme => ({
   },
   knownAddressesTable: {
     marginRight: theme.spacing(10)
+  },
+  buttonAddToken: {
+    textAlign: "right"
+  },
+  addNewTokenSection: {
+    marginBottom: theme.spacing(4)
+  },
+  addNewTokenAlert: {
+    marginBottom: theme.spacing(2)
+  },
+  addNewTokenExplanation: {
+    fontSize: "0.875rem"
+  },
+  validateNewClientIdButton: {
+    marginRight: theme.spacing(2)
+  },
+  newClientIdField: {
+    paddingRight: theme.spacing(2),
+    marginBottom: theme.spacing(2)
+  },
+  toggleButton: {
+    minWidth: theme.spacing(13)
   }
 }));
 
@@ -79,10 +102,16 @@ const COMPANY_SUB_PANELS = [
     label: "Paramètres",
     view: "settings",
     component: props => <SettingAdmin {...props} />
+  },
+  {
+    label: "API",
+    view: "api",
+    component: props => <CompanyApiPanel {...props} />
   }
 ];
 
 function SubNavigationToggle({ view, setView }) {
+  const classes = usePanelStyles();
   return (
     <ToggleButtonGroup
       value={view}
@@ -93,7 +122,11 @@ function SubNavigationToggle({ view, setView }) {
       size="small"
     >
       {COMPANY_SUB_PANELS.map(panelInfos => (
-        <ToggleButton key={panelInfos.view} value={panelInfos.view}>
+        <ToggleButton
+          key={panelInfos.view}
+          value={panelInfos.view}
+          className={classes.toggleButton}
+        >
           {panelInfos.label}
         </ToggleButton>
       ))}

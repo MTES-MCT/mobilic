@@ -63,7 +63,7 @@ export function OAuthTokenSection() {
 
   React.useEffect(async () => {
     setLoadingAccessTokens(true);
-    const apiResponse = await api.graphQlMutate(
+    const apiResponse = await api.graphQlQuery(
       OAUTH_TOKEN_QUERY,
       {
         userId: currentUserId()
@@ -76,7 +76,7 @@ export function OAuthTokenSection() {
 
   const onValidateNewClientId = async () => {
     if (isNaN(newClientId)) {
-      alerts.error("La clé API renseignée n'est pas correcte", "", 6000);
+      alerts.error("Le client id renseigné n'est pas correct", "", 6000);
     } else {
       await alerts.withApiErrorHandling(async () => {
         const apiResponse = await api.graphQlMutate(
@@ -100,7 +100,7 @@ export function OAuthTokenSection() {
         if (newKeyCreated) {
           alerts.success("La clé API a été ajoutée avec succès", "", 6000);
         } else {
-          alerts.success(
+          alerts.info(
             "Une clé API valide existe déjà pour ce logiciel ",
             "",
             6000
