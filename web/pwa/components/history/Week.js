@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import {
-  splitByLongBreaksAndComputePeriodStats,
   renderPeriodKpis,
+  splitByLongBreaksAndComputePeriodStats,
   WorkTimeSummaryKpiGrid
 } from "../WorkTimeSummary";
 import { RegulationCheck } from "../RegulationCheck";
@@ -11,13 +11,11 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Link from "@mui/material/Link";
-import { prettyFormatDay } from "common/utils/time";
+import { isoFormatLocalDate, prettyFormatDay } from "common/utils/time";
 import Divider from "@mui/material/Divider";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { getLatestAlertComputationVersion } from "common/utils/regulation/alertVersions";
-import { RegulatoryTextNotCalculatedYet } from "../../../regulatory/RegulatoryText";
-import { renderRegulationCheck } from "../../../regulatory/RegulatoryAlertRender";
-import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
+import { WeekRegulatoryAlerts } from "../../../regulatory/WeekRegulatoryAlerts";
 
 export function Week({
   missionsInPeriod,
@@ -26,7 +24,9 @@ export function Week({
   selectedPeriodEnd,
   handleMissionClick,
   previousPeriodActivityEnd,
-  regulationComputationsInPeriod
+  regulationComputationsInPeriod,
+  userId,
+  controlId
 }) {
   const infoCardStyles = useInfoCardStyles();
 
@@ -57,15 +57,14 @@ export function Week({
       </InfoCard>
       {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
         <InfoCard className={infoCardStyles.topMargin}>
-          {regulationComputation ? (
-            regulationComputation.regulationChecks
-              ?.filter(
-                regulationCheck => regulationCheck.unit === PERIOD_UNITS.WEEK
-              )
-              .map(regulationCheck => renderRegulationCheck(regulationCheck))
-          ) : (
-            <RegulatoryTextNotCalculatedYet />
-          )}
+          <WeekRegulatoryAlerts
+            userId={userId}
+            day={isoFormatLocalDate(selectedPeriodStart)}
+            prefetchedRegulationComputation={
+              controlId ? regulationComputation : null
+            }
+            shouldFetchRegulationComputation={!controlId}
+          />
         </InfoCard>
       )}
       <InfoCard className={infoCardStyles.topMargin}>

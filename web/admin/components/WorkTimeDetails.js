@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { AugmentedTable } from "./AugmentedTable";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -33,8 +33,6 @@ import { ActivitiesCard } from "./ActivitiesCard";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL } from "common/utils/matomoTags";
 import { DayRegulatoryAlerts } from "../../regulatory/DayRegulatoryAlerts";
-import { useGetUserRegulationComputationsForDate } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
-import { getLatestAlertComputationVersion } from "common/utils/regulation/alertVersions";
 import { WeekRegulatoryAlerts } from "../../regulatory/WeekRegulatoryAlerts";
 
 export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
@@ -45,19 +43,8 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   const [activitiesOver3Days, setActivitiesOver3Days] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
-  const [loadingRegulation, setLoadingRegulation] = React.useState(false);
   const { trackEvent } = useMatomo();
 
-  const regulationComputations = useGetUserRegulationComputationsForDate(
-    workTimeEntry.user.id,
-    isoFormatLocalDate(workTimeEntry.periodActualStart),
-    setLoadingRegulation
-  );
-  const regulationComputation = useMemo(
-    () => getLatestAlertComputationVersion(regulationComputations),
-
-    [regulationComputations]
-  );
   const periodEnd = new Date(workTimeEntry.periodStart * 1000 + DAY * 1000);
 
   const nameMissionCol = {
@@ -273,12 +260,12 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
         <Grid item xs={12}>
           <MissionInfoCard
             title="Seuils réglementaires"
-            loading={loadingRegulation}
             className={classes.regulatoryAlertCard}
           >
             <div>Alertes quotidiennes</div>
             <DayRegulatoryAlerts
-              regulationComputation={regulationComputation}
+              userId={workTimeEntry.user.id}
+              day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
             />
             {getStartOfWeek(workTimeEntry.periodStart) ===
               workTimeEntry.periodStart && (
@@ -286,7 +273,8 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
                 <br></br>
                 <div>Alertes hebdomadaires</div>
                 <WeekRegulatoryAlerts
-                  regulationComputation={regulationComputation}
+                  userId={workTimeEntry.user.id}
+                  day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
                 />
               </>
             )}

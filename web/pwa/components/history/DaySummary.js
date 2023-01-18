@@ -8,7 +8,7 @@ import { ItalicWarningTypography } from "./ItalicWarningTypography";
 import { MissionReviewSection } from "../MissionReviewSection";
 import { ActivityList } from "../ActivityList";
 import React from "react";
-import { DAY } from "common/utils/time";
+import { DAY, isoFormatLocalDate } from "common/utils/time";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { DayRegulatoryAlerts } from "../../../regulatory/DayRegulatoryAlerts";
 
@@ -17,8 +17,11 @@ export function DaySummary({
   activitiesWithNextAndPreviousDay,
   weekActivities,
   dayStart,
-  regulationComputation,
-  loading = false
+  userId,
+  loading = false,
+  shouldDisplayInitialEmployeeVersion = false,
+  prefetchedRegulationComputation = null,
+  shouldFetchRegulationComputation = true
 }) {
   const dayEnd = dayStart + DAY;
   const infoCardStyles = useInfoCardStyles();
@@ -51,8 +54,16 @@ export function DaySummary({
         )}
       </InfoCard>
       {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
-        <InfoCard loading={loading} className={infoCardStyles.topMargin}>
-          <DayRegulatoryAlerts regulationComputation={regulationComputation} />
+        <InfoCard className={infoCardStyles.topMargin}>
+          <DayRegulatoryAlerts
+            day={isoFormatLocalDate(dayStart)}
+            userId={userId}
+            shouldDisplayInitialEmployeeVersion={
+              shouldDisplayInitialEmployeeVersion
+            }
+            prefetchedRegulationComputation={prefetchedRegulationComputation}
+            shouldFetchRegulationComputation={shouldFetchRegulationComputation}
+          />
         </InfoCard>
       )}
       <InfoCard className={infoCardStyles.topMargin}>
