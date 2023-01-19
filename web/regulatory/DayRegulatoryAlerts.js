@@ -1,20 +1,20 @@
 import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 import React from "react";
-import { renderRegulationCheck } from "./RegulatoryAlertRender";
-import {
-  RegulatoryTextDayBeforeAndAfter,
-  RegulatoryTextNotCalculatedYet
-} from "./RegulatoryText";
+import { GenericRegulatoryAlerts } from "./GenericRegulatoryAlerts";
 
-export function DayRegulatoryAlerts({ regulationComputation }) {
-  return regulationComputation ? (
-    <>
-      <RegulatoryTextDayBeforeAndAfter />
-      {regulationComputation.regulationChecks
-        ?.filter(regulationCheck => regulationCheck.unit === PERIOD_UNITS.DAY)
-        .map(regulationCheck => renderRegulationCheck(regulationCheck))}
-    </>
-  ) : (
-    <RegulatoryTextNotCalculatedYet />
+export function DayRegulatoryAlerts({
+  userId,
+  day,
+  prefetchedRegulationComputation,
+  shouldDisplayInitialEmployeeVersion = false
+}) {
+  return (
+    <GenericRegulatoryAlerts
+      userId={userId}
+      day={day}
+      shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
+      prefetchedRegulationComputation={prefetchedRegulationComputation}
+      regulationCheckUnit={PERIOD_UNITS.DAY}
+    />
   );
 }

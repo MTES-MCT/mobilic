@@ -15,6 +15,7 @@ import {
   getAlertComputationVersion,
   getLatestAlertComputationVersion
 } from "common/utils/regulation/alertVersions";
+import { currentControllerId } from "common/utils/cookie";
 
 export const useStyles = makeStyles(theme => ({
   contradictorySwitch: {
@@ -84,29 +85,31 @@ export function Day({
   ];
 
   React.useEffect(() => {
-    if (
-      !canDisplayContradictoryVersions ||
-      contradictoryComputationError ||
-      (hasComputedContradictory && contradictoryIsEmpty)
-    ) {
-      // No contradictory => use latest version
-      setRegulationComputationToUse(
-        getLatestAlertComputationVersion(regulationComputationsInPeriod)
-      );
-    } else if (shouldDisplayInitialEmployeeVersion) {
-      setRegulationComputationToUse(
-        getAlertComputationVersion(
-          regulationComputationsInPeriod,
-          SubmitterType.EMPLOYEE
-        )
-      );
-    } else {
-      setRegulationComputationToUse(
-        getAlertComputationVersion(
-          regulationComputationsInPeriod,
-          SubmitterType.ADMIN
-        )
-      );
+    if (controlId) {
+      if (
+        !canDisplayContradictoryVersions ||
+        contradictoryComputationError ||
+        (hasComputedContradictory && contradictoryIsEmpty)
+      ) {
+        // No contradictory => use latest version
+        setRegulationComputationToUse(
+          getLatestAlertComputationVersion(regulationComputationsInPeriod)
+        );
+      } else if (shouldDisplayInitialEmployeeVersion) {
+        setRegulationComputationToUse(
+          getAlertComputationVersion(
+            regulationComputationsInPeriod,
+            SubmitterType.EMPLOYEE
+          )
+        );
+      } else {
+        setRegulationComputationToUse(
+          getAlertComputationVersion(
+            regulationComputationsInPeriod,
+            SubmitterType.ADMIN
+          )
+        );
+      }
     }
   }, [
     regulationComputationsInPeriod,
@@ -142,8 +145,14 @@ export function Day({
         isDayEnded={true}
         dayStart={selectedPeriodStart}
         weekActivities={weekActivities}
-        regulationComputation={regulationComputationToUse}
+        prefetchedRegulationComputation={
+          currentControllerId() ? regulationComputationToUse : null
+        }
         loading={loadingEmployeeVersion}
+        userId={userId}
+        shouldDisplayInitialEmployeeVersion={
+          shouldDisplayInitialEmployeeVersion
+        }
       />
       <InfoCard className={infoCardStyles.topMargin}>
         <MissionReviewSection

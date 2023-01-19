@@ -5,11 +5,10 @@ import {
   DEFAULT_NB_FIRST_MISSIONS,
   parseMissionPayloadFromBackend
 } from "./mission";
-import { DAY, isoFormatLocalDate, now } from "./time";
+import { DAY, now } from "./time";
 import {
   COMPANY_SETTINGS_FRAGMENT,
-  FULL_MISSION_FRAGMENT,
-  REGULATION_COMPUTATIONS_FRAGMENT
+  FULL_MISSION_FRAGMENT
 } from "./apiFragments";
 import { gql } from "graphql-tag";
 import { captureSentryException } from "./sentry";
@@ -21,14 +20,7 @@ import { CURRENT_MISSION_INFO } from "./apiQueries";
 const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FULL_MISSION_FRAGMENT}
-  ${REGULATION_COMPUTATIONS_FRAGMENT}
-  query user(
-    $id: Int!
-    $activityAfter: TimeStamp
-    $nbFirstMissions: Int!
-    $regulationsFromDate: Date
-    $regulationsToDate: Date
-  ) {
+  query user($id: Int!, $activityAfter: TimeStamp, $nbFirstMissions: Int!) {
     user(id: $id) {
       id
       firstName
@@ -95,12 +87,6 @@ const USER_QUERY = gql`
           }
         }
       }
-      regulationComputationsByDay(
-        fromDate: $regulationsFromDate
-        toDate: $regulationsToDate
-      ) {
-        ...RegulationComputations
-      }
     }
   }
 `;
@@ -114,10 +100,7 @@ export async function loadUserData(api, store, alerts) {
       {
         id: userId,
         activityAfter: now() - DAY * DEFAULT_NB_DAYS_MISSIONS_HISTORY,
-        nbFirstMissions: DEFAULT_NB_FIRST_MISSIONS,
-        regulationsFromDate: isoFormatLocalDate(
-          now() - DAY * DEFAULT_NB_DAYS_MISSIONS_HISTORY
-        )
+        nbFirstMissions: DEFAULT_NB_FIRST_MISSIONS
       },
       { context: { timeout: 12000 } }
     );
@@ -138,8 +121,7 @@ export async function syncUser(userPayload, api, store) {
     disabledWarnings,
     missions: missionsPayload,
     employments,
-    currentEmployments,
-    regulationComputationsByDay
+    currentEmployments
   } = userPayload;
 
   const activities = [];
@@ -252,9 +234,6 @@ export async function syncUser(userPayload, api, store) {
     syncActions.push(
       store.syncEntity(flatten(values(employmentsPerCompanyId)), "employments")
     );
-  syncActions.push(
-    store.syncEntity(regulationComputationsByDay, "regulationComputationsByDay")
-  );
   store.batchUpdate();
   await Promise.all(syncActions);
 }
