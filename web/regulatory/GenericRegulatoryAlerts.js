@@ -1,6 +1,10 @@
 import React from "react";
 import { renderRegulationCheck } from "./RegulatoryAlertRender";
-import { RegulatoryTextNotCalculatedYet } from "./RegulatoryText";
+import {
+  RegulatoryTextDayBeforeAndAfter,
+  RegulatoryTextNotCalculatedYet,
+  RegulatoryTextWeekBeforeAndAfter
+} from "./RegulatoryText";
 import { USER_READ_REGULATION_COMPUTATIONS_QUERY } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../common/Snackbar";
@@ -10,15 +14,15 @@ import {
   getLatestAlertComputationVersion
 } from "common/utils/regulation/alertVersions";
 import { SubmitterType } from "common/utils/regulation/alertTypes";
+import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
+import { currentControllerId } from "common/utils/cookie";
 
 export function GenericRegulatoryAlerts({
   userId,
   day,
   prefetchedRegulationComputation,
   regulationCheckUnit,
-  shouldDisplayInitialEmployeeVersion = false,
-  shouldFetchRegulationComputation = true,
-  explanationTextComponent
+  shouldDisplayInitialEmployeeVersion = false
 }) {
   const [regulationComputations, setRegulationComputations] = React.useState(
     []
@@ -30,7 +34,7 @@ export function GenericRegulatoryAlerts({
 
   React.useEffect(async () => {
     setLoading(true);
-    if (!shouldFetchRegulationComputation) {
+    if (currentControllerId()) {
       setRegulationComputations(prefetchedRegulationComputation);
     } else {
       await alerts.withApiErrorHandling(async () => {
@@ -71,18 +75,26 @@ export function GenericRegulatoryAlerts({
     shouldDisplayInitialEmployeeVersion
   ]);
 
-  return loading ? (
-    <Skeleton variant="rectangular" width="100%" height={300} />
-  ) : regulationComputations ? (
+  return (
     <>
-      {explanationTextComponent}
-      {regulationComputations.regulationChecks
-        ?.filter(
-          regulationCheck => regulationCheck.unit === regulationCheckUnit
-        )
-        .map(regulationCheck => renderRegulationCheck(regulationCheck))}
+      {loading && <Skeleton variant="rectangular" width="100%" height={300} />}
+      {!loading && regulationComputations && (
+        <>
+          {regulationCheckUnit === PERIOD_UNITS.DAY ? (
+            <RegulatoryTextDayBeforeAndAfter />
+          ) : (
+            <RegulatoryTextWeekBeforeAndAfter />
+          )}
+          {regulationComputations.regulationChecks
+            ?.filter(
+              regulationCheck => regulationCheck.unit === regulationCheckUnit
+            )
+            .map(regulationCheck => renderRegulationCheck(regulationCheck))}
+        </>
+      )}
+      {!loading && !regulationComputations && (
+        <RegulatoryTextNotCalculatedYet />
+      )}
     </>
-  ) : (
-    <RegulatoryTextNotCalculatedYet />
   );
 }

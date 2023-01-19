@@ -16,6 +16,7 @@ import Divider from "@mui/material/Divider";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { getLatestAlertComputationVersion } from "common/utils/regulation/alertVersions";
 import { WeekRegulatoryAlerts } from "../../../regulatory/WeekRegulatoryAlerts";
+import { currentControllerId } from "common/utils/cookie";
 
 export function Week({
   missionsInPeriod,
@@ -61,9 +62,8 @@ export function Week({
             userId={userId}
             day={isoFormatLocalDate(selectedPeriodStart)}
             prefetchedRegulationComputation={
-              controlId ? regulationComputation : null
+              currentControllerId() ? regulationComputation : null
             }
-            shouldFetchRegulationComputation={!controlId}
           />
         </InfoCard>
       )}

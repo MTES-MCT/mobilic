@@ -15,6 +15,7 @@ import {
   getAlertComputationVersion,
   getLatestAlertComputationVersion
 } from "common/utils/regulation/alertVersions";
+import { currentControllerId } from "common/utils/cookie";
 
 export const useStyles = makeStyles(theme => ({
   contradictorySwitch: {
@@ -145,9 +146,8 @@ export function Day({
         dayStart={selectedPeriodStart}
         weekActivities={weekActivities}
         prefetchedRegulationComputation={
-          controlId ? regulationComputationToUse : null
+          currentControllerId() ? regulationComputationToUse : null
         }
-        shouldFetchRegulationComputation={!controlId}
         loading={loadingEmployeeVersion}
         userId={userId}
         shouldDisplayInitialEmployeeVersion={

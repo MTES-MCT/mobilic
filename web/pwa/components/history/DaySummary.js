@@ -20,8 +20,7 @@ export function DaySummary({
   userId,
   loading = false,
   shouldDisplayInitialEmployeeVersion = false,
-  prefetchedRegulationComputation = null,
-  shouldFetchRegulationComputation = true
+  prefetchedRegulationComputation = null
 }) {
   const dayEnd = dayStart + DAY;
   const infoCardStyles = useInfoCardStyles();
@@ -62,7 +61,6 @@ export function DaySummary({
               shouldDisplayInitialEmployeeVersion
             }
             prefetchedRegulationComputation={prefetchedRegulationComputation}
-            shouldFetchRegulationComputation={shouldFetchRegulationComputation}
           />
         </InfoCard>
       )}
