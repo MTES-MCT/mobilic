@@ -199,6 +199,12 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "Vous ne pouvez pas enregistrer des activités en dehors de votre période de rattachement.";
       case "ACTIVITY_OUTSIDE_EMPLOYMENT_ADMIN":
         return "Vous ne pouvez pas enregistrer des activités en dehors de la période de rattachement du salarié sélectionné.";
+      case "EMPLOYMENT_CLIENT_LINK_ALREADY_ACCEPTED":
+        return "Vous avez déjà accordé les droits d'accès à votre compte Mobilic.";
+      case "EMPLOYMENT_CLIENT_LINK_EXPIRED":
+        return "Le lien a expiré. Contactez votre éditeur de logiciel afin de recevoir un nouveau mail de connexion.";
+      case "EMPLOYMENT_CLIENT_LINK_NOT_FOUND":
+        return "Paramètres invalides. Veuillez suivre le lien d'activation inclus dans le mail reçu. Si le problème persiste, contactez votre éditeur de logiciel.";
       default:
         return null;
     }
