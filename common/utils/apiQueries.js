@@ -1744,3 +1744,46 @@ export const OAUTH_CLIENT_QUERY = gql`
     }
   }
 `;
+
+export const THIRD_PARTY_CLIENT_EMPLOYMENT_QUERY = gql`
+  query clientEmploymentLink(
+    $clientId: Int!
+    $employmentId: Int!
+    $invitationToken: String!
+  ) {
+    clientEmploymentLink(
+      clientId: $clientId
+      employmentId: $employmentId
+      invitationToken: $invitationToken
+    ) {
+      clientName
+      employment {
+        isAcknowledged
+        company {
+          name
+        }
+        user {
+          email
+          hasConfirmedEmail
+          hasActivatedEmail
+        }
+      }
+    }
+  }
+`;
+
+export const THIRD_PARTY_CLIENT_EMPLOYMENT_ACCEPT = gql`
+  mutation generateEmploymentToken(
+    $clientId: Int!
+    $employmentId: Int!
+    $invitationToken: String!
+  ) {
+    generateEmploymentToken(
+      clientId: $clientId
+      employmentId: $employmentId
+      invitationToken: $invitationToken
+    ) {
+      success
+    }
+  }
+`;

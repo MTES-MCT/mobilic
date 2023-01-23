@@ -32,6 +32,7 @@ import { ControllerHome } from "../controller/components/home/ControllerHome";
 import { ControllerScanQRCode } from "../controller/components/scanQRCode/ControllerScanQRCode";
 import { ControllerQRCodeNotRecognized } from "../controller/components/scanQRCode/ControllerQRCodeNotRecognized";
 import { ControllerHistory } from "../controller/components/history/ControllerHistory";
+import { SyncEmployeeValidation } from "../login/SyncEmployeeValidation";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -206,6 +207,13 @@ export const ROUTES = [
     label: "Reset password",
     accessible: () => true,
     component: ResetPassword,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/sync_employee",
+    label: "Rattachement d'un compte Mobilic",
+    accessible: () => true,
+    component: SyncEmployeeValidation,
     menuItemFilter: () => false
   },
   {
