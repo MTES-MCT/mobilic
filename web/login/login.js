@@ -147,7 +147,8 @@ export default function Login() {
                     history.push("/request_reset_password");
                   }}
                 >
-                  J'ai oublié mon mot de passe
+                  J'ai oublié mon mot de passe <br />
+                  Je n'ai pas de mot de passe
                 </Link>
               </Typography>
               <Typography>
