@@ -165,7 +165,7 @@ export function ResetPassword() {
                     className="vertical-form-text-input"
                     label="Nouveau mot de passe"
                     placeholder="Choisissez un mot de passe"
-                    autoComplete="current-password"
+                    autoComplete="new-password"
                     variant="standard"
                     value={password}
                     onChange={e => {
