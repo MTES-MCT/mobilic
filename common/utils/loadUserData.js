@@ -16,6 +16,7 @@ import values from "lodash/values";
 import flatten from "lodash/flatten";
 import { EMPLOYMENT_STATUS, getEmploymentsStatus } from "./employments";
 import { CURRENT_MISSION_INFO } from "./apiQueries";
+import { onLogIn } from "./updatePassword";
 
 const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
@@ -117,6 +118,7 @@ export async function syncUser(userPayload, api, store) {
     email,
     birthDate,
     timezoneName,
+    shouldUpatePassword,
     hasConfirmedEmail,
     hasActivatedEmail,
     disabledWarnings,
@@ -124,6 +126,8 @@ export async function syncUser(userPayload, api, store) {
     employments,
     currentEmployments
   } = userPayload;
+
+  onLogIn(shouldUpatePassword);
 
   const activities = [];
   const expenditures = [];
