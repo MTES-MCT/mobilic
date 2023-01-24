@@ -4,6 +4,7 @@ import {
   COMPANY_SETTINGS_FRAGMENT,
   FRAGMENT_LOCATION_FULL,
   FULL_MISSION_FRAGMENT,
+  REGULATION_COMPUTATIONS_FRAGMENT,
   WORK_DAYS_DATA_FRAGMENT
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
@@ -336,6 +337,7 @@ export const CONTROLLER_READ_MISSION_DETAILS = gql`
 export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
+  ${REGULATION_COMPUTATIONS_FRAGMENT}
   query readControlData($controlId: Int!) {
     controlData(controlId: $controlId) {
       id
@@ -433,6 +435,24 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
         lastName
         birthDate
         email
+      }
+      regulationComputationsByDay {
+        ...RegulationComputations
+      }
+    }
+  }
+`;
+
+export const USER_READ_REGULATION_COMPUTATIONS_QUERY = gql`
+  ${REGULATION_COMPUTATIONS_FRAGMENT}
+  query getUserRegulationComputations(
+    $userId: Int!
+    $fromDate: Date
+    $toDate: Date
+  ) {
+    user(id: $userId) {
+      regulationComputationsByDay(fromDate: $fromDate, toDate: $toDate) {
+        ...RegulationComputations
       }
     }
   }
@@ -581,6 +601,19 @@ export const ADMIN_COMPANIES_LIST_QUERY = gql`
         id
         name
         siren
+      }
+    }
+  }
+`;
+
+export const THIRD_PARTY_CLIENTS_COMPANY_QUERY = gql`
+  query thirdPartyClientsCompany($userId: Int!, $companyIds: [Int]) {
+    user(id: $userId) {
+      adminedCompanies(companyIds: $companyIds) {
+        authorizedClients {
+          id
+          name
+        }
       }
     }
   }
@@ -1505,6 +1538,37 @@ export const MISSION_QUERY = gql`
   }
 `;
 
+export const OAUTH_TOKEN_QUERY = gql`
+  query userOAuthToken($userId: Int!) {
+    oauthAccessTokens(userId: $userId) {
+      id
+      token
+      clientName
+    }
+  }
+`;
+
+export const CREATE_OAUTH_TOKEN_MUTATION = gql`
+  mutation createOauthToken($userId: Int!, $clientId: Int!) {
+    createOauthToken(userId: $userId, clientId: $clientId) {
+      id
+      token
+      clientName
+      clientId
+    }
+  }
+`;
+
+export const REVOKE_OAUTH_TOKEN_MUTATION = gql`
+  mutation revokeOauthToken($tokenId: Int!) {
+    revokeOauthToken(tokenId: $tokenId) {
+      clientName
+      token
+      id
+    }
+  }
+`;
+
 export const DISABLE_WARNING_MUTATION = gql`
   mutation disableValidationWarning($warningName: WarningToDisableTypeEnum!) {
     account {
@@ -1642,6 +1706,84 @@ export const CHECK_AUTH_QUERY = gql`
     checkAuth {
       success
       userId
+    }
+  }
+`;
+
+export const DISMISS_THIRD_PARTY_EMPLOYMENT_TOKEN_MUTATION = gql`
+  mutation dismissEmploymentToken($employmentId: Int!, $clientId: Int!) {
+    dismissEmploymentToken(employmentId: $employmentId, clientId: $clientId) {
+      success
+    }
+  }
+`;
+
+export const DISMISS_THIRD_PARTY_COMPANY_TOKEN_MUTATION = gql`
+  mutation dismissCompanyToken($companyId: Int!, $clientId: Int!) {
+    dismissCompanyToken(companyId: $companyId, clientId: $clientId) {
+      id
+      name
+    }
+  }
+`;
+
+export const GENERATE_THIRD_PARTY_COMPANY_TOKEN_MUTATION = gql`
+  mutation generateCompanyToken($companyId: Int!, $clientId: Int!) {
+    generateCompanyToken(companyId: $companyId, clientId: $clientId) {
+      id
+      name
+    }
+  }
+`;
+
+export const OAUTH_CLIENT_QUERY = gql`
+  query oauthClient($clientId: Int!) {
+    oauthClient(clientId: $clientId) {
+      id
+      name
+    }
+  }
+`;
+
+export const THIRD_PARTY_CLIENT_EMPLOYMENT_QUERY = gql`
+  query clientEmploymentLink(
+    $clientId: Int!
+    $employmentId: Int!
+    $invitationToken: String!
+  ) {
+    clientEmploymentLink(
+      clientId: $clientId
+      employmentId: $employmentId
+      invitationToken: $invitationToken
+    ) {
+      clientName
+      employment {
+        isAcknowledged
+        company {
+          name
+        }
+        user {
+          email
+          hasConfirmedEmail
+          hasActivatedEmail
+        }
+      }
+    }
+  }
+`;
+
+export const THIRD_PARTY_CLIENT_EMPLOYMENT_ACCEPT = gql`
+  mutation generateEmploymentToken(
+    $clientId: Int!
+    $employmentId: Int!
+    $invitationToken: String!
+  ) {
+    generateEmploymentToken(
+      clientId: $clientId
+      employmentId: $employmentId
+      invitationToken: $invitationToken
+    ) {
+      success
     }
   }
 `;

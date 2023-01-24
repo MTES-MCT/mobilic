@@ -8,15 +8,19 @@ import { ItalicWarningTypography } from "./ItalicWarningTypography";
 import { MissionReviewSection } from "../MissionReviewSection";
 import { ActivityList } from "../ActivityList";
 import React from "react";
-import { DAY } from "common/utils/time";
+import { DAY, isoFormatLocalDate } from "common/utils/time";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
+import { DayRegulatoryAlerts } from "../../../regulatory/DayRegulatoryAlerts";
 
 export function DaySummary({
   isDayEnded,
   activitiesWithNextAndPreviousDay,
   weekActivities,
   dayStart,
-  loading = false
+  userId,
+  loading = false,
+  shouldDisplayInitialEmployeeVersion = false,
+  prefetchedRegulationComputation = null
 }) {
   const dayEnd = dayStart + DAY;
   const infoCardStyles = useInfoCardStyles();
@@ -48,6 +52,18 @@ export function DaySummary({
           <ItalicWarningTypography>Mission en cours !</ItalicWarningTypography>
         )}
       </InfoCard>
+      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
+        <InfoCard className={infoCardStyles.topMargin}>
+          <DayRegulatoryAlerts
+            day={isoFormatLocalDate(dayStart)}
+            userId={userId}
+            shouldDisplayInitialEmployeeVersion={
+              shouldDisplayInitialEmployeeVersion
+            }
+            prefetchedRegulationComputation={prefetchedRegulationComputation}
+          />
+        </InfoCard>
+      )}
       <InfoCard className={infoCardStyles.topMargin}>
         <MissionReviewSection
           title="Activités de la journée"

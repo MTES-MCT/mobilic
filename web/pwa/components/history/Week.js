@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
-  splitByLongBreaksAndComputePeriodStats,
   renderPeriodKpis,
+  splitByLongBreaksAndComputePeriodStats,
   WorkTimeSummaryKpiGrid
 } from "../WorkTimeSummary";
 import { RegulationCheck } from "../RegulationCheck";
@@ -11,9 +11,12 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Link from "@mui/material/Link";
-import { prettyFormatDay } from "common/utils/time";
+import { isoFormatLocalDate, prettyFormatDay } from "common/utils/time";
 import Divider from "@mui/material/Divider";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
+import { getLatestAlertComputationVersion } from "common/utils/regulation/alertVersions";
+import { WeekRegulatoryAlerts } from "../../../regulatory/WeekRegulatoryAlerts";
+import { currentControllerId } from "common/utils/cookie";
 
 export function Week({
   missionsInPeriod,
@@ -21,10 +24,17 @@ export function Week({
   selectedPeriodStart,
   selectedPeriodEnd,
   handleMissionClick,
-  previousPeriodActivityEnd
+  previousPeriodActivityEnd,
+  regulationComputationsInPeriod,
+  userId,
+  controlId
 }) {
   const infoCardStyles = useInfoCardStyles();
 
+  const regulationComputation = useMemo(
+    () => getLatestAlertComputationVersion(regulationComputationsInPeriod),
+    [regulationComputationsInPeriod]
+  );
   const stats = splitByLongBreaksAndComputePeriodStats(
     activitiesWithNextAndPreviousDay,
     selectedPeriodStart,
@@ -46,6 +56,17 @@ export function Week({
           )}
         />
       </InfoCard>
+      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
+        <InfoCard className={infoCardStyles.topMargin}>
+          <WeekRegulatoryAlerts
+            userId={userId}
+            day={isoFormatLocalDate(selectedPeriodStart)}
+            prefetchedRegulationComputation={
+              currentControllerId() ? regulationComputation : null
+            }
+          />
+        </InfoCard>
+      )}
       <InfoCard className={infoCardStyles.topMargin}>
         <MissionReviewSection
           title="Détail par mission"

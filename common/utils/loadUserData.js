@@ -1,6 +1,10 @@
 import { broadCastChannel } from "../store/store";
 import { parseActivityPayloadFromBackend } from "./activities";
-import { parseMissionPayloadFromBackend } from "./mission";
+import {
+  DEFAULT_NB_DAYS_MISSIONS_HISTORY,
+  DEFAULT_NB_FIRST_MISSIONS,
+  parseMissionPayloadFromBackend
+} from "./mission";
 import { DAY, now } from "./time";
 import {
   COMPANY_SETTINGS_FRAGMENT,
@@ -16,7 +20,7 @@ import { CURRENT_MISSION_INFO } from "./apiQueries";
 const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FULL_MISSION_FRAGMENT}
-  query user($id: Int!, $activityAfter: TimeStamp) {
+  query user($id: Int!, $activityAfter: TimeStamp, $nbFirstMissions: Int!) {
     user(id: $id) {
       id
       firstName
@@ -27,7 +31,7 @@ const USER_QUERY = gql`
       hasConfirmedEmail
       hasActivatedEmail
       disabledWarnings
-      missions(fromTime: $activityAfter, first: 200) {
+      missions(fromTime: $activityAfter, first: $nbFirstMissions) {
         edges {
           node {
             ...FullMissionData
@@ -40,6 +44,10 @@ const USER_QUERY = gql`
         endDate
         isAcknowledged
         hasAdminRights
+        authorizedClients {
+          id
+          name
+        }
         company {
           id
           name
@@ -91,7 +99,8 @@ export async function loadUserData(api, store, alerts) {
       USER_QUERY,
       {
         id: userId,
-        activityAfter: now() - DAY * 215
+        activityAfter: now() - DAY * DEFAULT_NB_DAYS_MISSIONS_HISTORY,
+        nbFirstMissions: DEFAULT_NB_FIRST_MISSIONS
       },
       { context: { timeout: 12000 } }
     );

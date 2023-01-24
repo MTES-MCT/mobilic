@@ -39,13 +39,15 @@ export default function ConfirmationModal({
           { context: { nonPublicApi: true } }
         );
       }
+    } catch {
+      // Do nothing, if this call fails, modal should be closed anyway
     } finally {
       await handleConfirm(...args);
     }
   }
 
   return (
-    <Dialog onClose={handleClose} open={open}>
+    <Dialog onClose={handleClose} open={open} maxWidth={"md"}>
       <CustomDialogTitle
         title={title || "Confirmer"}
         handleClose={handleClose}

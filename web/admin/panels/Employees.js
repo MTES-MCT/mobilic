@@ -502,7 +502,9 @@ export function Employees({ company, containerRef }) {
         color="primary"
         onClick={() => {
           setHidePendingEmployments(false);
-          pendingEmploymentsTableRef.current.newRow();
+          pendingEmploymentsTableRef.current.newRow({
+            hasAdminRights: EMPLOYMENT_ROLE.employee
+          });
         }}
         className={classes.actionButton}
       >
@@ -571,7 +573,11 @@ export function Employees({ company, containerRef }) {
           variant="contained"
           size="small"
           color="primary"
-          onClick={() => pendingEmploymentsTableRef.current.newRow()}
+          onClick={() =>
+            pendingEmploymentsTableRef.current.newRow({
+              hasAdminRights: EMPLOYMENT_ROLE.employee
+            })
+          }
           className={classes.actionButton}
         >
           Inviter un nouveau salarié

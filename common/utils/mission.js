@@ -11,6 +11,9 @@ import sum from "lodash/sum";
 import { DAY, HOUR, now } from "./time";
 import { ACTIVITIES, getCurrentActivityDuration } from "./activities";
 
+export const DEFAULT_NB_DAYS_MISSIONS_HISTORY = 215;
+export const DEFAULT_NB_FIRST_MISSIONS = 200;
+
 export const DEFAULT_LAST_ACTIVITY_TOO_LONG = 24 * HOUR;
 export const DEFAULT_WORKER_VALIDATION_TIMEOUT = 10 * DAY;
 

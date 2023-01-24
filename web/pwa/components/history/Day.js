@@ -10,6 +10,12 @@ import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { ContradictorySwitch } from "../ContradictorySwitch";
 import { makeStyles } from "@mui/styles";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
+import { SubmitterType } from "common/utils/regulation/alertTypes";
+import {
+  getAlertComputationVersion,
+  getLatestAlertComputationVersion
+} from "common/utils/regulation/alertVersions";
+import { currentControllerId } from "common/utils/cookie";
 
 export const useStyles = makeStyles(theme => ({
   contradictorySwitch: {
@@ -22,6 +28,7 @@ export function Day({
   activitiesWithNextAndPreviousDay,
   selectedPeriodStart,
   selectedPeriodEnd,
+  regulationComputationsInPeriod,
   editActivityEvent,
   createActivity,
   editExpenditures,
@@ -39,11 +46,16 @@ export function Day({
 }) {
   const infoCardStyles = useInfoCardStyles();
   const classes = useStyles();
+  const [
+    regulationComputationToUse,
+    setRegulationComputationToUse
+  ] = React.useState([]);
 
   const [
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion
   ] = React.useState(false);
+
   const canDisplayContradictoryVersions = missionsInPeriod.every(
     mission => mission.adminValidation && mission.validation
   );
@@ -73,6 +85,42 @@ export function Day({
   ];
 
   React.useEffect(() => {
+    if (controlId) {
+      if (
+        !canDisplayContradictoryVersions ||
+        contradictoryComputationError ||
+        (hasComputedContradictory && contradictoryIsEmpty)
+      ) {
+        // No contradictory => use latest version
+        setRegulationComputationToUse(
+          getLatestAlertComputationVersion(regulationComputationsInPeriod)
+        );
+      } else if (shouldDisplayInitialEmployeeVersion) {
+        setRegulationComputationToUse(
+          getAlertComputationVersion(
+            regulationComputationsInPeriod,
+            SubmitterType.EMPLOYEE
+          )
+        );
+      } else {
+        setRegulationComputationToUse(
+          getAlertComputationVersion(
+            regulationComputationsInPeriod,
+            SubmitterType.ADMIN
+          )
+        );
+      }
+    }
+  }, [
+    regulationComputationsInPeriod,
+    canDisplayContradictoryVersions,
+    hasComputedContradictory,
+    contradictoryIsEmpty,
+    contradictoryComputationError,
+    shouldDisplayInitialEmployeeVersion
+  ]);
+
+  React.useEffect(() => {
     if (!canDisplayContradictoryVersions && shouldDisplayInitialEmployeeVersion)
       setShouldDisplayInitialEmployeeVersion(false);
   }, [canDisplayContradictoryVersions]);
@@ -97,7 +145,14 @@ export function Day({
         isDayEnded={true}
         dayStart={selectedPeriodStart}
         weekActivities={weekActivities}
+        prefetchedRegulationComputation={
+          currentControllerId() ? regulationComputationToUse : null
+        }
         loading={loadingEmployeeVersion}
+        userId={userId}
+        shouldDisplayInitialEmployeeVersion={
+          shouldDisplayInitialEmployeeVersion
+        }
       />
       <InfoCard className={infoCardStyles.topMargin}>
         <MissionReviewSection

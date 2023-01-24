@@ -36,6 +36,10 @@ function _App({ ScreenComponent, loadUser }) {
     if (!document.hidden) api.executePendingRequests();
   }, []);
 
+  const regulationComputationsByDay = values(
+    store.getEntity("regulationComputationsByDay")
+  );
+
   const activities = sortActivities(values(store.getEntity("activities")));
   const expenditures = values(store.getEntity("expenditures"));
   const comments = sortEvents(values(store.getEntity("comments")));
@@ -94,6 +98,7 @@ function _App({ ScreenComponent, loadUser }) {
             logComment={actions.logComment}
             cancelComment={actions.cancelComment}
             registerKilometerReading={actions.registerKilometerReading}
+            regulationComputationsByDay={regulationComputationsByDay}
           />
         </Route>
         <Route path={`${path}/edit_mission`}>

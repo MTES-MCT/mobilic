@@ -37,8 +37,8 @@ export default function ExportExcelOne({ open, handleClose, controlId }) {
           d’activité du contrôle Mobilic sélectionné.{" "}
           <b>
             Les données du salarié sont limitées à une période qui ne peut pas
-            dépasser les 28 jours précédents le contôle (ainsi que la journée
-            “en cours” lors du contôle).
+            dépasser les 28 jours précédant le contrôle (ainsi que la journée
+            “en cours” lors du contrôle).
           </b>
         </p>
       </ModalContent>

@@ -27,6 +27,7 @@ import { EmploymentInfoCard } from "../../common/EmploymentInfoCard";
 import { employmentSelector } from "common/store/selectors";
 import AlertEmailNotActivated from "./AlertEmailNotActivated";
 import { getTimezone, getTimezonePrettyName } from "common/utils/timezones";
+import { OAuthTokenSection } from "./OAuthTokensSection";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
@@ -174,6 +175,7 @@ export default function Home() {
             )}
           </Section>
         )}
+        {isActive && <OAuthTokenSection />}
       </Container>
     </PaperContainer>
   ];

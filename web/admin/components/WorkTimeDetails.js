@@ -20,6 +20,7 @@ import {
   formatTimeOfDay,
   formatTimer,
   getStartOfWeek,
+  isoFormatLocalDate,
   now,
   prettyFormatDay,
   WEEK
@@ -31,6 +32,8 @@ import { ExpendituresCard } from "./ExpendituresCard";
 import { ActivitiesCard } from "./ActivitiesCard";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL } from "common/utils/matomoTags";
+import { DayRegulatoryAlerts } from "../../regulatory/DayRegulatoryAlerts";
+import { WeekRegulatoryAlerts } from "../../regulatory/WeekRegulatoryAlerts";
 
 export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   const classes = useStyles();
@@ -253,6 +256,31 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
           </MissionInfoCard>
         </Grid>
       </Grid>
+      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
+        <Grid item xs={12}>
+          <MissionInfoCard
+            title="Seuils réglementaires"
+            className={classes.regulatoryAlertCard}
+          >
+            <div>Alertes quotidiennes</div>
+            <DayRegulatoryAlerts
+              userId={workTimeEntry.user.id}
+              day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
+            />
+            {getStartOfWeek(workTimeEntry.periodStart) ===
+              workTimeEntry.periodStart && (
+              <>
+                <br></br>
+                <div>Alertes hebdomadaires</div>
+                <WeekRegulatoryAlerts
+                  userId={workTimeEntry.user.id}
+                  day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
+                />
+              </>
+            )}
+          </MissionInfoCard>
+        </Grid>
+      )}
       <Grid item xs={12}>
         <ExpendituresCard
           title="Frais de la journée"

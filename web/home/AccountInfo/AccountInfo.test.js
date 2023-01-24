@@ -4,6 +4,8 @@ import Home from "./AccountInfo";
 import * as store from "common/store/store";
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/material";
+import * as api from "common/utils/api";
+import { waitFor } from "@babel/core/lib/gensync-utils/async";
 
 jest.mock("apollo-link-timeout", () => () => {});
 jest.mock("../../common/Header", () => ({
@@ -20,6 +22,10 @@ describe("<Home />", () => {
   let storeSpy;
 
   beforeAll(() => {
+    const apiSpy = jest.spyOn(api, "useApi");
+    apiSpy.mockReturnValue({
+      graphQlMutate: jest.fn()
+    });
     storeSpy = jest.spyOn(store, "useStoreSyncedWithLocalStorage");
   });
 
@@ -56,13 +62,15 @@ describe("<Home />", () => {
     expect(screen).toBeDefined();
   });
 
-  it("should render without AlertEmailNotActivated if email is activated", () => {
-    const emailActivatedUserInfo = () => {
-      return { id: "1234", hasActivatedEmail: true };
-    };
+  it("should render without AlertEmailNotActivated if email is activated", async () => {
+    await waitFor(() => {
+      const emailActivatedUserInfo = () => {
+        return { id: "1234", hasActivatedEmail: true };
+      };
 
-    const wrapper = setup({ userInfo: emailActivatedUserInfo });
-    expect(wrapper.queryByTestId("alertEmailNotActivated")).toBeFalsy();
+      const wrapper = setup({ userInfo: emailActivatedUserInfo });
+      expect(wrapper.queryByTestId("alertEmailNotActivated")).toBeFalsy();
+    });
   });
 
   it("should render with AlertEmailNotActivated if email is not activated", () => {
