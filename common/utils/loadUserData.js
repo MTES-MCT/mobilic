@@ -27,6 +27,7 @@ const USER_QUERY = gql`
       lastName
       birthDate
       timezoneName
+      shouldUpatePassword
       email
       hasConfirmedEmail
       hasActivatedEmail
