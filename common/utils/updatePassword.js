@@ -3,6 +3,15 @@ import { addDaysToDate } from "./time";
 
 const UPDATE_TIME_COOKIE_NAME = "nextUpdatePasswordTime";
 
+export const shouldUpdatePassword = () => {
+  if (!exists()) {
+    return false;
+  }
+  const nextTime = new Date(readCookie(UPDATE_TIME_COOKIE_NAME)).getTime();
+  const nowTime = new Date().getTime();
+  return nowTime > nextTime;
+};
+
 export const onLogIn = shouldUpatePassword => {
   if (!shouldUpatePassword) {
     clear();
