@@ -22,6 +22,8 @@ import {
 } from "common/utils/apiQueries";
 import { EmailField } from "../common/EmailField";
 import Emoji from "../common/Emoji";
+import { PasswordHelper } from "../common/PasswordHelper";
+import { getPasswordErrors } from "common/utils/passwords";
 
 const useStyles = makeStyles(theme => ({
   introText: {
@@ -170,12 +172,15 @@ export function ResetPassword() {
                       setPassword(e.target.value);
                     }}
                     required
+                    error={password ? getPasswordErrors(password) : null}
                   />
+                  <PasswordHelper password={password} />
                   <PasswordField
                     required
                     fullWidth
                     label="Confirmez le mot de passe"
                     className="vertical-form-text-input"
+                    autoComplete="new-password"
                     variant="standard"
                     error={
                       passwordCopy && passwordCopy !== password
