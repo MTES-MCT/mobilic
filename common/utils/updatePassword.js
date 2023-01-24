@@ -12,8 +12,8 @@ export const shouldUpdatePassword = () => {
   return nowTime > nextTime;
 };
 
-export const onLogIn = shouldUpatePassword => {
-  if (!shouldUpatePassword) {
+export const onLogIn = shouldUpdatePassword => {
+  if (!shouldUpdatePassword) {
     clear();
   } else {
     if (!exists()) {
