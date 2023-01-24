@@ -55,18 +55,22 @@ export function PasswordHelper({ password }) {
       </Typography>
       {!password ? (
         <>
-          {PASSWORD_POLICY_RULES.map(rule =>
-            getHelper(rule.message, classes.info)
-          )}
+          {PASSWORD_POLICY_RULES.map((rule, i) => (
+            <div key={`password_rule${i}`}>
+              {getHelper(rule.message, classes.info)}
+            </div>
+          ))}
         </>
       ) : (
         <>
-          {PASSWORD_POLICY_RULES.map(rule =>
-            getHelper(
-              rule.message,
-              rule.validator(password) ? classes.validated : classes.error
-            )
-          )}
+          {PASSWORD_POLICY_RULES.map((rule, i) => (
+            <div key={`password_rule${i}`}>
+              {getHelper(
+                rule.message,
+                rule.validator(password) ? classes.validated : classes.error
+              )}
+            </div>
+          ))}
         </>
       )}
     </Box>
