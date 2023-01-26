@@ -42,6 +42,7 @@ export default function NewMissionForm({
   const [address, setAddress] = React.useState(null);
   const [endAddress, setEndAddress] = React.useState(null);
   const [kilometerReading, setKilometerReading] = React.useState("");
+  const [defaultAddresses, setDefaultAddresses] = React.useState([]);
 
   React.useEffect(() => {
     if (vehicle?.companyId) setVehicle("");
@@ -52,6 +53,11 @@ export default function NewMissionForm({
     }
 
     setMission("");
+    setDefaultAddresses(
+      companyAddresses.filter(a =>
+        company ? a.companyId === company.id : true
+      )
+    );
   }, [company]);
 
   React.useEffect(() => {
@@ -158,9 +164,7 @@ export default function NewMissionForm({
             value={address}
             onChange={setAddress}
             currentPosition={currentPosition}
-            defaultAddresses={companyAddresses.filter(a =>
-              company ? a.companyId === company.id : true
-            )}
+            defaultAddresses={defaultAddresses}
             askCurrentPosition={askCurrentPosition}
             disableGeolocation={disableGeolocation}
           />
@@ -178,9 +182,7 @@ export default function NewMissionForm({
               value={endAddress}
               onChange={setEndAddress}
               currentPosition={currentPosition}
-              defaultAddresses={companyAddresses.filter(a =>
-                company ? a.companyId === company.id : true
-              )}
+              defaultAddresses={defaultAddresses}
               disableGeolocation={true}
             />
           ]}
