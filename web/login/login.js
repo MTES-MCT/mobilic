@@ -22,6 +22,7 @@ import { LOGIN_MUTATION } from "common/utils/apiQueries";
 import { EmailField } from "../common/EmailField";
 import { DividerWithText } from "../common/DividerWithText";
 import Button from "@mui/material/Button";
+import { pluralize } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   forgotPasswordLink: {
@@ -38,11 +39,16 @@ const useStyles = makeStyles(theme => ({
   loginControllerButton: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(4)
+  },
+  errorMessage: {
+    color: "red",
+    fontSize: "0.85em"
   }
 }));
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
+  const [errorMessage, setErrorMessage] = React.useState(null);
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
@@ -54,6 +60,7 @@ export default function Login() {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    setErrorMessage(null);
     setLoading(true);
     await alerts.withApiErrorHandling(
       async () => {
@@ -72,6 +79,25 @@ export default function Login() {
       graphQLError => {
         if (graphQLErrorMatchesCode(graphQLError, "AUTHENTICATION_ERROR")) {
           return "Identifiants incorrects.";
+        }
+        if (graphQLErrorMatchesCode(graphQLError, "BAD_PASSWORD_ERROR")) {
+          const { nb_bad_tries, max_possible_tries } = graphQLError.extensions;
+          const displayErrorMessage = nb_bad_tries * 2 >= max_possible_tries;
+          if (displayErrorMessage) {
+            setErrorMessage(
+              `Attention, il vous reste ${pluralize(
+                max_possible_tries - nb_bad_tries,
+                "tentative"
+              )} avant que votre compte ne soit bloqué`
+            );
+          }
+          return "Identifiants incorrects.";
+        }
+        if (graphQLErrorMatchesCode(graphQLError, "BLOCKED_ACCOUNT_ERROR")) {
+          setErrorMessage(
+            "Vous avez épuisé vos tentatives de connexion. Votre compte est bloqué."
+          );
+          return "Votre compte est bloqué.";
         }
       }
     );
@@ -138,6 +164,13 @@ export default function Login() {
                 Me connecter
               </LoadingButton>
             </Box>
+            {errorMessage && (
+              <Box>
+                <Typography className={classes.errorMessage}>
+                  {errorMessage}
+                </Typography>
+              </Box>
+            )}
             <Box mt={5}>
               <Typography className={classes.forgotPasswordLink}>
                 <Link
