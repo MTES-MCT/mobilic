@@ -44,6 +44,11 @@ export default function UpdatePasswordModal() {
       if (!apiResponse.data.account.requestResetPassword.success) {
         throw Error;
       }
+      alerts.success(
+        "Votre demande de réinitialisation de mot de passe a été enregistrée. Vous allez recevoir un email d'instructions.",
+        "",
+        6000
+      );
     }, "request-reset-password");
   };
 
