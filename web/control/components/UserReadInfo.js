@@ -11,7 +11,7 @@ import { LoadingButton } from "common/components/LoadingButton";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import Container from "@mui/material/Container";
-import React from "react";
+import React, { useMemo } from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
@@ -23,6 +23,7 @@ import DriveEtaIcon from "@mui/icons-material/DirectionsCar";
 import BusinessIcon from "@mui/icons-material/Business";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Alert from "@mui/material/Alert";
+import { currentControllerId } from "common/utils/cookie";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -54,6 +55,7 @@ export function UserReadInfo({
   tokenInfo,
   controlTime,
   alertNumber,
+  missions,
   workingDaysNumber,
   setTab,
   allowC1BExport = true,
@@ -63,6 +65,29 @@ export function UserReadInfo({
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const classes = useStyles();
+
+  const missionInProgress = useMemo(
+    () =>
+      missions.find(
+        mission => mission.ended === false || mission.endTime === controlTime
+      ),
+    [missions, controlTime]
+  );
+
+  const isMissionInProgressDuringControl = currentControllerId()
+    ? !!companyName
+    : !!missionInProgress;
+
+  const companyNameDuringControl = currentControllerId()
+    ? companyName
+    : missionInProgress?.company?.name;
+  const vehiculeNameDuringControl = currentControllerId()
+    ? vehicleRegistrationNumber
+    : missionInProgress?.vehicle?.registrationNumber;
+
+  const textIfNoMissionInProgressDuringControl = currentControllerId()
+    ? "Le salarié n'avait aucune saisie en cours au moment du contrôle ou était en pause."
+    : "Le salarié n'avait aucune saisie en cours au moment du contrôle.";
 
   return (
     <Container maxWidth="md" className={classes.container}>
@@ -79,13 +104,13 @@ export function UserReadInfo({
               <InfoItem name="Nom" value={formatPersonName(userInfo)} />
             </Grid>
           </Grid>
-          {!companyName && (
+          {!isMissionInProgressDuringControl && (
             <Alert severity="warning">
-              Aucune saisie en cours au moment du contrôle
+              {textIfNoMissionInProgressDuringControl}
             </Alert>
           )}
         </Grid>
-        {companyName && (
+        {isMissionInProgressDuringControl && (
           <Grid item md={6}>
             <Typography variant="h5">Mission lors du contrôle</Typography>
             <List dense>
@@ -94,7 +119,7 @@ export function UserReadInfo({
                   <DriveEtaIcon />
                 </ListItemIcon>
                 <Typography noWrap align="left" className={classes.fieldValue}>
-                  {vehicleRegistrationNumber || "Non renseigné"}
+                  {vehiculeNameDuringControl || "Non renseigné"}
                 </Typography>
               </ListItem>
               <ListItem disableGutters>
@@ -102,7 +127,7 @@ export function UserReadInfo({
                   <BusinessIcon />
                 </ListItemIcon>
                 <Typography noWrap align="left" className={classes.fieldValue}>
-                  {companyName}
+                  {companyNameDuringControl}
                 </Typography>
               </ListItem>
             </List>
