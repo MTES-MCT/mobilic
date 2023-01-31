@@ -44,6 +44,8 @@ export default function UpdatePasswordModal() {
       if (!apiResponse.data.account.requestResetPassword.success) {
         throw Error;
       }
+      setIsOpen(false);
+      snooze();
       alerts.success(
         "Votre demande de réinitialisation de mot de passe a été enregistrée. Vous allez recevoir un email d'instructions.",
         "",
@@ -66,8 +68,6 @@ export default function UpdatePasswordModal() {
           className={classes.modalButton}
           title="reset-password"
           onClick={e => {
-            setIsOpen(false);
-            snooze();
             handleSubmit(e);
           }}
         >
