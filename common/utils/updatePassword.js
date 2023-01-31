@@ -4,7 +4,7 @@ import { addDaysToDate } from "./time";
 const UPDATE_TIME_COOKIE_NAME = "nextUpdatePasswordTime";
 
 export const shouldUpdatePassword = () => {
-  if (!exists()) {
+  if (!checkUpdateTimeCookieExists()) {
     return false;
   }
   const nextTime = new Date(readCookie(UPDATE_TIME_COOKIE_NAME)).getTime();
@@ -14,22 +14,23 @@ export const shouldUpdatePassword = () => {
 
 export const onLogIn = shouldUpdatePassword => {
   if (!shouldUpdatePassword) {
-    clear();
+    clearUpdateTimeCookie();
   } else {
-    if (!exists()) {
-      init();
+    if (!checkUpdateTimeCookieExists()) {
+      initUpdateTimeCookie();
     }
   }
 };
 
-export const clear = () => clearCookie(UPDATE_TIME_COOKIE_NAME);
+export const clearUpdateTimeCookie = () => clearCookie(UPDATE_TIME_COOKIE_NAME);
 
-export const exists = () => !!readCookie(UPDATE_TIME_COOKIE_NAME);
+export const checkUpdateTimeCookieExists = () =>
+  !!readCookie(UPDATE_TIME_COOKIE_NAME);
 
-export const init = () => setTime(new Date());
+export const initUpdateTimeCookie = () => setTime(new Date());
 
 export const snooze = () => {
-  if (!exists()) {
+  if (!checkUpdateTimeCookieExists()) {
     return;
   }
   setTime(addDaysToDate(new Date(), 3));
