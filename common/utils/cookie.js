@@ -9,8 +9,8 @@ export function clearCookie(name) {
   document.cookie = `${name}=;secure;`;
 }
 
-export function setCookie(name, value) {
-  document.cookie = `${name}=${value}`;
+export function setCookie(name, value, isRootPath = false) {
+  document.cookie = `${name}=${value}${isRootPath ? ";path=/;" : ""}`;
 }
 
 export function currentUserId() {

@@ -36,4 +36,4 @@ export const snooze = () => {
   setTime(addDaysToDate(new Date(), 3));
 };
 
-const setTime = newTime => setCookie(UPDATE_TIME_COOKIE_NAME, newTime);
+const setTime = newTime => setCookie(UPDATE_TIME_COOKIE_NAME, newTime, true);
