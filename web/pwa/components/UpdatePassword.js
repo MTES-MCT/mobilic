@@ -1,10 +1,6 @@
-import {
-  Button,
-  Modal,
-  ModalContent,
-  ModalFooter,
-  ModalTitle
-} from "@dataesr/react-dsfr";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import Button from "@mui/material/Button";
 import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
@@ -12,6 +8,11 @@ import { REQUEST_RESET_PASSWORD_MUTATION } from "common/utils/apiQueries";
 import { snooze } from "common/utils/updatePassword";
 import React, { useState } from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import {
+  CustomDialogActions,
+  CustomDialogTitle
+} from "../../common/CustomDialogTitle";
+import { LoadingButton } from "common/components/LoadingButton";
 
 const useStyles = makeStyles(theme => ({
   modalFooter: {
@@ -54,25 +55,21 @@ export default function UpdatePasswordModal() {
     }, "request-reset-password");
   };
 
+  const handleClose = () => setIsOpen(false);
+
   return (
-    <Modal isOpen={isOpen} size="lg">
-      <ModalTitle>Modifier votre mot de passe</ModalTitle>
-      <ModalContent>
+    <Dialog maxWidth="sm" onClose={handleClose} open={isOpen} fullWidth>
+      <CustomDialogTitle
+        handleClose={handleClose}
+        title="Modifier votre mot de passe"
+      />
+      <DialogContent>
         <p>
           Suite à une mise à jour de notre politique de sécurité, veuillez
           réinitialiser votre mot de passe pour continuer à utiliser Mobilic.
         </p>
-      </ModalContent>
-      <ModalFooter className={classes.modalFooter}>
-        <Button
-          className={classes.modalButton}
-          title="reset-password"
-          onClick={e => {
-            handleSubmit(e);
-          }}
-        >
-          Je réinitialise mon mot de passe
-        </Button>
+      </DialogContent>
+      <CustomDialogActions>
         <Button
           className={classes.modalButton}
           title="remind-later"
@@ -84,7 +81,19 @@ export default function UpdatePasswordModal() {
         >
           Plus tard
         </Button>
-      </ModalFooter>
-    </Modal>
+        <LoadingButton
+          className={classes.modalButton}
+          type="submit"
+          title="reset-password"
+          color="primary"
+          variant="contained"
+          onClick={e => {
+            handleSubmit(e);
+          }}
+        >
+          Je réinitialise mon mot de passe
+        </LoadingButton>
+      </CustomDialogActions>
+    </Dialog>
   );
 }
