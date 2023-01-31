@@ -95,7 +95,7 @@ export default function Login() {
         }
         if (graphQLErrorMatchesCode(graphQLError, "BLOCKED_ACCOUNT_ERROR")) {
           setErrorMessage(
-            "Vous avez épuisé vos tentatives de connexion. Votre compte est bloqué."
+            "Vous avez épuisé vos tentatives de connexion. Nous vous avons envoyé un mail afin que vous puissiez réinitialiser votre mot de passe, et ainsi débloquer votre compte."
           );
           return "Votre compte est bloqué.";
         }
