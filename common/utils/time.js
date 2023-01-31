@@ -61,7 +61,7 @@ export function formatTimerWithSeconds(timerDuration) {
   )}m${addZero(timerDuration % 60)}`;
 }
 
-const pluralize = (count, noun, suffix = "s") =>
+export const pluralize = (count, noun, suffix = "s") =>
   `${count} ${noun}${count > 1 ? suffix : ""}`;
 
 export function formatLongTimer(timerDuration) {
