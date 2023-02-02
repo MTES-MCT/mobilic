@@ -5,12 +5,12 @@ export function readCookie(name) {
   return cookieEntry ? cookieEntry.pop() : null;
 }
 
-export function clearCookie(name) {
-  document.cookie = `${name}=;secure;`;
+export function clearCookie(name, isRootPath = false) {
+  setCookie(name, "", isRootPath);
 }
 
 export function setCookie(name, value, isRootPath = false) {
-  document.cookie = `${name}=${value}${isRootPath ? ";path=/;" : ""}`;
+  document.cookie = `${name}=${value};secure;${isRootPath ? ";path=/;" : ""}`;
 }
 
 export function currentUserId() {

@@ -22,7 +22,8 @@ export const onLogIn = shouldUpdatePassword => {
   }
 };
 
-export const clearUpdateTimeCookie = () => clearCookie(UPDATE_TIME_COOKIE_NAME);
+export const clearUpdateTimeCookie = () =>
+  clearCookie(UPDATE_TIME_COOKIE_NAME, true);
 
 export const checkUpdateTimeCookieExists = () =>
   !!readCookie(UPDATE_TIME_COOKIE_NAME);
