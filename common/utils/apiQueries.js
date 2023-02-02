@@ -831,6 +831,15 @@ export const RESET_PASSWORD_MUTATION = gql`
     }
   }
 `;
+export const RESET_PASSWORD_CONNECTED_MUTATION = gql`
+  mutation resetPasswordConnected($password: Password!) {
+    account {
+      resetPasswordConnected(password: $password) {
+        success
+      }
+    }
+  }
+`;
 export const REQUEST_RESET_PASSWORD_MUTATION = gql`
   mutation requestResetPassword($mail: String!) {
     account {

@@ -13,7 +13,6 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { useLoadingScreen } from "common/utils/loading";
 import { Header } from "../common/Header";
-import { PasswordField } from "common/components/PasswordField";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 import {
@@ -22,8 +21,7 @@ import {
 } from "common/utils/apiQueries";
 import { EmailField } from "../common/EmailField";
 import Emoji from "../common/Emoji";
-import { PasswordHelper } from "../common/PasswordHelper";
-import { getPasswordErrors } from "common/utils/passwords";
+import { NewPasswordBlock } from "../common/NewPasswordBlock";
 
 const useStyles = makeStyles(theme => ({
   introText: {
@@ -157,40 +155,12 @@ export function ResetPassword() {
                   autoComplete="off"
                   onSubmit={handleSubmit}
                 >
-                  <Typography className={classes.introText}>
-                    Veuillez choisir un nouveau mot de passe.
-                  </Typography>
-                  <PasswordField
-                    fullWidth
-                    className="vertical-form-text-input"
-                    label="Nouveau mot de passe"
-                    placeholder="Choisissez un mot de passe"
-                    autoComplete="new-password"
-                    variant="standard"
-                    value={password}
-                    onChange={e => {
-                      setPassword(e.target.value);
-                    }}
-                    required
-                    error={password ? getPasswordErrors(password) : null}
-                  />
-                  <PasswordHelper password={password} />
-                  <PasswordField
-                    required
-                    fullWidth
-                    label="Confirmez le mot de passe"
-                    className="vertical-form-text-input"
-                    autoComplete="new-password"
-                    variant="standard"
-                    error={
-                      passwordCopy && passwordCopy !== password
-                        ? "Le mot de passe n'est pas identique"
-                        : null
-                    }
-                    value={passwordCopy}
-                    onChange={e => {
-                      setPasswordCopy(e.target.value);
-                    }}
+                  <NewPasswordBlock
+                    label="Veuillez choisir un nouveau mot de passe."
+                    password={password}
+                    setPassword={setPassword}
+                    passwordCopy={passwordCopy}
+                    setPasswordCopy={setPasswordCopy}
                   />
                   <Box my={4}>
                     <LoadingButton

@@ -1,12 +1,10 @@
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
-import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import { REQUEST_RESET_PASSWORD_MUTATION } from "common/utils/apiQueries";
-import { snooze } from "common/utils/updatePassword";
+import { RESET_PASSWORD_CONNECTED_MUTATION } from "common/utils/apiQueries";
+import { clearUpdateTimeCookie, snooze } from "common/utils/updatePassword";
 import React, { useState } from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import {
@@ -14,9 +12,8 @@ import {
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
 import { LoadingButton } from "common/components/LoadingButton";
-import { PasswordField } from "common/components/PasswordField";
 import { getPasswordErrors } from "common/utils/passwords";
-import { PasswordHelper } from "../../common/PasswordHelper";
+import { NewPasswordBlock } from "../../common/NewPasswordBlock";
 
 const useStyles = makeStyles(theme => ({
   modalFooter: {
@@ -33,7 +30,6 @@ export default function UpdatePasswordModal() {
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const [isOpen, setIsOpen] = useState(true);
-  const store = useStoreSyncedWithLocalStorage();
 
   const [loading, setLoading] = React.useState(false);
   const [password, setPassword] = React.useState(null);
@@ -44,26 +40,20 @@ export default function UpdatePasswordModal() {
     setLoading(true);
     await alerts.withApiErrorHandling(async () => {
       const apiResponse = await api.graphQlMutate(
-        REQUEST_RESET_PASSWORD_MUTATION,
-        { mail: store.state.userInfo.email },
-        {
-          context: { nonPublicApi: true }
-        },
+        RESET_PASSWORD_CONNECTED_MUTATION,
+        { password },
+        { context: { nonPublicApi: true } },
         true
       );
 
-      setLoading(false);
-      if (!apiResponse.data.account.requestResetPassword.success) {
+      if (!apiResponse.data.account.resetPasswordConnected.success) {
         throw Error;
       }
       setIsOpen(false);
-      snooze();
-      alerts.success(
-        "Votre demande de réinitialisation de mot de passe a été enregistrée. Vous allez recevoir un email d'instructions.",
-        "",
-        6000
-      );
-    }, "request-reset-password");
+      clearUpdateTimeCookie();
+      alerts.success("Votre mot de passe a bien été modifié.", "", 6000);
+    }, "reset-password");
+    setLoading(false);
   };
 
   const handleClose = () => setIsOpen(false);
@@ -84,40 +74,12 @@ export default function UpdatePasswordModal() {
             Suite à une mise à jour de notre politique de sécurité, veuillez
             réinitialiser votre mot de passe pour continuer à utiliser Mobilic.
           </p>
-          <Typography className={classes.introText}>
-            Veuillez choisir un nouveau mot de passe.
-          </Typography>
-          <PasswordField
-            fullWidth
-            className="vertical-form-text-input"
-            label="Nouveau mot de passe"
-            placeholder="Choisissez un mot de passe"
-            autoComplete="new-password"
-            variant="standard"
-            value={password}
-            onChange={e => {
-              setPassword(e.target.value);
-            }}
-            required
-            error={password ? getPasswordErrors(password) : null}
-          />
-          <PasswordHelper password={password} />
-          <PasswordField
-            required
-            fullWidth
-            label="Confirmez le mot de passe"
-            className="vertical-form-text-input"
-            autoComplete="new-password"
-            variant="standard"
-            error={
-              passwordCopy && passwordCopy !== password
-                ? "Le mot de passe n'est pas identique"
-                : null
-            }
-            value={passwordCopy}
-            onChange={e => {
-              setPasswordCopy(e.target.value);
-            }}
+          <NewPasswordBlock
+            label="Veuillez choisir un nouveau mot de passe."
+            password={password}
+            setPassword={setPassword}
+            passwordCopy={passwordCopy}
+            setPasswordCopy={setPasswordCopy}
           />
         </DialogContent>
         <CustomDialogActions>
