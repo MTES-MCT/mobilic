@@ -279,7 +279,7 @@ function _Root() {
         process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
         <EnvironmentHeader />
       )}
-      {shouldUpdatePassword() && <UpdatePasswordModal />}
+      {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
       <React.Suspense fallback={<CircularProgress color="primary" />}>
         <Switch color="secondary">
           {routes.map(route => (
