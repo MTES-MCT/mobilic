@@ -29,6 +29,8 @@ server {
     add_header Cache-Control $cache_control;
 
     location / {
+      modsecurity on;
+      modsecurity_rules_file /app/my_security_rules.conf;
       try_files $uri.html $uri $uri/ /index.html;
     }
 
