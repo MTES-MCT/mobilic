@@ -27,6 +27,8 @@ import { captureSentryException } from "common/utils/sentry";
 import TimezoneSelect from "../common/TimezoneSelect";
 import { getClientTimezone } from "common/utils/timezones";
 import { WayHeardOfMobilic } from "../common/WayHeardOfMobilic";
+import { getPasswordErrors } from "common/utils/passwords";
+import { PasswordHelper } from "../common/PasswordHelper";
 
 const useStyles = makeStyles(theme => ({
   text: {
@@ -209,18 +211,22 @@ export function EmailSelection() {
             label="Choisir un mot de passe"
           />
           {choosePassword && (
-            <PasswordField
-              required
-              fullWidth
-              className="vertical-form-text-input"
-              label="Choisissez un mot de passe"
-              autoComplete="current-password"
-              variant="standard"
-              value={password}
-              onChange={e => {
-                setPassword(e.target.value);
-              }}
-            />
+            <>
+              <PasswordField
+                required
+                fullWidth
+                className="vertical-form-text-input"
+                label="Choisissez un mot de passe"
+                autoComplete="current-password"
+                variant="standard"
+                value={password}
+                onChange={e => {
+                  setPassword(e.target.value);
+                }}
+                error={password ? getPasswordErrors(password) : null}
+              />
+              <PasswordHelper password={password} />
+            </>
           )}
         </Section>
         <Section title="3. Fuseau horaire">
@@ -246,7 +252,11 @@ export function EmailSelection() {
             color="primary"
             type="submit"
             loading={loading}
-            disabled={emailError || !email || (choosePassword && !password)}
+            disabled={
+              emailError ||
+              !email ||
+              (choosePassword && (!password || getPasswordErrors(password)))
+            }
           >
             Continuer
           </LoadingButton>

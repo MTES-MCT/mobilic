@@ -24,6 +24,8 @@ import { EmailField } from "../common/EmailField";
 import TimezoneSelect from "../common/TimezoneSelect";
 import { getClientTimezone } from "common/utils/timezones";
 import { WayHeardOfMobilic } from "../common/WayHeardOfMobilic";
+import { getPasswordErrors } from "common/utils/passwords";
+import { PasswordHelper } from "../common/PasswordHelper";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   const api = useApi();
@@ -179,7 +181,9 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             onChange={e => {
               setPassword(e.target.value);
             }}
+            error={password ? getPasswordErrors(password) : null}
           />
+          <PasswordHelper password={password} />
           <TextField
             required
             fullWidth
@@ -226,7 +230,11 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
               color="primary"
               type="submit"
               disabled={
-                emailError || !email || !password || !firstName || !lastName
+                emailError ||
+                !email ||
+                getPasswordErrors(password) ||
+                !firstName ||
+                !lastName
               }
               loading={loading}
             >

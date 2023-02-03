@@ -122,7 +122,7 @@ export const LOGIN_MUTATION = gql`
 export const USER_SIGNUP_MUTATION = gql`
   mutation userSignUp(
     $email: String!
-    $password: String!
+    $password: Password!
     $firstName: String!
     $lastName: String!
     $inviteToken: String
@@ -152,7 +152,7 @@ export const USER_SIGNUP_MUTATION = gql`
 export const CONFIRM_FC_EMAIL_MUTATION = gql`
   mutation confirmFcEmail(
     $email: String!
-    $password: String
+    $password: Password
     $timezoneName: String
     $wayHeardOfMobilic: String
   ) {
@@ -823,10 +823,19 @@ export const RESEND_ACTIVATION_EMAIL = gql`
   }
 `;
 export const RESET_PASSWORD_MUTATION = gql`
-  mutation resetPassword($token: String!, $password: String!) {
+  mutation resetPassword($token: String!, $password: Password!) {
     account {
       resetPassword(token: $token, password: $password) {
         id
+      }
+    }
+  }
+`;
+export const RESET_PASSWORD_CONNECTED_MUTATION = gql`
+  mutation resetPasswordConnected($password: Password!) {
+    account {
+      resetPasswordConnected(password: $password) {
+        success
       }
     }
   }
