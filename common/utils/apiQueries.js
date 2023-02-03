@@ -832,9 +832,9 @@ export const RESET_PASSWORD_MUTATION = gql`
   }
 `;
 export const RESET_PASSWORD_CONNECTED_MUTATION = gql`
-  mutation resetPasswordConnected($password: Password!) {
+  mutation resetPasswordConnected($userId: Int!, $password: Password!) {
     account {
-      resetPasswordConnected(password: $password) {
+      resetPasswordConnected(userId: $userId, password: $password) {
         success
       }
     }

@@ -14,6 +14,7 @@ import {
 import { LoadingButton } from "common/components/LoadingButton";
 import { getPasswordErrors } from "common/utils/passwords";
 import { NewPasswordBlock } from "../../common/NewPasswordBlock";
+import { currentUserId } from "common/utils/cookie";
 
 const useStyles = makeStyles(theme => ({
   modalFooter: {
@@ -41,7 +42,7 @@ export default function UpdatePasswordModal() {
     await alerts.withApiErrorHandling(async () => {
       const apiResponse = await api.graphQlMutate(
         RESET_PASSWORD_CONNECTED_MUTATION,
-        { password },
+        { password, userId: currentUserId() },
         { context: { nonPublicApi: true } },
         true
       );
