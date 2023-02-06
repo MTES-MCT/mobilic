@@ -22,6 +22,9 @@ const useStyles = makeStyles(theme => ({
   },
   modalButton: {
     marginLeft: theme.spacing(2)
+  },
+  prioritaryModal: {
+    zIndex: 2500
   }
 }));
 
@@ -59,7 +62,13 @@ export default function UpdatePasswordModal() {
   const handleClose = () => setIsOpen(false);
 
   return (
-    <Dialog maxWidth="sm" onClose={handleClose} open={isOpen} fullWidth>
+    <Dialog
+      className={classes.prioritaryModal}
+      maxWidth="sm"
+      onClose={handleClose}
+      open={isOpen}
+      fullWidth
+    >
       <form
         className="vertical-form centered"
         autoComplete="off"
