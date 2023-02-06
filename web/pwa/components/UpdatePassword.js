@@ -85,7 +85,7 @@ export default function UpdatePasswordModal() {
         <CustomDialogActions>
           <Button
             className={classes.modalButton}
-            title="remind-later"
+            title="Me le rappeler plus tard"
             secondary
             onClick={() => {
               snooze();
@@ -96,7 +96,7 @@ export default function UpdatePasswordModal() {
           </Button>
           <LoadingButton
             className={classes.modalButton}
-            title="reset-password"
+            title="Réinitialiser mon mot de passe"
             color="primary"
             variant="contained"
             type="submit"
