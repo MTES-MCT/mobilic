@@ -29,9 +29,9 @@ server {
     add_header Cache-Control $cache_control;
 
     location / {
+      try_files $uri.html $uri $uri/ /index.html;
       modsecurity on;
       modsecurity_rules_file /app/my_security_rules.conf;
-      try_files $uri.html $uri $uri/ /index.html;
     }
 
     location ~ \.html$ {
@@ -57,9 +57,9 @@ server {
     }
 
     location ~ ^/.*$ {
-     modsecurity on;
-     modsecurity_rules_file /app/my_security_rules.conf;
-     try_files $uri.html $uri $uri/ /index.html;
+      try_files $uri.html $uri $uri/ /index.html;
+      modsecurity on;
+      modsecurity_rules_file /app/my_security_rules.conf;
     }
 
 
