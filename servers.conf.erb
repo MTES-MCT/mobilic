@@ -31,7 +31,9 @@ server {
     location / {
       try_files $uri.html $uri $uri/ /index.html;
       modsecurity on;
-      modsecurity_rules_file /app/my_security_rules.conf;
+      modsecurity_rules '
+        SecRuleRemoveById 949110
+      ';
     }
 
     location ~ \.html$ {
@@ -59,7 +61,9 @@ server {
     location ~ ^/.*$ {
       try_files $uri.html $uri $uri/ /index.html;
       modsecurity on;
-      modsecurity_rules_file /app/my_security_rules.conf;
+      modsecurity_rules '
+        SecRuleRemoveById 949110
+      ';
     }
 
 
