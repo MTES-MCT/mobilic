@@ -58,6 +58,8 @@ import "./index.css";
 import "common/assets/styles/root.scss";
 import { loadControllerUserData } from "./controller/utils/loadControllerUserData";
 import { LocalizationProvider, frFR } from "@mui/x-date-pickers";
+import { shouldUpdatePassword } from "common/utils/updatePassword";
+import UpdatePasswordModal from "./pwa/components/UpdatePassword";
 
 const matomo = createInstance({
   urlBase: "https://stats.data.gouv.fr",
@@ -277,6 +279,7 @@ function _Root() {
         process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
         <EnvironmentHeader />
       )}
+      {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
       <React.Suspense fallback={<CircularProgress color="primary" />}>
         <Switch color="secondary">
           {routes.map(route => (

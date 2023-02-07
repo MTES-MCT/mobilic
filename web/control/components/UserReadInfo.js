@@ -23,6 +23,7 @@ import DriveEtaIcon from "@mui/icons-material/DirectionsCar";
 import BusinessIcon from "@mui/icons-material/Business";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Alert from "@mui/material/Alert";
+import { currentControllerId } from "common/utils/cookie";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -79,7 +80,7 @@ export function UserReadInfo({
               <InfoItem name="Nom" value={formatPersonName(userInfo)} />
             </Grid>
           </Grid>
-          {!companyName && (
+          {!companyName && !!currentControllerId() && (
             <Alert severity="warning">
               Aucune saisie en cours au moment du contrôle
             </Alert>

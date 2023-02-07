@@ -24,7 +24,7 @@ export function Footer() {
       <Follow />
       <DSFooter>
         <FooterBody
-          description="Mobilic est un service numérique de l’Etat, soutenue par la
+          description="Mobilic est un service numérique de l’Etat, soutenu par la
               Direction générale des infrastructures, des transports et des mobilités 
               (DGITM), incubé à la Fabrique Numérique du Ministère de la
               Transition écologique, membre du réseau d’incubateurs
