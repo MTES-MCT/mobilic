@@ -30,6 +30,8 @@ server {
 
     modsecurity on;
     modsecurity_rules_file /app/my_security_rules.conf;
+    ModSecurityConfig /app/modsecurity.conf;
+
     modsecurity_rules '
       SecRuleRemoveById 942190 932100
     ';
