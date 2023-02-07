@@ -23,6 +23,9 @@ const useStyles = makeStyles(theme => ({
   },
   modalButton: {
     marginLeft: theme.spacing(2)
+  },
+  prioritaryModal: {
+    zIndex: 2500
   }
 }));
 
@@ -60,7 +63,13 @@ export default function UpdatePasswordModal() {
   const handleClose = () => setIsOpen(false);
 
   return (
-    <Dialog maxWidth="sm" onClose={handleClose} open={isOpen} fullWidth>
+    <Dialog
+      className={classes.prioritaryModal}
+      maxWidth="sm"
+      onClose={handleClose}
+      open={isOpen}
+      fullWidth
+    >
       <form
         className="vertical-form centered"
         autoComplete="off"
@@ -86,7 +95,7 @@ export default function UpdatePasswordModal() {
         <CustomDialogActions>
           <Button
             className={classes.modalButton}
-            title="remind-later"
+            title="Me le rappeler plus tard"
             secondary
             onClick={() => {
               snooze();
@@ -97,7 +106,7 @@ export default function UpdatePasswordModal() {
           </Button>
           <LoadingButton
             className={classes.modalButton}
-            title="reset-password"
+            title="Réinitialiser mon mot de passe"
             color="primary"
             variant="contained"
             type="submit"
