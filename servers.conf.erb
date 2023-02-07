@@ -28,12 +28,13 @@ server {
     add_header X-XSS-Protection "1; mode=block";
     add_header Cache-Control $cache_control;
 
+    modsecurity on;
+    modsecurity_rules_file /app/my_security_rules.conf;
+    modsecurity_rules '
+      SecRuleRemoveById 949110 932115 942190 932100
+    ';
     location / {
       try_files $uri.html $uri $uri/ /index.html;
-      modsecurity on;
-      modsecurity_rules '
-        SecRuleRemoveById 949110
-      ';
     }
 
     location ~ \.html$ {
@@ -60,10 +61,6 @@ server {
 
     location ~ ^/.*$ {
       try_files $uri.html $uri $uri/ /index.html;
-      modsecurity on;
-      modsecurity_rules '
-        SecRuleRemoveById 949110
-      ';
     }
 
 
