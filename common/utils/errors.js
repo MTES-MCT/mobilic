@@ -103,8 +103,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "le lien est invalide";
       case "EXPIRED_TOKEN":
         return "le lien a expiré";
-      case "EMAIL_ALREADY_REGISTERED":
-        return "L'adresse email est déjà utilisée.";
+      case "ERROR_WHILE_REGISTERING_USER":
+        return "Une erreur interne s'est produite ou l'adresse email est déjà utilisée.";
       case "FC_USER_ALREADY_REGISTERED":
         return "L'utilisateur est déjà inscrit sur Mobilic.";
       case "ACTIVITY_EXIST_AFTER_EMPLOYMENT_END_DATE":
