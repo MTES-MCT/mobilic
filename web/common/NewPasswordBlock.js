@@ -4,7 +4,6 @@ import { makeStyles } from "@mui/styles";
 
 import Typography from "@mui/material/Typography";
 import { PasswordField } from "common/components/PasswordField";
-import { getPasswordErrors } from "common/utils/passwords";
 import { PasswordHelper } from "./PasswordHelper";
 
 const useStyles = makeStyles(theme => ({
@@ -23,8 +22,10 @@ export function NewPasswordBlock({
   label,
   password,
   setPassword,
+  passwordError,
   passwordCopy,
-  setPasswordCopy
+  setPasswordCopy,
+  passwordCopyError
 }) {
   const classes = useStyles(theme => ({
     introText: {
@@ -49,7 +50,7 @@ export function NewPasswordBlock({
           setPassword(e.target.value);
         }}
         required
-        error={password ? getPasswordErrors(password) : null}
+        error={passwordError}
       />
       <PasswordHelper password={password} />
       <PasswordField
@@ -59,11 +60,7 @@ export function NewPasswordBlock({
         className="vertical-form-text-input"
         autoComplete="new-password"
         variant="standard"
-        error={
-          passwordCopy && passwordCopy !== password
-            ? "Le mot de passe n'est pas identique"
-            : null
-        }
+        error={passwordCopyError}
         value={passwordCopy}
         onChange={e => {
           setPasswordCopy(e.target.value);
