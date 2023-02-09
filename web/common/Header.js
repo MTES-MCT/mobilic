@@ -188,7 +188,8 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies }) {
         {route.subRoutes
           .filter(
             subRoute =>
-              !subRoute.accessible || subRoute.accessible(userInfo, companies)
+              !subRoute.accessible ||
+              subRoute.accessible({ userInfo, companies })
           )
           .map(subRoute => (
             <ListRouteItem
