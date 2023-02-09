@@ -39,6 +39,12 @@ export default function UpdatePasswordModal() {
   const [password, setPassword] = React.useState(null);
   const [passwordCopy, setPasswordCopy] = React.useState(null);
 
+  const passwordError = password ? getPasswordErrors(password) : null;
+  const passwordCopyError =
+    passwordCopy && passwordCopy !== password
+      ? "Le mot de passe n'est pas identique"
+      : null;
+
   const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
@@ -88,8 +94,10 @@ export default function UpdatePasswordModal() {
             label="Veuillez choisir un nouveau mot de passe."
             password={password}
             setPassword={setPassword}
+            passwordError={passwordError}
             passwordCopy={passwordCopy}
             setPasswordCopy={setPasswordCopy}
+            passwordCopyError={passwordCopyError}
           />
         </DialogContent>
         <CustomDialogActions>
@@ -113,8 +121,8 @@ export default function UpdatePasswordModal() {
             disabled={
               !password ||
               !passwordCopy ||
-              getPasswordErrors(password) ||
-              password !== passwordCopy
+              !!passwordError ||
+              !!passwordCopyError
             }
             loading={loading}
           >
