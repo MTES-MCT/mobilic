@@ -133,6 +133,21 @@ export function MissionDetails({
   const actualUserId = userId || store.userId();
   const alerts = useSnackbarAlerts();
 
+  const [
+    currentlyEmployedInCompany,
+    setCurrentlyEmployedInCompany
+  ] = React.useState(false);
+
+  React.useEffect(() => {
+    setCurrentlyEmployedInCompany(
+      mission?.company?.id &&
+        store
+          .companies()
+          .map(c => c.id)
+          .includes(mission.company?.id)
+    );
+  }, [mission]);
+
   const actualCoworkers = coworkers || store.getEntity("coworkers");
 
   let teamChanges = omit(mission.teamChanges, [actualUserId]);
@@ -175,7 +190,10 @@ export function MissionDetails({
       (!untilTime || new Date(exp.spendingDate).getTime() / 1000 < untilTime)
   );
 
-  const disableActions = mission.validation || mission.adminValidation;
+  const disableActions =
+    mission.validation ||
+    mission.adminValidation ||
+    !currentlyEmployedInCompany;
 
   const cacheContradictoryInfoInPwaStore = useCacheContradictoryInfoInPwaStore();
 
@@ -269,7 +287,7 @@ export function MissionDetails({
         />
       </MissionReviewSection>
       {hasTeamMates ||
-      (mission.company && mission.company.settings.allowTeamMode) ? (
+      (mission.company && mission.company.settings?.allowTeamMode) ? (
         <MissionReviewSection
           title={`${hasTeamMates ? "Coéquipiers" : "En solo"}`}
           onEdit={
@@ -441,9 +459,9 @@ export function MissionDetails({
       {!hideComments && (
         <MissionReviewSection
           title="Observations"
-          editButtonLabel="Ajouter"
+          editButtonLabel={currentlyEmployedInCompany ? "Ajouter" : null}
           onEdit={
-            logComment
+            logComment && currentlyEmployedInCompany
               ? () =>
                   modals.open("commentInput", {
                     handleContinue: text =>
@@ -461,7 +479,11 @@ export function MissionDetails({
                     time={comment.receptionTime}
                     submitterId={comment.submitterId}
                     submitter={comment.submitter}
-                    cancel={cancelComment ? () => cancelComment(comment) : null}
+                    cancel={
+                      cancelComment && currentlyEmployedInCompany
+                        ? () => cancelComment(comment)
+                        : null
+                    }
                     withFullDate={
                       getStartOfDay(comment.receptionTime) !==
                       getStartOfDay(mission.startTime)
