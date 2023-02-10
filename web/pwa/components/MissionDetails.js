@@ -144,7 +144,7 @@ export function MissionDetails({
         store
           .companies()
           .map(c => c.id)
-          .includes(mission.company?.id)
+          .includes(mission.company.id)
     );
   }, [mission]);
 
