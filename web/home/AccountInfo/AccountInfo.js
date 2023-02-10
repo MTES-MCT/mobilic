@@ -21,6 +21,7 @@ import {
 import { frenchFormatDateStringOrTimeStamp } from "common/utils/time";
 import {
   CHANGE_EMAIL_MUTATION,
+  CHANGE_NAME_MUTATION,
   CHANGE_TIMEZONE_MUTATION
 } from "common/utils/apiQueries";
 import { EmploymentInfoCard } from "../../common/EmploymentInfoCard";
@@ -28,6 +29,7 @@ import { employmentSelector } from "common/store/selectors";
 import AlertEmailNotActivated from "./AlertEmailNotActivated";
 import { getTimezone, getTimezonePrettyName } from "common/utils/timezones";
 import { OAuthTokenSection } from "./OAuthTokensSection";
+import { currentUserId } from "common/utils/cookie";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
@@ -79,7 +81,38 @@ export default function Home() {
               />
             </Grid>
             <Grid item sm={6} zeroMinWidth>
-              <InfoItem name="Nom" value={formatPersonName(userInfo)} />
+              <InfoItem
+                name="Nom"
+                value={formatPersonName(userInfo)}
+                actionTitle="Modifier Nom"
+                action={() =>
+                  modals.open("changeName", {
+                    firstName: userInfo.firstName,
+                    lastName: userInfo.lastName,
+                    handleSubmit: async ({ firstName, lastName }) => {
+                      if (
+                        firstName !== userInfo.firstName ||
+                        lastName !== userInfo.lastName
+                      ) {
+                        const apiResponse = await api.graphQlMutate(
+                          CHANGE_NAME_MUTATION,
+                          {
+                            userId: currentUserId(),
+                            newFirstName: firstName,
+                            newLastName: lastName
+                          },
+                          { context: { nonPublicApi: true } }
+                        );
+                        await store.setUserInfo({
+                          ...store.userInfo(),
+                          ...apiResponse.data.account.changeName
+                        });
+                        await broadCastChannel.postMessage("update");
+                      }
+                    }
+                  })
+                }
+              />
             </Grid>
             {userInfo.birthDate && (
               <Grid item sm={6} zeroMinWidth>

@@ -29,6 +29,7 @@ import GeolocPermissionInfoModal from "./pwa/components/GeolocPermissionInfoModa
 import ControllerHelp from "./controller/components/modals/ControllerHelp";
 import ExportExcelOne from "./controller/components/modals/ControllerExportExcelOne";
 import ControllerExportC1BAll from "./controller/components/modals/ControllerExportC1BAll";
+import ChangeNameModal from "./home/ChangeName";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -50,6 +51,7 @@ export const MODAL_DICT = {
   apiErrorDialog: ApiErrorDialogModal,
   cgu: CGUModal,
   changeEmail: ChangeEmailModal,
+  changeName: ChangeNameModal,
   changeTimezone: ChangeTimezoneModal,
   terminateEmployment: TerminateEmployment,
   userReadQRCode: UserReadQRCodeModal,

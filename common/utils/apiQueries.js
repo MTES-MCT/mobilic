@@ -804,6 +804,25 @@ export const CHANGE_EMAIL_MUTATION = gql`
     }
   }
 `;
+export const CHANGE_NAME_MUTATION = gql`
+  mutation changeName(
+    $userId: Int!
+    $newFirstName: String!
+    $newLastName: String!
+  ) {
+    account {
+      changeName(
+        userId: $userId
+        newFirstName: $newFirstName
+        newLastName: $newLastName
+      ) {
+        id
+        firstName
+        lastName
+      }
+    }
+  }
+`;
 export const CHANGE_TIMEZONE_MUTATION = gql`
   mutation changeTimezone($timezoneName: String!) {
     account {
