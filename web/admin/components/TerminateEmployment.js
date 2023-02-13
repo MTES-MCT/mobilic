@@ -61,6 +61,9 @@ export default function TerminateEmployment({
             Cette opération signale le départ d'un salarié : après la date
             choisie le salarié ne pourra plus enregistrer de temps de travail
             pour l'entreprise, ni accéder aux informations de l'entreprise.
+            <br />
+            En tant que gestionnaire, vous ne pourrez plus ajouter de missions
+            dans le passé pour le compte de ce salarié.
           </Alert>
           <Box my={2} mt={4} className="flex-row-center">
             <MobileDatePicker
