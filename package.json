@@ -121,7 +121,7 @@
   },
   "engines": {
     "node": "14",
-    "yarn": ">=1.19"
+    "yarn": ">=1.19 <2"
   },
   "browserslist": {
     "production": [
