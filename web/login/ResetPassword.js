@@ -22,6 +22,7 @@ import {
 import { EmailField } from "../common/EmailField";
 import Emoji from "../common/Emoji";
 import { NewPasswordBlock } from "../common/NewPasswordBlock";
+import { getPasswordErrors } from "common/utils/passwords";
 
 const useStyles = makeStyles(theme => ({
   introText: {
@@ -51,6 +52,12 @@ export function ResetPassword() {
   const [tokenError, setTokenError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [token, setToken] = React.useState(null);
+
+  const passwordError = password ? getPasswordErrors(password) : null;
+  const passwordCopyError =
+    passwordCopy && passwordCopy !== password
+      ? "Le mot de passe n'est pas identique"
+      : null;
 
   React.useEffect(() => {
     withLoadingScreen(async () => {
@@ -159,8 +166,10 @@ export function ResetPassword() {
                     label="Veuillez choisir un nouveau mot de passe."
                     password={password}
                     setPassword={setPassword}
+                    passwordError={passwordError}
                     passwordCopy={passwordCopy}
                     setPasswordCopy={setPasswordCopy}
+                    passwordCopyError={passwordCopyError}
                   />
                   <Box my={4}>
                     <LoadingButton
@@ -172,7 +181,8 @@ export function ResetPassword() {
                         !token ||
                         !password ||
                         !passwordCopy ||
-                        password !== passwordCopy
+                        !!passwordError ||
+                        !!passwordCopyError
                       }
                       loading={loading}
                     >

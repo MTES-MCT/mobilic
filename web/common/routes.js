@@ -83,11 +83,11 @@ export const ROUTES = [
   {
     path: "/app",
     label: "Mes missions",
-    accessible: ({ userInfo, companies }) =>
-      userInfo?.hasActivatedEmail && userInfo?.id && companies?.length > 0,
+    accessible: ({ userInfo }) => userInfo?.hasActivatedEmail && userInfo?.id,
     component: React.lazy(() => import("../pwa/utils/navigation")),
     subRoutes: [
       {
+        accessible: ({ companies }) => companies?.length > 0,
         path: "",
         label: "Saisie de temps",
         exact: true

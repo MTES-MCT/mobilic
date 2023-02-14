@@ -158,7 +158,7 @@ function HeaderContainer(props) {
   );
 }
 
-export function ListRouteItem({ route, closeDrawer }) {
+export function ListRouteItem({ route, closeDrawer, userInfo, companies }) {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
@@ -185,13 +185,19 @@ export function ListRouteItem({ route, closeDrawer }) {
           </ListSubheader>
         }
       >
-        {route.subRoutes.map(subRoute => (
-          <ListRouteItem
-            key={subRoute.path || subRoute.label}
-            route={{ ...subRoute, path: `${route.path}${subRoute.path}` }}
-            closeDrawer={closeDrawer}
-          />
-        ))}
+        {route.subRoutes
+          .filter(
+            subRoute =>
+              !subRoute.accessible ||
+              subRoute.accessible({ userInfo, companies })
+          )
+          .map(subRoute => (
+            <ListRouteItem
+              key={subRoute.path || subRoute.label}
+              route={{ ...subRoute, path: `${route.path}${subRoute.path}` }}
+              closeDrawer={closeDrawer}
+            />
+          ))}
       </List>
       <Divider className="hr-unstyled" />
     </>
@@ -260,6 +266,8 @@ export function NavigationMenu({ open, setOpen }) {
           )
           .map(route => (
             <ListRouteItem
+              userInfo={userInfo}
+              companies={companies}
               key={route.path || route.label}
               route={route}
               closeDrawer={() => setOpen(false)}

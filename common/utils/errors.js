@@ -103,8 +103,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "le lien est invalide";
       case "EXPIRED_TOKEN":
         return "le lien a expiré";
-      case "EMAIL_ALREADY_REGISTERED":
-        return "L'adresse email est déjà utilisée.";
+      case "ERROR_WHILE_REGISTERING_USER":
+        return "Une erreur interne s'est produite ou l'adresse email est déjà utilisée.";
       case "FC_USER_ALREADY_REGISTERED":
         return "L'utilisateur est déjà inscrit sur Mobilic.";
       case "ACTIVITY_EXIST_AFTER_EMPLOYMENT_END_DATE":
@@ -199,6 +199,10 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "Vous ne pouvez pas enregistrer des activités en dehors de votre période de rattachement.";
       case "ACTIVITY_OUTSIDE_EMPLOYMENT_ADMIN":
         return "Vous ne pouvez pas enregistrer des activités en dehors de la période de rattachement du salarié sélectionné.";
+      case "USER_NOT_EMPLOYED_BY_COMPANY_ANYMORE_EMPLOYEE":
+        return "Vous ne pouvez pas effectuer cette opération car vous n'êtes plus rattaché à la société.";
+      case "USER_NOT_EMPLOYED_BY_COMPANY_ANYMORE_ADMIN":
+        return "Vous ne pouvez pas effectuer cette opération car le salarié n'est plus rattaché à la société.";
       case "EMPLOYMENT_CLIENT_LINK_ALREADY_ACCEPTED":
         return "Vous avez déjà accordé les droits d'accès à votre compte Mobilic.";
       case "EMPLOYMENT_CLIENT_LINK_EXPIRED":
