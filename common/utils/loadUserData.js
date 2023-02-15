@@ -18,6 +18,44 @@ import { EMPLOYMENT_STATUS, getEmploymentsStatus } from "./employments";
 import { CURRENT_MISSION_INFO } from "./apiQueries";
 import { onLogIn } from "./updatePassword";
 
+const CURRENT_EMPLOYMENTS_QUERY = gql`
+  query currentEmployments($id: Int!) {
+    user(id: $id) {
+      id
+      currentEmployments {
+        id
+        startDate
+        isAcknowledged
+        hasAdminRights
+        company {
+          id
+          name
+          siren
+          sirets
+          users {
+            id
+            firstName
+            lastName
+          }
+          knownAddresses {
+            id
+            alias
+            name
+            postalCode
+            city
+          }
+          vehicles {
+            id
+            name
+            registrationNumber
+            lastKilometerReading
+          }
+        }
+      }
+    }
+  }
+`;
+
 const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FULL_MISSION_FRAGMENT}
@@ -58,37 +96,6 @@ const USER_QUERY = gql`
           ...CompanySettings
         }
       }
-      currentEmployments {
-        id
-        startDate
-        isAcknowledged
-        hasAdminRights
-        company {
-          id
-          name
-          siren
-          sirets
-          ...CompanySettings
-          users {
-            id
-            firstName
-            lastName
-          }
-          knownAddresses {
-            id
-            alias
-            name
-            postalCode
-            city
-          }
-          vehicles {
-            id
-            name
-            registrationNumber
-            lastKilometerReading
-          }
-        }
-      }
     }
   }
 `;
@@ -107,8 +114,63 @@ export async function loadUserData(api, store, alerts) {
       { context: { timeout: 12000 } }
     );
     await syncUser(userResponse.data.user, api, store);
+    loadCoworkerData(api, store, alerts).then(r => {});
     await broadCastChannel.postMessage("update");
   }, "load-user");
+}
+
+async function loadCoworkerData(api, store, alerts) {
+  const userId = store.userId();
+  if (!userId) return;
+  await alerts.withApiErrorHandling(async () => {
+    const userResponse = await api.graphQlQuery(
+      CURRENT_EMPLOYMENTS_QUERY,
+      {
+        id: userId
+      },
+      { context: { timeout: 12000 } }
+    );
+    await syncCoworkerData(userResponse.data.user, store);
+    await broadCastChannel.postMessage("update");
+  }, "load-user");
+}
+
+async function syncCoworkerData(coworkerPayload, store) {
+  const { currentEmployments } = coworkerPayload;
+
+  const users = [];
+  const vehicles = [];
+  const knownAddresses = [];
+
+  const sortedKnownAdresses = knownAddresses.sort((a1, a2) =>
+    (a1.alias || a1.name).localeCompare(a2.alias || a2.name, undefined, {
+      numeric: true,
+      sensitivity: "base"
+    })
+  );
+  const syncActions = [];
+  currentEmployments.forEach(e => {
+    const company = e.company;
+    company.users.forEach(u => {
+      if (u.id !== coworkerPayload.id) {
+        const userMatch = users.find(u2 => u2.id === u.id);
+        if (!userMatch) {
+          users.push({ ...u, companyIds: [company.id] });
+        } else userMatch.companyIds.push(company.id);
+      }
+    });
+    vehicles.push(
+      ...company.vehicles.map(v => ({ ...v, companyId: company.id }))
+    );
+    knownAddresses.push(
+      ...company.knownAddresses.map(a => ({ ...a, companyId: company.id }))
+    );
+  });
+  syncActions.push(store.syncEntity(users, "coworkers"));
+  syncActions.push(store.syncEntity(vehicles, "vehicles"));
+  syncActions.push(store.syncEntity(sortedKnownAdresses, "knownAddresses"));
+  store.batchUpdate();
+  await Promise.all(syncActions);
 }
 
 export async function syncUser(userPayload, api, store) {
@@ -123,8 +185,7 @@ export async function syncUser(userPayload, api, store) {
     hasActivatedEmail,
     disabledWarnings,
     missions: missionsPayload,
-    employments,
-    currentEmployments
+    employments
   } = userPayload;
 
   onLogIn(shouldUpdatePassword);
@@ -185,34 +246,6 @@ export async function syncUser(userPayload, api, store) {
   expenditures &&
     syncActions.push(store.syncEntity(expenditures, "expenditures"));
   comments && syncActions.push(store.syncEntity(comments, "comments"));
-  const users = [];
-  const vehicles = [];
-  const knownAddresses = [];
-
-  currentEmployments.forEach(e => {
-    const company = e.company;
-    company.users.forEach(u => {
-      if (u.id !== userPayload.id) {
-        const userMatch = users.find(u2 => u2.id === u.id);
-        if (!userMatch) {
-          users.push({ ...u, companyIds: [company.id] });
-        } else userMatch.companyIds.push(company.id);
-      }
-    });
-    vehicles.push(
-      ...company.vehicles.map(v => ({ ...v, companyId: company.id }))
-    );
-    knownAddresses.push(
-      ...company.knownAddresses.map(a => ({ ...a, companyId: company.id }))
-    );
-  });
-
-  const sortedKnownAdresses = knownAddresses.sort((a1, a2) =>
-    (a1.alias || a1.name).localeCompare(a2.alias || a2.name, undefined, {
-      numeric: true,
-      sensitivity: "base"
-    })
-  );
 
   const employmentsPerCompanyId = {};
   employments.forEach(e => {
@@ -232,9 +265,6 @@ export async function syncUser(userPayload, api, store) {
         employmentsPerCompanyId[company.id].push(e);
     }
   });
-  syncActions.push(store.syncEntity(users, "coworkers"));
-  syncActions.push(store.syncEntity(vehicles, "vehicles"));
-  syncActions.push(store.syncEntity(sortedKnownAdresses, "knownAddresses"));
   employments &&
     syncActions.push(
       store.syncEntity(flatten(values(employmentsPerCompanyId)), "employments")
