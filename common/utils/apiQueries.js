@@ -4,6 +4,7 @@ import {
   COMPANY_SETTINGS_FRAGMENT,
   FRAGMENT_LOCATION_FULL,
   FULL_MISSION_FRAGMENT,
+  FULL_TEAM_FRAGMENT,
   REGULATION_COMPUTATIONS_FRAGMENT,
   WORK_DAYS_DATA_FRAGMENT
 } from "./apiFragments";
@@ -619,6 +620,54 @@ export const THIRD_PARTY_CLIENTS_COMPANY_QUERY = gql`
   }
 `;
 
+export const ALL_TEAMS_COMPANY_QUERY = gql`
+  ${FULL_TEAM_FRAGMENT}
+  query allTeamsCompany($companyId: Int!) {
+    company(id: $companyId) {
+      teams {
+        ...FullTeamData
+      }
+    }
+  }
+`;
+
+export const DELETE_TEAM_MUTATION = gql`
+  mutation deleteTeam($id: Int!) {
+    teams {
+      deleteTeam(id: $id) {
+        success
+      }
+    }
+  }
+`;
+
+export const CREATE_TEAM_MUTATION = gql`
+  ${FULL_TEAM_FRAGMENT}
+  mutation createTeam(
+    $companyId: Int!
+    $name: String!
+    $userIds: [Int]!
+    $adminIds: [Int]!
+    $addressIds: [Int]!
+    $vehicleIds: [Int]!
+  ) {
+    teams {
+      createTeam(
+        companyId: $companyId
+        name: $name
+        userIds: $userIds
+        adminIds: $adminIds
+        addressIds: $addressIds
+        vehicleIds: $vehicleIds
+      ) {
+        teams {
+          ...FullTeamData
+        }
+      }
+    }
+  }
+`;
+
 export const ADMIN_COMPANIES_QUERY = gql`
   ${WORK_DAYS_DATA_FRAGMENT}
   ${COMPANY_SETTINGS_FRAGMENT}
@@ -639,6 +688,9 @@ export const ADMIN_COMPANIES_QUERY = gql`
           id
           firstName
           lastName
+        }
+        teams {
+          name
         }
         knownAddresses {
           id

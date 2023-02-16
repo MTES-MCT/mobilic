@@ -146,6 +146,11 @@ export function textualPrettyFormatDay(unixTimestamp, withYear = false) {
   return withYear ? `${baseString} ${date.getFullYear()}` : baseString;
 }
 
+export function isoFormatDay(unixTimestamp) {
+  const date = new Date(unixTimestamp * 1000);
+  return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+}
+
 export function prettyFormatDayHour(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
   return `${date.getDate()}/${date.getMonth() +

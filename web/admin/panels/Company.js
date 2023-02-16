@@ -13,6 +13,7 @@ import VehicleAdmin from "./Vehicles";
 import KnownAddressAdmin from "./KnownAddresses";
 import SettingAdmin from "./Settings";
 import CompanyApiPanel from "./CompanyApiPanel";
+import CompanyTeamsPanel from "./CompanyTeamsPanel";
 
 export const usePanelStyles = makeStyles(theme => ({
   navigation: {
@@ -102,6 +103,11 @@ const COMPANY_SUB_PANELS = [
     label: "Paramètres",
     view: "settings",
     component: props => <SettingAdmin {...props} />
+  },
+  {
+    label: "Équipe(s)",
+    view: "teams",
+    component: props => <CompanyTeamsPanel {...props} />
   },
   {
     label: "API",
