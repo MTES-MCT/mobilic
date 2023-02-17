@@ -113,6 +113,11 @@ export default function CompanyTeamsPanel({ company }) {
     }
     const customActions = [
       {
+        name: "update",
+        label: "Modifier l'équipe",
+        action: openTeamModal
+      },
+      {
         name: "delete",
         label: "Supprimer l'équipe",
         action: team => {
@@ -124,11 +129,6 @@ export default function CompanyTeamsPanel({ company }) {
             }
           });
         }
-      },
-      {
-        name: "update",
-        label: "Modifier l'équipe",
-        action: openTeamModal
       }
     ];
     return customActions;

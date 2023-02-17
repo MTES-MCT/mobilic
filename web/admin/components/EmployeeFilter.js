@@ -32,7 +32,8 @@ export function EmployeeFilter({
   multiple = true,
   handleSelect = null,
   noneSelectedLabel = "Tous les salariés",
-  fullWidth = false
+  fullWidth = false,
+  limitTagNumber = 1
 }) {
   const classes = useStyles();
 
@@ -52,7 +53,7 @@ export function EmployeeFilter({
       multiple={multiple}
       id="employee-filter"
       options={orderBy(users, ["firstName", "lastName"], ["asc", "asc"])}
-      limitTags={1}
+      limitTags={limitTagNumber}
       size="small"
       disableCloseOnSelect
       getOptionLabel={option => formatPersonName(option)}

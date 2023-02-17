@@ -40,8 +40,8 @@ export default function CompanyTeamCreationRevisionModal({
 }) {
   const [name, setName] = React.useState(team?.name || "");
   const [submitting, setSubmitting] = React.useState(false);
-  const [newUsers, setNewUsers] = React.useState(team?.users);
-  const [newAdmins, setNewAdmins] = React.useState(team?.userAdmins);
+  const [newUsers, setNewUsers] = React.useState([]);
+  const [newAdmins, setNewAdmins] = React.useState([]);
   const classes = useStyles();
   const alerts = useSnackbarAlerts();
   const api = useApi();
@@ -49,26 +49,18 @@ export default function CompanyTeamCreationRevisionModal({
   React.useEffect(() => {
     selectableUsers.forEach(su => (su.selected = false));
     selectableAdmins.forEach(sa => (sa.selected = false));
-    if (team?.users) {
-      team.users.forEach(existingUser => {
-        const selectableUser = selectableUsers.find(
-          su => su.id === existingUser.id
-        );
-        if (selectableUser) {
-          selectableUser.selected = true;
-        }
-      });
-    }
-    if (team?.adminUsers) {
-      team.adminUsers.forEach(existingAdmin => {
-        const selectableAdmin = selectableAdmins.find(
-          sa => sa.id === existingAdmin.id
-        );
-        if (selectableAdmin) {
-          selectableAdmin.selected = true;
-        }
-      });
-    }
+    setNewAdmins(
+      selectableAdmins.map(sa => ({
+        ...sa,
+        selected: team?.adminUsers?.some(au => au.id === sa.id)
+      }))
+    );
+    setNewUsers(
+      selectableUsers.map(sa => ({
+        ...sa,
+        selected: team?.users?.some(au => au.id === sa.id)
+      }))
+    );
   }, []);
 
   const commonPayloadFromFields = () => {
@@ -139,18 +131,20 @@ export default function CompanyTeamCreationRevisionModal({
           </Grid>
           <Grid item xs={12}>
             <EmployeeFilter
-              users={newAdmins || selectableAdmins}
+              users={newAdmins}
               setUsers={setNewAdmins}
               noneSelectedLabel={"Gestionnaire(s) de l'équipe"}
               fullWidth
+              limitTagNumber={5}
             />
           </Grid>
           <Grid item xs={12}>
             <EmployeeFilter
-              users={newUsers || selectableUsers}
+              users={newUsers}
               setUsers={setNewUsers}
               noneSelectedLabel={"Salarié(s) de l'équipe"}
               fullWidth
+              limitTagNumber={5}
             />
             <Alert severity="warning" className={classes.warningAffectation}>
               <Typography gutterBottom>
