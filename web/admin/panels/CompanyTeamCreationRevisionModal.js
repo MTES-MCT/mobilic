@@ -85,9 +85,9 @@ export default function CompanyTeamCreationRevisionModal({
       });
       setTeams(apiResponse?.data?.teams?.createTeam);
       alerts.success(`L'équipe '${name}' a bien été créée.`, "", 6000);
+      handleClose();
     }, "create-team");
     setSubmitting(false);
-    handleClose();
   }
 
   return (

@@ -12,16 +12,17 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { useModals } from "common/utils/modals";
 import { AugmentedTable } from "../components/AugmentedTable";
-import { captureSentryException } from "common/utils/sentry";
 import { Alert } from "@mui/material";
 import { isoFormatDay, isoFormatLocalDate } from "common/utils/time";
 import { formatPersonName } from "common/utils/coworkers";
 import { useAdminStore } from "../store/store";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 
 export default function CompanyTeamsPanel({ company }) {
   const api = useApi();
   const modals = useModals();
   const adminStore = useAdminStore();
+  const alerts = useSnackbarAlerts();
 
   const [teams, setTeams] = React.useState([]);
   const [loadingTeams, setLoadingTeams] = React.useState(false);
@@ -34,6 +35,16 @@ export default function CompanyTeamsPanel({ company }) {
     setTeams(apiResponse?.data?.company?.teams);
     setLoadingTeams(false);
   }, [company]);
+
+  async function deleteTeam(team) {
+    await alerts.withApiErrorHandling(async () => {
+      const apiResponse = await api.graphQlMutate(DELETE_TEAM_MUTATION, {
+        teamId: team.id
+      });
+      setTeams(apiResponse?.data?.teams?.deleteTeam);
+      alerts.success(`L'équipe '${team.name}' a bien été supprimée.`, "", 6000);
+    }, "delete-team");
+  }
 
   const classes = usePanelStyles();
 
@@ -167,13 +178,7 @@ export default function CompanyTeamsPanel({ company }) {
             textButtons: true,
             title: "Confirmer suppression",
             handleConfirm: async () => {
-              try {
-                await api.graphQlMutate(DELETE_TEAM_MUTATION, {
-                  id: team.id
-                });
-              } catch (err) {
-                captureSentryException(err);
-              }
+              await deleteTeam(team);
             }
           })
         }

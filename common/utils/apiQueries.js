@@ -632,10 +632,11 @@ export const ALL_TEAMS_COMPANY_QUERY = gql`
 `;
 
 export const DELETE_TEAM_MUTATION = gql`
-  mutation deleteTeam($id: Int!) {
+  ${FULL_TEAM_FRAGMENT}
+  mutation deleteTeam($teamId: Int!) {
     teams {
-      deleteTeam(id: $id) {
-        success
+      deleteTeam(teamId: $teamId) {
+        ...FullTeamData
       }
     }
   }
