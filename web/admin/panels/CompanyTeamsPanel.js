@@ -14,12 +14,14 @@ import { useModals } from "common/utils/modals";
 import { AugmentedTable } from "../components/AugmentedTable";
 import { captureSentryException } from "common/utils/sentry";
 import { Alert } from "@mui/material";
-import { isoFormatDay } from "common/utils/time";
+import { isoFormatDay, isoFormatLocalDate } from "common/utils/time";
 import { formatPersonName } from "common/utils/coworkers";
+import { useAdminStore } from "../store/store";
 
 export default function CompanyTeamsPanel({ company }) {
   const api = useApi();
   const modals = useModals();
+  const adminStore = useAdminStore();
 
   const [teams, setTeams] = React.useState([]);
   const [loadingTeams, setLoadingTeams] = React.useState(false);
@@ -93,6 +95,33 @@ export default function CompanyTeamsPanel({ company }) {
       sortable: true
     }
   ];
+
+  function openTeamModal() {
+    const currentUsers = adminStore.employments
+      .filter(
+        e =>
+          e.companyId === adminStore.companyId &&
+          e.isAcknowledged &&
+          (!e.endDate || e.endDate >= isoFormatLocalDate(new Date()))
+      )
+      .map(e => e.user);
+    const currentAdmins = adminStore.employments
+      .filter(
+        e =>
+          e.companyId === adminStore.companyId &&
+          e.isAcknowledged &&
+          e.hasAdminRights &&
+          (!e.endDate || e.endDate >= isoFormatLocalDate(new Date()))
+      )
+      .map(e => e.user);
+    modals.open("companyTeamCreationRevisionModal", {
+      company: company,
+      selectableUsers: currentUsers,
+      selectableAdmins: currentAdmins,
+      setTeams: setTeams
+    });
+  }
+
   return [
     <Grid key={0} container>
       <Grid item xs={6}>
@@ -107,9 +136,7 @@ export default function CompanyTeamsPanel({ company }) {
           size="small"
           color="primary"
           variant="contained"
-          onClick={() => {
-            console.log("toto");
-          }}
+          onClick={() => openTeamModal()}
         >
           Ajouter une nouvelle équipe
         </Button>

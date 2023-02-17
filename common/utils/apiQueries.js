@@ -646,10 +646,10 @@ export const CREATE_TEAM_MUTATION = gql`
   mutation createTeam(
     $companyId: Int!
     $name: String!
-    $userIds: [Int]!
-    $adminIds: [Int]!
-    $addressIds: [Int]!
-    $vehicleIds: [Int]!
+    $userIds: [Int]
+    $adminIds: [Int]
+    $addressIds: [Int]
+    $vehicleIds: [Int]
   ) {
     teams {
       createTeam(
@@ -660,9 +660,7 @@ export const CREATE_TEAM_MUTATION = gql`
         addressIds: $addressIds
         vehicleIds: $vehicleIds
       ) {
-        teams {
-          ...FullTeamData
-        }
+        ...FullTeamData
       }
     }
   }

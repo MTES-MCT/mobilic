@@ -8,9 +8,6 @@ import orderBy from "lodash/orderBy";
 
 const useStyles = makeStyles(theme => ({
   formControl: {
-    minWidth: 200
-  },
-  formControlWithMaxWidth: {
     minWidth: 200,
     maxWidth: 500
   },
@@ -30,9 +27,7 @@ export function EmployeeFilter({
   users,
   setUsers,
   multiple = true,
-  handleSelect = null,
-  noneSelectedLabel = "Tous les salariés",
-  fullWidth = false
+  handleSelect = null
 }) {
   const classes = useStyles();
 
@@ -72,15 +67,12 @@ export function EmployeeFilter({
       onChange={handleSelect || handleChange}
       renderInput={params => (
         <TextField
-          fullWidth
-          className={
-            fullWidth ? classes.formControl : classes.formControlWithMaxWidth
-          }
+          className={classes.formControl}
           {...params}
           placeholder={`${
             multiple
               ? selectedUsers.length === 0
-                ? noneSelectedLabel
+                ? "Tous les salariés"
                 : ""
               : "Sélectionner un salarié"
           }`}
