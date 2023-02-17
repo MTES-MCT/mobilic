@@ -107,7 +107,34 @@ export default function CompanyTeamsPanel({ company }) {
     }
   ];
 
-  function openTeamModal() {
+  const customActions = team => {
+    if (!team) {
+      return [];
+    }
+    const customActions = [
+      {
+        name: "delete",
+        label: "Supprimer l'équipe",
+        action: team => {
+          modals.open("confirmation", {
+            textButtons: true,
+            title: "Confirmer suppression",
+            handleConfirm: async () => {
+              await deleteTeam(team);
+            }
+          });
+        }
+      },
+      {
+        name: "update",
+        label: "Modifier l'équipe",
+        action: openTeamModal
+      }
+    ];
+    return customActions;
+  };
+
+  function openTeamModal(team) {
     const currentUsers = adminStore.employments
       .filter(
         e =>
@@ -126,6 +153,7 @@ export default function CompanyTeamsPanel({ company }) {
       )
       .map(e => e.user);
     modals.open("companyTeamCreationRevisionModal", {
+      team: team,
       company: company,
       selectableUsers: currentUsers,
       selectableAdmins: currentAdmins,
@@ -173,15 +201,8 @@ export default function CompanyTeamsPanel({ company }) {
         entries={teams}
         className={classes.vehiclesTable}
         defaultSortBy="name"
-        onRowDelete={team =>
-          modals.open("confirmation", {
-            textButtons: true,
-            title: "Confirmer suppression",
-            handleConfirm: async () => {
-              await deleteTeam(team);
-            }
-          })
-        }
+        onRowEdit={team => openTeamModal(team)}
+        customRowActions={customActions}
       />
     )
   ];

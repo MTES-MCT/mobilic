@@ -13,7 +13,10 @@ import Button from "@mui/material/Button";
 import { LoadingButton } from "common/components/LoadingButton";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
-import { CREATE_TEAM_MUTATION } from "common/utils/apiQueries";
+import {
+  CREATE_TEAM_MUTATION,
+  UPDATE_TEAM_MUTATION
+} from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 
@@ -37,15 +40,15 @@ export default function CompanyTeamCreationRevisionModal({
 }) {
   const [name, setName] = React.useState(team?.name || "");
   const [submitting, setSubmitting] = React.useState(false);
-  const [users, setUsers] = React.useState(team?.users);
-  const [admins, setAdmins] = React.useState(
-    team?.userAdmins || selectableAdmins
-  );
+  const [newUsers, setNewUsers] = React.useState(team?.users);
+  const [newAdmins, setNewAdmins] = React.useState(team?.userAdmins);
   const classes = useStyles();
   const alerts = useSnackbarAlerts();
   const api = useApi();
 
   React.useEffect(() => {
+    selectableUsers.forEach(su => (su.selected = false));
+    selectableAdmins.forEach(sa => (sa.selected = false));
     if (team?.users) {
       team.users.forEach(existingUser => {
         const selectableUser = selectableUsers.find(
@@ -71,10 +74,18 @@ export default function CompanyTeamCreationRevisionModal({
   const commonPayloadFromFields = () => {
     return {
       name: name,
-      userIds: users?.filter(u => u.selected).map(u => u.id),
-      adminIds: admins?.filter(u => u.selected).map(u => u.id)
+      userIds: newUsers?.filter(u => u.selected).map(u => u.id),
+      adminIds: newAdmins?.filter(u => u.selected).map(u => u.id)
     };
   };
+
+  async function submitForm() {
+    if (team) {
+      await updateTeam();
+    } else {
+      await createTeam();
+    }
+  }
 
   async function createTeam() {
     setSubmitting(true);
@@ -87,6 +98,20 @@ export default function CompanyTeamCreationRevisionModal({
       alerts.success(`L'équipe '${name}' a bien été créée.`, "", 6000);
       handleClose();
     }, "create-team");
+    setSubmitting(false);
+  }
+
+  async function updateTeam() {
+    setSubmitting(true);
+    await alerts.withApiErrorHandling(async () => {
+      const apiResponse = await api.graphQlMutate(UPDATE_TEAM_MUTATION, {
+        teamId: team.id,
+        ...commonPayloadFromFields()
+      });
+      setTeams(apiResponse?.data?.teams?.updateTeam);
+      alerts.success(`L'équipe '${name}' a bien été mise à jour.`, "", 6000);
+      handleClose();
+    }, "update-team");
     setSubmitting(false);
   }
 
@@ -114,16 +139,16 @@ export default function CompanyTeamCreationRevisionModal({
           </Grid>
           <Grid item xs={12}>
             <EmployeeFilter
-              users={admins || selectableAdmins}
-              setUsers={setAdmins}
+              users={newAdmins || selectableAdmins}
+              setUsers={setNewAdmins}
               noneSelectedLabel={"Gestionnaire(s) de l'équipe"}
               fullWidth
             />
           </Grid>
           <Grid item xs={12}>
             <EmployeeFilter
-              users={users || selectableUsers}
-              setUsers={setUsers}
+              users={newUsers || selectableUsers}
+              setUsers={setNewUsers}
               noneSelectedLabel={"Salarié(s) de l'équipe"}
               fullWidth
             />
@@ -151,7 +176,7 @@ export default function CompanyTeamCreationRevisionModal({
           color="primary"
           variant="contained"
           disabled={!name}
-          onClick={createTeam}
+          onClick={submitForm}
           loading={submitting}
         >
           Confirmer

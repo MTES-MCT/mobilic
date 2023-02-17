@@ -667,6 +667,31 @@ export const CREATE_TEAM_MUTATION = gql`
   }
 `;
 
+export const UPDATE_TEAM_MUTATION = gql`
+  ${FULL_TEAM_FRAGMENT}
+  mutation updateTeam(
+    $teamId: Int!
+    $name: String!
+    $userIds: [Int]
+    $adminIds: [Int]
+    $addressIds: [Int]
+    $vehicleIds: [Int]
+  ) {
+    teams {
+      updateTeam(
+        teamId: $teamId
+        name: $name
+        userIds: $userIds
+        adminIds: $adminIds
+        addressIds: $addressIds
+        vehicleIds: $vehicleIds
+      ) {
+        ...FullTeamData
+      }
+    }
+  }
+`;
+
 export const ADMIN_COMPANIES_QUERY = gql`
   ${WORK_DAYS_DATA_FRAGMENT}
   ${COMPANY_SETTINGS_FRAGMENT}
