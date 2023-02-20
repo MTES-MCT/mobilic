@@ -85,7 +85,7 @@ function _App({ ScreenComponent, loadUser }) {
         <Route path={`${path}/history`}>
           <History
             handleBack={() => history.push(path)}
-            missions={missions}
+            fetchMissions
             createActivity={args =>
               actions.pushNewTeamActivityEvent({ ...args, switchMode: false })
             }

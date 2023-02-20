@@ -1,41 +1,60 @@
+import moment from "moment";
 import React, { useMemo } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import GetAppIcon from "@mui/icons-material/GetApp";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
-import Tabs from "@mui/material/Tabs";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
 import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import Typography from "@mui/material/Typography";
+import { makeStyles } from "@mui/styles";
+
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
+import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
+import { useApi } from "common/utils/api";
+import { USER_MISSIONS_HISTORY_QUERY } from "common/utils/apiQueries";
+import { useSelectPeriod } from "common/utils/history/changePeriod";
+import { useComputePeriodStatuses } from "common/utils/history/computePeriodStatuses";
+import { useGroupMissionsAndExtractActivities } from "common/utils/history/groupByPeriodUnit";
+import { PERIOD_UNITS } from "common/utils/history/periodUnits";
+import { NoDataImage } from "common/utils/icons";
+import { useModals } from "common/utils/modals";
 import {
-  getStartOfWeek,
-  SHORT_MONTHS,
-  shortPrettyFormatDay,
+  differenceInCalendarMonths,
+  isThisMonth,
+  startOfMonth,
+  addMonths,
+  subMonths,
+  startOfToday
+} from "date-fns";
+import {
   DAY,
   WEEK,
-  isoFormatLocalDate
+  getStartOfWeek,
+  endOfMonthAsDate,
+  isoFormatLocalDate,
+  jsToUnixTimestamp,
+  shortPrettyFormatDay,
+  SHORT_MONTHS
 } from "common/utils/time";
-import { useGroupMissionsAndExtractActivities } from "common/utils/history/groupByPeriodUnit";
-import { makeStyles } from "@mui/styles";
-import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
-import Typography from "@mui/material/Typography";
-import { AccountButton } from "../components/AccountButton";
-import { useLocation, useHistory } from "react-router-dom";
-import Box from "@mui/material/Box";
-import { NoDataImage } from "common/utils/icons";
-import Button from "@mui/material/Button";
-import { useModals } from "common/utils/modals";
-import moment from "moment";
-import IconButton from "@mui/material/IconButton";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { useStoreSyncedWithLocalStorage } from "common/store/store";
+
+import {
+  DEFAULT_MONTH_RANGE_HISTORY,
+  augmentAndSortMissions
+} from "common/utils/mission";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { useApi } from "common/utils/api";
-import { Mission } from "../components/history/Mission";
+import { AccountButton } from "../components/AccountButton";
 import { Day } from "../components/history/Day";
-import { Week } from "../components/history/Week";
+import { Mission } from "../components/history/Mission";
 import { Month } from "../components/history/Month";
-import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
-import Grid from "@mui/material/Grid";
-import GetAppIcon from "@mui/icons-material/GetApp";
-import { useSelectPeriod } from "common/utils/history/changePeriod";
-import { PERIOD_UNITS } from "common/utils/history/periodUnits";
-import { useComputePeriodStatuses } from "common/utils/history/computePeriodStatuses";
+import { Week } from "../components/history/Week";
+import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
+import { PeriodFilter } from "../components/PeriodFilter";
 
 const tabs = {
   mission: {
@@ -146,6 +165,7 @@ const useStyles = makeStyles(theme => ({
 
 export function History({
   missions = [],
+  fetchMissions = false,
   currentMission,
   editActivityEvent,
   createActivity,
@@ -169,40 +189,17 @@ export function History({
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
   const alerts = useSnackbarAlerts();
+  const classes = useStyles();
 
   const actualUserId = userId || store.userId();
-
   const currentCompanies = store.companies();
 
-  const onBackButtonClick = location.state
-    ? () => history.push(location.state.previousPagePath)
-    : null;
+  /* MANAGE DIRECT LINK & HISTORY */
 
   const queryString = new URLSearchParams(location.search);
   const [currentTab, setCurrentTab] = React.useState(
     queryString.get("mission") ? "mission" : "day"
   );
-
-  const [
-    missionGroupsByPeriodUnit,
-    activities
-  ] = useGroupMissionsAndExtractActivities(missions, Object.values(tabs));
-  const [
-    selectedPeriod,
-    goToPeriod,
-    goToMission,
-    periodsByPeriodUnit
-  ] = useSelectPeriod(missionGroupsByPeriodUnit, currentTab);
-  const periodStatuses = useComputePeriodStatuses(missionGroupsByPeriodUnit);
-
-  const groupedMissions = missionGroupsByPeriodUnit[currentTab] || {};
-  const periods = periodsByPeriodUnit[currentTab] || [];
-
-  function handlePeriodChange(e, newTab, selectedDate) {
-    setCurrentTab(newTab);
-    goToPeriod(newTab, selectedDate);
-    resetLocation();
-  }
 
   React.useEffect(() => {
     let params = openPeriod;
@@ -247,7 +244,92 @@ export function History({
     }
   };
 
-  const classes = useStyles();
+  const onBackButtonClick = location.state
+    ? () => history.push(location.state.previousPagePath)
+    : null;
+
+  /* MANAGE FILTER PERIOD */
+
+  const [startPeriodFilter, setStartPeriodFilter] = React.useState(
+    startOfMonth(subMonths(new Date(), DEFAULT_MONTH_RANGE_HISTORY))
+  );
+  const [endPeriodFilter, setEndPeriodFilter] = React.useState(startOfToday());
+  const [periodFilterRangeError, setPeriodFilterRangeError] = React.useState(
+    null
+  );
+
+  React.useEffect(async () => {
+    setPeriodFilterRangeError(null);
+    const diffMonth = differenceInCalendarMonths(
+      endPeriodFilter,
+      startPeriodFilter
+    );
+    if (diffMonth > 2 || diffMonth < 0) {
+      setEndPeriodFilter(addMonths(startPeriodFilter, 2));
+    } else {
+      await getMissionsToUse();
+    }
+  }, [startPeriodFilter]);
+
+  React.useEffect(async () => {
+    if (differenceInCalendarMonths(endPeriodFilter, startPeriodFilter) > 2) {
+      setPeriodFilterRangeError(
+        "La période sélectionnée doit être inférieure à 2 mois !"
+      );
+    } else {
+      setPeriodFilterRangeError(null);
+      await getMissionsToUse();
+    }
+  }, [endPeriodFilter]);
+
+  /* MANAGE MISSIONS */
+
+  const [missionsToUse, setMissionsToUse] = React.useState(missions);
+
+  const getMissionsToUse = async () => {
+    await alerts.withApiErrorHandling(async () => {
+      const fromTime = startOfMonth(startPeriodFilter);
+      const untilTime = isThisMonth(endPeriodFilter)
+        ? endPeriodFilter
+        : endOfMonthAsDate(endPeriodFilter);
+      const apiResponse = await api.graphQlQuery(USER_MISSIONS_HISTORY_QUERY, {
+        fromTime: jsToUnixTimestamp(fromTime.getTime()),
+        untilTime: jsToUnixTimestamp(untilTime.getTime())
+      });
+      const resultMissions = apiResponse.data.me.missions.edges.map(
+        e => e.node
+      );
+      const filteredMissions = resultMissions
+        .map(m => {
+          m.allActivities = m.activities;
+          return m;
+        })
+        .filter(m => m.activities.length > 0);
+      const enrichedMissions = augmentAndSortMissions(
+        filteredMissions,
+        store.userId()
+      );
+      setMissionsToUse(enrichedMissions);
+    });
+  };
+
+  const [
+    missionGroupsByPeriodUnit,
+    activities
+  ] = useGroupMissionsAndExtractActivities(missionsToUse, Object.values(tabs));
+
+  /* MANAGE PERIOD FROM CAROUSSEL*/
+
+  const [
+    selectedPeriod,
+    goToPeriod,
+    goToMission,
+    periodsByPeriodUnit
+  ] = useSelectPeriod(missionGroupsByPeriodUnit, currentTab);
+  const periodStatuses = useComputePeriodStatuses(missionGroupsByPeriodUnit);
+
+  const groupedMissions = missionGroupsByPeriodUnit[currentTab] || {};
+  const periods = periodsByPeriodUnit[currentTab] || [];
 
   const missionsInSelectedPeriod = groupedMissions[selectedPeriod];
   const activitiesBefore = selectedPeriod
@@ -266,6 +348,14 @@ export function History({
     .add(tabs[currentTab].periodLength)
     .unix();
 
+  function handlePeriodChange(e, newTab, selectedDate) {
+    setCurrentTab(newTab);
+    goToPeriod(newTab, selectedDate);
+    resetLocation();
+  }
+
+  /* MANAGE REGULATION COMPUTATIONS */
+
   const regulationComputationsInPeriod = useMemo(() => {
     if (!selectedPeriod) {
       return [];
@@ -275,6 +365,18 @@ export function History({
     );
     return periodElement ? periodElement.regulationComputations : [];
   }, [selectedPeriod, regulationComputationsByDay]);
+
+  /* MANAGE MESSAGE WHEN NO DATA */
+
+  const noDataMessage = currentTab => {
+    if (currentTab === "day") {
+      return "Journée non renseignée";
+    }
+    if (currentTab === "week") {
+      return "Aucune journée renseignée dans la semaine";
+    }
+    return "Aucune journée renseignée dans le mois";
+  };
 
   return (
     <Container
@@ -373,7 +475,15 @@ export function History({
               Télécharger un relevé d'heures
             </Typography>
           </Grid>
-        </Grid>
+        </Grid>,
+        <PeriodFilter
+          key={4}
+          minDate={startPeriodFilter}
+          setMinDate={setStartPeriodFilter}
+          maxDate={endPeriodFilter}
+          setMaxDate={setEndPeriodFilter}
+          periodFilterRangeError={periodFilterRangeError}
+        />
       ]}
       <Container className={classes.periodSelector} maxWidth={false}>
         <Tabs
@@ -449,13 +559,7 @@ export function History({
         ) : (
           <Box className={classes.placeholder}>
             <NoDataImage height={100} />
-            <Typography>
-              {currentTab === "day"
-                ? "Journée non renseignée"
-                : currentTab === "week"
-                ? "Aucune journée renseignée dans la semaine"
-                : "Aucune journée renseignée dans le mois"}
-            </Typography>
+            <Typography>{noDataMessage(currentTab)}</Typography>
           </Box>
         )}
       </Container>

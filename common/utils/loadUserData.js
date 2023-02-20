@@ -1,11 +1,10 @@
 import { broadCastChannel } from "../store/store";
 import { parseActivityPayloadFromBackend } from "./activities";
 import {
-  DEFAULT_NB_DAYS_MISSIONS_HISTORY,
-  DEFAULT_NB_FIRST_MISSIONS,
+  DEFAULT_MONTH_RANGE_HISTORY,
   parseMissionPayloadFromBackend
 } from "./mission";
-import { DAY, now } from "./time";
+import { subMonths } from "date-fns";
 import {
   COMPANY_SETTINGS_FRAGMENT,
   FULL_MISSION_FRAGMENT
@@ -59,7 +58,7 @@ const CURRENT_EMPLOYMENTS_QUERY = gql`
 const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FULL_MISSION_FRAGMENT}
-  query user($id: Int!, $activityAfter: TimeStamp, $nbFirstMissions: Int!) {
+  query user($id: Int!, $activityAfter: TimeStamp) {
     user(id: $id) {
       id
       firstName
@@ -71,7 +70,7 @@ const USER_QUERY = gql`
       hasConfirmedEmail
       hasActivatedEmail
       disabledWarnings
-      missions(fromTime: $activityAfter, first: $nbFirstMissions) {
+      missions(fromTime: $activityAfter) {
         edges {
           node {
             ...FullMissionData
@@ -108,8 +107,10 @@ export async function loadUserData(api, store, alerts) {
       USER_QUERY,
       {
         id: userId,
-        activityAfter: now() - DAY * DEFAULT_NB_DAYS_MISSIONS_HISTORY,
-        nbFirstMissions: DEFAULT_NB_FIRST_MISSIONS
+        activityAfter: subMonths(
+          new Date(),
+          DEFAULT_MONTH_RANGE_HISTORY
+        ).getTime()
       },
       { context: { timeout: 12000 } }
     );

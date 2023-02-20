@@ -2,8 +2,9 @@ import React from "react";
 import { useSnackbarAlerts } from "../../../web/common/Snackbar";
 import { useApi } from "../api";
 import { USER_READ_REGULATION_COMPUTATIONS_QUERY } from "../apiQueries";
-import { DEFAULT_NB_DAYS_MISSIONS_HISTORY } from "../mission";
-import { DAY, isoFormatLocalDate, now } from "../time";
+import { MAX_NB_MONTHS_HISTORY } from "../mission";
+import { isoFormatLocalDate } from "../time";
+import { subMonths } from "date-fns";
 import { computeNumberOfAlerts } from "./computeNumberOfAlerts";
 
 const queryUserRegulationComputations = async (api, payload) => {
@@ -15,9 +16,10 @@ const queryUserRegulationComputations = async (api, payload) => {
 };
 
 export const getRegulationComputationsAndAlertNumber = async (api, userId) => {
+  const fromDate = subMonths(new Date(), MAX_NB_MONTHS_HISTORY);
   const apiResponse = await queryUserRegulationComputations(api, {
     userId,
-    fromDate: isoFormatLocalDate(now() - DAY * DEFAULT_NB_DAYS_MISSIONS_HISTORY)
+    fromDate: isoFormatLocalDate(fromDate)
   });
 
   const { regulationComputationsByDay } = apiResponse?.data?.user;
