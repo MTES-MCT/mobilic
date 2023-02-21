@@ -3,7 +3,11 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import { isoFormatLocalDate, startOfMonthAsDate } from "common/utils/time";
+import {
+  addDaysToDate,
+  isoFormatLocalDate,
+  startOfMonthAsDate
+} from "common/utils/time";
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { Header } from "../../../common/Header";
@@ -39,7 +43,9 @@ export function ControllerHistory() {
   }, []);
 
   const [controlFilters, setControlFilters] = React.useState({
-    fromDate: isoFormatLocalDate(startOfMonthAsDate(new Date())),
+    fromDate: isoFormatLocalDate(
+      startOfMonthAsDate(addDaysToDate(new Date(), -31))
+    ),
     toDate: isoFormatLocalDate(new Date())
   });
   const [period, setPeriod] = React.useState("day");
