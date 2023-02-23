@@ -16,6 +16,7 @@ import flatten from "lodash/flatten";
 import { EMPLOYMENT_STATUS, getEmploymentsStatus } from "./employments";
 import { CURRENT_MISSION_INFO } from "./apiQueries";
 import { onLogIn } from "./updatePassword";
+import { jsToUnixTimestamp } from "common/utils/time";
 
 const CURRENT_EMPLOYMENTS_QUERY = gql`
   query currentEmployments($id: Int!) {
@@ -107,10 +108,9 @@ export async function loadUserData(api, store, alerts) {
       USER_QUERY,
       {
         id: userId,
-        activityAfter: subMonths(
-          new Date(),
-          DEFAULT_MONTH_RANGE_HISTORY
-        ).getTime()
+        activityAfter: jsToUnixTimestamp(
+          subMonths(new Date(), DEFAULT_MONTH_RANGE_HISTORY).getTime()
+        )
       },
       { context: { timeout: 12000 } }
     );
@@ -174,6 +174,33 @@ async function syncCoworkerData(coworkerPayload, store) {
   await Promise.all(syncActions);
 }
 
+export async function syncMissions(missions, store, syncMethod) {
+  const syncActions = [];
+  const activities = [];
+  const expenditures = [];
+  const missionData = [];
+  const comments = [];
+
+  missions.forEach(mission => {
+    activities.push(...mission.activities);
+    expenditures.push(...mission.expenditures);
+    comments.push(...mission.comments);
+    missionData.push(parseMissionPayloadFromBackend(mission, store.userId()));
+  });
+
+  missions && syncActions.push(syncMethod(missionData, "missions"));
+  activities &&
+    syncActions.push(
+      syncMethod(activities.map(parseActivityPayloadFromBackend), "activities")
+    );
+
+  expenditures && syncActions.push(syncMethod(expenditures, "expenditures"));
+  comments && syncActions.push(syncMethod(comments, "comments"));
+
+  store.batchUpdate();
+  await Promise.all(syncActions);
+}
+
 export async function syncUser(userPayload, api, store) {
   const {
     firstName,
@@ -191,10 +218,6 @@ export async function syncUser(userPayload, api, store) {
 
   onLogIn(shouldUpdatePassword);
 
-  const activities = [];
-  const expenditures = [];
-  const missionData = [];
-  const comments = [];
   const missions = missionsPayload.edges.map(e => e.node);
 
   // Get end status for latest mission;
@@ -210,12 +233,6 @@ export async function syncUser(userPayload, api, store) {
       captureSentryException(err);
     }
   }
-  missions.forEach(mission => {
-    activities.push(...mission.activities);
-    expenditures.push(...mission.expenditures);
-    comments.push(...mission.comments);
-    missionData.push(parseMissionPayloadFromBackend(mission, store.userId()));
-  });
 
   const syncActions = [];
   firstName &&
@@ -235,18 +252,6 @@ export async function syncUser(userPayload, api, store) {
         false
       )
     );
-  missions && syncActions.push(store.syncEntity(missionData, "missions"));
-  activities &&
-    syncActions.push(
-      store.syncEntity(
-        activities.map(parseActivityPayloadFromBackend),
-        "activities"
-      )
-    );
-
-  expenditures &&
-    syncActions.push(store.syncEntity(expenditures, "expenditures"));
-  comments && syncActions.push(store.syncEntity(comments, "comments"));
 
   const employmentsPerCompanyId = {};
   employments.forEach(e => {
@@ -272,4 +277,6 @@ export async function syncUser(userPayload, api, store) {
     );
   store.batchUpdate();
   await Promise.all(syncActions);
+
+  await syncMissions(missions, store, store.syncEntity);
 }

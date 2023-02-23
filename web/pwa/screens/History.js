@@ -14,7 +14,10 @@ import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 
-import { useStoreSyncedWithLocalStorage } from "common/store/store";
+import {
+  useStoreSyncedWithLocalStorage,
+  broadCastChannel
+} from "common/store/store";
 import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
 import { useApi } from "common/utils/api";
 import { USER_MISSIONS_HISTORY_QUERY } from "common/utils/apiQueries";
@@ -30,7 +33,8 @@ import {
   startOfMonth,
   addMonths,
   subMonths,
-  startOfToday
+  startOfToday,
+  isAfter
 } from "date-fns";
 import {
   DAY,
@@ -43,10 +47,7 @@ import {
   SHORT_MONTHS
 } from "common/utils/time";
 
-import {
-  DEFAULT_MONTH_RANGE_HISTORY,
-  augmentAndSortMissions
-} from "common/utils/mission";
+import { DEFAULT_MONTH_RANGE_HISTORY } from "common/utils/mission";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { AccountButton } from "../components/AccountButton";
 import { Day } from "../components/history/Day";
@@ -55,6 +56,7 @@ import { Month } from "../components/history/Month";
 import { Week } from "../components/history/Week";
 import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
 import { PeriodFilter } from "../components/PeriodFilter";
+import { syncMissions } from "common/utils/loadUserData";
 
 const tabs = {
   mission: {
@@ -165,7 +167,6 @@ const useStyles = makeStyles(theme => ({
 
 export function History({
   missions = [],
-  fetchMissions = false,
   currentMission,
   editActivityEvent,
   createActivity,
@@ -265,9 +266,13 @@ export function History({
       startPeriodFilter
     );
     if (diffMonth > 2 || diffMonth < 0) {
-      setEndPeriodFilter(addMonths(startPeriodFilter, 2));
+      let newEndPeriodFilter = addMonths(startPeriodFilter, 2);
+      if (isAfter(newEndPeriodFilter, new Date())) {
+        newEndPeriodFilter = new Date();
+      }
+      setEndPeriodFilter(newEndPeriodFilter);
     } else {
-      await getMissionsToUse();
+      await syncMissionsStore();
     }
   }, [startPeriodFilter]);
 
@@ -278,15 +283,13 @@ export function History({
       );
     } else {
       setPeriodFilterRangeError(null);
-      await getMissionsToUse();
+      await syncMissionsStore();
     }
   }, [endPeriodFilter]);
 
   /* MANAGE MISSIONS */
 
-  const [missionsToUse, setMissionsToUse] = React.useState(missions);
-
-  const getMissionsToUse = async () => {
+  const syncMissionsStore = async () => {
     await alerts.withApiErrorHandling(async () => {
       const fromTime = startOfMonth(startPeriodFilter);
       const untilTime = isThisMonth(endPeriodFilter)
@@ -299,24 +302,20 @@ export function History({
       const resultMissions = apiResponse.data.me.missions.edges.map(
         e => e.node
       );
-      const filteredMissions = resultMissions
-        .map(m => {
-          m.allActivities = m.activities;
-          return m;
-        })
-        .filter(m => m.activities.length > 0);
-      const enrichedMissions = augmentAndSortMissions(
-        filteredMissions,
-        store.userId()
-      );
-      setMissionsToUse(enrichedMissions);
-    });
+      await syncMissions(resultMissions, store, store.addToEntityObject);
+      await broadCastChannel.postMessage("update");
+    }, "missions-history");
   };
 
   const [
     missionGroupsByPeriodUnit,
     activities
-  ] = useGroupMissionsAndExtractActivities(missionsToUse, Object.values(tabs));
+  ] = useGroupMissionsAndExtractActivities(
+    missions,
+    startPeriodFilter,
+    endPeriodFilter,
+    Object.values(tabs)
+  );
 
   /* MANAGE PERIOD FROM CAROUSSEL*/
 
