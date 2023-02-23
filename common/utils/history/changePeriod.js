@@ -58,11 +58,13 @@ export function useSelectPeriod(missionGroupsByPeriodUnit, initialPeriodUnit) {
     if (missionGroupsByPeriodUnit["mission"]) {
       const missionsAsLists = missionGroupsByPeriodUnit["mission"];
       const missionsAsListsAsTuples = toPairs(missionsAsLists);
-      const newPeriod = (find(
-        missionsAsListsAsTuples,
-        ms => ms[1][0].id === missionId_
-      ) || missionsAsListsAsTuples[missionsAsListsAsTuples.length - 1])[0];
-      updateStateWithNewPeriod(parseInt(newPeriod), "mission");
+      const group =
+        find(
+          missionsAsListsAsTuples,
+          ms => ms[1]?.length && ms[1][0] && ms[1][0].id === missionId_
+        ) || missionsAsListsAsTuples[missionsAsListsAsTuples.length - 1];
+      const newPeriod = group && group.length ? parseInt(group[0]) : null;
+      updateStateWithNewPeriod(newPeriod, "mission");
     } else setMissionId(missionId_);
   }
 
