@@ -278,6 +278,13 @@ export function Partners() {
             </ul>
           </Grid>
         </Grid>
+        <MainCtaButton
+          aria-label="Devenir partenaire"
+          className={classes.cta}
+          href="mailto:mobilic@beta.gouv.fr"
+        >
+          Devenir partenaire
+        </MainCtaButton>
         <Box my={10}>
           <Typography variant="h4" className={classes.title}>
             Ils sont interfacés avec Mobilic
@@ -319,13 +326,6 @@ export function Partners() {
             ))}
           </Grid>
         </Box>
-        <MainCtaButton
-          aria-label="Devenir partenaire"
-          className={classes.cta}
-          href="mailto:mobilic@beta.gouv.fr"
-        >
-          Devenir partenaire
-        </MainCtaButton>
       </Container>
     </Container>,
     <Footer key={3} />
