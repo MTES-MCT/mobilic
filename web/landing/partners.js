@@ -10,6 +10,7 @@ import { PaperContainerTitle } from "../common/PaperContainer";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import BetagouvLogo from "common/assets/images/betagouvlogo.png";
 import Emoji from "../common/Emoji";
+import { Link } from "../common/LinkButton";
 
 // This condition actually should detect if it's a Node environment
 if (typeof require.context === "undefined") {
@@ -64,6 +65,12 @@ const partnersSrcs = require.context(
   /\.(png|jpe?g|svg)$/
 );
 
+const interfacedSrcs = require.context(
+  "!url-loader?limit=10000&name=static%2Finterfaced-logos%2F%5Bname%5D.%5Bext%5D!common/assets/images/interfaced-logos",
+  true,
+  /\.(png|jpe?g|svg)$/
+);
+
 const useStyles = makeStyles(theme => ({
   whiteSection: {
     backgroundColor: theme.palette.background.paper
@@ -81,6 +88,9 @@ const useStyles = makeStyles(theme => ({
   },
   cta: {
     marginTop: theme.spacing(4)
+  },
+  paragraph: {
+    marginBottom: theme.spacing(2)
   },
   list: {
     listStyleType: "none",
@@ -275,6 +285,47 @@ export function Partners() {
         >
           Devenir partenaire
         </MainCtaButton>
+        <Box my={10}>
+          <Typography variant="h4" className={classes.title}>
+            Ils sont interfacés avec Mobilic
+          </Typography>
+          <Typography align="justify" className={classes.paragraph}>
+            Les logiciels interfacés avec Mobilic communiquent de manière
+            instantanée avec ce dernier : s'il s'agit d'outils de suivi du temps
+            de travail, ils envoient les données enregistrées par les salariés à
+            Mobilic, ce qui leur permet d'être conformes à la réglementation en
+            cas de contrôle. Inversement, ces logiciels peuvent aussi récupérer
+            les données enregistrées directement dans Mobilic pour établir des
+            bulletins de paie ou gérer vos effectifs sans ressaisie de la part
+            du responsable d'exploitation.
+          </Typography>
+          <Typography align="justify" className={classes.paragraph}>
+            Si vous êtes une entreprise souhaitant interfacer son logiciel de
+            gestion avec Mobilic, mettez-les en contact avec nous :
+            <Link href="mailto:mobilic@beta.gouv.fr">
+              {" "}
+              mobilic@beta.gouv.fr
+            </Link>
+            . Si vous êtes un logiciel, écrivez-nous à la même adresse pour vous
+            interfacer.
+          </Typography>
+          <Grid
+            container
+            justifyContent="space-evenly"
+            alignItems="center"
+            spacing={{ xs: 2, sm: 4, md: 7 }}
+          >
+            {interfacedSrcs.keys().map(src => (
+              <Grid item key={src}>
+                <img
+                  alt={src}
+                  src={interfacedSrcs(src)}
+                  className={classes.partnerImage}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
       </Container>
     </Container>,
     <Footer key={3} />
