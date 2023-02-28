@@ -135,14 +135,6 @@ export default function CompanyTeamsPanel({ company }) {
   };
 
   function openTeamModal(team) {
-    const currentUsers = adminStore.employments
-      .filter(
-        e =>
-          e.companyId === adminStore.companyId &&
-          e.isAcknowledged &&
-          (!e.endDate || e.endDate >= isoFormatLocalDate(new Date()))
-      )
-      .map(e => e.user);
     const currentAdmins = adminStore.employments
       .filter(
         e =>
@@ -152,11 +144,27 @@ export default function CompanyTeamsPanel({ company }) {
           (!e.endDate || e.endDate >= isoFormatLocalDate(new Date()))
       )
       .map(e => e.user);
+    const currentUsers = adminStore.employments
+      .filter(
+        e =>
+          e.companyId === adminStore.companyId &&
+          e.isAcknowledged &&
+          (!e.endDate || e.endDate >= isoFormatLocalDate(new Date()))
+      )
+      .map(e => e.user);
+    const currentKnownAddresses = adminStore.knownAddresses.filter(
+      e => e.companyId === adminStore.companyId
+    );
+    const currentVehicles = adminStore.vehicles.filter(
+      v => v.companyId === adminStore.companyId
+    );
     modals.open("companyTeamCreationRevisionModal", {
       team: team,
       company: company,
       selectableUsers: currentUsers,
       selectableAdmins: currentAdmins,
+      selectableKnownAddresses: currentKnownAddresses,
+      selectableVehicles: currentVehicles,
       setTeams: setTeams
     });
   }

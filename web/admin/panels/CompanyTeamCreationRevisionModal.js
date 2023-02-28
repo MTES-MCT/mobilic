@@ -19,6 +19,7 @@ import {
 } from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
+import { MultipleValuesFilter } from "./MultipleValuesFilter";
 
 const useStyles = makeStyles(theme => ({
   modalButton: {
@@ -34,14 +35,18 @@ export default function CompanyTeamCreationRevisionModal({
   company,
   selectableUsers,
   selectableAdmins,
+  selectableKnownAddresses,
+  selectableVehicles,
   setTeams,
   open,
   handleClose
 }) {
   const [name, setName] = React.useState(team?.name || "");
   const [submitting, setSubmitting] = React.useState(false);
-  const [newUsers, setNewUsers] = React.useState([]);
   const [newAdmins, setNewAdmins] = React.useState([]);
+  const [newUsers, setNewUsers] = React.useState([]);
+  const [newKnownAddresses, setNewKnownAddresses] = React.useState([]);
+  const [newVehicles, setNewVehicles] = React.useState([]);
   const classes = useStyles();
   const alerts = useSnackbarAlerts();
   const api = useApi();
@@ -49,6 +54,7 @@ export default function CompanyTeamCreationRevisionModal({
   React.useEffect(() => {
     selectableUsers.forEach(su => (su.selected = false));
     selectableAdmins.forEach(sa => (sa.selected = false));
+    selectableKnownAddresses.forEach(sa => (sa.selected = false));
     setNewAdmins(
       selectableAdmins.map(sa => ({
         ...sa,
@@ -61,13 +67,29 @@ export default function CompanyTeamCreationRevisionModal({
         selected: team?.users?.some(au => au.id === sa.id)
       }))
     );
+    setNewKnownAddresses(
+      selectableKnownAddresses.map(sa => ({
+        ...sa,
+        selected: team?.knownAddresses?.some(au => au.id === sa.id)
+      }))
+    );
+    setNewVehicles(
+      selectableVehicles.map(sv => ({
+        ...sv,
+        selected: team?.vehicles?.some(v => v.id === sv.id)
+      }))
+    );
   }, []);
 
   const commonPayloadFromFields = () => {
     return {
       name: name,
       userIds: newUsers?.filter(u => u.selected).map(u => u.id),
-      adminIds: newAdmins?.filter(u => u.selected).map(u => u.id)
+      adminIds: newAdmins?.filter(u => u.selected).map(u => u.id),
+      knownAddressIds: newKnownAddresses
+        ?.filter(a => a.selected)
+        .map(a => a.id),
+      vehicleIds: newVehicles?.filter(v => v.selected).map(v => v.id)
     };
   };
 
@@ -155,6 +177,28 @@ export default function CompanyTeamCreationRevisionModal({
                 précédente affectation sera supprimée.
               </Typography>
             </Alert>
+          </Grid>
+          <Grid item xs={12}>
+            <MultipleValuesFilter
+              values={newKnownAddresses}
+              setValues={setNewKnownAddresses}
+              fieldLabel={"Adresse(s) associée(s)"}
+              orderFields={["alias", "name"]}
+              optionLabel={o => {
+                return o.alias || o.name;
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <MultipleValuesFilter
+              values={newVehicles}
+              setValues={setNewVehicles}
+              fieldLabel={"Véhicule(s) associé(s)"}
+              orderFields={["alias", "registrationNumber"]}
+              optionLabel={o => {
+                return o.alias || o.registrationNumber;
+              }}
+            />
           </Grid>
         </Grid>
       </DialogContent>

@@ -674,7 +674,7 @@ export const UPDATE_TEAM_MUTATION = gql`
     $name: String!
     $userIds: [Int]
     $adminIds: [Int]
-    $addressIds: [Int]
+    $knownAddressIds: [Int]
     $vehicleIds: [Int]
   ) {
     teams {
@@ -683,7 +683,7 @@ export const UPDATE_TEAM_MUTATION = gql`
         name: $name
         userIds: $userIds
         adminIds: $adminIds
-        addressIds: $addressIds
+        knownAddressIds: $knownAddressIds
         vehicleIds: $vehicleIds
       ) {
         ...FullTeamData
