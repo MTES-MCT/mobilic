@@ -136,6 +136,7 @@ export default function CompanyTeamCreationRevisionModal({
               noneSelectedLabel={"Gestionnaire(s) de l'équipe"}
               fullWidth
               limitTagNumber={5}
+              componentSize={"medium"}
             />
           </Grid>
           <Grid item xs={12}>
@@ -145,6 +146,7 @@ export default function CompanyTeamCreationRevisionModal({
               noneSelectedLabel={"Salarié(s) de l'équipe"}
               fullWidth
               limitTagNumber={5}
+              componentSize={"medium"}
             />
             <Alert severity="warning" className={classes.warningAffectation}>
               <Typography gutterBottom>
