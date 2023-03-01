@@ -31,10 +31,9 @@ export function EmployeeFilter({
   setUsers,
   multiple = true,
   handleSelect = null,
-  noneSelectedLabel = null,
+  noneSelectedLabel = "Tous les salariés",
   fullWidth = false,
-  limitTagNumber = 1,
-  componentSize = "small"
+  limitTagNumber = 1
 }) {
   const classes = useStyles();
 
@@ -55,7 +54,7 @@ export function EmployeeFilter({
       id="employee-filter"
       options={orderBy(users, ["firstName", "lastName"], ["asc", "asc"])}
       limitTags={limitTagNumber}
-      size={componentSize}
+      size="small"
       disableCloseOnSelect
       getOptionLabel={option => formatPersonName(option)}
       renderOption={(props, option) => (
@@ -75,15 +74,17 @@ export function EmployeeFilter({
       renderInput={params => (
         <TextField
           fullWidth
-          label={
-            noneSelectedLabel ||
-            (multiple && selectedUsers.length === 0 ? "Tous les salariés" : "")
-          }
           className={
             fullWidth ? classes.formControl : classes.formControlWithMaxWidth
           }
           {...params}
-          placeholder={`${multiple ? "" : "Sélectionner un salarié"}`}
+          placeholder={`${
+            multiple
+              ? selectedUsers.length === 0
+                ? noneSelectedLabel
+                : ""
+              : "Sélectionner un salarié"
+          }`}
         />
       )}
     />

@@ -6,7 +6,6 @@ import React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "common/utils/TextField";
-import { EmployeeFilter } from "../components/EmployeeFilter";
 import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
@@ -20,6 +19,7 @@ import {
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { MultipleValuesFilter } from "./MultipleValuesFilter";
+import { TeamEmployeesFilter } from "./TeamEmployeesFilter";
 
 const useStyles = makeStyles(theme => ({
   modalButton: {
@@ -55,6 +55,7 @@ export default function CompanyTeamCreationRevisionModal({
     selectableUsers.forEach(su => (su.selected = false));
     selectableAdmins.forEach(sa => (sa.selected = false));
     selectableKnownAddresses.forEach(sa => (sa.selected = false));
+    selectableVehicles.forEach(sv => (sv.selected = false));
     setNewAdmins(
       selectableAdmins.map(sa => ({
         ...sa,
@@ -94,10 +95,10 @@ export default function CompanyTeamCreationRevisionModal({
   };
 
   async function submitForm() {
-    if (team) {
-      await updateTeam();
-    } else {
+    if (!team) {
       await createTeam();
+    } else {
+      await updateTeam();
     }
   }
 
@@ -152,23 +153,17 @@ export default function CompanyTeamCreationRevisionModal({
             />
           </Grid>
           <Grid item xs={12}>
-            <EmployeeFilter
-              users={newAdmins}
-              setUsers={setNewAdmins}
-              noneSelectedLabel={"Gestionnaire(s) de l'équipe"}
-              fullWidth
-              limitTagNumber={5}
-              componentSize={"medium"}
+            <TeamEmployeesFilter
+              values={newAdmins}
+              setValues={setNewAdmins}
+              fieldLabel={"Gestionnaire(s) de l'équipe"}
             />
           </Grid>
           <Grid item xs={12}>
-            <EmployeeFilter
-              users={newUsers}
-              setUsers={setNewUsers}
-              noneSelectedLabel={"Salarié(s) de l'équipe"}
-              fullWidth
-              limitTagNumber={5}
-              componentSize={"medium"}
+            <TeamEmployeesFilter
+              values={newUsers}
+              setValues={setNewUsers}
+              fieldLabel={"Salarié(s) de l'équipe"}
             />
             <Alert severity="warning" className={classes.warningAffectation}>
               <Typography gutterBottom>

@@ -13,10 +13,11 @@ import Button from "@mui/material/Button";
 import { useModals } from "common/utils/modals";
 import { AugmentedTable } from "../components/AugmentedTable";
 import { Alert } from "@mui/material";
-import { isoFormatDay, isoFormatLocalDate } from "common/utils/time";
+import { formatDay, isoFormatLocalDate } from "common/utils/time";
 import { formatPersonName } from "common/utils/coworkers";
 import { useAdminStore } from "../store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import uniqBy from "lodash/uniqBy";
 
 export default function CompanyTeamsPanel({ company }) {
   const api = useApi();
@@ -84,8 +85,7 @@ export default function CompanyTeamsPanel({ company }) {
           ?.map(address => address.alias || address.name)
           .sort()
           .join(", "),
-      overflowTooltip: true,
-      sortable: true
+      overflowTooltip: true
     },
     {
       label: "Véhicule(s)",
@@ -96,13 +96,12 @@ export default function CompanyTeamsPanel({ company }) {
           .sort()
           .join(", "),
       overflowTooltip: true,
-      maxWidth: 150,
-      sortable: true
+      maxWidth: 150
     },
     {
       label: "Date de création",
       name: "creationTime",
-      format: creationTime => isoFormatDay(creationTime),
+      format: creationTime => formatDay(creationTime, true),
       sortable: true
     }
   ];
@@ -151,7 +150,22 @@ export default function CompanyTeamsPanel({ company }) {
           e.isAcknowledged &&
           (!e.endDate || e.endDate >= isoFormatLocalDate(new Date()))
       )
-      .map(e => e.user);
+      .map(e => ({ ...e.user, detached: "Salarié(s) actif(s)" }));
+    const detachedUsers = uniqBy(
+      adminStore.employments
+        .filter(
+          e =>
+            e.companyId === adminStore.companyId &&
+            e.isAcknowledged &&
+            e.endDate &&
+            e.endDate < isoFormatLocalDate(new Date())
+        )
+        .map(e => ({ ...e.user, detached: "Salarié(s) détaché(s)" })),
+      "id"
+    ).filter(
+      detachedUser =>
+        !currentUsers.some(currentUser => currentUser.id === detachedUser.id)
+    );
     const currentKnownAddresses = adminStore.knownAddresses.filter(
       e => e.companyId === adminStore.companyId
     );
@@ -161,7 +175,7 @@ export default function CompanyTeamsPanel({ company }) {
     modals.open("companyTeamCreationRevisionModal", {
       team: team,
       company: company,
-      selectableUsers: currentUsers,
+      selectableUsers: [...currentUsers, ...detachedUsers],
       selectableAdmins: currentAdmins,
       selectableKnownAddresses: currentKnownAddresses,
       selectableVehicles: currentVehicles,
