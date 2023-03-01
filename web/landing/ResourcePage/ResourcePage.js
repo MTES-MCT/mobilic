@@ -29,9 +29,9 @@ export const RESOURCES_DOCUMENT = {
     },
     salarie: {
       slideshare:
-        "https://www.slideshare.net/slideshow/embed_code/key/1kEIdSBN2HJMdN/",
+        "https://www.slideshare.net/slideshow/embed_code/key/CcfwjZbnT1sA2C/",
       download:
-        "https://drive.google.com/uc?id=1uXGIUnxTfTOCKhbU5xQ9Eunr0U3RhaKT&export=download"
+        "https://drive.google.com/uc?id=1QVjPLMbDsFATAl8uT2LhQ4XPUiiGPDTg&export=download"
     },
     controleur: {
       slideshare:
