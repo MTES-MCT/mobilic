@@ -318,7 +318,7 @@ export function Partners() {
             </Typography>
             <Typography align="justify" className={classes.paragraph}>
               Si vous êtes une entreprise souhaitant interfacer son logiciel de
-              gestion avec Mobilic, mettez-les en contact avec nous :
+              gestion avec Mobilic, mettez-le en contact avec nous :
               <Link href="mailto:mobilic@beta.gouv.fr">
                 {" "}
                 mobilic@beta.gouv.fr
