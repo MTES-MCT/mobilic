@@ -289,26 +289,6 @@ export function Partners() {
           <Typography variant="h4" className={classes.title}>
             Ils sont interfacés avec Mobilic
           </Typography>
-          <Typography align="justify" className={classes.paragraph}>
-            Les logiciels interfacés avec Mobilic communiquent de manière
-            instantanée avec ce dernier : s'il s'agit d'outils de suivi du temps
-            de travail, ils envoient les données enregistrées par les salariés à
-            Mobilic, ce qui leur permet d'être conformes à la réglementation en
-            cas de contrôle. Inversement, ces logiciels peuvent aussi récupérer
-            les données enregistrées directement dans Mobilic pour établir des
-            bulletins de paie ou gérer vos effectifs sans ressaisie de la part
-            du responsable d'exploitation.
-          </Typography>
-          <Typography align="justify" className={classes.paragraph}>
-            Si vous êtes une entreprise souhaitant interfacer son logiciel de
-            gestion avec Mobilic, mettez-les en contact avec nous :
-            <Link href="mailto:mobilic@beta.gouv.fr">
-              {" "}
-              mobilic@beta.gouv.fr
-            </Link>
-            . Si vous êtes un logiciel, écrivez-nous à la même adresse pour vous
-            interfacer.
-          </Typography>
           <Grid
             container
             justifyContent="space-evenly"
@@ -324,6 +304,28 @@ export function Partners() {
                 />
               </Grid>
             ))}
+          </Grid>
+          <Grid pt={6}>
+            <Typography align="justify" className={classes.paragraph}>
+              Les logiciels interfacés avec Mobilic communiquent de manière
+              instantanée avec ce dernier : s'il s'agit d'outils de suivi du
+              temps de travail, ils envoient les données enregistrées par les
+              salariés à Mobilic, ce qui leur permet d'être conformes à la
+              réglementation en cas de contrôle. Inversement, ces logiciels
+              peuvent aussi récupérer les données enregistrées directement dans
+              Mobilic pour établir des bulletins de paie ou gérer vos effectifs
+              sans ressaisie de la part du responsable d'exploitation.
+            </Typography>
+            <Typography align="justify" className={classes.paragraph}>
+              Si vous êtes une entreprise souhaitant interfacer son logiciel de
+              gestion avec Mobilic, mettez-les en contact avec nous :
+              <Link href="mailto:mobilic@beta.gouv.fr">
+                {" "}
+                mobilic@beta.gouv.fr
+              </Link>
+              . Si vous êtes un logiciel, écrivez-nous à la même adresse pour
+              vous interfacer.
+            </Typography>
           </Grid>
         </Box>
       </Container>
