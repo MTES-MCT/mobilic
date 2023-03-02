@@ -80,6 +80,9 @@ export const usePanelStyles = makeStyles(theme => ({
   },
   toggleButton: {
     minWidth: theme.spacing(13)
+  },
+  warningOneTeamNoAdmin: {
+    marginBottom: theme.spacing(2)
   }
 }));
 

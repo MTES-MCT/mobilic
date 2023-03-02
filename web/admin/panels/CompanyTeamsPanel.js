@@ -27,6 +27,9 @@ export default function CompanyTeamsPanel({ company }) {
 
   const [teams, setTeams] = React.useState([]);
   const [loadingTeams, setLoadingTeams] = React.useState(false);
+  const [displayNoAdminWarning, setDisplayNoAdminWarning] = React.useState(
+    false
+  );
 
   React.useEffect(async () => {
     setLoadingTeams(true);
@@ -36,6 +39,10 @@ export default function CompanyTeamsPanel({ company }) {
     setTeams(apiResponse?.data?.company?.teams);
     setLoadingTeams(false);
   }, [company]);
+
+  React.useEffect(async () => {
+    setDisplayNoAdminWarning(teams.some(team => !team.adminUsers?.length > 0));
+  }, [teams]);
 
   async function deleteTeam(team) {
     await alerts.withApiErrorHandling(async () => {
@@ -217,15 +224,25 @@ export default function CompanyTeamsPanel({ company }) {
       </Alert>
     ),
     !loadingTeams && teams?.length > 0 && (
-      <AugmentedTable
-        key={2}
-        columns={teamColumns}
-        entries={teams}
-        className={classes.vehiclesTable}
-        defaultSortBy="name"
-        onRowEdit={team => openTeamModal(team)}
-        customRowActions={customActions}
-      />
+      <Box key={2}>
+        {displayNoAdminWarning && (
+          <Alert severity="warning" className={classes.warningOneTeamNoAdmin}>
+            <Typography gutterBottom>
+              Certaines équipes n'ont pas de gestionnaire rattaché. Les missions
+              des salariés concernés ne peuvent donc pas être validées.
+            </Typography>
+          </Alert>
+        )}
+        <AugmentedTable
+          key={2}
+          columns={teamColumns}
+          entries={teams}
+          className={classes.vehiclesTable}
+          defaultSortBy="name"
+          onRowEdit={team => openTeamModal(team)}
+          customRowActions={customActions}
+        />
+      </Box>
     )
   ];
 }
