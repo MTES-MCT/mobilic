@@ -8,9 +8,6 @@ import orderBy from "lodash/orderBy";
 
 const useStyles = makeStyles(theme => ({
   formControl: {
-    minWidth: 200
-  },
-  formControlWithMaxWidth: {
     minWidth: 200,
     maxWidth: 500
   },
@@ -30,10 +27,7 @@ export function EmployeeFilter({
   users,
   setUsers,
   multiple = true,
-  handleSelect = null,
-  noneSelectedLabel = "Tous les salariés",
-  fullWidth = false,
-  limitTagNumber = 1
+  handleSelect = null
 }) {
   const classes = useStyles();
 
@@ -53,7 +47,7 @@ export function EmployeeFilter({
       multiple={multiple}
       id="employee-filter"
       options={orderBy(users, ["firstName", "lastName"], ["asc", "asc"])}
-      limitTags={limitTagNumber}
+      limitTags={1}
       size="small"
       disableCloseOnSelect
       getOptionLabel={option => formatPersonName(option)}
@@ -73,15 +67,12 @@ export function EmployeeFilter({
       onChange={handleSelect || handleChange}
       renderInput={params => (
         <TextField
-          fullWidth
-          className={
-            fullWidth ? classes.formControl : classes.formControlWithMaxWidth
-          }
+          className={classes.formControl}
           {...params}
           placeholder={`${
             multiple
               ? selectedUsers.length === 0
-                ? noneSelectedLabel
+                ? "Tous les salariés"
                 : ""
               : "Sélectionner un salarié"
           }`}
