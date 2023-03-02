@@ -34,6 +34,8 @@ import {
   addMonths,
   subMonths,
   startOfToday,
+  endOfDay,
+  endOfMonth,
   isAfter
 } from "date-fns";
 import {
@@ -259,45 +261,56 @@ export function History({
     null
   );
 
-  React.useEffect(async () => {
+  const onChangeStartPeriodFilter = async value => {
+    const newStartPeriodFilter = startOfMonth(value);
+    setStartPeriodFilter(newStartPeriodFilter);
     setPeriodFilterRangeError(null);
+
     const diffMonth = differenceInCalendarMonths(
       endPeriodFilter,
-      startPeriodFilter
+      newStartPeriodFilter
     );
-    if (diffMonth > 2 || diffMonth < 0) {
-      let newEndPeriodFilter = addMonths(startPeriodFilter, 2);
+    if (diffMonth > DEFAULT_MONTH_RANGE_HISTORY || diffMonth < 0) {
+      let newEndPeriodFilter = endOfDay(
+        endOfMonth(addMonths(newStartPeriodFilter, DEFAULT_MONTH_RANGE_HISTORY))
+      );
       if (isAfter(newEndPeriodFilter, new Date())) {
-        newEndPeriodFilter = new Date();
+        newEndPeriodFilter = startOfToday();
       }
       setEndPeriodFilter(newEndPeriodFilter);
+      await syncMissionsStore(newStartPeriodFilter, newEndPeriodFilter);
     } else {
-      await syncMissionsStore();
+      await syncMissionsStore(newStartPeriodFilter, endPeriodFilter);
     }
-  }, [startPeriodFilter]);
+  };
 
-  React.useEffect(async () => {
-    if (differenceInCalendarMonths(endPeriodFilter, startPeriodFilter) > 2) {
+  const onChangeEndPeriodFilter = async value => {
+    const newEndPeriodFilter = isThisMonth(value)
+      ? value
+      : endOfDay(endOfMonthAsDate(value));
+    setEndPeriodFilter(newEndPeriodFilter);
+
+    if (
+      differenceInCalendarMonths(newEndPeriodFilter, startPeriodFilter) >
+      DEFAULT_MONTH_RANGE_HISTORY
+    ) {
       setPeriodFilterRangeError(
-        "La période sélectionnée doit être inférieure à 2 mois !"
-      );
+        `La période sélectionnée doit être inférieure à ${DEFAULT_MONTH_RANGE_HISTORY +
+          1} mois !`
+      ); // +1 because it's the default range + days from current month day.
     } else {
       setPeriodFilterRangeError(null);
-      await syncMissionsStore();
+      await syncMissionsStore(startPeriodFilter, newEndPeriodFilter);
     }
-  }, [endPeriodFilter]);
+  };
 
   /* MANAGE MISSIONS */
 
-  const syncMissionsStore = async () => {
+  const syncMissionsStore = async (start, end) => {
     await alerts.withApiErrorHandling(async () => {
-      const fromTime = startOfMonth(startPeriodFilter);
-      const untilTime = isThisMonth(endPeriodFilter)
-        ? endPeriodFilter
-        : endOfMonthAsDate(endPeriodFilter);
       const apiResponse = await api.graphQlQuery(USER_MISSIONS_HISTORY_QUERY, {
-        fromTime: jsToUnixTimestamp(fromTime.getTime()),
-        untilTime: jsToUnixTimestamp(untilTime.getTime())
+        fromTime: jsToUnixTimestamp(start.getTime()),
+        untilTime: jsToUnixTimestamp(end.getTime())
       });
       const resultMissions = apiResponse.data.me.missions.edges.map(
         e => e.node
@@ -314,6 +327,7 @@ export function History({
     missions,
     startPeriodFilter,
     endPeriodFilter,
+    periodFilterRangeError,
     Object.values(tabs)
   );
 
@@ -478,9 +492,9 @@ export function History({
         <PeriodFilter
           key={4}
           minDate={startPeriodFilter}
-          setMinDate={setStartPeriodFilter}
+          setMinDate={onChangeStartPeriodFilter}
           maxDate={endPeriodFilter}
-          setMaxDate={setEndPeriodFilter}
+          setMaxDate={onChangeEndPeriodFilter}
           periodFilterRangeError={periodFilterRangeError}
         />
       ]}

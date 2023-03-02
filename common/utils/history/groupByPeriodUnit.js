@@ -4,8 +4,7 @@
 // - when switching from day to week the new period should be the week containing the current day
 // - conversely, when switching from week to day, we decide (arbitrarily) that the new period should be the first (existing) day of the current week
 import moment from "moment";
-import { now, jsToUnixTimestamp, endOfMonthAsDate } from "../time";
-import { isThisMonth, startOfMonth } from "date-fns";
+import { now, jsToUnixTimestamp } from "../time";
 import {
   filterActivitiesOverlappingPeriod,
   sortActivities
@@ -96,6 +95,7 @@ export function useGroupMissionsAndExtractActivities(
   missions,
   start,
   end,
+  error,
   periodProps
 ) {
   const [activities, setActivities] = React.useState([]);
@@ -108,11 +108,14 @@ export function useGroupMissionsAndExtractActivities(
   const missionInPeriod = (mission, startTime, endTime) =>
     mission.startTime < endTime &&
     (!mission.endTime || mission.endTime > startTime);
+
   React.useEffect(() => {
-    const from = startOfMonth(start);
-    const to = isThisMonth(end) ? end : endOfMonthAsDate(end);
-    const fromTime = jsToUnixTimestamp(from.getTime());
-    const toTime = jsToUnixTimestamp(to.getTime());
+    if (error) {
+      return setMissionGroupsByPeriodUnit({});
+    }
+
+    const fromTime = jsToUnixTimestamp(start.getTime());
+    const toTime = jsToUnixTimestamp(end.getTime());
     const filteredMissions = missions.filter(mission =>
       missionInPeriod(mission, fromTime, toTime)
     );
@@ -125,7 +128,7 @@ export function useGroupMissionsAndExtractActivities(
     );
     sortActivities(acts);
     setActivities(acts);
-  }, [missions, start, end]);
+  }, [missions, start, end, error]);
 
   return [missionGroupsByPeriodUnit, activities];
 }

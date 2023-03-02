@@ -4,7 +4,7 @@ import { MobileDatePicker } from "@mui/x-date-pickers";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 
-import { subMonths } from "date-fns";
+import { startOfMonth, subMonths } from "date-fns";
 import { MAX_NB_MONTHS_HISTORY } from "common/utils/mission";
 
 export function PeriodFilter({
@@ -15,9 +15,11 @@ export function PeriodFilter({
   periodFilterRangeError
 }) {
   const today = new Date();
-  const firstHistoryDate = subMonths(new Date(), MAX_NB_MONTHS_HISTORY);
+  const firstHistoryDate = startOfMonth(
+    subMonths(new Date(), MAX_NB_MONTHS_HISTORY)
+  );
   return (
-    <Grid container spacing={2} mt={2}>
+    <Grid container spacing={2} m={0}>
       <Grid item>
         <MobileDatePicker
           label="Début"

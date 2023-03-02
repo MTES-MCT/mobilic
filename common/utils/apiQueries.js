@@ -560,70 +560,13 @@ export const USER_READ_QUERY = gql`
 export const USER_MISSIONS_HISTORY_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
+  ${FULL_MISSION_FRAGMENT}
   query readUserMissionsHistory($fromTime: TimeStamp!, $untilTime: TimeStamp!) {
     me {
       missions(fromTime: $fromTime, untilTime: $untilTime) {
         edges {
           node {
-            id
-            name
-            company {
-              id
-              name
-              siren
-              ...CompanySettings
-            }
-            validations {
-              submitterId
-              receptionTime
-              isAdmin
-              userId
-            }
-            vehicle {
-              id
-              name
-              registrationNumber
-            }
-            context
-            expenditures {
-              id
-              type
-              missionId
-              userId
-              spendingDate
-              receptionTime
-            }
-            activities {
-              id
-              type
-              missionId
-              startTime
-              endTime
-              userId
-              lastSubmitterId
-              user {
-                id
-                firstName
-                lastName
-              }
-            }
-            comments {
-              id
-              text
-              missionId
-              receptionTime
-              submitter {
-                id
-                firstName
-                lastName
-              }
-            }
-            startLocation {
-              ...FullLocation
-            }
-            endLocation {
-              ...FullLocation
-            }
+            ...FullMissionData
           }
         }
       }

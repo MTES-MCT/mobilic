@@ -4,7 +4,7 @@ import {
   DEFAULT_MONTH_RANGE_HISTORY,
   parseMissionPayloadFromBackend
 } from "./mission";
-import { subMonths } from "date-fns";
+import { startOfMonth, subMonths } from "date-fns";
 import {
   COMPANY_SETTINGS_FRAGMENT,
   FULL_MISSION_FRAGMENT
@@ -109,7 +109,9 @@ export async function loadUserData(api, store, alerts) {
       {
         id: userId,
         activityAfter: jsToUnixTimestamp(
-          subMonths(new Date(), DEFAULT_MONTH_RANGE_HISTORY).getTime()
+          startOfMonth(
+            subMonths(new Date(), DEFAULT_MONTH_RANGE_HISTORY)
+          ).getTime()
         )
       },
       { context: { timeout: 12000 } }
