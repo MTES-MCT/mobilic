@@ -24,6 +24,7 @@ import {
 import { AugmentedTableEditActions } from "./AugmentedTableEditActions";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
+import { get } from "lodash";
 
 const overflowStyleForMaxWidthCells = {
   overflowX: "hidden",
@@ -445,7 +446,11 @@ export const AugmentedTable = React.forwardRef(
     sortTypes.push(...alwaysSortBy.map(asb => asb[1]));
 
     if (sortBy && sortType) {
-      sortBys.push(sortBy);
+      sortBys.push(item =>
+        get(item, sortBy)
+          .toString()
+          .toLowerCase()
+      );
       sortTypes.push(sortType);
     }
 
