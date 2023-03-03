@@ -148,6 +148,9 @@ export default function CompanyTeamCreationRevisionModal({
               fullWidth
               label="Nom de l'équipe"
               variant="filled"
+              inputProps={{
+                maxLength: 255
+              }}
               value={name}
               onChange={e => setName(e.target.value)}
             />
