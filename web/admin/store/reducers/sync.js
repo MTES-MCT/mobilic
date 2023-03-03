@@ -1,6 +1,8 @@
 import flatMap from "lodash/flatMap";
 import { addWorkDaysReducer } from "./workDays";
 import uniqBy from "lodash/uniqBy";
+import { currentUserId } from "common/utils/cookie";
+import { computeUsersInValidationFilter } from "./validationsFilters";
 
 export function updateCompanyIdReducer(state, { companyId }) {
   return {
@@ -33,6 +35,37 @@ export function updateCompanyDetailsReducer(
   const users = flatMap(
     companiesPayload.map(c => c.users.map(u => ({ ...u, companyId: c.id })))
   );
+  const allEmployments = flatMap(
+    companiesPayload.map(c =>
+      c.employments.map(e => ({
+        ...e,
+        companyId: c.id,
+        company: { id: c.id, name: c.name, siren: c.siren }
+      }))
+    )
+  );
+
+  const adminedTeams = flatMap(
+    companiesPayload.map(c =>
+      c.teams.filter(team =>
+        team.adminUsers?.some(u => u.id === currentUserId())
+      )
+    )
+  );
+  const usersWithoutTeam = uniqBy(
+    allEmployments
+      ?.filter(
+        employment =>
+          !employment.teamId && employment.user && employment.isAcknowledged
+      )
+      .map(employment => employment.user),
+    u => u.id
+  );
+
+  const usersInValidationFilter = computeUsersInValidationFilter(
+    adminedTeams,
+    usersWithoutTeam
+  );
 
   return {
     ...stateWithWorkDays,
@@ -59,15 +92,7 @@ export function updateCompanyDetailsReducer(
           )
       )
     ),
-    employments: flatMap(
-      companiesPayload.map(c =>
-        c.employments.map(e => ({
-          ...e,
-          companyId: c.id,
-          company: { id: c.id, name: c.name, siren: c.siren }
-        }))
-      )
-    ),
+    employments: allEmployments,
     missions: [
       ...flatMap(
         companiesPayload.map(c =>
@@ -79,6 +104,11 @@ export function updateCompanyDetailsReducer(
       ...state.activitiesFilters,
       users: uniqBy(users, u => u.id),
       minDate
+    },
+    validationsFilters: {
+      ...state.validationsFilters,
+      teams: adminedTeams,
+      users: usersInValidationFilter
     }
   };
 }

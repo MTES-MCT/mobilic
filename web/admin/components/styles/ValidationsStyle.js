@@ -85,5 +85,8 @@ export const useStyles = makeStyles(theme => ({
   companyFilter: {
     alignSelf: "flex-start",
     maxWidth: 400
+  },
+  filterGrid: {
+    paddingBottom: theme.spacing(2)
   }
 }));

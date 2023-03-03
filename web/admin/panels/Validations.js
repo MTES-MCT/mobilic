@@ -37,6 +37,10 @@ import {
   VALIDATE_MISSION_IN_VALIDATION_PANEL
 } from "common/utils/matomoTags";
 import Badge from "@mui/material/Badge";
+import Grid from "@mui/material/Grid";
+import { EmployeeFilter } from "../components/EmployeeFilter";
+import { TeamFilter } from "../components/TeamFilter";
+import { useDeepCompareEffect } from "react-use";
 
 const VALIDATION_TABS = [
   {
@@ -69,6 +73,8 @@ function ValidationPanel() {
   const [tab, setTab] = React.useState(0);
   const [tableEntries, setTableEntries] = React.useState([]);
   const [tableColumns, setTableColumns] = React.useState([]);
+  const [users, setUsers] = React.useState(adminStore.validationsFilters.users);
+  const [teams, setTeams] = React.useState(adminStore.validationsFilters.teams);
   const [
     entriesToValidateByAdmin,
     setEntriesToValidateByAdmin
@@ -252,6 +258,43 @@ function ValidationPanel() {
     );
   }, [entriesToValidateByWorker]);
 
+  useDeepCompareEffect(() => {
+    setUsers(adminStore.validationsFilters.users);
+  }, [adminStore.validationsFilters.users]);
+
+  useDeepCompareEffect(() => {
+    setTeams(
+      teams.map(team => ({
+        ...team,
+        selected: false
+      }))
+    );
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateValidationsFilters,
+      payload: { users: users }
+    });
+  }, [users]);
+
+  useDeepCompareEffect(() => {
+    setTeams(adminStore.validationsFilters.teams);
+  }, [adminStore.validationsFilters.teams]);
+
+  useDeepCompareEffect(() => {
+    const selectedTeamIds = teams
+      .filter(team => team.selected)
+      ?.map(team => team.id);
+
+    const usersToSelect = users.map(user => ({
+      ...user,
+      selected: selectedTeamIds.includes(user.teamId)
+    }));
+    setUsers(usersToSelect);
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateValidationsFilters,
+      payload: { teams: teams }
+    });
+  }, [teams]);
+
   React.useEffect(() => {
     switch (tab) {
       case 0:
@@ -329,6 +372,18 @@ function ValidationPanel() {
         />
         <Tab className={classes.tab} label={VALIDATION_TABS[2].label} />
       </Tabs>
+      <Grid spacing={2} container className={classes.filterGrid}>
+        {users?.length > 0 && (
+          <Grid xs={3} item>
+            <EmployeeFilter users={users} setUsers={setUsers} />
+          </Grid>
+        )}
+        {teams?.length > 0 && (
+          <Grid xs={3} item>
+            <TeamFilter teams={teams} setTeams={setTeams} />
+          </Grid>
+        )}
+      </Grid>
       <Typography className={classes.explanation}>
         {VALIDATION_TABS[tab].explanation}
       </Typography>

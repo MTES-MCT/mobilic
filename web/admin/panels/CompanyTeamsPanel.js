@@ -18,6 +18,7 @@ import { formatPersonName } from "common/utils/coworkers";
 import { useAdminStore } from "../store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import uniqBy from "lodash/uniqBy";
+import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 export default function CompanyTeamsPanel({ company }) {
   const api = useApi();
@@ -49,7 +50,12 @@ export default function CompanyTeamsPanel({ company }) {
       const apiResponse = await api.graphQlMutate(DELETE_TEAM_MUTATION, {
         teamId: team.id
       });
-      setTeams(apiResponse?.data?.teams?.deleteTeam);
+      const { teams, employments } = apiResponse?.data?.teams?.deleteTeam;
+      setTeams(teams);
+      adminStore.dispatch({
+        type: ADMIN_ACTIONS.updateTeams,
+        payload: { teams, employments }
+      });
       alerts.success(`L'équipe '${team.name}' a bien été supprimée.`, "", 6000);
     }, "delete-team");
   }
@@ -71,6 +77,7 @@ export default function CompanyTeamsPanel({ company }) {
           .sort()
           .join(", "),
       overflowTooltip: true,
+      maxWidth: 150,
       sortable: true
     },
     {
@@ -82,6 +89,7 @@ export default function CompanyTeamsPanel({ company }) {
           .sort()
           .join(", "),
       overflowTooltip: true,
+      maxWidth: 250,
       sortable: true
     },
     {
@@ -186,7 +194,8 @@ export default function CompanyTeamsPanel({ company }) {
       selectableAdmins: currentAdmins,
       selectableKnownAddresses: currentKnownAddresses,
       selectableVehicles: currentVehicles,
-      setTeams: setTeams
+      setTeams: setTeams,
+      adminStore: adminStore
     });
   }
 

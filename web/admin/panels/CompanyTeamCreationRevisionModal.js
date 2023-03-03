@@ -20,6 +20,7 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { MultipleValuesFilter } from "./MultipleValuesFilter";
 import { TeamEmployeesFilter } from "./TeamEmployeesFilter";
+import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 const useStyles = makeStyles(theme => ({
   modalButton: {
@@ -38,6 +39,7 @@ export default function CompanyTeamCreationRevisionModal({
   selectableKnownAddresses,
   selectableVehicles,
   setTeams,
+  adminStore,
   open,
   handleClose
 }) {
@@ -109,7 +111,12 @@ export default function CompanyTeamCreationRevisionModal({
         companyId: company.id,
         ...commonPayloadFromFields()
       });
-      setTeams(apiResponse?.data?.teams?.createTeam);
+      const { teams, employments } = apiResponse?.data?.teams?.createTeam;
+      setTeams(teams);
+      adminStore.dispatch({
+        type: ADMIN_ACTIONS.updateTeams,
+        payload: { teams, employments }
+      });
       alerts.success(`L'équipe '${name}' a bien été créée.`, "", 6000);
       handleClose();
     }, "create-team");
@@ -123,7 +130,12 @@ export default function CompanyTeamCreationRevisionModal({
         teamId: team.id,
         ...commonPayloadFromFields()
       });
-      setTeams(apiResponse?.data?.teams?.updateTeam);
+      const { teams, employments } = apiResponse?.data?.teams?.updateTeam;
+      setTeams(teams);
+      adminStore.dispatch({
+        type: ADMIN_ACTIONS.updateTeams,
+        payload: { teams, employments }
+      });
       alerts.success(`L'équipe '${name}' a bien été mise à jour.`, "", 6000);
       handleClose();
     }, "update-team");

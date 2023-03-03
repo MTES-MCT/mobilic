@@ -636,7 +636,25 @@ export const DELETE_TEAM_MUTATION = gql`
   mutation deleteTeam($teamId: Int!) {
     teams {
       deleteTeam(teamId: $teamId) {
-        ...FullTeamData
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
       }
     }
   }
@@ -661,7 +679,25 @@ export const CREATE_TEAM_MUTATION = gql`
         knownAddressIds: $knownAddressIds
         vehicleIds: $vehicleIds
       ) {
-        ...FullTeamData
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
       }
     }
   }
@@ -686,7 +722,25 @@ export const UPDATE_TEAM_MUTATION = gql`
         knownAddressIds: $knownAddressIds
         vehicleIds: $vehicleIds
       ) {
-        ...FullTeamData
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
       }
     }
   }
@@ -715,6 +769,16 @@ export const ADMIN_COMPANIES_QUERY = gql`
         }
         teams {
           name
+          adminUsers {
+            id
+            firstName
+            lastName
+          }
+          users {
+            id
+            firstName
+            lastName
+          }
         }
         knownAddresses {
           id
@@ -796,6 +860,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
           email
           hasAdminRights
           latestInviteEmailTime
+          teamId
           user {
             id
             email
