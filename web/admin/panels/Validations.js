@@ -262,25 +262,23 @@ function ValidationPanel() {
     setUsers(adminStore.validationsFilters.users);
   }, [adminStore.validationsFilters.users]);
 
-  useDeepCompareEffect(() => {
-    setTeams(
-      teams.map(team => ({
-        ...team,
-        selected: false
-      }))
-    );
+  const handleUserFilterChange = users => {
+    const unselectedTeams = teams.map(team => ({
+      ...team,
+      selected: false
+    }));
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateValidationsFilters,
-      payload: { users: users }
+      payload: { teams: unselectedTeams, users: users }
     });
-  }, [users]);
+  };
 
   useDeepCompareEffect(() => {
     setTeams(adminStore.validationsFilters.teams);
   }, [adminStore.validationsFilters.teams]);
 
-  useDeepCompareEffect(() => {
-    const selectedTeamIds = teams
+  const handleTeamFilterChange = newTeams => {
+    const selectedTeamIds = newTeams
       .filter(team => team.selected)
       ?.map(team => team.id);
 
@@ -288,12 +286,11 @@ function ValidationPanel() {
       ...user,
       selected: selectedTeamIds.includes(user.teamId)
     }));
-    setUsers(usersToSelect);
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateValidationsFilters,
-      payload: { teams: teams }
+      payload: { teams: newTeams, users: usersToSelect }
     });
-  }, [teams]);
+  };
 
   React.useEffect(() => {
     switch (tab) {
@@ -375,12 +372,12 @@ function ValidationPanel() {
       <Grid spacing={2} container className={classes.filterGrid}>
         {users?.length > 0 && (
           <Grid xs={3} item>
-            <EmployeeFilter users={users} setUsers={setUsers} />
+            <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
           </Grid>
         )}
         {teams?.length > 0 && (
           <Grid xs={3} item>
-            <TeamFilter teams={teams} setTeams={setTeams} />
+            <TeamFilter teams={teams} setTeams={handleTeamFilterChange} />
           </Grid>
         )}
       </Grid>

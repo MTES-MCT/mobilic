@@ -768,6 +768,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
           lastName
         }
         teams {
+          id
           name
           adminUsers {
             id
