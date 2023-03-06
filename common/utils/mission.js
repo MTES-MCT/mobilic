@@ -98,6 +98,7 @@ export function computeMissionStats(m, users) {
       userId: a.userId || a.user.id,
       user: a.user || users.find(u => u.id === a.userId)
     }))
+    .filter(a => users.find(u => u.id === a.userId))
     .filter(a => !!a.user);
   const members = uniqBy(
     activitiesWithUserId.map(a => a.user),
