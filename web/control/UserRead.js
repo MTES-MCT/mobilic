@@ -194,7 +194,11 @@ export function UserRead() {
     if (!userInfo || !userInfo.id) {
       return;
     }
-    const res = await getRegulationComputationsAndAlertNumber(api, userInfo.id);
+    const res = await getRegulationComputationsAndAlertNumber(
+      api,
+      userInfo.id,
+      new Date(tokenInfo.historyStartDay)
+    );
     setRegulationComputationsByDay(res.regulationComputationsByDay);
     setAlertNumber(res.alertNumber);
   }, [userInfo]);
