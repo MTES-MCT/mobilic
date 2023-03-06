@@ -369,17 +369,21 @@ function ValidationPanel() {
         />
         <Tab className={classes.tab} label={VALIDATION_TABS[2].label} />
       </Tabs>
-      <Grid spacing={2} container className={classes.filterGrid}>
-        {users?.length > 0 && (
-          <Grid xs={3} item>
-            <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
-          </Grid>
-        )}
-        {teams?.length > 0 && (
-          <Grid xs={3} item>
+      <Grid
+        spacing={teams?.length > 0 ? 2 : 0}
+        container
+        className={classes.filterGrid}
+      >
+        <Grid item>
+          {teams?.length > 0 && (
             <TeamFilter teams={teams} setTeams={handleTeamFilterChange} />
-          </Grid>
-        )}
+          )}
+        </Grid>
+        <Grid item>
+          {users?.length > 0 && (
+            <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
+          )}
+        </Grid>
       </Grid>
       <Typography className={classes.explanation}>
         {VALIDATION_TABS[tab].explanation}
