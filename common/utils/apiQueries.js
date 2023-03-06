@@ -557,6 +557,23 @@ export const USER_READ_QUERY = gql`
   }
 `;
 
+export const USER_MISSIONS_HISTORY_QUERY = gql`
+  ${COMPANY_SETTINGS_FRAGMENT}
+  ${FRAGMENT_LOCATION_FULL}
+  ${FULL_MISSION_FRAGMENT}
+  query readUserMissionsHistory($fromTime: TimeStamp!, $untilTime: TimeStamp!) {
+    me {
+      missions(fromTime: $fromTime, untilTime: $untilTime) {
+        edges {
+          node {
+            ...FullMissionData
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const USER_WORK_DAY_QUERY = gql`
   query workDayDetail(
     $activityBefore: TimeStamp
