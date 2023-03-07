@@ -244,7 +244,7 @@ function ValidationPanel() {
         tableEntry => tableEntry.adminValidation
       )
     );
-  }, [adminStore.missions]);
+  }, [adminStore.missions, users]);
 
   React.useEffect(() => {
     setNbMissionsToValidateByAdmin(
