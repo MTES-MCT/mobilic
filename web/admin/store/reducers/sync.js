@@ -1,8 +1,6 @@
 import flatMap from "lodash/flatMap";
 import { addWorkDaysReducer } from "./workDays";
-import uniqBy from "lodash/uniqBy";
-import { currentUserId } from "common/utils/cookie";
-import { computeUsersInValidationFilter } from "./validationsFilters";
+import { computeUsersAndTeamFilters } from "./team";
 
 export function updateCompanyIdReducer(state, { companyId }) {
   return {
@@ -45,31 +43,21 @@ export function updateCompanyDetailsReducer(
     )
   );
 
-  const adminedTeams = flatMap(
-    companiesPayload.map(c =>
-      c.teams.filter(team =>
-        team.adminUsers?.some(u => u.id === currentUserId())
-      )
-    )
-  );
-  const usersWithoutTeam = uniqBy(
-    allEmployments
-      ?.filter(
-        employment =>
-          !employment.teamId && employment.user && employment.isAcknowledged
-      )
-      .map(employment => employment.user),
-    u => u.id
+  const teams = flatMap(
+    companiesPayload.map(c => c.teams.map(t => ({ ...t, companyId: t.id })))
   );
 
-  const usersInValidationFilter = computeUsersInValidationFilter(
-    adminedTeams,
-    usersWithoutTeam
+  const usersAndTeamsFilters = computeUsersAndTeamFilters(
+    users,
+    allEmployments,
+    teams
   );
 
   return {
     ...stateWithWorkDays,
     users,
+    teams: teams,
+    employments: allEmployments,
     vehicles: flatMap(
       companiesPayload.map(c =>
         c.vehicles.map(v => ({ ...v, companyId: c.id }))
@@ -92,7 +80,6 @@ export function updateCompanyDetailsReducer(
           )
       )
     ),
-    employments: allEmployments,
     missions: [
       ...flatMap(
         companiesPayload.map(c =>
@@ -102,13 +89,14 @@ export function updateCompanyDetailsReducer(
     ],
     activitiesFilters: {
       ...state.activitiesFilters,
-      users: uniqBy(users, u => u.id),
+      teams: usersAndTeamsFilters.activitiesFilters.teams,
+      users: usersAndTeamsFilters.activitiesFilters.users,
       minDate
     },
     validationsFilters: {
       ...state.validationsFilters,
-      teams: adminedTeams,
-      users: usersInValidationFilter
+      teams: usersAndTeamsFilters.validationsFilters.teams,
+      users: usersAndTeamsFilters.validationsFilters.users
     }
   };
 }

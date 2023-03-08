@@ -9,7 +9,7 @@ export function updateValidationsFiltersReducer(state, payload) {
 }
 
 export function computeUsersInValidationFilter(adminedTeams, usersWithoutTeam) {
-  const usersInValidationFilter = adminedTeams.reduce(
+  return adminedTeams.reduce(
     (accumulator, currentTeam) =>
       accumulator.concat(
         currentTeam.users.map(user => ({
@@ -20,5 +20,4 @@ export function computeUsersInValidationFilter(adminedTeams, usersWithoutTeam) {
       ),
     usersWithoutTeam || []
   );
-  return usersInValidationFilter;
 }

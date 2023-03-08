@@ -53,6 +53,8 @@ import {
   ADMIN_EXPORT_C1B,
   ADMIN_EXPORT_EXCEL
 } from "common/utils/matomoTags";
+import { useDeepCompareEffect } from "react-use";
+import { TeamFilter } from "../components/TeamFilter";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -131,6 +133,7 @@ function ActivitiesPanel() {
   const { trackEvent } = useMatomo();
 
   const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
+  const [teams, setTeams] = React.useState(adminStore.validationsFilters.teams);
   const [companies, setCompanies] = React.useState([]);
   const [minDate, setMinDate] = React.useState(
     adminStore.activitiesFilters.minDate
@@ -220,6 +223,40 @@ function ActivitiesPanel() {
     }
   }, [adminCompanies]);
 
+  const handleUserFilterChange = users => {
+    const unselectedTeams = teams.map(team => ({
+      ...team,
+      selected: false
+    }));
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateActivitiesFilters,
+      payload: { teams: unselectedTeams, users: users }
+    });
+  };
+
+  useDeepCompareEffect(() => {
+    setTeams(adminStore.activitiesFilters.teams);
+  }, [adminStore.activitiesFilters.teams]);
+
+  useDeepCompareEffect(() => {
+    setUsers(adminStore.activitiesFilters.users);
+  }, [adminStore.activitiesFilters.users]);
+
+  const handleTeamFilterChange = newTeams => {
+    const selectedTeamIds = newTeams
+      .filter(team => team.selected)
+      ?.map(team => team.id);
+
+    const usersToSelect = users.map(user => ({
+      ...user,
+      selected: selectedTeamIds.includes(user.teamId)
+    }));
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateActivitiesFilters,
+      payload: { teams: newTeams, users: usersToSelect }
+    });
+  };
+
   React.useEffect(() => {
     trackEvent(ACTIVITY_FILTER_EMPLOYEE);
   }, [users]);
@@ -254,8 +291,13 @@ function ActivitiesPanel() {
         justifyContent="space-between"
         className={classes.filterGrid}
       >
+        {teams?.length > 0 && (
+          <Grid item>
+            <TeamFilter teams={teams} setTeams={handleTeamFilterChange} />
+          </Grid>
+        )}
         <Grid item>
-          <EmployeeFilter users={users} setUsers={setUsers} />
+          <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
         </Grid>
         <Grid item>
           <PeriodToggle period={period} setPeriod={setPeriod} />

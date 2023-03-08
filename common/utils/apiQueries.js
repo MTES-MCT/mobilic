@@ -648,6 +648,12 @@ export const DELETE_TEAM_MUTATION = gql`
           hasAdminRights
           latestInviteEmailTime
           teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
           user {
             id
             email
@@ -691,6 +697,12 @@ export const CREATE_TEAM_MUTATION = gql`
           hasAdminRights
           latestInviteEmailTime
           teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
           user {
             id
             email
@@ -734,6 +746,12 @@ export const UPDATE_TEAM_MUTATION = gql`
           hasAdminRights
           latestInviteEmailTime
           teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
           user {
             id
             email
