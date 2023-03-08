@@ -40,7 +40,6 @@ import Badge from "@mui/material/Badge";
 import Grid from "@mui/material/Grid";
 import { EmployeeFilter } from "../components/EmployeeFilter";
 import { TeamFilter } from "../components/TeamFilter";
-import { useDeepCompareEffect } from "react-use";
 
 const VALIDATION_TABS = [
   {
@@ -258,24 +257,18 @@ function ValidationPanel() {
     );
   }, [entriesToValidateByWorker]);
 
-  useDeepCompareEffect(() => {
-    setUsers(adminStore.validationsFilters.users);
-  }, [adminStore.validationsFilters.users]);
-
-  const handleUserFilterChange = users => {
+  const handleUserFilterChange = newUsers => {
     const unselectedTeams = teams.map(team => ({
       ...team,
       selected: false
     }));
+    setUsers(newUsers);
+    setTeams(unselectedTeams);
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateValidationsFilters,
       payload: { teams: unselectedTeams, users: users }
     });
   };
-
-  useDeepCompareEffect(() => {
-    setTeams(adminStore.validationsFilters.teams);
-  }, [adminStore.validationsFilters.teams]);
 
   const handleTeamFilterChange = newTeams => {
     const selectedTeamIds = newTeams
@@ -286,6 +279,8 @@ function ValidationPanel() {
       ...user,
       selected: selectedTeamIds.includes(user.teamId)
     }));
+    setUsers(usersToSelect);
+    setTeams(newTeams);
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateValidationsFilters,
       payload: { teams: newTeams, users: usersToSelect }
