@@ -53,7 +53,6 @@ import {
   ADMIN_EXPORT_C1B,
   ADMIN_EXPORT_EXCEL
 } from "common/utils/matomoTags";
-import { useDeepCompareEffect } from "react-use";
 import { TeamFilter } from "../components/TeamFilter";
 
 const useStyles = makeStyles(theme => ({
@@ -223,24 +222,18 @@ function ActivitiesPanel() {
     }
   }, [adminCompanies]);
 
-  const handleUserFilterChange = users => {
+  const handleUserFilterChange = newUsers => {
     const unselectedTeams = teams.map(team => ({
       ...team,
       selected: false
     }));
+    setTeams(unselectedTeams);
+    setUsers(newUsers);
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateActivitiesFilters,
-      payload: { teams: unselectedTeams, users: users }
+      payload: { teams: unselectedTeams, users: newUsers }
     });
   };
-
-  useDeepCompareEffect(() => {
-    setTeams(adminStore.activitiesFilters.teams);
-  }, [adminStore.activitiesFilters.teams]);
-
-  useDeepCompareEffect(() => {
-    setUsers(adminStore.activitiesFilters.users);
-  }, [adminStore.activitiesFilters.users]);
 
   const handleTeamFilterChange = newTeams => {
     const selectedTeamIds = newTeams
@@ -251,6 +244,8 @@ function ActivitiesPanel() {
       ...user,
       selected: selectedTeamIds.includes(user.teamId)
     }));
+    setTeams(newTeams);
+    setUsers(usersToSelect);
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateActivitiesFilters,
       payload: { teams: newTeams, users: usersToSelect }
@@ -361,7 +356,8 @@ function ActivitiesPanel() {
                 trackEvent(ADMIN_EXPORT_EXCEL);
                 modals.open("dataExport", {
                   companies,
-                  users,
+                  initialUsers: users,
+                  initialTeams: teams,
                   defaultCompany: company,
                   defaultMinDate: minDate ? new Date(minDate) : null,
                   defaultMaxDate: maxDate
@@ -381,8 +377,9 @@ function ActivitiesPanel() {
                 trackEvent(ADMIN_EXPORT_C1B);
                 modals.open("tachographExport", {
                   companies,
+                  initialUsers: users,
+                  initialTeams: teams,
                   defaultCompany: company,
-                  users,
                   defaultMinDate: minDate ? new Date(minDate) : null,
                   defaultMaxDate: maxDate
                     ? new Date(maxDate)
