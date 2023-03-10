@@ -51,6 +51,23 @@ const CURRENT_EMPLOYMENTS_QUERY = gql`
             lastKilometerReading
           }
         }
+        team {
+          id
+          name
+          vehicles {
+            id
+            name
+            registrationNumber
+            lastKilometerReading
+          }
+          knownAddresses {
+            id
+            alias
+            name
+            postalCode
+            city
+          }
+        }
       }
     }
   }
@@ -151,6 +168,7 @@ async function syncCoworkerData(coworkerPayload, store) {
   const syncActions = [];
   currentEmployments.forEach(e => {
     const company = e.company;
+    const team = e.team;
     company.users.forEach(u => {
       if (u.id !== coworkerPayload.id) {
         const userMatch = users.find(u2 => u2.id === u.id);
@@ -159,12 +177,24 @@ async function syncCoworkerData(coworkerPayload, store) {
         } else userMatch.companyIds.push(company.id);
       }
     });
-    vehicles.push(
-      ...company.vehicles.map(v => ({ ...v, companyId: company.id }))
-    );
-    knownAddresses.push(
-      ...company.knownAddresses.map(a => ({ ...a, companyId: company.id }))
-    );
+    if (team && team.vehicles.length > 0) {
+      vehicles.push(
+        ...team.vehicles.map(v => ({ ...v, companyId: company.id }))
+      );
+    } else {
+      vehicles.push(
+        ...company.vehicles.map(v => ({ ...v, companyId: company.id }))
+      );
+    }
+    if (team && team.knownAddresses.length > 0) {
+      knownAddresses.push(
+        ...team.knownAddresses.map(a => ({ ...a, companyId: company.id }))
+      );
+    } else {
+      knownAddresses.push(
+        ...company.knownAddresses.map(a => ({ ...a, companyId: company.id }))
+      );
+    }
   });
   syncActions.push(store.syncEntity(users, "coworkers"));
   syncActions.push(store.syncEntity(vehicles, "vehicles"));
