@@ -67,6 +67,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const isUserOnlyAdminOfTeams = (teams, userId) => {
+  return teams
+    .filter(
+      team => team.adminUsers.length === 1 && team.adminUsers[0].id === userId
+    )
+    .map(team => team.name);
+};
+
 export function Employees({ company, containerRef }) {
   const api = useApi();
   const adminStore = useAdminStore();
@@ -440,13 +448,54 @@ export function Employees({ company, containerRef }) {
         name: "setWorker",
         label: "Retirer accès gestionnaire",
         disabled: employment.id === adminStore.userId,
-        action: empl => giveWorkerPermission(empl.id)
+        action: empl => giveWorkerPermission(empl.employmentId)
       });
     }
     if (adminStore?.teams?.length > 0) {
       customActions.unshift(customActionEditTeam);
     }
     return customActions;
+  };
+
+  const confirmActionIfOnlyAdmin = (
+    teams,
+    userId,
+    modalTitle,
+    action,
+    terminateEmployment
+  ) => {
+    const teamsWhereUserIsOnlyAdmin = isUserOnlyAdminOfTeams(teams, userId);
+    teamsWhereUserIsOnlyAdmin.length > 0
+      ? modals.open("confirmation", {
+          textButtons: true,
+          title: modalTitle,
+          content: (
+            <Box>
+              <Typography>
+                Ce gestionnaire est le seul gestionnaire rattaché aux équipes
+                suivantes: {teamsWhereUserIsOnlyAdmin.join(", ")}.
+              </Typography>
+              <Typography>
+                Si vous{" "}
+                {terminateEmployment
+                  ? "mettez fin à son rattachement"
+                  : "lui retirez ses droits de gestion"}
+                , il n'y aura plus de gestionnaire pour ces équipes.
+              </Typography>
+              <Typography>
+                Êtes-vous certain(e) de vouloir{" "}
+                {terminateEmployment
+                  ? "mettre fin à son rattachement"
+                  : "lui retirer ses droits de gestion"}
+                ?
+              </Typography>
+            </Box>
+          ),
+          handleConfirm: async () => {
+            await action();
+          }
+        })
+      : action();
   };
 
   const customActionsValidEmployment = employment => {
@@ -468,20 +517,33 @@ export function Employees({ company, containerRef }) {
         name: "setWorker",
         label: "Retirer accès gestionnaire",
         disabled: employment.id === adminStore.userId,
-        action: empl => giveWorkerPermission(empl.employmentId)
+        action: empl =>
+          confirmActionIfOnlyAdmin(
+            adminStore.teams,
+            empl.id,
+            `Retirer l'accès gestionnaire à ${employment.name}`,
+            () => giveWorkerPermission(empl.employmentId),
+            false
+          )
       });
     }
     customActions.push({
       name: "terminate",
       label: "Mettre fin au rattachement",
       disabled: employment.id === adminStore.userId,
-      action: empl => {
-        modals.open("terminateEmployment", {
-          minDate: new Date(empl.startDate),
-          terminateEmployment: async endDate =>
-            terminateEmployment(empl.employmentId, endDate)
-        });
-      }
+      action: empl =>
+        confirmActionIfOnlyAdmin(
+          adminStore.teams,
+          empl.id,
+          `Mettre fin au rattachement du gestionnaire ${employment.name}`,
+          () =>
+            modals.open("terminateEmployment", {
+              minDate: new Date(empl.startDate),
+              terminateEmployment: async endDate =>
+                terminateEmployment(empl.employmentId, endDate)
+            }),
+          true
+        )
     });
     return customActions;
   };
