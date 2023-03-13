@@ -168,6 +168,9 @@ export function Employees({ company, containerRef }) {
     alerts.success("Relance envoyée", employmentId, 6000);
   }
 
+  const formatTeam = teamId =>
+    adminStore?.teams?.find(team => team.id === teamId)?.name;
+
   const pendingEmploymentColumns = [
     {
       label: "Nom",
@@ -241,8 +244,7 @@ export function Employees({ company, containerRef }) {
       baseWidth: 160,
       align: "left",
       required: true,
-      format: teamId =>
-        adminStore?.teams?.find(team => team.id === teamId)?.name,
+      format: formatTeam,
       renderEditMode: (type, entry, setType) => (
         <TextField
           fullWidth
@@ -328,6 +330,16 @@ export function Employees({ company, containerRef }) {
     }
   ];
 
+  if (adminStore?.teams?.length > 0) {
+    validEmploymentColumns.push({
+      label: "Équipe de rattachement",
+      name: "teamId",
+      align: "left",
+      format: formatTeam,
+      minWidth: 80
+    });
+  }
+
   const companyEmployments = adminStore.employments.filter(
     e => e.companyId === companyId
   );
@@ -360,7 +372,8 @@ export function Employees({ company, containerRef }) {
       startDate: e.startDate,
       endDate: e.endDate,
       active: !e.endDate || e.endDate >= today,
-      hasAdminRights: e.hasAdminRights ? 1 : 0
+      hasAdminRights: e.hasAdminRights ? 1 : 0,
+      teamId: e.teamId
     }));
 
   const isAddingEmployment =
