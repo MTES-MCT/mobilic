@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -27,6 +28,7 @@ import {
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { EMPLOYMENT_ROLE } from "common/utils/employments";
+import { TeamFilter } from "../components/TeamFilter";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -64,6 +66,12 @@ const useStyles = makeStyles(theme => ({
   },
   hideButton: {
     marginLeft: theme.spacing(2)
+  },
+  teamFilter: {
+    marginBottom: theme.spacing(2)
+  },
+  flexGrow: {
+    flexGrow: 1
   }
 }));
 
@@ -81,6 +89,22 @@ export function Employees({ company, containerRef }) {
   const modals = useModals();
   const alerts = useSnackbarAlerts();
   const companyId = company ? company.id : null;
+  const [teams, setTeams] = React.useState([]);
+
+  React.useEffect(() => {
+    if (adminStore?.teams?.length > 0) {
+      setTeams([{ name: "-- Aucune équipe", id: -1 }, ...adminStore.teams]);
+    } else {
+      setTeams([]);
+    }
+  }, [adminStore.teams]);
+
+  const selectedTeamIds = React.useMemo(() => {
+    if (!teams) {
+      return [];
+    }
+    return teams.filter(team => team.selected).map(team => team.id);
+  }, [teams]);
 
   const setForceUpdate = React.useState({
     value: false
@@ -372,6 +396,15 @@ export function Employees({ company, containerRef }) {
   const today = isoFormatLocalDate(new Date());
 
   const validEmployments = companyEmployments
+    .filter(e => {
+      if (selectedTeamIds.length === 0) {
+        return true;
+      }
+      return (
+        selectedTeamIds.includes(e.teamId) ||
+        (selectedTeamIds.includes(-1) && !e.teamId)
+      );
+    })
     .filter(e => e.isAcknowledged)
     .map(e => ({
       pending: false,
@@ -718,8 +751,16 @@ export function Employees({ company, containerRef }) {
       Invitez vos salariés en renseignant leurs adresses mail, afin qu'ils
       puissent enregistrer du temps de travail pour l'entreprise.
     </Typography>,
+    <Grid key={5} spacing={4} container className={classes.teamFilter}>
+      {adminStore?.teams?.length > 0 && (
+        <Grid item sm={2} className={classes.flexGrow}>
+          {teams && <TeamFilter teams={teams} setTeams={setTeams} />}
+        </Grid>
+      )}
+    </Grid>,
+
     <AugmentedTable
-      key={5}
+      key={6}
       columns={validEmploymentColumns}
       entries={validEmployments}
       virtualizedRowHeight={45}
