@@ -357,7 +357,8 @@ export function Employees({ company, containerRef }) {
         e.latestInviteEmailTime ? e.latestInviteEmailTime * 1000 : e.startDate
       ),
       id: e.id,
-      teamId: e.teamId
+      teamId: e.teamId,
+      employmentId: e.id
     }));
 
   const today = isoFormatLocalDate(new Date());
@@ -384,6 +385,19 @@ export function Employees({ company, containerRef }) {
 
   const canDisplayPendingEmployments =
     isAddingEmployment || pendingEmployments.length > 0;
+
+  const customActionEditTeam = {
+    name: "editTeam",
+    label: "Modifier l'affectation",
+    action: employment => {
+      modals.open("employeesTeamRevisionModal", {
+        employment,
+        teams: adminStore?.teams,
+        companyId,
+        adminStore
+      });
+    }
+  };
 
   const customActionsPendingEmployment = employment => {
     if (!employment) {
@@ -429,6 +443,9 @@ export function Employees({ company, containerRef }) {
         action: empl => giveWorkerPermission(empl.id)
       });
     }
+    if (adminStore?.teams?.length > 0) {
+      customActions.unshift(customActionEditTeam);
+    }
     return customActions;
   };
 
@@ -438,18 +455,7 @@ export function Employees({ company, containerRef }) {
     }
     const customActions = [];
     if (adminStore?.teams?.length > 0) {
-      customActions.push({
-        name: "editTeam",
-        label: "Modifier l'affectation",
-        action: employment => {
-          modals.open("employeesTeamRevisionModal", {
-            employment,
-            teams: adminStore?.teams,
-            companyId,
-            adminStore
-          });
-        }
-      });
+      customActions.push(customActionEditTeam);
     }
     if (!employment.hasAdminRights) {
       customActions.push({

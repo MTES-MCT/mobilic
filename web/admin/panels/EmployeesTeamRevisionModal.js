@@ -62,13 +62,17 @@ export default function EmployeesTeamRevisionModal({
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <CustomDialogTitle
-        title={`Modifier l'affectation d'équipe du salarié ${employment.name}`}
+        title={`Modifier l'affectation d'équipe du salarié${
+          employment.name ? " " + employment.name : ""
+        }`}
         handleClose={handleClose}
       />
       <DialogContent dividers>
         <Grid container spacing={4}>
           <Grid item xs={12}>
-            <InputLabel id="select-team-label">{`Veuillez sélectionner une nouvelle équipe pour le salarié ${employment.name}`}</InputLabel>
+            <InputLabel id="select-team-label">{`Veuillez sélectionner une nouvelle équipe pour le salarié${
+              employment.name ? " " + employment.name : ""
+            }`}</InputLabel>
             <Select
               labelId="select-team-label"
               id="select-team"
