@@ -232,6 +232,37 @@ export function Employees({ company, containerRef }) {
     }
   ];
 
+  if (adminStore?.teams?.length > 0) {
+    pendingEmploymentColumns.push({
+      label: "Équipe de rattachement",
+      name: "teamId",
+      create: true,
+      minWidth: 160,
+      baseWidth: 160,
+      align: "left",
+      required: true,
+      format: teamId =>
+        adminStore?.teams?.find(team => team.id === teamId)?.name,
+      renderEditMode: (type, entry, setType) => (
+        <TextField
+          fullWidth
+          select
+          value={type}
+          onChange={e => setType(e.target.value)}
+        >
+          <MenuItem key={-1} value={-1}>
+            {"-"}
+          </MenuItem>
+          {adminStore.teams.map(team => (
+            <MenuItem key={team.id} value={team.id}>
+              {team.name}
+            </MenuItem>
+          ))}
+        </TextField>
+      )
+    });
+  }
+
   const validEmploymentColumns = [
     {
       label: "Nom",
@@ -312,7 +343,8 @@ export function Employees({ company, containerRef }) {
       latestInviteEmailDateString: frenchFormatDateStringOrTimeStamp(
         e.latestInviteEmailTime ? e.latestInviteEmailTime * 1000 : e.startDate
       ),
-      id: e.id
+      id: e.id,
+      teamId: e.teamId
     }));
 
   const today = isoFormatLocalDate(new Date());
@@ -503,7 +535,8 @@ export function Employees({ company, containerRef }) {
         onClick={() => {
           setHidePendingEmployments(false);
           pendingEmploymentsTableRef.current.newRow({
-            hasAdminRights: EMPLOYMENT_ROLE.employee
+            hasAdminRights: EMPLOYMENT_ROLE.employee,
+            teamId: -1
           });
         }}
         className={classes.actionButton}
@@ -536,10 +569,11 @@ export function Employees({ company, containerRef }) {
       virtualizedAttachScrollTo={
         canDisplayPendingEmployments ? containerRef.current : null
       }
-      onRowAdd={async ({ idOrEmail, hasAdminRights }) => {
+      onRowAdd={async ({ idOrEmail, hasAdminRights, teamId }) => {
         const payload = {
           hasAdminRights: hasAdminRights === EMPLOYMENT_ROLE.admin,
-          companyId
+          companyId,
+          ...(teamId !== -1 && { teamId })
         };
         if (/^\d+$/.test(idOrEmail)) {
           payload.userId = parseInt(idOrEmail);

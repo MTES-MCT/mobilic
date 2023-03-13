@@ -1203,6 +1203,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
     $companyId: Int!
     $hasAdminRights: Boolean
     $mail: String
+    $teamId: Int
   ) {
     employments {
       createEmployment(
@@ -1210,6 +1211,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         companyId: $companyId
         hasAdminRights: $hasAdminRights
         mail: $mail
+        teamId: $teamId
       ) {
         id
         startDate
@@ -1217,6 +1219,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         isAcknowledged
         email
         hasAdminRights
+        teamId
         company {
           id
           name
