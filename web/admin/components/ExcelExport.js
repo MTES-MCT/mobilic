@@ -22,6 +22,10 @@ import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDat
 import { CheckboxField } from "../../common/CheckboxField";
 import { Autocomplete } from "@mui/lab";
 import { TeamFilter } from "./TeamFilter";
+import {
+  getUsersToSelectFromTeamSelection,
+  unselectAndGetAllTeams
+} from "../store/reducers/team";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -72,23 +76,13 @@ export default function ExcelExport({
   }, [open]);
 
   const handleUserFilterChange = newUsers => {
-    const unselectedTeams = teams.map(team => ({
-      ...team,
-      selected: false
-    }));
+    const unselectedTeams = unselectAndGetAllTeams(teams);
     setTeams(unselectedTeams);
     setUsers(newUsers);
   };
 
   const handleTeamFilterChange = newTeams => {
-    const selectedTeamIds = newTeams
-      .filter(team => team.selected)
-      ?.map(team => team.id);
-
-    const usersToSelect = users.map(user => ({
-      ...user,
-      selected: selectedTeamIds.includes(user.teamId)
-    }));
+    const usersToSelect = getUsersToSelectFromTeamSelection(newTeams, users);
     setUsers(usersToSelect);
     setTeams(newTeams);
   };

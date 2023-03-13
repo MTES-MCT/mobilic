@@ -40,6 +40,10 @@ import Badge from "@mui/material/Badge";
 import Grid from "@mui/material/Grid";
 import { EmployeeFilter } from "../components/EmployeeFilter";
 import { TeamFilter } from "../components/TeamFilter";
+import {
+  getUsersToSelectFromTeamSelection,
+  unselectAndGetAllTeams
+} from "../store/reducers/team";
 
 const VALIDATION_TABS = [
   {
@@ -257,30 +261,24 @@ function ValidationPanel() {
     );
   }, [entriesToValidateByWorker]);
 
+  React.useEffect(() => {
+    setUsers(adminStore.validationsFilters.users);
+  }, [adminStore.validationsFilters.users]);
+
+  React.useEffect(() => {
+    setTeams(adminStore.validationsFilters.teams);
+  }, [adminStore.validationsFilters.teams]);
+
   const handleUserFilterChange = newUsers => {
-    const unselectedTeams = teams.map(team => ({
-      ...team,
-      selected: false
-    }));
-    setUsers(newUsers);
-    setTeams(unselectedTeams);
+    const unselectedTeams = unselectAndGetAllTeams(teams);
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateValidationsFilters,
-      payload: { teams: unselectedTeams, users: users }
+      payload: { teams: unselectedTeams, users: newUsers }
     });
   };
 
   const handleTeamFilterChange = newTeams => {
-    const selectedTeamIds = newTeams
-      .filter(team => team.selected)
-      ?.map(team => team.id);
-
-    const usersToSelect = users.map(user => ({
-      ...user,
-      selected: selectedTeamIds.includes(user.teamId)
-    }));
-    setUsers(usersToSelect);
-    setTeams(newTeams);
+    const usersToSelect = getUsersToSelectFromTeamSelection(newTeams, users);
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateValidationsFilters,
       payload: { teams: newTeams, users: usersToSelect }

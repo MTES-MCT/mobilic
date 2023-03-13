@@ -23,6 +23,10 @@ import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
 import SignFilesCheckbox from "../../common/SignFiles";
 import { TeamFilter } from "./TeamFilter";
+import {
+  getUsersToSelectFromTeamSelection,
+  unselectAndGetAllTeams
+} from "../store/reducers/team";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -105,23 +109,13 @@ export default function C1BExport({
   }, [open]);
 
   const handleUserFilterChange = newUsers => {
-    const unselectedTeams = teams.map(team => ({
-      ...team,
-      selected: false
-    }));
+    const unselectedTeams = unselectAndGetAllTeams(teams);
     setTeams(unselectedTeams);
     setUsers(newUsers);
   };
 
   const handleTeamFilterChange = newTeams => {
-    const selectedTeamIds = newTeams
-      .filter(team => team.selected)
-      ?.map(team => team.id);
-
-    const usersToSelect = users.map(user => ({
-      ...user,
-      selected: selectedTeamIds.includes(user.teamId)
-    }));
+    const usersToSelect = getUsersToSelectFromTeamSelection(newTeams, users);
     setUsers(usersToSelect);
     setTeams(newTeams);
   };
