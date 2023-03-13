@@ -117,7 +117,8 @@ export function Employees({ company, containerRef }) {
           entity: "employments",
           update: {
             ...employmentResponse.data.employments.changeEmployeeRole,
-            companyId
+            companyId,
+            adminStore
           }
         }
       });
@@ -436,6 +437,20 @@ export function Employees({ company, containerRef }) {
       return [];
     }
     const customActions = [];
+    if (adminStore?.teams?.length > 0) {
+      customActions.push({
+        name: "editTeam",
+        label: "Modifier l'affectation",
+        action: employment => {
+          modals.open("employeesTeamRevisionModal", {
+            employment,
+            teams: adminStore?.teams,
+            companyId,
+            adminStore
+          });
+        }
+      });
+    }
     if (!employment.hasAdminRights) {
       customActions.push({
         name: "setAdmin",

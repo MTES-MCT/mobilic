@@ -1175,6 +1175,41 @@ export const CHANGE_EMPLOYEE_ROLE = gql`
   }
 `;
 
+export const CHANGE_EMPLOYEE_TEAM = gql`
+  ${FULL_TEAM_FRAGMENT}
+  mutation changeEmployeeTeam($employmentId: Int!, $teamId: Int!) {
+    employments {
+      changeEmployeeTeam(employmentId: $employmentId, teamId: $teamId) {
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
   mutation batchCreateWorkerEmployments($companyId: Int!, $mails: [String]!) {
     employments {
