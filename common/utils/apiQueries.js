@@ -1179,14 +1179,38 @@ export const SEND_EMPLOYMENT_INVITE_REMINDER = gql`
 `;
 
 export const CHANGE_EMPLOYEE_ROLE = gql`
+  ${FULL_TEAM_FRAGMENT}
   mutation changeEmployeeRole($employmentId: Int!, $hasAdminRights: Boolean!) {
     employments {
       changeEmployeeRole(
         employmentId: $employmentId
         hasAdminRights: $hasAdminRights
       ) {
-        id
-        hasAdminRights
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
       }
     }
   }

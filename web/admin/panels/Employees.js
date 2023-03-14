@@ -138,21 +138,29 @@ export function Employees({ company, containerRef }) {
 
   async function changeEmployeeRole(employmentId, hasAdminRights) {
     try {
-      const employmentResponse = await api.graphQlMutate(CHANGE_EMPLOYEE_ROLE, {
+      const apiResponse = await api.graphQlMutate(CHANGE_EMPLOYEE_ROLE, {
         employmentId,
         hasAdminRights
       });
+      const {
+        teams,
+        employments
+      } = apiResponse?.data?.employments?.changeEmployeeRole;
       await adminStore.dispatch({
         type: ADMIN_ACTIONS.update,
         payload: {
           id: employmentId,
           entity: "employments",
           update: {
-            ...employmentResponse.data.employments.changeEmployeeRole,
+            ...employments.find(employment => employment.id === employmentId),
             companyId,
             adminStore
           }
         }
+      });
+      await adminStore.dispatch({
+        type: ADMIN_ACTIONS.updateTeams,
+        payload: { teams, employments }
       });
     } catch (err) {
       alerts.error(formatApiError(err), employmentId, 6000);
