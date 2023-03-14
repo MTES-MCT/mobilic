@@ -30,6 +30,7 @@ import ControllerHelp from "./controller/components/modals/ControllerHelp";
 import ExportExcelOne from "./controller/components/modals/ControllerExportExcelOne";
 import ControllerExportC1BAll from "./controller/components/modals/ControllerExportC1BAll";
 import ChangeNameModal from "./home/ChangeName";
+import CompanyTeamCreationRevisionModal from "./admin/panels/CompanyTeamCreationRevisionModal";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -63,5 +64,6 @@ export const MODAL_DICT = {
   geolocPermissionInfoModal: GeolocPermissionInfoModal,
   controllerExportExcelOne: ExportExcelOne,
   controllerExportC1BAll: ControllerExportC1BAll,
-  controllerHelp: ControllerHelp
+  controllerHelp: ControllerHelp,
+  companyTeamCreationRevisionModal: CompanyTeamCreationRevisionModal
 };

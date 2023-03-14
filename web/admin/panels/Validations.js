@@ -37,6 +37,13 @@ import {
   VALIDATE_MISSION_IN_VALIDATION_PANEL
 } from "common/utils/matomoTags";
 import Badge from "@mui/material/Badge";
+import Grid from "@mui/material/Grid";
+import { EmployeeFilter } from "../components/EmployeeFilter";
+import { TeamFilter } from "../components/TeamFilter";
+import {
+  getUsersToSelectFromTeamSelection,
+  unselectAndGetAllTeams
+} from "../store/reducers/team";
 
 const VALIDATION_TABS = [
   {
@@ -69,6 +76,8 @@ function ValidationPanel() {
   const [tab, setTab] = React.useState(0);
   const [tableEntries, setTableEntries] = React.useState([]);
   const [tableColumns, setTableColumns] = React.useState([]);
+  const [users, setUsers] = React.useState(adminStore.validationsFilters.users);
+  const [teams, setTeams] = React.useState(adminStore.validationsFilters.teams);
   const [
     entriesToValidateByAdmin,
     setEntriesToValidateByAdmin
@@ -238,7 +247,7 @@ function ValidationPanel() {
         tableEntry => tableEntry.adminValidation
       )
     );
-  }, [adminStore.missions]);
+  }, [adminStore.missions, users]);
 
   React.useEffect(() => {
     setNbMissionsToValidateByAdmin(
@@ -251,6 +260,30 @@ function ValidationPanel() {
       size(groupBy(entriesToValidateByWorker, "missionId"))
     );
   }, [entriesToValidateByWorker]);
+
+  React.useEffect(() => {
+    setUsers(adminStore.validationsFilters.users);
+  }, [adminStore.validationsFilters.users]);
+
+  React.useEffect(() => {
+    setTeams(adminStore.validationsFilters.teams);
+  }, [adminStore.validationsFilters.teams]);
+
+  const handleUserFilterChange = newUsers => {
+    const unselectedTeams = unselectAndGetAllTeams(teams);
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateValidationsFilters,
+      payload: { teams: unselectedTeams, users: newUsers }
+    });
+  };
+
+  const handleTeamFilterChange = newTeams => {
+    const usersToSelect = getUsersToSelectFromTeamSelection(newTeams, users);
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateValidationsFilters,
+      payload: { teams: newTeams, users: usersToSelect }
+    });
+  };
 
   React.useEffect(() => {
     switch (tab) {
@@ -329,6 +362,22 @@ function ValidationPanel() {
         />
         <Tab className={classes.tab} label={VALIDATION_TABS[2].label} />
       </Tabs>
+      <Grid
+        spacing={teams?.length > 0 ? 2 : 0}
+        container
+        className={classes.filterGrid}
+      >
+        <Grid item>
+          {teams?.length > 0 && (
+            <TeamFilter teams={teams} setTeams={handleTeamFilterChange} />
+          )}
+        </Grid>
+        <Grid item>
+          {users?.length > 0 && (
+            <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
+          )}
+        </Grid>
+      </Grid>
       <Typography className={classes.explanation}>
         {VALIDATION_TABS[tab].explanation}
       </Typography>

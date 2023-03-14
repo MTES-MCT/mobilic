@@ -22,6 +22,11 @@ import Alert from "@mui/material/Alert";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
 import SignFilesCheckbox from "../../common/SignFiles";
+import { TeamFilter } from "./TeamFilter";
+import {
+  getUsersToSelectFromTeamSelection,
+  unselectAndGetAllTeams
+} from "../store/reducers/team";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -51,7 +56,8 @@ export default function C1BExport({
   open,
   handleClose,
   companies = [],
-  users = [],
+  initialUsers = [],
+  initialTeams = [],
   defaultMinDate = null,
   defaultMaxDate = null,
   defaultCompany
@@ -69,7 +75,8 @@ export default function C1BExport({
   const [sign, setSign] = React.useState(true);
   const [dateRangeError, setDateRangeError] = React.useState(null);
   const [_companies, setCompanies] = React.useState([]);
-  const [_users, setUsers] = React.useState([]);
+  const [users, setUsers] = React.useState(initialUsers);
+  const [teams, setTeams] = React.useState(initialTeams);
 
   const invalidDateRange = (minDate, maxDate) =>
     maxDate &&
@@ -90,7 +97,6 @@ export default function C1BExport({
         return { ...c, selected: c.id === defaultCompany.id };
       })
     );
-    setUsers(users);
 
     if (invalidDateRange(defaultMinDate, defaultMaxDate)) {
       setMinDate(
@@ -101,6 +107,18 @@ export default function C1BExport({
     }
     setMaxDate(defaultMaxDate);
   }, [open]);
+
+  const handleUserFilterChange = newUsers => {
+    const unselectedTeams = unselectAndGetAllTeams(teams);
+    setTeams(unselectedTeams);
+    setUsers(newUsers);
+  };
+
+  const handleTeamFilterChange = newTeams => {
+    const usersToSelect = getUsersToSelectFromTeamSelection(newTeams, users);
+    setUsers(usersToSelect);
+    setTeams(newTeams);
+  };
 
   return (
     <Dialog onClose={handleClose} open={open} maxWidth="md">
@@ -167,8 +185,17 @@ export default function C1BExport({
             className={classes.flexGrow}
             sm={_companies.length > 1 ? 6 : 12}
           >
-            <EmployeeFilter users={_users} setUsers={setUsers} />
+            <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
           </Grid>
+          {teams?.length > 0 && (
+            <Grid
+              item
+              className={classes.flexGrow}
+              sm={_companies.length > 1 ? 6 : 12}
+            >
+              <TeamFilter teams={teams} setTeams={handleTeamFilterChange} />
+            </Grid>
+          )}
           <DateOrDateTimeRangeSelectionContext
             start={minDate}
             setStart={setMinDate}
@@ -232,7 +259,7 @@ export default function C1BExport({
           onClick={async e => {
             let selectedCompanies = _companies.filter(c => c.selected);
             if (selectedCompanies.length === 0) selectedCompanies = _companies;
-            let selectedUsers = _users.filter(u => u.selected);
+            let selectedUsers = users.filter(u => u.selected);
             const options = {
               company_ids: selectedCompanies.map(c => c.id)
             };

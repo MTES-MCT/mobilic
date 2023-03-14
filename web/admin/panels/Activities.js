@@ -53,6 +53,11 @@ import {
   ADMIN_EXPORT_C1B,
   ADMIN_EXPORT_EXCEL
 } from "common/utils/matomoTags";
+import { TeamFilter } from "../components/TeamFilter";
+import {
+  getUsersToSelectFromTeamSelection,
+  unselectAndGetAllTeams
+} from "../store/reducers/team";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -131,6 +136,7 @@ function ActivitiesPanel() {
   const { trackEvent } = useMatomo();
 
   const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
+  const [teams, setTeams] = React.useState(adminStore.activitiesFilters.teams);
   const [companies, setCompanies] = React.useState([]);
   const [minDate, setMinDate] = React.useState(
     adminStore.activitiesFilters.minDate
@@ -154,13 +160,6 @@ function ActivitiesPanel() {
       payload: { period }
     });
   }, [period]);
-
-  React.useEffect(() => {
-    adminStore.dispatch({
-      type: ADMIN_ACTIONS.updateActivitiesFilters,
-      payload: { users }
-    });
-  }, [users]);
 
   React.useEffect(() => {
     setUsers(adminStore.activitiesFilters.users);
@@ -221,6 +220,30 @@ function ActivitiesPanel() {
   }, [adminCompanies]);
 
   React.useEffect(() => {
+    setUsers(adminStore.activitiesFilters.users);
+  }, [adminStore.activitiesFilters.users]);
+
+  React.useEffect(() => {
+    setTeams(adminStore.activitiesFilters.teams);
+  }, [adminStore.activitiesFilters.teams]);
+
+  const handleUserFilterChange = newUsers => {
+    const unselectedTeams = unselectAndGetAllTeams(teams);
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateActivitiesFilters,
+      payload: { teams: unselectedTeams, users: newUsers }
+    });
+  };
+
+  const handleTeamFilterChange = newTeams => {
+    const usersToSelect = getUsersToSelectFromTeamSelection(newTeams, users);
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateActivitiesFilters,
+      payload: { teams: newTeams, users: usersToSelect }
+    });
+  };
+
+  React.useEffect(() => {
     trackEvent(ACTIVITY_FILTER_EMPLOYEE);
   }, [users]);
 
@@ -254,8 +277,13 @@ function ActivitiesPanel() {
         justifyContent="space-between"
         className={classes.filterGrid}
       >
+        {teams?.length > 0 && (
+          <Grid item>
+            <TeamFilter teams={teams} setTeams={handleTeamFilterChange} />
+          </Grid>
+        )}
         <Grid item>
-          <EmployeeFilter users={users} setUsers={setUsers} />
+          <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
         </Grid>
         <Grid item>
           <PeriodToggle period={period} setPeriod={setPeriod} />
@@ -319,7 +347,8 @@ function ActivitiesPanel() {
                 trackEvent(ADMIN_EXPORT_EXCEL);
                 modals.open("dataExport", {
                   companies,
-                  users,
+                  initialUsers: users,
+                  initialTeams: teams,
                   defaultCompany: company,
                   defaultMinDate: minDate ? new Date(minDate) : null,
                   defaultMaxDate: maxDate
@@ -339,8 +368,9 @@ function ActivitiesPanel() {
                 trackEvent(ADMIN_EXPORT_C1B);
                 modals.open("tachographExport", {
                   companies,
+                  initialUsers: users,
+                  initialTeams: teams,
                   defaultCompany: company,
-                  users,
                   defaultMinDate: minDate ? new Date(minDate) : null,
                   defaultMaxDate: maxDate
                     ? new Date(maxDate)

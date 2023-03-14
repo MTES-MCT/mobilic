@@ -21,6 +21,11 @@ import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
 import { CheckboxField } from "../../common/CheckboxField";
 import { Autocomplete } from "@mui/lab";
+import { TeamFilter } from "./TeamFilter";
+import {
+  getUsersToSelectFromTeamSelection,
+  unselectAndGetAllTeams
+} from "../store/reducers/team";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -47,7 +52,8 @@ export default function ExcelExport({
   handleClose,
   defaultCompany,
   companies = [],
-  users = [],
+  initialUsers,
+  initialTeams,
   defaultMinDate = null,
   defaultMaxDate = null
 }) {
@@ -59,15 +65,27 @@ export default function ExcelExport({
   const [isOneFileByEmployee, setIsOneFileByEmployee] = React.useState(false);
 
   const [selectedCompany, setSelectedCompany] = React.useState(defaultCompany);
-  const [_users, setUsers] = React.useState([]);
+  const [users, setUsers] = React.useState(initialUsers);
+  const [teams, setTeams] = React.useState(initialTeams);
 
   const today = new Date();
 
   React.useEffect(() => {
-    setUsers(users);
     setMinDate(defaultMinDate);
     setMaxDate(defaultMaxDate);
   }, [open]);
+
+  const handleUserFilterChange = newUsers => {
+    const unselectedTeams = unselectAndGetAllTeams(teams);
+    setTeams(unselectedTeams);
+    setUsers(newUsers);
+  };
+
+  const handleTeamFilterChange = newTeams => {
+    const usersToSelect = getUsersToSelectFromTeamSelection(newTeams, users);
+    setUsers(usersToSelect);
+    setTeams(newTeams);
+  };
 
   const classes = useStyles();
 
@@ -124,8 +142,17 @@ export default function ExcelExport({
             className={classes.flexGrow}
             sm={companies.length > 1 ? 6 : 12}
           >
-            <EmployeeFilter users={_users} setUsers={setUsers} />
+            <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
           </Grid>
+          {teams?.length > 0 && (
+            <Grid
+              item
+              className={classes.flexGrow}
+              sm={companies.length > 1 ? 6 : 12}
+            >
+              <TeamFilter teams={teams} setTeams={handleTeamFilterChange} />
+            </Grid>
+          )}
           <DateOrDateTimeRangeSelectionContext
             start={minDate}
             setStart={setMinDate}
@@ -186,7 +213,7 @@ export default function ExcelExport({
           variant="contained"
           onClick={async e =>
             await alerts.withApiErrorHandling(async () => {
-              let selectedUsers = _users.filter(u => u.selected);
+              let selectedUsers = users.filter(u => u.selected);
               const options = {
                 company_ids: [selectedCompany.id],
                 one_file_by_employee: isOneFileByEmployee

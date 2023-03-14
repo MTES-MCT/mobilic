@@ -1,6 +1,6 @@
 import flatMap from "lodash/flatMap";
 import { addWorkDaysReducer } from "./workDays";
-import uniqBy from "lodash/uniqBy";
+import { computeUsersAndTeamFilters } from "./team";
 
 export function updateCompanyIdReducer(state, { companyId }) {
   return {
@@ -33,10 +33,31 @@ export function updateCompanyDetailsReducer(
   const users = flatMap(
     companiesPayload.map(c => c.users.map(u => ({ ...u, companyId: c.id })))
   );
+  const allEmployments = flatMap(
+    companiesPayload.map(c =>
+      c.employments.map(e => ({
+        ...e,
+        companyId: c.id,
+        company: { id: c.id, name: c.name, siren: c.siren }
+      }))
+    )
+  );
+
+  const teams = flatMap(
+    companiesPayload.map(c => c.teams.map(t => ({ ...t, companyId: t.id })))
+  );
+
+  const usersAndTeamsFilters = computeUsersAndTeamFilters(
+    users,
+    allEmployments,
+    teams
+  );
 
   return {
     ...stateWithWorkDays,
     users,
+    teams: teams,
+    employments: allEmployments,
     vehicles: flatMap(
       companiesPayload.map(c =>
         c.vehicles.map(v => ({ ...v, companyId: c.id }))
@@ -59,15 +80,6 @@ export function updateCompanyDetailsReducer(
           )
       )
     ),
-    employments: flatMap(
-      companiesPayload.map(c =>
-        c.employments.map(e => ({
-          ...e,
-          companyId: c.id,
-          company: { id: c.id, name: c.name, siren: c.siren }
-        }))
-      )
-    ),
     missions: [
       ...flatMap(
         companiesPayload.map(c =>
@@ -77,8 +89,14 @@ export function updateCompanyDetailsReducer(
     ],
     activitiesFilters: {
       ...state.activitiesFilters,
-      users: uniqBy(users, u => u.id),
+      teams: usersAndTeamsFilters.activitiesFilters.teams,
+      users: usersAndTeamsFilters.activitiesFilters.users,
       minDate
+    },
+    validationsFilters: {
+      ...state.validationsFilters,
+      teams: usersAndTeamsFilters.validationsFilters.teams,
+      users: usersAndTeamsFilters.validationsFilters.users
     }
   };
 }

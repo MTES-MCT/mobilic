@@ -36,6 +36,10 @@ export function AdminStoreProvider({ children }) {
       maxDate: isoFormatLocalDate(new Date(Date.now())),
       minDate: isoFormatLocalDate(getStartOfMonth(now()))
     },
+    validationsFilters: {
+      users: [],
+      teams: []
+    },
     virtualActivities: [],
     virtualExpenditureActions: [],
     originalMissions: []

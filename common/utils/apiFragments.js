@@ -136,3 +136,32 @@ export const REGULATION_COMPUTATIONS_FRAGMENT = gql`
     }
   }
 `;
+
+export const FULL_TEAM_FRAGMENT = gql`
+  fragment FullTeamData on Team {
+    id
+    name
+    creationTime
+    adminUsers {
+      id
+      firstName
+      lastName
+    }
+    users {
+      id
+      firstName
+      lastName
+    }
+    vehicles {
+      id
+      name
+    }
+    knownAddresses {
+      id
+      alias
+      name
+      postalCode
+      city
+    }
+  }
+`;

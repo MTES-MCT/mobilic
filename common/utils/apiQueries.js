@@ -4,6 +4,7 @@ import {
   COMPANY_SETTINGS_FRAGMENT,
   FRAGMENT_LOCATION_FULL,
   FULL_MISSION_FRAGMENT,
+  FULL_TEAM_FRAGMENT,
   REGULATION_COMPUTATIONS_FRAGMENT,
   WORK_DAYS_DATA_FRAGMENT
 } from "./apiFragments";
@@ -636,6 +637,150 @@ export const THIRD_PARTY_CLIENTS_COMPANY_QUERY = gql`
   }
 `;
 
+export const ALL_TEAMS_COMPANY_QUERY = gql`
+  ${FULL_TEAM_FRAGMENT}
+  query allTeamsCompany($companyId: Int!) {
+    company(id: $companyId) {
+      teams {
+        ...FullTeamData
+      }
+    }
+  }
+`;
+
+export const DELETE_TEAM_MUTATION = gql`
+  ${FULL_TEAM_FRAGMENT}
+  mutation deleteTeam($teamId: Int!) {
+    teams {
+      deleteTeam(teamId: $teamId) {
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const CREATE_TEAM_MUTATION = gql`
+  ${FULL_TEAM_FRAGMENT}
+  mutation createTeam(
+    $companyId: Int!
+    $name: String!
+    $userIds: [Int]
+    $adminIds: [Int]
+    $knownAddressIds: [Int]
+    $vehicleIds: [Int]
+  ) {
+    teams {
+      createTeam(
+        companyId: $companyId
+        name: $name
+        userIds: $userIds
+        adminIds: $adminIds
+        knownAddressIds: $knownAddressIds
+        vehicleIds: $vehicleIds
+      ) {
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const UPDATE_TEAM_MUTATION = gql`
+  ${FULL_TEAM_FRAGMENT}
+  mutation updateTeam(
+    $teamId: Int!
+    $name: String!
+    $userIds: [Int]
+    $adminIds: [Int]
+    $knownAddressIds: [Int]
+    $vehicleIds: [Int]
+  ) {
+    teams {
+      updateTeam(
+        teamId: $teamId
+        name: $name
+        userIds: $userIds
+        adminIds: $adminIds
+        knownAddressIds: $knownAddressIds
+        vehicleIds: $vehicleIds
+      ) {
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const ADMIN_COMPANIES_QUERY = gql`
   ${WORK_DAYS_DATA_FRAGMENT}
   ${COMPANY_SETTINGS_FRAGMENT}
@@ -656,6 +801,20 @@ export const ADMIN_COMPANIES_QUERY = gql`
           id
           firstName
           lastName
+        }
+        teams {
+          id
+          name
+          adminUsers {
+            id
+            firstName
+            lastName
+          }
+          users {
+            id
+            firstName
+            lastName
+          }
         }
         knownAddresses {
           id
@@ -737,6 +896,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
           email
           hasAdminRights
           latestInviteEmailTime
+          teamId
           user {
             id
             email

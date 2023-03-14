@@ -28,6 +28,8 @@ import {
 } from "./virtualActivities";
 import { addVirtualExpenditureActionReducer } from "./virtualExpenditureActions";
 import { addUsersReducer } from "./users";
+import { updateValidationsFiltersReducer } from "./validationsFilters";
+import { updateTeamsReducer } from "./team";
 
 export const ADMIN_ACTIONS = {
   createOrSyncActivity: createOrSyncActivityReducer,
@@ -44,6 +46,8 @@ export const ADMIN_ACTIONS = {
   updateCompaniesList: updateCompaniesListReducer,
   updateCompanyId: updateCompanyIdReducer,
   updateActivitiesFilters: updateActivitiesFiltersReducer,
+  updateValidationsFilters: updateValidationsFiltersReducer,
+  updateTeams: updateTeamsReducer,
   addVirtualActivity: addVirtualActivityReducer,
   addVirtualExpenditureAction: addVirtualExpenditureActionReducer,
   resetVirtual: resetVirtualReducer,
