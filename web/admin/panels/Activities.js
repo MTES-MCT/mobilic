@@ -54,6 +54,10 @@ import {
   ADMIN_EXPORT_EXCEL
 } from "common/utils/matomoTags";
 import { TeamFilter } from "../components/TeamFilter";
+import {
+  getUsersToSelectFromTeamSelection,
+  unselectAndGetAllTeams
+} from "../store/reducers/team";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -132,7 +136,7 @@ function ActivitiesPanel() {
   const { trackEvent } = useMatomo();
 
   const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
-  const [teams, setTeams] = React.useState(adminStore.validationsFilters.teams);
+  const [teams, setTeams] = React.useState(adminStore.activitiesFilters.teams);
   const [companies, setCompanies] = React.useState([]);
   const [minDate, setMinDate] = React.useState(
     adminStore.activitiesFilters.minDate
@@ -156,13 +160,6 @@ function ActivitiesPanel() {
       payload: { period }
     });
   }, [period]);
-
-  React.useEffect(() => {
-    adminStore.dispatch({
-      type: ADMIN_ACTIONS.updateActivitiesFilters,
-      payload: { users }
-    });
-  }, [users]);
 
   React.useEffect(() => {
     setUsers(adminStore.activitiesFilters.users);
@@ -222,13 +219,16 @@ function ActivitiesPanel() {
     }
   }, [adminCompanies]);
 
+  React.useEffect(() => {
+    setUsers(adminStore.activitiesFilters.users);
+  }, [adminStore.activitiesFilters.users]);
+
+  React.useEffect(() => {
+    setTeams(adminStore.activitiesFilters.teams);
+  }, [adminStore.activitiesFilters.teams]);
+
   const handleUserFilterChange = newUsers => {
-    const unselectedTeams = teams.map(team => ({
-      ...team,
-      selected: false
-    }));
-    setTeams(unselectedTeams);
-    setUsers(newUsers);
+    const unselectedTeams = unselectAndGetAllTeams(teams);
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateActivitiesFilters,
       payload: { teams: unselectedTeams, users: newUsers }
@@ -236,16 +236,7 @@ function ActivitiesPanel() {
   };
 
   const handleTeamFilterChange = newTeams => {
-    const selectedTeamIds = newTeams
-      .filter(team => team.selected)
-      ?.map(team => team.id);
-
-    const usersToSelect = users.map(user => ({
-      ...user,
-      selected: selectedTeamIds.includes(user.teamId)
-    }));
-    setTeams(newTeams);
-    setUsers(usersToSelect);
+    const usersToSelect = getUsersToSelectFromTeamSelection(newTeams, users);
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateActivitiesFilters,
       payload: { teams: newTeams, users: usersToSelect }

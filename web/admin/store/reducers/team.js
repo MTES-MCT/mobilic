@@ -77,3 +77,21 @@ export function updateTeamsReducer(state, { teams, employments }) {
     }
   };
 }
+
+export function getUsersToSelectFromTeamSelection(teams, users) {
+  const selectedTeamIds = teams
+    .filter(team => team.selected)
+    ?.map(team => team.id);
+
+  return users.map(user => ({
+    ...user,
+    selected: selectedTeamIds.includes(user.teamId)
+  }));
+}
+
+export function unselectAndGetAllTeams(teams) {
+  return teams.map(team => ({
+    ...team,
+    selected: false
+  }));
+}

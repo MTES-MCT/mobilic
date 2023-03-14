@@ -1,41 +1,64 @@
+import moment from "moment";
 import React, { useMemo } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import GetAppIcon from "@mui/icons-material/GetApp";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
-import Tabs from "@mui/material/Tabs";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
 import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import Typography from "@mui/material/Typography";
+import { makeStyles } from "@mui/styles";
+
 import {
-  getStartOfWeek,
-  SHORT_MONTHS,
-  shortPrettyFormatDay,
+  useStoreSyncedWithLocalStorage,
+  broadCastChannel
+} from "common/store/store";
+import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
+import { useApi } from "common/utils/api";
+import { USER_MISSIONS_HISTORY_QUERY } from "common/utils/apiQueries";
+import { useSelectPeriod } from "common/utils/history/changePeriod";
+import { useComputePeriodStatuses } from "common/utils/history/computePeriodStatuses";
+import { useGroupMissionsAndExtractActivities } from "common/utils/history/groupByPeriodUnit";
+import { PERIOD_UNITS } from "common/utils/history/periodUnits";
+import { NoDataImage } from "common/utils/icons";
+import { useModals } from "common/utils/modals";
+import {
+  differenceInCalendarMonths,
+  isThisMonth,
+  startOfMonth,
+  addMonths,
+  subMonths,
+  startOfToday,
+  endOfDay,
+  endOfMonth,
+  isAfter
+} from "date-fns";
+import {
   DAY,
   WEEK,
-  isoFormatLocalDate
+  getStartOfWeek,
+  endOfMonthAsDate,
+  isoFormatLocalDate,
+  jsToUnixTimestamp,
+  shortPrettyFormatDay,
+  SHORT_MONTHS
 } from "common/utils/time";
-import { useGroupMissionsAndExtractActivities } from "common/utils/history/groupByPeriodUnit";
-import { makeStyles } from "@mui/styles";
-import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
-import Typography from "@mui/material/Typography";
-import { AccountButton } from "../components/AccountButton";
-import { useLocation, useHistory } from "react-router-dom";
-import Box from "@mui/material/Box";
-import { NoDataImage } from "common/utils/icons";
-import Button from "@mui/material/Button";
-import { useModals } from "common/utils/modals";
-import moment from "moment";
-import IconButton from "@mui/material/IconButton";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { useStoreSyncedWithLocalStorage } from "common/store/store";
+
+import { DEFAULT_MONTH_RANGE_HISTORY } from "common/utils/mission";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { useApi } from "common/utils/api";
-import { Mission } from "../components/history/Mission";
+import { AccountButton } from "../components/AccountButton";
 import { Day } from "../components/history/Day";
-import { Week } from "../components/history/Week";
+import { Mission } from "../components/history/Mission";
 import { Month } from "../components/history/Month";
-import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
-import Grid from "@mui/material/Grid";
-import GetAppIcon from "@mui/icons-material/GetApp";
-import { useSelectPeriod } from "common/utils/history/changePeriod";
-import { PERIOD_UNITS } from "common/utils/history/periodUnits";
-import { useComputePeriodStatuses } from "common/utils/history/computePeriodStatuses";
+import { Week } from "../components/history/Week";
+import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
+import { PeriodFilter } from "../components/PeriodFilter";
+import { syncMissions } from "common/utils/loadUserData";
 
 const tabs = {
   mission: {
@@ -169,40 +192,17 @@ export function History({
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
   const alerts = useSnackbarAlerts();
+  const classes = useStyles();
 
   const actualUserId = userId || store.userId();
-
   const currentCompanies = store.companies();
 
-  const onBackButtonClick = location.state
-    ? () => history.push(location.state.previousPagePath)
-    : null;
+  /* MANAGE DIRECT LINK & HISTORY */
 
   const queryString = new URLSearchParams(location.search);
   const [currentTab, setCurrentTab] = React.useState(
     queryString.get("mission") ? "mission" : "day"
   );
-
-  const [
-    missionGroupsByPeriodUnit,
-    activities
-  ] = useGroupMissionsAndExtractActivities(missions, Object.values(tabs));
-  const [
-    selectedPeriod,
-    goToPeriod,
-    goToMission,
-    periodsByPeriodUnit
-  ] = useSelectPeriod(missionGroupsByPeriodUnit, currentTab);
-  const periodStatuses = useComputePeriodStatuses(missionGroupsByPeriodUnit);
-
-  const groupedMissions = missionGroupsByPeriodUnit[currentTab] || {};
-  const periods = periodsByPeriodUnit[currentTab] || [];
-
-  function handlePeriodChange(e, newTab, selectedDate) {
-    setCurrentTab(newTab);
-    goToPeriod(newTab, selectedDate);
-    resetLocation();
-  }
 
   React.useEffect(() => {
     let params = openPeriod;
@@ -247,7 +247,102 @@ export function History({
     }
   };
 
-  const classes = useStyles();
+  const onBackButtonClick = location.state
+    ? () => history.push(location.state.previousPagePath)
+    : null;
+
+  /* MANAGE FILTER PERIOD */
+
+  const [startPeriodFilter, setStartPeriodFilter] = React.useState(
+    startOfMonth(subMonths(new Date(), DEFAULT_MONTH_RANGE_HISTORY))
+  );
+  const [endPeriodFilter, setEndPeriodFilter] = React.useState(startOfToday());
+  const [periodFilterRangeError, setPeriodFilterRangeError] = React.useState(
+    null
+  );
+
+  const onChangeStartPeriodFilter = async value => {
+    const newStartPeriodFilter = startOfMonth(value);
+    setStartPeriodFilter(newStartPeriodFilter);
+    setPeriodFilterRangeError(null);
+
+    const diffMonth = differenceInCalendarMonths(
+      endPeriodFilter,
+      newStartPeriodFilter
+    );
+    if (diffMonth > DEFAULT_MONTH_RANGE_HISTORY || diffMonth < 0) {
+      let newEndPeriodFilter = endOfDay(
+        endOfMonth(addMonths(newStartPeriodFilter, DEFAULT_MONTH_RANGE_HISTORY))
+      );
+      if (isAfter(newEndPeriodFilter, new Date())) {
+        newEndPeriodFilter = startOfToday();
+      }
+      setEndPeriodFilter(newEndPeriodFilter);
+      await syncMissionsStore(newStartPeriodFilter, newEndPeriodFilter);
+    } else {
+      await syncMissionsStore(newStartPeriodFilter, endPeriodFilter);
+    }
+  };
+
+  const onChangeEndPeriodFilter = async value => {
+    const newEndPeriodFilter = isThisMonth(value)
+      ? value
+      : endOfDay(endOfMonthAsDate(value));
+    setEndPeriodFilter(newEndPeriodFilter);
+
+    if (
+      differenceInCalendarMonths(newEndPeriodFilter, startPeriodFilter) >
+      DEFAULT_MONTH_RANGE_HISTORY
+    ) {
+      setPeriodFilterRangeError(
+        `La période sélectionnée doit être inférieure à ${DEFAULT_MONTH_RANGE_HISTORY +
+          1} mois !`
+      ); // +1 because it's the default range + days from current month day.
+    } else {
+      setPeriodFilterRangeError(null);
+      await syncMissionsStore(startPeriodFilter, newEndPeriodFilter);
+    }
+  };
+
+  /* MANAGE MISSIONS */
+
+  const syncMissionsStore = async (start, end) => {
+    await alerts.withApiErrorHandling(async () => {
+      const apiResponse = await api.graphQlQuery(USER_MISSIONS_HISTORY_QUERY, {
+        fromTime: jsToUnixTimestamp(start.getTime()),
+        untilTime: jsToUnixTimestamp(end.getTime())
+      });
+      const resultMissions = apiResponse.data.me.missions.edges.map(
+        e => e.node
+      );
+      await syncMissions(resultMissions, store, store.addToEntityObject);
+      await broadCastChannel.postMessage("update");
+    }, "missions-history");
+  };
+
+  const [
+    missionGroupsByPeriodUnit,
+    activities
+  ] = useGroupMissionsAndExtractActivities(
+    missions,
+    startPeriodFilter,
+    endPeriodFilter,
+    periodFilterRangeError,
+    Object.values(tabs)
+  );
+
+  /* MANAGE PERIOD FROM CAROUSSEL*/
+
+  const [
+    selectedPeriod,
+    goToPeriod,
+    goToMission,
+    periodsByPeriodUnit
+  ] = useSelectPeriod(missionGroupsByPeriodUnit, currentTab);
+  const periodStatuses = useComputePeriodStatuses(missionGroupsByPeriodUnit);
+
+  const groupedMissions = missionGroupsByPeriodUnit[currentTab] || {};
+  const periods = periodsByPeriodUnit[currentTab] || [];
 
   const missionsInSelectedPeriod = groupedMissions[selectedPeriod];
   const activitiesBefore = selectedPeriod
@@ -266,6 +361,14 @@ export function History({
     .add(tabs[currentTab].periodLength)
     .unix();
 
+  function handlePeriodChange(e, newTab, selectedDate) {
+    setCurrentTab(newTab);
+    goToPeriod(newTab, selectedDate);
+    resetLocation();
+  }
+
+  /* MANAGE REGULATION COMPUTATIONS */
+
   const regulationComputationsInPeriod = useMemo(() => {
     if (!selectedPeriod) {
       return [];
@@ -275,6 +378,18 @@ export function History({
     );
     return periodElement ? periodElement.regulationComputations : [];
   }, [selectedPeriod, regulationComputationsByDay]);
+
+  /* MANAGE MESSAGE WHEN NO DATA */
+
+  const noDataMessage = currentTab => {
+    if (currentTab === "day") {
+      return "Journée non renseignée";
+    }
+    if (currentTab === "week") {
+      return "Aucune journée renseignée dans la semaine";
+    }
+    return "Aucune journée renseignée dans le mois";
+  };
 
   return (
     <Container
@@ -373,7 +488,15 @@ export function History({
               Télécharger un relevé d'heures
             </Typography>
           </Grid>
-        </Grid>
+        </Grid>,
+        <PeriodFilter
+          key={4}
+          minDate={startPeriodFilter}
+          setMinDate={onChangeStartPeriodFilter}
+          maxDate={endPeriodFilter}
+          setMaxDate={onChangeEndPeriodFilter}
+          periodFilterRangeError={periodFilterRangeError}
+        />
       ]}
       <Container className={classes.periodSelector} maxWidth={false}>
         <Tabs
@@ -449,13 +572,7 @@ export function History({
         ) : (
           <Box className={classes.placeholder}>
             <NoDataImage height={100} />
-            <Typography>
-              {currentTab === "day"
-                ? "Journée non renseignée"
-                : currentTab === "week"
-                ? "Aucune journée renseignée dans la semaine"
-                : "Aucune journée renseignée dans le mois"}
-            </Typography>
+            <Typography>{noDataMessage(currentTab)}</Typography>
           </Box>
         )}
       </Container>

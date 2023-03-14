@@ -240,6 +240,18 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       : objectList[0].id;
   };
 
+  addToEntityObject = (objects, entity) => {
+    let objectList = Array.isArray(objects) ? objects : [objects];
+
+    this.dispatch(
+      {
+        type: ACTIONS.create,
+        payload: { items: objectList, entity }
+      },
+      [entity]
+    );
+  };
+
   updateEntityObject = ({
     objectId,
     entity,
