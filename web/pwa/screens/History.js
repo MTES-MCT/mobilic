@@ -47,7 +47,6 @@ import {
   jsToUnixTimestamp,
   shortPrettyFormatDay,
   SHORT_MONTHS,
-  addDaysToDate,
   startOfDayAsDate
 } from "common/utils/time";
 
@@ -181,6 +180,7 @@ export function History({
   editVehicle,
   isInControl = false,
   controlTime = null,
+  historyStartDay = null,
   coworkers = null,
   vehicles = null,
   userId = null,
@@ -257,8 +257,8 @@ export function History({
   /* MANAGE FILTER PERIOD */
 
   const [startPeriodFilter, setStartPeriodFilter] = React.useState(
-    controlTime
-      ? startOfDayAsDate(addDaysToDate(new Date(controlTime * 1000), -28))
+    historyStartDay
+      ? startOfDayAsDate(new Date(historyStartDay))
       : startOfMonth(subMonths(new Date(), DEFAULT_MONTH_RANGE_HISTORY))
   );
   const [endPeriodFilter, setEndPeriodFilter] = React.useState(
