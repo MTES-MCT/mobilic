@@ -41,10 +41,16 @@ export default function EmployeesTeamRevisionModal({
   async function updateTeam() {
     setSubmitting(true);
     await alerts.withApiErrorHandling(async () => {
-      const apiResponse = await api.graphQlMutate(CHANGE_EMPLOYEE_TEAM, {
-        teamId: newTeamId,
+      const payload = {
         employmentId: employment.employmentId
-      });
+      };
+      if (newTeamId !== -1) {
+        payload.teamId = newTeamId;
+      }
+      const apiResponse = await api.graphQlMutate(
+        CHANGE_EMPLOYEE_TEAM,
+        payload
+      );
       const {
         teams,
         employments

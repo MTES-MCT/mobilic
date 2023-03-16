@@ -1218,7 +1218,7 @@ export const CHANGE_EMPLOYEE_ROLE = gql`
 
 export const CHANGE_EMPLOYEE_TEAM = gql`
   ${FULL_TEAM_FRAGMENT}
-  mutation changeEmployeeTeam($employmentId: Int!, $teamId: Int!) {
+  mutation changeEmployeeTeam($employmentId: Int!, $teamId: Int) {
     employments {
       changeEmployeeTeam(employmentId: $employmentId, teamId: $teamId) {
         teams {
