@@ -7,16 +7,28 @@ import { findMatchingPeriodInNewUnit } from "./groupByPeriodUnit";
 import { PERIOD_UNITS } from "./periodUnits";
 import { now } from "../time";
 
-function getPeriodListFromMissionGroups(missionGroupsByPeriodUnit, periodUnit) {
+function getPeriodListFromMissionGroups(
+  missionGroupsByPeriodUnit,
+  periodUnit,
+  startPeriodFilter,
+  endPeriodFilter
+) {
   return fillHistoryPeriods(
     Object.keys(missionGroupsByPeriodUnit[periodUnit])
       .map(p => parseInt(p))
       .sort((a, b) => a - b),
-    periodUnit
+    periodUnit,
+    startPeriodFilter,
+    endPeriodFilter
   );
 }
 
-export function useSelectPeriod(missionGroupsByPeriodUnit, initialPeriodUnit) {
+export function useSelectPeriod(
+  missionGroupsByPeriodUnit,
+  initialPeriodUnit,
+  startPeriodFilter,
+  endPeriodFilter
+) {
   const [periodsByPeriodUnit, setPeriodsByPeriodUnit] = React.useState({});
   const [oldPeriodUnit, setOldPeriodUnit] = React.useState(initialPeriodUnit);
 
@@ -71,7 +83,12 @@ export function useSelectPeriod(missionGroupsByPeriodUnit, initialPeriodUnit) {
   React.useEffect(() => {
     setPeriodsByPeriodUnit(
       mapValues(missionGroupsByPeriodUnit, (_, periodUnit) =>
-        getPeriodListFromMissionGroups(missionGroupsByPeriodUnit, periodUnit)
+        getPeriodListFromMissionGroups(
+          missionGroupsByPeriodUnit,
+          periodUnit,
+          startPeriodFilter,
+          endPeriodFilter
+        )
       )
     );
   }, [missionGroupsByPeriodUnit]);
