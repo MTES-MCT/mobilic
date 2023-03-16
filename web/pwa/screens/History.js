@@ -46,7 +46,9 @@ import {
   isoFormatLocalDate,
   jsToUnixTimestamp,
   shortPrettyFormatDay,
-  SHORT_MONTHS
+  SHORT_MONTHS,
+  addDaysToDate,
+  startOfDayAsDate
 } from "common/utils/time";
 
 import { DEFAULT_MONTH_RANGE_HISTORY } from "common/utils/mission";
@@ -177,7 +179,8 @@ export function History({
   logComment,
   cancelComment,
   editVehicle,
-  displayActions = true,
+  isInControl = false,
+  controlTime = null,
   coworkers = null,
   vehicles = null,
   userId = null,
@@ -254,9 +257,13 @@ export function History({
   /* MANAGE FILTER PERIOD */
 
   const [startPeriodFilter, setStartPeriodFilter] = React.useState(
-    startOfMonth(subMonths(new Date(), DEFAULT_MONTH_RANGE_HISTORY))
+    controlTime
+      ? startOfDayAsDate(addDaysToDate(new Date(controlTime * 1000), -28))
+      : startOfMonth(subMonths(new Date(), DEFAULT_MONTH_RANGE_HISTORY))
   );
-  const [endPeriodFilter, setEndPeriodFilter] = React.useState(startOfToday());
+  const [endPeriodFilter, setEndPeriodFilter] = React.useState(
+    controlTime ? new Date(controlTime * 1000) : startOfToday()
+  );
   const [periodFilterRangeError, setPeriodFilterRangeError] = React.useState(
     null
   );
@@ -338,7 +345,12 @@ export function History({
     goToPeriod,
     goToMission,
     periodsByPeriodUnit
-  ] = useSelectPeriod(missionGroupsByPeriodUnit, currentTab);
+  ] = useSelectPeriod(
+    missionGroupsByPeriodUnit,
+    currentTab,
+    startPeriodFilter,
+    endPeriodFilter
+  );
   const periodStatuses = useComputePeriodStatuses(missionGroupsByPeriodUnit);
 
   const groupedMissions = missionGroupsByPeriodUnit[currentTab] || {};
@@ -398,7 +410,7 @@ export function History({
       disableGutters
       maxWidth="md"
     >
-      {displayActions && [
+      {!isInControl && [
         <AccountButton p={2} key={1} onBackButtonClick={onBackButtonClick} />,
         <Box key={2} className={classes.accessControlContainer}>
           <Button

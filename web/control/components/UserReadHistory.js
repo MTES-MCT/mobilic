@@ -8,13 +8,15 @@ export function UserReadHistory({
   userInfo,
   periodOnFocus,
   controlId,
+  controlTime,
   regulationComputationsByDay
 }) {
   return (
     <History
       key={1}
       missions={missions}
-      displayActions={false}
+      isInControl={true}
+      controlTime={controlTime}
       coworkers={coworkers}
       vehicles={vehicles}
       userId={userInfo.id}
