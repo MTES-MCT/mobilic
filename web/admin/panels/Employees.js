@@ -29,6 +29,7 @@ import {
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { EMPLOYMENT_ROLE } from "common/utils/employments";
 import { TeamFilter } from "../components/TeamFilter";
+import { NO_TEAMS_LABEL, NO_TEAM_ID } from "../utils/teams";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -78,7 +79,7 @@ const useStyles = makeStyles(theme => ({
 const isUserOnlyAdminOfTeams = (teams, userId) => {
   return teams
     .filter(
-      team => team.adminUsers.length === 1 && team.adminUsers[0].id === userId
+      team => team.adminUsers?.length === 1 && team.adminUsers[0].id === userId
     )
     .map(team => team.name);
 };
@@ -92,8 +93,11 @@ export function Employees({ company, containerRef }) {
   const [teams, setTeams] = React.useState([]);
 
   React.useEffect(() => {
+    if (teams.length > 0) {
+      return;
+    }
     if (adminStore?.teams?.length > 0) {
-      setTeams([{ name: "-- Aucune équipe", id: -1 }, ...adminStore.teams]);
+      setTeams([{ name: NO_TEAMS_LABEL, id: NO_TEAM_ID }, ...adminStore.teams]);
     } else {
       setTeams([]);
     }
@@ -293,7 +297,7 @@ export function Employees({ company, containerRef }) {
           value={type}
           onChange={e => setType(e.target.value)}
         >
-          <MenuItem key={-1} value={-1}>
+          <MenuItem key={NO_TEAM_ID} value={NO_TEAM_ID}>
             {"-"}
           </MenuItem>
           {adminStore.teams.map(team => (
@@ -377,7 +381,8 @@ export function Employees({ company, containerRef }) {
       name: "teamId",
       align: "left",
       format: formatTeam,
-      minWidth: 80
+      minWidth: 80,
+      overflowTooltip: true
     });
   }
 
@@ -405,12 +410,10 @@ export function Employees({ company, containerRef }) {
 
   const validEmployments = companyEmployments
     .filter(e => {
-      if (selectedTeamIds.length === 0) {
-        return true;
-      }
       return (
+        selectedTeamIds.length === 0 ||
         selectedTeamIds.includes(e.teamId) ||
-        (selectedTeamIds.includes(-1) && !e.teamId)
+        (selectedTeamIds.includes(NO_TEAM_ID) && !e.teamId)
       );
     })
     .filter(e => e.isAcknowledged)
@@ -673,7 +676,7 @@ export function Employees({ company, containerRef }) {
           setHidePendingEmployments(false);
           pendingEmploymentsTableRef.current.newRow({
             hasAdminRights: EMPLOYMENT_ROLE.employee,
-            teamId: -1
+            teamId: NO_TEAM_ID
           });
         }}
         className={classes.actionButton}
@@ -710,7 +713,7 @@ export function Employees({ company, containerRef }) {
         const payload = {
           hasAdminRights: hasAdminRights === EMPLOYMENT_ROLE.admin,
           companyId,
-          ...(teamId !== -1 && { teamId })
+          ...(teamId !== NO_TEAM_ID && { teamId })
         };
         if (/^\d+$/.test(idOrEmail)) {
           payload.userId = parseInt(idOrEmail);

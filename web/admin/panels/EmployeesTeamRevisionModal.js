@@ -16,14 +16,13 @@ import { CHANGE_EMPLOYEE_TEAM } from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
+import { NO_TEAMS_LABEL, NO_TEAM_ID } from "../utils/teams";
 
 const useStyles = makeStyles(theme => ({
   modalButton: {
     marginLeft: theme.spacing(2)
   }
 }));
-
-const NO_TEAMS_LABEL = "Aucune équipe";
 
 export default function EmployeesTeamRevisionModal({
   employment,
@@ -33,7 +32,9 @@ export default function EmployeesTeamRevisionModal({
   handleClose
 }) {
   const [submitting, setSubmitting] = React.useState(false);
-  const [newTeamId, setNewTeamId] = React.useState(employment.teamId || -1);
+  const [newTeamId, setNewTeamId] = React.useState(
+    employment.teamId || NO_TEAM_ID
+  );
   const classes = useStyles();
   const alerts = useSnackbarAlerts();
   const api = useApi();
@@ -44,7 +45,7 @@ export default function EmployeesTeamRevisionModal({
       const payload = {
         employmentId: employment.employmentId
       };
-      if (newTeamId !== -1) {
+      if (newTeamId !== NO_TEAM_ID) {
         payload.teamId = newTeamId;
       }
       const apiResponse = await api.graphQlMutate(
@@ -88,7 +89,7 @@ export default function EmployeesTeamRevisionModal({
                 teams.find(team => team.id === val)?.name || NO_TEAMS_LABEL
               }
             >
-              <MenuItem value={-1}>{NO_TEAMS_LABEL}</MenuItem>
+              <MenuItem value={NO_TEAM_ID}>{NO_TEAMS_LABEL}</MenuItem>
               {teams.map(team => (
                 <MenuItem key={team.id} value={team.id}>
                   {team.name}
@@ -111,7 +112,7 @@ export default function EmployeesTeamRevisionModal({
           title="Confirmer"
           color="primary"
           variant="contained"
-          disabled={newTeamId === (employment.teamId || -1)}
+          disabled={newTeamId === (employment.teamId || NO_TEAM_ID)}
           onClick={updateTeam}
           loading={submitting}
         >
