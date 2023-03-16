@@ -71,9 +71,9 @@ export function TeamFilter({
           placeholder={`${
             multiple
               ? selectedTeams.length === 0
-                ? "Toutes les équipes"
+                ? "Tous les groupes"
                 : ""
-              : "Sélectionner une équipe"
+              : "Sélectionner un groupe"
           }`}
         />
       )}

@@ -108,7 +108,7 @@ const COMPANY_SUB_PANELS = [
     component: props => <SettingAdmin {...props} />
   },
   {
-    label: "Équipe(s)",
+    label: "Groupe(s)",
     view: "teams",
     component: props => <CompanyTeamsPanel {...props} />
   },
