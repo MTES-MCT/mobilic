@@ -509,22 +509,30 @@ export function Employees({ company, containerRef }) {
     terminateEmployment
   ) => {
     const teamsWhereUserIsOnlyAdmin = isUserOnlyAdminOfTeams(teams, userId);
-    teamsWhereUserIsOnlyAdmin.length > 0
+    const nbTeamsOnlyAdmin = teamsWhereUserIsOnlyAdmin.length;
+    const moreThanOne = nbTeamsOnlyAdmin > 1;
+    const conditionalS = moreThanOne ? "s" : "";
+    const conditionalX = moreThanOne ? "x" : "";
+    nbTeamsOnlyAdmin > 0
       ? modals.open("confirmation", {
           textButtons: true,
           title: modalTitle,
           content: (
             <Box>
               <Typography>
-                Ce gestionnaire est le seul gestionnaire rattaché aux équipes
-                suivantes: {teamsWhereUserIsOnlyAdmin.join(", ")}.
+                Ce gestionnaire est le seul gestionnaire rattaché au
+                {conditionalX} groupe{conditionalS} suivant{conditionalS}:{" "}
+                <span className="bold">
+                  {teamsWhereUserIsOnlyAdmin.join(", ")}.
+                </span>
               </Typography>
               <Typography>
                 Si vous{" "}
                 {terminateEmployment
                   ? "mettez fin à son rattachement"
                   : "lui retirez ses droits de gestion"}
-                , il n'y aura plus de gestionnaire pour ces équipes.
+                , il n'y aura plus de gestionnaire pour ce{conditionalS} groupe
+                {conditionalS}.
               </Typography>
               <Typography>
                 Êtes-vous certain(e) de vouloir{" "}
