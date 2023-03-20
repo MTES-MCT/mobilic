@@ -282,7 +282,7 @@ export function Employees({ company, containerRef }) {
 
   if (adminStore?.teams?.length > 0) {
     pendingEmploymentColumns.push({
-      label: "Équipe de rattachement",
+      label: "Groupe de rattachement",
       name: "teamId",
       create: true,
       minWidth: 160,
@@ -377,7 +377,7 @@ export function Employees({ company, containerRef }) {
 
   if (adminStore?.teams?.length > 0) {
     validEmploymentColumns.push({
-      label: "Équipe de rattachement",
+      label: "Groupe de rattachement",
       name: "teamId",
       align: "left",
       format: formatTeam,
