@@ -20,6 +20,7 @@ export function VideoCard({ videoKey, description, posterKey }) {
         height="auto"
         width="100%"
         poster={posterKey ? s3Root + posterKey : null}
+        preload="metadata"
       >
         <source src={s3Root + videoKey} type="video/mp4" />
         <p>
