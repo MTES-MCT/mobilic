@@ -427,7 +427,9 @@ export function Employees({ company, containerRef }) {
       endDate: e.endDate,
       active: !e.endDate || e.endDate >= today,
       hasAdminRights: e.hasAdminRights ? 1 : 0,
-      teamId: e.teamId
+      teamId: e.teamId,
+      userId: e.user.id,
+      companyId: e.company.id
     }));
 
   const isAddingEmployment =

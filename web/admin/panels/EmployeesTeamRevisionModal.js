@@ -43,7 +43,8 @@ export default function EmployeesTeamRevisionModal({
     setSubmitting(true);
     await alerts.withApiErrorHandling(async () => {
       const payload = {
-        employmentId: employment.employmentId
+        companyId: employment.companyId,
+        userId: employment.userId
       };
       if (newTeamId !== NO_TEAM_ID) {
         payload.teamId = newTeamId;
