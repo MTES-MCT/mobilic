@@ -36,6 +36,7 @@ export function MultipleValuesFilter({
   const selectedValues = values.filter(user => user.selected);
   return (
     <Autocomplete
+      noOptionsText={"Aucune option disponible"}
       multiple
       disableCloseOnSelect
       options={orderBy(values, orderFields)}

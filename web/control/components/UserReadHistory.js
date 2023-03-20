@@ -6,6 +6,8 @@ export function UserReadHistory({
   coworkers,
   vehicles,
   userInfo,
+  controlTime,
+  tokenInfo,
   periodOnFocus,
   controlId,
   regulationComputationsByDay
@@ -14,7 +16,9 @@ export function UserReadHistory({
     <History
       key={1}
       missions={missions}
-      displayActions={false}
+      isInControl={true}
+      controlTime={controlTime}
+      historyStartDay={tokenInfo.historyStartDay}
       coworkers={coworkers}
       vehicles={vehicles}
       userId={userInfo.id}

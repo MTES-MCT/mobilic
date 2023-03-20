@@ -180,13 +180,6 @@ export default function C1BExport({
               />
             </Grid>
           )}
-          <Grid
-            item
-            className={classes.flexGrow}
-            sm={_companies.length > 1 ? 6 : 12}
-          >
-            <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
-          </Grid>
           {teams?.length > 0 && (
             <Grid
               item
@@ -196,6 +189,13 @@ export default function C1BExport({
               <TeamFilter teams={teams} setTeams={handleTeamFilterChange} />
             </Grid>
           )}
+          <Grid
+            item
+            className={classes.flexGrow}
+            sm={_companies.length > 1 ? 6 : 12}
+          >
+            <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
+          </Grid>
           <DateOrDateTimeRangeSelectionContext
             start={minDate}
             setStart={setMinDate}

@@ -56,7 +56,7 @@ export default function CompanyTeamsPanel({ company }) {
         type: ADMIN_ACTIONS.updateTeams,
         payload: { teams, employments }
       });
-      alerts.success(`L'équipe '${team.name}' a bien été supprimée.`, "", 6000);
+      alerts.success(`Le groupe '${team.name}' a bien été supprimé.`, "", 6000);
     }, "delete-team");
   }
 
@@ -128,12 +128,12 @@ export default function CompanyTeamsPanel({ company }) {
     const customActions = [
       {
         name: "update",
-        label: "Modifier l'équipe",
+        label: "Modifier le groupe",
         action: openTeamModal
       },
       {
         name: "delete",
-        label: "Supprimer l'équipe",
+        label: "Supprimer le groupe",
         action: team => {
           modals.open("confirmation", {
             textButtons: true,
@@ -204,7 +204,7 @@ export default function CompanyTeamsPanel({ company }) {
       <Grid item xs={6}>
         <Box className={classes.title}>
           <Typography variant="h4">
-            Équipes {!loadingTeams && <span> ({teams?.length || 0})</span>}
+            Groupes {!loadingTeams && <span> ({teams?.length || 0})</span>}
           </Typography>
         </Box>
       </Grid>
@@ -215,7 +215,7 @@ export default function CompanyTeamsPanel({ company }) {
           variant="contained"
           onClick={() => openTeamModal()}
         >
-          Ajouter une nouvelle équipe
+          Ajouter un nouveau groupe
         </Button>
       </Grid>
     </Grid>,
@@ -225,10 +225,10 @@ export default function CompanyTeamsPanel({ company }) {
     !loadingTeams && teams?.length === 0 && (
       <Alert key={1} severity="info">
         <Typography>
-          Si vos salariés sont répartis en équipes et que leurs temps de travail
-          sont gérés par des gestionnaires différents, vous avez la possibilité
-          de créer des équipes dans cet onglet. Les gestionnaires n'auront accès
-          qu'aux temps de travail de l'équipe à laquelle ils sont affiliés.
+          Dans cet onglet, vous avez la possibilité de répartir vos salariés
+          dans des groupes si leurs temps de travail sont gérés par des
+          gestionnaires différents. Les gestionnaires n'auront accès qu'aux
+          temps de travail du ou des groupes dont ils sont responsables.
         </Typography>
       </Alert>
     ),
@@ -237,7 +237,7 @@ export default function CompanyTeamsPanel({ company }) {
         {displayNoAdminWarning && (
           <Alert severity="warning" className={classes.warningOneTeamNoAdmin}>
             <Typography gutterBottom>
-              Certaines équipes n'ont pas de gestionnaire rattaché. Les missions
+              Certains groupes n'ont pas de gestionnaire rattaché. Les missions
               des salariés concernés ne peuvent donc pas être validées.
             </Typography>
           </Alert>

@@ -117,7 +117,7 @@ export default function CompanyTeamCreationRevisionModal({
         type: ADMIN_ACTIONS.updateTeams,
         payload: { teams, employments }
       });
-      alerts.success(`L'équipe '${name}' a bien été créée.`, "", 6000);
+      alerts.success(`Le groupe '${name}' a bien été créé.`, "", 6000);
       handleClose();
     }, "create-team");
     setSubmitting(false);
@@ -136,7 +136,7 @@ export default function CompanyTeamCreationRevisionModal({
         type: ADMIN_ACTIONS.updateTeams,
         payload: { teams, employments }
       });
-      alerts.success(`L'équipe '${name}' a bien été mise à jour.`, "", 6000);
+      alerts.success(`Le groupe '${name}' a bien été mis à jour.`, "", 6000);
       handleClose();
     }, "update-team");
     setSubmitting(false);
@@ -146,9 +146,7 @@ export default function CompanyTeamCreationRevisionModal({
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <CustomDialogTitle
         title={
-          !team
-            ? "Créer une nouvelle équipe"
-            : `Modifier l'équipe ${team?.name}`
+          !team ? "Créer un nouveau groupe" : `Modifier le groupe ${team?.name}`
         }
         handleClose={handleClose}
       />
@@ -158,7 +156,7 @@ export default function CompanyTeamCreationRevisionModal({
             <TextField
               required
               fullWidth
-              label="Nom de l'équipe"
+              label="Nom du groupe"
               variant="filled"
               inputProps={{
                 maxLength: 255
@@ -171,20 +169,20 @@ export default function CompanyTeamCreationRevisionModal({
             <TeamEmployeesFilter
               values={newAdmins}
               setValues={setNewAdmins}
-              fieldLabel={"Gestionnaire(s) de l'équipe"}
+              fieldLabel={"Gestionnaire(s) du groupe"}
             />
           </Grid>
           <Grid item xs={12}>
             <TeamEmployeesFilter
               values={newUsers}
               setValues={setNewUsers}
-              fieldLabel={"Salarié(s) de l'équipe"}
+              fieldLabel={"Salarié(s) du groupe"}
             />
             <Alert severity="warning" className={classes.warningAffectation}>
               <Typography gutterBottom>
-                Un salarié ne peut faire partie que d'une seule équipe à la
-                fois. Lorsque vous affecterez un salarié à l'équipe, sa
-                précédente affectation sera supprimée.
+                Un salarié ne peut faire partie que d'un seul groupe à la fois.
+                Lorsque vous affecterez un salarié au groupe, sa précédente
+                affectation sera supprimée.
               </Typography>
             </Alert>
           </Grid>

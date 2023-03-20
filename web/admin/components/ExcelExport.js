@@ -137,13 +137,6 @@ export default function ExcelExport({
               />
             </Grid>
           )}
-          <Grid
-            item
-            className={classes.flexGrow}
-            sm={companies.length > 1 ? 6 : 12}
-          >
-            <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
-          </Grid>
           {teams?.length > 0 && (
             <Grid
               item
@@ -153,6 +146,13 @@ export default function ExcelExport({
               <TeamFilter teams={teams} setTeams={handleTeamFilterChange} />
             </Grid>
           )}
+          <Grid
+            item
+            className={classes.flexGrow}
+            sm={companies.length > 1 ? 6 : 12}
+          >
+            <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
+          </Grid>
           <DateOrDateTimeRangeSelectionContext
             start={minDate}
             setStart={setMinDate}
