@@ -46,16 +46,18 @@ export function Week({
       <WorkTimeSummaryKpiGrid
         metrics={renderPeriodKpis(stats).filter(m => m.name !== "service")}
       />
-      <InfoCard className={infoCardStyles.topMargin}>
-        <RegulationCheck
-          check={checkMinimumDurationOfWeeklyRest(
-            stats.workedDays,
-            stats.innerLongBreaks,
-            stats.startTime,
-            previousPeriodActivityEnd
-          )}
-        />
-      </InfoCard>
+      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS !== "1" && (
+        <InfoCard className={infoCardStyles.topMargin}>
+          <RegulationCheck
+            check={checkMinimumDurationOfWeeklyRest(
+              stats.workedDays,
+              stats.innerLongBreaks,
+              stats.startTime,
+              previousPeriodActivityEnd
+            )}
+          />
+        </InfoCard>
+      )}
       {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
         <InfoCard className={infoCardStyles.topMargin}>
           <WeekRegulatoryAlerts

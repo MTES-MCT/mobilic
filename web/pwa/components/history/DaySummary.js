@@ -39,29 +39,39 @@ export function DaySummary({
           m => m.name !== "workedDays"
         )}
       />
-      <InfoCard loading={loading} className={infoCardStyles.topMargin}>
-        {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
-          <DayRegulationInfo
-            activitiesOverCurrentPastAndNextDay={
-              activitiesWithNextAndPreviousDay
-            }
-            dayStart={dayStart}
-            weekActivities={weekActivities}
-          />
-        ) : (
-          <ItalicWarningTypography>Mission en cours !</ItalicWarningTypography>
-        )}
-      </InfoCard>
+      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS !== "1" && (
+        <InfoCard loading={loading} className={infoCardStyles.topMargin}>
+          {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
+            <DayRegulationInfo
+              activitiesOverCurrentPastAndNextDay={
+                activitiesWithNextAndPreviousDay
+              }
+              dayStart={dayStart}
+              weekActivities={weekActivities}
+            />
+          ) : (
+            <ItalicWarningTypography>
+              Mission en cours !
+            </ItalicWarningTypography>
+          )}
+        </InfoCard>
+      )}
       {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
         <InfoCard className={infoCardStyles.topMargin}>
-          <DayRegulatoryAlerts
-            day={isoFormatLocalDate(dayStart)}
-            userId={userId}
-            shouldDisplayInitialEmployeeVersion={
-              shouldDisplayInitialEmployeeVersion
-            }
-            prefetchedRegulationComputation={prefetchedRegulationComputation}
-          />
+          {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
+            <DayRegulatoryAlerts
+              day={isoFormatLocalDate(dayStart)}
+              userId={userId}
+              shouldDisplayInitialEmployeeVersion={
+                shouldDisplayInitialEmployeeVersion
+              }
+              prefetchedRegulationComputation={prefetchedRegulationComputation}
+            />
+          ) : (
+            <ItalicWarningTypography>
+              Mission en cours !
+            </ItalicWarningTypography>
+          )}
         </InfoCard>
       )}
       <InfoCard className={infoCardStyles.topMargin}>
