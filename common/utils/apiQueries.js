@@ -1179,14 +1179,77 @@ export const SEND_EMPLOYMENT_INVITE_REMINDER = gql`
 `;
 
 export const CHANGE_EMPLOYEE_ROLE = gql`
+  ${FULL_TEAM_FRAGMENT}
   mutation changeEmployeeRole($employmentId: Int!, $hasAdminRights: Boolean!) {
     employments {
       changeEmployeeRole(
         employmentId: $employmentId
         hasAdminRights: $hasAdminRights
       ) {
-        id
-        hasAdminRights
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const CHANGE_EMPLOYEE_TEAM = gql`
+  ${FULL_TEAM_FRAGMENT}
+  mutation changeEmployeeTeam($companyId: Int!, $userId: Int!, $teamId: Int) {
+    employments {
+      changeEmployeeTeam(
+        companyId: $companyId
+        userId: $userId
+        teamId: $teamId
+      ) {
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
       }
     }
   }
@@ -1220,6 +1283,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
     $companyId: Int!
     $hasAdminRights: Boolean
     $mail: String
+    $teamId: Int
   ) {
     employments {
       createEmployment(
@@ -1227,6 +1291,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         companyId: $companyId
         hasAdminRights: $hasAdminRights
         mail: $mail
+        teamId: $teamId
       ) {
         id
         startDate
@@ -1234,6 +1299,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         isAcknowledged
         email
         hasAdminRights
+        teamId
         company {
           id
           name

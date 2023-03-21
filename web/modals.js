@@ -31,6 +31,7 @@ import ExportExcelOne from "./controller/components/modals/ControllerExportExcel
 import ControllerExportC1BAll from "./controller/components/modals/ControllerExportC1BAll";
 import ChangeNameModal from "./home/ChangeName";
 import CompanyTeamCreationRevisionModal from "./admin/panels/CompanyTeamCreationRevisionModal";
+import EmployeesTeamRevisionModal from "./admin/panels/EmployeesTeamRevisionModal";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -65,5 +66,6 @@ export const MODAL_DICT = {
   controllerExportExcelOne: ExportExcelOne,
   controllerExportC1BAll: ControllerExportC1BAll,
   controllerHelp: ControllerHelp,
-  companyTeamCreationRevisionModal: CompanyTeamCreationRevisionModal
+  companyTeamCreationRevisionModal: CompanyTeamCreationRevisionModal,
+  employeesTeamRevisionModal: EmployeesTeamRevisionModal
 };
