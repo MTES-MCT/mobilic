@@ -26,7 +26,8 @@ export function TeamFilter({
   teams,
   setTeams,
   multiple = true,
-  handleSelect = null
+  handleSelect = null,
+  orderByProperty = "name"
 }) {
   const classes = useStyles();
 
@@ -45,7 +46,7 @@ export function TeamFilter({
     <Autocomplete
       multiple={multiple}
       id="team-filter"
-      options={orderBy(teams, ["name"])}
+      options={orderBy(teams, [orderByProperty])}
       limitTags={1}
       size="small"
       disableCloseOnSelect

@@ -97,7 +97,10 @@ export function Employees({ company, containerRef }) {
       return;
     }
     if (adminStore?.teams?.length > 0) {
-      setTeams([{ name: NO_TEAMS_LABEL, id: NO_TEAM_ID }, ...adminStore.teams]);
+      setTeams([
+        { name: NO_TEAMS_LABEL, id: NO_TEAM_ID, rankName: "zzz" },
+        ...adminStore.teams.map(team => ({ ...team, rankName: team.name }))
+      ]);
     } else {
       setTeams([]);
     }
@@ -282,7 +285,7 @@ export function Employees({ company, containerRef }) {
 
   if (adminStore?.teams?.length > 0) {
     pendingEmploymentColumns.push({
-      label: "Groupe de rattachement",
+      label: "Groupe d'affectation",
       name: "teamId",
       create: true,
       minWidth: 160,
@@ -377,11 +380,11 @@ export function Employees({ company, containerRef }) {
 
   if (adminStore?.teams?.length > 0) {
     validEmploymentColumns.push({
-      label: "Groupe de rattachement",
+      label: "Groupe d'affectation",
       name: "teamId",
       align: "left",
       format: formatTeam,
-      minWidth: 80,
+      minWidth: 100,
       overflowTooltip: true
     });
   }
@@ -775,7 +778,13 @@ export function Employees({ company, containerRef }) {
     <Grid key={5} spacing={4} container className={classes.teamFilter}>
       {adminStore?.teams?.length > 0 && (
         <Grid item sm={2} className={classes.flexGrow}>
-          {teams && <TeamFilter teams={teams} setTeams={setTeams} />}
+          {teams && (
+            <TeamFilter
+              teams={teams}
+              setTeams={setTeams}
+              orderByProperty="rankName"
+            />
+          )}
         </Grid>
       )}
     </Grid>,

@@ -1,2 +1,2 @@
 export const NO_TEAM_ID = -1;
-export const NO_TEAMS_LABEL = "-- Aucun groupe";
+export const NO_TEAMS_LABEL = "Aucun groupe";
