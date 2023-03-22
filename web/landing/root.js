@@ -4,7 +4,19 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { Header } from "../common/Header";
-import { ManagerImage, SoftwareImage, WorkerImage } from "common/utils/icons";
+import "react-multi-carousel/lib/styles.css";
+import {
+  ActuTransportLogistiqueImage,
+  AxecImage,
+  EcoLogisticsImage,
+  FlottesAutomobilesImage,
+  HubInstituteImage,
+  ManagerImage,
+  RadioSupplyChainImage,
+  SoftwareImage,
+  SupplyChainVillageImage,
+  WorkerImage
+} from "common/utils/icons";
 import { useIsWidthDown } from "common/utils/useWidth";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Footer } from "./footer";
@@ -15,6 +27,8 @@ import {
 } from "./sections/LandingSection";
 import { WebinarListSection } from "./sections/WebinarListSection";
 import { IntroSection } from "./sections/IntroSection";
+import { PressCard } from "./ResourcePage/PressCard";
+import Carousel from "react-multi-carousel";
 
 const useStyles = makeStyles(theme => ({
   videoContainer: {
@@ -42,8 +56,68 @@ const useStyles = makeStyles(theme => ({
   },
   questionTitle: {
     paddingBottom: theme.spacing(1)
+  },
+  sectionSubtitle: {
+    textAlign: "left",
+    marginBottom: theme.spacing(2)
   }
 }));
+
+const responsive = {
+  superLargeDesktop: {
+    // the naming can be any, depends on you.
+    breakpoint: { max: 4000, min: 3000 },
+    items: 5
+  },
+  desktop: {
+    breakpoint: { max: 3000, min: 1024 },
+    items: 3
+  },
+  tablet: {
+    breakpoint: { max: 1024, min: 464 },
+    items: 2
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 1
+  }
+};
+const PRESS_ARTICLES = [
+  {
+    imageComponent: HubInstituteImage,
+    link:
+      "https://hubinstitute.com/Videos/stage-2-mobilic-rendre-clairs-et-accessibles-les-droits-des-chauffeurs-routiers"
+  },
+  {
+    imageComponent: EcoLogisticsImage,
+    link:
+      "https://fr.calameo.com/read/003039428318ecae421a5?authid=tXJH7bvui2rW"
+  },
+  {
+    imageComponent: SupplyChainVillageImage,
+    link:
+      "https://supplychain-village.com/interview-flash/evenements/interview-de-marie-vacherot-et-patrick-lambret/"
+  },
+  {
+    imageComponent: FlottesAutomobilesImage,
+    link:
+      "https://www.flotauto.com/transport-leger-demenagement-lic-mobilic-20210930.html"
+  },
+  {
+    imageComponent: RadioSupplyChainImage,
+    link: "https://www.radiosupplychain.fr/podcasts/reportage-mobilic/"
+  },
+  {
+    imageComponent: AxecImage,
+    link:
+      "https://www.linkedin.com/pulse/mobilic-ou-la-fin-du-petit-menteur-marc-bougaut/?trackingId=mDlGzBwMsikJJNPh2GI1yg%3D%3D"
+  },
+  {
+    imageComponent: ActuTransportLogistiqueImage,
+    link:
+      "https://www.actu-transport-logistique.fr/routier/une-application-web-pour-lutter-contre-le-travail-illegal-dans-le-transport-leger-674545.php"
+  }
+];
 
 function Showcase({
   image,
@@ -294,6 +368,24 @@ export const Landing = () => {
             </MainCtaButton>
           </Grid>
         </Grid>
+      </LandingSection>
+      <LandingSection title="Ils parlent de Mobilic">
+        <Typography variant={"h3"} className={classes.sectionSubtitle}>
+          Nos utilisateurs
+        </Typography>
+
+        <Typography variant={"h3"} className={classes.sectionSubtitle}>
+          la presse
+        </Typography>
+        <Carousel responsive={responsive} navButtonsAlwaysVisible={true}>
+          {PRESS_ARTICLES.map((article, index) => (
+            <PressCard
+              key={index}
+              ImageComponent={article.imageComponent}
+              articleLink={article.link}
+            />
+          ))}
+        </Carousel>
       </LandingSection>
     </LandingSectionList>,
     <Footer key={4} />
