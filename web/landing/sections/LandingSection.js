@@ -30,6 +30,10 @@ export const useSectionStyles = makeStyles(theme => ({
   inner: {
     margin: "auto",
     padding: 0
+  },
+  sectionSubtitle: {
+    textAlign: "left",
+    marginBottom: theme.spacing(2)
   }
 }));
 

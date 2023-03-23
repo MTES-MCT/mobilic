@@ -26,6 +26,9 @@ import _FlottesAutomobilesImage from "../assets/images/press-logos/flottes-autom
 import _HubInstituteImage from "../assets/images/press-logos/hubInstitute.png";
 import _RadioSupplyChainImage from "../assets/images/press-logos/radio_supply_chain.png";
 import _SupplyChainVillageImage from "../assets/images/press-logos/supply_chain_village.jpg";
+import _VirImage from "../assets/images/testimonials-logos/vir.jpg";
+import _AlexisDemenagementImage from "../assets/images/testimonials-logos/alexis_plus.jpg";
+import _BretagneMaceDemenagementImage from "../assets/images/testimonials-logos/bretagne_mace_demenagement.jpg";
 
 export function MobilicLogoFilledIcon(props) {
   return (
@@ -187,6 +190,26 @@ export function RadioSupplyChainImage(props) {
 export function SupplyChainVillageImage(props) {
   return (
     <img alt="Supply Chain Village" src={_SupplyChainVillageImage} {...props} />
+  );
+}
+
+export function VirImage(props) {
+  return <img alt="Vir" src={_VirImage} {...props} />;
+}
+
+export function AlexisDemenagementImage(props) {
+  return (
+    <img alt="Alexis Déménagement" src={_AlexisDemenagementImage} {...props} />
+  );
+}
+
+export function BretagneMaceDemenagementImage(props) {
+  return (
+    <img
+      alt="Bretagne Macé Déménagement"
+      src={_BretagneMaceDemenagementImage}
+      {...props}
+    />
   );
 }
 
