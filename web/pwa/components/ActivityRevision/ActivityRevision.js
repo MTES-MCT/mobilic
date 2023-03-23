@@ -256,6 +256,12 @@ export default function ActivityRevisionOrCreationModal({
   }, [open]);
 
   React.useEffect(() => {
+    if (allowTeamMode && team.length > 1) {
+      setTeamMode(true);
+    }
+  }, [newUserTime, teamChanges, userId]);
+
+  React.useEffect(() => {
     if (newUserTime) {
       let hasStartError = false;
       let hasEndError = false;

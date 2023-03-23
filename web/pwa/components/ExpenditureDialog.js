@@ -24,7 +24,7 @@ export default function ExpenditureDialogModal({
   handleSubmit
 }) {
   const [expenditures, setExpenditures] = React.useState({});
-  const [forAllTeam, setForAllTeam] = React.useState(false);
+  const [forAllTeam, setForAllTeam] = React.useState(true);
 
   React.useEffect(() => {
     setExpenditures(currentExpenditures || {});
