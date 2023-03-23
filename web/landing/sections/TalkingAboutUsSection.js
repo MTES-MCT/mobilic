@@ -17,6 +17,8 @@ import {
 import Carousel from "react-multi-carousel";
 import { PressCard } from "../ResourcePage/PressCard";
 import { TestimonialCard } from "../ResourcePage/TestimonialCard";
+import { VideoCard } from "../ResourcePage/VideoCard";
+import { resourceCardsClasses } from "../ResourcePage/styles/ResourceCardsStyle";
 
 export function TalkingAboutUsSection() {
   const responsivePressArticles = {
@@ -84,7 +86,7 @@ export function TalkingAboutUsSection() {
     }
   ];
 
-  const TESTMINONIALS = [
+  const TESTIMONIALS_TEXT = [
     {
       imageComponent: AlexisDemenagementImage,
       sentence:
@@ -105,15 +107,46 @@ export function TalkingAboutUsSection() {
     }
   ];
 
+  const TESTIMONIALS_VIDEOS = [
+    {
+      title: "Ludovic Almy, responsable d'exploitation dans le déménagement",
+      videoKey: "resources/videos/testimonials/ludovic_almy.mp4",
+      posterKey: "resources/videos/testimonials/ludovic_almy.jpg"
+    },
+    {
+      title:
+        "Raphaël Grenom, directeur d'une agence de livraison de marchandises",
+      videoKey: "resources/videos/testimonials/raphael_grenom.mp4",
+      posterKey: "resources/videos/testimonials/raphael_grenom.jpg"
+    },
+    {
+      title: "Yoann Macé, gérant d'une entreprise de déménagement",
+      videoKey: "resources/videos/testimonials/yoann_mace.mp4",
+      posterKey: "resources/videos/testimonials/yoann_mace.jpg"
+    },
+    {
+      title:
+        "Jérémy Cohen Boulakia, directeur d'une entreprise de livraison de marchandises",
+      videoKey: "resources/videos/testimonials/jeremy_cohen_boulakia.mp4",
+      posterKey: "resources/videos/testimonials/jeremy_cohen_boulakia.jpg"
+    },
+    {
+      title: "Nicolas K'bidi, déménageur",
+      videoKey: "resources/videos/testimonials/nicolas_kbidi.mp4",
+      posterKey: "resources/videos/testimonials/nicolas_kbidi.jpg"
+    }
+  ];
+
   const classes = useSectionStyles();
+  const cardClasses = resourceCardsClasses();
 
   return (
-    <LandingSection title="Ils parlent de Mobilic">
+    <LandingSection title="Ils parlent de Mobilic" id="temoignages">
       <Typography variant={"h3"} className={classes.sectionSubtitle}>
         Nos utilisateurs
       </Typography>
       <Carousel responsive={responsiveTestimonials}>
-        {TESTMINONIALS.map((testimonial, index) => (
+        {TESTIMONIALS_TEXT.map((testimonial, index) => (
           <TestimonialCard
             key={index}
             ImageComponent={testimonial.imageComponent}
@@ -123,7 +156,19 @@ export function TalkingAboutUsSection() {
         ))}
       </Carousel>
 
-      <Typography variant={"h3"} className={classes.sectionSubtitle}>
+      <Carousel responsive={responsivePressArticles}>
+        {TESTIMONIALS_VIDEOS.map((video, index) => (
+          <VideoCard
+            key={index}
+            videoKey={video.videoKey}
+            description={video.title}
+            posterKey={video.posterKey}
+            className={cardClasses.pressCard}
+          />
+        ))}
+      </Carousel>
+
+      <Typography variant={"h3"} className={classes.pressSubsection}>
         La presse
       </Typography>
       <Carousel responsive={responsivePressArticles}>
