@@ -33,10 +33,10 @@ import {
   startOfMonth,
   addMonths,
   subMonths,
-  startOfToday,
   endOfDay,
   endOfMonth,
-  isAfter
+  isAfter,
+  endOfToday
 } from "date-fns";
 import {
   DAY,
@@ -262,7 +262,7 @@ export function History({
       : startOfMonth(subMonths(new Date(), DEFAULT_MONTH_RANGE_HISTORY))
   );
   const [endPeriodFilter, setEndPeriodFilter] = React.useState(
-    controlTime ? new Date(controlTime * 1000) : startOfToday()
+    controlTime ? new Date(controlTime * 1000) : endOfToday()
   );
   const [periodFilterRangeError, setPeriodFilterRangeError] = React.useState(
     null
@@ -282,7 +282,7 @@ export function History({
         endOfMonth(addMonths(newStartPeriodFilter, DEFAULT_MONTH_RANGE_HISTORY))
       );
       if (isAfter(newEndPeriodFilter, new Date())) {
-        newEndPeriodFilter = startOfToday();
+        newEndPeriodFilter = endOfToday();
       }
       setEndPeriodFilter(newEndPeriodFilter);
       await syncMissionsStore(newStartPeriodFilter, newEndPeriodFilter);
