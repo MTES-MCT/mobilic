@@ -64,7 +64,7 @@ export default function ActivityRevisionOrCreationModal({
   const [newActivityType, setNewActivityType] = React.useState("");
   const [newActivityDriverId, setNewActivityDriverId] = React.useState(0);
 
-  const [teamMode, setTeamMode] = React.useState(false);
+  const [teamMode, setTeamMode] = React.useState(allowTeamMode);
 
   const [newUserTime, setNewUserTime] = React.useState(null);
   const [newUserEndTime, setNewUserEndTime] = React.useState(null);
@@ -103,9 +103,10 @@ export default function ActivityRevisionOrCreationModal({
             endTime: op.endTime,
             driverId: op.driverId,
             userComment,
-            team: teamMode
-              ? uniq([userId, ...resolveTeamAt(teamChanges, op.startTime)])
-              : [userId]
+            team:
+              teamMode && team.length > 1
+                ? uniq([userId, ...resolveTeamAt(teamChanges, op.startTime)])
+                : [userId]
           });
         } else {
           return handleRevisionAction(
@@ -129,7 +130,7 @@ export default function ActivityRevisionOrCreationModal({
           endTime: newUserEndTime,
           driverId: driverId,
           userComment: userComment,
-          team: teamMode ? team : [userId]
+          team: teamMode && team.length > 1 ? team : [userId]
         });
       } else {
         await handleRevisionAction(
@@ -155,9 +156,10 @@ export default function ActivityRevisionOrCreationModal({
             endTime: op.endTime,
             driverId: op.driverId,
             userComment,
-            team: teamMode
-              ? uniq([userId, ...resolveTeamAt(teamChanges, op.startTime)])
-              : [userId],
+            team:
+              teamMode && team.length > 1
+                ? uniq([userId, ...resolveTeamAt(teamChanges, op.startTime)])
+                : [userId],
             user: forcedUser
           }
         };
@@ -170,7 +172,7 @@ export default function ActivityRevisionOrCreationModal({
             newStartTime: op.startTime,
             newEndTime: op.endTime,
             userComment,
-            teamMode
+            teamMode: teamMode && team.length > 1
           }
         };
       }
@@ -201,7 +203,7 @@ export default function ActivityRevisionOrCreationModal({
             newStartTime: newUserTime,
             newEndTime: newUserEndTime,
             userComment,
-            teamMode
+            teamMode: teamMode && team.length > 1
           }
         });
       }
@@ -251,15 +253,9 @@ export default function ActivityRevisionOrCreationModal({
     setNewActivityDriverId(0);
     setNewActivityType("");
     setUserComment("");
-    setTeamMode(false);
+    setTeamMode(allowTeamMode);
     return () => {};
   }, [open]);
-
-  React.useEffect(() => {
-    if (allowTeamMode && team.length > 1) {
-      setTeamMode(true);
-    }
-  }, [newUserTime, teamChanges, userId]);
 
   React.useEffect(() => {
     if (newUserTime) {
