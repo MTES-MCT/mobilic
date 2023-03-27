@@ -146,9 +146,9 @@ export function TalkingAboutUsSection() {
         Nos utilisateurs
       </Typography>
       <Carousel responsive={responsiveTestimonials}>
-        {TESTIMONIALS_TEXT.map((testimonial, index) => (
+        {TESTIMONIALS_TEXT.map(testimonial => (
           <TestimonialCard
-            key={index}
+            key={testimonial.author}
             ImageComponent={testimonial.imageComponent}
             sentence={testimonial.sentence}
             author={testimonial.author}
@@ -156,10 +156,13 @@ export function TalkingAboutUsSection() {
         ))}
       </Carousel>
 
-      <Carousel responsive={responsivePressArticles}>
-        {TESTIMONIALS_VIDEOS.map((video, index) => (
+      <Carousel
+        responsive={responsivePressArticles}
+        className={classes.pressArticles}
+      >
+        {TESTIMONIALS_VIDEOS.map(video => (
           <VideoCard
-            key={index}
+            key={video.videoKey}
             videoKey={video.videoKey}
             description={video.title}
             posterKey={video.posterKey}
@@ -172,9 +175,9 @@ export function TalkingAboutUsSection() {
         La presse
       </Typography>
       <Carousel responsive={responsivePressArticles}>
-        {PRESS_ARTICLES.map((article, index) => (
+        {PRESS_ARTICLES.map(article => (
           <PressCard
-            key={index}
+            key={article.link}
             ImageComponent={article.imageComponent}
             articleLink={article.link}
           />

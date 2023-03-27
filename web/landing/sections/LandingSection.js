@@ -39,6 +39,10 @@ export const useSectionStyles = makeStyles(theme => ({
     textAlign: "left",
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(2)
+  },
+  pressArticles: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2)
   }
 }));
 

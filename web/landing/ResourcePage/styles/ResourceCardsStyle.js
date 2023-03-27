@@ -22,7 +22,9 @@ export const resourceCardsClasses = makeStyles(theme => ({
     borderRadius: 10,
     padding: theme.spacing(2),
     borderColor: theme.palette.primary.main,
-    margin: theme.spacing(2)
+    marginRight: theme.spacing(1),
+    marginLeft: theme.spacing(1),
+    height: "100%"
   },
   pressImage: {
     maxHeight: 60,
