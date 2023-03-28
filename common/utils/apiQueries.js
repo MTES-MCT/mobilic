@@ -4,6 +4,7 @@ import {
   COMPANY_SETTINGS_FRAGMENT,
   FRAGMENT_LOCATION_FULL,
   FULL_MISSION_FRAGMENT,
+  FULL_TEAM_FRAGMENT,
   REGULATION_COMPUTATIONS_FRAGMENT,
   WORK_DAYS_DATA_FRAGMENT
 } from "./apiFragments";
@@ -557,6 +558,23 @@ export const USER_READ_QUERY = gql`
   }
 `;
 
+export const USER_MISSIONS_HISTORY_QUERY = gql`
+  ${COMPANY_SETTINGS_FRAGMENT}
+  ${FRAGMENT_LOCATION_FULL}
+  ${FULL_MISSION_FRAGMENT}
+  query readUserMissionsHistory($fromTime: TimeStamp!, $untilTime: TimeStamp!) {
+    me {
+      missions(fromTime: $fromTime, untilTime: $untilTime) {
+        edges {
+          node {
+            ...FullMissionData
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const USER_WORK_DAY_QUERY = gql`
   query workDayDetail(
     $activityBefore: TimeStamp
@@ -619,6 +637,150 @@ export const THIRD_PARTY_CLIENTS_COMPANY_QUERY = gql`
   }
 `;
 
+export const ALL_TEAMS_COMPANY_QUERY = gql`
+  ${FULL_TEAM_FRAGMENT}
+  query allTeamsCompany($companyId: Int!) {
+    company(id: $companyId) {
+      teams {
+        ...FullTeamData
+      }
+    }
+  }
+`;
+
+export const DELETE_TEAM_MUTATION = gql`
+  ${FULL_TEAM_FRAGMENT}
+  mutation deleteTeam($teamId: Int!) {
+    teams {
+      deleteTeam(teamId: $teamId) {
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const CREATE_TEAM_MUTATION = gql`
+  ${FULL_TEAM_FRAGMENT}
+  mutation createTeam(
+    $companyId: Int!
+    $name: String!
+    $userIds: [Int]
+    $adminIds: [Int]
+    $knownAddressIds: [Int]
+    $vehicleIds: [Int]
+  ) {
+    teams {
+      createTeam(
+        companyId: $companyId
+        name: $name
+        userIds: $userIds
+        adminIds: $adminIds
+        knownAddressIds: $knownAddressIds
+        vehicleIds: $vehicleIds
+      ) {
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const UPDATE_TEAM_MUTATION = gql`
+  ${FULL_TEAM_FRAGMENT}
+  mutation updateTeam(
+    $teamId: Int!
+    $name: String!
+    $userIds: [Int]
+    $adminIds: [Int]
+    $knownAddressIds: [Int]
+    $vehicleIds: [Int]
+  ) {
+    teams {
+      updateTeam(
+        teamId: $teamId
+        name: $name
+        userIds: $userIds
+        adminIds: $adminIds
+        knownAddressIds: $knownAddressIds
+        vehicleIds: $vehicleIds
+      ) {
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const ADMIN_COMPANIES_QUERY = gql`
   ${WORK_DAYS_DATA_FRAGMENT}
   ${COMPANY_SETTINGS_FRAGMENT}
@@ -639,6 +801,20 @@ export const ADMIN_COMPANIES_QUERY = gql`
           id
           firstName
           lastName
+        }
+        teams {
+          id
+          name
+          adminUsers {
+            id
+            firstName
+            lastName
+          }
+          users {
+            id
+            firstName
+            lastName
+          }
         }
         knownAddresses {
           id
@@ -720,6 +896,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
           email
           hasAdminRights
           latestInviteEmailTime
+          teamId
           user {
             id
             email
@@ -1002,14 +1179,77 @@ export const SEND_EMPLOYMENT_INVITE_REMINDER = gql`
 `;
 
 export const CHANGE_EMPLOYEE_ROLE = gql`
+  ${FULL_TEAM_FRAGMENT}
   mutation changeEmployeeRole($employmentId: Int!, $hasAdminRights: Boolean!) {
     employments {
       changeEmployeeRole(
         employmentId: $employmentId
         hasAdminRights: $hasAdminRights
       ) {
-        id
-        hasAdminRights
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const CHANGE_EMPLOYEE_TEAM = gql`
+  ${FULL_TEAM_FRAGMENT}
+  mutation changeEmployeeTeam($companyId: Int!, $userId: Int!, $teamId: Int) {
+    employments {
+      changeEmployeeTeam(
+        companyId: $companyId
+        userId: $userId
+        teamId: $teamId
+      ) {
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          id
+          startDate
+          endDate
+          isAcknowledged
+          email
+          hasAdminRights
+          latestInviteEmailTime
+          teamId
+          companyId
+          company {
+            id
+            name
+            siren
+          }
+          user {
+            id
+            email
+            firstName
+            lastName
+          }
+        }
       }
     }
   }
@@ -1043,6 +1283,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
     $companyId: Int!
     $hasAdminRights: Boolean
     $mail: String
+    $teamId: Int
   ) {
     employments {
       createEmployment(
@@ -1050,6 +1291,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         companyId: $companyId
         hasAdminRights: $hasAdminRights
         mail: $mail
+        teamId: $teamId
       ) {
         id
         startDate
@@ -1057,6 +1299,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         isAcknowledged
         email
         hasAdminRights
+        teamId
         company {
           id
           name

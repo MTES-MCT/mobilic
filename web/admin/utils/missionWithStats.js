@@ -9,7 +9,9 @@ export function useMissionWithStats(mission) {
 
   React.useEffect(() => {
     if (mission)
-      setMissionWithStats(computeMissionStats(mission, adminStore.users));
+      setMissionWithStats(
+        computeMissionStats(mission, adminStore.validationsFilters?.users)
+      );
   }, [mission]);
 
   return missionWithStats;

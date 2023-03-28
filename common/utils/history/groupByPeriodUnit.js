@@ -4,7 +4,7 @@
 // - when switching from day to week the new period should be the week containing the current day
 // - conversely, when switching from week to day, we decide (arbitrarily) that the new period should be the first (existing) day of the current week
 import moment from "moment";
-import { now } from "../time";
+import { now, jsToUnixTimestamp } from "../time";
 import {
   filterActivitiesOverlappingPeriod,
   sortActivities
@@ -91,7 +91,13 @@ function computeMissionGroups(missions, periodProps) {
   return groupsByPeriodUnit;
 }
 
-export function useGroupMissionsAndExtractActivities(missions, periodProps) {
+export function useGroupMissionsAndExtractActivities(
+  missions,
+  start,
+  end,
+  error,
+  periodProps
+) {
   const [activities, setActivities] = React.useState([]);
 
   const [
@@ -99,15 +105,30 @@ export function useGroupMissionsAndExtractActivities(missions, periodProps) {
     setMissionGroupsByPeriodUnit
   ] = React.useState({});
 
+  const missionInPeriod = (mission, startTime, endTime) =>
+    mission.startTime < endTime &&
+    (!mission.endTime || mission.endTime > startTime);
+
   React.useEffect(() => {
-    setMissionGroupsByPeriodUnit(computeMissionGroups(missions, periodProps));
-    const acts = missions.reduce(
+    if (error) {
+      return setMissionGroupsByPeriodUnit({});
+    }
+
+    const fromTime = jsToUnixTimestamp(start.getTime());
+    const toTime = jsToUnixTimestamp(end.getTime());
+    const filteredMissions = missions.filter(mission =>
+      missionInPeriod(mission, fromTime, toTime)
+    );
+    setMissionGroupsByPeriodUnit(
+      computeMissionGroups(filteredMissions, periodProps)
+    );
+    const acts = filteredMissions.reduce(
       (acc, mission) => [...acc, ...mission.activities],
       []
     );
     sortActivities(acts);
     setActivities(acts);
-  }, [missions]);
+  }, [missions, start, end, error]);
 
   return [missionGroupsByPeriodUnit, activities];
 }

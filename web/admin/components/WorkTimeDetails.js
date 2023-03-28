@@ -242,45 +242,47 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
             />
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={8}>
-          <MissionInfoCard
-            title="Seuils réglementaires"
-            loading={loading}
-            className={classes.regulatoryAlertCard}
-          >
-            <DayRegulationInfo
-              activitiesOverCurrentPastAndNextDay={activitiesOver3Days}
-              weekActivities={weekActivities}
-              dayStart={workTimeEntry.periodStart}
-            />
-          </MissionInfoCard>
-        </Grid>
+        {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS !== "1" && (
+          <Grid item xs={12} sm={8}>
+            <MissionInfoCard
+              title="Seuils réglementaires"
+              loading={loading}
+              className={classes.regulatoryAlertCard}
+            >
+              <DayRegulationInfo
+                activitiesOverCurrentPastAndNextDay={activitiesOver3Days}
+                weekActivities={weekActivities}
+                dayStart={workTimeEntry.periodStart}
+              />
+            </MissionInfoCard>
+          </Grid>
+        )}
+        {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
+          <Grid item xs={12} sm={8}>
+            <MissionInfoCard
+              title="Seuils réglementaires"
+              className={classes.regulatoryAlertCard}
+            >
+              <div>Alertes quotidiennes</div>
+              <DayRegulatoryAlerts
+                userId={workTimeEntry.user.id}
+                day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
+              />
+              {getStartOfWeek(workTimeEntry.periodStart) ===
+                workTimeEntry.periodStart && (
+                <>
+                  <br></br>
+                  <div>Alertes hebdomadaires</div>
+                  <WeekRegulatoryAlerts
+                    userId={workTimeEntry.user.id}
+                    day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
+                  />
+                </>
+              )}
+            </MissionInfoCard>
+          </Grid>
+        )}
       </Grid>
-      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
-        <Grid item xs={12}>
-          <MissionInfoCard
-            title="Seuils réglementaires"
-            className={classes.regulatoryAlertCard}
-          >
-            <div>Alertes quotidiennes</div>
-            <DayRegulatoryAlerts
-              userId={workTimeEntry.user.id}
-              day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
-            />
-            {getStartOfWeek(workTimeEntry.periodStart) ===
-              workTimeEntry.periodStart && (
-              <>
-                <br></br>
-                <div>Alertes hebdomadaires</div>
-                <WeekRegulatoryAlerts
-                  userId={workTimeEntry.user.id}
-                  day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
-                />
-              </>
-            )}
-          </MissionInfoCard>
-        </Grid>
-      )}
       <Grid item xs={12}>
         <ExpendituresCard
           title="Frais de la journée"

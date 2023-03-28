@@ -311,8 +311,8 @@ export function MissionDetails({
                 className={classes.teamModeAlert}
               >
                 {mission.submittedBySomeoneElse
-                  ? `${mission.submitter.firstName} a choisi d'enregistrer le temps de travail pour toute l'équipe. Vous avez la possibilité de modifier les activités et frais vous concernant mais il est conseillé d'attendre la fin de mission pour éviter la double saisie.`
-                  : `Vous avez choisi d'enregistrer le temps de travail pour toute l'équipe. Pensez à les en informer afin d'éviter la double saisie.`}
+                  ? `${mission.submitter.firstName} a choisi d'enregistrer le temps de travail pour toute l'équipe.  Il est conseillé d'attendre la fin de mission avant d'effectuer des modifications pour continuer de bénéficier des saisies de ${mission.submitter.firstName}. En effet, si vous saisissez ou modifiez une mission en cours de journée, vous serez exclu de l'équipe et ne serez donc plus concerné par les temps enregistrés ensuite pas le chef d'équipe.`
+                  : `Vous avez choisi d'enregistrer le temps de travail pour toute l'équipe. Pensez à les en informer pour qu'ils continuent de bénéficier de vos saisies. En effet, s'ils saisissent ou modifient une activité en cours de journée, ils seront exclus de l'équipe et ne seront donc plus concernés par les temps que vous enregistrerez ensuite en tant que chef d'équipe.`}
               </Alert>
             ),
             <List key={1} dense>

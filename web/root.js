@@ -225,7 +225,7 @@ function _Root() {
       );
     } else if (
       location.pathname !== "/" &&
-      (!location.pathname.startsWith("/control") ||
+      (!location.pathname.startsWith("/control/user-history") ||
         location.pathname.startsWith(CONTROLLER_ROUTE_PREFIX)) &&
       !location.pathname.startsWith("/login") &&
       !location.pathname.startsWith("/controller-login") &&

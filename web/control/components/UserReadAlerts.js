@@ -43,22 +43,26 @@ export function UserReadAlerts({
 
   return (
     <Container maxWidth="md" className={classes.container}>
-      {groupedAlerts.length > 0 ? (
-        <List>
-          {groupedAlerts.map(group => (
-            <ListItem key={group.infringementLabel} disableGutters>
-              <AlertGroup
-                {...group}
-                setPeriodOnFocus={setPeriodOnFocus}
-                setTab={setTab}
-              />
-            </ListItem>
-          ))}
-        </List>
-      ) : (
-        <Typography className={classes.italicInfo}>
-          Il n'y a aucune alerte réglementaire sur la période
-        </Typography>
+      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS !== "1" && (
+        <>
+          {groupedAlerts.length > 0 ? (
+            <List>
+              {groupedAlerts.map(group => (
+                <ListItem key={group.infringementLabel} disableGutters>
+                  <AlertGroup
+                    {...group}
+                    setPeriodOnFocus={setPeriodOnFocus}
+                    setTab={setTab}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <Typography className={classes.italicInfo}>
+              Il n'y a aucune alerte réglementaire sur la période
+            </Typography>
+          )}
+        </>
       )}
       {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
         <>
