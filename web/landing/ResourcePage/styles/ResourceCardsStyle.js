@@ -17,5 +17,29 @@ export const resourceCardsClasses = makeStyles(theme => ({
     textTransform: "none",
     height: "100%",
     width: "100%"
+  },
+  pressCard: {
+    borderRadius: 10,
+    padding: theme.spacing(2),
+    borderColor: theme.palette.primary.main,
+    marginRight: theme.spacing(1),
+    marginLeft: theme.spacing(1),
+    height: "100%"
+  },
+  pressImage: {
+    maxHeight: 60,
+    maxWidth: 230,
+    marginBottom: theme.spacing(2)
+  },
+  testimonialImage: {
+    maxHeight: 90,
+    marginBottom: theme.spacing(2)
+  },
+  testimonialSentence: {
+    marginBottom: theme.spacing(4),
+    textAlign: "left"
+  },
+  testimonialAuthor: {
+    textAlign: "left"
   }
 }));

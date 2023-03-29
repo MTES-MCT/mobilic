@@ -15,6 +15,7 @@ import {
 } from "./sections/LandingSection";
 import { WebinarListSection } from "./sections/WebinarListSection";
 import { IntroSection } from "./sections/IntroSection";
+import { TalkingAboutUsSection } from "./sections/TalkingAboutUsSection";
 
 const useStyles = makeStyles(theme => ({
   videoContainer: {
@@ -295,6 +296,7 @@ export const Landing = () => {
           </Grid>
         </Grid>
       </LandingSection>
+      <TalkingAboutUsSection />
     </LandingSectionList>,
     <Footer key={4} />
   ];

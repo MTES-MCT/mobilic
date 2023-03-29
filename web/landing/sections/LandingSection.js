@@ -30,6 +30,19 @@ export const useSectionStyles = makeStyles(theme => ({
   inner: {
     margin: "auto",
     padding: 0
+  },
+  sectionSubtitle: {
+    textAlign: "left",
+    marginBottom: theme.spacing(2)
+  },
+  pressSubsection: {
+    textAlign: "left",
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(2)
+  },
+  pressArticles: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2)
   }
 }));
 
@@ -45,11 +58,15 @@ export function LandingSectionList({ children }) {
     );
 }
 
-export function LandingSection({ title, className, children }) {
+export function LandingSection({ title, className, children, ...props }) {
   const classes = useSectionStyles();
 
   return (
-    <Container className={`${classes.section} ${className}`} maxWidth={false}>
+    <Container
+      className={`${classes.section} ${className}`}
+      maxWidth={false}
+      {...props}
+    >
       <Container maxWidth="md" className={classes.inner}>
         <Typography variant="h3" className={`${classes.sectionTitle}`}>
           {title}

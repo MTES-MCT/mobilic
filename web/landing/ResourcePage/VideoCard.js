@@ -6,11 +6,11 @@ import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
 const s3Root =
   "https://storage.gra.cloud.ovh.net/v1/AUTH_8a2f745174054ce1b5ee7c6e79601088/mobilic/";
 
-export function VideoCard({ videoKey, description, posterKey }) {
+export function VideoCard({ videoKey, description, posterKey, ...props }) {
   const classes = resourceCardsClasses();
 
   return (
-    <Card variant="outlined" className={classes.card}>
+    <Card variant="outlined" className={classes.card} {...props}>
       <Typography variant={"h5"} className={classes.description}>
         {description}
       </Typography>
