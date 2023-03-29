@@ -3,7 +3,11 @@ import { Card } from "@mui/material";
 import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
 import { MainCtaButton } from "../../pwa/components/MainCtaButton";
 
-export function PressCard({ ImageComponent, articleLink }) {
+export function PressCard({
+  ImageComponent,
+  articleLink,
+  buttonLabel = "Lire l'article"
+}) {
   const classes = resourceCardsClasses();
 
   return (
@@ -16,7 +20,7 @@ export function PressCard({ ImageComponent, articleLink }) {
         target="_blank"
         rel="noopener noreferrer"
       >
-        Lire l'article
+        {buttonLabel}
       </MainCtaButton>
     </Card>
   );

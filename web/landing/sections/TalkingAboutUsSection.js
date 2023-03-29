@@ -51,19 +51,26 @@ export function TalkingAboutUsSection() {
   };
   const PRESS_ARTICLES = [
     {
+      imageComponent: ActuTransportLogistiqueImage,
+      link:
+        "https://www.actu-transport-logistique.fr/officiel-des-transporteurs/actualites/transport-leger-mobilic-poursuit-son-implantation-dans-les-entreprises-705685.php"
+    },
+    {
       imageComponent: HubInstituteImage,
       link:
-        "https://hubinstitute.com/Videos/stage-2-mobilic-rendre-clairs-et-accessibles-les-droits-des-chauffeurs-routiers"
+        "https://hubinstitute.com/Videos/stage-2-mobilic-rendre-clairs-et-accessibles-les-droits-des-chauffeurs-routiers",
+      buttonLabel: "Voir la vidéo"
     },
     {
       imageComponent: EcoLogisticsImage,
       link:
-        "https://fr.calameo.com/read/003039428318ecae421a5?authid=tXJH7bvui2rW"
+        "https://fr.calameo.com/read/003039428318ecae421a5?authid=tXJH7bvui2rW&page=6"
     },
     {
       imageComponent: SupplyChainVillageImage,
       link:
-        "https://supplychain-village.com/interview-flash/evenements/interview-de-marie-vacherot-et-patrick-lambret/"
+        "https://supplychain-village.com/interview-flash/evenements/interview-de-marie-vacherot-et-patrick-lambret/",
+      buttonLabel: "Voir la vidéo"
     },
     {
       imageComponent: FlottesAutomobilesImage,
@@ -72,7 +79,8 @@ export function TalkingAboutUsSection() {
     },
     {
       imageComponent: RadioSupplyChainImage,
-      link: "https://www.radiosupplychain.fr/podcasts/reportage-mobilic/"
+      link: "https://www.radiosupplychain.fr/podcasts/reportage-mobilic/",
+      buttonLabel: "Ecouter l'entretien"
     },
     {
       imageComponent: AxecImage,
@@ -90,19 +98,29 @@ export function TalkingAboutUsSection() {
     {
       imageComponent: AlexisDemenagementImage,
       sentence:
-        "«Les temps de travail sont plus fiables. J'ai un meilleur recul sur les heures quotidiennes, ce qui me permet de mieux gérer le repos de mes salariés.»",
+        "« Les temps de travail sont plus fiables. J'ai un meilleur recul sur les heures quotidiennes, ce qui me permet de mieux gérer le repos de mes salariés. »",
       author: "Ludovic Almy, responsable exploitation chez Alexis +"
     },
     {
       imageComponent: VirImage,
-      sentence:
-        "«Nous n'utilisons plus que Mobilic pour le suivi du temps de travail. Nos collaborateurs l'ont adopté sans difficulté.»",
+      sentence: (
+        <span>
+          « Nous n'utilisons plus que Mobilic pour le suivi du temps de travail.
+          Nos collaborateurs l'ont adopté sans difficulté. »<br />
+          <br />
+        </span>
+      ),
       author: "Raphaël Grenom, directeur de l'agence VIR Dijon"
     },
     {
       imageComponent: BretagneMaceDemenagementImage,
-      sentence:
-        "«C'est un gain de temps considérable. Les salariés sont autonomes et le suivi du côté de l'exploitant est facile.»",
+      sentence: (
+        <span>
+          « C'est un gain de temps considérable. Les salariés sont autonomes et
+          le suivi du côté de l'exploitant est facile. »<br />
+          <br />
+        </span>
+      ),
       author: "Yoann Macé, gérant chez Bretagne Macé déménagement"
     }
   ];
@@ -120,7 +138,13 @@ export function TalkingAboutUsSection() {
       posterKey: "resources/videos/testimonials/raphael_grenom.jpg"
     },
     {
-      title: "Yoann Macé, gérant d'une entreprise de déménagement",
+      title: (
+        <span>
+          Yoann Macé,
+          <br />
+          gérant d'une entreprise de déménagement
+        </span>
+      ),
       videoKey: "resources/videos/testimonials/yoann_mace.mp4",
       posterKey: "resources/videos/testimonials/yoann_mace.jpg"
     },
@@ -131,7 +155,15 @@ export function TalkingAboutUsSection() {
       posterKey: "resources/videos/testimonials/jeremy_cohen_boulakia.jpg"
     },
     {
-      title: "Nicolas K'bidi, déménageur",
+      title: (
+        <span>
+          Nicolas K'bidi,
+          <br />
+          déménageur
+          <br />
+          <br />
+        </span>
+      ),
       videoKey: "resources/videos/testimonials/nicolas_kbidi.mp4",
       posterKey: "resources/videos/testimonials/nicolas_kbidi.jpg"
     }
@@ -180,6 +212,7 @@ export function TalkingAboutUsSection() {
             key={article.link}
             ImageComponent={article.imageComponent}
             articleLink={article.link}
+            buttonLabel={article.buttonLabel}
           />
         ))}
       </Carousel>

@@ -20,7 +20,10 @@ export const resourceCardsClasses = makeStyles(theme => ({
   },
   pressCard: {
     borderRadius: 10,
-    padding: theme.spacing(2),
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
     borderColor: theme.palette.primary.main,
     marginRight: theme.spacing(1),
     marginLeft: theme.spacing(1),
