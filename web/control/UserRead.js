@@ -26,7 +26,6 @@ import { UserReadInfo } from "./components/UserReadInfo";
 import { UserReadHistory } from "./components/UserReadHistory";
 import { TextWithBadge } from "../common/TextWithBadge";
 import { UserReadAlerts } from "./components/UserReadAlerts";
-import { computeAlerts } from "common/utils/regulation/computeAlerts";
 import { getDaysBetweenTwoDates } from "common/utils/time";
 import { getRegulationComputationsAndAlertNumber } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
 
@@ -74,7 +73,6 @@ export function UserRead() {
   const [coworkers, setCoworkers] = React.useState(null);
   const [vehicles, setVehicles] = React.useState(null);
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
-  const [groupedAlerts, setGroupedAlerts] = React.useState([]);
   const [workingDays, setWorkingDays] = React.useState(new Set([]));
   const [
     regulationComputationsByDay,
@@ -163,13 +161,6 @@ export function UserRead() {
             ).forEach(day => userWorkingDays.add(day))
           );
           setWorkingDays(userWorkingDays);
-          setGroupedAlerts(
-            computeAlerts(
-              missions_,
-              (new Date(tokenInfo.historyStartDay).getTime() / 1000) >> 0,
-              (new Date(tokenInfo.creationDay) / 1000) >> 0
-            )
-          );
           const _vehicles = {};
           userPayload.employments.forEach(e => {
             e.company.vehicles.forEach(v => {
@@ -203,17 +194,7 @@ export function UserRead() {
     setAlertNumber(res.alertNumber);
   }, [userInfo]);
 
-  const legacyAlertNumber = groupedAlerts.reduce(
-    (acc, group) => acc + group.alerts.length,
-    0
-  );
-
-  const usedAlertNumber =
-    process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1"
-      ? alertNumber
-      : legacyAlertNumber;
-
-  const TABS = getTabs(usedAlertNumber);
+  const TABS = getTabs(alertNumber);
 
   return [
     <Header key={1} disableMenu />,
@@ -227,8 +208,7 @@ export function UserRead() {
       <UserReadTabs
         key={1}
         tabs={TABS}
-        groupedAlerts={groupedAlerts}
-        alertNumber={usedAlertNumber}
+        alertNumber={alertNumber}
         userInfo={userInfo}
         tokenInfo={tokenInfo}
         controlTime={controlTime}

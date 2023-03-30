@@ -41,7 +41,6 @@ export function Day({
   coworkers,
   vehicles,
   userId,
-  weekActivities,
   controlId = null
 }) {
   const infoCardStyles = useInfoCardStyles();
@@ -144,7 +143,6 @@ export function Day({
         activitiesWithNextAndPreviousDay={userActivitiesToUse}
         isDayEnded={true}
         dayStart={selectedPeriodStart}
-        weekActivities={weekActivities}
         prefetchedRegulationComputation={
           currentControllerId() ? regulationComputationToUse : null
         }
