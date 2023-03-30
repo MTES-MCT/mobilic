@@ -142,16 +142,14 @@ export function IntroSection() {
 
   return (
     <Container maxWidth={false} className={classes.heroContainer}>
-      {process.env.REACT_APP_SHOW_CONTROLLER_APP === "1" && (
-        <Alert severity="info" className={classes.agentConnectAlert}>
-          Accès Agent Public :{" "}
-          <Link variant="login controleur" to="/controller-login">
-            <span className={classes.agentConnectLink}>
-              se connecter à mon espace
-            </span>
-          </Link>
-        </Alert>
-      )}
+      <Alert severity="info" className={classes.agentConnectAlert}>
+        Accès Agent Public :{" "}
+        <Link variant="login controleur" to="/controller-login">
+          <span className={classes.agentConnectLink}>
+            se connecter à mon espace
+          </span>
+        </Link>
+      </Alert>
       <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
         <Grid container direction="row" className={classes.leftBlockIntro}>
           <Grid item xs={12} marginTop={4}>
