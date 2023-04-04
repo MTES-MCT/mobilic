@@ -3,7 +3,6 @@ import {
   splitByLongBreaksAndComputePeriodStats,
   WorkTimeSummaryKpiGrid
 } from "../WorkTimeSummary";
-import { DayRegulationInfo } from "../../../common/DayRegulationInfo";
 import { ItalicWarningTypography } from "./ItalicWarningTypography";
 import { MissionReviewSection } from "../MissionReviewSection";
 import { ActivityList } from "../ActivityList";
@@ -15,7 +14,6 @@ import { DayRegulatoryAlerts } from "../../../regulatory/DayRegulatoryAlerts";
 export function DaySummary({
   isDayEnded,
   activitiesWithNextAndPreviousDay,
-  weekActivities,
   dayStart,
   userId,
   loading = false,
@@ -39,41 +37,20 @@ export function DaySummary({
           m => m.name !== "workedDays"
         )}
       />
-      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS !== "1" && (
-        <InfoCard loading={loading} className={infoCardStyles.topMargin}>
-          {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
-            <DayRegulationInfo
-              activitiesOverCurrentPastAndNextDay={
-                activitiesWithNextAndPreviousDay
-              }
-              dayStart={dayStart}
-              weekActivities={weekActivities}
-            />
-          ) : (
-            <ItalicWarningTypography>
-              Mission en cours !
-            </ItalicWarningTypography>
-          )}
-        </InfoCard>
-      )}
-      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
-        <InfoCard className={infoCardStyles.topMargin}>
-          {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
-            <DayRegulatoryAlerts
-              day={isoFormatLocalDate(dayStart)}
-              userId={userId}
-              shouldDisplayInitialEmployeeVersion={
-                shouldDisplayInitialEmployeeVersion
-              }
-              prefetchedRegulationComputation={prefetchedRegulationComputation}
-            />
-          ) : (
-            <ItalicWarningTypography>
-              Mission en cours !
-            </ItalicWarningTypography>
-          )}
-        </InfoCard>
-      )}
+      <InfoCard className={infoCardStyles.topMargin}>
+        {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
+          <DayRegulatoryAlerts
+            day={isoFormatLocalDate(dayStart)}
+            userId={userId}
+            shouldDisplayInitialEmployeeVersion={
+              shouldDisplayInitialEmployeeVersion
+            }
+            prefetchedRegulationComputation={prefetchedRegulationComputation}
+          />
+        ) : (
+          <ItalicWarningTypography>Mission en cours !</ItalicWarningTypography>
+        )}
+      </InfoCard>
       <InfoCard className={infoCardStyles.topMargin}>
         <MissionReviewSection
           title="Activités de la journée"

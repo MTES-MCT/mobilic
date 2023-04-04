@@ -141,7 +141,7 @@ export const ROUTES = [
   {
     path: "/controller-login",
     label: "Connexion Agent",
-    accessible: () => process.env.REACT_APP_SHOW_CONTROLLER_APP === "1",
+    accessible: () => true,
     component: LoginController,
     menuItemFilter: () => false
   },

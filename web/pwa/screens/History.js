@@ -357,17 +357,6 @@ export function History({
   const periods = periodsByPeriodUnit[currentTab] || [];
 
   const missionsInSelectedPeriod = groupedMissions[selectedPeriod];
-  const activitiesBefore = selectedPeriod
-    ? activities.filter(a => a.startTime < selectedPeriod)
-    : [];
-  const previousPeriodActivityEnd =
-    activitiesBefore.length > 0
-      ? Math.min(
-          selectedPeriod,
-          Math.max(...activitiesBefore.map(a => a.endTime))
-        )
-      : null;
-
   const selectedPeriodEnd = moment
     .unix(selectedPeriod)
     .add(tabs[currentTab].periodLength)
@@ -566,7 +555,6 @@ export function History({
               getStartOfWeek(selectedPeriod) - DAY,
               getStartOfWeek(selectedPeriod) + WEEK + DAY
             ),
-            previousPeriodActivityEnd,
             editActivityEvent,
             createActivity,
             editExpenditures,
