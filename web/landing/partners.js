@@ -8,9 +8,6 @@ import { Header } from "../common/Header";
 import { Footer } from "./footer";
 import { PaperContainerTitle } from "../common/PaperContainer";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
-import BetagouvLogo from "common/assets/images/betagouvlogo.png";
-import Emoji from "../common/Emoji";
-import { Link } from "../common/LinkButton";
 
 // This condition actually should detect if it's a Node environment
 if (typeof require.context === "undefined") {
@@ -89,32 +86,23 @@ const useStyles = makeStyles(theme => ({
   cta: {
     marginTop: theme.spacing(4)
   },
-  paragraph: {
-    marginBottom: theme.spacing(2)
-  },
-  list: {
-    listStyleType: "none",
-    paddingLeft: 0
-  },
   title: {
     marginBottom: theme.spacing(6)
   },
-  logoSection: {
-    display: "flex",
-    flexDirection: "column",
-    [theme.breakpoints.up("md")]: {
-      flexDirection: "row"
-    },
-    gap: theme.spacing(4),
-    alignItems: "center"
+  paragraphDescription: {
+    textAlign: "left",
+    marginBottom: theme.spacing(6)
   },
   sponsorImage: {
     height: 80,
     [theme.breakpoints.up("md")]: {
-      height: 160
+      height: 120
     }
   },
   partnerImage: {
+    height: 60
+  },
+  interfacedImage: {
     height: 60,
     [theme.breakpoints.up("md")]: {
       height: 80
@@ -132,202 +120,119 @@ export function Partners() {
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth={false}
     >
-      <Container maxWidth="md" className={classes.inner}>
+      <Container maxWidth="lg" className={classes.inner}>
         <Box>
-          <PaperContainerTitle>
-            Mobilic, un label ? <Emoji emoji="🤝" ariaLabel="Partenariat" />
+          <PaperContainerTitle variant="h1" className={classes.title}>
+            Qui sont les partenaires de Mobilic
           </PaperContainerTitle>
         </Box>
-        <Box className={classes.logoSection}>
-          <Box className={classes.whiteSection}>
-            <img alt="beta.gouv" src={BetagouvLogo} height={200} />
-          </Box>
-          <Typography align="justify">
-            Mobilic s’est fixé comme mission principale de{" "}
-            <strong>
-              lutter contre le travail illégal dans le transport léger
-            </strong>
-            . Cette mission, complexe et ambitieuse, comprend à ce titre un
-            double objectif: garantir aux salariés le respect de leurs droits
-            mais également limiter la concurrence déloyale très souvent permise
-            par le dumping social.
-          </Typography>
-        </Box>
-        <Box my={10} style={{ textAlign: "justify" }}>
-          <Typography variant="h4" className={classes.title}>
-            Les entreprises partenaires de Mobilic: des entreprises
-            respectueuses des droits sociaux ?
-          </Typography>
-          <Typography>
-            Mobilic{" "}
-            <strong>
-              garantit que son entreprise partenaire répond aux exigences
-              suivantes
-            </strong>{" "}
-            :
-          </Typography>
-          <ul>
-            <li>
-              <Typography>
-                une saisie du temps de travail en temps réel et une traçabilité
-                des modifications qui limitent les possibilités de fraude.
-              </Typography>
-            </li>
-            <li>
-              <Typography>
-                une totale transparence auprès des salariés sur leur temps de
-                travail qui leur permet de contrôler la cohérence avec leur
-                fiche de paye.
-              </Typography>
-            </li>
-          </ul>
-          <Typography>
-            L’engagement des entreprises partenaires de Mobilic démontre leur
-            engagement en matière de responsabilité sociale et environnementale.
-          </Typography>
-        </Box>
-        <Box my={10}>
-          <Typography variant="h4" className={classes.title}>
-            Ils soutiennent Mobilic
-          </Typography>
-          <Grid
-            container
-            justifyContent="space-evenly"
-            alignItems="center"
-            spacing={{ xs: 2, sm: 4, md: 7 }}
-          >
-            {sponsorsSrcs.keys().map(src => (
-              <Grid item key={src}>
-                <img
-                  alt={src}
-                  src={sponsorsSrcs(src)}
-                  className={classes.sponsorImage}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-        <Box my={10}>
-          <Typography variant="h4" className={classes.title}>
-            Ils sont partenaires de Mobilic
-          </Typography>
-          <Grid
-            container
-            justifyContent="space-evenly"
-            alignItems="center"
-            spacing={{ xs: 2, sm: 4, md: 7 }}
-          >
-            {partnersSrcs.keys().map(src => (
-              <Grid item key={src}>
-                <img
-                  alt={src}
-                  src={partnersSrcs(src)}
-                  className={classes.partnerImage}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-        <Grid container spacing={8} style={{ textAlign: "justify" }}>
-          <Grid item sm={6}>
-            <Typography className="bold">
-              Quels avantages d'être partenaires ?
+        <Grid container spacing={15}>
+          <Grid item xs={12} md={6}>
+            <Typography variant="h2" className={classes.title}>
+              Les entreprises
             </Typography>
-            <ul className={classes.list}>
-              <li>
-                <Typography>
-                  <Emoji emoji="✅" ariaLabel="Avantage" /> Mise en visibilité
-                  lors des diverses communications de l’équipe Mobilic (lettre
-                  d'information, présentations) et via le référencement sur le
-                  site Mobilic via la page "Partenaires".
-                </Typography>
-              </li>
-              <li>
-                <Typography>
-                  <Emoji emoji="✅" ariaLabel="Avantage" /> Participation à des
-                  ateliers exclusifs sur le produit à travers notre comité
-                  produit restreint.
-                </Typography>
-              </li>
-              <li>
-                <Typography>
-                  <Emoji emoji="✅" ariaLabel="Avantage" /> Accès à des
-                  informations privilégiées sur l'avancement et les évolutions
-                  autour du produit.
-                </Typography>
-              </li>
-            </ul>
+            <Typography className={classes.paragraphDescription}>
+              Les entreprises partenaires{" "}
+              <strong>utilisent Mobilic de manière active</strong>, c'est à dire
+              qu'au moins 75% de leurs salariés inscrits sur Mobilic s'en
+              servent au quotidien.
+            </Typography>
+            <Grid
+              container
+              justifyContent="space-evenly"
+              alignItems="center"
+              spacing={{ xs: 2, md: 4 }}
+            >
+              {partnersSrcs.keys().map(src => (
+                <Grid item key={src}>
+                  <img
+                    alt={src}
+                    src={partnersSrcs(src)}
+                    className={classes.partnerImage}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+            <MainCtaButton
+              aria-label="Devenir partenaire"
+              className={classes.cta}
+              href="mailto:mobilic@beta.gouv.fr"
+            >
+              Devenir partenaire
+            </MainCtaButton>
           </Grid>
-          <Grid item sm={6}>
-            <Typography className="bold">Quels engagements ?</Typography>
-            <ul className={classes.list}>
-              <li>
-                <Typography>
-                  <Emoji emoji="👉" ariaLabel="Information" /> L’entreprise
-                  utilise Mobilic activement, c’est à dire que plus 75% de ses
-                  salariés l’utilisent pour suivre leur temps de travail.
-                </Typography>
-              </li>
-              <li>
-                <Typography>
-                  <Emoji emoji="👉" ariaLabel="Information" /> L’entreprise
-                  s’engage “moralement” à donner du feedback sur l’utilisation
-                  et l’amélioration de l’outil.
-                </Typography>
-              </li>
-            </ul>
+          <Grid item xs={12} md={6}>
+            <Box marginBottom={16}>
+              <Typography variant="h2" className={classes.title}>
+                Les éditeurs de logiciels
+              </Typography>
+              <Typography className={classes.paragraphDescription}>
+                Les éditeurs de logiciels partenaires sont{" "}
+                <strong>
+                  interfacés avec{" "}
+                  <span style={{ whiteSpace: "nowrap" }}>l'API Mobilic :</span>
+                </strong>
+                <ul>
+                  <li>
+                    Les logiciels de suivi du temps de travail envoient
+                    automatiquement à Mobilic les données enregistrées par les
+                    salariés, ce qui leur permet d'être confirmes à la
+                    réglementation en cas de contrôle ;
+                  </li>
+                  <li>
+                    Les autres logiciels récupèrent automatiquement les données
+                    enregistrées dans Mobilic pour établir des bulletins de paie
+                    ou aider à la gestion des effectifs de leurs clients
+                  </li>
+                </ul>
+              </Typography>
+              <Grid
+                container
+                justifyContent="space-evenly"
+                alignItems="center"
+                spacing={{ xs: 2, sm: 4 }}
+              >
+                {interfacedSrcs.keys().map(src => (
+                  <Grid item key={src}>
+                    <img
+                      alt={src}
+                      src={interfacedSrcs(src)}
+                      className={classes.interfacedImage}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+              <MainCtaButton
+                aria-label="S'interfacer avec Mobilic"
+                className={classes.cta}
+                href="mailto:mobilic@beta.gouv.fr"
+              >
+                S'interfacer avec MOBILIC
+              </MainCtaButton>
+            </Box>
+            <Box>
+              <Typography variant="h2" className={classes.title}>
+                Les différents soutiens
+              </Typography>
+              <Grid
+                container
+                justifyContent="space-evenly"
+                alignItems="center"
+                spacing={{ xs: 2, sm: 4 }}
+              >
+                {sponsorsSrcs.keys().map(src => (
+                  <Grid item key={src}>
+                    <img
+                      alt={src}
+                      src={sponsorsSrcs(src)}
+                      className={classes.sponsorImage}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
           </Grid>
         </Grid>
-        <MainCtaButton
-          aria-label="Devenir partenaire"
-          className={classes.cta}
-          href="mailto:mobilic@beta.gouv.fr"
-        >
-          Devenir partenaire
-        </MainCtaButton>
-        <Box my={10}>
-          <Typography variant="h4" className={classes.title}>
-            Ils sont interfacés avec Mobilic
-          </Typography>
-          <Grid
-            container
-            justifyContent="space-evenly"
-            alignItems="center"
-            spacing={{ xs: 2, sm: 4, md: 7 }}
-          >
-            {interfacedSrcs.keys().map(src => (
-              <Grid item key={src}>
-                <img
-                  alt={src}
-                  src={interfacedSrcs(src)}
-                  className={classes.partnerImage}
-                />
-              </Grid>
-            ))}
-          </Grid>
-          <Grid pt={6}>
-            <Typography align="justify" className={classes.paragraph}>
-              Les logiciels interfacés avec Mobilic communiquent de manière
-              instantanée avec ce dernier : s'il s'agit d'outils de suivi du
-              temps de travail, ils envoient les données enregistrées par les
-              salariés à Mobilic, ce qui leur permet d'être conformes à la
-              réglementation en cas de contrôle. Inversement, ces logiciels
-              peuvent aussi récupérer les données enregistrées directement dans
-              Mobilic pour établir des bulletins de paie ou gérer vos effectifs
-              sans ressaisie de la part du responsable d'exploitation.
-            </Typography>
-            <Typography align="justify" className={classes.paragraph}>
-              Si vous êtes une entreprise souhaitant interfacer son logiciel de
-              gestion avec Mobilic, mettez-le en contact avec nous :
-              <Link href="mailto:mobilic@beta.gouv.fr">
-                {" "}
-                mobilic@beta.gouv.fr
-              </Link>
-              . Si vous êtes un logiciel, écrivez-nous à la même adresse pour
-              vous interfacer.
-            </Typography>
-          </Grid>
-        </Box>
       </Container>
     </Container>,
     <Footer key={3} />
