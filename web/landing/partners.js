@@ -176,7 +176,7 @@ export function Partners() {
                   <li>
                     Les logiciels de suivi du temps de travail envoient
                     automatiquement à Mobilic les données enregistrées par les
-                    salariés, ce qui leur permet d'être confirmes à la
+                    salariés, ce qui leur permet d'être conformes à la
                     réglementation en cas de contrôle ;
                   </li>
                   <li>
