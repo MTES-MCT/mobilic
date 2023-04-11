@@ -207,7 +207,7 @@ export function Partners() {
                 className={classes.cta}
                 href="mailto:mobilic@beta.gouv.fr"
               >
-                S'interfacer avec MOBILIC
+                S'interfacer avec Mobilic
               </MainCtaButton>
             </Box>
             <Box>
