@@ -166,7 +166,10 @@ export function Partners() {
               <Typography variant="h2" className={classes.title}>
                 Les éditeurs de logiciels
               </Typography>
-              <Typography className={classes.paragraphDescription}>
+              <Typography
+                className={classes.paragraphDescription}
+                component="div"
+              >
                 Les éditeurs de logiciels partenaires sont{" "}
                 <strong>
                   interfacés avec{" "}
