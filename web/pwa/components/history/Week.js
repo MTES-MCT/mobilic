@@ -4,8 +4,6 @@ import {
   splitByLongBreaksAndComputePeriodStats,
   WorkTimeSummaryKpiGrid
 } from "../WorkTimeSummary";
-import { RegulationCheck } from "../RegulationCheck";
-import { checkMinimumDurationOfWeeklyRest } from "common/utils/regulation/rules";
 import { MissionReviewSection } from "../MissionReviewSection";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -24,10 +22,8 @@ export function Week({
   selectedPeriodStart,
   selectedPeriodEnd,
   handleMissionClick,
-  previousPeriodActivityEnd,
   regulationComputationsInPeriod,
-  userId,
-  controlId
+  userId
 }) {
   const infoCardStyles = useInfoCardStyles();
 
@@ -46,29 +42,15 @@ export function Week({
       <WorkTimeSummaryKpiGrid
         metrics={renderPeriodKpis(stats).filter(m => m.name !== "service")}
       />
-      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS !== "1" && (
-        <InfoCard className={infoCardStyles.topMargin}>
-          <RegulationCheck
-            check={checkMinimumDurationOfWeeklyRest(
-              stats.workedDays,
-              stats.innerLongBreaks,
-              stats.startTime,
-              previousPeriodActivityEnd
-            )}
-          />
-        </InfoCard>
-      )}
-      {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
-        <InfoCard className={infoCardStyles.topMargin}>
-          <WeekRegulatoryAlerts
-            userId={userId}
-            day={isoFormatLocalDate(selectedPeriodStart)}
-            prefetchedRegulationComputation={
-              currentControllerId() ? regulationComputation : null
-            }
-          />
-        </InfoCard>
-      )}
+      <InfoCard className={infoCardStyles.topMargin}>
+        <WeekRegulatoryAlerts
+          userId={userId}
+          day={isoFormatLocalDate(selectedPeriodStart)}
+          prefetchedRegulationComputation={
+            currentControllerId() ? regulationComputation : null
+          }
+        />
+      </InfoCard>
       <InfoCard className={infoCardStyles.topMargin}>
         <MissionReviewSection
           title="Détail par mission"

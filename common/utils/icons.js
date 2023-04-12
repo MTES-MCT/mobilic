@@ -19,6 +19,16 @@ import _ControllerImage from "../assets/images/controller1.png";
 import _AgentConnectImage from "../assets/images/agentconnect.svg";
 import _MobilicQrCode from "../assets/images/mobilic-qrcode.svg";
 import _NoDataImage from "../assets/images/no-data.png";
+import _AxecImage from "../assets/images/press-logos/axec.png";
+import _ActuTransportLogistiqueImage from "../assets/images/press-logos/actuTransportLogistique.png";
+import _EcoLogisticsImage from "../assets/images/press-logos/ecologistics.jpg";
+import _FlottesAutomobilesImage from "../assets/images/press-logos/flottes-automobiles.jpg";
+import _HubInstituteImage from "../assets/images/press-logos/hubInstitute.png";
+import _RadioSupplyChainImage from "../assets/images/press-logos/radio_supply_chain.png";
+import _SupplyChainVillageImage from "../assets/images/press-logos/supply_chain_village.jpg";
+import _VirImage from "../assets/images/testimonials-logos/vir.jpg";
+import _AlexisDemenagementImage from "../assets/images/testimonials-logos/alexis_plus.jpg";
+import _BretagneMaceDemenagementImage from "../assets/images/testimonials-logos/bretagne_mace_demenagement.jpg";
 
 export function MobilicLogoFilledIcon(props) {
   return (
@@ -141,6 +151,66 @@ export function ControllerImage(props) {
 
 export function AgentConnectImage(props) {
   return <img alt="agent connect" src={_AgentConnectImage} {...props} />;
+}
+
+export function AxecImage(props) {
+  return <img alt="AXEC" src={_AxecImage} {...props} />;
+}
+
+export function ActuTransportLogistiqueImage(props) {
+  return (
+    <img
+      alt="Actu Transport Logistique"
+      src={_ActuTransportLogistiqueImage}
+      {...props}
+    />
+  );
+}
+
+export function EcoLogisticsImage(props) {
+  return <img alt="Eco Logistique" src={_EcoLogisticsImage} {...props} />;
+}
+
+export function FlottesAutomobilesImage(props) {
+  return (
+    <img alt="Flottes Automobiles" src={_FlottesAutomobilesImage} {...props} />
+  );
+}
+
+export function HubInstituteImage(props) {
+  return <img alt="Hub Institute" src={_HubInstituteImage} {...props} />;
+}
+
+export function RadioSupplyChainImage(props) {
+  return (
+    <img alt="Radio Supply Chain" src={_RadioSupplyChainImage} {...props} />
+  );
+}
+
+export function SupplyChainVillageImage(props) {
+  return (
+    <img alt="Supply Chain Village" src={_SupplyChainVillageImage} {...props} />
+  );
+}
+
+export function VirImage(props) {
+  return <img alt="Vir" src={_VirImage} {...props} />;
+}
+
+export function AlexisDemenagementImage(props) {
+  return (
+    <img alt="Alexis Déménagement" src={_AlexisDemenagementImage} {...props} />
+  );
+}
+
+export function BretagneMaceDemenagementImage(props) {
+  return (
+    <img
+      alt="Bretagne Macé Déménagement"
+      src={_BretagneMaceDemenagementImage}
+      {...props}
+    />
+  );
 }
 
 export function FranceConnectIcon(props) {

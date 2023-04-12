@@ -6,8 +6,7 @@ import {
   augmentAndSortMissions,
   parseMissionPayloadFromBackend
 } from "common/utils/mission";
-import { jsToUnixTimestamp, unixToJSTimestamp } from "common/utils/time";
-import { computeAlerts } from "common/utils/regulation/computeAlerts";
+import { unixToJSTimestamp } from "common/utils/time";
 import { orderEmployments } from "common/utils/employments";
 import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
@@ -18,13 +17,11 @@ import { computeNumberOfAlerts } from "common/utils/regulation/computeNumberOfAl
 
 export function ControllerControlDetails({ controlId, onClose }) {
   const [controlData, setControlData] = React.useState({});
-  const [groupedAlerts, setGroupedAlerts] = React.useState([]);
   const [employments, setEmployments] = React.useState([]);
   const [vehicles, setVehicles] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
   const [coworkers, setCoworkers] = React.useState([]);
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
-  const [legacyAlertNumber, setLegacyAlertNumber] = React.useState(0);
 
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
@@ -85,25 +82,11 @@ export function ControllerControlDetails({ controlId, onClose }) {
         });
       });
       setCoworkers(_coworkers);
-
-      const _groupedAlerts = computeAlerts(
-        _missions,
-        jsToUnixTimestamp(new Date(controlData.historyStartDate).getTime()),
-        controlData.qrCodeGenerationTime
-      );
-      setGroupedAlerts(_groupedAlerts);
     } else {
       setMissions([]);
       setCoworkers([]);
-      setGroupedAlerts([]);
     }
   }, [controlData]);
-
-  React.useEffect(() => {
-    setLegacyAlertNumber(
-      groupedAlerts.reduce((acc, group) => acc + group.alerts.length, 0)
-    );
-  }, [groupedAlerts]);
 
   const alertNumber = React.useMemo(() => {
     if (!controlData || !controlData.regulationComputationsByDay) {
@@ -111,11 +94,6 @@ export function ControllerControlDetails({ controlId, onClose }) {
     }
     return computeNumberOfAlerts(controlData.regulationComputationsByDay);
   }, [controlData]);
-
-  const usedAlertNumber =
-    process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1"
-      ? alertNumber
-      : legacyAlertNumber;
 
   return [
     <ControllerControlHeader
@@ -126,10 +104,9 @@ export function ControllerControlDetails({ controlId, onClose }) {
     />,
     <UserReadTabs
       key={1}
-      tabs={getTabs(usedAlertNumber)}
+      tabs={getTabs(alertNumber)}
       regulationComputationsByDay={controlData.regulationComputationsByDay}
-      groupedAlerts={groupedAlerts} // TODO to remove <<<
-      alertNumber={usedAlertNumber}
+      alertNumber={alertNumber}
       userInfo={controlData.user}
       tokenInfo={legacyTokenInfo}
       controlTime={controlData.qrCodeGenerationTime}

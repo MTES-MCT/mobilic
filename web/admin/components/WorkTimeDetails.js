@@ -25,7 +25,6 @@ import {
   prettyFormatDay,
   WEEK
 } from "common/utils/time";
-import { DayRegulationInfo } from "../../common/DayRegulationInfo";
 import { MetricCard } from "../../common/InfoCard";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ExpendituresCard } from "./ExpendituresCard";
@@ -39,8 +38,6 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   const classes = useStyles();
   const api = useApi();
   const [dayActivities, setDayActivities] = React.useState([]);
-  const [weekActivities, setWeekActivities] = React.useState([]);
-  const [activitiesOver3Days, setActivitiesOver3Days] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const { trackEvent } = useMatomo();
@@ -132,22 +129,6 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
         activitiesWithBreaks,
         workTimeEntry.periodStart,
         periodEnd.getTime() / 1000
-      );
-
-      setWeekActivities(
-        filterActivitiesOverlappingPeriod(
-          allActivities,
-          getStartOfWeek(workTimeEntry.periodActualStart),
-          getStartOfWeek(periodActualEnd) + WEEK
-        )
-      );
-
-      setActivitiesOver3Days(
-        filterActivitiesOverlappingPeriod(
-          allActivities,
-          workTimeEntry.periodActualStart - DAY,
-          periodActualEnd + DAY
-        )
       );
 
       setDayActivities(augmentedAndSortedActivities);
@@ -242,46 +223,29 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
             />
           </Grid>
         </Grid>
-        {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS !== "1" && (
-          <Grid item xs={12} sm={8}>
-            <MissionInfoCard
-              title="Seuils réglementaires"
-              loading={loading}
-              className={classes.regulatoryAlertCard}
-            >
-              <DayRegulationInfo
-                activitiesOverCurrentPastAndNextDay={activitiesOver3Days}
-                weekActivities={weekActivities}
-                dayStart={workTimeEntry.periodStart}
-              />
-            </MissionInfoCard>
-          </Grid>
-        )}
-        {process.env.REACT_APP_SHOW_BACKEND_REGULATION_COMPUTATIONS === "1" && (
-          <Grid item xs={12} sm={8}>
-            <MissionInfoCard
-              title="Seuils réglementaires"
-              className={classes.regulatoryAlertCard}
-            >
-              <div>Alertes quotidiennes</div>
-              <DayRegulatoryAlerts
-                userId={workTimeEntry.user.id}
-                day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
-              />
-              {getStartOfWeek(workTimeEntry.periodStart) ===
-                workTimeEntry.periodStart && (
-                <>
-                  <br></br>
-                  <div>Alertes hebdomadaires</div>
-                  <WeekRegulatoryAlerts
-                    userId={workTimeEntry.user.id}
-                    day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
-                  />
-                </>
-              )}
-            </MissionInfoCard>
-          </Grid>
-        )}
+        <Grid item xs={12} sm={8}>
+          <MissionInfoCard
+            title="Seuils réglementaires"
+            className={classes.regulatoryAlertCard}
+          >
+            <div>Alertes quotidiennes</div>
+            <DayRegulatoryAlerts
+              userId={workTimeEntry.user.id}
+              day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
+            />
+            {getStartOfWeek(workTimeEntry.periodStart) ===
+              workTimeEntry.periodStart && (
+              <>
+                <br></br>
+                <div>Alertes hebdomadaires</div>
+                <WeekRegulatoryAlerts
+                  userId={workTimeEntry.user.id}
+                  day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
+                />
+              </>
+            )}
+          </MissionInfoCard>
+        </Grid>
       </Grid>
       <Grid item xs={12}>
         <ExpendituresCard

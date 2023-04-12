@@ -200,32 +200,28 @@ export default function Login() {
             </Box>
           </form>
         </Box>
-        {process.env.REACT_APP_SHOW_CONTROLLER_APP === "1" && (
-          <>
-            <DividerWithText className={classes.dividerAgentConnect}>
-              OU
-            </DividerWithText>
-            <PaperContainerTitle variant="h3">
-              Connexion Contrôleurs
-            </PaperContainerTitle>
-            <Typography paragraph={true}>
-              Vous êtes Agent public de l'Etat ?
-            </Typography>
-            <Button
-              aria-label="Connexion contrôleur"
-              value="/controller-login"
-              variant="contained"
-              href="/controller-login"
-              onClick={e => {
-                e.preventDefault();
-                history.push("/controller-login");
-              }}
-              className={classes.loginControllerButton}
-            >
-              Je me connecte à mon espace dédié
-            </Button>
-          </>
-        )}
+        <DividerWithText className={classes.dividerAgentConnect}>
+          OU
+        </DividerWithText>
+        <PaperContainerTitle variant="h3">
+          Connexion Contrôleurs
+        </PaperContainerTitle>
+        <Typography paragraph={true}>
+          Vous êtes Agent public de l'Etat ?
+        </Typography>
+        <Button
+          aria-label="Connexion contrôleur"
+          value="/controller-login"
+          variant="contained"
+          href="/controller-login"
+          onClick={e => {
+            e.preventDefault();
+            history.push("/controller-login");
+          }}
+          className={classes.loginControllerButton}
+        >
+          Je me connecte à mon espace dédié
+        </Button>
       </Container>
     </PaperContainer>
   ];
