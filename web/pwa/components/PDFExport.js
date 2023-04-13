@@ -64,7 +64,7 @@ export default function PDFExport({ open, handleClose }) {
     if (
       maxDate &&
       minDate &&
-      maxDate.getTime() - minDate.getTime() > 365 * DAY * 1000
+      maxDate.getTime() - minDate.getTime() >= 365 * DAY * 1000
     ) {
       setDateRangeError(
         "La période sélectionnée doit être inférieure à 12 mois !"
@@ -83,8 +83,8 @@ export default function PDFExport({ open, handleClose }) {
       <DialogContent>
         <Typography gutterBottom>
           Vous pouvez exporter au format PDF votre{" "}
-          <strong>relevé d'heures</strong> Mobilic sur la période de votre
-          choix.
+          <strong>relevé d'heures</strong> Mobilic sur les 3 dernières années.
+          Chaque export peut contenir 12 mois maximum.
         </Typography>
         <Grid spacing={4} container className={classes.grid}>
           <DateOrDateTimeRangeSelectionContext
