@@ -3,6 +3,7 @@ import Container from "@mui/material/Container";
 import { Header } from "../common/Header";
 import { makeStyles } from "@mui/styles";
 import { Footer } from "./footer";
+import Link from "@mui/material/Link";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -68,7 +69,7 @@ function AccessibilityDeclaration() {
       <ul className="basic-information feedback h-card">
         <li>
           E-mail&nbsp;:{" "}
-          <a href="mailto:mobilic@beta.gouv.fr">mobilic@beta.gouv.fr</a>
+          <Link href="mailto:mobilic@beta.gouv.fr">mobilic@beta.gouv.fr</Link>
         </li>
 
         <li>
@@ -95,15 +96,15 @@ function AccessibilityDeclaration() {
       <ul>
         <li>
           Écrire un message au{" "}
-          <a href="https://formulaire.defenseurdesdroits.fr/">
+          <Link href="https://formulaire.defenseurdesdroits.fr/">
             Défenseur des droits
-          </a>
+          </Link>
         </li>
         <li>
           Contacter{" "}
-          <a href="https://www.defenseurdesdroits.fr/saisir/delegues">
+          <Link href="https://www.defenseurdesdroits.fr/saisir/delegues">
             le délégué du Défenseur des droits dans votre région
-          </a>
+          </Link>
         </li>
         <li>
           Envoyer un courrier par la poste (gratuit, ne pas mettre de
@@ -118,9 +119,9 @@ function AccessibilityDeclaration() {
       <p>
         Cette déclaration d’accessibilité a été créé le{" "}
         <span>27 mars 2023</span> grâce au{" "}
-        <a href="https://betagouv.github.io/a11y-generateur-declaration/#create">
+        <Link href="https://betagouv.github.io/a11y-generateur-declaration/#create">
           Générateur de Déclaration d’Accessibilité de BetaGouv
-        </a>
+        </Link>
         .
       </p>
     </Container>
