@@ -25,6 +25,8 @@ import {
 } from "common/utils/time";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
+import { startOfMonth, subMonths } from "date-fns";
+import { MAX_NB_MONTHS_HISTORY } from "common/utils/mission";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -59,6 +61,9 @@ export default function PDFExport({ open, handleClose }) {
   const [dateRangeError, setDateRangeError] = React.useState(null);
 
   const today = new Date();
+  const firstHistoryDate = startOfMonth(
+    subMonths(new Date(), MAX_NB_MONTHS_HISTORY)
+  );
 
   React.useEffect(() => {
     if (
@@ -106,6 +111,7 @@ export default function PDFExport({ open, handleClose }) {
                 disableCloseOnSelect={false}
                 disableMaskedInput={true}
                 maxDate={today}
+                minDate={firstHistoryDate}
                 renderInput={props => (
                   <TextField
                     {...props}
@@ -130,6 +136,7 @@ export default function PDFExport({ open, handleClose }) {
                 disableCloseOnSelect={false}
                 disableMaskedInput={true}
                 maxDate={today}
+                minDate={firstHistoryDate}
                 renderInput={props => (
                   <TextField
                     {...props}
