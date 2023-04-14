@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Container from "@mui/material/Container";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
@@ -8,6 +8,8 @@ import { Header } from "../common/Header";
 import { Footer } from "./footer";
 import { PaperContainerTitle } from "../common/PaperContainer";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
+import { shuffle } from "lodash/collection";
+import { LoadingButton } from "common/components/LoadingButton";
 
 // This condition actually should detect if it's a Node environment
 if (typeof require.context === "undefined") {
@@ -112,6 +114,20 @@ const useStyles = makeStyles(theme => ({
 
 export function Partners() {
   const classes = useStyles();
+  const [partnersToShow, setPartnersToShow] = React.useState([]);
+  const [showAllPartners, setShowAllPartners] = React.useState(false);
+
+  const shuffledPartners = useMemo(() => {
+    return shuffle(partnersSrcs.keys());
+  }, []);
+
+  React.useEffect(() => {
+    if (showAllPartners) {
+      setPartnersToShow(shuffledPartners);
+    } else {
+      setPartnersToShow(shuffledPartners.slice(0, 12));
+    }
+  }, [shuffledPartners, showAllPartners]);
 
   return [
     <Header key={1} />,
@@ -123,18 +139,18 @@ export function Partners() {
       <Container maxWidth="lg" className={classes.inner}>
         <Box>
           <PaperContainerTitle variant="h1" className={classes.title}>
-            Qui sont les partenaires de Mobilic
+            Qui sont les partenaires de Mobilic ?
           </PaperContainerTitle>
         </Box>
-        <Grid container spacing={15}>
+        <Grid container spacing={14}>
           <Grid item xs={12} md={6}>
             <Typography variant="h2" className={classes.title}>
               Les entreprises
             </Typography>
             <Typography className={classes.paragraphDescription}>
               Les entreprises partenaires{" "}
-              <strong>utilisent Mobilic de manière active</strong>, c'est à dire
-              qu'au moins 75% de leurs salariés inscrits sur Mobilic s'en
+              <strong>utilisent Mobilic de manière active</strong>, c'est-à-dire
+              qu'au moins 60% de leurs salariés inscrits sur Mobilic s'en
               servent au quotidien.
             </Typography>
             <Grid
@@ -143,7 +159,7 @@ export function Partners() {
               alignItems="center"
               spacing={{ xs: 2, md: 4 }}
             >
-              {partnersSrcs.keys().map(src => (
+              {partnersToShow.map(src => (
                 <Grid item key={src}>
                   <img
                     alt={src}
@@ -153,13 +169,23 @@ export function Partners() {
                 </Grid>
               ))}
             </Grid>
-            <MainCtaButton
-              aria-label="Devenir partenaire"
-              className={classes.cta}
-              href="mailto:mobilic@beta.gouv.fr"
-            >
-              Devenir partenaire
-            </MainCtaButton>
+            {!showAllPartners && (
+              <LoadingButton
+                className={classes.cta}
+                onClick={() => setShowAllPartners(true)}
+              >
+                Voir plus
+              </LoadingButton>
+            )}
+            <div>
+              <MainCtaButton
+                aria-label="Devenir partenaire"
+                className={classes.cta}
+                href="mailto:mobilic@beta.gouv.fr"
+              >
+                Devenir partenaire
+              </MainCtaButton>
+            </div>
           </Grid>
           <Grid item xs={12} md={6}>
             <Box marginBottom={16}>
@@ -175,6 +201,8 @@ export function Partners() {
                   interfacés avec{" "}
                   <span style={{ whiteSpace: "nowrap" }}>l'API Mobilic :</span>
                 </strong>
+                <br />
+                <br />
                 <ul>
                   <li>
                     Les logiciels de suivi du temps de travail envoient
@@ -182,6 +210,7 @@ export function Partners() {
                     salariés, ce qui leur permet d'être conformes à la
                     réglementation en cas de contrôle ;
                   </li>
+                  <br />
                   <li>
                     Les autres logiciels récupèrent automatiquement les données
                     enregistrées dans Mobilic pour établir des bulletins de paie
