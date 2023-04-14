@@ -3,6 +3,7 @@ import { Landing } from "../landing/root";
 import Login from "../login/login";
 import Signup from "../signup/root";
 import Stats from "../landing/stats";
+import Accessibility from "../landing/accessibility";
 import Home from "../home/AccountInfo/AccountInfo";
 import { Invite } from "../signup/invite";
 import { RedeemInvite } from "../home/RedeemInvite";
@@ -150,6 +151,13 @@ export const ROUTES = [
     label: "Statistiques",
     accessible: () => true,
     component: Stats,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/accessibility",
+    label: "Déclaration d'accessibilité",
+    accessible: () => true,
+    component: Accessibility,
     menuItemFilter: () => false
   },
   {
