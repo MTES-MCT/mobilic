@@ -58,7 +58,6 @@ function AccessibilityDeclaration() {
         </abbr>
         . <span>Le site n’a encore pas été audité.</span>
       </p>
-      <h2>Contenus non accessibles</h2>
       <h2>Amélioration et contact</h2>
       <p>
         Si vous n’arrivez pas à accéder à un contenu ou à un service, vous
