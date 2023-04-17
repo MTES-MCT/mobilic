@@ -125,7 +125,7 @@ export function Partners() {
     if (showAllPartners) {
       setPartnersToShow(shuffledPartners);
     } else {
-      setPartnersToShow(shuffledPartners.slice(0, 12));
+      setPartnersToShow(shuffledPartners.slice(0, 16));
     }
   }, [shuffledPartners, showAllPartners]);
 
