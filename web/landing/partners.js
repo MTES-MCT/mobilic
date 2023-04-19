@@ -98,7 +98,7 @@ const useStyles = makeStyles(theme => ({
   sponsorImage: {
     height: 80,
     [theme.breakpoints.up("md")]: {
-      height: 120
+      height: 100
     }
   },
   partnerImage: {
