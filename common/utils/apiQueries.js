@@ -619,6 +619,8 @@ export const ADMIN_COMPANIES_LIST_QUERY = gql`
         id
         name
         siren
+        isCertified
+        allowCertificationCommunication
       }
     }
   }
