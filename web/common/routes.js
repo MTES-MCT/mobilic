@@ -4,6 +4,7 @@ import Login from "../login/login";
 import Signup from "../signup/root";
 import Stats from "../landing/stats";
 import Accessibility from "../landing/accessibility";
+import PrivacyPolicy from "../landing/privacyPolicy";
 import Home from "../home/AccountInfo/AccountInfo";
 import { Invite } from "../signup/invite";
 import { RedeemInvite } from "../home/RedeemInvite";
@@ -165,6 +166,13 @@ export const ROUTES = [
     label: "CGU",
     accessible: () => true,
     component: CGU,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/privacy",
+    label: "Gestion des cookies",
+    accessible: () => true,
+    component: PrivacyPolicy,
     menuItemFilter: () => false
   },
   {

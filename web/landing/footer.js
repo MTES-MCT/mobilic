@@ -66,6 +66,7 @@ export function Footer() {
           <FooterLink href="#" onClick={() => modals.open("cgu")}>
             Conditions générales d'utilisation
           </FooterLink>
+          <FooterLink href="/privacy">Gestion des cookies</FooterLink>
           <FooterLink href="/stats">Statistiques</FooterLink>
           <FooterLink
             href="https://developers.mobilic.beta.gouv.fr"
