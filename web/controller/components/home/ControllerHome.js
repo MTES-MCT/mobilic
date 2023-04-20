@@ -129,9 +129,7 @@ export function ControllerHome() {
           <ControllerHomeCard
             text={"Pas de LIC à bord"}
             icon={"fr-icon-alarm-warning-line fr-icon--lg"}
-            onClick={() =>
-              setModal({ isOpen: true, parcours: '"Pas de LIC à bord"' })
-            }
+            link={CONTROLLER_ROUTE_PREFIX + "/no_lic"}
           />
         </Grid>
       </Grid>
