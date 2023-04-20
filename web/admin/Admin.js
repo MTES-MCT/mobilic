@@ -111,7 +111,7 @@ function _Admin() {
                 companies?.filter(
                   company =>
                     !!company.isCertified &&
-                    company.allowCertificationCommunication === null
+                    company.acceptCertificationCommunication === null
                 )
               );
             },
@@ -190,6 +190,7 @@ function _Admin() {
       {companiesToAcceptCertificateCommunication?.length > 0 && (
         <CertificationCommunicationModal
           companies={companiesToAcceptCertificateCommunication}
+          onClose={() => setCompaniesToAcceptCertificateCommunication([])}
         />
       )}
       <Container

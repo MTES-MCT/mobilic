@@ -620,7 +620,7 @@ export const ADMIN_COMPANIES_LIST_QUERY = gql`
         name
         siren
         isCertified
-        allowCertificationCommunication
+        acceptCertificationCommunication
       }
     }
   }
@@ -2055,6 +2055,20 @@ export const THIRD_PARTY_CLIENT_EMPLOYMENT_ACCEPT = gql`
       clientId: $clientId
       employmentId: $employmentId
       invitationToken: $invitationToken
+    ) {
+      success
+    }
+  }
+`;
+
+export const EDIT_COMPANIES_COMMUNICATION_SETTING = gql`
+  mutation editCompanyCommunicationSetting(
+    $companyIds: [Int]!
+    $acceptCommunication: Boolean!
+  ) {
+    editCompanyCommunicationSetting(
+      companyIds: $companyIds
+      acceptCommunication: $acceptCommunication
     ) {
       success
     }

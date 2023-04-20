@@ -3,7 +3,7 @@ import DialogContent from "@mui/material/DialogContent";
 import Button from "@mui/material/Button";
 import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
-import { RESET_PASSWORD_CONNECTED_MUTATION } from "common/utils/apiQueries";
+import { EDIT_COMPANIES_COMMUNICATION_SETTING } from "common/utils/apiQueries";
 import React, { useMemo, useState } from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import {
@@ -26,7 +26,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function CertificationCommunicationModal({ companies }) {
+export default function CertificationCommunicationModal({
+  companies,
+  onClose
+}) {
   const classes = useStyles();
   const api = useApi();
   const alerts = useSnackbarAlerts();
@@ -57,21 +60,28 @@ export default function CertificationCommunicationModal({ companies }) {
     setLoading(true);
     await alerts.withApiErrorHandling(async () => {
       const companyIds = companies.map(c => c.id);
-      await api.graphQlMutate(RESET_PASSWORD_CONNECTED_MUTATION, {
-        acceptCommunication: accept,
-        companyIds: companyIds
-      });
-      setIsOpen(false);
+      await api.graphQlMutate(
+        EDIT_COMPANIES_COMMUNICATION_SETTING,
+        {
+          companyIds: companyIds,
+          acceptCommunication: accept
+        },
+        { context: { nonPublicApi: true } }
+      );
       alerts.success(
         "Vos préférences de communication ont bien été prises compte.",
         "",
         6000
       );
+      handleClose();
     }, "certification-communication");
     setLoading(false);
   };
 
-  const handleClose = () => setIsOpen(false);
+  const handleClose = () => {
+    setIsOpen(false);
+    onClose();
+  };
 
   return (
     <Dialog
