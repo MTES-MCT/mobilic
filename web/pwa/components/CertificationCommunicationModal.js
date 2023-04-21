@@ -69,7 +69,7 @@ export default function CertificationCommunicationModal({
         { context: { nonPublicApi: true } }
       );
       alerts.success(
-        "Vos préférences de communication ont bien été prises compte.",
+        "Vos préférences de communication ont bien été prises en compte.",
         "",
         6000
       );
