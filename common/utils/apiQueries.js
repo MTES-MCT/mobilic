@@ -799,8 +799,6 @@ export const ADMIN_COMPANIES_QUERY = gql`
         id
         name
         ...CompanySettings
-        isCertified
-        acceptCertificationCommunication
         users(fromDate: $activityAfter) {
           id
           firstName
@@ -2073,6 +2071,18 @@ export const EDIT_COMPANIES_COMMUNICATION_SETTING = gql`
       acceptCertificationCommunication: $acceptCertificationCommunication
     ) {
       success
+    }
+  }
+`;
+
+export const COMPANY_CERTIFICATION_COMMUNICATION_QUERY = gql`
+  query certificationInfo($companyId: Int!) {
+    company(id: $companyId) {
+      id
+      name
+      isCertified
+      acceptCertificationCommunication
+      lastDayCertified
     }
   }
 `;
