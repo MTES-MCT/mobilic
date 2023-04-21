@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2)
   },
   prioritaryModal: {
-    zIndex: 2500
+    zIndex: 2400
   }
 }));
 
