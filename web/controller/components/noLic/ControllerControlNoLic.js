@@ -1,34 +1,25 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
-import classNames from "classnames";
-import { Link } from "react-router-dom";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import AppBar from "@mui/material/AppBar";
 import TabPanel from "@mui/lab/TabPanel";
 import TabContext from "@mui/lab/TabContext";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import WarningAmberOutlinedIcon from "@mui/icons-material/WarningOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
-import EditIcon from "@mui/icons-material/Edit";
-import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import { Header } from "../../../common/Header";
 import { TextWithBadge } from "../../../common/TextWithBadge";
 import { ControllerControlNoLicInfractionsComponent } from "./ControllerControlNoLicInfractions";
 import { ControllerControlNoLicHistory } from "./ControllerControlNoLicHistory";
 import { ControllerControlNoLicInformations } from "./ControllerControlNoLicInformations";
+import { ControllerControlNoLicBottomMenu as BottomMenu } from "./ControllerControlNoLicBottomMenu";
+import { ControllerControlNoLicTopMenu as TopMenu } from "./ControllerControlNoLicTopMenu";
 
 const useStyles = makeStyles(theme => ({
   container: {
     padding: 0
-  },
-  topPart: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: theme.spacing(2)
   },
   middleTab: {
     flexGrow: 1.5
@@ -49,14 +40,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: "left",
     backgroundColor: theme.palette.background.paper
   },
-  hiddenPanel: { flexGrow: 0 },
-  bottomMenu: {
-    display: "flex",
-    flexDirection: "column",
-    padding: theme.spacing(2),
-    gap: theme.spacing(2),
-    alignItems: "center"
-  }
+  hiddenPanel: { flexGrow: 0 }
 }));
 
 const TABS = [
@@ -97,6 +81,13 @@ export function ControllerControlNoLic() {
   const [tab, setTab] = React.useState(TABS[0].name);
   const [infractions, setInfractions] = React.useState([]);
   const [notes, setNotes] = React.useState("");
+  const [
+    lastInfractionsEditionDate,
+    setLastInfractionsEditionDate
+  ] = React.useState(null);
+  const [isReportingInfractions, setIsReportingInfractions] = React.useState(
+    false
+  );
 
   React.useEffect(() => {
     setInfractions(
@@ -107,32 +98,38 @@ export function ControllerControlNoLic() {
     );
   }, []);
 
+  const reportInfraction = () => {
+    setIsReportingInfractions(true);
+    setTab(TABS[1].name);
+  };
+
+  const toggleInfraction = ({ code, selected }) => {
+    console.log("toggle infraction");
+    setInfractions(
+      infractions.map(infraction =>
+        infraction.code === code
+          ? {
+              ...infraction,
+              selected: !selected
+            }
+          : infraction
+      )
+    );
+  };
+
+  const saveInfractions = () => {
+    setIsReportingInfractions(false);
+    setLastInfractionsEditionDate(new Date());
+  };
+  const cancelInfractions = () => {
+    setIsReportingInfractions(false);
+  };
+
   return (
     <>
       <Header />
       <Container className={classes.container} maxWidth="xl">
-        <Box className={classes.topPart}>
-          <div>
-            <Link
-              className={classNames(
-                "fr-link",
-                "fr-fi-arrow-left-line",
-                "fr-link--icon-left"
-              )}
-              to={CONTROLLER_ROUTE_PREFIX + "/home"}
-            >
-              Fermer
-            </Link>
-          </div>
-          <Button
-            color="primary"
-            variant="outlined"
-            size="small"
-            onClick={() => {}}
-          >
-            Exporter le contrôle
-          </Button>
-        </Box>
+        <TopMenu />
         <>
           <TabContext value={tab}>
             <AppBar enableColorOnDark position="static">
@@ -152,6 +149,7 @@ export function ControllerControlNoLic() {
                     value={t.name}
                     key={t.name}
                     icon={t.icon}
+                    disabled={t.name !== "alerts" && isReportingInfractions}
                   />
                 ))}
               </Tabs>
@@ -170,31 +168,26 @@ export function ControllerControlNoLic() {
                       infractions={infractions}
                       notes={notes}
                       setNotes={setNotes}
+                      lastInfractionsEditionDate={lastInfractionsEditionDate}
+                      setLastInfractionsEditionDate={
+                        setLastInfractionsEditionDate
+                      }
+                      isReportingInfractions={isReportingInfractions}
+                      toggleInfraction={toggleInfraction}
+                      saveInfractions={saveInfractions}
+                      cancelInfractions={cancelInfractions}
                     />
                   }
                 </TabPanel>
               ))}
             </Container>
           </TabContext>
-          <Box className={classes.bottomMenu}>
-            <Button
-              color="primary"
-              variant="contained"
-              size="small"
-              onClick={() => {}}
-            >
-              éditer un bulletin de contrôle
-            </Button>
-            <Button
-              color="primary"
-              variant="outlined"
-              size="small"
-              startIcon={<EditIcon />}
-              onClick={() => {}}
-            >
-              Relever l'infraction
-            </Button>
-          </Box>
+          {!isReportingInfractions && (
+            <BottomMenu
+              reportInfraction={reportInfraction}
+              updatedInfractions={!!lastInfractionsEditionDate}
+            />
+          )}
         </>
       </Container>
     </>

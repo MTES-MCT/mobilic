@@ -1,18 +1,12 @@
 import React from "react";
-import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import TextField from "common/utils/TextField";
 import { makeStyles } from "@mui/styles";
+import { SubmitCancelButtons } from "./SubmitCancelButtons";
 
 const useStyles = makeStyles(theme => ({
-  row: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    flexWrap: "nowrap",
-    alignItems: "center"
-  },
   addNotesButton: {
     textTransform: "none",
     textDecoration: "underline"
@@ -26,8 +20,8 @@ export function ControllerControlNoLicInformationsNotes({ notes, setNotes }) {
   const [isEditing, setIsEditing] = React.useState(false);
   const [editingNotes, setEditingNotes] = React.useState(notes);
   return (
-    <Box>
-      <Box className={classes.row}>
+    <Stack spacing={1} sx={{ width: "100%" }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography variant="h6">Mes notes</Typography>
         {!isEditing && (
           <Button
@@ -38,9 +32,9 @@ export function ControllerControlNoLicInformationsNotes({ notes, setNotes }) {
             {notes ? "Modifier mes notes" : "Ajouter des notes"}
           </Button>
         )}
-      </Box>
+      </Stack>
       {isEditing ? (
-        <Box>
+        <Stack direction="column">
           <TextField
             fullWidth
             multiline
@@ -50,37 +44,23 @@ export function ControllerControlNoLicInformationsNotes({ notes, setNotes }) {
             onChange={e => setEditingNotes(e.target.value)}
             margin="normal"
           />
-          <Box>
-            <Button
-              size="small"
-              color="primary"
-              variant="contained"
-              onClick={() => {
-                setNotes(editingNotes);
-                setIsEditing(false);
-              }}
-            >
-              Enregistrer
-            </Button>
-            <Button
-              size="small"
-              color="primary"
-              variant="outlined"
-              onClick={() => {
-                setEditingNotes(notes);
-                setIsEditing(false);
-              }}
-            >
-              Annuler
-            </Button>
-          </Box>
-        </Box>
+          <SubmitCancelButtons
+            onSubmit={() => {
+              setNotes(editingNotes);
+              setIsEditing(false);
+            }}
+            onCancel={() => {
+              setEditingNotes(notes);
+              setIsEditing(false);
+            }}
+          />
+        </Stack>
       ) : (
         <Typography className={classes.notes}>
           {notes ||
             "Vous n'avez pas encore renseigné d'annotations de contrôle"}
         </Typography>
       )}
-    </Box>
+    </Stack>
   );
 }
