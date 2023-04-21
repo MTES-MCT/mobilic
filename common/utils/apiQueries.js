@@ -799,6 +799,8 @@ export const ADMIN_COMPANIES_QUERY = gql`
         id
         name
         ...CompanySettings
+        isCertified
+        acceptCertificationCommunication
         users(fromDate: $activityAfter) {
           id
           firstName
@@ -2064,11 +2066,11 @@ export const THIRD_PARTY_CLIENT_EMPLOYMENT_ACCEPT = gql`
 export const EDIT_COMPANIES_COMMUNICATION_SETTING = gql`
   mutation editCompanyCommunicationSetting(
     $companyIds: [Int]!
-    $acceptCommunication: Boolean!
+    $acceptCertificationCommunication: Boolean!
   ) {
     editCompanyCommunicationSetting(
       companyIds: $companyIds
-      acceptCommunication: $acceptCommunication
+      acceptCertificationCommunication: $acceptCertificationCommunication
     ) {
       success
     }

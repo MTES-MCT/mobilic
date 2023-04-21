@@ -64,7 +64,7 @@ export default function CertificationCommunicationModal({
         EDIT_COMPANIES_COMMUNICATION_SETTING,
         {
           companyIds: companyIds,
-          acceptCommunication: accept
+          acceptCertificationCommunication: accept
         },
         { context: { nonPublicApi: true } }
       );
