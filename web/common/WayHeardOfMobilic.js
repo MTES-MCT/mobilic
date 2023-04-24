@@ -32,6 +32,10 @@ export const WAY_HEARD_OF_MOBILIC_CHOICES = [
   {
     value: "WORD_OF_MOUTH",
     label: "Bouche à oreille"
+  },
+  {
+    value: "PLATFORM",
+    label: "Plateforme de mise en relation entre entreprises et particuliers"
   }
 ];
 
@@ -71,7 +75,7 @@ export const WayHeardOfMobilic = ({ setWayHeardOfMobilicValue }) => {
         value={wayHeardOfMobilicSelect}
         onChange={handleChangeWayHeardOfMobilic}
       >
-        <Grid container>
+        <Grid container rowSpacing={2}>
           {WAY_HEARD_OF_MOBILIC_CHOICES.map(choice => (
             <Grid item xs={12} sm={6} key={choice.value}>
               <FormControlLabel

@@ -25,6 +25,8 @@ import {
 } from "common/utils/time";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
+import { startOfMonth, subMonths } from "date-fns";
+import { MAX_NB_MONTHS_HISTORY } from "common/utils/mission";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -59,12 +61,15 @@ export default function PDFExport({ open, handleClose }) {
   const [dateRangeError, setDateRangeError] = React.useState(null);
 
   const today = new Date();
+  const firstHistoryDate = startOfMonth(
+    subMonths(new Date(), MAX_NB_MONTHS_HISTORY)
+  );
 
   React.useEffect(() => {
     if (
       maxDate &&
       minDate &&
-      maxDate.getTime() - minDate.getTime() > 365 * DAY * 1000
+      maxDate.getTime() - minDate.getTime() >= 365 * DAY * 1000
     ) {
       setDateRangeError(
         "La période sélectionnée doit être inférieure à 12 mois !"
@@ -83,8 +88,8 @@ export default function PDFExport({ open, handleClose }) {
       <DialogContent>
         <Typography gutterBottom>
           Vous pouvez exporter au format PDF votre{" "}
-          <strong>relevé d'heures</strong> Mobilic sur la période de votre
-          choix.
+          <strong>relevé d'heures</strong> Mobilic sur les 3 dernières années.
+          Chaque export peut contenir 12 mois maximum.
         </Typography>
         <Grid spacing={4} container className={classes.grid}>
           <DateOrDateTimeRangeSelectionContext
@@ -106,6 +111,7 @@ export default function PDFExport({ open, handleClose }) {
                 disableCloseOnSelect={false}
                 disableMaskedInput={true}
                 maxDate={today}
+                minDate={firstHistoryDate}
                 renderInput={props => (
                   <TextField
                     {...props}
@@ -130,6 +136,7 @@ export default function PDFExport({ open, handleClose }) {
                 disableCloseOnSelect={false}
                 disableMaskedInput={true}
                 maxDate={today}
+                minDate={firstHistoryDate}
                 renderInput={props => (
                   <TextField
                     {...props}

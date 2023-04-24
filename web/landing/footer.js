@@ -60,7 +60,9 @@ export function Footer() {
           />
         </FooterPartners>
         <FooterBottom>
-          <FooterLink>Accessibilité : non conforme</FooterLink>
+          <FooterLink href="/accessibility">
+            Accessibilité : non conforme
+          </FooterLink>
           <FooterLink href="#" onClick={() => modals.open("cgu")}>
             Conditions générales d'utilisation
           </FooterLink>
