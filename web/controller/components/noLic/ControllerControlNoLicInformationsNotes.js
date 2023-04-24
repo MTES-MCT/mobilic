@@ -9,7 +9,8 @@ import { SubmitCancelButtons } from "./SubmitCancelButtons";
 const useStyles = makeStyles(theme => ({
   addNotesButton: {
     textTransform: "none",
-    textDecoration: "underline"
+    textDecoration: "underline",
+    fontSize: "1rem"
   },
   notes: {
     whiteSpace: "pre-line"

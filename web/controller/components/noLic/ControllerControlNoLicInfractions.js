@@ -29,7 +29,6 @@ const useStyles = makeStyles(theme => ({
 export function ControllerControlNoLicInfractionsComponent({
   infractions,
   lastInfractionsEditionDate,
-  setLastInfractionsEditionDate,
   isReportingInfractions,
   toggleInfraction,
   saveInfractions,

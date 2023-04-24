@@ -3,7 +3,11 @@ import Stack from "@mui/material/Stack";
 import { ControllerControlNoLicInformationsNotes as Notes } from "./ControllerControlNoLicInformationsNotes";
 import { ControllerControlNoLicInformationsInfos as Infos } from "./ControllerControlNoLicInformationsInfos";
 
-export function ControllerControlNoLicInformations({ notes, setNotes }) {
+export function ControllerControlNoLicInformations({
+  notes,
+  setNotes,
+  bulletinControle
+}) {
   return (
     <Stack
       direction="column"
@@ -13,7 +17,7 @@ export function ControllerControlNoLicInformations({ notes, setNotes }) {
       alignItems="center"
     >
       <Notes notes={notes} setNotes={setNotes} />
-      <Infos />
+      <Infos bulletinControle={bulletinControle} />
     </Stack>
   );
 }

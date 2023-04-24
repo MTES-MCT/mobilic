@@ -16,6 +16,8 @@ import { ControllerControlNoLicHistory } from "./ControllerControlNoLicHistory";
 import { ControllerControlNoLicInformations } from "./ControllerControlNoLicInformations";
 import { ControllerControlNoLicBottomMenu as BottomMenu } from "./ControllerControlNoLicBottomMenu";
 import { ControllerControlNoLicTopMenu as TopMenu } from "./ControllerControlNoLicTopMenu";
+import { ControllerControlBulletinControle } from "./ControllerControlBulletinControle";
+import { DEFAULT_BC_NO_LIC } from "../../utils/bulletinControle";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -88,6 +90,19 @@ export function ControllerControlNoLic() {
   const [isReportingInfractions, setIsReportingInfractions] = React.useState(
     false
   );
+  const [isEditingBC, setIsEditingBC] = React.useState(false);
+  const [bulletinControle, setBulletinControle] = React.useState(
+    DEFAULT_BC_NO_LIC
+  );
+
+  const handleEditBulletinControle = e => {
+    const { name, value } = e.target;
+    setBulletinControle(prevState => ({
+      ...prevState,
+      [name]: value,
+      touched: true
+    }));
+  };
 
   React.useEffect(() => {
     setInfractions(
@@ -98,13 +113,20 @@ export function ControllerControlNoLic() {
     );
   }, []);
 
+  const editBC = () => {
+    setIsEditingBC(true);
+  };
+
+  const downloadBC = () => {
+    console.log("download bulletin controle");
+  };
+
   const reportInfraction = () => {
     setIsReportingInfractions(true);
     setTab(TABS[1].name);
   };
 
   const toggleInfraction = ({ code, selected }) => {
-    console.log("toggle infraction");
     setInfractions(
       infractions.map(infraction =>
         infraction.code === code
@@ -125,7 +147,13 @@ export function ControllerControlNoLic() {
     setIsReportingInfractions(false);
   };
 
-  return (
+  return isEditingBC ? (
+    <ControllerControlBulletinControle
+      onClose={() => setIsEditingBC(false)}
+      bulletinControle={bulletinControle}
+      editBulletinControle={handleEditBulletinControle}
+    />
+  ) : (
     <>
       <Header />
       <Container className={classes.container} maxWidth="xl">
@@ -176,6 +204,7 @@ export function ControllerControlNoLic() {
                       toggleInfraction={toggleInfraction}
                       saveInfractions={saveInfractions}
                       cancelInfractions={cancelInfractions}
+                      bulletinControle={bulletinControle}
                     />
                   }
                 </TabPanel>
@@ -183,10 +212,15 @@ export function ControllerControlNoLic() {
             </Container>
           </TabContext>
           {!isReportingInfractions && (
-            <BottomMenu
-              reportInfraction={reportInfraction}
-              updatedInfractions={!!lastInfractionsEditionDate}
-            />
+            <>
+              <BottomMenu
+                reportInfraction={reportInfraction}
+                updatedInfractions={!!lastInfractionsEditionDate}
+                editBC={editBC}
+                downloadBC={downloadBC}
+                touchedBC={bulletinControle.touched}
+              />
+            </>
           )}
         </>
       </Container>
