@@ -59,7 +59,7 @@ export default function CertificationPanel({ company }) {
     () =>
       companyWithInfo.lastDayCertified
         ? `Votre entreprise ${companyWithInfo.name} n'est plus certifiée.`
-        : `Votre entreprise ${companyWithInfo.name} n'est pas certifiée.`,
+        : `Votre entreprise ${companyWithInfo.name} n'est pas encore certifiée.`,
     [companyWithInfo]
   );
 
