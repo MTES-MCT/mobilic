@@ -114,8 +114,8 @@ const COMPANY_SUB_PANELS = [
     component: props => <CompanyTeamsPanel {...props} />
   },
   {
-    label: "Certification",
-    view: "certification",
+    label: "Certificat",
+    view: "certificat",
     component: props => <CertificationPanel {...props} />
   },
   {

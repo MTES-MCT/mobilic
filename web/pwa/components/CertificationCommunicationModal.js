@@ -51,8 +51,8 @@ export default function CertificationCommunicationModal({
   const modalText = useMemo(
     () =>
       companies.length > 1
-        ? `Acceptez-vous que nous communiquions sur ces certifications, notamment auprès des plateformes de mise en relation entre entreprises et particuliers ?`
-        : `Acceptez-vous que nous communiquions sur cette certification, notamment auprès des plateformes de mise en relation entre entreprises et particuliers ?`,
+        ? `Acceptez-vous que nous communiquions sur ces certificats, notamment auprès des plateformes de mise en relation entre entreprises et particuliers ?`
+        : `Acceptez-vous que nous communiquions sur ce certificat, notamment auprès des plateformes de mise en relation entre entreprises et particuliers ?`,
     [companies]
   );
 
@@ -96,11 +96,11 @@ export default function CertificationCommunicationModal({
         <p>{modalText}</p>
         <p>
           <Link
-            href="https://faq.mobilic.beta.gouv.fr/"
+            href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Qu'est ce que la certification Mobilic ?
+            Qu'est-ce que le certificat Mobilic ?
           </Link>
         </p>
       </DialogContent>

@@ -58,15 +58,15 @@ export default function CertificationPanel({ company }) {
   const noCertifiedText = useMemo(
     () =>
       companyWithInfo.lastDayCertified
-        ? `Votre entreprise ${companyWithInfo.name} n'est plus certifiée`
-        : `Votre entreprise ${companyWithInfo.name} n'est pas certifiée`,
+        ? `Votre entreprise ${companyWithInfo.name} n'est plus certifiée.`
+        : `Votre entreprise ${companyWithInfo.name} n'est pas certifiée.`,
     [companyWithInfo]
   );
 
   return [
     <Box key={3} className={classes.title}>
       <Typography variant="h4" mb={1}>
-        Certification Mobilic
+        Certificat Mobilic
       </Typography>
     </Box>,
     loadingInfo && (
@@ -84,17 +84,17 @@ export default function CertificationPanel({ company }) {
           onChange={() =>
             changeCommunicationSetting(!acceptCertificationCommunication)
           }
-          label={`J'accepte que Mobilic communique sur le fait que l'entreprise ${companyWithInfo.name} soit certifiée, notamment auprès des plateformes de mises en relation entre entreprises et particuliers`}
+          label={`J'accepte que Mobilic communique sur le fait que l'entreprise ${companyWithInfo.name} soit certifiée, notamment auprès des plateformes de mise en relation entre entreprises et particuliers.`}
         />
       </Box>
     ),
     <Typography key={6} mt={1}>
       <Link
-        href="https://faq.mobilic.beta.gouv.fr/"
+        href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic/"
         target="_blank"
         rel="noopener noreferrer"
       >
-        Qu'est ce que la certification Mobilic ?
+        Qu'est-ce que le certificat Mobilic ?
       </Link>
     </Typography>
   ];
