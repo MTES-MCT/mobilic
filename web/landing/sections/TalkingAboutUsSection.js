@@ -53,44 +53,52 @@ export function TalkingAboutUsSection() {
     {
       imageComponent: ActuTransportLogistiqueImage,
       link:
-        "https://www.actu-transport-logistique.fr/officiel-des-transporteurs/actualites/transport-leger-mobilic-poursuit-son-implantation-dans-les-entreprises-705685.php"
+        "https://www.actu-transport-logistique.fr/officiel-des-transporteurs/actualites/transport-leger-mobilic-poursuit-son-implantation-dans-les-entreprises-705685.php",
+      matomoTag: "actu-transport-1"
     },
     {
       imageComponent: HubInstituteImage,
       link:
         "https://hubinstitute.com/Videos/stage-2-mobilic-rendre-clairs-et-accessibles-les-droits-des-chauffeurs-routiers",
-      buttonLabel: "Voir la vidéo"
+      buttonLabel: "Voir la vidéo",
+      matomoTag: "hub-institute"
     },
     {
       imageComponent: EcoLogisticsImage,
       link:
-        "https://fr.calameo.com/read/003039428318ecae421a5?authid=tXJH7bvui2rW&page=6"
+        "https://fr.calameo.com/read/003039428318ecae421a5?authid=tXJH7bvui2rW&page=6",
+      matomoTag: "eco-logistics"
     },
     {
       imageComponent: SupplyChainVillageImage,
       link:
         "https://supplychain-village.com/interview-flash/evenements/interview-de-marie-vacherot-et-patrick-lambret/",
-      buttonLabel: "Voir la vidéo"
+      buttonLabel: "Voir la vidéo",
+      matomoTag: "supply-chain-village"
     },
     {
       imageComponent: FlottesAutomobilesImage,
       link:
-        "https://www.flotauto.com/transport-leger-demenagement-lic-mobilic-20210930.html"
+        "https://www.flotauto.com/transport-leger-demenagement-lic-mobilic-20210930.html",
+      matomoTag: "flottes-automobiles"
     },
     {
       imageComponent: RadioSupplyChainImage,
       link: "https://www.radiosupplychain.fr/podcasts/reportage-mobilic/",
-      buttonLabel: "Ecouter l'entretien"
+      buttonLabel: "Ecouter l'entretien",
+      matomoTag: "radio-supply-chain"
     },
     {
       imageComponent: AxecImage,
       link:
-        "https://www.linkedin.com/pulse/mobilic-ou-la-fin-du-petit-menteur-marc-bougaut/?trackingId=mDlGzBwMsikJJNPh2GI1yg%3D%3D"
+        "https://www.linkedin.com/pulse/mobilic-ou-la-fin-du-petit-menteur-marc-bougaut/?trackingId=mDlGzBwMsikJJNPh2GI1yg%3D%3D",
+      matomoTag: "axec-image"
     },
     {
       imageComponent: ActuTransportLogistiqueImage,
       link:
-        "https://www.actu-transport-logistique.fr/routier/une-application-web-pour-lutter-contre-le-travail-illegal-dans-le-transport-leger-674545.php"
+        "https://www.actu-transport-logistique.fr/routier/une-application-web-pour-lutter-contre-le-travail-illegal-dans-le-transport-leger-674545.php",
+      matomoTag: "actu-transport-2"
     }
   ];
 
@@ -129,13 +137,15 @@ export function TalkingAboutUsSection() {
     {
       title: "Ludovic Almy, responsable d'exploitation dans le déménagement",
       videoKey: "resources/videos/testimonials/ludovic_almy.mp4",
-      posterKey: "resources/videos/testimonials/ludovic_almy.jpg"
+      posterKey: "resources/videos/testimonials/ludovic_almy.jpg",
+      matomoTag: "almy"
     },
     {
       title:
         "Raphaël Grenom, directeur d'une agence de livraison de marchandises",
       videoKey: "resources/videos/testimonials/raphael_grenom.mp4",
-      posterKey: "resources/videos/testimonials/raphael_grenom.jpg"
+      posterKey: "resources/videos/testimonials/raphael_grenom.jpg",
+      matomoTag: "grenom"
     },
     {
       title: (
@@ -146,13 +156,15 @@ export function TalkingAboutUsSection() {
         </span>
       ),
       videoKey: "resources/videos/testimonials/yoann_mace.mp4",
-      posterKey: "resources/videos/testimonials/yoann_mace.jpg"
+      posterKey: "resources/videos/testimonials/yoann_mace.jpg",
+      matomoTag: "mace"
     },
     {
       title:
         "Jérémy Cohen Boulakia, directeur d'une entreprise de livraison de marchandises",
       videoKey: "resources/videos/testimonials/jeremy_cohen_boulakia.mp4",
-      posterKey: "resources/videos/testimonials/jeremy_cohen_boulakia.jpg"
+      posterKey: "resources/videos/testimonials/jeremy_cohen_boulakia.jpg",
+      matomoTag: "boulakia"
     },
     {
       title: (
@@ -165,7 +177,8 @@ export function TalkingAboutUsSection() {
         </span>
       ),
       videoKey: "resources/videos/testimonials/nicolas_kbidi.mp4",
-      posterKey: "resources/videos/testimonials/nicolas_kbidi.jpg"
+      posterKey: "resources/videos/testimonials/nicolas_kbidi.jpg",
+      matomoTag: "k-bidi"
     }
   ];
 
@@ -199,6 +212,7 @@ export function TalkingAboutUsSection() {
             description={video.title}
             posterKey={video.posterKey}
             className={cardClasses.pressCard}
+            matomoTag={video.matomoTag}
           />
         ))}
       </Carousel>
@@ -213,6 +227,7 @@ export function TalkingAboutUsSection() {
             ImageComponent={article.imageComponent}
             articleLink={article.link}
             buttonLabel={article.buttonLabel}
+            matomoTag={article.matomoTag}
           />
         ))}
       </Carousel>
