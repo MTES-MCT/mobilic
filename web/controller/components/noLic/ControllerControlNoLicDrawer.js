@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
 export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
   const classes = useStyles();
 
-  const [isEditingBC, setIsEditingBC] = React.useState(false);
+  const [isEditingBC, setIsEditingBC] = React.useState(true);
   const [bulletinControle, setBulletinControle] = React.useState(
     DEFAULT_BC_NO_LIC
   );
