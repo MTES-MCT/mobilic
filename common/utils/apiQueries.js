@@ -1870,6 +1870,22 @@ export const CONTROLLER_SCAN_CODE = gql`
   }
 `;
 
+export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
+  mutation controllerSaveControlBulletin(
+    $controlId: Int
+    $userFirstName: String
+    $userLastName: String
+  ) {
+    controllerSaveControlBulletin(
+      controlId: $controlId
+      userFirstName: $userFirstName
+      userLastName: $userLastName
+    ) {
+      id
+    }
+  }
+`;
+
 export const CONTROLLER_USER_CONTROLS_QUERY = gql`
   query controllerUser($id: Int!, $fromDate: Date, $toDate: Date) {
     controllerUser(id: $id) {

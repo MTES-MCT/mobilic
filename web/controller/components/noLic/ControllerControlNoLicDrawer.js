@@ -6,6 +6,9 @@ import { now } from "common/utils/time";
 import { ControllerControlNoLic } from "./ControllerControlNoLic";
 import { DEFAULT_BC_NO_LIC } from "../../utils/bulletinControle";
 import { BulletinControleDrawer } from "../bulletinControle/BulletinControleDrawer";
+import { useLoadingScreen } from "common/utils/loading";
+import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries";
+import { useApi } from "common/utils/api";
 
 const useStyles = makeStyles(theme => ({
   missionDrawer: {
@@ -16,15 +19,39 @@ const useStyles = makeStyles(theme => ({
 
 export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
   const classes = useStyles();
+  const api = useApi();
+  const withLoadingScreen = useLoadingScreen();
 
   const [isEditingBC, setIsEditingBC] = React.useState(true);
   const [bulletinControle, setBulletinControle] = React.useState(
     DEFAULT_BC_NO_LIC
   );
+  const [controlId, setControlId] = React.useState(undefined);
 
   const editBC = () => {
     setIsEditingBC(true);
   };
+
+  const syncBulletin = async newBulletinControle =>
+    withLoadingScreen(async () => {
+      try {
+        const apiResponse = await api.graphQlMutate(
+          CONTROLLER_SAVE_CONTROL_BULLETIN,
+          {
+            controlId: controlId,
+            userFirstName: newBulletinControle.firstName,
+            userLastName: newBulletinControle.lastName
+          },
+          { context: { nonPublicApi: true } }
+        );
+        const resultControlId =
+          apiResponse.data.controllerSaveControlBulletin.id;
+        setControlId(resultControlId);
+        setBulletinControle(newBulletinControle);
+      } catch (err) {
+        console.log("error");
+      }
+    });
 
   return [
     <SwipeableDrawer
@@ -47,13 +74,13 @@ export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
           isOpen={isEditingBC}
           onClose={() => setIsEditingBC(false)}
           bulletinControle={bulletinControle}
-          onSavingBulletinControle={newBulletinControle => {
-            setBulletinControle(newBulletinControle);
+          onSavingBulletinControle={async newBulletinControle => {
+            await syncBulletin(newBulletinControle);
             setIsEditingBC(false);
           }}
         />
         <ControllerControlHeader
-          controlId="XXX"
+          controlId={controlId}
           controlDate={now()}
           onCloseDrawer={onClose}
         />
