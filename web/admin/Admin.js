@@ -27,6 +27,7 @@ import { useSnackbarAlerts } from "../common/Snackbar";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
 import { MissionDrawerContextProvider } from "./components/MissionDrawer";
+import CertificationCommunicationModal from "../pwa/components/CertificationCommunicationModal";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -59,6 +60,10 @@ function _Admin() {
   const [shouldRefreshData, setShouldRefreshData] = React.useState({
     value: true
   });
+  const [
+    companiesToAcceptCertificateCommunication,
+    setCompaniesToAcceptCertificateCommunication
+  ] = React.useState([]);
 
   const location = useLocation();
   const width = useWidth();
@@ -92,6 +97,13 @@ function _Admin() {
                 type: ADMIN_ACTIONS.updateCompanyId,
                 payload: { companyId: companyId }
               });
+              setCompaniesToAcceptCertificateCommunication(
+                companies?.filter(
+                  company =>
+                    !!company.isCertified &&
+                    company.acceptCertificationCommunication === null
+                )
+              );
             },
             "load-companies-list",
             null,
@@ -165,6 +177,12 @@ function _Admin() {
       width={width}
       setShouldRefreshData={shouldRefreshDataSetter}
     >
+      {companiesToAcceptCertificateCommunication?.length > 0 && (
+        <CertificationCommunicationModal
+          companies={companiesToAcceptCertificateCommunication}
+          onClose={() => setCompaniesToAcceptCertificateCommunication([])}
+        />
+      )}
       <Container
         key={1}
         maxWidth={false}

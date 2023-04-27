@@ -14,6 +14,7 @@ import KnownAddressAdmin from "./KnownAddresses";
 import SettingAdmin from "./Settings";
 import CompanyApiPanel from "./CompanyApiPanel";
 import CompanyTeamsPanel from "./CompanyTeamsPanel";
+import CertificationPanel from "./CertificationPanel";
 
 export const usePanelStyles = makeStyles(theme => ({
   navigation: {
@@ -111,6 +112,11 @@ const COMPANY_SUB_PANELS = [
     label: "Groupe(s)",
     view: "teams",
     component: props => <CompanyTeamsPanel {...props} />
+  },
+  {
+    label: "Certificat",
+    view: "certificat",
+    component: props => <CertificationPanel {...props} />
   },
   {
     label: "API",

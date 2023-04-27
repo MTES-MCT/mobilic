@@ -619,6 +619,8 @@ export const ADMIN_COMPANIES_LIST_QUERY = gql`
         id
         name
         siren
+        isCertified
+        acceptCertificationCommunication
       }
     }
   }
@@ -2055,6 +2057,32 @@ export const THIRD_PARTY_CLIENT_EMPLOYMENT_ACCEPT = gql`
       invitationToken: $invitationToken
     ) {
       success
+    }
+  }
+`;
+
+export const EDIT_COMPANIES_COMMUNICATION_SETTING = gql`
+  mutation editCompanyCommunicationSetting(
+    $companyIds: [Int]!
+    $acceptCertificationCommunication: Boolean!
+  ) {
+    editCompanyCommunicationSetting(
+      companyIds: $companyIds
+      acceptCertificationCommunication: $acceptCertificationCommunication
+    ) {
+      success
+    }
+  }
+`;
+
+export const COMPANY_CERTIFICATION_COMMUNICATION_QUERY = gql`
+  query certificationInfo($companyId: Int!) {
+    company(id: $companyId) {
+      id
+      name
+      isCertified
+      acceptCertificationCommunication
+      lastDayCertified
     }
   }
 `;
