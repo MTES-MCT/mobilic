@@ -34,7 +34,6 @@ import { ControllerScanQRCode } from "../controller/components/scanQRCode/Contro
 import { ControllerQRCodeNotRecognized } from "../controller/components/scanQRCode/ControllerQRCodeNotRecognized";
 import { ControllerHistory } from "../controller/components/history/ControllerHistory";
 import { SyncEmployeeValidation } from "../login/SyncEmployeeValidation";
-import { ControllerControlNoLic } from "../controller/components/noLic/ControllerControlNoLic";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -267,15 +266,6 @@ export const ROUTES = [
       return !!controllerInfo?.id;
     },
     component: ControllerQRCodeNotRecognized,
-    menuItemFilter: () => false
-  },
-  {
-    path: CONTROLLER_ROUTE_PREFIX + "/no_lic",
-    label: "No LIC",
-    accessible: ({ controllerInfo }) => {
-      return !!controllerInfo?.id;
-    },
-    component: ControllerControlNoLic,
     menuItemFilter: () => false
   },
   {

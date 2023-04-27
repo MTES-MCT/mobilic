@@ -17,6 +17,7 @@ import { HelpController } from "../help/ModalHelpController";
 import { InfoHoraireServiceController } from "./InfoHoraireServiceController";
 import classNames from "classnames";
 import { useModals } from "common/utils/modals";
+import { ControllerControlNoLicDrawer } from "../noLic/ControllerControlNoLicDrawer";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -70,6 +71,7 @@ export function ControllerHome() {
   const [showHoraireServiceModal, setShowHoraireServiceModal] = useState(false);
 
   const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
+  const [openNoLic, setOpenNoLic] = React.useState(false);
 
   const [controls, loadControls, loadingControls] = useLoadControls();
 
@@ -95,6 +97,10 @@ export function ControllerHome() {
       <ControllerControlDrawer
         controlId={controlIdOnFocus}
         onClose={() => setControlIdOnFocus(null)}
+      />
+      <ControllerControlNoLicDrawer
+        isOpen={openNoLic}
+        onClose={() => setOpenNoLic(false)}
       />
       <h3 className={classes.titleHello} key={1}>
         Bonjour, {controllerUserInfo.firstName}
@@ -129,7 +135,7 @@ export function ControllerHome() {
           <ControllerHomeCard
             text={"Pas de LIC à bord"}
             icon={"fr-icon-alarm-warning-line fr-icon--lg"}
-            link={CONTROLLER_ROUTE_PREFIX + "/no_lic"}
+            onClick={() => setOpenNoLic(true)}
           />
         </Grid>
       </Grid>

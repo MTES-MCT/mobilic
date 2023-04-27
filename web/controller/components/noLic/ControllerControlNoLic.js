@@ -9,15 +9,11 @@ import TabContext from "@mui/lab/TabContext";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import WarningAmberOutlinedIcon from "@mui/icons-material/WarningOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
-import { Header } from "../../../common/Header";
 import { TextWithBadge } from "../../../common/TextWithBadge";
 import { ControllerControlNoLicInfractionsComponent } from "./ControllerControlNoLicInfractions";
 import { ControllerControlNoLicHistory } from "./ControllerControlNoLicHistory";
 import { ControllerControlNoLicInformations } from "./ControllerControlNoLicInformations";
 import { ControllerControlNoLicBottomMenu as BottomMenu } from "./ControllerControlNoLicBottomMenu";
-import { ControllerControlNoLicTopMenu as TopMenu } from "./ControllerControlNoLicTopMenu";
-import { ControllerControlBulletinControle } from "./ControllerControlBulletinControle";
-import { DEFAULT_BC_NO_LIC } from "../../utils/bulletinControle";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -77,7 +73,7 @@ const INFRACTIONS = [
   }
 ];
 
-export function ControllerControlNoLic() {
+export function ControllerControlNoLic({ bulletinControle, editBC }) {
   const classes = useStyles();
 
   const [tab, setTab] = React.useState(TABS[0].name);
@@ -90,19 +86,6 @@ export function ControllerControlNoLic() {
   const [isReportingInfractions, setIsReportingInfractions] = React.useState(
     false
   );
-  const [isEditingBC, setIsEditingBC] = React.useState(false);
-  const [bulletinControle, setBulletinControle] = React.useState(
-    DEFAULT_BC_NO_LIC
-  );
-
-  const handleEditBulletinControle = e => {
-    const { name, value } = e.target;
-    setBulletinControle(prevState => ({
-      ...prevState,
-      [name]: value,
-      touched: true
-    }));
-  };
 
   React.useEffect(() => {
     setInfractions(
@@ -112,10 +95,6 @@ export function ControllerControlNoLic() {
       }))
     );
   }, []);
-
-  const editBC = () => {
-    setIsEditingBC(true);
-  };
 
   const downloadBC = () => {
     console.log("download bulletin controle");
@@ -147,83 +126,69 @@ export function ControllerControlNoLic() {
     setIsReportingInfractions(false);
   };
 
-  return isEditingBC ? (
-    <ControllerControlBulletinControle
-      onClose={() => setIsEditingBC(false)}
-      bulletinControle={bulletinControle}
-      editBulletinControle={handleEditBulletinControle}
-    />
-  ) : (
+  return (
     <>
-      <Header />
-      <Container className={classes.container} maxWidth="xl">
-        <TopMenu />
-        <>
-          <TabContext value={tab}>
-            <AppBar enableColorOnDark position="static">
-              <Tabs
-                value={tab}
-                onChange={(e, t) => setTab(t)}
-                aria-label="control no lic tabs"
-                centered
-                variant="fullWidth"
-                indicatorColor="primary"
-                textColor="inherit"
-              >
-                {TABS.map(t => (
-                  <Tab
-                    className={t.name === "alerts" ? classes.middleTab : ""}
-                    label={t.label}
-                    value={t.name}
-                    key={t.name}
-                    icon={t.icon}
-                    disabled={t.name !== "alerts" && isReportingInfractions}
-                  />
-                ))}
-              </Tabs>
-            </AppBar>
-            <Container className={classes.panelContainer} disableGutters>
-              {TABS.map(t => (
-                <TabPanel
-                  value={t.name}
-                  key={t.name}
-                  className={`${classes.panel} ${tab !== t.name &&
-                    classes.hiddenPanel}`}
-                >
-                  {
-                    <t.component
-                      setTab={setTab}
-                      infractions={infractions}
-                      notes={notes}
-                      setNotes={setNotes}
-                      lastInfractionsEditionDate={lastInfractionsEditionDate}
-                      setLastInfractionsEditionDate={
-                        setLastInfractionsEditionDate
-                      }
-                      isReportingInfractions={isReportingInfractions}
-                      toggleInfraction={toggleInfraction}
-                      saveInfractions={saveInfractions}
-                      cancelInfractions={cancelInfractions}
-                      bulletinControle={bulletinControle}
-                    />
-                  }
-                </TabPanel>
-              ))}
-            </Container>
-          </TabContext>
-          {!isReportingInfractions && (
-            <>
-              <BottomMenu
-                reportInfraction={reportInfraction}
-                updatedInfractions={!!lastInfractionsEditionDate}
-                editBC={editBC}
-                downloadBC={downloadBC}
-                touchedBC={bulletinControle.touched}
+      <TabContext value={tab}>
+        <AppBar enableColorOnDark position="static">
+          <Tabs
+            value={tab}
+            onChange={(e, t) => setTab(t)}
+            aria-label="control no lic tabs"
+            centered
+            variant="fullWidth"
+            indicatorColor="primary"
+            textColor="inherit"
+          >
+            {TABS.map(t => (
+              <Tab
+                className={t.name === "alerts" ? classes.middleTab : ""}
+                label={t.label}
+                value={t.name}
+                key={t.name}
+                icon={t.icon}
+                disabled={t.name !== "alerts" && isReportingInfractions}
               />
-            </>
-          )}
+            ))}
+          </Tabs>
+        </AppBar>
+        <Container className={classes.panelContainer} disableGutters>
+          {TABS.map(t => (
+            <TabPanel
+              value={t.name}
+              key={t.name}
+              className={`${classes.panel} ${tab !== t.name &&
+                classes.hiddenPanel}`}
+            >
+              {
+                <t.component
+                  setTab={setTab}
+                  infractions={infractions}
+                  notes={notes}
+                  setNotes={setNotes}
+                  lastInfractionsEditionDate={lastInfractionsEditionDate}
+                  setLastInfractionsEditionDate={setLastInfractionsEditionDate}
+                  isReportingInfractions={isReportingInfractions}
+                  toggleInfraction={toggleInfraction}
+                  saveInfractions={saveInfractions}
+                  cancelInfractions={cancelInfractions}
+                  bulletinControle={bulletinControle}
+                />
+              }
+            </TabPanel>
+          ))}
+        </Container>
+      </TabContext>
+      {!isReportingInfractions && (
+        <>
+          <BottomMenu
+            reportInfraction={reportInfraction}
+            updatedInfractions={!!lastInfractionsEditionDate}
+            editBC={editBC}
+            downloadBC={downloadBC}
+            touchedBC={bulletinControle.touched}
+          />
         </>
-      </Container>
+      )}
     </>
   );
 }
