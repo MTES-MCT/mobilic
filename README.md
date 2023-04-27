@@ -50,7 +50,7 @@ Les serveurs du back et du front ainsi que la base de données sont hébergés c
 
 - [CircleCI](https://circleci.com/) pour l'intégration continue et le déploiement
 - [Mailjet](https://fr.mailjet.com/) pour l'envoi de mails
-- [Sentry](https://sentry.io) pour le reporting des erreurs
+- [Sentry](https://sentry.incubateur.net/) pour le reporting des erreurs
 - [Graylog](https://www.graylog.org/) pour l'indexation des logs
 - [Metabase](https://www.metabase.com/) pour l'analyse et la visualisation des données Mobilic
 - [Matomo](https://fr.matomo.org/) pour l'analyse du traffic web
