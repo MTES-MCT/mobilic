@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import TextField from "common/utils/TextField";
 import { makeStyles } from "@mui/styles";
-import { SubmitCancelButtons } from "./SubmitCancelButtons";
+import { SubmitCancelButtons } from "../../../common/SubmitCancelButtons";
 
 const useStyles = makeStyles(theme => ({
   addNotesButton: {

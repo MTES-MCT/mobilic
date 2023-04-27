@@ -9,7 +9,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { CardActionArea } from "@mui/material";
 import { formatDateTime } from "common/utils/time";
-import { SubmitCancelButtons } from "./SubmitCancelButtons";
+import { SubmitCancelButtons } from "../../../common/SubmitCancelButtons";
 
 const useStyles = makeStyles(theme => ({
   container: {
