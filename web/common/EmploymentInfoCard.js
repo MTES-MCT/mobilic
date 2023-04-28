@@ -15,7 +15,7 @@ import { InfoItem } from "../home/InfoField";
 import { frenchFormatDateStringOrTimeStamp } from "common/utils/time";
 import Alert from "@mui/material/Alert";
 import { LoadingButton } from "common/components/LoadingButton";
-import React from "react";
+import React, { useMemo } from "react";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -29,6 +29,8 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ThirdPartyEmploymentAccess from "./ThirdPartyEmploymentAccess";
+import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
+import Box from "@mui/material/Box";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
@@ -43,6 +45,18 @@ const useStyles = makeStyles(theme => ({
   },
   employmentDetails: {
     display: "block"
+  },
+  copyAdminEmails: {
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
+    color: theme.palette.primary.main,
+    fontSize: "0.85em",
+    cursor: "pointer",
+    marginTop: theme.spacing(1)
+  },
+  copyAdminEmailsIcon: {
+    marginRight: theme.spacing(1)
   }
 }));
 
@@ -65,6 +79,20 @@ export function EmploymentInfoCard({
   defaultOpen = false
 }) {
   const [open, setOpen] = React.useState(defaultOpen);
+
+  const emailsCurrentAdmins = useMemo(
+    () =>
+      employment?.company.currentAdmins?.map(admin => admin.email).join(";"),
+    [employment]
+  );
+
+  const emailsCurrentAdminsDisplay = useMemo(
+    () =>
+      employment?.company.currentAdmins?.map(admin => (
+        <div key={admin.email}>{admin.email}</div>
+      )),
+    [employment]
+  );
 
   const classes = useStyles();
 
@@ -170,6 +198,26 @@ export function EmploymentInfoCard({
               }
             />
           </Grid>
+          {!!emailsCurrentAdminsDisplay && (
+            <Grid item>
+              <InfoItem
+                name="Email(s) gestionnaire(s"
+                value={emailsCurrentAdminsDisplay}
+              />
+              <Box
+                onClick={() => {
+                  navigator.clipboard.writeText(emailsCurrentAdmins);
+                }}
+                className={classes.copyAdminEmails}
+              >
+                <ContentCopyOutlined
+                  className={classes.copyAdminEmailsIcon}
+                  fontSize="small"
+                />
+                copier les emails
+              </Box>
+            </Grid>
+          )}
           {!hideRole && (
             <Grid item>
               <InfoItem
