@@ -88,12 +88,6 @@ export function ControllerScanQRCode() {
     }
   }, []);
 
-  React.useEffect(() => {
-    onScanQRCode(
-      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjcyMjM1ODY2MCwiZGF0ZUNvZGVHZW5lcmF0aW9uIjoxNjgyMzM1NzYzLjQ1NjU0NH0.8y891edMEz2k0CKP60oHs-jHQF_5-jBBvnvflitmhEs"
-    );
-  }, []);
-
   const getNewTokenFromOldQRCode = scannedCode => {
     if (
       scannedCode.startsWith(`${window.location.origin}/control/user-history`)
