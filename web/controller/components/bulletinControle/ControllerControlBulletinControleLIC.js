@@ -27,9 +27,6 @@ export function ControllerControlBulletinControleLIC({
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
   const [controlBulletin, setControlBulletin] = React.useState({});
-  React.useEffect(() => {
-    setControlBulletin(controlBulletin);
-  }, [controlBulletin]);
 
   React.useEffect(() => {
     setControlBulletin(initControlBulletinFromControlData());
