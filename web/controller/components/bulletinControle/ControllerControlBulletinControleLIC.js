@@ -6,7 +6,8 @@ import {
   TextInput,
   Select,
   Radio,
-  RadioGroup
+  RadioGroup,
+  Stepper
 } from "@dataesr/react-dsfr";
 
 import { NATIONALITIES } from "../../utils/bulletinControle";
@@ -95,21 +96,13 @@ export function ControllerControlBulletinControleLIC({
       retrouver dans votre historique de contrôles et de générer un BDC au
       format PDF.
     </Typography>,
-    <div key={15} className="fr-stepper">
-      <h2 className="fr-stepper__title">
-        <span className="fr-stepper__state">Étape 1 sur 3</span>
-        Données relatives au salarié
-      </h2>
-      <div
-        className="fr-stepper__steps"
-        data-fr-current-step="1"
-        data-fr-steps="3"
-      ></div>
-      <p className="fr-stepper__details">
-        <span className="fr-text--bold">Étape suivante :</span> Relevez les
-        infractions
-      </p>
-    </div>,
+    <Stepper
+      key={15}
+      currentStep={1}
+      steps={3}
+      currentTitle="Données relatives au salarié"
+      nextStepTitle="Données relatives à l'entreprise et au véhicule"
+    />,
     <Stack key={20} direction="column" p={2} sx={{ width: "100%" }}>
       <RadioGroup
         legend="LIC papier présenté ?"
