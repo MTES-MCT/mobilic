@@ -2,6 +2,7 @@ import { gql } from "graphql-tag";
 import { buildBackendPayloadForAddress } from "./addresses";
 import {
   COMPANY_SETTINGS_FRAGMENT,
+  CONTROL_BULLETIN_FRAGMENT,
   FRAGMENT_LOCATION_FULL,
   FULL_MISSION_FRAGMENT,
   FULL_TEAM_FRAGMENT,
@@ -339,6 +340,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
   ${REGULATION_COMPUTATIONS_FRAGMENT}
+  ${CONTROL_BULLETIN_FRAGMENT}
   query readControlData($controlId: Int!) {
     controlData(controlId: $controlId) {
       id
@@ -348,6 +350,9 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       vehicleRegistrationNumber
       historyStartDate
       nbControlledDays
+      controlBulletin {
+        ...ControlBulletin
+      }
       missions {
         id
         name
@@ -1871,17 +1876,27 @@ export const CONTROLLER_SCAN_CODE = gql`
 `;
 
 export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
+  ${CONTROL_BULLETIN_FRAGMENT}
   mutation controllerSaveControlBulletin(
     $controlId: Int
     $userFirstName: String
     $userLastName: String
+    $userBirthDate: Date
+    $userNationality: String
+    $licPaperPresented: Boolean
   ) {
     controllerSaveControlBulletin(
       controlId: $controlId
       userFirstName: $userFirstName
       userLastName: $userLastName
+      userNationality: $userNationality
+      userBirthDate: $userBirthDate
+      licPaperPresented: $licPaperPresented
     ) {
       id
+      controlBulletin {
+        ...ControlBulletin
+      }
     }
   }
 `;

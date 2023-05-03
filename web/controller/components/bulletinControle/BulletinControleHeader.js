@@ -1,64 +1,44 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
-import { useIsWidthUp } from "common/utils/useWidth";
 import classNames from "classnames";
 import { Link } from "react-router-dom";
-import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 
 const useStyles = makeStyles(theme => ({
-  desktopHeaderContainer: {
-    paddingBottom: theme.spacing(1)
-  },
-  linkHomeDesktopLine: {
-    textAlign: "right",
-    width: "100%"
-  },
-  linkHomeDesktop: {
-    cursor: "pointer"
-  },
-  subHeaderSection: {
+  controlHeaderContainer: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingLeft: "none",
-    paddingRight: "none",
+    paddingLeft: "0",
+    paddingRight: "0",
     paddingBottom: theme.spacing(1),
-    [theme.breakpoints.up("md")]: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(2),
-      paddingBottom: "none"
-    },
-    mobileHeaderContainer: {
-      marginBottom: theme.spacing(2)
-    }
+    marginBottom: theme.spacing(2)
   }
 }));
 
-export function BulletinControleHeader({ onCloseDrawer }) {
+export function BulletinControleHeader({ onCloseDrawer, controlData }) {
   const classes = useStyles();
-  const isOnDesktop = useIsWidthUp("md");
-  return isOnDesktop ? (
-    <Container className={classes.desktopHeaderContainer}>
-      <Box className={classes.linkHomeDesktopLine}>
-        <Typography
+  return controlData?.id ? (
+    <Container className={classes.controlHeaderContainer}>
+      <Box className={classes.subHeaderSection}>
+        <Link
+          to="#"
           className={classNames(
-            classes.linkHomeDesktop,
+            classes.linkHomeMobile,
             "fr-link",
-            "fr-fi-close-line",
-            "fr-link--icon-right"
+            "fr-fi-arrow-left-line",
+            "fr-link--icon-left"
           )}
           onClick={onCloseDrawer}
         >
-          Fermer
-        </Typography>
+          Retour au contrôle {controlData.id}
+        </Link>
       </Box>
-      <h5>Contrôle #</h5>
     </Container>
   ) : (
-    <Container className={classes.mobileHeaderContainer}>
+    <Container className={classes.controlHeaderContainer}>
       <Box className={classes.subHeaderSection}>
         <Link
           to="#"

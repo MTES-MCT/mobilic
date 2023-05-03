@@ -10,7 +10,6 @@ export function ControllerControlBulletinControle({
   onSavingBulletinControle,
   onClose
 }) {
-  console.log("bulletinControle", bulletinControle);
   const [newBulletinControle, setNewBulletinControle] = React.useState(
     bulletinControle
   );

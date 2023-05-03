@@ -24,6 +24,7 @@ import BusinessIcon from "@mui/icons-material/Business";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Alert from "@mui/material/Alert";
 import { currentControllerId } from "common/utils/cookie";
+import { BulletinControleCreationButtons } from "../../controller/components/bulletinControle/BulletinControleCreationButtons";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -59,7 +60,9 @@ export function UserReadInfo({
   setTab,
   allowC1BExport = true,
   companyName,
-  vehicleRegistrationNumber
+  vehicleRegistrationNumber,
+  openBulletinControl,
+  controlData
 }) {
   const alerts = useSnackbarAlerts();
   const api = useApi();
@@ -218,6 +221,14 @@ export function UserReadInfo({
             Télécharger C1B
           </LoadingButton>
         </Box>
+      )}
+      {!!currentControllerId() && (
+        <>
+          <BulletinControleCreationButtons
+            openBulletinControl={openBulletinControl}
+            controlData={controlData}
+          />
+        </>
       )}
     </Container>
   );

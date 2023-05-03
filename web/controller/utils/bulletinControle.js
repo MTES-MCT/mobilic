@@ -6,6 +6,7 @@ export const DEFAULT_BC_NO_LIC = {
 };
 
 export const NATIONALITIES = [
+  { value: "", label: "" },
   { value: "fr", label: "France" },
   { value: "en", label: "Angleterre" }
 ];

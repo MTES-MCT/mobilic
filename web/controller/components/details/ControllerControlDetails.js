@@ -14,6 +14,7 @@ import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { ControllerControlHeader } from "./ControllerControlHeader";
 import _ from "lodash";
 import { computeNumberOfAlerts } from "common/utils/regulation/computeNumberOfAlerts";
+import { BulletinControleDrawer } from "../bulletinControle/BulletinControleDrawer";
 
 export function ControllerControlDetails({ controlId, onClose }) {
   const [controlData, setControlData] = React.useState({});
@@ -22,6 +23,7 @@ export function ControllerControlDetails({ controlId, onClose }) {
   const [missions, setMissions] = React.useState([]);
   const [coworkers, setCoworkers] = React.useState([]);
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
+  const [isEditingBC, setIsEditingBC] = React.useState(false);
 
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
@@ -121,6 +123,14 @@ export function ControllerControlDetails({ controlId, onClose }) {
       controlId={controlId}
       companyName={controlData.companyName}
       vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
+      openBulletinControl={() => setIsEditingBC(true)}
+      controlData={controlData}
+    />,
+    <BulletinControleDrawer
+      key={2}
+      isOpen={isEditingBC}
+      onClose={() => setIsEditingBC(false)}
+      controlData={controlData}
     />
   ];
 }
