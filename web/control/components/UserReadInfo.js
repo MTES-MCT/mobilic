@@ -169,6 +169,7 @@ export function UserReadInfo({
             Nombre de journées enregistrées : {workingDaysNumber}
           </Typography>
           <Link
+            to="#"
             color="primary"
             variant="body1"
             onClick={e => {
@@ -184,6 +185,7 @@ export function UserReadInfo({
             Nombre d'alertes réglementaires : {alertNumber}
           </Typography>
           <Link
+            to="#"
             color="primary"
             variant="body1"
             onClick={e => {
