@@ -58,7 +58,11 @@ export function ControllerControlBulletinControleLIC({
         userFirstName: controlData.user.firstName,
         userLastName: controlData.user.lastName,
         userBirthDate: controlData.user.birthDate,
-        companyName: controlData.companyName
+        companyName: controlData.companyName,
+        siren: controlData.siren,
+        companyAddress: controlData.companyAddress,
+        missionAddressBegin: controlData.missionAddressBegin,
+        vehicleRegistrationNumber: controlData.vehicleRegistrationNumber
       };
     }
   };

@@ -353,6 +353,9 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       controlBulletin {
         ...ControlBulletin
       }
+      siren
+      companyAddress
+      missionAddressBegin
       missions {
         id
         name
