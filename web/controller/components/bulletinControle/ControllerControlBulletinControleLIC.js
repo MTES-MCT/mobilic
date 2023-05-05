@@ -304,7 +304,7 @@ export function ControllerControlBulletinControleLIC({
           value={controlBulletin.licenseNumber}
           name="licenseNumber"
           onChange={e => handleEditControlBulletin(e)}
-          label="N° de la license"
+          label="N° de la licence"
         />
         <TextInput
           value={controlBulletin.licenseCopyNumber}
