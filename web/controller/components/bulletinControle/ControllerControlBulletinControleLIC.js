@@ -74,7 +74,7 @@ export function ControllerControlBulletinControleLIC({
         );
         controlData.controlBulletin =
           apiResponse.data.controllerSaveControlBulletin.controlBulletin;
-        alerts.success("Le bordereau de contrôle a été enregistré.", "", 6000);
+        alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
         setMustConfirmBeforeClosing(false);
         onClose(true);
       } catch (err) {
