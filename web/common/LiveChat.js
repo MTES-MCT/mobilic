@@ -1,45 +1,76 @@
 import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
 import { Crisp } from "crisp-sdk-web";
-import Button from "@mui/material/Button";
+import CrispClosedChat from "common/assets/images/crisp_closed_chat.svg";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 const useStyles = makeStyles(theme => ({
   chatButton: {
-    textTransform: "none",
     position: "fixed",
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
-    zIndex: 99,
-    fontSize: "1.2rem",
-    [theme.breakpoints.up("md")]: {
-      right: theme.spacing(4),
-      bottom: theme.spacing(4)
-    }
+    right: "24px",
+    bottom: "20px",
+    backgroundColor: "#1972F5",
+    zIndex: 98,
+    width: "60px",
+    height: "60px",
+    cursor: "pointer",
+    borderRadius: "100%"
+  },
+  closeButton: {
+    position: "fixed",
+    right: "20px",
+    bottom: "68px",
+    backgroundColor: "grey",
+    color: theme.palette.primary.contrastText,
+    height: "20px",
+    width: "20px",
+    zIndex: 99
+  },
+  closeIcon: {
+    fontSize: "1rem"
+  },
+  chatIcon: {
+    backgroundImage: `url(${CrispClosedChat})`,
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+    width: "33px",
+    height: "28px",
+    top: "18px",
+    left: "13px",
+    position: "absolute"
   }
 }));
 
 export const LiveChat = () => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [displayIcon, setDisplayIcon] = useState(true);
   const classes = useStyles();
 
   const openChat = () => {
-    setOpen(false);
+    setOpen(true);
     Crisp.setColorTheme("blue");
     Crisp.chat.show();
     Crisp.chat.open();
   };
 
+  const hideChat = () => {
+    setOpen(false);
+    setDisplayIcon(false);
+    Crisp.chat.hide();
+  };
+
   return (
-    open && (
-      <Button
-        size="small"
-        color="primary"
-        variant="contained"
-        onClick={openChat}
-        className={classes.chatButton}
-      >
-        Besoin d'aide ?
-      </Button>
+    !open &&
+    displayIcon && (
+      <>
+        <IconButton className={classes.closeButton} onClick={hideChat}>
+          <CloseIcon className={classes.closeIcon} />
+        </IconButton>
+        <div role="button" className={classes.chatButton} onClick={openChat}>
+          <span className={classes.chatIcon}></span>
+        </div>
+      </>
     )
   );
 };
