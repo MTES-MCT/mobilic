@@ -78,7 +78,8 @@ export const REGULATION_RULES = {
         <br />
         <br />
         Le repos quotidien est d'au-moins{" "}
-        <Emphasis>10 heures consécutives</Emphasis> toutes les 24 heures.
+        <Emphasis>10 heures consécutives</Emphasis> dans les 24 heures suivant
+        le début d'une journée de travail.
         <br />
         <br />
       </span>
@@ -86,8 +87,14 @@ export const REGULATION_RULES = {
     details: (
       <span>
         Le salarié doit prendre au-moins{" "}
-        <Emphasis>10 heures consécutives</Emphasis> de repos sur toute période
-        de 24 heures. <br />
+        <Emphasis>10 heures de repos consécutives</Emphasis> dans les 24 heures
+        suivant le début d'une journée de travail.
+        <br />
+        <br />
+        Ainsi, s’il commence sa journée de travail à 7h le lundi, il devra
+        obligatoirement avoir pris 10 heures de repos consécutives avant 7h le
+        mardi.
+        <br />
         <br />
         Par ailleurs le salarié ne peut travailler plus de{" "}
         <Emphasis>6 heures d'affilée</Emphasis> sans prendre de pause.
