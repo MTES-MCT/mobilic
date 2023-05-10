@@ -2,6 +2,8 @@ import React from "react";
 import omit from "lodash/omit";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 export function LoadingButton(props) {
   const [loading, setLoading] = React.useState(false);
@@ -29,10 +31,24 @@ export function LoadingButton(props) {
       {...omit(props, ["loading", "onClick"])}
       disabled={props.disabled || isLoading}
     >
-      <span style={{ position: "relative", visibility: isLoading && "hidden" }}>
+      <span
+        style={{
+          position: "relative",
+          display: isLoading && props.loadingLabel && "none",
+          visibility: isLoading && !props.loadingLabel && "hidden"
+        }}
+      >
         {props.children}
       </span>
-      {isLoading && (
+      {isLoading && props.loadingLabel && (
+        <Box
+          sx={{ display: "flex", alignItems: "center", textTransform: "none" }}
+        >
+          <Typography mr={2}>{props.loadingLabel}</Typography>
+          <CircularProgress color="inherit" size="1rem" />
+        </Box>
+      )}
+      {isLoading && !props.loadingLabel && (
         <CircularProgress
           style={{ position: "absolute" }}
           color="inherit"

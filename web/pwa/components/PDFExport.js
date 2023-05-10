@@ -182,6 +182,7 @@ export default function PDFExport({ open, handleClose }) {
               alerts.error(formatApiError(err), "generate_pdf_export", 6000);
             }
           }}
+          loadingLabel={"Veuillez patienter pendant le téléchargement"}
         >
           Télécharger
         </LoadingButton>
