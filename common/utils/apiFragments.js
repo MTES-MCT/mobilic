@@ -185,5 +185,6 @@ export const CONTROL_BULLETIN_FRAGMENT = gql`
     articlesNature
     licenseNumber
     licenseCopyNumber
+    observation
   }
 `;

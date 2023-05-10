@@ -107,7 +107,8 @@ export function ControllerControlBulletinControleLIC({
             transportType: newBulletinControle.transportType,
             articlesNature: newBulletinControle.articlesNature,
             licenseNumber: newBulletinControle.licenseNumber,
-            licenseCopyNumber: newBulletinControle.licenseCopyNumber
+            licenseCopyNumber: newBulletinControle.licenseCopyNumber,
+            observation: newBulletinControle.observation
           },
           { context: { nonPublicApi: true } }
         );
@@ -316,6 +317,18 @@ export function ControllerControlBulletinControleLIC({
           name="licenseCopyNumber"
           onChange={e => handleEditControlBulletin(e)}
           label="N° de copie conforme de la licence"
+        />
+      </Stack>
+    ),
+    step === 3 && (
+      <Stack key={40} direction="column" p={2} sx={{ width: "100%" }}>
+        <TextInput
+          value={controlBulletin.observation}
+          name="observation"
+          label="Observations"
+          rows="3"
+          onChange={e => handleEditControlBulletin(e)}
+          textarea
         />
       </Stack>
     ),

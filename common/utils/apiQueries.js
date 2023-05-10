@@ -1898,6 +1898,7 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
     $articlesNature: String
     $licenseNumber: String
     $licenseCopyNumber: String
+    $observation: String
   ) {
     controllerSaveControlBulletin(
       controlId: $controlId
@@ -1917,6 +1918,7 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
       articlesNature: $articlesNature
       licenseNumber: $licenseNumber
       licenseCopyNumber: $licenseCopyNumber
+      observation: $observation
     ) {
       id
       controlBulletin {
