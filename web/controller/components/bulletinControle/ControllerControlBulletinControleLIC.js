@@ -10,10 +10,7 @@ import {
   Stepper
 } from "@dataesr/react-dsfr";
 
-import {
-  CONTROL_BULLETIN_TRANSPORT_TYPE,
-  NATIONALITIES
-} from "../../utils/bulletinControle";
+import { CONTROL_BULLETIN_TRANSPORT_TYPE } from "../../utils/bulletinControle";
 import Typography from "@mui/material/Typography";
 import { BulletinControleHeader } from "./BulletinControleHeader";
 import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries";
@@ -21,6 +18,7 @@ import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { formatApiError } from "common/utils/errors";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
+import { COUNTRIES } from "../../utils/country";
 
 const STEPS = {
   1: { title: "Données relatives au salarié" },
@@ -208,7 +206,7 @@ export function ControllerControlBulletinControleLIC({
           onChange={e => {
             handleEditControlBulletin(e);
           }}
-          options={NATIONALITIES}
+          options={COUNTRIES}
         />
       </Stack>
     ),
@@ -243,12 +241,15 @@ export function ControllerControlBulletinControleLIC({
           label="Immatriculation du véhicule"
           required
         />
-        <TextInput
-          value={controlBulletin.vehicleRegistrationCountry}
-          name="vehicleRegistrationCountry"
-          onChange={e => handleEditControlBulletin(e)}
+        <Select
           label="Pays d'immatriculation"
+          selected={controlBulletin.vehicleRegistrationCountry}
+          name="vehicleRegistrationCountry"
           required
+          onChange={e => {
+            handleEditControlBulletin(e);
+          }}
+          options={COUNTRIES}
         />
         <TextInput
           value={controlBulletin.missionAddressBegin}

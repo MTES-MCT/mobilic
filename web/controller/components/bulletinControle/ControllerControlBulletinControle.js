@@ -2,8 +2,7 @@ import React from "react";
 
 import Stack from "@mui/material/Stack";
 import { Button, TextInput, Select } from "@dataesr/react-dsfr";
-
-import { NATIONALITIES } from "../../utils/bulletinControle";
+import { COUNTRIES } from "../../utils/country";
 
 export function ControllerControlBulletinControle({
   bulletinControle,
@@ -57,7 +56,7 @@ export function ControllerControlBulletinControle({
         onChange={e => {
           handleEditBulletinControle(e);
         }}
-        options={NATIONALITIES}
+        options={COUNTRIES}
       />
       <Stack direction="row" justifyContent="flex-start" spacing={4}>
         <Button
