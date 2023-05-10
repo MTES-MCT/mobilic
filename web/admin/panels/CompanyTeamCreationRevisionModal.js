@@ -61,7 +61,9 @@ export default function CompanyTeamCreationRevisionModal({
     setNewAdmins(
       selectableAdmins.map(sa => ({
         ...sa,
-        selected: team?.adminUsers?.some(au => au.id === sa.id)
+        selected: team
+          ? team?.adminUsers?.some(au => au.id === sa.id)
+          : sa.id === adminStore.userId
       }))
     );
     setNewUsers(
