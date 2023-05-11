@@ -1821,6 +1821,14 @@ export const OAUTH_TOKEN_QUERY = gql`
   }
 `;
 
+export const USER_CONTROLS_QUERY = gql`
+  query userControls($userId: Int!) {
+    user(id: $userId) {
+      controlsDate
+    }
+  }
+`;
+
 export const CREATE_OAUTH_TOKEN_MUTATION = gql`
   mutation createOauthToken($userId: Int!, $clientId: Int!) {
     createOauthToken(userId: $userId, clientId: $clientId) {
