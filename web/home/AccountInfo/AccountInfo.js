@@ -186,7 +186,7 @@ export default function Home() {
         {isActive && (
           <Section
             title={
-              employments.length > 1 ? "Mes entreprises    " : "Mon entreprise"
+              employments.length > 1 ? "Mes entreprises     " : "Mon entreprise"
             }
           >
             {employments.length > 0 ? (
