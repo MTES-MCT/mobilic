@@ -55,11 +55,13 @@ export function register(config) {
 }
 
 function registerValidSW(swUrl, config) {
+  console.log("registerValidSW", swUrl);
   const currentServiceWorker = navigator.serviceWorker.controller;
   navigator.serviceWorker
     .register(swUrl)
     .then(registration => {
       registration.onupdatefound = () => {
+        console.log("registration.onupdatefound");
         const installingWorker = registration.installing;
         if (installingWorker == null) {
           return;
@@ -77,11 +79,15 @@ function registerValidSW(swUrl, config) {
 
 function checkValidServiceWorker(swUrl, config) {
   // Check if the service worker can be found. If it can't reload the page.
+  console.log("checkValidServiceWorker, swUrl", swUrl);
+  console.log("checkValidServiceWorker, config", config);
   fetch(swUrl, {
     headers: { "Service-Worker": "script" }
   })
     .then(response => {
       // Ensure service worker exists, and that we really are getting a JS file.
+      console.log("checkResponse", response);
+      console.log("content-type", response.headers.get("content-type"));
       const contentType = response.headers.get("content-type");
       if (
         response.status === 404 ||
@@ -95,6 +101,7 @@ function checkValidServiceWorker(swUrl, config) {
           });
         });
       } else {
+        console.log("registerValidSW");
         // Service worker found. Proceed as normal.
         registerValidSW(swUrl, config);
       }
