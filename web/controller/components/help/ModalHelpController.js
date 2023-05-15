@@ -5,6 +5,7 @@ import { ControllerHelpCard } from "../home/ControllerHelpCard";
 
 export function HelpController() {
   const openChat = () => {
+    Crisp.setPosition("left");
     Crisp.chat.show();
     Crisp.chat.open();
   };
