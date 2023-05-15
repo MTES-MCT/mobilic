@@ -49,7 +49,6 @@ export const LiveChat = () => {
 
   const openChat = () => {
     setOpen(true);
-    Crisp.setColorTheme("blue");
     Crisp.chat.show();
     Crisp.chat.open();
   };
