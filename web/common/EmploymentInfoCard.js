@@ -201,7 +201,7 @@ export function EmploymentInfoCard({
           {!!emailsCurrentAdminsDisplay && (
             <Grid item>
               <InfoItem
-                name="Email(s) gestionnaire(s"
+                name="Email(s) gestionnaire(s)"
                 value={emailsCurrentAdminsDisplay}
               />
               <Box
