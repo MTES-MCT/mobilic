@@ -428,6 +428,9 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
             name
             registrationNumber
           }
+          currentAdmins {
+            email
+          }
         }
       }
       user {
