@@ -1,8 +1,14 @@
 import React from "react";
-import { ControllerHelpCard } from "../home/ControllerHelpCard";
 import Stack from "@mui/material/Stack";
+import { Crisp } from "crisp-sdk-web";
+import { ControllerHelpCard } from "../home/ControllerHelpCard";
 
 export function HelpController() {
+  const openChat = () => {
+    Crisp.chat.show();
+    Crisp.chat.open();
+  };
+
   return (
     <Stack spacing={2}>
       <ControllerHelpCard
@@ -23,10 +29,18 @@ export function HelpController() {
         description="Comment utiliser Mobilic ?"
         linkTo="https://mobilic.beta.gouv.fr/resources/controller"
       />
+      {process.env.REACT_APP_CRISP_WEBSITE_ID && (
+        <ControllerHelpCard
+          iconName={"fr-icon-questionnaire-fill"}
+          title="Service Support"
+          description="Un problème technique ou une question règlementaire ? Contactez l'équipe Mobilic"
+          clickAction={openChat}
+        />
+      )}
       <ControllerHelpCard
-        iconName={"fr-icon-question-answer-line"}
-        title="Messagerie instantanée"
-        description="Échangez avec l’équipe Mobilic et d’autres CTT sur notre forum Tchap !"
+        iconName={"fr-icon-question-answer-fill"}
+        title="Forum Tchap"
+        description="Échangez avec d’autres contrôleurs sur notre forum Tchap !"
         linkTo="https://www.tchap.gouv.fr/#/room/%23SupportMobilicYNhe5wcTWWb:agent.dinum.tchap.gouv.fr"
       />
     </Stack>
