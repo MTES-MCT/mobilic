@@ -404,7 +404,7 @@ export const ROUTES = [
         href:
           "https://tchap.gouv.fr/#/room/#SupportMobilicYNhe5wcTWWb:agent.dinum.tchap.gouv.fr",
         target: "_blank",
-        label: "Support chat"
+        label: "Forum Tchap"
       }
     ]
   },
