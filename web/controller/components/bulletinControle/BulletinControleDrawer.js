@@ -72,12 +72,9 @@ export function BulletinControleDrawer({
       isOpen={openModalCancel}
       hide={() => setOpenModalCancel(false)}
     >
-      <ModalTitle>Confirmation d'annulation</ModalTitle>
+      <ModalTitle>Vous avez des modifications non enregistrées</ModalTitle>
       <ModalContent>
-        En annulant ou en fermant sans enregistrer, vous perdrez les
-        modifications effectuées.
-        <br />
-        Êtes-vous certain(e) de vouloir annuler ?
+        En annulant, vous perdrez les modifications effectuées.
       </ModalContent>
       <ModalFooter>
         <ButtonGroup isInlineFrom="md" align="right">
@@ -89,7 +86,7 @@ export function BulletinControleDrawer({
               onClose();
             }}
           >
-            Annuler
+            Annuler mes modifications
           </Button>
           <Button
             secondary

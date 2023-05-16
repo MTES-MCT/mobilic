@@ -25,7 +25,13 @@ export function BulletinControleCreationButtons({
         <Button color="secondary" variant="outlined" size="small" disabled>
           Télécharger le bulletin de contrôle
         </Button>
-        <Link variant="modifier BDC" onClick={openBulletinControl}>
+        <Link
+          variant="modifier BDC"
+          onClick={e => {
+            e.preventDefault();
+            openBulletinControl();
+          }}
+        >
           Modifier le bulletin de contrôle
         </Link>
       </Stack>
