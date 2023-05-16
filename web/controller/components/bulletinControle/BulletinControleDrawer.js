@@ -1,17 +1,14 @@
-import {
-  Button,
-  ButtonGroup,
-  Modal,
-  ModalContent,
-  ModalFooter,
-  ModalTitle
-} from "@dataesr/react-dsfr";
-
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
 import { ControllerControlBulletinControleLIC } from "./ControllerControlBulletinControleLIC";
 import Box from "@mui/material/Box";
+import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries";
+import { formatApiError } from "common/utils/errors";
+import { useApi } from "common/utils/api";
+import { useLoadingScreen } from "common/utils/loading";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   missionDrawer: {
@@ -28,14 +25,64 @@ export function BulletinControleDrawer({
   controlData
 }) {
   const classes = useStyles();
-  const [openModalCancel, setOpenModalCancel] = useState(false);
   const [mustConfirmBeforeClosing, setMustConfirmBeforeClosing] = useState(
     false
   );
+  const api = useApi();
+  const withLoadingScreen = useLoadingScreen();
+  const alerts = useSnackbarAlerts();
+  const modals = useModals();
+
+  const saveControlBulletin = async ({ newBulletinControle, onSuccess }) =>
+    withLoadingScreen(async () => {
+      try {
+        const apiResponse = await api.graphQlMutate(
+          CONTROLLER_SAVE_CONTROL_BULLETIN,
+          {
+            controlId: controlData?.id,
+            userFirstName: newBulletinControle.userFirstName,
+            userLastName: newBulletinControle.userLastName,
+            userBirthDate: newBulletinControle.userBirthDate,
+            userNationality: newBulletinControle.userNationality,
+            licPaperPresented: newBulletinControle.licPaperPresented,
+            siren: newBulletinControle.siren,
+            companyName: newBulletinControle.companyName,
+            companyAddress: newBulletinControle.companyAddress,
+            vehicleRegistrationNumber:
+              newBulletinControle.vehicleRegistrationNumber,
+            vehicleRegistrationCountry:
+              newBulletinControle.vehicleRegistrationCountry,
+            missionAddressBegin: newBulletinControle.missionAddressBegin,
+            missionAddressEnd: newBulletinControle.missionAddressEnd,
+            transportType: newBulletinControle.transportType,
+            articlesNature: newBulletinControle.articlesNature,
+            licenseNumber: newBulletinControle.licenseNumber,
+            licenseCopyNumber: newBulletinControle.licenseCopyNumber,
+            observation: newBulletinControle.observation
+          },
+          { context: { nonPublicApi: true } }
+        );
+        controlData.controlBulletin =
+          apiResponse.data.controllerSaveControlBulletin.controlBulletin;
+        alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
+        if (onSuccess) {
+          onSuccess();
+        }
+        setMustConfirmBeforeClosing(false);
+      } catch (err) {
+        alerts.error(formatApiError(err), "", 6000);
+      }
+    });
 
   const closeDrawer = (forceClose = false) => {
     if (!forceClose && mustConfirmBeforeClosing) {
-      setOpenModalCancel(true);
+      modals.open("confirmationCancelControlBulletinModal", {
+        confirmButtonLabel: "Revenir à mes modifications",
+        handleCancel: () => {
+          onClose();
+        },
+        handleConfirm: () => {}
+      });
     } else {
       onClose();
     }
@@ -64,39 +111,9 @@ export function BulletinControleDrawer({
           onClose={closeDrawer}
           controlData={controlData}
           setMustConfirmBeforeClosing={setMustConfirmBeforeClosing}
+          saveControlBulletin={saveControlBulletin}
         />
       </Box>
-    </SwipeableDrawer>,
-    <Modal
-      key={2}
-      isOpen={openModalCancel}
-      hide={() => setOpenModalCancel(false)}
-    >
-      <ModalTitle>Vous avez des modifications non enregistrées</ModalTitle>
-      <ModalContent>
-        En annulant, vous perdrez les modifications effectuées.
-      </ModalContent>
-      <ModalFooter>
-        <ButtonGroup isInlineFrom="md" align="right">
-          <Button
-            title="Annuler"
-            onClick={() => {
-              setOpenModalCancel(false);
-              setMustConfirmBeforeClosing(false);
-              onClose();
-            }}
-          >
-            Annuler mes modifications
-          </Button>
-          <Button
-            secondary
-            title="Fermer"
-            onClick={() => setOpenModalCancel(false)}
-          >
-            Revenir à mes modifications
-          </Button>
-        </ButtonGroup>
-      </ModalFooter>
-    </Modal>
+    </SwipeableDrawer>
   ];
 }

@@ -3,22 +3,19 @@ import React from "react";
 import Stack from "@mui/material/Stack";
 import {
   Button,
-  TextInput,
-  Select,
   Radio,
   RadioGroup,
-  Stepper
+  Select,
+  Stepper,
+  TextInput
 } from "@dataesr/react-dsfr";
 
 import { CONTROL_BULLETIN_TRANSPORT_TYPE } from "../../utils/bulletinControle";
 import Typography from "@mui/material/Typography";
 import { BulletinControleHeader } from "./BulletinControleHeader";
-import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries";
-import { useApi } from "common/utils/api";
-import { useLoadingScreen } from "common/utils/loading";
-import { formatApiError } from "common/utils/errors";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { COUNTRIES } from "../../utils/country";
+import { useModals } from "common/utils/modals";
 
 const STEPS = {
   1: { title: "Données relatives au salarié" },
@@ -29,11 +26,11 @@ const STEPS = {
 export function ControllerControlBulletinControleLIC({
   controlData,
   onClose,
-  setMustConfirmBeforeClosing
+  setMustConfirmBeforeClosing,
+  saveControlBulletin
 }) {
-  const api = useApi();
-  const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
+  const modals = useModals();
   const [controlBulletin, setControlBulletin] = React.useState({});
   const [fieldUpdated, setFieldUpdated] = React.useState(false);
   const [step, setStep] = React.useState(1);
@@ -77,7 +74,10 @@ export function ControllerControlBulletinControleLIC({
 
   const onSaveButton = async newBulletinControle => {
     if (fieldUpdated) {
-      await saveControlBulletin(newBulletinControle);
+      await saveControlBulletin({
+        newBulletinControle: newBulletinControle,
+        onSuccess: () => setFieldUpdated(false)
+      });
     } else if (!STEPS[step + 1]) {
       alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
     }
@@ -88,57 +88,56 @@ export function ControllerControlBulletinControleLIC({
     }
   };
 
-  const onBackOrCloseButton = () => {
-    if (!STEPS[step - 1]) {
-      onClose();
+  const onBackOrCloseButton = controlBulletin => {
+    const previousStep = !STEPS[step - 1]
+      ? onClose
+      : () => {
+          setStep(step - 1);
+          setFieldUpdated(false);
+        };
+    if (fieldUpdated) {
+      modals.open("confirmationCancelControlBulletinModal", {
+        handleCancel: () => {
+          setControlBulletin(initControlBulletinFromControlData());
+          setFieldUpdated(false);
+          previousStep();
+        },
+        handleConfirm: async () => {
+          await saveControlBulletin({
+            newBulletinControle: controlBulletin,
+            onSuccess: previousStep
+          });
+        }
+      });
     } else {
-      setStep(step - 1);
+      previousStep();
     }
   };
 
-  const saveControlBulletin = async newBulletinControle =>
-    withLoadingScreen(async () => {
-      try {
-        const apiResponse = await api.graphQlMutate(
-          CONTROLLER_SAVE_CONTROL_BULLETIN,
-          {
-            controlId: controlData?.id,
-            userFirstName: newBulletinControle.userFirstName,
-            userLastName: newBulletinControle.userLastName,
-            userBirthDate: newBulletinControle.userBirthDate,
-            userNationality: newBulletinControle.userNationality,
-            licPaperPresented: newBulletinControle.licPaperPresented,
-            siren: newBulletinControle.siren,
-            companyName: newBulletinControle.companyName,
-            companyAddress: newBulletinControle.companyAddress,
-            vehicleRegistrationNumber:
-              newBulletinControle.vehicleRegistrationNumber,
-            vehicleRegistrationCountry:
-              newBulletinControle.vehicleRegistrationCountry,
-            missionAddressBegin: newBulletinControle.missionAddressBegin,
-            missionAddressEnd: newBulletinControle.missionAddressEnd,
-            transportType: newBulletinControle.transportType,
-            articlesNature: newBulletinControle.articlesNature,
-            licenseNumber: newBulletinControle.licenseNumber,
-            licenseCopyNumber: newBulletinControle.licenseCopyNumber,
-            observation: newBulletinControle.observation
-          },
-          { context: { nonPublicApi: true } }
-        );
-        controlData.controlBulletin =
-          apiResponse.data.controllerSaveControlBulletin.controlBulletin;
-        alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
-        setFieldUpdated(false);
-        setMustConfirmBeforeClosing(false);
-      } catch (err) {
-        alerts.error(formatApiError(err), "", 6000);
-      }
-    });
+  const onCancelButton = controlBulletin => {
+    if (fieldUpdated) {
+      modals.open("confirmationCancelControlBulletinModal", {
+        handleCancel: () => {
+          onClose(true);
+        },
+        handleConfirm: async () => {
+          await saveControlBulletin({
+            newBulletinControle: controlBulletin,
+            onSuccess: () => {
+              onClose(true);
+            }
+          });
+        }
+      });
+    } else {
+      onClose(true);
+    }
+  };
 
   return [
     <BulletinControleHeader
       key={0}
-      onCloseDrawer={onBackOrCloseButton}
+      onCloseDrawer={() => onBackOrCloseButton(controlBulletin)}
       backLinkLabel={
         !STEPS[step - 1]
           ? `Retour au contrôle ${controlData.id}`
@@ -348,7 +347,11 @@ export function ControllerControlBulletinControleLIC({
       <Button title="Enregistrer" onClick={() => onSaveButton(controlBulletin)}>
         {!STEPS[step + 1] ? "Enregistrer" : "Suivant"}
       </Button>
-      <Button title="Annuler" onClick={() => onClose()} secondary>
+      <Button
+        title="Annuler"
+        onClick={() => onCancelButton(controlBulletin)}
+        secondary
+      >
         Annuler
       </Button>
     </Stack>
