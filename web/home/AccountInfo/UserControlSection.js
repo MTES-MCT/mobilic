@@ -1,5 +1,6 @@
 import { useApi } from "common/utils/api";
 import { USER_CONTROLS_QUERY } from "common/utils/apiQueries";
+import Stack from "@mui/material/Stack";
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
@@ -48,7 +49,7 @@ export function UserControlSection() {
   return (
     <Box my={6} mb={6} className={classes.section}>
       <Grid container>
-        <Grid item xs={6}>
+        <Grid item xs={12}>
           <Typography className={classes.mainTitle} variant="h5">
             Mes contrôles en bord de route
           </Typography>
@@ -58,7 +59,7 @@ export function UserControlSection() {
         ) : (
           <>
             {controlsDate.length > 0 && (
-              <>
+              <Stack direction="column">
                 <Alert severity="info" className={classes.alert}>
                   <Typography className={classes.explanation}>
                     Votre employeur est responsable en cas de contrôle en bord
@@ -75,11 +76,11 @@ export function UserControlSection() {
                 <Typography align="left">
                   {controlsDate.map(prettyFormatDayHour).join(" ; ")}
                 </Typography>
-              </>
+              </Stack>
             )}
           </>
         )}
-        {controlsDate.length === 0 && (
+        {controlsDate.length === 0 && !loading && (
           <Typography>
             Vous n'avez pas de contrôle en bord de route enregistré dans
             Mobilic.
