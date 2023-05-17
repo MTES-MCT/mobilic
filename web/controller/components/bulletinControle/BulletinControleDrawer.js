@@ -1,17 +1,9 @@
-import {
-  Button,
-  ButtonGroup,
-  Modal,
-  ModalContent,
-  ModalFooter,
-  ModalTitle
-} from "@dataesr/react-dsfr";
-
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
 import { ControllerControlBulletinControle } from "./ControllerControlBulletinControle";
 import Box from "@mui/material/Box";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   missionDrawer: {
@@ -27,14 +19,20 @@ export function BulletinControleDrawer({
   onSaveControlBulletin
 }) {
   const classes = useStyles();
-  const [openModalCancel, setOpenModalCancel] = useState(false);
   const [mustConfirmBeforeClosing, setMustConfirmBeforeClosing] = useState(
     false
   );
+  const modals = useModals();
 
   const closeDrawer = (forceClose = false) => {
     if (!forceClose && mustConfirmBeforeClosing) {
-      setOpenModalCancel(true);
+      modals.open("confirmationCancelControlBulletinModal", {
+        confirmButtonLabel: "Revenir à mes modifications",
+        handleCancel: () => {
+          onClose();
+        },
+        handleConfirm: () => {}
+      });
     } else {
       onClose();
     }
@@ -64,40 +62,6 @@ export function BulletinControleDrawer({
           onSaveControlBulletin={onSaveControlBulletin}
         />
       </Box>
-    </SwipeableDrawer>,
-    <Modal
-      key={2}
-      isOpen={openModalCancel}
-      hide={() => setOpenModalCancel(false)}
-    >
-      <ModalTitle>Confirmation d'annulation</ModalTitle>
-      <ModalContent>
-        En annulant ou en fermant sans enregistrer, vous perdrez les
-        modifications effectuées.
-        <br />
-        Êtes-vous certain(e) de vouloir annuler ?
-      </ModalContent>
-      <ModalFooter>
-        <ButtonGroup isInlineFrom="md" align="right">
-          <Button
-            title="Annuler"
-            onClick={() => {
-              setOpenModalCancel(false);
-              setMustConfirmBeforeClosing(false);
-              onClose();
-            }}
-          >
-            Annuler
-          </Button>
-          <Button
-            secondary
-            title="Fermer"
-            onClick={() => setOpenModalCancel(false)}
-          >
-            Revenir à mes modifications
-          </Button>
-        </ButtonGroup>
-      </ModalFooter>
-    </Modal>
+    </SwipeableDrawer>
   ];
 }

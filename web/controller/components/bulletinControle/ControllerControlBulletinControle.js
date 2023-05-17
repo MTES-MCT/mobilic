@@ -77,10 +77,23 @@ export function ControllerControlBulletinControle({
   };
 
   const onSaveButton = async newBulletinControle => {
-    if (!STEPS[step + 1]) {
+    if (fieldUpdated) {
       await saveControlBulletin(newBulletinControle);
+    } else if (!STEPS[step + 1]) {
+      alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
+    }
+    if (!STEPS[step + 1]) {
+      onClose(true);
     } else {
       setStep(step + 1);
+    }
+  };
+
+  const onBackOrCloseButton = () => {
+    if (!STEPS[step - 1]) {
+      onClose();
+    } else {
+      setStep(step - 1);
     }
   };
 
@@ -119,7 +132,6 @@ export function ControllerControlBulletinControle({
         alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
         setFieldUpdated(false);
         setMustConfirmBeforeClosing(false);
-        onClose(true);
       } catch (err) {
         alerts.error(formatApiError(err), "", 6000);
       }
@@ -128,13 +140,7 @@ export function ControllerControlBulletinControle({
   return [
     <BulletinControleHeader
       key={0}
-      onCloseDrawer={
-        !STEPS[step - 1]
-          ? () => onClose()
-          : () => {
-              setStep(step - 1);
-            }
-      }
+      onCloseDrawer={onBackOrCloseButton}
       backLinkLabel={
         !STEPS[step - 1]
           ? `Retour au contrôle ${controlData.id}`

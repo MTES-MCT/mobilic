@@ -32,6 +32,7 @@ import ControllerExportC1BAll from "./controller/components/modals/ControllerExp
 import ChangeNameModal from "./home/ChangeName";
 import CompanyTeamCreationRevisionModal from "./admin/panels/CompanyTeamCreationRevisionModal";
 import EmployeesTeamRevisionModal from "./admin/panels/EmployeesTeamRevisionModal";
+import ConfirmationCancelControlBulletinModal from "./controller/components/bulletinControle/ConfirmationCancelControlBulletinModal";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -67,5 +68,6 @@ export const MODAL_DICT = {
   controllerExportC1BAll: ControllerExportC1BAll,
   controllerHelp: ControllerHelp,
   companyTeamCreationRevisionModal: CompanyTeamCreationRevisionModal,
-  employeesTeamRevisionModal: EmployeesTeamRevisionModal
+  employeesTeamRevisionModal: EmployeesTeamRevisionModal,
+  confirmationCancelControlBulletinModal: ConfirmationCancelControlBulletinModal
 };
