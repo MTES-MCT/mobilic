@@ -148,8 +148,11 @@ export function textualPrettyFormatDay(unixTimestamp, withYear = false) {
 
 export function prettyFormatDayHour(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
-  return `${date.getDate()}/${date.getMonth() +
-    1}/${date.getFullYear()} à ${date.getHours()}:${date.getMinutes()}`;
+  return `${addZero(date.getDate())}/${addZero(
+    date.getMonth() + 1
+  )}/${date.getFullYear()} à ${addZero(date.getHours())}:${addZero(
+    date.getMinutes()
+  )}`;
 }
 
 export function textualPrettyFormatWeek(startOfWeek) {
