@@ -24,6 +24,15 @@ export function ControllerControlNoLicPreliminaryForm({
     setVehicleRegistrationNumber
   ] = React.useState("");
 
+  const canSubmitForm = React.useMemo(
+    () =>
+      !!userFirstName &&
+      userLastName &&
+      companyName &&
+      vehicleRegistrationNumber,
+    [userFirstName, userLastName, companyName, vehicleRegistrationNumber]
+  );
+
   const submitPreliminaryForm = async () =>
     withLoadingScreen(async () => {
       try {
@@ -91,7 +100,7 @@ export function ControllerControlNoLicPreliminaryForm({
           <Button
             title="Enregistrer"
             onClick={() => submitPreliminaryForm()}
-            disabled={false}
+            disabled={!canSubmitForm}
           >
             Enregistrer
           </Button>
