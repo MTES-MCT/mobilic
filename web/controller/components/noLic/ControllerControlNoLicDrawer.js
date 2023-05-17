@@ -28,6 +28,11 @@ export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
     setIsEditingBC(true);
   };
 
+  const closeControl = () => {
+    setControlData(null);
+    onClose();
+  };
+
   return [
     <SwipeableDrawer
       key={0}
@@ -36,7 +41,7 @@ export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
       disableSwipeToOpen
       disableDiscovery
       onOpen={() => {}}
-      onClose={onClose}
+      onClose={() => closeControl()}
       PaperProps={{
         className: classes.missionDrawer,
         sx: {
@@ -60,7 +65,7 @@ export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
           <ControllerControlHeader
             controlId={controlData.id}
             controlDate={controlData.creationTime}
-            onCloseDrawer={onClose}
+            onCloseDrawer={() => closeControl()}
           />
           <ControllerControlNoLic controlData={controlData} editBC={editBC} />
         </>
@@ -75,14 +80,14 @@ export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
                 "fr-fi-arrow-left-line",
                 "fr-link--icon-left"
               )}
-              onClick={onClose}
+              onClick={() => closeControl()}
             >
               Fermer
             </Link>
           </Box>
           <ControllerControlNoLicPreliminaryForm
             setControlData={setControlData}
-            onClose={onClose}
+            onClose={() => closeControl()}
           />
         </Container>
       )}
