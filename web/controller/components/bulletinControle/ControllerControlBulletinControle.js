@@ -26,7 +26,7 @@ const STEPS = {
   3: { title: "Relevez des infractions" }
 };
 
-export function ControllerControlBulletinControleLIC({
+export function ControllerControlBulletinControle({
   controlData,
   onClose,
   setMustConfirmBeforeClosing,

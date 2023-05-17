@@ -10,7 +10,7 @@ import {
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
-import { ControllerControlBulletinControleLIC } from "./ControllerControlBulletinControleLIC";
+import { ControllerControlBulletinControle } from "./ControllerControlBulletinControle";
 import Box from "@mui/material/Box";
 
 const useStyles = makeStyles(theme => ({
@@ -57,7 +57,7 @@ export function BulletinControleDrawer({
       }}
     >
       <Box m={2}>
-        <ControllerControlBulletinControleLIC
+        <ControllerControlBulletinControle
           onClose={closeDrawer}
           controlData={controlData}
           setMustConfirmBeforeClosing={setMustConfirmBeforeClosing}
