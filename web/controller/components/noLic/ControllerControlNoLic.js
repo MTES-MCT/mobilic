@@ -73,7 +73,7 @@ const INFRACTIONS = [
   }
 ];
 
-export function ControllerControlNoLic({ bulletinControle, editBC }) {
+export function ControllerControlNoLic({ controlData, editBC }) {
   const classes = useStyles();
 
   const [tab, setTab] = React.useState(TABS[0].name);
@@ -171,7 +171,7 @@ export function ControllerControlNoLic({ bulletinControle, editBC }) {
                   toggleInfraction={toggleInfraction}
                   saveInfractions={saveInfractions}
                   cancelInfractions={cancelInfractions}
-                  bulletinControle={bulletinControle}
+                  controlData={controlData}
                 />
               }
             </TabPanel>
@@ -185,7 +185,7 @@ export function ControllerControlNoLic({ bulletinControle, editBC }) {
             updatedInfractions={!!lastInfractionsEditionDate}
             editBC={editBC}
             downloadBC={downloadBC}
-            touchedBC={bulletinControle.touched}
+            touchedBC={controlData.controlBulletin.touched}
           />
         </>
       )}

@@ -1921,6 +1921,7 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
       observation: $observation
     ) {
       id
+      creationTime
       controlBulletin {
         ...ControlBulletin
       }

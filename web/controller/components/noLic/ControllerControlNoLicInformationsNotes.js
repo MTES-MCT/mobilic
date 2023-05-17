@@ -6,7 +6,7 @@ import TextField from "common/utils/TextField";
 import { makeStyles } from "@mui/styles";
 import { SubmitCancelButtons } from "../../../common/SubmitCancelButtons";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   addNotesButton: {
     textTransform: "none",
     textDecoration: "underline",

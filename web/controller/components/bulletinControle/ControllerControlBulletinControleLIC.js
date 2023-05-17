@@ -29,7 +29,8 @@ const STEPS = {
 export function ControllerControlBulletinControleLIC({
   controlData,
   onClose,
-  setMustConfirmBeforeClosing
+  setMustConfirmBeforeClosing,
+  onSaveControlBulletin
 }) {
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
@@ -112,8 +113,9 @@ export function ControllerControlBulletinControleLIC({
           },
           { context: { nonPublicApi: true } }
         );
-        controlData.controlBulletin =
-          apiResponse.data.controllerSaveControlBulletin.controlBulletin;
+        onSaveControlBulletin(
+          apiResponse.data.controllerSaveControlBulletin.controlBulletin
+        );
         alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
         setFieldUpdated(false);
         setMustConfirmBeforeClosing(false);

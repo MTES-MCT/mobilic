@@ -1,57 +1,32 @@
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import React from "react";
+import { Link } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
+import classNames from "classnames";
 import { ControllerControlHeader } from "../details/ControllerControlHeader";
-import { now } from "common/utils/time";
 import { ControllerControlNoLic } from "./ControllerControlNoLic";
-import { DEFAULT_BC_NO_LIC } from "../../utils/bulletinControle";
 import { BulletinControleDrawer } from "../bulletinControle/BulletinControleDrawer";
-import { useLoadingScreen } from "common/utils/loading";
-import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries";
-import { useApi } from "common/utils/api";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
+import { ControllerControlNoLicPreliminaryForm } from "./ControllerControlNoLicPreliminaryForm";
 
 const useStyles = makeStyles(theme => ({
   missionDrawer: {
     paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2)
+    paddingBottom: theme.spacing(2),
+    marginBottom: theme.spacing(2)
   }
 }));
 
 export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
   const classes = useStyles();
-  const api = useApi();
-  const withLoadingScreen = useLoadingScreen();
 
-  const [isEditingBC, setIsEditingBC] = React.useState(true);
-  const [bulletinControle, setBulletinControle] = React.useState(
-    DEFAULT_BC_NO_LIC
-  );
-  const [controlId, setControlId] = React.useState(undefined);
+  const [isEditingBC, setIsEditingBC] = React.useState(false);
+  const [controlData, setControlData] = React.useState(null);
 
   const editBC = () => {
     setIsEditingBC(true);
   };
-
-  const syncBulletin = async newBulletinControle =>
-    withLoadingScreen(async () => {
-      try {
-        const apiResponse = await api.graphQlMutate(
-          CONTROLLER_SAVE_CONTROL_BULLETIN,
-          {
-            controlId: controlId,
-            userFirstName: newBulletinControle.firstName,
-            userLastName: newBulletinControle.lastName
-          },
-          { context: { nonPublicApi: true } }
-        );
-        const resultControlId =
-          apiResponse.data.controllerSaveControlBulletin.id;
-        setControlId(resultControlId);
-        setBulletinControle(newBulletinControle);
-      } catch (err) {
-        console.log("error");
-      }
-    });
 
   return [
     <SwipeableDrawer
@@ -65,30 +40,52 @@ export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
       PaperProps={{
         className: classes.missionDrawer,
         sx: {
-          width: { xs: "100vw", md: 860 }
+          width: { xs: "100vw", md: 420 }
         }
       }}
     >
-      <>
-        <BulletinControleDrawer
-          isOpen={isEditingBC}
-          onClose={() => setIsEditingBC(false)}
-          bulletinControle={bulletinControle}
-          onSavingBulletinControle={async newBulletinControle => {
-            await syncBulletin(newBulletinControle);
-            setIsEditingBC(false);
-          }}
-        />
-        <ControllerControlHeader
-          controlId={controlId}
-          controlDate={now()}
-          onCloseDrawer={onClose}
-        />
-        <ControllerControlNoLic
-          bulletinControle={bulletinControle}
-          editBC={editBC}
-        />
-      </>
+      {controlData ? (
+        <>
+          <BulletinControleDrawer
+            isOpen={isEditingBC}
+            onClose={() => setIsEditingBC(false)}
+            controlData={controlData}
+            onSaveControlBulletin={newControlBulletin =>
+              setControlData(prevControlData => ({
+                ...prevControlData,
+                controlBulletin: newControlBulletin
+              }))
+            }
+          />
+          <ControllerControlHeader
+            controlId={controlData.id}
+            controlDate={controlData.creationTime}
+            onCloseDrawer={onClose}
+          />
+          <ControllerControlNoLic controlData={controlData} editBC={editBC} />
+        </>
+      ) : (
+        <Container className={classes.controlHeaderContainer}>
+          <Box marginBottom={2}>
+            <Link
+              to="#"
+              className={classNames(
+                classes.linkHomeMobile,
+                "fr-link",
+                "fr-fi-arrow-left-line",
+                "fr-link--icon-left"
+              )}
+              onClick={onClose}
+            >
+              Fermer
+            </Link>
+          </Box>
+          <ControllerControlNoLicPreliminaryForm
+            setControlData={setControlData}
+            onClose={onClose}
+          />
+        </Container>
+      )}
     </SwipeableDrawer>
   ];
 }

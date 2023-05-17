@@ -6,7 +6,7 @@ import { ControllerControlNoLicInformationsInfos as Infos } from "./ControllerCo
 export function ControllerControlNoLicInformations({
   notes,
   setNotes,
-  bulletinControle
+  controlData
 }) {
   return (
     <Stack
@@ -17,7 +17,7 @@ export function ControllerControlNoLicInformations({
       alignItems="center"
     >
       <Notes notes={notes} setNotes={setNotes} />
-      <Infos bulletinControle={bulletinControle} />
+      <Infos controlData={controlData} />
     </Stack>
   );
 }

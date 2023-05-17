@@ -23,9 +23,8 @@ const useStyles = makeStyles(theme => ({
 export function BulletinControleDrawer({
   isOpen,
   onClose,
-  bulletinControle,
-  onSavingBulletinControle,
-  controlData
+  controlData,
+  onSaveControlBulletin
 }) {
   const classes = useStyles();
   const [openModalCancel, setOpenModalCancel] = useState(false);
@@ -59,11 +58,10 @@ export function BulletinControleDrawer({
     >
       <Box m={2}>
         <ControllerControlBulletinControleLIC
-          bulletinControle={bulletinControle}
-          onSavingBulletinControle={onSavingBulletinControle}
           onClose={closeDrawer}
           controlData={controlData}
           setMustConfirmBeforeClosing={setMustConfirmBeforeClosing}
+          onSaveControlBulletin={onSaveControlBulletin}
         />
       </Box>
     </SwipeableDrawer>,
