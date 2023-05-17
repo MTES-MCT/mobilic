@@ -14,6 +14,8 @@ import { ControllerControlNoLicInfractionsComponent } from "./ControllerControlN
 import { ControllerControlNoLicHistory } from "./ControllerControlNoLicHistory";
 import { ControllerControlNoLicInformations } from "./ControllerControlNoLicInformations";
 import { ControllerControlNoLicBottomMenu as BottomMenu } from "./ControllerControlNoLicBottomMenu";
+import { useApi } from "common/utils/api";
+import { HTTP_QUERIES } from "common/utils/apiQueries";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -74,6 +76,7 @@ const INFRACTIONS = [
 ];
 
 export function ControllerControlNoLic({ controlData, editBC }) {
+  const api = useApi();
   const classes = useStyles();
 
   const [tab, setTab] = React.useState(TABS[0].name);
@@ -96,8 +99,10 @@ export function ControllerControlNoLic({ controlData, editBC }) {
     );
   }, []);
 
-  const downloadBC = () => {
-    console.log("download bulletin controle");
+  const downloadBC = async () => {
+    await api.downloadFileHttpQuery(HTTP_QUERIES.controlBDCExport, {
+      json: { control_id: controlData.id }
+    });
   };
 
   const reportInfraction = () => {
@@ -185,7 +190,7 @@ export function ControllerControlNoLic({ controlData, editBC }) {
             updatedInfractions={!!lastInfractionsEditionDate}
             editBC={editBC}
             downloadBC={downloadBC}
-            touchedBC={controlData.controlBulletin.touched}
+            touchedBC={true}
           />
         </>
       )}
