@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Switch,
   Route,
@@ -27,7 +27,6 @@ import { useSnackbarAlerts } from "../common/Snackbar";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
 import { MissionDrawerContextProvider } from "./components/MissionDrawer";
-import { currentUserId } from "common/utils/cookie";
 import CertificationCommunicationModal from "../pwa/components/CertificationCommunicationModal";
 
 const useStyles = makeStyles(theme => ({
@@ -65,15 +64,6 @@ function _Admin() {
     companiesToAcceptCertificateCommunication,
     setCompaniesToAcceptCertificateCommunication
   ] = React.useState([]);
-
-  useEffect(() => {
-    if (process.env.SURVICATE_ACCOUNT_KEY) {
-      return window._sva?.setVisitorTraits({
-        userId: currentUserId(),
-        profil: "gestionnaire"
-      });
-    }
-  }, []);
 
   const location = useLocation();
   const width = useWidth();
