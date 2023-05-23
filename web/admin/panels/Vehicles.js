@@ -35,7 +35,8 @@ export default function VehicleAdmin({ company }) {
       label: "Immatriculation",
       name: "registrationNumber",
       create: true,
-      sortable: true
+      sortable: true,
+      format: registrationNumber => registrationNumber?.toUpperCase()
     },
     {
       label: "Nom usuel",
@@ -104,7 +105,7 @@ export default function VehicleAdmin({ company }) {
           const apiResponse = await api.graphQlMutate(
             CREATE_VEHICLE_MUTATION,
             {
-              registrationNumber,
+              registrationNumber: registrationNumber?.toUpperCase(),
               alias,
               companyId
             },
