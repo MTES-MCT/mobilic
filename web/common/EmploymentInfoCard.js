@@ -206,7 +206,15 @@ export function EmploymentInfoCard({
               />
               <Box
                 onClick={() => {
-                  navigator.clipboard.writeText(emailsCurrentAdmins);
+                  navigator.clipboard
+                    .writeText(emailsCurrentAdmins)
+                    .then(() => {
+                      alerts.success(
+                        `Email(s) copiée(s) dans le presse-papiers !`,
+                        "",
+                        2000
+                      );
+                    });
                 }}
                 className={classes.copyAdminEmails}
               >
