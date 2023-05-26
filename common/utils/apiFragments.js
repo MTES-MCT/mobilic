@@ -188,3 +188,13 @@ export const CONTROL_BULLETIN_FRAGMENT = gql`
     observation
   }
 `;
+
+export const CONTROLLER_USER_FRAGMENT = gql`
+  fragment ControllerUser on ControllerUser {
+    id
+    firstName
+    lastName
+    email
+    grecoId
+  }
+`;

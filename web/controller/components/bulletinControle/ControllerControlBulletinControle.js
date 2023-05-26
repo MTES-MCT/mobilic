@@ -13,12 +13,20 @@ import {
 import { CONTROL_BULLETIN_TRANSPORT_TYPE } from "../../utils/bulletinControle";
 import Typography from "@mui/material/Typography";
 import { BulletinControleHeader } from "./BulletinControleHeader";
-import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries";
+import {
+  CONTROLLER_CHANGE_GRECO_ID,
+  CONTROLLER_SAVE_CONTROL_BULLETIN
+} from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { formatApiError } from "common/utils/errors";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { COUNTRIES } from "../../utils/country";
+import {
+  broadCastChannel,
+  useStoreSyncedWithLocalStorage
+} from "common/store/store";
+import { syncControllerUser } from "../../utils/loadControllerUserData";
 
 const STEPS = {
   1: { title: "Données relatives au salarié" },
@@ -32,12 +40,17 @@ export function ControllerControlBulletinControle({
   setMustConfirmBeforeClosing,
   onSaveControlBulletin
 }) {
+  const store = useStoreSyncedWithLocalStorage();
+  const controllerUserInfo = store.controllerInfo();
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
   const [controlBulletin, setControlBulletin] = React.useState({});
   const [fieldUpdated, setFieldUpdated] = React.useState(false);
   const [step, setStep] = React.useState(1);
+  const [grecoId, setGrecoId] = React.useState(
+    controllerUserInfo.grecoId || ""
+  );
 
   React.useEffect(() => {
     setControlBulletin(initControlBulletinFromControlData());
@@ -100,6 +113,21 @@ export function ControllerControlBulletinControle({
   const saveControlBulletin = async newBulletinControle =>
     withLoadingScreen(async () => {
       try {
+        if (grecoId !== controllerUserInfo.grecoId) {
+          const updateControllerUserResponse = await api.graphQlMutate(
+            CONTROLLER_CHANGE_GRECO_ID,
+            {
+              grecoId
+            },
+            { context: { nonPublicApi: true } }
+          );
+          await syncControllerUser(
+            updateControllerUserResponse.data.controllerChangeGrecoId,
+            api,
+            store
+          );
+          await broadCastChannel.postMessage("update");
+        }
         const apiResponse = await api.graphQlMutate(
           CONTROLLER_SAVE_CONTROL_BULLETIN,
           {
@@ -330,6 +358,15 @@ export function ControllerControlBulletinControle({
     ),
     step === 3 && (
       <Stack key={40} direction="column" p={2} sx={{ width: "100%" }}>
+        <TextInput
+          value={grecoId}
+          name="grecoId"
+          onChange={e => {
+            setGrecoId(e.target.value);
+            setFieldUpdated(true);
+          }}
+          label="Votre identifiant Greco"
+        />
         <TextInput
           value={controlBulletin.observation}
           name="observation"
