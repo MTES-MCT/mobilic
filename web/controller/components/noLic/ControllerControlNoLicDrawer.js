@@ -45,7 +45,7 @@ export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
       PaperProps={{
         className: classes.missionDrawer,
         sx: {
-          width: { xs: "100vw", md: 420 }
+          width: { xs: "100vw", md: 860 }
         }
       }}
     >
