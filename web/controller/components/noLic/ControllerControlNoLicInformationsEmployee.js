@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControllerControlNoLicInformationsInfos({ controlData }) {
+export function ControllerControlNoLicInformationsEmployee({ controlData }) {
   const classes = useStyles();
   return (
     <Grid container spacing={2} className={classes.sectionBody} p={1}>
