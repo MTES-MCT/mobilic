@@ -22,11 +22,10 @@ export function BulletinControleCreationButtons({
     ),
     controlData.controlBulletin && (
       <Stack key={10} direction="column" spacing={2} mt={2} alignItems="center">
-        <Button color="secondary" variant="outlined" size="small" disabled>
+        <Button color="secondary" variant="outlined" size="small">
           Télécharger le bulletin de contrôle
         </Button>
         <Link
-          variant="modifier BDC"
           onClick={e => {
             e.preventDefault();
             openBulletinControl();
