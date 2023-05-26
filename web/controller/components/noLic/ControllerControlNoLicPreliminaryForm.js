@@ -68,7 +68,7 @@ export function ControllerControlNoLicPreliminaryForm({
           value={userLastName}
           name="userLastName"
           onChange={e => setUserLastName(e.target.value)}
-          label="Prénom du salarié"
+          label="Nom du salarié"
           required
           type="text"
         />
@@ -76,7 +76,7 @@ export function ControllerControlNoLicPreliminaryForm({
           value={userFirstName}
           name="userFirstName"
           onChange={e => setUserFirstName(e.target.value)}
-          label="Nom du salarié"
+          label="Prénom du salarié"
           required
           type="text"
         />
