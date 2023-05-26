@@ -1,7 +1,7 @@
 import React from "react";
 import TextField from "common/utils/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
-import { getVehicleName } from "common/utils/vehicles";
+import { getSanitizedVehicleName, getVehicleName } from "common/utils/vehicles";
 import KilometerReadingField from "./KilometerReadingField";
 
 export function VehicleField({
@@ -18,11 +18,11 @@ export function VehicleField({
   ...other
 }) {
   const _filterOptions = createFilterOptions({
-    stringify: option => getVehicleName(option, true)?.replace(/[ |-]/g, "")
+    stringify: option => getSanitizedVehicleName(option)
   });
   const filterOptions = (options, other) =>
     _filterOptions(options, {
-      inputValue: getVehicleName(vehicle, true) || ""
+      inputValue: getSanitizedVehicleName(vehicle) || ""
     });
 
   React.useEffect(() => {
@@ -34,8 +34,6 @@ export function VehicleField({
       }
     }
   }, [vehicle]);
-
-  console.log("vehicles", vehicles);
 
   return [
     <Autocomplete
@@ -56,7 +54,9 @@ export function VehicleField({
           const vehicleMatch = vehicles.find(
             v =>
               v.name === newVehicleName ||
-              v.registrationNumber === newVehicleName
+              v.registrationNumber === newVehicleName ||
+              getSanitizedVehicleName(v) ===
+                getSanitizedVehicleName({ registrationNumber: newVehicleName })
           );
           if (vehicleMatch) setVehicle(vehicleMatch);
           else setVehicle({ registrationNumber: newVehicleName });
