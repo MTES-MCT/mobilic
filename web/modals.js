@@ -32,7 +32,7 @@ import ControllerExportC1BAll from "./controller/components/modals/ControllerExp
 import ChangeNameModal from "./home/ChangeName";
 import CompanyTeamCreationRevisionModal from "./admin/panels/CompanyTeamCreationRevisionModal";
 import EmployeesTeamRevisionModal from "./admin/panels/EmployeesTeamRevisionModal";
-import ConfirmationCancelControlBulletinModal from "./controller/components/bulletinControle/ConfirmationCancelControlBulletinModal";
+import ConfirmationCancelControlBulletinModal from "./controller/components/controlBulletin/ConfirmationCancelControlBulletinModal";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,

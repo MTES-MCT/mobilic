@@ -10,9 +10,9 @@ import {
   Stepper
 } from "@dataesr/react-dsfr";
 
-import { CONTROL_BULLETIN_TRANSPORT_TYPE } from "../../utils/bulletinControle";
+import { CONTROL_BULLETIN_TRANSPORT_TYPE } from "../../utils/controlBulletin";
 import Typography from "@mui/material/Typography";
-import { BulletinControleHeader } from "./BulletinControleHeader";
+import { ControlBulletinHeader } from "./ControlBulletinHeader";
 import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
@@ -26,7 +26,7 @@ const STEPS = {
   3: { title: "Relevez des infractions" }
 };
 
-export function ControllerControlBulletinControle({
+export function ControllerControlBulletin({
   controlData,
   onClose,
   setMustConfirmBeforeClosing,
@@ -76,9 +76,9 @@ export function ControllerControlBulletinControle({
     setFieldUpdated(true);
   };
 
-  const onSaveButton = async newBulletinControle => {
+  const onSaveButton = async newControlBulletin => {
     if (fieldUpdated) {
-      await saveControlBulletin(newBulletinControle);
+      await saveControlBulletin(newControlBulletin);
     } else if (!STEPS[step + 1]) {
       alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
     }
@@ -97,32 +97,32 @@ export function ControllerControlBulletinControle({
     }
   };
 
-  const saveControlBulletin = async newBulletinControle =>
+  const saveControlBulletin = async newControlBulletin =>
     withLoadingScreen(async () => {
       try {
         const apiResponse = await api.graphQlMutate(
           CONTROLLER_SAVE_CONTROL_BULLETIN,
           {
             controlId: controlData?.id,
-            userFirstName: newBulletinControle.userFirstName,
-            userLastName: newBulletinControle.userLastName,
-            userBirthDate: newBulletinControle.userBirthDate,
-            userNationality: newBulletinControle.userNationality,
-            licPaperPresented: newBulletinControle.licPaperPresented,
-            siren: newBulletinControle.siren,
-            companyName: newBulletinControle.companyName,
-            companyAddress: newBulletinControle.companyAddress,
+            userFirstName: newControlBulletin.userFirstName,
+            userLastName: newControlBulletin.userLastName,
+            userBirthDate: newControlBulletin.userBirthDate,
+            userNationality: newControlBulletin.userNationality,
+            licPaperPresented: newControlBulletin.licPaperPresented,
+            siren: newControlBulletin.siren,
+            companyName: newControlBulletin.companyName,
+            companyAddress: newControlBulletin.companyAddress,
             vehicleRegistrationNumber:
-              newBulletinControle.vehicleRegistrationNumber,
+              newControlBulletin.vehicleRegistrationNumber,
             vehicleRegistrationCountry:
-              newBulletinControle.vehicleRegistrationCountry,
-            missionAddressBegin: newBulletinControle.missionAddressBegin,
-            missionAddressEnd: newBulletinControle.missionAddressEnd,
-            transportType: newBulletinControle.transportType,
-            articlesNature: newBulletinControle.articlesNature,
-            licenseNumber: newBulletinControle.licenseNumber,
-            licenseCopyNumber: newBulletinControle.licenseCopyNumber,
-            observation: newBulletinControle.observation
+              newControlBulletin.vehicleRegistrationCountry,
+            missionAddressBegin: newControlBulletin.missionAddressBegin,
+            missionAddressEnd: newControlBulletin.missionAddressEnd,
+            transportType: newControlBulletin.transportType,
+            articlesNature: newControlBulletin.articlesNature,
+            licenseNumber: newControlBulletin.licenseNumber,
+            licenseCopyNumber: newControlBulletin.licenseCopyNumber,
+            observation: newControlBulletin.observation
           },
           { context: { nonPublicApi: true } }
         );
@@ -138,7 +138,7 @@ export function ControllerControlBulletinControle({
     });
 
   return [
-    <BulletinControleHeader
+    <ControlBulletinHeader
       key={0}
       onCloseDrawer={onBackOrCloseButton}
       backLinkLabel={
