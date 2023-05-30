@@ -87,8 +87,8 @@ export function ActivitiesPieChart({
             position="inside"
             content={entry => renderCustomizedLabel(entry.name, entry.viewBox)}
           />
-          {pieData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.color} />
+          {pieData.map(entry => (
+            <Cell key={entry.name} fill={entry.color} />
           ))}
         </Pie>
       </PieChart>
