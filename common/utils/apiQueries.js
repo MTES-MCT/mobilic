@@ -1881,7 +1881,6 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
     $userLastName: String
     $userBirthDate: Date
     $userNationality: String
-    $licPaperPresented: Boolean
     $siren: String
     $companyName: String
     $companyAddress: String
@@ -1901,7 +1900,6 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
       userLastName: $userLastName
       userNationality: $userNationality
       userBirthDate: $userBirthDate
-      licPaperPresented: $licPaperPresented
       siren: $siren
       companyName: $companyName
       companyAddress: $companyAddress

@@ -170,7 +170,6 @@ export const CONTROL_BULLETIN_FRAGMENT = gql`
   fragment ControlBulletin on ControlBulletinFields {
     userBirthDate
     userNationality
-    licPaperPresented
     siren
     companyAddress
     vehicleRegistrationCountry

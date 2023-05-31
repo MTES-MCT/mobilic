@@ -108,7 +108,6 @@ export function ControllerControlBulletin({
             userLastName: newControlBulletin.userLastName,
             userBirthDate: newControlBulletin.userBirthDate,
             userNationality: newControlBulletin.userNationality,
-            licPaperPresented: newControlBulletin.licPaperPresented,
             siren: newControlBulletin.siren,
             companyName: newControlBulletin.companyName,
             companyAddress: newControlBulletin.companyAddress,

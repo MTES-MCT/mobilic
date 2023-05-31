@@ -41,7 +41,6 @@ export function ControllerControlNoLicPreliminaryForm({
           {
             userFirstName,
             userLastName,
-            licPaperPresented: false,
             companyName,
             vehicleRegistrationNumber
           },
