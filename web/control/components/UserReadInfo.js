@@ -70,7 +70,7 @@ export function UserReadInfo({
     if (userInfo) {
       setUserName(formatPersonName(userInfo));
     } else if (controlData) {
-      setUserName(controlData.userFirstName + " " + controlData.userFirstName);
+      setUserName(controlData.userFirstName + " " + controlData.userLastName);
     }
   }, [controlData, userInfo]);
 
