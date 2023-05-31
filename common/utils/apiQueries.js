@@ -342,24 +342,14 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${FRAGMENT_LOCATION_FULL}
   ${REGULATION_COMPUTATIONS_FRAGMENT}
   ${CONTROL_BULLETIN_FRAGMENT}
+  ${CONTROL_DATA_FRAGMENT}
   query readControlData($controlId: Int!) {
     controlData(controlId: $controlId) {
-      id
-      creationTime
-      qrCodeGenerationTime
-      companyName
-      userFirstName
-      userLastName
-      controlBulletinCreationTime
-      vehicleRegistrationNumber
+      ...ControlData
       historyStartDate
-      nbControlledDays
       controlBulletin {
         ...ControlBulletin
       }
-      siren
-      companyAddress
-      missionAddressBegin
       missions {
         id
         name

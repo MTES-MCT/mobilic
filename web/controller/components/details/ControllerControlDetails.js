@@ -109,7 +109,6 @@ export function ControllerControlDetails({ controlId, onClose }) {
       tabs={getTabs(alertNumber)}
       regulationComputationsByDay={controlData.regulationComputationsByDay}
       alertNumber={alertNumber}
-      userInfo={controlData.user}
       tokenInfo={legacyTokenInfo}
       controlTime={controlData.qrCodeGenerationTime}
       missions={missions}

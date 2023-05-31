@@ -64,6 +64,16 @@ export function UserReadInfo({
   openBulletinControl,
   controlData
 }) {
+  const [userName, setUserName] = React.useState("");
+
+  React.useEffect(() => {
+    if (userInfo) {
+      setUserName(formatPersonName(userInfo));
+    } else if (controlData) {
+      setUserName(controlData.userFirstName + " " + controlData.userFirstName);
+    }
+  }, [controlData, userInfo]);
+
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const classes = useStyles();
@@ -80,7 +90,7 @@ export function UserReadInfo({
             className={classes.subSectionBody}
           >
             <Grid item>
-              <InfoItem name="Nom" value={formatPersonName(userInfo)} />
+              <InfoItem name="Nom" value={userName} />
             </Grid>
           </Grid>
           {!companyName && !!currentControllerId() && (
