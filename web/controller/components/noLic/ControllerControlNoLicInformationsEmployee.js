@@ -30,16 +30,10 @@ export function ControllerControlNoLicInformationsEmployee({ controlData }) {
         className={classes.subSectionBody}
       >
         <Grid item xs={6}>
-          <InfoItem
-            name="Nom"
-            value={controlData.controlBulletin.userLastName}
-          />
+          <InfoItem name="Nom" value={controlData.userLastName} />
         </Grid>
         <Grid item xs={6}>
-          <InfoItem
-            name="Prénom"
-            value={controlData.controlBulletin.userFirstName}
-          />
+          <InfoItem name="Prénom" value={controlData.userFirstName} />
         </Grid>
       </Grid>
       <Typography variant="h5">Mission lors du contrôle</Typography>
@@ -56,8 +50,7 @@ export function ControllerControlNoLicInformationsEmployee({ controlData }) {
                 <DriveEtaIcon />
               </ListItemIcon>
               <Typography noWrap align="left" className={classes.fieldValue}>
-                {controlData.controlBulletin.vehicleRegistrationNumber ||
-                  "Non renseigné"}
+                {controlData.vehicleRegistrationNumber || "Non renseigné"}
               </Typography>
             </ListItem>
             <ListItem disableGutters>
@@ -65,7 +58,7 @@ export function ControllerControlNoLicInformationsEmployee({ controlData }) {
                 <BusinessIcon />
               </ListItemIcon>
               <Typography noWrap align="left" className={classes.fieldValue}>
-                {controlData.controlBulletin.companyName || "Non renseigné"}
+                {controlData.companyName || "Non renseigné"}
               </Typography>
             </ListItem>
           </List>

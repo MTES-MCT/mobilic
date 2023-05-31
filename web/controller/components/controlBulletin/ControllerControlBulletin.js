@@ -47,7 +47,7 @@ export function ControllerControlBulletin({
       return {
         userFirstName: controlData.userFirstName,
         userLastName: controlData.userLastName,
-        userBirthDate: controlData.user.birthDate,
+        userBirthDate: controlData.user?.birthDate,
         companyName: controlData.companyName,
         vehicleRegistrationNumber: controlData.vehicleRegistrationNumber,
         ...controlData.controlBulletin

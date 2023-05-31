@@ -183,3 +183,18 @@ export const CONTROL_BULLETIN_FRAGMENT = gql`
     observation
   }
 `;
+
+export const CONTROL_DATA_FRAGMENT = gql`
+  fragment ControlData on ControllerControl {
+    id
+    controlType
+    qrCodeGenerationTime
+    nbControlledDays
+    creationTime
+    companyName
+    userFirstName
+    userLastName
+    controlBulletinCreationTime
+    vehicleRegistrationNumber
+  }
+`;

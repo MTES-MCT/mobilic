@@ -3,6 +3,7 @@ import { buildBackendPayloadForAddress } from "./addresses";
 import {
   COMPANY_SETTINGS_FRAGMENT,
   CONTROL_BULLETIN_FRAGMENT,
+  CONTROL_DATA_FRAGMENT,
   FRAGMENT_LOCATION_FULL,
   FULL_MISSION_FRAGMENT,
   FULL_TEAM_FRAGMENT,
@@ -1883,6 +1884,7 @@ export const CONTROLLER_SCAN_CODE = gql`
 
 export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
   ${CONTROL_BULLETIN_FRAGMENT}
+  ${CONTROL_DATA_FRAGMENT}
   mutation controllerSaveControlBulletin(
     $controlId: Int
     $userFirstName: String
@@ -1923,8 +1925,7 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
       licenseCopyNumber: $licenseCopyNumber
       observation: $observation
     ) {
-      id
-      creationTime
+      ...ControlData
       controlBulletin {
         ...ControlBulletin
       }
@@ -1933,20 +1934,11 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
 `;
 
 export const CONTROLLER_USER_CONTROLS_QUERY = gql`
+  ${CONTROL_DATA_FRAGMENT}
   query controllerUser($id: Int!, $fromDate: Date, $toDate: Date) {
     controllerUser(id: $id) {
       controls(fromDate: $fromDate, toDate: $toDate) {
-        id
-        controlType
-        user {
-          firstName
-          lastName
-        }
-        qrCodeGenerationTime
-        creationTime
-        companyName
-        vehicleRegistrationNumber
-        nbControlledDays
+        ...ControlData
       }
     }
   }
