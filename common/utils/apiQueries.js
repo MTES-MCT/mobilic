@@ -347,6 +347,9 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       creationTime
       qrCodeGenerationTime
       companyName
+      userFirstName
+      userLastName
+      controlBulletinCreationTime
       vehicleRegistrationNumber
       historyStartDate
       nbControlledDays

@@ -43,18 +43,25 @@ export function ControllerControlBulletin({
   const initControlBulletinFromControlData = () => {
     if (!controlData) {
       return {};
-    } else if (controlData?.controlBulletin) {
-      return { ...controlData.controlBulletin };
-    } else {
+    } else if (controlData.controlBulletinCreationTime) {
       return {
-        userFirstName: controlData.user.firstName,
-        userLastName: controlData.user.lastName,
+        userFirstName: controlData.userFirstName,
+        userLastName: controlData.userLastName,
         userBirthDate: controlData.user.birthDate,
         companyName: controlData.companyName,
-        siren: controlData.siren,
-        companyAddress: controlData.companyAddress,
-        missionAddressBegin: controlData.missionAddressBegin,
-        vehicleRegistrationNumber: controlData.vehicleRegistrationNumber
+        vehicleRegistrationNumber: controlData.vehicleRegistrationNumber,
+        ...controlData.controlBulletin
+      };
+    } else {
+      return {
+        userFirstName: controlData.userFirstName,
+        userLastName: controlData.userLastName,
+        userBirthDate: controlData.user?.birthDate,
+        companyName: controlData.companyName,
+        vehicleRegistrationNumber: controlData.vehicleRegistrationNumber,
+        siren: controlData.controlBulletin?.siren,
+        companyAddress: controlData.controlBulletin?.companyAddress,
+        missionAddressBegin: controlData.controlBulletin?.missionAddressBegin
       };
     }
   };

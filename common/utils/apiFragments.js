@@ -167,17 +167,12 @@ export const FULL_TEAM_FRAGMENT = gql`
 `;
 
 export const CONTROL_BULLETIN_FRAGMENT = gql`
-  fragment ControlBulletin on ControlBulletin {
-    id
-    userFirstName
-    userLastName
+  fragment ControlBulletin on ControlBulletinFields {
     userBirthDate
     userNationality
     licPaperPresented
     siren
-    companyName
     companyAddress
-    vehicleRegistrationNumber
     vehicleRegistrationCountry
     missionAddressBegin
     missionAddressEnd

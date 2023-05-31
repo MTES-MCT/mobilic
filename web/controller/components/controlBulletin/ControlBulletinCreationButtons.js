@@ -8,7 +8,7 @@ export function ControlBulletinCreationButtons({
   openBulletinControl
 }) {
   return [
-    !controlData.controlBulletin && (
+    !controlData.controlBulletinCreationTime && (
       <Stack key={0} direction="column" spacing={2} mt={2} alignItems="center">
         <Button
           color="primary"
@@ -20,7 +20,7 @@ export function ControlBulletinCreationButtons({
         </Button>
       </Stack>
     ),
-    controlData.controlBulletin && (
+    controlData.controlBulletinCreationTime && (
       <Stack key={10} direction="column" spacing={2} mt={2} alignItems="center">
         <Button color="secondary" variant="outlined" size="small">
           Télécharger le bulletin de contrôle
