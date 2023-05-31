@@ -428,6 +428,9 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
             name
             registrationNumber
           }
+          currentAdmins {
+            email
+          }
         }
       }
       user {
@@ -1817,6 +1820,14 @@ export const OAUTH_TOKEN_QUERY = gql`
       id
       token
       clientName
+    }
+  }
+`;
+
+export const USER_CONTROLS_QUERY = gql`
+  query userControls($userId: Int!) {
+    user(id: $userId) {
+      controlsDate
     }
   }
 `;

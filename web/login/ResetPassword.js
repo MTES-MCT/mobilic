@@ -251,7 +251,7 @@ export function RequestResetPassword() {
               >
                 <Typography className={classes.introText}>
                   Pour réinitialiser votre mot de passe veuillez entrer
-                  l'adresse email avec laquelle vous vous êtes inscrits sur
+                  l'adresse email avec laquelle vous vous êtes inscrit sur
                   Mobilic.
                 </Typography>
                 <EmailField

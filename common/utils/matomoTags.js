@@ -2,7 +2,8 @@ export const MATOMO_CATEGORIES = {
   ADMIN_MISSION_ACTION: "admin-mission-action",
   ADMIN_NAVIGATION: "admin-navigation",
   ADMIN_ACTIVITY_FILTER: "admin-activity-filter",
-  ADMIN_EXPORT: "admin-export"
+  ADMIN_EXPORT: "admin-export",
+  HOME: "homepage"
 };
 
 export const MATOMO_ACTIONS = {
@@ -132,4 +133,20 @@ export const OPEN_CANCEL_UPDATE_MISSION = {
   category: MATOMO_CATEGORIES.ADMIN_NAVIGATION,
   action: "open-cancel-mission",
   name: "Affichage pop up annulation modification mission"
+};
+
+export const OPEN_PRESS_ARTICLE = tagName => {
+  return {
+    category: MATOMO_CATEGORIES.HOME,
+    action: "open-article",
+    name: tagName
+  };
+};
+
+export const PLAY_VIDEO = tagName => {
+  return {
+    category: MATOMO_CATEGORIES.HOME,
+    action: "play-video",
+    name: tagName
+  };
 };

@@ -9,25 +9,55 @@ const useStyles = makeStyles(theme => ({
   },
   icon: {
     color: theme.palette.primary.main
+  },
+  clickable: {
+    cursor: "pointer"
   }
 }));
 
-export function ControllerHelpCard({ iconName, title, description, linkTo }) {
+export function ControllerHelpCard({
+  iconName,
+  title,
+  description,
+  linkTo,
+  clickAction
+}) {
   const classes = useStyles();
+
+  const handleClick = () => {
+    if (clickAction) {
+      clickAction();
+    }
+  };
+
+  const child = (
+    <Stack direction="row" spacing={4}>
+      <span
+        className={classNames(iconName, "fr-icon--lg", classes.icon)}
+        aria-hidden="true"
+      ></span>
+      <Stack>
+        <h5>{title}</h5>
+        <p>{description}</p>
+      </Stack>
+    </Stack>
+  );
+
+  if (linkTo) {
+    return (
+      <a href={linkTo} target="_blank" rel="noreferrer">
+        <div className={classNames("fr-tile", classes.card)}>{child}</div>
+      </a>
+    );
+  }
+
   return (
-    <a href={linkTo} target="_blank" rel="noreferrer">
-      <div className={classNames("fr-tile", classes.card)}>
-        <Stack direction="row" spacing={4}>
-          <span
-            className={classNames(iconName, "fr-icon--lg", classes.icon)}
-            aria-hidden="true"
-          ></span>
-          <Stack>
-            <h5>{title}</h5>
-            <p>{description}</p>
-          </Stack>
-        </Stack>
-      </div>
-    </a>
+    <div
+      role="button"
+      onClick={handleClick}
+      className={classNames("fr-tile", classes.card, classes.clickable)}
+    >
+      {child}
+    </div>
   );
 }

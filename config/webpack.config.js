@@ -13,7 +13,6 @@ const safePostCssParser = require("postcss-safe-parser");
 const ManifestPlugin = require("webpack-manifest-plugin");
 const InterpolateHtmlPlugin = require("react-dev-utils/InterpolateHtmlPlugin");
 const WorkboxWebpackPlugin = require("workbox-webpack-plugin");
-const SentryWebpackPlugin = require("@sentry/webpack-plugin");
 const ModuleScopePlugin = require("react-dev-utils/ModuleScopePlugin");
 const getCSSModuleLocalIdent = require("react-dev-utils/getCSSModuleLocalIdent");
 const paths = require("./paths");
@@ -686,13 +685,6 @@ module.exports = function(webpackEnv) {
             "!**/src/setupTests.*"
           ],
           silent: true
-        }),
-      process.env.SENTRY_AUTH_TOKEN &&
-        new SentryWebpackPlugin({
-          include: "build",
-          ignoreFile: ".sentrycliignore",
-          configFile: "sentry.properties",
-          release: process.env.REACT_APP_SENTRY_RELEASE
         })
     ].filter(Boolean),
     // Some libraries import Node modules but don't use them in the browser.
