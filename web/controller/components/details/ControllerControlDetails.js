@@ -131,6 +131,12 @@ export function ControllerControlDetails({ controlId, onClose }) {
       isOpen={isEditingBC}
       onClose={() => setIsEditingBC(false)}
       controlData={controlData}
+      onSaveControlBulletin={newControlBulletin =>
+        setControlData(prevControlData => ({
+          ...prevControlData,
+          controlBulletin: newControlBulletin
+        }))
+      }
     />
   ];
 }

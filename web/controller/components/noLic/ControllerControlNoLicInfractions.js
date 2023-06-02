@@ -12,11 +12,6 @@ import { formatDateTime } from "common/utils/time";
 import { SubmitCancelButtons } from "../../../common/SubmitCancelButtons";
 
 const useStyles = makeStyles(theme => ({
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    width: "100%"
-  },
   infractionBox: {
     maxWidth: "345px"
   },

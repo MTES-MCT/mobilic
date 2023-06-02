@@ -1,12 +1,12 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
 import { ControllerControlNoLicInformationsNotes as Notes } from "./ControllerControlNoLicInformationsNotes";
-import { ControllerControlNoLicInformationsInfos as Infos } from "./ControllerControlNoLicInformationsInfos";
+import { ControllerControlNoLicInformationsEmployee as InformationsEmployee } from "./ControllerControlNoLicInformationsEmployee";
 
 export function ControllerControlNoLicInformations({
   notes,
   setNotes,
-  bulletinControle
+  controlData
 }) {
   return (
     <Stack
@@ -17,7 +17,7 @@ export function ControllerControlNoLicInformations({
       alignItems="center"
     >
       <Notes notes={notes} setNotes={setNotes} />
-      <Infos bulletinControle={bulletinControle} />
+      <InformationsEmployee controlData={controlData} />
     </Stack>
   );
 }

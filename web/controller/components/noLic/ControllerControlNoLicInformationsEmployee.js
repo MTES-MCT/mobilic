@@ -18,9 +18,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControllerControlNoLicInformationsInfos({ bulletinControle }) {
+export function ControllerControlNoLicInformationsEmployee({ controlData }) {
   const classes = useStyles();
-  return bulletinControle?.touched ? (
+  return (
     <Grid container spacing={2} className={classes.sectionBody} p={1}>
       <Typography variant="h5">Informations salarié(e)</Typography>
       <Grid
@@ -30,19 +30,16 @@ export function ControllerControlNoLicInformationsInfos({ bulletinControle }) {
         className={classes.subSectionBody}
       >
         <Grid item xs={6}>
-          <InfoItem name="Nom" value={bulletinControle.lastName} />
-        </Grid>
-        <Grid item xs={6}>
-          <InfoItem name="Prénom" value={bulletinControle.firstName} />
-        </Grid>
-        <Grid item xs={6}>
           <InfoItem
-            name="Date de naissance"
-            value={bulletinControle.birthDate}
+            name="Nom"
+            value={controlData.controlBulletin.userLastName}
           />
         </Grid>
         <Grid item xs={6}>
-          <InfoItem name="Nationalité" value={bulletinControle.nationality} />
+          <InfoItem
+            name="Prénom"
+            value={controlData.controlBulletin.userFirstName}
+          />
         </Grid>
       </Grid>
       <Typography variant="h5">Mission lors du contrôle</Typography>
@@ -59,7 +56,8 @@ export function ControllerControlNoLicInformationsInfos({ bulletinControle }) {
                 <DriveEtaIcon />
               </ListItemIcon>
               <Typography noWrap align="left" className={classes.fieldValue}>
-                {bulletinControle.vehicleRegistrationNumber || "Non renseigné"}
+                {controlData.controlBulletin.vehicleRegistrationNumber ||
+                  "Non renseigné"}
               </Typography>
             </ListItem>
             <ListItem disableGutters>
@@ -67,17 +65,12 @@ export function ControllerControlNoLicInformationsInfos({ bulletinControle }) {
                 <BusinessIcon />
               </ListItemIcon>
               <Typography noWrap align="left" className={classes.fieldValue}>
-                {bulletinControle.companyName || "Non renseigné"}
+                {controlData.controlBulletin.companyName || "Non renseigné"}
               </Typography>
             </ListItem>
           </List>
         </Grid>
       </Grid>
     </Grid>
-  ) : (
-    <Typography>
-      Renseignez les informations relatives au salarié et à l'entreprise
-      directement en éditant le bulletin de contrôle.
-    </Typography>
   );
 }

@@ -1,13 +1,8 @@
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
-import { ControllerControlBulletinControleLIC } from "./ControllerControlBulletinControleLIC";
+import { ControllerControlBulletinControle } from "./ControllerControlBulletinControle";
 import Box from "@mui/material/Box";
-import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries";
-import { formatApiError } from "common/utils/errors";
-import { useApi } from "common/utils/api";
-import { useLoadingScreen } from "common/utils/loading";
-import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
@@ -20,59 +15,14 @@ const useStyles = makeStyles(theme => ({
 export function BulletinControleDrawer({
   isOpen,
   onClose,
-  bulletinControle,
-  onSavingBulletinControle,
-  controlData
+  controlData,
+  onSaveControlBulletin
 }) {
   const classes = useStyles();
   const [mustConfirmBeforeClosing, setMustConfirmBeforeClosing] = useState(
     false
   );
-  const api = useApi();
-  const withLoadingScreen = useLoadingScreen();
-  const alerts = useSnackbarAlerts();
   const modals = useModals();
-
-  const saveControlBulletin = async ({ newBulletinControle, onSuccess }) =>
-    withLoadingScreen(async () => {
-      try {
-        const apiResponse = await api.graphQlMutate(
-          CONTROLLER_SAVE_CONTROL_BULLETIN,
-          {
-            controlId: controlData?.id,
-            userFirstName: newBulletinControle.userFirstName,
-            userLastName: newBulletinControle.userLastName,
-            userBirthDate: newBulletinControle.userBirthDate,
-            userNationality: newBulletinControle.userNationality,
-            licPaperPresented: newBulletinControle.licPaperPresented,
-            siren: newBulletinControle.siren,
-            companyName: newBulletinControle.companyName,
-            companyAddress: newBulletinControle.companyAddress,
-            vehicleRegistrationNumber:
-              newBulletinControle.vehicleRegistrationNumber,
-            vehicleRegistrationCountry:
-              newBulletinControle.vehicleRegistrationCountry,
-            missionAddressBegin: newBulletinControle.missionAddressBegin,
-            missionAddressEnd: newBulletinControle.missionAddressEnd,
-            transportType: newBulletinControle.transportType,
-            articlesNature: newBulletinControle.articlesNature,
-            licenseNumber: newBulletinControle.licenseNumber,
-            licenseCopyNumber: newBulletinControle.licenseCopyNumber,
-            observation: newBulletinControle.observation
-          },
-          { context: { nonPublicApi: true } }
-        );
-        controlData.controlBulletin =
-          apiResponse.data.controllerSaveControlBulletin.controlBulletin;
-        alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
-        if (onSuccess) {
-          onSuccess();
-        }
-        setMustConfirmBeforeClosing(false);
-      } catch (err) {
-        alerts.error(formatApiError(err), "", 6000);
-      }
-    });
 
   const closeDrawer = (forceClose = false) => {
     if (!forceClose && mustConfirmBeforeClosing) {
@@ -105,13 +55,11 @@ export function BulletinControleDrawer({
       }}
     >
       <Box m={2}>
-        <ControllerControlBulletinControleLIC
-          bulletinControle={bulletinControle}
-          onSavingBulletinControle={onSavingBulletinControle}
+        <ControllerControlBulletinControle
           onClose={closeDrawer}
           controlData={controlData}
           setMustConfirmBeforeClosing={setMustConfirmBeforeClosing}
-          saveControlBulletin={saveControlBulletin}
+          onSaveControlBulletin={onSaveControlBulletin}
         />
       </Box>
     </SwipeableDrawer>
