@@ -353,6 +353,9 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       controlBulletin {
         ...ControlBulletin
       }
+      siren
+      companyAddress
+      missionAddressBegin
       missions {
         id
         name
@@ -1884,6 +1887,18 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
     $userBirthDate: Date
     $userNationality: String
     $licPaperPresented: Boolean
+    $siren: String
+    $companyName: String
+    $companyAddress: String
+    $vehicleRegistrationNumber: String
+    $vehicleRegistrationCountry: String
+    $missionAddressBegin: String
+    $missionAddressEnd: String
+    $transportType: String
+    $articlesNature: String
+    $licenseNumber: String
+    $licenseCopyNumber: String
+    $observation: String
   ) {
     controllerSaveControlBulletin(
       controlId: $controlId
@@ -1892,6 +1907,18 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
       userNationality: $userNationality
       userBirthDate: $userBirthDate
       licPaperPresented: $licPaperPresented
+      siren: $siren
+      companyName: $companyName
+      companyAddress: $companyAddress
+      vehicleRegistrationNumber: $vehicleRegistrationNumber
+      vehicleRegistrationCountry: $vehicleRegistrationCountry
+      missionAddressBegin: $missionAddressBegin
+      missionAddressEnd: $missionAddressEnd
+      transportType: $transportType
+      articlesNature: $articlesNature
+      licenseNumber: $licenseNumber
+      licenseCopyNumber: $licenseCopyNumber
+      observation: $observation
     ) {
       id
       controlBulletin {

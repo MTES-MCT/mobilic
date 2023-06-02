@@ -174,5 +174,17 @@ export const CONTROL_BULLETIN_FRAGMENT = gql`
     userBirthDate
     userNationality
     licPaperPresented
+    siren
+    companyName
+    companyAddress
+    vehicleRegistrationNumber
+    vehicleRegistrationCountry
+    missionAddressBegin
+    missionAddressEnd
+    transportType
+    articlesNature
+    licenseNumber
+    licenseCopyNumber
+    observation
   }
 `;

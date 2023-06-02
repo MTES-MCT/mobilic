@@ -1,21 +1,40 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import { Link } from "../../../common/LinkButton";
 
 export function BulletinControleCreationButtons({
   controlData,
   openBulletinControl
 }) {
-  return (
-    <Stack direction="column" spacing={2} mt={2} alignItems="center">
-      <Button
-        color="primary"
-        variant="contained"
-        size="small"
-        onClick={openBulletinControl}
-      >
-        Éditer un bulletin de contrôle
-      </Button>
-    </Stack>
-  );
+  return [
+    !controlData.controlBulletin && (
+      <Stack key={0} direction="column" spacing={2} mt={2} alignItems="center">
+        <Button
+          color="primary"
+          variant="contained"
+          size="small"
+          onClick={openBulletinControl}
+        >
+          Éditer un bulletin de contrôle
+        </Button>
+      </Stack>
+    ),
+    controlData.controlBulletin && (
+      <Stack key={10} direction="column" spacing={2} mt={2} alignItems="center">
+        <Button color="secondary" variant="outlined" size="small" disabled>
+          Télécharger le bulletin de contrôle
+        </Button>
+        <Link
+          variant="modifier BDC"
+          onClick={e => {
+            e.preventDefault();
+            openBulletinControl();
+          }}
+        >
+          Modifier le bulletin de contrôle
+        </Link>
+      </Stack>
+    )
+  ];
 }

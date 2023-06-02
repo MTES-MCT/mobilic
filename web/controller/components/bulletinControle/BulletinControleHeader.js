@@ -18,9 +18,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function BulletinControleHeader({ onCloseDrawer, controlData }) {
+export function BulletinControleHeader({ onCloseDrawer, backLinkLabel }) {
   const classes = useStyles();
-  return controlData?.id ? (
+  return (
     <Container className={classes.controlHeaderContainer}>
       <Box className={classes.subHeaderSection}>
         <Link
@@ -33,24 +33,7 @@ export function BulletinControleHeader({ onCloseDrawer, controlData }) {
           )}
           onClick={onCloseDrawer}
         >
-          Retour au contrôle {controlData.id}
-        </Link>
-      </Box>
-    </Container>
-  ) : (
-    <Container className={classes.controlHeaderContainer}>
-      <Box className={classes.subHeaderSection}>
-        <Link
-          to="#"
-          className={classNames(
-            classes.linkHomeMobile,
-            "fr-link",
-            "fr-fi-arrow-left-line",
-            "fr-link--icon-left"
-          )}
-          onClick={onCloseDrawer}
-        >
-          Fermer
+          {backLinkLabel}
         </Link>
       </Box>
     </Container>
