@@ -24,7 +24,7 @@ import BusinessIcon from "@mui/icons-material/Business";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Alert from "@mui/material/Alert";
 import { currentControllerId } from "common/utils/cookie";
-import { BulletinControleCreationButtons } from "../../controller/components/bulletinControle/BulletinControleCreationButtons";
+import { ControlBulletinCreationButtons } from "../../controller/components/controlBulletin/ControlBulletinCreationButtons";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -226,7 +226,7 @@ export function UserReadInfo({
       )}
       {!!currentControllerId() && (
         <>
-          <BulletinControleCreationButtons
+          <ControlBulletinCreationButtons
             openBulletinControl={openBulletinControl}
             controlData={controlData}
           />

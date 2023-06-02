@@ -14,7 +14,7 @@ import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { ControllerControlHeader } from "./ControllerControlHeader";
 import _ from "lodash";
 import { computeNumberOfAlerts } from "common/utils/regulation/computeNumberOfAlerts";
-import { BulletinControleDrawer } from "../bulletinControle/BulletinControleDrawer";
+import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
 
 export function ControllerControlDetails({ controlId, onClose }) {
   const [controlData, setControlData] = React.useState({});
@@ -126,7 +126,7 @@ export function ControllerControlDetails({ controlId, onClose }) {
       openBulletinControl={() => setIsEditingBC(true)}
       controlData={controlData}
     />,
-    <BulletinControleDrawer
+    <ControlBulletinDrawer
       key={2}
       isOpen={isEditingBC}
       onClose={() => setIsEditingBC(false)}

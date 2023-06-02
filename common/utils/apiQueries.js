@@ -2028,6 +2028,10 @@ export const HTTP_QUERIES = {
   controlC1BExport: {
     method: "POST",
     endpoint: "/controllers/generate_tachograph_files"
+  },
+  controlBDCExport: {
+    method: "POST",
+    endpoint: "/controllers/generate_control_bulletin"
   }
 };
 

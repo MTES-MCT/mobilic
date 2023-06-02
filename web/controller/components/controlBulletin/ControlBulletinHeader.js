@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function BulletinControleHeader({ onCloseDrawer, backLinkLabel }) {
+export function ControlBulletinHeader({ onCloseDrawer, backLinkLabel }) {
   const classes = useStyles();
   return (
     <Container className={classes.controlHeaderContainer}>
