@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import classNames from "classnames";
 import { ControllerControlHeader } from "../details/ControllerControlHeader";
 import { ControllerControlNoLic } from "./ControllerControlNoLic";
-import { BulletinControleDrawer } from "../bulletinControle/BulletinControleDrawer";
+import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
@@ -51,7 +51,7 @@ export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
     >
       {controlData ? (
         <>
-          <BulletinControleDrawer
+          <ControlBulletinDrawer
             isOpen={isEditingBC}
             onClose={() => setIsEditingBC(false)}
             controlData={controlData}
