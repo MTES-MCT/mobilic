@@ -21,11 +21,11 @@ const useStyles = makeStyles(theme => ({
 export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
   const classes = useStyles();
 
-  const [isEditingBC, setIsEditingBC] = React.useState(false);
+  const [isEditingBDC, setIsEditingBDC] = React.useState(false);
   const [controlData, setControlData] = React.useState(null);
 
-  const editBC = () => {
-    setIsEditingBC(true);
+  const editBDC = () => {
+    setIsEditingBDC(true);
   };
 
   const closeControl = () => {
@@ -52,8 +52,8 @@ export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
       {controlData ? (
         <>
           <ControlBulletinDrawer
-            isOpen={isEditingBC}
-            onClose={() => setIsEditingBC(false)}
+            isOpen={isEditingBDC}
+            onClose={() => setIsEditingBDC(false)}
             controlData={controlData}
             onSaveControlBulletin={newData =>
               setControlData(prevControlData => ({
@@ -67,7 +67,7 @@ export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
             controlDate={controlData.creationTime}
             onCloseDrawer={() => closeControl()}
           />
-          <ControllerControlNoLic controlData={controlData} editBC={editBC} />
+          <ControllerControlNoLic controlData={controlData} editBDC={editBDC} />
         </>
       ) : (
         <Container className={classes.controlHeaderContainer}>
