@@ -2,6 +2,7 @@ import { gql } from "graphql-tag";
 import { buildBackendPayloadForAddress } from "./addresses";
 import {
   COMPANY_SETTINGS_FRAGMENT,
+  CONTROLLER_USER_FRAGMENT,
   CONTROL_BULLETIN_FRAGMENT,
   CONTROL_DATA_FRAGMENT,
   FRAGMENT_LOCATION_FULL,
@@ -1868,6 +1869,24 @@ export const CONTROLLER_SCAN_CODE = gql`
     controllerScanCode(jwtToken: $jwtToken) {
       id
       qrCodeGenerationTime
+    }
+  }
+`;
+
+export const CONTROLLER_USER_QUERY = gql`
+  ${CONTROLLER_USER_FRAGMENT}
+  query controllerUser($id: Int!) {
+    controllerUser(id: $id) {
+      ...ControllerUser
+    }
+  }
+`;
+
+export const CONTROLLER_CHANGE_GRECO_ID = gql`
+  ${CONTROLLER_USER_FRAGMENT}
+  mutation controllerChangeGrecoId($grecoId: String!) {
+    controllerChangeGrecoId(grecoId: $grecoId) {
+      ...ControllerUser
     }
   }
 `;
