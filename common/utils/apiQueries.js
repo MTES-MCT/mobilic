@@ -1942,9 +1942,18 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
 
 export const CONTROLLER_USER_CONTROLS_QUERY = gql`
   ${CONTROL_DATA_FRAGMENT}
-  query controllerUser($id: Int!, $fromDate: Date, $toDate: Date) {
+  query controllerUser(
+    $id: Int!
+    $fromDate: Date
+    $toDate: Date
+    $controlsType: String
+  ) {
     controllerUser(id: $id) {
-      controls(fromDate: $fromDate, toDate: $toDate) {
+      controls(
+        fromDate: $fromDate
+        toDate: $toDate
+        controlsType: $controlsType
+      ) {
         ...ControlData
       }
     }

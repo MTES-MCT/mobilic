@@ -1,6 +1,7 @@
 import { Button as ButtonDsfr } from "@dataesr/react-dsfr";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import { makeStyles } from "@mui/styles";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { useModals } from "common/utils/modals";
@@ -16,6 +17,21 @@ const useStyles = makeStyles(theme => ({
     flexShrink: 0
   }
 }));
+
+const controlsTypes = [
+  {
+    label: "-",
+    value: ""
+  },
+  {
+    label: "Mobilic",
+    value: "mobilic"
+  },
+  {
+    label: "Pas de LIC",
+    value: "sans_lic"
+  }
+];
 
 export function ControllerHistoryFilters({
   controlFilters,
@@ -37,6 +53,28 @@ export function ControllerHistoryFilters({
       className={classes.filterGrid}
       sx={{ justifyContent: { xs: "left", md: "center" } }}
     >
+      <Grid item xs={12} md={2}>
+        <TextField
+          label="Type de contrôle"
+          variant="filled"
+          select
+          fullWidth
+          value={controlFilters.controlsType}
+          size="small"
+          onChange={e =>
+            setControlFilters(prevFilters => ({
+              ...prevFilters,
+              controlsType: e.target.value
+            }))
+          }
+        >
+          {controlsTypes.map(controlsType => (
+            <MenuItem key={controlsType.value} value={controlsType.value}>
+              {controlsType.label}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
       <Grid item>
         <PeriodToggle period={period} setPeriod={setPeriod} />
       </Grid>
