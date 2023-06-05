@@ -158,9 +158,7 @@ export function ControllerControlBulletin({
           },
           { context: { nonPublicApi: true } }
         );
-        onSaveControlBulletin(
-          apiResponse.data.controllerSaveControlBulletin.controlBulletin
-        );
+        onSaveControlBulletin(apiResponse.data.controllerSaveControlBulletin);
         alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
         setFieldUpdated(false);
         setMustConfirmBeforeClosing(false);

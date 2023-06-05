@@ -190,7 +190,7 @@ export function ControllerControlNoLic({ controlData, editBC }) {
             updatedInfractions={!!lastInfractionsEditionDate}
             editBC={editBC}
             downloadBC={downloadBC}
-            touchedBC={true}
+            touchedBC={controlData.controlBulletinCreationTime}
           />
         </>
       )}

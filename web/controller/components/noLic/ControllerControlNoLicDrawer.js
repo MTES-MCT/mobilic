@@ -55,10 +55,10 @@ export function ControllerControlNoLicDrawer({ isOpen, onClose }) {
             isOpen={isEditingBC}
             onClose={() => setIsEditingBC(false)}
             controlData={controlData}
-            onSaveControlBulletin={newControlBulletin =>
+            onSaveControlBulletin={newData =>
               setControlData(prevControlData => ({
                 ...prevControlData,
-                controlBulletin: newControlBulletin
+                ...newData
               }))
             }
           />
