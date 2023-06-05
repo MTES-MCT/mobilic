@@ -74,6 +74,7 @@ export function ControlsList({
             vehicle: control.vehicleRegistrationNumber,
             company: control.companyName,
             time: control.creationTime,
+            controlLocation: "Bientôt disponible",
             formattedTime:
               (period !== "day"
                 ? `${formatDay(control.creationTime)} - `

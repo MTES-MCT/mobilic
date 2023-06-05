@@ -4,14 +4,15 @@ import { useIsWidthUp } from "common/utils/useWidth";
 const ControlsTable = ({ entries, onRowClick, period = "day" }) => {
   const columns = React.useMemo(
     () => [
-      { name: "company", label: "Nom entreprise" },
       { name: "employee", label: "Salarié" },
       { name: "vehicle", label: "Véhicule" },
       {
         name: "formattedTime",
         label: period === "day" ? "Heure" : "Date & Heure"
       },
+      { name: "controlLocation", label: "Lieu contrôle" },
       { name: "type", label: "Type" },
+      { name: "company", label: "Nom entreprise" },
       { name: "nbControlledDays", label: "Jours contrôlés" }
     ],
     [period]
