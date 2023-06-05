@@ -1,13 +1,13 @@
 import { Button as ButtonDsfr } from "@dataesr/react-dsfr";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
 import { makeStyles } from "@mui/styles";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { useModals } from "common/utils/modals";
 import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 import React from "react";
 import { PeriodToggle } from "../../../admin/components/PeriodToggle";
+import { ControlTypeFilters } from "../filters/ControlTypeFilter";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -17,21 +17,6 @@ const useStyles = makeStyles(theme => ({
     flexShrink: 0
   }
 }));
-
-const controlsTypes = [
-  {
-    label: "-",
-    value: ""
-  },
-  {
-    label: "Mobilic",
-    value: "mobilic"
-  },
-  {
-    label: "Pas de LIC",
-    value: "sans_lic"
-  }
-];
 
 export function ControllerHistoryFilters({
   controlFilters,
@@ -54,26 +39,15 @@ export function ControllerHistoryFilters({
       sx={{ justifyContent: { xs: "left", md: "center" } }}
     >
       <Grid item xs={12} md={2}>
-        <TextField
-          label="Type de contrôle"
-          variant="filled"
-          select
-          fullWidth
-          value={controlFilters.controlsType}
-          size="small"
-          onChange={e =>
+        <ControlTypeFilters
+          controlsType={controlFilters.controlsType}
+          setControlsType={value =>
             setControlFilters(prevFilters => ({
               ...prevFilters,
-              controlsType: e.target.value
+              controlsType: value
             }))
           }
-        >
-          {controlsTypes.map(controlsType => (
-            <MenuItem key={controlsType.value} value={controlsType.value}>
-              {controlsType.label}
-            </MenuItem>
-          ))}
-        </TextField>
+        />
       </Grid>
       <Grid item>
         <PeriodToggle period={period} setPeriod={setPeriod} />
