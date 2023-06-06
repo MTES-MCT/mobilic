@@ -144,6 +144,9 @@ export function ControllerControlBulletin({
             siren: newControlBulletin.siren,
             companyName: newControlBulletin.companyName,
             companyAddress: newControlBulletin.companyAddress,
+            locationDepartment: newControlBulletin.locationDepartment,
+            locationCommune: newControlBulletin.locationCommune,
+            locationLieu: newControlBulletin.locationLieu,
             vehicleRegistrationNumber:
               newControlBulletin.vehicleRegistrationNumber,
             vehicleRegistrationCountry:

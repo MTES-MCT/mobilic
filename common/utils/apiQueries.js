@@ -1903,6 +1903,9 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
     $siren: String
     $companyName: String
     $companyAddress: String
+    $locationDepartment: String
+    $locationCommune: String
+    $locationLieu: String
     $vehicleRegistrationNumber: String
     $vehicleRegistrationCountry: String
     $missionAddressBegin: String
@@ -1922,6 +1925,9 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
       siren: $siren
       companyName: $companyName
       companyAddress: $companyAddress
+      locationDepartment: $locationDepartment
+      locationCommune: $locationCommune
+      locationLieu: $locationLieu
       vehicleRegistrationNumber: $vehicleRegistrationNumber
       vehicleRegistrationCountry: $vehicleRegistrationCountry
       missionAddressBegin: $missionAddressBegin

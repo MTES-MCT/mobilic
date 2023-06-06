@@ -172,6 +172,9 @@ export const CONTROL_BULLETIN_FRAGMENT = gql`
     userNationality
     siren
     companyAddress
+    locationDepartment
+    locationCommune
+    locationLieu
     vehicleRegistrationCountry
     missionAddressBegin
     missionAddressEnd
