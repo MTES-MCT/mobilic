@@ -4,7 +4,7 @@ import React from "react";
 
 const controlsTypes = [
   {
-    label: "-",
+    label: "Tous les types",
     value: ""
   },
   {
@@ -27,6 +27,7 @@ export function ControlTypeFilters({ controlsType, setControlsType }) {
       value={controlsType}
       size="small"
       onChange={e => setControlsType(e.target.value)}
+      sx={{ textAlign: "left" }}
     >
       {controlsTypes.map(controlsType => (
         <MenuItem key={controlsType.value} value={controlsType.value}>
