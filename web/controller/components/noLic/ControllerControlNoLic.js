@@ -15,6 +15,7 @@ import { ControllerControlNoLicInformations } from "./ControllerControlNoLicInfo
 import { useDownloadBDC } from "../../utils/useDownloadBDC";
 import { ControllerControlBottomMenu as BottomMenu } from "../menu/ControllerControlBottomMenu";
 import { InfractionsAvailableSoon } from "../infractions/InfractionsAvailableSoon";
+import { canDownloadBDC } from "../../utils/controlBulletin";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -183,6 +184,7 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
             updatedInfractions={!!lastInfractionsEditionDate}
             editBDC={editBDC}
             downloadBDC={downloadBDC}
+            canDownloadBDC={canDownloadBDC(controlData)}
             touchedBDC={controlData.controlBulletinCreationTime}
           />
         </>

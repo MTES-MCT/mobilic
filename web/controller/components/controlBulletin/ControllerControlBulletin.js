@@ -20,6 +20,7 @@ import {
   useStoreSyncedWithLocalStorage
 } from "common/store/store";
 import { syncControllerUser } from "../../utils/loadControllerUserData";
+import { canDownloadBDC } from "../../utils/controlBulletin";
 
 const STEPS = {
   1: { title: "Données relatives au salarié" },
@@ -44,6 +45,9 @@ export function ControllerControlBulletin({
   const [grecoId, setGrecoId] = React.useState(
     controllerUserInfo.grecoId || ""
   );
+  const controlCanBeDownloaded = React.useMemo(() => {
+    return canDownloadBDC(controlData);
+  }, [controlData]);
 
   const onUpdateGrecoId = newGrecoId => {
     setGrecoId(newGrecoId);
@@ -216,6 +220,7 @@ export function ControllerControlBulletin({
         controlBulletin={controlBulletin}
         grecoId={grecoId}
         onUpdateGrecoId={onUpdateGrecoId}
+        controlCanBeDownloaded={controlCanBeDownloaded}
       />
     ),
     <Stack
