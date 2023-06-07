@@ -55,7 +55,7 @@ export function ControlBulletinFormStep1({
       />
       <Select
         label="Nationalité du salarié"
-        selected={controlBulletin.userNationality || "FRA"}
+        selected={controlBulletin.userNationality}
         name="userNationality"
         required
         onChange={e => {

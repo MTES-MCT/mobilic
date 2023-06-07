@@ -64,7 +64,7 @@ export function ControllerControlBulletin({
 
   const initControlBulletinFromControlData = () => {
     if (!controlData) {
-      return {};
+      return { userNationality: "FRA" };
     } else if (controlData.controlBulletinCreationTime) {
       return {
         userFirstName: controlData.userFirstName,
@@ -83,7 +83,8 @@ export function ControllerControlBulletin({
         vehicleRegistrationNumber: controlData.vehicleRegistrationNumber,
         siren: controlData.controlBulletin?.siren,
         companyAddress: controlData.controlBulletin?.companyAddress,
-        missionAddressBegin: controlData.controlBulletin?.missionAddressBegin
+        missionAddressBegin: controlData.controlBulletin?.missionAddressBegin,
+        userNationality: "FRA"
       };
     }
   };
