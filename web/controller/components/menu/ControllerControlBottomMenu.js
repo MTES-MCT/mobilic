@@ -50,6 +50,7 @@ export function ControllerControlBottomMenu({
           size="small"
           startIcon={<EditIcon />}
           onClick={reportInfraction}
+          disabled
         >
           {updatedInfractions
             ? "Modifier l'infraction retenue"
