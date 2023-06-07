@@ -7,3 +7,7 @@ export function getVehicleName(vehicle, withRegistrationNumber = false) {
       : vehicle.registrationNumber
     : "";
 }
+
+export function getSanitizedVehicleName(vehicle) {
+  return getVehicleName(vehicle, true)?.replace(/[ |-]/g, "");
+}
