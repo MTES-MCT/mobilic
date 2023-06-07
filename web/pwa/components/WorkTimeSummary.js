@@ -178,7 +178,7 @@ export function splitByLongBreaksAndComputePeriodStats(
     const activity = activities[activityIndex];
 
     if (activity.endTime && activity.endTime < civilDay) activityIndex++;
-    else if (activity.startTime < nextDay) {
+    else if (activity.startTime < nextDay && civilDay < now()) {
       workedDays++;
       civilDay = nextDay;
     } else civilDay = nextDay;
