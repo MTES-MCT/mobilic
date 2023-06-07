@@ -18,6 +18,7 @@ import { InfoHoraireServiceController } from "./InfoHoraireServiceController";
 import classNames from "classnames";
 import { useModals } from "common/utils/modals";
 import { ControllerControlNoLicDrawer } from "../noLic/ControllerControlNoLicDrawer";
+import { ControlTypeFilters } from "../filters/ControlTypeFilter";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -75,13 +76,15 @@ export function ControllerHome() {
 
   const [controls, loadControls, loadingControls] = useLoadControls();
 
+  const [controlsType, setControlsType] = React.useState("mobilic");
+
   React.useEffect(() => {
     loadControls({
       controllerId: controllerUserInfo.id,
       fromDate: isoFormatLocalDate(addDaysToDate(new Date(), -14)),
-      controlsType: "mobilic"
+      controlsType
     });
-  }, []);
+  }, [controlsType]);
 
   React.useEffect(() => {
     setControlIdOnFocus(location.state?.controlId);
@@ -148,6 +151,14 @@ export function ControllerHome() {
       <h4 className={classes.newControlText}>
         Historique des contrôles récents
       </h4>
+      <Grid container>
+        <Grid item xs={12} sm={4} md={2} marginBottom={2}>
+          <ControlTypeFilters
+            controlsType={controlsType}
+            setControlsType={setControlsType}
+          />
+        </Grid>
+      </Grid>
       <Button
         size="small"
         color="primary"

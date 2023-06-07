@@ -1,16 +1,5 @@
-import { gql } from "graphql-tag";
 import { broadCastChannel } from "common/store/store";
-
-const CONTROLLER_USER_QUERY = gql`
-  query controllerUser($id: Int!) {
-    controllerUser(id: $id) {
-      id
-      firstName
-      lastName
-      email
-    }
-  }
-`;
+import { CONTROLLER_USER_QUERY } from "common/utils/apiQueries";
 
 export async function loadControllerUserData(api, store, alerts) {
   const controllerId = store.controllerId();
@@ -28,8 +17,8 @@ export async function loadControllerUserData(api, store, alerts) {
   }, "load-controller-user");
 }
 
-async function syncControllerUser(controllerUserPayload, api, store) {
-  const { id, firstName, lastName, email } = controllerUserPayload;
+export async function syncControllerUser(controllerUserPayload, api, store) {
+  const { id, firstName, lastName, email, grecoId } = controllerUserPayload;
   const syncActions = [];
   firstName &&
     lastName &&
@@ -39,7 +28,8 @@ async function syncControllerUser(controllerUserPayload, api, store) {
           id,
           firstName,
           lastName,
-          email
+          email,
+          grecoId
         },
         false
       )

@@ -24,7 +24,8 @@ import BusinessIcon from "@mui/icons-material/Business";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Alert from "@mui/material/Alert";
 import { currentControllerId } from "common/utils/cookie";
-import { ControlBulletinCreationButtons } from "../../controller/components/controlBulletin/ControlBulletinCreationButtons";
+import { ControllerControlBottomMenu } from "../../controller/components/menu/ControllerControlBottomMenu";
+import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -77,6 +78,8 @@ export function UserReadInfo({
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const classes = useStyles();
+
+  const downloadBDC = useDownloadBDC(controlData.id);
 
   return (
     <Container maxWidth="md" className={classes.container}>
@@ -236,9 +239,10 @@ export function UserReadInfo({
       )}
       {!!currentControllerId() && (
         <>
-          <ControlBulletinCreationButtons
-            openBulletinControl={openBulletinControl}
-            controlData={controlData}
+          <ControllerControlBottomMenu
+            editBDC={openBulletinControl}
+            downloadBDC={downloadBDC}
+            touchedBDC={controlData.controlBulletinCreationTime}
           />
         </>
       )}

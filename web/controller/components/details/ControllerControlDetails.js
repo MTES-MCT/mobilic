@@ -130,10 +130,10 @@ export function ControllerControlDetails({ controlId, onClose }) {
       isOpen={isEditingBC}
       onClose={() => setIsEditingBC(false)}
       controlData={controlData}
-      onSaveControlBulletin={newControlBulletin =>
+      onSaveControlBulletin={newControlData =>
         setControlData(prevControlData => ({
           ...prevControlData,
-          controlBulletin: newControlBulletin
+          ...newControlData
         }))
       }
     />

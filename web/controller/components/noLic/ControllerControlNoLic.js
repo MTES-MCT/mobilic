@@ -13,9 +13,8 @@ import { TextWithBadge } from "../../../common/TextWithBadge";
 import { ControllerControlNoLicInfractionsComponent } from "./ControllerControlNoLicInfractions";
 import { ControllerControlNoLicHistory } from "./ControllerControlNoLicHistory";
 import { ControllerControlNoLicInformations } from "./ControllerControlNoLicInformations";
-import { ControllerControlNoLicBottomMenu as BottomMenu } from "./ControllerControlNoLicBottomMenu";
-import { useApi } from "common/utils/api";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
+import { useDownloadBDC } from "../../utils/useDownloadBDC";
+import { ControllerControlBottomMenu as BottomMenu } from "../menu/ControllerControlBottomMenu";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -75,9 +74,9 @@ const INFRACTIONS = [
   }
 ];
 
-export function ControllerControlNoLic({ controlData, editBC }) {
-  const api = useApi();
+export function ControllerControlNoLic({ controlData, editBDC }) {
   const classes = useStyles();
+  const downloadBDC = useDownloadBDC(controlData.id);
 
   const [tab, setTab] = React.useState(TABS[0].name);
   const [infractions, setInfractions] = React.useState([]);
@@ -98,12 +97,6 @@ export function ControllerControlNoLic({ controlData, editBC }) {
       }))
     );
   }, []);
-
-  const downloadBC = async () => {
-    await api.downloadFileHttpQuery(HTTP_QUERIES.controlBDCExport, {
-      json: { control_id: controlData.id }
-    });
-  };
 
   const reportInfraction = () => {
     setIsReportingInfractions(true);
@@ -188,9 +181,9 @@ export function ControllerControlNoLic({ controlData, editBC }) {
           <BottomMenu
             reportInfraction={reportInfraction}
             updatedInfractions={!!lastInfractionsEditionDate}
-            editBC={editBC}
-            downloadBC={downloadBC}
-            touchedBC={true}
+            editBDC={editBDC}
+            downloadBDC={downloadBDC}
+            touchedBDC={controlData.controlBulletinCreationTime}
           />
         </>
       )}

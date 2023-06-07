@@ -13,22 +13,22 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControllerControlNoLicBottomMenu({
+export function ControllerControlBottomMenu({
   reportInfraction,
   updatedInfractions,
-  editBC,
-  downloadBC,
-  touchedBC
+  editBDC,
+  downloadBDC,
+  touchedBDC
 }) {
   const classes = useStyles();
   return (
     <Stack direction="column" spacing={2} mt={2} alignItems="center">
-      {touchedBC ? (
+      {touchedBDC ? (
         <Button
           color="primary"
           variant="contained"
           size="small"
-          onClick={downloadBC}
+          onClick={downloadBDC}
           startIcon={<DownloadIcon />}
         >
           télécharger le bulletin de contrôle
@@ -38,24 +38,26 @@ export function ControllerControlNoLicBottomMenu({
           color="primary"
           variant="contained"
           size="small"
-          onClick={editBC}
+          onClick={editBDC}
         >
           éditer un bulletin de contrôle
         </Button>
       )}
-      <Button
-        color="primary"
-        variant="outlined"
-        size="small"
-        startIcon={<EditIcon />}
-        onClick={reportInfraction}
-      >
-        {updatedInfractions
-          ? "Modifier l'infraction retenue"
-          : "Relever l'infraction"}
-      </Button>
-      {touchedBC && (
-        <Button variant="text" className={classes.textButton} onClick={editBC}>
+      {reportInfraction && (
+        <Button
+          color="primary"
+          variant="outlined"
+          size="small"
+          startIcon={<EditIcon />}
+          onClick={reportInfraction}
+        >
+          {updatedInfractions
+            ? "Modifier l'infraction retenue"
+            : "Relever l'infraction"}
+        </Button>
+      )}
+      {touchedBDC && (
+        <Button variant="text" className={classes.textButton} onClick={editBDC}>
           Modifier le bulletin de contrôle
         </Button>
       )}

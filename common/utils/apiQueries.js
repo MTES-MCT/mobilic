@@ -2,6 +2,7 @@ import { gql } from "graphql-tag";
 import { buildBackendPayloadForAddress } from "./addresses";
 import {
   COMPANY_SETTINGS_FRAGMENT,
+  CONTROLLER_USER_FRAGMENT,
   CONTROL_BULLETIN_FRAGMENT,
   CONTROL_DATA_FRAGMENT,
   FRAGMENT_LOCATION_FULL,
@@ -1872,6 +1873,24 @@ export const CONTROLLER_SCAN_CODE = gql`
   }
 `;
 
+export const CONTROLLER_USER_QUERY = gql`
+  ${CONTROLLER_USER_FRAGMENT}
+  query controllerUser($id: Int!) {
+    controllerUser(id: $id) {
+      ...ControllerUser
+    }
+  }
+`;
+
+export const CONTROLLER_CHANGE_GRECO_ID = gql`
+  ${CONTROLLER_USER_FRAGMENT}
+  mutation controllerChangeGrecoId($grecoId: String!) {
+    controllerChangeGrecoId(grecoId: $grecoId) {
+      ...ControllerUser
+    }
+  }
+`;
+
 export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
   ${CONTROL_BULLETIN_FRAGMENT}
   ${CONTROL_DATA_FRAGMENT}
@@ -1923,9 +1942,18 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
 
 export const CONTROLLER_USER_CONTROLS_QUERY = gql`
   ${CONTROL_DATA_FRAGMENT}
-  query controllerUser($id: Int!, $fromDate: Date, $toDate: Date) {
+  query controllerUser(
+    $id: Int!
+    $fromDate: Date
+    $toDate: Date
+    $controlsType: String
+  ) {
     controllerUser(id: $id) {
-      controls(fromDate: $fromDate, toDate: $toDate) {
+      controls(
+        fromDate: $fromDate
+        toDate: $toDate
+        controlsType: $controlsType
+      ) {
         ...ControlData
       }
     }

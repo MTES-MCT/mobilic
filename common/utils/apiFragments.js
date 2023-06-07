@@ -197,3 +197,13 @@ export const CONTROL_DATA_FRAGMENT = gql`
     vehicleRegistrationNumber
   }
 `;
+
+export const CONTROLLER_USER_FRAGMENT = gql`
+  fragment ControllerUser on ControllerUser {
+    id
+    firstName
+    lastName
+    email
+    grecoId
+  }
+`;
