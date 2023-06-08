@@ -97,6 +97,11 @@ export function updateCompanyDetailsReducer(
       ...state.validationsFilters,
       teams: usersAndTeamsFilters.validationsFilters.teams,
       users: usersAndTeamsFilters.validationsFilters.users
+    },
+    exportFilters: {
+      ...state.exportFilters,
+      teams: usersAndTeamsFilters.exportFilters.teams,
+      users: usersAndTeamsFilters.exportFilters.users
     }
   };
 }
