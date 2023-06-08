@@ -1,23 +1,22 @@
 import { UserReadTabs } from "../../../control/components/UserReadTabs";
 import React from "react";
 import { getTabs } from "../../../control/UserRead";
-import { CONTROLLER_READ_CONTROL_DATA } from "common/utils/apiQueries";
 import {
   augmentAndSortMissions,
   parseMissionPayloadFromBackend
 } from "common/utils/mission";
 import { unixToJSTimestamp } from "common/utils/time";
 import { orderEmployments } from "common/utils/employments";
-import { useApi } from "common/utils/api";
-import { useLoadingScreen } from "common/utils/loading";
-import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { ControllerControlHeader } from "./ControllerControlHeader";
 import _ from "lodash";
 import { computeNumberOfAlerts } from "common/utils/regulation/computeNumberOfAlerts";
 import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
 
-export function ControllerControlDetails({ controlId, onClose }) {
-  const [controlData, setControlData] = React.useState({});
+export function ControllerControlDetails({
+  controlData,
+  setControlData,
+  onClose
+}) {
   const [employments, setEmployments] = React.useState([]);
   const [vehicles, setVehicles] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
@@ -25,31 +24,12 @@ export function ControllerControlDetails({ controlId, onClose }) {
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
   const [isEditingBC, setIsEditingBC] = React.useState(false);
 
-  const api = useApi();
-  const withLoadingScreen = useLoadingScreen();
-  const alerts = useSnackbarAlerts();
-
   // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
   const legacyTokenInfo = {
     creationDay: new Date(unixToJSTimestamp(controlData.qrCodeGenerationTime)),
     historyStartDay: controlData.historyStartDate,
     creationTime: controlData.creationTime
   };
-
-  React.useEffect(() => {
-    if (controlId) {
-      withLoadingScreen(async () => {
-        await alerts.withApiErrorHandling(async () => {
-          const apiResponse = await api.graphQlMutate(
-            CONTROLLER_READ_CONTROL_DATA,
-            { controlId },
-            { context: { nonPublicApi: true } }
-          );
-          setControlData(apiResponse.data.controlData);
-        });
-      });
-    }
-  }, [controlId]);
 
   React.useEffect(() => {
     if (controlData.employments) {
@@ -100,7 +80,7 @@ export function ControllerControlDetails({ controlId, onClose }) {
   return [
     <ControllerControlHeader
       key={0}
-      controlId={controlId}
+      controlId={controlData.id}
       controlDate={legacyTokenInfo?.creationTime}
       onCloseDrawer={onClose}
     />,
@@ -119,7 +99,7 @@ export function ControllerControlDetails({ controlId, onClose }) {
       setPeriodOnFocus={setPeriodOnFocus}
       workingDaysNumber={controlData.nbControlledDays || 0}
       allowC1BExport={false}
-      controlId={controlId}
+      controlId={controlData.id}
       companyName={controlData.companyName}
       vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
       openBulletinControl={() => setIsEditingBC(true)}

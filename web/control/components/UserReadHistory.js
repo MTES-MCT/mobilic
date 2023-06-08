@@ -21,7 +21,7 @@ export function UserReadHistory({
       historyStartDay={tokenInfo.historyStartDay}
       coworkers={coworkers}
       vehicles={vehicles}
-      userId={userInfo.id}
+      userId={userInfo?.id}
       openPeriod={periodOnFocus}
       controlId={controlId}
       regulationComputationsByDay={regulationComputationsByDay}

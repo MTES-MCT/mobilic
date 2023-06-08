@@ -17,8 +17,8 @@ import { HelpController } from "../help/ModalHelpController";
 import { InfoHoraireServiceController } from "./InfoHoraireServiceController";
 import classNames from "classnames";
 import { useModals } from "common/utils/modals";
-import { ControllerControlNoLicDrawer } from "../noLic/ControllerControlNoLicDrawer";
 import { ControlTypeFilters } from "../filters/ControlTypeFilter";
+import { ControllerControlNewNoLic } from "../noLic/ControllerControlNewNoLic";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -71,12 +71,12 @@ export function ControllerHome() {
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showHoraireServiceModal, setShowHoraireServiceModal] = useState(false);
 
-  const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
-  const [openNoLic, setOpenNoLic] = React.useState(false);
+  const [controlOnFocus, setControlOnFocus] = React.useState(null);
+  const [openNewNoLic, setOpenNewNoLic] = React.useState(false);
 
   const [controls, loadControls, loadingControls] = useLoadControls();
 
-  const [controlsType, setControlsType] = React.useState("mobilic");
+  const [controlsType, setControlsType] = React.useState("");
 
   React.useEffect(() => {
     loadControls({
@@ -87,7 +87,7 @@ export function ControllerHome() {
   }, [controlsType]);
 
   React.useEffect(() => {
-    setControlIdOnFocus(location.state?.controlId);
+    setControlOnFocus(location.state?.controlOnFocus);
   }, []);
 
   return [
@@ -98,12 +98,14 @@ export function ControllerHome() {
       maxWidth="xl"
     >
       <ControllerControlDrawer
-        controlId={controlIdOnFocus}
-        onClose={() => setControlIdOnFocus(null)}
+        controlId={controlOnFocus?.id}
+        controlType={controlOnFocus?.type}
+        onClose={() => setControlOnFocus(null)}
       />
-      <ControllerControlNoLicDrawer
-        isOpen={openNoLic}
-        onClose={() => setOpenNoLic(false)}
+      <ControllerControlNewNoLic
+        isOpen={openNewNoLic}
+        onClose={() => setOpenNewNoLic(false)}
+        setControlOnFocus={setControlOnFocus}
       />
       <h3 className={classes.titleHello} key={1}>
         Bonjour, {controllerUserInfo.firstName}
@@ -138,7 +140,7 @@ export function ControllerHome() {
           <ControllerHomeCard
             text={"Pas de LIC à bord"}
             icon={"fr-icon-alarm-warning-line fr-icon--lg"}
-            onClick={() => setOpenNoLic(true)}
+            onClick={() => setOpenNewNoLic(true)}
           />
         </Grid>
       </Grid>
@@ -171,7 +173,7 @@ export function ControllerHome() {
       <ControlsList
         controls={controls}
         loading={loadingControls}
-        clickOnRow={setControlIdOnFocus}
+        clickOnRow={(id, type) => setControlOnFocus({ id, type })}
       />
     </Container>,
     <Modal
