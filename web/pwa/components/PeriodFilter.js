@@ -19,7 +19,7 @@ export function PeriodFilter({
     subMonths(new Date(), MAX_NB_MONTHS_HISTORY)
   );
   return (
-    <Grid container spacing={2} m={0}>
+    <Grid container spacing={2} pl={2}>
       <Grid item>
         <MobileDatePicker
           label="Début"
