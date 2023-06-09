@@ -146,7 +146,7 @@ export function IntroSection() {
         Accès Agent Public :{" "}
         <Link variant="login controleur" to="/controller-login">
           <span className={classes.agentConnectLink}>
-            se connecter à mon espace
+            Se connecter à mon espace
           </span>
         </Link>
       </Alert>
