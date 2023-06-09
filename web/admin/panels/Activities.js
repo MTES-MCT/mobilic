@@ -347,8 +347,8 @@ function ActivitiesPanel() {
                 trackEvent(ADMIN_EXPORT_EXCEL);
                 modals.open("dataExport", {
                   companies,
-                  initialUsers: users,
-                  initialTeams: teams,
+                  initialUsers: adminStore.exportFilters.users,
+                  initialTeams: adminStore.exportFilters.teams,
                   defaultCompany: company,
                   defaultMinDate: minDate ? new Date(minDate) : null,
                   defaultMaxDate: maxDate
@@ -368,8 +368,8 @@ function ActivitiesPanel() {
                 trackEvent(ADMIN_EXPORT_C1B);
                 modals.open("tachographExport", {
                   companies,
-                  initialUsers: users,
-                  initialTeams: teams,
+                  initialUsers: adminStore.exportFilters.users,
+                  initialTeams: adminStore.exportFilters.teams,
                   defaultCompany: company,
                   defaultMinDate: minDate ? new Date(minDate) : null,
                   defaultMaxDate: maxDate

@@ -37,6 +37,12 @@ export function computeUsersAndTeamFilters(users, employments, teams) {
     usersWithoutTeam
   );
 
+  const usersInExportFilter = computeUsersInActivityFilter(
+    uniqBy(users, u => u.id),
+    teams,
+    usersWithoutTeam
+  );
+
   const teamsInActivityFilter = computeTeamsInActivityFilter(
     usersInActivityFilter,
     adminedTeams
@@ -50,6 +56,10 @@ export function computeUsersAndTeamFilters(users, employments, teams) {
     validationsFilters: {
       teams: adminedTeams,
       users: usersInValidationFilter
+    },
+    exportFilters: {
+      teams: teams,
+      users: usersInExportFilter
     }
   };
 }
