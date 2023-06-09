@@ -10,11 +10,12 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import WarningAmberOutlinedIcon from "@mui/icons-material/WarningOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import { TextWithBadge } from "../../../common/TextWithBadge";
-import { ControllerControlNoLicInfractionsComponent } from "./ControllerControlNoLicInfractions";
 import { ControllerControlNoLicHistory } from "./ControllerControlNoLicHistory";
 import { ControllerControlNoLicInformations } from "./ControllerControlNoLicInformations";
 import { useDownloadBDC } from "../../utils/useDownloadBDC";
 import { ControllerControlBottomMenu as BottomMenu } from "../menu/ControllerControlBottomMenu";
+import { InfractionsAvailableSoon } from "../infractions/InfractionsAvailableSoon";
+import { canDownloadBDC } from "../../utils/controlBulletin";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -57,7 +58,7 @@ const TABS = [
       </TextWithBadge>
     ),
     icon: <WarningAmberOutlinedIcon />,
-    component: ControllerControlNoLicInfractionsComponent
+    component: InfractionsAvailableSoon
   },
   {
     name: "history",
@@ -183,6 +184,7 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
             updatedInfractions={!!lastInfractionsEditionDate}
             editBDC={editBDC}
             downloadBDC={downloadBDC}
+            canDownloadBDC={canDownloadBDC(controlData)}
             touchedBDC={controlData.controlBulletinCreationTime}
           />
         </>

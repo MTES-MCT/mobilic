@@ -20,6 +20,7 @@ import {
   useStoreSyncedWithLocalStorage
 } from "common/store/store";
 import { syncControllerUser } from "../../utils/loadControllerUserData";
+import { canDownloadBDC } from "../../utils/controlBulletin";
 
 const STEPS = {
   1: { title: "Données relatives au salarié" },
@@ -44,6 +45,9 @@ export function ControllerControlBulletin({
   const [grecoId, setGrecoId] = React.useState(
     controllerUserInfo.grecoId || ""
   );
+  const controlCanBeDownloaded = React.useMemo(() => {
+    return canDownloadBDC(controlData);
+  }, [controlData]);
 
   const onUpdateGrecoId = newGrecoId => {
     setGrecoId(newGrecoId);
@@ -60,7 +64,7 @@ export function ControllerControlBulletin({
 
   const initControlBulletinFromControlData = () => {
     if (!controlData) {
-      return {};
+      return { userNationality: "FRA" };
     } else if (controlData.controlBulletinCreationTime) {
       return {
         userFirstName: controlData.userFirstName,
@@ -79,7 +83,8 @@ export function ControllerControlBulletin({
         vehicleRegistrationNumber: controlData.vehicleRegistrationNumber,
         siren: controlData.controlBulletin?.siren,
         companyAddress: controlData.controlBulletin?.companyAddress,
-        missionAddressBegin: controlData.controlBulletin?.missionAddressBegin
+        missionAddressBegin: controlData.controlBulletin?.missionAddressBegin,
+        userNationality: "FRA"
       };
     }
   };
@@ -144,6 +149,9 @@ export function ControllerControlBulletin({
             siren: newControlBulletin.siren,
             companyName: newControlBulletin.companyName,
             companyAddress: newControlBulletin.companyAddress,
+            locationDepartment: newControlBulletin.locationDepartment,
+            locationCommune: newControlBulletin.locationCommune,
+            locationLieu: newControlBulletin.locationLieu,
             vehicleRegistrationNumber:
               newControlBulletin.vehicleRegistrationNumber,
             vehicleRegistrationCountry:
@@ -213,6 +221,7 @@ export function ControllerControlBulletin({
         controlBulletin={controlBulletin}
         grecoId={grecoId}
         onUpdateGrecoId={onUpdateGrecoId}
+        controlCanBeDownloaded={controlCanBeDownloaded}
       />
     ),
     <Stack

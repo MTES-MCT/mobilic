@@ -26,6 +26,7 @@ import Alert from "@mui/material/Alert";
 import { currentControllerId } from "common/utils/cookie";
 import { ControllerControlBottomMenu } from "../../controller/components/menu/ControllerControlBottomMenu";
 import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
+import { canDownloadBDC } from "../../controller/utils/controlBulletin";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -242,6 +243,7 @@ export function UserReadInfo({
           <ControllerControlBottomMenu
             editBDC={openBulletinControl}
             downloadBDC={downloadBDC}
+            canDownloadBDC={canDownloadBDC(controlData)}
             touchedBDC={controlData.controlBulletinCreationTime}
           />
         </>

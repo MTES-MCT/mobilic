@@ -8,10 +8,7 @@ import { TextInput, Button, Title } from "@dataesr/react-dsfr";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 
-export function ControllerControlNoLicPreliminaryForm({
-  setControlData,
-  onClose
-}) {
+export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
@@ -46,7 +43,7 @@ export function ControllerControlNoLicPreliminaryForm({
           },
           { context: { nonPublicApi: true } }
         );
-        setControlData(apiResponse.data.controllerSaveControlBulletin);
+        onSubmit(apiResponse.data.controllerSaveControlBulletin.id);
         alerts.success("Le contrôle a été créé.", "", 3000);
       } catch (err) {
         alerts.error(formatApiError(err), "", 6000);

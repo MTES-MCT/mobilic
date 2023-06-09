@@ -338,6 +338,19 @@ export const CONTROLLER_READ_MISSION_DETAILS = gql`
   }
 `;
 
+export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
+  ${CONTROL_BULLETIN_FRAGMENT}
+  ${CONTROL_DATA_FRAGMENT}
+  query readControlDataNoLic($controlId: Int!) {
+    controlData(controlId: $controlId) {
+      ...ControlData
+      controlBulletin {
+        ...ControlBulletin
+      }
+    }
+  }
+`;
+
 export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
@@ -1903,6 +1916,9 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
     $siren: String
     $companyName: String
     $companyAddress: String
+    $locationDepartment: String
+    $locationCommune: String
+    $locationLieu: String
     $vehicleRegistrationNumber: String
     $vehicleRegistrationCountry: String
     $missionAddressBegin: String
@@ -1922,6 +1938,9 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
       siren: $siren
       companyName: $companyName
       companyAddress: $companyAddress
+      locationDepartment: $locationDepartment
+      locationCommune: $locationCommune
+      locationLieu: $locationLieu
       vehicleRegistrationNumber: $vehicleRegistrationNumber
       vehicleRegistrationCountry: $vehicleRegistrationCountry
       missionAddressBegin: $missionAddressBegin

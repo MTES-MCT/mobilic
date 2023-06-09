@@ -11,6 +11,27 @@ export function ControlBulletinFormStep1({
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
       <TextInput
+        value={controlBulletin.locationDepartment || ""}
+        name="locationDepartment"
+        onChange={e => handleEditControlBulletin(e)}
+        label="Département du contrôle"
+        required
+      />
+      <TextInput
+        value={controlBulletin.locationCommune || ""}
+        name="locationCommune"
+        onChange={e => handleEditControlBulletin(e)}
+        label="Commune du contrôle"
+        required
+      />
+      <TextInput
+        value={controlBulletin.locationLieu || ""}
+        name="locationLieu"
+        onChange={e => handleEditControlBulletin(e)}
+        label="Lieu du contrôle"
+        required
+      />
+      <TextInput
         value={controlBulletin.userLastName || ""}
         name="userLastName"
         onChange={e => handleEditControlBulletin(e)}
@@ -34,7 +55,7 @@ export function ControlBulletinFormStep1({
       />
       <Select
         label="Nationalité du salarié"
-        selected={controlBulletin.userNationality || "FRA"}
+        selected={controlBulletin.userNationality}
         name="userNationality"
         required
         onChange={e => {

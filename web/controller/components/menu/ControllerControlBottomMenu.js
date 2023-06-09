@@ -18,6 +18,7 @@ export function ControllerControlBottomMenu({
   updatedInfractions,
   editBDC,
   downloadBDC,
+  canDownloadBDC,
   touchedBDC
 }) {
   const classes = useStyles();
@@ -30,6 +31,7 @@ export function ControllerControlBottomMenu({
           size="small"
           onClick={downloadBDC}
           startIcon={<DownloadIcon />}
+          disabled={!canDownloadBDC}
         >
           télécharger le bulletin de contrôle
         </Button>
@@ -50,6 +52,7 @@ export function ControllerControlBottomMenu({
           size="small"
           startIcon={<EditIcon />}
           onClick={reportInfraction}
+          disabled
         >
           {updatedInfractions
             ? "Modifier l'infraction retenue"
