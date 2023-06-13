@@ -40,6 +40,10 @@ export function AdminStoreProvider({ children }) {
       users: [],
       teams: []
     },
+    exportFilters: {
+      users: [],
+      teams: []
+    },
     virtualActivities: [],
     virtualExpenditureActions: [],
     originalMissions: []

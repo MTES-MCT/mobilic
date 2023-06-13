@@ -57,6 +57,10 @@ export const usePanelStyles = makeStyles(theme => ({
   vehiclesTable: {
     marginRight: theme.spacing(10)
   },
+  vehiclesAlert: {
+    marginRight: theme.spacing(10),
+    marginBottom: theme.spacing(2)
+  },
   knownAddressesTable: {
     marginRight: theme.spacing(10)
   },
@@ -128,24 +132,26 @@ const COMPANY_SUB_PANELS = [
 function SubNavigationToggle({ view, setView }) {
   const classes = usePanelStyles();
   return (
-    <ToggleButtonGroup
-      value={view}
-      exclusive
-      onChange={(e, newView) => {
-        if (newView) setView(newView);
-      }}
-      size="small"
-    >
+    <>
       {COMPANY_SUB_PANELS.map(panelInfos => (
-        <ToggleButton
+        <ToggleButtonGroup
           key={panelInfos.view}
-          value={panelInfos.view}
-          className={classes.toggleButton}
+          value={view}
+          exclusive
+          onChange={(e, newView) => {
+            if (newView) setView(newView);
+          }}
+          size="small"
         >
-          {panelInfos.label}
-        </ToggleButton>
+          <ToggleButton
+            value={panelInfos.view}
+            className={classes.toggleButton}
+          >
+            {panelInfos.label}
+          </ToggleButton>
+        </ToggleButtonGroup>
       ))}
-    </ToggleButtonGroup>
+    </>
   );
 }
 

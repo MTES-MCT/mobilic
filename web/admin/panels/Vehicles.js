@@ -17,6 +17,7 @@ import { formatApiError } from "common/utils/errors";
 import { usePanelStyles } from "./Company";
 import { captureSentryException } from "common/utils/sentry";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
+import Alert from "@mui/material/Alert";
 
 export default function VehicleAdmin({ company }) {
   const api = useApi();
@@ -34,7 +35,8 @@ export default function VehicleAdmin({ company }) {
       label: "Immatriculation",
       name: "registrationNumber",
       create: true,
-      sortable: true
+      sortable: true,
+      format: registrationNumber => registrationNumber?.toUpperCase()
     },
     {
       label: "Nom usuel",
@@ -62,8 +64,15 @@ export default function VehicleAdmin({ company }) {
       Les véhicules que vous ajoutez ici seront proposés aux salariés lorsqu'ils
       renseigneront les informations d'une mission dans leur outil mobile.
     </Typography>,
+    <Alert key={5} severity="info" className={classes.vehiclesAlert}>
+      <Typography>
+        Vos salariés peuvent aussi créer de nouveaux véhicules lorsqu'ils ne les
+        trouvent pas dans cette liste. Ces nouveaux véhicules sont alors
+        disponibles à la sélection pour tous les salariés.
+      </Typography>
+    </Alert>,
     <AugmentedTable
-      key={5}
+      key={10}
       columns={vehicleColumns}
       entries={vehicles}
       ref={tableRef}
@@ -96,7 +105,7 @@ export default function VehicleAdmin({ company }) {
           const apiResponse = await api.graphQlMutate(
             CREATE_VEHICLE_MUTATION,
             {
-              registrationNumber,
+              registrationNumber: registrationNumber?.toUpperCase(),
               alias,
               companyId
             },
