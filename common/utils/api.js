@@ -59,7 +59,7 @@ class Api {
           new ApolloLink((operation, forward) => {
             operation.setContext(({ headers = {} }) => ({
               headers: {
-                "X-CLIENT-ID": process.env.MOBILIC_CLIENT_ID,
+                "X-CLIENT-ID": process.env.REACT_APP_MOBILIC_CLIENT_ID,
                 ...headers,
                 ...(this.getImpersonationHeaders() || {})
               }
@@ -175,7 +175,7 @@ class Api {
         };
       }
       options.headers = {
-        "X-CLIENT-ID": process.env.MOBILIC_CLIENT_ID,
+        "X-CLIENT-ID": process.env.REACT_APP_MOBILIC_CLIENT_ID,
         ...options.headers
       };
       const response = await this._fetch(queryInfo, options);
