@@ -36,6 +36,7 @@ const ControlsTable = ({ entries, onRowClick, period = "day" }) => {
         <tbody>
           {entries.map(entry => (
             <tr
+              style={{ cursor: "pointer" }}
               key={`table_row__${entry.id}`}
               onClick={() => onRowClick(entry.id)}
             >

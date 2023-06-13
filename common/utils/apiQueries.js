@@ -1982,6 +1982,10 @@ export const HTTP_QUERIES = {
   controlC1BExport: {
     method: "POST",
     endpoint: "/controllers/generate_tachograph_files"
+  },
+  certificateSearch: {
+    method: "POST",
+    endpoint: "/companies/public_company_certification"
   }
 };
 

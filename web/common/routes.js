@@ -35,6 +35,7 @@ import { ControllerScanQRCode } from "../controller/components/scanQRCode/Contro
 import { ControllerQRCodeNotRecognized } from "../controller/components/scanQRCode/ControllerQRCodeNotRecognized";
 import { ControllerHistory } from "../controller/components/history/ControllerHistory";
 import { SyncEmployeeValidation } from "../login/SyncEmployeeValidation";
+import { Certificate } from "../landing/certificate";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -63,6 +64,13 @@ export const RESOURCES_ROUTE = {
       label: "Partenaires"
     }
   ]
+};
+
+export const CERTIFICATE_ROUTE = {
+  label: "Certificat",
+  path: "/certificate",
+  component: Certificate,
+  accessible: () => true
 };
 
 export const CONTROLLER_ROUTE_PREFIX = "/controller";
@@ -311,6 +319,13 @@ export const ROUTES = [
     label: "Vérification d'intégrité",
     accessible: () => true,
     component: XlsxVerifier,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/certificate",
+    label: "Recherche certification",
+    accessible: () => true,
+    component: Certificate,
     menuItemFilter: () => false
   },
   {
