@@ -15,6 +15,7 @@ import { prettyFormatDayHour } from "common/utils/time";
 import { useLoadingScreen } from "common/utils/loading";
 import Typography from "@mui/material/Typography";
 import { Header } from "../../../common/Header";
+import { CONTROL_TYPES } from "../../utils/useReadControlData";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -117,7 +118,10 @@ export function ControllerScanQRCode() {
           6000
         );
         history.push(CONTROLLER_ROUTE_PREFIX + "/home", {
-          controlId: controlResponse.id
+          controlOnFocus: {
+            id: controlResponse.id,
+            type: CONTROL_TYPES.MOBILIC
+          }
         });
       } catch (err) {
         history.push(CONTROLLER_ROUTE_PREFIX + "/scan_error");

@@ -24,6 +24,9 @@ import BusinessIcon from "@mui/icons-material/Business";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Alert from "@mui/material/Alert";
 import { currentControllerId } from "common/utils/cookie";
+import { ControllerControlBottomMenu } from "../../controller/components/menu/ControllerControlBottomMenu";
+import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
+import { canDownloadBDC } from "../../controller/utils/controlBulletin";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -59,11 +62,25 @@ export function UserReadInfo({
   setTab,
   allowC1BExport = true,
   companyName,
-  vehicleRegistrationNumber
+  vehicleRegistrationNumber,
+  openBulletinControl,
+  controlData
 }) {
+  const [userName, setUserName] = React.useState("");
+
+  React.useEffect(() => {
+    if (userInfo) {
+      setUserName(formatPersonName(userInfo));
+    } else if (controlData) {
+      setUserName(controlData.userFirstName + " " + controlData.userLastName);
+    }
+  }, [controlData, userInfo]);
+
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const classes = useStyles();
+
+  const downloadBDC = useDownloadBDC(controlData.id);
 
   return (
     <Container maxWidth="md" className={classes.container}>
@@ -77,7 +94,7 @@ export function UserReadInfo({
             className={classes.subSectionBody}
           >
             <Grid item>
-              <InfoItem name="Nom" value={formatPersonName(userInfo)} />
+              <InfoItem name="Nom" value={userName} />
             </Grid>
           </Grid>
           {!companyName && !!currentControllerId() && (
@@ -166,6 +183,7 @@ export function UserReadInfo({
             Nombre de journées enregistrées : {workingDaysNumber}
           </Typography>
           <Link
+            to="#"
             color="primary"
             variant="body1"
             onClick={e => {
@@ -181,6 +199,7 @@ export function UserReadInfo({
             Nombre d'alertes réglementaires : {alertNumber}
           </Typography>
           <Link
+            to="#"
             color="primary"
             variant="body1"
             onClick={e => {
@@ -218,6 +237,16 @@ export function UserReadInfo({
             Télécharger C1B
           </LoadingButton>
         </Box>
+      )}
+      {!!currentControllerId() && (
+        <>
+          <ControllerControlBottomMenu
+            editBDC={openBulletinControl}
+            downloadBDC={downloadBDC}
+            canDownloadBDC={canDownloadBDC(controlData)}
+            touchedBDC={controlData.controlBulletinCreationTime}
+          />
+        </>
       )}
     </Container>
   );

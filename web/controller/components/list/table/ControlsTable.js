@@ -1,22 +1,23 @@
 import React from "react";
 import { useIsWidthUp } from "common/utils/useWidth";
+import { CONTROL_TYPES } from "../../../utils/useReadControlData";
 
 const ControlsTable = ({ entries, onRowClick, period = "day" }) => {
   const columns = React.useMemo(
     () => [
-      { name: "company", label: "Nom entreprise" },
       { name: "employee", label: "Salarié" },
       { name: "vehicle", label: "Véhicule" },
       {
         name: "formattedTime",
         label: period === "day" ? "Heure" : "Date & Heure"
       },
+      { name: "controlLocation", label: "Lieu contrôle" },
       { name: "type", label: "Type" },
+      { name: "company", label: "Nom entreprise" },
       { name: "nbControlledDays", label: "Jours contrôlés" }
     ],
     [period]
   );
-
   const isMdUp = useIsWidthUp("md");
   return (
     <div
@@ -37,7 +38,14 @@ const ControlsTable = ({ entries, onRowClick, period = "day" }) => {
           {entries.map(entry => (
             <tr
               key={`table_row__${entry.id}`}
-              onClick={() => onRowClick(entry.id)}
+              onClick={() =>
+                onRowClick(
+                  entry.id,
+                  entry.type === "Mobilic"
+                    ? CONTROL_TYPES.MOBILIC
+                    : CONTROL_TYPES.NO_LIC
+                )
+              }
             >
               {columns.map((column, idxColumn) => {
                 return (
