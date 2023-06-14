@@ -88,6 +88,63 @@ export const usePanelStyles = makeStyles(theme => ({
   },
   warningOneTeamNoAdmin: {
     marginBottom: theme.spacing(2)
+  },
+  italicInfo: {
+    fontStyle: "italic",
+    color: theme.palette.grey[600]
+  },
+  caption: {
+    textTransform: "uppercase",
+    color: theme.palette.grey[500]
+  },
+  successCriteriasTitle: {
+    color: theme.palette.success.main,
+    fontWeight: "bold",
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1)
+  },
+  failureCriteriasTitle: {
+    color: theme.palette.error.main,
+    fontWeight: "bold",
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1)
+  },
+  alertCriteria: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    "& .MuiAlert-message": {
+      width: "100%"
+    }
+  },
+  accordionCriteria: {
+    width: "100%",
+    "&::before": {
+      content: "none"
+    },
+    "&.Mui-disabled": {
+      background: "inherit"
+    },
+    background: "inherit"
+  },
+  accordionSummary: {
+    padding: 0,
+    fontWeight: "bold",
+    minHeight: "unset",
+    margin: 0,
+    "& .MuiAccordionSummary-content": {
+      margin: 0
+    },
+    "&.Mui-expanded": {
+      minHeight: "unset",
+      margin: 0,
+      backgroundColor: "inherit"
+    }
+  },
+  accordionDetails: {
+    display: "block",
+    background: "inherit",
+    padding: 0,
+    marginTop: theme.spacing(2)
   }
 }));
 
