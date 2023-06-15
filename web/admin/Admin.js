@@ -24,6 +24,7 @@ import { makeStyles } from "@mui/styles";
 import { useIsWidthUp, useWidth } from "common/utils/useWidth";
 import { SideMenu } from "./components/SideMenu";
 import { useSnackbarAlerts } from "../common/Snackbar";
+import { CertificateBanner } from "./components/CertificateBanner";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
 import { MissionDrawerContextProvider } from "./components/MissionDrawer";
@@ -172,8 +173,9 @@ function _Admin() {
   const defaultView = views.find(view => view.isDefault);
   return [
     <Header key={0} />,
+    <CertificateBanner key={1} />,
     <MissionDrawerContextProvider
-      key={1}
+      key={2}
       width={width}
       setShouldRefreshData={shouldRefreshDataSetter}
     >
