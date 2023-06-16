@@ -165,3 +165,48 @@ export const FULL_TEAM_FRAGMENT = gql`
     }
   }
 `;
+
+export const CONTROL_BULLETIN_FRAGMENT = gql`
+  fragment ControlBulletin on ControlBulletinFields {
+    userBirthDate
+    userNationality
+    siren
+    companyAddress
+    locationDepartment
+    locationCommune
+    locationLieu
+    vehicleRegistrationCountry
+    missionAddressBegin
+    missionAddressEnd
+    transportType
+    articlesNature
+    licenseNumber
+    licenseCopyNumber
+    observation
+  }
+`;
+
+export const CONTROL_DATA_FRAGMENT = gql`
+  fragment ControlData on ControllerControl {
+    id
+    controlType
+    qrCodeGenerationTime
+    nbControlledDays
+    creationTime
+    companyName
+    userFirstName
+    userLastName
+    controlBulletinCreationTime
+    vehicleRegistrationNumber
+  }
+`;
+
+export const CONTROLLER_USER_FRAGMENT = gql`
+  fragment ControllerUser on ControllerUser {
+    id
+    firstName
+    lastName
+    email
+    grecoId
+  }
+`;

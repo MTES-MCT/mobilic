@@ -46,7 +46,8 @@ export function ControllerHistory() {
     fromDate: isoFormatLocalDate(
       startOfMonthAsDate(addDaysToDate(new Date(), -31))
     ),
-    toDate: isoFormatLocalDate(new Date())
+    toDate: isoFormatLocalDate(new Date()),
+    controlsType: ""
   });
   const [period, setPeriod] = React.useState("day");
   const [controls, loadControls, loadingControls] = useLoadControls();

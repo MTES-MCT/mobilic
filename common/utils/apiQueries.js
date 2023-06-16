@@ -2,6 +2,9 @@ import { gql } from "graphql-tag";
 import { buildBackendPayloadForAddress } from "./addresses";
 import {
   COMPANY_SETTINGS_FRAGMENT,
+  CONTROLLER_USER_FRAGMENT,
+  CONTROL_BULLETIN_FRAGMENT,
+  CONTROL_DATA_FRAGMENT,
   FRAGMENT_LOCATION_FULL,
   FULL_MISSION_FRAGMENT,
   FULL_TEAM_FRAGMENT,
@@ -335,19 +338,32 @@ export const CONTROLLER_READ_MISSION_DETAILS = gql`
   }
 `;
 
+export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
+  ${CONTROL_BULLETIN_FRAGMENT}
+  ${CONTROL_DATA_FRAGMENT}
+  query readControlDataNoLic($controlId: Int!) {
+    controlData(controlId: $controlId) {
+      ...ControlData
+      controlBulletin {
+        ...ControlBulletin
+      }
+    }
+  }
+`;
+
 export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
   ${REGULATION_COMPUTATIONS_FRAGMENT}
+  ${CONTROL_BULLETIN_FRAGMENT}
+  ${CONTROL_DATA_FRAGMENT}
   query readControlData($controlId: Int!) {
     controlData(controlId: $controlId) {
-      id
-      creationTime
-      qrCodeGenerationTime
-      companyName
-      vehicleRegistrationNumber
+      ...ControlData
       historyStartDate
-      nbControlledDays
+      controlBulletin {
+        ...ControlBulletin
+      }
       missions {
         id
         name
@@ -1883,21 +1899,94 @@ export const CONTROLLER_SCAN_CODE = gql`
   }
 `;
 
-export const CONTROLLER_USER_CONTROLS_QUERY = gql`
-  query controllerUser($id: Int!, $fromDate: Date, $toDate: Date) {
+export const CONTROLLER_USER_QUERY = gql`
+  ${CONTROLLER_USER_FRAGMENT}
+  query controllerUser($id: Int!) {
     controllerUser(id: $id) {
-      controls(fromDate: $fromDate, toDate: $toDate) {
-        id
-        controlType
-        user {
-          firstName
-          lastName
-        }
-        qrCodeGenerationTime
-        creationTime
-        companyName
-        vehicleRegistrationNumber
-        nbControlledDays
+      ...ControllerUser
+    }
+  }
+`;
+
+export const CONTROLLER_CHANGE_GRECO_ID = gql`
+  ${CONTROLLER_USER_FRAGMENT}
+  mutation controllerChangeGrecoId($grecoId: String!) {
+    controllerChangeGrecoId(grecoId: $grecoId) {
+      ...ControllerUser
+    }
+  }
+`;
+
+export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
+  ${CONTROL_BULLETIN_FRAGMENT}
+  ${CONTROL_DATA_FRAGMENT}
+  mutation controllerSaveControlBulletin(
+    $controlId: Int
+    $userFirstName: String
+    $userLastName: String
+    $userBirthDate: Date
+    $userNationality: String
+    $siren: String
+    $companyName: String
+    $companyAddress: String
+    $locationDepartment: String
+    $locationCommune: String
+    $locationLieu: String
+    $vehicleRegistrationNumber: String
+    $vehicleRegistrationCountry: String
+    $missionAddressBegin: String
+    $missionAddressEnd: String
+    $transportType: String
+    $articlesNature: String
+    $licenseNumber: String
+    $licenseCopyNumber: String
+    $observation: String
+  ) {
+    controllerSaveControlBulletin(
+      controlId: $controlId
+      userFirstName: $userFirstName
+      userLastName: $userLastName
+      userNationality: $userNationality
+      userBirthDate: $userBirthDate
+      siren: $siren
+      companyName: $companyName
+      companyAddress: $companyAddress
+      locationDepartment: $locationDepartment
+      locationCommune: $locationCommune
+      locationLieu: $locationLieu
+      vehicleRegistrationNumber: $vehicleRegistrationNumber
+      vehicleRegistrationCountry: $vehicleRegistrationCountry
+      missionAddressBegin: $missionAddressBegin
+      missionAddressEnd: $missionAddressEnd
+      transportType: $transportType
+      articlesNature: $articlesNature
+      licenseNumber: $licenseNumber
+      licenseCopyNumber: $licenseCopyNumber
+      observation: $observation
+    ) {
+      ...ControlData
+      controlBulletin {
+        ...ControlBulletin
+      }
+    }
+  }
+`;
+
+export const CONTROLLER_USER_CONTROLS_QUERY = gql`
+  ${CONTROL_DATA_FRAGMENT}
+  query controllerUser(
+    $id: Int!
+    $fromDate: Date
+    $toDate: Date
+    $controlsType: String
+  ) {
+    controllerUser(id: $id) {
+      controls(
+        fromDate: $fromDate
+        toDate: $toDate
+        controlsType: $controlsType
+      ) {
+        ...ControlData
       }
     }
   }
@@ -1982,6 +2071,10 @@ export const HTTP_QUERIES = {
   controlC1BExport: {
     method: "POST",
     endpoint: "/controllers/generate_tachograph_files"
+  },
+  controlBDCExport: {
+    method: "POST",
+    endpoint: "/controllers/generate_control_bulletin"
   },
   certificateSearch: {
     method: "POST",

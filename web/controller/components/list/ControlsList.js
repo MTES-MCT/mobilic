@@ -70,10 +70,11 @@ export function ControlsList({
         entries: controlsGroupedByPeriod[date]
           .map(control => ({
             id: control.id,
-            employee: `${control.user.firstName} ${control.user.lastName}`,
+            employee: `${control.userFirstName} ${control.userLastName}`,
             vehicle: control.vehicleRegistrationNumber,
             company: control.companyName,
             time: control.creationTime,
+            controlLocation: "Bientôt disponible",
             formattedTime:
               (period !== "day"
                 ? `${formatDay(control.creationTime)} - `
