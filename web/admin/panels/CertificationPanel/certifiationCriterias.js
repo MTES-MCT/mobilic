@@ -29,6 +29,8 @@ export const CERTIFICATION_CRITERIAS = {
       <span>
         Au moins 65 % des missions doivent être validées par le gestionnaire
         dans les 7 jours suivant leur enregistrement.
+        <br />
+        Ce critère garantit une meilleure fiabilité des données.
       </span>
     )
   },
@@ -39,6 +41,17 @@ export const CERTIFICATION_CRITERIAS = {
         Au moins 65 % des activités enregistrées par les salariés de
         l'entreprise doivent avoir été lancées dans les 60 minutes suivant
         l'heure effective de début de l'activité.
+        <br />
+        Ce critère garantit une meilleure fiabilité des données.
+      </span>
+    )
+  },
+  beCompliant: {
+    title: "Respect de l'ensemble des seuils réglementaires",
+    explanation: (
+      <span>
+        Les activités enregistrées ne doivent pas provoquer d'alertes
+        réglementaires.
       </span>
     )
   }

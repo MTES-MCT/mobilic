@@ -7,6 +7,7 @@ import Stack from "@mui/material/Stack";
 import { jsToUnixTimestamp, prettyFormatDay } from "common/utils/time";
 import { CERTIFICATION_CRITERIAS } from "./certifiationCriterias";
 import CertificationCriteriaSingleResult from "./CertificationCriteriaSingleResult";
+import { Link } from "../../../common/LinkButton";
 
 const useStyles = makeStyles(theme => ({
   italicInfo: {
@@ -138,6 +139,15 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
         </Grid>
         <Grid item xs={12} md={6}></Grid>
       </Grid>
-    )
+    ),
+    <Typography key={6} mt={2}>
+      <Link
+        href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic#les-criteres-dobtention-du-certificat"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Consulter le détail des critères
+      </Link>
+    </Typography>
   ];
 }
