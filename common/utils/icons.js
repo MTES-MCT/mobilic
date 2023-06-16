@@ -29,7 +29,7 @@ import _SupplyChainVillageImage from "../assets/images/press-logos/supply_chain_
 import _VirImage from "../assets/images/testimonials-logos/vir.jpg";
 import _AlexisDemenagementImage from "../assets/images/testimonials-logos/alexis_plus.jpg";
 import _BretagneMaceDemenagementImage from "../assets/images/testimonials-logos/bretagne_mace_demenagement.jpg";
-import _CertificactionImage from "../assets/images/certification.svg";
+import _CertificationImage from "../assets/images/certification.svg";
 
 export function MobilicLogoFilledIcon(props) {
   return (
@@ -251,5 +251,5 @@ export function MobilicQrCode(props) {
 }
 
 export function CertificationImage(props) {
-  return <img alt="Certificat" src={_CertificactionImage} {...props} />;
+  return <img alt="Certificat" src={_CertificationImage} {...props} />;
 }
