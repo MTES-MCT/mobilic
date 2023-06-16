@@ -87,6 +87,7 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
           mentionnés ci-dessous, nécessaires pour garder le certificat à l'issue
           de sa période de validité.
         </b>
+        <br />
         Le calcul des critères est mis à jour automatiquement chaque début de
         mois.
       </Typography>

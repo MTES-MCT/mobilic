@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
   accordionCriteria: {
     width: "100%",
+    overflow: "hidden",
     "&::before": {
       content: "none"
     },
