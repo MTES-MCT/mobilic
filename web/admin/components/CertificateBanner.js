@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import moment from "moment";
+import React, { useMemo } from "react";
 import { Link, Notice } from "@dataesr/react-dsfr";
 import { useApi } from "common/utils/api";
 import { useAdminCompanies } from "../store/store";
+import { getMonthsBetweenTwoDates } from "common/utils/time";
 import { COMPANY_CERTIFICATION_COMMUNICATION_QUERY } from "common/utils/apiQueries";
 
 export function CertificateBanner() {
   const api = useApi();
   const [, company] = useAdminCompanies();
-  const [content, setContent] = React.useState({});
-  const [visible, setVisible] = useState(false);
+  const [companyWithInfo, setCompanyWithInfo] = React.useState({});
+  const [visible, setVisible] = React.useState(false);
 
   // TODO 1123: refactor to mutualize this code
   React.useEffect(async () => {
@@ -21,57 +21,59 @@ export function CertificateBanner() {
           companyId: company.id
         }
       );
-      const companyWithInfo = apiResponse?.data?.company;
-      setContent(getContent(companyWithInfo));
+      setCompanyWithInfo(apiResponse?.data?.company);
       setVisible(true);
     }
   }, [company]);
 
-  // TODO 1123 extract in date/time utils?
-  const nMonthAgo = day => {
-    const currentDate = moment();
-    const inputDate = moment(day);
-    return currentDate.diff(inputDate, "months");
-  };
-
-  const getContent = companyWithInfo => {
+  const content = useMemo(() => {
     if (!companyWithInfo.isCertified) {
-      if (nMonthAgo(companyWithInfo.lastDayCertified) === 1) {
+      const nbMonthLastCertification = getMonthsBetweenTwoDates(
+        new Date(companyWithInfo.lastDayCertified),
+        new Date()
+      );
+
+      if (nbMonthLastCertification === 1) {
         return {
           title:
             "Attention, votre certificat Mobilic ne peut pas être renouvelé",
           linkText: "Se mettre à niveau"
         };
       }
+
       return {
         title: "Vous ne remplissez pas les critères de certification Mobilic",
         linkText: "Se mettre à niveau"
       };
     }
 
-    const numMonthCertified =
-      nMonthAgo(companyWithInfo.startLastCertificationPeriod) + 1;
-    console.log(numMonthCertified);
-    if (numMonthCertified === 1) {
+    const nbMonthOfCertification =
+      getMonthsBetweenTwoDates(
+        new Date(companyWithInfo.startLastCertificationPeriod),
+        new Date()
+      ) + 1;
+
+    if (nbMonthOfCertification === 1) {
       return {
         title: "Félicitations, vous venez d'obtenir le certificat Mobilic",
         linkText: "Voir les critères"
       };
     }
-    if (numMonthCertified % 7 === 0) {
+
+    if (nbMonthOfCertification % 7 === 0) {
       return {
         title: "Félicitations, votre certificat est renouvelé",
         linkText: "Voir les critères"
       };
     }
+
     const currentCriterias = companyWithInfo.certificateCriterias;
     if (
-      numMonthCertified % 6 === 0 &&
-      (!currentCriterias.beActive ||
-        !currentCriterias.beCompliant ||
-        !currentCriterias.logInRealTime ||
-        !currentCriterias.notTooManyChanges ||
-        !currentCriterias.validateRegularly)
+      !currentCriterias.beActive ||
+      !currentCriterias.beCompliant ||
+      !currentCriterias.logInRealTime ||
+      !currentCriterias.notTooManyChanges ||
+      !currentCriterias.validateRegularly
     ) {
       return {
         title:
@@ -81,11 +83,10 @@ export function CertificateBanner() {
     }
 
     return {
-      title: `Félicitations, vous êtes certifiés depuis ${numMonthCertified -
-        1} mois`,
+      title: `Félicitations, vous êtes certifiés depuis ${nbMonthOfCertification} mois`,
       linkText: "Voir les critères"
     };
-  };
+  }, [companyWithInfo]);
 
   const onCloseBanner = () => {
     setVisible(false);
