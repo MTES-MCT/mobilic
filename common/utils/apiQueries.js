@@ -2075,6 +2075,10 @@ export const HTTP_QUERIES = {
   controlBDCExport: {
     method: "POST",
     endpoint: "/controllers/generate_control_bulletin"
+  },
+  certificateSearch: {
+    method: "POST",
+    endpoint: "/companies/public_company_certification"
   }
 };
 

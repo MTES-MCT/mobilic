@@ -4,7 +4,12 @@ import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import { formatPersonName } from "common/utils/coworkers";
 import IconButton from "@mui/material/IconButton";
-import { getAccessibleRoutes, getBadgeRoutes, RESOURCES_ROUTE } from "./routes";
+import {
+  CERTIFICATE_ROUTE,
+  getAccessibleRoutes,
+  getBadgeRoutes,
+  RESOURCES_ROUTE
+} from "./routes";
 import { useHistory, useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { Logos } from "./Logos";
@@ -241,6 +246,9 @@ export function NavigationMenu({ open, setOpen }) {
 
   const routes = getAccessibleRoutes({ userInfo, companies });
   routes.push(RESOURCES_ROUTE);
+  if (!userInfo?.id) {
+    routes.push(CERTIFICATE_ROUTE);
+  }
 
   return (
     <Drawer
@@ -381,7 +389,17 @@ function DesktopHeader({ disableMenu }) {
       className={classes.docButton}
     >
       Partenaires
-    </LinkButton>
+    </LinkButton>,
+    !userInfo?.id && (
+      <LinkButton
+        aria-label="Certificat"
+        key={3}
+        to="/certificate"
+        className={classes.docButton}
+      >
+        Certificat
+      </LinkButton>
+    )
   ];
 
   return (
