@@ -2191,6 +2191,15 @@ export const COMPANY_CERTIFICATION_COMMUNICATION_QUERY = gql`
       isCertified
       acceptCertificationCommunication
       lastDayCertified
+      startLastCertificationPeriod
+      certificateCriterias {
+        creationTime
+        beActive
+        beCompliant
+        notTooManyChanges
+        validateRegularly
+        logInRealTime
+      }
     }
   }
 `;

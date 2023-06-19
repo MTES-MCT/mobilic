@@ -6,11 +6,14 @@ import {
   COMPANY_CERTIFICATION_COMMUNICATION_QUERY,
   EDIT_COMPANIES_COMMUNICATION_SETTING
 } from "common/utils/apiQueries";
-import { usePanelStyles } from "./Company";
-import { Link } from "../../common/LinkButton";
+import { usePanelStyles } from "../Company";
+import { Link } from "../../../common/LinkButton";
 import Skeleton from "@mui/material/Skeleton";
-import { CheckboxField } from "../../common/CheckboxField";
-import { useSnackbarAlerts } from "../../common/Snackbar";
+import { CheckboxField } from "../../../common/CheckboxField";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
+import { getMonthsBetweenTwoDates } from "common/utils/time";
+import Alert from "@mui/material/Alert";
+import CertificationCriteriaGlobalResult from "./CertificationCriteriaGlobalResult";
 
 export default function CertificationPanel({ company }) {
   const api = useApi();
@@ -36,6 +39,17 @@ export default function CertificationPanel({ company }) {
     );
     setLoadingInfo(false);
   }, [company]);
+
+  const nbMonthOfCertification = useMemo(() => {
+    if (companyWithInfo?.startLastCertificationPeriod) {
+      return (
+        getMonthsBetweenTwoDates(
+          new Date(companyWithInfo?.startLastCertificationPeriod),
+          new Date()
+        ) + 1
+      );
+    }
+  }, [companyWithInfo]);
 
   async function changeCommunicationSetting(value) {
     await api.graphQlMutate(
@@ -79,16 +93,32 @@ export default function CertificationPanel({ company }) {
     ),
     !loadingInfo && companyWithInfo.isCertified && (
       <Box key={5}>
+        <Typography variant="h6">
+          Félicitations, votre entreprise est certifiée depuis{" "}
+          {nbMonthOfCertification} mois.
+        </Typography>
+        <Typography mt={1}>
+          Le certificat, fourni par l'équipe Mobilic atteste du fait qu'une
+          entreprise se plie à la réglementation de suivi du temps de travail
+          et, pour cela, utilise Mobilic de manière conforme. L'attestation est
+          valable pour une durée de 6 mois.
+        </Typography>
         <CheckboxField
+          mt={2}
           checked={acceptCertificationCommunication}
           onChange={() =>
             changeCommunicationSetting(!acceptCertificationCommunication)
           }
           label={`J'accepte que Mobilic communique sur le fait que l'entreprise ${companyWithInfo.name} soit certifiée, notamment auprès des plateformes de mise en relation entre entreprises et particuliers.`}
         />
+        <Alert severity="warning" mb={2}>
+          Attention, le certificat Mobilic n'est en aucun cas un gage de respect
+          total de la réglementation par l'entreprise. Il n'atteste que de la
+          bonne utilisation de l'outil de suivi du temps de travail.
+        </Alert>
       </Box>
     ),
-    <Typography key={6} mt={1}>
+    <Typography key={6} mt={2}>
       <Link
         href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic/"
         target="_blank"
@@ -96,6 +126,9 @@ export default function CertificationPanel({ company }) {
       >
         Qu'est-ce que le certificat Mobilic ?
       </Link>
-    </Typography>
+    </Typography>,
+    companyWithInfo?.certificateCriterias && (
+      <CertificationCriteriaGlobalResult companyWithInfo={companyWithInfo} />
+    )
   ];
 }

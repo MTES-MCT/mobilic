@@ -14,7 +14,7 @@ import KnownAddressAdmin from "./KnownAddresses";
 import SettingAdmin from "./Settings";
 import CompanyApiPanel from "./CompanyApiPanel";
 import CompanyTeamsPanel from "./CompanyTeamsPanel";
-import CertificationPanel from "./CertificationPanel";
+import CertificationPanel from "./CertificationPanel/CertificationPanel";
 
 export const usePanelStyles = makeStyles(theme => ({
   navigation: {
