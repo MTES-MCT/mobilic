@@ -114,7 +114,7 @@ export default function CertificationPanel({ company }) {
         <Alert severity="warning" mb={2}>
           Attention, le certificat Mobilic n'est en aucun cas un gage de respect
           total de la réglementation par l'entreprise. Il n'atteste que de la
-          bonne utilisation de l'outil de suivi du temps de travail{" "}
+          bonne utilisation de l'outil de suivi du temps de travail.
         </Alert>
       </Box>
     ),

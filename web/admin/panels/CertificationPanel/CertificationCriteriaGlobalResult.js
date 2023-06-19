@@ -76,9 +76,6 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
       <Typography key={20} mt={2}>
         Votre entreprise rempli tous les critères mentionnés ci-dessous,
         nécessaires à l'obtention du certificat.
-        <br />
-        Le calcul des critères est mis à jour automatiquement chaque début de
-        mois.
       </Typography>
     ),
     companyWithInfo.isCertified && failureCriterias.length > 0 && (
@@ -88,20 +85,18 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
           mentionnés ci-dessous, nécessaires pour garder le certificat à l'issue
           de sa période de validité.
         </b>
-        <br />
-        Le calcul des critères est mis à jour automatiquement chaque début de
-        mois.
       </Typography>
     ),
     !companyWithInfo.isCertified && (
       <Typography key={40} mt={2}>
         Afin d'obtenir une attestation, votre entreprise doit remplir tous les
         critères mentionnés ci-dessous.
-        <br />
-        Le calcul des critères est mis à jour automatiquement chaque début de
-        mois.
       </Typography>
     ),
+    <Typography key={45}>
+      Le calcul des critères est mis à jour automatiquement chaque début de
+      mois.
+    </Typography>,
     (failureCriterias.length > 0 || succeededCriterias.length > 0) && (
       <Grid container key={50}>
         <Grid item xs={12} md={6}>
