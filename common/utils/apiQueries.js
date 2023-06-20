@@ -1978,12 +1978,14 @@ export const CONTROLLER_USER_CONTROLS_QUERY = gql`
     $id: Int!
     $fromDate: Date
     $toDate: Date
+    $limit: Int
     $controlsType: String
   ) {
     controllerUser(id: $id) {
       controls(
         fromDate: $fromDate
         toDate: $toDate
+        limit: $limit
         controlsType: $controlsType
       ) {
         ...ControlData
