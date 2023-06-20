@@ -59,11 +59,7 @@ export function Certificate() {
     { label: "Nom", name: "company_name" },
     { label: "SIREN", name: "siren" },
     { label: "SIRET", name: "siret" },
-    { label: "Date de certification", name: "certification_attribution_date" },
-    {
-      label: "Date d''inscription sur Mobilic",
-      name: "company_subscription_date"
-    }
+    { label: "Date de certification", name: "certification_attribution_date" }
   ];
 
   const onSearch = async () => {
