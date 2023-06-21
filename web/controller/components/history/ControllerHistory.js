@@ -38,7 +38,7 @@ export function ControllerHistory() {
 
   const [controlFilters, setControlFilters] = React.useState({
     fromDate: isoFormatLocalDate(
-      startOfMonthAsDate(addDaysToDate(new Date(), -31))
+      startOfMonthAsDate(addDaysToDate(new Date(), -91))
     ),
     toDate: isoFormatLocalDate(new Date()),
     controlsType: ""

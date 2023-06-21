@@ -98,7 +98,7 @@ export default function CertificationPanel({ company }) {
           {nbMonthOfCertification} mois.
         </Typography>
         <Typography mt={1}>
-          Le certificat, fourni par l'équipe Mobilic atteste du fait qu'une
+          Le certificat, fourni par l'équipe Mobilic atteste, du fait qu'une
           entreprise se plie à la réglementation de suivi du temps de travail
           et, pour cela, utilise Mobilic de manière conforme. L'attestation est
           valable pour une durée de 6 mois.

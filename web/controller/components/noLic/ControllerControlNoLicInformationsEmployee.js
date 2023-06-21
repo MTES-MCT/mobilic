@@ -15,6 +15,11 @@ const useStyles = makeStyles(theme => ({
   },
   subSectionBody: {
     marginBottom: theme.spacing(2)
+  },
+  fieldValue: {
+    fontWeight: 500,
+    fontSize: "1rem",
+    whiteSpace: "inherit"
   }
 }));
 
