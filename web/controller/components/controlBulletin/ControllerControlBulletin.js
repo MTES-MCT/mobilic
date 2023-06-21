@@ -93,8 +93,7 @@ export function ControllerControlBulletin({
     const { name, value } = e.target;
     setControlBulletin(prevState => ({
       ...prevState,
-      [name]: value,
-      touched: true
+      [name]: value
     }));
     setFieldUpdated(true);
   };

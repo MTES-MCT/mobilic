@@ -244,7 +244,7 @@ export function UserReadInfo({
             editBDC={openBulletinControl}
             downloadBDC={downloadBDC}
             canDownloadBDC={canDownloadBDC(controlData)}
-            touchedBDC={controlData.controlBulletinCreationTime}
+            BDCAlreadyExisting={!!controlData.controlBulletinCreationTime}
           />
         </>
       )}
