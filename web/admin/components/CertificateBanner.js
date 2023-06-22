@@ -1,11 +1,21 @@
 import React, { useMemo } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import { makeStyles } from "@mui/styles";
 import { Link, Notice } from "@dataesr/react-dsfr";
 import { useApi } from "common/utils/api";
 import { useAdminCompanies } from "../store/store";
 import { getMonthsBetweenTwoDates } from "common/utils/time";
 import { COMPANY_CERTIFICATION_COMMUNICATION_QUERY } from "common/utils/apiQueries";
 
+const useStyles = makeStyles({
+  certificateBanner: {
+    width: "100%",
+    backgroundColor: "var(--background-contrast-info)"
+  }
+});
+
 export function CertificateBanner() {
+  const classes = useStyles();
   const api = useApi();
   const [, company] = useAdminCompanies();
   const [companyWithInfo, setCompanyWithInfo] = React.useState({});
@@ -27,6 +37,12 @@ export function CertificateBanner() {
   }, [company]);
 
   const content = useMemo(() => {
+    if (!companyWithInfo.certificateCriterias?.creationTime) {
+      return {
+        title: "Devenez une entreprise certifiée Mobilic !",
+        linkText: "Découvrir les critères"
+      };
+    }
     if (!companyWithInfo.isCertified) {
       const nbMonthLastCertification = getMonthsBetweenTwoDates(
         new Date(companyWithInfo.lastDayCertified),
@@ -92,20 +108,17 @@ export function CertificateBanner() {
     setVisible(false);
   };
 
-  // TODO 1123: handle link destination
   return (
-    <div
-      style={{
-        width: "100%",
-        backgroundColor: "var(--background-contrast-info)"
-      }}
-    >
+    <div className={classes.certificateBanner}>
       <Notice
         title={content.title}
         visible={visible}
         onClose={onCloseBanner}
         asLink={
-          <Link className="certificateBannerLink" href="#">
+          <Link
+            className="certificateBannerLink"
+            as={<RouterLink to="/admin/company?tab=certificat" />}
+          >
             {content.linkText}
           </Link>
         }

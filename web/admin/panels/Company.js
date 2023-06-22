@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
 import { useAdminCompanies } from "../store/store";
@@ -156,14 +157,22 @@ function SubNavigationToggle({ view, setView }) {
 }
 
 function CompanyPanel({ width, containerRef }) {
-  const [view, setView] = React.useState("employees");
+  const classes = usePanelStyles({ width });
+  const location = useLocation();
 
+  const [view, setView] = React.useState("employees");
   const [, company] = useAdminCompanies();
 
-  const classes = usePanelStyles({ width });
   const subPanel = COMPANY_SUB_PANELS.find(sp => sp.view === view);
-
   const currentCompanyName = company ? company.name : "";
+
+  React.useEffect(() => {
+    const queryString = new URLSearchParams(location.search);
+    const tab = queryString.get("tab");
+    if (COMPANY_SUB_PANELS.find(tabs => tabs.view === tab)) {
+      setView(tab);
+    }
+  }, [location]);
 
   return [
     <Paper
