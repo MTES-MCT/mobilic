@@ -6,6 +6,7 @@ import { makeStyles } from "@mui/styles";
 import useTheme from "@mui/styles/useTheme";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { useAdminStore } from "../store/store";
+import { useCertificationInfo } from "../utils/certificationInfo";
 import { getBadgeRoutes } from "../../common/routes";
 import { TextWithBadge } from "../../common/TextWithBadge";
 
@@ -31,9 +32,10 @@ function MenuItem({ label, path }) {
   const history = useHistory();
   const classes = menuItemStyles();
   const selected = useRouteMatch(path);
-  const badgeContent = getBadgeRoutes(useAdminStore()).find(
+  const { companyWithInfo } = useCertificationInfo();
+  const badge = getBadgeRoutes(useAdminStore(), companyWithInfo).find(
     br => br.path === path
-  )?.badgeContent;
+  )?.badge;
   return (
     <ListItem className="no-margin-no-padding">
       <Link
@@ -47,11 +49,7 @@ function MenuItem({ label, path }) {
           history.push(path);
         }}
       >
-        <TextWithBadge
-          invisible={!badgeContent}
-          badgeContent={badgeContent}
-          color="error"
-        >
+        <TextWithBadge invisible={!badge} {...badge}>
           {label}
         </TextWithBadge>
       </Link>
@@ -68,8 +66,8 @@ export function SideMenu({ views }) {
       className={`side-menu-container`}
       style={{ backgroundColor: theme.palette.background.paper }}
     >
-      {views.map((view, index) => (
-        <MenuItem key={index} {...view} />
+      {views.map(view => (
+        <MenuItem key={view.path} {...view} />
       ))}
     </List>
   );

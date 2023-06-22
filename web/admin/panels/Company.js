@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
 import { useAdminCompanies } from "../store/store";
+import { useCertificationInfo } from "../utils/certificationInfo";
+import { getCertificateBadge } from "../../common/routes";
+import Badge from "@mui/material/Badge";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Employees } from "./Employees";
@@ -132,6 +135,10 @@ const COMPANY_SUB_PANELS = [
 
 function SubNavigationToggle({ view, setView }) {
   const classes = usePanelStyles();
+  const { companyWithInfo } = useCertificationInfo();
+  const certificatBadge = useMemo(() => getCertificateBadge(companyWithInfo), [
+    companyWithInfo
+  ]);
   return (
     <>
       {COMPANY_SUB_PANELS.map(panelInfos => (
@@ -148,7 +155,13 @@ function SubNavigationToggle({ view, setView }) {
             value={panelInfos.view}
             className={classes.toggleButton}
           >
-            {panelInfos.label}
+            {panelInfos.view === "certificat" ? (
+              <Badge invisible={!certificatBadge} {...certificatBadge}>
+                {panelInfos.label}
+              </Badge>
+            ) : (
+              panelInfos.label
+            )}
           </ToggleButton>
         </ToggleButtonGroup>
       ))}

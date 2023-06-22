@@ -10,22 +10,15 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.success.main
   }
 }));
-export function TextWithBadge({
-  children,
-  badgeContent,
-  invisible = false,
-  color
-}) {
+export function TextWithBadge({ children, ...props }) {
   const classes = useStyles();
 
   return (
     <Badge
-      invisible={invisible}
-      badgeContent={badgeContent}
-      color={color}
+      {...props}
       classes={{
         badge: `${classes.customBadge} ${
-          color === "success" ? classes.success : ""
+          props.color === "success" ? classes.success : ""
         }`
       }}
     >

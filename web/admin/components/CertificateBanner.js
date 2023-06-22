@@ -20,7 +20,7 @@ export function CertificateBanner() {
   const content = useMemo(() => {
     if (!companyWithInfo.certificateCriterias?.creationTime) {
       return {
-        title: "Devenez une entreprise certifiée Mobilic !",
+        title: "Devenez une entreprise certifiée Mobilic",
         linkText: "Découvrir les critères"
       };
     }
