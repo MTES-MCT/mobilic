@@ -2,10 +2,8 @@ import React, { useMemo } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 import { Link, Notice } from "@dataesr/react-dsfr";
-import { useApi } from "common/utils/api";
-import { useAdminCompanies } from "../store/store";
 import { getMonthsBetweenTwoDates } from "common/utils/time";
-import { COMPANY_CERTIFICATION_COMMUNICATION_QUERY } from "common/utils/apiQueries";
+import { useCertificationInfo } from "../utils/certificationInfo";
 
 const useStyles = makeStyles({
   certificateBanner: {
@@ -16,25 +14,8 @@ const useStyles = makeStyles({
 
 export function CertificateBanner() {
   const classes = useStyles();
-  const api = useApi();
-  const [, company] = useAdminCompanies();
-  const [companyWithInfo, setCompanyWithInfo] = React.useState({});
-  const [visible, setVisible] = React.useState(false);
-
-  // TODO 1123: refactor to mutualize this code
-  React.useEffect(async () => {
-    setVisible(false);
-    if (company) {
-      const apiResponse = await api.graphQlQuery(
-        COMPANY_CERTIFICATION_COMMUNICATION_QUERY,
-        {
-          companyId: company.id
-        }
-      );
-      setCompanyWithInfo(apiResponse?.data?.company);
-      setVisible(true);
-    }
-  }, [company]);
+  const { companyWithInfo } = useCertificationInfo();
+  const [visible, setVisible] = React.useState(true);
 
   const content = useMemo(() => {
     if (!companyWithInfo.certificateCriterias?.creationTime) {
