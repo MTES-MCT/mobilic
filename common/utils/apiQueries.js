@@ -1917,6 +1917,14 @@ export const CONTROLLER_CHANGE_GRECO_ID = gql`
   }
 `;
 
+export const CONTROLLER_ADD_CONTROL_NOTE = gql`
+  mutation controllerAddControlNote($controlId: Int!, $content: String!) {
+    controllerAddControlNote(controlId: $controlId, content: $content) {
+      note
+    }
+  }
+`;
+
 export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
   ${CONTROL_BULLETIN_FRAGMENT}
   ${CONTROL_DATA_FRAGMENT}

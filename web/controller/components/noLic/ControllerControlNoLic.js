@@ -81,7 +81,6 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
 
   const [tab, setTab] = React.useState(TABS[0].name);
   const [infractions, setInfractions] = React.useState([]);
-  const [notes, setNotes] = React.useState("");
   const [
     lastInfractionsEditionDate,
     setLastInfractionsEditionDate
@@ -162,8 +161,6 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
                 <t.component
                   setTab={setTab}
                   infractions={infractions}
-                  notes={notes}
-                  setNotes={setNotes}
                   lastInfractionsEditionDate={lastInfractionsEditionDate}
                   setLastInfractionsEditionDate={setLastInfractionsEditionDate}
                   isReportingInfractions={isReportingInfractions}

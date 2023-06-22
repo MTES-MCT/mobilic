@@ -198,6 +198,7 @@ export const CONTROL_DATA_FRAGMENT = gql`
     userLastName
     controlBulletinCreationTime
     vehicleRegistrationNumber
+    note
   }
 `;
 
