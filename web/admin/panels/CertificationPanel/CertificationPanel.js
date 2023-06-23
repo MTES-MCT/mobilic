@@ -18,6 +18,7 @@ import CertificationCriteriaGlobalResult from "./CertificationCriteriaGlobalResu
 export default function CertificationPanel({ company }) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
+  const classes = usePanelStyles();
   const [companyWithInfo, setCompanyWithInfo] = React.useState({});
   const [
     acceptCertificationCommunication,
@@ -40,13 +41,11 @@ export default function CertificationPanel({ company }) {
     setLoadingInfo(false);
   }, [company]);
 
-  const nbMonthOfCertification = useMemo(() => {
-    if (companyWithInfo?.startLastCertificationPeriod) {
-      return (
-        getMonthsBetweenTwoDates(
-          new Date(companyWithInfo?.startLastCertificationPeriod),
-          new Date()
-        ) + 1
+  const nbMonthSinceLastCertification = useMemo(() => {
+    if (companyWithInfo?.lastDayCertified) {
+      return getMonthsBetweenTwoDates(
+        new Date(companyWithInfo?.lastDayCertified),
+        new Date()
       );
     }
   }, [companyWithInfo]);
@@ -68,11 +67,21 @@ export default function CertificationPanel({ company }) {
     );
   }
 
-  const classes = usePanelStyles();
+  const nbMonthOfCertification = useMemo(() => {
+    if (companyWithInfo?.startLastCertificationPeriod) {
+      return (
+        getMonthsBetweenTwoDates(
+          new Date(companyWithInfo?.startLastCertificationPeriod),
+          new Date()
+        ) + 1
+      );
+    }
+  }, [companyWithInfo]);
+
   const noCertifiedText = useMemo(
     () =>
       companyWithInfo.lastDayCertified
-        ? `Votre entreprise ${companyWithInfo.name} n'est plus certifiée.`
+        ? `Votre entreprise ${companyWithInfo.name} n'est plus certifiée depuis ${nbMonthSinceLastCertification} mois`
         : `Votre entreprise ${companyWithInfo.name} n'est pas encore certifiée.`,
     [companyWithInfo]
   );
@@ -87,8 +96,8 @@ export default function CertificationPanel({ company }) {
       <Skeleton key={2} variant="rectangular" width="100%" height={100} />
     ),
     !loadingInfo && !companyWithInfo.isCertified && (
-      <Box key={4}>
-        <Typography>{noCertifiedText}</Typography>
+      <Box key={4} mb={2}>
+        <Typography variant="h6">{noCertifiedText}</Typography>
       </Box>
     ),
     !loadingInfo && companyWithInfo.isCertified && (
@@ -96,12 +105,6 @@ export default function CertificationPanel({ company }) {
         <Typography variant="h6">
           Félicitations, votre entreprise est certifiée depuis{" "}
           {nbMonthOfCertification} mois.
-        </Typography>
-        <Typography mt={1}>
-          Le certificat, fourni par l'équipe Mobilic atteste, du fait qu'une
-          entreprise se plie à la réglementation de suivi du temps de travail
-          et, pour cela, utilise Mobilic de manière conforme. L'attestation est
-          valable pour une durée de 6 mois.
         </Typography>
         <CheckboxField
           mt={2}
@@ -111,14 +114,24 @@ export default function CertificationPanel({ company }) {
           }
           label={`J'accepte que Mobilic communique sur le fait que l'entreprise ${companyWithInfo.name} soit certifiée, notamment auprès des plateformes de mise en relation entre entreprises et particuliers.`}
         />
-        <Alert severity="warning" mb={2}>
+      </Box>
+    ),
+    !loadingInfo && (
+      <Box key={8} mb={2}>
+        <Typography mb={2}>
+          Le certificat, fourni par l'équipe Mobilic, atteste du fait qu'une
+          entreprise se plie à la réglementation de suivi du temps de travail
+          et, pour cela, utilise Mobilic de manière conforme. L'attestation est
+          valable pour une durée de 6 mois.
+        </Typography>
+        <Alert severity="warning">
           Attention, le certificat Mobilic n'est en aucun cas un gage de respect
           total de la réglementation par l'entreprise. Il n'atteste que de la
           bonne utilisation de l'outil de suivi du temps de travail.
         </Alert>
       </Box>
     ),
-    <Typography key={6} mt={2}>
+    <Typography key={10} mt={2}>
       <Link
         href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic/"
         target="_blank"

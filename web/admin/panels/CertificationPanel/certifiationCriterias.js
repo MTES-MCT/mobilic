@@ -20,6 +20,8 @@ export const CERTIFICATION_CRITERIAS = {
       <span>
         Le gestionnaire ne doit pas modifier plus de 10 % des activités
         enregistrées par les salariés.
+        <br />
+        Ce critère garantit une meilleure fiabilité des données.
       </span>
     )
   },

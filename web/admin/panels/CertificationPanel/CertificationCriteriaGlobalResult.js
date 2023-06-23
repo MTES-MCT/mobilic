@@ -74,27 +74,33 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
     </Box>,
     companyWithInfo.isCertified && failureCriterias.length === 0 && (
       <Typography key={20} mt={2}>
-        Votre entreprise rempli tous les critères mentionnés ci-dessous,
-        nécessaires à l'obtention du certificat.
+        Votre entreprise remplit tous les critères nécessaires à l'obtention du
+        certificat mentionnés ci-dessous.
       </Typography>
     ),
     companyWithInfo.isCertified && failureCriterias.length > 0 && (
       <Typography key={30} mt={2}>
         <b>
-          Attention, votre entreprise ne rempli plus tous les critères
+          Attention, votre entreprise ne remplit plus tous les critères
           mentionnés ci-dessous, nécessaires pour garder le certificat à l'issue
           de sa période de validité.
         </b>
       </Typography>
     ),
-    !companyWithInfo.isCertified && (
+    !companyWithInfo.isCertified && !companyWithInfo.lastDayCertified && (
       <Typography key={40} mt={2}>
-        Afin d'obtenir une attestation, votre entreprise doit remplir tous les
+        Pour obtenir le certificat, votre entreprise doit remplir tous les
         critères mentionnés ci-dessous.
       </Typography>
     ),
+    !companyWithInfo.isCertified && companyWithInfo.lastDayCertified && (
+      <Typography key={42} mt={2}>
+        Pour obtenir à nouveau le certificat, votre entreprise doit remplir tous
+        les critères mentionnés ci-dessous.
+      </Typography>
+    ),
     <Typography key={45}>
-      Le calcul des critères est mis à jour automatiquement chaque début de
+      Le calcul des critères est mis à jour automatiquement à chaque début de
       mois.
     </Typography>,
     (failureCriterias.length > 0 || succeededCriterias.length > 0) && (
