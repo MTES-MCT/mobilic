@@ -4,7 +4,10 @@ import Typography from "@mui/material/Typography";
 
 export function InfractionsAvailableSoon() {
   return (
-    <Alert severity="info" sx={{ height: "fit-content", marginBottom: 2 }}>
+    <Alert
+      severity="info"
+      sx={{ height: "fit-content", marginBottom: 2, marginTop: 2 }}
+    >
       <Typography>
         Vous pourrez bientôt retenir des infractions pour les contrôles. En
         attendant vous pouvez retrouver{" "}

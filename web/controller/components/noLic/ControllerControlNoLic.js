@@ -9,7 +9,6 @@ import TabContext from "@mui/lab/TabContext";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import WarningAmberOutlinedIcon from "@mui/icons-material/WarningOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
-import { TextWithBadge } from "../../../common/TextWithBadge";
 import { ControllerControlNoLicHistory } from "./ControllerControlNoLicHistory";
 import { ControllerControlNoLicInformations } from "./ControllerControlNoLicInformations";
 import { useDownloadBDC } from "../../utils/useDownloadBDC";
@@ -52,11 +51,7 @@ const TABS = [
   },
   {
     name: "alerts",
-    label: (
-      <TextWithBadge badgeContent="1" color="error">
-        Infractions
-      </TextWithBadge>
-    ),
+    label: "Infractions",
     icon: <WarningAmberOutlinedIcon />,
     component: InfractionsAvailableSoon
   },
