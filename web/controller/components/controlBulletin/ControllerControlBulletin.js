@@ -20,11 +20,21 @@ import {
   useStoreSyncedWithLocalStorage
 } from "common/store/store";
 import { syncControllerUser } from "../../utils/loadControllerUserData";
-import { canDownloadBDC } from "../../utils/controlBulletin";
+import {
+  canDownloadBDC,
+  checkRequiredFieldStep1,
+  checkRequiredFieldStep2
+} from "../../utils/controlBulletin";
 
 const STEPS = {
-  1: { title: "Données relatives au salarié" },
-  2: { title: "Données relatives à l'entreprise et au véhicule" },
+  1: {
+    title: "Données relatives au salarié",
+    checkRequiredField: checkRequiredFieldStep1
+  },
+  2: {
+    title: "Données relatives à l'entreprise et au véhicule",
+    checkRequiredField: checkRequiredFieldStep2
+  },
   3: { title: "Relevez des infractions" }
 };
 
@@ -45,6 +55,8 @@ export function ControllerControlBulletin({
   const [grecoId, setGrecoId] = React.useState(
     controllerUserInfo.grecoId || ""
   );
+  const [showErrors, setShowErrors] = React.useState(false);
+
   const controlCanBeDownloaded = React.useMemo(() => {
     return canDownloadBDC(controlData);
   }, [controlData]);
@@ -94,22 +106,29 @@ export function ControllerControlBulletin({
     const { name, value } = e.target;
     setControlBulletin(prevState => ({
       ...prevState,
-      [name]: value,
-      touched: true
+      [name]: value
     }));
     setFieldUpdated(true);
   };
 
   const onSaveButton = async newControlBulletin => {
-    if (fieldUpdated) {
-      await saveControlBulletin(newControlBulletin);
-    } else if (!STEPS[step + 1]) {
-      alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
-    }
-    if (!STEPS[step + 1]) {
-      onClose(true);
+    if (
+      STEPS[step].checkRequiredField &&
+      !STEPS[step].checkRequiredField(newControlBulletin)
+    ) {
+      setShowErrors(true);
     } else {
-      setStep(step + 1);
+      setShowErrors(false);
+      if (fieldUpdated) {
+        await saveControlBulletin(newControlBulletin);
+      } else if (!STEPS[step + 1]) {
+        alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
+      }
+      if (!STEPS[step + 1]) {
+        onClose(true);
+      } else {
+        setStep(step + 1);
+      }
     }
   };
 
@@ -206,6 +225,7 @@ export function ControllerControlBulletin({
         key={20}
         handleEditControlBulletin={handleEditControlBulletin}
         controlBulletin={controlBulletin}
+        showErrors={showErrors}
       />
     ),
     step === 2 && (
@@ -213,6 +233,7 @@ export function ControllerControlBulletin({
         key={30}
         handleEditControlBulletin={handleEditControlBulletin}
         controlBulletin={controlBulletin}
+        showErrors={showErrors}
       />
     ),
     step === 3 && (

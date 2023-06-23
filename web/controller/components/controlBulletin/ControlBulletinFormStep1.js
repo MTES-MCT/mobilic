@@ -6,7 +6,8 @@ import { COUNTRIES } from "../../utils/country";
 
 export function ControlBulletinFormStep1({
   handleEditControlBulletin,
-  controlBulletin
+  controlBulletin,
+  showErrors
 }) {
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
@@ -16,6 +17,9 @@ export function ControlBulletinFormStep1({
         onChange={e => handleEditControlBulletin(e)}
         label="Département du contrôle"
         required
+        messageType={
+          !controlBulletin.locationDepartment && showErrors ? "error" : ""
+        }
       />
       <TextInput
         value={controlBulletin.locationCommune || ""}
@@ -23,6 +27,9 @@ export function ControlBulletinFormStep1({
         onChange={e => handleEditControlBulletin(e)}
         label="Commune du contrôle"
         required
+        messageType={
+          !controlBulletin.locationCommune && showErrors ? "error" : ""
+        }
       />
       <TextInput
         value={controlBulletin.locationLieu || ""}
@@ -30,6 +37,7 @@ export function ControlBulletinFormStep1({
         onChange={e => handleEditControlBulletin(e)}
         label="Lieu du contrôle"
         required
+        messageType={!controlBulletin.locationLieu && showErrors ? "error" : ""}
       />
       <TextInput
         value={controlBulletin.userLastName || ""}
@@ -37,6 +45,7 @@ export function ControlBulletinFormStep1({
         onChange={e => handleEditControlBulletin(e)}
         label="Nom du salarié"
         required
+        messageType={!controlBulletin.userLastName && showErrors ? "error" : ""}
       />
       <TextInput
         value={controlBulletin.userFirstName || ""}
@@ -44,6 +53,9 @@ export function ControlBulletinFormStep1({
         onChange={e => handleEditControlBulletin(e)}
         label="Prénom du salarié"
         required
+        messageType={
+          !controlBulletin.userFirstName && showErrors ? "error" : ""
+        }
       />
       <TextInput
         value={controlBulletin.userBirthDate || ""}
@@ -52,6 +64,9 @@ export function ControlBulletinFormStep1({
         label="Date de naissance du salarié"
         required
         type="date"
+        messageType={
+          !controlBulletin.userBirthDate && showErrors ? "error" : ""
+        }
       />
       <Select
         label="Nationalité du salarié"
@@ -62,6 +77,9 @@ export function ControlBulletinFormStep1({
           handleEditControlBulletin(e);
         }}
         options={COUNTRIES}
+        messageType={
+          !controlBulletin.userNationality && showErrors ? "error" : ""
+        }
       />
     </Stack>
   );
