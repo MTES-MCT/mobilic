@@ -81,9 +81,9 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
     companyWithInfo.isCertified && failureCriterias.length > 0 && (
       <Typography key={30} mt={2}>
         <b>
-          Attention, votre entreprise ne remplit plus tous les critères
-          mentionnés ci-dessous, nécessaires pour garder le certificat à l'issue
-          de sa période de validité.
+          Attention, votre entreprise ne remplit plus l’ensemble des critères
+          nécessaires au renouvellement de votre certificat. Ces critères sont
+          mentionnés ci-dessous.
         </b>
       </Typography>
     ),

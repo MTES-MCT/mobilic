@@ -21,7 +21,7 @@ export function ControlBulletinFormStep3({
         value={grecoId}
         name="grecoId"
         onChange={e => onUpdateGrecoId(e.target.value)}
-        label="Votre identifiant Greco"
+        label="Votre identifiant de carte contrôleur"
       />
       <TextInput
         value={controlBulletin.observation || ""}

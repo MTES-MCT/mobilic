@@ -67,45 +67,34 @@ export default function CertificationPanel({ company }) {
     );
   }
 
-  const nbMonthOfCertification = useMemo(() => {
-    if (companyWithInfo?.startLastCertificationPeriod) {
-      return (
+  const panelTitle = useMemo(() => {
+    if (loadingInfo) {
+      return "Certificat Mobilic";
+    } else if (companyWithInfo.isCertified) {
+      const nbMonthCertified =
         getMonthsBetweenTwoDates(
           new Date(companyWithInfo?.startLastCertificationPeriod),
           new Date()
-        ) + 1
-      );
+        ) + 1;
+      return `Certificat Mobilic : Félicitations, votre entreprise est certifiée depuis ${nbMonthCertified} mois.`;
+    } else {
+      return companyWithInfo.lastDayCertified
+        ? `Certificat Mobilic : Votre entreprise ${companyWithInfo.name} n'est plus certifiée depuis ${nbMonthSinceLastCertification} mois`
+        : `Certificat Mobilic : Votre entreprise ${companyWithInfo.name} n'est pas encore certifiée.`;
     }
-  }, [companyWithInfo]);
-
-  const noCertifiedText = useMemo(
-    () =>
-      companyWithInfo.lastDayCertified
-        ? `Votre entreprise ${companyWithInfo.name} n'est plus certifiée depuis ${nbMonthSinceLastCertification} mois`
-        : `Votre entreprise ${companyWithInfo.name} n'est pas encore certifiée.`,
-    [companyWithInfo]
-  );
+  }, [loadingInfo, companyWithInfo.isCertified, nbMonthSinceLastCertification]);
 
   return [
     <Box key={3} className={classes.title}>
       <Typography variant="h4" mb={1}>
-        Certificat Mobilic
+        {panelTitle}
       </Typography>
     </Box>,
     loadingInfo && (
       <Skeleton key={2} variant="rectangular" width="100%" height={100} />
     ),
-    !loadingInfo && !companyWithInfo.isCertified && (
-      <Box key={4} mb={2}>
-        <Typography variant="h6">{noCertifiedText}</Typography>
-      </Box>
-    ),
     !loadingInfo && companyWithInfo.isCertified && (
       <Box key={5}>
-        <Typography variant="h6">
-          Félicitations, votre entreprise est certifiée depuis{" "}
-          {nbMonthOfCertification} mois.
-        </Typography>
         <CheckboxField
           mt={2}
           checked={acceptCertificationCommunication}
