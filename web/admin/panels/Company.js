@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
-import { useAdminCompanies } from "../store/store";
+import { useAdminCompanies, useAdminStore } from "../store/store";
 import { useCertificationInfo } from "../utils/certificationInfo";
 import { getCertificateBadge } from "../../common/routes";
 import Badge from "@mui/material/Badge";
@@ -136,9 +136,11 @@ const COMPANY_SUB_PANELS = [
 function SubNavigationToggle({ view, setView }) {
   const classes = usePanelStyles();
   const { companyWithInfo } = useCertificationInfo();
-  const certificatBadge = useMemo(() => getCertificateBadge(companyWithInfo), [
-    companyWithInfo
-  ]);
+  const adminStore = useAdminStore();
+  const certificateBadge = useMemo(
+    () => getCertificateBadge(companyWithInfo, adminStore?.userId),
+    [companyWithInfo]
+  );
   return (
     <>
       {COMPANY_SUB_PANELS.map(panelInfos => (
@@ -156,7 +158,7 @@ function SubNavigationToggle({ view, setView }) {
             className={classes.toggleButton}
           >
             {panelInfos.view === "certificat" ? (
-              <Badge invisible={!certificatBadge} {...certificatBadge}>
+              <Badge invisible={!certificateBadge} {...certificateBadge}>
                 {panelInfos.label}
               </Badge>
             ) : (

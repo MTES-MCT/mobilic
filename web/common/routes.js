@@ -35,6 +35,7 @@ import { ControllerScanQRCode } from "../controller/components/scanQRCode/Contro
 import { ControllerQRCodeNotRecognized } from "../controller/components/scanQRCode/ControllerQRCodeNotRecognized";
 import { ControllerHistory } from "../controller/components/history/ControllerHistory";
 import { SyncEmployeeValidation } from "../login/SyncEmployeeValidation";
+import { shouldDisplayBadge } from "../admin/utils/certificationInfo";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -466,7 +467,10 @@ export function getBadgeRoutes(adminStore, companyWithCertificationInfo) {
     }
   ];
 
-  const certificateBadge = getCertificateBadge(companyWithCertificationInfo);
+  const certificateBadge = getCertificateBadge(
+    companyWithCertificationInfo,
+    adminStore?.userId
+  );
   if (certificateBadge) {
     badgeRoutes.push({
       path: "/admin/company",
@@ -477,7 +481,11 @@ export function getBadgeRoutes(adminStore, companyWithCertificationInfo) {
   return badgeRoutes;
 }
 
-export function getCertificateBadge(companyWithCertificationInfo) {
+export function getCertificateBadge(companyWithCertificationInfo, userId) {
+  if (!shouldDisplayBadge(userId)) {
+    return null;
+  }
+
   if (!companyWithCertificationInfo.certificateCriterias?.creationTime) {
     return null;
   }

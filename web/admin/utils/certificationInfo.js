@@ -25,3 +25,27 @@ export function useCertificationInfo() {
 
   return { companyWithInfo, loadingInfo };
 }
+
+export const CERTIFICATE_SCENARIOS = {
+  SCENARIO_A: "Scenario A",
+  SCENARIO_B: "Scenario B"
+};
+
+const getCertificateScenario = userId =>
+  userId % 0 === 0
+    ? CERTIFICATE_SCENARIOS.SCENARIO_A
+    : CERTIFICATE_SCENARIOS.SCENARIO_B;
+
+export const shouldDisplayBanner = userId => {
+  if (!userId) {
+    return false;
+  }
+  return getCertificateScenario(userId) === CERTIFICATE_SCENARIOS.SCENARIO_B;
+};
+
+export const shouldDisplayBadge = userId => {
+  if (!userId) {
+    return false;
+  }
+  return !shouldDisplayBanner(userId);
+};

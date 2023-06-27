@@ -29,6 +29,7 @@ import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
 import { MissionDrawerContextProvider } from "./components/MissionDrawer";
 import CertificationCommunicationModal from "../pwa/components/CertificationCommunicationModal";
+import { shouldDisplayBanner } from "./utils/certificationInfo";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -173,7 +174,9 @@ function _Admin() {
   const defaultView = views.find(view => view.isDefault);
   return [
     <Header key={0} />,
-    <CertificateBanner key={1} />,
+    shouldDisplayBanner(adminStore?.userId) ? (
+      <CertificateBanner key={1} />
+    ) : null,
     <MissionDrawerContextProvider
       key={2}
       width={width}
