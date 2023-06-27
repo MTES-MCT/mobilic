@@ -209,9 +209,8 @@ export function ControllerControlBulletin({
       Éditer un bulletin de contrôle
     </Typography>,
     <Typography key={10}>
-      Enregistrez les informations de contrôle d'un LIC papier afin de le
-      retrouver dans votre historique de contrôles et de générer un BDC au
-      format PDF.
+      Pour éditer un bulletin de contrôle au format PDF, veuillez renseigner les
+      champs ci-dessous.
     </Typography>,
     <Stepper
       key={15}

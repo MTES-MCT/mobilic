@@ -93,18 +93,6 @@ export default function CertificationPanel({ company }) {
     loadingInfo && (
       <Skeleton key={2} variant="rectangular" width="100%" height={100} />
     ),
-    !loadingInfo && companyWithInfo.isCertified && (
-      <Box key={5}>
-        <CheckboxField
-          mt={2}
-          checked={acceptCertificationCommunication}
-          onChange={() =>
-            changeCommunicationSetting(!acceptCertificationCommunication)
-          }
-          label={`J'accepte que Mobilic communique sur le fait que l'entreprise ${companyWithInfo.name} soit certifiée, notamment auprès des plateformes de mise en relation entre entreprises et particuliers.`}
-        />
-      </Box>
-    ),
     !loadingInfo && (
       <Box key={8} mb={2}>
         <Typography mb={2}>
@@ -118,6 +106,18 @@ export default function CertificationPanel({ company }) {
           total de la réglementation par l'entreprise. Il n'atteste que de la
           bonne utilisation de l'outil de suivi du temps de travail.
         </Alert>
+      </Box>
+    ),
+    !loadingInfo && companyWithInfo.isCertified && (
+      <Box key={5}>
+        <CheckboxField
+          mt={2}
+          checked={acceptCertificationCommunication}
+          onChange={() =>
+            changeCommunicationSetting(!acceptCertificationCommunication)
+          }
+          label={`J'accepte que Mobilic communique sur le fait que l'entreprise ${companyWithInfo.name} soit certifiée, notamment auprès des plateformes de mise en relation entre entreprises et particuliers.`}
+        />
       </Box>
     ),
     <Typography key={10} mt={2}>

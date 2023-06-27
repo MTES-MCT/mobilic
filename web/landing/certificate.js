@@ -17,15 +17,13 @@ import Box from "@mui/material/Box";
 
 const useStyles = makeStyles(theme => ({
   explanation: {
-    fontSize: "1.25em",
-    marginTop: theme.spacing(10),
+    marginTop: theme.spacing(8),
     textAlign: "left"
   },
   warning: {
     marginTop: theme.spacing(3)
   },
   linkExplanation: {
-    fontSize: "1.25em",
     textAlign: "left"
   },
   searchBar: {
