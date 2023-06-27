@@ -3,7 +3,10 @@ import { Link as RouterLink } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 import { Link, Notice } from "@dataesr/react-dsfr";
 import { getMonthsBetweenTwoDates } from "common/utils/time";
-import { useCertificationInfo } from "../utils/certificationInfo";
+import {
+  dismissCertificateInfo,
+  useCertificationInfo
+} from "../utils/certificationInfo";
 
 const useStyles = makeStyles({
   certificateBanner: {
@@ -86,7 +89,12 @@ export function CertificateBanner() {
   }, [companyWithInfo]);
 
   const onCloseBanner = () => {
+    dismissCertificateInfo();
     setVisible(false);
+  };
+
+  const onClickLinkBanner = () => {
+    dismissCertificateInfo();
   };
 
   return (
@@ -99,6 +107,7 @@ export function CertificateBanner() {
           <Link
             className="certificateBannerLink"
             as={<RouterLink to="/admin/company?tab=certificat" />}
+            onClick={() => onClickLinkBanner()}
           >
             {content.linkText}
           </Link>

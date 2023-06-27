@@ -3,7 +3,11 @@ import { useLocation } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
 import { useAdminCompanies, useAdminStore } from "../store/store";
-import { useCertificationInfo } from "../utils/certificationInfo";
+import {
+  dismissCertificateInfo,
+  shouldDisplayBadge,
+  useCertificationInfo
+} from "../utils/certificationInfo";
 import { getCertificateBadge } from "../../common/routes";
 import Badge from "@mui/material/Badge";
 import ToggleButton from "@mui/material/ToggleButton";
@@ -124,7 +128,12 @@ const COMPANY_SUB_PANELS = [
   {
     label: "Certificat",
     view: "certificat",
-    component: props => <CertificationPanel {...props} />
+    component: props => <CertificationPanel {...props} />,
+    onClick: userId => {
+      if (shouldDisplayBadge(userId)) {
+        dismissCertificateInfo();
+      }
+    }
   },
   {
     label: "API",
@@ -156,6 +165,11 @@ function SubNavigationToggle({ view, setView }) {
           <ToggleButton
             value={panelInfos.view}
             className={classes.toggleButton}
+            onClick={
+              panelInfos.onClick
+                ? () => panelInfos.onClick(adminStore.userId)
+                : null
+            }
           >
             {panelInfos.view === "certificat" ? (
               <Badge invisible={!certificateBadge} {...certificateBadge}>
