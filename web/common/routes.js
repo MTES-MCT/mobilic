@@ -49,15 +49,15 @@ export const RESOURCES_ROUTE = {
   accessible: () => true,
   subRoutes: [
     {
-      path: "/resources/home",
-      target: "_blank",
-      label: "Documentation"
-    },
-    {
       to: "",
       label: "Foire aux questions",
       target: "_blank",
       href: "https://faq.mobilic.beta.gouv.fr/"
+    },
+    {
+      path: "/resources/home",
+      target: "_blank",
+      label: "Documentation"
     },
     {
       path: "/partners",

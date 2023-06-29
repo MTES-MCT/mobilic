@@ -245,7 +245,15 @@ export function NavigationMenu({ open, setOpen }) {
   const classes = useStyles();
 
   const routes = getAccessibleRoutes({ userInfo, companies });
-  routes.push(RESOURCES_ROUTE);
+
+  const indexMonCompte = routes.findIndex(
+    route => route.label === "Mon compte"
+  );
+  if (indexMonCompte !== -1) {
+    routes.splice(indexMonCompte, 0, RESOURCES_ROUTE);
+  } else {
+    routes.push(RESOURCES_ROUTE);
+  }
   if (!userInfo?.id) {
     routes.push(CERTIFICATE_ROUTE);
   }
@@ -364,23 +372,23 @@ function DesktopHeader({ disableMenu }) {
 
   const docLinks = () => [
     <LinkButton
-      aria-label="Documentation"
-      key={0}
-      href="/resources/home"
-      target="_blank"
-      className={classes.docButton}
-    >
-      Documentation
-    </LinkButton>,
-    <LinkButton
       aria-label="Foire aux questions"
-      key={1}
+      key={0}
       href="https://faq.mobilic.beta.gouv.fr"
       target="_blank"
       rel="noopener noreferrer"
       className={classes.docButton}
     >
       Foire aux questions
+    </LinkButton>,
+    <LinkButton
+      aria-label="Documentation"
+      key={1}
+      href="/resources/home"
+      target="_blank"
+      className={classes.docButton}
+    >
+      Documentation
     </LinkButton>,
     <LinkButton
       aria-label="Partenaires"
