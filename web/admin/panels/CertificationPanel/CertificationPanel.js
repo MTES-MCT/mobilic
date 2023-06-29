@@ -4,7 +4,8 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {
   COMPANY_CERTIFICATION_COMMUNICATION_QUERY,
-  EDIT_COMPANIES_COMMUNICATION_SETTING
+  EDIT_COMPANIES_COMMUNICATION_SETTING,
+  HTTP_QUERIES
 } from "common/utils/apiQueries";
 import { usePanelStyles } from "../Company";
 import { Link } from "../../../common/LinkButton";
@@ -14,6 +15,8 @@ import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { getMonthsBetweenTwoDates } from "common/utils/time";
 import Alert from "@mui/material/Alert";
 import CertificationCriteriaGlobalResult from "./CertificationCriteriaGlobalResult";
+import Button from "@mui/material/Button";
+import DownloadIcon from "@mui/icons-material/Download";
 
 export default function CertificationPanel({ company }) {
   const api = useApi();
@@ -86,9 +89,24 @@ export default function CertificationPanel({ company }) {
 
   return [
     <Box key={3} className={classes.title}>
-      <Typography variant="h4" mb={1}>
-        {panelTitle}
-      </Typography>
+      <Typography variant="h4">{panelTitle}</Typography>
+      <Button
+        startIcon={<DownloadIcon />}
+        variant="outlined"
+        color="primary"
+        onClick={async () =>
+          alerts.withApiErrorHandling(async () => {
+            const options = {
+              company_id: company.id
+            };
+            await api.downloadFileHttpQuery(HTTP_QUERIES.downloadCertificate, {
+              json: options
+            });
+          }, "download-certificate")
+        }
+      >
+        Télécharger le certificat
+      </Button>
     </Box>,
     loadingInfo && (
       <Skeleton key={2} variant="rectangular" width="100%" height={100} />
