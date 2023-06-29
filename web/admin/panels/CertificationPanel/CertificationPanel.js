@@ -90,23 +90,28 @@ export default function CertificationPanel({ company }) {
   return [
     <Box key={3} className={classes.title}>
       <Typography variant="h4">{panelTitle}</Typography>
-      <Button
-        startIcon={<DownloadIcon />}
-        variant="outlined"
-        color="primary"
-        onClick={async () =>
-          alerts.withApiErrorHandling(async () => {
-            const options = {
-              company_id: company.id
-            };
-            await api.downloadFileHttpQuery(HTTP_QUERIES.downloadCertificate, {
-              json: options
-            });
-          }, "download-certificate")
-        }
-      >
-        Télécharger le certificat
-      </Button>
+      {!loadingInfo && companyWithInfo.isCertified && (
+        <Button
+          startIcon={<DownloadIcon />}
+          variant="outlined"
+          color="primary"
+          onClick={async () =>
+            alerts.withApiErrorHandling(async () => {
+              const options = {
+                company_id: company.id
+              };
+              await api.downloadFileHttpQuery(
+                HTTP_QUERIES.downloadCertificate,
+                {
+                  json: options
+                }
+              );
+            }, "download-certificate")
+          }
+        >
+          Télécharger le certificat
+        </Button>
+      )}
     </Box>,
     loadingInfo && (
       <Skeleton key={2} variant="rectangular" width="100%" height={100} />
