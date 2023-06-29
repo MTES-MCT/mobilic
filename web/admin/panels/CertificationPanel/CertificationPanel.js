@@ -68,7 +68,7 @@ export default function CertificationPanel({ company }) {
   }
 
   const panelTitle = useMemo(() => {
-    if (loadingInfo) {
+    if (loadingInfo || !companyWithInfo?.certificateCriterias) {
       return "Certificat Mobilic";
     } else if (companyWithInfo.isCertified) {
       const nbMonthCertified =
@@ -93,6 +93,14 @@ export default function CertificationPanel({ company }) {
     loadingInfo && (
       <Skeleton key={2} variant="rectangular" width="100%" height={100} />
     ),
+    !loadingInfo && !companyWithInfo?.certificateCriterias && (
+      <Box key={5} mb={2}>
+        <Typography variant="h6">
+          Votre entreprise n'est pas encore certifiée, car le calcul de
+          certification se fera au premier jour du mois suivant.
+        </Typography>
+      </Box>
+    ),
     !loadingInfo && (
       <Box key={8} mb={2}>
         <Typography mb={2}>
@@ -109,7 +117,7 @@ export default function CertificationPanel({ company }) {
       </Box>
     ),
     !loadingInfo && companyWithInfo.isCertified && (
-      <Box key={5}>
+      <Box key={9}>
         <CheckboxField
           mt={2}
           checked={acceptCertificationCommunication}
@@ -120,17 +128,22 @@ export default function CertificationPanel({ company }) {
         />
       </Box>
     ),
-    <Typography key={10} mt={2}>
-      <Link
-        href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Qu'est-ce que le certificat Mobilic ?
-      </Link>
-    </Typography>,
-    companyWithInfo?.certificateCriterias && (
-      <CertificationCriteriaGlobalResult companyWithInfo={companyWithInfo} />
+    !loadingInfo && (
+      <Typography key={15} mt={2}>
+        <Link
+          href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Qu'est-ce que le certificat Mobilic ?
+        </Link>
+      </Typography>
+    ),
+    !loadingInfo && companyWithInfo && (
+      <CertificationCriteriaGlobalResult
+        key={20}
+        companyWithInfo={companyWithInfo}
+      />
     )
   ];
 }
