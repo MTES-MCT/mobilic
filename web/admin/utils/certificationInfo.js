@@ -1,11 +1,21 @@
 import React from "react";
 import { useApi } from "common/utils/api";
-import { useAdminCompanies } from "../store/store";
-import { COMPANY_CERTIFICATION_COMMUNICATION_QUERY } from "common/utils/apiQueries";
-import { readCookie, setCookie } from "common/utils/cookie";
-import { isDateInCurrentMonth } from "common/utils/time";
+import { useAdminCompanies, useAdminStore } from "../store/store";
+import {
+  ADD_CERTIFICATION_INFO_RESULT,
+  COMPANY_CERTIFICATION_COMMUNICATION_QUERY
+} from "common/utils/apiQueries";
 
-const DISMISS_TIME_COOKIE_NAME = "certificateInfoDismissTime";
+export const CERTIFICATE_SCENARIOS = {
+  SCENARIO_A: "Scenario A",
+  SCENARIO_B: "Scenario B"
+};
+
+export const CERTIFICATE_ACTIONS = {
+  LOAD: "Load",
+  SUCCESS: "Success",
+  CLOSE: "Close"
+};
 
 export function useCertificationInfo() {
   const api = useApi();
@@ -30,18 +40,36 @@ export function useCertificationInfo() {
   return { companyWithInfo, loadingInfo };
 }
 
-export const CERTIFICATE_SCENARIOS = {
-  SCENARIO_A: "Scenario A",
-  SCENARIO_B: "Scenario B"
-};
+export function useSendCertificationInfoResult() {
+  const api = useApi();
+  const adminStore = useAdminStore();
+
+  const sendResult = result => async () => {
+    await api.graphQlMutate(
+      ADD_CERTIFICATION_INFO_RESULT,
+      {
+        userId: adminStore.userId,
+        action: result,
+        scenario: getCertificateScenario(adminStore.userId)
+      },
+      { context: { nonPublicApi: true } }
+    );
+  };
+
+  const sendSuccess = sendResult(CERTIFICATE_ACTIONS.SUCCESS);
+  const sendClose = sendResult(CERTIFICATE_ACTIONS.CLOSE);
+  const sendLoad = sendResult(CERTIFICATE_ACTIONS.LOAD);
+
+  return [sendSuccess, sendClose, sendLoad];
+}
 
 const getCertificateScenario = userId =>
   userId % 0 === 0
     ? CERTIFICATE_SCENARIOS.SCENARIO_A
     : CERTIFICATE_SCENARIOS.SCENARIO_B;
 
-export const shouldDisplayBanner = userId => {
-  if (dismissedCookieThisMonthExists()) {
+export const shouldDisplayBanner = ({ userId, shouldSeeCertificateInfo }) => {
+  if (!shouldSeeCertificateInfo) {
     return false;
   }
   if (!userId) {
@@ -50,24 +78,12 @@ export const shouldDisplayBanner = userId => {
   return getCertificateScenario(userId) === CERTIFICATE_SCENARIOS.SCENARIO_A;
 };
 
-export const shouldDisplayBadge = userId => {
-  if (dismissedCookieThisMonthExists()) {
+export const shouldDisplayBadge = ({ userId, shouldSeeCertificateInfo }) => {
+  if (!shouldSeeCertificateInfo) {
     return false;
   }
   if (!userId) {
     return false;
   }
   return !shouldDisplayBanner(userId);
-};
-
-const dismissedCookieThisMonthExists = () => {
-  const cookieDateTime = readCookie(DISMISS_TIME_COOKIE_NAME);
-  if (!cookieDateTime) {
-    return false;
-  }
-  return isDateInCurrentMonth(new Date(cookieDateTime));
-};
-
-export const dismissCertificateInfo = () => {
-  setCookie(DISMISS_TIME_COOKIE_NAME, new Date(), true);
 };

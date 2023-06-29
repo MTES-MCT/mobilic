@@ -4,9 +4,9 @@ import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
 import { useAdminCompanies, useAdminStore } from "../store/store";
 import {
-  dismissCertificateInfo,
   shouldDisplayBadge,
-  useCertificationInfo
+  useCertificationInfo,
+  useSendCertificationInfoResult
 } from "../utils/certificationInfo";
 import { getCertificateBadge } from "../../common/routes";
 import Badge from "@mui/material/Badge";
@@ -129,9 +129,9 @@ const COMPANY_SUB_PANELS = [
     label: "Certificat",
     view: "certificat",
     component: props => <CertificationPanel {...props} />,
-    onClick: userId => {
-      if (shouldDisplayBadge(userId)) {
-        dismissCertificateInfo();
+    onClick: async (adminStore, action) => {
+      if (shouldDisplayBadge(adminStore)) {
+        await action();
       }
     }
   },
@@ -147,9 +147,15 @@ function SubNavigationToggle({ view, setView }) {
   const { companyWithInfo } = useCertificationInfo();
   const adminStore = useAdminStore();
   const certificateBadge = useMemo(
-    () => getCertificateBadge(companyWithInfo, adminStore?.userId),
+    () => getCertificateBadge(companyWithInfo, adminStore),
     [companyWithInfo]
   );
+  const [sendSuccess, , sendLoad] = useSendCertificationInfoResult();
+  React.useEffect(async () => {
+    if (certificateBadge) {
+      await sendLoad();
+    }
+  }, [certificateBadge]);
   return (
     <>
       {COMPANY_SUB_PANELS.map(panelInfos => (
@@ -167,7 +173,7 @@ function SubNavigationToggle({ view, setView }) {
             className={classes.toggleButton}
             onClick={
               panelInfos.onClick
-                ? () => panelInfos.onClick(adminStore.userId)
+                ? () => panelInfos.onClick(adminStore, sendSuccess)
                 : null
             }
           >

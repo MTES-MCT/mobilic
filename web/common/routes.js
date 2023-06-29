@@ -469,7 +469,7 @@ export function getBadgeRoutes(adminStore, companyWithCertificationInfo) {
 
   const certificateBadge = getCertificateBadge(
     companyWithCertificationInfo,
-    adminStore?.userId
+    adminStore
   );
   if (certificateBadge) {
     badgeRoutes.push({
@@ -481,8 +481,8 @@ export function getBadgeRoutes(adminStore, companyWithCertificationInfo) {
   return badgeRoutes;
 }
 
-export function getCertificateBadge(companyWithCertificationInfo, userId) {
-  if (!shouldDisplayBadge(userId)) {
+export function getCertificateBadge(companyWithCertificationInfo, adminStore) {
+  if (!shouldDisplayBadge(adminStore)) {
     return null;
   }
 

@@ -2179,6 +2179,22 @@ export const EDIT_COMPANIES_COMMUNICATION_SETTING = gql`
   }
 `;
 
+export const ADD_CERTIFICATION_INFO_RESULT = gql`
+  mutation addCertificateInfoResult(
+    $userId: Int!
+    $scenario: String!
+    $action: String!
+  ) {
+    addCertificateInfoResult(
+      userId: $userId
+      scenario: $scenario
+      action: $action
+    ) {
+      success
+    }
+  }
+`;
+
 export const COMPANY_CERTIFICATION_COMMUNICATION_QUERY = gql`
   query certificationInfo($companyId: Int!) {
     company(id: $companyId) {

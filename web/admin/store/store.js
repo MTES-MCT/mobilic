@@ -58,6 +58,7 @@ export function AdminStoreProvider({ children }) {
       value={{
         ...state,
         userId: store.userId(),
+        shouldSeeCertificateInfo: store.userInfo().shouldSeeCertificateInfo,
         minWorkDaysDate: state.minWorkDaysCursor
           ? state.minWorkDaysCursor.slice(0, 10)
           : null,

@@ -416,7 +416,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       birthDate,
       hasConfirmedEmail,
       hasActivatedEmail,
-      disabledWarnings
+      disabledWarnings,
+      shouldSeeCertificateInfo
     },
     commitImmediately = true
   ) =>
@@ -431,7 +432,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             timezoneName,
             hasConfirmedEmail,
             hasActivatedEmail,
-            disabledWarnings
+            disabledWarnings,
+            shouldSeeCertificateInfo
           }
         },
         resolve,

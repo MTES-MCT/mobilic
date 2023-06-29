@@ -174,9 +174,7 @@ function _Admin() {
   const defaultView = views.find(view => view.isDefault);
   return [
     <Header key={0} />,
-    shouldDisplayBanner(adminStore?.userId) ? (
-      <CertificateBanner key={1} />
-    ) : null,
+    shouldDisplayBanner(adminStore) ? <CertificateBanner key={1} /> : null,
     <MissionDrawerContextProvider
       key={2}
       width={width}

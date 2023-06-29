@@ -4,8 +4,8 @@ import { makeStyles } from "@mui/styles";
 import { Link, Notice } from "@dataesr/react-dsfr";
 import { getMonthsBetweenTwoDates } from "common/utils/time";
 import {
-  dismissCertificateInfo,
-  useCertificationInfo
+  useCertificationInfo,
+  useSendCertificationInfoResult
 } from "../utils/certificationInfo";
 
 const useStyles = makeStyles({
@@ -16,9 +16,12 @@ const useStyles = makeStyles({
 });
 
 export function CertificateBanner() {
+  const [sendSuccess, sendClose, sendLoad] = useSendCertificationInfoResult();
   const classes = useStyles();
   const { companyWithInfo } = useCertificationInfo();
   const [visible, setVisible] = React.useState(true);
+
+  React.useEffect(() => sendLoad(), []);
 
   const content = useMemo(() => {
     if (!companyWithInfo.certificateCriterias?.creationTime) {
@@ -88,13 +91,14 @@ export function CertificateBanner() {
     };
   }, [companyWithInfo]);
 
-  const onCloseBanner = () => {
-    dismissCertificateInfo();
+  const onCloseBanner = async () => {
+    await sendClose();
     setVisible(false);
   };
 
-  const onClickLinkBanner = () => {
-    dismissCertificateInfo();
+  const onClickLinkBanner = async () => {
+    await sendSuccess();
+    setVisible(false);
   };
 
   return (
