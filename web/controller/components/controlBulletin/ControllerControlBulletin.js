@@ -29,13 +29,18 @@ import {
 const STEPS = {
   1: {
     title: "Données relatives au salarié",
-    checkRequiredField: checkRequiredFieldStep1
+    checkRequiredField: checkRequiredFieldStep1,
+    successMessage: "Les informations ont été enregistrées"
   },
   2: {
     title: "Données relatives à l'entreprise et au véhicule",
-    checkRequiredField: checkRequiredFieldStep2
+    checkRequiredField: checkRequiredFieldStep2,
+    successMessage: "Les informations ont été enregistrées"
   },
-  3: { title: "Relevez des infractions" }
+  3: {
+    title: "Relevez des infractions",
+    successMessage: "Le bulletin de contrôle a été enregistré"
+  }
 };
 
 export function ControllerControlBulletin({
@@ -120,9 +125,12 @@ export function ControllerControlBulletin({
     } else {
       setShowErrors(false);
       if (fieldUpdated) {
-        await saveControlBulletin(newControlBulletin);
+        await saveControlBulletin(
+          newControlBulletin,
+          STEPS[step].successMessage
+        );
       } else if (!STEPS[step + 1]) {
-        alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
+        alerts.success(STEPS[step].successMessage, "", 3000);
       }
       if (!STEPS[step + 1]) {
         onClose(true);
@@ -140,7 +148,7 @@ export function ControllerControlBulletin({
     }
   };
 
-  const saveControlBulletin = async newControlBulletin =>
+  const saveControlBulletin = async (newControlBulletin, successMessage) =>
     withLoadingScreen(async () => {
       try {
         if (grecoId !== controllerUserInfo.grecoId) {
@@ -187,7 +195,7 @@ export function ControllerControlBulletin({
           { context: { nonPublicApi: true } }
         );
         onSaveControlBulletin(apiResponse.data.controllerSaveControlBulletin);
-        alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
+        alerts.success(successMessage, "", 3000);
         setFieldUpdated(false);
         setMustConfirmBeforeClosing(false);
       } catch (err) {
