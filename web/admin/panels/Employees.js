@@ -406,7 +406,9 @@ export function Employees({ company, containerRef }) {
       ),
       id: e.id,
       teamId: e.teamId,
-      employmentId: e.id
+      employmentId: e.id,
+      userId: e.user?.id,
+      companyId: e.company.id
     }));
 
   const today = isoFormatLocalDate(new Date());

@@ -49,6 +49,11 @@ export default function EmployeesTeamRevisionModal({
       if (newTeamId !== NO_TEAM_ID) {
         payload.teamId = newTeamId;
       }
+      if (employment.userId) {
+        payload.userId = employment.userId;
+      } else {
+        payload.employmentId = employment.employmentId;
+      }
       const apiResponse = await api.graphQlMutate(
         CHANGE_EMPLOYEE_TEAM,
         payload
