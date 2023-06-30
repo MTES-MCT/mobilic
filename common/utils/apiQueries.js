@@ -2089,6 +2089,10 @@ export const HTTP_QUERIES = {
   certificateSearch: {
     method: "POST",
     endpoint: "/companies/public_company_certification"
+  },
+  downloadCertificate: {
+    method: "POST",
+    endpoint: "/companies/download_certificate"
   }
 };
 
