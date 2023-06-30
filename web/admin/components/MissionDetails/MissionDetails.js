@@ -437,7 +437,7 @@ export function MissionDetails({
         workerEntries?.length === 0) && (
         <MissionDetailsSection
           key={3}
-          title="Saisies à valider"
+          title="Saisie(s) à valider"
           actionButtonLabel="Ajouter un salarié"
           className={classes.validationSection}
           action={
@@ -585,7 +585,7 @@ export function MissionDetails({
         </MissionDetailsSection>
       )}
       {entriesToValidateByWorker?.length > 0 && (
-        <MissionDetailsSection key={6} title="Saisies en cours">
+        <MissionDetailsSection key={6} title="Saisie(s) en cours">
           <Alert severity="info">
             <Typography className={classes.validationWarningText}>
               Vous aurez accès à la validation de ces saisies lorsque le salarié
@@ -608,7 +608,7 @@ export function MissionDetails({
         </MissionDetailsSection>
       )}
       {entriesValidatedByAdmin?.length > 0 && (
-        <MissionDetailsSection key={7} title="Saisies validées">
+        <MissionDetailsSection key={7} title="Saisie(s) validée(s)">
           <List>
             {entriesValidatedByAdmin.map(e => (
               <ListItem key={e.user.id} disableGutters>
