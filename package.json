@@ -63,7 +63,7 @@
     "http-proxy-middleware": "^1.0.5",
     "husky": "^4.2.5",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^25.0.0",
+    "jest": "^26.0.0",
     "jest-environment-jsdom-fourteen": "^0.1.0",
     "jest-resolve": "^25.0.0",
     "jest-watch-typeahead": "^0.4.2",
