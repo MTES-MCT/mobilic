@@ -29,7 +29,10 @@ import TwitterIcon from "common/assets/images/twitter.svg";
 import TwitterWhiteIcon from "common/assets/images/twitter-white.svg";
 import Grid from "@mui/material/Grid";
 import { useAdminStore, useAdminCompanies } from "../admin/store/store";
-import { useCertificationInfo } from "../admin/utils/certificationInfo";
+import {
+  useCertificationInfo,
+  useShouldDisplayScenariis
+} from "../admin/utils/certificationInfo";
 import { TextWithBadge } from "./TextWithBadge";
 import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 import TextField from "common/utils/TextField";
@@ -163,10 +166,13 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies }) {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
+  const [shouldDisplayBadge] = useShouldDisplayScenariis();
   const { companyWithInfo } = useCertificationInfo();
-  const badge = getBadgeRoutes(useAdminStore(), companyWithInfo).find(
-    br => br.path === route.path
-  )?.badge;
+  const badge = getBadgeRoutes(
+    useAdminStore(),
+    companyWithInfo,
+    shouldDisplayBadge
+  ).find(br => br.path === route.path)?.badge;
 
   const selected = route.exact
     ? location.pathname === route.path

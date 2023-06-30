@@ -6,7 +6,10 @@ import { makeStyles } from "@mui/styles";
 import useTheme from "@mui/styles/useTheme";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { useAdminStore } from "../store/store";
-import { useCertificationInfo } from "../utils/certificationInfo";
+import {
+  useCertificationInfo,
+  useShouldDisplayScenariis
+} from "../utils/certificationInfo";
 import { getBadgeRoutes } from "../../common/routes";
 import { TextWithBadge } from "../../common/TextWithBadge";
 
@@ -32,10 +35,13 @@ function MenuItem({ label, path }) {
   const history = useHistory();
   const classes = menuItemStyles();
   const selected = useRouteMatch(path);
+  const [shouldDisplayBadge] = useShouldDisplayScenariis();
   const { companyWithInfo } = useCertificationInfo();
-  const badge = getBadgeRoutes(useAdminStore(), companyWithInfo).find(
-    br => br.path === path
-  )?.badge;
+  const badge = getBadgeRoutes(
+    useAdminStore(),
+    companyWithInfo,
+    shouldDisplayBadge
+  ).find(br => br.path === path)?.badge;
   return (
     <ListItem className="no-margin-no-padding">
       <Link

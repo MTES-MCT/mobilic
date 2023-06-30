@@ -35,7 +35,6 @@ import { ControllerScanQRCode } from "../controller/components/scanQRCode/Contro
 import { ControllerQRCodeNotRecognized } from "../controller/components/scanQRCode/ControllerQRCodeNotRecognized";
 import { ControllerHistory } from "../controller/components/history/ControllerHistory";
 import { SyncEmployeeValidation } from "../login/SyncEmployeeValidation";
-import { shouldDisplayBadge } from "../admin/utils/certificationInfo";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -452,7 +451,11 @@ export function isAccessible(path, storeData) {
   return ROUTES.find(r => path.startsWith(r.path)).accessible(storeData);
 }
 
-export function getBadgeRoutes(adminStore, companyWithCertificationInfo) {
+export function getBadgeRoutes(
+  adminStore,
+  companyWithCertificationInfo,
+  shouldDisplayBadge
+) {
   const entries = missionsToTableEntries(adminStore).filter(entry =>
     entryToBeValidatedByAdmin(entry, adminStore?.userId)
   );
@@ -467,25 +470,20 @@ export function getBadgeRoutes(adminStore, companyWithCertificationInfo) {
     }
   ];
 
-  const certificateBadge = getCertificateBadge(
-    companyWithCertificationInfo,
-    adminStore
-  );
-  if (certificateBadge) {
-    badgeRoutes.push({
-      path: "/admin/company",
-      badge: certificateBadge
-    });
+  if (shouldDisplayBadge) {
+    const certificateBadge = getCertificateBadge(companyWithCertificationInfo);
+    if (certificateBadge) {
+      badgeRoutes.push({
+        path: "/admin/company",
+        badge: certificateBadge
+      });
+    }
   }
 
   return badgeRoutes;
 }
 
-export function getCertificateBadge(companyWithCertificationInfo, adminStore) {
-  if (!shouldDisplayBadge(adminStore)) {
-    return null;
-  }
-
+export function getCertificateBadge(companyWithCertificationInfo) {
   if (!companyWithCertificationInfo.certificateCriterias?.creationTime) {
     return null;
   }

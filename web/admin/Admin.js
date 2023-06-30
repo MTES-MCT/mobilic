@@ -29,7 +29,7 @@ import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
 import { MissionDrawerContextProvider } from "./components/MissionDrawer";
 import CertificationCommunicationModal from "../pwa/components/CertificationCommunicationModal";
-import { shouldDisplayBanner } from "./utils/certificationInfo";
+import { useShouldDisplayScenariis } from "./utils/certificationInfo";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -57,6 +57,7 @@ function _Admin() {
   const withLoadingScreen = useLoadingScreen();
   const { path } = useRouteMatch();
   const alerts = useSnackbarAlerts();
+  const [, shouldDisplayBanner] = useShouldDisplayScenariis();
 
   const classes = useStyles();
   const [shouldRefreshData, setShouldRefreshData] = React.useState({
@@ -174,7 +175,7 @@ function _Admin() {
   const defaultView = views.find(view => view.isDefault);
   return [
     <Header key={0} />,
-    shouldDisplayBanner(adminStore) ? <CertificateBanner key={1} /> : null,
+    shouldDisplayBanner ? <CertificateBanner key={1} /> : null,
     <MissionDrawerContextProvider
       key={2}
       width={width}

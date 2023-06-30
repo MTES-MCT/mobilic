@@ -2,11 +2,11 @@ import React, { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
-import { useAdminCompanies, useAdminStore } from "../store/store";
+import { useAdminCompanies } from "../store/store";
 import {
-  shouldDisplayBadge,
   useCertificationInfo,
-  useSendCertificationInfoResult
+  useSendCertificationInfoResult,
+  useShouldDisplayScenariis
 } from "../utils/certificationInfo";
 import { getCertificateBadge } from "../../common/routes";
 import Badge from "@mui/material/Badge";
@@ -129,10 +129,8 @@ const COMPANY_SUB_PANELS = [
     label: "Certificat",
     view: "certificat",
     component: props => <CertificationPanel {...props} />,
-    onClick: async (adminStore, action) => {
-      if (shouldDisplayBadge(adminStore)) {
-        await action();
-      }
+    onClick: async action => {
+      await action();
     }
   },
   {
@@ -145,11 +143,13 @@ const COMPANY_SUB_PANELS = [
 function SubNavigationToggle({ view, setView }) {
   const classes = usePanelStyles();
   const { companyWithInfo } = useCertificationInfo();
-  const adminStore = useAdminStore();
-  const certificateBadge = useMemo(
-    () => getCertificateBadge(companyWithInfo, adminStore),
-    [companyWithInfo]
-  );
+  const [shouldDisplayBadge] = useShouldDisplayScenariis();
+  const certificateBadge = useMemo(() => {
+    if (!shouldDisplayBadge) {
+      return null;
+    }
+    return getCertificateBadge(companyWithInfo);
+  }, [companyWithInfo, shouldDisplayBadge]);
   const [sendSuccess, , sendLoad] = useSendCertificationInfoResult();
   React.useEffect(async () => {
     if (certificateBadge) {
@@ -172,8 +172,8 @@ function SubNavigationToggle({ view, setView }) {
             value={panelInfos.view}
             className={classes.toggleButton}
             onClick={
-              panelInfos.onClick
-                ? () => panelInfos.onClick(adminStore, sendSuccess)
+              panelInfos.onClick && shouldDisplayBadge
+                ? () => panelInfos.onClick(sendSuccess)
                 : null
             }
           >
