@@ -38,12 +38,10 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
   const [infoCriterias, setInfoCriterias] = React.useState([]);
   const classes = useStyles();
   const criteriaCalculationDate = useMemo(() => {
-    if (companyWithInfo?.certificateCriterias?.creationTime) {
+    if (companyWithInfo.certificateCriterias?.creationTime) {
       return prettyFormatDay(
         jsToUnixTimestamp(
-          new Date(
-            companyWithInfo?.certificateCriterias?.creationTime
-          ).getTime()
+          new Date(companyWithInfo.certificateCriterias?.creationTime).getTime()
         ),
         true
       );
@@ -55,9 +53,9 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
     const criteriasKO = [];
     const criteriasINFO = [];
     Object.entries(CERTIFICATION_CRITERIAS).forEach(([key, value]) => {
-      if (!companyWithInfo?.certificateCriterias) {
+      if (!companyWithInfo.certificateCriterias) {
         criteriasINFO.push(value);
-      } else if (companyWithInfo?.certificateCriterias[key]) {
+      } else if (companyWithInfo.certificateCriterias[key]) {
         criteriasOK.push(value);
       } else {
         criteriasKO.push(value);
@@ -71,7 +69,7 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
   return [
     <Box key={10} mt={4}>
       <Typography variant="h4">Synthèse de l'obtention des critères</Typography>
-      {companyWithInfo?.certificateCriterias && (
+      {companyWithInfo.certificateCriterias && (
         <Typography mb={1} className={classes.italicInfo}>
           données calculées le {criteriaCalculationDate}
         </Typography>
@@ -104,10 +102,18 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
         les critères mentionnés ci-dessous.
       </Typography>
     ),
-    <Typography key={45}>
-      Le calcul des critères est mis à jour automatiquement à chaque début de
-      mois.
-    </Typography>,
+    companyWithInfo.certificateCriterias && (
+      <Typography key={45}>
+        Le calcul des critères est mis à jour automatiquement à chaque début de
+        mois.
+      </Typography>
+    ),
+    !companyWithInfo.certificateCriterias && (
+      <Typography key={47}>
+        Votre entreprise n'est pas encore certifiée car le calcul de
+        certification se fera au début du mois prochain.
+      </Typography>
+    ),
     <Grid container key={50}>
       <Grid item xs={12} md={6}>
         {(failureCriterias.length > 0 || succeededCriterias.length > 0) && (
