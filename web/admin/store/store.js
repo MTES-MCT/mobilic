@@ -21,6 +21,8 @@ export function AdminStoreProvider({ children }) {
 
   const [state, setState] = React.useState({
     companyId: undefined,
+    employmentId: undefined,
+    shouldSeeCertificateInfo: false,
     users: [],
     workDays: [],
     vehicles: [],

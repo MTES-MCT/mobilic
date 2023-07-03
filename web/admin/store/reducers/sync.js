@@ -9,6 +9,23 @@ export function updateCompanyIdReducer(state, { companyId }) {
   };
 }
 
+export function updateShouldSeeCertificateInfoReducer(
+  state,
+  { shouldSeeCertificateInfo }
+) {
+  return {
+    ...state,
+    shouldSeeCertificateInfo
+  };
+}
+
+export function updateEmploymentIdReducer(state, { employmentId }) {
+  return {
+    ...state,
+    employmentId
+  };
+}
+
 export function updateCompaniesListReducer(state, { companiesPayload }) {
   return {
     ...state,

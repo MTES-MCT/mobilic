@@ -918,6 +918,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
           hasAdminRights
           latestInviteEmailTime
           teamId
+          shouldSeeCertificateInfo
           user {
             id
             email
@@ -2181,12 +2182,12 @@ export const EDIT_COMPANIES_COMMUNICATION_SETTING = gql`
 
 export const ADD_CERTIFICATION_INFO_RESULT = gql`
   mutation addCertificateInfoResult(
-    $userId: Int!
+    $employmentId: Int!
     $scenario: String!
     $action: String!
   ) {
     addCertificateInfoResult(
-      userId: $userId
+      employmentId: $employmentId
       scenario: $scenario
       action: $action
     ) {

@@ -1,15 +1,15 @@
 import React from "react";
 import { useApi } from "common/utils/api";
-import { useAdminCompanies } from "../store/store";
+import { useAdminCompanies, useAdminStore } from "../store/store";
 import {
   ADD_CERTIFICATION_INFO_RESULT,
   COMPANY_CERTIFICATION_COMMUNICATION_QUERY
 } from "common/utils/apiQueries";
-import { useStoreSyncedWithLocalStorage } from "common/store/store";
+import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 export const CERTIFICATE_SCENARIOS = {
-  SCENARIO_A: "Scenario A",
-  SCENARIO_B: "Scenario B"
+  SCENARIO_A: "Certificate scenario A",
+  SCENARIO_B: "Certificate scenario B"
 };
 
 export const CERTIFICATE_ACTIONS = {
@@ -43,67 +43,41 @@ export function useCertificationInfo() {
 
 export function useSendCertificationInfoResult() {
   const api = useApi();
-  const store = useStoreSyncedWithLocalStorage();
+  const adminStore = useAdminStore();
 
   const sendResult = result => async () => {
     await api.graphQlMutate(
       ADD_CERTIFICATION_INFO_RESULT,
       {
-        userId: store.userInfo().id,
+        employmentId: adminStore.employmentId,
         action: result,
-        scenario: getCertificateScenario(store.userInfo().id)
+        scenario: getCertificateScenario(adminStore.userId)
       },
       { context: { nonPublicApi: true } }
     );
+    if (result !== CERTIFICATE_ACTIONS.LOAD) {
+      adminStore.dispatch({
+        type: ADMIN_ACTIONS.updateShouldSeeCertificateInfo,
+        payload: { shouldSeeCertificateInfo: false }
+      });
+    }
   };
 
-  const sendSuccess = () => {
-    if (store.userInfo().hasSentActionSuccess) {
-      return;
-    } else {
-      sendResult(CERTIFICATE_ACTIONS.SUCCESS)();
-      store.setUserInfo({
-        ...store.userInfo(),
-        hasSentActionSuccess: true,
-        shouldSeeCertificateInfo: false
-      });
-    }
-  };
-  const sendClose = () => {
-    if (store.userInfo().hasSentActionClose) {
-      return;
-    } else {
-      sendResult(CERTIFICATE_ACTIONS.CLOSE)();
-      store.setUserInfo({
-        ...store.userInfo(),
-        hasSentActionClose: true,
-        shouldSeeCertificateInfo: false
-      });
-    }
-  };
-  const sendLoad = () => {
-    if (store.userInfo().hasSentActionLoad) {
-      return;
-    } else {
-      sendResult(CERTIFICATE_ACTIONS.LOAD)();
-      store.setUserInfo({
-        ...store.userInfo(),
-        hasSentActionLoad: true
-      });
-    }
-  };
+  const sendSuccess = () => sendResult(CERTIFICATE_ACTIONS.SUCCESS)();
+  const sendClose = () => sendResult(CERTIFICATE_ACTIONS.CLOSE)();
+  const sendLoad = () => sendResult(CERTIFICATE_ACTIONS.LOAD)();
 
   return [sendSuccess, sendClose, sendLoad];
 }
 
 export function useShouldDisplayScenariis() {
-  const store = useStoreSyncedWithLocalStorage();
+  const adminStore = useAdminStore();
 
   const [shouldDisplayBanner, setShouldDisplayBanner] = React.useState(false);
   const [shouldDisplayBadge, setShouldDisplayBadge] = React.useState(false);
 
   React.useEffect(() => {
-    const { id: userId, shouldSeeCertificateInfo } = store.userInfo();
+    const { userId, shouldSeeCertificateInfo } = adminStore;
     if (!userId || !shouldSeeCertificateInfo) {
       setShouldDisplayBanner(false);
       setShouldDisplayBadge(false);
@@ -114,12 +88,12 @@ export function useShouldDisplayScenariis() {
     } else {
       setShouldDisplayBadge(true);
     }
-  }, [store]);
+  }, [adminStore.userId, adminStore.shouldSeeCertificateInfo]);
 
   return [shouldDisplayBadge, shouldDisplayBanner];
 }
 
 const getCertificateScenario = userId =>
   userId % 0 === 0
-    ? CERTIFICATE_SCENARIOS.SCENARIO_B
-    : CERTIFICATE_SCENARIOS.SCENARIO_A;
+    ? CERTIFICATE_SCENARIOS.SCENARIO_A
+    : CERTIFICATE_SCENARIOS.SCENARIO_B;

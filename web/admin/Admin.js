@@ -168,6 +168,29 @@ function _Admin() {
     if (adminStore.companyId) loadDataCompanyDetails();
   }, [adminStore.companyId]);
 
+  React.useEffect(() => {
+    const { userId, companyId, employments } = adminStore;
+    if (!userId || !companyId || !employments || employments.length === 0) {
+      return;
+    }
+    const employment = employments.find(
+      employment =>
+        employment.companyId === companyId && employment.user?.id === userId
+    );
+    if (!employment) {
+      return false;
+    }
+    const { shouldSeeCertificateInfo, id } = employment;
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateShouldSeeCertificateInfo,
+      payload: { shouldSeeCertificateInfo }
+    });
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateEmploymentId,
+      payload: { employmentId: id }
+    });
+  }, [adminStore.userId, adminStore.companyId, adminStore.employments]);
+
   const ref = React.useRef(null);
 
   const shouldRefreshDataSetter = val => setShouldRefreshData({ value: val });
