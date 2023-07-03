@@ -102,22 +102,14 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
         les critères mentionnés ci-dessous.
       </Typography>
     ),
-    companyWithInfo.certificateCriterias && (
-      <Typography key={45}>
-        Le calcul des critères est mis à jour automatiquement à chaque début de
-        mois.
-      </Typography>
-    ),
-    !companyWithInfo.certificateCriterias && (
-      <Typography key={47}>
-        Votre entreprise n'est pas encore certifiée car le calcul de
-        certification se fera au début du mois prochain.
-      </Typography>
-    ),
+    <Typography key={45} mb={3}>
+      Le calcul des critères est mis à jour automatiquement à chaque début de
+      mois.
+    </Typography>,
     <Grid container key={50}>
       <Grid item xs={12} md={6}>
         {(failureCriterias.length > 0 || succeededCriterias.length > 0) && (
-          <Typography mt={4} className={classes.caption}>
+          <Typography className={classes.caption}>
             Critères liés à votre utilisation de Mobilic
           </Typography>
         )}
