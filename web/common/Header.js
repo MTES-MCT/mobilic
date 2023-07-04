@@ -7,8 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import {
   CERTIFICATE_ROUTE,
   getAccessibleRoutes,
-  getBadgeRoutes,
-  RESOURCES_ROUTE
+  getBadgeRoutes
 } from "./routes";
 import { useHistory, useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
@@ -246,14 +245,6 @@ export function NavigationMenu({ open, setOpen }) {
 
   const routes = getAccessibleRoutes({ userInfo, companies });
 
-  const indexMonCompte = routes.findIndex(
-    route => route.label === "Mon compte"
-  );
-  if (indexMonCompte !== -1) {
-    routes.splice(indexMonCompte, 0, RESOURCES_ROUTE);
-  } else {
-    routes.push(RESOURCES_ROUTE);
-  }
   if (!userInfo?.id) {
     routes.push(CERTIFICATE_ROUTE);
   }
@@ -484,7 +475,8 @@ function DesktopHeader({ disableMenu }) {
                   r =>
                     r.accessible({ userInfo, companies }) &&
                     (!r.menuItemFilter ||
-                      r.menuItemFilter({ userInfo, companies }))
+                      r.menuItemFilter({ userInfo, companies })) &&
+                    !r.subRoutes
                 )
                 .map(route => {
                   const ButtonComponent = route.mainCta

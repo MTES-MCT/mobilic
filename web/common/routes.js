@@ -43,7 +43,7 @@ function UserReadRedirect() {
   return <Redirect to={`/control/user-history?token=${token}`} />;
 }
 
-export const RESOURCES_ROUTE = {
+const RESOURCES_ROUTE = {
   label: "Ressources",
   path: "",
   accessible: () => true,
@@ -377,6 +377,7 @@ export const ROUTES = [
     menuItemFilter: () => false,
     component: Home
   },
+  RESOURCES_ROUTE,
   {
     label: "Mon compte",
     path: "",
