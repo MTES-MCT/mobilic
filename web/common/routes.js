@@ -46,7 +46,7 @@ function UserReadRedirect() {
 const RESOURCES_ROUTE = {
   label: "Ressources",
   path: "",
-  accessible: () => true,
+  accessible: ({ controllerInfo }) => !controllerInfo?.id,
   subRoutes: [
     {
       to: "",
@@ -460,6 +460,7 @@ export function getFallbackRoute({ userInfo, companies, controllerInfo }) {
 }
 
 export function getAccessibleRoutes(storeData) {
+  console.log("storeData", storeData);
   return ROUTES.filter(r => r.accessible(storeData));
 }
 
