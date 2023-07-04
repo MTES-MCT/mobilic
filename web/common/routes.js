@@ -43,21 +43,21 @@ function UserReadRedirect() {
   return <Redirect to={`/control/user-history?token=${token}`} />;
 }
 
-export const RESOURCES_ROUTE = {
+const RESOURCES_ROUTE = {
   label: "Ressources",
   path: "",
   accessible: () => true,
   subRoutes: [
     {
-      path: "/resources/home",
-      target: "_blank",
-      label: "Documentation"
-    },
-    {
       to: "",
       label: "Foire aux questions",
       target: "_blank",
       href: "https://faq.mobilic.beta.gouv.fr/"
+    },
+    {
+      path: "/resources/home",
+      target: "_blank",
+      label: "Documentation"
     },
     {
       path: "/partners",
@@ -377,6 +377,7 @@ export const ROUTES = [
     menuItemFilter: () => false,
     component: Home
   },
+  RESOURCES_ROUTE,
   {
     label: "Mon compte",
     path: "",
