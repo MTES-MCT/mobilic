@@ -918,6 +918,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
           hasAdminRights
           latestInviteEmailTime
           teamId
+          shouldSeeCertificateInfo
           user {
             id
             email
@@ -2197,6 +2198,22 @@ export const EDIT_COMPANIES_COMMUNICATION_SETTING = gql`
     editCompanyCommunicationSetting(
       companyIds: $companyIds
       acceptCertificationCommunication: $acceptCertificationCommunication
+    ) {
+      success
+    }
+  }
+`;
+
+export const ADD_CERTIFICATION_INFO_RESULT = gql`
+  mutation addCertificateInfoResult(
+    $employmentId: Int!
+    $scenario: ScenarioEnum!
+    $action: ActionEnum!
+  ) {
+    addCertificateInfoResult(
+      employmentId: $employmentId
+      scenario: $scenario
+      action: $action
     ) {
       success
     }

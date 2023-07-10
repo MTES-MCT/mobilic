@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 import { useApi } from "common/utils/api";
+import { useCertificationInfo } from "../../utils/certificationInfo";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {
-  COMPANY_CERTIFICATION_COMMUNICATION_QUERY,
   EDIT_COMPANIES_COMMUNICATION_SETTING,
   HTTP_QUERIES
 } from "common/utils/apiQueries";
@@ -22,27 +22,17 @@ export default function CertificationPanel({ company }) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const classes = usePanelStyles();
-  const [companyWithInfo, setCompanyWithInfo] = React.useState({});
+  const { companyWithInfo, loadingInfo } = useCertificationInfo();
   const [
     acceptCertificationCommunication,
     setAcceptCertificationCommunication
   ] = React.useState(null);
-  const [loadingInfo, setLoadingInfo] = React.useState(true);
 
   React.useEffect(async () => {
-    setLoadingInfo(true);
-    const apiResponse = await api.graphQlQuery(
-      COMPANY_CERTIFICATION_COMMUNICATION_QUERY,
-      {
-        companyId: company.id
-      }
-    );
-    setCompanyWithInfo(apiResponse?.data?.company);
     setAcceptCertificationCommunication(
-      apiResponse?.data?.company?.acceptCertificationCommunication
+      companyWithInfo.acceptCertificationCommunication
     );
-    setLoadingInfo(false);
-  }, [company]);
+  }, [companyWithInfo]);
 
   const nbMonthSinceLastCertification = useMemo(() => {
     if (companyWithInfo?.lastDayCertified) {

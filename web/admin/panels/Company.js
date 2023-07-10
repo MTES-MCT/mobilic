@@ -1,7 +1,15 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
 import { useAdminCompanies } from "../store/store";
+import {
+  useCertificationInfo,
+  useSendCertificationInfoResult,
+  useShouldDisplayScenariis
+} from "../utils/certificationInfo";
+import { getCertificateBadge } from "../../common/routes";
+import Badge from "@mui/material/Badge";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Employees } from "./Employees";
@@ -120,7 +128,10 @@ const COMPANY_SUB_PANELS = [
   {
     label: "Certificat",
     view: "certificat",
-    component: props => <CertificationPanel {...props} />
+    component: props => <CertificationPanel {...props} />,
+    onClick: async action => {
+      await action();
+    }
   },
   {
     label: "API",
@@ -131,6 +142,20 @@ const COMPANY_SUB_PANELS = [
 
 function SubNavigationToggle({ view, setView }) {
   const classes = usePanelStyles();
+  const { companyWithInfo } = useCertificationInfo();
+  const [shouldDisplayBadge] = useShouldDisplayScenariis();
+  const certificateBadge = useMemo(() => {
+    if (!shouldDisplayBadge) {
+      return null;
+    }
+    return getCertificateBadge(companyWithInfo);
+  }, [companyWithInfo, shouldDisplayBadge]);
+  const [sendSuccess, , sendLoad] = useSendCertificationInfoResult();
+  React.useEffect(async () => {
+    if (certificateBadge) {
+      await sendLoad();
+    }
+  }, [certificateBadge]);
   return (
     <>
       {COMPANY_SUB_PANELS.map(panelInfos => (
@@ -146,8 +171,19 @@ function SubNavigationToggle({ view, setView }) {
           <ToggleButton
             value={panelInfos.view}
             className={classes.toggleButton}
+            onClick={
+              panelInfos.onClick && shouldDisplayBadge
+                ? () => panelInfos.onClick(sendSuccess)
+                : null
+            }
           >
-            {panelInfos.label}
+            {panelInfos.view === "certificat" ? (
+              <Badge invisible={!certificateBadge} {...certificateBadge}>
+                {panelInfos.label}
+              </Badge>
+            ) : (
+              panelInfos.label
+            )}
           </ToggleButton>
         </ToggleButtonGroup>
       ))}
@@ -156,14 +192,22 @@ function SubNavigationToggle({ view, setView }) {
 }
 
 function CompanyPanel({ width, containerRef }) {
-  const [view, setView] = React.useState("employees");
+  const classes = usePanelStyles({ width });
+  const location = useLocation();
 
+  const [view, setView] = React.useState("employees");
   const [, company] = useAdminCompanies();
 
-  const classes = usePanelStyles({ width });
   const subPanel = COMPANY_SUB_PANELS.find(sp => sp.view === view);
-
   const currentCompanyName = company ? company.name : "";
+
+  React.useEffect(() => {
+    const queryString = new URLSearchParams(location.search);
+    const tab = queryString.get("tab");
+    if (COMPANY_SUB_PANELS.find(tabs => tabs.view === tab)) {
+      setView(tab);
+    }
+  }, [location]);
 
   return [
     <Paper
