@@ -59,14 +59,14 @@ export function CertificateBanner() {
     if (nbMonthOfCertification === 1) {
       return {
         title: "Félicitations, vous venez d'obtenir le certificat Mobilic",
-        linkText: "Voir les critères"
+        linkText: "Télécharger mon certificat"
       };
     }
 
     if (nbMonthOfCertification % 7 === 0) {
       return {
         title: "Félicitations, votre certificat est renouvelé",
-        linkText: "Voir les critères"
+        linkText: "Télécharger mon nouveau certificat"
       };
     }
 
@@ -87,7 +87,7 @@ export function CertificateBanner() {
 
     return {
       title: `Félicitations, vous êtes certifié depuis ${nbMonthOfCertification} mois`,
-      linkText: "Voir les critères"
+      linkText: "Voir mon évolution"
     };
   }, [companyWithInfo]);
 
