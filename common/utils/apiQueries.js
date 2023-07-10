@@ -2183,8 +2183,8 @@ export const EDIT_COMPANIES_COMMUNICATION_SETTING = gql`
 export const ADD_CERTIFICATION_INFO_RESULT = gql`
   mutation addCertificateInfoResult(
     $employmentId: Int!
-    $scenario: String!
-    $action: String!
+    $scenario: ScenarioEnum!
+    $action: ActionEnum!
   ) {
     addCertificateInfoResult(
       employmentId: $employmentId

@@ -178,7 +178,7 @@ function _Admin() {
         employment.companyId === companyId && employment.user?.id === userId
     );
     if (!employment) {
-      return false;
+      return;
     }
     const { shouldSeeCertificateInfo, id } = employment;
     adminStore.dispatch({

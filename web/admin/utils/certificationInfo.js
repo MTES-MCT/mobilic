@@ -8,8 +8,8 @@ import {
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 export const CERTIFICATE_SCENARIOS = {
-  SCENARIO_A: "Certificate scenario A",
-  SCENARIO_B: "Certificate scenario B"
+  SCENARIO_A: "Certificate banner",
+  SCENARIO_B: "Certificate badge"
 };
 
 export const CERTIFICATE_ACTIONS = {
@@ -94,6 +94,6 @@ export function useShouldDisplayScenariis() {
 }
 
 const getCertificateScenario = userId =>
-  userId % 0 === 0
+  userId % 2 === 0
     ? CERTIFICATE_SCENARIOS.SCENARIO_A
     : CERTIFICATE_SCENARIOS.SCENARIO_B;
