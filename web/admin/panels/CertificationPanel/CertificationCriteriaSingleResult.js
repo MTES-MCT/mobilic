@@ -12,7 +12,8 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1),
     "& .MuiAlert-message": {
       width: "100%"
-    }
+    },
+    maxWidth: theme.spacing(76)
   },
   accordionCriteria: {
     width: "100%",
@@ -49,7 +50,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function CertificationCriteriaSingleResult({
   criteria,
-  status
+  status,
+  ...props
 }) {
   const classes = useStyles();
   return (
@@ -57,6 +59,8 @@ export default function CertificationCriteriaSingleResult({
       key={criteria.title}
       severity={status}
       className={classes.alertCriteria}
+      iconMapping={{ info: false }}
+      {...props}
     >
       <Accordion elevation={0} className={classes.accordionCriteria}>
         <AccordionSummary

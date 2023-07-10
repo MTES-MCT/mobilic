@@ -23,3 +23,28 @@ export const canDownloadBDC = controlData => {
     !!controlData?.controlBulletin?.transportType
   );
 };
+
+export const checkRequiredFieldStep1 = newControlBulletin => {
+  return (
+    !!newControlBulletin?.locationCommune &&
+    !!newControlBulletin?.locationDepartment &&
+    !!newControlBulletin?.locationLieu &&
+    !!newControlBulletin?.userFirstName &&
+    !!newControlBulletin?.userLastName &&
+    !!newControlBulletin?.userBirthDate &&
+    !!newControlBulletin?.userNationality
+  );
+};
+
+export const checkRequiredFieldStep2 = newControlBulletin => {
+  return (
+    !!newControlBulletin?.companyAddress &&
+    !!newControlBulletin?.companyName &&
+    !!newControlBulletin?.siren &&
+    !!newControlBulletin?.missionAddressBegin &&
+    !!newControlBulletin?.missionAddressEnd &&
+    !!newControlBulletin?.vehicleRegistrationCountry &&
+    !!newControlBulletin?.vehicleRegistrationNumber &&
+    !!newControlBulletin?.transportType
+  );
+};

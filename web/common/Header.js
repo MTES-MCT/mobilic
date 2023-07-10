@@ -4,7 +4,11 @@ import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import { formatPersonName } from "common/utils/coworkers";
 import IconButton from "@mui/material/IconButton";
-import { getAccessibleRoutes, getBadgeRoutes, RESOURCES_ROUTE } from "./routes";
+import {
+  CERTIFICATE_ROUTE,
+  getAccessibleRoutes,
+  getBadgeRoutes
+} from "./routes";
 import { useHistory, useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { Logos } from "./Logos";
@@ -244,7 +248,10 @@ export function NavigationMenu({ open, setOpen }) {
   const classes = useStyles();
 
   const routes = getAccessibleRoutes({ userInfo, companies });
-  routes.push(RESOURCES_ROUTE);
+
+  if (!userInfo?.id) {
+    routes.push(CERTIFICATE_ROUTE);
+  }
 
   return (
     <Drawer
@@ -360,17 +367,8 @@ function DesktopHeader({ disableMenu }) {
 
   const docLinks = () => [
     <LinkButton
-      aria-label="Documentation"
-      key={0}
-      href="/resources/home"
-      target="_blank"
-      className={classes.docButton}
-    >
-      Documentation
-    </LinkButton>,
-    <LinkButton
       aria-label="Foire aux questions"
-      key={1}
+      key={0}
       href="https://faq.mobilic.beta.gouv.fr"
       target="_blank"
       rel="noopener noreferrer"
@@ -379,13 +377,32 @@ function DesktopHeader({ disableMenu }) {
       Foire aux questions
     </LinkButton>,
     <LinkButton
+      aria-label="Documentation"
+      key={1}
+      href="/resources/home"
+      target="_blank"
+      className={classes.docButton}
+    >
+      Documentation
+    </LinkButton>,
+    <LinkButton
       aria-label="Partenaires"
       key={2}
       to="/partners"
       className={classes.docButton}
     >
       Partenaires
-    </LinkButton>
+    </LinkButton>,
+    !userInfo?.id && (
+      <LinkButton
+        aria-label="Certificat"
+        key={3}
+        to="/certificate"
+        className={classes.docButton}
+      >
+        Certificat
+      </LinkButton>
+    )
   ];
 
   return (
@@ -462,7 +479,8 @@ function DesktopHeader({ disableMenu }) {
                   r =>
                     r.accessible({ userInfo, companies }) &&
                     (!r.menuItemFilter ||
-                      r.menuItemFilter({ userInfo, companies }))
+                      r.menuItemFilter({ userInfo, companies })) &&
+                    !r.subRoutes
                 )
                 .map(route => {
                   const ButtonComponent = route.mainCta

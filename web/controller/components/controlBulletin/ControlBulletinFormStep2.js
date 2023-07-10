@@ -7,7 +7,8 @@ import { CONTROL_BULLETIN_TRANSPORT_TYPE } from "../../utils/controlBulletin";
 
 export function ControlBulletinFormStep2({
   handleEditControlBulletin,
-  controlBulletin
+  controlBulletin,
+  showErrors
 }) {
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
@@ -18,6 +19,7 @@ export function ControlBulletinFormStep2({
         label="Entreprise responsable (de rattachement)"
         hint="N° SIREN"
         required
+        messageType={!controlBulletin.siren && showErrors ? "error" : ""}
       />
       <TextInput
         value={controlBulletin.companyName || ""}
@@ -25,6 +27,7 @@ export function ControlBulletinFormStep2({
         onChange={e => handleEditControlBulletin(e)}
         label="Nom de l'entreprise"
         required
+        messageType={!controlBulletin.companyName && showErrors ? "error" : ""}
       />
       <TextInput
         value={controlBulletin.companyAddress || ""}
@@ -32,6 +35,9 @@ export function ControlBulletinFormStep2({
         onChange={e => handleEditControlBulletin(e)}
         label="Adresse de l'entreprise"
         required
+        messageType={
+          !controlBulletin.companyAddress && showErrors ? "error" : ""
+        }
       />
       <TextInput
         value={controlBulletin.vehicleRegistrationNumber || ""}
@@ -39,16 +45,26 @@ export function ControlBulletinFormStep2({
         onChange={e => handleEditControlBulletin(e)}
         label="Immatriculation du véhicule"
         required
+        messageType={
+          !controlBulletin.vehicleRegistrationNumber && showErrors
+            ? "error"
+            : ""
+        }
       />
       <Select
         label="Pays d'immatriculation"
         selected={controlBulletin.vehicleRegistrationCountry || ""}
         name="vehicleRegistrationCountry"
-        required
         onChange={e => {
           handleEditControlBulletin(e);
         }}
         options={COUNTRIES}
+        required
+        messageType={
+          !controlBulletin.vehicleRegistrationCountry && showErrors
+            ? "error"
+            : ""
+        }
       />
       <TextInput
         value={controlBulletin.missionAddressBegin || ""}
@@ -56,6 +72,9 @@ export function ControlBulletinFormStep2({
         onChange={e => handleEditControlBulletin(e)}
         label="Provenance"
         required
+        messageType={
+          !controlBulletin.missionAddressBegin && showErrors ? "error" : ""
+        }
       />
       <TextInput
         value={controlBulletin.missionAddressEnd || ""}
@@ -63,14 +82,20 @@ export function ControlBulletinFormStep2({
         onChange={e => handleEditControlBulletin(e)}
         label="Destination"
         required
+        messageType={
+          !controlBulletin.missionAddressEnd && showErrors ? "error" : ""
+        }
       />
       <RadioGroup
         legend="Type de transport"
-        required
         onChange={e =>
           handleEditControlBulletin({
             target: { name: "transportType", value: e }
           })
+        }
+        required
+        messageType={
+          !controlBulletin.transportType && showErrors ? "error" : ""
         }
       >
         <Radio

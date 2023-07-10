@@ -8,10 +8,9 @@ import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import { Header } from "../../../common/Header";
 import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
 import { useLocation } from "react-router-dom";
-import { Modal, ModalTitle, ModalContent } from "@dataesr/react-dsfr";
+import { Modal, ModalContent, ModalTitle } from "@dataesr/react-dsfr";
 import { ControlsList } from "../list/ControlsList";
 import { useLoadControls } from "../../utils/loadControls";
-import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 import Button from "@mui/material/Button";
 import { HelpController } from "../help/ModalHelpController";
 import { InfoHoraireServiceController } from "./InfoHoraireServiceController";
@@ -81,7 +80,7 @@ export function ControllerHome() {
   React.useEffect(() => {
     loadControls({
       controllerId: controllerUserInfo.id,
-      fromDate: isoFormatLocalDate(addDaysToDate(new Date(), -14)),
+      limit: 10,
       controlsType
     });
   }, [controlsType]);
@@ -151,7 +150,7 @@ export function ControllerHome() {
         Un horaire de service est présenté ?
       </div>
       <h4 className={classes.newControlText}>
-        Historique des contrôles récents
+        Historique des derniers contrôles
       </h4>
       <Grid container>
         <Grid item xs={12} sm={4} md={2} marginBottom={2}>

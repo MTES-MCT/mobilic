@@ -14,6 +14,7 @@ export const useLoadControls = () => {
     controllerId,
     fromDate,
     toDate,
+    limit,
     controlsType
   }) => {
     setLoading(true);
@@ -24,6 +25,7 @@ export const useLoadControls = () => {
           id: controllerId,
           fromDate,
           toDate,
+          limit,
           ...(controlsType && { controlsType })
         },
 

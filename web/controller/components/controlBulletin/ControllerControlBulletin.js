@@ -20,12 +20,27 @@ import {
   useStoreSyncedWithLocalStorage
 } from "common/store/store";
 import { syncControllerUser } from "../../utils/loadControllerUserData";
-import { canDownloadBDC } from "../../utils/controlBulletin";
+import {
+  canDownloadBDC,
+  checkRequiredFieldStep1,
+  checkRequiredFieldStep2
+} from "../../utils/controlBulletin";
 
 const STEPS = {
-  1: { title: "Données relatives au salarié" },
-  2: { title: "Données relatives à l'entreprise et au véhicule" },
-  3: { title: "Relevez des infractions" }
+  1: {
+    title: "Données relatives au salarié",
+    checkRequiredField: checkRequiredFieldStep1,
+    successMessage: "Les informations ont été enregistrées"
+  },
+  2: {
+    title: "Données relatives à l'entreprise et au véhicule",
+    checkRequiredField: checkRequiredFieldStep2,
+    successMessage: "Les informations ont été enregistrées"
+  },
+  3: {
+    title: "Relevez des infractions",
+    successMessage: "Le bulletin de contrôle a été enregistré"
+  }
 };
 
 export function ControllerControlBulletin({
@@ -45,6 +60,8 @@ export function ControllerControlBulletin({
   const [grecoId, setGrecoId] = React.useState(
     controllerUserInfo.grecoId || ""
   );
+  const [showErrors, setShowErrors] = React.useState(false);
+
   const controlCanBeDownloaded = React.useMemo(() => {
     return canDownloadBDC(controlData);
   }, [controlData]);
@@ -64,7 +81,7 @@ export function ControllerControlBulletin({
 
   const initControlBulletinFromControlData = () => {
     if (!controlData) {
-      return { userNationality: "FRA" };
+      return { userNationality: "FRA", vehicleRegistrationCountry: "FRA" };
     } else if (controlData.controlBulletinCreationTime) {
       return {
         userFirstName: controlData.userFirstName,
@@ -84,7 +101,8 @@ export function ControllerControlBulletin({
         siren: controlData.controlBulletin?.siren,
         companyAddress: controlData.controlBulletin?.companyAddress,
         missionAddressBegin: controlData.controlBulletin?.missionAddressBegin,
-        userNationality: "FRA"
+        userNationality: "FRA",
+        vehicleRegistrationCountry: "FRA"
       };
     }
   };
@@ -93,22 +111,32 @@ export function ControllerControlBulletin({
     const { name, value } = e.target;
     setControlBulletin(prevState => ({
       ...prevState,
-      [name]: value,
-      touched: true
+      [name]: value
     }));
     setFieldUpdated(true);
   };
 
   const onSaveButton = async newControlBulletin => {
-    if (fieldUpdated) {
-      await saveControlBulletin(newControlBulletin);
-    } else if (!STEPS[step + 1]) {
-      alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
-    }
-    if (!STEPS[step + 1]) {
-      onClose(true);
+    if (
+      STEPS[step].checkRequiredField &&
+      !STEPS[step].checkRequiredField(newControlBulletin)
+    ) {
+      setShowErrors(true);
     } else {
-      setStep(step + 1);
+      setShowErrors(false);
+      if (fieldUpdated) {
+        await saveControlBulletin(
+          newControlBulletin,
+          STEPS[step].successMessage
+        );
+      } else if (!STEPS[step + 1]) {
+        alerts.success(STEPS[step].successMessage, "", 3000);
+      }
+      if (!STEPS[step + 1]) {
+        onClose(true);
+      } else {
+        setStep(step + 1);
+      }
     }
   };
 
@@ -120,7 +148,7 @@ export function ControllerControlBulletin({
     }
   };
 
-  const saveControlBulletin = async newControlBulletin =>
+  const saveControlBulletin = async (newControlBulletin, successMessage) =>
     withLoadingScreen(async () => {
       try {
         if (grecoId !== controllerUserInfo.grecoId) {
@@ -167,7 +195,7 @@ export function ControllerControlBulletin({
           { context: { nonPublicApi: true } }
         );
         onSaveControlBulletin(apiResponse.data.controllerSaveControlBulletin);
-        alerts.success("Le bulletin de contrôle a été enregistré.", "", 3000);
+        alerts.success(successMessage, "", 3000);
         setFieldUpdated(false);
         setMustConfirmBeforeClosing(false);
       } catch (err) {
@@ -189,9 +217,8 @@ export function ControllerControlBulletin({
       Éditer un bulletin de contrôle
     </Typography>,
     <Typography key={10}>
-      Enregistrez les informations de contrôle d'un LIC papier afin de le
-      retrouver dans votre historique de contrôles et de générer un BDC au
-      format PDF.
+      Pour éditer un bulletin de contrôle au format PDF, veuillez renseigner les
+      champs ci-dessous.
     </Typography>,
     <Stepper
       key={15}
@@ -205,6 +232,7 @@ export function ControllerControlBulletin({
         key={20}
         handleEditControlBulletin={handleEditControlBulletin}
         controlBulletin={controlBulletin}
+        showErrors={showErrors}
       />
     ),
     step === 2 && (
@@ -212,6 +240,7 @@ export function ControllerControlBulletin({
         key={30}
         handleEditControlBulletin={handleEditControlBulletin}
         controlBulletin={controlBulletin}
+        showErrors={showErrors}
       />
     ),
     step === 3 && (

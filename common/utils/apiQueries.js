@@ -1240,11 +1240,17 @@ export const CHANGE_EMPLOYEE_ROLE = gql`
 
 export const CHANGE_EMPLOYEE_TEAM = gql`
   ${FULL_TEAM_FRAGMENT}
-  mutation changeEmployeeTeam($companyId: Int!, $userId: Int!, $teamId: Int) {
+  mutation changeEmployeeTeam(
+    $companyId: Int!
+    $userId: Int
+    $employmentId: Int
+    $teamId: Int
+  ) {
     employments {
       changeEmployeeTeam(
         companyId: $companyId
         userId: $userId
+        employmentId: $employmentId
         teamId: $teamId
       ) {
         teams {
@@ -1918,6 +1924,14 @@ export const CONTROLLER_CHANGE_GRECO_ID = gql`
   }
 `;
 
+export const CONTROLLER_ADD_CONTROL_NOTE = gql`
+  mutation controllerAddControlNote($controlId: Int!, $content: String!) {
+    controllerAddControlNote(controlId: $controlId, content: $content) {
+      note
+    }
+  }
+`;
+
 export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
   ${CONTROL_BULLETIN_FRAGMENT}
   ${CONTROL_DATA_FRAGMENT}
@@ -1979,12 +1993,14 @@ export const CONTROLLER_USER_CONTROLS_QUERY = gql`
     $id: Int!
     $fromDate: Date
     $toDate: Date
+    $limit: Int
     $controlsType: String
   ) {
     controllerUser(id: $id) {
       controls(
         fromDate: $fromDate
         toDate: $toDate
+        limit: $limit
         controlsType: $controlsType
       ) {
         ...ControlData
@@ -2076,6 +2092,14 @@ export const HTTP_QUERIES = {
   controlBDCExport: {
     method: "POST",
     endpoint: "/controllers/generate_control_bulletin"
+  },
+  certificateSearch: {
+    method: "POST",
+    endpoint: "/companies/public_company_certification"
+  },
+  downloadCertificate: {
+    method: "POST",
+    endpoint: "/companies/download_certificate"
   }
 };
 

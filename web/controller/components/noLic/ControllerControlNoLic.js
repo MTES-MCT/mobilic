@@ -9,7 +9,6 @@ import TabContext from "@mui/lab/TabContext";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import WarningAmberOutlinedIcon from "@mui/icons-material/WarningOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
-import { TextWithBadge } from "../../../common/TextWithBadge";
 import { ControllerControlNoLicHistory } from "./ControllerControlNoLicHistory";
 import { ControllerControlNoLicInformations } from "./ControllerControlNoLicInformations";
 import { useDownloadBDC } from "../../utils/useDownloadBDC";
@@ -52,11 +51,7 @@ const TABS = [
   },
   {
     name: "alerts",
-    label: (
-      <TextWithBadge badgeContent="1" color="error">
-        Infractions
-      </TextWithBadge>
-    ),
+    label: "Infractions",
     icon: <WarningAmberOutlinedIcon />,
     component: InfractionsAvailableSoon
   },
@@ -81,7 +76,6 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
 
   const [tab, setTab] = React.useState(TABS[0].name);
   const [infractions, setInfractions] = React.useState([]);
-  const [notes, setNotes] = React.useState("");
   const [
     lastInfractionsEditionDate,
     setLastInfractionsEditionDate
@@ -162,8 +156,6 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
                 <t.component
                   setTab={setTab}
                   infractions={infractions}
-                  notes={notes}
-                  setNotes={setNotes}
                   lastInfractionsEditionDate={lastInfractionsEditionDate}
                   setLastInfractionsEditionDate={setLastInfractionsEditionDate}
                   isReportingInfractions={isReportingInfractions}
@@ -185,7 +177,7 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
             editBDC={editBDC}
             downloadBDC={downloadBDC}
             canDownloadBDC={canDownloadBDC(controlData)}
-            touchedBDC={controlData.controlBulletinCreationTime}
+            BDCAlreadyExisting={!!controlData.controlBulletinCreationTime}
           />
         </>
       )}

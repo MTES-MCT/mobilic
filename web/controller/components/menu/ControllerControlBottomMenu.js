@@ -19,12 +19,12 @@ export function ControllerControlBottomMenu({
   editBDC,
   downloadBDC,
   canDownloadBDC,
-  touchedBDC
+  BDCAlreadyExisting
 }) {
   const classes = useStyles();
   return (
     <Stack direction="column" spacing={2} mt={2} alignItems="center">
-      {touchedBDC ? (
+      {BDCAlreadyExisting ? (
         <Button
           color="primary"
           variant="contained"
@@ -59,7 +59,7 @@ export function ControllerControlBottomMenu({
             : "Relever l'infraction"}
         </Button>
       )}
-      {touchedBDC && (
+      {BDCAlreadyExisting && (
         <Button variant="text" className={classes.textButton} onClick={editBDC}>
           Modifier le bulletin de contrôle
         </Button>

@@ -27,6 +27,7 @@ import { currentControllerId } from "common/utils/cookie";
 import { ControllerControlBottomMenu } from "../../controller/components/menu/ControllerControlBottomMenu";
 import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
 import { canDownloadBDC } from "../../controller/utils/controlBulletin";
+import { ControllerControlNote } from "../../controller/components/details/ControllerControlNote";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -85,6 +86,11 @@ export function UserReadInfo({
   return (
     <Container maxWidth="md" className={classes.container}>
       <Grid container spacing={2} className={classes.sectionBody}>
+        {controlData && (
+          <Grid item xs={12} mb={2}>
+            <ControllerControlNote controlData={controlData} />
+          </Grid>
+        )}
         <Grid item md={6}>
           <Typography variant="h5">Informations salarié(e)</Typography>
           <Grid
@@ -244,7 +250,7 @@ export function UserReadInfo({
             editBDC={openBulletinControl}
             downloadBDC={downloadBDC}
             canDownloadBDC={canDownloadBDC(controlData)}
-            touchedBDC={controlData.controlBulletinCreationTime}
+            BDCAlreadyExisting={!!controlData.controlBulletinCreationTime}
           />
         </>
       )}
