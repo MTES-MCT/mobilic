@@ -86,7 +86,7 @@ export function CertificateBanner() {
     }
 
     return {
-      title: `Félicitations, vous êtes certifiés depuis ${nbMonthOfCertification} mois`,
+      title: `Félicitations, vous êtes certifié depuis ${nbMonthOfCertification} mois`,
       linkText: "Voir les critères"
     };
   }, [companyWithInfo]);
