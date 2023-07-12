@@ -35,6 +35,7 @@ import { ControllerScanQRCode } from "../controller/components/scanQRCode/Contro
 import { ControllerQRCodeNotRecognized } from "../controller/components/scanQRCode/ControllerQRCodeNotRecognized";
 import { ControllerHistory } from "../controller/components/history/ControllerHistory";
 import { SyncEmployeeValidation } from "../login/SyncEmployeeValidation";
+import { Certificate } from "../landing/certificate";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -42,16 +43,11 @@ function UserReadRedirect() {
   return <Redirect to={`/control/user-history?token=${token}`} />;
 }
 
-export const RESOURCES_ROUTE = {
+const RESOURCES_ROUTE = {
   label: "Ressources",
   path: "",
-  accessible: () => true,
+  accessible: ({ controllerInfo }) => !controllerInfo?.id,
   subRoutes: [
-    {
-      path: "/resources/home",
-      target: "_blank",
-      label: "Documentation"
-    },
     {
       to: "",
       label: "Foire aux questions",
@@ -59,10 +55,22 @@ export const RESOURCES_ROUTE = {
       href: "https://faq.mobilic.beta.gouv.fr/"
     },
     {
+      path: "/resources/home",
+      target: "_blank",
+      label: "Documentation"
+    },
+    {
       path: "/partners",
       label: "Partenaires"
     }
   ]
+};
+
+export const CERTIFICATE_ROUTE = {
+  label: "Certificat",
+  path: "/certificate",
+  component: Certificate,
+  accessible: () => true
 };
 
 export const CONTROLLER_ROUTE_PREFIX = "/controller";
@@ -314,6 +322,13 @@ export const ROUTES = [
     menuItemFilter: () => false
   },
   {
+    path: "/certificate",
+    label: "Recherche certification",
+    accessible: () => true,
+    component: Certificate,
+    menuItemFilter: () => false
+  },
+  {
     path: "/partners",
     label: "Partenaires",
     accessible: () => true,
@@ -362,6 +377,7 @@ export const ROUTES = [
     menuItemFilter: () => false,
     component: Home
   },
+  RESOURCES_ROUTE,
   {
     label: "Mon compte",
     path: "",
@@ -451,14 +467,64 @@ export function isAccessible(path, storeData) {
   return ROUTES.find(r => path.startsWith(r.path)).accessible(storeData);
 }
 
-export function getBadgeRoutes(adminStore) {
+export function getBadgeRoutes(
+  adminStore,
+  companyWithCertificationInfo,
+  shouldDisplayBadge
+) {
   const entries = missionsToTableEntries(adminStore).filter(entry =>
     entryToBeValidatedByAdmin(entry, adminStore?.userId)
   );
-  return [
+
+  const badgeRoutes = [
     {
       path: "/admin/validations",
-      badgeContent: size(groupBy(entries, "missionId"))
+      badge: {
+        badgeContent: size(groupBy(entries, "missionId")),
+        color: "error"
+      }
     }
   ];
+
+  if (shouldDisplayBadge) {
+    const certificateBadge = getCertificateBadge(companyWithCertificationInfo);
+    if (certificateBadge) {
+      badgeRoutes.push({
+        path: "/admin/company",
+        badge: certificateBadge
+      });
+    }
+  }
+
+  return badgeRoutes;
+}
+
+export function getCertificateBadge(companyWithCertificationInfo) {
+  if (!companyWithCertificationInfo.certificateCriterias?.creationTime) {
+    return null;
+  }
+
+  let color = null;
+
+  if (!companyWithCertificationInfo.isCertified) {
+    color = "error";
+  } else {
+    const currentCriterias = companyWithCertificationInfo.certificateCriterias;
+    if (
+      !currentCriterias.beActive ||
+      !currentCriterias.beCompliant ||
+      !currentCriterias.logInRealTime ||
+      !currentCriterias.notTooManyChanges ||
+      !currentCriterias.validateRegularly
+    ) {
+      color = "warning";
+    } else {
+      color = "success";
+    }
+  }
+
+  return {
+    variant: "dot",
+    color
+  };
 }

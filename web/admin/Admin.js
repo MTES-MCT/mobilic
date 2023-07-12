@@ -24,10 +24,12 @@ import { makeStyles } from "@mui/styles";
 import { useIsWidthUp, useWidth } from "common/utils/useWidth";
 import { SideMenu } from "./components/SideMenu";
 import { useSnackbarAlerts } from "../common/Snackbar";
+import { CertificateBanner } from "./components/CertificateBanner";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
 import { MissionDrawerContextProvider } from "./components/MissionDrawer";
 import CertificationCommunicationModal from "../pwa/components/CertificationCommunicationModal";
+import { useShouldDisplayScenariis } from "./utils/certificationInfo";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -55,6 +57,7 @@ function _Admin() {
   const withLoadingScreen = useLoadingScreen();
   const { path } = useRouteMatch();
   const alerts = useSnackbarAlerts();
+  const [, shouldDisplayBanner] = useShouldDisplayScenariis();
 
   const classes = useStyles();
   const [shouldRefreshData, setShouldRefreshData] = React.useState({
@@ -165,6 +168,29 @@ function _Admin() {
     if (adminStore.companyId) loadDataCompanyDetails();
   }, [adminStore.companyId]);
 
+  React.useEffect(() => {
+    const { userId, companyId, employments } = adminStore;
+    if (!userId || !companyId || !employments || employments.length === 0) {
+      return;
+    }
+    const employment = employments.find(
+      employment =>
+        employment.companyId === companyId && employment.user?.id === userId
+    );
+    if (!employment) {
+      return;
+    }
+    const { shouldSeeCertificateInfo, id } = employment;
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateShouldSeeCertificateInfo,
+      payload: { shouldSeeCertificateInfo }
+    });
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateEmploymentId,
+      payload: { employmentId: id }
+    });
+  }, [adminStore.userId, adminStore.companyId, adminStore.employments]);
+
   const ref = React.useRef(null);
 
   const shouldRefreshDataSetter = val => setShouldRefreshData({ value: val });
@@ -172,8 +198,9 @@ function _Admin() {
   const defaultView = views.find(view => view.isDefault);
   return [
     <Header key={0} />,
+    shouldDisplayBanner ? <CertificateBanner key={1} /> : null,
     <MissionDrawerContextProvider
-      key={1}
+      key={2}
       width={width}
       setShouldRefreshData={shouldRefreshDataSetter}
     >

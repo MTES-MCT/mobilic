@@ -227,18 +227,15 @@
   display: none !important;
 }
 
+// override dsfr notice
+.fr-notice--info {
+  width: fit-content;
+}
+
 // override dsfr tables
 .fr-table {
   padding: 0;
   margin-bottom: 0;
-}
-
-.fr-table tbody {
-  background-color: var(--background-contrast-grey);
-
-  tr {
-    cursor: pointer;
-  }
 }
 
 .fr-table th {
@@ -249,7 +246,7 @@
   opacity: 0;
 }
 
-[href]:not(.fr-breadcrumb__link, .fr-link) {
+[href]:not(.fr-breadcrumb__link, .fr-link, .certificateBannerLink) {
   --underline-img: none;
 }
 

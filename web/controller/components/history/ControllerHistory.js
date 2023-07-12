@@ -9,7 +9,6 @@ import {
   startOfMonthAsDate
 } from "common/utils/time";
 import React from "react";
-import { useLocation } from "react-router-dom";
 import { Header } from "../../../common/Header";
 import { useLoadControls } from "../../utils/loadControls";
 import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
@@ -35,18 +34,14 @@ export function ControllerHistory() {
   const store = useStoreSyncedWithLocalStorage();
   const controllerUserInfo = store.controllerInfo();
 
-  const location = useLocation();
-  const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
-
-  React.useEffect(() => {
-    setControlIdOnFocus(location.state?.controlId);
-  }, []);
+  const [controlOnFocus, setControlOnFocus] = React.useState(null);
 
   const [controlFilters, setControlFilters] = React.useState({
     fromDate: isoFormatLocalDate(
-      startOfMonthAsDate(addDaysToDate(new Date(), -31))
+      startOfMonthAsDate(addDaysToDate(new Date(), -91))
     ),
-    toDate: isoFormatLocalDate(new Date())
+    toDate: isoFormatLocalDate(new Date()),
+    controlsType: ""
   });
   const [period, setPeriod] = React.useState("day");
   const [controls, loadControls, loadingControls] = useLoadControls();
@@ -65,8 +60,9 @@ export function ControllerHistory() {
       maxWidth="xl"
     >
       <ControllerControlDrawer
-        controlId={controlIdOnFocus}
-        onClose={() => setControlIdOnFocus(null)}
+        controlId={controlOnFocus?.id}
+        controlType={controlOnFocus?.type}
+        onClose={() => setControlOnFocus(null)}
       />
       <Typography sx={{ typography: { xs: "h3", sm: "h1" } }}>
         Historique des contrôles
@@ -91,7 +87,7 @@ export function ControllerHistory() {
           controls={controls}
           period={period}
           loading={loadingControls}
-          clickOnRow={setControlIdOnFocus}
+          clickOnRow={(id, type) => setControlOnFocus({ id, type })}
         />
       )}
     </Container>

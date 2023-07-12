@@ -10,7 +10,7 @@ export function MissionValidationInfo({
   return (
     <Alert severity={validation ? "success" : "warning"} className={className}>
       {validation
-        ? `validé ${
+        ? `validée ${
             isAdmin ? "par un gestionnaire" : "par le salarié"
           } le ${formatDay(validation.receptionTime, true)}`
         : `validation ${

@@ -7,6 +7,7 @@ import { useModals } from "common/utils/modals";
 import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 import React from "react";
 import { PeriodToggle } from "../../../admin/components/PeriodToggle";
+import { ControlTypeFilters } from "../filters/ControlTypeFilter";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -37,6 +38,17 @@ export function ControllerHistoryFilters({
       className={classes.filterGrid}
       sx={{ justifyContent: { xs: "left", md: "center" } }}
     >
+      <Grid item xs={12} md={2}>
+        <ControlTypeFilters
+          controlsType={controlFilters.controlsType}
+          setControlsType={value =>
+            setControlFilters(prevFilters => ({
+              ...prevFilters,
+              controlsType: value
+            }))
+          }
+        />
+      </Grid>
       <Grid item>
         <PeriodToggle period={period} setPeriod={setPeriod} />
       </Grid>

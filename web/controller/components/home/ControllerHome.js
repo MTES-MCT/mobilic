@@ -8,15 +8,16 @@ import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import { Header } from "../../../common/Header";
 import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
 import { useLocation } from "react-router-dom";
-import { Modal, ModalTitle, ModalContent } from "@dataesr/react-dsfr";
+import { Modal, ModalContent, ModalTitle } from "@dataesr/react-dsfr";
 import { ControlsList } from "../list/ControlsList";
 import { useLoadControls } from "../../utils/loadControls";
-import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 import Button from "@mui/material/Button";
 import { HelpController } from "../help/ModalHelpController";
 import { InfoHoraireServiceController } from "./InfoHoraireServiceController";
 import classNames from "classnames";
 import { useModals } from "common/utils/modals";
+import { ControlTypeFilters } from "../filters/ControlTypeFilter";
+import { ControllerControlNewNoLic } from "../noLic/ControllerControlNewNoLic";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -69,20 +70,23 @@ export function ControllerHome() {
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showHoraireServiceModal, setShowHoraireServiceModal] = useState(false);
 
-  const [controlIdOnFocus, setControlIdOnFocus] = React.useState(null);
+  const [controlOnFocus, setControlOnFocus] = React.useState(null);
+  const [openNewNoLic, setOpenNewNoLic] = React.useState(false);
 
   const [controls, loadControls, loadingControls] = useLoadControls();
+
+  const [controlsType, setControlsType] = React.useState("");
 
   React.useEffect(() => {
     loadControls({
       controllerId: controllerUserInfo.id,
-      fromDate: isoFormatLocalDate(addDaysToDate(new Date(), -14)),
-      controlsType: "mobilic"
+      limit: 10,
+      controlsType
     });
-  }, []);
+  }, [controlsType]);
 
   React.useEffect(() => {
-    setControlIdOnFocus(location.state?.controlId);
+    setControlOnFocus(location.state?.controlOnFocus);
   }, []);
 
   return [
@@ -93,8 +97,14 @@ export function ControllerHome() {
       maxWidth="xl"
     >
       <ControllerControlDrawer
-        controlId={controlIdOnFocus}
-        onClose={() => setControlIdOnFocus(null)}
+        controlId={controlOnFocus?.id}
+        controlType={controlOnFocus?.type}
+        onClose={() => setControlOnFocus(null)}
+      />
+      <ControllerControlNewNoLic
+        isOpen={openNewNoLic}
+        onClose={() => setOpenNewNoLic(false)}
+        setControlOnFocus={setControlOnFocus}
       />
       <h3 className={classes.titleHello} key={1}>
         Bonjour, {controllerUserInfo.firstName}
@@ -129,9 +139,7 @@ export function ControllerHome() {
           <ControllerHomeCard
             text={"Pas de LIC à bord"}
             icon={"fr-icon-alarm-warning-line fr-icon--lg"}
-            onClick={() =>
-              setModal({ isOpen: true, parcours: '"Pas de LIC à bord"' })
-            }
+            onClick={() => setOpenNewNoLic(true)}
           />
         </Grid>
       </Grid>
@@ -142,8 +150,16 @@ export function ControllerHome() {
         Un horaire de service est présenté ?
       </div>
       <h4 className={classes.newControlText}>
-        Historique des contrôles récents
+        Historique des derniers contrôles
       </h4>
+      <Grid container>
+        <Grid item xs={12} sm={4} md={2} marginBottom={2}>
+          <ControlTypeFilters
+            controlsType={controlsType}
+            setControlsType={setControlsType}
+          />
+        </Grid>
+      </Grid>
       <Button
         size="small"
         color="primary"
@@ -156,7 +172,7 @@ export function ControllerHome() {
       <ControlsList
         controls={controls}
         loading={loadingControls}
-        clickOnRow={setControlIdOnFocus}
+        clickOnRow={(id, type) => setControlOnFocus({ id, type })}
       />
     </Container>,
     <Modal

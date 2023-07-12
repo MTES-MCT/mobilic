@@ -32,8 +32,8 @@ export function ControllerResourcePage() {
           Je suis contrôleur
         </PaperContainerTitle>
         <Typography variant={"h3"} className={classes.resourceSubtitle}>
-          Je suis contrôleur des transports terrestres et je souhaite apprendre
-          à utiliser Mobilic
+          Je suis contrôleur des transports terrestres ou inspecteur du travail,
+          et j'apprends à utiliser Mobilic
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={10}>
           <Grid item sm={6}>
@@ -65,7 +65,7 @@ export function ControllerResourcePage() {
             <Box>
               <VideoCard
                 description="Effectuer un contrôle en bord de route"
-                videoKey="resources/videos/controleurs/tuto-nouvelle-interface-controle-v4.mp4"
+                videoKey="resources/videos/controleurs/tuto-ctt-it-juin-2023.mp4"
               />
             </Box>
             <Button
@@ -81,8 +81,7 @@ export function ControllerResourcePage() {
           </Grid>
         </Grid>
         <Typography variant={"h3"} className={classes.itAgentResourceSubtitle}>
-          Je suis inspecteur du travail ou agent de police et je souhaite
-          apprendre à utiliser Mobilic
+          Je suis agent de police et j'apprends à utiliser Mobilic
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={10}>
           <Grid item sm={6}>
@@ -112,7 +111,7 @@ export function ControllerResourcePage() {
             <Box>
               <VideoCard
                 description="Effectuer un contrôle en bord de route"
-                videoKey="resources/videos/controleurs/tuto-controleur-v6.mp4"
+                videoKey="resources/videos/controleurs/tuto-police-juin-2023.mp4"
               />
             </Box>
             <Button
