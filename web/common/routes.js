@@ -460,7 +460,6 @@ export function getFallbackRoute({ userInfo, companies, controllerInfo }) {
 }
 
 export function getAccessibleRoutes(storeData) {
-  console.log("storeData", storeData);
   return ROUTES.filter(r => r.accessible(storeData));
 }
 
