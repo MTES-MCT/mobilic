@@ -32,7 +32,7 @@ export function ControllerResourcePage() {
           Je suis contrôleur
         </PaperContainerTitle>
         <Typography variant={"h3"} className={classes.resourceSubtitle}>
-          Je suis contrôleur des transports terrestres ou inspecteur du travail
+          Je suis contrôleur des transports terrestres ou inspecteur du travail,
           et j'apprends à utiliser Mobilic
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={10}>
