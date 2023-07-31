@@ -1,13 +1,12 @@
 import React from "react";
 import {
+  Button,
   Modal,
-  ModalTitle,
   ModalContent,
   ModalFooter,
-  Button
+  ModalTitle
 } from "@dataesr/react-dsfr";
 import { makeStyles } from "@mui/styles";
-import Typography from "@mui/material/Typography";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
@@ -29,17 +28,6 @@ export default function ExportExcelOne({ open, handleClose, controlId }) {
         <p>
           Mobilic permet d'exporter les données des salariés contrôlés au format
           Excel (.xlsx).
-        </p>
-        <Typography variant="h4">Conditions d’export</Typography>
-        <br></br>
-        <p>
-          Le téléchargement produit un fichier Excel qui contient les données
-          d’activité du contrôle Mobilic sélectionné.{" "}
-          <b>
-            Les données du salarié sont limitées à une période qui ne peut pas
-            dépasser les 28 jours précédant le contrôle (ainsi que la journée
-            “en cours” lors du contrôle).
-          </b>
         </p>
       </ModalContent>
       <ModalFooter>

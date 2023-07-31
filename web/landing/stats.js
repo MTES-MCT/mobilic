@@ -20,8 +20,7 @@ export default function Stats() {
     <Container key={2} className={classes.container} maxWidth={false}>
       <iframe
         title="Métriques publiques"
-        src="https://metabase.mobilic.beta.gouv.fr/public/dashboard/14cc44a1-eec6-4d8d-9269-b67b10ca77bc#bordered=false"
-        frameBorder="0"
+        src="https://metabase.mobilic.beta.gouv.fr/public/dashboard/1d41b5c1-8eed-4688-a605-306614511814#bordered=false"
         width="100%"
         height="100%"
         style={{ backgroundColor: "transparent" }}
