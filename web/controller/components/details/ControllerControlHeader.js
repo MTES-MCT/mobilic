@@ -40,26 +40,30 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ExportButton = (classes, modals, controlId) => (
-  <Button
-    color="primary"
-    variant="outlined"
-    size="small"
-    className={classes.batchInviteButton}
-    onClick={() => {
-      modals.open("controllerExportExcelOne", { controlId });
-    }}
-  >
-    Exporter le contrôle
-  </Button>
-);
+export function ExportButton({ controlId }) {
+  const modals = useModals();
+  const classes = useStyles();
+  return (
+    <Button
+      color="primary"
+      variant="outlined"
+      size="small"
+      className={classes.batchInviteButton}
+      onClick={() => {
+        modals.open("controllerExportExcelOne", { controlId });
+      }}
+    >
+      Exporter le contrôle
+    </Button>
+  );
+}
 
 export function ControllerControlHeader({
   controlId,
   controlDate,
-  onCloseDrawer
+  onCloseDrawer,
+  enableExport = true
 }) {
-  const modals = useModals();
   const classes = useStyles();
   const isOnDesktop = useIsWidthUp("md");
   return isOnDesktop ? (
@@ -82,7 +86,7 @@ export function ControllerControlHeader({
         <Typography>
           Date et heure du contrôle : <b>{prettyFormatDayHour(controlDate)}</b>
         </Typography>
-        {ExportButton(classes, modals, controlId)}
+        {enableExport && <ExportButton controlId={controlId} />}
       </Box>
     </Container>
   ) : (
@@ -100,7 +104,7 @@ export function ControllerControlHeader({
         >
           Fermer
         </Link>
-        {ExportButton(classes, modals, controlId)}
+        {enableExport && <ExportButton controlId={controlId} />}
       </Box>
     </Container>
   );

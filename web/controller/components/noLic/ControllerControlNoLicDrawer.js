@@ -38,6 +38,7 @@ export function ControllerControlNoLicDrawer({
         controlId={controlData.id}
         controlDate={controlData.creationTime}
         onCloseDrawer={() => closeControl()}
+        enableExport={false}
       />
       <ControllerControlNoLic controlData={controlData} editBDC={editBDC} />
     </ControlDrawer>
