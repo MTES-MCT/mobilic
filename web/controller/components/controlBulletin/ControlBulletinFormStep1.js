@@ -3,12 +3,10 @@ import React from "react";
 import Stack from "@mui/material/Stack";
 import { Select, TextInput } from "@dataesr/react-dsfr";
 import { COUNTRIES } from "../../utils/country";
-import TextField from "@mui/material/TextField";
-import { Autocomplete } from "@mui/material";
 import { DEPARTMENTS } from "../../utils/departments";
-import Typography from "@mui/material/Typography";
 import { useApi } from "common/utils/api";
 import { CONTROL_LOCATION_QUERY } from "common/utils/apiQueries";
+import { DsfrAutocomplete } from "../utils/DsfrAutocomplete";
 
 export function ControlBulletinFormStep1({
   handleEditControlBulletin,
@@ -22,6 +20,7 @@ export function ControlBulletinFormStep1({
   const [departmentLocations, setDepartmentLocations] = React.useState([]);
 
   const api = useApi();
+
   React.useEffect(async () => {
     if (controlBulletin.locationDepartment) {
       const departmentCode = DEPARTMENTS.find(
@@ -55,127 +54,48 @@ export function ControlBulletinFormStep1({
     }
   }, [controlBulletin.locationCommune, departmentLocations]);
 
+  function editControlBulletinField(newValue, fieldName) {
+    handleEditControlBulletin({
+      target: {
+        name: fieldName,
+        value: newValue
+      }
+    });
+  }
+
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
-      <Typography
-        mb={0.5}
-        className={
-          !controlBulletin.locationDepartment && showErrors
-            ? "fr-label--error"
-            : ""
-        }
-      >
-        Département du contrôle {<sup style={{ color: "red" }}>*</sup>}
-      </Typography>
-      <Autocomplete
-        disableClearable
-        noOptionsText={"Aucune option disponible"}
-        value={controlBulletin.locationDepartment || ""}
-        size="small"
+      <DsfrAutocomplete
+        field={controlBulletin.locationDepartment}
+        fieldLabel="Département du contrôle"
         options={DEPARTMENTS}
+        showErrors={showErrors}
         onChange={(_, newValue) => {
-          handleEditControlBulletin({
-            target: {
-              name: "locationDepartment",
-              value: newValue.label
-            }
-          });
-          handleEditControlBulletin({
-            target: {
-              name: "locationCommune",
-              value: ""
-            }
-          });
-          handleEditControlBulletin({
-            target: {
-              name: "locationLieu",
-              value: ""
-            }
-          });
+          editControlBulletinField(newValue.label, "locationDepartment");
+          editControlBulletinField("", "locationCommune");
+          editControlBulletinField("", "locationLieu");
         }}
-        renderInput={params => (
-          <TextField
-            {...params}
-            variant="filled"
-            hiddenLabel
-            error={!controlBulletin.locationDepartment && showErrors}
-          />
-        )}
       />
-      <Typography
-        mb={0.5}
-        mt={2}
-        className={
-          !controlBulletin.locationCommune && showErrors
-            ? "fr-label--error"
-            : ""
-        }
-      >
-        Commune du contrôle {<sup style={{ color: "red" }}>*</sup>}
-      </Typography>
-      <Autocomplete
-        disableClearable
-        noOptionsText={"Aucune option disponible"}
-        value={controlBulletin.locationCommune || ""}
+      <DsfrAutocomplete
+        field={controlBulletin.locationCommune}
+        fieldLabel="Commune du contrôle"
         disabled={!controlBulletin.locationDepartment}
-        size="small"
         options={controlLocationCommunes}
+        showErrors={showErrors}
         onChange={(_, newValue) => {
-          handleEditControlBulletin({
-            target: {
-              name: "locationCommune",
-              value: newValue
-            }
-          });
-          handleEditControlBulletin({
-            target: {
-              name: "locationLieu",
-              value: ""
-            }
-          });
+          editControlBulletinField(newValue, "locationCommune");
+          editControlBulletinField("", "locationLieu");
         }}
-        renderInput={params => (
-          <TextField
-            {...params}
-            variant="filled"
-            hiddenLabel
-            error={!controlBulletin.locationCommune && showErrors}
-          />
-        )}
       />
-      <Typography
-        mt={2}
-        mb={0.5}
-        className={
-          !controlBulletin.locationLieu && showErrors ? "fr-label--error" : ""
-        }
-      >
-        Lieu du contrôle {<sup style={{ color: "red" }}>*</sup>}
-      </Typography>
-      <Autocomplete
-        style={{ marginBottom: "1.5rem" }}
-        noOptionsText={"Aucune option disponible"}
-        disableClearable
-        value={controlBulletin.locationLieu || ""}
+      <DsfrAutocomplete
+        field={controlBulletin.locationLieu}
+        fieldLabel="Lieu du contrôle"
         disabled={!controlBulletin.locationCommune}
-        size="small"
         options={controlLocationLabels}
+        showErrors={showErrors}
         onChange={(_, newValue) => {
-          handleEditControlBulletin({
-            target: {
-              name: "locationLieu",
-              value: newValue
-            }
-          });
+          editControlBulletinField(newValue, "locationLieu");
         }}
-        renderInput={params => (
-          <TextField
-            {...params}
-            variant="filled"
-            hiddenLabel
-            error={!controlBulletin.locationLieu && showErrors}
-          />
-        )}
       />
       <TextInput
         value={controlBulletin.userLastName || ""}
