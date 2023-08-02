@@ -146,6 +146,13 @@ export function textualPrettyFormatDay(unixTimestamp, withYear = false) {
   return withYear ? `${baseString} ${date.getFullYear()}` : baseString;
 }
 
+export function textualPrettyFormatDayHour(unixTimestamp, withYear = false) {
+  const date = new Date(unixTimestamp * 1000);
+  return `${textualPrettyFormatDay(unixTimestamp, withYear)} à ${addZero(
+    date.getHours()
+  )}:${addZero(date.getMinutes())}`;
+}
+
 export function prettyFormatDayHour(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
   return `${addZero(date.getDate())}/${addZero(
@@ -153,6 +160,17 @@ export function prettyFormatDayHour(unixTimestamp) {
   )}/${date.getFullYear()} à ${addZero(date.getHours())}:${addZero(
     date.getMinutes()
   )}`;
+}
+
+export function formatTimeFromSeconds(seconds) {
+  const hours = Math.floor(seconds / HOUR);
+  const remainingSeconds = Math.floor(seconds % HOUR);
+  const minutes = Math.floor(remainingSeconds / MINUTE);
+  return `${hours}h${addZero(minutes)}`;
+}
+
+export function formatMinutesFromSeconds(seconds) {
+  return `${Math.floor(seconds / MINUTE)}m`;
 }
 
 export function textualPrettyFormatWeek(startOfWeek) {
