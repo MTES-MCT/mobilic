@@ -1,9 +1,7 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
-import Box from "@mui/material/Box";
 import { makeStyles } from "@mui/styles";
-import { Link } from "../../common/LinkButton";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
@@ -72,18 +70,6 @@ export function UserReadAlerts({
           substituer à lui.
         </Typography>
       </Alert>
-      <Box className={classes.linkContainer}>
-        <Link
-          color="primary"
-          variant="body1"
-          onClick={e => {
-            e.preventDefault();
-            setTab("history");
-          }}
-        >
-          Voir l'historique
-        </Link>
-      </Box>
     </Container>
   );
 }
