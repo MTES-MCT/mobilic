@@ -1947,6 +1947,7 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
     $locationDepartment: String
     $locationCommune: String
     $locationLieu: String
+    $locationId: Int
     $vehicleRegistrationNumber: String
     $vehicleRegistrationCountry: String
     $missionAddressBegin: String
@@ -1969,6 +1970,7 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
       locationDepartment: $locationDepartment
       locationCommune: $locationCommune
       locationLieu: $locationLieu
+      locationId: $locationId
       vehicleRegistrationNumber: $vehicleRegistrationNumber
       vehicleRegistrationCountry: $vehicleRegistrationCountry
       missionAddressBegin: $missionAddressBegin

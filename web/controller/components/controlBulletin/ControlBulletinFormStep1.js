@@ -48,7 +48,6 @@ export function ControlBulletinFormStep1({
       setControlLocationLabels(
         departmentLocations
           .filter(depLoc => depLoc.commune === controlBulletin.locationCommune)
-          .map(loc => loc.label)
           .sort((a, b) => a.localeCompare(b))
       );
     }
@@ -94,7 +93,8 @@ export function ControlBulletinFormStep1({
         options={controlLocationLabels}
         showErrors={showErrors}
         onChange={(_, newValue) => {
-          editControlBulletinField(newValue, "locationLieu");
+          editControlBulletinField(newValue.label, "locationLieu");
+          editControlBulletinField(newValue.id, "locationId");
         }}
       />
       <TextInput
