@@ -21,7 +21,7 @@ function formatAlertPeriod(alert) {
   return "Mission";
 }
 
-export function RegulatoryAlert({ alert, setPeriodOnFocus, setTab }) {
+export function RegulatoryAlert({ alert, type, setPeriodOnFocus, setTab }) {
   return (
     <Link
       onClick={e => {

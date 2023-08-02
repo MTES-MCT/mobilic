@@ -15,16 +15,19 @@ export const getAlertsGroupedByDay = regulationComputations =>
             breachedRegCheck.unit === PERIOD_UNITS.WEEK
               ? { week: timestamp }
               : { day: timestamp };
+          const extra = JSON.parse(breachedRegCheck.alert.extra);
           let checkInArray = arr.find(
             item => item.infringementLabel === breachedRegCheck.label
           );
           if (checkInArray) {
-            checkInArray.alerts.push(alertToPush);
+            checkInArray.alerts.push({ ...alertToPush, extra });
           } else {
             arr.push({
               infringementLabel: breachedRegCheck.label,
               description: breachedRegCheck.description,
-              alerts: [alertToPush]
+              type: breachedRegCheck.type,
+              sanction: extra?.sanction_code,
+              alerts: [{ ...alertToPush, extra }]
             });
           }
         }

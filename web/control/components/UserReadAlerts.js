@@ -49,15 +49,19 @@ export function UserReadAlerts({
       </Alert>
       {newVersionGroupedAlerts.length > 0 ? (
         <List>
-          {newVersionGroupedAlerts.map(group => (
-            <ListItem key={group.infringementLabel} disableGutters>
-              <AlertGroup
-                {...group}
-                setPeriodOnFocus={setPeriodOnFocus}
-                setTab={setTab}
-              />
-            </ListItem>
-          ))}
+          {newVersionGroupedAlerts
+            .sort((alert1, alert2) =>
+              alert1.sanction.localeCompare(alert2.sanction)
+            )
+            .map(group => (
+              <ListItem key={group.type} disableGutters>
+                <AlertGroup
+                  {...group}
+                  setPeriodOnFocus={setPeriodOnFocus}
+                  setTab={setTab}
+                />
+              </ListItem>
+            ))}
         </List>
       ) : (
         <Typography className={classes.italicInfo}>

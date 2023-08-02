@@ -48,6 +48,8 @@ export function AlertGroup({
   alerts,
   infringementLabel,
   description,
+  type,
+  sanction,
   setPeriodOnFocus,
   setTab
 }) {
@@ -70,6 +72,9 @@ export function AlertGroup({
           wrap="nowrap"
         >
           <Grid item>
+            <Typography className="bold" color="primary">
+              {sanction}
+            </Typography>
             <Typography className="bold">{infringementLabel}</Typography>
           </Grid>
           <Grid item>
@@ -84,6 +89,7 @@ export function AlertGroup({
             <ListItem key={index} disableGutters>
               <RegulatoryAlert
                 alert={a}
+                type={type}
                 setPeriodOnFocus={setPeriodOnFocus}
                 setTab={setTab}
               />
