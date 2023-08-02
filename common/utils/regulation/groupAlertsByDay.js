@@ -17,7 +17,9 @@ export const getAlertsGroupedByDay = regulationComputations =>
               : { day: timestamp };
           const extra = JSON.parse(breachedRegCheck.alert.extra);
           let checkInArray = arr.find(
-            item => item.infringementLabel === breachedRegCheck.label
+            item =>
+              item.infringementLabel === breachedRegCheck.label &&
+              item.sanction === extra?.sanction_code
           );
           if (checkInArray) {
             checkInArray.alerts.push({ ...alertToPush, extra });
