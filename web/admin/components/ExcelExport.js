@@ -228,7 +228,8 @@ export default function ExcelExport({
                 linkType: "download"
               });
               await api.downloadFileHttpQuery(HTTP_QUERIES.excelExport, {
-                json: options
+                json: options,
+                timeout: 45000
               });
             }, "download-company-report")
           }
