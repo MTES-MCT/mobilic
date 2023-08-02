@@ -2240,3 +2240,14 @@ export const COMPANY_CERTIFICATION_COMMUNICATION_QUERY = gql`
     }
   }
 `;
+
+export const CONTROL_LOCATION_QUERY = gql`
+  query controlLocation($department: String!) {
+    controlLocation(department: $department) {
+      id
+      department
+      commune
+      label
+    }
+  }
+`;
