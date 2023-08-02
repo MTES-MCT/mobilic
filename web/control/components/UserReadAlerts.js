@@ -40,6 +40,13 @@ export function UserReadAlerts({
 
   return (
     <Container maxWidth="md" className={classes.container}>
+      <Alert severity="info">
+        <Typography gutterBottom>
+          Les infractions calculées par Mobilic se basent sur la version validée
+          par le gestionnaire, ou, si elle n’a pas été faite au moment du
+          contrôle, sur celle du salarié.
+        </Typography>
+      </Alert>
       {newVersionGroupedAlerts.length > 0 ? (
         <List>
           {newVersionGroupedAlerts.map(group => (
