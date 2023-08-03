@@ -29,11 +29,7 @@ function formatAlertPeriod(alert, type) {
         new Date(alert.extra.longest_uninterrupted_work_end) / 1000
       );
     }
-    case ALERT_TYPES.minimumWorkDayBreak: {
-      return textualPrettyFormatDayHour(
-        new Date(alert.extra.work_range_end) / 1000
-      );
-    }
+    case ALERT_TYPES.minimumWorkDayBreak:
     case ALERT_TYPES.maximumWorkDayTime: {
       return textualPrettyFormatDayHour(
         new Date(alert.extra.work_range_end) / 1000
