@@ -54,7 +54,7 @@ export function UserReadAlerts({
               alert1.sanction.localeCompare(alert2.sanction)
             )
             .map(group => (
-              <ListItem key={group.type} disableGutters>
+              <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
                 <AlertGroup
                   {...group}
                   setPeriodOnFocus={setPeriodOnFocus}
