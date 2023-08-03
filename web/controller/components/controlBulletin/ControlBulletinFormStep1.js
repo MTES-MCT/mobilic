@@ -48,7 +48,7 @@ export function ControlBulletinFormStep1({
       setControlLocationLabels(
         departmentLocations
           .filter(depLoc => depLoc.commune === controlBulletin.locationCommune)
-          .sort((a, b) => a.localeCompare(b))
+          .sort((a, b) => a.label.localeCompare(b.label))
       );
     }
   }, [controlBulletin.locationCommune, departmentLocations]);
