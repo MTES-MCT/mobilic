@@ -88,7 +88,7 @@ function formatAlertText(alert, type) {
       return (
         <span>
           Durée du temps de pause :{" "}
-          <b>{formatMinutesFromSeconds(breakTimeInSeconds)}</b> sur une période
+          <b>{formatMinutesFromSeconds(breakTimeInSeconds)}</b> pour une période
           de travail de <b>{formatTimeFromSeconds(workTimeInSeconds)}</b>
         </span>
       );

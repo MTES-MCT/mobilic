@@ -11,6 +11,9 @@ const useStyles = makeStyles(theme => ({
   sectionBody: {
     marginBottom: theme.spacing(6)
   },
+  middleTab: {
+    flexGrow: 1.5
+  },
   panel: {
     padding: 0,
     maxWidth: "100%",
@@ -53,7 +56,9 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
           >
             {tabs.map(t => (
               <Tab
-                className={classes.tab}
+                className={
+                  t.name === "alerts" ? classes.middleTab : classes.tab
+                }
                 label={t.label}
                 value={t.name}
                 key={t.name}
