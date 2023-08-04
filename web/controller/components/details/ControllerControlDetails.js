@@ -179,6 +179,7 @@ export function ControllerControlDetails({
       groupedAlerts={groupedAlerts}
       saveInfractions={saveInfractions}
       cancelInfractions={cancelInfractions}
+      readOnlyAlerts={false}
     />,
     <ControlBulletinDrawer
       key={2}

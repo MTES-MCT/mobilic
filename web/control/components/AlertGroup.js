@@ -52,8 +52,10 @@ const getDescription = (description, sanction) =>
     ? `${description}. Si une partie du travail de la journée s'effectue entre minuit et 5 heures, la durée maximale du travail est réduite à 10 heures`
     : description;
 
-const getAlertsNumber = (alerts, isReportingInfractions) =>
-  isReportingInfractions
+const getAlertsNumber = (alerts, isReportingInfractions, readOnlyAlerts) =>
+  readOnlyAlerts
+    ? alerts.length
+    : isReportingInfractions
     ? `${alerts.filter(alert => alert.checked).length} / ${alerts.length}`
     : alerts.filter(alert => alert.checked).length;
 
@@ -66,12 +68,17 @@ export function AlertGroup({
   setPeriodOnFocus,
   setTab,
   isReportingInfractions,
-  setReportedInfractions
+  setReportedInfractions,
+  readOnlyAlerts
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
 
-  const alertsNumber = getAlertsNumber(alerts, isReportingInfractions);
+  const alertsNumber = getAlertsNumber(
+    alerts,
+    isReportingInfractions,
+    readOnlyAlerts
+  );
 
   return (
     <Accordion
@@ -117,6 +124,7 @@ export function AlertGroup({
                 setTab={setTab}
                 isReportingInfractions={isReportingInfractions}
                 setReportedInfractions={setReportedInfractions}
+                readOnlyAlerts={readOnlyAlerts}
               />
             </ListItem>
           ))}
