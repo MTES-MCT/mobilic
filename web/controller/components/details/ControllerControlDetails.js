@@ -9,8 +9,8 @@ import { unixToJSTimestamp } from "common/utils/time";
 import { orderEmployments } from "common/utils/employments";
 import { ControllerControlHeader } from "./ControllerControlHeader";
 import _ from "lodash";
-import { computeNumberOfAlerts } from "common/utils/regulation/computeNumberOfAlerts";
 import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
+import { getAlertsGroupedByDay } from "common/utils/regulation/groupAlertsByDay";
 
 export function ControllerControlDetails({
   controlData,
@@ -23,6 +23,33 @@ export function ControllerControlDetails({
   const [coworkers, setCoworkers] = React.useState([]);
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
   const [isEditingBC, setIsEditingBC] = React.useState(false);
+  const [isReportingInfractions, setIsReportingInfractions] = React.useState(
+    false
+  );
+  const [reportedInfractions, setReportedInfractions] = React.useState([]);
+  const groupedAlerts = React.useMemo(
+    () =>
+      reportedInfractions
+        ? getAlertsGroupedByDay(
+            controlData.regulationComputationsByDay,
+            reportedInfractions
+          )
+        : [],
+    [reportedInfractions]
+  );
+
+  React.useEffect(() => {
+    setReportedInfractions(controlData.reportedInfractions);
+  }, [controlData.reportedInfractions]);
+
+  const saveInfractions = () => {
+    console.log("saving infractions", reportedInfractions);
+    setIsReportingInfractions(false);
+  };
+  const cancelInfractions = () => {
+    setReportedInfractions(controlData.reportedInfractions);
+    setIsReportingInfractions(false);
+  };
 
   // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
   const legacyTokenInfo = {
@@ -70,12 +97,15 @@ export function ControllerControlDetails({
     }
   }, [controlData]);
 
-  const alertNumber = React.useMemo(() => {
-    if (!controlData || !controlData.regulationComputationsByDay) {
-      return 0;
-    }
-    return computeNumberOfAlerts(controlData.regulationComputationsByDay);
-  }, [controlData]);
+  const alertsNumber = React.useMemo(
+    () =>
+      groupedAlerts.reduce(
+        (curr, alertsGroup) =>
+          curr + alertsGroup.alerts.filter(alert => alert.checked).length,
+        0
+      ),
+    [groupedAlerts]
+  );
 
   return [
     <ControllerControlHeader
@@ -86,9 +116,8 @@ export function ControllerControlDetails({
     />,
     <UserReadTabs
       key={1}
-      tabs={getTabs(alertNumber)}
+      tabs={getTabs(alertsNumber)}
       regulationComputationsByDay={controlData.regulationComputationsByDay}
-      alertNumber={alertNumber}
       tokenInfo={legacyTokenInfo}
       controlTime={controlData.qrCodeGenerationTime}
       missions={missions}
@@ -104,6 +133,12 @@ export function ControllerControlDetails({
       vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
       openBulletinControl={() => setIsEditingBC(true)}
       controlData={controlData}
+      isReportingInfractions={isReportingInfractions}
+      setIsReportingInfractions={setIsReportingInfractions}
+      setReportedInfractions={setReportedInfractions}
+      groupedAlerts={groupedAlerts}
+      saveInfractions={saveInfractions}
+      cancelInfractions={cancelInfractions}
     />,
     <ControlBulletinDrawer
       key={2}

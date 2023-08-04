@@ -52,6 +52,11 @@ const getDescription = (description, sanction) =>
     ? `${description}. Si une partie du travail de la journée s'effectue entre minuit et 5 heures, la durée maximale du travail est réduite à 10 heures`
     : description;
 
+const getAlertsNumber = (alerts, isReportingInfractions) =>
+  isReportingInfractions
+    ? `${alerts.filter(alert => alert.checked).length} / ${alerts.length}`
+    : alerts.filter(alert => alert.checked).length;
+
 export function AlertGroup({
   alerts,
   infringementLabel,
@@ -59,10 +64,14 @@ export function AlertGroup({
   type,
   sanction,
   setPeriodOnFocus,
-  setTab
+  setTab,
+  isReportingInfractions,
+  setReportedInfractions
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
+
+  const alertsNumber = getAlertsNumber(alerts, isReportingInfractions);
 
   return (
     <Accordion
@@ -87,9 +96,11 @@ export function AlertGroup({
               {getLabel(infringementLabel, sanction)}
             </Typography>
           </Grid>
-          <Grid item>
-            <span className={classes.alertNumber}>{alerts.length}</span>
-          </Grid>
+          {alertsNumber !== 0 && (
+            <Grid item>
+              <span className={classes.alertNumber}>{alertsNumber}</span>
+            </Grid>
+          )}
         </Grid>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
@@ -104,6 +115,8 @@ export function AlertGroup({
                 type={type}
                 setPeriodOnFocus={setPeriodOnFocus}
                 setTab={setTab}
+                isReportingInfractions={isReportingInfractions}
+                setReportedInfractions={setReportedInfractions}
               />
             </ListItem>
           ))}

@@ -74,6 +74,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
                 value={t.name}
                 key={t.name}
                 icon={t.icon}
+                disabled={t.name !== "alerts" && props.isReportingInfractions}
               />
             ))}
           </Tabs>
@@ -86,7 +87,20 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
               className={`${classes.panel} ${tab !== t.name &&
                 classes.hiddenPanel}`}
             >
-              {<t.component {...props} setTab={setTab} />}
+              {
+                <t.component
+                  {...props}
+                  setTab={setTab}
+                  groupedAlerts={props.groupedAlerts}
+                  isReportingInfractions={props.isReportingInfractions}
+                  saveInfractions={props.saveInfractions}
+                  cancelInfractions={props.cancelInfractions}
+                  setReportedInfractions={props.setReportedInfractions}
+                  reportedInfractionsLastUpdateTime={
+                    props.controlData?.reportedInfractionsLastUpdateTime
+                  }
+                />
+              }
             </TabPanel>
           ))}
         </Container>

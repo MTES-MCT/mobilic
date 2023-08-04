@@ -10,6 +10,8 @@ import {
 } from "common/utils/time";
 import { Link } from "../../common/LinkButton";
 import { ALERT_TYPES } from "common/utils/regulation/alertTypes";
+import Stack from "@mui/material/Stack";
+import Checkbox from "@mui/material/Checkbox";
 
 function formatAlertPeriod(alert, type) {
   if (alert.month) {
@@ -104,23 +106,60 @@ function formatAlertText(alert, type) {
   }
 }
 
-export function RegulatoryAlert({ alert, type, setPeriodOnFocus, setTab }) {
+const isNatinf = alert => alert.extra?.sanction_code.includes("NATINF");
+
+export function RegulatoryAlert({
+  alert,
+  type,
+  setPeriodOnFocus,
+  setTab,
+  isReportingInfractions,
+  setReportedInfractions
+}) {
   return (
-    <div>
-      <Link
-        onClick={e => {
-          e.preventDefault();
-          setTab("history");
-          setPeriodOnFocus(
-            alert.day || alert.week || alert.month
-              ? mapValues(alert, date => isoFormatLocalDate(parseInt(date)))
-              : alert
-          );
-        }}
-      >
-        {formatAlertPeriod(alert, type)}
-      </Link>
-      <div>{formatAlertText(alert, type)}</div>
-    </div>
+    <Stack direction="row" spacing={2} alignItems="flex-start" flexWrap="wrap">
+      {isNatinf(alert) && (
+        <Checkbox
+          checked={alert.checked}
+          disabled={!isReportingInfractions}
+          onChange={e => {
+            const alertDate = alert.day || alert.week || alert.month;
+            if (e.target.checked) {
+              setReportedInfractions(curr => [
+                ...curr,
+                {
+                  sanction: alert.extra?.sanction_code,
+                  date: alertDate
+                }
+              ]);
+            } else {
+              setReportedInfractions(curr =>
+                curr.filter(
+                  infraction =>
+                    infraction.sanction !== alert.extra?.sanction_code ||
+                    infraction.date !== alertDate
+                )
+              );
+            }
+          }}
+        />
+      )}
+      <div>
+        <Link
+          onClick={e => {
+            e.preventDefault();
+            setTab("history");
+            setPeriodOnFocus(
+              alert.day || alert.week || alert.month
+                ? mapValues(alert, date => isoFormatLocalDate(parseInt(date)))
+                : alert
+            );
+          }}
+        >
+          {formatAlertPeriod(alert, type)}
+        </Link>
+        <div>{formatAlertText(alert, type)}</div>
+      </div>
+    </Stack>
   );
 }
