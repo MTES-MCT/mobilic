@@ -459,6 +459,11 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       regulationComputationsByDay {
         ...RegulationComputations
       }
+      reportedInfractions {
+        sanction
+        date
+      }
+      reportedInfractionsLastUpdateTime
     }
   }
 `;

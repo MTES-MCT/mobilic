@@ -197,10 +197,10 @@ export function UserRead() {
   const TABS = getTabs(alertNumber);
 
   return [
-    <Header key={1} disableMenu />,
+    <Header key={0} disableMenu />,
     error ? (
-      <Container>
-        <Typography align="center" key={0} color="error">
+      <Container key={1}>
+        <Typography align="center" color="error">
           Impossible d'accéder à la page : {error}
         </Typography>
       </Container>
