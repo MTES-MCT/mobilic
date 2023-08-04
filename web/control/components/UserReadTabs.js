@@ -6,6 +6,10 @@ import AppBar from "@mui/material/AppBar";
 import TabPanel from "@mui/lab/TabPanel";
 import TabContext from "@mui/lab/TabContext";
 import Container from "@mui/material/Container";
+import { ControllerControlBottomMenu } from "../../controller/components/menu/ControllerControlBottomMenu";
+import { currentControllerId } from "common/utils/cookie";
+import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
+import { canDownloadBDC } from "../../controller/utils/controlBulletin";
 
 const useStyles = makeStyles(theme => ({
   sectionBody: {
@@ -39,6 +43,13 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
   React.useEffect(() => {
     if (restoreScroll) restoreScroll();
   }, [tab]);
+
+  const reportInfractions = () => {
+    props.setIsReportingInfractions(true);
+    setTab(tabs[1].name);
+  };
+
+  const downloadBDC = useDownloadBDC(props.controlData?.id);
 
   const classes = useStyles();
   return (
@@ -80,6 +91,16 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
           ))}
         </Container>
       </TabContext>
+      {!!currentControllerId() && !props.isReportingInfractions && (
+        <ControllerControlBottomMenu
+          reportInfractions={reportInfractions}
+          updatedInfractions={false}
+          editBDC={props.openBulletinControl}
+          downloadBDC={downloadBDC}
+          canDownloadBDC={canDownloadBDC(props.controlData)}
+          BDCAlreadyExisting={!!props.controlData.controlBulletinCreationTime}
+        />
+      )}
     </>
   );
 }

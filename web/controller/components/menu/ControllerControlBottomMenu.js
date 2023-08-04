@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ControllerControlBottomMenu({
-  reportInfraction,
+  reportInfractions,
   updatedInfractions,
   editBDC,
   downloadBDC,
@@ -45,14 +45,13 @@ export function ControllerControlBottomMenu({
           éditer un bulletin de contrôle
         </Button>
       )}
-      {reportInfraction && (
+      {reportInfractions && (
         <Button
           color="primary"
           variant="outlined"
           size="small"
           startIcon={<EditIcon />}
-          onClick={reportInfraction}
-          disabled
+          onClick={reportInfractions}
         >
           {updatedInfractions
             ? "Modifier l'infraction retenue"
