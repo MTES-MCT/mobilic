@@ -54,8 +54,8 @@ export function ControllerControlBottomMenu({
           onClick={reportInfractions}
         >
           {updatedInfractions
-            ? "Modifier l'infraction retenue"
-            : "Relever l'infraction"}
+            ? "Modifier les infractions retenues"
+            : "Relever les infractions"}
         </Button>
       )}
       {BDCAlreadyExisting && (

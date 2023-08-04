@@ -114,11 +114,12 @@ export function RegulatoryAlert({
   setPeriodOnFocus,
   setTab,
   isReportingInfractions,
-  setReportedInfractions
+  setReportedInfractions,
+  readOnlyAlerts
 }) {
   return (
     <Stack direction="row" spacing={2} alignItems="flex-start" flexWrap="wrap">
-      {isNatinf(alert) && (
+      {!readOnlyAlerts && isNatinf(alert) && (
         <Checkbox
           checked={alert.checked}
           disabled={!isReportingInfractions}

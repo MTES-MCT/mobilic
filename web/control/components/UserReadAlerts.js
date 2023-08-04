@@ -42,7 +42,8 @@ export function UserReadAlerts({
   saveInfractions,
   cancelInfractions,
   setReportedInfractions,
-  reportedInfractionsLastUpdateTime
+  reportedInfractionsLastUpdateTime,
+  readOnlyAlerts
 }) {
   const classes = useStyles();
 
@@ -70,7 +71,7 @@ export function UserReadAlerts({
           contrôle, sur celle du salarié.
         </Typography>
       </Alert>
-      {groupedAlerts.length > 0 ? (
+      {groupedAlerts?.length > 0 ? (
         <List>
           {groupedAlerts
             .sort((alert1, alert2) =>
@@ -84,6 +85,7 @@ export function UserReadAlerts({
                   setTab={setTab}
                   isReportingInfractions={isReportingInfractions}
                   setReportedInfractions={setReportedInfractions}
+                  readOnlyAlerts={readOnlyAlerts}
                 />
               </ListItem>
             ))}

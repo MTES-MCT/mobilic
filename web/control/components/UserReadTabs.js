@@ -99,6 +99,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
                   reportedInfractionsLastUpdateTime={
                     props.reportedInfractionsLastUpdateTime
                   }
+                  readOnlyAlerts={props.readOnlyAlerts}
                 />
               }
             </TabPanel>
@@ -108,7 +109,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
       {!!currentControllerId() && !props.isReportingInfractions && (
         <ControllerControlBottomMenu
           reportInfractions={reportInfractions}
-          updatedInfractions={false}
+          updatedInfractions={!!props.reportedInfractionsLastUpdateTime}
           editBDC={props.openBulletinControl}
           downloadBDC={downloadBDC}
           canDownloadBDC={canDownloadBDC(props.controlData)}
