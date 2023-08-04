@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import Stack from "@mui/material/Stack";
 import { Select, TextInput } from "@dataesr/react-dsfr";
@@ -13,10 +13,6 @@ export function ControlBulletinFormStep1({
   controlBulletin,
   showErrors
 }) {
-  const [controlLocationCommunes, setControlLocationCommunes] = React.useState(
-    []
-  );
-  const [controlLocationLabels, setControlLocationLabels] = React.useState([]);
   const [departmentLocations, setDepartmentLocations] = React.useState([]);
 
   const api = useApi();
@@ -35,21 +31,28 @@ export function ControlBulletinFormStep1({
           { context: { nonPublicApi: true } }
         );
         setDepartmentLocations(apiResponse.data.controlLocation);
-        const allCommunes = apiResponse.data.controlLocation
-          .map(location => location.commune)
-          .sort((a, b) => a.localeCompare(b));
-        setControlLocationCommunes([...new Set(allCommunes)]);
       }
     }
   }, [controlBulletin.locationDepartment]);
 
-  React.useEffect(async () => {
+  const controlLocationCommunes = useMemo(() => {
+    if (departmentLocations) {
+      const allCommunes = departmentLocations
+        .map(location => location.commune)
+        .sort((a, b) => a.localeCompare(b));
+      return [...new Set(allCommunes)];
+    } else {
+      return [];
+    }
+  }, [departmentLocations]);
+
+  const controlLocationLabels = useMemo(() => {
     if (controlBulletin.locationCommune && departmentLocations) {
-      setControlLocationLabels(
-        departmentLocations
-          .filter(depLoc => depLoc.commune === controlBulletin.locationCommune)
-          .sort((a, b) => a.label.localeCompare(b.label))
-      );
+      return departmentLocations
+        .filter(depLoc => depLoc.commune === controlBulletin.locationCommune)
+        .sort((a, b) => a.label.localeCompare(b.label));
+    } else {
+      return [];
     }
   }, [controlBulletin.locationCommune, departmentLocations]);
 
