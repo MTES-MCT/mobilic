@@ -3,6 +3,7 @@ import mapValues from "lodash/mapValues";
 import {
   formatMinutesFromSeconds,
   formatTimeFromSeconds,
+  getStartOfDay,
   isoFormatLocalDate,
   prettyFormatMonth,
   textualPrettyFormatDayHour,
@@ -134,13 +135,13 @@ export function RegulatoryAlert({
                 }
               ]);
             } else {
-              setReportedInfractions(curr =>
-                curr.filter(
+              setReportedInfractions(curr => {
+                return curr.filter(
                   infraction =>
                     infraction.sanction !== alert.extra?.sanction_code ||
-                    infraction.date !== alertDate
-                )
-              );
+                    getStartOfDay(infraction.date) !== getStartOfDay(alertDate)
+                );
+              });
             }
           }}
         />
