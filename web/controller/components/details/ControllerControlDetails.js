@@ -11,12 +11,20 @@ import { ControllerControlHeader } from "./ControllerControlHeader";
 import _ from "lodash";
 import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
 import { getAlertsGroupedByDay } from "common/utils/regulation/groupAlertsByDay";
+import { useApi } from "common/utils/api";
+import { useLoadingScreen } from "common/utils/loading";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
+import { formatApiError } from "common/utils/errors";
+import { CONTROLLER_SAVE_REPORTED_INFRACTIONS } from "common/utils/apiQueries";
 
 export function ControllerControlDetails({
   controlData,
   setControlData,
   onClose
 }) {
+  const api = useApi();
+  const withLoadingScreen = useLoadingScreen();
+  const alerts = useSnackbarAlerts();
   const [employments, setEmployments] = React.useState([]);
   const [vehicles, setVehicles] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
@@ -26,6 +34,10 @@ export function ControllerControlDetails({
   const [isReportingInfractions, setIsReportingInfractions] = React.useState(
     false
   );
+  const [
+    reportedInfractionsLastUpdateTime,
+    setReportedInfractionsLastUpdateTime
+  ] = React.useState(controlData.reportedInfractionsLastUpdateTime);
   const [reportedInfractions, setReportedInfractions] = React.useState([]);
   const groupedAlerts = React.useMemo(
     () =>
@@ -42,9 +54,36 @@ export function ControllerControlDetails({
     setReportedInfractions(controlData.reportedInfractions);
   }, [controlData.reportedInfractions]);
 
-  const saveInfractions = () => {
-    console.log("saving infractions", reportedInfractions);
-    setIsReportingInfractions(false);
+  const saveInfractions = async () => {
+    withLoadingScreen(async () => {
+      try {
+        const apiResponse = await api.graphQlMutate(
+          CONTROLLER_SAVE_REPORTED_INFRACTIONS,
+          {
+            controlId: controlData?.id,
+            reportedInfractions: reportedInfractions.map(
+              ({ date, sanction }) => ({
+                date,
+                sanction
+              })
+            )
+          },
+          { context: { nonPublicApi: true } }
+        );
+        const {
+          reportedInfractionsLastUpdateTime
+        } = apiResponse.data.controllerSaveReportedInfractions;
+        setReportedInfractionsLastUpdateTime(reportedInfractionsLastUpdateTime);
+        alerts.success(
+          "Les infractions relevées ont été enregistrées",
+          "",
+          3000
+        );
+        setIsReportingInfractions(false);
+      } catch (err) {
+        alerts.error(formatApiError(err), "", 6000);
+      }
+    });
   };
   const cancelInfractions = () => {
     setReportedInfractions(controlData.reportedInfractions);
@@ -133,6 +172,7 @@ export function ControllerControlDetails({
       vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
       openBulletinControl={() => setIsEditingBC(true)}
       controlData={controlData}
+      reportedInfractionsLastUpdateTime={reportedInfractionsLastUpdateTime}
       isReportingInfractions={isReportingInfractions}
       setIsReportingInfractions={setIsReportingInfractions}
       setReportedInfractions={setReportedInfractions}

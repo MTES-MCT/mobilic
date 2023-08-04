@@ -97,7 +97,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
                   cancelInfractions={props.cancelInfractions}
                   setReportedInfractions={props.setReportedInfractions}
                   reportedInfractionsLastUpdateTime={
-                    props.controlData?.reportedInfractionsLastUpdateTime
+                    props.reportedInfractionsLastUpdateTime
                   }
                 />
               }

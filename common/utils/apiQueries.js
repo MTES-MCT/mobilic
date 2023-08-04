@@ -1992,6 +1992,24 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
   }
 `;
 
+export const CONTROLLER_SAVE_REPORTED_INFRACTIONS = gql`
+  mutation controllerSaveReportedInfractions(
+    $controlId: Int
+    $reportedInfractions: [ReportedInfractionInput]
+  ) {
+    controllerSaveReportedInfractions(
+      controlId: $controlId
+      reportedInfractions: $reportedInfractions
+    ) {
+      reportedInfractions {
+        sanction
+        date
+      }
+      reportedInfractionsLastUpdateTime
+    }
+  }
+`;
+
 export const CONTROLLER_USER_CONTROLS_QUERY = gql`
   ${CONTROL_DATA_FRAGMENT}
   query controllerUser(
