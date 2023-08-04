@@ -16,6 +16,7 @@ import { useLoadingScreen } from "common/utils/loading";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 import { CONTROLLER_SAVE_REPORTED_INFRACTIONS } from "common/utils/apiQueries";
+import { useModals } from "common/utils/modals";
 
 export function ControllerControlDetails({
   controlData,
@@ -25,6 +26,7 @@ export function ControllerControlDetails({
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
+  const modals = useModals();
   const [employments, setEmployments] = React.useState([]);
   const [vehicles, setVehicles] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
@@ -86,8 +88,14 @@ export function ControllerControlDetails({
     });
   };
   const cancelInfractions = () => {
-    setReportedInfractions(controlData.reportedInfractions);
-    setIsReportingInfractions(false);
+    modals.open("confirmationCancelControlBulletinModal", {
+      confirmButtonLabel: "Revenir à mes modifications",
+      handleCancel: () => {
+        setReportedInfractions(controlData.reportedInfractions);
+        setIsReportingInfractions(false);
+      },
+      handleConfirm: () => {}
+    });
   };
 
   // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
