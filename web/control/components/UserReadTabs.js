@@ -95,10 +95,11 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
                   isReportingInfractions={props.isReportingInfractions}
                   saveInfractions={props.saveInfractions}
                   cancelInfractions={props.cancelInfractions}
-                  setReportedInfractions={props.setReportedInfractions}
+                  onUpdateInfraction={props.onUpdateInfraction}
                   reportedInfractionsLastUpdateTime={
                     props.reportedInfractionsLastUpdateTime
                   }
+                  hasModifiedInfractions={props.hasModifiedInfractions}
                   readOnlyAlerts={props.readOnlyAlerts}
                 />
               }
@@ -113,7 +114,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
           editBDC={props.openBulletinControl}
           downloadBDC={downloadBDC}
           canDownloadBDC={canDownloadBDC(props.controlData)}
-          BDCAlreadyExisting={!!props.controlData.controlBulletinCreationTime}
+          bdcAlreadyExisting={!!props.controlData.controlBulletinCreationTime}
         />
       )}
     </>

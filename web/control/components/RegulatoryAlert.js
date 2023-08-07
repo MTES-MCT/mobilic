@@ -2,12 +2,12 @@ import React from "react";
 import mapValues from "lodash/mapValues";
 import {
   formatMinutesFromSeconds,
-  getStartOfDay,
   formatTimer,
   isoFormatLocalDate,
   prettyFormatMonth,
   textualPrettyFormatDayHour,
-  textualPrettyFormatWeek
+  textualPrettyFormatWeek,
+  jsToUnixTimestamp
 } from "common/utils/time";
 import { Link } from "../../common/LinkButton";
 import { ALERT_TYPES } from "common/utils/regulation/alertTypes";
@@ -21,7 +21,7 @@ function formatAlertPeriod(alert, type) {
   switch (type) {
     case ALERT_TYPES.minimumDailyRest: {
       return textualPrettyFormatDayHour(
-        new Date(alert.extra.breach_period_end) / 1000
+        jsToUnixTimestamp(new Date(alert.extra.breach_period_end).getTime())
       );
     }
     case ALERT_TYPES.maximumWorkedDaysInWeek: {
@@ -29,13 +29,15 @@ function formatAlertPeriod(alert, type) {
     }
     case ALERT_TYPES.maximumUninterruptedWorkTime: {
       return textualPrettyFormatDayHour(
-        new Date(alert.extra.longest_uninterrupted_work_end) / 1000
+        jsToUnixTimestamp(
+          new Date(alert.extra.longest_uninterrupted_work_end).getTime()
+        )
       );
     }
     case ALERT_TYPES.minimumWorkDayBreak:
     case ALERT_TYPES.maximumWorkDayTime: {
       return textualPrettyFormatDayHour(
-        new Date(alert.extra.work_range_end) / 1000
+        jsToUnixTimestamp(new Date(alert.extra.work_range_end).getTime())
       );
     }
     default: {
@@ -61,22 +63,26 @@ function formatAlertText(alert, type) {
       const tooManyDays = alert.extra.too_many_days;
       return (
         <span>
-          Durée du repos hebdo : <b>{formatTimer(maxBreakLengthInSeconds)}</b>
-          {tooManyDays && (
+          {maxBreakLengthInSeconds && (
             <>
-              <br /> Trop de jours travaillés dans la semaine
+              Durée du repos hebdo :{" "}
+              <b>{formatTimer(maxBreakLengthInSeconds)}</b>
+              <br />
             </>
+          )}
+          {tooManyDays && (
+            <>La semaine ne comporte aucune journée non travaillée</>
           )}
         </span>
       );
     }
     case ALERT_TYPES.maximumUninterruptedWorkTime: {
-      const uninterrumptedWorkTime =
+      const uninterruptedWorkTime =
         alert.extra.longest_uninterrupted_work_in_seconds;
       return (
         <span>
           Durée du temps de service depuis le dernier repos quotidien :{" "}
-          <b>{formatTimer(uninterrumptedWorkTime)}</b>
+          <b>{formatTimer(uninterruptedWorkTime)}</b>
         </span>
       );
     }
@@ -106,7 +112,7 @@ function formatAlertText(alert, type) {
   }
 }
 
-const isNatinf = alert => alert.extra?.sanction_code.includes("NATINF");
+const isReportable = alert => alert.extra?.sanction_code.includes("NATINF");
 
 export function RegulatoryAlert({
   alert,
@@ -114,34 +120,22 @@ export function RegulatoryAlert({
   setPeriodOnFocus,
   setTab,
   isReportingInfractions,
-  setReportedInfractions,
+  onUpdateInfraction,
   readOnlyAlerts
 }) {
   return (
     <Stack direction="row" spacing={2} alignItems="baseline" flexWrap="wrap">
-      {!readOnlyAlerts && isNatinf(alert) && (
+      {!readOnlyAlerts && isReportable(alert) && (
         <Checkbox
           checked={alert.checked}
           disabled={!isReportingInfractions}
           onChange={e => {
             const alertDate = alert.day || alert.week || alert.month;
-            if (e.target.checked) {
-              setReportedInfractions(curr => [
-                ...curr,
-                {
-                  sanction: alert.extra?.sanction_code,
-                  date: alertDate
-                }
-              ]);
-            } else {
-              setReportedInfractions(curr => {
-                return curr.filter(
-                  infraction =>
-                    infraction.sanction !== alert.extra?.sanction_code ||
-                    getStartOfDay(infraction.date) !== getStartOfDay(alertDate)
-                );
-              });
-            }
+            onUpdateInfraction(
+              alert.extra?.sanction_code,
+              alertDate,
+              e.target.checked
+            );
           }}
         />
       )}

@@ -5,7 +5,7 @@ import {
   augmentAndSortMissions,
   parseMissionPayloadFromBackend
 } from "common/utils/mission";
-import { unixToJSTimestamp } from "common/utils/time";
+import { getStartOfDay, unixToJSTimestamp } from "common/utils/time";
 import { orderEmployments } from "common/utils/employments";
 import { ControllerControlHeader } from "./ControllerControlHeader";
 import _ from "lodash";
@@ -34,6 +34,9 @@ export function ControllerControlDetails({
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
   const [isEditingBC, setIsEditingBC] = React.useState(false);
   const [isReportingInfractions, setIsReportingInfractions] = React.useState(
+    false
+  );
+  const [hasModifiedInfractions, setHasModifiedInfractions] = React.useState(
     false
   );
   const [
@@ -87,15 +90,44 @@ export function ControllerControlDetails({
       }
     });
   };
+
+  const onCloseInfractions = () => {
+    setReportedInfractions(controlData.reportedInfractions);
+    setIsReportingInfractions(false);
+  };
   const cancelInfractions = () => {
-    modals.open("confirmationCancelControlBulletinModal", {
-      confirmButtonLabel: "Revenir à mes modifications",
-      handleCancel: () => {
-        setReportedInfractions(controlData.reportedInfractions);
-        setIsReportingInfractions(false);
-      },
-      handleConfirm: () => {}
-    });
+    if (hasModifiedInfractions) {
+      modals.open("confirmationCancelControlBulletinModal", {
+        confirmButtonLabel: "Revenir à mes modifications",
+        handleCancel: () => {
+          onCloseInfractions();
+        },
+        handleConfirm: () => {}
+      });
+    } else {
+      onCloseInfractions();
+    }
+  };
+
+  const onUpdateInfraction = (sanction, date, checked) => {
+    if (checked) {
+      setReportedInfractions(curr => [
+        ...curr,
+        {
+          sanction,
+          date
+        }
+      ]);
+    } else {
+      setReportedInfractions(curr => {
+        return curr.filter(
+          infraction =>
+            infraction.sanction !== sanction ||
+            getStartOfDay(infraction.date) !== getStartOfDay(date)
+        );
+      });
+    }
+    setHasModifiedInfractions(true);
   };
 
   // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
@@ -146,11 +178,13 @@ export function ControllerControlDetails({
 
   const alertsNumber = React.useMemo(
     () =>
-      groupedAlerts.reduce(
-        (curr, alertsGroup) =>
-          curr + alertsGroup.alerts.filter(alert => alert.checked).length,
-        0
-      ),
+      groupedAlerts
+        ? groupedAlerts.reduce(
+            (curr, alertsGroup) =>
+              curr + alertsGroup.alerts.filter(alert => alert.checked).length,
+            0
+          )
+        : 0,
     [groupedAlerts]
   );
 
@@ -183,10 +217,11 @@ export function ControllerControlDetails({
       reportedInfractionsLastUpdateTime={reportedInfractionsLastUpdateTime}
       isReportingInfractions={isReportingInfractions}
       setIsReportingInfractions={setIsReportingInfractions}
-      setReportedInfractions={setReportedInfractions}
       groupedAlerts={groupedAlerts}
       saveInfractions={saveInfractions}
       cancelInfractions={cancelInfractions}
+      onUpdateInfraction={onUpdateInfraction}
+      hasModifiedInfractions={hasModifiedInfractions}
       readOnlyAlerts={false}
     />,
     <ControlBulletinDrawer

@@ -7,8 +7,9 @@ import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
 import { AlertGroup } from "./AlertGroup";
-import { SubmitCancelButtons } from "../../common/SubmitCancelButtons";
 import { prettyFormatDayHour } from "common/utils/time";
+import Stack from "@mui/material/Stack";
+import { Button } from "@dataesr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -20,7 +21,8 @@ const useStyles = makeStyles(theme => ({
   },
   italicInfo: {
     fontStyle: "italic",
-    color: theme.palette.grey[600]
+    color: theme.palette.grey[600],
+    marginTop: theme.spacing(2)
   },
   subtitle: {
     color: theme.palette.grey[600]
@@ -41,7 +43,8 @@ export function UserReadAlerts({
   isReportingInfractions,
   saveInfractions,
   cancelInfractions,
-  setReportedInfractions,
+  onUpdateInfraction,
+  hasModifiedInfractions,
   reportedInfractionsLastUpdateTime,
   readOnlyAlerts
 }) {
@@ -84,7 +87,7 @@ export function UserReadAlerts({
                   setPeriodOnFocus={setPeriodOnFocus}
                   setTab={setTab}
                   isReportingInfractions={isReportingInfractions}
-                  setReportedInfractions={setReportedInfractions}
+                  onUpdateInfraction={onUpdateInfraction}
                   readOnlyAlerts={readOnlyAlerts}
                 />
               </ListItem>
@@ -97,10 +100,23 @@ export function UserReadAlerts({
       )}
       <Divider className={`hr-unstyled ${classes.divider}`} />
       {isReportingInfractions ? (
-        <SubmitCancelButtons
-          onSubmit={saveInfractions}
-          onCancel={cancelInfractions}
-        />
+        <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
+          <Button
+            title="Enregistrer"
+            onClick={() => saveInfractions()}
+            disabled={!hasModifiedInfractions}
+          >
+            Enregistrer
+          </Button>
+          <Button
+            title="Annuler"
+            onClick={() => cancelInfractions()}
+            secondary
+            disabled={!hasModifiedInfractions}
+          >
+            Annuler
+          </Button>
+        </Stack>
       ) : (
         <Alert severity="warning">
           <Typography gutterBottom>

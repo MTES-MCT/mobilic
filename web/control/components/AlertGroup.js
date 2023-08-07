@@ -60,7 +60,7 @@ export function AlertGroup({
   setPeriodOnFocus,
   setTab,
   isReportingInfractions,
-  setReportedInfractions,
+  onUpdateInfraction,
   readOnlyAlerts
 }) {
   const [open, setOpen] = React.useState(false);
@@ -111,7 +111,7 @@ export function AlertGroup({
                 setPeriodOnFocus={setPeriodOnFocus}
                 setTab={setTab}
                 isReportingInfractions={isReportingInfractions}
-                setReportedInfractions={setReportedInfractions}
+                onUpdateInfraction={onUpdateInfraction}
                 readOnlyAlerts={readOnlyAlerts}
               />
             </ListItem>
