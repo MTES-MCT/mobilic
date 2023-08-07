@@ -162,13 +162,6 @@ export function prettyFormatDayHour(unixTimestamp) {
   )}`;
 }
 
-export function formatTimeFromSeconds(seconds) {
-  const hours = Math.floor(seconds / HOUR);
-  const remainingSeconds = Math.floor(seconds % HOUR);
-  const minutes = Math.floor(remainingSeconds / MINUTE);
-  return `${hours}h${addZero(minutes)}`;
-}
-
 export function formatMinutesFromSeconds(seconds) {
   return `${Math.floor(seconds / MINUTE)}m`;
 }

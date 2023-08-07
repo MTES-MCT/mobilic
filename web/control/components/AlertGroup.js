@@ -44,14 +44,6 @@ const useStyles = makeStyles(theme => {
   };
 });
 
-const getLabel = (label, sanction) =>
-  sanction === "NATINF 32083" ? label.replace("quotidien", "de nuit") : label;
-
-const getDescription = (description, sanction) =>
-  sanction === "NATINF 32083"
-    ? `${description}. Si une partie du travail de la journée s'effectue entre minuit et 5 heures, la durée maximale du travail est réduite à 10 heures`
-    : description;
-
 const getAlertsNumber = (alerts, isReportingInfractions, readOnlyAlerts) =>
   readOnlyAlerts
     ? alerts.length
@@ -99,9 +91,7 @@ export function AlertGroup({
             <Typography className="bold" color="primary">
               {sanction}
             </Typography>
-            <Typography className="bold">
-              {getLabel(infringementLabel, sanction)}
-            </Typography>
+            <Typography className="bold">{infringementLabel}</Typography>
           </Grid>
           {alertsNumber !== 0 && (
             <Grid item>
@@ -111,9 +101,7 @@ export function AlertGroup({
         </Grid>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
-        <Typography className={classes.description}>
-          {getDescription(description, sanction)}
-        </Typography>
+        <Typography className={classes.description}>{description}</Typography>
         <List>
           {alerts.map((a, index) => (
             <ListItem key={index} disableGutters>
