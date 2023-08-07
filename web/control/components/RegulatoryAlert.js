@@ -2,7 +2,7 @@ import React from "react";
 import mapValues from "lodash/mapValues";
 import {
   formatMinutesFromSeconds,
-  formatTimeFromSeconds,
+  formatTimer,
   isoFormatLocalDate,
   prettyFormatMonth,
   textualPrettyFormatDayHour,
@@ -49,7 +49,7 @@ function formatAlertText(alert, type) {
       return (
         <span>
           Durée du repos le plus long sur les 24 dernières heures :{" "}
-          <b>{formatTimeFromSeconds(maxBreakLengthInSeconds)}</b>
+          <b>{formatTimer(maxBreakLengthInSeconds)}</b>
         </span>
       );
     }
@@ -58,8 +58,7 @@ function formatAlertText(alert, type) {
       const tooManyDays = alert.extra.too_many_days;
       return (
         <span>
-          Durée du repos hebdo :{" "}
-          <b>{formatTimeFromSeconds(maxBreakLengthInSeconds)}</b>
+          Durée du repos hebdo : <b>{formatTimer(maxBreakLengthInSeconds)}</b>
           {tooManyDays && (
             <>
               <br /> Trop de jours travaillés dans la semaine
@@ -74,7 +73,7 @@ function formatAlertText(alert, type) {
       return (
         <span>
           Durée du temps de service depuis le dernier repos quotidien :{" "}
-          <b>{formatTimeFromSeconds(uninterrumptedWorkTime)}</b>
+          <b>{formatTimer(uninterrumptedWorkTime)}</b>
         </span>
       );
     }
@@ -85,7 +84,7 @@ function formatAlertText(alert, type) {
         <span>
           Durée du temps de pause :{" "}
           <b>{formatMinutesFromSeconds(breakTimeInSeconds)}</b> pour une période
-          de travail de <b>{formatTimeFromSeconds(workTimeInSeconds)}</b>
+          de travail de <b>{formatTimer(workTimeInSeconds)}</b>
         </span>
       );
     }
@@ -95,7 +94,7 @@ function formatAlertText(alert, type) {
       return (
         <span>
           Durée de travail {nightWork ? " (travail de nuit)" : ""} :{" "}
-          <b>{formatTimeFromSeconds(workTime)}</b>
+          <b>{formatTimer(workTime)}</b>
         </span>
       );
     }
