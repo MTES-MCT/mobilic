@@ -44,7 +44,7 @@ export function getTabs(alertNumber) {
           badgeContent={alertNumber || 0}
           color={alertNumber ? "error" : "success"}
         >
-          Alertes
+          Infractions
         </TextWithBadge>
       ),
       icon: <WarningAmberOutlinedIcon />,

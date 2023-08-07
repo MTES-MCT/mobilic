@@ -1,9 +1,7 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
-import Box from "@mui/material/Box";
 import { makeStyles } from "@mui/styles";
-import { Link } from "../../common/LinkButton";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
@@ -42,17 +40,28 @@ export function UserReadAlerts({
 
   return (
     <Container maxWidth="md" className={classes.container}>
+      <Alert severity="info">
+        <Typography gutterBottom>
+          Les infractions calculées par Mobilic se basent sur la version validée
+          par le gestionnaire, ou, si elle n’a pas été faite au moment du
+          contrôle, sur celle du salarié.
+        </Typography>
+      </Alert>
       {newVersionGroupedAlerts.length > 0 ? (
         <List>
-          {newVersionGroupedAlerts.map(group => (
-            <ListItem key={group.infringementLabel} disableGutters>
-              <AlertGroup
-                {...group}
-                setPeriodOnFocus={setPeriodOnFocus}
-                setTab={setTab}
-              />
-            </ListItem>
-          ))}
+          {newVersionGroupedAlerts
+            .sort((alert1, alert2) =>
+              alert1.sanction.localeCompare(alert2.sanction)
+            )
+            .map(group => (
+              <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
+                <AlertGroup
+                  {...group}
+                  setPeriodOnFocus={setPeriodOnFocus}
+                  setTab={setTab}
+                />
+              </ListItem>
+            ))}
         </List>
       ) : (
         <Typography className={classes.italicInfo}>
@@ -72,18 +81,6 @@ export function UserReadAlerts({
           substituer à lui.
         </Typography>
       </Alert>
-      <Box className={classes.linkContainer}>
-        <Link
-          color="primary"
-          variant="body1"
-          onClick={e => {
-            e.preventDefault();
-            setTab("history");
-          }}
-        >
-          Voir l'historique
-        </Link>
-      </Box>
     </Container>
   );
 }
