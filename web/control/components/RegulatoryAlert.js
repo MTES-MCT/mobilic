@@ -12,7 +12,7 @@ import {
 import { Link } from "../../common/LinkButton";
 import { ALERT_TYPES } from "common/utils/regulation/alertTypes";
 import Stack from "@mui/material/Stack";
-import Checkbox from "@mui/material/Checkbox";
+import { Checkbox } from "@dataesr/react-dsfr";
 
 function formatAlertPeriod(alert, type) {
   if (alert.month) {
@@ -119,7 +119,7 @@ export function RegulatoryAlert({
   readOnlyAlerts
 }) {
   return (
-    <Stack direction="row" spacing={2} alignItems="flex-start" flexWrap="wrap">
+    <Stack direction="row" spacing={2} alignItems="baseline" flexWrap="wrap">
       {!readOnlyAlerts && isNatinf(alert) && (
         <Checkbox
           checked={alert.checked}
