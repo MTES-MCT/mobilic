@@ -3,6 +3,7 @@ import { Autocomplete } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import React from "react";
 import Box from "@mui/material/Box";
+import { createFilterOptions } from "@mui/material/Autocomplete";
 
 export function DsfrAutocomplete({
   field,
@@ -12,6 +13,9 @@ export function DsfrAutocomplete({
   showErrors,
   options
 }) {
+  const filterOptions = createFilterOptions({
+    matchFrom: "start"
+  });
   return (
     <Box mb={"1.5rem"}>
       <Typography
@@ -28,6 +32,7 @@ export function DsfrAutocomplete({
         value={field || ""}
         options={options}
         onChange={onChange}
+        filterOptions={filterOptions}
         renderInput={params => (
           <TextField
             {...params}
