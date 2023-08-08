@@ -112,11 +112,11 @@ function formatAlertText(alert, type) {
   }
 }
 
-const isReportable = alert => alert.extra?.sanction_code.includes("NATINF");
-
 export function RegulatoryAlert({
   alert,
   type,
+  sanction,
+  isReportable,
   setPeriodOnFocus,
   setTab,
   isReportingInfractions,
@@ -125,17 +125,13 @@ export function RegulatoryAlert({
 }) {
   return (
     <Stack direction="row" spacing={2} alignItems="baseline" flexWrap="wrap">
-      {!readOnlyAlerts && isReportable(alert) && (
+      {!readOnlyAlerts && isReportable && (
         <Checkbox
           checked={alert.checked}
           disabled={!isReportingInfractions}
           onChange={e => {
             const alertDate = alert.day || alert.week || alert.month;
-            onUpdateInfraction(
-              alert.extra?.sanction_code,
-              alertDate,
-              e.target.checked
-            );
+            onUpdateInfraction(sanction, alertDate, e.target.checked);
           }}
         />
       )}
