@@ -59,6 +59,12 @@ export function ControllerControlDetails({
     setReportedInfractions(controlData.reportedInfractions);
   }, [controlData.reportedInfractions]);
 
+  React.useEffect(() => {
+    setReportedInfractionsLastUpdateTime(
+      controlData.reportedInfractionsLastUpdateTime
+    );
+  }, [controlData.reportedInfractionsLastUpdateTime]);
+
   const saveInfractions = async () => {
     withLoadingScreen(async () => {
       try {
