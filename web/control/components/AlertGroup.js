@@ -25,9 +25,8 @@ const useStyles = makeStyles(theme => {
     },
     alertNumber: {
       display: "inline-flex",
-      fontSisze: "120%",
+      whiteSpace: "pre",
       borderRadius: theme.spacing(1.5),
-      backgroundColor: theme.palette.error.main,
       color: "white",
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(1),
@@ -37,12 +36,32 @@ const useStyles = makeStyles(theme => {
       justifyContent: "center",
       fontWeight: "bold"
     },
+    reportableAlert: {
+      backgroundColor: theme.palette.error.main
+    },
+    notReportableAlert: {
+      backgroundColor: theme.palette.warning.main
+    },
     description: {
       fontStyle: "italic",
       color: theme.palette.grey[600]
     }
   };
 });
+
+const getAlertsNumber = (
+  alerts,
+  isSanctionReportable,
+  isReportingInfractions,
+  readOnlyAlerts
+) =>
+  readOnlyAlerts || !isSanctionReportable
+    ? alerts.length
+    : isReportingInfractions
+    ? `${alerts.filter(alert => alert.checked).length} / ${alerts.length}`
+    : alerts.filter(alert => alert.checked).length;
+
+const isReportable = sanction => sanction.includes("NATINF");
 
 export function AlertGroup({
   alerts,
@@ -51,10 +70,22 @@ export function AlertGroup({
   type,
   sanction,
   setPeriodOnFocus,
-  setTab
+  setTab,
+  isReportingInfractions,
+  onUpdateInfraction,
+  readOnlyAlerts
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
+
+  const isSanctionReportable = isReportable(sanction);
+
+  const alertsNumber = getAlertsNumber(
+    alerts,
+    isSanctionReportable,
+    isReportingInfractions,
+    readOnlyAlerts
+  );
 
   return (
     <Accordion
@@ -77,21 +108,36 @@ export function AlertGroup({
             </Typography>
             <Typography className="bold">{infringementLabel}</Typography>
           </Grid>
-          <Grid item>
-            <span className={classes.alertNumber}>{alerts.length}</span>
-          </Grid>
+          {alertsNumber !== 0 && (
+            <Grid item>
+              <span
+                className={`${classes.alertNumber} ${
+                  isSanctionReportable
+                    ? classes.reportableAlert
+                    : classes.notReportableAlert
+                }`}
+              >
+                {alertsNumber}
+              </span>
+            </Grid>
+          )}
         </Grid>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
         <Typography className={classes.description}>{description}</Typography>
         <List>
-          {alerts.map((a, index) => (
+          {alerts.map((alert, index) => (
             <ListItem key={index} disableGutters>
               <RegulatoryAlert
-                alert={a}
+                alert={alert}
                 type={type}
+                sanction={sanction}
+                isReportable={isSanctionReportable}
                 setPeriodOnFocus={setPeriodOnFocus}
                 setTab={setTab}
+                isReportingInfractions={isReportingInfractions}
+                onUpdateInfraction={onUpdateInfraction}
+                readOnlyAlerts={readOnlyAlerts}
               />
             </ListItem>
           ))}

@@ -14,17 +14,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ControllerControlBottomMenu({
-  reportInfraction,
+  reportInfractions,
   updatedInfractions,
+  disabledReportInfractions,
   editBDC,
   downloadBDC,
   canDownloadBDC,
-  BDCAlreadyExisting
+  bdcAlreadyExisting
 }) {
   const classes = useStyles();
   return (
     <Stack direction="column" spacing={2} mt={2} alignItems="center">
-      {BDCAlreadyExisting ? (
+      {bdcAlreadyExisting ? (
         <Button
           color="primary"
           variant="contained"
@@ -45,21 +46,21 @@ export function ControllerControlBottomMenu({
           éditer un bulletin de contrôle
         </Button>
       )}
-      {reportInfraction && (
+      {reportInfractions && (
         <Button
           color="primary"
           variant="outlined"
           size="small"
           startIcon={<EditIcon />}
-          onClick={reportInfraction}
-          disabled
+          onClick={reportInfractions}
+          disabled={disabledReportInfractions}
         >
           {updatedInfractions
-            ? "Modifier l'infraction retenue"
-            : "Relever l'infraction"}
+            ? "Modifier les infractions retenues"
+            : "Relever les infractions"}
         </Button>
       )}
-      {BDCAlreadyExisting && (
+      {bdcAlreadyExisting && (
         <Button variant="text" className={classes.textButton} onClick={editBDC}>
           Modifier le bulletin de contrôle
         </Button>

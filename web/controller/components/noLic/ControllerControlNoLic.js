@@ -172,8 +172,9 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
       {!isReportingInfractions && (
         <>
           <BottomMenu
-            reportInfraction={reportInfraction}
+            reportInfractions={reportInfraction}
             updatedInfractions={!!lastInfractionsEditionDate}
+            disableReportInfractions={false}
             editBDC={editBDC}
             downloadBDC={downloadBDC}
             canDownloadBDC={canDownloadBDC(controlData)}

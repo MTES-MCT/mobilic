@@ -459,6 +459,11 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       regulationComputationsByDay {
         ...RegulationComputations
       }
+      reportedInfractions {
+        sanction
+        date
+      }
+      reportedInfractionsLastUpdateTime
     }
   }
 `;
@@ -1983,6 +1988,24 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
       controlBulletin {
         ...ControlBulletin
       }
+    }
+  }
+`;
+
+export const CONTROLLER_SAVE_REPORTED_INFRACTIONS = gql`
+  mutation controllerSaveReportedInfractions(
+    $controlId: Int
+    $reportedInfractions: [ReportedInfractionInput]
+  ) {
+    controllerSaveReportedInfractions(
+      controlId: $controlId
+      reportedInfractions: $reportedInfractions
+    ) {
+      reportedInfractions {
+        sanction
+        date
+      }
+      reportedInfractionsLastUpdateTime
     }
   }
 `;

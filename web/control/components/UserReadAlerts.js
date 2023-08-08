@@ -7,7 +7,9 @@ import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
 import { AlertGroup } from "./AlertGroup";
-import { getAlertsGroupedByDay } from "common/utils/regulation/groupAlertsByDay";
+import { prettyFormatDayHour } from "common/utils/time";
+import Stack from "@mui/material/Stack";
+import { Button } from "@dataesr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -19,7 +21,14 @@ const useStyles = makeStyles(theme => ({
   },
   italicInfo: {
     fontStyle: "italic",
+    color: theme.palette.grey[600],
+    marginTop: theme.spacing(2)
+  },
+  subtitle: {
     color: theme.palette.grey[600]
+  },
+  helpText: {
+    fontWeight: "bold"
   },
   divider: {
     marginTop: theme.spacing(4),
@@ -29,17 +38,35 @@ const useStyles = makeStyles(theme => ({
 
 export function UserReadAlerts({
   setTab,
+  groupedAlerts,
   setPeriodOnFocus,
-  regulationComputationsByDay
+  isReportingInfractions,
+  saveInfractions,
+  cancelInfractions,
+  onUpdateInfraction,
+  hasModifiedInfractions,
+  reportedInfractionsLastUpdateTime,
+  readOnlyAlerts
 }) {
   const classes = useStyles();
 
-  const newVersionGroupedAlerts = getAlertsGroupedByDay(
-    regulationComputationsByDay
-  );
-
   return (
     <Container maxWidth="md" className={classes.container}>
+      {isReportingInfractions && (
+        <Typography className={classes.helpText}>
+          Sélectionnez la ou les infractions que vous souhaitez verbaliser
+        </Typography>
+      )}
+      {!isReportingInfractions && reportedInfractionsLastUpdateTime && (
+        <Typography className={classes.helpText}>
+          {`Date de la dernière modification des infractions retenues : ${prettyFormatDayHour(
+            reportedInfractionsLastUpdateTime
+          )}`}
+        </Typography>
+      )}
+      <Typography align="left" className={classes.subtitle} variant="overline">
+        Infractions calculées par Mobilic
+      </Typography>{" "}
       <Alert severity="info">
         <Typography gutterBottom>
           Les infractions calculées par Mobilic se basent sur la version validée
@@ -47,9 +74,9 @@ export function UserReadAlerts({
           contrôle, sur celle du salarié.
         </Typography>
       </Alert>
-      {newVersionGroupedAlerts.length > 0 ? (
+      {groupedAlerts?.length > 0 ? (
         <List>
-          {newVersionGroupedAlerts
+          {groupedAlerts
             .sort((alert1, alert2) =>
               alert1.sanction.localeCompare(alert2.sanction)
             )
@@ -59,6 +86,9 @@ export function UserReadAlerts({
                   {...group}
                   setPeriodOnFocus={setPeriodOnFocus}
                   setTab={setTab}
+                  isReportingInfractions={isReportingInfractions}
+                  onUpdateInfraction={onUpdateInfraction}
+                  readOnlyAlerts={readOnlyAlerts}
                 />
               </ListItem>
             ))}
@@ -69,18 +99,38 @@ export function UserReadAlerts({
         </Typography>
       )}
       <Divider className={`hr-unstyled ${classes.divider}`} />
-      <Alert severity="warning">
-        <Typography gutterBottom>
-          Les données collectées par Mobilic sont déclaratives et sont donc
-          susceptibles d'erreurs ou d'oublis. En cas de données manquantes ou
-          inexactes les alertes réglementaires ne peuvent pas être remontées
-          correctement.
-        </Typography>
-        <Typography>
-          Mobilic sert à faciliter le travail d'enquête des inspecteurs sans se
-          substituer à lui.
-        </Typography>
-      </Alert>
+      {isReportingInfractions ? (
+        <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
+          <Button
+            title="Enregistrer"
+            onClick={() => saveInfractions()}
+            disabled={!hasModifiedInfractions}
+          >
+            Enregistrer
+          </Button>
+          <Button
+            title="Annuler"
+            onClick={() => cancelInfractions()}
+            secondary
+            disabled={!hasModifiedInfractions}
+          >
+            Annuler
+          </Button>
+        </Stack>
+      ) : (
+        <Alert severity="warning">
+          <Typography gutterBottom>
+            Les données collectées par Mobilic sont déclaratives et sont donc
+            susceptibles d'erreurs ou d'oublis. En cas de données manquantes ou
+            inexactes les alertes réglementaires ne peuvent pas être remontées
+            correctement.
+          </Typography>
+          <Typography>
+            Mobilic sert à faciliter le travail d'enquête des inspecteurs sans
+            se substituer à lui.
+          </Typography>
+        </Alert>
+      )}
     </Container>
   );
 }

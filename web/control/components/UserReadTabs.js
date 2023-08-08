@@ -6,6 +6,10 @@ import AppBar from "@mui/material/AppBar";
 import TabPanel from "@mui/lab/TabPanel";
 import TabContext from "@mui/lab/TabContext";
 import Container from "@mui/material/Container";
+import { ControllerControlBottomMenu } from "../../controller/components/menu/ControllerControlBottomMenu";
+import { currentControllerId } from "common/utils/cookie";
+import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
+import { canDownloadBDC } from "../../controller/utils/controlBulletin";
 
 const useStyles = makeStyles(theme => ({
   sectionBody: {
@@ -40,6 +44,13 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
     if (restoreScroll) restoreScroll();
   }, [tab]);
 
+  const reportInfractions = () => {
+    props.setIsReportingInfractions(true);
+    setTab(tabs[1].name);
+  };
+
+  const downloadBDC = useDownloadBDC(props.controlData?.id);
+
   const classes = useStyles();
   return (
     <>
@@ -63,6 +74,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
                 value={t.name}
                 key={t.name}
                 icon={t.icon}
+                disabled={t.name !== "alerts" && props.isReportingInfractions}
               />
             ))}
           </Tabs>
@@ -75,11 +87,37 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
               className={`${classes.panel} ${tab !== t.name &&
                 classes.hiddenPanel}`}
             >
-              {<t.component {...props} setTab={setTab} />}
+              {
+                <t.component
+                  {...props}
+                  setTab={setTab}
+                  groupedAlerts={props.groupedAlerts}
+                  isReportingInfractions={props.isReportingInfractions}
+                  saveInfractions={props.saveInfractions}
+                  cancelInfractions={props.cancelInfractions}
+                  onUpdateInfraction={props.onUpdateInfraction}
+                  reportedInfractionsLastUpdateTime={
+                    props.reportedInfractionsLastUpdateTime
+                  }
+                  hasModifiedInfractions={props.hasModifiedInfractions}
+                  readOnlyAlerts={props.readOnlyAlerts}
+                />
+              }
             </TabPanel>
           ))}
         </Container>
       </TabContext>
+      {!!currentControllerId() && !props.isReportingInfractions && (
+        <ControllerControlBottomMenu
+          reportInfractions={reportInfractions}
+          disabledReportInfractions={(props.groupedAlerts?.length || 0) === 0}
+          updatedInfractions={!!props.reportedInfractionsLastUpdateTime}
+          editBDC={props.openBulletinControl}
+          downloadBDC={downloadBDC}
+          canDownloadBDC={canDownloadBDC(props.controlData)}
+          bdcAlreadyExisting={!!props.controlData.controlBulletinCreationTime}
+        />
+      )}
     </>
   );
 }

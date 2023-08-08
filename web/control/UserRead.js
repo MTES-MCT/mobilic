@@ -28,6 +28,7 @@ import { TextWithBadge } from "../common/TextWithBadge";
 import { UserReadAlerts } from "./components/UserReadAlerts";
 import { getDaysBetweenTwoDates } from "common/utils/time";
 import { getRegulationComputationsAndAlertNumber } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
+import { getAlertsGroupedByDay } from "common/utils/regulation/groupAlertsByDay";
 
 export function getTabs(alertNumber) {
   return [
@@ -194,13 +195,18 @@ export function UserRead() {
     setAlertNumber(res.alertNumber);
   }, [userInfo]);
 
+  const groupedAlerts = React.useMemo(
+    () => getAlertsGroupedByDay(regulationComputationsByDay, []),
+    [regulationComputationsByDay]
+  );
+
   const TABS = getTabs(alertNumber);
 
   return [
-    <Header key={1} disableMenu />,
+    <Header key={0} disableMenu />,
     error ? (
-      <Container>
-        <Typography align="center" key={0} color="error">
+      <Container key={1}>
+        <Typography align="center" color="error">
           Impossible d'accéder à la page : {error}
         </Typography>
       </Container>
@@ -208,7 +214,6 @@ export function UserRead() {
       <UserReadTabs
         key={1}
         tabs={TABS}
-        alertNumber={alertNumber}
         userInfo={userInfo}
         tokenInfo={tokenInfo}
         controlTime={controlTime}
@@ -219,7 +224,8 @@ export function UserRead() {
         periodOnFocus={periodOnFocus}
         setPeriodOnFocus={setPeriodOnFocus}
         workingDaysNumber={workingDays.size}
-        regulationComputationsByDay={regulationComputationsByDay}
+        groupedAlerts={groupedAlerts}
+        readOnlyAlerts={true}
       />
     ) : null
   ];

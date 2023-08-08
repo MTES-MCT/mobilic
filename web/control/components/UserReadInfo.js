@@ -24,9 +24,6 @@ import BusinessIcon from "@mui/icons-material/Business";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Alert from "@mui/material/Alert";
 import { currentControllerId } from "common/utils/cookie";
-import { ControllerControlBottomMenu } from "../../controller/components/menu/ControllerControlBottomMenu";
-import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
-import { canDownloadBDC } from "../../controller/utils/controlBulletin";
 import { ControllerControlNote } from "../../controller/components/details/ControllerControlNote";
 
 const useStyles = makeStyles(theme => ({
@@ -64,7 +61,6 @@ export function UserReadInfo({
   allowC1BExport = true,
   companyName,
   vehicleRegistrationNumber,
-  openBulletinControl,
   controlData
 }) {
   const [userName, setUserName] = React.useState("");
@@ -80,8 +76,6 @@ export function UserReadInfo({
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const classes = useStyles();
-
-  const downloadBDC = useDownloadBDC(controlData.id);
 
   return (
     <Container maxWidth="md" className={classes.container}>
@@ -243,16 +237,6 @@ export function UserReadInfo({
             Télécharger C1B
           </LoadingButton>
         </Box>
-      )}
-      {!!currentControllerId() && (
-        <>
-          <ControllerControlBottomMenu
-            editBDC={openBulletinControl}
-            downloadBDC={downloadBDC}
-            canDownloadBDC={canDownloadBDC(controlData)}
-            BDCAlreadyExisting={!!controlData.controlBulletinCreationTime}
-          />
-        </>
       )}
     </Container>
   );

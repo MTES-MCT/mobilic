@@ -5,24 +5,136 @@ import {
   augmentAndSortMissions,
   parseMissionPayloadFromBackend
 } from "common/utils/mission";
-import { unixToJSTimestamp } from "common/utils/time";
+import { getStartOfDay, unixToJSTimestamp } from "common/utils/time";
 import { orderEmployments } from "common/utils/employments";
 import { ControllerControlHeader } from "./ControllerControlHeader";
 import _ from "lodash";
-import { computeNumberOfAlerts } from "common/utils/regulation/computeNumberOfAlerts";
 import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
+import { getAlertsGroupedByDay } from "common/utils/regulation/groupAlertsByDay";
+import { useApi } from "common/utils/api";
+import { useLoadingScreen } from "common/utils/loading";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
+import { formatApiError } from "common/utils/errors";
+import { CONTROLLER_SAVE_REPORTED_INFRACTIONS } from "common/utils/apiQueries";
+import { useModals } from "common/utils/modals";
 
 export function ControllerControlDetails({
   controlData,
   setControlData,
   onClose
 }) {
+  const api = useApi();
+  const withLoadingScreen = useLoadingScreen();
+  const alerts = useSnackbarAlerts();
+  const modals = useModals();
   const [employments, setEmployments] = React.useState([]);
   const [vehicles, setVehicles] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
   const [coworkers, setCoworkers] = React.useState([]);
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
   const [isEditingBC, setIsEditingBC] = React.useState(false);
+  const [isReportingInfractions, setIsReportingInfractions] = React.useState(
+    false
+  );
+  const [hasModifiedInfractions, setHasModifiedInfractions] = React.useState(
+    false
+  );
+  const [
+    reportedInfractionsLastUpdateTime,
+    setReportedInfractionsLastUpdateTime
+  ] = React.useState(controlData.reportedInfractionsLastUpdateTime);
+  const [reportedInfractions, setReportedInfractions] = React.useState([]);
+  const groupedAlerts = React.useMemo(
+    () =>
+      reportedInfractions
+        ? getAlertsGroupedByDay(
+            controlData.regulationComputationsByDay,
+            reportedInfractions
+          )
+        : [],
+    [reportedInfractions]
+  );
+
+  React.useEffect(() => {
+    setReportedInfractions(controlData.reportedInfractions);
+  }, [controlData.reportedInfractions]);
+
+  React.useEffect(() => {
+    setReportedInfractionsLastUpdateTime(
+      controlData.reportedInfractionsLastUpdateTime
+    );
+  }, [controlData.reportedInfractionsLastUpdateTime]);
+
+  const saveInfractions = async () => {
+    withLoadingScreen(async () => {
+      try {
+        const apiResponse = await api.graphQlMutate(
+          CONTROLLER_SAVE_REPORTED_INFRACTIONS,
+          {
+            controlId: controlData?.id,
+            reportedInfractions: reportedInfractions.map(
+              ({ date, sanction }) => ({
+                date,
+                sanction
+              })
+            )
+          },
+          { context: { nonPublicApi: true } }
+        );
+        const {
+          reportedInfractionsLastUpdateTime
+        } = apiResponse.data.controllerSaveReportedInfractions;
+        setReportedInfractionsLastUpdateTime(reportedInfractionsLastUpdateTime);
+        alerts.success(
+          "Les infractions relevées ont été enregistrées",
+          "",
+          3000
+        );
+        setIsReportingInfractions(false);
+      } catch (err) {
+        alerts.error(formatApiError(err), "", 6000);
+      }
+    });
+  };
+
+  const onCloseInfractions = () => {
+    setReportedInfractions(controlData.reportedInfractions);
+    setIsReportingInfractions(false);
+  };
+  const cancelInfractions = () => {
+    if (hasModifiedInfractions) {
+      modals.open("confirmationCancelControlBulletinModal", {
+        confirmButtonLabel: "Revenir à mes modifications",
+        handleCancel: () => {
+          onCloseInfractions();
+        },
+        handleConfirm: () => {}
+      });
+    } else {
+      onCloseInfractions();
+    }
+  };
+
+  const onUpdateInfraction = (sanction, date, checked) => {
+    if (checked) {
+      setReportedInfractions(curr => [
+        ...curr,
+        {
+          sanction,
+          date
+        }
+      ]);
+    } else {
+      setReportedInfractions(curr => {
+        return curr.filter(
+          infraction =>
+            infraction.sanction !== sanction ||
+            getStartOfDay(infraction.date) !== getStartOfDay(date)
+        );
+      });
+    }
+    setHasModifiedInfractions(true);
+  };
 
   // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
   const legacyTokenInfo = {
@@ -70,12 +182,17 @@ export function ControllerControlDetails({
     }
   }, [controlData]);
 
-  const alertNumber = React.useMemo(() => {
-    if (!controlData || !controlData.regulationComputationsByDay) {
-      return 0;
-    }
-    return computeNumberOfAlerts(controlData.regulationComputationsByDay);
-  }, [controlData]);
+  const alertsNumber = React.useMemo(
+    () =>
+      groupedAlerts
+        ? groupedAlerts.reduce(
+            (curr, alertsGroup) =>
+              curr + alertsGroup.alerts.filter(alert => alert.checked).length,
+            0
+          )
+        : 0,
+    [groupedAlerts]
+  );
 
   return [
     <ControllerControlHeader
@@ -86,9 +203,8 @@ export function ControllerControlDetails({
     />,
     <UserReadTabs
       key={1}
-      tabs={getTabs(alertNumber)}
+      tabs={getTabs(alertsNumber)}
       regulationComputationsByDay={controlData.regulationComputationsByDay}
-      alertNumber={alertNumber}
       tokenInfo={legacyTokenInfo}
       controlTime={controlData.qrCodeGenerationTime}
       missions={missions}
@@ -104,6 +220,15 @@ export function ControllerControlDetails({
       vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
       openBulletinControl={() => setIsEditingBC(true)}
       controlData={controlData}
+      reportedInfractionsLastUpdateTime={reportedInfractionsLastUpdateTime}
+      isReportingInfractions={isReportingInfractions}
+      setIsReportingInfractions={setIsReportingInfractions}
+      groupedAlerts={groupedAlerts}
+      saveInfractions={saveInfractions}
+      cancelInfractions={cancelInfractions}
+      onUpdateInfraction={onUpdateInfraction}
+      hasModifiedInfractions={hasModifiedInfractions}
+      readOnlyAlerts={false}
     />,
     <ControlBulletinDrawer
       key={2}
