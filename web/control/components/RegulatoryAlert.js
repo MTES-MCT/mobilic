@@ -124,7 +124,7 @@ export function RegulatoryAlert({
   readOnlyAlerts
 }) {
   return (
-    <Stack direction="row" spacing={2} alignItems="baseline" flexWrap="wrap">
+    <Stack direction="row" spacing={2} alignItems="baseline" flexWrap="nowrap">
       {!readOnlyAlerts && isReportable && (
         <Checkbox
           checked={alert.checked}
