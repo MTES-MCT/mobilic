@@ -81,7 +81,7 @@ export function UserReadInfo({
   const api = useApi();
   const classes = useStyles();
 
-  const downloadBDC = useDownloadBDC(controlData.id);
+  const downloadBDC = useDownloadBDC(controlData?.id);
 
   return (
     <Container maxWidth="md" className={classes.container}>
