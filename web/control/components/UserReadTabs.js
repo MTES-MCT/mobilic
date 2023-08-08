@@ -110,6 +110,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
       {!!currentControllerId() && !props.isReportingInfractions && (
         <ControllerControlBottomMenu
           reportInfractions={reportInfractions}
+          disabledReportInfractions={(props.groupedAlerts?.length || 0) === 0}
           updatedInfractions={!!props.reportedInfractionsLastUpdateTime}
           editBDC={props.openBulletinControl}
           downloadBDC={downloadBDC}

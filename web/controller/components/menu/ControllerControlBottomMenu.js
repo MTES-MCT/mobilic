@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
 export function ControllerControlBottomMenu({
   reportInfractions,
   updatedInfractions,
+  disabledReportInfractions,
   editBDC,
   downloadBDC,
   canDownloadBDC,
@@ -52,6 +53,7 @@ export function ControllerControlBottomMenu({
           size="small"
           startIcon={<EditIcon />}
           onClick={reportInfractions}
+          disabled={disabledReportInfractions}
         >
           {updatedInfractions
             ? "Modifier les infractions retenues"
