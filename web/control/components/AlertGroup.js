@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => {
     },
     alertNumber: {
       display: "inline-flex",
-      fontSisze: "120%",
+      whiteSpace: "pre",
       borderRadius: theme.spacing(1.5),
       color: "white",
       paddingLeft: theme.spacing(1),
