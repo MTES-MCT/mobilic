@@ -27,6 +27,7 @@ import {
   getUsersToSelectFromTeamSelection,
   unselectAndGetAllTeams
 } from "../store/reducers/team";
+import { CheckboxField } from "../../common/CheckboxField";
 
 const useStyles = makeStyles(theme => ({
   start: {
@@ -77,6 +78,7 @@ export default function C1BExport({
   const [_companies, setCompanies] = React.useState([]);
   const [users, setUsers] = React.useState(initialUsers);
   const [teams, setTeams] = React.useState(initialTeams);
+  const [employeeVersion, setEmployeeVersion] = React.useState(false);
 
   const invalidDateRange = (minDate, maxDate) =>
     maxDate &&
@@ -171,6 +173,12 @@ export default function C1BExport({
           Les données d'activité sont limitées à une{" "}
           <strong>période qui ne peut pas dépasser 60 jours</strong>.
         </Typography>
+        <CheckboxField
+          mt={2}
+          checked={employeeVersion}
+          onChange={() => setEmployeeVersion(!employeeVersion)}
+          label={`Obtenir deux fichiers pour chaque salarié : une version saisie salarié et une version post modifications gestionnaire`}
+        />
         <Grid spacing={4} container className={classes.grid}>
           {_companies.length > 1 && (
             <Grid item sm={6} className={classes.flexGrow}>
@@ -261,7 +269,8 @@ export default function C1BExport({
             if (selectedCompanies.length === 0) selectedCompanies = _companies;
             let selectedUsers = users.filter(u => u.selected);
             const options = {
-              company_ids: selectedCompanies.map(c => c.id)
+              company_ids: selectedCompanies.map(c => c.id),
+              employee_version: employeeVersion
             };
             if (selectedUsers.length > 0)
               options["user_ids"] = selectedUsers.map(u => u.id);
