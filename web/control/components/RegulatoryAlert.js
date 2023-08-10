@@ -40,6 +40,9 @@ function formatAlertPeriod(alert, type) {
         jsToUnixTimestamp(new Date(alert.extra.work_range_end).getTime())
       );
     }
+    case ALERT_TYPES.noPaperLic: {
+      return textualPrettyFormatDayHour(alert.day);
+    }
     default: {
       return "Mission";
     }
@@ -108,7 +111,7 @@ function formatAlertText(alert, type) {
       );
     }
     default:
-      return "";
+      return <span></span>;
   }
 }
 

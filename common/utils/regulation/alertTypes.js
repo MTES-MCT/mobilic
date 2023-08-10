@@ -10,7 +10,8 @@ export const ALERT_TYPES = {
   maximumWorkDayTime: "maximumWorkDayTime",
   minimumWorkDayBreak: "minimumWorkDayBreak",
   maximumUninterruptedWorkTime: "maximumUninterruptedWorkTime",
-  maximumWorkedDaysInWeek: "maximumWorkedDaysInWeek"
+  maximumWorkedDaysInWeek: "maximumWorkedDaysInWeek",
+  noPaperLic: "noPaperLic"
 };
 
 export const ALERT_TYPE_PROPS_SIMPLER = {

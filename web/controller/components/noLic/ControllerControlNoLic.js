@@ -13,13 +13,12 @@ import { ControllerControlNoLicHistory } from "./ControllerControlNoLicHistory";
 import { ControllerControlNoLicInformations } from "./ControllerControlNoLicInformations";
 import { useDownloadBDC } from "../../utils/useDownloadBDC";
 import { ControllerControlBottomMenu as BottomMenu } from "../menu/ControllerControlBottomMenu";
-import { InfractionsAvailableSoon } from "../infractions/InfractionsAvailableSoon";
 import { canDownloadBDC } from "../../utils/controlBulletin";
+import { TextWithBadge } from "../../../common/TextWithBadge";
+import { UserReadAlerts } from "../../../control/components/UserReadAlerts";
+import { useReportInfractions } from "../../utils/useReportInfractions";
 
 const useStyles = makeStyles(theme => ({
-  container: {
-    padding: 0
-  },
   middleTab: {
     flexGrow: 1.5
   },
@@ -42,7 +41,7 @@ const useStyles = makeStyles(theme => ({
   hiddenPanel: { flexGrow: 0 }
 }));
 
-const TABS = [
+const getTabs = alertNumber => [
   {
     name: "info",
     label: "Informations",
@@ -51,9 +50,16 @@ const TABS = [
   },
   {
     name: "alerts",
-    label: "Infractions",
+    label: (
+      <TextWithBadge
+        badgeContent={alertNumber || 0}
+        color={alertNumber ? "error" : "success"}
+      >
+        Infractions
+      </TextWithBadge>
+    ),
     icon: <WarningAmberOutlinedIcon />,
-    component: InfractionsAvailableSoon
+    component: UserReadAlerts
   },
   {
     name: "history",
@@ -63,60 +69,27 @@ const TABS = [
   }
 ];
 
-const INFRACTIONS = [
-  {
-    code: "NATINF 23103",
-    description: "Absence de livret individuel de contrôle à bord"
-  }
-];
-
 export function ControllerControlNoLic({ controlData, editBDC }) {
   const classes = useStyles();
+  const [
+    reportedInfractionsLastUpdateTime,
+    groupedAlerts,
+    alertsNumber,
+    isReportingInfractions,
+    setIsReportingInfractions,
+    hasModifiedInfractions,
+    saveInfractions,
+    cancelInfractions,
+    onUpdateInfraction
+  ] = useReportInfractions(controlData, true);
   const downloadBDC = useDownloadBDC(controlData.id);
 
+  const TABS = getTabs(alertsNumber);
   const [tab, setTab] = React.useState(TABS[0].name);
-  const [infractions, setInfractions] = React.useState([]);
-  const [
-    lastInfractionsEditionDate,
-    setLastInfractionsEditionDate
-  ] = React.useState(null);
-  const [isReportingInfractions, setIsReportingInfractions] = React.useState(
-    false
-  );
-
-  React.useEffect(() => {
-    setInfractions(
-      INFRACTIONS.map(infraction => ({
-        ...infraction,
-        selected: false
-      }))
-    );
-  }, []);
 
   const reportInfraction = () => {
     setIsReportingInfractions(true);
     setTab(TABS[1].name);
-  };
-
-  const toggleInfraction = ({ code, selected }) => {
-    setInfractions(
-      infractions.map(infraction =>
-        infraction.code === code
-          ? {
-              ...infraction,
-              selected: !selected
-            }
-          : infraction
-      )
-    );
-  };
-
-  const saveInfractions = () => {
-    setIsReportingInfractions(false);
-    setLastInfractionsEditionDate(new Date());
-  };
-  const cancelInfractions = () => {
-    setIsReportingInfractions(false);
   };
 
   return (
@@ -155,14 +128,16 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
               {
                 <t.component
                   setTab={setTab}
-                  infractions={infractions}
-                  lastInfractionsEditionDate={lastInfractionsEditionDate}
-                  setLastInfractionsEditionDate={setLastInfractionsEditionDate}
                   isReportingInfractions={isReportingInfractions}
-                  toggleInfraction={toggleInfraction}
+                  setIsReportingInfractions={setIsReportingInfractions}
+                  controlData={controlData}
+                  groupedAlerts={groupedAlerts}
                   saveInfractions={saveInfractions}
                   cancelInfractions={cancelInfractions}
-                  controlData={controlData}
+                  onUpdateInfraction={onUpdateInfraction}
+                  hasModifiedInfractions={hasModifiedInfractions}
+                  noLic={true}
+                  readOnlyAlerts={false}
                 />
               }
             </TabPanel>
@@ -173,12 +148,13 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
         <>
           <BottomMenu
             reportInfractions={reportInfraction}
-            updatedInfractions={!!lastInfractionsEditionDate}
+            updatedInfractions={!!reportedInfractionsLastUpdateTime}
             disableReportInfractions={false}
             editBDC={editBDC}
             downloadBDC={downloadBDC}
             canDownloadBDC={canDownloadBDC(controlData)}
             BDCAlreadyExisting={!!controlData.controlBulletinCreationTime}
+            singleInfraction={true}
           />
         </>
       )}
