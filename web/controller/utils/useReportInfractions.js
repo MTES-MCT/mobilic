@@ -1,7 +1,6 @@
 import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { ALERT_TYPES } from "common/utils/regulation/alertTypes";
-import { getStartOfDay } from "common/utils/time";
 import React from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useModals } from "common/utils/modals";
@@ -18,7 +17,7 @@ export const useReportInfractions = (controlData, noLic) => {
     reportedInfractionsLastUpdateTime,
     setReportedInfractionsLastUpdateTime
   ] = React.useState(controlData.reportedInfractionsLastUpdateTime);
-  const [reportedInfractions, setReportedInfractions] = React.useState([]);
+  const [observedInfractions, setObservedInfractions] = React.useState([]);
 
   const [isReportingInfractions, setIsReportingInfractions] = React.useState(
     false
@@ -34,39 +33,34 @@ export const useReportInfractions = (controlData, noLic) => {
   }, [controlData.reportedInfractionsLastUpdateTime]);
 
   React.useEffect(() => {
-    setReportedInfractions(controlData.reportedInfractions);
-  }, [controlData.reportedInfractions]);
+    setObservedInfractions(controlData.observedInfractions);
+  }, [controlData.observedInfractions]);
 
-  const groupedAlerts = React.useMemo(
-    () =>
-      reportedInfractions
-        ? noLic
-          ? [
-              {
-                type: ALERT_TYPES.noPaperLic,
-                sanction: "NATINF 23103",
-                infringementLabel:
-                  "Absence de livret individuel de contrôle à bord",
-                description:
-                  "Défaut de documents nécessaires au décompte de la durée du travail (L. 3121-67 du Code du travail et R. 3312‑58 du Code des transports + arrêté du 20 juillet 1998)",
-                alerts: [
-                  {
-                    checked: reportedInfractions.length > 0,
-                    day: controlData.creationTime,
-                    extra: {
-                      sanction_code: "NATINF 23103"
-                    }
+  const groupedAlerts = React.useMemo(() => {
+    return observedInfractions
+      ? noLic
+        ? [
+            {
+              type: ALERT_TYPES.noPaperLic,
+              sanction: "NATINF 23103",
+              infringementLabel:
+                "Absence de livret individuel de contrôle à bord",
+              description:
+                "Défaut de documents nécessaires au décompte de la durée du travail (L. 3121-67 du Code du travail et R. 3312‑58 du Code des transports + arrêté du 20 juillet 1998)",
+              alerts: [
+                {
+                  checked: observedInfractions.length > 0,
+                  day: controlData.creationTime,
+                  extra: {
+                    sanction_code: "NATINF 23103"
                   }
-                ]
-              }
-            ]
-          : getAlertsGroupedByDay(
-              controlData.regulationComputationsByDay,
-              reportedInfractions
-            )
-        : [],
-    [reportedInfractions]
-  );
+                }
+              ]
+            }
+          ]
+        : getAlertsGroupedByDay(observedInfractions)
+      : [];
+  }, [observedInfractions]);
 
   const saveInfractions = async () => {
     withLoadingScreen(async () => {
@@ -75,19 +69,23 @@ export const useReportInfractions = (controlData, noLic) => {
           CONTROLLER_SAVE_REPORTED_INFRACTIONS,
           {
             controlId: controlData?.id,
-            reportedInfractions: reportedInfractions.map(
-              ({ date, sanction }) => ({
+            reportedInfractions: observedInfractions
+              .filter(infraction => infraction.isReported)
+              .map(({ date, sanction }) => ({
                 date,
                 sanction
-              })
-            )
+              }))
           },
           { context: { nonPublicApi: true } }
         );
         const {
-          reportedInfractionsLastUpdateTime
+          reportedInfractionsLastUpdateTime: newReportedInfractionsLastUpdateTime,
+          observedInfractions: newObservedInfractions
         } = apiResponse.data.controllerSaveReportedInfractions;
-        setReportedInfractionsLastUpdateTime(reportedInfractionsLastUpdateTime);
+        setReportedInfractionsLastUpdateTime(
+          newReportedInfractionsLastUpdateTime
+        );
+        setObservedInfractions(newObservedInfractions);
         alerts.success(
           noLic
             ? "L'infraction relevée a été enregistrée "
@@ -103,7 +101,7 @@ export const useReportInfractions = (controlData, noLic) => {
   };
 
   const onCloseInfractions = () => {
-    setReportedInfractions(controlData.reportedInfractions);
+    setObservedInfractions(controlData.observedInfractions);
     setIsReportingInfractions(false);
   };
   const cancelInfractions = () => {
@@ -122,21 +120,21 @@ export const useReportInfractions = (controlData, noLic) => {
 
   const onUpdateInfraction = (sanction, date, checked) => {
     if (checked) {
-      setReportedInfractions(curr => [
-        ...curr,
-        {
-          sanction,
-          date
-        }
-      ]);
+      setObservedInfractions(currentObservedInfractions =>
+        currentObservedInfractions.map(infraction =>
+          infraction.date === date && infraction.sanction === sanction
+            ? { ...infraction, isReported: true }
+            : infraction
+        )
+      );
     } else {
-      setReportedInfractions(curr => {
-        return curr.filter(
-          infraction =>
-            infraction.sanction !== sanction ||
-            getStartOfDay(infraction.date) !== getStartOfDay(date)
-        );
-      });
+      setObservedInfractions(currentObservedInfractions =>
+        currentObservedInfractions.map(infraction =>
+          infraction.date === date && infraction.sanction === sanction
+            ? { ...infraction, isReported: false }
+            : infraction
+        )
+      );
     }
     setHasModifiedInfractions(true);
   };

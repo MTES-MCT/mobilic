@@ -9,6 +9,7 @@ import {
   FULL_MISSION_FRAGMENT,
   FULL_TEAM_FRAGMENT,
   REGULATION_COMPUTATIONS_FRAGMENT,
+  REGULATION_OBSERVED_INFRACTIONS_FRAGMENT,
   WORK_DAYS_DATA_FRAGMENT
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
@@ -347,6 +348,11 @@ export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
       controlBulletin {
         ...ControlBulletin
       }
+      observedInfractions {
+        sanction
+        date
+      }
+      reportedInfractionsLastUpdateTime
     }
   }
 `;
@@ -355,6 +361,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
   ${REGULATION_COMPUTATIONS_FRAGMENT}
+  ${REGULATION_OBSERVED_INFRACTIONS_FRAGMENT}
   ${CONTROL_BULLETIN_FRAGMENT}
   ${CONTROL_DATA_FRAGMENT}
   query readControlData($controlId: Int!) {
@@ -459,9 +466,8 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       regulationComputationsByDay {
         ...RegulationComputations
       }
-      reportedInfractions {
-        sanction
-        date
+      observedInfractions {
+        ...ObservedInfractions
       }
       reportedInfractionsLastUpdateTime
     }
@@ -1993,6 +1999,7 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
 `;
 
 export const CONTROLLER_SAVE_REPORTED_INFRACTIONS = gql`
+  ${REGULATION_OBSERVED_INFRACTIONS_FRAGMENT}
   mutation controllerSaveReportedInfractions(
     $controlId: Int
     $reportedInfractions: [ReportedInfractionInput]
@@ -2001,9 +2008,8 @@ export const CONTROLLER_SAVE_REPORTED_INFRACTIONS = gql`
       controlId: $controlId
       reportedInfractions: $reportedInfractions
     ) {
-      reportedInfractions {
-        sanction
-        date
+      observedInfractions {
+        ...ObservedInfractions
       }
       reportedInfractionsLastUpdateTime
     }
