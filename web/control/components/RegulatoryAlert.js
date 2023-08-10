@@ -7,7 +7,8 @@ import {
   prettyFormatMonth,
   textualPrettyFormatDayHour,
   textualPrettyFormatWeek,
-  jsToUnixTimestamp
+  jsToUnixTimestamp,
+  textualPrettyFormatDay
 } from "common/utils/time";
 import { Link } from "../../common/LinkButton";
 import { ALERT_TYPES } from "common/utils/regulation/alertTypes";
@@ -41,7 +42,7 @@ function formatAlertPeriod(alert, type) {
       );
     }
     case ALERT_TYPES.noPaperLic: {
-      return textualPrettyFormatDayHour(alert.day);
+      return textualPrettyFormatDay(alert.day);
     }
     default: {
       return "Mission";

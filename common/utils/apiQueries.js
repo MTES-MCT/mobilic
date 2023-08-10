@@ -342,6 +342,7 @@ export const CONTROLLER_READ_MISSION_DETAILS = gql`
 export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
   ${CONTROL_BULLETIN_FRAGMENT}
   ${CONTROL_DATA_FRAGMENT}
+  ${REGULATION_OBSERVED_INFRACTIONS_FRAGMENT}
   query readControlDataNoLic($controlId: Int!) {
     controlData(controlId: $controlId) {
       ...ControlData
@@ -349,8 +350,7 @@ export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
         ...ControlBulletin
       }
       observedInfractions {
-        sanction
-        date
+        ...ObservedInfractions
       }
       reportedInfractionsLastUpdateTime
     }

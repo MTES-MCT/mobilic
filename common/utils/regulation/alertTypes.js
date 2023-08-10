@@ -11,7 +11,7 @@ export const ALERT_TYPES = {
   minimumWorkDayBreak: "minimumWorkDayBreak",
   maximumUninterruptedWorkTime: "maximumUninterruptedWorkTime",
   maximumWorkedDaysInWeek: "maximumWorkedDaysInWeek",
-  noPaperLic: "noPaperLic"
+  noPaperLic: "noLic"
 };
 
 export const ALERT_TYPE_PROPS_SIMPLER = {

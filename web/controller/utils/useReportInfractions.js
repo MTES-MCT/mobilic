@@ -1,6 +1,5 @@
 import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
-import { ALERT_TYPES } from "common/utils/regulation/alertTypes";
 import React from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useModals } from "common/utils/modals";
@@ -38,27 +37,7 @@ export const useReportInfractions = (controlData, noLic) => {
 
   const groupedAlerts = React.useMemo(() => {
     return observedInfractions
-      ? noLic
-        ? [
-            {
-              type: ALERT_TYPES.noPaperLic,
-              sanction: "NATINF 23103",
-              infringementLabel:
-                "Absence de livret individuel de contrôle à bord",
-              description:
-                "Défaut de documents nécessaires au décompte de la durée du travail (L. 3121-67 du Code du travail et R. 3312‑58 du Code des transports + arrêté du 20 juillet 1998)",
-              alerts: [
-                {
-                  checked: observedInfractions.length > 0,
-                  day: controlData.creationTime,
-                  extra: {
-                    sanction_code: "NATINF 23103"
-                  }
-                }
-              ]
-            }
-          ]
-        : getAlertsGroupedByDay(observedInfractions)
+      ? getAlertsGroupedByDay(observedInfractions)
       : [];
   }, [observedInfractions]);
 
