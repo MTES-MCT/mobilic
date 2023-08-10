@@ -45,7 +45,7 @@ export default function ControllerExportC1BAll({
   const api = useApi();
   const classes = useStyles();
 
-  const [exportFilter, setExportFilter] = React.useState(controlFilters);
+  const [exportFilters, setExportFilters] = React.useState(controlFilters);
   const [sign, setSign] = React.useState(true);
 
   const today = new Date();
@@ -88,12 +88,12 @@ export default function ControllerExportC1BAll({
           <Grid item sm={6}>
             <MobileDatePicker
               label="Début"
-              value={exportFilter.fromDate}
+              value={exportFilters.fromDate}
               inputFormat="d MMMM yyyy"
               disableCloseOnSelect={false}
               disableMaskedInput={true}
               onChange={newFromDate => {
-                setExportFilter(prevFilters => {
+                setExportFilters(prevFilters => {
                   return {
                     ...prevFilters,
                     fromDate: isoFormatLocalDate(newFromDate),
@@ -119,12 +119,12 @@ export default function ControllerExportC1BAll({
           <Grid item sm={6}>
             <MobileDatePicker
               label="Fin"
-              value={exportFilter.toDate}
+              value={exportFilters.toDate}
               inputFormat="d MMMM yyyy"
               disableCloseOnSelect={false}
               disableMaskedInput={true}
               onChange={newToDate => {
-                setExportFilter(prevFilters => {
+                setExportFilters(prevFilters => {
                   return {
                     ...prevFilters,
                     toDate: isoFormatLocalDate(newToDate),
@@ -158,8 +158,8 @@ export default function ControllerExportC1BAll({
           onClick={async () => {
             alerts.withApiErrorHandling(async () => {
               const options = {
-                min_date: controlFilters.fromDate,
-                max_date: controlFilters.toDate,
+                min_date: exportFilters.fromDate,
+                max_date: exportFilters.toDate,
                 with_digital_signatures: sign
               };
               await api.downloadFileHttpQuery(HTTP_QUERIES.controlC1BExport, {
