@@ -10,7 +10,7 @@
     ]
   },
   "dependencies": {
-    "@babel/core": "^7.7.4",
+    "@babel/core": "^7.22.6",
     "@babel/runtime": "^7.6.2",
     "@dataesr/react-dsfr": "^2.2.2",
     "@datapunt/matomo-tracker-react": "0.5.1",
@@ -33,7 +33,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-named-asset-import": "^0.3.5",
     "babel-plugin-recharts": "^2.0.0",
-    "babel-preset-react-app": "^9.1.0",
+    "babel-preset-react-app": "^10.0.1",
     "broadcast-channel": "^3.2.0",
     "camelcase": "^5.3.1",
     "case-sensitive-paths-webpack-plugin": "^2.2.0",
@@ -153,6 +153,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.3.4",
     "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/polyfill": "^7.2.5",
     "@babel/preset-env": "^7.3.4",
