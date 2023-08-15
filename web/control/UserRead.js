@@ -28,7 +28,7 @@ import { TextWithBadge } from "../common/TextWithBadge";
 import { UserReadAlerts } from "./components/UserReadAlerts";
 import { getDaysBetweenTwoDates } from "common/utils/time";
 import { getRegulationComputationsAndAlertNumber } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
-import { getAlertsGroupedByDay } from "common/utils/regulation/groupAlertsByDay";
+import { getAlertsGroupedByDayFromRegulationComputationsByDay } from "common/utils/regulation/groupAlertsByDay";
 
 export function getTabs(alertNumber) {
   return [
@@ -196,7 +196,10 @@ export function UserRead() {
   }, [userInfo]);
 
   const groupedAlerts = React.useMemo(
-    () => getAlertsGroupedByDay(regulationComputationsByDay, []),
+    () =>
+      getAlertsGroupedByDayFromRegulationComputationsByDay(
+        regulationComputationsByDay
+      ),
     [regulationComputationsByDay]
   );
 
