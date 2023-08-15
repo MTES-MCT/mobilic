@@ -74,17 +74,18 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
   const [
     reportedInfractionsLastUpdateTime,
     groupedAlerts,
-    alertsNumber,
+    checkedAlertsNumber,
+    totalAlertsNumber,
     isReportingInfractions,
     setIsReportingInfractions,
     hasModifiedInfractions,
     saveInfractions,
     cancelInfractions,
     onUpdateInfraction
-  ] = useReportInfractions(controlData, true);
+  ] = useReportInfractions(controlData);
   const downloadBDC = useDownloadBDC(controlData.id);
 
-  const TABS = getTabs(alertsNumber);
+  const TABS = getTabs(checkedAlertsNumber);
   const [tab, setTab] = React.useState(TABS[0].name);
 
   const reportInfraction = () => {
@@ -132,6 +133,7 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
                   setIsReportingInfractions={setIsReportingInfractions}
                   controlData={controlData}
                   groupedAlerts={groupedAlerts}
+                  totalAlertsNumber={totalAlertsNumber}
                   saveInfractions={saveInfractions}
                   cancelInfractions={cancelInfractions}
                   onUpdateInfraction={onUpdateInfraction}
@@ -154,7 +156,7 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
             downloadBDC={downloadBDC}
             canDownloadBDC={canDownloadBDC(controlData)}
             BDCAlreadyExisting={!!controlData.controlBulletinCreationTime}
-            singleInfraction={true}
+            totalAlertsNumber={totalAlertsNumber}
           />
         </>
       )}

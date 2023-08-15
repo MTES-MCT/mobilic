@@ -26,14 +26,15 @@ export function ControllerControlDetails({
   const [
     reportedInfractionsLastUpdateTime,
     groupedAlerts,
-    alertsNumber,
+    checkedAlertsNumber,
+    totalAlertsNumber,
     isReportingInfractions,
     setIsReportingInfractions,
     hasModifiedInfractions,
     saveInfractions,
     cancelInfractions,
     onUpdateInfraction
-  ] = useReportInfractions(controlData, false);
+  ] = useReportInfractions(controlData);
 
   // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
   const legacyTokenInfo = {
@@ -90,7 +91,8 @@ export function ControllerControlDetails({
     />,
     <UserReadTabs
       key={1}
-      tabs={getTabs(alertsNumber)}
+      tabs={getTabs(checkedAlertsNumber)}
+      totalAlertsNumber={totalAlertsNumber}
       regulationComputationsByDay={controlData.regulationComputationsByDay}
       tokenInfo={legacyTokenInfo}
       controlTime={controlData.qrCodeGenerationTime}

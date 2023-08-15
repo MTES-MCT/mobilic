@@ -36,14 +36,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const HELPER_TEXT =
+const HELPER_TEXT_SEVERAL_INFRACTIONS =
   "Sélectionnez la ou les infractions que vous souhaitez verbaliser";
-const HELPER_TEXT_NO_LIC =
+const HELPER_TEXT_SINGLE_INFRACTION =
   "Sélectionnez l’infraction si vous souhaitez la verbaliser";
 
 export function UserReadAlerts({
   setTab,
   groupedAlerts,
+  totalAlertsNumber,
   setPeriodOnFocus,
   isReportingInfractions,
   saveInfractions,
@@ -60,7 +61,9 @@ export function UserReadAlerts({
     <Container maxWidth="md" className={classes.container}>
       {isReportingInfractions && (
         <Typography className={classes.helpText}>
-          {noLic ? HELPER_TEXT_NO_LIC : HELPER_TEXT}
+          {totalAlertsNumber === 1
+            ? HELPER_TEXT_SINGLE_INFRACTION
+            : HELPER_TEXT_SEVERAL_INFRACTIONS}
         </Typography>
       )}
       {!isReportingInfractions && reportedInfractionsLastUpdateTime && (

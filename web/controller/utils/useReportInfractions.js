@@ -7,7 +7,7 @@ import { CONTROLLER_SAVE_REPORTED_INFRACTIONS } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { getAlertsGroupedByDay } from "common/utils/regulation/groupAlertsByDay";
 
-export const useReportInfractions = (controlData, noLic) => {
+export const useReportInfractions = controlData => {
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
@@ -66,7 +66,7 @@ export const useReportInfractions = (controlData, noLic) => {
         );
         setObservedInfractions(newObservedInfractions);
         alerts.success(
-          noLic
+          observedInfractions.length === 1
             ? "L'infraction relevée a été enregistrée "
             : "Les infractions relevées ont été enregistrées",
           "",
@@ -118,7 +118,7 @@ export const useReportInfractions = (controlData, noLic) => {
     setHasModifiedInfractions(true);
   };
 
-  const alertsNumber = React.useMemo(
+  const checkedAlertsNumber = React.useMemo(
     () =>
       groupedAlerts
         ? groupedAlerts.reduce(
@@ -130,10 +130,24 @@ export const useReportInfractions = (controlData, noLic) => {
     [groupedAlerts]
   );
 
+  const totalAlertsNumber = React.useMemo(
+    () =>
+      groupedAlerts
+        ? groupedAlerts.reduce(
+            (curr, alertsGroup) =>
+              curr +
+              alertsGroup.alerts.filter(alert => alert.reportable).length,
+            0
+          )
+        : 0,
+    [groupedAlerts]
+  );
+
   return [
     reportedInfractionsLastUpdateTime,
     groupedAlerts,
-    alertsNumber,
+    checkedAlertsNumber,
+    totalAlertsNumber,
     isReportingInfractions,
     setIsReportingInfractions,
     hasModifiedInfractions,

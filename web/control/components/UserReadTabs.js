@@ -92,6 +92,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
                   {...props}
                   setTab={setTab}
                   groupedAlerts={props.groupedAlerts}
+                  totalAlertsNumber={props.totalAlertsNumber}
                   isReportingInfractions={props.isReportingInfractions}
                   saveInfractions={props.saveInfractions}
                   cancelInfractions={props.cancelInfractions}
@@ -116,6 +117,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
           downloadBDC={downloadBDC}
           canDownloadBDC={canDownloadBDC(props.controlData)}
           bdcAlreadyExisting={!!props.controlData.controlBulletinCreationTime}
+          totalAlertsNumber={props.totalAlertsNumber}
         />
       )}
     </>
