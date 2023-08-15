@@ -137,7 +137,7 @@ export const REGULATION_COMPUTATIONS_FRAGMENT = gql`
   }
 `;
 
-export const REGULATION_OBSERVED_INFRACTIONS_FRAGMENT = gql`
+export const OBSERVED_INFRACTIONS_FRAGMENT = gql`
   fragment ObservedInfractions on ObservedInfraction {
     sanction
     date
