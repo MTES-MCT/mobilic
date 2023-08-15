@@ -98,23 +98,14 @@ export const useReportInfractions = controlData => {
   };
 
   const onUpdateInfraction = (sanction, date, checked) => {
-    if (checked) {
-      setObservedInfractions(currentObservedInfractions =>
-        currentObservedInfractions.map(infraction =>
-          infraction.date === date && infraction.sanction === sanction
-            ? { ...infraction, isReported: true }
-            : infraction
-        )
-      );
-    } else {
-      setObservedInfractions(currentObservedInfractions =>
-        currentObservedInfractions.map(infraction =>
-          infraction.date === date && infraction.sanction === sanction
-            ? { ...infraction, isReported: false }
-            : infraction
-        )
-      );
-    }
+    setObservedInfractions(currentObservedInfractions =>
+      currentObservedInfractions.map(infraction =>
+        infraction.date === date && infraction.sanction === sanction
+          ? { ...infraction, isReported: checked }
+          : infraction
+      )
+    );
+
     setHasModifiedInfractions(true);
   };
 
