@@ -17,6 +17,9 @@ import { canDownloadBDC } from "../../utils/controlBulletin";
 import { TextWithBadge } from "../../../common/TextWithBadge";
 import { UserReadAlerts } from "../../../control/components/UserReadAlerts";
 import { useReportInfractions } from "../../utils/useReportInfractions";
+import { Alert } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 const useStyles = makeStyles(theme => ({
   middleTab: {
@@ -50,7 +53,11 @@ const useStyles = makeStyles(theme => ({
     textAlign: "left",
     backgroundColor: theme.palette.background.paper
   },
-  hiddenPanel: { flexGrow: 0 }
+  hiddenPanel: { flexGrow: 0 },
+  linkInfractionTab: {
+    textDecoration: "underline",
+    cursor: "pointer"
+  }
 }));
 
 const getTabs = alertNumber => [
@@ -132,33 +139,47 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
             ))}
           </Tabs>
         </AppBar>
-        <Container className={classes.panelContainer} disableGutters>
-          {TABS.map(t => (
-            <TabPanel
-              value={t.name}
-              key={t.name}
-              className={`${classes.panel} ${tab !== t.name &&
-                classes.hiddenPanel}`}
-            >
-              {
-                <t.component
-                  setTab={setTab}
-                  isReportingInfractions={isReportingInfractions}
-                  setIsReportingInfractions={setIsReportingInfractions}
-                  controlData={controlData}
-                  groupedAlerts={groupedAlerts}
-                  totalAlertsNumber={totalAlertsNumber}
-                  saveInfractions={saveInfractions}
-                  cancelInfractions={cancelInfractions}
-                  onUpdateInfraction={onUpdateInfraction}
-                  hasModifiedInfractions={hasModifiedInfractions}
-                  noLic={true}
-                  readOnlyAlerts={false}
-                />
-              }
-            </TabPanel>
-          ))}
-        </Container>
+        <Box>
+          <Alert severity="info">
+            <Typography>
+              Mobilic a relevé des infractions par défaut, vous pouvez modifier
+              la sélection au sein de{" "}
+              <span
+                className={classes.linkInfractionTab}
+                onClick={() => setTab(TABS[1].name)}
+              >
+                l’onglet infractions
+              </span>
+            </Typography>
+          </Alert>
+          <Container className={classes.panelContainer} disableGutters>
+            {TABS.map(t => (
+              <TabPanel
+                value={t.name}
+                key={t.name}
+                className={`${classes.panel} ${tab !== t.name &&
+                  classes.hiddenPanel}`}
+              >
+                {
+                  <t.component
+                    setTab={setTab}
+                    isReportingInfractions={isReportingInfractions}
+                    setIsReportingInfractions={setIsReportingInfractions}
+                    controlData={controlData}
+                    groupedAlerts={groupedAlerts}
+                    totalAlertsNumber={totalAlertsNumber}
+                    saveInfractions={saveInfractions}
+                    cancelInfractions={cancelInfractions}
+                    onUpdateInfraction={onUpdateInfraction}
+                    hasModifiedInfractions={hasModifiedInfractions}
+                    noLic={true}
+                    readOnlyAlerts={false}
+                  />
+                }
+              </TabPanel>
+            ))}
+          </Container>
+        </Box>
       </TabContext>
       {!isReportingInfractions && (
         <>
