@@ -20,7 +20,19 @@ import { useReportInfractions } from "../../utils/useReportInfractions";
 
 const useStyles = makeStyles(theme => ({
   middleTab: {
-    flexGrow: 1.5
+    flexGrow: 1.5,
+    opacity: 1,
+    color: "rgb(255,255,255,0.5)",
+    "&.Mui-selected": {
+      color: "rgb(255,255,255,1)"
+    }
+  },
+  tab: {
+    opacity: 1,
+    color: "rgb(255,255,255,0.5)",
+    "&.Mui-selected": {
+      color: "rgb(255,255,255,1)"
+    }
   },
   panel: {
     padding: 0,
@@ -108,7 +120,9 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
           >
             {TABS.map(t => (
               <Tab
-                className={t.name === "alerts" ? classes.middleTab : ""}
+                className={
+                  t.name === "alerts" ? classes.middleTab : classes.tab
+                }
                 label={t.label}
                 value={t.name}
                 key={t.name}

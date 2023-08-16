@@ -16,7 +16,19 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(6)
   },
   middleTab: {
-    flexGrow: 1.5
+    flexGrow: 1.5,
+    opacity: 1,
+    color: "rgb(255,255,255,0.5)",
+    "&.Mui-selected": {
+      color: "rgb(255,255,255,1)"
+    }
+  },
+  tab: {
+    opacity: 1,
+    color: "rgb(255,255,255,0.5)",
+    "&.Mui-selected": {
+      color: "rgb(255,255,255,1)"
+    }
   },
   panel: {
     padding: 0,
