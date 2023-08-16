@@ -32,7 +32,7 @@ Le projet est divisé en 2 grandes briques distinctes :
   - Application Flask servie par Gunicorn avec une API GraphQL
   - [lien vers le dépôt](https://github.com/MTES-MCT/mobilic-api)
 
-![Architecture](./archi.png)
+![Architecture](./archi.jpg)
 
 ## Infrastructure
 
