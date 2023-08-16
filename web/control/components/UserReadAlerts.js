@@ -50,7 +50,6 @@ export function UserReadAlerts({
   saveInfractions,
   cancelInfractions,
   onUpdateInfraction,
-  hasModifiedInfractions,
   reportedInfractionsLastUpdateTime,
   readOnlyAlerts,
   noLic
@@ -118,11 +117,7 @@ export function UserReadAlerts({
       <>
         {isReportingInfractions ? (
           <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
-            <Button
-              title="Enregistrer"
-              onClick={() => saveInfractions()}
-              disabled={!hasModifiedInfractions}
-            >
+            <Button title="Enregistrer" onClick={() => saveInfractions()}>
               Enregistrer
             </Button>
             <Button

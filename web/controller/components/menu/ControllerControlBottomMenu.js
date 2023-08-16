@@ -61,8 +61,8 @@ export function ControllerControlBottomMenu({
               ? "Modifier l'infraction retenue"
               : "Modifier les infractions retenues"
             : totalAlertsNumber === 1
-            ? "Relever l'infraction"
-            : "Relever les infractions"}
+            ? "Modifier l'infraction relevée"
+            : "Modifier les infractions relevées"}
         </Button>
       )}
       {bdcAlreadyExisting && (
