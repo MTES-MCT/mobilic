@@ -20,7 +20,8 @@ export function ControllerControlBottomMenu({
   editBDC,
   downloadBDC,
   canDownloadBDC,
-  bdcAlreadyExisting
+  bdcAlreadyExisting,
+  totalAlertsNumber
 }) {
   const classes = useStyles();
   return (
@@ -56,7 +57,11 @@ export function ControllerControlBottomMenu({
           disabled={disabledReportInfractions}
         >
           {updatedInfractions
-            ? "Modifier les infractions retenues"
+            ? totalAlertsNumber === 1
+              ? "Modifier l'infraction retenue"
+              : "Modifier les infractions retenues"
+            : totalAlertsNumber === 1
+            ? "Relever l'infraction"
             : "Relever les infractions"}
         </Button>
       )}

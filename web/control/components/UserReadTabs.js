@@ -87,22 +87,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
               className={`${classes.panel} ${tab !== t.name &&
                 classes.hiddenPanel}`}
             >
-              {
-                <t.component
-                  {...props}
-                  setTab={setTab}
-                  groupedAlerts={props.groupedAlerts}
-                  isReportingInfractions={props.isReportingInfractions}
-                  saveInfractions={props.saveInfractions}
-                  cancelInfractions={props.cancelInfractions}
-                  onUpdateInfraction={props.onUpdateInfraction}
-                  reportedInfractionsLastUpdateTime={
-                    props.reportedInfractionsLastUpdateTime
-                  }
-                  hasModifiedInfractions={props.hasModifiedInfractions}
-                  readOnlyAlerts={props.readOnlyAlerts}
-                />
-              }
+              {<t.component {...props} setTab={setTab} />}
             </TabPanel>
           ))}
         </Container>
@@ -116,6 +101,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
           downloadBDC={downloadBDC}
           canDownloadBDC={canDownloadBDC(props.controlData)}
           bdcAlreadyExisting={!!props.controlData.controlBulletinCreationTime}
+          totalAlertsNumber={props.totalAlertsNumber}
         />
       )}
     </>

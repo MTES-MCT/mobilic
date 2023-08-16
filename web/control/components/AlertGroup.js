@@ -78,7 +78,7 @@ export function AlertGroup({
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
 
-  const isSanctionReportable = isReportable(sanction);
+  const isSanctionReportable = readOnlyAlerts ? true : isReportable(sanction);
 
   const alertsNumber = getAlertsNumber(
     alerts,

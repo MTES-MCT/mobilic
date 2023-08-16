@@ -9,6 +9,7 @@ import {
   FULL_MISSION_FRAGMENT,
   FULL_TEAM_FRAGMENT,
   REGULATION_COMPUTATIONS_FRAGMENT,
+  OBSERVED_INFRACTIONS_FRAGMENT,
   WORK_DAYS_DATA_FRAGMENT
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
@@ -341,12 +342,17 @@ export const CONTROLLER_READ_MISSION_DETAILS = gql`
 export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
   ${CONTROL_BULLETIN_FRAGMENT}
   ${CONTROL_DATA_FRAGMENT}
+  ${OBSERVED_INFRACTIONS_FRAGMENT}
   query readControlDataNoLic($controlId: Int!) {
     controlData(controlId: $controlId) {
       ...ControlData
       controlBulletin {
         ...ControlBulletin
       }
+      observedInfractions {
+        ...ObservedInfractions
+      }
+      reportedInfractionsLastUpdateTime
     }
   }
 `;
@@ -355,6 +361,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
   ${REGULATION_COMPUTATIONS_FRAGMENT}
+  ${OBSERVED_INFRACTIONS_FRAGMENT}
   ${CONTROL_BULLETIN_FRAGMENT}
   ${CONTROL_DATA_FRAGMENT}
   query readControlData($controlId: Int!) {
@@ -459,9 +466,8 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       regulationComputationsByDay {
         ...RegulationComputations
       }
-      reportedInfractions {
-        sanction
-        date
+      observedInfractions {
+        ...ObservedInfractions
       }
       reportedInfractionsLastUpdateTime
     }
@@ -1993,6 +1999,7 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
 `;
 
 export const CONTROLLER_SAVE_REPORTED_INFRACTIONS = gql`
+  ${OBSERVED_INFRACTIONS_FRAGMENT}
   mutation controllerSaveReportedInfractions(
     $controlId: Int
     $reportedInfractions: [ReportedInfractionInput]
@@ -2001,9 +2008,8 @@ export const CONTROLLER_SAVE_REPORTED_INFRACTIONS = gql`
       controlId: $controlId
       reportedInfractions: $reportedInfractions
     ) {
-      reportedInfractions {
-        sanction
-        date
+      observedInfractions {
+        ...ObservedInfractions
       }
       reportedInfractionsLastUpdateTime
     }
