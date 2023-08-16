@@ -72,6 +72,7 @@ export const useReportInfractions = controlData => {
           "",
           3000
         );
+        setHasModifiedInfractions(false);
         setIsReportingInfractions(false);
       } catch (err) {
         alerts.error(formatApiError(err), "", 6000);
@@ -82,6 +83,7 @@ export const useReportInfractions = controlData => {
   const onCloseInfractions = () => {
     setObservedInfractions(controlData.observedInfractions);
     setIsReportingInfractions(false);
+    setHasModifiedInfractions(false);
   };
   const cancelInfractions = () => {
     if (hasModifiedInfractions) {
