@@ -180,6 +180,7 @@ export function ControllerControlBulletin({
             locationDepartment: newControlBulletin.locationDepartment,
             locationCommune: newControlBulletin.locationCommune,
             locationLieu: newControlBulletin.locationLieu,
+            locationId: newControlBulletin.locationId,
             vehicleRegistrationNumber:
               newControlBulletin.vehicleRegistrationNumber,
             vehicleRegistrationCountry:

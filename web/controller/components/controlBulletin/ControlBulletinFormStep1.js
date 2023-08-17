@@ -1,43 +1,104 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import Stack from "@mui/material/Stack";
 import { Select, TextInput } from "@dataesr/react-dsfr";
 import { COUNTRIES } from "../../utils/country";
+import { DEPARTMENTS } from "../../utils/departments";
+import { useApi } from "common/utils/api";
+import { CONTROL_LOCATION_QUERY } from "common/utils/apiQueries";
+import { DsfrAutocomplete } from "../utils/DsfrAutocomplete";
 
 export function ControlBulletinFormStep1({
   handleEditControlBulletin,
   controlBulletin,
   showErrors
 }) {
+  const [departmentLocations, setDepartmentLocations] = React.useState([]);
+
+  const api = useApi();
+
+  React.useEffect(async () => {
+    if (controlBulletin.locationDepartment) {
+      const departmentCode = DEPARTMENTS.find(
+        d => d.label === controlBulletin.locationDepartment
+      )?.code;
+      if (departmentCode) {
+        const apiResponse = await api.graphQlQuery(
+          CONTROL_LOCATION_QUERY,
+          {
+            department: departmentCode
+          },
+          { context: { nonPublicApi: true } }
+        );
+        setDepartmentLocations(apiResponse.data.controlLocation);
+      }
+    }
+  }, [controlBulletin.locationDepartment]);
+
+  const controlLocationCommunes = useMemo(() => {
+    if (departmentLocations) {
+      const allCommunes = departmentLocations
+        .map(location => location.commune)
+        .sort((a, b) => a.localeCompare(b));
+      return [...new Set(allCommunes)];
+    } else {
+      return [];
+    }
+  }, [departmentLocations]);
+
+  const controlLocationLabels = useMemo(() => {
+    if (controlBulletin.locationCommune && departmentLocations) {
+      return departmentLocations
+        .filter(depLoc => depLoc.commune === controlBulletin.locationCommune)
+        .sort((a, b) => a.label.localeCompare(b.label));
+    } else {
+      return [];
+    }
+  }, [controlBulletin.locationCommune, departmentLocations]);
+
+  function editControlBulletinField(newValue, fieldName) {
+    handleEditControlBulletin({
+      target: {
+        name: fieldName,
+        value: newValue
+      }
+    });
+  }
+
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
-      <TextInput
-        value={controlBulletin.locationDepartment || ""}
-        name="locationDepartment"
-        onChange={e => handleEditControlBulletin(e)}
-        label="Département du contrôle"
-        required
-        messageType={
-          !controlBulletin.locationDepartment && showErrors ? "error" : ""
-        }
+      <DsfrAutocomplete
+        field={controlBulletin.locationDepartment}
+        fieldLabel="Département du contrôle"
+        options={DEPARTMENTS}
+        showErrors={showErrors}
+        onChange={(_, newValue) => {
+          editControlBulletinField(newValue.label, "locationDepartment");
+          editControlBulletinField("", "locationCommune");
+          editControlBulletinField("", "locationLieu");
+        }}
       />
-      <TextInput
-        value={controlBulletin.locationCommune || ""}
-        name="locationCommune"
-        onChange={e => handleEditControlBulletin(e)}
-        label="Commune du contrôle"
-        required
-        messageType={
-          !controlBulletin.locationCommune && showErrors ? "error" : ""
-        }
+      <DsfrAutocomplete
+        field={controlBulletin.locationCommune}
+        fieldLabel="Commune du contrôle"
+        disabled={!controlBulletin.locationDepartment}
+        options={controlLocationCommunes}
+        showErrors={showErrors}
+        onChange={(_, newValue) => {
+          editControlBulletinField(newValue, "locationCommune");
+          editControlBulletinField("", "locationLieu");
+        }}
       />
-      <TextInput
-        value={controlBulletin.locationLieu || ""}
-        name="locationLieu"
-        onChange={e => handleEditControlBulletin(e)}
-        label="Lieu du contrôle"
-        required
-        messageType={!controlBulletin.locationLieu && showErrors ? "error" : ""}
+      <DsfrAutocomplete
+        field={controlBulletin.locationLieu}
+        fieldLabel="Lieu du contrôle"
+        disabled={!controlBulletin.locationCommune}
+        options={controlLocationLabels}
+        showErrors={showErrors}
+        onChange={(_, newValue) => {
+          editControlBulletinField(newValue.label, "locationLieu");
+          editControlBulletinField(newValue.id, "locationId");
+        }}
       />
       <TextInput
         value={controlBulletin.userLastName || ""}
