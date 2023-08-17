@@ -13,7 +13,10 @@ import {
   getAlertComputationVersion,
   getLatestAlertComputationVersion
 } from "common/utils/regulation/alertVersions";
-import { SubmitterType } from "common/utils/regulation/alertTypes";
+import {
+  ALERT_TYPE_PROPS_SIMPLER,
+  SubmitterType
+} from "common/utils/regulation/alertTypes";
 import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 import { currentControllerId } from "common/utils/cookie";
 
@@ -86,6 +89,10 @@ export function GenericRegulatoryAlerts({
             <RegulatoryTextWeekBeforeAndAfter />
           )}
           {regulationComputations.regulationChecks
+            ?.filter(
+              regulationCheck =>
+                regulationCheck.type in ALERT_TYPE_PROPS_SIMPLER
+            )
             ?.filter(
               regulationCheck => regulationCheck.unit === regulationCheckUnit
             )

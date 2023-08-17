@@ -1,15 +1,15 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
-import Box from "@mui/material/Box";
 import { makeStyles } from "@mui/styles";
-import { Link } from "../../common/LinkButton";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
 import { AlertGroup } from "./AlertGroup";
-import { getAlertsGroupedByDay } from "common/utils/regulation/groupAlertsByDay";
+import { prettyFormatDayHour } from "common/utils/time";
+import Stack from "@mui/material/Stack";
+import { Button } from "@dataesr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -21,7 +21,14 @@ const useStyles = makeStyles(theme => ({
   },
   italicInfo: {
     fontStyle: "italic",
+    color: theme.palette.grey[600],
+    marginTop: theme.spacing(2)
+  },
+  subtitle: {
     color: theme.palette.grey[600]
+  },
+  helpText: {
+    fontWeight: "bold"
   },
   divider: {
     marginTop: theme.spacing(4),
@@ -29,61 +36,116 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const HELPER_TEXT_SEVERAL_INFRACTIONS =
+  "Sélectionnez la ou les infractions que vous souhaitez verbaliser";
+const HELPER_TEXT_SINGLE_INFRACTION =
+  "Sélectionnez l’infraction si vous souhaitez la verbaliser";
+
 export function UserReadAlerts({
   setTab,
+  groupedAlerts,
+  totalAlertsNumber,
   setPeriodOnFocus,
-  regulationComputationsByDay
+  isReportingInfractions,
+  saveInfractions,
+  cancelInfractions,
+  onUpdateInfraction,
+  reportedInfractionsLastUpdateTime,
+  readOnlyAlerts,
+  noLic
 }) {
   const classes = useStyles();
 
-  const newVersionGroupedAlerts = getAlertsGroupedByDay(
-    regulationComputationsByDay
-  );
-
   return (
     <Container maxWidth="md" className={classes.container}>
-      {newVersionGroupedAlerts.length > 0 ? (
+      {isReportingInfractions && (
+        <Typography className={classes.helpText}>
+          {totalAlertsNumber === 1
+            ? HELPER_TEXT_SINGLE_INFRACTION
+            : HELPER_TEXT_SEVERAL_INFRACTIONS}
+        </Typography>
+      )}
+      {!isReportingInfractions && reportedInfractionsLastUpdateTime && (
+        <Typography className={classes.helpText}>
+          {`Date de la dernière modification des infractions retenues : ${prettyFormatDayHour(
+            reportedInfractionsLastUpdateTime
+          )}`}
+        </Typography>
+      )}
+      {!noLic && (
+        <>
+          <Typography
+            align="left"
+            className={classes.subtitle}
+            variant="overline"
+          >
+            Infractions calculées par Mobilic
+          </Typography>{" "}
+          <Alert severity="info">
+            <Typography gutterBottom>
+              Les infractions calculées par Mobilic se basent sur la version
+              validée par le gestionnaire, ou, si elle n’a pas été faite au
+              moment du contrôle, sur celle du salarié.
+            </Typography>
+          </Alert>
+        </>
+      )}
+      {groupedAlerts?.length > 0 ? (
         <List>
-          {newVersionGroupedAlerts.map(group => (
-            <ListItem key={group.infringementLabel} disableGutters>
-              <AlertGroup
-                {...group}
-                setPeriodOnFocus={setPeriodOnFocus}
-                setTab={setTab}
-              />
-            </ListItem>
-          ))}
+          {groupedAlerts
+            .sort((alert1, alert2) =>
+              alert1.sanction.localeCompare(alert2.sanction)
+            )
+            .map(group => (
+              <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
+                <AlertGroup
+                  {...group}
+                  setPeriodOnFocus={setPeriodOnFocus}
+                  setTab={setTab}
+                  isReportingInfractions={isReportingInfractions}
+                  onUpdateInfraction={onUpdateInfraction}
+                  readOnlyAlerts={readOnlyAlerts}
+                />
+              </ListItem>
+            ))}
         </List>
       ) : (
         <Typography className={classes.italicInfo}>
           Il n'y a aucune alerte réglementaire sur la période
         </Typography>
       )}
+      <>
+        {isReportingInfractions ? (
+          <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
+            <Button title="Enregistrer" onClick={() => saveInfractions()}>
+              Enregistrer
+            </Button>
+            <Button
+              title="Annuler"
+              onClick={() => cancelInfractions()}
+              secondary
+            >
+              Annuler
+            </Button>
+          </Stack>
+        ) : (
+          !noLic && (
+            <Alert severity="warning">
+              <Typography gutterBottom>
+                Les données collectées par Mobilic sont déclaratives et sont
+                donc susceptibles d'erreurs ou d'oublis. En cas de données
+                manquantes ou inexactes les alertes réglementaires ne peuvent
+                pas être remontées correctement.
+              </Typography>
+              <Typography>
+                Mobilic sert à faciliter le travail d'enquête des inspecteurs
+                sans se substituer à lui.
+              </Typography>
+            </Alert>
+          )
+        )}
+      </>
       <Divider className={`hr-unstyled ${classes.divider}`} />
-      <Alert severity="warning">
-        <Typography gutterBottom>
-          Les données collectées par Mobilic sont déclaratives et sont donc
-          susceptibles d'erreurs ou d'oublis. En cas de données manquantes ou
-          inexactes les alertes réglementaires ne peuvent pas être remontées
-          correctement.
-        </Typography>
-        <Typography>
-          Mobilic sert à faciliter le travail d'enquête des inspecteurs sans se
-          substituer à lui.
-        </Typography>
-      </Alert>
-      <Box className={classes.linkContainer}>
-        <Link
-          color="primary"
-          variant="body1"
-          onClick={e => {
-            e.preventDefault();
-            setTab("history");
-          }}
-        >
-          Voir l'historique
-        </Link>
-      </Box>
     </Container>
   );
 }
