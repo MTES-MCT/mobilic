@@ -117,8 +117,8 @@ export function UserReadAlerts({
       <>
         {isReportingInfractions ? (
           <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
-            <Button title="Enregistrer" onClick={() => saveInfractions()}>
-              Enregistrer
+            <Button title="Valider" onClick={() => saveInfractions()}>
+              Valider
             </Button>
             <Button
               title="Annuler"
