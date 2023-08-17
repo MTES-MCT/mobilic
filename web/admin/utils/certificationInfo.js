@@ -8,7 +8,7 @@ import {
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 export const CERTIFICATE_SCENARIOS = {
-  SCENARIO_A: "Certificate banner",
+  // SCENARIO_A: "Certificate banner", // deactivated
   SCENARIO_B: "Certificate badge"
 };
 
@@ -51,7 +51,7 @@ export function useSendCertificationInfoResult() {
       {
         employmentId: adminStore.employmentId,
         action: result,
-        scenario: getCertificateScenario(adminStore.userId)
+        scenario: CERTIFICATE_SCENARIOS.SCENARIO_B
       },
       { context: { nonPublicApi: true } }
     );
@@ -70,30 +70,19 @@ export function useSendCertificationInfoResult() {
   return [sendSuccess, sendClose, sendLoad];
 }
 
-export function useShouldDisplayScenariis() {
+export function useShouldDisplayBadge() {
   const adminStore = useAdminStore();
-
-  const [shouldDisplayBanner, setShouldDisplayBanner] = React.useState(false);
   const [shouldDisplayBadge, setShouldDisplayBadge] = React.useState(false);
 
   React.useEffect(() => {
     const { userId, shouldSeeCertificateInfo } = adminStore;
     if (!userId || !shouldSeeCertificateInfo) {
-      setShouldDisplayBanner(false);
       setShouldDisplayBadge(false);
       return;
     }
-    if (getCertificateScenario(userId) === CERTIFICATE_SCENARIOS.SCENARIO_A) {
-      setShouldDisplayBanner(true);
-    } else {
-      setShouldDisplayBadge(true);
-    }
+
+    setShouldDisplayBadge(true);
   }, [adminStore.userId, adminStore.shouldSeeCertificateInfo]);
 
-  return [shouldDisplayBadge, shouldDisplayBanner];
+  return shouldDisplayBadge;
 }
-
-const getCertificateScenario = userId =>
-  userId % 2 === 0
-    ? CERTIFICATE_SCENARIOS.SCENARIO_A
-    : CERTIFICATE_SCENARIOS.SCENARIO_B;

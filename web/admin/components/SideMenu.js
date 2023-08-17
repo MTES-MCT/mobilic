@@ -8,7 +8,7 @@ import { useHistory, useRouteMatch } from "react-router-dom";
 import { useAdminStore } from "../store/store";
 import {
   useCertificationInfo,
-  useShouldDisplayScenariis
+  useShouldDisplayBadge
 } from "../utils/certificationInfo";
 import { getBadgeRoutes } from "../../common/routes";
 import { TextWithBadge } from "../../common/TextWithBadge";
@@ -35,7 +35,7 @@ function MenuItem({ label, path }) {
   const history = useHistory();
   const classes = menuItemStyles();
   const selected = useRouteMatch(path);
-  const [shouldDisplayBadge] = useShouldDisplayScenariis();
+  const shouldDisplayBadge = useShouldDisplayBadge();
   const { companyWithInfo } = useCertificationInfo();
   const badge = getBadgeRoutes(
     useAdminStore(),

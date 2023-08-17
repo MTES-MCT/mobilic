@@ -6,7 +6,7 @@ import { useAdminCompanies } from "../store/store";
 import {
   useCertificationInfo,
   useSendCertificationInfoResult,
-  useShouldDisplayScenariis
+  useShouldDisplayBadge
 } from "../utils/certificationInfo";
 import { getCertificateBadge } from "../../common/routes";
 import Badge from "@mui/material/Badge";
@@ -143,7 +143,7 @@ const COMPANY_SUB_PANELS = [
 function SubNavigationToggle({ view, setView }) {
   const classes = usePanelStyles();
   const { companyWithInfo } = useCertificationInfo();
-  const [shouldDisplayBadge] = useShouldDisplayScenariis();
+  const shouldDisplayBadge = useShouldDisplayBadge();
   const certificateBadge = useMemo(() => {
     if (!shouldDisplayBadge) {
       return null;
