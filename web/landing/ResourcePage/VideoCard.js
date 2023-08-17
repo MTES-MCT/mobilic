@@ -5,16 +5,7 @@ import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { PLAY_VIDEO } from "common/utils/matomoTags";
 
-const s3Root =
-  "https://storage.gra.cloud.ovh.net/v1/AUTH_8a2f745174054ce1b5ee7c6e79601088/mobilic/";
-
-export function VideoCard({
-  videoKey,
-  description,
-  posterKey,
-  matomoTag,
-  ...props
-}) {
+export function VideoCard({ video, description, poster, matomoTag, ...props }) {
   const classes = resourceCardsClasses();
   const { trackEvent } = useMatomo();
 
@@ -31,14 +22,14 @@ export function VideoCard({
         controls
         height="auto"
         width="100%"
-        poster={posterKey ? s3Root + posterKey : null}
+        poster={poster || null}
         preload="metadata"
         onPlay={clickEvent}
       >
-        <source src={s3Root + videoKey} type="video/mp4" />
+        <source src={video} type="video/mp4" />
         <p>
           Votre navigateur ne prend pas en charge les vidéos HTML5. Voici{" "}
-          <a href={s3Root + videoKey}>un lien pour télécharger la vidéo</a>
+          <a href={video}>un lien pour télécharger la vidéo</a>
         </p>
       </video>
     </Card>

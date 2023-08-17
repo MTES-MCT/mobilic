@@ -13,6 +13,15 @@ import { SlideshareCard } from "./SlideshareCard";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { RESOURCES_DOCUMENT } from "./ResourcePage";
 
+import SalarieInscriptionVideo from "common/assets/videos/salaries/salarie-inscription.mp4";
+import SalarieInscriptionPoster from "common/assets/videos/salaries/salarie-inscription.jpg";
+import SalarieInstallAndroidVideo from "common/assets/videos/salaries/salarie-installation-appli-android.mp4";
+import SalarieInstallAndroidPoster from "common/assets/videos/salaries/salarie-installation-appli-android.jpg";
+import SalarieInstallIphoneVideo from "common/assets/videos/salaries/salarie-installation-appli-iphone.mp4";
+import SalarieInstallIphonePoster from "common/assets/videos/salaries/salarie-installation-appli-iphone.jpg";
+import SalarieUsageQuotidienVideo from "common/assets/videos/salaries/salarie-usage-quotidien.mp4";
+import SalarieUsageQuotidienPoster from "common/assets/videos/salaries/salarie-usage-quotidien.jpg";
+
 export function DriverResourcePage() {
   const classes = resourcePagesClasses();
 
@@ -61,25 +70,29 @@ export function DriverResourcePage() {
           <Grid item xs={12} sm={6}>
             <VideoCard
               description="Inscription sur Mobilic"
-              videoKey="resources/videos/salaries/salarie-inscription.mp4"
+              video={SalarieInscriptionVideo}
+              poster={SalarieInscriptionPoster}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <VideoCard
               description="Télécharger Mobilic sur Android"
-              videoKey="resources/videos/salaries/salarie-installation-appli-android.mp4"
+              video={SalarieInstallAndroidVideo}
+              poster={SalarieInstallAndroidPoster}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <VideoCard
               description="Télécharger Mobilic sur iPhone"
-              videoKey="resources/videos/salaries/salarie-installation-appli-iphone.mp4"
+              video={SalarieInstallIphoneVideo}
+              poster={SalarieInstallIphonePoster}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <VideoCard
               description="Utiliser Mobilic au quotidien"
-              videoKey="resources/videos/salaries/salarie-usage-quotidien.mp4"
+              video={SalarieUsageQuotidienVideo}
+              poster={SalarieUsageQuotidienPoster}
             />
           </Grid>
         </Grid>
