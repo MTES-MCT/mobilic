@@ -14,7 +14,8 @@ const ControlsTable = ({ entries, onRowClick, period = "day" }) => {
       { name: "controlLocation", label: "Lieu contrôle" },
       { name: "type", label: "Type" },
       { name: "company", label: "Nom entreprise" },
-      { name: "nbControlledDays", label: "Jours contrôlés" }
+      { name: "nbControlledDays", label: "Jours contrôlés" },
+      { name: "nbReportedInfractions", label: "Infractions retenues" }
     ],
     [period]
   );
