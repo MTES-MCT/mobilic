@@ -190,7 +190,7 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
             editBDC={editBDC}
             downloadBDC={downloadBDC}
             canDownloadBDC={canDownloadBDC(controlData)}
-            BDCAlreadyExisting={!!controlData.controlBulletinCreationTime}
+            bdcAlreadyExisting={!!controlData.controlBulletinCreationTime}
             totalAlertsNumber={totalAlertsNumber}
           />
         </>
