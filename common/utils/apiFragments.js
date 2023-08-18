@@ -213,6 +213,7 @@ export const CONTROL_DATA_FRAGMENT = gql`
     controlBulletinCreationTime
     vehicleRegistrationNumber
     note
+    nbReportedInfractions
     controlBulletin {
       locationLieu
     }
