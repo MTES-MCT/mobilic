@@ -89,7 +89,6 @@ export const useReportInfractions = controlData => {
     setHasModifiedInfractions(false);
   };
   const cancelInfractions = ({ forceCancel = false } = {}) => {
-    console.log("forceCancel", forceCancel);
     if (forceCancel) {
       onCloseInfractions();
     } else {
