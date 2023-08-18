@@ -130,6 +130,10 @@ export function ControllerControlDetails({
           ...newControlData
         }))
       }
+      groupedAlerts={groupedAlerts}
+      saveInfractions={saveInfractions}
+      onUpdateInfraction={onUpdateInfraction}
+      cancelInfractions={cancelInfractions}
     />
   ];
 }

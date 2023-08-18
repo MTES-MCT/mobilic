@@ -38,7 +38,7 @@ const STEPS = {
     successMessage: "Les informations ont été enregistrées"
   },
   3: {
-    title: "Relevez des infractions",
+    title: "Infractions retenues et observations",
     successMessage: "Le bulletin de contrôle a été enregistré"
   }
 };
@@ -47,7 +47,10 @@ export function ControllerControlBulletin({
   controlData,
   onClose,
   setMustConfirmBeforeClosing,
-  onSaveControlBulletin
+  onSaveControlBulletin,
+  groupedAlerts,
+  saveInfractions,
+  onUpdateInfraction
 }) {
   const store = useStoreSyncedWithLocalStorage();
   const controllerUserInfo = store.controllerInfo();
@@ -125,6 +128,9 @@ export function ControllerControlBulletin({
     } else {
       setShowErrors(false);
       if (fieldUpdated) {
+        if (!STEPS[step + 1]) {
+          await saveInfractions();
+        }
         await saveControlBulletin(
           newControlBulletin,
           STEPS[step].successMessage
@@ -252,6 +258,11 @@ export function ControllerControlBulletin({
         grecoId={grecoId}
         onUpdateGrecoId={onUpdateGrecoId}
         controlCanBeDownloaded={controlCanBeDownloaded}
+        onUpdateInfraction={(...args) => {
+          setFieldUpdated(true);
+          onUpdateInfraction(...args);
+        }}
+        groupedAlerts={groupedAlerts}
       />
     ),
     <Stack

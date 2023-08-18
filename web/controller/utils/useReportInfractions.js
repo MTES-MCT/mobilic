@@ -41,7 +41,7 @@ export const useReportInfractions = controlData => {
       : [];
   }, [observedInfractions]);
 
-  const saveInfractions = async () => {
+  const saveInfractions = async ({ showSuccessMessage = true } = {}) => {
     withLoadingScreen(async () => {
       try {
         const apiResponse = await api.graphQlMutate(
@@ -65,13 +65,16 @@ export const useReportInfractions = controlData => {
           newReportedInfractionsLastUpdateTime
         );
         setObservedInfractions(newObservedInfractions);
-        alerts.success(
-          observedInfractions.length === 1
-            ? "L'infraction relevée a été enregistrée "
-            : "Les infractions relevées ont été enregistrées",
-          "",
-          3000
-        );
+        controlData.observedInfractions = newObservedInfractions;
+        if (showSuccessMessage) {
+          alerts.success(
+            observedInfractions.length === 1
+              ? "L'infraction relevée a été enregistrée "
+              : "Les infractions relevées ont été enregistrées",
+            "",
+            3000
+          );
+        }
         setHasModifiedInfractions(false);
         setIsReportingInfractions(false);
       } catch (err) {
@@ -85,17 +88,22 @@ export const useReportInfractions = controlData => {
     setIsReportingInfractions(false);
     setHasModifiedInfractions(false);
   };
-  const cancelInfractions = () => {
-    if (hasModifiedInfractions) {
-      modals.open("confirmationCancelControlBulletinModal", {
-        confirmButtonLabel: "Revenir à mes modifications",
-        handleCancel: () => {
-          onCloseInfractions();
-        },
-        handleConfirm: () => {}
-      });
-    } else {
+  const cancelInfractions = ({ forceCancel = false } = {}) => {
+    console.log("forceCancel", forceCancel);
+    if (forceCancel) {
       onCloseInfractions();
+    } else {
+      if (hasModifiedInfractions) {
+        modals.open("confirmationCancelControlBulletinModal", {
+          confirmButtonLabel: "Revenir à mes modifications",
+          handleCancel: () => {
+            onCloseInfractions();
+          },
+          handleConfirm: () => {}
+        });
+      } else {
+        onCloseInfractions();
+      }
     }
   };
 

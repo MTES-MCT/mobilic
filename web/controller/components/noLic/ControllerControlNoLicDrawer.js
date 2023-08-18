@@ -3,6 +3,7 @@ import { ControllerControlHeader } from "../details/ControllerControlHeader";
 import { ControllerControlNoLic } from "./ControllerControlNoLic";
 import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
 import { ControlDrawer } from "../../utils/ControlDrawer";
+import { useReportInfractions } from "../../utils/useReportInfractions";
 
 export function ControllerControlNoLicDrawer({
   controlData,
@@ -21,6 +22,18 @@ export function ControllerControlNoLicDrawer({
     onClose();
   };
 
+  const [
+    reportedInfractionsLastUpdateTime,
+    groupedAlerts,
+    checkedAlertsNumber,
+    totalAlertsNumber,
+    isReportingInfractions,
+    setIsReportingInfractions,
+    hasModifiedInfractions,
+    saveInfractions,
+    cancelInfractions,
+    onUpdateInfraction
+  ] = useReportInfractions(controlData);
   return (
     <ControlDrawer isOpen={isOpen} onClose={() => closeControl()}>
       <ControlBulletinDrawer
@@ -33,6 +46,10 @@ export function ControllerControlNoLicDrawer({
             ...newData
           }))
         }
+        groupedAlerts={groupedAlerts}
+        saveInfractions={saveInfractions}
+        onUpdateInfraction={onUpdateInfraction}
+        cancelInfractions={cancelInfractions}
       />
       <ControllerControlHeader
         controlId={controlData.id}
@@ -40,7 +57,20 @@ export function ControllerControlNoLicDrawer({
         onCloseDrawer={() => closeControl()}
         enableExport={false}
       />
-      <ControllerControlNoLic controlData={controlData} editBDC={editBDC} />
+      <ControllerControlNoLic
+        controlData={controlData}
+        editBDC={editBDC}
+        isReportingInfractions={isReportingInfractions}
+        setIsReportingInfractions={setIsReportingInfractions}
+        groupedAlerts={groupedAlerts}
+        totalAlertsNumber={totalAlertsNumber}
+        saveInfractions={saveInfractions}
+        cancelInfractions={cancelInfractions}
+        onUpdateInfraction={onUpdateInfraction}
+        hasModifiedInfractions={hasModifiedInfractions}
+        reportedInfractionsLastUpdateTime={reportedInfractionsLastUpdateTime}
+        checkedAlertsNumber={checkedAlertsNumber}
+      />
     </ControlDrawer>
   );
 }
