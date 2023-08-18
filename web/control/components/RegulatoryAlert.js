@@ -140,19 +140,27 @@ export function RegulatoryAlert({
         />
       )}
       <div>
-        <Link
-          onClick={e => {
-            e.preventDefault();
-            setTab("history");
-            setPeriodOnFocus(
-              alert.day || alert.week || alert.month
-                ? mapValues(alert, date => isoFormatLocalDate(parseInt(date)))
-                : alert
-            );
-          }}
-        >
-          {formatAlertPeriod(alert, type)}
-        </Link>
+        {setTab ? (
+          <Link
+            onClick={e => {
+              e.preventDefault();
+              setTab("history");
+              if (setPeriodOnFocus) {
+                setPeriodOnFocus(
+                  alert.day || alert.week || alert.month
+                    ? mapValues(alert, date =>
+                        isoFormatLocalDate(parseInt(date))
+                      )
+                    : alert
+                );
+              }
+            }}
+          >
+            {formatAlertPeriod(alert, type)}
+          </Link>
+        ) : (
+          <div>{formatAlertPeriod(alert, type)}</div>
+        )}
         <div>{formatAlertText(alert, type)}</div>
       </div>
     </Stack>

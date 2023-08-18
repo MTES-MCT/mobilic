@@ -16,7 +16,6 @@ import { ControllerControlBottomMenu as BottomMenu } from "../menu/ControllerCon
 import { canDownloadBDC } from "../../utils/controlBulletin";
 import { TextWithBadge } from "../../../common/TextWithBadge";
 import { UserReadAlerts } from "../../../control/components/UserReadAlerts";
-import { useReportInfractions } from "../../utils/useReportInfractions";
 import { Alert } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -88,20 +87,21 @@ const getTabs = alertNumber => [
   }
 ];
 
-export function ControllerControlNoLic({ controlData, editBDC }) {
+export function ControllerControlNoLic({
+  controlData,
+  editBDC,
+  reportedInfractionsLastUpdateTime,
+  groupedAlerts,
+  checkedAlertsNumber,
+  totalAlertsNumber,
+  isReportingInfractions,
+  setIsReportingInfractions,
+  hasModifiedInfractions,
+  saveInfractions,
+  cancelInfractions,
+  onUpdateInfraction
+}) {
   const classes = useStyles();
-  const [
-    reportedInfractionsLastUpdateTime,
-    groupedAlerts,
-    checkedAlertsNumber,
-    totalAlertsNumber,
-    isReportingInfractions,
-    setIsReportingInfractions,
-    hasModifiedInfractions,
-    saveInfractions,
-    cancelInfractions,
-    onUpdateInfraction
-  ] = useReportInfractions(controlData);
   const downloadBDC = useDownloadBDC(controlData.id);
 
   const TABS = getTabs(checkedAlertsNumber);
@@ -163,9 +163,9 @@ export function ControllerControlNoLic({ controlData, editBDC }) {
                 {
                   <t.component
                     setTab={setTab}
+                    controlData={controlData}
                     isReportingInfractions={isReportingInfractions}
                     setIsReportingInfractions={setIsReportingInfractions}
-                    controlData={controlData}
                     groupedAlerts={groupedAlerts}
                     totalAlertsNumber={totalAlertsNumber}
                     saveInfractions={saveInfractions}
