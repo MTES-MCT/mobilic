@@ -12,21 +12,12 @@ import { SlideshareCard } from "./SlideshareCard";
 import Box from "@mui/material/Box";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { RESOURCES_DOCUMENT } from "./ResourcePage";
+import { DriverVideoSection } from "./DriverVideoSection";
 
 import GestionnaireInscriptionVideo from "common/assets/videos/gestionnaires/gestionnaire-inscription.mp4";
 import GestionnaireInscriptionPoster from "common/assets/videos/gestionnaires/gestionnaire-inscription.jpg";
 import GestionnaireUtilisationVideo from "common/assets/videos/gestionnaires/gestionnaire-utilisation.mp4";
 import GestionnaireUtilisationPoster from "common/assets/videos/gestionnaires/gestionnaire-utilisation.jpg";
-import {
-  SalarieInscriptionVideo,
-  SalarieInscriptionPoster,
-  SalarieInstallAndroidVideo,
-  SalarieInstallAndroidPoster,
-  SalarieInstallIphoneVideo,
-  SalarieInstallIphonePoster,
-  SalarieUsageQuotidienVideo,
-  SalarieUsageQuotidienPoster
-} from "../videoConstants";
 
 export function AdminResourcePage() {
   const classes = resourcePagesClasses();
@@ -110,46 +101,7 @@ export function AdminResourcePage() {
         <Typography variant={"h3"} className={classes.resourceSubtitle}>
           Je cherche une notice d'utilisation pour mes salariés
         </Typography>
-        <Grid container direction="row" alignItems="center" spacing={10}>
-          <Grid item xs={12} sm={6}>
-            <VideoCard
-              description="Inscription sur Mobilic"
-              video={SalarieInscriptionVideo}
-              poster={SalarieInscriptionPoster}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <VideoCard
-              description="Télécharger Mobilic sur Android"
-              video={SalarieInstallAndroidVideo}
-              poster={SalarieInstallAndroidPoster}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <VideoCard
-              description="Télécharger Mobilic sur iPhone"
-              video={SalarieInstallIphoneVideo}
-              poster={SalarieInstallIphonePoster}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <VideoCard
-              description="Utiliser Mobilic au quotidien"
-              video={SalarieUsageQuotidienVideo}
-              poster={SalarieUsageQuotidienPoster}
-            />
-          </Grid>
-        </Grid>
-        <Button
-          color="primary"
-          size="small"
-          className={classes.viewAllButton}
-          variant={"outlined"}
-          href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg"
-          target="_blank"
-        >
-          Voir toutes les vidéos
-        </Button>
+        <DriverVideoSection buttonStyle={classes.viewAllButton} />
         <Grid container direction="row" alignItems="stretch" spacing={10}>
           <Grid item xs={12} sm={6}>
             <Box>
