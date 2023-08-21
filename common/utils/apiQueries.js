@@ -2235,14 +2235,22 @@ export const EDIT_COMPANIES_COMMUNICATION_SETTING = gql`
   }
 `;
 
-export const ADD_CERTIFICATION_INFO_RESULT = gql`
-  mutation addCertificateInfoResult(
-    $employmentId: Int!
+export const SNOOZE_CERTIFICATION_INFO = gql`
+  mutation snoozeCertificateInfo($employmentId: Int!) {
+    snoozeCertificateInfo(employmentId: $employmentId) {
+      success
+    }
+  }
+`;
+
+export const ADD_SCENARIO_TESTING_RESULT = gql`
+  mutation addScenarioTestingResult(
+    $userId: Int!
     $scenario: ScenarioEnum!
     $action: ActionEnum!
   ) {
-    addCertificateInfoResult(
-      employmentId: $employmentId
+    addScenarioTestingResult(
+      userId: $userId
       scenario: $scenario
       action: $action
     ) {

@@ -2,10 +2,9 @@ import React, { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
-import { useAdminCompanies } from "../store/store";
+import { useAdminCompanies, useAdminStore } from "../store/store";
 import {
   useCertificationInfo,
-  useSendCertificationInfoResult,
   useShouldDisplayBadge
 } from "../utils/certificationInfo";
 import { getCertificateBadge } from "../../common/routes";
@@ -23,6 +22,9 @@ import SettingAdmin from "./Settings";
 import CompanyApiPanel from "./CompanyApiPanel";
 import CompanyTeamsPanel from "./CompanyTeamsPanel";
 import CertificationPanel from "./CertificationPanel/CertificationPanel";
+import { useApi } from "common/utils/api";
+import { SNOOZE_CERTIFICATION_INFO } from "common/utils/apiQueries";
+import { ADMIN_ACTIONS } from "../store/reducers/root";
 
 export const usePanelStyles = makeStyles(theme => ({
   navigation: {
@@ -141,6 +143,8 @@ const COMPANY_SUB_PANELS = [
 ];
 
 function SubNavigationToggle({ view, setView }) {
+  const api = useApi();
+  const adminStore = useAdminStore();
   const classes = usePanelStyles();
   const { companyWithInfo } = useCertificationInfo();
   const shouldDisplayBadge = useShouldDisplayBadge();
@@ -150,12 +154,20 @@ function SubNavigationToggle({ view, setView }) {
     }
     return getCertificateBadge(companyWithInfo);
   }, [companyWithInfo, shouldDisplayBadge]);
-  const [sendSuccess, , sendLoad] = useSendCertificationInfoResult();
-  React.useEffect(async () => {
-    if (certificateBadge) {
-      await sendLoad();
-    }
-  }, [certificateBadge]);
+
+  const snoozeCertificationInfo = async () => {
+    console.log("snoozeCertificationInfo");
+    await api.graphQlMutate(
+      SNOOZE_CERTIFICATION_INFO,
+      { employmentId: adminStore.employmentId },
+      { context: { nonPublicApi: true } }
+    );
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateShouldSeeCertificateInfo,
+      payload: { shouldSeeCertificateInfo: false }
+    });
+  };
+
   return (
     <>
       {COMPANY_SUB_PANELS.map(panelInfos => (
@@ -173,7 +185,7 @@ function SubNavigationToggle({ view, setView }) {
             className={classes.toggleButton}
             onClick={
               panelInfos.onClick && shouldDisplayBadge
-                ? () => panelInfos.onClick(sendSuccess)
+                ? () => panelInfos.onClick(() => snoozeCertificationInfo())
                 : null
             }
           >
