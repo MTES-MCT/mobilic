@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
@@ -112,6 +112,10 @@ export function ControllerControlNoLic({
     setTab(TABS[1].name);
   };
 
+  const showModifyInfractionsAlert = useMemo(() => {
+    return !reportedInfractionsLastUpdateTime && !isReportingInfractions;
+  }, [reportedInfractionsLastUpdateTime, isReportingInfractions]);
+
   return (
     <>
       <TabContext value={tab}>
@@ -140,18 +144,20 @@ export function ControllerControlNoLic({
           </Tabs>
         </AppBar>
         <Box>
-          <Alert severity="info">
-            <Typography>
-              Mobilic a relevé des infractions par défaut, vous pouvez modifier
-              la sélection au sein de{" "}
-              <span
-                className={classes.linkInfractionTab}
-                onClick={() => setTab(TABS[1].name)}
-              >
-                l’onglet infractions
-              </span>
-            </Typography>
-          </Alert>
+          {!!showModifyInfractionsAlert && (
+            <Alert severity="info">
+              <Typography>
+                Mobilic a relevé des infractions par défaut, vous pouvez
+                modifier la sélection au sein de{" "}
+                <span
+                  className={classes.linkInfractionTab}
+                  onClick={() => setTab(TABS[1].name)}
+                >
+                  l’onglet infractions
+                </span>
+              </Typography>
+            </Alert>
+          )}
           <Container className={classes.panelContainer} disableGutters>
             {TABS.map(t => (
               <TabPanel
