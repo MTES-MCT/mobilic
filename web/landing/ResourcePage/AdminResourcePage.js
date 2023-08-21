@@ -12,6 +12,12 @@ import { SlideshareCard } from "./SlideshareCard";
 import Box from "@mui/material/Box";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { RESOURCES_DOCUMENT } from "./ResourcePage";
+import { DriverVideoSection } from "./DriverVideoSection";
+
+import GestionnaireInscriptionVideo from "common/assets/videos/gestionnaires/gestionnaire-inscription.mp4";
+import GestionnaireInscriptionPoster from "common/assets/videos/gestionnaires/gestionnaire-inscription.jpg";
+import GestionnaireUtilisationVideo from "common/assets/videos/gestionnaires/gestionnaire-utilisation.mp4";
+import GestionnaireUtilisationPoster from "common/assets/videos/gestionnaires/gestionnaire-utilisation.jpg";
 
 export function AdminResourcePage() {
   const classes = resourcePagesClasses();
@@ -38,13 +44,15 @@ export function AdminResourcePage() {
           <Grid item xs={12} sm={6}>
             <VideoCard
               description="Vous inscrire sur Mobilic"
-              videoKey="resources/videos/gestionnaires/gestionnaire-inscription.mp4"
+              video={GestionnaireInscriptionVideo}
+              poster={GestionnaireInscriptionPoster}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <VideoCard
               description="Utiliser l'interface gestionnaire"
-              videoKey="resources/videos/gestionnaires/gestionnaire-utilisation.mp4"
+              video={GestionnaireUtilisationVideo}
+              poster={GestionnaireUtilisationPoster}
             />
           </Grid>
         </Grid>
@@ -93,42 +101,7 @@ export function AdminResourcePage() {
         <Typography variant={"h3"} className={classes.resourceSubtitle}>
           Je cherche une notice d'utilisation pour mes salariés
         </Typography>
-        <Grid container direction="row" alignItems="center" spacing={10}>
-          <Grid item xs={12} sm={6}>
-            <VideoCard
-              description="Inscription sur Mobilic"
-              videoKey="resources/videos/salaries/salarie-inscription.mp4"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <VideoCard
-              description="Télécharger Mobilic sur Android"
-              videoKey="resources/videos/salaries/salarie-installation-appli-android.mp4"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <VideoCard
-              description="Télécharger Mobilic sur iPhone"
-              videoKey="resources/videos/salaries/salarie-installation-appli-iphone.mp4"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <VideoCard
-              description="Utiliser Mobilic au quotidien"
-              videoKey="resources/videos/salaries/salarie-usage-quotidien.mp4"
-            />
-          </Grid>
-        </Grid>
-        <Button
-          color="primary"
-          size="small"
-          className={classes.viewAllButton}
-          variant={"outlined"}
-          href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg"
-          target="_blank"
-        >
-          Voir toutes les vidéos
-        </Button>
+        <DriverVideoSection buttonStyle={classes.viewAllButton} />
         <Grid container direction="row" alignItems="stretch" spacing={10}>
           <Grid item xs={12} sm={6}>
             <Box>
