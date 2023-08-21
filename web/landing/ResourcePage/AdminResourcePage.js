@@ -17,14 +17,16 @@ import GestionnaireInscriptionVideo from "common/assets/videos/gestionnaires/ges
 import GestionnaireInscriptionPoster from "common/assets/videos/gestionnaires/gestionnaire-inscription.jpg";
 import GestionnaireUtilisationVideo from "common/assets/videos/gestionnaires/gestionnaire-utilisation.mp4";
 import GestionnaireUtilisationPoster from "common/assets/videos/gestionnaires/gestionnaire-utilisation.jpg";
-import SalarieInscriptionVideo from "common/assets/videos/salaries/salarie-inscription.mp4";
-import SalarieInscriptionPoster from "common/assets/videos/salaries/salarie-inscription.jpg";
-import SalarieInstallAndroidVideo from "common/assets/videos/salaries/salarie-installation-appli-android.mp4";
-import SalarieInstallAndroidPoster from "common/assets/videos/salaries/salarie-installation-appli-android.jpg";
-import SalarieInstallIphoneVideo from "common/assets/videos/salaries/salarie-installation-appli-iphone.mp4";
-import SalarieInstallIphonePoster from "common/assets/videos/salaries/salarie-installation-appli-iphone.jpg";
-import SalarieUsageQuotidienVideo from "common/assets/videos/salaries/salarie-usage-quotidien.mp4";
-import SalarieUsageQuotidienPoster from "common/assets/videos/salaries/salarie-usage-quotidien.jpg";
+import {
+  SalarieInscriptionVideo,
+  SalarieInscriptionPoster,
+  SalarieInstallAndroidVideo,
+  SalarieInstallAndroidPoster,
+  SalarieInstallIphoneVideo,
+  SalarieInstallIphonePoster,
+  SalarieUsageQuotidienVideo,
+  SalarieUsageQuotidienPoster
+} from "../videoConstants";
 
 export function AdminResourcePage() {
   const classes = resourcePagesClasses();
