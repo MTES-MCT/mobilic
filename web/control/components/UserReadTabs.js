@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { makeStyles } from "@mui/styles";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -68,6 +68,18 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
     setTab(tabs[1].name);
   };
 
+  const showModifyInfractionsAlert = useMemo(() => {
+    return (
+      props.totalAlertsNumber > 0 &&
+      !props.reportedInfractionsLastUpdateTime &&
+      !props.isReportingInfractions
+    );
+  }, [
+    props.totalAlertsNumber,
+    props.reportedInfractionsLastUpdateTime,
+    props.isReportingInfractions
+  ]);
+
   const downloadBDC = useDownloadBDC(props.controlData?.id);
 
   const classes = useStyles();
@@ -99,7 +111,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
           </Tabs>
         </AppBar>
         <Box>
-          {props.totalAlertsNumber > 0 && (
+          {!!showModifyInfractionsAlert && (
             <Alert severity="info">
               <Typography>
                 Mobilic a relevé des infractions par défaut, vous pouvez
