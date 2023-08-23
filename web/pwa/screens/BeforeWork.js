@@ -32,8 +32,7 @@ import {
   firstActionDateForSurvey,
   hasNeverSeenSurvey,
   hasNotSubmittedSurvey,
-  nbTimesSurveyWasDisplayed,
-  SURVEYS
+  nbTimesSurveyWasDisplayed
 } from "common/utils/surveys";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
@@ -205,35 +204,27 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   );
 
   function shouldDisplayEmployeeSocialImpactSurvey() {
-    if (companies?.some(c => c.admin)) {
+    const surveyId = process.env.REACT_APP_SURVEY_EMPLOYEE_SOCIAL_IMPACT;
+    if (!surveyId) {
+      return false;
+    } else if (companies?.some(c => c.admin)) {
       return false;
     } else if (
       !isDateBeforeNbDays(unixTimestampToDate(userInfo.creationTime), 61)
     ) {
       return false;
-    } else if (
-      hasNeverSeenSurvey(
-        userInfo.surveyActions,
-        SURVEYS.EMPLOYEE_SOCIAL_IMPACT_1.surveyId
-      )
-    ) {
+    } else if (hasNeverSeenSurvey(userInfo.surveyActions, surveyId)) {
       return true;
     } else {
       const firstActionForSurvey = firstActionDateForSurvey(
         userInfo.surveyActions,
-        SURVEYS.EMPLOYEE_SOCIAL_IMPACT_1.surveyId
+        surveyId
       );
       if (
-        hasNotSubmittedSurvey(
-          userInfo.surveyActions,
-          SURVEYS.EMPLOYEE_SOCIAL_IMPACT_1.surveyId
-        ) &&
+        hasNotSubmittedSurvey(userInfo.surveyActions, surveyId) &&
         firstActionForSurvey &&
         isDateBeforeNbDays(firstActionForSurvey, 30) &&
-        nbTimesSurveyWasDisplayed(
-          userInfo.surveyActions,
-          SURVEYS.EMPLOYEE_SOCIAL_IMPACT_1.surveyId
-        ) < 3
+        nbTimesSurveyWasDisplayed(userInfo.surveyActions, surveyId) < 3
       ) {
         return true;
       }
@@ -244,7 +235,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   React.useEffect(() => {
     if (shouldDisplayEmployeeSocialImpactSurvey()) {
       modals.open("typeformModal", {
-        typeformId: SURVEYS.EMPLOYEE_SOCIAL_IMPACT_1.surveyId,
+        typeformId: process.env.REACT_APP_SURVEY_EMPLOYEE_SOCIAL_IMPACT,
         userId: userId
       });
     }

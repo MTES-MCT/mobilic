@@ -1,7 +1,5 @@
 import { unixTimestampToDate } from "./time";
 
-export const SURVEYS = { EMPLOYEE_SOCIAL_IMPACT_1: { surveyId: "cHirYHre" } };
-
 export const SURVEY_ACTIONS = {
   DISPLAY: "DISPLAY",
   CLOSE: "CLOSE",

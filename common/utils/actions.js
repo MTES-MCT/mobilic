@@ -51,8 +51,7 @@ import { ACTIONS } from "../store/reducers/root";
 import {
   firstActionDateForSurvey,
   hasNotSubmittedSurvey,
-  nbTimesSurveyWasDisplayed,
-  SURVEYS
+  nbTimesSurveyWasDisplayed
 } from "./surveys";
 
 const ActionsContext = React.createContext(() => {});
@@ -336,26 +335,19 @@ class Actions {
           missionResponse.id,
           6000
         );
+        const surveyId = process.env.REACT_APP_SURVEY_EMPLOYEE_SOCIAL_IMPACT;
         if (
+          surveyId &&
           userInfo.surveyActions &&
-          hasNotSubmittedSurvey(
-            userInfo.surveyActions,
-            SURVEYS.EMPLOYEE_SOCIAL_IMPACT_1.surveyId
-          ) &&
-          nbTimesSurveyWasDisplayed(
-            userInfo.surveyActions,
-            SURVEYS.EMPLOYEE_SOCIAL_IMPACT_1.surveyId
-          ) === 1 &&
+          hasNotSubmittedSurvey(userInfo.surveyActions, surveyId) &&
+          nbTimesSurveyWasDisplayed(userInfo.surveyActions, surveyId) === 1 &&
           isDateBeforeNbDays(
-            firstActionDateForSurvey(
-              userInfo.surveyActions,
-              SURVEYS.EMPLOYEE_SOCIAL_IMPACT_1.surveyId
-            ),
+            firstActionDateForSurvey(userInfo.surveyActions, surveyId),
             7
           )
         ) {
           modals.open("typeformModal", {
-            typeformId: SURVEYS.EMPLOYEE_SOCIAL_IMPACT_1.surveyId,
+            typeformId: surveyId,
             userId: userId
           });
         }
