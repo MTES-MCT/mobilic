@@ -20,6 +20,17 @@ import { TestimonialCard } from "../ResourcePage/TestimonialCard";
 import { VideoCard } from "../ResourcePage/VideoCard";
 import { resourceCardsClasses } from "../ResourcePage/styles/ResourceCardsStyle";
 
+import TestimonialJCBVideo from "common/assets/videos/testimonials/jeremy_cohen_boulakia.mp4";
+import TestimonialJCBPoster from "common/assets/videos/testimonials/jeremy_cohen_boulakia.jpg";
+import TestimonialLAVideo from "common/assets/videos/testimonials/ludovic_almy.mp4";
+import TestimonialLAPoster from "common/assets/videos/testimonials/ludovic_almy.jpg";
+import TestimonialNKVideo from "common/assets/videos/testimonials/nicolas_kbidi.mp4";
+import TestimonialNKPoster from "common/assets/videos/testimonials/nicolas_kbidi.jpg";
+import TestimonialRGVideo from "common/assets/videos/testimonials/raphael_grenom.mp4";
+import TestimonialRGPoster from "common/assets/videos/testimonials/raphael_grenom.jpg";
+import TestimonialYMVideo from "common/assets/videos/testimonials/yoann_mace.mp4";
+import TestimonialYMPoster from "common/assets/videos/testimonials/yoann_mace.jpg";
+
 export function TalkingAboutUsSection() {
   const responsivePressArticles = {
     desktop: {
@@ -136,15 +147,15 @@ export function TalkingAboutUsSection() {
   const TESTIMONIALS_VIDEOS = [
     {
       title: "Ludovic Almy, responsable d'exploitation dans le déménagement",
-      videoKey: "resources/videos/testimonials/ludovic_almy.mp4",
-      posterKey: "resources/videos/testimonials/ludovic_almy.jpg",
+      video: TestimonialLAVideo,
+      poster: TestimonialLAPoster,
       matomoTag: "almy"
     },
     {
       title:
         "Raphaël Grenom, directeur d'une agence de livraison de marchandises",
-      videoKey: "resources/videos/testimonials/raphael_grenom.mp4",
-      posterKey: "resources/videos/testimonials/raphael_grenom.jpg",
+      video: TestimonialRGVideo,
+      poster: TestimonialRGPoster,
       matomoTag: "grenom"
     },
     {
@@ -155,15 +166,15 @@ export function TalkingAboutUsSection() {
           gérant d'une entreprise de déménagement
         </span>
       ),
-      videoKey: "resources/videos/testimonials/yoann_mace.mp4",
-      posterKey: "resources/videos/testimonials/yoann_mace.jpg",
+      video: TestimonialYMVideo,
+      poster: TestimonialYMPoster,
       matomoTag: "mace"
     },
     {
       title:
         "Jérémy Cohen Boulakia, directeur d'une entreprise de livraison de marchandises",
-      videoKey: "resources/videos/testimonials/jeremy_cohen_boulakia.mp4",
-      posterKey: "resources/videos/testimonials/jeremy_cohen_boulakia.jpg",
+      video: TestimonialJCBVideo,
+      poster: TestimonialJCBPoster,
       matomoTag: "boulakia"
     },
     {
@@ -176,8 +187,8 @@ export function TalkingAboutUsSection() {
           <br />
         </span>
       ),
-      videoKey: "resources/videos/testimonials/nicolas_kbidi.mp4",
-      posterKey: "resources/videos/testimonials/nicolas_kbidi.jpg",
+      video: TestimonialNKVideo,
+      poster: TestimonialNKPoster,
       matomoTag: "k-bidi"
     }
   ];
@@ -207,10 +218,10 @@ export function TalkingAboutUsSection() {
       >
         {TESTIMONIALS_VIDEOS.map(video => (
           <VideoCard
-            key={video.videoKey}
-            videoKey={video.videoKey}
+            key={video.matomoTag}
+            video={video.video}
             description={video.title}
-            posterKey={video.posterKey}
+            poster={video.poster}
             className={cardClasses.pressCard}
             matomoTag={video.matomoTag}
           />

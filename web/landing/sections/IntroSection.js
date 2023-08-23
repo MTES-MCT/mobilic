@@ -10,19 +10,10 @@ import { makeStyles } from "@mui/styles";
 import { useIsWidthDown } from "common/utils/useWidth";
 import { VideoCard } from "../ResourcePage/VideoCard";
 
-const videos = [
-  {
-    title: "Mobilic, qu'est-ce que c'est ?",
-    videoKey: "resources/videos/accueil/accueil-qu-est-ce-que-mobilic.mp4",
-    posterKey:
-      "resources/videos/accueil/accueil-qu-est-ce-que-mobilic-preview.jpg"
-  },
-  {
-    title: "Mobilic est-il conforme à la réglementation ?",
-    videoKey: "resources/videos/accueil/accueil-reglementaire.mp4",
-    posterKey: "resources/videos/accueil/accueil-reglementaire-preview.jpg"
-  }
-];
+import MobilicVideo from "common/assets/videos/accueil/accueil-qu-est-ce-que-mobilic.mp4";
+import MobilicPoster from "common/assets/videos/accueil/accueil-qu-est-ce-que-mobilic-preview.jpg";
+import ReglementationVideo from "common/assets/videos/accueil/accueil-reglementaire.mp4";
+import ReglementationPoster from "common/assets/videos/accueil/accueil-reglementaire-preview.jpg";
 
 const useStyles = makeStyles(theme => ({
   heroContainer: {
@@ -108,9 +99,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function IntroSection() {
+const PhoneImageComponent = ({ isSmDown }) => {
   const classes = useStyles();
-  const PhoneImageComponent = () => (
+  return (
     <Grid item xs={12} sm={6} lg={8} className={classes.phoneImageContainer}>
       <img
         className={classes.phoneImage}
@@ -121,7 +112,11 @@ export function IntroSection() {
       />
     </Grid>
   );
-  const Explanation = () => (
+};
+
+const Explanation = () => {
+  const classes = useStyles();
+  return (
     <Grid item xs={12} sm={6} lg={4}>
       <Typography className={classes.explanation}>
         Mobilic est une alternative numérique au livret individuel de contrôle
@@ -137,7 +132,10 @@ export function IntroSection() {
       </Typography>
     </Grid>
   );
+};
 
+export function IntroSection() {
+  const classes = useStyles();
   const isSmDown = useIsWidthDown("sm");
 
   return (
@@ -168,28 +166,33 @@ export function IntroSection() {
           </Grid>
           {isSmDown ? (
             <>
-              <PhoneImageComponent />
+              <PhoneImageComponent isSmDown={isSmDown} />
               <Explanation />
             </>
           ) : (
             <>
               <Explanation />
-              <PhoneImageComponent />
+              <PhoneImageComponent isSmDown={isSmDown} />
             </>
           )}
         </Grid>
       </Container>
       <Container maxWidth="md" className={classes.videoSection}>
         <Grid container direction="row" alignItems="center" spacing={1}>
-          {videos.map(video => (
-            <Grid key={video.videoKey} item xs={12} sm={6}>
-              <VideoCard
-                description={video.title}
-                videoKey={video.videoKey}
-                posterKey={video.posterKey}
-              />
-            </Grid>
-          ))}
+          <Grid item xs={12} sm={6}>
+            <VideoCard
+              description="Mobilic, qu'est-ce que c'est ?"
+              video={MobilicVideo}
+              poster={MobilicPoster}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <VideoCard
+              description="Mobilic est-il conforme à la réglementation ?"
+              video={ReglementationVideo}
+              poster={ReglementationPoster}
+            />
+          </Grid>
         </Grid>
       </Container>
     </Container>
