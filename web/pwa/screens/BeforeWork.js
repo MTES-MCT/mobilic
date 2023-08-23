@@ -16,9 +16,11 @@ import {
   DAY,
   formatDayOfWeek,
   formatTimeOfDay,
+  isDateBeforeNbDays,
   prettyFormatDay,
   shortPrettyFormatDay,
-  startOfDay
+  startOfDay,
+  unixTimestampToDate
 } from "common/utils/time";
 import ListSubheader from "@mui/material/ListSubheader";
 import orderBy from "lodash/orderBy";
@@ -26,6 +28,13 @@ import { LoadingButton } from "common/components/LoadingButton";
 import { useLoadingScreen } from "common/utils/loading";
 import BackgroundImage from "common/assets/images/landing-hero-vertical-without-text-logo.svg";
 import LogoWithText from "common/assets/images/mobilic-logo-white-with-text.svg";
+import {
+  firstActionDateForSurvey,
+  hasNeverSeenSurvey,
+  hasNotSubmittedSurvey,
+  nbTimesSurveyWasDisplayed,
+  SURVEYS
+} from "common/utils/surveys";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -119,6 +128,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
 
   const companies = store.companies();
   const userId = store.userId();
+  const userInfo = store.userInfo();
 
   function handleFirstActivitySelection(teamMates, missionInfos) {
     const team = teamMates ? [userId, ...teamMates.map(cw => cw.id)] : [userId];
@@ -193,6 +203,52 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
     ["startTime"],
     ["desc"]
   );
+
+  function shouldDisplayEmployeeSocialImpactSurvey() {
+    if (companies?.some(c => c.admin)) {
+      return false;
+    } else if (
+      !isDateBeforeNbDays(unixTimestampToDate(userInfo.creationTime), 61)
+    ) {
+      return false;
+    } else if (
+      hasNeverSeenSurvey(
+        userInfo.surveyActions,
+        SURVEYS.EMPLOYEE_SOCIAL_IMPACT_1.surveyId
+      )
+    ) {
+      return true;
+    } else {
+      const firstActionForSurvey = firstActionDateForSurvey(
+        userInfo.surveyActions,
+        SURVEYS.EMPLOYEE_SOCIAL_IMPACT_1.surveyId
+      );
+      if (
+        hasNotSubmittedSurvey(
+          userInfo.surveyActions,
+          SURVEYS.EMPLOYEE_SOCIAL_IMPACT_1.surveyId
+        ) &&
+        firstActionForSurvey &&
+        isDateBeforeNbDays(firstActionForSurvey, 30) &&
+        nbTimesSurveyWasDisplayed(
+          userInfo.surveyActions,
+          SURVEYS.EMPLOYEE_SOCIAL_IMPACT_1.surveyId
+        ) < 3
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  React.useEffect(() => {
+    if (shouldDisplayEmployeeSocialImpactSurvey()) {
+      modals.open("typeformModal", {
+        typeformId: SURVEYS.EMPLOYEE_SOCIAL_IMPACT_1.surveyId,
+        userId: userId
+      });
+    }
+  }, []);
 
   return (
     <Container maxWidth={false} className={classes.outer} disableGutters>

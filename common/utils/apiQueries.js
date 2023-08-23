@@ -2282,3 +2282,17 @@ export const CONTROL_LOCATION_QUERY = gql`
     }
   }
 `;
+
+export const CREATE_SURVEY_ACTION = gql`
+  mutation createSurveyAction(
+    $userId: Int!
+    $surveyId: String!
+    $action: SurveyActionEnum!
+  ) {
+    createSurveyAction(userId: $userId, surveyId: $surveyId, action: $action) {
+      surveyId
+      creationTime
+      action
+    }
+  }
+`;

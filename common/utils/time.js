@@ -348,3 +348,11 @@ export function getMonthsBetweenTwoDates(dateFrom, dateTo) {
     12 * (dateTo.getFullYear() - dateFrom.getFullYear())
   );
 }
+
+export function unixTimestampToDate(unixTimestamp) {
+  return new Date(unixTimestamp * 1000);
+}
+
+export function isDateBeforeNbDays(dateToTest, nbDays) {
+  return dateToTest < addDaysToDate(new Date(), -nbDays);
+}
