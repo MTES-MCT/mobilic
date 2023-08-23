@@ -78,7 +78,7 @@ export default function UserReadQRCodeModal({ open, handleClose }) {
               montrer ce QR code qui leur permettra de consulter les données de
               votre historique.
             </Typography>,
-            <QRCode value={link} size={180} key={1} />
+            <QRCode value={link} size={180} key={1} includeMargin={true} />
           ]
         ) : error ? (
           <Typography color="error">
