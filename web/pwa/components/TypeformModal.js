@@ -90,7 +90,7 @@ export default function TypeformModal({
         <Widget
           id={typeformId}
           displayAsFullScreenModal={false}
-          enableSandbox={!!process.env.REACT_APP_SUBMIT_TYPEFORM === 1}
+          enableSandbox={process.env.REACT_APP_SUBMIT_TYPEFORM !== "1"}
           style={{ height: "100%" }}
           onSubmit={() => onSubmitForm()}
         />
