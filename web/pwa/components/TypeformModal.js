@@ -78,7 +78,7 @@ export default function TypeformModal({
         maxWidth="sm"
         className={classes.container}
         disableGutters
-        data-testid="geoloc-modal-container"
+        data-testid="typeform-modal-container"
       >
         <IconButton
           aria-label="Fermer"
