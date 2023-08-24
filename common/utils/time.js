@@ -350,7 +350,7 @@ export function getMonthsBetweenTwoDates(dateFrom, dateTo) {
 }
 
 export function unixTimestampToDate(unixTimestamp) {
-  return new Date(unixTimestamp * 1000);
+  return new Date(unixToJSTimestamp(unixTimestamp));
 }
 
 export function isDateBeforeNbDays(dateToTest, nbDays) {
