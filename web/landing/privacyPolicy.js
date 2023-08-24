@@ -4,6 +4,39 @@ import { Header } from "../common/Header";
 import { makeStyles } from "@mui/styles";
 import { Footer } from "./footer";
 import Link from "@mui/material/Link";
+import { SimpleTable } from "@dataesr/react-dsfr";
+
+const dataCookies = [
+  {
+    Cookies: "Matomo",
+    "Traitement réalisé": "Analyse statistique des activités.",
+    "Base juridique": "Article 82 de la loi n°78-17 du 6 janvier 1978 modifiée",
+    Garanties: (
+      <Link
+        href="https://fr.matomo.org/privacy-policy/"
+        target="_blank"
+        rel="noreferrer"
+      >
+        https://fr.matomo.org/privacy-policy/
+      </Link>
+    )
+  },
+  {
+    Cookies: "Typeform",
+    "Traitement réalisé":
+      "Outil de création de formulaires et d'enquêtes, centrés sur l'expérience utilisateur.",
+    "Base juridique": "Consentement",
+    Garanties: (
+      <Link
+        href="https://www.typeform.com/help/s/legal-compliance-8911275305876/"
+        target="_blank"
+        rel="noreferrer"
+      >
+        https://www.typeform.com/help/s/legal-compliance-8911275305876/
+      </Link>
+    )
+  }
+];
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -73,18 +106,17 @@ function PrivacyPolicyContent() {
         n&lsquo;est pas affectée lorsque les utilisateurs utilisent des
         navigateurs désactivant les cookies.
       </p>
-      <p>
-        <b>
-          Nous utilisons pour cela{" "}
-          <Link
-            href="https://matomo.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Matomo
-          </Link>
-        </b>
-        , un outil de mesure d&lsquo;audience web{" "}
+      <h2>Quels sont les cookies et traceurs que nous utilisons ?</h2>
+      <SimpleTable data={dataCookies} />
+      <p style={{ marginTop: "1.5rem" }}>
+        <Link
+          href="https://matomo.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Matomo
+        </Link>{" "}
+        est un outil de mesure d&lsquo;audience web{" "}
         <Link
           href="https://matomo.org/free-software/"
           target="_blank"

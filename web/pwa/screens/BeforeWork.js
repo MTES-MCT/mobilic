@@ -26,6 +26,7 @@ import { LoadingButton } from "common/components/LoadingButton";
 import { useLoadingScreen } from "common/utils/loading";
 import BackgroundImage from "common/assets/images/landing-hero-vertical-without-text-logo.svg";
 import LogoWithText from "common/assets/images/mobilic-logo-white-with-text.svg";
+import { shouldDisplayEmployeeSocialImpactSurveyOnMainPage } from "common/utils/surveys";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -119,6 +120,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
 
   const companies = store.companies();
   const userId = store.userId();
+  const userInfo = store.userInfo();
 
   function handleFirstActivitySelection(teamMates, missionInfos) {
     const team = teamMates ? [userId, ...teamMates.map(cw => cw.id)] : [userId];
@@ -193,6 +195,17 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
     ["startTime"],
     ["desc"]
   );
+
+  React.useEffect(() => {
+    if (
+      shouldDisplayEmployeeSocialImpactSurveyOnMainPage(userInfo, companies)
+    ) {
+      modals.open("typeformModal", {
+        typeformId: process.env.REACT_APP_SURVEY_EMPLOYEE_SOCIAL_IMPACT,
+        userId: userId
+      });
+    }
+  }, []);
 
   return (
     <Container maxWidth={false} className={classes.outer} disableGutters>
