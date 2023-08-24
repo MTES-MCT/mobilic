@@ -50,31 +50,29 @@ export function shouldDisplayEmployeeSocialImpactSurveyOnMainPage(
   const surveyId = process.env.REACT_APP_SURVEY_EMPLOYEE_SOCIAL_IMPACT;
   if (!surveyId) {
     return false;
-  } else if (companies?.some(c => c.admin)) {
+  }
+  if (companies?.some(c => c.admin)) {
     return false;
-  } else if (
+  }
+  if (
     !isDateBeforeNbDays(
       unixTimestampToDate(userInfo.creationTime),
       NB_DAYS_BEFORE_FIRST_DISPLAY
     )
   ) {
     return false;
-  } else if (hasNeverSeenSurvey(userInfo.surveyActions, surveyId)) {
-    return true;
-  } else {
-    const firstActionForSurvey = firstActionDateForSurvey(
-      userInfo.surveyActions,
-      surveyId
-    );
-    if (
-      hasNotSubmittedSurvey(userInfo.surveyActions, surveyId) &&
-      firstActionForSurvey &&
-      isDateBeforeNbDays(firstActionForSurvey, NB_DAYS_BEFORE_REDISPLAY) &&
-      nbTimesSurveyWasDisplayed(userInfo.surveyActions, surveyId) <
-        NB_MAX_DISPLAY
-    ) {
-      return true;
-    }
   }
-  return false;
+  if (hasNeverSeenSurvey(userInfo.surveyActions, surveyId)) {
+    return true;
+  }
+  const firstActionForSurvey = firstActionDateForSurvey(
+    userInfo.surveyActions,
+    surveyId
+  );
+  return (
+    hasNotSubmittedSurvey(userInfo.surveyActions, surveyId) &&
+    firstActionForSurvey &&
+    isDateBeforeNbDays(firstActionForSurvey, NB_DAYS_BEFORE_REDISPLAY) &&
+    nbTimesSurveyWasDisplayed(userInfo.surveyActions, surveyId) < NB_MAX_DISPLAY
+  );
 }
