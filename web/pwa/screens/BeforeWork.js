@@ -16,11 +16,9 @@ import {
   DAY,
   formatDayOfWeek,
   formatTimeOfDay,
-  isDateBeforeNbDays,
   prettyFormatDay,
   shortPrettyFormatDay,
-  startOfDay,
-  unixTimestampToDate
+  startOfDay
 } from "common/utils/time";
 import ListSubheader from "@mui/material/ListSubheader";
 import orderBy from "lodash/orderBy";
@@ -28,12 +26,7 @@ import { LoadingButton } from "common/components/LoadingButton";
 import { useLoadingScreen } from "common/utils/loading";
 import BackgroundImage from "common/assets/images/landing-hero-vertical-without-text-logo.svg";
 import LogoWithText from "common/assets/images/mobilic-logo-white-with-text.svg";
-import {
-  firstActionDateForSurvey,
-  hasNeverSeenSurvey,
-  hasNotSubmittedSurvey,
-  nbTimesSurveyWasDisplayed
-} from "common/utils/surveys";
+import { shouldDisplayEmployeeSocialImpactSurveyOnMainPage } from "common/utils/surveys";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -203,37 +196,10 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
     ["desc"]
   );
 
-  function shouldDisplayEmployeeSocialImpactSurvey() {
-    const surveyId = process.env.REACT_APP_SURVEY_EMPLOYEE_SOCIAL_IMPACT;
-    if (!surveyId) {
-      return false;
-    } else if (companies?.some(c => c.admin)) {
-      return false;
-    } else if (
-      !isDateBeforeNbDays(unixTimestampToDate(userInfo.creationTime), 61)
-    ) {
-      return false;
-    } else if (hasNeverSeenSurvey(userInfo.surveyActions, surveyId)) {
-      return true;
-    } else {
-      const firstActionForSurvey = firstActionDateForSurvey(
-        userInfo.surveyActions,
-        surveyId
-      );
-      if (
-        hasNotSubmittedSurvey(userInfo.surveyActions, surveyId) &&
-        firstActionForSurvey &&
-        isDateBeforeNbDays(firstActionForSurvey, 30) &&
-        nbTimesSurveyWasDisplayed(userInfo.surveyActions, surveyId) < 3
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   React.useEffect(() => {
-    if (shouldDisplayEmployeeSocialImpactSurvey()) {
+    if (
+      shouldDisplayEmployeeSocialImpactSurveyOnMainPage(userInfo, companies)
+    ) {
       modals.open("typeformModal", {
         typeformId: process.env.REACT_APP_SURVEY_EMPLOYEE_SOCIAL_IMPACT,
         userId: userId
