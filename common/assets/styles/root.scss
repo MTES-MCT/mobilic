@@ -246,7 +246,7 @@
   opacity: 0;
 }
 
-[href]:not(.fr-breadcrumb__link, .fr-link, .certificateBannerLink) {
+[href]:not(.fr-breadcrumb__link, .fr-link) {
   --underline-img: none;
 }
 
