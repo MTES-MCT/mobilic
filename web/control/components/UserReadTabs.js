@@ -111,7 +111,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
           </Tabs>
         </AppBar>
         <Box>
-          {!!showModifyInfractionsAlert && (
+          {tab !== tabs[1].name && !!showModifyInfractionsAlert && (
             <Alert severity="info">
               <Typography>
                 Mobilic a relevé des infractions par défaut, vous pouvez

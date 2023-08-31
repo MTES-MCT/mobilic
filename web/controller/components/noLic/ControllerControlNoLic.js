@@ -144,7 +144,7 @@ export function ControllerControlNoLic({
           </Tabs>
         </AppBar>
         <Box>
-          {!!showModifyInfractionsAlert && (
+          {tab !== TABS[1].name && !!showModifyInfractionsAlert && (
             <Alert severity="info">
               <Typography>
                 Mobilic a relevé des infractions par défaut, vous pouvez
