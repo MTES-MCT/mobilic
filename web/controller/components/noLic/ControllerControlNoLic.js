@@ -168,7 +168,6 @@ export function ControllerControlNoLic({
               >
                 {
                   <t.component
-                    setTab={setTab}
                     controlData={controlData}
                     isReportingInfractions={isReportingInfractions}
                     setIsReportingInfractions={setIsReportingInfractions}
