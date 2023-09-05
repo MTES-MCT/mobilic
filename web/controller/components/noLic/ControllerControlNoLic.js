@@ -113,8 +113,8 @@ export function ControllerControlNoLic({
   };
 
   const showModifyInfractionsAlert = useMemo(() => {
-    return !reportedInfractionsLastUpdateTime && !isReportingInfractions;
-  }, [reportedInfractionsLastUpdateTime, isReportingInfractions]);
+    return !reportedInfractionsLastUpdateTime && tab !== TABS[1].name;
+  }, [reportedInfractionsLastUpdateTime, tab]);
 
   return (
     <>
@@ -168,7 +168,6 @@ export function ControllerControlNoLic({
               >
                 {
                   <t.component
-                    setTab={setTab}
                     controlData={controlData}
                     isReportingInfractions={isReportingInfractions}
                     setIsReportingInfractions={setIsReportingInfractions}

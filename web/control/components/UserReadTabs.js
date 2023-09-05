@@ -70,15 +70,11 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
 
   const showModifyInfractionsAlert = useMemo(() => {
     return (
+      tab !== tabs[1].name &&
       props.totalAlertsNumber > 0 &&
-      !props.reportedInfractionsLastUpdateTime &&
-      !props.isReportingInfractions
+      !props.reportedInfractionsLastUpdateTime
     );
-  }, [
-    props.totalAlertsNumber,
-    props.reportedInfractionsLastUpdateTime,
-    props.isReportingInfractions
-  ]);
+  }, [props.totalAlertsNumber, props.reportedInfractionsLastUpdateTime, tab]);
 
   const downloadBDC = useDownloadBDC(props.controlData?.id);
 
