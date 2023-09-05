@@ -113,8 +113,8 @@ export function ControllerControlNoLic({
   };
 
   const showModifyInfractionsAlert = useMemo(() => {
-    return !reportedInfractionsLastUpdateTime && !isReportingInfractions;
-  }, [reportedInfractionsLastUpdateTime, isReportingInfractions]);
+    return !reportedInfractionsLastUpdateTime && tab !== TABS[1].name;
+  }, [reportedInfractionsLastUpdateTime, tab]);
 
   return (
     <>
@@ -144,7 +144,7 @@ export function ControllerControlNoLic({
           </Tabs>
         </AppBar>
         <Box>
-          {tab !== TABS[1].name && !!showModifyInfractionsAlert && (
+          {!!showModifyInfractionsAlert && (
             <Alert severity="info">
               <Typography>
                 Mobilic a relevé des infractions par défaut, vous pouvez
