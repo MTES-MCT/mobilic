@@ -17,7 +17,7 @@ export function ControlBulletinFormStep2({
         name="siren"
         onChange={e => handleEditControlBulletin(e)}
         label="Entreprise responsable (de rattachement)"
-        hint="N° SIREN"
+        hint="SIREN ou Numéro TVA"
         required
         messageType={!controlBulletin.siren && showErrors ? "error" : ""}
       />
