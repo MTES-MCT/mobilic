@@ -98,6 +98,11 @@ export const usePanelStyles = makeStyles(theme => ({
   },
   warningOneTeamNoAdmin: {
     marginBottom: theme.spacing(2)
+  },
+  customBadge: {
+    "& .MuiBadge-badge": {
+      right: theme.spacing(-0.6)
+    }
   }
 }));
 
@@ -190,7 +195,11 @@ function SubNavigationToggle({ view, setView }) {
             }
           >
             {panelInfos.view === "certificat" ? (
-              <Badge invisible={!certificateBadge} {...certificateBadge}>
+              <Badge
+                invisible={!certificateBadge}
+                {...certificateBadge}
+                className={classes.customBadge}
+              >
                 {panelInfos.label}
               </Badge>
             ) : (
