@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
@@ -15,7 +15,6 @@ import { Employees } from "./Employees";
 import Grid from "@mui/material/Grid";
 import { LinkButton } from "../../common/LinkButton";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import VehicleAdmin from "./Vehicles";
 import KnownAddressAdmin from "./KnownAddresses";
 import SettingAdmin from "./Settings";
@@ -23,8 +22,12 @@ import CompanyApiPanel from "./CompanyApiPanel";
 import CompanyTeamsPanel from "./CompanyTeamsPanel";
 import CertificationPanel from "./CertificationPanel/CertificationPanel";
 import { useApi } from "common/utils/api";
-import { SNOOZE_CERTIFICATION_INFO } from "common/utils/apiQueries";
+import {
+  SNOOZE_CERTIFICATION_INFO,
+  UPDATE_COMPANY_NAME
+} from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
+import EditableTextField from "../../common/EditableTextField";
 
 export const usePanelStyles = makeStyles(theme => ({
   navigation: {
@@ -156,7 +159,6 @@ function SubNavigationToggle({ view, setView }) {
   }, [companyWithInfo, shouldDisplayBadge]);
 
   const snoozeCertificationInfo = async () => {
-    console.log("snoozeCertificationInfo");
     await api.graphQlMutate(
       SNOOZE_CERTIFICATION_INFO,
       { employmentId: adminStore.employmentId },
@@ -204,6 +206,8 @@ function SubNavigationToggle({ view, setView }) {
 }
 
 function CompanyPanel({ width, containerRef }) {
+  const api = useApi();
+  const adminStore = useAdminStore();
   const classes = usePanelStyles({ width });
   const location = useLocation();
 
@@ -221,43 +225,73 @@ function CompanyPanel({ width, containerRef }) {
     }
   }, [location]);
 
+  const updateCompanyName = useCallback(async (companyId, newName) => {
+    try {
+      const response = await api.graphQlMutate(
+        UPDATE_COMPANY_NAME,
+        { companyId, newName },
+        { context: { nonPublicApi: false } }
+      );
+
+      const id = response?.data?.updateCompanyName?.id;
+      if (id) {
+        adminStore.dispatch({
+          type: ADMIN_ACTIONS.updateCompanyName,
+          payload: { companyId, companyName: newName }
+        });
+      } else {
+        console.log("CompanyId is falsy:", typeof id);
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
+  }, []);
+
   return [
-    <Paper
-      className={`${classes.navigation} flex-row-center`}
-      variant="outlined"
-      key={1}
-    >
-      <Grid
-        container
-        spacing={5}
-        justifyContent="space-between"
-        alignItems="center"
-        style={{ flex: "1 1 auto" }}
+    <>
+      <Paper
+        className={`${classes.navigation} flex-row-center`}
+        variant="outlined"
+        key={1}
       >
-        <Grid item>
-          <Box>
-            <Typography className={classes.companyName} variant="h3">
-              {currentCompanyName}
-            </Typography>
-            <SubNavigationToggle view={view} setView={setView} />
-          </Box>
+        <Grid
+          container
+          spacing={5}
+          justifyContent="space-between"
+          alignItems="center"
+          style={{ flex: "1 1 auto" }}
+        >
+          <Grid item>
+            <Box>
+              <EditableTextField
+                text={currentCompanyName}
+                onSave={newName => {
+                  updateCompanyName(company.id, newName);
+                }}
+                className={classes.companyName}
+                maxLength={255}
+              />
+              <SubNavigationToggle view={view} setView={setView} />
+            </Box>
+          </Grid>
+          <Grid item>
+            <LinkButton
+              className={classes.createCompanyButton}
+              size="small"
+              variant="contained"
+              color="primary"
+              to="/signup/company"
+            >
+              Inscrire une nouvelle entreprise
+            </LinkButton>
+          </Grid>
         </Grid>
-        <Grid item>
-          <LinkButton
-            className={classes.createCompanyButton}
-            size="small"
-            variant="contained"
-            color="primary"
-            to="/signup/company"
-          >
-            Inscrire une nouvelle entreprise
-          </LinkButton>
-        </Grid>
-      </Grid>
-    </Paper>,
-    <Paper className={classes.subPanel} variant="outlined" key={2}>
-      {company ? subPanel.component({ company, containerRef }) : null}
-    </Paper>
+      </Paper>
+      ,
+      <Paper className={classes.subPanel} variant="outlined" key={2}>
+        {company ? subPanel.component({ company, containerRef }) : null}
+      </Paper>
+    </>
   ];
 }
 
