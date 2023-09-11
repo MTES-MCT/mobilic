@@ -15,32 +15,24 @@ import { ALERT_TYPES } from "common/utils/regulation/alertTypes";
 import Stack from "@mui/material/Stack";
 import { Checkbox } from "@dataesr/react-dsfr";
 
+const formatDate = timestamp => {
+  const date = new Date(timestamp);
+  const unixTimestamp = jsToUnixTimestamp(date.getTime());
+  return textualPrettyFormatDayHour(unixTimestamp);
+};
+
 function formatAlertPeriod(alert, type) {
   if (alert.month) {
     return prettyFormatMonth(alert.month);
   }
   switch (type) {
-    case ALERT_TYPES.minimumDailyRest: {
-      return textualPrettyFormatDayHour(
-        jsToUnixTimestamp(new Date(alert.extra.breach_period_end).getTime())
-      );
-    }
     case ALERT_TYPES.maximumWorkedDaysInWeek: {
       return textualPrettyFormatWeek(alert.week);
     }
-    case ALERT_TYPES.maximumUninterruptedWorkTime: {
-      return textualPrettyFormatDayHour(
-        jsToUnixTimestamp(
-          new Date(alert.extra.longest_uninterrupted_work_end).getTime()
-        )
-      );
-    }
+    case ALERT_TYPES.maximumUninterruptedWorkTime:
+    case ALERT_TYPES.minimumDailyRest:
     case ALERT_TYPES.minimumWorkDayBreak:
-    case ALERT_TYPES.maximumWorkDayTime: {
-      return textualPrettyFormatDayHour(
-        jsToUnixTimestamp(new Date(alert.extra.work_range_end).getTime())
-      );
-    }
+    case ALERT_TYPES.maximumWorkDayTime:
     case ALERT_TYPES.noPaperLic: {
       return textualPrettyFormatDay(alert.day);
     }
@@ -57,7 +49,9 @@ function formatAlertText(alert, type) {
         alert.extra.breach_period_max_break_in_seconds;
       return (
         <span>
-          Durée du repos le plus long sur les 24 dernières heures :{" "}
+          Durée du repos le plus long du{" "}
+          {formatDate(alert.extra.breach_period_start)} au{" "}
+          {formatDate(alert.extra.breach_period_end)} :{" "}
           <b>{formatTimer(maxBreakLengthInSeconds)}</b>
         </span>
       );
@@ -85,8 +79,10 @@ function formatAlertText(alert, type) {
         alert.extra.longest_uninterrupted_work_in_seconds;
       return (
         <span>
-          Durée du temps de service depuis le dernier repos quotidien :{" "}
-          <b>{formatTimer(uninterruptedWorkTime)}</b>
+          Durée du temps de travail ininterrompu constaté :{" "}
+          <b>{formatTimer(uninterruptedWorkTime)}</b> du{" "}
+          {formatDate(alert.extra.longest_uninterrupted_work_start)} au{" "}
+          {formatDate(alert.extra.longest_uninterrupted_work_end)}
         </span>
       );
     }
@@ -97,7 +93,9 @@ function formatAlertText(alert, type) {
         <span>
           Durée du temps de pause :{" "}
           <b>{formatMinutesFromSeconds(breakTimeInSeconds)}</b> pour une période
-          de travail de <b>{formatTimer(workTimeInSeconds)}</b>
+          de travail de <b>{formatTimer(workTimeInSeconds)}</b> du{" "}
+          {formatDate(alert.extra.work_range_start)} au{" "}
+          {formatDate(alert.extra.work_range_end)}
         </span>
       );
     }
@@ -106,7 +104,9 @@ function formatAlertText(alert, type) {
       const workTime = alert.extra.work_range_in_seconds;
       return (
         <span>
-          Durée de travail {nightWork ? " (travail de nuit)" : ""} :{" "}
+          Durée de travail {nightWork ? " (travail de nuit)" : ""} du{" "}
+          {formatDate(alert.extra.work_range_start)} au{" "}
+          {formatDate(alert.extra.work_range_end)} :{" "}
           <b>{formatTimer(workTime)}</b>
         </span>
       );
