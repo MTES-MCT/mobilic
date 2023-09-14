@@ -36,6 +36,7 @@ import { ControllerQRCodeNotRecognized } from "../controller/components/scanQRCo
 import { ControllerHistory } from "../controller/components/history/ControllerHistory";
 import { SyncEmployeeValidation } from "../login/SyncEmployeeValidation";
 import { Certificate } from "../landing/certificate";
+import { LandingGestionnaire } from "../landing/gestionnaire/LandingGestionnaire";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -319,6 +320,13 @@ export const ROUTES = [
     label: "Vérification d'intégrité",
     accessible: () => true,
     component: XlsxVerifier,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/accueil-gestionnaire",
+    label: "Accueil gestionnaire",
+    accessible: () => true,
+    component: LandingGestionnaire,
     menuItemFilter: () => false
   },
   {
