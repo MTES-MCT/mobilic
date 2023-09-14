@@ -49,8 +49,8 @@ function formatAlertText(alert, type) {
         alert.extra.breach_period_max_break_in_seconds;
       return (
         <span>
-          Durée du repos le plus long du{" "}
-          {formatDate(alert.extra.breach_period_start)} au{" "}
+          Durée de la plus longue période de repos consécutif effectuée entre le{" "}
+          {formatDate(alert.extra.breach_period_start)} et le{" "}
           {formatDate(alert.extra.breach_period_end)} :{" "}
           <b>{formatTimer(maxBreakLengthInSeconds)}</b>
         </span>
@@ -63,7 +63,7 @@ function formatAlertText(alert, type) {
         <span>
           {maxBreakLengthInSeconds && (
             <>
-              Durée du repos hebdo :{" "}
+              Durée du repos hebdomadaire :{" "}
               <b>{formatTimer(maxBreakLengthInSeconds)}</b>
               <br />
             </>
@@ -80,8 +80,8 @@ function formatAlertText(alert, type) {
       return (
         <span>
           Durée du temps de travail ininterrompu constaté :{" "}
-          <b>{formatTimer(uninterruptedWorkTime)}</b> du{" "}
-          {formatDate(alert.extra.longest_uninterrupted_work_start)} au{" "}
+          <b>{formatTimer(uninterruptedWorkTime)}</b> entre le{" "}
+          {formatDate(alert.extra.longest_uninterrupted_work_start)} et le{" "}
           {formatDate(alert.extra.longest_uninterrupted_work_end)}
         </span>
       );
@@ -93,8 +93,8 @@ function formatAlertText(alert, type) {
         <span>
           Durée du temps de pause :{" "}
           <b>{formatMinutesFromSeconds(breakTimeInSeconds)}</b> pour une période
-          de travail de <b>{formatTimer(workTimeInSeconds)}</b> du{" "}
-          {formatDate(alert.extra.work_range_start)} au{" "}
+          de travail de <b>{formatTimer(workTimeInSeconds)}</b> effectuée entre
+          le {formatDate(alert.extra.work_range_start)} et le{" "}
           {formatDate(alert.extra.work_range_end)}
         </span>
       );
@@ -104,8 +104,10 @@ function formatAlertText(alert, type) {
       const workTime = alert.extra.work_range_in_seconds;
       return (
         <span>
-          Durée de travail {nightWork ? " (travail de nuit)" : ""} du{" "}
-          {formatDate(alert.extra.work_range_start)} au{" "}
+          {nightWork
+            ? "Durée du travail de nuit effectué entre le"
+            : "Temps de travail total effectué entre le"}{" "}
+          {formatDate(alert.extra.work_range_start)} et le{" "}
           {formatDate(alert.extra.work_range_end)} :{" "}
           <b>{formatTimer(workTime)}</b>
         </span>
