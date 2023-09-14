@@ -58,7 +58,13 @@ export function LandingSectionList({ children }) {
     );
 }
 
-export function LandingSection({ title, className, children, ...props }) {
+export function LandingSection({
+  title,
+  className,
+  innerWidth,
+  children,
+  ...props
+}) {
   const classes = useSectionStyles();
 
   return (
@@ -67,7 +73,7 @@ export function LandingSection({ title, className, children, ...props }) {
       maxWidth={false}
       {...props}
     >
-      <Container maxWidth="md" className={classes.inner}>
+      <Container maxWidth={innerWidth || "md"} className={classes.inner}>
         <Typography variant="h3" className={`${classes.sectionTitle}`}>
           {title}
         </Typography>

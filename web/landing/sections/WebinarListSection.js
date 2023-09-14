@@ -15,8 +15,9 @@ export function WebinarListSection({ className }) {
 
   return (
     <LandingSection
-      title="Découvrez Mobilic lors d’un webinaire"
+      title="Prochains webinaires Mobilic"
       className={className}
+      id="webinars"
     >
       <Typography className={classes.sectionIntroText}>
         Inscrivez-vous à l’un de nos webinaires pour assister à une
