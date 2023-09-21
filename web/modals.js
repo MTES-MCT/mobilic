@@ -33,6 +33,7 @@ import ChangeNameModal from "./home/ChangeName";
 import CompanyTeamCreationRevisionModal from "./admin/panels/CompanyTeamCreationRevisionModal";
 import EmployeesTeamRevisionModal from "./admin/panels/EmployeesTeamRevisionModal";
 import ConfirmationCancelControlBulletinModal from "./controller/components/controlBulletin/ConfirmationCancelControlBulletinModal";
+import TypeformModal from "./pwa/components/TypeformModal";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -69,5 +70,6 @@ export const MODAL_DICT = {
   controllerHelp: ControllerHelp,
   companyTeamCreationRevisionModal: CompanyTeamCreationRevisionModal,
   employeesTeamRevisionModal: EmployeesTeamRevisionModal,
-  confirmationCancelControlBulletinModal: ConfirmationCancelControlBulletinModal
+  confirmationCancelControlBulletinModal: ConfirmationCancelControlBulletinModal,
+  typeformModal: TypeformModal
 };

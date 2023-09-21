@@ -246,7 +246,7 @@
   opacity: 0;
 }
 
-[href]:not(.fr-breadcrumb__link, .fr-link, .certificateBannerLink) {
+[href]:not(.fr-breadcrumb__link, .fr-link) {
   --underline-img: none;
 }
 
@@ -316,4 +316,10 @@ video:not([href])[controls] {
           linear-gradient(#000 0 0) content-box,
           linear-gradient(#000 0 0);
   mask-composite: exclude;
+}
+
+.fr-checkbox-group {
+  input[type=checkbox]:disabled{
+    opacity: 0;
+  }
 }

@@ -16,7 +16,11 @@ export function ControlBulletinDrawer({
   isOpen,
   onClose,
   controlData,
-  onSaveControlBulletin
+  onSaveControlBulletin,
+  groupedAlerts,
+  saveInfractions,
+  onUpdateInfraction,
+  cancelInfractions
 }) {
   const classes = useStyles();
   const [mustConfirmBeforeClosing, setMustConfirmBeforeClosing] = useState(
@@ -29,6 +33,7 @@ export function ControlBulletinDrawer({
       modals.open("confirmationCancelControlBulletinModal", {
         confirmButtonLabel: "Revenir à mes modifications",
         handleCancel: () => {
+          cancelInfractions({ forceCancel: true });
           onClose();
         },
         handleConfirm: () => {}
@@ -60,6 +65,9 @@ export function ControlBulletinDrawer({
           controlData={controlData}
           setMustConfirmBeforeClosing={setMustConfirmBeforeClosing}
           onSaveControlBulletin={onSaveControlBulletin}
+          groupedAlerts={groupedAlerts}
+          saveInfractions={() => saveInfractions({ showSuccessMessage: false })}
+          onUpdateInfraction={onUpdateInfraction}
         />
       </Box>
     </SwipeableDrawer>

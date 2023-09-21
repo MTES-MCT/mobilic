@@ -12,7 +12,8 @@ import {
   startOfMonthAsDate,
   startOfWeekAsDate,
   getPrettyDateByperiod,
-  formatDay
+  formatDay,
+  pluralize
 } from "common/utils/time";
 import groupBy from "lodash/groupBy";
 import ControlsTable from "../list/table/ControlsTable";
@@ -81,6 +82,9 @@ export function ControlsList({
                 : "") + formatTimeOfDay(control.creationTime),
             type: control.controlType,
             nbControlledDays: control.nbControlledDays
+              ? `${pluralize(control.nbControlledDays, "jour")}`
+              : "-",
+            nbReportedInfractions: control.nbReportedInfractions || "-"
           }))
           .sort((control1, control2) => control2.time - control1.time)
       });

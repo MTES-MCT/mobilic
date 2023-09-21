@@ -137,6 +137,20 @@ export const REGULATION_COMPUTATIONS_FRAGMENT = gql`
   }
 `;
 
+export const OBSERVED_INFRACTIONS_FRAGMENT = gql`
+  fragment ObservedInfractions on ObservedInfraction {
+    sanction
+    date
+    isReportable
+    isReported
+    label
+    description
+    type
+    unit
+    extra
+  }
+`;
+
 export const FULL_TEAM_FRAGMENT = gql`
   fragment FullTeamData on Team {
     id
@@ -199,6 +213,7 @@ export const CONTROL_DATA_FRAGMENT = gql`
     controlBulletinCreationTime
     vehicleRegistrationNumber
     note
+    nbReportedInfractions
     controlBulletin {
       locationLieu
     }

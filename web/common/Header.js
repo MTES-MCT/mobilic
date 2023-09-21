@@ -35,7 +35,7 @@ import Grid from "@mui/material/Grid";
 import { useAdminStore, useAdminCompanies } from "../admin/store/store";
 import {
   useCertificationInfo,
-  useShouldDisplayScenariis
+  useShouldDisplayBadge
 } from "../admin/utils/certificationInfo";
 import { TextWithBadge } from "./TextWithBadge";
 import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
@@ -170,7 +170,7 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies }) {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
-  const [shouldDisplayBadge] = useShouldDisplayScenariis();
+  const shouldDisplayBadge = useShouldDisplayBadge();
   const { companyWithInfo } = useCertificationInfo();
   const badge = getBadgeRoutes(
     useAdminStore(),

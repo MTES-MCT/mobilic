@@ -146,6 +146,13 @@ export function textualPrettyFormatDay(unixTimestamp, withYear = false) {
   return withYear ? `${baseString} ${date.getFullYear()}` : baseString;
 }
 
+export function textualPrettyFormatDayHour(unixTimestamp, withYear = false) {
+  const date = new Date(unixTimestamp * 1000);
+  return `${textualPrettyFormatDay(unixTimestamp, withYear)} à ${addZero(
+    date.getHours()
+  )}:${addZero(date.getMinutes())}`;
+}
+
 export function prettyFormatDayHour(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
   return `${addZero(date.getDate())}/${addZero(
@@ -153,6 +160,10 @@ export function prettyFormatDayHour(unixTimestamp) {
   )}/${date.getFullYear()} à ${addZero(date.getHours())}:${addZero(
     date.getMinutes()
   )}`;
+}
+
+export function formatMinutesFromSeconds(seconds) {
+  return `${Math.floor(seconds / MINUTE)}m`;
 }
 
 export function textualPrettyFormatWeek(startOfWeek) {
@@ -336,4 +347,12 @@ export function getMonthsBetweenTwoDates(dateFrom, dateTo) {
     dateFrom.getMonth() +
     12 * (dateTo.getFullYear() - dateFrom.getFullYear())
   );
+}
+
+export function unixTimestampToDate(unixTimestamp) {
+  return new Date(unixToJSTimestamp(unixTimestamp));
+}
+
+export function isDateBeforeNbDays(dateToTest, nbDays) {
+  return dateToTest < addDaysToDate(new Date(), -nbDays);
 }

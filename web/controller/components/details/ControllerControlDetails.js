@@ -9,8 +9,8 @@ import { unixToJSTimestamp } from "common/utils/time";
 import { orderEmployments } from "common/utils/employments";
 import { ControllerControlHeader } from "./ControllerControlHeader";
 import _ from "lodash";
-import { computeNumberOfAlerts } from "common/utils/regulation/computeNumberOfAlerts";
 import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
+import { useReportInfractions } from "../../utils/useReportInfractions";
 
 export function ControllerControlDetails({
   controlData,
@@ -23,6 +23,18 @@ export function ControllerControlDetails({
   const [coworkers, setCoworkers] = React.useState([]);
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
   const [isEditingBC, setIsEditingBC] = React.useState(false);
+  const [
+    reportedInfractionsLastUpdateTime,
+    groupedAlerts,
+    checkedAlertsNumber,
+    totalAlertsNumber,
+    isReportingInfractions,
+    setIsReportingInfractions,
+    hasModifiedInfractions,
+    saveInfractions,
+    cancelInfractions,
+    onUpdateInfraction
+  ] = useReportInfractions(controlData);
 
   // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
   const legacyTokenInfo = {
@@ -70,13 +82,6 @@ export function ControllerControlDetails({
     }
   }, [controlData]);
 
-  const alertNumber = React.useMemo(() => {
-    if (!controlData || !controlData.regulationComputationsByDay) {
-      return 0;
-    }
-    return computeNumberOfAlerts(controlData.regulationComputationsByDay);
-  }, [controlData]);
-
   return [
     <ControllerControlHeader
       key={0}
@@ -86,9 +91,9 @@ export function ControllerControlDetails({
     />,
     <UserReadTabs
       key={1}
-      tabs={getTabs(alertNumber)}
+      tabs={getTabs(checkedAlertsNumber)}
+      totalAlertsNumber={totalAlertsNumber}
       regulationComputationsByDay={controlData.regulationComputationsByDay}
-      alertNumber={alertNumber}
       tokenInfo={legacyTokenInfo}
       controlTime={controlData.qrCodeGenerationTime}
       missions={missions}
@@ -104,6 +109,15 @@ export function ControllerControlDetails({
       vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
       openBulletinControl={() => setIsEditingBC(true)}
       controlData={controlData}
+      reportedInfractionsLastUpdateTime={reportedInfractionsLastUpdateTime}
+      isReportingInfractions={isReportingInfractions}
+      setIsReportingInfractions={setIsReportingInfractions}
+      groupedAlerts={groupedAlerts}
+      saveInfractions={saveInfractions}
+      cancelInfractions={cancelInfractions}
+      onUpdateInfraction={onUpdateInfraction}
+      hasModifiedInfractions={hasModifiedInfractions}
+      readOnlyAlerts={false}
     />,
     <ControlBulletinDrawer
       key={2}
@@ -116,6 +130,10 @@ export function ControllerControlDetails({
           ...newControlData
         }))
       }
+      groupedAlerts={groupedAlerts}
+      saveInfractions={saveInfractions}
+      onUpdateInfraction={onUpdateInfraction}
+      cancelInfractions={cancelInfractions}
     />
   ];
 }

@@ -9,6 +9,7 @@ import {
   FULL_MISSION_FRAGMENT,
   FULL_TEAM_FRAGMENT,
   REGULATION_COMPUTATIONS_FRAGMENT,
+  OBSERVED_INFRACTIONS_FRAGMENT,
   WORK_DAYS_DATA_FRAGMENT
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
@@ -341,12 +342,17 @@ export const CONTROLLER_READ_MISSION_DETAILS = gql`
 export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
   ${CONTROL_BULLETIN_FRAGMENT}
   ${CONTROL_DATA_FRAGMENT}
+  ${OBSERVED_INFRACTIONS_FRAGMENT}
   query readControlDataNoLic($controlId: Int!) {
     controlData(controlId: $controlId) {
       ...ControlData
       controlBulletin {
         ...ControlBulletin
       }
+      observedInfractions {
+        ...ObservedInfractions
+      }
+      reportedInfractionsLastUpdateTime
     }
   }
 `;
@@ -355,6 +361,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
   ${REGULATION_COMPUTATIONS_FRAGMENT}
+  ${OBSERVED_INFRACTIONS_FRAGMENT}
   ${CONTROL_BULLETIN_FRAGMENT}
   ${CONTROL_DATA_FRAGMENT}
   query readControlData($controlId: Int!) {
@@ -459,6 +466,10 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       regulationComputationsByDay {
         ...RegulationComputations
       }
+      observedInfractions {
+        ...ObservedInfractions
+      }
+      reportedInfractionsLastUpdateTime
     }
   }
 `;
@@ -1989,6 +2000,24 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
   }
 `;
 
+export const CONTROLLER_SAVE_REPORTED_INFRACTIONS = gql`
+  ${OBSERVED_INFRACTIONS_FRAGMENT}
+  mutation controllerSaveReportedInfractions(
+    $controlId: Int
+    $reportedInfractions: [ReportedInfractionInput]
+  ) {
+    controllerSaveReportedInfractions(
+      controlId: $controlId
+      reportedInfractions: $reportedInfractions
+    ) {
+      observedInfractions {
+        ...ObservedInfractions
+      }
+      reportedInfractionsLastUpdateTime
+    }
+  }
+`;
+
 export const CONTROLLER_USER_CONTROLS_QUERY = gql`
   ${CONTROL_DATA_FRAGMENT}
   query controllerUser(
@@ -2206,14 +2235,22 @@ export const EDIT_COMPANIES_COMMUNICATION_SETTING = gql`
   }
 `;
 
-export const ADD_CERTIFICATION_INFO_RESULT = gql`
-  mutation addCertificateInfoResult(
-    $employmentId: Int!
+export const SNOOZE_CERTIFICATION_INFO = gql`
+  mutation snoozeCertificateInfo($employmentId: Int!) {
+    snoozeCertificateInfo(employmentId: $employmentId) {
+      success
+    }
+  }
+`;
+
+export const ADD_SCENARIO_TESTING_RESULT = gql`
+  mutation addScenarioTestingResult(
+    $userId: Int!
     $scenario: ScenarioEnum!
     $action: ActionEnum!
   ) {
-    addCertificateInfoResult(
-      employmentId: $employmentId
+    addScenarioTestingResult(
+      userId: $userId
       scenario: $scenario
       action: $action
     ) {
@@ -2250,6 +2287,20 @@ export const CONTROL_LOCATION_QUERY = gql`
       department
       commune
       label
+    }
+  }
+`;
+
+export const CREATE_SURVEY_ACTION = gql`
+  mutation createSurveyAction(
+    $userId: Int!
+    $surveyId: String!
+    $action: SurveyActionEnum!
+  ) {
+    createSurveyAction(userId: $userId, surveyId: $surveyId, action: $action) {
+      surveyId
+      creationTime
+      action
     }
   }
 `;

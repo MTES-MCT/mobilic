@@ -187,7 +187,7 @@ export function XlsxVerifier() {
   const verifyResponseStatus = verifyResponse
     ? verifyResponse.success
       ? "SUCCESS"
-      : verifyResponse.error
+      : verifyResponse.error_code
     : null;
 
   return [

@@ -16,6 +16,7 @@ import {
 import {
   formatDay,
   formatTimeOfDay,
+  isDateBeforeNbDays,
   now,
   nowMilliseconds,
   sameMinute,
@@ -47,6 +48,11 @@ import {
 } from "./apiQueries";
 import { hasPendingUpdates } from "../store/offline";
 import { ACTIONS } from "../store/reducers/root";
+import {
+  firstActionDateForSurvey,
+  hasNotSubmittedSurvey,
+  nbTimesSurveyWasDisplayed
+} from "./surveys";
 
 const ActionsContext = React.createContext(() => {});
 
@@ -309,6 +315,7 @@ class Actions {
     api.registerResponseHandler("validateMission", {
       onSuccess: async apiResponse => {
         const userId = this.store.userId();
+        const userInfo = this.store.userInfo();
         const missionResponse = apiResponse.data.activities.validateMission;
         const parsedMission = parseMissionPayloadFromBackend(
           missionResponse,
@@ -328,6 +335,22 @@ class Actions {
           missionResponse.id,
           6000
         );
+        const surveyId = process.env.REACT_APP_SURVEY_EMPLOYEE_SOCIAL_IMPACT;
+        if (
+          surveyId &&
+          userInfo.surveyActions &&
+          hasNotSubmittedSurvey(userInfo.surveyActions, surveyId) &&
+          nbTimesSurveyWasDisplayed(userInfo.surveyActions, surveyId) === 1 &&
+          isDateBeforeNbDays(
+            firstActionDateForSurvey(userInfo.surveyActions, surveyId),
+            7
+          )
+        ) {
+          modals.open("typeformModal", {
+            typeformId: surveyId,
+            userId: userId
+          });
+        }
       }
     });
 
