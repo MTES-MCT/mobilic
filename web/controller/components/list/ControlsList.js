@@ -59,6 +59,7 @@ export function ControlsList({
   clickOnRow,
   period = "day"
 }) {
+  const [expandedDates, setExpandedDates] = React.useState([]);
   const controlsByPeriod = useMemo(() => {
     const controlsGroupedByPeriod = groupBy(controls, control =>
       getGroupByKey(new Date(control.creationTime * 1000), period)
@@ -103,7 +104,19 @@ export function ControlsList({
     />
   ) : (
     controlsByPeriod.map(histo => (
-      <Accordion key={`entries_${histo.date}`} disableGutters elevation={0}>
+      <Accordion
+        key={`entries_${histo.date}`}
+        disableGutters
+        elevation={0}
+        expanded={expandedDates.includes(histo.date)}
+        onChange={(_, expanded) =>
+          setExpandedDates(prev =>
+            expanded
+              ? [...prev, histo.date]
+              : prev.filter(item => item !== histo.date)
+          )
+        }
+      >
         <AccordionSummary
           aria-controls="panel1d-content"
           id="panel1d-header"
