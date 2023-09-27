@@ -64,8 +64,8 @@ export function ControllerResourcePage() {
           <Grid item sm={6}>
             <Box>
               <VideoCard
-                id="873642195"
-                title="tuto-ctt-it-juin-2023"
+                id="874704098"
+                title="tuto-ctt-it-septembre-2023"
                 description="Effectuer un contrôle en bord de route"
               />
             </Box>
@@ -111,8 +111,8 @@ export function ControllerResourcePage() {
           <Grid item sm={6}>
             <Box>
               <VideoCard
-                id="873642336"
-                title="tuto-police-juin-2023"
+                id="874704140"
+                title="tuto-force-en-tenue-septembre-2023"
                 description="Effectuer un contrôle en bord de route"
               />
             </Box>
