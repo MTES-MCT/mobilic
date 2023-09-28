@@ -5,7 +5,15 @@ import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { PLAY_VIDEO } from "common/utils/matomoTags";
 
-export function VideoCard({ video, description, poster, matomoTag, ...props }) {
+export function VideoCard({
+  video_mp4,
+  video_webm,
+  video_ogv,
+  description,
+  poster,
+  matomoTag,
+  ...props
+}) {
   const classes = resourceCardsClasses();
   const { trackEvent } = useMatomo();
 
@@ -26,10 +34,12 @@ export function VideoCard({ video, description, poster, matomoTag, ...props }) {
         preload="metadata"
         onPlay={clickEvent}
       >
-        <source src={video} type="video/mp4" />
+        <source src={video_mp4} type="video/mp4" />
+        <source src={video_webm} type="video/webm" />
+        <source src={video_ogv} type="video/ogv" />
         <p>
           Votre navigateur ne prend pas en charge les vidéos HTML5. Voici{" "}
-          <a href={video}>un lien pour télécharger la vidéo</a>
+          <a href={video_mp4}>un lien pour télécharger la vidéo</a>
         </p>
       </video>
     </Card>
