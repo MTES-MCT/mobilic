@@ -43,6 +43,7 @@ export function ControllerControlHeader({
   controlId,
   controlDate,
   onCloseDrawer,
+  canDownloadXml,
   enableExport = true
 }) {
   const classes = useStyles();
@@ -67,7 +68,12 @@ export function ControllerControlHeader({
         <Typography>
           Date et heure du contrôle : <b>{prettyFormatDayHour(controlDate)}</b>
         </Typography>
-        {enableExport && <ControllerControlExportMenu controlId={controlId} />}
+        {enableExport && (
+          <ControllerControlExportMenu
+            controlId={controlId}
+            canDownloadXml={canDownloadXml}
+          />
+        )}
       </Box>
     </Container>
   ) : (
@@ -85,7 +91,12 @@ export function ControllerControlHeader({
         >
           Fermer
         </Link>
-        {enableExport && <ControllerControlExportMenu controlId={controlId} />}
+        {enableExport && (
+          <ControllerControlExportMenu
+            controlId={controlId}
+            canDownloadXml={canDownloadXml}
+          />
+        )}
       </Box>
     </Container>
   );

@@ -9,7 +9,7 @@ import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 
-export function ControllerControlExportMenu({ controlId }) {
+export function ControllerControlExportMenu({ controlId, canDownloadXml }) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const [exportMenuAnchorEl, setExportMenuAnchorEl] = React.useState(null);
@@ -49,6 +49,7 @@ export function ControllerControlExportMenu({ controlId }) {
           <Typography>Export Excel</Typography>
         </MenuItem>
         <MenuItem
+          disabled={!canDownloadXml}
           onClick={async () => {
             setExportMenuAnchorEl(null);
             alerts.withApiErrorHandling(async () => {

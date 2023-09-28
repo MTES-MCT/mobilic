@@ -11,6 +11,7 @@ import { ControllerControlHeader } from "./ControllerControlHeader";
 import _ from "lodash";
 import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
 import { useReportInfractions } from "../../utils/useReportInfractions";
+import { canDownloadBDC } from "../../utils/controlBulletin";
 
 export function ControllerControlDetails({
   controlData,
@@ -87,6 +88,7 @@ export function ControllerControlDetails({
       key={0}
       controlId={controlData.id}
       controlDate={legacyTokenInfo?.creationTime}
+      canDownloadXml={canDownloadBDC(controlData)}
       onCloseDrawer={onClose}
     />,
     <UserReadTabs
