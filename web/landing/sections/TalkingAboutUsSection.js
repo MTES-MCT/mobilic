@@ -20,15 +20,25 @@ import { TestimonialCard } from "../ResourcePage/TestimonialCard";
 import { VideoCard } from "../ResourcePage/VideoCard";
 import { resourceCardsClasses } from "../ResourcePage/styles/ResourceCardsStyle";
 
-import TestimonialJCBVideo from "common/assets/videos/testimonials/jeremy_cohen_boulakia.mp4";
+import TestimonialJCBVideoMP4 from "common/assets/videos/testimonials/jeremy_cohen_boulakia.mp4";
+import TestimonialJCBVideoWEBM from "common/assets/videos/testimonials/jeremy_cohen_boulakia.webm";
+import TestimonialJCBVideoOGV from "common/assets/videos/testimonials/jeremy_cohen_boulakia.ogv";
 import TestimonialJCBPoster from "common/assets/videos/testimonials/jeremy_cohen_boulakia.jpg";
-import TestimonialLAVideo from "common/assets/videos/testimonials/ludovic_almy.mp4";
+import TestimonialLAVideoMP4 from "common/assets/videos/testimonials/ludovic_almy.mp4";
+import TestimonialLAVideoWEBM from "common/assets/videos/testimonials/ludovic_almy.webm";
+import TestimonialLAVideoOGV from "common/assets/videos/testimonials/ludovic_almy.ogv";
 import TestimonialLAPoster from "common/assets/videos/testimonials/ludovic_almy.jpg";
-import TestimonialNKVideo from "common/assets/videos/testimonials/nicolas_kbidi.mp4";
+import TestimonialNKVideoMP4 from "common/assets/videos/testimonials/nicolas_kbidi.mp4";
+import TestimonialNKVideoWEBM from "common/assets/videos/testimonials/nicolas_kbidi.webm";
+import TestimonialNKVideoOGV from "common/assets/videos/testimonials/nicolas_kbidi.ogv";
 import TestimonialNKPoster from "common/assets/videos/testimonials/nicolas_kbidi.jpg";
-import TestimonialRGVideo from "common/assets/videos/testimonials/raphael_grenom.mp4";
+import TestimonialRGVideoMP4 from "common/assets/videos/testimonials/raphael_grenom.mp4";
+import TestimonialRGVideoWEBM from "common/assets/videos/testimonials/raphael_grenom.webm";
+import TestimonialRGVideoOGV from "common/assets/videos/testimonials/raphael_grenom.ogv";
 import TestimonialRGPoster from "common/assets/videos/testimonials/raphael_grenom.jpg";
-import TestimonialYMVideo from "common/assets/videos/testimonials/yoann_mace.mp4";
+import TestimonialYMVideoMP4 from "common/assets/videos/testimonials/yoann_mace.mp4";
+import TestimonialYMVideoWEBM from "common/assets/videos/testimonials/yoann_mace.webm";
+import TestimonialYMVideoOGV from "common/assets/videos/testimonials/yoann_mace.ogv";
 import TestimonialYMPoster from "common/assets/videos/testimonials/yoann_mace.jpg";
 
 export function TalkingAboutUsSection() {
@@ -147,14 +157,18 @@ export function TalkingAboutUsSection() {
   const TESTIMONIALS_VIDEOS = [
     {
       title: "Ludovic Almy, responsable d'exploitation dans le déménagement",
-      video: TestimonialLAVideo,
+      video_mp4: TestimonialLAVideoMP4,
+      video_ogv: TestimonialLAVideoOGV,
+      video_webm: TestimonialLAVideoWEBM,
       poster: TestimonialLAPoster,
       matomoTag: "almy"
     },
     {
       title:
         "Raphaël Grenom, directeur d'une agence de livraison de marchandises",
-      video: TestimonialRGVideo,
+      video_mp4: TestimonialRGVideoMP4,
+      video_ogv: TestimonialRGVideoOGV,
+      video_webm: TestimonialRGVideoWEBM,
       poster: TestimonialRGPoster,
       matomoTag: "grenom"
     },
@@ -166,14 +180,18 @@ export function TalkingAboutUsSection() {
           gérant d'une entreprise de déménagement
         </span>
       ),
-      video: TestimonialYMVideo,
+      video_mp4: TestimonialYMVideoMP4,
+      video_ogv: TestimonialYMVideoOGV,
+      video_webm: TestimonialYMVideoWEBM,
       poster: TestimonialYMPoster,
       matomoTag: "mace"
     },
     {
       title:
         "Jérémy Cohen Boulakia, directeur d'une entreprise de livraison de marchandises",
-      video: TestimonialJCBVideo,
+      video_mp4: TestimonialJCBVideoMP4,
+      video_ogv: TestimonialJCBVideoOGV,
+      video_webm: TestimonialJCBVideoWEBM,
       poster: TestimonialJCBPoster,
       matomoTag: "boulakia"
     },
@@ -187,7 +205,9 @@ export function TalkingAboutUsSection() {
           <br />
         </span>
       ),
-      video: TestimonialNKVideo,
+      video_mp4: TestimonialNKVideoMP4,
+      video_ogv: TestimonialNKVideoOGV,
+      video_webm: TestimonialNKVideoWEBM,
       poster: TestimonialNKPoster,
       matomoTag: "k-bidi"
     }
@@ -219,7 +239,9 @@ export function TalkingAboutUsSection() {
         {TESTIMONIALS_VIDEOS.map(video => (
           <VideoCard
             key={video.matomoTag}
-            video={video.video}
+            video_mp4={video.video_mp4}
+            video_ogv={video.video_ogv}
+            video_webm={video.video_webm}
             description={video.title}
             poster={video.poster}
             className={cardClasses.pressCard}
