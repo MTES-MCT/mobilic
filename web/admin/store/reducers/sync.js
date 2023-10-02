@@ -37,6 +37,23 @@ export function updateCompaniesListReducer(state, { companiesPayload }) {
   };
 }
 
+export function updateCompanyNameReducer(state, action) {
+  const { companyId, companyName } = action;
+
+  const updatedCompanies = state.companies.map(({ id, ...rest }) => {
+    if (id !== companyId) {
+      return { id, ...rest };
+    }
+
+    return { id, ...rest, name: companyName };
+  });
+
+  return {
+    ...state,
+    companies: updatedCompanies
+  };
+}
+
 export function updateCompanyDetailsReducer(
   state,
   { companiesPayload, minDate }

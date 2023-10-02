@@ -2304,3 +2304,12 @@ export const CREATE_SURVEY_ACTION = gql`
     }
   }
 `;
+
+export const UPDATE_COMPANY_NAME = gql`
+  mutation UpdateCompanyName($companyId: Int!, $newName: String!) {
+    updateCompanyName(companyId: $companyId, newName: $newName) {
+      id
+      name
+    }
+  }
+`;
