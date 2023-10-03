@@ -44,14 +44,14 @@ export function AdminResourcePage() {
           <Grid item xs={12} sm={6}>
             <VideoCard
               description="Vous inscrire sur Mobilic"
-              video={GestionnaireInscriptionVideo}
+              video_mp4={GestionnaireInscriptionVideo}
               poster={GestionnaireInscriptionPoster}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <VideoCard
               description="Utiliser l'interface gestionnaire"
-              video={GestionnaireUtilisationVideo}
+              video_mp4={GestionnaireUtilisationVideo}
               poster={GestionnaireUtilisationPoster}
             />
           </Grid>
