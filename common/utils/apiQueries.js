@@ -2265,6 +2265,7 @@ export const COMPANY_CERTIFICATION_COMMUNICATION_QUERY = gql`
       id
       name
       isCertified
+      hasNoActivity
       acceptCertificationCommunication
       lastDayCertified
       startLastCertificationPeriod
