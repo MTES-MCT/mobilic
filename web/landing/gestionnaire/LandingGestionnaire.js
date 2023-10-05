@@ -31,6 +31,7 @@ export const LandingGestionnaire = () => {
             Mobilic ?
           </>
         }
+        innerWidth="lg"
       >
         <SetupMobilic key="setup" />
       </LandingSection>
@@ -41,6 +42,7 @@ export const LandingGestionnaire = () => {
             parlent de Mobilic{" "}
           </>
         }
+        innerWidth="lg"
       >
         <Testimony />
       </LandingSection>

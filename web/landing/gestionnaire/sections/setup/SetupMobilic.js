@@ -4,6 +4,7 @@ import { SetupMobilicBlock } from "./SetupMobilicBlock";
 import Stack from "@mui/material/Stack";
 import { useIsWidthUp } from "common/utils/useWidth";
 import { Link } from "../../../../common/LinkButton";
+import { LoadingButton } from "common/components/LoadingButton";
 
 const BLOCKS = [
   {
@@ -70,6 +71,9 @@ const useStyles = makeStyles(theme => ({
     "&::after": {
       right: 0
     }
+  },
+  button: {
+    margin: "auto"
   }
 }));
 
@@ -102,13 +106,22 @@ export function SetupMobilic() {
     return interleave(blocks, Divider());
   }, [isOnDesktop]);
   return (
-    <Stack
-      direction={isOnDesktop ? "row" : "column"}
-      justifyContent="space-around"
-      alignItems={isOnDesktop ? "flex-start" : "center"}
-      gap={4}
-    >
-      {BLOCKS_WITH_DIVIDERS}
+    <Stack direction="column" gap={8}>
+      <Stack
+        direction={isOnDesktop ? "row" : "column"}
+        justifyContent="space-around"
+        alignItems={isOnDesktop ? "flex-start" : "center"}
+        gap={4}
+      >
+        {BLOCKS_WITH_DIVIDERS}
+      </Stack>
+      <LoadingButton
+        variant="contained"
+        color="primary"
+        className={classes.button}
+      >
+        Je crée mon compte gratuit
+      </LoadingButton>
     </Stack>
   );
 }
