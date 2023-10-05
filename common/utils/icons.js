@@ -3,6 +3,7 @@ import React from "react";
 import omit from "lodash/omit";
 import { ReactComponent as MobilicFilledIcon_ } from "../assets/images/mobilic-logo-filled.svg";
 import { ReactComponent as MobilicOutlinedIcon_ } from "../assets/images/mobilic-logo-outlined.svg";
+import { ReactComponent as MobilicBlueIcon_ } from "../assets/images/mobilic-logo-blue.svg";
 import { ReactComponent as PersonIcon_ } from "../assets/images/User.svg";
 import { ReactComponent as TeamIcon_ } from "../assets/images/Team.svg";
 import { ReactComponent as TruckIcon_ } from "../assets/images/Truck2.svg";
@@ -38,6 +39,17 @@ export function MobilicLogoFilledIcon(props) {
       {...props}
       viewBox="0 0 255.27 297.23"
       component={MobilicFilledIcon_}
+    />
+  );
+}
+
+export function MobilicLogoBlueIcon(props) {
+  return (
+    <SvgIcon
+      titleAccess={"mobilic-logo-blue"}
+      {...props}
+      viewBox="0 0 48 57"
+      component={MobilicBlueIcon_}
     />
   );
 }

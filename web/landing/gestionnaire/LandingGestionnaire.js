@@ -4,7 +4,7 @@ import { Header } from "../../common/Header";
 import { Footer } from "../footer";
 import { IntroGestionnaire } from "./sections/IntroGestionnaire";
 import { OutroGestionnaire } from "./sections/OutroGestionnaire";
-import { SetupMobilic } from "./sections/SetupMobilic";
+import { SetupMobilic } from "./sections/setup/SetupMobilic";
 import { Testimony } from "./sections/Testimony";
 import { WhatsMobilic } from "./sections/WhatsMobilic";
 
