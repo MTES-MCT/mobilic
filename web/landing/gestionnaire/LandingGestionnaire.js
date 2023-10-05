@@ -6,7 +6,7 @@ import { IntroGestionnaire } from "./sections/IntroGestionnaire";
 import { OutroGestionnaire } from "./sections/OutroGestionnaire";
 import { SetupMobilic } from "./sections/setup/SetupMobilic";
 import { Testimony } from "./sections/Testimony";
-import { WhatsMobilic } from "./sections/WhatsMobilic";
+import { WhatsMobilic } from "./sections/whatsmobilic/WhatsMobilic";
 
 import { LandingSection, LandingSectionList } from "../sections/LandingSection";
 
@@ -55,6 +55,7 @@ export const LandingGestionnaire = () => {
             </span>
           </>
         }
+        innerWidth="lg"
       >
         <WhatsMobilic />
       </LandingSection>
