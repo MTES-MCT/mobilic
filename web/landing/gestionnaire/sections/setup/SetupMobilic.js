@@ -119,6 +119,7 @@ export function SetupMobilic() {
         variant="contained"
         color="primary"
         className={classes.button}
+        href="/signup/admin"
       >
         Je crée mon compte gratuit
       </LoadingButton>

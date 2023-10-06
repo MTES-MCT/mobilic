@@ -71,6 +71,7 @@ export function Testimony() {
         variant="contained"
         color="primary"
         className={classes.button}
+        href="/signup/admin"
       >
         Moi aussi je simplifie ma gestion administrative
       </LoadingButton>

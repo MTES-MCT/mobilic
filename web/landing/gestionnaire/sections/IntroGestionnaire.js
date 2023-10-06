@@ -8,6 +8,7 @@ import { VideoCard } from "../../ResourcePage/VideoCard";
 import BackgroundImage from "common/assets/images/landing-gestionnaire-hero-background.png";
 import MobilicPoster from "common/assets/videos/accueil/accueil-qu-est-ce-que-mobilic-preview.jpg";
 import MobilicVideo from "common/assets/videos/accueil/accueil-qu-est-ce-que-mobilic.mp4";
+import { useWebinars } from "../../useWebinars";
 
 const useStyles = makeStyles(theme => ({
   heroContainer: {
@@ -62,6 +63,9 @@ export function IntroGestionnaire() {
   const classes = useStyles();
   const isSmDown = useIsWidthDown("sm");
 
+  const [webinars] = useWebinars(() => {});
+  console.log("webinars length", webinars.length);
+
   return (
     <Container maxWidth={false} className={classes.heroContainer}>
       <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
@@ -78,12 +82,22 @@ export function IntroGestionnaire() {
           </Typography>
           {!isSmDown && (
             <div className={classes.heroButtons}>
-              <LoadingButton variant="contained" color="primary">
+              <LoadingButton
+                variant="contained"
+                color="primary"
+                href="/signup/admin"
+              >
                 J'inscris mon entreprise
               </LoadingButton>
-              <LoadingButton variant="outlined" color="primary">
-                J'assiste à une démonstration
-              </LoadingButton>
+              {webinars?.length > 0 && (
+                <LoadingButton
+                  variant="outlined"
+                  color="primary"
+                  href="/#webinars"
+                >
+                  J'assiste à une démonstration
+                </LoadingButton>
+              )}
             </div>
           )}
         </div>
