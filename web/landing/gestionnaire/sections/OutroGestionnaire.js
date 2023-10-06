@@ -27,7 +27,13 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(8),
     paddingBottom: theme.spacing(8),
     paddingLeft: theme.spacing(10),
-    paddingRight: theme.spacing(10)
+    paddingRight: theme.spacing(10),
+    [theme.breakpoints.down("sm")]: {
+      paddingTop: theme.spacing(4),
+      paddingBottom: theme.spacing(4),
+      paddingLeft: theme.spacing(2),
+      paddingRight: theme.spacing(2)
+    }
   },
   button: {
     margin: "auto"

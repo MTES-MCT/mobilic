@@ -65,9 +65,28 @@ export function IntroGestionnaire() {
 
   const [webinars] = useWebinars(() => {});
 
+  const Buttons = React.useMemo(
+    () => (
+      <div className={classes.heroButtons}>
+        <LoadingButton variant="contained" color="primary" href="/signup/admin">
+          J'inscris mon entreprise
+        </LoadingButton>
+        {webinars?.length > 0 && (
+          <LoadingButton variant="outlined" color="primary" href="/#webinars">
+            J'assiste à une démonstration
+          </LoadingButton>
+        )}
+      </div>
+    ),
+    [isSmDown, webinars]
+  );
+
   return (
     <Container maxWidth={false} className={classes.heroContainer}>
-      <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
+      <Container
+        maxWidth="xl"
+        className={`${isSmDown ? "" : "fade-in-image"} ${classes.heroInner}`}
+      >
         <div className={classes.heroLeft}>
           <Typography className={classes.textTitle} variant="h1">
             Vous êtes une entreprise de transport routier léger ou de
@@ -79,26 +98,7 @@ export function IntroGestionnaire() {
             </span>{" "}
             de vos salariés avec l'application Mobilic
           </Typography>
-          {!isSmDown && (
-            <div className={classes.heroButtons}>
-              <LoadingButton
-                variant="contained"
-                color="primary"
-                href="/signup/admin"
-              >
-                J'inscris mon entreprise
-              </LoadingButton>
-              {webinars?.length > 0 && (
-                <LoadingButton
-                  variant="outlined"
-                  color="primary"
-                  href="/#webinars"
-                >
-                  J'assiste à une démonstration
-                </LoadingButton>
-              )}
-            </div>
-          )}
+          {!isSmDown && Buttons}
         </div>
         <div className={classes.heroVideo}>
           <VideoCard
@@ -108,16 +108,7 @@ export function IntroGestionnaire() {
             poster={MobilicPoster}
           />
         </div>
-        {isSmDown && (
-          <div className={classes.heroButtons}>
-            <LoadingButton variant="contained" color="primary">
-              J'inscris mon entreprise
-            </LoadingButton>
-            <LoadingButton variant="outlined" color="primary">
-              J'assiste à une démonstration
-            </LoadingButton>
-          </div>
-        )}
+        {isSmDown && Buttons}
       </Container>
     </Container>
   );
