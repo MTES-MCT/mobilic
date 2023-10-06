@@ -13,11 +13,9 @@ import {
 import Button from "@mui/material/Button";
 import Skeleton from "@mui/material/Skeleton";
 import List from "@mui/material/List";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 
-import { useApi } from "common/utils/api";
 import { makeStyles } from "@mui/styles";
-import { captureSentryException } from "common/utils/sentry";
+import { useWebinars } from "../useWebinars";
 
 const useStyles = makeStyles(theme => ({
   webinarCard: {
@@ -63,39 +61,10 @@ const useStyles = makeStyles(theme => ({
 
 export const WebinarList = ({ setCantDisplayWebinarsBecauseNoneOrError }) => {
   const classes = useStyles();
-  const api = useApi();
 
-  const [webinars, setWebinars] = React.useState([]);
-  const [webinarsLoaded, setWebinarsLoaded] = React.useState(false);
-  const [webinarsLoadError, setWebinarsLoadError] = React.useState(false);
-
-  async function fetchWebinars() {
-    try {
-      const newWebinars = await api.jsonHttpQuery(
-        HTTP_QUERIES.webinars,
-        {},
-        true
-      );
-      setWebinars(newWebinars);
-      setWebinarsLoaded(true);
-      setWebinarsLoadError(false);
-    } catch (err) {
-      setWebinarsLoadError(true);
-      captureSentryException(err);
-    }
-  }
-
-  React.useEffect(() => {
-    if (webinars.length === 0 && !webinarsLoaded) {
-      fetchWebinars();
-    }
-  }, []);
-
-  React.useEffect(() => {
-    if ((webinarsLoaded && webinars.length === 0) || webinarsLoadError) {
-      setCantDisplayWebinarsBecauseNoneOrError(true);
-    } else setCantDisplayWebinarsBecauseNoneOrError(false);
-  }, [webinars, webinarsLoaded, webinarsLoadError]);
+  const [webinars, webinarsLoaded] = useWebinars(
+    setCantDisplayWebinarsBecauseNoneOrError
+  );
 
   if (webinars.length === 0 && webinarsLoaded) return null;
 
