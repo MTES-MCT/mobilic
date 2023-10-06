@@ -5,6 +5,8 @@ import Stack from "@mui/material/Stack";
 import { useIsWidthUp } from "common/utils/useWidth";
 import { Link } from "../../../../common/LinkButton";
 import { LoadingButton } from "common/components/LoadingButton";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { ADMIN_LANDING_SUBSCRIBE_HOW_TO } from "common/utils/matomoTags";
 
 const BLOCKS = [
   {
@@ -79,6 +81,7 @@ const useStyles = makeStyles(theme => ({
 
 export function SetupMobilic() {
   const isOnDesktop = useIsWidthUp("md");
+  const { trackEvent } = useMatomo();
 
   const classes = useStyles();
 
@@ -124,6 +127,7 @@ export function SetupMobilic() {
         color="primary"
         className={classes.button}
         href="/signup/admin"
+        onClick={() => trackEvent(ADMIN_LANDING_SUBSCRIBE_HOW_TO)}
       >
         Je crée mon compte gratuit
       </LoadingButton>

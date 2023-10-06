@@ -9,6 +9,11 @@ import BackgroundImage from "common/assets/images/landing-gestionnaire-hero-back
 import MobilicPoster from "common/assets/videos/accueil/accueil-qu-est-ce-que-mobilic-preview.jpg";
 import MobilicVideo from "common/assets/videos/accueil/accueil-qu-est-ce-que-mobilic.mp4";
 import { useWebinars } from "../../useWebinars";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import {
+  ADMIN_LANDING_SUBSCRIBE_TOP,
+  ADMIN_LANDING_WEBINARS
+} from "common/utils/matomoTags";
 
 const useStyles = makeStyles(theme => ({
   heroContainer: {
@@ -62,17 +67,28 @@ const useStyles = makeStyles(theme => ({
 export function IntroGestionnaire() {
   const classes = useStyles();
   const isSmDown = useIsWidthDown("sm");
+  const { trackEvent } = useMatomo();
 
   const [webinars] = useWebinars(() => {});
 
   const Buttons = React.useMemo(
     () => (
       <div className={classes.heroButtons}>
-        <LoadingButton variant="contained" color="primary" href="/signup/admin">
+        <LoadingButton
+          variant="contained"
+          color="primary"
+          href="/signup/admin"
+          onClick={() => trackEvent(ADMIN_LANDING_SUBSCRIBE_TOP)}
+        >
           J'inscris mon entreprise
         </LoadingButton>
         {webinars?.length > 0 && (
-          <LoadingButton variant="outlined" color="primary" href="/#webinars">
+          <LoadingButton
+            variant="outlined"
+            color="primary"
+            href="/#webinars"
+            onClick={() => trackEvent(ADMIN_LANDING_WEBINARS)}
+          >
             J'assiste à une démonstration
           </LoadingButton>
         )}

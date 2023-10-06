@@ -9,6 +9,8 @@ import { resourceCardsClasses } from "../../ResourcePage/styles/ResourceCardsSty
 import { TestimonialCard } from "../../ResourcePage/TestimonialCard";
 import { BretagneMaceDemenagementImage, VirImage } from "common/utils/icons";
 import Box from "@mui/material/Box";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { ADMIN_LANDING_SUBSCRIBE_TESTIMONY } from "common/utils/matomoTags";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -25,6 +27,7 @@ const useStyles = makeStyles(theme => ({
 export function Testimony() {
   const classes = useStyles();
   const cardClasses = resourceCardsClasses();
+  const { trackEvent } = useMatomo();
 
   return (
     <Stack direction="column" gap={8} alignItems="center">
@@ -72,6 +75,7 @@ export function Testimony() {
         color="primary"
         className={classes.button}
         href="/signup/admin"
+        onClick={() => trackEvent(ADMIN_LANDING_SUBSCRIBE_TESTIMONY)}
       >
         Moi aussi je simplifie ma gestion administrative
       </LoadingButton>

@@ -6,6 +6,8 @@ import { ComputerImage } from "common/utils/icons";
 import Typography from "@mui/material/Typography";
 import { useIsWidthUp } from "common/utils/useWidth";
 import { LoadingButton } from "common/components/LoadingButton";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { ADMIN_LANDING_CONTACT } from "common/utils/matomoTags";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -43,6 +45,7 @@ const useStyles = makeStyles(theme => ({
 export function OutroGestionnaire() {
   const isOnDesktop = useIsWidthUp("lg");
   const classes = useStyles();
+  const { trackEvent } = useMatomo();
   return (
     <Container maxWidth="xl" className={classes.container}>
       <Stack direction="row" className={classes.stackContainer}>
@@ -58,6 +61,7 @@ export function OutroGestionnaire() {
             className={classes.button}
             aria-label="Nous contacter"
             href="mailto:mobilic@beta.gouv.fr"
+            onClick={() => trackEvent(ADMIN_LANDING_CONTACT)}
           >
             J’ai une question pour l’équipe Mobilic
           </LoadingButton>

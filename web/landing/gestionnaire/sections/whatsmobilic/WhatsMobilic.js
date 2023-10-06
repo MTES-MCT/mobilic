@@ -44,6 +44,7 @@ export function WhatsMobilic() {
       {CARDS.map(({ id, title, content, link }) => (
         <WhatsMobilicCard
           key={id}
+          id={id}
           title={title}
           content={content}
           link={link}
