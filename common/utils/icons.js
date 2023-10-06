@@ -31,6 +31,7 @@ import _VirImage from "../assets/images/testimonials-logos/vir.jpg";
 import _AlexisDemenagementImage from "../assets/images/testimonials-logos/alexis_plus.jpg";
 import _BretagneMaceDemenagementImage from "../assets/images/testimonials-logos/bretagne_mace_demenagement.jpg";
 import _CertificationImage from "../assets/images/certification.svg";
+import _ComputerImage from "../assets/images/computer.png";
 
 export function MobilicLogoFilledIcon(props) {
   return (
@@ -224,6 +225,10 @@ export function BretagneMaceDemenagementImage(props) {
       {...props}
     />
   );
+}
+
+export function ComputerImage(props) {
+  return <img alt="Un ordinateur" src={_ComputerImage} {...props} />;
 }
 
 export function FranceConnectIcon(props) {
