@@ -40,12 +40,7 @@ const CARDS = [
 
 export function WhatsMobilic() {
   return (
-    <Stack
-      direction="horizonal"
-      flexWrap="wrap"
-      gap={4}
-      justifyContent="center"
-    >
+    <Stack direction="row" flexWrap="wrap" gap={4} justifyContent="center">
       {CARDS.map(({ id, title, content, link }) => (
         <WhatsMobilicCard
           key={id}

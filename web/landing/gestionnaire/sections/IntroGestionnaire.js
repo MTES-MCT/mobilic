@@ -64,7 +64,6 @@ export function IntroGestionnaire() {
   const isSmDown = useIsWidthDown("sm");
 
   const [webinars] = useWebinars(() => {});
-  console.log("webinars length", webinars.length);
 
   return (
     <Container maxWidth={false} className={classes.heroContainer}>

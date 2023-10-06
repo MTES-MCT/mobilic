@@ -77,15 +77,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const interleave = (arr, toAdd) => arr.flatMap(e => [e, toAdd]).slice(0, -1);
-
 export function SetupMobilic() {
   const isOnDesktop = useIsWidthUp("md");
 
   const classes = useStyles();
 
-  const Divider = () => (
-    <div className={classes.dividerContainer}>
+  const Divider = index => (
+    <div className={classes.dividerContainer} key={`divider_${index}`}>
       <div className={classes.divider} />
     </div>
   );
@@ -103,7 +101,13 @@ export function SetupMobilic() {
     if (!isOnDesktop) {
       return blocks;
     }
-    return interleave(blocks, Divider());
+    return blocks.reduce(
+      (arr, item, index) =>
+        index < blocks.length - 1
+          ? arr.concat([item, Divider(index)])
+          : arr.concat(item),
+      []
+    );
   }, [isOnDesktop]);
   return (
     <Stack direction="column" gap={8}>
