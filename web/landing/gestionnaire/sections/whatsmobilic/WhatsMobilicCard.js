@@ -21,17 +21,19 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function WhatsMobilicCard({ title, content }) {
+export function WhatsMobilicCard({ title, content, link }) {
   const classes = useStyles();
   return (
     <Paper variant="outlined" className={classes.card}>
-      <Stack direction="column" gap={2}>
-        <Typography variant="h5">{title}</Typography>
-        <Typography variant="body1">{content}</Typography>
-        <Typography variant="body1" className={classes.moreInfo}>
-          Plus d'infos
-        </Typography>
-      </Stack>
+      <a href={link} target="_blank" rel="noopener noreferrer">
+        <Stack direction="column" gap={2}>
+          <Typography variant="h5">{title}</Typography>
+          <Typography variant="body1">{content}</Typography>
+          <Typography variant="body1" className={classes.moreInfo}>
+            Plus d'infos
+          </Typography>
+        </Stack>
+      </a>
     </Paper>
   );
 }
