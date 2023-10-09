@@ -77,12 +77,16 @@ export function ControllerHome() {
 
   const [controlsType, setControlsType] = React.useState("");
 
-  React.useEffect(() => {
+  const _loadControls = () => {
     loadControls({
       controllerId: controllerUserInfo.id,
       limit: 10,
       controlsType
     });
+  };
+
+  React.useEffect(() => {
+    _loadControls();
   }, [controlsType]);
 
   React.useEffect(() => {
@@ -99,7 +103,10 @@ export function ControllerHome() {
       <ControllerControlDrawer
         controlId={controlOnFocus?.id}
         controlType={controlOnFocus?.type}
-        onClose={() => setControlOnFocus(null)}
+        onClose={() => {
+          _loadControls();
+          setControlOnFocus(null);
+        }}
       />
       <ControllerControlNewNoLic
         isOpen={openNewNoLic}

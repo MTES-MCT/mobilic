@@ -19,28 +19,28 @@ export function DriverVideoSection({ buttonStyle }) {
         <Grid item xs={12} sm={6}>
           <VideoCard
             description="Inscription sur Mobilic"
-            video={SalarieInscriptionVideo}
+            video_mp4={SalarieInscriptionVideo}
             poster={SalarieInscriptionPoster}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <VideoCard
             description="Télécharger Mobilic sur Android"
-            video={SalarieInstallAndroidVideo}
+            video_mp4={SalarieInstallAndroidVideo}
             poster={SalarieInstallAndroidPoster}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <VideoCard
             description="Télécharger Mobilic sur iPhone"
-            video={SalarieInstallIphoneVideo}
+            video_mp4={SalarieInstallIphoneVideo}
             poster={SalarieInstallIphonePoster}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <VideoCard
             description="Utiliser Mobilic au quotidien"
-            video={SalarieUsageQuotidienVideo}
+            video_mp4={SalarieUsageQuotidienVideo}
             poster={SalarieUsageQuotidienPoster}
           />
         </Grid>

@@ -46,11 +46,15 @@ export function ControllerHistory() {
   const [period, setPeriod] = React.useState("day");
   const [controls, loadControls, loadingControls] = useLoadControls();
 
-  React.useEffect(() => {
+  const _loadControls = () => {
     loadControls({
       controllerId: controllerUserInfo.id,
       ...controlFilters
     });
+  };
+
+  React.useEffect(() => {
+    _loadControls();
   }, [controlFilters]);
   return [
     <Header key={0} />,
@@ -62,7 +66,10 @@ export function ControllerHistory() {
       <ControllerControlDrawer
         controlId={controlOnFocus?.id}
         controlType={controlOnFocus?.type}
-        onClose={() => setControlOnFocus(null)}
+        onClose={() => {
+          _loadControls();
+          setControlOnFocus(null);
+        }}
       />
       <Typography sx={{ typography: { xs: "h3", sm: "h1" } }}>
         Historique des contrôles
