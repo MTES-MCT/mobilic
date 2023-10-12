@@ -13,9 +13,6 @@ import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { VideoCard } from "./VideoCard";
 import { RESOURCES_DOCUMENT } from "./ResourcePage";
 
-import TutoCttItVideo from "common/assets/videos/controleurs/tuto-ctt-it-juin-2023.mp4";
-import TutoPoliceVideo from "common/assets/videos/controleurs/tuto-police-juin-2023.mp4";
-
 export function ControllerResourcePage() {
   const classes = resourcePagesClasses();
 
@@ -67,8 +64,9 @@ export function ControllerResourcePage() {
           <Grid item sm={6}>
             <Box>
               <VideoCard
+                id="873642195"
+                title="tuto-ctt-it-juin-2023"
                 description="Effectuer un contrôle en bord de route"
-                video={TutoCttItVideo}
               />
             </Box>
             <Button
@@ -113,8 +111,9 @@ export function ControllerResourcePage() {
           <Grid item sm={6}>
             <Box>
               <VideoCard
+                id="873642336"
+                title="tuto-police-juin-2023"
                 description="Effectuer un contrôle en bord de route"
-                video={TutoPoliceVideo}
               />
             </Box>
             <Button
