@@ -52,6 +52,9 @@ const useStyles = makeStyles(theme => ({
   },
   divider: {
     backgroundColor: theme.palette.primary.main,
+    [theme.breakpoints.down("md")]: {
+      display: "none"
+    },
     minWidth: theme.spacing(18),
     height: "4px",
     position: "absolute",
@@ -101,9 +104,8 @@ export function SetupMobilic() {
         content={content}
       />
     ));
-    if (!isOnDesktop) {
-      return blocks;
-    }
+
+    // insert dividers
     return blocks.reduce(
       (arr, item, index) =>
         index < blocks.length - 1
@@ -111,7 +113,7 @@ export function SetupMobilic() {
           : arr.concat(item),
       []
     );
-  }, [isOnDesktop]);
+  }, []);
   return (
     <Stack direction="column" gap={8}>
       <Stack
