@@ -2,9 +2,7 @@ import Stack from "@mui/material/Stack";
 import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "common/components/LoadingButton";
 import React from "react";
-import { VideoCard } from "../../ResourcePage/VideoCard";
-import TestimonialLAVideo from "common/assets/videos/testimonials/ludovic_almy.mp4";
-import TestimonialLAPoster from "common/assets/videos/testimonials/ludovic_almy.jpg";
+import { VIDEOS, VideoCard } from "../../ResourcePage/VideoCard";
 import { resourceCardsClasses } from "../../ResourcePage/styles/ResourceCardsStyle";
 import { TestimonialCard } from "../../ResourcePage/TestimonialCard";
 import { BretagneMaceDemenagementImage, VirImage } from "common/utils/icons";
@@ -48,11 +46,8 @@ export function Testimony() {
         </Box>
         <Box className={classes.videoContainer}>
           <VideoCard
-            video={TestimonialLAVideo}
-            description="Ludovic Almy, responsable d'exploitation dans le déménagement"
-            poster={TestimonialLAPoster}
+            video={VIDEOS.Testimony_Almy}
             className={cardClasses.pressCard}
-            matomoTag="admin-page-almy"
           />
         </Box>
         <Box className={classes.testimonialContainer}>

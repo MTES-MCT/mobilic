@@ -4,10 +4,8 @@ import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useIsWidthDown } from "common/utils/useWidth";
 import React from "react";
-import { VideoCard } from "../../ResourcePage/VideoCard";
+import { VIDEOS, VideoCard } from "../../ResourcePage/VideoCard";
 import BackgroundImage from "common/assets/images/landing-gestionnaire-hero-background.png";
-import MobilicPoster from "common/assets/videos/accueil/accueil-qu-est-ce-que-mobilic-preview.jpg";
-import MobilicVideo from "common/assets/videos/accueil/accueil-qu-est-ce-que-mobilic.mp4";
 import { useWebinars } from "../../useWebinars";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
@@ -123,12 +121,7 @@ export function IntroGestionnaire() {
           {!isSmDown && Buttons}
         </div>
         <div className={classes.heroVideo}>
-          <VideoCard
-            style={{ margin: "auto", maxWidth: "400px" }}
-            description="Mobilic, qu'est-ce que c'est ?"
-            video={MobilicVideo}
-            poster={MobilicPoster}
-          />
+          <VideoCard video={VIDEOS.Home_Mobilic} />
         </div>
         {isSmDown && Buttons}
       </Container>

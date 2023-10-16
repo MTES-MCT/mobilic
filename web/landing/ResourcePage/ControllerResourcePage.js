@@ -10,7 +10,7 @@ import { SlideshareCard } from "./SlideshareCard";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
-import { VideoCard } from "./VideoCard";
+import { VideoCard, VIDEOS } from "./VideoCard";
 import { RESOURCES_DOCUMENT } from "./ResourcePage";
 
 export function ControllerResourcePage() {
@@ -63,11 +63,7 @@ export function ControllerResourcePage() {
           </Grid>
           <Grid item sm={6}>
             <Box>
-              <VideoCard
-                id="874704098"
-                title="tuto-ctt-it-septembre-2023"
-                description="Effectuer un contrôle en bord de route"
-              />
+              <VideoCard video={VIDEOS.Tuto_Ctt} />
             </Box>
             <Button
               color="primary"
@@ -110,11 +106,7 @@ export function ControllerResourcePage() {
           </Grid>
           <Grid item sm={6}>
             <Box>
-              <VideoCard
-                id="874704140"
-                title="tuto-force-en-tenue-septembre-2023"
-                description="Effectuer un contrôle en bord de route"
-              />
+              <VideoCard video={VIDEOS.Tuto_Police} />
             </Box>
             <Button
               color="primary"
