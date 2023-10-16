@@ -10,15 +10,6 @@ import { makeStyles } from "@mui/styles";
 import { useIsWidthDown } from "common/utils/useWidth";
 import { VideoCard } from "../ResourcePage/VideoCard";
 
-import MobilicVideo_mp4 from "common/assets/videos/accueil/accueil-qu-est-ce-que-mobilic.mp4";
-import MobilicVideo_webm from "common/assets/videos/accueil/accueil-qu-est-ce-que-mobilic.webm";
-import MobilicVideo_ogv from "common/assets/videos/accueil/accueil-qu-est-ce-que-mobilic.ogv";
-import MobilicPoster from "common/assets/videos/accueil/accueil-qu-est-ce-que-mobilic-preview.jpg";
-import ReglementationVideo_mp4 from "common/assets/videos/accueil/accueil-reglementaire.mp4";
-import ReglementationVideo_webm from "common/assets/videos/accueil/accueil-reglementaire.webm";
-import ReglementationVideo_ogv from "common/assets/videos/accueil/accueil-reglementaire.ogv";
-import ReglementationPoster from "common/assets/videos/accueil/accueil-reglementaire-preview.jpg";
-
 const useStyles = makeStyles(theme => ({
   heroContainer: {
     padding: 0,
@@ -185,20 +176,16 @@ export function IntroSection() {
         <Grid container direction="row" alignItems="center" spacing={1}>
           <Grid item xs={12} sm={6}>
             <VideoCard
+              id="873641091"
+              title="accueil-qu-est-ce-que-mobilic"
               description="Mobilic, qu'est-ce que c'est ?"
-              video_mp4={MobilicVideo_mp4}
-              video_webm={MobilicVideo_webm}
-              video_ogv={MobilicVideo_ogv}
-              poster={MobilicPoster}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <VideoCard
+              id="873641124"
+              title="accueil-reglementaire"
               description="Mobilic est-il conforme à la réglementation ?"
-              video_mp4={ReglementationVideo_mp4}
-              video_webm={ReglementationVideo_webm}
-              video_ogv={ReglementationVideo_ogv}
-              poster={ReglementationPoster}
             />
           </Grid>
         </Grid>

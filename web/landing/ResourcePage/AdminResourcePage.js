@@ -14,11 +14,6 @@ import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { RESOURCES_DOCUMENT } from "./ResourcePage";
 import { DriverVideoSection } from "./DriverVideoSection";
 
-import GestionnaireInscriptionVideo from "common/assets/videos/gestionnaires/gestionnaire-inscription.mp4";
-import GestionnaireInscriptionPoster from "common/assets/videos/gestionnaires/gestionnaire-inscription.jpg";
-import GestionnaireUtilisationVideo from "common/assets/videos/gestionnaires/gestionnaire-utilisation.mp4";
-import GestionnaireUtilisationPoster from "common/assets/videos/gestionnaires/gestionnaire-utilisation.jpg";
-
 export function AdminResourcePage() {
   const classes = resourcePagesClasses();
 
@@ -43,16 +38,16 @@ export function AdminResourcePage() {
         <Grid container direction="row" alignItems="stretch" spacing={10}>
           <Grid item xs={12} sm={6}>
             <VideoCard
+              id="873641619"
+              title="gestionnaire-inscription"
               description="Vous inscrire sur Mobilic"
-              video_mp4={GestionnaireInscriptionVideo}
-              poster={GestionnaireInscriptionPoster}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <VideoCard
+              id="873641999"
+              title="gestionnaire-utilisation"
               description="Utiliser l'interface gestionnaire"
-              video_mp4={GestionnaireUtilisationVideo}
-              poster={GestionnaireUtilisationPoster}
             />
           </Grid>
         </Grid>

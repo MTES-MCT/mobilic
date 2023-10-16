@@ -20,27 +20,6 @@ import { TestimonialCard } from "../ResourcePage/TestimonialCard";
 import { VideoCard } from "../ResourcePage/VideoCard";
 import { resourceCardsClasses } from "../ResourcePage/styles/ResourceCardsStyle";
 
-import TestimonialJCBVideoMP4 from "common/assets/videos/testimonials/jeremy_cohen_boulakia.mp4";
-import TestimonialJCBVideoWEBM from "common/assets/videos/testimonials/jeremy_cohen_boulakia.webm";
-import TestimonialJCBVideoOGV from "common/assets/videos/testimonials/jeremy_cohen_boulakia.ogv";
-import TestimonialJCBPoster from "common/assets/videos/testimonials/jeremy_cohen_boulakia.jpg";
-import TestimonialLAVideoMP4 from "common/assets/videos/testimonials/ludovic_almy.mp4";
-import TestimonialLAVideoWEBM from "common/assets/videos/testimonials/ludovic_almy.webm";
-import TestimonialLAVideoOGV from "common/assets/videos/testimonials/ludovic_almy.ogv";
-import TestimonialLAPoster from "common/assets/videos/testimonials/ludovic_almy.jpg";
-import TestimonialNKVideoMP4 from "common/assets/videos/testimonials/nicolas_kbidi.mp4";
-import TestimonialNKVideoWEBM from "common/assets/videos/testimonials/nicolas_kbidi.webm";
-import TestimonialNKVideoOGV from "common/assets/videos/testimonials/nicolas_kbidi.ogv";
-import TestimonialNKPoster from "common/assets/videos/testimonials/nicolas_kbidi.jpg";
-import TestimonialRGVideoMP4 from "common/assets/videos/testimonials/raphael_grenom.mp4";
-import TestimonialRGVideoWEBM from "common/assets/videos/testimonials/raphael_grenom.webm";
-import TestimonialRGVideoOGV from "common/assets/videos/testimonials/raphael_grenom.ogv";
-import TestimonialRGPoster from "common/assets/videos/testimonials/raphael_grenom.jpg";
-import TestimonialYMVideoMP4 from "common/assets/videos/testimonials/yoann_mace.mp4";
-import TestimonialYMVideoWEBM from "common/assets/videos/testimonials/yoann_mace.webm";
-import TestimonialYMVideoOGV from "common/assets/videos/testimonials/yoann_mace.ogv";
-import TestimonialYMPoster from "common/assets/videos/testimonials/yoann_mace.jpg";
-
 export function TalkingAboutUsSection() {
   const responsivePressArticles = {
     desktop: {
@@ -156,47 +135,38 @@ export function TalkingAboutUsSection() {
 
   const TESTIMONIALS_VIDEOS = [
     {
-      title: "Ludovic Almy, responsable d'exploitation dans le déménagement",
-      video_mp4: TestimonialLAVideoMP4,
-      video_ogv: TestimonialLAVideoOGV,
-      video_webm: TestimonialLAVideoWEBM,
-      poster: TestimonialLAPoster,
-      matomoTag: "almy"
+      id: "873642814",
+      title: "ludovic_almy",
+      description:
+        "Ludovic Almy, responsable d'exploitation dans le déménagement"
     },
     {
-      title:
-        "Raphaël Grenom, directeur d'une agence de livraison de marchandises",
-      video_mp4: TestimonialRGVideoMP4,
-      video_ogv: TestimonialRGVideoOGV,
-      video_webm: TestimonialRGVideoWEBM,
-      poster: TestimonialRGPoster,
-      matomoTag: "grenom"
+      id: "873642901",
+      title: "raphael_grenom",
+      description:
+        "Raphaël Grenom, directeur d'une agence de livraison de marchandises"
     },
     {
-      title: (
+      id: "873642970",
+      title: "yoan_mace",
+      description: (
         <span>
           Yoann Macé,
           <br />
           gérant d'une entreprise de déménagement
         </span>
-      ),
-      video_mp4: TestimonialYMVideoMP4,
-      video_ogv: TestimonialYMVideoOGV,
-      video_webm: TestimonialYMVideoWEBM,
-      poster: TestimonialYMPoster,
-      matomoTag: "mace"
+      )
     },
     {
-      title:
-        "Jérémy Cohen Boulakia, directeur d'une entreprise de livraison de marchandises",
-      video_mp4: TestimonialJCBVideoMP4,
-      video_ogv: TestimonialJCBVideoOGV,
-      video_webm: TestimonialJCBVideoWEBM,
-      poster: TestimonialJCBPoster,
-      matomoTag: "boulakia"
+      id: "873642767",
+      title: "jeremy_cohen_boulakia",
+      description:
+        "Jérémy Cohen Boulakia, directeur d'une entreprise de livraison de marchandises"
     },
     {
-      title: (
+      id: "873642861",
+      title: "nicolas_kbidi",
+      description: (
         <span>
           Nicolas K'bidi,
           <br />
@@ -204,12 +174,7 @@ export function TalkingAboutUsSection() {
           <br />
           <br />
         </span>
-      ),
-      video_mp4: TestimonialNKVideoMP4,
-      video_ogv: TestimonialNKVideoOGV,
-      video_webm: TestimonialNKVideoWEBM,
-      poster: TestimonialNKPoster,
-      matomoTag: "k-bidi"
+      )
     }
   ];
 
@@ -238,14 +203,11 @@ export function TalkingAboutUsSection() {
       >
         {TESTIMONIALS_VIDEOS.map(video => (
           <VideoCard
-            key={video.matomoTag}
-            video_mp4={video.video_mp4}
-            video_ogv={video.video_ogv}
-            video_webm={video.video_webm}
-            description={video.title}
-            poster={video.poster}
+            key={video.id}
+            id={video.id}
+            title={video.title}
+            description={video.description}
             className={cardClasses.pressCard}
-            matomoTag={video.matomoTag}
           />
         ))}
       </Carousel>

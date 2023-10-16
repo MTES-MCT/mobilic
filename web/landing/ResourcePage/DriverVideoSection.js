@@ -3,45 +3,36 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import { VideoCard } from "./VideoCard";
 
-import SalarieInscriptionVideo from "common/assets/videos/salaries/salarie-inscription.mp4";
-import SalarieInscriptionPoster from "common/assets/videos/salaries/salarie-inscription.jpg";
-import SalarieInstallAndroidVideo from "common/assets/videos/salaries/salarie-installation-appli-android.mp4";
-import SalarieInstallAndroidPoster from "common/assets/videos/salaries/salarie-installation-appli-android.jpg";
-import SalarieInstallIphoneVideo from "common/assets/videos/salaries/salarie-installation-appli-iphone.mp4";
-import SalarieInstallIphonePoster from "common/assets/videos/salaries/salarie-installation-appli-iphone.jpg";
-import SalarieUsageQuotidienVideo from "common/assets/videos/salaries/salarie-usage-quotidien.mp4";
-import SalarieUsageQuotidienPoster from "common/assets/videos/salaries/salarie-usage-quotidien.jpg";
-
 export function DriverVideoSection({ buttonStyle }) {
   return (
     <>
       <Grid container direction="row" alignItems="center" spacing={10}>
         <Grid item xs={12} sm={6}>
           <VideoCard
+            id="873641403"
+            title="salarie-inscription"
             description="Inscription sur Mobilic"
-            video_mp4={SalarieInscriptionVideo}
-            poster={SalarieInscriptionPoster}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <VideoCard
+            id="873641430"
+            title="salarie-installation-appli-android"
             description="Télécharger Mobilic sur Android"
-            video_mp4={SalarieInstallAndroidVideo}
-            poster={SalarieInstallAndroidPoster}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <VideoCard
+            id="873641464"
+            title="salarie-installation-appli-iphone"
             description="Télécharger Mobilic sur iPhone"
-            video_mp4={SalarieInstallIphoneVideo}
-            poster={SalarieInstallIphonePoster}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <VideoCard
+            id="873641485"
+            title="salarie-usage-quotidien"
             description="Utiliser Mobilic au quotidien"
-            video_mp4={SalarieUsageQuotidienVideo}
-            poster={SalarieUsageQuotidienPoster}
           />
         </Grid>
       </Grid>
