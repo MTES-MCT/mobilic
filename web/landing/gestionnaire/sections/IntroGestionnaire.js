@@ -23,6 +23,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "center",
+    justifyContent: "center",
     padding: "0 32px",
     columnGap: "32px",
     rowGap: "24px",
@@ -59,6 +60,9 @@ const useStyles = makeStyles(theme => ({
   },
   textTitle: {
     maxWidth: "600px"
+  },
+  button: {
+    textAlign: "center"
   }
 }));
 
@@ -73,6 +77,7 @@ export function IntroGestionnaire() {
     () => (
       <div className={classes.heroButtons}>
         <LoadingButton
+          className={classes.button}
           variant="contained"
           color="primary"
           href="/signup/admin"
@@ -82,6 +87,7 @@ export function IntroGestionnaire() {
         </LoadingButton>
         {webinars?.length > 0 && (
           <LoadingButton
+            className={classes.button}
             variant="outlined"
             color="primary"
             href="/#webinars"
