@@ -6,8 +6,6 @@ import { useIsWidthDown } from "common/utils/useWidth";
 import React from "react";
 import { VideoCard } from "../../ResourcePage/VideoCard";
 import BackgroundImage from "common/assets/images/landing-gestionnaire-hero-background.png";
-import MobilicPoster from "common/assets/videos/accueil/accueil-qu-est-ce-que-mobilic-preview.jpg";
-import MobilicVideo from "common/assets/videos/accueil/accueil-qu-est-ce-que-mobilic.mp4";
 import { useWebinars } from "../../useWebinars";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
@@ -118,10 +116,9 @@ export function IntroGestionnaire() {
         </div>
         <div className={classes.heroVideo}>
           <VideoCard
-            style={{ margin: "auto", maxWidth: "400px" }}
+            id="873641091"
+            title="accueil-qu-est-ce-que-mobilic"
             description="Mobilic, qu'est-ce que c'est ?"
-            video={MobilicVideo}
-            poster={MobilicPoster}
           />
         </div>
         {isSmDown && Buttons}
