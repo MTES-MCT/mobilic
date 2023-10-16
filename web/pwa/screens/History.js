@@ -481,7 +481,12 @@ export function History({
           >
             <IconButton
               color="primary"
-              onClick={() => modals.open("pdfExport")}
+              onClick={() =>
+                modals.open("pdfExport", {
+                  initialMinDate: startPeriodFilter,
+                  initialMaxDate: endPeriodFilter
+                })
+              }
             >
               <GetAppIcon fontSize="large" />
             </IconButton>
