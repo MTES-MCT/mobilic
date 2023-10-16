@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useIsWidthDown } from "common/utils/useWidth";
 import React from "react";
-import { VideoCard } from "../../ResourcePage/VideoCard";
+import { VIDEOS, VideoCard } from "../../ResourcePage/VideoCard";
 import BackgroundImage from "common/assets/images/landing-gestionnaire-hero-background.png";
 import { useWebinars } from "../../useWebinars";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
@@ -121,11 +121,7 @@ export function IntroGestionnaire() {
           {!isSmDown && Buttons}
         </div>
         <div className={classes.heroVideo}>
-          <VideoCard
-            id="873641091"
-            title="accueil-qu-est-ce-que-mobilic"
-            description="Mobilic, qu'est-ce que c'est ?"
-          />
+          <VideoCard video={VIDEOS.Home_Mobilic} />
         </div>
         {isSmDown && Buttons}
       </Container>

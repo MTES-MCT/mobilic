@@ -8,7 +8,7 @@ import { Link } from "../../common/LinkButton";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthDown } from "common/utils/useWidth";
-import { VideoCard } from "../ResourcePage/VideoCard";
+import { VideoCard, VIDEOS } from "../ResourcePage/VideoCard";
 
 const useStyles = makeStyles(theme => ({
   heroContainer: {
@@ -175,18 +175,10 @@ export function IntroSection() {
       <Container maxWidth="md" className={classes.videoSection}>
         <Grid container direction="row" alignItems="center" spacing={1}>
           <Grid item xs={12} sm={6}>
-            <VideoCard
-              id="873641091"
-              title="accueil-qu-est-ce-que-mobilic"
-              description="Mobilic, qu'est-ce que c'est ?"
-            />
+            <VideoCard video={VIDEOS.Home_Mobilic} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <VideoCard
-              id="873641124"
-              title="accueil-reglementaire"
-              description="Mobilic est-il conforme à la réglementation ?"
-            />
+            <VideoCard video={VIDEOS.Home_Regulation} />
           </Grid>
         </Grid>
       </Container>

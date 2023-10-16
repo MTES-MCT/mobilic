@@ -2,7 +2,7 @@ import Stack from "@mui/material/Stack";
 import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "common/components/LoadingButton";
 import React from "react";
-import { VideoCard } from "../../ResourcePage/VideoCard";
+import { VIDEOS, VideoCard } from "../../ResourcePage/VideoCard";
 import { resourceCardsClasses } from "../../ResourcePage/styles/ResourceCardsStyle";
 import { TestimonialCard } from "../../ResourcePage/TestimonialCard";
 import { BretagneMaceDemenagementImage, VirImage } from "common/utils/icons";
@@ -46,9 +46,7 @@ export function Testimony() {
         </Box>
         <Box className={classes.videoContainer}>
           <VideoCard
-            id="873642814"
-            title="ludovic_almy"
-            description="Ludovic Almy, responsable d'exploitation dans le déménagement"
+            video={VIDEOS.Testimony_Almy}
             className={cardClasses.pressCard}
           />
         </Box>

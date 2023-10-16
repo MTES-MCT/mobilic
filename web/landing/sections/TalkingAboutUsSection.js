@@ -17,7 +17,7 @@ import {
 import Carousel from "react-multi-carousel";
 import { PressCard } from "../ResourcePage/PressCard";
 import { TestimonialCard } from "../ResourcePage/TestimonialCard";
-import { VideoCard } from "../ResourcePage/VideoCard";
+import { VideoCard, VIDEOS } from "../ResourcePage/VideoCard";
 import { resourceCardsClasses } from "../ResourcePage/styles/ResourceCardsStyle";
 
 export function TalkingAboutUsSection() {
@@ -135,46 +135,19 @@ export function TalkingAboutUsSection() {
 
   const TESTIMONIALS_VIDEOS = [
     {
-      id: "873642814",
-      title: "ludovic_almy",
-      description:
-        "Ludovic Almy, responsable d'exploitation dans le déménagement"
+      video: VIDEOS.Testimony_Almy
     },
     {
-      id: "873642901",
-      title: "raphael_grenom",
-      description:
-        "Raphaël Grenom, directeur d'une agence de livraison de marchandises"
+      video: VIDEOS.Testimony_Grenom
     },
     {
-      id: "873642970",
-      title: "yoan_mace",
-      description: (
-        <span>
-          Yoann Macé,
-          <br />
-          gérant d'une entreprise de déménagement
-        </span>
-      )
+      video: VIDEOS.Testimony_Mace
     },
     {
-      id: "873642767",
-      title: "jeremy_cohen_boulakia",
-      description:
-        "Jérémy Cohen Boulakia, directeur d'une entreprise de livraison de marchandises"
+      video: VIDEOS.Testimony_Cohen
     },
     {
-      id: "873642861",
-      title: "nicolas_kbidi",
-      description: (
-        <span>
-          Nicolas K'bidi,
-          <br />
-          déménageur
-          <br />
-          <br />
-        </span>
-      )
+      video: VIDEOS.Testimony_Kbidi
     }
   ];
 
@@ -201,12 +174,10 @@ export function TalkingAboutUsSection() {
         responsive={responsivePressArticles}
         className={classes.pressArticles}
       >
-        {TESTIMONIALS_VIDEOS.map(video => (
+        {TESTIMONIALS_VIDEOS.map(({ video }) => (
           <VideoCard
             key={video.id}
-            id={video.id}
-            title={video.title}
-            description={video.description}
+            video={video}
             className={cardClasses.pressCard}
           />
         ))}
