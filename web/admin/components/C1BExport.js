@@ -177,7 +177,7 @@ export default function C1BExport({
           mt={2}
           checked={employeeVersion}
           onChange={() => setEmployeeVersion(!employeeVersion)}
-          label={`Obtenir deux fichiers pour chaque salarié : une version saisie salarié et une version post modifications gestionnaire`}
+          label={`Obtenir deux fichiers pour chaque salarié : une version saisie salarié et une version validée par le gestionnaire.`}
         />
         <Grid spacing={4} container className={classes.grid}>
           {_companies.length > 1 && (
