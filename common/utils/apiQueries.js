@@ -1967,6 +1967,7 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
     $articlesNature: String
     $licenseNumber: String
     $licenseCopyNumber: String
+    $isVehicleImmobilized: Boolean
     $observation: String
   ) {
     controllerSaveControlBulletin(
@@ -1990,6 +1991,7 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
       articlesNature: $articlesNature
       licenseNumber: $licenseNumber
       licenseCopyNumber: $licenseCopyNumber
+      isVehicleImmobilized: $isVehicleImmobilized
       observation: $observation
     ) {
       ...ControlData

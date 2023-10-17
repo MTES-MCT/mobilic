@@ -197,6 +197,7 @@ export const CONTROL_BULLETIN_FRAGMENT = gql`
     licenseNumber
     licenseCopyNumber
     observation
+    isVehicleImmobilized
   }
 `;
 
