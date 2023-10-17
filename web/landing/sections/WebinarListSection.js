@@ -17,7 +17,7 @@ export function WebinarListSection({ className }) {
     <LandingSection
       title="Prochains webinaires Mobilic"
       className={className}
-      id="webinars"
+      id="webinaires"
     >
       <Typography className={classes.sectionIntroText}>
         Vous pouvez assister à un de nos webinaires pour mieux connaître
