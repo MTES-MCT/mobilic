@@ -90,7 +90,7 @@ export function IntroGestionnaire() {
             className={classes.button}
             variant="outlined"
             color="primary"
-            href="/#webinars"
+            href="/#webinaires"
             onClick={() => trackEvent(ADMIN_LANDING_WEBINARS)}
           >
             J'assiste à une démonstration
