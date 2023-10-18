@@ -77,6 +77,22 @@ export default function CertificationPanel({ company }) {
     }
   }, [loadingInfo, companyWithInfo.isCertified, nbMonthSinceLastCertification]);
 
+  const noCertificateText = useMemo(() => {
+    if (loadingInfo) {
+      return "";
+    }
+
+    if (companyWithInfo?.hasNoActivity) {
+      return "Votre entreprise n'est pas encore certifiée car le calcul se fera lorsque vous aurez commencé à enregistrer des activités.";
+    }
+
+    if (!companyWithInfo?.certificateCriterias) {
+      return "Votre entreprise n'est pas encore certifiée car le calcul de certification se fera au début du mois prochain.";
+    }
+
+    return "";
+  }, [companyWithInfo, loadingInfo]);
+
   return [
     <Box key={3} className={classes.title}>
       <Typography variant="h4">{panelTitle}</Typography>
@@ -106,24 +122,11 @@ export default function CertificationPanel({ company }) {
     loadingInfo && (
       <Skeleton key={2} variant="rectangular" width="100%" height={100} />
     ),
-    !loadingInfo &&
-      (companyWithInfo?.hasNoActivity ? (
-        <Box key={5} mb={2}>
-          <Typography variant="h6">
-            Votre entreprise n'est pas encore certifiée car le calcul se fera
-            lorsque vous aurez commencé à enregistrer des activités.
-          </Typography>
-        </Box>
-      ) : (
-        !companyWithInfo?.certificateCriterias && (
-          <Box key={5} mb={2}>
-            <Typography variant="h6">
-              Votre entreprise n'est pas encore certifiée car le calcul de
-              certification se fera au début du mois prochain.
-            </Typography>
-          </Box>
-        )
-      )),
+    noCertificateText && (
+      <Box key={5} mb={2}>
+        <Typography variant="h6">{noCertificateText}</Typography>
+      </Box>
+    ),
     !loadingInfo && (
       <Box key={8} mb={2}>
         <Typography mb={2}>
