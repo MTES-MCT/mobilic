@@ -1,7 +1,13 @@
 import React from "react";
 
 import Stack from "@mui/material/Stack";
-import { Radio, RadioGroup, Select, TextInput } from "@dataesr/react-dsfr";
+import {
+  Radio,
+  RadioGroup,
+  Select,
+  TextInput,
+  Checkbox
+} from "@dataesr/react-dsfr";
 import { COUNTRIES } from "../../utils/country";
 import { CONTROL_BULLETIN_TRANSPORT_TYPE } from "../../utils/controlBulletin";
 
@@ -140,6 +146,15 @@ export function ControlBulletinFormStep2({
         name="licenseCopyNumber"
         onChange={e => handleEditControlBulletin(e)}
         label="N° de copie conforme de la licence"
+      />
+      <Checkbox
+        checked={controlBulletin.isVehicleImmobilized}
+        onChange={e =>
+          handleEditControlBulletin({
+            target: { name: "isVehicleImmobilized", value: e.target.checked }
+          })
+        }
+        label="J'ai immobilisé le véhicule"
       />
     </Stack>
   );
