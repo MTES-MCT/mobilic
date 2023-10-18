@@ -500,13 +500,12 @@ export function getBadgeRoutes(
 }
 
 export function getCertificateBadge(companyWithCertificationInfo) {
-  if (!companyWithCertificationInfo.certificateCriterias?.creationTime) {
-    return null;
-  }
-
   let color = null;
-
-  if (!companyWithCertificationInfo.isCertified) {
+  if (companyWithCertificationInfo.hasNoActivity) {
+    color = "error";
+  } else if (!companyWithCertificationInfo.certificateCriterias?.creationTime) {
+    return null;
+  } else if (!companyWithCertificationInfo.isCertified) {
     color = "error";
   } else {
     const currentCriterias = companyWithCertificationInfo.certificateCriterias;
