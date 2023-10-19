@@ -9,6 +9,7 @@ import { Testimony } from "./sections/Testimony";
 import { WhatsMobilic } from "./sections/whatsmobilic/WhatsMobilic";
 
 import { LandingSection, LandingSectionList } from "../sections/LandingSection";
+import { usePageTitle } from "../../common/usePageTitle";
 
 const useStyles = makeStyles(theme => ({
   underlineBlue: {
@@ -18,6 +19,7 @@ const useStyles = makeStyles(theme => ({
 
 export const LandingGestionnaire = () => {
   const classes = useStyles();
+  usePageTitle("Accueil Gestionnaire - Mobilic");
 
   return [
     <Header key="header" />,

@@ -107,7 +107,7 @@ export function ControllerResourcePage() {
           <Grid item sm={6}>
             <Box>
               <VideoCard video={VIDEOS.Tuto_Police} />
-            </Box >
+            </Box>
             <Button
               color="primary"
               size="small"
@@ -118,10 +118,10 @@ export function ControllerResourcePage() {
             >
               Voir toutes les vidéos
             </Button>
-          </Grid >
-        </Grid >
-      </Container >
-    </Container >,
+          </Grid>
+        </Grid>
+      </Container>
+    </Container>,
     <Container
       key={3}
       className={`${classes.container} ${classes.whiteSection}`}
