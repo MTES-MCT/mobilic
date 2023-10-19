@@ -82,7 +82,7 @@ export function ControllerResourcePage() {
           </Grid>
         </Grid>
         <Typography variant={"h3"} className={classes.itAgentResourceSubtitle}>
-          Je suis agent de police et j'apprends à utiliser Mobilic
+          Je fais partie des forces en tenue et j'apprends à utiliser Mobilic
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={10}>
           <Grid item sm={6}>
