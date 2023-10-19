@@ -52,12 +52,19 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function PDFExport({ open, handleClose }) {
+export default function PDFExport({
+  open,
+  handleClose,
+  initialMinDate,
+  initialMaxDate
+}) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const { trackLink } = useMatomo();
-  const [minDate, setMinDate] = React.useState(null);
-  const [maxDate, setMaxDate] = React.useState(startOfDayAsDate(new Date()));
+  const [minDate, setMinDate] = React.useState(initialMinDate);
+  const [maxDate, setMaxDate] = React.useState(
+    startOfDayAsDate(initialMaxDate)
+  );
   const [dateRangeError, setDateRangeError] = React.useState(null);
 
   const today = new Date();
