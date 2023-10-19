@@ -105,7 +105,6 @@ export function SetupMobilic() {
       />
     ));
 
-    // insert dividers
     return blocks.reduce(
       (arr, item, index) =>
         index < blocks.length - 1
