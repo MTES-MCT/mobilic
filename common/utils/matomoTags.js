@@ -150,3 +150,15 @@ export const PLAY_VIDEO = tagName => {
     name: tagName
   };
 };
+
+export const ADMIN_CERTIFICATE_TAB_WITH_BADGE = {
+  category: MATOMO_CATEGORIES.ADMIN_NAVIGATION,
+  action: "open-certificate-tab-with-badge",
+  name: "Affichage de l'onglet Certificat avec le badge"
+};
+
+export const ADMIN_CERTIFICATE_TAB_WITHOUT_BADGE = {
+  category: MATOMO_CATEGORIES.ADMIN_NAVIGATION,
+  action: "open-certificate-tab-without-badge",
+  name: "Affichage de l'onglet Certificat sans le badge"
+};
