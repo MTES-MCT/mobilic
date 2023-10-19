@@ -14,11 +14,14 @@ export function WebinarListSection({ className }) {
   if (cantDisplayWebinarsBecauseNoneOrError) return null;
 
   return (
-    <LandingSection title="Prochains webinaires Mobilic" className={className}>
+    <LandingSection
+      title="Découvrez Mobilic lors d’un webinaire"
+      className={className}
+    >
       <Typography className={classes.sectionIntroText}>
-        Vous pouvez assister à un de nos webinaires pour mieux connaître
-        Mobilic, savoir si Mobilic est adapté à vos besoins et comprendre
-        comment l'utiliser.
+        Inscrivez-vous à l’un de nos webinaires pour assister à une
+        démonstration de l’usage de Mobilic et obtenir toutes les réponses à vos
+        questions :
       </Typography>
       <WebinarList
         setCantDisplayWebinarsBecauseNoneOrError={
