@@ -55,7 +55,7 @@ const VALIDATION_TABS = [
   {
     label: "En attente de validation par les salariés",
     explanation:
-      "Les missions suivantes sont terminées mais n'ont pas encore été validées par tous les salariés concernés.",
+      "Les missions suivantes ne sont pas terminées ou n'ont pas encore été validées par tous les salariés concernés.",
     matomoName: "Onglet Validation Salarié"
   },
   {
