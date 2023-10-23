@@ -7,6 +7,11 @@ import {
   useCertificationInfo,
   useShouldDisplayBadge
 } from "../utils/certificationInfo";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import {
+  ADMIN_CERTIFICATE_TAB_WITH_BADGE,
+  ADMIN_CERTIFICATE_TAB_WITHOUT_BADGE
+} from "common/utils/matomoTags";
 import { getCertificateBadge } from "../../common/routes";
 import Badge from "@mui/material/Badge";
 import ToggleButton from "@mui/material/ToggleButton";
@@ -154,6 +159,7 @@ function SubNavigationToggle({ view, setView }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const classes = usePanelStyles();
+  const { trackEvent } = useMatomo();
   const { companyWithInfo } = useCertificationInfo();
   const shouldDisplayBadge = useShouldDisplayBadge();
   const certificateBadge = useMemo(() => {
@@ -191,8 +197,17 @@ function SubNavigationToggle({ view, setView }) {
             value={panelInfos.view}
             className={classes.toggleButton}
             onClick={
-              panelInfos.onClick && shouldDisplayBadge
-                ? () => panelInfos.onClick(() => snoozeCertificationInfo())
+              panelInfos.onClick
+                ? () => {
+                    if (shouldDisplayBadge) {
+                      panelInfos.onClick(() => {
+                        snoozeCertificationInfo();
+                        trackEvent(ADMIN_CERTIFICATE_TAB_WITH_BADGE);
+                      });
+                    } else {
+                      trackEvent(ADMIN_CERTIFICATE_TAB_WITHOUT_BADGE);
+                    }
+                  }
                 : null
             }
           >
