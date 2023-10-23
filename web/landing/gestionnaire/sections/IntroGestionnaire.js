@@ -40,11 +40,13 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "column",
     columnGap: "48px",
-    rowGap: "24px",
+    rowGap: "48px",
     width: "50%",
     [theme.breakpoints.down("sm")]: {
       width: "100%"
-    }
+    },
+    paddingTop: theme.spacing(8),
+    paddingBottom: theme.spacing(8)
   },
   heroButtons: {
     display: "flex",
@@ -52,14 +54,19 @@ const useStyles = makeStyles(theme => ({
     gap: "16px"
   },
   heroVideo: {
-    margin: "0 auto"
+    margin: "0 auto",
+    width: "40%",
+    maxWidth: "360px"
   },
   textIntro: {
-    fontWeight: "normal",
-    maxWidth: "600px"
+    fontWeight: 500,
+    maxWidth: "600px",
+    lineHeight: "initial",
+    fontSize: "2.2rem"
   },
   textTitle: {
-    maxWidth: "600px"
+    maxWidth: "600px",
+    fontSize: "2.2rem"
   },
   button: {
     textAlign: "center"

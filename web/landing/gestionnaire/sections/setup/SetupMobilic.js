@@ -22,8 +22,12 @@ const BLOCKS = [
     when: "15 jours plus tard",
     title:
       "Vos salariés lancent Mobilic au quotidien, vous récupérez les temps de travail dans votre interface",
-    content:
-      "Vous utilisez Mobilic de manière conforme et gagnez 15 minutes de gestion administrative par salarié et par semaine"
+    content: (
+      <>
+        Vous <b>utilisez Mobilic de manière conforme</b> et gagnez 15 minutes de
+        gestion administrative par salarié et par semaine
+      </>
+    )
   },
   {
     index: "3",

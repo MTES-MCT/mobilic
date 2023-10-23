@@ -15,7 +15,9 @@ export const useSectionStyles = makeStyles(theme => ({
     margin: 0
   },
   sectionTitle: {
-    paddingBottom: theme.spacing(6)
+    paddingBottom: theme.spacing(6),
+    fontWeight: "bold",
+    fontSize: "1.8rem"
   },
   sectionIntroText: {
     paddingBottom: theme.spacing(4),
