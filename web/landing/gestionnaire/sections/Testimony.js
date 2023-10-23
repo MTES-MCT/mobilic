@@ -15,10 +15,11 @@ const useStyles = makeStyles(theme => ({
     margin: "auto"
   },
   videoContainer: {
-    width: "320px"
+    width: "360px"
   },
   testimonialContainer: {
-    width: "340px"
+    width: "320px",
+    paddingBottom: theme.spacing(4)
   }
 }));
 
@@ -29,7 +30,13 @@ export function Testimony() {
 
   return (
     <Stack direction="column" gap={8} alignItems="center">
-      <Stack direction="row" gap={1} flexWrap="wrap" justifyContent="center">
+      <Stack
+        direction="row"
+        gap={1}
+        flexWrap="wrap"
+        justifyContent="center"
+        alignItems="flex-end"
+      >
         <Box className={classes.testimonialContainer}>
           <TestimonialCard
             ImageComponent={VirImage}
