@@ -10,7 +10,8 @@ export const resourceCardsClasses = makeStyles(theme => ({
     height: "100%"
   },
   description: {
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
+    textAlign: "center"
   },
   linkWholeCard: {
     padding: 0,

@@ -30,7 +30,7 @@ const CARDS = [
   {
     id: "do_i_need_mobilic",
     title:
-      "J’utilise déjà un logiciel de gestion, dois-je passer sur Mobilic ?",
+      "J’utilise déjà un logiciel de suivi du temps de travail, dois-je passer sur Mobilic ?",
     content:
       "Oui car les autres logiciels ne remplacent pas Mobilic. Pour ne pas multiplier le nombre d’outils utilisés par les salariés, vous pouvez interfacer Mobilic à votre logiciel.",
     link:
