@@ -3,10 +3,10 @@ import React from "react";
 
 const CODES = {
   transports: {
-    label: "code des transports"
+    label: "Code des transports"
   },
   work: {
-    label: "code du travail"
+    label: "Code du travail"
   }
 };
 

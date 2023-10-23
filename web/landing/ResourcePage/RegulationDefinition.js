@@ -11,7 +11,7 @@ export const DEFINITIONS = {
     content: (
       <span>
         période entre deux repos quotidiens/hebdomadaires consécutifs (repos
-        d'au-moins 10 heures). Inclut donc les heures travaillées mais aussi les
+        d'au moins 10 heures). Inclut donc les heures travaillées mais aussi les
         pauses ou repos inférieurs à 10 heures.
       </span>
     )
@@ -58,7 +58,7 @@ export const DEFINITIONS = {
           article={LEGAL_ARTICLES.longDistance}
           shortLabel
         />{" "}
-        du code des transports).
+        du Code des transports).
       </span>
     )
   },
@@ -72,7 +72,7 @@ export const DEFINITIONS = {
           article={LEGAL_ARTICLES.calendarWeek}
           shortLabel
         />{" "}
-        du code du travail).
+        du Code du travail).
       </span>
     )
   }
