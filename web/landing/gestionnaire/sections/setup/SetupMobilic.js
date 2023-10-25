@@ -15,7 +15,7 @@ const BLOCKS = [
     title:
       "Vous invitez vos salariés à rejoindre Mobilic et rattachez leur compte à votre entreprise",
     content:
-      "L'application mobile intuitive permet à vos salariés une prise en main rapide et une utilisation quotidienne"
+      "L'application mobile intuitive permet à vos salariés une prise en main rapide et une utilisation quotidienne."
   },
   {
     index: "2",
@@ -25,7 +25,7 @@ const BLOCKS = [
     content: (
       <>
         Vous <b>utilisez Mobilic de manière conforme</b> et gagnez 15 minutes de
-        gestion administrative par salarié et par semaine
+        gestion administrative par salarié et par semaine.
       </>
     )
   },
@@ -46,7 +46,7 @@ const BLOCKS = [
       </>
     ),
     content:
-      "Les donneurs d'ordre, les salariés et les clients potentiels savent que vous respectez la réglementation de suivi du temps de travail"
+      "Les donneurs d'ordre, les salariés et les clients potentiels savent que vous respectez la réglementation de suivi du temps de travail."
   }
 ];
 

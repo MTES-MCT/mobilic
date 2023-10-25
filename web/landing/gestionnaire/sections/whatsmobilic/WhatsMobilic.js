@@ -7,7 +7,7 @@ const CARDS = [
     id: "what_is_mobilic",
     title: "Qu'est-ce que Mobilic ?",
     content:
-      "Une application et une API de saisie et de suivi du temps de travail dans le transport routier léger développée par le ministère chargé des Transports.",
+      "Une application et une API de saisie et de suivi du temps de travail dans le transport routier léger développées par le ministère chargé des Transports.",
     link:
       "https://faq.mobilic.beta.gouv.fr/comprendre-ce-quest-mobilic/vos-questions-recurrentes"
   },
