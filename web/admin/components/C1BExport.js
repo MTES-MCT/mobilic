@@ -148,9 +148,11 @@ export default function C1BExport({
           <strong>un fichier C1B pour chaque travailleur</strong> dans le
           périmètre choisi (précisé par les options ci-dessous).
           <Alert severity="warning" className={classes.grid}>
-            Si un travailleur n'a pas effectué d'activités dans la période
-            demandée, aucun fichier C1B ne sera généré le concernant, même s'il
-            est dans la liste d'export.
+            <Typography component="div" variant="body1" gutterBottom>
+              Si un travailleur n'a pas effectué d'activités dans la période
+              demandée, aucun fichier C1B ne sera généré le concernant, même
+              s'il est dans la liste d'export.
+            </Typography>
           </Alert>
         </Typography>
         <Typography variant="h5" className={classes.subTitle}>
