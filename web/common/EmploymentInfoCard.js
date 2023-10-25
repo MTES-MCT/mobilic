@@ -31,6 +31,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ThirdPartyEmploymentAccess from "./ThirdPartyEmploymentAccess";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import Box from "@mui/material/Box";
+import { HideEmail } from "../home/HideEmail";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
@@ -246,6 +247,11 @@ export function EmploymentInfoCard({
                 employmentId={employment.id}
                 clients={employment.authorizedClients}
               />
+            </Grid>
+          )}
+          {!hideActions && (
+            <Grid item xs={12}>
+              <HideEmail employment={employment} />
             </Grid>
           )}
         </Grid>
