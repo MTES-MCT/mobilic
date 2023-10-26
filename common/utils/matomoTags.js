@@ -3,12 +3,17 @@ export const MATOMO_CATEGORIES = {
   ADMIN_NAVIGATION: "admin-navigation",
   ADMIN_ACTIVITY_FILTER: "admin-activity-filter",
   ADMIN_EXPORT: "admin-export",
+  ADMIN_LANDING_PAGE: "admin-landing-page",
   HOME: "homepage"
 };
 
 export const MATOMO_ACTIONS = {
   OPEN_MISSION_DRAWER: "open-mission-drawer",
-  VALIDATE_MISSION: "validate-mission"
+  VALIDATE_MISSION: "validate-mission",
+  ADMIN_SUBSCRIBE: "admin-subscribe",
+  ADMIN_WEBINARS: "admin-webinars",
+  ADMIN_FAQ: "admin-faq",
+  ADMIN_CONTACT: "admin-contact-team"
 };
 
 export const EDIT_ACTIVITY_IN_MISSION_PANEL = {
@@ -135,6 +140,42 @@ export const OPEN_CANCEL_UPDATE_MISSION = {
   name: "Affichage pop up annulation modification mission"
 };
 
+export const ADMIN_LANDING_SUBSCRIBE_TOP = {
+  category: MATOMO_CATEGORIES.ADMIN_LANDING_PAGE,
+  action: MATOMO_ACTIONS.ADMIN_SUBSCRIBE,
+  name: "Inscription d'entreprise - Intro"
+};
+
+export const ADMIN_LANDING_SUBSCRIBE_HOW_TO = {
+  category: MATOMO_CATEGORIES.ADMIN_LANDING_PAGE,
+  action: MATOMO_ACTIONS.ADMIN_SUBSCRIBE,
+  name: "Inscription d'entreprise - Comment mettre en place Mobilic"
+};
+
+export const ADMIN_LANDING_SUBSCRIBE_TESTIMONY = {
+  category: MATOMO_CATEGORIES.ADMIN_LANDING_PAGE,
+  action: MATOMO_ACTIONS.ADMIN_SUBSCRIBE,
+  name: "Inscription d'entreprise - Comment mettre en place Mobilic"
+};
+
+export const ADMIN_LANDING_WEBINARS = {
+  category: MATOMO_CATEGORIES.ADMIN_LANDING_PAGE,
+  action: MATOMO_ACTIONS.ADMIN_WEBINARS,
+  name: "Consultation de la section Webinaires"
+};
+
+export const ADMIN_LANDING_CONTACT = {
+  category: MATOMO_CATEGORIES.ADMIN_LANDING_PAGE,
+  action: MATOMO_ACTIONS.ADMIN_CONTACT,
+  name: "Envoi d'un email à l'équipe"
+};
+
+export const ADMIN_FAQ = tagName => ({
+  category: MATOMO_CATEGORIES.ADMIN_LANDING_PAGE,
+  action: MATOMO_ACTIONS.ADMIN_FAQ,
+  name: tagName
+});
+
 export const OPEN_PRESS_ARTICLE = tagName => {
   return {
     category: MATOMO_CATEGORIES.HOME,
@@ -149,4 +190,16 @@ export const PLAY_VIDEO = tagName => {
     action: "play-video",
     name: tagName
   };
+};
+
+export const ADMIN_CERTIFICATE_TAB_WITH_BADGE = {
+  category: MATOMO_CATEGORIES.ADMIN_NAVIGATION,
+  action: "open-certificate-tab-with-badge",
+  name: "Affichage de l'onglet Certificat avec le badge"
+};
+
+export const ADMIN_CERTIFICATE_TAB_WITHOUT_BADGE = {
+  category: MATOMO_CATEGORIES.ADMIN_NAVIGATION,
+  action: "open-certificate-tab-without-badge",
+  name: "Affichage de l'onglet Certificat sans le badge"
 };

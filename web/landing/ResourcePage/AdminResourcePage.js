@@ -6,7 +6,7 @@ import { Header } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import Button from "@mui/material/Button";
-import { VideoCard } from "./VideoCard";
+import { VIDEOS, VideoCard } from "./VideoCard";
 import { Breadcrumb, BreadcrumbItem } from "@dataesr/react-dsfr";
 import { SlideshareCard } from "./SlideshareCard";
 import Box from "@mui/material/Box";
@@ -37,18 +37,10 @@ export function AdminResourcePage() {
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={10}>
           <Grid item xs={12} sm={6}>
-            <VideoCard
-              id="873641619"
-              title="gestionnaire-inscription"
-              description="Vous inscrire sur Mobilic"
-            />
+            <VideoCard video={VIDEOS.Admin_Inscription} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <VideoCard
-              id="873641999"
-              title="gestionnaire-utilisation"
-              description="Utiliser l'interface gestionnaire"
-            />
+            <VideoCard video={VIDEOS.Admin_Utilisation} />
           </Grid>
         </Grid>
         <Button

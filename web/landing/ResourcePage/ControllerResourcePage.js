@@ -10,7 +10,7 @@ import { SlideshareCard } from "./SlideshareCard";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
-import { VideoCard } from "./VideoCard";
+import { VideoCard, VIDEOS } from "./VideoCard";
 import { RESOURCES_DOCUMENT } from "./ResourcePage";
 
 export function ControllerResourcePage() {
@@ -63,11 +63,7 @@ export function ControllerResourcePage() {
           </Grid>
           <Grid item sm={6}>
             <Box>
-              <VideoCard
-                id="873642195"
-                title="tuto-ctt-it-juin-2023"
-                description="Effectuer un contrôle en bord de route"
-              />
+              <VideoCard video={VIDEOS.Tuto_Ctt} />
             </Box>
             <Button
               color="primary"
@@ -82,7 +78,7 @@ export function ControllerResourcePage() {
           </Grid>
         </Grid>
         <Typography variant={"h3"} className={classes.itAgentResourceSubtitle}>
-          Je suis agent de police et j'apprends à utiliser Mobilic
+          Je fais partie des forces en tenue et j'apprends à utiliser Mobilic
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={10}>
           <Grid item sm={6}>
@@ -110,11 +106,7 @@ export function ControllerResourcePage() {
           </Grid>
           <Grid item sm={6}>
             <Box>
-              <VideoCard
-                id="873642336"
-                title="tuto-police-juin-2023"
-                description="Effectuer un contrôle en bord de route"
-              />
+              <VideoCard video={VIDEOS.Tuto_Police} />
             </Box>
             <Button
               color="primary"

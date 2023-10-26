@@ -72,12 +72,12 @@ export const REGULATION_RULES = {
         <Emphasis>6 heures d'affilée</Emphasis> sans une pause.
         <br />
         <br />
-        La pause doit être d'au-moins <Emphasis>30 minutes</Emphasis> si le
-        travail quotidien est entre 6 heures et 9 heures et d'au-moins{" "}
+        La pause doit être d'au moins <Emphasis>30 minutes</Emphasis> si le
+        travail quotidien est entre 6 heures et 9 heures et d'au moins{" "}
         <Emphasis>45 minutes</Emphasis> si le temps de travail dépasse 9 heures.
         <br />
         <br />
-        Le repos quotidien est d'au-moins{" "}
+        Le repos quotidien est d'au moins{" "}
         <Emphasis>10 heures consécutives</Emphasis> dans les 24 heures suivant
         le début d'une journée de travail.
         <br />
@@ -86,7 +86,7 @@ export const REGULATION_RULES = {
     ),
     details: (
       <span>
-        Le salarié doit prendre au-moins{" "}
+        Le salarié doit prendre au moins{" "}
         <Emphasis>10 heures de repos consécutives</Emphasis> dans les 24 heures
         suivant le début d'une journée de travail.
         <br />
@@ -114,7 +114,7 @@ export const REGULATION_RULES = {
             au-delà de 9 heures : au moins <Emphasis>45 minutes</Emphasis>
           </li>
         </ul>
-        La pause peut-être subdivisée en périodes d'au-moins 15 minutes.
+        La pause peut-être subdivisée en périodes d'au moins 15 minutes.
       </span>
     ),
     definitions: [DEFINITIONS.amplitude],
@@ -215,7 +215,7 @@ export const REGULATION_RULES = {
         <Emphasis>complètement non travaillé</Emphasis> (de 0h à 24h).
         <br />
         <br />
-        De plus le repos hebdomadaire est d'au-moins{" "}
+        De plus le repos hebdomadaire est d'au moins{" "}
         <Emphasis>34 heures</Emphasis>.
       </span>
     ),
@@ -238,9 +238,9 @@ export const REGULATION_RULES = {
         aucune activité entre 0h00 et 23h59.
         <br />
         <br />
-        Mobilic vérifie également qu'au-moins 34 heures se sont écoulées entre
+        Mobilic vérifie également qu'au moins 34 heures se sont écoulées entre
         la dernière activité de la semaine précédente et la première activité de
-        la semaine, ou alors qu'un repos d'au-moins 34 heures a été pris au
+        la semaine, ou alors qu'un repos d'au moins 34 heures a été pris au
         milieu de la semaine. <br />
         <br />
       </span>

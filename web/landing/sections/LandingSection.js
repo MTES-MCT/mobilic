@@ -15,7 +15,9 @@ export const useSectionStyles = makeStyles(theme => ({
     margin: 0
   },
   sectionTitle: {
-    paddingBottom: theme.spacing(6)
+    paddingBottom: theme.spacing(6),
+    fontWeight: "bold",
+    fontSize: "1.8rem"
   },
   sectionIntroText: {
     paddingBottom: theme.spacing(4),
@@ -58,7 +60,13 @@ export function LandingSectionList({ children }) {
     );
 }
 
-export function LandingSection({ title, className, children, ...props }) {
+export function LandingSection({
+  title,
+  className,
+  innerWidth,
+  children,
+  ...props
+}) {
   const classes = useSectionStyles();
 
   return (
@@ -67,7 +75,7 @@ export function LandingSection({ title, className, children, ...props }) {
       maxWidth={false}
       {...props}
     >
-      <Container maxWidth="md" className={classes.inner}>
+      <Container maxWidth={innerWidth || "md"} className={classes.inner}>
         <Typography variant="h3" className={`${classes.sectionTitle}`}>
           {title}
         </Typography>

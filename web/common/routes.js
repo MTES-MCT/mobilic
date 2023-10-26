@@ -36,6 +36,7 @@ import { ControllerQRCodeNotRecognized } from "../controller/components/scanQRCo
 import { ControllerHistory } from "../controller/components/history/ControllerHistory";
 import { SyncEmployeeValidation } from "../login/SyncEmployeeValidation";
 import { Certificate } from "../landing/certificate";
+import { LandingGestionnaire } from "../landing/gestionnaire/LandingGestionnaire";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -322,6 +323,13 @@ export const ROUTES = [
     menuItemFilter: () => false
   },
   {
+    path: "/accueil-gestionnaire",
+    label: "Accueil gestionnaire",
+    accessible: () => true,
+    component: LandingGestionnaire,
+    menuItemFilter: () => false
+  },
+  {
     path: "/certificate",
     label: "Recherche certification",
     accessible: () => true,
@@ -500,13 +508,12 @@ export function getBadgeRoutes(
 }
 
 export function getCertificateBadge(companyWithCertificationInfo) {
-  if (!companyWithCertificationInfo.certificateCriterias?.creationTime) {
-    return null;
-  }
-
   let color = null;
-
-  if (!companyWithCertificationInfo.isCertified) {
+  if (companyWithCertificationInfo.hasNoActivity) {
+    color = "error";
+  } else if (!companyWithCertificationInfo.certificateCriterias?.creationTime) {
+    return null;
+  } else if (!companyWithCertificationInfo.isCertified) {
     color = "error";
   } else {
     const currentCriterias = companyWithCertificationInfo.certificateCriterias;

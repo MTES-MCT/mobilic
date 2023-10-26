@@ -197,7 +197,8 @@ export function ControllerControlBulletin({
             articlesNature: newControlBulletin.articlesNature,
             licenseNumber: newControlBulletin.licenseNumber,
             licenseCopyNumber: newControlBulletin.licenseCopyNumber,
-            observation: newControlBulletin.observation
+            observation: newControlBulletin.observation,
+            isVehicleImmobilized: newControlBulletin.isVehicleImmobilized
           },
           { context: { nonPublicApi: true } }
         );

@@ -35,15 +35,15 @@ export const RESOURCES_DOCUMENT = {
     },
     controleur: {
       slideshare:
-        "https://www.slideshare.net/slideshow/embed_code/key/gh3e7IhJIbI3ZB",
+        "https://www.slideshare.net/slideshow/embed_code/key/khEsCS5bTemUi7",
       download:
-        "https://drive.google.com/uc?id=1rBnB_JeaN3GejjqHZBEJ4aYZu9JoA6Cs&export=download"
+        "https://drive.google.com/uc?export=download&id=1XovEkL679iXg97uePoDACOdu1QYatt7J"
     },
     controleurConnected: {
       slideshare:
-        "https://www.slideshare.net/slideshow/embed_code/key/777jjs9sqNb8au",
+        "https://www.slideshare.net/slideshow/embed_code/key/JXFUkvCYSfuNoH",
       download:
-        "https://drive.google.com/uc?id=1JnhyKJNxdi_TBLzUaxqt7MBvJmCy30Je&export=download"
+        "https://drive.google.com/uc?export=download&id=1A5yd3MoXV-28fWhXDKLGWQB5NWrJ-4sH"
     }
   },
   brochure: {

@@ -146,24 +146,38 @@ export default function C1BExport({
         <Typography gutterBottom>
           Le téléchargement produit un dossier zippé (.zip) qui contient{" "}
           <strong>un fichier C1B pour chaque travailleur</strong> dans le
-          périmètre choisi (précisé par les options ci-dessous). Si un
-          travailleur n'a pas d'activités dans la période demandée aucun fichier
-          C1B ne sera généré pour lui, même si ce travailleur est dans la liste.
+          périmètre choisi (précisé par les options ci-dessous).
+          <Alert severity="warning" className={classes.grid}>
+            <Typography component="div" variant="body1" gutterBottom>
+              Si un travailleur n'a pas effectué d'activités dans la période
+              demandée, aucun fichier C1B ne sera généré le concernant, même
+              s'il est dans la liste d'export.
+            </Typography>
+          </Alert>
         </Typography>
         <Typography variant="h5" className={classes.subTitle}>
           Avertissement
         </Typography>
         <Alert severity="warning">
-          <Typography gutterBottom>
-            Les fichiers générés par Mobilic respectent la norme C1B, mais ne
-            sont pour autant pas tout à fait identiques aux fichiers des cartes
-            conducteur (ex. : certaines parties sont laissées vides faute de
-            données, les signatures numériques sont différentes, ...).
-          </Typography>
-          <Typography>
-            Si jamais vous ne parvenez à lire les fichiers Mobilic depuis votre
-            logiciel d'analyse n'hésitez pas à nous contacter à l'adresse mail{" "}
-            <a href="mailto:mobilic@beta.gouv.fr">mobilic@beta.gouv.fr</a>.
+          <Typography component="div" variant="body1" gutterBottom>
+            <ul>
+              <li>
+                Les fichiers générés par Mobilic respectent la norme C1B, mais
+                ne sont pour autant pas tout à fait identiques aux fichiers des
+                cartes conducteur (ex. : certaines parties sont laissées vides
+                faute de données, les signatures numériques sont différentes,
+                ...). <br />
+                Si jamais vous ne parvenez à lire les fichiers Mobilic depuis
+                votre logiciel d'analyse n'hésitez pas à nous contacter à
+                l'adresse mail
+                <a href="mailto:mobilic@beta.gouv.fr">mobilic@beta.gouv.fr</a>.
+              </li>
+              <li>
+                En cas d'export pour l'inspection du travail, veillez à ne pas
+                modifier la mise en page du fichier afin qu'il soit considéré
+                comme inchangé par le logiciel de contrôle.
+              </li>
+            </ul>
           </Typography>
         </Alert>
         <Typography variant="h5" className={classes.subTitle}>
@@ -177,7 +191,7 @@ export default function C1BExport({
           mt={2}
           checked={employeeVersion}
           onChange={() => setEmployeeVersion(!employeeVersion)}
-          label={`Obtenir deux fichiers pour chaque salarié : une version saisie salarié et une version post modifications gestionnaire`}
+          label={`Obtenir deux fichiers pour chaque salarié : une version saisie salarié et une version validée par le gestionnaire.`}
         />
         <Grid spacing={4} container className={classes.grid}>
           {_companies.length > 1 && (

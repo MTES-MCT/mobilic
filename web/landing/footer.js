@@ -17,11 +17,11 @@ import FranceRelanceLogo from "common/assets/images/sponsor-logos/france_relance
 import NextGenerationEULogo from "common/assets/images/sponsor-logos/next_generation_eu.png";
 import { FabNumIcon } from "common/utils/icons";
 
-export function Footer() {
+export function Footer({ withFollow = true }) {
   const modals = useModals();
   return (
     <>
-      <Follow />
+      {withFollow && <Follow />}
       <DSFooter>
         <FooterBody
           description="Mobilic est un service numérique de l’Etat, soutenu par la
