@@ -42,6 +42,7 @@ export function initSentry() {
     Sentry.init({
       dsn: process.env.REACT_APP_SENTRY_URL,
       release: process.env.REACT_APP_SENTRY_RELEASE,
+      tracesSampleRate: process.env.REACT_APP_SENTRY_SAMPLE_RATE || 1,
       environment: process.env.REACT_APP_SENTRY_ENVIRONMENT || "dev",
       ignoreErrors: ERROR_MESSAGES_TO_FILTER_OUT
     });
