@@ -17,7 +17,7 @@ export function HideEmail({ employment }) {
   const classes = useStyles();
 
   return (
-    <Stack>
+    <Stack mb={2}>
       <Typography align="left" className={classes.fieldName} variant="overline">
         Autorisation d'accès à mon email personnel
       </Typography>
