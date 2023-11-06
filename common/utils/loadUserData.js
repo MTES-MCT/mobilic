@@ -107,6 +107,7 @@ const USER_QUERY = gql`
         endDate
         isAcknowledged
         hasAdminRights
+        hideEmail
         authorizedClients {
           id
           name

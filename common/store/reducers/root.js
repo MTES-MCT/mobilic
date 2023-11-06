@@ -8,6 +8,7 @@ import forEach from "lodash/forEach";
 import { removeTemporaryMissionIdReducer } from "./mission";
 import { removeOptimisticUpdateReducer } from "./optimisticUpdate";
 import { closeCurrentActivityReducer } from "./activity";
+import { udpateEmploymentReducer } from "./employment";
 
 export const ACTIONS = {
   create: createItemsReducer,
@@ -17,7 +18,8 @@ export const ACTIONS = {
   removeOptimistic: removeOptimisticUpdateReducer,
   sync: syncReducer,
   closeCurrentActivity: closeCurrentActivityReducer,
-  removeTemporaryMissionId: removeTemporaryMissionIdReducer
+  removeTemporaryMissionId: removeTemporaryMissionIdReducer,
+  udpateEmployment: udpateEmploymentReducer
 };
 
 const REDUCERS = {};

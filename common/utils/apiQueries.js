@@ -2245,6 +2245,17 @@ export const SNOOZE_CERTIFICATION_INFO = gql`
   }
 `;
 
+export const UPDATE_HIDE_EMAIL_MUTATION = gql`
+  mutation updateHideEmail($employmentId: Int!, $hideEmail: Boolean!) {
+    employments {
+      updateHideEmail(employmentId: $employmentId, hideEmail: $hideEmail) {
+        id
+        hideEmail
+      }
+    }
+  }
+`;
+
 export const ADD_SCENARIO_TESTING_RESULT = gql`
   mutation addScenarioTestingResult(
     $userId: Int!

@@ -774,8 +774,10 @@ export function Employees({ company, containerRef }) {
       )}
     </Box>,
     <Typography key={4} className={classes.explanation}>
-      Invitez vos salariés en renseignant leurs adresses mail, afin qu'ils
-      puissent enregistrer du temps de travail pour l'entreprise.
+      Invitez vos salariés en renseignant leurs adresses e-mail (certaines
+      adresses n’apparaissent pas dans la liste ci-dessous car les salariés ont
+      choisi de ne pas vous les communiquer), afin qu'ils puissent enregistrer
+      du temps de travail pour l'entreprise.
     </Typography>,
     <Grid key={5} spacing={4} container className={classes.teamFilter}>
       {adminStore?.teams?.length > 0 && (
