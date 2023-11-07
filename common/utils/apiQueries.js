@@ -1470,6 +1470,26 @@ export const BULK_ACTIVITY_QUERY = gql`
   }
 `;
 
+export const LOG_HOLIDAY_MUTATION = gql`
+  mutation logHoliday(
+    $companyId: Int!
+    $startTime: TimeStamp!
+    $endTime: TimeStamp!
+    $title: String!
+  ) {
+    activities {
+      logHoliday(
+        companyId: $companyId
+        startTime: $startTime
+        endTime: $endTime
+        title: $title
+      ) {
+        success
+      }
+    }
+  }
+`;
+
 export const CURRENT_MISSION_INFO = gql`
   query currentMissionInfo($id: Int!) {
     mission(id: $id) {

@@ -41,6 +41,12 @@ export const ACTIVITIES = {
     label: "Liaison",
     renderIcon: props => <TransferIcon {...props} />,
     color: "#417DC4"
+  },
+  off: {
+    name: "off",
+    label: "Conge",
+    renderIcon: props => <TransferIcon {...props} />,
+    color: "#417DC4"
   }
 };
 

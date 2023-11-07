@@ -28,6 +28,13 @@ import BackgroundImage from "common/assets/images/landing-hero-vertical-without-
 import LogoWithText from "common/assets/images/mobilic-logo-white-with-text.svg";
 import { shouldDisplayEmployeeSocialImpactSurveyOnMainPage } from "common/utils/surveys";
 
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import Stack from "@mui/material/Stack";
+import { useApi } from "common/utils/api";
+import { LOG_HOLIDAY_MUTATION } from "common/utils/apiQueries";
+import { useSnackbarAlerts } from "../../common/Snackbar";
+import { graphQLErrorMatchesCode } from "common/utils/errors";
+
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
 const useStyles = makeStyles(theme => ({
@@ -110,6 +117,10 @@ const useStyles = makeStyles(theme => ({
   promiseText: {
     color: theme.palette.primary.contrastText,
     fontStyle: "italic"
+  },
+  holidayButton: {
+    textDecoration: "underline",
+    textTransform: "none"
   }
 }));
 
@@ -117,6 +128,8 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
+  const api = useApi();
+  const alerts = useSnackbarAlerts();
 
   const companies = store.companies();
   const userId = store.userId();
@@ -180,6 +193,32 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
     });
   };
 
+  const onEnterNewHolidayFunnel = () => {
+    modals.open("newHoliday", {
+      companies,
+      handleContinue: async payload => {
+        console.log(payload);
+        await alerts.withApiErrorHandling(
+          async () => {
+            const apiResponse = await api.graphQlMutate(
+              LOG_HOLIDAY_MUTATION,
+              payload
+            );
+            console.log(apiResponse);
+            alerts.success("Bien enregistré", "", 6000);
+          },
+          "logHoliday",
+          graphQLError => {
+            if (graphQLErrorMatchesCode(graphQLError, "OVERLAPPING_MISSIONS")) {
+              return "Des activités sont déjà enregistrées sur cette période.";
+            }
+            console.log("error", graphQLError);
+          }
+        );
+      }
+    });
+  };
+
   const classes = useStyles();
 
   const currentTime = startOfDay(new Date(Date.now()));
@@ -235,6 +274,20 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
           }}
         >
           Voir mon historique
+        </LoadingButton>
+        <LoadingButton
+          style={{ marginTop: 2 }}
+          className={classes.subButton}
+          onClick={() => {
+            onEnterNewHolidayFunnel();
+          }}
+        >
+          <Stack direction="row" spacing={1}>
+            <DateRangeIcon />
+            <Typography className={classes.holidayButton}>
+              Renseigner un congé ou une absence
+            </Typography>
+          </Stack>
         </LoadingButton>
       </Box>
       {nonValidatedMissions.length > 0 && (
