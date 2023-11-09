@@ -484,6 +484,16 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     await this._removeUserAndControllerInfo();
   };
 
+  updateEmployment = payload => {
+    this.update(
+      {
+        type: ACTIONS.udpateEmployment,
+        payload
+      },
+      []
+    );
+  };
+
   userId = () => this.state.userId;
 
   controllerId = () => this.state.controllerId;

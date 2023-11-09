@@ -397,7 +397,7 @@ export function Employees({ company, containerRef }) {
     .filter(e => !e.isAcknowledged)
     .map(e => ({
       pending: true,
-      idOrEmail: e.user ? e.user.id : e.email,
+      idOrEmail: e.email || e.user?.id,
       name: e.user ? formatPersonName(e.user) : null,
       hasAdminRights: e.hasAdminRights,
       creationDate: e.startDate,
@@ -774,8 +774,10 @@ export function Employees({ company, containerRef }) {
       )}
     </Box>,
     <Typography key={4} className={classes.explanation}>
-      Invitez vos salariés en renseignant leurs adresses mail, afin qu'ils
-      puissent enregistrer du temps de travail pour l'entreprise.
+      Invitez vos salariés en renseignant leurs adresses e-mail (certaines
+      adresses n’apparaissent pas dans la liste ci-dessous car les salariés ont
+      choisi de ne pas vous les communiquer), afin qu'ils puissent enregistrer
+      du temps de travail pour l'entreprise.
     </Typography>,
     <Grid key={5} spacing={4} container className={classes.teamFilter}>
       {adminStore?.teams?.length > 0 && (

@@ -52,6 +52,19 @@ const RESOURCES_ROUTE = {
     {
       to: "",
       label: "Foire aux questions",
+      accessible: ({ userInfo, companies }) =>
+        // is employee
+        !!userInfo?.id && !companies?.some(c => c.admin),
+      target: "_blank",
+      href:
+        "https://faq.mobilic.beta.gouv.fr/je-suis-salarie/quest-ce-que-mobilic"
+    },
+    {
+      to: "",
+      label: "Foire aux questions",
+      accessible: ({ userInfo, companies }) =>
+        // is not employee (not connected or admin or controller)
+        !userInfo?.id || companies?.some(c => c.admin),
       target: "_blank",
       href: "https://faq.mobilic.beta.gouv.fr/"
     },
