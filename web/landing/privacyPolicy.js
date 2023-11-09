@@ -35,6 +35,21 @@ const dataCookies = [
         https://www.typeform.com/help/s/legal-compliance-8911275305876/
       </Link>
     )
+  },
+  {
+    Cookies: "Google Ads",
+    "Traitement réalisé":
+      "Outil de gestion de balises permettant de suivre et mesurer les publicités. Il mesure l'efficacité des campagnes sponsorisées.",
+    "Base juridique": "Consentement",
+    Garanties: (
+      <Link
+        href="https://privacy.google.com/intl/fr_fr/businesses/compliance/#!?modal_active=none"
+        target="_blank"
+        rel="noreferrer"
+      >
+        https://privacy.google.com/intl/fr_fr/businesses/compliance/#!?modal_active=none
+      </Link>
+    )
   }
 ];
 
@@ -136,9 +151,9 @@ function PrivacyPolicyContent() {
         <abbr title="Commission Nationale de l'Informatique et des Libertés">
           CNIL
         </abbr>
-        . Cela signifie que votre adresse IP, par exemple, est anonymisée avant
-        d&lsquo;être enregistrée. Il est donc impossible d&lsquo;associer vos
-        visites sur ce site à votre personne.
+        {/* */}. Cela signifie que votre adresse IP, par exemple, est anonymisée
+        avant d&lsquo;être enregistrée. Il est donc impossible d&lsquo;associer
+        vos visites sur ce site à votre personne.
       </p>
       <p>Il convient d&lsquo;indiquer que :</p>
       <ul className="fr-list">
