@@ -13,6 +13,7 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
+import DateRangeIcon from "@mui/icons-material/DateRange";
 
 import {
   useStoreSyncedWithLocalStorage,
@@ -60,6 +61,7 @@ import { Week } from "../components/history/Week";
 import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
 import { PeriodFilter } from "../components/PeriodFilter";
 import { syncMissions } from "common/utils/loadUserData";
+import { useHolidays } from "../../common/useHolidays";
 
 const tabs = {
   mission: {
@@ -196,6 +198,7 @@ export function History({
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const classes = useStyles();
+  const { openHolidaysModal } = useHolidays();
 
   const actualUserId = userId || store.userId();
   const currentCompanies = store.companies();
@@ -478,6 +481,21 @@ export function History({
             alignItems="center"
             justifyContent={{ sm: "flex-end" }}
             sm={6}
+          >
+            <IconButton color="primary" onClick={() => openHolidaysModal()}>
+              <DateRangeIcon />
+            </IconButton>
+            <Typography align="left" mr={2}>
+              Renseigner un congé ou une absence
+            </Typography>
+          </Grid>
+          <Grid
+            container
+            item
+            direction="row"
+            alignItems="center"
+            justifyContent={{ sm: "flex-end" }}
+            xs={12}
           >
             <IconButton
               color="primary"

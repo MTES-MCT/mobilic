@@ -30,10 +30,7 @@ import { shouldDisplayEmployeeSocialImpactSurveyOnMainPage } from "common/utils/
 
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import Stack from "@mui/material/Stack";
-import { useApi } from "common/utils/api";
-import { LOG_HOLIDAY_MUTATION } from "common/utils/apiQueries";
-import { useSnackbarAlerts } from "../../common/Snackbar";
-import { graphQLErrorMatchesCode } from "common/utils/errors";
+import { useHolidays } from "../../common/useHolidays";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -128,8 +125,8 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
-  const api = useApi();
-  const alerts = useSnackbarAlerts();
+
+  const { openHolidaysModal } = useHolidays();
 
   const companies = store.companies();
   const userId = store.userId();
@@ -193,31 +190,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
     });
   };
 
-  const onEnterNewHolidayFunnel = () => {
-    modals.open("newHoliday", {
-      companies,
-      handleContinue: async payload => {
-        console.log(payload);
-        await alerts.withApiErrorHandling(
-          async () => {
-            const apiResponse = await api.graphQlMutate(
-              LOG_HOLIDAY_MUTATION,
-              payload
-            );
-            console.log(apiResponse);
-            alerts.success("Bien enregistré", "", 6000);
-          },
-          "logHoliday",
-          graphQLError => {
-            if (graphQLErrorMatchesCode(graphQLError, "OVERLAPPING_MISSIONS")) {
-              return "Des activités sont déjà enregistrées sur cette période.";
-            }
-            console.log("error", graphQLError);
-          }
-        );
-      }
-    });
-  };
+  const onEnterNewHolidayFunnel = () => openHolidaysModal();
 
   const classes = useStyles();
 

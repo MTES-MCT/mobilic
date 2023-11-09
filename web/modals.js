@@ -42,7 +42,7 @@ export const MODAL_DICT = {
   confirmation: ConfirmationModal,
   batchInvite: BatchInvite,
   newMission: NewMissionModal,
-  newHoliday: LogHolidayModal,
+  LogHoliday: LogHolidayModal,
   driverSelection: DriverSelectionModal,
   commentInput: CommentInputModal,
   activityRevision: ActivityRevisionOrCreationModal,
