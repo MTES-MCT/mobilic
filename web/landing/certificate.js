@@ -14,6 +14,7 @@ import { useApi } from "common/utils/api";
 import { captureSentryException } from "common/utils/sentry";
 import { CertificationImage } from "common/utils/icons";
 import Box from "@mui/material/Box";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   explanation: {
@@ -45,6 +46,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function Certificate() {
+  usePageTitle("Certificat - Mobilic");
   const classes = useStyles();
   const alerts = useSnackbarAlerts();
   const api = useApi();

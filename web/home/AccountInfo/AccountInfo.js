@@ -31,6 +31,7 @@ import { getTimezone, getTimezonePrettyName } from "common/utils/timezones";
 import { OAuthTokenSection } from "./OAuthTokensSection";
 import { currentUserId } from "common/utils/cookie";
 import { UserControlSection } from "./UserControlSection";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
@@ -52,6 +53,7 @@ function NoEmploymentAlert() {
 }
 
 export default function Home() {
+  usePageTitle("Mes Informations - Mobilic");
   const classes = useStyles();
 
   const store = useStoreSyncedWithLocalStorage();

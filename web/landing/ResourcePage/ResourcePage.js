@@ -18,6 +18,7 @@ import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { LinkButton } from "../../common/LinkButton";
 import { RegulationCard } from "./RegulationCard";
 import { REGULATION_RULES } from "./RegulationRules";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 export const RESOURCES_DOCUMENT = {
   noticeUtilisation: {
@@ -55,6 +56,7 @@ export const RESOURCES_DOCUMENT = {
 };
 
 export function ResourcePage() {
+  usePageTitle("Documentation - Mobilic");
   const classes = resourcePagesClasses();
 
   return [

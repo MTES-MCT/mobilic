@@ -13,8 +13,10 @@ import Box from "@mui/material/Box";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { RESOURCES_DOCUMENT } from "./ResourcePage";
 import { DriverVideoSection } from "./DriverVideoSection";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 export function AdminResourcePage() {
+  usePageTitle("Documentation Gestionnaire - Mobilic");
   const classes = resourcePagesClasses();
 
   return [

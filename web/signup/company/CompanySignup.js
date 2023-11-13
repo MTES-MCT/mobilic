@@ -18,8 +18,10 @@ import { SelectSirenStep } from "./SelectSirenStep";
 import { Steps } from "./Step";
 import { SelectSiretsStep } from "./SelectSiretsStep";
 import { OptInForSiretsSelectionStep } from "./OptInForSiretsSelectionStep";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 export function CompanySignup() {
+  usePageTitle("Inscription - Mobilic");
   const api = useApi();
   const history = useHistory();
   const location = useLocation();

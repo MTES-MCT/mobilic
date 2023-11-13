@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { LinkButton } from "../common/LinkButton";
 import { PaperContainerTitle } from "../common/PaperContainer";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   roleButton: {
@@ -23,6 +24,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function RoleSelection() {
+  usePageTitle("Inscription - Mobilic");
   const classes = useStyles();
 
   return [

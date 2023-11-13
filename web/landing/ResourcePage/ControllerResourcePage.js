@@ -12,8 +12,10 @@ import Box from "@mui/material/Box";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { VideoCard, VIDEOS } from "./VideoCard";
 import { RESOURCES_DOCUMENT } from "./ResourcePage";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 export function ControllerResourcePage() {
+  usePageTitle("Documentation Contrôleur - Mobilic");
   const classes = resourcePagesClasses();
 
   return [

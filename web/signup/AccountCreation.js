@@ -26,8 +26,10 @@ import { getClientTimezone } from "common/utils/timezones";
 import { WayHeardOfMobilic } from "../common/WayHeardOfMobilic";
 import { getPasswordErrors } from "common/utils/passwords";
 import { PasswordHelper } from "../common/PasswordHelper";
+import { usePageTitle } from "../common/UsePageTitle";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
+  usePageTitle("Inscription - Mobilic");
   const api = useApi();
   const history = useHistory();
   const store = useStoreSyncedWithLocalStorage();
