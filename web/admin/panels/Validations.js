@@ -63,6 +63,12 @@ const VALIDATION_TABS = [
     explanation:
       "Les missions suivantes ont été validées par salarié(s) et gestionnaire. Elles ne sont plus modifiables.",
     matomoName: "Onglet Validées"
+  },
+  {
+    label: "Missions supprimées",
+    explanation:
+      "Définition “saisie supprimée” : toutes les activités sont supprimées de la saisie par n'importe qui sauf soi même (un gestionnaire ou un autre salarié, dans le cas du mode équipe), concerne uniquement les saisies validées.",
+    matomoName: "Onglet Supprimées"
   }
 ];
 
@@ -89,6 +95,7 @@ function ValidationPanel() {
   const [entriesValidatedByAdmin, setEntriesValidatedByAdmin] = React.useState(
     []
   );
+  const [entriesDeletedByAdmin, setEntriesDeletedByAdmin] = React.useState([]);
   const [
     nbMissionsToValidateByAdmin,
     setNbMissionsToValidateByAdmin
@@ -234,6 +241,7 @@ function ValidationPanel() {
   };
 
   React.useEffect(() => {
+    console.log("adminStoreMission", adminStore.missions);
     setEntriesToValidateByAdmin(
       missionsToTableEntries(adminStore).filter(entry =>
         entryToBeValidatedByAdmin(entry, adminStore.userId)
@@ -243,6 +251,11 @@ function ValidationPanel() {
       missionsToTableEntries(adminStore).filter(entryToBeValidatedByWorker)
     );
     setEntriesValidatedByAdmin(
+      missionsToTableEntries(adminStore).filter(
+        tableEntry => tableEntry.adminValidation
+      )
+    );
+    setEntriesDeletedByAdmin(
       missionsToTableEntries(adminStore).filter(
         tableEntry => tableEntry.adminValidation
       )
@@ -299,6 +312,10 @@ function ValidationPanel() {
         setTableEntries(entriesValidatedByAdmin);
         setTableColumns([...commonCols, validationAdminCol]);
         break;
+      case 3:
+        setTableEntries(entriesDeletedByAdmin);
+        setTableColumns([...commonCols, validationAdminCol]);
+        break;
       default:
         setTableColumns([]);
         setTableEntries([]);
@@ -307,7 +324,8 @@ function ValidationPanel() {
     tab,
     entriesToValidateByAdmin,
     entriesToValidateByWorker,
-    entriesValidatedByAdmin
+    entriesValidatedByAdmin,
+    entriesDeletedByAdmin
   ]);
 
   React.useEffect(() => {
@@ -361,6 +379,7 @@ function ValidationPanel() {
           }
         />
         <Tab className={classes.tab} label={VALIDATION_TABS[2].label} />
+        <Tab className={classes.tab} label={VALIDATION_TABS[3].label} />
       </Tabs>
       <Grid
         spacing={teams?.length > 0 ? 2 : 0}

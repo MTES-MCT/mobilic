@@ -87,6 +87,8 @@ export function updateCompanyDetailsReducer(
     teams
   );
 
+  console.log("stateWithWorkDays", stateWithWorkDays);
+
   return {
     ...stateWithWorkDays,
     users,

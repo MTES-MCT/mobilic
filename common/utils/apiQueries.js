@@ -915,6 +915,19 @@ export const ADMIN_COMPANIES_QUERY = gql`
             }
           }
         }
+        missionsDeleted {
+          edges {
+            node {
+              id
+              name
+              receptionTime
+              activities {
+                id
+                dismissedAt
+              }
+            }
+          }
+        }
         vehicles {
           id
           registrationNumber
