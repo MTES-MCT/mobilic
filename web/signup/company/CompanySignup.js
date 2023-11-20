@@ -21,7 +21,7 @@ import { OptInForSiretsSelectionStep } from "./OptInForSiretsSelectionStep";
 import { usePageTitle } from "../../common/UsePageTitle";
 
 export function CompanySignup() {
-  usePageTitle("Inscription - Mobilic");
+  usePageTitle("Inscription de l'entreprise - Mobilic");
   const api = useApi();
   const history = useHistory();
   const location = useLocation();
