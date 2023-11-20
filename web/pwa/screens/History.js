@@ -49,6 +49,7 @@ import {
   SHORT_MONTHS,
   startOfDayAsDate
 } from "common/utils/time";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 import { DEFAULT_MONTH_RANGE_HISTORY } from "common/utils/mission";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -196,6 +197,7 @@ export function History({
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const classes = useStyles();
+  usePageTitle("Historique - Mobilic");
 
   const actualUserId = userId || store.userId();
   const currentCompanies = store.companies();

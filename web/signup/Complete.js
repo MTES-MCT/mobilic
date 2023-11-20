@@ -8,6 +8,7 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import Emoji from "../common/Emoji";
 import AlertEmailDelay from "../common/AlertEmailDelay";
 import ButtonGoHome from "../common/ButtonGoHome";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -38,6 +39,7 @@ const getCompaniesText = companiesName => {
 };
 
 export function Complete({ type }) {
+  usePageTitle("Inscription - Mobilic");
   const classes = useStyles();
 
   const store = useStoreSyncedWithLocalStorage();

@@ -13,6 +13,7 @@ import { formatPersonName } from "common/utils/coworkers";
 import Grid from "@mui/material/Grid";
 import { loadEmployeeInvite } from "../common/loadEmployeeInvite";
 import { LinkButton } from "../common/LinkButton";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -35,6 +36,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function Invite() {
+  usePageTitle("Invitation - Mobilic");
   const location = useLocation();
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();

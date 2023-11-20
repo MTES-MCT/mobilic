@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import Typography from "@mui/material/Typography";
 import { Header } from "../../../common/Header";
+import { usePageTitle } from "../../../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -32,6 +33,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 export function ControllerQRCodeNotRecognized() {
+  usePageTitle("Erreur QRCode - Mobilic");
   const classes = useStyles();
 
   return [

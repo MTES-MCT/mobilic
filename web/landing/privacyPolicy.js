@@ -5,6 +5,7 @@ import { makeStyles } from "@mui/styles";
 import { Footer } from "./footer";
 import Link from "@mui/material/Link";
 import { SimpleTable } from "@dataesr/react-dsfr";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const dataCookies = [
   {
@@ -56,6 +57,7 @@ export default function PrivacyPolicy() {
 }
 
 function PrivacyPolicyContent() {
+  usePageTitle("Gestion des cookies - Mobilic");
   const classes = useStyles();
 
   return (

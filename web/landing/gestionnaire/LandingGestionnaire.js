@@ -9,7 +9,7 @@ import { Testimony } from "./sections/Testimony";
 import { WhatsMobilic } from "./sections/whatsmobilic/WhatsMobilic";
 
 import { LandingSection, LandingSectionList } from "../sections/LandingSection";
-import { usePageTitle } from "../../common/usePageTitle";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   underlineBlue: {

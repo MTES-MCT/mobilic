@@ -44,6 +44,7 @@ import {
   getUsersToSelectFromTeamSelection,
   unselectAndGetAllTeams
 } from "../store/reducers/team";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 const VALIDATION_TABS = [
   {
@@ -67,6 +68,7 @@ const VALIDATION_TABS = [
 ];
 
 function ValidationPanel() {
+  usePageTitle("Validation Saisie(s) - Mobilic");
   const api = useApi();
   const adminStore = useAdminStore();
   const alerts = useSnackbarAlerts();

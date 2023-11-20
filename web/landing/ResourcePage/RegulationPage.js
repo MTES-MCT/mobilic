@@ -13,6 +13,7 @@ import { REGULATION_RULES } from "./RegulationRules";
 import { useRegulationDrawer } from "./RegulationDrawer";
 import { useHistory, useLocation } from "react-router-dom";
 import { findKey } from "lodash";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   ruleScope: {
@@ -23,6 +24,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function RegulationPage() {
+  usePageTitle("Réglementation - Mobilic");
   const classes = resourcePagesClasses();
   const history = useHistory();
 

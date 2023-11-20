@@ -23,6 +23,7 @@ import { EmailField } from "../common/EmailField";
 import Emoji from "../common/Emoji";
 import { NewPasswordBlock } from "../common/NewPasswordBlock";
 import { getPasswordErrors } from "common/utils/passwords";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   introText: {
@@ -37,6 +38,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ResetPassword() {
+  usePageTitle("Réinitaliser Mot de Passe - Mobilic");
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
   const location = useLocation();
@@ -200,6 +202,7 @@ export function ResetPassword() {
 }
 
 export function RequestResetPassword() {
+  usePageTitle("Réinitialiser Mot de Passe - Mobilic");
   const classes = useStyles();
   const api = useApi();
   const alerts = useSnackbarAlerts();
