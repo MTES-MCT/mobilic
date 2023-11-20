@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function RoleSelection() {
-  usePageTitle("Inscription - Mobilic");
+  usePageTitle("Sélection de rôle - Mobilic");
   const classes = useStyles();
 
   return [
