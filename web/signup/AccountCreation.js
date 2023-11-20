@@ -29,7 +29,7 @@ import { PasswordHelper } from "../common/PasswordHelper";
 import { usePageTitle } from "../common/UsePageTitle";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
-  usePageTitle("Inscription - Mobilic");
+  usePageTitle("Création de compte - Mobilic");
   const api = useApi();
   const history = useHistory();
   const store = useStoreSyncedWithLocalStorage();
