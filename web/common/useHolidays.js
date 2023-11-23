@@ -27,6 +27,7 @@ export const useHolidays = () => {
               6000
             );
             setTimeout(() => {
+              //TODO: redirect to correct day
               history.go(`/app/history`);
             }, 1000);
           },
