@@ -21,7 +21,7 @@ export const useHolidays = () => {
           async () => {
             await api.graphQlMutate(LOG_HOLIDAY_MUTATION, payload);
             alerts.success(
-              "Congé ou absence a bien été enregistré(e)",
+              "Votre congé ou absence a bien été enregistré(e)",
               "",
               6000
             );

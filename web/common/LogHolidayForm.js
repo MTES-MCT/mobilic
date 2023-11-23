@@ -6,8 +6,14 @@ import Box from "@mui/material/Box";
 import { useStyles as useFunnelModalStyles } from "../pwa/components/FunnelModal";
 import MenuItem from "@mui/material/MenuItem";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
-import { jsToUnixTimestamp } from "common/utils/time";
+import {
+  jsToUnixTimestamp,
+  now,
+  sameMinute,
+  truncateMinute
+} from "common/utils/time";
 import { NativeDateTimePicker } from "./NativeDateTimePicker";
+import _ from "lodash";
 
 const OTHER_MOTIF_ID = "other";
 const MOTIFS = [
@@ -53,7 +59,7 @@ const MOTIFS = [
   },
   {
     id: OTHER_MOTIF_ID,
-    label: "Autre congé (précisez)"
+    label: "Autre congé"
   }
 ];
 
@@ -73,23 +79,29 @@ export default function LogHolidayForm({
   };
 
   const [company, setCompany] = React.useState(getInitialCompany());
+
   const [startTimestamp, setStartTimestamp] = React.useState(null);
   const [endTimestamp, setEndTimestamp] = React.useState(null);
-  const [motif, setMotif] = React.useState(MOTIFS[0].id);
+
+  const [motifId, setMotifId] = React.useState(MOTIFS[0].id);
   const [otherMotif, setOtherMotif] = React.useState(undefined);
   const [loading, setLoading] = React.useState(false);
+
+  const [startTimeError, setStartTimeError] = React.useState("");
+  const [endTimeError, setEndTimeError] = React.useState("");
 
   const funnelModalClasses = useFunnelModalStyles();
 
   React.useEffect(() => {
     const today = new Date();
+    const isTodayTooEarly = today.getHours() < 16;
     setStartTimestamp(
       jsToUnixTimestamp(
         new Date(
           today.getFullYear(),
           today.getMonth(),
-          today.getDate() - 1,
-          Math.min(today.getHours(), 7),
+          today.getDate() - (isTodayTooEarly ? 1 : 0),
+          7,
           0,
           0
         ).getTime()
@@ -100,8 +112,8 @@ export default function LogHolidayForm({
         new Date(
           today.getFullYear(),
           today.getMonth(),
-          today.getDate() - 1,
-          Math.max(today.getHours(), 16),
+          today.getDate() - (isTodayTooEarly ? 1 : 0),
+          16,
           0,
           0
         ).getTime()
@@ -109,15 +121,54 @@ export default function LogHolidayForm({
     );
   }, []);
 
+  React.useEffect(() => {
+    let endTimeError = "";
+    let startTimeError = "";
+
+    if (startTimestamp && endTimestamp) {
+      if (startTimestamp >= now()) {
+        startTimeError = "L'heure de début ne peut pas être dans le futur.";
+      }
+      if (
+        endTimestamp <= startTimestamp ||
+        sameMinute(startTimestamp, endTimestamp)
+      ) {
+        endTimeError = "La fin doit être après le début";
+      }
+      if (endTimestamp >= now()) {
+        endTimeError = "L'heure de fin ne peut pas être dans le futur.";
+      }
+    }
+
+    setStartTimeError(startTimeError);
+    setEndTimeError(endTimeError);
+  }, [startTimestamp, endTimestamp]);
+
+  const motifLabel = React.useMemo(
+    () => MOTIFS.find(item => item.id === motifId)?.label || "",
+    [motifId]
+  );
+
   const isFormValid = React.useMemo(() => {
-    if (!startTimestamp || !endTimestamp || !company || !motif) {
+    if (!startTimestamp || !endTimestamp || !company || !motifId) {
       return false;
     }
-    if (motif === OTHER_MOTIF_ID && !otherMotif) {
+    if (endTimeError || startTimeError) {
+      return false;
+    }
+    if (motifId === OTHER_MOTIF_ID && !otherMotif) {
       return false;
     }
     return true;
-  }, [startTimestamp, endTimestamp, company, motif, otherMotif]);
+  }, [
+    startTimestamp,
+    endTimestamp,
+    company,
+    motifId,
+    otherMotif,
+    endTimeError,
+    startTimeError
+  ]);
 
   return (
     <Container>
@@ -128,9 +179,10 @@ export default function LogHolidayForm({
           e.preventDefault();
           await handleSubmit({
             companyId: company.id,
-            title: motif,
+            title: motifLabel,
             startTime: startTimestamp,
-            endTime: endTimestamp
+            endTime: endTimestamp,
+            ...(motifId === OTHER_MOTIF_ID ? { comment: otherMotif } : {})
           });
           setLoading(false);
         }}
@@ -174,8 +226,8 @@ export default function LogHolidayForm({
             fullWidth
             variant="filled"
             select
-            value={motif}
-            onChange={e => setMotif(e.target.value)}
+            value={motifId}
+            onChange={e => setMotifId(e.target.value)}
           >
             {MOTIFS.map(({ id, label }) => (
               <MenuItem key={id} value={id}>
@@ -183,7 +235,7 @@ export default function LogHolidayForm({
               </MenuItem>
             ))}
           </TextField>
-          {motif === OTHER_MOTIF_ID && (
+          {motifId === OTHER_MOTIF_ID && (
             <TextField
               label="Veuillez préciser votre motif de congé"
               variant="standard"
@@ -204,28 +256,25 @@ export default function LogHolidayForm({
           <NativeDateTimePicker
             label="Début"
             value={startTimestamp}
-            setValue={setStartTimestamp}
-            // minDateTime={previousMissionEnd}
-            // maxDateTime={now()}
+            setValue={_.flow([truncateMinute, setStartTimestamp])}
+            maxDateTime={now()}
             fullWidth
             required
             variant="filled"
-            // error={newUserTimeError}
+            error={startTimeError}
           />
           <Typography variant="h5" className="form-field-title">
             Quel est le jour et l'heure de fin&nbsp;?
           </Typography>
           <NativeDateTimePicker
-            label="Début"
+            label="Fin"
             value={endTimestamp}
-            setValue={setEndTimestamp}
-            // setValue={_.flow([truncateMinute, setNewUserTime])}
-            // minDateTime={previousMissionEnd}
-            // maxDateTime={now()}
+            setValue={_.flow([truncateMinute, setEndTimestamp])}
+            maxDateTime={now()}
             fullWidth
             required
             variant="filled"
-            // error={newUserTimeError}
+            error={endTimeError}
           />
         </Container>
         <Box className="cta-container" my={4}>
