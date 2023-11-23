@@ -4,6 +4,7 @@ import { LOG_HOLIDAY_MUTATION } from "common/utils/apiQueries";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "./Snackbar";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 export const useHolidays = () => {
   const modals = useModals();
@@ -11,12 +12,12 @@ export const useHolidays = () => {
   const alerts = useSnackbarAlerts();
   const store = useStoreSyncedWithLocalStorage();
   const companies = store.companies();
+  const history = useHistory();
 
   const openHolidaysModal = () => {
     modals.open("LogHoliday", {
       companies,
       handleContinue: async payload => {
-        console.log(payload);
         await alerts.withApiErrorHandling(
           async () => {
             await api.graphQlMutate(LOG_HOLIDAY_MUTATION, payload);
@@ -25,6 +26,9 @@ export const useHolidays = () => {
               "",
               6000
             );
+            setTimeout(() => {
+              history.go(`/app/history`);
+            }, 1000);
           },
           "logHoliday",
           graphQLError => {
