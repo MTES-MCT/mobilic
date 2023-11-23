@@ -1476,6 +1476,7 @@ export const LOG_HOLIDAY_MUTATION = gql`
     $startTime: TimeStamp!
     $endTime: TimeStamp!
     $title: String!
+    $comment: String
   ) {
     activities {
       logHoliday(
@@ -1483,6 +1484,7 @@ export const LOG_HOLIDAY_MUTATION = gql`
         startTime: $startTime
         endTime: $endTime
         title: $title
+        comment: $comment
       ) {
         success
       }
