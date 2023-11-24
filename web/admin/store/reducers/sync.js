@@ -123,6 +123,13 @@ export function updateCompanyDetailsReducer(
         )
       )
     ],
+    missionsDeleted: [
+      ...flatMap(
+        companiesPayload.map(c =>
+          c.missionsDeleted.edges.map(m => ({ ...m.node, companyId: c.id }))
+        )
+      )
+    ],
     activitiesFilters: {
       ...state.activitiesFilters,
       teams: usersAndTeamsFilters.activitiesFilters.teams,

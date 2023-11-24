@@ -44,9 +44,3 @@ const entryValidatedByWorkerOrOutdated = tableEntry =>
   tableEntry.workerValidation ||
   tableEntry.missionTooOld ||
   tableEntry.missionNotUpdatedForTooLong;
-
-// TODO
-// const entryDeletedByAdmin = tableEntry =>
-//   tableEntry.workerValidation ||
-//   tableEntry.missionTooOld ||
-//   tableEntry.missionNotUpdatedForTooLong;

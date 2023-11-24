@@ -921,7 +921,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
               id
               name
               receptionTime
-              activities {
+              activities (includeDismissedActivities: true) {
                 id
                 dismissedAt
               }

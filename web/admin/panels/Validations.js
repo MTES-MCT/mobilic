@@ -29,6 +29,7 @@ import {
   entryToBeValidatedByWorker,
   missionsToTableEntries
 } from "../selectors/validationEntriesSelectors";
+import { missionDeletedEntriesSelector } from "../selectors/missionDeletedEntriesSelector";
 import groupBy from "lodash/groupBy";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
@@ -240,8 +241,14 @@ function ValidationPanel() {
     minWidth: 200
   };
 
+  console.log("adminStore", adminStore);
+  console.log("adminStoreMissionDeleted", adminStore.missionsDeleted);
+
   React.useEffect(() => {
-    console.log("adminStoreMission", adminStore.missions);
+    setEntriesDeletedByAdmin(missionDeletedEntriesSelector(adminStore));
+  }, [adminStore.missionsDeleted, users]);
+
+  React.useEffect(() => {
     setEntriesToValidateByAdmin(
       missionsToTableEntries(adminStore).filter(entry =>
         entryToBeValidatedByAdmin(entry, adminStore.userId)
@@ -251,11 +258,6 @@ function ValidationPanel() {
       missionsToTableEntries(adminStore).filter(entryToBeValidatedByWorker)
     );
     setEntriesValidatedByAdmin(
-      missionsToTableEntries(adminStore).filter(
-        tableEntry => tableEntry.adminValidation
-      )
-    );
-    setEntriesDeletedByAdmin(
       missionsToTableEntries(adminStore).filter(
         tableEntry => tableEntry.adminValidation
       )

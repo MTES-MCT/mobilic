@@ -31,6 +31,7 @@ export function AdminStoreProvider({ children }) {
     employments: [],
     companies: [],
     missions: [],
+    missionsDeleted: [],
     minWorkDaysCursor: [],
     activitiesFilters: {
       period: "day",
