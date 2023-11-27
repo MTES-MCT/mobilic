@@ -16,6 +16,7 @@ import {
 import { WebinarListSection } from "./sections/WebinarListSection";
 import { IntroSection } from "./sections/IntroSection";
 import { TalkingAboutUsSection } from "./sections/TalkingAboutUsSection";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   videoContainer: {
@@ -118,6 +119,7 @@ function Showcase({
 }
 
 export const Landing = () => {
+  usePageTitle("Accueil - Mobilic");
   const classes = useStyles();
   const sectionClasses = useSectionStyles();
 

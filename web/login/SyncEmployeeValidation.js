@@ -16,6 +16,7 @@ import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -42,6 +43,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function SyncEmployeeValidation() {
+  usePageTitle("Rattachement Compte - Mobilic");
   const classes = useStyles();
   const api = useApi();
   const alerts = useSnackbarAlerts();

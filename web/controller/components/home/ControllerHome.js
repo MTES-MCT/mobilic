@@ -18,6 +18,7 @@ import classNames from "classnames";
 import { useModals } from "common/utils/modals";
 import { ControlTypeFilters } from "../filters/ControlTypeFilter";
 import { ControllerControlNewNoLic } from "../noLic/ControllerControlNewNoLic";
+import { usePageTitle } from "../../../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -61,6 +62,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ControllerHome() {
+  usePageTitle("Nouveau contrôle - Mobilic");
   const classes = useStyles();
   const store = useStoreSyncedWithLocalStorage();
   const location = useLocation();

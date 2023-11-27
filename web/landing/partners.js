@@ -10,6 +10,7 @@ import { PaperContainerTitle } from "../common/PaperContainer";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { shuffle } from "lodash/collection";
 import { LoadingButton } from "common/components/LoadingButton";
+import { usePageTitle } from "../common/UsePageTitle";
 
 // This condition actually should detect if it's a Node environment
 if (typeof require.context === "undefined") {
@@ -113,6 +114,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function Partners() {
+  usePageTitle("Partenaires - Mobilic");
   const classes = useStyles();
   const [partnersToShow, setPartnersToShow] = React.useState([]);
   const [showAllPartners, setShowAllPartners] = React.useState(false);

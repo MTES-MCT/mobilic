@@ -2,6 +2,7 @@ import React from "react";
 import Container from "@mui/material/Container";
 import { Header } from "../common/Header";
 import { makeStyles } from "@mui/styles";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -13,6 +14,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Stats() {
+  usePageTitle("Statistiques - Mobilic");
   const classes = useStyles();
 
   return [
