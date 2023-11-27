@@ -8,7 +8,7 @@ import { Testimony } from "./sections/Testimony";
 import { WhatsMobilic } from "./sections/whatsmobilic/WhatsMobilic";
 
 import { LandingSection, LandingSectionList } from "../sections/LandingSection";
-import { usePageTitle } from "../../common/usePageTitle";
+import { usePageTitle } from "../../common/UsePageTitle";
 import { makeStyles } from "@mui/styles";
 import trackAds from "common/utils/trackAds";
 
