@@ -66,7 +66,8 @@ const MOTIFS = [
 export default function LogHolidayForm({
   handleSubmit,
   companies,
-  companyId = null
+  companyId = null,
+  users
 }) {
   const getInitialCompany = () => {
     if (companyId) {
@@ -78,7 +79,14 @@ export default function LogHolidayForm({
     return "";
   };
 
+  const getInitialUser = () => {
+    if (users && users.length === 1) {
+      return users[0];
+    }
+  };
+
   const [company, setCompany] = React.useState(getInitialCompany());
+  const [user, setUser] = React.useState(getInitialUser());
 
   const [startTimestamp, setStartTimestamp] = React.useState(null);
   const [endTimestamp, setEndTimestamp] = React.useState(null);
@@ -150,7 +158,13 @@ export default function LogHolidayForm({
   );
 
   const isFormValid = React.useMemo(() => {
-    if (!startTimestamp || !endTimestamp || !company || !motifId) {
+    if (
+      !startTimestamp ||
+      !endTimestamp ||
+      (companies && !company) ||
+      (users && !user) ||
+      !motifId
+    ) {
       return false;
     }
     if (endTimeError || startTimeError) {
@@ -164,6 +178,7 @@ export default function LogHolidayForm({
     startTimestamp,
     endTimestamp,
     company,
+    user,
     motifId,
     otherMotif,
     endTimeError,
@@ -182,6 +197,7 @@ export default function LogHolidayForm({
             title: motifLabel,
             startTime: startTimestamp,
             endTime: endTimestamp,
+            userId: user.id,
             ...(motifId === OTHER_MOTIF_ID ? { comment: otherMotif } : {})
           });
           setLoading(false);
@@ -212,6 +228,30 @@ export default function LogHolidayForm({
                 {companies.map(company => (
                   <MenuItem key={company.id} value={company}>
                     {company.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </>
+          )}
+          {users && (
+            <>
+              <Typography variant="h5" className="form-field-title">
+                Qui est le salarié concerné&nbsp;?
+              </Typography>
+              <TextField
+                label="Salarié"
+                required
+                fullWidth
+                variant="filled"
+                select
+                value={user || ""}
+                onChange={e => {
+                  setUser(e.target.value);
+                }}
+              >
+                {users.map(user => (
+                  <MenuItem key={user.id} value={user}>
+                    {`${user.firstName} ${user.lastName}`}
                   </MenuItem>
                 ))}
               </TextField>

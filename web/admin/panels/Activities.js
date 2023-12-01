@@ -58,6 +58,8 @@ import {
   getUsersToSelectFromTeamSelection,
   unselectAndGetAllTeams
 } from "../store/reducers/team";
+import { LogHolidayButton } from "../../common/LogHolidayButton";
+import LogHolidayForm from "../../common/LogHolidayForm";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -149,6 +151,7 @@ function ActivitiesPanel() {
     adminStore.activitiesFilters.period
   );
   const [openNewMission, setOpenNewMission] = React.useState(false);
+  const [openLogHoliday, setOpenLogHoliday] = React.useState(false);
 
   const minDateOfFetchedData = adminStore.minWorkDaysDate;
 
@@ -403,19 +406,29 @@ function ActivitiesPanel() {
               : "."
           }`}
         </Typography>
-        <LoadingButton
-          style={{ marginTop: 8, alignSelf: "flex-start" }}
-          color="primary"
-          variant="contained"
-          size="small"
-          className={classes.subButton}
-          onClick={() => {
-            trackEvent(ADMIN_ADD_MISSION);
-            setOpenNewMission(true);
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "space-between"
           }}
         >
-          Ajouter des activités
-        </LoadingButton>
+          <LoadingButton
+            style={{ marginTop: 8, alignSelf: "flex-start" }}
+            color="primary"
+            variant="contained"
+            size="small"
+            className={classes.subButton}
+            onClick={() => {
+              trackEvent(ADMIN_ADD_MISSION);
+              setOpenNewMission(true);
+            }}
+          >
+            Ajouter des activités
+          </LoadingButton>
+          <LogHolidayButton onClick={() => setOpenLogHoliday(true)} />
+        </Box>
         <WorkTimeTable
           className={classes.workTimeTable}
           period={period}
@@ -425,6 +438,29 @@ function ActivitiesPanel() {
           loading={loading}
           width={width}
         />
+        <Drawer
+          anchor="right"
+          open={openLogHoliday}
+          onClose={() => {
+            setOpenLogHoliday(false);
+          }}
+        >
+          <Box p={3} className={classes.missionTitleContainer}>
+            <Typography variant="h1" className={classes.missionTitle}>
+              Congé ou absence passé
+            </Typography>
+            <IconButton
+              aria-label="Fermer"
+              className={classes.closeButton}
+              onClick={() => {
+                setOpenLogHoliday(false);
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <LogHolidayForm users={users} handleSubmit={e => console.log(e)} />
+        </Drawer>
         <Drawer
           anchor="right"
           open={openNewMission}
