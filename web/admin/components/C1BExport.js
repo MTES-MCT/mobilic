@@ -78,7 +78,7 @@ export default function C1BExport({
   const [_companies, setCompanies] = React.useState([]);
   const [users, setUsers] = React.useState(initialUsers);
   const [teams, setTeams] = React.useState(initialTeams);
-  const [employeeVersion, setEmployeeVersion] = React.useState(false);
+  const [employeeVersion, setEmployeeVersion] = React.useState(true);
 
   const invalidDateRange = (minDate, maxDate) =>
     maxDate &&
