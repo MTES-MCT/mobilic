@@ -27,6 +27,7 @@ import { useLoadingScreen } from "common/utils/loading";
 import BackgroundImage from "common/assets/images/landing-hero-vertical-without-text-logo.svg";
 import LogoWithText from "common/assets/images/mobilic-logo-white-with-text.svg";
 import { shouldDisplayEmployeeSocialImpactSurveyOnMainPage } from "common/utils/surveys";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -114,6 +115,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function BeforeWork({ beginNewMission, openHistory, missions }) {
+  usePageTitle("Saisie Temps - Mobilic");
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();

@@ -53,6 +53,9 @@ const useStyles = makeStyles(theme => ({
   linkInfractionTab: {
     textDecoration: "underline",
     cursor: "pointer"
+  },
+  boxContainer: {
+    width: "100%"
   }
 }));
 
@@ -106,7 +109,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
             ))}
           </Tabs>
         </AppBar>
-        <Box>
+        <Box className={classes.boxContainer}>
           {!!showModifyInfractionsAlert && (
             <Alert severity="info">
               <Typography>

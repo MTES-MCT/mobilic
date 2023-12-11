@@ -33,6 +33,7 @@ import {
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import EditableTextField from "../../common/EditableTextField";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 export const usePanelStyles = makeStyles(theme => ({
   navigation: {
@@ -156,6 +157,7 @@ const COMPANY_SUB_PANELS = [
 ];
 
 function SubNavigationToggle({ view, setView }) {
+  usePageTitle("Entreprise(s) - Mobilic");
   const api = useApi();
   const adminStore = useAdminStore();
   const classes = usePanelStyles();

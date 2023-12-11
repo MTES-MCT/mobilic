@@ -15,6 +15,7 @@ import AlertTitle from "@mui/material/AlertTitle";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const STATUS_MAP = {
   SUCCESS: {
@@ -128,6 +129,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function XlsxVerifier() {
+  usePageTitle("Vérification Intégrité - Mobilic");
   const api = useApi();
   const alerts = useSnackbarAlerts();
 

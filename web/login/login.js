@@ -23,6 +23,7 @@ import { EmailField } from "../common/EmailField";
 import { DividerWithText } from "../common/DividerWithText";
 import Button from "@mui/material/Button";
 import { pluralize } from "common/utils/time";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   forgotPasswordLink: {
@@ -47,6 +48,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Login() {
+  usePageTitle("Connexion - Mobilic");
   const [email, setEmail] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState(null);
   const [password, setPassword] = React.useState("");

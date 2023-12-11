@@ -58,6 +58,7 @@ import {
   getUsersToSelectFromTeamSelection,
   unselectAndGetAllTeams
 } from "../store/reducers/team";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -127,6 +128,7 @@ const onMinDateChange = debounce(
 );
 
 function ActivitiesPanel() {
+  usePageTitle("Activités - Mobilic");
   const adminStore = useAdminStore();
   const [adminCompanies, company] = useAdminCompanies();
   const modals = useModals();

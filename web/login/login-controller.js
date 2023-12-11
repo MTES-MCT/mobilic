@@ -12,6 +12,7 @@ import {
   buildAgentConnectUrl
 } from "../controller/utils/agentConnect";
 import { AgentConnectImage } from "common/utils/icons";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   agentConnectButton: {
@@ -32,6 +33,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function LoginController() {
+  usePageTitle("Connexion Agent - Mobilic");
   const classes = useStyles();
 
   const clickAgentConnect = () => {

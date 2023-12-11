@@ -280,7 +280,9 @@ function _Root() {
         process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
         <EnvironmentHeader />
       )}
-      {process.env.REACT_APP_CRISP_WEBSITE_ID && !controllerId && <LiveChat />}
+      {process.env.REACT_APP_CRISP_AUTOLOAD !== "1" &&
+        process.env.REACT_APP_CRISP_WEBSITE_ID &&
+        !controllerId && <LiveChat />}
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
       <React.Suspense fallback={<CircularProgress color="primary" />}>
         <Switch color="secondary">
