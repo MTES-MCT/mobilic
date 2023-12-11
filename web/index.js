@@ -8,9 +8,11 @@ import { Crisp } from "crisp-sdk-web";
 
 initSentry();
 
-Crisp.configure(process.env.REACT_APP_CRISP_WEBSITE_ID, {
-  // autoload: false
-});
+if (process.env.REACT_APP_CRISP_WEBSITE_ID) {
+  Crisp.configure(process.env.REACT_APP_CRISP_WEBSITE_ID, {
+    autoload: process.env.REACT_APP_CRISP_AUTOLOAD === "1"
+  });
+}
 
 ReactDOM.render(<Root />, document.getElementById("root"));
 
