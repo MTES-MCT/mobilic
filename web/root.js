@@ -36,7 +36,6 @@ import {
 import { ScrollToTop } from "common/utils/scroll";
 import { SnackbarProvider, useSnackbarAlerts } from "./common/Snackbar";
 import { EnvironmentHeader } from "./common/EnvironmentHeader";
-import { LiveChat } from "./common/LiveChat";
 import { currentControllerId, currentUserId } from "common/utils/cookie";
 import {
   MatomoProvider,
@@ -280,7 +279,7 @@ function _Root() {
         process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
         <EnvironmentHeader />
       )}
-      {process.env.REACT_APP_CRISP_WEBSITE_ID && !controllerId && <LiveChat />}
+      {/* {process.env.REACT_APP_CRISP_WEBSITE_ID && !controllerId && <LiveChat />} */}
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
       <React.Suspense fallback={<CircularProgress color="primary" />}>
         <Switch color="secondary">

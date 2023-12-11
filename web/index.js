@@ -9,7 +9,7 @@ import { Crisp } from "crisp-sdk-web";
 initSentry();
 
 Crisp.configure(process.env.REACT_APP_CRISP_WEBSITE_ID, {
-  autoload: false
+  // autoload: false
 });
 
 ReactDOM.render(<Root />, document.getElementById("root"));
