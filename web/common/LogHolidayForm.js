@@ -197,7 +197,7 @@ export default function LogHolidayForm({
             title: motifLabel,
             startTime: startTimestamp,
             endTime: endTimestamp,
-            userId: user.id,
+            userId: user?.id,
             ...(motifId === OTHER_MOTIF_ID ? { comment: otherMotif } : {})
           });
           setLoading(false);

@@ -198,7 +198,7 @@ export function History({
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const classes = useStyles();
-  const { openHolidaysModal } = useHolidays();
+  const { openHolidaysModal, closeHolidaysModal } = useHolidays();
 
   const actualUserId = userId || store.userId();
   const currentCompanies = store.companies();
@@ -211,6 +211,7 @@ export function History({
   );
 
   React.useEffect(() => {
+    closeHolidaysModal();
     let params = openPeriod;
     if (!params) {
       const queryString = new URLSearchParams(location.search);

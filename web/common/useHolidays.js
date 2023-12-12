@@ -5,6 +5,7 @@ import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "./Snackbar";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { isoFormatLocalDate } from "common/utils/time";
 
 export const useHolidays = () => {
   const modals = useModals();
@@ -27,8 +28,14 @@ export const useHolidays = () => {
               6000
             );
             setTimeout(() => {
-              //TODO: redirect to correct day
-              history.go(`/app/history`);
+              const redirectParams = {
+                day: isoFormatLocalDate(payload.startTime)
+              };
+              const searchParams = new URLSearchParams(
+                redirectParams
+              ).toString();
+              history.push(`/app/history?${searchParams}`);
+              window.location.reload(true);
             }, 1000);
           },
           "logHoliday",
@@ -42,5 +49,9 @@ export const useHolidays = () => {
     });
   };
 
-  return { openHolidaysModal };
+  const closeHolidaysModal = () => {
+    modals.close("LogHoliday");
+  };
+
+  return { openHolidaysModal, closeHolidaysModal };
 };
