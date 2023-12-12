@@ -16,7 +16,7 @@ export const useHolidays = () => {
   const history = useHistory();
 
   const openHolidaysModal = () => {
-    modals.open("LogHoliday", {
+    modals.open("logHoliday", {
       companies,
       handleContinue: async payload => {
         await alerts.withApiErrorHandling(
@@ -50,7 +50,7 @@ export const useHolidays = () => {
   };
 
   const closeHolidaysModal = () => {
-    modals.close("LogHoliday");
+    modals.close("logHoliday");
   };
 
   return { openHolidaysModal, closeHolidaysModal };

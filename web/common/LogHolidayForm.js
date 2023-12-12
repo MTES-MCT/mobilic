@@ -15,6 +15,9 @@ import {
 import { NativeDateTimePicker } from "./NativeDateTimePicker";
 import _ from "lodash";
 
+const DEFAULT_START_HOUR = 7;
+const DEFAULT_END_HOUR = 16;
+
 const OTHER_MOTIF_ID = "other";
 const MOTIFS = [
   {
@@ -47,7 +50,7 @@ const MOTIFS = [
   },
   {
     id: "compassionate-leave",
-    label: "Congé pour évènement familiaux"
+    label: "Congé pour évènements familiaux"
   },
   {
     id: "training",
@@ -102,14 +105,14 @@ export default function LogHolidayForm({
 
   React.useEffect(() => {
     const today = new Date();
-    const isTodayTooEarly = today.getHours() < 16;
+    const isTodayTooEarly = today.getHours() < DEFAULT_END_HOUR;
     setStartTimestamp(
       jsToUnixTimestamp(
         new Date(
           today.getFullYear(),
           today.getMonth(),
           today.getDate() - (isTodayTooEarly ? 1 : 0),
-          7,
+          DEFAULT_START_HOUR,
           0,
           0
         ).getTime()
@@ -121,7 +124,7 @@ export default function LogHolidayForm({
           today.getFullYear(),
           today.getMonth(),
           today.getDate() - (isTodayTooEarly ? 1 : 0),
-          16,
+          DEFAULT_END_HOUR,
           0,
           0
         ).getTime()
