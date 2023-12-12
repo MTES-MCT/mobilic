@@ -1473,6 +1473,7 @@ export const BULK_ACTIVITY_QUERY = gql`
 export const LOG_HOLIDAY_MUTATION = gql`
   mutation logHoliday(
     $companyId: Int!
+    $userId: Int
     $startTime: TimeStamp!
     $endTime: TimeStamp!
     $title: String!
@@ -1481,6 +1482,7 @@ export const LOG_HOLIDAY_MUTATION = gql`
     activities {
       logHoliday(
         companyId: $companyId
+        userId: $userId
         startTime: $startTime
         endTime: $endTime
         title: $title
