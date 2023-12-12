@@ -13,7 +13,6 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
-import DateRangeIcon from "@mui/icons-material/DateRange";
 
 import {
   useStoreSyncedWithLocalStorage,
@@ -62,6 +61,7 @@ import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
 import { PeriodFilter } from "../components/PeriodFilter";
 import { syncMissions } from "common/utils/loadUserData";
 import { useHolidays } from "../../common/useHolidays";
+import { LogHolidayButton } from "../../common/LogHolidayButton";
 
 const tabs = {
   mission: {
@@ -198,7 +198,7 @@ export function History({
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const classes = useStyles();
-  const { openHolidaysModal } = useHolidays();
+  const { openHolidaysModal, closeHolidaysModal } = useHolidays();
 
   const actualUserId = userId || store.userId();
   const currentCompanies = store.companies();
@@ -211,6 +211,7 @@ export function History({
   );
 
   React.useEffect(() => {
+    closeHolidaysModal();
     let params = openPeriod;
     if (!params) {
       const queryString = new URLSearchParams(location.search);
@@ -474,21 +475,7 @@ export function History({
               </>
             )}
           </Grid>
-          <Grid
-            container
-            item
-            direction="row"
-            alignItems="center"
-            justifyContent={{ sm: "flex-end" }}
-            sm={6}
-          >
-            <IconButton color="primary" onClick={() => openHolidaysModal()}>
-              <DateRangeIcon />
-            </IconButton>
-            <Typography align="left" mr={2}>
-              Renseigner un congé ou une absence
-            </Typography>
-          </Grid>
+          <LogHolidayButton onClick={() => openHolidaysModal()} />
           <Grid
             container
             item
