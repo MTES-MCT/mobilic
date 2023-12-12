@@ -33,6 +33,7 @@ import CompanyTeamCreationRevisionModal from "./admin/panels/CompanyTeamCreation
 import EmployeesTeamRevisionModal from "./admin/panels/EmployeesTeamRevisionModal";
 import ConfirmationCancelControlBulletinModal from "./controller/components/controlBulletin/ConfirmationCancelControlBulletinModal";
 import TypeformModal from "./pwa/components/TypeformModal";
+import LogHolidayModal from "./pwa/components/LogHoliday";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -40,6 +41,7 @@ export const MODAL_DICT = {
   confirmation: ConfirmationModal,
   batchInvite: BatchInvite,
   newMission: NewMissionModal,
+  logHoliday: LogHolidayModal,
   driverSelection: DriverSelectionModal,
   commentInput: CommentInputModal,
   activityRevision: ActivityRevisionOrCreationModal,

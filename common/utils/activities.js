@@ -41,6 +41,13 @@ export const ACTIVITIES = {
     label: "Liaison",
     renderIcon: props => <TransferIcon {...props} />,
     color: "#417DC4"
+  },
+  //TODO: this will get removed when we will filter out rest activities while displaying mission recaps
+  off: {
+    name: "off",
+    label: "Conge",
+    renderIcon: props => <TransferIcon {...props} />,
+    color: "#417DC4"
   }
 };
 

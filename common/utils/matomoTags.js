@@ -52,6 +52,12 @@ export const ADMIN_ADD_MISSION = {
   name: "Création d'une nouvelle mission"
 };
 
+export const ADMIN_ADD_HOLIDAY = {
+  category: MATOMO_CATEGORIES.ADMIN_MISSION_ACTION,
+  action: "add-holiday",
+  name: "Création d'une période de congés ou d'absence pour un salarié"
+};
+
 export const OPEN_MISSION_DRAWER_IN_ACTIVITY_PANEL = {
   category: MATOMO_CATEGORIES.ADMIN_NAVIGATION,
   action: MATOMO_ACTIONS.OPEN_MISSION_DRAWER,
