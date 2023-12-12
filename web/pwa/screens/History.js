@@ -60,6 +60,8 @@ import { Week } from "../components/history/Week";
 import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
 import { PeriodFilter } from "../components/PeriodFilter";
 import { syncMissions } from "common/utils/loadUserData";
+import { useHolidays } from "../../common/useHolidays";
+import { LogHolidayButton } from "../../common/LogHolidayButton";
 
 const tabs = {
   mission: {
@@ -196,6 +198,7 @@ export function History({
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const classes = useStyles();
+  const { openHolidaysModal, closeHolidaysModal } = useHolidays();
 
   const actualUserId = userId || store.userId();
   const currentCompanies = store.companies();
@@ -208,6 +211,7 @@ export function History({
   );
 
   React.useEffect(() => {
+    closeHolidaysModal();
     let params = openPeriod;
     if (!params) {
       const queryString = new URLSearchParams(location.search);
@@ -471,13 +475,14 @@ export function History({
               </>
             )}
           </Grid>
+          <LogHolidayButton onClick={() => openHolidaysModal()} />
           <Grid
             container
             item
             direction="row"
             alignItems="center"
             justifyContent={{ sm: "flex-end" }}
-            sm={6}
+            xs={12}
           >
             <IconButton
               color="primary"

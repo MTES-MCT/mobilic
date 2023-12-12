@@ -28,6 +28,10 @@ import BackgroundImage from "common/assets/images/landing-hero-vertical-without-
 import LogoWithText from "common/assets/images/mobilic-logo-white-with-text.svg";
 import { shouldDisplayEmployeeSocialImpactSurveyOnMainPage } from "common/utils/surveys";
 
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import Stack from "@mui/material/Stack";
+import { useHolidays } from "../../common/useHolidays";
+
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
 const useStyles = makeStyles(theme => ({
@@ -110,6 +114,10 @@ const useStyles = makeStyles(theme => ({
   promiseText: {
     color: theme.palette.primary.contrastText,
     fontStyle: "italic"
+  },
+  holidayButton: {
+    textDecoration: "underline",
+    textTransform: "none"
   }
 }));
 
@@ -117,6 +125,8 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
+
+  const { openHolidaysModal } = useHolidays();
 
   const companies = store.companies();
   const userId = store.userId();
@@ -180,6 +190,8 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
     });
   };
 
+  const onEnterNewHolidayFunnel = () => openHolidaysModal();
+
   const classes = useStyles();
 
   const currentTime = startOfDay(new Date(Date.now()));
@@ -235,6 +247,20 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
           }}
         >
           Voir mon historique
+        </LoadingButton>
+        <LoadingButton
+          style={{ marginTop: 2 }}
+          className={classes.subButton}
+          onClick={() => {
+            onEnterNewHolidayFunnel();
+          }}
+        >
+          <Stack direction="row" spacing={1}>
+            <DateRangeIcon />
+            <Typography className={classes.holidayButton}>
+              Renseigner un congé ou une absence
+            </Typography>
+          </Stack>
         </LoadingButton>
       </Box>
       {nonValidatedMissions.length > 0 && (
