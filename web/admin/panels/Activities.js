@@ -50,6 +50,7 @@ import {
   ACTIVITY_FILTER_EMPLOYEE,
   ACTIVITY_FILTER_MAX_DATE,
   ACTIVITY_FILTER_MIN_DATE,
+  ADMIN_ADD_HOLIDAY,
   ADMIN_ADD_MISSION,
   ADMIN_EXPORT_C1B,
   ADMIN_EXPORT_EXCEL
@@ -288,7 +289,6 @@ function ActivitiesPanel() {
     );
   }, [adminStore.workDays, minDate, maxDate]);
 
-  // TODO : memoize this
   const periodAggregates = React.useMemo(
     () => aggregateWorkDayPeriods(selectedWorkDays, period),
     [selectedWorkDays, period]
@@ -458,7 +458,12 @@ function ActivitiesPanel() {
           >
             Ajouter des activités
           </LoadingButton>
-          <LogHolidayButton onClick={() => setOpenLogHoliday(true)} />
+          <LogHolidayButton
+            onClick={() => {
+              trackEvent(ADMIN_ADD_HOLIDAY);
+              setOpenLogHoliday(true);
+            }}
+          />
         </Box>
         <WorkTimeTable
           className={classes.workTimeTable}
@@ -529,7 +534,7 @@ function ActivitiesPanel() {
                       })
                   );
                 },
-                "create-mission",
+                "create-holiday",
                 graphQLError => {
                   if (
                     graphQLErrorMatchesCode(
