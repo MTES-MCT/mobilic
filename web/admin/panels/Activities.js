@@ -39,6 +39,7 @@ import {
   ADMIN_WORK_DAYS_QUERY,
   buildLogLocationPayloadFromAddress,
   CREATE_MISSION_MUTATION,
+  LOG_HOLIDAY_MUTATION,
   LOG_LOCATION_MUTATION
 } from "common/utils/apiQueries";
 import { MobileDatePicker } from "@mui/x-date-pickers";
@@ -49,6 +50,7 @@ import {
   ACTIVITY_FILTER_EMPLOYEE,
   ACTIVITY_FILTER_MAX_DATE,
   ACTIVITY_FILTER_MIN_DATE,
+  ADMIN_ADD_HOLIDAY,
   ADMIN_ADD_MISSION,
   ADMIN_EXPORT_C1B,
   ADMIN_EXPORT_EXCEL
@@ -58,6 +60,9 @@ import {
   getUsersToSelectFromTeamSelection,
   unselectAndGetAllTeams
 } from "../store/reducers/team";
+import { LogHolidayButton } from "../../common/LogHolidayButton";
+import LogHolidayForm from "../../common/LogHolidayForm";
+import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { usePageTitle } from "../../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
@@ -97,6 +102,31 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const refreshWorkDays = async (
+  setLoading,
+  alerts,
+  api,
+  userId,
+  minDate,
+  maxDate,
+  companyId,
+  addWorkDays,
+  addUsers
+) => {
+  setLoading(true);
+  await alerts.withApiErrorHandling(async () => {
+    const companiesPayload = await api.graphQlQuery(ADMIN_WORK_DAYS_QUERY, {
+      id: userId,
+      activityAfter: minDate,
+      activityBefore: maxDate,
+      companyIds: [companyId]
+    });
+    addWorkDays(companiesPayload.data.user.adminedCompanies, minDate);
+    addUsers(companiesPayload.data.user.adminedCompanies);
+  }, "load-work-days");
+  setLoading(false);
+};
+
 const onMinDateChange = debounce(
   async (
     newMinDate,
@@ -110,18 +140,17 @@ const onMinDateChange = debounce(
     alerts
   ) => {
     if (newMinDate < maxDate) {
-      setLoading(true);
-      await alerts.withApiErrorHandling(async () => {
-        const companiesPayload = await api.graphQlQuery(ADMIN_WORK_DAYS_QUERY, {
-          id: userId,
-          activityAfter: newMinDate,
-          activityBefore: maxDate,
-          companyIds: [companyId]
-        });
-        addWorkDays(companiesPayload.data.user.adminedCompanies, newMinDate);
-        addUsers(companiesPayload.data.user.adminedCompanies);
-      }, "load-work-days");
-      setLoading(false);
+      await refreshWorkDays(
+        setLoading,
+        alerts,
+        api,
+        userId,
+        newMinDate,
+        maxDate,
+        companyId,
+        addWorkDays,
+        addUsers
+      );
     }
   },
   500
@@ -151,6 +180,7 @@ function ActivitiesPanel() {
     adminStore.activitiesFilters.period
   );
   const [openNewMission, setOpenNewMission] = React.useState(false);
+  const [openLogHoliday, setOpenLogHoliday] = React.useState(false);
 
   const minDateOfFetchedData = adminStore.minWorkDaysDate;
 
@@ -252,15 +282,19 @@ function ActivitiesPanel() {
   let selectedUsers = users.filter(u => u.selected);
   if (selectedUsers.length === 0) selectedUsers = users;
 
-  const selectedWorkDays = adminStore.workDays.filter(
-    wd =>
-      selectedUsers.map(u => u.id).includes(wd.user.id) &&
-      (!minDate || wd.day >= minDate) &&
-      (!maxDate || wd.day <= maxDate)
-  );
+  const selectedWorkDays = React.useMemo(() => {
+    return adminStore.workDays.filter(
+      wd =>
+        selectedUsers.map(u => u.id).includes(wd.user.id) &&
+        (!minDate || wd.day >= minDate) &&
+        (!maxDate || wd.day <= maxDate)
+    );
+  }, [adminStore.workDays, minDate, maxDate]);
 
-  // TODO : memoize this
-  const periodAggregates = aggregateWorkDayPeriods(selectedWorkDays, period);
+  const periodAggregates = React.useMemo(
+    () => aggregateWorkDayPeriods(selectedWorkDays, period),
+    [selectedWorkDays, period]
+  );
   const ref = React.useRef(null);
   const width = useWidth();
 
@@ -405,19 +439,34 @@ function ActivitiesPanel() {
               : "."
           }`}
         </Typography>
-        <LoadingButton
-          style={{ marginTop: 8, alignSelf: "flex-start" }}
-          color="primary"
-          variant="contained"
-          size="small"
-          className={classes.subButton}
-          onClick={() => {
-            trackEvent(ADMIN_ADD_MISSION);
-            setOpenNewMission(true);
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "space-between"
           }}
         >
-          Ajouter des activités
-        </LoadingButton>
+          <LoadingButton
+            style={{ marginTop: 8, alignSelf: "flex-start" }}
+            color="primary"
+            variant="contained"
+            size="small"
+            className={classes.subButton}
+            onClick={() => {
+              trackEvent(ADMIN_ADD_MISSION);
+              setOpenNewMission(true);
+            }}
+          >
+            Ajouter des activités
+          </LoadingButton>
+          <LogHolidayButton
+            onClick={() => {
+              trackEvent(ADMIN_ADD_HOLIDAY);
+              setOpenLogHoliday(true);
+            }}
+          />
+        </Box>
         <WorkTimeTable
           className={classes.workTimeTable}
           period={period}
@@ -427,6 +476,81 @@ function ActivitiesPanel() {
           loading={loading}
           width={width}
         />
+        <Drawer
+          anchor="right"
+          open={openLogHoliday}
+          onClose={() => {
+            setOpenLogHoliday(false);
+          }}
+        >
+          <Box p={3} className={classes.missionTitleContainer}>
+            <Typography variant="h1" className={classes.missionTitle}>
+              Congé ou absence passé
+            </Typography>
+            <IconButton
+              aria-label="Fermer"
+              className={classes.closeButton}
+              onClick={() => {
+                setOpenLogHoliday(false);
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <LogHolidayForm
+            users={users}
+            handleSubmit={async payload =>
+              await alerts.withApiErrorHandling(
+                async () => {
+                  await api.graphQlMutate(LOG_HOLIDAY_MUTATION, {
+                    ...payload,
+                    companyId: company.id
+                  });
+                  alerts.success(
+                    "Votre congé ou absence a bien été enregistré(e)",
+                    "",
+                    6000
+                  );
+                  setOpenLogHoliday(false);
+                  refreshWorkDays(
+                    setLoading,
+                    alerts,
+                    api,
+                    adminStore.userId,
+                    minDate,
+                    maxDate,
+                    company.id,
+                    (companiesPayload, newMinDate) =>
+                      adminStore.dispatch({
+                        type: ADMIN_ACTIONS.addWorkDays,
+                        payload: {
+                          companiesPayload,
+                          minDate: newMinDate,
+                          reset: true
+                        }
+                      }),
+                    companiesPayload =>
+                      adminStore.dispatch({
+                        type: ADMIN_ACTIONS.addUsers,
+                        payload: { companiesPayload }
+                      })
+                  );
+                },
+                "create-holiday",
+                graphQLError => {
+                  if (
+                    graphQLErrorMatchesCode(
+                      graphQLError,
+                      "OVERLAPPING_MISSIONS"
+                    )
+                  ) {
+                    return "Des activités sont déjà enregistrées sur cette période.";
+                  }
+                }
+              )
+            }
+          />
+        </Drawer>
         <Drawer
           anchor="right"
           open={openNewMission}
