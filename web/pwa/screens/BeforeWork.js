@@ -33,6 +33,10 @@ import DateRangeIcon from "@mui/icons-material/DateRange";
 import Stack from "@mui/material/Stack";
 import { useHolidays } from "../../common/useHolidays";
 
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import Stack from "@mui/material/Stack";
+import { useHolidays } from "../../common/useHolidays";
+
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
 const useStyles = makeStyles(theme => ({

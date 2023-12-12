@@ -63,6 +63,8 @@ import { PeriodFilter } from "../components/PeriodFilter";
 import { syncMissions } from "common/utils/loadUserData";
 import { useHolidays } from "../../common/useHolidays";
 import { LogHolidayButton } from "../../common/LogHolidayButton";
+import { useHolidays } from "../../common/useHolidays";
+import { LogHolidayButton } from "../../common/LogHolidayButton";
 
 const tabs = {
   mission: {

@@ -40,6 +40,7 @@ import {
   buildLogLocationPayloadFromAddress,
   CREATE_MISSION_MUTATION,
   LOG_HOLIDAY_MUTATION,
+  LOG_HOLIDAY_MUTATION,
   LOG_LOCATION_MUTATION
 } from "common/utils/apiQueries";
 import { MobileDatePicker } from "@mui/x-date-pickers";
@@ -50,6 +51,7 @@ import {
   ACTIVITY_FILTER_EMPLOYEE,
   ACTIVITY_FILTER_MAX_DATE,
   ACTIVITY_FILTER_MIN_DATE,
+  ADMIN_ADD_HOLIDAY,
   ADMIN_ADD_HOLIDAY,
   ADMIN_ADD_MISSION,
   ADMIN_EXPORT_C1B,
