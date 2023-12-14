@@ -24,7 +24,8 @@ const MissionDrawerContext = React.createContext(() => {});
 
 export function MissionDrawerContextProvider({
   children,
-  setShouldRefreshData
+  setShouldRefreshData,
+  refreshData
 }) {
   const location = useLocation();
   const modals = useModals();
@@ -122,6 +123,7 @@ export function MissionDrawerContextProvider({
           day={location.state ? location.state.day : null}
           handleClose={onClose}
           setShouldRefreshActivityPanel={setShouldRefreshData}
+          refreshData={refreshData}
         />
       </SwipeableDrawer>
       {children}
