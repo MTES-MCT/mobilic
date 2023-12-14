@@ -3,6 +3,7 @@ import { computeMissionStats } from "common/utils/mission";
 import values from "lodash/values";
 
 export const missionsSelector = state => state.missions;
+export const deletedMissionsSelector = state => state.missionsDeleted;
 
 const usersSelector = state => {
   const selectedUsers = state.validationsFilters?.users.filter(
@@ -17,6 +18,13 @@ const usersSelector = state => {
 
 export const missionWithStats = createSelector(
   missionsSelector,
+  usersSelector,
+  (missions, users) =>
+    missions?.map(mission => computeMissionStats(mission, users))
+);
+
+export const deletedMissionWithStats = createSelector(
+  deletedMissionsSelector,
   usersSelector,
   (missions, users) =>
     missions?.map(mission => computeMissionStats(mission, users))

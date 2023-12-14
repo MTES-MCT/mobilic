@@ -23,6 +23,23 @@ export const FRAGMENT_LOCATION_FULL = gql`
     kilometerReading
   }
 `;
+
+export const FRAGMENT_ACTIVITY = gql`
+  fragment Activity on Activity {
+    id
+    type
+    startTime
+    endTime
+    lastUpdateTime
+    lastSubmitterId
+    user {
+      id
+      firstName
+      lastName
+    }
+    submitterId
+  }
+`;
 export const FULL_MISSION_FRAGMENT = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}

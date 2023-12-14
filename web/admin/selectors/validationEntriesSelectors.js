@@ -2,10 +2,17 @@ import { createSelector } from "reselect";
 import { getStartOfDay, now } from "common/utils/time";
 import flatMap from "lodash/flatMap";
 import map from "lodash/map";
-import { missionWithStats } from "./missionSelectors";
+import { missionWithStats, deletedMissionWithStats } from "./missionSelectors";
 
 export const missionsToTableEntries = createSelector(
   missionWithStats,
+  missions => {
+    return flatMap(missions?.map(m => missionToValidationEntries(m)));
+  }
+);
+
+export const deletedMissionsToTableEntries = createSelector(
+  deletedMissionWithStats,
   missions => {
     return flatMap(missions?.map(m => missionToValidationEntries(m)));
   }

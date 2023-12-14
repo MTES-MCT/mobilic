@@ -25,11 +25,11 @@ import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMissionDrawer } from "../components/MissionDrawer";
 import { LoadingButton } from "common/components/LoadingButton";
 import {
+  deletedMissionsToTableEntries,
   entryToBeValidatedByAdmin,
   entryToBeValidatedByWorker,
   missionsToTableEntries
 } from "../selectors/validationEntriesSelectors";
-import { missionDeletedEntriesSelector } from "../selectors/missionDeletedEntriesSelector";
 import groupBy from "lodash/groupBy";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
@@ -79,6 +79,7 @@ function ValidationPanel() {
   const alerts = useSnackbarAlerts();
   const location = useLocation();
   const { trackEvent } = useMatomo();
+  console.log("adminStore", adminStore);
 
   const [tab, setTab] = React.useState(0);
   const [tableEntries, setTableEntries] = React.useState([]);
@@ -241,11 +242,8 @@ function ValidationPanel() {
     minWidth: 200
   };
 
-  console.log("adminStore", adminStore);
-  console.log("adminStoreMissionDeleted", adminStore.missionsDeleted);
-
   React.useEffect(() => {
-    setEntriesDeletedByAdmin(missionDeletedEntriesSelector(adminStore));
+    setEntriesDeletedByAdmin(deletedMissionsToTableEntries(adminStore));
   }, [adminStore.missionsDeleted, users]);
 
   React.useEffect(() => {
@@ -316,7 +314,7 @@ function ValidationPanel() {
         break;
       case 3:
         setTableEntries(entriesDeletedByAdmin);
-        setTableColumns([...commonCols, validationAdminCol]);
+        setTableColumns([...commonCols]);
         break;
       default:
         setTableColumns([]);
