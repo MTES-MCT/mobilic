@@ -79,7 +79,6 @@ function ValidationPanel() {
   const alerts = useSnackbarAlerts();
   const location = useLocation();
   const { trackEvent } = useMatomo();
-  console.log("adminStore", adminStore);
 
   const [tab, setTab] = React.useState(0);
   const [tableEntries, setTableEntries] = React.useState([]);

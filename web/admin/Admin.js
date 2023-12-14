@@ -199,6 +199,7 @@ function _Admin() {
       key={1}
       width={width}
       setShouldRefreshData={shouldRefreshDataSetter}
+      refreshData={refreshData}
     >
       {companiesToAcceptCertificateCommunication?.length > 0 && (
         <CertificationCommunicationModal

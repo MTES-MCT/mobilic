@@ -57,7 +57,8 @@ export function MissionDetails({
   missionId,
   day,
   handleClose,
-  setShouldRefreshActivityPanel
+  setShouldRefreshActivityPanel,
+  refreshData
 }) {
   const classes = useMissionDetailsStyles();
 
@@ -523,6 +524,7 @@ export function MissionDetails({
                               await missionActions.cancelMission({
                                 user: e.user
                               });
+                              await refreshData();
                               handleClose();
                             }
                           })
