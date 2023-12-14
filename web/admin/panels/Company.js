@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
 import { useAdminCompanies, useAdminStore } from "../store/store";
@@ -161,6 +161,7 @@ function SubNavigationToggle({ view, setView }) {
   const api = useApi();
   const adminStore = useAdminStore();
   const classes = usePanelStyles();
+  const history = useHistory();
   const { trackEvent } = useMatomo();
   const { companyWithInfo } = useCertificationInfo();
   const shouldDisplayBadge = useShouldDisplayBadge();
@@ -191,7 +192,7 @@ function SubNavigationToggle({ view, setView }) {
           value={view}
           exclusive
           onChange={(e, newView) => {
-            if (newView) setView(newView);
+            if (newView) history.push(`?tab=${newView}`);
           }}
           size="small"
         >
