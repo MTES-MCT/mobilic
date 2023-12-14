@@ -15,7 +15,7 @@ import { usePageTitle } from "../common/UsePageTitle";
 // This condition actually should detect if it's a Node environment
 if (typeof require.context === "undefined") {
   const fs = require("fs");
-  const path = require("path");
+  const path = require("path-browserify");
 
   require.context = (
     base = ".",
