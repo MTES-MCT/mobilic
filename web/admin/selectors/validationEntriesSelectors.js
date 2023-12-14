@@ -2,17 +2,10 @@ import { createSelector } from "reselect";
 import { getStartOfDay, now } from "common/utils/time";
 import flatMap from "lodash/flatMap";
 import map from "lodash/map";
-import { missionWithStats, deletedMissionWithStats } from "./missionSelectors";
+import { missionWithStats } from "./missionSelectors";
 
 export const missionsToTableEntries = createSelector(
   missionWithStats,
-  missions => {
-    return flatMap(missions?.map(m => missionToValidationEntries(m)));
-  }
-);
-
-export const deletedMissionsToTableEntries = createSelector(
-  deletedMissionWithStats,
   missions => {
     return flatMap(missions?.map(m => missionToValidationEntries(m)));
   }
@@ -30,7 +23,9 @@ export const missionToValidationEntries = mission =>
     id: `${mission.id}${us.user.id}`,
     multipleDays:
       getStartOfDay(mission.startTime) !==
-      getStartOfDay(mission.endTime ? mission.endTime - 1 : now())
+      getStartOfDay(mission.endTime ? mission.endTime - 1 : now()),
+    isDeleted: mission.isDeleted,
+    lastUpdateTime: mission.lastUpdateTime
   }));
 
 export const entryToBeValidatedByAdmin = (
@@ -38,6 +33,7 @@ export const entryToBeValidatedByAdmin = (
   currentUserId,
   adminCanBypass = false
 ) =>
+  !tableEntry.isDeleted &&
   !tableEntry.adminValidation &&
   (entryValidatedByWorkerOrOutdated(tableEntry) ||
     tableEntry.lastActivitySubmitterId === currentUserId ||
@@ -51,3 +47,5 @@ const entryValidatedByWorkerOrOutdated = tableEntry =>
   tableEntry.workerValidation ||
   tableEntry.missionTooOld ||
   tableEntry.missionNotUpdatedForTooLong;
+
+export const entryDeleted = tableEntry => tableEntry.isDeleted;

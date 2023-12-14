@@ -87,6 +87,36 @@ export function updateCompanyDetailsReducer(
     teams
   );
 
+  const regularMissions = flatMap(
+    companiesPayload.map(c =>
+      c.missions.edges.map(m => ({
+        ...m.node,
+        companyId: c.id,
+        isDeleted: false
+      }))
+    )
+  );
+  const deletedMissions = flatMap(
+    companiesPayload.map(c =>
+      c.missionsDeleted.edges.map(m => ({
+        ...m.node,
+        companyId: c.id,
+        isDeleted: true,
+        lastUpdateTime: Math.max(
+          m.node.activities
+            .map(activity => activity.lastUpdateTime)
+            .filter(item => !!item)
+        )
+      }))
+    )
+  );
+
+  const missions = deletedMissions.concat(
+    regularMissions.filter(
+      mission => !deletedMissions.find(m => m.id === mission.id)
+    )
+  );
+
   return {
     ...stateWithWorkDays,
     users,
@@ -114,20 +144,7 @@ export function updateCompanyDetailsReducer(
           )
       )
     ),
-    missions: [
-      ...flatMap(
-        companiesPayload.map(c =>
-          c.missions.edges.map(m => ({ ...m.node, companyId: c.id }))
-        )
-      )
-    ],
-    missionsDeleted: [
-      ...flatMap(
-        companiesPayload.map(c =>
-          c.missionsDeleted.edges.map(m => ({ ...m.node, companyId: c.id }))
-        )
-      )
-    ],
+    missions,
     activitiesFilters: {
       ...state.activitiesFilters,
       teams: usersAndTeamsFilters.activitiesFilters.teams,

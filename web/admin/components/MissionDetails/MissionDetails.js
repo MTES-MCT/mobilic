@@ -6,8 +6,10 @@ import Typography from "@mui/material/Typography";
 import {
   formatDateTime,
   formatTimeOfDay,
+  frenchFormatDateStringOrTimeStamp,
   getStartOfDay,
-  textualPrettyFormatDay
+  textualPrettyFormatDay,
+  unixTimestampToDate
 } from "common/utils/time";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../../store/store";
@@ -42,6 +44,7 @@ import { Alert } from "@mui/material";
 import { WarningModificationMission } from "./WarningModificationMission";
 import { ACTIVITIES } from "common/utils/activities";
 import {
+  entryDeleted,
   entryToBeValidatedByAdmin,
   missionToValidationEntries
 } from "../../selectors/validationEntriesSelectors";
@@ -79,12 +82,7 @@ export function MissionDetails({
   const mission = useMissionWithStats(mission_);
 
   const [loading, setLoading] = React.useState(false);
-  const [globalFieldsEditable, setGlobalFieldsEditable] = React.useState(false);
   const [missionLoadError, setMissionLoadError] = React.useState(false);
-  const [
-    adminMayOverrideValidation,
-    setAdminMayOverrideValidation
-  ] = React.useState(false);
 
   const [usersToAdd, setUsersToAdd] = React.useState([]);
 
@@ -96,6 +94,7 @@ export function MissionDetails({
     entriesToValidateByWorker,
     setEntriesToValidateByWorker
   ] = React.useState([]);
+  const [entriesDeleted, setEntriesDeleted] = React.useState([]);
   const [entriesValidatedByAdmin, setEntriesValidatedByAdmin] = React.useState(
     []
   );
@@ -125,9 +124,28 @@ export function MissionDetails({
       } catch (err) {
         setMissionLoadError(formatApiError(err));
       }
-      setLoading(false);
     }
+    setLoading(false);
   }
+
+  const isMissionDeleted = React.useMemo(() => mission?.isDeleted, [mission]);
+
+  const adminMayOverrideValidation = React.useMemo(
+    () =>
+      mission &&
+      (mission.missionTooOld ||
+        mission.missionNotUpdatedForTooLong ||
+        missionCreatedByAdmin(mission, adminStore.employments)),
+    [mission]
+  );
+
+  const globalFieldsEditable = React.useMemo(
+    () =>
+      !isMissionDeleted &&
+      !missionHasAtLeastOneAdminValidation(mission) &&
+      (entriesToValidateByAdmin?.length > 0 || adminMayOverrideValidation),
+    [entriesToValidateByAdmin, adminMayOverrideValidation]
+  );
 
   const onValidate = async () => {
     setLoading(true);
@@ -143,31 +161,28 @@ export function MissionDetails({
   }, [missionId]);
 
   React.useEffect(() => {
-    const partitionedList = partition(workerEntries, workerEntry =>
+    const [deleted, notDeleted] = partition(workerEntries, workerEntry =>
+      entryDeleted(workerEntry)
+    );
+    setEntriesDeleted(deleted);
+    const [
+      toBeValidatedByAdmin,
+      notToBeValidatedByAdmin
+    ] = partition(notDeleted, workerEntry =>
       entryToBeValidatedByAdmin(
         workerEntry,
         adminStore.userId,
         adminMayOverrideValidation
       )
     );
-    setEntriesToValidateByAdmin(partitionedList[0]);
-    const partitionedNoRequiredActionList = partition(
-      partitionedList[1],
+    setEntriesToValidateByAdmin(toBeValidatedByAdmin);
+    const [validatedByAdmin, toValidateByWorker] = partition(
+      notToBeValidatedByAdmin,
       workerEntry => workerEntry.adminValidation
     );
-    setEntriesValidatedByAdmin(partitionedNoRequiredActionList[0]);
-    setEntriesToValidateByWorker(partitionedNoRequiredActionList[1]);
+    setEntriesValidatedByAdmin(validatedByAdmin);
+    setEntriesToValidateByWorker(toValidateByWorker);
   }, [workerEntries, adminMayOverrideValidation]);
-
-  React.useEffect(() => {
-    if (mission) {
-      setAdminMayOverrideValidation(
-        mission.missionTooOld ||
-          mission.missionNotUpdatedForTooLong ||
-          missionCreatedByAdmin(mission, adminStore.employments)
-      );
-    }
-  }, [mission]);
 
   React.useEffect(() => {
     if (mission) {
@@ -188,13 +203,6 @@ export function MissionDetails({
       setWorkerEntries(entries);
     }
   }, [mission, usersToAdd]);
-
-  React.useEffect(() => {
-    setGlobalFieldsEditable(
-      !missionHasAtLeastOneAdminValidation(mission) &&
-        (entriesToValidateByAdmin?.length > 0 || adminMayOverrideValidation)
-    );
-  }, [entriesToValidateByAdmin, adminMayOverrideValidation]);
 
   if (loading) return <CircularProgress color="primary" />;
   if (missionLoadError)
@@ -272,6 +280,17 @@ export function MissionDetails({
           </Typography>
         )}
       </Box>
+      {isMissionDeleted && (
+        <Alert severity="info" sx={{ mb: 2 }}>
+          <Typography className={classes.validationWarningText}>
+            Cette mission a été supprimée le{" "}
+            {frenchFormatDateStringOrTimeStamp(
+              unixTimestampToDate(mission?.lastUpdateTime)
+            )}
+            .
+          </Typography>
+        </Alert>
+      )}
       {globalFieldsEditable && <WarningModificationMission />}
       {globalFieldsEditable && mission.missionNotUpdatedForTooLong && (
         <Alert severity="warning" className={classes.missionTooLongWarning}>
@@ -621,6 +640,25 @@ export function MissionDetails({
                   showExpenditures={showExpenditures}
                   day={day}
                   displayIcon={false}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </MissionDetailsSection>
+      )}
+      {entriesDeleted?.length > 0 && (
+        <MissionDetailsSection key={8} title="Saisie(s) supprimée(s)">
+          <List>
+            {entriesDeleted.map(e => (
+              <ListItem key={e.user.id} disableGutters>
+                <MissionEmployeeCard
+                  className={classes.employeeCard}
+                  mission={mission}
+                  user={e.user}
+                  showExpenditures={showExpenditures}
+                  day={day}
+                  displayIcon={false}
+                  isDeleted={true}
                 />
               </ListItem>
             ))}

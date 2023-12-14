@@ -12,7 +12,8 @@ import {
   formatDateTime,
   formatDay,
   formatTimeOfDay,
-  formatTimer
+  formatTimer,
+  prettyFormatDay
 } from "common/utils/time";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import Tabs from "@mui/material/Tabs";
@@ -25,7 +26,6 @@ import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMissionDrawer } from "../components/MissionDrawer";
 import { LoadingButton } from "common/components/LoadingButton";
 import {
-  deletedMissionsToTableEntries,
   entryToBeValidatedByAdmin,
   entryToBeValidatedByWorker,
   missionsToTableEntries
@@ -67,8 +67,7 @@ const VALIDATION_TABS = [
   },
   {
     label: "Missions supprimées",
-    explanation:
-      "Définition “saisie supprimée” : toutes les activités sont supprimées de la saisie par n'importe qui sauf soi même (un gestionnaire ou un autre salarié, dans le cas du mode équipe), concerne uniquement les saisies validées.",
+    explanation: "Les missions suivantes ont été supprimées.",
     matomoName: "Onglet Supprimées"
   }
 ];
@@ -241,23 +240,34 @@ function ValidationPanel() {
     minWidth: 200
   };
 
-  React.useEffect(() => {
-    setEntriesDeletedByAdmin(deletedMissionsToTableEntries(adminStore));
-  }, [adminStore.missionsDeleted, users]);
+  const deletionCol = {
+    label: "Date de suppression",
+    name: "deletion",
+    format: (_, entry) => (
+      <Typography>{prettyFormatDay(entry.lastUpdateTime, true)}</Typography>
+    ),
+    align: "left",
+    minWidth: 200
+  };
 
   React.useEffect(() => {
+    setEntriesDeletedByAdmin(
+      missionsToTableEntries(adminStore).filter(entry => entry.isDeleted)
+    );
     setEntriesToValidateByAdmin(
-      missionsToTableEntries(adminStore).filter(entry =>
-        entryToBeValidatedByAdmin(entry, adminStore.userId)
-      )
+      missionsToTableEntries(adminStore)
+        .filter(entry => !entry.isDeleted)
+        .filter(entry => entryToBeValidatedByAdmin(entry, adminStore.userId))
     );
     setEntriesToValidateByWorker(
-      missionsToTableEntries(adminStore).filter(entryToBeValidatedByWorker)
+      missionsToTableEntries(adminStore)
+        .filter(entry => !entry.isDeleted)
+        .filter(entryToBeValidatedByWorker)
     );
     setEntriesValidatedByAdmin(
-      missionsToTableEntries(adminStore).filter(
-        tableEntry => tableEntry.adminValidation
-      )
+      missionsToTableEntries(adminStore)
+        .filter(entry => !entry.isDeleted)
+        .filter(tableEntry => tableEntry.adminValidation)
     );
   }, [adminStore.missions, users]);
 
@@ -313,7 +323,7 @@ function ValidationPanel() {
         break;
       case 3:
         setTableEntries(entriesDeletedByAdmin);
-        setTableColumns([...commonCols]);
+        setTableColumns([...commonCols, deletionCol]);
         break;
       default:
         setTableColumns([]);
