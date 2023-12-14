@@ -176,7 +176,7 @@ function PrivacyPolicyContent() {
       <iframe
         title="matomo-opt-out"
         style={{ border: 0, height: 120, width: "100%" }}
-        src="https://stats.data.gouv.fr/index.php?module=CoreAdminHome&action=optOut&language=fr&backgroundColor=&fontColor=&fontSize=&fontFamily=%22Marianne%22%2C%20arial%2C%20sans-serif"
+        src="https://stats.beta.gouv.fr/index.php?module=CoreAdminHome&action=optOut&language=fr&backgroundColor=&fontColor=&fontSize=&fontFamily=%22Marianne%22%2C%20arial%2C%20sans-serif"
       />
       <p>
         À tout moment, vous pouvez refuser l&lsquo;utilisation des cookies et
