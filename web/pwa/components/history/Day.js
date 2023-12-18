@@ -3,7 +3,7 @@ import { MissionReviewSection } from "../MissionReviewSection";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { Mission } from "./Mission";
-import { Box } from "@mui/material";
+import { Alert, Box, Typography } from "@mui/material";
 import { DaySummary } from "./DaySummary";
 import { useToggleContradictory } from "./toggleContradictory";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
@@ -57,6 +57,11 @@ export function Day({
 
   const canDisplayContradictoryVersions = missionsInPeriod.every(
     mission => mission.adminValidation && mission.validation
+  );
+
+  const atLeastOneMissionDeleted = React.useMemo(
+    () => missionsInPeriod.some(mission => mission.isDeleted),
+    [missionsInPeriod]
   );
 
   const [
@@ -126,19 +131,28 @@ export function Day({
 
   return (
     <Box>
-      <ContradictorySwitch
-        contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
-        disabled={loadingEmployeeVersion}
-        emptyContradictory={hasComputedContradictory && contradictoryIsEmpty}
-        className={classes.contradictorySwitch}
-        shouldDisplayInitialEmployeeVersion={
-          shouldDisplayInitialEmployeeVersion
-        }
-        setShouldDisplayInitialEmployeeVersion={
-          setShouldDisplayInitialEmployeeVersion
-        }
-        contradictoryComputationError={contradictoryComputationError}
-      />
+      {atLeastOneMissionDeleted ? (
+        <Alert severity="warning" sx={{ marginBottom: 2 }}>
+          <Typography>
+            Une ou plusieurs missions de la journée ont été supprimées.
+          </Typography>
+        </Alert>
+      ) : (
+        <ContradictorySwitch
+          contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
+          disabled={loadingEmployeeVersion}
+          emptyContradictory={hasComputedContradictory && contradictoryIsEmpty}
+          className={classes.contradictorySwitch}
+          shouldDisplayInitialEmployeeVersion={
+            shouldDisplayInitialEmployeeVersion
+          }
+          setShouldDisplayInitialEmployeeVersion={
+            setShouldDisplayInitialEmployeeVersion
+          }
+          contradictoryComputationError={contradictoryComputationError}
+        />
+      )}
+
       <DaySummary
         activitiesWithNextAndPreviousDay={userActivitiesToUse}
         isDayEnded={true}
