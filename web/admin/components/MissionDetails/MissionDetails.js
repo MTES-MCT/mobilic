@@ -285,7 +285,7 @@ export function MissionDetails({
           <Typography className={classes.validationWarningText}>
             Cette mission a été supprimée le{" "}
             {frenchFormatDateStringOrTimeStamp(
-              unixTimestampToDate(mission?.lastUpdateTime)
+              unixTimestampToDate(mission?.deletedAt)
             )}
             .
           </Typography>

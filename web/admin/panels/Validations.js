@@ -244,7 +244,7 @@ function ValidationPanel() {
     label: "Date de suppression",
     name: "deletion",
     format: (_, entry) => (
-      <Typography>{prettyFormatDay(entry.lastUpdateTime, true)}</Typography>
+      <Typography>{prettyFormatDay(entry.deletedAt, true)}</Typography>
     ),
     align: "left",
     minWidth: 200

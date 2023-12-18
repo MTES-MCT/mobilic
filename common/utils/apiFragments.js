@@ -115,6 +115,7 @@ export const FULL_MISSION_DELETED_FRAGMENT = gql`
     id
     name
     submitterId
+    deletedAt
     validations {
       submitterId
       receptionTime

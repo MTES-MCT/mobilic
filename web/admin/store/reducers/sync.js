@@ -101,12 +101,7 @@ export function updateCompanyDetailsReducer(
       c.missionsDeleted.edges.map(m => ({
         ...m.node,
         companyId: c.id,
-        isDeleted: true,
-        lastUpdateTime: Math.max(
-          m.node.activities
-            .map(activity => activity.lastUpdateTime)
-            .filter(item => !!item)
-        )
+        isDeleted: true
       }))
     )
   );

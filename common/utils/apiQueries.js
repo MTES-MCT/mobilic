@@ -912,6 +912,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
               id
               name
               submitterId
+              deletedAt
               validations {
                 submitterId
                 receptionTime
