@@ -55,6 +55,7 @@ export function MissionEmployeeCard({
   showExpenditures,
   onEditExpenditures,
   removeUser,
+  isDeleted = false,
   defaultOpen = false,
   displayIcon = true
 }) {
@@ -173,29 +174,36 @@ export function MissionEmployeeCard({
       </AccordionSummary>
       <AccordionDetails style={{ display: "block" }}>
         <Grid container spacing={2} direction="column" wrap="nowrap">
-          <Grid item>
-            {isAdminBypassingEmployeeValidation ? (
-              <Alert severity="warning">
-                La validation par le salarié n'a pas eu lieu pour{" "}
-                <a
-                  href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic/suivi-et-validation-du-temps-de-travail#en-tant-que-gestionnaire-je-peux-uniquement-modifier-et-valider-les-missions-validees-par-les-salari"
-                  className={classNames(
-                    "fr-link fr-icon-external-link-line fr-link--icon-right",
-                    classes.linkAdminBypassValidation
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  l'une des raisons suivantes
-                </a>
-              </Alert>
-            ) : (
-              <MissionValidationInfo validation={stats.workerValidation} />
-            )}
-          </Grid>
-          <Grid item>
-            <MissionValidationInfo validation={stats.adminValidation} isAdmin />
-          </Grid>
+          {!isDeleted && (
+            <>
+              <Grid item>
+                {isAdminBypassingEmployeeValidation ? (
+                  <Alert severity="warning">
+                    La validation par le salarié n'a pas eu lieu pour{" "}
+                    <a
+                      href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic/suivi-et-validation-du-temps-de-travail#en-tant-que-gestionnaire-je-peux-uniquement-modifier-et-valider-les-missions-validees-par-les-salari"
+                      className={classNames(
+                        "fr-link fr-icon-external-link-line fr-link--icon-right",
+                        classes.linkAdminBypassValidation
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      l'une des raisons suivantes
+                    </a>
+                  </Alert>
+                ) : (
+                  <MissionValidationInfo validation={stats.workerValidation} />
+                )}
+              </Grid>
+              <Grid item>
+                <MissionValidationInfo
+                  validation={stats.adminValidation}
+                  isAdmin
+                />
+              </Grid>
+            </>
+          )}
           <Grid item container spacing={2} alignItems="stretch">
             <Grid xs={12} sm={6} item className={classes.cardRecapKPIContainer}>
               <MetricCard

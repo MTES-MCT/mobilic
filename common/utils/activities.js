@@ -64,7 +64,8 @@ export function parseActivityPayloadFromBackend(activity) {
     endTime: activity.endTime,
     missionId: activity.missionId,
     userId: activity.userId,
-    context: activity.context
+    context: activity.context,
+    isDeleted: activity.isDeleted || false
   };
 }
 

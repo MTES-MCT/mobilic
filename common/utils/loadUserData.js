@@ -7,6 +7,7 @@ import {
 import { startOfMonth, subMonths } from "date-fns";
 import {
   COMPANY_SETTINGS_FRAGMENT,
+  FULL_MISSION_DELETED_FRAGMENT,
   FULL_MISSION_FRAGMENT
 } from "./apiFragments";
 import { gql } from "graphql-tag";
@@ -76,6 +77,7 @@ const CURRENT_EMPLOYMENTS_QUERY = gql`
 const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FULL_MISSION_FRAGMENT}
+  ${FULL_MISSION_DELETED_FRAGMENT}
   query user($id: Int!, $activityAfter: TimeStamp) {
     user(id: $id) {
       id
@@ -98,6 +100,13 @@ const USER_QUERY = gql`
         edges {
           node {
             ...FullMissionData
+          }
+        }
+      }
+      missionsDeleted {
+        edges {
+          node {
+            ...FullMissionDeletedData
           }
         }
       }
@@ -213,7 +222,12 @@ async function syncCoworkerData(coworkerPayload, store) {
   await Promise.all(syncActions);
 }
 
-export async function syncMissions(missions, store, syncMethod) {
+export async function syncMissions(
+  missions,
+  missionsDeleted,
+  store,
+  syncMethod
+) {
   const syncActions = [];
   const activities = [];
   const expenditures = [];
@@ -224,7 +238,24 @@ export async function syncMissions(missions, store, syncMethod) {
     activities.push(...mission.activities);
     expenditures.push(...mission.expenditures);
     comments.push(...mission.comments);
-    missionData.push(parseMissionPayloadFromBackend(mission, store.userId()));
+    missionData.push({
+      ...parseMissionPayloadFromBackend(mission, store.userId()),
+      isDeleted: false
+    });
+  });
+  missionsDeleted.forEach(mission => {
+    missionData.push({
+      ...parseMissionPayloadFromBackend(mission, store.userId()),
+      isDeleted: true
+    });
+    activities.push(
+      ...mission.activities.map(activity => ({
+        ...activity,
+        isDeleted: true
+      }))
+    );
+    expenditures.push(...mission.expenditures);
+    comments.push(...mission.comments);
   });
 
   missions && syncActions.push(syncMethod(missionData, "missions"));
@@ -253,6 +284,7 @@ export async function syncUser(userPayload, api, store) {
     hasActivatedEmail,
     disabledWarnings,
     missions: missionsPayload,
+    missionsDeleted: missionsDeletedPayload,
     employments,
     surveyActions
   } = userPayload;
@@ -260,6 +292,7 @@ export async function syncUser(userPayload, api, store) {
   onLogIn(shouldUpdatePassword);
 
   const missions = missionsPayload.edges.map(e => e.node);
+  const missionsDeleted = missionsDeletedPayload.edges.map(e => e.node);
 
   // Get end status for latest mission;
   if (missions.length > 0) {
@@ -321,5 +354,5 @@ export async function syncUser(userPayload, api, store) {
   store.batchUpdate();
   await Promise.all(syncActions);
 
-  await syncMissions(missions, store, store.syncEntity);
+  await syncMissions(missions, missionsDeleted, store, store.syncEntity);
 }

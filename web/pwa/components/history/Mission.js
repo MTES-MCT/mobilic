@@ -174,10 +174,13 @@ export function Mission({
           onClick={() => setOpen(!open)}
         >
           <Grid item>
-            <Typography className="bold">
-              {mission.name
-                ? `Nom de la mission : ${mission.name}`
-                : `Mission du ${prettyFormatDay(actualDay)}`}
+            <Typography>
+              <span className="bold">
+                {mission.name
+                  ? `Nom de la mission : ${mission.name}`
+                  : `Mission du ${prettyFormatDay(actualDay)}`}
+              </span>
+              {mission.isDeleted ? " (mission supprimée)" : ""}
             </Typography>
           </Grid>
           <Grid item className={classes.buttonContainer}>
