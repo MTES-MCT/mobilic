@@ -255,9 +255,9 @@ function ValidationPanel() {
       missionsToTableEntries(adminStore).filter(entry => entry.isDeleted)
     );
     setEntriesToValidateByAdmin(
-      missionsToTableEntries(adminStore)
-        .filter(entry => !entry.isDeleted)
-        .filter(entry => entryToBeValidatedByAdmin(entry, adminStore.userId))
+      missionsToTableEntries(adminStore).filter(entry =>
+        entryToBeValidatedByAdmin(entry, adminStore.userId)
+      )
     );
     setEntriesToValidateByWorker(
       missionsToTableEntries(adminStore)
@@ -265,9 +265,9 @@ function ValidationPanel() {
         .filter(entryToBeValidatedByWorker)
     );
     setEntriesValidatedByAdmin(
-      missionsToTableEntries(adminStore)
-        .filter(entry => !entry.isDeleted)
-        .filter(tableEntry => tableEntry.adminValidation)
+      missionsToTableEntries(adminStore).filter(
+        tableEntry => tableEntry.adminValidation
+      )
     );
   }, [adminStore.missions, users]);
 

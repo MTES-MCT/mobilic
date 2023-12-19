@@ -106,11 +106,7 @@ export function updateCompanyDetailsReducer(
     )
   );
 
-  const missions = deletedMissions.concat(
-    regularMissions.filter(
-      mission => !deletedMissions.find(m => m.id === mission.id)
-    )
-  );
+  const missions = deletedMissions.concat(regularMissions);
 
   return {
     ...stateWithWorkDays,
