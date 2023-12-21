@@ -237,6 +237,7 @@ function CompanyPanel({ width, containerRef }) {
   const adminStore = useAdminStore();
   const classes = usePanelStyles({ width });
   const location = useLocation();
+  const history = useHistory();
 
   const [view, setView] = React.useState("employees");
   const [, company] = useAdminCompanies();
@@ -249,6 +250,8 @@ function CompanyPanel({ width, containerRef }) {
     const tab = queryString.get("tab");
     if (COMPANY_SUB_PANELS.find(tabs => tabs.view === tab)) {
       setView(tab);
+    } else {
+      history.push(`?tab=employees`);
     }
   }, [location]);
 
