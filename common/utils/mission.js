@@ -65,6 +65,8 @@ export function augmentMissionWithProperties(mission, userId, companies = []) {
   const company =
     mission.company || companies.find(c => c.id === mission.companyId);
   const activities = mission.allActivities.filter(a => a.userId === userId);
+  // TODO remove debug log
+  console.log(mission.name, mission.deletedAt);
   return {
     ...mission,
     company,
@@ -73,11 +75,17 @@ export function augmentMissionWithProperties(mission, userId, companies = []) {
     startTime:
       activities.length > 0 ? activities[0].startTime : mission.receptionTime,
     isComplete:
-      activities.length > 0 && !!activities[activities.length - 1].endTime,
-    endTime:
-      activities.length > 0 ? activities[activities.length - 1].endTime : null,
+      mission.isDeleted ||
+      (activities.length > 0 && !!activities[activities.length - 1].endTime),
+    endTime: mission.isDeleted
+      ? mission.deletedAt
+      : activities.length > 0
+      ? activities[activities.length - 1].endTime
+      : null,
     teamChanges: computeTeamChanges(mission.allActivities, userId),
-    ended: mission.ended && activities.every(a => !!a.endTime),
+    ended:
+      mission.isDeleted ||
+      (mission.ended && activities.every(a => !!a.endTime)),
     submittedBySomeoneElse:
       mission.submitter && mission.submitter.id !== userId,
     lastActivityStartTime: activities[activities.length - 1]?.startTime
