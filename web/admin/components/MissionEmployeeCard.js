@@ -278,13 +278,13 @@ export function MissionEmployeeCard({
               />
             </Grid>
           )}
-          {stats.adminValidation && stats.workerValidation && (
+          {((stats.adminValidation && stats.workerValidation) || isDeleted) && (
             <Grid item xs={12}>
               <MissionInfoCard>
                 <ContradictoryChanges
                   mission={mission}
-                  validationTime={stats.workerValidation.receptionTime}
-                  showEventsBeforeValidation={false}
+                  validationTime={stats.workerValidation?.receptionTime}
+                  showEventsBeforeValidation={isDeleted}
                   userId={user.id}
                   cacheInStore={cacheContradictoryInfoInAdminStore}
                 />
