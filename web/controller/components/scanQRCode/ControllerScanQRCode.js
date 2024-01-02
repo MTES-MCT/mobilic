@@ -16,6 +16,7 @@ import { useLoadingScreen } from "common/utils/loading";
 import Typography from "@mui/material/Typography";
 import { Header } from "../../../common/Header";
 import { CONTROL_TYPES } from "../../utils/useReadControlData";
+import { usePageTitle } from "../../../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -55,6 +56,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 export function ControllerScanQRCode() {
+  usePageTitle("Scan QRCode - Mobilic");
   const classes = useStyles();
   const api = useApi();
   const theme = useTheme();

@@ -14,6 +14,7 @@ import { useLoadControls } from "../../utils/loadControls";
 import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
 import { ControlsList } from "../list/ControlsList";
 import { ControllerHistoryFilters } from "./ControllerHistoryFilters";
+import { usePageTitle } from "../../../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -30,6 +31,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ControllerHistory() {
+  usePageTitle("Historique Contrôle - Mobilic");
   const classes = useStyles();
   const store = useStoreSyncedWithLocalStorage();
   const controllerUserInfo = store.controllerInfo();

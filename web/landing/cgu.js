@@ -11,6 +11,7 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { CustomDialogActions } from "../common/CustomDialogTitle";
 import { Header } from "../common/Header";
 import Container from "@mui/material/Container";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   frameContainer: {
@@ -26,6 +27,7 @@ export function CGU() {
 }
 
 function CGUContent() {
+  usePageTitle("CGU - Mobilic");
   const classes = useStyles();
 
   return (

@@ -63,6 +63,7 @@ import {
 import { LogHolidayButton } from "../../common/LogHolidayButton";
 import LogHolidayForm from "../../common/LogHolidayForm";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -156,6 +157,7 @@ const onMinDateChange = debounce(
 );
 
 function ActivitiesPanel() {
+  usePageTitle("Activités - Mobilic");
   const adminStore = useAdminStore();
   const [adminCompanies, company] = useAdminCompanies();
   const modals = useModals();

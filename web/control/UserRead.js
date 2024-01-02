@@ -29,6 +29,7 @@ import { UserReadAlerts } from "./components/UserReadAlerts";
 import { getDaysBetweenTwoDates } from "common/utils/time";
 import { getRegulationComputationsAndAlertNumber } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
 import { getAlertsGroupedByDayFromRegulationComputationsByDay } from "common/utils/regulation/groupAlertsByDay";
+import { usePageTitle } from "../common/UsePageTitle";
 
 export function getTabs(alertNumber) {
   return [
@@ -61,6 +62,7 @@ export function getTabs(alertNumber) {
 }
 
 export function UserRead() {
+  usePageTitle("Historique - Mobilic");
   const location = useLocation();
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();

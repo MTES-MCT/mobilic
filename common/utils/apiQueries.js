@@ -10,7 +10,8 @@ import {
   FULL_TEAM_FRAGMENT,
   REGULATION_COMPUTATIONS_FRAGMENT,
   OBSERVED_INFRACTIONS_FRAGMENT,
-  WORK_DAYS_DATA_FRAGMENT
+  WORK_DAYS_DATA_FRAGMENT,
+  FRAGMENT_ACTIVITY
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
 
@@ -817,6 +818,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
   ${WORK_DAYS_DATA_FRAGMENT}
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
+  ${FRAGMENT_ACTIVITY}
   query adminCompanies(
     $id: Int!
     $activityAfter: Date
@@ -889,18 +891,54 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 ...FullLocation
               }
               activities {
+                ...Activity
+              }
+              comments {
                 id
-                type
-                startTime
-                endTime
-                lastUpdateTime
-                lastSubmitterId
-                user {
+                text
+                receptionTime
+                submitter {
                   id
                   firstName
                   lastName
                 }
+              }
+            }
+          }
+        }
+        missionsDeleted {
+          edges {
+            node {
+              id
+              name
+              submitterId
+              deletedAt
+              validations {
                 submitterId
+                receptionTime
+                isAdmin
+                userId
+              }
+              vehicle {
+                id
+                name
+                registrationNumber
+              }
+              expenditures {
+                id
+                type
+                userId
+                receptionTime
+                spendingDate
+              }
+              startLocation {
+                ...FullLocation
+              }
+              endLocation {
+                ...FullLocation
+              }
+              activities(includeDismissedActivities: true) {
+                ...Activity
               }
               comments {
                 id

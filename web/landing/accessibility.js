@@ -4,6 +4,7 @@ import { Header } from "../common/Header";
 import { makeStyles } from "@mui/styles";
 import { Footer } from "./footer";
 import Link from "@mui/material/Link";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -23,6 +24,7 @@ export default function Accessibility() {
 }
 
 function AccessibilityDeclaration() {
+  usePageTitle("Déclaration d'accessibilité - Mobilic");
   const classes = useStyles();
 
   return (

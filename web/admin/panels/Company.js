@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
 import { useAdminCompanies, useAdminStore } from "../store/store";
@@ -33,6 +33,7 @@ import {
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import EditableTextField from "../../common/EditableTextField";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 export const usePanelStyles = makeStyles(theme => ({
   navigation: {
@@ -156,9 +157,11 @@ const COMPANY_SUB_PANELS = [
 ];
 
 function SubNavigationToggle({ view, setView }) {
+  usePageTitle("Entreprise(s) - Mobilic");
   const api = useApi();
   const adminStore = useAdminStore();
   const classes = usePanelStyles();
+  const history = useHistory();
   const { trackEvent } = useMatomo();
   const { companyWithInfo } = useCertificationInfo();
   const shouldDisplayBadge = useShouldDisplayBadge();
@@ -189,7 +192,7 @@ function SubNavigationToggle({ view, setView }) {
           value={view}
           exclusive
           onChange={(e, newView) => {
-            if (newView) setView(newView);
+            if (newView) history.push(`?tab=${newView}`);
           }}
           size="small"
         >
@@ -234,6 +237,7 @@ function CompanyPanel({ width, containerRef }) {
   const adminStore = useAdminStore();
   const classes = usePanelStyles({ width });
   const location = useLocation();
+  const history = useHistory();
 
   const [view, setView] = React.useState("employees");
   const [, company] = useAdminCompanies();
@@ -246,6 +250,8 @@ function CompanyPanel({ width, containerRef }) {
     const tab = queryString.get("tab");
     if (COMPANY_SUB_PANELS.find(tabs => tabs.view === tab)) {
       setView(tab);
+    } else {
+      history.push(`?tab=employees`);
     }
   }, [location]);
 

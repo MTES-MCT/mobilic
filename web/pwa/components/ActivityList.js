@@ -92,7 +92,11 @@ function ActivityItem({
         disableTypography
         primary={
           <Typography className={isLongBreak ? classes.longBreak : ""}>
-            {isLongBreak ? "Repos journalier" : ACTIVITIES[activity.type].label}
+            {isLongBreak
+              ? "Repos journalier"
+              : `${ACTIVITIES[activity.type].label}${
+                  activity.isDeleted ? " (supprimée)" : ""
+                }`}
           </Typography>
         }
         secondary={

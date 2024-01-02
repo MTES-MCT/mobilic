@@ -63,11 +63,11 @@ import { shouldUpdatePassword } from "common/utils/updatePassword";
 import UpdatePasswordModal from "./pwa/components/UpdatePassword";
 
 const matomo = createInstance({
-  urlBase: "https://stats.data.gouv.fr",
-  siteId: 163,
-  userId: "UID76903202", // optional, default value: `undefined`.
-  trackerUrl: "https://stats.data.gouv.fr/piwik.php", // optional, default value: `${urlBase}matomo.php`
-  srcUrl: "https://stats.data.gouv.fr/piwik.js", // optional, default value: `${urlBase}matomo.js`,
+  urlBase: "https://stats.beta.gouv.fr",
+  siteId: 75,
+  // userId: 'UIDC2DH', // optional, default value: `undefined`.
+  // trackerUrl: 'https://LINK.TO.DOMAIN/tracking.php', // optional, default value: `${urlBase}matomo.php`
+  // srcUrl: 'https://LINK.TO.DOMAIN/tracking.js', // optional, default value: `${urlBase}matomo.js`
   disabled: !process.env.REACT_APP_MATOMO,
   heartBeat: {
     // optional, enabled by default
@@ -280,7 +280,9 @@ function _Root() {
         process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
         <EnvironmentHeader />
       )}
-      {process.env.REACT_APP_CRISP_WEBSITE_ID && !controllerId && <LiveChat />}
+      {process.env.REACT_APP_CRISP_AUTOLOAD !== "1" &&
+        process.env.REACT_APP_CRISP_WEBSITE_ID &&
+        !controllerId && <LiveChat />}
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
       <React.Suspense fallback={<CircularProgress color="primary" />}>
         <Switch color="secondary">

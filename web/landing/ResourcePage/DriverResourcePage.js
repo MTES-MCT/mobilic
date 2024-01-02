@@ -11,8 +11,10 @@ import Box from "@mui/material/Box";
 import { SlideshareCard } from "./SlideshareCard";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { RESOURCES_DOCUMENT } from "./ResourcePage";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 export function DriverResourcePage() {
+  usePageTitle("Documentation Travailleur Mobile - Mobilic");
   const classes = resourcePagesClasses();
 
   return [

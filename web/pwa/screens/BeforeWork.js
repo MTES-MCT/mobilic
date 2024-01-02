@@ -27,6 +27,7 @@ import { useLoadingScreen } from "common/utils/loading";
 import BackgroundImage from "common/assets/images/landing-hero-vertical-without-text-logo.svg";
 import LogoWithText from "common/assets/images/mobilic-logo-white-with-text.svg";
 import { shouldDisplayEmployeeSocialImpactSurveyOnMainPage } from "common/utils/surveys";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import Stack from "@mui/material/Stack";
@@ -122,6 +123,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function BeforeWork({ beginNewMission, openHistory, missions }) {
+  usePageTitle("Saisie Temps - Mobilic");
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();

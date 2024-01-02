@@ -12,7 +12,8 @@ import {
   formatDateTime,
   formatDay,
   formatTimeOfDay,
-  formatTimer
+  formatTimer,
+  prettyFormatDay
 } from "common/utils/time";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import Tabs from "@mui/material/Tabs";
@@ -44,6 +45,7 @@ import {
   getUsersToSelectFromTeamSelection,
   unselectAndGetAllTeams
 } from "../store/reducers/team";
+import { usePageTitle } from "../../common/UsePageTitle";
 
 const VALIDATION_TABS = [
   {
@@ -63,10 +65,16 @@ const VALIDATION_TABS = [
     explanation:
       "Les missions suivantes ont été validées par salarié(s) et gestionnaire. Elles ne sont plus modifiables.",
     matomoName: "Onglet Validées"
+  },
+  {
+    label: "Missions supprimées",
+    explanation: "Les missions suivantes ont été supprimées.",
+    matomoName: "Onglet Supprimées"
   }
 ];
 
 function ValidationPanel() {
+  usePageTitle("Validation Saisie(s) - Mobilic");
   const api = useApi();
   const adminStore = useAdminStore();
   const alerts = useSnackbarAlerts();
@@ -89,6 +97,7 @@ function ValidationPanel() {
   const [entriesValidatedByAdmin, setEntriesValidatedByAdmin] = React.useState(
     []
   );
+  const [entriesDeletedByAdmin, setEntriesDeletedByAdmin] = React.useState([]);
   const [
     nbMissionsToValidateByAdmin,
     setNbMissionsToValidateByAdmin
@@ -233,14 +242,29 @@ function ValidationPanel() {
     minWidth: 200
   };
 
+  const deletionCol = {
+    label: "Date de suppression",
+    name: "deletion",
+    format: (_, entry) => (
+      <Typography>{prettyFormatDay(entry.deletedAt, true)}</Typography>
+    ),
+    align: "left",
+    minWidth: 200
+  };
+
   React.useEffect(() => {
+    setEntriesDeletedByAdmin(
+      missionsToTableEntries(adminStore).filter(entry => entry.isDeleted)
+    );
     setEntriesToValidateByAdmin(
       missionsToTableEntries(adminStore).filter(entry =>
         entryToBeValidatedByAdmin(entry, adminStore.userId)
       )
     );
     setEntriesToValidateByWorker(
-      missionsToTableEntries(adminStore).filter(entryToBeValidatedByWorker)
+      missionsToTableEntries(adminStore)
+        .filter(entry => !entry.isDeleted)
+        .filter(entryToBeValidatedByWorker)
     );
     setEntriesValidatedByAdmin(
       missionsToTableEntries(adminStore).filter(
@@ -299,6 +323,10 @@ function ValidationPanel() {
         setTableEntries(entriesValidatedByAdmin);
         setTableColumns([...commonCols, validationAdminCol]);
         break;
+      case 3:
+        setTableEntries(entriesDeletedByAdmin);
+        setTableColumns([...commonCols, deletionCol]);
+        break;
       default:
         setTableColumns([]);
         setTableEntries([]);
@@ -307,7 +335,8 @@ function ValidationPanel() {
     tab,
     entriesToValidateByAdmin,
     entriesToValidateByWorker,
-    entriesValidatedByAdmin
+    entriesValidatedByAdmin,
+    entriesDeletedByAdmin
   ]);
 
   React.useEffect(() => {
@@ -361,6 +390,7 @@ function ValidationPanel() {
           }
         />
         <Tab className={classes.tab} label={VALIDATION_TABS[2].label} />
+        <Tab className={classes.tab} label={VALIDATION_TABS[3].label} />
       </Tabs>
       <Grid
         spacing={teams?.length > 0 ? 2 : 0}

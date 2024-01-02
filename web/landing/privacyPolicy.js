@@ -5,6 +5,7 @@ import { makeStyles } from "@mui/styles";
 import { Footer } from "./footer";
 import Link from "@mui/material/Link";
 import { SimpleTable } from "@dataesr/react-dsfr";
+import { usePageTitle } from "../common/UsePageTitle";
 
 const dataCookies = [
   {
@@ -35,6 +36,21 @@ const dataCookies = [
         https://www.typeform.com/help/s/legal-compliance-8911275305876/
       </Link>
     )
+  },
+  {
+    Cookies: "Google Ads",
+    "Traitement réalisé":
+      "Outil de gestion de balises permettant de suivre et mesurer les publicités. Il mesure l'efficacité des campagnes sponsorisées.",
+    "Base juridique": "Consentement",
+    Garanties: (
+      <Link
+        href="https://privacy.google.com/intl/fr_fr/businesses/compliance/#!?modal_active=none"
+        target="_blank"
+        rel="noreferrer"
+      >
+        https://privacy.google.com/intl/fr_fr/businesses/compliance/#!?modal_active=none
+      </Link>
+    )
   }
 ];
 
@@ -56,6 +72,7 @@ export default function PrivacyPolicy() {
 }
 
 function PrivacyPolicyContent() {
+  usePageTitle("Gestion des cookies - Mobilic");
   const classes = useStyles();
 
   return (
@@ -136,9 +153,9 @@ function PrivacyPolicyContent() {
         <abbr title="Commission Nationale de l'Informatique et des Libertés">
           CNIL
         </abbr>
-        . Cela signifie que votre adresse IP, par exemple, est anonymisée avant
-        d&lsquo;être enregistrée. Il est donc impossible d&lsquo;associer vos
-        visites sur ce site à votre personne.
+        {/* */}. Cela signifie que votre adresse IP, par exemple, est anonymisée
+        avant d&lsquo;être enregistrée. Il est donc impossible d&lsquo;associer
+        vos visites sur ce site à votre personne.
       </p>
       <p>Il convient d&lsquo;indiquer que :</p>
       <ul className="fr-list">
@@ -159,7 +176,7 @@ function PrivacyPolicyContent() {
       <iframe
         title="matomo-opt-out"
         style={{ border: 0, height: 120, width: "100%" }}
-        src="https://stats.data.gouv.fr/index.php?module=CoreAdminHome&action=optOut&language=fr&backgroundColor=&fontColor=&fontSize=&fontFamily=%22Marianne%22%2C%20arial%2C%20sans-serif"
+        src="https://stats.beta.gouv.fr/index.php?module=CoreAdminHome&action=optOut&language=fr&backgroundColor=&fontColor=&fontSize=&fontFamily=%22Marianne%22%2C%20arial%2C%20sans-serif"
       />
       <p>
         À tout moment, vous pouvez refuser l&lsquo;utilisation des cookies et

@@ -397,7 +397,7 @@ export function Employees({ company, containerRef }) {
     .filter(e => !e.isAcknowledged)
     .map(e => ({
       pending: true,
-      idOrEmail: e.user ? e.user.id : e.email,
+      idOrEmail: e.email || e.user?.id,
       name: e.user ? formatPersonName(e.user) : null,
       hasAdminRights: e.hasAdminRights,
       creationDate: e.startDate,
