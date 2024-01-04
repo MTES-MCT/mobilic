@@ -8,7 +8,8 @@ function _InnerAppScreen(props) {
   if (
     !props.latestActivity ||
     !props.currentMission ||
-    (props.currentMission && props.currentMission.adminValidation) ||
+    props.currentMission.isDeleted ||
+    props.currentMission.adminValidation ||
     (props.currentMission.validation &&
       props.currentMission.ended &&
       props.latestActivity.endTime)
