@@ -34,7 +34,8 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     startLocation: missionPayload.startLocation,
     endLocation: missionPayload.endLocation,
     ended: missionPayload.ended !== undefined ? missionPayload.ended : true,
-    submitter: missionPayload.submitter || null
+    submitter: missionPayload.submitter || null,
+    deletedAt: missionPayload.deletedAt
   };
 }
 
@@ -65,8 +66,6 @@ export function augmentMissionWithProperties(mission, userId, companies = []) {
   const company =
     mission.company || companies.find(c => c.id === mission.companyId);
   const activities = mission.allActivities.filter(a => a.userId === userId);
-  // TODO remove debug log
-  console.log(mission.name, mission.deletedAt);
   return {
     ...mission,
     company,
