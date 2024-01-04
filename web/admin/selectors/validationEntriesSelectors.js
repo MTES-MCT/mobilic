@@ -25,7 +25,8 @@ export const missionToValidationEntries = mission =>
       getStartOfDay(mission.startTime) !==
       getStartOfDay(mission.endTime ? mission.endTime - 1 : now()),
     isDeleted: mission.isDeleted,
-    deletedAt: mission.deletedAt
+    deletedAt: mission.deletedAt,
+    deletedBy: mission.deletedBy
   }));
 
 export const entryToBeValidatedByAdmin = (
