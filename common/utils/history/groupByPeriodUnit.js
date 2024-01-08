@@ -51,9 +51,7 @@ export function groupMissionsByPeriodUnit(missions, unit) {
     const firstPeriod = periodGetter(mission.startTime);
     const lastPeriod =
       periodLength.asSeconds() > 0
-        ? periodGetter(
-            mission.activities[mission.activities.length - 1].endTime || now1
-          )
+        ? periodGetter(mission.endTime || now1)
         : firstPeriod;
     let currentPeriod = firstPeriod;
     while (currentPeriod <= lastPeriod) {
@@ -119,6 +117,7 @@ export function useGroupMissionsAndExtractActivities(
     const filteredMissions = missions.filter(mission =>
       missionInPeriod(mission, fromTime, toTime)
     );
+
     setMissionGroupsByPeriodUnit(
       computeMissionGroups(filteredMissions, periodProps)
     );

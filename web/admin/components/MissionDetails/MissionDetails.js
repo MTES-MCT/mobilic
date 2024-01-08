@@ -286,8 +286,8 @@ export function MissionDetails({
             Cette mission a été supprimée le{" "}
             {frenchFormatDateStringOrTimeStamp(
               unixTimestampToDate(mission?.deletedAt)
-            )}
-            .
+            )}{" "}
+            par {mission?.deletedBy}.
           </Typography>
         </Alert>
       )}

@@ -84,7 +84,7 @@ export function Mission({
   const alerts = useSnackbarAlerts();
 
   const canDisplayContradictoryVersions =
-    mission.adminValidation && mission.validation;
+    (mission.adminValidation && mission.validation) || mission.isDeleted;
 
   React.useEffect(() => {
     if (

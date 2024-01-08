@@ -190,6 +190,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const nonValidatedMissions = orderBy(
     missionsInHistory.filter(
       m =>
+        !m.isDeleted &&
         !m.validation &&
         !m.adminValidation &&
         m.startTime >= currentTime - DAY * 31

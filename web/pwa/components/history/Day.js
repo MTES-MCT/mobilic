@@ -56,7 +56,8 @@ export function Day({
   ] = React.useState(false);
 
   const canDisplayContradictoryVersions = missionsInPeriod.every(
-    mission => mission.adminValidation && mission.validation
+    mission =>
+      (mission.adminValidation && mission.validation) || mission.isDeleted
   );
 
   const atLeastOneMissionDeleted = React.useMemo(
