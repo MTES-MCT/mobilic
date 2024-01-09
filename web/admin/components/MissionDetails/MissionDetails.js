@@ -268,7 +268,7 @@ export function MissionDetails({
               <span>
                 {" "}
                 au {textualPrettyFormatDay(mission.endTimeOrNow)}{" "}
-                {mission.isComplete ? (
+                {mission.isComplete || mission.isDeleted ? (
                   ""
                 ) : (
                   <span className={classes.runningMissionText}>(en cours)</span>
@@ -351,7 +351,7 @@ export function MissionDetails({
               mission.startTime ? (
                 <span>
                   {dateTimeFormatter(mission.endTimeOrNow)}{" "}
-                  {mission.isComplete ? (
+                  {mission.isComplete || mission.isDeleted ? (
                     ""
                   ) : (
                     <span className={classes.runningMissionText}>

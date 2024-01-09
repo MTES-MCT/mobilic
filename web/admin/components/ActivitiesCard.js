@@ -18,6 +18,7 @@ import {
 } from "common/utils/matomoTags";
 
 export function ActivitiesCard({
+  missionDeleted = false,
   activities,
   onCreateActivity,
   onEditActivity,
@@ -58,6 +59,8 @@ export function ActivitiesCard({
       format: time =>
         time ? (
           datetimeFormatter(time)
+        ) : missionDeleted ? (
+          "-"
         ) : (
           <span className={classes.warningText}>En cours</span>
         ),
@@ -68,9 +71,11 @@ export function ActivitiesCard({
       name: "duration",
       align: "right",
       format: (duration, entry) =>
-        formatTimer(
-          (entry.displayedEndTime || now()) - entry.displayedStartTime
-        ),
+        missionDeleted && !entry.displayedEndTime
+          ? "-"
+          : formatTimer(
+              (entry.displayedEndTime || now()) - entry.displayedStartTime
+            ),
       minWidth: 60
     }
   ];
@@ -131,25 +136,38 @@ export function ActivitiesCard({
             />
           </Grid>
         </Grid>
-        {activities.length > 0 && [
-          <Grid key={1} item xs={12} sm={4} className={classes.chartContainer}>
-            <Typography variant="h6">Frise temporelle</Typography>
-            <VerticalTimeline
-              width={300}
-              activities={activities}
-              datetimeFormatter={datetimeFormatter}
-            />
-          </Grid>,
-          <Grid key={2} item xs={12} sm={8} className={classes.chartContainer}>
-            <Typography variant="h6">Répartition</Typography>
-            <ActivitiesPieChart
-              activities={activities}
-              fromTime={fromTime}
-              untilTime={untilTime}
-              maxWidth={500}
-            />
-          </Grid>
-        ]}
+        {activities.length > 0 &&
+          !missionDeleted && [
+            <Grid
+              key={1}
+              item
+              xs={12}
+              sm={4}
+              className={classes.chartContainer}
+            >
+              <Typography variant="h6">Frise temporelle</Typography>
+              <VerticalTimeline
+                width={300}
+                activities={activities}
+                datetimeFormatter={datetimeFormatter}
+              />
+            </Grid>,
+            <Grid
+              key={2}
+              item
+              xs={12}
+              sm={8}
+              className={classes.chartContainer}
+            >
+              <Typography variant="h6">Répartition</Typography>
+              <ActivitiesPieChart
+                activities={activities}
+                fromTime={fromTime}
+                untilTime={untilTime}
+                maxWidth={500}
+              />
+            </Grid>
+          ]}
       </Grid>
     </MissionInfoCard>
   );
