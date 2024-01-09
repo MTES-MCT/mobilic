@@ -141,6 +141,8 @@ function ValidationPanel() {
       format: (time, entry) =>
         entry.isComplete ? (
           (entry.multipleDays ? formatDateTime : formatTimeOfDay)(time)
+        ) : entry.isDeleted ? (
+          "-"
         ) : (
           <span className={classes.warningText}>
             <strong>En cours</strong>
@@ -154,6 +156,8 @@ function ValidationPanel() {
       format: (time, entry) =>
         entry.isComplete ? (
           formatTimer(time)
+        ) : entry.isDeleted ? (
+          "-"
         ) : (
           <span className={classes.warningText}>
             <strong>En cours</strong>
@@ -168,6 +172,8 @@ function ValidationPanel() {
       format: (time, entry) =>
         entry.isComplete ? (
           formatTimer(time)
+        ) : entry.isDeleted ? (
+          "-"
         ) : (
           <span className={classes.warningText}>
             <strong>En cours</strong>
@@ -182,6 +188,8 @@ function ValidationPanel() {
       format: (time, entry) =>
         entry.isComplete ? (
           formatTimer(time)
+        ) : entry.isDeleted ? (
+          "-"
         ) : (
           <span className={classes.warningText}>
             <strong>En cours</strong>
@@ -196,6 +204,8 @@ function ValidationPanel() {
       format: (time, entry) =>
         entry.isComplete ? (
           formatTimer(time)
+        ) : entry.isDeleted ? (
+          "-"
         ) : (
           <span className={classes.warningText}>
             <strong>En cours</strong>
