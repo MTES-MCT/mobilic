@@ -35,7 +35,8 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     endLocation: missionPayload.endLocation,
     ended: missionPayload.ended !== undefined ? missionPayload.ended : true,
     submitter: missionPayload.submitter || null,
-    deletedAt: missionPayload.deletedAt
+    deletedAt: missionPayload.deletedAt,
+    deletedBy: missionPayload.deletedBy
   };
 }
 
