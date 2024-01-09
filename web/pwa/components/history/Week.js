@@ -29,10 +29,17 @@ export function Week({
 }) {
   const infoCardStyles = useInfoCardStyles();
 
-  const atLeastOneMissionDeleted = React.useMemo(
-    () => missionsInPeriod.some(mission => mission.isDeleted),
+  const missionsDeleted = React.useMemo(
+    () => missionsInPeriod.filter(mission => mission.isDeleted),
     [missionsInPeriod]
   );
+  const missionsDeletedWarning =
+    missionsDeleted.length === 1
+      ? `La semaine comporte une mission supprimée le ${prettyFormatDay(
+          missionsDeleted[0].deletedAt,
+          true
+        )} par ${missionsDeleted[0].deletedBy}`
+      : `La semaine comporte plusieurs missions supprimées`;
 
   const regulationComputation = useMemo(
     () => getLatestAlertComputationVersion(regulationComputationsInPeriod),
@@ -46,11 +53,9 @@ export function Week({
   );
   return (
     <div>
-      {atLeastOneMissionDeleted && (
+      {missionsDeleted.length > 0 && (
         <Alert severity="warning" sx={{ marginBottom: 2 }}>
-          <Typography>
-            Une ou plusieurs missions de la semaine ont été supprimées.
-          </Typography>
+          <Typography>{missionsDeletedWarning}</Typography>
         </Alert>
       )}
       <WorkTimeSummaryKpiGrid

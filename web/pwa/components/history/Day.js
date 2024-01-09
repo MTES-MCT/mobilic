@@ -16,6 +16,7 @@ import {
   getLatestAlertComputationVersion
 } from "common/utils/regulation/alertVersions";
 import { currentControllerId } from "common/utils/cookie";
+import { prettyFormatDay } from "common/utils/time";
 
 export const useStyles = makeStyles(theme => ({
   contradictorySwitch: {
@@ -60,10 +61,17 @@ export function Day({
       (mission.adminValidation && mission.validation) || mission.isDeleted
   );
 
-  const atLeastOneMissionDeleted = React.useMemo(
-    () => missionsInPeriod.some(mission => mission.isDeleted),
+  const missionsDeleted = React.useMemo(
+    () => missionsInPeriod.filter(mission => mission.isDeleted),
     [missionsInPeriod]
   );
+  const missionsDeletedWarning =
+    missionsDeleted.length === 1
+      ? `La journée comporte une mission supprimée le ${prettyFormatDay(
+          missionsDeleted[0].deletedAt,
+          true
+        )} par ${missionsDeleted[0].deletedBy}`
+      : `La journée comporte plusieurs missions supprimées`;
 
   const [
     missionResourcesToUse,
@@ -132,11 +140,9 @@ export function Day({
 
   return (
     <Box>
-      {atLeastOneMissionDeleted ? (
+      {missionsDeleted.length > 0 ? (
         <Alert severity="warning" sx={{ marginBottom: 2 }}>
-          <Typography>
-            Une ou plusieurs missions de la journée ont été supprimées.
-          </Typography>
+          <Typography>{missionsDeletedWarning}</Typography>
         </Alert>
       ) : (
         <ContradictorySwitch
