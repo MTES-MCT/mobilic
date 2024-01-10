@@ -866,7 +866,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
             }
           }
         }
-        missionsDeleted(fromTime: $endedMissionsAfter) {
+        missionsDeleted {
           edges {
             node {
               id
