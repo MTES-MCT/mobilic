@@ -103,7 +103,7 @@ export function MissionEmployeeCard({
             </Grid>
             {!open &&
               activities.length > 0 && [
-                !stats.isComplete && (
+                !stats.isComplete && !isDeleted && (
                   <Hidden xsDown key={0}>
                     <Grid item>
                       <Typography
@@ -121,7 +121,10 @@ export function MissionEmployeeCard({
                       variant="caption"
                       className={classes.workDurationCaption}
                     >
-                      Temps de travail : {formatTimer(stats.totalWorkDuration)}
+                      Temps de travail :{" "}
+                      {isDeleted && !stats.isComplete
+                        ? "-"
+                        : formatTimer(stats.totalWorkDuration)}
                     </Typography>
                   </Grid>
                 </Hidden>,
@@ -212,17 +215,26 @@ export function MissionEmployeeCard({
                 py={2}
                 variant="outlined"
                 title="Amplitude"
-                value={formatTimer(stats.service)}
+                value={
+                  !stats.isComplete && isDeleted
+                    ? "-"
+                    : formatTimer(stats.service)
+                }
                 valueProps={{
                   variant: "body1",
-                  className: !stats.isComplete ? classes.runningMissionText : ""
+                  className:
+                    !stats.isComplete && !isDeleted
+                      ? classes.runningMissionText
+                      : ""
                 }}
                 subText={
                   stats.startTime ? (
                     <span>
                       de {datetimeFormatter(stats.startTime)} à{" "}
-                      {datetimeFormatter(stats.endTimeOrNow)}{" "}
-                      {!stats.isComplete ? (
+                      {!stats.isComplete && isDeleted
+                        ? " -"
+                        : datetimeFormatter(stats.endTimeOrNow)}{" "}
+                      {!stats.isComplete && !isDeleted ? (
                         <span className={classes.runningMissionText}>
                           (en cours)
                         </span>
@@ -243,13 +255,20 @@ export function MissionEmployeeCard({
                 py={2}
                 variant="outlined"
                 title="Temps de travail"
-                value={formatTimer(stats.totalWorkDuration)}
+                value={
+                  !stats.isComplete && isDeleted
+                    ? "-"
+                    : formatTimer(stats.totalWorkDuration)
+                }
                 valueProps={{
                   variant: "body1",
-                  className: !stats.isComplete ? classes.runningMissionText : ""
+                  className:
+                    !stats.isComplete && !isDeleted
+                      ? classes.runningMissionText
+                      : ""
                 }}
                 subText={
-                  !stats.isComplete ? (
+                  !stats.isComplete && !isDeleted ? (
                     <span className={classes.runningMissionText}>En cours</span>
                   ) : null
                 }
@@ -258,6 +277,7 @@ export function MissionEmployeeCard({
           </Grid>
           <Grid item xs={12}>
             <ActivitiesCard
+              missionDeleted={isDeleted}
               activities={augmentedAndSortedActivities}
               onCreateActivity={onCreateActivity}
               onEditActivity={onEditActivity}
