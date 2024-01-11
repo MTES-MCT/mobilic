@@ -514,7 +514,8 @@ export function MissionDetails({
       {!hideValidations &&
         validateMission &&
         !mission.adminValidation &&
-        !mission.validation && (
+        !mission.validation &&
+        !mission.isDeleted && (
           <MissionReviewSection title="Validation">
             <Box style={{ textAlign: "center" }} pt={2} pb={2}>
               <MainCtaButton
