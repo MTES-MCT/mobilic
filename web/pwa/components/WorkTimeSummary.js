@@ -58,8 +58,9 @@ export function computeTimesAndDurationsFromActivities(
   fromTime = null,
   untilTime = null
 ) {
+  const notDismissedActivities = activities.filter(a => !a.isDeleted);
   const filteredActivities = filterActivitiesOverlappingPeriod(
-    activities,
+    notDismissedActivities,
     fromTime,
     untilTime
   );
@@ -106,7 +107,7 @@ export function computeTimesAndDurationsFromActivities(
   });
 
   const dayTimers = computeTotalActivityDurations(
-    activities,
+    notDismissedActivities,
     fromTime,
     untilTime
   );
