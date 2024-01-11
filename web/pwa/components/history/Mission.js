@@ -244,7 +244,7 @@ export function Mission({
         </Grid>
       </InfoCard>
       <Collapse in={open || !collapsable}>
-        {!mission.ended && (
+        {!mission.ended && !mission.isDeleted && (
           <InfoCard
             {...(alternateDisplay
               ? {

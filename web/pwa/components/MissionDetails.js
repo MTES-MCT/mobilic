@@ -191,6 +191,7 @@ export function MissionDetails({
   );
 
   const disableActions =
+    mission.isDeleted ||
     mission.validation ||
     mission.adminValidation ||
     !currentlyEmployedInCompany;

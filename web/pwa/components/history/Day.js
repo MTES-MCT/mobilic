@@ -163,19 +163,21 @@ export function Day({
         />
       )}
 
-      <DaySummary
-        activitiesWithNextAndPreviousDay={userActivitiesToUse}
-        isDayEnded={true}
-        dayStart={selectedPeriodStart}
-        prefetchedRegulationComputation={
-          currentControllerId() ? regulationComputationToUse : null
-        }
-        loading={loadingEmployeeVersion}
-        userId={userId}
-        shouldDisplayInitialEmployeeVersion={
-          shouldDisplayInitialEmployeeVersion
-        }
-      />
+      {missionsInPeriod.length !== missionsDeleted.length && (
+        <DaySummary
+          activitiesWithNextAndPreviousDay={userActivitiesToUse}
+          isDayEnded={true}
+          dayStart={selectedPeriodStart}
+          prefetchedRegulationComputation={
+            currentControllerId() ? regulationComputationToUse : null
+          }
+          loading={loadingEmployeeVersion}
+          userId={userId}
+          shouldDisplayInitialEmployeeVersion={
+            shouldDisplayInitialEmployeeVersion
+          }
+        />
+      )}
       <InfoCard className={infoCardStyles.topMargin}>
         <MissionReviewSection
           title="Détail par mission"
@@ -196,7 +198,10 @@ export function Day({
                   currentMission={currentMission}
                   alternateDisplay
                   collapsable
-                  defaultOpenCollapse={false}
+                  defaultOpenCollapse={
+                    missionsInPeriod.length === 1 &&
+                    missionsDeleted.length === 1
+                  }
                   showMetrics={false}
                   editActivityEvent={editActivityEvent}
                   createActivity={createActivity}
