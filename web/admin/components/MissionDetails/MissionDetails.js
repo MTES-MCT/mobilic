@@ -263,12 +263,13 @@ export function MissionDetails({
         </Grid>
         {mission.name && (mission.startTime || day) && (
           <Typography variant="h6" className={classes.missionSubTitle}>
-            Du {textualPrettyFormatDay(mission.startTime || day)}
-            {doesMissionSpanOnMultipleDays ? (
+            Du {textualPrettyFormatDay(mission.startTime || day)}{" "}
+            {doesMissionSpanOnMultipleDays &&
+            !(mission.isDeleted && !mission.isComplete) ? (
               <span>
                 {" "}
                 au {textualPrettyFormatDay(mission.endTimeOrNow)}{" "}
-                {mission.isComplete || mission.isDeleted ? (
+                {mission.isComplete ? (
                   ""
                 ) : (
                   <span className={classes.runningMissionText}>(en cours)</span>
@@ -348,10 +349,11 @@ export function MissionDetails({
           <MissionLocationInfo
             location={mission.endLocation}
             time={
-              mission.startTime ? (
+              mission.startTime &&
+              !(mission.isDeleted && !mission.isComplete) ? (
                 <span>
                   {dateTimeFormatter(mission.endTimeOrNow)}{" "}
-                  {mission.isComplete || mission.isDeleted ? (
+                  {mission.isComplete ? (
                     ""
                   ) : (
                     <span className={classes.runningMissionText}>
