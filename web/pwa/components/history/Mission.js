@@ -12,7 +12,11 @@ import { makeStyles } from "@mui/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { ItalicWarningTypography } from "./ItalicWarningTypography";
-import { prettyFormatDay } from "common/utils/time";
+import {
+  prettyFormatDay,
+  frenchFormatDateStringOrTimeStamp,
+  unixTimestampToDate
+} from "common/utils/time";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { useToggleContradictory } from "./toggleContradictory";
 import { ContradictorySwitch } from "../ContradictorySwitch";
@@ -84,7 +88,8 @@ export function Mission({
   const alerts = useSnackbarAlerts();
 
   const canDisplayContradictoryVersions =
-    (mission.adminValidation && mission.validation) || mission.isDeleted;
+    (mission.adminValidation && mission.validation) ||
+    (mission.isDeleted && mission.complete);
 
   React.useEffect(() => {
     if (
@@ -180,7 +185,11 @@ export function Mission({
                   ? `Nom de la mission : ${mission.name}`
                   : `Mission du ${prettyFormatDay(actualDay)}`}
               </span>
-              {mission.isDeleted ? " (mission supprimée)" : ""}
+              {mission.isDeleted
+                ? ` (mission supprimée le ${frenchFormatDateStringOrTimeStamp(
+                    unixTimestampToDate(mission?.deletedAt)
+                  )} par ${mission?.deletedBy})`
+                : ""}
             </Typography>
           </Grid>
           <Grid item className={classes.buttonContainer}>
@@ -249,18 +258,19 @@ export function Mission({
             </ItalicWarningTypography>
           </InfoCard>
         )}
-        {(!validateMission ||
-          mission.validation ||
-          mission.adminValidation) && (
-          <>
-            <MissionValidationInfo validation={mission.validation} />
-            <MissionValidationInfo
-              className={classes.employeeValidation}
-              validation={mission.adminValidation}
-              isAdmin
-            />
-          </>
-        )}
+        {!(mission.isDeleted && !mission.complete) &&
+          (!validateMission ||
+            mission.validation ||
+            mission.adminValidation) && (
+            <>
+              <MissionValidationInfo validation={mission.validation} />
+              <MissionValidationInfo
+                className={classes.employeeValidation}
+                validation={mission.adminValidation}
+                isAdmin
+              />
+            </>
+          )}
         <ContradictorySwitch
           contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
           emptyContradictory={contradictoryIsEmpty && hasComputedContradictory}
