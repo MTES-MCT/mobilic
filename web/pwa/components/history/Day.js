@@ -91,9 +91,12 @@ export function Day({
   );
 
   const userActivitiesToUse = [
-    ...missionResourcesToUse.activities.filter(a => a.userId === userId),
+    ...missionResourcesToUse.activities.filter(
+      a => a.userId === userId && !a.isDeleted
+    ),
     ...activitiesWithNextAndPreviousDay.filter(
-      a => !missionsInPeriod.map(m => m.id).includes(a.missionId)
+      a =>
+        !missionsInPeriod.map(m => m.id).includes(a.missionId) && !a.isDeleted
     )
   ];
 
