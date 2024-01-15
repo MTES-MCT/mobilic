@@ -34,7 +34,9 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     startLocation: missionPayload.startLocation,
     endLocation: missionPayload.endLocation,
     ended: missionPayload.ended !== undefined ? missionPayload.ended : true,
-    submitter: missionPayload.submitter || null
+    submitter: missionPayload.submitter || null,
+    deletedAt: missionPayload.deletedAt,
+    deletedBy: missionPayload.deletedBy
   };
 }
 
@@ -73,11 +75,17 @@ export function augmentMissionWithProperties(mission, userId, companies = []) {
     startTime:
       activities.length > 0 ? activities[0].startTime : mission.receptionTime,
     isComplete:
-      activities.length > 0 && !!activities[activities.length - 1].endTime,
-    endTime:
-      activities.length > 0 ? activities[activities.length - 1].endTime : null,
+      mission.isDeleted ||
+      (activities.length > 0 && !!activities[activities.length - 1].endTime),
+    endTime: mission.isDeleted
+      ? mission.deletedAt
+      : activities.length > 0
+      ? activities[activities.length - 1].endTime
+      : null,
     teamChanges: computeTeamChanges(mission.allActivities, userId),
-    ended: mission.ended && activities.every(a => !!a.endTime),
+    ended:
+      mission.isDeleted ||
+      (mission.ended && activities.every(a => !!a.endTime)),
     submittedBySomeoneElse:
       mission.submitter && mission.submitter.id !== userId,
     lastActivityStartTime: activities[activities.length - 1]?.startTime

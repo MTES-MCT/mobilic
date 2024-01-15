@@ -12,7 +12,11 @@ import { makeStyles } from "@mui/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { ItalicWarningTypography } from "./ItalicWarningTypography";
-import { prettyFormatDay } from "common/utils/time";
+import {
+  prettyFormatDay,
+  frenchFormatDateStringOrTimeStamp,
+  unixTimestampToDate
+} from "common/utils/time";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { useToggleContradictory } from "./toggleContradictory";
 import { ContradictorySwitch } from "../ContradictorySwitch";
@@ -84,7 +88,8 @@ export function Mission({
   const alerts = useSnackbarAlerts();
 
   const canDisplayContradictoryVersions =
-    mission.adminValidation && mission.validation;
+    (mission.adminValidation && mission.validation) ||
+    (mission.isDeleted && mission.complete);
 
   React.useEffect(() => {
     if (
@@ -174,10 +179,17 @@ export function Mission({
           onClick={() => setOpen(!open)}
         >
           <Grid item>
-            <Typography className="bold">
-              {mission.name
-                ? `Nom de la mission : ${mission.name}`
-                : `Mission du ${prettyFormatDay(actualDay)}`}
+            <Typography>
+              <span className="bold">
+                {mission.name
+                  ? `Nom de la mission : ${mission.name}`
+                  : `Mission du ${prettyFormatDay(actualDay)}`}
+              </span>
+              {mission.isDeleted
+                ? ` (mission supprimée le ${frenchFormatDateStringOrTimeStamp(
+                    unixTimestampToDate(mission?.deletedAt)
+                  )} par ${mission?.deletedBy})`
+                : ""}
             </Typography>
           </Grid>
           <Grid item className={classes.buttonContainer}>
@@ -232,7 +244,7 @@ export function Mission({
         </Grid>
       </InfoCard>
       <Collapse in={open || !collapsable}>
-        {!mission.ended && (
+        {!mission.ended && !mission.isDeleted && (
           <InfoCard
             {...(alternateDisplay
               ? {
@@ -246,31 +258,36 @@ export function Mission({
             </ItalicWarningTypography>
           </InfoCard>
         )}
-        {(!validateMission ||
-          mission.validation ||
-          mission.adminValidation) && (
-          <>
-            <MissionValidationInfo validation={mission.validation} />
-            <MissionValidationInfo
-              className={classes.employeeValidation}
-              validation={mission.adminValidation}
-              isAdmin
-            />
-          </>
+        {!(mission.isDeleted && !mission.complete) &&
+          (!validateMission ||
+            mission.validation ||
+            mission.adminValidation) && (
+            <>
+              <MissionValidationInfo validation={mission.validation} />
+              <MissionValidationInfo
+                className={classes.employeeValidation}
+                validation={mission.adminValidation}
+                isAdmin
+              />
+            </>
+          )}
+        {!mission.isDeleted && (
+          <ContradictorySwitch
+            contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
+            emptyContradictory={
+              contradictoryIsEmpty && hasComputedContradictory
+            }
+            className={classes.contradictorySwitch}
+            shouldDisplayInitialEmployeeVersion={
+              shouldDisplayInitialEmployeeVersion
+            }
+            setShouldDisplayInitialEmployeeVersion={
+              setShouldDisplayInitialEmployeeVersion
+            }
+            contradictoryComputationError={contradictoryComputationError}
+            disabled={loadingEmployeeVersion}
+          />
         )}
-        <ContradictorySwitch
-          contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
-          emptyContradictory={contradictoryIsEmpty && hasComputedContradictory}
-          className={classes.contradictorySwitch}
-          shouldDisplayInitialEmployeeVersion={
-            shouldDisplayInitialEmployeeVersion
-          }
-          setShouldDisplayInitialEmployeeVersion={
-            setShouldDisplayInitialEmployeeVersion
-          }
-          contradictoryComputationError={contradictoryComputationError}
-          disabled={loadingEmployeeVersion}
-        />
         {showMetrics && (
           <WorkTimeSummaryKpiGrid
             loading={loadingEmployeeVersion}

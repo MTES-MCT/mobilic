@@ -23,7 +23,10 @@ export const missionToValidationEntries = mission =>
     id: `${mission.id}${us.user.id}`,
     multipleDays:
       getStartOfDay(mission.startTime) !==
-      getStartOfDay(mission.endTime ? mission.endTime - 1 : now())
+      getStartOfDay(mission.endTime ? mission.endTime - 1 : now()),
+    isDeleted: mission.isDeleted,
+    deletedAt: mission.deletedAt,
+    deletedBy: mission.deletedBy
   }));
 
 export const entryToBeValidatedByAdmin = (
@@ -31,6 +34,7 @@ export const entryToBeValidatedByAdmin = (
   currentUserId,
   adminCanBypass = false
 ) =>
+  !tableEntry.isDeleted &&
   !tableEntry.adminValidation &&
   (entryValidatedByWorkerOrOutdated(tableEntry) ||
     tableEntry.lastActivitySubmitterId === currentUserId ||
@@ -44,3 +48,5 @@ const entryValidatedByWorkerOrOutdated = tableEntry =>
   tableEntry.workerValidation ||
   tableEntry.missionTooOld ||
   tableEntry.missionNotUpdatedForTooLong;
+
+export const entryDeleted = tableEntry => tableEntry.isDeleted;

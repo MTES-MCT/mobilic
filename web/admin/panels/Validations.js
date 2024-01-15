@@ -12,7 +12,8 @@ import {
   formatDateTime,
   formatDay,
   formatTimeOfDay,
-  formatTimer
+  formatTimer,
+  prettyFormatDay
 } from "common/utils/time";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import Tabs from "@mui/material/Tabs";
@@ -64,6 +65,11 @@ const VALIDATION_TABS = [
     explanation:
       "Les missions suivantes ont été validées par salarié(s) et gestionnaire. Elles ne sont plus modifiables.",
     matomoName: "Onglet Validées"
+  },
+  {
+    label: "Missions supprimées",
+    explanation: "Les missions suivantes ont été supprimées.",
+    matomoName: "Onglet Supprimées"
   }
 ];
 
@@ -91,6 +97,7 @@ function ValidationPanel() {
   const [entriesValidatedByAdmin, setEntriesValidatedByAdmin] = React.useState(
     []
   );
+  const [entriesDeletedByAdmin, setEntriesDeletedByAdmin] = React.useState([]);
   const [
     nbMissionsToValidateByAdmin,
     setNbMissionsToValidateByAdmin
@@ -108,6 +115,15 @@ function ValidationPanel() {
   const showExpenditures = adminStore.settings.requireExpenditures;
 
   const allowTransfers = adminStore.settings.allowTransfers;
+
+  const inProgress = entry =>
+    entry.isDeleted ? (
+      "-"
+    ) : (
+      <span className={classes.warningText}>
+        <strong>En cours</strong>
+      </span>
+    );
 
   const commonCols = [
     {
@@ -132,26 +148,16 @@ function ValidationPanel() {
       name: "endTime",
       align: "left",
       format: (time, entry) =>
-        entry.isComplete ? (
-          (entry.multipleDays ? formatDateTime : formatTimeOfDay)(time)
-        ) : (
-          <span className={classes.warningText}>
-            <strong>En cours</strong>
-          </span>
-        ),
+        entry.isComplete
+          ? (entry.multipleDays ? formatDateTime : formatTimeOfDay)(time)
+          : inProgress(entry),
       minWidth: 80
     },
     {
       label: "Amplitude",
       name: "service",
       format: (time, entry) =>
-        entry.isComplete ? (
-          formatTimer(time)
-        ) : (
-          <span className={classes.warningText}>
-            <strong>En cours</strong>
-          </span>
-        ),
+        entry.isComplete ? formatTimer(time) : inProgress(entry),
       align: "right",
       minWidth: 100
     },
@@ -159,13 +165,7 @@ function ValidationPanel() {
       label: "Travail",
       name: "totalWorkDuration",
       format: (time, entry) =>
-        entry.isComplete ? (
-          formatTimer(time)
-        ) : (
-          <span className={classes.warningText}>
-            <strong>En cours</strong>
-          </span>
-        ),
+        entry.isComplete ? formatTimer(time) : inProgress(entry),
       align: "right",
       minWidth: 100
     },
@@ -173,13 +173,7 @@ function ValidationPanel() {
       label: "Liaison",
       name: "transferDuration",
       format: (time, entry) =>
-        entry.isComplete ? (
-          formatTimer(time)
-        ) : (
-          <span className={classes.warningText}>
-            <strong>En cours</strong>
-          </span>
-        ),
+        entry.isComplete ? formatTimer(time) : inProgress(entry),
       align: "right",
       minWidth: 100
     },
@@ -187,13 +181,7 @@ function ValidationPanel() {
       label: "Repos",
       name: "breakDuration",
       format: (time, entry) =>
-        entry.isComplete ? (
-          formatTimer(time)
-        ) : (
-          <span className={classes.warningText}>
-            <strong>En cours</strong>
-          </span>
-        ),
+        entry.isComplete ? formatTimer(time) : inProgress(entry),
       align: "right",
       minWidth: 100
     },
@@ -235,14 +223,29 @@ function ValidationPanel() {
     minWidth: 200
   };
 
+  const deletionCol = {
+    label: "Date de suppression",
+    name: "deletion",
+    format: (_, entry) => (
+      <Typography>{prettyFormatDay(entry.deletedAt, true)}</Typography>
+    ),
+    align: "left",
+    minWidth: 200
+  };
+
   React.useEffect(() => {
+    setEntriesDeletedByAdmin(
+      missionsToTableEntries(adminStore).filter(entry => entry.isDeleted)
+    );
     setEntriesToValidateByAdmin(
       missionsToTableEntries(adminStore).filter(entry =>
         entryToBeValidatedByAdmin(entry, adminStore.userId)
       )
     );
     setEntriesToValidateByWorker(
-      missionsToTableEntries(adminStore).filter(entryToBeValidatedByWorker)
+      missionsToTableEntries(adminStore)
+        .filter(entry => !entry.isDeleted)
+        .filter(entryToBeValidatedByWorker)
     );
     setEntriesValidatedByAdmin(
       missionsToTableEntries(adminStore).filter(
@@ -301,6 +304,10 @@ function ValidationPanel() {
         setTableEntries(entriesValidatedByAdmin);
         setTableColumns([...commonCols, validationAdminCol]);
         break;
+      case 3:
+        setTableEntries(entriesDeletedByAdmin);
+        setTableColumns([...commonCols, deletionCol]);
+        break;
       default:
         setTableColumns([]);
         setTableEntries([]);
@@ -309,7 +316,8 @@ function ValidationPanel() {
     tab,
     entriesToValidateByAdmin,
     entriesToValidateByWorker,
-    entriesValidatedByAdmin
+    entriesValidatedByAdmin,
+    entriesDeletedByAdmin
   ]);
 
   React.useEffect(() => {
@@ -363,6 +371,7 @@ function ValidationPanel() {
           }
         />
         <Tab className={classes.tab} label={VALIDATION_TABS[2].label} />
+        <Tab className={classes.tab} label={VALIDATION_TABS[3].label} />
       </Tabs>
       <Grid
         spacing={teams?.length > 0 ? 2 : 0}

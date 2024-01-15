@@ -15,6 +15,8 @@ import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { getLatestAlertComputationVersion } from "common/utils/regulation/alertVersions";
 import { WeekRegulatoryAlerts } from "../../../regulatory/WeekRegulatoryAlerts";
 import { currentControllerId } from "common/utils/cookie";
+import Alert from "@mui/material/Alert";
+import Typography from "@mui/material/Typography";
 
 export function Week({
   missionsInPeriod,
@@ -26,6 +28,18 @@ export function Week({
   userId
 }) {
   const infoCardStyles = useInfoCardStyles();
+
+  const missionsDeleted = React.useMemo(
+    () => missionsInPeriod.filter(mission => mission.isDeleted),
+    [missionsInPeriod]
+  );
+  const missionsDeletedWarning =
+    missionsDeleted.length === 1
+      ? `La semaine comporte une mission supprimée le ${prettyFormatDay(
+          missionsDeleted[0].deletedAt,
+          true
+        )} par ${missionsDeleted[0].deletedBy}`
+      : `La semaine comporte plusieurs missions supprimées`;
 
   const regulationComputation = useMemo(
     () => getLatestAlertComputationVersion(regulationComputationsInPeriod),
@@ -39,6 +53,11 @@ export function Week({
   );
   return (
     <div>
+      {missionsDeleted.length > 0 && (
+        <Alert severity="warning" sx={{ marginBottom: 2 }}>
+          <Typography>{missionsDeletedWarning}</Typography>
+        </Alert>
+      )}
       <WorkTimeSummaryKpiGrid
         metrics={renderPeriodKpis(stats).filter(m => m.name !== "service")}
       />
@@ -73,6 +92,7 @@ export function Week({
                   >
                     Mission {mission.name} du{" "}
                     {prettyFormatDay(mission.startTime)}
+                    {mission.isDeleted ? " (supprimée)" : ""}
                   </Link>
                 </ListItemText>
               </ListItem>,
