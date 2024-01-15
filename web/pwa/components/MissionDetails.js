@@ -529,7 +529,10 @@ export function MissionDetails({
           </MissionReviewSection>
         )}
       {!hideValidations &&
-        (!validateMission || mission.validation || mission.adminValidation) && (
+        (!validateMission ||
+          mission.isDeleted ||
+          mission.validation ||
+          mission.adminValidation) && (
           <MissionReviewSection>
             <ContradictoryChanges
               mission={mission}

@@ -271,19 +271,23 @@ export function Mission({
               />
             </>
           )}
-        <ContradictorySwitch
-          contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
-          emptyContradictory={contradictoryIsEmpty && hasComputedContradictory}
-          className={classes.contradictorySwitch}
-          shouldDisplayInitialEmployeeVersion={
-            shouldDisplayInitialEmployeeVersion
-          }
-          setShouldDisplayInitialEmployeeVersion={
-            setShouldDisplayInitialEmployeeVersion
-          }
-          contradictoryComputationError={contradictoryComputationError}
-          disabled={loadingEmployeeVersion}
-        />
+        {!mission.isDeleted && (
+          <ContradictorySwitch
+            contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
+            emptyContradictory={
+              contradictoryIsEmpty && hasComputedContradictory
+            }
+            className={classes.contradictorySwitch}
+            shouldDisplayInitialEmployeeVersion={
+              shouldDisplayInitialEmployeeVersion
+            }
+            setShouldDisplayInitialEmployeeVersion={
+              setShouldDisplayInitialEmployeeVersion
+            }
+            contradictoryComputationError={contradictoryComputationError}
+            disabled={loadingEmployeeVersion}
+          />
+        )}
         {showMetrics && (
           <WorkTimeSummaryKpiGrid
             loading={loadingEmployeeVersion}

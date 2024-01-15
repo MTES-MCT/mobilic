@@ -271,7 +271,7 @@ export function ActivityList({
       )}
       {hasActivitiesBeforeMinTime && (
         <Typography variant="body2" className={classes.infoText}>
-          Les activités avant minuit le jour précédent ne sont pas inclues
+          Les activités avant minuit le jour précédent ne sont pas inclues.
         </Typography>
       )}
       {(view === "list" || !canDisplayChart) && (
@@ -313,7 +313,7 @@ export function ActivityList({
       )}
       {hasActivitiesAfterMaxTime && (
         <Typography variant="body2" className={classes.infoText}>
-          Les activités après minuit le jour suivant ne sont pas inclues
+          Les activités après minuit le jour suivant ne sont pas inclues.
         </Typography>
       )}
     </Container>
