@@ -145,15 +145,40 @@ export function UserRead() {
             birthDate: userPayload.birthDate,
             email: userPayload.email
           });
+
+          const resultMissions = userPayload.missions.edges.map(e => e.node);
+          const resultMissionsDeleted = userPayload.missionsDeleted.edges.map(
+            e => e.node
+          );
+
+          const missionData = [];
+          resultMissions.forEach(mission => {
+            missionData.push({
+              ...mission,
+              ...parseMissionPayloadFromBackend(mission, userPayload.id),
+              isDeleted: false,
+              allActivities: mission.activities.map(activity => ({
+                ...activity,
+                isDeleted: false
+              }))
+            });
+          });
+          resultMissionsDeleted.forEach(mission => {
+            missionData.push({
+              ...mission,
+              ...parseMissionPayloadFromBackend(mission, userPayload.id),
+              isDeleted: true,
+              allActivities: mission.activities.map(activity => ({
+                ...activity,
+                isDeleted: true
+              }))
+            });
+          });
+
           const missions_ = augmentAndSortMissions(
-            userPayload.missions.edges.map(m => ({
-              ...m.node,
-              ...parseMissionPayloadFromBackend(m.node, userPayload.id),
-              allActivities: m.node.activities
-            })),
+            missionData,
             userPayload.id
           ).filter(m => m.activities.length > 0);
-
           setMissions(missions_);
 
           const userWorkingDays = new Set([]);
