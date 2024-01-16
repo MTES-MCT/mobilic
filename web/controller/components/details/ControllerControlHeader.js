@@ -7,8 +7,7 @@ import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import { useModals } from "common/utils/modals";
+import { ControllerControlExportMenu } from "./ControllerControlExportMenu";
 
 const useStyles = makeStyles(theme => ({
   desktopHeaderContainer: {
@@ -40,28 +39,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ExportButton({ controlId }) {
-  const modals = useModals();
-  const classes = useStyles();
-  return (
-    <Button
-      color="primary"
-      variant="outlined"
-      size="small"
-      className={classes.batchInviteButton}
-      onClick={() => {
-        modals.open("controllerExportExcelOne", { controlId });
-      }}
-    >
-      Exporter le contrôle
-    </Button>
-  );
-}
-
 export function ControllerControlHeader({
   controlId,
   controlDate,
   onCloseDrawer,
+  canDownloadXml,
   enableExport = true
 }) {
   const classes = useStyles();
@@ -86,7 +68,12 @@ export function ControllerControlHeader({
         <Typography>
           Date et heure du contrôle : <b>{prettyFormatDayHour(controlDate)}</b>
         </Typography>
-        {enableExport && <ExportButton controlId={controlId} />}
+        {enableExport && (
+          <ControllerControlExportMenu
+            controlId={controlId}
+            canDownloadXml={canDownloadXml}
+          />
+        )}
       </Box>
     </Container>
   ) : (
@@ -104,7 +91,12 @@ export function ControllerControlHeader({
         >
           Fermer
         </Link>
-        {enableExport && <ExportButton controlId={controlId} />}
+        {enableExport && (
+          <ControllerControlExportMenu
+            controlId={controlId}
+            canDownloadXml={canDownloadXml}
+          />
+        )}
       </Box>
     </Container>
   );
