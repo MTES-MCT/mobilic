@@ -14,16 +14,24 @@ export const WAY_HEARD_OF_MOBILIC_CHOICES = [
     label: "Courriel de l'équipe Mobilic"
   },
   {
-    value: "MAIL_DREAL",
-    label: "Courrier/courriel de la DREAL"
-  },
-  {
     value: "DURING_CONTROL",
     label: "Lors d'un contrôle"
   },
   {
+    value: "PHONE_CALL",
+    label: "Appel de l'équipe Mobilic"
+  },
+  {
+    value: "MAIL_DREAL",
+    label: "Courrier/courriel de la DREAL"
+  },
+  {
     value: "SOCIAL_NETWORK",
     label: "Sur les réseaux sociaux"
+  },
+  {
+    value: "SEARCH_ENGINE",
+    label: "Moteur de recherche"
   },
   {
     value: "WEBINAR",
@@ -105,7 +113,7 @@ export const WayHeardOfMobilic = ({ setWayHeardOfMobilicValue }) => {
                       maxLength: 250
                     }}
                     onChange={e => {
-                      setWayHeardOfMobilicValue(e.target.value.trimLeft());
+                      setWayHeardOfMobilicValue(e.target.value.trimStart());
                     }}
                   />
                 ) : (
