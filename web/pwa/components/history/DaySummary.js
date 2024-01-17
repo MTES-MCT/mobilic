@@ -32,28 +32,42 @@ export function DaySummary({
     dayEnd
   );
 
+  const hasWorkMissions = React.useMemo(
+    () => missions.filter(mission => !mission.isHoliday).length > 0,
+    [missions]
+  );
+
   return (
     <>
-      <WorkTimeSummaryKpiGrid
-        loading={loading}
-        metrics={renderPeriodKpis(stats, true)
-          .filter(m => m.name !== "workedDays")
-          .filter(m => m.name !== "offDays")}
-      />
-      <InfoCard className={infoCardStyles.topMargin}>
-        {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
-          <DayRegulatoryAlerts
-            day={isoFormatLocalDate(dayStart)}
-            userId={userId}
-            shouldDisplayInitialEmployeeVersion={
-              shouldDisplayInitialEmployeeVersion
-            }
-            prefetchedRegulationComputation={prefetchedRegulationComputation}
+      {hasWorkMissions && (
+        <>
+          <WorkTimeSummaryKpiGrid
+            loading={loading}
+            metrics={renderPeriodKpis(stats, true)
+              .filter(m => m.name !== "workedDays")
+              .filter(m => m.name !== "offDays")}
           />
-        ) : (
-          <ItalicWarningTypography>Mission en cours !</ItalicWarningTypography>
-        )}
-      </InfoCard>
+          <InfoCard className={infoCardStyles.topMargin}>
+            {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
+              <DayRegulatoryAlerts
+                day={isoFormatLocalDate(dayStart)}
+                userId={userId}
+                shouldDisplayInitialEmployeeVersion={
+                  shouldDisplayInitialEmployeeVersion
+                }
+                prefetchedRegulationComputation={
+                  prefetchedRegulationComputation
+                }
+              />
+            ) : (
+              <ItalicWarningTypography>
+                Mission en cours !
+              </ItalicWarningTypography>
+            )}
+          </InfoCard>
+        </>
+      )}
+
       <Grid
         container
         direction="row"

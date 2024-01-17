@@ -55,6 +55,18 @@ export function Week({
     () => missionsInPeriod.filter(mission => !mission.isHoliday),
     [missionsInPeriod]
   );
+
+  const hasWorkMissions = React.useMemo(
+    () => missionsInPeriod.filter(mission => !mission.isHoliday).length > 0,
+    [missionsInPeriod]
+  );
+  const kpis = React.useMemo(() => {
+    let allKpis = renderPeriodKpis(stats).filter(m => m.name !== "service");
+    if (hasWorkMissions) {
+      return allKpis;
+    }
+    return allKpis.filter(m => m.name === "offDays");
+  }, [hasWorkMissions, stats]);
   return (
     <div>
       {missionsDeleted.length > 0 && (
@@ -62,18 +74,18 @@ export function Week({
           <Typography>{missionsDeletedWarning}</Typography>
         </Alert>
       )}
-      <WorkTimeSummaryKpiGrid
-        metrics={renderPeriodKpis(stats).filter(m => m.name !== "service")}
-      />
-      <InfoCard className={infoCardStyles.topMargin}>
-        <WeekRegulatoryAlerts
-          userId={userId}
-          day={isoFormatLocalDate(selectedPeriodStart)}
-          prefetchedRegulationComputation={
-            currentControllerId() ? regulationComputation : null
-          }
-        />
-      </InfoCard>
+      <WorkTimeSummaryKpiGrid metrics={kpis} />
+      {hasWorkMissions && (
+        <InfoCard className={infoCardStyles.topMargin}>
+          <WeekRegulatoryAlerts
+            userId={userId}
+            day={isoFormatLocalDate(selectedPeriodStart)}
+            prefetchedRegulationComputation={
+              currentControllerId() ? regulationComputation : null
+            }
+          />
+        </InfoCard>
+      )}
       {missionsToDetail.length > 0 && (
         <InfoCard className={infoCardStyles.topMargin}>
           <MissionReviewSection
