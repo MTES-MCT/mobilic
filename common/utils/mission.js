@@ -38,7 +38,7 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     deletedAt: missionPayload.deletedAt,
     deletedBy: missionPayload.deletedBy,
     isHoliday:
-      missionPayload.isHoliday !== undefined ? missionPayload.isHoliday : true
+      missionPayload.isHoliday !== undefined ? missionPayload.isHoliday : null
   };
 }
 

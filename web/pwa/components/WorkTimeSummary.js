@@ -21,7 +21,7 @@ import {
 import { InfoCard, MetricCard } from "../../common/InfoCard";
 import { partition } from "lodash";
 
-function formatRangeString(startTime, endTime) {
+export function formatRangeString(startTime, endTime) {
   return getStartOfDay(startTime) === getStartOfDay(endTime - 1)
     ? `De ${formatTimeOfDay(startTime)} à ${formatTimeOfDay(endTime)}`
     : `Du ${formatDateTime(startTime)} au ${formatDateTime(endTime)}`;

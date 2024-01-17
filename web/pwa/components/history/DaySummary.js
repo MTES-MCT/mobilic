@@ -10,6 +10,8 @@ import React from "react";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { DayRegulatoryAlerts } from "../../../regulatory/DayRegulatoryAlerts";
+import { HolidayRecap } from "./HolidayRecap";
+import Grid from "@mui/material/Grid";
 
 export function DaySummary({
   isDayEnded,
@@ -18,7 +20,8 @@ export function DaySummary({
   userId,
   loading = false,
   shouldDisplayInitialEmployeeVersion = false,
-  prefetchedRegulationComputation = null
+  prefetchedRegulationComputation = null,
+  missions
 }) {
   const dayEnd = dayStart + DAY;
   const infoCardStyles = useInfoCardStyles();
@@ -33,9 +36,9 @@ export function DaySummary({
     <>
       <WorkTimeSummaryKpiGrid
         loading={loading}
-        metrics={renderPeriodKpis(stats, true).filter(
-          m => m.name !== "workedDays"
-        )}
+        metrics={renderPeriodKpis(stats, true)
+          .filter(m => m.name !== "workedDays")
+          .filter(m => m.name !== "offDays")}
       />
       <InfoCard className={infoCardStyles.topMargin}>
         {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
@@ -51,6 +54,20 @@ export function DaySummary({
           <ItalicWarningTypography>Mission en cours !</ItalicWarningTypography>
         )}
       </InfoCard>
+      <Grid
+        container
+        direction="row"
+        justifyContent="left"
+        alignItems={"baseline"}
+        spacing={2}
+        my={2}
+      >
+        {missions
+          .filter(m => !!m.isHoliday)
+          .map(mission => (
+            <HolidayRecap key={mission.id} mission={mission} />
+          ))}
+      </Grid>
       <InfoCard className={infoCardStyles.topMargin}>
         <MissionReviewSection
           title="Activités de la journée"

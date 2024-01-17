@@ -176,6 +176,7 @@ export function Day({
           shouldDisplayInitialEmployeeVersion={
             shouldDisplayInitialEmployeeVersion
           }
+          missions={missionsInPeriod}
         />
       )}
       <InfoCard className={infoCardStyles.topMargin}>
