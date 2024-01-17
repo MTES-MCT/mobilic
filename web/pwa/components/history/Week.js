@@ -51,6 +51,10 @@ export function Week({
     selectedPeriodEnd,
     missionsInPeriod
   );
+  const missionsToDetail = React.useMemo(
+    () => missionsInPeriod.filter(mission => !mission.isHoliday),
+    [missionsInPeriod]
+  );
   return (
     <div>
       {missionsDeleted.length > 0 && (
@@ -70,43 +74,45 @@ export function Week({
           }
         />
       </InfoCard>
-      <InfoCard className={infoCardStyles.topMargin}>
-        <MissionReviewSection
-          title="Détail par mission"
-          className="no-margin-no-padding"
-        >
-          <List>
-            {missionsInPeriod.map((mission, index) => [
-              <ListItem
-                key={2 * index}
-                onClick={handleMissionClick(mission.startTime)}
-              >
-                <ListItemText disableTypography>
-                  <Link
-                    component="button"
-                    variant="body1"
-                    style={{ textAlign: "justify" }}
-                    onClick={e => {
-                      e.preventDefault();
-                    }}
-                  >
-                    Mission {mission.name} du{" "}
-                    {prettyFormatDay(mission.startTime)}
-                    {mission.isDeleted ? " (supprimée)" : ""}
-                  </Link>
-                </ListItemText>
-              </ListItem>,
-              index < missionsInPeriod.length - 1 ? (
-                <Divider
-                  key={2 * index + 1}
-                  component="li"
-                  className="hr-unstyled"
-                />
-              ) : null
-            ])}
-          </List>
-        </MissionReviewSection>
-      </InfoCard>
+      {missionsToDetail.length > 0 && (
+        <InfoCard className={infoCardStyles.topMargin}>
+          <MissionReviewSection
+            title="Détail par mission"
+            className="no-margin-no-padding"
+          >
+            <List>
+              {missionsToDetail.map((mission, index) => [
+                <ListItem
+                  key={2 * index}
+                  onClick={handleMissionClick(mission.startTime)}
+                >
+                  <ListItemText disableTypography>
+                    <Link
+                      component="button"
+                      variant="body1"
+                      style={{ textAlign: "justify" }}
+                      onClick={e => {
+                        e.preventDefault();
+                      }}
+                    >
+                      Mission {mission.name} du{" "}
+                      {prettyFormatDay(mission.startTime)}
+                      {mission.isDeleted ? " (supprimée)" : ""}
+                    </Link>
+                  </ListItemText>
+                </ListItem>,
+                index < missionsInPeriod.length - 1 ? (
+                  <Divider
+                    key={2 * index + 1}
+                    component="li"
+                    className="hr-unstyled"
+                  />
+                ) : null
+              ])}
+            </List>
+          </MissionReviewSection>
+        </InfoCard>
+      )}
     </div>
   );
 }
