@@ -3,12 +3,17 @@ import { EditableMissionInfo } from "./EditableMissionInfo";
 import React from "react";
 import TextField from "@mui/material/TextField";
 
-export function MissionTitle({ name, startTime, onEdit }) {
+export function MissionTitle({
+  name,
+  startTime,
+  onEdit,
+  missionPrefix = true
+}) {
   return (
     <EditableMissionInfo
       value={name}
       format={() =>
-        `Mission ${name}` ||
+        `${missionPrefix ? "Mission " : ""}${name}` ||
         (startTime
           ? `Mission du ${prettyFormatDay(startTime, false)}`
           : "Détails de la mission")

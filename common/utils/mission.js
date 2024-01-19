@@ -36,7 +36,8 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     ended: missionPayload.ended !== undefined ? missionPayload.ended : true,
     submitter: missionPayload.submitter || null,
     deletedAt: missionPayload.deletedAt,
-    deletedBy: missionPayload.deletedBy
+    deletedBy: missionPayload.deletedBy,
+    isHoliday: missionPayload.isHoliday
   };
 }
 

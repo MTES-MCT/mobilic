@@ -47,6 +47,7 @@ export const FULL_MISSION_FRAGMENT = gql`
     id
     name
     submitterId
+    isHoliday
     validations {
       submitterId
       receptionTime
@@ -117,6 +118,7 @@ export const FULL_MISSION_DELETED_FRAGMENT = gql`
     submitterId
     deletedAt
     deletedBy
+    isHoliday
     validations {
       submitterId
       receptionTime
