@@ -116,6 +116,15 @@ function ValidationPanel() {
 
   const allowTransfers = adminStore.settings.allowTransfers;
 
+  const inProgress = entry =>
+    entry.isDeleted ? (
+      "-"
+    ) : (
+      <span className={classes.warningText}>
+        <strong>En cours</strong>
+      </span>
+    );
+
   const commonCols = [
     {
       label: "Salarié",
@@ -139,26 +148,16 @@ function ValidationPanel() {
       name: "endTime",
       align: "left",
       format: (time, entry) =>
-        entry.isComplete ? (
-          (entry.multipleDays ? formatDateTime : formatTimeOfDay)(time)
-        ) : (
-          <span className={classes.warningText}>
-            <strong>En cours</strong>
-          </span>
-        ),
+        entry.isComplete
+          ? (entry.multipleDays ? formatDateTime : formatTimeOfDay)(time)
+          : inProgress(entry),
       minWidth: 80
     },
     {
       label: "Amplitude",
       name: "service",
       format: (time, entry) =>
-        entry.isComplete ? (
-          formatTimer(time)
-        ) : (
-          <span className={classes.warningText}>
-            <strong>En cours</strong>
-          </span>
-        ),
+        entry.isComplete ? formatTimer(time) : inProgress(entry),
       align: "right",
       minWidth: 100
     },
@@ -166,13 +165,7 @@ function ValidationPanel() {
       label: "Travail",
       name: "totalWorkDuration",
       format: (time, entry) =>
-        entry.isComplete ? (
-          formatTimer(time)
-        ) : (
-          <span className={classes.warningText}>
-            <strong>En cours</strong>
-          </span>
-        ),
+        entry.isComplete ? formatTimer(time) : inProgress(entry),
       align: "right",
       minWidth: 100
     },
@@ -180,13 +173,7 @@ function ValidationPanel() {
       label: "Liaison",
       name: "transferDuration",
       format: (time, entry) =>
-        entry.isComplete ? (
-          formatTimer(time)
-        ) : (
-          <span className={classes.warningText}>
-            <strong>En cours</strong>
-          </span>
-        ),
+        entry.isComplete ? formatTimer(time) : inProgress(entry),
       align: "right",
       minWidth: 100
     },
@@ -194,13 +181,7 @@ function ValidationPanel() {
       label: "Repos",
       name: "breakDuration",
       format: (time, entry) =>
-        entry.isComplete ? (
-          formatTimer(time)
-        ) : (
-          <span className={classes.warningText}>
-            <strong>En cours</strong>
-          </span>
-        ),
+        entry.isComplete ? formatTimer(time) : inProgress(entry),
       align: "right",
       minWidth: 100
     },

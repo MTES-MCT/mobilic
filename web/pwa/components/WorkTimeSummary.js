@@ -58,8 +58,9 @@ export function computeTimesAndDurationsFromActivities(
   fromTime = null,
   untilTime = null
 ) {
+  const notDismissedActivities = activities.filter(a => !a.isDeleted);
   const filteredActivities = filterActivitiesOverlappingPeriod(
-    activities,
+    notDismissedActivities,
     fromTime,
     untilTime
   );
@@ -106,7 +107,7 @@ export function computeTimesAndDurationsFromActivities(
   });
 
   const dayTimers = computeTotalActivityDurations(
-    activities,
+    notDismissedActivities,
     fromTime,
     untilTime
   );
@@ -177,8 +178,13 @@ export function splitByLongBreaksAndComputePeriodStats(
     const nextDay = civilDay + DAY;
     const activity = activities[activityIndex];
 
-    if (activity.endTime && activity.endTime < civilDay) activityIndex++;
-    else if (activity.startTime < nextDay && civilDay < now()) {
+    if (activity.isDeleted || (activity.endTime && activity.endTime < civilDay))
+      activityIndex++;
+    else if (
+      !activity.isDeleted &&
+      activity.startTime < nextDay &&
+      civilDay < now()
+    ) {
       workedDays++;
       civilDay = nextDay;
     } else civilDay = nextDay;

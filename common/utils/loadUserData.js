@@ -103,7 +103,7 @@ const USER_QUERY = gql`
           }
         }
       }
-      missionsDeleted {
+      missionsDeleted(fromTime: $activityAfter) {
         edges {
           node {
             ...FullMissionDeletedData

@@ -16,6 +16,7 @@ import {
   getLatestAlertComputationVersion
 } from "common/utils/regulation/alertVersions";
 import { currentControllerId } from "common/utils/cookie";
+import { prettyFormatDay } from "common/utils/time";
 
 export const useStyles = makeStyles(theme => ({
   contradictorySwitch: {
@@ -56,13 +57,21 @@ export function Day({
   ] = React.useState(false);
 
   const canDisplayContradictoryVersions = missionsInPeriod.every(
-    mission => mission.adminValidation && mission.validation
+    mission =>
+      (mission.adminValidation && mission.validation) || mission.isDeleted
   );
 
-  const atLeastOneMissionDeleted = React.useMemo(
-    () => missionsInPeriod.some(mission => mission.isDeleted),
+  const missionsDeleted = React.useMemo(
+    () => missionsInPeriod.filter(mission => mission.isDeleted),
     [missionsInPeriod]
   );
+  const missionsDeletedWarning =
+    missionsDeleted.length === 1
+      ? `La journée comporte une mission supprimée le ${prettyFormatDay(
+          missionsDeleted[0].deletedAt,
+          true
+        )} par ${missionsDeleted[0].deletedBy}`
+      : `La journée comporte plusieurs missions supprimées`;
 
   const [
     missionResourcesToUse,
@@ -82,9 +91,12 @@ export function Day({
   );
 
   const userActivitiesToUse = [
-    ...missionResourcesToUse.activities.filter(a => a.userId === userId),
+    ...missionResourcesToUse.activities.filter(
+      a => a.userId === userId && !a.isDeleted
+    ),
     ...activitiesWithNextAndPreviousDay.filter(
-      a => !missionsInPeriod.map(m => m.id).includes(a.missionId)
+      a =>
+        !missionsInPeriod.map(m => m.id).includes(a.missionId) && !a.isDeleted
     )
   ];
 
@@ -131,11 +143,9 @@ export function Day({
 
   return (
     <Box>
-      {atLeastOneMissionDeleted ? (
+      {missionsDeleted.length > 0 ? (
         <Alert severity="warning" sx={{ marginBottom: 2 }}>
-          <Typography>
-            Une ou plusieurs missions de la journée ont été supprimées.
-          </Typography>
+          <Typography>{missionsDeletedWarning}</Typography>
         </Alert>
       ) : (
         <ContradictorySwitch
@@ -153,19 +163,21 @@ export function Day({
         />
       )}
 
-      <DaySummary
-        activitiesWithNextAndPreviousDay={userActivitiesToUse}
-        isDayEnded={true}
-        dayStart={selectedPeriodStart}
-        prefetchedRegulationComputation={
-          currentControllerId() ? regulationComputationToUse : null
-        }
-        loading={loadingEmployeeVersion}
-        userId={userId}
-        shouldDisplayInitialEmployeeVersion={
-          shouldDisplayInitialEmployeeVersion
-        }
-      />
+      {missionsInPeriod.length !== missionsDeleted.length && (
+        <DaySummary
+          activitiesWithNextAndPreviousDay={userActivitiesToUse}
+          isDayEnded={true}
+          dayStart={selectedPeriodStart}
+          prefetchedRegulationComputation={
+            currentControllerId() ? regulationComputationToUse : null
+          }
+          loading={loadingEmployeeVersion}
+          userId={userId}
+          shouldDisplayInitialEmployeeVersion={
+            shouldDisplayInitialEmployeeVersion
+          }
+        />
+      )}
       <InfoCard className={infoCardStyles.topMargin}>
         <MissionReviewSection
           title="Détail par mission"
@@ -186,7 +198,10 @@ export function Day({
                   currentMission={currentMission}
                   alternateDisplay
                   collapsable
-                  defaultOpenCollapse={false}
+                  defaultOpenCollapse={
+                    missionsInPeriod.length === 1 &&
+                    missionsDeleted.length === 1
+                  }
                   showMetrics={false}
                   editActivityEvent={editActivityEvent}
                   createActivity={createActivity}

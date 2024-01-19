@@ -4,6 +4,7 @@ import { ControllerControlNoLic } from "./ControllerControlNoLic";
 import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
 import { ControlDrawer } from "../../utils/ControlDrawer";
 import { useReportInfractions } from "../../utils/useReportInfractions";
+import { canDownloadBDC } from "../../utils/controlBulletin";
 
 export function ControllerControlNoLicDrawer({
   controlData,
@@ -55,6 +56,7 @@ export function ControllerControlNoLicDrawer({
         controlId={controlData.id}
         controlDate={controlData.creationTime}
         onCloseDrawer={() => closeControl()}
+        canDownloadXml={canDownloadBDC(controlData)}
         enableExport={false}
       />
       <ControllerControlNoLic

@@ -191,6 +191,7 @@ export function MissionDetails({
   );
 
   const disableActions =
+    mission.isDeleted ||
     mission.validation ||
     mission.adminValidation ||
     !currentlyEmployedInCompany;
@@ -514,7 +515,8 @@ export function MissionDetails({
       {!hideValidations &&
         validateMission &&
         !mission.adminValidation &&
-        !mission.validation && (
+        !mission.validation &&
+        !mission.isDeleted && (
           <MissionReviewSection title="Validation">
             <Box style={{ textAlign: "center" }} pt={2} pb={2}>
               <MainCtaButton
@@ -527,7 +529,10 @@ export function MissionDetails({
           </MissionReviewSection>
         )}
       {!hideValidations &&
-        (!validateMission || mission.validation || mission.adminValidation) && (
+        (!validateMission ||
+          mission.isDeleted ||
+          mission.validation ||
+          mission.adminValidation) && (
           <MissionReviewSection>
             <ContradictoryChanges
               mission={mission}

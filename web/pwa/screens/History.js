@@ -328,7 +328,15 @@ export function History({
       const resultMissions = apiResponse.data.me.missions.edges.map(
         e => e.node
       );
-      await syncMissions(resultMissions, store, store.addToEntityObject);
+      const resultMissionsDeleted = apiResponse.data.me.missionsDeleted.edges.map(
+        e => e.node
+      );
+      await syncMissions(
+        resultMissions,
+        resultMissionsDeleted,
+        store,
+        store.addToEntityObject
+      );
       await broadCastChannel.postMessage("update");
     }, "missions-history");
   };

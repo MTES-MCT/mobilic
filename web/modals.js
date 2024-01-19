@@ -27,7 +27,6 @@ import WarningEndMissionModal from "./pwa/components/WarningEndMissionModal/Warn
 import NewsletterSubscriptionModal from "./landing/NewsletterSubscription";
 import GeolocPermissionInfoModal from "./pwa/components/GeolocPermissionInfoModal";
 import ControllerHelp from "./controller/components/modals/ControllerHelp";
-import ExportExcelOne from "./controller/components/modals/ControllerExportExcelOne";
 import ControllerExportC1BAll from "./controller/components/modals/ControllerExportC1BAll";
 import ChangeNameModal from "./home/ChangeName";
 import CompanyTeamCreationRevisionModal from "./admin/panels/CompanyTeamCreationRevisionModal";
@@ -67,7 +66,6 @@ export const MODAL_DICT = {
   newsletterSubscription: NewsletterSubscriptionModal,
   warningEndMissionModal: WarningEndMissionModal,
   geolocPermissionInfoModal: GeolocPermissionInfoModal,
-  controllerExportExcelOne: ExportExcelOne,
   controllerExportC1BAll: ControllerExportC1BAll,
   controllerHelp: ControllerHelp,
   companyTeamCreationRevisionModal: CompanyTeamCreationRevisionModal,

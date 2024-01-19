@@ -11,7 +11,8 @@ import {
   REGULATION_COMPUTATIONS_FRAGMENT,
   OBSERVED_INFRACTIONS_FRAGMENT,
   WORK_DAYS_DATA_FRAGMENT,
-  FRAGMENT_ACTIVITY
+  FRAGMENT_ACTIVITY,
+  FULL_MISSION_DELETED_FRAGMENT
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
 
@@ -493,6 +494,8 @@ export const USER_READ_REGULATION_COMPUTATIONS_QUERY = gql`
 export const USER_READ_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
+  ${FULL_MISSION_FRAGMENT}
+  ${FULL_MISSION_DELETED_FRAGMENT}
   query readUser {
     me {
       id
@@ -503,65 +506,14 @@ export const USER_READ_QUERY = gql`
       missions {
         edges {
           node {
-            id
-            name
-            company {
-              id
-              name
-              siren
-              ...CompanySettings
-            }
-            validations {
-              submitterId
-              receptionTime
-              isAdmin
-              userId
-            }
-            vehicle {
-              id
-              name
-              registrationNumber
-            }
-            context
-            expenditures {
-              id
-              type
-              missionId
-              userId
-              spendingDate
-              receptionTime
-            }
-            activities {
-              id
-              type
-              missionId
-              startTime
-              endTime
-              userId
-              lastSubmitterId
-              user {
-                id
-                firstName
-                lastName
-              }
-            }
-            comments {
-              id
-              text
-              missionId
-              receptionTime
-              submitter {
-                id
-                firstName
-                lastName
-              }
-            }
-            startLocation {
-              ...FullLocation
-            }
-            endLocation {
-              ...FullLocation
-            }
+            ...FullMissionData
+          }
+        }
+      }
+      missionsDeleted {
+        edges {
+          node {
+            ...FullMissionDeletedData
           }
         }
       }
@@ -593,12 +545,20 @@ export const USER_MISSIONS_HISTORY_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
   ${FULL_MISSION_FRAGMENT}
+  ${FULL_MISSION_DELETED_FRAGMENT}
   query readUserMissionsHistory($fromTime: TimeStamp!, $untilTime: TimeStamp!) {
     me {
       missions(fromTime: $fromTime, untilTime: $untilTime) {
         edges {
           node {
             ...FullMissionData
+          }
+        }
+      }
+      missionsDeleted(fromTime: $fromTime, untilTime: $untilTime) {
+        edges {
+          node {
+            ...FullMissionDeletedData
           }
         }
       }
@@ -913,6 +873,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
               name
               submitterId
               deletedAt
+              deletedBy
               validations {
                 submitterId
                 receptionTime
@@ -2179,6 +2140,10 @@ export const HTTP_QUERIES = {
   controlExcelExport: {
     method: "POST",
     endpoint: "/controllers/download_control_report"
+  },
+  controlXmlExport: {
+    method: "POST",
+    endpoint: "/controllers/download_control_xml"
   },
   controlC1BExport: {
     method: "POST",

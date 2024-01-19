@@ -263,8 +263,9 @@ export function MissionDetails({
         </Grid>
         {mission.name && (mission.startTime || day) && (
           <Typography variant="h6" className={classes.missionSubTitle}>
-            Du {textualPrettyFormatDay(mission.startTime || day)}
-            {doesMissionSpanOnMultipleDays ? (
+            Du {textualPrettyFormatDay(mission.startTime || day)}{" "}
+            {doesMissionSpanOnMultipleDays &&
+            !(mission.isDeleted && !mission.isComplete) ? (
               <span>
                 {" "}
                 au {textualPrettyFormatDay(mission.endTimeOrNow)}{" "}
@@ -286,8 +287,8 @@ export function MissionDetails({
             Cette mission a été supprimée le{" "}
             {frenchFormatDateStringOrTimeStamp(
               unixTimestampToDate(mission?.deletedAt)
-            )}
-            .
+            )}{" "}
+            par {mission?.deletedBy}.
           </Typography>
         </Alert>
       )}
@@ -348,7 +349,8 @@ export function MissionDetails({
           <MissionLocationInfo
             location={mission.endLocation}
             time={
-              mission.startTime ? (
+              mission.startTime &&
+              !(mission.isDeleted && !mission.isComplete) ? (
                 <span>
                   {dateTimeFormatter(mission.endTimeOrNow)}{" "}
                   {mission.isComplete ? (
