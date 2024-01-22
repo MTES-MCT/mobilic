@@ -59,23 +59,57 @@ export function ControllerControlDetails({
       setVehicles([]);
     }
 
-    if (controlData.missions) {
-      const _missions = augmentAndSortMissions(
-        controlData.missions.map(m => ({
-          ...m,
-          ...parseMissionPayloadFromBackend(m, controlData.user.id),
-          allActivities: _.orderBy(m.activities, ["startTime", "endTime"])
-        })),
-        controlData.user.id
-      ).filter(m => m.activities.length > 0);
-      setMissions(_missions);
+    const missionData = [];
+    const _coworkers = {};
 
-      const _coworkers = {};
+    if (controlData.missions) {
+      controlData.missions.forEach(mission => {
+        const activities = mission.activities.map(activity => ({
+          ...activity,
+          isDeleted: false
+        }));
+        missionData.push({
+          ...mission,
+          ...parseMissionPayloadFromBackend(mission, controlData.user.id),
+          isDeleted: false,
+          allActivities: _.orderBy(activities, ["startTime", "endTime"])
+        });
+      });
+
       controlData.missions.forEach(m => {
         m.activities.forEach(a => {
           _coworkers[a.user.id.toString()] = a.user;
         });
       });
+    }
+
+    if (controlData.missionsDeleted) {
+      controlData.missionsDeleted.forEach(mission => {
+        const activities = mission.activities.map(activity => ({
+          ...activity,
+          isDeleted: true
+        }));
+        missionData.push({
+          ...mission,
+          ...parseMissionPayloadFromBackend(mission, controlData.user.id),
+          isDeleted: true,
+          allActivities: _.orderBy(activities, ["startTime", "endTime"])
+        });
+      });
+
+      controlData.missionsDeleted.forEach(m => {
+        m.activities.forEach(a => {
+          _coworkers[a.user.id.toString()] = a.user;
+        });
+      });
+    }
+
+    if (missionData.length > 0) {
+      const _missions = augmentAndSortMissions(
+        missionData,
+        controlData.user.id
+      ).filter(m => m.activities.length > 0);
+      setMissions(_missions);
       setCoworkers(_coworkers);
     } else {
       setMissions([]);

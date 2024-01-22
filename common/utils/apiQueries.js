@@ -361,7 +361,8 @@ export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
 
 export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
-  ${FRAGMENT_LOCATION_FULL}
+  ${FULL_MISSION_FRAGMENT}
+  ${FULL_MISSION_DELETED_FRAGMENT}
   ${REGULATION_COMPUTATIONS_FRAGMENT}
   ${OBSERVED_INFRACTIONS_FRAGMENT}
   ${CONTROL_BULLETIN_FRAGMENT}
@@ -374,66 +375,10 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
         ...ControlBulletin
       }
       missions {
-        id
-        name
-        company {
-          id
-          name
-          siren
-          legalName
-          ...CompanySettings
-        }
-        validations {
-          submitterId
-          receptionTime
-          isAdmin
-          userId
-        }
-        vehicle {
-          id
-          name
-          registrationNumber
-        }
-        context
-        expenditures {
-          id
-          type
-          missionId
-          userId
-          spendingDate
-          receptionTime
-        }
-        activities {
-          id
-          type
-          missionId
-          startTime
-          endTime
-          userId
-          lastSubmitterId
-          user {
-            id
-            firstName
-            lastName
-          }
-        }
-        comments {
-          id
-          text
-          missionId
-          receptionTime
-          submitter {
-            id
-            firstName
-            lastName
-          }
-        }
-        startLocation {
-          ...FullLocation
-        }
-        endLocation {
-          ...FullLocation
-        }
+        ...FullMissionData
+      }
+      missionsDeleted {
+        ...FullMissionDeletedData
       }
       employments {
         id

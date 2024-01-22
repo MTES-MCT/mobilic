@@ -71,6 +71,7 @@ export const FULL_MISSION_FRAGMENT = gql`
       id
       name
       siren
+      legalName
       ...CompanySettings
     }
     activities {
@@ -141,6 +142,7 @@ export const FULL_MISSION_DELETED_FRAGMENT = gql`
       id
       name
       siren
+      legalName
       ...CompanySettings
     }
     activities(includeDismissedActivities: true) {
