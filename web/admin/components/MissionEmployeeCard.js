@@ -278,6 +278,7 @@ export function MissionEmployeeCard({
           <Grid item xs={12}>
             <ActivitiesCard
               missionDeleted={isDeleted}
+              isHoliday={mission.isHoliday}
               activities={augmentedAndSortedActivities}
               onCreateActivity={onCreateActivity}
               onEditActivity={onEditActivity}
