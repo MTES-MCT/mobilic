@@ -282,14 +282,12 @@ function ActivitiesPanel() {
   let selectedUsers = users.filter(u => u.selected);
   if (selectedUsers.length === 0) selectedUsers = users;
 
-  const selectedWorkDays = React.useMemo(() => {
-    return adminStore.workDays.filter(
-      wd =>
-        selectedUsers.map(u => u.id).includes(wd.user.id) &&
-        (!minDate || wd.day >= minDate) &&
-        (!maxDate || wd.day <= maxDate)
-    );
-  }, [adminStore.workDays, minDate, maxDate]);
+  const selectedWorkDays = adminStore.workDays.filter(
+    wd =>
+      selectedUsers.map(u => u.id).includes(wd.user.id) &&
+      (!minDate || wd.day >= minDate) &&
+      (!maxDate || wd.day <= maxDate)
+  );
 
   const periodAggregates = React.useMemo(
     () => aggregateWorkDayPeriods(selectedWorkDays, period),
