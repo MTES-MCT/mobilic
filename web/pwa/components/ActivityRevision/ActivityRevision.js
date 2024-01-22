@@ -240,6 +240,11 @@ export default function ActivityRevisionOrCreationModal({
     }
   }
 
+  const canDelete = React.useMemo(
+    () => (event ? !event.type === ACTIVITIES.off : true),
+    [event]
+  );
+
   React.useEffect(() => {
     if (event) {
       setNewUserTime(event.startTime);
@@ -485,7 +490,7 @@ export default function ActivityRevisionOrCreationModal({
         </Box>
       </DialogContent>
       <CustomDialogActions>
-        {!isCreation && (
+        {!isCreation && canDelete && (
           <Button
             variant="outlined"
             color="primary"
