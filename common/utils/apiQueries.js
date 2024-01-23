@@ -11,8 +11,7 @@ import {
   REGULATION_COMPUTATIONS_FRAGMENT,
   OBSERVED_INFRACTIONS_FRAGMENT,
   WORK_DAYS_DATA_FRAGMENT,
-  FRAGMENT_ACTIVITY,
-  FULL_MISSION_DELETED_FRAGMENT
+  FRAGMENT_ACTIVITY
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
 
@@ -362,7 +361,6 @@ export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
 export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FULL_MISSION_FRAGMENT}
-  ${FULL_MISSION_DELETED_FRAGMENT}
   ${REGULATION_COMPUTATIONS_FRAGMENT}
   ${OBSERVED_INFRACTIONS_FRAGMENT}
   ${CONTROL_BULLETIN_FRAGMENT}
@@ -376,9 +374,6 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       }
       missions {
         ...FullMissionData
-      }
-      missionsDeleted {
-        ...FullMissionDeletedData
       }
       employments {
         id
@@ -440,7 +435,6 @@ export const USER_READ_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
   ${FULL_MISSION_FRAGMENT}
-  ${FULL_MISSION_DELETED_FRAGMENT}
   query readUser {
     me {
       id
@@ -452,13 +446,6 @@ export const USER_READ_QUERY = gql`
         edges {
           node {
             ...FullMissionData
-          }
-        }
-      }
-      missionsDeleted {
-        edges {
-          node {
-            ...FullMissionDeletedData
           }
         }
       }
@@ -490,20 +477,12 @@ export const USER_MISSIONS_HISTORY_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
   ${FULL_MISSION_FRAGMENT}
-  ${FULL_MISSION_DELETED_FRAGMENT}
   query readUserMissionsHistory($fromTime: TimeStamp!, $untilTime: TimeStamp!) {
     me {
       missions(fromTime: $fromTime, untilTime: $untilTime) {
         edges {
           node {
             ...FullMissionData
-          }
-        }
-      }
-      missionsDeleted(fromTime: $fromTime, untilTime: $untilTime) {
-        edges {
-          node {
-            ...FullMissionDeletedData
           }
         }
       }

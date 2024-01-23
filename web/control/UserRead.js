@@ -147,30 +147,17 @@ export function UserRead() {
           });
 
           const resultMissions = userPayload.missions.edges.map(e => e.node);
-          const resultMissionsDeleted = userPayload.missionsDeleted.edges.map(
-            e => e.node
-          );
 
           const missionData = [];
           resultMissions.forEach(mission => {
+            const isMissionDeleted = !!mission.deletedAt;
             missionData.push({
               ...mission,
               ...parseMissionPayloadFromBackend(mission, userPayload.id),
-              isDeleted: false,
+              isDeleted: isMissionDeleted,
               allActivities: mission.activities.map(activity => ({
                 ...activity,
-                isDeleted: false
-              }))
-            });
-          });
-          resultMissionsDeleted.forEach(mission => {
-            missionData.push({
-              ...mission,
-              ...parseMissionPayloadFromBackend(mission, userPayload.id),
-              isDeleted: true,
-              allActivities: mission.activities.map(activity => ({
-                ...activity,
-                isDeleted: true
+                isDeleted: isMissionDeleted
               }))
             });
           });

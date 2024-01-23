@@ -64,40 +64,20 @@ export function ControllerControlDetails({
 
     if (controlData.missions) {
       controlData.missions.forEach(mission => {
+        const isMissionDeleted = !!mission.deletedAt;
         const activities = mission.activities.map(activity => ({
           ...activity,
-          isDeleted: false
+          isDeleted: isMissionDeleted
         }));
         missionData.push({
           ...mission,
           ...parseMissionPayloadFromBackend(mission, controlData.user.id),
-          isDeleted: false,
+          isDeleted: isMissionDeleted,
           allActivities: _.orderBy(activities, ["startTime", "endTime"])
         });
       });
 
       controlData.missions.forEach(m => {
-        m.activities.forEach(a => {
-          _coworkers[a.user.id.toString()] = a.user;
-        });
-      });
-    }
-
-    if (controlData.missionsDeleted) {
-      controlData.missionsDeleted.forEach(mission => {
-        const activities = mission.activities.map(activity => ({
-          ...activity,
-          isDeleted: true
-        }));
-        missionData.push({
-          ...mission,
-          ...parseMissionPayloadFromBackend(mission, controlData.user.id),
-          isDeleted: true,
-          allActivities: _.orderBy(activities, ["startTime", "endTime"])
-        });
-      });
-
-      controlData.missionsDeleted.forEach(m => {
         m.activities.forEach(a => {
           _coworkers[a.user.id.toString()] = a.user;
         });
