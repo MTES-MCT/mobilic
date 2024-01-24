@@ -372,7 +372,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       controlBulletin {
         ...ControlBulletin
       }
-      missions {
+      missions(includeDismissedMissions: true) {
         ...FullMissionData
       }
       employments {
@@ -479,7 +479,11 @@ export const USER_MISSIONS_HISTORY_QUERY = gql`
   ${FULL_MISSION_FRAGMENT}
   query readUserMissionsHistory($fromTime: TimeStamp!, $untilTime: TimeStamp!) {
     me {
-      missions(fromTime: $fromTime, untilTime: $untilTime) {
+      missions(
+        fromTime: $fromTime
+        untilTime: $untilTime
+        includeDismissedMissions: true
+      ) {
         edges {
           node {
             ...FullMissionData

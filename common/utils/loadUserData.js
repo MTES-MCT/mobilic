@@ -94,7 +94,7 @@ const USER_QUERY = gql`
       hasConfirmedEmail
       hasActivatedEmail
       disabledWarnings
-      missions(fromTime: $activityAfter) {
+      missions(fromTime: $activityAfter, includeDismissedMissions: true) {
         edges {
           node {
             ...FullMissionData
