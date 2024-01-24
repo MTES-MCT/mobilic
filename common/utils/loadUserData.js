@@ -270,9 +270,10 @@ export async function syncUser(userPayload, api, store) {
 
   const missions = missionsPayload.edges.map(e => e.node);
 
+  const notDeletedMissions = missions.filter(mission => !mission.deletedAt);
   // Get end status for latest mission;
-  if (missions.filter(mission => !mission.deletedAt).length > 0) {
-    const latestMission = missions.filter(mission => !mission.deletedAt)[0];
+  if (notDeletedMissions.length > 0) {
+    const latestMission = notDeletedMissions[0];
     try {
       const latestMissionInfo = await api.graphQlQuery(CURRENT_MISSION_INFO, {
         id: latestMission.id
