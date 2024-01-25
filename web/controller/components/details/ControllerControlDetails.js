@@ -67,7 +67,7 @@ export function ControllerControlDetails({
         const isMissionDeleted = !!mission.deletedAt;
         const activities = mission.activities.map(activity => ({
           ...activity,
-          isDeleted: isMissionDeleted
+          isDeleted: !!activity.deletedAt
         }));
         missionData.push({
           ...mission,

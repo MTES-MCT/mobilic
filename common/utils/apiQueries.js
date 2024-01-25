@@ -244,7 +244,7 @@ export const CONTROLLER_READ_MISSION_DETAILS = gql`
   ${FRAGMENT_LOCATION_FULL}
   query readMissionControlData($controlId: Int!, $missionId: Int!) {
     controlData(controlId: $controlId) {
-      missions(missionId: $missionId) {
+      missions(missionId: $missionId, includeDeletedMissions: true) {
         receptionTime
         submitter {
           id

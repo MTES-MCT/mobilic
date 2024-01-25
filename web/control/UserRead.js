@@ -157,7 +157,7 @@ export function UserRead() {
               isDeleted: isMissionDeleted,
               allActivities: mission.activities.map(activity => ({
                 ...activity,
-                isDeleted: isMissionDeleted
+                isDeleted: !!activity.deletedAt
               }))
             });
           });
