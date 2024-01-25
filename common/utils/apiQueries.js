@@ -2117,6 +2117,10 @@ export const HTTP_QUERIES = {
     method: "POST",
     endpoint: "/controllers/download_control_report"
   },
+  controlXmlExport: {
+    method: "POST",
+    endpoint: "/controllers/download_control_xml"
+  },
   controlC1BExport: {
     method: "POST",
     endpoint: "/controllers/generate_tachograph_files"
