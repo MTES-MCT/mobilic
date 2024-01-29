@@ -32,6 +32,7 @@ import _AlexisDemenagementImage from "../assets/images/testimonials-logos/alexis
 import _BretagneMaceDemenagementImage from "../assets/images/testimonials-logos/bretagne_mace_demenagement.jpg";
 import _CertificationImage from "../assets/images/certification.svg";
 import _ComputerImage from "../assets/images/computer.png";
+import DateRangeIcon from "@mui/icons-material/DateRange";
 
 export function MobilicLogoFilledIcon(props) {
   return (
@@ -108,6 +109,10 @@ export function TransferIcon(props) {
       component={TrainIcon_}
     />
   );
+}
+
+export function HolidayIcon(props) {
+  return <DateRangeIcon {...props} />;
 }
 
 export function WorkIcon(props) {

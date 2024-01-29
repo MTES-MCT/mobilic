@@ -1,5 +1,11 @@
 import React from "react";
-import { RestIcon, TransferIcon, TruckIcon, WorkIcon } from "./icons";
+import {
+  HolidayIcon,
+  RestIcon,
+  TransferIcon,
+  TruckIcon,
+  WorkIcon
+} from "./icons";
 import { now } from "./time";
 import forEach from "lodash/forEach";
 import maxBy from "lodash/maxBy";
@@ -42,12 +48,11 @@ export const ACTIVITIES = {
     renderIcon: props => <TransferIcon {...props} />,
     color: "#417DC4"
   },
-  //TODO: this will get removed when we will filter out rest activities while displaying mission recaps
   off: {
     name: "off",
     label: "Conge",
-    renderIcon: props => <TransferIcon {...props} />,
-    color: "#417DC4"
+    renderIcon: props => <HolidayIcon {...props} />,
+    color: "#3284FF"
   }
 };
 

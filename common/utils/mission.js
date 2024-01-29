@@ -34,9 +34,11 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     startLocation: missionPayload.startLocation,
     endLocation: missionPayload.endLocation,
     ended: missionPayload.ended !== undefined ? missionPayload.ended : true,
-    submitter: missionPayload.submitter || null,
+    submitter: missionPayload.submitter,
     deletedAt: missionPayload.deletedAt,
-    deletedBy: missionPayload.deletedBy
+    deletedBy: missionPayload.deletedBy,
+    isHoliday:
+      missionPayload.isHoliday !== undefined ? missionPayload.isHoliday : false
   };
 }
 

@@ -19,8 +19,9 @@ import {
   sortActivities
 } from "common/utils/activities";
 import { InfoCard, MetricCard } from "../../common/InfoCard";
+import { partition } from "lodash";
 
-function formatRangeString(startTime, endTime) {
+export function formatRangeString(startTime, endTime) {
   return getStartOfDay(startTime) === getStartOfDay(endTime - 1)
     ? `De ${formatTimeOfDay(startTime)} à ${formatTimeOfDay(endTime)}`
     : `Du ${formatDateTime(startTime)} au ${formatDateTime(endTime)}`;
@@ -162,16 +163,9 @@ export function renderMissionKpis(
   return formattedKpis;
 }
 
-export function splitByLongBreaksAndComputePeriodStats(
-  activities,
-  fromTime,
-  untilTime,
-  missions
-) {
-  sortActivities(activities);
-
+const getNbDistinctDays = (fromTime, untilTime, activities) => {
   let civilDay = fromTime;
-  let workedDays = 0;
+  let counter = 0;
   let activityIndex = 0;
 
   while (civilDay < untilTime && activityIndex < activities.length) {
@@ -188,10 +182,27 @@ export function splitByLongBreaksAndComputePeriodStats(
       activity.startTime < nextDay &&
       civilDay < now()
     ) {
-      workedDays++;
+      counter++;
       civilDay = nextDay;
     } else civilDay = nextDay;
   }
+  return counter;
+};
+export function splitByLongBreaksAndComputePeriodStats(
+  activities,
+  fromTime,
+  untilTime,
+  missions
+) {
+  sortActivities(activities);
+
+  const [workActivities, offActivities] = partition(
+    activities,
+    activity => activity.type !== "off"
+  );
+
+  const workedDays = getNbDistinctDays(fromTime, untilTime, workActivities);
+  const offDays = getNbDistinctDays(fromTime, untilTime, offActivities);
 
   const {
     timers,
@@ -200,7 +211,11 @@ export function splitByLongBreaksAndComputePeriodStats(
     innerLongBreaks,
     activityGroups,
     filteredActivities
-  } = computeTimesAndDurationsFromActivities(activities, fromTime, untilTime);
+  } = computeTimesAndDurationsFromActivities(
+    workActivities,
+    fromTime,
+    untilTime
+  );
 
   const expendituresCount = {};
   if (missions)
@@ -218,6 +233,7 @@ export function splitByLongBreaksAndComputePeriodStats(
     endTime,
     innerLongBreaks,
     workedDays,
+    offDays,
     expendituresCount,
     filteredActivities,
     activityGroups
@@ -304,5 +320,13 @@ export function renderPeriodKpis(
         </Grid>
       )
     });
+  if (kpis.offDays) {
+    formattedKpis.push({
+      name: "offDays",
+      label: "Jours congé ou absence",
+      value: kpis.offDays,
+      fullWidth: true
+    });
+  }
   return formattedKpis;
 }
