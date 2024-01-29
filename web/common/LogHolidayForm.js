@@ -66,7 +66,7 @@ const MOTIFS = [
   }
 ];
 
-export default function LogHolidayForm({
+export function LogHolidayForm({
   handleSubmit,
   companies,
   companyId = null,

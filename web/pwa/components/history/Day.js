@@ -141,6 +141,10 @@ export function Day({
       setShouldDisplayInitialEmployeeVersion(false);
   }, [canDisplayContradictoryVersions]);
 
+  const missionsToDetail = React.useMemo(
+    () => missionsInPeriod.filter(mission => !mission.isHoliday),
+    [missionsInPeriod]
+  );
   return (
     <Box>
       {missionsDeleted.length > 0 ? (
@@ -176,56 +180,59 @@ export function Day({
           shouldDisplayInitialEmployeeVersion={
             shouldDisplayInitialEmployeeVersion
           }
+          missions={missionsInPeriod}
         />
       )}
-      <InfoCard className={infoCardStyles.topMargin}>
-        <MissionReviewSection
-          title="Détail par mission"
-          className="no-margin-no-padding"
-        >
-          <List>
-            {missionsInPeriod.map(mission => (
-              <ListItem
-                key={mission.id}
-                style={{
-                  display: "block",
-                  paddingLeft: 0,
-                  paddingRight: 0
-                }}
-              >
-                <Mission
-                  mission={mission}
-                  currentMission={currentMission}
-                  alternateDisplay
-                  collapsable
-                  defaultOpenCollapse={
-                    missionsInPeriod.length === 1 &&
-                    missionsDeleted.length === 1
-                  }
-                  showMetrics={false}
-                  editActivityEvent={editActivityEvent}
-                  createActivity={createActivity}
-                  editExpenditures={editExpenditures}
-                  editVehicle={editVehicle}
-                  validateMission={validateMission}
-                  logComment={logComment}
-                  cancelComment={cancelComment}
-                  coworkers={coworkers}
-                  vehicles={vehicles}
-                  userId={userId}
-                  fromTime={selectedPeriodStart}
-                  untilTime={selectedPeriodEnd}
-                  registerKilometerReading={registerKilometerReading}
-                  controlledShouldDisplayInitialEmployeeVersion={
-                    shouldDisplayInitialEmployeeVersion
-                  }
-                  controlId={controlId}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </MissionReviewSection>
-      </InfoCard>
+      {missionsToDetail.length > 0 && (
+        <InfoCard className={infoCardStyles.topMargin}>
+          <MissionReviewSection
+            title="Détail par mission"
+            className="no-margin-no-padding"
+          >
+            <List>
+              {missionsToDetail.map(mission => (
+                <ListItem
+                  key={mission.id}
+                  style={{
+                    display: "block",
+                    paddingLeft: 0,
+                    paddingRight: 0
+                  }}
+                >
+                  <Mission
+                    mission={mission}
+                    currentMission={currentMission}
+                    alternateDisplay
+                    collapsable
+                    defaultOpenCollapse={
+                      missionsInPeriod.length === 1 &&
+                      missionsDeleted.length === 1
+                    }
+                    showMetrics={false}
+                    editActivityEvent={editActivityEvent}
+                    createActivity={createActivity}
+                    editExpenditures={editExpenditures}
+                    editVehicle={editVehicle}
+                    validateMission={validateMission}
+                    logComment={logComment}
+                    cancelComment={cancelComment}
+                    coworkers={coworkers}
+                    vehicles={vehicles}
+                    userId={userId}
+                    fromTime={selectedPeriodStart}
+                    untilTime={selectedPeriodEnd}
+                    registerKilometerReading={registerKilometerReading}
+                    controlledShouldDisplayInitialEmployeeVersion={
+                      shouldDisplayInitialEmployeeVersion
+                    }
+                    controlId={controlId}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </MissionReviewSection>
+        </InfoCard>
+      )}
     </Box>
   );
 }
