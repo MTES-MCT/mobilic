@@ -44,8 +44,8 @@ export function DaySummary({
           <WorkTimeSummaryKpiGrid
             loading={loading}
             metrics={renderPeriodKpis(stats, true)
-              .filter(m => m.name !== "workedDays")
-              .filter(m => m.name !== "offDays")}
+              .filter(kpi => kpi.name !== "workedDays")
+              .filter(kpi => kpi.name !== "offDays")}
           />
           <InfoCard className={infoCardStyles.topMargin}>
             {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (

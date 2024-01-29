@@ -61,11 +61,11 @@ export function Week({
     [missionsInPeriod]
   );
   const kpis = React.useMemo(() => {
-    let allKpis = renderPeriodKpis(stats).filter(m => m.name !== "service");
+    let allKpis = renderPeriodKpis(stats).filter(kpi => kpi.name !== "service");
     if (hasWorkMissions) {
       return allKpis;
     }
-    return allKpis.filter(m => m.name === "offDays");
+    return allKpis.filter(kpi => kpi.name === "offDays");
   }, [hasWorkMissions, stats]);
   return (
     <div>

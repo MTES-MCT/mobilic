@@ -23,11 +23,11 @@ export function Month({
         selectedPeriodEnd,
         missionsInPeriod
       )
-    ).filter(m => m.name !== "service");
+    ).filter(kpi => kpi.name !== "service");
     if (hasWorkMissions) {
       return allKpis;
     }
-    return allKpis.filter(m => m.name === "offDays");
+    return allKpis.filter(kpi => kpi.name === "offDays");
   }, [
     hasWorkMissions,
     activitiesWithNextAndPreviousDay,
