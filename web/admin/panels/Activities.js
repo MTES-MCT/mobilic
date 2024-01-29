@@ -61,7 +61,7 @@ import {
   unselectAndGetAllTeams
 } from "../store/reducers/team";
 import { LogHolidayButton } from "../../common/LogHolidayButton";
-import LogHolidayForm from "../../common/LogHolidayForm";
+import { LogHolidayForm } from "../../common/LogHolidayForm";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { usePageTitle } from "../../common/UsePageTitle";
 

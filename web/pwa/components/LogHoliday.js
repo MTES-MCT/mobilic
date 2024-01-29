@@ -1,6 +1,6 @@
 import React from "react";
 import { FunnelModal } from "./FunnelModal";
-import LogHolidayForm from "../../common/LogHolidayForm";
+import { LogHolidayForm } from "../../common/LogHolidayForm";
 
 export default function LogHolidayModal({
   open,
