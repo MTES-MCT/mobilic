@@ -244,7 +244,7 @@ export const CONTROLLER_READ_MISSION_DETAILS = gql`
   ${FRAGMENT_LOCATION_FULL}
   query readMissionControlData($controlId: Int!, $missionId: Int!) {
     controlData(controlId: $controlId) {
-      missions(missionId: $missionId, includeDeletedMissions: true) {
+      missions(missionId: $missionId) {
         receptionTime
         submitter {
           id
@@ -372,7 +372,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       controlBulletin {
         ...ControlBulletin
       }
-      missions(includeDeletedMissions: true) {
+      missions {
         ...FullMissionData
       }
       employments {

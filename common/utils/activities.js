@@ -65,7 +65,7 @@ export function parseActivityPayloadFromBackend(activity) {
     missionId: activity.missionId,
     userId: activity.userId,
     context: activity.context,
-    isDeleted: !!activity.dismissedAt
+    isMissionDeleted: activity.isMissionDeleted || false
   };
 }
 

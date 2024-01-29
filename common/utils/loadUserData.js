@@ -222,7 +222,12 @@ export async function syncMissions(missions, store, syncMethod) {
 
   missions.forEach(mission => {
     const isMissionDeleted = !!mission.deletedAt;
-    activities.push(...mission.activities);
+    activities.push(
+      ...mission.activities.map(activity => ({
+        ...activity,
+        isMissionDeleted
+      }))
+    );
     expenditures.push(...mission.expenditures);
     comments.push(...mission.comments);
     missionData.push({
