@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import orderBy from "lodash/orderBy";
 import forEach from "lodash/forEach";
 import sum from "lodash/sum";
@@ -904,15 +904,55 @@ const VirtualizedTable = React.forwardRef(
         scrollerRef.current.updatePosition()
     }));
 
-    return attachScrollTo ? (
-      <WindowScroller ref={scrollerRef} scrollElement={attachScrollTo}>
-        {({ height, registerChild, onChildScroll, scrollTop }) => (
-          <AutoSizer
-            disableHeight
-            style={{ filter: loading ? "blur(5px)" : "none" }}
-          >
-            {({ width }) => (
-              <div ref={registerChild}>
+    const key = React.useMemo(() => `table__${entries.length}`, [entries]);
+
+    return (
+      <Fragment key={key}>
+        {attachScrollTo ? (
+          <WindowScroller ref={scrollerRef} scrollElement={attachScrollTo}>
+            {({ height, registerChild, onChildScroll, scrollTop }) => (
+              <AutoSizer
+                disableHeight
+                style={{ filter: loading ? "blur(5px)" : "none" }}
+              >
+                {({ width }) => (
+                  <div ref={registerChild}>
+                    <_VirtualizedTable
+                      ref={ref}
+                      columns={columns}
+                      entries={entries}
+                      classes={classes}
+                      width={width}
+                      height={height}
+                      minHeight={minHeight}
+                      headerHeight={headerHeight}
+                      rowHeightFunc={rowHeight}
+                      isAddingRow={isAddingRow}
+                      isEditingRow={isEditingRow}
+                      renderHeaderCell={renderHeaderCell}
+                      editedValues={editedValues}
+                      onScroll={onChildScroll}
+                      onScrollAction={() => {
+                        onScroll();
+                      }}
+                      scrollTop={scrollTop}
+                      autoHeight={true}
+                      onRowClick={onRowClick}
+                      rowClassName={rowClassName}
+                      renderRow={renderRow}
+                      headerClassName={headerClassName}
+                      renderCell={renderCell}
+                      rowId={rowId}
+                    />
+                  </div>
+                )}
+              </AutoSizer>
+            )}
+          </WindowScroller>
+        ) : (
+          <AutoSizer style={{ filter: loading ? "blur(5px)" : "none" }}>
+            {({ width, height }) => {
+              return (
                 <_VirtualizedTable
                   ref={ref}
                   columns={columns}
@@ -927,12 +967,6 @@ const VirtualizedTable = React.forwardRef(
                   isEditingRow={isEditingRow}
                   renderHeaderCell={renderHeaderCell}
                   editedValues={editedValues}
-                  onScroll={onChildScroll}
-                  onScrollAction={() => {
-                    onScroll();
-                  }}
-                  scrollTop={scrollTop}
-                  autoHeight={true}
                   onRowClick={onRowClick}
                   rowClassName={rowClassName}
                   renderRow={renderRow}
@@ -940,39 +974,11 @@ const VirtualizedTable = React.forwardRef(
                   renderCell={renderCell}
                   rowId={rowId}
                 />
-              </div>
-            )}
+              );
+            }}
           </AutoSizer>
         )}
-      </WindowScroller>
-    ) : (
-      <AutoSizer style={{ filter: loading ? "blur(5px)" : "none" }}>
-        {({ width, height }) => {
-          return (
-            <_VirtualizedTable
-              ref={ref}
-              columns={columns}
-              entries={entries}
-              classes={classes}
-              width={width}
-              height={height}
-              minHeight={minHeight}
-              headerHeight={headerHeight}
-              rowHeightFunc={rowHeight}
-              isAddingRow={isAddingRow}
-              isEditingRow={isEditingRow}
-              renderHeaderCell={renderHeaderCell}
-              editedValues={editedValues}
-              onRowClick={onRowClick}
-              rowClassName={rowClassName}
-              renderRow={renderRow}
-              headerClassName={headerClassName}
-              renderCell={renderCell}
-              rowId={rowId}
-            />
-          );
-        }}
-      </AutoSizer>
+      </Fragment>
     );
   }
 );
