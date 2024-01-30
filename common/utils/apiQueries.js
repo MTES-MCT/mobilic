@@ -442,7 +442,7 @@ export const USER_READ_QUERY = gql`
       lastName
       birthDate
       email
-      missions {
+      missions(includeDeletedMissions: true) {
         edges {
           node {
             ...FullMissionData
