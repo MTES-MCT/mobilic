@@ -252,10 +252,6 @@ function ActivitiesPanel() {
   }, [adminCompanies]);
 
   React.useEffect(() => {
-    setUsers(adminStore.activitiesFilters.users);
-  }, [adminStore.activitiesFilters.users]);
-
-  React.useEffect(() => {
     setTeams(adminStore.activitiesFilters.teams);
   }, [adminStore.activitiesFilters.teams]);
 
@@ -279,14 +275,23 @@ function ActivitiesPanel() {
     trackEvent(ACTIVITY_FILTER_EMPLOYEE);
   }, [users]);
 
-  let selectedUsers = users.filter(u => u.selected);
-  if (selectedUsers.length === 0) selectedUsers = users;
+  const selectedUsers = React.useMemo(() => {
+    const selected = users.filter(u => u.selected);
+    if (selected.length === 0) {
+      return users;
+    }
+    return selected;
+  }, [users]);
 
-  const selectedWorkDays = adminStore.workDays.filter(
-    wd =>
-      selectedUsers.map(u => u.id).includes(wd.user.id) &&
-      (!minDate || wd.day >= minDate) &&
-      (!maxDate || wd.day <= maxDate)
+  const selectedWorkDays = React.useMemo(
+    () =>
+      adminStore.workDays.filter(
+        wd =>
+          selectedUsers.map(u => u.id).includes(wd.user.id) &&
+          (!minDate || wd.day >= minDate) &&
+          (!maxDate || wd.day <= maxDate)
+      ),
+    [minDate, maxDate, selectedUsers, adminStore.workDays]
   );
 
   const periodAggregates = React.useMemo(
