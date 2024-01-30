@@ -6,6 +6,7 @@ import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "./Snackbar";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { isoFormatLocalDate } from "common/utils/time";
+import { syncMissions } from "common/utils/loadUserData";
 
 export const useHolidays = () => {
   const modals = useModals();
@@ -21,11 +22,20 @@ export const useHolidays = () => {
       handleContinue: async payload => {
         await alerts.withApiErrorHandling(
           async () => {
-            await api.graphQlMutate(LOG_HOLIDAY_MUTATION, payload);
+            const missionHolidayResponse = await api.graphQlMutate(
+              LOG_HOLIDAY_MUTATION,
+              payload
+            );
             alerts.success(
               "Votre congé ou absence a bien été enregistré(e)",
               "",
               6000
+            );
+            syncMissions(
+              [missionHolidayResponse.data.activities.logHoliday],
+              [],
+              store,
+              store.addToEntityObject
             );
             setTimeout(() => {
               const redirectParams = {
@@ -35,7 +45,6 @@ export const useHolidays = () => {
                 redirectParams
               ).toString();
               history.push(`/app/history?${searchParams}`);
-              window.location.reload(true);
             }, 1000);
           },
           "logHoliday",
