@@ -1400,6 +1400,7 @@ export const BULK_ACTIVITY_QUERY = gql`
 `;
 
 export const LOG_HOLIDAY_MUTATION = gql`
+  ${FULL_MISSION_FRAGMENT}
   mutation logHoliday(
     $companyId: Int!
     $userId: Int
@@ -1417,7 +1418,7 @@ export const LOG_HOLIDAY_MUTATION = gql`
         title: $title
         comment: $comment
       ) {
-        success
+        ...FullMissionData
       }
     }
   }
