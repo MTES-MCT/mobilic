@@ -76,7 +76,7 @@ export const FULL_MISSION_FRAGMENT = gql`
       legalName
       ...CompanySettings
     }
-    activities(includeDismissedActivities: true) {
+    activities(includeDismissedActivities: false) {
       id
       type
       missionId

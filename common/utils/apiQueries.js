@@ -6,12 +6,12 @@ import {
   CONTROL_BULLETIN_FRAGMENT,
   CONTROL_DATA_FRAGMENT,
   FRAGMENT_LOCATION_FULL,
-  FULL_MISSION_FRAGMENT,
   FULL_TEAM_FRAGMENT,
   REGULATION_COMPUTATIONS_FRAGMENT,
   OBSERVED_INFRACTIONS_FRAGMENT,
   WORK_DAYS_DATA_FRAGMENT,
-  FRAGMENT_ACTIVITY
+  FRAGMENT_ACTIVITY,
+  FULL_MISSION_FRAGMENT
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
 
@@ -372,7 +372,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       controlBulletin {
         ...ControlBulletin
       }
-      missions {
+      missions(includeDeletedMissions: true) {
         ...FullMissionData
       }
       employments {
