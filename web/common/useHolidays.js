@@ -31,12 +31,14 @@ export const useHolidays = () => {
               "",
               6000
             );
-            syncMissions(
-              [missionHolidayResponse.data.activities.logHoliday],
-              [],
-              store,
-              store.addToEntityObject
-            );
+            if (missionHolidayResponse?.data?.activities?.logHoliday) {
+              syncMissions(
+                [missionHolidayResponse.data.activities.logHoliday],
+                [],
+                store,
+                store.addToEntityObject
+              );
+            }
             setTimeout(() => {
               const redirectParams = {
                 day: isoFormatLocalDate(payload.startTime)
