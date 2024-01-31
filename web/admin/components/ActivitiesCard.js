@@ -19,6 +19,7 @@ import {
 
 export function ActivitiesCard({
   missionDeleted = false,
+  isHoliday = false,
   activities,
   onCreateActivity,
   onEditActivity,
@@ -126,7 +127,7 @@ export function ActivitiesCard({
       <Grid container key={2} spacing={2}>
         <Grid item xs={12}>
           <Grid key={1} item xs={12} className={classes.listActivitiesGrid}>
-            {onCreateActivity && <AddActivityButton />}
+            {onCreateActivity && !isHoliday && <AddActivityButton />}
             <AugmentedTable
               columns={activityColumns}
               ref={ref}

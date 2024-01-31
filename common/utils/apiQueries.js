@@ -754,6 +754,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
               id
               name
               submitterId
+              isHoliday
               validations {
                 submitterId
                 receptionTime
@@ -802,6 +803,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
               submitterId
               deletedAt
               deletedBy
+              isHoliday
               validations {
                 submitterId
                 receptionTime

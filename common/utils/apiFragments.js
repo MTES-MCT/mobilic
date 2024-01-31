@@ -50,6 +50,7 @@ export const FULL_MISSION_FRAGMENT = gql`
     isHoliday
     deletedAt
     deletedBy
+    isHoliday
     validations {
       submitterId
       receptionTime
