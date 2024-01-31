@@ -17,7 +17,6 @@ import { LoadingButton } from "common/components/LoadingButton";
 import { useModals } from "common/utils/modals";
 import List from "@mui/material/List";
 import { MISSION_QUERY } from "common/utils/apiQueries";
-import { Event } from "../../../common/Event";
 import { formatApiError } from "common/utils/errors";
 import { editUserExpenditures } from "common/utils/expenditures";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -26,8 +25,6 @@ import {
   missionHasAtLeastOneAdminValidation,
   missionsSelector
 } from "../../selectors/missionSelectors";
-import { MissionVehicleInfo } from "../MissionVehicleInfo";
-import { MissionLocationInfo } from "../MissionLocationInfo";
 import { MissionEmployeeCard } from "../MissionEmployeeCard";
 import ListItem from "@mui/material/ListItem";
 import { ADMIN_ACTIONS } from "../../store/reducers/root";
@@ -49,12 +46,14 @@ import {
   missionToValidationEntries
 } from "../../selectors/validationEntriesSelectors";
 import { partition } from "lodash/collection";
-import Button from "@mui/material/Button";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
   ADD_EMPLOYEE_IN_MISSION_PANEL,
   VALIDATE_MISSION_IN_MISSION_PANEL
 } from "common/utils/matomoTags";
+import { MissionDetailsVehicle } from "./MissionDetailsVehicle";
+import { MissionDetailsLocations } from "./MissionDetailsLocations";
+import { MissionDetailsObservations } from "./MissionDetailsObservations";
 
 export function MissionDetails({
   missionId,
@@ -129,6 +128,7 @@ export function MissionDetails({
   }
 
   const isMissionDeleted = React.useMemo(() => mission?.isDeleted, [mission]);
+  const isMissionHoliday = React.useMemo(() => mission?.isHoliday, [mission]);
 
   const adminMayOverrideValidation = React.useMemo(
     () =>
@@ -141,6 +141,7 @@ export function MissionDetails({
 
   const globalFieldsEditable = React.useMemo(
     () =>
+      !isMissionHoliday &&
       !isMissionDeleted &&
       !missionHasAtLeastOneAdminValidation(mission) &&
       (entriesToValidateByAdmin?.length > 0 || adminMayOverrideValidation),
@@ -212,10 +213,8 @@ export function MissionDetails({
 
   const adminSettings = adminStore.settings;
 
-  const missionCompany = adminStore.companies.find(
-    c => c.id === mission.companyId
-  );
-  const showExpenditures = adminSettings.requireExpenditures;
+  const showExpenditures =
+    adminSettings.requireExpenditures && !mission.isHoliday;
   const showKilometerReading = adminSettings.requireKilometerData;
   const allowTransfers = adminSettings.allowTransfers;
   const allowSupportActivity = adminSettings.requireSupportActivity;
@@ -249,6 +248,7 @@ export function MissionDetails({
                   ? newName => missionActions.changeName(newName)
                   : null
               }
+              missionPrefix={!isMissionHoliday}
             />
           </Grid>
           <Grid>
@@ -300,145 +300,24 @@ export function MissionDetails({
           {DEFAULT_LAST_ACTIVITY_TOO_LONG / 3600} heures.
         </Alert>
       )}
-      <Box className="flex-row" pb={4} style={{ alignItems: "center" }}>
-        <Typography variant="h5" className={classes.vehicle}>
-          Véhicule :
-        </Typography>
-        <MissionVehicleInfo
-          vehicle={mission.vehicle}
-          editVehicle={
-            globalFieldsEditable ? missionActions.updateVehicle : null
-          }
-          vehicles={adminStore.vehicles.filter(
-            v => missionCompany && v.companyId === missionCompany.id
-          )}
+      {!isMissionHoliday && (
+        <MissionDetailsVehicle
+          mission={mission}
+          missionActions={missionActions}
+          isEditable={globalFieldsEditable}
         />
-      </Box>
-      <Grid container justifyContent="space-between" spacing={4}>
-        <Grid item xs={12} sm={6}>
-          <Typography variant="h5">Début</Typography>
-          <MissionLocationInfo
-            location={mission.startLocation}
-            time={
-              mission.startTime ? dateTimeFormatter(mission.startTime) : null
-            }
-            editLocation={
-              globalFieldsEditable
-                ? address =>
-                    missionActions.updateLocation(
-                      address,
-                      true,
-                      mission.startLocation?.kilometerReading
-                    )
-                : null
-            }
-            editKm={
-              globalFieldsEditable
-                ? km => missionActions.updateKilometerReading(km, true)
-                : null
-            }
-            showKm={showKilometerReading}
-            defaultAddresses={adminStore.knownAddresses.filter(
-              a => missionCompany && a.companyId === missionCompany.id
-            )}
-            maxKmReading={mission.endLocation?.kilometerReading}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <Typography variant="h5">Fin</Typography>
-          <MissionLocationInfo
-            location={mission.endLocation}
-            time={
-              mission.startTime &&
-              !(mission.isDeleted && !mission.isComplete) ? (
-                <span>
-                  {dateTimeFormatter(mission.endTimeOrNow)}{" "}
-                  {mission.isComplete ? (
-                    ""
-                  ) : (
-                    <span className={classes.runningMissionText}>
-                      (en cours)
-                    </span>
-                  )}
-                </span>
-              ) : null
-            }
-            editLocation={
-              globalFieldsEditable
-                ? address =>
-                    missionActions.updateLocation(
-                      address,
-                      false,
-                      mission.endLocation?.kilometerReading
-                    )
-                : null
-            }
-            editKm={
-              globalFieldsEditable
-                ? km => missionActions.updateKilometerReading(km, false)
-                : null
-            }
-            showKm={showKilometerReading}
-            defaultAddresses={adminStore.knownAddresses.filter(
-              a => missionCompany && a.companyId === missionCompany.id
-            )}
-            minKmReading={mission.startLocation?.kilometerReading}
-          />
-        </Grid>
-      </Grid>
-      <Box
-        pb={4}
-        style={{ alignItems: "center" }}
-        className={classes.observationSection}
-      >
-        <Grid
-          container
-          spacing={2}
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Grid item>
-            <Typography variant="h5" className={classes.vehicle}>
-              Observations
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Button
-              aria-label="Ajouter une observation"
-              color="primary"
-              variant="outlined"
-              size="small"
-              className={classes.smallTextButton}
-              onClick={() => {
-                modals.open("commentInput", {
-                  handleContinue: missionActions.createComment
-                });
-              }}
-            >
-              Ajouter une observation
-            </Button>
-          </Grid>
-        </Grid>
-        {mission.comments.length > 0 ? (
-          <List className={classes.comments}>
-            {mission.comments.map(comment => (
-              <Event
-                key={comment.id}
-                text={comment.text}
-                time={comment.receptionTime}
-                submitter={comment.submitter}
-                submitterId={comment.submitterId}
-                withFullDate={true}
-                cancel={() => missionActions.deleteComment(comment)}
-              />
-            ))}
-          </List>
-        ) : (
-          <Typography className={classes.noCommentText}>
-            Aucune observation sur cette mission
-          </Typography>
-        )}
-      </Box>
+      )}
+      <MissionDetailsLocations
+        mission={mission}
+        missionActions={missionActions}
+        dateTimeFormatter={dateTimeFormatter}
+        isEditable={globalFieldsEditable}
+        showKilometerReading={showKilometerReading}
+      />
+      <MissionDetailsObservations
+        mission={mission}
+        missionActions={missionActions}
+      />
       {showKilometerReading &&
         mission.startLocation &&
         mission.startLocation.kilometerReading &&

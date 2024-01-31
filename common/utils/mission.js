@@ -165,10 +165,12 @@ export function computeMissionStats(m, users) {
       endTime,
       endTimeOrNow,
       service: endTimeOrNow - startTime,
-      totalWorkDuration: totalWorkDuration - transferDuration,
+      totalWorkDuration: m.isHoliday ? 0 : totalWorkDuration - transferDuration,
       transferDuration,
       isComplete: _activities.every(a => !!a.endTime),
-      breakDuration: endTimeOrNow - startTime - totalWorkDuration,
+      breakDuration: m.isHoliday
+        ? 0
+        : endTimeOrNow - startTime - totalWorkDuration,
       expenditures: m.expenditures.filter(e => e.userId.toString() === userId),
       adminValidation:
         m.validations.find(v => v.userId?.toString() === userId && v.isAdmin) ||
