@@ -45,8 +45,8 @@ export const VIDEOS = {
     description: "Utiliser Mobilic au quotidien"
   },
   Tuto_Ctt: {
-    id: "874704098",
-    title: "tuto-ctt-it-septembre-2023",
+    id: "909969262",
+    title: "tuto-ctt-it-janvier-2024",
     description: "Effectuer un contrôle en bord de route"
   },
   Tuto_Police: {
