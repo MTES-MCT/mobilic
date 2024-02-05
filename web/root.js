@@ -43,6 +43,7 @@ import {
   createInstance,
   useMatomo
 } from "@datapunt/matomo-tracker-react";
+import { Crisp } from "crisp-sdk-web";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ErrorBoundary } from "./common/ErrorFallback";
 import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
@@ -252,7 +253,14 @@ function _Root() {
   React.useEffect(() => {
     withLoadingScreen(
       async () => {
-        if (userId && store.userId()) await loadUserAndRoute();
+        if (userId && store.userId()) {
+          Crisp.session.setData({
+            mobilic_id: userId,
+            metabase_link:
+              "https://metabase.mobilic.beta.gouv.fr/dashboard/6?id=" + userId
+          });
+          await loadUserAndRoute();
+        }
       },
       { cacheKey: "loadUser" + userId },
       false
