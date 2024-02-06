@@ -42,9 +42,9 @@ export const RESOURCES_DOCUMENT = {
     },
     controleurConnected: {
       slideshare:
-        "https://www.slideshare.net/slideshow/embed_code/key/JXFUkvCYSfuNoH",
+        "https://www.slideshare.net/slideshow/embed_code/key/r1TfId1XpMD66Z",
       download:
-        "https://drive.google.com/uc?export=download&id=1A5yd3MoXV-28fWhXDKLGWQB5NWrJ-4sH"
+        "https://drive.google.com/uc?export=download&id=1kUdMyTkO7x-vPWLTOGwUcDXfuSeXAKi1"
     }
   },
   brochure: {
