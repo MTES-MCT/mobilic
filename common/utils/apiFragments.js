@@ -47,74 +47,6 @@ export const FULL_MISSION_FRAGMENT = gql`
     id
     name
     submitterId
-    validations {
-      submitterId
-      receptionTime
-      isAdmin
-      userId
-    }
-    vehicle {
-      id
-      name
-      registrationNumber
-    }
-    context
-    expenditures {
-      id
-      type
-      missionId
-      userId
-      receptionTime
-      spendingDate
-    }
-    company {
-      id
-      name
-      siren
-      ...CompanySettings
-    }
-    activities {
-      id
-      type
-      missionId
-      startTime
-      endTime
-      userId
-      submitterId
-      lastSubmitterId
-      user {
-        id
-        firstName
-        lastName
-      }
-    }
-    comments {
-      id
-      text
-      missionId
-      receptionTime
-      submitter {
-        id
-        firstName
-        lastName
-      }
-    }
-    startLocation {
-      ...FullLocation
-    }
-    endLocation {
-      ...FullLocation
-    }
-  }
-`;
-
-export const FULL_MISSION_DELETED_FRAGMENT = gql`
-  ${COMPANY_SETTINGS_FRAGMENT}
-  ${FRAGMENT_LOCATION_FULL}
-  fragment FullMissionDeletedData on Mission {
-    id
-    name
-    submitterId
     deletedAt
     deletedBy
     validations {
@@ -141,9 +73,10 @@ export const FULL_MISSION_DELETED_FRAGMENT = gql`
       id
       name
       siren
+      legalName
       ...CompanySettings
     }
-    activities(includeDismissedActivities: true) {
+    activities(includeDismissedActivities: false) {
       id
       type
       missionId

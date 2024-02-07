@@ -95,7 +95,7 @@ function ActivityItem({
             {isLongBreak
               ? "Repos journalier"
               : `${ACTIVITIES[activity.type].label}${
-                  activity.isDeleted ? " (activité supprimée)" : ""
+                  activity.isMissionDeleted ? " (activité supprimée)" : ""
                 }`}
           </Typography>
         }
