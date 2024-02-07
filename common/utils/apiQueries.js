@@ -372,7 +372,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
       controlBulletin {
         ...ControlBulletin
       }
-      missions(includeDeletedMissions: true) {
+      missions {
         ...FullMissionData
       }
       employments {
