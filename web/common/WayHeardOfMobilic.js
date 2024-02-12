@@ -31,7 +31,7 @@ export const WAY_HEARD_OF_MOBILIC_CHOICES = [
   },
   {
     value: "SEARCH_ENGINE",
-    label: "Moteur de recherche"
+    label: "Recherche internet"
   },
   {
     value: "WEBINAR",
