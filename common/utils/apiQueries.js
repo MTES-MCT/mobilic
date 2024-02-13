@@ -6,13 +6,12 @@ import {
   CONTROL_BULLETIN_FRAGMENT,
   CONTROL_DATA_FRAGMENT,
   FRAGMENT_LOCATION_FULL,
-  FULL_MISSION_FRAGMENT,
   FULL_TEAM_FRAGMENT,
   REGULATION_COMPUTATIONS_FRAGMENT,
   OBSERVED_INFRACTIONS_FRAGMENT,
   WORK_DAYS_DATA_FRAGMENT,
   FRAGMENT_ACTIVITY,
-  FULL_MISSION_DELETED_FRAGMENT
+  FULL_MISSION_FRAGMENT
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
 
@@ -361,7 +360,7 @@ export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
 
 export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
-  ${FRAGMENT_LOCATION_FULL}
+  ${FULL_MISSION_FRAGMENT}
   ${REGULATION_COMPUTATIONS_FRAGMENT}
   ${OBSERVED_INFRACTIONS_FRAGMENT}
   ${CONTROL_BULLETIN_FRAGMENT}
@@ -374,66 +373,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
         ...ControlBulletin
       }
       missions {
-        id
-        name
-        company {
-          id
-          name
-          siren
-          legalName
-          ...CompanySettings
-        }
-        validations {
-          submitterId
-          receptionTime
-          isAdmin
-          userId
-        }
-        vehicle {
-          id
-          name
-          registrationNumber
-        }
-        context
-        expenditures {
-          id
-          type
-          missionId
-          userId
-          spendingDate
-          receptionTime
-        }
-        activities {
-          id
-          type
-          missionId
-          startTime
-          endTime
-          userId
-          lastSubmitterId
-          user {
-            id
-            firstName
-            lastName
-          }
-        }
-        comments {
-          id
-          text
-          missionId
-          receptionTime
-          submitter {
-            id
-            firstName
-            lastName
-          }
-        }
-        startLocation {
-          ...FullLocation
-        }
-        endLocation {
-          ...FullLocation
-        }
+        ...FullMissionData
       }
       employments {
         id
@@ -495,7 +435,6 @@ export const USER_READ_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
   ${FULL_MISSION_FRAGMENT}
-  ${FULL_MISSION_DELETED_FRAGMENT}
   query readUser {
     me {
       id
@@ -503,17 +442,10 @@ export const USER_READ_QUERY = gql`
       lastName
       birthDate
       email
-      missions {
+      missions(includeDeletedMissions: true) {
         edges {
           node {
             ...FullMissionData
-          }
-        }
-      }
-      missionsDeleted {
-        edges {
-          node {
-            ...FullMissionDeletedData
           }
         }
       }
@@ -545,20 +477,16 @@ export const USER_MISSIONS_HISTORY_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
   ${FULL_MISSION_FRAGMENT}
-  ${FULL_MISSION_DELETED_FRAGMENT}
   query readUserMissionsHistory($fromTime: TimeStamp!, $untilTime: TimeStamp!) {
     me {
-      missions(fromTime: $fromTime, untilTime: $untilTime) {
+      missions(
+        fromTime: $fromTime
+        untilTime: $untilTime
+        includeDeletedMissions: true
+      ) {
         edges {
           node {
             ...FullMissionData
-          }
-        }
-      }
-      missionsDeleted(fromTime: $fromTime, untilTime: $untilTime) {
-        edges {
-          node {
-            ...FullMissionDeletedData
           }
         }
       }
