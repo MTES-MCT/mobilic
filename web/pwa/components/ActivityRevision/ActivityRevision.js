@@ -2,7 +2,7 @@ import React from "react";
 import Dialog from "@mui/material/Dialog";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
-import { now, sameMinute, truncateMinute } from "common/utils/time";
+import { HOUR, now, sameMinute, truncateMinute } from "common/utils/time";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "common/utils/TextField";
 import {
@@ -243,10 +243,14 @@ export default function ActivityRevisionOrCreationModal({
   React.useEffect(() => {
     if (event) {
       setNewUserTime(event.startTime);
-      setNewUserEndTime(event.endTime);
+      if (!event.endTime && !actuallyNullableEndTime) {
+        setNewUserEndTime(event.startTime ? event.startTime + HOUR : null);
+      } else {
+        setNewUserEndTime(event.endTime);
+      }
     } else {
       setNewUserTime(defaultTime);
-      setNewUserEndTime(null);
+      setNewUserEndTime(defaultTime ? defaultTime + HOUR : null);
     }
     setNewUserEndTimeError("");
     setNewUserTimeError("");
