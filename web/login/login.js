@@ -20,8 +20,6 @@ import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 import { LOGIN_MUTATION } from "common/utils/apiQueries";
 import { EmailField } from "../common/EmailField";
-import { DividerWithText } from "../common/DividerWithText";
-import Button from "@mui/material/Button";
 import { pluralize } from "common/utils/time";
 import { usePageTitle } from "../common/UsePageTitle";
 
@@ -48,7 +46,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Login() {
-  usePageTitle("Connexion - Mobilic");
+  usePageTitle("Connexion Entreprise / Salarié - Mobilic");
   const [email, setEmail] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState(null);
   const [password, setPassword] = React.useState("");
@@ -114,7 +112,7 @@ export default function Login() {
           Connexion
         </PaperContainerTitle>
         <PaperContainerTitle variant="h3">
-          Connexion Entreprises et Salariés
+          Entreprise ou salarié
         </PaperContainerTitle>
         <FranceConnectContainer
           mt={2}
@@ -202,28 +200,6 @@ export default function Login() {
             </Box>
           </form>
         </Box>
-        <DividerWithText className={classes.dividerAgentConnect}>
-          OU
-        </DividerWithText>
-        <PaperContainerTitle variant="h3">
-          Connexion Contrôleurs
-        </PaperContainerTitle>
-        <Typography paragraph={true}>
-          Vous êtes Agent public de l'Etat ?
-        </Typography>
-        <Button
-          aria-label="Connexion contrôleur"
-          value="/controller-login"
-          variant="contained"
-          href="/controller-login"
-          onClick={e => {
-            e.preventDefault();
-            history.push("/controller-login");
-          }}
-          className={classes.loginControllerButton}
-        >
-          Je me connecte à mon espace dédié
-        </Button>
       </Container>
     </PaperContainer>
   ];
