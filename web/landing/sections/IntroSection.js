@@ -23,10 +23,10 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(2)
     }
   },
-  agentConnectLink: {
+  loginLink: {
     whiteSpace: "nowrap"
   },
-  agentConnectAlert: {
+  loginInfo: {
     textAlign: "left"
   },
   underlineBlue: {
@@ -135,12 +135,9 @@ export function IntroSection() {
 
   return (
     <Container maxWidth={false} className={classes.heroContainer}>
-      <Alert severity="info" className={classes.agentConnectAlert}>
-        Accès Agent Public :{" "}
-        <Link variant="login controleur" to="/controller-login">
-          <span className={classes.agentConnectLink}>
-            se connecter à mon espace
-          </span>
+      <Alert severity="info" className={classes.loginInfo}>
+        <Link variant="login" to="/login-selection">
+          <span className={classes.loginLink}>Se connecter à mon espace</span>
         </Link>
       </Alert>
       <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
