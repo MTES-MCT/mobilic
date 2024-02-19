@@ -244,13 +244,13 @@ export default function ActivityRevisionOrCreationModal({
     if (event) {
       setNewUserTime(event.startTime);
       if (!event.endTime && !actuallyNullableEndTime) {
-        setNewUserEndTime(event.startTime ? event.startTime + HOUR : null);
+        setNewUserEndTime(presetNewEndTime(event.startTime));
       } else {
         setNewUserEndTime(event.endTime);
       }
     } else {
       setNewUserTime(defaultTime);
-      setNewUserEndTime(defaultTime ? defaultTime + HOUR : null);
+      setNewUserEndTime(presetNewEndTime(defaultTime));
     }
     setNewUserEndTimeError("");
     setNewUserTimeError("");
@@ -260,6 +260,17 @@ export default function ActivityRevisionOrCreationModal({
     setTeamMode(allowTeamMode);
     return () => {};
   }, [open]);
+
+  const presetNewEndTime = startTime => {
+    const dateNow = now();
+    if (startTime) {
+      const oneHourAfterStartTime = startTime + HOUR;
+      if (oneHourAfterStartTime < dateNow) {
+        return oneHourAfterStartTime;
+      }
+    }
+    return null;
+  };
 
   React.useEffect(() => {
     if (newUserTime) {
