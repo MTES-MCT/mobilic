@@ -1,5 +1,11 @@
 import React from "react";
-import { RestIcon, TransferIcon, TruckIcon, WorkIcon } from "./icons";
+import {
+  HolidayIcon,
+  RestIcon,
+  TransferIcon,
+  TruckIcon,
+  WorkIcon
+} from "./icons";
 import { now } from "./time";
 import forEach from "lodash/forEach";
 import maxBy from "lodash/maxBy";
@@ -41,6 +47,12 @@ export const ACTIVITIES = {
     label: "Liaison",
     renderIcon: props => <TransferIcon {...props} />,
     color: "#417DC4"
+  },
+  off: {
+    name: "off",
+    label: "Conge",
+    renderIcon: props => <HolidayIcon {...props} />,
+    color: "#3284FF"
   }
 };
 

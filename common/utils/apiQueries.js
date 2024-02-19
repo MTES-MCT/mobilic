@@ -754,6 +754,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
               id
               name
               submitterId
+              isHoliday
               validations {
                 submitterId
                 receptionTime
@@ -802,6 +803,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
               submitterId
               deletedAt
               deletedBy
+              isHoliday
               validations {
                 submitterId
                 receptionTime
@@ -1393,6 +1395,31 @@ export const BULK_ACTIVITY_QUERY = gql`
       startTime
       endTime
       lastSubmitterId
+    }
+  }
+`;
+
+export const LOG_HOLIDAY_MUTATION = gql`
+  ${FULL_MISSION_FRAGMENT}
+  mutation logHoliday(
+    $companyId: Int!
+    $userId: Int
+    $startTime: TimeStamp!
+    $endTime: TimeStamp!
+    $title: String!
+    $comment: String
+  ) {
+    activities {
+      logHoliday(
+        companyId: $companyId
+        userId: $userId
+        startTime: $startTime
+        endTime: $endTime
+        title: $title
+        comment: $comment
+      ) {
+        ...FullMissionData
+      }
     }
   }
 `;

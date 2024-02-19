@@ -12,6 +12,7 @@ function computeWorkDayGroupAggregates(workDayGroup) {
   let serviceDuration = 0;
   let totalWorkDuration = 0;
   let transferDuration = 0;
+  let offDuration = 0;
   let minStartTime;
   let maxEndTime;
   workDayGroup.forEach(wd => {
@@ -22,6 +23,7 @@ function computeWorkDayGroupAggregates(workDayGroup) {
     serviceDuration = serviceDuration + wd.serviceDuration;
     totalWorkDuration = totalWorkDuration + wd.totalWorkDuration;
     transferDuration = aggregateTimers[ACTIVITIES.transfer.name] || 0;
+    offDuration = aggregateTimers[ACTIVITIES.off.name] || 0;
     if (wd.expenditures) {
       Object.keys(wd.expenditures).forEach(exp => {
         aggregateExpenditures[exp] =
@@ -42,7 +44,7 @@ function computeWorkDayGroupAggregates(workDayGroup) {
     service: serviceDuration,
     totalWork: totalWorkDuration,
     transferDuration,
-    rest: serviceDuration - totalWorkDuration - transferDuration,
+    rest: serviceDuration - totalWorkDuration - transferDuration - offDuration,
     timers: aggregateTimers,
     companyIds: uniq(workDayGroup.map(wd => wd.companyId)),
     missionNames: workDayGroup.reduce(

@@ -34,9 +34,11 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     startLocation: missionPayload.startLocation,
     endLocation: missionPayload.endLocation,
     ended: missionPayload.ended !== undefined ? missionPayload.ended : true,
-    submitter: missionPayload.submitter || null,
+    submitter: missionPayload.submitter,
     deletedAt: missionPayload.deletedAt,
-    deletedBy: missionPayload.deletedBy
+    deletedBy: missionPayload.deletedBy,
+    isHoliday:
+      missionPayload.isHoliday !== undefined ? missionPayload.isHoliday : false
   };
 }
 
@@ -163,10 +165,12 @@ export function computeMissionStats(m, users) {
       endTime,
       endTimeOrNow,
       service: endTimeOrNow - startTime,
-      totalWorkDuration: totalWorkDuration - transferDuration,
+      totalWorkDuration: m.isHoliday ? 0 : totalWorkDuration - transferDuration,
       transferDuration,
       isComplete: _activities.every(a => !!a.endTime),
-      breakDuration: endTimeOrNow - startTime - totalWorkDuration,
+      breakDuration: m.isHoliday
+        ? 0
+        : endTimeOrNow - startTime - totalWorkDuration,
       expenditures: m.expenditures.filter(e => e.userId.toString() === userId),
       adminValidation:
         m.validations.find(v => v.userId?.toString() === userId && v.isAdmin) ||
