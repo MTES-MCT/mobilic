@@ -1,6 +1,5 @@
 import React from "react";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import { RoleSelection } from "./RoleSelection";
 import { AccountCreation } from "./AccountCreation";
 import {
   Switch,
@@ -87,11 +86,6 @@ export default function Signup() {
           {userId && (
             <Route key="company_completion" path={`${path}/company_complete`}>
               <Complete type="company" />
-            </Route>
-          )}
-          {!userId && (
-            <Route exact key="role" path={`${path}/role_selection`}>
-              <RoleSelection />
             </Route>
           )}
           <Redirect key="default" from="*" to={defaultRoute()} />

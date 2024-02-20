@@ -2159,9 +2159,9 @@
   resolved "https://registry.npmjs.org/@csstools/normalize.css/-/normalize.css-10.1.0.tgz"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
-"@dataesr/react-dsfr@^2.2.2":
+"@dataesr/react-dsfr@^2.9.2":
   version "2.9.2"
-  resolved "https://registry.npmjs.org/@dataesr/react-dsfr/-/react-dsfr-2.9.2.tgz"
+  resolved "https://registry.yarnpkg.com/@dataesr/react-dsfr/-/react-dsfr-2.9.2.tgz#2e6808b2b2601abd67980cff9b9a829b11c0c94c"
   integrity sha512-jbGJ/jM8R+RV2JLJXjTxrdVcq/DfJwNmwToygntpODBz7fES1L4rZjnl1zUenqo/+y9NrcFnZYkKkVdendnNTw==
   dependencies:
     "@babel/runtime" "^7.16.3"
