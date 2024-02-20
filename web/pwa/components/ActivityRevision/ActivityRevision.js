@@ -2,7 +2,7 @@ import React from "react";
 import Dialog from "@mui/material/Dialog";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
-import { HOUR, now, sameMinute, truncateMinute } from "common/utils/time";
+import { MINUTE, now, sameMinute, truncateMinute } from "common/utils/time";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "common/utils/TextField";
 import {
@@ -264,9 +264,9 @@ export default function ActivityRevisionOrCreationModal({
   const presetNewEndTime = startTime => {
     const dateNow = now();
     if (startTime) {
-      const oneHourAfterStartTime = startTime + HOUR;
-      if (oneHourAfterStartTime < dateNow) {
-        return oneHourAfterStartTime;
+      const halfHourAfterStartTime = startTime + 30 * MINUTE;
+      if (halfHourAfterStartTime < dateNow) {
+        return halfHourAfterStartTime;
       }
     }
     return null;
