@@ -1,25 +1,20 @@
 import React from "react";
-import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
-import Card from "@mui/material/Card";
 import { ManagerImage, WorkerImage } from "common/utils/icons";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import { LinkButton } from "../common/LinkButton";
-import { PaperContainerTitle } from "../common/PaperContainer";
+import { Header } from "../common/Header";
 import { usePageTitle } from "../common/UsePageTitle";
+import classNames from "classnames";
 
 const useStyles = makeStyles(theme => ({
-  roleButton: {
-    borderRadius: 1,
-    textTransform: "none",
-    maxWidth: 300
-  },
-  icon: {
-    fontSize: 100
-  },
-  roleButtonText: {
-    marginTop: theme.spacing(2)
+  container: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignContent: "center",
+    justifyContent: "center",
+    alignItems: "stretch",
+    gap: "16px",
+    textAlign: "left"
   }
 }));
 
@@ -28,40 +23,45 @@ export function RoleSelection() {
   const classes = useStyles();
 
   return [
-    <PaperContainerTitle key={0}>Quel est votre métier ?</PaperContainerTitle>,
-    <Grid key={1} container justifyContent="space-evenly">
-      <Grid item>
-        <LinkButton
-          aria-label="Inscription salarié"
-          to="/signup/user"
-          className={classes.roleButton}
-        >
-          <Card raised>
-            <Box p={2} className="flex-column-space-between">
-              <WorkerImage height={150} width={150} />
-              <Typography className={classes.roleButtonText}>
-                Je suis travailleur mobile et je dois remplir le LIC
-              </Typography>
-            </Box>
-          </Card>
-        </LinkButton>
-      </Grid>
-      <Grid item>
-        <LinkButton
-          aria-label="Inscription gestionnaire"
-          to="/signup/admin"
-          className={classes.roleButton}
-        >
-          <Card raised>
-            <Box p={2} className="flex-column-space-between">
-              <ManagerImage height={150} width={150} />
-              <Typography className={classes.roleButtonText}>
-                Je suis gestionnaire d'une entreprise de transport
-              </Typography>
-            </Box>
-          </Card>
-        </LinkButton>
-      </Grid>
-    </Grid>
+    <Header key={1} />,
+    <h3 key={2} className="fr-pt-2w">
+      Quel est votre métier ?
+    </h3>,
+    <div key={3} className={classNames(classes.container, "fr-mx-2w")}>
+      <div className="fr-card fr-enlarge-link fr-col-12 fr-col-md-4">
+        <div className="fr-card__body">
+          <div className="fr-card__content">
+            <h2 className="fr-card__title">
+              <a href="/signup/user">Travailleur mobile</a>
+            </h2>
+            <p className="fr-card__desc">
+              Je suis travailleur mobile et je dois remplir le LIC
+            </p>
+          </div>
+        </div>
+        <div className="fr-card__header">
+          <div className="fr-card__img">
+            <WorkerImage height={150} width={150} />
+          </div>
+        </div>
+      </div>
+      <div className="fr-card fr-enlarge-link fr-col-12 fr-col-md-4">
+        <div className="fr-card__body">
+          <div className="fr-card__content">
+            <h2 className="fr-card__title">
+              <a href="/signup/user">Gestionnaire</a>
+            </h2>
+            <p className="fr-card__desc">
+              Je suis gestionnaire d'une entreprise de transport
+            </p>
+          </div>
+        </div>
+        <div className="fr-card__header">
+          <div className="fr-card__img">
+            <ManagerImage height={150} width={150} />
+          </div>
+        </div>
+      </div>
+    </div>
   ];
 }

@@ -38,6 +38,7 @@ import { AgentConnectCallback } from "../signup/AgentConnectCallback";
 import { FranceConnectCallback } from "../signup/FranceConnectCallback";
 import { Invite } from "../signup/invite";
 import Signup from "../signup/root";
+import { RoleSelection } from "../signup/RoleSelection";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -145,6 +146,13 @@ export const ROUTES = [
         path: "/validations"
       }
     ]
+  },
+  {
+    path: "/signup/role_selection",
+    label: "Inscription",
+    accessible: () => true,
+    component: RoleSelection,
+    menuItemFilter: () => false
   },
   {
     path: "/signup",
