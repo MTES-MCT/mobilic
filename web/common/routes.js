@@ -30,7 +30,7 @@ import { Landing } from "../landing/root";
 import Stats from "../landing/stats";
 import { RequestResetPassword, ResetPassword } from "../login/ResetPassword";
 import { SyncEmployeeValidation } from "../login/SyncEmployeeValidation";
-import LoginSelection from "../login/login-selection";
+import LoginSelection from "../login/LoginSelection";
 import LoginController from "../login/login-controller";
 import Login from "../login/login";
 import { Logout } from "../login/logout";
