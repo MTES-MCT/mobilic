@@ -46,7 +46,7 @@ export function EmployeeFilter({
     <Autocomplete
       multiple={multiple}
       id="employee-filter"
-      options={orderBy(users, ["firstName", "lastName"], ["asc", "asc"])}
+      options={orderBy(users, ["lastName", "firstName"], ["asc", "asc"])}
       limitTags={1}
       size="small"
       disableCloseOnSelect
