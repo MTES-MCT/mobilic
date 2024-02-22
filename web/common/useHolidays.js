@@ -33,7 +33,7 @@ export const useHolidays = () => {
             );
             if (missionHolidayResponse?.data?.activities?.logHoliday) {
               syncMissions(
-                [missionHolidayResponse.data.activities.logHoliday],
+                missionHolidayResponse.data.activities.logHoliday,
                 store,
                 store.addToEntityObject
               );
