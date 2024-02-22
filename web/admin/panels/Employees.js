@@ -316,10 +316,18 @@ export function Employees({ company, containerRef }) {
   const validEmploymentColumns = [
     {
       label: "Nom",
-      name: "name",
+      name: "lastName",
       align: "left",
       sortable: true,
-      minWidth: 200,
+      minWidth: 120,
+      overflowTooltip: true
+    },
+    {
+      label: "Prénom",
+      name: "firstName",
+      align: "left",
+      sortable: true,
+      minWidth: 120,
       overflowTooltip: true
     },
     {
@@ -427,6 +435,8 @@ export function Employees({ company, containerRef }) {
       id: e.user.id,
       email: e.user.email,
       employmentId: e.id,
+      lastName: e.user.lastName,
+      firstName: e.user.firstName,
       name: formatPersonName(e.user),
       startDate: e.startDate,
       endDate: e.endDate,
@@ -801,7 +811,7 @@ export function Employees({ company, containerRef }) {
       className={classes.acceptedEmployments}
       virtualizedMaxHeight={"100%"}
       ref={validEmploymentsTableRef}
-      defaultSortBy="name"
+      defaultSortBy="lastName"
       alwaysSortBy={[["active", "desc"]]}
       virtualizedAttachScrollTo={containerRef.current}
       rowClassName={row => (!row.active ? classes.terminatedEmployment : "")}
