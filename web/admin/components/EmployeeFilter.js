@@ -46,11 +46,11 @@ export function EmployeeFilter({
     <Autocomplete
       multiple={multiple}
       id="employee-filter"
-      options={orderBy(users, ["firstName", "lastName"], ["asc", "asc"])}
+      options={orderBy(users, ["lastName", "firstName"], ["asc", "asc"])}
       limitTags={1}
       size="small"
       disableCloseOnSelect
-      getOptionLabel={option => formatPersonName(option)}
+      getOptionLabel={option => formatPersonName(option, true)}
       renderOption={(props, option) => (
         <li {...props}>
           {multiple && (
@@ -60,7 +60,7 @@ export function EmployeeFilter({
               checked={option.selected || false}
             />
           )}
-          <span>{formatPersonName(option)}</span>
+          <span>{formatPersonName(option, true)}</span>
         </li>
       )}
       value={selectedUsers}
