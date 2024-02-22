@@ -406,7 +406,7 @@ export function Employees({ company, containerRef }) {
     .map(e => ({
       pending: true,
       idOrEmail: e.email || e.user?.id,
-      name: e.user ? formatPersonName(e.user) : null,
+      name: e.user ? formatPersonName(e.user, true) : null,
       hasAdminRights: e.hasAdminRights,
       creationDate: e.startDate,
       latestInviteEmailDateString: frenchFormatDateStringOrTimeStamp(
