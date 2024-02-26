@@ -50,7 +50,7 @@ export const ACTIVITIES = {
   },
   off: {
     name: "off",
-    label: "Conge",
+    label: "Congé",
     renderIcon: props => <HolidayIcon {...props} />,
     color: "#3284FF"
   }

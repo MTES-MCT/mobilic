@@ -22,7 +22,7 @@ const OTHER_MOTIF_ID = "other";
 const MOTIFS = [
   {
     id: "sick-leave",
-    label: "Arrêt Maladie"
+    label: "Arrêt maladie"
   },
   {
     id: "workplace-accident",
