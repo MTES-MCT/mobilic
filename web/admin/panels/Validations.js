@@ -131,7 +131,7 @@ function ValidationPanel() {
       name: "user",
       align: "left",
       minWidth: 200,
-      format: formatPersonName,
+      format: (person, _) => formatPersonName(person),
       overflowTooltip: true,
       alwaysShowTooltip: true
     },
