@@ -4,7 +4,6 @@ import ApolloLinkTimeout from "apollo-link-timeout";
 import { InMemoryCache } from "@apollo/client/cache";
 import { onError } from "@apollo/client/link/error";
 import * as Sentry from "@sentry/browser";
-import { Crisp } from "crisp-sdk-web";
 import omit from "lodash/omit";
 import {
   broadCastChannel,
@@ -354,7 +353,6 @@ class Api {
   async logout({ postFCLogoutRedirect = "/logout", failOnError = true }) {
     this.refreshTokenQueue.clear();
     this.nonConcurrentQueryQueue.clear();
-    Crisp.session.reset();
     const hasFcToken = readCookie("hasFc") || false;
     const hasAcToken = readCookie("hasAc") || false;
     if (hasFcToken) {
