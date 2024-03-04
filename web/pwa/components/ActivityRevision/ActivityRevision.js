@@ -378,7 +378,8 @@ export default function ActivityRevisionOrCreationModal({
 
   const filteredActivities = () => {
     return Object.keys(ACTIVITIES).filter(
-      a => filterOutSupport(a) && filterOutTransfer(a)
+      a =>
+        filterOutSupport(a) && filterOutTransfer(a) && a !== ACTIVITIES.off.name
     );
   };
 

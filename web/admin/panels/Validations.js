@@ -73,6 +73,11 @@ const VALIDATION_TABS = [
   }
 ];
 
+const formatMissionName = mission =>
+  `${mission.isHoliday ? "" : "Mission "}${mission.name} du ${formatDay(
+    mission.startTime
+  )}`;
+
 function ValidationPanel() {
   usePageTitle("Validation Saisie(s) - Mobilic");
   const api = useApi();
@@ -425,7 +430,7 @@ function ValidationPanel() {
           format: (value, entry) => (
             <Box className="flex-row-space-between">
               <Typography variant="h6" className={classes.missionTitle}>
-                Mission {entry.name} du {formatDay(entry.startTime)}
+                {formatMissionName(entry)}
               </Typography>
               {tab === 0 && (
                 <LoadingButton
@@ -475,7 +480,7 @@ function ValidationPanel() {
               )}
             </Box>
           ),
-          groupProps: ["name", "startTime"]
+          groupProps: ["name", "startTime", "isHoliday"]
         }}
         headerClassName={`${classes.header} ${classes.row}`}
       />
