@@ -22,6 +22,7 @@ import { LOGIN_MUTATION } from "common/utils/apiQueries";
 import { EmailField } from "../common/EmailField";
 import { pluralize } from "common/utils/time";
 import { usePageTitle } from "../common/UsePageTitle";
+import { RegistrationLink } from "../common/RegistrationLink";
 
 const useStyles = makeStyles(theme => ({
   forgotPasswordLink: {
@@ -184,19 +185,7 @@ export default function Login() {
                   Je n'ai pas de mot de passe
                 </Link>
               </Typography>
-              <Typography>
-                Pas encore de compte ?{" "}
-                <Link
-                  href="/signup"
-                  onClick={e => {
-                    e.preventDefault();
-                    history.push("/signup");
-                  }}
-                >
-                  {" "}
-                  Je m'inscris
-                </Link>
-              </Typography>
+              <RegistrationLink />
             </Box>
           </form>
         </Box>
