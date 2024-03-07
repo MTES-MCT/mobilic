@@ -252,11 +252,13 @@ export function LogHolidayForm({
                   setUser(e.target.value);
                 }}
               >
-                {users.map(user => (
-                  <MenuItem key={user.id} value={user}>
-                    {`${user.firstName} ${user.lastName}`}
-                  </MenuItem>
-                ))}
+                {users
+                  .sort((u1, u2) => u1.lastName.localeCompare(u2.lastName))
+                  .map(user => (
+                    <MenuItem key={user.id} value={user}>
+                      {`${user.lastName} ${user.firstName}`}
+                    </MenuItem>
+                  ))}
               </TextField>
             </>
           )}
