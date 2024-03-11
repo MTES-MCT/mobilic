@@ -2,7 +2,7 @@ import React from "react";
 import Dialog from "@mui/material/Dialog";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
-import { now, sameMinute, truncateMinute } from "common/utils/time";
+import { MINUTE, now, sameMinute, truncateMinute } from "common/utils/time";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "common/utils/TextField";
 import {
@@ -243,10 +243,14 @@ export default function ActivityRevisionOrCreationModal({
   React.useEffect(() => {
     if (event) {
       setNewUserTime(event.startTime);
-      setNewUserEndTime(event.endTime);
+      if (!event.endTime && !actuallyNullableEndTime) {
+        setNewUserEndTime(presetNewEndTime(event.startTime));
+      } else {
+        setNewUserEndTime(event.endTime);
+      }
     } else {
       setNewUserTime(defaultTime);
-      setNewUserEndTime(null);
+      setNewUserEndTime(presetNewEndTime(defaultTime));
     }
     setNewUserEndTimeError("");
     setNewUserTimeError("");
@@ -256,6 +260,17 @@ export default function ActivityRevisionOrCreationModal({
     setTeamMode(allowTeamMode);
     return () => {};
   }, [open]);
+
+  const presetNewEndTime = startTime => {
+    const dateNow = now();
+    if (startTime) {
+      const halfHourAfterStartTime = startTime + 30 * MINUTE;
+      if (halfHourAfterStartTime < dateNow) {
+        return halfHourAfterStartTime;
+      }
+    }
+    return null;
+  };
 
   React.useEffect(() => {
     if (newUserTime) {
@@ -363,7 +378,8 @@ export default function ActivityRevisionOrCreationModal({
 
   const filteredActivities = () => {
     return Object.keys(ACTIVITIES).filter(
-      a => filterOutSupport(a) && filterOutTransfer(a)
+      a =>
+        filterOutSupport(a) && filterOutTransfer(a) && a !== ACTIVITIES.off.name
     );
   };
 

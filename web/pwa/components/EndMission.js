@@ -9,7 +9,7 @@ import { Expenditures } from "./Expenditures";
 import { AddressField } from "../../common/AddressField";
 import KilometerReadingField from "../../common/KilometerReadingField";
 import { NativeDateTimePicker } from "../../common/NativeDateTimePicker";
-import { getDaysBetweenTwoDates, now } from "common/utils/time";
+import { MINUTE, getDaysBetweenTwoDates, now } from "common/utils/time";
 import { setCurrentLocation } from "common/utils/location";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 
@@ -25,7 +25,10 @@ export default function EndMissionModal({
   missionMinEndTime
 }) {
   const [expenditures, setExpenditures] = React.useState({});
-  const [endTime, setEndTime] = React.useState(missionEndTime);
+  const [endTime, setEndTime] = React.useState(
+    missionEndTime ||
+      (missionMinEndTime ? missionMinEndTime + 30 * MINUTE : null)
+  );
   const [comment, setComment] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [address, setAddress] = React.useState(false);

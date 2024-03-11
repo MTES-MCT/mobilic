@@ -48,6 +48,9 @@ export function groupMissionsByPeriodUnit(missions, unit) {
   const groups = {};
   const now1 = now();
   missions.forEach(mission => {
+    if (unit.value === "mission" && mission.isHoliday) {
+      return;
+    }
     const firstPeriod = periodGetter(mission.startTime);
     const lastPeriod =
       periodLength.asSeconds() > 0
