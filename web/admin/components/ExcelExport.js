@@ -5,6 +5,7 @@ import { MobileDatePicker } from "@mui/x-date-pickers";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import FormControl from "@mui/material/FormControl";
+import Alert from "@mui/material/Alert";
 import { useApi } from "common/utils/api";
 import { makeStyles } from "@mui/styles";
 import { LoadingButton } from "common/components/LoadingButton";
@@ -120,6 +121,10 @@ export default function ExcelExport({
         <Typography variant="h5" className={classes.subTitle}>
           Options
         </Typography>
+        <Alert severity="warning">
+          En cas d'export pour les agents de contrôle, veillez à ne pas modifier
+          la mise en page du fichier avant envoi.
+        </Alert>
         <Grid spacing={4} container className={classes.grid}>
           {companies.length > 1 && (
             <Grid item sm={6} className={classes.flexGrow}>
