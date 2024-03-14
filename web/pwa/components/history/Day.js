@@ -65,13 +65,21 @@ export function Day({
     () => missionsInPeriod.filter(mission => mission.isDeleted),
     [missionsInPeriod]
   );
-  const missionsDeletedWarning =
-    missionsDeleted.length === 1
-      ? `La journée comporte une mission supprimée le ${prettyFormatDay(
-          missionsDeleted[0].deletedAt,
-          true
-        )} par ${missionsDeleted[0].deletedBy}`
-      : `La journée comporte plusieurs missions supprimées`;
+
+  const missionsDeletedWarning = React.useMemo(() => {
+    if (missionsDeleted.length === 1) {
+      const missionDeleted = missionsDeleted[0];
+      return `La journée comporte une ${
+        missionDeleted.isHoliday
+          ? "absence de type " + missionDeleted.name.toLowerCase()
+          : "mission"
+      } supprimée le ${prettyFormatDay(missionDeleted.deletedAt, true)} par ${
+        missionDeleted.deletedBy
+      }.`;
+    } else {
+      return `La journée comporte plusieurs missions et/ou absences supprimées.`;
+    }
+  }, [missionsDeleted]);
 
   const [
     missionResourcesToUse,
