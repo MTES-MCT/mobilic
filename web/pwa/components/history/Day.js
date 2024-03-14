@@ -157,7 +157,7 @@ export function Day({
   return (
     <Box>
       {missionsDeleted.length > 0 ? (
-        <Alert severity="warning" sx={{ marginBottom: 2 }}>
+        <Alert severity="warning" sx={{ marginBottom: 2, textAlign: "left" }}>
           <Typography>{missionsDeletedWarning}</Typography>
         </Alert>
       ) : (
