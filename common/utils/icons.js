@@ -153,19 +153,19 @@ export function NoDataImage(props) {
 }
 
 export function ManagerImage(props) {
-  return <img alt="gestionnaire" src={_ManagerImage} {...props} />;
+  return <img alt="" src={_ManagerImage} {...props} />;
 }
 
 export function WorkerImage(props) {
-  return <img alt="salarié" src={_WorkerImage} {...props} />;
+  return <img alt="" src={_WorkerImage} {...props} />;
 }
 
 export function SoftwareImage(props) {
-  return <img alt="logiciel" src={_SoftwareImage} {...props} />;
+  return <img alt="" src={_SoftwareImage} {...props} />;
 }
 
 export function ControllerImage(props) {
-  return <img alt="controleur" src={_ControllerImage} {...props} />;
+  return <img alt="" src={_ControllerImage} {...props} />;
 }
 
 export function AgentConnectImage(props) {
