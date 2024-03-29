@@ -162,6 +162,7 @@ export default function GeolocPermissionInfoModal({
           severity="info"
           className={classes.alertInfo}
           data-testid="geoloc-modal-alert-info"
+          variant="filled"
         >
           <Typography className={classes.informationText}>
             Rassurez-vous, vos trajets ne seront pas géolocalisés et votre
