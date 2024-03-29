@@ -63,6 +63,7 @@ export function Footer({ withFollow = true }) {
           <FooterLink href="/accessibility">
             Accessibilité : non conforme
           </FooterLink>
+          <FooterLink href="legal-notices">Mentions légales</FooterLink>
           <FooterLink href="#" onClick={() => modals.open("cgu")}>
             Conditions générales d'utilisation
           </FooterLink>
