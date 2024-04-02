@@ -1,43 +1,45 @@
 import React from "react";
-import { Landing } from "../landing/root";
-import Login from "../login/login";
-import Signup from "../signup/root";
-import Stats from "../landing/stats";
-import Accessibility from "../landing/accessibility";
-import PrivacyPolicy from "../landing/privacyPolicy";
-import Home from "../home/AccountInfo/AccountInfo";
-import { Invite } from "../signup/invite";
-import { RedeemInvite } from "../home/RedeemInvite";
-import { FranceConnectCallback } from "../signup/FranceConnectCallback";
-import { Logout } from "../login/logout";
-import { ActivateEmail } from "../signup/ActivateEmail";
-import { RequestResetPassword, ResetPassword } from "../login/ResetPassword";
-import { CGU } from "../landing/cgu";
-import { UserRead } from "../control/UserRead";
-import { XlsxVerifier } from "../control/VerifyXlsxSignature";
-import { Partners } from "../landing/partners";
 import { Redirect, useParams } from "react-router-dom";
-import { ResourcePage } from "../landing/ResourcePage/ResourcePage";
-import { AdminResourcePage } from "../landing/ResourcePage/AdminResourcePage";
-import { DriverResourcePage } from "../landing/ResourcePage/DriverResourcePage";
-import { ControllerResourcePage } from "../landing/ResourcePage/ControllerResourcePage";
-import { RegulationPage } from "../landing/ResourcePage/RegulationPage";
+import groupBy from "lodash/groupBy";
+import size from "lodash/size";
 import {
   entryToBeValidatedByAdmin,
   missionsToTableEntries
 } from "../admin/selectors/validationEntriesSelectors";
-import size from "lodash/size";
-import groupBy from "lodash/groupBy";
-import LoginController from "../login/login-controller";
-import { AgentConnectCallback } from "../signup/AgentConnectCallback";
-import { ControllerHome } from "../controller/components/home/ControllerHome";
-import { ControllerScanQRCode } from "../controller/components/scanQRCode/ControllerScanQRCode";
-import { ControllerQRCodeNotRecognized } from "../controller/components/scanQRCode/ControllerQRCodeNotRecognized";
+import { UserRead } from "../control/UserRead";
+import { XlsxVerifier } from "../control/VerifyXlsxSignature";
 import { ControllerHistory } from "../controller/components/history/ControllerHistory";
-import { SyncEmployeeValidation } from "../login/SyncEmployeeValidation";
+import { ControllerHome } from "../controller/components/home/ControllerHome";
+import { ControllerQRCodeNotRecognized } from "../controller/components/scanQRCode/ControllerQRCodeNotRecognized";
+import { ControllerScanQRCode } from "../controller/components/scanQRCode/ControllerScanQRCode";
+import Home from "../home/AccountInfo/AccountInfo";
+import { RedeemInvite } from "../home/RedeemInvite";
+import { AdminResourcePage } from "../landing/ResourcePage/AdminResourcePage";
+import { ControllerResourcePage } from "../landing/ResourcePage/ControllerResourcePage";
+import { DriverResourcePage } from "../landing/ResourcePage/DriverResourcePage";
+import { RegulationPage } from "../landing/ResourcePage/RegulationPage";
+import { ResourcePage } from "../landing/ResourcePage/ResourcePage";
+import Accessibility from "../landing/accessibility";
 import { Certificate } from "../landing/certificate";
+import { CGU } from "../landing/cgu";
 import { LandingGestionnaire } from "../landing/gestionnaire/LandingGestionnaire";
 import LegalNotices from "../landing/legalNotices";
+import { Partners } from "../landing/partners";
+import PrivacyPolicy from "../landing/privacyPolicy";
+import { Landing } from "../landing/root";
+import Stats from "../landing/stats";
+import { RequestResetPassword, ResetPassword } from "../login/ResetPassword";
+import { SyncEmployeeValidation } from "../login/SyncEmployeeValidation";
+import LoginSelection from "../login/LoginSelection";
+import LoginController from "../login/login-controller";
+import Login from "../login/login";
+import { Logout } from "../login/logout";
+import { ActivateEmail } from "../signup/ActivateEmail";
+import { AgentConnectCallback } from "../signup/AgentConnectCallback";
+import { FranceConnectCallback } from "../signup/FranceConnectCallback";
+import { Invite } from "../signup/invite";
+import Signup from "../signup/root";
+import { SignupSelection } from "../signup/SignupSelection";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -147,6 +149,13 @@ export const ROUTES = [
     ]
   },
   {
+    path: "/signup/role_selection",
+    label: "Inscription",
+    accessible: () => true,
+    component: SignupSelection,
+    menuItemFilter: () => false
+  },
+  {
     path: "/signup",
     label: "Inscription",
     accessible: () => true,
@@ -156,12 +165,19 @@ export const ROUTES = [
     mainCta: true
   },
   {
-    path: "/login",
+    path: "/login-selection",
     label: "Connexion",
     accessible: () => true,
-    component: Login,
+    component: LoginSelection,
     menuItemFilter: ({ userInfo, controllerInfo }) =>
       !userInfo?.id && !controllerInfo?.id
+  },
+  {
+    path: "/login",
+    label: "Connexion Entreprise / Salarié",
+    accessible: () => true,
+    component: Login,
+    menuItemFilter: () => false
   },
   {
     path: "/controller-login",

@@ -323,3 +323,25 @@ video:not([href])[controls] {
     opacity: 0;
   }
 }
+
+.fr-card__title a:after {
+  --icon-size: 1.5rem;
+  bottom: 2rem;
+  position: absolute;
+  right: 2rem;
+  margin-left: .5rem;
+  -webkit-mask-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0ibTE2LjE3MiAxMS01LjM2NC01LjM2NCAxLjQxNC0xLjQxNEwyMCAxMmwtNy43NzggNy43NzgtMS40MTQtMS40MTRMMTYuMTcyIDEzSDR2LTJoMTIuMTcyWiIvPjwvc3ZnPg==);
+  mask-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZD0ibTE2LjE3MiAxMS01LjM2NC01LjM2NCAxLjQxNC0xLjQxNEwyMCAxMmwtNy43NzggNy43NzgtMS40MTQtMS40MTRMMTYuMTcyIDEzSDR2LTJoMTIuMTcyWiIvPjwvc3ZnPg==);
+  background-color: currentColor;
+  content: "";
+  display: inline-block;
+  flex: 0 0 auto;
+  height: 1rem;
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  vertical-align: calc(.375em - .5rem);
+  vertical-align: calc((.75em - var(--icon-size))*.5);
+  width: 1rem;
+  width: var(--icon-size)
+}
