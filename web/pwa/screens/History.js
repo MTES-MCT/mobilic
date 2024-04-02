@@ -105,7 +105,7 @@ const tabs = {
             -
           </Typography>
           <Typography className={missions ? "bold" : ""}>
-            {shortPrettyFormatDay(period + DAY * 7)}
+            {shortPrettyFormatDay(period + DAY * 6)}
           </Typography>
         </Box>
       );
