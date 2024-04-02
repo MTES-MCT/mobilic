@@ -53,6 +53,14 @@ const MOTIFS = [
     label: "Congé pour évènements familiaux"
   },
   {
+    id: "bank-holiday",
+    label: "Jour férié"
+  },
+  {
+    id: "heavy-truck-driving",
+    label: "Conduite poids lourd"
+  },
+  {
     id: "training",
     label: "Formation"
   },

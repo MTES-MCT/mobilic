@@ -16,7 +16,7 @@ export function LogHolidayButton({ onClick }) {
         <DateRangeIcon />
       </IconButton>
       <Typography align="left" mr={2}>
-        Renseigner un congé ou une absence
+        Renseigner une indisponibilité
       </Typography>
     </Grid>
   );
