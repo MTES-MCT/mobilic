@@ -37,6 +37,7 @@ import { ControllerHistory } from "../controller/components/history/ControllerHi
 import { SyncEmployeeValidation } from "../login/SyncEmployeeValidation";
 import { Certificate } from "../landing/certificate";
 import { LandingGestionnaire } from "../landing/gestionnaire/LandingGestionnaire";
+import LegalNotices from "../landing/legalNotices";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -181,6 +182,13 @@ export const ROUTES = [
     label: "Déclaration d'accessibilité",
     accessible: () => true,
     component: Accessibility,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/legal-notices",
+    label: "Mentions légales",
+    accessible: () => true,
+    component: LegalNotices,
     menuItemFilter: () => false
   },
   {
