@@ -33,10 +33,18 @@ const initGoogleAds = () => {
   gtag("config", "AW-11378818239");
 };
 
+const isGoogleAdsInitiated = () => {
+  return !!window.dataLayer;
+};
+
 const trackGoogleAds = () => {
-  gtag("event", "conversion", {
-    send_to: "AW-11378818239/ErUFCOnghf8YEL_567Eq"
-  });
+  if (!isGoogleAdsInitiated()) {
+    console.info("Google ads script not initiated: event won't be sent");
+  } else {
+    gtag("event", "conversion", {
+      send_to: "AW-11378818239/ErUFCOnghf8YEL_567Eq"
+    });
+  }
 };
 
 const removeGoogleAds = () => {
@@ -49,5 +57,6 @@ module.exports = {
   initAxeptio,
   initGoogleAds,
   trackGoogleAds,
-  removeGoogleAds
+  removeGoogleAds,
+  isGoogleAdsInitiated
 };

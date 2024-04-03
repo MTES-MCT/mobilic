@@ -261,7 +261,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
           <Stack direction="row" spacing={1}>
             <DateRangeIcon />
             <Typography className={classes.holidayButton}>
-              Renseigner un congé ou une absence
+              Renseigner une indisponibilité
             </Typography>
           </Stack>
         </LoadingButton>

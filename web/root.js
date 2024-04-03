@@ -37,7 +37,11 @@ import { ScrollToTop } from "common/utils/scroll";
 import { SnackbarProvider, useSnackbarAlerts } from "./common/Snackbar";
 import { EnvironmentHeader } from "./common/EnvironmentHeader";
 import { LiveChat } from "./common/LiveChat";
-import { currentControllerId, currentUserId } from "common/utils/cookie";
+import {
+  currentControllerId,
+  currentUserId,
+  hasGoogleAdsConsent
+} from "common/utils/cookie";
 import {
   MatomoProvider,
   createInstance,
@@ -47,6 +51,7 @@ import { Crisp } from "crisp-sdk-web";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ErrorBoundary } from "./common/ErrorFallback";
 import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
+import { isGoogleAdsInitiated, initGoogleAds } from "common/utils/trackAds";
 
 import "@gouvfr/dsfr/dist/dsfr.min.css"; // dsfr should be imported before custom styles
 import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
@@ -208,6 +213,13 @@ function _Root() {
   };
 
   React.useEffect(() => {
+    if (
+      process.env.REACT_APP_GOOGLE_ADS &&
+      !isGoogleAdsInitiated() &&
+      hasGoogleAdsConsent()
+    ) {
+      initGoogleAds();
+    }
     if (
       !currentUserId() &&
       (location.pathname.startsWith("/app") ||
