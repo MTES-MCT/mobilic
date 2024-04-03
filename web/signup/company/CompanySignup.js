@@ -20,6 +20,7 @@ import { SelectSiretsStep } from "./SelectSiretsStep";
 import { OptInForSiretsSelectionStep } from "./OptInForSiretsSelectionStep";
 import { usePageTitle } from "../../common/UsePageTitle";
 import trackAds from "common/utils/trackAds";
+import { hasGoogleAdsConsent } from "common/utils/cookie";
 
 export function CompanySignup() {
   usePageTitle("Inscription de l'entreprise - Mobilic");
@@ -75,7 +76,7 @@ export function CompanySignup() {
   const handleCompanySignup = async e => {
     e.preventDefault();
 
-    if (process.env.REACT_APP_GOOGLE_ADS && window.dataLayer) {
+    if (process.env.REACT_APP_GOOGLE_ADS && hasGoogleAdsConsent()) {
       trackAds.trackGoogleAds();
     }
 
@@ -107,7 +108,7 @@ export function CompanySignup() {
   const handleCompaniesSignup = async e => {
     e.preventDefault();
 
-    if (process.env.REACT_APP_GOOGLE_ADS && window.dataLayer) {
+    if (process.env.REACT_APP_GOOGLE_ADS && hasGoogleAdsConsent()) {
       trackAds.trackGoogleAds();
     }
 
