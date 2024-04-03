@@ -7,6 +7,7 @@ import Card from "@mui/material/Card";
 import { FunnelModal, useStyles as useFunnelModalStyles } from "./FunnelModal";
 import { makeStyles } from "@mui/styles";
 import { PersonIcon, TeamIcon } from "common/utils/icons";
+import ButtonBase from "@mui/material/ButtonBase";
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -54,32 +55,30 @@ export default function TeamOrSoloChoiceModal({
             Pour qui enregistrez-vous le temps de travail&nbsp;?
           </Typography>
           <Box mt={3} mb={6} className="flex-row-center">
-            <Card
-              className={`${classes.card} ${classes.left}`}
-              onClick={() => handleContinue(false)}
-            >
-              <CardContent
-                className={`flex-column-space-between ${classes.content}`}
-              >
-                <PersonIcon color="primary" className={classes.icon} />
-                <Typography className="bold" color="primary">
-                  Moi
-                </Typography>
-              </CardContent>
-            </Card>
-            <Card
-              className={`${classes.card} ${classes.right}`}
-              onClick={() => handleContinue(true)}
-            >
-              <CardContent
-                className={`flex-column-space-between ${classes.content}`}
-              >
-                <TeamIcon color="primary" className={classes.icon} />
-                <Typography noWrap className="bold" color="primary">
-                  Moi et mon équipe
-                </Typography>
-              </CardContent>
-            </Card>
+            <ButtonBase onClick={() => handleContinue(false)}>
+              <Card className={`${classes.card} ${classes.left}`}>
+                <CardContent
+                  className={`flex-column-space-between ${classes.content}`}
+                >
+                  <PersonIcon color="primary" className={classes.icon} />
+                  <Typography className="bold" color="primary">
+                    Moi
+                  </Typography>
+                </CardContent>
+              </Card>
+            </ButtonBase>
+            <ButtonBase onClick={() => handleContinue(true)}>
+              <Card className={`${classes.card} ${classes.right}`}>
+                <CardContent
+                  className={`flex-column-space-between ${classes.content}`}
+                >
+                  <TeamIcon color="primary" className={classes.icon} />
+                  <Typography noWrap className="bold" color="primary">
+                    Moi et mon équipe
+                  </Typography>
+                </CardContent>
+              </Card>
+            </ButtonBase>
           </Box>
           <Typography className={classes.explanationTitle}>
             Saisie solo

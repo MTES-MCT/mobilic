@@ -54,7 +54,7 @@ export function FunnelModal({
           style={{ position: "static", width: "100%", flexShrink: 0 }}
         >
           <Button
-            variant="outlined"
+            variant={darkBackground ? "contained" : "outlined"}
             color="primary"
             disableElevation
             startIcon={<ChevronLeftIcon />}
