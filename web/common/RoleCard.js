@@ -7,6 +7,9 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up("md")]: {
       minWidth: "360px"
     }
+  },
+  img: {
+    margin: "24px 0 0 24px"
   }
 }));
 
@@ -28,7 +31,7 @@ export function RoleCard({ destination, title, description, image }) {
         </div>
       </div>
       <div className="fr-card__header">
-        <div className="fr-card__img">
+        <div className={classNames("fr-card__img", classes.img)}>
           {React.cloneElement(image, { height: 150, width: 150 })}
         </div>
       </div>

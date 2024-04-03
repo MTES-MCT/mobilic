@@ -18,7 +18,7 @@ export function SignupSelection() {
         image={<WorkerImage />}
       />
       <RoleCard
-        destination="/signup/user"
+        destination="/signup/admin"
         title="Gestionnaire"
         description="Je suis gestionnaire d'une entreprise de transport"
         image={<ManagerImage />}
