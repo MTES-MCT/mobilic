@@ -70,8 +70,7 @@ export function FranceConnectCallback() {
     const state = queryString.get("state");
     const newQS = removeParamsFromQueryString(window.location.search, [
       "code",
-      "state",
-      "iss"
+      "state"
     ]);
     const callBackUrl =
       window.location.origin +
