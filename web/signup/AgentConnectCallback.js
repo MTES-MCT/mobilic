@@ -59,7 +59,8 @@ export function AgentConnectCallback() {
     const errorDescription = queryString.get("error_description");
     const newQS = removeParamsFromQueryString(window.location.search, [
       "code",
-      "state"
+      "state",
+      "iss"
     ]);
     const callBackUrl =
       window.location.origin +
