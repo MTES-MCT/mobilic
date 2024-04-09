@@ -10,24 +10,30 @@ export function isConnectionError(error) {
 }
 
 export function formatApiError(error, overrideFormatGraphQLError) {
-  let formattedError;
+  let formattedError = "Une erreur est survenue. Veuillez réessayer plus tard.";
+
   try {
     if (isConnectionError(error)) {
       formattedError =
-        "Pas de connection Internet. Veuillez réessayer plus tard.";
+        "Pas de connexion Internet. Veuillez réessayer plus tard.";
     } else if (isGraphQLError(error)) {
       const formattedGraphQLErrors = error.graphQLErrors
         .map(e => formatGraphQLError(e, overrideFormatGraphQLError))
         .filter(e => !!e);
-      if (formattedGraphQLErrors.length > 0)
-        formattedError = formattedGraphQLErrors.join("\n");
+
+      if (formattedGraphQLErrors.length > 0) {
+        if (typeof formattedGraphQLErrors[0] === "object") {
+          formattedError = formattedGraphQLErrors;
+        } else {
+          formattedError = formattedGraphQLErrors.join("\n");
+        }
+      }
     }
   } catch {
     // Do nothing
   }
-  return formattedError
-    ? formattedError
-    : "Une erreur est survenue. Veuillez réessayer plus tard.";
+
+  return formattedError;
 }
 
 export function isAuthenticationError(error) {
@@ -209,8 +215,14 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "Le lien a expiré. Contactez votre éditeur de logiciel afin de recevoir un nouveau mail de connexion.";
       case "EMPLOYMENT_CLIENT_LINK_NOT_FOUND":
         return "Paramètres invalides. Veuillez suivre le lien d'activation inclus dans le mail reçu. Si le problème persiste, contactez votre éditeur de logiciel.";
-      case "AGENT_CONNECT_ERROR":
-        return "Vous n'êtes pas autorisé(e) à créer un compte Mobilic contrôleur. Si vous faites partie de l’inspection du travail, veuillez suivre la procédure décrite dans la notice d’utilisation disponible sur : https://mobilic.beta.gouv.fr/resources/controller.";
+      case "AGENT_CONNECT_ORGANIZATIONAL_UNIT_NOT_FOUND_ERROR":
+        return {
+          message: `Vous n'êtes pas autorisé(e) à créer un compte Mobilic contrôleur. Si vous faites partie de l’inspection du travail, veuillez suivre la procédure décrite dans la notice d’utilisation disponible sur :`,
+          link: {
+            url: "https://mobilic.beta.gouv.fr/resources/controller",
+            text: "https://mobilic.beta.gouv.fr/resources/controller"
+          }
+        };
       default:
         return null;
     }
