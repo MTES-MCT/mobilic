@@ -429,52 +429,52 @@ export function History({
         >
           <Grid container item direction="row" alignItems="center" sm={6}>
             {currentCompanies?.length > 0 && (
-              <>
-                <IconButton
-                  color="primary"
-                  onClick={() =>
-                    modals.open("newMission", {
-                      companies: store.companies(),
-                      companyAddresses: store.getEntity("knownAddresses"),
-                      disableCurrentPosition: true,
-                      disableKilometerReading: true,
-                      withDay: true,
-                      withEndLocation: true,
-                      handleContinue: async missionInfos => {
-                        await alerts.withApiErrorHandling(async () => {
-                          const tempMissionId = await createMission({
-                            companyId: missionInfos.company.id,
-                            name: missionInfos.mission,
-                            vehicle: missionInfos.vehicle,
-                            startLocation: missionInfos.address,
-                            endLocation: missionInfos.endAddress
-                          });
-                          await api.executePendingRequests();
-                          const actualMissionId = store.identityMap()[
-                            tempMissionId
-                          ];
-                          if (!actualMissionId) {
-                            alerts.error(
-                              "La mission n'a pas pu être créée. Vérifiez votre connexion internet, vous ne pouvez pas créer de mission passée sans être connecté.",
-                              tempMissionId,
-                              6000
-                            );
-                          } else {
-                            history.push(
-                              `/app/edit_mission?mission=${actualMissionId}`,
-                              { day: missionInfos.day }
-                            );
-                            modals.close("newMission");
-                          }
-                        }, "create-mission");
-                      }
-                    })
-                  }
-                >
-                  <AddCircleIcon fontSize="large" />
-                </IconButton>
-                <Typography align="left">Ajouter une mission passée</Typography>
-              </>
+              <IconButton
+                color="primary"
+                onClick={() =>
+                  modals.open("newMission", {
+                    companies: store.companies(),
+                    companyAddresses: store.getEntity("knownAddresses"),
+                    disableCurrentPosition: true,
+                    disableKilometerReading: true,
+                    withDay: true,
+                    withEndLocation: true,
+                    handleContinue: async missionInfos => {
+                      await alerts.withApiErrorHandling(async () => {
+                        const tempMissionId = await createMission({
+                          companyId: missionInfos.company.id,
+                          name: missionInfos.mission,
+                          vehicle: missionInfos.vehicle,
+                          startLocation: missionInfos.address,
+                          endLocation: missionInfos.endAddress
+                        });
+                        await api.executePendingRequests();
+                        const actualMissionId = store.identityMap()[
+                          tempMissionId
+                        ];
+                        if (!actualMissionId) {
+                          alerts.error(
+                            "La mission n'a pas pu être créée. Vérifiez votre connexion internet, vous ne pouvez pas créer de mission passée sans être connecté.",
+                            tempMissionId,
+                            6000
+                          );
+                        } else {
+                          history.push(
+                            `/app/edit_mission?mission=${actualMissionId}`,
+                            { day: missionInfos.day }
+                          );
+                          modals.close("newMission");
+                        }
+                      }, "create-mission");
+                    }
+                  })
+                }
+              >
+                <AddCircleIcon fontSize="large" />
+                <Typography align="left" ml={1}>
+                  Ajouter une mission passée
+                </Typography>
+              </IconButton>
             )}
           </Grid>
           <LogHolidayButton onClick={() => openHolidaysModal()} />
@@ -496,10 +496,10 @@ export function History({
               }
             >
               <GetAppIcon fontSize="large" />
+              <Typography align="left" ml={1} mr={2}>
+                Télécharger un relevé d'heures
+              </Typography>
             </IconButton>
-            <Typography align="left" mr={2}>
-              Télécharger un relevé d'heures
-            </Typography>
           </Grid>
         </Grid>,
         <PeriodFilter

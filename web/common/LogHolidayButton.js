@@ -14,10 +14,10 @@ export function LogHolidayButton({ onClick }) {
     >
       <IconButton color="primary" onClick={onClick}>
         <DateRangeIcon />
+        <Typography align="left" ml={1} mr={2}>
+          Renseigner une indisponibilité
+        </Typography>
       </IconButton>
-      <Typography align="left" mr={2}>
-        Renseigner une indisponibilité
-      </Typography>
     </Grid>
   );
 }
