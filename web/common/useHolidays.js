@@ -65,9 +65,11 @@ export const useHolidays = () => {
         };
 
         if (
-          !userInfo.disabledWarnings ||
-          !userInfo.disabledWarnings.includes(
-            DISMISSABLE_WARNINGS.EMPLOYEE_OFF_CREATION
+          !(
+            userInfo.disabledWarnings &&
+            userInfo.disabledWarnings.includes(
+              DISMISSABLE_WARNINGS.EMPLOYEE_OFF_CREATION
+            )
           )
         ) {
           modals.open("confirmation", {
