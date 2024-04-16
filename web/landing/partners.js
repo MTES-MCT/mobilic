@@ -183,7 +183,7 @@ export function Partners() {
               <MainCtaButton
                 aria-label="Devenir partenaire"
                 className={classes.cta}
-                href="mailto:mobilic@beta.gouv.fr"
+                href="mailto:contact@mobilic.beta.gouv.fr"
               >
                 Devenir partenaire
               </MainCtaButton>
@@ -239,7 +239,7 @@ export function Partners() {
               <MainCtaButton
                 aria-label="S'interfacer avec Mobilic"
                 className={classes.cta}
-                href="mailto:mobilic@beta.gouv.fr"
+                href="mailto:interfacage@mobilic.beta.gouv.fr"
               >
                 S'interfacer avec Mobilic
               </MainCtaButton>
