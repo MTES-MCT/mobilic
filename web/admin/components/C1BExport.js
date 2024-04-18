@@ -170,7 +170,10 @@ export default function C1BExport({
                 Si jamais vous ne parvenez à lire les fichiers Mobilic depuis
                 votre logiciel d'analyse n'hésitez pas à nous contacter à
                 l'adresse mail
-                <a href="mailto:mobilic@beta.gouv.fr">mobilic@beta.gouv.fr</a>.
+                <a href="mailto:assistance@mobilic.beta.gouv.fr">
+                  assistance@mobilic.beta.gouv.fr
+                </a>
+                .
               </li>
               <li>
                 En cas d'export pour l'inspection du travail, veillez à ne pas
