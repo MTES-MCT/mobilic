@@ -1,7 +1,7 @@
 import React from "react";
 import MuiSnackbar from "@mui/material/Snackbar";
 import { useIsWidthUp } from "common/utils/useWidth";
-import Alert from "@mui/material/Alert";
+import CustomAlert from "./CustomAlert";
 import {
   formatApiError,
   isConnectionError,
@@ -65,7 +65,7 @@ export const SnackbarProvider = ({ children }) => {
       if (!isGraphQLError(err)) captureSentryException(err);
       if (onError) onError(err);
       if (!isConnectionError(err) || !hideNetworkErrors)
-        error(formatApiError(err, overrideFormatError), name, 6000);
+        error(formatApiError(err, overrideFormatError), name, 10000);
     }
   }
 
@@ -91,15 +91,14 @@ export const SnackbarProvider = ({ children }) => {
         autoHideDuration={_autoHideDuration}
         onClose={close}
       >
-        <Alert
+        <CustomAlert
+          message={_message}
           onClose={close}
+          severity={_severity}
           elevation={5}
           variant="filled"
-          severity={_severity}
           style={{ textAlign: "justify" }}
-        >
-          {_message}
-        </Alert>
+        />
       </MuiSnackbar>
     </SnackbarContext.Provider>
   );

@@ -37,7 +37,9 @@ export function Footer({ withFollow = true }) {
             <FabNumIcon />
           </FooterOperator>
           <FooterBodyItem>
-            <Link href="mailto:mobilic@beta.gouv.fr">Nous contacter</Link>
+            <Link href="mailto:contact@mobilic.beta.gouv.fr">
+              Nous contacter
+            </Link>
           </FooterBodyItem>
           <FooterBodyItem>
             <Link href="https://www.ecologie.gouv.fr/">ecologie.gouv.fr</Link>
