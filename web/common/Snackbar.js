@@ -65,7 +65,7 @@ export const SnackbarProvider = ({ children }) => {
       if (!isGraphQLError(err)) captureSentryException(err);
       if (onError) onError(err);
       if (!isConnectionError(err) || !hideNetworkErrors)
-        error(formatApiError(err, overrideFormatError), name, 6000);
+        error(formatApiError(err, overrideFormatError), name, 10000);
     }
   }
 

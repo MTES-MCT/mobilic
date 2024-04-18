@@ -23,6 +23,7 @@ const CustomAlert = React.forwardRef(
                   <>
                     {" "}
                     <Link
+                      style={severity === "error" ? { color: "white" } : {}}
                       href={msg.link.url}
                       target="_blank"
                       rel="noopener noreferrer"
