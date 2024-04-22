@@ -53,6 +53,7 @@ export function MissionDetailsLocations({
       <Grid item xs={12} sm={6}>
         <Typography variant="h5">Fin</Typography>
         <MissionLocationInfo
+          showLocation={!mission.isHoliday}
           location={mission.endLocation}
           time={
             mission.startTime && !(mission.isDeleted && !mission.isComplete) ? (

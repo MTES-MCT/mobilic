@@ -34,16 +34,8 @@ export const WAY_HEARD_OF_MOBILIC_CHOICES = [
     label: "Recherche internet"
   },
   {
-    value: "WEBINAR",
-    label: "Lors d’un webinaire organisé par l’équipe Mobilic"
-  },
-  {
     value: "WORD_OF_MOUTH",
     label: "Bouche à oreille"
-  },
-  {
-    value: "PLATFORM",
-    label: "Plateforme de mise en relation entre entreprises et particuliers"
   }
 ];
 

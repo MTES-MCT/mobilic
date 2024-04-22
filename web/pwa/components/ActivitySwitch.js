@@ -10,6 +10,7 @@ import Box from "@mui/material/Box";
 import { MainCtaButton } from "./MainCtaButton";
 import { now } from "common/utils/time";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ButtonBase from "@mui/material/ButtonBase";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -70,23 +71,25 @@ export function ActivitySwitchCard({
 }) {
   const classes = useStyles({ colored, highlighted, disabled, color });
   return (
-    <Card className={classes.card} onClick={!disabled ? onClick : null} raised>
-      <Box className={`${classes.cardContent} flex-column-space-between`}>
-        {renderIcon({
-          className: classes.cardIcon,
-          fontSize: "large"
-        })}
-        <Typography
-          align="center"
-          variant="body2"
-          className={classes.cardText}
-          noWrap
-          gutterBottom
-        >
-          {label}
-        </Typography>
-      </Box>
-    </Card>
+    <ButtonBase onClick={!disabled ? onClick : null}>
+      <Card className={classes.card} raised>
+        <Box className={`${classes.cardContent} flex-column-space-between`}>
+          {renderIcon({
+            className: classes.cardIcon,
+            fontSize: "large"
+          })}
+          <Typography
+            align="center"
+            variant="body2"
+            className={classes.cardText}
+            noWrap
+            gutterBottom
+          >
+            {label}
+          </Typography>
+        </Box>
+      </Card>
+    </ButtonBase>
   );
 }
 

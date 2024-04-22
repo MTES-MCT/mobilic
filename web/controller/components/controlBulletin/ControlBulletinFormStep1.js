@@ -177,7 +177,7 @@ export function ControlBulletinFormStep1({
       <Box sx={{ marginBottom: 4, maxWidth: "400px" }}>
         <label className="fr-label">Date de naissance du salarié</label>
         <Row gutters>
-          <Col n="3">
+          <Col n="4">
             <TextInput
               type="number"
               required
@@ -189,7 +189,7 @@ export function ControlBulletinFormStep1({
               messageType={dayErrorMessage ? "error" : undefined}
             />
           </Col>
-          <Col n="3">
+          <Col n="4">
             <TextInput
               type="number"
               required
