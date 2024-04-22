@@ -30,7 +30,7 @@ function Notices() {
       <h1>Mentions légales</h1>
       <Stack direction="column" spacing={4}>
         <Box>
-          <h3>Éditeur de la plateforme</h3>
+          <h2>Éditeur de la plateforme</h2>
           <Typography sx={{ marginBottom: 2 }}>
             La Direction générale des infrastructures, des transports et des
             mobilités (<b>DGITM</b>) , située :
@@ -42,14 +42,14 @@ function Notices() {
           </address>
         </Box>
         <Box>
-          <h3>Directeur de la publication</h3>
+          <h2>Directeur de la publication</h2>
           <Typography>
             <b>Monsieur Rodolphe GINTZ</b>, directeur général des
             infrastructures, des transports et des mobilités.
           </Typography>
         </Box>
         <Box>
-          <h3>Hébergement de la plateforme</h3>
+          <h2>Hébergement de la plateforme</h2>
           <Typography sx={{ marginBottom: 2 }}>
             <b>Scalingo</b>
           </Typography>
