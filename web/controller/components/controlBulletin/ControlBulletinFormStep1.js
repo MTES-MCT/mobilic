@@ -10,6 +10,9 @@ import { DsfrAutocomplete } from "../utils/DsfrAutocomplete";
 import { Box } from "@mui/material";
 import { CURRENT_YEAR } from "common/utils/time";
 
+const BIRTH_DATE_MIN_YEAR = 100;
+const BIRTH_DATE_MAX_YEAR = 18;
+
 export function ControlBulletinFormStep1({
   handleEditControlBulletin,
   controlBulletin,
@@ -21,9 +24,6 @@ export function ControlBulletinFormStep1({
   const [day, setDay] = React.useState(1);
   const [month, setMonth] = React.useState(1);
   const [year, setYear] = React.useState(1980);
-  const [dayErrorMessage, setDayErrorMessage] = React.useState("");
-  const [monthErrorMessage, setMonthErrorMessage] = React.useState("");
-  const [yearErrorMessage, setYearErrorMessage] = React.useState("");
 
   React.useEffect(() => {
     const { userBirthDate } = controlBulletin;
@@ -36,40 +36,36 @@ export function ControlBulletinFormStep1({
     setDay(date.getDate());
   }, [controlBulletin]);
 
-  React.useEffect(() => {
-    setYearErrorMessage("");
-    if (year < CURRENT_YEAR - 110 || year >= CURRENT_YEAR - 15) {
-      setYearErrorMessage("Année invalide");
-    }
-  }, [year]);
+  const MAX_BIRTH_DATE_YEAR = React.useMemo(
+    () => CURRENT_YEAR - BIRTH_DATE_MAX_YEAR,
+    [CURRENT_YEAR]
+  );
+  const MIN_BIRTH_DATE_YEAR = React.useMemo(
+    () => CURRENT_YEAR - BIRTH_DATE_MIN_YEAR,
+    [CURRENT_YEAR]
+  );
 
-  React.useEffect(() => {
-    setMonthErrorMessage("");
-    if (month < 1 || month > 12) {
-      setMonthErrorMessage("Mois invalide");
-    }
-  }, [month]);
-
-  React.useEffect(() => {
-    setDayErrorMessage("");
-    if (day < 1 || day > 31) {
-      setDayErrorMessage("Jour invalide");
-    }
-  }, [day]);
-
-  React.useEffect(() => {
-    if (yearErrorMessage) {
-      editControlBulletinField(undefined, "userBirthDate");
-      return;
-    }
-    const date = new Date(year, month - 1, parseInt(day) + 1);
+  const onValidateBirthDate = () => {
+    const validYear = Math.max(
+      MIN_BIRTH_DATE_YEAR,
+      Math.min(year, MAX_BIRTH_DATE_YEAR)
+    );
+    const validMonth = Math.max(0, Math.min(month - 1, 11));
+    const maxDay = validMonth === 1 ? 29 : 30;
+    const validDay = Math.max(1, Math.min(parseInt(day), maxDay));
+    const date = new Date(validYear, validMonth, validDay, 10, 0, 0, 0);
     if (!isNaN(date)) {
       const newDateString = date.toISOString().split("T")[0];
-      if (newDateString !== controlBulletin.userBirthDate) {
-        editControlBulletinField(newDateString, "userBirthDate");
-      }
+      editControlBulletinField(newDateString, "userBirthDate");
     }
-  }, [day, month, year, yearErrorMessage]);
+  };
+
+  const onChangeNDigits = (e, setter, n) => {
+    const firstTwoChars = e.target.value.slice(0, n);
+    if (!isNaN(firstTwoChars)) {
+      setter(firstTwoChars);
+    }
+  };
 
   React.useEffect(async () => {
     if (controlBulletin.locationDepartment) {
@@ -177,40 +173,37 @@ export function ControlBulletinFormStep1({
       <Box sx={{ marginBottom: 4, maxWidth: "400px" }}>
         <label className="fr-label">Date de naissance du salarié</label>
         <Row gutters>
-          <Col n="4">
+          <Col n="3">
             <TextInput
-              type="number"
               required
               value={day}
-              onChange={e => setDay(e.target.value)}
+              inputMode="numeric"
+              onChange={e => onChangeNDigits(e, setDay, 2)}
+              onBlur={onValidateBirthDate}
               label="Jour"
               hint="Exemple: 14"
-              message={dayErrorMessage}
-              messageType={dayErrorMessage ? "error" : undefined}
             />
           </Col>
-          <Col n="4">
+          <Col n="3">
             <TextInput
-              type="number"
+              inputMode="numeric"
               required
               value={month}
-              onChange={e => setMonth(e.target.value)}
+              onChange={e => onChangeNDigits(e, setMonth, 2)}
+              onBlur={onValidateBirthDate}
               label="Mois"
               hint="Exemple: 12"
-              message={monthErrorMessage}
-              messageType={monthErrorMessage ? "error" : undefined}
             />
           </Col>
           <Col n="4">
             <TextInput
-              type="number"
+              inputMode="numeric"
               required
               value={year}
-              onChange={e => setYear(e.target.value)}
+              onChange={e => onChangeNDigits(e, setYear, 4)}
+              onBlur={onValidateBirthDate}
               label="Année"
               hint="Exemple: 1984"
-              message={yearErrorMessage}
-              messageType={yearErrorMessage ? "error" : undefined}
             />
           </Col>
         </Row>
