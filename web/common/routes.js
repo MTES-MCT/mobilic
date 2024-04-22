@@ -216,7 +216,7 @@ export const ROUTES = [
   },
   {
     path: "/privacy",
-    label: "Gestion des cookies",
+    label: "Données personnelles",
     accessible: () => true,
     component: PrivacyPolicy,
     menuItemFilter: () => false

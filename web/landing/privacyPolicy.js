@@ -72,12 +72,12 @@ export default function PrivacyPolicy() {
 }
 
 function PrivacyPolicyContent() {
-  usePageTitle("Gestion des cookies - Mobilic");
+  usePageTitle("Données personnelles - Mobilic");
   const classes = useStyles();
 
   return (
     <Container className={classes.container} maxWidth="lg">
-      <h1>Gestion des cookies</h1>
+      <h1>Données personnelles</h1>
       <h2>Cookies</h2>
       <p>
         Un cookie est un fichier déposé sur votre terminal lors de la visite
