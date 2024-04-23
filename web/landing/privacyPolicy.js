@@ -136,7 +136,7 @@ function PrivacyPolicyContent() {
 
   return (
     <Container className={classes.container} maxWidth="lg">
-      <h1>Données personnelles</h1>
+      <h1>Protection des données personnelles</h1>
       <Stack direction="column" spacing={4}>
         <Box>
           <h2>Qui est responsable de Mobilic ?</h2>
@@ -174,7 +174,8 @@ function PrivacyPolicyContent() {
           <ul>
             <li>
               <b>Données relatives aux salariés</b>: nom, prénom, adresse
-              e-mail, identifiants France Connect
+              e-mail, identifiants France Connect, numéro de téléphone
+              professionnel
             </li>
             <li>
               <b>Données relatives aux gestionnaires</b>: nom, prénom, adresse
@@ -261,8 +262,8 @@ function PrivacyPolicyContent() {
           <p>
             Pour exercer vos droits ou pour toute question sur le traitement de
             vos données, vous pouvez nous écrire à l&lsquo;adresse suivante :{" "}
-            <Link href="mailto:assistance@mobilic.beta.gouv.fr">
-              assistance@mobilic.beta.gouv.fr
+            <Link href="mailto:contact@mobilic.beta.gouv.fr">
+              contact@mobilic.beta.gouv.fr
             </Link>
             .
           </p>

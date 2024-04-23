@@ -69,7 +69,9 @@ export function Footer({ withFollow = true }) {
           <FooterLink href="#" onClick={() => modals.open("cgu")}>
             CGU
           </FooterLink>
-          <FooterLink href="/privacy">Données personnelles</FooterLink>
+          <FooterLink href="/donnees-personnelles">
+            Données personnelles
+          </FooterLink>
           <FooterLink href="/stats">Statistiques</FooterLink>
           <FooterLink
             href="https://developers.mobilic.beta.gouv.fr"
