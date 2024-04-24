@@ -79,14 +79,19 @@ const tabs = {
       );
     },
     renderPeriod: ({ missionsInPeriod, ...props }) => (
-      <Mission mission={missionsInPeriod[0]} collapsable={false} {...props} />
+      <Mission
+        mission={missionsInPeriod[0]}
+        collapsable={false}
+        headingComponent="h2"
+        {...props}
+      />
     )
   },
   day: {
     label: "Jour",
     value: "day",
     ...PERIOD_UNITS.day,
-    renderPeriod: props => <Day {...props} />
+    renderPeriod: props => <Day headingComponent="h2" {...props} />
   },
   week: {
     label: "Semaine",
@@ -110,7 +115,7 @@ const tabs = {
         </Box>
       );
     },
-    renderPeriod: props => <Week {...props} />
+    renderPeriod: props => <Week headingComponent="h2" {...props} />
   },
   month: {
     label: "Mois",
@@ -123,6 +128,7 @@ const tabs = {
         <Box className="flex-column-space-between">
           <Typography
             variant="h5"
+            component="span"
             style={{ fontWeight: missions ? "bold" : "normal" }}
           >
             {SHORT_MONTHS[periodDate.getMonth()]}

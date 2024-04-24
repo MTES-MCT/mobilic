@@ -125,7 +125,7 @@ export function MissionDetails({
   disableEmptyActivitiesPlaceHolder = false,
   forceDisplayEndLocation = false,
   controlId = null,
-  headingLevel = ""
+  headingComponent = ""
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -267,7 +267,7 @@ export function MissionDetails({
                 })
             : null
         }
-        headingLevel={headingLevel}
+        headingComponent={headingComponent}
       >
         <ActivityList
           activities={userActivities}
@@ -304,6 +304,7 @@ export function MissionDetails({
               : null
           }
           editButtonLabel="Changer"
+          headingComponent={headingComponent}
         >
           {hasTeamMates && [
             changeTeam && (
@@ -351,7 +352,7 @@ export function MissionDetails({
             : null
         }
         editButtonLabel="Modifier"
-        headingLevel={headingLevel}
+        headingComponent={headingComponent}
       >
         {mission.vehicle && (
           <List dense>
@@ -370,7 +371,7 @@ export function MissionDetails({
           </List>
         )}
       </MissionReviewSection>
-      <MissionReviewSection title="Lieux" headingLevel={headingLevel}>
+      <MissionReviewSection title="Lieux" headingComponent={headingComponent}>
         {(mission.startLocation || mission.endLocation) && (
           <List dense>
             <LocationEntry
@@ -451,7 +452,7 @@ export function MissionDetails({
                     })
                 : null
             }
-            headingLevel={headingLevel}
+            headingComponent={headingComponent}
           >
             <Box className={`flex-row ${classes.expenditures}`}>
               {expenditureForPeriod &&
@@ -474,7 +475,7 @@ export function MissionDetails({
                   })
               : null
           }
-          headingLevel={headingLevel}
+          headingComponent={headingComponent}
         >
           <List dense className={classes.commentList}>
             {mission.comments
@@ -500,7 +501,10 @@ export function MissionDetails({
           </List>
         </MissionReviewSection>
       )}
-      <MissionReviewSection title="Entreprise" headingLevel={headingLevel}>
+      <MissionReviewSection
+        title="Entreprise"
+        headingComponent={headingComponent}
+      >
         <List dense>
           <ListItem disableGutters>
             <ListItemText
@@ -522,7 +526,10 @@ export function MissionDetails({
         !mission.adminValidation &&
         !mission.validation &&
         !mission.isDeleted && (
-          <MissionReviewSection title="Validation" headingLevel={headingLevel}>
+          <MissionReviewSection
+            title="Validation"
+            headingComponent={headingComponent}
+          >
             <Box style={{ textAlign: "center" }} pt={2} pb={2}>
               <MainCtaButton
                 style={{ textAlign: "center" }}
@@ -545,6 +552,7 @@ export function MissionDetails({
               userId={actualUserId}
               cacheInStore={cacheContradictoryInfoInPwaStore}
               controlId={controlId}
+              headingComponent={headingComponent}
             />
           </MissionReviewSection>
         )}
