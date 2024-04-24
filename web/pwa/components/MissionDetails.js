@@ -124,7 +124,8 @@ export function MissionDetails({
   defaultTime = null,
   disableEmptyActivitiesPlaceHolder = false,
   forceDisplayEndLocation = false,
-  controlId = null
+  controlId = null,
+  headingLevel = ""
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -266,6 +267,7 @@ export function MissionDetails({
                 })
             : null
         }
+        headingLevel={headingLevel}
       >
         <ActivityList
           activities={userActivities}
@@ -349,6 +351,7 @@ export function MissionDetails({
             : null
         }
         editButtonLabel="Modifier"
+        headingLevel={headingLevel}
       >
         {mission.vehicle && (
           <List dense>
@@ -367,7 +370,7 @@ export function MissionDetails({
           </List>
         )}
       </MissionReviewSection>
-      <MissionReviewSection title="Lieux">
+      <MissionReviewSection title="Lieux" headingLevel={headingLevel}>
         {(mission.startLocation || mission.endLocation) && (
           <List dense>
             <LocationEntry
@@ -448,6 +451,7 @@ export function MissionDetails({
                     })
                 : null
             }
+            headingLevel={headingLevel}
           >
             <Box className={`flex-row ${classes.expenditures}`}>
               {expenditureForPeriod &&
@@ -470,6 +474,7 @@ export function MissionDetails({
                   })
               : null
           }
+          headingLevel={headingLevel}
         >
           <List dense className={classes.commentList}>
             {mission.comments
@@ -495,7 +500,7 @@ export function MissionDetails({
           </List>
         </MissionReviewSection>
       )}
-      <MissionReviewSection title="Entreprise">
+      <MissionReviewSection title="Entreprise" headingLevel={headingLevel}>
         <List dense>
           <ListItem disableGutters>
             <ListItemText
@@ -517,7 +522,7 @@ export function MissionDetails({
         !mission.adminValidation &&
         !mission.validation &&
         !mission.isDeleted && (
-          <MissionReviewSection title="Validation">
+          <MissionReviewSection title="Validation" headingLevel={headingLevel}>
             <Box style={{ textAlign: "center" }} pt={2} pb={2}>
               <MainCtaButton
                 style={{ textAlign: "center" }}
