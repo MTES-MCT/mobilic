@@ -18,7 +18,11 @@ export const Section = React.forwardRef((props, ref) => {
 
   return (
     <Box ref={ref} my={6} mb={props.last ? 0 : 6} className={classes.section}>
-      <Typography className={classes.sectionTitle} variant="h5">
+      <Typography
+        className={classes.sectionTitle}
+        variant="h5"
+        component={props.component || undefined}
+      >
         {props.title}
       </Typography>
       {props.children}
