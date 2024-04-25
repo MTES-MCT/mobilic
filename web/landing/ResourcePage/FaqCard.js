@@ -41,7 +41,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function FaqCard({ question, answer, link, moreInfoText, onClick }) {
+export function FaqCard({
+  question,
+  answer,
+  link,
+  moreInfoText,
+  onClick,
+  titleProps
+}) {
   const classes = useStyles();
   const commonCardsClasses = resourceCardsClasses();
 
@@ -61,7 +68,9 @@ export function FaqCard({ question, answer, link, moreInfoText, onClick }) {
       {...buttonActionProps}
     >
       <Card variant="outlined" className={commonCardsClasses.card}>
-        <Typography variant={"h4"}>{question}</Typography>
+        <Typography variant={"h4"} {...titleProps}>
+          {question}
+        </Typography>
         <Typography className={classes.faqCardAnswer}>{answer}</Typography>
         <Box className={classes.dummy}></Box>
         <Box className={classes.moreInfoBlock}>
