@@ -25,6 +25,7 @@ import { useCacheContradictoryInfoInAdminStore } from "common/utils/contradictor
 import Emoji from "../../common/Emoji";
 import { Alert } from "@mui/material";
 import classNames from "classnames";
+import { getNextHeadingComponent } from "common/utils/html";
 
 const useStyles = makeStyles(theme => ({
   cardRecapKPIContainer: {
@@ -57,7 +58,8 @@ export function MissionEmployeeCard({
   removeUser,
   isDeleted = false,
   defaultOpen = false,
-  displayIcon = true
+  displayIcon = true,
+  headingComponent = undefined
 }) {
   const stats = mission.userStats[user.id.toString()] || {};
   const activities = stats.activities || [];
@@ -99,7 +101,9 @@ export function MissionEmployeeCard({
         >
           <Grid item container spacing={3} wrap="nowrap">
             <Grid item>
-              <Typography>{formatPersonName(user)}</Typography>
+              <Typography component={headingComponent}>
+                {formatPersonName(user)}
+              </Typography>
             </Grid>
             {!open &&
               activities.length > 0 && [
@@ -215,6 +219,10 @@ export function MissionEmployeeCard({
                 py={2}
                 variant="outlined"
                 title="Amplitude"
+                titleProps={{
+                  variant: "h6",
+                  component: getNextHeadingComponent(headingComponent)
+                }}
                 value={
                   !stats.isComplete && isDeleted
                     ? "-"
@@ -255,6 +263,10 @@ export function MissionEmployeeCard({
                 py={2}
                 variant="outlined"
                 title="Temps de travail"
+                titleProps={{
+                  variant: "h6",
+                  component: getNextHeadingComponent(headingComponent)
+                }}
                 value={
                   !stats.isComplete && isDeleted
                     ? "-"
@@ -285,6 +297,10 @@ export function MissionEmployeeCard({
               day={day}
               title="Activités"
               datetimeFormatter={datetimeFormatter}
+              titleProps={{
+                variant: "h6",
+                component: getNextHeadingComponent(headingComponent)
+              }}
             />
           </Grid>
           {showExpenditures && (
@@ -296,6 +312,10 @@ export function MissionEmployeeCard({
                 onEditExpenditures={onEditExpenditures}
                 minSpendingDate={stats.startTime}
                 maxSpendingDate={stats.endTime}
+                titleProps={{
+                  variant: "h6",
+                  component: getNextHeadingComponent(headingComponent)
+                }}
               />
             </Grid>
           )}

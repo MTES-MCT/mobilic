@@ -262,7 +262,11 @@ export function MissionDetails({
           </Grid>
         </Grid>
         {mission.name && (mission.startTime || day) && (
-          <Typography variant="h6" className={classes.missionSubTitle}>
+          <Typography
+            variant="h6"
+            component="span"
+            className={classes.missionSubTitle}
+          >
             Du {textualPrettyFormatDay(mission.startTime || day)}{" "}
             {doesMissionSpanOnMultipleDays &&
             !(mission.isDeleted && !mission.isComplete) ? (
@@ -305,6 +309,7 @@ export function MissionDetails({
           mission={mission}
           missionActions={missionActions}
           isEditable={globalFieldsEditable}
+          titleProps={{ component: "h2" }}
         />
       )}
       <MissionDetailsLocations
@@ -313,10 +318,12 @@ export function MissionDetails({
         dateTimeFormatter={dateTimeFormatter}
         isEditable={globalFieldsEditable}
         showKilometerReading={showKilometerReading}
+        titleProps={{ component: "h2" }}
       />
       <MissionDetailsObservations
         mission={mission}
         missionActions={missionActions}
+        titleProps={{ component: "h2" }}
       />
       {showKilometerReading &&
         mission.startLocation &&
@@ -325,7 +332,11 @@ export function MissionDetails({
         mission.endLocation.kilometerReading &&
         mission.endLocation.kilometerReading >=
           mission.startLocation.kilometerReading && (
-          <Typography variant="h5" className={classes.kilometers}>
+          <Typography
+            variant="h5"
+            component="span"
+            className={classes.kilometers}
+          >
             Distance parcourue :{" "}
             <span style={{ fontSize: "1rem", fontWeight: "normal" }}>
               {mission.endLocation.kilometerReading -
@@ -361,6 +372,7 @@ export function MissionDetails({
                 }
               : null
           }
+          titleProps={{ component: "h2" }}
         >
           <List>
             {entriesToValidateByAdmin.map(e => (
@@ -370,6 +382,7 @@ export function MissionDetails({
                   mission={mission}
                   user={e.user}
                   showExpenditures={showExpenditures}
+                  headingComponent="h3"
                   onCreateActivity={
                     entryToBeValidatedByAdmin(
                       e,

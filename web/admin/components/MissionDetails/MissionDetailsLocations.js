@@ -10,7 +10,8 @@ export function MissionDetailsLocations({
   missionActions,
   dateTimeFormatter,
   isEditable,
-  showKilometerReading
+  showKilometerReading,
+  titleProps
 }) {
   const classes = useMissionDetailsStyles();
   const adminStore = useAdminStore();
@@ -25,7 +26,9 @@ export function MissionDetailsLocations({
   return (
     <Grid container justifyContent="space-between" spacing={4}>
       <Grid item xs={12} sm={6}>
-        <Typography variant="h5">Début</Typography>
+        <Typography variant="h5" {...titleProps}>
+          Début
+        </Typography>
         <MissionLocationInfo
           showLocation={!mission.isHoliday}
           location={mission.startLocation}
@@ -51,7 +54,9 @@ export function MissionDetailsLocations({
         />
       </Grid>
       <Grid item xs={12} sm={6}>
-        <Typography variant="h5">Fin</Typography>
+        <Typography variant="h5" {...titleProps}>
+          Fin
+        </Typography>
         <MissionLocationInfo
           showLocation={!mission.isHoliday}
           location={mission.endLocation}

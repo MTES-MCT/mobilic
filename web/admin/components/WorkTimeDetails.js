@@ -139,7 +139,11 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
 
   return [
     <Box key={0} className={classes.workTimeDetailsTitleContainer}>
-      <Typography variant="h3" className={classes.workTimeDetailsTitle}>
+      <Typography
+        variant="h3"
+        component="h1"
+        className={classes.workTimeDetailsTitle}
+      >
         Détail de la journée du{" "}
         {prettyFormatDay(workTimeEntry.periodActualStart, true)}
       </Typography>
@@ -152,7 +156,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
       </IconButton>
     </Box>,
     <Box key={1}>
-      <Typography variant="h3" className={classes.employeeName}>
+      <Typography variant="h3" component="h2" className={classes.employeeName}>
         {workTimeEntry.workerName}
       </Typography>
     </Box>,
@@ -173,14 +177,15 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
               textAlign="center"
               py={2}
               variant="outlined"
-              titleProps={{ variant: "h3" }}
+              titleProps={{ variant: "h6", component: "h2" }}
               title="Amplitude"
               value={formatTimer(workTimeEntry.service)}
               valueProps={{
                 className: `${classes.amplitudeText} ${
                   !workTimeEntry.endTime ? classes.runningMissionText : ""
                 }`,
-                variant: "body1"
+                variant: "h1",
+                component: "p"
               }}
               subText={
                 <span>
@@ -204,14 +209,15 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
               textAlign="center"
               py={2}
               variant="outlined"
-              titleProps={{ variant: "h3" }}
+              titleProps={{ variant: "h6", component: "h2" }}
               title="Temps de travail"
               value={formatTimer(workTimeEntry.totalWork)}
               valueProps={{
                 className: `${classes.amplitudeText} ${
                   !workTimeEntry.endTime ? classes.runningMissionText : ""
                 }`,
-                variant: "body1"
+                variant: "h1",
+                component: "p"
               }}
               subText={
                 !workTimeEntry.endTime ? (
@@ -227,6 +233,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
           <MissionInfoCard
             title="Seuils réglementaires"
             className={classes.regulatoryAlertCard}
+            titleProps={{ component: "h2", variant: "h6" }}
           >
             <div>Alertes quotidiennes</div>
             <DayRegulatoryAlerts
@@ -252,6 +259,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
           title="Frais de la journée"
           loading={loading}
           expenditures={workTimeEntry.expenditures}
+          titleProps={{ component: "h2", variant: "h6" }}
         />
       </Grid>
       <Grid item xs={12}>
@@ -261,10 +269,18 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
           loading={loading}
           fromTime={workTimeEntry.periodStart}
           untilTime={periodEnd.getTime() / 1000}
+          titleProps={{
+            variant: "h6",
+            component: "h2"
+          }}
         />
       </Grid>
       <Grid item xs={12}>
-        <MissionInfoCard title="Missions de la journée" extraPaddingBelowTitle>
+        <MissionInfoCard
+          title="Missions de la journée"
+          extraPaddingBelowTitle
+          titleProps={{ component: "h2", variant: "h6" }}
+        >
           {missions.length > 0 && (
             <AugmentedTable
               columns={missionTableColumns}

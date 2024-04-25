@@ -26,7 +26,8 @@ export function ExpendituresCard({
   onEditExpenditures,
   minSpendingDate,
   maxSpendingDate,
-  loading
+  loading,
+  titleProps
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -59,6 +60,7 @@ export function ExpendituresCard({
           : null
       }
       actionButtonLabel="Modifier"
+      titleProps={titleProps}
     >
       {hasExpenditures ? (
         <Grid spacing={1} container>

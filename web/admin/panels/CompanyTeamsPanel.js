@@ -203,7 +203,7 @@ export default function CompanyTeamsPanel({ company }) {
     <Grid key={0} container>
       <Grid item xs={6}>
         <Box className={classes.title}>
-          <Typography variant="h4">
+          <Typography variant="h4" component="h2">
             Groupes {!loadingTeams && <span> ({teams?.length || 0})</span>}
           </Typography>
         </Box>

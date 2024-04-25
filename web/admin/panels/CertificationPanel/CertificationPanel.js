@@ -95,7 +95,9 @@ export default function CertificationPanel({ company }) {
 
   return [
     <Box key={3} className={classes.title}>
-      <Typography variant="h4">{panelTitle}</Typography>
+      <Typography variant="h4" component="h2">
+        {panelTitle}
+      </Typography>
       {!loadingInfo && companyWithInfo.isCertified && (
         <Button
           startIcon={<DownloadIcon />}
@@ -124,7 +126,9 @@ export default function CertificationPanel({ company }) {
     ),
     noCertificateText && (
       <Box key={5} mb={2}>
-        <Typography variant="h6">{noCertificateText}</Typography>
+        <Typography variant="h6" component="span">
+          {noCertificateText}
+        </Typography>
       </Box>
     ),
     !loadingInfo && (

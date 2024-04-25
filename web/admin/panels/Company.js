@@ -300,6 +300,7 @@ function CompanyPanel({ width, containerRef }) {
                 }}
                 className={classes.companyName}
                 maxLength={255}
+                component="h1"
               />
               <SubNavigationToggle view={view} setView={setView} />
             </Box>

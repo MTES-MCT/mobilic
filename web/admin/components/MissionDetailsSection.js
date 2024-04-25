@@ -19,7 +19,8 @@ export function MissionDetailsSection({
   children,
   title,
   action,
-  actionButtonLabel
+  actionButtonLabel,
+  titleProps
 }) {
   const classes = useStyles();
 
@@ -33,7 +34,9 @@ export function MissionDetailsSection({
         className={classes.sectionTitle}
       >
         <Grid item>
-          <Typography variant="h3">{title}</Typography>
+          <Typography variant="h4" {...titleProps}>
+            {title}
+          </Typography>
         </Grid>
         {action && (
           <Grid item>

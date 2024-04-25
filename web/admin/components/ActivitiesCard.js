@@ -28,7 +28,8 @@ export function ActivitiesCard({
   loading,
   fromTime,
   untilTime,
-  datetimeFormatter = formatTimeOfDay
+  datetimeFormatter = formatTimeOfDay,
+  titleProps
 }) {
   const classes = useActivitiesCardStyles();
   const ref = React.useRef();
@@ -123,7 +124,12 @@ export function ActivitiesCard({
   );
 
   return (
-    <MissionInfoCard title={title} extraPaddingBelowTitle loading={loading}>
+    <MissionInfoCard
+      title={title}
+      extraPaddingBelowTitle
+      loading={loading}
+      titleProps={titleProps}
+    >
       <Grid container key={2} spacing={2}>
         <Grid item xs={12}>
           <Grid key={1} item xs={12} className={classes.listActivitiesGrid}>
@@ -146,7 +152,9 @@ export function ActivitiesCard({
               sm={4}
               className={classes.chartContainer}
             >
-              <Typography variant="h6">Frise temporelle</Typography>
+              <Typography variant="h6" component="span">
+                Frise temporelle
+              </Typography>
               <VerticalTimeline
                 width={300}
                 activities={activities}
@@ -160,7 +168,9 @@ export function ActivitiesCard({
               sm={8}
               className={classes.chartContainer}
             >
-              <Typography variant="h6">Répartition</Typography>
+              <Typography variant="h6" component="span">
+                Répartition
+              </Typography>
               <ActivitiesPieChart
                 activities={activities}
                 fromTime={fromTime}

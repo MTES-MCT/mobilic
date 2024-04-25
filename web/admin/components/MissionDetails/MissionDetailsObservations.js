@@ -8,7 +8,11 @@ import { Event } from "../../../common/Event";
 import { useMissionDetailsStyles } from "./MissionDetailsStyle";
 import { useModals } from "common/utils/modals";
 
-export function MissionDetailsObservations({ mission, missionActions }) {
+export function MissionDetailsObservations({
+  mission,
+  missionActions,
+  titleProps
+}) {
   const classes = useMissionDetailsStyles();
   const modals = useModals();
   return (
@@ -24,7 +28,7 @@ export function MissionDetailsObservations({ mission, missionActions }) {
         alignItems="center"
       >
         <Grid item>
-          <Typography variant="h5" className={classes.vehicle}>
+          <Typography variant="h5" {...titleProps} className={classes.vehicle}>
             Observations
           </Typography>
         </Grid>
