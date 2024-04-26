@@ -9,7 +9,7 @@ export function MissionDetailsVehicle({
   mission,
   missionActions,
   isEditable,
-  titleProps
+  titleProps = {}
 }) {
   const classes = useMissionDetailsStyles();
 

@@ -27,7 +27,7 @@ export function InfoItem({
   actionTitle,
   action,
   alertComponent,
-  titleProps
+  titleProps = {}
 }) {
   const classes = useStyles({ bold });
 

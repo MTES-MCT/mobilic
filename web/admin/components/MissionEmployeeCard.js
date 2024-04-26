@@ -59,7 +59,7 @@ export function MissionEmployeeCard({
   isDeleted = false,
   defaultOpen = false,
   displayIcon = true,
-  headingComponent = undefined
+  headingComponent
 }) {
   const stats = mission.userStats[user.id.toString()] || {};
   const activities = stats.activities || [];

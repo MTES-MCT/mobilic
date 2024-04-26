@@ -47,7 +47,7 @@ export function FaqCard({
   link,
   moreInfoText,
   onClick,
-  titleProps
+  titleProps = {}
 }) {
   const classes = useStyles();
   const commonCardsClasses = resourceCardsClasses();

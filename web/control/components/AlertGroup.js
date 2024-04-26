@@ -74,7 +74,7 @@ export function AlertGroup({
   isReportingInfractions,
   onUpdateInfraction,
   readOnlyAlerts,
-  titleProps
+  titleProps = {}
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();

@@ -20,7 +20,7 @@ export function MissionDetailsSection({
   title,
   action,
   actionButtonLabel,
-  titleProps
+  titleProps = {}
 }) {
   const classes = useStyles();
 

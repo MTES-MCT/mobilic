@@ -11,7 +11,7 @@ import { useModals } from "common/utils/modals";
 export function MissionDetailsObservations({
   mission,
   missionActions,
-  titleProps
+  titleProps = {}
 }) {
   const classes = useMissionDetailsStyles();
   const modals = useModals();

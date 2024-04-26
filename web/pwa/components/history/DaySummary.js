@@ -86,7 +86,7 @@ export function DaySummary({
         <MissionReviewSection
           title="Activités de la journée"
           className="no-margin-no-padding"
-          headingComponent="h2"
+          titleProps={{ component: "h2" }}
         >
           <ActivityList
             activities={activitiesWithNextAndPreviousDay}

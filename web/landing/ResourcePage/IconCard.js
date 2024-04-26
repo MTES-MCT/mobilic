@@ -21,7 +21,7 @@ export function IconCard({
   IconComponent,
   link,
   href,
-  titleProps
+  titleProps = {}
 }) {
   const classes = useStyles();
   const commonCardsClasses = resourceCardsClasses();

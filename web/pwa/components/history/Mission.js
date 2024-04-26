@@ -77,7 +77,7 @@ export function Mission({
   registerKilometerReading,
   controlledShouldDisplayInitialEmployeeVersion = false,
   controlId = null,
-  headingComponent = undefined
+  headingComponent
 }) {
   const [open, setOpen] = React.useState(defaultOpenCollapse);
   const [
@@ -161,11 +161,12 @@ export function Mission({
       untilTime={untilTime}
       editKilometerReading={registerKilometerReading}
       controlId={controlId}
-      headingComponent={
-        headingComponent && collapsable
-          ? getNextHeadingComponent(headingComponent)
-          : headingComponent
-      }
+      titleProps={{
+        component:
+          headingComponent && collapsable
+            ? getNextHeadingComponent(headingComponent)
+            : headingComponent
+      }}
     />
   );
 

@@ -11,7 +11,7 @@ export function MissionDetailsLocations({
   dateTimeFormatter,
   isEditable,
   showKilometerReading,
-  titleProps
+  titleProps = {}
 }) {
   const classes = useMissionDetailsStyles();
   const adminStore = useAdminStore();

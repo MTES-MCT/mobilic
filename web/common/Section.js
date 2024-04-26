@@ -21,7 +21,7 @@ export const Section = React.forwardRef((props, ref) => {
       <Typography
         className={classes.sectionTitle}
         variant="h5"
-        component={props.component || undefined}
+        component={props.component}
       >
         {props.title}
       </Typography>

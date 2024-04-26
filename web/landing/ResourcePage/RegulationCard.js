@@ -2,7 +2,7 @@ import React from "react";
 import { FaqCard } from "./FaqCard";
 import { useRegulationDrawer } from "./RegulationDrawer";
 
-export function RegulationCard({ rule, onClick = () => {}, titleProps }) {
+export function RegulationCard({ rule, onClick = () => {}, titleProps = {} }) {
   const openRegulationDrawer = useRegulationDrawer();
 
   return (

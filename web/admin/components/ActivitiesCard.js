@@ -29,7 +29,7 @@ export function ActivitiesCard({
   fromTime,
   untilTime,
   datetimeFormatter = formatTimeOfDay,
-  titleProps
+  titleProps = {}
 }) {
   const classes = useActivitiesCardStyles();
   const ref = React.useRef();

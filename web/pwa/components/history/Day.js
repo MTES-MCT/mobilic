@@ -44,7 +44,7 @@ export function Day({
   vehicles,
   userId,
   controlId = null,
-  headingComponent = undefined
+  headingComponent
 }) {
   const infoCardStyles = useInfoCardStyles();
   const classes = useStyles();
@@ -199,7 +199,7 @@ export function Day({
           <MissionReviewSection
             title="Détail par mission"
             className="no-margin-no-padding"
-            headingComponent={headingComponent}
+            titleProps={{ component: headingComponent }}
           >
             <List>
               {missionsToDetail.map(mission => (

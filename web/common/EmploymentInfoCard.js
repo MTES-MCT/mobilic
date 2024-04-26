@@ -79,7 +79,7 @@ export function EmploymentInfoCard({
   hideActions = false,
   lightenIfEnded = true,
   defaultOpen = false,
-  headingComponent = undefined
+  headingComponent
 }) {
   const [open, setOpen] = React.useState(defaultOpen);
 

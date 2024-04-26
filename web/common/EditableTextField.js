@@ -14,7 +14,7 @@ function EditableTextField({
   onCancel,
   className,
   maxLength = 255,
-  component = undefined
+  titleProps = {}
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(text);
@@ -54,7 +54,7 @@ function EditableTextField({
   };
 
   return (
-    <Typography variant="h3" component={component} className={className}>
+    <Typography variant="h3" className={className} {...titleProps}>
       {isEditing ? (
         <>
           <TextField

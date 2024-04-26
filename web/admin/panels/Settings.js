@@ -45,7 +45,7 @@ export default function SettingAdmin({ company }) {
           value={adminStore.settings.allowTeamMode}
           description="Lors de missions en équipe ce mode donne la possibilité à l'un des équipiers d'enregistrer le temps de travail pour toute l'équipe (au lieu que chacun enregistre son propre temps de travail séparément). Chaque équipier doit toutefois valider individuellement les informations à la fin de la mission."
           submitSettingChange={submitSettingChange}
-          component="h3"
+          titleProps={{ component: "h3" }}
         />
       </ListItem>
       <Divider className="hr-unstyled" />
@@ -56,7 +56,7 @@ export default function SettingAdmin({ company }) {
           value={adminStore.settings.requireSupportActivity}
           description="Permet la distinction entre temps de conduite et temps d'accompagnement (c'est le temps passé à bord du véhicule lorsque quelqu'un d'autre conduit). Les travailleurs doivent préciser s'ils sont conducteurs ou non à chaque fois qu'ils sélectionnent l'activité Déplacement. Pour certaines entreprises le temps d'accompagnement est soumis à une rémunération spéciale (dans le déménagement par exemple)."
           submitSettingChange={submitSettingChange}
-          component="h3"
+          titleProps={{ component: "h3" }}
         />
       </ListItem>
       <Divider className="hr-unstyled" />
@@ -67,7 +67,7 @@ export default function SettingAdmin({ company }) {
           value={adminStore.settings.allowTransfers}
           description="Durée des trajets vers et au retour des lieux de chantier de déménagement au moyen du train, du ferry de l'autocar ou de l'avion (heure de départ - heure d'arrivée). Ces temps de liaison ne sont pas comptabilisés dans le temps de travail effectif."
           submitSettingChange={submitSettingChange}
-          component="h3"
+          titleProps={{ component: "h3" }}
         />
       </ListItem>
       <Divider className="hr-unstyled" />
@@ -78,7 +78,7 @@ export default function SettingAdmin({ company }) {
           value={adminStore.settings.requireKilometerData}
           description="Exige le relevé du compteur kilométrique du véhicule en début et fin de mission, conformément aux exigences du Livret Individuel de Contrôle. Pour certains secteurs tels que le déménagement cette donnée n'est toutefois plus demandée."
           submitSettingChange={submitSettingChange}
-          component="h3"
+          titleProps={{ component: "h3" }}
         />
       </ListItem>
       <Divider className="hr-unstyled" />
@@ -89,7 +89,7 @@ export default function SettingAdmin({ company }) {
           value={adminStore.settings.requireExpenditures}
           description="La gestion des frais de déplacement se fait dans Mobilic. Les travailleurs mobiles saisissent leurs frais en fin de mission et ceux-ci sont rendus visibles pour le gestionnaire (et présents dans les exports des données d'activité)."
           submitSettingChange={submitSettingChange}
-          component="h3"
+          titleProps={{ component: "h3" }}
         />
       </ListItem>
       <Divider className="hr-unstyled" />
@@ -100,7 +100,7 @@ export default function SettingAdmin({ company }) {
           value={adminStore.settings.requireMissionName}
           description="A la création d'une mission, le travailleur mobile doit obligatoirement saisir un nom pour celle-ci. Ce nom sera ensuite repris dans l'interface du gestionnaire pour un suivi plus fin du temps de travail et une meilleure visibilité dans les outils de reporting."
           submitSettingChange={submitSettingChange}
-          component="h3"
+          titleProps={{ component: "h3" }}
         />
       </ListItem>
     </List>

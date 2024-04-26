@@ -27,7 +27,7 @@ export function ExpendituresCard({
   minSpendingDate,
   maxSpendingDate,
   loading,
-  titleProps
+  titleProps = {}
 }) {
   const classes = useStyles();
   const modals = useModals();

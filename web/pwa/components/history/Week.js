@@ -26,7 +26,7 @@ export function Week({
   handleMissionClick,
   regulationComputationsInPeriod,
   userId,
-  headingComponent = undefined
+  headingComponent
 }) {
   const infoCardStyles = useInfoCardStyles();
 
@@ -92,7 +92,7 @@ export function Week({
           <MissionReviewSection
             title="Détail par mission"
             className="no-margin-no-padding"
-            headingComponent={headingComponent}
+            titleProps={{ component: headingComponent }}
           >
             <List>
               {missionsToDetail.map((mission, index) => [
