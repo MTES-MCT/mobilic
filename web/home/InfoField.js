@@ -26,7 +26,8 @@ export function InfoItem({
   bold,
   actionTitle,
   action,
-  alertComponent
+  alertComponent,
+  titleProps
 }) {
   const classes = useStyles({ bold });
 
@@ -37,6 +38,7 @@ export function InfoItem({
           align="left"
           className={classes.fieldName}
           variant="overline"
+          {...titleProps}
         >
           {name}
         </Typography>
