@@ -21,9 +21,9 @@ export function ControlBulletinFormStep1({
   const [departmentLocations, setDepartmentLocations] = React.useState([]);
 
   const api = useApi();
-  const [day, setDay] = React.useState(1);
-  const [month, setMonth] = React.useState(1);
-  const [year, setYear] = React.useState(1980);
+  const [day, setDay] = React.useState();
+  const [month, setMonth] = React.useState();
+  const [year, setYear] = React.useState();
 
   React.useEffect(() => {
     const { userBirthDate } = controlBulletin;
@@ -170,7 +170,7 @@ export function ControlBulletinFormStep1({
           !controlBulletin.userFirstName && showErrors ? "error" : undefined
         }
       />
-      <Box sx={{ marginBottom: 4, maxWidth: "400px" }}>
+      <Box sx={{ marginBottom: 4, maxWidth: "440px" }}>
         <label className="fr-label">Date de naissance du salarié</label>
         <Row gutters>
           <Col n="3">
@@ -181,7 +181,7 @@ export function ControlBulletinFormStep1({
               onChange={e => onChangeNDigits(e, setDay, 2)}
               onBlur={onValidateBirthDate}
               label="Jour"
-              hint="Exemple: 14"
+              hint="Ex : 14"
             />
           </Col>
           <Col n="3">
@@ -192,10 +192,10 @@ export function ControlBulletinFormStep1({
               onChange={e => onChangeNDigits(e, setMonth, 2)}
               onBlur={onValidateBirthDate}
               label="Mois"
-              hint="Exemple: 12"
+              hint="Ex : 12"
             />
           </Col>
-          <Col n="4">
+          <Col n="6">
             <TextInput
               inputMode="numeric"
               required
@@ -203,7 +203,7 @@ export function ControlBulletinFormStep1({
               onChange={e => onChangeNDigits(e, setYear, 4)}
               onBlur={onValidateBirthDate}
               label="Année"
-              hint="Exemple: 1984"
+              hint="Ex : 1984"
             />
           </Col>
         </Row>
