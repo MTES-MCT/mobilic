@@ -67,100 +67,55 @@ const dataInfra = [
     Partenaire: "Scalingo",
     "Traitement réalisé": "Hébergement de la base de données",
     "Pays destinataire": "France",
-    Garanties: (
-      <ExternalLink
-        url={scalingoLink}
-        title="Gestion et traitements des données personnelles de Scalingo"
-      />
-    )
+    Garanties: <ExternalLink url={scalingoLink} title="Garantie Scalingo" />
   },
   {
     Partenaire: "OVH",
     "Traitement réalisé": "Hébergement des logs",
     "Pays destinataire": "France",
-    Garanties: (
-      <ExternalLink
-        url={ovhLink}
-        title="Gestion et traitements des données personnelles de OVH"
-      />
-    )
+    Garanties: <ExternalLink url={ovhLink} title="Garantie OVH" />
   },
   {
     Partenaire: "Crisp",
     "Traitement réalisé": "Support / Chat",
     "Pays destinataire": "France",
-    Garanties: (
-      <ExternalLink
-        url={crispLink}
-        title="Gestion et traitements des données personnelles de Crisp"
-      />
-    )
+    Garanties: <ExternalLink url={crispLink} title="Garantie Crisp" />
   },
   {
     Partenaire: "Sentry",
     "Traitement réalisé": "Tracking d’erreurs",
     "Pays destinataire": "États-Unis",
-    Garanties: (
-      <ExternalLink
-        url={sentryLink}
-        title="Gestion et traitements des données personnelles de Sentry"
-      />
-    )
+    Garanties: <ExternalLink url={sentryLink} title="Garantie Sentry" />
   },
   {
     Partenaire: "Metabase",
     "Traitement réalisé": "Mesure d’audience",
     "Pays destinataire": "France",
-    Garanties: (
-      <ExternalLink
-        url={metabaseLink}
-        title="Gestion et traitements des données personnelles de Metabase"
-      />
-    )
+    Garanties: <ExternalLink url={metabaseLink} title="Garantie Metabase" />
   },
   {
     Partenaire: "Google",
     "Traitement réalisé": "Publicité",
     "Pays destinataire": "États-Unis",
-    Garanties: (
-      <ExternalLink
-        url={googleLink}
-        title="Gestion et traitements des données personnelles de Google"
-      />
-    )
+    Garanties: <ExternalLink url={googleLink} title="Garantie Google" />
   },
   {
     Partenaire: "Mailjet",
     "Traitement réalisé": "Envoi d’e-mails / Newsletter",
     "Pays destinataire": "France",
-    Garanties: (
-      <ExternalLink
-        url={mailjetLink}
-        title="Gestion et traitements des données personnelles de Mailjet"
-      />
-    )
+    Garanties: <ExternalLink url={mailjetLink} title="Garantie Mailjet" />
   },
   {
     Partenaire: "Brevo",
     "Traitement réalisé": "Envoi d’e-mails / Newsletter",
     "Pays destinataire": "France",
-    Garanties: (
-      <ExternalLink
-        url={brevoLink}
-        title="Gestion et traitements des données personnelles de Brevo"
-      />
-    )
+    Garanties: <ExternalLink url={brevoLink} title="Garantie Brevo" />
   },
   {
     Partenaire: "Livestorm",
     "Traitement réalisé": "Webinaires",
     "Pays destinataire": "Irlande",
-    Garanties: (
-      <ExternalLink
-        url={livestormLink}
-        title="Gestion et traitements des données personnelles de Livestorm"
-      />
-    )
+    Garanties: <ExternalLink url={livestormLink} title="Garantie Livestorm" />
   }
 ];
 
@@ -359,8 +314,9 @@ function PrivacyPolicyContent() {
             <Typography>France</Typography>
           </address>
           <p>
-            Les modalités de réclamation sont précisées sur le site de la CNIL :{" "}
-            <ExternalLink url="https://www.cnil.fr" title="Site de la CNIL" />.
+            Les modalités de réclamation sont précisées sur{" "}
+            <ExternalLink url="https://www.cnil.fr" text="le site de la CNIL" />
+            .
           </p>
         </Box>
         <Box>
