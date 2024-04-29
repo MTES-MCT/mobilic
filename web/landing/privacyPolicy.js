@@ -8,6 +8,7 @@ import { SimpleTable } from "@dataesr/react-dsfr";
 import { usePageTitle } from "../common/UsePageTitle";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
 const dataCustody = [
   {
@@ -38,8 +39,13 @@ const dataCustody = [
   }
 ];
 
-const ExternalLink = ({ url, text }) => (
-  <Link href={url} target="_blank" rel="noopener noreferrer">
+const ExternalLink = ({ url, text, title }) => (
+  <Link
+    href={url}
+    target="_blank"
+    rel="noopener noreferrer"
+    title={text ? text : title}
+  >
     {text ? text : url}
   </Link>
 );
@@ -61,55 +67,100 @@ const dataInfra = [
     Partenaire: "Scalingo",
     "Traitement réalisé": "Hébergement de la base de données",
     "Pays destinataire": "France",
-    Garanties: <ExternalLink url={scalingoLink} />
+    Garanties: (
+      <ExternalLink
+        url={scalingoLink}
+        title="Gestion et traitements des données personnelles de Scalingo"
+      />
+    )
   },
   {
     Partenaire: "OVH",
     "Traitement réalisé": "Hébergement des logs",
     "Pays destinataire": "France",
-    Garanties: <ExternalLink url={ovhLink} />
+    Garanties: (
+      <ExternalLink
+        url={ovhLink}
+        title="Gestion et traitements des données personnelles de OVH"
+      />
+    )
   },
   {
     Partenaire: "Crisp",
     "Traitement réalisé": "Support / Chat",
     "Pays destinataire": "France",
-    Garanties: <ExternalLink url={crispLink} />
+    Garanties: (
+      <ExternalLink
+        url={crispLink}
+        title="Gestion et traitements des données personnelles de Crisp"
+      />
+    )
   },
   {
     Partenaire: "Sentry",
     "Traitement réalisé": "Tracking d’erreurs",
     "Pays destinataire": "États-Unis",
-    Garanties: <ExternalLink url={sentryLink} />
+    Garanties: (
+      <ExternalLink
+        url={sentryLink}
+        title="Gestion et traitements des données personnelles de Sentry"
+      />
+    )
   },
   {
     Partenaire: "Metabase",
     "Traitement réalisé": "Mesure d’audience",
-    "Pays destinataire": "États-Unis",
-    Garanties: <ExternalLink url={metabaseLink} />
+    "Pays destinataire": "France",
+    Garanties: (
+      <ExternalLink
+        url={metabaseLink}
+        title="Gestion et traitements des données personnelles de Metabase"
+      />
+    )
   },
   {
     Partenaire: "Google",
     "Traitement réalisé": "Publicité",
     "Pays destinataire": "États-Unis",
-    Garanties: <ExternalLink url={googleLink} />
+    Garanties: (
+      <ExternalLink
+        url={googleLink}
+        title="Gestion et traitements des données personnelles de Google"
+      />
+    )
   },
   {
     Partenaire: "Mailjet",
     "Traitement réalisé": "Envoi d’e-mails / Newsletter",
     "Pays destinataire": "France",
-    Garanties: <ExternalLink url={mailjetLink} />
+    Garanties: (
+      <ExternalLink
+        url={mailjetLink}
+        title="Gestion et traitements des données personnelles de Mailjet"
+      />
+    )
   },
   {
     Partenaire: "Brevo",
     "Traitement réalisé": "Envoi d’e-mails / Newsletter",
     "Pays destinataire": "France",
-    Garanties: <ExternalLink url={brevoLink} />
+    Garanties: (
+      <ExternalLink
+        url={brevoLink}
+        title="Gestion et traitements des données personnelles de Brevo"
+      />
+    )
   },
   {
     Partenaire: "Livestorm",
     "Traitement réalisé": "Webinaires",
     "Pays destinataire": "Irlande",
-    Garanties: <ExternalLink url={livestormLink} />
+    Garanties: (
+      <ExternalLink
+        url={livestormLink}
+        title="Gestion et traitements des données personnelles de Livestorm"
+      />
+    )
   }
 ];
 
@@ -281,14 +332,17 @@ function PrivacyPolicyContent() {
             </li>
             <li>ou par courrier à l&lsquo;adresse suivante :</li>
             <address>
-              ministère de la Transition écologique et de la cohésion des
-              territoires<br></br>À l&lsquo;attention du Délégué à la protection
-              des données (DPD)<br></br>
-              SG/DAJ/AJAG1-2<br></br>
-              92055 La Défense Cedex<br></br>
-              France
+              <Typography>
+                ministère de la Transition écologique et de la cohésion des
+                territoires
+              </Typography>
+              <Typography>
+                À l&lsquo;attention du Délégué à la protection des données (DPD)
+              </Typography>
+              <Typography>SG/DAJ/AJAG1-2</Typography>
+              <Typography>92055 La Défense Cedex</Typography>
+              <Typography>France</Typography>
             </address>
-            <br></br>
           </ul>
           <p>
             Si vous estimez, après nous avoir contacter, que vos droits
@@ -296,16 +350,17 @@ function PrivacyPolicyContent() {
             une réclamation à la CNIL :
           </p>
           <address>
-            Commission nationale informatique et libertés<br></br>3 place de
-            Fontenoy<br></br>
-            TSA 80715<br></br>
-            75334 PARIS CEDEX 07<br></br>
-            France
+            <Typography>
+              Commission nationale informatique et libertés
+            </Typography>
+            <Typography>3 place de Fontenoy</Typography>
+            <Typography>TSA 80715</Typography>
+            <Typography>75334 PARIS CEDEX 07</Typography>
+            <Typography>France</Typography>
           </address>
-          <br></br>
           <p>
             Les modalités de réclamation sont précisées sur le site de la CNIL :{" "}
-            <ExternalLink url="https://www.cnil.fr" />.
+            <ExternalLink url="https://www.cnil.fr" title="Site de la CNIL" />.
           </p>
         </Box>
         <Box>
