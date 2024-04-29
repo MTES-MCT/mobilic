@@ -170,8 +170,14 @@ export function ControlBulletinFormStep1({
           !controlBulletin.userFirstName && showErrors ? "error" : undefined
         }
       />
-      <Box sx={{ marginBottom: 4, maxWidth: "440px" }}>
-        <label className="fr-label">Date de naissance du salarié</label>
+      <Box
+        sx={{ marginBottom: 4, maxWidth: "440px" }}
+        role="group"
+        aria-labelledby="date-naissance-salarie"
+      >
+        <label className="fr-label" id="date-naissance-salarie">
+          Date de naissance du salarié
+        </label>
         <Row gutters>
           <Col n="3">
             <TextInput
