@@ -36,7 +36,11 @@ export function ControllerControlNoLicDrawer({
     onUpdateInfraction
   ] = useReportInfractions(controlData);
   return (
-    <ControlDrawer isOpen={isOpen} onClose={() => closeControl()}>
+    <ControlDrawer
+      isOpen={isOpen}
+      onClose={() => closeControl()}
+      controlId={controlData.id}
+    >
       <ControlBulletinDrawer
         isOpen={isEditingBDC}
         onClose={() => setIsEditingBDC(false)}

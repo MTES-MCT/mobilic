@@ -9,8 +9,22 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControlDrawer({ isOpen, onClose, children }) {
+export function ControlDrawer({
+  isOpen,
+  onClose,
+  children,
+  controlId = undefined
+}) {
   const classes = useStyles();
+
+  React.useEffect(() => {
+    if (isOpen && controlId) {
+      const previousTitle = document.title;
+      document.title = `Contrôle #${controlId} - Mobilic`;
+      return () => (document.title = previousTitle);
+    }
+  }, [isOpen, controlId]);
+
   return (
     <SwipeableDrawer
       anchor="right"

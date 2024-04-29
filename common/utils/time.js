@@ -45,6 +45,8 @@ export const DAYS = [
 
 export const LONG_BREAK_DURATION = 10 * HOUR;
 
+export const CURRENT_YEAR = new Date().getFullYear();
+
 export function formatTimer(timerDuration) {
   if (!timerDuration && timerDuration !== 0) return null;
   const timerDurationInMinutes = (timerDuration / 60) >> 0;

@@ -6,51 +6,116 @@ import { Footer } from "./footer";
 import Link from "@mui/material/Link";
 import { SimpleTable } from "@dataesr/react-dsfr";
 import { usePageTitle } from "../common/UsePageTitle";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
-const dataCookies = [
+const dataCustody = [
   {
-    Cookies: "Matomo",
-    "Traitement réalisé": "Analyse statistique des activités.",
-    "Base juridique": "Article 82 de la loi n°78-17 du 6 janvier 1978 modifiée",
-    Garanties: (
-      <Link
-        href="https://fr.matomo.org/privacy-policy/"
-        target="_blank"
-        rel="noreferrer"
-      >
-        https://fr.matomo.org/privacy-policy/
-      </Link>
-    )
+    "Catégorie de données": "Données relatives aux salariés",
+    "Durée de conservation":
+      "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998 ou 3 ans à partir du dernier contact avec les salariés"
   },
   {
-    Cookies: "Typeform",
-    "Traitement réalisé":
-      "Outil de création de formulaires et d'enquêtes, centrés sur l'expérience utilisateur.",
-    "Base juridique": "Consentement",
-    Garanties: (
-      <Link
-        href="https://www.typeform.com/help/s/legal-compliance-8911275305876/"
-        target="_blank"
-        rel="noreferrer"
-      >
-        https://www.typeform.com/help/s/legal-compliance-8911275305876/
-      </Link>
-    )
+    "Catégorie de données": "Données relatives aux gestionnaires",
+    "Durée de conservation":
+      "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998 ou 3 ans à partir du dernier contact avec les gestionnaires"
   },
   {
-    Cookies: "Google Ads",
-    "Traitement réalisé":
-      "Outil de gestion de balises permettant de suivre et mesurer les publicités. Il mesure l'efficacité des campagnes sponsorisées.",
-    "Base juridique": "Consentement",
-    Garanties: (
-      <Link
-        href="https://privacy.google.com/intl/fr_fr/businesses/compliance/#!?modal_active=none"
-        target="_blank"
-        rel="noreferrer"
-      >
-        https://privacy.google.com/intl/fr_fr/businesses/compliance/#!?modal_active=none
-      </Link>
-    )
+    "Catégorie de données":
+      "Données relatives au temps de travail et de repos des salariés",
+    "Durée de conservation":
+      "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998 ou 3 ans à partir du dernier contact avec les salariés"
+  },
+  {
+    "Catégorie de données": "Données relatives à la newsletter",
+    "Durée de conservation":
+      "Jusqu’à la demande de désinscription ou 2 ans à compter du dernier contact"
+  },
+  {
+    "Catégorie de données": "Données relatives aux webinaires",
+    "Durée de conservation":
+      "Les données sont conservées 2 ans à compter de la fin du webinaire"
+  }
+];
+
+const ExternalLink = ({ url, text, title }) => (
+  <Link
+    href={url}
+    target="_blank"
+    rel="noopener noreferrer"
+    title={text ? text : title}
+  >
+    {text ? text : url}
+  </Link>
+);
+
+const scalingoLink =
+  "https://scalingo.com/fr/contrat-gestion-traitements-donnees-personnelles";
+const ovhLink = "https://us.ovhcloud.com/legal/data-processing-agreement/";
+const crispLink =
+  "https://help.crisp.chat/en/article/how-to-sign-my-gdpr-data-processing-agreement-dpa-1wfmngo/";
+const sentryLink = "https://sentry.io/legal/dpa/";
+const metabaseLink = "https://www.metabase.com/license/hosting";
+const googleLink = "https://cloud.google.com/terms/data-processing-addendum";
+const mailjetLink = "https://www.mailjet.com/fr/legal/dpa/";
+const brevoLink = "https://www.brevo.com/legal/termsofuse/#annex";
+const livestormLink = "https://livestorm.co/fr/rgpd";
+
+const dataInfra = [
+  {
+    Partenaire: "Scalingo",
+    "Traitement réalisé": "Hébergement de la base de données",
+    "Pays destinataire": "France",
+    Garanties: <ExternalLink url={scalingoLink} title="Garantie Scalingo" />
+  },
+  {
+    Partenaire: "OVH",
+    "Traitement réalisé": "Hébergement des logs",
+    "Pays destinataire": "France",
+    Garanties: <ExternalLink url={ovhLink} title="Garantie OVH" />
+  },
+  {
+    Partenaire: "Crisp",
+    "Traitement réalisé": "Support / Chat",
+    "Pays destinataire": "France",
+    Garanties: <ExternalLink url={crispLink} title="Garantie Crisp" />
+  },
+  {
+    Partenaire: "Sentry",
+    "Traitement réalisé": "Tracking d’erreurs",
+    "Pays destinataire": "États-Unis",
+    Garanties: <ExternalLink url={sentryLink} title="Garantie Sentry" />
+  },
+  {
+    Partenaire: "Metabase",
+    "Traitement réalisé": "Mesure d’audience",
+    "Pays destinataire": "France",
+    Garanties: <ExternalLink url={metabaseLink} title="Garantie Metabase" />
+  },
+  {
+    Partenaire: "Google",
+    "Traitement réalisé": "Publicité",
+    "Pays destinataire": "États-Unis",
+    Garanties: <ExternalLink url={googleLink} title="Garantie Google" />
+  },
+  {
+    Partenaire: "Mailjet",
+    "Traitement réalisé": "Envoi d’e-mails / Newsletter",
+    "Pays destinataire": "France",
+    Garanties: <ExternalLink url={mailjetLink} title="Garantie Mailjet" />
+  },
+  {
+    Partenaire: "Brevo",
+    "Traitement réalisé": "Envoi d’e-mails / Newsletter",
+    "Pays destinataire": "France",
+    Garanties: <ExternalLink url={brevoLink} title="Garantie Brevo" />
+  },
+  {
+    Partenaire: "Livestorm",
+    "Traitement réalisé": "Webinaires",
+    "Pays destinataire": "Irlande",
+    Garanties: <ExternalLink url={livestormLink} title="Garantie Livestorm" />
   }
 ];
 
@@ -72,143 +137,254 @@ export default function PrivacyPolicy() {
 }
 
 function PrivacyPolicyContent() {
-  usePageTitle("Gestion des cookies - Mobilic");
+  usePageTitle("Données personnelles - Mobilic");
   const classes = useStyles();
 
   return (
     <Container className={classes.container} maxWidth="lg">
-      <h1>Gestion des cookies</h1>
-      <h2>Cookies</h2>
-      <p>
-        Un cookie est un fichier déposé sur votre terminal lors de la visite
-        d&lsquo;un site. Il a pour but de collecter des informations relatives à
-        votre navigation et de vous adresser des services adaptés à votre
-        terminal (ordinateur, mobile ou tablette).
-      </p>
-      <p>
-        En application de l’article 5(3) de la directive 2002/58/CE modifiée
-        concernant le traitement des données à caractère personnel et la
-        protection de la vie privée dans le secteur des communications
-        électroniques, transposée à l’article 82 de la loi n°78-17 du 6 janvier
-        1978 relative à l’informatique, aux fichiers et aux libertés, les
-        traceurs ou cookies suivent deux régimes distincts.
-      </p>
-      <p>
-        Les cookies strictement nécessaires au service ou ayant pour finalité
-        exclusive de faciliter la communication par voie électronique sont
-        dispensés de consentement préalable au titre de l’article 82 de la loi
-        n°78-17 du 6 janvier 1978. Les cookies n’étant pas strictement
-        nécessaires au service ou n’ayant pas pour finalité exclusive de
-        faciliter la communication par voie électronique doivent être consenti
-        par l’utilisateur.
-      </p>
-      <p>
-        Ce consentement de la personne concernée pour une ou plusieurs finalités
-        spécifiques constitue une base légale au sens du RGPD et doit être
-        entendu au sens de l’article 6-a du Règlement (UE) 2016/679 du Parlement
-        européen et du Conseil du 27 avril 2016 relatif à la protection des
-        personnes physiques à l’égard du traitement des données à caractère
-        personnel et à la libre circulation de ces données.
-      </p>
-      <p>
-        Le site dépose des cookies de mesure d&lsquo;audience (nombre de
-        visites, pages consultées), respectant les conditions d&lsquo;exemption
-        du consentement de l&lsquo;internaute définies par la recommandation
-        &laquo; Cookies &raquo; de la Commission nationale informatique et
-        libertés (CNIL). Cela signifie, notamment, que ces cookies ne servent
-        qu&lsquo;à la production de statistiques anonymes et ne permettent pas
-        de suivre la navigation de l&lsquo;internaute sur d&lsquo;autres sites.
-        Le site dépose également des cookies de navigation, aux fins strictement
-        techniques, qui ne sont pas conservés. La consultation du site
-        n&lsquo;est pas affectée lorsque les utilisateurs utilisent des
-        navigateurs désactivant les cookies.
-      </p>
-      <h2>Quels sont les cookies et traceurs que nous utilisons ?</h2>
-      <SimpleTable data={dataCookies} />
-      <p style={{ marginTop: "1.5rem" }}>
-        <Link
-          href="https://matomo.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Matomo
-        </Link>{" "}
-        est un outil de mesure d&lsquo;audience web{" "}
-        <Link
-          href="https://matomo.org/free-software/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          libre
-        </Link>
-        , paramétré pour être en conformité avec la{" "}
-        <Link
-          href="https://www.cnil.fr/fr/solutions-pour-la-mesure-daudience"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          recommandation « Cookies »
-        </Link>{" "}
-        de la{" "}
-        <abbr title="Commission Nationale de l'Informatique et des Libertés">
-          CNIL
-        </abbr>
-        {/* */}. Cela signifie que votre adresse IP, par exemple, est anonymisée
-        avant d&lsquo;être enregistrée. Il est donc impossible d&lsquo;associer
-        vos visites sur ce site à votre personne.
-      </p>
-      <p>Il convient d&lsquo;indiquer que :</p>
-      <ul className="fr-list">
-        <li>
-          Les données collectées ne sont pas recoupées avec d&lsquo;autres
-          traitements.
-        </li>
-        <li>
-          Les cookies ne permettent pas de suivre la navigation de
-          l&lsquo;internaute sur d&lsquo;autres sites.
-        </li>
-      </ul>
-      <h2>Droit au retrait</h2>
-
-      <p>
-        Pour refuser les cookies de Matomo directement sur notre plateforme :
-      </p>
-      <iframe
-        title="matomo-opt-out"
-        style={{ border: 0, height: 120, width: "100%" }}
-        src="https://stats.beta.gouv.fr/index.php?module=CoreAdminHome&action=optOut&language=fr&backgroundColor=&fontColor=&fontSize=&fontFamily=%22Marianne%22%2C%20arial%2C%20sans-serif"
-      />
-      <p>
-        À tout moment, vous pouvez refuser l&lsquo;utilisation des cookies et
-        désactiver le dépôt sur votre ordinateur en utilisant la fonction dédiée
-        de votre navigateur (fonction disponible notamment sur Microsoft
-        Internet Explorer 11, Google Chrome, Mozilla Firefox, Apple Safari et
-        Opera).
-      </p>
-      <p>
-        Pour aller plus loin, vous pouvez consulter les fiches proposées par la
-        Commission Nationale de l&lsquo;Informatique et des Libertés (CNIL) :
-      </p>
-      <ul className="fr-list">
-        <li>
-          <Link
-            href="https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Cookies et traceurs : que dit la loi ?
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="https://www.cnil.fr/fr/cookies-les-outils-pour-les-maitriser"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Cookies : les outils pour les maîtriser
-          </Link>
-        </li>
-      </ul>
+      <h1>Protection des données personnelles</h1>
+      <Stack direction="column" spacing={4}>
+        <Box>
+          <h2>Qui est responsable de Mobilic ?</h2>
+          <p>
+            Mobilic, développé au sein de la Fabrique numérique du Ministère de
+            la transition écologique, est sous la responsabilité de la Direction
+            générale des infrastructures, des transports et des mobilités
+            (DGITM). Elle s&lsquo;engage à assurer un traitement de ces données
+            conforme au RGPD et à la loi n°7817 du 6 janvier 1978 relative à
+            l'informatique, aux fichiers et aux libertés.
+          </p>
+          <p>
+            Mobilic est un service public numérique qui permet le suivi du temps
+            de travail des conducteurs dans le transport routier léger et du
+            déménagement.
+          </p>
+        </Box>
+        <Box>
+          <h2>Pourquoi traitons-nous des données à caractère personnel ?</h2>
+          <p>Mobilic traite des données à caractère personnel pour :</p>
+          <ul>
+            <li>
+              Simplifier le suivi et le respect du temps de travail des
+              conducteurs et mettre ces données à disposition des gestionnaires
+              administratifs des entreprises du secteur des transports routiers
+              légers et aux autorités de contrôle.
+            </li>
+          </ul>
+        </Box>
+        <Box>
+          <h2>
+            Quelles sont les données à caractère personnel traitées par Mobilic
+            ?
+          </h2>
+          <ul>
+            <li>
+              <b>Données relatives aux salariés</b>: nom, prénom, adresse
+              e-mail, identifiants France Connect, numéro de téléphone
+              professionnel
+            </li>
+            <li>
+              <b>Données relatives aux gestionnaires</b>: nom, prénom, adresse
+              e-mail, identifiants France Connect, numéro de téléphone
+              professionnel
+            </li>
+            <li>
+              <b>
+                Données relatives au temps de travail et de repos des salariés
+              </b>
+              : lieu de prise et de fin de service, temps d&lsquo;activité
+            </li>
+            <li>
+              <b>Données relatives à la newsletter</b>: adresse e-mail
+            </li>
+            <li>
+              <b>Données relatives aux webinaires</b>: adresse e-mail
+            </li>
+          </ul>
+        </Box>
+        <Box>
+          <h2>
+            Qu&lsquo;est-ce qui nous autorise à traiter des données à caractère
+            personnel ?
+          </h2>
+          <p>
+            Mobilic traite des données à caractère personnel en se basant sur
+            l&lsquo;exécution d&lsquo;une mission d&lsquo;intérêt public ou
+            relevant de l&lsquo;exercice de l&lsquo;autorité publique dont est
+            investi le responsable de traitement au sens de l&lsquo;article 6-1
+            e) du RGPD.
+          </p>
+          <p>
+            Cette mission d&lsquo;intérêt public est mise en œuvre par les
+            articles{" "}
+            <ExternalLink
+              url="https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000023086525/LEGISCTA000033450345/#LEGISCTA000033450345"
+              text="R. 3312-19 et R. 3312-58 du Code des transports"
+            />{" "}
+            et par l&lsquo;
+            <ExternalLink
+              url="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000390680"
+              text="arrêté du 20 juillet 1998"
+            />
+            .
+          </p>
+        </Box>
+        <Box>
+          <h2>Pendant combien de temps conservons-nous ces données ?</h2>
+          <SimpleTable data={dataCustody} />
+        </Box>
+        <Box>
+          <h2>Qui peut avoir accès à ces données ?</h2>
+          <p>
+            Les accès aux données à caractère personnel sont strictement
+            encadrés et juridiquement justifiés. Les personnes suivantes vont
+            avoir accès aux données :
+          </p>
+          <ul>
+            <li>Les membres habilités de l&lsquo;équipe Mobilic</li>
+            <li>L&lsquo;API Mobilic</li>
+            <li>Les contrôleurs</li>
+          </ul>
+        </Box>
+        <Box>
+          <h2>Qui nous aide à traiter vos données à caractère personnel ?</h2>
+          <p>
+            Certaines données sont envoyées à des sous-traitants. Le responsable
+            de traitement s&lsquo;est assuré de la mise en œuvre par ses
+            sous-traitants de garanties adéquates et du respect de conditions
+            strictes de confidentialité, d&lsquo;usage et de protection des
+            données.
+          </p>
+          <SimpleTable data={dataInfra} />
+        </Box>
+        <Box>
+          <h2>Quels sont vos droits ?</h2>
+          <p>
+            Vous disposez d&lsquo;un droit d&lsquo;accès et de rectification des
+            données à caractère personnel qui vous concernent. Vous disposez
+            également d&lsquo;un droit d&lsquo;opposition et de limitation du
+            traitement de vos données.
+          </p>
+          <p>
+            Pour exercer vos droits ou pour toute question sur le traitement de
+            vos données, vous pouvez nous écrire à l&lsquo;adresse suivante :{" "}
+            <Link href="mailto:contact@mobilic.beta.gouv.fr">
+              contact@mobilic.beta.gouv.fr
+            </Link>
+            .
+          </p>
+          <p>
+            Vous pouvez également contacter le délégué à la protection des
+            données (DPD) du ministère de la Transition écologique et de la
+            cohésion des territoires :
+          </p>
+          <ul>
+            <li>
+              par mail à{" "}
+              <Link href="mailto:dpd.daj.sg@developpement-durable.gouv.fr">
+                dpd.daj.sg@developpement-durable.gouv.fr
+              </Link>
+            </li>
+            <li>ou par courrier à l&lsquo;adresse suivante :</li>
+            <address>
+              <Typography>
+                ministère de la Transition écologique et de la cohésion des
+                territoires
+              </Typography>
+              <Typography>
+                À l&lsquo;attention du Délégué à la protection des données (DPD)
+              </Typography>
+              <Typography>SG/DAJ/AJAG1-2</Typography>
+              <Typography>92055 La Défense Cedex</Typography>
+              <Typography>France</Typography>
+            </address>
+          </ul>
+          <p>
+            Si vous estimez, après nous avoir contacter, que vos droits
+            Informatiques et Libertés ne sont pas respectés vous pouvez adresser
+            une réclamation à la CNIL :
+          </p>
+          <address>
+            <Typography>
+              Commission nationale informatique et libertés
+            </Typography>
+            <Typography>3 place de Fontenoy</Typography>
+            <Typography>TSA 80715</Typography>
+            <Typography>75334 PARIS CEDEX 07</Typography>
+            <Typography>France</Typography>
+          </address>
+          <p>
+            Les modalités de réclamation sont précisées sur{" "}
+            <ExternalLink url="https://www.cnil.fr" text="le site de la CNIL" />
+            .
+          </p>
+        </Box>
+        <Box>
+          <h2>Cookies et traceurs</h2>
+          <p>
+            Un cookie est un fichier déposé sur votre terminal lors de la visite
+            d&lsquo;un site. Il a pour but de collecter des informations
+            relatives à votre navigation et de vous adresser des services
+            adaptés à votre terminal (ordinateur, mobile ou tablette).
+          </p>
+          <p>
+            En application de l&lsquo;article 5(3) de la directive 2002/58/CE
+            modifiée concernant le traitement des données à caractère personnel
+            et la protection de la vie privée dans le secteur des communications
+            électroniques, transposée à l&lsquo;article 82 de la loi n°78-17 du
+            6 janvier 1978 relative à l&lsquo;informatique, aux fichiers et aux
+            libertés, les traceurs ou cookies suivent deux régimes distincts.
+          </p>
+          <p>
+            Les cookies strictement nécessaires au service ou ayant pour
+            finalité exclusive de faciliter la communication par voie
+            électronique sont dispensés de consentement préalable au titre de
+            l&lsquo;article 82 de la loi n°78-17 du 6 janvier 1978.
+          </p>
+          <p>
+            Les cookies n&lsquo;étant pas strictement nécessaires au service ou
+            n&lsquo;ayant pas pour finalité exclusive de faciliter la
+            communication par voie électronique doivent être consentis par
+            l&lsquo;utilisateur.
+          </p>
+          <p>
+            Ce consentement de la personne concernée pour une ou plusieurs
+            finalités spécifiques constitue une base légale au sens du RGPD et
+            doit être entendu au sens de l'article 6-a du Règlement (UE)
+            2016/679 du Parlement européen et du Conseil du 27 avril 2016
+            relatif à la protection des personnes physiques à l'égard du
+            traitement des données à caractère personnel et à la libre
+            circulation de ces données.
+          </p>
+          <p>
+            Mobilic utilise l&lsquo;outil de mesure d&lsquo;audience Matomo,
+            configuré en mode exempté et ne nécessitant pas le recueil de votre
+            consentement conformément aux recommandations de la CNIL.
+          </p>
+          <p>
+            Toutefois, votre consentement est nécessaire et se matérialise par
+            un bandeau cookies s&lsquo;agissant de Crisp et Google Ads.
+          </p>
+          <p>
+            Pour aller plus loin, vous pouvez consulter les fiches proposées par
+            la Commission Nationale de l'Informatique et des Libertés (CNIL) :
+          </p>
+          <ul>
+            <li>
+              <ExternalLink
+                url="https://www.cnil.fr/fr/cookies-et-autres-traceurs/regles/cookies/que-dit-la-loi"
+                text="Cookies & traceurs : que dit la loi ?"
+              />
+            </li>
+            <li>
+              <ExternalLink
+                url="https://www.cnil.fr/fr/cookies-et-autres-traceurs/comment-se-proteger/maitriser-votre-navigateur"
+                text="Cookies : les outils pour les maîtriser"
+              />
+            </li>
+          </ul>
+        </Box>
+      </Stack>
     </Container>
   );
 }
