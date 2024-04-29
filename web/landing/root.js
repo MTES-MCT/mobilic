@@ -56,6 +56,7 @@ function Showcase({
   descriptionContent,
   ctaTarget,
   ctaLabel,
+  titleProps = {},
   width
 }) {
   const classes = useStyles();
@@ -64,7 +65,12 @@ function Showcase({
     <Grid container direction="column" spacing={1} alignItems="center">
       <Grid item>{image}</Grid>
       <Grid item>
-        <Typography className="bold" variant="h4" color="primary">
+        <Typography
+          className="bold"
+          variant="h4"
+          color="primary"
+          {...titleProps}
+        >
           {imageDescription}
         </Typography>
         <Typography className={classes.subDescription} variant="body2">
@@ -75,7 +81,13 @@ function Showcase({
   );
 
   const Description = props => [
-    <Typography align="left" variant="h4" key={0} className="bold">
+    <Typography
+      align="left"
+      variant="h4"
+      key={0}
+      className="bold"
+      component="span"
+    >
       {descriptionTitle}
     </Typography>,
     <React.Fragment key={1}>{descriptionContent}</React.Fragment>,
@@ -128,7 +140,10 @@ export const Landing = () => {
     <IntroSection key={2} />,
     <LandingSectionList key={3}>
       {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
-      <LandingSection title="A qui s'adresse Mobilic ?">
+      <LandingSection
+        title="A qui s'adresse Mobilic ?"
+        titleProps={{ component: "h2" }}
+      >
         <Typography className={sectionClasses.sectionIntroText}>
           Mobilic s'adresse aux conducteurs des entreprises de transport routier
           qui utilisent des véhicules utilitaires légers (VUL, {"<"} 3.5T), et
@@ -176,6 +191,7 @@ export const Landing = () => {
             }
             ctaLabel="M'inscrire comme travailleur mobile"
             ctaTarget="/signup/user"
+            titleProps={{ component: "h3" }}
           />
         </Box>
         <Box p={2}>
@@ -205,6 +221,7 @@ export const Landing = () => {
             }
             ctaLabel="M'inscrire comme gestionnaire"
             ctaTarget="/signup/admin"
+            titleProps={{ component: "h3" }}
           />
         </Box>
         <Box className={classes.lightBlue} p={2}>
@@ -233,10 +250,14 @@ export const Landing = () => {
             }
             ctaLabel="Découvrir l'API"
             ctaTarget="https://developers.mobilic.beta.gouv.fr/"
+            titleProps={{ component: "h3" }}
           />
         </Box>
       </LandingSection>
-      <LandingSection title="Ce qu'il faut savoir sur Mobilic">
+      <LandingSection
+        title="Ce qu'il faut savoir sur Mobilic"
+        titleProps={{ component: "h2" }}
+      >
         <Grid
           container
           spacing={4}
@@ -254,7 +275,11 @@ export const Landing = () => {
             style={{ textAlign: "justify", flexGrow: 100 }}
           >
             <Grid item>
-              <Typography variant="h5" className={classes.questionTitle}>
+              <Typography
+                variant="h5"
+                component="h3"
+                className={classes.questionTitle}
+              >
                 Mobilic est-ce que ça fonctionne déjà ?
               </Typography>
               <Typography>
@@ -266,7 +291,11 @@ export const Landing = () => {
               </Typography>
             </Grid>
             <Grid item>
-              <Typography variant="h5" className={classes.questionTitle}>
+              <Typography
+                variant="h5"
+                component="h3"
+                className={classes.questionTitle}
+              >
                 Dois-je doublonner avec le LIC papier quand j’utilise Mobilic ?
               </Typography>
               <Typography>
