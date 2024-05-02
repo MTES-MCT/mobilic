@@ -32,6 +32,7 @@ import ThirdPartyEmploymentAccess from "./ThirdPartyEmploymentAccess";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import Box from "@mui/material/Box";
 import { HideEmail } from "../home/HideEmail";
+import { getNextHeadingComponent } from "common/utils/html";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
@@ -77,7 +78,8 @@ export function EmploymentInfoCard({
   hideStatus = false,
   hideActions = false,
   lightenIfEnded = true,
-  defaultOpen = false
+  defaultOpen = false,
+  headingComponent
 }) {
   const [open, setOpen] = React.useState(defaultOpen);
 
@@ -161,7 +163,10 @@ export function EmploymentInfoCard({
           wrap="nowrap"
         >
           <Grid item>
-            <Typography className={classes.companyName}>
+            <Typography
+              className={classes.companyName}
+              component={headingComponent}
+            >
               {employment.company.legalName || employment.company.name}
             </Typography>
           </Grid>
@@ -177,18 +182,30 @@ export function EmploymentInfoCard({
       <AccordionDetails className={classes.employmentDetails}>
         <Grid container wrap="wrap" spacing={spacing}>
           <Grid item>
-            <InfoItem name="SIREN" value={employment.company.siren} />
+            <InfoItem
+              name="SIREN"
+              value={employment.company.siren}
+              titleProps={{
+                component: getNextHeadingComponent(headingComponent)
+              }}
+            />
           </Grid>
           <Grid item>
             <InfoItem
               name="SIRETS"
               value={employment.company.sirets?.join(", ")}
+              titleProps={{
+                component: getNextHeadingComponent(headingComponent)
+              }}
             />
           </Grid>
           <Grid item>
             <InfoItem
               name="Début rattachement"
               value={frenchFormatDateStringOrTimeStamp(employment.startDate)}
+              titleProps={{
+                component: getNextHeadingComponent(headingComponent)
+              }}
             />
           </Grid>
           <Grid item>
@@ -199,6 +216,9 @@ export function EmploymentInfoCard({
                   ? frenchFormatDateStringOrTimeStamp(employment.endDate)
                   : ""
               }
+              titleProps={{
+                component: getNextHeadingComponent(headingComponent)
+              }}
             />
           </Grid>
           {!!emailsCurrentAdminsDisplay && (
@@ -206,6 +226,9 @@ export function EmploymentInfoCard({
               <InfoItem
                 name="Email(s) gestionnaire(s)"
                 value={emailsCurrentAdminsDisplay}
+                titleProps={{
+                  component: getNextHeadingComponent(headingComponent)
+                }}
               />
               <Box
                 onClick={() => {
@@ -238,6 +261,9 @@ export function EmploymentInfoCard({
                     ? EMPLOYMENT_ROLE.admin
                     : EMPLOYMENT_ROLE.employee
                 }
+                titleProps={{
+                  component: getNextHeadingComponent(headingComponent)
+                }}
               />
             </Grid>
           )}

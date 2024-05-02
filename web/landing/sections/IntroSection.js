@@ -144,16 +144,24 @@ export function IntroSection() {
         <Grid container direction="row" className={classes.leftBlockIntro}>
           <Grid item xs={12} marginTop={4}>
             <Typography className={classes.textTitle} variant="h1">
-              La plateforme numérique gouvernementale
-            </Typography>
-            <Typography className={classes.textIntro} variant="h2">
-              de{" "}
-              <span className={classes.underlineBlue}>
-                suivi du temps de travail
-              </span>
-            </Typography>
-            <Typography className={classes.textIntro} variant="h2">
-              dans le transport routier léger
+              La plateforme numérique gouvernementale{" "}
+              <Typography
+                className={classes.textIntro}
+                variant="h2"
+                component="p"
+              >
+                de{" "}
+                <span className={classes.underlineBlue}>
+                  suivi du temps de travail
+                </span>{" "}
+              </Typography>
+              <Typography
+                className={classes.textIntro}
+                variant="h2"
+                component="p"
+              >
+                dans le transport routier léger
+              </Typography>
             </Typography>
           </Grid>
           {isSmDown ? (
@@ -172,10 +180,16 @@ export function IntroSection() {
       <Container maxWidth="md" className={classes.videoSection}>
         <Grid container direction="row" alignItems="center" spacing={1}>
           <Grid item xs={12} sm={6}>
-            <VideoCard video={VIDEOS.Home_Mobilic} />
+            <VideoCard
+              video={VIDEOS.Home_Mobilic}
+              titleProps={{ component: "h3" }}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <VideoCard video={VIDEOS.Home_Regulation} />
+            <VideoCard
+              video={VIDEOS.Home_Regulation}
+              titleProps={{ component: "h3" }}
+            />
           </Grid>
         </Grid>
       </Container>

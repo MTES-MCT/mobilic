@@ -19,6 +19,7 @@ export function MissionReviewSection({
   displayExpandToggle,
   onEdit,
   editButtonLabel,
+  titleProps = {},
   children,
   ...other
 }) {
@@ -28,7 +29,7 @@ export function MissionReviewSection({
   return (
     <Box px={2} py={2} className={className} {...omit(other, ["className"])}>
       <Box className="flex-row-space-between full-width">
-        <Typography align="left" className="bold">
+        <Typography align="left" className="bold" {...titleProps}>
           {title}
         </Typography>
         {onEdit && (

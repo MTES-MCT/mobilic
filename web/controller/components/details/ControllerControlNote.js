@@ -56,7 +56,9 @@ export function ControllerControlNote({ controlData }) {
   return (
     <Stack spacing={0} sx={{ width: "100%" }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h6">Mes notes</Typography>
+        <Typography variant="h5" component="h2">
+          Mes notes
+        </Typography>
         {!isEditing && (
           <Button
             variant="text"

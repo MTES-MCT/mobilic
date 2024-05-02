@@ -155,7 +155,11 @@ export function TalkingAboutUsSection() {
   const cardClasses = resourceCardsClasses();
 
   return (
-    <LandingSection title="Ils parlent de Mobilic" id="temoignages">
+    <LandingSection
+      title="Ils parlent de Mobilic"
+      id="temoignages"
+      titleProps={{ component: "h2" }}
+    >
       <Typography variant={"h3"} className={classes.sectionSubtitle}>
         Nos utilisateurs
       </Typography>
@@ -179,6 +183,7 @@ export function TalkingAboutUsSection() {
             key={video.id}
             video={video}
             className={cardClasses.pressCard}
+            titleProps={{ component: "h4" }}
           />
         ))}
       </Carousel>

@@ -429,7 +429,7 @@ function ActivitiesPanel() {
         className={`flex-column ${classes.workTimeTableContainer}`}
         style={{ maxHeight: ref.current ? ref.current.clientHeight : 0 }}
       >
-        <Typography align="left" variant="h6">
+        <Typography align="left" variant="h6" component="span">
           {`${periodAggregates.length} résultats${
             periodAggregates.length > 0
               ? ` pour ${

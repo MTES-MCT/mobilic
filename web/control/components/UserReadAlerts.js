@@ -78,6 +78,7 @@ export function UserReadAlerts({
             align="left"
             className={classes.subtitle}
             variant="overline"
+            component="h2"
           >
             Infractions calculées par Mobilic
           </Typography>{" "}
@@ -105,6 +106,7 @@ export function UserReadAlerts({
                   isReportingInfractions={isReportingInfractions}
                   onUpdateInfraction={onUpdateInfraction}
                   readOnlyAlerts={readOnlyAlerts}
+                  titleProps={{ component: "h3" }}
                 />
               </ListItem>
             ))}

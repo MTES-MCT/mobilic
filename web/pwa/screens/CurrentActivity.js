@@ -151,6 +151,7 @@ export function CurrentActivity({
       }
       isMissionEnded={false}
       editKilometerReading={registerKilometerReading}
+      titleProps={{ component: "h2" }}
     />,
     <WarningEndMissionModalContainer
       key={4}

@@ -5,7 +5,12 @@ import { useAdminStore } from "../../store/store";
 import { MissionVehicleInfo } from "../MissionVehicleInfo";
 import { useMissionDetailsStyles } from "./MissionDetailsStyle";
 
-export function MissionDetailsVehicle({ mission, missionActions, isEditable }) {
+export function MissionDetailsVehicle({
+  mission,
+  missionActions,
+  isEditable,
+  titleProps = {}
+}) {
   const classes = useMissionDetailsStyles();
 
   const adminStore = useAdminStore();
@@ -18,7 +23,7 @@ export function MissionDetailsVehicle({ mission, missionActions, isEditable }) {
   );
   return (
     <Box className="flex-row" pb={4} style={{ alignItems: "center" }}>
-      <Typography variant="h5" className={classes.vehicle}>
+      <Typography variant="h5" {...titleProps} className={classes.vehicle}>
         Véhicule :
       </Typography>
       <MissionVehicleInfo

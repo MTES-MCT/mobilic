@@ -429,7 +429,11 @@ function ValidationPanel() {
           name: "missionId",
           format: (value, entry) => (
             <Box className="flex-row-space-between">
-              <Typography variant="h6" className={classes.missionTitle}>
+              <Typography
+                variant="h6"
+                component="span"
+                className={classes.missionTitle}
+              >
                 {formatMissionName(entry)}
               </Typography>
               {tab === 0 && (

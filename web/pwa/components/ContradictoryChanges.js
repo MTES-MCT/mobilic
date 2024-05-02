@@ -57,7 +57,8 @@ export function ContradictoryChanges({
   showEventsBeforeValidation = true,
   userId,
   cacheInStore,
-  controlId = null
+  controlId = null,
+  titleProps = {}
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
@@ -106,7 +107,9 @@ export function ContradictoryChanges({
         expandIcon={<ExpandMoreIcon />}
         className={classes.accordionTitle}
       >
-        <Typography className="bold">Historique de saisie</Typography>
+        <Typography className="bold" {...titleProps}>
+          Historique de saisie
+        </Typography>
       </AccordionSummary>
       <AccordionDetails className={classes.collapse}>
         {loadingEmployeeVersion ? (

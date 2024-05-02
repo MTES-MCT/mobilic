@@ -68,7 +68,9 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
 
   return [
     <Box key={10} mt={4}>
-      <Typography variant="h4">Synthèse de l'obtention des critères</Typography>
+      <Typography variant="h4" component="h2">
+        Synthèse de l'obtention des critères
+      </Typography>
       {companyWithInfo.certificateCriterias && (
         <Typography mb={1} className={classes.italicInfo}>
           données calculées le {criteriaCalculationDate}

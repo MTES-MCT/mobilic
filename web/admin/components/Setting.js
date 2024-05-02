@@ -20,7 +20,8 @@ export function Setting({
   description,
   descriptionStyle,
   renderInput,
-  submitSettingChange
+  submitSettingChange,
+  titleProps = {}
 }) {
   const alerts = useSnackbarAlerts();
 
@@ -47,7 +48,9 @@ export function Setting({
 
   return (
     <Box p={1}>
-      <Typography variant="h6">{label}</Typography>
+      <Typography variant="h6" {...titleProps}>
+        {label}
+      </Typography>
       <Grid container spacing={4} alignItems="center" wrap="nowrap">
         <Grid item>{renderInput(value_, handleChange)}</Grid>
         <Grid item>
@@ -68,7 +71,8 @@ export function SimpleToggleSetting({
   name,
   value,
   description,
-  submitSettingChange
+  submitSettingChange,
+  titleProps = {}
 }) {
   return (
     <Setting
@@ -85,6 +89,7 @@ export function SimpleToggleSetting({
           onChange={e => handleChange(e.target.checked)}
         />
       )}
+      titleProps={titleProps}
     />
   );
 }

@@ -124,7 +124,8 @@ export function MissionDetails({
   defaultTime = null,
   disableEmptyActivitiesPlaceHolder = false,
   forceDisplayEndLocation = false,
-  controlId = null
+  controlId = null,
+  titleProps = {}
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -266,6 +267,7 @@ export function MissionDetails({
                 })
             : null
         }
+        titleProps={titleProps}
       >
         <ActivityList
           activities={userActivities}
@@ -302,6 +304,7 @@ export function MissionDetails({
               : null
           }
           editButtonLabel="Changer"
+          titleProps={titleProps}
         >
           {hasTeamMates && [
             changeTeam && (
@@ -349,6 +352,7 @@ export function MissionDetails({
             : null
         }
         editButtonLabel="Modifier"
+        titleProps={titleProps}
       >
         {mission.vehicle && (
           <List dense>
@@ -367,7 +371,7 @@ export function MissionDetails({
           </List>
         )}
       </MissionReviewSection>
-      <MissionReviewSection title="Lieux">
+      <MissionReviewSection title="Lieux" titleProps={titleProps}>
         {(mission.startLocation || mission.endLocation) && (
           <List dense>
             <LocationEntry
@@ -448,6 +452,7 @@ export function MissionDetails({
                     })
                 : null
             }
+            titleProps={titleProps}
           >
             <Box className={`flex-row ${classes.expenditures}`}>
               {expenditureForPeriod &&
@@ -470,6 +475,7 @@ export function MissionDetails({
                   })
               : null
           }
+          titleProps={titleProps}
         >
           <List dense className={classes.commentList}>
             {mission.comments
@@ -495,7 +501,7 @@ export function MissionDetails({
           </List>
         </MissionReviewSection>
       )}
-      <MissionReviewSection title="Entreprise">
+      <MissionReviewSection title="Entreprise" titleProps={titleProps}>
         <List dense>
           <ListItem disableGutters>
             <ListItemText
@@ -517,7 +523,7 @@ export function MissionDetails({
         !mission.adminValidation &&
         !mission.validation &&
         !mission.isDeleted && (
-          <MissionReviewSection title="Validation">
+          <MissionReviewSection title="Validation" titleProps={titleProps}>
             <Box style={{ textAlign: "center" }} pt={2} pb={2}>
               <MainCtaButton
                 style={{ textAlign: "center" }}
@@ -540,6 +546,7 @@ export function MissionDetails({
               userId={actualUserId}
               cacheInStore={cacheContradictoryInfoInPwaStore}
               controlId={controlId}
+              titleProps={titleProps}
             />
           </MissionReviewSection>
         )}

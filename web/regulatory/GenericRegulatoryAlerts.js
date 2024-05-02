@@ -19,6 +19,7 @@ import {
 } from "common/utils/regulation/alertTypes";
 import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 import { currentControllerId } from "common/utils/cookie";
+import { Typography } from "@mui/material";
 
 export function GenericRegulatoryAlerts({
   userId,
@@ -83,6 +84,9 @@ export function GenericRegulatoryAlerts({
       {loading && <Skeleton variant="rectangular" width="100%" height={300} />}
       {!loading && regulationComputations && (
         <>
+          <Typography variant="h6" component="h2">
+            Seuils réglementaires
+          </Typography>
           {regulationCheckUnit === PERIOD_UNITS.DAY ? (
             <RegulatoryTextDayBeforeAndAfter />
           ) : (

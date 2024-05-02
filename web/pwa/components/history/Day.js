@@ -17,6 +17,7 @@ import {
 } from "common/utils/regulation/alertVersions";
 import { currentControllerId } from "common/utils/cookie";
 import { prettyFormatDay } from "common/utils/time";
+import { getNextHeadingComponent } from "common/utils/html";
 
 export const useStyles = makeStyles(theme => ({
   contradictorySwitch: {
@@ -42,7 +43,8 @@ export function Day({
   coworkers,
   vehicles,
   userId,
-  controlId = null
+  controlId = null,
+  headingComponent
 }) {
   const infoCardStyles = useInfoCardStyles();
   const classes = useStyles();
@@ -197,6 +199,7 @@ export function Day({
           <MissionReviewSection
             title="Détail par mission"
             className="no-margin-no-padding"
+            titleProps={{ component: headingComponent }}
           >
             <List>
               {missionsToDetail.map(mission => (
@@ -235,6 +238,7 @@ export function Day({
                       shouldDisplayInitialEmployeeVersion
                     }
                     controlId={controlId}
+                    headingComponent={getNextHeadingComponent(headingComponent)}
                   />
                 </ListItem>
               ))}

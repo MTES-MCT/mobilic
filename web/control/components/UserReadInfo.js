@@ -86,7 +86,9 @@ export function UserReadInfo({
           </Grid>
         )}
         <Grid item md={6}>
-          <Typography variant="h5">Informations salarié(e)</Typography>
+          <Typography variant="h5" component="h2">
+            Informations salarié(e)
+          </Typography>
           <Grid
             container
             wrap="wrap"
@@ -94,7 +96,13 @@ export function UserReadInfo({
             className={classes.subSectionBody}
           >
             <Grid item>
-              <InfoItem name="Nom" value={userName} />
+              <InfoItem
+                name="Nom"
+                value={userName}
+                titleProps={{
+                  component: "h3"
+                }}
+              />
             </Grid>
           </Grid>
           {!companyName && !!currentControllerId() && (
@@ -105,7 +113,9 @@ export function UserReadInfo({
         </Grid>
         {companyName && (
           <Grid item md={6}>
-            <Typography variant="h5">Mission lors du contrôle</Typography>
+            <Typography variant="h5" component="h2">
+              Mission lors du contrôle
+            </Typography>
             <List dense>
               <ListItem disableGutters>
                 <ListItemIcon>
@@ -127,7 +137,11 @@ export function UserReadInfo({
           </Grid>
         )}
       </Grid>
-      <Typography variant="h5" className={classes.subSectionBody}>
+      <Typography
+        variant="h5"
+        component="h2"
+        className={classes.subSectionBody}
+      >
         Entreprise(s) de rattachement
       </Typography>
       <Grid
@@ -146,28 +160,40 @@ export function UserReadInfo({
               hideStatus
               hideActions
               lightenIfEnded={false}
+              headingComponent="h3"
             />
           </Grid>
         ))}
       </Grid>
-      <Typography variant="h5">Historique récent (28 jours)</Typography>
+      <Typography variant="h5" component="h2">
+        Historique récent (28 jours)
+      </Typography>
       <Grid container wrap="wrap" spacing={2}>
         <Grid item>
           <InfoItem
             name="Heure du contrôle"
             value={formatDateTime(controlTime || tokenInfo.creationTime, true)}
+            titleProps={{
+              component: "h3"
+            }}
           />
         </Grid>
         <Grid item>
           <InfoItem
             name="Début de l'historique"
             value={frenchFormatDateStringOrTimeStamp(tokenInfo.historyStartDay)}
+            titleProps={{
+              component: "h3"
+            }}
           />
         </Grid>
         <Grid item>
           <InfoItem
             name="Fin de l'historique"
             value={frenchFormatDateStringOrTimeStamp(tokenInfo.creationDay)}
+            titleProps={{
+              component: "h3"
+            }}
           />
         </Grid>
       </Grid>

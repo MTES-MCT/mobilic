@@ -50,7 +50,9 @@ export default function VehicleAdmin({ company }) {
 
   return [
     <Box key={3} className={classes.title}>
-      <Typography variant="h4">Véhicules ({vehicles.length})</Typography>
+      <Typography variant="h4" component="h2">
+        Véhicules ({vehicles.length})
+      </Typography>
       <Button
         variant="contained"
         size="small"

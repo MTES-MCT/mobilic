@@ -20,7 +20,7 @@ export function MissionTitle({
       }
       onEdit={onEdit}
       disabledEdit={newName => !newName}
-      typographyProps={{ variant: "h1" }}
+      typographyProps={{ variant: "h3", component: "h1" }}
       renderEditMode={(newName, setNewName) => (
         <TextField
           label="Nom de la mission"

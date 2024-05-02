@@ -27,7 +27,9 @@ export function ControllerControlNoLicInformationsEmployee({ controlData }) {
   const classes = useStyles();
   return (
     <Grid container spacing={2} className={classes.sectionBody} p={1}>
-      <Typography variant="h5">Informations salarié(e)</Typography>
+      <Typography variant="h5" component="h2">
+        Informations salarié(e)
+      </Typography>
       <Grid
         container
         wrap="wrap"
@@ -35,13 +37,27 @@ export function ControllerControlNoLicInformationsEmployee({ controlData }) {
         className={classes.subSectionBody}
       >
         <Grid item xs={6}>
-          <InfoItem name="Nom" value={controlData.userLastName} />
+          <InfoItem
+            name="Nom"
+            value={controlData.userLastName}
+            titleProps={{
+              component: "h3"
+            }}
+          />
         </Grid>
         <Grid item xs={6}>
-          <InfoItem name="Prénom" value={controlData.userFirstName} />
+          <InfoItem
+            name="Prénom"
+            value={controlData.userFirstName}
+            titleProps={{
+              component: "h3"
+            }}
+          />
         </Grid>
       </Grid>
-      <Typography variant="h5">Mission lors du contrôle</Typography>
+      <Typography variant="h5" component="h2">
+        Mission lors du contrôle
+      </Typography>
       <Grid
         container
         wrap="wrap"

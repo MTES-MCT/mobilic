@@ -18,6 +18,7 @@ export function WebinarListSection({ className }) {
       title="Prochains webinaires Mobilic"
       className={className}
       id="webinaires"
+      titleProps={{ component: "h2" }}
     >
       <Typography className={classes.sectionIntroText}>
         Inscrivez-vous à l’un de nos webinaires pour assister à une

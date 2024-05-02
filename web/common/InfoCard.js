@@ -65,6 +65,7 @@ export function MetricCard({
       <Typography
         className={`${classes.value} ${valueProps.className}`}
         variant="h1"
+        component="p"
         {...omit(valueProps, ["className"])}
       >
         {value}
