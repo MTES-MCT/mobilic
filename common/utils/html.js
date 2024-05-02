@@ -13,6 +13,6 @@ export const getNextHeadingComponent = headingComponent => {
     case "h6":
       return "p";
     default:
-      return "span";
+      return "p";
   }
 };
