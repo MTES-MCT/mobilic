@@ -55,12 +55,17 @@ function _App({ ScreenComponent, loadUser }) {
   );
 
   const missions = unfilteredMissions.filter(m => m.activities.length > 0);
+  const notDeletedMissions = missions.filter(m => !m.deletedAt);
 
   const currentMission =
-    missions.length > 0 ? missions[missions.length - 1] : null;
+    notDeletedMissions.length > 0
+      ? notDeletedMissions[notDeletedMissions.length - 1]
+      : null;
 
   const previousMission =
-    missions.length > 1 ? missions[missions.length - 2] : null;
+    notDeletedMissions.length > 1
+      ? notDeletedMissions[notDeletedMissions.length - 2]
+      : null;
   const previousMissionEnd = previousMission
     ? previousMission.activities[previousMission.activities.length - 1].endTime
     : 0;
