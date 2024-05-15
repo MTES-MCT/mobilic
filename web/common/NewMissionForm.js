@@ -120,7 +120,12 @@ export default function NewMissionForm({
               </TextField>
             ]}
           {settings?.requireMissionName && [
-            <Typography key={1} variant="h5" className="form-field-title">
+            <Typography
+              key={1}
+              variant="h5"
+              component="p"
+              className="form-field-title"
+            >
               Quel est le nom de la mission&nbsp;?
             </Typography>,
             <TextField
@@ -134,7 +139,12 @@ export default function NewMissionForm({
             />
           ]}
           {withDay && [
-            <Typography key={1} variant="h5" className="form-field-title">
+            <Typography
+              key={1}
+              variant="h5"
+              component="p"
+              className="form-field-title"
+            >
               Quel jour s'est déroulée la mission ?
             </Typography>,
             <MobileDatePicker
@@ -152,7 +162,7 @@ export default function NewMissionForm({
               )}
             />
           ]}
-          <Typography variant="h5" className="form-field-title">
+          <Typography variant="h5" component="p" className="form-field-title">
             Quel est le lieu de prise de service&nbsp;?
           </Typography>
           <AddressField
@@ -169,7 +179,12 @@ export default function NewMissionForm({
             disableGeolocation={disableGeolocation}
           />
           {withEndLocation && [
-            <Typography key={0} variant="h5" className="form-field-title">
+            <Typography
+              key={0}
+              variant="h5"
+              component="p"
+              className="form-field-title"
+            >
               Quel est le lieu de fin de service&nbsp;?
             </Typography>,
             <AddressField
@@ -186,7 +201,7 @@ export default function NewMissionForm({
               disableGeolocation={true}
             />
           ]}
-          <Typography variant="h5" className="form-field-title">
+          <Typography variant="h5" component="p" className="form-field-title">
             Utilisez-vous un véhicule&nbsp;?{" "}
           </Typography>
           <VehicleFieldForApp

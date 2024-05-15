@@ -28,7 +28,7 @@ export default function FirstActivitySelectionModal({
   return (
     <FunnelModal open={open} handleBack={handleClose} darkBackground>
       <Box p={5} pb={8} className={classes.topPanel}>
-        <Typography variant="h2" align="center">
+        <Typography variant="h2" component="h1" align="center">
           Commencez la mission en sélectionnant la première activité
         </Typography>
       </Box>

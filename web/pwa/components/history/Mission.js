@@ -29,7 +29,10 @@ import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { MissionValidationInfo } from "../../../common/MissionValidationInfo";
-import { getNextHeadingComponent } from "common/utils/html";
+import {
+  getNextHeadingComponent,
+  getPrevHeadingComponent
+} from "common/utils/html";
 
 const useStyles = makeStyles(theme => ({
   alternateCard: {
@@ -187,7 +190,7 @@ export function Mission({
           onClick={() => setOpen(!open)}
         >
           <Grid item>
-            <Typography component={headingComponent}>
+            <Typography component={getPrevHeadingComponent(headingComponent)}>
               <span className="bold">
                 {mission.name
                   ? `Nom de la mission : ${mission.name}`

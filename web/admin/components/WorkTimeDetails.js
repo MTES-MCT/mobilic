@@ -156,7 +156,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
       </IconButton>
     </Box>,
     <Box key={1}>
-      <Typography variant="h3" component="h2" className={classes.employeeName}>
+      <Typography variant="h3" component="p" className={classes.employeeName}>
         {workTimeEntry.workerName}
       </Typography>
     </Box>,
