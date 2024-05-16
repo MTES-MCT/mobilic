@@ -96,7 +96,12 @@ export default function NewMissionForm({
         >
           {companies &&
             companies.length > 1 && [
-              <Typography key={0} variant="h5" className="form-field-title">
+              <Typography
+                key={0}
+                variant="h5"
+                component="p"
+                className="form-field-title"
+              >
                 Pour quelle entreprise&nbsp;?
               </Typography>,
               <TextField
