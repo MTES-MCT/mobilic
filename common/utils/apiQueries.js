@@ -136,6 +136,7 @@ export const USER_SIGNUP_MUTATION = gql`
     $isEmployee: Boolean
     $timezoneName: String
     $wayHeardOfMobilic: String
+    $phoneNumber: String
   ) {
     signUp {
       user(
@@ -148,6 +149,7 @@ export const USER_SIGNUP_MUTATION = gql`
         isEmployee: $isEmployee
         timezoneName: $timezoneName
         wayHeardOfMobilic: $wayHeardOfMobilic
+        phoneNumber: $phoneNumber
       ) {
         accessToken
         refreshToken

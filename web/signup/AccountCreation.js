@@ -27,6 +27,7 @@ import { WayHeardOfMobilic } from "../common/WayHeardOfMobilic";
 import { getPasswordErrors } from "common/utils/passwords";
 import { PasswordHelper } from "../common/PasswordHelper";
 import { usePageTitle } from "../common/UsePageTitle";
+import { PhoneNumber } from "../common/PhoneNumber";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   usePageTitle("Création de compte - Mobilic");
@@ -39,6 +40,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [phoneNumber, setPhoneNumber] = React.useState("");
   const [emailError, setEmailError] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [wayHeardOfMobilic, setWayHeardOfMobilic] = React.useState("");
@@ -62,7 +64,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
         lastName,
         subscribeToNewsletter,
         selectedTimezone.name,
-        wayHeardOfMobilic
+        wayHeardOfMobilic,
+        phoneNumber
       );
     } else {
       modals.open("cgu", {
@@ -76,7 +79,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             lastName,
             subscribeToNewsletter,
             selectedTimezone.name,
-            wayHeardOfMobilic
+            wayHeardOfMobilic,
+            phoneNumber
           ),
         handleReject: () => {}
       });
@@ -92,7 +96,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
     lastName,
     subscribeToNewsletter,
     timezone,
-    wayHeardOfMobilic
+    wayHeardOfMobilic,
+    phoneNumber
   ) => {
     setLoading(true);
     await alerts.withApiErrorHandling(
@@ -105,7 +110,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           subscribeToNewsletter,
           isEmployee: !isAdmin,
           timezoneName: timezone,
-          wayHeardOfMobilic: wayHeardOfMobilic
+          wayHeardOfMobilic: wayHeardOfMobilic,
+          ...(isAdmin && phoneNumber ? { phoneNumber } : {})
         };
         if (employeeInvite) {
           signupPayload.inviteToken = employeeInvite.inviteToken;
@@ -214,6 +220,13 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             currentTimezone={selectedTimezone}
             setTimezone={setSelectedTimezone}
           />
+          {isAdmin && (
+            <PhoneNumber
+              currentPhoneNumber={phoneNumber}
+              setCurrentPhoneNumber={setPhoneNumber}
+              label="Numéro de téléphone professionel"
+            />
+          )}
           {isAdmin && (
             <WayHeardOfMobilic
               setWayHeardOfMobilicValue={setWayHeardOfMobilic}
