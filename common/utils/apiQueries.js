@@ -962,6 +962,16 @@ export const CHANGE_NAME_MUTATION = gql`
     }
   }
 `;
+export const CHANGE_PHONE_NUMBER_MUTATION = gql`
+  mutation changePhoneNumber($userId: Int!, $newPhoneNumber: String!) {
+    account {
+      changePhoneNumber(userId: $userId, newPhoneNumber: $newPhoneNumber) {
+        id
+        phoneNumber
+      }
+    }
+  }
+`;
 export const CHANGE_TIMEZONE_MUTATION = gql`
   mutation changeTimezone($timezoneName: String!) {
     account {

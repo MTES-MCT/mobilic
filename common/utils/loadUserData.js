@@ -88,6 +88,7 @@ const USER_QUERY = gql`
       firstName
       lastName
       birthDate
+      phoneNumber
       timezoneName
       shouldUpdatePassword
       email
@@ -256,6 +257,7 @@ export async function syncUser(userPayload, api, store) {
     email,
     creationTime,
     birthDate,
+    phoneNumber,
     timezoneName,
     shouldUpdatePassword,
     hasConfirmedEmail,
@@ -297,6 +299,7 @@ export async function syncUser(userPayload, api, store) {
           creationTime,
           timezoneName,
           birthDate,
+          phoneNumber,
           hasConfirmedEmail,
           hasActivatedEmail,
           disabledWarnings,
