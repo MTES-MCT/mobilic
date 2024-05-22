@@ -50,7 +50,7 @@ export function UserControlSection() {
     <Box my={6} mb={6} className={classes.section}>
       <Grid container>
         <Grid item xs={12}>
-          <Typography className={classes.mainTitle} variant="h5">
+          <Typography className={classes.mainTitle} variant="h5" component="h2">
             Mes contrôles en bord de route
           </Typography>
         </Grid>

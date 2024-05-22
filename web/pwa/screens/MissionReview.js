@@ -46,6 +46,7 @@ export function MissionReview({
           className={classes.overviewTimersTitle}
           align="left"
           variant="h5"
+          component="h1"
         >
           Récapitulatif de la mission
           {` ${currentMission.name} du ${prettyFormatDay(
@@ -73,6 +74,7 @@ export function MissionReview({
         logComment={logComment}
         cancelComment={cancelComment}
         editKilometerReading={registerKilometerReading}
+        titleProps={{ component: "h2" }}
       />
     </Container>
   );

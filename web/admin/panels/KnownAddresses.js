@@ -71,7 +71,7 @@ export default function KnownAddressAdmin({ company }) {
 
   return [
     <Box key={0} className={classes.title}>
-      <Typography variant="h4">
+      <Typography variant="h4" component="h2">
         Adresses fréquentes ({knownAddresses.length})
       </Typography>
       <Button

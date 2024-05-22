@@ -16,7 +16,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function IconCard({ description, IconComponent, link, href }) {
+export function IconCard({
+  description,
+  IconComponent,
+  link,
+  href,
+  titleProps = {}
+}) {
   const classes = useStyles();
   const commonCardsClasses = resourceCardsClasses();
 
@@ -32,7 +38,7 @@ export function IconCard({ description, IconComponent, link, href }) {
         className={classnames(commonCardsClasses.card, classes.iconCard)}
       >
         <IconComponent height={150} width={150} className={classes.icon} />
-        <Typography>{description}</Typography>
+        <Typography {...titleProps}>{description}</Typography>
       </Card>
     </LinkButton>
   );

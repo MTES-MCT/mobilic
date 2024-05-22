@@ -51,7 +51,11 @@ export default function TeamOrSoloChoiceModal({
     <FunnelModal open={open} handleBack={handleClose}>
       <Container className="flex-column-space-between" style={{ flexGrow: 1 }}>
         <Container className={funnelModalClasses.slimContainer} disableGutters>
-          <Typography className={funnelModalClasses.title} variant="h5">
+          <Typography
+            className={funnelModalClasses.title}
+            variant="h5"
+            component="p"
+          >
             Pour qui enregistrez-vous le temps de travail&nbsp;?
           </Typography>
           <Box mt={3} mb={6} className="flex-row-center">

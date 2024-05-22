@@ -63,7 +63,9 @@ export function ControllerControlHeader({
           Fermer
         </Typography>
       </Box>
-      <h5>Contrôle #{controlId}</h5>
+      <Typography variant="h3" component="h1">
+        Contrôle #{controlId}
+      </Typography>
       <Box className={classes.subHeaderSection}>
         <Typography>
           Date et heure du contrôle : <b>{prettyFormatDayHour(controlDate)}</b>

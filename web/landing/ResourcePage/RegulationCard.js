@@ -2,7 +2,7 @@ import React from "react";
 import { FaqCard } from "./FaqCard";
 import { useRegulationDrawer } from "./RegulationDrawer";
 
-export function RegulationCard({ rule, onClick = () => {} }) {
+export function RegulationCard({ rule, onClick = () => {}, titleProps = {} }) {
   const openRegulationDrawer = useRegulationDrawer();
 
   return (
@@ -13,6 +13,7 @@ export function RegulationCard({ rule, onClick = () => {} }) {
         onClick();
         openRegulationDrawer(rule, false);
       }}
+      titleProps={titleProps}
     />
   );
 }

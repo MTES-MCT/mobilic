@@ -29,7 +29,7 @@ const getCompaniesText = companiesName => {
     return "L'entreprise a été créée avec succès !";
   }
 
-  if (companiesName.length == 1) {
+  if (companiesName.length === 1) {
     return `L'entreprise ${companiesName[0]} a été créée avec succès !`;
   }
 

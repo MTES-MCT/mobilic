@@ -19,6 +19,7 @@ import { useModals } from "common/utils/modals";
 import { ControlTypeFilters } from "../filters/ControlTypeFilter";
 import { ControllerControlNewNoLic } from "../noLic/ControllerControlNewNoLic";
 import { usePageTitle } from "../../../common/UsePageTitle";
+import { Typography } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -115,12 +116,24 @@ export function ControllerHome() {
         onClose={() => setOpenNewNoLic(false)}
         setControlOnFocus={setControlOnFocus}
       />
-      <h3 className={classes.titleHello} key={1}>
+      <Typography
+        variant="h4"
+        component="h1"
+        key={1}
+        className={classes.titleHello}
+      >
         Bonjour, {controllerUserInfo.firstName}
-      </h3>
-      <h4 className={classes.newControlText} key={2}>
+      </Typography>
+
+      <Typography
+        variant="h5"
+        component="h2"
+        key={2}
+        className={classes.newControlText}
+        marginBottom={2}
+      >
         Nouveau contrôle
-      </h4>
+      </Typography>
       <Grid
         container
         direction="row"
@@ -158,9 +171,15 @@ export function ControllerHome() {
       >
         Un horaire de service est présenté ?
       </div>
-      <h4 className={classes.newControlText}>
+      <Typography
+        variant="h5"
+        component="h2"
+        key={2}
+        className={classes.newControlText}
+        marginBottom={2}
+      >
         Historique des derniers contrôles
-      </h4>
+      </Typography>
       <Grid container>
         <Grid item xs={12} sm={4} md={2} marginBottom={2}>
           <ControlTypeFilters

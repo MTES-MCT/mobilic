@@ -29,6 +29,10 @@ import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { MissionValidationInfo } from "../../../common/MissionValidationInfo";
+import {
+  getNextHeadingComponent,
+  getPrevHeadingComponent
+} from "common/utils/html";
 
 const useStyles = makeStyles(theme => ({
   alternateCard: {
@@ -75,7 +79,8 @@ export function Mission({
   untilTime,
   registerKilometerReading,
   controlledShouldDisplayInitialEmployeeVersion = false,
-  controlId = null
+  controlId = null,
+  headingComponent
 }) {
   const [open, setOpen] = React.useState(defaultOpenCollapse);
   const [
@@ -159,6 +164,12 @@ export function Mission({
       untilTime={untilTime}
       editKilometerReading={registerKilometerReading}
       controlId={controlId}
+      titleProps={{
+        component:
+          headingComponent && collapsable
+            ? getNextHeadingComponent(headingComponent)
+            : headingComponent
+      }}
     />
   );
 
@@ -179,7 +190,7 @@ export function Mission({
           onClick={() => setOpen(!open)}
         >
           <Grid item>
-            <Typography>
+            <Typography component={getPrevHeadingComponent(headingComponent)}>
               <span className="bold">
                 {mission.name
                   ? `Nom de la mission : ${mission.name}`

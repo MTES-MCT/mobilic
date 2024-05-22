@@ -115,7 +115,11 @@ export default function EndMissionModal({
           >
             {!missionEndTime && (
               <Box key={0}>
-                <Typography variant="h5" className="form-field-title">
+                <Typography
+                  variant="h5"
+                  component="p"
+                  className="form-field-title"
+                >
                   Quelle est l'heure de fin de la mission&nbsp;?
                 </Typography>
                 <NativeDateTimePicker
@@ -131,7 +135,7 @@ export default function EndMissionModal({
                 />
               </Box>
             )}
-            <Typography variant="h5" className="form-field-title">
+            <Typography variant="h5" component="p" className="form-field-title">
               Quel est le lieu de fin de service&nbsp;?
             </Typography>
             <AddressField
@@ -153,7 +157,12 @@ export default function EndMissionModal({
             currentMission.startLocation &&
             currentMission.startLocation.kilometerReading
               ? [
-                  <Typography key={0} variant="h5" className="form-field-title">
+                  <Typography
+                    key={0}
+                    variant="h5"
+                    component="p"
+                    className="form-field-title"
+                  >
                     Quel est le relevé kilométrique de fin de service&nbsp;?
                   </Typography>,
                   <KilometerReadingField
@@ -170,7 +179,11 @@ export default function EndMissionModal({
               !currentMission.company.settings ||
               currentMission.company.settings.requireExpenditures) && (
               <>
-                <Typography variant="h5" className="form-field-title">
+                <Typography
+                  variant="h5"
+                  component="p"
+                  className="form-field-title"
+                >
                   Avez-vous eu des frais lors de cette mission&nbsp;?
                 </Typography>
                 <Expenditures
@@ -183,7 +196,7 @@ export default function EndMissionModal({
                 />
               </>
             )}
-            <Typography variant="h5" className="form-field-title">
+            <Typography variant="h5" component="p" className="form-field-title">
               Avez-vous une observation&nbsp;? (optionnel)
             </Typography>
             <TextField

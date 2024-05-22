@@ -44,6 +44,7 @@ export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {}, loading }) {
               {...omit(metric, "render")}
               {...cardProps}
               loading={loading}
+              titleProps={{ component: "h2" }}
             >
               {metric.render && metric.render()}
             </CardComponent>
@@ -308,10 +309,15 @@ export function renderPeriodKpis(
                     fontWeight: "bold",
                     whiteSpace: "nowrap"
                   }}
+                  component="h2"
                 >
                   {EXPENDITURES[type].plural}
                 </Typography>
-                <Typography variant="h4" style={{ fontWeight: "bold" }}>
+                <Typography
+                  variant="h4"
+                  component="span"
+                  style={{ fontWeight: "bold" }}
+                >
                   {kpis.expendituresCount[type]}
                 </Typography>
               </Box>

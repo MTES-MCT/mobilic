@@ -674,7 +674,7 @@ export function Employees({ company, containerRef }) {
         classes.title
       }`}
     >
-      <Typography variant="h4">
+      <Typography variant="h4" component="h2">
         Invitations en attente ({pendingEmployments.length}){" "}
         {
           <Button
@@ -766,7 +766,9 @@ export function Employees({ company, containerRef }) {
       customRowActions={customActionsPendingEmployment}
     />,
     <Box key={3} className={classes.title}>
-      <Typography variant="h4">Salariés ({validEmployments.length})</Typography>
+      <Typography variant="h4" component="h2">
+        Salariés ({validEmployments.length})
+      </Typography>
       {!canDisplayPendingEmployments && (
         <Button
           variant="contained"

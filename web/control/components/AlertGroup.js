@@ -73,7 +73,8 @@ export function AlertGroup({
   setTab,
   isReportingInfractions,
   onUpdateInfraction,
-  readOnlyAlerts
+  readOnlyAlerts,
+  titleProps = {}
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
@@ -103,7 +104,7 @@ export function AlertGroup({
           wrap="nowrap"
         >
           <Grid item>
-            <Typography className="bold" color="primary">
+            <Typography className="bold" color="primary" {...titleProps}>
               {sanction}
             </Typography>
             <Typography className="bold">{infringementLabel}</Typography>

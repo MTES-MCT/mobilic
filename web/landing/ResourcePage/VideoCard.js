@@ -101,13 +101,17 @@ function getCdnUrl(id) {
   return `https://player.vimeo.com/video/${id}?badge=0&amp;autopause=0&amp;quality_selector=1&amp;progress_bar=1&amp;player_id=0&amp;app_id=58479`;
 }
 
-export function VideoCard({ video, ...props }) {
+export function VideoCard({ video, titleProps = {}, ...props }) {
   const classes = resourceCardsClasses();
 
   const { id, title, description } = video;
   return (
     <Card variant="outlined" className={classes.card} {...props}>
-      <Typography variant={"h5"} className={classes.description}>
+      <Typography
+        variant={"h5"}
+        className={classes.description}
+        {...titleProps}
+      >
         {description}
       </Typography>
       <div style={{ padding: "20rem 0 0 0", position: "relative" }}>

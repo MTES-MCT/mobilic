@@ -221,7 +221,11 @@ export function LogHolidayForm({
         >
           {companies && companies.length > 1 && (
             <>
-              <Typography variant="h5" className="form-field-title">
+              <Typography
+                variant="h5"
+                component="p"
+                className="form-field-title"
+              >
                 Pour quelle entreprise&nbsp;?
               </Typography>
               <TextField
@@ -246,7 +250,11 @@ export function LogHolidayForm({
           )}
           {users && (
             <>
-              <Typography variant="h5" className="form-field-title">
+              <Typography
+                variant="h5"
+                component="p"
+                className="form-field-title"
+              >
                 Qui est le salarié concerné&nbsp;?
               </Typography>
               <TextField
@@ -270,7 +278,7 @@ export function LogHolidayForm({
               </TextField>
             </>
           )}
-          <Typography variant="h5" className="form-field-title">
+          <Typography variant="h5" component="p" className="form-field-title">
             Quel est le motif de congé ou d'absence&nbsp;?
           </Typography>
           <TextField
@@ -303,7 +311,7 @@ export function LogHolidayForm({
             />
           )}
 
-          <Typography variant="h5" className="form-field-title">
+          <Typography variant="h5" component="p" className="form-field-title">
             Quel est le jour et l'heure de début&nbsp;?
           </Typography>
           <NativeDateTimePicker
@@ -316,7 +324,7 @@ export function LogHolidayForm({
             variant="filled"
             error={startTimeError}
           />
-          <Typography variant="h5" className="form-field-title">
+          <Typography variant="h5" component="p" className="form-field-title">
             Quel est le jour et l'heure de fin&nbsp;?
           </Typography>
           <NativeDateTimePicker

@@ -127,7 +127,7 @@ export default function CompanyApiPanel({ company }) {
     <Grid key={0} container>
       <Grid item xs={6}>
         <Box className={classes.title}>
-          <Typography variant="h4">
+          <Typography variant="h4" component="h2">
             Mes logiciels autorisés{" "}
             {!loadingAuthorizedClients && (
               <span> ({authorizedClients?.length || 0})</span>

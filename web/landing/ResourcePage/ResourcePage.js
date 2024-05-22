@@ -70,12 +70,17 @@ export function ResourcePage() {
         <PaperContainerTitle variant="h1" className={classes.title}>
           Bienvenue sur la page documentation
         </PaperContainerTitle>
-        <Typography variant={"h3"} className={classes.resourceSubtitle}>
+        <Typography
+          variant={"h3"}
+          component="h2"
+          className={classes.resourceSubtitle}
+        >
           Je découvre Mobilic
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={10}>
           <Grid item xs={12} sm={4}>
             <FaqCard
+              titleProps={{ component: "h3" }}
               question="Qu'est ce que Mobilic ?"
               answer="Mobilic est un outil numérique de saisie et de suivi du temps de travail."
               link="https://faq.mobilic.beta.gouv.fr/comprendre-ce-quest-mobilic/vos-questions-recurrentes"
@@ -83,6 +88,7 @@ export function ResourcePage() {
           </Grid>
           <Grid item xs={12} sm={4}>
             <FaqCard
+              titleProps={{ component: "h3" }}
               question="Qui est concerné par Mobilic ?"
               answer="Toutes les entreprises de transport léger et de déménagement."
               link="https://faq.mobilic.beta.gouv.fr/comprendre-ce-quest-mobilic/vos-questions-recurrentes"
@@ -90,6 +96,7 @@ export function ResourcePage() {
           </Grid>
           <Grid item xs={12} sm={4}>
             <FaqCard
+              titleProps={{ component: "h3" }}
               question="Est-il possible de remplacer le livret individuel de contrôle par Mobilic ?"
               answer="Oui, si vous utilisez Mobilic, vous n'avez pas besoin de continuer à remplir le LIC."
               link="https://faq.mobilic.beta.gouv.fr/comprendre-ce-quest-mobilic/securite-et-confidentialite-des-donnees"
@@ -114,7 +121,11 @@ export function ResourcePage() {
       maxWidth={false}
     >
       <Container maxWidth="lg" className={classes.inner}>
-        <Typography variant={"h3"} className={classes.resourceSubtitle}>
+        <Typography
+          variant={"h3"}
+          component="h2"
+          className={classes.resourceSubtitle}
+        >
           Je cherche de la documentation pour m'aider à utiliser Mobilic
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={10}>
@@ -123,6 +134,7 @@ export function ResourcePage() {
               link="/resources/admin"
               description="Documentation gestionnaire"
               IconComponent={ManagerImage}
+              titleProps={{ component: "h3" }}
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -130,6 +142,7 @@ export function ResourcePage() {
               link="/resources/driver"
               description="Documentation travailleur mobile"
               IconComponent={WorkerImage}
+              titleProps={{ component: "h3" }}
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -137,6 +150,7 @@ export function ResourcePage() {
               link="/resources/controller"
               description="Documentation contrôleur"
               IconComponent={ControllerImage}
+              titleProps={{ component: "h3" }}
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -144,6 +158,7 @@ export function ResourcePage() {
               href="https://developers.mobilic.beta.gouv.fr"
               description="Documentation API"
               IconComponent={SoftwareImage}
+              titleProps={{ component: "h3" }}
             />
           </Grid>
         </Grid>
@@ -155,7 +170,11 @@ export function ResourcePage() {
       maxWidth={false}
     >
       <Container maxWidth="lg" className={classes.inner}>
-        <Typography variant={"h3"} className={classes.resourceSubtitle}>
+        <Typography
+          variant={"h3"}
+          component="h2"
+          className={classes.resourceSubtitle}
+        >
           Je cherche des informations sur la réglementation en vigueur dans le
           transport léger
         </Typography>
@@ -164,7 +183,7 @@ export function ResourcePage() {
             .slice(0, 3)
             .map((rule, index) => (
               <Grid item xs={12} sm={4} key={index}>
-                <RegulationCard rule={rule} />
+                <RegulationCard rule={rule} titleProps={{ component: "h3" }} />
               </Grid>
             ))}
         </Grid>

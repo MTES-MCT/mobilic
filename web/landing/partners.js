@@ -146,7 +146,7 @@ export function Partners() {
         </Box>
         <Grid container spacing={14}>
           <Grid item xs={12} md={6}>
-            <Typography variant="h2" className={classes.title}>
+            <Typography variant="h5" component="h2" className={classes.title}>
               Les entreprises
             </Typography>
             <Typography className={classes.paragraphDescription}>
@@ -191,7 +191,7 @@ export function Partners() {
           </Grid>
           <Grid item xs={12} md={6}>
             <Box marginBottom={16}>
-              <Typography variant="h2" className={classes.title}>
+              <Typography variant="h5" component="h2" className={classes.title}>
                 Les éditeurs de logiciels
               </Typography>
               <Typography
@@ -245,7 +245,7 @@ export function Partners() {
               </MainCtaButton>
             </Box>
             <Box>
-              <Typography variant="h2" className={classes.title}>
+              <Typography variant="h5" component="h2" className={classes.title}>
                 Les différents soutiens
               </Typography>
               <Grid

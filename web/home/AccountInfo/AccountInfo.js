@@ -68,8 +68,10 @@ export default function Home() {
     <Header key={0} />,
     <PaperContainer key={1} style={{ textAlign: "left" }}>
       <Container className={`centered ${classes.innerContainer}`} maxWidth="sm">
-        <PaperContainerTitle>Mes informations</PaperContainerTitle>
-        <Section title="Moi">
+        <PaperContainerTitle component="h1">
+          Mes informations
+        </PaperContainerTitle>
+        <Section title="Moi" component="h2">
           <Grid container wrap="wrap" spacing={4}>
             <Grid item xs={12}>
               <InfoItem
@@ -188,6 +190,7 @@ export default function Home() {
         {isActive && <Divider className="hr-unstyled" />}
         {isActive && (
           <Section
+            component="h2"
             title={
               employments.length > 1 ? "Mes entreprises" : "Mon entreprise"
             }

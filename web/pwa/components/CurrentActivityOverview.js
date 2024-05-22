@@ -93,10 +93,10 @@ export function CurrentActivityOverview({
         disableGutters
         maxWidth={false}
       >
-        <Typography className="hidden" variant="h2">
+        <Typography className="hidden" variant="h2" component="h1">
           Vous êtes en accompagnement depuis 00h 00m00
         </Typography>
-        <Typography variant="h2" className={classes.primaryText}>
+        <Typography className={classes.primaryText} variant="h2" component="h1">
           {activityOverviewText}
         </Typography>
         <Typography className={classes.secondaryText}>
