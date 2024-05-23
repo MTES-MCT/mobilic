@@ -92,7 +92,6 @@ export default function ControllerExportC1BOne({
       </ModalContent>
       <ModalFooter>
         <Button
-          title="téléchargement"
           className={classes.modalFooter}
           onClick={async () => {
             alerts.withApiErrorHandling(async () => {
