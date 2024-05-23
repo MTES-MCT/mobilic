@@ -6,6 +6,7 @@ import {
   ModalTitle
 } from "@dataesr/react-dsfr";
 import { Alert } from "@mui/material";
+import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
@@ -57,7 +58,11 @@ export default function ControllerExportC1BOne({
           <Typography mt={1}>
             Si jamais vous ne parvenez pas à lire les fichiers Mobilic depuis
             votre logiciel d'analyse n'hésitez pas à nous contacter à l'adresse
-            mail contact@mobilic.beta.gouv.fr.
+            mail{" "}
+            <Link href="mailto:contact@mobilic.beta.gouv.fr">
+              contact@mobilic.beta.gouv.fr
+            </Link>
+            .
           </Typography>
         </Alert>
         <Typography variant="h4" className={classes.subtitle}>
