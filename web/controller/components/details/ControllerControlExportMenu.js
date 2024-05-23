@@ -17,9 +17,16 @@ export function ControllerControlExportMenu({ controlId, canDownloadXml }) {
   const alerts = useSnackbarAlerts();
   const [exportMenuAnchorEl, setExportMenuAnchorEl] = React.useState(null);
 
+  const isOpen = React.useMemo(() => !!exportMenuAnchorEl, [
+    exportMenuAnchorEl
+  ]);
   return (
     <>
       <Button
+        id="control-export-button"
+        aria-controls={isOpen ? "control-export-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={isOpen ? "true" : undefined}
         color="primary"
         variant="outlined"
         size="small"
@@ -28,10 +35,14 @@ export function ControllerControlExportMenu({ controlId, canDownloadXml }) {
         Exporter le contrôle
       </Button>
       <Menu
+        id="control-export-menu"
         keepMounted
-        open={Boolean(exportMenuAnchorEl)}
+        open={isOpen}
         onClose={() => setExportMenuAnchorEl(null)}
         anchorEl={exportMenuAnchorEl}
+        MenuListProps={{
+          "aria-labelledby": "control-export-button"
+        }}
       >
         <MenuItem
           onClick={() => {
