@@ -176,7 +176,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             value={email}
             setValue={setEmail}
             validate
-            error={emailError}
+            error={!!emailError}
             setError={setEmailError}
           />
           <PasswordField
@@ -189,7 +189,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             onChange={e => {
               setPassword(e.target.value);
             }}
-            error={password ? getPasswordErrors(password) : null}
+            error={password ? !!getPasswordErrors(password) : false}
           />
           <PasswordHelper password={password} />
           <TextField
@@ -245,9 +245,9 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
               color="primary"
               type="submit"
               disabled={
-                emailError ||
+                !!emailError ||
                 !email ||
-                getPasswordErrors(password) ||
+                !!getPasswordErrors(password) ||
                 !firstName ||
                 !lastName
               }
