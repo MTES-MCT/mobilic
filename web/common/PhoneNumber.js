@@ -1,8 +1,15 @@
 import React from "react";
-import PhoneInput from "react-phone-input-2";
 import examples from "libphonenumber-js/mobile/examples";
-import { getExampleNumber, isPossiblePhoneNumber } from "libphonenumber-js";
+import {
+  AsYouType,
+  getCountryCallingCode,
+  getExampleNumber,
+  parsePhoneNumber
+} from "libphonenumber-js";
 import { makeStyles } from "@mui/styles";
+import Flag from "react-world-flags";
+import { MenuItem, Select, Stack } from "@mui/material";
+import { TextInput } from "@dataesr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -10,57 +17,112 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const COUNTRIES = [
+  {
+    code: "FR",
+    label: "France"
+  },
+  {
+    code: "ES",
+    label: "Espagne"
+  },
+  {
+    code: "BE",
+    label: "Belgique"
+  },
+  {
+    code: "IT",
+    label: "Italie"
+  }
+];
+
 export function PhoneNumber({
   currentPhoneNumber,
   setCurrentPhoneNumber,
-  label = "Numéro de téléphone",
-  isInModal = false
+  label = "Numéro de téléphone"
 }) {
   const classes = useStyles();
 
-  const [phoneNumber, setPhoneNumber] = React.useState(currentPhoneNumber);
+  const [phoneNumber, setPhoneNumber] = React.useState("");
   const [currentCountry, setCurrentCountry] = React.useState("FR");
+  const [errorMessage, setErrorMessage] = React.useState("");
 
   React.useEffect(() => {
-    if (phoneNumber && isPossiblePhoneNumber(phoneNumber)) {
-      setCurrentPhoneNumber(phoneNumber);
+    try {
+      const parsedNumber = parsePhoneNumber(currentPhoneNumber);
+      if (parsedNumber) {
+        setCurrentCountry(parsedNumber.country);
+        setPhoneNumber(parsedNumber.formatNational());
+      }
+    } catch {
+      setPhoneNumber(currentPhoneNumber);
+      setCurrentCountry("FR");
     }
-  }, [phoneNumber]);
+  }, [currentPhoneNumber]);
 
   const numberExample = React.useMemo(
-    () => getExampleNumber(currentCountry, examples).formatInternational(),
+    () => getExampleNumber(currentCountry, examples).formatNational(),
     [currentCountry]
   );
 
+  const onInput = number => {
+    const formatter = new AsYouType(currentCountry);
+    const formattedValue = formatter.input(number);
+    if (formatter.isPossible()) {
+      const parsedPhoneNumber = parsePhoneNumber(
+        formattedValue,
+        currentCountry
+      );
+      setCurrentPhoneNumber(parsedPhoneNumber.format("E.164"));
+      setErrorMessage("");
+    } else {
+      if (number) {
+        setErrorMessage(
+          `Le format de numéro de téléphone saisie n’est pas valide.`
+        );
+      }
+    }
+    setPhoneNumber(formattedValue || number);
+  };
+
   return (
     <div className="fr-input-group">
-      <label htmlFor="phone-input" className={`fr-label ${classes.label}`}>
+      <label
+        htmlFor="phone-number-input"
+        className={`fr-label ${classes.label}`}
+      >
         {label}
         <span className="fr-hint-text">Format attendu : {numberExample}</span>
       </label>
-      <PhoneInput
-        placeholder=""
-        value={phoneNumber}
-        onChange={(newNumber, newCountry, e, formattedValue) => {
-          setPhoneNumber(formattedValue);
-          setCurrentCountry(newCountry.countryCode.toUpperCase());
-        }}
-        inputClass="fr-input"
-        country={"fr"}
-        onlyCountries={["fr", "it"]}
-        dropdownStyle={isInModal ? { position: "fixed" } : {}}
-        inputStyle={{
-          marginLeft: "3rem",
-          paddingLeft: "0.5rem",
-          backgroundColor: "none",
-          position: "relative"
-        }}
-        countryCodeEditable={false}
-        containerStyle={{
-          width: "100%",
-          position: "relative"
-        }}
-      />
+      <Stack direction="row" spacing={1}>
+        <Select
+          hiddenLabel
+          variant="filled"
+          size="small"
+          value={currentCountry}
+          onChange={e => setCurrentCountry(e.target.value)}
+          native={false}
+          renderValue={c => (
+            <Flag code={c} height="17" style={{ paddingTop: "0.25rem" }} />
+          )}
+          sx={{ height: "2.5rem" }}
+        >
+          {COUNTRIES.map(({ code, label }) => (
+            <MenuItem key={code} value={code}>
+              <Flag code={code} width="24" style={{ marginRight: "1rem" }} />{" "}
+              {label} (+{getCountryCallingCode(code)})
+            </MenuItem>
+          ))}
+        </Select>
+        <TextInput
+          id="phone-number-input"
+          value={phoneNumber}
+          onChange={e => onInput(e.target.value)}
+          messageType={errorMessage && "error"}
+          message={errorMessage}
+          autoComplete="tel"
+        />
+      </Stack>
     </div>
   );
 }

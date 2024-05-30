@@ -8,7 +8,6 @@ import {
 import { useSnackbarAlerts } from "../common/Snackbar";
 import DialogContent from "@mui/material/DialogContent";
 import Button from "@mui/material/Button";
-import "react-phone-input-2/lib/plain.css";
 import { PhoneNumber } from "../common/PhoneNumber";
 
 export default function ChangePhoneNumberModal({
@@ -48,8 +47,7 @@ export default function ChangePhoneNumberModal({
         <DialogContent>
           <PhoneNumber
             currentPhoneNumber={newPhoneNumber}
-            setPhoneNumber={setNewPhoneNumber}
-            isInModal={true}
+            setCurrentPhoneNumber={setNewPhoneNumber}
           />
         </DialogContent>
         <CustomDialogActions>
