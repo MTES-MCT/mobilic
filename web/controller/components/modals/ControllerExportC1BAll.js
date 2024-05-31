@@ -162,10 +162,10 @@ export default function ControllerExportC1BAll({
                 max_date: exportFilters.toDate,
                 with_digital_signatures: sign
               };
-              await api.downloadFileHttpQuery(HTTP_QUERIES.controlC1BExport, {
+              await api.downloadFileHttpQuery(HTTP_QUERIES.controlsC1bExport, {
                 json: options
               });
-            }, "download-control-c1b");
+            }, "download-control-c1b-all");
           }}
         >
           Générer

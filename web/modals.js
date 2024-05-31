@@ -34,6 +34,7 @@ import EmployeesTeamRevisionModal from "./admin/panels/EmployeesTeamRevisionModa
 import ConfirmationCancelControlBulletinModal from "./controller/components/controlBulletin/ConfirmationCancelControlBulletinModal";
 import TypeformModal from "./pwa/components/TypeformModal";
 import LogHolidayModal from "./pwa/components/LogHoliday";
+import ControllerExportC1BOne from "./controller/components/modals/ControllerExportC1BOne";
 import ChangePhoneNumberModal from "./home/ChangePhoneNumber";
 
 export const MODAL_DICT = {
@@ -69,6 +70,7 @@ export const MODAL_DICT = {
   warningEndMissionModal: WarningEndMissionModal,
   geolocPermissionInfoModal: GeolocPermissionInfoModal,
   controllerExportC1BAll: ControllerExportC1BAll,
+  controllerExportC1BOne: ControllerExportC1BOne,
   controllerHelp: ControllerHelp,
   companyTeamCreationRevisionModal: CompanyTeamCreationRevisionModal,
   employeesTeamRevisionModal: EmployeesTeamRevisionModal,
