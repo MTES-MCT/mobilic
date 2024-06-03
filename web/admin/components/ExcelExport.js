@@ -234,7 +234,7 @@ export default function ExcelExport({
               });
               await api.downloadFileHttpQuery(HTTP_QUERIES.excelExport, {
                 json: options,
-                timeout: 45000
+                timeout: 120000
               });
             }, "download-company-report")
           }
