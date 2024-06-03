@@ -40,10 +40,7 @@ export default function ChangePhoneNumberModal({
   return (
     <Dialog maxWidth="sm" onClose={handleClose} open={open} fullWidth>
       <CustomDialogTitle handleClose={handleClose} title={title} />
-      <form
-        autoComplete="off"
-        onSubmit={e => submitNewPhoneNumber(e, newPhoneNumber)}
-      >
+      <form onSubmit={e => submitNewPhoneNumber(e, newPhoneNumber)}>
         <DialogContent>
           <PhoneNumber
             currentPhoneNumber={newPhoneNumber}
