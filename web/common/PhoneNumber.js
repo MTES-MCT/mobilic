@@ -86,8 +86,13 @@ export function PhoneNumber({
   };
 
   return (
-    <div className="fr-input-group">
+    <div
+      className="fr-input-group"
+      role="group"
+      aria-labelledby="phone-number-title"
+    >
       <label
+        id="phone-number-title"
         htmlFor="phone-number-input"
         className={`fr-label ${classes.label}`}
       >

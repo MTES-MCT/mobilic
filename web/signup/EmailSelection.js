@@ -223,7 +223,7 @@ export function EmailSelection() {
                 onChange={e => {
                   setPassword(e.target.value);
                 }}
-                error={password ? !!getPasswordErrors(password) : null}
+                error={password ? !!getPasswordErrors(password) : false}
               />
               <PasswordHelper password={password} />
             </>
