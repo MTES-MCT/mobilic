@@ -179,9 +179,13 @@ export const CONFIRM_FC_EMAIL_MUTATION = gql`
 `;
 export const COMPANY_SIGNUP_MUTATION = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
-  mutation companySignUp($siren: String!, $usualName: String!) {
+  mutation companySignUp(
+    $siren: String!
+    $usualName: String!
+    $phoneNumber: String
+  ) {
     signUp {
-      company(siren: $siren, usualName: $usualName) {
+      company(siren: $siren, usualName: $usualName, phoneNumber: $phoneNumber) {
         employment {
           id
           startDate
