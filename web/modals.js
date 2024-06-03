@@ -35,6 +35,7 @@ import ConfirmationCancelControlBulletinModal from "./controller/components/cont
 import TypeformModal from "./pwa/components/TypeformModal";
 import LogHolidayModal from "./pwa/components/LogHoliday";
 import ControllerExportC1BOne from "./controller/components/modals/ControllerExportC1BOne";
+import ChangePhoneNumberModal from "./home/ChangePhoneNumber";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -58,6 +59,7 @@ export const MODAL_DICT = {
   cgu: CGUModal,
   changeEmail: ChangeEmailModal,
   changeName: ChangeNameModal,
+  changePhoneNumber: ChangePhoneNumberModal,
   changeTimezone: ChangeTimezoneModal,
   terminateEmployment: TerminateEmployment,
   userReadQRCode: UserReadQRCodeModal,

@@ -183,7 +183,7 @@ export function EmailSelection() {
             value={email}
             setValue={setEmail}
             validate
-            error={emailError}
+            error={!!emailError}
             setError={setEmailError}
           />
           <CheckboxField
@@ -223,7 +223,7 @@ export function EmailSelection() {
                 onChange={e => {
                   setPassword(e.target.value);
                 }}
-                error={password ? getPasswordErrors(password) : null}
+                error={password ? !!getPasswordErrors(password) : false}
               />
               <PasswordHelper password={password} />
             </>
@@ -253,7 +253,7 @@ export function EmailSelection() {
             type="submit"
             loading={loading}
             disabled={
-              emailError ||
+              !!emailError ||
               !email ||
               (choosePassword && (!password || getPasswordErrors(password)))
             }

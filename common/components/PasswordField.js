@@ -38,7 +38,7 @@ export function PasswordField(props) {
         endAdornment={
           <InputAdornment position="end">
             <IconButton
-              tabIndex="-1"
+              tabIndex={-1}
               aria-label="toggle password visibility"
               onClick={e => {
                 setShowPassword(!showPassword);
