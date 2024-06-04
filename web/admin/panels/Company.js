@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
@@ -19,7 +19,6 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Employees } from "./Employees";
 import Grid from "@mui/material/Grid";
 import { LinkButton } from "../../common/LinkButton";
-import Box from "@mui/material/Box";
 import VehicleAdmin from "./Vehicles";
 import KnownAddressAdmin from "./KnownAddresses";
 import SettingAdmin from "./Settings";
@@ -27,13 +26,11 @@ import CompanyApiPanel from "./CompanyApiPanel";
 import CompanyTeamsPanel from "./CompanyTeamsPanel";
 import CertificationPanel from "./CertificationPanel/CertificationPanel";
 import { useApi } from "common/utils/api";
-import {
-  SNOOZE_CERTIFICATION_INFO,
-  UPDATE_COMPANY_NAME
-} from "common/utils/apiQueries";
+import { SNOOZE_CERTIFICATION_INFO } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
-import EditableTextField from "../../common/EditableTextField";
 import { usePageTitle } from "../../common/UsePageTitle";
+import CompanyDetails from "../../home/CompanyDetails";
+import Stack from "@mui/material/Stack";
 
 export const usePanelStyles = makeStyles(theme => ({
   navigation: {
@@ -63,9 +60,6 @@ export const usePanelStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
     fontStyle: "italic",
     textAlign: "justify"
-  },
-  companyName: {
-    marginBottom: theme.spacing(1)
   },
   title: {
     marginBottom: theme.spacing(2),
@@ -185,7 +179,7 @@ function SubNavigationToggle({ view, setView }) {
   };
 
   return (
-    <>
+    <Stack direction="row">
       {COMPANY_SUB_PANELS.map(panelInfos => (
         <ToggleButtonGroup
           key={panelInfos.view}
@@ -228,13 +222,11 @@ function SubNavigationToggle({ view, setView }) {
           </ToggleButton>
         </ToggleButtonGroup>
       ))}
-    </>
+    </Stack>
   );
 }
 
 function CompanyPanel({ width, containerRef }) {
-  const api = useApi();
-  const adminStore = useAdminStore();
   const classes = usePanelStyles({ width });
   const location = useLocation();
   const history = useHistory();
@@ -243,7 +235,6 @@ function CompanyPanel({ width, containerRef }) {
   const [, company] = useAdminCompanies();
 
   const subPanel = COMPANY_SUB_PANELS.find(sp => sp.view === view);
-  const currentCompanyName = company ? company.name : "";
 
   React.useEffect(() => {
     const queryString = new URLSearchParams(location.search);
@@ -255,34 +246,11 @@ function CompanyPanel({ width, containerRef }) {
     }
   }, [location]);
 
-  const updateCompanyName = useCallback(async (companyId, newName) => {
-    try {
-      const response = await api.graphQlMutate(
-        UPDATE_COMPANY_NAME,
-        { companyId, newName },
-        { context: { nonPublicApi: false } }
-      );
-
-      const id = response?.data?.updateCompanyName?.id;
-      if (id) {
-        adminStore.dispatch({
-          type: ADMIN_ACTIONS.updateCompanyName,
-          payload: { companyId, companyName: newName }
-        });
-      } else {
-        console.log("CompanyId is falsy:", typeof id);
-      }
-    } catch (error) {
-      console.error("An error occurred:", error);
-    }
-  }, []);
-
-  return [
+  return (
     <>
       <Paper
         className={`${classes.navigation} flex-row-center`}
         variant="outlined"
-        key={1}
       >
         <Grid
           container
@@ -292,18 +260,10 @@ function CompanyPanel({ width, containerRef }) {
           style={{ flex: "1 1 auto" }}
         >
           <Grid item>
-            <Box>
-              <EditableTextField
-                text={currentCompanyName}
-                onSave={newName => {
-                  updateCompanyName(company.id, newName);
-                }}
-                className={classes.companyName}
-                maxLength={255}
-                titleProps={{ component: "h1" }}
-              />
+            <Stack direction="column" spacing={2}>
+              <CompanyDetails company={company} />
               <SubNavigationToggle view={view} setView={setView} />
-            </Box>
+            </Stack>
           </Grid>
           <Grid item>
             <LinkButton
@@ -318,12 +278,11 @@ function CompanyPanel({ width, containerRef }) {
           </Grid>
         </Grid>
       </Paper>
-      ,
-      <Paper className={classes.subPanel} variant="outlined" key={2}>
+      <Paper className={classes.subPanel} variant="outlined">
         {company ? subPanel.component({ company, containerRef }) : null}
       </Paper>
     </>
-  ];
+  );
 }
 
 export default CompanyPanel;
