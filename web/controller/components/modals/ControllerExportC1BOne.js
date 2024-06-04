@@ -53,7 +53,7 @@ export default function ControllerExportC1BOne({
             Les fichiers générés par Mobilic respectent la norme C1B, mais ne
             sont pour autant pas tout à fait identiques aux fichiers des cartes
             conducteur (par exemple: certaines parties sont laissées vides faute
-            de données, les signatures numériques sont différentes, ...).
+            de données, les signatures numériques sont différentes ...).
           </Typography>
           <Typography mt={1}>
             Si jamais vous ne parvenez pas à lire les fichiers Mobilic depuis
@@ -76,7 +76,7 @@ export default function ControllerExportC1BOne({
           mt={2}
           checked={employeeVersion}
           onChange={() => setEmployeeVersion(!employeeVersion)}
-          label={`Une version saisie salarié et une version validée par le gestionnaire.`}
+          label={`Obtenir deux fichiers pour ce salarié : une version saisie salarié et une version validée par le gestionnaire.`}
         />
         <Grid
           spacing={2}
