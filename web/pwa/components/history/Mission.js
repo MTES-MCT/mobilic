@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.default
   },
   darkCard: {
-    backgroundColor: theme.palette.grey[700],
+    backgroundColor: theme.palette.grey[500],
     color: theme.palette.primary.contrastText
   },
   contradictorySwitch: {
