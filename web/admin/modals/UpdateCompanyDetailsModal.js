@@ -78,16 +78,8 @@ export default function UpdateCompanyDetailsModal({
     <Modal isOpen={open} hide={handleClose} size="lg">
       <ModalTitle>Modifier les détails de l'entreprise</ModalTitle>
       <ModalContent>
-        <div
-          className="fr-input-group"
-          role="group"
-          aria-labelledby="company-name-title"
-        >
-          <label
-            id="company-name-title"
-            htmlFor="phone-number-input"
-            className={`fr-label ${classes.label}`}
-          >
+        <div className="fr-input-group">
+          <label htmlFor="company-name" className={`fr-label ${classes.label}`}>
             Nom usuel
           </label>
           <TextInput
