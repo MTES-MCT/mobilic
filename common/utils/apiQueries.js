@@ -2301,8 +2301,8 @@ export const CREATE_SURVEY_ACTION = gql`
 export const UPDATE_COMPANY_DETAILS = gql`
   mutation UpdateCompanyDetails(
     $companyId: Int!
-    $newName: String!
-    $newPhoneNumber: String!
+    $newName: String
+    $newPhoneNumber: String
   ) {
     updateCompanyDetails(
       companyId: $companyId

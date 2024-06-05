@@ -15,6 +15,7 @@ import { PhoneNumber } from "../../common/PhoneNumber";
 import { UPDATE_COMPANY_DETAILS } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import Stack from "@mui/material/Stack";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -30,6 +31,7 @@ export default function UpdateCompanyDetailsModal({
 }) {
   const classes = useStyles();
   const api = useApi();
+  const alerts = useSnackbarAlerts();
 
   const [newCompanyName, setNewCompanyName] = React.useState(company?.name);
   const [newCompanyPhoneNumber, setNewCompanyPhoneNumber] = React.useState(
@@ -45,7 +47,7 @@ export default function UpdateCompanyDetailsModal({
   );
 
   const handleSubmit = async () => {
-    try {
+    await alerts.withApiErrorHandling(async () => {
       const apiResponse = await api.graphQlMutate(
         UPDATE_COMPANY_DETAILS,
         {
@@ -56,23 +58,22 @@ export default function UpdateCompanyDetailsModal({
         { context: { nonPublicApi: false } }
       );
 
-      const id = apiResponse?.data?.updateCompanyDetails?.id;
-      if (id) {
-        adminStore.dispatch({
-          type: ADMIN_ACTIONS.updateCompanyNameAndPhoneNumber,
-          payload: {
-            companyId: company?.id,
-            companyName: newCompanyName,
-            companyPhoneNumber: newCompanyPhoneNumber
-          }
-        });
-      } else {
-        console.log("CompanyId is falsy:", typeof id);
-      }
+      const { id } = apiResponse?.data?.updateCompanyDetails;
+      adminStore.dispatch({
+        type: ADMIN_ACTIONS.updateCompanyNameAndPhoneNumber,
+        payload: {
+          companyId: id,
+          companyName: newCompanyName,
+          companyPhoneNumber: newCompanyPhoneNumber
+        }
+      });
+      alerts.success(
+        "Les détails de l'entreprise ont bien été enregistrés",
+        "",
+        6000
+      );
       handleClose();
-    } catch (error) {
-      console.error("An error occurred:", error);
-    }
+    }, "update-company-details");
   };
   return (
     <Modal isOpen={open} hide={handleClose} size="lg">
