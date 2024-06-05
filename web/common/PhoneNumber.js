@@ -39,7 +39,8 @@ const COUNTRIES = [
 export function PhoneNumber({
   currentPhoneNumber,
   setCurrentPhoneNumber,
-  label = "Numéro de téléphone"
+  label = "Numéro de téléphone",
+  accessibilityHelpText = ""
 }) {
   const classes = useStyles();
 
@@ -97,6 +98,7 @@ export function PhoneNumber({
         className={`fr-label ${classes.label}`}
       >
         {label}
+        <span className="fr-sr-only"> {accessibilityHelpText}</span>
         <span className="fr-hint-text">Format attendu : {numberExample}</span>
       </label>
       <Stack direction="row" spacing={1}>

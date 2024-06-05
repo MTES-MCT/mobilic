@@ -4,6 +4,8 @@ import { LoadingButton } from "common/components/LoadingButton";
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import { Step } from "./Step";
+import { PhoneNumber } from "../../common/PhoneNumber";
+import { Stack } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -16,6 +18,8 @@ export function SubmitStep({
   loading,
   companyName,
   setCompanyName,
+  phoneNumber,
+  setPhoneNumber,
   ...props
 }) {
   const [claimedRights, setClaimedRights] = React.useState(false);
@@ -36,14 +40,21 @@ export function SubmitStep({
         onSubmit={handleSubmit}
       >
         {usingCompanyName && (
-          <TextField
-            fullWidth
-            variant="standard"
-            required={usingCompanyName}
-            label="Nom usuel"
-            value={companyName}
-            onChange={e => setCompanyName(e.target.value.trimLeft())}
-          />
+          <Stack direction="column" spacing={2}>
+            <TextField
+              fullWidth
+              variant="standard"
+              required={usingCompanyName}
+              label="Nom usuel"
+              value={companyName}
+              onChange={e => setCompanyName(e.target.value.trimLeft())}
+            />
+            <PhoneNumber
+              currentPhoneNumber={phoneNumber}
+              setCurrentPhoneNumber={setPhoneNumber}
+              label="Numéro de téléphone de l'entreprise"
+            />
+          </Stack>
         )}
         <CheckboxField
           checked={claimedRights}

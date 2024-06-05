@@ -36,6 +36,7 @@ import TypeformModal from "./pwa/components/TypeformModal";
 import LogHolidayModal from "./pwa/components/LogHoliday";
 import ControllerExportC1BOne from "./controller/components/modals/ControllerExportC1BOne";
 import ChangePhoneNumberModal from "./home/ChangePhoneNumber";
+import UpdateCompanyDetailsModal from "./admin/modals/UpdateCompanyDetailsModal";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -75,5 +76,6 @@ export const MODAL_DICT = {
   companyTeamCreationRevisionModal: CompanyTeamCreationRevisionModal,
   employeesTeamRevisionModal: EmployeesTeamRevisionModal,
   confirmationCancelControlBulletinModal: ConfirmationCancelControlBulletinModal,
-  typeformModal: TypeformModal
+  typeformModal: TypeformModal,
+  updateCompanyDetails: UpdateCompanyDetailsModal
 };

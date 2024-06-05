@@ -179,9 +179,13 @@ export const CONFIRM_FC_EMAIL_MUTATION = gql`
 `;
 export const COMPANY_SIGNUP_MUTATION = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
-  mutation companySignUp($siren: String!, $usualName: String!) {
+  mutation companySignUp(
+    $siren: String!
+    $usualName: String!
+    $phoneNumber: String
+  ) {
     signUp {
-      company(siren: $siren, usualName: $usualName) {
+      company(siren: $siren, usualName: $usualName, phoneNumber: $phoneNumber) {
         employment {
           id
           startDate
@@ -540,6 +544,7 @@ export const ADMIN_COMPANIES_LIST_QUERY = gql`
         id
         name
         siren
+        phoneNumber
         isCertified
         acceptCertificationCommunication
       }
@@ -2293,11 +2298,20 @@ export const CREATE_SURVEY_ACTION = gql`
   }
 `;
 
-export const UPDATE_COMPANY_NAME = gql`
-  mutation UpdateCompanyName($companyId: Int!, $newName: String!) {
-    updateCompanyName(companyId: $companyId, newName: $newName) {
+export const UPDATE_COMPANY_DETAILS = gql`
+  mutation UpdateCompanyDetails(
+    $companyId: Int!
+    $newName: String
+    $newPhoneNumber: String
+  ) {
+    updateCompanyDetails(
+      companyId: $companyId
+      newName: $newName
+      newPhoneNumber: $newPhoneNumber
+    ) {
       id
       name
+      phoneNumber
     }
   }
 `;

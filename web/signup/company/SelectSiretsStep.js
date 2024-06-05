@@ -7,6 +7,7 @@ import Grid from "@mui/material/Grid";
 import { FacilityInfo } from "./FacilityInfo";
 import AlreadyRegisteredSirets from "./AlreadyRegisteredSirets";
 import Stack from "@mui/material/Stack";
+import { PhoneNumber } from "../../common/PhoneNumber";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -108,25 +109,42 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                 />
               </Button>
               {facility.selected && (
-                <TextField
-                  variant="standard"
-                  className={classes.siretName}
-                  required
-                  label="Nom usuel"
-                  value={facility.usualName}
-                  onChange={e => {
-                    setHasValidatedChoice(false);
-                    setFacilities(
-                      facilities.map(f =>
-                        f.siret === facility.siret
-                          ? { ...f, usualName: e.target.value }
-                          : f
-                      )
-                    );
-                  }}
-                  error={!!getFacilityError(facility)}
-                  helperText={getFacilityError(facility)}
-                />
+                <Stack direction="column" spacing={2}>
+                  <TextField
+                    variant="standard"
+                    className={classes.siretName}
+                    required
+                    label="Nom usuel"
+                    value={facility.usualName}
+                    onChange={e => {
+                      setHasValidatedChoice(false);
+                      setFacilities(
+                        facilities.map(f =>
+                          f.siret === facility.siret
+                            ? { ...f, usualName: e.target.value }
+                            : f
+                        )
+                      );
+                    }}
+                    error={!!getFacilityError(facility)}
+                    helperText={getFacilityError(facility)}
+                  />
+                  <PhoneNumber
+                    currentPhoneNumber={facility.phone_number}
+                    setCurrentPhoneNumber={newPhoneNumber => {
+                      setHasValidatedChoice(false);
+                      setFacilities(
+                        facilities.map(f =>
+                          f.siret === facility.siret
+                            ? { ...f, phoneNumber: newPhoneNumber }
+                            : f
+                        )
+                      );
+                    }}
+                    label="Numéro de téléphone de l'entreprise"
+                    accessibilityHelpText={`${facility.address}, ${facility.postal_code}`}
+                  />
+                </Stack>
               )}
             </Stack>
           </Grid>

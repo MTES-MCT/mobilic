@@ -14,7 +14,7 @@ import {
   updateCompaniesListReducer,
   updateCompanyDetailsReducer,
   updateCompanyIdReducer,
-  updateCompanyNameReducer,
+  updateCompanyNameAndPhoneNumberReducer,
   updateEmploymentIdReducer,
   updateShouldSeeCertificateInfoReducer
 } from "./sync";
@@ -59,7 +59,7 @@ export const ADMIN_ACTIONS = {
   addUsers: addUsersReducer,
   putAsideOriginalMissions: putAsideOriginalMissionsReducer,
   revertMissionToOriginalValues: revertMissionToOriginalValuesReducer,
-  updateCompanyName: updateCompanyNameReducer
+  updateCompanyNameAndPhoneNumber: updateCompanyNameAndPhoneNumberReducer
 };
 
 const ADMIN_REDUCERS = {};

@@ -32,20 +32,21 @@ export function updateCompaniesListReducer(state, { companiesPayload }) {
     companies: companiesPayload.map(c => ({
       id: c.id,
       name: c.name,
-      siren: c.siren
+      siren: c.siren,
+      phoneNumber: c.phoneNumber
     }))
   };
 }
 
-export function updateCompanyNameReducer(state, action) {
-  const { companyId, companyName } = action;
+export function updateCompanyNameAndPhoneNumberReducer(state, action) {
+  const { companyId, companyName, companyPhoneNumber } = action;
 
   const updatedCompanies = state.companies.map(({ id, ...rest }) => {
     if (id !== companyId) {
       return { id, ...rest };
     }
 
-    return { id, ...rest, name: companyName };
+    return { id, ...rest, name: companyName, phoneNumber: companyPhoneNumber };
   });
 
   return {
