@@ -23,16 +23,32 @@ const COUNTRIES = [
     label: "France"
   },
   {
-    code: "ES",
-    label: "Espagne"
+    code: "DE",
+    label: "Allemagne"
   },
   {
     code: "BE",
     label: "Belgique"
   },
   {
+    code: "ES",
+    label: "Espagne"
+  },
+  {
     code: "IT",
     label: "Italie"
+  },
+  {
+    code: "PL",
+    label: "Pologne"
+  },
+  {
+    code: "PT",
+    label: "Portugal"
+  },
+  {
+    code: "GB",
+    label: "Royaume-Uni"
   }
 ];
 

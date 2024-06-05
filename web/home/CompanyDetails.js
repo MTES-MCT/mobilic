@@ -38,14 +38,16 @@ export default function CompanyDetails({ company }) {
           {company?.name}
         </Typography>
         <Typography className={classes.phoneNumber}>
-          <span className={classes.phoneNumberLabel}>Numéro de téléphone</span>{" "}
+          <span className={classes.phoneNumberLabel}>
+            Numéro de téléphone :
+          </span>{" "}
           <span
             className={`${classes.phoneNumberData} ${!company?.phoneNumber &&
               classes.missingPhoneNumber}`}
           >
             {company?.phoneNumber
               ? formatPhoneNumber(company.phoneNumber)
-              : "Aucun numéro de téléphone renseigné"}
+              : "aucun numéro de téléphone renseigné"}
           </span>
         </Typography>
       </Stack>
