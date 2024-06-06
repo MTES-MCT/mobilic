@@ -184,9 +184,15 @@ export const COMPANY_SIGNUP_MUTATION = gql`
     $siren: String!
     $usualName: String!
     $phoneNumber: String
+    $businessType: String
   ) {
     signUp {
-      company(siren: $siren, usualName: $usualName, phoneNumber: $phoneNumber) {
+      company(
+        siren: $siren
+        usualName: $usualName
+        phoneNumber: $phoneNumber
+        businessType: $businessType
+      ) {
         employment {
           id
           startDate
