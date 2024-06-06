@@ -2,7 +2,10 @@ import React from "react";
 import { useApi } from "common/utils/api";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { EDIT_COMPANY_SETTINGS_MUTATION } from "common/utils/apiQueries";
+import {
+  EDIT_COMPANY_BUSINESS_TYPE_MUTATION,
+  EDIT_COMPANY_SETTINGS_MUTATION
+} from "common/utils/apiQueries";
 import { usePanelStyles } from "./Company";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -10,6 +13,7 @@ import { SimpleToggleSetting } from "../components/Setting";
 import Divider from "@mui/material/Divider";
 import { useAdminStore } from "../store/store";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
+import { BusinessType } from "../../common/BusinessType";
 
 export default function SettingAdmin({ company }) {
   const api = useApi();
@@ -25,6 +29,19 @@ export default function SettingAdmin({ company }) {
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateSettings,
       payload: { settings: payload }
+    });
+  }
+
+  async function submitTransportTypeChange(newBusinessType) {
+    const response = await api.graphQlMutate(
+      EDIT_COMPANY_BUSINESS_TYPE_MUTATION,
+      { businessType: newBusinessType, companyId: company.id },
+      { context: { nonPublicApi: true } }
+    );
+    const payload = response.data.editCompanyBusinessType.business;
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateBusinessType,
+      payload: { business: payload }
     });
   }
 
@@ -102,6 +119,18 @@ export default function SettingAdmin({ company }) {
           submitSettingChange={submitSettingChange}
           titleProps={{ component: "h3" }}
         />
+      </ListItem>
+      <Divider className="hr-unstyled" />
+      <ListItem>
+        {adminStore.business && (
+          <BusinessType
+            currentBusiness={adminStore.business}
+            onChangeBusinessType={newBusinessType =>
+              submitTransportTypeChange(newBusinessType)
+            }
+            required
+          />
+        )}
       </ListItem>
     </List>
   ];

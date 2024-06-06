@@ -680,6 +680,10 @@ export const ADMIN_COMPANIES_QUERY = gql`
         id
         name
         ...CompanySettings
+        business {
+          transportType
+          businessType
+        }
         users(fromDate: $activityAfter) {
           id
           firstName
@@ -1667,6 +1671,21 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
     ) {
       id
       ...CompanySettings
+    }
+  }
+`;
+
+export const EDIT_COMPANY_BUSINESS_TYPE_MUTATION = gql`
+  mutation editCompanyBusinessType($companyId: Int!, $businessType: String!) {
+    editCompanyBusinessType(
+      companyId: $companyId
+      businessType: $businessType
+    ) {
+      id
+      business {
+        transportType
+        businessType
+      }
     }
   }
 `;
