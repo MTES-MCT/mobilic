@@ -18,9 +18,11 @@ export function BusinessDropdown({ employmentId, companyId, business }) {
       variant="standard"
       size="small"
     >
-      <MenuItem value="">
-        <em>Non renseigné</em>
-      </MenuItem>
+      {!business?.businessType && (
+        <MenuItem value="">
+          <em>Non renseigné</em>
+        </MenuItem>
+      )}
       {BUSINESS_TYPES.map(({ id, label }) => (
         <MenuItem key={`business_type_${id}`} value={id}>
           {label}
