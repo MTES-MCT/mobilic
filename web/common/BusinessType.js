@@ -52,7 +52,17 @@ export function BusinessType({
     [required, transportType]
   );
 
-  React.useEffect(() => setBusinessType(""), [transportType]);
+  React.useEffect(() => {
+    const currentBusinessType = currentBusiness?.businessType;
+    if (!currentBusinessType) {
+      setBusinessType("");
+    }
+    setBusinessType(
+      businessOptions.map(o => o.value).includes(currentBusinessType)
+        ? currentBusinessType
+        : ""
+    );
+  }, [transportType]);
   React.useEffect(() => onChangeBusinessType(businessType), [businessType]);
 
   return (
@@ -63,11 +73,11 @@ export function BusinessType({
         options={transportOptions}
         selected={transportType}
         onChange={e => setTransportType(e.target.value)}
-        messageType={!transportType && required && "error"}
+        {...(!transportType && required ? { messageType: "error" } : {})}
         message={
-          !transportType &&
-          required &&
-          "Veuillez renseigner un type de transport"
+          !transportType && required
+            ? "Veuillez renseigner un type de transport"
+            : ""
         }
       ></Select>
       <Select
@@ -77,9 +87,9 @@ export function BusinessType({
         selected={businessType}
         onChange={e => setBusinessType(e.target.value)}
         disabled={!transportType}
-        messageType={!businessType && required && "error"}
+        {...(!businessType && required ? { messageType: "error" } : {})}
         message={
-          !businessType && required && "Veuillez renseigner une activité"
+          !businessType && required ? "Veuillez renseigner une activité" : ""
         }
       ></Select>
     </div>

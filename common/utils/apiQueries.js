@@ -1675,21 +1675,6 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
   }
 `;
 
-export const EDIT_COMPANY_BUSINESS_TYPE_MUTATION = gql`
-  mutation editCompanyBusinessType($companyId: Int!, $businessType: String!) {
-    editCompanyBusinessType(
-      companyId: $companyId
-      businessType: $businessType
-    ) {
-      id
-      business {
-        transportType
-        businessType
-      }
-    }
-  }
-`;
-
 export const UPDATE_MISSION_VEHICLE_MUTATION = gql`
   mutation updateMissionVehicle(
     $missionId: Int!
@@ -2219,15 +2204,21 @@ export const UPDATE_COMPANY_DETAILS = gql`
     $companyId: Int!
     $newName: String
     $newPhoneNumber: String
+    $newBusinessType: String
   ) {
     updateCompanyDetails(
       companyId: $companyId
       newName: $newName
       newPhoneNumber: $newPhoneNumber
+      newBusinessType: $newBusinessType
     ) {
       id
       name
       phoneNumber
+      business {
+        businessType
+        transportType
+      }
     }
   }
 `;

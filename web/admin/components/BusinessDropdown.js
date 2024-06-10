@@ -2,29 +2,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import React from "react";
 import { useUpdateEmployeeBusinessType } from "../../common/useUpdateBusiness";
+import { BUSINESS_TYPES } from "common/utils/businessTypes";
 
-const BUSINESS_TYPES = [
-  {
-    id: "LONG_DISTANCE",
-    label: "Longue distance"
-  },
-  {
-    id: "SHORT_DISTANCE",
-    label: "Courte distance"
-  },
-  {
-    id: "SHIPPING",
-    label: "Messagerie, Fonds et valeur"
-  },
-  {
-    id: "FREQUENT",
-    label: "Lignes régulières"
-  },
-  {
-    id: "INFREQUENT",
-    label: "Occasionnels"
-  }
-];
 export function BusinessDropdown({ employmentId, companyId, business }) {
   const { udpateEmployeeBusinessType } = useUpdateEmployeeBusinessType(
     employmentId,

@@ -16,6 +16,7 @@ import { UPDATE_COMPANY_DETAILS } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import Stack from "@mui/material/Stack";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import { BusinessType } from "../../common/BusinessType";
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -37,13 +38,24 @@ export default function UpdateCompanyDetailsModal({
   const [newCompanyPhoneNumber, setNewCompanyPhoneNumber] = React.useState(
     company?.phoneNumber
   );
+  const [newCompanyBusinessType, setNewCompanyBusinessType] = React.useState(
+    adminStore.business?.BusinessType
+  );
 
   const canSave = React.useMemo(
     () =>
       newCompanyName &&
       (newCompanyName !== company?.name ||
-        newCompanyPhoneNumber !== company?.phoneNumber),
-    [company?.phoneNumber, company?.name, newCompanyName, newCompanyPhoneNumber]
+        newCompanyPhoneNumber !== company?.phoneNumber ||
+        newCompanyBusinessType !== adminStore.business?.businessType),
+    [
+      company?.phoneNumber,
+      company?.name,
+      newCompanyName,
+      newCompanyPhoneNumber,
+      newCompanyBusinessType,
+      adminStore.business?.businessType
+    ]
   );
 
   const handleSubmit = async () => {
@@ -53,18 +65,25 @@ export default function UpdateCompanyDetailsModal({
         {
           companyId: company?.id,
           newName: newCompanyName,
-          newPhoneNumber: newCompanyPhoneNumber
+          newPhoneNumber: newCompanyPhoneNumber,
+          newBusinessType: newCompanyBusinessType
         },
         { context: { nonPublicApi: false } }
       );
 
-      const { id } = apiResponse?.data?.updateCompanyDetails;
-      adminStore.dispatch({
+      const { id, business } = apiResponse?.data?.updateCompanyDetails;
+      await adminStore.dispatch({
         type: ADMIN_ACTIONS.updateCompanyNameAndPhoneNumber,
         payload: {
           companyId: id,
           companyName: newCompanyName,
           companyPhoneNumber: newCompanyPhoneNumber
+        }
+      });
+      await adminStore.dispatch({
+        type: ADMIN_ACTIONS.updateBusinessType,
+        payload: {
+          business
         }
       });
       alerts.success(
@@ -95,6 +114,13 @@ export default function UpdateCompanyDetailsModal({
             setNewCompanyPhoneNumber(newNumber)
           }
         />
+        {adminStore.business && (
+          <BusinessType
+            currentBusiness={adminStore.business}
+            onChangeBusinessType={setNewCompanyBusinessType}
+            required
+          />
+        )}
       </ModalContent>
       <ModalFooter>
         <Stack

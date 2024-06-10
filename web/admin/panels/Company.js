@@ -256,7 +256,7 @@ function CompanyPanel({ width, containerRef }) {
           container
           spacing={5}
           justifyContent="space-between"
-          alignItems="center"
+          alignItems="flex-start"
           style={{ flex: "1 1 auto" }}
         >
           <Grid item>
