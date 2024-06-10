@@ -1,5 +1,6 @@
 import React from "react";
 import { Select } from "@dataesr/react-dsfr";
+import { Stack } from "@mui/material";
 
 const TRANSPORT_OPTIONS = [
   { value: "TRM", label: "Marchandises (TRM)" },
@@ -20,7 +21,8 @@ const BUSINESS_OPTIONS = {
 export function BusinessType({
   currentBusiness,
   onChangeBusinessType,
-  required = false
+  required = false,
+  forceColumn = false
 }) {
   const [transportType, setTransportType] = React.useState(
     currentBusiness?.transportType || ""
@@ -67,31 +69,36 @@ export function BusinessType({
 
   return (
     <div style={{ textAlign: "left" }}>
-      <Select
-        label="Type de transport routier"
-        required
-        options={transportOptions}
-        selected={transportType}
-        onChange={e => setTransportType(e.target.value)}
-        {...(!transportType && required ? { messageType: "error" } : {})}
-        message={
-          !transportType && required
-            ? "Veuillez renseigner un type de transport"
-            : ""
-        }
-      ></Select>
-      <Select
-        label="Activité principale"
-        required
-        options={businessOptions}
-        selected={businessType}
-        onChange={e => setBusinessType(e.target.value)}
-        disabled={!transportType}
-        {...(!businessType && required ? { messageType: "error" } : {})}
-        message={
-          !businessType && required ? "Veuillez renseigner une activité" : ""
-        }
-      ></Select>
+      <Stack
+        direction={{ xs: "column", sm: forceColumn ? "column" : "row" }}
+        spacing={{ xs: 1, sm: forceColumn ? 1 : 3 }}
+      >
+        <Select
+          label="Type de transport routier"
+          required
+          options={transportOptions}
+          selected={transportType}
+          onChange={e => setTransportType(e.target.value)}
+          {...(!transportType && required ? { messageType: "error" } : {})}
+          message={
+            !transportType && required
+              ? "Veuillez renseigner un type de transport"
+              : ""
+          }
+        ></Select>
+        <Select
+          label="Activité principale"
+          required
+          options={businessOptions}
+          selected={businessType}
+          onChange={e => setBusinessType(e.target.value)}
+          disabled={!transportType}
+          {...(!businessType && required ? { messageType: "error" } : {})}
+          message={
+            !businessType && required ? "Veuillez renseigner une activité" : ""
+          }
+        ></Select>
+      </Stack>
     </div>
   );
 }

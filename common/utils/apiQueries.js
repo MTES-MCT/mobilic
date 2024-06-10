@@ -2204,13 +2204,11 @@ export const UPDATE_COMPANY_DETAILS = gql`
     $companyId: Int!
     $newName: String
     $newPhoneNumber: String
-    $newBusinessType: String
   ) {
     updateCompanyDetails(
       companyId: $companyId
       newName: $newName
       newPhoneNumber: $newPhoneNumber
-      newBusinessType: $newBusinessType
     ) {
       id
       name
@@ -2218,6 +2216,36 @@ export const UPDATE_COMPANY_DETAILS = gql`
       business {
         businessType
         transportType
+      }
+    }
+  }
+`;
+
+export const UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE = gql`
+  ${FULL_EMPLOYMENT_FRAGMENT}
+  mutation UpdateCompanyDetailsWithBusinessType(
+    $companyId: Int!
+    $newName: String
+    $newPhoneNumber: String
+    $newBusinessType: String
+    $applyBusinessTypeToEmployees: Boolean
+  ) {
+    updateCompanyDetails(
+      companyId: $companyId
+      newName: $newName
+      newPhoneNumber: $newPhoneNumber
+      newBusinessType: $newBusinessType
+      applyBusinessTypeToEmployees: $applyBusinessTypeToEmployees
+    ) {
+      id
+      name
+      phoneNumber
+      business {
+        businessType
+        transportType
+      }
+      employments {
+        ...FullEmploymentData
       }
     }
   }

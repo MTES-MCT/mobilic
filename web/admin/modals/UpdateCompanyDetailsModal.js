@@ -4,6 +4,7 @@ import { useApi } from "common/utils/api";
 
 import {
   Button,
+  Checkbox,
   Modal,
   ModalContent,
   ModalFooter,
@@ -12,7 +13,10 @@ import {
 } from "@dataesr/react-dsfr";
 import { makeStyles } from "@mui/styles";
 import { PhoneNumber } from "../../common/PhoneNumber";
-import { UPDATE_COMPANY_DETAILS } from "common/utils/apiQueries";
+import {
+  UPDATE_COMPANY_DETAILS,
+  UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE
+} from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import Stack from "@mui/material/Stack";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -41,32 +45,47 @@ export default function UpdateCompanyDetailsModal({
   const [newCompanyBusinessType, setNewCompanyBusinessType] = React.useState(
     adminStore.business?.BusinessType
   );
+  const [
+    applyBusinessTypeToEmployees,
+    setApplyBusinessTypeToEmployees
+  ] = React.useState(false);
+
+  const hasBusinessTypeChanged = React.useMemo(
+    () => newCompanyBusinessType !== adminStore.business?.businessType,
+    [newCompanyBusinessType, adminStore.business?.businessType]
+  );
 
   const canSave = React.useMemo(
     () =>
       newCompanyName &&
       (newCompanyName !== company?.name ||
         newCompanyPhoneNumber !== company?.phoneNumber ||
-        newCompanyBusinessType !== adminStore.business?.businessType),
+        hasBusinessTypeChanged),
     [
       company?.phoneNumber,
       company?.name,
       newCompanyName,
       newCompanyPhoneNumber,
-      newCompanyBusinessType,
-      adminStore.business?.businessType
+      hasBusinessTypeChanged
     ]
   );
 
   const handleSubmit = async () => {
     await alerts.withApiErrorHandling(async () => {
       const apiResponse = await api.graphQlMutate(
-        UPDATE_COMPANY_DETAILS,
+        hasBusinessTypeChanged
+          ? UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE
+          : UPDATE_COMPANY_DETAILS,
         {
           companyId: company?.id,
           newName: newCompanyName,
           newPhoneNumber: newCompanyPhoneNumber,
-          newBusinessType: newCompanyBusinessType
+          ...(hasBusinessTypeChanged
+            ? {
+                newBusinessType: newCompanyBusinessType,
+                applyBusinessTypeToEmployees
+              }
+            : {})
         },
         { context: { nonPublicApi: false } }
       );
@@ -86,6 +105,23 @@ export default function UpdateCompanyDetailsModal({
           business
         }
       });
+      if (hasBusinessTypeChanged) {
+        const { employments } = apiResponse?.data?.updateCompanyDetails;
+        for (const employment of employments) {
+          await adminStore.dispatch({
+            type: ADMIN_ACTIONS.update,
+            payload: {
+              id: employment.id,
+              entity: "employments",
+              update: {
+                ...employment,
+                companyId: id,
+                adminStore
+              }
+            }
+          });
+        }
+      }
       alerts.success(
         "Les détails de l'entreprise ont bien été enregistrés",
         "",
@@ -115,11 +151,20 @@ export default function UpdateCompanyDetailsModal({
           }
         />
         {adminStore.business && (
-          <BusinessType
-            currentBusiness={adminStore.business}
-            onChangeBusinessType={setNewCompanyBusinessType}
-            required
-          />
+          <>
+            <BusinessType
+              currentBusiness={adminStore.business}
+              onChangeBusinessType={setNewCompanyBusinessType}
+              required
+            />
+            <Checkbox
+              checked={applyBusinessTypeToEmployees}
+              onChange={e => setApplyBusinessTypeToEmployees(e.target.checked)}
+              label="Attribuer cette activité à tous mes salariés"
+              hint="L'activité sera attribuée par défaut à tous vos salariés. Vous aurez ensuite la possibilité de modifier individuellement le type d'activité pour chaque salarié."
+              disabled={!hasBusinessTypeChanged}
+            />
+          </>
         )}
       </ModalContent>
       <ModalFooter>
