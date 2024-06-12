@@ -85,7 +85,7 @@ export function PhoneNumber({
   const onInput = number => {
     const formatter = new AsYouType(currentCountry);
     const formattedValue = formatter.input(number);
-    if (formatter.isPossible()) {
+    if (formatter.isValid()) {
       const parsedPhoneNumber = parsePhoneNumber(
         formattedValue,
         currentCountry
