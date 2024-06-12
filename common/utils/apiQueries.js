@@ -2250,3 +2250,12 @@ export const UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE = gql`
     }
   }
 `;
+
+export const USER_QUERY_ENOUGH_BREAK = gql`
+  query hasEnoughBreak($id: Int!) {
+    user(id: $id) {
+      id
+      hadEnoughBreakLastMission
+    }
+  }
+`;
