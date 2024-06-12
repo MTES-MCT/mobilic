@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.default
   },
   darkCard: {
-    backgroundColor: theme.palette.grey[500],
+    backgroundColor: theme.palette.grey[700],
     color: theme.palette.primary.contrastText
   },
   contradictorySwitch: {
@@ -190,7 +190,10 @@ export function Mission({
           onClick={() => setOpen(!open)}
         >
           <Grid item>
-            <Typography component={getPrevHeadingComponent(headingComponent)}>
+            <Typography
+              component={getPrevHeadingComponent(headingComponent)}
+              sx={{ color: "inherit" }}
+            >
               <span className="bold">
                 {mission.name
                   ? `Nom de la mission : ${mission.name}`
