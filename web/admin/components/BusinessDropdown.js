@@ -1,28 +1,27 @@
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import React from "react";
 import { useUpdateEmployeeBusinessType } from "../../common/useUpdateBusiness";
+import { Select } from "@dataesr/react-dsfr";
 
 const BUSINESS_TYPES = [
   {
-    id: "LONG_DISTANCE",
-    label: "Longue distance"
+    value: "LONG_DISTANCE",
+    label: "TRM - Longue distance"
   },
   {
-    id: "SHORT_DISTANCE",
-    label: "Courte distance"
+    value: "SHORT_DISTANCE",
+    label: "TRM - Courte distance"
   },
   {
-    id: "SHIPPING",
-    label: "Messagerie, Fonds et valeur"
+    value: "SHIPPING",
+    label: "TRM - Messagerie, Fonds et valeur"
   },
   {
-    id: "FREQUENT",
-    label: "Lignes régulières"
+    value: "FREQUENT",
+    label: "TRV - Lignes régulières"
   },
   {
-    id: "INFREQUENT",
-    label: "Occasionnels"
+    value: "INFREQUENT",
+    label: "TRV - Occasionnels"
   }
 ];
 export function BusinessDropdown({ employmentId, companyId, business }) {
@@ -33,20 +32,15 @@ export function BusinessDropdown({ employmentId, companyId, business }) {
 
   return (
     <Select
-      value={business?.businessType || ""}
+      options={[
+        ...(!business?.businessType
+          ? [{ value: "", label: "Non renseigné" }]
+          : []),
+        ...BUSINESS_TYPES
+      ]}
+      selected={business?.businessType || ""}
       onChange={e => udpateEmployeeBusinessType(e.target.value)}
-      displayEmpty
-      variant="standard"
-      size="small"
-    >
-      <MenuItem value="">
-        <em>Non renseigné</em>
-      </MenuItem>
-      {BUSINESS_TYPES.map(({ id, label }) => (
-        <MenuItem key={`business_type_${id}`} value={id}>
-          {label}
-        </MenuItem>
-      ))}
-    </Select>
+      aria-label="Type d'activité"
+    />
   );
 }

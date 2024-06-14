@@ -409,7 +409,7 @@ export function Employees({ company, containerRef }) {
         employmentId={employmentId}
       />
     ),
-    minWidth: 200,
+    minWidth: 240,
     overflowTooltip: true
   });
 
