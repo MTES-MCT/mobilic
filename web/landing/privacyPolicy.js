@@ -9,6 +9,7 @@ import { usePageTitle } from "../common/UsePageTitle";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { ExternalLink } from "../common/ExternalLink";
 
 const dataCustody = [
   {
@@ -38,17 +39,6 @@ const dataCustody = [
       "Les données sont conservées 2 ans à compter de la fin du webinaire"
   }
 ];
-
-const ExternalLink = ({ url, text, title }) => (
-  <Link
-    href={url}
-    target="_blank"
-    rel="noopener noreferrer"
-    title={text ? text : title}
-  >
-    {text ? text : url}
-  </Link>
-);
 
 const scalingoLink =
   "https://scalingo.com/fr/contrat-gestion-traitements-donnees-personnelles";
