@@ -1,7 +1,5 @@
 import React from "react";
 
-import { useApi } from "common/utils/api";
-
 import {
   Button,
   Checkbox,
@@ -12,14 +10,10 @@ import {
   TextInput
 } from "@dataesr/react-dsfr";
 import { PhoneNumber } from "../../common/PhoneNumber";
-import {
-  UPDATE_COMPANY_DETAILS,
-  UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE
-} from "common/utils/apiQueries";
-import { ADMIN_ACTIONS } from "../store/reducers/root";
+
 import Stack from "@mui/material/Stack";
-import { useSnackbarAlerts } from "../../common/Snackbar";
 import { BusinessType } from "../../common/BusinessType";
+import { useUpdateCompanyDetails } from "../../common/useUpdateCompanyDetails";
 
 export default function UpdateCompanyDetailsModal({
   open,
@@ -27,25 +21,20 @@ export default function UpdateCompanyDetailsModal({
   company,
   adminStore
 }) {
-  const api = useApi();
-  const alerts = useSnackbarAlerts();
+  const {
+    newCompanyName,
+    setNewCompanyName,
+    newCompanyPhoneNumber,
+    setNewCompanyPhoneNumber,
+    setNewCompanyBusinessType,
+    hasBusinessTypeChanged,
+    updateCompanyDetails
+  } = useUpdateCompanyDetails(company, adminStore, handleClose);
 
-  const [newCompanyName, setNewCompanyName] = React.useState(company?.name);
-  const [newCompanyPhoneNumber, setNewCompanyPhoneNumber] = React.useState(
-    company?.phoneNumber
-  );
-  const [newCompanyBusinessType, setNewCompanyBusinessType] = React.useState(
-    adminStore.business?.BusinessType
-  );
   const [
     applyBusinessTypeToEmployees,
     setApplyBusinessTypeToEmployees
   ] = React.useState(false);
-
-  const hasBusinessTypeChanged = React.useMemo(
-    () => newCompanyBusinessType !== adminStore.business?.businessType,
-    [newCompanyBusinessType, adminStore.business?.businessType]
-  );
 
   const canSave = React.useMemo(
     () =>
@@ -62,68 +51,9 @@ export default function UpdateCompanyDetailsModal({
     ]
   );
 
-  const handleSubmit = async () => {
-    await alerts.withApiErrorHandling(async () => {
-      const apiResponse = await api.graphQlMutate(
-        hasBusinessTypeChanged
-          ? UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE
-          : UPDATE_COMPANY_DETAILS,
-        {
-          companyId: company?.id,
-          newName: newCompanyName,
-          newPhoneNumber: newCompanyPhoneNumber,
-          ...(hasBusinessTypeChanged
-            ? {
-                newBusinessType: newCompanyBusinessType,
-                applyBusinessTypeToEmployees
-              }
-            : {})
-        },
-        { context: { nonPublicApi: false } }
-      );
+  const handleSubmit = async () =>
+    await updateCompanyDetails(applyBusinessTypeToEmployees);
 
-      const id = apiResponse?.data?.updateCompanyDetails?.id;
-      const business = apiResponse?.data?.updateCompanyDetails?.business;
-      await adminStore.dispatch({
-        type: ADMIN_ACTIONS.updateCompanyNameAndPhoneNumber,
-        payload: {
-          companyId: id,
-          companyName: newCompanyName,
-          companyPhoneNumber: newCompanyPhoneNumber
-        }
-      });
-      await adminStore.dispatch({
-        type: ADMIN_ACTIONS.updateBusinessType,
-        payload: {
-          business
-        }
-      });
-      if (hasBusinessTypeChanged) {
-        const employments =
-          apiResponse?.data?.updateCompanyDetails?.employments;
-        for (const employment of employments) {
-          await adminStore.dispatch({
-            type: ADMIN_ACTIONS.update,
-            payload: {
-              id: employment.id,
-              entity: "employments",
-              update: {
-                ...employment,
-                companyId: id,
-                adminStore
-              }
-            }
-          });
-        }
-      }
-      alerts.success(
-        "Les détails de l'entreprise ont bien été enregistrés",
-        "",
-        6000
-      );
-      handleClose();
-    }, "update-company-details");
-  };
   return (
     <Modal isOpen={open} hide={handleClose} size="lg">
       <ModalTitle>Modifier les détails de l'entreprise</ModalTitle>
