@@ -19,9 +19,8 @@ export const useUpdateEmployeeBusinessType = (employmentId, companyId) => {
           businessType
         }
       );
-      const {
-        employments
-      } = apiResponse?.data?.employments?.changeEmployeeBusinessType;
+      const employments =
+        apiResponse?.data?.employments?.changeEmployeeBusinessType?.employments;
       await adminStore.dispatch({
         type: ADMIN_ACTIONS.update,
         payload: {
