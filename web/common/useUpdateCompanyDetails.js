@@ -48,12 +48,10 @@ export const useUpdateCompanyDetails = (
         { context: { nonPublicApi: false } }
       );
 
-      const {
-        id,
-        business,
-        name,
-        phoneNumber
-      } = apiResponse?.data?.updateCompanyDetails;
+      const id = apiResponse?.data?.updateCompanyDetails?.id;
+      const business = apiResponse?.data?.updateCompanyDetails?.business;
+      const name = apiResponse?.data?.updateCompanyDetails?.name;
+      const phoneNumber = apiResponse?.data?.updateCompanyDetails?.phoneNumber;
       await adminStore.dispatch({
         type: ADMIN_ACTIONS.updateCompanyNameAndPhoneNumber,
         payload: {
@@ -69,7 +67,8 @@ export const useUpdateCompanyDetails = (
         }
       });
       if (hasBusinessTypeChanged) {
-        const { employments } = apiResponse?.data?.updateCompanyDetails;
+        const employments =
+          apiResponse?.data?.updateCompanyDetails?.employments;
         for (const employment of employments) {
           await adminStore.dispatch({
             type: ADMIN_ACTIONS.update,
