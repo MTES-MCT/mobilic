@@ -11,7 +11,6 @@ import {
   ModalTitle,
   TextInput
 } from "@dataesr/react-dsfr";
-import { makeStyles } from "@mui/styles";
 import { PhoneNumber } from "../../common/PhoneNumber";
 import {
   UPDATE_COMPANY_DETAILS,
@@ -22,19 +21,12 @@ import Stack from "@mui/material/Stack";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { BusinessType } from "../../common/BusinessType";
 
-const useStyles = makeStyles(theme => ({
-  label: {
-    textAlign: "left"
-  }
-}));
-
 export default function UpdateCompanyDetailsModal({
   open,
   handleClose,
   company,
   adminStore
 }) {
-  const classes = useStyles();
   const api = useApi();
   const alerts = useSnackbarAlerts();
 
@@ -135,13 +127,18 @@ export default function UpdateCompanyDetailsModal({
       <ModalTitle>Modifier les détails de l'entreprise</ModalTitle>
       <ModalContent>
         <div className="fr-input-group">
-          <label htmlFor="company-name" className={`fr-label ${classes.label}`}>
-            Nom usuel
-          </label>
           <TextInput
             id="company-name"
             value={newCompanyName}
             onChange={e => setNewCompanyName(e.target.value)}
+            label="Nom usuel"
+            required
+            {...(!newCompanyName ? { messageType: "error" } : {})}
+            message={
+              !newCompanyName
+                ? "Veuillez renseigner un nom pour l'entreprise"
+                : ""
+            }
           />
         </div>
         <PhoneNumber
