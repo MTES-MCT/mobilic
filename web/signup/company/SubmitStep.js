@@ -6,6 +6,7 @@ import { makeStyles } from "@mui/styles";
 import { Step } from "./Step";
 import { PhoneNumber } from "../../common/PhoneNumber";
 import { Stack } from "@mui/material";
+import { BusinessType } from "../../common/BusinessType";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -20,6 +21,8 @@ export function SubmitStep({
   setCompanyName,
   phoneNumber,
   setPhoneNumber,
+  businessType,
+  setBusinessType,
   ...props
 }) {
   const [claimedRights, setClaimedRights] = React.useState(false);
@@ -54,6 +57,7 @@ export function SubmitStep({
               setCurrentPhoneNumber={setPhoneNumber}
               label="Numéro de téléphone de l'entreprise"
             />
+            <BusinessType onChangeBusinessType={setBusinessType} required />
           </Stack>
         )}
         <CheckboxField
@@ -68,7 +72,11 @@ export function SubmitStep({
           variant="contained"
           color="primary"
           type="submit"
-          disabled={!claimedRights || (usingCompanyName && !companyName)}
+          disabled={
+            !claimedRights ||
+            (usingCompanyName && !companyName) ||
+            (usingCompanyName && !businessType)
+          }
           loading={loading}
         >
           Terminer

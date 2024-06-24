@@ -34,7 +34,6 @@ import Stack from "@mui/material/Stack";
 
 export const usePanelStyles = makeStyles(theme => ({
   navigation: {
-    marginBottom: theme.spacing(1),
     padding: theme.spacing(2),
     flexShrink: 0,
     top: "0",
@@ -247,7 +246,7 @@ function CompanyPanel({ width, containerRef }) {
   }, [location]);
 
   return (
-    <>
+    <Stack direction="column" spacing={2}>
       <Paper
         className={`${classes.navigation} flex-row-center`}
         variant="outlined"
@@ -256,13 +255,12 @@ function CompanyPanel({ width, containerRef }) {
           container
           spacing={5}
           justifyContent="space-between"
-          alignItems="center"
+          alignItems="flex-start"
           style={{ flex: "1 1 auto" }}
         >
           <Grid item>
             <Stack direction="column" spacing={2}>
               <CompanyDetails company={company} />
-              <SubNavigationToggle view={view} setView={setView} />
             </Stack>
           </Grid>
           <Grid item>
@@ -278,10 +276,11 @@ function CompanyPanel({ width, containerRef }) {
           </Grid>
         </Grid>
       </Paper>
+      <SubNavigationToggle view={view} setView={setView} />
       <Paper className={classes.subPanel} variant="outlined">
         {company ? subPanel.component({ company, containerRef }) : null}
       </Paper>
-    </>
+    </Stack>
   );
 }
 

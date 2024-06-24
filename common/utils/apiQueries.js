@@ -184,9 +184,15 @@ export const COMPANY_SIGNUP_MUTATION = gql`
     $siren: String!
     $usualName: String!
     $phoneNumber: String
+    $businessType: String
   ) {
     signUp {
-      company(siren: $siren, usualName: $usualName, phoneNumber: $phoneNumber) {
+      company(
+        siren: $siren
+        usualName: $usualName
+        phoneNumber: $phoneNumber
+        businessType: $businessType
+      ) {
         employment {
           id
           startDate
@@ -674,6 +680,10 @@ export const ADMIN_COMPANIES_QUERY = gql`
         id
         name
         ...CompanySettings
+        business {
+          transportType
+          businessType
+        }
         users(fromDate: $activityAfter) {
           id
           firstName
@@ -2203,6 +2213,40 @@ export const UPDATE_COMPANY_DETAILS = gql`
       id
       name
       phoneNumber
+      business {
+        businessType
+        transportType
+      }
+    }
+  }
+`;
+
+export const UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE = gql`
+  ${FULL_EMPLOYMENT_FRAGMENT}
+  mutation UpdateCompanyDetailsWithBusinessType(
+    $companyId: Int!
+    $newName: String
+    $newPhoneNumber: String
+    $newBusinessType: String
+    $applyBusinessTypeToEmployees: Boolean
+  ) {
+    updateCompanyDetails(
+      companyId: $companyId
+      newName: $newName
+      newPhoneNumber: $newPhoneNumber
+      newBusinessType: $newBusinessType
+      applyBusinessTypeToEmployees: $applyBusinessTypeToEmployees
+    ) {
+      id
+      name
+      phoneNumber
+      business {
+        businessType
+        transportType
+      }
+      employments {
+        ...FullEmploymentData
+      }
     }
   }
 `;
