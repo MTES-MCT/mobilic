@@ -82,7 +82,8 @@ export default function UpdateCompanyDetailsModal({
         { context: { nonPublicApi: false } }
       );
 
-      const { id, business } = apiResponse?.data?.updateCompanyDetails;
+      const id = apiResponse?.data?.updateCompanyDetails?.id;
+      const business = apiResponse?.data?.updateCompanyDetails?.business;
       await adminStore.dispatch({
         type: ADMIN_ACTIONS.updateCompanyNameAndPhoneNumber,
         payload: {
@@ -98,7 +99,8 @@ export default function UpdateCompanyDetailsModal({
         }
       });
       if (hasBusinessTypeChanged) {
-        const { employments } = apiResponse?.data?.updateCompanyDetails;
+        const employments =
+          apiResponse?.data?.updateCompanyDetails?.employments;
         for (const employment of employments) {
           await adminStore.dispatch({
             type: ADMIN_ACTIONS.update,
