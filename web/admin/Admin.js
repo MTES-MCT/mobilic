@@ -213,7 +213,6 @@ function _Admin() {
           />
         )}
         <Container
-          key={1}
           maxWidth={false}
           disableGutters
           className={classes.container}
