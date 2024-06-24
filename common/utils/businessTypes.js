@@ -1,23 +1,23 @@
 export const BUSINESS_TYPES = [
   {
-    id: "LONG_DISTANCE",
-    label: "Longue distance"
+    value: "LONG_DISTANCE",
+    label: "TRM - Longue distance"
   },
   {
-    id: "SHORT_DISTANCE",
-    label: "Courte distance"
+    value: "SHORT_DISTANCE",
+    label: "TRM - Courte distance"
   },
   {
-    id: "SHIPPING",
-    label: "Messagerie, Fonds et valeur"
+    value: "SHIPPING",
+    label: "TRM - Messagerie, Fonds et valeur"
   },
   {
-    id: "FREQUENT",
-    label: "Lignes régulières"
+    value: "FREQUENT",
+    label: "TRV - Lignes régulières"
   },
   {
-    id: "INFREQUENT",
-    label: "Occasionnels"
+    value: "INFREQUENT",
+    label: "TRV - Occasionnels"
   }
 ];
 
@@ -29,7 +29,5 @@ export const formatActivity = business => {
   if (!transportType || !businessType) {
     return "";
   }
-  return `${transportType} - ${
-    BUSINESS_TYPES.filter(b => b.id === businessType)[0].label
-  }`;
+  return BUSINESS_TYPES.filter(b => b.value === businessType)[0].label;
 };
