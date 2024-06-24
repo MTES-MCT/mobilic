@@ -80,6 +80,7 @@ const USER_QUERY = gql`
     user(id: $id) {
       id
       creationTime
+      hadEnoughBreakLastMission
       surveyActions {
         surveyId
         creationTime
@@ -265,7 +266,8 @@ export async function syncUser(userPayload, api, store) {
     disabledWarnings,
     missions: missionsPayload,
     employments,
-    surveyActions
+    surveyActions,
+    hadEnoughBreakLastMission
   } = userPayload;
 
   onLogIn(shouldUpdatePassword);
@@ -303,7 +305,8 @@ export async function syncUser(userPayload, api, store) {
           hasConfirmedEmail,
           hasActivatedEmail,
           disabledWarnings,
-          surveyActions
+          surveyActions,
+          hadEnoughBreakLastMission
         },
         false
       )
