@@ -30,6 +30,7 @@ import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { EMPLOYMENT_ROLE } from "common/utils/employments";
 import { TeamFilter } from "../components/TeamFilter";
 import { NO_TEAMS_LABEL, NO_TEAM_ID } from "../utils/teams";
+import { BusinessDropdown } from "../components/BusinessDropdown";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -392,10 +393,25 @@ export function Employees({ company, containerRef }) {
       name: "teamId",
       align: "left",
       format: formatTeam,
-      minWidth: 100,
+      minWidth: 140,
       overflowTooltip: true
     });
   }
+
+  validEmploymentColumns.push({
+    label: "Type d'activité",
+    name: "business",
+    align: "left",
+    format: (business, { employmentId }) => (
+      <BusinessDropdown
+        business={business}
+        companyId={companyId}
+        employmentId={employmentId}
+      />
+    ),
+    minWidth: 240,
+    overflowTooltip: true
+  });
 
   const companyEmployments = adminStore.employments.filter(
     e => e.companyId === companyId
@@ -444,7 +460,8 @@ export function Employees({ company, containerRef }) {
       hasAdminRights: e.hasAdminRights ? 1 : 0,
       teamId: e.teamId,
       userId: e.user.id,
-      companyId: e.company.id
+      companyId: e.company.id,
+      business: e.business
     }));
 
   const isAddingEmployment =
