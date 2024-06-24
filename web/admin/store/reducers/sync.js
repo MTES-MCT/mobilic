@@ -120,6 +120,10 @@ export function updateCompanyDetailsReducer(
       )
     ),
     settings: companiesPayload[0].settings,
+    business: companiesPayload[0].business || {
+      businessType: "",
+      transportType: ""
+    },
     knownAddresses: flatMap(
       companiesPayload.map(c =>
         c.knownAddresses

@@ -1,6 +1,6 @@
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { Step } from "./Step";
 import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
@@ -8,6 +8,7 @@ import { FacilityInfo } from "./FacilityInfo";
 import AlreadyRegisteredSirets from "./AlreadyRegisteredSirets";
 import Stack from "@mui/material/Stack";
 import { PhoneNumber } from "../../common/PhoneNumber";
+import { BusinessType } from "../../common/BusinessType";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -36,6 +37,16 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
   const [hasValidatedChoice, setHasValidatedChoice] = React.useState(false);
   const classes = useStyles();
 
+  const updateFacility = useCallback(
+    (facility, field, newValue) =>
+      setFacilities(
+        facilities.map(f =>
+          f.siret === facility.siret ? { ...f, [field]: newValue } : f
+        )
+      ),
+    [facilities, setFacilities]
+  );
+
   const selectedSirets = useMemo(() => facilities.filter(f => f.selected), [
     facilities
   ]);
@@ -49,6 +60,17 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
     if (selectedNames.filter(Boolean).length < selectedNames.length) {
       return false;
     }
+
+    const selectedBusinessTypes = selectedSirets.map(f => f.businessType);
+
+    // no value should be empty
+    if (
+      selectedBusinessTypes.filter(Boolean).length <
+      selectedBusinessTypes.length
+    ) {
+      return false;
+    }
+
     // values should be unique
     return [...new Set(selectedNames)].length === selectedNames.length;
   }, [selectedSirets]);
@@ -118,13 +140,7 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                     value={facility.usualName}
                     onChange={e => {
                       setHasValidatedChoice(false);
-                      setFacilities(
-                        facilities.map(f =>
-                          f.siret === facility.siret
-                            ? { ...f, usualName: e.target.value }
-                            : f
-                        )
-                      );
+                      updateFacility(facility, "usualName", e.target.value);
                     }}
                     error={!!getFacilityError(facility)}
                     helperText={getFacilityError(facility)}
@@ -133,16 +149,17 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                     currentPhoneNumber={facility.phone_number}
                     setCurrentPhoneNumber={newPhoneNumber => {
                       setHasValidatedChoice(false);
-                      setFacilities(
-                        facilities.map(f =>
-                          f.siret === facility.siret
-                            ? { ...f, phoneNumber: newPhoneNumber }
-                            : f
-                        )
-                      );
+                      updateFacility(facility, "phoneNumber", newPhoneNumber);
                     }}
                     label="Numéro de téléphone de l'entreprise"
                     accessibilityHelpText={`${facility.address}, ${facility.postal_code}`}
+                  />
+                  <BusinessType
+                    onChangeBusinessType={newBusinessType => {
+                      setHasValidatedChoice(false);
+                      updateFacility(facility, "businessType", newBusinessType);
+                    }}
+                    required
                   />
                 </Stack>
               )}

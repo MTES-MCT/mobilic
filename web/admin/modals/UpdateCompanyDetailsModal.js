@@ -4,24 +4,22 @@ import { useApi } from "common/utils/api";
 
 import {
   Button,
+  Checkbox,
   Modal,
   ModalContent,
   ModalFooter,
   ModalTitle,
   TextInput
 } from "@dataesr/react-dsfr";
-import { makeStyles } from "@mui/styles";
 import { PhoneNumber } from "../../common/PhoneNumber";
-import { UPDATE_COMPANY_DETAILS } from "common/utils/apiQueries";
+import {
+  UPDATE_COMPANY_DETAILS,
+  UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE
+} from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import Stack from "@mui/material/Stack";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-
-const useStyles = makeStyles(theme => ({
-  label: {
-    textAlign: "left"
-  }
-}));
+import { BusinessType } from "../../common/BusinessType";
 
 export default function UpdateCompanyDetailsModal({
   open,
@@ -29,7 +27,6 @@ export default function UpdateCompanyDetailsModal({
   company,
   adminStore
 }) {
-  const classes = useStyles();
   const api = useApi();
   const alerts = useSnackbarAlerts();
 
@@ -37,29 +34,57 @@ export default function UpdateCompanyDetailsModal({
   const [newCompanyPhoneNumber, setNewCompanyPhoneNumber] = React.useState(
     company?.phoneNumber
   );
+  const [newCompanyBusinessType, setNewCompanyBusinessType] = React.useState(
+    adminStore.business?.BusinessType
+  );
+  const [
+    applyBusinessTypeToEmployees,
+    setApplyBusinessTypeToEmployees
+  ] = React.useState(false);
+
+  const hasBusinessTypeChanged = React.useMemo(
+    () => newCompanyBusinessType !== adminStore.business?.businessType,
+    [newCompanyBusinessType, adminStore.business?.businessType]
+  );
 
   const canSave = React.useMemo(
     () =>
       newCompanyName &&
       (newCompanyName !== company?.name ||
-        newCompanyPhoneNumber !== company?.phoneNumber),
-    [company?.phoneNumber, company?.name, newCompanyName, newCompanyPhoneNumber]
+        newCompanyPhoneNumber !== company?.phoneNumber ||
+        hasBusinessTypeChanged),
+    [
+      company?.phoneNumber,
+      company?.name,
+      newCompanyName,
+      newCompanyPhoneNumber,
+      hasBusinessTypeChanged
+    ]
   );
 
   const handleSubmit = async () => {
     await alerts.withApiErrorHandling(async () => {
       const apiResponse = await api.graphQlMutate(
-        UPDATE_COMPANY_DETAILS,
+        hasBusinessTypeChanged
+          ? UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE
+          : UPDATE_COMPANY_DETAILS,
         {
           companyId: company?.id,
           newName: newCompanyName,
-          newPhoneNumber: newCompanyPhoneNumber
+          newPhoneNumber: newCompanyPhoneNumber,
+          ...(hasBusinessTypeChanged
+            ? {
+                newBusinessType: newCompanyBusinessType,
+                applyBusinessTypeToEmployees
+              }
+            : {})
         },
         { context: { nonPublicApi: false } }
       );
 
-      const { id } = apiResponse?.data?.updateCompanyDetails;
-      adminStore.dispatch({
+      const id = apiResponse?.data?.updateCompanyDetails?.id;
+      const business = apiResponse?.data?.updateCompanyDetails?.business;
+      await adminStore.dispatch({
         type: ADMIN_ACTIONS.updateCompanyNameAndPhoneNumber,
         payload: {
           companyId: id,
@@ -67,6 +92,30 @@ export default function UpdateCompanyDetailsModal({
           companyPhoneNumber: newCompanyPhoneNumber
         }
       });
+      await adminStore.dispatch({
+        type: ADMIN_ACTIONS.updateBusinessType,
+        payload: {
+          business
+        }
+      });
+      if (hasBusinessTypeChanged) {
+        const employments =
+          apiResponse?.data?.updateCompanyDetails?.employments;
+        for (const employment of employments) {
+          await adminStore.dispatch({
+            type: ADMIN_ACTIONS.update,
+            payload: {
+              id: employment.id,
+              entity: "employments",
+              update: {
+                ...employment,
+                companyId: id,
+                adminStore
+              }
+            }
+          });
+        }
+      }
       alerts.success(
         "Les détails de l'entreprise ont bien été enregistrés",
         "",
@@ -80,13 +129,18 @@ export default function UpdateCompanyDetailsModal({
       <ModalTitle>Modifier les détails de l'entreprise</ModalTitle>
       <ModalContent>
         <div className="fr-input-group">
-          <label htmlFor="company-name" className={`fr-label ${classes.label}`}>
-            Nom usuel
-          </label>
           <TextInput
             id="company-name"
             value={newCompanyName}
             onChange={e => setNewCompanyName(e.target.value)}
+            label="Nom usuel"
+            required
+            {...(!newCompanyName ? { messageType: "error" } : {})}
+            message={
+              !newCompanyName
+                ? "Veuillez renseigner un nom pour l'entreprise"
+                : ""
+            }
           />
         </div>
         <PhoneNumber
@@ -95,6 +149,22 @@ export default function UpdateCompanyDetailsModal({
             setNewCompanyPhoneNumber(newNumber)
           }
         />
+        {adminStore.business && (
+          <>
+            <BusinessType
+              currentBusiness={adminStore.business}
+              onChangeBusinessType={setNewCompanyBusinessType}
+              required
+            />
+            <Checkbox
+              checked={applyBusinessTypeToEmployees}
+              onChange={e => setApplyBusinessTypeToEmployees(e.target.checked)}
+              label="Attribuer cette activité à tous mes salariés"
+              hint="L'activité sera attribuée par défaut à tous vos salariés. Vous aurez ensuite la possibilité de modifier individuellement le type d'activité pour chaque salarié."
+              disabled={!hasBusinessTypeChanged}
+            />
+          </>
+        )}
       </ModalContent>
       <ModalFooter>
         <Stack

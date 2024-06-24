@@ -202,6 +202,35 @@ export const FULL_TEAM_FRAGMENT = gql`
   }
 `;
 
+export const FULL_EMPLOYMENT_FRAGMENT = gql`
+  fragment FullEmploymentData on Employment {
+    id
+    startDate
+    endDate
+    isAcknowledged
+    email
+    hasAdminRights
+    latestInviteEmailTime
+    teamId
+    business {
+      transportType
+      businessType
+    }
+    companyId
+    company {
+      id
+      name
+      siren
+    }
+    user {
+      id
+      email
+      firstName
+      lastName
+    }
+  }
+`;
+
 export const CONTROL_BULLETIN_FRAGMENT = gql`
   fragment ControlBulletin on ControlBulletinFields {
     userBirthDate
