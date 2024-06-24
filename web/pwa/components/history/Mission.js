@@ -190,7 +190,10 @@ export function Mission({
           onClick={() => setOpen(!open)}
         >
           <Grid item>
-            <Typography component={getPrevHeadingComponent(headingComponent)}>
+            <Typography
+              component={getPrevHeadingComponent(headingComponent)}
+              sx={{ color: "inherit" }}
+            >
               <span className="bold">
                 {mission.name
                   ? `Nom de la mission : ${mission.name}`

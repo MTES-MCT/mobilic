@@ -185,8 +185,15 @@ export const COMPANY_SIGNUP_MUTATION = gql`
     $usualName: String!
     $phoneNumber: String
     $businessType: String
+    $businessType: String
   ) {
     signUp {
+      company(
+        siren: $siren
+        usualName: $usualName
+        phoneNumber: $phoneNumber
+        businessType: $businessType
+      ) {
       company(
         siren: $siren
         usualName: $usualName
@@ -1133,6 +1140,7 @@ export const CHANGE_EMPLOYEE_BUSINESS_TYPE = gql`
 export const CHANGE_EMPLOYEE_TEAM = gql`
   ${FULL_TEAM_FRAGMENT}
   ${FULL_EMPLOYMENT_FRAGMENT}
+  ${FULL_EMPLOYMENT_FRAGMENT}
   mutation changeEmployeeTeam(
     $companyId: Int!
     $userId: Int
@@ -1180,6 +1188,7 @@ export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
 `;
 
 export const CREATE_EMPLOYMENT_MUTATION = gql`
+  ${FULL_EMPLOYMENT_FRAGMENT}
   ${FULL_EMPLOYMENT_FRAGMENT}
   mutation createEmployment(
     $userId: Int
