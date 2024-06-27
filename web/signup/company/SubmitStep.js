@@ -5,12 +5,19 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import { Step } from "./Step";
 import { PhoneNumber } from "../../common/PhoneNumber";
-import { Stack } from "@mui/material";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import { BusinessType } from "../../common/BusinessType";
+import { Section } from "../../common/Section";
+import { ExternalLink } from "../../common/ExternalLink";
+import { Typography } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
     marginTop: theme.spacing(4)
+  },
+  greyText: {
+    color: theme.palette.grey[600]
   }
 }));
 
@@ -57,7 +64,25 @@ export function SubmitStep({
               setCurrentPhoneNumber={setPhoneNumber}
               label="Numéro de téléphone de l'entreprise"
             />
-            <BusinessType onChangeBusinessType={setBusinessType} required />
+            <Section title="Veuillez indiquer votre type d'activité">
+              <Box sx={{ textAlign: "left", marginBottom: 2 }}>
+                <Typography className={classes.greyText}>
+                  Par défaut, l’activité sera attribuée à tous vos salariés.
+                  Vous aurez ensuite la possibilité de modifier le type
+                  d'activité pour chaque salarié.
+                </Typography>
+                <ExternalLink
+                  url="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/gestionnaire-parametrer-mon-entreprise"
+                  text="À quoi sert cette information ?"
+                  withIcon
+                />
+              </Box>
+              <BusinessType
+                onChangeBusinessType={setBusinessType}
+                required
+                forceColumn
+              />
+            </Section>
           </Stack>
         )}
         <CheckboxField
