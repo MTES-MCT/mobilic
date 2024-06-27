@@ -419,8 +419,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       hasConfirmedEmail,
       hasActivatedEmail,
       disabledWarnings,
-      surveyActions,
-      hadEnoughBreakLastMission
+      surveyActions
     },
     commitImmediately = true
   ) =>
@@ -438,8 +437,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             hasConfirmedEmail,
             hasActivatedEmail,
             disabledWarnings,
-            surveyActions,
-            hadEnoughBreakLastMission
+            surveyActions
           }
         },
         resolve,
