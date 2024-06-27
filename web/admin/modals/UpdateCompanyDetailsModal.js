@@ -78,6 +78,7 @@ export default function UpdateCompanyDetailsModal({
           setCurrentPhoneNumber={newNumber =>
             setNewCompanyPhoneNumber(newNumber)
           }
+          label="Numéro de téléphone de l'entreprise"
         />
         {adminStore.business && (
           <>
