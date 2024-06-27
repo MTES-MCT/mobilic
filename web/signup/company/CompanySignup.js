@@ -165,7 +165,7 @@ export function CompanySignup() {
       <Steps>
         <SelectSirenStep
           name="select-siren"
-          title="Quel est le SIREN de l'entreprise ?"
+          title="Quel est le numéro SIREN de l'entreprise ?"
           siren={siren}
           setSiren={setSiren}
           sirenInfo={sirenInfo}

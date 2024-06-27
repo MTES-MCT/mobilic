@@ -2,7 +2,7 @@ import { clearCookie, readCookie, setCookie } from "./cookie";
 import { addDaysToDate } from "./time";
 
 const UPDATE_TIME_COOKIE_NAME = "nextUpdateBusinessTypeTime";
-const SNOOZE_DELAY = 7;
+const SNOOZE_DELAY = 1;
 
 export const shouldUpdateBusinessType = () => {
   if (!checkUpdateTimeCookieExists()) {

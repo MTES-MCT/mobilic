@@ -24,6 +24,9 @@ const useStyles = makeStyles(theme => ({
   },
   missingSubTitle: {
     color: theme.palette.grey[800]
+  },
+  phoneNumberData: {
+    color: "black"
   }
 }));
 
@@ -39,12 +42,12 @@ export default function CompanyDetails({ company }) {
 
   return (
     <Stack direction="row" justifyContent="flex-start" alignItems="flex-start">
-      <Stack direction="column" spacing={1}>
-        <Typography variant="h3" component="h1">
+      <Stack direction="column">
+        <Typography variant="h3" component="h1" sx={{ marginBottom: 1 }}>
           {company?.name}
         </Typography>
         <Typography className={classes.subTitle}>
-          <span className={classes.subTitleLabel}>Numéro de téléphone</span>{" "}
+          <span className={classes.subTitleLabel}>Numéro de téléphone :</span>{" "}
           <span
             className={`${classes.phoneNumberData} ${!company?.phoneNumber &&
               classes.missingSubTitle}`}
@@ -55,7 +58,7 @@ export default function CompanyDetails({ company }) {
           </span>
         </Typography>
         <Typography className={classes.subTitle}>
-          <span className={classes.subTitleLabel}>Activité principale</span>{" "}
+          <span className={classes.subTitleLabel}>Activité principale :</span>{" "}
           <span
             className={`${classes.phoneNumberData} ${!printActivity &&
               classes.missingSubTitle}`}

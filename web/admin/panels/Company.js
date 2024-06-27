@@ -31,10 +31,10 @@ import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { usePageTitle } from "../../common/UsePageTitle";
 import CompanyDetails from "../../home/CompanyDetails";
 import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
 
 export const usePanelStyles = makeStyles(theme => ({
   navigation: {
-    padding: theme.spacing(2),
     flexShrink: 0,
     top: "0",
     zIndex: 500,
@@ -246,10 +246,14 @@ function CompanyPanel({ width, containerRef }) {
   }, [location]);
 
   return (
-    <Stack direction="column" spacing={2}>
-      <Paper
+    <Stack
+      direction="column"
+      spacing={1.5}
+      sx={{ marginTop: "8px", paddingX: "8px" }}
+    >
+      <Box
         className={`${classes.navigation} flex-row-center`}
-        variant="outlined"
+        sx={{ marginBottom: "4px" }}
       >
         <Grid
           container
@@ -259,9 +263,11 @@ function CompanyPanel({ width, containerRef }) {
           style={{ flex: "1 1 auto" }}
         >
           <Grid item>
-            <Stack direction="column" spacing={2}>
-              <CompanyDetails company={company} />
-            </Stack>
+            <Paper variant="outlined" sx={{ padding: 2, maxWidth: "640px" }}>
+              <Stack direction="column" spacing={2}>
+                <CompanyDetails company={company} />
+              </Stack>
+            </Paper>
           </Grid>
           <Grid item>
             <LinkButton
@@ -275,7 +281,7 @@ function CompanyPanel({ width, containerRef }) {
             </LinkButton>
           </Grid>
         </Grid>
-      </Paper>
+      </Box>
       <SubNavigationToggle view={view} setView={setView} />
       <Paper className={classes.subPanel} variant="outlined">
         {company ? subPanel.component({ company, containerRef }) : null}
