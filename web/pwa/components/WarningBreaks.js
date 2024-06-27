@@ -11,8 +11,8 @@ export const WarningBreaks = () => (
     <Box className="fr-container">
       <Box className="fr-notice__body">
         <Typography marginBottom={1}>
-          Pensez à respecter le temps de pause obligatoire lors de votre
-          prochaine mission afin de respecter la réglementation !
+          Pour être en règle, pensez à respecter le temps de pause obligatoire
+          lors de votre prochaine mission !
         </Typography>
         <Typography fontWeight="bold">
           <ExternalLink
