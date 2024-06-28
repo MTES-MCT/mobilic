@@ -22,7 +22,8 @@ export function BusinessType({
   currentBusiness,
   onChangeBusinessType,
   required = false,
-  forceColumn = false
+  forceColumn = false,
+  showErrors = false
 }) {
   const [transportType, setTransportType] = React.useState(
     currentBusiness?.transportType || ""
@@ -79,9 +80,11 @@ export function BusinessType({
           options={transportOptions}
           selected={transportType}
           onChange={e => setTransportType(e.target.value)}
-          {...(!transportType && required ? { messageType: "error" } : {})}
+          {...(!transportType && required && showErrors
+            ? { messageType: "error" }
+            : {})}
           message={
-            !transportType && required
+            !transportType && required && showErrors
               ? "Veuillez renseigner un type de transport"
               : ""
           }
@@ -93,9 +96,13 @@ export function BusinessType({
           selected={businessType}
           onChange={e => setBusinessType(e.target.value)}
           disabled={!transportType}
-          {...(!businessType && required ? { messageType: "error" } : {})}
+          {...(!businessType && required && showErrors
+            ? { messageType: "error" }
+            : {})}
           message={
-            !businessType && required ? "Veuillez renseigner une activité" : ""
+            !businessType && required && showErrors
+              ? "Veuillez renseigner une activité"
+              : ""
           }
         ></Select>
       </Stack>
