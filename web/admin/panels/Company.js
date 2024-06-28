@@ -36,16 +36,8 @@ import Box from "@mui/material/Box";
 export const usePanelStyles = makeStyles(theme => ({
   navigation: {
     flexShrink: 0,
-    top: "0",
-    zIndex: 500,
     textAlign: "left",
-    flexWrap: "wrap",
-    [theme.breakpoints.up("md")]: {
-      position: "sticky"
-    },
-    [theme.breakpoints.down("lg")]: {
-      position: "static"
-    }
+    flexWrap: "wrap"
   },
   subPanel: {
     padding: theme.spacing(2),
