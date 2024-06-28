@@ -7,6 +7,7 @@ import { USER_QUERY_ENOUGH_BREAK } from "common/utils/apiQueries";
 export const useEnoughBreak = () => {
   const store = useStoreSyncedWithLocalStorage();
   const userId = store.userId();
+  const missions = store.missions();
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const [hasEnoughBreak, setHasEnoughBreak] = React.useState(true);
@@ -20,7 +21,7 @@ export const useEnoughBreak = () => {
       const { hadEnoughBreakLastMission } = response.data.user;
       setHasEnoughBreak(hadEnoughBreakLastMission);
     }, "enough-break");
-  }, [userId]);
+  }, [userId, missions]);
 
   return { hasEnoughBreak };
 };
