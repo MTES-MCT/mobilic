@@ -28,6 +28,7 @@ import { getPasswordErrors } from "common/utils/passwords";
 import { PasswordHelper } from "../common/PasswordHelper";
 import { usePageTitle } from "../common/UsePageTitle";
 import { PhoneNumber } from "../common/PhoneNumber";
+import { Notice } from "../common/Notice";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   usePageTitle("Création de compte - Mobilic");
@@ -221,11 +222,19 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             setTimezone={setSelectedTimezone}
           />
           {isAdmin && (
-            <PhoneNumber
-              currentPhoneNumber={phoneNumber}
-              setCurrentPhoneNumber={setPhoneNumber}
-              label="Numéro de téléphone professionel"
-            />
+            <>
+              <PhoneNumber
+                currentPhoneNumber={phoneNumber}
+                setCurrentPhoneNumber={setPhoneNumber}
+                label="Numéro de téléphone professionel"
+              />
+              <Notice>
+                <Typography textAlign="left" fontSize="0.9rem">
+                  Cette information pourra être utilisée par l’équipe Mobilic
+                  pour vous contacter à des fins d’aide à la prise en main.
+                </Typography>
+              </Notice>
+            </>
           )}
           {isAdmin && (
             <WayHeardOfMobilic
