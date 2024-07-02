@@ -1,6 +1,8 @@
 import React from "react";
 import { Select } from "@dataesr/react-dsfr";
-import { Stack } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
+import { ExternalLink } from "./ExternalLink";
+import { makeStyles } from "@mui/styles";
 
 const TRANSPORT_OPTIONS = [
   { value: "TRM", label: "Marchandises (TRM)" },
@@ -14,17 +16,25 @@ const BUSINESS_OPTIONS = {
   ],
   TRV: [
     { value: "FREQUENT", label: "Lignes régulières" },
-    { value: "INFREQUENT", label: "Occasionnels" }
+    { value: "INFREQUENT", label: "Occasionnel" }
   ]
 };
+
+const useStyles = makeStyles(theme => ({
+  greyText: {
+    color: theme.palette.grey[600]
+  }
+}));
 
 export function BusinessType({
   currentBusiness,
   onChangeBusinessType,
   required = false,
   forceColumn = false,
-  showErrors = false
+  showErrors = false,
+  displayInfo = false
 }) {
+  const classes = useStyles();
   const [transportType, setTransportType] = React.useState(
     currentBusiness?.transportType || ""
   );
@@ -106,6 +116,20 @@ export function BusinessType({
           }
         ></Select>
       </Stack>
+      {displayInfo && (
+        <Box sx={{ textAlign: "left", marginTop: 2 }}>
+          <Typography className={classes.greyText} sx={{ marginBottom: 1 }}>
+            Par défaut, l’activité sera attribuée à tous vos salariés. Vous
+            aurez ensuite la possibilité de modifier le type d'activité pour
+            chaque salarié.
+          </Typography>
+          <ExternalLink
+            url="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/gestionnaire-parametrer-mon-entreprise"
+            text="À quoi sert cette information ?"
+            withIcon
+          />
+        </Box>
+      )}
     </div>
   );
 }

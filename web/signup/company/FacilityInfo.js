@@ -18,8 +18,8 @@ const useStyles = makeStyles(theme => ({
     fontWeight: "normal"
   },
   selectedFacility: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText
+    borderColor: theme.palette.primary.main,
+    borderWidth: 2
   },
   errorText: {
     color: theme.palette.error.main,
@@ -34,9 +34,10 @@ export function FacilityInfo({ facility, selected, alreadyRegistered }) {
 
   return (
     <Card
-      raised
       style={{ textAlign: "left" }}
+      variant="outlined"
       className={selected ? classes.selectedFacility : ""}
+      sx={{ width: "100%" }}
     >
       <CardContent>
         <Typography variant="h5" gutterBottom>

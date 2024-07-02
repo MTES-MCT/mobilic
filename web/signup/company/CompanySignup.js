@@ -190,7 +190,6 @@ export function CompanySignup() {
         {willRegisterSeveralSirets ? (
           <SubmitStep
             name="finalize"
-            title="Attestation d'habilitation"
             handleSubmit={handleCompaniesSignup}
             loading={loadingCompanySignup}
           />

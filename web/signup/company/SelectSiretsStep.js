@@ -1,5 +1,4 @@
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import React, { useMemo, useCallback } from "react";
 import { Step } from "./Step";
 import { makeStyles } from "@mui/styles";
@@ -9,6 +8,7 @@ import AlreadyRegisteredSirets from "./AlreadyRegisteredSirets";
 import Stack from "@mui/material/Stack";
 import { PhoneNumber } from "../../common/PhoneNumber";
 import { BusinessType } from "../../common/BusinessType";
+import { TextInput } from "@dataesr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -110,7 +110,7 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
       {allFacilitiesAlreadyRegistered && <AlreadyRegisteredSirets />}
       <Grid container key={2} spacing={3} wrap="wrap">
         {facilities.map((facility, index) => (
-          <Grid item key={facility.siret}>
+          <Grid item key={facility.siret} xs={12}>
             <Stack direction="column" alignItems="flex-start" spacing={0}>
               <Button
                 onClick={() => {
@@ -123,6 +123,8 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                   setFacilities(newFacilities);
                 }}
                 disabled={facility.registered}
+                fullWidth
+                sx={{ padding: 0 }}
               >
                 <FacilityInfo
                   facility={facility}
@@ -131,10 +133,13 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                 />
               </Button>
               {facility.selected && (
-                <Stack direction="column" spacing={2}>
-                  <TextField
-                    variant="standard"
-                    className={classes.siretName}
+                <Stack
+                  direction="column"
+                  spacing={1}
+                  textAlign="left"
+                  sx={{ marginTop: 1 }}
+                >
+                  <TextInput
                     required
                     label="Nom usuel"
                     value={facility.usualName}
@@ -142,8 +147,12 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                       setHasValidatedChoice(false);
                       updateFacility(facility, "usualName", e.target.value);
                     }}
-                    error={!!getFacilityError(facility)}
-                    helperText={getFacilityError(facility)}
+                    {...(getFacilityError(facility)
+                      ? {
+                          messageType: "error",
+                          message: getFacilityError(facility)
+                        }
+                      : {})}
                   />
                   <PhoneNumber
                     currentPhoneNumber={facility.phone_number}
@@ -160,6 +169,7 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                       updateFacility(facility, "businessType", newBusinessType);
                     }}
                     required
+                    displayInfo
                   />
                 </Stack>
               )}

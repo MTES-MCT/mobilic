@@ -818,7 +818,7 @@ export function Employees({ company, containerRef }) {
       {areThereEmploymentsWithoutBusinessType && (
         <Alert severity="info">
           <Typography>
-            Certains salariés n'ont pas de type d'activité de Transport
+            Certains salariés n'ont pas de type d'activité de transport
             renseigné. Veuillez en sélectionner un pour chaque salarié actif.
           </Typography>
         </Alert>
