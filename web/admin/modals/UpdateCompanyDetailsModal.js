@@ -28,7 +28,8 @@ export default function UpdateCompanyDetailsModal({
     setNewCompanyPhoneNumber,
     setNewCompanyBusinessType,
     hasBusinessTypeChanged,
-    updateCompanyDetails
+    updateCompanyDetails,
+    newCompanyBusinessType
   } = useUpdateCompanyDetails(company, adminStore, handleClose);
 
   const [
@@ -41,13 +42,14 @@ export default function UpdateCompanyDetailsModal({
       newCompanyName &&
       (newCompanyName !== company?.name ||
         newCompanyPhoneNumber !== company?.phoneNumber ||
-        hasBusinessTypeChanged),
+        (hasBusinessTypeChanged && !!newCompanyBusinessType)),
     [
       company?.phoneNumber,
       company?.name,
       newCompanyName,
       newCompanyPhoneNumber,
-      hasBusinessTypeChanged
+      hasBusinessTypeChanged,
+      newCompanyBusinessType
     ]
   );
 

@@ -99,6 +99,7 @@ export const useUpdateCompanyDetails = (
     setNewCompanyPhoneNumber,
     setNewCompanyBusinessType,
     hasBusinessTypeChanged,
-    updateCompanyDetails
+    updateCompanyDetails,
+    newCompanyBusinessType
   };
 };
