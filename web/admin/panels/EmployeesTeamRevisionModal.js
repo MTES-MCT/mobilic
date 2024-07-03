@@ -58,10 +58,8 @@ export default function EmployeesTeamRevisionModal({
         CHANGE_EMPLOYEE_TEAM,
         payload
       );
-      const {
-        teams,
-        employments
-      } = apiResponse?.data?.employments?.changeEmployeeTeam;
+      const { teams, employments } =
+        apiResponse?.data?.employments?.changeEmployeeTeam || {};
       adminStore.dispatch({
         type: ADMIN_ACTIONS.updateTeams,
         payload: { teams, employments }

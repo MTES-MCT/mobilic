@@ -113,7 +113,7 @@ export default function CompanyTeamCreationRevisionModal({
         companyId: company.id,
         ...commonPayloadFromFields()
       });
-      const { teams, employments } = apiResponse?.data?.teams?.createTeam;
+      const { teams, employments } = apiResponse?.data?.teams?.createTeam || {};
       setTeams(teams);
       adminStore.dispatch({
         type: ADMIN_ACTIONS.updateTeams,
@@ -132,7 +132,7 @@ export default function CompanyTeamCreationRevisionModal({
         teamId: team.id,
         ...commonPayloadFromFields()
       });
-      const { teams, employments } = apiResponse?.data?.teams?.updateTeam;
+      const { teams, employments } = apiResponse?.data?.teams?.updateTeam || {};
       setTeams(teams);
       adminStore.dispatch({
         type: ADMIN_ACTIONS.updateTeams,

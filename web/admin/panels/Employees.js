@@ -138,10 +138,8 @@ export function Employees({ company, containerRef }) {
         employmentId,
         hasAdminRights
       });
-      const {
-        teams,
-        employments
-      } = apiResponse?.data?.employments?.changeEmployeeRole;
+      const { teams, employments } =
+        apiResponse?.data?.employments?.changeEmployeeRole || {};
       await adminStore.dispatch({
         type: ADMIN_ACTIONS.update,
         payload: {

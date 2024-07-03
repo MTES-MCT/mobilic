@@ -50,7 +50,7 @@ export default function CompanyTeamsPanel({ company }) {
       const apiResponse = await api.graphQlMutate(DELETE_TEAM_MUTATION, {
         teamId: team.id
       });
-      const { teams, employments } = apiResponse?.data?.teams?.deleteTeam;
+      const { teams, employments } = apiResponse?.data?.teams?.deleteTeam || {};
       setTeams(teams);
       adminStore.dispatch({
         type: ADMIN_ACTIONS.updateTeams,

@@ -23,7 +23,8 @@ export const getRegulationComputationsAndAlertNumber = async (
     fromDate: isoFormatLocalDate(fromDate)
   });
 
-  const { regulationComputationsByDay } = apiResponse?.data?.user;
+  const regulationComputationsByDay =
+    apiResponse?.data?.user?.regulationComputationsByDay;
 
   let alertNumber = 0;
   if (regulationComputationsByDay) {

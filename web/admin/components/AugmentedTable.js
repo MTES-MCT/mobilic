@@ -760,6 +760,7 @@ const _VirtualizedTable = React.forwardRef(
     },
     ref
   ) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     let actualRef = ref || React.useRef();
 
     const minTableWidth = columns.reduce((acc, col) => {
