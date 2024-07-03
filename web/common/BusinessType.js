@@ -1,8 +1,8 @@
 import React from "react";
 import { Select } from "@dataesr/react-dsfr";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { ExternalLink } from "./ExternalLink";
-import { makeStyles } from "@mui/styles";
+import { Notice } from "./Notice";
 
 const TRANSPORT_OPTIONS = [
   { value: "TRM", label: "Marchandises (TRM)" },
@@ -20,12 +20,6 @@ const BUSINESS_OPTIONS = {
   ]
 };
 
-const useStyles = makeStyles(theme => ({
-  greyText: {
-    color: theme.palette.grey[600]
-  }
-}));
-
 export function BusinessType({
   currentBusiness,
   onChangeBusinessType,
@@ -34,7 +28,6 @@ export function BusinessType({
   showErrors = false,
   displayInfo = false
 }) {
-  const classes = useStyles();
   const [transportType, setTransportType] = React.useState(
     currentBusiness?.transportType || ""
   );
@@ -80,54 +73,57 @@ export function BusinessType({
 
   return (
     <div style={{ textAlign: "left" }}>
-      <Stack
-        direction={{ xs: "column", sm: forceColumn ? "column" : "row" }}
-        spacing={{ xs: 1, sm: forceColumn ? 1 : 3 }}
-      >
-        <Select
-          label="Type de transport routier"
-          required
-          options={transportOptions}
-          selected={transportType}
-          onChange={e => setTransportType(e.target.value)}
-          {...(!transportType && required && showErrors
-            ? { messageType: "error" }
-            : {})}
-          message={
-            !transportType && required && showErrors
-              ? "Veuillez renseigner un type de transport"
-              : ""
-          }
-        ></Select>
-        <Select
-          label="Activité principale"
-          required
-          options={businessOptions}
-          selected={businessType}
-          onChange={e => setBusinessType(e.target.value)}
-          disabled={!transportType}
-          {...(!businessType && required && showErrors
-            ? { messageType: "error" }
-            : {})}
-          message={
-            !businessType && required && showErrors
-              ? "Veuillez renseigner une activité"
-              : ""
-          }
-        ></Select>
-      </Stack>
+      <Grid container spacing={forceColumn ? 1 : 2}>
+        <Grid item xs={forceColumn ? 6 : 12}>
+          <Select
+            label="Type de transport routier"
+            required
+            options={transportOptions}
+            selected={transportType}
+            onChange={e => setTransportType(e.target.value)}
+            {...(!transportType && required && showErrors
+              ? { messageType: "error" }
+              : {})}
+            message={
+              !transportType && required && showErrors
+                ? "Veuillez renseigner un type de transport"
+                : ""
+            }
+          ></Select>
+        </Grid>
+        <Grid item xs={forceColumn ? 6 : 12}>
+          <Select
+            label="Activité principale"
+            required
+            options={businessOptions}
+            selected={businessType}
+            onChange={e => setBusinessType(e.target.value)}
+            disabled={!transportType}
+            {...(!businessType && required && showErrors
+              ? { messageType: "error" }
+              : {})}
+            message={
+              !businessType && required && showErrors
+                ? "Veuillez renseigner une activité"
+                : ""
+            }
+          ></Select>
+        </Grid>
+      </Grid>
       {displayInfo && (
-        <Box sx={{ textAlign: "left", marginTop: 2 }}>
-          <Typography className={classes.greyText} sx={{ marginBottom: 1 }}>
-            Par défaut, l’activité sera attribuée à tous vos salariés. Vous
-            aurez ensuite la possibilité de modifier le type d'activité pour
-            chaque salarié.
-          </Typography>
-          <ExternalLink
-            url="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/gestionnaire-parametrer-mon-entreprise"
-            text="À quoi sert cette information ?"
-            withIcon
-          />
+        <Box sx={{ textAlign: "left", marginTop: 2, fontSize: "0.7rem" }}>
+          <Notice noBackground noPadding textAlign="left">
+            <Typography sx={{ fontSize: "0.7rem" }}>
+              Par défaut, l’activité sera attribuée à tous vos salariés. Vous
+              aurez ensuite la possibilité de modifier le type d'activité pour
+              chaque salarié.
+            </Typography>
+            <ExternalLink
+              url="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/gestionnaire-parametrer-mon-entreprise"
+              text="À quoi sert cette information ?"
+              withIcon
+            />
+          </Notice>
         </Box>
       )}
     </div>

@@ -166,6 +166,7 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                     }}
                     required
                     displayInfo
+                    forceColumn
                   />
                 </Stack>
               )}

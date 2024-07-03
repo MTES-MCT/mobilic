@@ -61,7 +61,6 @@ export function SubmitStep({
               <BusinessType
                 onChangeBusinessType={setBusinessType}
                 required
-                forceColumn
                 displayInfo
               />
             </Section>
