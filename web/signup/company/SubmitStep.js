@@ -50,13 +50,6 @@ export function SubmitStep({
               value={companyName}
               onChange={e => setCompanyName(e.target.value.trimLeft())}
               required
-              {...(!companyName
-                ? {
-                    messageType: "error",
-                    message:
-                      "Veuillez renseigner un nom usuel pour l'entreprise"
-                  }
-                : {})}
               label="Nom usuel"
             />
             <PhoneNumber

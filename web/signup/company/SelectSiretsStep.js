@@ -77,10 +77,6 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
 
   const getFacilityError = useMemo(() => {
     return facility => {
-      if (!facility.usualName) {
-        return "Veuillez entrer un nom pour cette entreprise";
-      }
-
       if (
         selectedSirets.filter(f => f.usualName === facility.usualName).length >
         1
