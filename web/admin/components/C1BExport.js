@@ -165,11 +165,11 @@ export default function C1BExport({
                 Les fichiers générés par Mobilic respectent la norme C1B, mais
                 ne sont pour autant pas tout à fait identiques aux fichiers des
                 cartes conducteur (ex. : certaines parties sont laissées vides
-                faute de données, les signatures numériques sont différentes,
+                faute de données, les signatures numériques sont différentes
                 ...). <br />
                 Si jamais vous ne parvenez à lire les fichiers Mobilic depuis
                 votre logiciel d'analyse n'hésitez pas à nous contacter à
-                l'adresse mail
+                l'adresse mail{" "}
                 <a href="mailto:assistance@mobilic.beta.gouv.fr">
                   assistance@mobilic.beta.gouv.fr
                 </a>

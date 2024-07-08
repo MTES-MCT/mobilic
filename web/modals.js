@@ -34,6 +34,9 @@ import EmployeesTeamRevisionModal from "./admin/panels/EmployeesTeamRevisionModa
 import ConfirmationCancelControlBulletinModal from "./controller/components/controlBulletin/ConfirmationCancelControlBulletinModal";
 import TypeformModal from "./pwa/components/TypeformModal";
 import LogHolidayModal from "./pwa/components/LogHoliday";
+import ControllerExportC1BOne from "./controller/components/modals/ControllerExportC1BOne";
+import ChangePhoneNumberModal from "./home/ChangePhoneNumber";
+import UpdateCompanyDetailsModal from "./admin/modals/UpdateCompanyDetailsModal";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -57,6 +60,7 @@ export const MODAL_DICT = {
   cgu: CGUModal,
   changeEmail: ChangeEmailModal,
   changeName: ChangeNameModal,
+  changePhoneNumber: ChangePhoneNumberModal,
   changeTimezone: ChangeTimezoneModal,
   terminateEmployment: TerminateEmployment,
   userReadQRCode: UserReadQRCodeModal,
@@ -67,9 +71,11 @@ export const MODAL_DICT = {
   warningEndMissionModal: WarningEndMissionModal,
   geolocPermissionInfoModal: GeolocPermissionInfoModal,
   controllerExportC1BAll: ControllerExportC1BAll,
+  controllerExportC1BOne: ControllerExportC1BOne,
   controllerHelp: ControllerHelp,
   companyTeamCreationRevisionModal: CompanyTeamCreationRevisionModal,
   employeesTeamRevisionModal: EmployeesTeamRevisionModal,
   confirmationCancelControlBulletinModal: ConfirmationCancelControlBulletinModal,
-  typeformModal: TypeformModal
+  typeformModal: TypeformModal,
+  updateCompanyDetails: UpdateCompanyDetailsModal
 };

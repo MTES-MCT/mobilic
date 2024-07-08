@@ -28,6 +28,8 @@ import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
 import { MissionDrawerContextProvider } from "./components/MissionDrawer";
 import CertificationCommunicationModal from "../pwa/components/CertificationCommunicationModal";
+import UpdateCompanyBusinessTypeModal from "./components/UpdateCompanyBusinessTypeModal";
+import { shouldUpdateBusinessType } from "common/utils/updateBusinessType";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -193,55 +195,59 @@ function _Admin() {
   const shouldRefreshDataSetter = val => setShouldRefreshData({ value: val });
 
   const defaultView = views.find(view => view.isDefault);
-  return [
-    <Header key={0} />,
-    <MissionDrawerContextProvider
-      key={1}
-      width={width}
-      setShouldRefreshData={shouldRefreshDataSetter}
-      refreshData={refreshData}
-    >
-      {companiesToAcceptCertificateCommunication?.length > 0 && (
-        <CertificationCommunicationModal
-          companies={companiesToAcceptCertificateCommunication}
-          onClose={() => setCompaniesToAcceptCertificateCommunication([])}
-        />
-      )}
-      <Container
-        key={1}
-        maxWidth={false}
-        disableGutters
-        className={classes.container}
+  return (
+    <>
+      {!!adminStore.business &&
+        !adminStore.business.businessType &&
+        shouldUpdateBusinessType() && <UpdateCompanyBusinessTypeModal />}
+      <Header />
+      <MissionDrawerContextProvider
+        width={width}
+        setShouldRefreshData={shouldRefreshDataSetter}
+        refreshData={refreshData}
       >
-        {isMdUp && <SideMenu views={views} />}
+        {companiesToAcceptCertificateCommunication?.length > 0 && (
+          <CertificationCommunicationModal
+            companies={companiesToAcceptCertificateCommunication}
+            onClose={() => setCompaniesToAcceptCertificateCommunication([])}
+          />
+        )}
         <Container
-          className={`scrollable ${classes.panelContainer}`}
+          key={1}
           maxWidth={false}
-          ref={ref}
+          disableGutters
+          className={classes.container}
         >
-          <Switch color="secondary">
-            {views.map(view => (
-              <Route
-                key={view.label}
-                path={view.path}
-                render={() => (
-                  <view.component
-                    containerRef={ref}
-                    setShouldRefreshData={val =>
-                      setShouldRefreshData(shouldRefreshDataSetter)
-                    }
-                  />
-                )}
-              />
-            ))}
-            {defaultView && (
-              <Redirect key="default" push from="*" to={defaultView.path} />
-            )}
-          </Switch>
+          {isMdUp && <SideMenu views={views} />}
+          <Container
+            className={`scrollable ${classes.panelContainer}`}
+            maxWidth={false}
+            ref={ref}
+          >
+            <Switch color="secondary">
+              {views.map(view => (
+                <Route
+                  key={view.label}
+                  path={view.path}
+                  render={() => (
+                    <view.component
+                      containerRef={ref}
+                      setShouldRefreshData={val =>
+                        setShouldRefreshData(shouldRefreshDataSetter)
+                      }
+                    />
+                  )}
+                />
+              ))}
+              {defaultView && (
+                <Redirect key="default" push from="*" to={defaultView.path} />
+              )}
+            </Switch>
+          </Container>
         </Container>
-      </Container>
-    </MissionDrawerContextProvider>
-  ];
+      </MissionDrawerContextProvider>
+    </>
+  );
 }
 
 export default function Admin(props) {

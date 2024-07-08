@@ -22,6 +22,7 @@ import { frenchFormatDateStringOrTimeStamp } from "common/utils/time";
 import {
   CHANGE_EMAIL_MUTATION,
   CHANGE_NAME_MUTATION,
+  CHANGE_PHONE_NUMBER_MUTATION,
   CHANGE_TIMEZONE_MUTATION
 } from "common/utils/apiQueries";
 import { EmploymentInfoCard } from "../../common/EmploymentInfoCard";
@@ -32,6 +33,7 @@ import { OAuthTokenSection } from "./OAuthTokensSection";
 import { currentUserId } from "common/utils/cookie";
 import { UserControlSection } from "./UserControlSection";
 import { usePageTitle } from "../../common/UsePageTitle";
+import { parsePhoneNumber } from "libphonenumber-js";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
@@ -64,6 +66,14 @@ export default function Home() {
   const userInfo = store.userInfo();
   const isActive = userInfo.hasActivatedEmail;
 
+  const displayPhoneNumber = React.useMemo(() => {
+    if (!userInfo.phoneNumber) {
+      return undefined;
+    }
+    const phoneNumber = parsePhoneNumber(userInfo.phoneNumber);
+    return phoneNumber ? phoneNumber.formatNational() : undefined;
+  }, [userInfo.phoneNumber]);
+
   return [
     <Header key={0} />,
     <PaperContainer key={1} style={{ textAlign: "left" }}>
@@ -75,21 +85,20 @@ export default function Home() {
           <Grid container wrap="wrap" spacing={4}>
             <Grid item xs={12}>
               <InfoItem
-                name="Identifiant Mobilic"
+                name="Identifiant"
                 value={userInfo.id}
-                bold
                 info={
                   employments.length === 0
                     ? "Cet identifiant est à communiquer à votre employeur afin qu'il vous rattache à l'entreprise"
                     : ""
                 }
+                uppercaseTitle={false}
               />
             </Grid>
-            <Grid item sm={6} zeroMinWidth>
+            <Grid item xs={12} zeroMinWidth>
               <InfoItem
                 name="Nom"
                 value={formatPersonName(userInfo)}
-                actionTitle="Modifier Nom"
                 action={() =>
                   modals.open("changeName", {
                     firstName: userInfo.firstName,
@@ -117,22 +126,23 @@ export default function Home() {
                     }
                   })
                 }
+                uppercaseTitle={false}
               />
             </Grid>
             {userInfo.birthDate && (
-              <Grid item sm={6} zeroMinWidth>
+              <Grid item xs={12} zeroMinWidth>
                 <InfoItem
                   name="Date de naissance"
                   value={frenchFormatDateStringOrTimeStamp(userInfo.birthDate)}
+                  uppercaseTitle={false}
                 />
               </Grid>
             )}
-            <Grid item {...(isActive ? { sm: 6 } : { xs: 12 })} zeroMinWidth>
+            <Grid item xs={12} zeroMinWidth>
               <InfoItem
                 data-testid="emailInfoItem"
-                name="Email"
+                name="Adresse email"
                 value={userInfo.email}
-                actionTitle="Modifier email"
                 action={() =>
                   modals.open("changeEmail", {
                     handleSubmit: async email => {
@@ -157,6 +167,7 @@ export default function Home() {
                     />
                   )
                 }
+                uppercaseTitle={false}
               />
             </Grid>
             <Grid item xs={12} zeroMinWidth>
@@ -164,7 +175,6 @@ export default function Home() {
                 data-testid="timezoneInfoItem"
                 name="Fuseau horaire"
                 value={getTimezonePrettyName(userInfo.timezoneName)}
-                actionTitle="Modifier fuseau horaire"
                 action={() =>
                   modals.open("changeTimezone", {
                     defaultValue: getTimezone(userInfo.timezoneName),
@@ -183,6 +193,37 @@ export default function Home() {
                     }
                   })
                 }
+                uppercaseTitle={false}
+              />
+            </Grid>
+            <Grid item xs={12} zeroMinWidth>
+              <InfoItem
+                name="Numéro de téléphone"
+                value={displayPhoneNumber}
+                valuePlaceholder="Aucun numéro renseigné"
+                action={() =>
+                  modals.open("changePhoneNumber", {
+                    phoneNumber: userInfo.phoneNumber,
+                    handleSubmit: async ({ newPhoneNumber }) => {
+                      if (newPhoneNumber !== userInfo.phoneNumber) {
+                        const apiResponse = await api.graphQlMutate(
+                          CHANGE_PHONE_NUMBER_MUTATION,
+                          {
+                            userId: currentUserId(),
+                            newPhoneNumber: newPhoneNumber
+                          },
+                          { context: { nonPublicApi: true } }
+                        );
+                        await store.setUserInfo({
+                          ...store.userInfo(),
+                          ...apiResponse.data.account.changePhoneNumber
+                        });
+                        await broadCastChannel.postMessage("update");
+                      }
+                    }
+                  })
+                }
+                uppercaseTitle={false}
               />
             </Grid>
           </Grid>

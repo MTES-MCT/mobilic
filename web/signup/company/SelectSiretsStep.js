@@ -1,12 +1,15 @@
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { Step } from "./Step";
 import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
 import { FacilityInfo } from "./FacilityInfo";
 import AlreadyRegisteredSirets from "./AlreadyRegisteredSirets";
 import Stack from "@mui/material/Stack";
+import { PhoneNumber } from "../../common/PhoneNumber";
+import { BusinessType } from "../../common/BusinessType";
+import { TextInput } from "@dataesr/react-dsfr";
+import { MandatoryField } from "../../common/MandatoryField";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -35,6 +38,16 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
   const [hasValidatedChoice, setHasValidatedChoice] = React.useState(false);
   const classes = useStyles();
 
+  const updateFacility = useCallback(
+    (facility, field, newValue) =>
+      setFacilities(
+        facilities.map(f =>
+          f.siret === facility.siret ? { ...f, [field]: newValue } : f
+        )
+      ),
+    [facilities, setFacilities]
+  );
+
   const selectedSirets = useMemo(() => facilities.filter(f => f.selected), [
     facilities
   ]);
@@ -48,16 +61,23 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
     if (selectedNames.filter(Boolean).length < selectedNames.length) {
       return false;
     }
+
+    const selectedBusinessTypes = selectedSirets.map(f => f.businessType);
+
+    // no value should be empty
+    if (
+      selectedBusinessTypes.filter(Boolean).length <
+      selectedBusinessTypes.length
+    ) {
+      return false;
+    }
+
     // values should be unique
     return [...new Set(selectedNames)].length === selectedNames.length;
   }, [selectedSirets]);
 
   const getFacilityError = useMemo(() => {
     return facility => {
-      if (!facility.usualName) {
-        return "Veuillez entrer un nom pour cette entreprise";
-      }
-
       if (
         selectedSirets.filter(f => f.usualName === facility.usualName).length >
         1
@@ -84,10 +104,11 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
       complete={hasValidatedChoice && areFacilitiesCorrectlySet}
       {...props}
     >
+      <MandatoryField />
       {allFacilitiesAlreadyRegistered && <AlreadyRegisteredSirets />}
       <Grid container key={2} spacing={3} wrap="wrap">
         {facilities.map((facility, index) => (
-          <Grid item key={facility.siret}>
+          <Grid item key={facility.siret} xs={12}>
             <Stack direction="column" alignItems="flex-start" spacing={0}>
               <Button
                 onClick={() => {
@@ -100,6 +121,8 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                   setFacilities(newFacilities);
                 }}
                 disabled={facility.registered}
+                fullWidth
+                sx={{ padding: 0 }}
               >
                 <FacilityInfo
                   facility={facility}
@@ -108,25 +131,46 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                 />
               </Button>
               {facility.selected && (
-                <TextField
-                  variant="standard"
-                  className={classes.siretName}
-                  required
-                  label="Nom usuel"
-                  value={facility.usualName}
-                  onChange={e => {
-                    setHasValidatedChoice(false);
-                    setFacilities(
-                      facilities.map(f =>
-                        f.siret === facility.siret
-                          ? { ...f, usualName: e.target.value }
-                          : f
-                      )
-                    );
-                  }}
-                  error={!!getFacilityError(facility)}
-                  helperText={getFacilityError(facility)}
-                />
+                <Stack
+                  direction="column"
+                  spacing={1}
+                  textAlign="left"
+                  sx={{ marginTop: 1 }}
+                >
+                  <TextInput
+                    required
+                    label="Nom usuel"
+                    value={facility.usualName}
+                    onChange={e => {
+                      setHasValidatedChoice(false);
+                      updateFacility(facility, "usualName", e.target.value);
+                    }}
+                    {...(getFacilityError(facility)
+                      ? {
+                          messageType: "error",
+                          message: getFacilityError(facility)
+                        }
+                      : {})}
+                  />
+                  <PhoneNumber
+                    currentPhoneNumber={facility.phone_number}
+                    setCurrentPhoneNumber={newPhoneNumber => {
+                      setHasValidatedChoice(false);
+                      updateFacility(facility, "phoneNumber", newPhoneNumber);
+                    }}
+                    label="Numéro de téléphone de l'entreprise"
+                    accessibilityHelpText={`${facility.address}, ${facility.postal_code}`}
+                  />
+                  <BusinessType
+                    onChangeBusinessType={newBusinessType => {
+                      setHasValidatedChoice(false);
+                      updateFacility(facility, "businessType", newBusinessType);
+                    }}
+                    required
+                    displayInfo
+                    forceColumn
+                  />
+                </Stack>
               )}
             </Stack>
           </Grid>

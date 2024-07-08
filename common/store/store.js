@@ -415,6 +415,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       email,
       creationTime,
       birthDate,
+      phoneNumber,
       hasConfirmedEmail,
       hasActivatedEmail,
       disabledWarnings,
@@ -431,6 +432,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             email,
             creationTime,
             birthDate,
+            phoneNumber,
             timezoneName,
             hasConfirmedEmail,
             hasActivatedEmail,
@@ -499,6 +501,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   controllerId = () => this.state.controllerId;
 
   userInfo = () => ({ id: this.state.userId, ...this.state.userInfo });
+
+  missions = () => this.state.missions;
 
   controllerInfo = () => ({
     id: this.state.controllerId,

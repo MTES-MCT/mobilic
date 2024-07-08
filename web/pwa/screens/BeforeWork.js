@@ -32,6 +32,8 @@ import { usePageTitle } from "../../common/UsePageTitle";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import Stack from "@mui/material/Stack";
 import { useHolidays } from "../../common/useHolidays";
+import { WarningBreaks } from "../components/WarningBreaks";
+import { useEnoughBreak } from "../../common/useEnoughBreak";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -127,8 +129,8 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
-
   const { openHolidaysModal } = useHolidays();
+  const { hasEnoughBreak } = useEnoughBreak();
 
   const companies = store.companies();
   const userId = store.userId();
@@ -235,6 +237,8 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
         <Typography className={`${classes.promiseText} bold`}>
           Fiable, facile et rapide !
         </Typography>
+        {process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
+          !hasEnoughBreak && <WarningBreaks />}
         <LoadingButton
           variant="contained"
           className={classes.ctaButton}

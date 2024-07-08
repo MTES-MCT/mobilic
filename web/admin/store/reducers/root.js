@@ -14,7 +14,7 @@ import {
   updateCompaniesListReducer,
   updateCompanyDetailsReducer,
   updateCompanyIdReducer,
-  updateCompanyNameReducer,
+  updateCompanyNameAndPhoneNumberReducer,
   updateEmploymentIdReducer,
   updateShouldSeeCertificateInfoReducer
 } from "./sync";
@@ -33,6 +33,7 @@ import { addVirtualExpenditureActionReducer } from "./virtualExpenditureActions"
 import { addUsersReducer } from "./users";
 import { updateValidationsFiltersReducer } from "./validationsFilters";
 import { updateTeamsReducer } from "./team";
+import { updateBusinessTypeReducer } from "./businessType";
 
 export const ADMIN_ACTIONS = {
   createOrSyncActivity: createOrSyncActivityReducer,
@@ -44,6 +45,7 @@ export const ADMIN_ACTIONS = {
   create: createItemsReducer,
   update: updateItemReducer,
   updateSettings: updateSettingsReducer,
+  updateBusinessType: updateBusinessTypeReducer,
   delete: deleteItemReducer,
   updateCompanyDetails: updateCompanyDetailsReducer,
   updateCompaniesList: updateCompaniesListReducer,
@@ -59,7 +61,7 @@ export const ADMIN_ACTIONS = {
   addUsers: addUsersReducer,
   putAsideOriginalMissions: putAsideOriginalMissionsReducer,
   revertMissionToOriginalValues: revertMissionToOriginalValuesReducer,
-  updateCompanyName: updateCompanyNameReducer
+  updateCompanyNameAndPhoneNumber: updateCompanyNameAndPhoneNumberReducer
 };
 
 const ADMIN_REDUCERS = {};

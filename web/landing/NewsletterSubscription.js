@@ -123,7 +123,7 @@ export default function NewsletterSubscriptionModal({ open, handleClose }) {
             color="primary"
             type="submit"
             variant="contained"
-            disabled={emailError || !email || !profile}
+            disabled={!!emailError || !email || !profile}
             loading={loading}
           >
             Abonnement

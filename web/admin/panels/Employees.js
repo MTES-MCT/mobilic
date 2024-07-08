@@ -30,16 +30,17 @@ import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { EMPLOYMENT_ROLE } from "common/utils/employments";
 import { TeamFilter } from "../components/TeamFilter";
 import { NO_TEAMS_LABEL, NO_TEAM_ID } from "../utils/teams";
+import { BusinessDropdown } from "../components/BusinessDropdown";
+import Alert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
 
 const useStyles = makeStyles(theme => ({
   title: {
-    marginBottom: theme.spacing(2),
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center"
   },
   explanation: {
-    marginBottom: theme.spacing(2),
     fontStyle: "italic",
     textAlign: "justify"
   },
@@ -49,11 +50,7 @@ const useStyles = makeStyles(theme => ({
   warningText: {
     color: theme.palette.warning.main
   },
-  pendingEmployments: {
-    marginBottom: theme.spacing(10),
-    marginRight: theme.spacing(10)
-  },
-  acceptedEmployments: {
+  augmentedTable: {
     marginRight: theme.spacing(10)
   },
   terminatedEmployment: {
@@ -62,17 +59,8 @@ const useStyles = makeStyles(theme => ({
   displayNone: {
     display: "none !important"
   },
-  batchInviteButton: {
-    marginBottom: theme.spacing(2)
-  },
   hideButton: {
     marginLeft: theme.spacing(2)
-  },
-  teamFilter: {
-    marginBottom: theme.spacing(2)
-  },
-  flexGrow: {
-    flexGrow: 1
   }
 }));
 
@@ -89,8 +77,9 @@ export function Employees({ company, containerRef }) {
   const adminStore = useAdminStore();
   const modals = useModals();
   const alerts = useSnackbarAlerts();
-  const companyId = company ? company.id : null;
   const [teams, setTeams] = React.useState([]);
+
+  const companyId = React.useMemo(() => company?.id || null, [company]);
 
   React.useEffect(() => {
     if (teams.length > 0) {
@@ -392,60 +381,92 @@ export function Employees({ company, containerRef }) {
       name: "teamId",
       align: "left",
       format: formatTeam,
-      minWidth: 100,
+      minWidth: 140,
       overflowTooltip: true
     });
   }
 
-  const companyEmployments = adminStore.employments.filter(
-    e => e.companyId === companyId
+  validEmploymentColumns.push({
+    label: "Type d'activité",
+    name: "business",
+    align: "left",
+    format: (business, { employmentId }) => (
+      <BusinessDropdown
+        business={business}
+        companyId={companyId}
+        employmentId={employmentId}
+      />
+    ),
+    minWidth: 200,
+    overflowTooltip: true
+  });
+
+  const companyEmployments = React.useMemo(
+    () => adminStore.employments.filter(e => e.companyId === companyId),
+    [adminStore.employments, companyId]
   );
 
-  const pendingEmployments = companyEmployments
-    .filter(e => !e.isAcknowledged)
-    .map(e => ({
-      pending: true,
-      idOrEmail: e.email || e.user?.id,
-      name: e.user ? formatPersonName(e.user, true) : null,
-      hasAdminRights: e.hasAdminRights,
-      creationDate: e.startDate,
-      latestInviteEmailDateString: frenchFormatDateStringOrTimeStamp(
-        e.latestInviteEmailTime ? e.latestInviteEmailTime * 1000 : e.startDate
-      ),
-      id: e.id,
-      teamId: e.teamId,
-      employmentId: e.id,
-      userId: e.user?.id,
-      companyId: e.company.id
-    }));
+  const pendingEmployments = React.useMemo(
+    () =>
+      companyEmployments
+        .filter(e => !e.isAcknowledged)
+        .map(e => ({
+          pending: true,
+          idOrEmail: e.email || e.user?.id,
+          name: e.user ? formatPersonName(e.user, true) : null,
+          hasAdminRights: e.hasAdminRights,
+          creationDate: e.startDate,
+          latestInviteEmailDateString: frenchFormatDateStringOrTimeStamp(
+            e.latestInviteEmailTime
+              ? e.latestInviteEmailTime * 1000
+              : e.startDate
+          ),
+          id: e.id,
+          teamId: e.teamId,
+          employmentId: e.id,
+          userId: e.user?.id,
+          companyId: e.company.id
+        })),
+    [companyEmployments]
+  );
 
   const today = isoFormatLocalDate(new Date());
 
-  const validEmployments = companyEmployments
-    .filter(e => {
-      return (
-        selectedTeamIds.length === 0 ||
-        selectedTeamIds.includes(e.teamId) ||
-        (selectedTeamIds.includes(NO_TEAM_ID) && !e.teamId)
-      );
-    })
-    .filter(e => e.isAcknowledged)
-    .map(e => ({
-      pending: false,
-      id: e.user.id,
-      email: e.user.email,
-      employmentId: e.id,
-      lastName: e.user.lastName,
-      firstName: e.user.firstName,
-      name: formatPersonName(e.user),
-      startDate: e.startDate,
-      endDate: e.endDate,
-      active: !e.endDate || e.endDate >= today,
-      hasAdminRights: e.hasAdminRights ? 1 : 0,
-      teamId: e.teamId,
-      userId: e.user.id,
-      companyId: e.company.id
-    }));
+  const validEmployments = React.useMemo(
+    () =>
+      companyEmployments
+        .filter(e => {
+          return (
+            selectedTeamIds.length === 0 ||
+            selectedTeamIds.includes(e.teamId) ||
+            (selectedTeamIds.includes(NO_TEAM_ID) && !e.teamId)
+          );
+        })
+        .filter(e => e.isAcknowledged)
+        .map(e => ({
+          pending: false,
+          id: e.user.id,
+          email: e.user.email,
+          employmentId: e.id,
+          lastName: e.user.lastName,
+          firstName: e.user.firstName,
+          name: formatPersonName(e.user),
+          startDate: e.startDate,
+          endDate: e.endDate,
+          active: !e.endDate || e.endDate >= today,
+          hasAdminRights: e.hasAdminRights ? 1 : 0,
+          teamId: e.teamId,
+          userId: e.user.id,
+          companyId: e.company.id,
+          business: e.business
+        })),
+    [companyEmployments, selectedTeamIds]
+  );
+
+  const areThereEmploymentsWithoutBusinessType = React.useMemo(
+    () => validEmployments.filter(e => !e.business).length > 0,
+    [validEmployments]
+  );
 
   const isAddingEmployment =
     pendingEmploymentsTableRef.current &&
@@ -617,208 +638,218 @@ export function Employees({ company, containerRef }) {
     return customActions;
   };
 
-  return [
-    <Button
-      key={-1}
-      color="primary"
-      variant="outlined"
-      size="small"
-      className={classes.batchInviteButton}
-      onClick={() =>
-        modals.open("batchInvite", {
-          handleSubmit: async mails => {
-            await alerts.withApiErrorHandling(async () => {
-              const employmentsResponse = await api.graphQlMutate(
-                BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
-                {
-                  companyId,
-                  mails
-                }
-              );
-              const employments =
-                employmentsResponse.data.employments
-                  .batchCreateWorkerEmployments;
-              adminStore.dispatch({
-                type: ADMIN_ACTIONS.create,
-                payload: {
-                  items: employments.map(e => ({ ...e, companyId })),
-                  entity: "employments"
-                }
-              });
-              if (employments.length < mails.length) {
-                alerts.warning(
-                  "Certaines invitations n'ont pu être envoyées, êtes-vous sûr(e) des adresses email ?",
-                  "batch-invite-warning",
-                  6000
-                );
-              } else
-                alerts.success(
-                  "Invitations envoyées !",
-                  "batch-invite-success",
-                  6000
-                );
-              setTimeout(
-                validEmploymentsTableRef.current.updateScrollPosition,
-                0
-              );
-            });
-          }
-        })
-      }
-    >
-      Inviter une liste d'emails
-    </Button>,
-    <Box
-      key={0}
-      className={`${canDisplayPendingEmployments ? "" : classes.displayNone} ${
-        classes.title
-      }`}
-    >
-      <Typography variant="h4" component="h2">
-        Invitations en attente ({pendingEmployments.length}){" "}
-        {
-          <Button
-            disabled={isAddingEmployment}
-            color="primary"
-            className={classes.hideButton}
-            onClick={() => {
-              setHidePendingEmployments(!hidePendingEmployments);
-              setTimeout(
-                validEmploymentsTableRef.current.updateScrollPosition,
-                0
-              );
-            }}
-          >
-            {hidePendingEmployments ? "Afficher" : "Masquer"}
-          </Button>
-        }
-      </Typography>
+  return (
+    <Stack direction="column" spacing={2}>
       <Button
-        variant="contained"
-        size="small"
         color="primary"
-        onClick={() => {
-          setHidePendingEmployments(false);
-          pendingEmploymentsTableRef.current.newRow({
-            hasAdminRights: EMPLOYMENT_ROLE.employee,
-            teamId: NO_TEAM_ID
-          });
+        variant="outlined"
+        size="small"
+        sx={{
+          marginRight: "auto"
         }}
-        className={classes.actionButton}
-      >
-        Inviter un nouveau salarié
-      </Button>
-    </Box>,
-    <AugmentedTable
-      key={1}
-      columns={pendingEmploymentColumns}
-      entries={pendingEmployments}
-      ref={pendingEmploymentsTableRef}
-      onScroll={updateValidListScrollPosition}
-      dense
-      className={`${
-        canDisplayPendingEmployments && !hidePendingEmployments
-          ? ""
-          : classes.displayNone
-      } ${classes.pendingEmployments}`}
-      validateRow={({ idOrEmail, hasAdminRights }) =>
-        !!idOrEmail && !!hasAdminRights
-      }
-      forceParentUpdateOnRowAdd={() => setForceUpdate(value => !value)}
-      editActionsColumnMinWidth={180}
-      defaultSortBy={"creationDate"}
-      defaultSortType={"desc"}
-      virtualized
-      virtualizedRowHeight={45}
-      virtualizedMaxHeight={"100%"}
-      virtualizedAttachScrollTo={
-        canDisplayPendingEmployments ? containerRef.current : null
-      }
-      onRowAdd={async ({ idOrEmail, hasAdminRights, teamId }) => {
-        const payload = {
-          hasAdminRights: hasAdminRights === EMPLOYMENT_ROLE.admin,
-          companyId,
-          ...(teamId !== NO_TEAM_ID && { teamId })
-        };
-        if (/^\d+$/.test(idOrEmail)) {
-          payload.userId = parseInt(idOrEmail);
-        } else {
-          payload.mail = idOrEmail;
-        }
-        try {
-          const apiResponse = await api.graphQlMutate(
-            CREATE_EMPLOYMENT_MUTATION,
-            payload
-          );
-          adminStore.dispatch({
-            type: ADMIN_ACTIONS.create,
-            payload: {
-              items: [
-                { ...apiResponse.data.employments.createEmployment, companyId }
-              ],
-              entity: "employments"
+        onClick={() =>
+          modals.open("batchInvite", {
+            handleSubmit: async mails => {
+              await alerts.withApiErrorHandling(async () => {
+                const employmentsResponse = await api.graphQlMutate(
+                  BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
+                  {
+                    companyId,
+                    mails
+                  }
+                );
+                const employments =
+                  employmentsResponse.data.employments
+                    .batchCreateWorkerEmployments;
+                adminStore.dispatch({
+                  type: ADMIN_ACTIONS.create,
+                  payload: {
+                    items: employments.map(e => ({ ...e, companyId })),
+                    entity: "employments"
+                  }
+                });
+                if (employments.length < mails.length) {
+                  alerts.warning(
+                    "Certaines invitations n'ont pu être envoyées, êtes-vous sûr(e) des adresses email ?",
+                    "batch-invite-warning",
+                    6000
+                  );
+                } else
+                  alerts.success(
+                    "Invitations envoyées !",
+                    "batch-invite-success",
+                    6000
+                  );
+                setTimeout(
+                  validEmploymentsTableRef.current.updateScrollPosition,
+                  0
+                );
+              });
             }
-          });
-        } catch (err) {
-          alerts.error(formatApiError(err), idOrEmail, 6000);
+          })
         }
-      }}
-      customRowActions={customActionsPendingEmployment}
-    />,
-    <Box key={3} className={classes.title}>
-      <Typography variant="h4" component="h2">
-        Salariés ({validEmployments.length})
-      </Typography>
-      {!canDisplayPendingEmployments && (
+      >
+        Inviter une liste d'emails
+      </Button>
+      <Box
+        className={`${
+          canDisplayPendingEmployments ? "" : classes.displayNone
+        } ${classes.title}`}
+      >
+        <Typography variant="h4" component="h2">
+          Invitations en attente ({pendingEmployments.length}){" "}
+          {
+            <Button
+              disabled={isAddingEmployment}
+              color="primary"
+              className={classes.hideButton}
+              onClick={() => {
+                setHidePendingEmployments(!hidePendingEmployments);
+                setTimeout(
+                  validEmploymentsTableRef.current.updateScrollPosition,
+                  0
+                );
+              }}
+            >
+              {hidePendingEmployments ? "Afficher" : "Masquer"}
+            </Button>
+          }
+        </Typography>
         <Button
           variant="contained"
           size="small"
           color="primary"
-          onClick={() =>
+          onClick={() => {
+            setHidePendingEmployments(false);
             pendingEmploymentsTableRef.current.newRow({
-              hasAdminRights: EMPLOYMENT_ROLE.employee
-            })
-          }
+              hasAdminRights: EMPLOYMENT_ROLE.employee,
+              teamId: NO_TEAM_ID
+            });
+          }}
           className={classes.actionButton}
         >
           Inviter un nouveau salarié
         </Button>
-      )}
-    </Box>,
-    <Typography key={4} className={classes.explanation}>
-      Invitez vos salariés en renseignant leurs adresses e-mail (certaines
-      adresses n’apparaissent pas dans la liste ci-dessous car les salariés ont
-      choisi de ne pas vous les communiquer), afin qu'ils puissent enregistrer
-      du temps de travail pour l'entreprise.
-    </Typography>,
-    <Grid key={5} spacing={4} container className={classes.teamFilter}>
-      {adminStore?.teams?.length > 0 && (
-        <Grid item sm={2} className={classes.flexGrow}>
-          {teams && (
-            <TeamFilter
-              teams={teams}
-              setTeams={setTeams}
-              orderByProperty="rankName"
-            />
-          )}
-        </Grid>
-      )}
-    </Grid>,
+      </Box>
+      <AugmentedTable
+        columns={pendingEmploymentColumns}
+        entries={pendingEmployments}
+        ref={pendingEmploymentsTableRef}
+        onScroll={updateValidListScrollPosition}
+        dense
+        className={`${
+          canDisplayPendingEmployments && !hidePendingEmployments
+            ? ""
+            : classes.displayNone
+        } ${classes.augmentedTable}`}
+        validateRow={({ idOrEmail, hasAdminRights }) =>
+          !!idOrEmail && !!hasAdminRights
+        }
+        forceParentUpdateOnRowAdd={() => setForceUpdate(value => !value)}
+        editActionsColumnMinWidth={180}
+        defaultSortBy={"creationDate"}
+        defaultSortType={"desc"}
+        virtualized
+        virtualizedRowHeight={45}
+        virtualizedMaxHeight={"100%"}
+        virtualizedAttachScrollTo={
+          canDisplayPendingEmployments ? containerRef.current : null
+        }
+        onRowAdd={async ({ idOrEmail, hasAdminRights, teamId }) => {
+          const payload = {
+            hasAdminRights: hasAdminRights === EMPLOYMENT_ROLE.admin,
+            companyId,
+            ...(teamId !== NO_TEAM_ID && { teamId })
+          };
+          if (/^\d+$/.test(idOrEmail)) {
+            payload.userId = parseInt(idOrEmail);
+          } else {
+            payload.mail = idOrEmail;
+          }
+          try {
+            const apiResponse = await api.graphQlMutate(
+              CREATE_EMPLOYMENT_MUTATION,
+              payload
+            );
+            adminStore.dispatch({
+              type: ADMIN_ACTIONS.create,
+              payload: {
+                items: [
+                  {
+                    ...apiResponse.data.employments.createEmployment,
+                    companyId
+                  }
+                ],
+                entity: "employments"
+              }
+            });
+          } catch (err) {
+            alerts.error(formatApiError(err), idOrEmail, 6000);
+          }
+        }}
+        customRowActions={customActionsPendingEmployment}
+      />
+      <Box className={classes.title}>
+        <Typography variant="h4" component="h2">
+          Salariés ({validEmployments.length})
+        </Typography>
+        {!canDisplayPendingEmployments && (
+          <Button
+            variant="contained"
+            size="small"
+            color="primary"
+            onClick={() =>
+              pendingEmploymentsTableRef.current.newRow({
+                hasAdminRights: EMPLOYMENT_ROLE.employee
+              })
+            }
+          >
+            Inviter un nouveau salarié
+          </Button>
+        )}
+      </Box>
+      <Typography className={classes.explanation}>
+        Invitez vos salariés en renseignant leurs adresses e-mail (certaines
+        adresses n’apparaissent pas dans la liste ci-dessous car les salariés
+        ont choisi de ne pas vous les communiquer), afin qu'ils puissent
+        enregistrer du temps de travail pour l'entreprise.
+      </Typography>
 
-    <AugmentedTable
-      key={6}
-      columns={validEmploymentColumns}
-      entries={validEmployments}
-      virtualizedRowHeight={45}
-      className={classes.acceptedEmployments}
-      virtualizedMaxHeight={"100%"}
-      ref={validEmploymentsTableRef}
-      defaultSortBy="lastName"
-      alwaysSortBy={[["active", "desc"]]}
-      virtualizedAttachScrollTo={containerRef.current}
-      rowClassName={row => (!row.active ? classes.terminatedEmployment : "")}
-      customRowActions={customActionsValidEmployment}
-      virtualized
-    />
-  ];
+      {areThereEmploymentsWithoutBusinessType && (
+        <Alert severity="info">
+          <Typography>
+            Certains salariés n'ont pas de type d'activité de transport
+            renseigné. Veuillez en sélectionner un pour chaque salarié actif.
+          </Typography>
+        </Alert>
+      )}
+      <Grid container>
+        {adminStore?.teams?.length > 0 && (
+          <Grid item sm={2} flexGrow={1}>
+            {teams && (
+              <TeamFilter
+                teams={teams}
+                setTeams={setTeams}
+                orderByProperty="rankName"
+              />
+            )}
+          </Grid>
+        )}
+      </Grid>
+      <AugmentedTable
+        columns={validEmploymentColumns}
+        entries={validEmployments}
+        virtualizedRowHeight={45}
+        className={classes.augmentedTable}
+        virtualizedMaxHeight={"100%"}
+        ref={validEmploymentsTableRef}
+        defaultSortBy="lastName"
+        alwaysSortBy={[["active", "desc"]]}
+        virtualizedAttachScrollTo={containerRef.current}
+        rowClassName={row => (!row.active ? classes.terminatedEmployment : "")}
+        customRowActions={customActionsValidEmployment}
+        virtualized
+      />
+    </Stack>
+  );
 }
