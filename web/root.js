@@ -67,6 +67,7 @@ import { loadControllerUserData } from "./controller/utils/loadControllerUserDat
 import { LocalizationProvider, frFR } from "@mui/x-date-pickers";
 import { shouldUpdatePassword } from "common/utils/updatePassword";
 import UpdatePasswordModal from "./pwa/components/UpdatePassword";
+import AcceptCguModal from "./pwa/modals/AcceptCguModal";
 
 const matomo = createInstance({
   urlBase: "https://stats.beta.gouv.fr",
@@ -303,6 +304,7 @@ function _Root() {
       {process.env.REACT_APP_CRISP_AUTOLOAD !== "1" &&
         process.env.REACT_APP_CRISP_WEBSITE_ID &&
         !controllerId && <LiveChat />}
+      {store.userId() && <AcceptCguModal />}
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
       <React.Suspense fallback={<CircularProgress color="primary" />}>
         <Switch color="secondary">
