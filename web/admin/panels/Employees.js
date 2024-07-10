@@ -764,7 +764,7 @@ export function Employees({ company, containerRef }) {
           if (/^\d+$/.test(idOrEmail)) {
             payload.userId = parseInt(idOrEmail);
           } else {
-            payload.mail = idOrEmail;
+            payload.mail = idOrEmail.lower();
           }
           try {
             const apiResponse = await api.graphQlMutate(
