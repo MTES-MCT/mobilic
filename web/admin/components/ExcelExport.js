@@ -75,7 +75,8 @@ export default function ExcelExport({
     minDate,
     maxDate,
     isOneFileByEmployee,
-    users
+    users,
+    selectedCompany
   ]);
 
   const today = new Date();
