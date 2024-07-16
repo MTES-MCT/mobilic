@@ -8,6 +8,7 @@ import Stack from "@mui/material/Stack";
 import { BusinessType } from "../../common/BusinessType";
 import { Section } from "../../common/Section";
 import { TextInput } from "@dataesr/react-dsfr";
+import { MandatoryField } from "../../common/MandatoryField";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -45,6 +46,7 @@ export function SubmitStep({
       >
         {usingCompanyName && (
           <Stack direction="column" spacing={2} textAlign="left">
+            <MandatoryField />
             <TextInput
               id="company-usual-name"
               value={companyName}

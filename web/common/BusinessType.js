@@ -3,6 +3,7 @@ import { Select } from "@dataesr/react-dsfr";
 import { Box, Grid, Typography } from "@mui/material";
 import { ExternalLink } from "./ExternalLink";
 import { Notice } from "./Notice";
+import { useIsWidthDown } from "common/utils/useWidth";
 
 const TRANSPORT_OPTIONS = [
   { value: "TRM", label: "Marchandises (TRM)" },
@@ -71,10 +72,12 @@ export function BusinessType({
   }, [transportType]);
   React.useEffect(() => onChangeBusinessType(businessType), [businessType]);
 
+  const isSmDown = useIsWidthDown("sm");
+
   return (
     <div style={{ textAlign: "left" }}>
-      <Grid container spacing={forceColumn ? 1 : 2}>
-        <Grid item xs={forceColumn ? 6 : 12}>
+      <Grid container spacing={isSmDown ? 2 : forceColumn ? 1 : 2}>
+        <Grid item xs={12} sm={forceColumn ? 6 : 12}>
           <Select
             label="Type de transport routier"
             required
@@ -91,7 +94,7 @@ export function BusinessType({
             }
           ></Select>
         </Grid>
-        <Grid item xs={forceColumn ? 6 : 12}>
+        <Grid item xs={12} sm={forceColumn ? 6 : 12}>
           <Select
             label="Activité principale"
             required

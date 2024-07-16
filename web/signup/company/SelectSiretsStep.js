@@ -9,6 +9,7 @@ import Stack from "@mui/material/Stack";
 import { PhoneNumber } from "../../common/PhoneNumber";
 import { BusinessType } from "../../common/BusinessType";
 import { TextInput } from "@dataesr/react-dsfr";
+import { MandatoryField } from "../../common/MandatoryField";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -103,6 +104,7 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
       complete={hasValidatedChoice && areFacilitiesCorrectlySet}
       {...props}
     >
+      <MandatoryField />
       {allFacilitiesAlreadyRegistered && <AlreadyRegisteredSirets />}
       <Grid container key={2} spacing={3} wrap="wrap">
         {facilities.map((facility, index) => (

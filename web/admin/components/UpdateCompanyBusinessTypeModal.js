@@ -11,9 +11,10 @@ import Stack from "@mui/material/Stack";
 import { ExternalLink } from "../../common/ExternalLink";
 import { useAdminCompanies, useAdminStore } from "../store/store";
 import { BusinessType } from "../../common/BusinessType";
-import { Box } from "@mui/material";
+import Box from "@mui/material/Box";
 import { useUpdateCompanyDetails } from "../../common/useUpdateCompanyDetails";
 import { clearUpdateTimeCookie, snooze } from "common/utils/updateBusinessType";
+import { MandatoryField } from "../../common/MandatoryField";
 
 export default function UpdateCompanyBusinessTypeModal() {
   const adminStore = useAdminStore();
@@ -55,10 +56,14 @@ export default function UpdateCompanyBusinessTypeModal() {
           withIcon
         />
         <Box marginTop={2}>
+          <MandatoryField />
+        </Box>
+        <Box marginTop={2}>
           <BusinessType
             currentBusiness={adminStore.business}
             onChangeBusinessType={setNewCompanyBusinessType}
             required
+            forceColumn
           />
         </Box>
       </ModalContent>
