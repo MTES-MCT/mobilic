@@ -12,6 +12,7 @@ import _ from "lodash";
 import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
 import { useReportInfractions } from "../../utils/useReportInfractions";
 import { canDownloadBDC } from "../../utils/controlBulletin";
+import { formatActivity } from "common/utils/businessTypes";
 
 export function ControllerControlDetails({
   controlData,
@@ -97,6 +98,11 @@ export function ControllerControlDetails({
     }
   }, [controlData]);
 
+  const businesses = React.useMemo(
+    () => [...new Set(employments.map(e => formatActivity(e.business)))],
+    [employments]
+  );
+
   return [
     <ControllerControlHeader
       key={0}
@@ -114,6 +120,7 @@ export function ControllerControlDetails({
       controlTime={controlData.qrCodeGenerationTime}
       missions={missions}
       employments={employments}
+      businesses={businesses}
       coworkers={coworkers}
       vehicles={vehicles}
       periodOnFocus={periodOnFocus}

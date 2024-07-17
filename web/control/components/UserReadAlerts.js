@@ -52,6 +52,7 @@ export function UserReadAlerts({
   onUpdateInfraction,
   reportedInfractionsLastUpdateTime,
   readOnlyAlerts,
+  businesses,
   noLic
 }) {
   const classes = useStyles();
@@ -89,6 +90,18 @@ export function UserReadAlerts({
               moment du contrôle, sur celle du salarié.
             </Typography>
           </Alert>
+          {businesses && businesses.length > 1 && (
+            <Alert severity="warning" marginTop={1}>
+              <Typography gutterBottom>
+                {`Attention, veuillez noter que ce salarié a saisi des missions
+                pour différents secteurs d’activité sur la période contrôlée
+                (${businesses.join(
+                  ", "
+                )}). L’ensemble des seuils réglementaires a donc été
+                calculé sur la base du dernier type d’activité effectué.`}
+              </Typography>
+            </Alert>
+          )}
         </>
       )}
       {groupedAlerts?.length > 0 ? (
