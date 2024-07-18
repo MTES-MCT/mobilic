@@ -5,7 +5,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Stack
+  Stack,
+  Typography
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Button, Checkbox } from "@dataesr/react-dsfr";
@@ -30,6 +31,10 @@ const useStyles = makeStyles(theme => ({
       width: "auto",
       maxWidth: "590px"
     }
+  },
+  warningIcon: {
+    color: "#CE0500",
+    marginRight: theme.spacing(1)
   }
 }));
 
@@ -39,9 +44,40 @@ export default function AcceptCguModal({ handleClose, handleSubmit }) {
   const [hasTurnedDown, setHasTurnedDown] = React.useState(false);
   const title = React.useMemo(
     () =>
-      hasTurnedDown
-        ? "Votre compte va être supprimé"
-        : "Mise à jour des conditions générales d'utilisation",
+      hasTurnedDown ? (
+        <>
+          <span
+            className={`fr-icon-warning-fill ${classes.warningIcon}`}
+            aria-hidden="true"
+          ></span>
+          Votre compte va être supprimé
+        </>
+      ) : (
+        "Mise à jour des conditions générales d'utilisation"
+      ),
+    [hasTurnedDown]
+  );
+  const content = React.useMemo(
+    () => (
+      <>
+        <Typography>
+          <>
+            {hasTurnedDown
+              ? "Votre compte Mobilic sera supprimé car vous n’avez pas accepté les"
+              : "Nous avons récemment changé nos"}{" "}
+            <ExternalLink
+              url={"https://mobilic.beta.gouv.fr/cgu"}
+              text={"conditions générales d'utilisation"}
+            />{" "}
+            .
+          </>
+        </Typography>
+        <Typography sx={{ marginTop: 1 }}>
+          Pour continuer à bénéficier des services Mobilic, nous vous invitons à
+          les lire et à les accepter.
+        </Typography>
+      </>
+    ),
     [hasTurnedDown]
   );
   return (
@@ -60,13 +96,7 @@ export default function AcceptCguModal({ handleClose, handleSubmit }) {
           id="cgu-dialog-description"
           className={classes.content}
         >
-          Nous avons récemment changé nos{" "}
-          <ExternalLink
-            url={"https://mobilic.beta.gouv.fr/cgu"}
-            text={"conditions générales d'utilisation"}
-          />
-          . Pour continuer à bénéficier des services Mobilic, nous vous invitons
-          à les lire et à les accepter.
+          {content}
         </DialogContentText>
         <Checkbox
           checked={isChecked}
@@ -89,13 +119,23 @@ export default function AcceptCguModal({ handleClose, handleSubmit }) {
           >
             Valider
           </Button>
-          <Button
-            title="Refuser les Conditions Générales d'Utilisation"
-            onClick={() => setHasTurnedDown(true)}
-            secondary
-          >
-            Je refuse
-          </Button>
+          {hasTurnedDown ? (
+            <Button
+              title="Supprimer mon compte"
+              onClick={() => console.log("delete account")}
+              secondary
+            >
+              Supprimer mon compte
+            </Button>
+          ) : (
+            <Button
+              title="Refuser les Conditions Générales d'Utilisation"
+              onClick={() => setHasTurnedDown(true)}
+              secondary
+            >
+              Je refuse
+            </Button>
+          )}
         </Stack>
       </DialogActions>
     </Dialog>
