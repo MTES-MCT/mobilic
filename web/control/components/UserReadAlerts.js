@@ -91,10 +91,9 @@ export function UserReadAlerts({
             </Typography>
           </Alert>
           {businesses && businesses.length > 1 && (
-            <Alert severity="warning" marginTop={1}>
+            <Alert severity="warning" sx={{ marginTop: 1 }}>
               <Typography gutterBottom>
-                {`Attention, veuillez noter que ce salarié a saisi des missions
-                pour différents secteurs d’activité sur la période contrôlée
+                {`Attention, veuillez noter que ce salarié effectue des missions pour différents secteurs d’activité 
                 (${businesses.join(
                   ", "
                 )}). L’ensemble des seuils réglementaires a donc été
