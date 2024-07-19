@@ -8,11 +8,9 @@ import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import { Header } from "../../../common/Header";
 import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
 import { useLocation } from "react-router-dom";
-import { Modal, ModalContent, ModalTitle } from "@dataesr/react-dsfr";
 import { ControlsList } from "../list/ControlsList";
 import { useLoadControls } from "../../utils/loadControls";
 import Button from "@mui/material/Button";
-import { HelpController } from "../help/ModalHelpController";
 import { InfoHoraireServiceController } from "./InfoHoraireServiceController";
 import classNames from "classnames";
 import { useModals } from "common/utils/modals";
@@ -20,6 +18,7 @@ import { ControlTypeFilters } from "../filters/ControlTypeFilter";
 import { ControllerControlNewNoLic } from "../noLic/ControllerControlNewNoLic";
 import { usePageTitle } from "../../../common/UsePageTitle";
 import { Typography } from "@mui/material";
+import Modal from "../../../common/Modal";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -70,7 +69,6 @@ export function ControllerHome() {
   const modals = useModals();
   const controllerUserInfo = store.controllerInfo();
   const [modal, setModal] = useState({ isOpen: false, parcours: "" });
-  const [showHelpModal, setShowHelpModal] = useState(false);
   const [showHoraireServiceModal, setShowHoraireServiceModal] = useState(false);
 
   const [controlOnFocus, setControlOnFocus] = React.useState(null);
@@ -96,147 +94,129 @@ export function ControllerHome() {
     setControlOnFocus(location.state?.controlOnFocus);
   }, []);
 
-  return [
-    <Header key={0} />,
-    <Container
-      key={1}
-      className={`${classes.container} ${classes.whiteSection}`}
-      maxWidth="xl"
-    >
-      <ControllerControlDrawer
-        controlId={controlOnFocus?.id}
-        controlType={controlOnFocus?.type}
-        onClose={() => {
-          _loadControls();
-          setControlOnFocus(null);
-        }}
-      />
-      <ControllerControlNewNoLic
-        isOpen={openNewNoLic}
-        onClose={() => setOpenNewNoLic(false)}
-        setControlOnFocus={setControlOnFocus}
-      />
-      <Typography
-        variant="h4"
-        component="h1"
-        key={1}
-        className={classes.titleHello}
+  return (
+    <>
+      <Header />
+      <Container
+        className={`${classes.container} ${classes.whiteSection}`}
+        maxWidth="xl"
       >
-        Bonjour, {controllerUserInfo.firstName}
-      </Typography>
+        <ControllerControlDrawer
+          controlId={controlOnFocus?.id}
+          controlType={controlOnFocus?.type}
+          onClose={() => {
+            _loadControls();
+            setControlOnFocus(null);
+          }}
+        />
+        <ControllerControlNewNoLic
+          isOpen={openNewNoLic}
+          onClose={() => setOpenNewNoLic(false)}
+          setControlOnFocus={setControlOnFocus}
+        />
+        <Typography
+          variant="h4"
+          component="h1"
+          key={1}
+          className={classes.titleHello}
+        >
+          Bonjour, {controllerUserInfo.firstName}
+        </Typography>
 
-      <Typography
-        variant="h5"
-        component="h2"
-        key={2}
-        className={classes.newControlText}
-        marginBottom={2}
-      >
-        Nouveau contrôle
-      </Typography>
-      <Grid
-        container
-        direction="row"
-        alignItems="stretch"
-        spacing={3}
-        className={classes.newControlButton}
-      >
-        <Grid item xs={12} sm={4}>
-          <ControllerHomeCard
-            text={"QR Code Mobilic présenté"}
-            icon={"fr-icon-qr-code-line fr-icon--lg"}
-            link={CONTROLLER_ROUTE_PREFIX + "/scan"}
-          />
+        <Typography
+          variant="h5"
+          component="h2"
+          key={2}
+          className={classes.newControlText}
+          marginBottom={2}
+        >
+          Nouveau contrôle
+        </Typography>
+        <Grid
+          container
+          direction="row"
+          alignItems="stretch"
+          spacing={3}
+          className={classes.newControlButton}
+        >
+          <Grid item xs={12} sm={4}>
+            <ControllerHomeCard
+              text={"QR Code Mobilic présenté"}
+              icon={"fr-icon-qr-code-line fr-icon--lg"}
+              link={CONTROLLER_ROUTE_PREFIX + "/scan"}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <ControllerHomeCard
+              text={"LIC papier présenté"}
+              icon={"fr-icon-draft-line fr-icon--lg"}
+              onClick={() =>
+                setModal({ isOpen: true, parcours: "d'un LIC papier" })
+              }
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <ControllerHomeCard
+              text={"Pas de LIC à bord"}
+              icon={"fr-icon-alarm-warning-line fr-icon--lg"}
+              onClick={() => setOpenNewNoLic(true)}
+            />
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={4}>
-          <ControllerHomeCard
-            text={"LIC papier présenté"}
-            icon={"fr-icon-draft-line fr-icon--lg"}
-            onClick={() =>
-              setModal({ isOpen: true, parcours: "d'un LIC papier" })
-            }
-          />
+        <div
+          className={classNames(classes.noLicLink, "fr-link")}
+          onClick={() => setShowHoraireServiceModal(true)}
+        >
+          Un horaire de service est présenté ?
+        </div>
+        <Typography
+          variant="h5"
+          component="h2"
+          className={classes.newControlText}
+          marginBottom={2}
+        >
+          Historique des derniers contrôles
+        </Typography>
+        <Grid container>
+          <Grid item xs={12} sm={4} md={2} marginBottom={2}>
+            <ControlTypeFilters
+              controlsType={controlsType}
+              setControlsType={setControlsType}
+            />
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={4}>
-          <ControllerHomeCard
-            text={"Pas de LIC à bord"}
-            icon={"fr-icon-alarm-warning-line fr-icon--lg"}
-            onClick={() => setOpenNewNoLic(true)}
-          />
-        </Grid>
-      </Grid>
-      <div
-        className={classNames(classes.noLicLink, "fr-link")}
-        onClick={() => setShowHoraireServiceModal(true)}
-      >
-        Un horaire de service est présenté ?
-      </div>
-      <Typography
-        variant="h5"
-        component="h2"
-        key={2}
-        className={classes.newControlText}
-        marginBottom={2}
-      >
-        Historique des derniers contrôles
-      </Typography>
-      <Grid container>
-        <Grid item xs={12} sm={4} md={2} marginBottom={2}>
-          <ControlTypeFilters
-            controlsType={controlsType}
-            setControlsType={setControlsType}
-          />
-        </Grid>
-      </Grid>
-      <Button
-        size="small"
-        color="primary"
-        variant="contained"
-        onClick={() => modals.open("controllerHelp")}
-        className={classes.helpButton}
-      >
-        Besoin d'aide ?
-      </Button>
-      <ControlsList
-        controls={controls}
-        loading={loadingControls}
-        clickOnRow={(id, type) => setControlOnFocus({ id, type })}
+        <Button
+          size="small"
+          color="primary"
+          variant="contained"
+          onClick={() => modals.open("controllerHelp")}
+          className={classes.helpButton}
+        >
+          Besoin d'aide ?
+        </Button>
+        <ControlsList
+          controls={controls}
+          loading={loadingControls}
+          clickOnRow={(id, type) => setControlOnFocus({ id, type })}
+        />
+      </Container>
+      <Modal
+        open={modal.isOpen}
+        handleClose={() => setModal({ isOpen: false, parcours: "" })}
+        title="En cours de construction"
+        content={
+          <>
+            Le parcours de contrôle {modal.parcours} dans votre interface
+            Mobilic est en cours de conception.
+          </>
+        }
       />
-    </Container>,
-    <Modal
-      key={2}
-      isOpen={modal.isOpen}
-      hide={() => setModal({ isOpen: false, parcours: "" })}
-    >
-      <ModalTitle>En cours de construction</ModalTitle>
-      <ModalContent>
-        Le parcours de contrôle {modal.parcours} dans votre interface Mobilic
-        est en cours de conception.
-      </ModalContent>
-    </Modal>,
-    <Modal
-      key={3}
-      isOpen={showHelpModal}
-      hide={() => setShowHelpModal(false)}
-      size="lg"
-    >
-      <ModalTitle>Besoin d'aide ?</ModalTitle>
-      <ModalContent>
-        <HelpController />
-      </ModalContent>
-    </Modal>,
-    <Modal
-      key={4}
-      isOpen={showHoraireServiceModal}
-      hide={() => setShowHoraireServiceModal(false)}
-      size="lg"
-    >
-      <ModalTitle>
-        Un horaire de service m'est présenté à la place du LIC
-      </ModalTitle>
-      <ModalContent>
-        <InfoHoraireServiceController />
-      </ModalContent>
-    </Modal>
-  ];
+      <Modal
+        open={showHoraireServiceModal}
+        handleClose={() => setShowHoraireServiceModal(false)}
+        title="Un horaire de service m'est présenté à la place du LIC"
+        content={<InfoHoraireServiceController />}
+      />
+    </>
+  );
 }

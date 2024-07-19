@@ -1,20 +1,14 @@
 import React from "react";
 
-import {
-  Button,
-  Modal,
-  ModalContent,
-  ModalFooter,
-  ModalTitle
-} from "@dataesr/react-dsfr";
-import Stack from "@mui/material/Stack";
+import { Button } from "@dataesr/react-dsfr";
 import { ExternalLink } from "../../common/ExternalLink";
 import { useAdminCompanies, useAdminStore } from "../store/store";
 import { BusinessType } from "../../common/BusinessType";
-import Box from "@mui/material/Box";
 import { useUpdateCompanyDetails } from "../../common/useUpdateCompanyDetails";
 import { clearUpdateTimeCookie, snooze } from "common/utils/updateBusinessType";
 import { MandatoryField } from "../../common/MandatoryField";
+import Modal from "../../common/Modal";
+import Box from "@mui/material/Box";
 
 export default function UpdateCompanyBusinessTypeModal() {
   const adminStore = useAdminStore();
@@ -41,40 +35,39 @@ export default function UpdateCompanyBusinessTypeModal() {
   };
 
   return (
-    <Modal isOpen={isOpen} hide={handleClose} size="lg">
-      <ModalTitle>Veuillez indiquer votre type d'activité</ModalTitle>
-      <ModalContent>
-        <p>
-          Ce renseignement est nécessaire pour appliquer la réglementation
-          adaptée à votre type d'activité. Par défaut, l'activité sera attribuée
-          à tous vos salariés. Vous aurez ensuite la possibilité de modifier le
-          type d'activité pour chaque salarié.
-        </p>
-        <ExternalLink
-          url="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/gestionnaire-parametrer-mon-entreprise"
-          text="À quoi sert cette information ?"
-          withIcon
-        />
-        <Box marginTop={2}>
-          <MandatoryField />
-        </Box>
-        <Box marginTop={2}>
-          <BusinessType
-            currentBusiness={adminStore.business}
-            onChangeBusinessType={setNewCompanyBusinessType}
-            required
-            forceColumn
+    <Modal
+      open={isOpen}
+      handleClose={handleClose}
+      size="sm"
+      title="Veuillez indiquer votre type d'activité"
+      content={
+        <>
+          <p>
+            Ce renseignement est nécessaire pour appliquer la réglementation
+            adaptée à votre type d'activité. Par défaut, l'activité sera
+            attribuée à tous vos salariés. Vous aurez ensuite la possibilité de
+            modifier le type d'activité pour chaque salarié.
+          </p>
+          <ExternalLink
+            url="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/gestionnaire-parametrer-mon-entreprise"
+            text="À quoi sert cette information ?"
+            withIcon
           />
-        </Box>
-      </ModalContent>
-      <ModalFooter>
-        <Stack
-          direction="row-reverse"
-          justifyContent="flex-start"
-          p={2}
-          spacing={4}
-          width="100%"
-        >
+          <Box marginTop={2}>
+            <MandatoryField />
+          </Box>
+          <Box marginTop={2}>
+            <BusinessType
+              currentBusiness={adminStore.business}
+              onChangeBusinessType={setNewCompanyBusinessType}
+              required
+              forceColumn
+            />
+          </Box>
+        </>
+      }
+      actions={
+        <>
           <Button
             title="Confirmer mon type d'activité"
             onClick={handleSubmit}
@@ -85,8 +78,8 @@ export default function UpdateCompanyBusinessTypeModal() {
           <Button onClick={handleClose} secondary>
             Me le rappeler plus tard
           </Button>
-        </Stack>
-      </ModalFooter>
-    </Modal>
+        </>
+      }
+    />
   );
 }
