@@ -36,11 +36,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Modal({
+  open,
+  handleClose,
   title,
   content,
   actions,
-  open,
-  handleClose,
   size = "md"
 }) {
   const classes = useStyles();
@@ -98,5 +98,8 @@ export const modalStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(2),
     paddingRight: theme.spacing(2),
     flexShrink: 0
+  },
+  flexGrow: {
+    flexGrow: 1
   }
 }));

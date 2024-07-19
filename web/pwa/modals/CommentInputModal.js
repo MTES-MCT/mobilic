@@ -1,13 +1,9 @@
 import React from "react";
 import CheckIcon from "@mui/icons-material/Check";
-import Dialog from "@mui/material/Dialog";
 import IconButton from "@mui/material/IconButton";
-import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
-import {
-  CustomDialogActions,
-  CustomDialogTitle
-} from "../../common/CustomDialogTitle";
+
+import Modal from "../../common/Modal";
 
 export default function CommentInputModal({
   open,
@@ -19,12 +15,12 @@ export default function CommentInputModal({
   React.useEffect(() => setText(""), [open]);
 
   return (
-    <Dialog onClose={handleClose} open={open}>
-      <CustomDialogTitle
-        title="Nouvelle observation"
-        handleClose={handleClose}
-      />
-      <DialogContent>
+    <Modal
+      open={open}
+      handleClose={handleClose}
+      title="Nouvelle observation"
+      size="sm"
+      content={
         <TextField
           fullWidth
           variant="standard"
@@ -34,8 +30,8 @@ export default function CommentInputModal({
           value={text}
           onChange={e => setText(e.target.value)}
         />
-      </DialogContent>
-      <CustomDialogActions>
+      }
+      actions={
         <IconButton
           className="no-margin-no-padding"
           onClick={() => {
@@ -46,7 +42,7 @@ export default function CommentInputModal({
         >
           <CheckIcon color="primary" />
         </IconButton>
-      </CustomDialogActions>
-    </Dialog>
+      }
+    />
   );
 }

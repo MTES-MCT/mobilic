@@ -1,11 +1,11 @@
 import React from "react";
-import { FunnelModal } from "./FunnelModal";
 import NewMissionForm from "../../common/NewMissionForm";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { DISMISSABLE_WARNINGS } from "../../admin/utils/dismissableWarnings";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { setCurrentLocation } from "common/utils/location";
+import { FunnelModal } from "../components/FunnelModal";
 
 export default function NewMissionModal({
   open,

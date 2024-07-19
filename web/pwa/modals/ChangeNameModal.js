@@ -1,13 +1,13 @@
 import React from "react";
 import Dialog from "@mui/material/Dialog";
 import { LoadingButton } from "common/components/LoadingButton";
+import TextField from "@mui/material/TextField";
+import DialogContent from "@mui/material/DialogContent";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 import {
   CustomDialogActions,
   CustomDialogTitle
-} from "../common/CustomDialogTitle";
-import { useSnackbarAlerts } from "../common/Snackbar";
-import TextField from "@mui/material/TextField";
-import DialogContent from "@mui/material/DialogContent";
+} from "../../common/CustomDialogTitle";
 
 export default function ChangeNameModal({
   open,

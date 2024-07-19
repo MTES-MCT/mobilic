@@ -1,9 +1,9 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import { FunnelModal } from "./FunnelModal";
 import Box from "@mui/material/Box";
 import { makeStyles } from "@mui/styles";
-import { ActivitySwitch } from "./ActivitySwitch";
+import { FunnelModal } from "../components/FunnelModal";
+import { ActivitySwitch } from "../components/ActivitySwitch";
 
 const useStyles = makeStyles(theme => ({
   topPanel: {

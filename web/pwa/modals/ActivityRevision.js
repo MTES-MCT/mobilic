@@ -1,9 +1,7 @@
 import React from "react";
-import Dialog from "@mui/material/Dialog";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import { MINUTE, now, sameMinute, truncateMinute } from "common/utils/time";
-import DialogContent from "@mui/material/DialogContent";
 import TextField from "common/utils/TextField";
 import {
   ACTIVITIES,
@@ -16,20 +14,18 @@ import max from "lodash/max";
 import MenuItem from "@mui/material/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import { NativeDateTimePicker } from "../../../common/NativeDateTimePicker";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-import {
-  CustomDialogActions,
-  CustomDialogTitle
-} from "../../../common/CustomDialogTitle";
+
 import Button from "@mui/material/Button";
 import { makeStyles } from "@mui/styles";
 import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
-import OverlappedActivityList from "./OverlappedActivityList";
 import _ from "lodash";
-import { VIRTUAL_ACTIVITIES_ACTIONS } from "../../../admin/store/store";
+import { VIRTUAL_ACTIVITIES_ACTIONS } from "../../admin/store/store";
+import { NativeDateTimePicker } from "../../common/NativeDateTimePicker";
+import OverlappedActivityList from "../components/ActivityRevision/OverlappedActivityList";
+import Modal from "../../common/Modal";
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -386,177 +382,181 @@ export default function ActivityRevisionOrCreationModal({
   const classes = useStyles();
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <CustomDialogTitle
-        title={isCreation ? "Nouvelle activité" : "Modifier l'activité"}
-        handleClose={handleClose}
-      />
-      <DialogContent dividers>
-        {displayWarningMessage && (
-          <Box my={2} mb={4}>
-            <Alert severity="warning">
-              Les modifications seront visibles par votre employeur et par les
-              contrôleurs (en cas de contrôle en bord de route ou en entreprise)
-            </Alert>
-          </Box>
-        )}
-        <Box mt={1}>
-          <TextField
-            label="Activité"
-            required
-            fullWidth
-            variant="filled"
-            className={classes.formField}
-            select
-            disabled={!isCreation}
-            value={isCreation ? newActivityType : event.type}
-            onChange={e => setNewActivityType(e.target.value)}
-          >
-            {filteredActivities().map(activityName => (
-              <MenuItem
-                disabled={activityName === ACTIVITIES.support.name}
-                key={activityName}
-                value={activityName}
-              >
-                {ACTIVITIES[activityName].label}
-              </MenuItem>
-            ))}
-          </TextField>
-          {requiresDriver() && (
+    <Modal
+      open={open}
+      handleClose={handleClose}
+      title={isCreation ? "Nouvelle activité" : "Modifier l'activité"}
+      content={
+        <>
+          {displayWarningMessage && (
+            <Box my={2} mb={4}>
+              <Alert severity="warning">
+                Les modifications seront visibles par votre employeur et par les
+                contrôleurs (en cas de contrôle en bord de route ou en
+                entreprise)
+              </Alert>
+            </Box>
+          )}
+          <Box mt={1}>
             <TextField
-              label="Conducteur"
+              label="Activité"
               required
+              fullWidth
               variant="filled"
               className={classes.formField}
-              fullWidth
               select
-              value={newActivityDriverId}
-              onChange={e => setNewActivityDriverId(e.target.value)}
+              disabled={!isCreation}
+              value={isCreation ? newActivityType : event.type}
+              onChange={e => setNewActivityType(e.target.value)}
             >
-              {team.map((id, index) => (
-                <MenuItem key={index} value={id}>
-                  {id === store.userId()
-                    ? formatPersonName(store.userInfo())
-                    : coworkers[id.toString()]
-                    ? formatPersonName(coworkers[id.toString()])
-                    : "Inconnu"}
+              {filteredActivities().map(activityName => (
+                <MenuItem
+                  disabled={activityName === ACTIVITIES.support.name}
+                  key={activityName}
+                  value={activityName}
+                >
+                  {ACTIVITIES[activityName].label}
                 </MenuItem>
               ))}
-              <MenuItem key={-1} value={-1}>
-                Une autre personne
-              </MenuItem>
             </TextField>
-          )}
-          <NativeDateTimePicker
-            key={0}
-            label="Début"
-            value={newUserTime}
-            setValue={_.flow([truncateMinute, setNewUserTime])}
-            minDateTime={previousMissionEnd}
-            maxDateTime={now()}
-            fullWidth
-            required
-            className={classes.formField}
-            variant="filled"
-            error={newUserTimeError}
-          />
-          <NativeDateTimePicker
-            key={1}
-            label="Fin"
-            value={newUserEndTime}
-            setValue={_.flow([truncateMinute, setNewUserEndTime])}
-            minDateTime={newUserTime}
-            maxDateTime={now()}
-            required={!actuallyNullableEndTime}
-            className={classes.formField}
-            variant="filled"
-            error={newUserEndTimeError}
-            clearable={actuallyNullableEndTime}
-          />
-        </Box>
-        {allowTeamMode && team.length > 1 && (
-          <Box mt={1}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={teamMode}
-                  onChange={() => setTeamMode(!teamMode)}
-                />
-              }
-              label="Pour toute l'équipe"
-              labelPlacement="end"
+            {requiresDriver() && (
+              <TextField
+                label="Conducteur"
+                required
+                variant="filled"
+                className={classes.formField}
+                fullWidth
+                select
+                value={newActivityDriverId}
+                onChange={e => setNewActivityDriverId(e.target.value)}
+              >
+                {team.map((id, index) => (
+                  <MenuItem key={index} value={id}>
+                    {id === store.userId()
+                      ? formatPersonName(store.userInfo())
+                      : coworkers[id.toString()]
+                      ? formatPersonName(coworkers[id.toString()])
+                      : "Inconnu"}
+                  </MenuItem>
+                ))}
+                <MenuItem key={-1} value={-1}>
+                  Une autre personne
+                </MenuItem>
+              </TextField>
+            )}
+            <NativeDateTimePicker
+              key={0}
+              label="Début"
+              value={newUserTime}
+              setValue={_.flow([truncateMinute, setNewUserTime])}
+              minDateTime={previousMissionEnd}
+              maxDateTime={now()}
+              fullWidth
+              required
+              className={classes.formField}
+              variant="filled"
+              error={newUserTimeError}
+            />
+            <NativeDateTimePicker
+              key={1}
+              label="Fin"
+              value={newUserEndTime}
+              setValue={_.flow([truncateMinute, setNewUserEndTime])}
+              minDateTime={newUserTime}
+              maxDateTime={now()}
+              required={!actuallyNullableEndTime}
+              className={classes.formField}
+              variant="filled"
+              error={newUserEndTimeError}
+              clearable={actuallyNullableEndTime}
             />
           </Box>
-        )}
-        <Box py={4}>
-          <TextField
-            label="Raison (optionnelle)"
-            fullWidth
-            variant="filled"
-            multiline
-            maxRows={10}
-            value={userComment}
-            onChange={e => setUserComment(e.target.value)}
-          />
-        </Box>
-      </DialogContent>
-      <CustomDialogActions>
-        {!isCreation && (
-          <Button
-            variant="outlined"
-            color="primary"
-            disabled={!canSubmit(ACTIVITIES_OPERATIONS.cancel)}
-            onClick={() => {
-              modals.open("confirmation", {
-                title: "Confirmer la suppression",
-                content: (!otherUserActivities ||
-                  otherUserActivities.length === 0) && (
-                  <Alert severity="warning">
-                    En supprimant la seule activité d'une mission, vous
-                    annulerez la mission. Vous ne pourrez plus y apporter de
-                    modifications.
-                  </Alert>
-                ),
-                cancelButtonLabel: "Annuler",
-                confirmButtonLabel: "Valider",
-                handleConfirm: async () => {
-                  if (
-                    handleCancelMission &&
-                    (!otherUserActivities || otherUserActivities.length === 0)
-                  ) {
-                    await handleCancelMission();
-                  } else {
-                    await handleSubmit(ACTIVITIES_OPERATIONS.cancel);
-                  }
-                  handleClose();
+          {allowTeamMode && team.length > 1 && (
+            <Box mt={1}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={teamMode}
+                    onChange={() => setTeamMode(!teamMode)}
+                  />
                 }
-              });
+                label="Pour toute l'équipe"
+                labelPlacement="end"
+              />
+            </Box>
+          )}
+          <Box py={4}>
+            <TextField
+              label="Raison (optionnelle)"
+              fullWidth
+              variant="filled"
+              multiline
+              maxRows={10}
+              value={userComment}
+              onChange={e => setUserComment(e.target.value)}
+            />
+          </Box>
+        </>
+      }
+      actions={
+        <>
+          {!isCreation && (
+            <Button
+              variant="outlined"
+              color="primary"
+              disabled={!canSubmit(ACTIVITIES_OPERATIONS.cancel)}
+              onClick={() => {
+                modals.open("confirmation", {
+                  title: "Confirmer la suppression",
+                  content: (!otherUserActivities ||
+                    otherUserActivities.length === 0) && (
+                    <Alert severity="warning">
+                      En supprimant la seule activité d'une mission, vous
+                      annulerez la mission. Vous ne pourrez plus y apporter de
+                      modifications.
+                    </Alert>
+                  ),
+                  cancelButtonLabel: "Annuler",
+                  confirmButtonLabel: "Valider",
+                  handleConfirm: async () => {
+                    if (
+                      handleCancelMission &&
+                      (!otherUserActivities || otherUserActivities.length === 0)
+                    ) {
+                      await handleCancelMission();
+                    } else {
+                      await handleSubmit(ACTIVITIES_OPERATIONS.cancel);
+                    }
+                    handleClose();
+                  }
+                });
+              }}
+            >
+              Supprimer
+            </Button>
+          )}
+          <LoadingButton
+            variant="contained"
+            color="primary"
+            disabled={
+              !canSubmit(
+                isCreation
+                  ? ACTIVITIES_OPERATIONS.create
+                  : ACTIVITIES_OPERATIONS.update
+              )
+            }
+            onClick={async () => {
+              await handleSubmit(
+                isCreation
+                  ? ACTIVITIES_OPERATIONS.create
+                  : ACTIVITIES_OPERATIONS.update
+              );
             }}
           >
-            Supprimer
-          </Button>
-        )}
-        <LoadingButton
-          variant="contained"
-          color="primary"
-          disabled={
-            !canSubmit(
-              isCreation
-                ? ACTIVITIES_OPERATIONS.create
-                : ACTIVITIES_OPERATIONS.update
-            )
-          }
-          onClick={async () => {
-            await handleSubmit(
-              isCreation
-                ? ACTIVITIES_OPERATIONS.create
-                : ACTIVITIES_OPERATIONS.update
-            );
-          }}
-        >
-          {isCreation ? "Créer" : "Modifier heure"}
-        </LoadingButton>
-      </CustomDialogActions>
-    </Dialog>
+            {isCreation ? "Créer" : "Modifier heure"}
+          </LoadingButton>
+        </>
+      }
+    />
   );
 }
