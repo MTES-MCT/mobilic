@@ -58,7 +58,7 @@ export function EmailSelection() {
   const [password, setPassword] = React.useState("");
   const [choosePassword, setChoosePassword] = React.useState(false);
   const [subscribeToNewsletter, setSubscribeToNewsletter] = React.useState(
-    true
+    isAdmin ? true : false
   );
   const [loading, setLoading] = React.useState(false);
 
@@ -186,11 +186,20 @@ export function EmailSelection() {
             error={!!emailError}
             setError={setEmailError}
           />
-          <CheckboxField
-            checked={subscribeToNewsletter}
-            onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
-            label="Je souhaite m'abonner à la lettre d'information de Mobilic pour rester informé par mail des nouveautés du produit"
-          />
+          {!isAdmin && (
+            <CheckboxField
+              checked={subscribeToNewsletter}
+              onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
+              label="En cochant cette case, j'accepte que mon adresse e-mail soit utilisée pour m'envoyer la lettre d'information Mobilic et pour me contacter en cas de besoin d'assistance technique."
+            />
+          )}
+          {isAdmin && (
+            <CheckboxField
+              checked={!subscribeToNewsletter}
+              onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
+              label="Je m’oppose à ce que mon adresse e-mail soit utilisée pour recevoir la lettre d'information, les informations sur les nouvelles fonctionnalités et les dates de formation gestionnaire."
+            />
+          )}
         </Section>
         <Section title="2. Mot de passe (facultatif)">
           <Typography align="justify" className={classes.text}>
