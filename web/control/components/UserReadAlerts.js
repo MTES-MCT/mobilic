@@ -94,10 +94,7 @@ export function UserReadAlerts({
             <Alert severity="warning" sx={{ marginTop: 1 }}>
               <Typography gutterBottom>
                 {`Attention, veuillez noter que ce salarié effectue des missions pour différents secteurs d’activité 
-                (${businesses.join(
-                  ", "
-                )}). L’ensemble des seuils réglementaires a donc été
-                calculé sur la base du dernier type d’activité effectué.`}
+                (${businesses.join(", ")}).`}
               </Typography>
             </Alert>
           )}

@@ -99,7 +99,11 @@ export function ControllerControlDetails({
   }, [controlData]);
 
   const businesses = React.useMemo(
-    () => [...new Set(employments.map(e => formatActivity(e.business)))],
+    () => [
+      ...new Set(
+        employments.map(e => formatActivity(e.business)).filter(b => !!b)
+      )
+    ],
     [employments]
   );
 
