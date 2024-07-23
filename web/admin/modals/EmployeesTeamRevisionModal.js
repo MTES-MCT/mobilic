@@ -67,31 +67,29 @@ export default function EmployeesTeamRevisionModal({
         employment.name ? " " + employment.name : ""
       }`}
       content={
-        <>
-          <Grid container spacing={4}>
-            <Grid item xs={12}>
-              <InputLabel id="select-team-label">{`Veuillez sélectionner un nouveau groupe pour le salarié${
-                employment.name ? " " + employment.name : ""
-              }`}</InputLabel>
-              <Select
-                labelId="select-team-label"
-                id="select-team"
-                value={newTeamId}
-                onChange={e => setNewTeamId(e.target.value)}
-                renderValue={val =>
-                  teams.find(team => team.id === val)?.name || NO_TEAMS_LABEL
-                }
-              >
-                <MenuItem value={NO_TEAM_ID}>{NO_TEAMS_LABEL}</MenuItem>
-                {teams.map(team => (
-                  <MenuItem key={team.id} value={team.id}>
-                    {team.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Grid>
+        <Grid container spacing={4}>
+          <Grid item xs={12}>
+            <InputLabel id="select-team-label">{`Veuillez sélectionner un nouveau groupe pour le salarié${
+              employment.name ? " " + employment.name : ""
+            }`}</InputLabel>
+            <Select
+              labelId="select-team-label"
+              id="select-team"
+              value={newTeamId}
+              onChange={e => setNewTeamId(e.target.value)}
+              renderValue={val =>
+                teams.find(team => team.id === val)?.name || NO_TEAMS_LABEL
+              }
+            >
+              <MenuItem value={NO_TEAM_ID}>{NO_TEAMS_LABEL}</MenuItem>
+              {teams.map(team => (
+                <MenuItem key={team.id} value={team.id}>
+                  {team.name}
+                </MenuItem>
+              ))}
+            </Select>
           </Grid>
-        </>
+        </Grid>
       }
       actions={
         <>

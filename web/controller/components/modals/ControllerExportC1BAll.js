@@ -135,29 +135,24 @@ export default function ControllerExportC1BAll({
         </>
       }
       actions={
-        <>
-          <Button
-            title="téléchargement"
-            className={classes.modalFooter}
-            onClick={async () => {
-              alerts.withApiErrorHandling(async () => {
-                const options = {
-                  min_date: exportFilters.fromDate,
-                  max_date: exportFilters.toDate,
-                  with_digital_signatures: sign
-                };
-                await api.downloadFileHttpQuery(
-                  HTTP_QUERIES.controlsC1bExport,
-                  {
-                    json: options
-                  }
-                );
-              }, "download-control-c1b-all");
-            }}
-          >
-            Générer
-          </Button>
-        </>
+        <Button
+          title="téléchargement"
+          className={classes.modalFooter}
+          onClick={async () => {
+            alerts.withApiErrorHandling(async () => {
+              const options = {
+                min_date: exportFilters.fromDate,
+                max_date: exportFilters.toDate,
+                with_digital_signatures: sign
+              };
+              await api.downloadFileHttpQuery(HTTP_QUERIES.controlsC1bExport, {
+                json: options
+              });
+            }, "download-control-c1b-all");
+          }}
+        >
+          Générer
+        </Button>
       }
     />
   );

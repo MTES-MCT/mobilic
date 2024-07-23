@@ -136,66 +136,64 @@ export default function CompanyTeamCreationRevisionModal({
         !team ? "Créer un nouveau groupe" : `Modifier le groupe ${team?.name}`
       }
       content={
-        <>
-          <Grid container spacing={4}>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                label="Nom du groupe"
-                variant="filled"
-                inputProps={{
-                  maxLength: 255
-                }}
-                value={name}
-                onChange={e => setName(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TeamEmployeesFilter
-                values={newAdmins}
-                setValues={setNewAdmins}
-                fieldLabel={"Gestionnaire(s) du groupe"}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TeamEmployeesFilter
-                values={newUsers}
-                setValues={setNewUsers}
-                fieldLabel={"Salarié(s) du groupe"}
-              />
-              <Alert severity="warning" sx={{ marginTop: 1 }}>
-                <Typography gutterBottom>
-                  Un salarié ne peut faire partie que d'un seul groupe à la
-                  fois. Lorsque vous affecterez un salarié au groupe, sa
-                  précédente affectation sera supprimée.
-                </Typography>
-              </Alert>
-            </Grid>
-            <Grid item xs={12}>
-              <MultipleValuesFilter
-                values={newKnownAddresses}
-                setValues={setNewKnownAddresses}
-                fieldLabel={"Adresse(s) associée(s)"}
-                orderFields={["alias", "name"]}
-                optionLabel={o => {
-                  return o.alias || o.name;
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <MultipleValuesFilter
-                values={newVehicles}
-                setValues={setNewVehicles}
-                fieldLabel={"Véhicule(s) associé(s)"}
-                orderFields={["alias", "registrationNumber"]}
-                optionLabel={o => {
-                  return o.alias || o.registrationNumber;
-                }}
-              />
-            </Grid>
+        <Grid container spacing={4}>
+          <Grid item xs={12}>
+            <TextField
+              required
+              fullWidth
+              label="Nom du groupe"
+              variant="filled"
+              inputProps={{
+                maxLength: 255
+              }}
+              value={name}
+              onChange={e => setName(e.target.value)}
+            />
           </Grid>
-        </>
+          <Grid item xs={12}>
+            <TeamEmployeesFilter
+              values={newAdmins}
+              setValues={setNewAdmins}
+              fieldLabel={"Gestionnaire(s) du groupe"}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TeamEmployeesFilter
+              values={newUsers}
+              setValues={setNewUsers}
+              fieldLabel={"Salarié(s) du groupe"}
+            />
+            <Alert severity="warning" sx={{ marginTop: 1 }}>
+              <Typography gutterBottom>
+                Un salarié ne peut faire partie que d'un seul groupe à la fois.
+                Lorsque vous affecterez un salarié au groupe, sa précédente
+                affectation sera supprimée.
+              </Typography>
+            </Alert>
+          </Grid>
+          <Grid item xs={12}>
+            <MultipleValuesFilter
+              values={newKnownAddresses}
+              setValues={setNewKnownAddresses}
+              fieldLabel={"Adresse(s) associée(s)"}
+              orderFields={["alias", "name"]}
+              optionLabel={o => {
+                return o.alias || o.name;
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <MultipleValuesFilter
+              values={newVehicles}
+              setValues={setNewVehicles}
+              fieldLabel={"Véhicule(s) associé(s)"}
+              orderFields={["alias", "registrationNumber"]}
+              optionLabel={o => {
+                return o.alias || o.registrationNumber;
+              }}
+            />
+          </Grid>
+        </Grid>
       }
       actions={
         <>
