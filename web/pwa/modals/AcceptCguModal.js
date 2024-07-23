@@ -64,6 +64,7 @@ export default function AcceptCguModal({ handleClose, handleSubmit }) {
       open={true}
       handleClose={handleClose}
       size="sm"
+      zIndex={3500}
       title={title}
       content={content}
       actions={
