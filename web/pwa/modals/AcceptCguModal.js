@@ -9,6 +9,10 @@ const useStyles = makeStyles(theme => ({
   warningIcon: {
     color: "#CE0500",
     marginRight: theme.spacing(1)
+  },
+  deleteButton: {
+    color: "var(--red-marianne-main-472)",
+    boxShadow: "inset 0 0 0 1px var(--red-marianne-main-472)"
   }
 }));
 
@@ -81,6 +85,7 @@ export default function AcceptCguModal({ handleClose, handleSubmit }) {
               title="Supprimer mon compte"
               onClick={() => console.log("delete account")}
               secondary
+              className={classes.deleteButton}
             >
               Supprimer mon compte
             </Button>
