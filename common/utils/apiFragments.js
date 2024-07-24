@@ -289,6 +289,7 @@ export const USER_AGREEMENT = gql`
     shouldAcceptCgu
     isBlacklisted
     answerDate
+    expiresAt
     cguVersion
   }
 `;

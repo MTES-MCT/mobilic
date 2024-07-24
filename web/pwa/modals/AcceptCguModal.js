@@ -1,25 +1,13 @@
 import React from "react";
 import { Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import { Button, Checkbox } from "@dataesr/react-dsfr";
 import { ExternalLink } from "../../common/ExternalLink";
-import Modal from "../../common/Modal";
+import Modal, { modalStyles } from "../../common/Modal";
 import { useCgu } from "../../common/useCgu";
-
-const useStyles = makeStyles(theme => ({
-  warningIcon: {
-    color: "#CE0500",
-    marginRight: theme.spacing(1)
-  },
-  deleteButton: {
-    color: "var(--red-marianne-main-472)",
-    boxShadow: "inset 0 0 0 1px var(--red-marianne-main-472)"
-  }
-}));
 
 export default function AcceptCguModal({ handleClose }) {
   const { acceptCgu, rejectCgu } = useCgu();
-  const classes = useStyles();
+  const classes = modalStyles();
   const [isChecked, setIsChecked] = React.useState(false);
   const [hasTurnedDown, setHasTurnedDown] = React.useState(false);
   const title = React.useMemo(

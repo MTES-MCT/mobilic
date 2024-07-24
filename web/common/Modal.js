@@ -103,5 +103,13 @@ export const modalStyles = makeStyles(theme => ({
   },
   flexGrow: {
     flexGrow: 1
+  },
+  warningIcon: {
+    color: "#CE0500",
+    marginRight: theme.spacing(1)
+  },
+  deleteButton: {
+    color: "var(--red-marianne-main-472)",
+    boxShadow: "inset 0 0 0 1px var(--red-marianne-main-472)"
   }
 }));

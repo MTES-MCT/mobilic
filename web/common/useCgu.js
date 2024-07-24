@@ -24,7 +24,9 @@ export const useCgu = () => {
       { userId, cguVersion },
       { context: { nonPublicApi: true } }
     );
-    const { acceptCgu: response } = apiResponse.data.account;
+    const response = accept
+      ? apiResponse.data.account.acceptCgu
+      : apiResponse.data.account.rejectCgu;
     await store.setUserInfo({
       ...store.userInfo(),
       userAgreementStatus: response
