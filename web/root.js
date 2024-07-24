@@ -293,6 +293,11 @@ function _Root() {
     return () => {};
   }, [controllerId]);
 
+  const shouldSeeCguModal = React.useMemo(
+    () => userInfo?.userAgreementStatus?.shouldAcceptCgu,
+    [userInfo?.userAgreementStatus?.shouldAcceptCgu]
+  );
+
   const routes = getAccessibleRoutes({ userInfo, companies, controllerInfo });
 
   return (
@@ -304,7 +309,7 @@ function _Root() {
       {process.env.REACT_APP_CRISP_AUTOLOAD !== "1" &&
         process.env.REACT_APP_CRISP_WEBSITE_ID &&
         !controllerId && <LiveChat />}
-      {store.userId() && <AcceptCguModal />}
+      {store.userId() && shouldSeeCguModal && <AcceptCguModal />}
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
       <React.Suspense fallback={<CircularProgress color="primary" />}>
         <Switch color="secondary">

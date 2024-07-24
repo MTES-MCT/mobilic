@@ -281,3 +281,14 @@ export const CONTROLLER_USER_FRAGMENT = gql`
     grecoId
   }
 `;
+
+export const USER_AGREEMENT = gql`
+  fragment UserAgreementData on UserAgreement {
+    hasAcceptedCgu
+    hasRejectedCgu
+    shouldAcceptCgu
+    isBlacklisted
+    answerDate
+    cguVersion
+  }
+`;
