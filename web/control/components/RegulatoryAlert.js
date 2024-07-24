@@ -107,8 +107,9 @@ function formatAlertText(alert, type) {
         <span>
           Temps de travail total effectué entre le{" "}
           {formatDate(alert.extra.work_range_start)} et le{" "}
-          {formatDate(alert.extra.work_range_end)},{" "}
-          {nightWork ? "et comprenant du travail de nuit :" : ""}{" "}
+          {formatDate(alert.extra.work_range_end)}
+          {nightWork ? " et comprenant du travail de nuit" : ""}
+          {" : "}
           <b>{formatTimer(workTime)}</b>
         </span>
       );

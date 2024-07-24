@@ -15,18 +15,18 @@ const dataCustody = [
   {
     "Catégorie de données": "Données relatives aux salariés",
     "Durée de conservation":
-      "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998 ou 3 ans à partir du dernier contact avec les salariés"
+      "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998"
   },
   {
     "Catégorie de données": "Données relatives aux gestionnaires",
     "Durée de conservation":
-      "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998 ou 3 ans à partir du dernier contact avec les gestionnaires"
+      "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998"
   },
   {
     "Catégorie de données":
       "Données relatives au temps de travail et de repos des salariés",
     "Durée de conservation":
-      "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998 ou 3 ans à partir du dernier contact avec les salariés"
+      "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998"
   },
   {
     "Catégorie de données": "Données relatives à la newsletter",
@@ -135,7 +135,7 @@ function PrivacyPolicyContent() {
       <h1>Protection des données personnelles</h1>
       <Stack direction="column" spacing={4}>
         <Box>
-          <h2>Qui est responsable de Mobilic ?</h2>
+          <h2>Qui est responsable de Mobilic&nbsp;?</h2>
           <p>
             Mobilic, développé au sein de la Fabrique numérique du Ministère de
             la transition écologique, est sous la responsabilité de la Direction
@@ -147,126 +147,161 @@ function PrivacyPolicyContent() {
           <p>
             Mobilic est un service public numérique qui permet le suivi du temps
             de travail des conducteurs dans le transport routier léger et du
-            déménagement.
+            déménagement afin de lutter contre le travail dissimulé.
           </p>
         </Box>
         <Box>
-          <h2>Pourquoi traitons-nous des données à caractère personnel ?</h2>
-          <p>Mobilic traite des données à caractère personnel pour :</p>
+          <h2>
+            Pourquoi traitons-nous des données à caractère personnel&nbsp;?
+          </h2>
+          <p>Mobilic traite des données à caractère personnel pour&nbsp;:</p>
           <ul>
             <li>
-              Simplifier le suivi et le respect du temps de travail des
-              conducteurs et mettre ces données à disposition des gestionnaires
-              administratifs des entreprises du secteur des transports routiers
-              légers et aux autorités de contrôle.
+              Lutter contre le travail illégal par un enregistrement certifié
+              des temps de travail des personnels roulants de transports
+              routiers n&lsquo;entrant pas dans le champ d&lsquo;application du
+              règlement (CE) n°561/2006&nbsp;;
+            </li>
+            <li>
+              Enregistrer et assurer le suivi du temps de travail des personnels
+              roulants conformément aux obligations énoncées aux articles
+              R.3312-19 et R.3312-58 du code des transports&nbsp;;
+            </li>
+            <li>
+              Contrôler le respect des seuils en matière de durée du travail et
+              de repos et sanctionner les éventuels dépassements&nbsp;;
+            </li>
+            <li>
+              Permettre la mise en place d&lsquo;une API pour assurer la gestion
+              administrative et financière des entreprises, la réception des
+              données par les agents habilités conformément à l&lsquo;article
+              L3315- 1 du code des transports et l&lsquo;interfaçage avec les
+              logiciels tiers de logistiques.
             </li>
           </ul>
         </Box>
         <Box>
           <h2>
             Quelles sont les données à caractère personnel traitées par Mobilic
-            ?
+            &nbsp;?
           </h2>
           <ul>
             <li>
-              <b>Données relatives aux salariés</b>: nom, prénom, adresse
-              e-mail, identifiants France Connect, numéro de téléphone
-              professionnel
+              <b>Données d'état civil, de coordonnées</b> (des personnels
+              roulants et gestionnaires)&nbsp;;
             </li>
             <li>
-              <b>Données relatives aux gestionnaires</b>: nom, prénom, adresse
-              e-mail, identifiants France Connect, numéro de téléphone
-              professionnel
+              <b>Données des entreprises</b> (SIRET, raison sociale)&nbsp;;
             </li>
             <li>
               <b>
                 Données relatives au temps de travail et de repos des salariés
               </b>
-              : lieu de prise et de fin de service, temps d&lsquo;activité
-            </li>
-            <li>
-              <b>Données relatives à la newsletter</b>: adresse e-mail
-            </li>
-            <li>
-              <b>Données relatives aux webinaires</b>: adresse e-mail
+              &nbsp;: lieu de prise et de fin de service, temps
+              d&lsquo;activité.
             </li>
           </ul>
         </Box>
         <Box>
           <h2>
             Qu&lsquo;est-ce qui nous autorise à traiter des données à caractère
-            personnel ?
+            personnel&nbsp;?
           </h2>
           <p>
-            Mobilic traite des données à caractère personnel en se basant sur
-            l&lsquo;exécution d&lsquo;une mission d&lsquo;intérêt public ou
-            relevant de l&lsquo;exercice de l&lsquo;autorité publique dont est
-            investi le responsable de traitement au sens de l&lsquo;article 6-1
-            e) du RGPD.
-          </p>
-          <p>
-            Cette mission d&lsquo;intérêt public est mise en œuvre par les
-            articles{" "}
-            <ExternalLink
-              url="https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000023086525/LEGISCTA000033450345/#LEGISCTA000033450345"
-              text="R. 3312-19 et R. 3312-58 du Code des transports"
-            />{" "}
-            et par l&lsquo;
-            <ExternalLink
-              url="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000390680"
-              text="arrêté du 20 juillet 1998"
-            />
-            .
+            Le traitement Mobilic est fondé sur l&lsquo;exécution d&lsquo;une
+            mission d&lsquo;intérêt public ou relevant de l&lsquo;exercice de
+            l&lsquo;autorité publique dont est investi le responsable de
+            traitement au sens de l&lsquo;article 6-1 e) du RGPD.
           </p>
         </Box>
         <Box>
-          <h2>Pendant combien de temps conservons-nous ces données ?</h2>
+          <h2>Pendant combien de temps conservons-nous ces données&nbsp;?</h2>
           <SimpleTable data={dataCustody} />
         </Box>
         <Box>
-          <h2>Qui peut avoir accès à ces données ?</h2>
+          <h2>Qui peut avoir accès à ces données&nbsp;?</h2>
           <p>
             Les accès aux données à caractère personnel sont strictement
             encadrés et juridiquement justifiés. Les personnes suivantes vont
-            avoir accès aux données :
+            avoir accès aux données&nbsp;:
           </p>
           <ul>
-            <li>Les membres habilités de l&lsquo;équipe Mobilic</li>
-            <li>L&lsquo;API Mobilic</li>
-            <li>Les contrôleurs</li>
+            <li>Les membres habilités de l&lsquo;équipe Mobilic&nbsp;;</li>
+            <li>
+              Les chefs d&lsquo;entreprise et les personnels habilités de ces
+              entreprises&nbsp;;
+            </li>
+            <li>
+              Les agents mentionnés à l&lsquo;article L.3315-1 du code des
+              transports dans les conditions prévues aux articles R.3312-19 et
+              R.3312-58 du code des transports&nbsp;;
+            </li>
+            <li>
+              Les personnels habilités des sous-traitants de l&lsquo;équipe
+              Mobilic.
+            </li>
           </ul>
         </Box>
         <Box>
-          <h2>Qui nous aide à traiter vos données à caractère personnel ?</h2>
+          <h2>Quelles mesures de sécurité mettons-nous en place&nbsp;?</h2>
           <p>
-            Certaines données sont envoyées à des sous-traitants. Le responsable
-            de traitement s&lsquo;est assuré de la mise en œuvre par ses
-            sous-traitants de garanties adéquates et du respect de conditions
-            strictes de confidentialité, d&lsquo;usage et de protection des
-            données.
+            Nous mettons en place plusieurs mesures pour sécuriser les
+            données&nbsp;:
+          </p>
+          <li>Chiffrage des documents&nbsp;;</li>
+          <li>Cloisonnement des données&nbsp;;</li>
+          <li>Mesures de traçabilité&nbsp;;</li>
+          <li>Surveillance via un monitoring&nbsp;;</li>
+          <li>
+            Protection contre les virus, malwares et logiciels espions&nbsp;;
+          </li>
+          <li>
+            Protection des réseaux&nbsp;: mesures de protection de nos
+            hébergeurs et connexion SSL (https)&nbsp;;
+          </li>
+          <li>Sauvegarde&nbsp;;</li>
+          <li>
+            Mesures restrictives d&lsquo;accès aux données à caractère
+            personnel&nbsp;: accès aux données par les agents habilités dans les
+            conditions réglementaires prévues.
+          </li>
+        </Box>
+        <Box>
+          <h2>
+            Qui nous aide à traiter vos données à caractère personnel&nbsp;?
+          </h2>
+          <p>
+            Certaines données sont envoyées à d'autres acteurs, appelés
+            "sous-traitants", pour qu'ils nous aident à les manipuler.
+            Conformément à l&lsquo;article 28 du RGPD, nous nous assurons
+            qu&lsquo;ils respectent strictement leurs obligations en matière de
+            protection des données et qu&lsquo;ils apportent des garanties
+            suffisantes en matière de sécurité des données.
           </p>
           <SimpleTable data={dataInfra} />
         </Box>
         <Box>
-          <h2>Quels sont vos droits ?</h2>
+          <h2>Quels sont vos droits&nbsp;?</h2>
           <p>
-            Vous disposez d&lsquo;un droit d&lsquo;accès et de rectification des
-            données à caractère personnel qui vous concernent. Vous disposez
-            également d&lsquo;un droit d&lsquo;opposition et de limitation du
-            traitement de vos données.
-          </p>
-          <p>
-            Pour exercer vos droits ou pour toute question sur le traitement de
-            vos données, vous pouvez nous écrire à l&lsquo;adresse suivante :{" "}
+            Vous disposez d&lsquo;un droit d&lsquo;accès, de rectification et
+            d&lsquo;opposition en vertu des articles 15, 16, 18 et 21 du RGPD
+            ainsi que les droits prévus par l&lsquo;article 85 de la loi n°78-17
+            du 6 janvier 1978 auprès du responsable de traitement, par courriel
+            à l&lsquo;adresse suivante{" "}
             <Link href="mailto:contact@mobilic.beta.gouv.fr">
               contact@mobilic.beta.gouv.fr
             </Link>
             .
           </p>
           <p>
-            Vous pouvez également contacter le délégué à la protection des
-            données (DPD) du ministère de la Transition écologique et de la
-            cohésion des territoires :
+            Nous nous engageons à vous répondre dans un délai raisonnable qui ne
+            saurait dépasser 1 mois à compter de la réception de votre demande.
+          </p>
+          <p>
+            Pour toute question concernant le traitement de vos données à
+            caractère personnel, vous pouvez également contacter le délégué à la
+            protection des données du ministère à l&lsquo;adresse
+            suivante&nbsp;:
           </p>
           <ul>
             <li>
@@ -274,8 +309,9 @@ function PrivacyPolicyContent() {
               <Link href="mailto:dpd.daj.sg@developpement-durable.gouv.fr">
                 dpd.daj.sg@developpement-durable.gouv.fr
               </Link>
+              &nbsp;; ou
             </li>
-            <li>ou par courrier à l&lsquo;adresse suivante :</li>
+            <li>par courrier à l&lsquo;adresse suivante&nbsp;:</li>
             <address>
               <Typography>
                 ministère de la Transition écologique et de la cohésion des
@@ -286,27 +322,32 @@ function PrivacyPolicyContent() {
               </Typography>
               <Typography>SG/DAJ/AJAG1-2</Typography>
               <Typography>92055 La Défense Cedex</Typography>
-              <Typography>France</Typography>
             </address>
           </ul>
           <p>
-            Si vous estimez, après nous avoir contacter, que vos droits
-            Informatiques et Libertés ne sont pas respectés vous pouvez adresser
-            une réclamation à la CNIL :
+            Dans le cadre de l&lsquo;exercice de vos droits, vous devez
+            justifier de votre identité par tout moyen. En cas de doute sur
+            votre identité, les services chargés du droit d&lsquo;accès et le
+            délégué à la protection des données se réservent le droit de vous
+            demander les informations supplémentaires qui leur apparaissent
+            nécessaires, y compris la photocopie d&lsquo;un titre
+            d&lsquo;identité portant votre signature.
           </p>
-          <address>
-            <Typography>
-              Commission nationale informatique et libertés
-            </Typography>
-            <Typography>3 place de Fontenoy</Typography>
-            <Typography>TSA 80715</Typography>
-            <Typography>75334 PARIS CEDEX 07</Typography>
-            <Typography>France</Typography>
-          </address>
           <p>
-            Les modalités de réclamation sont précisées sur{" "}
-            <ExternalLink url="https://www.cnil.fr" text="le site de la CNIL" />
-            .
+            Si vous estimez, même après avoir introduit une réclamation auprès
+            du responsable de traitement, que vos droits en matière de
+            protection des données à caractère personnel ne sont pas respectés,
+            vous avez la possibilité d&lsquo;introduire une réclamation auprès
+            de la Commission nationale de l&lsquo;informatique et des libertés
+            (CNIL) à l&lsquo;adresse suivante&nbsp;:{" "}
+            <address>
+              3 Place de Fontenoy &#8211; TSA 80715 &#8211; 75334 Paris Cedex 07
+            </address>
+          </p>
+          <p>
+            Pour vous aider dans votre démarche, vous trouverez un modèle de
+            courrier élaboré par la CNIL ici&nbsp;:{" "}
+            <ExternalLink url="https://www.cnil.fr/fr/modele/courrier/exercer-son-droit-dacces" />
           </p>
         </Box>
         <Box>
@@ -340,9 +381,9 @@ function PrivacyPolicyContent() {
           <p>
             Ce consentement de la personne concernée pour une ou plusieurs
             finalités spécifiques constitue une base légale au sens du RGPD et
-            doit être entendu au sens de l'article 6-a du Règlement (UE)
+            doit être entendu au sens de l&#39;article 6-a du Règlement (UE)
             2016/679 du Parlement européen et du Conseil du 27 avril 2016
-            relatif à la protection des personnes physiques à l'égard du
+            relatif à la protection des personnes physiques à l&#39;égard du
             traitement des données à caractère personnel et à la libre
             circulation de ces données.
           </p>
@@ -357,19 +398,20 @@ function PrivacyPolicyContent() {
           </p>
           <p>
             Pour aller plus loin, vous pouvez consulter les fiches proposées par
-            la Commission Nationale de l'Informatique et des Libertés (CNIL) :
+            la Commission Nationale de l'Informatique et des Libertés
+            (CNIL)&nbsp;:
           </p>
           <ul>
             <li>
               <ExternalLink
                 url="https://www.cnil.fr/fr/cookies-et-autres-traceurs/regles/cookies/que-dit-la-loi"
-                text="Cookies & traceurs : que dit la loi ?"
+                text="Cookies & traceurs&nbsp;: que dit la loi&nbsp;?"
               />
             </li>
             <li>
               <ExternalLink
                 url="https://www.cnil.fr/fr/cookies-et-autres-traceurs/comment-se-proteger/maitriser-votre-navigateur"
-                text="Cookies : les outils pour les maîtriser"
+                text="Cookies&nbsp;: les outils pour les maîtriser"
               />
             </li>
           </ul>
