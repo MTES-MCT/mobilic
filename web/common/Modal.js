@@ -75,11 +75,18 @@ export default function Modal({
       <DialogContent>{content}</DialogContent>
       <DialogActions>
         <Stack
-          direction="row-reverse"
-          justifyContent="flex-start"
           p={2}
-          spacing={4}
           width="100%"
+          columnGap={2}
+          rowGap={2}
+          alignItems="center"
+          justifyContent="flex-start"
+          sx={{
+            flexDirection: {
+              xs: "column",
+              sm: "row-reverse"
+            }
+          }}
         >
           {actions}
         </Stack>
@@ -111,5 +118,8 @@ export const modalStyles = makeStyles(theme => ({
   deleteButton: {
     color: "var(--red-marianne-main-472)",
     boxShadow: "inset 0 0 0 1px var(--red-marianne-main-472)"
+  },
+  warningText: {
+    color: "#CE0500"
   }
 }));
