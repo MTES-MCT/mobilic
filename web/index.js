@@ -1,6 +1,3 @@
-import "react-app-polyfill/ie11"; // Should be loaded first
-import "react-app-polyfill/stable"; // Should be loaded first
-
 import "core-js";
 import ReactDOM from "react-dom";
 import * as serviceWorker from "./serviceWorker";

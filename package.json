@@ -2,7 +2,6 @@
   "name": "mobilic",
   "version": "0.1.0",
   "private": true,
-  "homepage": ".",
   "workspaces": {
     "packages": [
       "web",
