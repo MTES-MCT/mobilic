@@ -5,11 +5,20 @@ import { ExternalLink } from "../../common/ExternalLink";
 import Modal, { modalStyles } from "../../common/Modal";
 import { useCgu } from "../../common/useCgu";
 
-export default function AcceptCguModal({ handleClose }) {
+export default function AcceptCguModal({ onAccept, onReject, handleClose }) {
   const { acceptCgu, rejectCgu } = useCgu();
   const classes = modalStyles();
   const [isChecked, setIsChecked] = React.useState(false);
   const [hasTurnedDown, setHasTurnedDown] = React.useState(false);
+
+  const _onAccept = async () => {
+    await acceptCgu();
+    onAccept();
+  };
+  const _onReject = async () => {
+    await rejectCgu();
+    onReject();
+  };
   const title = React.useMemo(
     () =>
       hasTurnedDown ? (
@@ -65,7 +74,7 @@ export default function AcceptCguModal({ handleClose }) {
         <>
           <Button
             title="Accepter les Conditions Générales d'Utilisation"
-            onClick={acceptCgu}
+            onClick={_onAccept}
             disabled={!isChecked}
           >
             Valider
@@ -73,7 +82,7 @@ export default function AcceptCguModal({ handleClose }) {
           {hasTurnedDown ? (
             <Button
               title="Supprimer mon compte"
-              onClick={rejectCgu}
+              onClick={_onReject}
               secondary
               className={classes.deleteButton}
             >

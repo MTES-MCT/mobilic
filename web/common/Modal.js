@@ -121,5 +121,8 @@ export const modalStyles = makeStyles(theme => ({
   },
   warningText: {
     color: "#CE0500"
+  },
+  underlined: {
+    textDecoration: "underline"
   }
 }));

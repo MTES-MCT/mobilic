@@ -1,33 +1,29 @@
 import React from "react";
 import { Typography } from "@mui/material";
-import { Button } from "@dataesr/react-dsfr";
+import { Button, Link } from "@dataesr/react-dsfr";
 import Modal, { modalStyles } from "../../common/Modal";
 import { prettyFormatDay } from "common/utils/time";
 import { useIsAdmin } from "../../common/hooks/useIsAdmin";
 
-export default function RejectedCguModal({ refusalDate }) {
-  const classes = modalStyles();
+export default function RejectedCguModal({ refusalDate, onRevert }) {
   const { isAdmin } = useIsAdmin();
+  const classes = modalStyles();
   return (
     <Modal
       open={true}
       handleClose={null}
       size="sm"
       zIndex={3500}
-      title={
-        <>
-          <span
-            className={`fr-icon-warning-fill ${classes.warningIcon}`}
-            aria-hidden="true"
-          ></span>
-          Votre compte va être supprimé
-        </>
-      }
       content={
         <>
           <Typography>
             Attention,{" "}
-            <b>votre compte sera supprimé le {prettyFormatDay(refusalDate)}</b>{" "}
+            <span className={classes.warningText}>
+              <b>
+                votre compte sera supprimé le{" "}
+                {prettyFormatDay(refusalDate, true)}
+              </b>
+            </span>{" "}
             car vous avez refusé nos conditions générales d’utilisation.{" "}
             {isAdmin ? (
               <>
@@ -45,18 +41,31 @@ export default function RejectedCguModal({ refusalDate }) {
           </Typography>
           <Typography sx={{ marginTop: 1 }}>
             S’il s’agit d’une erreur, vous pouvez accepter nos conditions
-            générales d’utilisation en cliquant ici.
+            générales d’utilisation en{" "}
+            <button
+              className={`fr-link fr-link--md ${classes.underlined}`}
+              title="Accepter les CGU"
+              onClick={onRevert}
+            >
+              cliquant ici
+            </button>
+            .
           </Typography>
         </>
       }
       actions={
-        <Button
-          onClick={() => {}}
-          icon="fr-icon-download-line"
-          iconPosition="left"
-        >
-          Télécharger l'ensemble des données
-        </Button>
+        <>
+          <Button
+            onClick={() => {}}
+            icon="fr-icon-download-line"
+            iconPosition="left"
+          >
+            Télécharger l'ensemble des données
+          </Button>
+          <Link href="/logout" className="fr-btn fr-btn--secondary">
+            Se déconnecter
+          </Link>
+        </>
       }
     />
   );

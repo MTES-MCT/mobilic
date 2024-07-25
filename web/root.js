@@ -294,13 +294,15 @@ function _Root() {
     return () => {};
   }, [controllerId]);
 
+  const [seeAgainCgu, setSeeAgainCgu] = React.useState(false);
+
   const shouldSeeCguModal = React.useMemo(
-    () => userInfo?.userAgreementStatus?.shouldAcceptCgu,
-    [userInfo?.userAgreementStatus?.shouldAcceptCgu]
+    () => userInfo?.userAgreementStatus?.shouldAcceptCgu || seeAgainCgu,
+    [userInfo?.userAgreementStatus?.shouldAcceptCgu, seeAgainCgu]
   );
-  const hasRejectedCguModal = React.useMemo(
-    () => userInfo?.userAgreementStatus?.hasRejectedCgu,
-    [userInfo?.userAgreementStatus?.hasRejectedCgu]
+  const shouldSeeHasRejectedCguModal = React.useMemo(
+    () => !seeAgainCgu && userInfo?.userAgreementStatus?.hasRejectedCgu,
+    [userInfo?.userAgreementStatus?.hasRejectedCgu, seeAgainCgu]
   );
 
   const routes = getAccessibleRoutes({ userInfo, companies, controllerInfo });
@@ -314,10 +316,16 @@ function _Root() {
       {process.env.REACT_APP_CRISP_AUTOLOAD !== "1" &&
         process.env.REACT_APP_CRISP_WEBSITE_ID &&
         !controllerId && <LiveChat />}
-      {store.userId() && shouldSeeCguModal && <AcceptCguModal />}
-      {store.userId() && hasRejectedCguModal && (
+      {store.userId() && shouldSeeCguModal && (
+        <AcceptCguModal
+          onAccept={() => setSeeAgainCgu(false)}
+          onReject={() => setSeeAgainCgu(false)}
+        />
+      )}
+      {store.userId() && shouldSeeHasRejectedCguModal && (
         <RejectedCguModal
           refusalDate={userInfo?.userAgreementStatus?.expiresAt}
+          onRevert={() => setSeeAgainCgu(true)}
         />
       )}
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
