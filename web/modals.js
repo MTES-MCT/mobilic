@@ -45,6 +45,7 @@ import UpdateVehicleModal from "./pwa/modals/VehicleBookingModal";
 import WarningEndMissionModal from "./pwa/modals/WarningEndMissionModal";
 import PDFExportModal from "./pwa/modals/PDFExportModal";
 import ExpenditureModal from "./pwa/modals/ExpenditureModal";
+import BlockedTimeModal from "./pwa/modals/BlockedTimeModal";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -85,5 +86,6 @@ export const MODAL_DICT = {
   employeesTeamRevisionModal: EmployeesTeamRevisionModal,
   confirmationCancelControlBulletinModal: ConfirmationCancelControlBulletinModal,
   typeformModal: TypeformModal,
-  updateCompanyDetails: UpdateCompanyDetailsModal
+  updateCompanyDetails: UpdateCompanyDetailsModal,
+  blockedTime: BlockedTimeModal
 };
