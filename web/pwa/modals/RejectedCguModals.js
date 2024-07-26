@@ -62,7 +62,10 @@ export default function RejectedCguModal({ refusalDate, onRevert }) {
           >
             Télécharger l'ensemble des données
           </Button>
-          <Link href="/logout" className="fr-btn fr-btn--secondary">
+          <Link
+            href="/logout"
+            className={`fr-btn fr-btn--secondary ${classes.button}`}
+          >
             Se déconnecter
           </Link>
         </>

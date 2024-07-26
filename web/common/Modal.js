@@ -124,5 +124,11 @@ export const modalStyles = makeStyles(theme => ({
   },
   underlined: {
     textDecoration: "underline"
+  },
+  button: {
+    [theme.breakpoints.down("md")]: {
+      width: "100%",
+      justifyContent: "center"
+    }
   }
 }));
