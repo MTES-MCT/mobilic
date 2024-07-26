@@ -121,6 +121,11 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const userId = store.userId();
   const userInfo = store.userInfo();
 
+  const areAllCompaniesWithoutAdmins = React.useMemo(
+    () => companies.every(c => !!c.hasNoAdmin),
+    [companies]
+  );
+
   function handleFirstActivitySelection(teamMates, missionInfos) {
     const team = teamMates ? [userId, ...teamMates.map(cw => cw.id)] : [userId];
     modals.open("firstActivity", {
@@ -156,27 +161,32 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   }
 
   const onEnterNewMissionFunnel = () => {
-    modals.open("newMission", {
-      companies,
-      companyAddresses: store.getEntity("knownAddresses"),
-      handleContinue: missionInfos => {
-        const company = companies.find(c => c.id === missionInfos.company.id);
-        if (company.settings && company.settings.allowTeamMode) {
-          modals.open("teamOrSoloChoice", {
-            handleContinue: isTeamMode => {
-              if (isTeamMode) {
-                modals.open("teamSelection", {
-                  mission: null,
-                  companyId: missionInfos.company.id,
-                  handleContinue: teamMates =>
-                    handleFirstActivitySelection(teamMates, missionInfos)
-                });
-              } else handleFirstActivitySelection(null, missionInfos);
-            }
-          });
-        } else handleFirstActivitySelection(null, missionInfos);
-      }
-    });
+    if (areAllCompaniesWithoutAdmins) {
+      modals.open("blockedTime", {});
+    } else {
+      modals.open("newMission", {
+        companies,
+        companyAddresses: store.getEntity("knownAddresses"),
+        handleContinue: missionInfos => {
+          const company = companies.find(c => c.id === missionInfos.company.id);
+          if (company.settings && company.settings.allowTeamMode) {
+            modals.open("teamOrSoloChoice", {
+              handleContinue: isTeamMode => {
+                if (isTeamMode) {
+                  modals.open("teamSelection", {
+                    mission: null,
+                    companyId: missionInfos.company.id,
+                    handleContinue: teamMates =>
+                      handleFirstActivitySelection(teamMates, missionInfos)
+                  });
+                } else handleFirstActivitySelection(null, missionInfos);
+              }
+            });
+          } else handleFirstActivitySelection(null, missionInfos);
+        },
+        onSelectNoAdminCompany: () => modals.open("blockedTime", {})
+      });
+    }
   };
 
   const onEnterNewHolidayFunnel = () => openHolidaysModal();
@@ -215,7 +225,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
       <PlaceHolder>
         <img alt="mobilic-logo-text" src={LogoWithText} width={150} />
       </PlaceHolder>
-      <Box key={2} mt={2} className="cta-container" mb={2}>
+      <Box mt={2} className="cta-container" mb={2}>
         <Typography className={classes.promiseText}>
           Le suivi de votre temps de travail
         </Typography>
@@ -256,7 +266,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
         </LoadingButton>
       </Box>
       {nonValidatedMissions.length > 0 && (
-        <Box key={3} className={classes.missionsToValidateList}>
+        <Box className={classes.missionsToValidateList}>
           <List
             subheader={
               <ListSubheader

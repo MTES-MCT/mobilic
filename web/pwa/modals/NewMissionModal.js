@@ -16,7 +16,8 @@ export default function NewMissionModal({
   disableCurrentPosition = false,
   disableKilometerReading = false,
   withDay = false,
-  withEndLocation = false
+  withEndLocation = false,
+  onSelectNoAdminCompany = null
 }) {
   const [currentPosition, setCurrentPosition] = React.useState(null);
 
@@ -58,6 +59,10 @@ export default function NewMissionModal({
         withEndLocation={withEndLocation}
         askCurrentPosition={askCurrentPosition}
         disableGeolocation={disableCurrentPosition}
+        onSelectNoAdminCompany={() => {
+          handleClose();
+          onSelectNoAdminCompany();
+        }}
       />
     </FunnelModal>
   );
