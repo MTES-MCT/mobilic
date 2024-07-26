@@ -464,7 +464,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         name: e.company.name,
         admin: e.hasAdminRights,
         siren: e.company.siren,
-        settings: e.company.settings
+        settings: e.company.settings,
+        hasNoAdmin: e.company.hasNoActiveAdmins
       })),
       c => c.id
     );
