@@ -46,26 +46,11 @@ const useStyles = makeStyles(theme => ({
     backgroundSize: "cover",
     position: "relative"
   },
-  container: {
-    position: "relative",
-    justifyContent: "flex-start",
-    flexGrow: 1,
-    flexShrink: 0,
-    overflowY: "hidden"
-  },
-  heroImage: {
-    width: "100%",
-    height: "auto",
-    color: theme.palette.background.default
-  },
   accountButton: {
     alignSelf: "flex-end",
     position: "absolute",
     top: "0",
     right: "0"
-  },
-  welcomeText: {
-    marginBottom: theme.spacing(2)
   },
   missionsToValidateList: {
     backgroundColor: theme.palette.background.paper,
