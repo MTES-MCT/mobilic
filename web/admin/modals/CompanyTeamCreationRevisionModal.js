@@ -197,11 +197,8 @@ export default function CompanyTeamCreationRevisionModal({
       }
       actions={
         <>
-          <Button title="Annuler" onClick={handleClose}>
-            Annuler
-          </Button>
+          <Button onClick={handleClose}>Annuler</Button>
           <LoadingButton
-            title="Confirmer"
             color="primary"
             variant="contained"
             disabled={!name}
