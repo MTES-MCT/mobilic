@@ -27,7 +27,7 @@ export default function ControllerExportC1BOne({
     <Modal
       open={open}
       handleClose={handleClose}
-      title={<>Générer un export C1B</>}
+      title="Générer un export C1B"
       content={
         <>
           <Alert severity="warning">

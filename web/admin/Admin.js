@@ -28,8 +28,8 @@ import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
 import { MissionDrawerContextProvider } from "./components/MissionDrawer";
 import CertificationCommunicationModal from "../pwa/components/CertificationCommunicationModal";
-import UpdateCompanyBusinessTypeModal from "./components/UpdateCompanyBusinessTypeModal";
 import { shouldUpdateBusinessType } from "common/utils/updateBusinessType";
+import UpdateCompanyBusinessTypeModal from "./modals/UpdateCompanyBusinessTypeModal";
 
 const useStyles = makeStyles(theme => ({
   container: {
