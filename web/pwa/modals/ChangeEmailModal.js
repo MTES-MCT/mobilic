@@ -2,12 +2,12 @@ import React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import { LoadingButton } from "common/components/LoadingButton";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 import {
   CustomDialogActions,
   CustomDialogTitle
-} from "../common/CustomDialogTitle";
-import { useSnackbarAlerts } from "../common/Snackbar";
-import { EmailField } from "../common/EmailField";
+} from "../../common/CustomDialogTitle";
+import { EmailField } from "../../common/EmailField";
 
 export default function ChangeEmailModal({ open, handleClose, handleSubmit }) {
   const [email, setEmail] = React.useState("");

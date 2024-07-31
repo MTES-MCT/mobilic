@@ -1,14 +1,15 @@
 import React from "react";
 import Dialog from "@mui/material/Dialog";
 import { LoadingButton } from "common/components/LoadingButton";
+
+import DialogContent from "@mui/material/DialogContent";
+import Button from "@mui/material/Button";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 import {
   CustomDialogActions,
   CustomDialogTitle
-} from "../common/CustomDialogTitle";
-import { useSnackbarAlerts } from "../common/Snackbar";
-import DialogContent from "@mui/material/DialogContent";
-import Button from "@mui/material/Button";
-import { PhoneNumber } from "../common/PhoneNumber";
+} from "../../common/CustomDialogTitle";
+import { PhoneNumber } from "../../common/PhoneNumber";
 
 export default function ChangePhoneNumberModal({
   open,

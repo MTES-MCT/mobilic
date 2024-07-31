@@ -1,19 +1,11 @@
 import React from "react";
 
-import {
-  Button,
-  Checkbox,
-  Modal,
-  ModalContent,
-  ModalFooter,
-  ModalTitle,
-  TextInput
-} from "@dataesr/react-dsfr";
+import { Button, Checkbox, TextInput } from "@dataesr/react-dsfr";
 import { PhoneNumber } from "../../common/PhoneNumber";
 
-import Stack from "@mui/material/Stack";
 import { BusinessType } from "../../common/BusinessType";
 import { useUpdateCompanyDetails } from "../../common/useUpdateCompanyDetails";
+import Modal from "../../common/Modal";
 
 export default function UpdateCompanyDetailsModal({
   open,
@@ -57,56 +49,57 @@ export default function UpdateCompanyDetailsModal({
     await updateCompanyDetails(applyBusinessTypeToEmployees);
 
   return (
-    <Modal isOpen={open} hide={handleClose} size="lg">
-      <ModalTitle>Modifier les détails de l'entreprise</ModalTitle>
-      <ModalContent>
-        <div className="fr-input-group">
-          <TextInput
-            id="company-name"
-            value={newCompanyName}
-            onChange={e => setNewCompanyName(e.target.value)}
-            label="Nom usuel"
-            required
-            {...(!newCompanyName ? { messageType: "error" } : {})}
-            message={
-              !newCompanyName
-                ? "Veuillez renseigner un nom pour l'entreprise"
-                : ""
-            }
-          />
-        </div>
-        <PhoneNumber
-          currentPhoneNumber={newCompanyPhoneNumber || undefined}
-          setCurrentPhoneNumber={newNumber =>
-            setNewCompanyPhoneNumber(newNumber)
-          }
-          label="Numéro de téléphone de l'entreprise"
-        />
-        {adminStore.business && (
-          <>
-            <BusinessType
-              currentBusiness={adminStore.business}
-              onChangeBusinessType={setNewCompanyBusinessType}
+    <Modal
+      open={open}
+      handleClose={handleClose}
+      size="sm"
+      title="Modifier les détails de l'entreprise"
+      content={
+        <>
+          <div className="fr-input-group">
+            <TextInput
+              id="company-name"
+              value={newCompanyName}
+              onChange={e => setNewCompanyName(e.target.value)}
+              label="Nom usuel"
               required
+              {...(!newCompanyName ? { messageType: "error" } : {})}
+              message={
+                !newCompanyName
+                  ? "Veuillez renseigner un nom pour l'entreprise"
+                  : ""
+              }
             />
-            <Checkbox
-              checked={applyBusinessTypeToEmployees}
-              onChange={e => setApplyBusinessTypeToEmployees(e.target.checked)}
-              label="Attribuer cette activité à tous mes salariés"
-              hint="L'activité sera attribuée par défaut à tous vos salariés. Vous aurez ensuite la possibilité de modifier individuellement le type d'activité pour chaque salarié."
-              disabled={!hasBusinessTypeChanged}
-            />
-          </>
-        )}
-      </ModalContent>
-      <ModalFooter>
-        <Stack
-          direction="row-reverse"
-          justifyContent="flex-start"
-          p={2}
-          spacing={4}
-          width="100%"
-        >
+          </div>
+          <PhoneNumber
+            currentPhoneNumber={newCompanyPhoneNumber || undefined}
+            setCurrentPhoneNumber={newNumber =>
+              setNewCompanyPhoneNumber(newNumber)
+            }
+            label="Numéro de téléphone de l'entreprise"
+          />
+          {adminStore.business && (
+            <>
+              <BusinessType
+                currentBusiness={adminStore.business}
+                onChangeBusinessType={setNewCompanyBusinessType}
+                required
+              />
+              <Checkbox
+                checked={applyBusinessTypeToEmployees}
+                onChange={e =>
+                  setApplyBusinessTypeToEmployees(e.target.checked)
+                }
+                label="Attribuer cette activité à tous mes salariés"
+                hint="L'activité sera attribuée par défaut à tous vos salariés. Vous aurez ensuite la possibilité de modifier individuellement le type d'activité pour chaque salarié."
+                disabled={!hasBusinessTypeChanged}
+              />
+            </>
+          )}
+        </>
+      }
+      actions={
+        <>
           <Button
             title="Enregistrer les détails de l'entreprise"
             onClick={handleSubmit}
@@ -121,8 +114,8 @@ export default function UpdateCompanyDetailsModal({
           >
             Annuler
           </Button>
-        </Stack>
-      </ModalFooter>
-    </Modal>
+        </>
+      }
+    />
   );
 }

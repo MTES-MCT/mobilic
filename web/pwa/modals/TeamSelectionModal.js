@@ -12,10 +12,13 @@ import {
 } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import Box from "@mui/material/Box";
-import { FunnelModal, useStyles as useFunnelModalStyles } from "./FunnelModal";
 import Container from "@mui/material/Container";
 import { makeStyles } from "@mui/styles";
-import { MainCtaButton } from "./MainCtaButton";
+import { MainCtaButton } from "../components/MainCtaButton";
+import {
+  FunnelModal,
+  useStyles as useFunnelModalStyles
+} from "../components/FunnelModal";
 
 const useStyles = makeStyles(theme => ({
   teamMate: {
