@@ -4,6 +4,7 @@ import { makeStyles } from "@mui/styles";
 import { Button, Checkbox } from "@dataesr/react-dsfr";
 import { ExternalLink } from "../../common/ExternalLink";
 import Modal from "../../common/Modal";
+import { useCgu } from "../../common/useCgu";
 
 const useStyles = makeStyles(theme => ({
   warningIcon: {
@@ -16,7 +17,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function AcceptCguModal({ handleClose, handleSubmit }) {
+export default function AcceptCguModal({ handleClose }) {
+  const { acceptCgu, rejectCgu } = useCgu();
   const classes = useStyles();
   const [isChecked, setIsChecked] = React.useState(false);
   const [hasTurnedDown, setHasTurnedDown] = React.useState(false);
@@ -75,7 +77,7 @@ export default function AcceptCguModal({ handleClose, handleSubmit }) {
         <>
           <Button
             title="Accepter les Conditions Générales d'Utilisation"
-            onClick={handleSubmit}
+            onClick={acceptCgu}
             disabled={!isChecked}
           >
             Valider
@@ -83,7 +85,7 @@ export default function AcceptCguModal({ handleClose, handleSubmit }) {
           {hasTurnedDown ? (
             <Button
               title="Supprimer mon compte"
-              onClick={() => console.log("delete account")}
+              onClick={rejectCgu}
               secondary
               className={classes.deleteButton}
             >

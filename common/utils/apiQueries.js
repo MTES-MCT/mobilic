@@ -12,7 +12,8 @@ import {
   WORK_DAYS_DATA_FRAGMENT,
   FRAGMENT_ACTIVITY,
   FULL_MISSION_FRAGMENT,
-  FULL_EMPLOYMENT_FRAGMENT
+  FULL_EMPLOYMENT_FRAGMENT,
+  USER_AGREEMENT
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
 
@@ -2256,6 +2257,28 @@ export const USER_QUERY_ENOUGH_BREAK = gql`
     user(id: $id) {
       id
       hadEnoughBreakLastMission
+    }
+  }
+`;
+
+export const ACCEPT_CGU_MUTATION = gql`
+  ${USER_AGREEMENT}
+  mutation acceptCgu($userId: Int!, $cguVersion: String!) {
+    account {
+      acceptCgu(userId: $userId, cguVersion: $cguVersion) {
+        ...UserAgreementData
+      }
+    }
+  }
+`;
+
+export const REJECT_CGU_MUTATION = gql`
+  ${USER_AGREEMENT}
+  mutation rejectCgu($userId: Int!, $cguVersion: String!) {
+    account {
+      rejectCgu(userId: $userId, cguVersion: $cguVersion) {
+        ...UserAgreementData
+      }
     }
   }
 `;
