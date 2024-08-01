@@ -24,7 +24,9 @@ export const useCgu = () => {
       { userId, cguVersion },
       { context: { nonPublicApi: true } }
     );
-    const { acceptCgu: response } = apiResponse.data.account;
+    const response = accept
+      ? apiResponse.data.account.acceptCgu
+      : apiResponse.data.account.rejectCgu;
     await store.setUserInfo({
       ...store.userInfo(),
       userAgreementStatus: response
@@ -32,11 +34,14 @@ export const useCgu = () => {
   };
 
   const acceptCgu = React.useCallback(async () => {
-    await alerts.withApiErrorHandling(updateCgu(true), "acceptCgu");
+    await alerts.withApiErrorHandling(async () => updateCgu(true), "acceptCgu");
   }, [cguVersion, userId]);
 
   const rejectCgu = React.useCallback(async () => {
-    await alerts.withApiErrorHandling(updateCgu(false), "rejectCgu");
+    await alerts.withApiErrorHandling(
+      async () => updateCgu(false),
+      "rejectCgu"
+    );
   }, [cguVersion, userId]);
 
   return { acceptCgu, rejectCgu };

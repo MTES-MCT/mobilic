@@ -68,6 +68,7 @@ import { LocalizationProvider, frFR } from "@mui/x-date-pickers";
 import { shouldUpdatePassword } from "common/utils/updatePassword";
 import UpdatePasswordModal from "./pwa/components/UpdatePassword";
 import AcceptCguModal from "./pwa/modals/AcceptCguModal";
+import RejectedCguModal from "./pwa/modals/RejectedCguModals";
 
 const matomo = createInstance({
   urlBase: "https://stats.beta.gouv.fr",
@@ -293,9 +294,15 @@ function _Root() {
     return () => {};
   }, [controllerId]);
 
+  const [seeAgainCgu, setSeeAgainCgu] = React.useState(false);
+
   const shouldSeeCguModal = React.useMemo(
-    () => userInfo?.userAgreementStatus?.shouldAcceptCgu,
-    [userInfo?.userAgreementStatus?.shouldAcceptCgu]
+    () => userInfo?.userAgreementStatus?.shouldAcceptCgu || seeAgainCgu,
+    [userInfo?.userAgreementStatus?.shouldAcceptCgu, seeAgainCgu]
+  );
+  const shouldSeeHasRejectedCguModal = React.useMemo(
+    () => !seeAgainCgu && userInfo?.userAgreementStatus?.hasRejectedCgu,
+    [userInfo?.userAgreementStatus?.hasRejectedCgu, seeAgainCgu]
   );
 
   const routes = getAccessibleRoutes({ userInfo, companies, controllerInfo });
@@ -309,7 +316,18 @@ function _Root() {
       {process.env.REACT_APP_CRISP_AUTOLOAD !== "1" &&
         process.env.REACT_APP_CRISP_WEBSITE_ID &&
         !controllerId && <LiveChat />}
-      {store.userId() && shouldSeeCguModal && <AcceptCguModal />}
+      {store.userId() && shouldSeeCguModal && (
+        <AcceptCguModal
+          onAccept={() => setSeeAgainCgu(false)}
+          onReject={() => setSeeAgainCgu(false)}
+        />
+      )}
+      {store.userId() && shouldSeeHasRejectedCguModal && (
+        <RejectedCguModal
+          expiryDate={userInfo?.userAgreementStatus?.expiresAt}
+          onRevert={() => setSeeAgainCgu(true)}
+        />
+      )}
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
       <React.Suspense fallback={<CircularProgress color="primary" />}>
         <Switch color="secondary">
