@@ -34,7 +34,7 @@ export default function ControllerExportC1BAll({
     <Modal
       open={open}
       handleClose={handleClose}
-      title={<>Générez des fichiers C1B</>}
+      title="Générez des fichiers C1B"
       content={
         <>
           <p>
