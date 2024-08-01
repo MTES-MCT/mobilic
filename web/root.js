@@ -324,7 +324,7 @@ function _Root() {
       )}
       {store.userId() && shouldSeeHasRejectedCguModal && (
         <RejectedCguModal
-          refusalDate={userInfo?.userAgreementStatus?.expiresAt}
+          expiryDate={userInfo?.userAgreementStatus?.expiresAt}
           onRevert={() => setSeeAgainCgu(true)}
         />
       )}
