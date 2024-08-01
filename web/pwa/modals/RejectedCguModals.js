@@ -44,7 +44,7 @@ export default function RejectedCguModal({ expiryDate, onRevert }) {
             générales d’utilisation en{" "}
             <button
               className={`fr-link fr-link--md ${classes.underlined}`}
-              title="Accepter les CGU"
+              title="cliquant ici pour accepter les CGU"
               onClick={onRevert}
             >
               cliquant ici
