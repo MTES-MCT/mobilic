@@ -34,8 +34,7 @@ export default function BatchInvite({ open, handleClose, handleSubmit }) {
       <DialogContent>
         <Typography gutterBottom>
           Vous pouvez inviter d'un coup plusieurs salariés en copiant ci-dessous
-          leurs adresses mail. Chaque adresse doit figurer sur une nouvelle
-          ligne.
+          leur adresse mail. Chaque adresse doit figurer sur une nouvelle ligne.
         </Typography>
         <TextField
           fullWidth
