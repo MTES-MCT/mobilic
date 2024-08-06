@@ -114,19 +114,13 @@ export function ControllerHome() {
           onClose={() => setOpenNewNoLic(false)}
           setControlOnFocus={setControlOnFocus}
         />
-        <Typography
-          variant="h4"
-          component="h1"
-          key={1}
-          className={classes.titleHello}
-        >
+        <Typography variant="h4" component="h1" className={classes.titleHello}>
           Bonjour, {controllerUserInfo.firstName}
         </Typography>
 
         <Typography
           variant="h5"
           component="h2"
-          key={2}
           className={classes.newControlText}
           marginBottom={2}
         >

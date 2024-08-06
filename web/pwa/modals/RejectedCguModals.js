@@ -5,7 +5,7 @@ import Modal, { modalStyles } from "../../common/Modal";
 import { prettyFormatDay } from "common/utils/time";
 import { useIsAdmin } from "../../common/hooks/useIsAdmin";
 
-export default function RejectedCguModal({ refusalDate, onRevert }) {
+export default function RejectedCguModal({ expiryDate, onRevert }) {
   const { isAdmin } = useIsAdmin();
   const classes = modalStyles();
   return (
@@ -21,7 +21,7 @@ export default function RejectedCguModal({ refusalDate, onRevert }) {
             <span className={classes.warningText}>
               <b>
                 votre compte sera supprimé le{" "}
-                {prettyFormatDay(refusalDate, true)}
+                {prettyFormatDay(expiryDate, true)}
               </b>
             </span>{" "}
             car vous avez refusé nos conditions générales d’utilisation.{" "}
@@ -44,7 +44,7 @@ export default function RejectedCguModal({ refusalDate, onRevert }) {
             générales d’utilisation en{" "}
             <button
               className={`fr-link fr-link--md ${classes.underlined}`}
-              title="Accepter les CGU"
+              title="cliquant ici pour accepter les CGU"
               onClick={onRevert}
             >
               cliquant ici
@@ -62,10 +62,7 @@ export default function RejectedCguModal({ refusalDate, onRevert }) {
           >
             Télécharger l'ensemble des données
           </Button>
-          <Link
-            href="/logout"
-            className={`fr-btn fr-btn--secondary ${classes.button}`}
-          >
+          <Link href="/logout" className="fr-btn fr-btn--secondary">
             Se déconnecter
           </Link>
         </>
