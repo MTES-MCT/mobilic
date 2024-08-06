@@ -139,6 +139,7 @@ export const USER_SIGNUP_MUTATION = gql`
     $timezoneName: String
     $wayHeardOfMobilic: String
     $phoneNumber: String
+    $acceptCgu: Boolean
   ) {
     signUp {
       user(
@@ -152,6 +153,7 @@ export const USER_SIGNUP_MUTATION = gql`
         timezoneName: $timezoneName
         wayHeardOfMobilic: $wayHeardOfMobilic
         phoneNumber: $phoneNumber
+        acceptCgu: $acceptCgu
       ) {
         accessToken
         refreshToken
