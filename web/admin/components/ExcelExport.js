@@ -69,6 +69,16 @@ export default function ExcelExport({
   const [users, setUsers] = React.useState(initialUsers);
   const [teams, setTeams] = React.useState(initialTeams);
 
+  const [isEnabledDownload, setIsEnabledDownload] = React.useState(true);
+
+  React.useEffect(() => setIsEnabledDownload(true), [
+    minDate,
+    maxDate,
+    isOneFileByEmployee,
+    users,
+    selectedCompany
+  ]);
+
   const today = new Date();
 
   React.useEffect(() => {
@@ -216,7 +226,8 @@ export default function ExcelExport({
         <LoadingButton
           color="primary"
           variant="contained"
-          onClick={async e =>
+          disabled={!isEnabledDownload}
+          onClick={async e => {
             await alerts.withApiErrorHandling(async () => {
               let selectedUsers = users.filter(u => u.selected);
               const options = {
@@ -232,12 +243,17 @@ export default function ExcelExport({
                 href: `/download_company_activity_report`,
                 linkType: "download"
               });
-              await api.downloadFileHttpQuery(HTTP_QUERIES.excelExport, {
-                json: options,
-                timeout: 45000
+              await api.jsonHttpQuery(HTTP_QUERIES.excelExport, {
+                json: options
               });
-            }, "download-company-report")
-          }
+              setIsEnabledDownload(false);
+              alerts.success(
+                "Le fichier étant volumineux, il vous sera envoyé par e-mail d’ici à quelques minutes.",
+                "",
+                6000
+              );
+            }, "download-company-report");
+          }}
         >
           Télécharger
         </LoadingButton>
