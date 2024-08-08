@@ -159,7 +159,7 @@ export const RegulationDrawerContextProvider = ({ children }) => {
                   </Accordion>
                 </Alert>
               )}
-              <Typography variant="body2">{rule.details}</Typography>
+              <Box>{rule.details}</Box>
             </Section>
             {rule.definitions && rule.definitions.length > 0 && (
               <Section className={classes.definitions} title="Définitions">
