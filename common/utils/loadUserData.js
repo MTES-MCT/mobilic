@@ -109,6 +109,10 @@ const USER_QUERY = gql`
         isAcknowledged
         hasAdminRights
         hideEmail
+        business {
+          transportType
+          businessType
+        }
         authorizedClients {
           id
           name
