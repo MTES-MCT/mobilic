@@ -26,19 +26,19 @@ export const RESOURCES_DOCUMENT = {
       slideshare:
         "https://www.slideshare.net/slideshow/embed_code/key/csRjiZP7BrQcMu/",
       download:
-        "https://drive.google.com/uc?export=download&id=1DBDA9057er3p6FRC7iQIuhZTZe8ldBux"
+        "https://drive.google.com/uc?export=download&id=1S7qU2W2ypGUtuAG-fKmF__Sc9KOfqGte"
     },
     salarie: {
       slideshare:
         "https://www.slideshare.net/slideshow/embed_code/key/zIMzBV9OangCxm/",
       download:
-        "https://drive.google.com/uc?export=download&id=1Ce9zM7B03TADWMWa4Gr5gmTsiMx4dm0m"
+        "https://drive.google.com/uc?export=download&id=1MmMhbd75_T8K2YWhKKl2PRd29NXus5OU"
     },
     controleur: {
       slideshare:
         "https://www.slideshare.net/slideshow/embed_code/key/khEsCS5bTemUi7",
       download:
-        "https://drive.google.com/uc?export=download&id=1XovEkL679iXg97uePoDACOdu1QYatt7J"
+        "https://drive.google.com/uc?export=download&id=19XKk9wp6N0O7MVL_xcx6NudeSnKRBeGC"
     },
     controleurConnected: {
       slideshare:
