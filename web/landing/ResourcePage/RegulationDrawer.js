@@ -165,13 +165,8 @@ export const RegulationDrawerContextProvider = ({ children }) => {
               <Section className={classes.definitions} title="Définitions">
                 <ul className={classes.definitionList}>
                   {rule.definitions.map((def, index) => (
-                    <li key={index}>
-                      <Typography
-                        variant="body2"
-                        className={classes.definition}
-                      >
-                        <span className="bold">{def.name}</span> : {def.content}
-                      </Typography>
+                    <li key={index} className={classes.definition}>
+                      <span className="bold">{def.name}</span> : {def.content}
                     </li>
                   ))}
                 </ul>

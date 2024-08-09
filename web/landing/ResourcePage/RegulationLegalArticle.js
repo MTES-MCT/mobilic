@@ -137,11 +137,26 @@ export function RegulationLegalArticleLink({ article, shortLabel = false }) {
 }
 
 export function RegulationArticlesBlock({ articles, className }) {
-  return (
+  return articles instanceof Array ? (
     <ul className={className}>
-      {articles.map((article, index) => (
-        <li key={index}>
+      {articles.map(article => (
+        <li key={article.name || article.label}>
           <RegulationLegalArticleLink article={article} />
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <ul className={className}>
+      {Object.entries(articles).map(([key, value]) => (
+        <li key={key}>
+          {key}&nbsp;:
+          <ul>
+            {value.map(link => (
+              <li key={link.name || link.label}>
+                <RegulationLegalArticleLink article={link} />
+              </li>
+            ))}
+          </ul>
         </li>
       ))}
     </ul>

@@ -62,15 +62,19 @@ export const REGULATION_RULES = {
       </>
     ),
     definitions: [DEFINITIONS.amplitude, DEFINITIONS.nightWorker],
-    articles: [
-      LEGAL_ARTICLES.dailyWorkTRM,
-      LEGAL_ARTICLES.dailyWorkTRV1,
-      LEGAL_ARTICLES.dailyWorkTRV2,
-      LEGAL_ARTICLES.dailyWorkTRV3,
-      LEGAL_ARTICLES.dailyWorkTRV4,
-      LEGAL_ARTICLES.dailyWorkDuringNight,
-      LEGAL_ARTICLES.amplitude
-    ],
+    articles: {
+      "Transport routier de marchandises": [LEGAL_ARTICLES.dailyWorkTRM],
+      "Transport routier de voyageurs": [
+        LEGAL_ARTICLES.dailyWorkTRV1,
+        LEGAL_ARTICLES.dailyWorkTRV2,
+        LEGAL_ARTICLES.dailyWorkTRV3,
+        LEGAL_ARTICLES.dailyWorkTRV4
+      ],
+      Transverses: [
+        LEGAL_ARTICLES.dailyWorkDuringNight,
+        LEGAL_ARTICLES.amplitude
+      ]
+    },
     computation: (
       <>
         <p>
@@ -203,11 +207,10 @@ export const REGULATION_RULES = {
     ),
     details: (
       <>
-        <p>
-          Durée maximale de travail hebdomadaire sur une semaine civile isolée
-          (la semaine civile débute le lundi à 0 heure et se termine le dimanche
-          à 24 heures)&nbsp;:
-        </p>
+        <h6>
+          Durée maximale de travail hebdomadaire sur une semaine civile
+          isolée&nbsp;:
+        </h6>
         <ul>
           <li>
             Transport routier de marchandises&nbsp;:
@@ -236,7 +239,7 @@ export const REGULATION_RULES = {
             </ul>
           </li>
         </ul>
-        <p>Durée maximale de travail hebdomadaire moyenne&nbsp;: </p>
+        <h6>Durée maximale de travail hebdomadaire moyenne&nbsp;:</h6>
         <ul>
           <li>
             Transport routier de marchandises (par semaine en moyenne sur une
@@ -275,12 +278,14 @@ export const REGULATION_RULES = {
         </ul>
       </>
     ),
-    definitions: [DEFINITIONS.longDistance],
-    articles: [
-      LEGAL_ARTICLES.weeklyWorkTRM,
-      LEGAL_ARTICLES.weeklyWorkTRV1,
-      LEGAL_ARTICLES.weeklyWorkTRV2
-    ]
+    definitions: [DEFINITIONS.calendarWeek, DEFINITIONS.longDistance],
+    articles: {
+      "Transport routier de marchandises": [LEGAL_ARTICLES.weeklyWorkTRM],
+      "Transport routier de voyageurs": [
+        LEGAL_ARTICLES.weeklyWorkTRV1,
+        LEGAL_ARTICLES.weeklyWorkTRV2
+      ]
+    }
   },
   weeklyRest: {
     url: "repos-hebdomadaire",
