@@ -109,7 +109,7 @@ export default function ExcelExport({
       <DialogContent>
         <Typography gutterBottom>
           Le rapport d'activité est un fichier Excel (.xlsx) qui contient les
-          onglets suivants.
+          onglets suivants&nbsp;:
         </Typography>
         <ul>
           <li>
@@ -221,6 +221,12 @@ export default function ExcelExport({
             </FormControl>
           </Grid>
         </Grid>
+        <Typography>
+          En cas de téléchargement des données pour un grand nombre de salariés
+          en une fois, plusieurs fichiers vous seront envoyés simultanément.
+          Chacun contiendra les temps de travail d’un groupe de salariés. Le tri
+          s’effectuera par ordre alphabétique.
+        </Typography>
       </DialogContent>
       <CustomDialogActions>
         <LoadingButton
