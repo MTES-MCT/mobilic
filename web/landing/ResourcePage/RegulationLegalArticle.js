@@ -11,10 +11,34 @@ const CODES = {
 };
 
 export const LEGAL_ARTICLES = {
-  dailyWork: {
+  dailyWorkTRM: {
     name: "R.3312-51",
     url:
       "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033450339/",
+    code: CODES.transports
+  },
+  dailyWorkTRV1: {
+    name: "D.3312-6",
+    url:
+      "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043651243/",
+    code: CODES.transports
+  },
+  dailyWorkTRV2: {
+    name: "R.3312-28",
+    url:
+      "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033450281/",
+    code: CODES.transports
+  },
+  dailyWorkTRV3: {
+    name: "R.3312-9",
+    url:
+      "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043651238/",
+    code: CODES.transports
+  },
+  dailyWorkTRV4: {
+    name: "R.3312-11",
+    url:
+      "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043651232/",
     code: CODES.transports
   },
   amplitude: {
@@ -32,10 +56,20 @@ export const LEGAL_ARTICLES = {
     url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033450343",
     code: CODES.transports
   },
-  weeklyWork: {
+  weeklyWorkTRM: {
     name: "R.3312-50",
     url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033450337",
     code: CODES.transports
+  },
+  weeklyWorkTRV1: {
+    name: "L.3121-20",
+    url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI0000330204",
+    code: CODES.work
+  },
+  weeklyWorkTRV2: {
+    name: "L.3121-22",
+    url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033020402",
+    code: CODES.work
   },
   weeklyRest1: {
     name: "L.3132-2",
@@ -103,11 +137,26 @@ export function RegulationLegalArticleLink({ article, shortLabel = false }) {
 }
 
 export function RegulationArticlesBlock({ articles, className }) {
-  return (
+  return articles instanceof Array ? (
     <ul className={className}>
-      {articles.map((article, index) => (
-        <li key={index}>
+      {articles.map(article => (
+        <li key={article.name || article.label}>
           <RegulationLegalArticleLink article={article} />
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <ul className={className}>
+      {Object.entries(articles).map(([key, value]) => (
+        <li key={key}>
+          {key}&nbsp;:
+          <ul>
+            {value.map(link => (
+              <li key={link.name || link.label}>
+                <RegulationLegalArticleLink article={link} />
+              </li>
+            ))}
+          </ul>
         </li>
       ))}
     </ul>

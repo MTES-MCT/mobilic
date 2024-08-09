@@ -71,7 +71,7 @@ export function FaqCard({
         <Typography variant={"h4"} {...titleProps}>
           {question}
         </Typography>
-        <Typography className={classes.faqCardAnswer}>{answer}</Typography>
+        <Box className={classes.faqCardAnswer}>{answer}</Box>
         <Box className={classes.dummy}></Box>
         <Box className={classes.moreInfoBlock}>
           <Divider className={`hr-unstyled ${classes.faqCardDivider}`} />
