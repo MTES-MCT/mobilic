@@ -29,7 +29,7 @@ export default function BatchInviteModal({ open, handleClose, handleSubmit }) {
         <>
           <Typography gutterBottom>
             Vous pouvez inviter d'un coup plusieurs salariés en copiant
-            ci-dessous leurs adresses mail. Chaque adresse doit figurer sur une
+            ci-dessous leur adresse mail. Chaque adresse doit figurer sur une
             nouvelle ligne.
           </Typography>
           <TextField
