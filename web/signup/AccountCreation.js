@@ -49,7 +49,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
     getClientTimezone()
   );
   const [subscribeToNewsletter, setSubscribeToNewsletter] = React.useState(
-    true
+    isAdmin ? true : false
   );
   const [loading, setLoading] = React.useState(false);
 
@@ -242,12 +242,20 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
               setWayHeardOfMobilicValue={setWayHeardOfMobilic}
             />
           )}
-
-          <CheckboxField
-            checked={subscribeToNewsletter}
-            onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
-            label="Je souhaite m'abonner à la lettre d'information de Mobilic pour rester informé par mail des nouveautés du produit"
-          />
+          {!isAdmin && (
+            <CheckboxField
+              checked={subscribeToNewsletter}
+              onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
+              label="En cochant cette case, j'accepte que mon adresse e-mail soit utilisée pour m'envoyer la lettre d'information Mobilic et pour me contacter en cas de besoin d'assistance technique."
+            />
+          )}
+          {isAdmin && (
+            <CheckboxField
+              checked={!subscribeToNewsletter}
+              onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
+              label="Je m’oppose à ce que mon adresse e-mail soit utilisée pour recevoir la lettre d'information, les informations sur les nouvelles fonctionnalités et les dates de formation gestionnaire."
+            />
+          )}
           <Box my={4}>
             <LoadingButton
               aria-label="Inscription"

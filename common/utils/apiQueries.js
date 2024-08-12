@@ -397,6 +397,10 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
         isAcknowledged
         hasAdminRights
         endDate
+        business {
+          transportType
+          businessType
+        }
         company {
           id
           name

@@ -26,6 +26,7 @@ function formatAlertPeriod(alert, type) {
     return prettyFormatMonth(alert.month);
   }
   switch (type) {
+    case ALERT_TYPES.maximumWorkInCalendarWeek:
     case ALERT_TYPES.maximumWorkedDaysInWeek: {
       return textualPrettyFormatWeek(alert.week);
     }
@@ -106,9 +107,25 @@ function formatAlertText(alert, type) {
         <span>
           Temps de travail total effectué entre le{" "}
           {formatDate(alert.extra.work_range_start)} et le{" "}
-          {formatDate(alert.extra.work_range_end)},{" "}
-          {nightWork ? "et comprenant du travail de nuit :" : ""}{" "}
+          {formatDate(alert.extra.work_range_end)}
+          {nightWork ? " et comprenant du travail de nuit" : ""}
+          {" : "}
           <b>{formatTimer(workTime)}</b>
+        </span>
+      );
+    }
+    case ALERT_TYPES.maximumWorkInCalendarWeek: {
+      const {
+        work_duration_in_seconds,
+        work_range_start,
+        work_range_end
+      } = alert.extra;
+      return (
+        <span>
+          Temps de travail total effectué entre le{" "}
+          {formatDate(work_range_start)} et le {formatDate(work_range_end)} :{" "}
+          <b>{formatTimer(work_duration_in_seconds)}</b>
+          <b></b>
         </span>
       );
     }
