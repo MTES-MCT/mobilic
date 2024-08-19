@@ -64,7 +64,7 @@ export function RegulationPage() {
           routier de marchandises (TRM) : longue distance, courte distance,
           messagerie, fonds et valeurs ; et du transport routier de voyageurs
           (TRV) : lignes régulières et occasionel. Par ailleurs, les dérogations
-          ou règles spécifiques à certains secteur ne sont pas précisées. Les
+          ou règles spécifiques à certains secteurs ne sont pas précisées. Les
           conducteurs soumis au règlement (CE) n°561/2006 sont, d'autre part,
           soumis aux seuils de ce règlement pour les dispositions en matière de
           durée des repos et de temps de conduite.
