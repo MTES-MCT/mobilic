@@ -19,9 +19,7 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
   const downloadUserData = async () => {
     try {
       const options = {
-        // for testing purpose
-        // company_ids: [85],
-        user_id: userId,
+        user_ids: [userId],
         ensure_full_date_range: true
       };
 

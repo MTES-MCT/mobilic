@@ -326,6 +326,7 @@ function _Root() {
         <RejectedCguModal
           expiryDate={userInfo?.userAgreementStatus?.expiresAt}
           onRevert={() => setSeeAgainCgu(true)}
+          userId={userId}
         />
       )}
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
