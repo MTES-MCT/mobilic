@@ -2020,6 +2020,10 @@ export const HTTP_QUERIES = {
   downloadCertificate: {
     method: "POST",
     endpoint: "/companies/download_certificate"
+  },
+  downloadFullDataWhenCGUrefused: {
+    method: "POST",
+    endpoint: "/users/download_full_data_when_CGU_refused"
   }
 };
 

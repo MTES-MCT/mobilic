@@ -8,6 +8,7 @@ import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
+import { formatApiError } from "common/utils/errors";
 
 export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
   const { isAdmin } = useIsAdmin();
@@ -17,37 +18,30 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
   const { trackLink } = useMatomo();
 
   const downloadUserData = async () => {
+    const options = {
+      user_id: userId
+    };
+
+    trackLink({
+      href: `/users/download_full_data_when_CGU_refused`,
+      linkType: "CGUrefusedDownload"
+    });
+
     try {
-      const options = {
-        user_ids: [userId],
-        ensure_full_date_range: true
-      };
-
-      trackLink({
-        href: `/companies/download_activity_report`,
-        linkType: "download"
-      });
-
-      const data = await api.jsonHttpQuery(HTTP_QUERIES.excelExport, {
+      await api.jsonHttpQuery(HTTP_QUERIES.downloadFullDataWhenCGUrefused, {
         json: options
       });
-
-      if (data.result !== "ok") {
-        throw new Error("Failed to request data export");
-      }
-
       alerts.success(
         "Votre demande a été prise en compte. Le fichier sera envoyé par email d'ici quelques minutes.",
         null,
         9000
       );
-    } catch (error) {
+    } catch (err) {
       alerts.error(
-        "Erreur lors de la demande d'exportation des données.",
-        null,
-        9000
+        formatApiError(err),
+        "download_full_data_when_CGU_refused",
+        6000
       );
-      console.error("Error requesting data export:", error);
     }
   };
 
