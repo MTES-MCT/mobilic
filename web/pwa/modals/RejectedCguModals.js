@@ -18,18 +18,14 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
   const { trackLink } = useMatomo();
 
   const downloadUserData = async () => {
-    const options = {
-      user_id: userId
-    };
-
     trackLink({
       href: `/users/download_full_data_when_CGU_refused`,
-      linkType: "CGUrefusedDownload"
+      linkType: "download"
     });
 
     try {
       await api.jsonHttpQuery(HTTP_QUERIES.downloadFullDataWhenCGUrefused, {
-        json: options
+        json: { user_id: userId }
       });
       alerts.success(
         "Votre demande a été prise en compte. Le fichier sera envoyé par email d'ici quelques minutes.",
