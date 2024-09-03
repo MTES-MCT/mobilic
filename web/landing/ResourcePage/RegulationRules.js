@@ -44,9 +44,8 @@ export const REGULATION_RULES = {
         </p>
         <p>
           En TRM comme en TRV, l'amplitude est quant à elle limitée à{" "}
-          <Emphasis>14 heures</Emphasis>
-          car le salarié doit prendre au moins 10 heures consécutives de repos
-          quotidien sur toute période de 24 heures.
+          <Emphasis>14 heures</Emphasis> car le salarié doit prendre au moins 10
+          heures consécutives de repos quotidien sur toute période de 24 heures.
         </p>
         <p>
           Si le salarié est un travailleur de nuit ou si une partie du travail
@@ -107,7 +106,7 @@ export const REGULATION_RULES = {
           Cette pause doit intervenir avant la 6e heure de travail ininterrompu
           et durer au moins&nbsp;:
         </p>
-        <ul>
+        <ul style={{ fontSize: "1rem" }}>
           <li>
             <Emphasis>30 minutes</Emphasis> lorsque le total des heures
             travaillées est compris entre 6 et 9 heures,
@@ -154,7 +153,7 @@ export const REGULATION_RULES = {
             au-delà de 9 heures&nbsp;: au moins <Emphasis>45 minutes</Emphasis>
           </li>
         </ul>
-        <p>La pause peut-être subdivisée en périodes d'au moins 15 minutes.</p>
+        <p>La pause peut être subdivisée en périodes d'au moins 15 minutes.</p>
         <p>
           Ces dispositions concernent le transport routier de marchandises comme
           le transport routier de voyageurs.
@@ -196,8 +195,8 @@ export const REGULATION_RULES = {
         <p>
           La durée du travail hebdomadaire, calculée sur la semaine civile, est
           limitée à deux niveaux&nbsp;: <Emphasis>pour chaque semaine</Emphasis>{" "}
-          mais aussi <Emphasis></Emphasis>en moyenne sur un trimestre ou un
-          quadrimestre.
+          mais aussi{" "}
+          <Emphasis>en moyenne sur un trimestre ou un quadrimestre</Emphasis>.
         </p>
         <p>
           Ces plafonds dépendent du type d'activité des salariés. Veuillez

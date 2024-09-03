@@ -63,7 +63,7 @@ export const LEGAL_ARTICLES = {
   },
   weeklyWorkTRV1: {
     name: "L.3121-20",
-    url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI0000330204",
+    url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033020414",
     code: CODES.work
   },
   weeklyWorkTRV2: {
