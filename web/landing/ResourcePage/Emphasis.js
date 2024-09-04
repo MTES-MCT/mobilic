@@ -5,7 +5,7 @@ export function Emphasis(props) {
     <span
       style={{
         fontWeight: "bold",
-        whiteSpace: "nowrap",
+        whiteSpace: props.whiteSpace || "nowrap",
         backgroundColor: "#ffee66"
       }}
       {...props}

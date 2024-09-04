@@ -196,7 +196,10 @@ export const REGULATION_RULES = {
           La durée du travail hebdomadaire, calculée sur la semaine civile, est
           limitée à deux niveaux&nbsp;: <Emphasis>pour chaque semaine</Emphasis>{" "}
           mais aussi{" "}
-          <Emphasis>en moyenne sur un trimestre ou un quadrimestre</Emphasis>.
+          <Emphasis whiteSpace="normal">
+            en moyenne sur un trimestre ou un quadrimestre
+          </Emphasis>
+          .
         </p>
         <p>
           Ces plafonds dépendent du type d'activité des salariés. Veuillez
