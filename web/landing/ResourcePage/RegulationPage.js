@@ -58,14 +58,16 @@ export function RegulationPage() {
           La réglementation du temps de travail dans le transport routier léger
         </PaperContainerTitle>
         <Typography variant="caption" className={otherClasses.ruleScope}>
-          Les règles suivantes concernent le personnel roulant soumis au livret
-          individuel de contrôle et ne sont pas forcément applicables aux autres
-          personnels des entreprises de transport routier. Par ailleurs les
-          dérogations ou règles propres à chaque secteur (déménagement,
-          messagerie, ...) ne sont pas précisées. Les conducteurs soumis au
-          règlement (CE) n°561/2006 sont par ailleurs soumis aux seuils de ce
-          règlement pour les dispositions en matière de durée des repos et de
-          temps de conduite.
+          Les règles suivantes concernent le personnel roulant du transport
+          léger soumis au livret individuel de contrôle selon les articles
+          R3312-19 et R3312-58 du Code des transports : salariés du transport
+          routier de marchandises (TRM) : longue distance, courte distance,
+          messagerie, fonds et valeurs ; et du transport routier de voyageurs
+          (TRV) : lignes régulières et occasionel. Par ailleurs, les dérogations
+          ou règles spécifiques à certains secteurs ne sont pas précisées. Les
+          conducteurs soumis au règlement (CE) n°561/2006 sont, d'autre part,
+          soumis aux seuils de ce règlement pour les dispositions en matière de
+          durée des repos et de temps de conduite.
         </Typography>
         <Grid container direction="row" alignItems="stretch" spacing={6}>
           {Object.values(REGULATION_RULES).map((rule, index) => (

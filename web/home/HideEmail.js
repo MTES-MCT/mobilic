@@ -7,7 +7,8 @@ import { useUpdateHideEmail } from "./useUpdateHideEmail";
 
 const useStyles = makeStyles(theme => ({
   fieldName: {
-    color: theme.palette.grey[600]
+    color: theme.palette.grey[700],
+    fontSize: "0.875rem"
   }
 }));
 
@@ -18,7 +19,11 @@ export function HideEmail({ employment }) {
 
   return (
     <Stack mb={2}>
-      <Typography align="left" className={classes.fieldName} variant="overline">
+      <Typography
+        align="left"
+        className={classes.fieldName}
+        variant="subtitle1"
+      >
         Autorisation d'accès à mon email personnel
       </Typography>
       <Checkbox

@@ -66,7 +66,7 @@ export const DEFINITIONS = {
     name: "Semaine civile",
     content: (
       <span>
-        elle débute le lundi à 0 heure et se termine le dimanche à 24 heures.
+        elle débute le lundi à 0 heure et se termine le dimanche à 24 heures
         (article{" "}
         <RegulationLegalArticleLink
           article={LEGAL_ARTICLES.calendarWeek}

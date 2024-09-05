@@ -33,6 +33,7 @@ import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import Box from "@mui/material/Box";
 import { HideEmail } from "../home/HideEmail";
 import { getNextHeadingComponent } from "common/utils/html";
+import { formatActivity } from "common/utils/businessTypes";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
@@ -79,6 +80,7 @@ export function EmploymentInfoCard({
   hideActions = false,
   lightenIfEnded = true,
   defaultOpen = false,
+  hideBusiness = false,
   headingComponent
 }) {
   const [open, setOpen] = React.useState(defaultOpen);
@@ -181,7 +183,7 @@ export function EmploymentInfoCard({
       </AccordionSummary>
       <AccordionDetails className={classes.employmentDetails}>
         <Grid container wrap="wrap" spacing={spacing}>
-          <Grid item>
+          <Grid item xs={6}>
             <InfoItem
               name="SIREN"
               value={employment.company.siren}
@@ -190,7 +192,7 @@ export function EmploymentInfoCard({
               }}
             />
           </Grid>
-          <Grid item>
+          <Grid item xs={6}>
             <InfoItem
               name="SIRETS"
               value={employment.company.sirets?.join(", ")}
@@ -199,16 +201,17 @@ export function EmploymentInfoCard({
               }}
             />
           </Grid>
-          <Grid item>
+          <Grid item xs={6}>
             <InfoItem
               name="Début rattachement"
               value={frenchFormatDateStringOrTimeStamp(employment.startDate)}
               titleProps={{
                 component: getNextHeadingComponent(headingComponent)
               }}
+              uppercaseTitle={false}
             />
           </Grid>
-          <Grid item>
+          <Grid item xs={6}>
             <InfoItem
               name="Fin rattachement"
               value={
@@ -219,6 +222,7 @@ export function EmploymentInfoCard({
               titleProps={{
                 component: getNextHeadingComponent(headingComponent)
               }}
+              uppercaseTitle={false}
             />
           </Grid>
           {!!emailsCurrentAdminsDisplay && (
@@ -253,7 +257,7 @@ export function EmploymentInfoCard({
             </Grid>
           )}
           {!hideRole && (
-            <Grid item>
+            <Grid item xs={12}>
               <InfoItem
                 name="Rôle"
                 value={
@@ -264,6 +268,19 @@ export function EmploymentInfoCard({
                 titleProps={{
                   component: getNextHeadingComponent(headingComponent)
                 }}
+                uppercaseTitle={false}
+              />
+            </Grid>
+          )}
+          {!hideBusiness && !!employment.business && (
+            <Grid item xs={12}>
+              <InfoItem
+                name="Type d'activité"
+                value={formatActivity(employment.business)}
+                titleProps={{
+                  component: getNextHeadingComponent(headingComponent)
+                }}
+                uppercaseTitle={false}
               />
             </Grid>
           )}
