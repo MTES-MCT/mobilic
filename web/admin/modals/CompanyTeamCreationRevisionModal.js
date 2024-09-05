@@ -1,12 +1,5 @@
-import {
-  CustomDialogActions,
-  CustomDialogTitle
-} from "../../common/CustomDialogTitle";
 import React from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
 import TextField from "common/utils/TextField";
-import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { LoadingButton } from "common/components/LoadingButton";
@@ -18,18 +11,10 @@ import {
 } from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
-import { MultipleValuesFilter } from "./MultipleValuesFilter";
-import { TeamEmployeesFilter } from "./TeamEmployeesFilter";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
-
-const useStyles = makeStyles(theme => ({
-  modalButton: {
-    marginLeft: theme.spacing(2)
-  },
-  warningAffectation: {
-    marginTop: theme.spacing(1)
-  }
-}));
+import { TeamEmployeesFilter } from "../panels/TeamEmployeesFilter";
+import { MultipleValuesFilter } from "../panels/MultipleValuesFilter";
+import Modal from "../../common/Modal";
 
 export default function CompanyTeamCreationRevisionModal({
   team,
@@ -49,7 +34,6 @@ export default function CompanyTeamCreationRevisionModal({
   const [newUsers, setNewUsers] = React.useState([]);
   const [newKnownAddresses, setNewKnownAddresses] = React.useState([]);
   const [newVehicles, setNewVehicles] = React.useState([]);
-  const classes = useStyles();
   const alerts = useSnackbarAlerts();
   const api = useApi();
 
@@ -145,14 +129,13 @@ export default function CompanyTeamCreationRevisionModal({
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-      <CustomDialogTitle
-        title={
-          !team ? "Créer un nouveau groupe" : `Modifier le groupe ${team?.name}`
-        }
-        handleClose={handleClose}
-      />
-      <DialogContent dividers>
+    <Modal
+      open={open}
+      handleClose={handleClose}
+      title={
+        !team ? "Créer un nouveau groupe" : `Modifier le groupe ${team?.name}`
+      }
+      content={
         <Grid container spacing={4}>
           <Grid item xs={12}>
             <TextField
@@ -180,7 +163,7 @@ export default function CompanyTeamCreationRevisionModal({
               setValues={setNewUsers}
               fieldLabel={"Salarié(s) du groupe"}
             />
-            <Alert severity="warning" className={classes.warningAffectation}>
+            <Alert severity="warning" sx={{ marginTop: 1 }}>
               <Typography gutterBottom>
                 Un salarié ne peut faire partie que d'un seul groupe à la fois.
                 Lorsque vous affecterez un salarié au groupe, sa précédente
@@ -211,27 +194,24 @@ export default function CompanyTeamCreationRevisionModal({
             />
           </Grid>
         </Grid>
-      </DialogContent>
-      <CustomDialogActions>
-        <Button
-          className={classes.modalButton}
-          title="Annuler"
-          onClick={handleClose}
-        >
-          Annuler
-        </Button>
-        <LoadingButton
-          className={classes.modalButton}
-          title="Confirmer"
-          color="primary"
-          variant="contained"
-          disabled={!name}
-          onClick={submitForm}
-          loading={submitting}
-        >
-          Confirmer
-        </LoadingButton>
-      </CustomDialogActions>
-    </Dialog>
+      }
+      actions={
+        <>
+          <Button title="Annuler" onClick={handleClose}>
+            Annuler
+          </Button>
+          <LoadingButton
+            title="Confirmer"
+            color="primary"
+            variant="contained"
+            disabled={!name}
+            onClick={submitForm}
+            loading={submitting}
+          >
+            Confirmer
+          </LoadingButton>
+        </>
+      }
+    />
   );
 }

@@ -7,7 +7,8 @@ import {
 import { startOfMonth, subMonths } from "date-fns";
 import {
   COMPANY_SETTINGS_FRAGMENT,
-  FULL_MISSION_FRAGMENT
+  FULL_MISSION_FRAGMENT,
+  USER_AGREEMENT
 } from "./apiFragments";
 import { gql } from "graphql-tag";
 import { captureSentryException } from "./sentry";
@@ -76,6 +77,7 @@ const CURRENT_EMPLOYMENTS_QUERY = gql`
 const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FULL_MISSION_FRAGMENT}
+  ${USER_AGREEMENT}
   query user($id: Int!, $activityAfter: TimeStamp) {
     user(id: $id) {
       id
@@ -122,8 +124,12 @@ const USER_QUERY = gql`
           name
           siren
           sirets
+          hasNoActiveAdmins
           ...CompanySettings
         }
+      }
+      userAgreementStatus {
+        ...UserAgreementData
       }
     }
   }
@@ -269,7 +275,8 @@ export async function syncUser(userPayload, api, store) {
     disabledWarnings,
     missions: missionsPayload,
     employments,
-    surveyActions
+    surveyActions,
+    userAgreementStatus
   } = userPayload;
 
   onLogIn(shouldUpdatePassword);
@@ -307,7 +314,8 @@ export async function syncUser(userPayload, api, store) {
           hasConfirmedEmail,
           hasActivatedEmail,
           disabledWarnings,
-          surveyActions
+          surveyActions,
+          userAgreementStatus
         },
         false
       )

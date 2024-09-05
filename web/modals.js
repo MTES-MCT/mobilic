@@ -1,68 +1,77 @@
-import FirstActivitySelectionModal from "./pwa/components/FirstActivitySelection";
-import TeamSelectionModal from "./pwa/components/TeamSelection";
 import ConfirmationModal from "./common/Confirmation";
-import NewMissionModal from "./pwa/components/NewMission";
-import DriverSelectionModal from "./pwa/components/DriverSelection";
-import CommentInputModal from "./pwa/components/CommentInput";
-import ActivityRevisionOrCreationModal from "./pwa/components/ActivityRevision/ActivityRevision";
-import updateVehicleModal from "./pwa/components/VehicleBooking";
-import ExcelExport from "./admin/components/ExcelExport";
-import C1BExport from "./admin/components/C1BExport";
 import TeamOrSoloChoiceModal from "./pwa/components/TeamOrSoloChoice";
 import NewTeamMateModal from "./pwa/components/NewTeamMate";
 import EndMissionModal from "./pwa/components/EndMission";
-import ExpenditureDialogModal from "./pwa/components/ExpenditureDialog";
 import ApiErrorDialogModal from "./pwa/components/ApiErrorDialog";
 import CGUModal from "./landing/cgu";
-import ChangeEmailModal from "./home/ChangeEmail";
-import ChangeTimezoneModal from "./home/ChangeTimezone";
-import TerminateEmployment from "./admin/components/TerminateEmployment";
 import UserReadQRCodeModal from "./control/UserReadQRCode";
 import UnavailableOfflineModeModal from "./common/UnavailableOfflineMode";
 import KilometerReadingModal from "./pwa/components/KilometerReadingModal";
-import SelectEmployeeModal from "./admin/components/SelectEmployee";
-import PDFExport from "./pwa/components/PDFExport";
-import BatchInvite from "./admin/components/BatchInvite";
-import WarningEndMissionModal from "./pwa/components/WarningEndMissionModal/WarningEndMissionModal";
 import NewsletterSubscriptionModal from "./landing/NewsletterSubscription";
 import GeolocPermissionInfoModal from "./pwa/components/GeolocPermissionInfoModal";
-import ControllerHelp from "./controller/components/modals/ControllerHelp";
-import ControllerExportC1BAll from "./controller/components/modals/ControllerExportC1BAll";
-import ChangeNameModal from "./home/ChangeName";
-import CompanyTeamCreationRevisionModal from "./admin/panels/CompanyTeamCreationRevisionModal";
-import EmployeesTeamRevisionModal from "./admin/panels/EmployeesTeamRevisionModal";
-import ConfirmationCancelControlBulletinModal from "./controller/components/controlBulletin/ConfirmationCancelControlBulletinModal";
 import TypeformModal from "./pwa/components/TypeformModal";
 import LogHolidayModal from "./pwa/components/LogHoliday";
+
+// controller
+import ControllerHelp from "./controller/components/modals/ControllerHelp";
+import ControllerExportC1BAll from "./controller/components/modals/ControllerExportC1BAll";
 import ControllerExportC1BOne from "./controller/components/modals/ControllerExportC1BOne";
-import ChangePhoneNumberModal from "./home/ChangePhoneNumber";
+import ConfirmationCancelControlBulletinModal from "./controller/components/modals/ConfirmationCancelControlBulletinModal";
+
+// admin
 import UpdateCompanyDetailsModal from "./admin/modals/UpdateCompanyDetailsModal";
+import C1BExportModal from "./admin/modals/C1BExportModal";
+import ExcelExportModal from "./admin/modals/ExcelExportModal";
+import EmployeesTeamRevisionModal from "./admin/modals/EmployeesTeamRevisionModal";
+import CompanyTeamCreationRevisionModal from "./admin/modals/CompanyTeamCreationRevisionModal";
+import SelectEmployeeModal from "./admin/modals/SelectEmployeeModal";
+import TerminateEmploymentModal from "./admin/modals/TerminateEmploymentModal";
+import BatchInviteModal from "./admin/modals/BatchInviteModal";
+
+// home
+import ChangeEmailModal from "./pwa/modals/ChangeEmailModal";
+import ChangeNameModal from "./pwa/modals/ChangeNameModal";
+import ChangePhoneNumberModal from "./pwa/modals/ChangePhoneNumberModal";
+import ChangeTimezoneModal from "./pwa/modals/ChangeTimezoneModal";
+
+// employee
+import FirstActivitySelectionModal from "./pwa/modals/FirstActivitySelectionModal";
+import TeamSelectionModal from "./pwa/modals/TeamSelectionModal";
+import NewMissionModal from "./pwa/modals/NewMissionModal";
+import DriverSelectionModal from "./pwa/modals/DriverSelectionModal";
+import CommentInputModal from "./pwa/modals/CommentInputModal";
+import ActivityRevisionOrCreationModal from "./pwa/modals/ActivityRevision";
+import UpdateVehicleModal from "./pwa/modals/VehicleBookingModal";
+import WarningEndMissionModal from "./pwa/modals/WarningEndMissionModal";
+import PDFExportModal from "./pwa/modals/PDFExportModal";
+import ExpenditureModal from "./pwa/modals/ExpenditureModal";
+import BlockedTimeModal from "./pwa/modals/BlockedTimeModal";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
   teamSelection: TeamSelectionModal,
   confirmation: ConfirmationModal,
-  batchInvite: BatchInvite,
+  batchInvite: BatchInviteModal,
   newMission: NewMissionModal,
   logHoliday: LogHolidayModal,
   driverSelection: DriverSelectionModal,
   commentInput: CommentInputModal,
   activityRevision: ActivityRevisionOrCreationModal,
-  updateVehicle: updateVehicleModal,
-  dataExport: ExcelExport,
-  tachographExport: C1BExport,
-  pdfExport: PDFExport,
+  updateVehicle: UpdateVehicleModal,
+  dataExport: ExcelExportModal,
+  tachographExport: C1BExportModal,
+  pdfExport: PDFExportModal,
   teamOrSoloChoice: TeamOrSoloChoiceModal,
   newTeamMate: NewTeamMateModal,
   endMission: EndMissionModal,
-  expenditures: ExpenditureDialogModal,
+  expenditures: ExpenditureModal,
   apiErrorDialog: ApiErrorDialogModal,
   cgu: CGUModal,
   changeEmail: ChangeEmailModal,
   changeName: ChangeNameModal,
   changePhoneNumber: ChangePhoneNumberModal,
   changeTimezone: ChangeTimezoneModal,
-  terminateEmployment: TerminateEmployment,
+  terminateEmployment: TerminateEmploymentModal,
   userReadQRCode: UserReadQRCodeModal,
   unavailableOfflineMode: UnavailableOfflineModeModal,
   kilometerReading: KilometerReadingModal,
@@ -77,5 +86,6 @@ export const MODAL_DICT = {
   employeesTeamRevisionModal: EmployeesTeamRevisionModal,
   confirmationCancelControlBulletinModal: ConfirmationCancelControlBulletinModal,
   typeformModal: TypeformModal,
-  updateCompanyDetails: UpdateCompanyDetailsModal
+  updateCompanyDetails: UpdateCompanyDetailsModal,
+  blockedTime: BlockedTimeModal
 };

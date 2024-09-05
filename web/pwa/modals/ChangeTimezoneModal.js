@@ -2,13 +2,14 @@ import React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import { LoadingButton } from "common/components/LoadingButton";
+
+import { getClientTimezone } from "common/utils/timezones";
+import { useSnackbarAlerts } from "../../common/Snackbar";
 import {
   CustomDialogActions,
   CustomDialogTitle
-} from "../common/CustomDialogTitle";
-import { useSnackbarAlerts } from "../common/Snackbar";
-import { getClientTimezone } from "common/utils/timezones";
-import TimezoneSelect from "../common/TimezoneSelect";
+} from "../../common/CustomDialogTitle";
+import TimezoneSelect from "../../common/TimezoneSelect";
 
 export default function ChangeTimezoneModal({
   open,

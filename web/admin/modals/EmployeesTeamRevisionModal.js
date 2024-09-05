@@ -1,11 +1,4 @@
-import {
-  CustomDialogActions,
-  CustomDialogTitle
-} from "../../common/CustomDialogTitle";
 import React from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
@@ -17,12 +10,7 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { NO_TEAMS_LABEL, NO_TEAM_ID } from "../utils/teams";
-
-const useStyles = makeStyles(theme => ({
-  modalButton: {
-    marginLeft: theme.spacing(2)
-  }
-}));
+import Modal from "../../common/Modal";
 
 export default function EmployeesTeamRevisionModal({
   employment,
@@ -35,7 +23,6 @@ export default function EmployeesTeamRevisionModal({
   const [newTeamId, setNewTeamId] = React.useState(
     employment.teamId || NO_TEAM_ID
   );
-  const classes = useStyles();
   const alerts = useSnackbarAlerts();
   const api = useApi();
 
@@ -73,14 +60,13 @@ export default function EmployeesTeamRevisionModal({
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-      <CustomDialogTitle
-        title={`Modifier l'affectation de groupe du salarié${
-          employment.name ? " " + employment.name : ""
-        }`}
-        handleClose={handleClose}
-      />
-      <DialogContent dividers>
+    <Modal
+      open={open}
+      handleClose={handleClose}
+      title={`Modifier l'affectation de groupe du salarié${
+        employment.name ? " " + employment.name : ""
+      }`}
+      content={
         <Grid container spacing={4}>
           <Grid item xs={12}>
             <InputLabel id="select-team-label">{`Veuillez sélectionner un nouveau groupe pour le salarié${
@@ -104,27 +90,24 @@ export default function EmployeesTeamRevisionModal({
             </Select>
           </Grid>
         </Grid>
-      </DialogContent>
-      <CustomDialogActions>
-        <Button
-          className={classes.modalButton}
-          title="Annuler"
-          onClick={handleClose}
-        >
-          Annuler
-        </Button>
-        <LoadingButton
-          className={classes.modalButton}
-          title="Confirmer"
-          color="primary"
-          variant="contained"
-          disabled={newTeamId === (employment.teamId || NO_TEAM_ID)}
-          onClick={updateTeam}
-          loading={submitting}
-        >
-          Confirmer
-        </LoadingButton>
-      </CustomDialogActions>
-    </Dialog>
+      }
+      actions={
+        <>
+          <Button title="Annuler" onClick={handleClose}>
+            Annuler
+          </Button>
+          <LoadingButton
+            title="Confirmer"
+            color="primary"
+            variant="contained"
+            disabled={newTeamId === (employment.teamId || NO_TEAM_ID)}
+            onClick={updateTeam}
+            loading={submitting}
+          >
+            Confirmer
+          </LoadingButton>
+        </>
+      }
+    />
   );
 }

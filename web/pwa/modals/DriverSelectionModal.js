@@ -8,8 +8,8 @@ import DialogContent from "@mui/material/DialogContent";
 import { formatTimer, now } from "common/utils/time";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { CustomDialogTitle } from "../../common/CustomDialogTitle";
-import { VehicleFieldForApp } from "./VehicleFieldForApp";
 import Box from "@mui/material/Box";
+import { VehicleFieldForApp } from "../components/VehicleFieldForApp";
 
 export default function DriverSelectionModal({
   team = [],

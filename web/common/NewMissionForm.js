@@ -22,7 +22,8 @@ export default function NewMissionForm({
   companyId = null,
   overrideSettings = null,
   askCurrentPosition = () => {},
-  disableGeolocation = false
+  disableGeolocation = false,
+  onSelectNoAdminCompany = null
 }) {
   const getInitialCompany = () => {
     if (companyId) {
@@ -45,6 +46,9 @@ export default function NewMissionForm({
   const [defaultAddresses, setDefaultAddresses] = React.useState([]);
 
   React.useEffect(() => {
+    if (onSelectNoAdminCompany && company.hasNoAdmin) {
+      onSelectNoAdminCompany();
+    }
     if (vehicle?.companyId) setVehicle("");
     if (address?.companyId) setAddress("");
 
