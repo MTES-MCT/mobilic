@@ -16,8 +16,10 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const { trackLink } = useMatomo();
+  const [isEnabledDownload, setIsEnabledDownload] = React.useState(true);
 
   const downloadUserData = async () => {
+    setIsEnabledDownload(false);
     trackLink({
       href: `/users/download_full_data_when_CGU_refused`,
       linkType: "download"
@@ -92,6 +94,7 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
             onClick={downloadUserData}
             icon="fr-icon-download-line"
             iconPosition="left"
+            disabled={!isEnabledDownload}
           >
             Télécharger l'ensemble des données
           </Button>
