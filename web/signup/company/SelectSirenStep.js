@@ -11,6 +11,7 @@ import { formatApiError } from "common/utils/errors";
 import { LegalUnitInfo } from "./LegalUnitInfo";
 import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
+import { MandatoryField } from "../../common/MandatoryField";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -86,6 +87,7 @@ export function SelectSirenStep({
       complete={siren && !sirenFormatError && hasValidatedSiren}
       {...props}
     >
+      <MandatoryField />
       <form
         className="vertical-form centered"
         autoComplete="off"

@@ -6,6 +6,7 @@ import { PhoneNumber } from "../../common/PhoneNumber";
 import { BusinessType } from "../../common/BusinessType";
 import { useUpdateCompanyDetails } from "../../common/useUpdateCompanyDetails";
 import Modal from "../../common/Modal";
+import { MandatoryField } from "../../common/MandatoryField";
 
 export default function UpdateCompanyDetailsModal({
   open,
@@ -56,6 +57,7 @@ export default function UpdateCompanyDetailsModal({
       title="Modifier les détails de l'entreprise"
       content={
         <>
+          <MandatoryField />
           <div className="fr-input-group">
             <TextInput
               id="company-name"

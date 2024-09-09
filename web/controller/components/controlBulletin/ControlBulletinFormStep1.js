@@ -9,6 +9,7 @@ import { CONTROL_LOCATION_QUERY } from "common/utils/apiQueries";
 import { DsfrAutocomplete } from "../utils/DsfrAutocomplete";
 import { Box } from "@mui/material";
 import { CURRENT_YEAR } from "common/utils/time";
+import { MandatoryField } from "../../../common/MandatoryField";
 
 const BIRTH_DATE_MIN_YEAR = 100;
 const BIRTH_DATE_MAX_YEAR = 18;
@@ -117,6 +118,7 @@ export function ControlBulletinFormStep1({
 
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
+      <MandatoryField />
       <DsfrAutocomplete
         field={controlBulletin.locationDepartment}
         fieldLabel="Département du contrôle"

@@ -29,6 +29,7 @@ import { PasswordHelper } from "../common/PasswordHelper";
 import { usePageTitle } from "../common/UsePageTitle";
 import { PhoneNumber } from "../common/PhoneNumber";
 import { Notice } from "../common/Notice";
+import { MandatoryField } from "../common/MandatoryField";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   usePageTitle("Création de compte - Mobilic");
@@ -165,6 +166,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       </Section>
 
       <Section last title="ou via le formulaire d'inscription">
+        <MandatoryField />
         <form
           className="vertical-form centered"
           autoComplete="off"

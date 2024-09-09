@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import { TextInput, Button, Title } from "@dataesr/react-dsfr";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
+import { MandatoryField } from "../../../common/MandatoryField";
 
 export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
   const api = useApi();
@@ -60,6 +61,7 @@ export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
       </Typography>
 
       <Stack direction="column" p={2} sx={{ width: "100%" }}>
+        <MandatoryField />
         <TextInput
           value={userLastName}
           name="userLastName"

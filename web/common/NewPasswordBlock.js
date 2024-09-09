@@ -5,6 +5,7 @@ import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import { PasswordField } from "common/components/PasswordField";
 import { PasswordHelper } from "./PasswordHelper";
+import { MandatoryField } from "./MandatoryField";
 
 const useStyles = makeStyles(theme => ({
   introText: {
@@ -38,6 +39,7 @@ export function NewPasswordBlock({
   return (
     <>
       <Typography className={classes.introText}>{label}</Typography>
+      <MandatoryField />
       <PasswordField
         fullWidth
         className="vertical-form-text-input"

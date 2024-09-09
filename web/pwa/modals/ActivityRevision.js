@@ -26,6 +26,7 @@ import { VIRTUAL_ACTIVITIES_ACTIONS } from "../../admin/store/store";
 import { NativeDateTimePicker } from "../../common/NativeDateTimePicker";
 import OverlappedActivityList from "../components/ActivityRevision/OverlappedActivityList";
 import Modal from "../../common/Modal";
+import { MandatoryField } from "../../common/MandatoryField";
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -397,6 +398,7 @@ export default function ActivityRevisionOrCreationModal({
               </Alert>
             </Box>
           )}
+          <MandatoryField />
           <Box mt={1}>
             <TextField
               label="Activité"

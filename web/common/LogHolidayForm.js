@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import { useStyles as useFunnelModalStyles } from "../pwa/components/FunnelModal";
 import MenuItem from "@mui/material/MenuItem";
 import { MainCtaButton } from "../pwa/components/MainCtaButton";
+import { MandatoryField } from "./MandatoryField";
 import {
   jsToUnixTimestamp,
   now,
@@ -198,26 +199,28 @@ export function LogHolidayForm({
 
   return (
     <Container>
-      <form
-        autoComplete="off"
-        onSubmit={async e => {
-          setLoading(true);
-          e.preventDefault();
-          await handleSubmit({
-            companyId: company.id,
-            title: motifLabel,
-            startTime: startTimestamp,
-            endTime: endTimestamp,
-            userId: user?.id,
-            ...(motifId === OTHER_MOTIF_ID ? { comment: otherMotif } : {})
-          });
-          setLoading(false);
-        }}
+      <Container
+        className={`day-info-inputs ${funnelModalClasses.slimContainer}`}
+        style={{ flexShrink: 0 }}
+        disableGutters
       >
-        <Container
-          className={`day-info-inputs ${funnelModalClasses.slimContainer}`}
-          style={{ flexShrink: 0 }}
-          disableGutters
+        <MandatoryField />
+        <form
+          style={{ width: "100%" }}
+          autoComplete="off"
+          onSubmit={async e => {
+            setLoading(true);
+            e.preventDefault();
+            await handleSubmit({
+              companyId: company.id,
+              title: motifLabel,
+              startTime: startTimestamp,
+              endTime: endTimestamp,
+              userId: user?.id,
+              ...(motifId === OTHER_MOTIF_ID ? { comment: otherMotif } : {})
+            });
+            setLoading(false);
+          }}
         >
           {companies && companies.length > 1 && (
             <>
@@ -337,17 +340,17 @@ export function LogHolidayForm({
             variant="filled"
             error={endTimeError}
           />
-        </Container>
-        <Box className="cta-container" my={4}>
-          <MainCtaButton
-            disabled={!isFormValid}
-            type="submit"
-            loading={loading}
-          >
-            Soumettre ma saisie
-          </MainCtaButton>
-        </Box>
-      </form>
+          <Box className="cta-container" my={4}>
+            <MainCtaButton
+              disabled={!isFormValid}
+              type="submit"
+              loading={loading}
+            >
+              Soumettre ma saisie
+            </MainCtaButton>
+          </Box>
+        </form>
+      </Container>
     </Container>
   );
 }
