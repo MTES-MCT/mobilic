@@ -10,7 +10,10 @@ import {
 
 const useStyles = makeStyles(theme => ({
   title: {
-    fontSize: "1.5rem"
+    fontSize: "1.5rem",
+    [theme.breakpoints.down("md")]: {
+      marginTop: theme.spacing(1)
+    }
   },
   content: {
     color: "rgba(0, 0, 0, 0.8)"
