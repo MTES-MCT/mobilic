@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   title: {
     fontSize: "1.5rem",
     [theme.breakpoints.down("md")]: {
-      marginTop: theme.spacing(1)
+      marginTop: theme.spacing(2)
     }
   },
   content: {
