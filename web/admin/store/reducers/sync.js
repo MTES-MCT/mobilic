@@ -68,6 +68,11 @@ export function updateCompanyDetailsReducer(
   const users = flatMap(
     companiesPayload.map(c => c.users.map(u => ({ ...u, companyId: c.id })))
   );
+  const currentUsers = flatMap(
+    companiesPayload.map(c =>
+      c.currentUsers.map(u => ({ ...u, companyId: c.id }))
+    )
+  );
   const allEmployments = flatMap(
     companiesPayload.map(c =>
       c.employments.map(e => ({
@@ -112,6 +117,7 @@ export function updateCompanyDetailsReducer(
   return {
     ...stateWithWorkDays,
     users,
+    currentUsers,
     teams: teams,
     employments: allEmployments,
     vehicles: flatMap(

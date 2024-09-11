@@ -696,6 +696,9 @@ export const ADMIN_COMPANIES_QUERY = gql`
           firstName
           lastName
         }
+        currentUsers {
+          id
+        }
         teams {
           id
           name
