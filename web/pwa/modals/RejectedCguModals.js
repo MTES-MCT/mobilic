@@ -96,7 +96,7 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
             iconPosition="left"
             disabled={!isEnabledDownload}
           >
-            Télécharger l'ensemble des données
+            Recevoir l'ensemble des données par e-mail
           </Button>
           <Link href="/logout" className="fr-btn fr-btn--secondary">
             Se déconnecter
