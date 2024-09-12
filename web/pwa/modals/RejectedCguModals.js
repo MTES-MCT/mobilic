@@ -96,10 +96,10 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
             iconPosition="left"
             disabled={!isEnabledDownload}
           >
-            Recevoir l'ensemble des données par e-mail
+            Recevoir les données par&nbsp;e&#8209;mail
           </Button>
           <Link href="/logout" className="fr-btn fr-btn--secondary">
-            Se déconnecter
+            Se&nbsp;déconnecter
           </Link>
         </>
       }
