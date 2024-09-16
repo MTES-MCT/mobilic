@@ -12,15 +12,18 @@ export const useEnoughBreak = () => {
   const api = useApi();
   const [hasEnoughBreak, setHasEnoughBreak] = React.useState(true);
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     if (!userId) return;
-    await alerts.withApiErrorHandling(async () => {
-      const response = await api.graphQlQuery(USER_QUERY_ENOUGH_BREAK, {
-        id: userId
-      });
-      const { hadEnoughBreakLastMission } = response.data.user;
-      setHasEnoughBreak(hadEnoughBreakLastMission);
-    }, "enough-break");
+    const loadData = async () => {
+      await alerts.withApiErrorHandling(async () => {
+        const response = await api.graphQlQuery(USER_QUERY_ENOUGH_BREAK, {
+          id: userId
+        });
+        const { hadEnoughBreakLastMission } = response.data.user;
+        setHasEnoughBreak(hadEnoughBreakLastMission);
+      }, "enough-break");
+    };
+    loadData();
   }, [userId, missions]);
 
   return { hasEnoughBreak };

@@ -37,13 +37,16 @@ export function UserControlSection() {
   const [controlsDate, setControlsDate] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
-  React.useEffect(async () => {
-    setLoading(true);
-    const apiResponse = await api.graphQlQuery(USER_CONTROLS_QUERY, {
-      userId: currentUserId()
-    });
-    setControlsDate(apiResponse.data.user.controlsDate);
-    setLoading(false);
+  React.useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      const apiResponse = await api.graphQlQuery(USER_CONTROLS_QUERY, {
+        userId: currentUserId()
+      });
+      setControlsDate(apiResponse.data.user.controlsDate);
+      setLoading(false);
+    };
+    loadData();
   }, []);
 
   return (

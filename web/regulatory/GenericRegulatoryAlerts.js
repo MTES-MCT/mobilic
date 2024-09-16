@@ -35,12 +35,13 @@ export function GenericRegulatoryAlerts({
   const api = useApi();
   const alerts = useSnackbarAlerts();
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     setLoading(true);
     if (currentControllerId()) {
       setRegulationComputations(prefetchedRegulationComputation);
+      setLoading(false);
     } else {
-      await alerts.withApiErrorHandling(async () => {
+      alerts.withApiErrorHandling(async () => {
         const apiResponse = await api.graphQlQuery(
           USER_READ_REGULATION_COMPUTATIONS_QUERY,
           {
@@ -68,9 +69,9 @@ export function GenericRegulatoryAlerts({
             );
           }
         }
+        setLoading(false);
       });
     }
-    setLoading(false);
   }, [
     day,
     userId,

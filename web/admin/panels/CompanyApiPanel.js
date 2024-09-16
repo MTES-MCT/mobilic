@@ -33,18 +33,21 @@ export default function CompanyApiPanel({ company }) {
   const [newTokenSectionVisible, setNewTokenSectionVisible] = React.useState(
     false
   );
-  React.useEffect(async () => {
-    const apiResponse = await api.graphQlQuery(
-      THIRD_PARTY_CLIENTS_COMPANY_QUERY,
-      {
-        userId: currentUserId(),
-        companyIds: [company.id]
-      }
-    );
-    setAuthorizedClients(
-      apiResponse?.data?.user?.adminedCompanies[0]?.authorizedClients
-    );
-    setLoadingAuthorizedClients(false);
+  React.useEffect(() => {
+    const loadData = async () => {
+      const apiResponse = await api.graphQlQuery(
+        THIRD_PARTY_CLIENTS_COMPANY_QUERY,
+        {
+          userId: currentUserId(),
+          companyIds: [company.id]
+        }
+      );
+      setAuthorizedClients(
+        apiResponse?.data?.user?.adminedCompanies[0]?.authorizedClients
+      );
+      setLoadingAuthorizedClients(false);
+    };
+    loadData();
   }, [company]);
 
   const classes = usePanelStyles();

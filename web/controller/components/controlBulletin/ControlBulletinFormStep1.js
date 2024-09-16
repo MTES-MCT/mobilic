@@ -68,22 +68,25 @@ export function ControlBulletinFormStep1({
     }
   };
 
-  React.useEffect(async () => {
-    if (controlBulletin.locationDepartment) {
-      const departmentCode = DEPARTMENTS.find(
-        d => d.label === controlBulletin.locationDepartment
-      )?.code;
-      if (departmentCode) {
-        const apiResponse = await api.graphQlQuery(
-          CONTROL_LOCATION_QUERY,
-          {
-            department: departmentCode
-          },
-          { context: { nonPublicApi: true } }
-        );
-        setDepartmentLocations(apiResponse.data.controlLocation);
+  React.useEffect(() => {
+    const loadData = async () => {
+      if (controlBulletin.locationDepartment) {
+        const departmentCode = DEPARTMENTS.find(
+          d => d.label === controlBulletin.locationDepartment
+        )?.code;
+        if (departmentCode) {
+          const apiResponse = await api.graphQlQuery(
+            CONTROL_LOCATION_QUERY,
+            {
+              department: departmentCode
+            },
+            { context: { nonPublicApi: true } }
+          );
+          setDepartmentLocations(apiResponse.data.controlLocation);
+        }
       }
-    }
+    };
+    loadData();
   }, [controlBulletin.locationDepartment]);
 
   const controlLocationCommunes = useMemo(() => {

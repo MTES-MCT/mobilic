@@ -32,16 +32,19 @@ export default function CompanyTeamsPanel({ company }) {
     false
   );
 
-  React.useEffect(async () => {
-    setLoadingTeams(true);
-    const apiResponse = await api.graphQlQuery(ALL_TEAMS_COMPANY_QUERY, {
-      companyId: company.id
-    });
-    setTeams(apiResponse?.data?.company?.teams);
-    setLoadingTeams(false);
+  React.useEffect(() => {
+    const loadData = async () => {
+      setLoadingTeams(true);
+      const apiResponse = await api.graphQlQuery(ALL_TEAMS_COMPANY_QUERY, {
+        companyId: company.id
+      });
+      setTeams(apiResponse?.data?.company?.teams);
+      setLoadingTeams(false);
+    };
+    loadData();
   }, [company]);
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     setDisplayNoAdminWarning(teams.some(team => !team.adminUsers?.length > 0));
   }, [teams]);
 

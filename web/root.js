@@ -279,7 +279,6 @@ function _Root() {
       { cacheKey: "loadUser" + userId },
       false
     );
-    return () => {};
   }, [userId]);
 
   React.useEffect(() => {
@@ -291,7 +290,6 @@ function _Root() {
       { cacheKey: "loadController" + controllerId },
       false
     );
-    return () => {};
   }, [controllerId]);
 
   const [seeAgainCgu, setSeeAgainCgu] = React.useState(false);
@@ -331,7 +329,7 @@ function _Root() {
       )}
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
       <React.Suspense fallback={<CircularProgress color="primary" />}>
-        <Switch color="secondary">
+        <Switch>
           {routes.map(route => (
             <Route
               key={route.path}

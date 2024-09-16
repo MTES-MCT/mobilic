@@ -28,7 +28,7 @@ export default function CertificationPanel({ company }) {
     setAcceptCertificationCommunication
   ] = React.useState(null);
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     setAcceptCertificationCommunication(
       companyWithInfo.acceptCertificationCommunication
     );

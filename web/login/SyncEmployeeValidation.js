@@ -72,7 +72,7 @@ export function SyncEmployeeValidation() {
     setHasAcceptedTokenGeneration
   ] = React.useState(false);
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     const queryString = new URLSearchParams(location.search);
     const queryToken = queryString.get("token");
     const queryClientId = queryString.get("client_id");
@@ -81,38 +81,41 @@ export function SyncEmployeeValidation() {
     setClientId(queryClientId);
     setEmploymentId(queryEmploymentId);
     setLoading(true);
-    try {
-      const apiResponse = await api.graphQlQuery(
-        THIRD_PARTY_CLIENT_EMPLOYMENT_QUERY,
-        {
-          clientId: queryClientId,
-          employmentId: queryEmploymentId,
-          invitationToken: queryToken
-        },
-        { context: { nonPublicApi: true } }
-      );
-      const link = apiResponse.data.clientEmploymentLink;
-      const user = link?.employment?.user;
+    const loadData = async () => {
+      try {
+        const apiResponse = await api.graphQlQuery(
+          THIRD_PARTY_CLIENT_EMPLOYMENT_QUERY,
+          {
+            clientId: queryClientId,
+            employmentId: queryEmploymentId,
+            invitationToken: queryToken
+          },
+          { context: { nonPublicApi: true } }
+        );
+        const link = apiResponse.data.clientEmploymentLink;
+        const user = link?.employment?.user;
 
-      setClientName(link?.clientName);
-      setCompanyName(link?.employment?.company?.name);
-      setMustAcceptEmploymentCreation(!link?.employment?.isAcknowledged);
-      setEmail(user?.email);
-      setMustAcceptAccountCreation(
-        !user?.hasConfirmedEmail || !user?.hasActivatedEmail
-      );
-    } catch (err) {
-      const errorMessage = formatApiError(err, gqlError => {
-        if (graphQLErrorMatchesCode(gqlError, "AUTHORIZATION_ERROR")) {
-          return "Paramètres invalides. Veuillez suivre le lien d'activation inclus dans le mail reçu. Si le problème persiste, contactez votre éditeur de logiciel.";
-        }
-      });
-      setApiError(errorMessage);
-    }
-    setLoading(false);
+        setClientName(link?.clientName);
+        setCompanyName(link?.employment?.company?.name);
+        setMustAcceptEmploymentCreation(!link?.employment?.isAcknowledged);
+        setEmail(user?.email);
+        setMustAcceptAccountCreation(
+          !user?.hasConfirmedEmail || !user?.hasActivatedEmail
+        );
+      } catch (err) {
+        const errorMessage = formatApiError(err, gqlError => {
+          if (graphQLErrorMatchesCode(gqlError, "AUTHORIZATION_ERROR")) {
+            return "Paramètres invalides. Veuillez suivre le lien d'activation inclus dans le mail reçu. Si le problème persiste, contactez votre éditeur de logiciel.";
+          }
+        });
+        setApiError(errorMessage);
+      }
+      setLoading(false);
+    };
+    loadData();
   }, []);
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     if (mustAcceptAccountCreation) {
       openCGUModal();
     }

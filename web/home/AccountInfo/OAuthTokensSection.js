@@ -61,17 +61,20 @@ export function OAuthTokenSection() {
   );
   const [loadingAccessTokens, setLoadingAccessTokens] = React.useState(false);
 
-  React.useEffect(async () => {
-    setLoadingAccessTokens(true);
-    const apiResponse = await api.graphQlQuery(
-      OAUTH_TOKEN_QUERY,
-      {
-        userId: currentUserId()
-      },
-      { context: { nonPublicApi: true } }
-    );
-    setAccessTokens(apiResponse.data.oauthAccessTokens);
-    setLoadingAccessTokens(false);
+  React.useEffect(() => {
+    const loadData = async () => {
+      setLoadingAccessTokens(true);
+      const apiResponse = await api.graphQlQuery(
+        OAUTH_TOKEN_QUERY,
+        {
+          userId: currentUserId()
+        },
+        { context: { nonPublicApi: true } }
+      );
+      setAccessTokens(apiResponse.data.oauthAccessTokens);
+      setLoadingAccessTokens(false);
+    };
+    loadData();
   }, []);
 
   const onValidateNewClientId = async () => {
