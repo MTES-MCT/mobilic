@@ -143,8 +143,18 @@ export function IntroSection() {
       <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
         <Grid container direction="row" className={classes.leftBlockIntro}>
           <Grid item xs={12} marginTop={4}>
-            <Typography className={classes.textTitle} variant="h1">
-              La plateforme numérique gouvernementale{" "}
+            <h1 className="fr-sr-only">
+              La plateforme numérique gouvernementale de suivi du temps de
+              travail dans le transport routier léger
+            </h1>
+            <div aria-hidden="true">
+              <Typography
+                className={classes.textTitle}
+                variant="h1"
+                component="p"
+              >
+                La plateforme numérique gouvernementale{" "}
+              </Typography>
               <Typography
                 className={classes.textIntro}
                 variant="h2"
@@ -162,7 +172,7 @@ export function IntroSection() {
               >
                 dans le transport routier léger
               </Typography>
-            </Typography>
+            </div>
           </Grid>
           {isSmDown ? (
             <>
