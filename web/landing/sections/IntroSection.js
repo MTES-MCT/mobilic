@@ -9,6 +9,7 @@ import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthDown } from "common/utils/useWidth";
 import { VideoCard, VIDEOS } from "../ResourcePage/VideoCard";
+import classNames from "classnames";
 
 const useStyles = makeStyles(theme => ({
   heroContainer: {
@@ -64,7 +65,6 @@ const useStyles = makeStyles(theme => ({
   },
   objective: {
     fontWeight: "bold",
-    fontSize: "1em",
     marginTop: theme.spacing(3)
   },
   phoneImageContainer: {
@@ -120,10 +120,12 @@ const Explanation = () => {
           entreprises concernées par la réglementation de suivi du temps de
           travail dans le transport léger et dans le déménagement (-3.5T)
         </span>
-        <Typography className={classes.objective}>
-          L'objectif : faciliter l'application{" "}
-          <span style={{ whiteSpace: "nowrap" }}>de la réglementation !</span>
-        </Typography>
+      </Typography>
+      <Typography
+        className={classNames(classes.objective, classes.explanation)}
+      >
+        L'objectif : faciliter l'application{" "}
+        <span style={{ whiteSpace: "nowrap" }}>de la réglementation !</span>
       </Typography>
     </Grid>
   );
