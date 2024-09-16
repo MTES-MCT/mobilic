@@ -12,7 +12,8 @@ import {
   WORK_DAYS_DATA_FRAGMENT,
   FRAGMENT_ACTIVITY,
   FULL_MISSION_FRAGMENT,
-  FULL_EMPLOYMENT_FRAGMENT
+  FULL_EMPLOYMENT_FRAGMENT,
+  USER_AGREEMENT
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
 
@@ -138,6 +139,7 @@ export const USER_SIGNUP_MUTATION = gql`
     $timezoneName: String
     $wayHeardOfMobilic: String
     $phoneNumber: String
+    $acceptCgu: Boolean
   ) {
     signUp {
       user(
@@ -151,6 +153,7 @@ export const USER_SIGNUP_MUTATION = gql`
         timezoneName: $timezoneName
         wayHeardOfMobilic: $wayHeardOfMobilic
         phoneNumber: $phoneNumber
+        acceptCgu: $acceptCgu
       ) {
         accessToken
         refreshToken
@@ -2017,6 +2020,10 @@ export const HTTP_QUERIES = {
   downloadCertificate: {
     method: "POST",
     endpoint: "/companies/download_certificate"
+  },
+  downloadFullDataWhenCGUrefused: {
+    method: "POST",
+    endpoint: "/users/download_full_data_when_CGU_refused"
   }
 };
 
@@ -2260,6 +2267,28 @@ export const USER_QUERY_ENOUGH_BREAK = gql`
     user(id: $id) {
       id
       hadEnoughBreakLastMission
+    }
+  }
+`;
+
+export const ACCEPT_CGU_MUTATION = gql`
+  ${USER_AGREEMENT}
+  mutation acceptCgu($userId: Int!, $cguVersion: String!) {
+    account {
+      acceptCgu(userId: $userId, cguVersion: $cguVersion) {
+        ...UserAgreementData
+      }
+    }
+  }
+`;
+
+export const REJECT_CGU_MUTATION = gql`
+  ${USER_AGREEMENT}
+  mutation rejectCgu($userId: Int!, $cguVersion: String!) {
+    account {
+      rejectCgu(userId: $userId, cguVersion: $cguVersion) {
+        ...UserAgreementData
+      }
     }
   }
 `;

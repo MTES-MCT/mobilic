@@ -1,5 +1,5 @@
 import React from "react";
-import ConfirmationDSFR from "../modals/ConfirmationDSFR";
+import ConfirmationDSFR from "./ConfirmationDSFR";
 
 export default function ConfirmationCancelControlBulletinModal(props) {
   return (

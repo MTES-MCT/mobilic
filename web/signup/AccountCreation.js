@@ -112,7 +112,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           isEmployee: !isAdmin,
           timezoneName: timezone,
           wayHeardOfMobilic: wayHeardOfMobilic,
-          ...(isAdmin && phoneNumber ? { phoneNumber } : {})
+          ...(isAdmin && phoneNumber ? { phoneNumber } : {}),
+          acceptCgu: true
         };
         if (employeeInvite) {
           signupPayload.inviteToken = employeeInvite.inviteToken;

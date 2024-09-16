@@ -13,7 +13,7 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 
-export default function TerminateEmployment({
+export default function TerminateEmploymentModal({
   open,
   terminateEmployment,
   minDate,

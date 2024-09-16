@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  Button,
-  ButtonGroup,
-  Modal,
-  ModalContent,
-  ModalFooter,
-  ModalTitle
-} from "@dataesr/react-dsfr";
+import Modal from "../../../common/Modal";
+import { Button } from "@dataesr/react-dsfr";
 
 export default function ConfirmationDSFR({
   title,
@@ -19,20 +13,13 @@ export default function ConfirmationDSFR({
   handleCancel
 }) {
   return (
-    <Modal isOpen={open} hide={handleClose}>
-      <ModalTitle>{title}</ModalTitle>
-      <ModalContent>{content}</ModalContent>
-      <ModalFooter>
-        <ButtonGroup isInlineFrom="md" align="right">
-          <Button
-            title="Annuler"
-            onClick={(...args) => {
-              handleCancel(...args);
-              handleClose();
-            }}
-          >
-            {cancelButtonLabel}
-          </Button>
+    <Modal
+      open={open}
+      handleClose={handleClose}
+      title={title}
+      content={content}
+      actions={
+        <>
           <Button
             secondary
             title="Confirmer"
@@ -43,8 +30,17 @@ export default function ConfirmationDSFR({
           >
             {confirmButtonLabel}
           </Button>
-        </ButtonGroup>
-      </ModalFooter>
-    </Modal>
+          <Button
+            title="Annuler"
+            onClick={(...args) => {
+              handleCancel(...args);
+              handleClose();
+            }}
+          >
+            {cancelButtonLabel}
+          </Button>
+        </>
+      }
+    />
   );
 }
