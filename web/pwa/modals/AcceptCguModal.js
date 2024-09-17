@@ -43,7 +43,7 @@ export default function AcceptCguModal({ onAccept, onReject, handleClose }) {
               ? "Votre compte Mobilic sera supprimé car vous n’avez pas accepté les"
               : "Nous avons récemment changé nos"}{" "}
             <ExternalLink
-              url={"https://mobilic.beta.gouv.fr/cgu"}
+              url={"https://cgu.mobilic.beta.gouv.fr"}
               text={"conditions générales d'utilisation"}
             />
             .
