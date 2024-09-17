@@ -54,7 +54,7 @@ export default function Signup() {
     <>
       <Header />
       <PaperContainer>
-        <Switch color="secondary">
+        <Switch>
           {!userId && (
             <Route key="user" path={`${path}/user`}>
               <AccountCreation
@@ -88,7 +88,7 @@ export default function Signup() {
               <Complete type="company" />
             </Route>
           )}
-          <Redirect key="default" from="*" to={defaultRoute()} />
+          <Route path="*" render={() => <Redirect to={defaultRoute()} />} />
         </Switch>
       </PaperContainer>
     </>

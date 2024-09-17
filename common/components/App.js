@@ -86,7 +86,7 @@ function _App({ ScreenComponent, loadUser }) {
 
   return (
     <Container className={classes.appContainer} maxWidth="md" disableGutters>
-      <Switch color="secondary">
+      <Switch>
         <Route path={`${path}/history`}>
           <History
             handleBack={() => history.push(path)}

@@ -335,10 +335,11 @@ function _Root() {
               key={route.path}
               exact={route.exact || false}
               path={route.path}
-              component={route.component}
-            />
+            >
+              {route.component}
+            </Route>
           ))}
-          <Redirect key="default" from="*" to={fallbackRoute} />
+          <Route path="*" render={() => <Redirect to={fallbackRoute} />} />
         </Switch>
       </React.Suspense>
     </>
