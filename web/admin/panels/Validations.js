@@ -332,6 +332,23 @@ function ValidationPanel() {
     openMission(missionId || null);
   }, [location]);
 
+  const filteredUserIds = React.useMemo(() => {
+    switch (tab) {
+      case 0:
+      case 1:
+        return users
+          .filter(user =>
+            adminStore.currentUsers.map(u => u.id).includes(user.id)
+          )
+          .map(user => user.id);
+      case 2:
+      case 3:
+        return users.map(user => user.id);
+      default:
+        return [];
+    }
+  }, [tab, users]);
+
   return (
     <Paper className={classes.container} variant="outlined">
       <Tabs
@@ -390,7 +407,11 @@ function ValidationPanel() {
         </Grid>
         <Grid item>
           {users?.length > 0 && (
-            <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
+            <EmployeeFilter
+              users={users}
+              setUsers={handleUserFilterChange}
+              showOnlyUserIds={filteredUserIds}
+            />
           )}
         </Grid>
       </Grid>
