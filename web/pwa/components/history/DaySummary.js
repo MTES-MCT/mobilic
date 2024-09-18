@@ -20,8 +20,8 @@ export function DaySummary({
   userId,
   loading = false,
   shouldDisplayInitialEmployeeVersion = false,
-  prefetchedRegulationComputation = null,
-  missions
+  missions,
+  controlId = null
 }) {
   const dayEnd = dayStart + DAY;
   const infoCardStyles = useInfoCardStyles();
@@ -47,24 +47,23 @@ export function DaySummary({
               .filter(kpi => kpi.name !== "workedDays")
               .filter(kpi => kpi.name !== "offDays")}
           />
-          <InfoCard className={infoCardStyles.topMargin}>
-            {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
-              <DayRegulatoryAlerts
-                day={isoFormatLocalDate(dayStart)}
-                userId={userId}
-                shouldDisplayInitialEmployeeVersion={
-                  shouldDisplayInitialEmployeeVersion
-                }
-                prefetchedRegulationComputation={
-                  prefetchedRegulationComputation
-                }
-              />
-            ) : (
-              <ItalicWarningTypography>
-                Mission en cours !
-              </ItalicWarningTypography>
-            )}
-          </InfoCard>
+          {!controlId && (
+            <InfoCard className={infoCardStyles.topMargin}>
+              {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
+                <DayRegulatoryAlerts
+                  day={isoFormatLocalDate(dayStart)}
+                  userId={userId}
+                  shouldDisplayInitialEmployeeVersion={
+                    shouldDisplayInitialEmployeeVersion
+                  }
+                />
+              ) : (
+                <ItalicWarningTypography>
+                  Mission en cours !
+                </ItalicWarningTypography>
+              )}
+            </InfoCard>
+          )}
         </>
       )}
 
