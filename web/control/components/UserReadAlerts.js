@@ -41,6 +41,16 @@ const HELPER_TEXT_SEVERAL_INFRACTIONS =
 const HELPER_TEXT_SINGLE_INFRACTION =
   "Sélectionnez l’infraction si vous souhaitez la verbaliser";
 
+export const WarningComputedAlerts = () => (
+  <Alert severity="info">
+    <Typography gutterBottom>
+      Les infractions calculées par Mobilic se basent sur la version validée par
+      le gestionnaire, ou, si elle n’a pas été faite au moment du contrôle, sur
+      celle du salarié.
+    </Typography>
+  </Alert>
+);
+
 export function UserReadAlerts({
   setTab,
   groupedAlerts,
@@ -83,13 +93,7 @@ export function UserReadAlerts({
           >
             Infractions calculées par Mobilic
           </Typography>{" "}
-          <Alert severity="info">
-            <Typography gutterBottom>
-              Les infractions calculées par Mobilic se basent sur la version
-              validée par le gestionnaire, ou, si elle n’a pas été faite au
-              moment du contrôle, sur celle du salarié.
-            </Typography>
-          </Alert>
+          <WarningComputedAlerts />
           {businesses && businesses.length > 1 && (
             <Alert severity="warning" sx={{ marginTop: 1 }}>
               <Typography gutterBottom>

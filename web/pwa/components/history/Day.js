@@ -12,6 +12,7 @@ import { makeStyles } from "@mui/styles";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
 import { prettyFormatDay } from "common/utils/time";
 import { getNextHeadingComponent } from "common/utils/html";
+import { AlertsInHistory } from "../../../control/components/AlertsInHistory";
 
 export const useStyles = makeStyles(theme => ({
   contradictorySwitch: {
@@ -37,7 +38,8 @@ export function Day({
   vehicles,
   userId,
   controlId = null,
-  headingComponent
+  headingComponent,
+  alertsInPeriod = null
 }) {
   const infoCardStyles = useInfoCardStyles();
   const classes = useStyles();
@@ -111,6 +113,9 @@ export function Day({
   );
   return (
     <Box>
+      {alertsInPeriod && alertsInPeriod.length > 0 && (
+        <AlertsInHistory alertsInPeriod={alertsInPeriod} />
+      )}
       {missionsDeleted.length > 0 ? (
         <Alert severity="warning" sx={{ marginBottom: 2, textAlign: "left" }}>
           <Typography>{missionsDeletedWarning}</Typography>

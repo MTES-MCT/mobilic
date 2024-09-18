@@ -3,7 +3,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import { RegulatoryAlert } from "./RegulatoryAlert";
+import { formatAlertText, RegulatoryAlert } from "./RegulatoryAlert";
 import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
 import Accordion from "@mui/material/Accordion";
@@ -143,6 +143,39 @@ export function AlertGroup({
             </ListItem>
           ))}
         </List>
+      </AccordionDetails>
+    </Accordion>
+  );
+}
+
+export function AlertCard({ alert }) {
+  const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+  return (
+    <Accordion
+      expanded={open}
+      onChange={(event, open_) => setOpen(open_)}
+      variant="outlined"
+      className={classes.container}
+    >
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Grid
+          container
+          spacing={2}
+          alignItems="center"
+          justifyContent="space-between"
+          wrap="nowrap"
+        >
+          <Grid item>
+            <Typography className="bold" color="primary">
+              {alert.sanction}
+            </Typography>
+            <Typography className="bold">{alert.infringementLabel}</Typography>
+          </Grid>
+        </Grid>
+      </AccordionSummary>
+      <AccordionDetails className={classes.details}>
+        <Typography>{formatAlertText(alert, alert.type)}</Typography>
       </AccordionDetails>
     </Accordion>
   );

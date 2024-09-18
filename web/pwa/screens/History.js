@@ -196,7 +196,8 @@ export function History({
   createMission = null,
   openPeriod = null,
   controlId = null,
-  regulationComputationsByDay = []
+  regulationComputationsByDay = [],
+  groupedAlerts = null
 }) {
   const location = useLocation();
   const history = useHistory();
@@ -392,6 +393,37 @@ export function History({
     return periodElement ? periodElement.regulationComputations : [];
   }, [selectedPeriod, regulationComputationsByDay]);
 
+  const alertsInPeriod = React.useMemo(() => {
+    if (!groupedAlerts) {
+      return null;
+    }
+    if (currentTab === "day") {
+      return groupedAlerts.reduce((arr, curr) => {
+        let { alerts, ...rest } = curr;
+        alerts = alerts
+          .filter(alert => !!alert.day && alert.day === selectedPeriod)
+          .map(alert => ({
+            ...alert,
+            ...rest
+          }));
+        return [...arr, ...alerts];
+      }, []);
+    }
+    if (currentTab === "week") {
+      return groupedAlerts.reduce((arr, curr) => {
+        let { alerts, ...rest } = curr;
+        alerts = alerts
+          .filter(alert => !!alert.week && alert.week === selectedPeriod)
+          .map(alert => ({
+            ...alert,
+            ...rest
+          }));
+        return [...arr, ...alerts];
+      }, []);
+    }
+    return null;
+  }, [selectedPeriod, currentTab, groupedAlerts]);
+
   /* MANAGE MESSAGE WHEN NO DATA */
 
   const noDataMessage = currentTab => {
@@ -585,7 +617,8 @@ export function History({
             coworkers,
             vehicles,
             userId: actualUserId,
-            controlId: controlId
+            controlId: controlId,
+            alertsInPeriod
           })
         ) : (
           <Box className={classes.placeholder}>

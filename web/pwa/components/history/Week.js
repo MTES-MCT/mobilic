@@ -15,6 +15,7 @@ import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { WeekRegulatoryAlerts } from "../../../regulatory/WeekRegulatoryAlerts";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
+import { AlertsInHistory } from "../../../control/components/AlertsInHistory";
 
 export function Week({
   missionsInPeriod,
@@ -24,7 +25,8 @@ export function Week({
   handleMissionClick,
   userId,
   headingComponent,
-  controlId = null
+  controlId = null,
+  alertsInPeriod = null
 }) {
   const infoCardStyles = useInfoCardStyles();
 
@@ -64,6 +66,9 @@ export function Week({
   }, [hasWorkMissions, stats]);
   return (
     <div>
+      {alertsInPeriod && alertsInPeriod.length > 0 && (
+        <AlertsInHistory alertsInPeriod={alertsInPeriod} />
+      )}
       {missionsDeleted.length > 0 && (
         <Alert severity="warning" sx={{ marginBottom: 2 }}>
           <Typography>{missionsDeletedWarning}</Typography>
