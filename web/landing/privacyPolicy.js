@@ -4,40 +4,35 @@ import { Header } from "../common/Header";
 import { makeStyles } from "@mui/styles";
 import { Footer } from "./footer";
 import Link from "@mui/material/Link";
-// import { SimpleTable } from "@dataesr/react-dsfr";
+import { Table } from "@codegouvfr/react-dsfr/Table";
 import { usePageTitle } from "../common/UsePageTitle";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { ExternalLink } from "../common/ExternalLink";
 
+const dataCustodyHeaders = ["Catégorie de données", "Durée de conservation"];
 const dataCustody = [
-  {
-    "Catégorie de données": "Données relatives aux salariés",
-    "Durée de conservation":
-      "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998"
-  },
-  {
-    "Catégorie de données": "Données relatives aux gestionnaires",
-    "Durée de conservation":
-      "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998"
-  },
-  {
-    "Catégorie de données":
-      "Données relatives au temps de travail et de repos des salariés",
-    "Durée de conservation":
-      "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998"
-  },
-  {
-    "Catégorie de données": "Données relatives à la newsletter",
-    "Durée de conservation":
-      "Jusqu’à la demande de désinscription ou 2 ans à compter du dernier contact"
-  },
-  {
-    "Catégorie de données": "Données relatives aux webinaires",
-    "Durée de conservation":
-      "Les données sont conservées 2 ans à compter de la fin du webinaire"
-  }
+  [
+    "Données relatives aux salariés",
+    "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998"
+  ],
+  [
+    "Données relatives aux gestionnaires",
+    "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998"
+  ],
+  [
+    "Données relatives au temps de travail et de repos des salariés",
+    "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998"
+  ],
+  [
+    "Données relatives à la newsletter",
+    "Jusqu’à la demande de désinscription ou 2 ans à compter du dernier contact"
+  ],
+  [
+    "Données relatives aux webinaires",
+    "Les données sont conservées 2 ans à compter de la fin du webinaire"
+  ]
 ];
 
 const scalingoLink =
@@ -52,61 +47,76 @@ const mailjetLink = "https://www.mailjet.com/fr/legal/dpa/";
 const brevoLink = "https://www.brevo.com/legal/termsofuse/#annex";
 const livestormLink = "https://livestorm.co/fr/rgpd";
 
+const dataInfraHeaders = [
+  "Partenaire",
+  "Traitement réalisé",
+  "Pays destinataire",
+  "Garanties"
+];
 const dataInfra = [
-  {
-    Partenaire: "Scalingo",
-    "Traitement réalisé": "Hébergement de la base de données",
-    "Pays destinataire": "France",
-    Garanties: <ExternalLink url={scalingoLink} title="Garantie Scalingo" />
-  },
-  {
-    Partenaire: "OVH",
-    "Traitement réalisé": "Hébergement des logs",
-    "Pays destinataire": "France",
-    Garanties: <ExternalLink url={ovhLink} title="Garantie OVH" />
-  },
-  {
-    Partenaire: "Crisp",
-    "Traitement réalisé": "Support / Chat",
-    "Pays destinataire": "France",
-    Garanties: <ExternalLink url={crispLink} title="Garantie Crisp" />
-  },
-  {
-    Partenaire: "Sentry",
-    "Traitement réalisé": "Tracking d’erreurs",
-    "Pays destinataire": "États-Unis",
-    Garanties: <ExternalLink url={sentryLink} title="Garantie Sentry" />
-  },
-  {
-    Partenaire: "Metabase",
-    "Traitement réalisé": "Mesure d’audience",
-    "Pays destinataire": "France",
-    Garanties: <ExternalLink url={metabaseLink} title="Garantie Metabase" />
-  },
-  {
-    Partenaire: "Google",
-    "Traitement réalisé": "Publicité",
-    "Pays destinataire": "États-Unis",
-    Garanties: <ExternalLink url={googleLink} title="Garantie Google" />
-  },
-  {
-    Partenaire: "Mailjet",
-    "Traitement réalisé": "Envoi d’e-mails / Newsletter",
-    "Pays destinataire": "France",
-    Garanties: <ExternalLink url={mailjetLink} title="Garantie Mailjet" />
-  },
-  {
-    Partenaire: "Brevo",
-    "Traitement réalisé": "Envoi d’e-mails / Newsletter",
-    "Pays destinataire": "France",
-    Garanties: <ExternalLink url={brevoLink} title="Garantie Brevo" />
-  },
-  {
-    Partenaire: "Livestorm",
-    "Traitement réalisé": "Webinaires",
-    "Pays destinataire": "Irlande",
-    Garanties: <ExternalLink url={livestormLink} title="Garantie Livestorm" />
-  }
+  [
+    "Scalingo",
+    "Hébergement de la base de données",
+    "France",
+    // eslint-disable-next-line react/jsx-key
+    <ExternalLink url={scalingoLink} title="Garantie Scalingo" />
+  ],
+  [
+    "OVH",
+    "Hébergement des logs",
+    "France",
+    // eslint-disable-next-line react/jsx-key
+    <ExternalLink url={ovhLink} title="Garantie OVH" />
+  ],
+  [
+    "Crisp",
+    "Support / Chat",
+    "France",
+    // eslint-disable-next-line react/jsx-key
+    <ExternalLink url={crispLink} title="Garantie Crisp" />
+  ],
+  [
+    "Sentry",
+    "Tracking d’erreurs",
+    "États-Unis",
+    // eslint-disable-next-line react/jsx-key
+    <ExternalLink url={sentryLink} title="Garantie Sentry" />
+  ],
+  [
+    "Metabase",
+    "Mesure d’audience",
+    "France",
+    // eslint-disable-next-line react/jsx-key
+    <ExternalLink url={metabaseLink} title="Garantie Metabase" />
+  ],
+  [
+    "Google",
+    "Publicité",
+    "États-Unis",
+    // eslint-disable-next-line react/jsx-key
+    <ExternalLink url={googleLink} title="Garantie Google" />
+  ],
+  [
+    "Mailjet",
+    "Envoi d’e-mails / Newsletter",
+    "France",
+    // eslint-disable-next-line react/jsx-key
+    <ExternalLink url={mailjetLink} title="Garantie Mailjet" />
+  ],
+  [
+    "Brevo",
+    "Envoi d’e-mails / Newsletter",
+    "France",
+    // eslint-disable-next-line react/jsx-key
+    <ExternalLink url={brevoLink} title="Garantie Brevo" />
+  ],
+  [
+    "Livestorm",
+    "Webinaires",
+    "Irlande",
+    // eslint-disable-next-line react/jsx-key
+    <ExternalLink url={livestormLink} title="Garantie Livestorm" />
+  ]
 ];
 
 const useStyles = makeStyles(theme => ({
@@ -216,7 +226,7 @@ function PrivacyPolicyContent() {
         </Box>
         <Box>
           <h2>Pendant combien de temps conservons-nous ces données&nbsp;?</h2>
-          {/* <SimpleTable data={dataCustody} /> */}
+          <Table data={dataCustody} headers={dataCustodyHeaders} />
         </Box>
         <Box>
           <h2>Qui peut avoir accès à ces données&nbsp;?</h2>
@@ -278,7 +288,7 @@ function PrivacyPolicyContent() {
             protection des données et qu&lsquo;ils apportent des garanties
             suffisantes en matière de sécurité des données.
           </p>
-          {/* <SimpleTable data={dataInfra} /> */}
+          <Table headers={dataInfraHeaders} data={dataInfra} />
         </Box>
         <Box>
           <h2>Quels sont vos droits&nbsp;?</h2>
