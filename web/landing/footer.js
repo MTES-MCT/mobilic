@@ -20,7 +20,7 @@ export function Footer({ withFollow = true }) {
           </>
         }
         homeLinkProps={{
-          href: "/",
+          to: "/",
           title: "Accueil - Mobilic"
         }}
         accessibility="non compliant"
