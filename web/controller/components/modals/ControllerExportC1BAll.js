@@ -1,4 +1,4 @@
-// import { Button } from "@dataesr/react-dsfr";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Alert } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
@@ -135,25 +135,24 @@ export default function ControllerExportC1BAll({
         </>
       }
       actions={
-        <></>
-        // <Button
-        //   title="téléchargement"
-        //   className={classes.modalFooter}
-        //   onClick={async () => {
-        //     alerts.withApiErrorHandling(async () => {
-        //       const options = {
-        //         min_date: exportFilters.fromDate,
-        //         max_date: exportFilters.toDate,
-        //         with_digital_signatures: sign
-        //       };
-        //       await api.downloadFileHttpQuery(HTTP_QUERIES.controlsC1bExport, {
-        //         json: options
-        //       });
-        //     }, "download-control-c1b-all");
-        //   }}
-        // >
-        //   Générer
-        // </Button>
+        <Button
+          title="téléchargement"
+          className={classes.modalFooter}
+          onClick={async () => {
+            alerts.withApiErrorHandling(async () => {
+              const options = {
+                min_date: exportFilters.fromDate,
+                max_date: exportFilters.toDate,
+                with_digital_signatures: sign
+              };
+              await api.downloadFileHttpQuery(HTTP_QUERIES.controlsC1bExport, {
+                json: options
+              });
+            }, "download-control-c1b-all");
+          }}
+        >
+          Générer
+        </Button>
       }
     />
   );

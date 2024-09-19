@@ -1,4 +1,4 @@
-// import { Button as ButtonDsfr } from "@dataesr/react-dsfr";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import { makeStyles } from "@mui/styles";
@@ -106,14 +106,13 @@ export function ControllerHistoryFilters({
         />
       </Grid>
       <Grid item>
-        {/* <ButtonDsfr
-          title="Exporter"
+        <Button
           onClick={() =>
             modals.open("controllerExportC1BAll", { controlFilters })
           }
         >
           Exporter
-        </ButtonDsfr> */}
+        </Button>
       </Grid>
     </Grid>
   );

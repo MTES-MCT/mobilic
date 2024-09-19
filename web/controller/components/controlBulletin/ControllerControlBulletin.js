@@ -2,6 +2,7 @@ import React from "react";
 
 import Stack from "@mui/material/Stack";
 // import { Button, Stepper } from "@dataesr/react-dsfr";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import Typography from "@mui/material/Typography";
 import { ControlBulletinHeader } from "./ControlBulletinHeader";
 import {
@@ -273,12 +274,12 @@ export function ControllerControlBulletin({
       p={2}
       spacing={4}
     >
-      {/* <Button title="Enregistrer" onClick={() => onSaveButton(controlBulletin)}>
+      <Button onClick={() => onSaveButton(controlBulletin)}>
         {!STEPS[step + 1] ? "Enregistrer" : "Suivant"}
       </Button>
-      <Button title="Annuler" onClick={() => onClose()} secondary>
+      <Button onClick={() => onClose()} priority="secondary">
         Annuler
-      </Button> */}
+      </Button>
     </Stack>
   ];
 }

@@ -7,6 +7,7 @@ import { Footer } from "./footer";
 import Alert from "@mui/material/Alert";
 import { Link } from "../common/LinkButton";
 // import { Button, Table, TextInput } from "@dataesr/react-dsfr";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import Grid from "@mui/material/Grid";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../common/Snackbar";
@@ -131,16 +132,16 @@ export function Certificate() {
             message={inputErrorMessage}
             messageType={inputErrorMessage ? "error" : ""}
           />
-        </Grid>
+        </Grid> */}
         <Grid item xs={12} md={2}>
           <Button
-            icon="fr-icon-search-line"
+            iconId="fr-icon-search-line"
             iconPosition="left"
             onClick={() => onSearch()}
           >
             Rechercher
           </Button>
-        </Grid> */}
+        </Grid>
       </Grid>
     </Container>,
     searchResults?.length > 1 && (
