@@ -147,7 +147,7 @@ export function RegulatoryAlert({
 }) {
   return (
     <Stack direction="row" spacing={2} alignItems="baseline" flexWrap="nowrap">
-      {/* {!readOnlyAlerts && isReportable && (
+      {!readOnlyAlerts && isReportable && (
         <Checkbox
           disabled={!isReportingInfractions}
           options={[
@@ -164,7 +164,7 @@ export function RegulatoryAlert({
             }
           ]}
         />
-      )} */}
+      )}
       <div>
         {setTab ? (
           <Link

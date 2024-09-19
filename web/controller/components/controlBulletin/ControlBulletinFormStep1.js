@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 
 import Stack from "@mui/material/Stack";
+import { Select } from "@codegouvfr/react-dsfr/Select";
 // import { Col, Row, Select, TextInput } from "@dataesr/react-dsfr";
 import { COUNTRIES } from "../../utils/country";
 import { DEPARTMENTS } from "../../utils/departments";
@@ -219,19 +220,29 @@ export function ControlBulletinFormStep1({
           </Col>
         </Row> */}
       </Box>
-      {/* <Select
+      <Select
         label="Nationalité du salarié"
-        selected={controlBulletin.userNationality}
-        name="userNationality"
-        required
-        onChange={e => {
-          handleEditControlBulletin(e);
+        nativeSelectProps={{
+          onChange: e => handleEditControlBulletin(e),
+          value: controlBulletin.userNationality,
+          name: "userNationality",
+          required: true
         }}
-        options={COUNTRIES}
-        messageType={
-          !controlBulletin.userNationality && showErrors ? "error" : undefined
+        state={
+          !controlBulletin.userNationality && showErrors ? "error" : "default"
         }
-      /> */}
+        stateRelatedMessage={
+          !controlBulletin.userNationality && showErrors
+            ? "Veuillez compléter ce champ"
+            : ""
+        }
+      >
+        {COUNTRIES.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </Select>
     </Stack>
   );
 }

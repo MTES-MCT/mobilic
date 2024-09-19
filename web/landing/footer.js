@@ -1,16 +1,4 @@
 import React from "react";
-// import {
-//   Footer as DSFooter,
-//   FooterBody,
-//   FooterBodyItem,
-//   FooterOperator,
-//   FooterBottom,
-//   FooterPartners,
-//   FooterPartnersLogo,
-//   FooterLink,
-//   Logo,
-//   Link
-// } from "@dataesr/react-dsfr";
 import { Footer as DSFooter } from "@codegouvfr/react-dsfr/Footer";
 import { useModals } from "common/utils/modals";
 import { Follow } from "./follow";
@@ -23,7 +11,7 @@ export function Footer({ withFollow = true }) {
   return (
     <>
       {withFollow && <Follow />}
-      {/* <DSFooter
+      <DSFooter
         brandTop={
           <>
             République
@@ -33,8 +21,7 @@ export function Footer({ withFollow = true }) {
         }
         homeLinkProps={{
           href: "/",
-          title:
-            "Accueil - Nom de l%E2%80%99entit%C3%A9 (minist%C3%A8re, secr%C3%A9tariat d%E2%80%98%C3%A9tat, gouvernement)"
+          title: "Accueil - Mobilic"
         }}
         accessibility="non compliant"
         contentDescription="Mobilic est un service numérique de l’Etat, soutenu par la
@@ -42,11 +29,11 @@ export function Footer({ withFollow = true }) {
               (DGITM), incubé à la Fabrique Numérique du Ministère de la
               Transition écologique, membre du réseau d’incubateurs
               beta.gouv.fr."
-        // operatorLogo={{
-        //   alt: "Fabrique du numérique",
-        //   imgUrl: "",
-        //   orientation: "horizontal"
-        // }}
+        operatorLogo={{
+          alt: "Fabrique du numérique",
+          imgUrl: "",
+          orientation: "horizontal"
+        }}
         partnersLogos={{
           sub: [
             {
@@ -59,30 +46,46 @@ export function Footer({ withFollow = true }) {
             }
           ]
         }}
+        termsLinkProps={{
+          to: "legal-notices"
+        }}
         bottomItems={[
-          { text: "Mentions légales", linkProps: { to: "legal-notices" } }
+          {
+            text: "CGU",
+            linkProps: { to: "#", onClick: () => modals.open("cgu") }
+          },
+          {
+            text: "Données personnelles",
+            linkProps: { to: "donnees-personnelles" }
+          },
+          {
+            text: "Statistiques",
+            linkProps: { to: "stats" }
+          },
+          {
+            text: "Documentation API",
+            linkProps: {
+              to: "https://developers.mobilic.beta.gouv.fr",
+              target: "_blank",
+              rel: "noopener noreferrer"
+            }
+          }
         ]}
         domains={["ecologie.gouv.fr", "service-public.fr", "beta.gouv.fr"]}
-
-        //   <FooterBottom>
-
-        //   <FooterLink href="legal-notices">Mentions légales</FooterLink>
-        //   <FooterLink href="#" onClick={() => modals.open("cgu")}>
-        //     CGU
-        //   </FooterLink>
-        //   <FooterLink href="/donnees-personnelles">
-        //     Données personnelles
-        //   </FooterLink>
-        //   <FooterLink href="/stats">Statistiques</FooterLink>
-        //   <FooterLink
-        //     href="https://developers.mobilic.beta.gouv.fr"
-        //     target="_blank"
-        //     rel="noopener noreferrer"
-        //   >
-        //     Documentation API
-        //   </FooterLink>
-        // </FooterBottom>
-      /> */}
+        license={
+          <>
+            Sauf mention explicite de propriété intellectuelle détenue par des
+            tiers, les contenus de ce site sont proposés sous{" "}
+            <a
+              href="https://github.com/MTES-MCT/mobilic/blob/master/LICENSE.txt"
+              target="_blank"
+              rel="noreferrer"
+            >
+              licence MIT
+            </a>
+          </>
+        }
+      />
     </>
   );
 }

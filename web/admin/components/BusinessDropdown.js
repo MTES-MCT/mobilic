@@ -10,24 +10,22 @@ export function BusinessDropdown({ employmentId, companyId, business }) {
   );
 
   return (
-    <></>
-    // <Select
-    //   label="Type d'activité"
-    //   nativeSelectProps={{
-    //     onChange: e => udpateEmployeeBusinessType(e.target.value),
-    //     value: business?.businessType || ""
-    //   }}
-    // >
-    //   {!business?.businessType && (
-    //     <option value="" disabled>
-    //       Non renseigné
-    //     </option>
-    //   )}
-    //   {BUSINESS_TYPES.map(businessType => (
-    //     <option key={businessType.value} value={businessType.value}>
-    //       {businessType.label}
-    //     </option>
-    //   ))}
-    // </Select>
+    <Select
+      nativeSelectProps={{
+        onChange: e => udpateEmployeeBusinessType(e.target.value),
+        value: business?.businessType || ""
+      }}
+    >
+      {!business?.businessType && (
+        <option value="" disabled>
+          Non renseigné
+        </option>
+      )}
+      {BUSINESS_TYPES.map(businessType => (
+        <option key={businessType.value} value={businessType.value}>
+          {businessType.label}
+        </option>
+      ))}
+    </Select>
   );
 }

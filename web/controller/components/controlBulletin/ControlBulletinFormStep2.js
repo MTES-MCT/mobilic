@@ -8,6 +8,7 @@ import Stack from "@mui/material/Stack";
 //   TextInput,
 //   Checkbox
 // } from "@dataesr/react-dsfr";
+import { Select } from "@codegouvfr/react-dsfr/Select";
 import { COUNTRIES } from "../../utils/country";
 import { CONTROL_BULLETIN_TRANSPORT_TYPE } from "../../utils/controlBulletin";
 
@@ -56,22 +57,33 @@ export function ControlBulletinFormStep2({
             ? "error"
             : ""
         }
-      />
+      />*/}
       <Select
         label="Pays d'immatriculation"
-        selected={controlBulletin.vehicleRegistrationCountry || ""}
-        name="vehicleRegistrationCountry"
-        onChange={e => {
-          handleEditControlBulletin(e);
+        nativeSelectProps={{
+          onChange: e => handleEditControlBulletin(e),
+          value: controlBulletin.vehicleRegistrationCountry || "",
+          name: "vehicleRegistrationCountry",
+          required: true
         }}
-        options={COUNTRIES}
-        required
-        messageType={
+        state={
           !controlBulletin.vehicleRegistrationCountry && showErrors
             ? "error"
+            : "default"
+        }
+        stateRelatedMessage={
+          !controlBulletin.vehicleRegistrationCountry && showErrors
+            ? "Veuillez compléter ce champ"
             : ""
         }
-      />
+      >
+        {COUNTRIES.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </Select>
+      {/*
       <TextInput
         value={controlBulletin.missionAddressBegin || ""}
         name="missionAddressBegin"

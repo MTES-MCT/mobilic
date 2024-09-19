@@ -78,7 +78,7 @@ export function BusinessType({
     <div style={{ textAlign: "left" }}>
       <Grid container spacing={isSmDown ? 2 : forceColumn ? 1 : 2}>
         <Grid item xs={12} sm={forceColumn ? 6 : 12}>
-          {/* <Select
+          <Select
             label="Type de transport routier"
             nativeSelectProps={{
               onChange: e => setTransportType(e.target.value),
@@ -99,10 +99,10 @@ export function BusinessType({
                 {option.label}
               </option>
             ))}
-          </Select> */}
+          </Select>
         </Grid>
         <Grid item xs={12} sm={forceColumn ? 6 : 12}>
-          {/* <Select
+          <Select
             label="Activité principale"
             nativeSelectProps={{
               onChange: e => setBusinessType(e.target.value),
@@ -124,7 +124,7 @@ export function BusinessType({
                 {option.label}
               </option>
             ))}
-          </Select> */}
+          </Select>
         </Grid>
       </Grid>
       {displayInfo && (

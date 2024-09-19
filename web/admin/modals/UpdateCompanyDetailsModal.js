@@ -61,7 +61,7 @@ export default function UpdateCompanyDetailsModal({
         <>
           <MandatoryField />
           <div className="fr-input-group">
-            {/* <Input
+            <Input
               label="Nom usuel"
               state={!newCompanyName ? "error" : "default"}
               stateRelatedMessage={
@@ -73,7 +73,7 @@ export default function UpdateCompanyDetailsModal({
                 onChange: e => setNewCompanyName(e.target.value),
                 required: true
               }}
-            /> */}
+            />
           </div>
           <PhoneNumber
             currentPhoneNumber={newCompanyPhoneNumber || undefined}
@@ -89,7 +89,8 @@ export default function UpdateCompanyDetailsModal({
                 onChangeBusinessType={setNewCompanyBusinessType}
                 required
               />
-              {/* <Checkbox
+              <Checkbox
+                legend=""
                 options={[
                   {
                     hintText:
@@ -104,19 +105,19 @@ export default function UpdateCompanyDetailsModal({
                   }
                 ]}
                 disabled={!hasBusinessTypeChanged}
-              /> */}
+              />
             </>
           )}
         </>
       }
       actions={
         <>
-          {/* <Button onClick={handleSubmit} disabled={!canSave}>
+          <Button onClick={handleSubmit} disabled={!canSave}>
             Enregistrer
           </Button>
           <Button onClick={handleClose} priority="secondary">
             Annuler
-          </Button> */}
+          </Button>
         </>
       }
     />
