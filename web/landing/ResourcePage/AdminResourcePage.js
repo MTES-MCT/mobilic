@@ -7,7 +7,7 @@ import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import Button from "@mui/material/Button";
 import { VIDEOS, VideoCard } from "./VideoCard";
-// import { Breadcrumb, BreadcrumbItem } from "@dataesr/react-dsfr";
+import { Breadcrumb } from "@codegouvfr/react-dsfr/Breadcrumb";
 import { SlideshareCard } from "./SlideshareCard";
 import Box from "@mui/material/Box";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
@@ -27,10 +27,20 @@ export function AdminResourcePage() {
       maxWidth={false}
     >
       <Container maxWidth="lg" className={classes.inner}>
-        {/* <Breadcrumb>
-          <BreadcrumbItem href="/resources/home">Documentation</BreadcrumbItem>
-          <BreadcrumbItem>Gestionnaire</BreadcrumbItem>
-        </Breadcrumb> */}
+        <Breadcrumb
+          currentPageLabel="Gestionnaire"
+          homeLinkProps={{
+            to: "/"
+          }}
+          segments={[
+            {
+              label: "Documentation",
+              linkProps: {
+                to: "/resources/home"
+              }
+            }
+          ]}
+        />
         <PaperContainerTitle variant="h1" className={classes.title}>
           Je suis gestionnaire
         </PaperContainerTitle>
