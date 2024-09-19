@@ -1,4 +1,4 @@
-import { Button } from "@dataesr/react-dsfr";
+// import { Button } from "@dataesr/react-dsfr";
 import { Alert } from "@mui/material";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
@@ -75,23 +75,24 @@ export default function ControllerExportC1BOne({
         </>
       }
       actions={
-        <Button
-          className={classes.modalFooter}
-          onClick={async () => {
-            alerts.withApiErrorHandling(async () => {
-              const options = {
-                control_id: controlId,
-                with_digital_signatures: sign,
-                employee_version: employeeVersion
-              };
-              await api.downloadFileHttpQuery(HTTP_QUERIES.controlC1bExport, {
-                json: options
-              });
-            }, "download-control-c1b-one");
-          }}
-        >
-          Générer
-        </Button>
+        <></>
+        // <Button
+        //   className={classes.modalFooter}
+        //   onClick={async () => {
+        //     alerts.withApiErrorHandling(async () => {
+        //       const options = {
+        //         control_id: controlId,
+        //         with_digital_signatures: sign,
+        //         employee_version: employeeVersion
+        //       };
+        //       await api.downloadFileHttpQuery(HTTP_QUERIES.controlC1bExport, {
+        //         json: options
+        //       });
+        //     }, "download-control-c1b-one");
+        //   }}
+        // >
+        //   Générer
+        // </Button>
       }
     />
   );

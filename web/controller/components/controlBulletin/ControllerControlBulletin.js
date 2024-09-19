@@ -1,7 +1,7 @@
 import React from "react";
 
 import Stack from "@mui/material/Stack";
-import { Button, Stepper } from "@dataesr/react-dsfr";
+// import { Button, Stepper } from "@dataesr/react-dsfr";
 import Typography from "@mui/material/Typography";
 import { ControlBulletinHeader } from "./ControlBulletinHeader";
 import {
@@ -228,13 +228,13 @@ export function ControllerControlBulletin({
       Pour éditer un bulletin de contrôle au format PDF, veuillez renseigner les
       champs ci-dessous.
     </Typography>,
-    <Stepper
-      key={15}
-      currentStep={step}
-      steps={3}
-      currentTitle={STEPS[step].title}
-      nextStepTitle={STEPS[step + 1]?.title || ""}
-    />,
+    // <Stepper
+    //   key={15}
+    //   currentStep={step}
+    //   steps={3}
+    //   currentTitle={STEPS[step].title}
+    //   nextStepTitle={STEPS[step + 1]?.title || ""}
+    // />,
     step === 1 && (
       <ControlBulletinFormStep1
         key={20}
@@ -273,12 +273,12 @@ export function ControllerControlBulletin({
       p={2}
       spacing={4}
     >
-      <Button title="Enregistrer" onClick={() => onSaveButton(controlBulletin)}>
+      {/* <Button title="Enregistrer" onClick={() => onSaveButton(controlBulletin)}>
         {!STEPS[step + 1] ? "Enregistrer" : "Suivant"}
       </Button>
       <Button title="Annuler" onClick={() => onClose()} secondary>
         Annuler
-      </Button>
+      </Button> */}
     </Stack>
   ];
 }

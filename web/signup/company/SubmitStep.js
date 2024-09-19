@@ -7,7 +7,7 @@ import { PhoneNumber } from "../../common/PhoneNumber";
 import Stack from "@mui/material/Stack";
 import { BusinessType } from "../../common/BusinessType";
 import { Section } from "../../common/Section";
-import { TextInput } from "@dataesr/react-dsfr";
+// import { TextInput } from "@dataesr/react-dsfr";
 import { MandatoryField } from "../../common/MandatoryField";
 
 const useStyles = makeStyles(theme => ({
@@ -47,13 +47,13 @@ export function SubmitStep({
         {usingCompanyName && (
           <Stack direction="column" spacing={2} textAlign="left">
             <MandatoryField />
-            <TextInput
+            {/* <TextInput
               id="company-usual-name"
               value={companyName}
               onChange={e => setCompanyName(e.target.value.trimLeft())}
               required
               label="Nom usuel"
-            />
+            /> */}
             <PhoneNumber
               currentPhoneNumber={phoneNumber}
               setCurrentPhoneNumber={setPhoneNumber}

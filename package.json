@@ -12,7 +12,7 @@
   "dependencies": {
     "@babel/core": "^7.22.6",
     "@babel/runtime": "^7.6.2",
-    "@dataesr/react-dsfr": "^2.9.2",
+    "@codegouvfr/react-dsfr": "^1.13.2",
     "@datapunt/matomo-tracker-react": "0.5.1",
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.8.1",
@@ -118,7 +118,10 @@
     "build-analyze": "INLINE_RUNTIME_CHUNK=false node scripts/build.js --analyze",
     "build-with-nginx": "yarn build && scripts/start_nginx.sh",
     "test": "node scripts/test.js",
-    "lint": "eslint --ext .js,.jsx ./"
+    "lint": "eslint --ext .js,.jsx ./",
+    "postinstall": "react-dsfr copy-static-assets",
+    "predev": "react-dsfr update-icons",
+    "prebuild": "react-dsfr update-icons"
   },
   "engines": {
     "node": "14",
@@ -135,11 +138,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "lint-staged": {
     "*.{html,json,md,mdx,css,yaml}": [
@@ -202,6 +200,7 @@
       "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
     },
     "transformIgnorePatterns": [
+      "node_modules/(?!@codegouvfr/react-dsfr)",
       "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
       "^.+\\.module\\.(css|sass|scss)$"
     ],

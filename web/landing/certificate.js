@@ -6,7 +6,7 @@ import { Header } from "../common/Header";
 import { Footer } from "./footer";
 import Alert from "@mui/material/Alert";
 import { Link } from "../common/LinkButton";
-import { Button, Table, TextInput } from "@dataesr/react-dsfr";
+// import { Button, Table, TextInput } from "@dataesr/react-dsfr";
 import Grid from "@mui/material/Grid";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../common/Snackbar";
@@ -121,7 +121,7 @@ export function Certificate() {
         Consultez le statut de certification d'une entreprise :
       </Typography>
       <Grid container mt={2} mb={5} className={classes.searchBar}>
-        <Grid item xs={12} md={10}>
+        {/* <Grid item xs={12} md={10}>
           <TextInput
             placeholder="Rechercher un nom d'entreprise ou un SIREN"
             required
@@ -140,7 +140,7 @@ export function Certificate() {
           >
             Rechercher
           </Button>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Container>,
     searchResults?.length > 1 && (
@@ -168,18 +168,18 @@ export function Certificate() {
     searchResults?.length > 0 && (
       <Box key={15}>
         <CertificationImage className={classes.certificationImage} />
-        <Table
+        {/* <Table
           fixedHeader
           tableID="certifiactionTable"
           columns={resultColumns}
           rowKey={x => x.siren + x.siret}
           data={searchResults}
           className={classes.resultTable}
-        />
+        /> */}
       </Box>
     ),
     <Box key={20} className={classes.footer}>
-      <Footer />
+      {/* <Footer /> */}
     </Box>
   ];
 }

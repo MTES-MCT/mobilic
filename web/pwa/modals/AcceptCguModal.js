@@ -1,6 +1,6 @@
 import React from "react";
 import { Typography } from "@mui/material";
-import { Button, Checkbox } from "@dataesr/react-dsfr";
+// import { Button, Checkbox } from "@dataesr/react-dsfr";
 import { ExternalLink } from "../../common/ExternalLink";
 import Modal, { modalStyles } from "../../common/Modal";
 import { useCgu } from "../../common/useCgu";
@@ -53,11 +53,11 @@ export default function AcceptCguModal({ onAccept, onReject, handleClose }) {
           Pour continuer à bénéficier des services Mobilic, nous vous invitons à
           les lire et à les accepter.
         </Typography>
-        <Checkbox
+        {/* <Checkbox
           checked={isChecked}
           onChange={e => setIsChecked(e.target.checked)}
           label="En cochant cette case, vous confirmez avoir lu et accepté nos conditions générales d'utilisation"
-        />
+        /> */}
       </>
     ),
     [hasTurnedDown, isChecked]
@@ -72,7 +72,7 @@ export default function AcceptCguModal({ onAccept, onReject, handleClose }) {
       content={content}
       actions={
         <>
-          <Button
+          {/* <Button
             title="Accepter les Conditions Générales d'Utilisation"
             onClick={_onAccept}
             disabled={!isChecked}
@@ -99,7 +99,7 @@ export default function AcceptCguModal({ onAccept, onReject, handleClose }) {
             >
               Je refuse
             </Button>
-          )}
+          )} */}
         </>
       }
     />

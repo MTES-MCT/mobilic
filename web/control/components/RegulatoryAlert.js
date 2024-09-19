@@ -13,7 +13,7 @@ import {
 import { Link } from "../../common/LinkButton";
 import { ALERT_TYPES } from "common/utils/regulation/alertTypes";
 import Stack from "@mui/material/Stack";
-import { Checkbox } from "@dataesr/react-dsfr";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 
 const formatDate = timestamp => {
   const date = new Date(timestamp);
@@ -147,16 +147,24 @@ export function RegulatoryAlert({
 }) {
   return (
     <Stack direction="row" spacing={2} alignItems="baseline" flexWrap="nowrap">
-      {!readOnlyAlerts && isReportable && (
+      {/* {!readOnlyAlerts && isReportable && (
         <Checkbox
-          checked={alert.checked}
           disabled={!isReportingInfractions}
-          onChange={e => {
-            const alertDate = alert.day || alert.week || alert.month;
-            onUpdateInfraction(sanction, alertDate, e.target.checked);
-          }}
+          options={[
+            {
+              label: "",
+              nativeInputProps: {
+                name: "",
+                value: alert.checked,
+                onChange: e => {
+                  const alertDate = alert.day || alert.week || alert.month;
+                  onUpdateInfraction(sanction, alertDate, e.target.checked);
+                }
+              }
+            }
+          ]}
         />
-      )}
+      )} */}
       <div>
         {setTab ? (
           <Link

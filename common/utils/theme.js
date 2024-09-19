@@ -1,7 +1,7 @@
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
 
-const customOptions = {
+export const customOptions = {
   components: {
     MuiLink: {
       defaultProps: {

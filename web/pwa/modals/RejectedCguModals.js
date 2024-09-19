@@ -1,6 +1,6 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import { Button, Link } from "@dataesr/react-dsfr";
+// import { Button, Link } from "@dataesr/react-dsfr";
 import Modal, { modalStyles } from "../../common/Modal";
 import { prettyFormatDay } from "common/utils/time";
 import { useIsAdmin } from "../../common/hooks/useIsAdmin";
@@ -90,7 +90,7 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
       }
       actions={
         <>
-          <Button
+          {/* <Button
             onClick={downloadUserData}
             icon="fr-icon-download-line"
             iconPosition="left"
@@ -100,7 +100,7 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
           </Button>
           <Link href="/logout" className="fr-btn fr-btn--secondary">
             Se&nbsp;déconnecter
-          </Link>
+          </Link>*/}
         </>
       }
     />

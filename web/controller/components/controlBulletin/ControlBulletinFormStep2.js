@@ -1,13 +1,13 @@
 import React from "react";
 
 import Stack from "@mui/material/Stack";
-import {
-  Radio,
-  RadioGroup,
-  Select,
-  TextInput,
-  Checkbox
-} from "@dataesr/react-dsfr";
+// import {
+//   Radio,
+//   RadioGroup,
+//   Select,
+//   TextInput,
+//   Checkbox
+// } from "@dataesr/react-dsfr";
 import { COUNTRIES } from "../../utils/country";
 import { CONTROL_BULLETIN_TRANSPORT_TYPE } from "../../utils/controlBulletin";
 
@@ -18,7 +18,7 @@ export function ControlBulletinFormStep2({
 }) {
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
-      <TextInput
+      {/* <TextInput
         value={controlBulletin.siren || ""}
         name="siren"
         onChange={e => handleEditControlBulletin(e)}
@@ -155,7 +155,7 @@ export function ControlBulletinFormStep2({
           })
         }
         label="J'ai immobilisé le véhicule"
-      />
+      /> */}
     </Stack>
   );
 }

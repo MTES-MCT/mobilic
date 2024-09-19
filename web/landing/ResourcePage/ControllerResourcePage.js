@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import { Header } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
-import { Breadcrumb, BreadcrumbItem } from "@dataesr/react-dsfr";
+// import { Breadcrumb, BreadcrumbItem } from "@dataesr/react-dsfr";
 import { SlideshareCard } from "./SlideshareCard";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -26,10 +26,10 @@ export function ControllerResourcePage() {
       maxWidth={false}
     >
       <Container maxWidth="lg" className={classes.inner}>
-        <Breadcrumb>
+        {/* <Breadcrumb>
           <BreadcrumbItem href="/resources/home">Documentation</BreadcrumbItem>
           <BreadcrumbItem>Contrôleur</BreadcrumbItem>
-        </Breadcrumb>
+        </Breadcrumb> */}
         <PaperContainerTitle variant="h1" className={classes.title}>
           Je suis contrôleur
         </PaperContainerTitle>

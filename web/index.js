@@ -5,6 +5,13 @@ import Root from "./root";
 import { createRoot } from "react-dom/client";
 import { initSentry } from "common/utils/sentry";
 import { Crisp } from "crisp-sdk-web";
+import { startReactDsfr } from "@codegouvfr/react-dsfr/spa";
+import { Link } from "react-router-dom";
+
+startReactDsfr({
+  defaultColorScheme: "light",
+  Link
+});
 
 initSentry();
 

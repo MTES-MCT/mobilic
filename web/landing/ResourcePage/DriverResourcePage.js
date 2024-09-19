@@ -6,7 +6,7 @@ import { Header } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import { DriverVideoSection } from "./DriverVideoSection";
-import { Breadcrumb, BreadcrumbItem } from "@dataesr/react-dsfr";
+// import { Breadcrumb, BreadcrumbItem } from "@dataesr/react-dsfr";
 import Box from "@mui/material/Box";
 import { SlideshareCard } from "./SlideshareCard";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
@@ -25,10 +25,10 @@ export function DriverResourcePage() {
       maxWidth={false}
     >
       <Container maxWidth="lg" className={classes.inner}>
-        <Breadcrumb>
+        {/* <Breadcrumb>
           <BreadcrumbItem href="/resources/home">Documentation</BreadcrumbItem>
           <BreadcrumbItem>Travailleur mobile</BreadcrumbItem>
-        </Breadcrumb>
+        </Breadcrumb> */}
         <PaperContainerTitle variant="h1" className={classes.title}>
           Je suis travailleur mobile
         </PaperContainerTitle>

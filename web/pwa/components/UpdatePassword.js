@@ -104,7 +104,8 @@ export default function UpdatePasswordModal() {
           <Button
             className={classes.modalButton}
             title="Me le rappeler plus tard"
-            secondary
+            color="secondary"
+            variant="outlined"
             onClick={() => {
               snooze();
               setIsOpen(false);

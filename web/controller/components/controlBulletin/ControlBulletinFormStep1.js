@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 
 import Stack from "@mui/material/Stack";
-import { Col, Row, Select, TextInput } from "@dataesr/react-dsfr";
+// import { Col, Row, Select, TextInput } from "@dataesr/react-dsfr";
 import { COUNTRIES } from "../../utils/country";
 import { DEPARTMENTS } from "../../utils/departments";
 import { useApi } from "common/utils/api";
@@ -155,7 +155,7 @@ export function ControlBulletinFormStep1({
           editControlBulletinField(newValue.id, "locationId");
         }}
       />
-      <TextInput
+      {/* <TextInput
         value={controlBulletin.userLastName || ""}
         name="userLastName"
         onChange={e => handleEditControlBulletin(e)}
@@ -174,7 +174,7 @@ export function ControlBulletinFormStep1({
         messageType={
           !controlBulletin.userFirstName && showErrors ? "error" : undefined
         }
-      />
+      /> */}
       <Box
         sx={{ marginBottom: 4, maxWidth: "440px" }}
         role="group"
@@ -183,7 +183,7 @@ export function ControlBulletinFormStep1({
         <label className="fr-label" id="date-naissance-salarie">
           Date de naissance du salarié
         </label>
-        <Row gutters>
+        {/* <Row gutters>
           <Col n="3">
             <TextInput
               required
@@ -217,9 +217,9 @@ export function ControlBulletinFormStep1({
               hint="Ex : 1984"
             />
           </Col>
-        </Row>
+        </Row> */}
       </Box>
-      <Select
+      {/* <Select
         label="Nationalité du salarié"
         selected={controlBulletin.userNationality}
         name="userNationality"
@@ -231,7 +231,7 @@ export function ControlBulletinFormStep1({
         messageType={
           !controlBulletin.userNationality && showErrors ? "error" : undefined
         }
-      />
+      /> */}
     </Stack>
   );
 }

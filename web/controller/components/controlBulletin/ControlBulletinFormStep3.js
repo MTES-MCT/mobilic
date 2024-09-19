@@ -1,7 +1,7 @@
 import React from "react";
 
 import Stack from "@mui/material/Stack";
-import { TextInput } from "@dataesr/react-dsfr";
+// import { TextInput } from "@dataesr/react-dsfr";
 import { Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import List from "@mui/material/List";
@@ -19,12 +19,12 @@ export function ControlBulletinFormStep3({
 }) {
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
-      <TextInput
+      {/* <TextInput
         value={grecoId}
         name="grecoId"
         onChange={e => onUpdateGrecoId(e.target.value)}
         label="Votre identifiant de carte contrôleur"
-      />
+      /> */}
       <Typography variant="h5">Infractions retenues</Typography>
       {groupedAlerts?.length > 0 ? (
         <List>
@@ -48,14 +48,14 @@ export function ControlBulletinFormStep3({
           Il n'y a aucune alerte réglementaire sur la période
         </Typography>
       )}
-      <TextInput
+      {/* <TextInput
         value={controlBulletin.observation || ""}
         name="observation"
         label="Observations"
         rows="3"
         onChange={e => handleEditControlBulletin(e)}
         textarea
-      />
+      /> */}
       {!controlCanBeDownloaded && (
         <Alert severity="warning">
           Certains champs obligatoires doivent être renseignés pour permettre le

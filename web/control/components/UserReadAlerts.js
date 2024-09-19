@@ -9,7 +9,7 @@ import List from "@mui/material/List";
 import { AlertGroup } from "./AlertGroup";
 import { prettyFormatDayHour } from "common/utils/time";
 import Stack from "@mui/material/Stack";
-import { Button } from "@dataesr/react-dsfr";
+// import { Button } from "@dataesr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -128,7 +128,7 @@ export function UserReadAlerts({
       <>
         {isReportingInfractions ? (
           <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
-            <Button title="Valider" onClick={() => saveInfractions()}>
+            {/* <Button title="Valider" onClick={() => saveInfractions()}>
               Valider
             </Button>
             <Button
@@ -137,7 +137,7 @@ export function UserReadAlerts({
               secondary
             >
               Annuler
-            </Button>
+            </Button> */}
           </Stack>
         ) : (
           !noLic && (

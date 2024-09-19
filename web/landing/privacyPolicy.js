@@ -4,7 +4,7 @@ import { Header } from "../common/Header";
 import { makeStyles } from "@mui/styles";
 import { Footer } from "./footer";
 import Link from "@mui/material/Link";
-import { SimpleTable } from "@dataesr/react-dsfr";
+// import { SimpleTable } from "@dataesr/react-dsfr";
 import { usePageTitle } from "../common/UsePageTitle";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -216,7 +216,7 @@ function PrivacyPolicyContent() {
         </Box>
         <Box>
           <h2>Pendant combien de temps conservons-nous ces données&nbsp;?</h2>
-          <SimpleTable data={dataCustody} />
+          {/* <SimpleTable data={dataCustody} /> */}
         </Box>
         <Box>
           <h2>Qui peut avoir accès à ces données&nbsp;?</h2>
@@ -278,7 +278,7 @@ function PrivacyPolicyContent() {
             protection des données et qu&lsquo;ils apportent des garanties
             suffisantes en matière de sécurité des données.
           </p>
-          <SimpleTable data={dataInfra} />
+          {/* <SimpleTable data={dataInfra} /> */}
         </Box>
         <Box>
           <h2>Quels sont vos droits&nbsp;?</h2>

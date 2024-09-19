@@ -4,7 +4,7 @@ import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { TextInput, Button, Title } from "@dataesr/react-dsfr";
+// import { TextInput, Button, Title } from "@dataesr/react-dsfr";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 import { MandatoryField } from "../../../common/MandatoryField";
@@ -53,7 +53,7 @@ export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
 
   return (
     <>
-      <Title as="h1" look="h4" mt={2} mb={2}>
+      {/* <Title as="h1" look="h4" mt={2} mb={2}>
         Nouveau contrôle “Pas de LIC à bord”
       </Title>
       <Typography variant="h5" mb={2}>
@@ -106,7 +106,7 @@ export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
             Annuler
           </Button>
         </Stack>
-      </Stack>
+      </Stack> */}
     </>
   );
 }

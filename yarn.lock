@@ -2149,6 +2149,14 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@codegouvfr/react-dsfr@^1.13.2":
+  version "1.13.2"
+  resolved "https://registry.yarnpkg.com/@codegouvfr/react-dsfr/-/react-dsfr-1.13.2.tgz#aa64d1daebbf554f01b84e11c053c101cd7b4d10"
+  integrity sha512-gemeOlvveVCMiXZnXobKv6MDS0L5Wd7BPec49/42TfYvE8gGdPpPjrVx1ZWT9nYwkFxfnLPjnTToZxyvYvtTCA==
+  dependencies:
+    tsafe "^1.7.2"
+    yargs-parser "^21.1.1"
+
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
   resolved "https://registry.npmjs.org/@csstools/convert-colors/-/convert-colors-1.4.0.tgz"
@@ -2158,18 +2166,6 @@
   version "10.1.0"
   resolved "https://registry.npmjs.org/@csstools/normalize.css/-/normalize.css-10.1.0.tgz"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
-
-"@dataesr/react-dsfr@^2.9.2":
-  version "2.9.2"
-  resolved "https://registry.yarnpkg.com/@dataesr/react-dsfr/-/react-dsfr-2.9.2.tgz#2e6808b2b2601abd67980cff9b9a829b11c0c94c"
-  integrity sha512-jbGJ/jM8R+RV2JLJXjTxrdVcq/DfJwNmwToygntpODBz7fES1L4rZjnl1zUenqo/+y9NrcFnZYkKkVdendnNTw==
-  dependencies:
-    "@babel/runtime" "^7.16.3"
-    "@gouvfr/dsfr" "1.7.0"
-    classnames "^2.3.1"
-    html-react-parser "^1.4.0"
-    prop-types "^15.7.2"
-    uuid "^8.3.2"
 
 "@datapunt/matomo-tracker-js@^0.5.1":
   version "0.5.1"
@@ -2350,11 +2346,6 @@
     js-yaml "^3.13.1"
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
-
-"@gouvfr/dsfr@1.7.0":
-  version "1.7.0"
-  resolved "https://registry.npmjs.org/@gouvfr/dsfr/-/dsfr-1.7.0.tgz"
-  integrity sha512-FMaB37SN5Zc5R5sryOGAnWRFQfmfbycHDV+656JCOKgAVKkzU1c5bjzjXTSsK2FtDbnog+qSHct2pGNQHlFDsQ==
 
 "@graphiql/react@^0.13.3":
   version "0.13.3"
@@ -5368,7 +5359,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.2.5, classnames@^2.2.6, classnames@^2.3.1:
+classnames@^2.2.5, classnames@^2.2.6:
   version "2.3.2"
   resolved "https://registry.npmjs.org/classnames/-/classnames-2.3.2.tgz"
   integrity sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==
@@ -6482,7 +6473,7 @@ domexception@^2.0.1:
   dependencies:
     webidl-conversions "^5.0.0"
 
-domhandler@4.3.1, domhandler@^4.0.0, domhandler@^4.2.0, domhandler@^4.2.2, domhandler@^4.3.1:
+domhandler@^4.0.0, domhandler@^4.2.0, domhandler@^4.3.1:
   version "4.3.1"
   resolved "https://registry.npmjs.org/domhandler/-/domhandler-4.3.1.tgz"
   integrity sha512-GrwoxYN+uWlzO8uhUXRl0P+kHE4GtVPfYzVLcUxPL7KNdHKj66vvlhiweIHqYYXWlw+T8iLMp42Lm67ghw4WMQ==
@@ -6655,11 +6646,6 @@ entities@^2.0.0:
   version "2.2.0"
   resolved "https://registry.npmjs.org/entities/-/entities-2.2.0.tgz"
   integrity sha512-p92if5Nz619I0w+akJrLZH0MX0Pb5DX39XOwQTtXSdQQOaYH03S1uIQp4mhOZtAXrxq4ViO67YTiLBo2638o9A==
-
-entities@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.npmjs.org/entities/-/entities-3.0.1.tgz"
-  integrity sha512-WiyBqoomrwMdFG1e0kqvASYfnlb0lp8M5o5Fw2OFq1hNZxxcNk8Ik0Xm7LxzBhuidnZB/UtBqVCgUz3kBOP51Q==
 
 entities@^4.2.0, entities@^4.3.0, entities@^4.4.0:
   version "4.4.0"
@@ -8071,14 +8057,6 @@ hpack.js@^2.1.6:
     readable-stream "^2.0.1"
     wbuf "^1.1.0"
 
-html-dom-parser@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.npmjs.org/html-dom-parser/-/html-dom-parser-1.2.0.tgz"
-  integrity sha512-2HIpFMvvffsXHFUFjso0M9LqM+1Lm22BF+Df2ba+7QHJXjk63pWChEnI6YG27eaWqUdfnh5/Vy+OXrNTtepRsg==
-  dependencies:
-    domhandler "4.3.1"
-    htmlparser2 "7.2.0"
-
 html-element-map@^1.2.0:
   version "1.3.1"
   resolved "https://registry.npmjs.org/html-element-map/-/html-element-map-1.3.1.tgz"
@@ -8124,16 +8102,6 @@ html-minifier-terser@^5.0.1:
     relateurl "^0.2.7"
     terser "^4.6.3"
 
-html-react-parser@^1.4.0:
-  version "1.4.14"
-  resolved "https://registry.npmjs.org/html-react-parser/-/html-react-parser-1.4.14.tgz"
-  integrity sha512-pxhNWGie8Y+DGDpSh8cTa0k3g8PsDcwlfolA+XxYo1AGDeB6e2rdlyv4ptU9bOTiZ2i3fID+6kyqs86MN0FYZQ==
-  dependencies:
-    domhandler "4.3.1"
-    html-dom-parser "1.2.0"
-    react-property "2.0.0"
-    style-to-js "1.1.1"
-
 html-webpack-plugin@^4.5.1:
   version "4.5.2"
   resolved "https://registry.npmjs.org/html-webpack-plugin/-/html-webpack-plugin-4.5.2.tgz"
@@ -8148,16 +8116,6 @@ html-webpack-plugin@^4.5.1:
     pretty-error "^2.1.1"
     tapable "^1.1.3"
     util.promisify "1.0.0"
-
-htmlparser2@7.2.0:
-  version "7.2.0"
-  resolved "https://registry.npmjs.org/htmlparser2/-/htmlparser2-7.2.0.tgz"
-  integrity sha512-H7MImA4MS6cw7nbyURtLPO1Tms7C5H602LRETv95z1MxO/7CP7rDVROehUYeYBUYEON94NXXDEPmZuq+hX4sog==
-  dependencies:
-    domelementtype "^2.0.1"
-    domhandler "^4.2.2"
-    domutils "^2.8.0"
-    entities "^3.0.1"
 
 htmlparser2@^6.1.0:
   version "6.1.0"
@@ -8444,11 +8402,6 @@ ini@^1.3.5:
   version "1.3.8"
   resolved "https://registry.npmjs.org/ini/-/ini-1.3.8.tgz"
   integrity sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==
-
-inline-style-parser@0.1.1:
-  version "0.1.1"
-  resolved "https://registry.npmjs.org/inline-style-parser/-/inline-style-parser-0.1.1.tgz"
-  integrity sha512-7NXolsK4CAS5+xvdj5OMMbI962hU/wvwoxk+LWR9Ek9bVtyuuYScDN6eS0rUm6TxApFpw7CX1o4uJzcd4AyD3Q==
 
 internal-slot@^1.0.3:
   version "1.0.3"
@@ -12384,11 +12337,6 @@ react-multi-carousel@^2.8.2:
   resolved "https://registry.npmjs.org/react-multi-carousel/-/react-multi-carousel-2.8.2.tgz"
   integrity sha512-M9Y7DfAp8bA/r6yexttU6RLA7uyppje4c0ELRuCHZWswH+u7nr0uVP6qHNPjc4XGOEY1MYFOb5nBg7JvoKutuQ==
 
-react-property@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/react-property/-/react-property-2.0.0.tgz"
-  integrity sha512-kzmNjIgU32mO4mmH5+iUyrqlpFQhF8K2k7eZ4fdLSOPFrD1XgEuSBv9LDEgxRXTMBqMd8ppT0x6TIzqE5pdGdw==
-
 react-qr-reader@^3.0.0-beta-1:
   version "3.0.0-beta-1"
   resolved "https://registry.npmjs.org/react-qr-reader/-/react-qr-reader-3.0.0-beta-1.tgz"
@@ -13929,20 +13877,6 @@ style-loader@1.0.0:
     loader-utils "^1.2.3"
     schema-utils "^2.0.1"
 
-style-to-js@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.npmjs.org/style-to-js/-/style-to-js-1.1.1.tgz"
-  integrity sha512-RJ18Z9t2B02sYhZtfWKQq5uplVctgvjTfLWT7+Eb1zjUjIrWzX5SdlkwLGQozrqarTmEzJJ/YmdNJCUNI47elg==
-  dependencies:
-    style-to-object "0.3.0"
-
-style-to-object@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.npmjs.org/style-to-object/-/style-to-object-0.3.0.tgz"
-  integrity sha512-CzFnRRXhzWIdItT3OmF8SQfWyahHhjq3HwcMNCNLn+N7klOOqPjMeG/4JSu77D7ypZdGvSzvkrbyeTMizz2VrA==
-  dependencies:
-    inline-style-parser "0.1.1"
-
 stylehacks@^5.1.0:
   version "5.1.0"
   resolved "https://registry.npmjs.org/stylehacks/-/stylehacks-5.1.0.tgz"
@@ -14337,6 +14271,11 @@ ts-pnp@^1.1.5, ts-pnp@^1.1.6:
   version "1.2.0"
   resolved "https://registry.npmjs.org/ts-pnp/-/ts-pnp-1.2.0.tgz"
   integrity sha512-csd+vJOb/gkzvcCHgTGSChYpy5f1/XKNsmvBGO4JXS+z1v2HobugDz4s1IeFXM3wZB44uczs+eazB5Q/ccdhQw==
+
+tsafe@^1.7.2:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/tsafe/-/tsafe-1.7.2.tgz#0f63d414876287ad01b135f832722f93e22da374"
+  integrity sha512-dAPfQLhCfCRre5qs+Z5Q2a7s2CV7RxffZUmvj7puGaePYjECzWREJFd3w4XSFe/T5tbxgowfItA/JSSZ6Ma3dA==
 
 tsconfig-paths@^3.14.1:
   version "3.14.1"
@@ -15345,6 +15284,11 @@ yargs-parser@^20.2.2:
   version "20.2.9"
   resolved "https://registry.npmjs.org/yargs-parser/-/yargs-parser-20.2.9.tgz"
   integrity sha512-y11nGElTIV+CT3Zv9t7VKl+Q3hTQoT9a1Qzezhhl6Rp21gJ/IVTW7Z3y9EWXhuUBC2Shnf+DX0antecpAwSP8w==
+
+yargs-parser@^21.1.1:
+  version "21.1.1"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-21.1.1.tgz#9096bceebf990d21bb31fa9516e0ede294a77d35"
+  integrity sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==
 
 yargs@^16.2.0:
   version "16.2.0"

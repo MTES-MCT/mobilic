@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
-import { Checkbox } from "@dataesr/react-dsfr";
+// import { Checkbox } from "@dataesr/react-dsfr";
 import Stack from "@mui/material/Stack";
 import { useUpdateHideEmail } from "./useUpdateHideEmail";
 
@@ -26,11 +26,11 @@ export function HideEmail({ employment }) {
       >
         Autorisation d'accès à mon email personnel
       </Typography>
-      <Checkbox
+      {/* <Checkbox
         checked={hideEmail}
         onChange={e => updateHideEmail(e.target.checked)}
         label="J'utilise mon mail personnel et je n'autorise pas le(s) gestionnaire(s) de cette entreprise à y avoir accès"
-      />
+      /> */}
     </Stack>
   );
 }

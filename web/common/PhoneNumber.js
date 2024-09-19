@@ -9,7 +9,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import Flag from "react-world-flags";
 import { MenuItem, Select, Stack } from "@mui/material";
-import { TextInput } from "@dataesr/react-dsfr";
+// import { TextInput } from "@dataesr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -137,14 +137,14 @@ export function PhoneNumber({
             </MenuItem>
           ))}
         </Select>
-        <TextInput
+        {/* <TextInput
           id="phone-number-input"
           value={phoneNumber}
           onChange={e => onInput(e.target.value)}
           messageType={errorMessage && "error"}
           message={errorMessage}
           autoComplete="tel"
-        />
+        /> */}
       </Stack>
     </div>
   );

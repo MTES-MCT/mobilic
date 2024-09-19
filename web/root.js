@@ -12,13 +12,9 @@ import {
   useStoreSyncedWithLocalStorage
 } from "common/store/store";
 import { ApiContextProvider, useApi } from "common/utils/api";
-import { theme } from "common/utils/theme";
+import { customOptions } from "common/utils/theme";
 import { MODAL_DICT } from "./modals";
-import {
-  ThemeProvider,
-  StyledEngineProvider,
-  CssBaseline
-} from "@mui/material";
+import { StyledEngineProvider, CssBaseline } from "@mui/material";
 import { loadUserData } from "common/utils/loadUserData";
 import frLocale from "date-fns/locale/fr";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -52,15 +48,15 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { ErrorBoundary } from "./common/ErrorFallback";
 import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
 import { isGoogleAdsInitiated, initGoogleAds } from "common/utils/trackAds";
-
-import "@gouvfr/dsfr/dist/dsfr.min.css"; // dsfr should be imported before custom styles
-import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-development/icons-development.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-communication/icons-communication.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-others/icons-others.min.css";
-import "@gouvfr/dsfr/dist/utility/colors/colors.min.css";
+import { createMuiDsfrThemeProvider } from "@codegouvfr/react-dsfr/mui";
+// import "@gouvfr/dsfr/dist/dsfr.min.css"; // dsfr should be imported before custom styles
+// import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
+// import "@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css";
+// import "@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css";
+// import "@gouvfr/dsfr/dist/utility/icons/icons-development/icons-development.min.css";
+// import "@gouvfr/dsfr/dist/utility/icons/icons-communication/icons-communication.min.css";
+// import "@gouvfr/dsfr/dist/utility/icons/icons-others/icons-others.min.css";
+// import "@gouvfr/dsfr/dist/utility/colors/colors.min.css";
 import "./index.css";
 import "common/assets/styles/root.scss";
 import { loadControllerUserData } from "./controller/utils/loadControllerUserData";
@@ -85,13 +81,20 @@ const matomo = createInstance({
   linkTracking: false // optional, default value: true
 });
 
+const { MuiDsfrThemeProvider } = createMuiDsfrThemeProvider({
+  augmentMuiTheme: ({ nonAugmentedMuiTheme, frColorTheme }) => ({
+    ...nonAugmentedMuiTheme,
+    custom: customOptions
+  })
+});
+
 export default function Root() {
   return (
     <MatomoProvider value={matomo}>
       <StoreSyncedWithLocalStorageProvider storage={localStorage}>
         <Router>
           <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={theme}>
+            <MuiDsfrThemeProvider>
               <CssBaseline />
               <ErrorBoundary>
                 <ApiContextProvider>
@@ -116,7 +119,7 @@ export default function Root() {
                   </LocalizationProvider>
                 </ApiContextProvider>
               </ErrorBoundary>
-            </ThemeProvider>
+            </MuiDsfrThemeProvider>
           </StyledEngineProvider>
         </Router>
       </StoreSyncedWithLocalStorageProvider>

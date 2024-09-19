@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@dataesr/react-dsfr";
+// import { Button } from "@dataesr/react-dsfr";
 import Modal, { modalStyles } from "../../common/Modal";
 import { Typography } from "@mui/material";
 
@@ -32,9 +32,10 @@ export default function BlockedTimeModal({ open, handleClose }) {
         </>
       }
       actions={
-        <Button onClick={handleClose} className={classes.button}>
-          J'ai compris
-        </Button>
+        <></>
+        // <Button onClick={handleClose} className={classes.button}>
+        //   J'ai compris
+        // </Button>
       }
     />
   );

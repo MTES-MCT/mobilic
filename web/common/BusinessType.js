@@ -1,5 +1,5 @@
 import React from "react";
-import { Select } from "@dataesr/react-dsfr";
+import { Select } from "@codegouvfr/react-dsfr/Select";
 import { Box, Grid, Typography } from "@mui/material";
 import { ExternalLink } from "./ExternalLink";
 import { Notice } from "./Notice";
@@ -78,39 +78,53 @@ export function BusinessType({
     <div style={{ textAlign: "left" }}>
       <Grid container spacing={isSmDown ? 2 : forceColumn ? 1 : 2}>
         <Grid item xs={12} sm={forceColumn ? 6 : 12}>
-          <Select
+          {/* <Select
             label="Type de transport routier"
-            required
-            options={transportOptions}
-            selected={transportType}
-            onChange={e => setTransportType(e.target.value)}
-            {...(!transportType && required && showErrors
-              ? { messageType: "error" }
-              : {})}
-            message={
+            nativeSelectProps={{
+              onChange: e => setTransportType(e.target.value),
+              value: transportType,
+              required
+            }}
+            state={
+              !transportType && required && showErrors ? "error" : "default"
+            }
+            stateRelatedMessage={
               !transportType && required && showErrors
-                ? "Veuillez renseigner un type de transport"
+                ? "Veuillez compléter ce champ"
                 : ""
             }
-          ></Select>
+          >
+            {transportOptions.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select> */}
         </Grid>
         <Grid item xs={12} sm={forceColumn ? 6 : 12}>
-          <Select
+          {/* <Select
             label="Activité principale"
-            required
-            options={businessOptions}
-            selected={businessType}
-            onChange={e => setBusinessType(e.target.value)}
-            disabled={!transportType}
-            {...(!businessType && required && showErrors
-              ? { messageType: "error" }
-              : {})}
-            message={
+            nativeSelectProps={{
+              onChange: e => setBusinessType(e.target.value),
+              value: businessType,
+              required
+            }}
+            state={
+              !businessType && required && showErrors ? "error" : "default"
+            }
+            stateRelatedMessage={
               !businessType && required && showErrors
-                ? "Veuillez renseigner une activité"
+                ? "Veuillez compléter ce champ"
                 : ""
             }
-          ></Select>
+            disabled={!transportType}
+          >
+            {businessOptions.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select> */}
         </Grid>
       </Grid>
       {displayInfo && (
