@@ -11,7 +11,8 @@ export function UserReadHistory({
   periodOnFocus,
   controlId,
   regulationComputationsByDay,
-  controlData
+  controlData,
+  groupedAlerts
 }) {
   return (
     <History
@@ -26,6 +27,7 @@ export function UserReadHistory({
       openPeriod={periodOnFocus}
       controlId={controlId}
       regulationComputationsByDay={regulationComputationsByDay}
+      groupedAlerts={groupedAlerts}
     />
   );
 }

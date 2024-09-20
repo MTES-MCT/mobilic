@@ -18,12 +18,10 @@ import {
   SubmitterType
 } from "common/utils/regulation/alertTypes";
 import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
-import { currentControllerId } from "common/utils/cookie";
 
 export function GenericRegulatoryAlerts({
   userId,
   day,
-  prefetchedRegulationComputation,
   regulationCheckUnit,
   shouldDisplayInitialEmployeeVersion = false
 }) {
@@ -37,46 +35,37 @@ export function GenericRegulatoryAlerts({
 
   React.useEffect(async () => {
     setLoading(true);
-    if (currentControllerId()) {
-      setRegulationComputations(prefetchedRegulationComputation);
-    } else {
-      await alerts.withApiErrorHandling(async () => {
-        const apiResponse = await api.graphQlQuery(
-          USER_READ_REGULATION_COMPUTATIONS_QUERY,
-          {
-            userId: userId,
-            fromDate: day,
-            toDate: day
-          }
-        );
-        const { regulationComputationsByDay } = apiResponse.data.user;
-        if (regulationComputationsByDay?.length !== 1) {
-          setRegulationComputations(null);
-        } else {
-          if (shouldDisplayInitialEmployeeVersion) {
-            setRegulationComputations(
-              getAlertComputationVersion(
-                regulationComputationsByDay[0].regulationComputations,
-                SubmitterType.EMPLOYEE
-              )
-            );
-          } else {
-            setRegulationComputations(
-              getLatestAlertComputationVersion(
-                regulationComputationsByDay[0].regulationComputations
-              )
-            );
-          }
+    await alerts.withApiErrorHandling(async () => {
+      const apiResponse = await api.graphQlQuery(
+        USER_READ_REGULATION_COMPUTATIONS_QUERY,
+        {
+          userId: userId,
+          fromDate: day,
+          toDate: day
         }
-      });
-    }
+      );
+      const { regulationComputationsByDay } = apiResponse.data.user;
+      if (regulationComputationsByDay?.length !== 1) {
+        setRegulationComputations(null);
+      } else {
+        if (shouldDisplayInitialEmployeeVersion) {
+          setRegulationComputations(
+            getAlertComputationVersion(
+              regulationComputationsByDay[0].regulationComputations,
+              SubmitterType.EMPLOYEE
+            )
+          );
+        } else {
+          setRegulationComputations(
+            getLatestAlertComputationVersion(
+              regulationComputationsByDay[0].regulationComputations
+            )
+          );
+        }
+      }
+    });
     setLoading(false);
-  }, [
-    day,
-    userId,
-    prefetchedRegulationComputation,
-    shouldDisplayInitialEmployeeVersion
-  ]);
+  }, [day, userId, shouldDisplayInitialEmployeeVersion]);
 
   return (
     <>
