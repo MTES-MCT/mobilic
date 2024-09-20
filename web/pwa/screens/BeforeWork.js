@@ -222,7 +222,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   return (
     <Container maxWidth={false} className={classes.outer} disableGutters>
       <AccountButton p={2} className={classes.accountButton} darkBackground />
-      <PlaceHolder>
+      <PlaceHolder style={{ textAlign: "center" }}>
         <img alt="mobilic-logo-text" src={LogoWithText} width={150} />
       </PlaceHolder>
       <Box mt={2} className="cta-container" mb={2}>

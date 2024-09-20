@@ -44,7 +44,11 @@ export default function LoginController() {
   return [
     <Header key={1} />,
     <PaperContainer key={2}>
-      <Container className="centered" maxWidth="xs">
+      <Container
+        className="centered"
+        maxWidth="xs"
+        sx={{ textAlign: "center" }}
+      >
         <PaperContainerTitle>Connexion Contrôleur</PaperContainerTitle>
         <Typography>
           Je me connecte avec mon identifiant Cerbère grâce à{" "}
