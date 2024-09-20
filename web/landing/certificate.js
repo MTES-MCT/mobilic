@@ -7,6 +7,7 @@ import { Footer } from "./footer";
 import Alert from "@mui/material/Alert";
 import { Link } from "../common/LinkButton";
 // import { Button, Table, TextInput } from "@dataesr/react-dsfr";
+import { Input } from "@codegouvfr/react-dsfr/Input";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import Grid from "@mui/material/Grid";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
@@ -33,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: "auto",
     width: "80%",
     [theme.breakpoints.up("md")]: {
-      width: "50%"
+      width: "70%"
     }
   },
   certificationImage: {
@@ -122,25 +123,30 @@ export function Certificate() {
         Consultez le statut de certification d'une entreprise :
       </Typography>
       <Grid container mt={2} mb={5} className={classes.searchBar}>
-        {/* <Grid item xs={12} md={10}>
-          <TextInput
-            placeholder="Rechercher un nom d'entreprise ou un SIREN"
-            required
-            onChange={e => {
-              setSearchInput(e.target.value);
+        <Grid item xs={12} md={10}>
+          <Input
+            label=""
+            classes={{
+              label: "required"
             }}
-            message={inputErrorMessage}
-            messageType={inputErrorMessage ? "error" : ""}
+            nativeInputProps={{
+              onChange: e => {
+                setSearchInput(e.target.value);
+              },
+              placeholder: "Rechercher un nom d'entreprise ou un SIREN"
+            }}
+            state={inputErrorMessage ? "error" : "default"}
+            stateRelatedMessage={inputErrorMessage}
+            addon={
+              <Button
+                iconId="fr-icon-search-line"
+                iconPosition="left"
+                onClick={() => onSearch()}
+              >
+                Rechercher
+              </Button>
+            }
           />
-        </Grid> */}
-        <Grid item xs={12} md={2}>
-          <Button
-            iconId="fr-icon-search-line"
-            iconPosition="left"
-            onClick={() => onSearch()}
-          >
-            Rechercher
-          </Button>
         </Grid>
       </Grid>
     </Container>,
@@ -180,7 +186,7 @@ export function Certificate() {
       </Box>
     ),
     <Box key={20} className={classes.footer}>
-      {/* <Footer /> */}
+      <Footer />
     </Box>
   ];
 }
