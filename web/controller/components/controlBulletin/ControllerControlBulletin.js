@@ -1,7 +1,7 @@
 import React from "react";
 
 import Stack from "@mui/material/Stack";
-// import { Button, Stepper } from "@dataesr/react-dsfr";
+import { Stepper } from "@codegouvfr/react-dsfr/Stepper";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import Typography from "@mui/material/Typography";
 import { ControlBulletinHeader } from "./ControlBulletinHeader";
@@ -212,74 +212,65 @@ export function ControllerControlBulletin({
       }
     });
 
-  return [
-    <ControlBulletinHeader
-      key={0}
-      onCloseDrawer={onBackOrCloseButton}
-      backLinkLabel={
-        !STEPS[step - 1]
-          ? `Retour au contrôle ${controlData.id}`
-          : `Revenir à l'étape ${step - 1}/${Object.keys(STEPS).length}`
-      }
-    />,
-    <Typography key={5} variant="h1" mb={2}>
-      Éditer un bulletin de contrôle
-    </Typography>,
-    <Typography key={10}>
-      Pour éditer un bulletin de contrôle au format PDF, veuillez renseigner les
-      champs ci-dessous.
-    </Typography>,
-    // <Stepper
-    //   key={15}
-    //   currentStep={step}
-    //   steps={3}
-    //   currentTitle={STEPS[step].title}
-    //   nextStepTitle={STEPS[step + 1]?.title || ""}
-    // />,
-    step === 1 && (
-      <ControlBulletinFormStep1
-        key={20}
-        handleEditControlBulletin={handleEditControlBulletin}
-        controlBulletin={controlBulletin}
-        showErrors={showErrors}
+  return (
+    <>
+      <ControlBulletinHeader
+        onCloseDrawer={onBackOrCloseButton}
+        backLinkLabel={
+          !STEPS[step - 1]
+            ? `Retour au contrôle ${controlData.id}`
+            : `Revenir à l'étape ${step - 1}/${Object.keys(STEPS).length}`
+        }
       />
-    ),
-    step === 2 && (
-      <ControlBulletinFormStep2
-        key={30}
-        handleEditControlBulletin={handleEditControlBulletin}
-        controlBulletin={controlBulletin}
-        showErrors={showErrors}
+      <Typography variant="h1" mb={2}>
+        Éditer un bulletin de contrôle
+      </Typography>
+      <Typography>
+        Pour éditer un bulletin de contrôle au format PDF, veuillez renseigner
+        les champs ci-dessous.
+      </Typography>
+      <Stepper
+        currentStep={step}
+        nextTitle={STEPS[step + 1]?.title || null}
+        stepCount={3}
+        title={STEPS[step].title}
       />
-    ),
-    step === 3 && (
-      <ControlBulletinFormStep3
-        key={40}
-        handleEditControlBulletin={handleEditControlBulletin}
-        controlBulletin={controlBulletin}
-        grecoId={grecoId}
-        onUpdateGrecoId={onUpdateGrecoId}
-        controlCanBeDownloaded={controlCanBeDownloaded}
-        onUpdateInfraction={(...args) => {
-          setFieldUpdated(true);
-          onUpdateInfraction(...args);
-        }}
-        groupedAlerts={groupedAlerts}
-      />
-    ),
-    <Stack
-      key={50}
-      direction="row"
-      justifyContent="flex-start"
-      p={2}
-      spacing={4}
-    >
-      <Button onClick={() => onSaveButton(controlBulletin)}>
-        {!STEPS[step + 1] ? "Enregistrer" : "Suivant"}
-      </Button>
-      <Button onClick={() => onClose()} priority="secondary">
-        Annuler
-      </Button>
-    </Stack>
-  ];
+      {step === 1 && (
+        <ControlBulletinFormStep1
+          handleEditControlBulletin={handleEditControlBulletin}
+          controlBulletin={controlBulletin}
+          showErrors={showErrors}
+        />
+      )}
+      {step === 2 && (
+        <ControlBulletinFormStep2
+          handleEditControlBulletin={handleEditControlBulletin}
+          controlBulletin={controlBulletin}
+          showErrors={showErrors}
+        />
+      )}
+      {step === 3 && (
+        <ControlBulletinFormStep3
+          handleEditControlBulletin={handleEditControlBulletin}
+          controlBulletin={controlBulletin}
+          grecoId={grecoId}
+          onUpdateGrecoId={onUpdateGrecoId}
+          controlCanBeDownloaded={controlCanBeDownloaded}
+          onUpdateInfraction={(...args) => {
+            setFieldUpdated(true);
+            onUpdateInfraction(...args);
+          }}
+          groupedAlerts={groupedAlerts}
+        />
+      )}
+      <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
+        <Button onClick={() => onSaveButton(controlBulletin)}>
+          {!STEPS[step + 1] ? "Enregistrer" : "Suivant"}
+        </Button>
+        <Button onClick={() => onClose()} priority="secondary">
+          Annuler
+        </Button>
+      </Stack>
+    </>
+  );
 }
