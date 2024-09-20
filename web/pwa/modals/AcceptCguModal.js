@@ -55,14 +55,17 @@ export default function AcceptCguModal({ onAccept, onReject, handleClose }) {
           les lire et à les accepter.
         </Typography>
         <Checkbox
+          legend=""
           options={[
             {
               label:
-                "En cochant cette case, vous confirmez avoir lu et accepté nos conditions générales d'utilisation"
+                "En cochant cette case, vous confirmez avoir lu et accepté nos conditions générales d'utilisation",
+              nativeInputProps: {
+                checked: isChecked,
+                onChange: e => setIsChecked(e.target.checked)
+              }
             }
           ]}
-          checked={isChecked}
-          onChange={e => setIsChecked(e.target.checked)}
         />
       </>
     ),

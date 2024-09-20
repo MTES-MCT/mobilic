@@ -2,13 +2,13 @@ import React, { useMemo } from "react";
 
 import Stack from "@mui/material/Stack";
 import { Select } from "@codegouvfr/react-dsfr/Select";
-// import { Col, Row, Select, TextInput } from "@dataesr/react-dsfr";
+import { Input } from "@codegouvfr/react-dsfr/Input";
 import { COUNTRIES } from "../../utils/country";
 import { DEPARTMENTS } from "../../utils/departments";
 import { useApi } from "common/utils/api";
 import { CONTROL_LOCATION_QUERY } from "common/utils/apiQueries";
 import { DsfrAutocomplete } from "../utils/DsfrAutocomplete";
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { CURRENT_YEAR } from "common/utils/time";
 import { MandatoryField } from "../../../common/MandatoryField";
 
@@ -156,26 +156,29 @@ export function ControlBulletinFormStep1({
           editControlBulletinField(newValue.id, "locationId");
         }}
       />
-      {/* <TextInput
-        value={controlBulletin.userLastName || ""}
-        name="userLastName"
-        onChange={e => handleEditControlBulletin(e)}
-        label="Nom du salarié"
-        required
-        messageType={
-          !controlBulletin.userLastName && showErrors ? "error" : undefined
+      <Input
+        nativeInputProps={{
+          value: controlBulletin.userLastName || "",
+          onChange: e => handleEditControlBulletin(e),
+          name: "userLastName"
+        }}
+        label="Nom du salarié *"
+        state={
+          !controlBulletin.userLastName && showErrors ? "error" : "default"
         }
       />
-      <TextInput
-        value={controlBulletin.userFirstName || ""}
-        name="userFirstName"
-        onChange={e => handleEditControlBulletin(e)}
-        label="Prénom du salarié"
-        required
-        messageType={
-          !controlBulletin.userFirstName && showErrors ? "error" : undefined
+      <Input
+        nativeInputProps={{
+          value: controlBulletin.userFirstName || "",
+          onChange: e => handleEditControlBulletin(e),
+          name: "userFirstName"
+        }}
+        label="Prénom du salarié *"
+        state={
+          !controlBulletin.userFirstName && showErrors ? "error" : "default"
         }
-      /> */}
+      />
+
       <Box
         sx={{ marginBottom: 4, maxWidth: "440px" }}
         role="group"
@@ -184,44 +187,50 @@ export function ControlBulletinFormStep1({
         <label className="fr-label" id="date-naissance-salarie">
           Date de naissance du salarié
         </label>
-        {/* <Row gutters>
-          <Col n="3">
-            <TextInput
-              required
-              value={day}
+        <Grid container spacing={2}>
+          <Grid item xs={3}>
+            <Input
+              nativeInputProps={{
+                value: day,
+                onChange: e => onChangeNDigits(e, setDay, 2),
+                onBlur: onValidateBirthDate
+              }}
               inputMode="numeric"
-              onChange={e => onChangeNDigits(e, setDay, 2)}
-              onBlur={onValidateBirthDate}
-              label="Jour"
-              hint="Ex : 14"
+              type="number"
+              label="Jour *"
+              hintText="Ex : 14"
             />
-          </Col>
-          <Col n="3">
-            <TextInput
+          </Grid>
+          <Grid item xs={3}>
+            <Input
+              nativeInputProps={{
+                value: month,
+                onChange: e => onChangeNDigits(e, setMonth, 2),
+                onBlur: onValidateBirthDate
+              }}
               inputMode="numeric"
-              required
-              value={month}
-              onChange={e => onChangeNDigits(e, setMonth, 2)}
-              onBlur={onValidateBirthDate}
-              label="Mois"
-              hint="Ex : 12"
+              type="number"
+              label="Mois *"
+              hintText="Ex : 12"
             />
-          </Col>
-          <Col n="6">
-            <TextInput
+          </Grid>
+          <Grid item xs={6}>
+            <Input
+              nativeInputProps={{
+                value: year,
+                onChange: e => onChangeNDigits(e, setYear, 4),
+                onBlur: onValidateBirthDate
+              }}
               inputMode="numeric"
-              required
-              value={year}
-              onChange={e => onChangeNDigits(e, setYear, 4)}
-              onBlur={onValidateBirthDate}
-              label="Année"
-              hint="Ex : 1984"
+              type="number"
+              label="Année *"
+              hintText="Ex : 1984"
             />
-          </Col>
-        </Row> */}
+          </Grid>
+        </Grid>
       </Box>
       <Select
-        label="Nationalité du salarié"
+        label="Nationalité du salarié *"
         nativeSelectProps={{
           onChange: e => handleEditControlBulletin(e),
           value: controlBulletin.userNationality,

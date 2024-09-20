@@ -8,7 +8,7 @@ import AlreadyRegisteredSirets from "./AlreadyRegisteredSirets";
 import Stack from "@mui/material/Stack";
 import { PhoneNumber } from "../../common/PhoneNumber";
 import { BusinessType } from "../../common/BusinessType";
-// import { TextInput } from "@dataesr/react-dsfr";
+import { Input } from "@codegouvfr/react-dsfr/Input";
 import { MandatoryField } from "../../common/MandatoryField";
 
 const useStyles = makeStyles(theme => ({
@@ -137,21 +137,22 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                   textAlign="left"
                   sx={{ marginTop: 1 }}
                 >
-                  {/* <TextInput
-                    required
-                    label="Nom usuel"
-                    value={facility.usualName}
-                    onChange={e => {
-                      setHasValidatedChoice(false);
-                      updateFacility(facility, "usualName", e.target.value);
+                  <Input
+                    label="Nom usuel *"
+                    nativeInputProps={{
+                      value: facility.usualName,
+                      onChange: e => {
+                        setHasValidatedChoice(false);
+                        updateFacility(facility, "usualName", e.target.value);
+                      }
                     }}
                     {...(getFacilityError(facility)
                       ? {
-                          messageType: "error",
-                          message: getFacilityError(facility)
+                          state: "error",
+                          stateRelatedMessage: getFacilityError(facility)
                         }
                       : {})}
-                  /> */}
+                  />
                   <PhoneNumber
                     currentPhoneNumber={facility.phone_number}
                     setCurrentPhoneNumber={newPhoneNumber => {

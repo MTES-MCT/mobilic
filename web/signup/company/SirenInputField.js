@@ -1,5 +1,5 @@
-import TextField from "@mui/material/TextField";
 import React from "react";
+import { Input } from "@codegouvfr/react-dsfr/Input";
 
 function validateSirenString(string) {
   if (!string) return true;
@@ -28,22 +28,28 @@ export function SirenInputField({
   setSiren,
   error,
   setError,
+  button,
   className
 }) {
   return (
-    <TextField
-      error={error}
-      required
+    <Input
+      addon={button}
+      label="SIREN *"
       className={className}
-      variant="standard"
-      label="SIREN"
-      placeholder="123456789"
-      helperText={error ? "L'entrée n'est pas un numéro de SIREN valide" : ""}
-      value={siren}
-      onChange={e => {
-        const newSirenValue = e.target.value.replace(/\s/g, "");
-        setSiren(newSirenValue);
-        setError(!validateSirenString(newSirenValue));
+      nativeInputProps={{
+        value: siren,
+        onChange: e => {
+          const newSirenValue = e.target.value.replace(/\s/g, "");
+          setSiren(newSirenValue);
+          setError(!validateSirenString(newSirenValue));
+        }
+      }}
+      state={error ? "error" : "default"}
+      stateRelatedMessage={
+        error ? "L'entrée n'est pas un numéro de SIREN valide" : ""
+      }
+      classes={{
+        nativeInputOrTextArea: "fr-mr-2v"
       }}
     />
   );

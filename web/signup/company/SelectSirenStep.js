@@ -1,4 +1,3 @@
-import Box from "@mui/material/Box";
 import { SirenInputField } from "./SirenInputField";
 import { LoadingButton } from "common/components/LoadingButton";
 import Typography from "@mui/material/Typography";
@@ -93,30 +92,27 @@ export function SelectSirenStep({
         autoComplete="off"
         onSubmit={handleSirenSubmit}
       >
-        <Box
-          className="flex-row-space-between"
-          style={{ alignItems: "baseline" }}
-        >
-          <SirenInputField
-            siren={siren}
-            setSiren={value => {
-              resetApiResponse();
-              setSiren(value);
-            }}
-            error={sirenFormatError}
-            setError={setSirenFormatError}
-          />
-          <LoadingButton
-            aria-label="Rechercher SIREN"
-            variant="contained"
-            color="primary"
-            type="submit"
-            loading={loadingSirenInfo}
-            disabled={!siren || sirenFormatError}
-          >
-            Rechercher
-          </LoadingButton>
-        </Box>
+        <SirenInputField
+          siren={siren}
+          setSiren={value => {
+            resetApiResponse();
+            setSiren(value);
+          }}
+          error={sirenFormatError}
+          setError={setSirenFormatError}
+          button={
+            <LoadingButton
+              aria-label="Rechercher SIREN"
+              variant="contained"
+              color="primary"
+              type="submit"
+              loading={loadingSirenInfo}
+              disabled={!siren || sirenFormatError}
+            >
+              Rechercher
+            </LoadingButton>
+          }
+        />
         {apiError || sirenAlreadyFullyRegistered ? (
           <Typography display="block" align="justify" color="error">
             {sirenAlreadyFullyRegistered
