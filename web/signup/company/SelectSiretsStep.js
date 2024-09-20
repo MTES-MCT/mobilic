@@ -138,7 +138,10 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                   sx={{ marginTop: 1 }}
                 >
                   <Input
-                    label="Nom usuel *"
+                    label="Nom usuel"
+                    classes={{
+                      label: "required"
+                    }}
                     nativeInputProps={{
                       value: facility.usualName,
                       onChange: e => {

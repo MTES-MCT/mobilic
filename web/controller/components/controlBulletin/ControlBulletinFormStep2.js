@@ -21,9 +21,12 @@ export function ControlBulletinFormStep2({
           name: "siren",
           onChange: e => handleEditControlBulletin(e)
         }}
-        label="Entreprise responsable (de rattachement) *"
+        label="Entreprise responsable (de rattachement)"
         hintText="SIREN ou Numéro TVA"
         state={!controlBulletin.siren && showErrors ? "error" : "default"}
+        classes={{
+          label: "required"
+        }}
       />
       <Input
         nativeInputProps={{
@@ -31,8 +34,11 @@ export function ControlBulletinFormStep2({
           name: "companyName",
           onChange: e => handleEditControlBulletin(e)
         }}
-        label="Nom de l'entreprise *"
+        label="Nom de l'entreprise"
         state={!controlBulletin.companyName && showErrors ? "error" : "default"}
+        classes={{
+          label: "required"
+        }}
       />
       <Input
         nativeInputProps={{
@@ -40,10 +46,13 @@ export function ControlBulletinFormStep2({
           name: "companyAddress",
           onChange: e => handleEditControlBulletin(e)
         }}
-        label="Adresse de l'entreprise *"
+        label="Adresse de l'entreprise"
         state={
           !controlBulletin.companyAddress && showErrors ? "error" : "default"
         }
+        classes={{
+          label: "required"
+        }}
       />
       <Input
         nativeInputProps={{
@@ -51,12 +60,15 @@ export function ControlBulletinFormStep2({
           name: "vehicleRegistrationNumber",
           onChange: e => handleEditControlBulletin(e)
         }}
-        label="Immatriculation du véhicule *"
+        label="Immatriculation du véhicule"
         state={
           !controlBulletin.vehicleRegistrationNumber && showErrors
             ? "error"
             : "default"
         }
+        classes={{
+          label: "required"
+        }}
       />
       <Select
         label="Pays d'immatriculation"
@@ -89,12 +101,15 @@ export function ControlBulletinFormStep2({
           name: "missionAddressBegin",
           onChange: e => handleEditControlBulletin(e)
         }}
-        label="Provenance *"
+        label="Provenance"
         state={
           !controlBulletin.missionAddressBegin && showErrors
             ? "error"
             : "default"
         }
+        classes={{
+          label: "required"
+        }}
       />
       <Input
         nativeInputProps={{
@@ -102,10 +117,13 @@ export function ControlBulletinFormStep2({
           name: "missionAddressEnd",
           onChange: e => handleEditControlBulletin(e)
         }}
-        label="Destination *"
+        label="Destination"
         state={
           !controlBulletin.missionAddressEnd && showErrors ? "error" : "default"
         }
+        classes={{
+          label: "required"
+        }}
       />
       <RadioButtons
         legend="Type de transport *"

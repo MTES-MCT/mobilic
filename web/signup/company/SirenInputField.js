@@ -34,7 +34,7 @@ export function SirenInputField({
   return (
     <Input
       addon={button}
-      label="SIREN *"
+      label="SIREN"
       className={className}
       nativeInputProps={{
         value: siren,
@@ -49,7 +49,8 @@ export function SirenInputField({
         error ? "L'entrée n'est pas un numéro de SIREN valide" : ""
       }
       classes={{
-        nativeInputOrTextArea: "fr-mr-2v"
+        nativeInputOrTextArea: "fr-mr-2v",
+        label: "required"
       }}
     />
   );

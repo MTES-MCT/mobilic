@@ -51,7 +51,10 @@ export function SubmitStep({
               id="company-usual-name"
               value={companyName}
               onChange={e => setCompanyName(e.target.value.trimLeft())}
-              label="Nom usuel *"
+              label="Nom usuel"
+              classes={{
+                label: "required"
+              }}
             />
             <PhoneNumber
               currentPhoneNumber={phoneNumber}

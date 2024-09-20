@@ -69,7 +69,10 @@ export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
             onChange: e => setUserLastName(e.target.value),
             name: "userLastName"
           }}
-          label="Nom du salarié *"
+          label="Nom du salarié"
+          classes={{
+            label: "required"
+          }}
         />
 
         <Input
@@ -78,7 +81,10 @@ export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
             onChange: e => setUserFirstName(e.target.value),
             name: "userFirstName"
           }}
-          label="Prénom du salarié *"
+          label="Prénom du salarié"
+          classes={{
+            label: "required"
+          }}
         />
         <Input
           nativeInputProps={{
@@ -86,7 +92,10 @@ export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
             onChange: e => setCompanyName(e.target.value),
             name: "companyName"
           }}
-          label="Nom de l'entreprise *"
+          label="Nom de l'entreprise"
+          classes={{
+            label: "required"
+          }}
         />
         <Input
           nativeInputProps={{
@@ -94,7 +103,10 @@ export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
             onChange: e => setVehicleRegistrationNumber(e.target.value),
             name: "vehicleRegistrationNumber"
           }}
-          label="Immatriculation du véhicule *"
+          label="Immatriculation du véhicule"
+          classes={{
+            label: "required"
+          }}
         />
         <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
           <Button

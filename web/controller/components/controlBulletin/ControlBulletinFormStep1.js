@@ -162,10 +162,13 @@ export function ControlBulletinFormStep1({
           onChange: e => handleEditControlBulletin(e),
           name: "userLastName"
         }}
-        label="Nom du salarié *"
+        label="Nom du salarié"
         state={
           !controlBulletin.userLastName && showErrors ? "error" : "default"
         }
+        classes={{
+          label: "required"
+        }}
       />
       <Input
         nativeInputProps={{
@@ -173,10 +176,13 @@ export function ControlBulletinFormStep1({
           onChange: e => handleEditControlBulletin(e),
           name: "userFirstName"
         }}
-        label="Prénom du salarié *"
+        label="Prénom du salarié"
         state={
           !controlBulletin.userFirstName && showErrors ? "error" : "default"
         }
+        classes={{
+          label: "required"
+        }}
       />
 
       <Box
@@ -197,8 +203,11 @@ export function ControlBulletinFormStep1({
               }}
               inputMode="numeric"
               type="number"
-              label="Jour *"
+              label="Jour"
               hintText="Ex : 14"
+              classes={{
+                label: "required"
+              }}
             />
           </Grid>
           <Grid item xs={3}>
@@ -210,8 +219,11 @@ export function ControlBulletinFormStep1({
               }}
               inputMode="numeric"
               type="number"
-              label="Mois *"
+              label="Mois"
               hintText="Ex : 12"
+              classes={{
+                label: "required"
+              }}
             />
           </Grid>
           <Grid item xs={6}>
@@ -223,14 +235,17 @@ export function ControlBulletinFormStep1({
               }}
               inputMode="numeric"
               type="number"
-              label="Année *"
+              label="Année"
               hintText="Ex : 1984"
+              classes={{
+                label: "required"
+              }}
             />
           </Grid>
         </Grid>
       </Box>
       <Select
-        label="Nationalité du salarié *"
+        label="Nationalité du salarié"
         nativeSelectProps={{
           onChange: e => handleEditControlBulletin(e),
           value: controlBulletin.userNationality,
@@ -245,6 +260,7 @@ export function ControlBulletinFormStep1({
             ? "Veuillez compléter ce champ"
             : ""
         }
+        className="required"
       >
         {COUNTRIES.map(option => (
           <option key={option.value} value={option.value}>
