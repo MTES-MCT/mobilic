@@ -397,23 +397,13 @@ export function History({
     if (!groupedAlerts) {
       return null;
     }
-    if (currentTab === "day") {
+    if (currentTab === "day" || currentTab === "week") {
       return groupedAlerts.reduce((arr, curr) => {
         let { alerts, ...rest } = curr;
         alerts = alerts
-          .filter(alert => !!alert.day && alert.day === selectedPeriod)
-          .map(alert => ({
-            ...alert,
-            ...rest
-          }));
-        return [...arr, ...alerts];
-      }, []);
-    }
-    if (currentTab === "week") {
-      return groupedAlerts.reduce((arr, curr) => {
-        let { alerts, ...rest } = curr;
-        alerts = alerts
-          .filter(alert => !!alert.week && alert.week === selectedPeriod)
+          .filter(
+            alert => !!alert[currentTab] && alert[currentTab] === selectedPeriod
+          )
           .map(alert => ({
             ...alert,
             ...rest
