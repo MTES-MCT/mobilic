@@ -1,12 +1,12 @@
 import React from "react";
 
 import Stack from "@mui/material/Stack";
-import { Input } from "@codegouvfr/react-dsfr/Input";
 import { Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { AlertGroup } from "../../../control/components/AlertGroup";
+import { Input } from "../../../common/forms/Input";
 
 export function ControlBulletinFormStep3({
   handleEditControlBulletin,

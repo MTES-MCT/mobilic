@@ -7,8 +7,8 @@ import { PhoneNumber } from "../../common/PhoneNumber";
 import Stack from "@mui/material/Stack";
 import { BusinessType } from "../../common/BusinessType";
 import { Section } from "../../common/Section";
-import { Input } from "@codegouvfr/react-dsfr/Input";
 import { MandatoryField } from "../../common/MandatoryField";
+import { Input } from "../../common/forms/Input";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -49,12 +49,12 @@ export function SubmitStep({
             <MandatoryField />
             <Input
               id="company-usual-name"
-              value={companyName}
-              onChange={e => setCompanyName(e.target.value.trimLeft())}
-              label="Nom usuel"
-              classes={{
-                label: "required"
+              required
+              nativeInputProps={{
+                value: companyName,
+                onChange: e => setCompanyName(e.target.value.trimLeft())
               }}
+              label="Nom usuel"
             />
             <PhoneNumber
               currentPhoneNumber={phoneNumber}

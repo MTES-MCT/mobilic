@@ -2,11 +2,11 @@ import React from "react";
 
 import Stack from "@mui/material/Stack";
 import { Select } from "@codegouvfr/react-dsfr/Select";
-import { Input } from "@codegouvfr/react-dsfr/Input";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
 import { COUNTRIES } from "../../utils/country";
 import { CONTROL_BULLETIN_TRANSPORT_TYPE } from "../../utils/controlBulletin";
+import { Input } from "../../../common/forms/Input";
 
 export function ControlBulletinFormStep2({
   handleEditControlBulletin,
@@ -24,9 +24,7 @@ export function ControlBulletinFormStep2({
         label="Entreprise responsable (de rattachement)"
         hintText="SIREN ou Numéro TVA"
         state={!controlBulletin.siren && showErrors ? "error" : "default"}
-        classes={{
-          label: "required"
-        }}
+        required
       />
       <Input
         nativeInputProps={{
@@ -36,9 +34,7 @@ export function ControlBulletinFormStep2({
         }}
         label="Nom de l'entreprise"
         state={!controlBulletin.companyName && showErrors ? "error" : "default"}
-        classes={{
-          label: "required"
-        }}
+        required
       />
       <Input
         nativeInputProps={{
@@ -50,9 +46,7 @@ export function ControlBulletinFormStep2({
         state={
           !controlBulletin.companyAddress && showErrors ? "error" : "default"
         }
-        classes={{
-          label: "required"
-        }}
+        required
       />
       <Input
         nativeInputProps={{
@@ -66,9 +60,7 @@ export function ControlBulletinFormStep2({
             ? "error"
             : "default"
         }
-        classes={{
-          label: "required"
-        }}
+        required
       />
       <Select
         label="Pays d'immatriculation"
@@ -107,9 +99,7 @@ export function ControlBulletinFormStep2({
             ? "error"
             : "default"
         }
-        classes={{
-          label: "required"
-        }}
+        required
       />
       <Input
         nativeInputProps={{
@@ -121,9 +111,7 @@ export function ControlBulletinFormStep2({
         state={
           !controlBulletin.missionAddressEnd && showErrors ? "error" : "default"
         }
-        classes={{
-          label: "required"
-        }}
+        required
       />
       <RadioButtons
         legend="Type de transport *"

@@ -1,6 +1,5 @@
 import React from "react";
 
-import { Input } from "@codegouvfr/react-dsfr/Input";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { PhoneNumber } from "../../common/PhoneNumber";
@@ -9,6 +8,7 @@ import { BusinessType } from "../../common/BusinessType";
 import { useUpdateCompanyDetails } from "../../common/useUpdateCompanyDetails";
 import Modal from "../../common/Modal";
 import { MandatoryField } from "../../common/MandatoryField";
+import { Input } from "../../common/forms/Input";
 
 export default function UpdateCompanyDetailsModal({
   open,
@@ -70,9 +70,9 @@ export default function UpdateCompanyDetailsModal({
               nativeInputProps={{
                 id: "company-name",
                 value: newCompanyName,
-                onChange: e => setNewCompanyName(e.target.value),
-                required: true
+                onChange: e => setNewCompanyName(e.target.value)
               }}
+              required
             />
           </div>
           <PhoneNumber

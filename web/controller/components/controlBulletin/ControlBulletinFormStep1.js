@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 
 import Stack from "@mui/material/Stack";
 import { Select } from "@codegouvfr/react-dsfr/Select";
-import { Input } from "@codegouvfr/react-dsfr/Input";
 import { COUNTRIES } from "../../utils/country";
 import { DEPARTMENTS } from "../../utils/departments";
 import { useApi } from "common/utils/api";
@@ -11,6 +10,7 @@ import { DsfrAutocomplete } from "../utils/DsfrAutocomplete";
 import { Box, Grid } from "@mui/material";
 import { CURRENT_YEAR } from "common/utils/time";
 import { MandatoryField } from "../../../common/MandatoryField";
+import { Input } from "../../../common/forms/Input";
 
 const BIRTH_DATE_MIN_YEAR = 100;
 const BIRTH_DATE_MAX_YEAR = 18;
@@ -166,9 +166,7 @@ export function ControlBulletinFormStep1({
         state={
           !controlBulletin.userLastName && showErrors ? "error" : "default"
         }
-        classes={{
-          label: "required"
-        }}
+        required
       />
       <Input
         nativeInputProps={{
@@ -180,9 +178,7 @@ export function ControlBulletinFormStep1({
         state={
           !controlBulletin.userFirstName && showErrors ? "error" : "default"
         }
-        classes={{
-          label: "required"
-        }}
+        required
       />
 
       <Box
@@ -205,9 +201,7 @@ export function ControlBulletinFormStep1({
               type="number"
               label="Jour"
               hintText="Ex : 14"
-              classes={{
-                label: "required"
-              }}
+              required
             />
           </Grid>
           <Grid item xs={3}>
@@ -221,9 +215,7 @@ export function ControlBulletinFormStep1({
               type="number"
               label="Mois"
               hintText="Ex : 12"
-              classes={{
-                label: "required"
-              }}
+              required
             />
           </Grid>
           <Grid item xs={6}>
@@ -237,9 +229,7 @@ export function ControlBulletinFormStep1({
               type="number"
               label="Année"
               hintText="Ex : 1984"
-              classes={{
-                label: "required"
-              }}
+              required
             />
           </Grid>
         </Grid>

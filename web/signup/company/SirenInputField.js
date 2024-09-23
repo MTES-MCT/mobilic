@@ -1,5 +1,5 @@
 import React from "react";
-import { Input } from "@codegouvfr/react-dsfr/Input";
+import { Input } from "../../common/forms/Input";
 
 function validateSirenString(string) {
   if (!string) return true;
@@ -49,9 +49,9 @@ export function SirenInputField({
         error ? "L'entrée n'est pas un numéro de SIREN valide" : ""
       }
       classes={{
-        nativeInputOrTextArea: "fr-mr-2v",
-        label: "required"
+        nativeInputOrTextArea: "fr-mr-2v"
       }}
+      required
     />
   );
 }

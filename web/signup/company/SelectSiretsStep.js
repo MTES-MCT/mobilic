@@ -8,8 +8,8 @@ import AlreadyRegisteredSirets from "./AlreadyRegisteredSirets";
 import Stack from "@mui/material/Stack";
 import { PhoneNumber } from "../../common/PhoneNumber";
 import { BusinessType } from "../../common/BusinessType";
-import { Input } from "@codegouvfr/react-dsfr/Input";
 import { MandatoryField } from "../../common/MandatoryField";
+import { Input } from "../../common/forms/Input";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -139,9 +139,7 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                 >
                   <Input
                     label="Nom usuel"
-                    classes={{
-                      label: "required"
-                    }}
+                    required
                     nativeInputProps={{
                       value: facility.usualName,
                       onChange: e => {

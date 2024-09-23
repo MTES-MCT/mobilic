@@ -344,19 +344,3 @@ video:not([href])[controls] {
   width: 1rem;
   width: var(--icon-size)
 }
-
-.required label, label.required {
-  position: relative;
-  display: inline-block;
-
-  &::after {
-    content: "*";
-    color: red;
-    margin-left: 5px;
-    position: absolute;
-    top: 0;
-    right: 0;
-    transform: translateX(10px) translateY(1px);
-  }
-
-}

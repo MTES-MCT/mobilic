@@ -7,7 +7,6 @@ import { Footer } from "./footer";
 import Alert from "@mui/material/Alert";
 import { Link } from "../common/LinkButton";
 // import { Button, Table, TextInput } from "@dataesr/react-dsfr";
-import { Input } from "@codegouvfr/react-dsfr/Input";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import Grid from "@mui/material/Grid";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
@@ -17,6 +16,7 @@ import { captureSentryException } from "common/utils/sentry";
 import { CertificationImage } from "common/utils/icons";
 import Box from "@mui/material/Box";
 import { usePageTitle } from "../common/UsePageTitle";
+import { Input } from "../common/forms/Input";
 
 const useStyles = makeStyles(theme => ({
   explanation: {
@@ -126,9 +126,7 @@ export function Certificate() {
         <Grid item xs={12} md={10}>
           <Input
             label=""
-            classes={{
-              label: "required"
-            }}
+            required
             nativeInputProps={{
               onChange: e => {
                 setSearchInput(e.target.value);

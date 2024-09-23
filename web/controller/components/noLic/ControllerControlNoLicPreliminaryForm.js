@@ -4,11 +4,11 @@ import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Input } from "@codegouvfr/react-dsfr/Input";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 import { MandatoryField } from "../../../common/MandatoryField";
+import { Input } from "../../../common/forms/Input";
 
 export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
   const api = useApi();
@@ -70,9 +70,7 @@ export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
             name: "userLastName"
           }}
           label="Nom du salarié"
-          classes={{
-            label: "required"
-          }}
+          required
         />
 
         <Input
@@ -82,9 +80,7 @@ export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
             name: "userFirstName"
           }}
           label="Prénom du salarié"
-          classes={{
-            label: "required"
-          }}
+          required
         />
         <Input
           nativeInputProps={{
@@ -93,9 +89,7 @@ export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
             name: "companyName"
           }}
           label="Nom de l'entreprise"
-          classes={{
-            label: "required"
-          }}
+          required
         />
         <Input
           nativeInputProps={{
@@ -104,9 +98,7 @@ export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
             name: "vehicleRegistrationNumber"
           }}
           label="Immatriculation du véhicule"
-          classes={{
-            label: "required"
-          }}
+          required
         />
         <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
           <Button
