@@ -1,31 +1,27 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import { makeStyles } from "@mui/styles";
 
-const useStyles = makeStyles(theme => ({
-  box: {
-    background: ({ noBackground }) => (noBackground ? "none" : "")
-  },
-  container: {
-    padding: ({ noPadding }) => (noPadding ? "0" : "")
-  }
-}));
-
-export const Notice = ({
-  noBackground = false,
-  noPadding = false,
-  textAlign,
-  children
-}) => {
-  const classes = useStyles({ noBackground, noPadding });
+export const Notice = ({ title, description, linkUrl, linkText }) => {
   return (
-    <Box
-      className={`${classes.box} fr-notice fr-notice--info`}
-      textAlign={textAlign ? textAlign : { xs: "left", md: "center" }}
-      marginY={1}
-    >
-      <Box className={`${classes.container} fr-container`}>
-        <Box className="fr-notice__body">{children}</Box>
+    <Box className="fr-notice fr-notice--info">
+      <Box className="fr-container">
+        <Box className="fr-notice__body">
+          <p>
+            <span className="fr-notice__title">{title}</span>
+            <span className="fr-notice__desc">{description}</span>
+            {linkUrl && linkText && (
+              <a
+                target="_blank"
+                rel="noopener external noreferrer"
+                title={`${linkText} - nouvelle fenêtre`}
+                href={linkUrl}
+                className="fr-notice__link"
+              >
+                {linkText}
+              </a>
+            )}
+          </p>
+        </Box>
       </Box>
     </Box>
   );
