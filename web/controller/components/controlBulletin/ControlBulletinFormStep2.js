@@ -1,12 +1,12 @@
 import React from "react";
 
 import Stack from "@mui/material/Stack";
-import { Select } from "@codegouvfr/react-dsfr/Select";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
 import { COUNTRIES } from "../../utils/country";
 import { CONTROL_BULLETIN_TRANSPORT_TYPE } from "../../utils/controlBulletin";
 import { Input } from "../../../common/forms/Input";
+import { Select } from "../../../common/forms/Select";
+import { RadioButtons } from "../../../common/forms/RadioButtons";
 
 export function ControlBulletinFormStep2({
   handleEditControlBulletin,
@@ -67,8 +67,7 @@ export function ControlBulletinFormStep2({
         nativeSelectProps={{
           onChange: e => handleEditControlBulletin(e),
           value: controlBulletin.vehicleRegistrationCountry || "",
-          name: "vehicleRegistrationCountry",
-          required: true
+          name: "vehicleRegistrationCountry"
         }}
         state={
           !controlBulletin.vehicleRegistrationCountry && showErrors
@@ -80,6 +79,7 @@ export function ControlBulletinFormStep2({
             ? "Veuillez compléter ce champ"
             : ""
         }
+        required
       >
         {COUNTRIES.map(option => (
           <option key={option.value} value={option.value}>
@@ -114,7 +114,7 @@ export function ControlBulletinFormStep2({
         required
       />
       <RadioButtons
-        legend="Type de transport *"
+        legend="Type de transport"
         name="transportType"
         options={Object.values(CONTROL_BULLETIN_TRANSPORT_TYPE).map(
           ({ label, apiValue }) => ({
@@ -134,6 +134,7 @@ export function ControlBulletinFormStep2({
         state={
           !controlBulletin.transportType && showErrors ? "error" : "default"
         }
+        required
       />
       <Input
         nativeInputProps={{

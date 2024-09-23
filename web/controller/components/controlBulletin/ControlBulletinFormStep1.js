@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 
 import Stack from "@mui/material/Stack";
-import { Select } from "@codegouvfr/react-dsfr/Select";
 import { COUNTRIES } from "../../utils/country";
 import { DEPARTMENTS } from "../../utils/departments";
 import { useApi } from "common/utils/api";
@@ -11,6 +10,7 @@ import { Box, Grid } from "@mui/material";
 import { CURRENT_YEAR } from "common/utils/time";
 import { MandatoryField } from "../../../common/MandatoryField";
 import { Input } from "../../../common/forms/Input";
+import { Select } from "../../../common/forms/Select";
 
 const BIRTH_DATE_MIN_YEAR = 100;
 const BIRTH_DATE_MAX_YEAR = 18;
@@ -239,8 +239,7 @@ export function ControlBulletinFormStep1({
         nativeSelectProps={{
           onChange: e => handleEditControlBulletin(e),
           value: controlBulletin.userNationality,
-          name: "userNationality",
-          required: true
+          name: "userNationality"
         }}
         state={
           !controlBulletin.userNationality && showErrors ? "error" : "default"
@@ -250,7 +249,7 @@ export function ControlBulletinFormStep1({
             ? "Veuillez compléter ce champ"
             : ""
         }
-        className="required"
+        required
       >
         {COUNTRIES.map(option => (
           <option key={option.value} value={option.value}>

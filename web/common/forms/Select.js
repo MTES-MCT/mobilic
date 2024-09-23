@@ -1,9 +1,9 @@
 import React from "react";
-import { Input as InputDsfr } from "@codegouvfr/react-dsfr/Input";
+import { Select as SelectDsfr } from "@codegouvfr/react-dsfr/Select";
 import { MandatorySuffix } from "./MandatorySuffix";
 
-export const Input = React.forwardRef(
-  ({ required, label, nativeInputProps, ...props }, ref) => {
+export const Select = React.forwardRef(
+  ({ required, label, nativeSelectProps, ...props }, ref) => {
     const augmentedLabel =
       required && label ? (
         <>
@@ -13,14 +13,14 @@ export const Input = React.forwardRef(
         label
       );
 
-    const augmentedNativeInputProps = {
-      ...nativeInputProps,
+    const augmentedNativeSelectProps = {
+      ...nativeSelectProps,
       ...(required ? { required: true } : {})
     };
     return (
-      <InputDsfr
+      <SelectDsfr
         label={augmentedLabel}
-        nativeInputProps={augmentedNativeInputProps}
+        nativeSelectProps={augmentedNativeSelectProps}
         {...props}
         ref={ref}
       />
