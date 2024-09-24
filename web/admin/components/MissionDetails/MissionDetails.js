@@ -286,20 +286,19 @@ export function MissionDetails({
         )}
       </Box>
       {isMissionDeleted && (
-        <Box sx={{ mb: 2 }}>
-          <Notice
-            type="info"
-            description={
-              <>
-                Cette mission a été supprimée le{" "}
-                {frenchFormatDateStringOrTimeStamp(
-                  unixTimestampToDate(mission?.deletedAt)
-                )}{" "}
-                par {mission?.deletedBy}.
-              </>
-            }
-          />
-        </Box>
+        <Notice
+          type="info"
+          description={
+            <>
+              Cette mission a été supprimée le{" "}
+              {frenchFormatDateStringOrTimeStamp(
+                unixTimestampToDate(mission?.deletedAt)
+              )}{" "}
+              par {mission?.deletedBy}.
+            </>
+          }
+          sx={{ mb: 2 }}
+        />
       )}
       {globalFieldsEditable && <WarningModificationMission />}
       {globalFieldsEditable && mission.missionNotUpdatedForTooLong && (

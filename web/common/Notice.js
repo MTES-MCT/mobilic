@@ -12,7 +12,8 @@ const Notice = ({
   linkUrl,
   linkText,
   style,
-  classes = {}
+  classes = {},
+  sx = {}
 }) => {
   return (
     <Box
@@ -22,6 +23,7 @@ const Notice = ({
         className
       )}
       style={style}
+      sx={sx}
     >
       <Box className="fr-container">
         <Box className="fr-notice__body">

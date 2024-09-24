@@ -1,5 +1,6 @@
 // toto.d.ts
 import { FC, ReactNode } from 'react';
+import { SxProps } from '@material-ui/system';
 
 export interface NoticeProps {
     className?: string;
@@ -11,6 +12,7 @@ export interface NoticeProps {
     linkUrl?: string;
     linkText?: string;
     style?: CSSProperties;
+    sx?: SxProps;
 }
 
 declare const Notice: FC<NoticeProps>;

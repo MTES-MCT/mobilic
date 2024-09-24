@@ -1,5 +1,4 @@
 import React from "react";
-import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import { MINUTE, now, sameMinute, truncateMinute } from "common/utils/time";
 import TextField from "common/utils/TextField";
@@ -391,14 +390,13 @@ export default function ActivityRevisionOrCreationModal({
       content={
         <>
           {displayWarningMessage && (
-            <Box my={2} mb={4}>
-              <Notice
-                description="Les modifications seront visibles par votre employeur et par les
+            <Notice
+              description="Les modifications seront visibles par votre employeur et par les
                 contrôleurs (en cas de contrôle en bord de route ou en
                 entreprise)"
-                type="warning"
-              />
-            </Box>
+              type="warning"
+              sx={{ marginTop: 2, marginBottom: 4 }}
+            />
           )}
           <MandatoryField />
           <Box mt={1}>
