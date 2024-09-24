@@ -3,7 +3,7 @@ import { MissionReviewSection } from "../MissionReviewSection";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { Mission } from "./Mission";
-import { Alert, Box, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { DaySummary } from "./DaySummary";
 import { useToggleContradictory } from "./toggleContradictory";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
@@ -18,6 +18,7 @@ import {
 import { currentControllerId } from "common/utils/cookie";
 import { prettyFormatDay } from "common/utils/time";
 import { getNextHeadingComponent } from "common/utils/html";
+import Notice from "../../../common/Notice";
 
 export const useStyles = makeStyles(theme => ({
   contradictorySwitch: {
@@ -159,9 +160,11 @@ export function Day({
   return (
     <Box>
       {missionsDeleted.length > 0 ? (
-        <Alert severity="warning" sx={{ marginBottom: 2, textAlign: "left" }}>
-          <Typography>{missionsDeletedWarning}</Typography>
-        </Alert>
+        <Notice
+          type="warning"
+          sx={{ marginBottom: 2, textAlign: "left" }}
+          description={<Typography>{missionsDeletedWarning}</Typography>}
+        />
       ) : (
         <ContradictorySwitch
           contradictoryNotYetAvailable={!canDisplayContradictoryVersions}

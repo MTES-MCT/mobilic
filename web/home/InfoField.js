@@ -1,10 +1,10 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
-import Alert from "@mui/material/Alert";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { Stack } from "@mui/material";
+import Notice from "../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   fieldName: {
@@ -76,7 +76,7 @@ export function InfoItem({
           </Grid>
         )}
       </Stack>
-      {info && <Alert severity="info">{info}</Alert>}
+      {info && <Notice description={info} />}
       {alertComponent}
     </>
   );

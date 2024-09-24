@@ -1,6 +1,7 @@
 import React from "react";
-import { Alert, TextField, MenuItem } from "@mui/material";
+import { TextField, MenuItem } from "@mui/material";
 import { getTimezone, TIMEZONES } from "common/utils/timezones";
+import Notice from "./Notice";
 
 const TimezoneSelect = ({ currentTimezone, setTimezone }) => {
   const isGuyana = currentTimezone.name === "America/Cayenne";
@@ -24,13 +25,14 @@ const TimezoneSelect = ({ currentTimezone, setTimezone }) => {
         ))}
       </TextField>
       {isGuyana && (
-        <Alert severity="info" style={{ textAlign: "left" }}>
-          Les réseaux téléphoniques de Guyane étant basés sur ceux des Antilles,
+        <Notice
+          style={{ textAlign: "left" }}
+          description="Les réseaux téléphoniques de Guyane étant basés sur ceux des Antilles,
           il est nécessaire de faire une petite manipulation pour utiliser
           Mobilic correctement : sélectionnez le fuseau horaire de Guyane dans
           votre téléphone puis ajustez manuellement l'heure de votre téléphone à
-          l'heure locale.
-        </Alert>
+          l'heure locale."
+        />
       )}
     </>
   );

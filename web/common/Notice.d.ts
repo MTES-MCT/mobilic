@@ -11,6 +11,7 @@ export interface NoticeProps {
     classes?: Partial<Record<"root" | "title" | "description" | "link" | "container", string>>;
     linkUrl?: string;
     linkText?: string;
+    isFullWidth?: boolean;
     style?: CSSProperties;
     sx?: SxProps;
 }

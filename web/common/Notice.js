@@ -12,6 +12,7 @@ const Notice = ({
   linkUrl,
   linkText,
   style,
+  isFullWidth = true,
   classes = {},
   sx = {}
 }) => {
@@ -25,7 +26,12 @@ const Notice = ({
       style={style}
       sx={sx}
     >
-      <Box className={cx(fr.cx("fr-container"), classes.container)}>
+      <Box
+        className={cx(fr.cx("fr-container"), classes.container)}
+        style={{
+          ...(isFullWidth && { maxWidth: "100%" })
+        }}
+      >
         <Box className="fr-notice__body">
           <p>
             <span

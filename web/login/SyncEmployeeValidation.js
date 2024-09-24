@@ -11,21 +11,18 @@ import {
 } from "common/utils/apiQueries";
 import { useLocation } from "react-router-dom";
 import Typography from "@mui/material/Typography";
-import { Alert } from "@mui/material";
 import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { usePageTitle } from "../common/UsePageTitle";
+import Notice from "../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   container: {
     textAlign: "left",
     paddingRight: theme.spacing(12),
     paddingLeft: theme.spacing(12)
-  },
-  cguAlert: {
-    marginTop: theme.spacing(2)
   },
   openCGULink: {
     cursor: "pointer",
@@ -198,20 +195,25 @@ export function SyncEmployeeValidation() {
                     Confirmation d'autorisation d'accès
                   </PaperContainerTitle>
                   {mustAcceptAccountCreation && (
-                    <Alert severity="warning" className={classes.cguAlert}>
-                      <Typography>
-                        Vous devez d'abord accepter les Conditions Générales
-                        pour pouvoir confirmer l'accès au logiciel {clientName}.
-                        <br />
-                        <span
-                          className={classes.openCGULink}
-                          onClick={openCGUModal}
-                        >
-                          Ouvrir les CGU
-                        </span>{" "}
-                        pour continuer.
-                      </Typography>
-                    </Alert>
+                    <Notice
+                      type="warning"
+                      sx={{ marginTop: 2 }}
+                      description={
+                        <Typography>
+                          Vous devez d'abord accepter les Conditions Générales
+                          pour pouvoir confirmer l'accès au logiciel{" "}
+                          {clientName}.
+                          <br />
+                          <span
+                            className={classes.openCGULink}
+                            onClick={openCGUModal}
+                          >
+                            Ouvrir les CGU
+                          </span>{" "}
+                          pour continuer.
+                        </Typography>
+                      }
+                    />
                   )}
                   <Typography variant="h6" className={classes.explanationBlock}>
                     Votre entreprise {companyName} utilise le logiciel de

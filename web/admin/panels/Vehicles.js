@@ -17,7 +17,7 @@ import { formatApiError } from "common/utils/errors";
 import { usePanelStyles } from "./Company";
 import { captureSentryException } from "common/utils/sentry";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
-import Alert from "@mui/material/Alert";
+import Notice from "../../common/Notice";
 
 export default function VehicleAdmin({ company }) {
   const api = useApi();
@@ -48,112 +48,120 @@ export default function VehicleAdmin({ company }) {
   ];
   const vehicles = adminStore.vehicles.filter(v => v.companyId === companyId);
 
-  return [
-    <Box key={3} className={classes.title}>
-      <Typography variant="h4" component="h2">
-        Véhicules ({vehicles.length})
+  return (
+    <>
+      <Box className={classes.title}>
+        <Typography variant="h4" component="h2">
+          Véhicules ({vehicles.length})
+        </Typography>
+        <Button
+          variant="contained"
+          size="small"
+          color="primary"
+          onClick={() => tableRef.current.newRow()}
+        >
+          Ajouter un véhicule
+        </Button>
+      </Box>
+      <Typography className={classes.explanation}>
+        Les véhicules que vous ajoutez ici seront proposés aux salariés
+        lorsqu'ils renseigneront les informations d'une mission dans leur outil
+        mobile.
       </Typography>
-      <Button
-        variant="contained"
-        size="small"
-        color="primary"
-        onClick={() => tableRef.current.newRow()}
-      >
-        Ajouter un véhicule
-      </Button>
-    </Box>,
-    <Typography key={4} className={classes.explanation}>
-      Les véhicules que vous ajoutez ici seront proposés aux salariés lorsqu'ils
-      renseigneront les informations d'une mission dans leur outil mobile.
-    </Typography>,
-    <Alert key={5} severity="info" className={classes.vehiclesAlert}>
-      <Typography>
-        Vos salariés peuvent aussi créer de nouveaux véhicules lorsqu'ils ne les
-        trouvent pas dans cette liste. Ces nouveaux véhicules sont alors
-        disponibles à la sélection pour tous les salariés.
-      </Typography>
-    </Alert>,
-    <AugmentedTable
-      key={10}
-      columns={vehicleColumns}
-      entries={vehicles}
-      ref={tableRef}
-      className={classes.vehiclesTable}
-      onRowEdit={async (vehicle, { alias }) => {
-        try {
-          const apiResponse = await api.graphQlMutate(
-            EDIT_VEHICLE_MUTATION,
-            {
-              id: vehicle.id,
-              alias
-            },
-            { context: { nonPublicApi: true } }
-          );
-          adminStore.dispatch({
-            type: ADMIN_ACTIONS.update,
-            payload: {
-              id: vehicle.id,
-              entity: "vehicles",
-              update: apiResponse.data.vehicles.editVehicle
-            }
-          });
-        } catch (err) {
-          captureSentryException(err);
-        }
-      }}
-      validateRow={({ registrationNumber }) => !!registrationNumber}
-      onRowAdd={async ({ registrationNumber, alias }) => {
-        try {
-          const apiResponse = await api.graphQlMutate(
-            CREATE_VEHICLE_MUTATION,
-            {
-              registrationNumber: registrationNumber?.toUpperCase(),
-              alias,
-              companyId
-            },
-            { context: { nonPublicApi: true } }
-          );
-          adminStore.dispatch({
-            type: ADMIN_ACTIONS.create,
-            payload: {
-              entity: "vehicles",
-              items: [
-                {
-                  ...apiResponse.data.vehicles.createVehicle,
-                  companyId
-                }
-              ]
-            }
-          });
-        } catch (err) {
-          captureSentryException(err);
-          alerts.error(formatApiError(err), "vehicleAlreadyRegistered", 6000);
-        }
-      }}
-      defaultSortBy="registrationNumber"
-      onRowDelete={vehicle =>
-        modals.open("confirmation", {
-          textButtons: true,
-          title: "Confirmer suppression",
-          handleConfirm: async () => {
+      <Box sx={{ marginRight: 10 }}>
+        <Notice
+          description="Vos salariés peuvent aussi créer de nouveaux véhicules lorsqu'ils ne
+          les trouvent pas dans cette liste. Ces nouveaux véhicules sont alors
+          disponibles à la sélection pour tous les salariés."
+          sx={{
+            marginBottom: 2
+          }}
+        />
+        <AugmentedTable
+          columns={vehicleColumns}
+          entries={vehicles}
+          ref={tableRef}
+          onRowEdit={async (vehicle, { alias }) => {
             try {
-              await api.graphQlMutate(
-                TERMINATE_VEHICLE_MUTATION,
+              const apiResponse = await api.graphQlMutate(
+                EDIT_VEHICLE_MUTATION,
                 {
-                  id: vehicle.id
+                  id: vehicle.id,
+                  alias
                 },
                 { context: { nonPublicApi: true } }
               );
               adminStore.dispatch({
-                type: ADMIN_ACTIONS.delete,
-                payload: { id: vehicle.id, entity: "vehicles" }
+                type: ADMIN_ACTIONS.update,
+                payload: {
+                  id: vehicle.id,
+                  entity: "vehicles",
+                  update: apiResponse.data.vehicles.editVehicle
+                }
               });
             } catch (err) {
               captureSentryException(err);
             }
+          }}
+          validateRow={({ registrationNumber }) => !!registrationNumber}
+          onRowAdd={async ({ registrationNumber, alias }) => {
+            try {
+              const apiResponse = await api.graphQlMutate(
+                CREATE_VEHICLE_MUTATION,
+                {
+                  registrationNumber: registrationNumber?.toUpperCase(),
+                  alias,
+                  companyId
+                },
+                { context: { nonPublicApi: true } }
+              );
+              adminStore.dispatch({
+                type: ADMIN_ACTIONS.create,
+                payload: {
+                  entity: "vehicles",
+                  items: [
+                    {
+                      ...apiResponse.data.vehicles.createVehicle,
+                      companyId
+                    }
+                  ]
+                }
+              });
+            } catch (err) {
+              captureSentryException(err);
+              alerts.error(
+                formatApiError(err),
+                "vehicleAlreadyRegistered",
+                6000
+              );
+            }
+          }}
+          defaultSortBy="registrationNumber"
+          onRowDelete={vehicle =>
+            modals.open("confirmation", {
+              textButtons: true,
+              title: "Confirmer suppression",
+              handleConfirm: async () => {
+                try {
+                  await api.graphQlMutate(
+                    TERMINATE_VEHICLE_MUTATION,
+                    {
+                      id: vehicle.id
+                    },
+                    { context: { nonPublicApi: true } }
+                  );
+                  adminStore.dispatch({
+                    type: ADMIN_ACTIONS.delete,
+                    payload: { id: vehicle.id, entity: "vehicles" }
+                  });
+                } catch (err) {
+                  captureSentryException(err);
+                }
+              }
+            })
           }
-        })
-      }
-    />
-  ];
+        />
+      </Box>
+    </>
+  );
 }

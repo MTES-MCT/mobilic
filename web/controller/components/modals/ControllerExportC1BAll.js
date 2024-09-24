@@ -1,5 +1,4 @@
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { Alert } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -11,6 +10,7 @@ import React from "react";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import SignFilesCheckbox from "../../../common/SignFiles";
 import Modal, { modalStyles } from "../../../common/Modal";
+import Notice from "../../../common/Notice";
 
 export default function ControllerExportC1BAll({
   open,
@@ -50,9 +50,10 @@ export default function ControllerExportC1BAll({
             Le téléchargement produit un dossier zippé (.zip) qui contient{" "}
             <strong>un fichier C1B pour chaque travailleur contrôlé</strong>.
           </p>
-          <Alert severity="warning">
-            Seuls les contrôles de type "Mobilic" seront exportés au format C1B.
-          </Alert>
+          <Notice
+            type="warning"
+            description={`Seuls les contrôles de type "Mobilic" seront exportés au format C1B.`}
+          />
           <Typography variant="h4" className={classes.subtitle}>
             Options
           </Typography>

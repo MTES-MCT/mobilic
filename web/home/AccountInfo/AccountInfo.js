@@ -10,7 +10,6 @@ import { Header } from "../../common/Header";
 import { Section } from "../../common/Section";
 import Grid from "@mui/material/Grid";
 import { InfoItem } from "../InfoField";
-import Alert from "@mui/material/Alert";
 import { useApi } from "common/utils/api";
 import { useModals } from "common/utils/modals";
 import Divider from "@mui/material/Divider";
@@ -34,6 +33,7 @@ import { currentUserId } from "common/utils/cookie";
 import { UserControlSection } from "./UserControlSection";
 import { usePageTitle } from "../../common/UsePageTitle";
 import { parsePhoneNumber } from "libphonenumber-js";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
@@ -43,14 +43,19 @@ const useStyles = makeStyles(theme => ({
 
 function NoEmploymentAlert() {
   return (
-    <Alert severity="warning">
-      Vous n'avez aucune entreprise à laquelle vous êtes rattaché(e) et{" "}
-      <span className="bold">
-        vous ne pouvez donc pas enregistrer de temps de travail
-      </span>
-      . Rapprochez-vous de votre employeur du moment pour effectuer le
-      rattachement.
-    </Alert>
+    <Notice
+      type="warning"
+      description={
+        <>
+          Vous n'avez aucune entreprise à laquelle vous êtes rattaché(e) et{" "}
+          <span className="bold">
+            vous ne pouvez donc pas enregistrer de temps de travail
+          </span>
+          . Rapprochez-vous de votre employeur du moment pour effectuer le
+          rattachement.
+        </>
+      }
+    />
   );
 }
 

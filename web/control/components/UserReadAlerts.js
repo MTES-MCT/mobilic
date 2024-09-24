@@ -1,6 +1,5 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import Alert from "@mui/material/Alert";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
@@ -10,6 +9,7 @@ import { AlertGroup } from "./AlertGroup";
 import { prettyFormatDayHour } from "common/utils/time";
 import Stack from "@mui/material/Stack";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -83,20 +83,20 @@ export function UserReadAlerts({
           >
             Infractions calculées par Mobilic
           </Typography>{" "}
-          <Alert severity="info">
-            <Typography gutterBottom>
-              Les infractions calculées par Mobilic se basent sur la version
+          <Notice
+            description="Les infractions calculées par Mobilic se basent sur la version
               validée par le gestionnaire, ou, si elle n’a pas été faite au
-              moment du contrôle, sur celle du salarié.
-            </Typography>
-          </Alert>
+              moment du contrôle, sur celle du salarié."
+          />
           {businesses && businesses.length > 1 && (
-            <Alert severity="warning" sx={{ marginTop: 1 }}>
-              <Typography gutterBottom>
-                {`Attention, veuillez noter que ce salarié effectue des missions pour différents secteurs d’activité 
-                (${businesses.join(", ")}).`}
-              </Typography>
-            </Alert>
+            <Notice
+              type="warning"
+              sx={{ marginTop: 1 }}
+              description={
+                <>{`Attention, veuillez noter que ce salarié effectue des missions pour différents secteurs d’activité 
+              (${businesses.join(", ")}).`}</>
+              }
+            />
           )}
         </>
       )}
@@ -135,18 +135,20 @@ export function UserReadAlerts({
           </Stack>
         ) : (
           !noLic && (
-            <Alert severity="warning">
-              <Typography gutterBottom>
-                Les données collectées par Mobilic sont déclaratives et sont
-                donc susceptibles d'erreurs ou d'oublis. En cas de données
-                manquantes ou inexactes les alertes réglementaires ne peuvent
-                pas être remontées correctement.
-              </Typography>
-              <Typography>
-                Mobilic sert à faciliter le travail d'enquête des inspecteurs
-                sans se substituer à lui.
-              </Typography>
-            </Alert>
+            <Notice
+              type="warning"
+              description={
+                <>
+                  Les données collectées par Mobilic sont déclaratives et sont
+                  donc susceptibles d'erreurs ou d'oublis. En cas de données
+                  manquantes ou inexactes les alertes réglementaires ne peuvent
+                  pas être remontées correctement.
+                  <br />
+                  Mobilic sert à faciliter le travail d'enquête des inspecteurs
+                  sans se substituer à lui.
+                </>
+              }
+            />
           )
         )}
       </>

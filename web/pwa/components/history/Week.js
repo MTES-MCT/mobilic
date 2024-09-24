@@ -15,8 +15,8 @@ import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { getLatestAlertComputationVersion } from "common/utils/regulation/alertVersions";
 import { WeekRegulatoryAlerts } from "../../../regulatory/WeekRegulatoryAlerts";
 import { currentControllerId } from "common/utils/cookie";
-import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
+import Notice from "../../../common/Notice";
 
 export function Week({
   missionsInPeriod,
@@ -71,9 +71,11 @@ export function Week({
   return (
     <div>
       {missionsDeleted.length > 0 && (
-        <Alert severity="warning" sx={{ marginBottom: 2 }}>
-          <Typography>{missionsDeletedWarning}</Typography>
-        </Alert>
+        <Notice
+          type="warning"
+          sx={{ marginBottom: 2, textAlign: "left" }}
+          description={<Typography>{missionsDeletedWarning}</Typography>}
+        />
       )}
       <WorkTimeSummaryKpiGrid metrics={kpis} />
       {hasWorkMissions && (

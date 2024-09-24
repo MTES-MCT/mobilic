@@ -4,7 +4,6 @@ import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import { Header } from "../common/Header";
 import { Footer } from "./footer";
-import Alert from "@mui/material/Alert";
 import { Link } from "../common/LinkButton";
 // import { Button, Table, TextInput } from "@dataesr/react-dsfr";
 import { Button } from "@codegouvfr/react-dsfr/Button";
@@ -17,6 +16,7 @@ import { CertificationImage } from "common/utils/icons";
 import Box from "@mui/material/Box";
 import { usePageTitle } from "../common/UsePageTitle";
 import { Input } from "../common/forms/Input";
+import Notice from "../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   explanation: {
@@ -103,11 +103,13 @@ export function Certificate() {
         pour cela, utilise Mobilic de manière conforme. L'attestation est
         valable pour une durée de 6 mois.
       </Typography>
-      <Alert severity="warning" className={classes.warning}>
-        Attention, le certificat Mobilic n'est en aucun cas gage de respect
+      <Notice
+        type="warning"
+        description="Attention, le certificat Mobilic n'est en aucun cas gage de respect
         total de la réglementation par l'entreprise. Il n'atteste que de la
-        bonne utilisation de l'outil de suivi du temps de travail.
-      </Alert>
+        bonne utilisation de l'outil de suivi du temps de travail."
+        className={classes.warning}
+      />
       <Typography mt={2} className={classes.linkExplanation}>
         <Link
           href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic/"

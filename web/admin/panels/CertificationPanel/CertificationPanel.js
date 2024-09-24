@@ -13,10 +13,10 @@ import Skeleton from "@mui/material/Skeleton";
 import { CheckboxField } from "../../../common/CheckboxField";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { getMonthsBetweenTwoDates } from "common/utils/time";
-import Alert from "@mui/material/Alert";
 import CertificationCriteriaGlobalResult from "./CertificationCriteriaGlobalResult";
 import Button from "@mui/material/Button";
 import DownloadIcon from "@mui/icons-material/Download";
+import Notice from "../../../common/Notice";
 
 export default function CertificationPanel({ company }) {
   const api = useApi();
@@ -139,11 +139,12 @@ export default function CertificationPanel({ company }) {
           et, pour cela, utilise Mobilic de manière conforme. L'attestation est
           valable pour une durée de 6 mois.
         </Typography>
-        <Alert severity="warning">
-          Attention, le certificat Mobilic n'est en aucun cas un gage de respect
+        <Notice
+          type="warning"
+          description="Attention, le certificat Mobilic n'est en aucun cas un gage de respect
           total de la réglementation par l'entreprise. Il n'atteste que de la
-          bonne utilisation de l'outil de suivi du temps de travail.
-        </Alert>
+          bonne utilisation de l'outil de suivi du temps de travail."
+        />
       </Box>
     ),
     !loadingInfo && companyWithInfo.isCertified && (

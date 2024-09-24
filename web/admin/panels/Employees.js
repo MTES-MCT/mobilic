@@ -31,8 +31,8 @@ import { EMPLOYMENT_ROLE } from "common/utils/employments";
 import { TeamFilter } from "../components/TeamFilter";
 import { NO_TEAMS_LABEL, NO_TEAM_ID } from "../utils/teams";
 import { BusinessDropdown } from "../components/BusinessDropdown";
-import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -816,12 +816,10 @@ export function Employees({ company, containerRef }) {
       </Typography>
 
       {areThereEmploymentsWithoutBusinessType && (
-        <Alert severity="info">
-          <Typography>
-            Certains salariés n'ont pas de type d'activité de transport
-            renseigné. Veuillez en sélectionner un pour chaque salarié actif.
-          </Typography>
-        </Alert>
+        <Notice
+          description="Certains salariés n'ont pas de type d'activité de transport
+            renseigné. Veuillez en sélectionner un pour chaque salarié actif."
+        />
       )}
       <Grid container>
         {adminStore?.teams?.length > 0 && (
