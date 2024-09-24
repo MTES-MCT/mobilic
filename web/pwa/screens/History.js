@@ -47,7 +47,8 @@ import {
   jsToUnixTimestamp,
   shortPrettyFormatDay,
   SHORT_MONTHS,
-  startOfDayAsDate
+  startOfDayAsDate,
+  isMoreOrLessTheSameDay
 } from "common/utils/time";
 import { usePageTitle } from "../../common/UsePageTitle";
 
@@ -402,7 +403,9 @@ export function History({
         let { alerts, ...rest } = curr;
         alerts = alerts
           .filter(
-            alert => !!alert[currentTab] && alert[currentTab] === selectedPeriod
+            alert =>
+              !!alert[currentTab] &&
+              isMoreOrLessTheSameDay(alert[currentTab], selectedPeriod)
           )
           .map(alert => ({
             ...alert,
