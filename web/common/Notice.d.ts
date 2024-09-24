@@ -1,5 +1,5 @@
 // toto.d.ts
-import { FC, ReactNode } from 'react';
+import { CSSProperties, FC, ReactNode } from 'react';
 import { SxProps } from '@material-ui/system';
 
 export interface NoticeProps {
@@ -8,7 +8,7 @@ export interface NoticeProps {
     description?: ReactNode;
     type?: "info" | "warning" | "success";
     size?: "small" | "normal";
-    classes?: Partial<Record<"root" | "title" | "description" | "link", string>>;
+    classes?: Partial<Record<"root" | "title" | "description" | "link" | "container", string>>;
     linkUrl?: string;
     linkText?: string;
     style?: CSSProperties;

@@ -6,13 +6,13 @@ import { Header } from "../common/Header";
 import { makeStyles } from "@mui/styles";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 import Button from "@mui/material/Button";
-import { Alert } from "@mui/material";
 import {
   buildAgentConnectCallbackUrl,
   buildAgentConnectUrl
 } from "../controller/utils/agentConnect";
 import { AgentConnectImage } from "common/utils/icons";
 import { usePageTitle } from "../common/UsePageTitle";
+import Notice from "../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   agentConnectButton: {
@@ -27,8 +27,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: "left"
   },
   informationText: {
-    fontStyle: "italic",
-    fontSize: "small"
+    fontStyle: "italic"
   }
 }));
 
@@ -70,15 +69,19 @@ export default function LoginController() {
         >
           Qu'est-ce que AgentConnect ?
         </Link>
-        <Alert severity="info" className={classes.alertInfo}>
-          <Typography className={classes.informationText}>
-            Vous n'avez pas de compte Mobilic à créer.
-          </Typography>
-          <Typography className={classes.informationText}>
-            AgentConnect vous permet de vous connecter à Mobilic avec votre
-            compte Cerbère
-          </Typography>
-        </Alert>
+        <Notice
+          className={classes.alertInfo}
+          size="small"
+          classes={{
+            description: classes.informationText
+          }}
+          description={
+            <>
+              Vous n'avez pas de compte Mobilic à créer. AgentConnect vous
+              permet de vous connecter à Mobilic avec votre compte Cerbère
+            </>
+          }
+        />
       </Container>
     </PaperContainer>
   ];

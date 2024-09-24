@@ -25,7 +25,7 @@ const Notice = ({
       style={style}
       sx={sx}
     >
-      <Box className="fr-container">
+      <Box className={cx(fr.cx("fr-container"), classes.container)}>
         <Box className="fr-notice__body">
           <p>
             <span
