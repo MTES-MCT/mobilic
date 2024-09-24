@@ -358,3 +358,6 @@ export function unixTimestampToDate(unixTimestamp) {
 export function isDateBeforeNbDays(dateToTest, nbDays) {
   return dateToTest < addDaysToDate(new Date(), -nbDays);
 }
+
+export const isMoreOrLessTheSameDay = (time1, time2) =>
+  Math.abs(time1 - time2) < HOUR * 3;
