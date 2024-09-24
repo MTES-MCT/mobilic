@@ -27,6 +27,7 @@ import { NativeDateTimePicker } from "../../common/NativeDateTimePicker";
 import OverlappedActivityList from "../components/ActivityRevision/OverlappedActivityList";
 import Modal from "../../common/Modal";
 import { MandatoryField } from "../../common/MandatoryField";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -391,11 +392,12 @@ export default function ActivityRevisionOrCreationModal({
         <>
           {displayWarningMessage && (
             <Box my={2} mb={4}>
-              <Alert severity="warning">
-                Les modifications seront visibles par votre employeur et par les
+              <Notice
+                description="Les modifications seront visibles par votre employeur et par les
                 contrôleurs (en cas de contrôle en bord de route ou en
-                entreprise)
-              </Alert>
+                entreprise)"
+                type="warning"
+              />
             </Box>
           )}
           <MandatoryField />
@@ -512,11 +514,11 @@ export default function ActivityRevisionOrCreationModal({
                   title: "Confirmer la suppression",
                   content: (!otherUserActivities ||
                     otherUserActivities.length === 0) && (
-                    <Alert severity="warning">
-                      En supprimant la seule activité d'une mission, vous
+                    <Notice
+                      description="En supprimant la seule activité d'une mission, vous
                       annulerez la mission. Vous ne pourrez plus y apporter de
-                      modifications.
-                    </Alert>
+                      modifications."
+                    />
                   ),
                   cancelButtonLabel: "Annuler",
                   confirmButtonLabel: "Valider",

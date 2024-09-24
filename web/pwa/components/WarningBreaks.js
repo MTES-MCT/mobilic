@@ -1,6 +1,6 @@
 import React from "react";
-import { Notice } from "../../common/Notice";
 import Box from "@mui/material/Box";
+import Notice from "../../common/Notice";
 
 export const WarningBreaks = () => (
   <Box sx={{ marginTop: 1 }}>

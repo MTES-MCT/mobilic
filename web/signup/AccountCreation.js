@@ -29,7 +29,7 @@ import { PasswordHelper } from "../common/PasswordHelper";
 import { usePageTitle } from "../common/UsePageTitle";
 import { PhoneNumber } from "../common/PhoneNumber";
 import { MandatoryField } from "../common/MandatoryField";
-import { Notice } from "../common/Notice";
+import Notice from "../common/Notice";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   usePageTitle("Création de compte - Mobilic");
@@ -232,7 +232,6 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                 label="Numéro de téléphone professionel"
               />
               <Notice
-                title=""
                 description="Cette information pourra être utilisée par l’équipe Mobilic
                   pour vous contacter à des fins d’aide à la prise en main."
               />
