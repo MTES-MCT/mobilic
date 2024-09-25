@@ -14,6 +14,7 @@ export interface NoticeProps {
     isFullWidth?: boolean;
     style?: CSSProperties;
     sx?: SxProps;
+    onClose?:()=>void;
 }
 
 declare const Notice: FC<NoticeProps>;

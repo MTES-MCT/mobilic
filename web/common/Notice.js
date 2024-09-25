@@ -14,7 +14,8 @@ const Notice = ({
   style,
   isFullWidth = true,
   classes = {},
-  sx = {}
+  sx = {},
+  onClose = null
 }) => {
   return (
     <Box
@@ -65,6 +66,16 @@ const Notice = ({
               </a>
             )}
           </p>
+          {onClose && (
+            <button
+              title="Masquer le message"
+              onClick={onClose}
+              id="button-1299"
+              className="fr-btn--close fr-btn"
+            >
+              Masquer le message
+            </button>
+          )}
         </Box>
       </Box>
     </Box>
