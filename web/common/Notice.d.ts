@@ -6,7 +6,7 @@ export interface NoticeProps {
     className?: string;
     title?: ReactNode;
     description?: ReactNode;
-    type?: "info" | "warning" | "success";
+    type?: "info" | "warning" | "success" | "error";
     size?: "small" | "normal";
     classes?: Partial<Record<"root" | "title" | "description" | "link" | "container", string>>;
     linkUrl?: string;

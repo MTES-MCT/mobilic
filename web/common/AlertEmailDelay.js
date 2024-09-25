@@ -19,7 +19,7 @@ const AlertEmailDelay = () => {
       className={classes.alert}
       description={
         <>
-          <Typography>Il est possible que</Typography>
+          Il est possible que
           <ul style={{ padding: 0 }}>
             <li>
               <Typography>
