@@ -115,9 +115,8 @@ export function VideoCard({ video, titleProps = {}, ...props }) {
         {description}
       </Typography>
       <div style={{ padding: "20rem 0 0 0", position: "relative" }}>
-        {/* <iframe
+        <iframe
           src={getCdnUrl(id)}
-          frameBorder="0"
           allow="autoplay; fullscreen; picture-in-picture"
           style={{
             position: "absolute",
@@ -127,7 +126,7 @@ export function VideoCard({ video, titleProps = {}, ...props }) {
             height: "100%"
           }}
           title={title}
-        ></iframe> */}
+        ></iframe>
       </div>
     </Card>
   );
