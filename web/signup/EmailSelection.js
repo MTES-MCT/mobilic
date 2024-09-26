@@ -177,14 +177,13 @@ export function EmailSelection() {
           </Typography>
           <EmailField
             required
-            fullWidth
-            className="vertical-form-text-input"
             label="Adresse e-mail"
             value={email}
             setValue={setEmail}
             validate
             error={!!emailError}
             setError={setEmailError}
+            hintText="Format attendu : prenom.nom@domaine.fr"
           />
           {!isAdmin && (
             <CheckboxField

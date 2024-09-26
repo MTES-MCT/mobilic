@@ -208,6 +208,7 @@ export function RequestResetPassword() {
   const alerts = useSnackbarAlerts();
 
   const [email, setEmail] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
   const [didSubmitForm, setDidSubmitForm] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
@@ -259,11 +260,11 @@ export function RequestResetPassword() {
                 </Typography>
                 <EmailField
                   required
-                  fullWidth
-                  className="vertical-form-text-input"
                   label="Adresse email de connexion"
                   value={email}
                   setValue={setEmail}
+                  error={emailError}
+                  setError={setEmailError}
                 />
                 <Box my={4}>
                   <LoadingButton
@@ -271,7 +272,7 @@ export function RequestResetPassword() {
                     variant="contained"
                     color="primary"
                     type="submit"
-                    disabled={!email}
+                    disabled={!!emailError || !email}
                     loading={loading}
                   >
                     Valider

@@ -49,6 +49,7 @@ const useStyles = makeStyles(theme => ({
 export default function Login() {
   usePageTitle("Connexion Entreprise / Salarié - Mobilic");
   const [email, setEmail] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState(null);
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -116,15 +117,12 @@ export default function Login() {
           Entreprise ou salarié
         </PaperContainerTitle>
         <FranceConnectContainer
-          mt={2}
-          mb={3}
           onButtonClick={() => {
             const callbackUrl = buildCallbackUrl();
             window.location.href = buildFranceConnectUrl(callbackUrl);
           }}
-          helperText="FranceConnect est la solution proposée par l’État pour simplifier la connexion à vos services en ligne. Vous pouvez vous connecter à votre compte via FranceConnect."
         />
-        <Typography>ou</Typography>
+        <p className="fr-hr-or">ou</p>
         <Box my={1}>
           <form
             className="vertical-form"
@@ -133,12 +131,11 @@ export default function Login() {
             onSubmit={handleSubmit}
           >
             <EmailField
-              fullWidth
-              className="vertical-form-text-input"
-              label="Email"
               autoComplete="username"
               value={email}
               setValue={setEmail}
+              error={emailError}
+              setError={setEmailError}
               required
             />
             <PasswordField

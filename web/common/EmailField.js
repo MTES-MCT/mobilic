@@ -1,9 +1,9 @@
-import TextField from "@mui/material/TextField";
 import React from "react";
 import {
   cleanEmailString,
   validateCleanEmailString
 } from "common/utils/validation";
+import { Input } from "./forms/Input";
 
 export function EmailField({
   value,
@@ -11,30 +11,37 @@ export function EmailField({
   error,
   setError,
   validate,
+  label = "Email",
+  required = false,
   ...props
 }) {
   React.useEffect(() => {
     if (validate && value && value !== "" && !validateCleanEmailString(value)) {
-      setError("Le format de l'adresse n'est pas valide");
+      setError(
+        "Le format de l'adresse saisie n'est pas valide. Le format attendu est prenom.nom@domaine.fr."
+      );
     } else if (error && setError) setError("");
   }, [value]);
 
   const [actualInput, setActualInput] = React.useState(value);
 
   return (
-    <TextField
-      type="email"
-      value={actualInput}
-      onChange={e => {
-        const newValue = e.target.value;
-        const cleanValue = newValue ? cleanEmailString(newValue) : newValue;
-        setActualInput(newValue);
-        setValue(cleanValue);
+    <Input
+      label={label}
+      state={error ? "error" : "default"}
+      stateRelatedMessage={error}
+      nativeInputProps={{
+        type: "email",
+        value: actualInput,
+        onChange: e => {
+          const newValue = e.target.value;
+          const cleanValue = newValue ? cleanEmailString(newValue) : newValue;
+          setActualInput(newValue);
+          setValue(cleanValue);
+        },
+        ...props
       }}
-      error={!!error}
-      helperText={error}
-      variant="standard"
-      {...props}
+      required={required}
     />
   );
 }

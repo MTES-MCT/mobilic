@@ -14,6 +14,7 @@ import { useSnackbarAlerts } from "../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { makeStyles } from "@mui/styles";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
+import { MandatoryField } from "../common/MandatoryField";
 
 const useStyles = makeStyles(theme => ({
   caption: {
@@ -82,15 +83,13 @@ export default function NewsletterSubscriptionModal({ open, handleClose }) {
           title="Abonnement à la lettre d'information"
         />
         <DialogContent>
-          <Typography>
+          <Typography mb={2}>
             Veuillez renseigner votre adresse email pour vous abonner à notre
-            lettre d'information
+            lettre d'information.
           </Typography>
+          <MandatoryField />
           <EmailField
             required
-            fullWidth
-            className="vertical-form-text-input"
-            label="Email"
             value={email}
             setValue={setEmail}
             validate
