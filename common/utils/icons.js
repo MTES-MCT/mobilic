@@ -236,22 +236,6 @@ export function ComputerImage(props) {
   return <img alt="Un ordinateur" src={_ComputerImage} {...props} />;
 }
 
-export function FranceConnectIcon(props) {
-  return (
-    <SvgIcon
-      titleAccess="FranceConnect"
-      style={{
-        width: 283 * (props.scale ? props.scale : 1),
-        height: 82 * (props.scale ? props.scale : 1),
-        ...props.style
-      }}
-      {...omit(props, "style")}
-      viewBox="0 0 283.5 82.2"
-      component={FranceConnectIcon_}
-    />
-  );
-}
-
 export function FabNumIcon(props) {
   return (
     <SvgIcon
