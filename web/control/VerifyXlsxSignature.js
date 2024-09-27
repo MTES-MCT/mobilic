@@ -14,7 +14,8 @@ import { useSnackbarAlerts } from "../common/Snackbar";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
 import { usePageTitle } from "../common/UsePageTitle";
-import Notice from "../common/Notice";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 
 const STATUS_MAP = {
   SUCCESS: {
@@ -229,18 +230,24 @@ export function XlsxVerifier() {
             )}
           </Box>
           {verifyResponse && (
-            <Notice
-              type={verifyResponse.success ? "success" : "error"}
-              title={
-                (STATUS_MAP[verifyResponseStatus] || STATUS_MAP.INTERNAL_ERROR)
-                  .title
-              }
-              description={
+            <Alert
+              variant="filled"
+              className={classes.response}
+              severity={verifyResponse.success ? "success" : "error"}
+            >
+              <AlertTitle className="bold">
+                {
+                  (
+                    STATUS_MAP[verifyResponseStatus] ||
+                    STATUS_MAP.INTERNAL_ERROR
+                  ).title
+                }{" "}
+              </AlertTitle>
+              {
                 (STATUS_MAP[verifyResponseStatus] || STATUS_MAP.INTERNAL_ERROR)
                   .desc
               }
-              className={classes.response}
-            />
+            </Alert>
           )}
         </Container>
       </PaperContainer>
