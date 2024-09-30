@@ -12,21 +12,23 @@ import {
 } from "common/utils/franceConnect";
 import { FranceConnectContainer } from "../common/FranceConnect";
 import { useModals } from "common/utils/modals";
-import { PasswordField } from "common/components/PasswordField";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { USER_SIGNUP_MUTATION } from "common/utils/apiQueries";
 import { EmailField } from "../common/EmailField";
 import TimezoneSelect from "../common/TimezoneSelect";
 import { getClientTimezone } from "common/utils/timezones";
 import { WayHeardOfMobilic } from "../common/WayHeardOfMobilic";
-import { getPasswordErrors } from "common/utils/passwords";
-import { PasswordHelper } from "../common/PasswordHelper";
+import {
+  getPasswordErrors,
+  PASSWORD_POLICY_RULES
+} from "common/utils/passwords";
 import { usePageTitle } from "../common/UsePageTitle";
 import { MandatoryField } from "../common/MandatoryField";
 import { PhoneNumber } from "../common/PhoneNumber";
 import { Notice } from "../common/Notice";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Input } from "../common/forms/Input";
+import { PasswordInput } from "../common/forms/PasswordInput";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   usePageTitle("Création de compte - Mobilic");
@@ -38,6 +40,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
 
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
+  const [firstNameError, setFirstNameError] = React.useState(false);
+  const [lastNameError, setLastNameError] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [phoneNumber, setPhoneNumber] = React.useState("");
   const [emailError, setEmailError] = React.useState("");
@@ -53,6 +57,22 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    if (
+      !email ||
+      !!emailError ||
+      !!getPasswordErrors(password) ||
+      !firstName ||
+      !lastName ||
+      !email
+    ) {
+      if (!email) {
+        setEmailError("Veuillez compléter ce champ");
+      }
+      setFirstNameError(!firstName);
+      setLastNameError(!lastName);
+      return;
+    }
+
     if (store.hasAcceptedCgu()) {
       await _createAccount(
         employeeInvite,
@@ -207,31 +227,38 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                         hintText="Format attendu : prenom.nom@domaine.fr"
                         autoComplete="email"
                       />
-                      <PasswordField
-                        required
-                        fullWidth
-                        className="vertical-form-text-input"
-                        label="Choisissez un mot de passe"
-                        variant="standard"
-                        value={password}
-                        onChange={e => {
-                          setPassword(e.target.value);
+                      <PasswordInput
+                        label="Mot de passe"
+                        nativeInputProps={{
+                          autoComplete: "new-password",
+                          value: password,
+                          onChange: e => setPassword(e.target.value),
+                          onBlur: e => setPassword("")
                         }}
-                        error={password ? !!getPasswordErrors(password) : false}
+                        messages={PASSWORD_POLICY_RULES.map(rule => {
+                          return {
+                            message: rule.message,
+                            severity: !password
+                              ? "info"
+                              : rule.validator(password)
+                              ? "valid"
+                              : "error"
+                          };
+                        })}
+                        required
                       />
-                      <PasswordHelper password={password} />
                       <Input
                         nativeInputProps={{
                           value: firstName,
                           onChange: e =>
                             setFirstName(e.target.value.trimStart()),
+                          onBlur: e =>
+                            setFirstNameError(!e.target.value.trim()),
                           autoComplete: "given-name"
                         }}
                         label="Prénom"
-                        state={!firstName ? "error" : "default"}
-                        stateRelatedMessage={
-                          !firstName ? "Veuillez compléter ce champ" : ""
-                        }
+                        state={firstNameError ? "error" : "default"}
+                        stateRelatedMessage="Veuillez compléter ce champ"
                         required
                       />
                       <Input
@@ -239,13 +266,12 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                           value: lastName,
                           onChange: e =>
                             setLastName(e.target.value.trimStart()),
+                          onBlur: e => setLastNameError(!e.target.value.trim()),
                           autoComplete: "family-name"
                         }}
                         label="Nom"
-                        state={!lastName ? "error" : "default"}
-                        stateRelatedMessage={
-                          !lastName ? "Veuillez compléter ce champ" : ""
-                        }
+                        state={lastNameError ? "error" : "default"}
+                        stateRelatedMessage="Veuillez compléter ce champ"
                         required
                       />
                       <TimezoneSelect
@@ -315,13 +341,6 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                           variant="contained"
                           color="primary"
                           type="submit"
-                          disabled={
-                            !!emailError ||
-                            !email ||
-                            !!getPasswordErrors(password) ||
-                            !firstName ||
-                            !lastName
-                          }
                           loading={loading}
                         >
                           M'inscrire

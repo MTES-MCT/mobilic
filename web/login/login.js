@@ -14,7 +14,6 @@ import {
   buildFranceConnectUrl
 } from "common/utils/franceConnect";
 import { FranceConnectContainer } from "../common/FranceConnect";
-import { PasswordField } from "common/components/PasswordField";
 import { makeStyles } from "@mui/styles";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
@@ -23,6 +22,7 @@ import { EmailField } from "../common/EmailField";
 import { pluralize } from "common/utils/time";
 import { usePageTitle } from "../common/UsePageTitle";
 import { RegistrationLink } from "../common/RegistrationLink";
+import { PasswordInput } from "../common/forms/PasswordInput";
 
 const useStyles = makeStyles(theme => ({
   forgotPasswordLink: {
@@ -138,15 +138,12 @@ export default function Login() {
               setError={setEmailError}
               required
             />
-            <PasswordField
-              fullWidth
-              className="vertical-form-text-input"
+            <PasswordInput
               label="Mot de passe"
-              variant="standard"
-              autoComplete="current-password"
-              value={password}
-              onChange={e => {
-                setPassword(e.target.value);
+              nativeInputProps={{
+                autoComplete: "current-password",
+                value: password,
+                onChange: e => setPassword(e.target.value)
               }}
               required
             />

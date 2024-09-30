@@ -14,7 +14,6 @@ import Container from "@mui/material/Container";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Section } from "../common/Section";
 import { useModals } from "common/utils/modals";
-import { PasswordField } from "common/components/PasswordField";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainerTitle } from "../common/PaperContainer";
 import {
@@ -27,8 +26,11 @@ import { captureSentryException } from "common/utils/sentry";
 import TimezoneSelect from "../common/TimezoneSelect";
 import { getClientTimezone } from "common/utils/timezones";
 import { WayHeardOfMobilic } from "../common/WayHeardOfMobilic";
-import { getPasswordErrors } from "common/utils/passwords";
-import { PasswordHelper } from "../common/PasswordHelper";
+import {
+  getPasswordErrors,
+  PASSWORD_POLICY_RULES
+} from "common/utils/passwords";
+import { PasswordInput } from "../common/forms/PasswordInput";
 
 const useStyles = makeStyles(theme => ({
   text: {
@@ -219,22 +221,25 @@ export function EmailSelection() {
             label="Choisir un mot de passe"
           />
           {choosePassword && (
-            <>
-              <PasswordField
-                required
-                fullWidth
-                className="vertical-form-text-input"
-                label="Choisissez un mot de passe"
-                autoComplete="current-password"
-                variant="standard"
-                value={password}
-                onChange={e => {
-                  setPassword(e.target.value);
-                }}
-                error={password ? !!getPasswordErrors(password) : false}
-              />
-              <PasswordHelper password={password} />
-            </>
+            <PasswordInput
+              label="Choisissez un mot de passe"
+              nativeInputProps={{
+                autoComplete: "current-password",
+                value: password,
+                onChange: e => setPassword(e.target.value)
+              }}
+              messages={PASSWORD_POLICY_RULES.map(rule => {
+                return {
+                  message: rule.message,
+                  severity: !password
+                    ? "info"
+                    : rule.validator(password)
+                    ? "valid"
+                    : "error"
+                };
+              })}
+              required
+            />
           )}
         </Section>
         <Section title="3. Fuseau horaire">

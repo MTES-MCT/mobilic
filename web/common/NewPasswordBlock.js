@@ -3,9 +3,9 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 
 import Typography from "@mui/material/Typography";
-import { PasswordField } from "common/components/PasswordField";
-import { PasswordHelper } from "./PasswordHelper";
+import { PasswordInput } from "./forms/PasswordInput";
 import { MandatoryField } from "./MandatoryField";
+import { PASSWORD_POLICY_RULES } from "common/utils/passwords";
 
 const useStyles = makeStyles(theme => ({
   introText: {
@@ -40,34 +40,37 @@ export function NewPasswordBlock({
     <>
       <Typography className={classes.introText}>{label}</Typography>
       <MandatoryField />
-      <PasswordField
-        fullWidth
-        className="vertical-form-text-input"
+      <PasswordInput
         label="Nouveau mot de passe"
-        placeholder="Choisissez un mot de passe"
-        autoComplete="new-password"
-        variant="standard"
-        value={password}
-        onChange={e => {
-          setPassword(e.target.value);
+        nativeInputProps={{
+          autoComplete: "new-password",
+          value: password,
+          onChange: e => setPassword(e.target.value)
         }}
+        messages={PASSWORD_POLICY_RULES.map(rule => {
+          return {
+            message: rule.message,
+            severity: !password
+              ? "info"
+              : rule.validator(password)
+              ? "valid"
+              : "error"
+          };
+        })}
         required
-        error={passwordError}
       />
-      <PasswordHelper password={password} />
-      <PasswordField
-        required
-        fullWidth
+      <PasswordInput
         label="Confirmez le mot de passe"
-        className="vertical-form-text-input"
-        autoComplete="new-password"
-        variant="standard"
-        error={passwordCopyError}
-        value={passwordCopy}
-        onChange={e => {
-          setPasswordCopy(e.target.value);
+        nativeInputProps={{
+          autoComplete: "new-password",
+          value: passwordCopy,
+          onChange: e => setPasswordCopy(e.target.value)
         }}
+        required
       />
+      {!!passwordCopyError && (
+        <div className="fr-error-text">{passwordCopyError}</div>
+      )}
     </>
   );
 }
