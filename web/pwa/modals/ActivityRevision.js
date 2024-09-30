@@ -513,6 +513,7 @@ export default function ActivityRevisionOrCreationModal({
                   content: (!otherUserActivities ||
                     otherUserActivities.length === 0) && (
                     <Notice
+                      type="warning"
                       description="En supprimant la seule activité d'une mission, vous
                       annulerez la mission. Vous ne pourrez plus y apporter de
                       modifications."
