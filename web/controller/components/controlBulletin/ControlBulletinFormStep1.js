@@ -259,7 +259,7 @@ export function ControlBulletinFormStep1({
               hintText="Exemple : 1984"
               required
               state={yearState}
-              stateRelatedMessage="Année invalide. Exemple : 1990."
+              stateRelatedMessage="Année invalide : elle doit être comprise entre 1924 et 2006. Exemple : 1990."
             />
           </Grid>
         </Grid>
