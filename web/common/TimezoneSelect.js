@@ -1,28 +1,26 @@
 import React from "react";
-import { Alert, TextField, MenuItem } from "@mui/material";
+import { Alert } from "@mui/material";
 import { getTimezone, TIMEZONES } from "common/utils/timezones";
+import { Select } from "./forms/Select";
 
 const TimezoneSelect = ({ currentTimezone, setTimezone }) => {
   const isGuyana = currentTimezone.name === "America/Cayenne";
   return (
     <>
-      <TextField
-        required
-        select
-        fullWidth
-        className="timezone-select"
-        label="Fuseau Horaire"
-        value={currentTimezone.name}
-        onChange={e => {
-          setTimezone(getTimezone(e.target.value));
+      <Select
+        label="Fuseau horaire"
+        nativeSelectProps={{
+          onChange: e => setTimezone(getTimezone(e.target.value)),
+          value: currentTimezone.name
         }}
+        required
       >
-        {TIMEZONES.map(({ name, label }) => (
-          <MenuItem key={`timezone__${name}`} value={name}>
-            {label}
-          </MenuItem>
+        {TIMEZONES.map(option => (
+          <option key={`timezone__${option.value}`} value={option.value}>
+            {option.label}
+          </option>
         ))}
-      </TextField>
+      </Select>
       {isGuyana && (
         <Alert severity="info" style={{ textAlign: "left" }}>
           Les réseaux téléphoniques de Guyane étant basés sur ceux des Antilles,
