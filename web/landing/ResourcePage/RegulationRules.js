@@ -103,8 +103,8 @@ export const REGULATION_RULES = {
           <Emphasis>plus de 6 heures d’affilée</Emphasis> sans prendre de pause.
         </p>
         <p>
-          Cette pause doit intervenir avant la 6e heure de travail ininterrompu
-          et durer au moins&nbsp;:
+          Cette pause doit intervenir au plus tard au bout de 6 heures de
+          travail ininterrompu et durer au moins&nbsp;:
         </p>
         <ul style={{ fontSize: "1rem" }}>
           <li>
@@ -140,9 +140,9 @@ export const REGULATION_RULES = {
           <Emphasis>plus de 6 heures d'affilée</Emphasis> sans prendre de pause.
         </p>
         <p>
-          La pause doit intervenir avant la 6e heure de travail ininterrompu et
-          sa durée minimale dépend du temps de travail de la journée (total
-          calculé sur l'amplitude journalière)&nbsp;:
+          La pause doit intervenir au plus tard au bout de 6 heures de travail
+          ininterrompu et sa durée minimale dépend du temps de travail de la
+          journée (total calculé sur l'amplitude journalière)&nbsp;:
         </p>
         <ul>
           <li>
