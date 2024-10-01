@@ -114,7 +114,7 @@
     "build": "INLINE_RUNTIME_CHUNK=false node scripts/build.js && rm build/static/js/*.map",
     "build-analyze": "INLINE_RUNTIME_CHUNK=false node scripts/build.js --analyze",
     "build-with-nginx": "yarn build && scripts/start_nginx.sh",
-    "test": "node scripts/test.js",
+    "test": "node scripts/test.js --passWithNoTests",
     "lint": "eslint --ext .js,.jsx ./",
     "postinstall": "react-dsfr copy-static-assets",
     "predev": "react-dsfr update-icons",
