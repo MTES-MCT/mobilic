@@ -10,7 +10,6 @@ import { ReactComponent as TruckIcon_ } from "../assets/images/Truck2.svg";
 import { ReactComponent as HammerWenchIcon_ } from "../assets/images/Work.svg";
 import { ReactComponent as TrainIcon_ } from "../assets/images/Train.svg";
 import { ReactComponent as BedIcon_ } from "../assets/images/Bed2.svg";
-import { ReactComponent as FranceConnectIcon_ } from "../assets/images/FranceConnect.svg";
 import { ReactComponent as FabNumIcon_ } from "../assets/images/fabnum.svg";
 import { ReactComponent as MarianneIcon_ } from "common/assets/images/marianne.svg";
 import _ManagerImage from "../assets/images/Manager.svg";
