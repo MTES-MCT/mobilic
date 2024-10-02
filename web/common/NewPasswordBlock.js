@@ -5,7 +5,6 @@ import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import { PasswordInput } from "./forms/PasswordInput";
 import { MandatoryField } from "./MandatoryField";
-import { PASSWORD_POLICY_RULES } from "common/utils/passwords";
 
 const useStyles = makeStyles(theme => ({
   introText: {
@@ -47,16 +46,7 @@ export function NewPasswordBlock({
           value: password,
           onChange: e => setPassword(e.target.value)
         }}
-        messages={PASSWORD_POLICY_RULES.map(rule => {
-          return {
-            message: rule.message,
-            severity: !password
-              ? "info"
-              : rule.validator(password)
-              ? "valid"
-              : "error"
-          };
-        })}
+        displayMessages
         required
       />
       <PasswordInput

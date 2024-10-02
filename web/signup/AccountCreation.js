@@ -18,10 +18,7 @@ import { EmailField } from "../common/EmailField";
 import TimezoneSelect from "../common/TimezoneSelect";
 import { getClientTimezone } from "common/utils/timezones";
 import { WayHeardOfMobilic } from "../common/WayHeardOfMobilic";
-import {
-  getPasswordErrors,
-  PASSWORD_POLICY_RULES
-} from "common/utils/passwords";
+import { getPasswordErrors } from "common/utils/passwords";
 import { usePageTitle } from "../common/UsePageTitle";
 import { MandatoryField } from "../common/MandatoryField";
 import { PhoneNumber } from "../common/PhoneNumber";
@@ -235,16 +232,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                           onChange: e => setPassword(e.target.value),
                           onBlur: e => setPassword("")
                         }}
-                        messages={PASSWORD_POLICY_RULES.map(rule => {
-                          return {
-                            message: rule.message,
-                            severity: !password
-                              ? "info"
-                              : rule.validator(password)
-                              ? "valid"
-                              : "error"
-                          };
-                        })}
+                        displayMessages
                         required
                       />
                       <Input

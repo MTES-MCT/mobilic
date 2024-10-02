@@ -26,10 +26,7 @@ import { captureSentryException } from "common/utils/sentry";
 import TimezoneSelect from "../common/TimezoneSelect";
 import { getClientTimezone } from "common/utils/timezones";
 import { WayHeardOfMobilic } from "../common/WayHeardOfMobilic";
-import {
-  getPasswordErrors,
-  PASSWORD_POLICY_RULES
-} from "common/utils/passwords";
+import { getPasswordErrors } from "common/utils/passwords";
 import { PasswordInput } from "../common/forms/PasswordInput";
 
 const useStyles = makeStyles(theme => ({
@@ -228,16 +225,7 @@ export function EmailSelection() {
                 value: password,
                 onChange: e => setPassword(e.target.value)
               }}
-              messages={PASSWORD_POLICY_RULES.map(rule => {
-                return {
-                  message: rule.message,
-                  severity: !password
-                    ? "info"
-                    : rule.validator(password)
-                    ? "valid"
-                    : "error"
-                };
-              })}
+              displayMessages
               required
             />
           )}

@@ -1,9 +1,10 @@
 import React from "react";
 import { PasswordInput as PasswordInputDsfr } from "@codegouvfr/react-dsfr/blocks/PasswordInput";
 import { MandatorySuffix } from "./MandatorySuffix";
+import { PASSWORD_POLICY_RULES } from "common/utils/passwords";
 
 export const PasswordInput = React.forwardRef(
-  ({ required, label, nativeInputProps, ...props }, ref) => {
+  ({ required, label, nativeInputProps, displayMessages, ...props }, ref) => {
     const augmentedLabel =
       required && label ? (
         <>
@@ -17,6 +18,7 @@ export const PasswordInput = React.forwardRef(
       ...nativeInputProps,
       ...(required ? { required: true } : {})
     };
+    const { value } = nativeInputProps;
     return (
       <PasswordInputDsfr
         label={augmentedLabel}
@@ -24,6 +26,20 @@ export const PasswordInput = React.forwardRef(
         {...props}
         className="fr-input-group"
         ref={ref}
+        messages={
+          displayMessages
+            ? PASSWORD_POLICY_RULES.map(rule => {
+                return {
+                  message: rule.message,
+                  severity: !value
+                    ? "info"
+                    : rule.validator(value)
+                    ? "valid"
+                    : "error"
+                };
+              })
+            : []
+        }
       />
     );
   }
