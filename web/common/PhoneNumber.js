@@ -95,7 +95,7 @@ export function PhoneNumber({
     } else {
       if (number) {
         setErrorMessage(
-          `Le format de numéro de téléphone saisie n’est pas valide.`
+          `Le format du numéro de téléphone saisi n’est pas valide. Le format attendu est : ${numberExample}`
         );
       }
     }

@@ -23,10 +23,6 @@ const useStyles = makeStyles(theme => ({
   },
   sirenResultText: {
     marginTop: theme.spacing(4)
-  },
-  findSirenText: {
-    display: "block",
-    paddingTop: theme.spacing(4)
   }
 }));
 
@@ -150,19 +146,6 @@ export function SelectSirenStep({
           )}
         {(!siren || sirenFormatError) && (
           <>
-            <Typography
-              className={classes.findSirenText}
-              align="left"
-              variant="caption"
-            >
-              <Link
-                href="https://annuaire-entreprises.data.gouv.fr/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Trouvez facilement le numéro SIREN de votre entreprise
-              </Link>
-            </Typography>
             <Typography
               className={classes.noSirenText}
               align="left"

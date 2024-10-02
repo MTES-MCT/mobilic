@@ -6,7 +6,7 @@ import { Header } from "../common/Header";
 import { Footer } from "./footer";
 import Alert from "@mui/material/Alert";
 import { Link } from "../common/LinkButton";
-// import { Button, Table, TextInput } from "@dataesr/react-dsfr";
+import { Table } from "@codegouvfr/react-dsfr/Table";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import Grid from "@mui/material/Grid";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
@@ -57,13 +57,6 @@ export function Certificate() {
   const [searchResults, setSearchResults] = React.useState([]);
   const [searchDone, setSearchDone] = React.useState(false);
 
-  const resultColumns = [
-    { label: "Nom", name: "company_name" },
-    { label: "SIREN", name: "siren" },
-    { label: "SIRET", name: "siret" },
-    { label: "Date de certification", name: "certification_attribution_date" }
-  ];
-
   const onSearch = async () => {
     const cleanSearchInput = searchInput?.replace(/[. -]/g, "");
     if (cleanSearchInput?.length < 2) {
@@ -93,7 +86,7 @@ export function Certificate() {
 
   return [
     <Header key={1} />,
-    <Container key={2} maxWidth="xl">
+    <Container key={2} maxWidth="xl" sx={{ textAlign: "center" }}>
       <Typography variant="h1" mt={10}>
         Les entreprises certifiées
       </Typography>
@@ -118,7 +111,7 @@ export function Certificate() {
         </Link>
       </Typography>
     </Container>,
-    <Container key={3} maxWidth="xl">
+    <Container key={3} maxWidth="xl" sx={{ textAlign: "center" }}>
       <Typography variant="h3" mt={8}>
         Consultez le statut de certification d'une entreprise :
       </Typography>
@@ -159,7 +152,7 @@ export function Certificate() {
       </Typography>
     ),
     searchResults?.length === 0 && searchDone && (
-      <Box key={10}>
+      <Box key={10} sx={{ textAlign: "center" }}>
         <Typography variant="h4" mt={3}>
           Nous n'avons pas trouvé de certification pour cette entreprise.
         </Typography>
@@ -171,16 +164,21 @@ export function Certificate() {
       </Box>
     ),
     searchResults?.length > 0 && (
-      <Box key={15}>
+      <Box key={15} sx={{ textAlign: "center" }}>
         <CertificationImage className={classes.certificationImage} />
-        {/* <Table
+        <Table
           fixedHeader
-          tableID="certifiactionTable"
-          columns={resultColumns}
-          rowKey={x => x.siren + x.siret}
-          data={searchResults}
+          noCaption
+          tableID="certificationTable"
+          headers={["Nom", "SIREN", "SIRET", "Date de certification"]}
+          data={searchResults.map(r => [
+            r.company_name,
+            r.siren,
+            r.siret,
+            r.certification_attribution_date
+          ])}
           className={classes.resultTable}
-        /> */}
+        />
       </Box>
     ),
     <Box key={20} className={classes.footer}>

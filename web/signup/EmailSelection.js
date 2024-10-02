@@ -14,7 +14,6 @@ import Container from "@mui/material/Container";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Section } from "../common/Section";
 import { useModals } from "common/utils/modals";
-import { PasswordField } from "common/components/PasswordField";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainerTitle } from "../common/PaperContainer";
 import {
@@ -28,7 +27,7 @@ import TimezoneSelect from "../common/TimezoneSelect";
 import { getClientTimezone } from "common/utils/timezones";
 import { WayHeardOfMobilic } from "../common/WayHeardOfMobilic";
 import { getPasswordErrors } from "common/utils/passwords";
-import { PasswordHelper } from "../common/PasswordHelper";
+import { PasswordInput } from "../common/forms/PasswordInput";
 
 const useStyles = makeStyles(theme => ({
   text: {
@@ -177,14 +176,13 @@ export function EmailSelection() {
           </Typography>
           <EmailField
             required
-            fullWidth
-            className="vertical-form-text-input"
             label="Adresse e-mail"
             value={email}
             setValue={setEmail}
             validate
             error={!!emailError}
             setError={setEmailError}
+            hintText="Format attendu : prenom.nom@domaine.fr"
           />
           {!isAdmin && (
             <CheckboxField
@@ -220,22 +218,16 @@ export function EmailSelection() {
             label="Choisir un mot de passe"
           />
           {choosePassword && (
-            <>
-              <PasswordField
-                required
-                fullWidth
-                className="vertical-form-text-input"
-                label="Choisissez un mot de passe"
-                autoComplete="current-password"
-                variant="standard"
-                value={password}
-                onChange={e => {
-                  setPassword(e.target.value);
-                }}
-                error={password ? !!getPasswordErrors(password) : false}
-              />
-              <PasswordHelper password={password} />
-            </>
+            <PasswordInput
+              label="Choisissez un mot de passe"
+              nativeInputProps={{
+                autoComplete: "current-password",
+                value: password,
+                onChange: e => setPassword(e.target.value)
+              }}
+              displayMessages
+              required
+            />
           )}
         </Section>
         <Section title="3. Fuseau horaire">
