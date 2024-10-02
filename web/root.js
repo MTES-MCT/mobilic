@@ -57,6 +57,7 @@ import { shouldUpdatePassword } from "common/utils/updatePassword";
 import UpdatePasswordModal from "./pwa/components/UpdatePassword";
 import AcceptCguModal from "./pwa/modals/AcceptCguModal";
 import RejectedCguModal from "./pwa/modals/RejectedCguModals";
+import merge from "lodash/merge";
 
 const matomo = createInstance({
   urlBase: "https://stats.beta.gouv.fr",
@@ -75,8 +76,7 @@ const matomo = createInstance({
 
 const { MuiDsfrThemeProvider } = createMuiDsfrThemeProvider({
   augmentMuiTheme: ({ nonAugmentedMuiTheme, frColorTheme }) => ({
-    ...nonAugmentedMuiTheme,
-    custom: customOptions
+    ...merge(nonAugmentedMuiTheme, customOptions)
   })
 });
 
