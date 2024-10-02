@@ -43,7 +43,7 @@ function formatAlertPeriod(alert, type) {
   }
 }
 
-function formatAlertText(alert, type) {
+export function formatAlertText(alert, type) {
   switch (type) {
     case ALERT_TYPES.minimumDailyRest: {
       const maxBreakLengthInSeconds =

@@ -27,7 +27,8 @@ export function EmployeeFilter({
   users,
   setUsers,
   multiple = true,
-  handleSelect = null
+  handleSelect = null,
+  showOnlyUserIds = null
 }) {
   const classes = useStyles();
 
@@ -42,11 +43,23 @@ export function EmployeeFilter({
   };
 
   const selectedUsers = users.filter(user => user.selected);
+
+  const displayedUsers = React.useMemo(
+    () =>
+      showOnlyUserIds
+        ? users.filter(user => showOnlyUserIds.includes(user.id))
+        : users,
+    [showOnlyUserIds, users]
+  );
   return (
     <Autocomplete
       multiple={multiple}
       id="employee-filter"
-      options={orderBy(users, ["lastName", "firstName"], ["asc", "asc"])}
+      options={orderBy(
+        displayedUsers,
+        ["lastName", "firstName"],
+        ["asc", "asc"]
+      )}
       limitTags={1}
       size="small"
       disableCloseOnSelect

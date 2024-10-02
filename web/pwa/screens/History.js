@@ -47,7 +47,8 @@ import {
   jsToUnixTimestamp,
   shortPrettyFormatDay,
   SHORT_MONTHS,
-  startOfDayAsDate
+  startOfDayAsDate,
+  isMoreOrLessTheSameDay
 } from "common/utils/time";
 import { usePageTitle } from "../../common/UsePageTitle";
 
@@ -196,7 +197,8 @@ export function History({
   createMission = null,
   openPeriod = null,
   controlId = null,
-  regulationComputationsByDay = []
+  regulationComputationsByDay = [],
+  groupedAlerts = null
 }) {
   const location = useLocation();
   const history = useHistory();
@@ -392,6 +394,29 @@ export function History({
     return periodElement ? periodElement.regulationComputations : [];
   }, [selectedPeriod, regulationComputationsByDay]);
 
+  const alertsInPeriod = React.useMemo(() => {
+    if (!groupedAlerts) {
+      return null;
+    }
+    if (currentTab === "day" || currentTab === "week") {
+      return groupedAlerts.reduce((arr, curr) => {
+        let { alerts, ...rest } = curr;
+        alerts = alerts
+          .filter(
+            alert =>
+              !!alert[currentTab] &&
+              isMoreOrLessTheSameDay(alert[currentTab], selectedPeriod)
+          )
+          .map(alert => ({
+            ...alert,
+            ...rest
+          }));
+        return [...arr, ...alerts];
+      }, []);
+    }
+    return null;
+  }, [selectedPeriod, currentTab, groupedAlerts]);
+
   /* MANAGE MESSAGE WHEN NO DATA */
 
   const noDataMessage = currentTab => {
@@ -585,7 +610,8 @@ export function History({
             coworkers,
             vehicles,
             userId: actualUserId,
-            controlId: controlId
+            controlId: controlId,
+            alertsInPeriod
           })
         ) : (
           <Box className={classes.placeholder}>

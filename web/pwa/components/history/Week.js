@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import {
   renderPeriodKpis,
   splitByLongBreaksAndComputePeriodStats,
@@ -12,11 +12,10 @@ import Link from "@mui/material/Link";
 import { isoFormatLocalDate, prettyFormatDay } from "common/utils/time";
 import Divider from "@mui/material/Divider";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
-import { getLatestAlertComputationVersion } from "common/utils/regulation/alertVersions";
 import { WeekRegulatoryAlerts } from "../../../regulatory/WeekRegulatoryAlerts";
-import { currentControllerId } from "common/utils/cookie";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
+import { AlertsInHistory } from "../../../control/components/AlertsInHistory";
 
 export function Week({
   missionsInPeriod,
@@ -24,9 +23,10 @@ export function Week({
   selectedPeriodStart,
   selectedPeriodEnd,
   handleMissionClick,
-  regulationComputationsInPeriod,
   userId,
-  headingComponent
+  headingComponent,
+  controlId = null,
+  alertsInPeriod = null
 }) {
   const infoCardStyles = useInfoCardStyles();
 
@@ -42,10 +42,6 @@ export function Week({
         )} par ${missionsDeleted[0].deletedBy}`
       : `La semaine comporte plusieurs missions supprimées`;
 
-  const regulationComputation = useMemo(
-    () => getLatestAlertComputationVersion(regulationComputationsInPeriod),
-    [regulationComputationsInPeriod]
-  );
   const stats = splitByLongBreaksAndComputePeriodStats(
     activitiesWithNextAndPreviousDay,
     selectedPeriodStart,
@@ -70,20 +66,20 @@ export function Week({
   }, [hasWorkMissions, stats]);
   return (
     <div>
+      {alertsInPeriod && alertsInPeriod.length > 0 && (
+        <AlertsInHistory alertsInPeriod={alertsInPeriod} />
+      )}
       {missionsDeleted.length > 0 && (
         <Alert severity="warning" sx={{ marginBottom: 2 }}>
           <Typography>{missionsDeletedWarning}</Typography>
         </Alert>
       )}
       <WorkTimeSummaryKpiGrid metrics={kpis} />
-      {hasWorkMissions && (
+      {hasWorkMissions && !controlId && (
         <InfoCard className={infoCardStyles.topMargin}>
           <WeekRegulatoryAlerts
             userId={userId}
             day={isoFormatLocalDate(selectedPeriodStart)}
-            prefetchedRegulationComputation={
-              currentControllerId() ? regulationComputation : null
-            }
           />
         </InfoCard>
       )}

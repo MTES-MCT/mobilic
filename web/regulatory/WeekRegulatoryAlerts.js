@@ -5,15 +5,13 @@ import { GenericRegulatoryAlerts } from "./GenericRegulatoryAlerts";
 export function WeekRegulatoryAlerts({
   userId,
   day,
-  shouldDisplayInitialEmployeeVersion,
-  prefetchedRegulationComputation
+  shouldDisplayInitialEmployeeVersion
 }) {
   return (
     <GenericRegulatoryAlerts
       userId={userId}
       day={day}
       shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
-      prefetchedRegulationComputation={prefetchedRegulationComputation}
       regulationCheckUnit={PERIOD_UNITS.WEEK}
     />
   );
