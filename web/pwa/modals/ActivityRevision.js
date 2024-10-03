@@ -1,5 +1,4 @@
 import React from "react";
-import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import { MINUTE, now, sameMinute, truncateMinute } from "common/utils/time";
 import TextField from "common/utils/TextField";
@@ -27,6 +26,7 @@ import { NativeDateTimePicker } from "../../common/NativeDateTimePicker";
 import OverlappedActivityList from "../components/ActivityRevision/OverlappedActivityList";
 import Modal from "../../common/Modal";
 import { MandatoryField } from "../../common/MandatoryField";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -390,13 +390,13 @@ export default function ActivityRevisionOrCreationModal({
       content={
         <>
           {displayWarningMessage && (
-            <Box my={2} mb={4}>
-              <Alert severity="warning">
-                Les modifications seront visibles par votre employeur et par les
+            <Notice
+              description="Les modifications seront visibles par votre employeur et par les
                 contrôleurs (en cas de contrôle en bord de route ou en
-                entreprise)
-              </Alert>
-            </Box>
+                entreprise)"
+              type="warning"
+              sx={{ marginTop: 2, marginBottom: 4 }}
+            />
           )}
           <MandatoryField />
           <Box mt={1}>
@@ -512,11 +512,12 @@ export default function ActivityRevisionOrCreationModal({
                   title: "Confirmer la suppression",
                   content: (!otherUserActivities ||
                     otherUserActivities.length === 0) && (
-                    <Alert severity="warning">
-                      En supprimant la seule activité d'une mission, vous
+                    <Notice
+                      type="warning"
+                      description="En supprimant la seule activité d'une mission, vous
                       annulerez la mission. Vous ne pourrez plus y apporter de
-                      modifications.
-                    </Alert>
+                      modifications."
+                    />
                   ),
                   cancelButtonLabel: "Annuler",
                   confirmButtonLabel: "Valider",

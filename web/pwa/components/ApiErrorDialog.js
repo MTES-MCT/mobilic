@@ -12,12 +12,12 @@ import {
   CustomDialogActions,
   CustomDialogTitle
 } from "../../common/CustomDialogTitle";
-import Alert from "@mui/material/Alert";
 import { useLoadingScreen } from "common/utils/loading";
 import { useApi } from "common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { loadUserData } from "common/utils/loadUserData";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   failureStatusText: {
@@ -56,30 +56,31 @@ export default function ApiErrorDialogModal({
       <CustomDialogTitle title={displayTitle} handleClose={handleClose} />
       <DialogContent>
         {shouldProposeRefresh && (
-          <Alert
-            className="refresh-app-alert"
-            severity="warning"
-            variant="outlined"
-          >
-            <Typography align={"justify"} className="bold">
-              Il est possible qu'un coéquipier ou un gestionnaire ait apporté
-              des nouveaux changements vous concernant. Vous pouvez rafraîchir
-              l'application pour les voir.
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ marginTop: 16 }}
-              onClick={() =>
-                withLoadingScreen(async () => {
-                  await loadUserData(api, store, alerts);
-                  handleClose();
-                })
-              }
-            >
-              Rafraîchir
-            </Button>
-          </Alert>
+          <Notice
+            type="warning"
+            description={
+              <>
+                <Typography align={"justify"} className="bold">
+                  Il est possible qu'un coéquipier ou un gestionnaire ait
+                  apporté des nouveaux changements vous concernant. Vous pouvez
+                  rafraîchir l'application pour les voir.
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{ marginTop: 16 }}
+                  onClick={() =>
+                    withLoadingScreen(async () => {
+                      await loadUserData(api, store, alerts);
+                      handleClose();
+                    })
+                  }
+                >
+                  Rafraîchir
+                </Button>
+              </>
+            }
+          />
         )}
         {errors.map((error, index) => (
           <Box mt={2} key={index}>

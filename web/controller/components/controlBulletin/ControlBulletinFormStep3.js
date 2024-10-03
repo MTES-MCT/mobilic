@@ -2,11 +2,11 @@ import React from "react";
 
 import Stack from "@mui/material/Stack";
 import { Typography } from "@mui/material";
-import Alert from "@mui/material/Alert";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { AlertGroup } from "../../../control/components/AlertGroup";
 import { Input } from "../../../common/forms/Input";
+import Notice from "../../../common/Notice";
 
 export function ControlBulletinFormStep3({
   handleEditControlBulletin,
@@ -60,10 +60,11 @@ export function ControlBulletinFormStep3({
         textArea
       />
       {!controlCanBeDownloaded && (
-        <Alert severity="warning">
-          Certains champs obligatoires doivent être renseignés pour permettre le
-          téléchargement du Bulletin de Contrôle.
-        </Alert>
+        <Notice
+          type="warning"
+          description="Certains champs obligatoires doivent être renseignés pour permettre le
+          téléchargement du Bulletin de Contrôle."
+        />
       )}
     </Stack>
   );

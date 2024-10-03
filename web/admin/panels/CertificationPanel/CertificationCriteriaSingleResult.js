@@ -8,12 +8,9 @@ import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles(theme => ({
   alertCriteria: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
     "& .MuiAlert-message": {
       width: "100%"
-    },
-    maxWidth: theme.spacing(76)
+    }
   },
   accordionCriteria: {
     width: "100%",
@@ -58,6 +55,7 @@ export default function CertificationCriteriaSingleResult({
     <Alert
       key={criteria.title}
       severity={status}
+      sx={{ marginY: 1 }}
       className={classes.alertCriteria}
       iconMapping={{ info: false }}
       {...props}

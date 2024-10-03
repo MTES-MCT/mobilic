@@ -13,11 +13,11 @@ import Skeleton from "@mui/material/Skeleton";
 import { CompanyClientCard } from "./CompanyClientCard";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import { Alert } from "@mui/material";
 import TextField from "common/utils/TextField";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useModals } from "common/utils/modals";
+import Notice from "../../common/Notice";
 
 export default function CompanyApiPanel({ company }) {
   const api = useApi();
@@ -160,12 +160,12 @@ export default function CompanyApiPanel({ company }) {
         className={classes.addNewTokenSection}
       >
         <Grid item xs={12}>
-          <Alert severity="info" className={classes.addNewTokenAlert}>
-            <Typography className={classes.addNewTokenExplanation}>
-              Rapprochez-vous de votre éditeur de logiciel pour obtenir son
-              client_id.
-            </Typography>
-          </Alert>
+          <Notice
+            description="Rapprochez-vous de votre éditeur de logiciel pour obtenir son
+              client_id."
+            sx={{ marginBottom: 2 }}
+            size="small"
+          />
         </Grid>
         <Grid item xs={12}>
           <Typography>client_id</Typography>
@@ -228,12 +228,16 @@ export default function CompanyApiPanel({ company }) {
       </Box>
     ),
     authorizedClients?.length > 0 && (
-      <Alert severity="info" className={classes.addNewTokenAlert}>
-        <Typography className={classes.addNewTokenExplanation}>
-          Vous pouvez communiquer votre identifiant de société "{company.id}" à
-          votre éditeur, afin qu'il puisse utiliser l'API Mobilic.
-        </Typography>
-      </Alert>
+      <Notice
+        description={
+          <>
+            Vous pouvez communiquer votre identifiant de société "{company.id}"
+            à votre éditeur, afin qu'il puisse utiliser l'API Mobilic.
+          </>
+        }
+        sx={{ marginBottom: 2 }}
+        size="small"
+      />
     )
   ];
 }

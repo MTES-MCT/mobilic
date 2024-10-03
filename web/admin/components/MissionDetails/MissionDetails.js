@@ -37,7 +37,6 @@ import {
   DEFAULT_LAST_ACTIVITY_TOO_LONG,
   missionCreatedByAdmin
 } from "common/utils/mission";
-import { Alert } from "@mui/material";
 import { WarningModificationMission } from "./WarningModificationMission";
 import { ACTIVITIES } from "common/utils/activities";
 import {
@@ -54,6 +53,7 @@ import {
 import { MissionDetailsVehicle } from "./MissionDetailsVehicle";
 import { MissionDetailsLocations } from "./MissionDetailsLocations";
 import { MissionDetailsObservations } from "./MissionDetailsObservations";
+import Notice from "../../../common/Notice";
 
 export function MissionDetails({
   missionId,
@@ -286,23 +286,33 @@ export function MissionDetails({
         )}
       </Box>
       {isMissionDeleted && (
-        <Alert severity="info" sx={{ mb: 2 }}>
-          <Typography className={classes.validationWarningText}>
-            Cette mission a été supprimée le{" "}
-            {frenchFormatDateStringOrTimeStamp(
-              unixTimestampToDate(mission?.deletedAt)
-            )}{" "}
-            par {mission?.deletedBy}.
-          </Typography>
-        </Alert>
+        <Notice
+          type="info"
+          description={
+            <>
+              Cette mission a été supprimée le{" "}
+              {frenchFormatDateStringOrTimeStamp(
+                unixTimestampToDate(mission?.deletedAt)
+              )}{" "}
+              par {mission?.deletedBy}.
+            </>
+          }
+          sx={{ mb: 2 }}
+        />
       )}
       {globalFieldsEditable && <WarningModificationMission />}
       {globalFieldsEditable && mission.missionNotUpdatedForTooLong && (
-        <Alert severity="warning" className={classes.missionTooLongWarning}>
-          Vous pouvez modifier et valider cette mission car la dernière activité
-          de votre salarié dure depuis plus de{" "}
-          {DEFAULT_LAST_ACTIVITY_TOO_LONG / 3600} heures.
-        </Alert>
+        <Notice
+          type="warning"
+          description={
+            <>
+              Vous pouvez modifier et valider cette mission car la dernière
+              activité de votre salarié dure depuis plus de{" "}
+              {DEFAULT_LAST_ACTIVITY_TOO_LONG / 3600} heures.
+            </>
+          }
+          className={classes.missionTooLongWarning}
+        />
       )}
       {!isMissionHoliday && (
         <MissionDetailsVehicle
@@ -474,13 +484,12 @@ export function MissionDetails({
           </List>
           {entriesToValidateByAdmin?.length > 0 && (
             <Box>
-              <Alert severity="info">
-                <Typography className={classes.validationWarningText}>
-                  Il ne vous sera plus possible de modifier les données après
+              <Notice
+                type="info"
+                description="Il ne vous sera plus possible de modifier les données après
                   validation, y compris les données globales de la mission
-                  (Lieux, Véhicules).
-                </Typography>
-              </Alert>
+                  (Lieux, Véhicules)."
+              />
               <LoadingButton
                 aria-label="Valider"
                 variant="contained"
@@ -501,12 +510,11 @@ export function MissionDetails({
       )}
       {entriesToValidateByWorker?.length > 0 && (
         <MissionDetailsSection key={6} title="Saisie(s) en cours">
-          <Alert severity="info">
-            <Typography className={classes.validationWarningText}>
-              Vous aurez accès à la validation de ces saisies lorsque le salarié
-              les aura validées.
-            </Typography>
-          </Alert>
+          <Notice
+            type="info"
+            description="Vous aurez accès à la validation de ces saisies lorsque le salarié
+              les aura validées."
+          />
           <List>
             {entriesToValidateByWorker.map(e => (
               <ListItem key={e.user.id} disableGutters>

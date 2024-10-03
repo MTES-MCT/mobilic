@@ -1,32 +1,85 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import { makeStyles } from "@mui/styles";
+import { cx } from "@codegouvfr/react-dsfr/tools/cx";
+import { fr } from "@codegouvfr/react-dsfr";
 
-const useStyles = makeStyles(theme => ({
-  box: {
-    background: ({ noBackground }) => (noBackground ? "none" : "")
-  },
-  container: {
-    padding: ({ noPadding }) => (noPadding ? "0" : "")
-  }
-}));
-
-export const Notice = ({
-  noBackground = false,
-  noPadding = false,
-  textAlign,
-  children
+const Notice = ({
+  className,
+  title,
+  description,
+  size = "normal",
+  type = "info",
+  linkUrl,
+  linkText,
+  style,
+  isFullWidth = true,
+  classes = {},
+  sx = {},
+  onClose = null
 }) => {
-  const classes = useStyles({ noBackground, noPadding });
   return (
     <Box
-      className={`${classes.box} fr-notice fr-notice--info`}
-      textAlign={textAlign ? textAlign : { xs: "left", md: "center" }}
-      marginY={1}
+      className={cx(
+        fr.cx("fr-notice", `fr-notice--${type}`),
+        classes.root,
+        className
+      )}
+      style={style}
+      sx={sx}
     >
-      <Box className={`${classes.container} fr-container`}>
-        <Box className="fr-notice__body">{children}</Box>
+      <Box
+        className={cx(fr.cx("fr-container"), classes.container)}
+        style={{
+          ...(isFullWidth && { maxWidth: "100%" })
+        }}
+      >
+        <Box className="fr-notice__body">
+          <p>
+            <span
+              className={cx(
+                fr.cx("fr-notice__title", { "fr-text--sm": size === "small" }),
+                classes.title
+              )}
+            >
+              {title}
+            </span>
+            <span
+              className={cx(
+                fr.cx("fr-notice__desc", { "fr-text--sm": size === "small" }),
+                classes.description
+              )}
+            >
+              {description}
+            </span>
+            {linkUrl && linkText && (
+              <a
+                target="_blank"
+                rel="noopener external noreferrer"
+                title={`${linkText} - nouvelle fenêtre`}
+                href={linkUrl}
+                className={cx(
+                  fr.cx("fr-notice__link", { "fr-text--sm": size === "small" }),
+                  classes.link
+                )}
+              >
+                {linkText}
+              </a>
+            )}
+          </p>
+          {onClose && (
+            <button
+              title="Masquer le message"
+              onClick={onClose}
+              id="button-1299"
+              className="fr-btn--close fr-btn"
+            >
+              Masquer le message
+            </button>
+          )}
+        </Box>
       </Box>
     </Box>
   );
 };
+
+export default Notice;

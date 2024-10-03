@@ -1,9 +1,8 @@
 import React from "react";
-import { Box, Grid, Typography } from "@mui/material";
-import { ExternalLink } from "./ExternalLink";
-import { Notice } from "./Notice";
+import { Box, Grid } from "@mui/material";
 import { useIsWidthDown } from "common/utils/useWidth";
 import { Select } from "./forms/Select";
+import Notice from "./Notice";
 
 const TRANSPORT_OPTIONS = [
   { value: "TRM", label: "Marchandises (TRM)" },
@@ -129,18 +128,13 @@ export function BusinessType({
       </Grid>
       {displayInfo && (
         <Box sx={{ textAlign: "left", marginTop: 2, fontSize: "0.7rem" }}>
-          <Notice noBackground noPadding textAlign="left">
-            <Typography sx={{ fontSize: "0.7rem" }}>
-              Par défaut, l’activité sera attribuée à tous vos salariés. Vous
+          <Notice
+            description="Par défaut, l’activité sera attribuée à tous vos salariés. Vous
               aurez ensuite la possibilité de modifier le type d'activité pour
-              chaque salarié.
-            </Typography>
-            <ExternalLink
-              url="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/gestionnaire-parametrer-mon-entreprise"
-              text="À quoi sert cette information ?"
-              withIcon
-            />
-          </Notice>
+              chaque salarié."
+            linkText="À quoi sert cette information ?"
+            linkUrl="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/gestionnaire-parametrer-mon-entreprise"
+          />
         </Box>
       )}
     </div>

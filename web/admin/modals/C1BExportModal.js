@@ -9,7 +9,6 @@ import { formatApiError } from "common/utils/errors";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import Grid from "@mui/material/Grid";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
-import Alert from "@mui/material/Alert";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
 import SignFilesCheckbox from "../../common/SignFiles";
@@ -22,6 +21,7 @@ import { TeamFilter } from "../components/TeamFilter";
 import { EmployeeFilter } from "../components/EmployeeFilter";
 import { CompanyFilter } from "../components/CompanyFilter";
 import Modal, { modalStyles } from "../../common/Modal";
+import Notice from "../../common/Notice";
 
 export default function C1BExportModal({
   open,
@@ -117,19 +117,20 @@ export default function C1BExportModal({
             Le téléchargement produit un dossier zippé (.zip) qui contient{" "}
             <strong>un fichier C1B pour chaque travailleur</strong> dans le
             périmètre choisi (précisé par les options ci-dessous).
-            <Alert severity="warning" className={classes.grid}>
-              <Typography component="div" variant="body1" gutterBottom>
-                Si un travailleur n'a pas effectué d'activités dans la période
+            <Notice
+              type="warning"
+              description="Si un travailleur n'a pas effectué d'activités dans la période
                 demandée, aucun fichier C1B ne sera généré le concernant, même
-                s'il est dans la liste d'export.
-              </Typography>
-            </Alert>
+                s'il est dans la liste d'export."
+              sx={{ marginTop: 1 }}
+            />
           </Typography>
           <Typography variant="h5" className={classes.subtitle}>
             Avertissement
           </Typography>
-          <Alert severity="warning">
-            <Typography component="div" variant="body1" gutterBottom>
+          <Notice
+            type="warning"
+            description={
               <ul>
                 <li>
                   Les fichiers générés par Mobilic respectent la norme C1B, mais
@@ -151,8 +152,8 @@ export default function C1BExportModal({
                   comme inchangé par le logiciel de contrôle.
                 </li>
               </ul>
-            </Typography>
-          </Alert>
+            }
+          />
           <Typography variant="h5" className={classes.subtitle}>
             Options
           </Typography>

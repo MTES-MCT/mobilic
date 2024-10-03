@@ -1,6 +1,5 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { useApi } from "common/utils/api";
 import { useHistory } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
@@ -22,7 +21,7 @@ import { getPasswordErrors } from "common/utils/passwords";
 import { usePageTitle } from "../common/UsePageTitle";
 import { MandatoryField } from "../common/MandatoryField";
 import { PhoneNumber } from "../common/PhoneNumber";
-import { Notice } from "../common/Notice";
+import Notice from "../common/Notice";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Input } from "../common/forms/Input";
 import { PasswordInput } from "../common/forms/PasswordInput";
@@ -273,13 +272,10 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                             setCurrentPhoneNumber={setPhoneNumber}
                             label="Numéro de téléphone professionel"
                           />
-                          <Notice>
-                            <Typography textAlign="left" fontSize="0.9rem">
-                              Cette information pourra être utilisée par
-                              l’équipe Mobilic pour vous contacter à des fins
-                              d’aide à la prise en main.
-                            </Typography>
-                          </Notice>
+                          <Notice
+                            description="Cette information pourra être utilisée par l’équipe Mobilic
+                  pour vous contacter à des fins d’aide à la prise en main."
+                          />
                         </>
                       )}
                       {isAdmin && (

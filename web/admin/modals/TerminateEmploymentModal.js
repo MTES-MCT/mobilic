@@ -1,5 +1,4 @@
 import React from "react";
-import Alert from "@mui/material/Alert";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -12,6 +11,7 @@ import {
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { MobileDatePicker } from "@mui/x-date-pickers";
+import Notice from "../../common/Notice";
 
 export default function TerminateEmploymentModal({
   open,
@@ -57,14 +57,20 @@ export default function TerminateEmploymentModal({
         }}
       >
         <DialogContent>
-          <Alert severity="warning">
-            Cette opération signale le départ d'un salarié : après la date
-            choisie le salarié ne pourra plus enregistrer de temps de travail
-            pour l'entreprise, ni accéder aux informations de l'entreprise.
-            <br />
-            En tant que gestionnaire, vous ne pourrez plus ajouter de missions
-            dans le passé pour le compte de ce salarié.
-          </Alert>
+          <Notice
+            type="warning"
+            description={
+              <>
+                Cette opération signale le départ d'un salarié : après la date
+                choisie le salarié ne pourra plus enregistrer de temps de
+                travail pour l'entreprise, ni accéder aux informations de
+                l'entreprise.
+                <br />
+                En tant que gestionnaire, vous ne pourrez plus ajouter de
+                missions dans le passé pour le compte de ce salarié.
+              </>
+            }
+          />
           <Box my={2} mt={4} className="flex-row-center">
             <MobileDatePicker
               label="Date de fin du rattachement"

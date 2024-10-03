@@ -12,10 +12,10 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { OAuthTokenCard } from "./OAuthTokenCard";
 import Skeleton from "@mui/material/Skeleton";
-import { Alert } from "@mui/material";
 import TextField from "common/utils/TextField";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   section: {
@@ -37,12 +37,6 @@ const useStyles = makeStyles(theme => ({
   newClientIdField: {
     paddingRight: theme.spacing(2),
     marginBottom: theme.spacing(2)
-  },
-  addNewTokenAlert: {
-    marginBottom: theme.spacing(2)
-  },
-  addNewTokenExplanation: {
-    fontSize: "0.875rem"
   },
   alreadyGeneratedKeysTitle: {
     color: theme.palette.grey[600]
@@ -139,12 +133,12 @@ export function OAuthTokenSection() {
           <Grid item xs={12} className={classes.addNewTokenSection}>
             <Grid container alignItems={"center"}>
               <Grid item xs={12}>
-                <Alert severity="info" className={classes.addNewTokenAlert}>
-                  <Typography className={classes.addNewTokenExplanation}>
-                    Rapprochez-vous de votre éditeur de logiciel pour obtenir
-                    son client_id.
-                  </Typography>
-                </Alert>
+                <Notice
+                  description="Rapprochez-vous de votre éditeur de logiciel pour obtenir son
+              client_id."
+                  sx={{ marginBottom: 2 }}
+                  size="small"
+                />{" "}
               </Grid>
               <Grid item xs={12}>
                 <Typography>client_id</Typography>

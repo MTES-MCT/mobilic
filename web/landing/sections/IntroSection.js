@@ -3,13 +3,13 @@ import Typography from "@mui/material/Typography";
 import React from "react";
 import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizontal.png";
 import BackgroundVerticalImage from "common/assets/images/landing-hero-vertical.jpg";
-import { Alert } from "@mui/material";
 import { Link } from "../../common/LinkButton";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthDown } from "common/utils/useWidth";
 import { VideoCard, VIDEOS } from "../ResourcePage/VideoCard";
 import classNames from "classnames";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   heroContainer: {
@@ -26,9 +26,6 @@ const useStyles = makeStyles(theme => ({
   },
   loginLink: {
     whiteSpace: "nowrap"
-  },
-  loginInfo: {
-    textAlign: "left"
   },
   underlineBlue: {
     backgroundColor: "rgba(49, 132, 255, 0.2)"
@@ -137,11 +134,14 @@ export function IntroSection() {
 
   return (
     <Container maxWidth={false} className={classes.heroContainer}>
-      <Alert severity="info" className={classes.loginInfo}>
-        <Link variant="login" to="/login-selection">
-          <span className={classes.loginLink}>Se connecter à mon espace</span>
-        </Link>
-      </Alert>
+      <Notice
+        size="small"
+        description={
+          <Link variant="login" to="/login-selection">
+            <span className={classes.loginLink}>Se connecter à mon espace</span>
+          </Link>
+        }
+      />
       <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
         <Grid container direction="row" className={classes.leftBlockIntro}>
           <Grid item xs={12} marginTop={4}>

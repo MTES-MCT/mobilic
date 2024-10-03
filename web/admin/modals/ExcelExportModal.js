@@ -3,7 +3,6 @@ import Typography from "@mui/material/Typography";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
-import Alert from "@mui/material/Alert";
 import { useApi } from "common/utils/api";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -21,6 +20,7 @@ import {
 import Modal, { modalStyles } from "../../common/Modal";
 import { TeamFilter } from "../components/TeamFilter";
 import { EmployeeFilter } from "../components/EmployeeFilter";
+import Notice from "../../common/Notice";
 
 export default function ExcelExportModal({
   open,
@@ -105,10 +105,11 @@ export default function ExcelExportModal({
           <Typography variant="h5" className={classes.subtitle}>
             Options
           </Typography>
-          <Alert severity="warning">
-            En cas d'export pour les agents de contrôle, veillez à ne pas
-            modifier la mise en page du fichier avant envoi.
-          </Alert>
+          <Notice
+            type="warning"
+            description="En cas d'export pour les agents de contrôle, veillez à ne pas
+            modifier la mise en page du fichier avant envoi."
+          />
           <Grid spacing={4} container className={classes.subtitle}>
             {companies.length > 1 && (
               <Grid item sm={6} className={classes.flexGrow}>

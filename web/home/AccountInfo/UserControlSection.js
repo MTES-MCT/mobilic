@@ -9,7 +9,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Skeleton from "@mui/material/Skeleton";
 import { prettyFormatDayHour } from "common/utils/time";
-import { Alert } from "@mui/material";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   section: {
@@ -18,12 +18,6 @@ const useStyles = makeStyles(theme => ({
   mainTitle: {
     marginBottom: theme.spacing(1),
     textAlign: "left"
-  },
-  alert: {
-    marginBottom: theme.spacing(2)
-  },
-  explanation: {
-    fontSize: "0.875rem"
   },
   controlHistory: {
     color: theme.palette.grey[600]
@@ -63,12 +57,12 @@ export function UserControlSection() {
           <>
             {controlsDate.length > 0 && (
               <Stack direction="column">
-                <Alert severity="info" className={classes.alert}>
-                  <Typography className={classes.explanation}>
-                    Votre employeur est responsable en cas de contrôle en bord
-                    de route
-                  </Typography>
-                </Alert>
+                <Notice
+                  sx={{ marginBottom: 2 }}
+                  description="Votre employeur est responsable en cas de contrôle en bord
+                    de route"
+                  size="small"
+                />
                 <Typography
                   align="left"
                   className={classes.controlHistory}

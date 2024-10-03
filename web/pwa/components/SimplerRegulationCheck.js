@@ -1,11 +1,11 @@
 import React from "react";
 import { ALERT_TYPE_PROPS_SIMPLER } from "common/utils/regulation/alertTypes";
-import { Alert } from "@mui/material";
 import Chip from "@mui/material/Chip";
 import { Link } from "../../common/LinkButton";
 import { useRegulationDrawer } from "../../landing/ResourcePage/RegulationDrawer";
 import { ChevronRight } from "@mui/icons-material";
 import { makeStyles } from "@mui/styles";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   moreInfoIcon: {
@@ -35,20 +35,26 @@ export function SimplerRegulationCheck({ regulationCheck }) {
     : alertProps.errorMessage(extra, label);
 
   return (
-    <Alert severity={severity}>
-      <Link
-        color="inherit"
-        onClick={e => {
-          e.preventDefault();
-          openRegulationDrawer(rule, true);
-        }}
-      >
-        {message}
-      </Link>
-      <ChevronRight className={classes.moreInfoIcon} />
-      {extra.night_work && (
-        <Chip className={classes.chip} label="Travail de nuit" />
-      )}
-    </Alert>
+    <Notice
+      type={severity}
+      size="small"
+      description={
+        <>
+          <Link
+            color="inherit"
+            onClick={e => {
+              e.preventDefault();
+              openRegulationDrawer(rule, true);
+            }}
+          >
+            {message}
+          </Link>
+          <ChevronRight className={classes.moreInfoIcon} />
+          {extra.night_work && (
+            <Chip className={classes.chip} label="Travail de nuit" />
+          )}
+        </>
+      }
+    />
   );
 }
