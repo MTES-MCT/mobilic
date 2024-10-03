@@ -28,10 +28,6 @@ const useStyles = makeStyles(theme => ({
   forgotPasswordLink: {
     marginBottom: theme.spacing(2)
   },
-  dividerAgentConnect: {
-    borderBottomColor: theme.palette.primary.main,
-    color: theme.palette.primary.main
-  },
   mainTitle: {
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2)
