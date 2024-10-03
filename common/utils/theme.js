@@ -1,48 +1,42 @@
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
 
 export const customOptions = {
-  components: {
-    MuiLink: {
-      defaultProps: {
-        underline: "always"
-      }
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: "20px"
-        }
-      }
-    },
-    MuiTableSortLabel: {
-      styleOverrides: {
-        icon: {
-          opacity: 0.3
-        }
-      }
-    }
-  },
+  // components: {
+  //   MuiLink: {
+  //     defaultProps: {
+  //       underline: "always"
+  //     }
+  //   },
+  // MuiButton: {
+  //   styleOverrides: {
+  //     root: {
+  //       borderRadius: "20px"
+  //     }
+  //   }
+  // },
+  //   MuiTableSortLabel: {
+  //     styleOverrides: {
+  //       icon: {
+  //         opacity: 0.3
+  //       }
+  //     }
+  //   }
+  // },
   palette: {
-    work: "#F3A817",
-    break: "#9A9CF8",
-    drive: "#6BE670",
-    transfer: "#417DC4",
-    rest: red[600],
     primary: {
-      main: "#3284FF",
-      light: "#006be6",
-      lighter: "#b4e1fa",
-      dark: "#0053b3"
-    },
-    background: {
-      default: "#f7f9fa",
-      paper: "#fff",
-      dark: "#26353f"
-    },
-    text: {
-      primary: "#26353f"
+      main: "#3965EA",
+      light: "#DAE9FF",
+      lighter: "#F4F8FF",
+      dark: "#202DA7"
     }
+    // background: {
+    //   default: "#f7f9fa",
+    //   paper: "#fff",
+    //   dark: "#26353f"
+    // },
+    // text: {
+    //   primary: "#26353f"
+    // }
   },
   typography: {
     fontFamily: '"Marianne", Arial, sans-serif',

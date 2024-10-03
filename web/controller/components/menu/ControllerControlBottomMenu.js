@@ -35,7 +35,7 @@ export function ControllerControlBottomMenu({
           startIcon={<DownloadIcon />}
           disabled={!canDownloadBDC}
         >
-          télécharger le bulletin de contrôle
+          Télécharger le bulletin de contrôle
         </Button>
       ) : (
         <Button
@@ -44,7 +44,7 @@ export function ControllerControlBottomMenu({
           size="small"
           onClick={editBDC}
         >
-          éditer un bulletin de contrôle
+          Éditer un bulletin de contrôle
         </Button>
       )}
       {reportInfractions && (

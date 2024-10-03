@@ -1,7 +1,7 @@
 import React from "react";
-import { Select } from "@codegouvfr/react-dsfr/Select";
 import { Box, Grid } from "@mui/material";
 import { useIsWidthDown } from "common/utils/useWidth";
+import { Select } from "./forms/Select";
 import Notice from "./Notice";
 
 const TRANSPORT_OPTIONS = [
@@ -81,8 +81,7 @@ export function BusinessType({
             label="Type de transport routier"
             nativeSelectProps={{
               onChange: e => setTransportType(e.target.value),
-              value: transportType,
-              required
+              value: transportType
             }}
             state={
               !transportType && required && showErrors ? "error" : "default"
@@ -92,6 +91,7 @@ export function BusinessType({
                 ? "Veuillez compléter ce champ"
                 : ""
             }
+            required
           >
             {transportOptions.map(option => (
               <option key={option.value} value={option.value}>
@@ -105,8 +105,7 @@ export function BusinessType({
             label="Activité principale"
             nativeSelectProps={{
               onChange: e => setBusinessType(e.target.value),
-              value: businessType,
-              required
+              value: businessType
             }}
             state={
               !businessType && required && showErrors ? "error" : "default"
@@ -116,6 +115,7 @@ export function BusinessType({
                 ? "Veuillez compléter ce champ"
                 : ""
             }
+            required
             disabled={!transportType}
           >
             {businessOptions.map(option => (

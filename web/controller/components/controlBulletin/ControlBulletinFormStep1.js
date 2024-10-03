@@ -27,6 +27,11 @@ export function ControlBulletinFormStep1({
   const [month, setMonth] = React.useState();
   const [year, setYear] = React.useState();
 
+  const [dayState, setDayState] = React.useState("default");
+  const [monthState, setMonthState] = React.useState("default");
+  const [yearState, setYearState] = React.useState("default");
+  const [dateState, setDateState] = React.useState("default");
+
   React.useEffect(() => {
     const { userBirthDate } = controlBulletin;
     if (!userBirthDate) {
@@ -48,24 +53,40 @@ export function ControlBulletinFormStep1({
   );
 
   const onValidateBirthDate = () => {
-    const validYear = Math.max(
-      MIN_BIRTH_DATE_YEAR,
-      Math.min(year, MAX_BIRTH_DATE_YEAR)
-    );
-    const validMonth = Math.max(0, Math.min(month - 1, 11));
-    const maxDay = validMonth === 1 ? 29 : 30;
-    const validDay = Math.max(1, Math.min(parseInt(day), maxDay));
-    const date = new Date(validYear, validMonth, validDay, 10, 0, 0, 0);
-    if (!isNaN(date)) {
-      const newDateString = date.toISOString().split("T")[0];
-      editControlBulletinField(newDateString, "userBirthDate");
+    let hasError = false;
+    if (year < MIN_BIRTH_DATE_YEAR || year > MAX_BIRTH_DATE_YEAR) {
+      setYearState("error");
+      hasError = true;
+    } else {
+      setYearState("default");
     }
-  };
+    if (month < 1 || month > 12) {
+      setMonthState("error");
+      hasError = true;
+    } else {
+      setMonthState("default");
+    }
+    if (day < 1 || day > 31) {
+      setDayState("error");
+      hasError = true;
+    } else {
+      setDayState("default");
+    }
 
-  const onChangeNDigits = (e, setter, n) => {
-    const firstTwoChars = e.target.value.slice(0, n);
-    if (!isNaN(firstTwoChars)) {
-      setter(firstTwoChars);
+    if (!hasError && day && month && year) {
+      const date = new Date(year, month - 1, day, 10, 0, 0, 0);
+      const validYear = date.getFullYear() === parseInt(year);
+      const validMonth = date.getMonth() === parseInt(month - 1);
+      const validDay = date.getDate() === parseInt(day);
+      if (validYear && validMonth && validDay) {
+        setDateState("default");
+        const newDateString = date.toISOString().split("T")[0];
+        editControlBulletinField(newDateString, "userBirthDate");
+      } else {
+        setDateState("error");
+      }
+    } else {
+      setDateState("default");
     }
   };
 
@@ -185,6 +206,8 @@ export function ControlBulletinFormStep1({
         sx={{ marginBottom: 4, maxWidth: "440px" }}
         role="group"
         aria-labelledby="date-naissance-salarie"
+        aria-describedby="date-naissance-salarie-error"
+        className={dateState === "error" ? "fr-input-group--error" : ""}
       >
         <label className="fr-label" id="date-naissance-salarie">
           Date de naissance du salarié
@@ -194,45 +217,57 @@ export function ControlBulletinFormStep1({
             <Input
               nativeInputProps={{
                 value: day,
-                onChange: e => onChangeNDigits(e, setDay, 2),
-                onBlur: onValidateBirthDate
+                onChange: e => setDay(e.target.value),
+                onBlur: onValidateBirthDate,
+                type: "number",
+                inputMode: "numeric"
               }}
-              inputMode="numeric"
               type="number"
               label="Jour"
-              hintText="Ex : 14"
+              hintText="Entre 1 et 31"
               required
+              state={dayState}
+              stateRelatedMessage="Jour invalide. Exemple : 14."
             />
           </Grid>
           <Grid item xs={3}>
             <Input
               nativeInputProps={{
                 value: month,
-                onChange: e => onChangeNDigits(e, setMonth, 2),
-                onBlur: onValidateBirthDate
+                onChange: e => setMonth(e.target.value),
+                onBlur: onValidateBirthDate,
+                type: "number",
+                inputMode: "numeric"
               }}
-              inputMode="numeric"
-              type="number"
               label="Mois"
-              hintText="Ex : 12"
+              hintText="Entre 1 et 12"
               required
+              state={monthState}
+              stateRelatedMessage="Mois invalide. Exemple : 12."
             />
           </Grid>
           <Grid item xs={6}>
             <Input
               nativeInputProps={{
                 value: year,
-                onChange: e => onChangeNDigits(e, setYear, 4),
-                onBlur: onValidateBirthDate
+                onChange: e => setYear(e.target.value),
+                onBlur: onValidateBirthDate,
+                type: "number",
+                inputMode: "numeric"
               }}
-              inputMode="numeric"
-              type="number"
               label="Année"
-              hintText="Ex : 1984"
+              hintText="Exemple : 1984"
               required
+              state={yearState}
+              stateRelatedMessage="Année invalide : elle doit être comprise entre 1924 et 2006. Exemple : 1990."
             />
           </Grid>
         </Grid>
+        {dateState === "error" && (
+          <p id="date-naissance-salarie-error" className="fr-error-text">
+            Date invalide : ce jour n'existe pas.
+          </p>
+        )}
       </Box>
       <Select
         label="Nationalité du salarié"

@@ -39,14 +39,12 @@ export default function ChangeEmailModal({ open, handleClose, handleSubmit }) {
         <DialogContent>
           <EmailField
             required
-            fullWidth
-            className="vertical-form-text-input"
-            label="Email"
             value={email}
             validate
             setValue={setEmail}
             error={error}
             setError={setError}
+            hintText="Format attendu : prenom.nom@domaine.fr"
           />
         </DialogContent>
         <CustomDialogActions>

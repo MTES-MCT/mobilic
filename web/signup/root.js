@@ -12,7 +12,6 @@ import { Complete } from "./Complete";
 import { loadEmployeeInvite } from "../common/loadEmployeeInvite";
 import { useApi } from "common/utils/api";
 import { EmailSelection } from "./EmailSelection";
-import { PaperContainer } from "../common/PaperContainer";
 import { Header } from "../common/Header";
 import { CompanySignup } from "./company/CompanySignup";
 
@@ -53,7 +52,7 @@ export default function Signup() {
   return (
     <>
       <Header />
-      <PaperContainer>
+      <main role="main" id="content">
         <Switch>
           {!userId && (
             <Route key="user" path={`${path}/user`}>
@@ -90,7 +89,7 @@ export default function Signup() {
           )}
           <Route path="*" render={() => <Redirect to={defaultRoute()} />} />
         </Switch>
-      </PaperContainer>
+      </main>
     </>
   );
 }

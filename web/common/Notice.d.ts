@@ -1,4 +1,3 @@
-// toto.d.ts
 import { CSSProperties, FC, ReactNode } from 'react';
 import { SxProps } from '@material-ui/system';
 

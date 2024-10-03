@@ -49,14 +49,6 @@ import { ErrorBoundary } from "./common/ErrorFallback";
 import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
 import { isGoogleAdsInitiated, initGoogleAds } from "common/utils/trackAds";
 import { createMuiDsfrThemeProvider } from "@codegouvfr/react-dsfr/mui";
-// import "@gouvfr/dsfr/dist/dsfr.min.css"; // dsfr should be imported before custom styles
-// import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
-// import "@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css";
-// import "@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css";
-// import "@gouvfr/dsfr/dist/utility/icons/icons-development/icons-development.min.css";
-// import "@gouvfr/dsfr/dist/utility/icons/icons-communication/icons-communication.min.css";
-// import "@gouvfr/dsfr/dist/utility/icons/icons-others/icons-others.min.css";
-// import "@gouvfr/dsfr/dist/utility/colors/colors.min.css";
 import "./index.css";
 import "common/assets/styles/root.scss";
 import { loadControllerUserData } from "./controller/utils/loadControllerUserData";
@@ -65,6 +57,7 @@ import { shouldUpdatePassword } from "common/utils/updatePassword";
 import UpdatePasswordModal from "./pwa/components/UpdatePassword";
 import AcceptCguModal from "./pwa/modals/AcceptCguModal";
 import RejectedCguModal from "./pwa/modals/RejectedCguModals";
+import merge from "lodash/merge";
 
 const matomo = createInstance({
   urlBase: "https://stats.beta.gouv.fr",
@@ -83,8 +76,7 @@ const matomo = createInstance({
 
 const { MuiDsfrThemeProvider } = createMuiDsfrThemeProvider({
   augmentMuiTheme: ({ nonAugmentedMuiTheme, frColorTheme }) => ({
-    ...nonAugmentedMuiTheme,
-    custom: customOptions
+    ...merge(nonAugmentedMuiTheme, customOptions)
   })
 });
 
