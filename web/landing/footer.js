@@ -2,9 +2,6 @@ import React from "react";
 import { Footer as DSFooter } from "@codegouvfr/react-dsfr/Footer";
 import { useModals } from "common/utils/modals";
 import { Follow } from "./follow";
-import FranceRelanceLogo from "common/assets/images/sponsor-logos/france_relance.jpg";
-import NextGenerationEULogo from "common/assets/images/sponsor-logos/next_generation_eu.png";
-// import { FabNumIcon } from "common/utils/icons";
 
 export function Footer({ withFollow = true }) {
   const modals = useModals();
@@ -31,20 +28,8 @@ export function Footer({ withFollow = true }) {
               beta.gouv.fr."
         operatorLogo={{
           alt: "Fabrique du numérique",
-          imgUrl: "",
+          imgUrl: "https://beta.gouv.fr/img/incubators/logo_fabnum_mtes.png",
           orientation: "horizontal"
-        }}
-        partnersLogos={{
-          sub: [
-            {
-              alt: "France Relance",
-              imgUrl: { FranceRelanceLogo }
-            },
-            {
-              alt: "Financé par NextGeneration EU",
-              imgUrl: { NextGenerationEULogo }
-            }
-          ]
         }}
         termsLinkProps={{
           to: "legal-notices"
