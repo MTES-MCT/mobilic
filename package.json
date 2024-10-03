@@ -116,9 +116,7 @@
     "build-with-nginx": "yarn build && scripts/start_nginx.sh",
     "test": "node scripts/test.js --passWithNoTests",
     "lint": "eslint --ext .js,.jsx ./",
-    "postinstall": "react-dsfr copy-static-assets",
-    "predev": "react-dsfr update-icons",
-    "prebuild": "react-dsfr update-icons"
+    "postinstall": "react-dsfr copy-static-assets"
   },
   "engines": {
     "node": "14",
@@ -128,7 +126,8 @@
     "production": [
       ">0.2%",
       "not dead",
-      "not op_mini all"
+      "not op_mini all",
+      "not op_mob >=1"
     ],
     "development": [
       "last 1 chrome version",
