@@ -1,15 +1,9 @@
 import React from "react";
-import Dialog from "@mui/material/Dialog";
 import { LoadingButton } from "common/components/LoadingButton";
-
-import DialogContent from "@mui/material/DialogContent";
 import Button from "@mui/material/Button";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import {
-  CustomDialogActions,
-  CustomDialogTitle
-} from "../../common/CustomDialogTitle";
 import { PhoneNumber } from "../../common/PhoneNumber";
+import Modal from "../../common/Modal";
 
 export default function ChangePhoneNumberModal({
   open,
@@ -39,22 +33,31 @@ export default function ChangePhoneNumberModal({
   };
 
   return (
-    <Dialog maxWidth="sm" onClose={handleClose} open={open} fullWidth>
-      <CustomDialogTitle handleClose={handleClose} title={title} />
-      <form onSubmit={e => submitNewPhoneNumber(e, newPhoneNumber)}>
-        <DialogContent>
+    <Modal
+      size="sm"
+      open={open}
+      handleClose={handleClose}
+      title={title}
+      content={
+        <form
+          onSubmit={e => submitNewPhoneNumber(e, newPhoneNumber)}
+          id="update-phone-number-form"
+        >
           <PhoneNumber
             currentPhoneNumber={newPhoneNumber}
             setCurrentPhoneNumber={setNewPhoneNumber}
           />
-        </DialogContent>
-        <CustomDialogActions>
+        </form>
+      }
+      actions={
+        <>
           {phoneNumber ? (
             <Button
               title="Supprimer le numéro"
               onClick={e => submitNewPhoneNumber(e, "")}
               variant="outlined"
               color="error"
+              form="update-phone-number-form"
             >
               Supprimer
             </Button>
@@ -70,11 +73,12 @@ export default function ChangePhoneNumberModal({
             disabled={!enableSave}
             color="primary"
             variant="contained"
+            form="update-phone-number-form"
           >
             Enregistrer
           </LoadingButton>
-        </CustomDialogActions>
-      </form>
-    </Dialog>
+        </>
+      }
+    />
   );
 }

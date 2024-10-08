@@ -1,15 +1,11 @@
 import React from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
 import { LoadingButton } from "common/components/LoadingButton";
 
 import { getClientTimezone } from "common/utils/timezones";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import {
-  CustomDialogActions,
-  CustomDialogTitle
-} from "../../common/CustomDialogTitle";
+
 import TimezoneSelect from "../../common/TimezoneSelect";
+import Modal from "../../common/Modal";
 
 export default function ChangeTimezoneModal({
   open,
@@ -23,33 +19,38 @@ export default function ChangeTimezoneModal({
   const alerts = useSnackbarAlerts();
 
   return (
-    <Dialog maxWidth="sm" onClose={handleClose} open={open} fullWidth>
-      <CustomDialogTitle
-        handleClose={handleClose}
-        title="Modifier votre fuseau horaire"
-      />
-      <form
-        autoComplete="off"
-        onSubmit={async e => {
-          e.preventDefault();
-          await alerts.withApiErrorHandling(async () => {
-            await handleSubmit(selectedTimezone);
-            handleClose();
-          }, "change-timezone");
-        }}
-      >
-        <DialogContent>
+    <Modal
+      size="sm"
+      title="Modifier votre fuseau horaire"
+      open={open}
+      handleClose={handleClose}
+      content={
+        <form
+          id="udpate-timezone-form"
+          autoComplete="off"
+          onSubmit={async e => {
+            e.preventDefault();
+            await alerts.withApiErrorHandling(async () => {
+              await handleSubmit(selectedTimezone);
+              handleClose();
+            }, "change-timezone");
+          }}
+        >
           <TimezoneSelect
             currentTimezone={selectedTimezone}
             setTimezone={setSelectedTimezone}
           />
-        </DialogContent>
-        <CustomDialogActions>
-          <LoadingButton type="submit" color="primary">
-            Enregistrer
-          </LoadingButton>
-        </CustomDialogActions>
-      </form>
-    </Dialog>
+        </form>
+      }
+      actions={
+        <LoadingButton
+          type="submit"
+          color="primary"
+          form="udpate-timezone-form"
+        >
+          Enregistrer
+        </LoadingButton>
+      }
+    />
   );
 }
