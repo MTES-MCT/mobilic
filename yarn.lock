@@ -2149,10 +2149,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@codegouvfr/react-dsfr@^1.13.2":
-  version "1.13.2"
-  resolved "https://registry.yarnpkg.com/@codegouvfr/react-dsfr/-/react-dsfr-1.13.2.tgz#aa64d1daebbf554f01b84e11c053c101cd7b4d10"
-  integrity sha512-gemeOlvveVCMiXZnXobKv6MDS0L5Wd7BPec49/42TfYvE8gGdPpPjrVx1ZWT9nYwkFxfnLPjnTToZxyvYvtTCA==
+"@codegouvfr/react-dsfr@^1.13.7":
+  version "1.13.7"
+  resolved "https://registry.yarnpkg.com/@codegouvfr/react-dsfr/-/react-dsfr-1.13.7.tgz#606609a42c3dda9e23e92ff11333a7a2b22304c1"
+  integrity sha512-w2r79WNsTFv6TbRU+7SeSNgcx071y1ZpJdwIPjiZi+8HECXGYEGXbL5OkSmmSQC54YyyRsKzZd8GqHoAS2ddpw==
   dependencies:
     tsafe "^1.7.2"
     yargs-parser "^21.1.1"

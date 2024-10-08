@@ -19,7 +19,8 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(-3),
     marginBottom: theme.spacing(-3),
     zIndex: 1000,
-    flexShrink: 0
+    flexShrink: 0,
+    textAlign: "center"
   },
   gridItem: {
     maxWidth: 120
