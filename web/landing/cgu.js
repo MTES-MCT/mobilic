@@ -1,17 +1,12 @@
 import React from "react";
-import DialogTitle from "@mui/material/DialogTitle";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import Typography from "@mui/material/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
 import { makeStyles } from "@mui/styles";
-import { useIsWidthDown } from "common/utils/useWidth";
 import Button from "@mui/material/Button";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import { CustomDialogActions } from "../common/CustomDialogTitle";
 import { Header } from "../common/Header";
 import Container from "@mui/material/Container";
 import { usePageTitle } from "../common/UsePageTitle";
+import Modal from "../common/Modal";
 
 const useStyles = makeStyles(theme => ({
   frameContainer: {
@@ -23,7 +18,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function CGU() {
-  return [<Header key={0} />, <CGUContent key={1} />];
+  return (
+    <>
+      <Header />
+      <CGUContent />
+    </>
+  );
 }
 
 function CGUContent() {
@@ -46,64 +46,57 @@ function CGUContent() {
 
 function CGUModal({ open, handleClose, handleAccept, handleReject }) {
   const store = useStoreSyncedWithLocalStorage();
-  const isSmDown = useIsWidthDown("sm");
 
   return (
-    <Dialog
-      onClose={handleClose}
+    <Modal
+      size="lg"
+      fullHeight
       open={open}
-      scroll="paper"
-      fullWidth
-      fullScreen={isSmDown}
-      maxWidth="lg"
-      PaperProps={{ style: { height: "100%" } }}
-    >
-      <DialogTitle disableTypography>
-        <Typography variant="h4">Conditions générales d'utilisation</Typography>
-      </DialogTitle>
-      <DialogContent dividers>
-        <CGUContent />
-      </DialogContent>
-      <CustomDialogActions>
-        {handleAccept && (
-          <LoadingButton
-            aria-label="Accepter"
-            variant="contained"
-            color="primary"
-            onClick={async () => {
-              await handleAccept();
-              await store.setHasAcceptedCgu();
-              handleClose();
-            }}
-          >
-            Accepter
-          </LoadingButton>
-        )}
-        {handleAccept && (
-          <LoadingButton
-            aria-label="Refuser"
-            variant="outlined"
-            color="primary"
-            onClick={async () => {
-              if (handleReject) await handleReject();
-              handleClose();
-            }}
-          >
-            Refuser
-          </LoadingButton>
-        )}
-        {!handleAccept && (
-          <Button
-            aria-label="Fermer"
-            variant="outlined"
-            color="primary"
-            onClick={handleClose}
-          >
-            Fermer
-          </Button>
-        )}
-      </CustomDialogActions>
-    </Dialog>
+      handleClose={handleClose}
+      title="Conditions générales d'utilisation"
+      content={<CGUContent />}
+      actions={
+        <>
+          {handleAccept && (
+            <LoadingButton
+              aria-label="Accepter"
+              variant="contained"
+              color="primary"
+              onClick={async () => {
+                await handleAccept();
+                await store.setHasAcceptedCgu();
+                handleClose();
+              }}
+            >
+              Accepter
+            </LoadingButton>
+          )}
+          {handleAccept && (
+            <LoadingButton
+              aria-label="Refuser"
+              variant="outlined"
+              color="primary"
+              onClick={async () => {
+                if (handleReject) await handleReject();
+                handleClose();
+              }}
+            >
+              Refuser
+            </LoadingButton>
+          )}
+          {!handleAccept && (
+            <Button
+              aria-label="Fermer"
+              variant="outlined"
+              color="primary"
+              onClick={handleClose}
+            >
+              Fermer
+            </Button>
+          )}
+        </>
+      }
+    />
   );
 }
 

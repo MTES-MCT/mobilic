@@ -1,15 +1,15 @@
 import React from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
 import Typography from "@mui/material/Typography";
 import QRCode from "qrcode.react";
 import CircularProgress from "@mui/material/CircularProgress";
-import { CustomDialogTitle } from "../common/CustomDialogTitle";
 import { useApi } from "common/utils/api";
 import { formatApiError } from "common/utils/errors";
 import { makeStyles } from "@mui/styles";
 import { now } from "common/utils/time";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
+import Notice from "../common/Notice";
+import Modal from "../common/Modal";
+import Box from "@mui/material/Box";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -60,34 +60,32 @@ export default function UserReadQRCodeModal({ open, handleClose }) {
   const classes = useStyles();
 
   return (
-    <Dialog
-      onClose={handleClose}
+    <Modal
+      title="Donner accès à votre historique"
+      fullHeight
       open={open}
-      scroll="paper"
-      PaperProps={{ style: { height: "100%" } }}
-    >
-      <CustomDialogTitle
-        title={"Donner accès à votre historique"}
-        handleClose={handleClose}
-      />
-      <DialogContent className={classes.container}>
-        {link ? (
-          [
-            <Typography align="left" className={classes.qrCodeText} key={0}>
-              En cas de contrôle par des personnes habilitées vous pouvez leur
-              montrer ce QR code qui leur permettra de consulter les données de
-              votre historique.
-            </Typography>,
-            <QRCode value={link} size={180} key={1} includeMargin={true} />
-          ]
-        ) : error ? (
-          <Typography color="error">
-            La génération du code d'accès a échoué.
-          </Typography>
-        ) : (
-          <CircularProgress color="primary" />
-        )}
-      </DialogContent>
-    </Dialog>
+      handleClose={handleClose}
+      content={
+        <Box className={classes.container}>
+          {link ? (
+            <>
+              <Typography align="left" className={classes.qrCodeText}>
+                En cas de contrôle par des personnes habilitées vous pouvez leur
+                montrer ce QR code qui leur permettra de consulter les données
+                de votre historique.
+              </Typography>
+              <QRCode value={link} size={180} includeMargin={true} />
+            </>
+          ) : error ? (
+            <Notice
+              type="error"
+              description="La génération du code d'accès a échoué."
+            />
+          ) : (
+            <CircularProgress color="primary" />
+          )}
+        </Box>
+      }
+    />
   );
 }

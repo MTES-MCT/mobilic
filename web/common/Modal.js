@@ -45,7 +45,8 @@ export default function Modal({
   content,
   actions,
   zIndex = 2000,
-  size = "md"
+  size = "md",
+  fullHeight = false
 }) {
   const classes = useStyles();
 
@@ -70,6 +71,7 @@ export default function Modal({
       maxWidth={size}
       classes={{ paper: classes.dialogPaper }}
       sx={{ zIndex }}
+      {...(fullHeight ? { PaperProps: { style: { height: "100%" } } } : {})}
     >
       <DialogTitle id="dialog-title" className={classes.title}>
         {title}
