@@ -14,7 +14,6 @@ import _ManagerImage from "../assets/images/Manager.svg";
 import _WorkerImage from "../assets/images/worker.svg";
 import _SoftwareImage from "../assets/images/software.svg";
 import _ControllerImage from "../assets/images/controller1.png";
-import _AgentConnectImage from "../assets/images/agentconnect.svg";
 import _MobilicQrCode from "../assets/images/mobilic-qrcode.svg";
 import _NoDataImage from "../assets/images/no-data.png";
 import _AxecImage from "../assets/images/press-logos/axec.png";
@@ -163,10 +162,6 @@ export function SoftwareImage(props) {
 
 export function ControllerImage(props) {
   return <img alt="" src={_ControllerImage} {...props} />;
-}
-
-export function AgentConnectImage(props) {
-  return <img alt="agent connect" src={_AgentConnectImage} {...props} />;
 }
 
 export function AxecImage(props) {

@@ -1,18 +1,16 @@
 import React from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
 import { Header } from "../common/Header";
 import { makeStyles } from "@mui/styles";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
-import Button from "@mui/material/Button";
 import {
   buildAgentConnectCallbackUrl,
   buildAgentConnectUrl
 } from "../controller/utils/agentConnect";
-import { AgentConnectImage } from "common/utils/icons";
 import { usePageTitle } from "../common/UsePageTitle";
 import Notice from "../common/Notice";
+import { ProConnectButton } from "@codegouvfr/react-dsfr/ProConnectButton";
 
 const useStyles = makeStyles(theme => ({
   agentConnectButton: {
@@ -50,25 +48,12 @@ export default function LoginController() {
       >
         <PaperContainerTitle>Connexion Contrôleur</PaperContainerTitle>
         <Typography>
-          Je me connecte avec mon identifiant Cerbère grâce à{" "}
-          <b>AgentConnect</b>
+          Je me connecte avec mon identifiant Cerbère grâce à <b>ProConnect</b>
         </Typography>
-        <Button
-          aria-label="Agent Connect"
+        <ProConnectButton
           className={classes.agentConnectButton}
           onClick={clickAgentConnect}
-        >
-          <AgentConnectImage />
-        </Button>
-        <Link
-          className={classes.infoLink}
-          variant="body1"
-          href="https://agentconnect.gouv.fr/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Qu'est-ce que AgentConnect ?
-        </Link>
+        />
         <Notice
           className={classes.alertInfo}
           size="small"
@@ -77,8 +62,8 @@ export default function LoginController() {
           }}
           description={
             <>
-              Vous n'avez pas de compte Mobilic à créer. AgentConnect vous
-              permet de vous connecter à Mobilic avec votre compte Cerbère
+              Vous n'avez pas de compte Mobilic à créer. ProConnect vous permet
+              de vous connecter à Mobilic avec votre compte Cerbère
             </>
           }
         />
