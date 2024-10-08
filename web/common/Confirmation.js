@@ -3,7 +3,6 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import { LoadingButton } from "common/components/LoadingButton";
-import DialogContent from "@mui/material/DialogContent";
 import Typography from "@mui/material/Typography";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
@@ -53,7 +52,7 @@ export default function ConfirmationModal({
       content={
         <>
           {(content || disableWarningName) && (
-            <DialogContent>
+            <>
               {content}
               {disableWarningName && (
                 <FormControlLabel
@@ -72,7 +71,7 @@ export default function ConfirmationModal({
                   }
                 />
               )}
-            </DialogContent>
+            </>
           )}
         </>
       }
