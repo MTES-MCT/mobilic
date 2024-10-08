@@ -1,12 +1,7 @@
 import React from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import {
-  CustomDialogActions,
-  CustomDialogTitle
-} from "../../common/CustomDialogTitle";
 import KilometerReadingField from "../../common/KilometerReadingField";
 import { LoadingButton } from "common/components/LoadingButton";
+import Modal from "../../common/Modal";
 
 export default function KilometerReadingModal({
   open,
@@ -28,12 +23,12 @@ export default function KilometerReadingModal({
   }, [open]);
 
   return (
-    <Dialog onClose={handleClose} open={open} fullWidth>
-      <CustomDialogTitle
-        title={`Relevé kilométrique de ${isStart ? "début" : "fin"} de service`}
-        handleClose={handleClose}
-      />
-      <DialogContent>
+    <Modal
+      open={open}
+      handleClose={handleClose}
+      size="sm"
+      title={`Relevé kilométrique de ${isStart ? "début" : "fin"} de service`}
+      content={
         <KilometerReadingField
           kilometerReading={kilometerReading}
           setKilometerReading={setKilometerReading}
@@ -42,8 +37,8 @@ export default function KilometerReadingModal({
           minReading={minReading}
           maxReading={maxReading}
         />
-      </DialogContent>
-      <CustomDialogActions>
+      }
+      actions={
         <LoadingButton
           color="primary"
           variant="contained"
@@ -55,7 +50,7 @@ export default function KilometerReadingModal({
         >
           OK
         </LoadingButton>
-      </CustomDialogActions>
-    </Dialog>
+      }
+    />
   );
 }

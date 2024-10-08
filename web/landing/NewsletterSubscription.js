@@ -1,11 +1,5 @@
 import React from "react";
-import Dialog from "@mui/material/Dialog";
 import { LoadingButton } from "common/components/LoadingButton";
-import {
-  CustomDialogActions,
-  CustomDialogTitle
-} from "../common/CustomDialogTitle";
-import DialogContent from "@mui/material/DialogContent";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "common/utils/TextField";
 import Typography from "@mui/material/Typography";
@@ -15,6 +9,7 @@ import { useApi } from "common/utils/api";
 import { makeStyles } from "@mui/styles";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { MandatoryField } from "../common/MandatoryField";
+import Modal from "../common/Modal";
 
 const useStyles = makeStyles(theme => ({
   caption: {
@@ -76,59 +71,65 @@ export default function NewsletterSubscriptionModal({ open, handleClose }) {
   }
 
   return (
-    <Dialog onClose={handleClose} open={open}>
-      <form autoComplete="off" onSubmit={handleSubmit}>
-        <CustomDialogTitle
-          handleClose={handleClose}
-          title="Abonnement à la lettre d'information"
-        />
-        <DialogContent>
+    <Modal
+      open={open}
+      handleClose={handleClose}
+      title="Abonnement à la lettre d'information"
+      content={
+        <>
           <Typography mb={2}>
             Veuillez renseigner votre adresse email pour vous abonner à notre
             lettre d'information.
           </Typography>
           <MandatoryField />
-          <EmailField
-            required
-            value={email}
-            setValue={setEmail}
-            validate
-            error={emailError}
-            setError={setEmailError}
-          />
-          <TextField
-            label="Profil"
-            variant="standard"
-            required
-            fullWidth
-            select
-            value={profile}
-            onChange={e => setProfile(e.target.value)}
+          <form
+            autoComplete="off"
+            onSubmit={handleSubmit}
+            id="subscribe-newsletter-form"
           >
-            {PROFILES.map(prof => (
-              <MenuItem key={prof.name} value={prof.name}>
-                {prof.label}
-              </MenuItem>
-            ))}
-          </TextField>
+            <EmailField
+              required
+              value={email}
+              setValue={setEmail}
+              validate
+              error={emailError}
+              setError={setEmailError}
+            />
+            <TextField
+              label="Profil"
+              variant="standard"
+              required
+              fullWidth
+              select
+              value={profile}
+              onChange={e => setProfile(e.target.value)}
+            >
+              {PROFILES.map(prof => (
+                <MenuItem key={prof.name} value={prof.name}>
+                  {prof.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </form>
           <Typography variant="caption" className={classes.caption}>
             Vous pouvez vous désabonner à tout moment en cliquant sur le lien
             présent dans nos emails.
           </Typography>
-        </DialogContent>
-        <CustomDialogActions>
-          <LoadingButton
-            aria-label="Abonnement"
-            color="primary"
-            type="submit"
-            variant="contained"
-            disabled={!!emailError || !email || !profile}
-            loading={loading}
-          >
-            Abonnement
-          </LoadingButton>
-        </CustomDialogActions>
-      </form>
-    </Dialog>
+        </>
+      }
+      actions={
+        <LoadingButton
+          aria-label="Abonnement"
+          color="primary"
+          type="submit"
+          variant="contained"
+          disabled={!!emailError || !email || !profile}
+          loading={loading}
+          form="subscribe-newsletter-form"
+        >
+          Abonnement
+        </LoadingButton>
+      }
+    />
   );
 }
