@@ -42,6 +42,9 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const [phoneNumber, setPhoneNumber] = React.useState("");
   const [emailError, setEmailError] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [forcePasswordValidation, setForcePasswordValidation] = React.useState(
+    false
+  );
   const [wayHeardOfMobilic, setWayHeardOfMobilic] = React.useState("");
   const [selectedTimezone, setSelectedTimezone] = React.useState(
     getClientTimezone()
@@ -66,6 +69,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       }
       setFirstNameError(!firstName);
       setLastNameError(!lastName);
+      setForcePasswordValidation(true);
       return;
     }
 
@@ -149,6 +153,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       () => {
         setEmail("");
         setPassword("");
+        setForcePasswordValidation(false);
       }
     );
     setLoading(false);
@@ -210,7 +215,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                     <MandatoryField />
                     <form
                       className="vertical-form centered"
-                      autoComplete="off"
+                      noValidate
                       onSubmit={handleSubmit}
                     >
                       <EmailField
@@ -218,7 +223,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                         value={email}
                         setValue={setEmail}
                         validate
-                        error={!!emailError}
+                        error={emailError}
                         setError={setEmailError}
                         hintText="Format attendu : prenom.nom@domaine.fr"
                         autoComplete="email"
@@ -228,10 +233,10 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                         nativeInputProps={{
                           autoComplete: "new-password",
                           value: password,
-                          onChange: e => setPassword(e.target.value),
-                          onBlur: e => setPassword("")
+                          onChange: e => setPassword(e.target.value)
                         }}
                         displayMessages
+                        forceValidation={forcePasswordValidation}
                         required
                       />
                       <Input

@@ -4,7 +4,17 @@ import { MandatorySuffix } from "./MandatorySuffix";
 import { PASSWORD_POLICY_RULES } from "common/utils/passwords";
 
 export const PasswordInput = React.forwardRef(
-  ({ required, label, nativeInputProps, displayMessages, ...props }, ref) => {
+  (
+    {
+      required,
+      label,
+      nativeInputProps,
+      displayMessages,
+      forceValidation = false,
+      ...props
+    },
+    ref
+  ) => {
     const augmentedLabel =
       required && label ? (
         <>
@@ -31,11 +41,12 @@ export const PasswordInput = React.forwardRef(
             ? PASSWORD_POLICY_RULES.map(rule => {
                 return {
                   message: rule.message,
-                  severity: !value
-                    ? "info"
-                    : rule.validator(value)
-                    ? "valid"
-                    : "error"
+                  severity:
+                    !value && !forceValidation
+                      ? "info"
+                      : rule.validator(value)
+                      ? "valid"
+                      : "error"
                 };
               })
             : []
