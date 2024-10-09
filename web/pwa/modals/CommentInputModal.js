@@ -32,16 +32,18 @@ export default function CommentInputModal({
         />
       }
       actions={
-        <IconButton
-          className="no-margin-no-padding"
-          onClick={() => {
-            handleContinue(text);
-            handleClose();
-          }}
-          disabled={!text}
-        >
-          <CheckIcon color="primary" />
-        </IconButton>
+        <>
+          <IconButton
+            className="no-margin-no-padding"
+            onClick={() => {
+              handleContinue(text);
+              handleClose();
+            }}
+            disabled={!text}
+          >
+            <CheckIcon color="primary" />
+          </IconButton>
+        </>
       }
     />
   );

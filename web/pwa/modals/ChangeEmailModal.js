@@ -46,13 +46,15 @@ export default function ChangeEmailModal({ open, handleClose, handleSubmit }) {
         </form>
       }
       actions={
-        <LoadingButton
-          type="submit"
-          disabled={error || !email}
-          form="update-email-form"
-        >
-          Enregistrer
-        </LoadingButton>
+        <>
+          <LoadingButton
+            type="submit"
+            disabled={error || !email}
+            form="update-email-form"
+          >
+            Enregistrer
+          </LoadingButton>
+        </>
       }
     />
   );

@@ -21,6 +21,15 @@ export default function ConfirmationDSFR({
       actions={
         <>
           <Button
+            title="Annuler"
+            onClick={(...args) => {
+              handleCancel(...args);
+              handleClose();
+            }}
+          >
+            {cancelButtonLabel}
+          </Button>
+          <Button
             title="Confirmer"
             onClick={(...args) => {
               handleConfirm(...args);
@@ -29,15 +38,6 @@ export default function ConfirmationDSFR({
             priority="secondary"
           >
             {confirmButtonLabel}
-          </Button>
-          <Button
-            title="Annuler"
-            onClick={(...args) => {
-              handleCancel(...args);
-              handleClose();
-            }}
-          >
-            {cancelButtonLabel}
           </Button>
         </>
       }

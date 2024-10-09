@@ -43,9 +43,11 @@ export default function ChangeTimezoneModal({
         </form>
       }
       actions={
-        <LoadingButton type="submit" form="udpate-timezone-form">
-          Enregistrer
-        </LoadingButton>
+        <>
+          <LoadingButton type="submit" form="udpate-timezone-form">
+            Enregistrer
+          </LoadingButton>
+        </>
       }
     />
   );

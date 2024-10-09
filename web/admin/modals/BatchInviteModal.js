@@ -51,15 +51,17 @@ export default function BatchInviteModal({ open, handleClose, handleSubmit }) {
         </>
       }
       actions={
-        <LoadingButton
-          disabled={!text || tooManyLinesError}
-          onClick={async e => {
-            await handleSubmit(parseText(text));
-            handleClose();
-          }}
-        >
-          Inviter
-        </LoadingButton>
+        <>
+          <LoadingButton
+            disabled={!text || tooManyLinesError}
+            onClick={async e => {
+              await handleSubmit(parseText(text));
+              handleClose();
+            }}
+          >
+            Inviter
+          </LoadingButton>
+        </>
       }
     />
   );

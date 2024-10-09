@@ -6,7 +6,6 @@ import {
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import { currentUserId } from "common/utils/cookie";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -16,6 +15,7 @@ import TextField from "common/utils/TextField";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import Notice from "../../common/Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   section: {
@@ -119,8 +119,6 @@ export function OAuthTokenSection() {
           <Grid item xs={6} className={classes.buttonAddKey}>
             <Button
               size="small"
-              color="primary"
-              variant="contained"
               onClick={() => {
                 setNewTokenSectionVisible(true);
               }}
@@ -172,8 +170,7 @@ export function OAuthTokenSection() {
                 </LoadingButton>
                 <Button
                   size="small"
-                  color="primary"
-                  variant="outlined"
+                  priority="secondary"
                   onClick={() => {
                     setNewClientId("");
                     setNewTokenSectionVisible(false);

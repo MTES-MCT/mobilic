@@ -58,15 +58,17 @@ export default function ExpenditureModal({
         </>
       }
       actions={
-        <IconButton
-          className="no-margin-no-padding"
-          onClick={() => {
-            handleSubmit(expenditures, forAllTeam);
-            handleClose();
-          }}
-        >
-          <CheckIcon color="primary" />
-        </IconButton>
+        <>
+          <IconButton
+            className="no-margin-no-padding"
+            onClick={() => {
+              handleSubmit(expenditures, forAllTeam);
+              handleClose();
+            }}
+          >
+            <CheckIcon color="primary" />
+          </IconButton>
+        </>
       }
     />
   );

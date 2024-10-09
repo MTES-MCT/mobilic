@@ -118,14 +118,16 @@ export default function NewsletterSubscriptionModal({ open, handleClose }) {
         </>
       }
       actions={
-        <LoadingButton
-          type="submit"
-          disabled={!!emailError || !email || !profile}
-          loading={loading}
-          form="subscribe-newsletter-form"
-        >
-          Abonnement
-        </LoadingButton>
+        <>
+          <LoadingButton
+            type="submit"
+            disabled={!!emailError || !email || !profile}
+            loading={loading}
+            form="subscribe-newsletter-form"
+          >
+            Abonnement
+          </LoadingButton>
+        </>
       }
     />
   );

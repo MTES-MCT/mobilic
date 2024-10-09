@@ -205,38 +205,40 @@ export default function ExcelExportModal({
         </>
       }
       actions={
-        <LoadingButton
-          disabled={!isEnabledDownload}
-          onClick={async e =>
-            await alerts.withApiErrorHandling(async () => {
-              let selectedUsers = users.filter(u => u.selected);
-              const options = {
-                company_ids: [selectedCompany.id],
-                one_file_by_employee: isOneFileByEmployee
-              };
-              if (selectedUsers.length > 0)
-                options["user_ids"] = selectedUsers.map(u => u.id);
-              if (minDate) options["min_date"] = isoFormatLocalDate(minDate);
-              if (maxDate) options["max_date"] = isoFormatLocalDate(maxDate);
-              e.preventDefault();
-              trackLink({
-                href: `/download_company_activity_report`,
-                linkType: "download"
-              });
-              await api.jsonHttpQuery(HTTP_QUERIES.excelExport, {
-                json: options
-              });
-              setIsEnabledDownload(false);
-              alerts.success(
-                "Le fichier étant volumineux, il vous sera envoyé par e-mail d’ici à quelques minutes.",
-                "",
-                6000
-              );
-            }, "download-company-report")
-          }
-        >
-          Télécharger
-        </LoadingButton>
+        <>
+          <LoadingButton
+            disabled={!isEnabledDownload}
+            onClick={async e =>
+              await alerts.withApiErrorHandling(async () => {
+                let selectedUsers = users.filter(u => u.selected);
+                const options = {
+                  company_ids: [selectedCompany.id],
+                  one_file_by_employee: isOneFileByEmployee
+                };
+                if (selectedUsers.length > 0)
+                  options["user_ids"] = selectedUsers.map(u => u.id);
+                if (minDate) options["min_date"] = isoFormatLocalDate(minDate);
+                if (maxDate) options["max_date"] = isoFormatLocalDate(maxDate);
+                e.preventDefault();
+                trackLink({
+                  href: `/download_company_activity_report`,
+                  linkType: "download"
+                });
+                await api.jsonHttpQuery(HTTP_QUERIES.excelExport, {
+                  json: options
+                });
+                setIsEnabledDownload(false);
+                alerts.success(
+                  "Le fichier étant volumineux, il vous sera envoyé par e-mail d’ici à quelques minutes.",
+                  "",
+                  6000
+                );
+              }, "download-company-report")
+            }
+          >
+            Télécharger
+          </LoadingButton>
+        </>
       }
     />
   );

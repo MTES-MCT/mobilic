@@ -112,11 +112,11 @@ export default function UpdateCompanyDetailsModal({
       }
       actions={
         <>
-          <Button onClick={handleSubmit} disabled={!canSave}>
-            Enregistrer
-          </Button>
           <Button onClick={handleClose} priority="secondary">
             Annuler
+          </Button>
+          <Button onClick={handleSubmit} disabled={!canSave}>
+            Enregistrer
           </Button>
         </>
       }

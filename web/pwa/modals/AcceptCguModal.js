@@ -81,13 +81,6 @@ export default function AcceptCguModal({ onAccept, onReject, handleClose }) {
       content={content}
       actions={
         <>
-          <Button
-            title="Accepter les Conditions Générales d'Utilisation"
-            onClick={_onAccept}
-            disabled={!isChecked}
-          >
-            Valider
-          </Button>
           {hasTurnedDown ? (
             <Button
               title="Supprimer mon compte"
@@ -109,6 +102,13 @@ export default function AcceptCguModal({ onAccept, onReject, handleClose }) {
               Je refuse
             </Button>
           )}
+          <Button
+            title="Accepter les Conditions Générales d'Utilisation"
+            onClick={_onAccept}
+            disabled={!isChecked}
+          >
+            Valider
+          </Button>
         </>
       }
     />

@@ -249,41 +249,44 @@ export default function C1BExportModal({
         </>
       }
       actions={
-        <LoadingButton
-          disabled={!minDate || !maxDate || dateRangeError}
-          onClick={async e => {
-            let selectedCompanies = _companies.filter(c => c.selected);
-            if (selectedCompanies.length === 0) selectedCompanies = _companies;
-            let selectedUsers = users.filter(u => u.selected);
-            const options = {
-              company_ids: selectedCompanies.map(c => c.id),
-              employee_version: employeeVersion
-            };
-            if (selectedUsers.length > 0)
-              options["user_ids"] = selectedUsers.map(u => u.id);
-            if (minDate) options["min_date"] = isoFormatLocalDate(minDate);
-            if (maxDate) options["max_date"] = isoFormatLocalDate(maxDate);
-            options["with_digital_signatures"] = sign;
-            e.preventDefault();
-            trackLink({
-              href: `/generate_tachograph_files`,
-              linkType: "download"
-            });
-            try {
-              await api.downloadFileHttpQuery(HTTP_QUERIES.companyC1bExport, {
-                json: options
+        <>
+          <LoadingButton
+            disabled={!minDate || !maxDate || dateRangeError}
+            onClick={async e => {
+              let selectedCompanies = _companies.filter(c => c.selected);
+              if (selectedCompanies.length === 0)
+                selectedCompanies = _companies;
+              let selectedUsers = users.filter(u => u.selected);
+              const options = {
+                company_ids: selectedCompanies.map(c => c.id),
+                employee_version: employeeVersion
+              };
+              if (selectedUsers.length > 0)
+                options["user_ids"] = selectedUsers.map(u => u.id);
+              if (minDate) options["min_date"] = isoFormatLocalDate(minDate);
+              if (maxDate) options["max_date"] = isoFormatLocalDate(maxDate);
+              options["with_digital_signatures"] = sign;
+              e.preventDefault();
+              trackLink({
+                href: `/generate_tachograph_files`,
+                linkType: "download"
               });
-            } catch (err) {
-              alerts.error(
-                formatApiError(err),
-                "generate_tachograph_files",
-                6000
-              );
-            }
-          }}
-        >
-          Générer
-        </LoadingButton>
+              try {
+                await api.downloadFileHttpQuery(HTTP_QUERIES.companyC1bExport, {
+                  json: options
+                });
+              } catch (err) {
+                alerts.error(
+                  formatApiError(err),
+                  "generate_tachograph_files",
+                  6000
+                );
+              }
+            }}
+          >
+            Générer
+          </LoadingButton>
+        </>
       }
     />
   );

@@ -32,9 +32,11 @@ export default function BlockedTimeModal({ open, handleClose }) {
         </>
       }
       actions={
-        <Button onClick={handleClose} className={classes.button}>
-          J'ai compris
-        </Button>
+        <>
+          <Button onClick={handleClose} className={classes.button}>
+            J'ai compris
+          </Button>
+        </>
       }
     />
   );

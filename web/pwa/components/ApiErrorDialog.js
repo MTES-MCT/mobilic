@@ -125,9 +125,11 @@ export default function ApiErrorDialogModal({
         </>
       }
       actions={
-        <Button color="primary" onClick={handleClose}>
-          Fermer
-        </Button>
+        <>
+          <Button color="primary" onClick={handleClose}>
+            Fermer
+          </Button>
+        </>
       }
     />
   );

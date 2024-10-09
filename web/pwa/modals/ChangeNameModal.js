@@ -60,13 +60,15 @@ export default function ChangeNameModal({
         </form>
       }
       actions={
-        <LoadingButton
-          type="submit"
-          disabled={!newFirstName || !newLastName}
-          form="update-name-form"
-        >
-          Enregistrer
-        </LoadingButton>
+        <>
+          <LoadingButton
+            type="submit"
+            disabled={!newFirstName || !newLastName}
+            form="update-name-form"
+          >
+            Enregistrer
+          </LoadingButton>
+        </>
       }
     />
   );

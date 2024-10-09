@@ -39,15 +39,17 @@ export default function KilometerReadingModal({
         />
       }
       actions={
-        <LoadingButton
-          disabled={!!error}
-          onClick={async () => {
-            await handleKilometerReading(kilometerReading);
-            handleClose();
-          }}
-        >
-          OK
-        </LoadingButton>
+        <>
+          <LoadingButton
+            disabled={!!error}
+            onClick={async () => {
+              await handleKilometerReading(kilometerReading);
+              handleClose();
+            }}
+          >
+            OK
+          </LoadingButton>
+        </>
       }
     />
   );
