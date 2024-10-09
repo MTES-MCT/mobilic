@@ -1,12 +1,12 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
-import Button from "@mui/material/Button";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import { DISMISS_THIRD_PARTY_COMPANY_TOKEN_MUTATION } from "common/utils/apiQueries";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   companyClientLine: {
@@ -59,8 +59,7 @@ export function CompanyClientCard({
       <Grid item xs={4}>
         <Button
           size="small"
-          color="primary"
-          variant="outlined"
+          priority="secondary"
           onClick={onRevokeAuthorizedClient}
           className={classes.revokeAccessButton}
         >

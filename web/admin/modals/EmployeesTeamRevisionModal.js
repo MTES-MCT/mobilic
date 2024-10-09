@@ -1,6 +1,5 @@
 import React from "react";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -11,6 +10,7 @@ import { useApi } from "common/utils/api";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { NO_TEAMS_LABEL, NO_TEAM_ID } from "../utils/teams";
 import Modal from "../../common/Modal";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export default function EmployeesTeamRevisionModal({
   employment,
@@ -93,7 +93,7 @@ export default function EmployeesTeamRevisionModal({
       }
       actions={
         <>
-          <Button title="Annuler" onClick={handleClose}>
+          <Button priority="secondary" onClick={handleClose}>
             Annuler
           </Button>
           <LoadingButton

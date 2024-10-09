@@ -2,11 +2,11 @@ import React from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import List from "@mui/material/List";
 import { Event } from "../../../common/Event";
 import { useMissionDetailsStyles } from "./MissionDetailsStyle";
 import { useModals } from "common/utils/modals";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export function MissionDetailsObservations({
   mission,
@@ -34,11 +34,10 @@ export function MissionDetailsObservations({
         </Grid>
         <Grid item>
           <Button
-            aria-label="Ajouter une observation"
-            color="primary"
-            variant="outlined"
+            priority="secondary"
             size="small"
-            className={classes.smallTextButton}
+            iconId="fr-icon-add-line"
+            iconPosition="left"
             onClick={() => {
               modals.open("commentInput", {
                 handleContinue: missionActions.createComment

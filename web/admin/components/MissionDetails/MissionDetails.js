@@ -382,6 +382,7 @@ export function MissionDetails({
                 }
               : null
           }
+          actionProps={{ iconId: "fr-icon-add-line", iconPosition: "left" }}
           titleProps={{ component: "h2" }}
         >
           <List>
