@@ -7,7 +7,6 @@ import Grid from "@mui/material/Grid";
 import { Header } from "../common/Header";
 import { Footer } from "./footer";
 import { PaperContainerTitle } from "../common/PaperContainer";
-import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { shuffle } from "lodash/collection";
 import { LoadingButton } from "common/components/LoadingButton";
 import { usePageTitle } from "../common/UsePageTitle";
@@ -180,13 +179,12 @@ export function Partners() {
               </LoadingButton>
             )}
             <div>
-              <MainCtaButton
-                aria-label="Devenir partenaire"
+              <LoadingButton
                 className={classes.cta}
                 href="mailto:contact@mobilic.beta.gouv.fr"
               >
                 Devenir partenaire
-              </MainCtaButton>
+              </LoadingButton>
             </div>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -236,13 +234,12 @@ export function Partners() {
                   </Grid>
                 ))}
               </Grid>
-              <MainCtaButton
-                aria-label="S'interfacer avec Mobilic"
+              <LoadingButton
                 className={classes.cta}
                 href="mailto:interfacage@mobilic.beta.gouv.fr"
               >
                 S'interfacer avec Mobilic
-              </MainCtaButton>
+              </LoadingButton>
             </Box>
             <Box>
               <Typography variant="h5" component="h2" className={classes.title}>

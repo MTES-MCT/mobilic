@@ -6,7 +6,6 @@ import Grid from "@mui/material/Grid";
 import { Header } from "../common/Header";
 import { ManagerImage, SoftwareImage, WorkerImage } from "common/utils/icons";
 import { useIsWidthDown } from "common/utils/useWidth";
-import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Footer } from "./footer";
 import {
   LandingSection,
@@ -17,6 +16,7 @@ import { WebinarListSection } from "./sections/WebinarListSection";
 import { IntroSection } from "./sections/IntroSection";
 import { TalkingAboutUsSection } from "./sections/TalkingAboutUsSection";
 import { usePageTitle } from "../common/UsePageTitle";
+import { LoadingButton } from "common/components/LoadingButton";
 
 const useStyles = makeStyles(theme => ({
   videoContainer: {
@@ -91,14 +91,9 @@ function Showcase({
       {descriptionTitle}
     </Typography>,
     <React.Fragment key={1}>{descriptionContent}</React.Fragment>,
-    <MainCtaButton
-      aria-label={ctaLabel}
-      key={2}
-      className={classes.cta}
-      href={ctaTarget}
-    >
+    <LoadingButton key={2} className={classes.cta} href={ctaTarget}>
       {ctaLabel}
-    </MainCtaButton>
+    </LoadingButton>
   ];
 
   const isMdDown = useIsWidthDown("md");
@@ -316,14 +311,13 @@ export const Landing = () => {
             </Grid>
           </Grid>
           <Grid item xs className={classes.faqCta}>
-            <MainCtaButton
-              aria-label="Foire aux questions"
+            <LoadingButton
               href="https://faq.mobilic.beta.gouv.fr"
               target="_blank"
               rel="noopener noreferrer"
             >
               Consulter la foire aux questions
-            </MainCtaButton>
+            </LoadingButton>
           </Grid>
         </Grid>
       </LandingSection>

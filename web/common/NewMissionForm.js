@@ -5,12 +5,12 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import { useStyles as useFunnelModalStyles } from "../pwa/components/FunnelModal";
 import MenuItem from "@mui/material/MenuItem";
-import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { VehicleFieldForApp } from "../pwa/components/VehicleFieldForApp";
 import { AddressField } from "./AddressField";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { DAY } from "common/utils/time";
 import { MandatoryField } from "./MandatoryField";
+import { LoadingButton } from "common/components/LoadingButton";
 
 export default function NewMissionForm({
   handleSubmit,
@@ -233,7 +233,7 @@ export default function NewMissionForm({
             }
           />
           <Box className="cta-container" my={4}>
-            <MainCtaButton
+            <LoadingButton
               disabled={
                 !address ||
                 (!mission && settings?.requireMissionName) ||
@@ -244,7 +244,7 @@ export default function NewMissionForm({
               loading={loading}
             >
               Continuer
-            </MainCtaButton>
+            </LoadingButton>
           </Box>
         </form>
       </Container>

@@ -2,7 +2,6 @@ import React from "react";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { MainCtaButton } from "./MainCtaButton";
 import { LoadingButton } from "common/components/LoadingButton";
 import { makeStyles } from "@mui/styles";
 import GeolocModalBackground from "common/assets/images/geoloc-modal-background.svg";
@@ -160,12 +159,12 @@ export default function GeolocPermissionInfoModal({
           className={classes.actionButton}
           data-testid="geoloc-modal-action-button"
         >
-          <MainCtaButton
+          <LoadingButton
             className={classes.ctaButton}
             onClick={acceptGeoLocation}
           >
             Partager ma position
-          </MainCtaButton>
+          </LoadingButton>
           <LoadingButton
             style={{ marginTop: 8 }}
             className={classes.subButton}

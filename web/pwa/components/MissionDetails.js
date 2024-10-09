@@ -27,7 +27,6 @@ import ListItemText from "@mui/material/ListItemText";
 import { getVehicleName } from "common/utils/vehicles";
 import { PersonIcon } from "common/utils/icons";
 import { getStartOfDay, now } from "common/utils/time";
-import { MainCtaButton } from "./MainCtaButton";
 import Typography from "@mui/material/Typography";
 import { Event } from "../../common/Event";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -36,6 +35,7 @@ import { ContradictoryChanges } from "./ContradictoryChanges";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
 import { DISMISSABLE_WARNINGS } from "../../admin/utils/dismissableWarnings";
 import Notice from "../../common/Notice";
+import { LoadingButton } from "common/components/LoadingButton";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -523,12 +523,12 @@ export function MissionDetails({
         !mission.isDeleted && (
           <MissionReviewSection title="Validation" titleProps={titleProps}>
             <Box style={{ textAlign: "center" }} pt={2} pb={2}>
-              <MainCtaButton
+              <LoadingButton
                 style={{ textAlign: "center" }}
                 onClick={handleMissionValidation}
               >
                 {validationButtonName}
-              </MainCtaButton>
+              </LoadingButton>
             </Box>
           </MissionReviewSection>
         )}

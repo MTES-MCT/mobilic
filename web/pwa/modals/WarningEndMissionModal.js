@@ -1,7 +1,6 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
-import { MainCtaButton } from "../components/MainCtaButton";
 import Modal from "../../common/Modal";
 
 export default function WarningEndMissionModal({
@@ -32,13 +31,13 @@ export default function WarningEndMissionModal({
       }
       actions={
         <>
-          <MainCtaButton
+          <LoadingButton
             onClick={() => {
               dismiss().then(handleMissionEnd());
             }}
           >
             Terminer la mission
-          </MainCtaButton>
+          </LoadingButton>
           <LoadingButton onClick={dismiss}>Poursuivre la mission</LoadingButton>
         </>
       }

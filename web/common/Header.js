@@ -16,14 +16,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import useTheme from "@mui/styles/useTheme";
 import { useIsWidthUp } from "common/utils/useWidth";
 import { makeStyles } from "@mui/styles";
-import Button from "@mui/material/Button";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
 import Drawer from "@mui/material/Drawer";
 import ListSubheader from "@mui/material/ListSubheader";
 import CloseIcon from "@mui/icons-material/Close";
 import Tooltip from "@mui/material/Tooltip";
-import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Link, LinkButton } from "./LinkButton";
 import YoutubeIcon from "common/assets/images/youtube.png";
 import FacebookIcon from "common/assets/images/facebook.png";
@@ -42,6 +41,7 @@ import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 import TextField from "common/utils/TextField";
 import { MenuItem } from "@mui/material";
 import { ControllerHeader } from "../controller/components/header/ControllerHeader";
+import { LoadingButton } from "common/components/LoadingButton";
 
 const SOCIAL_NETWORKS = [
   {
@@ -484,10 +484,8 @@ function DesktopHeader({ disableMenu }) {
                 )
                 .map(route => {
                   const ButtonComponent = route.mainCta
-                    ? MainCtaButton
-                    : props => (
-                        <Button variant="outlined" color="primary" {...props} />
-                      );
+                    ? LoadingButton
+                    : props => <Button priority="secondary" {...props} />;
                   return (
                     <Grid item key={route.path}>
                       <ButtonComponent
