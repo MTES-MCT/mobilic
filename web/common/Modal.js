@@ -1,12 +1,7 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
-import Stack from "@mui/material/Stack";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle
-} from "@mui/material";
+import { Dialog } from "@mui/material";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -26,15 +21,6 @@ const useStyles = makeStyles(theme => ({
       width: "100%",
       maxWidth: "100%"
     }
-  },
-  closeButton: {
-    position: "absolute",
-    right: 8,
-    top: 4,
-    [theme.breakpoints.up("sm")]: {
-      right: 16,
-      top: 8
-    }
   }
 }));
 
@@ -45,18 +31,16 @@ export default function Modal({
   content,
   actions,
   zIndex = 2000,
-  size = "md",
-  fullHeight = false
+  size = "md"
 }) {
   const classes = useStyles();
 
   const closeButton = (
     <button
-      className={`fr-link--close fr-link ${classes.closeButton}`}
+      className={fr.cx("fr-btn--close", "fr-btn")}
       type="button"
       onClick={handleClose}
       title="Fermer la fenêtre modale"
-      aria-controls="fr-modal"
     >
       Fermer
     </button>
@@ -71,31 +55,41 @@ export default function Modal({
       maxWidth={size}
       classes={{ paper: classes.dialogPaper }}
       sx={{ zIndex }}
-      {...(fullHeight ? { PaperProps: { style: { height: "100%" } } } : {})}
     >
-      <DialogTitle id="dialog-title" className={classes.title}>
-        {title}
-      </DialogTitle>
-      {!!handleClose && closeButton}
-      <DialogContent>{content}</DialogContent>
-      <DialogActions>
-        <Stack
-          p={2}
-          width="100%"
-          columnGap={2}
-          rowGap={2}
-          alignItems="center"
-          justifyContent="flex-start"
-          sx={{
-            flexDirection: {
-              xs: "column",
-              sm: "row-reverse"
-            }
-          }}
-        >
-          {actions}
-        </Stack>
-      </DialogActions>
+      <div className={fr.cx("fr-modal__body")}>
+        <div className={fr.cx("fr-modal__header")}>
+          {!!handleClose && closeButton}
+        </div>
+        <div className={fr.cx("fr-modal__content")}>
+          <h1 id="dialog-title" className={fr.cx("fr-modal__title")}>
+            {title}
+          </h1>
+          {content}
+        </div>
+        {actions && (
+          <div className={fr.cx("fr-modal__footer")}>
+            <ul
+              className={fr.cx(
+                "fr-btns-group",
+                "fr-btns-group--right",
+                "fr-btns-group--inline-reverse",
+                "fr-btns-group--inline-lg",
+                "fr-btns-group--icon-left"
+              )}
+            >
+              {React.Children.toArray(actions.props.children)
+                .reverse()
+                .map((action, i) => (
+                  <li key={i}>
+                    {React.cloneElement(action, {
+                      className: fr.cx("fr-btn", action.props.className)
+                    })}
+                  </li>
+                ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </Dialog>
   );
 }

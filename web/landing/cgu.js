@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(4),
     paddingBottom: theme.spacing(1),
     margin: "auto",
-    height: "100%"
+    height: "40vh"
   }
 }));
 
@@ -50,7 +50,6 @@ function CGUModal({ open, handleClose, handleAccept, handleReject }) {
   return (
     <Modal
       size="lg"
-      fullHeight
       open={open}
       handleClose={handleClose}
       title="Conditions générales d'utilisation"

@@ -62,7 +62,6 @@ export default function UserReadQRCodeModal({ open, handleClose }) {
   return (
     <Modal
       title="Donner accès à votre historique"
-      fullHeight
       open={open}
       handleClose={handleClose}
       content={
