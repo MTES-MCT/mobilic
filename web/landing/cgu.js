@@ -56,25 +56,9 @@ function CGUModal({ open, handleClose, handleAccept, handleReject }) {
       content={<CGUContent />}
       actions={
         <>
-          {handleAccept && (
+          {handleReject && (
             <LoadingButton
-              aria-label="Accepter"
-              variant="contained"
-              color="primary"
-              onClick={async () => {
-                await handleAccept();
-                await store.setHasAcceptedCgu();
-                handleClose();
-              }}
-            >
-              Accepter
-            </LoadingButton>
-          )}
-          {handleAccept && (
-            <LoadingButton
-              aria-label="Refuser"
-              variant="outlined"
-              color="primary"
+              priority="secondary"
               onClick={async () => {
                 if (handleReject) await handleReject();
                 handleClose();
@@ -83,15 +67,21 @@ function CGUModal({ open, handleClose, handleAccept, handleReject }) {
               Refuser
             </LoadingButton>
           )}
-          {!handleAccept && (
-            <Button
-              aria-label="Fermer"
-              variant="outlined"
-              color="primary"
-              onClick={handleClose}
-            >
+          {!handleReject && (
+            <Button priority="secondary" onClick={handleClose}>
               Fermer
             </Button>
+          )}
+          {handleAccept && (
+            <LoadingButton
+              onClick={async () => {
+                await handleAccept();
+                await store.setHasAcceptedCgu();
+                handleClose();
+              }}
+            >
+              Accepter
+            </LoadingButton>
           )}
         </>
       }

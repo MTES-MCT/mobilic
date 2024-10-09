@@ -1,4 +1,4 @@
-import Button from "@mui/material/Button";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useApi } from "common/utils/api";
 import { RESET_PASSWORD_CONNECTED_MUTATION } from "common/utils/apiQueries";
 import { clearUpdateTimeCookie, snooze } from "common/utils/updatePassword";
@@ -81,21 +81,20 @@ export default function UpdatePasswordModal() {
       actions={
         <>
           <Button
+            priority="secondary"
             title="Me le rappeler plus tard"
-            color="primary"
-            variant="outlined"
             onClick={() => {
               snooze();
               setIsOpen(false);
             }}
-            form="new-password-form"
+            nativeButtonProps={{
+              form: "new-password-form"
+            }}
           >
             Plus tard
           </Button>
           <LoadingButton
             title="Réinitialiser mon mot de passe"
-            color="primary"
-            variant="contained"
             type="submit"
             disabled={
               !password ||

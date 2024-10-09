@@ -63,7 +63,6 @@ export default function ChangeNameModal({
         <LoadingButton
           type="submit"
           disabled={!newFirstName || !newLastName}
-          color="primary"
           form="update-name-form"
         >
           Enregistrer

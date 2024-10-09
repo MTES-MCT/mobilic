@@ -133,8 +133,6 @@ export default function PDFExportModal({
       }
       actions={
         <LoadingButton
-          color="primary"
-          variant="contained"
           disabled={!minDate || !maxDate || dateRangeError}
           onClick={async e => {
             const options = {};

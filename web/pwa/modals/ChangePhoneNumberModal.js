@@ -71,8 +71,6 @@ export default function ChangePhoneNumberModal({
             marginLeft={1}
             type="submit"
             disabled={!enableSave}
-            color="primary"
-            variant="contained"
             form="update-phone-number-form"
           >
             Enregistrer

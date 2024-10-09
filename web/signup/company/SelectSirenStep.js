@@ -99,8 +99,6 @@ export function SelectSirenStep({
           button={
             <LoadingButton
               aria-label="Rechercher SIREN"
-              variant="contained"
-              color="primary"
               type="submit"
               loading={loadingSirenInfo}
               disabled={!siren || sirenFormatError}

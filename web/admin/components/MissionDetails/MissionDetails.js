@@ -491,9 +491,6 @@ export function MissionDetails({
                   (Lieux, Véhicules)."
               />
               <LoadingButton
-                aria-label="Valider"
-                variant="contained"
-                color="primary"
                 size="small"
                 className={classes.validationButton}
                 onClick={async e => {

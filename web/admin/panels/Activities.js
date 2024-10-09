@@ -452,8 +452,6 @@ function ActivitiesPanel() {
         >
           <LoadingButton
             style={{ marginTop: 8, alignSelf: "flex-start" }}
-            color="primary"
-            variant="contained"
             size="small"
             className={classes.subButton}
             onClick={() => {

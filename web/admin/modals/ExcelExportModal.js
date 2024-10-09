@@ -206,8 +206,6 @@ export default function ExcelExportModal({
       }
       actions={
         <LoadingButton
-          color="primary"
-          variant="contained"
           disabled={!isEnabledDownload}
           onClick={async e =>
             await alerts.withApiErrorHandling(async () => {

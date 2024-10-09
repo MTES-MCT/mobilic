@@ -89,8 +89,6 @@ export default function TerminateEmploymentModal({
       }
       actions={
         <LoadingButton
-          color="primary"
-          variant="contained"
           type="submit"
           loading={loading}
           form="terminate-employment-form"

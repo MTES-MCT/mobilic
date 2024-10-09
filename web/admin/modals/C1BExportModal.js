@@ -250,8 +250,6 @@ export default function C1BExportModal({
       }
       actions={
         <LoadingButton
-          color="primary"
-          variant="contained"
           disabled={!minDate || !maxDate || dateRangeError}
           onClick={async e => {
             let selectedCompanies = _companies.filter(c => c.selected);

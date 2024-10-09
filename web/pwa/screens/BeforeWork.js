@@ -235,7 +235,6 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
         {process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
           !hasEnoughBreak && <WarningBreaks />}
         <LoadingButton
-          variant="contained"
           className={classes.ctaButton}
           onClick={onEnterNewMissionFunnel}
         >

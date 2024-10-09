@@ -539,8 +539,6 @@ export default function ActivityRevisionOrCreationModal({
             </Button>
           )}
           <LoadingButton
-            variant="contained"
-            color="primary"
             disabled={
               !canSubmit(
                 isCreation

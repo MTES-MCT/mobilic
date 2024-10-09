@@ -161,8 +161,6 @@ export function OAuthTokenSection() {
                 <LoadingButton
                   type="submit"
                   size="small"
-                  color="primary"
-                  variant="contained"
                   disabled={!newClientId}
                   onClick={async e => {
                     e.stopPropagation();

@@ -119,10 +119,7 @@ export default function NewsletterSubscriptionModal({ open, handleClose }) {
       }
       actions={
         <LoadingButton
-          aria-label="Abonnement"
-          color="primary"
           type="submit"
-          variant="contained"
           disabled={!!emailError || !email || !profile}
           loading={loading}
           form="subscribe-newsletter-form"

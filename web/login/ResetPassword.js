@@ -175,9 +175,6 @@ export function ResetPassword() {
                   />
                   <Box my={4}>
                     <LoadingButton
-                      aria-label="Valider"
-                      variant="contained"
-                      color="primary"
                       type="submit"
                       disabled={
                         !token ||
@@ -268,9 +265,6 @@ export function RequestResetPassword() {
                 />
                 <Box my={4}>
                   <LoadingButton
-                    aria-label="Valider"
-                    variant="contained"
-                    color="primary"
                     type="submit"
                     disabled={!!emailError || !email}
                     loading={loading}

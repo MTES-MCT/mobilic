@@ -238,9 +238,6 @@ export function SyncEmployeeValidation() {
                   </Typography>
                   <LoadingButton
                     disabled={mustAcceptAccountCreation}
-                    aria-label="Confirmer"
-                    variant="contained"
-                    color="primary"
                     size="small"
                     className={classes.validationButton}
                     onClick={async e => {

@@ -200,9 +200,6 @@ export default function CompanyTeamCreationRevisionModal({
             Annuler
           </Button>
           <LoadingButton
-            title="Confirmer"
-            color="primary"
-            variant="contained"
             disabled={!name}
             onClick={submitForm}
             loading={submitting}

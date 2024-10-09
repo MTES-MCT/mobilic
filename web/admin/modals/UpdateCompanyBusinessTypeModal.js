@@ -68,11 +68,11 @@ export default function UpdateCompanyBusinessTypeModal() {
       }
       actions={
         <>
-          <Button onClick={handleSubmit} disabled={!canSubmit}>
-            Confirmer
-          </Button>
           <Button onClick={handleClose} priority="secondary">
             Me le rappeler plus tard
+          </Button>
+          <Button onClick={handleSubmit} disabled={!canSubmit}>
+            Confirmer
           </Button>
         </>
       }

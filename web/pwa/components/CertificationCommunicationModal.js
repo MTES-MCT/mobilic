@@ -93,8 +93,6 @@ export default function CertificationCommunicationModal({
             Je refuse
           </Button>
           <LoadingButton
-            color="primary"
-            variant="contained"
             onClick={async e => {
               handleSubmit(true);
             }}

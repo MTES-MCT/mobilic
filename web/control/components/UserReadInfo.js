@@ -241,7 +241,7 @@ export function UserReadInfo({
       {allowC1BExport && (
         <Box className={classes.exportButton}>
           <LoadingButton
-            color="primary"
+            priority="secondary"
             className={classes.exportButton}
             onClick={async () => {
               try {
@@ -259,7 +259,6 @@ export function UserReadInfo({
                 );
               }
             }}
-            variant="outlined"
           >
             Télécharger C1B
           </LoadingButton>

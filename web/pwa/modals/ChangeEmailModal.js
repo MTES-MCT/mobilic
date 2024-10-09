@@ -49,7 +49,6 @@ export default function ChangeEmailModal({ open, handleClose, handleSubmit }) {
         <LoadingButton
           type="submit"
           disabled={error || !email}
-          color="primary"
           form="update-email-form"
         >
           Enregistrer

@@ -97,9 +97,6 @@ export default function EmployeesTeamRevisionModal({
             Annuler
           </Button>
           <LoadingButton
-            title="Confirmer"
-            color="primary"
-            variant="contained"
             disabled={newTeamId === (employment.teamId || NO_TEAM_ID)}
             onClick={updateTeam}
             loading={submitting}

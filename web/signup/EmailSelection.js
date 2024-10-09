@@ -248,9 +248,6 @@ export function EmailSelection() {
         )}
         <Box my={4}>
           <LoadingButton
-            aria-label="Continuer"
-            variant="contained"
-            color="primary"
             type="submit"
             loading={loading}
             disabled={

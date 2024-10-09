@@ -79,8 +79,8 @@ export default function ConfirmationModal({
         <>
           {cancelButtonLabel || textButtons ? (
             <LoadingButton
-              aria-label="Confirmer"
-              color="primary"
+              priority="secondary"
+              aria-label="Annuler"
               onClick={handleClose}
             >
               {cancelButtonLabel || "Non"}
@@ -92,9 +92,7 @@ export default function ConfirmationModal({
           )}
           {confirmButtonLabel || textButtons ? (
             <LoadingButton
-              aria-label="Annuler"
-              color="primary"
-              variant="contained"
+              aria-label="Confirmer"
               onClick={async (...args) => {
                 await handleConfirmWithEventualWarningDisable(...args);
                 handleClose();

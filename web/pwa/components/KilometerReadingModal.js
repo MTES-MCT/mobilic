@@ -40,8 +40,6 @@ export default function KilometerReadingModal({
       }
       actions={
         <LoadingButton
-          color="primary"
-          variant="contained"
           disabled={!!error}
           onClick={async () => {
             await handleKilometerReading(kilometerReading);

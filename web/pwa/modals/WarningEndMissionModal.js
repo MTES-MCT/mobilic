@@ -39,9 +39,7 @@ export default function WarningEndMissionModal({
           >
             Terminer la mission
           </MainCtaButton>
-          <LoadingButton color="primary" onClick={dismiss}>
-            Poursuivre la mission
-          </LoadingButton>
+          <LoadingButton onClick={dismiss}>Poursuivre la mission</LoadingButton>
         </>
       }
     />

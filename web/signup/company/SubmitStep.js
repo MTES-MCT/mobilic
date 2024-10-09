@@ -81,8 +81,6 @@ export function SubmitStep({
         <LoadingButton
           aria-label="Terminer inscription"
           className={classes.verticalFormButton}
-          variant="contained"
-          color="primary"
           type="submit"
           disabled={
             !claimedRights ||
