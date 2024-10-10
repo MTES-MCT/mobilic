@@ -63,6 +63,7 @@ import { PeriodFilter } from "../components/PeriodFilter";
 import { syncMissions } from "common/utils/loadUserData";
 import { useHolidays } from "../../common/useHolidays";
 import { LogHolidayButton } from "../../common/LogHolidayButton";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const tabs = {
   mission: {
@@ -153,7 +154,7 @@ const useStyles = makeStyles(theme => ({
   },
   placeholderContainer: {
     backgroundColor: "inherit",
-    color: theme.palette.grey[500]
+    color: fr.colors.decisions.text.mention.grey.default
   },
   periodSelector: {
     paddingTop: theme.spacing(1),
