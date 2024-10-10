@@ -2,12 +2,10 @@ import moment from "moment";
 import React, { useMemo } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Box from "@mui/material/Box";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
@@ -433,8 +431,8 @@ export function History({
         >
           <Grid container item direction="row" alignItems="center" sm={6}>
             {currentCompanies?.length > 0 && (
-              <IconButton
-                color="primary"
+              <Button
+                priority="tertiary no outline"
                 onClick={() =>
                   modals.open("newMission", {
                     companies: store.companies(),
@@ -473,12 +471,11 @@ export function History({
                     }
                   })
                 }
+                iconId="fr-icon-add-circle-fill"
+                iconPosition="left"
               >
-                <AddCircleIcon fontSize="large" />
-                <Typography align="left" ml={1}>
-                  Ajouter une mission passée
-                </Typography>
-              </IconButton>
+                Ajouter une mission passée
+              </Button>
             )}
           </Grid>
           <LogHolidayButton onClick={() => openHolidaysModal()} />
