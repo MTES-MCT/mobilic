@@ -1,4 +1,5 @@
 import { makeStyles } from "@mui/styles";
+import { fr } from "@codegouvfr/react-dsfr";
 
 export const useMissionDetailsStyles = makeStyles(theme => ({
   closeButton: {
@@ -32,7 +33,7 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   },
   noCommentText: {
     fontStyle: "italic",
-    color: theme.palette.grey[500]
+    color: fr.colors.decisions.text.mention.grey.default
   },
   validationButton: {
     marginTop: theme.spacing(4)

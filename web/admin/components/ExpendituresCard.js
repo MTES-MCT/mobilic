@@ -11,10 +11,11 @@ import React from "react";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import { useModals } from "common/utils/modals";
+import { fr } from "@codegouvfr/react-dsfr";
 
 export const useStyles = makeStyles(theme => ({
   noExpenditureLabel: {
-    color: theme.palette.grey[500],
+    color: fr.colors.decisions.text.mention.grey.default,
     fontStyle: "italic"
   }
 }));

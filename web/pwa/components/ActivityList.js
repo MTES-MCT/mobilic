@@ -29,10 +29,11 @@ import { VerticalTimeline } from "common/components/VerticalTimeline";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from "@mui/material/ToggleButton";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   infoText: {
-    color: theme.palette.grey[500],
+    color: fr.colors.decisions.text.mention.grey.default,
     fontStyle: "italic"
   },
   longBreak: {

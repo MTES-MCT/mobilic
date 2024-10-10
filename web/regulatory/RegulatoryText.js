@@ -2,12 +2,13 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import Notice from "../common/Notice";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   infoText: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    color: theme.palette.grey[500],
+    color: fr.colors.decisions.text.mention.grey.default,
     fontStyle: "italic"
   }
 }));
