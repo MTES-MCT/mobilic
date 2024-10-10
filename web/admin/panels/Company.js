@@ -252,8 +252,6 @@ function CompanyPanel({ width, containerRef }) {
             <LinkButton
               className={classes.createCompanyButton}
               size="small"
-              variant="contained"
-              color="primary"
               to="/signup/company"
             >
               Inscrire une nouvelle entreprise

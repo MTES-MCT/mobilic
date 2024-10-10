@@ -2,17 +2,15 @@ import React from "react";
 
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { useModals } from "common/utils/modals";
 import { useAdminStore } from "../admin/store/store";
 import { formatPhoneNumber } from "common/utils/phoneNumber";
 import { formatActivity } from "common/utils/businessTypes";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   actionButton: {
-    fontSize: "0.875rem",
-    textTransform: "none",
     marginLeft: "2rem"
   },
   subTitle: {
@@ -69,8 +67,7 @@ export default function CompanyDetails({ company }) {
       </Stack>
       <Button
         size="small"
-        color="primary"
-        variant="outlined"
+        priority="secondary"
         title={`Modifier les informations de l'entreprise ${company?.name}`}
         onClick={() =>
           modals.open("updateCompanyDetails", {
