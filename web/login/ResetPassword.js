@@ -10,7 +10,6 @@ import Box from "@mui/material/Box";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import jwt_decode from "jwt-decode";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import { useLoadingScreen } from "common/utils/loading";
 import { Header } from "../common/Header";
 import { useSnackbarAlerts } from "../common/Snackbar";
@@ -24,6 +23,7 @@ import Emoji from "../common/Emoji";
 import { NewPasswordBlock } from "../common/NewPasswordBlock";
 import { getPasswordErrors } from "common/utils/passwords";
 import { usePageTitle } from "../common/UsePageTitle";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   introText: {
@@ -144,8 +144,6 @@ export function ResetPassword() {
                 </Grid>
                 <Grid item xs={12}>
                   <Button
-                    color="primary"
-                    variant="contained"
                     onClick={() => {
                       history.push("/home");
                     }}

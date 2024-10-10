@@ -1,12 +1,12 @@
 import React from "react";
 import { LoadingButton } from "common/components/LoadingButton";
 import { makeStyles } from "@mui/styles";
-import Button from "@mui/material/Button";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { Header } from "../common/Header";
 import Container from "@mui/material/Container";
 import { usePageTitle } from "../common/UsePageTitle";
 import Modal from "../common/Modal";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   frameContainer: {

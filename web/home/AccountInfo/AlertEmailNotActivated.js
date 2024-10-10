@@ -1,7 +1,6 @@
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
 import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
-import Button from "@mui/material/Button";
 import React from "react";
 import { RESEND_ACTIVATION_EMAIL } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
@@ -10,6 +9,7 @@ import { useApi } from "common/utils/api";
 import { makeStyles } from "@mui/styles";
 import Emoji from "../../common/Emoji";
 import Notice from "../../common/Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export default function AlertEmailNotActivated({ email }) {
   const useStyles = makeStyles(theme => ({
@@ -79,8 +79,6 @@ export default function AlertEmailNotActivated({ email }) {
               <ListItemIcon className={classes.emailCheckIcon} />
               <Button
                 size="small"
-                color="primary"
-                variant="contained"
                 data-testid="resendActivationEmailButton"
                 onClick={resendActivationEmail}
               >

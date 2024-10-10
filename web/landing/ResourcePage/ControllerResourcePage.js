@@ -7,12 +7,12 @@ import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import { Breadcrumb } from "@codegouvfr/react-dsfr/Breadcrumb";
 import { SlideshareCard } from "./SlideshareCard";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { VideoCard, VIDEOS } from "./VideoCard";
 import { RESOURCES_DOCUMENT } from "./ResourcePage";
 import { usePageTitle } from "../../common/UsePageTitle";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export function ControllerResourcePage() {
   usePageTitle("Documentation Contrôleur - Mobilic");
@@ -63,12 +63,14 @@ export function ControllerResourcePage() {
               />
             </Box>
             <Button
-              color="primary"
+              priority="secondary"
               size="small"
               className={classes.viewAllButton}
-              variant={"outlined"}
-              href="https://drive.google.com/drive/folders/1b87UFjE7BL-nk-dQy_Seghs1gcgBB-A8"
-              target="_blank"
+              linkProps={{
+                href:
+                  "https://drive.google.com/drive/folders/1b87UFjE7BL-nk-dQy_Seghs1gcgBB-A8",
+                target: "_blank"
+              }}
             >
               Voir toutes les notices
             </Button>
@@ -78,12 +80,14 @@ export function ControllerResourcePage() {
               <VideoCard video={VIDEOS.Tuto_Ctt} />
             </Box>
             <Button
-              color="primary"
+              priority="secondary"
               size="small"
               className={classes.viewAllButton}
-              variant={"outlined"}
-              href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos"
-              target="_blank"
+              linkProps={{
+                href:
+                  "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos",
+                target: "_blank"
+              }}
             >
               Voir toutes les vidéos
             </Button>
@@ -106,12 +110,14 @@ export function ControllerResourcePage() {
               />
             </Box>
             <Button
-              color="primary"
+              priority="secondary"
               size="small"
               className={classes.viewAllButton}
-              variant={"outlined"}
-              href="https://drive.google.com/drive/folders/1b87UFjE7BL-nk-dQy_Seghs1gcgBB-A8"
-              target="_blank"
+              linkProps={{
+                href:
+                  "https://drive.google.com/drive/folders/1b87UFjE7BL-nk-dQy_Seghs1gcgBB-A8",
+                target: "_blank"
+              }}
             >
               Voir toutes les notices
             </Button>
@@ -121,12 +127,14 @@ export function ControllerResourcePage() {
               <VideoCard video={VIDEOS.Tuto_Police} />
             </Box>
             <Button
-              color="primary"
+              priority="secondary"
               size="small"
               className={classes.viewAllButton}
-              variant={"outlined"}
-              href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos"
-              target="_blank"
+              linkProps={{
+                href:
+                  "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos",
+                target: "_blank"
+              }}
             >
               Voir toutes les vidéos
             </Button>

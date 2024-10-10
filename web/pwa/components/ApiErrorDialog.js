@@ -4,7 +4,6 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { formatGraphQLError } from "common/utils/errors";
 import { makeStyles } from "@mui/styles";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { useLoadingScreen } from "common/utils/loading";
 import { useApi } from "common/utils/api";
@@ -13,6 +12,7 @@ import { loadUserData } from "common/utils/loadUserData";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import Notice from "../../common/Notice";
 import Modal from "../../common/Modal";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   failureStatusText: {
@@ -64,8 +64,6 @@ export default function ApiErrorDialogModal({
                     pouvez rafraîchir l'application pour les voir.
                   </Typography>
                   <Button
-                    variant="contained"
-                    color="primary"
                     style={{ marginTop: 16 }}
                     onClick={() =>
                       withLoadingScreen(async () => {
@@ -126,7 +124,7 @@ export default function ApiErrorDialogModal({
       }
       actions={
         <>
-          <Button color="primary" onClick={handleClose}>
+          <Button priority="tertiary no outline" onClick={handleClose}>
             Fermer
           </Button>
         </>

@@ -5,7 +5,6 @@ import Grid from "@mui/material/Grid";
 import { Header } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
-import Button from "@mui/material/Button";
 import { FaqCard } from "./FaqCard";
 import {
   ControllerImage,
@@ -19,6 +18,7 @@ import { LinkButton } from "../../common/LinkButton";
 import { RegulationCard } from "./RegulationCard";
 import { REGULATION_RULES } from "./RegulationRules";
 import { usePageTitle } from "../../common/UsePageTitle";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export const RESOURCES_DOCUMENT = {
   noticeUtilisation: {
@@ -104,12 +104,13 @@ export function ResourcePage() {
           </Grid>
         </Grid>
         <Button
-          color="primary"
+          priority="secondary"
           size="small"
           className={classes.viewAllButton}
-          variant={"outlined"}
-          href="https://faq.mobilic.beta.gouv.fr/"
-          target="_blank"
+          linkProps={{
+            href: "https://faq.mobilic.beta.gouv.fr/",
+            target: "_blank"
+          }}
         >
           Accéder à la FAQ
         </Button>

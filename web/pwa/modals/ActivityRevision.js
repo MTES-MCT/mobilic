@@ -16,7 +16,6 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 
-import Button from "@mui/material/Button";
 import { makeStyles } from "@mui/styles";
 import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
@@ -27,6 +26,7 @@ import OverlappedActivityList from "../components/ActivityRevision/OverlappedAct
 import Modal from "../../common/Modal";
 import { MandatoryField } from "../../common/MandatoryField";
 import Notice from "../../common/Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -504,8 +504,7 @@ export default function ActivityRevisionOrCreationModal({
         <>
           {!isCreation && (
             <Button
-              variant="outlined"
-              color="primary"
+              priority="secondary"
               disabled={!canSubmit(ACTIVITIES_OPERATIONS.cancel)}
               onClick={() => {
                 modals.open("confirmation", {

@@ -1,9 +1,9 @@
 import React from "react";
 import { LoadingButton } from "common/components/LoadingButton";
-import Button from "@mui/material/Button";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { PhoneNumber } from "../../common/PhoneNumber";
 import Modal from "../../common/Modal";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export default function ChangePhoneNumberModal({
   open,
@@ -55,14 +55,14 @@ export default function ChangePhoneNumberModal({
             <Button
               title="Supprimer le numéro"
               onClick={e => submitNewPhoneNumber(e, "")}
-              variant="outlined"
-              color="error"
+              priority="secondary"
+              className="error"
               form="update-phone-number-form"
             >
               Supprimer
             </Button>
           ) : (
-            <Button title="Annuler" onClick={handleClose} variant="outlined">
+            <Button onClick={handleClose} priority="secondary">
               Annuler
             </Button>
           )}
