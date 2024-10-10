@@ -9,17 +9,15 @@ import {
   formatKey
 } from "common/utils/addresses";
 import { captureSentryException } from "common/utils/sentry";
-import Button from "@mui/material/Button";
 import { makeStyles } from "@mui/styles";
-import { MyLocation } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Notice from "./Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   geolocationButton: {
-    marginLeft: theme.spacing(3),
-    textTransform: "none"
+    marginLeft: theme.spacing(3)
   }
 }));
 
@@ -182,10 +180,10 @@ export function AddressField({
             {!loading ? (
               <>
                 <Button
-                  startIcon={<MyLocation />}
-                  variant="outlined"
+                  iconId="fr-icon-map-pin-2-line"
+                  iconPosition="left"
+                  priority="secondary"
                   className={classes.geolocationButton}
-                  disableElevation
                   onClick={e => {
                     setLoading(true);
                     askCurrentPosition();

@@ -1,4 +1,3 @@
-import Button from "@mui/material/Button";
 import { useApi } from "common/utils/api";
 import { EDIT_COMPANIES_COMMUNICATION_SETTING } from "common/utils/apiQueries";
 import React, { useMemo, useState } from "react";
@@ -6,6 +5,7 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Link } from "../../common/LinkButton";
 import Modal from "../../common/Modal";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export default function CertificationCommunicationModal({
   companies,
@@ -85,7 +85,7 @@ export default function CertificationCommunicationModal({
       actions={
         <>
           <Button
-            secondary
+            priority="secondary"
             onClick={() => {
               handleSubmit(false);
             }}

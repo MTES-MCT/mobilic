@@ -10,7 +10,6 @@ import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
 import { useLocation } from "react-router-dom";
 import { ControlsList } from "../list/ControlsList";
 import { useLoadControls } from "../../utils/loadControls";
-import Button from "@mui/material/Button";
 import { InfoHoraireServiceController } from "./InfoHoraireServiceController";
 import classNames from "classnames";
 import { useModals } from "common/utils/modals";
@@ -19,6 +18,7 @@ import { ControllerControlNewNoLic } from "../noLic/ControllerControlNewNoLic";
 import { usePageTitle } from "../../../common/UsePageTitle";
 import { Typography } from "@mui/material";
 import Modal from "../../../common/Modal";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -48,12 +48,10 @@ const useStyles = makeStyles(theme => ({
     textDecoration: "underline"
   },
   helpButton: {
-    textTransform: "none",
     position: "fixed",
     bottom: theme.spacing(4),
     right: theme.spacing(4),
     zIndex: 99,
-    fontSize: "1.2rem",
     [theme.breakpoints.up("md")]: {
       right: theme.spacing(10),
       bottom: theme.spacing(10)
@@ -180,9 +178,6 @@ export function ControllerHome() {
           </Grid>
         </Grid>
         <Button
-          size="small"
-          color="primary"
-          variant="contained"
           onClick={() => modals.open("controllerHelp")}
           className={classes.helpButton}
         >

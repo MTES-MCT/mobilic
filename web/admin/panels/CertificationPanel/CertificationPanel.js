@@ -14,7 +14,7 @@ import { CheckboxField } from "../../../common/CheckboxField";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { getMonthsBetweenTwoDates } from "common/utils/time";
 import CertificationCriteriaGlobalResult from "./CertificationCriteriaGlobalResult";
-import Button from "@mui/material/Button";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import DownloadIcon from "@mui/icons-material/Download";
 import Notice from "../../../common/Notice";
 
@@ -101,8 +101,9 @@ export default function CertificationPanel({ company }) {
       {!loadingInfo && companyWithInfo.isCertified && (
         <Button
           startIcon={<DownloadIcon />}
-          variant="outlined"
-          color="primary"
+          priority="secondary"
+          iconId="fr-icon-download-fill"
+          iconPosition="left"
           onClick={async () =>
             alerts.withApiErrorHandling(async () => {
               const options = {
