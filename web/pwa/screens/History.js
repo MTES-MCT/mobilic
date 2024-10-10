@@ -3,9 +3,8 @@ import React, { useMemo } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import GetAppIcon from "@mui/icons-material/GetApp";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
@@ -63,6 +62,7 @@ import { PeriodFilter } from "../components/PeriodFilter";
 import { syncMissions } from "common/utils/loadUserData";
 import { useHolidays } from "../../common/useHolidays";
 import { LogHolidayButton } from "../../common/LogHolidayButton";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const tabs = {
   mission: {
@@ -415,10 +415,8 @@ export function History({
         <AccountButton p={2} key={1} onBackButtonClick={onBackButtonClick} />,
         <Box key={2} className={classes.accessControlContainer}>
           <Button
-            aria-label="Accès contrôleur"
-            className={classes.generateAccessButton}
-            color="error"
-            variant="outlined"
+            priority="secondary"
+            className={fr.cx(classes.generateAccessButton, "error")}
             onClick={() => {
               modals.open("userReadQRCode");
             }}
@@ -492,8 +490,10 @@ export function History({
             justifyContent={{ sm: "flex-end" }}
             xs={12}
           >
-            <IconButton
-              color="primary"
+            <Button
+              priority="tertiary no outline"
+              iconId="fr-icon-download-fill"
+              iconPosition="left"
               onClick={() =>
                 modals.open("pdfExport", {
                   initialMinDate: startPeriodFilter,
@@ -501,11 +501,8 @@ export function History({
                 })
               }
             >
-              <GetAppIcon fontSize="large" />
-              <Typography align="left" ml={1} mr={2}>
-                Télécharger un relevé d'heures
-              </Typography>
-            </IconButton>
+              Télécharger un relevé d'heures
+            </Button>
           </Grid>
         </Grid>,
         <PeriodFilter
