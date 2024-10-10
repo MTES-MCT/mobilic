@@ -106,11 +106,6 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2),
     maxWidth: 500
   },
-  docButton: {
-    textTransform: "none",
-    borderRadius: 0,
-    fontSize: "1rem"
-  },
   divider: {
     marginBottom: theme.spacing(1),
     marginTop: theme.spacing(1),
@@ -365,45 +360,33 @@ function DesktopHeader({ disableMenu }) {
   const companyName = company ? company.name : null;
   const routes = getAccessibleRoutes({ userInfo, companies });
 
-  const docLinks = () => [
-    <LinkButton
-      aria-label="Foire aux questions"
-      key={0}
-      href="https://faq.mobilic.beta.gouv.fr"
-      target="_blank"
-      rel="noopener noreferrer"
-      className={classes.docButton}
-    >
-      Foire aux questions
-    </LinkButton>,
-    <LinkButton
-      aria-label="Documentation"
-      key={1}
-      href="/resources/home"
-      target="_blank"
-      className={classes.docButton}
-    >
-      Documentation
-    </LinkButton>,
-    <LinkButton
-      aria-label="Partenaires"
-      key={2}
-      to="/partners"
-      className={classes.docButton}
-    >
-      Partenaires
-    </LinkButton>,
-    !userInfo?.id && (
+  const docLinks = () => (
+    <>
       <LinkButton
-        aria-label="Certificat"
-        key={3}
-        to="/certificate"
-        className={classes.docButton}
+        priority="tertiary no outline"
+        href="https://faq.mobilic.beta.gouv.fr"
+        target="_blank"
+        rel="noopener noreferrer"
       >
-        Certificat
+        Foire aux questions
       </LinkButton>
-    )
-  ];
+      <LinkButton
+        priority="tertiary no outline"
+        href="/resources/home"
+        target="_blank"
+      >
+        Documentation
+      </LinkButton>
+      <LinkButton priority="tertiary no outline" to="/partners">
+        Partenaires
+      </LinkButton>
+      {!userInfo?.id && (
+        <LinkButton priority="tertiary no outline" to="/certificate">
+          Certificat
+        </LinkButton>
+      )}
+    </>
+  );
 
   return (
     <Box className={`flex-row-space-between ${classes.desktopHeader}`}>

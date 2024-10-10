@@ -1,35 +1,41 @@
 import React from "react";
-import Button from "@mui/material/Button";
 import { useHistory, Link as RouterLink } from "react-router-dom";
 import MaterialLink from "@mui/material/Link";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export function LinkButton(props) {
   const history = useHistory();
   const { trackLink } = useMatomo();
 
-  let buttonProps;
-  const { to, ...otherProps } = props;
+  const { to, href, target, rel, ...otherProps } = props;
+
+  let rootProps = otherProps;
+  const linkProps = {
+    to: to || href,
+    rel,
+    target
+  };
 
   if (to) {
-    buttonProps = {
-      href: to,
+    rootProps = {
+      ...rootProps,
       onClick: e => {
         e.preventDefault();
         history.push(props.to);
-      },
-      ...otherProps
+      }
     };
-  } else if (otherProps.href.startsWith("/")) {
-    buttonProps = {
+  } else if (href.startsWith("/")) {
+    rootProps = {
+      ...rootProps,
       onClick: e => {
-        trackLink({ href: otherProps.href });
-      },
-      ...otherProps
+        e.preventDefault();
+        trackLink({ href });
+      }
     };
-  } else buttonProps = props;
+  }
 
-  return <Button {...buttonProps} />;
+  return <Button {...rootProps} linkProps={linkProps} />;
 }
 
 export function Link(props) {

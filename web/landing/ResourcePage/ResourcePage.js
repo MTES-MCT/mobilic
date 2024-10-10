@@ -188,11 +188,10 @@ export function ResourcePage() {
             ))}
         </Grid>
         <LinkButton
-          color="primary"
           size="small"
           className={classes.viewAllButton}
-          variant={"outlined"}
           to="/resources/regulations"
+          priority="tertiary no outline"
         >
           Voir tous les seuils réglementaires
         </LinkButton>

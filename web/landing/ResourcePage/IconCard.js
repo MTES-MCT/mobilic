@@ -31,7 +31,7 @@ export function IconCard({
       to={link}
       href={href}
       className={commonCardsClasses.linkWholeCard}
-      color="primary"
+      priority="tertiary no outline"
     >
       <Card
         variant="outlined"
