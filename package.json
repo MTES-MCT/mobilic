@@ -121,7 +121,7 @@
     "prebuild": "react-dsfr update-icons"
   },
   "engines": {
-    "node": ">=16.7.0",
+    "node": "16",
     "yarn": ">=1.19 <2"
   },
   "browserslist": {
