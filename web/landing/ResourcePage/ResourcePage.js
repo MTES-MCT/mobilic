@@ -192,7 +192,6 @@ export function ResourcePage() {
           size="small"
           className={classes.viewAllButton}
           to="/resources/regulations"
-          priority="tertiary no outline"
         >
           Voir tous les seuils réglementaires
         </LinkButton>

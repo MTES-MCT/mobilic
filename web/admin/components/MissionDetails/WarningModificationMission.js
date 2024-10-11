@@ -47,7 +47,7 @@ export function WarningModificationMission() {
   return (
     <Collapse in={modificationAlertOpen}>
       <Notice
-        className={classes.modificationAlert}
+        sx={{ marginBottom: 3 }}
         data-testid="warningAlert"
         description={
           <>

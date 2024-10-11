@@ -251,6 +251,7 @@ function CompanyPanel({ width, containerRef }) {
           <Grid item>
             <LinkButton
               className={classes.createCompanyButton}
+              priority="primary"
               size="small"
               to="/signup/company"
             >

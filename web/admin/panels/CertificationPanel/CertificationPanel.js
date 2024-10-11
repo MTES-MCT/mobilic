@@ -15,7 +15,6 @@ import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { getMonthsBetweenTwoDates } from "common/utils/time";
 import CertificationCriteriaGlobalResult from "./CertificationCriteriaGlobalResult";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import DownloadIcon from "@mui/icons-material/Download";
 import Notice from "../../../common/Notice";
 
 export default function CertificationPanel({ company }) {
@@ -100,7 +99,6 @@ export default function CertificationPanel({ company }) {
       </Typography>
       {!loadingInfo && companyWithInfo.isCertified && (
         <Button
-          startIcon={<DownloadIcon />}
           priority="secondary"
           iconId="fr-icon-download-fill"
           iconPosition="left"

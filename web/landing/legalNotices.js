@@ -18,7 +18,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function LegalNotices() {
-  return [<Header key={1} />, <Notices key={2} />, <Footer key={3} />];
+  return (
+    <>
+      <Header />
+      <Notices />
+      <Footer />
+    </>
+  );
 }
 
 function Notices() {

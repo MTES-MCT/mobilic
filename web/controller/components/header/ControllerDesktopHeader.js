@@ -35,15 +35,10 @@ export function ControllerDesktopHeader() {
   const controllerUserInfo = store.controllerInfo();
   const docLinks = () => (
     <>
-      <LinkButton
-        priority="tertiary no outline"
-        href="/resources/controller"
-        target="_blank"
-      >
+      <LinkButton href="/resources/controller" target="_blank">
         Documentation
       </LinkButton>
       <LinkButton
-        priority="tertiary no outline"
         href="https://mobilic.gitbook.io/mobilic-faq-dediee-aux-corps-de-controle/"
         target="_blank"
         rel="noopener noreferrer"
@@ -51,7 +46,6 @@ export function ControllerDesktopHeader() {
         Foire aux questions
       </LinkButton>
       <LinkButton
-        priority="tertiary no outline"
         target="_blank"
         rel="noopener noreferrer"
         href="https://mobilic.gitbook.io/natinf-expliques/"

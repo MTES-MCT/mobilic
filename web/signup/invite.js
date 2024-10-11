@@ -96,6 +96,7 @@ export function Invite() {
                 <Grid item>
                   <LinkButton
                     aria-label="Inscription"
+                    priority="primary"
                     to={`/signup/user?token=${employeeInvite.inviteToken}`}
                   >
                     Je crée un compte

@@ -31,6 +31,7 @@ export default function WarningEndMissionModal({
       }
       actions={
         <>
+          <LoadingButton onClick={dismiss}>Poursuivre la mission</LoadingButton>
           <LoadingButton
             onClick={() => {
               dismiss().then(handleMissionEnd());
@@ -38,7 +39,6 @@ export default function WarningEndMissionModal({
           >
             Terminer la mission
           </LoadingButton>
-          <LoadingButton onClick={dismiss}>Poursuivre la mission</LoadingButton>
         </>
       }
     />

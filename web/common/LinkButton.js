@@ -10,7 +10,10 @@ export function LinkButton(props) {
 
   const { to, href, target, rel, ...otherProps } = props;
 
-  let rootProps = otherProps;
+  let rootProps = {
+    ...otherProps,
+    priority: otherProps.priority || "tertiary no outline"
+  };
   const linkProps = {
     to: to || href,
     rel,

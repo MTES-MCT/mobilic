@@ -60,7 +60,7 @@ import { PeriodFilter } from "../components/PeriodFilter";
 import { syncMissions } from "common/utils/loadUserData";
 import { useHolidays } from "../../common/useHolidays";
 import { LogHolidayButton } from "../../common/LogHolidayButton";
-import { fr } from "@codegouvfr/react-dsfr";
+import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 
 const tabs = {
   mission: {
@@ -414,7 +414,7 @@ export function History({
         <Box key={2} className={classes.accessControlContainer}>
           <Button
             priority="secondary"
-            className={fr.cx(classes.generateAccessButton, "error")}
+            className={cx(classes.generateAccessButton, "error")}
             onClick={() => {
               modals.open("userReadQRCode");
             }}

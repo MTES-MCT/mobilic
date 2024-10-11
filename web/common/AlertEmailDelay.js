@@ -1,22 +1,12 @@
 import React from "react";
-import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import Notice from "./Notice";
 
-const useStyles = makeStyles(theme => ({
-  alert: {
-    textAlign: "left",
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2)
-  }
-}));
-
 const AlertEmailDelay = () => {
-  const classes = useStyles();
   return (
     <Notice
+      sx={{ marginY: 2 }}
       type="warning"
-      className={classes.alert}
       description={
         <>
           Il est possible que

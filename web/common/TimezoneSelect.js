@@ -23,7 +23,6 @@ const TimezoneSelect = ({ currentTimezone, setTimezone }) => {
       </Select>
       {isGuyana && (
         <Notice
-          style={{ textAlign: "left" }}
           description="Les réseaux téléphoniques de Guyane étant basés sur ceux des Antilles,
           il est nécessaire de faire une petite manipulation pour utiliser
           Mobilic correctement : sélectionnez le fuseau horaire de Guyane dans

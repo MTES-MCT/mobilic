@@ -26,6 +26,7 @@ export default function ConfirmationDSFR({
               handleCancel(...args);
               handleClose();
             }}
+            priority="secondary"
           >
             {cancelButtonLabel}
           </Button>
@@ -35,7 +36,6 @@ export default function ConfirmationDSFR({
               handleConfirm(...args);
               handleClose();
             }}
-            priority="secondary"
           >
             {confirmButtonLabel}
           </Button>

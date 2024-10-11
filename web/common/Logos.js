@@ -26,7 +26,6 @@ export function Logos({ leaveSpaceForMenu = true }) {
         </Box>
       )}
       <LinkButton
-        priority="tertiary no outline"
         to={getFallbackRoute({
           userInfo: store.userInfo(),
           controllerInfo: store.controllerInfo(),

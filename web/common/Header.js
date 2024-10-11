@@ -363,28 +363,17 @@ function DesktopHeader({ disableMenu }) {
   const docLinks = () => (
     <>
       <LinkButton
-        priority="tertiary no outline"
         href="https://faq.mobilic.beta.gouv.fr"
         target="_blank"
         rel="noopener noreferrer"
       >
         Foire aux questions
       </LinkButton>
-      <LinkButton
-        priority="tertiary no outline"
-        href="/resources/home"
-        target="_blank"
-      >
+      <LinkButton href="/resources/home" target="_blank">
         Documentation
       </LinkButton>
-      <LinkButton priority="tertiary no outline" to="/partners">
-        Partenaires
-      </LinkButton>
-      {!userInfo?.id && (
-        <LinkButton priority="tertiary no outline" to="/certificate">
-          Certificat
-        </LinkButton>
-      )}
+      <LinkButton to="/partners">Partenaires</LinkButton>
+      {!userInfo?.id && <LinkButton to="/certificate">Certificat</LinkButton>}
     </>
   );
 
