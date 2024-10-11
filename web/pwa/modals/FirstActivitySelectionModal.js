@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import { makeStyles } from "@mui/styles";
 import { FunnelModal } from "../components/FunnelModal";
 import { ActivitySwitch } from "../components/ActivitySwitch";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   topPanel: {
@@ -28,7 +29,12 @@ export default function FirstActivitySelectionModal({
   return (
     <FunnelModal open={open} handleBack={handleClose} darkBackground>
       <Box p={5} pb={8} className={classes.topPanel}>
-        <Typography variant="h2" component="h1" align="center" color="white">
+        <Typography
+          variant="h2"
+          component="h1"
+          align="center"
+          color={fr.colors.decisions.text.inverted.grey.default}
+        >
           Commencez la mission en sélectionnant la première activité
         </Typography>
       </Box>

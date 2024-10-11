@@ -13,8 +13,8 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(0.25)
   },
   chip: {
-    backgroundColor: "#ff99cc",
-    color: theme.palette.primary.contrastText
+    backgroundColor: "#FDDBFA",
+    color: "#6E445A"
   }
 }));
 
