@@ -29,11 +29,11 @@ import LogoWithText from "common/assets/images/mobilic-logo-white-with-text.svg"
 import { shouldDisplayEmployeeSocialImpactSurveyOnMainPage } from "common/utils/surveys";
 import { usePageTitle } from "../../common/UsePageTitle";
 
-import DateRangeIcon from "@mui/icons-material/DateRange";
-import Stack from "@mui/material/Stack";
 import { useHolidays } from "../../common/useHolidays";
 import { WarningBreaks } from "../components/WarningBreaks";
 import { useEnoughBreak } from "../../common/useEnoughBreak";
+import Stack from "@mui/material/Stack";
+import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -97,15 +97,20 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2)
   },
   subButton: {
-    color: theme.palette.primary.contrastText
+    color: theme.palette.primary.contrastText,
+    "&:hover": {
+      color: theme.palette.primary.main
+    }
+  },
+  uppercaseButton: {
+    textTransform: "uppercase"
   },
   promiseText: {
     color: theme.palette.primary.contrastText,
     fontStyle: "italic"
   },
   holidayButton: {
-    textDecoration: "underline",
-    textTransform: "none"
+    textDecoration: "underline"
   }
 }));
 
@@ -234,35 +239,34 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
         </Typography>
         {process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
           !hasEnoughBreak && <WarningBreaks />}
-        <LoadingButton
-          className={classes.ctaButton}
-          onClick={onEnterNewMissionFunnel}
-        >
-          Commencer une mission
-        </LoadingButton>
-        <LoadingButton
-          style={{ marginTop: 8 }}
-          className={classes.subButton}
-          onClick={() => {
-            openHistory();
-          }}
-        >
-          Voir mon historique
-        </LoadingButton>
-        <LoadingButton
-          style={{ marginTop: 2 }}
-          className={classes.subButton}
-          onClick={() => {
-            onEnterNewHolidayFunnel();
-          }}
-        >
-          <Stack direction="row" spacing={1}>
-            <DateRangeIcon />
-            <Typography className={classes.holidayButton}>
-              Renseigner une indisponibilité
-            </Typography>
-          </Stack>
-        </LoadingButton>
+        <Stack direction="column" spacing={1} alignItems="center">
+          <LoadingButton
+            className={classes.ctaButton}
+            onClick={onEnterNewMissionFunnel}
+          >
+            Commencer une mission
+          </LoadingButton>
+          <LoadingButton
+            className={cx(classes.subButton, classes.uppercaseButton)}
+            onClick={() => {
+              openHistory();
+            }}
+            priority="tertiary no outline"
+          >
+            Voir mon historique
+          </LoadingButton>
+          <LoadingButton
+            className={cx(classes.subButton, classes.holidayButton)}
+            onClick={() => {
+              onEnterNewHolidayFunnel();
+            }}
+            priority="tertiary no outline"
+            iconId="fr-icon-calendar-2-fill"
+            iconPosition="left"
+          >
+            Renseigner une indisponibilité
+          </LoadingButton>
+        </Stack>
       </Box>
       {nonValidatedMissions.length > 0 && (
         <Box className={classes.missionsToValidateList}>
