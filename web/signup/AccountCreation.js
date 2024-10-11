@@ -327,8 +327,6 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                       <Box my={4}>
                         <LoadingButton
                           aria-label="Inscription"
-                          variant="contained"
-                          color="primary"
                           type="submit"
                           loading={loading}
                         >

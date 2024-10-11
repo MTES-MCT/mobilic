@@ -73,8 +73,6 @@ export function Testimony() {
         </Box>
       </Stack>
       <LoadingButton
-        variant="contained"
-        color="primary"
         className={classes.button}
         href="/signup/admin"
         onClick={() => trackEvent(ADMIN_LANDING_SUBSCRIBE_TESTIMONY)}

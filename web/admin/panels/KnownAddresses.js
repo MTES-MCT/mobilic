@@ -6,7 +6,6 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { AddressField } from "../../common/AddressField";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import { AugmentedTable } from "../components/AugmentedTable";
 import {
   CREATE_KNOWN_ADDRESS_MUTATION,
@@ -18,6 +17,7 @@ import { usePanelStyles } from "./Company";
 import { captureSentryException } from "common/utils/sentry";
 import { buildBackendPayloadForAddress } from "common/utils/addresses";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export default function KnownAddressAdmin({ company }) {
   const api = useApi();
@@ -74,12 +74,7 @@ export default function KnownAddressAdmin({ company }) {
       <Typography variant="h4" component="h2">
         Adresses fréquentes ({knownAddresses.length})
       </Typography>
-      <Button
-        variant="contained"
-        size="small"
-        color="primary"
-        onClick={() => tableRef.current.newRow()}
-      >
+      <Button size="small" onClick={() => tableRef.current.newRow()}>
         Ajouter un lieu
       </Button>
     </Box>,

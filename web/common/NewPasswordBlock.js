@@ -8,13 +8,9 @@ import { MandatoryField } from "./MandatoryField";
 
 const useStyles = makeStyles(theme => ({
   introText: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(2),
     textAlign: "justify"
-  },
-  submitText: {
-    paddingTop: theme.spacing(10),
-    paddingBottom: theme.spacing(10)
   }
 }));
 
@@ -27,13 +23,7 @@ export function NewPasswordBlock({
   setPasswordCopy,
   passwordCopyError
 }) {
-  const classes = useStyles(theme => ({
-    introText: {
-      paddingTop: theme.spacing(4),
-      paddingBottom: theme.spacing(4),
-      textAlign: "justify"
-    }
-  }));
+  const classes = useStyles();
 
   return (
     <>

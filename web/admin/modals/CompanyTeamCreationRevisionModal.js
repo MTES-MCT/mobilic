@@ -1,7 +1,6 @@
 import React from "react";
 import TextField from "common/utils/TextField";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import { LoadingButton } from "common/components/LoadingButton";
 import {
   CREATE_TEAM_MUTATION,
@@ -14,6 +13,7 @@ import { TeamEmployeesFilter } from "../panels/TeamEmployeesFilter";
 import { MultipleValuesFilter } from "../panels/MultipleValuesFilter";
 import Modal from "../../common/Modal";
 import Notice from "../../common/Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export default function CompanyTeamCreationRevisionModal({
   team,
@@ -196,13 +196,10 @@ export default function CompanyTeamCreationRevisionModal({
       }
       actions={
         <>
-          <Button title="Annuler" onClick={handleClose}>
+          <Button priority="secondary" onClick={handleClose}>
             Annuler
           </Button>
           <LoadingButton
-            title="Confirmer"
-            color="primary"
-            variant="contained"
             disabled={!name}
             onClick={submitForm}
             loading={submitting}

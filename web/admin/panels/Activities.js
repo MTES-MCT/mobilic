@@ -5,7 +5,6 @@ import { EmployeeFilter } from "../components/EmployeeFilter";
 import Paper from "@mui/material/Paper";
 import { PeriodToggle } from "../components/PeriodToggle";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { useWidth } from "common/utils/useWidth";
@@ -64,6 +63,7 @@ import { LogHolidayButton } from "../../common/LogHolidayButton";
 import { LogHolidayForm } from "../../common/LogHolidayForm";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { usePageTitle } from "../../common/UsePageTitle";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -366,12 +366,7 @@ function ActivitiesPanel() {
           />
         </Grid>
         <Grid item>
-          <Button
-            className={classes.exportButton}
-            color="primary"
-            onClick={e => setExportMenuAnchorEl(e.currentTarget)}
-            variant="contained"
-          >
+          <Button onClick={e => setExportMenuAnchorEl(e.currentTarget)}>
             Exporter
           </Button>
           <Menu
@@ -452,8 +447,6 @@ function ActivitiesPanel() {
         >
           <LoadingButton
             style={{ marginTop: 8, alignSelf: "flex-start" }}
-            color="primary"
-            variant="contained"
             size="small"
             className={classes.subButton}
             onClick={() => {

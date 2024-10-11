@@ -1,36 +1,16 @@
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import Button from "@mui/material/Button";
-import { makeStyles } from "@mui/styles";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useApi } from "common/utils/api";
 import { RESET_PASSWORD_CONNECTED_MUTATION } from "common/utils/apiQueries";
 import { clearUpdateTimeCookie, snooze } from "common/utils/updatePassword";
 import React, { useState } from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import {
-  CustomDialogActions,
-  CustomDialogTitle
-} from "../../common/CustomDialogTitle";
 import { LoadingButton } from "common/components/LoadingButton";
 import { getPasswordErrors } from "common/utils/passwords";
 import { NewPasswordBlock } from "../../common/NewPasswordBlock";
 import { currentUserId } from "common/utils/cookie";
-
-const useStyles = makeStyles(theme => ({
-  modalFooter: {
-    display: "flex",
-    flexDirection: "row-reverse"
-  },
-  modalButton: {
-    marginLeft: theme.spacing(2)
-  },
-  prioritaryModal: {
-    zIndex: 2500
-  }
-}));
+import Modal from "../../common/Modal";
 
 export default function UpdatePasswordModal() {
-  const classes = useStyles();
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const [isOpen, setIsOpen] = useState(true);
@@ -69,55 +49,52 @@ export default function UpdatePasswordModal() {
   const handleClose = () => setIsOpen(false);
 
   return (
-    <Dialog
-      className={classes.prioritaryModal}
-      maxWidth="sm"
-      onClose={handleClose}
+    <Modal
       open={isOpen}
-      fullWidth
-    >
-      <form
-        className="vertical-form centered"
-        autoComplete="off"
-        onSubmit={handleSubmit}
-      >
-        <CustomDialogTitle
-          handleClose={handleClose}
-          title="Modifier votre mot de passe"
-        />
-        <DialogContent>
+      handleClose={handleClose}
+      title="Modifier votre mot de passe"
+      size="sm"
+      content={
+        <>
           <p>
             Suite à une mise à jour de notre politique de sécurité, veuillez
             réinitialiser votre mot de passe pour continuer à utiliser Mobilic.
           </p>
-          <NewPasswordBlock
-            label="Veuillez choisir un nouveau mot de passe."
-            password={password}
-            setPassword={setPassword}
-            passwordError={passwordError}
-            passwordCopy={passwordCopy}
-            setPasswordCopy={setPasswordCopy}
-            passwordCopyError={passwordCopyError}
-          />
-        </DialogContent>
-        <CustomDialogActions>
+          <form
+            className="vertical-form centered"
+            autoComplete="off"
+            onSubmit={handleSubmit}
+            id="new-password-form"
+          >
+            <NewPasswordBlock
+              label="Veuillez choisir un nouveau mot de passe."
+              password={password}
+              setPassword={setPassword}
+              passwordError={passwordError}
+              passwordCopy={passwordCopy}
+              setPasswordCopy={setPasswordCopy}
+              passwordCopyError={passwordCopyError}
+            />
+          </form>
+        </>
+      }
+      actions={
+        <>
           <Button
-            className={classes.modalButton}
+            priority="secondary"
             title="Me le rappeler plus tard"
-            color="primary"
-            variant="outlined"
             onClick={() => {
               snooze();
               setIsOpen(false);
+            }}
+            nativeButtonProps={{
+              form: "new-password-form"
             }}
           >
             Plus tard
           </Button>
           <LoadingButton
-            className={classes.modalButton}
             title="Réinitialiser mon mot de passe"
-            color="primary"
-            variant="contained"
             type="submit"
             disabled={
               !password ||
@@ -126,11 +103,12 @@ export default function UpdatePasswordModal() {
               !!passwordCopyError
             }
             loading={loading}
+            form="new-password-form"
           >
             Valider
           </LoadingButton>
-        </CustomDialogActions>
-      </form>
-    </Dialog>
+        </>
+      }
+    />
   );
 }

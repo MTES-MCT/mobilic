@@ -12,12 +12,12 @@ import { currentUserId } from "common/utils/cookie";
 import Skeleton from "@mui/material/Skeleton";
 import { CompanyClientCard } from "./CompanyClientCard";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import TextField from "common/utils/TextField";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useModals } from "common/utils/modals";
 import Notice from "../../common/Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export default function CompanyApiPanel({ company }) {
   const api = useApi();
@@ -142,8 +142,6 @@ export default function CompanyApiPanel({ company }) {
         <Grid item xs={6} className={classes.buttonAddToken}>
           <Button
             size="small"
-            color="primary"
-            variant="contained"
             onClick={() => {
               setNewTokenSectionVisible(true);
             }}
@@ -188,8 +186,6 @@ export default function CompanyApiPanel({ company }) {
           <LoadingButton
             type="submit"
             size="small"
-            color="primary"
-            variant="contained"
             disabled={!newClientId}
             onClick={async e => {
               e.stopPropagation();
@@ -201,8 +197,7 @@ export default function CompanyApiPanel({ company }) {
           </LoadingButton>
           <Button
             size="small"
-            color="primary"
-            variant="outlined"
+            priority="secondary"
             onClick={() => {
               setNewClientId("");
               setNewTokenSectionVisible(false);

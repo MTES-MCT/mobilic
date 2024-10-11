@@ -128,8 +128,6 @@ export function SetupMobilic() {
         {BLOCKS_WITH_DIVIDERS}
       </Stack>
       <LoadingButton
-        variant="contained"
-        color="primary"
         className={classes.button}
         href="/signup/admin"
         onClick={() => trackEvent(ADMIN_LANDING_SUBSCRIBE_HOW_TO)}

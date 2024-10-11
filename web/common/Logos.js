@@ -26,7 +26,6 @@ export function Logos({ leaveSpaceForMenu = true }) {
         </Box>
       )}
       <LinkButton
-        style={{ borderRadius: 0, textTransform: "none" }}
         to={getFallbackRoute({
           userInfo: store.userInfo(),
           controllerInfo: store.controllerInfo(),

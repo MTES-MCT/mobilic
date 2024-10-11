@@ -20,10 +20,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     display: "block"
   },
-  alertInfo: {
-    marginTop: theme.spacing(3),
-    textAlign: "left"
-  },
   informationText: {
     fontStyle: "italic"
   }
@@ -55,7 +51,7 @@ export default function LoginController() {
           onClick={clickAgentConnect}
         />
         <Notice
-          className={classes.alertInfo}
+          sx={{ marginTop: 3 }}
           size="small"
           classes={{
             description: classes.informationText

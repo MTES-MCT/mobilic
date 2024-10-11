@@ -5,7 +5,6 @@ import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import { AugmentedTable } from "../components/AugmentedTable";
 import {
   CREATE_VEHICLE_MUTATION,
@@ -18,6 +17,7 @@ import { usePanelStyles } from "./Company";
 import { captureSentryException } from "common/utils/sentry";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import Notice from "../../common/Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export default function VehicleAdmin({ company }) {
   const api = useApi();
@@ -54,12 +54,7 @@ export default function VehicleAdmin({ company }) {
         <Typography variant="h4" component="h2">
           Véhicules ({vehicles.length})
         </Typography>
-        <Button
-          variant="contained"
-          size="small"
-          color="primary"
-          onClick={() => tableRef.current.newRow()}
-        >
+        <Button size="small" onClick={() => tableRef.current.newRow()}>
           Ajouter un véhicule
         </Button>
       </Box>

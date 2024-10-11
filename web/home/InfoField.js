@@ -2,9 +2,9 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import { Stack } from "@mui/material";
 import Notice from "../common/Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   fieldName: {
@@ -17,10 +17,6 @@ const useStyles = makeStyles(theme => ({
   },
   valuePlaceholder: {
     color: theme.palette.grey[600]
-  },
-  actionButton: {
-    fontSize: "0.875rem",
-    textTransform: props => (props.uppercaseTitle ? "uppercase" : "none")
   }
 }));
 
@@ -66,10 +62,8 @@ export function InfoItem({
           <Grid item>
             <Button
               size="small"
-              color="primary"
-              variant={value ? "outlined" : "contained"}
+              priority={value ? "secondary" : "primary"}
               onClick={action}
-              className={classes.actionButton}
             >
               {title}
             </Button>

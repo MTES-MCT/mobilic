@@ -451,3 +451,16 @@ video:not([href])[controls] {
     }
   }
 }
+
+.fr-btn--secondary.error {
+  background-color: var(--background-alt-red-marianne);
+  color: var(--background-action-high-red-marianne);
+  box-shadow: inset 0 0 0 1px var(--border-action-high-red-marianne);
+}
+
+.fr-btn--icon-left[class^="fr-icon-"]::before, .fr-btn--icon-left[class*=" fr-icon-"]::before, .fr-btn--icon-left[class^="fr-fi-"]::before, .fr-btn--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1.3rem
+}
+.fr-btn--icon-right[class^="fr-icon-"]::after, .fr-btn--icon-right[class*=" fr-icon-"]::after, .fr-btn--icon-right[class^="fr-fi-"]::after, .fr-btn--icon-right[class*=" fr-fi-"]::after {
+  --icon-size: 1.3rem
+}

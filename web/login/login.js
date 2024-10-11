@@ -146,8 +146,6 @@ export default function Login() {
             <Box my={2}>
               <LoadingButton
                 aria-label="Connexion"
-                variant="contained"
-                color="primary"
                 type="submit"
                 loading={loading}
                 disabled={!email || !password}

@@ -116,10 +116,12 @@
     "build-with-nginx": "yarn build && scripts/start_nginx.sh",
     "test": "node scripts/test.js --passWithNoTests",
     "lint": "eslint --ext .js,.jsx ./",
-    "postinstall": "react-dsfr copy-static-assets"
+    "postinstall": "react-dsfr copy-static-assets",
+    "predev": "react-dsfr update-icons",
+    "prebuild": "react-dsfr update-icons"
   },
   "engines": {
-    "node": "14",
+    "node": ">=16.7.0",
     "yarn": ">=1.19 <2"
   },
   "browserslist": {

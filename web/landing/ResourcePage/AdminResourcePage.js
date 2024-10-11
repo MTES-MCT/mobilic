@@ -5,7 +5,6 @@ import Grid from "@mui/material/Grid";
 import { Header } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
-import Button from "@mui/material/Button";
 import { VIDEOS, VideoCard } from "./VideoCard";
 import { Breadcrumb } from "@codegouvfr/react-dsfr/Breadcrumb";
 import { SlideshareCard } from "./SlideshareCard";
@@ -14,6 +13,7 @@ import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { RESOURCES_DOCUMENT } from "./ResourcePage";
 import { DriverVideoSection } from "./DriverVideoSection";
 import { usePageTitle } from "../../common/UsePageTitle";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export function AdminResourcePage() {
   usePageTitle("Documentation Gestionnaire - Mobilic");
@@ -56,12 +56,14 @@ export function AdminResourcePage() {
           </Grid>
         </Grid>
         <Button
-          color="primary"
+          priority="secondary"
           size="small"
           className={classes.viewAllButton}
-          variant={"outlined"}
-          href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos"
-          target="_blank"
+          linkProps={{
+            href:
+              "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos",
+            target: "_blank"
+          }}
         >
           Voir toutes les vidéos
         </Button>
@@ -79,11 +81,13 @@ export function AdminResourcePage() {
               />
             </Box>
             <Button
-              color="primary"
               size="small"
               className={classes.viewAllButton}
-              variant={"outlined"}
-              href="https://drive.google.com/drive/folders/1xc1tvfWNoTksyuIANnUXvUh9RrD1utHF"
+              priority="secondary"
+              linkProps={{
+                href:
+                  "https://drive.google.com/drive/folders/1xc1tvfWNoTksyuIANnUXvUh9RrD1utHF"
+              }}
             >
               Voir toutes les notices
             </Button>
@@ -115,11 +119,13 @@ export function AdminResourcePage() {
               />
             </Box>
             <Button
-              color="primary"
+              priority="secondary"
               size="small"
               className={classes.viewAllButton}
-              variant={"outlined"}
-              href="https://drive.google.com/drive/folders/1xc1tvfWNoTksyuIANnUXvUh9RrD1utHF"
+              linkProps={{
+                href:
+                  "https://drive.google.com/drive/folders/1xc1tvfWNoTksyuIANnUXvUh9RrD1utHF"
+              }}
             >
               Voir toutes les notices
             </Button>

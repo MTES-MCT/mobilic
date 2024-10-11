@@ -40,17 +40,17 @@ export default function UpdateVehicleModal({
         </>
       }
       actions={
-        <LoadingButton
-          color="primary"
-          disabled={!vehicle}
-          variant="contained"
-          onClick={async () => {
-            await handleSubmit(vehicle);
-            handleClose();
-          }}
-        >
-          OK
-        </LoadingButton>
+        <>
+          <LoadingButton
+            disabled={!vehicle}
+            onClick={async () => {
+              await handleSubmit(vehicle);
+              handleClose();
+            }}
+          >
+            OK
+          </LoadingButton>
+        </>
       }
     />
   );

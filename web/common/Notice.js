@@ -24,7 +24,7 @@ const Notice = ({
         classes.root,
         className
       )}
-      style={style}
+      style={{ ...style, textAlign: "justify" }}
       sx={sx}
     >
       <Box

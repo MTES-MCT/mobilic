@@ -1,12 +1,11 @@
 import React from "react";
-import CheckIcon from "@mui/icons-material/Check";
-import IconButton from "@mui/material/IconButton";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Box from "@mui/material/Box";
 import { getDaysBetweenTwoDates, now } from "common/utils/time";
 import { Expenditures } from "../components/Expenditures";
 import Modal from "../../common/Modal";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export default function ExpenditureModal({
   open,
@@ -58,15 +57,16 @@ export default function ExpenditureModal({
         </>
       }
       actions={
-        <IconButton
-          className="no-margin-no-padding"
-          onClick={() => {
-            handleSubmit(expenditures, forAllTeam);
-            handleClose();
-          }}
-        >
-          <CheckIcon color="primary" />
-        </IconButton>
+        <>
+          <Button
+            onClick={() => {
+              handleSubmit(expenditures, forAllTeam);
+              handleClose();
+            }}
+          >
+            Valider
+          </Button>
+        </>
       }
     />
   );

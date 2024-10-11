@@ -1,7 +1,6 @@
 import { SirenInputField } from "./SirenInputField";
 import { LoadingButton } from "common/components/LoadingButton";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import { Link } from "../../common/LinkButton";
 import React from "react";
 import { Step } from "./Step";
@@ -11,6 +10,7 @@ import { LegalUnitInfo } from "./LegalUnitInfo";
 import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
 import { MandatoryField } from "../../common/MandatoryField";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -99,8 +99,6 @@ export function SelectSirenStep({
           button={
             <LoadingButton
               aria-label="Rechercher SIREN"
-              variant="contained"
-              color="primary"
               type="submit"
               loading={loadingSirenInfo}
               disabled={!siren || sirenFormatError}
@@ -131,8 +129,7 @@ export function SelectSirenStep({
           !hasValidatedSiren &&
           (apiError || sirenInfo) && (
             <Button
-              variant={apiError ? "outlined" : "contained"}
-              color={apiError ? "secondary" : "primary"}
+              priority={apiError ? "secondary" : "primary"}
               className={classes.button}
               onClick={() => {
                 setApiError("");

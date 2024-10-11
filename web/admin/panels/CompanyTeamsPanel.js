@@ -9,7 +9,6 @@ import {
 import { usePanelStyles } from "./Company";
 import Skeleton from "@mui/material/Skeleton";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import { useModals } from "common/utils/modals";
 import { AugmentedTable } from "../components/AugmentedTable";
 import { formatDay, isoFormatLocalDate } from "common/utils/time";
@@ -19,6 +18,7 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import uniqBy from "lodash/uniqBy";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import Notice from "../../common/Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export default function CompanyTeamsPanel({ company }) {
   const api = useApi();
@@ -213,12 +213,7 @@ export default function CompanyTeamsPanel({ company }) {
           </Box>
         </Grid>
         <Grid item xs={6} className={classes.buttonAddToken}>
-          <Button
-            size="small"
-            color="primary"
-            variant="contained"
-            onClick={() => openTeamModal()}
-          >
+          <Button size="small" onClick={() => openTeamModal()}>
             Ajouter un nouveau groupe
           </Button>
         </Grid>

@@ -23,9 +23,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(8),
     textAlign: "left"
   },
-  warning: {
-    marginTop: theme.spacing(3)
-  },
   linkExplanation: {
     textAlign: "left"
   },
@@ -101,7 +98,7 @@ export function Certificate() {
         description="Attention, le certificat Mobilic n'est en aucun cas gage de respect
         total de la réglementation par l'entreprise. Il n'atteste que de la
         bonne utilisation de l'outil de suivi du temps de travail."
-        className={classes.warning}
+        sx={{ marginTop: 3 }}
       />
       <Typography mt={2} className={classes.linkExplanation}>
         <Link

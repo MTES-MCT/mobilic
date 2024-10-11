@@ -10,9 +10,9 @@ import {
   SHORT_DAYS,
   SHORT_MONTHS
 } from "common/utils/time";
-import Button from "@mui/material/Button";
 import Skeleton from "@mui/material/Skeleton";
 import List from "@mui/material/List";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 import { makeStyles } from "@mui/styles";
 import { useWebinars } from "../useWebinars";
@@ -127,7 +127,7 @@ export const WebinarList = ({ setCantDisplayWebinarsBecauseNoneOrError }) => {
                         </Typography>
                       </Grid>
                       <Grid item>
-                        <Button color="primary" style={{ paddingLeft: 0 }}>
+                        <Button priority="tertiary no outline" size="small">
                           M'inscrire
                         </Button>
                       </Grid>

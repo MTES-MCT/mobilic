@@ -91,6 +91,9 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
       }
       actions={
         <>
+          <Link href="/logout" className="fr-btn fr-btn--secondary">
+            Se&nbsp;déconnecter
+          </Link>
           <Button
             onClick={downloadUserData}
             iconPosition="left"
@@ -99,9 +102,6 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
           >
             Recevoir les données par&nbsp;e&#8209;mail
           </Button>
-          <Link href="/logout" className="fr-btn fr-btn--secondary">
-            Se&nbsp;déconnecter
-          </Link>
         </>
       }
     />

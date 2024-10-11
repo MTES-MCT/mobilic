@@ -3,7 +3,6 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { FunnelModal } from "./FunnelModal";
 import Container from "@mui/material/Container";
-import { MainCtaButton } from "./MainCtaButton";
 import TextField from "common/utils/TextField";
 import { Expenditures } from "./Expenditures";
 import { AddressField } from "../../common/AddressField";
@@ -13,6 +12,7 @@ import { MINUTE, getDaysBetweenTwoDates, now } from "common/utils/time";
 import { setCurrentLocation } from "common/utils/location";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { MandatoryField } from "../../common/MandatoryField";
+import { LoadingButton } from "common/components/LoadingButton";
 
 export default function EndMissionModal({
   open,
@@ -213,13 +213,13 @@ export default function EndMissionModal({
             />
 
             <Box className="cta-container" my={4}>
-              <MainCtaButton
+              <LoadingButton
                 type="submit"
                 disabled={!canSubmit()}
                 loading={loading}
               >
                 Suivant
-              </MainCtaButton>
+              </LoadingButton>
             </Box>
           </form>
         </Container>

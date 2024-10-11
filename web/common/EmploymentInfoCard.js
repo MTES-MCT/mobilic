@@ -320,8 +320,6 @@ export function EmploymentInfoCard({
             >
               <Grid item>
                 <LoadingButton
-                  color="primary"
-                  variant="contained"
                   onClick={async () => await handleEmploymentValidation(true)}
                 >
                   Valider le rattachement
@@ -329,8 +327,7 @@ export function EmploymentInfoCard({
               </Grid>
               <Grid item>
                 <LoadingButton
-                  color="primary"
-                  variant="outlined"
+                  priority="secondary"
                   onClick={() =>
                     modals.open("confirmation", {
                       textButtons: true,

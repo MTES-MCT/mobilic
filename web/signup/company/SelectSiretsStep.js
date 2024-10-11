@@ -1,4 +1,3 @@
-import Button from "@mui/material/Button";
 import React, { useMemo, useCallback } from "react";
 import { Step } from "./Step";
 import { makeStyles } from "@mui/styles";
@@ -10,6 +9,7 @@ import { PhoneNumber } from "../../common/PhoneNumber";
 import { BusinessType } from "../../common/BusinessType";
 import { MandatoryField } from "../../common/MandatoryField";
 import { Input } from "../../common/forms/Input";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -180,10 +180,7 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
       </Grid>
       {!hasValidatedChoice && (
         <Button
-          aria-label="Continuer"
           className={classes.verticalFormButton}
-          variant="contained"
-          color="primary"
           disabled={!areFacilitiesCorrectlySet}
           onClick={() => setHasValidatedChoice(true)}
         >
