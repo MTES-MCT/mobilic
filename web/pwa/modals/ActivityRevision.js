@@ -13,9 +13,6 @@ import max from "lodash/max";
 import MenuItem from "@mui/material/MenuItem";
 import { formatPersonName, resolveTeamAt } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-
 import { makeStyles } from "@mui/styles";
 import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
@@ -27,6 +24,7 @@ import Modal from "../../common/Modal";
 import { MandatoryField } from "../../common/MandatoryField";
 import Notice from "../../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch";
 
 const useStyles = makeStyles(theme => ({
   formField: {
@@ -475,15 +473,10 @@ export default function ActivityRevisionOrCreationModal({
           </Box>
           {allowTeamMode && team.length > 1 && (
             <Box mt={1}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={teamMode}
-                    onChange={() => setTeamMode(!teamMode)}
-                  />
-                }
+              <ToggleSwitch
                 label="Pour toute l'équipe"
-                labelPlacement="end"
+                checked={teamMode}
+                onChange={checked => setTeamMode(checked)}
               />
             </Box>
           )}
