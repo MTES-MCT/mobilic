@@ -30,8 +30,6 @@ import { ReactComponent as TachoIcon } from "common/assets/images/tacho.svg";
 import { LoadingButton } from "common/components/LoadingButton";
 import Drawer from "@mui/material/Drawer";
 import NewMissionForm from "../../common/NewMissionForm";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import {
@@ -64,6 +62,7 @@ import { LogHolidayForm } from "../../common/LogHolidayForm";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { usePageTitle } from "../../common/UsePageTitle";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import CloseButton from "../../common/CloseButton";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -88,9 +87,6 @@ const useStyles = makeStyles(theme => ({
   workTimeTableContainer: {
     padding: theme.spacing(2),
     paddingTop: theme.spacing(1)
-  },
-  closeButton: {
-    padding: 0
   },
   missionTitle: {
     marginRight: theme.spacing(4)
@@ -483,15 +479,11 @@ function ActivitiesPanel() {
             <Typography variant="h1" className={classes.missionTitle}>
               Congé ou absence passé
             </Typography>
-            <IconButton
-              aria-label="Fermer"
-              className={classes.closeButton}
+            <CloseButton
               onClick={() => {
                 setOpenLogHoliday(false);
               }}
-            >
-              <CloseIcon />
-            </IconButton>
+            />
           </Box>
           <LogHolidayForm
             users={users}
@@ -558,15 +550,11 @@ function ActivitiesPanel() {
             <Typography variant="h1" className={classes.missionTitle}>
               Mission passée
             </Typography>
-            <IconButton
-              aria-label="Fermer"
-              className={classes.closeButton}
+            <CloseButton
               onClick={() => {
                 setOpenNewMission(false);
               }}
-            >
-              <CloseIcon />
-            </IconButton>
+            />
           </Box>
           <NewMissionForm
             companies={adminCompanies}

@@ -1,7 +1,5 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 import {
   formatDateTime,
@@ -54,6 +52,7 @@ import { MissionDetailsVehicle } from "./MissionDetailsVehicle";
 import { MissionDetailsLocations } from "./MissionDetailsLocations";
 import { MissionDetailsObservations } from "./MissionDetailsObservations";
 import Notice from "../../../common/Notice";
+import CloseButton from "../../../common/CloseButton";
 
 export function MissionDetails({
   missionId,
@@ -252,13 +251,7 @@ export function MissionDetails({
             />
           </Grid>
           <Grid>
-            <IconButton
-              aria-label="Fermer"
-              className={classes.closeButton}
-              onClick={handleClose}
-            >
-              <CloseIcon />
-            </IconButton>
+            <CloseButton onClick={handleClose} />
           </Grid>
         </Grid>
         {mission.name && (mission.startTime || day) && (

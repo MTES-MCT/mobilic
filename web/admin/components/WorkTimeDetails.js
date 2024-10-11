@@ -5,8 +5,6 @@ import Box from "@mui/material/Box";
 import { useApi } from "common/utils/api";
 import { USER_WORK_DAY_QUERY } from "common/utils/apiQueries";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 import { useStyles } from "./styles/WorkTimeDetailsStyle";
 import {
   addBreaksToActivityList,
@@ -33,6 +31,7 @@ import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL } from "common/utils/matomoTags";
 import { DayRegulatoryAlerts } from "../../regulatory/DayRegulatoryAlerts";
 import { WeekRegulatoryAlerts } from "../../regulatory/WeekRegulatoryAlerts";
+import CloseButton from "../../common/CloseButton";
 
 export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   const classes = useStyles();
@@ -147,13 +146,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
         Détail de la journée du{" "}
         {prettyFormatDay(workTimeEntry.periodActualStart, true)}
       </Typography>
-      <IconButton
-        aria-label="Fermer"
-        className={classes.closeButton}
-        onClick={handleClose}
-      >
-        <CloseIcon />
-      </IconButton>
+      <CloseButton onClick={handleClose} />
     </Box>,
     <Box key={1}>
       <Typography variant="h3" component="p" className={classes.employeeName}>

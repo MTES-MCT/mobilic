@@ -2,9 +2,6 @@ import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
 
 export const useMissionDetailsStyles = makeStyles(theme => ({
-  closeButton: {
-    padding: 0
-  },
   missionSubTitle: {
     fontWeight: 200,
     display: "block"
