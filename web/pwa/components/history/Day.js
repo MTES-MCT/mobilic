@@ -3,7 +3,7 @@ import { MissionReviewSection } from "../MissionReviewSection";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { Mission } from "./Mission";
-import { Box, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
 import { DaySummary } from "./DaySummary";
 import { useToggleContradictory } from "./toggleContradictory";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
@@ -162,8 +162,8 @@ export function Day({
       {missionsDeleted.length > 0 ? (
         <Notice
           type="warning"
-          sx={{ marginBottom: 2, textAlign: "left" }}
-          description={<Typography>{missionsDeletedWarning}</Typography>}
+          sx={{ marginBottom: 2 }}
+          description={missionsDeletedWarning}
         />
       ) : (
         <ContradictorySwitch

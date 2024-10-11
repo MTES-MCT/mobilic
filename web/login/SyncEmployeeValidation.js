@@ -199,7 +199,7 @@ export function SyncEmployeeValidation() {
                       type="warning"
                       sx={{ marginTop: 2 }}
                       description={
-                        <Typography>
+                        <>
                           Vous devez d'abord accepter les Conditions Générales
                           pour pouvoir confirmer l'accès au logiciel{" "}
                           {clientName}.
@@ -211,7 +211,7 @@ export function SyncEmployeeValidation() {
                             Ouvrir les CGU
                           </span>{" "}
                           pour continuer.
-                        </Typography>
+                        </>
                       }
                     />
                   )}

@@ -41,30 +41,25 @@ const Notice = ({
                 classes.title
               )}
             >
-              {title}
-            </span>
-            <span
-              className={cx(
-                fr.cx("fr-notice__desc", { "fr-text--sm": size === "small" }),
-                classes.description
+              {title}{" "}
+              <span className={fr.cx("fr-text--regular")}>{description}</span>
+              {linkUrl && linkText && (
+                <a
+                  target="_blank"
+                  rel="noopener external noreferrer"
+                  title={`${linkText} - nouvelle fenêtre`}
+                  href={linkUrl}
+                  className={cx(
+                    fr.cx("fr-notice__link", {
+                      "fr-text--sm": size === "small"
+                    }),
+                    classes.link
+                  )}
+                >
+                  {linkText}
+                </a>
               )}
-            >
-              {description}
             </span>
-            {linkUrl && linkText && (
-              <a
-                target="_blank"
-                rel="noopener external noreferrer"
-                title={`${linkText} - nouvelle fenêtre`}
-                href={linkUrl}
-                className={cx(
-                  fr.cx("fr-notice__link", { "fr-text--sm": size === "small" }),
-                  classes.link
-                )}
-              >
-                {linkText}
-              </a>
-            )}
           </p>
           {onClose && (
             <button
