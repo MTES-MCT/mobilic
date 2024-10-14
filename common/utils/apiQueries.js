@@ -857,6 +857,21 @@ export const ADMIN_WORK_DAYS_QUERY = gql`
   }
 `;
 
+export const ADMIN_USERS_SINCE_DATE = gql`
+  query adminCompanies($id: Int!, $activityAfter: Date, $companyIds: [Int]) {
+    user(id: $id) {
+      adminedCompanies(companyIds: $companyIds) {
+        id
+        users(fromDate: $activityAfter) {
+          id
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+`;
+
 export const GET_EMPLOYMENT_QUERY = gql`
   query getInvitation($token: String!) {
     employment(token: $token) {

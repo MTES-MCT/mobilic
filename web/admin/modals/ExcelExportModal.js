@@ -30,7 +30,8 @@ export default function ExcelExportModal({
   initialUsers,
   initialTeams,
   defaultMinDate = null,
-  defaultMaxDate = null
+  defaultMaxDate = null,
+  getUsersSinceDate
 }) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
@@ -44,6 +45,21 @@ export default function ExcelExportModal({
   const [teams, setTeams] = React.useState(initialTeams);
 
   const [isEnabledDownload, setIsEnabledDownload] = React.useState(true);
+
+  React.useEffect(async () => {
+    if (minDate < defaultMinDate) {
+      const newUsers = await getUsersSinceDate(minDate);
+      setUsers(currentUsers => [
+        ...currentUsers,
+        ...newUsers.filter(
+          newUser =>
+            !currentUsers
+              .map(currentUser => currentUser.id)
+              .includes(newUser.id)
+        )
+      ]);
+    }
+  }, [minDate]);
 
   React.useEffect(() => setIsEnabledDownload(true), [
     minDate,
