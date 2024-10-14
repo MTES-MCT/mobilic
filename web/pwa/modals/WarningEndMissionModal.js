@@ -31,7 +31,9 @@ export default function WarningEndMissionModal({
       }
       actions={
         <>
-          <LoadingButton onClick={dismiss}>Poursuivre la mission</LoadingButton>
+          <LoadingButton onClick={dismiss} priority="secondary">
+            Poursuivre la mission
+          </LoadingButton>
           <LoadingButton
             onClick={() => {
               dismiss().then(handleMissionEnd());
