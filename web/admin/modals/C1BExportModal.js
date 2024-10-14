@@ -31,7 +31,8 @@ export default function C1BExportModal({
   initialTeams = [],
   defaultMinDate = null,
   defaultMaxDate = null,
-  defaultCompany
+  defaultCompany,
+  getUsersSinceDate
 }) {
   const MAX_RANGE_DAYS = 60;
   const today = new Date();
@@ -49,6 +50,21 @@ export default function C1BExportModal({
   const [users, setUsers] = React.useState(initialUsers);
   const [teams, setTeams] = React.useState(initialTeams);
   const [employeeVersion, setEmployeeVersion] = React.useState(true);
+
+  React.useEffect(async () => {
+    if (minDate < defaultMinDate) {
+      const newUsers = await getUsersSinceDate(minDate);
+      setUsers(currentUsers => [
+        ...currentUsers,
+        ...newUsers.filter(
+          newUser =>
+            !currentUsers
+              .map(currentUser => currentUser.id)
+              .includes(newUser.id)
+        )
+      ]);
+    }
+  }, [minDate]);
 
   const invalidDateRange = (minDate, maxDate) =>
     maxDate &&
