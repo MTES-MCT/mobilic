@@ -34,6 +34,7 @@ import { currentUserId } from "common/utils/cookie";
 import { UserControlSection } from "./UserControlSection";
 import { usePageTitle } from "../../common/UsePageTitle";
 import { parsePhoneNumber } from "libphonenumber-js";
+import BecomeAdmin from "./BecomeAdmin";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
@@ -228,35 +229,38 @@ export default function Home() {
             </Grid>
           </Grid>
         </Section>
-        {isActive && <Divider className="hr-unstyled" />}
         {isActive && (
-          <Section
-            component="h2"
-            title={
-              employments.length > 1 ? "Mes entreprises" : "Mon entreprise"
-            }
-          >
-            {employments.length > 0 ? (
-              <Grid container spacing={2} direction="column">
-                {employments.map(e => (
-                  <Grid item xs={12} key={e.id}>
-                    <EmploymentInfoCard
-                      employment={e}
-                      key={e.id}
-                      defaultOpen={
-                        employments.length === 1 || !e.isAcknowledged
-                      }
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            ) : (
-              <NoEmploymentAlert />
-            )}
-          </Section>
+          <>
+            <Divider className="hr-unstyled" />
+            <Section
+              component="h2"
+              title={
+                employments.length > 1 ? "Mes entreprises" : "Mon entreprise"
+              }
+            >
+              {employments.length > 0 ? (
+                <Grid container spacing={2} direction="column">
+                  {employments.map(e => (
+                    <Grid item xs={12} key={e.id}>
+                      <EmploymentInfoCard
+                        employment={e}
+                        key={e.id}
+                        defaultOpen={
+                          employments.length === 1 || !e.isAcknowledged
+                        }
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              ) : (
+                <NoEmploymentAlert />
+              )}
+              <BecomeAdmin mt={2} />
+            </Section>
+            <OAuthTokenSection />
+            <UserControlSection />
+          </>
         )}
-        {isActive && <OAuthTokenSection />}
-        {isActive && <UserControlSection />}
       </Container>
     </PaperContainer>
   ];
