@@ -60,19 +60,41 @@ export function formatAlertText(alert, type) {
     case ALERT_TYPES.maximumWorkedDaysInWeek: {
       const maxBreakLengthInSeconds = alert.extra.rest_duration_s;
       const tooManyDays = alert.extra.too_many_days;
+      const restDurationText = (
+        <>
+          Durée du repos hebdomadaire :{" "}
+          <b>{formatTimer(maxBreakLengthInSeconds)}</b>.
+        </>
+      );
+      const tooManyDaysText = (
+        <>La semaine ne comporte aucune journée non travaillée.</>
+      );
+      if (tooManyDays && !maxBreakLengthInSeconds) {
+        return (
+          <>
+            {tooManyDaysText}
+            <br />
+            Le repos hebdomadaire a été respecté.
+          </>
+        );
+      }
+      if (!tooManyDays && maxBreakLengthInSeconds) {
+        return (
+          <>
+            {restDurationText}
+            <br />
+            Le nombre maximal de jours de travail par semaine civile a été
+            respecté.
+          </>
+        );
+      }
+
       return (
-        <span>
-          {maxBreakLengthInSeconds && (
-            <>
-              Durée du repos hebdomadaire :{" "}
-              <b>{formatTimer(maxBreakLengthInSeconds)}</b>
-              <br />
-            </>
-          )}
-          {tooManyDays && (
-            <>La semaine ne comporte aucune journée non travaillée</>
-          )}
-        </span>
+        <>
+          {restDurationText}
+          <br />
+          {tooManyDaysText}
+        </>
       );
     }
     case ALERT_TYPES.maximumUninterruptedWorkTime: {
