@@ -225,7 +225,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                         validate
                         error={emailError}
                         setError={setEmailError}
-                        hintText="Format attendu : prenom.nom@domaine.fr"
+                        showHint
                         autoComplete="email"
                       />
                       <PasswordInput
