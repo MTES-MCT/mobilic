@@ -1,18 +1,11 @@
 import React from "react";
-import Container from "@mui/material/Container";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 export const useSectionStyles = makeStyles(theme => ({
   whiteSection: {
     backgroundColor: theme.palette.background.paper
-  },
-  section: {
-    paddingTop: theme.spacing(7),
-    paddingBottom: theme.spacing(7),
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(5),
-    margin: 0
   },
   sectionTitle: {
     paddingBottom: theme.spacing(6),
@@ -24,14 +17,6 @@ export const useSectionStyles = makeStyles(theme => ({
     maxWidth: 600,
     margin: "auto",
     textAlign: "justify"
-  },
-  sectionHPadding: {
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(5)
-  },
-  inner: {
-    margin: "auto",
-    padding: 0
   },
   sectionSubtitle: {
     textAlign: "left",
@@ -71,21 +56,15 @@ export function LandingSection({
   const classes = useSectionStyles();
 
   return (
-    <Container
-      className={`${classes.section} ${className}`}
-      maxWidth={false}
-      {...props}
-    >
-      <Container maxWidth={innerWidth || "lg"} className={classes.inner}>
-        <Typography
-          variant="h3"
-          className={`${classes.sectionTitle}`}
-          {...titleProps}
-        >
-          {title}
-        </Typography>
-        {children}
-      </Container>
-    </Container>
+    <Box className={className} {...props}>
+      <Typography
+        variant="h3"
+        className={`${classes.sectionTitle}`}
+        {...titleProps}
+      >
+        {title}
+      </Typography>
+      {children}
+    </Box>
   );
 }
