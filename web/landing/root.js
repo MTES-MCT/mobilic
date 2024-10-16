@@ -130,43 +130,74 @@ export const Landing = () => {
   const classes = useStyles();
   const sectionClasses = useSectionStyles();
 
-  return [
-    <Header key={1} />,
-    <IntroSection key={2} />,
-    <LandingSectionList key={3}>
-      {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
-      <LandingSection
-        title="A qui s'adresse Mobilic ?"
-        titleProps={{ component: "h2" }}
-      >
-        <Typography className={sectionClasses.sectionIntroText}>
-          Mobilic s'adresse aux conducteurs des entreprises de transport routier
-          qui utilisent des véhicules utilitaires légers (VUL, {"<"} 3.5T), et
-          aux autres{" "}
-          <strong>
-            personnels roulants qui sont soumis au livret individuel de contrôle
-            (LIC)
-          </strong>{" "}
-          conformément aux articles R. 3312-19, 2° et R. 3312-58, 2° du code des
-          transports : déménagement, messagerie, fret express, transport de
-          personnes.
-        </Typography>
-        <Box className={`${classes.lightBlue}`} p={2}>
-          <Showcase
-            image={<WorkerImage height={200} width={200} />}
-            imagePosition="left"
-            imageDescription="Travailleur mobile"
-            imageSubDescription="Conducteurs et autres personnels roulants"
-            descriptionTitle="Suivre simplement mon temps de travail et être mieux informé(e) sur mes droits"
-            descriptionContent={
-              <div
-                style={{
-                  textAlign: "left",
-                  fontSize: "1rem",
-                  lineHeight: "1.6"
-                }}
-              >
-                <p>Directement depuis mon téléphone</p>
+  return (
+    <>
+      <Header />
+      <IntroSection />
+      <LandingSectionList>
+        {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
+        <LandingSection
+          title="A qui s'adresse Mobilic ?"
+          titleProps={{ component: "h2" }}
+        >
+          <Typography className={sectionClasses.sectionIntroText}>
+            Mobilic s'adresse aux conducteurs des entreprises de transport
+            routier qui utilisent des véhicules utilitaires légers (VUL, {"<"}{" "}
+            3.5T), et aux autres{" "}
+            <strong>
+              personnels roulants qui sont soumis au livret individuel de
+              contrôle (LIC)
+            </strong>{" "}
+            conformément aux articles R. 3312-19, 2° et R. 3312-58, 2° du code
+            des transports : déménagement, messagerie, fret express, transport
+            de personnes.
+          </Typography>
+          <Box className={`${classes.lightBlue}`} p={2}>
+            <Showcase
+              image={<WorkerImage height={200} width={200} />}
+              imagePosition="left"
+              imageDescription="Travailleur mobile"
+              imageSubDescription="Conducteurs et autres personnels roulants"
+              descriptionTitle="Suivre simplement mon temps de travail et être mieux informé(e) sur mes droits"
+              descriptionContent={
+                <div
+                  style={{
+                    textAlign: "left",
+                    fontSize: "1rem",
+                    lineHeight: "1.6"
+                  }}
+                >
+                  <p>Directement depuis mon téléphone</p>
+                  <ul
+                    style={{
+                      textAlign: "justify",
+                      fontSize: "1rem",
+                      lineHeight: "1.6"
+                    }}
+                  >
+                    <li>
+                      Enregistrer de manière simple et rapide mon temps de
+                      travail et mes frais
+                    </li>
+                    <li>
+                      Accéder à tout moment à mon relevé d'heures et de frais
+                    </li>
+                  </ul>
+                </div>
+              }
+              ctaLabel="M'inscrire comme travailleur mobile"
+              ctaTarget="/signup/user"
+              titleProps={{ component: "h3" }}
+            />
+          </Box>
+          <Box p={2}>
+            <Showcase
+              image={<ManagerImage height={200} width={200} />}
+              imagePosition="right"
+              imageDescription="Gestionnaire"
+              imageSubDescription="Responsables d'exploitation, dirigeant(e)s"
+              descriptionTitle="Gérer facilement le temps de travail des salarié(e)s de mon entreprise"
+              descriptionContent={
                 <ul
                   style={{
                     textAlign: "justify",
@@ -175,154 +206,126 @@ export const Landing = () => {
                   }}
                 >
                   <li>
-                    Enregistrer de manière simple et rapide mon temps de travail
-                    et mes frais
+                    Alléger la gestion administrative des données sociales de
+                    mon entreprise en évitant la double saisie des informations
                   </li>
                   <li>
-                    Accéder à tout moment à mon relevé d'heures et de frais
+                    Optimiser l'organisation de mes équipes en accédant aux
+                    données sociales en temps réel
                   </li>
                 </ul>
-              </div>
-            }
-            ctaLabel="M'inscrire comme travailleur mobile"
-            ctaTarget="/signup/user"
-            titleProps={{ component: "h3" }}
-          />
-        </Box>
-        <Box p={2}>
-          <Showcase
-            image={<ManagerImage height={200} width={200} />}
-            imagePosition="right"
-            imageDescription="Gestionnaire"
-            imageSubDescription="Responsables d'exploitation, dirigeant(e)s"
-            descriptionTitle="Gérer facilement le temps de travail des salarié(e)s de mon entreprise"
-            descriptionContent={
-              <ul
-                style={{
-                  textAlign: "justify",
-                  fontSize: "1rem",
-                  lineHeight: "1.6"
-                }}
-              >
-                <li>
-                  Alléger la gestion administrative des données sociales de mon
-                  entreprise en évitant la double saisie des informations
-                </li>
-                <li>
-                  Optimiser l'organisation de mes équipes en accédant aux
-                  données sociales en temps réel
-                </li>
-              </ul>
-            }
-            ctaLabel="M'inscrire comme gestionnaire"
-            ctaTarget="/signup/admin"
-            titleProps={{ component: "h3" }}
-          />
-        </Box>
-        <Box className={classes.lightBlue} p={2}>
-          <Showcase
-            image={<SoftwareImage height={200} width={200} />}
-            imagePosition="left"
-            imageDescription="Logiciel métier"
-            descriptionTitle="Echanger en temps réel avec l'API Mobilic des données sociales clés pour la gestion du personnel"
-            descriptionContent={
-              <ul
-                style={{
-                  textAlign: "justify",
-                  fontSize: "1rem",
-                  lineHeight: "1.6"
-                }}
-              >
-                <li>
-                  Enrichir mon logiciel avec les données sociales, accessibles
-                  sans délai
-                </li>
-                <li>
-                  Garantir la conformité réglementaire de mes entreprises
-                  clientes
-                </li>
-              </ul>
-            }
-            ctaLabel="Découvrir l'API"
-            ctaTarget="https://developers.mobilic.beta.gouv.fr/"
-            titleProps={{ component: "h3" }}
-          />
-        </Box>
-      </LandingSection>
-      <LandingSection
-        title="Ce qu'il faut savoir sur Mobilic"
-        titleProps={{ component: "h2" }}
-      >
-        <Grid
-          container
-          spacing={4}
-          alignItems="center"
-          justifyContent="space-between"
-          className={classes.showcase}
+              }
+              ctaLabel="M'inscrire comme gestionnaire"
+              ctaTarget="/signup/admin"
+              titleProps={{ component: "h3" }}
+            />
+          </Box>
+          <Box className={classes.lightBlue} p={2}>
+            <Showcase
+              image={<SoftwareImage height={200} width={200} />}
+              imagePosition="left"
+              imageDescription="Logiciel métier"
+              descriptionTitle="Echanger en temps réel avec l'API Mobilic des données sociales clés pour la gestion du personnel"
+              descriptionContent={
+                <ul
+                  style={{
+                    textAlign: "justify",
+                    fontSize: "1rem",
+                    lineHeight: "1.6"
+                  }}
+                >
+                  <li>
+                    Enrichir mon logiciel avec les données sociales, accessibles
+                    sans délai
+                  </li>
+                  <li>
+                    Garantir la conformité réglementaire de mes entreprises
+                    clientes
+                  </li>
+                </ul>
+              }
+              ctaLabel="Découvrir l'API"
+              ctaTarget="https://developers.mobilic.beta.gouv.fr/"
+              titleProps={{ component: "h3" }}
+            />
+          </Box>
+        </LandingSection>
+        <LandingSection
+          title="Ce qu'il faut savoir sur Mobilic"
+          titleProps={{ component: "h2" }}
         >
           <Grid
-            item
-            md
             container
-            direction="column"
             spacing={4}
-            alignItems="flex-start"
-            style={{ textAlign: "justify", flexGrow: 100 }}
+            alignItems="center"
+            justifyContent="space-between"
+            className={classes.showcase}
           >
-            <Grid item>
-              <Typography
-                variant="h5"
-                component="h3"
-                className={classes.questionTitle}
-              >
-                Mobilic est-ce que ça fonctionne déjà ?
-              </Typography>
-              <Typography>
-                Oui bien sûr ! Vous pouvez déjà utiliser Mobilic pour
-                enregistrer le temps de travail. Le nom de domaine en
-                “beta.gouv.fr” indique que Mobilic fait partie des startups
-                d'État, des startups publiques développées au sein des
-                Ministères publics.
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Typography
-                variant="h5"
-                component="h3"
-                className={classes.questionTitle}
-              >
-                Dois-je doublonner avec le LIC papier quand j’utilise Mobilic ?
-              </Typography>
-              <Typography>
-                Non ! Mobilic permet de justifier du respect des exigences
-                fixées dans les articles R. 3312-19 et R. 3312-58 du code des
-                transports. Par ailleurs, dans le secteur du déménagement, un{" "}
-                <a
-                  href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000043023481"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  arrêté spécifique
-                </a>{" "}
-                permet de justifier du respect du relevé hebdomadaire d’activité
-                au moyen de Mobilic par dérogation à la présentation sous forme
-                d’un carnet auto-carboné.{" "}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Grid item xs className={classes.faqCta}>
-            <LoadingButton
-              href="https://faq.mobilic.beta.gouv.fr"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Grid
+              item
+              md
+              container
+              direction="column"
+              spacing={4}
+              alignItems="flex-start"
+              style={{ textAlign: "justify", flexGrow: 100 }}
             >
-              Consulter la foire aux questions
-            </LoadingButton>
+              <Grid item>
+                <Typography
+                  variant="h5"
+                  component="h3"
+                  className={classes.questionTitle}
+                >
+                  Mobilic est-ce que ça fonctionne déjà ?
+                </Typography>
+                <Typography>
+                  Oui bien sûr ! Vous pouvez déjà utiliser Mobilic pour
+                  enregistrer le temps de travail. Le nom de domaine en
+                  “beta.gouv.fr” indique que Mobilic fait partie des startups
+                  d'État, des startups publiques développées au sein des
+                  Ministères publics.
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography
+                  variant="h5"
+                  component="h3"
+                  className={classes.questionTitle}
+                >
+                  Dois-je doublonner avec le LIC papier quand j’utilise Mobilic
+                  ?
+                </Typography>
+                <Typography>
+                  Non ! Mobilic permet de justifier du respect des exigences
+                  fixées dans les articles R. 3312-19 et R. 3312-58 du code des
+                  transports. Par ailleurs, dans le secteur du déménagement, un{" "}
+                  <a
+                    href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000043023481"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    arrêté spécifique
+                  </a>{" "}
+                  permet de justifier du respect du relevé hebdomadaire
+                  d’activité au moyen de Mobilic par dérogation à la
+                  présentation sous forme d’un carnet auto-carboné.{" "}
+                </Typography>
+              </Grid>
+            </Grid>
+            <Grid item xs className={classes.faqCta}>
+              <LoadingButton
+                href="https://faq.mobilic.beta.gouv.fr"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Consulter la foire aux questions
+              </LoadingButton>
+            </Grid>
           </Grid>
-        </Grid>
-      </LandingSection>
-      <TalkingAboutUsSection />
-    </LandingSectionList>,
-    <Footer key={4} />
-  ];
+        </LandingSection>
+        <TalkingAboutUsSection />
+      </LandingSectionList>
+      <Footer />
+    </>
+  );
 };
