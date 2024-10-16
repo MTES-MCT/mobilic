@@ -24,7 +24,6 @@ export const Landing = () => {
           <LandingSectionList>
             <VideoSection />
             {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
-            {<WebinarListSection />}
             <WhoSection />
             <WhatToKnowSection />
             <TalkingAboutUsSection />
