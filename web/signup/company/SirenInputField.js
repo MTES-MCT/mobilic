@@ -68,7 +68,7 @@ export function SirenInputField({
           rel="noopener noreferrer"
           href="https://annuaire-entreprises.data.gouv.fr/"
         >
-          Annuaire des entreprises
+          Trouvez facilement le numéro SIREN de votre entreprise
         </a>
       </div>
     </fieldset>
