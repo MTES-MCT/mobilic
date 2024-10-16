@@ -76,7 +76,7 @@ export function LandingSection({
       maxWidth={false}
       {...props}
     >
-      <Container maxWidth={innerWidth || "md"} className={classes.inner}>
+      <Container maxWidth={innerWidth || "lg"} className={classes.inner}>
         <Typography
           variant="h3"
           className={`${classes.sectionTitle}`}
