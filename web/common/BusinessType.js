@@ -129,9 +129,14 @@ export function BusinessType({
       {displayInfo && (
         <Box sx={{ textAlign: "left", marginTop: 2, fontSize: "0.7rem" }}>
           <Notice
-            description="Par défaut, l’activité sera attribuée à tous vos salariés. Vous
-              aurez ensuite la possibilité de modifier le type d'activité pour
-              chaque salarié."
+            description={
+              <>
+                Par défaut, l’activité sera attribuée à tous vos salariés. Vous
+                aurez ensuite la possibilité de modifier le type d'activité pour
+                chaque salarié.
+                <br />
+              </>
+            }
             linkText="À quoi sert cette information ?"
             linkUrl="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/gestionnaire-parametrer-mon-entreprise"
           />
