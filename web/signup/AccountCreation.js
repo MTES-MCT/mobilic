@@ -164,7 +164,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       <div className="fr-container fr-mt-8v fr-mt-md-14v fr-mb-2v fr-mb-md-8v">
         <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
           <div className="fr-col-12 fr-col-md-10 fr-col-lg-8">
-            <h1 className="fr-h2">
+            <h1 className="fr-h2" style={{ textAlign: "center" }}>
               {isAdmin ? "S'inscrire comme gestionnaire" : "Créer mon compte"}
             </h1>
             {employeeInvite && employeeInvite.company && (
@@ -225,7 +225,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                         validate
                         error={emailError}
                         setError={setEmailError}
-                        hintText="Format attendu : prenom.nom@domaine.fr"
+                        showHint
                         autoComplete="email"
                       />
                       <PasswordInput

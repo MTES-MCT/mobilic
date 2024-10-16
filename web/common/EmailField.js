@@ -13,7 +13,7 @@ export function EmailField({
   validate,
   label = "Email",
   required = false,
-  hintText,
+  showHint = false,
   ...props
 }) {
   React.useEffect(() => {
@@ -29,7 +29,7 @@ export function EmailField({
   return (
     <Input
       label={label}
-      hintText={hintText}
+      hintText={showHint && "Exemple de format attendu : prenom.nom@domaine.fr"}
       state={error ? "error" : "default"}
       stateRelatedMessage={error}
       nativeInputProps={{

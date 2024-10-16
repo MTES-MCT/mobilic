@@ -41,7 +41,7 @@ export default function ChangeEmailModal({ open, handleClose, handleSubmit }) {
             setValue={setEmail}
             error={error}
             setError={setError}
-            hintText="Format attendu : prenom.nom@domaine.fr"
+            showHint
           />
         </form>
       }

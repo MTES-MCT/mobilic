@@ -182,7 +182,7 @@ export function EmailSelection() {
             validate
             error={!!emailError}
             setError={setEmailError}
-            hintText="Format attendu : prenom.nom@domaine.fr"
+            showHint
           />
           {!isAdmin && (
             <CheckboxField

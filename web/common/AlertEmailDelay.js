@@ -6,10 +6,11 @@ const AlertEmailDelay = () => {
   return (
     <Notice
       sx={{ marginY: 2 }}
+      style={{ paddingBottom: 0 }}
       type="warning"
       description={
         <>
-          Il est possible que
+          Il est possible que&nbsp;:
           <ul style={{ padding: 0 }}>
             <li>
               <Typography>

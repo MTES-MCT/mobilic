@@ -7,7 +7,6 @@ import { Link } from "../../common/LinkButton";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthDown } from "common/utils/useWidth";
-import { VideoCard, VIDEOS } from "../ResourcePage/VideoCard";
 import classNames from "classnames";
 import Notice from "../../common/Notice";
 
@@ -31,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: "rgba(49, 132, 255, 0.2)"
   },
   leftBlockIntro: {
-    marginLeft: theme.spacing(12),
+    marginLeft: theme.spacing(4),
     [theme.breakpoints.down("sm")]: {
       marginLeft: theme.spacing(2)
     },
@@ -80,13 +79,6 @@ const useStyles = makeStyles(theme => ({
     maxWidth: "900px",
     [theme.breakpoints.down("sm")]: {
       marginLeft: theme.spacing(-2)
-    }
-  },
-  videoSection: {
-    marginTop: theme.spacing(5),
-    [theme.breakpoints.down("sm")]: {
-      paddingRight: theme.spacing(3.5),
-      marginLeft: theme.spacing(1)
     }
   }
 }));
@@ -187,22 +179,6 @@ export function IntroSection() {
               <PhoneImageComponent isSmDown={isSmDown} />
             </>
           )}
-        </Grid>
-      </Container>
-      <Container maxWidth="md" className={classes.videoSection}>
-        <Grid container direction="row" alignItems="center" spacing={1}>
-          <Grid item xs={12} sm={6}>
-            <VideoCard
-              video={VIDEOS.Home_Mobilic}
-              titleProps={{ component: "h3" }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <VideoCard
-              video={VIDEOS.Home_Regulation}
-              titleProps={{ component: "h3" }}
-            />
-          </Grid>
         </Grid>
       </Container>
     </Container>
