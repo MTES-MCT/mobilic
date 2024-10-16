@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: "rgba(49, 132, 255, 0.2)"
   },
   leftBlockIntro: {
-    marginLeft: theme.spacing(12),
+    marginLeft: theme.spacing(4),
     [theme.breakpoints.down("sm")]: {
       marginLeft: theme.spacing(2)
     },
@@ -189,7 +189,7 @@ export function IntroSection() {
           )}
         </Grid>
       </Container>
-      <Container maxWidth="md" className={classes.videoSection}>
+      <Container maxWidth="lg" className={classes.videoSection}>
         <Grid container direction="row" alignItems="center" spacing={1}>
           <Grid item xs={12} sm={6}>
             <VideoCard
