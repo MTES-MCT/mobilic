@@ -37,10 +37,11 @@ export const REGULATION_RULES = {
         </p>
         <p>
           En transport routier de voyageurs (TRV), le travail quotidien ne doit
-          pas dépasser <Emphasis>10 heures</Emphasis>. Dans le cas de TRV
-          occasionnel, la durée maximale de travail quotidien passe à{" "}
-          <Emphasis>9 heures</Emphasis> si l'amplitude de la journée est{" "}
-          <Emphasis>supérieure à 13 heures</Emphasis>.
+          pas dépasser <Emphasis>10 heures</Emphasis>. Dans le cas de TRV lignes
+          régulières ou de T3P (taxis, VTC, LOTI), la durée maximale de travail
+          quotidien passe à <Emphasis>9 heures</Emphasis> si l'amplitude de la
+          journée est respectivement{" "}
+          <Emphasis>supérieure à 13 heures ou à 12 heures</Emphasis>.
         </p>
         <p>
           En TRM comme en TRV, l'amplitude est quant à elle limitée à{" "}
@@ -238,6 +239,9 @@ export const REGULATION_RULES = {
               <li>
                 Lignes régulières&nbsp;: <Emphasis>48 heures</Emphasis>
               </li>
+              <li>
+                T3P (taxis, VTC, LOTI)&nbsp;: <Emphasis>48 heures</Emphasis>
+              </li>
             </ul>
           </li>
         </ul>
@@ -274,6 +278,9 @@ export const REGULATION_RULES = {
               </li>
               <li>
                 Lignes régulières&nbsp;: <Emphasis>44 heures</Emphasis>
+              </li>
+              <li>
+                T3P (taxis, VTC, LOTI)&nbsp;: <Emphasis>44 heures</Emphasis>
               </li>
             </ul>
           </li>
