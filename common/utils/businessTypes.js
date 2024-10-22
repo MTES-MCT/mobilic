@@ -18,6 +18,22 @@ export const BUSINESS_TYPES = [
   {
     value: "INFREQUENT",
     label: "TRV - Occasionnel"
+  },
+  {
+    value: "TAXI_GENERAL",
+    label: "TRV - Taxi général"
+  },
+  {
+    value: "TAXI_REGULATED",
+    label: "TRV - Taxi conventionné"
+  },
+  {
+    value: "VTC",
+    label: "TRV - VTC"
+  },
+  {
+    value: "LOTI",
+    label: "TRV - LOTI"
   }
 ];
 
