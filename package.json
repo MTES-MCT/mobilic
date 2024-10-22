@@ -61,7 +61,7 @@
     "graphiql": "^2.0.9",
     "graphql": "^15.0.0",
     "html-webpack-plugin": "^4.5.1",
-    "http-proxy-middleware": "^1.0.5",
+    "http-proxy-middleware": "^2.0.7",
     "husky": "^4.2.5",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.0.0",
@@ -105,7 +105,7 @@
     "ts-pnp": "^1.1.5",
     "typescript": "^3.7.5",
     "url-loader": "^2.3.0",
-    "webpack": "^4.46.0",
+    "webpack": "^5.0.0",
     "webpack-dev-server": "^4.11.1",
     "webpack-manifest-plugin": "^2.2.0",
     "workbox-webpack-plugin": "^6.0.2"
