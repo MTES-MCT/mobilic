@@ -30,6 +30,10 @@ export const BUSINESS_TYPES = [
   {
     value: "VTC",
     label: "TRV - VTC"
+  },
+  {
+    value: "LOTI",
+    label: "TRV - LOTI"
   }
 ];
 
