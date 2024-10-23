@@ -15,7 +15,7 @@ export const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2)
   },
   slimContainer: {
-    maxWidth: 400
+    maxWidth: 550
   },
   container: {
     backgroundColor: darkBackground =>

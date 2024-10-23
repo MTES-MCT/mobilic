@@ -362,7 +362,10 @@ function ActivitiesPanel() {
           />
         </Grid>
         <Grid item>
-          <Button onClick={e => setExportMenuAnchorEl(e.currentTarget)}>
+          <Button
+            onClick={e => setExportMenuAnchorEl(e.currentTarget)}
+            size="small"
+          >
             Exporter
           </Button>
           <Menu
