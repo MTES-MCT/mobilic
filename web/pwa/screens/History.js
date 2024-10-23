@@ -410,108 +410,109 @@ export function History({
       disableGutters
       maxWidth="md"
     >
-      {!isInControl && [
-        <AccountButton p={2} key={1} onBackButtonClick={onBackButtonClick} />,
-        <Box key={2} className={classes.accessControlContainer}>
-          <Button
-            priority="secondary"
-            className={cx(classes.generateAccessButton, "error")}
-            onClick={() => {
-              modals.open("userReadQRCode");
-            }}
-          >
-            Accès contrôleurs
-          </Button>
-        </Box>,
-        <Grid
-          container
-          key={3}
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Grid container item direction="row" alignItems="center" sm={6}>
-            {currentCompanies?.length > 0 && (
-              <Button
-                priority="tertiary no outline"
-                onClick={() =>
-                  modals.open("newMission", {
-                    companies: store.companies(),
-                    companyAddresses: store.getEntity("knownAddresses"),
-                    disableCurrentPosition: true,
-                    disableKilometerReading: true,
-                    withDay: true,
-                    withEndLocation: true,
-                    handleContinue: async missionInfos => {
-                      await alerts.withApiErrorHandling(async () => {
-                        const tempMissionId = await createMission({
-                          companyId: missionInfos.company.id,
-                          name: missionInfos.mission,
-                          vehicle: missionInfos.vehicle,
-                          startLocation: missionInfos.address,
-                          endLocation: missionInfos.endAddress
-                        });
-                        await api.executePendingRequests();
-                        const actualMissionId = store.identityMap()[
-                          tempMissionId
-                        ];
-                        if (!actualMissionId) {
-                          alerts.error(
-                            "La mission n'a pas pu être créée. Vérifiez votre connexion internet, vous ne pouvez pas créer de mission passée sans être connecté.",
-                            tempMissionId,
-                            6000
-                          );
-                        } else {
-                          history.push(
-                            `/app/edit_mission?mission=${actualMissionId}`,
-                            { day: missionInfos.day }
-                          );
-                          modals.close("newMission");
-                        }
-                      }, "create-mission");
-                    }
-                  })
-                }
-                iconId="fr-icon-add-circle-fill"
-                iconPosition="left"
-              >
-                Ajouter une mission passée
-              </Button>
-            )}
-          </Grid>
-          <LogHolidayButton onClick={() => openHolidaysModal()} />
+      {!isInControl && (
+        <>
+          <AccountButton p={2} onBackButtonClick={onBackButtonClick} />
+          <Box className={classes.accessControlContainer}>
+            <Button
+              priority="secondary"
+              className={cx(classes.generateAccessButton, "error")}
+              onClick={() => {
+                modals.open("userReadQRCode");
+              }}
+            >
+              Accès contrôleurs
+            </Button>
+          </Box>
           <Grid
             container
-            item
             direction="row"
+            justifyContent="space-between"
             alignItems="center"
-            justifyContent={{ sm: "flex-end" }}
-            xs={12}
+            marginBottom={2}
           >
-            <Button
-              priority="tertiary no outline"
-              iconId="fr-icon-download-fill"
-              iconPosition="left"
-              onClick={() =>
-                modals.open("pdfExport", {
-                  initialMinDate: startPeriodFilter,
-                  initialMaxDate: endPeriodFilter
-                })
-              }
+            <Grid container item direction="row" alignItems="center" sm={6}>
+              {currentCompanies?.length > 0 && (
+                <Button
+                  priority="tertiary no outline"
+                  onClick={() =>
+                    modals.open("newMission", {
+                      companies: store.companies(),
+                      companyAddresses: store.getEntity("knownAddresses"),
+                      disableCurrentPosition: true,
+                      disableKilometerReading: true,
+                      withDay: true,
+                      withEndLocation: true,
+                      handleContinue: async missionInfos => {
+                        await alerts.withApiErrorHandling(async () => {
+                          const tempMissionId = await createMission({
+                            companyId: missionInfos.company.id,
+                            name: missionInfos.mission,
+                            vehicle: missionInfos.vehicle,
+                            startLocation: missionInfos.address,
+                            endLocation: missionInfos.endAddress
+                          });
+                          await api.executePendingRequests();
+                          const actualMissionId = store.identityMap()[
+                            tempMissionId
+                          ];
+                          if (!actualMissionId) {
+                            alerts.error(
+                              "La mission n'a pas pu être créée. Vérifiez votre connexion internet, vous ne pouvez pas créer de mission passée sans être connecté.",
+                              tempMissionId,
+                              6000
+                            );
+                          } else {
+                            history.push(
+                              `/app/edit_mission?mission=${actualMissionId}`,
+                              { day: missionInfos.day }
+                            );
+                            modals.close("newMission");
+                          }
+                        }, "create-mission");
+                      }
+                    })
+                  }
+                  iconId="fr-icon-add-circle-fill"
+                  iconPosition="left"
+                >
+                  Ajouter une mission passée
+                </Button>
+              )}
+            </Grid>
+            <LogHolidayButton onClick={() => openHolidaysModal()} />
+            <Grid
+              container
+              item
+              direction="row"
+              alignItems="center"
+              justifyContent={{ sm: "flex-end" }}
+              xs={12}
             >
-              Télécharger un relevé d'heures
-            </Button>
+              <Button
+                priority="tertiary no outline"
+                iconId="fr-icon-download-fill"
+                iconPosition="left"
+                onClick={() =>
+                  modals.open("pdfExport", {
+                    initialMinDate: startPeriodFilter,
+                    initialMaxDate: endPeriodFilter
+                  })
+                }
+              >
+                Télécharger un relevé d'heures
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>,
-        <PeriodFilter
-          key={4}
-          minDate={startPeriodFilter}
-          setMinDate={onChangeStartPeriodFilter}
-          maxDate={endPeriodFilter}
-          setMaxDate={onChangeEndPeriodFilter}
-          periodFilterRangeError={periodFilterRangeError}
-        />
-      ]}
+          <PeriodFilter
+            minDate={startPeriodFilter}
+            setMinDate={onChangeStartPeriodFilter}
+            maxDate={endPeriodFilter}
+            setMaxDate={onChangeEndPeriodFilter}
+            periodFilterRangeError={periodFilterRangeError}
+          />
+        </>
+      )}
       <Container className={classes.periodSelector} maxWidth={false}>
         <Tabs
           value={currentTab}
