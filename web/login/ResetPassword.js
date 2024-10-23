@@ -48,8 +48,8 @@ export function ResetPassword() {
   const withLoadingScreen = useLoadingScreen();
 
   const [didSubmitForm, setDidSubmitForm] = React.useState(false);
-  const [password, setPassword] = React.useState(null);
-  const [passwordCopy, setPasswordCopy] = React.useState(null);
+  const [password, setPassword] = React.useState("");
+  const [passwordCopy, setPasswordCopy] = React.useState("");
 
   const [tokenError, setTokenError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);

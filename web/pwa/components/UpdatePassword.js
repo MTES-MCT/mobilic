@@ -16,8 +16,8 @@ export default function UpdatePasswordModal() {
   const [isOpen, setIsOpen] = useState(true);
 
   const [loading, setLoading] = React.useState(false);
-  const [password, setPassword] = React.useState(null);
-  const [passwordCopy, setPasswordCopy] = React.useState(null);
+  const [password, setPassword] = React.useState("");
+  const [passwordCopy, setPasswordCopy] = React.useState("");
 
   const passwordError = password ? getPasswordErrors(password) : null;
   const passwordCopyError =
