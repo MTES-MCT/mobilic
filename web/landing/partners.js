@@ -144,7 +144,7 @@ export function Partners() {
           </PaperContainerTitle>
         </Box>
         <Grid container spacing={14}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} textAlign="center">
             <Typography variant="h5" component="h2" className={classes.title}>
               Les entreprises
             </Typography>
@@ -174,6 +174,7 @@ export function Partners() {
               <LoadingButton
                 className={classes.cta}
                 onClick={() => setShowAllPartners(true)}
+                priority="secondary"
               >
                 Voir plus
               </LoadingButton>
@@ -187,7 +188,7 @@ export function Partners() {
               </LoadingButton>
             </div>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} textAlign="center">
             <Box marginBottom={16}>
               <Typography variant="h5" component="h2" className={classes.title}>
                 Les éditeurs de logiciels
