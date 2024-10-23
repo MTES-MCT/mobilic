@@ -7,7 +7,8 @@ export const resourceCardsClasses = makeStyles(theme => ({
     backgroundColor: theme.palette.grey[100],
     borderColor: theme.palette.primary.main,
     width: "100%",
-    height: "100%"
+    height: "100%",
+    position: "relative"
   },
   description: {
     marginBottom: theme.spacing(2),
