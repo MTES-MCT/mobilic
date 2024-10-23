@@ -18,151 +18,154 @@ export function ControllerResourcePage() {
   usePageTitle("Documentation Contrôleur - Mobilic");
   const classes = resourcePagesClasses();
 
-  return [
-    <Header key={1} />,
-    <Container
-      key={2}
-      className={`${classes.container} ${classes.whiteSection}`}
-      maxWidth={false}
-    >
-      <Container maxWidth="lg" className={classes.inner}>
-        <Breadcrumb
-          currentPageLabel="Contrôleur"
-          homeLinkProps={{
-            to: "/"
-          }}
-          segments={[
-            {
-              label: "Documentation",
-              linkProps: {
-                to: "/resources/home"
+  return (
+    <>
+      <Header />
+      <Container
+        className={`${classes.container} ${classes.whiteSection}`}
+        maxWidth={false}
+      >
+        <Container maxWidth="xl" className={classes.inner}>
+          <Breadcrumb
+            currentPageLabel="Contrôleur"
+            homeLinkProps={{
+              to: "/"
+            }}
+            segments={[
+              {
+                label: "Documentation",
+                linkProps: {
+                  to: "/resources/home"
+                }
               }
-            }
-          ]}
-        />
-        <PaperContainerTitle variant="h1" className={classes.title}>
-          Je suis contrôleur
-        </PaperContainerTitle>
-        <Typography variant={"h3"} className={classes.resourceSubtitle}>
-          Je suis contrôleur des transports terrestres ou inspecteur du travail,
-          et j'apprends à utiliser Mobilic
-        </Typography>
-        <Grid container direction="row" alignItems="stretch" spacing={10}>
-          <Grid item sm={6}>
-            <Box>
-              <SlideshareCard
-                description="Notice d'utilisation"
-                slideshareUrl={
-                  RESOURCES_DOCUMENT.noticeUtilisation.controleurConnected
-                    .slideshare
-                }
-                downloadLink={
-                  RESOURCES_DOCUMENT.noticeUtilisation.controleurConnected
-                    .download
-                }
-              />
-            </Box>
-            <Button
-              priority="secondary"
-              size="small"
-              className={classes.viewAllButton}
-              linkProps={{
-                href:
-                  "https://drive.google.com/drive/folders/1b87UFjE7BL-nk-dQy_Seghs1gcgBB-A8",
-                target: "_blank"
-              }}
-            >
-              Voir toutes les notices
-            </Button>
+            ]}
+          />
+          <PaperContainerTitle variant="h1" className={classes.title}>
+            Je suis contrôleur
+          </PaperContainerTitle>
+          <Typography variant={"h3"} className={classes.resourceSubtitle}>
+            Je suis contrôleur des transports terrestres ou inspecteur du
+            travail, et j'apprends à utiliser Mobilic
+          </Typography>
+          <Grid container direction="row" alignItems="stretch" spacing={10}>
+            <Grid item sm={6}>
+              <Box>
+                <SlideshareCard
+                  description="Notice d'utilisation"
+                  slideshareUrl={
+                    RESOURCES_DOCUMENT.noticeUtilisation.controleurConnected
+                      .slideshare
+                  }
+                  downloadLink={
+                    RESOURCES_DOCUMENT.noticeUtilisation.controleurConnected
+                      .download
+                  }
+                />
+              </Box>
+              <Button
+                priority="secondary"
+                size="small"
+                className={classes.viewAllButton}
+                linkProps={{
+                  href:
+                    "https://drive.google.com/drive/folders/1b87UFjE7BL-nk-dQy_Seghs1gcgBB-A8",
+                  target: "_blank"
+                }}
+              >
+                Voir toutes les notices
+              </Button>
+            </Grid>
+            <Grid item sm={6}>
+              <Box>
+                <VideoCard video={VIDEOS.Tuto_Ctt} />
+              </Box>
+              <Button
+                priority="secondary"
+                size="small"
+                className={classes.viewAllButton}
+                linkProps={{
+                  href:
+                    "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos",
+                  target: "_blank"
+                }}
+              >
+                Voir toutes les vidéos
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item sm={6}>
-            <Box>
-              <VideoCard video={VIDEOS.Tuto_Ctt} />
-            </Box>
-            <Button
-              priority="secondary"
-              size="small"
-              className={classes.viewAllButton}
-              linkProps={{
-                href:
-                  "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos",
-                target: "_blank"
-              }}
-            >
-              Voir toutes les vidéos
-            </Button>
+          <Typography
+            variant={"h3"}
+            className={classes.itAgentResourceSubtitle}
+          >
+            Je fais partie des forces en tenue et j'apprends à utiliser Mobilic
+          </Typography>
+          <Grid container direction="row" alignItems="stretch" spacing={10}>
+            <Grid item sm={6}>
+              <Box>
+                <SlideshareCard
+                  description="Notice d'utilisation"
+                  slideshareUrl={
+                    RESOURCES_DOCUMENT.noticeUtilisation.controleur.slideshare
+                  }
+                  downloadLink={
+                    RESOURCES_DOCUMENT.noticeUtilisation.controleur.download
+                  }
+                />
+              </Box>
+              <Button
+                priority="secondary"
+                size="small"
+                className={classes.viewAllButton}
+                linkProps={{
+                  href:
+                    "https://drive.google.com/drive/folders/1b87UFjE7BL-nk-dQy_Seghs1gcgBB-A8",
+                  target: "_blank"
+                }}
+              >
+                Voir toutes les notices
+              </Button>
+            </Grid>
+            <Grid item sm={6}>
+              <Box>
+                <VideoCard video={VIDEOS.Tuto_Police} />
+              </Box>
+              <Button
+                priority="secondary"
+                size="small"
+                className={classes.viewAllButton}
+                linkProps={{
+                  href:
+                    "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos",
+                  target: "_blank"
+                }}
+              >
+                Voir toutes les vidéos
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-        <Typography variant={"h3"} className={classes.itAgentResourceSubtitle}>
-          Je fais partie des forces en tenue et j'apprends à utiliser Mobilic
-        </Typography>
-        <Grid container direction="row" alignItems="stretch" spacing={10}>
-          <Grid item sm={6}>
-            <Box>
-              <SlideshareCard
-                description="Notice d'utilisation"
-                slideshareUrl={
-                  RESOURCES_DOCUMENT.noticeUtilisation.controleur.slideshare
-                }
-                downloadLink={
-                  RESOURCES_DOCUMENT.noticeUtilisation.controleur.download
-                }
-              />
-            </Box>
-            <Button
-              priority="secondary"
-              size="small"
-              className={classes.viewAllButton}
-              linkProps={{
-                href:
-                  "https://drive.google.com/drive/folders/1b87UFjE7BL-nk-dQy_Seghs1gcgBB-A8",
-                target: "_blank"
-              }}
-            >
-              Voir toutes les notices
-            </Button>
-          </Grid>
-          <Grid item sm={6}>
-            <Box>
-              <VideoCard video={VIDEOS.Tuto_Police} />
-            </Box>
-            <Button
-              priority="secondary"
-              size="small"
-              className={classes.viewAllButton}
-              linkProps={{
-                href:
-                  "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos",
-                target: "_blank"
-              }}
-            >
-              Voir toutes les vidéos
-            </Button>
-          </Grid>
-        </Grid>
+        </Container>
       </Container>
-    </Container>,
-    <Container
-      key={3}
-      className={`${classes.container} ${classes.whiteSection}`}
-      maxWidth={false}
-    >
-      <Container maxWidth="lg" className={classes.inner}>
-        <Typography variant={"h3"} className={classes.resourceSubtitle}>
-          Je souhaite diffuser Mobilic auprès de mes collègues et des
-          entreprises que je contrôle
-        </Typography>
-        <Grid container direction="row" alignItems="stretch" spacing={10}>
-          <Grid item sm={6}>
-            <SlideshareCard
-              description="Brochure"
-              slideshareUrl={RESOURCES_DOCUMENT.brochure.slideshare}
-              downloadLink={RESOURCES_DOCUMENT.brochure.download}
-            />
+      <Container
+        className={`${classes.container} ${classes.whiteSection}`}
+        maxWidth={false}
+      >
+        <Container maxWidth="xl" className={classes.inner}>
+          <Typography variant={"h3"} className={classes.resourceSubtitle}>
+            Je souhaite diffuser Mobilic auprès de mes collègues et des
+            entreprises que je contrôle
+          </Typography>
+          <Grid container direction="row" alignItems="stretch" spacing={10}>
+            <Grid item sm={6}>
+              <SlideshareCard
+                description="Brochure"
+                slideshareUrl={RESOURCES_DOCUMENT.brochure.slideshare}
+                downloadLink={RESOURCES_DOCUMENT.brochure.download}
+              />
+            </Grid>
           </Grid>
-        </Grid>
+        </Container>
       </Container>
-    </Container>,
-    <Footer key={4} />
-  ];
+      <Footer />
+    </>
+  );
 }

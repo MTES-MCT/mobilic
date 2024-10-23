@@ -17,60 +17,60 @@ export function DriverResourcePage() {
   usePageTitle("Documentation Travailleur Mobile - Mobilic");
   const classes = resourcePagesClasses();
 
-  return [
-    <Header key={1} />,
-    <Container
-      key={2}
-      className={`${classes.container} ${classes.whiteSection}`}
-      maxWidth={false}
-    >
-      <Container maxWidth="lg" className={classes.inner}>
-        <Breadcrumb
-          currentPageLabel="Travailleur mobile"
-          homeLinkProps={{
-            to: "/"
-          }}
-          segments={[
-            {
-              label: "Documentation",
-              linkProps: {
-                to: "/resources/home"
+  return (
+    <>
+      <Header />
+      <Container
+        className={`${classes.container} ${classes.whiteSection}`}
+        maxWidth={false}
+      >
+        <Container maxWidth="xl" className={classes.inner}>
+          <Breadcrumb
+            currentPageLabel="Travailleur mobile"
+            homeLinkProps={{
+              to: "/"
+            }}
+            segments={[
+              {
+                label: "Documentation",
+                linkProps: {
+                  to: "/resources/home"
+                }
               }
-            }
-          ]}
-        />
-        <PaperContainerTitle variant="h1" className={classes.title}>
-          Je suis travailleur mobile
-        </PaperContainerTitle>
-        <Typography variant={"h3"} className={classes.resourceSubtitle}>
-          Je souhaite apprendre à utiliser Mobilic
-        </Typography>
-        <Grid container direction="row" alignItems="stretch" spacing={10}>
-          <Grid item xs={12} sm={6}>
-            <Box>
-              <SlideshareCard
-                description="Notice d'utilisation"
-                slideshareUrl={
-                  RESOURCES_DOCUMENT.noticeUtilisation.salarie.slideshare
-                }
-                downloadLink={
-                  RESOURCES_DOCUMENT.noticeUtilisation.salarie.download
-                }
-              />
-            </Box>
+            ]}
+          />
+          <PaperContainerTitle variant="h1" className={classes.title}>
+            Je suis travailleur mobile
+          </PaperContainerTitle>
+          <Typography variant={"h3"} className={classes.resourceSubtitle}>
+            Je souhaite apprendre à utiliser Mobilic
+          </Typography>
+          <Grid container direction="row" alignItems="stretch" spacing={10}>
+            <Grid item xs={12} sm={6}>
+              <Box>
+                <SlideshareCard
+                  description="Notice d'utilisation"
+                  slideshareUrl={
+                    RESOURCES_DOCUMENT.noticeUtilisation.salarie.slideshare
+                  }
+                  downloadLink={
+                    RESOURCES_DOCUMENT.noticeUtilisation.salarie.download
+                  }
+                />
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
+        </Container>
       </Container>
-    </Container>,
-    <Container
-      key={3}
-      className={`${classes.container} ${classes.whiteSection}`}
-      maxWidth={false}
-    >
-      <Container maxWidth="lg" className={classes.inner}>
-        <DriverVideoSection buttonStyle={classes.viewAllButton} />
+      <Container
+        className={`${classes.container} ${classes.whiteSection}`}
+        maxWidth={false}
+      >
+        <Container maxWidth="xl" className={classes.inner}>
+          <DriverVideoSection buttonStyle={classes.viewAllButton} />
+        </Container>
       </Container>
-    </Container>,
-    <Footer key={4} />
-  ];
+      <Footer />
+    </>
+  );
 }

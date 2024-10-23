@@ -32,7 +32,7 @@ function Notices() {
   const classes = useStyles();
 
   return (
-    <Container className={classes.container} maxWidth="lg">
+    <Container className={classes.container} maxWidth="xl">
       <h1>Mentions légales</h1>
       <Stack direction="column" spacing={4}>
         <Box>

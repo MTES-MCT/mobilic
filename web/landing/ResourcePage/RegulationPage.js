@@ -49,7 +49,7 @@ export function RegulationPage() {
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth={false}
     >
-      <Container maxWidth="lg" className={classes.inner}>
+      <Container maxWidth="xl" className={classes.inner}>
         <Breadcrumb
           currentPageLabel="Réglementation"
           homeLinkProps={{

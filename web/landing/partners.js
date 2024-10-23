@@ -137,7 +137,7 @@ export function Partners() {
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth={false}
     >
-      <Container maxWidth="lg" className={classes.inner}>
+      <Container maxWidth="xl" className={classes.inner}>
         <Box>
           <PaperContainerTitle variant="h1" className={classes.title}>
             Qui sont les partenaires de Mobilic ?
