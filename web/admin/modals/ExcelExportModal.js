@@ -22,6 +22,15 @@ import Modal, { modalStyles } from "../../common/Modal";
 import { TeamFilter } from "../components/TeamFilter";
 import { EmployeeFilter } from "../components/EmployeeFilter";
 
+export const syncUsers = (setUsers, newUsers) => {
+  setUsers(currentUsers => [
+    ...currentUsers,
+    ...newUsers.filter(
+      newUser =>
+        !currentUsers.map(currentUser => currentUser.id).includes(newUser.id)
+    )
+  ]);
+};
 export default function ExcelExportModal({
   open,
   handleClose,
@@ -49,15 +58,7 @@ export default function ExcelExportModal({
   React.useEffect(async () => {
     if (minDate < defaultMinDate) {
       const newUsers = await getUsersSinceDate(minDate);
-      setUsers(currentUsers => [
-        ...currentUsers,
-        ...newUsers.filter(
-          newUser =>
-            !currentUsers
-              .map(currentUser => currentUser.id)
-              .includes(newUser.id)
-        )
-      ]);
+      syncUsers(setUsers, newUsers);
     }
   }, [minDate]);
 
