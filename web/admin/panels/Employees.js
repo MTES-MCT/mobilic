@@ -47,9 +47,6 @@ const useStyles = makeStyles(theme => ({
   successText: {
     color: theme.palette.success.main
   },
-  warningText: {
-    color: theme.palette.warning.main
-  },
   augmentedTable: {
     marginRight: theme.spacing(10)
   },

@@ -1,3 +1,4 @@
+import { fr } from "@codegouvfr/react-dsfr";
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
 export const customOptions = {
@@ -28,6 +29,12 @@ export const customOptions = {
       light: "#DAE9FF",
       lighter: "#F4F8FF",
       dark: "#202DA7"
+    },
+    warning: {
+      light: fr.colors.options.warning._425_625.active,
+      main: fr.colors.options.warning._425_625.default,
+      dark: fr.colors.options.warning._425_625.hover,
+      contrastText: fr.colors.options.grey._1000_50.default
     }
     // background: {
     //   default: "#f7f9fa",

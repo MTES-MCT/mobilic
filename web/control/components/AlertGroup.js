@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => {
       backgroundColor: theme.palette.error.main
     },
     notReportableAlert: {
-      backgroundColor: theme.palette.warning.main
+      backgroundColor: theme.palette.warning.light
     },
     description: {
       fontStyle: "italic",
