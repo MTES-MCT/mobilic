@@ -58,7 +58,7 @@ export const useStyles = makeStyles(theme => ({
   },
   customBadge: {
     "& .MuiBadge-badge": {
-      right: theme.spacing(-2),
+      right: theme.spacing(-16),
       top: theme.spacing(1),
       color: "white"
     }
