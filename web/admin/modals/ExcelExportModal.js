@@ -55,11 +55,14 @@ export default function ExcelExportModal({
 
   const [isEnabledDownload, setIsEnabledDownload] = React.useState(true);
 
-  React.useEffect(async () => {
-    if (minDate < defaultMinDate) {
-      const newUsers = await getUsersSinceDate(minDate);
-      syncUsers(setUsers, newUsers);
-    }
+  React.useEffect(() => {
+    const load = async () => {
+      if (minDate < defaultMinDate) {
+        const newUsers = await getUsersSinceDate(minDate);
+        syncUsers(setUsers, newUsers);
+      }
+    };
+    load();
   }, [minDate]);
 
   React.useEffect(() => setIsEnabledDownload(true), [

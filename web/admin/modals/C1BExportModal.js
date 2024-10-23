@@ -52,11 +52,14 @@ export default function C1BExportModal({
   const [teams, setTeams] = React.useState(initialTeams);
   const [employeeVersion, setEmployeeVersion] = React.useState(true);
 
-  React.useEffect(async () => {
-    if (minDate < defaultMinDate) {
-      const newUsers = await getUsersSinceDate(minDate);
-      syncUsers(setUsers, newUsers);
-    }
+  React.useEffect(() => {
+    const load = async () => {
+      if (minDate < defaultMinDate) {
+        const newUsers = await getUsersSinceDate(minDate);
+        syncUsers(setUsers, newUsers);
+      }
+    };
+    load();
   }, [minDate]);
 
   const invalidDateRange = (minDate, maxDate) =>
