@@ -21,6 +21,7 @@ export function Footer({ withFollow = true }) {
           title: "Accueil - Mobilic"
         }}
         accessibility="non compliant"
+        accessibilityLinkProps={{ to: "/accessibility" }}
         contentDescription="Mobilic est un service numérique de l’Etat, soutenu par la
               Direction générale des infrastructures, des transports et des mobilités 
               (DGITM), incubé à la Fabrique Numérique du Ministère de la
