@@ -115,7 +115,7 @@ export function Certificate() {
         Consultez le statut de certification d'une entreprise :
       </Typography>
       <Grid container mt={2} mb={5} className={classes.searchBar}>
-        <Grid item xs={12} md={10}>
+        <Grid item xs={12} md={10} margin="auto">
           <Input
             label=""
             required
