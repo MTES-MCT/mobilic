@@ -32,7 +32,7 @@ export function Footer({ withFollow = true }) {
           orientation: "horizontal"
         }}
         termsLinkProps={{
-          to: "legal-notices"
+          to: "/legal-notices"
         }}
         bottomItems={[
           {
