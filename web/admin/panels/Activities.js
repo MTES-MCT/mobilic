@@ -61,6 +61,7 @@ import { LogHolidayButton } from "../../common/LogHolidayButton";
 import { LogHolidayForm } from "../../common/LogHolidayForm";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { usePageTitle } from "../../common/UsePageTitle";
+import { useGetUsersSinceDate } from "../../common/hooks/useGetUsersSinceDate";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import CloseButton from "../../common/CloseButton";
 
@@ -161,6 +162,7 @@ function ActivitiesPanel() {
   const api = useApi();
   const history = useHistory();
   const { trackEvent } = useMatomo();
+  const { getUsersSinceDate } = useGetUsersSinceDate();
 
   const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
   const [teams, setTeams] = React.useState(adminStore.activitiesFilters.teams);
@@ -386,7 +388,8 @@ function ActivitiesPanel() {
                   defaultMinDate: minDate ? new Date(minDate) : null,
                   defaultMaxDate: maxDate
                     ? new Date(maxDate)
-                    : startOfDayAsDate(new Date())
+                    : startOfDayAsDate(new Date()),
+                  getUsersSinceDate
                 });
               }}
             >
@@ -407,7 +410,8 @@ function ActivitiesPanel() {
                   defaultMinDate: minDate ? new Date(minDate) : null,
                   defaultMaxDate: maxDate
                     ? new Date(maxDate)
-                    : startOfDayAsDate(new Date())
+                    : startOfDayAsDate(new Date()),
+                  getUsersSinceDate
                 });
               }}
             >

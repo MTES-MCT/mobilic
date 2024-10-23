@@ -21,6 +21,7 @@ import { TeamFilter } from "../components/TeamFilter";
 import { EmployeeFilter } from "../components/EmployeeFilter";
 import { CompanyFilter } from "../components/CompanyFilter";
 import Modal, { modalStyles } from "../../common/Modal";
+import { syncUsers } from "./ExcelExportModal";
 import Notice from "../../common/Notice";
 
 export default function C1BExportModal({
@@ -31,7 +32,8 @@ export default function C1BExportModal({
   initialTeams = [],
   defaultMinDate = null,
   defaultMaxDate = null,
-  defaultCompany
+  defaultCompany,
+  getUsersSinceDate
 }) {
   const MAX_RANGE_DAYS = 60;
   const today = new Date();
@@ -49,6 +51,13 @@ export default function C1BExportModal({
   const [users, setUsers] = React.useState(initialUsers);
   const [teams, setTeams] = React.useState(initialTeams);
   const [employeeVersion, setEmployeeVersion] = React.useState(true);
+
+  React.useEffect(async () => {
+    if (minDate < defaultMinDate) {
+      const newUsers = await getUsersSinceDate(minDate);
+      syncUsers(setUsers, newUsers);
+    }
+  }, [minDate]);
 
   const invalidDateRange = (minDate, maxDate) =>
     maxDate &&

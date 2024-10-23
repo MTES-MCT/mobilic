@@ -22,6 +22,15 @@ import { TeamFilter } from "../components/TeamFilter";
 import { EmployeeFilter } from "../components/EmployeeFilter";
 import Notice from "../../common/Notice";
 
+export const syncUsers = (setUsers, newUsers) => {
+  setUsers(currentUsers => [
+    ...currentUsers,
+    ...newUsers.filter(
+      newUser =>
+        !currentUsers.map(currentUser => currentUser.id).includes(newUser.id)
+    )
+  ]);
+};
 export default function ExcelExportModal({
   open,
   handleClose,
@@ -30,7 +39,8 @@ export default function ExcelExportModal({
   initialUsers,
   initialTeams,
   defaultMinDate = null,
-  defaultMaxDate = null
+  defaultMaxDate = null,
+  getUsersSinceDate
 }) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
@@ -44,6 +54,13 @@ export default function ExcelExportModal({
   const [teams, setTeams] = React.useState(initialTeams);
 
   const [isEnabledDownload, setIsEnabledDownload] = React.useState(true);
+
+  React.useEffect(async () => {
+    if (minDate < defaultMinDate) {
+      const newUsers = await getUsersSinceDate(minDate);
+      syncUsers(setUsers, newUsers);
+    }
+  }, [minDate]);
 
   React.useEffect(() => setIsEnabledDownload(true), [
     minDate,

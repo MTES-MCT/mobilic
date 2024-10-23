@@ -448,8 +448,8 @@ export const AugmentedTable = React.forwardRef(
     if (sortBy && sortType) {
       sortBys.push(item =>
         get(item, sortBy)
-          .toString()
-          .toLowerCase()
+          ?.toString()
+          ?.toLowerCase()
       );
       sortTypes.push(sortType);
     }

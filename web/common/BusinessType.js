@@ -16,7 +16,11 @@ const BUSINESS_OPTIONS = {
   ],
   TRV: [
     { value: "FREQUENT", label: "Lignes régulières" },
-    { value: "INFREQUENT", label: "Occasionnel" }
+    { value: "INFREQUENT", label: "Occasionnel" },
+    { value: "TAXI_GENERAL", label: "Taxi général" },
+    { value: "TAXI_REGULATED", label: "Taxi conventionné" },
+    { value: "VTC", label: "VTC" },
+    { value: "LOTI", label: "LOTI" }
   ]
 };
 
