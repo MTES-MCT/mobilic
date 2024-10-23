@@ -16,7 +16,7 @@ const TimezoneSelect = ({ currentTimezone, setTimezone }) => {
         required
       >
         {TIMEZONES.map(option => (
-          <option key={`timezone__${option.value}`} value={option.value}>
+          <option key={`timezone__${option.name}`} value={option.name}>
             {option.label}
           </option>
         ))}
