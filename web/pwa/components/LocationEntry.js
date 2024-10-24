@@ -78,7 +78,7 @@ export default function LocationEntry({
       ) : location && editKilometerReading ? (
         <ListItemText className={classes.kilometerReading} disableTypography>
           <Button
-            priority="secondary"
+            priority="tertiary"
             size="small"
             onClick={handleEditKilometerReading}
           >

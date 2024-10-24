@@ -227,7 +227,7 @@ function CompanyPanel({ width, containerRef }) {
   return (
     <Stack
       direction="column"
-      spacing={1.5}
+      spacing={1}
       sx={{ marginTop: "8px", paddingX: "8px" }}
     >
       <Box

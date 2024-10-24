@@ -33,7 +33,6 @@ import { useHolidays } from "../../common/useHolidays";
 import { WarningBreaks } from "../components/WarningBreaks";
 import { useEnoughBreak } from "../../common/useEnoughBreak";
 import Stack from "@mui/material/Stack";
-import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -102,15 +101,9 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.primary.main
     }
   },
-  uppercaseButton: {
-    textTransform: "uppercase"
-  },
   promiseText: {
     color: theme.palette.primary.contrastText,
     fontStyle: "italic"
-  },
-  holidayButton: {
-    textDecoration: "underline"
   }
 }));
 
@@ -247,7 +240,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
             Commencer une mission
           </LoadingButton>
           <LoadingButton
-            className={cx(classes.subButton, classes.uppercaseButton)}
+            className={classes.subButton}
             onClick={() => {
               openHistory();
             }}
@@ -256,7 +249,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
             Voir mon historique
           </LoadingButton>
           <LoadingButton
-            className={cx(classes.subButton, classes.holidayButton)}
+            className={classes.subButton}
             onClick={() => {
               onEnterNewHolidayFunnel();
             }}

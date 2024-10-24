@@ -15,7 +15,6 @@ import { LoadingButton } from "common/components/LoadingButton";
 const useStyles = makeStyles(theme => ({
   container: {
     backgroundColor: theme.palette.background.paper,
-    borderRadius: "24px",
     marginTop: theme.spacing(-3),
     marginBottom: theme.spacing(-3),
     zIndex: 1000,
@@ -213,7 +212,7 @@ export function ActivitySwitch({
       </Grid>
       {endMission && (
         <Box pt={6} pb={2}>
-          <LoadingButton onClick={() => endMission(now())}>
+          <LoadingButton onClick={() => endMission(now())} size="large">
             Mission terminée
           </LoadingButton>
         </Box>

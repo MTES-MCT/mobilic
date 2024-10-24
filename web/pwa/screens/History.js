@@ -144,7 +144,6 @@ const useStyles = makeStyles(theme => ({
   contentContainer: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
-    borderRadius: "24px 24px 0 0",
     flexGrow: 1,
     flexShrink: 0,
     paddingTop: theme.spacing(4),

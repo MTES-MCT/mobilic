@@ -46,6 +46,7 @@ export default function ConfirmationModal({
 
   return (
     <Modal
+      size="sm"
       open={open}
       handleClose={handleClose}
       title={title || "Confirmer"}

@@ -148,8 +148,8 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
       </Typography>
       <CloseButton onClick={handleClose} />
     </Box>,
-    <Box key={1}>
-      <Typography variant="h3" component="p" className={classes.employeeName}>
+    <Box key={1} marginTop={1} marginBottom={3}>
+      <Typography variant="h6" component="p" className={classes.employeeName}>
         {workTimeEntry.workerName}
       </Typography>
     </Box>,

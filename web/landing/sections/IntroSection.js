@@ -51,7 +51,8 @@ const useStyles = makeStyles(theme => ({
     }
   },
   explanation: {
-    fontSize: "1.25em",
+    fontSize: "1.25rem",
+    lineHeight: "1.75rem",
     marginTop: theme.spacing(10),
     [theme.breakpoints.down("sm")]: {
       marginTop: theme.spacing(2),

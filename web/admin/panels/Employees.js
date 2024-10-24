@@ -699,6 +699,7 @@ export function Employees({ company, containerRef }) {
               disabled={isAddingEmployment}
               className={classes.hideButton}
               priority="tertiary"
+              size="small"
               onClick={() => {
                 setHidePendingEmployments(!hidePendingEmployments);
                 setTimeout(

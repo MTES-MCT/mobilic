@@ -67,7 +67,7 @@ export default function CompanyDetails({ company }) {
       </Stack>
       <Button
         size="small"
-        priority="secondary"
+        priority="tertiary"
         title={`Modifier les informations de l'entreprise ${company?.name}`}
         onClick={() =>
           modals.open("updateCompanyDetails", {

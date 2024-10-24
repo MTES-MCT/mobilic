@@ -485,7 +485,7 @@ export function MissionDetails({
                   (Lieux, Véhicules)."
               />
               <LoadingButton
-                size="small"
+                size="large"
                 className={classes.validationButton}
                 onClick={async e => {
                   e.stopPropagation();

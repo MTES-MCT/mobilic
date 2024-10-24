@@ -426,8 +426,14 @@ function ActivitiesPanel() {
       <Box
         className={`flex-column ${classes.workTimeTableContainer}`}
         style={{ maxHeight: ref.current ? ref.current.clientHeight : 0 }}
+        sx={{ marginTop: 1 }}
       >
-        <Typography align="left" variant="h6" component="span">
+        <Typography
+          align="left"
+          variant="h6"
+          component="span"
+          style={{ fontSize: "1rem" }}
+        >
           {`${periodAggregates.length} résultats${
             periodAggregates.length > 0
               ? ` pour ${
