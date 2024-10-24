@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "../../../common/Modal";
-import { Button } from "@dataesr/react-dsfr";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export default function ConfirmationDSFR({
   title,
@@ -21,7 +21,16 @@ export default function ConfirmationDSFR({
       actions={
         <>
           <Button
-            secondary
+            title="Annuler"
+            onClick={(...args) => {
+              handleCancel(...args);
+              handleClose();
+            }}
+            priority="secondary"
+          >
+            {cancelButtonLabel}
+          </Button>
+          <Button
             title="Confirmer"
             onClick={(...args) => {
               handleConfirm(...args);
@@ -29,15 +38,6 @@ export default function ConfirmationDSFR({
             }}
           >
             {confirmButtonLabel}
-          </Button>
-          <Button
-            title="Annuler"
-            onClick={(...args) => {
-              handleCancel(...args);
-              handleClose();
-            }}
-          >
-            {cancelButtonLabel}
           </Button>
         </>
       }

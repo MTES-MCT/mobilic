@@ -385,7 +385,11 @@ function ValidationPanel() {
           label={
             <Badge
               badgeContent={nbMissionsToValidateByWorker}
-              color="warning"
+              sx={{
+                "& .MuiBadge-badge": {
+                  backgroundColor: theme => theme.palette.warning.light
+                }
+              }}
               className={classes.customBadge}
             >
               {VALIDATION_TABS[1].label}
@@ -459,9 +463,6 @@ function ValidationPanel() {
               </Typography>
               {tab === 0 && (
                 <LoadingButton
-                  aria-label="Valider"
-                  variant="contained"
-                  color="primary"
                   size="small"
                   onClick={async e => {
                     e.stopPropagation();

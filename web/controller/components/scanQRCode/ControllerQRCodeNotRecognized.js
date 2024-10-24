@@ -2,12 +2,12 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import classNames from "classnames";
-import { Alert } from "@mui/material";
 import { Link } from "react-router-dom";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import Typography from "@mui/material/Typography";
 import { Header } from "../../../common/Header";
 import { usePageTitle } from "../../../common/UsePageTitle";
+import Notice from "../../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -27,9 +27,6 @@ const useStyles = makeStyles(theme => ({
   },
   whiteSection: {
     backgroundColor: theme.palette.background.paper
-  },
-  warningMessage: {
-    marginTop: theme.spacing(3)
   }
 }));
 export function ControllerQRCodeNotRecognized() {
@@ -60,10 +57,12 @@ export function ControllerQRCodeNotRecognized() {
         le QR Code scanné{" "}
         <b>provienne d'une application tierce non interfacée à Mobilic.</b>
       </Typography>
-      <Alert severity="warning" className={classes.warningMessage}>
-        N'hésitez pas à nous remonter le nom de l'application utilisée par le
-        salarié, afin que nous contactions cet éditeur de logiciel.
-      </Alert>
+      <Notice
+        type="warning"
+        sx={{ marginTop: 3 }}
+        description="N'hésitez pas à nous remonter le nom de l'application utilisée par le
+        salarié, afin que nous contactions cet éditeur de logiciel."
+      />
     </Container>
   ];
 }

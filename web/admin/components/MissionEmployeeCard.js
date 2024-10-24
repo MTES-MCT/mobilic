@@ -23,9 +23,8 @@ import { MissionInfoCard } from "./MissionInfoCard";
 import { ContradictoryChanges } from "../../pwa/components/ContradictoryChanges";
 import { useCacheContradictoryInfoInAdminStore } from "common/utils/contradictory";
 import Emoji from "../../common/Emoji";
-import { Alert } from "@mui/material";
-import classNames from "classnames";
 import { getNextHeadingComponent } from "common/utils/html";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   cardRecapKPIContainer: {
@@ -40,9 +39,6 @@ const useStyles = makeStyles(theme => ({
   runningMissionText: {
     color: theme.palette.warning.main,
     fontWeight: "bold"
-  },
-  linkAdminBypassValidation: {
-    fontSize: "0.875rem"
   }
 }));
 
@@ -185,20 +181,14 @@ export function MissionEmployeeCard({
             <>
               <Grid item>
                 {isAdminBypassingEmployeeValidation ? (
-                  <Alert severity="warning">
-                    La validation par le salarié n'a pas eu lieu pour{" "}
-                    <a
-                      href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic/suivi-et-validation-du-temps-de-travail#en-tant-que-gestionnaire-je-peux-uniquement-modifier-et-valider-les-missions-validees-par-les-salari"
-                      className={classNames(
-                        "fr-link fr-icon-external-link-line fr-link--icon-right",
-                        classes.linkAdminBypassValidation
-                      )}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      l'une des raisons suivantes
-                    </a>
-                  </Alert>
+                  <Notice
+                    type="warning"
+                    description={
+                      <>La validation par le salarié n'a pas eu lieu pour </>
+                    }
+                    linkText="l'une des raisons suivantes."
+                    linkUrl="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic/suivi-et-validation-du-temps-de-travail#en-tant-que-gestionnaire-je-peux-uniquement-modifier-et-valider-les-missions-validees-par-les-salari"
+                  />
                 ) : (
                   <MissionValidationInfo validation={stats.workerValidation} />
                 )}

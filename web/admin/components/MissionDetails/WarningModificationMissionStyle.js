@@ -9,13 +9,6 @@ export const useWarningModificationMissionStyles = makeStyles(theme => ({
     fontStyle: "italic",
     padding: 0
   },
-  modificationAlert: {
-    marginBottom: theme.spacing(3),
-    "& .MuiAlert-message": {
-      width: "100%",
-      paddingTop: theme.spacing(0.5)
-    }
-  },
   dismissModificationAlert: {
     float: "right",
     fontStyle: "italic",

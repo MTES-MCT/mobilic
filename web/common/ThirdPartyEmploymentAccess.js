@@ -1,4 +1,3 @@
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import {
@@ -10,6 +9,7 @@ import { DISMISS_THIRD_PARTY_EMPLOYMENT_TOKEN_MUTATION } from "common/utils/apiQ
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import React from "react";
 import { useSnackbarAlerts } from "./Snackbar";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   fieldName: {
@@ -88,10 +88,8 @@ const ThirdPartyEmploymentAccess = ({ employmentId, clients }) => {
           </Typography>
           <Button
             size="small"
-            color="primary"
-            variant="outlined"
+            priority="secondary"
             onClick={() => removeClientAccess(client.id)}
-            className={classes.actionButton}
           >
             Retirer l'accès
           </Button>

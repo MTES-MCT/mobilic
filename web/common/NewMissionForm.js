@@ -5,11 +5,12 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import { useStyles as useFunnelModalStyles } from "../pwa/components/FunnelModal";
 import MenuItem from "@mui/material/MenuItem";
-import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { VehicleFieldForApp } from "../pwa/components/VehicleFieldForApp";
 import { AddressField } from "./AddressField";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { DAY } from "common/utils/time";
+import { MandatoryField } from "./MandatoryField";
+import { LoadingButton } from "common/components/LoadingButton";
 
 export default function NewMissionForm({
   handleSubmit,
@@ -75,28 +76,30 @@ export default function NewMissionForm({
 
   return (
     <Container>
-      <form
-        autoComplete="off"
-        onSubmit={async e => {
-          setLoading(true);
-          e.preventDefault();
-          const payLoad = {
-            mission,
-            vehicle,
-            address,
-            company,
-            endAddress,
-            kilometerReading,
-            day
-          };
-          await handleSubmit(payLoad);
-          setLoading(false);
-        }}
+      <Container
+        className={`day-info-inputs ${funnelModalClasses.slimContainer}`}
+        style={{ flexShrink: 0 }}
+        disableGutters
       >
-        <Container
-          className={`day-info-inputs ${funnelModalClasses.slimContainer}`}
-          style={{ flexShrink: 0 }}
-          disableGutters
+        <MandatoryField />
+        <form
+          style={{ width: "100%" }}
+          autoComplete="off"
+          onSubmit={async e => {
+            setLoading(true);
+            e.preventDefault();
+            const payLoad = {
+              mission,
+              vehicle,
+              address,
+              company,
+              endAddress,
+              kilometerReading,
+              day
+            };
+            await handleSubmit(payLoad);
+            setLoading(false);
+          }}
         >
           {companies &&
             companies.length > 1 && [
@@ -229,22 +232,22 @@ export default function NewMissionForm({
                 : null
             }
           />
-        </Container>
-        <Box className="cta-container" my={4}>
-          <MainCtaButton
-            disabled={
-              !address ||
-              (!mission && settings?.requireMissionName) ||
-              (withEndLocation && !endAddress) ||
-              (withDay && !day)
-            }
-            type="submit"
-            loading={loading}
-          >
-            Continuer
-          </MainCtaButton>
-        </Box>
-      </form>
+          <Box className="cta-container" my={4}>
+            <LoadingButton
+              disabled={
+                !address ||
+                (!mission && settings?.requireMissionName) ||
+                (withEndLocation && !endAddress) ||
+                (withDay && !day)
+              }
+              type="submit"
+              loading={loading}
+            >
+              Continuer
+            </LoadingButton>
+          </Box>
+        </form>
+      </Container>
     </Container>
   );
 }

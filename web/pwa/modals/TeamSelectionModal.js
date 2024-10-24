@@ -14,11 +14,11 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { makeStyles } from "@mui/styles";
-import { MainCtaButton } from "../components/MainCtaButton";
 import {
   FunnelModal,
   useStyles as useFunnelModalStyles
 } from "../components/FunnelModal";
+import { LoadingButton } from "common/components/LoadingButton";
 
 const useStyles = makeStyles(theme => ({
   teamMate: {
@@ -159,7 +159,7 @@ export default function TeamSelectionModal({
           </List>
         </Container>
         <Box className="cta-container" mt={2} mb={4}>
-          <MainCtaButton
+          <LoadingButton
             onClick={async () => {
               handleContinue(
                 updatedCoworkersWithMissionEnrollmentStatuses.filter(
@@ -174,7 +174,7 @@ export default function TeamSelectionModal({
             }}
           >
             Continuer
-          </MainCtaButton>
+          </LoadingButton>
         </Box>
       </Container>
     </FunnelModal>

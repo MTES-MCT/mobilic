@@ -2,9 +2,7 @@ import { makeStyles } from "@mui/styles";
 
 export const useStyles = makeStyles(theme => ({
   employeeName: {
-    textOverflow: "ellipsis",
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(6)
+    textOverflow: "ellipsis"
   },
   regulatoryAlertCard: {
     height: "100%"

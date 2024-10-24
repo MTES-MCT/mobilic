@@ -13,9 +13,8 @@ import { isoFormatLocalDate, prettyFormatDay } from "common/utils/time";
 import Divider from "@mui/material/Divider";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { WeekRegulatoryAlerts } from "../../../regulatory/WeekRegulatoryAlerts";
-import Alert from "@mui/material/Alert";
-import Typography from "@mui/material/Typography";
 import { AlertsInHistory } from "../../../control/components/AlertsInHistory";
+import Notice from "../../../common/Notice";
 
 export function Week({
   missionsInPeriod,
@@ -70,9 +69,11 @@ export function Week({
         <AlertsInHistory alertsInPeriod={alertsInPeriod} />
       )}
       {missionsDeleted.length > 0 && (
-        <Alert severity="warning" sx={{ marginBottom: 2 }}>
-          <Typography>{missionsDeletedWarning}</Typography>
-        </Alert>
+        <Notice
+          type="warning"
+          sx={{ marginBottom: 2, textAlign: "left" }}
+          description={missionsDeletedWarning}
+        />
       )}
       <WorkTimeSummaryKpiGrid metrics={kpis} />
       {hasWorkMissions && !controlId && (

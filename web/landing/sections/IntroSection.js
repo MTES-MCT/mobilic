@@ -3,12 +3,12 @@ import Typography from "@mui/material/Typography";
 import React from "react";
 import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizontal.png";
 import BackgroundVerticalImage from "common/assets/images/landing-hero-vertical.jpg";
-import { Alert } from "@mui/material";
 import { Link } from "../../common/LinkButton";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthDown } from "common/utils/useWidth";
-import { VideoCard, VIDEOS } from "../ResourcePage/VideoCard";
+import classNames from "classnames";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   heroContainer: {
@@ -26,14 +26,11 @@ const useStyles = makeStyles(theme => ({
   loginLink: {
     whiteSpace: "nowrap"
   },
-  loginInfo: {
-    textAlign: "left"
-  },
   underlineBlue: {
     backgroundColor: "rgba(49, 132, 255, 0.2)"
   },
   leftBlockIntro: {
-    marginLeft: theme.spacing(12),
+    marginLeft: theme.spacing(4),
     [theme.breakpoints.down("sm")]: {
       marginLeft: theme.spacing(2)
     },
@@ -54,7 +51,8 @@ const useStyles = makeStyles(theme => ({
     }
   },
   explanation: {
-    fontSize: "1.25em",
+    fontSize: "1.25rem",
+    lineHeight: "1.75rem",
     marginTop: theme.spacing(10),
     [theme.breakpoints.down("sm")]: {
       marginTop: theme.spacing(2),
@@ -64,7 +62,6 @@ const useStyles = makeStyles(theme => ({
   },
   objective: {
     fontWeight: "bold",
-    fontSize: "1em",
     marginTop: theme.spacing(3)
   },
   phoneImageContainer: {
@@ -83,13 +80,6 @@ const useStyles = makeStyles(theme => ({
     maxWidth: "900px",
     [theme.breakpoints.down("sm")]: {
       marginLeft: theme.spacing(-2)
-    }
-  },
-  videoSection: {
-    marginTop: theme.spacing(5),
-    [theme.breakpoints.down("sm")]: {
-      paddingRight: theme.spacing(3.5),
-      marginLeft: theme.spacing(1)
     }
   }
 }));
@@ -120,10 +110,12 @@ const Explanation = () => {
           entreprises concernées par la réglementation de suivi du temps de
           travail dans le transport léger et dans le déménagement (-3.5T)
         </span>
-        <Typography className={classes.objective}>
-          L'objectif : faciliter l'application{" "}
-          <span style={{ whiteSpace: "nowrap" }}>de la réglementation !</span>
-        </Typography>
+      </Typography>
+      <Typography
+        className={classNames(classes.objective, classes.explanation)}
+      >
+        L'objectif : faciliter l'application{" "}
+        <span style={{ whiteSpace: "nowrap" }}>de la réglementation !</span>
       </Typography>
     </Grid>
   );
@@ -135,16 +127,29 @@ export function IntroSection() {
 
   return (
     <Container maxWidth={false} className={classes.heroContainer}>
-      <Alert severity="info" className={classes.loginInfo}>
-        <Link variant="login" to="/login-selection">
-          <span className={classes.loginLink}>Se connecter à mon espace</span>
-        </Link>
-      </Alert>
+      <Notice
+        size="small"
+        description={
+          <Link variant="login" to="/login-selection">
+            <span className={classes.loginLink}>Se connecter à mon espace</span>
+          </Link>
+        }
+      />
       <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
         <Grid container direction="row" className={classes.leftBlockIntro}>
           <Grid item xs={12} marginTop={4}>
-            <Typography className={classes.textTitle} variant="h1">
-              La plateforme numérique gouvernementale{" "}
+            <h1 className="fr-sr-only">
+              La plateforme numérique gouvernementale de suivi du temps de
+              travail dans le transport routier léger
+            </h1>
+            <div aria-hidden="true">
+              <Typography
+                className={classes.textTitle}
+                variant="h1"
+                component="p"
+              >
+                La plateforme numérique gouvernementale{" "}
+              </Typography>
               <Typography
                 className={classes.textIntro}
                 variant="h2"
@@ -162,7 +167,7 @@ export function IntroSection() {
               >
                 dans le transport routier léger
               </Typography>
-            </Typography>
+            </div>
           </Grid>
           {isSmDown ? (
             <>
@@ -175,22 +180,6 @@ export function IntroSection() {
               <PhoneImageComponent isSmDown={isSmDown} />
             </>
           )}
-        </Grid>
-      </Container>
-      <Container maxWidth="md" className={classes.videoSection}>
-        <Grid container direction="row" alignItems="center" spacing={1}>
-          <Grid item xs={12} sm={6}>
-            <VideoCard
-              video={VIDEOS.Home_Mobilic}
-              titleProps={{ component: "h3" }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <VideoCard
-              video={VIDEOS.Home_Regulation}
-              titleProps={{ component: "h3" }}
-            />
-          </Grid>
         </Grid>
       </Container>
     </Container>

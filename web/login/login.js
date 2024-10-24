@@ -14,7 +14,6 @@ import {
   buildFranceConnectUrl
 } from "common/utils/franceConnect";
 import { FranceConnectContainer } from "../common/FranceConnect";
-import { PasswordField } from "common/components/PasswordField";
 import { makeStyles } from "@mui/styles";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
@@ -23,14 +22,11 @@ import { EmailField } from "../common/EmailField";
 import { pluralize } from "common/utils/time";
 import { usePageTitle } from "../common/UsePageTitle";
 import { RegistrationLink } from "../common/RegistrationLink";
+import { PasswordInput } from "../common/forms/PasswordInput";
 
 const useStyles = makeStyles(theme => ({
   forgotPasswordLink: {
     marginBottom: theme.spacing(2)
-  },
-  dividerAgentConnect: {
-    borderBottomColor: theme.palette.primary.main,
-    color: theme.palette.primary.main
   },
   mainTitle: {
     paddingTop: theme.spacing(2),
@@ -49,6 +45,7 @@ const useStyles = makeStyles(theme => ({
 export default function Login() {
   usePageTitle("Connexion Entreprise / Salarié - Mobilic");
   const [email, setEmail] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState(null);
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -116,15 +113,12 @@ export default function Login() {
           Entreprise ou salarié
         </PaperContainerTitle>
         <FranceConnectContainer
-          mt={2}
-          mb={3}
           onButtonClick={() => {
             const callbackUrl = buildCallbackUrl();
             window.location.href = buildFranceConnectUrl(callbackUrl);
           }}
-          helperText="FranceConnect est la solution proposée par l’État pour simplifier la connexion à vos services en ligne. Vous pouvez vous connecter à votre compte via FranceConnect."
         />
-        <Typography>ou</Typography>
+        <p className="fr-hr-or">ou</p>
         <Box my={1}>
           <form
             className="vertical-form"
@@ -133,31 +127,25 @@ export default function Login() {
             onSubmit={handleSubmit}
           >
             <EmailField
-              fullWidth
-              className="vertical-form-text-input"
-              label="Email"
               autoComplete="username"
               value={email}
               setValue={setEmail}
+              error={emailError}
+              setError={setEmailError}
               required
             />
-            <PasswordField
-              fullWidth
-              className="vertical-form-text-input"
+            <PasswordInput
               label="Mot de passe"
-              variant="standard"
-              autoComplete="current-password"
-              value={password}
-              onChange={e => {
-                setPassword(e.target.value);
+              nativeInputProps={{
+                autoComplete: "current-password",
+                value: password,
+                onChange: e => setPassword(e.target.value)
               }}
               required
             />
             <Box my={2}>
               <LoadingButton
                 aria-label="Connexion"
-                variant="contained"
-                color="primary"
                 type="submit"
                 loading={loading}
                 disabled={!email || !password}

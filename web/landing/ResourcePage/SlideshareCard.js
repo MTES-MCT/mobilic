@@ -8,7 +8,8 @@ import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
 const useStyles = makeStyles(theme => ({
   downloadLink: {
     color: theme.palette.primary.main,
-    paddingLeft: theme.spacing(2)
+    paddingLeft: theme.spacing(2),
+    fontSize: "1rem"
   }
 }));
 

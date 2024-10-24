@@ -4,8 +4,8 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import Skeleton from "@mui/material/Skeleton";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export const useStyles = makeStyles(theme => ({
   container: {
@@ -55,7 +55,11 @@ export function MissionInfoCard({
           </Grid>
           {onActionButtonClick && (
             <Grid item>
-              <Button color="primary" onClick={onActionButtonClick}>
+              <Button
+                priority="tertiary"
+                size="small"
+                onClick={onActionButtonClick}
+              >
                 {actionButtonLabel}
               </Button>
             </Grid>

@@ -1,15 +1,11 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import EditIcon from "@mui/icons-material/Edit";
-import DownloadIcon from "@mui/icons-material/Download";
 import { makeStyles } from "@mui/styles";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   textButton: {
-    textTransform: "none",
-    textDecoration: "underline",
-    fontSize: "1rem"
+    textDecoration: "underline"
   }
 }));
 
@@ -28,31 +24,23 @@ export function ControllerControlBottomMenu({
     <Stack direction="column" spacing={2} mt={2} alignItems="center">
       {bdcAlreadyExisting ? (
         <Button
-          color="primary"
-          variant="contained"
-          size="small"
           onClick={downloadBDC}
-          startIcon={<DownloadIcon />}
+          iconId="fr-icon-download-line"
+          iconPosition="left"
           disabled={!canDownloadBDC}
         >
-          télécharger le bulletin de contrôle
+          Télécharger le bulletin de contrôle
         </Button>
       ) : (
-        <Button
-          color="primary"
-          variant="contained"
-          size="small"
-          onClick={editBDC}
-        >
-          éditer un bulletin de contrôle
+        <Button priority="secondary" onClick={editBDC}>
+          Éditer un bulletin de contrôle
         </Button>
       )}
       {reportInfractions && (
         <Button
-          color="primary"
-          variant="outlined"
-          size="small"
-          startIcon={<EditIcon />}
+          priority="secondary"
+          iconId="fr-icon-edit-line"
+          iconPosition="left"
           onClick={reportInfractions}
           disabled={disabledReportInfractions}
         >
@@ -66,7 +54,11 @@ export function ControllerControlBottomMenu({
         </Button>
       )}
       {bdcAlreadyExisting && (
-        <Button variant="text" className={classes.textButton} onClick={editBDC}>
+        <Button
+          priority="tertiary no outline"
+          className={classes.textButton}
+          onClick={editBDC}
+        >
           Modifier le bulletin de contrôle
         </Button>
       )}

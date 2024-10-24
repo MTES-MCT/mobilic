@@ -7,19 +7,19 @@ import { useModals } from "common/utils/modals";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { makeStyles } from "@mui/styles";
 import Box from "@mui/material/Box";
-import { MainCtaButton } from "./MainCtaButton";
 import { now } from "common/utils/time";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ButtonBase from "@mui/material/ButtonBase";
+import { LoadingButton } from "common/components/LoadingButton";
 
 const useStyles = makeStyles(theme => ({
   container: {
     backgroundColor: theme.palette.background.paper,
-    borderRadius: "24px",
     marginTop: theme.spacing(-3),
     marginBottom: theme.spacing(-3),
     zIndex: 1000,
-    flexShrink: 0
+    flexShrink: 0,
+    textAlign: "center"
   },
   gridItem: {
     maxWidth: 120
@@ -212,9 +212,9 @@ export function ActivitySwitch({
       </Grid>
       {endMission && (
         <Box pt={6} pb={2}>
-          <MainCtaButton onClick={() => endMission(now())}>
+          <LoadingButton onClick={() => endMission(now())} size="large">
             Mission terminée
-          </MainCtaButton>
+          </LoadingButton>
         </Box>
       )}
     </Box>

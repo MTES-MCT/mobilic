@@ -10,7 +10,6 @@ import Box from "@mui/material/Box";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import jwt_decode from "jwt-decode";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import { useLoadingScreen } from "common/utils/loading";
 import { Header } from "../common/Header";
 import { useSnackbarAlerts } from "../common/Snackbar";
@@ -24,6 +23,7 @@ import Emoji from "../common/Emoji";
 import { NewPasswordBlock } from "../common/NewPasswordBlock";
 import { getPasswordErrors } from "common/utils/passwords";
 import { usePageTitle } from "../common/UsePageTitle";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   introText: {
@@ -48,8 +48,8 @@ export function ResetPassword() {
   const withLoadingScreen = useLoadingScreen();
 
   const [didSubmitForm, setDidSubmitForm] = React.useState(false);
-  const [password, setPassword] = React.useState(null);
-  const [passwordCopy, setPasswordCopy] = React.useState(null);
+  const [password, setPassword] = React.useState("");
+  const [passwordCopy, setPasswordCopy] = React.useState("");
 
   const [tokenError, setTokenError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
@@ -144,8 +144,6 @@ export function ResetPassword() {
                 </Grid>
                 <Grid item xs={12}>
                   <Button
-                    color="primary"
-                    variant="contained"
                     onClick={() => {
                       history.push("/home");
                     }}
@@ -175,9 +173,6 @@ export function ResetPassword() {
                   />
                   <Box my={4}>
                     <LoadingButton
-                      aria-label="Valider"
-                      variant="contained"
-                      color="primary"
                       type="submit"
                       disabled={
                         !token ||
@@ -208,6 +203,7 @@ export function RequestResetPassword() {
   const alerts = useSnackbarAlerts();
 
   const [email, setEmail] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
   const [didSubmitForm, setDidSubmitForm] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
@@ -259,19 +255,16 @@ export function RequestResetPassword() {
                 </Typography>
                 <EmailField
                   required
-                  fullWidth
-                  className="vertical-form-text-input"
                   label="Adresse email de connexion"
                   value={email}
                   setValue={setEmail}
+                  error={emailError}
+                  setError={setEmailError}
                 />
                 <Box my={4}>
                   <LoadingButton
-                    aria-label="Valider"
-                    variant="contained"
-                    color="primary"
                     type="submit"
-                    disabled={!email}
+                    disabled={!!emailError || !email}
                     loading={loading}
                   >
                     Valider

@@ -1,7 +1,6 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import TextField from "common/utils/TextField";
 import { makeStyles } from "@mui/styles";
 import { SubmitCancelButtons } from "../../../common/SubmitCancelButtons";
@@ -9,12 +8,11 @@ import { CONTROLLER_ADD_CONTROL_NOTE } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useApi } from "common/utils/api";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(() => ({
   addNoteButton: {
-    textTransform: "none",
-    textDecoration: "underline",
-    fontSize: "1rem"
+    textDecoration: "underline"
   },
   note: {
     whiteSpace: "pre-line"
@@ -61,7 +59,7 @@ export function ControllerControlNote({ controlData }) {
         </Typography>
         {!isEditing && (
           <Button
-            variant="text"
+            priority="tertiary no outline"
             className={classes.addNoteButton}
             onClick={() => setIsEditing(true)}
           >

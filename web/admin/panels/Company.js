@@ -61,10 +61,6 @@ export const usePanelStyles = makeStyles(theme => ({
   vehiclesTable: {
     marginRight: theme.spacing(10)
   },
-  vehiclesAlert: {
-    marginRight: theme.spacing(10),
-    marginBottom: theme.spacing(2)
-  },
   knownAddressesTable: {
     marginRight: theme.spacing(10)
   },
@@ -73,12 +69,6 @@ export const usePanelStyles = makeStyles(theme => ({
   },
   addNewTokenSection: {
     marginBottom: theme.spacing(4)
-  },
-  addNewTokenAlert: {
-    marginBottom: theme.spacing(2)
-  },
-  addNewTokenExplanation: {
-    fontSize: "0.875rem"
   },
   validateNewClientIdButton: {
     marginRight: theme.spacing(2)
@@ -89,9 +79,6 @@ export const usePanelStyles = makeStyles(theme => ({
   },
   toggleButton: {
     minWidth: theme.spacing(13)
-  },
-  warningOneTeamNoAdmin: {
-    marginBottom: theme.spacing(2)
   },
   customBadge: {
     "& .MuiBadge-badge": {
@@ -240,7 +227,7 @@ function CompanyPanel({ width, containerRef }) {
   return (
     <Stack
       direction="column"
-      spacing={1.5}
+      spacing={1}
       sx={{ marginTop: "8px", paddingX: "8px" }}
     >
       <Box
@@ -264,9 +251,8 @@ function CompanyPanel({ width, containerRef }) {
           <Grid item>
             <LinkButton
               className={classes.createCompanyButton}
+              priority="primary"
               size="small"
-              variant="contained"
-              color="primary"
               to="/signup/company"
             >
               Inscrire une nouvelle entreprise

@@ -82,20 +82,13 @@ export function Consent({ clientName, redirectUri }) {
               justifyContent="center"
             >
               <Grid item>
-                <LoadingButton
-                  aria-label="Autoriser"
-                  color="primary"
-                  variant="contained"
-                  onClick={() => handleAuthorize(false)}
-                >
+                <LoadingButton onClick={() => handleAuthorize(false)}>
                   Autoriser
                 </LoadingButton>
               </Grid>
               <Grid item>
                 <LoadingButton
-                  aria-label="Refuser"
-                  color="primary"
-                  variant="outlined"
+                  priority="secondary"
                   onClick={async () => await handleAuthorize(true)}
                 >
                   Refuser

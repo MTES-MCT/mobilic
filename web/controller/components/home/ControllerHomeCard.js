@@ -44,7 +44,7 @@ export function ControllerHomeCard({ text, icon, link, onClick }) {
   return (
     <ButtonComponent
       className={`${classes.linkWholeCard} ${!link ? classes.button : ""}`}
-      color="primary"
+      priority="tertiary no outline"
       {...buttonActionProps}
     >
       <Card variant="outlined" className={classes.card}>

@@ -2,12 +2,11 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthUp } from "common/utils/useWidth";
 import { prettyFormatDayHour } from "common/utils/time";
-import classNames from "classnames";
-import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import { ControllerControlExportMenu } from "./ControllerControlExportMenu";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   desktopHeaderContainer: {
@@ -16,9 +15,6 @@ const useStyles = makeStyles(theme => ({
   linkHomeDesktopLine: {
     textAlign: "right",
     width: "100%"
-  },
-  linkHomeDesktop: {
-    cursor: "pointer"
   },
   subHeaderSection: {
     display: "flex",
@@ -36,6 +32,9 @@ const useStyles = makeStyles(theme => ({
     mobileHeaderContainer: {
       marginBottom: theme.spacing(2)
     }
+  },
+  underlinedButton: {
+    textDecoration: "underline"
   }
 }));
 
@@ -51,17 +50,15 @@ export function ControllerControlHeader({
   return isOnDesktop ? (
     <Container className={classes.desktopHeaderContainer}>
       <Box className={classes.linkHomeDesktopLine}>
-        <Typography
-          className={classNames(
-            classes.linkHomeDesktop,
-            "fr-link",
-            "fr-fi-close-line",
-            "fr-link--icon-right"
-          )}
+        <Button
           onClick={onCloseDrawer}
+          priority="secondary"
+          iconPosition="right"
+          iconId="fr-icon-close-line"
+          size="small"
         >
           Fermer
-        </Typography>
+        </Button>
       </Box>
       <Typography variant="h3" component="h1">
         Contrôle #{controlId}
@@ -81,18 +78,15 @@ export function ControllerControlHeader({
   ) : (
     <Container className={classes.mobileHeaderContainer}>
       <Box className={classes.subHeaderSection}>
-        <Link
-          to="#"
-          className={classNames(
-            classes.linkHomeMobile,
-            "fr-link",
-            "fr-fi-arrow-left-line",
-            "fr-link--icon-left"
-          )}
+        <Button
           onClick={onCloseDrawer}
+          priority="tertiary no outline"
+          iconId="fr-icon-arrow-left-s-line"
+          iconPosition="left"
+          className={classes.underlinedButton}
         >
           Fermer
-        </Link>
+        </Button>
         {enableExport && (
           <ControllerControlExportMenu
             controlId={controlId}

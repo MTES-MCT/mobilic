@@ -7,11 +7,11 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import { InfoItem } from "../InfoField";
-import Button from "@mui/material/Button";
 import classNames from "classnames";
 import { REVOKE_OAUTH_TOKEN_MUTATION } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   clientName: {
@@ -85,9 +85,8 @@ export function OAuthTokenCard({ accessTokenInfo, setAccessTokens }) {
           </Grid>
           <Grid item xs={12} sm={4}>
             <Button
+              priority="secondary"
               size="small"
-              color="primary"
-              variant="outlined"
               onClick={() => {
                 onRevokeToken(accessTokenInfo.id);
               }}
@@ -97,8 +96,6 @@ export function OAuthTokenCard({ accessTokenInfo, setAccessTokens }) {
             </Button>
             <Button
               size="small"
-              color="primary"
-              variant="contained"
               onClick={() => {
                 navigator.clipboard.writeText(accessTokenInfo.token);
               }}

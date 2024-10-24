@@ -1,9 +1,9 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import { ReactComponent as ExcelIcon } from "common/assets/images/excel.svg";
 import { ReactComponent as XmlIcon } from "common/assets/images/xml.svg";
 import { ReactComponent as C1bIcon } from "common/assets/images/tacho.svg";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 import { ListItemIcon, Menu, MenuItem, SvgIcon } from "@mui/material";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
@@ -27,8 +27,7 @@ export function ControllerControlExportMenu({ controlId, canDownloadXml }) {
         aria-controls={isOpen ? "control-export-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={isOpen ? "true" : undefined}
-        color="primary"
-        variant="outlined"
+        priority="secondary"
         size="small"
         onClick={e => setExportMenuAnchorEl(e.currentTarget)}
       >

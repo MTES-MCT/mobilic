@@ -44,7 +44,7 @@ export function TeamEmployeesFilter({ values, setValues, fieldLabel }) {
       renderOption={(props, option) => (
         <li {...props}>
           <Checkbox
-            color="secondary"
+            color="primary"
             style={{ marginRight: 8 }}
             checked={option.selected || false}
           />

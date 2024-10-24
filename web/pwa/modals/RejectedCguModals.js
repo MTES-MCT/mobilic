@@ -1,6 +1,6 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import { Button, Link } from "@dataesr/react-dsfr";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import Modal, { modalStyles } from "../../common/Modal";
 import { prettyFormatDay } from "common/utils/time";
 import { useIsAdmin } from "../../common/hooks/useIsAdmin";
@@ -9,6 +9,7 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
+import { Link } from "@mui/material";
 
 export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
   const { isAdmin } = useIsAdmin();
@@ -90,17 +91,17 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
       }
       actions={
         <>
+          <Link href="/logout" className="fr-btn fr-btn--secondary">
+            Se&nbsp;déconnecter
+          </Link>
           <Button
             onClick={downloadUserData}
-            icon="fr-icon-download-line"
             iconPosition="left"
+            iconId="fr-icon-download-line"
             disabled={!isEnabledDownload}
           >
             Recevoir les données par&nbsp;e&#8209;mail
           </Button>
-          <Link href="/logout" className="fr-btn fr-btn--secondary">
-            Se&nbsp;déconnecter
-          </Link>
         </>
       }
     />

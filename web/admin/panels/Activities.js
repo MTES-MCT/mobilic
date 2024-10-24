@@ -5,7 +5,6 @@ import { EmployeeFilter } from "../components/EmployeeFilter";
 import Paper from "@mui/material/Paper";
 import { PeriodToggle } from "../components/PeriodToggle";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { useWidth } from "common/utils/useWidth";
@@ -31,8 +30,6 @@ import { ReactComponent as TachoIcon } from "common/assets/images/tacho.svg";
 import { LoadingButton } from "common/components/LoadingButton";
 import Drawer from "@mui/material/Drawer";
 import NewMissionForm from "../../common/NewMissionForm";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import {
@@ -65,6 +62,8 @@ import { LogHolidayForm } from "../../common/LogHolidayForm";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { usePageTitle } from "../../common/UsePageTitle";
 import { useGetUsersSinceDate } from "../../common/hooks/useGetUsersSinceDate";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import CloseButton from "../../common/CloseButton";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -89,9 +88,6 @@ const useStyles = makeStyles(theme => ({
   workTimeTableContainer: {
     padding: theme.spacing(2),
     paddingTop: theme.spacing(1)
-  },
-  closeButton: {
-    padding: 0
   },
   missionTitle: {
     marginRight: theme.spacing(4)
@@ -369,10 +365,8 @@ function ActivitiesPanel() {
         </Grid>
         <Grid item>
           <Button
-            className={classes.exportButton}
-            color="primary"
             onClick={e => setExportMenuAnchorEl(e.currentTarget)}
-            variant="contained"
+            size="small"
           >
             Exporter
           </Button>
@@ -432,8 +426,14 @@ function ActivitiesPanel() {
       <Box
         className={`flex-column ${classes.workTimeTableContainer}`}
         style={{ maxHeight: ref.current ? ref.current.clientHeight : 0 }}
+        sx={{ marginTop: 1 }}
       >
-        <Typography align="left" variant="h6" component="span">
+        <Typography
+          align="left"
+          variant="h6"
+          component="span"
+          style={{ fontSize: "1rem" }}
+        >
           {`${periodAggregates.length} résultats${
             periodAggregates.length > 0
               ? ` pour ${
@@ -456,8 +456,6 @@ function ActivitiesPanel() {
         >
           <LoadingButton
             style={{ marginTop: 8, alignSelf: "flex-start" }}
-            color="primary"
-            variant="contained"
             size="small"
             className={classes.subButton}
             onClick={() => {
@@ -494,15 +492,11 @@ function ActivitiesPanel() {
             <Typography variant="h1" className={classes.missionTitle}>
               Congé ou absence passé
             </Typography>
-            <IconButton
-              aria-label="Fermer"
-              className={classes.closeButton}
+            <CloseButton
               onClick={() => {
                 setOpenLogHoliday(false);
               }}
-            >
-              <CloseIcon />
-            </IconButton>
+            />
           </Box>
           <LogHolidayForm
             users={users}
@@ -569,15 +563,11 @@ function ActivitiesPanel() {
             <Typography variant="h1" className={classes.missionTitle}>
               Mission passée
             </Typography>
-            <IconButton
-              aria-label="Fermer"
-              className={classes.closeButton}
+            <CloseButton
               onClick={() => {
                 setOpenNewMission(false);
               }}
-            >
-              <CloseIcon />
-            </IconButton>
+            />
           </Box>
           <NewMissionForm
             companies={adminCompanies}

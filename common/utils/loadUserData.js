@@ -294,6 +294,7 @@ export async function syncUser(userPayload, api, store) {
       latestMission.ended = latestMissionInfo.data.mission.isEndedForSelf;
       latestMission.submitter = latestMissionInfo.data.mission.submitter;
     } catch (err) {
+      console.error(err);
       captureSentryException(err);
     }
   }

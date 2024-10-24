@@ -28,7 +28,7 @@ function AccessibilityDeclaration() {
   const classes = useStyles();
 
   return (
-    <Container className={classes.container} maxWidth="lg">
+    <Container className={classes.container} maxWidth="xl">
       <h1>Déclaration d’accessibilité</h1>
       <p>
         Établie le <span>27 mars 2023</span>.

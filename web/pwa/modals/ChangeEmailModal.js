@@ -1,13 +1,9 @@
 import React from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import {
-  CustomDialogActions,
-  CustomDialogTitle
-} from "../../common/CustomDialogTitle";
+
 import { EmailField } from "../../common/EmailField";
+import Modal from "../../common/Modal";
 
 export default function ChangeEmailModal({ open, handleClose, handleSubmit }) {
   const [email, setEmail] = React.useState("");
@@ -21,44 +17,45 @@ export default function ChangeEmailModal({ open, handleClose, handleSubmit }) {
   }, [open]);
 
   return (
-    <Dialog maxWidth="sm" onClose={handleClose} open={open} fullWidth>
-      <CustomDialogTitle
-        handleClose={handleClose}
-        title="Nouvelle adresse email"
-      />
-      <form
-        autoComplete="off"
-        onSubmit={async e => {
-          e.preventDefault();
-          await alerts.withApiErrorHandling(async () => {
-            await handleSubmit(email);
-            handleClose();
-          }, "change-email");
-        }}
-      >
-        <DialogContent>
+    <Modal
+      size="sm"
+      title="Nouvelle adresse email"
+      open={open}
+      handleClose={handleClose}
+      content={
+        <form
+          id="update-email-form"
+          autoComplete="off"
+          onSubmit={async e => {
+            e.preventDefault();
+            await alerts.withApiErrorHandling(async () => {
+              await handleSubmit(email);
+              handleClose();
+            }, "change-email");
+          }}
+        >
           <EmailField
             required
-            fullWidth
-            className="vertical-form-text-input"
-            label="Email"
             value={email}
             validate
             setValue={setEmail}
             error={error}
             setError={setError}
+            showHint
           />
-        </DialogContent>
-        <CustomDialogActions>
+        </form>
+      }
+      actions={
+        <>
           <LoadingButton
             type="submit"
             disabled={error || !email}
-            color="primary"
+            form="update-email-form"
           >
             Enregistrer
           </LoadingButton>
-        </CustomDialogActions>
-      </form>
-    </Dialog>
+        </>
+      }
+    />
   );
 }

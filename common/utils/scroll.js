@@ -1,7 +1,9 @@
 import React from "react";
-import { withRouter } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
-function _ScrollToTop({ history }) {
+function _ScrollToTop() {
+  const history = useHistory();
+
   React.useEffect(() => {
     const unlisten = history.listen(() => {
       if (
@@ -19,4 +21,4 @@ function _ScrollToTop({ history }) {
   return null;
 }
 
-export const ScrollToTop = withRouter(_ScrollToTop);
+export const ScrollToTop = _ScrollToTop;

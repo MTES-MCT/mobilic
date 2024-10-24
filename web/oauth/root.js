@@ -99,7 +99,7 @@ export default function OAuth() {
     <>
       <Header disableMenu={true} />
       <Container className={classes.container} maxWidth="sm">
-        <Switch color="secondary">
+        <Switch>
           {userId && (
             <Route key="consent" path={`${path}/consent`}>
               <Consent clientName={clientName} redirectUri={redirectUri} />
@@ -115,7 +115,7 @@ export default function OAuth() {
               setRedirectUri={setRedirectUri}
             />
           </Route>
-          <Redirect push key="default" from="*" to={`${path}`} />
+          <Route path="*" render={() => <Redirect push to={`${path}`} />} />
         </Switch>
       </Container>
     </>

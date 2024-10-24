@@ -1,7 +1,6 @@
 import React from "react";
-import CheckIcon from "@mui/icons-material/Check";
-import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 import Modal from "../../common/Modal";
 
@@ -32,16 +31,17 @@ export default function CommentInputModal({
         />
       }
       actions={
-        <IconButton
-          className="no-margin-no-padding"
-          onClick={() => {
-            handleContinue(text);
-            handleClose();
-          }}
-          disabled={!text}
-        >
-          <CheckIcon color="primary" />
-        </IconButton>
+        <>
+          <Button
+            onClick={() => {
+              handleContinue(text);
+              handleClose();
+            }}
+            disabled={!text}
+          >
+            Valider
+          </Button>
+        </>
       }
     />
   );

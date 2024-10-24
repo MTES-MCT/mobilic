@@ -85,8 +85,6 @@ export function IntroGestionnaire() {
       <div className={classes.heroButtons}>
         <LoadingButton
           className={classes.button}
-          variant="contained"
-          color="primary"
           href="/signup/admin"
           onClick={() => trackEvent(ADMIN_LANDING_SUBSCRIBE_TOP)}
         >
@@ -95,8 +93,7 @@ export function IntroGestionnaire() {
         {webinars?.length > 0 && (
           <LoadingButton
             className={classes.button}
-            variant="outlined"
-            color="primary"
+            priority="secondary"
             href="/#webinaires"
             onClick={() => trackEvent(ADMIN_LANDING_WEBINARS)}
           >

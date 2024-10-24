@@ -62,7 +62,7 @@ export function Complete({ type }) {
             <Emoji emoji="🎉" ariaLabel="Succès" />
           </Typography>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sx={{ textAlign: "center" }}>
           {type === "user" ? (
             <Typography>L'inscription s'est terminée avec succès !</Typography>
           ) : (

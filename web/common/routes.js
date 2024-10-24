@@ -86,32 +86,36 @@ const RESOURCES_ROUTE = {
 export const CERTIFICATE_ROUTE = {
   label: "Certificat",
   path: "/certificate",
-  component: Certificate,
+  component: <Certificate />,
   accessible: () => true
 };
 
 export const CONTROLLER_ROUTE_PREFIX = "/controller";
+
+const Admin = React.lazy(() => import("../admin/Admin"));
+const Navigation = React.lazy(() => import("../pwa/utils/navigation"));
+const OAuth = React.lazy(() => import("../oauth/root"));
 
 export const ROUTES = [
   {
     path: "/fc-callback",
     label: "Callback France Connect",
     accessible: ({ userInfo }) => !userInfo?.id,
-    component: FranceConnectCallback,
+    component: <FranceConnectCallback />,
     menuItemFilter: () => false
   },
   {
     path: "/ac-callback",
     label: "Callback Agent Connect",
     accessible: ({ controllerInfo }) => !controllerInfo?.id,
-    component: AgentConnectCallback,
+    component: <AgentConnectCallback />,
     menuItemFilter: () => false
   },
   {
     path: "/app",
     label: "Mes missions",
     accessible: ({ userInfo }) => userInfo?.hasActivatedEmail && userInfo?.id,
-    component: React.lazy(() => import("../pwa/utils/navigation")),
+    component: <Navigation />,
     subRoutes: [
       {
         accessible: ({ companies }) => companies?.length > 0,
@@ -132,7 +136,7 @@ export const ROUTES = [
       userInfo?.hasActivatedEmail &&
       userInfo?.id &&
       companies?.some(c => c.admin),
-    component: React.lazy(() => import("../admin/Admin")),
+    component: <Admin />,
     subRoutes: [
       {
         path: "/company",
@@ -152,14 +156,14 @@ export const ROUTES = [
     path: "/signup/role_selection",
     label: "Inscription",
     accessible: () => true,
-    component: SignupSelection,
+    component: <SignupSelection />,
     menuItemFilter: () => false
   },
   {
     path: "/signup",
     label: "Inscription",
     accessible: () => true,
-    component: Signup,
+    component: <Signup />,
     menuItemFilter: ({ userInfo, controllerInfo }) =>
       !userInfo?.id && !controllerInfo?.id,
     mainCta: true
@@ -168,7 +172,7 @@ export const ROUTES = [
     path: "/login-selection",
     label: "Connexion",
     accessible: () => true,
-    component: LoginSelection,
+    component: <LoginSelection />,
     menuItemFilter: ({ userInfo, controllerInfo }) =>
       !userInfo?.id && !controllerInfo?.id
   },
@@ -176,84 +180,84 @@ export const ROUTES = [
     path: "/login",
     label: "Connexion Entreprise / Salarié",
     accessible: () => true,
-    component: Login,
+    component: <Login />,
     menuItemFilter: () => false
   },
   {
     path: "/controller-login",
     label: "Connexion Agent",
     accessible: () => true,
-    component: LoginController,
+    component: <LoginController />,
     menuItemFilter: () => false
   },
   {
     path: "/stats",
     label: "Statistiques",
     accessible: () => true,
-    component: Stats,
+    component: <Stats />,
     menuItemFilter: () => false
   },
   {
     path: "/accessibility",
     label: "Déclaration d'accessibilité",
     accessible: () => true,
-    component: Accessibility,
+    component: <Accessibility />,
     menuItemFilter: () => false
   },
   {
     path: "/legal-notices",
     label: "Mentions légales",
     accessible: () => true,
-    component: LegalNotices,
+    component: <LegalNotices />,
     menuItemFilter: () => false
   },
   {
     path: "/cgu",
     label: "CGU",
     accessible: () => true,
-    component: CGU,
+    component: <CGU />,
     menuItemFilter: () => false
   },
   {
     path: "/donnees-personnelles",
     label: "Données personnelles",
     accessible: () => true,
-    component: PrivacyPolicy,
+    component: <PrivacyPolicy />,
     menuItemFilter: () => false
   },
   {
     path: "/invite",
     label: "Invitation",
     accessible: () => true,
-    component: Invite,
+    component: <Invite />,
     menuItemFilter: () => false
   },
   {
     path: "/redeem_invite",
     label: "Redeem invite",
     accessible: () => true,
-    component: RedeemInvite,
+    component: <RedeemInvite />,
     menuItemFilter: () => false
   },
   {
     path: "/activate_email",
     label: "Activate email",
     accessible: () => true,
-    component: ActivateEmail,
+    component: <ActivateEmail />,
     menuItemFilter: () => false
   },
   {
     path: "/oauth/authorize",
     label: "OAuth",
     accessible: () => true,
-    component: React.lazy(() => import("../oauth/root")),
+    component: <OAuth />,
     menuItemFilter: () => false
   },
   {
     path: "/logout",
     label: "Logout",
     accessible: () => true,
-    component: Logout,
+    component: <Logout />,
     menuItemFilter: () => false
   },
   {
@@ -261,21 +265,21 @@ export const ROUTES = [
     label: "Landing",
     accessible: () => true,
     exact: true,
-    component: Landing,
+    component: <Landing />,
     menuItemFilter: () => false
   },
   {
     path: "/reset_password",
     label: "Reset password",
     accessible: () => true,
-    component: ResetPassword,
+    component: <ResetPassword />,
     menuItemFilter: () => false
   },
   {
     path: "/sync_employee",
     label: "Rattachement d'un compte Mobilic",
     accessible: () => true,
-    component: SyncEmployeeValidation,
+    component: <SyncEmployeeValidation />,
     menuItemFilter: () => false
   },
   {
@@ -283,7 +287,7 @@ export const ROUTES = [
     label: "Reset password",
     accessible: ({ userInfo, controllerInfo }) =>
       !userInfo?.id && !controllerInfo?.id,
-    component: RequestResetPassword,
+    component: <RequestResetPassword />,
     menuItemFilter: () => false
   },
   {
@@ -292,7 +296,7 @@ export const ROUTES = [
     accessible: ({ controllerInfo }) => {
       return controllerInfo?.id;
     },
-    component: ControllerHome,
+    component: <ControllerHome />,
     menuItemFilter: () => false
   },
   {
@@ -301,7 +305,7 @@ export const ROUTES = [
     accessible: ({ controllerInfo }) => {
       return !!controllerInfo?.id;
     },
-    component: ControllerHistory,
+    component: <ControllerHistory />,
     menuItemFilter: () => false
   },
   {
@@ -310,7 +314,7 @@ export const ROUTES = [
     accessible: ({ controllerInfo }) => {
       return !!controllerInfo?.id;
     },
-    component: ControllerScanQRCode,
+    component: <ControllerScanQRCode />,
     menuItemFilter: () => false
   },
   {
@@ -319,7 +323,7 @@ export const ROUTES = [
     accessible: ({ controllerInfo }) => {
       return !!controllerInfo?.id;
     },
-    component: ControllerQRCodeNotRecognized,
+    component: <ControllerQRCodeNotRecognized />,
     menuItemFilter: () => false
   },
   {
@@ -342,77 +346,77 @@ export const ROUTES = [
     path: "/control/user-history/:token",
     label: "Historique de l'utilisateur",
     accessible: () => true,
-    component: UserReadRedirect,
+    component: <UserReadRedirect />,
     menuItemFilter: () => false
   },
   {
     path: "/control/user-history",
     label: "Historique de l'utilisateur",
     accessible: () => true,
-    component: UserRead,
+    component: <UserRead />,
     menuItemFilter: () => false
   },
   {
     path: "/control/verify-export",
     label: "Vérification d'intégrité",
     accessible: () => true,
-    component: XlsxVerifier,
+    component: <XlsxVerifier />,
     menuItemFilter: () => false
   },
   {
     path: "/accueil-gestionnaire",
     label: "Accueil gestionnaire",
     accessible: () => true,
-    component: LandingGestionnaire,
+    component: <LandingGestionnaire />,
     menuItemFilter: () => false
   },
   {
     path: "/certificate",
     label: "Recherche certification",
     accessible: () => true,
-    component: Certificate,
+    component: <Certificate />,
     menuItemFilter: () => false
   },
   {
     path: "/partners",
     label: "Partenaires",
     accessible: () => true,
-    component: Partners,
+    component: <Partners />,
     menuItemFilter: () => false
   },
   {
     path: "/resources/home",
     label: "Documentation",
     accessible: () => true,
-    component: ResourcePage,
+    component: <ResourcePage />,
     menuItemFilter: () => false
   },
   {
     path: "/resources/driver",
     label: "Documentation travailleur mobile",
     accessible: () => true,
-    component: DriverResourcePage,
+    component: <DriverResourcePage />,
     menuItemFilter: () => false
   },
   {
     path: "/resources/controller",
     label: "Documentation contrôleur",
     accessible: () => true,
-    component: ControllerResourcePage,
+    component: <ControllerResourcePage />,
     menuItemFilter: () => false
   },
   {
     path: "/resources/admin",
     label: "Documentation Gestionnaire",
     accessible: () => true,
-    component: AdminResourcePage,
+    component: <AdminResourcePage />,
     menuItemFilter: () => false
   },
   {
     path: "/resources/regulations",
     label: "Réglementation",
     accessible: () => true,
-    component: RegulationPage,
+    component: <RegulationPage />,
     menuItemFilter: () => false
   },
   {
@@ -420,7 +424,7 @@ export const ROUTES = [
     label: "Mes informations",
     accessible: () => true,
     menuItemFilter: () => false,
-    component: Home
+    component: <Home />
   },
   RESOURCES_ROUTE,
   {
@@ -474,7 +478,7 @@ export const ROUTES = [
     label: "Déconnexion",
     accessible: ({ controllerInfo }) => !!controllerInfo?.id,
     menuItemFilter: () => true,
-    component: Logout
+    component: <Logout />
   }
 ];
 

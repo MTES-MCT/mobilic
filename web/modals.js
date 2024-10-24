@@ -1,6 +1,5 @@
 import ConfirmationModal from "./common/Confirmation";
 import TeamOrSoloChoiceModal from "./pwa/components/TeamOrSoloChoice";
-import NewTeamMateModal from "./pwa/components/NewTeamMate";
 import EndMissionModal from "./pwa/components/EndMission";
 import ApiErrorDialogModal from "./pwa/components/ApiErrorDialog";
 import CGUModal from "./landing/cgu";
@@ -62,7 +61,6 @@ export const MODAL_DICT = {
   tachographExport: C1BExportModal,
   pdfExport: PDFExportModal,
   teamOrSoloChoice: TeamOrSoloChoiceModal,
-  newTeamMate: NewTeamMateModal,
   endMission: EndMissionModal,
   expenditures: ExpenditureModal,
   apiErrorDialog: ApiErrorDialogModal,

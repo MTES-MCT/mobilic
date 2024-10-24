@@ -196,17 +196,20 @@ export function UserRead() {
     }
   }, [impersonatingUser]);
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     if (!userInfo || !userInfo.id) {
       return;
     }
-    const res = await getRegulationComputationsAndAlertNumber(
-      api,
-      userInfo.id,
-      new Date(tokenInfo.historyStartDay)
-    );
-    setRegulationComputationsByDay(res.regulationComputationsByDay);
-    setAlertNumber(res.alertNumber);
+    const loadData = async () => {
+      const res = await getRegulationComputationsAndAlertNumber(
+        api,
+        userInfo.id,
+        new Date(tokenInfo.historyStartDay)
+      );
+      setRegulationComputationsByDay(res.regulationComputationsByDay);
+      setAlertNumber(res.alertNumber);
+    };
+    loadData();
   }, [userInfo]);
 
   const groupedAlerts = React.useMemo(

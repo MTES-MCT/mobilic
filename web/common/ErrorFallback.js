@@ -18,11 +18,7 @@ export function ErrorFallback() {
       }}
     >
       <Typography>Oups..une erreur est survenue</Typography>
-      <LoadingButton
-        color="primary"
-        variant="contained"
-        onClick={() => window.location.reload()}
-      >
+      <LoadingButton onClick={() => window.location.reload()}>
         Recharger la page
       </LoadingButton>
     </Container>

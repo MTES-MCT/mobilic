@@ -16,9 +16,9 @@ import { ControllerControlBottomMenu as BottomMenu } from "../menu/ControllerCon
 import { canDownloadBDC } from "../../utils/controlBulletin";
 import { TextWithBadge } from "../../../common/TextWithBadge";
 import { UserReadAlerts } from "../../../control/components/UserReadAlerts";
-import { Alert } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Notice from "../../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   middleTab: {
@@ -145,18 +145,22 @@ export function ControllerControlNoLic({
         </AppBar>
         <Box>
           {!!showModifyInfractionsAlert && (
-            <Alert severity="info">
-              <Typography>
-                Mobilic a relevé des infractions par défaut, vous pouvez
-                modifier la sélection au sein de{" "}
-                <span
-                  className={classes.linkInfractionTab}
-                  onClick={() => setTab(TABS[1].name)}
-                >
-                  l’onglet infractions
-                </span>
-              </Typography>
-            </Alert>
+            <Notice
+              description={
+                <>
+                  <Typography>
+                    Mobilic a relevé des infractions par défaut, vous pouvez
+                    modifier la sélection au sein de{" "}
+                    <span
+                      className={classes.linkInfractionTab}
+                      onClick={() => setTab(TABS[1].name)}
+                    >
+                      l’onglet infractions
+                    </span>
+                  </Typography>
+                </>
+              }
+            />
           )}
           <Container className={classes.panelContainer} disableGutters>
             {TABS.map(t => (

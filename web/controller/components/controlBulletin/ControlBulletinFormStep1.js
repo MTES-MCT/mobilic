@@ -1,14 +1,16 @@
 import React, { useMemo } from "react";
 
 import Stack from "@mui/material/Stack";
-import { Col, Row, Select, TextInput } from "@dataesr/react-dsfr";
 import { COUNTRIES } from "../../utils/country";
 import { DEPARTMENTS } from "../../utils/departments";
 import { useApi } from "common/utils/api";
 import { CONTROL_LOCATION_QUERY } from "common/utils/apiQueries";
 import { DsfrAutocomplete } from "../utils/DsfrAutocomplete";
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { CURRENT_YEAR } from "common/utils/time";
+import { MandatoryField } from "../../../common/MandatoryField";
+import { Input } from "../../../common/forms/Input";
+import { Select } from "../../../common/forms/Select";
 
 const BIRTH_DATE_MIN_YEAR = 100;
 const BIRTH_DATE_MAX_YEAR = 18;
@@ -24,6 +26,11 @@ export function ControlBulletinFormStep1({
   const [day, setDay] = React.useState();
   const [month, setMonth] = React.useState();
   const [year, setYear] = React.useState();
+
+  const [dayState, setDayState] = React.useState("default");
+  const [monthState, setMonthState] = React.useState("default");
+  const [yearState, setYearState] = React.useState("default");
+  const [dateState, setDateState] = React.useState("default");
 
   React.useEffect(() => {
     const { userBirthDate } = controlBulletin;
@@ -46,43 +53,62 @@ export function ControlBulletinFormStep1({
   );
 
   const onValidateBirthDate = () => {
-    const validYear = Math.max(
-      MIN_BIRTH_DATE_YEAR,
-      Math.min(year, MAX_BIRTH_DATE_YEAR)
-    );
-    const validMonth = Math.max(0, Math.min(month - 1, 11));
-    const maxDay = validMonth === 1 ? 29 : 30;
-    const validDay = Math.max(1, Math.min(parseInt(day), maxDay));
-    const date = new Date(validYear, validMonth, validDay, 10, 0, 0, 0);
-    if (!isNaN(date)) {
-      const newDateString = date.toISOString().split("T")[0];
-      editControlBulletinField(newDateString, "userBirthDate");
+    let hasError = false;
+    if (year < MIN_BIRTH_DATE_YEAR || year > MAX_BIRTH_DATE_YEAR) {
+      setYearState("error");
+      hasError = true;
+    } else {
+      setYearState("default");
     }
-  };
-
-  const onChangeNDigits = (e, setter, n) => {
-    const firstTwoChars = e.target.value.slice(0, n);
-    if (!isNaN(firstTwoChars)) {
-      setter(firstTwoChars);
+    if (month < 1 || month > 12) {
+      setMonthState("error");
+      hasError = true;
+    } else {
+      setMonthState("default");
     }
-  };
+    if (day < 1 || day > 31) {
+      setDayState("error");
+      hasError = true;
+    } else {
+      setDayState("default");
+    }
 
-  React.useEffect(async () => {
-    if (controlBulletin.locationDepartment) {
-      const departmentCode = DEPARTMENTS.find(
-        d => d.label === controlBulletin.locationDepartment
-      )?.code;
-      if (departmentCode) {
-        const apiResponse = await api.graphQlQuery(
-          CONTROL_LOCATION_QUERY,
-          {
-            department: departmentCode
-          },
-          { context: { nonPublicApi: true } }
-        );
-        setDepartmentLocations(apiResponse.data.controlLocation);
+    if (!hasError && day && month && year) {
+      const date = new Date(year, month - 1, day, 10, 0, 0, 0);
+      const validYear = date.getFullYear() === parseInt(year);
+      const validMonth = date.getMonth() === parseInt(month - 1);
+      const validDay = date.getDate() === parseInt(day);
+      if (validYear && validMonth && validDay) {
+        setDateState("default");
+        const newDateString = date.toISOString().split("T")[0];
+        editControlBulletinField(newDateString, "userBirthDate");
+      } else {
+        setDateState("error");
       }
+    } else {
+      setDateState("default");
     }
+  };
+
+  React.useEffect(() => {
+    const loadData = async () => {
+      if (controlBulletin.locationDepartment) {
+        const departmentCode = DEPARTMENTS.find(
+          d => d.label === controlBulletin.locationDepartment
+        )?.code;
+        if (departmentCode) {
+          const apiResponse = await api.graphQlQuery(
+            CONTROL_LOCATION_QUERY,
+            {
+              department: departmentCode
+            },
+            { context: { nonPublicApi: true } }
+          );
+          setDepartmentLocations(apiResponse.data.controlLocation);
+        }
+      }
+    };
+    loadData();
   }, [controlBulletin.locationDepartment]);
 
   const controlLocationCommunes = useMemo(() => {
@@ -117,6 +143,7 @@ export function ControlBulletinFormStep1({
 
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
+      <MandatoryField />
       <DsfrAutocomplete
         field={controlBulletin.locationDepartment}
         fieldLabel="Département du contrôle"
@@ -150,83 +177,121 @@ export function ControlBulletinFormStep1({
           editControlBulletinField(newValue.id, "locationId");
         }}
       />
-      <TextInput
-        value={controlBulletin.userLastName || ""}
-        name="userLastName"
-        onChange={e => handleEditControlBulletin(e)}
+      <Input
+        nativeInputProps={{
+          value: controlBulletin.userLastName || "",
+          onChange: e => handleEditControlBulletin(e),
+          name: "userLastName"
+        }}
         label="Nom du salarié"
-        required
-        messageType={
-          !controlBulletin.userLastName && showErrors ? "error" : undefined
+        state={
+          !controlBulletin.userLastName && showErrors ? "error" : "default"
         }
+        required
       />
-      <TextInput
-        value={controlBulletin.userFirstName || ""}
-        name="userFirstName"
-        onChange={e => handleEditControlBulletin(e)}
+      <Input
+        nativeInputProps={{
+          value: controlBulletin.userFirstName || "",
+          onChange: e => handleEditControlBulletin(e),
+          name: "userFirstName"
+        }}
         label="Prénom du salarié"
-        required
-        messageType={
-          !controlBulletin.userFirstName && showErrors ? "error" : undefined
+        state={
+          !controlBulletin.userFirstName && showErrors ? "error" : "default"
         }
+        required
       />
+
       <Box
         sx={{ marginBottom: 4, maxWidth: "440px" }}
         role="group"
         aria-labelledby="date-naissance-salarie"
+        aria-describedby="date-naissance-salarie-error"
+        className={dateState === "error" ? "fr-input-group--error" : ""}
       >
         <label className="fr-label" id="date-naissance-salarie">
           Date de naissance du salarié
         </label>
-        <Row gutters>
-          <Col n="3">
-            <TextInput
-              required
-              value={day}
-              inputMode="numeric"
-              onChange={e => onChangeNDigits(e, setDay, 2)}
-              onBlur={onValidateBirthDate}
+        <Grid container spacing={2}>
+          <Grid item xs={3}>
+            <Input
+              nativeInputProps={{
+                value: day,
+                onChange: e => setDay(e.target.value),
+                onBlur: onValidateBirthDate,
+                type: "number",
+                inputMode: "numeric"
+              }}
+              type="number"
               label="Jour"
-              hint="Ex : 14"
-            />
-          </Col>
-          <Col n="3">
-            <TextInput
-              inputMode="numeric"
+              hintText="Entre 1 et 31"
               required
-              value={month}
-              onChange={e => onChangeNDigits(e, setMonth, 2)}
-              onBlur={onValidateBirthDate}
+              state={dayState}
+              stateRelatedMessage="Jour invalide. Exemple : 14."
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <Input
+              nativeInputProps={{
+                value: month,
+                onChange: e => setMonth(e.target.value),
+                onBlur: onValidateBirthDate,
+                type: "number",
+                inputMode: "numeric"
+              }}
               label="Mois"
-              hint="Ex : 12"
-            />
-          </Col>
-          <Col n="6">
-            <TextInput
-              inputMode="numeric"
+              hintText="Entre 1 et 12"
               required
-              value={year}
-              onChange={e => onChangeNDigits(e, setYear, 4)}
-              onBlur={onValidateBirthDate}
-              label="Année"
-              hint="Ex : 1984"
+              state={monthState}
+              stateRelatedMessage="Mois invalide. Exemple : 12."
             />
-          </Col>
-        </Row>
+          </Grid>
+          <Grid item xs={6}>
+            <Input
+              nativeInputProps={{
+                value: year,
+                onChange: e => setYear(e.target.value),
+                onBlur: onValidateBirthDate,
+                type: "number",
+                inputMode: "numeric"
+              }}
+              label="Année"
+              hintText="Exemple : 1984"
+              required
+              state={yearState}
+              stateRelatedMessage="Année invalide : elle doit être comprise entre 1924 et 2006. Exemple : 1990."
+            />
+          </Grid>
+        </Grid>
+        {dateState === "error" && (
+          <p id="date-naissance-salarie-error" className="fr-error-text">
+            Date invalide : ce jour n'existe pas.
+          </p>
+        )}
       </Box>
       <Select
         label="Nationalité du salarié"
-        selected={controlBulletin.userNationality}
-        name="userNationality"
-        required
-        onChange={e => {
-          handleEditControlBulletin(e);
+        nativeSelectProps={{
+          onChange: e => handleEditControlBulletin(e),
+          value: controlBulletin.userNationality,
+          name: "userNationality"
         }}
-        options={COUNTRIES}
-        messageType={
-          !controlBulletin.userNationality && showErrors ? "error" : undefined
+        state={
+          !controlBulletin.userNationality && showErrors ? "error" : "default"
         }
-      />
+        stateRelatedMessage={
+          !controlBulletin.userNationality && showErrors
+            ? "Veuillez compléter ce champ"
+            : ""
+        }
+        required
+      >
+        {COUNTRIES.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </Select>
     </Stack>
   );
 }

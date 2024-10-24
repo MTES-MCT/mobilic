@@ -9,7 +9,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import Flag from "react-world-flags";
 import { MenuItem, Select, Stack } from "@mui/material";
-import { TextInput } from "@dataesr/react-dsfr";
+import { Input } from "@codegouvfr/react-dsfr/Input";
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -95,7 +95,7 @@ export function PhoneNumber({
     } else {
       if (number) {
         setErrorMessage(
-          `Le format de numéro de téléphone saisie n’est pas valide.`
+          `Le format du numéro de téléphone saisi n’est pas valide. Le format attendu est : ${numberExample}`
         );
       }
     }
@@ -117,7 +117,7 @@ export function PhoneNumber({
         <span className="fr-sr-only"> {accessibilityHelpText}</span>
         <span className="fr-hint-text">Format attendu : {numberExample}</span>
       </label>
-      <Stack direction="row" spacing={1}>
+      <Stack direction="row" spacing={1} mt={1}>
         <Select
           hiddenLabel
           variant="filled"
@@ -137,13 +137,17 @@ export function PhoneNumber({
             </MenuItem>
           ))}
         </Select>
-        <TextInput
+        <Input
+          label=""
+          nativeInputProps={{
+            inputMode: "tel",
+            value: phoneNumber,
+            onChange: e => onInput(e.target.value)
+          }}
           id="phone-number-input"
-          value={phoneNumber}
-          onChange={e => onInput(e.target.value)}
-          messageType={errorMessage && "error"}
-          message={errorMessage}
-          autoComplete="tel"
+          state={errorMessage ? "error" : "default"}
+          stateRelatedMessage={errorMessage}
+          className="fr-ml-4v"
         />
       </Stack>
     </div>

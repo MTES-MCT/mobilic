@@ -10,9 +10,8 @@ import { ControllerControlBottomMenu } from "../../controller/components/menu/Co
 import { currentControllerId } from "common/utils/cookie";
 import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
 import { canDownloadBDC } from "../../controller/utils/controlBulletin";
-import { Alert } from "@mui/material";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   sectionBody: {
@@ -111,18 +110,20 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
         </AppBar>
         <Box className={classes.boxContainer}>
           {!!showModifyInfractionsAlert && (
-            <Alert severity="info">
-              <Typography>
-                Mobilic a relevé des infractions par défaut, vous pouvez
-                modifier la sélection au sein de{" "}
-                <span
-                  className={classes.linkInfractionTab}
-                  onClick={() => setTab(tabs[1].name)}
-                >
-                  l’onglet infractions
-                </span>
-              </Typography>
-            </Alert>
+            <Notice
+              description={
+                <>
+                  Mobilic a relevé des infractions par défaut, vous pouvez
+                  modifier la sélection au sein de{" "}
+                  <span
+                    className={classes.linkInfractionTab}
+                    onClick={() => setTab(tabs[1].name)}
+                  >
+                    l’onglet infractions
+                  </span>
+                </>
+              }
+            />
           )}
           <Container className={classes.panelContainer} key={2} disableGutters>
             {tabs.map(t => (

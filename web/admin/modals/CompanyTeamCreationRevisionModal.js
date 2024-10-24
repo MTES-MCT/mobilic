@@ -1,10 +1,7 @@
 import React from "react";
 import TextField from "common/utils/TextField";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import { LoadingButton } from "common/components/LoadingButton";
-import Alert from "@mui/material/Alert";
-import Typography from "@mui/material/Typography";
 import {
   CREATE_TEAM_MUTATION,
   UPDATE_TEAM_MUTATION
@@ -15,6 +12,8 @@ import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { TeamEmployeesFilter } from "../panels/TeamEmployeesFilter";
 import { MultipleValuesFilter } from "../panels/MultipleValuesFilter";
 import Modal from "../../common/Modal";
+import Notice from "../../common/Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export default function CompanyTeamCreationRevisionModal({
   team,
@@ -163,13 +162,13 @@ export default function CompanyTeamCreationRevisionModal({
               setValues={setNewUsers}
               fieldLabel={"Salarié(s) du groupe"}
             />
-            <Alert severity="warning" sx={{ marginTop: 1 }}>
-              <Typography gutterBottom>
-                Un salarié ne peut faire partie que d'un seul groupe à la fois.
+            <Notice
+              type="warning"
+              sx={{ marginTop: 1 }}
+              description="Un salarié ne peut faire partie que d'un seul groupe à la fois.
                 Lorsque vous affecterez un salarié au groupe, sa précédente
-                affectation sera supprimée.
-              </Typography>
-            </Alert>
+                affectation sera supprimée."
+            />
           </Grid>
           <Grid item xs={12}>
             <MultipleValuesFilter
@@ -197,13 +196,10 @@ export default function CompanyTeamCreationRevisionModal({
       }
       actions={
         <>
-          <Button title="Annuler" onClick={handleClose}>
+          <Button priority="secondary" onClick={handleClose}>
             Annuler
           </Button>
           <LoadingButton
-            title="Confirmer"
-            color="primary"
-            variant="contained"
             disabled={!name}
             onClick={submitForm}
             loading={submitting}

@@ -9,16 +9,16 @@ import {
 import { usePanelStyles } from "./Company";
 import Skeleton from "@mui/material/Skeleton";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import { useModals } from "common/utils/modals";
 import { AugmentedTable } from "../components/AugmentedTable";
-import { Alert } from "@mui/material";
 import { formatDay, isoFormatLocalDate } from "common/utils/time";
 import { formatPersonName } from "common/utils/coworkers";
 import { useAdminStore } from "../store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import uniqBy from "lodash/uniqBy";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
+import Notice from "../../common/Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export default function CompanyTeamsPanel({ company }) {
   const api = useApi();
@@ -32,16 +32,19 @@ export default function CompanyTeamsPanel({ company }) {
     false
   );
 
-  React.useEffect(async () => {
-    setLoadingTeams(true);
-    const apiResponse = await api.graphQlQuery(ALL_TEAMS_COMPANY_QUERY, {
-      companyId: company.id
-    });
-    setTeams(apiResponse?.data?.company?.teams);
-    setLoadingTeams(false);
+  React.useEffect(() => {
+    const loadData = async () => {
+      setLoadingTeams(true);
+      const apiResponse = await api.graphQlQuery(ALL_TEAMS_COMPANY_QUERY, {
+        companyId: company.id
+      });
+      setTeams(apiResponse?.data?.company?.teams);
+      setLoadingTeams(false);
+    };
+    loadData();
   }, [company]);
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     setDisplayNoAdminWarning(teams.some(team => !team.adminUsers?.length > 0));
   }, [teams]);
 
@@ -199,59 +202,56 @@ export default function CompanyTeamsPanel({ company }) {
     });
   }
 
-  return [
-    <Grid key={0} container>
-      <Grid item xs={6}>
-        <Box className={classes.title}>
-          <Typography variant="h4" component="h2">
-            Groupes {!loadingTeams && <span> ({teams?.length || 0})</span>}
-          </Typography>
-        </Box>
-      </Grid>
-      <Grid item xs={6} className={classes.buttonAddToken}>
-        <Button
-          size="small"
-          color="primary"
-          variant="contained"
-          onClick={() => openTeamModal()}
-        >
-          Ajouter un nouveau groupe
-        </Button>
-      </Grid>
-    </Grid>,
-    loadingTeams && (
-      <Skeleton key={2} variant="rectangular" width="100%" height={100} />
-    ),
-    !loadingTeams && teams?.length === 0 && (
-      <Alert key={1} severity="info">
-        <Typography>
-          Dans cet onglet, vous avez la possibilité de répartir vos salariés
-          dans des groupes si leurs temps de travail sont gérés par des
-          gestionnaires différents. Les gestionnaires n'auront accès qu'aux
-          temps de travail du ou des groupes dont ils sont responsables.
-        </Typography>
-      </Alert>
-    ),
-    !loadingTeams && teams?.length > 0 && (
-      <Box key={2}>
-        {displayNoAdminWarning && (
-          <Alert severity="warning" className={classes.warningOneTeamNoAdmin}>
-            <Typography gutterBottom>
-              Certains groupes n'ont pas de gestionnaire rattaché. Les missions
-              des salariés concernés ne peuvent donc pas être validées.
+  return (
+    <>
+      <Grid container>
+        <Grid item xs={6}>
+          <Box className={classes.title}>
+            <Typography variant="h4" component="h2">
+              Groupes {!loadingTeams && <span> ({teams?.length || 0})</span>}
             </Typography>
-          </Alert>
-        )}
-        <AugmentedTable
-          key={2}
-          columns={teamColumns}
-          entries={teams}
-          className={classes.vehiclesTable}
-          defaultSortBy="name"
-          onRowEdit={team => openTeamModal(team)}
-          customRowActions={customActions}
+          </Box>
+        </Grid>
+        <Grid item xs={6} className={classes.buttonAddToken}>
+          <Button size="small" onClick={() => openTeamModal()}>
+            Ajouter un nouveau groupe
+          </Button>
+        </Grid>
+      </Grid>
+      {loadingTeams && (
+        <Skeleton variant="rectangular" width="100%" height={100} />
+      )}
+      {!loadingTeams && teams?.length === 0 && (
+        <Notice
+          description="Dans cet onglet, vous avez la possibilité de répartir vos salariés
+            dans des groupes si leurs temps de travail sont gérés par des
+            gestionnaires différents. Les gestionnaires n'auront accès qu'aux
+            temps de travail du ou des groupes dont ils sont responsables."
+          size="small"
         />
-      </Box>
-    )
-  ];
+      )}
+      {!loadingTeams && teams?.length > 0 && (
+        <Box>
+          {displayNoAdminWarning && (
+            <Notice
+              type="warning"
+              description="Certains groupes n'ont pas de gestionnaire rattaché. Les
+                missions des salariés concernés ne peuvent donc pas être
+                validées."
+              sx={{ marginBottom: 2 }}
+            />
+          )}
+          <AugmentedTable
+            key={2}
+            columns={teamColumns}
+            entries={teams}
+            className={classes.vehiclesTable}
+            defaultSortBy="name"
+            onRowEdit={team => openTeamModal(team)}
+            customRowActions={customActions}
+          />
+        </Box>
+      )}
+    </>
+  );
 }

@@ -1,6 +1,7 @@
 import React from "react";
 import { Typography } from "@mui/material";
-import { Button, Checkbox } from "@dataesr/react-dsfr";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { ExternalLink } from "../../common/ExternalLink";
 import Modal, { modalStyles } from "../../common/Modal";
 import { useCgu } from "../../common/useCgu";
@@ -54,9 +55,17 @@ export default function AcceptCguModal({ onAccept, onReject, handleClose }) {
           les lire et à les accepter.
         </Typography>
         <Checkbox
-          checked={isChecked}
-          onChange={e => setIsChecked(e.target.checked)}
-          label="En cochant cette case, vous confirmez avoir lu et accepté nos conditions générales d'utilisation"
+          legend=""
+          options={[
+            {
+              label:
+                "En cochant cette case, vous confirmez avoir lu et accepté nos conditions générales d'utilisation",
+              nativeInputProps: {
+                checked: isChecked,
+                onChange: e => setIsChecked(e.target.checked)
+              }
+            }
+          ]}
         />
       </>
     ),
@@ -72,18 +81,11 @@ export default function AcceptCguModal({ onAccept, onReject, handleClose }) {
       content={content}
       actions={
         <>
-          <Button
-            title="Accepter les Conditions Générales d'Utilisation"
-            onClick={_onAccept}
-            disabled={!isChecked}
-          >
-            Valider
-          </Button>
           {hasTurnedDown ? (
             <Button
               title="Supprimer mon compte"
               onClick={_onReject}
-              secondary
+              priority="secondary"
               className={classes.deleteButton}
             >
               Supprimer mon compte
@@ -95,11 +97,18 @@ export default function AcceptCguModal({ onAccept, onReject, handleClose }) {
                 setHasTurnedDown(true);
                 setIsChecked(false);
               }}
-              secondary
+              priority="secondary"
             >
               Je refuse
             </Button>
           )}
+          <Button
+            title="Accepter les Conditions Générales d'Utilisation"
+            onClick={_onAccept}
+            disabled={!isChecked}
+          >
+            Valider
+          </Button>
         </>
       }
     />

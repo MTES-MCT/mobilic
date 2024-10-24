@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles(theme => ({
   customBadge: {
-    right: theme.spacing(-2)
+    right: theme.spacing(-16)
   },
   success: {
     backgroundColor: theme.palette.success.main

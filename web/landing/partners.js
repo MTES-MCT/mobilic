@@ -7,7 +7,6 @@ import Grid from "@mui/material/Grid";
 import { Header } from "../common/Header";
 import { Footer } from "./footer";
 import { PaperContainerTitle } from "../common/PaperContainer";
-import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { shuffle } from "lodash/collection";
 import { LoadingButton } from "common/components/LoadingButton";
 import { usePageTitle } from "../common/UsePageTitle";
@@ -138,14 +137,14 @@ export function Partners() {
       className={`${classes.container} ${classes.whiteSection}`}
       maxWidth={false}
     >
-      <Container maxWidth="lg" className={classes.inner}>
+      <Container maxWidth="xl" className={classes.inner}>
         <Box>
           <PaperContainerTitle variant="h1" className={classes.title}>
             Qui sont les partenaires de Mobilic ?
           </PaperContainerTitle>
         </Box>
         <Grid container spacing={14}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} textAlign="center">
             <Typography variant="h5" component="h2" className={classes.title}>
               Les entreprises
             </Typography>
@@ -175,21 +174,21 @@ export function Partners() {
               <LoadingButton
                 className={classes.cta}
                 onClick={() => setShowAllPartners(true)}
+                priority="secondary"
               >
                 Voir plus
               </LoadingButton>
             )}
             <div>
-              <MainCtaButton
-                aria-label="Devenir partenaire"
+              <LoadingButton
                 className={classes.cta}
                 href="mailto:contact@mobilic.beta.gouv.fr"
               >
                 Devenir partenaire
-              </MainCtaButton>
+              </LoadingButton>
             </div>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} textAlign="center">
             <Box marginBottom={16}>
               <Typography variant="h5" component="h2" className={classes.title}>
                 Les éditeurs de logiciels
@@ -236,13 +235,12 @@ export function Partners() {
                   </Grid>
                 ))}
               </Grid>
-              <MainCtaButton
-                aria-label="S'interfacer avec Mobilic"
+              <LoadingButton
                 className={classes.cta}
                 href="mailto:interfacage@mobilic.beta.gouv.fr"
               >
                 S'interfacer avec Mobilic
-              </MainCtaButton>
+              </LoadingButton>
             </Box>
             <Box>
               <Typography variant="h5" component="h2" className={classes.title}>

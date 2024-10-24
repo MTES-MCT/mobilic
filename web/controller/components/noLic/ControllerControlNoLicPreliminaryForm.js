@@ -4,9 +4,11 @@ import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { TextInput, Button, Title } from "@dataesr/react-dsfr";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
+import { MandatoryField } from "../../../common/MandatoryField";
+import { Input } from "../../../common/forms/Input";
 
 export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
   const api = useApi();
@@ -52,55 +54,60 @@ export function ControllerControlNoLicPreliminaryForm({ onSubmit, onClose }) {
 
   return (
     <>
-      <Title as="h1" look="h4" mt={2} mb={2}>
+      <Typography variant="h4" component="h1" sx={{ marginY: 2 }}>
         Nouveau contrôle “Pas de LIC à bord”
-      </Title>
+      </Typography>
       <Typography variant="h5" mb={2}>
         Veuillez renseigner ces informations afin de créer le contrôle
       </Typography>
 
       <Stack direction="column" p={2} sx={{ width: "100%" }}>
-        <TextInput
-          value={userLastName}
-          name="userLastName"
-          onChange={e => setUserLastName(e.target.value)}
+        <MandatoryField />
+        <Input
+          nativeInputProps={{
+            value: userLastName,
+            onChange: e => setUserLastName(e.target.value),
+            name: "userLastName"
+          }}
           label="Nom du salarié"
           required
-          type="text"
         />
-        <TextInput
-          value={userFirstName}
-          name="userFirstName"
-          onChange={e => setUserFirstName(e.target.value)}
+
+        <Input
+          nativeInputProps={{
+            value: userFirstName,
+            onChange: e => setUserFirstName(e.target.value),
+            name: "userFirstName"
+          }}
           label="Prénom du salarié"
           required
-          type="text"
         />
-        <TextInput
-          value={companyName}
-          name="companyName"
-          onChange={e => setCompanyName(e.target.value)}
+        <Input
+          nativeInputProps={{
+            value: companyName,
+            onChange: e => setCompanyName(e.target.value),
+            name: "companyName"
+          }}
           label="Nom de l'entreprise"
           required
-          type="text"
         />
-        <TextInput
-          value={vehicleRegistrationNumber}
-          name="vehicleRegistrationNumber"
-          onChange={e => setVehicleRegistrationNumber(e.target.value)}
+        <Input
+          nativeInputProps={{
+            value: vehicleRegistrationNumber,
+            onChange: e => setVehicleRegistrationNumber(e.target.value),
+            name: "vehicleRegistrationNumber"
+          }}
           label="Immatriculation du véhicule"
           required
-          type="text"
         />
         <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
           <Button
-            title="Enregistrer"
             onClick={() => submitPreliminaryForm()}
             disabled={!canSubmitForm}
           >
             Enregistrer
           </Button>
-          <Button title="Annuler" onClick={() => onClose()} secondary>
+          <Button onClick={() => onClose()} priority="secondary">
             Annuler
           </Button>
         </Stack>

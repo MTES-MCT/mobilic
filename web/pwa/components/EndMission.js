@@ -3,7 +3,6 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { FunnelModal } from "./FunnelModal";
 import Container from "@mui/material/Container";
-import { MainCtaButton } from "./MainCtaButton";
 import TextField from "common/utils/TextField";
 import { Expenditures } from "./Expenditures";
 import { AddressField } from "../../common/AddressField";
@@ -12,6 +11,8 @@ import { NativeDateTimePicker } from "../../common/NativeDateTimePicker";
 import { MINUTE, getDaysBetweenTwoDates, now } from "common/utils/time";
 import { setCurrentLocation } from "common/utils/location";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import { MandatoryField } from "../../common/MandatoryField";
+import { LoadingButton } from "common/components/LoadingButton";
 
 export default function EndMissionModal({
   open,
@@ -92,26 +93,27 @@ export default function EndMissionModal({
   return (
     <FunnelModal open={open} handleBack={handleClose}>
       <Container className="flex-column-space-between" style={{ flexGrow: 1 }}>
-        <form
-          autoComplete="off"
-          onSubmit={async e => {
-            e.preventDefault();
-            setLoading(true);
-            await new Promise(resolve => setTimeout(resolve, 100));
-            await handleMissionEnd(
-              expenditures,
-              comment,
-              address,
-              kilometerReading,
-              endTime
-            );
-            handleClose();
-          }}
+        <Container
+          className="flex-column"
+          style={{ flexShrink: 0 }}
+          disableGutters
         >
-          <Container
-            className="flex-column"
-            style={{ flexShrink: 0 }}
-            disableGutters
+          <MandatoryField />
+          <form
+            autoComplete="off"
+            onSubmit={async e => {
+              e.preventDefault();
+              setLoading(true);
+              await new Promise(resolve => setTimeout(resolve, 100));
+              await handleMissionEnd(
+                expenditures,
+                comment,
+                address,
+                kilometerReading,
+                endTime
+              );
+              handleClose();
+            }}
           >
             {!missionEndTime && (
               <Box key={0}>
@@ -197,7 +199,7 @@ export default function EndMissionModal({
               </>
             )}
             <Typography variant="h5" component="p" className="form-field-title">
-              Avez-vous une observation&nbsp;? (optionnel)
+              Avez-vous une observation&nbsp;?
             </Typography>
             <TextField
               fullWidth
@@ -209,17 +211,18 @@ export default function EndMissionModal({
               value={comment}
               onChange={e => setComment(e.target.value)}
             />
-          </Container>
-          <Box className="cta-container" my={4}>
-            <MainCtaButton
-              type="submit"
-              disabled={!canSubmit()}
-              loading={loading}
-            >
-              Suivant
-            </MainCtaButton>
-          </Box>
-        </form>
+
+            <Box className="cta-container" my={4}>
+              <LoadingButton
+                type="submit"
+                disabled={!canSubmit()}
+                loading={loading}
+              >
+                Suivant
+              </LoadingButton>
+            </Box>
+          </form>
+        </Container>
       </Container>
     </FunnelModal>
   );

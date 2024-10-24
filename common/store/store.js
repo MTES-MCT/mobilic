@@ -137,9 +137,9 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     );
   }
 
-  batchUpdate = () => {
+  batchUpdate = async () => {
     if (this.pendingActions.length > 0) {
-      this.update(
+      await this.update(
         this.pendingActions.map(a => a.action),
         uniq(flatMap(this.pendingActions, upd => upd.fieldsToSync)),
         () => {
@@ -158,27 +158,30 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     });
   };
 
-  update = (actionOrActions, fieldsToSync, callback = () => {}) => {
+  update = async (actionOrActions, fieldsToSync, callback = () => {}) => {
     const actions = Array.isArray(actionOrActions)
       ? actionOrActions
       : [actionOrActions];
 
-    this.setState(
-      state => {
-        const newState = actions.reduce(rootReducer, state);
-        return newState;
-      },
-      () => {
-        if (this.allowOfflineMode)
-          fieldsToSync.forEach(field => {
-            this.storage.setItem(
-              field,
-              LOCAL_STORAGE_SCHEMA[field].serialize(this.state[field])
-            );
-          });
-        callback();
-      }
-    );
+    return new Promise(resolve => {
+      this.setState(
+        state => {
+          const newState = actions.reduce(rootReducer, state);
+          return newState;
+        },
+        () => {
+          if (this.allowOfflineMode)
+            fieldsToSync.forEach(field => {
+              this.storage.setItem(
+                field,
+                LOCAL_STORAGE_SCHEMA[field].serialize(this.state[field])
+              );
+            });
+          callback();
+          resolve();
+        }
+      );
+    });
   };
 
   setItems = (itemValueMap, callback = () => {}, commitImmediately = true) => {

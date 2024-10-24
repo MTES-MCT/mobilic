@@ -117,7 +117,6 @@ export function VideoCard({ video, titleProps = {}, ...props }) {
       <div style={{ padding: "20rem 0 0 0", position: "relative" }}>
         <iframe
           src={getCdnUrl(id)}
-          frameBorder="0"
           allow="autoplay; fullscreen; picture-in-picture"
           style={{
             position: "absolute",

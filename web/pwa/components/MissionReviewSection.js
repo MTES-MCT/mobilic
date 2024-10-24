@@ -2,10 +2,8 @@ import React from "react";
 import omit from "lodash/omit";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import { makeStyles } from "@mui/styles";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -34,9 +32,8 @@ export function MissionReviewSection({
         </Typography>
         {onEdit && (
           <Button
-            color="primary"
             size="small"
-            variant="contained"
+            priority="tertiary"
             className={classes.button}
             onClick={onEdit}
           >
@@ -45,10 +42,13 @@ export function MissionReviewSection({
         )}
         {displayExpandToggle && (
           <Button
-            color="primary"
+            priority="tertiary"
             size="small"
             onClick={() => setExpand(!expand)}
-            endIcon={expand ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+            iconPosition="right"
+            iconId={
+              expand ? "fr-icon-arrow-up-s-fill" : "fr-icon-arrow-down-s-fill"
+            }
           >
             {expand ? "Masquer" : "Afficher"}
           </Button>
