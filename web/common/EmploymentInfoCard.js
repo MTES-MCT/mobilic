@@ -164,7 +164,7 @@ export function EmploymentInfoCard({
           justifyContent="space-between"
           wrap="nowrap"
         >
-          <Grid item>
+          <Grid item xs={8} sm={9}>
             <Typography
               className={classes.companyName}
               component={headingComponent}
@@ -173,8 +173,14 @@ export function EmploymentInfoCard({
             </Typography>
           </Grid>
           {!hideStatus && (
-            <Grid item>
-              <Typography style={{ color: statusColor, fontWeight: "bold" }}>
+            <Grid item xs={4} sm={3} pr={1}>
+              <Typography
+                style={{
+                  color: statusColor,
+                  fontWeight: "bold",
+                  textAlign: "right"
+                }}
+              >
                 {statusText}
               </Typography>
             </Grid>
