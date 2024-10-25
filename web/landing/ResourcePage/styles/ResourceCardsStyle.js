@@ -39,7 +39,8 @@ export const resourceCardsClasses = makeStyles(theme => ({
   },
   testimonialImage: {
     maxHeight: 90,
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
+    objectFit: "contain"
   },
   testimonialSentence: {
     marginBottom: theme.spacing(4),
