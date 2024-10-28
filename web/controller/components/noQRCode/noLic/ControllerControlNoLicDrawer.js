@@ -1,10 +1,10 @@
 import React from "react";
-import { ControllerControlHeader } from "../details/ControllerControlHeader";
+import { ControllerControlHeader } from "../../details/ControllerControlHeader";
 import { ControllerControlNoLic } from "./ControllerControlNoLic";
-import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
-import { ControlDrawer } from "../../utils/ControlDrawer";
-import { useReportInfractions } from "../../utils/useReportInfractions";
-import { canDownloadBDC } from "../../utils/controlBulletin";
+import { ControlBulletinDrawer } from "../../controlBulletin/ControlBulletinDrawer";
+import { ControlDrawer } from "../../../utils/ControlDrawer";
+import { useReportInfractions } from "../../../utils/useReportInfractions";
+import { canDownloadBDC } from "../../../utils/controlBulletin";
 
 export function ControllerControlNoLicDrawer({
   controlData,

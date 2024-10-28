@@ -7,7 +7,7 @@ import ListItem from "@mui/material/ListItem";
 import DriveEtaIcon from "@mui/icons-material/DirectionsCar";
 import BusinessIcon from "@mui/icons-material/Business";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import { InfoItem } from "../../../home/InfoField";
+import { InfoItem } from "../../../../home/InfoField";
 
 const useStyles = makeStyles(theme => ({
   sectionBody: {

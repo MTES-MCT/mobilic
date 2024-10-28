@@ -4,7 +4,7 @@ import {
   CONTROL_TYPES,
   useReadControlData
 } from "../../utils/useReadControlData";
-import { ControllerControlNoLicDrawer } from "../noLic/ControllerControlNoLicDrawer";
+import { ControllerControlNoLicDrawer } from "../noQRCode/noLic/ControllerControlNoLicDrawer";
 import { ControlDrawer } from "../../utils/ControlDrawer";
 
 export function ControllerControlDrawer({ controlId, controlType, onClose }) {

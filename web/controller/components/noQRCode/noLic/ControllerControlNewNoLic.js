@@ -3,20 +3,22 @@ import { Link } from "react-router-dom";
 import classNames from "classnames";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import { ControllerControlNoLicPreliminaryForm } from "./ControllerControlNoLicPreliminaryForm";
-import { CONTROL_TYPES } from "../../utils/useReadControlData";
-import { ControlDrawer } from "../../utils/ControlDrawer";
+import Typography from "@mui/material/Typography";
+import { ControllerControlPreliminaryForm } from "../ControllerControlPreliminaryForm";
+import { CONTROL_TYPES } from "../../../utils/useReadControlData";
+import { ControlDrawer } from "../../../utils/ControlDrawer";
 
 export function ControllerControlNewNoLic({
   isOpen,
   onClose,
   setControlOnFocus
 }) {
+  const type = CONTROL_TYPES.NO_LIC;
   const onControlCreated = id => {
     onClose();
     setControlOnFocus({
       id,
-      type: CONTROL_TYPES.NO_LIC
+      type
     });
   };
   return (
@@ -35,7 +37,14 @@ export function ControllerControlNewNoLic({
             Fermer
           </Link>
         </Box>
-        <ControllerControlNoLicPreliminaryForm
+        <Typography variant="h4" component="h1" sx={{ marginY: 2 }}>
+          Nouveau contrôle “Pas de LIC à bord”
+        </Typography>
+        <p>
+          Veuillez renseigner ces informations afin de créer le contrôle&nbsp;:
+        </p>
+        <ControllerControlPreliminaryForm
+          type={type}
           onSubmit={onControlCreated}
           onClose={onClose}
         />

@@ -11,14 +11,14 @@ import WarningAmberOutlinedIcon from "@mui/icons-material/WarningOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import { ControllerControlNoLicHistory } from "./ControllerControlNoLicHistory";
 import { ControllerControlNoLicInformations } from "./ControllerControlNoLicInformations";
-import { useDownloadBDC } from "../../utils/useDownloadBDC";
-import { ControllerControlBottomMenu as BottomMenu } from "../menu/ControllerControlBottomMenu";
-import { canDownloadBDC } from "../../utils/controlBulletin";
-import { TextWithBadge } from "../../../common/TextWithBadge";
-import { UserReadAlerts } from "../../../control/components/UserReadAlerts";
+import { useDownloadBDC } from "../../../utils/useDownloadBDC";
+import { ControllerControlBottomMenu as BottomMenu } from "../../menu/ControllerControlBottomMenu";
+import { canDownloadBDC } from "../../../utils/controlBulletin";
+import { TextWithBadge } from "../../../../common/TextWithBadge";
+import { UserReadAlerts } from "../../../../control/components/UserReadAlerts";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Notice from "../../../common/Notice";
+import Notice from "../../../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   middleTab: {

@@ -45,7 +45,7 @@ const ControlsTable = ({ entries, onRowClick, period = "day" }) => {
                   entry.id,
                   entry.type === "Mobilic"
                     ? CONTROL_TYPES.MOBILIC
-                    : CONTROL_TYPES.NO_LIC
+                    : CONTROL_TYPES.NO_LIC // TODO LIC PAPIER
                 )
               }
             >
