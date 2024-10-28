@@ -8,8 +8,12 @@ import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 import { MandatoryField } from "../../../common/MandatoryField";
 import { Input } from "../../../common/forms/Input";
+import { Select } from "../../../common/forms/Select";
 import { RadioButtons } from "../../../common/forms/RadioButtons";
+import { BirthDate } from "../../../common/forms/BirthDate";
 import { CONTROL_TYPES } from "../../utils/useReadControlData";
+import { COUNTRIES } from "../../utils/country";
+import { BUSINESS_TYPES } from "common/utils/businessTypes";
 
 export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
   const api = useApi();
@@ -18,39 +22,54 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
 
   const [userFirstName, setUserFirstName] = React.useState("");
   const [userLastName, setUserLastName] = React.useState("");
+  const [userBirthDate, setUserBirthDate] = React.useState("");
+  const [userNationality, setUserNationality] = React.useState("");
   const [companyName, setCompanyName] = React.useState("");
+  const [businessType, setBusinessType] = React.useState("");
   const [
     vehicleRegistrationNumber,
     setVehicleRegistrationNumber
   ] = React.useState("");
-  const [dayPageFilled, setDayPageFilled] = React.useState();
+  const [isDayPageFilled, setIsDayPageFilled] = React.useState();
 
   const canSubmitForm = React.useMemo(
     () =>
       !!userFirstName &&
       !!userLastName &&
+      !!userBirthDate &&
+      !!userNationality &&
       !!companyName &&
+      !!businessType &&
       !!vehicleRegistrationNumber &&
-      (type === CONTROL_TYPES.NO_LIC || dayPageFilled !== undefined),
+      (type === CONTROL_TYPES.NO_LIC || isDayPageFilled !== undefined),
     [
       userFirstName,
       userLastName,
+      userBirthDate,
+      userNationality,
       companyName,
+      businessType,
       vehicleRegistrationNumber,
-      dayPageFilled
+      isDayPageFilled
     ]
   );
 
   const submitPreliminaryForm = async () =>
     withLoadingScreen(async () => {
       try {
+        console.log(type);
         const apiResponse = await api.graphQlMutate(
           CONTROLLER_SAVE_CONTROL_BULLETIN,
           {
+            type,
             userFirstName,
             userLastName,
+            userBirthDate,
+            userNationality,
             companyName,
-            vehicleRegistrationNumber
+            businessType,
+            vehicleRegistrationNumber,
+            isDayPageFilled
           },
           { context: { nonPublicApi: true } }
         );
@@ -83,6 +102,30 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         label="Prénom du salarié"
         required
       />
+
+      <BirthDate
+        label="Date de naissance du salarié"
+        userBirthDate={userBirthDate}
+        setUserBirthDate={setUserBirthDate}
+      />
+
+      <Select
+        label="Nationalité du salarié"
+        nativeSelectProps={{
+          onChange: e => setUserNationality(e.target.value),
+          value: userNationality,
+          name: "userNationality"
+        }}
+        required
+      >
+        {COUNTRIES.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </Select>
+
+      {/*  TODO LIC PAPIER */}
       <Input
         nativeInputProps={{
           value: companyName,
@@ -92,6 +135,27 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         label="Nom de l'entreprise"
         required
       />
+
+      <Select
+        label="Type d'activité"
+        nativeSelectProps={{
+          onChange: e => setBusinessType(e.target.value),
+          value: businessType
+        }}
+        required
+      >
+        {!businessType && (
+          <option value="" disabled>
+            Non renseigné
+          </option>
+        )}
+        {BUSINESS_TYPES.map(businessType => (
+          <option key={businessType.value} value={businessType.value}>
+            {businessType.label}
+          </option>
+        ))}
+      </Select>
+
       <Input
         nativeInputProps={{
           value: vehicleRegistrationNumber,
@@ -101,35 +165,37 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         label="Immatriculation du véhicule"
         required
       />
+
       {type === CONTROL_TYPES.LIC_PAPIER && (
         <RadioButtons
           legend="Page du jour remplie"
-          name="dayPageFilled"
+          name="isDayPageFilled"
           options={[
             {
               label: "Oui",
               nativeInputProps: {
-                checked: dayPageFilled === true,
-                onChange: () => setDayPageFilled(true)
+                checked: isDayPageFilled === true,
+                onChange: () => setIsDayPageFilled(true)
               }
             },
             {
               label: "Non",
               nativeInputProps: {
-                checked: dayPageFilled === false,
-                onChange: () => setDayPageFilled(false)
+                checked: isDayPageFilled === false,
+                onChange: () => setIsDayPageFilled(false)
               }
             }
           ]}
           required
         />
       )}
+
       <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
         <Button
           onClick={() => submitPreliminaryForm()}
           disabled={!canSubmitForm}
         >
-          Enregistrer
+          Créer le contrôle
         </Button>
         <Button onClick={() => onClose()} priority="secondary">
           Annuler

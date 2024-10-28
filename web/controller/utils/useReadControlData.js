@@ -10,8 +10,8 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 
 export const CONTROL_TYPES = {
   MOBILIC: "mobilic",
-  NO_LIC: "no-lic",
-  LIC_PAPIER: "lic-papier"
+  NO_LIC: "sans_lic",
+  LIC_PAPIER: "lic_papier"
 };
 
 export const useReadControlData = (controlId, controlType) => {

@@ -249,6 +249,7 @@ export const CONTROL_BULLETIN_FRAGMENT = gql`
     licenseCopyNumber
     observation
     isVehicleImmobilized
+    businessType
   }
 `;
 
@@ -264,6 +265,7 @@ export const CONTROL_DATA_FRAGMENT = gql`
     userLastName
     controlBulletinCreationTime
     vehicleRegistrationNumber
+    isDayPageFilled
     note
     nbReportedInfractions
     controlBulletin {
