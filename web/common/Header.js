@@ -366,14 +366,25 @@ function DesktopHeader({ disableMenu }) {
         href="https://faq.mobilic.beta.gouv.fr"
         target="_blank"
         rel="noopener noreferrer"
+        style={{ padding: "0.25rem 0.5rem" }}
       >
         Foire aux questions
       </LinkButton>
-      <LinkButton href="/resources/home" target="_blank">
+      <LinkButton
+        href="/resources/home"
+        target="_blank"
+        style={{ padding: "0.25rem 0.5rem" }}
+      >
         Documentation
       </LinkButton>
-      <LinkButton to="/partners">Partenaires</LinkButton>
-      {!userInfo?.id && <LinkButton to="/certificate">Certificat</LinkButton>}
+      <LinkButton to="/partners" style={{ padding: "0.25rem 0.5rem" }}>
+        Partenaires
+      </LinkButton>
+      {!userInfo?.id && (
+        <LinkButton to="/certificate" style={{ padding: "0.25rem 0.5rem" }}>
+          Certificat
+        </LinkButton>
+      )}
     </>
   );
 
