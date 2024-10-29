@@ -29,7 +29,7 @@ export function Testimony() {
   const { trackEvent } = useMatomo();
 
   return (
-    <Stack direction="column" gap={8} alignItems="center">
+    <Stack direction="column" gap={4} alignItems="center">
       <Stack
         direction="row"
         gap={1}

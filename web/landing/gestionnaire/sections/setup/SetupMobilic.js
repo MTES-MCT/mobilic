@@ -51,36 +51,6 @@ const BLOCKS = [
 ];
 
 const useStyles = makeStyles(theme => ({
-  dividerContainer: {
-    position: "relative"
-  },
-  divider: {
-    backgroundColor: theme.palette.primary.main,
-    [theme.breakpoints.down("md")]: {
-      display: "none"
-    },
-    minWidth: theme.spacing(18),
-    height: "4px",
-    position: "absolute",
-    top: "128px",
-    left: "-76px",
-    "&::before, &::after": {
-      content: '""',
-      backgroundColor: theme.palette.primary.main,
-      display: "inline-block",
-      height: "20px",
-      width: "20px",
-      borderRadius: "50%",
-      position: "absolute",
-      top: "-8px"
-    },
-    "&::before": {
-      left: 0
-    },
-    "&::after": {
-      right: 0
-    }
-  },
   button: {
     margin: "auto"
   }
@@ -91,12 +61,6 @@ export function SetupMobilic() {
   const { trackEvent } = useMatomo();
 
   const classes = useStyles();
-
-  const Divider = index => (
-    <div className={classes.dividerContainer} key={`divider_${index}`}>
-      <div className={classes.divider} />
-    </div>
-  );
 
   const BLOCKS_WITH_DIVIDERS = React.useMemo(() => {
     const blocks = BLOCKS.map(({ index, when, title, content }) => (
@@ -109,16 +73,10 @@ export function SetupMobilic() {
       />
     ));
 
-    return blocks.reduce(
-      (arr, item, index) =>
-        index < blocks.length - 1
-          ? arr.concat([item, Divider(index)])
-          : arr.concat(item),
-      []
-    );
+    return blocks;
   }, []);
   return (
-    <Stack direction="column" gap={8}>
+    <Stack direction="column" gap={4}>
       <Stack
         direction={isOnDesktop ? "row" : "column"}
         justifyContent="space-around"
