@@ -29,7 +29,7 @@ export function Testimony() {
   const { trackEvent } = useMatomo();
 
   return (
-    <Stack direction="column" gap={8} alignItems="center">
+    <Stack direction="column" gap={4} alignItems="center">
       <Stack
         direction="row"
         gap={1}
@@ -73,8 +73,6 @@ export function Testimony() {
         </Box>
       </Stack>
       <LoadingButton
-        variant="contained"
-        color="primary"
         className={classes.button}
         href="/signup/admin"
         onClick={() => trackEvent(ADMIN_LANDING_SUBSCRIBE_TESTIMONY)}

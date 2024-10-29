@@ -1,11 +1,10 @@
 import React from "react";
 import Dialog from "@mui/material/Dialog";
 import Box from "@mui/material/Box";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Slide from "@mui/material/Slide";
-import Button from "@mui/material/Button";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -16,7 +15,7 @@ export const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2)
   },
   slimContainer: {
-    maxWidth: 400
+    maxWidth: 550
   },
   container: {
     backgroundColor: darkBackground =>
@@ -54,10 +53,9 @@ export function FunnelModal({
           style={{ position: "static", width: "100%", flexShrink: 0 }}
         >
           <Button
-            variant={darkBackground ? "contained" : "outlined"}
-            color="primary"
-            disableElevation
-            startIcon={<ChevronLeftIcon />}
+            priority={darkBackground ? "primary" : "secondary"}
+            iconId="fr-icon-arrow-left-s-line"
+            iconPosition="left"
             onClick={handleBack}
           >
             Retour

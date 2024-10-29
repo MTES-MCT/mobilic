@@ -5,6 +5,7 @@ import React from "react";
 import Stack from "@mui/material/Stack";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { ADMIN_FAQ } from "common/utils/matomoTags";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -29,11 +30,14 @@ export function WhatsMobilicCard({ id, title, content, link }) {
 
   return (
     <Paper variant="outlined" className={classes.card}>
-      <a
-        href={link}
-        target="_blank"
-        rel="noopener noreferrer"
+      <Button
         onClick={() => trackEvent(ADMIN_FAQ(id))}
+        linkProps={{
+          href: link,
+          target: "_blank",
+          rel: "noopener noreferrer"
+        }}
+        priority="secondary"
       >
         <Stack direction="column" gap={2}>
           <Typography variant="h5">{title}</Typography>
@@ -42,7 +46,7 @@ export function WhatsMobilicCard({ id, title, content, link }) {
             Plus d'infos
           </Typography>
         </Stack>
-      </a>
+      </Button>
     </Paper>
   );
 }

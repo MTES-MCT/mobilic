@@ -2,13 +2,10 @@ import moment from "moment";
 import React, { useMemo } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import GetAppIcon from "@mui/icons-material/GetApp";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
@@ -64,6 +61,8 @@ import { PeriodFilter } from "../components/PeriodFilter";
 import { syncMissions } from "common/utils/loadUserData";
 import { useHolidays } from "../../common/useHolidays";
 import { LogHolidayButton } from "../../common/LogHolidayButton";
+import { cx } from "@codegouvfr/react-dsfr/tools/cx";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const tabs = {
   mission: {
@@ -145,7 +144,6 @@ const useStyles = makeStyles(theme => ({
   contentContainer: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
-    borderRadius: "24px 24px 0 0",
     flexGrow: 1,
     flexShrink: 0,
     paddingTop: theme.spacing(4),
@@ -154,7 +152,7 @@ const useStyles = makeStyles(theme => ({
   },
   placeholderContainer: {
     backgroundColor: "inherit",
-    color: theme.palette.grey[500]
+    color: fr.colors.decisions.text.mention.grey.default
   },
   periodSelector: {
     paddingTop: theme.spacing(1),
@@ -436,112 +434,109 @@ export function History({
       disableGutters
       maxWidth="md"
     >
-      {!isInControl && [
-        <AccountButton p={2} key={1} onBackButtonClick={onBackButtonClick} />,
-        <Box key={2} className={classes.accessControlContainer}>
-          <Button
-            aria-label="Accès contrôleur"
-            className={classes.generateAccessButton}
-            color="error"
-            variant="outlined"
-            onClick={() => {
-              modals.open("userReadQRCode");
-            }}
+      {!isInControl && (
+        <>
+          <AccountButton p={2} onBackButtonClick={onBackButtonClick} />
+          <Box className={classes.accessControlContainer}>
+            <Button
+              priority="secondary"
+              className={cx(classes.generateAccessButton, "error")}
+              onClick={() => {
+                modals.open("userReadQRCode");
+              }}
+            >
+              Accès contrôleurs
+            </Button>
+          </Box>
+          <Grid
+            container
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            marginBottom={2}
           >
-            Accès contrôleurs
-          </Button>
-        </Box>,
-        <Grid
-          container
-          key={3}
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Grid container item direction="row" alignItems="center" sm={6}>
-            {currentCompanies?.length > 0 && (
-              <IconButton
-                color="primary"
+            <Grid container item direction="row" alignItems="center" sm={6}>
+              {currentCompanies?.length > 0 && (
+                <Button
+                  priority="tertiary no outline"
+                  onClick={() =>
+                    modals.open("newMission", {
+                      companies: store.companies(),
+                      companyAddresses: store.getEntity("knownAddresses"),
+                      disableCurrentPosition: true,
+                      disableKilometerReading: true,
+                      withDay: true,
+                      withEndLocation: true,
+                      handleContinue: async missionInfos => {
+                        await alerts.withApiErrorHandling(async () => {
+                          const tempMissionId = await createMission({
+                            companyId: missionInfos.company.id,
+                            name: missionInfos.mission,
+                            vehicle: missionInfos.vehicle,
+                            startLocation: missionInfos.address,
+                            endLocation: missionInfos.endAddress
+                          });
+                          await api.executePendingRequests();
+                          const actualMissionId = store.identityMap()[
+                            tempMissionId
+                          ];
+                          if (!actualMissionId) {
+                            alerts.error(
+                              "La mission n'a pas pu être créée. Vérifiez votre connexion internet, vous ne pouvez pas créer de mission passée sans être connecté.",
+                              tempMissionId,
+                              6000
+                            );
+                          } else {
+                            history.push(
+                              `/app/edit_mission?mission=${actualMissionId}`,
+                              { day: missionInfos.day }
+                            );
+                            modals.close("newMission");
+                          }
+                        }, "create-mission");
+                      }
+                    })
+                  }
+                  iconId="fr-icon-add-circle-fill"
+                  iconPosition="left"
+                >
+                  Ajouter une mission passée
+                </Button>
+              )}
+            </Grid>
+            <LogHolidayButton onClick={() => openHolidaysModal()} />
+            <Grid
+              container
+              item
+              direction="row"
+              alignItems="center"
+              justifyContent={{ sm: "flex-end" }}
+              xs={12}
+            >
+              <Button
+                priority="tertiary no outline"
+                iconId="fr-icon-download-fill"
+                iconPosition="left"
                 onClick={() =>
-                  modals.open("newMission", {
-                    companies: store.companies(),
-                    companyAddresses: store.getEntity("knownAddresses"),
-                    disableCurrentPosition: true,
-                    disableKilometerReading: true,
-                    withDay: true,
-                    withEndLocation: true,
-                    handleContinue: async missionInfos => {
-                      await alerts.withApiErrorHandling(async () => {
-                        const tempMissionId = await createMission({
-                          companyId: missionInfos.company.id,
-                          name: missionInfos.mission,
-                          vehicle: missionInfos.vehicle,
-                          startLocation: missionInfos.address,
-                          endLocation: missionInfos.endAddress
-                        });
-                        await api.executePendingRequests();
-                        const actualMissionId = store.identityMap()[
-                          tempMissionId
-                        ];
-                        if (!actualMissionId) {
-                          alerts.error(
-                            "La mission n'a pas pu être créée. Vérifiez votre connexion internet, vous ne pouvez pas créer de mission passée sans être connecté.",
-                            tempMissionId,
-                            6000
-                          );
-                        } else {
-                          history.push(
-                            `/app/edit_mission?mission=${actualMissionId}`,
-                            { day: missionInfos.day }
-                          );
-                          modals.close("newMission");
-                        }
-                      }, "create-mission");
-                    }
+                  modals.open("pdfExport", {
+                    initialMinDate: startPeriodFilter,
+                    initialMaxDate: endPeriodFilter
                   })
                 }
               >
-                <AddCircleIcon fontSize="large" />
-                <Typography align="left" ml={1}>
-                  Ajouter une mission passée
-                </Typography>
-              </IconButton>
-            )}
-          </Grid>
-          <LogHolidayButton onClick={() => openHolidaysModal()} />
-          <Grid
-            container
-            item
-            direction="row"
-            alignItems="center"
-            justifyContent={{ sm: "flex-end" }}
-            xs={12}
-          >
-            <IconButton
-              color="primary"
-              onClick={() =>
-                modals.open("pdfExport", {
-                  initialMinDate: startPeriodFilter,
-                  initialMaxDate: endPeriodFilter
-                })
-              }
-            >
-              <GetAppIcon fontSize="large" />
-              <Typography align="left" ml={1} mr={2}>
                 Télécharger un relevé d'heures
-              </Typography>
-            </IconButton>
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>,
-        <PeriodFilter
-          key={4}
-          minDate={startPeriodFilter}
-          setMinDate={onChangeStartPeriodFilter}
-          maxDate={endPeriodFilter}
-          setMaxDate={onChangeEndPeriodFilter}
-          periodFilterRangeError={periodFilterRangeError}
-        />
-      ]}
+          <PeriodFilter
+            minDate={startPeriodFilter}
+            setMinDate={onChangeStartPeriodFilter}
+            maxDate={endPeriodFilter}
+            setMaxDate={onChangeEndPeriodFilter}
+            periodFilterRangeError={periodFilterRangeError}
+          />
+        </>
+      )}
       <Container className={classes.periodSelector} maxWidth={false}>
         <Tabs
           value={currentTab}

@@ -56,8 +56,7 @@ export function OutroGestionnaire() {
             <b>une entreprise conforme à la réglementation</b>
           </Typography>
           <LoadingButton
-            variant="outlined"
-            color="primary"
+            priority="secondary"
             className={classes.button}
             aria-label="Nous contacter"
             href="mailto:assistance@mobilic.beta.gouv.fr"

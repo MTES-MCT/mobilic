@@ -1,7 +1,7 @@
 import { createGraphiQLFetcher } from "@graphiql/toolkit";
 import { GraphiQL } from "graphiql";
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import "./playground.css";
 import map from "lodash/map";
 
@@ -129,4 +129,6 @@ function Playgrounds() {
   ];
 }
 
-ReactDOM.render(<Playgrounds />, document.getElementById("root"));
+const container = document.getElementById("root");
+const root = createRoot(container);
+root.render(<Playgrounds />);

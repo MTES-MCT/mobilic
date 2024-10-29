@@ -9,7 +9,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { isoFormatLocalDate } from "common/utils/time";
 import { syncMissions } from "common/utils/loadUserData";
 import { DISMISSABLE_WARNINGS } from "../admin/utils/dismissableWarnings";
-import Alert from "@mui/material/Alert";
+import Notice from "./Notice";
 
 export const useHolidays = () => {
   const modals = useModals();
@@ -78,10 +78,11 @@ export const useHolidays = () => {
             cancelButtonLabel: "Annuler",
             disableWarningName: DISMISSABLE_WARNINGS.EMPLOYEE_OFF_CREATION,
             content: (
-              <Alert severity="warning">
-                Une fois le congé ou l'absence validé(e), vous ne pourrez plus y
-                apporter de modification.
-              </Alert>
+              <Notice
+                type="warning"
+                description="Une fois le congé ou l'absence validé(e), vous ne pourrez plus y
+                apporter de modification."
+              />
             ),
             handleConfirm: logHolidayProcess
           });

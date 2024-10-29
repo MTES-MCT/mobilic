@@ -224,7 +224,7 @@ function _Admin() {
             maxWidth={false}
             ref={ref}
           >
-            <Switch color="secondary">
+            <Switch>
               {views.map(view => (
                 <Route
                   key={view.label}
@@ -240,7 +240,10 @@ function _Admin() {
                 />
               ))}
               {defaultView && (
-                <Redirect key="default" push from="*" to={defaultView.path} />
+                <Route
+                  path="*"
+                  render={() => <Redirect push to={defaultView.path} />}
+                />
               )}
             </Switch>
           </Container>

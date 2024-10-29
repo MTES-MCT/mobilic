@@ -64,7 +64,7 @@ export function FaqCard({
       className={`${commonCardsClasses.linkWholeCard} ${
         !link ? classes.button : ""
       }`}
-      color="primary"
+      priority="tertiary no outline"
       {...buttonActionProps}
     >
       <Card variant="outlined" className={commonCardsClasses.card}>

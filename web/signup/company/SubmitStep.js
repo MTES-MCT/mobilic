@@ -7,8 +7,8 @@ import { PhoneNumber } from "../../common/PhoneNumber";
 import Stack from "@mui/material/Stack";
 import { BusinessType } from "../../common/BusinessType";
 import { Section } from "../../common/Section";
-import { TextInput } from "@dataesr/react-dsfr";
 import { MandatoryField } from "../../common/MandatoryField";
+import { Input } from "../../common/forms/Input";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -47,11 +47,13 @@ export function SubmitStep({
         {usingCompanyName && (
           <Stack direction="column" spacing={2} textAlign="left">
             <MandatoryField />
-            <TextInput
+            <Input
               id="company-usual-name"
-              value={companyName}
-              onChange={e => setCompanyName(e.target.value.trimLeft())}
               required
+              nativeInputProps={{
+                value: companyName,
+                onChange: e => setCompanyName(e.target.value.trimLeft())
+              }}
               label="Nom usuel"
             />
             <PhoneNumber
@@ -79,8 +81,6 @@ export function SubmitStep({
         <LoadingButton
           aria-label="Terminer inscription"
           className={classes.verticalFormButton}
-          variant="contained"
-          color="primary"
           type="submit"
           disabled={
             !claimedRights ||

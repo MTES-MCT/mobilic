@@ -1,6 +1,5 @@
 import SvgIcon from "@mui/material/SvgIcon";
 import React from "react";
-import omit from "lodash/omit";
 import { ReactComponent as MobilicFilledIcon_ } from "../assets/images/mobilic-logo-filled.svg";
 import { ReactComponent as MobilicOutlinedIcon_ } from "../assets/images/mobilic-logo-outlined.svg";
 import { ReactComponent as MobilicBlueIcon_ } from "../assets/images/mobilic-logo-blue.svg";
@@ -10,14 +9,11 @@ import { ReactComponent as TruckIcon_ } from "../assets/images/Truck2.svg";
 import { ReactComponent as HammerWenchIcon_ } from "../assets/images/Work.svg";
 import { ReactComponent as TrainIcon_ } from "../assets/images/Train.svg";
 import { ReactComponent as BedIcon_ } from "../assets/images/Bed2.svg";
-import { ReactComponent as FranceConnectIcon_ } from "../assets/images/FranceConnect.svg";
-import { ReactComponent as FabNumIcon_ } from "../assets/images/fabnum.svg";
 import { ReactComponent as MarianneIcon_ } from "common/assets/images/marianne.svg";
 import _ManagerImage from "../assets/images/Manager.svg";
 import _WorkerImage from "../assets/images/worker.svg";
 import _SoftwareImage from "../assets/images/software.svg";
 import _ControllerImage from "../assets/images/controller1.png";
-import _AgentConnectImage from "../assets/images/agentconnect.svg";
 import _MobilicQrCode from "../assets/images/mobilic-qrcode.svg";
 import _NoDataImage from "../assets/images/no-data.png";
 import _AxecImage from "../assets/images/press-logos/axec.png";
@@ -168,10 +164,6 @@ export function ControllerImage(props) {
   return <img alt="" src={_ControllerImage} {...props} />;
 }
 
-export function AgentConnectImage(props) {
-  return <img alt="agent connect" src={_AgentConnectImage} {...props} />;
-}
-
 export function AxecImage(props) {
   return <img alt="AXEC" src={_AxecImage} {...props} />;
 }
@@ -234,38 +226,6 @@ export function BretagneMaceDemenagementImage(props) {
 
 export function ComputerImage(props) {
   return <img alt="Un ordinateur" src={_ComputerImage} {...props} />;
-}
-
-export function FranceConnectIcon(props) {
-  return (
-    <SvgIcon
-      titleAccess="FranceConnect"
-      style={{
-        width: 283 * (props.scale ? props.scale : 1),
-        height: 82 * (props.scale ? props.scale : 1),
-        ...props.style
-      }}
-      {...omit(props, "style")}
-      viewBox="0 0 283.5 82.2"
-      component={FranceConnectIcon_}
-    />
-  );
-}
-
-export function FabNumIcon(props) {
-  return (
-    <SvgIcon
-      titleAccess="fabrique numérique"
-      style={{
-        width: 141 * (props.scale ? props.scale : 1),
-        height: 141 * (props.scale ? props.scale : 1),
-        ...props.style
-      }}
-      {...omit(props, "style")}
-      viewBox="0 0 141.73 141.73"
-      component={FabNumIcon_}
-    />
-  );
 }
 
 export function MobilicQrCode(props) {

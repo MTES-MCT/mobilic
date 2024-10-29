@@ -4,7 +4,6 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { makeStyles } from "@mui/styles";
 import { useLocation } from "react-router-dom";
 import { useModals } from "common/utils/modals";
-import { Alert } from "@mui/material";
 import { useAdminStore } from "../store/store";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import {
@@ -12,6 +11,7 @@ import {
   OPEN_CANCEL_UPDATE_MISSION
 } from "common/utils/matomoTags";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   missionDrawer: {
@@ -85,10 +85,11 @@ export function MissionDrawerContextProvider({
         confirmButtonLabel: "Fermer",
         cancelButtonLabel: "Annuler",
         content: (
-          <Alert severity="warning">
-            Si vous fermez cette mission, les modifications non validées seront
-            perdues.
-          </Alert>
+          <Notice
+            type="warning"
+            description="Si vous fermez cette mission, les modifications non validées seront
+            perdues."
+          />
         ),
         handleConfirm: () => {
           trackEvent(CANCEL_UPDATE_MISSION);

@@ -18,7 +18,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function LegalNotices() {
-  return [<Header key={1} />, <Notices key={2} />, <Footer key={3} />];
+  return (
+    <>
+      <Header />
+      <Notices />
+      <Footer />
+    </>
+  );
 }
 
 function Notices() {
@@ -26,7 +32,7 @@ function Notices() {
   const classes = useStyles();
 
   return (
-    <Container className={classes.container} maxWidth="lg">
+    <Container className={classes.container} maxWidth="xl">
       <h1>Mentions légales</h1>
       <Stack direction="column" spacing={4}>
         <Box>

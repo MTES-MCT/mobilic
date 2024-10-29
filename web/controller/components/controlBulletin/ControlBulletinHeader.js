@@ -1,9 +1,8 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
-import classNames from "classnames";
-import { Link } from "react-router-dom";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   controlHeaderContainer: {
@@ -15,6 +14,9 @@ const useStyles = makeStyles(theme => ({
     paddingRight: "0",
     paddingBottom: theme.spacing(1),
     marginBottom: theme.spacing(2)
+  },
+  underlinedButton: {
+    textDecoration: "underline"
   }
 }));
 
@@ -22,19 +24,16 @@ export function ControlBulletinHeader({ onCloseDrawer, backLinkLabel }) {
   const classes = useStyles();
   return (
     <Container className={classes.controlHeaderContainer}>
-      <Box className={classes.subHeaderSection}>
-        <Link
-          to="#"
-          className={classNames(
-            classes.linkHomeMobile,
-            "fr-link",
-            "fr-fi-arrow-left-line",
-            "fr-link--icon-left"
-          )}
+      <Box>
+        <Button
           onClick={onCloseDrawer}
+          priority="tertiary no outline"
+          iconId="fr-icon-arrow-left-s-line"
+          iconPosition="left"
+          className={classes.underlinedButton}
         >
           {backLinkLabel}
-        </Link>
+        </Button>
       </Box>
     </Container>
   );

@@ -2,7 +2,6 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import classNames from "classnames";
-import { Alert } from "@mui/material";
 import { QrReader } from "react-qr-reader";
 import Grid from "@mui/material/Grid";
 import useTheme from "@mui/styles/useTheme";
@@ -17,6 +16,7 @@ import Typography from "@mui/material/Typography";
 import { Header } from "../../../common/Header";
 import { CONTROL_TYPES } from "../../utils/useReadControlData";
 import { usePageTitle } from "../../../common/UsePageTitle";
+import Notice from "../../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -50,9 +50,6 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(3),
     paddingLeft: theme.spacing(3),
     marginTop: theme.spacing(2)
-  },
-  scanSeveralCodes: {
-    marginTop: theme.spacing(3)
   }
 }));
 export function ControllerScanQRCode() {
@@ -184,10 +181,16 @@ export function ControllerScanQRCode() {
           </div>
         </Grid>
       </Grid>
-      <Alert severity="info" className={classes.scanSeveralCodes}>
-        Plusieurs personnes sont à bord du VUL ? Scannez un premier QR Code (ex{" "}
-        : conducteur) puis procédez à un nouveau contrôle (ex : accompagnateur)
-      </Alert>
+      <Notice
+        sx={{ marginTop: 3 }}
+        description={
+          <>
+            Plusieurs personnes sont à bord du VUL ? Scannez un premier QR Code
+            (ex : conducteur) puis procédez à un nouveau contrôle (ex :
+            accompagnateur)
+          </>
+        }
+      />
       <div className={classes.noQRCodeLink}>
         <a
           className="fr-link fr-link--icon-right fr-fi-external-link-line"

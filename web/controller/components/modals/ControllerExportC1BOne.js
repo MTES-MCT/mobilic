@@ -1,5 +1,4 @@
-import { Button } from "@dataesr/react-dsfr";
-import { Alert } from "@mui/material";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -10,6 +9,7 @@ import { useSnackbarAlerts } from "../../../common/Snackbar";
 import SignFilesCheckbox from "../../../common/SignFiles";
 import { CheckboxField } from "../../../common/CheckboxField";
 import Modal, { modalStyles } from "../../../common/Modal";
+import Notice from "../../../common/Notice";
 
 export default function ControllerExportC1BOne({
   controlId,
@@ -30,24 +30,29 @@ export default function ControllerExportC1BOne({
       title="Générer un export C1B"
       content={
         <>
-          <Alert severity="warning">
-            <Typography>
-              Les fichiers générés par Mobilic respectent la norme C1B, mais ne
-              sont pour autant pas tout à fait identiques aux fichiers des
-              cartes conducteur (par exemple: certaines parties sont laissées
-              vides faute de données, les signatures numériques sont différentes
-              ...).
-            </Typography>
-            <Typography mt={1}>
-              Si jamais vous ne parvenez pas à lire les fichiers Mobilic depuis
-              votre logiciel d'analyse n'hésitez pas à nous contacter à
-              l'adresse mail{" "}
-              <Link href="mailto:contact@mobilic.beta.gouv.fr">
-                contact@mobilic.beta.gouv.fr
-              </Link>
-              .
-            </Typography>
-          </Alert>
+          <Notice
+            type="warning"
+            description={
+              <>
+                <Typography>
+                  Les fichiers générés par Mobilic respectent la norme C1B, mais
+                  ne sont pour autant pas tout à fait identiques aux fichiers
+                  des cartes conducteur (par exemple: certaines parties sont
+                  laissées vides faute de données, les signatures numériques
+                  sont différentes ...).
+                </Typography>
+                <Typography mt={1}>
+                  Si jamais vous ne parvenez pas à lire les fichiers Mobilic
+                  depuis votre logiciel d'analyse n'hésitez pas à nous contacter
+                  à l'adresse mail{" "}
+                  <Link href="mailto:contact@mobilic.beta.gouv.fr">
+                    contact@mobilic.beta.gouv.fr
+                  </Link>
+                  .
+                </Typography>
+              </>
+            }
+          />
           <Typography variant="h4" className={classes.subtitle}>
             Options
           </Typography>
@@ -75,23 +80,25 @@ export default function ControllerExportC1BOne({
         </>
       }
       actions={
-        <Button
-          className={classes.modalFooter}
-          onClick={async () => {
-            alerts.withApiErrorHandling(async () => {
-              const options = {
-                control_id: controlId,
-                with_digital_signatures: sign,
-                employee_version: employeeVersion
-              };
-              await api.downloadFileHttpQuery(HTTP_QUERIES.controlC1bExport, {
-                json: options
-              });
-            }, "download-control-c1b-one");
-          }}
-        >
-          Générer
-        </Button>
+        <>
+          <Button
+            className={classes.modalFooter}
+            onClick={async () => {
+              alerts.withApiErrorHandling(async () => {
+                const options = {
+                  control_id: controlId,
+                  with_digital_signatures: sign,
+                  employee_version: employeeVersion
+                };
+                await api.downloadFileHttpQuery(HTTP_QUERIES.controlC1bExport, {
+                  json: options
+                });
+              }, "download-control-c1b-one");
+            }}
+          >
+            Générer
+          </Button>
+        </>
       }
     />
   );

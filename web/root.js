@@ -12,13 +12,9 @@ import {
   useStoreSyncedWithLocalStorage
 } from "common/store/store";
 import { ApiContextProvider, useApi } from "common/utils/api";
-import { theme } from "common/utils/theme";
+import { customOptions } from "common/utils/theme";
 import { MODAL_DICT } from "./modals";
-import {
-  ThemeProvider,
-  StyledEngineProvider,
-  CssBaseline
-} from "@mui/material";
+import { StyledEngineProvider, CssBaseline } from "@mui/material";
 import { loadUserData } from "common/utils/loadUserData";
 import frLocale from "date-fns/locale/fr";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -52,15 +48,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { ErrorBoundary } from "./common/ErrorFallback";
 import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
 import { isGoogleAdsInitiated, initGoogleAds } from "common/utils/trackAds";
-
-import "@gouvfr/dsfr/dist/dsfr.min.css"; // dsfr should be imported before custom styles
-import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-development/icons-development.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-communication/icons-communication.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-others/icons-others.min.css";
-import "@gouvfr/dsfr/dist/utility/colors/colors.min.css";
+import { createMuiDsfrThemeProvider } from "@codegouvfr/react-dsfr/mui";
 import "./index.css";
 import "common/assets/styles/root.scss";
 import { loadControllerUserData } from "./controller/utils/loadControllerUserData";
@@ -69,6 +57,7 @@ import { shouldUpdatePassword } from "common/utils/updatePassword";
 import UpdatePasswordModal from "./pwa/components/UpdatePassword";
 import AcceptCguModal from "./pwa/modals/AcceptCguModal";
 import RejectedCguModal from "./pwa/modals/RejectedCguModals";
+import merge from "lodash/merge";
 
 const matomo = createInstance({
   urlBase: "https://stats.beta.gouv.fr",
@@ -85,13 +74,19 @@ const matomo = createInstance({
   linkTracking: false // optional, default value: true
 });
 
+const { MuiDsfrThemeProvider } = createMuiDsfrThemeProvider({
+  augmentMuiTheme: ({ nonAugmentedMuiTheme, frColorTheme }) => ({
+    ...merge(nonAugmentedMuiTheme, customOptions)
+  })
+});
+
 export default function Root() {
   return (
     <MatomoProvider value={matomo}>
       <StoreSyncedWithLocalStorageProvider storage={localStorage}>
         <Router>
           <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={theme}>
+            <MuiDsfrThemeProvider>
               <CssBaseline />
               <ErrorBoundary>
                 <ApiContextProvider>
@@ -116,7 +111,7 @@ export default function Root() {
                   </LocalizationProvider>
                 </ApiContextProvider>
               </ErrorBoundary>
-            </ThemeProvider>
+            </MuiDsfrThemeProvider>
           </StyledEngineProvider>
         </Router>
       </StoreSyncedWithLocalStorageProvider>
@@ -279,7 +274,6 @@ function _Root() {
       { cacheKey: "loadUser" + userId },
       false
     );
-    return () => {};
   }, [userId]);
 
   React.useEffect(() => {
@@ -291,7 +285,6 @@ function _Root() {
       { cacheKey: "loadController" + controllerId },
       false
     );
-    return () => {};
   }, [controllerId]);
 
   const [seeAgainCgu, setSeeAgainCgu] = React.useState(false);
@@ -331,16 +324,17 @@ function _Root() {
       )}
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
       <React.Suspense fallback={<CircularProgress color="primary" />}>
-        <Switch color="secondary">
+        <Switch>
           {routes.map(route => (
             <Route
               key={route.path}
               exact={route.exact || false}
               path={route.path}
-              component={route.component}
-            />
+            >
+              {route.component}
+            </Route>
           ))}
-          <Redirect key="default" from="*" to={fallbackRoute} />
+          <Route path="*" render={() => <Redirect to={fallbackRoute} />} />
         </Switch>
       </React.Suspense>
     </>

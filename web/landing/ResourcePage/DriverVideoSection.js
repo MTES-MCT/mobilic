@@ -1,7 +1,7 @@
 import React from "react";
-import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import { VideoCard, VIDEOS } from "./VideoCard";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export function DriverVideoSection({ buttonStyle }) {
   return (
@@ -21,12 +21,14 @@ export function DriverVideoSection({ buttonStyle }) {
         </Grid>
       </Grid>
       <Button
-        color="primary"
+        priority="secondary"
         size="small"
         className={buttonStyle}
-        variant={"outlined"}
-        href="https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos"
-        target="_blank"
+        linkProps={{
+          href:
+            "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos",
+          target: "_blank"
+        }}
       >
         Voir toutes les vidéos
       </Button>

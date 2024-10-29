@@ -6,7 +6,6 @@ import { AugmentedTable } from "../components/AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
@@ -31,8 +30,9 @@ import { EMPLOYMENT_ROLE } from "common/utils/employments";
 import { TeamFilter } from "../components/TeamFilter";
 import { NO_TEAMS_LABEL, NO_TEAM_ID } from "../utils/teams";
 import { BusinessDropdown } from "../components/BusinessDropdown";
-import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
+import Notice from "../../common/Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -46,9 +46,6 @@ const useStyles = makeStyles(theme => ({
   },
   successText: {
     color: theme.palette.success.main
-  },
-  warningText: {
-    color: theme.palette.warning.main
   },
   augmentedTable: {
     marginRight: theme.spacing(10)
@@ -641,8 +638,7 @@ export function Employees({ company, containerRef }) {
   return (
     <Stack direction="column" spacing={2}>
       <Button
-        color="primary"
-        variant="outlined"
+        priority="secondary"
         size="small"
         sx={{
           marginRight: "auto"
@@ -701,8 +697,9 @@ export function Employees({ company, containerRef }) {
           {
             <Button
               disabled={isAddingEmployment}
-              color="primary"
               className={classes.hideButton}
+              priority="tertiary"
+              size="small"
               onClick={() => {
                 setHidePendingEmployments(!hidePendingEmployments);
                 setTimeout(
@@ -716,9 +713,7 @@ export function Employees({ company, containerRef }) {
           }
         </Typography>
         <Button
-          variant="contained"
           size="small"
-          color="primary"
           onClick={() => {
             setHidePendingEmployments(false);
             pendingEmploymentsTableRef.current.newRow({
@@ -726,7 +721,6 @@ export function Employees({ company, containerRef }) {
               teamId: NO_TEAM_ID
             });
           }}
-          className={classes.actionButton}
         >
           Inviter un nouveau salarié
         </Button>
@@ -795,9 +789,7 @@ export function Employees({ company, containerRef }) {
         </Typography>
         {!canDisplayPendingEmployments && (
           <Button
-            variant="contained"
             size="small"
-            color="primary"
             onClick={() =>
               pendingEmploymentsTableRef.current.newRow({
                 hasAdminRights: EMPLOYMENT_ROLE.employee
@@ -816,12 +808,10 @@ export function Employees({ company, containerRef }) {
       </Typography>
 
       {areThereEmploymentsWithoutBusinessType && (
-        <Alert severity="info">
-          <Typography>
-            Certains salariés n'ont pas de type d'activité de transport
-            renseigné. Veuillez en sélectionner un pour chaque salarié actif.
-          </Typography>
-        </Alert>
+        <Notice
+          description="Certains salariés n'ont pas de type d'activité de transport
+            renseigné. Veuillez en sélectionner un pour chaque salarié actif."
+        />
       )}
       <Grid container>
         {adminStore?.teams?.length > 0 && (

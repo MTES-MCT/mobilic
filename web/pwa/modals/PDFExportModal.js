@@ -132,40 +132,40 @@ export default function PDFExportModal({
         </>
       }
       actions={
-        <LoadingButton
-          color="primary"
-          variant="contained"
-          disabled={!minDate || !maxDate || dateRangeError}
-          onClick={async e => {
-            const options = {};
-            if (minDate)
-              options["min_date"] = isoFormatLocalDate(
-                startOfMonthAsDate(minDate)
-              );
-            if (maxDate) {
-              options["max_date"] = isoFormatLocalDate(
-                isDateInCurrentMonth(maxDate)
-                  ? new Date()
-                  : endOfMonthAsDate(maxDate)
-              );
-            }
-            e.preventDefault();
-            trackLink({
-              href: `/generate_pdf_export`,
-              linkType: "download"
-            });
-            try {
-              await api.downloadFileHttpQuery(HTTP_QUERIES.pdfExport, {
-                json: options
+        <>
+          <LoadingButton
+            disabled={!minDate || !maxDate || dateRangeError}
+            onClick={async e => {
+              const options = {};
+              if (minDate)
+                options["min_date"] = isoFormatLocalDate(
+                  startOfMonthAsDate(minDate)
+                );
+              if (maxDate) {
+                options["max_date"] = isoFormatLocalDate(
+                  isDateInCurrentMonth(maxDate)
+                    ? new Date()
+                    : endOfMonthAsDate(maxDate)
+                );
+              }
+              e.preventDefault();
+              trackLink({
+                href: `/generate_pdf_export`,
+                linkType: "download"
               });
-            } catch (err) {
-              alerts.error(formatApiError(err), "generate_pdf_export", 6000);
-            }
-          }}
-          loadingLabel={"Veuillez patienter pendant le téléchargement"}
-        >
-          Télécharger
-        </LoadingButton>
+              try {
+                await api.downloadFileHttpQuery(HTTP_QUERIES.pdfExport, {
+                  json: options
+                });
+              } catch (err) {
+                alerts.error(formatApiError(err), "generate_pdf_export", 6000);
+              }
+            }}
+            loadingLabel={"Veuillez patienter pendant le téléchargement"}
+          >
+            Télécharger
+          </LoadingButton>
+        </>
       }
     />
   );
