@@ -73,7 +73,11 @@ export function ControllerHistory() {
           setControlOnFocus(null);
         }}
       />
-      <Typography sx={{ typography: { xs: "h3", sm: "h1" } }} component="h1">
+      <Typography
+        sx={{ typography: { xs: "h3", sm: "h1" } }}
+        component="h1"
+        mb={{ xs: 2, sm: 3 }}
+      >
         Historique des contrôles
       </Typography>
       <Box

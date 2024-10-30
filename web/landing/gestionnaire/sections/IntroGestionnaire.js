@@ -1,7 +1,6 @@
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
-import { LoadingButton } from "common/components/LoadingButton";
 import { useIsWidthDown } from "common/utils/useWidth";
 import React from "react";
 import { VIDEOS, VideoCard } from "../../ResourcePage/VideoCard";
@@ -12,6 +11,7 @@ import {
   ADMIN_LANDING_SUBSCRIBE_TOP,
   ADMIN_LANDING_WEBINARS
 } from "common/utils/matomoTags";
+import { LinkButton } from "../../../common/LinkButton";
 
 const useStyles = makeStyles(theme => ({
   heroContainer: {
@@ -83,22 +83,23 @@ export function IntroGestionnaire() {
   const Buttons = React.useMemo(
     () => (
       <div className={classes.heroButtons}>
-        <LoadingButton
+        <LinkButton
           className={classes.button}
-          href="/signup/admin"
+          priority="primary"
+          to="/signup/admin"
           onClick={() => trackEvent(ADMIN_LANDING_SUBSCRIBE_TOP)}
         >
           J'inscris mon entreprise
-        </LoadingButton>
+        </LinkButton>
         {webinars?.length > 0 && (
-          <LoadingButton
+          <LinkButton
             className={classes.button}
             priority="secondary"
-            href="/#webinaires"
+            to="/#webinaires"
             onClick={() => trackEvent(ADMIN_LANDING_WEBINARS)}
           >
             J'assiste à une démonstration
-          </LoadingButton>
+          </LinkButton>
         )}
       </div>
     ),

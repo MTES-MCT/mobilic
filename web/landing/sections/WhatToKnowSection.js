@@ -3,7 +3,7 @@ import { makeStyles } from "@mui/styles";
 
 import { Grid, Typography } from "@mui/material";
 import { LandingSection } from "./LandingSection";
-import { LoadingButton } from "common/components/LoadingButton";
+import { LinkButton } from "../../common/LinkButton";
 
 const useStyles = makeStyles(theme => ({
   faqCta: {
@@ -80,13 +80,14 @@ export const WhatToKnowSection = () => {
           </Grid>
         </Grid>
         <Grid item xs={12} className={classes.faqCta}>
-          <LoadingButton
-            href="https://faq.mobilic.beta.gouv.fr"
+          <LinkButton
+            to="https://faq.mobilic.beta.gouv.fr"
             target="_blank"
             rel="noopener noreferrer"
+            priority="primary"
           >
             Consulter la foire aux questions
-          </LoadingButton>
+          </LinkButton>
         </Grid>
       </Grid>
     </LandingSection>

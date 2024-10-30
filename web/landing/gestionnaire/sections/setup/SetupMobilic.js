@@ -3,8 +3,7 @@ import { makeStyles } from "@mui/styles";
 import { SetupMobilicBlock } from "./SetupMobilicBlock";
 import Stack from "@mui/material/Stack";
 import { useIsWidthUp } from "common/utils/useWidth";
-import { Link } from "../../../../common/LinkButton";
-import { LoadingButton } from "common/components/LoadingButton";
+import { Link, LinkButton } from "../../../../common/LinkButton";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { ADMIN_LANDING_SUBSCRIBE_HOW_TO } from "common/utils/matomoTags";
 
@@ -85,13 +84,14 @@ export function SetupMobilic() {
       >
         {BLOCKS_WITH_DIVIDERS}
       </Stack>
-      <LoadingButton
+      <LinkButton
         className={classes.button}
-        href="/signup/admin"
+        priority="primary"
+        to="/signup/admin"
         onClick={() => trackEvent(ADMIN_LANDING_SUBSCRIBE_HOW_TO)}
       >
         Je crée mon compte gratuit
-      </LoadingButton>
+      </LinkButton>
     </Stack>
   );
 }

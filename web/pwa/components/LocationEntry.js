@@ -54,7 +54,9 @@ export default function LocationEntry({
 
   return (
     <ListItem disableGutters>
-      <ListItemIcon>{isStart ? "Début" : "Fin"}</ListItemIcon>
+      <ListItemIcon sx={{ marginRight: 1 }}>
+        {isStart ? "Début" : "Fin"}
+      </ListItemIcon>
       <ListItemText
         primary={location ? formatAddressMainText(location) : null}
         secondary={location ? formatAddressSubText(location) : null}
