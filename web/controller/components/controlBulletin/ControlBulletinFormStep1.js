@@ -9,7 +9,7 @@ import { DsfrAutocomplete } from "../utils/DsfrAutocomplete";
 import { MandatoryField } from "../../../common/MandatoryField";
 import { Input } from "../../../common/forms/Input";
 import { Select } from "../../../common/forms/Select";
-import { BirthDate } from "../../../common/forms/BirthDate";
+import { BirthDate } from "../forms/BirthDate";
 
 export function ControlBulletinFormStep1({
   handleEditControlBulletin,
@@ -117,6 +117,7 @@ export function ControlBulletinFormStep1({
         state={
           !controlBulletin.userLastName && showErrors ? "error" : "default"
         }
+        stateRelatedMessage="Veuillez compléter ce champ."
         required
       />
       <Input
@@ -129,6 +130,7 @@ export function ControlBulletinFormStep1({
         state={
           !controlBulletin.userFirstName && showErrors ? "error" : "default"
         }
+        stateRelatedMessage="Veuillez compléter ce champ."
         required
       />
       <BirthDate
@@ -148,11 +150,7 @@ export function ControlBulletinFormStep1({
         state={
           !controlBulletin.userNationality && showErrors ? "error" : "default"
         }
-        stateRelatedMessage={
-          !controlBulletin.userNationality && showErrors
-            ? "Veuillez compléter ce champ"
-            : ""
-        }
+        stateRelatedMessage="Veuillez compléter ce champ."
         required
       >
         {COUNTRIES.map(option => (

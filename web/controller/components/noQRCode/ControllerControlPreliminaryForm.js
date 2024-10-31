@@ -10,10 +10,11 @@ import { MandatoryField } from "../../../common/MandatoryField";
 import { Input } from "../../../common/forms/Input";
 import { Select } from "../../../common/forms/Select";
 import { RadioButtons } from "../../../common/forms/RadioButtons";
-import { BirthDate } from "../../../common/forms/BirthDate";
+import { BirthDate } from "../forms/BirthDate";
 import { CONTROL_TYPES } from "../../utils/useReadControlData";
 import { COUNTRIES } from "../../utils/country";
 import { BUSINESS_TYPES } from "common/utils/businessTypes";
+import { CompanyControlData } from "../forms/CompanyControlData";
 
 export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
   const api = useApi();
@@ -24,7 +25,9 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
   const [userLastName, setUserLastName] = React.useState("");
   const [userBirthDate, setUserBirthDate] = React.useState("");
   const [userNationality, setUserNationality] = React.useState("");
+  const [siren, setSiren] = React.useState("");
   const [companyName, setCompanyName] = React.useState("");
+  const [companyAddress, setCompanyAddress] = React.useState("");
   const [businessType, setBusinessType] = React.useState("");
   const [
     vehicleRegistrationNumber,
@@ -38,7 +41,9 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
       !!userLastName &&
       !!userBirthDate &&
       !!userNationality &&
+      !!siren &&
       !!companyName &&
+      !!companyAddress &&
       !!businessType &&
       !!vehicleRegistrationNumber &&
       (type === CONTROL_TYPES.NO_LIC || isDayPageFilled !== undefined),
@@ -47,7 +52,9 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
       userLastName,
       userBirthDate,
       userNationality,
+      siren,
       companyName,
+      companyAddress,
       businessType,
       vehicleRegistrationNumber,
       isDayPageFilled
@@ -57,7 +64,6 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
   const submitPreliminaryForm = async () =>
     withLoadingScreen(async () => {
       try {
-        console.log(type);
         const apiResponse = await api.graphQlMutate(
           CONTROLLER_SAVE_CONTROL_BULLETIN,
           {
@@ -66,7 +72,9 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
             userLastName,
             userBirthDate,
             userNationality,
+            siren,
             companyName,
+            companyAddress,
             businessType,
             vehicleRegistrationNumber,
             isDayPageFilled
@@ -125,15 +133,14 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         ))}
       </Select>
 
-      {/*  TODO LIC PAPIER */}
-      <Input
-        nativeInputProps={{
-          value: companyName,
-          onChange: e => setCompanyName(e.target.value),
-          name: "companyName"
-        }}
-        label="Nom de l'entreprise"
-        required
+      <CompanyControlData
+        siren={siren}
+        setSiren={setSiren}
+        companyName={companyName}
+        setCompanyName={setCompanyName}
+        companyAddress={companyAddress}
+        setCompanyAddress={setCompanyAddress}
+        showErrors={canSubmitForm}
       />
 
       <Select
