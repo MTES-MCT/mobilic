@@ -109,6 +109,7 @@ export default function C1BExportModal({
       open={open}
       handleClose={handleClose}
       title="Générer des fichiers C1B"
+      size="lg"
       content={
         <>
           <Typography gutterBottom>
