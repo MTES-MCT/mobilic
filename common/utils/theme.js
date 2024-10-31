@@ -31,7 +31,7 @@ export const customOptions = {
       dark: "#202DA7"
     },
     warning: {
-      light: fr.colors.options.warning._425_625.active,
+      light: fr.colors.options.warning._425_625.default,
       main: fr.colors.options.warning._425_625.default,
       dark: fr.colors.options.warning._425_625.hover,
       contrastText: fr.colors.options.grey._1000_50.default
