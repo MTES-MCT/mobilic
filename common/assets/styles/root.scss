@@ -468,3 +468,7 @@ video:not([href])[controls] {
 .fr-modal__footer {
   z-index: 2;
 }
+
+.MuiChip-filled.MuiChip-colorDefault {
+  background-color: var(--background-action-low-blue-france)
+}
