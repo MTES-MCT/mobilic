@@ -58,6 +58,7 @@ import UpdatePasswordModal from "./pwa/components/UpdatePassword";
 import AcceptCguModal from "./pwa/modals/AcceptCguModal";
 import RejectedCguModal from "./pwa/modals/RejectedCguModals";
 import merge from "lodash/merge";
+import useScrollToHash from "./common/hooks/useScrollHash";
 
 const matomo = createInstance({
   urlBase: "https://stats.beta.gouv.fr",
@@ -124,6 +125,7 @@ function _Root() {
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
+  useScrollToHash();
 
   const userId = store.userId();
   const controllerId = store.controllerId();
