@@ -86,15 +86,6 @@ export function ControllerControlBulletin({
   const initControlBulletinFromControlData = () => {
     if (!controlData) {
       return { userNationality: "FRA", vehicleRegistrationCountry: "FRA" };
-    } else if (controlData.controlBulletinCreationTime) {
-      return {
-        userFirstName: controlData.userFirstName,
-        userLastName: controlData.userLastName,
-        userBirthDate: controlData.user?.birthDate,
-        companyName: controlData.companyName,
-        vehicleRegistrationNumber: controlData.vehicleRegistrationNumber,
-        ...controlData.controlBulletin
-      };
     } else {
       return {
         userFirstName: controlData.userFirstName,
@@ -102,11 +93,9 @@ export function ControllerControlBulletin({
         userBirthDate: controlData.user?.birthDate,
         companyName: controlData.companyName,
         vehicleRegistrationNumber: controlData.vehicleRegistrationNumber,
-        siren: controlData.controlBulletin?.siren,
-        companyAddress: controlData.controlBulletin?.companyAddress,
-        missionAddressBegin: controlData.controlBulletin?.missionAddressBegin,
-        userNationality: "FRA",
-        vehicleRegistrationCountry: "FRA"
+        vehicleRegistrationCountry:
+          controlData.controlBulletin?.vehicleRegistrationCountry,
+        ...controlData.controlBulletin
       };
     }
   };
