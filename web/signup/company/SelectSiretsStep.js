@@ -122,7 +122,7 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                 }}
                 disabled={facility.registered}
                 fullWidth
-                sx={{ padding: 0 }}
+                style={{ padding: facility.selected ? "2px" : "1px" }}
               >
                 <FacilityInfo
                   facility={facility}
