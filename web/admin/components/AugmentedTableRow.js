@@ -85,6 +85,17 @@ export function AugmentedTableRow({
 
   return renderRowContainer({
     className: rowClassName,
+    role: "button",
+    tabIndex: "0",
+    onKeyDown: event => {
+      if (
+        event.key === "Enter" &&
+        event.target.tagName !== "A" &&
+        event.target.tagName !== "BUTTON"
+      ) {
+        onRowClick(entry);
+      }
+    },
     onClick: onRowClick,
     children: renderRow({
       entry,
