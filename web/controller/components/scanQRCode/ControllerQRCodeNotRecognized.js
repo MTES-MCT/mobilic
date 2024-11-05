@@ -4,8 +4,8 @@ import Typography from "@mui/material/Typography";
 import { Header } from "../../../common/Header";
 import { usePageTitle } from "../../../common/UsePageTitle";
 import Notice from "../../../common/Notice";
-import { BackButton } from "./BackButton";
 import { Main } from "../../../common/semantics/Main";
+import { ControllerBackButton } from "./ControllerBackButton";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -38,7 +38,7 @@ export function ControllerQRCodeNotRecognized() {
         className={`${classes.container} ${classes.whiteSection}`}
         maxWidth="xl"
       >
-        <BackButton label="Scannez un QR Code" route="/scan" />
+        <ControllerBackButton label="Scannez un QR Code" route="/scan" />
         <h3 className={classes.title}>QR Code non reconnu</h3>
         <Typography>
           Nous n'avons pas pu vérifier la validité de ce QR Code. Il se peut que
