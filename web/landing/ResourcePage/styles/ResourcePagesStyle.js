@@ -7,9 +7,14 @@ export const resourcePagesClasses = makeStyles(theme => ({
   container: {
     paddingTop: theme.spacing(3),
     paddingBottom: theme.spacing(7),
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(5),
-    margin: 0
+    paddingX: theme.spacing(5),
+    margin: 0,
+    [theme.breakpoints.down("sm")]: {
+      paddingTop: theme.spacing(1),
+      paddingBottom: theme.spacing(3),
+      paddingX: theme.spacing(1),
+      marginBottom: theme.spacing(4)
+    }
   },
   inner: {
     margin: "auto",
