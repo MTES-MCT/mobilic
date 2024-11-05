@@ -73,9 +73,6 @@ const useStyles = makeStyles(theme => ({
     borderTop: "0.5px solid #ebeff3",
     "&:first-child": {
       borderTop: "none"
-    },
-    "&:focus": {
-      outline: "none"
     }
   },
   clickableRow: {
