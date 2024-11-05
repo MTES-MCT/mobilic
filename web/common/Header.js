@@ -147,17 +147,27 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function HeaderContainer(props) {
+export const HeaderComponent = ({ children }) => {
   const theme = useTheme();
   return (
     <Box
       px={2}
+      component="header"
+      role="banner"
       className="header-container"
       style={{ backgroundColor: theme.palette.background.paper }}
     >
+      {children}
+    </Box>
+  );
+};
+
+function HeaderContainer(props) {
+  return (
+    <HeaderComponent>
       <Box py={1} {...props}></Box>
       <Divider className="full-width-divider hr-unstyled" />
-    </Box>
+    </HeaderComponent>
   );
 }
 
