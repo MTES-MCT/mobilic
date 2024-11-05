@@ -12,8 +12,8 @@ import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
 import { useApi } from "../utils/api";
 import EditPastMission from "../../web/pwa/components/EditPastMission";
 import { makeStyles } from "@mui/styles";
-import Container from "@mui/material/Container";
 import { sortActivities } from "../utils/activities";
+import { Main } from "../../web/common/semantics/Main";
 
 const useStyles = makeStyles(theme => ({
   appContainer: {
@@ -85,7 +85,7 @@ function _App({ ScreenComponent, loadUser }) {
   }
 
   return (
-    <Container className={classes.appContainer} maxWidth="md" disableGutters>
+    <Main className={classes.appContainer} maxWidth="md" disableGutters>
       <Switch>
         <Route path={`${path}/history`}>
           <History
@@ -149,7 +149,7 @@ function _App({ ScreenComponent, loadUser }) {
           />
         </Route>
       </Switch>
-    </Container>
+    </Main>
   );
 }
 

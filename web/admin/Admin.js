@@ -30,6 +30,7 @@ import { MissionDrawerContextProvider } from "./components/MissionDrawer";
 import CertificationCommunicationModal from "../pwa/components/CertificationCommunicationModal";
 import { shouldUpdateBusinessType } from "common/utils/updateBusinessType";
 import UpdateCompanyBusinessTypeModal from "./modals/UpdateCompanyBusinessTypeModal";
+import { Main } from "../common/semantics/Main";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -212,12 +213,7 @@ function _Admin() {
             onClose={() => setCompaniesToAcceptCertificateCommunication([])}
           />
         )}
-        <Container
-          key={1}
-          maxWidth={false}
-          disableGutters
-          className={classes.container}
-        >
+        <Main maxWidth={false} className={classes.container} disableGutters>
           {isMdUp && <SideMenu views={views} />}
           <Container
             className={`scrollable ${classes.panelContainer}`}
@@ -247,7 +243,7 @@ function _Admin() {
               )}
             </Switch>
           </Container>
-        </Container>
+        </Main>
       </MissionDrawerContextProvider>
     </>
   );

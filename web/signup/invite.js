@@ -14,6 +14,7 @@ import Grid from "@mui/material/Grid";
 import { loadEmployeeInvite } from "../common/loadEmployeeInvite";
 import { LinkButton } from "../common/LinkButton";
 import { usePageTitle } from "../common/UsePageTitle";
+import { Main } from "../common/semantics/Main";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -66,58 +67,61 @@ export function Invite() {
 
   const employeeInvite = store.employeeInvite();
 
-  return [
-    <Header key={1} />,
-    <Container className={classes.container} key={2} maxWidth="md">
-      <Paper>
-        <Container className={classes.innerContainer} maxWidth="sm">
-          {!employeeInvite || error ? (
-            error ? (
-              <Typography key={0} color="error">
-                Impossible d'accéder à la page pour la raison suivante : {error}
-              </Typography>
-            ) : null
-          ) : (
-            [
-              <Typography className={classes.text} key={1}>
-                <span className="bold">
-                  {formatPersonName(employeeInvite.submitter)}
-                </span>{" "}
-                vous invite à rejoindre l'entreprise{" "}
-                <span className="bold">{employeeInvite.company.name}</span>.
-              </Typography>,
-              <Grid
-                key={2}
-                className={classes.buttonContainer}
-                container
-                justifyContent="space-evenly"
-                spacing={2}
-              >
-                <Grid item>
-                  <LinkButton
-                    aria-label="Inscription"
-                    priority="primary"
-                    to={`/signup/user?token=${employeeInvite.inviteToken}`}
-                  >
-                    Je crée un compte
-                  </LinkButton>
+  return (
+    <>
+      <Header />
+      <Main maxWidth="lg" className={classes.container}>
+        <Paper>
+          <Container className={classes.innerContainer} maxWidth="sm">
+            {!employeeInvite || error ? (
+              error ? (
+                <Typography key={0} color="error">
+                  Impossible d'accéder à la page pour la raison suivante :{" "}
+                  {error}
+                </Typography>
+              ) : null
+            ) : (
+              [
+                <Typography className={classes.text} key={1}>
+                  <span className="bold">
+                    {formatPersonName(employeeInvite.submitter)}
+                  </span>{" "}
+                  vous invite à rejoindre l'entreprise{" "}
+                  <span className="bold">{employeeInvite.company.name}</span>.
+                </Typography>,
+                <Grid
+                  key={2}
+                  className={classes.buttonContainer}
+                  container
+                  justifyContent="space-evenly"
+                  spacing={2}
+                >
+                  <Grid item>
+                    <LinkButton
+                      aria-label="Inscription"
+                      priority="primary"
+                      to={`/signup/user?token=${employeeInvite.inviteToken}`}
+                    >
+                      Je crée un compte
+                    </LinkButton>
+                  </Grid>
+                  <Grid item>
+                    <LinkButton
+                      aria-label="Rattachement d'un compte existant"
+                      priority="secondary"
+                      to={`/login?next=${encodeURIComponent(
+                        "/redeem_invite?token=" + employeeInvite.inviteToken
+                      )}`}
+                    >
+                      J'ai déjà un compte
+                    </LinkButton>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <LinkButton
-                    aria-label="Rattachement d'un compte existant"
-                    priority="secondary"
-                    to={`/login?next=${encodeURIComponent(
-                      "/redeem_invite?token=" + employeeInvite.inviteToken
-                    )}`}
-                  >
-                    J'ai déjà un compte
-                  </LinkButton>
-                </Grid>
-              </Grid>
-            ]
-          )}
-        </Container>
-      </Paper>
-    </Container>
-  ];
+              ]
+            )}
+          </Container>
+        </Paper>
+      </Main>
+    </>
+  );
 }

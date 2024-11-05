@@ -14,6 +14,7 @@ import { useApi } from "common/utils/api";
 import { EmailSelection } from "./EmailSelection";
 import { Header } from "../common/Header";
 import { CompanySignup } from "./company/CompanySignup";
+import { Main } from "../common/semantics/Main";
 
 export default function Signup() {
   const store = useStoreSyncedWithLocalStorage();
@@ -52,7 +53,7 @@ export default function Signup() {
   return (
     <>
       <Header />
-      <main role="main" id="content">
+      <Main>
         <Switch>
           {!userId && (
             <Route key="user" path={`${path}/user`}>
@@ -89,7 +90,7 @@ export default function Signup() {
           )}
           <Route path="*" render={() => <Redirect to={defaultRoute()} />} />
         </Switch>
-      </main>
+      </Main>
     </>
   );
 }

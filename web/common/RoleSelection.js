@@ -19,7 +19,9 @@ export function RoleSelection({ title, children }) {
   const classes = useStyles();
   return (
     <>
-      <h4 className="fr-pt-2w">{title}</h4>
+      <h4 className="fr-pt-2w" style={{ textAlign: "center" }}>
+        {title}
+      </h4>
       <div className={classNames(classes.container, "fr-mx-2w")}>
         {children}
       </div>

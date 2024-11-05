@@ -7,6 +7,7 @@ import { usePageTitle } from "../common/UsePageTitle";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
+import { Main } from "../common/semantics/Main";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -21,7 +22,9 @@ export default function LegalNotices() {
   return (
     <>
       <Header />
-      <Notices />
+      <Main>
+        <Notices />
+      </Main>
       <Footer />
     </>
   );
