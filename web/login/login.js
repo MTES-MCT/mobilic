@@ -23,6 +23,7 @@ import { pluralize } from "common/utils/time";
 import { usePageTitle } from "../common/UsePageTitle";
 import { RegistrationLink } from "../common/RegistrationLink";
 import { PasswordInput } from "../common/forms/PasswordInput";
+import { Main } from "../common/semantics/Main";
 
 const useStyles = makeStyles(theme => ({
   forgotPasswordLink: {
@@ -102,82 +103,86 @@ export default function Login() {
     setLoading(false);
   };
 
-  return [
-    <Header key={1} />,
-    <PaperContainer key={2}>
-      <Container className="centered" maxWidth="xs">
-        <PaperContainerTitle variant="h1" className={classes.mainTitle}>
-          Connexion
-        </PaperContainerTitle>
-        <PaperContainerTitle variant="h3">
-          Entreprise ou salarié
-        </PaperContainerTitle>
-        <FranceConnectContainer
-          onButtonClick={() => {
-            const callbackUrl = buildCallbackUrl();
-            window.location.href = buildFranceConnectUrl(callbackUrl);
-          }}
-        />
-        <p className="fr-hr-or">ou</p>
-        <Box my={1}>
-          <form
-            className="vertical-form"
-            autoComplete="on"
-            noValidate
-            onSubmit={handleSubmit}
-          >
-            <EmailField
-              autoComplete="username"
-              value={email}
-              setValue={setEmail}
-              error={emailError}
-              setError={setEmailError}
-              required
-            />
-            <PasswordInput
-              label="Mot de passe"
-              nativeInputProps={{
-                autoComplete: "current-password",
-                value: password,
-                onChange: e => setPassword(e.target.value)
+  return (
+    <>
+      <Header />
+      <Main>
+        <PaperContainer>
+          <Container className="centered" maxWidth="xs">
+            <PaperContainerTitle variant="h1" className={classes.mainTitle}>
+              Connexion
+            </PaperContainerTitle>
+            <PaperContainerTitle variant="h3">
+              Entreprise ou salarié
+            </PaperContainerTitle>
+            <FranceConnectContainer
+              onButtonClick={() => {
+                const callbackUrl = buildCallbackUrl();
+                window.location.href = buildFranceConnectUrl(callbackUrl);
               }}
-              required
             />
-            <Box my={2}>
-              <LoadingButton
-                aria-label="Connexion"
-                type="submit"
-                loading={loading}
-                disabled={!email || !password}
+            <p className="fr-hr-or">ou</p>
+            <Box my={1}>
+              <form
+                className="vertical-form"
+                autoComplete="on"
+                noValidate
+                onSubmit={handleSubmit}
               >
-                Me connecter
-              </LoadingButton>
-            </Box>
-            {errorMessage && (
-              <Box>
-                <Typography className={classes.errorMessage}>
-                  {errorMessage}
-                </Typography>
-              </Box>
-            )}
-            <Box mt={5}>
-              <Typography className={classes.forgotPasswordLink}>
-                <Link
-                  href="/request_reset_password"
-                  onClick={e => {
-                    e.preventDefault();
-                    history.push("/request_reset_password");
+                <EmailField
+                  autoComplete="username"
+                  value={email}
+                  setValue={setEmail}
+                  error={emailError}
+                  setError={setEmailError}
+                  required
+                />
+                <PasswordInput
+                  label="Mot de passe"
+                  nativeInputProps={{
+                    autoComplete: "current-password",
+                    value: password,
+                    onChange: e => setPassword(e.target.value)
                   }}
-                >
-                  J'ai oublié mon mot de passe <br />
-                  Je n'ai pas de mot de passe
-                </Link>
-              </Typography>
-              <RegistrationLink />
+                  required
+                />
+                <Box my={2}>
+                  <LoadingButton
+                    aria-label="Connexion"
+                    type="submit"
+                    loading={loading}
+                    disabled={!email || !password}
+                  >
+                    Me connecter
+                  </LoadingButton>
+                </Box>
+                {errorMessage && (
+                  <Box>
+                    <Typography className={classes.errorMessage}>
+                      {errorMessage}
+                    </Typography>
+                  </Box>
+                )}
+                <Box mt={5}>
+                  <Typography className={classes.forgotPasswordLink}>
+                    <Link
+                      href="/request_reset_password"
+                      onClick={e => {
+                        e.preventDefault();
+                        history.push("/request_reset_password");
+                      }}
+                    >
+                      J'ai oublié mon mot de passe <br />
+                      Je n'ai pas de mot de passe
+                    </Link>
+                  </Typography>
+                  <RegistrationLink />
+                </Box>
+              </form>
             </Box>
-          </form>
-        </Box>
-      </Container>
-    </PaperContainer>
-  ];
+          </Container>
+        </PaperContainer>
+      </Main>
+    </>
+  );
 }

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { makeStyles } from "@mui/styles";
-import Container from "@mui/material/Container";
 import { ControllerHomeCard } from "./ControllerHomeCard";
 import Grid from "@mui/material/Grid";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
@@ -19,6 +18,7 @@ import { usePageTitle } from "../../../common/UsePageTitle";
 import { Typography } from "@mui/material";
 import Modal from "../../../common/Modal";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Main } from "../../../common/semantics/Main";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -95,7 +95,7 @@ export function ControllerHome() {
   return (
     <>
       <Header />
-      <Container
+      <Main
         className={`${classes.container} ${classes.whiteSection}`}
         maxWidth="xl"
       >
@@ -188,7 +188,7 @@ export function ControllerHome() {
           loading={loadingControls}
           clickOnRow={(id, type) => setControlOnFocus({ id, type })}
         />
-      </Container>
+      </Main>
       <Modal
         open={modal.isOpen}
         handleClose={() => setModal({ isOpen: false, parcours: "" })}

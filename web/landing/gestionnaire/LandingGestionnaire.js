@@ -12,6 +12,7 @@ import { usePageTitle } from "../../common/UsePageTitle";
 import { makeStyles } from "@mui/styles";
 import trackAds from "common/utils/trackAds";
 import { Stack } from "@mui/material";
+import { Main } from "../../common/semantics/Main";
 
 const useStyles = makeStyles(theme => ({
   underlineBlue: {
@@ -55,50 +56,52 @@ export const LandingGestionnaire = () => {
   return (
     <>
       <Header />
-      <IntroGestionnaire />
-      <Stack direction="column" maxWidth="xl" rowGap={12} marginY={6}>
-        <LandingSection
-          title={
-            <>
-              Comment{" "}
-              <span className={classes.underlineBlue}>mettre en place</span>{" "}
-              Mobilic ?
-            </>
-          }
-          innerWidth="xl"
-          style={{ textAlign: "center" }}
-        >
-          <SetupMobilic key="setup" />
-        </LandingSection>
-        <LandingSection
-          title={
-            <>
-              <span className={classes.underlineBlue}>Les gestionnaires</span>{" "}
-              parlent de Mobilic{" "}
-            </>
-          }
-          innerWidth="xl"
-          style={{ textAlign: "center" }}
-        >
-          <Testimony />
-        </LandingSection>
-        <LandingSection
-          title={
-            <>
-              En bref,{" "}
-              <span className={classes.underlineBlue}>
-                qu'est-ce que Mobilic ?
-              </span>
-            </>
-          }
-          innerWidth="xl"
-          style={{ textAlign: "center" }}
-        >
-          <WhatsMobilic />
-        </LandingSection>
-      </Stack>
+      <Main maxWidth={false}>
+        <IntroGestionnaire />
+        <Stack direction="column" maxWidth="xl" rowGap={12} marginY={6}>
+          <LandingSection
+            title={
+              <>
+                Comment{" "}
+                <span className={classes.underlineBlue}>mettre en place</span>{" "}
+                Mobilic ?
+              </>
+            }
+            innerWidth="xl"
+            style={{ textAlign: "center" }}
+          >
+            <SetupMobilic key="setup" />
+          </LandingSection>
+          <LandingSection
+            title={
+              <>
+                <span className={classes.underlineBlue}>Les gestionnaires</span>{" "}
+                parlent de Mobilic{" "}
+              </>
+            }
+            innerWidth="xl"
+            style={{ textAlign: "center" }}
+          >
+            <Testimony />
+          </LandingSection>
+          <LandingSection
+            title={
+              <>
+                En bref,{" "}
+                <span className={classes.underlineBlue}>
+                  qu'est-ce que Mobilic ?
+                </span>
+              </>
+            }
+            innerWidth="xl"
+            style={{ textAlign: "center" }}
+          >
+            <WhatsMobilic />
+          </LandingSection>
+        </Stack>
 
-      <OutroGestionnaire />
+        <OutroGestionnaire />
+      </Main>
       <Footer withFollow={false} />
     </>
   );
