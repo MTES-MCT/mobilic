@@ -12,7 +12,7 @@ function useScroll() {
       }
       return;
     }
-    if (pathname === "/resources/regulations" || search !== "") {
+    if (pathname === "/resources/regulations" && search !== "") {
       return;
     }
     const mainElements = document.getElementsByTagName("main");
