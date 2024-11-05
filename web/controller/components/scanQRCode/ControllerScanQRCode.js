@@ -16,7 +16,7 @@ import { CONTROL_TYPES } from "../../utils/useReadControlData";
 import { usePageTitle } from "../../../common/UsePageTitle";
 import Notice from "../../../common/Notice";
 import { Main } from "../../../common/semantics/Main";
-import { BackButton } from "./BackButton";
+import { ControllerBackButton } from "./ControllerBackButton";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -132,7 +132,7 @@ export function ControllerScanQRCode() {
         className={`${classes.container} ${classes.whiteSection}`}
         maxWidth="xl"
       >
-        <BackButton label="Accueil" route="/home" />
+        <ControllerBackButton label="Accueil" route="/home" />
         <h3 className={classes.titleScan}>Scannez un QR Code Mobilic</h3>
         <Typography>
           Afin d'accéder à l'historique de 28 jours du salarié, positionnez son

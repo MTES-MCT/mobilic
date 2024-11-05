@@ -472,3 +472,7 @@ video:not([href])[controls] {
 .MuiChip-filled.MuiChip-colorDefault {
   background-color: var(--background-action-low-blue-france)
 }
+
+main {
+  scroll-margin-top: 75px;
+}

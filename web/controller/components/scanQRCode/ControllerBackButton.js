@@ -2,7 +2,7 @@ import React from "react";
 import { LinkButton } from "../../../common/LinkButton";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 
-export const BackButton = ({ label, route }) => (
+export const ControllerBackButton = ({ label, route }) => (
   <LinkButton
     to={`${CONTROLLER_ROUTE_PREFIX}${route}`}
     priority="tertiary no outline"
