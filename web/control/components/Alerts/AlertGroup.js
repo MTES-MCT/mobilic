@@ -11,6 +11,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import { groupBy } from "lodash";
 import { formatActivity } from "common/utils/businessTypes";
+import { Description } from "../../../common/typography/Description";
 
 const useStyles = makeStyles(theme => {
   return {
@@ -43,10 +44,6 @@ const useStyles = makeStyles(theme => {
     },
     notReportableAlert: {
       backgroundColor: theme.palette.warning.light
-    },
-    description: {
-      fontStyle: "italic",
-      color: theme.palette.grey[600]
     }
   };
 });
@@ -64,6 +61,13 @@ const getAlertsNumber = (
     : alerts.filter(alert => alert.checked).length;
 
 const isReportable = sanction => sanction.includes("NATINF");
+
+const BusinessTypeTitle = ({ business }) => (
+  <Typography className="bold" sx={{ fontSize: "0.875rem" }} mb={1}>
+    Infraction(s) liée(s) au {formatActivity(business)}
+    &nbsp;:
+  </Typography>
+);
 
 export function AlertGroup({
   alerts,
@@ -140,13 +144,8 @@ export function AlertGroup({
             } = firstAlert;
             return (
               <React.Fragment key={`alertsByBusiness_${businessId}`}>
-                <p>
-                  Infraction(s) liée(s) au {formatActivity(alertBusiness)}
-                  &nbsp;:
-                </p>
-                <Typography className={classes.description}>
-                  {alertDescription}
-                </Typography>
+                <BusinessTypeTitle business={alertBusiness} />
+                <Description>{alertDescription}</Description>
                 <List>
                   {alertsByBusiness.map((alert, index) => (
                     <ListItem key={index} disableGutters>
