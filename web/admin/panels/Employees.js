@@ -33,16 +33,13 @@ import { BusinessDropdown } from "../components/BusinessDropdown";
 import Stack from "@mui/material/Stack";
 import Notice from "../../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Explanation } from "../../common/typography/Explanation";
 
 const useStyles = makeStyles(theme => ({
   title: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center"
-  },
-  explanation: {
-    fontStyle: "italic",
-    textAlign: "justify"
   },
   successText: {
     color: theme.palette.success.main
@@ -800,12 +797,12 @@ export function Employees({ company, containerRef }) {
           </Button>
         )}
       </Box>
-      <Typography className={classes.explanation}>
+      <Explanation>
         Invitez vos salariés en renseignant leurs adresses e-mail (certaines
         adresses n’apparaissent pas dans la liste ci-dessous car les salariés
         ont choisi de ne pas vous les communiquer), afin qu'ils puissent
         enregistrer du temps de travail pour l'entreprise.
-      </Typography>
+      </Explanation>
 
       {areThereEmploymentsWithoutBusinessType && (
         <Notice

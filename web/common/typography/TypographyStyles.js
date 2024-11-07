@@ -13,5 +13,10 @@ export const useTypographyStyles = makeStyles(theme => ({
     color: fr.colors.decisions.text.mention.grey.default,
     fontSize: "0.875rem",
     lineHeight: "1.375rem"
+  },
+  explanation: {
+    fontStyle: "italic",
+    textAlign: "justify",
+    marginBottom: theme.spacing(2)
   }
 }));
