@@ -28,8 +28,12 @@ export const BusinessTypesFromGroupedAlerts = ({ groupedAlerts }) => {
     [groupedAlerts]
   );
 
+  if (!businessTypes || businessTypes.length === 0) {
+    return null;
+  }
+
   return (
-    <Box mb={2} p={2} className={classes.businessTypesContainer}>
+    <Box p={2} className={classes.businessTypesContainer}>
       <FieldTitle component="h2">Type(s) d'activité</FieldTitle>
       <Typography>{businessTypes.join(", ")}</Typography>
     </Box>

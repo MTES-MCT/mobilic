@@ -16,7 +16,8 @@ import { useTypographyStyles } from "../../common/typography/TypographyStyles";
 import { BusinessTypesFromGroupedAlerts } from "./Alerts/BusinessTypesFromGroupedAlerts";
 const useStyles = makeStyles(theme => ({
   container: {
-    paddingBottom: theme.spacing(4)
+    paddingBottom: theme.spacing(4),
+    marginTop: theme.spacing(2)
   },
   linkContainer: {
     textAlign: "center",
