@@ -13,7 +13,6 @@ import { graphQLErrorMatchesCode } from "common/utils/errors";
 import Grid from "@mui/material/Grid";
 import { InfoItem } from "../home/InfoField";
 import { frenchFormatDateStringOrTimeStamp } from "common/utils/time";
-import Alert from "@mui/material/Alert";
 import { LoadingButton } from "common/components/LoadingButton";
 import React, { useMemo } from "react";
 import { makeStyles } from "@mui/styles";
@@ -34,6 +33,7 @@ import Box from "@mui/material/Box";
 import { HideEmail } from "../home/HideEmail";
 import { getNextHeadingComponent } from "common/utils/html";
 import { formatActivity } from "common/utils/businessTypes";
+import Notice from "./Notice";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
@@ -164,7 +164,7 @@ export function EmploymentInfoCard({
           justifyContent="space-between"
           wrap="nowrap"
         >
-          <Grid item>
+          <Grid item xs={8} sm={9}>
             <Typography
               className={classes.companyName}
               component={headingComponent}
@@ -173,8 +173,14 @@ export function EmploymentInfoCard({
             </Typography>
           </Grid>
           {!hideStatus && (
-            <Grid item>
-              <Typography style={{ color: statusColor, fontWeight: "bold" }}>
+            <Grid item xs={4} sm={3} pr={1}>
+              <Typography
+                style={{
+                  color: statusColor,
+                  fontWeight: "bold",
+                  textAlign: "right"
+                }}
+              >
                 {statusText}
               </Typography>
             </Grid>
@@ -300,17 +306,18 @@ export function EmploymentInfoCard({
         </Grid>
 
         {!hideStatus && !hideActions && status === EMPLOYMENT_STATUS.ended && (
-          <Alert severity="warning">
-            L'entreprise a mis un terme à votre rattachement. Vous ne pouvez
-            plus saisir de temps de travail pour cette entreprise.
-          </Alert>
+          <Notice
+            type="warning"
+            description="L'entreprise a mis un terme à votre rattachement. Vous ne pouvez
+            plus saisir de temps de travail pour cette entreprise."
+          />
         )}
         {!hideStatus && !hideActions && status === EMPLOYMENT_STATUS.pending && (
           <>
-            <Alert severity="info">
-              La validation du rattachement vous donnera le droit d'enregistrer
-              du temps de travail pour cette entreprise.
-            </Alert>
+            <Notice
+              description="La validation du rattachement vous donnera le droit d'enregistrer
+              du temps de travail pour cette entreprise."
+            />
             <Grid
               className={classes.buttonContainer}
               container
@@ -319,8 +326,6 @@ export function EmploymentInfoCard({
             >
               <Grid item>
                 <LoadingButton
-                  color="primary"
-                  variant="contained"
                   onClick={async () => await handleEmploymentValidation(true)}
                 >
                   Valider le rattachement
@@ -328,8 +333,7 @@ export function EmploymentInfoCard({
               </Grid>
               <Grid item>
                 <LoadingButton
-                  color="primary"
-                  variant="outlined"
+                  priority="secondary"
                   onClick={() =>
                     modals.open("confirmation", {
                       textButtons: true,

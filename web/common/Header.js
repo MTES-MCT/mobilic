@@ -16,14 +16,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import useTheme from "@mui/styles/useTheme";
 import { useIsWidthUp } from "common/utils/useWidth";
 import { makeStyles } from "@mui/styles";
-import Button from "@mui/material/Button";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
 import Drawer from "@mui/material/Drawer";
 import ListSubheader from "@mui/material/ListSubheader";
 import CloseIcon from "@mui/icons-material/Close";
 import Tooltip from "@mui/material/Tooltip";
-import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Link, LinkButton } from "./LinkButton";
 import YoutubeIcon from "common/assets/images/youtube.png";
 import FacebookIcon from "common/assets/images/facebook.png";
@@ -42,6 +41,7 @@ import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 import TextField from "common/utils/TextField";
 import { MenuItem } from "@mui/material";
 import { ControllerHeader } from "../controller/components/header/ControllerHeader";
+import { LoadingButton } from "common/components/LoadingButton";
 
 const SOCIAL_NETWORKS = [
   {
@@ -106,11 +106,6 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2),
     maxWidth: 500
   },
-  docButton: {
-    textTransform: "none",
-    borderRadius: 0,
-    fontSize: "1rem"
-  },
   divider: {
     marginBottom: theme.spacing(1),
     marginTop: theme.spacing(1),
@@ -152,17 +147,27 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function HeaderContainer(props) {
+export const HeaderComponent = ({ children }) => {
   const theme = useTheme();
   return (
     <Box
       px={2}
+      component="header"
+      role="banner"
       className="header-container"
       style={{ backgroundColor: theme.palette.background.paper }}
     >
+      {children}
+    </Box>
+  );
+};
+
+function HeaderContainer(props) {
+  return (
+    <HeaderComponent>
       <Box py={1} {...props}></Box>
       <Divider className="full-width-divider hr-unstyled" />
-    </Box>
+    </HeaderComponent>
   );
 }
 
@@ -365,45 +370,33 @@ function DesktopHeader({ disableMenu }) {
   const companyName = company ? company.name : null;
   const routes = getAccessibleRoutes({ userInfo, companies });
 
-  const docLinks = () => [
-    <LinkButton
-      aria-label="Foire aux questions"
-      key={0}
-      href="https://faq.mobilic.beta.gouv.fr"
-      target="_blank"
-      rel="noopener noreferrer"
-      className={classes.docButton}
-    >
-      Foire aux questions
-    </LinkButton>,
-    <LinkButton
-      aria-label="Documentation"
-      key={1}
-      href="/resources/home"
-      target="_blank"
-      className={classes.docButton}
-    >
-      Documentation
-    </LinkButton>,
-    <LinkButton
-      aria-label="Partenaires"
-      key={2}
-      to="/partners"
-      className={classes.docButton}
-    >
-      Partenaires
-    </LinkButton>,
-    !userInfo?.id && (
+  const docLinks = () => (
+    <>
       <LinkButton
-        aria-label="Certificat"
-        key={3}
-        to="/certificate"
-        className={classes.docButton}
+        href="https://faq.mobilic.beta.gouv.fr"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ padding: "0.25rem 0.5rem" }}
       >
-        Certificat
+        Foire aux questions
       </LinkButton>
-    )
-  ];
+      <LinkButton
+        href="/resources/home"
+        target="_blank"
+        style={{ padding: "0.25rem 0.5rem" }}
+      >
+        Documentation
+      </LinkButton>
+      <LinkButton to="/partners" style={{ padding: "0.25rem 0.5rem" }}>
+        Partenaires
+      </LinkButton>
+      {!userInfo?.id && (
+        <LinkButton to="/certificate" style={{ padding: "0.25rem 0.5rem" }}>
+          Certificat
+        </LinkButton>
+      )}
+    </>
+  );
 
   return (
     <Box className={`flex-row-space-between ${classes.desktopHeader}`}>
@@ -484,10 +477,8 @@ function DesktopHeader({ disableMenu }) {
                 )
                 .map(route => {
                   const ButtonComponent = route.mainCta
-                    ? MainCtaButton
-                    : props => (
-                        <Button variant="outlined" color="primary" {...props} />
-                      );
+                    ? LoadingButton
+                    : props => <Button priority="secondary" {...props} />;
                   return (
                     <Grid item key={route.path}>
                       <ButtonComponent

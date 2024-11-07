@@ -7,7 +7,7 @@ import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import { AugmentedTable } from "./AugmentedTable";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ACTIVITIES } from "common/utils/activities";
-import Button from "@mui/material/Button";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useActivitiesCardStyles } from "./styles/ActivitiesCardStyle";
 import SvgIcon from "@mui/material/SvgIcon";
 import EditIcon from "@mui/icons-material/Edit";
@@ -108,8 +108,6 @@ export function ActivitiesCard({
 
   const AddActivityButton = () => (
     <Button
-      aria-label="Ajouter une activité"
-      color="primary"
       size="small"
       className={classes.addActivityButton}
       onClick={e => {
@@ -118,6 +116,8 @@ export function ActivitiesCard({
         trackEvent(ADD_ACTIVITY_IN_MISSION_PANEL);
         onCreateActivity();
       }}
+      iconId="fr-icon-add-line"
+      iconPosition="right"
     >
       Ajouter une activité
     </Button>

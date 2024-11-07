@@ -12,9 +12,9 @@ import { Complete } from "./Complete";
 import { loadEmployeeInvite } from "../common/loadEmployeeInvite";
 import { useApi } from "common/utils/api";
 import { EmailSelection } from "./EmailSelection";
-import { PaperContainer } from "../common/PaperContainer";
 import { Header } from "../common/Header";
 import { CompanySignup } from "./company/CompanySignup";
+import { Main } from "../common/semantics/Main";
 
 export default function Signup() {
   const store = useStoreSyncedWithLocalStorage();
@@ -53,8 +53,8 @@ export default function Signup() {
   return (
     <>
       <Header />
-      <PaperContainer>
-        <Switch color="secondary">
+      <Main>
+        <Switch>
           {!userId && (
             <Route key="user" path={`${path}/user`}>
               <AccountCreation
@@ -88,9 +88,9 @@ export default function Signup() {
               <Complete type="company" />
             </Route>
           )}
-          <Redirect key="default" from="*" to={defaultRoute()} />
+          <Route path="*" render={() => <Redirect to={defaultRoute()} />} />
         </Switch>
-      </PaperContainer>
+      </Main>
     </>
   );
 }

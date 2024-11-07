@@ -1,6 +1,6 @@
 import React from "react";
-import Alert from "@mui/material/Alert";
 import { formatDay } from "common/utils/time";
+import Notice from "./Notice";
 
 export function MissionValidationInfo({
   validation,
@@ -8,14 +8,20 @@ export function MissionValidationInfo({
   className
 }) {
   return (
-    <Alert severity={validation ? "success" : "warning"} className={className}>
-      {validation
-        ? `validée ${
-            isAdmin ? "par un gestionnaire" : "par le salarié"
-          } le ${formatDay(validation.receptionTime, true)}`
-        : `validation ${
-            isAdmin ? "par un gestionnaire" : "par le salarié"
-          } en attente`}
-    </Alert>
+    <Notice
+      type={validation ? "success" : "warning"}
+      description={
+        <>
+          {validation
+            ? `validée ${
+                isAdmin ? "par un gestionnaire" : "par le salarié"
+              } le ${formatDay(validation.receptionTime, true)}`
+            : `validation ${
+                isAdmin ? "par un gestionnaire" : "par le salarié"
+              } en attente`}
+        </>
+      }
+      className={className}
+    />
   );
 }

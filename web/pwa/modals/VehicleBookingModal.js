@@ -1,6 +1,5 @@
 import React from "react";
-import Box from "@mui/material/Box";
-import Alert from "@mui/material/Alert";
+import Notice from "../../common/Notice";
 
 import { LoadingButton } from "common/components/LoadingButton";
 import { VehicleFieldForApp } from "../components/VehicleFieldForApp";
@@ -26,12 +25,12 @@ export default function UpdateVehicleModal({
       title="Corriger le véhicule"
       content={
         <>
-          <Box my={2}>
-            <Alert severity="warning">
-              Le nouveau véhicule remplacera l'ancien sur toute la période de la
-              mission.
-            </Alert>
-          </Box>
+          <Notice
+            sx={{ marginY: 2 }}
+            type="warning"
+            description="Le nouveau véhicule remplacera l'ancien sur toute la période de la
+              mission."
+          />
           <VehicleFieldForApp
             label="Nom ou immatriculation du véhicule"
             vehicle={vehicle}
@@ -41,17 +40,17 @@ export default function UpdateVehicleModal({
         </>
       }
       actions={
-        <LoadingButton
-          color="primary"
-          disabled={!vehicle}
-          variant="contained"
-          onClick={async () => {
-            await handleSubmit(vehicle);
-            handleClose();
-          }}
-        >
-          OK
-        </LoadingButton>
+        <>
+          <LoadingButton
+            disabled={!vehicle}
+            onClick={async () => {
+              await handleSubmit(vehicle);
+              handleClose();
+            }}
+          >
+            OK
+          </LoadingButton>
+        </>
       }
     />
   );

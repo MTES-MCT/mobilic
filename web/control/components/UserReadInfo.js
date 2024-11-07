@@ -22,9 +22,9 @@ import ListItem from "@mui/material/ListItem";
 import DriveEtaIcon from "@mui/icons-material/DirectionsCar";
 import BusinessIcon from "@mui/icons-material/Business";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import Alert from "@mui/material/Alert";
 import { currentControllerId } from "common/utils/cookie";
 import { ControllerControlNote } from "../../controller/components/details/ControllerControlNote";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -106,9 +106,10 @@ export function UserReadInfo({
             </Grid>
           </Grid>
           {!companyName && !!currentControllerId() && (
-            <Alert severity="warning">
-              Aucune saisie en cours au moment du contrôle
-            </Alert>
+            <Notice
+              type="warning"
+              description="Aucune saisie en cours au moment du contrôle"
+            />
           )}
         </Grid>
         {companyName && (
@@ -240,7 +241,7 @@ export function UserReadInfo({
       {allowC1BExport && (
         <Box className={classes.exportButton}>
           <LoadingButton
-            color="primary"
+            priority="secondary"
             className={classes.exportButton}
             onClick={async () => {
               try {
@@ -258,7 +259,6 @@ export function UserReadInfo({
                 );
               }
             }}
-            variant="outlined"
           >
             Télécharger C1B
           </LoadingButton>

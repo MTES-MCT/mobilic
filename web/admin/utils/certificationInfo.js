@@ -9,18 +9,21 @@ export function useCertificationInfo() {
   const [companyWithInfo, setCompanyWithInfo] = React.useState({});
   const [loadingInfo, setLoadingInfo] = React.useState(true);
 
-  React.useEffect(async () => {
-    if (company) {
-      setLoadingInfo(true);
-      const apiResponse = await api.graphQlQuery(
-        COMPANY_CERTIFICATION_COMMUNICATION_QUERY,
-        {
-          companyId: company.id
-        }
-      );
-      setCompanyWithInfo(apiResponse?.data?.company);
-      setLoadingInfo(false);
-    }
+  React.useEffect(() => {
+    const loadData = async () => {
+      if (company) {
+        setLoadingInfo(true);
+        const apiResponse = await api.graphQlQuery(
+          COMPANY_CERTIFICATION_COMMUNICATION_QUERY,
+          {
+            companyId: company.id
+          }
+        );
+        setCompanyWithInfo(apiResponse?.data?.company);
+        setLoadingInfo(false);
+      }
+    };
+    loadData();
   }, [company]);
 
   return { companyWithInfo, loadingInfo };

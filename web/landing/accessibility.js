@@ -5,6 +5,7 @@ import { makeStyles } from "@mui/styles";
 import { Footer } from "./footer";
 import Link from "@mui/material/Link";
 import { usePageTitle } from "../common/UsePageTitle";
+import { Main } from "../common/semantics/Main";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -16,11 +17,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Accessibility() {
-  return [
-    <Header key={1} />,
-    <AccessibilityDeclaration key={2} />,
-    <Footer key={3} />
-  ];
+  return (
+    <>
+      <Header />
+      <Main>
+        <AccessibilityDeclaration />
+      </Main>
+      <Footer />
+    </>
+  );
 }
 
 function AccessibilityDeclaration() {
@@ -28,7 +33,7 @@ function AccessibilityDeclaration() {
   const classes = useStyles();
 
   return (
-    <Container className={classes.container} maxWidth="lg">
+    <Container className={classes.container} maxWidth="xl">
       <h1>Déclaration d’accessibilité</h1>
       <p>
         Établie le <span>27 mars 2023</span>.

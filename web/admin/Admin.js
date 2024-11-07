@@ -30,6 +30,7 @@ import { MissionDrawerContextProvider } from "./components/MissionDrawer";
 import CertificationCommunicationModal from "../pwa/components/CertificationCommunicationModal";
 import { shouldUpdateBusinessType } from "common/utils/updateBusinessType";
 import UpdateCompanyBusinessTypeModal from "./modals/UpdateCompanyBusinessTypeModal";
+import { Main } from "../common/semantics/Main";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -212,19 +213,14 @@ function _Admin() {
             onClose={() => setCompaniesToAcceptCertificateCommunication([])}
           />
         )}
-        <Container
-          key={1}
-          maxWidth={false}
-          disableGutters
-          className={classes.container}
-        >
+        <Main maxWidth={false} className={classes.container} disableGutters>
           {isMdUp && <SideMenu views={views} />}
           <Container
             className={`scrollable ${classes.panelContainer}`}
             maxWidth={false}
             ref={ref}
           >
-            <Switch color="secondary">
+            <Switch>
               {views.map(view => (
                 <Route
                   key={view.label}
@@ -240,11 +236,14 @@ function _Admin() {
                 />
               ))}
               {defaultView && (
-                <Redirect key="default" push from="*" to={defaultView.path} />
+                <Route
+                  path="*"
+                  render={() => <Redirect push to={defaultView.path} />}
+                />
               )}
             </Switch>
           </Container>
-        </Container>
+        </Main>
       </MissionDrawerContextProvider>
     </>
   );

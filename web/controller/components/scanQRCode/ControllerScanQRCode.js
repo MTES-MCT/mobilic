@@ -1,12 +1,9 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
-import Container from "@mui/material/Container";
-import classNames from "classnames";
-import { Alert } from "@mui/material";
 import { QrReader } from "react-qr-reader";
 import Grid from "@mui/material/Grid";
 import useTheme from "@mui/styles/useTheme";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import { CONTROLLER_SCAN_CODE } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
@@ -17,6 +14,9 @@ import Typography from "@mui/material/Typography";
 import { Header } from "../../../common/Header";
 import { CONTROL_TYPES } from "../../utils/useReadControlData";
 import { usePageTitle } from "../../../common/UsePageTitle";
+import Notice from "../../../common/Notice";
+import { Main } from "../../../common/semantics/Main";
+import { ControllerBackButton } from "./ControllerBackButton";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -25,9 +25,6 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
     margin: 0,
-    textAlign: "left"
-  },
-  linkHome: {
     textAlign: "left"
   },
   titleScan: {
@@ -50,9 +47,6 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(3),
     paddingLeft: theme.spacing(3),
     marginTop: theme.spacing(2)
-  },
-  scanSeveralCodes: {
-    marginTop: theme.spacing(3)
   }
 }));
 export function ControllerScanQRCode() {
@@ -131,73 +125,70 @@ export function ControllerScanQRCode() {
     });
   };
 
-  return [
-    <Header key={0} />,
-    <Container
-      key={20}
-      className={`${classes.container} ${classes.whiteSection}`}
-      maxWidth="xl"
-    >
-      <Link
-        className={classNames(
-          classes.linkHome,
-          "fr-link",
-          "fr-fi-arrow-left-line",
-          "fr-link--icon-left"
-        )}
-        to={CONTROLLER_ROUTE_PREFIX + "/home"}
+  return (
+    <>
+      <Header />
+      <Main
+        className={`${classes.container} ${classes.whiteSection}`}
+        maxWidth="xl"
       >
-        Accueil
-      </Link>
-      <h3 className={classes.titleScan}>Scannez un QR Code Mobilic</h3>
-      <Typography>
-        Afin d'accéder à l'historique de 28 jours du salarié, positionnez son QR
-        Code dans le cadre.
-      </Typography>
-      <Grid
-        container
-        justifyContent="center"
-        className={classes.cameraGridContainer}
-      >
-        <Grid item xs={12} md={8} lg={4}>
-          <div className={"camera-box"}>
-            <QrReader
-              constraints={{ facingMode: "environment", aspectRatio: 1 }}
-              videoContainerStyle={{
-                borderRadius: theme.spacing(2),
-                zIndex: -1
-              }}
-              onResult={(result, error) => {
-                if (result && result?.text) {
-                  onScanQRCode(result?.text);
-                }
-
-                if (error) {
-                  if (isPermissionDeniedOnSafari(error)) {
-                    displayCameraDeniedAlert();
-                  }
-                  console.info(error);
-                }
-              }}
-              className={classes.qrCodeScan}
-            />
-          </div>
-        </Grid>
-      </Grid>
-      <Alert severity="info" className={classes.scanSeveralCodes}>
-        Plusieurs personnes sont à bord du VUL ? Scannez un premier QR Code (ex{" "}
-        : conducteur) puis procédez à un nouveau contrôle (ex : accompagnateur)
-      </Alert>
-      <div className={classes.noQRCodeLink}>
-        <a
-          className="fr-link fr-link--icon-right fr-fi-external-link-line"
-          target="_blank"
-          href="https://faq.mobilic.beta.gouv.fr/securite-et-confidentialite-des-donnees/modalites-de-controle"
-          rel="noopener noreferrer"
+        <ControllerBackButton label="Accueil" route="/home" />
+        <h3 className={classes.titleScan}>Scannez un QR Code Mobilic</h3>
+        <Typography>
+          Afin d'accéder à l'historique de 28 jours du salarié, positionnez son
+          QR Code dans le cadre.
+        </Typography>
+        <Grid
+          container
+          justifyContent="center"
+          className={classes.cameraGridContainer}
         >
-          Le salarié ne trouve pas son QR Code ?
-        </a>
-      </div>
-    </Container>
-  ];
+          <Grid item xs={12} md={8} lg={4}>
+            <div className={"camera-box"}>
+              <QrReader
+                constraints={{ facingMode: "environment", aspectRatio: 1 }}
+                videoContainerStyle={{
+                  borderRadius: theme.spacing(2),
+                  zIndex: -1
+                }}
+                onResult={(result, error) => {
+                  if (result && result?.text) {
+                    onScanQRCode(result?.text);
+                  }
+
+                  if (error) {
+                    if (isPermissionDeniedOnSafari(error)) {
+                      displayCameraDeniedAlert();
+                    }
+                    console.info(error);
+                  }
+                }}
+                className={classes.qrCodeScan}
+              />
+            </div>
+          </Grid>
+        </Grid>
+        <Notice
+          sx={{ marginTop: 3 }}
+          description={
+            <>
+              Plusieurs personnes sont à bord du VUL ? Scannez un premier QR
+              Code (ex : conducteur) puis procédez à un nouveau contrôle (ex :
+              accompagnateur)
+            </>
+          }
+        />
+        <div className={classes.noQRCodeLink}>
+          <a
+            className="fr-link fr-link--icon-right fr-fi-external-link-line"
+            target="_blank"
+            href="https://faq.mobilic.beta.gouv.fr/securite-et-confidentialite-des-donnees/modalites-de-controle"
+            rel="noopener noreferrer"
+          >
+            Le salarié ne trouve pas son QR Code ?
+          </a>
+        </div>
+      </Main>
+    </>
+  );
 }

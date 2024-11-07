@@ -3,7 +3,6 @@ import Typography from "@mui/material/Typography";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
-import Alert from "@mui/material/Alert";
 import { useApi } from "common/utils/api";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -21,6 +20,7 @@ import {
 import Modal, { modalStyles } from "../../common/Modal";
 import { TeamFilter } from "../components/TeamFilter";
 import { EmployeeFilter } from "../components/EmployeeFilter";
+import Notice from "../../common/Notice";
 
 export const syncUsers = (setUsers, newUsers) => {
   setUsers(currentUsers => [
@@ -55,11 +55,14 @@ export default function ExcelExportModal({
 
   const [isEnabledDownload, setIsEnabledDownload] = React.useState(true);
 
-  React.useEffect(async () => {
-    if (minDate < defaultMinDate) {
-      const newUsers = await getUsersSinceDate(minDate);
-      syncUsers(setUsers, newUsers);
-    }
+  React.useEffect(() => {
+    const load = async () => {
+      if (minDate < defaultMinDate) {
+        const newUsers = await getUsersSinceDate(minDate);
+        syncUsers(setUsers, newUsers);
+      }
+    };
+    load();
   }, [minDate]);
 
   React.useEffect(() => setIsEnabledDownload(true), [
@@ -96,6 +99,7 @@ export default function ExcelExportModal({
       open={open}
       handleClose={handleClose}
       title="Télécharger le rapport d'activité"
+      size="lg"
       content={
         <>
           <Typography gutterBottom>
@@ -122,10 +126,11 @@ export default function ExcelExportModal({
           <Typography variant="h5" className={classes.subtitle}>
             Options
           </Typography>
-          <Alert severity="warning">
-            En cas d'export pour les agents de contrôle, veillez à ne pas
-            modifier la mise en page du fichier avant envoi.
-          </Alert>
+          <Notice
+            type="warning"
+            description="En cas d'export pour les agents de contrôle, veillez à ne pas
+            modifier la mise en page du fichier avant envoi."
+          />
           <Grid spacing={4} container className={classes.subtitle}>
             {companies.length > 1 && (
               <Grid item sm={6} className={classes.flexGrow}>
@@ -221,40 +226,40 @@ export default function ExcelExportModal({
         </>
       }
       actions={
-        <LoadingButton
-          color="primary"
-          variant="contained"
-          disabled={!isEnabledDownload}
-          onClick={async e =>
-            await alerts.withApiErrorHandling(async () => {
-              let selectedUsers = users.filter(u => u.selected);
-              const options = {
-                company_ids: [selectedCompany.id],
-                one_file_by_employee: isOneFileByEmployee
-              };
-              if (selectedUsers.length > 0)
-                options["user_ids"] = selectedUsers.map(u => u.id);
-              if (minDate) options["min_date"] = isoFormatLocalDate(minDate);
-              if (maxDate) options["max_date"] = isoFormatLocalDate(maxDate);
-              e.preventDefault();
-              trackLink({
-                href: `/download_company_activity_report`,
-                linkType: "download"
-              });
-              await api.jsonHttpQuery(HTTP_QUERIES.excelExport, {
-                json: options
-              });
-              setIsEnabledDownload(false);
-              alerts.success(
-                "Le fichier étant volumineux, il vous sera envoyé par e-mail d’ici à quelques minutes.",
-                "",
-                6000
-              );
-            }, "download-company-report")
-          }
-        >
-          Télécharger
-        </LoadingButton>
+        <>
+          <LoadingButton
+            disabled={!isEnabledDownload}
+            onClick={async e =>
+              await alerts.withApiErrorHandling(async () => {
+                let selectedUsers = users.filter(u => u.selected);
+                const options = {
+                  company_ids: [selectedCompany.id],
+                  one_file_by_employee: isOneFileByEmployee
+                };
+                if (selectedUsers.length > 0)
+                  options["user_ids"] = selectedUsers.map(u => u.id);
+                if (minDate) options["min_date"] = isoFormatLocalDate(minDate);
+                if (maxDate) options["max_date"] = isoFormatLocalDate(maxDate);
+                e.preventDefault();
+                trackLink({
+                  href: `/download_company_activity_report`,
+                  linkType: "download"
+                });
+                await api.jsonHttpQuery(HTTP_QUERIES.excelExport, {
+                  json: options
+                });
+                setIsEnabledDownload(false);
+                alerts.success(
+                  "Le fichier étant volumineux, il vous sera envoyé par e-mail d’ici à quelques minutes.",
+                  "",
+                  6000
+                );
+              }, "download-company-report")
+            }
+          >
+            Télécharger
+          </LoadingButton>
+        </>
       }
     />
   );

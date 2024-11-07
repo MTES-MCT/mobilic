@@ -15,10 +15,10 @@ const useStyles = makeStyles(theme => ({
     cursor: "pointer"
   },
   right: {
-    marginLeft: theme.spacing(0.5)
+    marginLeft: theme.spacing(1)
   },
   left: {
-    marginRight: theme.spacing(0.5)
+    marginRight: theme.spacing(1)
   },
   content: {
     paddingLeft: theme.spacing(1),
@@ -78,7 +78,7 @@ export default function TeamOrSoloChoiceModal({
                 >
                   <TeamIcon color="primary" className={classes.icon} />
                   <Typography noWrap className="bold" color="primary">
-                    Moi et mon équipe
+                    Mon équipe et moi
                   </Typography>
                 </CardContent>
               </Card>

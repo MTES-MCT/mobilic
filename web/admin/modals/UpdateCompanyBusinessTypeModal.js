@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Button } from "@dataesr/react-dsfr";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { ExternalLink } from "../../common/ExternalLink";
 import { useAdminCompanies, useAdminStore } from "../store/store";
 import { BusinessType } from "../../common/BusinessType";
@@ -68,15 +68,11 @@ export default function UpdateCompanyBusinessTypeModal() {
       }
       actions={
         <>
-          <Button
-            title="Confirmer mon type d'activité"
-            onClick={handleSubmit}
-            disabled={!canSubmit}
-          >
-            Confirmer
-          </Button>
-          <Button onClick={handleClose} secondary>
+          <Button onClick={handleClose} priority="secondary">
             Me le rappeler plus tard
+          </Button>
+          <Button onClick={handleSubmit} disabled={!canSubmit}>
+            Confirmer
           </Button>
         </>
       }

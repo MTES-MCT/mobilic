@@ -1,13 +1,14 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
-import { Alert } from "@mui/material";
+import Notice from "../common/Notice";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   infoText: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    color: theme.palette.grey[500],
+    color: fr.colors.decisions.text.mention.grey.default,
     fontStyle: "italic"
   }
 }));
@@ -36,11 +37,9 @@ export function RegulatoryTextWeekBeforeAndAfter() {
 
 export function RegulatoryTextNotCalculatedYet() {
   return (
-    <Alert severity="info">
-      <Typography variant="body2">
-        Les seuils réglementaires ne sont pas encore calculés. Ils apparaîtront
-        suite à la validation du salarié.
-      </Typography>
-    </Alert>
+    <Notice
+      description="Les seuils réglementaires ne sont pas encore calculés. Ils apparaîtront
+        suite à la validation du salarié."
+    />
   );
 }

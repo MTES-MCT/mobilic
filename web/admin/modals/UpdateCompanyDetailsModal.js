@@ -1,11 +1,14 @@
 import React from "react";
 
-import { Button, Checkbox, TextInput } from "@dataesr/react-dsfr";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { PhoneNumber } from "../../common/PhoneNumber";
 
 import { BusinessType } from "../../common/BusinessType";
 import { useUpdateCompanyDetails } from "../../common/useUpdateCompanyDetails";
 import Modal from "../../common/Modal";
+import { MandatoryField } from "../../common/MandatoryField";
+import { Input } from "../../common/forms/Input";
 
 export default function UpdateCompanyDetailsModal({
   open,
@@ -56,19 +59,20 @@ export default function UpdateCompanyDetailsModal({
       title="Modifier les détails de l'entreprise"
       content={
         <>
+          <MandatoryField />
           <div className="fr-input-group">
-            <TextInput
-              id="company-name"
-              value={newCompanyName}
-              onChange={e => setNewCompanyName(e.target.value)}
+            <Input
               label="Nom usuel"
-              required
-              {...(!newCompanyName ? { messageType: "error" } : {})}
-              message={
-                !newCompanyName
-                  ? "Veuillez renseigner un nom pour l'entreprise"
-                  : ""
+              state={!newCompanyName ? "error" : "default"}
+              stateRelatedMessage={
+                !newCompanyName ? "Veuillez compléter ce champ." : ""
               }
+              nativeInputProps={{
+                id: "company-name",
+                value: newCompanyName,
+                onChange: e => setNewCompanyName(e.target.value)
+              }}
+              required
             />
           </div>
           <PhoneNumber
@@ -86,12 +90,20 @@ export default function UpdateCompanyDetailsModal({
                 required
               />
               <Checkbox
-                checked={applyBusinessTypeToEmployees}
-                onChange={e =>
-                  setApplyBusinessTypeToEmployees(e.target.checked)
-                }
-                label="Attribuer cette activité à tous mes salariés"
-                hint="L'activité sera attribuée par défaut à tous vos salariés. Vous aurez ensuite la possibilité de modifier individuellement le type d'activité pour chaque salarié."
+                legend=""
+                options={[
+                  {
+                    hintText:
+                      "L'activité sera attribuée par défaut à tous vos salariés. Vous aurez ensuite la possibilité de modifier individuellement le type d'activité pour chaque salarié.",
+                    label: "Attribuer cette activité à tous mes salariés",
+                    nativeInputProps: {
+                      name: "cb-applyBusinessTypeToEmployees",
+                      value: applyBusinessTypeToEmployees,
+                      onChange: e =>
+                        setApplyBusinessTypeToEmployees(e.target.checked)
+                    }
+                  }
+                ]}
                 disabled={!hasBusinessTypeChanged}
               />
             </>
@@ -100,19 +112,11 @@ export default function UpdateCompanyDetailsModal({
       }
       actions={
         <>
-          <Button
-            title="Enregistrer les détails de l'entreprise"
-            onClick={handleSubmit}
-            disabled={!canSave}
-          >
-            Enregistrer
-          </Button>
-          <Button
-            title="Annuler les modifications"
-            onClick={handleClose}
-            secondary
-          >
+          <Button onClick={handleClose} priority="secondary">
             Annuler
+          </Button>
+          <Button onClick={handleSubmit} disabled={!canSave}>
+            Enregistrer
           </Button>
         </>
       }

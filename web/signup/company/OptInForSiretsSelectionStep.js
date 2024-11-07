@@ -1,10 +1,10 @@
-import Button from "@mui/material/Button";
 import React from "react";
 import { Step } from "./Step";
 import { makeStyles } from "@mui/styles";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -53,22 +53,19 @@ export function OptInForSiretsSelectionStep({
         <FormControlLabel
           className={classes.radioButton}
           value={"no"}
-          control={<Radio color="secondary" />}
+          control={<Radio />}
           label="Non, je souhaite inscrire une seule unité légale."
         />
         <FormControlLabel
           className={classes.radioButton}
           value={"yes"}
-          control={<Radio color="secondary" />}
+          control={<Radio />}
           label="Oui, je souhaite inscrire plusieurs établissements pour les gérer de manière distincte."
         />
       </RadioGroup>
       {!hasValidatedChoice && !shouldSelectSirets && (
         <Button
-          aria-label="Continuer"
           className={classes.verticalFormButton}
-          variant="contained"
-          color="primary"
           onClick={() => setHasValidatedChoice(true)}
         >
           Continuer

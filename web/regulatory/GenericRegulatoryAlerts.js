@@ -33,38 +33,41 @@ export function GenericRegulatoryAlerts({
   const api = useApi();
   const alerts = useSnackbarAlerts();
 
-  React.useEffect(async () => {
-    setLoading(true);
-    await alerts.withApiErrorHandling(async () => {
-      const apiResponse = await api.graphQlQuery(
-        USER_READ_REGULATION_COMPUTATIONS_QUERY,
-        {
-          userId: userId,
-          fromDate: day,
-          toDate: day
-        }
-      );
-      const { regulationComputationsByDay } = apiResponse.data.user;
-      if (regulationComputationsByDay?.length !== 1) {
-        setRegulationComputations(null);
-      } else {
-        if (shouldDisplayInitialEmployeeVersion) {
-          setRegulationComputations(
-            getAlertComputationVersion(
-              regulationComputationsByDay[0].regulationComputations,
-              SubmitterType.EMPLOYEE
-            )
-          );
+  React.useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      await alerts.withApiErrorHandling(async () => {
+        const apiResponse = await api.graphQlQuery(
+          USER_READ_REGULATION_COMPUTATIONS_QUERY,
+          {
+            userId: userId,
+            fromDate: day,
+            toDate: day
+          }
+        );
+        const { regulationComputationsByDay } = apiResponse.data.user;
+        if (regulationComputationsByDay?.length !== 1) {
+          setRegulationComputations(null);
         } else {
-          setRegulationComputations(
-            getLatestAlertComputationVersion(
-              regulationComputationsByDay[0].regulationComputations
-            )
-          );
+          if (shouldDisplayInitialEmployeeVersion) {
+            setRegulationComputations(
+              getAlertComputationVersion(
+                regulationComputationsByDay[0].regulationComputations,
+                SubmitterType.EMPLOYEE
+              )
+            );
+          } else {
+            setRegulationComputations(
+              getLatestAlertComputationVersion(
+                regulationComputationsByDay[0].regulationComputations
+              )
+            );
+          }
         }
-      }
-    });
-    setLoading(false);
+      });
+      setLoading(false);
+    };
+    loadData();
   }, [day, userId, shouldDisplayInitialEmployeeVersion]);
 
   return (

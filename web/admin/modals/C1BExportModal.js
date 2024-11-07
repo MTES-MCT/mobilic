@@ -9,7 +9,6 @@ import { formatApiError } from "common/utils/errors";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import Grid from "@mui/material/Grid";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
-import Alert from "@mui/material/Alert";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
 import SignFilesCheckbox from "../../common/SignFiles";
@@ -23,6 +22,7 @@ import { EmployeeFilter } from "../components/EmployeeFilter";
 import { CompanyFilter } from "../components/CompanyFilter";
 import Modal, { modalStyles } from "../../common/Modal";
 import { syncUsers } from "./ExcelExportModal";
+import Notice from "../../common/Notice";
 
 export default function C1BExportModal({
   open,
@@ -52,11 +52,14 @@ export default function C1BExportModal({
   const [teams, setTeams] = React.useState(initialTeams);
   const [employeeVersion, setEmployeeVersion] = React.useState(true);
 
-  React.useEffect(async () => {
-    if (minDate < defaultMinDate) {
-      const newUsers = await getUsersSinceDate(minDate);
-      syncUsers(setUsers, newUsers);
-    }
+  React.useEffect(() => {
+    const load = async () => {
+      if (minDate < defaultMinDate) {
+        const newUsers = await getUsersSinceDate(minDate);
+        syncUsers(setUsers, newUsers);
+      }
+    };
+    load();
   }, [minDate]);
 
   const invalidDateRange = (minDate, maxDate) =>
@@ -106,6 +109,7 @@ export default function C1BExportModal({
       open={open}
       handleClose={handleClose}
       title="Générer des fichiers C1B"
+      size="lg"
       content={
         <>
           <Typography gutterBottom>
@@ -126,19 +130,20 @@ export default function C1BExportModal({
             Le téléchargement produit un dossier zippé (.zip) qui contient{" "}
             <strong>un fichier C1B pour chaque travailleur</strong> dans le
             périmètre choisi (précisé par les options ci-dessous).
-            <Alert severity="warning" className={classes.grid}>
-              <Typography component="div" variant="body1" gutterBottom>
-                Si un travailleur n'a pas effectué d'activités dans la période
+            <Notice
+              type="warning"
+              description="Si un travailleur n'a pas effectué d'activités dans la période
                 demandée, aucun fichier C1B ne sera généré le concernant, même
-                s'il est dans la liste d'export.
-              </Typography>
-            </Alert>
+                s'il est dans la liste d'export."
+              sx={{ marginTop: 1 }}
+            />
           </Typography>
           <Typography variant="h5" className={classes.subtitle}>
             Avertissement
           </Typography>
-          <Alert severity="warning">
-            <Typography component="div" variant="body1" gutterBottom>
+          <Notice
+            type="warning"
+            description={
               <ul>
                 <li>
                   Les fichiers générés par Mobilic respectent la norme C1B, mais
@@ -160,8 +165,8 @@ export default function C1BExportModal({
                   comme inchangé par le logiciel de contrôle.
                 </li>
               </ul>
-            </Typography>
-          </Alert>
+            }
+          />
           <Typography variant="h5" className={classes.subtitle}>
             Options
           </Typography>
@@ -257,43 +262,44 @@ export default function C1BExportModal({
         </>
       }
       actions={
-        <LoadingButton
-          color="primary"
-          variant="contained"
-          disabled={!minDate || !maxDate || dateRangeError}
-          onClick={async e => {
-            let selectedCompanies = _companies.filter(c => c.selected);
-            if (selectedCompanies.length === 0) selectedCompanies = _companies;
-            let selectedUsers = users.filter(u => u.selected);
-            const options = {
-              company_ids: selectedCompanies.map(c => c.id),
-              employee_version: employeeVersion
-            };
-            if (selectedUsers.length > 0)
-              options["user_ids"] = selectedUsers.map(u => u.id);
-            if (minDate) options["min_date"] = isoFormatLocalDate(minDate);
-            if (maxDate) options["max_date"] = isoFormatLocalDate(maxDate);
-            options["with_digital_signatures"] = sign;
-            e.preventDefault();
-            trackLink({
-              href: `/generate_tachograph_files`,
-              linkType: "download"
-            });
-            try {
-              await api.downloadFileHttpQuery(HTTP_QUERIES.companyC1bExport, {
-                json: options
+        <>
+          <LoadingButton
+            disabled={!minDate || !maxDate || dateRangeError}
+            onClick={async e => {
+              let selectedCompanies = _companies.filter(c => c.selected);
+              if (selectedCompanies.length === 0)
+                selectedCompanies = _companies;
+              let selectedUsers = users.filter(u => u.selected);
+              const options = {
+                company_ids: selectedCompanies.map(c => c.id),
+                employee_version: employeeVersion
+              };
+              if (selectedUsers.length > 0)
+                options["user_ids"] = selectedUsers.map(u => u.id);
+              if (minDate) options["min_date"] = isoFormatLocalDate(minDate);
+              if (maxDate) options["max_date"] = isoFormatLocalDate(maxDate);
+              options["with_digital_signatures"] = sign;
+              e.preventDefault();
+              trackLink({
+                href: `/generate_tachograph_files`,
+                linkType: "download"
               });
-            } catch (err) {
-              alerts.error(
-                formatApiError(err),
-                "generate_tachograph_files",
-                6000
-              );
-            }
-          }}
-        >
-          Générer
-        </LoadingButton>
+              try {
+                await api.downloadFileHttpQuery(HTTP_QUERIES.companyC1bExport, {
+                  json: options
+                });
+              } catch (err) {
+                alerts.error(
+                  formatApiError(err),
+                  "generate_tachograph_files",
+                  6000
+                );
+              }
+            }}
+          >
+            Générer
+          </LoadingButton>
+        </>
       }
     />
   );

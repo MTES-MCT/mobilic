@@ -1,8 +1,6 @@
 import React from "react";
-import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
-import { Checkbox } from "@dataesr/react-dsfr";
-import Stack from "@mui/material/Stack";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { useUpdateHideEmail } from "./useUpdateHideEmail";
 
 const useStyles = makeStyles(theme => ({
@@ -18,19 +16,21 @@ export function HideEmail({ employment }) {
   const classes = useStyles();
 
   return (
-    <Stack mb={2}>
-      <Typography
-        align="left"
-        className={classes.fieldName}
-        variant="subtitle1"
-      >
-        Autorisation d'accès à mon email personnel
-      </Typography>
-      <Checkbox
-        checked={hideEmail}
-        onChange={e => updateHideEmail(e.target.checked)}
-        label="J'utilise mon mail personnel et je n'autorise pas le(s) gestionnaire(s) de cette entreprise à y avoir accès"
-      />
-    </Stack>
+    <Checkbox
+      legend="Autorisation d'accès à mon email personnel"
+      options={[
+        {
+          label:
+            "J'utilise mon mail personnel et je n'autorise pas le(s) gestionnaire(s) de cette entreprise à y avoir accès",
+          nativeInputProps: {
+            checked: hideEmail,
+            onChange: e => updateHideEmail(e.target.checked)
+          }
+        }
+      ]}
+      classes={{
+        legend: classes.fieldName
+      }}
+    />
   );
 }

@@ -56,9 +56,12 @@ export default function TypeformModal({
     }
   }
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     if (open) {
-      await sendActionForSurvey(SURVEY_ACTIONS.DISPLAY);
+      const loadData = async () => {
+        await sendActionForSurvey(SURVEY_ACTIONS.DISPLAY);
+      };
+      loadData();
     }
   }, [open]);
 

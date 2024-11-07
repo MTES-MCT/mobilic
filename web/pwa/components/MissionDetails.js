@@ -27,15 +27,15 @@ import ListItemText from "@mui/material/ListItemText";
 import { getVehicleName } from "common/utils/vehicles";
 import { PersonIcon } from "common/utils/icons";
 import { getStartOfDay, now } from "common/utils/time";
-import { MainCtaButton } from "./MainCtaButton";
 import Typography from "@mui/material/Typography";
 import { Event } from "../../common/Event";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import LocationEntry from "./LocationEntry";
-import Alert from "@mui/material/Alert";
 import { ContradictoryChanges } from "./ContradictoryChanges";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
 import { DISMISSABLE_WARNINGS } from "../../admin/utils/dismissableWarnings";
+import Notice from "../../common/Notice";
+import { LoadingButton } from "common/components/LoadingButton";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -64,10 +64,6 @@ const useStyles = makeStyles(theme => ({
   },
   kilometerReading: {
     flexGrow: 0
-  },
-  teamModeAlert: {
-    marginTop: theme.spacing(1),
-    textAlign: "left"
   },
   kilometers: {
     paddingTop: theme.spacing(1),
@@ -217,10 +213,11 @@ export function MissionDetails({
         cancelButtonLabel: "Annuler",
         disableWarningName: DISMISSABLE_WARNINGS.EMPLOYEE_MISSION_VALIDATION,
         content: (
-          <Alert severity="warning">
-            Une fois la mission validée vous ne pourrez plus y apporter de
-            modifications.
-          </Alert>
+          <Notice
+            type="warning"
+            description="Une fois la mission validée vous ne pourrez plus y apporter de
+            modifications."
+          />
         ),
         handleConfirm: actualValidationFunc
       });
@@ -306,37 +303,38 @@ export function MissionDetails({
           editButtonLabel="Changer"
           titleProps={titleProps}
         >
-          {hasTeamMates && [
-            changeTeam && (
-              <Alert
-                severity="info"
-                color="warning"
-                key={0}
-                className={classes.teamModeAlert}
-              >
-                {mission.submittedBySomeoneElse
-                  ? `${mission.submitter.firstName} a choisi d'enregistrer le temps de travail pour toute l'équipe.  Il est conseillé d'attendre la fin de mission avant d'effectuer des modifications pour continuer de bénéficier des saisies de ${mission.submitter.firstName}. En effet, si vous saisissez ou modifiez une mission en cours de journée, vous serez exclu de l'équipe et ne serez donc plus concerné par les temps enregistrés ensuite pas le chef d'équipe.`
-                  : `Vous avez choisi d'enregistrer le temps de travail pour toute l'équipe. Pensez à les en informer pour qu'ils continuent de bénéficier de vos saisies. En effet, s'ils saisissent ou modifient une activité en cours de journée, ils seront exclus de l'équipe et ne seront donc plus concernés par les temps que vous enregistrerez ensuite en tant que chef d'équipe.`}
-              </Alert>
-            ),
-            <List key={1} dense>
-              {map(teamMatesLatestStatuses, (tc, id) => (
-                <ListItem disableGutters key={id}>
-                  <ListItemIcon>
-                    <PersonIcon />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      actualCoworkers[tc.userId.toString()]
-                        ? actualCoworkers[tc.userId.toString()].firstName
-                        : "Inconnu"
-                    }
-                    secondary={formatLatestEnrollmentStatus(tc)}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          ]}
+          {hasTeamMates && (
+            <>
+              {changeTeam && (
+                <Notice
+                  type="warning"
+                  sx={{ marginTop: 1 }}
+                  description={
+                    mission.submittedBySomeoneElse
+                      ? `${mission.submitter.firstName} a choisi d'enregistrer le temps de travail pour toute l'équipe.  Il est conseillé d'attendre la fin de mission avant d'effectuer des modifications pour continuer de bénéficier des saisies de ${mission.submitter.firstName}. En effet, si vous saisissez ou modifiez une mission en cours de journée, vous serez exclu de l'équipe et ne serez donc plus concerné par les temps enregistrés ensuite pas le chef d'équipe.`
+                      : `Vous avez choisi d'enregistrer le temps de travail pour toute l'équipe. Pensez à les en informer pour qu'ils continuent de bénéficier de vos saisies. En effet, s'ils saisissent ou modifient une activité en cours de journée, ils seront exclus de l'équipe et ne seront donc plus concernés par les temps que vous enregistrerez ensuite en tant que chef d'équipe.`
+                  }
+                />
+              )}
+              <List dense>
+                {map(teamMatesLatestStatuses, (tc, id) => (
+                  <ListItem disableGutters key={id}>
+                    <ListItemIcon>
+                      <PersonIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={
+                        actualCoworkers[tc.userId.toString()]
+                          ? actualCoworkers[tc.userId.toString()].firstName
+                          : "Inconnu"
+                      }
+                      secondary={formatLatestEnrollmentStatus(tc)}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </>
+          )}
         </MissionReviewSection>
       ) : null}
       <MissionReviewSection
@@ -525,12 +523,12 @@ export function MissionDetails({
         !mission.isDeleted && (
           <MissionReviewSection title="Validation" titleProps={titleProps}>
             <Box style={{ textAlign: "center" }} pt={2} pb={2}>
-              <MainCtaButton
+              <LoadingButton
                 style={{ textAlign: "center" }}
                 onClick={handleMissionValidation}
               >
                 {validationButtonName}
-              </MainCtaButton>
+              </LoadingButton>
             </Box>
           </MissionReviewSection>
         )}

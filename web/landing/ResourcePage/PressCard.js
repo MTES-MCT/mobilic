@@ -1,9 +1,9 @@
 import React from "react";
 import { Card } from "@mui/material";
 import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
-import { MainCtaButton } from "../../pwa/components/MainCtaButton";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { OPEN_PRESS_ARTICLE } from "common/utils/matomoTags";
+import { LinkButton } from "../../common/LinkButton";
 
 export function PressCard({
   ImageComponent,
@@ -18,15 +18,15 @@ export function PressCard({
     <Card variant="outlined" className={classes.pressCard}>
       <ImageComponent className={classes.pressImage} />
       <br />
-      <MainCtaButton
-        aria-label="Lire l'article"
-        href={articleLink}
+      <LinkButton
+        priority="primary"
         target="_blank"
         rel="noopener noreferrer"
+        to={articleLink}
         onClick={() => trackEvent(OPEN_PRESS_ARTICLE(matomoTag))}
       >
         {buttonLabel}
-      </MainCtaButton>
+      </LinkButton>
     </Card>
   );
 }

@@ -1,14 +1,13 @@
 import React from "react";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import CloseIcon from "@mui/icons-material/Close";
 import { getAccessibleRoutes } from "../../../common/routes";
 import Drawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import { makeStyles } from "@mui/styles";
 import { ListRouteItem } from "../../../common/Header";
+import CloseButton from "../../../common/CloseButton";
 
 const useStyles = makeStyles(theme => ({
   closeNavButton: {
@@ -36,13 +35,7 @@ export function ControllerNavigationMenu({ open, setOpen }) {
       PaperProps={{ className: classes.navDrawer }}
     >
       <Box className={classes.closeNavButton} pt={2}>
-        <IconButton
-          aria-label="Fermer"
-          onClick={() => setOpen(false)}
-          className={classes.closeNavButton}
-        >
-          <CloseIcon />
-        </IconButton>
+        <CloseButton onClick={() => setOpen(false)} />
       </Box>
       <Divider className="hr-unstyled" />
       <List dense>

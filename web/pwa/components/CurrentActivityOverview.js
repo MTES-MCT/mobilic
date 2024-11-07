@@ -22,7 +22,8 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(1)
   },
   textContainer: {
-    position: "relative"
+    position: "relative",
+    textAlign: "center"
   },
   primaryText: {
     position: "absolute",

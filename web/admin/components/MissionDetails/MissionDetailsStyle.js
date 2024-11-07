@@ -1,9 +1,7 @@
 import { makeStyles } from "@mui/styles";
+import { fr } from "@codegouvfr/react-dsfr";
 
 export const useMissionDetailsStyles = makeStyles(theme => ({
-  closeButton: {
-    padding: 0
-  },
   missionSubTitle: {
     fontWeight: 200,
     display: "block"
@@ -32,7 +30,7 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   },
   noCommentText: {
     fontStyle: "italic",
-    color: theme.palette.grey[500]
+    color: fr.colors.decisions.text.mention.grey.default
   },
   validationButton: {
     marginTop: theme.spacing(4)
@@ -43,13 +41,6 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   runningMissionText: {
     color: theme.palette.warning.main,
     fontWeight: "bold"
-  },
-  validationWarningText: {
-    alignItems: "baseline",
-    fontStyle: "italic",
-    padding: 0,
-    fontSize: "0.875rem",
-    textAlign: "left"
   },
   missionTooLongWarning: {
     marginBottom: theme.spacing(3)

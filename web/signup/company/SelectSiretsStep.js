@@ -1,4 +1,3 @@
-import Button from "@mui/material/Button";
 import React, { useMemo, useCallback } from "react";
 import { Step } from "./Step";
 import { makeStyles } from "@mui/styles";
@@ -8,8 +7,9 @@ import AlreadyRegisteredSirets from "./AlreadyRegisteredSirets";
 import Stack from "@mui/material/Stack";
 import { PhoneNumber } from "../../common/PhoneNumber";
 import { BusinessType } from "../../common/BusinessType";
-import { TextInput } from "@dataesr/react-dsfr";
 import { MandatoryField } from "../../common/MandatoryField";
+import { Input } from "../../common/forms/Input";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -122,7 +122,7 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                 }}
                 disabled={facility.registered}
                 fullWidth
-                sx={{ padding: 0 }}
+                style={{ padding: facility.selected ? "2px" : "1px" }}
               >
                 <FacilityInfo
                   facility={facility}
@@ -137,18 +137,20 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                   textAlign="left"
                   sx={{ marginTop: 1 }}
                 >
-                  <TextInput
-                    required
+                  <Input
                     label="Nom usuel"
-                    value={facility.usualName}
-                    onChange={e => {
-                      setHasValidatedChoice(false);
-                      updateFacility(facility, "usualName", e.target.value);
+                    required
+                    nativeInputProps={{
+                      value: facility.usualName,
+                      onChange: e => {
+                        setHasValidatedChoice(false);
+                        updateFacility(facility, "usualName", e.target.value);
+                      }
                     }}
                     {...(getFacilityError(facility)
                       ? {
-                          messageType: "error",
-                          message: getFacilityError(facility)
+                          state: "error",
+                          stateRelatedMessage: getFacilityError(facility)
                         }
                       : {})}
                   />
@@ -178,10 +180,7 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
       </Grid>
       {!hasValidatedChoice && (
         <Button
-          aria-label="Continuer"
           className={classes.verticalFormButton}
-          variant="contained"
-          color="primary"
           disabled={!areFacilitiesCorrectlySet}
           onClick={() => setHasValidatedChoice(true)}
         >

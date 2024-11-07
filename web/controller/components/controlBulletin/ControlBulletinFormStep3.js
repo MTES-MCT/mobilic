@@ -1,12 +1,12 @@
 import React from "react";
 
 import Stack from "@mui/material/Stack";
-import { TextInput } from "@dataesr/react-dsfr";
 import { Typography } from "@mui/material";
-import Alert from "@mui/material/Alert";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { AlertGroup } from "../../../control/components/AlertGroup";
+import { Input } from "../../../common/forms/Input";
+import Notice from "../../../common/Notice";
 
 export function ControlBulletinFormStep3({
   handleEditControlBulletin,
@@ -19,10 +19,12 @@ export function ControlBulletinFormStep3({
 }) {
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
-      <TextInput
-        value={grecoId}
-        name="grecoId"
-        onChange={e => onUpdateGrecoId(e.target.value)}
+      <Input
+        nativeInputProps={{
+          value: grecoId,
+          name: "grecoId",
+          onChange: e => onUpdateGrecoId(e.target.value)
+        }}
         label="Votre identifiant de carte contrôleur"
       />
       <Typography variant="h5">Infractions retenues</Typography>
@@ -48,19 +50,21 @@ export function ControlBulletinFormStep3({
           Il n'y a aucune alerte réglementaire sur la période
         </Typography>
       )}
-      <TextInput
-        value={controlBulletin.observation || ""}
-        name="observation"
+      <Input
+        nativeInputProps={{
+          value: controlBulletin.observation || "",
+          name: "observation",
+          onChange: e => handleEditControlBulletin(e)
+        }}
         label="Observations"
-        rows="3"
-        onChange={e => handleEditControlBulletin(e)}
-        textarea
+        textArea
       />
       {!controlCanBeDownloaded && (
-        <Alert severity="warning">
-          Certains champs obligatoires doivent être renseignés pour permettre le
-          téléchargement du Bulletin de Contrôle.
-        </Alert>
+        <Notice
+          type="warning"
+          description="Certains champs obligatoires doivent être renseignés pour permettre le
+          téléchargement du Bulletin de Contrôle."
+        />
       )}
     </Stack>
   );

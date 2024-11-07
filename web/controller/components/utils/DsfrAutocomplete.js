@@ -4,6 +4,7 @@ import TextField from "@mui/material/TextField";
 import React from "react";
 import Box from "@mui/material/Box";
 import { createFilterOptions } from "@mui/material/Autocomplete";
+import { MandatorySuffix } from "../../../common/forms/MandatorySuffix";
 
 export function DsfrAutocomplete({
   field,
@@ -22,7 +23,7 @@ export function DsfrAutocomplete({
         mb={0.5}
         className={!field && showErrors ? "fr-label--error" : "fr-label"}
       >
-        {fieldLabel} {<sup style={{ color: "red" }}>*</sup>}
+        {fieldLabel} {<MandatorySuffix />}
       </Typography>
       <Autocomplete
         disableClearable
