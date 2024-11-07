@@ -203,6 +203,7 @@ export function RegulatoryAlert({
                 );
               }
             }}
+            to="/"
           >
             {formatAlertPeriod(alert, type)}
           </Link>
