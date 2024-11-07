@@ -8,5 +8,10 @@ export const useTypographyStyles = makeStyles(theme => ({
   },
   disabled: {
     color: fr.colors.decisions.text.disabled.grey.default
+  },
+  description: {
+    color: fr.colors.decisions.text.mention.grey.default,
+    fontSize: "0.875rem",
+    lineHeight: "1.375rem"
   }
 }));

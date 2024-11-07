@@ -83,7 +83,7 @@ export function UserReadAlerts({
             </Typography>
           )}
           {!isReportingInfractions && reportedInfractionsLastUpdateTime && (
-            <Typography className={typographyClasses.fieldName}>
+            <Typography className={typographyClasses.description}>
               {`Date de la dernière modification des infractions retenues : ${prettyFormatDayHour(
                 reportedInfractionsLastUpdateTime
               )}`}

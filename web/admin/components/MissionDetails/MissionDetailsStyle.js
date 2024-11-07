@@ -1,5 +1,4 @@
 import { makeStyles } from "@mui/styles";
-import { fr } from "@codegouvfr/react-dsfr";
 
 export const useMissionDetailsStyles = makeStyles(theme => ({
   missionSubTitle: {
@@ -27,10 +26,6 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   },
   employeeCard: {
     width: "100%"
-  },
-  noCommentText: {
-    fontStyle: "italic",
-    color: fr.colors.decisions.text.mention.grey.default
   },
   validationButton: {
     marginTop: theme.spacing(4)
