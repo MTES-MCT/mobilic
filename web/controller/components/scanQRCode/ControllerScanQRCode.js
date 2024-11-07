@@ -119,7 +119,7 @@ export function ControllerScanQRCode() {
         history.push(CONTROLLER_ROUTE_PREFIX + "/home", {
           controlOnFocus: {
             id: controlResponse.id,
-            type: CONTROL_TYPES.MOBILIC.value
+            type: CONTROL_TYPES.MOBILIC
           }
         });
       } catch (err) {

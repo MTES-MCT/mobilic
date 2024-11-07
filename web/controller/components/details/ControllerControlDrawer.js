@@ -16,7 +16,7 @@ export function ControllerControlDrawer({ controlId, controlType, onClose }) {
   if (!controlData) {
     return null;
   }
-  if (controlType === CONTROL_TYPES.MOBILIC.value) {
+  if (controlType === CONTROL_TYPES.MOBILIC) {
     return (
       <ControlDrawer
         isOpen={!!controlId}

@@ -46,7 +46,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
       !!companyAddress &&
       !!businessType &&
       !!vehicleRegistrationNumber &&
-      (type === CONTROL_TYPES.NO_LIC.value || isDayPageFilled !== undefined),
+      (type === CONTROL_TYPES.NO_LIC || isDayPageFilled !== undefined),
     [
       userFirstName,
       userLastName,
@@ -67,7 +67,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         const apiResponse = await api.graphQlMutate(
           CONTROLLER_SAVE_CONTROL_BULLETIN,
           {
-            type,
+            type: type.value,
             userFirstName,
             userLastName,
             userBirthDate,

@@ -26,7 +26,7 @@ export const useReadControlData = (controlId, controlType) => {
       withLoadingScreen(async () => {
         await alerts.withApiErrorHandling(async () => {
           const apiResponse = await api.graphQlMutate(
-            controlType === CONTROL_TYPES.MOBILIC.value
+            controlType === CONTROL_TYPES.MOBILIC
               ? CONTROLLER_READ_CONTROL_DATA
               : CONTROLLER_READ_CONTROL_DATA_NO_LIC,
             { controlId },
