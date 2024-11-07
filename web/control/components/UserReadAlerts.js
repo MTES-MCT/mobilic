@@ -5,11 +5,11 @@ import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
-import { AlertGroup } from "./AlertGroup";
 import { prettyFormatDayHour } from "common/utils/time";
 import Stack from "@mui/material/Stack";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import Notice from "../../common/Notice";
+import { AlertGroup } from "./Alerts/AlertGroup";
 
 const useStyles = makeStyles(theme => ({
   container: {
