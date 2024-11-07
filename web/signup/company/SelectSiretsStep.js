@@ -12,25 +12,8 @@ import { Input } from "../../common/forms/Input";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
-  button: {
-    marginTop: theme.spacing(2)
-  },
-  noSirenText: {
-    display: "block",
-    fontStyle: "italic",
-    paddingTop: theme.spacing(6)
-  },
   verticalFormButton: {
     marginTop: theme.spacing(4)
-  },
-  radioButton: {
-    textAlign: "left",
-    marginBottom: theme.spacing(2)
-  },
-  siretName: {
-    minWidth: 350,
-    maxWidth: 500,
-    marginBottom: theme.spacing(2)
   }
 }));
 
