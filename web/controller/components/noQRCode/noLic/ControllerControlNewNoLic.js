@@ -13,7 +13,7 @@ export function ControllerControlNewNoLic({
   onClose,
   setControlOnFocus
 }) {
-  const type = CONTROL_TYPES.NO_LIC;
+  const type = CONTROL_TYPES.NO_LIC.value;
   const onControlCreated = id => {
     onClose();
     setControlOnFocus({

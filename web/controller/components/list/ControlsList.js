@@ -18,6 +18,7 @@ import {
 import groupBy from "lodash/groupBy";
 import ControlsTable from "../list/table/ControlsTable";
 import CircularProgress from "@mui/material/CircularProgress";
+import { CONTROL_TYPES } from "../../utils/useReadControlData";
 
 const useStyles = makeStyles(theme => ({
   icon: {
@@ -82,9 +83,12 @@ export function ControlsList({
                 ? `${formatDay(control.creationTime)} - `
                 : "") + formatTimeOfDay(control.creationTime),
             type: control.controlType,
-            nbControlledDays: control.nbControlledDays
-              ? `${pluralize(control.nbControlledDays, "jour")}`
-              : "-",
+            nbControlledDays:
+              // Do not show for no lic or lic papier, default value set for greco stat usage
+              control.controlType === CONTROL_TYPES.MOBILIC.value &&
+              control.nbControlledDays
+                ? `${pluralize(control.nbControlledDays, "jour")}`
+                : "-",
             nbReportedInfractions: control.nbReportedInfractions || "-"
           }))
           .sort((control1, control2) => control2.time - control1.time)

@@ -46,7 +46,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
       !!companyAddress &&
       !!businessType &&
       !!vehicleRegistrationNumber &&
-      (type === CONTROL_TYPES.NO_LIC || isDayPageFilled !== undefined),
+      (type === CONTROL_TYPES.NO_LIC.value || isDayPageFilled !== undefined),
     [
       userFirstName,
       userLastName,
