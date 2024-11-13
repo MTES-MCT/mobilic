@@ -33,7 +33,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
     vehicleRegistrationNumber,
     setVehicleRegistrationNumber
   ] = React.useState("");
-  const [isDayPageFilled, setIsDayPageFilled] = React.useState();
+  const [isDayPageFilled, setIsDayPageFilled] = React.useState(null);
 
   const canSubmitForm = React.useMemo(
     () =>
@@ -182,7 +182,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
             {
               label: "Oui",
               nativeInputProps: {
-                checked: isDayPageFilled,
+                checked: isDayPageFilled === true,
                 onChange: () => setIsDayPageFilled(true)
               }
             },

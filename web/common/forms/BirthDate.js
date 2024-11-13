@@ -8,9 +8,9 @@ const BIRTH_DATE_MIN_YEAR = 100;
 const BIRTH_DATE_MAX_YEAR = 18;
 
 export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
-  const [day, setDay] = React.useState();
-  const [month, setMonth] = React.useState();
-  const [year, setYear] = React.useState();
+  const [day, setDay] = React.useState("");
+  const [month, setMonth] = React.useState("");
+  const [year, setYear] = React.useState("");
 
   const [dayState, setDayState] = React.useState("default");
   const [monthState, setMonthState] = React.useState("default");
@@ -38,26 +38,29 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
 
   const onValidateBirthDate = () => {
     let hasError = false;
-    if (year < MIN_BIRTH_DATE_YEAR || year > MAX_BIRTH_DATE_YEAR) {
+    if (
+      year !== "" &&
+      (year < MIN_BIRTH_DATE_YEAR || year > MAX_BIRTH_DATE_YEAR)
+    ) {
       setYearState("error");
       hasError = true;
     } else {
       setYearState("default");
     }
-    if (month < 1 || month > 12) {
+    if (month !== "" && (month < 1 || month > 12)) {
       setMonthState("error");
       hasError = true;
     } else {
       setMonthState("default");
     }
-    if (day < 1 || day > 31) {
+    if (day !== "" && (day < 1 || day > 31)) {
       setDayState("error");
       hasError = true;
     } else {
       setDayState("default");
     }
 
-    if (!hasError && day && month && year) {
+    if (!hasError && day !== "" && month !== "" && year !== "") {
       const date = new Date(year, month - 1, day, 10, 0, 0, 0);
       const validYear = date.getFullYear() === parseInt(year);
       const validMonth = date.getMonth() === parseInt(month - 1);
