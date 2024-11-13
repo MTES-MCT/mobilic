@@ -112,8 +112,12 @@ export function ControllerControlNoLic({
   };
 
   const showModifyInfractionsAlert = useMemo(() => {
-    return !reportedInfractionsLastUpdateTime && tab !== TABS[1].name;
-  }, [reportedInfractionsLastUpdateTime, tab]);
+    return (
+      !reportedInfractionsLastUpdateTime &&
+      tab !== TABS[1].name &&
+      totalAlertsNumber > 0
+    );
+  }, [reportedInfractionsLastUpdateTime, tab, totalAlertsNumber]);
 
   return (
     <>
