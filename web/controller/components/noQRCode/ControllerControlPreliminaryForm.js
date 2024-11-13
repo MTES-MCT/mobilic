@@ -10,7 +10,7 @@ import { MandatoryField } from "../../../common/MandatoryField";
 import { Input } from "../../../common/forms/Input";
 import { Select } from "../../../common/forms/Select";
 import { RadioButtons } from "../../../common/forms/RadioButtons";
-import { BirthDate } from "../forms/BirthDate";
+import { BirthDate } from "../../../common/forms/BirthDate";
 import { CONTROL_TYPES } from "../../utils/useReadControlData";
 import { COUNTRIES } from "../../utils/country";
 import { BUSINESS_TYPES } from "common/utils/businessTypes";

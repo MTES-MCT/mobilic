@@ -9,7 +9,7 @@ import { DsfrAutocomplete } from "../utils/DsfrAutocomplete";
 import { MandatoryField } from "../../../common/MandatoryField";
 import { Input } from "../../../common/forms/Input";
 import { Select } from "../../../common/forms/Select";
-import { BirthDate } from "../forms/BirthDate";
+import { BirthDate } from "../../../common/forms/BirthDate";
 
 export function ControlBulletinFormStep1({
   handleEditControlBulletin,

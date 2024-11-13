@@ -2,7 +2,7 @@ import React from "react";
 
 import classNames from "classnames";
 import { CURRENT_YEAR } from "common/utils/time";
-import { Input } from "../../../common/forms/Input";
+import { Input } from "./Input";
 
 const BIRTH_DATE_MIN_YEAR = 100;
 const BIRTH_DATE_MAX_YEAR = 18;
