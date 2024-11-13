@@ -16,7 +16,6 @@ import { ControllerControlBottomMenu as BottomMenu } from "../../menu/Controller
 import { canDownloadBDC } from "../../../utils/controlBulletin";
 import { TextWithBadge } from "../../../../common/TextWithBadge";
 import { UserReadAlerts } from "../../../../control/components/UserReadAlerts";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Notice from "../../../../common/Notice";
 
@@ -148,16 +147,22 @@ export function ControllerControlNoLic({
             <Notice
               description={
                 <>
-                  <Typography>
-                    Mobilic a relevé des infractions par défaut, vous pouvez
-                    modifier la sélection au sein de{" "}
-                    <span
-                      className={classes.linkInfractionTab}
-                      onClick={() => setTab(TABS[1].name)}
-                    >
-                      l’onglet infractions
-                    </span>
-                  </Typography>
+                  Mobilic a relevé des infractions par défaut, vous pouvez
+                  modifier la sélection au sein de{" "}
+                  <span
+                    role="button"
+                    tabIndex="0"
+                    className={classes.linkInfractionTab}
+                    onClick={() => setTab(TABS[1].name)}
+                    onKeyDown={e => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setTab(TABS[1].name);
+                      }
+                    }}
+                  >
+                    l’onglet infractions
+                  </span>
                 </>
               }
             />
