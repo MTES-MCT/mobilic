@@ -5,6 +5,7 @@ import { useApi } from "common/utils/api";
 import { formatApiError } from "common/utils/errors";
 import { SIREN_QUERY } from "common/utils/apiQueries";
 import { sirenValidationErrorMessage } from "../../../common/utils/siren";
+import { SirenFieldset } from "../../../common/forms/SirenFieldset";
 
 export function CompanyControlData({
   siren,
@@ -55,37 +56,25 @@ export function CompanyControlData({
 
   return (
     <>
-      <fieldset className="fr-fieldset" aria-label="Numéro SIREN">
-        <div className="fr-fieldset__element">
-          <Input
-            label="Entreprise responsable (de rattachement)"
-            hintText="SIREN ou Numéro TVA"
-            nativeInputProps={{
-              value: siren,
-              name: "siren",
-              onChange: e => {
-                const cleanSiren = e.target.value.replace(/\s/g, "");
-                setSiren(cleanSiren);
-                setSirenError(null);
-              },
-              onBlur: e => validateSiren(e)
-            }}
-            state={sirenError ? "error" : "default"}
-            stateRelatedMessage={sirenError}
-            required
-          />
-        </div>
-        <div className="fr-mt-n1v fr-fieldset__element">
-          <a
-            className="fr-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://annuaire-entreprises.data.gouv.fr/"
-          >
-            Annuaire des entreprises
-          </a>
-        </div>
-      </fieldset>
+      <SirenFieldset>
+        <Input
+          label="Entreprise responsable (de rattachement)"
+          hintText="SIREN ou Numéro TVA"
+          nativeInputProps={{
+            value: siren,
+            name: "siren",
+            onChange: e => {
+              const cleanSiren = e.target.value.replace(/\s/g, "");
+              setSiren(cleanSiren);
+              setSirenError(null);
+            },
+            onBlur: e => validateSiren(e)
+          }}
+          state={sirenError ? "error" : "default"}
+          stateRelatedMessage={sirenError}
+          required
+        />
+      </SirenFieldset>
 
       <Input
         label="Nom de l'entreprise"
