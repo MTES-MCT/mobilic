@@ -3,7 +3,7 @@ import { useLoadingScreen } from "common/utils/loading";
 import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import Stack from "@mui/material/Stack";
-import { Button } from "@codegouvfr/react-dsfr/Button";
+import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 import { MandatoryField } from "../../../common/MandatoryField";
@@ -177,11 +177,12 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         <RadioButtons
           legend="Page du jour remplie"
           name="isDayPageFilled"
+          orientation="horizontal"
           options={[
             {
               label: "Oui",
               nativeInputProps: {
-                checked: isDayPageFilled === true,
+                checked: isDayPageFilled,
                 onChange: () => setIsDayPageFilled(true)
               }
             },
@@ -197,17 +198,22 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         />
       )}
 
-      <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
-        <Button
-          onClick={() => submitPreliminaryForm()}
-          disabled={!canSubmitForm}
-        >
-          Créer le contrôle
-        </Button>
-        <Button onClick={() => onClose()} priority="secondary">
-          Annuler
-        </Button>
-      </Stack>
+      <ButtonsGroup
+        buttons={[
+          {
+            onClick: () => submitPreliminaryForm(),
+            children: "Créer le contrôle",
+            disabled: !canSubmitForm
+          },
+          {
+            children: "Annuler",
+            onClick: () => onClose(),
+            priority: "secondary"
+          }
+        ]}
+        inlineLayoutWhen="sm and up"
+        alignment="right"
+      />
     </Stack>
   );
 }
