@@ -21,6 +21,7 @@ import Notice from "../../../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   middleTab: {
+    fontSize: "0.75rem",
     flexGrow: 1.5,
     opacity: 1,
     color: "rgb(255,255,255,0.5)",
@@ -29,6 +30,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   tab: {
+    fontSize: "0.75rem",
     opacity: 1,
     color: "rgb(255,255,255,0.5)",
     "&.Mui-selected": {

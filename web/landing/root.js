@@ -7,10 +7,11 @@ import { IntroSection } from "./sections/IntroSection";
 import { TalkingAboutUsSection } from "./sections/TalkingAboutUsSection";
 import { usePageTitle } from "../common/UsePageTitle";
 import Stack from "@mui/material/Stack";
-import Container from "@mui/material/Container";
 import { VideoSection } from "./sections/VideoSection";
 import { WhoSection } from "./sections/WhoSection";
 import { WhatToKnowSection } from "./sections/WhatToKnowSection";
+import { Main } from "../common/semantics/Main";
+import { Container } from "@mui/material";
 
 export const Landing = () => {
   usePageTitle("Accueil - Mobilic");
@@ -18,18 +19,20 @@ export const Landing = () => {
   return (
     <>
       <Header />
-      <IntroSection />
-      <Container maxWidth="lg" sx={{ textAlign: "center" }}>
-        <Stack direction="column" gap={8} sx={{ marginY: 4 }}>
-          <LandingSectionList>
-            <VideoSection />
-            {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
-            <WhoSection />
-            <WhatToKnowSection />
-            <TalkingAboutUsSection />
-          </LandingSectionList>
-        </Stack>
-      </Container>
+      <Main maxWidth={false} sx={{ textAlign: "center" }}>
+        <IntroSection />
+        <Container maxWidth="lg">
+          <Stack direction="column" gap={8} sx={{ marginY: 4 }}>
+            <LandingSectionList>
+              <VideoSection />
+              {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
+              <WhoSection />
+              <WhatToKnowSection />
+              <TalkingAboutUsSection />
+            </LandingSectionList>
+          </Stack>
+        </Container>
+      </Main>
       <Footer />
     </>
   );

@@ -1,6 +1,5 @@
 import Stack from "@mui/material/Stack";
 import { makeStyles } from "@mui/styles";
-import { LoadingButton } from "common/components/LoadingButton";
 import React from "react";
 import { VIDEOS, VideoCard } from "../../ResourcePage/VideoCard";
 import { resourceCardsClasses } from "../../ResourcePage/styles/ResourceCardsStyle";
@@ -9,6 +8,7 @@ import { BretagneMaceDemenagementImage, VirImage } from "common/utils/icons";
 import Box from "@mui/material/Box";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { ADMIN_LANDING_SUBSCRIBE_TESTIMONY } from "common/utils/matomoTags";
+import { LinkButton } from "../../../common/LinkButton";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -29,7 +29,7 @@ export function Testimony() {
   const { trackEvent } = useMatomo();
 
   return (
-    <Stack direction="column" gap={8} alignItems="center">
+    <Stack direction="column" gap={4} alignItems="center">
       <Stack
         direction="row"
         gap={1}
@@ -72,13 +72,14 @@ export function Testimony() {
           />
         </Box>
       </Stack>
-      <LoadingButton
+      <LinkButton
         className={classes.button}
-        href="/signup/admin"
+        priority="primary"
+        to="/signup/admin"
         onClick={() => trackEvent(ADMIN_LANDING_SUBSCRIBE_TESTIMONY)}
       >
         Moi aussi je simplifie ma gestion administrative
-      </LoadingButton>
+      </LinkButton>
     </Stack>
   );
 }

@@ -5,8 +5,8 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { ManagerImage, SoftwareImage, WorkerImage } from "common/utils/icons";
 import { useIsWidthDown } from "common/utils/useWidth";
-import { LoadingButton } from "common/components/LoadingButton";
 import { LandingSection, useSectionStyles } from "./LandingSection";
+import { LinkButton } from "../../common/LinkButton";
 
 const useStyles = makeStyles(theme => ({
   lightBlue: {
@@ -54,21 +54,17 @@ function Showcase({
     </Grid>
   );
 
-  const Description = props => [
-    <Typography
-      align="left"
-      variant="h4"
-      key={0}
-      className="bold"
-      component="span"
-    >
-      {descriptionTitle}
-    </Typography>,
-    <React.Fragment key={1}>{descriptionContent}</React.Fragment>,
-    <LoadingButton key={2} className={classes.cta} href={ctaTarget}>
-      {ctaLabel}
-    </LoadingButton>
-  ];
+  const Description = props => (
+    <>
+      <Typography align="left" variant="h5" className="bold" mb={2}>
+        {descriptionTitle}
+      </Typography>
+      {descriptionContent}
+      <LinkButton className={classes.cta} to={ctaTarget} priority="primary">
+        {ctaLabel}
+      </LinkButton>
+    </>
+  );
 
   const isMdDown = useIsWidthDown("md");
   const leftAlignImage = isMdDown || imagePosition === "left";
@@ -135,7 +131,7 @@ export const WhoSection = () => {
                 lineHeight: "1.6"
               }}
             >
-              <p>Directement depuis mon téléphone</p>
+              <p>Directement depuis mon téléphone&nbsp;:</p>
               <ul
                 style={{
                   textAlign: "justify",

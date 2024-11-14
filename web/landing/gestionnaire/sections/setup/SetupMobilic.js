@@ -3,8 +3,7 @@ import { makeStyles } from "@mui/styles";
 import { SetupMobilicBlock } from "./SetupMobilicBlock";
 import Stack from "@mui/material/Stack";
 import { useIsWidthUp } from "common/utils/useWidth";
-import { Link } from "../../../../common/LinkButton";
-import { LoadingButton } from "common/components/LoadingButton";
+import { Link, LinkButton } from "../../../../common/LinkButton";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { ADMIN_LANDING_SUBSCRIBE_HOW_TO } from "common/utils/matomoTags";
 
@@ -51,36 +50,6 @@ const BLOCKS = [
 ];
 
 const useStyles = makeStyles(theme => ({
-  dividerContainer: {
-    position: "relative"
-  },
-  divider: {
-    backgroundColor: theme.palette.primary.main,
-    [theme.breakpoints.down("md")]: {
-      display: "none"
-    },
-    minWidth: theme.spacing(18),
-    height: "4px",
-    position: "absolute",
-    top: "128px",
-    left: "-76px",
-    "&::before, &::after": {
-      content: '""',
-      backgroundColor: theme.palette.primary.main,
-      display: "inline-block",
-      height: "20px",
-      width: "20px",
-      borderRadius: "50%",
-      position: "absolute",
-      top: "-8px"
-    },
-    "&::before": {
-      left: 0
-    },
-    "&::after": {
-      right: 0
-    }
-  },
   button: {
     margin: "auto"
   }
@@ -91,12 +60,6 @@ export function SetupMobilic() {
   const { trackEvent } = useMatomo();
 
   const classes = useStyles();
-
-  const Divider = index => (
-    <div className={classes.dividerContainer} key={`divider_${index}`}>
-      <div className={classes.divider} />
-    </div>
-  );
 
   const BLOCKS_WITH_DIVIDERS = React.useMemo(() => {
     const blocks = BLOCKS.map(({ index, when, title, content }) => (
@@ -109,16 +72,10 @@ export function SetupMobilic() {
       />
     ));
 
-    return blocks.reduce(
-      (arr, item, index) =>
-        index < blocks.length - 1
-          ? arr.concat([item, Divider(index)])
-          : arr.concat(item),
-      []
-    );
+    return blocks;
   }, []);
   return (
-    <Stack direction="column" gap={8}>
+    <Stack direction="column" gap={4}>
       <Stack
         direction={isOnDesktop ? "row" : "column"}
         justifyContent="space-around"
@@ -127,13 +84,14 @@ export function SetupMobilic() {
       >
         {BLOCKS_WITH_DIVIDERS}
       </Stack>
-      <LoadingButton
+      <LinkButton
         className={classes.button}
-        href="/signup/admin"
+        priority="primary"
+        to="/signup/admin"
         onClick={() => trackEvent(ADMIN_LANDING_SUBSCRIBE_HOW_TO)}
       >
         Je crée mon compte gratuit
-      </LoadingButton>
+      </LinkButton>
     </Stack>
   );
 }

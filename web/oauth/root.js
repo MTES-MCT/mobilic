@@ -1,5 +1,4 @@
 import React from "react";
-import Container from "@mui/material/Container";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { makeStyles } from "@mui/styles";
 import {
@@ -17,6 +16,7 @@ import { useLoadingScreen } from "common/utils/loading";
 import { Consent } from "./Consent";
 import Typography from "@mui/material/Typography";
 import { captureSentryException } from "common/utils/sentry";
+import { Main } from "../common/semantics/Main";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -98,7 +98,7 @@ export default function OAuth() {
   return (
     <>
       <Header disableMenu={true} />
-      <Container className={classes.container} maxWidth="sm">
+      <Main maxWidth="md" className={classes.container}>
         <Switch>
           {userId && (
             <Route key="consent" path={`${path}/consent`}>
@@ -117,7 +117,7 @@ export default function OAuth() {
           </Route>
           <Route path="*" render={() => <Redirect push to={`${path}`} />} />
         </Switch>
-      </Container>
+      </Main>
     </>
   );
 }

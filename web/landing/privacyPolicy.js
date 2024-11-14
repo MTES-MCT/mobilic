@@ -10,6 +10,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { ExternalLink } from "../common/ExternalLink";
+import { Main } from "../common/semantics/Main";
 
 const dataCustodyHeaders = ["Catégorie de données", "Durée de conservation"];
 const dataCustody = [
@@ -129,11 +130,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function PrivacyPolicy() {
-  return [
-    <Header key={1} />,
-    <PrivacyPolicyContent key={2} />,
-    <Footer key={3} />
-  ];
+  return (
+    <>
+      <Header />
+      <Main>
+        <PrivacyPolicyContent />
+      </Main>
+      <Footer />
+    </>
+  );
 }
 
 function PrivacyPolicyContent() {

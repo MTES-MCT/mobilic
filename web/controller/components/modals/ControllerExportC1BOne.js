@@ -34,13 +34,13 @@ export default function ControllerExportC1BOne({
             type="warning"
             description={
               <>
-                <Typography>
+                <>
                   Les fichiers générés par Mobilic respectent la norme C1B, mais
                   ne sont pour autant pas tout à fait identiques aux fichiers
                   des cartes conducteur (par exemple: certaines parties sont
                   laissées vides faute de données, les signatures numériques
                   sont différentes ...).
-                </Typography>
+                </>
                 <Typography mt={1}>
                   Si jamais vous ne parvenez pas à lire les fichiers Mobilic
                   depuis votre logiciel d'analyse n'hésitez pas à nous contacter

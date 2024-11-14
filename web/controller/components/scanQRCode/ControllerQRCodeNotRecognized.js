@@ -1,13 +1,11 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
-import Container from "@mui/material/Container";
-import classNames from "classnames";
-import { Link } from "react-router-dom";
-import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import Typography from "@mui/material/Typography";
 import { Header } from "../../../common/Header";
 import { usePageTitle } from "../../../common/UsePageTitle";
 import Notice from "../../../common/Notice";
+import { Main } from "../../../common/semantics/Main";
+import { ControllerBackButton } from "./ControllerBackButton";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -33,36 +31,27 @@ export function ControllerQRCodeNotRecognized() {
   usePageTitle("Erreur QRCode - Mobilic");
   const classes = useStyles();
 
-  return [
-    <Header key={0} />,
-    <Container
-      key={20}
-      className={`${classes.container} ${classes.whiteSection}`}
-      maxWidth="xl"
-    >
-      <Link
-        className={classNames(
-          classes.linkScan,
-          "fr-link",
-          "fr-fi-arrow-left-line",
-          "fr-link--icon-left"
-        )}
-        to={CONTROLLER_ROUTE_PREFIX + "/scan"}
+  return (
+    <>
+      <Header />
+      <Main
+        className={`${classes.container} ${classes.whiteSection}`}
+        maxWidth="xl"
       >
-        Scannez un QR Code
-      </Link>
-      <h3 className={classes.title}>QR Code non reconnu</h3>
-      <Typography>
-        Nous n'avons pas pu vérifier la validité de ce QR Code. Il se peut que
-        le QR Code scanné{" "}
-        <b>provienne d'une application tierce non interfacée à Mobilic.</b>
-      </Typography>
-      <Notice
-        type="warning"
-        sx={{ marginTop: 3 }}
-        description="N'hésitez pas à nous remonter le nom de l'application utilisée par le
+        <ControllerBackButton label="Scannez un QR Code" route="/scan" />
+        <h3 className={classes.title}>QR Code non reconnu</h3>
+        <Typography>
+          Nous n'avons pas pu vérifier la validité de ce QR Code. Il se peut que
+          le QR Code scanné{" "}
+          <b>provienne d'une application tierce non interfacée à Mobilic.</b>
+        </Typography>
+        <Notice
+          type="warning"
+          sx={{ marginTop: 3 }}
+          description="N'hésitez pas à nous remonter le nom de l'application utilisée par le
         salarié, afin que nous contactions cet éditeur de logiciel."
-      />
-    </Container>
-  ];
+        />
+      </Main>
+    </>
+  );
 }

@@ -2,27 +2,45 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
 export const customOptions = {
-  // components: {
-  //   MuiLink: {
-  //     defaultProps: {
-  //       underline: "always"
-  //     }
-  //   },
-  // MuiButton: {
-  //   styleOverrides: {
-  //     root: {
-  //       borderRadius: "20px"
-  //     }
-  //   }
-  // },
-  //   MuiTableSortLabel: {
-  //     styleOverrides: {
-  //       icon: {
-  //         opacity: 0.3
-  //       }
-  //     }
-  //   }
-  // },
+  components: {
+    MuiAccordionSummary: {
+      styleOverrides: {
+        root: {
+          "&.Mui-focusVisible": {
+            backgroundColor: "transparent"
+          }
+        }
+      }
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          "&.Mui-focusVisible": {
+            backgroundColor: "transparent"
+          }
+        }
+      }
+    }
+    //   MuiLink: {
+    //     defaultProps: {
+    //       underline: "always"
+    //     }
+    //   },
+    // MuiButton: {
+    //   styleOverrides: {
+    //     root: {
+    //       borderRadius: "20px"
+    //     }
+    //   }
+    // },
+    //   MuiTableSortLabel: {
+    //     styleOverrides: {
+    //       icon: {
+    //         opacity: 0.3
+    //       }
+    //     }
+    //   }
+  },
   palette: {
     primary: {
       main: "#3965EA",
@@ -31,19 +49,11 @@ export const customOptions = {
       dark: "#202DA7"
     },
     warning: {
-      light: fr.colors.options.warning._425_625.active,
+      light: fr.colors.options.warning._425_625.default,
       main: fr.colors.options.warning._425_625.default,
       dark: fr.colors.options.warning._425_625.hover,
       contrastText: fr.colors.options.grey._1000_50.default
     }
-    // background: {
-    //   default: "#f7f9fa",
-    //   paper: "#fff",
-    //   dark: "#26353f"
-    // },
-    // text: {
-    //   primary: "#26353f"
-    // }
   },
   typography: {
     fontFamily: '"Marianne", Arial, sans-serif',

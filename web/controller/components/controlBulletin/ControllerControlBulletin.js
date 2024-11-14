@@ -1,8 +1,6 @@
 import React from "react";
 
-import Stack from "@mui/material/Stack";
 import { Stepper } from "@codegouvfr/react-dsfr/Stepper";
-import { Button } from "@codegouvfr/react-dsfr/Button";
 import Typography from "@mui/material/Typography";
 import { ControlBulletinHeader } from "./ControlBulletinHeader";
 import {
@@ -26,6 +24,7 @@ import {
   checkRequiredFieldStep1,
   checkRequiredFieldStep2
 } from "../../utils/controlBulletin";
+import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 
 const STEPS = {
   1: {
@@ -252,14 +251,21 @@ export function ControllerControlBulletin({
           groupedAlerts={groupedAlerts}
         />
       )}
-      <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
-        <Button onClick={() => onSaveButton(controlBulletin)}>
-          {!STEPS[step + 1] ? "Enregistrer" : "Suivant"}
-        </Button>
-        <Button onClick={() => onClose()} priority="secondary">
-          Annuler
-        </Button>
-      </Stack>
+      <ButtonsGroup
+        buttons={[
+          {
+            onClick: () => onSaveButton(controlBulletin),
+            children: !STEPS[step + 1] ? "Enregistrer" : "Suivant"
+          },
+          {
+            children: "Annuler",
+            onClick: () => onClose(),
+            priority: "secondary"
+          }
+        ]}
+        inlineLayoutWhen="sm and up"
+        alignment="right"
+      />
     </>
   );
 }

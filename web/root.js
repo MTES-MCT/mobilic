@@ -29,7 +29,6 @@ import {
   getFallbackRoute,
   isAccessible
 } from "./common/routes";
-import { ScrollToTop } from "common/utils/scroll";
 import { SnackbarProvider, useSnackbarAlerts } from "./common/Snackbar";
 import { EnvironmentHeader } from "./common/EnvironmentHeader";
 import { LiveChat } from "./common/LiveChat";
@@ -58,6 +57,7 @@ import UpdatePasswordModal from "./pwa/components/UpdatePassword";
 import AcceptCguModal from "./pwa/modals/AcceptCguModal";
 import RejectedCguModal from "./pwa/modals/RejectedCguModals";
 import merge from "lodash/merge";
+import useScroll from "./common/hooks/useScroll";
 
 const matomo = createInstance({
   urlBase: "https://stats.beta.gouv.fr",
@@ -102,7 +102,6 @@ export default function Root() {
                       <LoadingScreenContextProvider>
                         <ModalProvider modalDict={MODAL_DICT}>
                           <RegulationDrawerContextProvider>
-                            <ScrollToTop />
                             <_Root />
                           </RegulationDrawerContextProvider>
                         </ModalProvider>
@@ -124,6 +123,7 @@ function _Root() {
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
+  useScroll();
 
   const userId = store.userId();
   const controllerId = store.controllerId();

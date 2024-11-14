@@ -464,3 +464,15 @@ video:not([href])[controls] {
 .fr-btn--icon-right[class^="fr-icon-"]::after, .fr-btn--icon-right[class*=" fr-icon-"]::after, .fr-btn--icon-right[class^="fr-fi-"]::after, .fr-btn--icon-right[class*=" fr-fi-"]::after {
   --icon-size: 1.3rem
 }
+
+.fr-modal__footer {
+  z-index: 2;
+}
+
+.MuiChip-filled.MuiChip-colorDefault {
+  background-color: var(--background-action-low-blue-france)
+}
+
+main {
+  scroll-margin-top: 200px;
+}

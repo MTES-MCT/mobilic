@@ -99,6 +99,7 @@ export default function ExcelExportModal({
       open={open}
       handleClose={handleClose}
       title="Télécharger le rapport d'activité"
+      size="lg"
       content={
         <>
           <Typography gutterBottom>

@@ -31,6 +31,7 @@ export function Logos({ leaveSpaceForMenu = true }) {
           controllerInfo: store.controllerInfo(),
           companies: store.companies()
         })}
+        style={{ padding: "0.25rem 0.5rem" }}
       >
         <img alt="Mobilic" height={45} width={128} src={MobilicLogoWithText} />
       </LinkButton>
