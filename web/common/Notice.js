@@ -24,7 +24,7 @@ const Notice = ({
         classes.root,
         className
       )}
-      style={{ ...style, textAlign: "justify" }}
+      style={{ ...style, textAlign: "initial" }}
       sx={sx}
     >
       <Box
@@ -33,7 +33,7 @@ const Notice = ({
           ...(isFullWidth && { maxWidth: "100%" })
         }}
       >
-        <Box className="fr-notice__body">
+        <Box className="fr-notice__body" style={!onClose ? { padding: 0 } : {}}>
           <p>
             <span
               className={cx(
