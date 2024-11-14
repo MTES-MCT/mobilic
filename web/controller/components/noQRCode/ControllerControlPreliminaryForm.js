@@ -67,7 +67,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         const apiResponse = await api.graphQlMutate(
           CONTROLLER_SAVE_CONTROL_BULLETIN,
           {
-            type,
+            type: type.value,
             userFirstName,
             userLastName,
             userBirthDate,

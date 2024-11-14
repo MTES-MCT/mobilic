@@ -14,12 +14,12 @@ import { InfoHoraireServiceController } from "./InfoHoraireServiceController";
 import classNames from "classnames";
 import { useModals } from "common/utils/modals";
 import { ControlTypeFilters } from "../filters/ControlTypeFilter";
-import { ControllerControlNewNoLic } from "../noQRCode/noLic/ControllerControlNewNoLic";
-import { ControllerControlNewLicPapier } from "../noQRCode/licPapier/ControllerControlNewLicPapier";
 import { usePageTitle } from "../../../common/UsePageTitle";
 import { Typography } from "@mui/material";
 import Modal from "../../../common/Modal";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { CONTROL_TYPES } from "../../utils/useReadControlData";
+import { ControllerControlNew } from "../noQRCode/ControllerControlNew";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -108,12 +108,14 @@ export function ControllerHome() {
             setControlOnFocus(null);
           }}
         />
-        <ControllerControlNewNoLic
+        <ControllerControlNew
+          type={CONTROL_TYPES.NO_LIC}
           isOpen={openNewNoLic}
           onClose={() => setOpenNewNoLic(false)}
           setControlOnFocus={setControlOnFocus}
         />
-        <ControllerControlNewLicPapier
+        <ControllerControlNew
+          type={CONTROL_TYPES.LIC_PAPIER}
           isOpen={openNewLicPapier}
           onClose={() => setOpenNewLicPapier(false)}
           setControlOnFocus={setControlOnFocus}

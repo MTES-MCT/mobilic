@@ -4,16 +4,15 @@ import classNames from "classnames";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { ControllerControlPreliminaryForm } from "../ControllerControlPreliminaryForm";
-import { CONTROL_TYPES } from "../../../utils/useReadControlData";
-import { ControlDrawer } from "../../../utils/ControlDrawer";
+import { ControllerControlPreliminaryForm } from "./ControllerControlPreliminaryForm";
+import { ControlDrawer } from "../../utils/ControlDrawer";
 
-export function ControllerControlNewNoLic({
+export function ControllerControlNew({
+  type,
   isOpen,
   onClose,
   setControlOnFocus
 }) {
-  const type = CONTROL_TYPES.NO_LIC;
   const onControlCreated = id => {
     onClose();
     setControlOnFocus({
@@ -38,7 +37,7 @@ export function ControllerControlNewNoLic({
           </Link>
         </Box>
         <Typography variant="h4" component="h1" sx={{ marginY: 2 }}>
-          Nouveau contrôle “Pas de LIC à bord”
+          Nouveau contrôle “{type.label}”
         </Typography>
         <p>
           Veuillez renseigner ces informations afin de créer le contrôle&nbsp;:
