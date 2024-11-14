@@ -14,7 +14,8 @@ import { InfoHoraireServiceController } from "./InfoHoraireServiceController";
 import classNames from "classnames";
 import { useModals } from "common/utils/modals";
 import { ControlTypeFilters } from "../filters/ControlTypeFilter";
-import { ControllerControlNewNoLic } from "../noLic/ControllerControlNewNoLic";
+import { ControllerControlNewNoLic } from "../noQRCode/noLic/ControllerControlNewNoLic";
+import { ControllerControlNewLicPapier } from "../noQRCode/licPapier/ControllerControlNewLicPapier";
 import { usePageTitle } from "../../../common/UsePageTitle";
 import { Typography } from "@mui/material";
 import Modal from "../../../common/Modal";
@@ -66,11 +67,11 @@ export function ControllerHome() {
   const location = useLocation();
   const modals = useModals();
   const controllerUserInfo = store.controllerInfo();
-  const [modal, setModal] = useState({ isOpen: false, parcours: "" });
   const [showHoraireServiceModal, setShowHoraireServiceModal] = useState(false);
 
   const [controlOnFocus, setControlOnFocus] = React.useState(null);
   const [openNewNoLic, setOpenNewNoLic] = React.useState(false);
+  const [openNewLicPapier, setOpenNewLicPapier] = React.useState(false);
 
   const [controls, loadControls, loadingControls] = useLoadControls();
 
@@ -112,6 +113,11 @@ export function ControllerHome() {
           onClose={() => setOpenNewNoLic(false)}
           setControlOnFocus={setControlOnFocus}
         />
+        <ControllerControlNewLicPapier
+          isOpen={openNewLicPapier}
+          onClose={() => setOpenNewLicPapier(false)}
+          setControlOnFocus={setControlOnFocus}
+        />
         <Typography variant="h4" component="h1" className={classes.titleHello}>
           Bonjour, {controllerUserInfo.firstName}
         </Typography>
@@ -142,9 +148,7 @@ export function ControllerHome() {
             <ControllerHomeCard
               text={"LIC papier présenté"}
               icon={"fr-icon-draft-line fr-icon--lg"}
-              onClick={() =>
-                setModal({ isOpen: true, parcours: "d'un LIC papier" })
-              }
+              onClick={() => setOpenNewLicPapier(true)}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -189,17 +193,6 @@ export function ControllerHome() {
           clickOnRow={(id, type) => setControlOnFocus({ id, type })}
         />
       </Container>
-      <Modal
-        open={modal.isOpen}
-        handleClose={() => setModal({ isOpen: false, parcours: "" })}
-        title="En cours de construction"
-        content={
-          <>
-            Le parcours de contrôle {modal.parcours} dans votre interface
-            Mobilic est en cours de conception.
-          </>
-        }
-      />
       <Modal
         open={showHoraireServiceModal}
         handleClose={() => setShowHoraireServiceModal(false)}

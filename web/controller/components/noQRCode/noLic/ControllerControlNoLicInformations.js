@@ -1,6 +1,6 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
-import { ControllerControlNote as Notes } from "../details/ControllerControlNote";
+import { ControllerControlNote as Notes } from "../../details/ControllerControlNote";
 import { ControllerControlNoLicInformationsEmployee as InformationsEmployee } from "./ControllerControlNoLicInformationsEmployee";
 
 export function ControllerControlNoLicInformations({ controlData }) {

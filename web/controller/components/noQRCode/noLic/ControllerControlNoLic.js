@@ -11,14 +11,13 @@ import WarningAmberOutlinedIcon from "@mui/icons-material/WarningOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import { ControllerControlNoLicHistory } from "./ControllerControlNoLicHistory";
 import { ControllerControlNoLicInformations } from "./ControllerControlNoLicInformations";
-import { useDownloadBDC } from "../../utils/useDownloadBDC";
-import { ControllerControlBottomMenu as BottomMenu } from "../menu/ControllerControlBottomMenu";
-import { canDownloadBDC } from "../../utils/controlBulletin";
-import { TextWithBadge } from "../../../common/TextWithBadge";
-import { UserReadAlerts } from "../../../control/components/UserReadAlerts";
-import Typography from "@mui/material/Typography";
+import { useDownloadBDC } from "../../../utils/useDownloadBDC";
+import { ControllerControlBottomMenu as BottomMenu } from "../../menu/ControllerControlBottomMenu";
+import { canDownloadBDC } from "../../../utils/controlBulletin";
+import { TextWithBadge } from "../../../../common/TextWithBadge";
+import { UserReadAlerts } from "../../../../control/components/UserReadAlerts";
 import Box from "@mui/material/Box";
-import Notice from "../../../common/Notice";
+import Notice from "../../../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   middleTab: {
@@ -113,8 +112,12 @@ export function ControllerControlNoLic({
   };
 
   const showModifyInfractionsAlert = useMemo(() => {
-    return !reportedInfractionsLastUpdateTime && tab !== TABS[1].name;
-  }, [reportedInfractionsLastUpdateTime, tab]);
+    return (
+      !reportedInfractionsLastUpdateTime &&
+      tab !== TABS[1].name &&
+      totalAlertsNumber > 0
+    );
+  }, [reportedInfractionsLastUpdateTime, tab, totalAlertsNumber]);
 
   return (
     <>
@@ -148,16 +151,22 @@ export function ControllerControlNoLic({
             <Notice
               description={
                 <>
-                  <Typography>
-                    Mobilic a relevé des infractions par défaut, vous pouvez
-                    modifier la sélection au sein de{" "}
-                    <span
-                      className={classes.linkInfractionTab}
-                      onClick={() => setTab(TABS[1].name)}
-                    >
-                      l’onglet infractions
-                    </span>
-                  </Typography>
+                  Mobilic a relevé des infractions par défaut, vous pouvez
+                  modifier la sélection au sein de{" "}
+                  <span
+                    role="button"
+                    tabIndex="0"
+                    className={classes.linkInfractionTab}
+                    onClick={() => setTab(TABS[1].name)}
+                    onKeyDown={e => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setTab(TABS[1].name);
+                      }
+                    }}
+                  >
+                    l’onglet infractions
+                  </span>
                 </>
               }
             />
