@@ -170,6 +170,11 @@ export const OBSERVED_INFRACTIONS_FRAGMENT = gql`
     type
     unit
     extra
+    business {
+      id
+      transportType
+      businessType
+    }
   }
 `;
 

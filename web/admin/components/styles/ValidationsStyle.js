@@ -7,11 +7,6 @@ export const useStyles = makeStyles(theme => ({
     display: "flex",
     alignItems: "center"
   },
-  explanation: {
-    marginBottom: theme.spacing(2),
-    fontStyle: "italic",
-    textAlign: "justify"
-  },
   container: {
     padding: theme.spacing(2),
     flexShrink: 1,

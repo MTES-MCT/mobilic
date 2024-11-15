@@ -29,13 +29,9 @@ import { VerticalTimeline } from "common/components/VerticalTimeline";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from "@mui/material/ToggleButton";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
-import { fr } from "@codegouvfr/react-dsfr";
+import { Description } from "../../common/typography/Description";
 
 const useStyles = makeStyles(theme => ({
-  infoText: {
-    color: fr.colors.decisions.text.mention.grey.default,
-    fontStyle: "italic"
-  },
   longBreak: {
     color: theme.palette.success.main
   },
@@ -249,6 +245,11 @@ export function ActivityList({
 
   return (
     <Container ref={ref} maxWidth={false} disableGutters>
+      {hasActivitiesBeforeMinTime && (
+        <Description>
+          Les activités avant minuit le jour précédent ne sont pas incluses.
+        </Description>
+      )}
       {canDisplayChart && (
         <ToggleButtonGroup
           className={classes.toggleContainer}
@@ -270,18 +271,12 @@ export function ActivityList({
           </ToggleButton>
         </ToggleButtonGroup>
       )}
-      {hasActivitiesBeforeMinTime && (
-        <Typography variant="body2" className={classes.infoText}>
-          Les activités avant minuit le jour précédent ne sont pas incluses.
-        </Typography>
-      )}
       {(view === "list" || !canDisplayChart) && (
         <List dense>
-          {augmentedAndSortedActivities.length === 0 && !disableEmptyMessage && (
-            <Typography variant="body2" className={classes.infoText}>
-              Pas d'activités sur cette journée
-            </Typography>
-          )}
+          {augmentedAndSortedActivities.length === 0 &&
+            !disableEmptyMessage && (
+              <Description>Pas d'activités sur cette journée</Description>
+            )}
           {augmentedAndSortedActivities.map((activity, index) => (
             <ActivityItem
               activity={activity}
@@ -313,9 +308,9 @@ export function ActivityList({
         />
       )}
       {hasActivitiesAfterMaxTime && (
-        <Typography variant="body2" className={classes.infoText}>
+        <Description>
           Les activités après minuit le jour suivant ne sont pas incluses.
-        </Typography>
+        </Description>
       )}
     </Container>
   );

@@ -5,15 +5,20 @@ import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
-import { AlertGroup } from "./AlertGroup";
 import { prettyFormatDayHour } from "common/utils/time";
 import Stack from "@mui/material/Stack";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import Notice from "../../common/Notice";
+import { AlertGroup } from "./Alerts/AlertGroup";
 
+import { FieldTitle } from "../../common/typography/FieldTitle";
+import { DisplayBusinessTypes } from "./Alerts/BusinessTypesFromGroupedAlerts";
+import { getBusinessTypesFromGroupedAlerts } from "../utils/businessTypesFromGroupedAlerts";
+import { Description } from "../../common/typography/Description";
 const useStyles = makeStyles(theme => ({
   container: {
-    paddingBottom: theme.spacing(4)
+    paddingBottom: theme.spacing(4),
+    marginTop: theme.spacing(2)
   },
   linkContainer: {
     textAlign: "center",
@@ -23,12 +28,6 @@ const useStyles = makeStyles(theme => ({
     fontStyle: "italic",
     color: theme.palette.grey[600],
     marginTop: theme.spacing(2)
-  },
-  subtitle: {
-    color: theme.palette.grey[600]
-  },
-  helpText: {
-    fontWeight: "bold"
   },
   divider: {
     marginTop: theme.spacing(4),
@@ -65,98 +64,122 @@ export function UserReadAlerts({
 }) {
   const classes = useStyles();
 
+  const businessTypes = React.useMemo(
+    () => getBusinessTypesFromGroupedAlerts(groupedAlerts),
+    [groupedAlerts]
+  );
+
   return (
-    <Container maxWidth="md" className={classes.container}>
-      {isReportingInfractions && (
-        <Typography className={classes.helpText}>
-          {totalAlertsNumber === 1
-            ? HELPER_TEXT_SINGLE_INFRACTION
-            : HELPER_TEXT_SEVERAL_INFRACTIONS}
-        </Typography>
-      )}
-      {!isReportingInfractions && reportedInfractionsLastUpdateTime && (
-        <Typography className={classes.helpText}>
-          {`Date de la dernière modification des infractions retenues : ${prettyFormatDayHour(
-            reportedInfractionsLastUpdateTime
-          )}`}
-        </Typography>
-      )}
-      {!noLic && (
-        <>
-          <Typography
-            align="left"
-            className={classes.subtitle}
-            variant="overline"
-            component="h2"
-          >
-            Infractions calculées par Mobilic
-          </Typography>{" "}
-          <WarningComputedAlerts />
-          {businesses && businesses.length > 1 && (
-            <Notice
-              type="warning"
-              sx={{ marginTop: 1 }}
-              description={
-                <>{`Attention, veuillez noter que ce salarié effectue des missions pour différents secteurs d’activité 
-              (${businesses.join(", ")}).`}</>
-              }
-            />
+    <Container maxWidth="md" sx={{ padding: 0 }}>
+      {!noLic && <DisplayBusinessTypes businessTypes={businessTypes} />}
+      <Container className={classes.container}>
+        <Stack direction="column" rowGap={1}>
+          {isReportingInfractions && (
+            <Typography>
+              {totalAlertsNumber === 1
+                ? HELPER_TEXT_SINGLE_INFRACTION
+                : HELPER_TEXT_SEVERAL_INFRACTIONS}
+            </Typography>
           )}
-        </>
-      )}
-      {groupedAlerts?.length > 0 ? (
-        <List>
-          {groupedAlerts
-            .sort((alert1, alert2) =>
-              alert1.sanction.localeCompare(alert2.sanction)
-            )
-            .map(group => (
-              <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
-                <AlertGroup
-                  {...group}
-                  setPeriodOnFocus={setPeriodOnFocus}
-                  setTab={setTab}
-                  isReportingInfractions={isReportingInfractions}
-                  onUpdateInfraction={onUpdateInfraction}
-                  readOnlyAlerts={readOnlyAlerts}
-                  titleProps={{ component: "h3" }}
+          {!isReportingInfractions && (
+            <Typography component="h2" fontWeight="bold" fontSize="1.125rem">
+              Infractions retenues
+            </Typography>
+          )}
+          {!isReportingInfractions && reportedInfractionsLastUpdateTime && (
+            <Description>
+              {`Date de la dernière modification des infractions retenues : ${prettyFormatDayHour(
+                reportedInfractionsLastUpdateTime
+              )}`}
+            </Description>
+          )}
+          {!noLic && (
+            <>
+              <FieldTitle uppercaseTitle component="h2" sx={{ marginTop: 2 }}>
+                Infractions calculées par Mobilic
+              </FieldTitle>
+              <WarningComputedAlerts />
+              {businesses && businesses.length > 1 && (
+                <Notice
+                  type="warning"
+                  sx={{ marginTop: 1 }}
+                  description={
+                    <>{`Attention, veuillez noter que ce salarié effectue des missions pour différents secteurs d’activité 
+              (${businesses.join(", ")}).`}</>
+                  }
                 />
-              </ListItem>
-            ))}
-        </List>
-      ) : (
-        <Typography className={classes.italicInfo}>
-          Il n'y a aucune alerte réglementaire sur la période
-        </Typography>
-      )}
-      <>
-        {isReportingInfractions ? (
-          <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
-            <Button onClick={() => saveInfractions()}>Valider</Button>
-            <Button onClick={() => cancelInfractions()} priority="secondary">
-              Annuler
-            </Button>
-          </Stack>
-        ) : (
-          !noLic && (
-            <Notice
-              type="warning"
-              description={
-                <>
-                  Les données collectées par Mobilic sont déclaratives et sont
-                  donc susceptibles d'erreurs ou d'oublis. En cas de données
-                  manquantes ou inexactes les alertes réglementaires ne peuvent
-                  pas être remontées correctement.
-                  <br />
-                  Mobilic sert à faciliter le travail d'enquête des inspecteurs
-                  sans se substituer à lui.
-                </>
-              }
-            />
-          )
-        )}
-      </>
-      <Divider className={`hr-unstyled ${classes.divider}`} />
+              )}
+            </>
+          )}
+          {groupedAlerts?.length > 0 ? (
+            <List>
+              {groupedAlerts
+                .sort((alert1, alert2) =>
+                  alert1.sanction.localeCompare(alert2.sanction)
+                )
+                .map(group => (
+                  <ListItem
+                    key={`${group.type}_${group.sanction}`}
+                    disableGutters
+                  >
+                    <AlertGroup
+                      {...group}
+                      setPeriodOnFocus={setPeriodOnFocus}
+                      setTab={setTab}
+                      isReportingInfractions={isReportingInfractions}
+                      onUpdateInfraction={onUpdateInfraction}
+                      readOnlyAlerts={readOnlyAlerts}
+                      titleProps={{ component: "h3" }}
+                      displayBusinessType={
+                        businessTypes && businessTypes.length > 1
+                      }
+                    />
+                  </ListItem>
+                ))}
+            </List>
+          ) : (
+            <Typography className={classes.italicInfo}>
+              Il n'y a aucune alerte réglementaire sur la période
+            </Typography>
+          )}
+          <>
+            {isReportingInfractions ? (
+              <Stack
+                direction="row"
+                justifyContent="flex-start"
+                p={2}
+                spacing={4}
+              >
+                <Button onClick={() => saveInfractions()}>Valider</Button>
+                <Button
+                  onClick={() => cancelInfractions()}
+                  priority="secondary"
+                >
+                  Annuler
+                </Button>
+              </Stack>
+            ) : (
+              !noLic && (
+                <Notice
+                  type="warning"
+                  description={
+                    <>
+                      Les données collectées par Mobilic sont déclaratives et
+                      sont donc susceptibles d'erreurs ou d'oublis. En cas de
+                      données manquantes ou inexactes les alertes réglementaires
+                      ne peuvent pas être remontées correctement.
+                      <br />
+                      Mobilic sert à faciliter le travail d'enquête des
+                      inspecteurs sans se substituer à lui.
+                    </>
+                  }
+                />
+              )
+            )}
+          </>
+          <Divider className={`hr-unstyled ${classes.divider}`} />
+        </Stack>
+      </Container>
     </Container>
   );
 }

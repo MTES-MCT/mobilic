@@ -2,17 +2,10 @@ import React from "react";
 import { getVehicleName } from "common/utils/vehicles";
 import { VehicleField } from "../../common/VehicleField";
 import { EditableMissionInfo } from "./EditableMissionInfo";
-import { makeStyles } from "@mui/styles";
-
-export const useStyles = makeStyles(theme => ({
-  placeholder: {
-    fontStyle: "italic",
-    color: theme.palette.grey[500]
-  }
-}));
+import { useTypographyStyles } from "../../common/typography/TypographyStyles";
 
 export function MissionVehicleInfo({ vehicle, editVehicle, vehicles }) {
-  const classes = useStyles();
+  const typographyClasses = useTypographyStyles();
 
   return (
     <EditableMissionInfo
@@ -22,7 +15,9 @@ export function MissionVehicleInfo({ vehicle, editVehicle, vehicles }) {
         v ? (
           getVehicleName(v, true)
         ) : (
-          <span className={classes.placeholder}>Aucun véhicule utilisé</span>
+          <span className={typographyClasses.disabled}>
+            Aucun véhicule utilisé
+          </span>
         )
       }
       renderEditMode={(newVehicle, setNewVehicle) => (

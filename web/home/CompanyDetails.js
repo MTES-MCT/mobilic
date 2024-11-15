@@ -8,20 +8,11 @@ import { useAdminStore } from "../admin/store/store";
 import { formatPhoneNumber } from "common/utils/phoneNumber";
 import { formatActivity } from "common/utils/businessTypes";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { useTypographyStyles } from "../common/typography/TypographyStyles";
 
 const useStyles = makeStyles(theme => ({
   actionButton: {
     marginLeft: "2rem"
-  },
-  subTitle: {
-    fontSize: "0.875rem",
-    fontWeight: 400
-  },
-  subTitleLabel: {
-    color: theme.palette.grey[700]
-  },
-  missingSubTitle: {
-    color: theme.palette.grey[800]
   },
   phoneNumberData: {
     color: "black"
@@ -30,6 +21,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function CompanyDetails({ company }) {
   const classes = useStyles();
+  const typographyClasses = useTypographyStyles();
   const modals = useModals();
   const adminStore = useAdminStore();
 
@@ -44,22 +36,28 @@ export default function CompanyDetails({ company }) {
         <Typography variant="h3" component="h1" sx={{ marginBottom: 1 }}>
           {company?.name}
         </Typography>
-        <Typography className={classes.subTitle}>
-          <span className={classes.subTitleLabel}>Numéro de téléphone :</span>{" "}
+        <Typography className={typographyClasses.fieldName}>
+          <span>Numéro de téléphone :</span>{" "}
           <span
-            className={`${classes.phoneNumberData} ${!company?.phoneNumber &&
-              classes.missingSubTitle}`}
+            className={
+              !company?.phoneNumber
+                ? typographyClasses.disabled
+                : classes.phoneNumberData
+            }
           >
             {company?.phoneNumber
               ? formatPhoneNumber(company.phoneNumber)
               : "aucun numéro de téléphone renseigné"}
           </span>
         </Typography>
-        <Typography className={classes.subTitle}>
-          <span className={classes.subTitleLabel}>Activité principale :</span>{" "}
+        <Typography className={typographyClasses.fieldName}>
+          <span>Activité principale :</span>{" "}
           <span
-            className={`${classes.phoneNumberData} ${!printActivity &&
-              classes.missingSubTitle}`}
+            className={
+              !printActivity
+                ? typographyClasses.disabled
+                : classes.phoneNumberData
+            }
           >
             {printActivity || "non renseignée"}
           </span>
