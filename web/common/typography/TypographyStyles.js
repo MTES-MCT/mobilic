@@ -8,10 +8,5 @@ export const useTypographyStyles = makeStyles(theme => ({
   },
   disabled: {
     color: fr.colors.decisions.text.disabled.grey.default
-  },
-  explanation: {
-    fontStyle: "italic",
-    textAlign: "justify",
-    marginBottom: theme.spacing(2)
   }
 }));
