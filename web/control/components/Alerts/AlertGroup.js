@@ -79,6 +79,7 @@ export function AlertGroup({
   isReportingInfractions,
   onUpdateInfraction,
   readOnlyAlerts,
+  displayBusinessType = false,
   titleProps = {}
 }) {
   const [open, setOpen] = React.useState(false);
@@ -144,7 +145,9 @@ export function AlertGroup({
             } = firstAlert;
             return (
               <React.Fragment key={`alertsByBusiness_${businessId}`}>
-                <BusinessTypeTitle business={alertBusiness} />
+                {displayBusinessType && (
+                  <BusinessTypeTitle business={alertBusiness} />
+                )}
                 <Description>{alertDescription}</Description>
                 <List>
                   {alertsByBusiness.map((alert, index) => (

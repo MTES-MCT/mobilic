@@ -1,7 +1,6 @@
 import { fr } from "@codegouvfr/react-dsfr";
 import { Box, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { formatActivity } from "common/utils/businessTypes";
 import React from "react";
 import { FieldTitle } from "../../../common/typography/FieldTitle";
 
@@ -11,22 +10,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const BusinessTypesFromGroupedAlerts = ({ groupedAlerts }) => {
+export const DisplayBusinessTypes = ({ businessTypes }) => {
   const classes = useStyles();
-  const businessTypes = React.useMemo(
-    () => [
-      ...new Set(
-        groupedAlerts.reduce(
-          (arr, group) =>
-            arr.concat(
-              group.alerts.map(alert => formatActivity(alert.business))
-            ),
-          []
-        )
-      )
-    ],
-    [groupedAlerts]
-  );
 
   if (!businessTypes || businessTypes.length === 0) {
     return null;

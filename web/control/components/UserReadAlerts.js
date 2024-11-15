@@ -13,7 +13,8 @@ import { AlertGroup } from "./Alerts/AlertGroup";
 
 import { FieldTitle } from "../../common/typography/FieldTitle";
 import { useTypographyStyles } from "../../common/typography/TypographyStyles";
-import { BusinessTypesFromGroupedAlerts } from "./Alerts/BusinessTypesFromGroupedAlerts";
+import { DisplayBusinessTypes } from "./Alerts/BusinessTypesFromGroupedAlerts";
+import { getBusinessTypesFromGroupedAlerts } from "../utils/businessTypesFromGroupedAlerts";
 const useStyles = makeStyles(theme => ({
   container: {
     paddingBottom: theme.spacing(4),
@@ -62,13 +63,16 @@ export function UserReadAlerts({
   noLic
 }) {
   const classes = useStyles();
-
   const typographyClasses = useTypographyStyles();
+
+  const businessTypes = React.useMemo(
+    () => getBusinessTypesFromGroupedAlerts(groupedAlerts),
+    [groupedAlerts]
+  );
+
   return (
     <Container maxWidth="md" sx={{ padding: 0 }}>
-      {!noLic && (
-        <BusinessTypesFromGroupedAlerts groupedAlerts={groupedAlerts} />
-      )}
+      {!noLic && <DisplayBusinessTypes businessTypes={businessTypes} />}
       <Container className={classes.container}>
         <Stack direction="column" rowGap={1}>
           {isReportingInfractions && (
@@ -127,6 +131,9 @@ export function UserReadAlerts({
                       onUpdateInfraction={onUpdateInfraction}
                       readOnlyAlerts={readOnlyAlerts}
                       titleProps={{ component: "h3" }}
+                      displayBusinessType={
+                        businessTypes && businessTypes.length > 1
+                      }
                     />
                   </ListItem>
                 ))}
