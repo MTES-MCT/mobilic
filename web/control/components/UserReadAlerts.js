@@ -12,9 +12,9 @@ import Notice from "../../common/Notice";
 import { AlertGroup } from "./Alerts/AlertGroup";
 
 import { FieldTitle } from "../../common/typography/FieldTitle";
-import { useTypographyStyles } from "../../common/typography/TypographyStyles";
 import { DisplayBusinessTypes } from "./Alerts/BusinessTypesFromGroupedAlerts";
 import { getBusinessTypesFromGroupedAlerts } from "../utils/businessTypesFromGroupedAlerts";
+import { Description } from "../../common/typography/Description";
 const useStyles = makeStyles(theme => ({
   container: {
     paddingBottom: theme.spacing(4),
@@ -63,7 +63,6 @@ export function UserReadAlerts({
   noLic
 }) {
   const classes = useStyles();
-  const typographyClasses = useTypographyStyles();
 
   const businessTypes = React.useMemo(
     () => getBusinessTypesFromGroupedAlerts(groupedAlerts),
@@ -88,11 +87,11 @@ export function UserReadAlerts({
             </Typography>
           )}
           {!isReportingInfractions && reportedInfractionsLastUpdateTime && (
-            <Typography className={typographyClasses.description}>
+            <Description>
               {`Date de la dernière modification des infractions retenues : ${prettyFormatDayHour(
                 reportedInfractionsLastUpdateTime
               )}`}
-            </Typography>
+            </Description>
           )}
           {!noLic && (
             <>
