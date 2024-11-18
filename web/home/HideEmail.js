@@ -1,19 +1,12 @@
 import React from "react";
-import { makeStyles } from "@mui/styles";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { useUpdateHideEmail } from "./useUpdateHideEmail";
-
-const useStyles = makeStyles(theme => ({
-  fieldName: {
-    color: theme.palette.grey[700],
-    fontSize: "0.875rem"
-  }
-}));
+import { useTypographyStyles } from "../common/typography/TypographyStyles";
 
 export function HideEmail({ employment }) {
   const updateHideEmail = useUpdateHideEmail(employment);
   const { hideEmail } = employment;
-  const classes = useStyles();
+  const classes = useTypographyStyles();
 
   return (
     <Checkbox

@@ -4,7 +4,7 @@ import Stack from "@mui/material/Stack";
 import { Typography } from "@mui/material";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import { AlertGroup } from "../../../control/components/AlertGroup";
+import { AlertGroup } from "../../../control/components/Alerts/AlertGroup";
 import { Input } from "../../../common/forms/Input";
 import Notice from "../../../common/Notice";
 

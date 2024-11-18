@@ -5,20 +5,11 @@ import {
   regroupExpendituresSpendingDateByType
 } from "common/utils/expenditures";
 import Chip from "@mui/material/Chip";
-import Typography from "@mui/material/Typography";
 import { MissionInfoCard } from "./MissionInfoCard";
 import React from "react";
 import Grid from "@mui/material/Grid";
-import { makeStyles } from "@mui/styles";
 import { useModals } from "common/utils/modals";
-import { fr } from "@codegouvfr/react-dsfr";
-
-export const useStyles = makeStyles(theme => ({
-  noExpenditureLabel: {
-    color: fr.colors.decisions.text.mention.grey.default,
-    fontStyle: "italic"
-  }
-}));
+import { Description } from "../../common/typography/Description";
 
 export function ExpendituresCard({
   title,
@@ -30,7 +21,6 @@ export function ExpendituresCard({
   loading,
   titleProps = {}
 }) {
-  const classes = useStyles();
   const modals = useModals();
 
   const expenditureCount = Array.isArray(expenditures)
@@ -80,9 +70,9 @@ export function ExpendituresCard({
           })}
         </Grid>
       ) : (
-        <Typography className={classes.noExpenditureLabel}>
+        <Description>
           Aucun frais n'a été enregistré pour cette journée
-        </Typography>
+        </Description>
       )}
     </MissionInfoCard>
   );

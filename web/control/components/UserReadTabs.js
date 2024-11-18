@@ -41,7 +41,6 @@ const useStyles = makeStyles(theme => ({
     display: "flex"
   },
   panelContainer: {
-    paddingTop: theme.spacing(3),
     margin: "auto",
     display: "flex",
     flexGrow: 1,

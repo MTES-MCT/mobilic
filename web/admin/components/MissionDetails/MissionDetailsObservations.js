@@ -7,6 +7,7 @@ import { Event } from "../../../common/Event";
 import { useMissionDetailsStyles } from "./MissionDetailsStyle";
 import { useModals } from "common/utils/modals";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Description } from "../../../common/typography/Description";
 
 export function MissionDetailsObservations({
   mission,
@@ -63,9 +64,7 @@ export function MissionDetailsObservations({
           ))}
         </List>
       ) : (
-        <Typography className={classes.noCommentText}>
-          Aucune observation sur cette mission
-        </Typography>
+        <Description>Aucune observation sur cette mission</Description>
       )}
     </Box>
   );

@@ -10,6 +10,7 @@ import Grid from "@mui/material/Grid";
 import Skeleton from "@mui/material/Skeleton";
 import { prettyFormatDayHour } from "common/utils/time";
 import Notice from "../../common/Notice";
+import { FieldTitle } from "../../common/typography/FieldTitle";
 
 const useStyles = makeStyles(theme => ({
   section: {
@@ -18,9 +19,6 @@ const useStyles = makeStyles(theme => ({
   mainTitle: {
     marginBottom: theme.spacing(1),
     textAlign: "left"
-  },
-  controlHistory: {
-    color: theme.palette.grey[600]
   }
 }));
 
@@ -63,13 +61,7 @@ export function UserControlSection() {
                     de route"
                   size="small"
                 />
-                <Typography
-                  align="left"
-                  className={classes.controlHistory}
-                  variant="overline"
-                >
-                  HISTORIQUE DES CONTRÔLES
-                </Typography>
+                <FieldTitle uppercaseTitle>Historique De Contrôles</FieldTitle>
                 <Typography align="left">
                   {controlsDate.map(prettyFormatDayHour).join(" ; ")}
                 </Typography>

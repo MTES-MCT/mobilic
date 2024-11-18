@@ -46,6 +46,7 @@ import {
   unselectAndGetAllTeams
 } from "../store/reducers/team";
 import { usePageTitle } from "../../common/UsePageTitle";
+import { Explanation } from "../../common/typography/Explanation";
 
 const VALIDATION_TABS = [
   {
@@ -419,9 +420,7 @@ function ValidationPanel() {
           )}
         </Grid>
       </Grid>
-      <Typography className={classes.explanation}>
-        {VALIDATION_TABS[tab].explanation}
-      </Typography>
+      <Explanation>{VALIDATION_TABS[tab].explanation}</Explanation>
       <AugmentedTable
         columns={tableColumns}
         entries={tableEntries}

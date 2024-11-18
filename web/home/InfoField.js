@@ -5,18 +5,13 @@ import Grid from "@mui/material/Grid";
 import { Stack } from "@mui/material";
 import Notice from "../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { FieldTitle } from "../common/typography/FieldTitle";
+import { useTypographyStyles } from "../common/typography/TypographyStyles";
 
 const useStyles = makeStyles(theme => ({
-  fieldName: {
-    color: theme.palette.grey[700],
-    fontSize: "0.875rem"
-  },
   fieldValue: {
     fontWeight: props => (props.bold ? "bold" : 400),
     whiteSpace: "inherit"
-  },
-  valuePlaceholder: {
-    color: theme.palette.grey[600]
   }
 }));
 
@@ -33,6 +28,7 @@ export function InfoItem({
   valuePlaceholder
 }) {
   const classes = useStyles({ bold });
+  const typographyClasses = useTypographyStyles();
 
   const title = React.useMemo(
     () => actionTitle || (value ? "Modifier" : "Ajouter")
@@ -42,18 +38,13 @@ export function InfoItem({
     <>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Stack direction="column">
-          <Typography
-            align="left"
-            className={classes.fieldName}
-            variant={uppercaseTitle ? "overline" : "subtitle1"}
-            {...titleProps}
-          >
+          <FieldTitle uppercaseTitle={uppercaseTitle} {...titleProps}>
             {name}
-          </Typography>
+          </FieldTitle>
           <Typography
             noWrap
             align="left"
-            className={value ? classes.fieldValue : classes.valuePlaceholder}
+            className={value ? classes.fieldValue : typographyClasses.disabled}
           >
             {value || valuePlaceholder}
           </Typography>

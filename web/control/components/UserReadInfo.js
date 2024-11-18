@@ -78,7 +78,11 @@ export function UserReadInfo({
   const classes = useStyles();
 
   return (
-    <Container maxWidth="md" className={classes.container}>
+    <Container
+      maxWidth="md"
+      className={classes.container}
+      sx={{ paddingTop: 3 }}
+    >
       <Grid container spacing={2} className={classes.sectionBody}>
         {controlData && (
           <Grid item xs={12} mb={2}>
