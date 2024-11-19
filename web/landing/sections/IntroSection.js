@@ -1,7 +1,7 @@
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import React from "react";
-import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizontal.png";
+import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizontal.jpg";
 import BackgroundVerticalImage from "common/assets/images/landing-hero-vertical.jpg";
 import { Link } from "../../common/LinkButton";
 import Grid from "@mui/material/Grid";
@@ -87,7 +87,14 @@ const useStyles = makeStyles(theme => ({
 const PhoneImageComponent = ({ isSmDown }) => {
   const classes = useStyles();
   return (
-    <Grid item xs={12} sm={6} lg={8} className={classes.phoneImageContainer}>
+    <Grid
+      item
+      xs={12}
+      sm={6}
+      lg={8}
+      className={classes.phoneImageContainer}
+      zIndex={-1}
+    >
       <img
         className={classes.phoneImage}
         src={isSmDown ? BackgroundVerticalImage : BackgroundHorizontalImage}
