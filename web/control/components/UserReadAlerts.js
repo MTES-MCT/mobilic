@@ -18,7 +18,11 @@ import { Description } from "../../common/typography/Description";
 const useStyles = makeStyles(theme => ({
   container: {
     paddingBottom: theme.spacing(4),
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
+    [theme.breakpoints.up("sm")]: {
+      paddingLeft: theme.spacing(0),
+      paddingRight: theme.spacing(0)
+    }
   },
   linkContainer: {
     textAlign: "center",
