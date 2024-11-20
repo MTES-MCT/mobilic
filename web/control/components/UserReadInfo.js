@@ -61,10 +61,10 @@ export function UserReadInfo({
   allowC1BExport = true,
   companyName,
   vehicleRegistrationNumber,
-  controlData
+  controlData,
+  businesses
 }) {
   const [userName, setUserName] = React.useState("");
-
   React.useEffect(() => {
     if (userInfo) {
       setUserName(formatPersonName(userInfo));
@@ -149,12 +149,7 @@ export function UserReadInfo({
       >
         Entreprise(s) de rattachement
       </Typography>
-      <Grid
-        container
-        spacing={2}
-        direction="column"
-        className={classes.sectionBody}
-      >
+      <Grid container spacing={2} direction="column">
         {employments.map(e => (
           <Grid item key={e.id}>
             <EmploymentInfoCard
@@ -170,6 +165,16 @@ export function UserReadInfo({
           </Grid>
         ))}
       </Grid>
+      {businesses && businesses.length > 1 && (
+        <Notice
+          type="warning"
+          sx={{ marginTop: 2, marginBottom: 6 }}
+          description={
+            <>{`Attention, veuillez noter que ce salarié effectue des missions pour différents secteurs d’activité 
+              (${businesses.join(", ")}).`}</>
+          }
+        />
+      )}
       <Typography variant="h5" component="h2">
         Historique récent (28 jours)
       </Typography>
