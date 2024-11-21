@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
@@ -17,7 +17,6 @@ import { canDownloadBDC } from "../../../utils/controlBulletin";
 import { TextWithBadge } from "../../../../common/TextWithBadge";
 import { UserReadAlerts } from "../../../../control/components/UserReadAlerts";
 import Box from "@mui/material/Box";
-import Notice from "../../../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   middleTab: {
@@ -89,6 +88,7 @@ const getTabs = alertNumber => [
 ];
 
 export function ControllerControlNoLic({
+  controlType,
   controlData,
   editBDC,
   reportedInfractionsLastUpdateTime,
@@ -112,14 +112,6 @@ export function ControllerControlNoLic({
     setIsReportingInfractions(true);
     setTab(TABS[1].name);
   };
-
-  const showModifyInfractionsAlert = useMemo(() => {
-    return (
-      !reportedInfractionsLastUpdateTime &&
-      tab !== TABS[1].name &&
-      totalAlertsNumber > 0
-    );
-  }, [reportedInfractionsLastUpdateTime, tab, totalAlertsNumber]);
 
   return (
     <>
@@ -149,30 +141,6 @@ export function ControllerControlNoLic({
           </Tabs>
         </AppBar>
         <Box>
-          {!!showModifyInfractionsAlert && (
-            <Notice
-              description={
-                <>
-                  Mobilic a relevé des infractions par défaut, vous pouvez
-                  modifier la sélection au sein de{" "}
-                  <span
-                    role="button"
-                    tabIndex="0"
-                    className={classes.linkInfractionTab}
-                    onClick={() => setTab(TABS[1].name)}
-                    onKeyDown={e => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setTab(TABS[1].name);
-                      }
-                    }}
-                  >
-                    l’onglet infractions
-                  </span>
-                </>
-              }
-            />
-          )}
           <Container className={classes.panelContainer} disableGutters>
             {TABS.map(t => (
               <TabPanel
@@ -183,6 +151,7 @@ export function ControllerControlNoLic({
               >
                 {
                   <t.component
+                    controlType={controlType}
                     controlData={controlData}
                     isReportingInfractions={isReportingInfractions}
                     setIsReportingInfractions={setIsReportingInfractions}
@@ -192,7 +161,6 @@ export function ControllerControlNoLic({
                     cancelInfractions={cancelInfractions}
                     onUpdateInfraction={onUpdateInfraction}
                     hasModifiedInfractions={hasModifiedInfractions}
-                    noLic={true}
                     readOnlyAlerts={false}
                   />
                 }

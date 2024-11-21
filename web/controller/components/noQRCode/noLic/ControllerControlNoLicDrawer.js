@@ -7,6 +7,7 @@ import { useReportInfractions } from "../../../utils/useReportInfractions";
 import { canDownloadBDC } from "../../../utils/controlBulletin";
 
 export function ControllerControlNoLicDrawer({
+  controlType,
   controlData,
   setControlData,
   isOpen,
@@ -64,6 +65,7 @@ export function ControllerControlNoLicDrawer({
         enableExport={false}
       />
       <ControllerControlNoLic
+        controlType={controlType}
         controlData={controlData}
         editBDC={editBDC}
         isReportingInfractions={isReportingInfractions}

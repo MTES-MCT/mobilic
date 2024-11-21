@@ -15,6 +15,8 @@ import { FieldTitle } from "../../common/typography/FieldTitle";
 import { DisplayBusinessTypes } from "./Alerts/BusinessTypesFromGroupedAlerts";
 import { getBusinessTypesFromGroupedAlerts } from "../utils/businessTypesFromGroupedAlerts";
 import { Description } from "../../common/typography/Description";
+import { CONTROL_TYPES } from "../../controller/utils/useReadControlData";
+
 const useStyles = makeStyles(theme => ({
   container: {
     paddingBottom: theme.spacing(4),
@@ -63,7 +65,7 @@ export function UserReadAlerts({
   onUpdateInfraction,
   reportedInfractionsLastUpdateTime,
   readOnlyAlerts,
-  noLic
+  controlType
 }) {
   const classes = useStyles();
 
@@ -74,14 +76,18 @@ export function UserReadAlerts({
 
   return (
     <Container maxWidth="md" sx={{ padding: 0 }}>
-      {!noLic && <DisplayBusinessTypes businessTypes={businessTypes} />}
+      {controlType === CONTROL_TYPES.MOBILIC && (
+        <DisplayBusinessTypes businessTypes={businessTypes} />
+      )}
       <Container className={classes.container}>
         <Stack direction="column" rowGap={1}>
           {isReportingInfractions && (
             <Typography>
               {totalAlertsNumber === 1
                 ? HELPER_TEXT_SINGLE_INFRACTION
-                : HELPER_TEXT_SEVERAL_INFRACTIONS}
+                : HELPER_TEXT_SEVERAL_INFRACTIONS
+              // TODO 835 update sentence
+              }
             </Typography>
           )}
           {!isReportingInfractions && (
@@ -96,7 +102,7 @@ export function UserReadAlerts({
               )}`}
             </Description>
           )}
-          {!noLic && (
+          {controlType === CONTROL_TYPES.MOBILIC && (
             <>
               <FieldTitle uppercaseTitle component="h2" sx={{ marginTop: 2 }}>
                 Infractions calculées par Mobilic
@@ -152,7 +158,7 @@ export function UserReadAlerts({
                 </Button>
               </Stack>
             ) : (
-              !noLic && (
+              controlType === CONTROL_TYPES.MOBILIC && (
                 <Notice
                   type="warning"
                   description={

@@ -33,6 +33,7 @@ export function ControllerControlDrawer({ controlId, controlType, onClose }) {
   } else {
     return (
       <ControllerControlNoLicDrawer
+        controlType={controlType}
         controlData={controlData}
         setControlData={setControlData}
         isOpen={!!controlId}
