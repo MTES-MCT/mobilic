@@ -18,7 +18,11 @@ import { Description } from "../../common/typography/Description";
 const useStyles = makeStyles(theme => ({
   container: {
     paddingBottom: theme.spacing(4),
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
+    [theme.breakpoints.up("sm")]: {
+      paddingLeft: theme.spacing(0),
+      paddingRight: theme.spacing(0)
+    }
   },
   linkContainer: {
     textAlign: "center",
@@ -59,7 +63,6 @@ export function UserReadAlerts({
   onUpdateInfraction,
   reportedInfractionsLastUpdateTime,
   readOnlyAlerts,
-  businesses,
   noLic
 }) {
   const classes = useStyles();
@@ -99,16 +102,6 @@ export function UserReadAlerts({
                 Infractions calculées par Mobilic
               </FieldTitle>
               <WarningComputedAlerts />
-              {businesses && businesses.length > 1 && (
-                <Notice
-                  type="warning"
-                  sx={{ marginTop: 1 }}
-                  description={
-                    <>{`Attention, veuillez noter que ce salarié effectue des missions pour différents secteurs d’activité 
-              (${businesses.join(", ")}).`}</>
-                  }
-                />
-              )}
             </>
           )}
           {groupedAlerts?.length > 0 ? (
