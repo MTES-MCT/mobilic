@@ -27,6 +27,7 @@ export const getAlertsGroupedByDay = observedInfractions => {
           }) => ({
             ...(unit === PERIOD_UNITS.DAY && { day: date }),
             ...(unit === PERIOD_UNITS.WEEK && { week: date }),
+            unit,
             checked: isReported,
             reportable: isReportable,
             extra,
@@ -62,6 +63,7 @@ export const getAlertsGroupedByDayFromRegulationComputationsByDay = regulationCo
               ...(breachedRegCheck.unit === PERIOD_UNITS.DAY && {
                 day: timestamp
               }),
+              unit: breachedRegCheck.unit,
               extra,
               checked: false
             };

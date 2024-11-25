@@ -76,7 +76,7 @@ export function UserReadAlerts({
 
   return (
     <Container maxWidth="md" sx={{ padding: 0 }}>
-      {controlType === CONTROL_TYPES.MOBILIC && (
+      {controlType === CONTROL_TYPES.MOBILIC.label && (
         <DisplayBusinessTypes businessTypes={businessTypes} />
       )}
       <Container className={classes.container}>
@@ -102,7 +102,7 @@ export function UserReadAlerts({
               )}`}
             </Description>
           )}
-          {controlType === CONTROL_TYPES.MOBILIC && (
+          {controlType === CONTROL_TYPES.MOBILIC.label && (
             <>
               <FieldTitle uppercaseTitle component="h2" sx={{ marginTop: 2 }}>
                 Infractions calculées par Mobilic
@@ -123,6 +123,7 @@ export function UserReadAlerts({
                   >
                     <AlertGroup
                       {...group}
+                      controlType={controlType}
                       setPeriodOnFocus={setPeriodOnFocus}
                       setTab={setTab}
                       isReportingInfractions={isReportingInfractions}

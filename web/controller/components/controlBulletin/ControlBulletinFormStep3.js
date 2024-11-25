@@ -9,6 +9,7 @@ import { Input } from "../../../common/forms/Input";
 import Notice from "../../../common/Notice";
 
 export function ControlBulletinFormStep3({
+  controlType,
   handleEditControlBulletin,
   controlBulletin,
   grecoId,
@@ -38,6 +39,7 @@ export function ControlBulletinFormStep3({
               <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
                 <AlertGroup
                   {...group}
+                  controlType={controlType}
                   isReportingInfractions={true}
                   onUpdateInfraction={onUpdateInfraction}
                   readOnlyAlerts={false}

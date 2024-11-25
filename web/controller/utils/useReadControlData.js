@@ -8,10 +8,11 @@ import {
 import { useLoadingScreen } from "common/utils/loading";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 
+// Value AND label must match ControlType enum from API
 export const CONTROL_TYPES = {
   MOBILIC: { value: "mobilic", label: "Mobilic" },
   NO_LIC: { value: "sans_lic", label: "Pas de LIC" },
-  LIC_PAPIER: { value: "lic_papier", label: "LIC Papier" }
+  LIC_PAPIER: { value: "lic_papier", label: "LIC papier" }
 };
 
 export const useReadControlData = (controlId, controlType) => {

@@ -17,7 +17,9 @@ export function ControllerControlNew({
     onClose();
     setControlOnFocus({
       id,
-      type
+      type: type.label
+      // Using label here because this is what is returned by API
+      // on infraction display/edition and on BDC step 3 edition
     });
   };
   return (

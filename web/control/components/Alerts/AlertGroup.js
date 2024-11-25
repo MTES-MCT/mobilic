@@ -12,6 +12,10 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import { groupBy } from "lodash";
 import { formatActivity } from "common/utils/businessTypes";
 import { Description } from "../../../common/typography/Description";
+import { CONTROL_TYPES } from "../../../controller/utils/useReadControlData";
+import { InfractionDay } from "./InfractionDay";
+import { InfractionWeek } from "./InfractionWeek";
+import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 
 const useStyles = makeStyles(theme => {
   return {
@@ -49,16 +53,23 @@ const useStyles = makeStyles(theme => {
 });
 
 const getAlertsNumber = (
+  controlType,
   alerts,
   isSanctionReportable,
   isReportingInfractions,
   readOnlyAlerts
-) =>
-  readOnlyAlerts || !isSanctionReportable
-    ? alerts.length
-    : isReportingInfractions
-    ? `${alerts.filter(alert => alert.checked).length} / ${alerts.length}`
-    : alerts.filter(alert => alert.checked).length;
+) => {
+  if (readOnlyAlerts || !isSanctionReportable) {
+    return alerts.filter(alert => !!(alert.day || alert.week)).length;
+  } else if (
+    isReportingInfractions &&
+    controlType === CONTROL_TYPES.MOBILIC.label
+  ) {
+    return `${alerts.filter(alert => alert.checked).length} / ${alerts.length}`;
+  } else {
+    return alerts.filter(alert => alert.checked).length;
+  }
+};
 
 const isReportable = sanction => sanction.includes("NATINF");
 
@@ -70,6 +81,7 @@ const BusinessTypeTitle = ({ business }) => (
 );
 
 export function AlertGroup({
+  controlType,
   alerts,
   infringementLabel,
   type,
@@ -88,6 +100,7 @@ export function AlertGroup({
   const isSanctionReportable = readOnlyAlerts ? true : isReportable(sanction);
 
   const alertsNumber = getAlertsNumber(
+    controlType,
     alerts,
     isSanctionReportable,
     isReportingInfractions,
@@ -136,39 +149,69 @@ export function AlertGroup({
         </Grid>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
-        {Object.entries(alertsGroupedByBusinessTypes).map(
-          ([businessId, alertsByBusiness]) => {
-            const firstAlert = alertsByBusiness[0];
-            const {
-              description: alertDescription,
-              business: alertBusiness
-            } = firstAlert;
-            return (
-              <React.Fragment key={`alertsByBusiness_${businessId}`}>
-                {displayBusinessType && (
-                  <BusinessTypeTitle business={alertBusiness} />
-                )}
-                <Description>{alertDescription}</Description>
-                <List>
-                  {alertsByBusiness.map((alert, index) => (
-                    <ListItem key={index} disableGutters>
-                      <RegulatoryAlert
-                        alert={alert}
-                        type={type}
-                        sanction={sanction}
-                        isReportable={isSanctionReportable}
-                        setPeriodOnFocus={setPeriodOnFocus}
-                        setTab={setTab}
-                        isReportingInfractions={isReportingInfractions}
-                        onUpdateInfraction={onUpdateInfraction}
-                        readOnlyAlerts={readOnlyAlerts}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              </React.Fragment>
-            );
-          }
+        {/* TODO refactor: extract in another component */}
+        {(controlType === CONTROL_TYPES.MOBILIC.label ||
+          controlType === CONTROL_TYPES.NO_LIC.label) &&
+          Object.entries(alertsGroupedByBusinessTypes).map(
+            ([businessId, alertsByBusiness]) => {
+              const firstAlert = alertsByBusiness[0];
+              const {
+                description: alertDescription,
+                business: alertBusiness
+              } = firstAlert;
+              return (
+                <React.Fragment key={`alertsByBusiness_${businessId}`}>
+                  {displayBusinessType && (
+                    <BusinessTypeTitle business={alertBusiness} />
+                  )}
+                  <Description>{alertDescription}</Description>
+                  <List>
+                    {alertsByBusiness.map((alert, index) => (
+                      <ListItem key={index} disableGutters>
+                        <RegulatoryAlert
+                          alert={alert}
+                          type={type}
+                          sanction={sanction}
+                          isReportable={isSanctionReportable}
+                          setPeriodOnFocus={setPeriodOnFocus}
+                          setTab={setTab}
+                          isReportingInfractions={isReportingInfractions}
+                          onUpdateInfraction={onUpdateInfraction}
+                          readOnlyAlerts={readOnlyAlerts}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </React.Fragment>
+              );
+            }
+          )}
+        {controlType === CONTROL_TYPES.LIC_PAPIER.label && (
+          <>
+            <Description>{alerts[0].description}</Description>
+            {alerts[0].unit === PERIOD_UNITS.DAY && (
+              <>
+                <p>Sélectionnez la ou les journées concernées&nbsp;:</p>
+                <InfractionDay
+                  alert={alerts[0]}
+                  days={alerts.map(alert => alert.day).filter(x => x)}
+                  isReportingInfractions={isReportingInfractions}
+                  onUpdateInfraction={onUpdateInfraction}
+                />
+              </>
+            )}
+            {alerts[0].unit === PERIOD_UNITS.WEEK && (
+              <>
+                <p>Sélectionnez la ou les semaines concernées&nbsp;:</p>
+                <InfractionWeek
+                  alert={alerts[0]}
+                  weeks={alerts.map(alert => alert.week).filter(x => x)}
+                  isReportingInfractions={isReportingInfractions}
+                  onUpdateInfraction={onUpdateInfraction}
+                />
+              </>
+            )}
+          </>
         )}
       </AccordionDetails>
     </Accordion>
