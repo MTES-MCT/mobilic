@@ -16,6 +16,7 @@ import { CONTROL_TYPES } from "../../../controller/utils/useReadControlData";
 import { InfractionDay } from "./InfractionDay";
 import { InfractionWeek } from "./InfractionWeek";
 import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
+import classNames from "classnames";
 
 const useStyles = makeStyles(theme => {
   return {
@@ -42,6 +43,10 @@ const useStyles = makeStyles(theme => {
       alignItems: "center",
       justifyContent: "center",
       fontWeight: "bold"
+    },
+    reportedAlert: {
+      borderColor: theme.palette.primary.main,
+      borderWidth: "2px"
     },
     reportableAlert: {
       backgroundColor: theme.palette.error.main
@@ -99,6 +104,11 @@ export function AlertGroup({
 
   const isSanctionReportable = readOnlyAlerts ? true : isReportable(sanction);
 
+  const isReported = React.useMemo(
+    () => alerts.filter(alert => alert.checked).length > 0,
+    [alerts]
+  );
+
   const alertsNumber = getAlertsNumber(
     controlType,
     alerts,
@@ -117,7 +127,10 @@ export function AlertGroup({
       expanded={open}
       onChange={(event, open_) => setOpen(open_)}
       variant="outlined"
-      className={classes.container}
+      className={classNames(
+        classes.container,
+        isReported ? classes.reportedAlert : ""
+      )}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Grid
@@ -136,11 +149,12 @@ export function AlertGroup({
           {alertsNumber !== 0 && (
             <Grid item>
               <span
-                className={`${classes.alertNumber} ${
+                className={classNames(
+                  classes.alertNumber,
                   isSanctionReportable
                     ? classes.reportableAlert
                     : classes.notReportableAlert
-                }`}
+                )}
               >
                 {alertsNumber}
               </span>
