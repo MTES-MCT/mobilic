@@ -1210,7 +1210,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
     $userId: Int
     $companyId: Int!
     $hasAdminRights: Boolean
-    $mail: String
+    $mail: Email
     $teamId: Int
   ) {
     employments {
