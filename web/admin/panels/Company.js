@@ -47,11 +47,6 @@ export const usePanelStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     flexShrink: 0
   },
-  explanation: {
-    marginBottom: theme.spacing(2),
-    fontStyle: "italic",
-    textAlign: "justify"
-  },
   title: {
     marginBottom: theme.spacing(2),
     display: "flex",

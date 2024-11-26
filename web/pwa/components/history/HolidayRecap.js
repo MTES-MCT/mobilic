@@ -7,18 +7,12 @@ import Stack from "@mui/material/Stack";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import { formatRangeString } from "../WorkTimeSummary";
 import { formatTimer, prettyFormatDay } from "common/utils/time";
+import { FieldTitle } from "../../../common/typography/FieldTitle";
 
 export const useStyles = makeStyles(theme => ({
-  subtitle: {
-    textTransform: "uppercase",
-    color: theme.palette.grey[500]
-  },
   title: {
     fontWeight: "bold",
-    fontSize: "1.6rem"
-  },
-  description: {
-    color: theme.palette.grey[700]
+    fontSize: "1.375rem"
   },
   container: {
     textAlign: "left",
@@ -47,12 +41,14 @@ export function HolidayRecap({ mission }) {
           <DateRangeIcon />
           <Typography>Congé ou absence {deletedInfo}</Typography>
         </Stack>
-        <Typography className={classes.subtitle}>Motif Renseigné</Typography>
-        <Typography className={classes.title}>{mission.name}</Typography>
-        <Typography className={classes.description}>
+        <FieldTitle uppercaseTitle>Motif Renseigné</FieldTitle>
+        <Typography className={classes.title} sx={{ marginBottom: 2 }}>
+          {mission.name}
+        </Typography>
+        <FieldTitle>
           {formatRangeString(mission.startTime, mission.endTime)} (
           {formatTimer(mission.endTime - mission.startTime)})
-        </Typography>
+        </FieldTitle>
       </Card>
     </Grid>
   );

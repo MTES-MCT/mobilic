@@ -3,7 +3,7 @@ import { InfoCard } from "../../common/InfoCard";
 import { MissionReviewSection } from "../../pwa/components/MissionReviewSection";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import { AlertCard } from "./AlertGroup";
+import { AlertCard } from "./Alerts/AlertGroup";
 import { WarningComputedAlerts } from "./UserReadAlerts";
 
 export function AlertsInHistory({ alertsInPeriod }) {

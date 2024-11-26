@@ -3,12 +3,15 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import { formatAlertText, RegulatoryAlert } from "./RegulatoryAlert";
+import { formatAlertText, RegulatoryAlert } from "../RegulatoryAlert";
 import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
+import { groupBy } from "lodash";
+import { formatActivity } from "common/utils/businessTypes";
+import { Description } from "../../../common/typography/Description";
 
 const useStyles = makeStyles(theme => {
   return {
@@ -40,11 +43,7 @@ const useStyles = makeStyles(theme => {
       backgroundColor: theme.palette.error.main
     },
     notReportableAlert: {
-      backgroundColor: theme.palette.warning.light
-    },
-    description: {
-      fontStyle: "italic",
-      color: theme.palette.grey[600]
+      backgroundColor: theme.palette.primary.main
     }
   };
 });
@@ -63,10 +62,16 @@ const getAlertsNumber = (
 
 const isReportable = sanction => sanction.includes("NATINF");
 
+const BusinessTypeTitle = ({ business }) => (
+  <Typography className="bold" sx={{ fontSize: "0.875rem" }} mb={1}>
+    Infraction(s) liée(s) au {formatActivity(business)}
+    &nbsp;:
+  </Typography>
+);
+
 export function AlertGroup({
   alerts,
   infringementLabel,
-  description,
   type,
   sanction,
   setPeriodOnFocus,
@@ -74,6 +79,7 @@ export function AlertGroup({
   isReportingInfractions,
   onUpdateInfraction,
   readOnlyAlerts,
+  displayBusinessType = false,
   titleProps = {}
 }) {
   const [open, setOpen] = React.useState(false);
@@ -86,6 +92,11 @@ export function AlertGroup({
     isSanctionReportable,
     isReportingInfractions,
     readOnlyAlerts
+  );
+
+  const alertsGroupedByBusinessTypes = React.useMemo(
+    () => groupBy(alerts, alert => alert.business.id),
+    [alerts]
   );
 
   return (
@@ -125,24 +136,40 @@ export function AlertGroup({
         </Grid>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
-        <Typography className={classes.description}>{description}</Typography>
-        <List>
-          {alerts.map((alert, index) => (
-            <ListItem key={index} disableGutters>
-              <RegulatoryAlert
-                alert={alert}
-                type={type}
-                sanction={sanction}
-                isReportable={isSanctionReportable}
-                setPeriodOnFocus={setPeriodOnFocus}
-                setTab={setTab}
-                isReportingInfractions={isReportingInfractions}
-                onUpdateInfraction={onUpdateInfraction}
-                readOnlyAlerts={readOnlyAlerts}
-              />
-            </ListItem>
-          ))}
-        </List>
+        {Object.entries(alertsGroupedByBusinessTypes).map(
+          ([businessId, alertsByBusiness]) => {
+            const firstAlert = alertsByBusiness[0];
+            const {
+              description: alertDescription,
+              business: alertBusiness
+            } = firstAlert;
+            return (
+              <React.Fragment key={`alertsByBusiness_${businessId}`}>
+                {displayBusinessType && (
+                  <BusinessTypeTitle business={alertBusiness} />
+                )}
+                <Description>{alertDescription}</Description>
+                <List>
+                  {alertsByBusiness.map((alert, index) => (
+                    <ListItem key={index} disableGutters>
+                      <RegulatoryAlert
+                        alert={alert}
+                        type={type}
+                        sanction={sanction}
+                        isReportable={isSanctionReportable}
+                        setPeriodOnFocus={setPeriodOnFocus}
+                        setTab={setTab}
+                        isReportingInfractions={isReportingInfractions}
+                        onUpdateInfraction={onUpdateInfraction}
+                        readOnlyAlerts={readOnlyAlerts}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </React.Fragment>
+            );
+          }
+        )}
       </AccordionDetails>
     </Accordion>
   );

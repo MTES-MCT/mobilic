@@ -7,14 +7,6 @@ import Radio from "@mui/material/Radio";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
-  button: {
-    marginTop: theme.spacing(2)
-  },
-  noSirenText: {
-    display: "block",
-    fontStyle: "italic",
-    paddingTop: theme.spacing(6)
-  },
   verticalFormButton: {
     marginTop: theme.spacing(4)
   },

@@ -375,8 +375,10 @@ export const REGULATION_RULES = {
           temps de travail.
         </p>
         <p>
-          Ces dispositions concernent le transport routier de marchandises comme
-          le transport routier de voyageurs.
+          Ces dispositions relèvent d’un accord conventionnel et ne sont donc
+          pas applicables à l’ensemble des entreprises. Les salariés sont
+          invités à se rapprocher de leur gestionnaire pour s’assurer qu’ils en
+          bénéficient.
         </p>
       </>
     ),

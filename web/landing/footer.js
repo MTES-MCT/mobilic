@@ -11,9 +11,13 @@ export function Footer({ withFollow = true }) {
       <DSFooter
         brandTop={
           <>
-            République
+            Ministères
             <br />
-            Française
+            Territoires
+            <br />
+            Écologie
+            <br />
+            Logement
           </>
         }
         homeLinkProps={{
@@ -22,11 +26,7 @@ export function Footer({ withFollow = true }) {
         }}
         accessibility="non compliant"
         accessibilityLinkProps={{ to: "/accessibility" }}
-        contentDescription="Mobilic est un service numérique de l’Etat, soutenu par la
-              Direction générale des infrastructures, des transports et des mobilités 
-              (DGITM), incubé à la Fabrique Numérique du Ministère de la
-              Transition écologique, membre du réseau d’incubateurs
-              beta.gouv.fr."
+        contentDescription="Mobilic est un service numérique de l’Etat, soutenu par la Direction générale des infrastructures, des transports et des mobilités (DGITM), incubé à la Fabrique Numérique des ministères Territoires, Ecologie, Logement, membre du réseau d’incubateurs beta.gouv.fr."
         operatorLogo={{
           alt: "Fabrique du numérique",
           imgUrl: "https://beta.gouv.fr/img/incubators/logo_fabnum_mtes.png",

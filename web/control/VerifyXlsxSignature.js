@@ -122,9 +122,6 @@ const useStyles = makeStyles(theme => ({
   response: {
     textAlign: "justify",
     marginTop: theme.spacing(2)
-  },
-  placeholder: {
-    padding: theme.spacing(2)
   }
 }));
 
@@ -214,7 +211,7 @@ export function XlsxVerifier() {
             >
               <input {...getInputProps()} />
               {fileName && <DescriptionIcon color="inherit" />}
-              <Typography className={classes.placeholder} color="inherit">
+              <Typography sx={{ padding: 2 }} color="inherit">
                 {fileName
                   ? fileName
                   : "Déposez votre fichier ici ou cliquez pour choisir un fichier. Seuls les .xlsx sont acceptés."}

@@ -18,6 +18,7 @@ import { captureSentryException } from "common/utils/sentry";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import Notice from "../../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Explanation } from "../../common/typography/Explanation";
 
 export default function VehicleAdmin({ company }) {
   const api = useApi();
@@ -58,11 +59,11 @@ export default function VehicleAdmin({ company }) {
           Ajouter un véhicule
         </Button>
       </Box>
-      <Typography className={classes.explanation}>
+      <Explanation>
         Les véhicules que vous ajoutez ici seront proposés aux salariés
         lorsqu'ils renseigneront les informations d'une mission dans leur outil
         mobile.
-      </Typography>
+      </Explanation>
       <Box sx={{ marginRight: 10 }}>
         <Notice
           description="Vos salariés peuvent aussi créer de nouveaux véhicules lorsqu'ils ne

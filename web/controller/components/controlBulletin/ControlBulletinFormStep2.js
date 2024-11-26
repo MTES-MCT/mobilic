@@ -148,7 +148,9 @@ export function ControlBulletinFormStep2({
         nativeInputProps={{
           value: controlBulletin.licenseNumber || "",
           name: "licenseNumber",
-          onChange: e => handleEditControlBulletin(e)
+          onChange: e => handleEditControlBulletin(e),
+          type: "number",
+          inputMode: "numeric"
         }}
         label="N° de la licence"
       />
@@ -156,7 +158,9 @@ export function ControlBulletinFormStep2({
         nativeInputProps={{
           value: controlBulletin.licenseCopyNumber || "",
           name: "licenseCopyNumber",
-          onChange: e => handleEditControlBulletin(e)
+          onChange: e => handleEditControlBulletin(e),
+          type: "number",
+          inputMode: "numeric"
         }}
         label="N° de copie conforme de la licence"
       />
