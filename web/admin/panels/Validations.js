@@ -388,7 +388,7 @@ function ValidationPanel() {
               badgeContent={nbMissionsToValidateByWorker}
               sx={{
                 "& .MuiBadge-badge": {
-                  backgroundColor: theme => theme.palette.warning.light
+                  backgroundColor: theme => theme.palette.primary.main
                 }
               }}
               className={classes.customBadge}

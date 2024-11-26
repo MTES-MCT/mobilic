@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => {
       backgroundColor: theme.palette.error.main
     },
     notReportableAlert: {
-      backgroundColor: theme.palette.warning.light
+      backgroundColor: theme.palette.primary.main
     }
   };
 });
