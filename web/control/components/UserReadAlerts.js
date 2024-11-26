@@ -63,6 +63,8 @@ export function UserReadAlerts({
   saveInfractions,
   cancelInfractions,
   onUpdateInfraction,
+  onAddInfraction,
+  onRemoveInfraction,
   reportedInfractionsLastUpdateTime,
   readOnlyAlerts,
   controlType
@@ -128,6 +130,8 @@ export function UserReadAlerts({
                       setTab={setTab}
                       isReportingInfractions={isReportingInfractions}
                       onUpdateInfraction={onUpdateInfraction}
+                      onAddInfraction={onAddInfraction}
+                      onRemoveInfraction={onRemoveInfraction}
                       readOnlyAlerts={readOnlyAlerts}
                       titleProps={{ component: "h3" }}
                       displayBusinessType={

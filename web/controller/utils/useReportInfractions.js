@@ -118,6 +118,61 @@ export const useReportInfractions = controlData => {
     setHasModifiedInfractions(true);
   };
 
+  const onAddInfraction = (sanction, date) => {
+    let hasInsertedNewOne = false;
+    setObservedInfractions(currentObservedInfractions =>
+      currentObservedInfractions.flatMap(infraction => {
+        if (infraction.sanction !== sanction) {
+          return [infraction];
+        }
+        if (!infraction.date) {
+          return [{ ...infraction, date }];
+        }
+        if (!hasInsertedNewOne) {
+          hasInsertedNewOne = true;
+          return [
+            infraction,
+            {
+              ...infraction,
+              date
+            }
+          ];
+        } else {
+          return [infraction];
+        }
+      })
+    );
+    setHasModifiedInfractions(true);
+  };
+
+  const onRemoveInfraction = (sanction, date) => {
+    const isOnlyOne =
+      observedInfractions.filter(infraction => infraction.sanction === sanction)
+        .length === 1;
+    setObservedInfractions(currentObservedInfractions =>
+      currentObservedInfractions.flatMap(infraction => {
+        if (infraction.sanction !== sanction) {
+          return [infraction];
+        }
+        if (isOnlyOne) {
+          return [
+            {
+              ...infraction,
+              date: null
+            }
+          ];
+        } else {
+          if (infraction.date === date) {
+            return [];
+          } else {
+            return [infraction];
+          }
+        }
+      })
+    );
+    setHasModifiedInfractions(true);
+  };
+
   const checkedAlertsNumber = React.useMemo(
     () =>
       groupedAlerts
@@ -153,6 +208,8 @@ export const useReportInfractions = controlData => {
     hasModifiedInfractions,
     saveInfractions,
     cancelInfractions,
-    onUpdateInfraction
+    onUpdateInfraction,
+    onAddInfraction,
+    onRemoveInfraction
   ];
 };

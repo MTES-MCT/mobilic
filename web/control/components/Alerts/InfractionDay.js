@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 import { Calendar } from "react-multi-date-picker";
-import { addDaysToDate, textualPrettyFormatDay } from "common/utils/time";
+import {
+  addDaysToDate,
+  textualPrettyFormatDay,
+  unixToJSTimestamp
+} from "common/utils/time";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
@@ -48,26 +52,42 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export const InfractionDay = ({
-  alert,
-  days,
+  alerts,
   isReportingInfractions,
-  onUpdateInfraction
+  onAddInfraction,
+  onRemoveInfraction,
+  sanction
 }) => {
   const classes = useStyles();
-  const [values, setValues] = useState(days); // TODO 835 remove to use props instead
+
+  const initialDays = useMemo(
+    () => alerts.map(alert => alert.day).filter(x => !!x),
+    [alerts]
+  );
+
+  const initialTimestamps = useMemo(() => initialDays.map(unixToJSTimestamp), [
+    initialDays
+  ]);
 
   const today = new Date();
   const minDate = addDaysToDate(new Date(), -28);
 
   const onSelectedDatesChange = values => {
-    console.log("onSelectedDatesChange = " + values);
-    setValues(values);
+    const newTimestamps = values
+      .map(dateString => {
+        const parsedDate = new Date(dateString);
+        return parsedDate.getTime();
+      })
+      .map(date => (date / 1000) >> 0)
+      .filter(ts => !initialDays.includes(ts));
+
+    for (const newTimestamp of newTimestamps) {
+      onAddInfraction(sanction, newTimestamp);
+    }
   };
 
-  const onRemoveDate = v => {
-    console.log("onRemoveDate = " + v);
-    const copyValues = [...values];
-    setValues(copyValues.filter(value => value !== v));
+  const onRemoveDate = timestamp => {
+    onRemoveInfraction(sanction, timestamp);
   };
 
   return (
@@ -81,7 +101,7 @@ export const InfractionDay = ({
         // Documentation: https://shahabyazdi.github.io/react-multi-date-picker/
         <Calendar
           className={classes.calendar}
-          value={values}
+          value={initialTimestamps}
           onChange={onSelectedDatesChange}
           multiple
           sort
@@ -95,24 +115,23 @@ export const InfractionDay = ({
         />
       )}
       <ul className="fr-tag-group">
-        {values.map(date => (
-          <li key={date}>
-            <Tag
-              dismissible={isReportingInfractions}
-              nativeButtonProps={{
-                ...(isReportingInfractions && {
-                  onClick: onRemoveDate,
-                  ariaLabel: `Retirer ${textualPrettyFormatDay(
-                    (date / 1000) >> 0,
-                    true
-                  )}`
-                })
-              }}
-            >
-              {textualPrettyFormatDay((date / 1000) >> 0, true)}
-            </Tag>
-          </li>
-        ))}
+        {initialTimestamps
+          .map(ts => (ts / 1000) >> 0)
+          .map(ts => (
+            <li key={ts}>
+              <Tag
+                dismissible={isReportingInfractions}
+                nativeButtonProps={{
+                  ...(isReportingInfractions && {
+                    onClick: () => onRemoveDate(ts),
+                    "aria-label": `Retirer ${textualPrettyFormatDay(ts, true)}`
+                  })
+                }}
+              >
+                {textualPrettyFormatDay(ts, true)}
+              </Tag>
+            </li>
+          ))}
       </ul>
     </div>
   );

@@ -34,7 +34,9 @@ export function ControllerControlNoLicDrawer({
     hasModifiedInfractions,
     saveInfractions,
     cancelInfractions,
-    onUpdateInfraction
+    onUpdateInfraction,
+    onAddInfraction,
+    onRemoveInfraction
   ] = useReportInfractions(controlData);
   return (
     <ControlDrawer
@@ -75,6 +77,8 @@ export function ControllerControlNoLicDrawer({
         saveInfractions={saveInfractions}
         cancelInfractions={cancelInfractions}
         onUpdateInfraction={onUpdateInfraction}
+        onAddInfraction={onAddInfraction}
+        onRemoveInfraction={onRemoveInfraction}
         hasModifiedInfractions={hasModifiedInfractions}
         reportedInfractionsLastUpdateTime={reportedInfractionsLastUpdateTime}
         checkedAlertsNumber={checkedAlertsNumber}

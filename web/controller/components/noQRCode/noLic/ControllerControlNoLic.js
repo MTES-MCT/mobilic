@@ -100,7 +100,9 @@ export function ControllerControlNoLic({
   hasModifiedInfractions,
   saveInfractions,
   cancelInfractions,
-  onUpdateInfraction
+  onUpdateInfraction,
+  onAddInfraction,
+  onRemoveInfraction
 }) {
   const classes = useStyles();
   const downloadBDC = useDownloadBDC(controlData.id);
@@ -160,6 +162,8 @@ export function ControllerControlNoLic({
                     saveInfractions={saveInfractions}
                     cancelInfractions={cancelInfractions}
                     onUpdateInfraction={onUpdateInfraction}
+                    onAddInfraction={onAddInfraction}
+                    onRemoveInfraction={onRemoveInfraction}
                     hasModifiedInfractions={hasModifiedInfractions}
                     readOnlyAlerts={false}
                   />
