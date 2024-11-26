@@ -16,6 +16,7 @@ import { CONTROL_TYPES } from "../../../controller/utils/useReadControlData";
 import { InfractionDay } from "./InfractionDay";
 import { InfractionWeek } from "./InfractionWeek";
 import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
+import { unixToJSTimestamp } from "common/utils/time";
 import classNames from "classnames";
 
 const useStyles = makeStyles(theme => {
@@ -204,15 +205,14 @@ export function AlertGroup({
           <>
             <Description>{alerts[0].description}</Description>
             {alerts[0].unit === PERIOD_UNITS.DAY && (
-              <>
-                <p>Sélectionnez la ou les journées concernées&nbsp;:</p>
-                <InfractionDay
-                  alert={alerts[0]}
-                  days={alerts.map(alert => alert.day).filter(x => x)}
-                  isReportingInfractions={isReportingInfractions}
-                  onUpdateInfraction={onUpdateInfraction}
-                />
-              </>
+              <InfractionDay
+                alert={alerts[0]}
+                days={alerts
+                  .map(alert => unixToJSTimestamp(alert.day)) // TODO 835 convert in component
+                  .filter(x => x)}
+                isReportingInfractions={isReportingInfractions}
+                onUpdateInfraction={onUpdateInfraction}
+              />
             )}
             {alerts[0].unit === PERIOD_UNITS.WEEK && (
               <>
