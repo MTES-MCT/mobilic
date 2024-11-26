@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Calendar } from "react-multi-date-picker";
 import { addDaysToDate, textualPrettyFormatDay } from "common/utils/time";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
+import { makeStyles } from "@mui/styles";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const gregorian_fr = {
   name: "gregorian_fr",
@@ -35,12 +37,23 @@ const gregorian_fr = {
   ]
 };
 
+const useStyles = makeStyles(theme => ({
+  calendar: {
+    margin: "auto",
+    border: "1px solid",
+    borderColor: fr.colors.decisions.background.disabled.grey.default,
+    borderRadius: "0px",
+    boxShadow: "none"
+  }
+}));
+
 export const InfractionDay = ({
   alert,
   days,
   isReportingInfractions,
   onUpdateInfraction
 }) => {
+  const classes = useStyles();
   const [values, setValues] = useState(days); // TODO 835 remove to use props instead
 
   const today = new Date();
@@ -67,6 +80,7 @@ export const InfractionDay = ({
       {isReportingInfractions && (
         // Documentation: https://shahabyazdi.github.io/react-multi-date-picker/
         <Calendar
+          className={classes.calendar}
           value={values}
           onChange={onSelectedDatesChange}
           multiple
