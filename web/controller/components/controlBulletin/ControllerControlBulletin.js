@@ -25,6 +25,7 @@ import {
   checkRequiredFieldStep2
 } from "../../utils/controlBulletin";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
+import { useInfractions } from "../../utils/contextInfractions";
 
 const STEPS = {
   1: {
@@ -48,12 +49,11 @@ export function ControllerControlBulletin({
   onClose,
   setMustConfirmBeforeClosing,
   onSaveControlBulletin,
-  groupedAlerts,
-  saveInfractions,
-  onUpdateInfraction
+  saveInfractions
 }) {
   const store = useStoreSyncedWithLocalStorage();
   const controllerUserInfo = store.controllerInfo();
+  const { onUpdateInfraction } = useInfractions();
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
@@ -249,7 +249,6 @@ export function ControllerControlBulletin({
             setFieldUpdated(true);
             onUpdateInfraction(...args);
           }}
-          groupedAlerts={groupedAlerts}
         />
       )}
       <ButtonsGroup

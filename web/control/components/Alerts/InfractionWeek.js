@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import Stack from "@mui/material/Stack";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { startOfDay, textualPrettyFormatWeek } from "common/utils/time";
+import { useInfractions } from "../../../controller/utils/contextInfractions";
 
 const getLastFourMondays = () => {
   const mondays = [];
@@ -17,13 +18,12 @@ const getLastFourMondays = () => {
   return mondays.map(startOfDay);
 };
 
-export const InfractionWeek = ({
-  alerts,
-  onAddInfraction,
-  onRemoveInfraction,
-  isReportingInfractions,
-  sanction
-}) => {
+export const InfractionWeek = ({ alerts, sanction }) => {
+  const {
+    isReportingInfractions,
+    onAddInfraction,
+    onRemoveInfraction
+  } = useInfractions();
   const initialWeeks = useMemo(
     () => alerts.map(alert => alert.week).filter(x => !!x),
     [alerts]

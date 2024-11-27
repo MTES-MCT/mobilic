@@ -9,6 +9,7 @@ import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
 import Stack from "@mui/material/Stack";
+import { useInfractions } from "../../../controller/utils/contextInfractions";
 
 const gregorian_fr = {
   name: "gregorian_fr",
@@ -52,14 +53,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const InfractionDay = ({
-  alerts,
-  isReportingInfractions,
-  onAddInfraction,
-  onRemoveInfraction,
-  sanction
-}) => {
+export const InfractionDay = ({ alerts, sanction }) => {
   const classes = useStyles();
+  const {
+    isReportingInfractions,
+    onAddInfraction,
+    onRemoveInfraction
+  } = useInfractions();
 
   const initialDays = useMemo(
     () => alerts.map(alert => alert.day).filter(x => !!x),

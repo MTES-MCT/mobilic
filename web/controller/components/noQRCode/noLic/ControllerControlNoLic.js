@@ -17,6 +17,7 @@ import { canDownloadBDC } from "../../../utils/controlBulletin";
 import { TextWithBadge } from "../../../../common/TextWithBadge";
 import { UserReadAlerts } from "../../../../control/components/UserReadAlerts";
 import Box from "@mui/material/Box";
+import { useInfractions } from "../../../utils/contextInfractions";
 
 const useStyles = makeStyles(theme => ({
   middleTab: {
@@ -87,25 +88,15 @@ const getTabs = alertNumber => [
   }
 ];
 
-export function ControllerControlNoLic({
-  controlType,
-  controlData,
-  editBDC,
-  reportedInfractionsLastUpdateTime,
-  groupedAlerts,
-  checkedAlertsNumber,
-  totalAlertsNumber,
-  isReportingInfractions,
-  setIsReportingInfractions,
-  hasModifiedInfractions,
-  saveInfractions,
-  cancelInfractions,
-  onUpdateInfraction,
-  onAddInfraction,
-  onRemoveInfraction
-}) {
+export function ControllerControlNoLic({ controlType, controlData, editBDC }) {
   const classes = useStyles();
   const downloadBDC = useDownloadBDC(controlData.id);
+  const {
+    checkedAlertsNumber,
+    setIsReportingInfractions,
+    isReportingInfractions,
+    reportedInfractionsLastUpdateTime
+  } = useInfractions();
 
   const TABS = getTabs(checkedAlertsNumber);
   const [tab, setTab] = React.useState(TABS[0].name);
@@ -155,16 +146,6 @@ export function ControllerControlNoLic({
                   <t.component
                     controlType={controlType}
                     controlData={controlData}
-                    isReportingInfractions={isReportingInfractions}
-                    setIsReportingInfractions={setIsReportingInfractions}
-                    groupedAlerts={groupedAlerts}
-                    totalAlertsNumber={totalAlertsNumber}
-                    saveInfractions={saveInfractions}
-                    cancelInfractions={cancelInfractions}
-                    onUpdateInfraction={onUpdateInfraction}
-                    onAddInfraction={onAddInfraction}
-                    onRemoveInfraction={onRemoveInfraction}
-                    hasModifiedInfractions={hasModifiedInfractions}
                     readOnlyAlerts={false}
                   />
                 }
@@ -183,7 +164,6 @@ export function ControllerControlNoLic({
             downloadBDC={downloadBDC}
             canDownloadBDC={canDownloadBDC(controlData)}
             bdcAlreadyExisting={!!controlData.controlBulletinCreationTime}
-            totalAlertsNumber={totalAlertsNumber}
           />
         </>
       )}

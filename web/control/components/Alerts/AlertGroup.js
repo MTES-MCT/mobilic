@@ -17,6 +17,7 @@ import { InfractionDay } from "./InfractionDay";
 import { InfractionWeek } from "./InfractionWeek";
 import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 import classNames from "classnames";
+import { useInfractions } from "../../../controller/utils/contextInfractions";
 
 const useStyles = makeStyles(theme => {
   return {
@@ -93,16 +94,13 @@ export function AlertGroup({
   sanction,
   setPeriodOnFocus,
   setTab,
-  isReportingInfractions,
-  onUpdateInfraction,
-  onAddInfraction,
-  onRemoveInfraction,
   readOnlyAlerts,
   displayBusinessType = false,
   titleProps = {}
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
+  const { isReportingInfractions } = useInfractions();
 
   const isSanctionReportable = readOnlyAlerts ? true : isReportable(sanction);
 
@@ -191,8 +189,6 @@ export function AlertGroup({
                           isReportable={isSanctionReportable}
                           setPeriodOnFocus={setPeriodOnFocus}
                           setTab={setTab}
-                          isReportingInfractions={isReportingInfractions}
-                          onUpdateInfraction={onUpdateInfraction}
                           readOnlyAlerts={readOnlyAlerts}
                         />
                       </ListItem>
@@ -206,23 +202,11 @@ export function AlertGroup({
           <>
             <Description>{alerts[0].description}</Description>
             {alerts[0].unit === PERIOD_UNITS.DAY && (
-              <InfractionDay
-                alerts={alerts}
-                isReportingInfractions={isReportingInfractions}
-                onAddInfraction={onAddInfraction}
-                onRemoveInfraction={onRemoveInfraction}
-                sanction={sanction}
-              />
+              <InfractionDay alerts={alerts} sanction={sanction} />
             )}
             {alerts[0].unit === PERIOD_UNITS.WEEK && (
               <>
-                <InfractionWeek
-                  alerts={alerts}
-                  isReportingInfractions={isReportingInfractions}
-                  onAddInfraction={onAddInfraction}
-                  onRemoveInfraction={onRemoveInfraction}
-                  sanction={sanction}
-                />
+                <InfractionWeek alerts={alerts} sanction={sanction} />
               </>
             )}
           </>

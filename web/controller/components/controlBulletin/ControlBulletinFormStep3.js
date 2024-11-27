@@ -7,6 +7,7 @@ import ListItem from "@mui/material/ListItem";
 import { AlertGroup } from "../../../control/components/Alerts/AlertGroup";
 import { Input } from "../../../common/forms/Input";
 import Notice from "../../../common/Notice";
+import { useInfractions } from "../../utils/contextInfractions";
 
 export function ControlBulletinFormStep3({
   controlType,
@@ -15,9 +16,9 @@ export function ControlBulletinFormStep3({
   grecoId,
   onUpdateGrecoId,
   controlCanBeDownloaded,
-  groupedAlerts,
   onUpdateInfraction
 }) {
+  const { groupedAlerts } = useInfractions();
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
       <Input

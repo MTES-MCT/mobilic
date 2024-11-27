@@ -202,7 +202,7 @@ export const useReportInfractions = controlData => {
     [groupedAlerts]
   );
 
-  return [
+  return {
     reportedInfractionsLastUpdateTime,
     groupedAlerts,
     checkedAlertsNumber,
@@ -215,5 +215,5 @@ export const useReportInfractions = controlData => {
     onUpdateInfraction,
     onAddInfraction,
     onRemoveInfraction
-  ];
+  };
 };

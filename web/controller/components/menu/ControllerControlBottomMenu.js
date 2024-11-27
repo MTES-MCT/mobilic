@@ -2,6 +2,7 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { Box } from "@mui/material";
+import { useInfractions } from "../../utils/contextInfractions";
 
 const useStyles = makeStyles(theme => ({
   textButton: {
@@ -16,10 +17,10 @@ export function ControllerControlBottomMenu({
   editBDC,
   downloadBDC,
   canDownloadBDC,
-  bdcAlreadyExisting,
-  totalAlertsNumber
+  bdcAlreadyExisting
 }) {
   const classes = useStyles();
+  const { totalAlertsNumber } = useInfractions();
 
   return (
     <Box padding={2}>

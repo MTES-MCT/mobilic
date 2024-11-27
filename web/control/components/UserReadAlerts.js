@@ -16,6 +16,7 @@ import { DisplayBusinessTypes } from "./Alerts/BusinessTypesFromGroupedAlerts";
 import { getBusinessTypesFromGroupedAlerts } from "../utils/businessTypesFromGroupedAlerts";
 import { Description } from "../../common/typography/Description";
 import { CONTROL_TYPES } from "../../controller/utils/useReadControlData";
+import { useInfractions } from "../../controller/utils/contextInfractions";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -56,20 +57,19 @@ export const WarningComputedAlerts = () => (
 
 export function UserReadAlerts({
   setTab,
-  groupedAlerts,
-  totalAlertsNumber,
   setPeriodOnFocus,
-  isReportingInfractions,
-  saveInfractions,
-  cancelInfractions,
-  onUpdateInfraction,
-  onAddInfraction,
-  onRemoveInfraction,
-  reportedInfractionsLastUpdateTime,
   readOnlyAlerts,
   controlType
 }) {
   const classes = useStyles();
+  const {
+    groupedAlerts,
+    isReportingInfractions,
+    totalAlertsNumber,
+    reportedInfractionsLastUpdateTime,
+    saveInfractions,
+    cancelInfractions
+  } = useInfractions();
 
   const businessTypes = React.useMemo(
     () => getBusinessTypesFromGroupedAlerts(groupedAlerts),
@@ -128,10 +128,6 @@ export function UserReadAlerts({
                       controlType={controlType}
                       setPeriodOnFocus={setPeriodOnFocus}
                       setTab={setTab}
-                      isReportingInfractions={isReportingInfractions}
-                      onUpdateInfraction={onUpdateInfraction}
-                      onAddInfraction={onAddInfraction}
-                      onRemoveInfraction={onRemoveInfraction}
                       readOnlyAlerts={readOnlyAlerts}
                       titleProps={{ component: "h3" }}
                       displayBusinessType={
