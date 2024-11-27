@@ -50,9 +50,11 @@ export const useReportInfractions = controlData => {
             controlId: controlData?.id,
             reportedInfractions: observedInfractions
               .filter(infraction => infraction.isReported)
-              .map(({ date, sanction }) => ({
+              .map(({ date, sanction, unit, type }) => ({
                 date,
-                sanction
+                sanction,
+                unit,
+                type
               }))
           },
           { context: { nonPublicApi: true } }
@@ -126,7 +128,7 @@ export const useReportInfractions = controlData => {
           return [infraction];
         }
         if (!infraction.date) {
-          return [{ ...infraction, date }];
+          return [{ ...infraction, date, isReported: true }];
         }
         if (!hasInsertedNewOne) {
           hasInsertedNewOne = true;
@@ -134,7 +136,8 @@ export const useReportInfractions = controlData => {
             infraction,
             {
               ...infraction,
-              date
+              date,
+              isReported: true
             }
           ];
         } else {
@@ -158,7 +161,8 @@ export const useReportInfractions = controlData => {
           return [
             {
               ...infraction,
-              date: null
+              date: null,
+              isReported: false
             }
           ];
         } else {

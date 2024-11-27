@@ -8,6 +8,7 @@ import {
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
+import Stack from "@mui/material/Stack";
 
 const gregorian_fr = {
   name: "gregorian_fr",
@@ -91,7 +92,7 @@ export const InfractionDay = ({
   };
 
   return (
-    <div style={{ display: "flex", gap: "16px", flexDirection: "column" }}>
+    <Stack direction="column" gap={2}>
       {isReportingInfractions && (
         <p style={{ marginBottom: 0 }}>
           Sélectionnez la ou les journées concernées&nbsp;:
@@ -133,6 +134,6 @@ export const InfractionDay = ({
             </li>
           ))}
       </ul>
-    </div>
+    </Stack>
   );
 };

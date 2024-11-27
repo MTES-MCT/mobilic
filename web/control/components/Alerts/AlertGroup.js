@@ -216,12 +216,12 @@ export function AlertGroup({
             )}
             {alerts[0].unit === PERIOD_UNITS.WEEK && (
               <>
-                <p>Sélectionnez la ou les semaines concernées&nbsp;:</p>
                 <InfractionWeek
-                  alert={alerts[0]}
-                  weeks={alerts.map(alert => alert.week).filter(x => x)}
+                  alerts={alerts}
                   isReportingInfractions={isReportingInfractions}
-                  onUpdateInfraction={onUpdateInfraction}
+                  onAddInfraction={onAddInfraction}
+                  onRemoveInfraction={onRemoveInfraction}
+                  sanction={sanction}
                 />
               </>
             )}
