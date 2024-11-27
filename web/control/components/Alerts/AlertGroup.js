@@ -95,6 +95,7 @@ export function AlertGroup({
   setPeriodOnFocus,
   setTab,
   readOnlyAlerts,
+  controlData,
   displayBusinessType = false,
   titleProps = {}
 }) {
@@ -202,11 +203,19 @@ export function AlertGroup({
           <>
             <Description>{alerts[0].description}</Description>
             {alerts[0].unit === PERIOD_UNITS.DAY && (
-              <InfractionDay alerts={alerts} sanction={sanction} />
+              <InfractionDay
+                alerts={alerts}
+                sanction={sanction}
+                controlData={controlData}
+              />
             )}
             {alerts[0].unit === PERIOD_UNITS.WEEK && (
               <>
-                <InfractionWeek alerts={alerts} sanction={sanction} />
+                <InfractionWeek
+                  alerts={alerts}
+                  sanction={sanction}
+                  controlData={controlData}
+                />
               </>
             )}
           </>

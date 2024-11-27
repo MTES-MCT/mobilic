@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const InfractionDay = ({ alerts, sanction }) => {
+export const InfractionDay = ({ alerts, sanction, controlData }) => {
   const classes = useStyles();
   const {
     isReportingInfractions,
@@ -70,8 +70,8 @@ export const InfractionDay = ({ alerts, sanction }) => {
     initialDays
   ]);
 
-  const today = new Date();
-  const minDate = addDaysToDate(new Date(), -28);
+  const maxDate = new Date(unixToJSTimestamp(controlData.creationTime));
+  const minDate = addDaysToDate(new Date(maxDate), -28);
 
   const onSelectedDatesChange = values => {
     const newTimestamps = values
@@ -107,7 +107,7 @@ export const InfractionDay = ({ alerts, sanction }) => {
           multiple
           sort
           minDate={minDate}
-          maxDate={today} // TODO 835 use controlDate
+          maxDate={maxDate}
           highlightToday={false}
           weekStartDayIndex={1}
           headerOrder={["MONTH_YEAR", "LEFT_BUTTON", "RIGHT_BUTTON"]}

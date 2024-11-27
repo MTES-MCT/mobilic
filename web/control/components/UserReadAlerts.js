@@ -57,6 +57,7 @@ export const WarningComputedAlerts = () => (
 
 export function UserReadAlerts({
   setTab,
+  controlData,
   setPeriodOnFocus,
   readOnlyAlerts,
   controlType
@@ -133,6 +134,7 @@ export function UserReadAlerts({
                       displayBusinessType={
                         businessTypes && businessTypes.length > 1
                       }
+                      controlData={controlData}
                     />
                   </ListItem>
                 ))}

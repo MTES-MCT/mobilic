@@ -1,13 +1,16 @@
 import React, { useMemo } from "react";
 import Stack from "@mui/material/Stack";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import { startOfDay, textualPrettyFormatWeek } from "common/utils/time";
+import {
+  startOfDay,
+  textualPrettyFormatWeek,
+  unixToJSTimestamp
+} from "common/utils/time";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
 
-const getLastFourMondays = () => {
+const getLastFourMondays = fromDate => {
   const mondays = [];
-  const today = new Date();
-  let date = new Date(today);
+  let date = new Date(fromDate);
 
   while (mondays.length < 4) {
     if (date.getDay() === 1) {
@@ -18,7 +21,7 @@ const getLastFourMondays = () => {
   return mondays.map(startOfDay);
 };
 
-export const InfractionWeek = ({ alerts, sanction }) => {
+export const InfractionWeek = ({ alerts, sanction, controlData }) => {
   const {
     isReportingInfractions,
     onAddInfraction,
@@ -43,7 +46,9 @@ export const InfractionWeek = ({ alerts, sanction }) => {
           Sélectionnez la ou les semaines concernées&nbsp;:
         </p>
       )}
-      {getLastFourMondays().map(monday => (
+      {getLastFourMondays(
+        new Date(unixToJSTimestamp(controlData.creationTime))
+      ).map(monday => (
         <Checkbox
           key={monday}
           style={{ margin: 0 }}
