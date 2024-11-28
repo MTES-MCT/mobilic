@@ -9,6 +9,7 @@ import { Input } from "../../../common/forms/Input";
 import Notice from "../../../common/Notice";
 import { useInfractions } from "../../utils/contextInfractions";
 import { sanctionComparator } from "../../../control/utils/sanctionComparator";
+import { CONTROL_TYPES } from "../../utils/useReadControlData";
 
 export function ControlBulletinFormStep3({
   controlData,
@@ -20,6 +21,19 @@ export function ControlBulletinFormStep3({
   onUpdateInfraction
 }) {
   const { groupedAlerts } = useInfractions();
+
+  const groupedAlertsToDisplay = React.useMemo(() => {
+    if (controlData.controlType === CONTROL_TYPES.LIC_PAPIER.label) {
+      return (
+        groupedAlerts.filter(
+          group => group.alerts.filter(alert => alert.checked).length > 0
+        ) || []
+      );
+    } else {
+      return groupedAlerts;
+    }
+  }, [controlData, groupedAlerts]);
+
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
       <Input
@@ -31,14 +45,13 @@ export function ControlBulletinFormStep3({
         label="Votre identifiant de carte contrôleur"
       />
       <Typography variant="h5">Infractions retenues</Typography>
-      {groupedAlerts?.length > 0 ? (
+      {groupedAlertsToDisplay?.length > 0 ? (
         <List>
-          {groupedAlerts.sort(sanctionComparator).map(group => (
+          {groupedAlertsToDisplay.sort(sanctionComparator).map(group => (
             <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
               <AlertGroup
                 {...group}
                 controlData={controlData}
-                isReportingInfractions={true}
                 onUpdateInfraction={onUpdateInfraction}
                 readOnlyAlerts={false}
               />
