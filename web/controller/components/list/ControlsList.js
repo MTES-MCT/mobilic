@@ -85,7 +85,7 @@ export function ControlsList({
             type: control.controlType,
             nbControlledDays:
               // Do not show for no lic or lic papier, default value set for greco stat usage
-              control.controlType === CONTROL_TYPES.MOBILIC.value &&
+              control.controlType === CONTROL_TYPES.MOBILIC.label &&
               control.nbControlledDays
                 ? `${pluralize(control.nbControlledDays, "jour")}`
                 : "-",

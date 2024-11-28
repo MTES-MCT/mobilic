@@ -144,7 +144,6 @@ export function ControllerControlNoLic({ controlType, controlData, editBDC }) {
               >
                 {
                   <t.component
-                    controlType={controlType}
                     controlData={controlData}
                     readOnlyAlerts={false}
                   />

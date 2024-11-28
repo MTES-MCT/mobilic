@@ -20,7 +20,7 @@ export function ControllerControlDrawer({ controlId, controlType, onClose }) {
 
   return (
     <InfractionsProvider controlData={controlData}>
-      {controlType === CONTROL_TYPES.MOBILIC ? (
+      {controlType === CONTROL_TYPES.MOBILIC.label ? (
         <ControlDrawer
           isOpen={!!controlId}
           onClose={onClose}

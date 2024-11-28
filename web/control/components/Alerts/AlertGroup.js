@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => {
     },
     reportedAlert: {
       borderColor: theme.palette.primary.main,
-      borderWidth: "2px"
+      borderWidth: "1px"
     },
     reportableAlert: {
       backgroundColor: theme.palette.error.main
