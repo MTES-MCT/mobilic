@@ -11,7 +11,7 @@ import { useInfractions } from "../../utils/contextInfractions";
 import { sanctionComparator } from "../../../control/utils/sanctionComparator";
 
 export function ControlBulletinFormStep3({
-  controlType,
+  controlData,
   handleEditControlBulletin,
   controlBulletin,
   grecoId,
@@ -37,7 +37,7 @@ export function ControlBulletinFormStep3({
             <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
               <AlertGroup
                 {...group}
-                controlType={controlType}
+                controlData={controlData}
                 isReportingInfractions={true}
                 onUpdateInfraction={onUpdateInfraction}
                 readOnlyAlerts={false}

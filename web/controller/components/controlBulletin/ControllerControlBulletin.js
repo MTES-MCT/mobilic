@@ -239,7 +239,7 @@ export function ControllerControlBulletin({
       )}
       {step === 3 && (
         <ControlBulletinFormStep3
-          controlType={controlData.controlType}
+          controlData={controlData}
           handleEditControlBulletin={handleEditControlBulletin}
           controlBulletin={controlBulletin}
           grecoId={grecoId}

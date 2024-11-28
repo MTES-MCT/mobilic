@@ -87,7 +87,6 @@ const BusinessTypeTitle = ({ business }) => (
 );
 
 export function AlertGroup({
-  controlType,
   alerts,
   infringementLabel,
   type,
@@ -111,7 +110,7 @@ export function AlertGroup({
   );
 
   const alertsNumber = getAlertsNumber(
-    controlType,
+    controlData.controlType,
     alerts,
     isSanctionReportable,
     isReportingInfractions,
@@ -165,8 +164,8 @@ export function AlertGroup({
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
         {/* TODO refactor: extract in another component */}
-        {(controlType === CONTROL_TYPES.MOBILIC.label ||
-          controlType === CONTROL_TYPES.NO_LIC.label) &&
+        {(controlData.controlType === CONTROL_TYPES.MOBILIC.label ||
+          controlData.controlType === CONTROL_TYPES.NO_LIC.label) &&
           Object.entries(alertsGroupedByBusinessTypes).map(
             ([businessId, alertsByBusiness]) => {
               const firstAlert = alertsByBusiness[0];
@@ -199,7 +198,7 @@ export function AlertGroup({
               );
             }
           )}
-        {controlType === CONTROL_TYPES.LIC_PAPIER.label && (
+        {controlData.controlType === CONTROL_TYPES.LIC_PAPIER.label && (
           <>
             <Description>{alerts[0].description}</Description>
             {alerts[0].unit === PERIOD_UNITS.DAY && (

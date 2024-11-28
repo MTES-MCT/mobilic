@@ -122,7 +122,6 @@ export function UserReadAlerts({
                 >
                   <AlertGroup
                     {...group}
-                    controlType={controlData.controlType}
                     setPeriodOnFocus={setPeriodOnFocus}
                     setTab={setTab}
                     readOnlyAlerts={readOnlyAlerts}
