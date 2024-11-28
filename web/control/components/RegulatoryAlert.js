@@ -48,25 +48,25 @@ export function formatAlertText(alert, type) {
   switch (type) {
     case ALERT_TYPES.minimumDailyRest: {
       const maxBreakLengthInSeconds =
-        alert.extra?.breach_period_max_break_in_seconds;
-      return maxBreakLengthInSeconds ? (
+        alert.extra.breach_period_max_break_in_seconds;
+      return (
         <span>
           Durée de la plus longue période de repos consécutif effectuée entre le{" "}
           {formatDate(alert.extra.breach_period_start)} et le{" "}
           {formatDate(alert.extra.breach_period_end)} :{" "}
           <b>{formatTimer(maxBreakLengthInSeconds)}</b>
         </span>
-      ) : null;
+      );
     }
     case ALERT_TYPES.maximumWorkedDaysInWeek: {
-      const maxBreakLengthInSeconds = alert.extra?.rest_duration_s;
-      const tooManyDays = alert.extra?.too_many_days;
-      const restDurationText = maxBreakLengthInSeconds ? (
+      const maxBreakLengthInSeconds = alert.extra.rest_duration_s;
+      const tooManyDays = alert.extra.too_many_days;
+      const restDurationText = (
         <>
           Durée du repos hebdomadaire :{" "}
           <b>{formatTimer(maxBreakLengthInSeconds)}</b>.
         </>
-      ) : null;
+      );
       const tooManyDaysText = (
         <>La semaine ne comporte aucune journée non travaillée.</>
       );
@@ -100,20 +100,20 @@ export function formatAlertText(alert, type) {
     }
     case ALERT_TYPES.maximumUninterruptedWorkTime: {
       const uninterruptedWorkTime =
-        alert.extra?.longest_uninterrupted_work_in_seconds;
-      return uninterruptedWorkTime ? (
+        alert.extra.longest_uninterrupted_work_in_seconds;
+      return (
         <span>
           Durée du temps de travail ininterrompu constaté :{" "}
           <b>{formatTimer(uninterruptedWorkTime)}</b> entre le{" "}
           {formatDate(alert.extra.longest_uninterrupted_work_start)} et le{" "}
           {formatDate(alert.extra.longest_uninterrupted_work_end)}
         </span>
-      ) : null;
+      );
     }
     case ALERT_TYPES.minimumWorkDayBreak: {
-      const breakTimeInSeconds = alert.extra?.total_break_time_in_seconds;
-      const workTimeInSeconds = alert.extra?.work_range_in_seconds;
-      return breakTimeInSeconds && workTimeInSeconds ? (
+      const breakTimeInSeconds = alert.extra.total_break_time_in_seconds;
+      const workTimeInSeconds = alert.extra.work_range_in_seconds;
+      return (
         <span>
           Durée du temps de pause :{" "}
           <b>{formatMinutesFromSeconds(breakTimeInSeconds)}</b> pour une période
@@ -121,16 +121,12 @@ export function formatAlertText(alert, type) {
           le {formatDate(alert.extra.work_range_start)} et le{" "}
           {formatDate(alert.extra.work_range_end)}
         </span>
-      ) : null;
+      );
     }
     case ALERT_TYPES.maximumWorkDayTime: {
-      const {
-        nightWork,
-        work_range_in_seconds: workTime,
-        work_range_start,
-        work_range_end
-      } = alert.extra || {};
-      return workTime && work_range_start && work_range_end ? (
+      const nightWork = alert.extra.night_work;
+      const workTime = alert.extra.work_range_in_seconds;
+      return (
         <span>
           Temps de travail total effectué entre le{" "}
           {formatDate(alert.extra.work_range_start)} et le{" "}
@@ -139,19 +135,22 @@ export function formatAlertText(alert, type) {
           {" : "}
           <b>{formatTimer(workTime)}</b>
         </span>
-      ) : null;
+      );
     }
     case ALERT_TYPES.maximumWorkInCalendarWeek: {
-      const { work_duration_in_seconds, work_range_start, work_range_end } =
-        alert.extra || {};
-      return work_duration_in_seconds && work_range_start && work_range_end ? (
+      const {
+        work_duration_in_seconds,
+        work_range_start,
+        work_range_end
+      } = alert.extra;
+      return (
         <span>
           Temps de travail total effectué entre le{" "}
           {formatDate(work_range_start)} et le {formatDate(work_range_end)} :{" "}
           <b>{formatTimer(work_duration_in_seconds)}</b>
           <b></b>
         </span>
-      ) : null;
+      );
     }
     default:
       return <span></span>;
