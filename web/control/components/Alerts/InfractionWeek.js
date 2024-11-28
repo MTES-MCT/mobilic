@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import Stack from "@mui/material/Stack";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import {
   startOfDay,
@@ -40,31 +39,23 @@ export const InfractionWeek = ({ alerts, sanction, controlData }) => {
     }
   };
   return (
-    <Stack direction="column" gap={2}>
-      {isReportingInfractions && (
-        <p style={{ marginBottom: 0 }}>
-          Sélectionnez la ou les semaines concernées&nbsp;:
-        </p>
-      )}
-      {getLastFourMondays(
+    <Checkbox
+      legend={
+        isReportingInfractions
+          ? "Sélectionnez la ou les semaines concernées :"
+          : ""
+      }
+      options={getLastFourMondays(
         new Date(unixToJSTimestamp(controlData.creationTime))
-      ).map(monday => (
-        <Checkbox
-          key={monday}
-          style={{ margin: 0 }}
-          legend=""
-          options={[
-            {
-              label: textualPrettyFormatWeek(monday),
-              nativeInputProps: {
-                checked: initialWeeks.includes(monday),
-                onChange: e => toggleInfraction(monday, e.target.checked)
-              }
-            }
-          ]}
-          disabled={!isReportingInfractions}
-        />
-      ))}
-    </Stack>
+      )
+        .reverse()
+        .map(monday => ({
+          label: textualPrettyFormatWeek(monday),
+          nativeInputProps: {
+            checked: initialWeeks.includes(monday),
+            onChange: e => toggleInfraction(monday, e.target.checked)
+          }
+        }))}
+    />
   );
 };

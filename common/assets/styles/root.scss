@@ -476,3 +476,16 @@ video:not([href])[controls] {
 main {
   scroll-margin-top: 200px;
 }
+
+.rmdp-day.rmdp-selected span:not(.highlight) {
+  background-color: #3965EA;
+  box-shadow: none;
+}
+
+.rmdp-week-day {
+  color: #00000061;
+}
+
+.rmdp-header-values {
+  font-weight: bold;
+}

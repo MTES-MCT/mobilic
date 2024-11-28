@@ -111,13 +111,14 @@ export const InfractionDay = ({ alerts, sanction, controlData }) => {
           highlightToday={false}
           weekStartDayIndex={1}
           headerOrder={["MONTH_YEAR", "LEFT_BUTTON", "RIGHT_BUTTON"]}
-          monthYearSeparator="" // TODO 835 maybe use space
+          monthYearSeparator=" "
           locale={gregorian_fr}
         />
       )}
-      <ul className="fr-tag-group">
+      <ul className="fr-tag-group" style={{ listStyleType: "none" }}>
         {initialTimestamps
           .map(ts => (ts / 1000) >> 0)
+          .sort()
           .map(ts => (
             <li key={ts}>
               <Tag
