@@ -8,6 +8,7 @@ import { AlertGroup } from "../../../control/components/Alerts/AlertGroup";
 import { Input } from "../../../common/forms/Input";
 import Notice from "../../../common/Notice";
 import { useInfractions } from "../../utils/contextInfractions";
+import { sanctionComparator } from "../../../control/utils/sanctionComparator";
 
 export function ControlBulletinFormStep3({
   controlType,
@@ -32,21 +33,17 @@ export function ControlBulletinFormStep3({
       <Typography variant="h5">Infractions retenues</Typography>
       {groupedAlerts?.length > 0 ? (
         <List>
-          {groupedAlerts
-            .sort((alert1, alert2) =>
-              alert1.sanction.localeCompare(alert2.sanction)
-            )
-            .map(group => (
-              <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
-                <AlertGroup
-                  {...group}
-                  controlType={controlType}
-                  isReportingInfractions={true}
-                  onUpdateInfraction={onUpdateInfraction}
-                  readOnlyAlerts={false}
-                />
-              </ListItem>
-            ))}
+          {groupedAlerts.sort(sanctionComparator).map(group => (
+            <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
+              <AlertGroup
+                {...group}
+                controlType={controlType}
+                isReportingInfractions={true}
+                onUpdateInfraction={onUpdateInfraction}
+                readOnlyAlerts={false}
+              />
+            </ListItem>
+          ))}
         </List>
       ) : (
         <Typography>

@@ -17,6 +17,7 @@ import { getBusinessTypesFromGroupedAlerts } from "../utils/businessTypesFromGro
 import { Description } from "../../common/typography/Description";
 import { CONTROL_TYPES } from "../../controller/utils/useReadControlData";
 import { useInfractions } from "../../controller/utils/contextInfractions";
+import { sanctionComparator } from "../utils/sanctionComparator";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -114,29 +115,25 @@ export function UserReadAlerts({
           )}
           {groupedAlerts?.length > 0 ? (
             <List>
-              {groupedAlerts
-                .sort((alert1, alert2) =>
-                  alert1.sanction.localeCompare(alert2.sanction)
-                )
-                .map(group => (
-                  <ListItem
-                    key={`${group.type}_${group.sanction}`}
-                    disableGutters
-                  >
-                    <AlertGroup
-                      {...group}
-                      controlType={controlData.controlType}
-                      setPeriodOnFocus={setPeriodOnFocus}
-                      setTab={setTab}
-                      readOnlyAlerts={readOnlyAlerts}
-                      titleProps={{ component: "h3" }}
-                      displayBusinessType={
-                        businessTypes && businessTypes.length > 1
-                      }
-                      controlData={controlData}
-                    />
-                  </ListItem>
-                ))}
+              {groupedAlerts.sort(sanctionComparator).map(group => (
+                <ListItem
+                  key={`${group.type}_${group.sanction}`}
+                  disableGutters
+                >
+                  <AlertGroup
+                    {...group}
+                    controlType={controlData.controlType}
+                    setPeriodOnFocus={setPeriodOnFocus}
+                    setTab={setTab}
+                    readOnlyAlerts={readOnlyAlerts}
+                    titleProps={{ component: "h3" }}
+                    displayBusinessType={
+                      businessTypes && businessTypes.length > 1
+                    }
+                    controlData={controlData}
+                  />
+                </ListItem>
+              ))}
             </List>
           ) : (
             <Typography className={classes.italicInfo}>
