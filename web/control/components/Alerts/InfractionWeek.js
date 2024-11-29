@@ -6,6 +6,7 @@ import {
   unixToJSTimestamp
 } from "common/utils/time";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
+import { useControl } from "../../../controller/utils/contextControl";
 
 const getLastFourMondays = fromDate => {
   const mondays = [];
@@ -20,12 +21,13 @@ const getLastFourMondays = fromDate => {
   return mondays.map(startOfDay);
 };
 
-export const InfractionWeek = ({ alerts, sanction, controlData }) => {
+export const InfractionWeek = ({ alerts, sanction }) => {
   const {
     isReportingInfractions,
     onAddInfraction,
     onRemoveInfraction
   } = useInfractions();
+  const { controlData } = useControl();
   const initialWeeks = useMemo(
     () => alerts.map(alert => alert.week).filter(x => !!x),
     [alerts]
@@ -40,6 +42,7 @@ export const InfractionWeek = ({ alerts, sanction, controlData }) => {
   };
   return (
     <Checkbox
+      disabled={!isReportingInfractions}
       legend={
         isReportingInfractions
           ? "Sélectionnez la ou les semaines concernées :"

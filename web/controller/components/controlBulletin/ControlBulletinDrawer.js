@@ -16,7 +16,6 @@ const useStyles = makeStyles(theme => ({
 export function ControlBulletinDrawer({
   isOpen,
   onClose,
-  controlData,
   onSaveControlBulletin
 }) {
   const classes = useStyles();
@@ -60,7 +59,6 @@ export function ControlBulletinDrawer({
       <Box m={2}>
         <ControllerControlBulletin
           onClose={closeDrawer}
-          controlData={controlData}
           setMustConfirmBeforeClosing={setMustConfirmBeforeClosing}
           onSaveControlBulletin={onSaveControlBulletin}
           saveInfractions={() => saveInfractions({ showSuccessMessage: false })}

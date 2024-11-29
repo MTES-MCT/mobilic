@@ -10,7 +10,6 @@ import { orderEmployments } from "common/utils/employments";
 import { ControllerControlHeader } from "./ControllerControlHeader";
 import _ from "lodash";
 import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
-import { canDownloadBDC } from "../../utils/controlBulletin";
 import { formatActivity } from "common/utils/businessTypes";
 import { useInfractions } from "../../utils/contextInfractions";
 
@@ -30,8 +29,7 @@ export function ControllerControlDetails({
     totalAlertsNumber,
     isReportingInfractions,
     setIsReportingInfractions,
-    reportedInfractionsLastUpdateTime,
-    groupedAlerts
+    reportedInfractionsLastUpdateTime
   } = useInfractions();
 
   // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
@@ -106,9 +104,7 @@ export function ControllerControlDetails({
   return (
     <>
       <ControllerControlHeader
-        controlId={controlData.id}
         controlDate={legacyTokenInfo?.creationTime}
-        canDownloadXml={canDownloadBDC(controlData)}
         onCloseDrawer={onClose}
       />
       <UserReadTabs
@@ -129,11 +125,9 @@ export function ControllerControlDetails({
         companyName={controlData.companyName}
         vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
         openBulletinControl={() => setIsEditingBC(true)}
-        controlData={controlData}
         reportedInfractionsLastUpdateTime={reportedInfractionsLastUpdateTime}
         isReportingInfractions={isReportingInfractions}
         setIsReportingInfractions={setIsReportingInfractions}
-        groupedAlerts={groupedAlerts}
         readOnlyAlerts={false}
       />
       <ControlBulletinDrawer

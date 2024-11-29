@@ -13,11 +13,11 @@ import { ControllerControlNoLicHistory } from "./ControllerControlNoLicHistory";
 import { ControllerControlNoLicInformations } from "./ControllerControlNoLicInformations";
 import { useDownloadBDC } from "../../../utils/useDownloadBDC";
 import { ControllerControlBottomMenu as BottomMenu } from "../../menu/ControllerControlBottomMenu";
-import { canDownloadBDC } from "../../../utils/controlBulletin";
 import { TextWithBadge } from "../../../../common/TextWithBadge";
 import { UserReadAlerts } from "../../../../control/components/UserReadAlerts";
 import Box from "@mui/material/Box";
 import { useInfractions } from "../../../utils/contextInfractions";
+import { useControl } from "../../../utils/contextControl";
 
 const useStyles = makeStyles(theme => ({
   middleTab: {
@@ -88,9 +88,11 @@ const getTabs = alertNumber => [
   }
 ];
 
-export function ControllerControlNoLic({ controlType, controlData, editBDC }) {
+export function ControllerControlNoLic({ editBDC }) {
   const classes = useStyles();
-  const downloadBDC = useDownloadBDC(controlData.id);
+
+  const { controlId } = useControl();
+  const downloadBDC = useDownloadBDC(controlId);
   const {
     checkedAlertsNumber,
     setIsReportingInfractions,
@@ -142,12 +144,7 @@ export function ControllerControlNoLic({ controlType, controlData, editBDC }) {
                 className={`${classes.panel} ${tab !== t.name &&
                   classes.hiddenPanel}`}
               >
-                {
-                  <t.component
-                    controlData={controlData}
-                    readOnlyAlerts={false}
-                  />
-                }
+                {<t.component readOnlyAlerts={false} />}
               </TabPanel>
             ))}
           </Container>
@@ -161,8 +158,6 @@ export function ControllerControlNoLic({ controlType, controlData, editBDC }) {
             disableReportInfractions={false}
             editBDC={editBDC}
             downloadBDC={downloadBDC}
-            canDownloadBDC={canDownloadBDC(controlData)}
-            bdcAlreadyExisting={!!controlData.controlBulletinCreationTime}
           />
         </>
       )}

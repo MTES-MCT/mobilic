@@ -1,18 +1,13 @@
 import React from "react";
 import { ControllerControlDetails } from "./ControllerControlDetails";
-import {
-  CONTROL_TYPES,
-  useReadControlData
-} from "../../utils/useReadControlData";
+import { CONTROL_TYPES } from "../../utils/useReadControlData";
 import { ControllerControlNoLicDrawer } from "../noQRCode/noLic/ControllerControlNoLicDrawer";
 import { ControlDrawer } from "../../utils/ControlDrawer";
 import { InfractionsProvider } from "../../utils/contextInfractions";
+import { ControlProvider, useControl } from "../../utils/contextControl";
 
-export function ControllerControlDrawer({ controlId, controlType, onClose }) {
-  const [controlData, setControlData] = useReadControlData(
-    controlId,
-    controlType
-  );
+const InnerControllerControlDrawer = ({ onClose }) => {
+  const { controlData, setControlData, controlId, controlType } = useControl();
 
   if (!controlData) {
     return null;
@@ -34,7 +29,6 @@ export function ControllerControlDrawer({ controlId, controlType, onClose }) {
         </ControlDrawer>
       ) : (
         <ControllerControlNoLicDrawer
-          controlType={controlType}
           controlData={controlData}
           setControlData={setControlData}
           isOpen={!!controlId}
@@ -42,5 +36,12 @@ export function ControllerControlDrawer({ controlId, controlType, onClose }) {
         />
       )}
     </InfractionsProvider>
+  );
+};
+export function ControllerControlDrawer({ controlId, controlType, onClose }) {
+  return (
+    <ControlProvider controlId={controlId} controlType={controlType}>
+      <InnerControllerControlDrawer onClose={onClose} />
+    </ControlProvider>
   );
 }

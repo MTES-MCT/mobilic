@@ -3,10 +3,8 @@ import { ControllerControlHeader } from "../../details/ControllerControlHeader";
 import { ControllerControlNoLic } from "./ControllerControlNoLic";
 import { ControlBulletinDrawer } from "../../controlBulletin/ControlBulletinDrawer";
 import { ControlDrawer } from "../../../utils/ControlDrawer";
-import { canDownloadBDC } from "../../../utils/controlBulletin";
 
 export function ControllerControlNoLicDrawer({
-  controlType,
   controlData,
   setControlData,
   isOpen,
@@ -41,17 +39,11 @@ export function ControllerControlNoLicDrawer({
         }
       />
       <ControllerControlHeader
-        controlId={controlData.id}
         controlDate={controlData.creationTime}
         onCloseDrawer={() => closeControl()}
-        canDownloadXml={canDownloadBDC(controlData)}
         enableExport={false}
       />
-      <ControllerControlNoLic
-        controlType={controlType}
-        controlData={controlData}
-        editBDC={editBDC}
-      />
+      <ControllerControlNoLic editBDC={editBDC} />
     </ControlDrawer>
   );
 }

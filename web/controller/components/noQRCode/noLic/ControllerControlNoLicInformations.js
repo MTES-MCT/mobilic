@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import { ControllerControlNote as Notes } from "../../details/ControllerControlNote";
 import { ControllerControlNoLicInformationsEmployee as InformationsEmployee } from "./ControllerControlNoLicInformationsEmployee";
 
-export function ControllerControlNoLicInformations({ controlData }) {
+export function ControllerControlNoLicInformations() {
   return (
     <Stack
       direction="column"
@@ -12,8 +12,8 @@ export function ControllerControlNoLicInformations({ controlData }) {
       paddingRight={1}
       alignItems="center"
     >
-      <Notes controlData={controlData} />
-      <InformationsEmployee controlData={controlData} />
+      <Notes />
+      <InformationsEmployee />
     </Stack>
   );
 }

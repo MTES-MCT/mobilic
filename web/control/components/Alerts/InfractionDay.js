@@ -10,6 +10,7 @@ import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
 import Stack from "@mui/material/Stack";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
+import { useControl } from "../../../controller/utils/contextControl";
 
 const gregorian_fr = {
   name: "gregorian_fr",
@@ -53,13 +54,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const InfractionDay = ({ alerts, sanction, controlData }) => {
+export const InfractionDay = ({ alerts, sanction }) => {
   const classes = useStyles();
   const {
     isReportingInfractions,
     onAddInfraction,
     onRemoveInfraction
   } = useInfractions();
+  const { controlData } = useControl();
 
   const initialDays = useMemo(
     () => alerts.map(alert => alert.day).filter(x => !!x),
@@ -74,16 +76,26 @@ export const InfractionDay = ({ alerts, sanction, controlData }) => {
   const minDate = addDaysToDate(new Date(maxDate), -28);
 
   const onSelectedDatesChange = values => {
-    const newTimestamps = values
+    const selectedTimestamps = values
       .map(dateString => {
         const parsedDate = new Date(dateString);
         return parsedDate.getTime();
       })
-      .map(date => (date / 1000) >> 0)
-      .filter(ts => !initialDays.includes(ts));
+      .map(date => (date / 1000) >> 0);
+
+    const newTimestamps = selectedTimestamps.filter(
+      ts => !initialDays.includes(ts)
+    );
 
     for (const newTimestamp of newTimestamps) {
       onAddInfraction(sanction, newTimestamp);
+    }
+
+    const removedTimestamps = initialDays.filter(
+      ts => !selectedTimestamps.includes(ts)
+    );
+    for (const removedTimestamp of removedTimestamps) {
+      onRemoveInfraction(sanction, removedTimestamp);
     }
   };
 

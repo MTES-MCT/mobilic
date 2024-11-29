@@ -18,6 +18,7 @@ import { Description } from "../../common/typography/Description";
 import { CONTROL_TYPES } from "../../controller/utils/useReadControlData";
 import { useInfractions } from "../../controller/utils/contextInfractions";
 import { sanctionComparator } from "../utils/sanctionComparator";
+import { useControl } from "../../controller/utils/contextControl";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -58,28 +59,30 @@ export const WarningComputedAlerts = () => (
 
 export function UserReadAlerts({
   setTab,
-  controlData,
   setPeriodOnFocus,
-  readOnlyAlerts
+  readOnlyAlerts,
+  groupedAlerts = undefined
 }) {
   const classes = useStyles();
   const {
-    groupedAlerts,
+    groupedAlerts: infractionsGroupedAlerts,
     isReportingInfractions,
     totalAlertsNumber,
     reportedInfractionsLastUpdateTime,
     saveInfractions,
     cancelInfractions
   } = useInfractions();
+  const { controlType } = useControl();
 
+  const _groupedAlerts = groupedAlerts ?? infractionsGroupedAlerts;
   const businessTypes = React.useMemo(
-    () => getBusinessTypesFromGroupedAlerts(groupedAlerts),
-    [groupedAlerts]
+    () => getBusinessTypesFromGroupedAlerts(_groupedAlerts),
+    [_groupedAlerts]
   );
 
   return (
     <Container maxWidth="md" sx={{ padding: 0 }}>
-      {controlData.controlType === CONTROL_TYPES.MOBILIC.label && (
+      {controlType === CONTROL_TYPES.MOBILIC.label && (
         <DisplayBusinessTypes businessTypes={businessTypes} />
       )}
       <Container className={classes.container}>
@@ -105,7 +108,7 @@ export function UserReadAlerts({
               )}`}
             </Description>
           )}
-          {controlData.controlType === CONTROL_TYPES.MOBILIC.label && (
+          {controlType === CONTROL_TYPES.MOBILIC.label && (
             <>
               <FieldTitle uppercaseTitle component="h2" sx={{ marginTop: 2 }}>
                 Infractions calculées par Mobilic
@@ -113,9 +116,9 @@ export function UserReadAlerts({
               <WarningComputedAlerts />
             </>
           )}
-          {groupedAlerts?.length > 0 ? (
+          {_groupedAlerts?.length > 0 ? (
             <List>
-              {groupedAlerts.sort(sanctionComparator).map(group => (
+              {_groupedAlerts.sort(sanctionComparator).map(group => (
                 <ListItem
                   key={`${group.type}_${group.sanction}`}
                   disableGutters
@@ -129,7 +132,6 @@ export function UserReadAlerts({
                     displayBusinessType={
                       businessTypes && businessTypes.length > 1
                     }
-                    controlData={controlData}
                   />
                 </ListItem>
               ))}
@@ -156,7 +158,7 @@ export function UserReadAlerts({
                 </Button>
               </Stack>
             ) : (
-              controlData.controlType === CONTROL_TYPES.MOBILIC.label && (
+              controlType === CONTROL_TYPES.MOBILIC.label && (
                 <Notice
                   type="warning"
                   description={

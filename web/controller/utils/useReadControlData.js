@@ -7,6 +7,7 @@ import {
 } from "common/utils/apiQueries";
 import { useLoadingScreen } from "common/utils/loading";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import { canDownloadBDC as _canDownloadBDC } from "./controlBulletin";
 
 // Value AND label must match ControlType enum from API
 export const CONTROL_TYPES = {
@@ -39,5 +40,21 @@ export const useReadControlData = (controlId, controlType) => {
     }
   }, [controlId]);
 
-  return [controlData, setControlData];
+  const canDownloadBDC = React.useMemo(() => _canDownloadBDC(controlData), [
+    controlData
+  ]);
+
+  const bdcAlreadyExists = React.useMemo(
+    () => !!controlData?.controlBulletinCreationTime,
+    [controlData]
+  );
+
+  return {
+    controlData,
+    setControlData,
+    controlId,
+    controlType,
+    canDownloadBDC,
+    bdcAlreadyExists
+  };
 };

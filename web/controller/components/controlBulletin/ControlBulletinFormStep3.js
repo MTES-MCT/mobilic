@@ -10,16 +10,16 @@ import Notice from "../../../common/Notice";
 import { useInfractions } from "../../utils/contextInfractions";
 import { sanctionComparator } from "../../../control/utils/sanctionComparator";
 import { CONTROL_TYPES } from "../../utils/useReadControlData";
+import { useControl } from "../../utils/contextControl";
 
 export function ControlBulletinFormStep3({
-  controlData,
   handleEditControlBulletin,
   controlBulletin,
   grecoId,
-  onUpdateGrecoId,
-  controlCanBeDownloaded
+  onUpdateGrecoId
 }) {
   const { groupedAlerts, setIsReportingInfractions } = useInfractions();
+  const { controlData, canDownloadBDC } = useControl();
 
   const groupedAlertsToDisplay = React.useMemo(() => {
     if (controlData.controlType === CONTROL_TYPES.LIC_PAPIER.label) {
@@ -52,11 +52,7 @@ export function ControlBulletinFormStep3({
         <List>
           {groupedAlertsToDisplay.sort(sanctionComparator).map(group => (
             <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
-              <AlertGroup
-                {...group}
-                controlData={controlData}
-                readOnlyAlerts={false}
-              />
+              <AlertGroup {...group} readOnlyAlerts={false} />
             </ListItem>
           ))}
         </List>
@@ -74,7 +70,7 @@ export function ControlBulletinFormStep3({
         label="Observations"
         textArea
       />
-      {!controlCanBeDownloaded && (
+      {!canDownloadBDC && (
         <Notice
           type="warning"
           description="Certains champs obligatoires doivent être renseignés pour permettre le

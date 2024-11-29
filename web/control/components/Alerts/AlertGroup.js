@@ -18,6 +18,7 @@ import { InfractionWeek } from "./InfractionWeek";
 import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 import classNames from "classnames";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
+import { useControl } from "../../../controller/utils/contextControl";
 
 const useStyles = makeStyles(theme => {
   return {
@@ -94,13 +95,13 @@ export function AlertGroup({
   setPeriodOnFocus,
   setTab,
   readOnlyAlerts,
-  controlData,
   displayBusinessType = false,
   titleProps = {}
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
   const { isReportingInfractions } = useInfractions();
+  const { controlType } = useControl();
 
   const isSanctionReportable = readOnlyAlerts ? true : isReportable(sanction);
 
@@ -110,7 +111,7 @@ export function AlertGroup({
   );
 
   const alertsNumber = getAlertsNumber(
-    controlData.controlType,
+    controlType,
     alerts,
     isSanctionReportable,
     isReportingInfractions,
@@ -164,8 +165,8 @@ export function AlertGroup({
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
         {/* TODO refactor: extract in another component */}
-        {(controlData.controlType === CONTROL_TYPES.MOBILIC.label ||
-          controlData.controlType === CONTROL_TYPES.NO_LIC.label) &&
+        {(controlType === CONTROL_TYPES.MOBILIC.label ||
+          controlType === CONTROL_TYPES.NO_LIC.label) &&
           Object.entries(alertsGroupedByBusinessTypes).map(
             ([businessId, alertsByBusiness]) => {
               const firstAlert = alertsByBusiness[0];
@@ -198,23 +199,15 @@ export function AlertGroup({
               );
             }
           )}
-        {controlData.controlType === CONTROL_TYPES.LIC_PAPIER.label && (
+        {controlType === CONTROL_TYPES.LIC_PAPIER.label && (
           <>
             <Description>{alerts[0].description}</Description>
             {alerts[0].unit === PERIOD_UNITS.DAY && (
-              <InfractionDay
-                alerts={alerts}
-                sanction={sanction}
-                controlData={controlData}
-              />
+              <InfractionDay alerts={alerts} sanction={sanction} />
             )}
             {alerts[0].unit === PERIOD_UNITS.WEEK && (
               <>
-                <InfractionWeek
-                  alerts={alerts}
-                  sanction={sanction}
-                  controlData={controlData}
-                />
+                <InfractionWeek alerts={alerts} sanction={sanction} />
               </>
             )}
           </>
