@@ -7,16 +7,36 @@ import ListItem from "@mui/material/ListItem";
 import { AlertGroup } from "../../../control/components/Alerts/AlertGroup";
 import { Input } from "../../../common/forms/Input";
 import Notice from "../../../common/Notice";
+import { useInfractions } from "../../utils/contextInfractions";
+import { sanctionComparator } from "../../../control/utils/sanctionComparator";
+import { CONTROL_TYPES } from "../../utils/useReadControlData";
+import { useControl } from "../../utils/contextControl";
 
 export function ControlBulletinFormStep3({
   handleEditControlBulletin,
   controlBulletin,
   grecoId,
-  onUpdateGrecoId,
-  controlCanBeDownloaded,
-  groupedAlerts,
-  onUpdateInfraction
+  onUpdateGrecoId
 }) {
+  const { groupedAlerts, setIsReportingInfractions } = useInfractions();
+  const { controlData, canDownloadBDC } = useControl();
+
+  const groupedAlertsToDisplay = React.useMemo(() => {
+    if (controlData.controlType === CONTROL_TYPES.LIC_PAPIER.label) {
+      return (
+        groupedAlerts.filter(
+          group => group.alerts.filter(alert => alert.checked).length > 0
+        ) || []
+      );
+    } else {
+      return groupedAlerts;
+    }
+  }, [controlData, groupedAlerts]);
+
+  React.useEffect(() => {
+    setIsReportingInfractions(true);
+  }, []);
+
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
       <Input
@@ -28,22 +48,13 @@ export function ControlBulletinFormStep3({
         label="Votre identifiant de carte contrôleur"
       />
       <Typography variant="h5">Infractions retenues</Typography>
-      {groupedAlerts?.length > 0 ? (
+      {groupedAlertsToDisplay?.length > 0 ? (
         <List>
-          {groupedAlerts
-            .sort((alert1, alert2) =>
-              alert1.sanction.localeCompare(alert2.sanction)
-            )
-            .map(group => (
-              <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
-                <AlertGroup
-                  {...group}
-                  isReportingInfractions={true}
-                  onUpdateInfraction={onUpdateInfraction}
-                  readOnlyAlerts={false}
-                />
-              </ListItem>
-            ))}
+          {groupedAlertsToDisplay.sort(sanctionComparator).map(group => (
+            <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
+              <AlertGroup {...group} readOnlyAlerts={false} />
+            </ListItem>
+          ))}
         </List>
       ) : (
         <Typography>
@@ -59,7 +70,7 @@ export function ControlBulletinFormStep3({
         label="Observations"
         textArea
       />
-      {!controlCanBeDownloaded && (
+      {!canDownloadBDC && (
         <Notice
           type="warning"
           description="Certains champs obligatoires doivent être renseignés pour permettre le

@@ -20,11 +20,12 @@ import {
 } from "common/store/store";
 import { syncControllerUser } from "../../utils/loadControllerUserData";
 import {
-  canDownloadBDC,
   checkRequiredFieldStep1,
   checkRequiredFieldStep2
 } from "../../utils/controlBulletin";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
+import { useInfractions } from "../../utils/contextInfractions";
+import { useControl } from "../../utils/contextControl";
 
 const STEPS = {
   1: {
@@ -44,13 +45,10 @@ const STEPS = {
 };
 
 export function ControllerControlBulletin({
-  controlData,
   onClose,
   setMustConfirmBeforeClosing,
   onSaveControlBulletin,
-  groupedAlerts,
-  saveInfractions,
-  onUpdateInfraction
+  saveInfractions
 }) {
   const store = useStoreSyncedWithLocalStorage();
   const controllerUserInfo = store.controllerInfo();
@@ -64,10 +62,8 @@ export function ControllerControlBulletin({
     controllerUserInfo.grecoId || ""
   );
   const [showErrors, setShowErrors] = React.useState(false);
-
-  const controlCanBeDownloaded = React.useMemo(() => {
-    return canDownloadBDC(controlData);
-  }, [controlData]);
+  const { setIsReportingInfractions } = useInfractions();
+  const { controlData } = useControl();
 
   const onUpdateGrecoId = newGrecoId => {
     setGrecoId(newGrecoId);
@@ -128,6 +124,7 @@ export function ControllerControlBulletin({
         alerts.success(STEPS[step].successMessage, "", 3000);
       }
       if (!STEPS[step + 1]) {
+        setIsReportingInfractions(false);
         onClose(true);
       } else {
         setStep(step + 1);
@@ -243,12 +240,6 @@ export function ControllerControlBulletin({
           controlBulletin={controlBulletin}
           grecoId={grecoId}
           onUpdateGrecoId={onUpdateGrecoId}
-          controlCanBeDownloaded={controlCanBeDownloaded}
-          onUpdateInfraction={(...args) => {
-            setFieldUpdated(true);
-            onUpdateInfraction(...args);
-          }}
-          groupedAlerts={groupedAlerts}
         />
       )}
       <ButtonsGroup

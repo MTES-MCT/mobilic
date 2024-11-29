@@ -9,7 +9,6 @@ import Container from "@mui/material/Container";
 import { ControllerControlBottomMenu } from "../../controller/components/menu/ControllerControlBottomMenu";
 import { currentControllerId } from "common/utils/cookie";
 import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
-import { canDownloadBDC } from "../../controller/utils/controlBulletin";
 import Box from "@mui/material/Box";
 import Notice from "../../common/Notice";
 
@@ -147,8 +146,6 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
           updatedInfractions={!!props.reportedInfractionsLastUpdateTime}
           editBDC={props.openBulletinControl}
           downloadBDC={downloadBDC}
-          canDownloadBDC={canDownloadBDC(props.controlData)}
-          bdcAlreadyExisting={!!props.controlData.controlBulletinCreationTime}
           totalAlertsNumber={props.totalAlertsNumber}
         />
       )}

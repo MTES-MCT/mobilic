@@ -10,11 +10,13 @@ import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useModals } from "common/utils/modals";
+import { useControl } from "../../utils/contextControl";
 
-export function ControllerControlExportMenu({ controlId, canDownloadXml }) {
+export function ControllerControlExportMenu() {
   const api = useApi();
   const modals = useModals();
   const alerts = useSnackbarAlerts();
+  const { controlId, canDownloadBDC } = useControl();
   const [exportMenuAnchorEl, setExportMenuAnchorEl] = React.useState(null);
 
   const isOpen = React.useMemo(() => !!exportMenuAnchorEl, [
@@ -75,7 +77,7 @@ export function ControllerControlExportMenu({ controlId, canDownloadXml }) {
           <Typography>Export Excel</Typography>
         </MenuItem>
         <MenuItem
-          disabled={!canDownloadXml}
+          disabled={!canDownloadBDC}
           onClick={async () => {
             setExportMenuAnchorEl(null);
             alerts.withApiErrorHandling(async () => {

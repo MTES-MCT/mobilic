@@ -15,6 +15,11 @@ import { FieldTitle } from "../../common/typography/FieldTitle";
 import { DisplayBusinessTypes } from "./Alerts/BusinessTypesFromGroupedAlerts";
 import { getBusinessTypesFromGroupedAlerts } from "../utils/businessTypesFromGroupedAlerts";
 import { Description } from "../../common/typography/Description";
+import { CONTROL_TYPES } from "../../controller/utils/useReadControlData";
+import { useInfractions } from "../../controller/utils/contextInfractions";
+import { sanctionComparator } from "../utils/sanctionComparator";
+import { useControl } from "../../controller/utils/contextControl";
+
 const useStyles = makeStyles(theme => ({
   container: {
     paddingBottom: theme.spacing(4),
@@ -54,34 +59,41 @@ export const WarningComputedAlerts = () => (
 
 export function UserReadAlerts({
   setTab,
-  groupedAlerts,
-  totalAlertsNumber,
   setPeriodOnFocus,
-  isReportingInfractions,
-  saveInfractions,
-  cancelInfractions,
-  onUpdateInfraction,
-  reportedInfractionsLastUpdateTime,
   readOnlyAlerts,
-  noLic
+  groupedAlerts = undefined
 }) {
   const classes = useStyles();
+  const {
+    groupedAlerts: infractionsGroupedAlerts,
+    isReportingInfractions,
+    totalAlertsNumber,
+    reportedInfractionsLastUpdateTime,
+    saveInfractions,
+    cancelInfractions
+  } = useInfractions();
+  const { controlType } = useControl();
 
+  const _groupedAlerts = groupedAlerts ?? infractionsGroupedAlerts;
   const businessTypes = React.useMemo(
-    () => getBusinessTypesFromGroupedAlerts(groupedAlerts),
-    [groupedAlerts]
+    () => getBusinessTypesFromGroupedAlerts(_groupedAlerts),
+    [_groupedAlerts]
   );
 
   return (
     <Container maxWidth="md" sx={{ padding: 0 }}>
-      {!noLic && <DisplayBusinessTypes businessTypes={businessTypes} />}
+      {controlType === CONTROL_TYPES.MOBILIC.label && (
+        <DisplayBusinessTypes businessTypes={businessTypes} />
+      )}
       <Container className={classes.container}>
         <Stack direction="column" rowGap={1}>
           {isReportingInfractions && (
             <Typography>
               {totalAlertsNumber === 1
                 ? HELPER_TEXT_SINGLE_INFRACTION
-                : HELPER_TEXT_SEVERAL_INFRACTIONS}
+                : HELPER_TEXT_SEVERAL_INFRACTIONS
+              // TODO 835 update sentence
+              }
             </Typography>
           )}
           {!isReportingInfractions && (
@@ -96,7 +108,7 @@ export function UserReadAlerts({
               )}`}
             </Description>
           )}
-          {!noLic && (
+          {controlType === CONTROL_TYPES.MOBILIC.label && (
             <>
               <FieldTitle uppercaseTitle component="h2" sx={{ marginTop: 2 }}>
                 Infractions calculées par Mobilic
@@ -104,31 +116,25 @@ export function UserReadAlerts({
               <WarningComputedAlerts />
             </>
           )}
-          {groupedAlerts?.length > 0 ? (
+          {_groupedAlerts?.length > 0 ? (
             <List>
-              {groupedAlerts
-                .sort((alert1, alert2) =>
-                  alert1.sanction.localeCompare(alert2.sanction)
-                )
-                .map(group => (
-                  <ListItem
-                    key={`${group.type}_${group.sanction}`}
-                    disableGutters
-                  >
-                    <AlertGroup
-                      {...group}
-                      setPeriodOnFocus={setPeriodOnFocus}
-                      setTab={setTab}
-                      isReportingInfractions={isReportingInfractions}
-                      onUpdateInfraction={onUpdateInfraction}
-                      readOnlyAlerts={readOnlyAlerts}
-                      titleProps={{ component: "h3" }}
-                      displayBusinessType={
-                        businessTypes && businessTypes.length > 1
-                      }
-                    />
-                  </ListItem>
-                ))}
+              {_groupedAlerts.sort(sanctionComparator).map(group => (
+                <ListItem
+                  key={`${group.type}_${group.sanction}`}
+                  disableGutters
+                >
+                  <AlertGroup
+                    {...group}
+                    setPeriodOnFocus={setPeriodOnFocus}
+                    setTab={setTab}
+                    readOnlyAlerts={readOnlyAlerts}
+                    titleProps={{ component: "h3" }}
+                    displayBusinessType={
+                      businessTypes && businessTypes.length > 1
+                    }
+                  />
+                </ListItem>
+              ))}
             </List>
           ) : (
             <Typography className={classes.italicInfo}>
@@ -152,7 +158,7 @@ export function UserReadAlerts({
                 </Button>
               </Stack>
             ) : (
-              !noLic && (
+              controlType === CONTROL_TYPES.MOBILIC.label && (
                 <Notice
                   type="warning"
                   description={

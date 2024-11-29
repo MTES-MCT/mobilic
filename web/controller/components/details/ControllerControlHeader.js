@@ -7,6 +7,7 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import { ControllerControlExportMenu } from "./ControllerControlExportMenu";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { useControl } from "../../utils/contextControl";
 
 const useStyles = makeStyles(theme => ({
   desktopHeaderContainer: {
@@ -39,13 +40,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ControllerControlHeader({
-  controlId,
   controlDate,
   onCloseDrawer,
-  canDownloadXml,
   enableExport = true
 }) {
   const classes = useStyles();
+  const { controlId } = useControl();
   const isOnDesktop = useIsWidthUp("md");
   return isOnDesktop ? (
     <Container className={classes.desktopHeaderContainer}>
@@ -67,12 +67,7 @@ export function ControllerControlHeader({
         <Typography>
           Date et heure du contrôle : <b>{prettyFormatDayHour(controlDate)}</b>
         </Typography>
-        {enableExport && (
-          <ControllerControlExportMenu
-            controlId={controlId}
-            canDownloadXml={canDownloadXml}
-          />
-        )}
+        {enableExport && <ControllerControlExportMenu />}
       </Box>
     </Container>
   ) : (
@@ -87,12 +82,7 @@ export function ControllerControlHeader({
         >
           Fermer
         </Button>
-        {enableExport && (
-          <ControllerControlExportMenu
-            controlId={controlId}
-            canDownloadXml={canDownloadXml}
-          />
-        )}
+        {enableExport && <ControllerControlExportMenu />}
       </Box>
     </Container>
   );

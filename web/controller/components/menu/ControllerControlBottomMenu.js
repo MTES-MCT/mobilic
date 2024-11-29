@@ -2,6 +2,8 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { Box } from "@mui/material";
+import { useInfractions } from "../../utils/contextInfractions";
+import { useControl } from "../../utils/contextControl";
 
 const useStyles = makeStyles(theme => ({
   textButton: {
@@ -14,18 +16,17 @@ export function ControllerControlBottomMenu({
   updatedInfractions,
   disabledReportInfractions,
   editBDC,
-  downloadBDC,
-  canDownloadBDC,
-  bdcAlreadyExisting,
-  totalAlertsNumber
+  downloadBDC
 }) {
   const classes = useStyles();
+  const { totalAlertsNumber } = useInfractions();
+  const { canDownloadBDC, bdcAlreadyExists } = useControl();
 
   return (
     <Box padding={2}>
       <ButtonsGroup
         buttons={[
-          bdcAlreadyExisting
+          bdcAlreadyExists
             ? {
                 children: "Télécharger le bulletin de contrôle",
                 onClick: downloadBDC,
@@ -56,7 +57,7 @@ export function ControllerControlBottomMenu({
                 }
               ]
             : []),
-          ...(bdcAlreadyExisting
+          ...(bdcAlreadyExists
             ? [
                 {
                   children: "Modifier le bulletin de contrôle",

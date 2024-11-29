@@ -9,6 +9,7 @@ import { formatApiError } from "common/utils/errors";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { useControl } from "../../utils/contextControl";
 
 const useStyles = makeStyles(() => ({
   addNoteButton: {
@@ -19,17 +20,18 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-export function ControllerControlNote({ controlData }) {
+export function ControllerControlNote() {
   const classes = useStyles();
   const [isEditing, setIsEditing] = React.useState(false);
-  const [note, setNote] = React.useState(controlData.note);
+  const { controlData } = useControl();
+  const [note, setNote] = React.useState(controlData.note || "");
 
   const alerts = useSnackbarAlerts();
   const api = useApi();
 
   React.useEffect(() => {
     if (controlData) {
-      setNote(controlData.note);
+      setNote(controlData.note || "");
     }
   }, [controlData]);
 

@@ -50,9 +50,11 @@ export const useReportInfractions = controlData => {
             controlId: controlData?.id,
             reportedInfractions: observedInfractions
               .filter(infraction => infraction.isReported)
-              .map(({ date, sanction }) => ({
+              .map(({ date, sanction, unit, type }) => ({
                 date,
-                sanction
+                sanction,
+                unit,
+                type
               }))
           },
           { context: { nonPublicApi: true } }
@@ -118,6 +120,63 @@ export const useReportInfractions = controlData => {
     setHasModifiedInfractions(true);
   };
 
+  const onAddInfraction = (sanction, date) => {
+    let hasInsertedNewOne = false;
+    setObservedInfractions(currentObservedInfractions =>
+      currentObservedInfractions.flatMap(infraction => {
+        if (infraction.sanction !== sanction) {
+          return [infraction];
+        }
+        if (!infraction.date) {
+          return [{ ...infraction, date, isReported: true }];
+        }
+        if (!hasInsertedNewOne) {
+          hasInsertedNewOne = true;
+          return [
+            infraction,
+            {
+              ...infraction,
+              date,
+              isReported: true
+            }
+          ];
+        } else {
+          return [infraction];
+        }
+      })
+    );
+    setHasModifiedInfractions(true);
+  };
+
+  const onRemoveInfraction = (sanction, date) => {
+    const isOnlyOne =
+      observedInfractions.filter(infraction => infraction.sanction === sanction)
+        .length === 1;
+    setObservedInfractions(currentObservedInfractions =>
+      currentObservedInfractions.flatMap(infraction => {
+        if (infraction.sanction !== sanction) {
+          return [infraction];
+        }
+        if (isOnlyOne) {
+          return [
+            {
+              ...infraction,
+              date: null,
+              isReported: false
+            }
+          ];
+        } else {
+          if (infraction.date === date) {
+            return [];
+          } else {
+            return [infraction];
+          }
+        }
+      })
+    );
+    setHasModifiedInfractions(true);
+  };
+
   const checkedAlertsNumber = React.useMemo(
     () =>
       groupedAlerts
@@ -143,7 +202,7 @@ export const useReportInfractions = controlData => {
     [groupedAlerts]
   );
 
-  return [
+  return {
     reportedInfractionsLastUpdateTime,
     groupedAlerts,
     checkedAlertsNumber,
@@ -153,6 +212,8 @@ export const useReportInfractions = controlData => {
     hasModifiedInfractions,
     saveInfractions,
     cancelInfractions,
-    onUpdateInfraction
-  ];
+    onUpdateInfraction,
+    onAddInfraction,
+    onRemoveInfraction
+  };
 };

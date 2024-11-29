@@ -4,6 +4,7 @@ import { makeStyles } from "@mui/styles";
 import { ControllerControlBulletin } from "./ControllerControlBulletin";
 import Box from "@mui/material/Box";
 import { useModals } from "common/utils/modals";
+import { useInfractions } from "../../utils/contextInfractions";
 
 const useStyles = makeStyles(theme => ({
   missionDrawer: {
@@ -15,14 +16,10 @@ const useStyles = makeStyles(theme => ({
 export function ControlBulletinDrawer({
   isOpen,
   onClose,
-  controlData,
-  onSaveControlBulletin,
-  groupedAlerts,
-  saveInfractions,
-  onUpdateInfraction,
-  cancelInfractions
+  onSaveControlBulletin
 }) {
   const classes = useStyles();
+  const { cancelInfractions, saveInfractions } = useInfractions();
   const [mustConfirmBeforeClosing, setMustConfirmBeforeClosing] = useState(
     false
   );
@@ -62,12 +59,9 @@ export function ControlBulletinDrawer({
       <Box m={2}>
         <ControllerControlBulletin
           onClose={closeDrawer}
-          controlData={controlData}
           setMustConfirmBeforeClosing={setMustConfirmBeforeClosing}
           onSaveControlBulletin={onSaveControlBulletin}
-          groupedAlerts={groupedAlerts}
           saveInfractions={() => saveInfractions({ showSuccessMessage: false })}
-          onUpdateInfraction={onUpdateInfraction}
         />
       </Box>
     </SwipeableDrawer>
