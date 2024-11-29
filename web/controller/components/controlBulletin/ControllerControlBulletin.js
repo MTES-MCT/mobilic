@@ -53,7 +53,6 @@ export function ControllerControlBulletin({
 }) {
   const store = useStoreSyncedWithLocalStorage();
   const controllerUserInfo = store.controllerInfo();
-  const { onUpdateInfraction } = useInfractions();
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
@@ -64,6 +63,7 @@ export function ControllerControlBulletin({
     controllerUserInfo.grecoId || ""
   );
   const [showErrors, setShowErrors] = React.useState(false);
+  const { setIsReportingInfractions } = useInfractions();
 
   const controlCanBeDownloaded = React.useMemo(() => {
     return canDownloadBDC(controlData);
@@ -128,6 +128,7 @@ export function ControllerControlBulletin({
         alerts.success(STEPS[step].successMessage, "", 3000);
       }
       if (!STEPS[step + 1]) {
+        setIsReportingInfractions(false);
         onClose(true);
       } else {
         setStep(step + 1);
@@ -245,10 +246,6 @@ export function ControllerControlBulletin({
           grecoId={grecoId}
           onUpdateGrecoId={onUpdateGrecoId}
           controlCanBeDownloaded={controlCanBeDownloaded}
-          onUpdateInfraction={(...args) => {
-            setFieldUpdated(true);
-            onUpdateInfraction(...args);
-          }}
         />
       )}
       <ButtonsGroup

@@ -17,10 +17,9 @@ export function ControlBulletinFormStep3({
   controlBulletin,
   grecoId,
   onUpdateGrecoId,
-  controlCanBeDownloaded,
-  onUpdateInfraction
+  controlCanBeDownloaded
 }) {
-  const { groupedAlerts } = useInfractions();
+  const { groupedAlerts, setIsReportingInfractions } = useInfractions();
 
   const groupedAlertsToDisplay = React.useMemo(() => {
     if (controlData.controlType === CONTROL_TYPES.LIC_PAPIER.label) {
@@ -33,6 +32,10 @@ export function ControlBulletinFormStep3({
       return groupedAlerts;
     }
   }, [controlData, groupedAlerts]);
+
+  React.useEffect(() => {
+    setIsReportingInfractions(true);
+  }, []);
 
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
@@ -52,7 +55,6 @@ export function ControlBulletinFormStep3({
               <AlertGroup
                 {...group}
                 controlData={controlData}
-                onUpdateInfraction={onUpdateInfraction}
                 readOnlyAlerts={false}
               />
             </ListItem>
