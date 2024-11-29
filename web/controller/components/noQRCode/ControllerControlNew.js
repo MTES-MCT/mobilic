@@ -3,11 +3,12 @@ import { Link } from "react-router-dom";
 import classNames from "classnames";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import { ControllerControlNoLicPreliminaryForm } from "./ControllerControlNoLicPreliminaryForm";
-import { CONTROL_TYPES } from "../../utils/useReadControlData";
+import Typography from "@mui/material/Typography";
+import { ControllerControlPreliminaryForm } from "./ControllerControlPreliminaryForm";
 import { ControlDrawer } from "../../utils/ControlDrawer";
 
-export function ControllerControlNewNoLic({
+export function ControllerControlNew({
+  type,
   isOpen,
   onClose,
   setControlOnFocus
@@ -16,7 +17,9 @@ export function ControllerControlNewNoLic({
     onClose();
     setControlOnFocus({
       id,
-      type: CONTROL_TYPES.NO_LIC
+      type: type.label
+      // Using label here because this is what is returned by API
+      // on infraction display/edition and on BDC step 3 edition
     });
   };
   return (
@@ -35,7 +38,14 @@ export function ControllerControlNewNoLic({
             Fermer
           </Link>
         </Box>
-        <ControllerControlNoLicPreliminaryForm
+        <Typography variant="h4" component="h1" sx={{ marginY: 2 }}>
+          Nouveau contrôle “{type.label}”
+        </Typography>
+        <p>
+          Veuillez renseigner ces informations afin de créer le contrôle&nbsp;:
+        </p>
+        <ControllerControlPreliminaryForm
+          type={type}
           onSubmit={onControlCreated}
           onClose={onClose}
         />

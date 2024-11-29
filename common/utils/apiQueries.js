@@ -1845,6 +1845,7 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
   ${CONTROL_DATA_FRAGMENT}
   mutation controllerSaveControlBulletin(
     $controlId: Int
+    $type: String
     $userFirstName: String
     $userLastName: String
     $userBirthDate: Date
@@ -1866,9 +1867,12 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
     $licenseCopyNumber: String
     $isVehicleImmobilized: Boolean
     $observation: String
+    $businessType: String
+    $isDayPageFilled: Boolean
   ) {
     controllerSaveControlBulletin(
       controlId: $controlId
+      type: $type
       userFirstName: $userFirstName
       userLastName: $userLastName
       userNationality: $userNationality
@@ -1890,6 +1894,8 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
       licenseCopyNumber: $licenseCopyNumber
       isVehicleImmobilized: $isVehicleImmobilized
       observation: $observation
+      businessType: $businessType
+      isDayPageFilled: $isDayPageFilled
     ) {
       ...ControlData
       controlBulletin {

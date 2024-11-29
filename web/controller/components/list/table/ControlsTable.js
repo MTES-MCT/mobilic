@@ -1,6 +1,5 @@
 import React from "react";
 import { useIsWidthUp } from "common/utils/useWidth";
-import { CONTROL_TYPES } from "../../../utils/useReadControlData";
 
 const ControlsTable = ({ entries, onRowClick, period = "day" }) => {
   const columns = React.useMemo(
@@ -40,14 +39,7 @@ const ControlsTable = ({ entries, onRowClick, period = "day" }) => {
             <tr
               style={{ cursor: "pointer" }}
               key={`table_row__${entry.id}`}
-              onClick={() =>
-                onRowClick(
-                  entry.id,
-                  entry.type === "Mobilic"
-                    ? CONTROL_TYPES.MOBILIC
-                    : CONTROL_TYPES.NO_LIC
-                )
-              }
+              onClick={() => onRowClick(entry.id, entry.type)}
             >
               {columns.map((column, idxColumn) => {
                 return (

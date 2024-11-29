@@ -1,5 +1,6 @@
 import React from "react";
 import { History } from "../../pwa/screens/History";
+import { useControl } from "../../controller/utils/contextControl";
 
 export function UserReadHistory({
   missions,
@@ -11,9 +12,9 @@ export function UserReadHistory({
   periodOnFocus,
   controlId,
   regulationComputationsByDay,
-  controlData,
   groupedAlerts
 }) {
+  const { controlData } = useControl() ?? {};
   return (
     <History
       key={1}

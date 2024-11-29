@@ -5,6 +5,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { AlertCard } from "./Alerts/AlertGroup";
 import { WarningComputedAlerts } from "./UserReadAlerts";
+import { sanctionComparator } from "../utils/sanctionComparator";
 
 export function AlertsInHistory({ alertsInPeriod }) {
   return (
@@ -15,15 +16,11 @@ export function AlertsInHistory({ alertsInPeriod }) {
       >
         <WarningComputedAlerts />
         <List>
-          {alertsInPeriod
-            .sort((alert1, alert2) =>
-              alert1.sanction.localeCompare(alert2.sanction)
-            )
-            .map(alert => (
-              <ListItem key={`alert__${alert.type}`} sx={{ paddingX: 0 }}>
-                <AlertCard alert={alert} />
-              </ListItem>
-            ))}
+          {alertsInPeriod.sort(sanctionComparator).map(alert => (
+            <ListItem key={`alert__${alert.type}`} sx={{ paddingX: 0 }}>
+              <AlertCard alert={alert} />
+            </ListItem>
+          ))}
         </List>
       </MissionReviewSection>
     </InfoCard>
