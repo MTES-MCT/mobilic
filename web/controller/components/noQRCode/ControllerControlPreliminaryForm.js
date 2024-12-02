@@ -95,7 +95,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         Veuillez renseigner ces informations afin de créer le contrôle&nbsp;:
       </Typography>
       <MandatoryField />
-      <form style={{ marginTop: "16px" }}>
+      <div style={{ marginTop: "16px" }}>
         <Input
           nativeInputProps={{
             value: userLastName,
@@ -219,7 +219,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
           inlineLayoutWhen="sm and up"
           alignment="right"
         />
-      </form>
+      </div>
     </Stack>
   );
 }
