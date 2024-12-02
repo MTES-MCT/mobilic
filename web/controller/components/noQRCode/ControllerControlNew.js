@@ -1,6 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import classNames from "classnames";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -26,17 +25,15 @@ export function ControllerControlNew({
     <ControlDrawer isOpen={isOpen} onClose={onClose}>
       <Container>
         <Box marginBottom={2}>
-          <Link
-            to="#"
-            className={classNames(
-              "fr-link",
-              "fr-fi-arrow-left-line",
-              "fr-link--icon-left"
-            )}
+          <Button
             onClick={onClose}
+            priority="tertiary no outline"
+            iconId="fr-icon-arrow-left-s-line"
+            iconPosition="left"
+            style={{ textDecoration: "underline" }}
           >
             Fermer
-          </Link>
+          </Button>
         </Box>
         <Typography variant="h4" component="h1" sx={{ marginY: 2 }}>
           Nouveau contrôle “{type.label}”

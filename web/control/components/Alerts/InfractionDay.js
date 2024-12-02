@@ -11,6 +11,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import Stack from "@mui/material/Stack";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
 import { useControl } from "../../../controller/utils/contextControl";
+import { capitalizeFirstLetter } from "common/utils/string";
 
 const gregorian_fr = {
   name: "gregorian_fr",
@@ -138,11 +139,13 @@ export const InfractionDay = ({ alerts, sanction }) => {
                 nativeButtonProps={{
                   ...(isReportingInfractions && {
                     onClick: () => onRemoveDate(ts),
-                    "aria-label": `Retirer ${textualPrettyFormatDay(ts, true)}`
+                    "aria-label": `Retirer ${capitalizeFirstLetter(
+                      textualPrettyFormatDay(ts, true)
+                    )}`
                   })
                 }}
               >
-                {textualPrettyFormatDay(ts, true)}
+                {capitalizeFirstLetter(textualPrettyFormatDay(ts, true))}
               </Tag>
             </li>
           ))}
