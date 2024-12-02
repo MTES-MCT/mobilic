@@ -10,12 +10,10 @@ import {
 import { LoadingButton } from "common/components/LoadingButton";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
-import Container from "@mui/material/Container";
 import React from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
-import Box from "@mui/material/Box";
 import { Link } from "../../common/LinkButton";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -26,13 +24,12 @@ import { currentControllerId } from "common/utils/cookie";
 import { ControllerControlNote } from "../../controller/components/details/ControllerControlNote";
 import Notice from "../../common/Notice";
 import { useControl } from "../../controller/utils/contextControl";
+import { FieldTitle } from "../../common/typography/FieldTitle";
+import { Stack } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   container: {
     paddingBottom: theme.spacing(4)
-  },
-  sectionBody: {
-    marginBottom: theme.spacing(6)
   },
   linkButtons: {
     marginTop: theme.spacing(2)
@@ -48,6 +45,9 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 500,
     fontSize: "1rem",
     whiteSpace: "inherit"
+  },
+  bigFieldName: {
+    fontSize: "2rem"
   }
 }));
 
@@ -79,49 +79,21 @@ export function UserReadInfo({
   const classes = useStyles();
 
   return (
-    <Container
-      maxWidth="md"
-      className={classes.container}
-      sx={{ paddingTop: 3 }}
-    >
-      <Grid container spacing={2} className={classes.sectionBody}>
-        {controlData && (
-          <Grid item xs={12} mb={2}>
-            <ControllerControlNote />
-          </Grid>
-        )}
-        <Grid item md={6}>
-          <Typography variant="h5" component="h2">
-            Informations salarié(e)
+    <Stack direction="column" p={3} rowGap={4}>
+      <div>
+        <FieldTitle component="h6" className="bigFieldName">
+          Salarié(e)
+        </FieldTitle>
+        <Typography variant="h4" component="p">
+          {userName}
+        </Typography>
+      </div>
+      {!!currentControllerId() && companyName && (
+        <Stack direction="column">
+          <Typography variant="h6" component="h2">
+            Mission lors du contrôle
           </Typography>
-          <Grid
-            container
-            wrap="wrap"
-            spacing={2}
-            className={classes.subSectionBody}
-          >
-            <Grid item>
-              <InfoItem
-                name="Nom"
-                value={userName}
-                titleProps={{
-                  component: "h3"
-                }}
-              />
-            </Grid>
-          </Grid>
-          {!companyName && !!currentControllerId() && (
-            <Notice
-              type="warning"
-              description="Aucune saisie en cours au moment du contrôle"
-            />
-          )}
-        </Grid>
-        {companyName && (
-          <Grid item md={6}>
-            <Typography variant="h5" component="h2">
-              Mission lors du contrôle
-            </Typography>
+          <Grid container spacing={2}>
             <List dense>
               <ListItem disableGutters>
                 <ListItemIcon>
@@ -141,84 +113,69 @@ export function UserReadInfo({
               </ListItem>
             </List>
           </Grid>
-        )}
-      </Grid>
-      <Typography
-        variant="h5"
-        component="h2"
-        className={classes.subSectionBody}
-      >
-        Entreprise(s) de rattachement
-      </Typography>
-      <Grid container spacing={2} direction="column">
-        {employments.map(e => (
-          <Grid item key={e.id}>
-            <EmploymentInfoCard
-              key={e.id}
-              employment={e}
-              defaultOpen={employments.length === 1}
-              hideRole
-              hideStatus
-              hideActions
-              lightenIfEnded={false}
-              headingComponent="h3"
-            />
-          </Grid>
-        ))}
-      </Grid>
-      {businesses && businesses.length > 1 && (
+        </Stack>
+      )}
+      {!companyName && (
         <Notice
           type="warning"
-          sx={{ marginTop: 2, marginBottom: 6 }}
-          description={
-            <>{`Attention, veuillez noter que ce salarié effectue des missions pour différents secteurs d’activité 
-              (${businesses.join(", ")}).`}</>
-          }
+          description="Aucune saisie en cours au moment du contrôle"
         />
       )}
-      <Typography variant="h5" component="h2">
-        Historique récent (28 jours)
-      </Typography>
-      <Grid container wrap="wrap" spacing={2}>
-        <Grid item>
-          <InfoItem
-            name="Heure du contrôle"
-            value={formatDateTime(controlTime || tokenInfo.creationTime, true)}
-            titleProps={{
-              component: "h3"
-            }}
-          />
+      <div>
+        <Typography
+          variant="h6"
+          component="h2"
+          className={classes.subSectionBody}
+        >
+          Entreprise(s) de rattachement
+        </Typography>
+        <Grid container spacing={2} direction="column">
+          {employments.map(e => (
+            <Grid item key={e.id}>
+              <EmploymentInfoCard
+                key={e.id}
+                employment={e}
+                hideRole
+                hideStatus
+                hideActions
+                lightenIfEnded={false}
+                headingComponent="h3"
+              />
+            </Grid>
+          ))}
         </Grid>
-        <Grid item>
-          <InfoItem
-            name="Début de l'historique"
-            value={frenchFormatDateStringOrTimeStamp(tokenInfo.historyStartDay)}
-            titleProps={{
-              component: "h3"
-            }}
+        {businesses && businesses.length > 1 && (
+          <Notice
+            type="warning"
+            sx={{ marginTop: 2, marginBottom: 6 }}
+            description={
+              <>{`Attention, veuillez noter que ce salarié effectue des missions pour différents secteurs d’activité 
+              (${businesses.join(", ")}).`}</>
+            }
           />
-        </Grid>
-        <Grid item>
-          <InfoItem
-            name="Fin de l'historique"
-            value={frenchFormatDateStringOrTimeStamp(tokenInfo.creationDay)}
-            titleProps={{
-              component: "h3"
-            }}
-          />
-        </Grid>
-      </Grid>
-      <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        spacing={6}
-        className={classes.linkButtons}
-      >
-        <Grid item xs={6} style={{ textAlign: "center" }}>
-          <Typography>
-            Nombre de journées enregistrées : {workingDaysNumber}
-          </Typography>
+        )}
+      </div>
+      <div>
+        <Typography variant="h6" component="h2">
+          Historique récent (28 jours)
+        </Typography>
+        <Typography>
+          {frenchFormatDateStringOrTimeStamp(tokenInfo.historyStartDay)} -{" "}
+          {frenchFormatDateStringOrTimeStamp(tokenInfo.creationDay)}
+        </Typography>
+        <InfoItem
+          name="Heure de contrôle"
+          value={formatDateTime(controlTime || tokenInfo.creationTime, true)}
+          uppercaseTitle={false}
+          titleProps={{
+            component: "h3"
+          }}
+        />
+      </div>
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack direction="column">
+          <Typography>Journées enregistrées</Typography>
+          <Typography>{workingDaysNumber}</Typography>
           <Link
             to="#"
             color="primary"
@@ -230,11 +187,10 @@ export function UserReadInfo({
           >
             Voir l'historique
           </Link>
-        </Grid>
-        <Grid item xs={6} style={{ textAlign: "center" }}>
-          <Typography>
-            Nombre d'alertes réglementaires : {alertNumber}
-          </Typography>
+        </Stack>
+        <Stack direction="column">
+          <Typography>Alertes réglementaires</Typography>
+          <Typography>{alertNumber}</Typography>
           <Link
             to="#"
             color="primary"
@@ -246,10 +202,11 @@ export function UserReadInfo({
           >
             Voir alertes
           </Link>
-        </Grid>
-      </Grid>
+        </Stack>
+      </Stack>
+      {controlData && <ControllerControlNote />}
       {allowC1BExport && (
-        <Box className={classes.exportButton}>
+        <div className={classes.exportButton}>
           <LoadingButton
             priority="secondary"
             className={classes.exportButton}
@@ -272,8 +229,8 @@ export function UserReadInfo({
           >
             Télécharger C1B
           </LoadingButton>
-        </Box>
+        </div>
       )}
-    </Container>
+    </Stack>
   );
 }
