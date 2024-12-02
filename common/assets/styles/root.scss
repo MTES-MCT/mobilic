@@ -488,6 +488,10 @@ main {
 
 .rmdp-header-values {
   font-weight: bold;
+
+  span {
+    padding: 0; // remove space between month and year
+  }
 }
 
 .rmdp-day,
