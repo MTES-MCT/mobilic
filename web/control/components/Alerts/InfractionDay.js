@@ -12,6 +12,7 @@ import Stack from "@mui/material/Stack";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
 import { useControl } from "../../../controller/utils/contextControl";
 import { capitalizeFirstLetter } from "common/utils/string";
+import "./InfractionDay.css";
 
 const gregorian_fr = {
   name: "gregorian_fr",
