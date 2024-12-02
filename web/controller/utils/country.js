@@ -1,5 +1,6 @@
 export const COUNTRIES = [
   { value: "", label: "" },
+  { value: "FRA", label: "France" },
   { value: "AFG", label: "Afghanistan" },
   { value: "ZAF", label: "Afrique du Sud" },
   { value: "ALB", label: "Albanie" },
@@ -66,7 +67,6 @@ export const COUNTRIES = [
   { value: "ETH", label: "Ethiopie" },
   { value: "FJI", label: "Fidji" },
   { value: "FIN", label: "Finlande" },
-  { value: "FRA", label: "France" },
   { value: "GAB", label: "Gabon" },
   { value: "GMB", label: "Gambie" },
   { value: "GHA", label: "Ghana" },

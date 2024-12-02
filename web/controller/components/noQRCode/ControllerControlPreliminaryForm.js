@@ -3,6 +3,7 @@ import { useLoadingScreen } from "common/utils/loading";
 import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
@@ -89,131 +90,136 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
     });
 
   return (
-    <Stack direction="column" p={2} sx={{ width: "100%" }}>
+    <Stack direction="column" sx={{ width: "100%" }}>
+      <Typography mb={1}>
+        Veuillez renseigner ces informations afin de créer le contrôle&nbsp;:
+      </Typography>
       <MandatoryField />
-      <Input
-        nativeInputProps={{
-          value: userLastName,
-          onChange: e => setUserLastName(e.target.value),
-          name: "userLastName"
-        }}
-        label="Nom du salarié"
-        required
-      />
-
-      <Input
-        nativeInputProps={{
-          value: userFirstName,
-          onChange: e => setUserFirstName(e.target.value),
-          name: "userFirstName"
-        }}
-        label="Prénom du salarié"
-        required
-      />
-
-      <BirthDate
-        label="Date de naissance du salarié"
-        userBirthDate={userBirthDate}
-        setUserBirthDate={setUserBirthDate}
-      />
-
-      <Select
-        label="Nationalité du salarié"
-        nativeSelectProps={{
-          onChange: e => setUserNationality(e.target.value),
-          value: userNationality,
-          name: "userNationality"
-        }}
-        required
-      >
-        {COUNTRIES.map(option => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </Select>
-
-      <CompanyControlData
-        siren={siren}
-        setSiren={setSiren}
-        companyName={companyName}
-        setCompanyName={setCompanyName}
-        companyAddress={companyAddress}
-        setCompanyAddress={setCompanyAddress}
-        showErrors={canSubmitForm}
-      />
-
-      <Select
-        label="Type d'activité"
-        nativeSelectProps={{
-          onChange: e => setBusinessType(e.target.value),
-          value: businessType
-        }}
-        required
-      >
-        {!businessType && (
-          <option value="" disabled>
-            Non renseigné
-          </option>
-        )}
-        {BUSINESS_TYPES.map(businessType => (
-          <option key={businessType.value} value={businessType.value}>
-            {businessType.label}
-          </option>
-        ))}
-      </Select>
-
-      <Input
-        nativeInputProps={{
-          value: vehicleRegistrationNumber,
-          onChange: e => setVehicleRegistrationNumber(e.target.value),
-          name: "vehicleRegistrationNumber"
-        }}
-        label="Immatriculation du véhicule"
-        required
-      />
-
-      {type === CONTROL_TYPES.LIC_PAPIER && (
-        <RadioButtons
-          legend="Page du jour remplie"
-          name="isDayPageFilled"
-          orientation="horizontal"
-          options={[
-            {
-              label: "Oui",
-              nativeInputProps: {
-                checked: isDayPageFilled === true,
-                onChange: () => setIsDayPageFilled(true)
-              }
-            },
-            {
-              label: "Non",
-              nativeInputProps: {
-                checked: isDayPageFilled === false,
-                onChange: () => setIsDayPageFilled(false)
-              }
-            }
-          ]}
+      <form style={{ marginTop: "16px" }}>
+        <Input
+          nativeInputProps={{
+            value: userLastName,
+            onChange: e => setUserLastName(e.target.value),
+            name: "userLastName"
+          }}
+          label="Nom du salarié"
           required
         />
-      )}
 
-      <ButtonsGroup
-        buttons={[
-          {
-            onClick: () => submitPreliminaryForm(),
-            children: "Créer le contrôle",
-            disabled: !canSubmitForm
-          },
-          {
-            children: "Annuler",
-            onClick: () => onClose(),
-            priority: "secondary"
-          }
-        ]}
-        inlineLayoutWhen="sm and up"
-        alignment="right"
-      />
+        <Input
+          nativeInputProps={{
+            value: userFirstName,
+            onChange: e => setUserFirstName(e.target.value),
+            name: "userFirstName"
+          }}
+          label="Prénom du salarié"
+          required
+        />
+
+        <BirthDate
+          label="Date de naissance du salarié"
+          userBirthDate={userBirthDate}
+          setUserBirthDate={setUserBirthDate}
+        />
+
+        <Select
+          label="Nationalité du salarié"
+          nativeSelectProps={{
+            onChange: e => setUserNationality(e.target.value),
+            value: userNationality,
+            name: "userNationality"
+          }}
+          required
+        >
+          {COUNTRIES.map(option => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+
+        <CompanyControlData
+          siren={siren}
+          setSiren={setSiren}
+          companyName={companyName}
+          setCompanyName={setCompanyName}
+          companyAddress={companyAddress}
+          setCompanyAddress={setCompanyAddress}
+          showErrors={canSubmitForm}
+        />
+
+        <Select
+          label="Type d'activité"
+          nativeSelectProps={{
+            onChange: e => setBusinessType(e.target.value),
+            value: businessType
+          }}
+          required
+        >
+          {!businessType && (
+            <option value="" disabled>
+              Non renseigné
+            </option>
+          )}
+          {BUSINESS_TYPES.map(businessType => (
+            <option key={businessType.value} value={businessType.value}>
+              {businessType.label}
+            </option>
+          ))}
+        </Select>
+
+        <Input
+          nativeInputProps={{
+            value: vehicleRegistrationNumber,
+            onChange: e => setVehicleRegistrationNumber(e.target.value),
+            name: "vehicleRegistrationNumber"
+          }}
+          label="Immatriculation du véhicule"
+          required
+        />
+
+        {type === CONTROL_TYPES.LIC_PAPIER && (
+          <RadioButtons
+            legend="Page du jour remplie"
+            name="isDayPageFilled"
+            orientation="horizontal"
+            options={[
+              {
+                label: "Oui",
+                nativeInputProps: {
+                  checked: isDayPageFilled === true,
+                  onChange: () => setIsDayPageFilled(true)
+                }
+              },
+              {
+                label: "Non",
+                nativeInputProps: {
+                  checked: isDayPageFilled === false,
+                  onChange: () => setIsDayPageFilled(false)
+                }
+              }
+            ]}
+            required
+          />
+        )}
+
+        <ButtonsGroup
+          buttons={[
+            {
+              onClick: () => submitPreliminaryForm(),
+              children: "Créer le contrôle",
+              disabled: !canSubmitForm
+            },
+            {
+              children: "Annuler",
+              onClick: () => onClose(),
+              priority: "secondary"
+            }
+          ]}
+          inlineLayoutWhen="sm and up"
+          alignment="right"
+        />
+      </form>
     </Stack>
   );
 }

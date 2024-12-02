@@ -41,9 +41,6 @@ export function ControllerControlNew({
         <Typography variant="h4" component="h1" sx={{ marginY: 2 }}>
           Nouveau contrôle “{type.label}”
         </Typography>
-        <p>
-          Veuillez renseigner ces informations afin de créer le contrôle&nbsp;:
-        </p>
         <ControllerControlPreliminaryForm
           type={type}
           onSubmit={onControlCreated}
