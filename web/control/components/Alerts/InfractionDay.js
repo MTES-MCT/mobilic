@@ -12,7 +12,7 @@ import Stack from "@mui/material/Stack";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
 import { useControl } from "../../../controller/utils/contextControl";
 import { capitalizeFirstLetter } from "common/utils/string";
-import "./InfractionDay.css";
+import classNames from "classnames";
 
 const gregorian_fr = {
   name: "gregorian_fr",
@@ -115,7 +115,7 @@ export const InfractionDay = ({ alerts, sanction }) => {
       {isReportingInfractions && (
         // Documentation: https://shahabyazdi.github.io/react-multi-date-picker/
         <Calendar
-          className={classes.calendar}
+          className={classNames(classes.calendar, "custom-calendar")}
           value={initialTimestamps}
           onChange={onSelectedDatesChange}
           multiple
