@@ -34,7 +34,18 @@ export const useReadControlData = (controlId, controlType) => {
             { controlId },
             { context: { nonPublicApi: true } }
           );
-          setControlData(apiResponse.data.controlData);
+          const controlData = apiResponse.data.controlData;
+          setControlData({
+            ...controlData,
+            observedInfractions: controlData.observedInfractions.map(
+              infraction => ({
+                ...infraction,
+                date: infraction.date
+                  ? new Date(infraction.date).getTime() / 1000
+                  : null
+              })
+            )
+          });
         });
       });
     }
