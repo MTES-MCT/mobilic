@@ -35,7 +35,7 @@ export function ControllerControlNew({
             Fermer
           </Button>
         </Box>
-        <Typography variant="h4" component="h1" sx={{ marginY: 2 }}>
+        <Typography variant="h3" component="h1" sx={{ marginY: 2 }}>
           Nouveau contrôle “{type.label}”
         </Typography>
         <ControllerControlPreliminaryForm
