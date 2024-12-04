@@ -115,7 +115,7 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
   }
 `;
 
-export const LOGIN_MUTATION_STRING = `mutation login($email: String!, $password: String!) {
+export const LOGIN_MUTATION_STRING = `mutation login($email: Email!, $password: String!) {
   auth {
     login(email: $email, password: $password) {
       accessToken
@@ -129,7 +129,7 @@ export const LOGIN_MUTATION = gql`
 `;
 export const USER_SIGNUP_MUTATION = gql`
   mutation userSignUp(
-    $email: String!
+    $email: Email!
     $password: Password!
     $firstName: String!
     $lastName: String!
@@ -163,7 +163,7 @@ export const USER_SIGNUP_MUTATION = gql`
 `;
 export const CONFIRM_FC_EMAIL_MUTATION = gql`
   mutation confirmFcEmail(
-    $email: String!
+    $email: Email!
     $password: Password
     $timezoneName: String
     $wayHeardOfMobilic: String
@@ -910,7 +910,7 @@ export const REDEEM_INVITE_QUERY = gql`
   }
 `;
 export const CHANGE_EMAIL_MUTATION = gql`
-  mutation changeEmail($email: String!) {
+  mutation changeEmail($email: Email!) {
     account {
       changeEmail(email: $email) {
         email
@@ -959,7 +959,7 @@ export const CHANGE_TIMEZONE_MUTATION = gql`
   }
 `;
 export const RESEND_ACTIVATION_EMAIL = gql`
-  mutation resendActivationEmail($email: String!) {
+  mutation resendActivationEmail($email: Email!) {
     account {
       resendActivationEmail(email: $email) {
         success
@@ -986,7 +986,7 @@ export const RESET_PASSWORD_CONNECTED_MUTATION = gql`
   }
 `;
 export const REQUEST_RESET_PASSWORD_MUTATION = gql`
-  mutation requestResetPassword($mail: String!) {
+  mutation requestResetPassword($mail: Email!) {
     account {
       requestResetPassword(mail: $mail) {
         success
@@ -1183,7 +1183,7 @@ export const CHANGE_EMPLOYEE_TEAM = gql`
 `;
 
 export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
-  mutation batchCreateWorkerEmployments($companyId: Int!, $mails: [String]!) {
+  mutation batchCreateWorkerEmployments($companyId: Int!, $mails: [Email]!) {
     employments {
       batchCreateWorkerEmployments(companyId: $companyId, mails: $mails) {
         id
@@ -1210,7 +1210,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
     $userId: Int
     $companyId: Int!
     $hasAdminRights: Boolean
-    $mail: String
+    $mail: Email
     $teamId: Int
   ) {
     employments {
