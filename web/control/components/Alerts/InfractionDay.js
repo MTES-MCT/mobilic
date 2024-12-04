@@ -129,7 +129,10 @@ export const InfractionDay = ({ alerts, sanction }) => {
           locale={gregorian_fr}
         />
       )}
-      <ul className="fr-tag-group" style={{ listStyleType: "none" }}>
+      <ul
+        className="fr-tag-group"
+        style={{ listStyleType: "none", paddingInlineStart: "none" }}
+      >
         {initialTimestamps
           .map(ts => (ts / 1000) >> 0)
           .sort()
