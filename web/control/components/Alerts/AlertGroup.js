@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
@@ -122,6 +122,12 @@ export function AlertGroup({
     () => groupBy(alerts, alert => alert.business.id),
     [alerts]
   );
+
+  useEffect(() => {
+    if (!isReportingInfractions) {
+      setOpen(false);
+    }
+  }, [isReportingInfractions]);
 
   return (
     <Accordion
