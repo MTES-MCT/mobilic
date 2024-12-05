@@ -25,6 +25,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import { currentControllerId } from "common/utils/cookie";
 import { ControllerControlNote } from "../../controller/components/details/ControllerControlNote";
 import Notice from "../../common/Notice";
+import { useControl } from "../../controller/utils/contextControl";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -61,9 +62,9 @@ export function UserReadInfo({
   allowC1BExport = true,
   companyName,
   vehicleRegistrationNumber,
-  controlData,
   businesses
 }) {
+  const { controlData } = useControl() ?? {};
   const [userName, setUserName] = React.useState("");
   React.useEffect(() => {
     if (userInfo) {
@@ -86,7 +87,7 @@ export function UserReadInfo({
       <Grid container spacing={2} className={classes.sectionBody}>
         {controlData && (
           <Grid item xs={12} mb={2}>
-            <ControllerControlNote controlData={controlData} />
+            <ControllerControlNote />
           </Grid>
         )}
         <Grid item md={6}>
@@ -175,7 +176,7 @@ export function UserReadInfo({
           }
         />
       )}
-      <Typography variant="h5" component="h2">
+      <Typography variant="h5" component="h2" mt={4}>
         Historique récent (28 jours)
       </Typography>
       <Grid container wrap="wrap" spacing={2}>

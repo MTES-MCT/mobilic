@@ -14,6 +14,7 @@ import { Link } from "../../common/LinkButton";
 import { ALERT_TYPES } from "common/utils/regulation/alertTypes";
 import Stack from "@mui/material/Stack";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
+import { useInfractions } from "../../controller/utils/contextInfractions";
 
 const formatDate = timestamp => {
   const date = new Date(timestamp);
@@ -163,10 +164,9 @@ export function RegulatoryAlert({
   isReportable,
   setPeriodOnFocus,
   setTab,
-  isReportingInfractions,
-  onUpdateInfraction,
   readOnlyAlerts
 }) {
+  const { isReportingInfractions, onUpdateInfraction } = useInfractions();
   return (
     <Stack direction="row" spacing={2} alignItems="baseline" flexWrap="nowrap">
       {!readOnlyAlerts && isReportable && (

@@ -361,3 +361,6 @@ export function isDateBeforeNbDays(dateToTest, nbDays) {
 
 export const isMoreOrLessTheSameDay = (time1, time2) =>
   Math.abs(time1 - time2) < HOUR * 3;
+
+export const strToUnixTimestamp = dateStr =>
+  jsToUnixTimestamp(startOfDayAsDate(new Date(dateStr)).getTime());

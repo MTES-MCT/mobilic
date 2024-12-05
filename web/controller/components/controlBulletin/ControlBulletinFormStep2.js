@@ -7,46 +7,50 @@ import { CONTROL_BULLETIN_TRANSPORT_TYPE } from "../../utils/controlBulletin";
 import { Input } from "../../../common/forms/Input";
 import { Select } from "../../../common/forms/Select";
 import { RadioButtons } from "../../../common/forms/RadioButtons";
+import { CompanyControlData } from "../forms/CompanyControlData";
 
 export function ControlBulletinFormStep2({
   handleEditControlBulletin,
   controlBulletin,
   showErrors
 }) {
+  const setSiren = value => {
+    handleEditControlBulletin({
+      target: {
+        name: "siren",
+        value
+      }
+    });
+  };
+
+  const setCompanyName = value => {
+    handleEditControlBulletin({
+      target: {
+        name: "companyName",
+        value
+      }
+    });
+  };
+
+  const setCompanyAddress = value => {
+    handleEditControlBulletin({
+      target: {
+        name: "companyAddress",
+        value
+      }
+    });
+  };
+
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
-      <Input
-        nativeInputProps={{
-          value: controlBulletin.siren || "",
-          name: "siren",
-          onChange: e => handleEditControlBulletin(e)
-        }}
-        label="Entreprise responsable (de rattachement)"
-        hintText="SIREN ou Numéro TVA"
-        state={!controlBulletin.siren && showErrors ? "error" : "default"}
-        required
-      />
-      <Input
-        nativeInputProps={{
-          value: controlBulletin.companyName || "",
-          name: "companyName",
-          onChange: e => handleEditControlBulletin(e)
-        }}
-        label="Nom de l'entreprise"
-        state={!controlBulletin.companyName && showErrors ? "error" : "default"}
-        required
-      />
-      <Input
-        nativeInputProps={{
-          value: controlBulletin.companyAddress || "",
-          name: "companyAddress",
-          onChange: e => handleEditControlBulletin(e)
-        }}
-        label="Adresse de l'entreprise"
-        state={
-          !controlBulletin.companyAddress && showErrors ? "error" : "default"
-        }
-        required
+      <CompanyControlData
+        siren={controlBulletin.siren}
+        setSiren={setSiren}
+        companyName={controlBulletin.companyName}
+        setCompanyName={setCompanyName}
+        companyAddress={controlBulletin.companyAddress}
+        setCompanyAddress={setCompanyAddress}
+        showErrors={showErrors}
       />
       <Input
         nativeInputProps={{
@@ -60,6 +64,7 @@ export function ControlBulletinFormStep2({
             ? "error"
             : "default"
         }
+        stateRelatedMessage="Veuillez compléter ce champ."
         required
       />
       <Select
@@ -74,11 +79,7 @@ export function ControlBulletinFormStep2({
             ? "error"
             : "default"
         }
-        stateRelatedMessage={
-          !controlBulletin.vehicleRegistrationCountry && showErrors
-            ? "Veuillez compléter ce champ"
-            : ""
-        }
+        stateRelatedMessage="Veuillez compléter ce champ."
         required
       >
         {COUNTRIES.map(option => (
@@ -99,6 +100,7 @@ export function ControlBulletinFormStep2({
             ? "error"
             : "default"
         }
+        stateRelatedMessage="Veuillez compléter ce champ."
         required
       />
       <Input
@@ -111,6 +113,7 @@ export function ControlBulletinFormStep2({
         state={
           !controlBulletin.missionAddressEnd && showErrors ? "error" : "default"
         }
+        stateRelatedMessage="Veuillez compléter ce champ."
         required
       />
       <RadioButtons
@@ -134,6 +137,7 @@ export function ControlBulletinFormStep2({
         state={
           !controlBulletin.transportType && showErrors ? "error" : "default"
         }
+        stateRelatedMessage="Veuillez compléter ce champ."
         required
       />
       <Input

@@ -7,7 +7,8 @@ import ListItem from "@mui/material/ListItem";
 import DriveEtaIcon from "@mui/icons-material/DirectionsCar";
 import BusinessIcon from "@mui/icons-material/Business";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import { InfoItem } from "../../../home/InfoField";
+import { InfoItem } from "../../../../home/InfoField";
+import { useControl } from "../../../utils/contextControl";
 
 const useStyles = makeStyles(theme => ({
   sectionBody: {
@@ -23,7 +24,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControllerControlNoLicInformationsEmployee({ controlData }) {
+export function ControllerControlNoLicInformationsEmployee() {
+  const { controlData } = useControl();
   const classes = useStyles();
   return (
     <Grid container spacing={2} className={classes.sectionBody} p={1}>

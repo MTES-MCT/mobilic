@@ -419,7 +419,7 @@ export function Employees({ company, containerRef }) {
           teamId: e.teamId,
           employmentId: e.id,
           userId: e.user?.id,
-          companyId: e.company.id
+          companyId: e.company?.id
         })),
     [companyEmployments]
   );

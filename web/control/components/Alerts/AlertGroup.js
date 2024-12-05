@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
@@ -12,6 +12,13 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import { groupBy } from "lodash";
 import { formatActivity } from "common/utils/businessTypes";
 import { Description } from "../../../common/typography/Description";
+import { CONTROL_TYPES } from "../../../controller/utils/useReadControlData";
+import { InfractionDay } from "./InfractionDay";
+import { InfractionWeek } from "./InfractionWeek";
+import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
+import classNames from "classnames";
+import { useInfractions } from "../../../controller/utils/contextInfractions";
+import { useControl } from "../../../controller/utils/contextControl";
 
 const useStyles = makeStyles(theme => {
   return {
@@ -39,6 +46,10 @@ const useStyles = makeStyles(theme => {
       justifyContent: "center",
       fontWeight: "bold"
     },
+    reportedAlert: {
+      borderColor: theme.palette.primary.main,
+      borderWidth: "1px"
+    },
     reportableAlert: {
       backgroundColor: theme.palette.error.main
     },
@@ -49,16 +60,23 @@ const useStyles = makeStyles(theme => {
 });
 
 const getAlertsNumber = (
+  controlType,
   alerts,
   isSanctionReportable,
   isReportingInfractions,
   readOnlyAlerts
-) =>
-  readOnlyAlerts || !isSanctionReportable
-    ? alerts.length
-    : isReportingInfractions
-    ? `${alerts.filter(alert => alert.checked).length} / ${alerts.length}`
-    : alerts.filter(alert => alert.checked).length;
+) => {
+  if (readOnlyAlerts || !isSanctionReportable) {
+    return alerts.filter(alert => !!(alert.day || alert.week)).length;
+  } else if (
+    isReportingInfractions &&
+    controlType === CONTROL_TYPES.MOBILIC.label
+  ) {
+    return `${alerts.filter(alert => alert.checked).length} / ${alerts.length}`;
+  } else {
+    return alerts.filter(alert => alert.checked).length;
+  }
+};
 
 const isReportable = sanction => sanction.includes("NATINF");
 
@@ -76,18 +94,24 @@ export function AlertGroup({
   sanction,
   setPeriodOnFocus,
   setTab,
-  isReportingInfractions,
-  onUpdateInfraction,
   readOnlyAlerts,
   displayBusinessType = false,
   titleProps = {}
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
+  const { isReportingInfractions } = useInfractions();
+  const { controlType } = useControl();
 
   const isSanctionReportable = readOnlyAlerts ? true : isReportable(sanction);
 
+  const isReported = React.useMemo(
+    () => alerts.filter(alert => alert.checked).length > 0,
+    [alerts]
+  );
+
   const alertsNumber = getAlertsNumber(
+    controlType,
     alerts,
     isSanctionReportable,
     isReportingInfractions,
@@ -99,12 +123,21 @@ export function AlertGroup({
     [alerts]
   );
 
+  useEffect(() => {
+    if (!isReportingInfractions) {
+      setOpen(false);
+    }
+  }, [isReportingInfractions]);
+
   return (
     <Accordion
       expanded={open}
       onChange={(event, open_) => setOpen(open_)}
       variant="outlined"
-      className={classes.container}
+      className={classNames(
+        classes.container,
+        isReported ? classes.reportedAlert : ""
+      )}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Grid
@@ -123,11 +156,12 @@ export function AlertGroup({
           {alertsNumber !== 0 && (
             <Grid item>
               <span
-                className={`${classes.alertNumber} ${
+                className={classNames(
+                  classes.alertNumber,
                   isSanctionReportable
                     ? classes.reportableAlert
                     : classes.notReportableAlert
-                }`}
+                )}
               >
                 {alertsNumber}
               </span>
@@ -136,39 +170,53 @@ export function AlertGroup({
         </Grid>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
-        {Object.entries(alertsGroupedByBusinessTypes).map(
-          ([businessId, alertsByBusiness]) => {
-            const firstAlert = alertsByBusiness[0];
-            const {
-              description: alertDescription,
-              business: alertBusiness
-            } = firstAlert;
-            return (
-              <React.Fragment key={`alertsByBusiness_${businessId}`}>
-                {displayBusinessType && (
-                  <BusinessTypeTitle business={alertBusiness} />
-                )}
-                <Description>{alertDescription}</Description>
-                <List>
-                  {alertsByBusiness.map((alert, index) => (
-                    <ListItem key={index} disableGutters>
-                      <RegulatoryAlert
-                        alert={alert}
-                        type={type}
-                        sanction={sanction}
-                        isReportable={isSanctionReportable}
-                        setPeriodOnFocus={setPeriodOnFocus}
-                        setTab={setTab}
-                        isReportingInfractions={isReportingInfractions}
-                        onUpdateInfraction={onUpdateInfraction}
-                        readOnlyAlerts={readOnlyAlerts}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              </React.Fragment>
-            );
-          }
+        {/* TODO refactor: extract in another component */}
+        {(controlType === CONTROL_TYPES.MOBILIC.label ||
+          controlType === CONTROL_TYPES.NO_LIC.label) &&
+          Object.entries(alertsGroupedByBusinessTypes).map(
+            ([businessId, alertsByBusiness]) => {
+              const firstAlert = alertsByBusiness[0];
+              const {
+                description: alertDescription,
+                business: alertBusiness
+              } = firstAlert;
+              return (
+                <React.Fragment key={`alertsByBusiness_${businessId}`}>
+                  {displayBusinessType && (
+                    <BusinessTypeTitle business={alertBusiness} />
+                  )}
+                  <Description>{alertDescription}</Description>
+                  <List>
+                    {alertsByBusiness.map((alert, index) => (
+                      <ListItem key={index} disableGutters>
+                        <RegulatoryAlert
+                          alert={alert}
+                          type={type}
+                          sanction={sanction}
+                          isReportable={isSanctionReportable}
+                          setPeriodOnFocus={setPeriodOnFocus}
+                          setTab={setTab}
+                          readOnlyAlerts={readOnlyAlerts}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </React.Fragment>
+              );
+            }
+          )}
+        {controlType === CONTROL_TYPES.LIC_PAPIER.label && (
+          <>
+            <Description>{alerts[0].description}</Description>
+            {alerts[0].unit === PERIOD_UNITS.DAY && (
+              <InfractionDay alerts={alerts} sanction={sanction} />
+            )}
+            {alerts[0].unit === PERIOD_UNITS.WEEK && (
+              <>
+                <InfractionWeek alerts={alerts} sanction={sanction} />
+              </>
+            )}
+          </>
         )}
       </AccordionDetails>
     </Accordion>

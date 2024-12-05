@@ -20,11 +20,12 @@ import {
 } from "common/store/store";
 import { syncControllerUser } from "../../utils/loadControllerUserData";
 import {
-  canDownloadBDC,
   checkRequiredFieldStep1,
   checkRequiredFieldStep2
 } from "../../utils/controlBulletin";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
+import { useInfractions } from "../../utils/contextInfractions";
+import { useControl } from "../../utils/contextControl";
 
 const STEPS = {
   1: {
@@ -38,19 +39,16 @@ const STEPS = {
     successMessage: "Les informations ont été enregistrées"
   },
   3: {
-    title: "Infractions retenues et observations",
+    title: "Relevé des infractions",
     successMessage: "Le bulletin de contrôle a été enregistré"
   }
 };
 
 export function ControllerControlBulletin({
-  controlData,
   onClose,
   setMustConfirmBeforeClosing,
   onSaveControlBulletin,
-  groupedAlerts,
-  saveInfractions,
-  onUpdateInfraction
+  saveInfractions
 }) {
   const store = useStoreSyncedWithLocalStorage();
   const controllerUserInfo = store.controllerInfo();
@@ -64,10 +62,8 @@ export function ControllerControlBulletin({
     controllerUserInfo.grecoId || ""
   );
   const [showErrors, setShowErrors] = React.useState(false);
-
-  const controlCanBeDownloaded = React.useMemo(() => {
-    return canDownloadBDC(controlData);
-  }, [controlData]);
+  const { setIsReportingInfractions } = useInfractions();
+  const { controlData } = useControl();
 
   const onUpdateGrecoId = newGrecoId => {
     setGrecoId(newGrecoId);
@@ -85,15 +81,6 @@ export function ControllerControlBulletin({
   const initControlBulletinFromControlData = () => {
     if (!controlData) {
       return { userNationality: "FRA", vehicleRegistrationCountry: "FRA" };
-    } else if (controlData.controlBulletinCreationTime) {
-      return {
-        userFirstName: controlData.userFirstName,
-        userLastName: controlData.userLastName,
-        userBirthDate: controlData.user?.birthDate,
-        companyName: controlData.companyName,
-        vehicleRegistrationNumber: controlData.vehicleRegistrationNumber,
-        ...controlData.controlBulletin
-      };
     } else {
       return {
         userFirstName: controlData.userFirstName,
@@ -101,11 +88,9 @@ export function ControllerControlBulletin({
         userBirthDate: controlData.user?.birthDate,
         companyName: controlData.companyName,
         vehicleRegistrationNumber: controlData.vehicleRegistrationNumber,
-        siren: controlData.controlBulletin?.siren,
-        companyAddress: controlData.controlBulletin?.companyAddress,
-        missionAddressBegin: controlData.controlBulletin?.missionAddressBegin,
-        userNationality: "FRA",
-        vehicleRegistrationCountry: "FRA"
+        vehicleRegistrationCountry:
+          controlData.controlBulletin?.vehicleRegistrationCountry,
+        ...controlData.controlBulletin
       };
     }
   };
@@ -116,6 +101,10 @@ export function ControllerControlBulletin({
       ...prevState,
       [name]: value
     }));
+    setFieldUpdated(true);
+  };
+
+  const onModifyInfractions = () => {
     setFieldUpdated(true);
   };
 
@@ -139,6 +128,7 @@ export function ControllerControlBulletin({
         alerts.success(STEPS[step].successMessage, "", 3000);
       }
       if (!STEPS[step + 1]) {
+        setIsReportingInfractions(false);
         onClose(true);
       } else {
         setStep(step + 1);
@@ -254,12 +244,7 @@ export function ControllerControlBulletin({
           controlBulletin={controlBulletin}
           grecoId={grecoId}
           onUpdateGrecoId={onUpdateGrecoId}
-          controlCanBeDownloaded={controlCanBeDownloaded}
-          onUpdateInfraction={(...args) => {
-            setFieldUpdated(true);
-            onUpdateInfraction(...args);
-          }}
-          groupedAlerts={groupedAlerts}
+          onModifyInfractions={onModifyInfractions}
         />
       )}
       <ButtonsGroup
