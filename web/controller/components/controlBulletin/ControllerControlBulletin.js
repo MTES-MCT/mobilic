@@ -39,7 +39,7 @@ const STEPS = {
     successMessage: "Les informations ont été enregistrées"
   },
   3: {
-    title: "Infractions retenues et observations",
+    title: "Relevé des infractions",
     successMessage: "Le bulletin de contrôle a été enregistré"
   }
 };
@@ -101,6 +101,10 @@ export function ControllerControlBulletin({
       ...prevState,
       [name]: value
     }));
+    setFieldUpdated(true);
+  };
+
+  const onModifyInfractions = () => {
     setFieldUpdated(true);
   };
 
@@ -240,6 +244,7 @@ export function ControllerControlBulletin({
           controlBulletin={controlBulletin}
           grecoId={grecoId}
           onUpdateGrecoId={onUpdateGrecoId}
+          onModifyInfractions={onModifyInfractions}
         />
       )}
       <ButtonsGroup
