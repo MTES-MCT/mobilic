@@ -6,7 +6,7 @@ import { useModals } from "common/utils/modals";
 import { CONTROLLER_SAVE_REPORTED_INFRACTIONS } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { getAlertsGroupedByDay } from "common/utils/regulation/groupAlertsByDay";
-import { isoFormatLocalDate } from "common/utils/time";
+import { isoFormatLocalDate, strToUnixTimestamp } from "common/utils/time";
 
 export const useReportInfractions = controlData => {
   const api = useApi();
@@ -70,7 +70,7 @@ export const useReportInfractions = controlData => {
         const newObservedInfractionsWithDates = newObservedInfractions.map(
           o => ({
             ...o,
-            date: o.date ? new Date(o.date).getTime() / 1000 : null
+            date: o.date ? strToUnixTimestamp(o.date) : null
           })
         );
         setObservedInfractions(newObservedInfractionsWithDates);

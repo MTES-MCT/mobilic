@@ -8,6 +8,7 @@ import {
 import { useLoadingScreen } from "common/utils/loading";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { canDownloadBDC as _canDownloadBDC } from "./controlBulletin";
+import { strToUnixTimestamp } from "common/utils/time";
 
 // Value AND label must match ControlType enum from API
 export const CONTROL_TYPES = {
@@ -41,7 +42,7 @@ export const useReadControlData = (controlId, controlType) => {
               infraction => ({
                 ...infraction,
                 date: infraction.date
-                  ? new Date(infraction.date).getTime() / 1000
+                  ? strToUnixTimestamp(infraction.date)
                   : null
               })
             )
