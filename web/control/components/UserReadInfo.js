@@ -176,7 +176,7 @@ export function UserReadInfo({
           }
         />
       )}
-      <Typography variant="h5" component="h2">
+      <Typography variant="h5" component="h2" mt={4}>
         Historique récent (28 jours)
       </Typography>
       <Grid container wrap="wrap" spacing={2}>
