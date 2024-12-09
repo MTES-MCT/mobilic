@@ -22,10 +22,12 @@ import ListItem from "@mui/material/ListItem";
 import DriveEtaIcon from "@mui/icons-material/DirectionsCar";
 import BusinessIcon from "@mui/icons-material/Business";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import ListAltIcon from "@mui/icons-material/ListAlt";
 import { currentControllerId } from "common/utils/cookie";
 import { ControllerControlNote } from "../../controller/components/details/ControllerControlNote";
 import Notice from "../../common/Notice";
 import { useControl } from "../../controller/utils/contextControl";
+import { formatActivity } from "common/utils/businessTypes";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -139,6 +141,20 @@ export function UserReadInfo({
                   {companyName}
                 </Typography>
               </ListItem>
+              {controlData.currentBusinessType && (
+                <ListItem disableGutters>
+                  <ListItemIcon>
+                    <ListAltIcon />
+                  </ListItemIcon>
+                  <Typography
+                    noWrap
+                    align="left"
+                    className={classes.fieldValue}
+                  >
+                    {formatActivity(controlData.currentBusinessType)}
+                  </Typography>
+                </ListItem>
+              )}
             </List>
           </Grid>
         )}
