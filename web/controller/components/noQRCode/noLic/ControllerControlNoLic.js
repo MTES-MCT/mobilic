@@ -18,6 +18,7 @@ import { UserReadAlerts } from "../../../../control/components/UserReadAlerts";
 import Box from "@mui/material/Box";
 import { useInfractions } from "../../../utils/contextInfractions";
 import { useControl } from "../../../utils/contextControl";
+import { CONTROL_TYPES } from "../../../utils/useReadControlData";
 
 const useStyles = makeStyles(theme => ({
   middleTab: {
@@ -88,7 +89,7 @@ const getTabs = alertNumber => [
   }
 ];
 
-export function ControllerControlNoLic({ editBDC }) {
+export function ControllerControlNoLic({ controlType, editBDC }) {
   const classes = useStyles();
 
   const { controlId } = useControl();
@@ -151,15 +152,13 @@ export function ControllerControlNoLic({ editBDC }) {
         </Box>
       </TabContext>
       {!isReportingInfractions && (
-        <>
-          <BottomMenu
-            reportInfractions={reportInfraction}
-            updatedInfractions={!!reportedInfractionsLastUpdateTime}
-            disableReportInfractions={false}
-            editBDC={editBDC}
-            downloadBDC={downloadBDC}
-          />
-        </>
+        <BottomMenu
+          reportInfractions={reportInfraction}
+          updatedInfractions={!!reportedInfractionsLastUpdateTime}
+          disabledReportInfractions={controlType === CONTROL_TYPES.NO_LIC.label}
+          editBDC={editBDC}
+          downloadBDC={downloadBDC}
+        />
       )}
     </>
   );
