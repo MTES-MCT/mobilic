@@ -1,5 +1,4 @@
 import React from "react";
-import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -18,47 +17,7 @@ import { UserReadAlerts } from "../../../../control/components/UserReadAlerts";
 import Box from "@mui/material/Box";
 import { useInfractions } from "../../../utils/contextInfractions";
 import { useControl } from "../../../utils/contextControl";
-
-const useStyles = makeStyles(theme => ({
-  middleTab: {
-    fontSize: "0.75rem",
-    flexGrow: 1.5,
-    opacity: 1,
-    color: "rgb(255,255,255,0.5)",
-    "&.Mui-selected": {
-      color: "rgb(255,255,255,1)"
-    }
-  },
-  tab: {
-    fontSize: "0.75rem",
-    opacity: 1,
-    color: "rgb(255,255,255,0.5)",
-    "&.Mui-selected": {
-      color: "rgb(255,255,255,1)"
-    }
-  },
-  panel: {
-    padding: 0,
-    maxWidth: "100%",
-    flexGrow: 1,
-    display: "flex"
-  },
-  panelContainer: {
-    paddingTop: theme.spacing(4),
-    margin: "auto",
-    display: "flex",
-    flexGrow: 1,
-    flexShrink: 0,
-    maxWidth: "100%",
-    textAlign: "left",
-    backgroundColor: theme.palette.background.paper
-  },
-  hiddenPanel: { flexGrow: 0 },
-  linkInfractionTab: {
-    textDecoration: "underline",
-    cursor: "pointer"
-  }
-}));
+import { controlTabsStyles } from "../../../../control/components/UserReadTabs";
 
 const getTabs = alertNumber => [
   {
@@ -89,7 +48,7 @@ const getTabs = alertNumber => [
 ];
 
 export function ControllerControlNoLic({ editBDC }) {
-  const classes = useStyles();
+  const classes = controlTabsStyles();
 
   const { controlId } = useControl();
   const downloadBDC = useDownloadBDC(controlId);

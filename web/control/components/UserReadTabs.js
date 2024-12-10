@@ -12,10 +12,7 @@ import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
 import Box from "@mui/material/Box";
 import Notice from "../../common/Notice";
 
-const useStyles = makeStyles(theme => ({
-  sectionBody: {
-    marginBottom: theme.spacing(6)
-  },
+export const controlTabsStyles = makeStyles(theme => ({
   middleTab: {
     fontSize: "0.75rem",
     flexGrow: 1.5,
@@ -80,7 +77,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
 
   const downloadBDC = useDownloadBDC(props.controlData?.id);
 
-  const classes = useStyles();
+  const classes = controlTabsStyles();
   return (
     <>
       <TabContext value={tab}>
@@ -125,7 +122,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
               }
             />
           )}
-          <Container className={classes.panelContainer} key={2} disableGutters>
+          <Container className={classes.panelContainer} disableGutters>
             {tabs.map(t => (
               <TabPanel
                 value={t.name}
