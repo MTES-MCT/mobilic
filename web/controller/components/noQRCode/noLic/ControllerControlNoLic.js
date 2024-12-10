@@ -89,10 +89,10 @@ const getTabs = alertNumber => [
   }
 ];
 
-export function ControllerControlNoLic({ controlType, editBDC }) {
+export function ControllerControlNoLic({ editBDC }) {
   const classes = useStyles();
 
-  const { controlId } = useControl();
+  const { controlId, controlType } = useControl();
   const downloadBDC = useDownloadBDC(controlId);
   const {
     checkedAlertsNumber,

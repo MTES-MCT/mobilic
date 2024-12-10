@@ -43,10 +43,7 @@ export function ControllerControlNoLicDrawer({
         onCloseDrawer={() => closeControl()}
         enableExport={false}
       />
-      <ControllerControlNoLic
-        controlType={controlData.controlType}
-        editBDC={editBDC}
-      />
+      <ControllerControlNoLic editBDC={editBDC} />
     </ControlDrawer>
   );
 }
