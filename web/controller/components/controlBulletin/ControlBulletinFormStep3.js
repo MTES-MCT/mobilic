@@ -63,18 +63,19 @@ export function ControlBulletinFormStep3({
         sx={{ width: "100%" }}
       >
         <Typography>Infractions retenues</Typography>
-        {!isReportingInfractions && (
-          <Button
-            priority="tertiary"
-            size="small"
-            onClick={() => {
-              onModifyInfractions();
-              setIsReportingInfractions(true);
-            }}
-          >
-            Modifier
-          </Button>
-        )}
+        {!isReportingInfractions &&
+          controlData.controlType !== CONTROL_TYPES.NO_LIC.label && (
+            <Button
+              priority="tertiary"
+              size="small"
+              onClick={() => {
+                onModifyInfractions();
+                setIsReportingInfractions(true);
+              }}
+            >
+              Modifier
+            </Button>
+          )}
       </Stack>
       {groupedAlertsToDisplay?.length > 0 ? (
         <List>
