@@ -10,6 +10,7 @@ import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useControl } from "../../utils/contextControl";
+import { Description } from "../../../common/typography/Description";
 
 const useStyles = makeStyles(() => ({
   addNoteButton: {
@@ -61,11 +62,11 @@ export function ControllerControlNote() {
         </Typography>
         {!isEditing && (
           <Button
-            priority="tertiary no outline"
-            className={classes.addNoteButton}
+            priority="tertiary"
+            size="small"
             onClick={() => setIsEditing(true)}
           >
-            {note ? "Modifier mes notes" : "Ajouter des notes"}
+            {note ? "Modifier" : "Ajouter"}
           </Button>
         )}
       </Stack>
@@ -90,10 +91,12 @@ export function ControllerControlNote() {
             }}
           />
         </Stack>
+      ) : note ? (
+        <Typography className={classes.note}>{note}</Typography>
       ) : (
-        <Typography className={classes.note}>
-          {note || "Vous n'avez pas encore renseigné d'annotations de contrôle"}
-        </Typography>
+        <Description>
+          Vous n'avez pas encore renseigné d'annotations de contrôle
+        </Description>
       )}
     </Stack>
   );
