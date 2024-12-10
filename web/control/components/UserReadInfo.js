@@ -141,7 +141,7 @@ export function UserReadInfo({
                   {companyName}
                 </Typography>
               </ListItem>
-              {controlData.currentBusinessType && (
+              {controlData.businessTypeDuringControl && (
                 <ListItem disableGutters>
                   <ListItemIcon>
                     <ListAltIcon />
@@ -151,7 +151,7 @@ export function UserReadInfo({
                     align="left"
                     className={classes.fieldValue}
                   >
-                    {formatActivity(controlData.currentBusinessType)}
+                    {formatActivity(controlData.businessTypeDuringControl)}
                   </Typography>
                 </ListItem>
               )}
