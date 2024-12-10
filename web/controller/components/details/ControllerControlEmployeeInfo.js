@@ -4,8 +4,12 @@ import { makeStyles } from "@mui/styles";
 import { FieldTitle } from "../../../common/typography/FieldTitle";
 
 const useStyles = makeStyles(() => ({
-  fieldName: {
-    fontSize: "2rem"
+  title: {
+    fontSize: "1rem"
+  },
+  value: {
+    fontSize: "1.375rem",
+    fontWeight: "700"
   }
 }));
 
@@ -14,10 +18,10 @@ export function ControllerControlEmployeeInfo({ name }) {
 
   return (
     <div>
-      <FieldTitle component="h6" className={classes.fieldName}>
+      <FieldTitle component="h6" className={classes.title}>
         Salarié(e)
       </FieldTitle>
-      <Typography variant="h4" component="p">
+      <Typography className={classes.value} mt={1}>
         {name}
       </Typography>
     </div>
