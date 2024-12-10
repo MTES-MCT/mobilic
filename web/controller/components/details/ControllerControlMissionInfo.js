@@ -24,7 +24,7 @@ export function ControllerControlMissionInfo({
       <Typography variant="h6" component="h2">
         Mission lors du contrôle
       </Typography>
-      <Stack direction="column">
+      <Stack direction="column" rowGap={1}>
         <InfoItem
           name="Véhicule"
           value={vehicleRegistrationNumber || "Non renseigné"}

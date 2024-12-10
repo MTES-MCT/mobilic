@@ -34,6 +34,7 @@ export function ControllerControlEmployments({ employments, businesses }) {
               hideActions
               lightenIfEnded={false}
               headingComponent="h3"
+              spacing={2}
             />
           </Grid>
         ))}
