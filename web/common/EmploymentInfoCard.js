@@ -92,12 +92,15 @@ export function EmploymentInfoCard({
   );
 
   const emailsCurrentAdminsDisplay = useMemo(
-    () =>
-      employment?.company.currentAdmins?.map(admin => (
-        <span key={admin.email} style={{ overflowWrap: "anywhere" }}>
-          {admin.email}
-        </span>
-      )),
+    () => (
+      <ul style={{ listStyleType: "none", paddingInlineStart: "0px" }}>
+        {employment?.company.currentAdmins?.map(admin => (
+          <li key={admin.email} style={{ overflowWrap: "anywhere" }}>
+            {admin.email}
+          </li>
+        ))}
+      </ul>
+    ),
     [employment]
   );
 

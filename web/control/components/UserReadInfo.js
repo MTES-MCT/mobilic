@@ -70,6 +70,7 @@ export function UserReadInfo({
         <ControllerControlMissionInfo
           vehicleRegistrationNumber={vehicleRegistrationNumber}
           companyName={companyName}
+          businessTypeDuringControl={controlData.businessTypeDuringControl}
         />
       )}
       <ControllerControlEmployments

@@ -3,10 +3,12 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Notice from "../../../common/Notice";
 import { InfoItem } from "../../../home/InfoField";
+import { formatActivity } from "common/utils/businessTypes";
 
 export function ControllerControlMissionInfo({
   vehicleRegistrationNumber,
-  companyName
+  companyName,
+  businessTypeDuringControl
 }) {
   if (!companyName) {
     return (
@@ -33,6 +35,13 @@ export function ControllerControlMissionInfo({
           value={companyName}
           uppercaseTitle={false}
         />
+        {businessTypeDuringControl && (
+          <InfoItem
+            name="Type d'activité"
+            value={formatActivity(businessTypeDuringControl)}
+            uppercaseTitle={false}
+          />
+        )}
       </Stack>
     </Stack>
   );

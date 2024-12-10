@@ -29,7 +29,8 @@ export function ControllerControlDetails({
     totalAlertsNumber,
     isReportingInfractions,
     setIsReportingInfractions,
-    reportedInfractionsLastUpdateTime
+    reportedInfractionsLastUpdateTime,
+    groupedAlerts
   } = useInfractions();
 
   // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
@@ -129,6 +130,7 @@ export function ControllerControlDetails({
         isReportingInfractions={isReportingInfractions}
         setIsReportingInfractions={setIsReportingInfractions}
         readOnlyAlerts={false}
+        groupedAlerts={groupedAlerts}
       />
       <ControlBulletinDrawer
         isOpen={isEditingBC}

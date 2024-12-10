@@ -12,7 +12,7 @@ import Stack from "@mui/material/Stack";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
 import { useControl } from "../../../controller/utils/contextControl";
 import { capitalizeFirstLetter } from "common/utils/string";
-import "./InfractionDay.css";
+import classNames from "classnames";
 
 const gregorian_fr = {
   name: "gregorian_fr",
@@ -105,6 +105,10 @@ export const InfractionDay = ({ alerts, sanction }) => {
     onRemoveInfraction(sanction, timestamp);
   };
 
+  if (!isReportingInfractions && !initialTimestamps) {
+    return null;
+  }
+
   return (
     <Stack direction="column" gap={2}>
       {isReportingInfractions && (
@@ -115,7 +119,7 @@ export const InfractionDay = ({ alerts, sanction }) => {
       {isReportingInfractions && (
         // Documentation: https://shahabyazdi.github.io/react-multi-date-picker/
         <Calendar
-          className={classes.calendar}
+          className={classNames(classes.calendar, "custom-calendar")}
           value={initialTimestamps}
           onChange={onSelectedDatesChange}
           multiple
@@ -129,28 +133,33 @@ export const InfractionDay = ({ alerts, sanction }) => {
           locale={gregorian_fr}
         />
       )}
-      <ul className="fr-tag-group" style={{ listStyleType: "none" }}>
-        {initialTimestamps
-          .map(ts => (ts / 1000) >> 0)
-          .sort()
-          .map(ts => (
-            <li key={ts}>
-              <Tag
-                dismissible={isReportingInfractions}
-                nativeButtonProps={{
-                  ...(isReportingInfractions && {
-                    onClick: () => onRemoveDate(ts),
-                    "aria-label": `Retirer ${capitalizeFirstLetter(
-                      textualPrettyFormatDay(ts, true)
-                    )}`
-                  })
-                }}
-              >
-                {capitalizeFirstLetter(textualPrettyFormatDay(ts, true))}
-              </Tag>
-            </li>
-          ))}
-      </ul>
+      {initialTimestamps?.length > 0 && (
+        <ul
+          className="fr-tag-group"
+          style={{ listStyleType: "none", paddingInlineStart: "none" }}
+        >
+          {initialTimestamps
+            .map(ts => (ts / 1000) >> 0)
+            .sort()
+            .map(ts => (
+              <li key={ts}>
+                <Tag
+                  dismissible={isReportingInfractions}
+                  nativeButtonProps={{
+                    ...(isReportingInfractions && {
+                      onClick: () => onRemoveDate(ts),
+                      "aria-label": `Retirer ${capitalizeFirstLetter(
+                        textualPrettyFormatDay(ts, true)
+                      )}`
+                    })
+                  }}
+                >
+                  {capitalizeFirstLetter(textualPrettyFormatDay(ts, true))}
+                </Tag>
+              </li>
+            ))}
+        </ul>
+      )}
     </Stack>
   );
 };

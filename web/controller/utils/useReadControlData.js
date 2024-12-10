@@ -8,6 +8,7 @@ import {
 import { useLoadingScreen } from "common/utils/loading";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { canDownloadBDC as _canDownloadBDC } from "./controlBulletin";
+import { strToUnixTimestamp } from "common/utils/time";
 
 // Value AND label must match ControlType enum from API
 export const CONTROL_TYPES = {
@@ -34,7 +35,18 @@ export const useReadControlData = (controlId, controlType) => {
             { controlId },
             { context: { nonPublicApi: true } }
           );
-          setControlData(apiResponse.data.controlData);
+          const controlData = apiResponse.data.controlData;
+          setControlData({
+            ...controlData,
+            observedInfractions: controlData.observedInfractions.map(
+              infraction => ({
+                ...infraction,
+                date: infraction.date
+                  ? strToUnixTimestamp(infraction.date)
+                  : null
+              })
+            )
+          });
         });
       });
     }
