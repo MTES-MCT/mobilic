@@ -41,7 +41,7 @@ export function ControllerControlEmployments({ employments, businesses }) {
       {businesses && businesses.length > 1 && (
         <Notice
           type="warning"
-          sx={{ marginTop: 2, marginBottom: 6 }}
+          sx={{ marginTop: 2 }}
           description={
             <>{`Attention, veuillez noter que ce salarié effectue des missions pour différents secteurs d’activité 
               (${businesses.join(", ")}).`}</>
