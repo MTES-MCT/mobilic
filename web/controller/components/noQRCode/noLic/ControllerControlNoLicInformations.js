@@ -12,14 +12,7 @@ import { ControllerControlNbCard } from "../../details/ControllerControlNbCard";
 export function ControllerControlNoLicInformations() {
   const { controlData } = useControl();
   return (
-    <Stack
-      direction="column"
-      spacing={2}
-      paddingLeft={2}
-      paddingRight={1}
-      rowGap={4}
-      alignItems="center"
-    >
+    <Stack direction="column" p={3} rowGap={4}>
       <ControllerControlEmployeeInfo
         name={controlData.userFirstName + " " + controlData.userLastName}
       />
