@@ -432,6 +432,11 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
         ...ObservedInfractions
       }
       reportedInfractionsLastUpdateTime
+      businessTypeDuringControl {
+        id
+        transportType
+        businessType
+      }
     }
   }
 `;
