@@ -5,7 +5,7 @@ import { useControl } from "../../controller/utils/contextControl";
 import { currentControllerId } from "common/utils/cookie";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
-import { Stack } from "@mui/material";
+import Stack from "@mui/material/Stack";
 import { ControllerControlEmployeeInfo } from "../../controller/components/details/ControllerControlEmployeeInfo";
 import { ControllerControlMissionInfo } from "../../controller/components/details/ControllerControlMissionInfo";
 import { ControllerControlEmployments } from "../../controller/components/details/ControllerControlEmployments";
@@ -81,7 +81,7 @@ export function UserReadInfo({
         controlTime={controlTime}
         tokenInfo={tokenInfo}
       />
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
+      <Stack direction="row" columnGap={1}>
         <ControllerControlNbCard
           label="Journées enregistrées"
           buttonLabel="Historique"
@@ -91,7 +91,7 @@ export function UserReadInfo({
         <ControllerControlNbCard
           label="Alertes réglementaires"
           buttonLabel="Alertes"
-          nbElem={alertNumber}
+          nbElem={alertNumber || 0}
           onClick={() => setTab("alerts")}
         />
       </Stack>

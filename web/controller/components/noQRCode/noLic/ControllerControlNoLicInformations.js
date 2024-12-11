@@ -1,6 +1,7 @@
 import React from "react";
 
-import { Stack } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
 import { useControl } from "../../../utils/contextControl";
 import { CONTROL_TYPES } from "../../../utils/useReadControlData";
 import { ControllerControlEmployeeInfo } from "../../details/ControllerControlEmployeeInfo";
@@ -24,12 +25,16 @@ export function ControllerControlNoLicInformations() {
         <ControllerControlDayPageInfo />
       )}
       <ControllerControlNote />
-      <ControllerControlNbCard
-        label="Alertes réglementaires"
-        buttonLabel="Alertes"
-        nbElem={0}
-        onClick={() => console.log("TODO 1660")}
-      />
+      <Grid container>
+        <Grid item xs={6}>
+          <ControllerControlNbCard
+            label="Alertes réglementaires"
+            buttonLabel="Alertes"
+            nbElem={0}
+            onClick={() => console.log("TODO 1660")}
+          />
+        </Grid>
+      </Grid>
     </Stack>
   );
 }
