@@ -13,7 +13,6 @@ const useStyles = makeStyles(theme => ({
 
 export function ControllerControlEmployments({ employments, businesses }) {
   const classes = useStyles();
-
   return (
     <div>
       <Typography
@@ -30,7 +29,6 @@ export function ControllerControlEmployments({ employments, businesses }) {
               key={e.id}
               employment={e}
               hideRole
-              hideStatus
               hideActions
               lightenIfEnded={false}
               headingComponent="h3"
