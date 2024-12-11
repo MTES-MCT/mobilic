@@ -103,7 +103,7 @@ export function ControllerControlNoLic({ editBDC }) {
                 className={`${classes.panel} ${tab !== t.name &&
                   classes.hiddenPanel}`}
               >
-                {<t.component readOnlyAlerts={false} />}
+                {<t.component readOnlyAlerts={false} setTab={setTab} />}
               </TabPanel>
             ))}
           </Container>

@@ -10,7 +10,7 @@ import { ControllerControlDayPageInfo } from "../../details/ControllerControlDay
 import { ControllerControlNote } from "../../details/ControllerControlNote";
 import { ControllerControlNbCard } from "../../details/ControllerControlNbCard";
 
-export function ControllerControlNoLicInformations() {
+export function ControllerControlNoLicInformations({ setTab }) {
   const { controlData } = useControl();
   return (
     <Stack direction="column" p={3} rowGap={3}>
@@ -31,7 +31,7 @@ export function ControllerControlNoLicInformations() {
             label="Alertes réglementaires"
             buttonLabel="Alertes"
             nbElem={0}
-            onClick={() => console.log("TODO 1660")}
+            onClick={() => setTab("alerts")}
           />
         </Grid>
       </Grid>
