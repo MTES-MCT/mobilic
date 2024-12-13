@@ -149,10 +149,15 @@ export function AlertGroup({
           wrap="nowrap"
         >
           <Grid item>
-            <Typography className="bold" color="primary" {...titleProps}>
+            <Typography
+              className="bold"
+              color="primary"
+              {...titleProps}
+              fontSize="0.875rem"
+            >
               {sanction}
             </Typography>
-            <Typography className="bold">{infringementLabel}</Typography>
+            <Typography fontWeight="500">{infringementLabel}</Typography>
           </Grid>
           {alertsNumber !== 0 && (
             <Grid item>
