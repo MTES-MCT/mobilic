@@ -128,6 +128,8 @@ export function UserReadAlerts({
                 <ListItem
                   key={`${group.type}_${group.sanction}`}
                   disableGutters
+                  disablePadding
+                  sx={{ marginBottom: "8px" }}
                 >
                   <AlertGroup
                     {...group}
