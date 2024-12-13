@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => {
     alertNumber: {
       display: "inline-flex",
       whiteSpace: "pre",
-      borderRadius: theme.spacing(1.5),
+      borderRadius: "100%",
       color: "white",
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(1),
@@ -44,7 +44,8 @@ const useStyles = makeStyles(theme => {
       minWidth: theme.spacing(3),
       alignItems: "center",
       justifyContent: "center",
-      fontWeight: "bold"
+      fontWeight: "bold",
+      fontSize: "0.75rem"
     },
     reportedAlert: {
       borderColor: theme.palette.primary.main,
