@@ -3,10 +3,8 @@ import React from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { useControl } from "../../../utils/contextControl";
-import { CONTROL_TYPES } from "../../../utils/useReadControlData";
 import { ControllerControlEmployeeInfo } from "../../details/ControllerControlEmployeeInfo";
 import { ControllerControlMissionInfo } from "../../details/ControllerControlMissionInfo";
-import { ControllerControlDayPageInfo } from "../../details/ControllerControlDayPageInfo";
 import { ControllerControlNote } from "../../details/ControllerControlNote";
 import { ControllerControlNbCard } from "../../details/ControllerControlNbCard";
 
@@ -21,9 +19,6 @@ export function ControllerControlNoLicInformations({ setTab }) {
         vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
         companyName={controlData.companyName}
       />
-      {controlData.controlType === CONTROL_TYPES.LIC_PAPIER.label && (
-        <ControllerControlDayPageInfo />
-      )}
       <ControllerControlNote />
       <Grid container>
         <Grid item xs={6}>
