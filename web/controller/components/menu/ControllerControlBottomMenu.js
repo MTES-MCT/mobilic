@@ -2,7 +2,6 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { Box } from "@mui/material";
-import { useInfractions } from "../../utils/contextInfractions";
 import { useControl } from "../../utils/contextControl";
 
 const useStyles = makeStyles(theme => ({
@@ -11,15 +10,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControllerControlBottomMenu({
-  reportInfractions,
-  updatedInfractions,
-  disabledReportInfractions,
-  editBDC,
-  downloadBDC
-}) {
+export function ControllerControlBottomMenu({ editBDC, downloadBDC }) {
   const classes = useStyles();
-  const { totalAlertsNumber } = useInfractions();
   const { canDownloadBDC, bdcAlreadyExists } = useControl();
 
   return (
@@ -39,24 +31,6 @@ export function ControllerControlBottomMenu({
                 onClick: editBDC,
                 priority: "secondary"
               },
-          ...(reportInfractions
-            ? [
-                {
-                  priority: "secondary",
-                  iconId: "fr-icon-edit-line",
-                  iconPosition: "left",
-                  onClick: reportInfractions,
-                  disabled: disabledReportInfractions,
-                  children: updatedInfractions
-                    ? totalAlertsNumber === 1
-                      ? "Modifier l'infraction retenue"
-                      : "Modifier les infractions retenues"
-                    : totalAlertsNumber === 1
-                    ? "Modifier l'infraction relevée"
-                    : "Modifier les infractions relevées"
-                }
-              ]
-            : []),
           ...(bdcAlreadyExists
             ? [
                 {

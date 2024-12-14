@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => {
     alertNumber: {
       display: "inline-flex",
       whiteSpace: "pre",
-      borderRadius: "100%",
+      borderRadius: "100px",
       color: "white",
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(1),

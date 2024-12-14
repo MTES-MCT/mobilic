@@ -52,20 +52,10 @@ export function ControllerControlNoLic({ editBDC }) {
 
   const { controlId } = useControl();
   const downloadBDC = useDownloadBDC(controlId);
-  const {
-    checkedAlertsNumber,
-    setIsReportingInfractions,
-    isReportingInfractions,
-    reportedInfractionsLastUpdateTime
-  } = useInfractions();
+  const { checkedAlertsNumber, isReportingInfractions } = useInfractions();
 
   const TABS = getTabs(checkedAlertsNumber);
   const [tab, setTab] = React.useState(TABS[0].name);
-
-  const reportInfraction = () => {
-    setIsReportingInfractions(true);
-    setTab(TABS[1].name);
-  };
 
   return (
     <>
@@ -111,13 +101,7 @@ export function ControllerControlNoLic({ editBDC }) {
       </TabContext>
       {!isReportingInfractions && (
         <>
-          <BottomMenu
-            reportInfractions={reportInfraction}
-            updatedInfractions={!!reportedInfractionsLastUpdateTime}
-            disableReportInfractions={false}
-            editBDC={editBDC}
-            downloadBDC={downloadBDC}
-          />
+          <BottomMenu editBDC={editBDC} downloadBDC={downloadBDC} />
         </>
       )}
     </>

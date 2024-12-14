@@ -10,6 +10,7 @@ import Stack from "@mui/material/Stack";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import Notice from "../../common/Notice";
 import { AlertGroup } from "./Alerts/AlertGroup";
+import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 
 import { FieldTitle } from "../../common/typography/FieldTitle";
 import { DisplayBusinessTypes } from "./Alerts/BusinessTypesFromGroupedAlerts";
@@ -41,6 +42,13 @@ const useStyles = makeStyles(theme => ({
   divider: {
     marginTop: theme.spacing(4),
     marginBottom: theme.spacing(4)
+  },
+  bottomButtons: {
+    position: "sticky",
+    bottom: "-20px",
+    background: "white",
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2)
   }
 }));
 
@@ -72,9 +80,14 @@ export function UserReadAlerts({
     totalAlertsNumber,
     reportedInfractionsLastUpdateTime,
     saveInfractions,
-    cancelInfractions
+    cancelInfractions,
+    setIsReportingInfractions
   } = useInfractions();
   const { controlType } = useControl();
+
+  const reportInfraction = () => {
+    setIsReportingInfractions(true);
+  };
 
   const _groupedAlerts = groupedAlerts ?? infractionsGroupedAlerts;
   const businessTypes = React.useMemo(
@@ -103,9 +116,23 @@ export function UserReadAlerts({
             <Typography>{updateInfractionsTitle}</Typography>
           )}
           {!isReportingInfractions && (
-            <Typography component="h2" fontWeight="bold" fontSize="1.125rem">
-              Infractions retenues
-            </Typography>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Typography component="h2" fontWeight="bold" fontSize="1.125rem">
+                Infractions retenues
+              </Typography>
+              <Button
+                priority="primary"
+                onClick={reportInfraction}
+                disabled={false}
+                size="small"
+              >
+                Modifier
+              </Button>
+            </Stack>
           )}
           {!isReportingInfractions && reportedInfractionsLastUpdateTime && (
             <Description>
@@ -150,22 +177,7 @@ export function UserReadAlerts({
             </Typography>
           )}
           <>
-            {isReportingInfractions ? (
-              <Stack
-                direction="row"
-                justifyContent="flex-start"
-                p={2}
-                spacing={4}
-              >
-                <Button onClick={() => saveInfractions()}>Valider</Button>
-                <Button
-                  onClick={() => cancelInfractions()}
-                  priority="secondary"
-                >
-                  Annuler
-                </Button>
-              </Stack>
-            ) : (
+            {!isReportingInfractions &&
               controlType === CONTROL_TYPES.MOBILIC.label && (
                 <Notice
                   type="warning"
@@ -181,12 +193,29 @@ export function UserReadAlerts({
                     </>
                   }
                 />
-              )
-            )}
+              )}
           </>
           <Divider className={`hr-unstyled ${classes.divider}`} />
         </Stack>
       </Container>
+      {isReportingInfractions && (
+        <ButtonsGroup
+          className={classes.bottomButtons}
+          buttons={[
+            {
+              onClick: () => saveInfractions(),
+              children: "Enregistrer"
+            },
+            {
+              children: "Annuler",
+              onClick: () => cancelInfractions(),
+              priority: "secondary"
+            }
+          ]}
+          inlineLayoutWhen="sm and up"
+          alignment="right"
+        />
+      )}
     </Container>
   );
 }
