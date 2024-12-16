@@ -191,7 +191,7 @@ export function AlertGroup({
                   {displayBusinessType && (
                     <BusinessTypeTitle business={alertBusiness} />
                   )}
-                  <Description>{alertDescription}</Description>
+                  <Description noMargin>{alertDescription}</Description>
                   <List>
                     {alertsByBusiness.map((alert, index) => (
                       <ListItem key={index} disableGutters>

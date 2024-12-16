@@ -52,12 +52,18 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const HELPER_TEXT_SEVERAL_INFRACTIONS =
-  "Sélectionnez la ou les infractions que vous souhaitez verbaliser";
-const HELPER_TEXT_SINGLE_INFRACTION =
-  "Sélectionnez l’infraction si vous souhaitez la verbaliser";
-const HELPER_TEXT_LIC_PAPIER =
-  "Sélectionnez les infractions que vous souhaitez verbaliser à partir du livret individuel de contrôle présenté";
+const HELPER_TEXT_SEVERAL_INFRACTIONS = (
+  <>Sélectionnez la ou les infractions que vous souhaitez verbaliser&nbsp;:</>
+);
+const HELPER_TEXT_SINGLE_INFRACTION = (
+  <>Sélectionnez l’infraction si vous souhaitez la verbaliser&nbsp;:</>
+);
+const HELPER_TEXT_LIC_PAPIER = (
+  <>
+    Sélectionnez les infractions que vous souhaitez verbaliser à partir du
+    livret individuel de contrôle présenté&nbsp;:
+  </>
+);
 
 export const WarningComputedAlerts = () => (
   <Notice
@@ -135,7 +141,7 @@ export function UserReadAlerts({
             </Stack>
           )}
           {!isReportingInfractions && reportedInfractionsLastUpdateTime && (
-            <Description>
+            <Description noMargin>
               {`Date de la dernière modification des infractions retenues : ${prettyFormatDayHour(
                 reportedInfractionsLastUpdateTime
               )}`}
@@ -143,7 +149,7 @@ export function UserReadAlerts({
           )}
           {controlType === CONTROL_TYPES.MOBILIC.label && (
             <>
-              <FieldTitle uppercaseTitle component="h2" sx={{ marginTop: 2 }}>
+              <FieldTitle uppercaseTitle component="h2">
                 Infractions calculées par Mobilic
               </FieldTitle>
               <WarningComputedAlerts />

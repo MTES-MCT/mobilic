@@ -2,7 +2,7 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import { InfoItem } from "../../../home/InfoField";
 import { formatDateTime, formatDay } from "common/utils/time";
-import { FieldTitle } from "../../../common/typography/FieldTitle";
+import { Description } from "../../../common/typography/Description";
 import { Stack } from "@mui/material";
 
 export function ControllerControlHistory({ controlTime, tokenInfo }) {
@@ -12,14 +12,14 @@ export function ControllerControlHistory({ controlTime, tokenInfo }) {
         <Typography variant="h6" component="h2" sx={{ lineHeight: "0.5rem" }}>
           Historique récent (28 jours)
         </Typography>
-        <FieldTitle>
+        <Description noMargin>
           Du{" "}
           {formatDay(
             new Date(tokenInfo.historyStartDay).getTime() / 1000,
             true
           )}{" "}
           au {formatDay(tokenInfo.creationTime, true)}
-        </FieldTitle>
+        </Description>
       </>
       <InfoItem
         name="Date et heure de contrôle"
