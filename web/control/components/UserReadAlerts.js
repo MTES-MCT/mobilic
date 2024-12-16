@@ -48,6 +48,8 @@ const HELPER_TEXT_SEVERAL_INFRACTIONS =
   "Sélectionnez la ou les infractions que vous souhaitez verbaliser";
 const HELPER_TEXT_SINGLE_INFRACTION =
   "Sélectionnez l’infraction si vous souhaitez la verbaliser";
+const HELPER_TEXT_LIC_PAPIER =
+  "Sélectionnez les infractions que vous souhaitez verbaliser à partir du livret individuel de contrôle présenté";
 
 export const WarningComputedAlerts = () => (
   <Notice
@@ -80,6 +82,16 @@ export function UserReadAlerts({
     [_groupedAlerts]
   );
 
+  const updateInfractionsTitle = React.useMemo(
+    () =>
+      controlType === CONTROL_TYPES.LIC_PAPIER.label
+        ? HELPER_TEXT_LIC_PAPIER
+        : totalAlertsNumber === 1
+        ? HELPER_TEXT_SINGLE_INFRACTION
+        : HELPER_TEXT_SEVERAL_INFRACTIONS,
+    [totalAlertsNumber, controlType]
+  );
+
   return (
     <Container maxWidth="md" sx={{ padding: 0 }}>
       {controlType === CONTROL_TYPES.MOBILIC.label && (
@@ -88,13 +100,7 @@ export function UserReadAlerts({
       <Container className={classes.container}>
         <Stack direction="column" rowGap={1}>
           {isReportingInfractions && (
-            <Typography>
-              {totalAlertsNumber === 1
-                ? HELPER_TEXT_SINGLE_INFRACTION
-                : HELPER_TEXT_SEVERAL_INFRACTIONS
-              // TODO 835 update sentence
-              }
-            </Typography>
+            <Typography>{updateInfractionsTitle}</Typography>
           )}
           {!isReportingInfractions && (
             <Typography component="h2" fontWeight="bold" fontSize="1.125rem">
