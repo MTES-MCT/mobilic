@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import { ControllerControlExportMenu } from "./ControllerControlExportMenu";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useControl } from "../../utils/contextControl";
+import { ControllerControlBackButton } from "../utils/ControllerControlBackButton";
 
 const useStyles = makeStyles(theme => ({
   desktopHeaderContainer: {
@@ -21,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "end",
     paddingLeft: "none",
     paddingRight: "none",
     paddingBottom: theme.spacing(1),
@@ -33,9 +34,6 @@ const useStyles = makeStyles(theme => ({
     mobileHeaderContainer: {
       marginBottom: theme.spacing(2)
     }
-  },
-  underlinedButton: {
-    textDecoration: "underline"
   }
 }));
 
@@ -73,15 +71,9 @@ export function ControllerControlHeader({
   ) : (
     <Container className={classes.mobileHeaderContainer}>
       <Box className={classes.subHeaderSection}>
-        <Button
-          onClick={onCloseDrawer}
-          priority="tertiary no outline"
-          iconId="fr-icon-arrow-left-s-line"
-          iconPosition="left"
-          className={classes.underlinedButton}
-        >
+        <ControllerControlBackButton onClick={onCloseDrawer}>
           Fermer
-        </Button>
+        </ControllerControlBackButton>
         {enableExport && <ControllerControlExportMenu />}
       </Box>
     </Container>
