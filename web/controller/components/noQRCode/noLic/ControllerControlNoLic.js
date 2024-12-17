@@ -17,7 +17,6 @@ import { UserReadAlerts } from "../../../../control/components/UserReadAlerts";
 import Box from "@mui/material/Box";
 import { useInfractions } from "../../../utils/contextInfractions";
 import { useControl } from "../../../utils/contextControl";
-import { CONTROL_TYPES } from "../../../utils/useReadControlData";
 import { controlTabsStyles } from "../../../../control/components/UserReadTabs";
 
 const getTabs = alertNumber => [
@@ -51,22 +50,12 @@ const getTabs = alertNumber => [
 export function ControllerControlNoLic({ editBDC }) {
   const classes = controlTabsStyles();
 
-  const { controlId, controlType } = useControl();
+  const { controlId } = useControl();
   const downloadBDC = useDownloadBDC(controlId);
-  const {
-    checkedAlertsNumber,
-    setIsReportingInfractions,
-    isReportingInfractions,
-    reportedInfractionsLastUpdateTime
-  } = useInfractions();
+  const { checkedAlertsNumber, isReportingInfractions } = useInfractions();
 
   const TABS = getTabs(checkedAlertsNumber);
   const [tab, setTab] = React.useState(TABS[0].name);
-
-  const reportInfraction = () => {
-    setIsReportingInfractions(true);
-    setTab(TABS[1].name);
-  };
 
   return (
     <>
@@ -111,13 +100,9 @@ export function ControllerControlNoLic({ editBDC }) {
         </Box>
       </TabContext>
       {!isReportingInfractions && (
-        <BottomMenu
-          reportInfractions={reportInfraction}
-          updatedInfractions={!!reportedInfractionsLastUpdateTime}
-          disabledReportInfractions={controlType === CONTROL_TYPES.NO_LIC.label}
-          editBDC={editBDC}
-          downloadBDC={downloadBDC}
-        />
+        <>
+          <BottomMenu editBDC={editBDC} downloadBDC={downloadBDC} />
+        </>
       )}
     </>
   );

@@ -62,11 +62,6 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
     if (restoreScroll) restoreScroll();
   }, [tab]);
 
-  const reportInfractions = () => {
-    props.setIsReportingInfractions(true);
-    setTab(tabs[1].name);
-  };
-
   const showModifyInfractionsAlert = useMemo(() => {
     return (
       tab !== tabs[1].name &&
@@ -138,12 +133,8 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
       </TabContext>
       {!!currentControllerId() && !props.isReportingInfractions && (
         <ControllerControlBottomMenu
-          reportInfractions={reportInfractions}
-          disabledReportInfractions={(props.groupedAlerts?.length || 0) === 0}
-          updatedInfractions={!!props.reportedInfractionsLastUpdateTime}
           editBDC={props.openBulletinControl}
           downloadBDC={downloadBDC}
-          totalAlertsNumber={props.totalAlertsNumber}
         />
       )}
     </>
