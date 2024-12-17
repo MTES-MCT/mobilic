@@ -28,12 +28,11 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ThirdPartyEmploymentAccess from "./ThirdPartyEmploymentAccess";
-import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
-import Box from "@mui/material/Box";
 import { HideEmail } from "../home/HideEmail";
 import { getNextHeadingComponent } from "common/utils/html";
 import { formatActivity } from "common/utils/businessTypes";
 import Notice from "./Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
@@ -48,18 +47,6 @@ const useStyles = makeStyles(theme => ({
   },
   employmentDetails: {
     display: "block"
-  },
-  copyAdminEmails: {
-    display: "flex",
-    alignItems: "center",
-    flexWrap: "wrap",
-    color: theme.palette.primary.main,
-    fontSize: "0.85em",
-    cursor: "pointer",
-    marginTop: theme.spacing(1)
-  },
-  copyAdminEmailsIcon: {
-    marginRight: theme.spacing(1)
   }
 }));
 
@@ -93,7 +80,13 @@ export function EmploymentInfoCard({
 
   const emailsCurrentAdminsDisplay = useMemo(
     () => (
-      <ul style={{ listStyleType: "none", paddingInlineStart: "0px" }}>
+      <ul
+        style={{
+          listStyleType: "none",
+          paddingInlineStart: "0px",
+          margin: "0px"
+        }}
+      >
         {employment?.company.currentAdmins?.map(admin => (
           <li key={admin.email} style={{ overflowWrap: "anywhere" }}>
             {admin.email}
@@ -234,6 +227,18 @@ export function EmploymentInfoCard({
               uppercaseTitle={false}
             />
           </Grid>
+          {!hideBusiness && !!employment.business && (
+            <Grid item xs={12}>
+              <InfoItem
+                name="Type d'activité"
+                value={formatActivity(employment.business)}
+                titleProps={{
+                  component: getNextHeadingComponent(headingComponent)
+                }}
+                uppercaseTitle={false}
+              />
+            </Grid>
+          )}
           {!!emailsCurrentAdminsDisplay && (
             <Grid item>
               <InfoItem
@@ -242,8 +247,10 @@ export function EmploymentInfoCard({
                 titleProps={{
                   component: getNextHeadingComponent(headingComponent)
                 }}
+                uppercaseTitle={false}
               />
-              <Box
+              <Button
+                priority="tertiary"
                 onClick={() => {
                   navigator.clipboard
                     .writeText(emailsCurrentAdmins)
@@ -255,14 +262,9 @@ export function EmploymentInfoCard({
                       );
                     });
                 }}
-                className={classes.copyAdminEmails}
               >
-                <ContentCopyOutlined
-                  className={classes.copyAdminEmailsIcon}
-                  fontSize="small"
-                />
                 copier les emails
-              </Box>
+              </Button>
             </Grid>
           )}
           {!hideRole && (
@@ -274,18 +276,6 @@ export function EmploymentInfoCard({
                     ? EMPLOYMENT_ROLE.admin
                     : EMPLOYMENT_ROLE.employee
                 }
-                titleProps={{
-                  component: getNextHeadingComponent(headingComponent)
-                }}
-                uppercaseTitle={false}
-              />
-            </Grid>
-          )}
-          {!hideBusiness && !!employment.business && (
-            <Grid item xs={12}>
-              <InfoItem
-                name="Type d'activité"
-                value={formatActivity(employment.business)}
                 titleProps={{
                   component: getNextHeadingComponent(headingComponent)
                 }}
