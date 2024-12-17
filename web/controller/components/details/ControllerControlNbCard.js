@@ -5,18 +5,22 @@ import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
 import { FieldTitle } from "../../../common/typography/FieldTitle";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { Grid } from "@mui/material";
+import Box from "@mui/material/Box";
 
 const useStyles = makeStyles(theme => ({
   card: {
     borderRadius: "4px",
     border: "1px solid",
     borderColor: fr.colors.decisions.border.default.grey.default,
-    padding: "8px 12px 12px 12px"
+    padding: "8px 12px 12px 12px",
+    [theme.breakpoints.up("sm")]: {
+      maxWidth: "50%"
+    }
   },
   value: {
     fontWeight: 700,
-    fontSize: "1.25rem"
+    fontSize: "1.25rem",
+    flexGrow: 1
   },
   button: {
     [theme.breakpoints.down("sm")]: {
@@ -33,12 +37,12 @@ export function ControllerControlNbCard({
 }) {
   const classes = useStyles();
   return (
-    <Stack direction="column" className={classes.card} rowGap={1}>
-      <FieldTitle component="h2">{label}</FieldTitle>
-      <Stack direction={{ xs: "column", md: "row" }} rowGap={1}>
-        <Typography className={classes.value} sx={{ flexGrow: 1 }}>
-          {nbElem}
-        </Typography>
+    <Stack direction="column" rowGap={1} className={classes.card} flexGrow={1}>
+      <FieldTitle component="h2" flexGrow={1}>
+        {label}
+      </FieldTitle>
+      <Box display="flex" flexWrap="wrap" alignItems="center" rowGap={1}>
+        <Typography className={classes.value}>{nbElem}</Typography>
         <Button
           priority="secondary"
           size="small"
@@ -52,7 +56,7 @@ export function ControllerControlNbCard({
         >
           {buttonLabel}
         </Button>
-      </Stack>
+      </Box>
     </Stack>
   );
 }
@@ -63,27 +67,23 @@ export function ControllerControlNbCards({
   setTab
 }) {
   return (
-    <Grid container spacing={2} width="100%">
+    <Stack direction="row" columnGap={1}>
       {(nbWorkingDays || nbWorkingDays === 0) && (
-        <Grid item xs={6}>
-          <ControllerControlNbCard
-            label="Journées enregistrées"
-            buttonLabel="Historique"
-            nbElem={nbWorkingDays}
-            onClick={() => setTab("history")}
-          />
-        </Grid>
+        <ControllerControlNbCard
+          label="Journées enregistrées"
+          buttonLabel="Historique"
+          nbElem={nbWorkingDays}
+          onClick={() => setTab("history")}
+        />
       )}
       {(nbAlerts || nbAlerts === 0) && (
-        <Grid item xs={6}>
-          <ControllerControlNbCard
-            label="Alertes réglementaires"
-            buttonLabel="Alertes"
-            nbElem={nbAlerts}
-            onClick={() => setTab("alerts")}
-          />
-        </Grid>
+        <ControllerControlNbCard
+          label="Alertes réglementaires"
+          buttonLabel="Alertes"
+          nbElem={nbAlerts}
+          onClick={() => setTab("alerts")}
+        />
       )}
-    </Grid>
+    </Stack>
   );
 }
