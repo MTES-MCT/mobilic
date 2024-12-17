@@ -11,6 +11,7 @@ import { shuffle } from "lodash/collection";
 import { LoadingButton } from "common/components/LoadingButton";
 import { usePageTitle } from "../common/UsePageTitle";
 import { Main } from "../common/semantics/Main";
+import { LinkButton } from "../common/LinkButton";
 
 // This condition actually should detect if it's a Node environment
 if (typeof require.context === "undefined") {
@@ -181,12 +182,13 @@ export function Partners() {
                 </LoadingButton>
               )}
               <div>
-                <LoadingButton
+                <LinkButton
                   className={classes.cta}
-                  href="mailto:contact@mobilic.beta.gouv.fr"
+                  to="mailto:contact@mobilic.beta.gouv.fr"
+                  priority="primary"
                 >
                   Devenir partenaire
-                </LoadingButton>
+                </LinkButton>
               </div>
             </Grid>
             <Grid item xs={12} md={6} textAlign="center">
@@ -243,12 +245,13 @@ export function Partners() {
                     </Grid>
                   ))}
                 </Grid>
-                <LoadingButton
+                <LinkButton
                   className={classes.cta}
-                  href="mailto:interfacage@mobilic.beta.gouv.fr"
+                  to="mailto:interfacage@mobilic.beta.gouv.fr"
+                  priority="primary"
                 >
                   S'interfacer avec Mobilic
-                </LoadingButton>
+                </LinkButton>
               </Box>
               <Box>
                 <Typography

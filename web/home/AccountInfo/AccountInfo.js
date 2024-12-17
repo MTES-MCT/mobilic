@@ -49,12 +49,13 @@ function NoEmploymentAlert() {
       type="warning"
       description={
         <>
-          Vous n'avez aucune entreprise à laquelle vous êtes rattaché(e) et{" "}
-          <span className="bold">
-            vous ne pouvez donc pas enregistrer de temps de travail
+          Vous n'êtes rattaché(e) à aucune entreprise. Vous ne pouvez donc pas
+          enregistrer de temps de travail. Rapprochez-vous de votre employeur du
+          moment pour effectuer le rattachement.
+          <span style={{ display: "block", marginTop: 1 }}>
+            Si vous êtes gestionnaire, créez votre entreprise en cliquant sur le
+            bouton ci-dessous.
           </span>
-          . Rapprochez-vous de votre employeur du moment pour effectuer le
-          rattachement.
         </>
       }
     />
@@ -81,6 +82,10 @@ export default function Home() {
     return phoneNumber ? phoneNumber.formatNational() : undefined;
   }, [userInfo.phoneNumber]);
 
+  const hasEmployment = React.useMemo(() => employments.length > 0, [
+    employments
+  ]);
+
   return (
     <>
       <Header />
@@ -100,7 +105,7 @@ export default function Home() {
                     name="Identifiant"
                     value={userInfo.id}
                     info={
-                      employments.length === 0
+                      !hasEmployment
                         ? "Cet identifiant est à communiquer à votre employeur afin qu'il vous rattache à l'entreprise"
                         : ""
                     }
@@ -254,7 +259,7 @@ export default function Home() {
                       : "Mon entreprise"
                   }
                 >
-                  {employments.length > 0 ? (
+                  {hasEmployment ? (
                     <Grid container spacing={2} direction="column">
                       {employments.map(e => (
                         <Grid item xs={12} key={e.id}>
@@ -271,7 +276,7 @@ export default function Home() {
                   ) : (
                     <NoEmploymentAlert />
                   )}
-                  <BecomeAdmin mt={2} />
+                  <BecomeAdmin mt={2} hasEmployments={hasEmployment} />
                 </Section>
                 <OAuthTokenSection />
                 <UserControlSection />

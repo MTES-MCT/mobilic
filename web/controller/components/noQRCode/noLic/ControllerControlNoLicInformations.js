@@ -1,19 +1,18 @@
 import React from "react";
 
-import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { useControl } from "../../../utils/contextControl";
-import { CONTROL_TYPES } from "../../../utils/useReadControlData";
 import { ControllerControlEmployeeInfo } from "../../details/ControllerControlEmployeeInfo";
 import { ControllerControlMissionInfo } from "../../details/ControllerControlMissionInfo";
-import { ControllerControlDayPageInfo } from "../../details/ControllerControlDayPageInfo";
 import { ControllerControlNote } from "../../details/ControllerControlNote";
-import { ControllerControlNbCard } from "../../details/ControllerControlNbCard";
+import { ControllerControlNbCards } from "../../details/ControllerControlNbCard";
+import { useInfractions } from "../../../utils/contextInfractions";
 
 export function ControllerControlNoLicInformations({ setTab }) {
   const { controlData } = useControl();
+  const { checkedAlertsNumber } = useInfractions() ?? {};
   return (
-    <Stack direction="column" p={3} rowGap={3}>
+    <Stack direction="column" p={3} rowGap={3} width="100%">
       <ControllerControlEmployeeInfo
         name={controlData.userFirstName + " " + controlData.userLastName}
       />
@@ -21,20 +20,11 @@ export function ControllerControlNoLicInformations({ setTab }) {
         vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
         companyName={controlData.companyName}
       />
-      {controlData.controlType === CONTROL_TYPES.LIC_PAPIER.label && (
-        <ControllerControlDayPageInfo />
-      )}
       <ControllerControlNote />
-      <Grid container>
-        <Grid item xs={6}>
-          <ControllerControlNbCard
-            label="Alertes réglementaires"
-            buttonLabel="Alertes"
-            nbElem={0}
-            onClick={() => setTab("alerts")}
-          />
-        </Grid>
-      </Grid>
+      <ControllerControlNbCards
+        nbAlerts={checkedAlertsNumber || 0}
+        setTab={setTab}
+      />
     </Stack>
   );
 }

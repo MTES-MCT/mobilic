@@ -11,10 +11,11 @@ import { ControllerControlMissionInfo } from "../../controller/components/detail
 import { ControllerControlEmployments } from "../../controller/components/details/ControllerControlEmployments";
 import { ControllerControlNote } from "../../controller/components/details/ControllerControlNote";
 import { ControllerControlHistory } from "../../controller/components/details/ControllerControlHistory";
-import { ControllerControlNbCard } from "../../controller/components/details/ControllerControlNbCard";
+import { ControllerControlNbCards } from "../../controller/components/details/ControllerControlNbCard";
 import { LoadingButton } from "common/components/LoadingButton";
 import { formatPersonName } from "common/utils/coworkers";
 import { makeStyles } from "@mui/styles";
+import { useInfractions } from "../../controller/utils/contextInfractions";
 
 const useStyles = makeStyles(theme => ({
   exportButton: {
@@ -37,6 +38,7 @@ export function UserReadInfo({
   businesses
 }) {
   const { controlData } = useControl() ?? {};
+  const { checkedAlertsNumber } = useInfractions() ?? {};
   const [userName, setUserName] = React.useState("");
   React.useEffect(() => {
     if (userInfo) {
@@ -81,20 +83,11 @@ export function UserReadInfo({
         controlTime={controlTime}
         tokenInfo={tokenInfo}
       />
-      <Stack direction="row" columnGap={1}>
-        <ControllerControlNbCard
-          label="Journées enregistrées"
-          buttonLabel="Historique"
-          nbElem={workingDaysNumber}
-          onClick={() => setTab("history")}
-        />
-        <ControllerControlNbCard
-          label="Alertes réglementaires"
-          buttonLabel="Alertes"
-          nbElem={alertNumber || 0}
-          onClick={() => setTab("alerts")}
-        />
-      </Stack>
+      <ControllerControlNbCards
+        nbWorkingDays={workingDaysNumber}
+        nbAlerts={alertNumber || checkedAlertsNumber || 0}
+        setTab={setTab}
+      />
       {controlData && <ControllerControlNote />}
       {allowC1BExport && (
         <div className={classes.exportButton}>
