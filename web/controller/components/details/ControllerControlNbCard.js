@@ -34,7 +34,7 @@ export function ControllerControlNbCard({
   const classes = useStyles();
   return (
     <Stack direction="column" className={classes.card} rowGap={1}>
-      <FieldTitle>{label}</FieldTitle>
+      <FieldTitle component="h2">{label}</FieldTitle>
       <Stack direction={{ xs: "column", md: "row" }} rowGap={1}>
         <Typography className={classes.value} sx={{ flexGrow: 1 }}>
           {nbElem}
