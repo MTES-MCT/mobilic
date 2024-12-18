@@ -94,8 +94,8 @@ export function ControllerControlNote() {
       ) : note ? (
         <Typography className={classes.note}>{note}</Typography>
       ) : (
-        <Description>
-          Vous n'avez pas encore renseigné d'annotations de contrôle
+        <Description noMargin>
+          Vous n'avez pas encore renseigné d'annotations de contrôle.
         </Description>
       )}
     </Stack>
