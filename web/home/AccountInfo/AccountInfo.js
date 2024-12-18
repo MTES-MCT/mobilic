@@ -52,12 +52,13 @@ function NoEmploymentAlert() {
           Vous n'êtes rattaché(e) à aucune entreprise. Vous ne pouvez donc pas
           enregistrer de temps de travail. Rapprochez-vous de votre employeur du
           moment pour effectuer le rattachement.
-          <span style={{ display: "block", marginTop: 1 }}>
+          <span style={{ display: "block", marginTop: "1.5rem" }}>
             Si vous êtes gestionnaire, créez votre entreprise en cliquant sur le
             bouton ci-dessous.
           </span>
         </>
       }
+      isNoMarginRight
     />
   );
 }
