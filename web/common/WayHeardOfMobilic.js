@@ -1,12 +1,7 @@
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import RadioGroup from "@mui/material/RadioGroup";
-import Grid from "@mui/material/Grid";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
-import TextField from "@mui/material/TextField";
 import React from "react";
-import { makeStyles } from "@mui/styles";
+import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
+import { Input } from "@codegouvfr/react-dsfr/Input";
+import { MandatorySuffix } from "./forms/MandatorySuffix";
 
 export const WAY_HEARD_OF_MOBILIC_CHOICES = [
   {
@@ -41,81 +36,79 @@ export const WAY_HEARD_OF_MOBILIC_CHOICES = [
 
 export const HEARD_OF_MOBILIC_OTHER_VALUE = "OTHER";
 
-const useStyles = makeStyles(theme => ({
-  wayKnowingMobilicSection: {
-    textAlign: "left",
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-    color: theme.palette.grey[700]
-  },
-  wayKnowingMobilicTitle: {
-    marginBottom: theme.spacing(1)
-  }
-}));
-
-export const WayHeardOfMobilic = ({ setWayHeardOfMobilicValue }) => {
-  const classes = useStyles();
+export function WayHeardOfMobilic({
+  setWayHeardOfMobilicValue,
+  otherInput,
+  setOtherInput,
+  error,
+  required
+}) {
   const [wayHeardOfMobilicSelect, setWayHeardOfMobilicSelect] = React.useState(
     ""
   );
 
-  const handleChangeWayHeardOfMobilic = event => {
-    setWayHeardOfMobilicSelect(event.target.value);
-    setWayHeardOfMobilicValue(event.target.value);
+  const handleRadioChange = event => {
+    const newValue = event.target.value;
+    setWayHeardOfMobilicSelect(newValue);
+
+    if (newValue !== HEARD_OF_MOBILIC_OTHER_VALUE) {
+      setOtherInput("");
+      setWayHeardOfMobilicValue(newValue);
+    } else {
+      setWayHeardOfMobilicValue("");
+    }
+  };
+
+  const handleOtherInputChange = event => {
+    const value = event.target.value.trimStart();
+    setOtherInput(value);
+    setWayHeardOfMobilicValue(value);
   };
 
   return (
-    <Box className={classes.wayKnowingMobilicSection}>
-      <Typography className={classes.wayKnowingMobilicTitle}>
-        Comment avez-vous connu Mobilic ?
-      </Typography>
-      <RadioGroup
-        aria-label="how-did-you-know-mobilic"
-        name="controlled-radio-buttons-group"
+    <fieldset>
+      <legend style={{ marginBottom: "1rem" }}>
+        Comment avez-vous connu Mobilic ? <MandatorySuffix />
+      </legend>
+      <RadioButtons
+        options={[
+          ...WAY_HEARD_OF_MOBILIC_CHOICES.map(choice => ({
+            value: choice.value,
+            label: choice.label,
+            nativeInputProps: { value: choice.value }
+          })),
+          {
+            value: HEARD_OF_MOBILIC_OTHER_VALUE,
+            label: "Autre",
+            nativeInputProps: { value: HEARD_OF_MOBILIC_OTHER_VALUE }
+          }
+        ]}
         value={wayHeardOfMobilicSelect}
-        onChange={handleChangeWayHeardOfMobilic}
-      >
-        <Grid container rowSpacing={2}>
-          {WAY_HEARD_OF_MOBILIC_CHOICES.map(choice => (
-            <Grid item xs={12} sm={6} key={choice.value}>
-              <FormControlLabel
-                value={choice.value}
-                control={<Radio size={"small"} />}
-                label={choice.label}
-              />
-            </Grid>
-          ))}
-          <Grid item xs={12} sm={6}>
-            <FormControlLabel
-              key={HEARD_OF_MOBILIC_OTHER_VALUE}
-              control={
-                <Radio
-                  size={"small"}
-                  value={HEARD_OF_MOBILIC_OTHER_VALUE}
-                  color="primary"
-                  label="Autre"
-                />
-              }
-              label={
-                wayHeardOfMobilicSelect === HEARD_OF_MOBILIC_OTHER_VALUE ? (
-                  <TextField
-                    label="Précisez"
-                    variant="standard"
-                    inputProps={{
-                      maxLength: 250
-                    }}
-                    onChange={e => {
-                      setWayHeardOfMobilicValue(e.target.value.trimStart());
-                    }}
-                  />
-                ) : (
-                  "Autre"
-                )
-              }
-            />
-          </Grid>
-        </Grid>
-      </RadioGroup>
-    </Box>
+        required={required}
+        state={error ? "error" : "default"}
+        stateRelatedMessage={
+          error && !wayHeardOfMobilicSelect
+            ? "Veuillez sélectionner comment vous avez connu Mobilic"
+            : undefined
+        }
+        onChange={handleRadioChange}
+      />
+      {wayHeardOfMobilicSelect === HEARD_OF_MOBILIC_OTHER_VALUE && (
+        <Input
+          label="Précisez"
+          nativeInputProps={{
+            value: otherInput,
+            onChange: handleOtherInputChange,
+            maxLength: 250
+          }}
+          state={error && !otherInput ? "error" : "default"}
+          stateRelatedMessage={
+            error && !otherInput ? "Veuillez préciser votre réponse" : undefined
+          }
+          required={required}
+          style={{ marginTop: "1rem" }}
+        />
+      )}
+    </fieldset>
   );
-};
+}
