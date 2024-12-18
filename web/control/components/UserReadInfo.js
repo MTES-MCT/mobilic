@@ -31,7 +31,7 @@ export function UserReadInfo({
   controlTime,
   alertNumber,
   workingDaysNumber,
-  setTab,
+  onChangeTab,
   allowC1BExport = true,
   companyName,
   vehicleRegistrationNumber,
@@ -86,7 +86,7 @@ export function UserReadInfo({
       <ControllerControlNbCards
         nbWorkingDays={workingDaysNumber}
         nbAlerts={alertNumber || checkedAlertsNumber || 0}
-        setTab={setTab}
+        onChangeTab={onChangeTab}
       />
       {controlData && <ControllerControlNote />}
       {allowC1BExport && (

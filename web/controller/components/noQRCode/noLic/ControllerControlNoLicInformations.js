@@ -8,7 +8,7 @@ import { ControllerControlNote } from "../../details/ControllerControlNote";
 import { ControllerControlNbCards } from "../../details/ControllerControlNbCard";
 import { useInfractions } from "../../../utils/contextInfractions";
 
-export function ControllerControlNoLicInformations({ setTab }) {
+export function ControllerControlNoLicInformations({ onChangeTab }) {
   const { controlData } = useControl();
   const { checkedAlertsNumber } = useInfractions() ?? {};
   return (
@@ -23,7 +23,7 @@ export function ControllerControlNoLicInformations({ setTab }) {
       <ControllerControlNote />
       <ControllerControlNbCards
         nbAlerts={checkedAlertsNumber || 0}
-        setTab={setTab}
+        onChangeTab={onChangeTab}
       />
     </Stack>
   );

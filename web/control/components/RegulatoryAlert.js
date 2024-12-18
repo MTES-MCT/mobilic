@@ -163,7 +163,7 @@ export function RegulatoryAlert({
   sanction,
   isReportable,
   setPeriodOnFocus,
-  setTab,
+  onChangeTab,
   readOnlyAlerts
 }) {
   const { isReportingInfractions, onUpdateInfraction } = useInfractions();
@@ -188,11 +188,11 @@ export function RegulatoryAlert({
         />
       )}
       <div>
-        {setTab ? (
+        {onChangeTab ? (
           <Link
             onClick={e => {
               e.preventDefault();
-              setTab("history");
+              onChangeTab("history");
               if (setPeriodOnFocus) {
                 setPeriodOnFocus(
                   alert.day || alert.week || alert.month

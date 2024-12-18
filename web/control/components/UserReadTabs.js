@@ -11,6 +11,7 @@ import { currentControllerId } from "common/utils/cookie";
 import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
 import Box from "@mui/material/Box";
 import Notice from "../../common/Notice";
+import { scrollToId } from "../../common/hooks/useScroll";
 
 export const controlTabsStyles = makeStyles(theme => ({
   middleTab: {
@@ -58,6 +59,12 @@ export const controlTabsStyles = makeStyles(theme => ({
 export function UserReadTabs({ tabs, restoreScroll, ...props }) {
   const [tab, setTab] = React.useState(tabs[0].name);
 
+  React.useEffect(() => scrollToId("control-header"), [tab]);
+
+  const onChangeTab = tabName => {
+    setTab(tabName);
+  };
+
   React.useEffect(() => {
     if (restoreScroll) restoreScroll();
   }, [tab]);
@@ -79,7 +86,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
         <AppBar enableColorOnDark position="static">
           <Tabs
             value={tab}
-            onChange={(e, t) => setTab(t)}
+            onChange={(e, t) => onChangeTab(t)}
             aria-label="user read tabs"
             centered
             variant="fullWidth"
@@ -109,7 +116,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
                   modifier la sélection au sein de{" "}
                   <span
                     className={classes.linkInfractionTab}
-                    onClick={() => setTab(tabs[1].name)}
+                    onClick={() => onChangeTab(tabs[1].name)}
                   >
                     l’onglet infractions
                   </span>
@@ -125,7 +132,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
                 className={`${classes.panel} ${tab !== t.name &&
                   classes.hiddenPanel}`}
               >
-                {<t.component {...props} setTab={setTab} />}
+                {<t.component {...props} onChangeTab={onChangeTab} />}
               </TabPanel>
             ))}
           </Container>

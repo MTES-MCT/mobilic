@@ -46,7 +46,7 @@ export function ControllerControlHeader({
   const { controlId } = useControl();
   const isOnDesktop = useIsWidthUp("md");
   return isOnDesktop ? (
-    <Container className={classes.desktopHeaderContainer}>
+    <Container className={classes.desktopHeaderContainer} id="control-header">
       <Box className={classes.linkHomeDesktopLine}>
         <Button
           onClick={onCloseDrawer}
@@ -69,7 +69,7 @@ export function ControllerControlHeader({
       </Box>
     </Container>
   ) : (
-    <Container className={classes.mobileHeaderContainer}>
+    <Container className={classes.mobileHeaderContainer} id="control-header">
       <Box className={classes.subHeaderSection}>
         <ControllerControlBackButton onClick={onCloseDrawer}>
           Fermer

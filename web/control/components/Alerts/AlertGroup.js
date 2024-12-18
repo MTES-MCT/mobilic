@@ -94,7 +94,7 @@ export function AlertGroup({
   type,
   sanction,
   setPeriodOnFocus,
-  setTab,
+  onChangeTab,
   readOnlyAlerts,
   displayBusinessType = false,
   titleProps = {}
@@ -201,7 +201,7 @@ export function AlertGroup({
                           sanction={sanction}
                           isReportable={isSanctionReportable}
                           setPeriodOnFocus={setPeriodOnFocus}
-                          setTab={setTab}
+                          onChangeTab={onChangeTab}
                           readOnlyAlerts={readOnlyAlerts}
                         />
                       </ListItem>

@@ -18,6 +18,7 @@ import Box from "@mui/material/Box";
 import { useInfractions } from "../../../utils/contextInfractions";
 import { useControl } from "../../../utils/contextControl";
 import { controlTabsStyles } from "../../../../control/components/UserReadTabs";
+import { scrollToId } from "../../../../common/hooks/useScroll";
 
 const getTabs = alertNumber => [
   {
@@ -57,13 +58,18 @@ export function ControllerControlNoLic({ editBDC }) {
   const TABS = getTabs(checkedAlertsNumber);
   const [tab, setTab] = React.useState(TABS[0].name);
 
+  React.useEffect(() => scrollToId("control-header"), [tab]);
+
+  const onChangeTab = tabName => {
+    setTab(tabName);
+  };
   return (
     <>
       <TabContext value={tab}>
         <AppBar enableColorOnDark position="static">
           <Tabs
             value={tab}
-            onChange={(e, t) => setTab(t)}
+            onChange={(e, t) => onChangeTab(t)}
             aria-label="control no lic tabs"
             centered
             variant="fullWidth"
@@ -93,7 +99,12 @@ export function ControllerControlNoLic({ editBDC }) {
                 className={`${classes.panel} ${tab !== t.name &&
                   classes.hiddenPanel}`}
               >
-                {<t.component readOnlyAlerts={false} setTab={setTab} />}
+                {
+                  <t.component
+                    readOnlyAlerts={false}
+                    onChangeTab={onChangeTab}
+                  />
+                }
               </TabPanel>
             ))}
           </Container>

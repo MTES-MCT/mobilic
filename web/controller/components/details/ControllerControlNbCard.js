@@ -64,7 +64,7 @@ export function ControllerControlNbCard({
 export function ControllerControlNbCards({
   nbAlerts = null,
   nbWorkingDays = null,
-  setTab
+  onChangeTab
 }) {
   return (
     <Stack direction="row" columnGap={1}>
@@ -73,7 +73,7 @@ export function ControllerControlNbCards({
           label="Journées enregistrées"
           buttonLabel="Historique"
           nbElem={nbWorkingDays}
-          onClick={() => setTab("history")}
+          onClick={() => onChangeTab("history")}
         />
       )}
       {(nbAlerts || nbAlerts === 0) && (
@@ -81,7 +81,7 @@ export function ControllerControlNbCards({
           label="Alertes réglementaires"
           buttonLabel="Alertes"
           nbElem={nbAlerts}
-          onClick={() => setTab("alerts")}
+          onClick={() => onChangeTab("alerts")}
         />
       )}
     </Stack>

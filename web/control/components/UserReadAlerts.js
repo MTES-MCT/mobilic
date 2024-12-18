@@ -74,7 +74,7 @@ export const WarningComputedAlerts = () => (
 );
 
 export function UserReadAlerts({
-  setTab,
+  onChangeTab,
   setPeriodOnFocus,
   readOnlyAlerts,
   groupedAlerts = undefined
@@ -167,7 +167,7 @@ export function UserReadAlerts({
                   <AlertGroup
                     {...group}
                     setPeriodOnFocus={setPeriodOnFocus}
-                    setTab={setTab}
+                    onChangeTab={onChangeTab}
                     readOnlyAlerts={readOnlyAlerts}
                     titleProps={{ component: "h3" }}
                     displayBusinessType={
