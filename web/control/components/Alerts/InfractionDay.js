@@ -48,9 +48,6 @@ const gregorian_fr = {
 
 const useStyles = makeStyles(theme => ({
   calendar: {
-    [theme.breakpoints.up("md")]: {
-      margin: "auto"
-    },
     border: "1px solid",
     borderColor: fr.colors.decisions.background.disabled.grey.default,
     borderRadius: "0px",
