@@ -46,6 +46,10 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
     false
   );
   const [wayHeardOfMobilic, setWayHeardOfMobilic] = React.useState("");
+  const [wayHeardOfMobilicError, setWayHeardOfMobilicError] = React.useState(
+    false
+  );
+  const [otherInput, setOtherInput] = React.useState("");
   const [selectedTimezone, setSelectedTimezone] = React.useState(
     getClientTimezone()
   );
@@ -62,13 +66,22 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       !!getPasswordErrors(password) ||
       !firstName ||
       !lastName ||
-      !email
+      !wayHeardOfMobilic
     ) {
       if (!email) {
         setEmailError("Veuillez compléter ce champ");
       }
       setFirstNameError(!firstName);
       setLastNameError(!lastName);
+
+      if (!wayHeardOfMobilic) {
+        setWayHeardOfMobilicError(true);
+      } else if (wayHeardOfMobilic === "OTHER" && !otherInput) {
+        setWayHeardOfMobilicError(true);
+      } else {
+        setWayHeardOfMobilicError(false);
+      }
+
       setForcePasswordValidation(true);
       return;
     }
@@ -286,6 +299,10 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                       {isAdmin && (
                         <WayHeardOfMobilic
                           setWayHeardOfMobilicValue={setWayHeardOfMobilic}
+                          otherInput={otherInput}
+                          setOtherInput={setOtherInput}
+                          error={wayHeardOfMobilicError}
+                          required
                         />
                       )}
                       {!isAdmin && (
