@@ -56,8 +56,12 @@ export function ControllerControlNote() {
 
   return (
     <Stack spacing={0} sx={{ width: "100%" }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h5" component="h2">
+      <Stack
+        direction="row"
+        justifyContent={{ xs: "space-between", md: "flex-start" }}
+        alignItems="center"
+      >
+        <Typography variant="h5" component="h2" sx={{ marginRight: 2 }}>
           Mes notes
         </Typography>
         {!isEditing && (
