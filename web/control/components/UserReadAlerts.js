@@ -48,7 +48,8 @@ const useStyles = makeStyles(theme => ({
     bottom: "-20px",
     background: "white",
     paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
+    paddingRight: theme.spacing(2),
+    zIndex: 300
   }
 }));
 
