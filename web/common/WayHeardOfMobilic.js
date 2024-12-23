@@ -37,40 +37,54 @@ export const WAY_HEARD_OF_MOBILIC_CHOICES = [
 export const HEARD_OF_MOBILIC_OTHER_VALUE = "OTHER";
 
 export function WayHeardOfMobilic({
-  setWayHeardOfMobilicValue,
-  otherInput,
-  setOtherInput,
-  error,
+  setWayHeardOfMobilic,
+  touched = false,
   required
 }) {
-  const [wayHeardOfMobilicSelect, setWayHeardOfMobilicSelect] = React.useState(
-    ""
+  const [selectValue, setSelectValue] = React.useState("");
+  const [otherValue, setOtherValue] = React.useState("");
+
+  const selectError = React.useMemo(() => touched && !selectValue, [
+    selectValue,
+    touched
+  ]);
+
+  const otherError = React.useMemo(
+    () =>
+      touched && selectValue === HEARD_OF_MOBILIC_OTHER_VALUE && !otherValue,
+    [touched, selectValue, otherValue]
   );
+
+  React.useEffect(() => {
+    setWayHeardOfMobilic(
+      selectValue === HEARD_OF_MOBILIC_OTHER_VALUE ? otherValue : selectValue
+    );
+  }, [selectValue, otherValue]);
+
+  React.useEffect(() => {
+    if (selectValue !== HEARD_OF_MOBILIC_OTHER_VALUE) {
+      setOtherValue("");
+    }
+  }, [selectValue]);
 
   const handleRadioChange = event => {
     const newValue = event.target.value;
-    setWayHeardOfMobilicSelect(newValue);
-
-    if (newValue !== HEARD_OF_MOBILIC_OTHER_VALUE) {
-      setOtherInput("");
-      setWayHeardOfMobilicValue(newValue);
-    } else {
-      setWayHeardOfMobilicValue("");
-    }
+    setSelectValue(newValue);
   };
 
   const handleOtherInputChange = event => {
     const value = event.target.value.trimStart();
-    setOtherInput(value);
-    setWayHeardOfMobilicValue(value);
+    setOtherValue(value);
   };
 
   return (
-    <fieldset>
-      <legend style={{ marginBottom: "1rem" }}>
-        Comment avez-vous connu Mobilic ? <MandatorySuffix />
-      </legend>
+    <>
       <RadioButtons
+        legend={
+          <>
+            Comment avez-vous connu Mobilic ? <MandatorySuffix />
+          </>
+        }
         options={[
           ...WAY_HEARD_OF_MOBILIC_CHOICES.map(choice => ({
             value: choice.value,
@@ -83,32 +97,31 @@ export function WayHeardOfMobilic({
             nativeInputProps: { value: HEARD_OF_MOBILIC_OTHER_VALUE }
           }
         ]}
-        value={wayHeardOfMobilicSelect}
+        value={selectValue}
         required={required}
-        state={error ? "error" : "default"}
+        state={selectError ? "error" : "default"}
         stateRelatedMessage={
-          error && !wayHeardOfMobilicSelect
+          selectError
             ? "Veuillez sélectionner comment vous avez connu Mobilic"
             : undefined
         }
         onChange={handleRadioChange}
       />
-      {wayHeardOfMobilicSelect === HEARD_OF_MOBILIC_OTHER_VALUE && (
+      {selectValue === HEARD_OF_MOBILIC_OTHER_VALUE && (
         <Input
           label="Précisez"
           nativeInputProps={{
-            value: otherInput,
+            value: otherValue,
             onChange: handleOtherInputChange,
             maxLength: 250
           }}
-          state={error && !otherInput ? "error" : "default"}
+          state={otherError ? "error" : "default"}
           stateRelatedMessage={
-            error && !otherInput ? "Veuillez préciser votre réponse" : undefined
+            otherError ? "Veuillez préciser votre réponse" : undefined
           }
           required={required}
-          style={{ marginTop: "1rem" }}
         />
       )}
-    </fieldset>
+    </>
   );
 }

@@ -46,20 +46,18 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
     false
   );
   const [wayHeardOfMobilic, setWayHeardOfMobilic] = React.useState("");
-  const [wayHeardOfMobilicError, setWayHeardOfMobilicError] = React.useState(
-    false
-  );
-  const [otherInput, setOtherInput] = React.useState("");
   const [selectedTimezone, setSelectedTimezone] = React.useState(
     getClientTimezone()
   );
   const [subscribeToNewsletter, setSubscribeToNewsletter] = React.useState(
     isAdmin ? true : false
   );
+  const [touched, setTouched] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
   const handleSubmit = async e => {
     e.preventDefault();
+    setTouched(true);
     if (
       !email ||
       !!emailError ||
@@ -73,14 +71,6 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       }
       setFirstNameError(!firstName);
       setLastNameError(!lastName);
-
-      if (!wayHeardOfMobilic) {
-        setWayHeardOfMobilicError(true);
-      } else if (wayHeardOfMobilic === "OTHER" && !otherInput) {
-        setWayHeardOfMobilicError(true);
-      } else {
-        setWayHeardOfMobilicError(false);
-      }
 
       setForcePasswordValidation(true);
       return;
@@ -293,15 +283,14 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                           <Notice
                             description="Cette information pourra être utilisée par l’équipe Mobilic
                   pour vous contacter à des fins d’aide à la prise en main."
+                            sx={{ marginBottom: 3 }}
                           />
                         </>
                       )}
                       {isAdmin && (
                         <WayHeardOfMobilic
-                          setWayHeardOfMobilicValue={setWayHeardOfMobilic}
-                          otherInput={otherInput}
-                          setOtherInput={setOtherInput}
-                          error={wayHeardOfMobilicError}
+                          setWayHeardOfMobilic={setWayHeardOfMobilic}
+                          touched={touched}
                           required
                         />
                       )}
