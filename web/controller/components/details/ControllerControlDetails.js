@@ -40,6 +40,13 @@ export function ControllerControlDetails({
     creationTime: controlData.creationTime
   };
 
+  const _onClose = () => {
+    if (setIsReportingInfractions) {
+      setIsReportingInfractions(false);
+    }
+    onClose();
+  };
+
   React.useEffect(() => {
     if (controlData.employments) {
       setEmployments(orderEmployments(controlData.employments));
@@ -106,7 +113,7 @@ export function ControllerControlDetails({
     <>
       <ControllerControlHeader
         controlDate={legacyTokenInfo?.creationTime}
-        onCloseDrawer={onClose}
+        onCloseDrawer={_onClose}
       />
       <UserReadTabs
         tabs={getTabs(checkedAlertsNumber)}

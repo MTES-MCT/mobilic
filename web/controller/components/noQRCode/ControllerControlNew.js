@@ -1,10 +1,10 @@
 import React from "react";
-import { Button } from "@codegouvfr/react-dsfr/Button";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { ControllerControlPreliminaryForm } from "./ControllerControlPreliminaryForm";
 import { ControlDrawer } from "../../utils/ControlDrawer";
+import { ControllerControlBackButton } from "../utils/ControllerControlBackButton";
 
 export function ControllerControlNew({
   type,
@@ -25,15 +25,9 @@ export function ControllerControlNew({
     <ControlDrawer isOpen={isOpen} onClose={onClose}>
       <Container>
         <Box marginBottom={2}>
-          <Button
-            onClick={onClose}
-            priority="tertiary no outline"
-            iconId="fr-icon-arrow-left-s-line"
-            iconPosition="left"
-            style={{ textDecoration: "underline" }}
-          >
+          <ControllerControlBackButton onClick={onClose}>
             Fermer
-          </Button>
+          </ControllerControlBackButton>
         </Box>
         <Typography variant="h3" component="h1" sx={{ marginY: 2 }}>
           Nouveau contrôle “{type.label}”

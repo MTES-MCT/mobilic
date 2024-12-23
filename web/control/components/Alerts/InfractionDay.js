@@ -48,7 +48,6 @@ const gregorian_fr = {
 
 const useStyles = makeStyles(theme => ({
   calendar: {
-    margin: "auto",
     border: "1px solid",
     borderColor: fr.colors.decisions.background.disabled.grey.default,
     borderRadius: "0px",
@@ -136,7 +135,7 @@ export const InfractionDay = ({ alerts, sanction }) => {
       {initialTimestamps?.length > 0 && (
         <ul
           className="fr-tag-group"
-          style={{ listStyleType: "none", paddingInlineStart: "none" }}
+          style={{ listStyleType: "none", paddingInlineStart: "0" }}
         >
           {initialTimestamps
             .map(ts => (ts / 1000) >> 0)

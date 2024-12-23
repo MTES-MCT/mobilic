@@ -12,6 +12,7 @@ const Notice = ({
   linkUrl,
   linkText,
   style,
+  isNoMarginRight = false,
   isFullWidth = true,
   classes = {},
   sx = {},
@@ -40,6 +41,9 @@ const Notice = ({
                 fr.cx("fr-notice__title", { "fr-text--sm": size === "small" }),
                 classes.title
               )}
+              style={{
+                ...(isNoMarginRight && { marginRight: 0 })
+              }}
             >
               {title}{" "}
               <span className={fr.cx("fr-text--regular")}>{description}</span>

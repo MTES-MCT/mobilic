@@ -8,6 +8,7 @@ export const ControllerBackButton = ({ label, route }) => (
     priority="tertiary no outline"
     iconId="fr-icon-arrow-left-s-line"
     iconPosition="left"
+    size="small"
   >
     {label}
   </LinkButton>

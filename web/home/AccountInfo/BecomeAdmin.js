@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-export default function BecomeAdmin(props) {
+export default function BecomeAdmin({ hasEmployments = true, ...otherProps }) {
   const classes = useStyles();
   const { isAdmin } = useIsAdmin();
 
@@ -21,9 +21,11 @@ export default function BecomeAdmin(props) {
     return null;
   }
   return (
-    <Box {...props}>
+    <Box {...otherProps}>
       <LinkButton to="/signup/company" className={classes.textButton}>
-        Je souhaite devenir gestionnaire d'une autre entreprise
+        {hasEmployments
+          ? "Je souhaite devenir gestionnaire d'une autre entreprise"
+          : "Je souhaite devenir gestionnaire d'une entreprise"}
       </LinkButton>
     </Box>
   );

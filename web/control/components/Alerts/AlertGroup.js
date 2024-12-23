@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => {
     alertNumber: {
       display: "inline-flex",
       whiteSpace: "pre",
-      borderRadius: theme.spacing(1.5),
+      borderRadius: "100px",
       color: "white",
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(1),
@@ -44,7 +44,8 @@ const useStyles = makeStyles(theme => {
       minWidth: theme.spacing(3),
       alignItems: "center",
       justifyContent: "center",
-      fontWeight: "bold"
+      fontWeight: "bold",
+      fontSize: "0.75rem"
     },
     reportedAlert: {
       borderColor: theme.palette.primary.main,
@@ -93,7 +94,7 @@ export function AlertGroup({
   type,
   sanction,
   setPeriodOnFocus,
-  setTab,
+  onChangeTab,
   readOnlyAlerts,
   displayBusinessType = false,
   titleProps = {}
@@ -148,10 +149,15 @@ export function AlertGroup({
           wrap="nowrap"
         >
           <Grid item>
-            <Typography className="bold" color="primary" {...titleProps}>
+            <Typography
+              className="bold"
+              color="primary"
+              {...titleProps}
+              fontSize="0.875rem"
+            >
               {sanction}
             </Typography>
-            <Typography className="bold">{infringementLabel}</Typography>
+            <Typography fontWeight="500">{infringementLabel}</Typography>
           </Grid>
           {alertsNumber !== 0 && (
             <Grid item>
@@ -185,7 +191,7 @@ export function AlertGroup({
                   {displayBusinessType && (
                     <BusinessTypeTitle business={alertBusiness} />
                   )}
-                  <Description>{alertDescription}</Description>
+                  <Description noMargin>{alertDescription}</Description>
                   <List>
                     {alertsByBusiness.map((alert, index) => (
                       <ListItem key={index} disableGutters>
@@ -195,7 +201,7 @@ export function AlertGroup({
                           sanction={sanction}
                           isReportable={isSanctionReportable}
                           setPeriodOnFocus={setPeriodOnFocus}
-                          setTab={setTab}
+                          onChangeTab={onChangeTab}
                           readOnlyAlerts={readOnlyAlerts}
                         />
                       </ListItem>

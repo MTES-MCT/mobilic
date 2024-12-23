@@ -1,53 +1,26 @@
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import { InfoItem } from "../../home/InfoField";
-import { formatPersonName } from "common/utils/coworkers";
-import { EmploymentInfoCard } from "../../common/EmploymentInfoCard";
-import {
-  formatDateTime,
-  frenchFormatDateStringOrTimeStamp
-} from "common/utils/time";
-import { LoadingButton } from "common/components/LoadingButton";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
-import { formatApiError } from "common/utils/errors";
-import Container from "@mui/material/Container";
 import React from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
-import Box from "@mui/material/Box";
-import { Link } from "../../common/LinkButton";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import DriveEtaIcon from "@mui/icons-material/DirectionsCar";
-import BusinessIcon from "@mui/icons-material/Business";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import { currentControllerId } from "common/utils/cookie";
-import { ControllerControlNote } from "../../controller/components/details/ControllerControlNote";
-import Notice from "../../common/Notice";
 import { useControl } from "../../controller/utils/contextControl";
+import { currentControllerId } from "common/utils/cookie";
+import { HTTP_QUERIES } from "common/utils/apiQueries";
+import { formatApiError } from "common/utils/errors";
+import Stack from "@mui/material/Stack";
+import { ControllerControlEmployeeInfo } from "../../controller/components/details/ControllerControlEmployeeInfo";
+import { ControllerControlMissionInfo } from "../../controller/components/details/ControllerControlMissionInfo";
+import { ControllerControlEmployments } from "../../controller/components/details/ControllerControlEmployments";
+import { ControllerControlNote } from "../../controller/components/details/ControllerControlNote";
+import { ControllerControlHistory } from "../../controller/components/details/ControllerControlHistory";
+import { ControllerControlNbCards } from "../../controller/components/details/ControllerControlNbCard";
+import { LoadingButton } from "common/components/LoadingButton";
+import { formatPersonName } from "common/utils/coworkers";
+import { makeStyles } from "@mui/styles";
+import { useInfractions } from "../../controller/utils/contextInfractions";
 
 const useStyles = makeStyles(theme => ({
-  container: {
-    paddingBottom: theme.spacing(4)
-  },
-  sectionBody: {
-    marginBottom: theme.spacing(6)
-  },
-  linkButtons: {
-    marginTop: theme.spacing(2)
-  },
   exportButton: {
     textAlign: "center",
     marginTop: theme.spacing(2)
-  },
-  subSectionBody: {
-    marginBottom: theme.spacing(2)
-  },
-  fieldValue: {
-    fontWeight: 500,
-    fontSize: "1rem",
-    whiteSpace: "inherit"
   }
 }));
 
@@ -58,13 +31,14 @@ export function UserReadInfo({
   controlTime,
   alertNumber,
   workingDaysNumber,
-  setTab,
+  onChangeTab,
   allowC1BExport = true,
   companyName,
   vehicleRegistrationNumber,
   businesses
 }) {
   const { controlData } = useControl() ?? {};
+  const { checkedAlertsNumber } = useInfractions() ?? {};
   const [userName, setUserName] = React.useState("");
   React.useEffect(() => {
     if (userInfo) {
@@ -78,202 +52,54 @@ export function UserReadInfo({
   const api = useApi();
   const classes = useStyles();
 
+  const onC1BExportClick = async () => {
+    try {
+      await api.downloadFileHttpQuery(HTTP_QUERIES.userC1bExport, {
+        json: {
+          min_date: tokenInfo.historyStartDay,
+          max_date: tokenInfo.creationDay
+        }
+      });
+    } catch (err) {
+      alerts.error(formatApiError(err), "generate_tachograph_files", 6000);
+    }
+  };
+
   return (
-    <Container
-      maxWidth="md"
-      className={classes.container}
-      sx={{ paddingTop: 3 }}
-    >
-      <Grid container spacing={2} className={classes.sectionBody}>
-        {controlData && (
-          <Grid item xs={12} mb={2}>
-            <ControllerControlNote />
-          </Grid>
-        )}
-        <Grid item md={6}>
-          <Typography variant="h5" component="h2">
-            Informations salarié(e)
-          </Typography>
-          <Grid
-            container
-            wrap="wrap"
-            spacing={2}
-            className={classes.subSectionBody}
-          >
-            <Grid item>
-              <InfoItem
-                name="Nom"
-                value={userName}
-                titleProps={{
-                  component: "h3"
-                }}
-              />
-            </Grid>
-          </Grid>
-          {!companyName && !!currentControllerId() && (
-            <Notice
-              type="warning"
-              description="Aucune saisie en cours au moment du contrôle"
-            />
-          )}
-        </Grid>
-        {companyName && (
-          <Grid item md={6}>
-            <Typography variant="h5" component="h2">
-              Mission lors du contrôle
-            </Typography>
-            <List dense>
-              <ListItem disableGutters>
-                <ListItemIcon>
-                  <DriveEtaIcon />
-                </ListItemIcon>
-                <Typography noWrap align="left" className={classes.fieldValue}>
-                  {vehicleRegistrationNumber || "Non renseigné"}
-                </Typography>
-              </ListItem>
-              <ListItem disableGutters>
-                <ListItemIcon>
-                  <BusinessIcon />
-                </ListItemIcon>
-                <Typography noWrap align="left" className={classes.fieldValue}>
-                  {companyName}
-                </Typography>
-              </ListItem>
-            </List>
-          </Grid>
-        )}
-      </Grid>
-      <Typography
-        variant="h5"
-        component="h2"
-        className={classes.subSectionBody}
-      >
-        Entreprise(s) de rattachement
-      </Typography>
-      <Grid container spacing={2} direction="column">
-        {employments.map(e => (
-          <Grid item key={e.id}>
-            <EmploymentInfoCard
-              key={e.id}
-              employment={e}
-              defaultOpen={employments.length === 1}
-              hideRole
-              hideStatus
-              hideActions
-              lightenIfEnded={false}
-              headingComponent="h3"
-            />
-          </Grid>
-        ))}
-      </Grid>
-      {businesses && businesses.length > 1 && (
-        <Notice
-          type="warning"
-          sx={{ marginTop: 2, marginBottom: 6 }}
-          description={
-            <>{`Attention, veuillez noter que ce salarié effectue des missions pour différents secteurs d’activité 
-              (${businesses.join(", ")}).`}</>
-          }
+    <Stack direction="column" p={3} rowGap={3}>
+      <ControllerControlEmployeeInfo name={userName} />
+      {!!currentControllerId() && (
+        <ControllerControlMissionInfo
+          vehicleRegistrationNumber={vehicleRegistrationNumber}
+          companyName={companyName}
+          businessTypeDuringControl={controlData.businessTypeDuringControl}
         />
       )}
-      <Typography variant="h5" component="h2" mt={4}>
-        Historique récent (28 jours)
-      </Typography>
-      <Grid container wrap="wrap" spacing={2}>
-        <Grid item>
-          <InfoItem
-            name="Heure du contrôle"
-            value={formatDateTime(controlTime || tokenInfo.creationTime, true)}
-            titleProps={{
-              component: "h3"
-            }}
-          />
-        </Grid>
-        <Grid item>
-          <InfoItem
-            name="Début de l'historique"
-            value={frenchFormatDateStringOrTimeStamp(tokenInfo.historyStartDay)}
-            titleProps={{
-              component: "h3"
-            }}
-          />
-        </Grid>
-        <Grid item>
-          <InfoItem
-            name="Fin de l'historique"
-            value={frenchFormatDateStringOrTimeStamp(tokenInfo.creationDay)}
-            titleProps={{
-              component: "h3"
-            }}
-          />
-        </Grid>
-      </Grid>
-      <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        spacing={6}
-        className={classes.linkButtons}
-      >
-        <Grid item xs={6} style={{ textAlign: "center" }}>
-          <Typography>
-            Nombre de journées enregistrées : {workingDaysNumber}
-          </Typography>
-          <Link
-            to="#"
-            color="primary"
-            variant="body1"
-            onClick={e => {
-              e.preventDefault();
-              setTab("history");
-            }}
-          >
-            Voir l'historique
-          </Link>
-        </Grid>
-        <Grid item xs={6} style={{ textAlign: "center" }}>
-          <Typography>
-            Nombre d'alertes réglementaires : {alertNumber}
-          </Typography>
-          <Link
-            to="#"
-            color="primary"
-            variant="body1"
-            onClick={e => {
-              e.preventDefault();
-              setTab("alerts");
-            }}
-          >
-            Voir alertes
-          </Link>
-        </Grid>
-      </Grid>
+      <ControllerControlEmployments
+        employments={employments}
+        businesses={businesses}
+      />
+      <ControllerControlHistory
+        controlTime={controlTime}
+        tokenInfo={tokenInfo}
+      />
+      <ControllerControlNbCards
+        nbWorkingDays={workingDaysNumber}
+        nbAlerts={alertNumber || checkedAlertsNumber || 0}
+        onChangeTab={onChangeTab}
+      />
+      {controlData && <ControllerControlNote />}
       {allowC1BExport && (
-        <Box className={classes.exportButton}>
+        <div className={classes.exportButton}>
           <LoadingButton
             priority="secondary"
             className={classes.exportButton}
-            onClick={async () => {
-              try {
-                await api.downloadFileHttpQuery(HTTP_QUERIES.userC1bExport, {
-                  json: {
-                    min_date: tokenInfo.historyStartDay,
-                    max_date: tokenInfo.creationDay
-                  }
-                });
-              } catch (err) {
-                alerts.error(
-                  formatApiError(err),
-                  "generate_tachograph_files",
-                  6000
-                );
-              }
-            }}
+            onClick={onC1BExportClick}
           >
             Télécharger C1B
           </LoadingButton>
-        </Box>
+        </div>
       )}
-    </Container>
+    </Stack>
   );
 }

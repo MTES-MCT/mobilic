@@ -57,7 +57,7 @@ import UpdatePasswordModal from "./pwa/components/UpdatePassword";
 import AcceptCguModal from "./pwa/modals/AcceptCguModal";
 import RejectedCguModal from "./pwa/modals/RejectedCguModals";
 import merge from "lodash/merge";
-import useScroll from "./common/hooks/useScroll";
+import { useScroll } from "./common/hooks/useScroll";
 
 const matomo = createInstance({
   urlBase: "https://stats.beta.gouv.fr",

@@ -1,19 +1,30 @@
 import React from "react";
-import Stack from "@mui/material/Stack";
-import { ControllerControlNote as Notes } from "../../details/ControllerControlNote";
-import { ControllerControlNoLicInformationsEmployee as InformationsEmployee } from "./ControllerControlNoLicInformationsEmployee";
 
-export function ControllerControlNoLicInformations() {
+import Stack from "@mui/material/Stack";
+import { useControl } from "../../../utils/contextControl";
+import { ControllerControlEmployeeInfo } from "../../details/ControllerControlEmployeeInfo";
+import { ControllerControlMissionInfo } from "../../details/ControllerControlMissionInfo";
+import { ControllerControlNote } from "../../details/ControllerControlNote";
+import { ControllerControlNbCards } from "../../details/ControllerControlNbCard";
+import { useInfractions } from "../../../utils/contextInfractions";
+
+export function ControllerControlNoLicInformations({ onChangeTab }) {
+  const { controlData } = useControl();
+  const { checkedAlertsNumber } = useInfractions() ?? {};
   return (
-    <Stack
-      direction="column"
-      spacing={2}
-      paddingLeft={2}
-      paddingRight={1}
-      alignItems="center"
-    >
-      <Notes />
-      <InformationsEmployee />
+    <Stack direction="column" p={3} rowGap={3} width="100%">
+      <ControllerControlEmployeeInfo
+        name={controlData.userFirstName + " " + controlData.userLastName}
+      />
+      <ControllerControlMissionInfo
+        vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
+        companyName={controlData.companyName}
+      />
+      <ControllerControlNote />
+      <ControllerControlNbCards
+        nbAlerts={checkedAlertsNumber || 0}
+        onChangeTab={onChangeTab}
+      />
     </Stack>
   );
 }

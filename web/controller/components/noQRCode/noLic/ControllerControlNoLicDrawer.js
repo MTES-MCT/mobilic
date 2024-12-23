@@ -3,6 +3,7 @@ import { ControllerControlHeader } from "../../details/ControllerControlHeader";
 import { ControllerControlNoLic } from "./ControllerControlNoLic";
 import { ControlBulletinDrawer } from "../../controlBulletin/ControlBulletinDrawer";
 import { ControlDrawer } from "../../../utils/ControlDrawer";
+import { useInfractions } from "../../../utils/contextInfractions";
 
 export function ControllerControlNoLicDrawer({
   controlData,
@@ -11,6 +12,7 @@ export function ControllerControlNoLicDrawer({
   onClose
 }) {
   const [isEditingBDC, setIsEditingBDC] = React.useState(false);
+  const { setIsReportingInfractions } = useInfractions();
 
   const editBDC = () => {
     setIsEditingBDC(true);
@@ -18,6 +20,7 @@ export function ControllerControlNoLicDrawer({
 
   const closeControl = () => {
     setControlData(null);
+    setIsReportingInfractions(false);
     onClose();
   };
 
