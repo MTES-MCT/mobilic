@@ -64,7 +64,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       !!getPasswordErrors(password) ||
       !firstName ||
       !lastName ||
-      !wayHeardOfMobilic
+      (isAdmin && !wayHeardOfMobilic)
     ) {
       if (!email) {
         setEmailError("Veuillez compléter ce champ");
