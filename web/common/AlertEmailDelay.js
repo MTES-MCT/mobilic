@@ -7,7 +7,7 @@ const AlertEmailDelay = () => {
     <Notice
       sx={{ marginY: 2 }}
       style={{ paddingBottom: 0 }}
-      type="warning"
+      type="info"
       description={
         <>
           Il est possible que&nbsp;:
