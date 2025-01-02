@@ -117,7 +117,7 @@ export function WayHeardOfMobilic({
           }}
           state={otherError ? "error" : "default"}
           stateRelatedMessage={
-            otherError ? "Veuillez préciser votre réponse" : undefined
+            otherError ? "Veuillez compléter ce champ" : undefined
           }
           required={required}
         />
