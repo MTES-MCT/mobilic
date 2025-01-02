@@ -11,13 +11,19 @@ import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useModals } from "common/utils/modals";
 import { useControl } from "../../utils/contextControl";
+import { CONTROL_TYPES } from "../../utils/useReadControlData";
 
 export function ControllerControlExportMenu() {
   const api = useApi();
   const modals = useModals();
   const alerts = useSnackbarAlerts();
-  const { controlId, canDownloadBDC } = useControl();
+  const { controlId, canDownloadBDC, controlType } = useControl();
   const [exportMenuAnchorEl, setExportMenuAnchorEl] = React.useState(null);
+
+  const isControlMobilic = React.useMemo(
+    () => controlType === CONTROL_TYPES.MOBILIC.label,
+    [controlType]
+  );
 
   const isOpen = React.useMemo(() => !!exportMenuAnchorEl, [
     exportMenuAnchorEl
@@ -45,19 +51,21 @@ export function ControllerControlExportMenu() {
           "aria-labelledby": "control-export-button"
         }}
       >
-        <MenuItem
-          onClick={() => {
-            setExportMenuAnchorEl(null);
-            modals.open("controllerExportC1BOne", {
-              controlId
-            });
-          }}
-        >
-          <ListItemIcon>
-            <SvgIcon viewBox="0 0 640 512" component={C1bIcon} />
-          </ListItemIcon>
-          <Typography>Export C1B</Typography>
-        </MenuItem>
+        {isControlMobilic && (
+          <MenuItem
+            onClick={() => {
+              setExportMenuAnchorEl(null);
+              modals.open("controllerExportC1BOne", {
+                controlId
+              });
+            }}
+          >
+            <ListItemIcon>
+              <SvgIcon viewBox="0 0 640 512" component={C1bIcon} />
+            </ListItemIcon>
+            <Typography>Export C1B</Typography>
+          </MenuItem>
+        )}
         <MenuItem
           onClick={async () => {
             setExportMenuAnchorEl(null);
@@ -76,25 +84,27 @@ export function ControllerControlExportMenu() {
           </ListItemIcon>
           <Typography>Export Excel</Typography>
         </MenuItem>
-        <MenuItem
-          disabled={!canDownloadBDC}
-          onClick={async () => {
-            setExportMenuAnchorEl(null);
-            alerts.withApiErrorHandling(async () => {
-              const options = {
-                control_id: controlId
-              };
-              await api.downloadFileHttpQuery(HTTP_QUERIES.controlXmlExport, {
-                json: options
-              });
-            }, "download-control-xml");
-          }}
-        >
-          <ListItemIcon>
-            <SvgIcon viewBox="0 0 64 64" component={XmlIcon} />
-          </ListItemIcon>
-          <Typography>Export XML</Typography>
-        </MenuItem>
+        {isControlMobilic && (
+          <MenuItem
+            disabled={!canDownloadBDC}
+            onClick={async () => {
+              setExportMenuAnchorEl(null);
+              alerts.withApiErrorHandling(async () => {
+                const options = {
+                  control_id: controlId
+                };
+                await api.downloadFileHttpQuery(HTTP_QUERIES.controlXmlExport, {
+                  json: options
+                });
+              }, "download-control-xml");
+            }}
+          >
+            <ListItemIcon>
+              <SvgIcon viewBox="0 0 64 64" component={XmlIcon} />
+            </ListItemIcon>
+            <Typography>Export XML</Typography>
+          </MenuItem>
+        )}
       </Menu>
     </>
   );
