@@ -40,6 +40,7 @@ import { FranceConnectCallback } from "../signup/FranceConnectCallback";
 import { Invite } from "../signup/invite";
 import Signup from "../signup/root";
 import { SignupSelection } from "../signup/SignupSelection";
+import { SecurityAccreditation } from "../landing/accreditation";
 
 function UserReadRedirect() {
   const { token } = useParams();
@@ -202,6 +203,13 @@ export const ROUTES = [
     label: "Déclaration d'accessibilité",
     accessible: () => true,
     component: <Accessibility />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/security-accreditation",
+    label: "Sécurité",
+    accessible: () => true,
+    component: <SecurityAccreditation />,
     menuItemFilter: () => false
   },
   {

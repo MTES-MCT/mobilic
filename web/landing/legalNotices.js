@@ -1,41 +1,23 @@
 import React from "react";
-import Container from "@mui/material/Container";
-import { Header } from "../common/Header";
-import { makeStyles } from "@mui/styles";
-import { Footer } from "./footer";
 import { usePageTitle } from "../common/UsePageTitle";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { Main } from "../common/semantics/Main";
-
-const useStyles = makeStyles(theme => ({
-  container: {
-    padding: theme.spacing(4),
-    paddingBottom: theme.spacing(7),
-    margin: "auto",
-    textAlign: "left"
-  }
-}));
+import { FullPageComponent } from "./components/FullPageComponent";
 
 export default function LegalNotices() {
   return (
-    <>
-      <Header />
-      <Main>
-        <Notices />
-      </Main>
-      <Footer />
-    </>
+    <FullPageComponent>
+      <Notices />
+    </FullPageComponent>
   );
 }
 
 function Notices() {
   usePageTitle("Mentions légales - Mobilic");
-  const classes = useStyles();
 
   return (
-    <Container className={classes.container} maxWidth="xl">
+    <>
       <h1>Mentions légales</h1>
       <Stack direction="column" spacing={4}>
         <Box>
@@ -68,6 +50,6 @@ function Notices() {
           </address>
         </Box>
       </Stack>
-    </Container>
+    </>
   );
 }

@@ -1,8 +1,4 @@
 import React from "react";
-import Container from "@mui/material/Container";
-import { Header } from "../common/Header";
-import { makeStyles } from "@mui/styles";
-import { Footer } from "./footer";
 import Link from "@mui/material/Link";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { usePageTitle } from "../common/UsePageTitle";
@@ -10,7 +6,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { ExternalLink } from "../common/ExternalLink";
-import { Main } from "../common/semantics/Main";
+import { FullPageComponent } from "./components/FullPageComponent";
 
 const dataCustodyHeaders = ["Catégorie de données", "Durée de conservation"];
 const dataCustody = [
@@ -120,33 +116,19 @@ const dataInfra = [
   ]
 ];
 
-const useStyles = makeStyles(theme => ({
-  container: {
-    padding: theme.spacing(4),
-    paddingBottom: theme.spacing(7),
-    margin: "auto",
-    textAlign: "left"
-  }
-}));
-
 export default function PrivacyPolicy() {
   return (
-    <>
-      <Header />
-      <Main>
-        <PrivacyPolicyContent />
-      </Main>
-      <Footer />
-    </>
+    <FullPageComponent>
+      <PrivacyPolicyContent />
+    </FullPageComponent>
   );
 }
 
 function PrivacyPolicyContent() {
   usePageTitle("Données personnelles - Mobilic");
-  const classes = useStyles();
 
   return (
-    <Container className={classes.container} maxWidth="xl">
+    <>
       <h1>Protection des données personnelles</h1>
       <Stack direction="column" spacing={4}>
         <Box>
@@ -263,23 +245,25 @@ function PrivacyPolicyContent() {
             Nous mettons en place plusieurs mesures pour sécuriser les
             données&nbsp;:
           </p>
-          <li>Chiffrage des documents&nbsp;;</li>
-          <li>Cloisonnement des données&nbsp;;</li>
-          <li>Mesures de traçabilité&nbsp;;</li>
-          <li>Surveillance via un monitoring&nbsp;;</li>
-          <li>
-            Protection contre les virus, malwares et logiciels espions&nbsp;;
-          </li>
-          <li>
-            Protection des réseaux&nbsp;: mesures de protection de nos
-            hébergeurs et connexion SSL (https)&nbsp;;
-          </li>
-          <li>Sauvegarde&nbsp;;</li>
-          <li>
-            Mesures restrictives d&lsquo;accès aux données à caractère
-            personnel&nbsp;: accès aux données par les agents habilités dans les
-            conditions réglementaires prévues.
-          </li>
+          <ul>
+            <li>Chiffrage des documents&nbsp;;</li>
+            <li>Cloisonnement des données&nbsp;;</li>
+            <li>Mesures de traçabilité&nbsp;;</li>
+            <li>Surveillance via un monitoring&nbsp;;</li>
+            <li>
+              Protection contre les virus, malwares et logiciels espions&nbsp;;
+            </li>
+            <li>
+              Protection des réseaux&nbsp;: mesures de protection de nos
+              hébergeurs et connexion SSL (https)&nbsp;;
+            </li>
+            <li>Sauvegarde&nbsp;;</li>
+            <li>
+              Mesures restrictives d&lsquo;accès aux données à caractère
+              personnel&nbsp;: accès aux données par les agents habilités dans
+              les conditions réglementaires prévues.
+            </li>
+          </ul>
         </Box>
         <Box>
           <h2>
@@ -432,6 +416,6 @@ function PrivacyPolicyContent() {
           </ul>
         </Box>
       </Stack>
-    </Container>
+    </>
   );
 }

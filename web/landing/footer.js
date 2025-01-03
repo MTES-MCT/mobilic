@@ -37,6 +37,10 @@ export function Footer({ withFollow = true }) {
         }}
         bottomItems={[
           {
+            text: "Sécurité",
+            linkProps: { to: "security-accreditation" }
+          },
+          {
             text: "CGU",
             linkProps: { to: "#", onClick: () => modals.open("cgu") }
           },
