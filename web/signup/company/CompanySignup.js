@@ -34,6 +34,7 @@ export function CompanySignup() {
   const [sirenInfo, setSirenInfo] = React.useState(null);
   const [usualName, setUsualName] = React.useState("");
   const [phoneNumber, setPhoneNumber] = React.useState("");
+  const [nbWorkers, setNbWorkers] = React.useState(0);
   const [businessType, setBusinessType] = React.useState("");
   const [shouldSelectSirets, setShouldSelectSirets] = React.useState(false);
   const [facilities, setFacilities] = React.useState([]);
@@ -88,7 +89,8 @@ export function CompanySignup() {
         siren: siren,
         usualName: usualName.trim(),
         phoneNumber,
-        businessType
+        businessType,
+        nbWorkers
       };
       const apiResponse = await api.graphQlMutate(
         COMPANY_SIGNUP_MUTATION,
@@ -127,7 +129,8 @@ export function CompanySignup() {
               siret: f.siret,
               usualName: f.usualName,
               phoneNumber: f.phoneNumber,
-              businessType: f.businessType
+              businessType: f.businessType,
+              nbWorkers: f.nbWorkers
             };
           })
       };
@@ -203,6 +206,8 @@ export function CompanySignup() {
             setPhoneNumber={setPhoneNumber}
             businessType={businessType}
             setBusinessType={setBusinessType}
+            nbWorkers={nbWorkers}
+            setNbWorkers={setNbWorkers}
             handleSubmit={handleCompanySignup}
             loading={loadingCompanySignup}
           />
