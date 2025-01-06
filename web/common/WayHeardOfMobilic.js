@@ -101,9 +101,7 @@ export function WayHeardOfMobilic({
         required={required}
         state={selectError ? "error" : "default"}
         stateRelatedMessage={
-          selectError
-            ? "Veuillez sélectionner comment vous avez connu Mobilic"
-            : undefined
+          selectError ? "Veuillez compléter ce champ" : undefined
         }
         onChange={handleRadioChange}
       />
