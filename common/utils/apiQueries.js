@@ -188,6 +188,7 @@ export const COMPANY_SIGNUP_MUTATION = gql`
     $usualName: String!
     $phoneNumber: String
     $businessType: String
+    $nbWorkers: Int
   ) {
     signUp {
       company(
@@ -195,6 +196,7 @@ export const COMPANY_SIGNUP_MUTATION = gql`
         usualName: $usualName
         phoneNumber: $phoneNumber
         businessType: $businessType
+        nbWorkers: $nbWorkers
       ) {
         employment {
           id

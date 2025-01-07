@@ -9,6 +9,7 @@ import { BusinessType } from "../../common/BusinessType";
 import { Section } from "../../common/Section";
 import { MandatoryField } from "../../common/MandatoryField";
 import { Input } from "../../common/forms/Input";
+import { NumericInput } from "../../common/forms/NumericInput";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -16,6 +17,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+export const MIN_NB_WORKERS = 1;
+export const MAX_NB_WORKERS = 5000;
 export function SubmitStep({
   handleSubmit,
   loading,
@@ -25,6 +28,8 @@ export function SubmitStep({
   setPhoneNumber,
   businessType,
   setBusinessType,
+  nbWorkers,
+  setNbWorkers,
   ...props
 }) {
   const [claimedRights, setClaimedRights] = React.useState(false);
@@ -61,6 +66,14 @@ export function SubmitStep({
               setCurrentPhoneNumber={setPhoneNumber}
               label="Numéro de téléphone de l'entreprise"
             />
+            <NumericInput
+              initialValue={nbWorkers}
+              onChangeValue={setNbWorkers}
+              label="Nombre de chauffeurs et/ou travailleurs mobiles"
+              required
+              min={MIN_NB_WORKERS}
+              max={MAX_NB_WORKERS}
+            />
             <Section title="Veuillez indiquer votre type d'activité">
               <BusinessType
                 onChangeBusinessType={setBusinessType}
@@ -83,6 +96,8 @@ export function SubmitStep({
           className={classes.verticalFormButton}
           type="submit"
           disabled={
+            nbWorkers < MIN_NB_WORKERS ||
+            nbWorkers > MAX_NB_WORKERS ||
             !claimedRights ||
             (usingCompanyName && !companyName) ||
             (usingCompanyName && !businessType)
