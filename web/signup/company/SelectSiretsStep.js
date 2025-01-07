@@ -58,9 +58,9 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
     }
 
     if (
-      !selectedSirets
+      selectedSirets
         .map(f => f.nbWorkers)
-        .every(nb => nb < MAX_NB_WORKERS && nb > MIN_NB_WORKERS)
+        .some(nb => nb < MIN_NB_WORKERS || nb > MAX_NB_WORKERS)
     ) {
       return false;
     }
