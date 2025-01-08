@@ -138,8 +138,8 @@ export function ControllerScanQRCode() {
         <ControllerBackButton label="Accueil" route="/home" />
         <h3 className={classes.titleScan}>Scannez un QR Code Mobilic</h3>
         <Typography>
-          Afin d'accéder à l'historique de {controlHistoryDepth} jours du
-          salarié, positionnez son QR Code dans le cadre.
+          Afin d'accéder à l'historique du salarié ({controlHistoryDepth}{" "}
+          jours), positionnez son QR Code dans le cadre.
         </Typography>
         <Grid
           container
