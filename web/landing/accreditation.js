@@ -6,6 +6,7 @@ import TabletteImage from "common/assets/images/security-accreditation/homologat
 import MobileImage from "common/assets/images/security-accreditation/homologation.mobile.png";
 import { useIsWidthDown, useIsWidthUp } from "common/utils/useWidth";
 import { FullPageComponent } from "./components/FullPageComponent";
+import { ExternalLink } from "../common/ExternalLink";
 
 export const SecurityAccreditation = () => (
   <FullPageComponent>
@@ -28,12 +29,14 @@ const InnerSecurityAccreditation = () => {
       </p>
       <p>
         L’homologation sécurité devra être renouvelée tous les 6 mois dans le
-        cadre d'une démarche de renforcement continue de la sécurité des
+        cadre d'une démarche continue de renforcement de la sécurité des
         services numériques de l’Etat.
       </p>
       <p>
-        Mobilic est hébergé chez OVH, hébergeur qualifié SecNumCloud (services
-        numériques respectant les plus hauts standards de sécurité de l'ANSSI).
+        Mobilic est hébergé chez{" "}
+        <ExternalLink url="https://www.ovhcloud.com/fr/" text="OVH" />,
+        hébergeur qualifié SecNumCloud (services numériques respectant les plus
+        hauts standards de sécurité de l'ANSSI).
       </p>
       <img
         src={isDesktop ? DesktopImage : isMobile ? MobileImage : TabletteImage}
