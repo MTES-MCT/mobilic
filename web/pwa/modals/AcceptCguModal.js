@@ -5,6 +5,7 @@ import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { ExternalLink } from "../../common/ExternalLink";
 import Modal, { modalStyles } from "../../common/Modal";
 import { useCgu } from "../../common/useCgu";
+import { CGU_EXTERNAL_URL } from "../../landing/cgu";
 
 export default function AcceptCguModal({ onAccept, onReject, handleClose }) {
   const { acceptCgu, rejectCgu } = useCgu();
@@ -44,7 +45,7 @@ export default function AcceptCguModal({ onAccept, onReject, handleClose }) {
               ? "Votre compte Mobilic sera supprimé car vous n’avez pas accepté les"
               : "Nous avons récemment changé nos"}{" "}
             <ExternalLink
-              url={"https://cgu.mobilic.beta.gouv.fr"}
+              url={CGU_EXTERNAL_URL}
               text={"conditions générales d'utilisation"}
             />
             .

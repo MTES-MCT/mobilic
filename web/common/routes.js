@@ -21,7 +21,6 @@ import { RegulationPage } from "../landing/ResourcePage/RegulationPage";
 import { ResourcePage } from "../landing/ResourcePage/ResourcePage";
 import Accessibility from "../landing/accessibility";
 import { Certificate } from "../landing/certificate";
-import { CGU } from "../landing/cgu";
 import { LandingGestionnaire } from "../landing/gestionnaire/LandingGestionnaire";
 import LegalNotices from "../landing/legalNotices";
 import { Partners } from "../landing/partners";
@@ -217,13 +216,6 @@ export const ROUTES = [
     label: "Mentions légales",
     accessible: () => true,
     component: <LegalNotices />,
-    menuItemFilter: () => false
-  },
-  {
-    path: "/cgu",
-    label: "CGU",
-    accessible: () => true,
-    component: <CGU />,
     menuItemFilter: () => false
   },
   {
