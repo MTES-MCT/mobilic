@@ -5,12 +5,15 @@ import { formatDateTime, formatDay } from "common/utils/time";
 import { Description } from "../../../common/typography/Description";
 import { Stack } from "@mui/material";
 
+const controlHistoryDepth =
+  process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH || 28;
+
 export function ControllerControlHistory({ controlTime, tokenInfo }) {
   return (
     <Stack rowGap={1}>
       <>
         <Typography variant="h6" component="h2" sx={{ lineHeight: "0.5rem" }}>
-          Historique récent (28 jours)
+          Historique récent ({controlHistoryDepth} jours)
         </Typography>
         <Description noMargin>
           Du{" "}

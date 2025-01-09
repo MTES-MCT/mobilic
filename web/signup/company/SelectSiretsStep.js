@@ -10,6 +10,8 @@ import { BusinessType } from "../../common/BusinessType";
 import { MandatoryField } from "../../common/MandatoryField";
 import { Input } from "../../common/forms/Input";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { NumericInput } from "../../common/forms/NumericInput";
+import { MAX_NB_WORKERS, MIN_NB_WORKERS } from "./SubmitStep";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -51,6 +53,14 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
     if (
       selectedBusinessTypes.filter(Boolean).length <
       selectedBusinessTypes.length
+    ) {
+      return false;
+    }
+
+    if (
+      selectedSirets
+        .map(f => f.nbWorkers)
+        .some(nb => nb < MIN_NB_WORKERS || nb > MAX_NB_WORKERS)
     ) {
       return false;
     }
@@ -145,6 +155,17 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                     }}
                     label="Numéro de téléphone de l'entreprise"
                     accessibilityHelpText={`${facility.address}, ${facility.postal_code}`}
+                  />
+                  <NumericInput
+                    initialValue={0}
+                    onChangeValue={newNbWorkers => {
+                      setHasValidatedChoice(false);
+                      updateFacility(facility, "nbWorkers", newNbWorkers);
+                    }}
+                    label="Nombre de chauffeurs et/ou travailleurs mobiles"
+                    required
+                    min={MIN_NB_WORKERS}
+                    max={MAX_NB_WORKERS}
                   />
                   <BusinessType
                     onChangeBusinessType={newBusinessType => {

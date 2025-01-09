@@ -1,8 +1,6 @@
 import React from "react";
 import ListItem from "@mui/material/ListItem";
 import ButtonBase from "@mui/material/ButtonBase";
-import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import {
   addZero,
@@ -16,30 +14,30 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 
 import { makeStyles } from "@mui/styles";
 import { useWebinars } from "../useWebinars";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   webinarCard: {
     width: "100%",
-    paddingBottom: theme.spacing(1),
-    paddingTop: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    backgroundColor: "inherit"
+    padding: theme.spacing(2),
+    backgroundColor: "inherit",
+    border: "1px solid",
+    borderColor: fr.colors.decisions.border.default.grey.default
   },
   webinarDateDay: {
-    fontWeight: "bold",
-    fontSize: "120%",
+    fontWeight: 500,
     lineHeight: 1,
-    letterSpacing: "3px",
     textTransform: "uppercase"
   },
   webinarDateMonth: {
-    fontWeight: "bold",
-    fontSize: "80%",
+    fontWeight: 500,
+    fontSize: "0.625rem",
     textTransform: "uppercase"
   },
   webinarDate: {
-    fontSize: "300%",
+    fontSize: "2rem",
     lineHeight: 1,
     fontWeight: "bold",
     color: theme.palette.primary.main
@@ -74,65 +72,43 @@ export const WebinarList = ({ setCantDisplayWebinarsBecauseNoneOrError }) => {
         ? webinars.slice(0, 10).map((webinar, index) => {
             const webinarDate = new Date(webinar.time * 1000);
             return (
-              <ListItem key={index} target="_blank">
+              <ListItem key={index} target="_blank" sx={{ paddingX: 0 }}>
                 <ButtonBase
                   className={classes.webinarButton}
                   href={webinar.link}
                   target="_blank"
                 >
-                  <Card className={classes.webinarCard}>
-                    <Grid
-                      container
-                      alignItems="center"
-                      spacing={1}
-                      sx={{
-                        spacing: { xs: 2, sm: 6 },
-                        wrap: { xs: "wrap", sm: "nowrap" }
-                      }}
+                  <Box className={classes.webinarCard}>
+                    <Stack
+                      direction={{ xs: "column", md: "row" }}
+                      justifyContent="space-between"
+                      alignItems={{ xs: "flex-start", md: "center" }}
                     >
-                      <Grid
-                        container
-                        item
-                        xs={6}
-                        sm={"auto"}
-                        direction="column"
-                        alignItems="center"
-                        style={{ maxWidth: 120 }}
-                      >
-                        <Grid item>
+                      <Stack direction="row" alignItems="center" columnGap={2}>
+                        <Stack direction="column" alignItems="center">
                           <Typography className={classes.webinarDateDay}>
                             {SHORT_DAYS[webinarDate.getDay()]}
                           </Typography>
-                        </Grid>
-                        <Grid item>
                           <Typography className={classes.webinarDate}>
                             {addZero(webinarDate.getDate())}
                           </Typography>
-                        </Grid>
-                        <Grid item>
                           <Typography className={classes.webinarDateMonth}>
                             {SHORT_MONTHS[webinarDate.getMonth()]}{" "}
                             {webinarDate.getFullYear()}
                           </Typography>
-                        </Grid>
-                      </Grid>
-                      <Grid item xs={6} sm={"auto"}>
+                        </Stack>
                         <Typography className={classes.webinarTime}>
                           {formatTimeOfDay(webinar.time)}
                         </Typography>
-                      </Grid>
-                      <Grid item style={{ flexGrow: 1, maxWidth: 620 }}>
-                        <Typography className={classes.webinarTitle}>
-                          {webinar.title}
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Button priority="tertiary no outline" size="small">
-                          M'inscrire
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </Card>
+                      </Stack>
+                      <Typography className={classes.webinarTitle}>
+                        {webinar.title}
+                      </Typography>
+                      <Button priority="tertiary no outline" size="small">
+                        M'inscrire
+                      </Button>
+                    </Stack>
+                  </Box>
                 </ButtonBase>
               </ListItem>
             );

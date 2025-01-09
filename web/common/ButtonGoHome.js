@@ -10,6 +10,7 @@ const ButtonGoHome = () => {
       onClick={() => {
         history.push("/home");
       }}
+      style={{ margin: "auto" }}
     >
       Aller dans mon espace
     </Button>

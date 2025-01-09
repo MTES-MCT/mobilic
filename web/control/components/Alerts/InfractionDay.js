@@ -14,6 +14,9 @@ import { useControl } from "../../../controller/utils/contextControl";
 import { capitalizeFirstLetter } from "common/utils/string";
 import classNames from "classnames";
 
+const controlHistoryDepth =
+  parseInt(process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH) || 28;
+
 const gregorian_fr = {
   name: "gregorian_fr",
   months: [
@@ -74,7 +77,7 @@ export const InfractionDay = ({ alerts, sanction }) => {
   ]);
 
   const maxDate = new Date(unixToJSTimestamp(controlData.creationTime));
-  const minDate = addDaysToDate(new Date(maxDate), -28);
+  const minDate = addDaysToDate(new Date(maxDate), -controlHistoryDepth);
 
   const onSelectedDatesChange = values => {
     const selectedTimestamps = values

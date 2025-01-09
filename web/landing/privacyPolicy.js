@@ -1,8 +1,4 @@
 import React from "react";
-import Container from "@mui/material/Container";
-import { Header } from "../common/Header";
-import { makeStyles } from "@mui/styles";
-import { Footer } from "./footer";
 import Link from "@mui/material/Link";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { usePageTitle } from "../common/UsePageTitle";
@@ -10,7 +6,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { ExternalLink } from "../common/ExternalLink";
-import { Main } from "../common/semantics/Main";
+import { FullPageComponent } from "./components/FullPageComponent";
 
 const dataCustodyHeaders = ["Catégorie de données", "Durée de conservation"];
 const dataCustody = [
@@ -120,44 +116,31 @@ const dataInfra = [
   ]
 ];
 
-const useStyles = makeStyles(theme => ({
-  container: {
-    padding: theme.spacing(4),
-    paddingBottom: theme.spacing(7),
-    margin: "auto",
-    textAlign: "left"
-  }
-}));
-
 export default function PrivacyPolicy() {
   return (
-    <>
-      <Header />
-      <Main>
-        <PrivacyPolicyContent />
-      </Main>
-      <Footer />
-    </>
+    <FullPageComponent>
+      <PrivacyPolicyContent />
+    </FullPageComponent>
   );
 }
 
 function PrivacyPolicyContent() {
   usePageTitle("Données personnelles - Mobilic");
-  const classes = useStyles();
 
   return (
-    <Container className={classes.container} maxWidth="xl">
+    <>
       <h1>Protection des données personnelles</h1>
       <Stack direction="column" spacing={4}>
         <Box>
           <h2>Qui est responsable de Mobilic&nbsp;?</h2>
           <p>
-            Mobilic, développé au sein de la Fabrique numérique du Ministère de
-            la transition écologique, est sous la responsabilité de la Direction
-            générale des infrastructures, des transports et des mobilités
-            (DGITM). Elle s&lsquo;engage à assurer un traitement de ces données
-            conforme au RGPD et à la loi n°7817 du 6 janvier 1978 relative à
-            l'informatique, aux fichiers et aux libertés.
+            Mobilic, développé au sein de la Fabrique Numérique du ministère de
+            l’Aménagement du territoire et de la Décentralisation, est sous la
+            responsabilité de la Direction générale des infrastructures, des
+            transports et des mobilités (DGITM). Elle s&lsquo;engage à assurer
+            un traitement de ces données conforme au RGPD et à la loi n°7817 du
+            6 janvier 1978 relative à l'informatique, aux fichiers et aux
+            libertés.
           </p>
           <p>
             Mobilic est un service public numérique qui permet le suivi du temps
@@ -263,23 +246,25 @@ function PrivacyPolicyContent() {
             Nous mettons en place plusieurs mesures pour sécuriser les
             données&nbsp;:
           </p>
-          <li>Chiffrage des documents&nbsp;;</li>
-          <li>Cloisonnement des données&nbsp;;</li>
-          <li>Mesures de traçabilité&nbsp;;</li>
-          <li>Surveillance via un monitoring&nbsp;;</li>
-          <li>
-            Protection contre les virus, malwares et logiciels espions&nbsp;;
-          </li>
-          <li>
-            Protection des réseaux&nbsp;: mesures de protection de nos
-            hébergeurs et connexion SSL (https)&nbsp;;
-          </li>
-          <li>Sauvegarde&nbsp;;</li>
-          <li>
-            Mesures restrictives d&lsquo;accès aux données à caractère
-            personnel&nbsp;: accès aux données par les agents habilités dans les
-            conditions réglementaires prévues.
-          </li>
+          <ul>
+            <li>Chiffrage des documents&nbsp;;</li>
+            <li>Cloisonnement des données&nbsp;;</li>
+            <li>Mesures de traçabilité&nbsp;;</li>
+            <li>Surveillance via un monitoring&nbsp;;</li>
+            <li>
+              Protection contre les virus, malwares et logiciels espions&nbsp;;
+            </li>
+            <li>
+              Protection des réseaux&nbsp;: mesures de protection de nos
+              hébergeurs et connexion SSL (https)&nbsp;;
+            </li>
+            <li>Sauvegarde&nbsp;;</li>
+            <li>
+              Mesures restrictives d&lsquo;accès aux données à caractère
+              personnel&nbsp;: accès aux données par les agents habilités dans
+              les conditions réglementaires prévues.
+            </li>
+          </ul>
         </Box>
         <Box>
           <h2>
@@ -329,8 +314,8 @@ function PrivacyPolicyContent() {
             <li>par courrier à l&lsquo;adresse suivante&nbsp;:</li>
             <address>
               <Typography>
-                ministère de la Transition écologique et de la cohésion des
-                territoires
+                Ministère de l’Aménagement du territoire et de la
+                Décentralisation
               </Typography>
               <Typography>
                 À l&lsquo;attention du Délégué à la protection des données (DPD)
@@ -432,6 +417,6 @@ function PrivacyPolicyContent() {
           </ul>
         </Box>
       </Stack>
-    </Container>
+    </>
   );
 }

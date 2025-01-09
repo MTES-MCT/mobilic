@@ -1,46 +1,28 @@
 import React from "react";
-import Container from "@mui/material/Container";
-import { Header } from "../common/Header";
-import { makeStyles } from "@mui/styles";
-import { Footer } from "./footer";
 import Link from "@mui/material/Link";
 import { usePageTitle } from "../common/UsePageTitle";
-import { Main } from "../common/semantics/Main";
-
-const useStyles = makeStyles(theme => ({
-  container: {
-    padding: theme.spacing(4),
-    paddingBottom: theme.spacing(7),
-    margin: "auto",
-    textAlign: "left"
-  }
-}));
+import { FullPageComponent } from "./components/FullPageComponent";
 
 export default function Accessibility() {
   return (
-    <>
-      <Header />
-      <Main>
-        <AccessibilityDeclaration />
-      </Main>
-      <Footer />
-    </>
+    <FullPageComponent>
+      <AccessibilityDeclaration />
+    </FullPageComponent>
   );
 }
 
 function AccessibilityDeclaration() {
   usePageTitle("Déclaration d'accessibilité - Mobilic");
-  const classes = useStyles();
 
   return (
-    <Container className={classes.container} maxWidth="xl">
+    <>
       <h1>Déclaration d’accessibilité</h1>
       <p>
         Établie le <span>27 mars 2023</span>.
       </p>
       <p>
         <span>
-          Ministère de la Transition écologique, chargé des Transports
+          Ministère de l’Aménagement du territoire et de la Décentralisation
         </span>{" "}
         s’engage à rendre son service accessible, conformément à l’article 47 de
         la loi n° 2005-102 du 11 février 2005.
@@ -83,9 +65,10 @@ function AccessibilityDeclaration() {
         <li>
           Adresse&nbsp;:{" "}
           <span>
-            Ministère de la Transition écologique Direction générale des
-            infrastructures, des transports et des mobilités, Bureau du droit
-            social dans les transports routiers 1 place Carpeaux, 92800 Puteaux
+            Ministère de l’Aménagement du territoire et de la Décentralisation
+            Direction générale des infrastructures, des transports et des
+            mobilités, Bureau du droit social dans les transports routiers 1
+            place Carpeaux, 92800 Puteaux
           </span>
         </li>
       </ul>
@@ -132,6 +115,6 @@ function AccessibilityDeclaration() {
         </Link>
         .
       </p>
-    </Container>
+    </>
   );
 }

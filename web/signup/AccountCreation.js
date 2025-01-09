@@ -52,23 +52,26 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const [subscribeToNewsletter, setSubscribeToNewsletter] = React.useState(
     isAdmin ? true : false
   );
+  const [touched, setTouched] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
   const handleSubmit = async e => {
     e.preventDefault();
+    setTouched(true);
     if (
       !email ||
       !!emailError ||
       !!getPasswordErrors(password) ||
       !firstName ||
       !lastName ||
-      !email
+      (isAdmin && !wayHeardOfMobilic)
     ) {
       if (!email) {
         setEmailError("Veuillez compléter ce champ");
       }
       setFirstNameError(!firstName);
       setLastNameError(!lastName);
+
       setForcePasswordValidation(true);
       return;
     }
@@ -280,12 +283,15 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                           <Notice
                             description="Cette information pourra être utilisée par l’équipe Mobilic
                   pour vous contacter à des fins d’aide à la prise en main."
+                            sx={{ marginBottom: 3 }}
                           />
                         </>
                       )}
                       {isAdmin && (
                         <WayHeardOfMobilic
-                          setWayHeardOfMobilicValue={setWayHeardOfMobilic}
+                          setWayHeardOfMobilic={setWayHeardOfMobilic}
+                          touched={touched}
+                          required
                         />
                       )}
                       {!isAdmin && (
