@@ -22,7 +22,7 @@ function AccessibilityDeclaration() {
       </p>
       <p>
         <span>
-          Ministère de la Transition écologique, chargé des Transports
+          Ministère de l’Aménagement du territoire et de la Décentralisation
         </span>{" "}
         s’engage à rendre son service accessible, conformément à l’article 47 de
         la loi n° 2005-102 du 11 février 2005.
@@ -65,9 +65,10 @@ function AccessibilityDeclaration() {
         <li>
           Adresse&nbsp;:{" "}
           <span>
-            Ministère de la Transition écologique Direction générale des
-            infrastructures, des transports et des mobilités, Bureau du droit
-            social dans les transports routiers 1 place Carpeaux, 92800 Puteaux
+            Ministère de l’Aménagement du territoire et de la Décentralisation
+            Direction générale des infrastructures, des transports et des
+            mobilités, Bureau du droit social dans les transports routiers 1
+            place Carpeaux, 92800 Puteaux
           </span>
         </li>
       </ul>

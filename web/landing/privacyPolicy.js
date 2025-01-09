@@ -134,12 +134,13 @@ function PrivacyPolicyContent() {
         <Box>
           <h2>Qui est responsable de Mobilic&nbsp;?</h2>
           <p>
-            Mobilic, développé au sein de la Fabrique numérique du Ministère de
-            la transition écologique, est sous la responsabilité de la Direction
-            générale des infrastructures, des transports et des mobilités
-            (DGITM). Elle s&lsquo;engage à assurer un traitement de ces données
-            conforme au RGPD et à la loi n°7817 du 6 janvier 1978 relative à
-            l'informatique, aux fichiers et aux libertés.
+            Mobilic, développé au sein de la Fabrique Numérique du ministère de
+            l’Aménagement du territoire et de la Décentralisation, est sous la
+            responsabilité de la Direction générale des infrastructures, des
+            transports et des mobilités (DGITM). Elle s&lsquo;engage à assurer
+            un traitement de ces données conforme au RGPD et à la loi n°7817 du
+            6 janvier 1978 relative à l'informatique, aux fichiers et aux
+            libertés.
           </p>
           <p>
             Mobilic est un service public numérique qui permet le suivi du temps
@@ -313,8 +314,8 @@ function PrivacyPolicyContent() {
             <li>par courrier à l&lsquo;adresse suivante&nbsp;:</li>
             <address>
               <Typography>
-                ministère de la Transition écologique et de la cohésion des
-                territoires
+                Ministère de l’Aménagement du territoire et de la
+                Décentralisation
               </Typography>
               <Typography>
                 À l&lsquo;attention du Délégué à la protection des données (DPD)
