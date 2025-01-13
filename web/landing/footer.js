@@ -1,10 +1,9 @@
 import React from "react";
 import { Footer as DSFooter } from "@codegouvfr/react-dsfr/Footer";
-import { useModals } from "common/utils/modals";
 import { Follow } from "./follow";
+import { CGU_EXTERNAL_URL } from "./cgu";
 
 export function Footer({ withFollow = true }) {
-  const modals = useModals();
   return (
     <>
       {withFollow && <Follow />}
@@ -42,7 +41,11 @@ export function Footer({ withFollow = true }) {
           },
           {
             text: "CGU",
-            linkProps: { to: "#", onClick: () => modals.open("cgu") }
+            linkProps: {
+              to: CGU_EXTERNAL_URL,
+              target: "_blank",
+              rel: "noopener noreferrer"
+            }
           },
           {
             text: "Données personnelles",
