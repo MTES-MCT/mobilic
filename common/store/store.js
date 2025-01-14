@@ -414,6 +414,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     {
       firstName,
       lastName,
+      gender,
       timezoneName,
       email,
       creationTime,
@@ -433,6 +434,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           userInfo: {
             firstName,
             lastName,
+            gender,
             email,
             creationTime,
             birthDate,
