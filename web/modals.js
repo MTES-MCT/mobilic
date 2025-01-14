@@ -45,6 +45,7 @@ import WarningEndMissionModal from "./pwa/modals/WarningEndMissionModal";
 import PDFExportModal from "./pwa/modals/PDFExportModal";
 import ExpenditureModal from "./pwa/modals/ExpenditureModal";
 import BlockedTimeModal from "./pwa/modals/BlockedTimeModal";
+import ChangeGenderModal from "./pwa/modals/ChangeGenderModal";
 
 export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
@@ -69,6 +70,7 @@ export const MODAL_DICT = {
   changeName: ChangeNameModal,
   changePhoneNumber: ChangePhoneNumberModal,
   changeTimezone: ChangeTimezoneModal,
+  changeGender: ChangeGenderModal,
   terminateEmployment: TerminateEmploymentModal,
   userReadQRCode: UserReadQRCodeModal,
   unavailableOfflineMode: UnavailableOfflineModeModal,

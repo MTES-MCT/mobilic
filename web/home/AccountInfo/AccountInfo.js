@@ -20,6 +20,7 @@ import {
 import { frenchFormatDateStringOrTimeStamp } from "common/utils/time";
 import {
   CHANGE_EMAIL_MUTATION,
+  CHANGE_GENDER_MUTATION,
   CHANGE_NAME_MUTATION,
   CHANGE_PHONE_NUMBER_MUTATION,
   CHANGE_TIMEZONE_MUTATION
@@ -36,6 +37,7 @@ import { parsePhoneNumber } from "libphonenumber-js";
 import BecomeAdmin from "./BecomeAdmin";
 import Notice from "../../common/Notice";
 import { Main } from "../../common/semantics/Main";
+import { GENDERS } from "common/utils/gender";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
@@ -186,6 +188,34 @@ export default function Home() {
                           data-testid="alertEmailNotActivated"
                         />
                       )
+                    }
+                    uppercaseTitle={false}
+                  />
+                </Grid>
+                <Grid item xs={12} zeroMinWidth>
+                  <InfoItem
+                    data-testid="genderInfoItem"
+                    name="Sexe"
+                    value={
+                      GENDERS.find(g => g.value === userInfo.gender)?.label
+                    }
+                    valuePlaceholder="Sexe non renseigné"
+                    action={() =>
+                      modals.open("changeGender", {
+                        currentGender: userInfo.gender,
+                        handleSubmit: async gender => {
+                          const apiResponse = await api.graphQlMutate(
+                            CHANGE_GENDER_MUTATION,
+                            { gender },
+                            { context: { nonPublicApi: true } }
+                          );
+                          await store.setUserInfo({
+                            ...store.userInfo(),
+                            gender: apiResponse.data.account.changeGender.gender
+                          });
+                          await broadCastChannel.postMessage("update");
+                        }
+                      })
                     }
                     uppercaseTitle={false}
                   />

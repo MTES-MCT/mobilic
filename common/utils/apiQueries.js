@@ -965,6 +965,15 @@ export const CHANGE_TIMEZONE_MUTATION = gql`
     }
   }
 `;
+export const CHANGE_GENDER_MUTATION = gql`
+  mutation changeGender($gender: GenderEnum!) {
+    account {
+      changeGender(gender: $gender) {
+        gender
+      }
+    }
+  }
+`;
 export const RESEND_ACTIVATION_EMAIL = gql`
   mutation resendActivationEmail($email: Email!) {
     account {
