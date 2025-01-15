@@ -58,6 +58,7 @@ import AcceptCguModal from "./pwa/modals/AcceptCguModal";
 import RejectedCguModal from "./pwa/modals/RejectedCguModals";
 import merge from "lodash/merge";
 import { useScroll } from "./common/hooks/useScroll";
+import UpdateGenderModal from "./pwa/modals/UpdateGenderModal";
 
 const matomo = createInstance({
   urlBase: "https://stats.beta.gouv.fr",
@@ -297,6 +298,9 @@ function _Root() {
     () => !seeAgainCgu && userInfo?.userAgreementStatus?.hasRejectedCgu,
     [userInfo?.userAgreementStatus?.hasRejectedCgu, seeAgainCgu]
   );
+  const shouldSeeGenderModal = React.useMemo(() => !userInfo.gender, [
+    userInfo?.gender
+  ]);
 
   const routes = getAccessibleRoutes({ userInfo, companies, controllerInfo });
 
@@ -322,6 +326,7 @@ function _Root() {
           userId={userId}
         />
       )}
+      {store.userId() && shouldSeeGenderModal && <UpdateGenderModal />}
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
       <React.Suspense fallback={<CircularProgress color="primary" />}>
         <Switch>
