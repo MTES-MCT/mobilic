@@ -25,6 +25,7 @@ import Notice from "../common/Notice";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Input } from "../common/forms/Input";
 import { PasswordInput } from "../common/forms/PasswordInput";
+import GenderSelect from "../common/GenderSelect";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   usePageTitle("Création de compte - Mobilic");
@@ -36,6 +37,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
 
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
+  const [gender, setGender] = React.useState("");
   const [firstNameError, setFirstNameError] = React.useState(false);
   const [lastNameError, setLastNameError] = React.useState(false);
   const [email, setEmail] = React.useState("");
@@ -64,6 +66,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       !!getPasswordErrors(password) ||
       !firstName ||
       !lastName ||
+      !gender ||
       (isAdmin && !wayHeardOfMobilic)
     ) {
       if (!email) {
@@ -84,6 +87,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
         password,
         firstName,
         lastName,
+        gender,
         subscribeToNewsletter,
         selectedTimezone.name,
         wayHeardOfMobilic,
@@ -99,6 +103,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
             password,
             firstName,
             lastName,
+            gender,
             subscribeToNewsletter,
             selectedTimezone.name,
             wayHeardOfMobilic,
@@ -116,6 +121,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
     password,
     firstName,
     lastName,
+    gender,
     subscribeToNewsletter,
     timezone,
     wayHeardOfMobilic,
@@ -129,6 +135,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           password,
           firstName: firstName.trim(),
           lastName: lastName.trim(),
+          gender,
           subscribeToNewsletter,
           isEmployee: !isAdmin,
           timezoneName: timezone,
@@ -268,6 +275,10 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                         state={lastNameError ? "error" : "default"}
                         stateRelatedMessage="Veuillez compléter ce champ"
                         required
+                      />
+                      <GenderSelect
+                        currentGender={gender}
+                        onGenderChange={setGender}
                       />
                       <TimezoneSelect
                         currentTimezone={selectedTimezone}
