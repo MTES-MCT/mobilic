@@ -19,6 +19,7 @@ export function ControllerControlNoLicInformations({ onChangeTab }) {
       <ControllerControlMissionInfo
         vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
         companyName={controlData.companyName}
+        businessTypeDuringControl={controlData.businessTypeDuringControl}
       />
       <ControllerControlNote />
       <ControllerControlNbCards

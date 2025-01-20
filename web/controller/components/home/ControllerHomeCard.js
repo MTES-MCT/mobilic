@@ -1,37 +1,56 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
-import { Card } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { LinkButton } from "../../../common/LinkButton";
 import ButtonBase from "@mui/material/ButtonBase";
 import classNames from "classnames";
+import { fr } from "@codegouvfr/react-dsfr";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
 
 const useStyles = makeStyles(theme => ({
   button: {
     textAlign: "left"
   },
   linkWholeCard: {
+    maxWidth: "420px",
     padding: 0,
     textTransform: "none",
-    width: "100%"
+    width: "100%",
+    color: "inherit"
   },
   card: {
     width: "100%",
-    borderRadius: 10,
     padding: theme.spacing(2),
-    borderColor: theme.palette.primary.main
+    border: "1px solid",
+    borderColor: fr.colors.decisions.border.default.grey.default,
+    fontWeight: 400
   },
   actionIcon: {
     marginRight: theme.spacing(2),
-    verticalAlign: "middle"
+    verticalAlign: "middle",
+    color: fr.colors.decisions.background.flat.blueFrance.default
   },
   arrowIcon: {
     verticalAlign: "middle",
     float: "right",
-    color: theme.palette.primary.main
+    color: fr.colors.decisions.background.flat.grey.default
+  },
+  text: {
+    flexGrow: 1
+  },
+  badge: {
+    marginRight: theme.spacing(1)
   }
 }));
 
-export function ControllerHomeCard({ text, icon, link, onClick }) {
+export function ControllerHomeCard({
+  text,
+  icon,
+  link,
+  onClick,
+  isNew = false
+}) {
   const classes = useStyles();
 
   let buttonActionProps = { onClick };
@@ -47,23 +66,30 @@ export function ControllerHomeCard({ text, icon, link, onClick }) {
       priority="tertiary no outline"
       {...buttonActionProps}
     >
-      <Card variant="outlined" className={classes.card}>
-        <span className="fr-text--lg">
-          <span
-            className={classNames(icon, classes.actionIcon)}
-            aria-hidden="true"
-          ></span>
-          {text}
-          <span
-            className={classNames(
-              "fr-icon-arrow-right-s-line",
-              "fr-icon--lg",
-              classes.arrowIcon
-            )}
-            aria-hidden="true"
-          ></span>
-        </span>
-      </Card>
+      <Stack
+        direction="row"
+        className={classes.card}
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <span
+          className={classNames(icon, classes.actionIcon)}
+          aria-hidden="true"
+        ></span>
+        <Typography className={classes.text}>{text}</Typography>
+        {isNew && (
+          <Badge severity="new" small noIcon className={classes.badge}>
+            Nouveauté
+          </Badge>
+        )}
+        <span
+          className={classNames(
+            "fr-icon-arrow-right-s-line",
+            classes.arrowIcon
+          )}
+          aria-hidden="true"
+        ></span>
+      </Stack>
     </ButtonComponent>
   );
 }

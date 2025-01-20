@@ -3,6 +3,8 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { makeStyles } from "@mui/styles";
 import { ControllerHomeCard } from "./ControllerHomeCard";
 import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import { Header } from "../../../common/Header";
 import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
@@ -14,7 +16,6 @@ import classNames from "classnames";
 import { useModals } from "common/utils/modals";
 import { ControlTypeFilters } from "../filters/ControlTypeFilter";
 import { usePageTitle } from "../../../common/UsePageTitle";
-import { Typography } from "@mui/material";
 import Modal from "../../../common/Modal";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Main } from "../../../common/semantics/Main";
@@ -34,14 +35,8 @@ const useStyles = makeStyles(theme => ({
     textAlign: "center",
     marginTop: theme.spacing(3)
   },
-  newControlText: {
-    marginTop: theme.spacing(7)
-  },
   whiteSection: {
     backgroundColor: theme.palette.background.paper
-  },
-  newControlButton: {
-    marginBottom: theme.spacing(2)
   },
   noLicLink: {
     width: "fit-content",
@@ -120,59 +115,46 @@ export function ControllerHome() {
           onClose={() => setOpenNewLicPapier(false)}
           setControlOnFocus={setControlOnFocus}
         />
-        <Typography variant="h4" component="h1" className={classes.titleHello}>
+        <Typography variant="h3" component="h1" className={classes.titleHello}>
           Bonjour, {controllerUserInfo.firstName}
         </Typography>
 
-        <Typography
-          variant="h5"
-          component="h2"
-          className={classes.newControlText}
-          marginBottom={2}
-        >
+        <Typography variant="h4" component="h2" marginBottom={2} marginTop={3}>
           Nouveau contrôle
         </Typography>
-        <Grid
-          container
-          direction="row"
-          alignItems="stretch"
-          spacing={3}
-          className={classes.newControlButton}
+        <Stack
+          direction={{
+            xs: "column",
+            lg: "row"
+          }}
+          columnGap={2}
+          rowGap={2}
+          marginBottom={2}
         >
-          <Grid item xs={12} sm={4}>
-            <ControllerHomeCard
-              text={"QR Code Mobilic présenté"}
-              icon={"fr-icon-qr-code-line fr-icon--lg"}
-              link={CONTROLLER_ROUTE_PREFIX + "/scan"}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <ControllerHomeCard
-              text={"LIC papier présenté"}
-              icon={"fr-icon-draft-line fr-icon--lg"}
-              onClick={() => setOpenNewLicPapier(true)}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <ControllerHomeCard
-              text={"Pas de LIC à bord"}
-              icon={"fr-icon-alarm-warning-line fr-icon--lg"}
-              onClick={() => setOpenNewNoLic(true)}
-            />
-          </Grid>
-        </Grid>
+          <ControllerHomeCard
+            text={"QR Code Mobilic présenté"}
+            icon={"fr-icon-qr-code-fill"}
+            link={CONTROLLER_ROUTE_PREFIX + "/scan"}
+          />
+          <ControllerHomeCard
+            text={"LIC papier présenté"}
+            icon={"fr-icon-edit-box-fill"}
+            onClick={() => setOpenNewLicPapier(true)}
+            isNew
+          />
+          <ControllerHomeCard
+            text={"Pas de LIC à bord"}
+            icon={"fr-icon-notification-3-fill"}
+            onClick={() => setOpenNewNoLic(true)}
+          />
+        </Stack>
         <div
           className={classNames(classes.noLicLink, "fr-link")}
           onClick={() => setShowHoraireServiceModal(true)}
         >
           Un horaire de service est présenté ?
         </div>
-        <Typography
-          variant="h5"
-          component="h2"
-          className={classes.newControlText}
-          marginBottom={2}
-        >
+        <Typography variant="h4" component="h2" marginBottom={2} marginTop={3}>
           Historique des derniers contrôles
         </Typography>
         <Grid container>
