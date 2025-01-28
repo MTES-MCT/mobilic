@@ -37,11 +37,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControllerControlHeader({
-  controlDate,
-  onCloseDrawer,
-  enableExport = true
-}) {
+export function ControllerControlHeader({ controlDate, onCloseDrawer }) {
   const classes = useStyles();
   const { controlId } = useControl();
   const isOnDesktop = useIsWidthUp("md");
@@ -65,7 +61,7 @@ export function ControllerControlHeader({
         <Typography>
           Date et heure du contrôle : <b>{prettyFormatDayHour(controlDate)}</b>
         </Typography>
-        {enableExport && <ControllerControlExportMenu />}
+        <ControllerControlExportMenu />
       </Box>
     </Container>
   ) : (
@@ -74,7 +70,7 @@ export function ControllerControlHeader({
         <ControllerControlBackButton onClick={onCloseDrawer}>
           Fermer
         </ControllerControlBackButton>
-        {enableExport && <ControllerControlExportMenu />}
+        <ControllerControlExportMenu />
       </Box>
     </Container>
   );
