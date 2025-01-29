@@ -58,7 +58,8 @@ import AcceptCguModal from "./pwa/modals/AcceptCguModal";
 import RejectedCguModal from "./pwa/modals/RejectedCguModals";
 import merge from "lodash/merge";
 import { useScroll } from "./common/hooks/useScroll";
-import UpdateGenderModal from "./pwa/modals/UpdateGenderModal";
+import { useIsAdmin } from "./common/hooks/useIsAdmin";
+import ChangeGenderModal from "./pwa/modals/ChangeGenderModal";
 
 const matomo = createInstance({
   urlBase: "https://stats.beta.gouv.fr",
@@ -290,6 +291,7 @@ function _Root() {
 
   const [seeAgainCgu, setSeeAgainCgu] = React.useState(false);
 
+  const { isAdmin } = useIsAdmin();
   const shouldSeeCguModal = React.useMemo(
     () => userInfo?.userAgreementStatus?.shouldAcceptCgu || seeAgainCgu,
     [userInfo?.userAgreementStatus?.shouldAcceptCgu, seeAgainCgu]
@@ -298,9 +300,10 @@ function _Root() {
     () => !seeAgainCgu && userInfo?.userAgreementStatus?.hasRejectedCgu,
     [userInfo?.userAgreementStatus?.hasRejectedCgu, seeAgainCgu]
   );
-  const shouldSeeGenderModal = React.useMemo(() => !userInfo.gender, [
-    userInfo?.gender
-  ]);
+  const shouldSeeGenderModal = React.useMemo(
+    () => !isAdmin && !userInfo.gender && userInfo.hasActivatedEmail,
+    [userInfo?.gender, userInfo?.hasActivatedEmail, isAdmin]
+  );
 
   const routes = getAccessibleRoutes({ userInfo, companies, controllerInfo });
 
@@ -326,7 +329,12 @@ function _Root() {
           userId={userId}
         />
       )}
-      {store.userId() && shouldSeeGenderModal && <UpdateGenderModal />}
+      <ChangeGenderModal
+        open={store.userId() && shouldSeeGenderModal}
+        buttonLabel="Valider"
+        title="Veuillez indiquer votre sexe pour continuer à utiliser Mobilic"
+        showExplanation
+      />
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
       <React.Suspense fallback={<CircularProgress color="primary" />}>
         <Switch>

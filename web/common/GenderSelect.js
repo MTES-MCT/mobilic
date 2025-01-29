@@ -1,23 +1,25 @@
 import React from "react";
-import { Select } from "./forms/Select";
 import { GENDERS } from "common/utils/gender";
+import { RadioButtons } from "./forms/RadioButtons";
 
-const GenderSelect = ({ currentGender, onGenderChange }) => {
+const GenderSelect = ({ currentGender, onGenderChange, touched = false }) => {
+  const isError = touched && !currentGender;
   return (
-    <Select
-      label="Sexe"
-      nativeSelectProps={{
-        onChange: e => onGenderChange(e.target.value),
-        value: currentGender
-      }}
-      required
-    >
-      {GENDERS.map(gender => (
-        <option key={`gender__${gender.value}`} value={gender.value}>
-          {gender.label}
-        </option>
-      ))}
-    </Select>
+    <RadioButtons
+      orientation="horizontal"
+      legend="Sexe"
+      required={true}
+      options={GENDERS.map(({ value, label }) => ({
+        label,
+        nativeInputProps: {
+          value,
+          checked: currentGender === value
+        }
+      }))}
+      onChange={e => onGenderChange(e.target.value)}
+      state={isError ? "error" : "default"}
+      stateRelatedMessage={isError ? "Veuillez indiquer votre sexe" : ""}
+    />
   );
 };
 

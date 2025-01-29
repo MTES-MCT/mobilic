@@ -280,6 +280,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                         <GenderSelect
                           currentGender={gender}
                           onGenderChange={setGender}
+                          touched={touched}
                         />
                       )}
                       <TimezoneSelect

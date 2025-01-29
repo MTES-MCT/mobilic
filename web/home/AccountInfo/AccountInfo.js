@@ -37,7 +37,6 @@ import BecomeAdmin from "./BecomeAdmin";
 import Notice from "../../common/Notice";
 import { Main } from "../../common/semantics/Main";
 import { GENDERS } from "common/utils/gender";
-import { useUpdateGender } from "../useUpdateGender";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
@@ -73,8 +72,6 @@ export default function Home() {
   const api = useApi();
   const employments = employmentSelector(store.state);
   const modals = useModals();
-
-  const { updateGender } = useUpdateGender();
 
   const userInfo = store.userInfo();
   const isActive = userInfo.hasActivatedEmail;
@@ -204,8 +201,7 @@ export default function Home() {
                     valuePlaceholder="Sexe non renseigné"
                     action={() =>
                       modals.open("changeGender", {
-                        currentGender: userInfo.gender,
-                        handleSubmit: updateGender
+                        currentGender: userInfo.gender
                       })
                     }
                     uppercaseTitle={false}
