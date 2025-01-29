@@ -66,7 +66,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
       !!getPasswordErrors(password) ||
       !firstName ||
       !lastName ||
-      !gender ||
+      (!isAdmin && !gender) ||
       (isAdmin && !wayHeardOfMobilic)
     ) {
       if (!email) {
@@ -135,7 +135,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           password,
           firstName: firstName.trim(),
           lastName: lastName.trim(),
-          gender,
+          ...(!isAdmin ? { gender } : {}),
           subscribeToNewsletter,
           isEmployee: !isAdmin,
           timezoneName: timezone,
@@ -276,10 +276,12 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                         stateRelatedMessage="Veuillez compléter ce champ"
                         required
                       />
-                      <GenderSelect
-                        currentGender={gender}
-                        onGenderChange={setGender}
-                      />
+                      {!isAdmin && (
+                        <GenderSelect
+                          currentGender={gender}
+                          onGenderChange={setGender}
+                        />
+                      )}
                       <TimezoneSelect
                         currentTimezone={selectedTimezone}
                         setTimezone={setSelectedTimezone}

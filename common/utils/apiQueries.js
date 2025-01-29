@@ -133,7 +133,7 @@ export const USER_SIGNUP_MUTATION = gql`
     $password: Password!
     $firstName: String!
     $lastName: String!
-    $gender: GenderEnum!
+    $gender: GenderEnum
     $inviteToken: String
     $subscribeToNewsletter: Boolean
     $isEmployee: Boolean
