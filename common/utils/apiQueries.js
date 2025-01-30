@@ -133,6 +133,7 @@ export const USER_SIGNUP_MUTATION = gql`
     $password: Password!
     $firstName: String!
     $lastName: String!
+    $gender: GenderEnum
     $inviteToken: String
     $subscribeToNewsletter: Boolean
     $isEmployee: Boolean
@@ -147,6 +148,7 @@ export const USER_SIGNUP_MUTATION = gql`
         password: $password
         firstName: $firstName
         lastName: $lastName
+        gender: $gender
         inviteToken: $inviteToken
         subscribeToNewsletter: $subscribeToNewsletter
         isEmployee: $isEmployee
@@ -966,6 +968,15 @@ export const CHANGE_TIMEZONE_MUTATION = gql`
     account {
       changeTimezone(timezoneName: $timezoneName) {
         timezoneName
+      }
+    }
+  }
+`;
+export const CHANGE_GENDER_MUTATION = gql`
+  mutation changeGender($gender: GenderEnum!) {
+    account {
+      changeGender(gender: $gender) {
+        gender
       }
     }
   }
