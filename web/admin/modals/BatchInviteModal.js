@@ -1,9 +1,9 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
-import TextField from "@mui/material/TextField";
 import Modal from "../../common/Modal";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Input } from "../../common/forms/Input";
 
 export default function BatchInviteModal({
   open,
@@ -55,22 +55,20 @@ export default function BatchInviteModal({
               nouvelle ligne.
             </Typography>
           )}
-
-          <TextField
-            fullWidth
-            label="Adresses email"
-            placeholder={`martin.dupond@gmail.com\ncorinne.robert@outlook.fr\n...`}
-            multiline
-            minRows={10}
-            maxRows={15}
-            value={text}
-            error={tooManyLinesError}
-            helperText={
+          <Input
+            label="Adresses e-mail"
+            hintText="Invitez plusieurs salariés d'un coup en séparant les adresses e-mail par des virgules."
+            textArea
+            state={tooManyLinesError ? "error" : "default"}
+            stateRelatedMessage={
               tooManyLinesError
                 ? "Le nombre d'emails ne peut pas dépasser 100. Vous pouvez découper la liste et le faire en plusieurs fois"
                 : ""
             }
-            onChange={e => setText(e.target.value)}
+            nativeTextAreaProps={{
+              onChange: e => setText(e.target.value),
+              value: text
+            }}
           />
         </>
       }
