@@ -3,8 +3,14 @@ import Typography from "@mui/material/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
 import TextField from "@mui/material/TextField";
 import Modal from "../../common/Modal";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
-export default function BatchInviteModal({ open, handleClose, handleSubmit }) {
+export default function BatchInviteModal({
+  open,
+  handleClose,
+  handleSubmit,
+  isNewAdmin = false
+}) {
   const [text, setText] = React.useState("");
   const [tooManyLinesError, setTooManyLinesError] = React.useState(false);
 
@@ -24,14 +30,32 @@ export default function BatchInviteModal({ open, handleClose, handleSubmit }) {
     <Modal
       open={open}
       handleClose={handleClose}
-      title="Inviter une liste d'emails"
+      title={
+        isNewAdmin
+          ? "Invitez vos salariés sur Mobilic !"
+          : "Inviter une liste d'emails"
+      }
       content={
         <>
-          <Typography gutterBottom>
-            Vous pouvez inviter d'un coup plusieurs salariés en copiant
-            ci-dessous leur adresse mail. Chaque adresse doit figurer sur une
-            nouvelle ligne.
-          </Typography>
+          {isNewAdmin ? (
+            <>
+              <p>
+                Ajoutez les adresses e-mail de vos salariés ci-dessous. Ils
+                recevront un e-mail pour créer un compte.
+              </p>
+              <p>
+                Une fois le compte créé, ils seront rattachés à votre entreprise
+                et pourront commencer à enregistrer du temps de travail.
+              </p>
+            </>
+          ) : (
+            <Typography gutterBottom>
+              Vous pouvez inviter d'un coup plusieurs salariés en copiant
+              ci-dessous leur adresse mail. Chaque adresse doit figurer sur une
+              nouvelle ligne.
+            </Typography>
+          )}
+
           <TextField
             fullWidth
             label="Adresses email"
@@ -52,6 +76,11 @@ export default function BatchInviteModal({ open, handleClose, handleSubmit }) {
       }
       actions={
         <>
+          {isNewAdmin && (
+            <Button onClick={handleClose} priority="secondary">
+              Plus tard
+            </Button>
+          )}
           <LoadingButton
             disabled={!text || tooManyLinesError}
             onClick={async e => {
@@ -59,7 +88,7 @@ export default function BatchInviteModal({ open, handleClose, handleSubmit }) {
               handleClose();
             }}
           >
-            Inviter
+            {isNewAdmin ? "Valider" : "Inviter"}
           </LoadingButton>
         </>
       }

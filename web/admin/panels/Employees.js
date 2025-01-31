@@ -640,6 +640,43 @@ export function Employees({ company, containerRef }) {
     return customActions;
   };
 
+  const inviteEmails = async mails => {
+    await alerts.withApiErrorHandling(async () => {
+      const employmentsResponse = await api.graphQlMutate(
+        BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
+        {
+          companyId,
+          mails
+        }
+      );
+      const employments =
+        employmentsResponse.data.employments.batchCreateWorkerEmployments;
+      adminStore.dispatch({
+        type: ADMIN_ACTIONS.create,
+        payload: {
+          items: employments.map(e => ({ ...e, companyId })),
+          entity: "employments"
+        }
+      });
+      if (employments.length < mails.length) {
+        alerts.warning(
+          "Certaines invitations n'ont pu être envoyées, êtes-vous sûr(e) des adresses email ?",
+          "batch-invite-warning",
+          6000
+        );
+      } else
+        alerts.success("Invitations envoyées !", "batch-invite-success", 6000);
+      setTimeout(validEmploymentsTableRef.current.updateScrollPosition, 0);
+    });
+  };
+
+  if (!hasMadeInvitations) {
+    modals.open("batchInvite", {
+      handleSubmit: inviteEmails,
+      isNewAdmin: true
+    });
+  }
+
   return (
     <Stack direction="column" spacing={2}>
       <Button
@@ -650,43 +687,7 @@ export function Employees({ company, containerRef }) {
         }}
         onClick={() =>
           modals.open("batchInvite", {
-            handleSubmit: async mails => {
-              await alerts.withApiErrorHandling(async () => {
-                const employmentsResponse = await api.graphQlMutate(
-                  BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
-                  {
-                    companyId,
-                    mails
-                  }
-                );
-                const employments =
-                  employmentsResponse.data.employments
-                    .batchCreateWorkerEmployments;
-                adminStore.dispatch({
-                  type: ADMIN_ACTIONS.create,
-                  payload: {
-                    items: employments.map(e => ({ ...e, companyId })),
-                    entity: "employments"
-                  }
-                });
-                if (employments.length < mails.length) {
-                  alerts.warning(
-                    "Certaines invitations n'ont pu être envoyées, êtes-vous sûr(e) des adresses email ?",
-                    "batch-invite-warning",
-                    6000
-                  );
-                } else
-                  alerts.success(
-                    "Invitations envoyées !",
-                    "batch-invite-success",
-                    6000
-                  );
-                setTimeout(
-                  validEmploymentsTableRef.current.updateScrollPosition,
-                  0
-                );
-              });
-            }
+            handleSubmit: inviteEmails
           })
         }
       >
