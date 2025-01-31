@@ -34,6 +34,7 @@ import Stack from "@mui/material/Stack";
 import Notice from "../../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Explanation } from "../../common/typography/Explanation";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -424,6 +425,13 @@ export function Employees({ company, containerRef }) {
     [companyEmployments]
   );
 
+  const hasMadeInvitations = React.useMemo(
+    () =>
+      companyEmployments.filter(e => e.user?.id !== adminStore.userId).length >
+      0,
+    [adminStore.userId, companyEmployments]
+  );
+
   const today = isoFormatLocalDate(new Date());
 
   const validEmployments = React.useMemo(
@@ -793,6 +801,11 @@ export function Employees({ company, containerRef }) {
               })
             }
           >
+            {!hasMadeInvitations && (
+              <Badge severity="new" small style={{ marginRight: "8px" }}>
+                A Faire
+              </Badge>
+            )}
             Inviter un nouveau salarié
           </Button>
         )}
