@@ -10,8 +10,7 @@ import { useTypographyStyles } from "../common/typography/TypographyStyles";
 
 const useStyles = makeStyles(theme => ({
   fieldValue: {
-    fontWeight: props => (props.bold ? "bold" : 400),
-    whiteSpace: "inherit"
+    fontWeight: props => (props.bold ? "bold" : 400)
   }
 }));
 
@@ -36,8 +35,13 @@ export function InfoItem({
 
   return (
     <>
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Stack direction="column">
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        columnGap={1}
+      >
+        <Stack direction="column" sx={{ flexGrow: 1, maxWidth: "70%" }}>
           <FieldTitle uppercaseTitle={uppercaseTitle} {...titleProps}>
             {name}
           </FieldTitle>
