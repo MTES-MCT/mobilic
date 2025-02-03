@@ -35,6 +35,7 @@ import Notice from "../../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Explanation } from "../../common/typography/Explanation";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
+import { readCookie, setCookie } from "common/utils/cookie";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -670,10 +671,11 @@ export function Employees({ company, containerRef }) {
     });
   };
 
-  if (!hasMadeInvitations) {
+  if (!hasMadeInvitations && !readCookie("dismissBatchInvite")) {
     modals.open("batchInvite", {
       handleSubmit: inviteEmails,
-      isNewAdmin: true
+      isNewAdmin: true,
+      onClose: () => setCookie("dismissBatchInvite", true)
     });
   }
 

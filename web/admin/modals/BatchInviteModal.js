@@ -9,7 +9,8 @@ export default function BatchInviteModal({
   open,
   handleClose,
   handleSubmit,
-  isNewAdmin = false
+  isNewAdmin = false,
+  onClose
 }) {
   const [text, setText] = React.useState("");
   const [tooManyLinesError, setTooManyLinesError] = React.useState(false);
@@ -26,10 +27,17 @@ export default function BatchInviteModal({
     else setTooManyLinesError(false);
   }, [text]);
 
+  const _handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+    handleClose();
+  };
+
   return (
     <Modal
       open={open}
-      handleClose={handleClose}
+      handleClose={_handleClose}
       title={
         isNewAdmin
           ? "Invitez vos salariés sur Mobilic !"
@@ -75,7 +83,7 @@ export default function BatchInviteModal({
       actions={
         <>
           {isNewAdmin && (
-            <Button onClick={handleClose} priority="secondary">
+            <Button onClick={_handleClose} priority="secondary">
               Plus tard
             </Button>
           )}
@@ -83,7 +91,7 @@ export default function BatchInviteModal({
             disabled={!text || tooManyLinesError}
             onClick={async e => {
               await handleSubmit(parseText(text));
-              handleClose();
+              _handleClose();
             }}
           >
             {isNewAdmin ? "Valider" : "Inviter"}
