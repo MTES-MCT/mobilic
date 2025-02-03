@@ -44,9 +44,12 @@ export const REGULATION_RULES = {
           <Emphasis>supérieure à 13 heures ou à 12 heures</Emphasis>.
         </p>
         <p>
-          En TRM comme en TRV, l'amplitude est quant à elle limitée à{" "}
-          <Emphasis>14 heures</Emphasis> car le salarié doit prendre au moins 10
-          heures consécutives de repos quotidien sur toute période de 24 heures.
+          En TRM comme en TRV lignes régulières et occasionnel, l'amplitude est
+          quant à elle limitée à <Emphasis>14 heures</Emphasis> car le salarié
+          doit prendre au moins 10 heures consécutives de repos quotidien sur
+          toute période de 24 heures. En T3P (taxi, VTC) et LOTI : l'amplitude
+          est limitée à <Emphasis>12 heures</Emphasis> en équipage simple et à{" "}
+          <Emphasis>18 heures</Emphasis> en double équipage.
         </p>
         <p>
           Si le salarié est un travailleur de nuit ou si une partie du travail
@@ -252,10 +255,10 @@ export const REGULATION_RULES = {
             période de 3 ou 4 mois)&nbsp;:
             <ul>
               <li>
-                Longue distance&nbsp;: <Emphasis>53 heures</Emphasis>
+                Longue distance&nbsp;: <Emphasis>48 heures</Emphasis>
               </li>
               <li>
-                Courte distance&nbsp;: <Emphasis>50 heures</Emphasis>
+                Courte distance&nbsp;: <Emphasis>48 heures</Emphasis>
               </li>
               <li>
                 Messagerie, Fonds et valeurs&nbsp;:{" "}
