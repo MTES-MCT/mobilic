@@ -1,4 +1,4 @@
 export const GENDERS = [
-  { value: "female", label: "Femme" },
-  { value: "male", label: "Homme" }
+  { value: "male", label: "Homme" },
+  { value: "female", label: "Femme" }
 ];
