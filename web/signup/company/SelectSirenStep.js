@@ -149,7 +149,7 @@ export function SelectSirenStep({
               variant="caption"
             >
               Vous n'avez pas de numéro SIREN ?{" "}
-              <Link href="mailto:assistance@mobilic.beta.gouv.fr">
+              <Link href="mailto:contact@mobilic.beta.gouv.fr">
                 Ecrivez-nous.
               </Link>
             </Typography>

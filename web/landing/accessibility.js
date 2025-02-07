@@ -57,8 +57,8 @@ function AccessibilityDeclaration() {
       <ul className="basic-information feedback h-card">
         <li>
           E-mail&nbsp;:{" "}
-          <Link href="mailto:assistance@mobilic.beta.gouv.fr">
-            assistance@mobilic.beta.gouv.fr
+          <Link href="mailto:contact@mobilic.beta.gouv.fr">
+            contact@mobilic.beta.gouv.fr
           </Link>
         </li>
 
