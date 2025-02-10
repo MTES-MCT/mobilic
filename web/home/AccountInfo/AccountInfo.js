@@ -36,6 +36,7 @@ import { parsePhoneNumber } from "libphonenumber-js";
 import BecomeAdmin from "./BecomeAdmin";
 import Notice from "../../common/Notice";
 import { Main } from "../../common/semantics/Main";
+import { GENDERS } from "common/utils/gender";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
@@ -186,6 +187,22 @@ export default function Home() {
                           data-testid="alertEmailNotActivated"
                         />
                       )
+                    }
+                    uppercaseTitle={false}
+                  />
+                </Grid>
+                <Grid item xs={12} zeroMinWidth>
+                  <InfoItem
+                    data-testid="genderInfoItem"
+                    name="Sexe"
+                    value={
+                      GENDERS.find(g => g.value === userInfo.gender)?.label
+                    }
+                    valuePlaceholder="Sexe non renseigné"
+                    action={() =>
+                      modals.open("changeGender", {
+                        currentGender: userInfo.gender
+                      })
                     }
                     uppercaseTitle={false}
                   />
