@@ -1,9 +1,14 @@
 import React from "react";
-import Typography from "@mui/material/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
 import Modal from "../../common/Modal";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Input } from "../../common/forms/Input";
+import { validateCleanEmailString } from "common/utils/validation";
+import { TagsGroup } from "@codegouvfr/react-dsfr/TagsGroup";
+import Typography from "@mui/material/Typography";
+
+const SEPARATORS_REGEX = /,|;|\n| /;
+const MAX_EMAILS = 100;
 
 export default function BatchInviteModal({
   open,
@@ -12,26 +17,45 @@ export default function BatchInviteModal({
   isNewAdmin = false,
   onClose
 }) {
+  const [emails, setEmails] = React.useState([]);
   const [text, setText] = React.useState("");
-  const [tooManyLinesError, setTooManyLinesError] = React.useState(false);
 
   function parseText(t) {
-    return t
-      .split("\n")
-      .map(s => s.trim())
-      .filter(s => s.length > 0);
+    const emails = t.split(SEPARATORS_REGEX);
+    const { valid, invalid } = emails
+      .map(email => email.toLowerCase())
+      .reduce(
+        (acc, email, index) => {
+          const isValid = validateCleanEmailString(email);
+          // we don't want to take the last item because the user is probably not done writing
+          if (isValid && index < emails.length - 1) {
+            acc.valid.push(email);
+          } else {
+            acc.invalid.push(email);
+          }
+          return acc;
+        },
+        { valid: [], invalid: [] }
+      );
+    setEmails(currentEmails =>
+      [...new Set([...currentEmails, ...valid])].slice(0, MAX_EMAILS)
+    );
+    setText(invalid.join("\n"));
   }
 
-  React.useEffect(() => {
-    if (parseText(text).length > 100) setTooManyLinesError(true);
-    else setTooManyLinesError(false);
-  }, [text]);
+  const tooManyEmails = React.useMemo(() => emails.length >= MAX_EMAILS, [
+    emails
+  ]);
 
   const _handleClose = () => {
     if (onClose) {
       onClose();
     }
     handleClose();
+  };
+
+  const removeEmail = email => {
+    setEmails(currentEmails => currentEmails.filter(e => e !== email));
   };
 
   return (
@@ -48,8 +72,9 @@ export default function BatchInviteModal({
           {isNewAdmin ? (
             <>
               <p>
-                Ajoutez les adresses e-mail de vos salariés ci-dessous. Ils
-                recevront un e-mail pour créer un compte.
+                Invitez plusieurs salariés en une fois en renseignant leur
+                adresse e-mail ou en copiant une liste dans l’encadré
+                ci-dessous.
               </p>
               <p>
                 Une fois le compte créé, ils seront rattachés à votre entreprise
@@ -58,25 +83,35 @@ export default function BatchInviteModal({
             </>
           ) : (
             <Typography gutterBottom>
-              Vous pouvez inviter d'un coup plusieurs salariés en copiant
-              ci-dessous leur adresse mail. Chaque adresse doit figurer sur une
-              nouvelle ligne.
+              Invitez plusieurs salariés en une fois en renseignant leur adresse
+              e-mail ou en copiant une liste dans l’encadré ci-dessous.
             </Typography>
           )}
           <Input
             label="Adresses e-mail"
-            hintText="Invitez plusieurs salariés d'un coup en séparant les adresses e-mail par des virgules."
+            hintText="Exemple de format attendu : prénom.nom@domaine.fr. Les adresses doivent être séparées par un espace."
             textArea
-            state={tooManyLinesError ? "error" : "default"}
+            state={tooManyEmails ? "error" : "default"}
             stateRelatedMessage={
-              tooManyLinesError
-                ? "Le nombre d'emails ne peut pas dépasser 100. Vous pouvez découper la liste et le faire en plusieurs fois"
+              tooManyEmails
+                ? `Le nombre d’e-mails ne peut dépasser ${MAX_EMAILS}. Veuillez découper la liste et procéder en plusieurs fois.`
                 : ""
             }
             nativeTextAreaProps={{
-              onChange: e => setText(e.target.value),
+              onChange: e => parseText(e.target.value),
               value: text
             }}
+            disabled={tooManyEmails}
+          />
+          <TagsGroup
+            tags={emails.map(email => ({
+              children: email,
+              dismissible: true,
+              nativeButtonProps: {
+                onClick: () => removeEmail(email),
+                "aria-label": `Retirer ${email}`
+              }
+            }))}
           />
         </>
       }
@@ -88,9 +123,9 @@ export default function BatchInviteModal({
             </Button>
           )}
           <LoadingButton
-            disabled={!text || tooManyLinesError}
+            disabled={emails.length === 0}
             onClick={async e => {
-              await handleSubmit(parseText(text));
+              await handleSubmit(emails);
               _handleClose();
             }}
           >
