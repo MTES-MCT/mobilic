@@ -1,65 +1,137 @@
 import React from "react";
-import Typography from "@mui/material/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
-import TextField from "@mui/material/TextField";
 import Modal from "../../common/Modal";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Input } from "../../common/forms/Input";
+import { validateCleanEmailString } from "common/utils/validation";
+import { TagsGroup } from "@codegouvfr/react-dsfr/TagsGroup";
 
-export default function BatchInviteModal({ open, handleClose, handleSubmit }) {
+const SEPARATORS_REGEX = /[,;\n ]/;
+const MAX_EMAILS = 100;
+
+export default function BatchInviteModal({
+  open,
+  handleClose,
+  handleSubmit,
+  isNewAdmin = false,
+  onClose
+}) {
+  const [emails, setEmails] = React.useState([]);
   const [text, setText] = React.useState("");
-  const [tooManyLinesError, setTooManyLinesError] = React.useState(false);
 
   function parseText(t) {
-    return t
-      .split("\n")
-      .map(s => s.trim())
-      .filter(s => s.length > 0);
+    const newEmails = t.split(SEPARATORS_REGEX);
+    const { valid, invalid } = newEmails
+      .map(email => email.toLowerCase())
+      .reduce(
+        (acc, email, index) => {
+          const isValid = validateCleanEmailString(email);
+          // we don't want to take the last item because the user is probably not done writing
+          if (isValid && index < newEmails.length - 1) {
+            acc.valid.push(email);
+          } else {
+            acc.invalid.push(email);
+          }
+          return acc;
+        },
+        { valid: [], invalid: [] }
+      );
+    const uniqueValidEmails = [...new Set([...emails, ...valid])];
+    setEmails(uniqueValidEmails.slice(0, MAX_EMAILS));
+    setText(
+      [...invalid, ...uniqueValidEmails.slice(MAX_EMAILS)]
+        .filter(e => !!e)
+        .join("\n")
+    );
   }
 
-  React.useEffect(() => {
-    if (parseText(text).length > 100) setTooManyLinesError(true);
-    else setTooManyLinesError(false);
-  }, [text]);
+  const tooManyEmails = React.useMemo(() => emails.length >= MAX_EMAILS, [
+    emails
+  ]);
+
+  const _handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+    handleClose();
+  };
+
+  const removeEmail = email => {
+    setEmails(currentEmails => currentEmails.filter(e => e !== email));
+  };
 
   return (
     <Modal
       open={open}
-      handleClose={handleClose}
-      title="Inviter une liste d'emails"
+      handleClose={_handleClose}
+      title={
+        isNewAdmin
+          ? "Invitez vos salariés sur Mobilic !"
+          : "Inviter une liste d'emails"
+      }
       content={
         <>
-          <Typography gutterBottom>
-            Vous pouvez inviter d'un coup plusieurs salariés en copiant
-            ci-dessous leur adresse mail. Chaque adresse doit figurer sur une
-            nouvelle ligne.
-          </Typography>
-          <TextField
-            fullWidth
-            label="Adresses email"
-            placeholder={`martin.dupond@gmail.com\ncorinne.robert@outlook.fr\n...`}
-            multiline
-            minRows={10}
-            maxRows={15}
-            value={text}
-            error={tooManyLinesError}
-            helperText={
-              tooManyLinesError
-                ? "Le nombre d'emails ne peut pas dépasser 100. Vous pouvez découper la liste et le faire en plusieurs fois"
+          {isNewAdmin ? (
+            <>
+              <p>
+                Invitez plusieurs salariés en une fois en renseignant leur
+                adresse e-mail ou en copiant une liste dans l’encadré
+                ci-dessous.
+              </p>
+              <p>
+                Une fois le compte créé, ils seront rattachés à votre entreprise
+                et pourront commencer à enregistrer du temps de travail.
+              </p>
+            </>
+          ) : (
+            <p>
+              Invitez plusieurs salariés en une fois en renseignant leur adresse
+              e-mail ou en copiant une liste dans l’encadré ci-dessous.
+            </p>
+          )}
+          <Input
+            label="Adresses e-mail"
+            hintText="Exemple de format attendu : prenom.nom@domaine.fr. Les adresses doivent être séparées par un espace."
+            textArea
+            state={tooManyEmails ? "error" : "default"}
+            stateRelatedMessage={
+              tooManyEmails
+                ? `Le nombre d’e-mails ne peut dépasser ${MAX_EMAILS}. Veuillez découper la liste et procéder en plusieurs fois.`
                 : ""
             }
-            onChange={e => setText(e.target.value)}
+            nativeTextAreaProps={{
+              onChange: e => parseText(e.target.value),
+              value: text
+            }}
+            disabled={tooManyEmails}
+          />
+          <TagsGroup
+            tags={emails.map(email => ({
+              children: email,
+              dismissible: true,
+              nativeButtonProps: {
+                onClick: () => removeEmail(email),
+                "aria-label": `Retirer ${email}`
+              }
+            }))}
           />
         </>
       }
       actions={
         <>
+          {isNewAdmin && (
+            <Button onClick={_handleClose} priority="secondary">
+              Plus tard
+            </Button>
+          )}
           <LoadingButton
-            disabled={!text || tooManyLinesError}
+            disabled={emails.length === 0}
             onClick={async e => {
-              await handleSubmit(parseText(text));
-              handleClose();
+              await handleSubmit(emails);
+              _handleClose();
             }}
           >
-            Inviter
+            {isNewAdmin ? "Valider" : "Inviter"}
           </LoadingButton>
         </>
       }
