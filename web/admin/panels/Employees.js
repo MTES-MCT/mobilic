@@ -426,10 +426,13 @@ export function Employees({ company, containerRef }) {
     [companyEmployments]
   );
 
+  // companyEmployments should not be empty (at least current admin user should be in it)
+  // therefore we return true when empty
   const hasMadeInvitations = React.useMemo(
     () =>
+      companyEmployments.length === 0 ||
       companyEmployments.filter(e => e.user?.id !== adminStore.userId).length >
-      0,
+        0,
     [adminStore.userId, companyEmployments]
   );
 
