@@ -43,11 +43,7 @@ export default function BatchInviteModal({
       );
     const uniqueValidEmails = [...new Set([...emails, ...valid])];
     setEmails(uniqueValidEmails.slice(0, MAX_EMAILS));
-    setText(
-      [...invalid, ...uniqueValidEmails.slice(MAX_EMAILS)]
-        .filter(e => !!e)
-        .join("\n")
-    );
+    setText(invalid.filter(e => !!e).join("\n"));
   }
 
   React.useEffect(() => {
