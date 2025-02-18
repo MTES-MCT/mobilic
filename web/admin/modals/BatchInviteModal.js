@@ -157,7 +157,15 @@ export default function BatchInviteModal({
           <LoadingButton
             disabled={emails.length === 0}
             onClick={async e => {
-              await handleSubmit(emails);
+              if (text) {
+                if (!validateCleanEmailString) {
+                  setHasValidated(true);
+                  return;
+                }
+                await handleSubmit([...new Set([...emails, text])]);
+              } else {
+                await handleSubmit(emails);
+              }
               _handleClose();
             }}
           >
