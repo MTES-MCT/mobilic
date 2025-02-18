@@ -19,7 +19,7 @@ export default function BatchInviteModal({
   const [emails, setEmails] = React.useState([]);
   const [text, setText] = React.useState("");
 
-  function parseText(t) {
+  function parseText(t, ignoreLast = true) {
     const newEmails = t.split(SEPARATORS_REGEX);
     const { valid, invalid } = newEmails
       .map(email => email.toLowerCase())
@@ -27,7 +27,7 @@ export default function BatchInviteModal({
         (acc, email, index) => {
           const isValid = validateCleanEmailString(email);
           // we don't want to take the last item because the user is probably not done writing
-          if (isValid && index < newEmails.length - 1) {
+          if (isValid && (!ignoreLast || index < newEmails.length - 1)) {
             acc.valid.push(email);
           } else {
             acc.invalid.push(email);
@@ -100,7 +100,12 @@ export default function BatchInviteModal({
                 : ""
             }
             nativeTextAreaProps={{
-              onChange: e => parseText(e.target.value),
+              onChange: e => {
+                parseText(e.target.value);
+              },
+              onBlur: e => {
+                parseText(e.target.value, false);
+              },
               value: text
             }}
             disabled={tooManyEmails}
