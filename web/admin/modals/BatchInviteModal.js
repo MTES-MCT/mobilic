@@ -18,9 +18,14 @@ export default function BatchInviteModal({
 }) {
   const [emails, setEmails] = React.useState([]);
   const [text, setText] = React.useState("");
+  // use this variable to check if user has tried to validate input by pressing space for example
+  const [hasValidated, setHasValidated] = React.useState(false);
 
   function parseText(t, ignoreLast = true) {
     const newEmails = t.split(SEPARATORS_REGEX);
+    if (newEmails.length > 1) {
+      setHasValidated(true);
+    }
     const { valid, invalid } = newEmails
       .map(email => email.toLowerCase())
       .reduce(
@@ -45,6 +50,16 @@ export default function BatchInviteModal({
     );
   }
 
+  React.useEffect(() => {
+    if (!text) {
+      setHasValidated(false);
+    }
+  }, [text]);
+  const isTextInvalidEmail = React.useMemo(
+    () => text && !validateCleanEmailString(text),
+    [text]
+  );
+
   const tooManyEmails = React.useMemo(() => emails.length >= MAX_EMAILS, [
     emails
   ]);
@@ -59,6 +74,20 @@ export default function BatchInviteModal({
   const removeEmail = email => {
     setEmails(currentEmails => currentEmails.filter(e => e !== email));
   };
+
+  const isError = React.useMemo(
+    () => (hasValidated && isTextInvalidEmail) || tooManyEmails,
+    [isTextInvalidEmail, tooManyEmails, hasValidated]
+  );
+  const errorMessage = React.useMemo(
+    () =>
+      isTextInvalidEmail && hasValidated
+        ? "Le format de l'adresse saisie n'est pas valide. Le format attendu est prenom.nom@domaine.fr."
+        : tooManyEmails
+        ? `Le nombre d’e-mails ne peut dépasser ${MAX_EMAILS}. Veuillez découper la liste et procéder en plusieurs fois.`
+        : "",
+    [isTextInvalidEmail, tooManyEmails, hasValidated]
+  );
 
   return (
     <Modal
@@ -93,12 +122,8 @@ export default function BatchInviteModal({
             label="Adresses e-mail"
             hintText="Exemple de format attendu : prenom.nom@domaine.fr. Les adresses doivent être séparées par un espace."
             textArea
-            state={tooManyEmails ? "error" : "default"}
-            stateRelatedMessage={
-              tooManyEmails
-                ? `Le nombre d’e-mails ne peut dépasser ${MAX_EMAILS}. Veuillez découper la liste et procéder en plusieurs fois.`
-                : ""
-            }
+            state={isError ? "error" : "default"}
+            stateRelatedMessage={errorMessage}
             nativeTextAreaProps={{
               onChange: e => {
                 parseText(e.target.value);
