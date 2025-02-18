@@ -5,7 +5,6 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Input } from "../../common/forms/Input";
 import { validateCleanEmailString } from "common/utils/validation";
 import { TagsGroup } from "@codegouvfr/react-dsfr/TagsGroup";
-import Typography from "@mui/material/Typography";
 
 const SEPARATORS_REGEX = /[,;\n ]/;
 const MAX_EMAILS = 100;
@@ -19,16 +18,21 @@ export default function BatchInviteModal({
 }) {
   const [emails, setEmails] = React.useState([]);
   const [text, setText] = React.useState("");
+  // use this variable to check if user has tried to validate input by pressing space for example
+  const [hasValidated, setHasValidated] = React.useState(false);
 
-  function parseText(t) {
+  function parseText(t, ignoreLast = true) {
     const newEmails = t.split(SEPARATORS_REGEX);
+    if (newEmails.length > 1) {
+      setHasValidated(true);
+    }
     const { valid, invalid } = newEmails
       .map(email => email.toLowerCase())
       .reduce(
         (acc, email, index) => {
           const isValid = validateCleanEmailString(email);
           // we don't want to take the last item because the user is probably not done writing
-          if (isValid && index < newEmails.length - 1) {
+          if (isValid && (!ignoreLast || index < newEmails.length - 1)) {
             acc.valid.push(email);
           } else {
             acc.invalid.push(email);
@@ -39,12 +43,18 @@ export default function BatchInviteModal({
       );
     const uniqueValidEmails = [...new Set([...emails, ...valid])];
     setEmails(uniqueValidEmails.slice(0, MAX_EMAILS));
-    setText(
-      [...invalid, ...uniqueValidEmails.slice(MAX_EMAILS)]
-        .filter(e => !!e)
-        .join("\n")
-    );
+    setText(invalid.filter(e => !!e).join("\n"));
   }
+
+  React.useEffect(() => {
+    if (!text) {
+      setHasValidated(false);
+    }
+  }, [text]);
+  const isTextInvalidEmail = React.useMemo(
+    () => text && !validateCleanEmailString(text),
+    [text]
+  );
 
   const tooManyEmails = React.useMemo(() => emails.length >= MAX_EMAILS, [
     emails
@@ -60,6 +70,20 @@ export default function BatchInviteModal({
   const removeEmail = email => {
     setEmails(currentEmails => currentEmails.filter(e => e !== email));
   };
+
+  const isError = React.useMemo(
+    () => (hasValidated && isTextInvalidEmail) || tooManyEmails,
+    [isTextInvalidEmail, tooManyEmails, hasValidated]
+  );
+  const errorMessage = React.useMemo(
+    () =>
+      isTextInvalidEmail && hasValidated
+        ? "Le format de l'adresse saisie n'est pas valide. Le format attendu est prenom.nom@domaine.fr."
+        : tooManyEmails
+        ? `Le nombre d’e-mails ne peut dépasser ${MAX_EMAILS}. Veuillez découper la liste et procéder en plusieurs fois.`
+        : "",
+    [isTextInvalidEmail, tooManyEmails, hasValidated]
+  );
 
   return (
     <Modal
@@ -85,23 +109,28 @@ export default function BatchInviteModal({
               </p>
             </>
           ) : (
-            <Typography gutterBottom>
+            <p>
               Invitez plusieurs salariés en une fois en renseignant leur adresse
               e-mail ou en copiant une liste dans l’encadré ci-dessous.
-            </Typography>
+            </p>
           )}
           <Input
             label="Adresses e-mail"
             hintText="Exemple de format attendu : prenom.nom@domaine.fr. Les adresses doivent être séparées par un espace."
             textArea
-            state={tooManyEmails ? "error" : "default"}
-            stateRelatedMessage={
-              tooManyEmails
-                ? `Le nombre d’e-mails ne peut dépasser ${MAX_EMAILS}. Veuillez découper la liste et procéder en plusieurs fois.`
-                : ""
-            }
+            state={isError ? "error" : "default"}
+            stateRelatedMessage={errorMessage}
             nativeTextAreaProps={{
-              onChange: e => parseText(e.target.value),
+              onChange: e => {
+                parseText(e.target.value);
+              },
+              onBlur: e => {
+                parseText(e.target.value, false);
+              },
+              onPaste: e => {
+                e.preventDefault();
+                parseText(e.clipboardData.getData("text"), false);
+              },
               value: text
             }}
             disabled={tooManyEmails}
@@ -128,7 +157,15 @@ export default function BatchInviteModal({
           <LoadingButton
             disabled={emails.length === 0}
             onClick={async e => {
-              await handleSubmit(emails);
+              if (text) {
+                if (!validateCleanEmailString) {
+                  setHasValidated(true);
+                  return;
+                }
+                await handleSubmit([...new Set([...emails, text])]);
+              } else {
+                await handleSubmit(emails);
+              }
               _handleClose();
             }}
           >
