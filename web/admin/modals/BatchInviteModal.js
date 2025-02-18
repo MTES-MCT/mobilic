@@ -131,6 +131,10 @@ export default function BatchInviteModal({
               onBlur: e => {
                 parseText(e.target.value, false);
               },
+              onPaste: e => {
+                e.preventDefault();
+                parseText(e.clipboardData.getData("text"), false);
+              },
               value: text
             }}
             disabled={tooManyEmails}
