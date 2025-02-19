@@ -374,6 +374,7 @@ export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
         ...ObservedInfractions
       }
       reportedInfractionsLastUpdateTime
+      canTakePictures
       businessTypeDuringControl {
         id
         transportType

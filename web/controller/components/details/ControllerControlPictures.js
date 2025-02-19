@@ -4,8 +4,10 @@ import Typography from "@mui/material/Typography";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Description } from "../../../common/typography/Description";
 import { TitleContainer } from "../../../control/components/TitleContainer";
+import { useControl } from "../../utils/contextControl";
 
 export function ControllerControlPictures() {
+  const { controlData } = useControl();
   return (
     <Stack spacing={0} sx={{ width: "100%" }}>
       <TitleContainer>
@@ -15,6 +17,7 @@ export function ControllerControlPictures() {
         <Button
           priority="primary"
           size="small"
+          disabled={!controlData.canTakePictures}
           onClick={() => {
             console.log("click");
           }}
