@@ -20,6 +20,7 @@ import { CONTROL_TYPES } from "../../controller/utils/useReadControlData";
 import { useInfractions } from "../../controller/utils/contextInfractions";
 import { sanctionComparator } from "../utils/sanctionComparator";
 import { useControl } from "../../controller/utils/contextControl";
+import { TitleContainer } from "./TitleContainer";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -124,11 +125,7 @@ export function UserReadAlerts({
             <Typography>{updateInfractionsTitle}</Typography>
           )}
           {!isReportingInfractions && (
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-            >
+            <TitleContainer>
               <Typography component="h2" fontWeight="bold" fontSize="1.125rem">
                 Infractions retenues
               </Typography>
@@ -140,7 +137,7 @@ export function UserReadAlerts({
               >
                 Modifier
               </Button>
-            </Stack>
+            </TitleContainer>
           )}
           {!isReportingInfractions && reportedInfractionsLastUpdateTime && (
             <Description noMargin>
