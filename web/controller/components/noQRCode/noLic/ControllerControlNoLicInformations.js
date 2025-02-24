@@ -12,7 +12,8 @@ import { ControllerControlPictures } from "../../details/ControllerControlPictur
 
 export function ControllerControlNoLicInformations({
   onChangeTab,
-  showPictures
+  showPictures,
+  takePictures
 }) {
   const { controlData, controlType } = useControl();
   const { checkedAlertsNumber } = useInfractions() ?? {};
@@ -27,7 +28,10 @@ export function ControllerControlNoLicInformations({
         businessTypeDuringControl={controlData.businessTypeDuringControl}
       />
       {controlType === CONTROL_TYPES.LIC_PAPIER.label && (
-        <ControllerControlPictures showPictures={showPictures} />
+        <ControllerControlPictures
+          showPictures={showPictures}
+          takePictures={takePictures}
+        />
       )}
       <ControllerControlNote />
       <ControllerControlNbCards

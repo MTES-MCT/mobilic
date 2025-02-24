@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControllerControlPictures({ showPictures }) {
+export function ControllerControlPictures({ showPictures, takePictures }) {
   const { controlData } = useControl();
 
   return (
@@ -46,9 +46,7 @@ export function ControllerControlPictures({ showPictures }) {
           priority="primary"
           size="small"
           disabled={!controlData.canTakePictures}
-          onClick={() => {
-            console.log("click");
-          }}
+          onClick={takePictures}
         >
           Prendre en photo
         </Button>

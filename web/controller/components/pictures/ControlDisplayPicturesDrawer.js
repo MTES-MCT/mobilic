@@ -62,7 +62,7 @@ export function ControlDisplayPicturesDrawer({ isOpen, onClose }) {
         className={classes.buttonGroup}
         buttons={[
           {
-            onClick: reportInfractions,
+            onClick: () => reportInfractions(),
             children: "Relever des infractions",
             iconPosition: "right",
             iconId: "fr-icon-arrow-right-s-line"

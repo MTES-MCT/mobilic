@@ -48,7 +48,11 @@ const getTabs = alertNumber => [
   }
 ];
 
-export function ControllerControlNoLic({ editBDC, showPictures }) {
+export function ControllerControlNoLic({
+  editBDC,
+  showPictures,
+  takePictures
+}) {
   const classes = controlTabsStyles();
 
   const { controlId } = useControl();
@@ -109,6 +113,7 @@ export function ControllerControlNoLic({ editBDC, showPictures }) {
                     readOnlyAlerts={false}
                     onChangeTab={onChangeTab}
                     showPictures={_showPictures}
+                    takePictures={takePictures}
                   />
                 }
               </TabPanel>
