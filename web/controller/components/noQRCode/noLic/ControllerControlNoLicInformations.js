@@ -10,7 +10,10 @@ import { useInfractions } from "../../../utils/contextInfractions";
 import { CONTROL_TYPES } from "../../../utils/useReadControlData";
 import { ControllerControlPictures } from "../../details/ControllerControlPictures";
 
-export function ControllerControlNoLicInformations({ onChangeTab }) {
+export function ControllerControlNoLicInformations({
+  onChangeTab,
+  showPictures
+}) {
   const { controlData, controlType } = useControl();
   const { checkedAlertsNumber } = useInfractions() ?? {};
   return (
@@ -24,7 +27,7 @@ export function ControllerControlNoLicInformations({ onChangeTab }) {
         businessTypeDuringControl={controlData.businessTypeDuringControl}
       />
       {controlType === CONTROL_TYPES.LIC_PAPIER.label && (
-        <ControllerControlPictures />
+        <ControllerControlPictures showPictures={showPictures} />
       )}
       <ControllerControlNote />
       <ControllerControlNbCards

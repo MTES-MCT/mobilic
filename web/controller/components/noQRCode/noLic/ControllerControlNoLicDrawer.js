@@ -4,6 +4,7 @@ import { ControllerControlNoLic } from "./ControllerControlNoLic";
 import { ControlBulletinDrawer } from "../../controlBulletin/ControlBulletinDrawer";
 import { ControlDrawer } from "../../../utils/ControlDrawer";
 import { useInfractions } from "../../../utils/contextInfractions";
+import { ControlDisplayPicturesDrawer } from "../../pictures/ControlDisplayPicturesDrawer";
 
 export function ControllerControlNoLicDrawer({
   controlData,
@@ -12,10 +13,15 @@ export function ControllerControlNoLicDrawer({
   onClose
 }) {
   const [isEditingBDC, setIsEditingBDC] = React.useState(false);
+  const [displayPictures, setDisplayPictures] = React.useState(false);
   const { setIsReportingInfractions } = useInfractions();
 
   const editBDC = () => {
     setIsEditingBDC(true);
+  };
+
+  const showPictures = () => {
+    setDisplayPictures(true);
   };
 
   const closeControl = () => {
@@ -41,11 +47,15 @@ export function ControllerControlNoLicDrawer({
           }))
         }
       />
+      <ControlDisplayPicturesDrawer
+        isOpen={displayPictures}
+        onClose={() => setDisplayPictures(false)}
+      />
       <ControllerControlHeader
         controlDate={controlData.creationTime}
         onCloseDrawer={() => closeControl()}
       />
-      <ControllerControlNoLic editBDC={editBDC} />
+      <ControllerControlNoLic editBDC={editBDC} showPictures={showPictures} />
     </ControlDrawer>
   );
 }

@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControllerControlPictures() {
+export function ControllerControlPictures({ showPictures }) {
   const { controlData } = useControl();
 
   return (
@@ -53,12 +53,12 @@ export function ControllerControlPictures() {
           Prendre en photo
         </Button>
       </TitleContainer>
-      <Content controlData={controlData} />
+      <Content controlData={controlData} showPictures={showPictures} />
     </Stack>
   );
 }
 
-const Content = ({ controlData }) => {
+const Content = ({ controlData, showPictures }) => {
   const classes = useStyles();
   const arrowButtonClasses = arrowButtonStyles();
 
@@ -92,9 +92,7 @@ const Content = ({ controlData }) => {
 suppression`}
       </Tag>
       <Button
-        onClick={() => {
-          console.log("click");
-        }}
+        onClick={showPictures}
         priority="secondary"
         iconId="fr-icon-arrow-right-s-line"
         iconPosition="right"

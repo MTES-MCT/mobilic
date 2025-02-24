@@ -48,7 +48,7 @@ const getTabs = alertNumber => [
   }
 ];
 
-export function ControllerControlNoLic({ editBDC }) {
+export function ControllerControlNoLic({ editBDC, showPictures }) {
   const classes = controlTabsStyles();
 
   const { controlId } = useControl();
@@ -57,6 +57,11 @@ export function ControllerControlNoLic({ editBDC }) {
 
   const TABS = getTabs(checkedAlertsNumber);
   const [tab, setTab] = React.useState(TABS[0].name);
+
+  const _showPictures = () => {
+    setTab(TABS[1].name);
+    showPictures();
+  };
 
   React.useEffect(() => scrollToId("control-header"), [tab]);
 
@@ -103,6 +108,7 @@ export function ControllerControlNoLic({ editBDC }) {
                   <t.component
                     readOnlyAlerts={false}
                     onChangeTab={onChangeTab}
+                    showPictures={_showPictures}
                   />
                 }
               </TabPanel>
