@@ -54,7 +54,7 @@ export function ControlDisplayPicturesDrawer({ isOpen, onClose }) {
       {controlData.pictures && (
         <Stack direction="column" rowGap={2} m={2}>
           {controlData.pictures.map((picture, index) => (
-            <img key={`picture__${index}`} src={picture} />
+            <img key={`picture__${index}`} src={picture.url} />
           ))}
         </Stack>
       )}

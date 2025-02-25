@@ -375,7 +375,9 @@ export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
       }
       reportedInfractionsLastUpdateTime
       canTakePictures
-      pictures
+      pictures {
+        url
+      }
       picturesExpiryDate
       businessTypeDuringControl {
         id

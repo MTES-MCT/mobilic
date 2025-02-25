@@ -81,7 +81,7 @@ const Content = ({ controlData, showPictures }) => {
             key={`control_picture_${idx}`}
             className={classes.imageContainer}
           >
-            <img className={classes.image} src={picture} alt="" />
+            <img className={classes.image} src={picture.url} alt="" />
           </div>
         ))}
       </Stack>
