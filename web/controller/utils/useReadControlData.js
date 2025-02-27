@@ -3,7 +3,8 @@ import { useApi } from "common/utils/api";
 
 import {
   CONTROLLER_READ_CONTROL_DATA,
-  CONTROLLER_READ_CONTROL_DATA_NO_LIC
+  CONTROLLER_READ_CONTROL_DATA_NO_LIC,
+  HTTP_QUERIES
 } from "common/utils/apiQueries";
 import { useLoadingScreen } from "common/utils/loading";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -61,12 +62,35 @@ export const useReadControlData = (controlId, controlType) => {
     [controlData]
   );
 
+  const uploadPictures = pictures => {
+    alerts.withApiErrorHandling(async () => {
+      const presignedUrlsRes = await api.jsonHttpQuery(
+        HTTP_QUERIES.controlPicturesGeneratePresignedUrls,
+        {
+          json: { control_id: controlId, nb_pictures: pictures.length }
+        }
+      );
+      const presignedUrls = presignedUrlsRes["presigned-urls"];
+
+      pictures.forEach(async (picture, index) => {
+        const uploadRes = await fetch(presignedUrls[index], {
+          method: "PUT",
+          headers: { "Content-Type": "image/png" },
+          body: picture.file
+        });
+        // TODO: check status is 200
+        console.log("uploadRes", uploadRes);
+      });
+    }, "download-control-c1b-one");
+  };
+
   return {
     controlData,
     setControlData,
     controlId,
     controlType,
     canDownloadBDC,
-    bdcAlreadyExists
+    bdcAlreadyExists,
+    uploadPictures
   };
 };

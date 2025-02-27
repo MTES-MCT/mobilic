@@ -2065,6 +2065,10 @@ export const HTTP_QUERIES = {
     method: "POST",
     endpoint: "/controllers/generate_control_bulletin"
   },
+  controlPicturesGeneratePresignedUrls: {
+    method: "POST",
+    endpoint: "/controllers/control-pictures-generate-presigned-urls"
+  },
   certificateSearch: {
     method: "POST",
     endpoint: "/companies/public_company_certification"

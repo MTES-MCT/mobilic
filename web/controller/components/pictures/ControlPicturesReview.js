@@ -2,6 +2,7 @@ import React from "react";
 import { Stack, Typography } from "@mui/material";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { makeStyles } from "@mui/styles";
+import { useControl } from "../../utils/contextControl";
 
 const useStyles = makeStyles(theme => ({
   imageContainer: {
@@ -23,6 +24,9 @@ const useStyles = makeStyles(theme => ({
 
 export function ControlPicturesReview({ onClose, pictures }) {
   const classes = useStyles();
+
+  const { uploadPictures } = useControl();
+
   return (
     <>
       <Typography variant="h2" component="h1" mb={2}>
@@ -34,14 +38,14 @@ export function ControlPicturesReview({ onClose, pictures }) {
       <Stack direction="row" flexWrap="wrap" mb={2}>
         {pictures.map((picture, index) => (
           <div key={`photo_${index}`} className={classes.imageContainer}>
-            <img src={picture} className={classes.image} />
+            <img src={picture.url} className={classes.image} alt="" />
           </div>
         ))}
       </Stack>
       <ButtonsGroup
         buttons={[
           {
-            onClick: () => console.log("todo"),
+            onClick: () => uploadPictures(pictures),
             children: `Ajouter ${pictures.length} photos au contrôle`
           },
           {

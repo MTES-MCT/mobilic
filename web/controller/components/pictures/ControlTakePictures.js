@@ -115,8 +115,16 @@ export function ControlTakePictures({ _onClose }) {
         canvasRef.current.width,
         canvasRef.current.height
       );
-      const newImage = canvasRef.current.toDataURL("image/png");
-      setCapturedImages(prevImages => [...prevImages, newImage]);
+      canvasRef.current.toBlob(blob => {
+        const newFile = new File([blob], "captured-image.png", {
+          type: "image/png"
+        });
+        const imageUrl = URL.createObjectURL(newFile);
+        setCapturedImages(prevImages => [
+          ...prevImages,
+          { file: newFile, url: imageUrl }
+        ]);
+      }, "image/png");
     }
   };
 
@@ -142,7 +150,11 @@ export function ControlTakePictures({ _onClose }) {
               <span className={classes.nbPictures}>
                 {capturedImages.length}
               </span>
-              <img src={capturedImages[0]} className={classes.image} alt="" />
+              <img
+                src={capturedImages[0].url}
+                className={classes.image}
+                alt=""
+              />
             </div>
           )}
         </div>
