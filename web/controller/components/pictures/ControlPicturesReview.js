@@ -22,10 +22,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControlPicturesReview({ onClose, pictures }) {
+export function ControlPicturesReview({ onBack, onClose, pictures }) {
   const classes = useStyles();
 
   const { uploadPictures } = useControl();
+
+  const _onUpload = () => {
+    uploadPictures(pictures);
+    onClose();
+  };
 
   return (
     <>
@@ -45,13 +50,13 @@ export function ControlPicturesReview({ onClose, pictures }) {
       <ButtonsGroup
         buttons={[
           {
-            onClick: () => uploadPictures(pictures),
+            onClick: _onUpload,
             children: `Ajouter ${pictures.length} photos au contrôle`
           },
           {
             children: "Annuler",
             priority: "secondary",
-            onClick: onClose
+            onClick: onBack
           }
         ]}
       />

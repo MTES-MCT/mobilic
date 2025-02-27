@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControlTakePictures({ _onClose }) {
+export function ControlTakePictures({ onClose }) {
   const classes = useStyles();
   const [stream, setStream] = useState(null);
   const [capturedImages, setCapturedImages] = useState([]);
@@ -68,6 +68,11 @@ export function ControlTakePictures({ _onClose }) {
     if (stream && videoRef.current) {
       videoRef.current.srcObject = stream;
     }
+    return () => {
+      if (stream) {
+        stopCamera(stream);
+      }
+    };
   }, [stream]);
 
   const startCamera = async () => {
@@ -93,15 +98,7 @@ export function ControlTakePictures({ _onClose }) {
 
   useEffect(() => {
     startCamera();
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (stream) {
-        stopCamera(stream);
-      }
-    };
-  }, [stream]);
+  }, [displayReview]);
 
   const captureImage = () => {
     if (videoRef.current && canvasRef.current) {
@@ -130,7 +127,8 @@ export function ControlTakePictures({ _onClose }) {
 
   return displayReview ? (
     <ControlPicturesReview
-      onClose={() => setDisplayReview(false)}
+      onBack={() => setDisplayReview(false)}
+      onClose={onClose}
       pictures={capturedImages}
     />
   ) : (

@@ -50,7 +50,7 @@ export function ControlTakePicturesDrawer({ isOpen, onClose }) {
           backLinkLabel={backLabel}
         />
         {isTakingPictures ? (
-          <ControlTakePictures _onClose={_onClose} />
+          <ControlTakePictures onClose={_onClose} />
         ) : (
           <>
             <Typography variant="h2" component="h1" mb={2}>

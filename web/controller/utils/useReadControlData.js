@@ -81,7 +81,8 @@ export const useReadControlData = (controlId, controlType) => {
         // TODO: check status is 200
         console.log("uploadRes", uploadRes);
       });
-    }, "download-control-c1b-one");
+      alerts.success("Vos photos ont bien été sauvegardées", "", 5000);
+    }, "controls-upload-pictures");
   };
 
   return {
