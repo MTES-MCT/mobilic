@@ -19,12 +19,17 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControlDisplayPicturesDrawer({ isOpen, onClose }) {
+export function ControlDisplayPicturesDrawer({
+  isOpen,
+  onClose,
+  switchToInfractionsTab
+}) {
   const classes = useStyles();
   const { controlData } = useControl();
   const { setIsReportingInfractions } = useInfractions();
 
   const reportInfractions = () => {
+    switchToInfractionsTab();
     if (onClose) {
       onClose();
     }
@@ -54,7 +59,7 @@ export function ControlDisplayPicturesDrawer({ isOpen, onClose }) {
       {controlData.pictures && (
         <Stack direction="column" rowGap={2} m={2}>
           {controlData.pictures.map((picture, index) => (
-            <img key={`picture__${index}`} src={picture.url} />
+            <img key={`picture__${index}`} src={picture.url} alt="" />
           ))}
         </Stack>
       )}

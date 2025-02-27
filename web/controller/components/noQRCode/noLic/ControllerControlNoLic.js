@@ -19,6 +19,7 @@ import { useInfractions } from "../../../utils/contextInfractions";
 import { useControl } from "../../../utils/contextControl";
 import { controlTabsStyles } from "../../../../control/components/UserReadTabs";
 import { scrollToId } from "../../../../common/hooks/useScroll";
+import { ControlDisplayPicturesDrawer } from "../../pictures/ControlDisplayPicturesDrawer";
 
 const getTabs = alertNumber => [
   {
@@ -48,23 +49,23 @@ const getTabs = alertNumber => [
   }
 ];
 
-export function ControllerControlNoLic({
-  editBDC,
-  showPictures,
-  takePictures
-}) {
+export function ControllerControlNoLic({ editBDC, takePictures }) {
   const classes = controlTabsStyles();
 
   const { controlId } = useControl();
   const downloadBDC = useDownloadBDC(controlId);
   const { checkedAlertsNumber, isReportingInfractions } = useInfractions();
+  const [displayPictures, setDisplayPictures] = React.useState(false);
+
+  const showPictures = () => {
+    setDisplayPictures(true);
+  };
 
   const TABS = getTabs(checkedAlertsNumber);
   const [tab, setTab] = React.useState(TABS[0].name);
 
-  const _showPictures = () => {
+  const switchToInfractionsTab = () => {
     setTab(TABS[1].name);
-    showPictures();
   };
 
   React.useEffect(() => scrollToId("control-header"), [tab]);
@@ -72,7 +73,13 @@ export function ControllerControlNoLic({
   const onChangeTab = tabName => {
     setTab(tabName);
   };
-  return (
+  return displayPictures ? (
+    <ControlDisplayPicturesDrawer
+      isOpen={displayPictures}
+      onClose={() => setDisplayPictures(false)}
+      switchToInfractionsTab={switchToInfractionsTab}
+    />
+  ) : (
     <>
       <TabContext value={tab}>
         <AppBar enableColorOnDark position="static">
@@ -112,8 +119,9 @@ export function ControllerControlNoLic({
                   <t.component
                     readOnlyAlerts={false}
                     onChangeTab={onChangeTab}
-                    showPictures={_showPictures}
+                    showPictures={showPictures}
                     takePictures={takePictures}
+                    switchToInfractionsTab={switchToInfractionsTab}
                   />
                 }
               </TabPanel>
