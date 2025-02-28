@@ -106,11 +106,18 @@ export function ControlTakePictures({ onClose }) {
     }
   };
 
+  const removeImage = url => {
+    setCapturedImages(prevImages =>
+      prevImages.filter(image => image.url !== url)
+    );
+  };
+
   return displayReview ? (
     <ControlPicturesReview
       onBack={() => setDisplayReview(false)}
       onClose={onClose}
       pictures={capturedImages}
+      removeImage={removeImage}
     />
   ) : (
     <Stack direction="column">

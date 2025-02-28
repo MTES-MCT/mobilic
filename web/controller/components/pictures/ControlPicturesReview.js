@@ -39,7 +39,7 @@ export function ControlPicturesReview({
       <Typography mb={4}>
         Vous pouvez organiser les photos en les faisant glisser.
       </Typography>
-      <Stack direction="row" flexWrap="wrap" mb={2}>
+      <Stack direction="row" flexWrap="wrap" mb={2} columnGap={2} rowGap={1}>
         {pictures.map((picture, index) => (
           <Picture
             key={`photo_${index}`}
@@ -58,6 +58,16 @@ export function ControlPicturesReview({
           />
         ))}
       </Stack>
+      <Button
+        priority="tertiary"
+        size="small"
+        iconPosition="left"
+        iconId="fr-icon-camera-fill"
+        className={classes.addPicturesButton}
+        onClick={onBack}
+      >
+        Ajouter des photos
+      </Button>
       <ButtonsGroup
         buttons={[
           {
