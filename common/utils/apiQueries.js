@@ -374,6 +374,11 @@ export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
         ...ObservedInfractions
       }
       reportedInfractionsLastUpdateTime
+      canTakePictures
+      pictures {
+        url
+      }
+      picturesExpiryDate
       businessTypeDuringControl {
         id
         transportType
@@ -2059,6 +2064,10 @@ export const HTTP_QUERIES = {
   controlBDCExport: {
     method: "POST",
     endpoint: "/controllers/generate_control_bulletin"
+  },
+  controlPicturesGeneratePresignedUrls: {
+    method: "POST",
+    endpoint: "/controllers/control-pictures-generate-presigned-urls"
   },
   certificateSearch: {
     method: "POST",
