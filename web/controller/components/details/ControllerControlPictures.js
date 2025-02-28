@@ -11,23 +11,9 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { arrowButtonStyles } from "../utils/ArrowButton";
 import { DAY } from "common/utils/time";
 import Notice from "../../../common/Notice";
+import Picture from "../pictures/Picture";
 
 const useStyles = makeStyles(theme => ({
-  imageContainer: {
-    width: "100px",
-    height: "100px",
-    overflow: "hidden",
-    position: "relative"
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)"
-  },
   tag: {
     color: fr.colors.decisions.background.flat.warning.default
   }
@@ -77,12 +63,13 @@ const Content = ({ controlData, showPictures }) => {
     <Stack direction="column" rowGap={1}>
       <Stack direction="row" columnGap={2}>
         {controlData.pictures.slice(0, 3).map((picture, idx) => (
-          <div
+          <Picture
             key={`control_picture_${idx}`}
-            className={classes.imageContainer}
-          >
-            <img className={classes.image} src={picture.url} alt="" />
-          </div>
+            src={picture.url}
+            alt=""
+            width="100px"
+            height="100px"
+          />
         ))}
       </Stack>
       <Tag className={classes.tag}>

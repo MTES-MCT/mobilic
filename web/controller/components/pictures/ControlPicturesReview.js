@@ -1,31 +1,30 @@
 import React from "react";
 import { Stack, Typography } from "@mui/material";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
-import { makeStyles } from "@mui/styles";
 import { useControl } from "../../utils/contextControl";
+import Picture from "./Picture";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles(theme => ({
-  imageContainer: {
-    width: "105px",
-    height: "105px",
-    overflow: "hidden",
-    position: "relative"
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
+  removeButton: {
     position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)"
+    top: 0,
+    right: 0,
+    zIndex: 500
+  },
+  addPicturesButton: {
+    marginBottom: theme.spacing(4)
   }
 }));
-
-export function ControlPicturesReview({ onBack, onClose, pictures }) {
-  const classes = useStyles();
-
+export function ControlPicturesReview({
+  onBack,
+  onClose,
+  pictures,
+  removeImage
+}) {
   const { uploadPictures } = useControl();
+  const classes = useStyles();
 
   const _onUpload = () => {
     uploadPictures(pictures);
@@ -42,9 +41,21 @@ export function ControlPicturesReview({ onBack, onClose, pictures }) {
       </Typography>
       <Stack direction="row" flexWrap="wrap" mb={2}>
         {pictures.map((picture, index) => (
-          <div key={`photo_${index}`} className={classes.imageContainer}>
-            <img src={picture.url} className={classes.image} alt="" />
-          </div>
+          <Picture
+            key={`photo_${index}`}
+            src={picture.url}
+            alt=""
+            width="105px"
+            height="105px"
+            icon={
+              <Button
+                className={classes.removeButton}
+                iconId="fr-icon-close-line"
+                onClick={() => removeImage(picture.url)}
+                title="Retirer l'image"
+              />
+            }
+          />
         ))}
       </Stack>
       <ButtonsGroup

@@ -3,37 +3,17 @@ import { Button, Stack } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { ControlPicturesReview } from "./ControlPicturesReview";
+import Picture from "./Picture";
 
 const useStyles = makeStyles(theme => ({
-  imageContainer: {
-    width: "64px",
-    height: "64px",
+  pictureContainer: {
     position: "absolute",
     bottom: 24,
     left: 24
   },
   image: {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
     borderRadius: "4px",
     border: "1px solid white"
-  },
-  pictureButton: {
-    width: 64,
-    height: 64,
-    borderRadius: "50%",
-    backgroundColor: `${theme.palette.primary.main}B2`,
-    "&:hover": { backgroundColor: theme.palette.primary.main },
-    position: "absolute",
-    bottom: 16,
-    left: "50%",
-    transform: "translateX(-50%)",
-    border: "2px solid white"
   },
   nbPictures: {
     display: "inline-flex",
@@ -144,14 +124,20 @@ export function ControlTakePictures({ onClose }) {
           />
           <Button onClick={captureImage} className={classes.pictureButton} />
           {capturedImages.length > 0 && (
-            <div className={classes.imageContainer}>
-              <span className={classes.nbPictures}>
-                {capturedImages.length}
-              </span>
-              <img
+            <div className={classes.pictureContainer}>
+              <Picture
                 src={capturedImages[0].url}
-                className={classes.image}
                 alt=""
+                height="64px"
+                width="64px"
+                classes={{
+                  img: classes.image
+                }}
+                icon={
+                  <span className={classes.nbPictures}>
+                    {capturedImages.length}
+                  </span>
+                }
               />
             </div>
           )}
