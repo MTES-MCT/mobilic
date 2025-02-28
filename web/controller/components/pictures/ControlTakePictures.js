@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { ControlPicturesReview } from "./ControlPicturesReview";
+import { TakePictureButton } from "./TakePictureButton";
 import Picture from "./Picture";
 
 const useStyles = makeStyles(theme => ({
@@ -122,7 +123,7 @@ export function ControlTakePictures({ onClose }) {
               borderRadius: "8px"
             }}
           />
-          <Button onClick={captureImage} className={classes.pictureButton} />
+          <TakePictureButton onClick={captureImage} />
           {capturedImages.length > 0 && (
             <div className={classes.pictureContainer}>
               <Picture
