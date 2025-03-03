@@ -81,6 +81,44 @@ export function ControlTakePictures({ onClose }) {
     startCamera();
   }, [displayReview]);
 
+  const addWatermark = context => {
+    context.font = "20px Arial";
+    context.fillStyle = "rgba(255, 255, 255, 0.3)";
+
+    const watermarkText1 = "Ne pas diffuser.";
+    const watermarkText2 = "Ne pas verser au PV.";
+    const textSpacing = 85;
+
+    const angle = 30 * (Math.PI / 180);
+
+    context.save();
+
+    context.translate(
+      canvasRef.current.width / 2,
+      canvasRef.current.height / 2
+    );
+    context.rotate(angle);
+
+    let i = 0;
+    for (
+      let y = -canvasRef.current.height;
+      y < canvasRef.current.height;
+      y += textSpacing
+    ) {
+      const watermarkText = i % 2 === 0 ? watermarkText1 : watermarkText2;
+      for (
+        let x = -canvasRef.current.width;
+        x < canvasRef.current.width;
+        x += context.measureText(watermarkText).width + textSpacing * 2
+      ) {
+        context.fillText(watermarkText, x, y);
+      }
+      i = i + 1;
+    }
+
+    context.restore();
+  };
+
   const captureImage = () => {
     if (videoRef.current && canvasRef.current) {
       const context = canvasRef.current.getContext("2d");
@@ -93,6 +131,7 @@ export function ControlTakePictures({ onClose }) {
         canvasRef.current.width,
         canvasRef.current.height
       );
+      addWatermark(context);
       canvasRef.current.toBlob(blob => {
         const newFile = new File([blob], "captured-image.png", {
           type: "image/png"
