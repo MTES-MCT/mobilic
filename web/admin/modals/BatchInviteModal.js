@@ -20,6 +20,10 @@ export default function BatchInviteModal({
   const [text, setText] = React.useState("");
   // use this variable to check if user has tried to validate input by pressing space for example
   const [hasValidated, setHasValidated] = React.useState(false);
+  const [
+    tooManyEmailsInPastedText,
+    setTooManyEmailsInPastedText
+  ] = React.useState(false);
 
   function parseText(t, ignoreLast = true) {
     const newEmails = t.split(SEPARATORS_REGEX);
@@ -46,6 +50,10 @@ export default function BatchInviteModal({
     setText(invalid.filter(e => !!e).join("\n"));
   }
 
+  const countItemsInText = t => {
+    return t.split(SEPARATORS_REGEX).length;
+  };
+
   React.useEffect(() => {
     if (!text) {
       setHasValidated(false);
@@ -55,6 +63,8 @@ export default function BatchInviteModal({
     () => text && !validateCleanEmailString(text),
     [text]
   );
+
+  React.useEffect(() => setTooManyEmailsInPastedText(false), [text]);
 
   const tooManyEmails = React.useMemo(() => emails.length >= MAX_EMAILS, [
     emails
@@ -72,17 +82,20 @@ export default function BatchInviteModal({
   };
 
   const isError = React.useMemo(
-    () => (hasValidated && isTextInvalidEmail) || tooManyEmails,
-    [isTextInvalidEmail, tooManyEmails, hasValidated]
+    () =>
+      (hasValidated && isTextInvalidEmail) ||
+      tooManyEmails ||
+      tooManyEmailsInPastedText,
+    [isTextInvalidEmail, tooManyEmails, hasValidated, tooManyEmailsInPastedText]
   );
   const errorMessage = React.useMemo(
     () =>
       isTextInvalidEmail && hasValidated
         ? "Le format de l'adresse saisie n'est pas valide. Le format attendu est prenom.nom@domaine.fr."
-        : tooManyEmails
+        : tooManyEmails || tooManyEmailsInPastedText
         ? `Le nombre d’e-mails ne peut dépasser ${MAX_EMAILS}. Veuillez découper la liste et procéder en plusieurs fois.`
         : "",
-    [isTextInvalidEmail, tooManyEmails, hasValidated]
+    [isTextInvalidEmail, tooManyEmails, hasValidated, tooManyEmailsInPastedText]
   );
 
   return (
@@ -129,7 +142,13 @@ export default function BatchInviteModal({
               },
               onPaste: e => {
                 e.preventDefault();
-                parseText(e.clipboardData.getData("text"), false);
+                const pastedText = e.clipboardData.getData("text");
+                const nbNewEmails = countItemsInText(pastedText);
+                if (nbNewEmails + emails.length > MAX_EMAILS) {
+                  setTooManyEmailsInPastedText(true);
+                  return;
+                }
+                parseText(pastedText, false);
               },
               value: text
             }}
