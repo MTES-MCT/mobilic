@@ -27,7 +27,7 @@ export default function BatchInviteModal({
 
   function parseText(t, ignoreLast = true) {
     const newEmails = t.split(SEPARATORS_REGEX);
-    if (newEmails.length > 1) {
+    if (!ignoreLast || newEmails.length > 1) {
       setHasValidated(true);
     }
     const { valid, invalid } = newEmails
