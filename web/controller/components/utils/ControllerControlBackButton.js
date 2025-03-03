@@ -1,19 +1,9 @@
 import React from "react";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { makeStyles } from "@mui/styles";
-import { fr } from "@codegouvfr/react-dsfr";
-
-const useStyles = makeStyles(theme => ({
-  button: {
-    boxShadow: `inset 0 -1px 0 ${fr.colors.decisions.border.actionHigh.blueFrance.default}`,
-    paddingLeft: 0,
-    paddingRight: 0,
-    paddingBottom: 1
-  }
-}));
+import { arrowButtonStyles } from "./ArrowButton";
 
 export const ControllerControlBackButton = ({ onClick, children }) => {
-  const classes = useStyles();
+  const classes = arrowButtonStyles();
 
   return (
     <Button
