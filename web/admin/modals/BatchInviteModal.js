@@ -177,7 +177,7 @@ export default function BatchInviteModal({
             disabled={emails.length === 0}
             onClick={async e => {
               if (text) {
-                if (!validateCleanEmailString) {
+                if (!validateCleanEmailString(text)) {
                   setHasValidated(true);
                   return;
                 }
