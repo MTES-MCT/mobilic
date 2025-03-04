@@ -388,6 +388,16 @@ export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
   }
 `;
 
+export const CONTROLLER_READ_CONTROL_PICTURES = gql`
+  query readControlPictures($controlId: Int!) {
+    controlData(controlId: $controlId) {
+      pictures {
+        url
+      }
+    }
+  }
+`;
+
 export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FULL_MISSION_FRAGMENT}

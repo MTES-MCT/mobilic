@@ -26,8 +26,8 @@ export function ControlPicturesReview({
   const { uploadPictures } = useControl();
   const classes = useStyles();
 
-  const _onUpload = () => {
-    uploadPictures(pictures);
+  const _onUpload = async () => {
+    await uploadPictures(pictures);
     onClose();
   };
 

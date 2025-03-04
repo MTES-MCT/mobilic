@@ -4,6 +4,7 @@ import { useApi } from "common/utils/api";
 import {
   CONTROLLER_READ_CONTROL_DATA,
   CONTROLLER_READ_CONTROL_DATA_NO_LIC,
+  CONTROLLER_READ_CONTROL_PICTURES,
   HTTP_QUERIES
 } from "common/utils/apiQueries";
 import { useLoadingScreen } from "common/utils/loading";
@@ -62,7 +63,7 @@ export const useReadControlData = (controlId, controlType) => {
     [controlData]
   );
 
-  const uploadPictures = pictures => {
+  const uploadPictures = async pictures => {
     alerts.withApiErrorHandling(async () => {
       const presignedUrlsRes = await api.jsonHttpQuery(
         HTTP_QUERIES.controlPicturesGeneratePresignedUrls,
@@ -72,14 +73,26 @@ export const useReadControlData = (controlId, controlType) => {
       );
       const presignedUrls = presignedUrlsRes["presigned-urls"];
 
-      pictures.forEach(async (picture, index) => {
-        const uploadRes = await fetch(presignedUrls[index], {
-          method: "PUT",
-          headers: { "Content-Type": "image/png" },
-          body: picture.file
-        });
-        // TODO: check status is 200
-        console.log("uploadRes", uploadRes);
+      await Promise.all(
+        pictures.map(async (picture, index) => {
+          const uploadRes = await fetch(presignedUrls[index], {
+            method: "PUT",
+            headers: { "Content-Type": "image/png" },
+            body: picture.file
+          });
+          // TODO: check status is 200
+          console.log("uploadRes", uploadRes);
+        })
+      );
+
+      const picturesResponse = await api.graphQlMutate(
+        CONTROLLER_READ_CONTROL_PICTURES,
+        { controlId },
+        { context: { nonPublicApi: true } }
+      );
+      setControlData({
+        ...controlData,
+        pictures: picturesResponse.data.controlData.pictures
       });
       alerts.success("Vos photos ont bien été sauvegardées", "", 5000);
     }, "controls-upload-pictures");
