@@ -14,7 +14,11 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(2)
   },
   buttonGroup: {
+    position: "sticky",
+    bottom: "-20px",
+    background: "white",
     paddingLeft: theme.spacing(2),
+    zIndex: 300,
     width: "100%"
   }
 }));
