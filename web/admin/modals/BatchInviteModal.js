@@ -142,6 +142,7 @@ export default function BatchInviteModal({
               },
               onPaste: e => {
                 e.preventDefault();
+                setTooManyEmailsInPastedText(false);
                 const pastedText = e.clipboardData.getData("text");
                 const nbNewEmails = countItemsInText(pastedText);
                 if (nbNewEmails + emails.length > MAX_EMAILS) {
