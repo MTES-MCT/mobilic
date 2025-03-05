@@ -23,6 +23,7 @@ import { useControl } from "../../controller/utils/contextControl";
 import { TitleContainer } from "./TitleContainer";
 import Grid from "@mui/material/Grid";
 import { useIsWidthUp } from "common/utils/useWidth";
+import { UserReadAlertsPictures } from "./UserReadAlertsPictures";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -127,15 +128,15 @@ export function UserReadAlerts({
   );
 
   return (
-    <Container maxWidth="md" sx={{ padding: 0 }}>
+    <Container maxWidth={displayPictures ? "lg" : "md"} sx={{ padding: 0 }}>
       {controlType === CONTROL_TYPES.MOBILIC.label && (
         <DisplayBusinessTypes businessTypes={businessTypes} />
       )}
       <Container className={classes.container}>
-        <Grid container spacing={1}>
+        <Grid container spacing={2}>
           {displayPictures && (
             <Grid item xs={5}>
-              photos
+              <UserReadAlertsPictures />
             </Grid>
           )}
           <Grid item xs={displayPictures ? 7 : 12}>

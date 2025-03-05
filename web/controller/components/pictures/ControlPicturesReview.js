@@ -7,12 +7,6 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles(theme => ({
-  removeButton: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    zIndex: 500
-  },
   addPicturesButton: {
     marginBottom: theme.spacing(4)
   }
@@ -49,7 +43,6 @@ export function ControlPicturesReview({
             height="105px"
             icon={
               <Button
-                className={classes.removeButton}
                 iconId="fr-icon-close-line"
                 onClick={() => removeImage(picture.url)}
                 title="Retirer l'image"
