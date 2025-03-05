@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 
 export const CGU_EXTERNAL_URL = "https://cgu.mobilic.beta.gouv.fr";
+export const CGU_API_EXTERNAL_URL = "https://cgu-api.mobilic.beta.gouv.fr/";
 
 function CGUModal({ open, handleClose, handleAccept, handleReject }) {
   const store = useStoreSyncedWithLocalStorage();

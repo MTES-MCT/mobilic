@@ -1,7 +1,7 @@
 import React from "react";
 import { Footer as DSFooter } from "@codegouvfr/react-dsfr/Footer";
 import { Follow } from "./follow";
-import { CGU_EXTERNAL_URL } from "./cgu";
+import { CGU_EXTERNAL_URL, CGU_API_EXTERNAL_URL } from "./cgu";
 
 export function Footer({ withFollow = true }) {
   return (
@@ -43,6 +43,14 @@ export function Footer({ withFollow = true }) {
             text: "CGU",
             linkProps: {
               to: CGU_EXTERNAL_URL,
+              target: "_blank",
+              rel: "noopener noreferrer"
+            }
+          },
+          {
+            text: "CGU API",
+            linkProps: {
+              to: CGU_API_EXTERNAL_URL,
               target: "_blank",
               rel: "noopener noreferrer"
             }
