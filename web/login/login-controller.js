@@ -12,7 +12,6 @@ import { usePageTitle } from "../common/UsePageTitle";
 import Notice from "../common/Notice";
 import { ProConnectButton } from "@codegouvfr/react-dsfr/ProConnectButton";
 import { Main } from "../common/semantics/Main";
-import CustomAlert from "../common/CustomAlert";
 
 const useStyles = makeStyles(theme => ({
   agentConnectButton: {
@@ -40,14 +39,6 @@ export default function LoginController() {
     <>
       <Header />
       <Main>
-        <CustomAlert
-          severity="error"
-          elevation={3}
-          style={{
-            marginBottom: "20px"
-          }}
-          message="La connexion est impossible actuellement en raison de l'arrêt des serveurs du ministère hébergeant Cerbère pour raisons de sécurité. Nous vous tiendrons informés lorsque l'accès sera rétabli."
-        />
         <Container
           className="centered"
           maxWidth="xs"
