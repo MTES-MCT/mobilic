@@ -94,7 +94,7 @@ export const useReadControlData = (controlId, controlType) => {
         ...controlData,
         pictures: picturesResponse.data.controlData.pictures
       });
-      alerts.success("Vos photos ont bien été sauvegardées", "", 5000);
+      alerts.success("Vos photos ont bien été sauvegardées", "", 6000);
     }, "controls-upload-pictures");
   };
 
