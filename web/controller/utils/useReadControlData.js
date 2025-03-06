@@ -71,7 +71,7 @@ export const useReadControlData = (controlId, controlType) => {
           json: { control_id: controlId, nb_pictures: pictures.length }
         }
       );
-      const presignedUrls = presignedUrlsRes["presigned-urls"];
+      const presignedUrls = presignedUrlsRes["presignedUrls"];
 
       await Promise.all(
         pictures.map(async (picture, index) => {
