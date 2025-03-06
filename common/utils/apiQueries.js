@@ -2077,7 +2077,7 @@ export const HTTP_QUERIES = {
   },
   controlPicturesGeneratePresignedUrls: {
     method: "POST",
-    endpoint: "/controllers/control-pictures-generate-presigned-urls"
+    endpoint: "/controllers/control_pictures_generate_presigned_urls"
   },
   certificateSearch: {
     method: "POST",
