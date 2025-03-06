@@ -73,7 +73,7 @@ const Content = ({ controlData, showPictures }) => {
         ))}
       </Stack>
       <Tag className={classes.tag}>
-        {`${diffInDays + 1} jour${diffInDays > 1 ? "s" : ""} avant la
+        {`${diffInDays + 1} jour${diffInDays > 0 ? "s" : ""} avant la
 suppression`}
       </Tag>
       <Button
