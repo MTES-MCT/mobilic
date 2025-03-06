@@ -72,7 +72,9 @@ export function ControlPicturesReview({
         buttons={[
           {
             onClick: _onUpload,
-            children: `Ajouter ${pictures.length} photos au contrôle`
+            children: `Ajouter ${pictures.length} photo${
+              pictures.length > 1 ? "s" : ""
+            } au contrôle`
           },
           {
             children: "Annuler",
