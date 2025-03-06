@@ -16,6 +16,7 @@ import ControllerHelp from "./controller/components/modals/ControllerHelp";
 import ControllerExportC1BAll from "./controller/components/modals/ControllerExportC1BAll";
 import ControllerExportC1BOne from "./controller/components/modals/ControllerExportC1BOne";
 import ConfirmationCancelControlBulletinModal from "./controller/components/modals/ConfirmationCancelControlBulletinModal";
+import ControlPicture from "./controller/components/modals/ControlPicture";
 
 // admin
 import UpdateCompanyDetailsModal from "./admin/modals/UpdateCompanyDetailsModal";
@@ -87,5 +88,6 @@ export const MODAL_DICT = {
   confirmationCancelControlBulletinModal: ConfirmationCancelControlBulletinModal,
   typeformModal: TypeformModal,
   updateCompanyDetails: UpdateCompanyDetailsModal,
-  blockedTime: BlockedTimeModal
+  blockedTime: BlockedTimeModal,
+  controlPicture: ControlPicture
 };

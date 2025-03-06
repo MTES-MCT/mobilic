@@ -4,6 +4,7 @@ import { useControl } from "../../controller/utils/contextControl";
 import Picture from "../../controller/components/pictures/Picture";
 import { makeStyles } from "@mui/styles";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   imageContainer: {
@@ -15,6 +16,8 @@ const useStyles = makeStyles(theme => ({
 
 export const UserReadAlertsPictures = () => {
   const classes = useStyles();
+  const modals = useModals();
+
   const { controlData } = useControl();
   return (
     <>
@@ -31,8 +34,13 @@ export const UserReadAlertsPictures = () => {
             }}
             icon={
               <Button
+                style={{ margin: "auto" }}
                 iconId="fr-icon-zoom-in-line"
-                onClick={() => console.log("click")}
+                onClick={() =>
+                  modals.open("controlPicture", {
+                    src: picture.url
+                  })
+                }
               >
                 agrandir
               </Button>
