@@ -5,6 +5,7 @@ import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { ControlPicturesReview } from "./ControlPicturesReview";
 import { TakePictureButton } from "./TakePictureButton";
 import Picture from "./Picture";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   pictureContainer: {
@@ -44,6 +45,15 @@ export function ControlTakePictures({ onClose }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [displayReview, setDisplayReview] = React.useState(false);
+  const alerts = useSnackbarAlerts();
+
+  const displayCameraDeniedAlert = () => {
+    alerts.error(
+      "L'autorisation d'utiliser la caméra a été refusée. Pour l'activer, allez dans les paramètres de votre navigateur.",
+      {},
+      6000
+    );
+  };
 
   useEffect(() => {
     if (stream && videoRef.current) {
@@ -66,6 +76,7 @@ export function ControlTakePictures({ onClose }) {
         videoRef.current.srcObject = mediaStream;
       }
     } catch (error) {
+      displayCameraDeniedAlert();
       console.error("Error accessing camera:", error);
     }
   };
