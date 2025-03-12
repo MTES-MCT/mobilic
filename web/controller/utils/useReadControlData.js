@@ -75,11 +75,18 @@ export const useReadControlData = (controlId, controlType) => {
 
       await Promise.all(
         pictures.map(async (picture, index) => {
-          await fetch(presignedUrls[index], {
+          const uploadRes = await fetch(presignedUrls[index], {
             method: "PUT",
             headers: { "Content-Type": "image/png" },
             body: picture.file
           });
+          if (uploadRes.status !== 200) {
+            alerts.error(
+              "Une erreur est survenue lors de l'upload d'une photo.",
+              "upload-control-picture",
+              6000
+            );
+          }
         })
       );
 
