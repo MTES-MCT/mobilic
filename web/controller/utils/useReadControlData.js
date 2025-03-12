@@ -75,13 +75,11 @@ export const useReadControlData = (controlId, controlType) => {
 
       await Promise.all(
         pictures.map(async (picture, index) => {
-          const uploadRes = await fetch(presignedUrls[index], {
+          await fetch(presignedUrls[index], {
             method: "PUT",
             headers: { "Content-Type": "image/png" },
             body: picture.file
           });
-          // TODO: check status is 200
-          console.log("uploadRes", uploadRes);
         })
       );
 
