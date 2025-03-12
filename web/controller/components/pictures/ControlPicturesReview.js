@@ -39,23 +39,32 @@ export function ControlPicturesReview({
       <Typography mb={4}>
         Vous pouvez organiser les photos en les faisant glisser.
       </Typography>
-      <Stack direction="row" flexWrap="wrap" mb={2} columnGap={2} rowGap={1}>
+      <Stack
+        direction="row"
+        flexWrap="wrap"
+        mb={2}
+        columnGap={2}
+        rowGap={1}
+        component="ul"
+        style={{ listStyleType: "none", padding: 0 }}
+      >
         {pictures.map((picture, index) => (
-          <Picture
-            key={`photo_${index}`}
-            src={picture.url}
-            alt=""
-            width="105px"
-            height="105px"
-            icon={
-              <Button
-                className={classes.removeButton}
-                iconId="fr-icon-close-line"
-                onClick={() => removeImage(picture.url)}
-                title="Retirer l'image"
-              />
-            }
-          />
+          <li key={`photo_${index}`}>
+            <Picture
+              src={picture.url}
+              alt={`Photo ${index + 1}`}
+              width="105px"
+              height="105px"
+              icon={
+                <Button
+                  className={classes.removeButton}
+                  iconId="fr-icon-close-line"
+                  onClick={() => removeImage(picture.url)}
+                  title="Retirer l'image"
+                />
+              }
+            />
+          </li>
         ))}
       </Stack>
       <Button

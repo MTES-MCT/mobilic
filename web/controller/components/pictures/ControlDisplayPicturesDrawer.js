@@ -61,9 +61,17 @@ export function ControlDisplayPicturesDrawer({
         description="Ne pas diffuser. Ne pas verser au PV."
       />
       {controlData.pictures && (
-        <Stack direction="column" rowGap={2} m={2}>
+        <Stack
+          direction="column"
+          rowGap={2}
+          m={2}
+          component="ul"
+          style={{ listStyleType: "none", padding: 0 }}
+        >
           {controlData.pictures.map((picture, index) => (
-            <img key={`picture__${index}`} src={picture.url} alt="" />
+            <li key={`picture__${index}`}>
+              <img src={picture.url} alt={`Photo ${index + 1}`} />
+            </li>
           ))}
         </Stack>
       )}

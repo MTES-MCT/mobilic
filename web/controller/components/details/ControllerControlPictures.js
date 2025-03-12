@@ -61,15 +61,21 @@ const Content = ({ controlData, showPictures }) => {
 
   return areThereAnyPictures ? (
     <Stack direction="column" rowGap={1}>
-      <Stack direction="row" columnGap={2}>
+      <Stack
+        direction="row"
+        columnGap={2}
+        component="ul"
+        style={{ listStyleType: "none", padding: 0 }}
+      >
         {controlData.pictures.slice(0, 3).map((picture, idx) => (
-          <Picture
-            key={`control_picture_${idx}`}
-            src={picture.url}
-            alt=""
-            width="100px"
-            height="100px"
-          />
+          <li key={`control_picture_${idx}`}>
+            <Picture
+              src={picture.url}
+              alt={`Photo ${idx + 1}`}
+              width="100px"
+              height="100px"
+            />
+          </li>
         ))}
       </Stack>
       <Tag className={classes.tag}>
