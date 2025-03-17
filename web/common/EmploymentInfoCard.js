@@ -88,7 +88,14 @@ export function EmploymentInfoCard({
         }}
       >
         {employment?.company.currentAdmins?.map(admin => (
-          <li key={admin.email} style={{ overflowWrap: "anywhere" }}>
+          <li
+            key={admin.email}
+            style={{
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              maxWidth: "80vw"
+            }}
+          >
             {admin.email}
           </li>
         ))}

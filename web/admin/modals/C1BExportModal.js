@@ -154,8 +154,8 @@ export default function C1BExportModal({
                   Si jamais vous ne parvenez à lire les fichiers Mobilic depuis
                   votre logiciel d'analyse n'hésitez pas à nous contacter à
                   l'adresse mail{" "}
-                  <a href="mailto:assistance@mobilic.beta.gouv.fr">
-                    assistance@mobilic.beta.gouv.fr
+                  <a href="mailto:contact@mobilic.beta.gouv.fr">
+                    contact@mobilic.beta.gouv.fr
                   </a>
                   .
                 </li>

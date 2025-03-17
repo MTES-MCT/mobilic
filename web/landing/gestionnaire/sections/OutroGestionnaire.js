@@ -62,7 +62,7 @@ export function OutroGestionnaire() {
             className={classes.button}
             priority="secondary"
             aria-label="Nous contacter"
-            to="mailto:assistance@mobilic.beta.gouv.fr"
+            to="mailto:contact@mobilic.beta.gouv.fr"
             onClick={() => trackEvent(ADMIN_LANDING_CONTACT)}
           >
             J’ai une question pour l’équipe Mobilic
