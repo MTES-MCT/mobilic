@@ -68,9 +68,21 @@ export function ControlTakePictures({ onClose }) {
 
   const startCamera = async () => {
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: true
-      });
+      let mediaStream;
+
+      // Try back camera first on mobile
+      try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { exact: "environment" } }
+        });
+      } catch (error) {
+        console.warn("Back camera not available, trying default camera...");
+        // Try default camera as a fallback
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true
+        });
+      }
+
       setStream(mediaStream);
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
