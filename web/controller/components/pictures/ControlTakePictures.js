@@ -73,13 +73,14 @@ export function ControlTakePictures({ onClose }) {
       // Try back camera first on mobile
       try {
         mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { exact: "environment" } }
+          video: { facingMode: { exact: "environment" }, aspectRatio: 1 }
         });
       } catch (error) {
         console.warn("Back camera not available, trying default camera...");
         // Try default camera as a fallback
         mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: true
+          video: true,
+          aspectRatio: 1
         });
       }
 
@@ -145,15 +146,29 @@ export function ControlTakePictures({ onClose }) {
   const captureImage = () => {
     if (videoRef.current && canvasRef.current) {
       const context = canvasRef.current.getContext("2d");
-      canvasRef.current.width = videoRef.current.videoWidth;
-      canvasRef.current.height = videoRef.current.videoHeight;
+      const videoWidth = videoRef.current.videoWidth;
+      const videoHeight = videoRef.current.videoHeight;
+
+      const squareSize = Math.min(videoWidth, videoHeight);
+
+      const startX = (videoWidth - squareSize) / 2;
+      const startY = (videoHeight - squareSize) / 2;
+
+      canvasRef.current.width = squareSize;
+      canvasRef.current.height = squareSize;
+
       context.drawImage(
         videoRef.current,
+        startX,
+        startY,
+        squareSize,
+        squareSize,
         0,
         0,
-        canvasRef.current.width,
-        canvasRef.current.height
+        squareSize,
+        squareSize
       );
+
       addWatermark(context);
       canvasRef.current.toBlob(blob => {
         const newFile = new File([blob], "captured-image.png", {
@@ -189,7 +204,10 @@ export function ControlTakePictures({ onClose }) {
             ref={videoRef}
             autoPlay
             style={{
-              borderRadius: "8px"
+              borderRadius: "8px",
+              width: "100%",
+              aspectRatio: "1 / 1",
+              objectFit: "cover"
             }}
           />
           <TakePictureButton onClick={captureImage} />
@@ -215,7 +233,7 @@ export function ControlTakePictures({ onClose }) {
       )}
       <canvas
         ref={canvasRef}
-        width="640"
+        width="480"
         height="480"
         style={{ display: "none" }}
       />
