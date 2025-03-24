@@ -197,7 +197,13 @@ export function ControlTakePictures({ onClose }) {
       removeImage={removeImage}
     />
   ) : (
-    <Stack direction="column">
+    <Stack
+      direction="column"
+      rowGap={2}
+      sx={{
+        marginTop: { xs: "40%", sm: "inherit" }
+      }}
+    >
       {stream && (
         <div style={{ position: "relative", display: "inline-block" }}>
           <video
