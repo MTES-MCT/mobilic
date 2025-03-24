@@ -29,7 +29,7 @@ export function ControllerControlPictures({ showPictures, takePictures }) {
           Photos du LIC
         </Typography>
         <Button
-          priority="primary"
+          priority={controlData.pictures?.length > 0 ? "tertiary" : "primary"}
           size="small"
           disabled={!controlData.canTakePictures}
           onClick={takePictures}
