@@ -15,7 +15,8 @@ import Picture from "../pictures/Picture";
 
 const useStyles = makeStyles(theme => ({
   tag: {
-    color: fr.colors.decisions.background.flat.warning.default
+    color: fr.colors.decisions.background.flat.warning.default,
+    backgroundColor: fr.colors.decisions.background.contrast.warning.default
   }
 }));
 
