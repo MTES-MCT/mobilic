@@ -55,7 +55,8 @@ function EMPLOYMENT_STATUS_TO_TEXT_AND_COLOR(theme) {
     [EMPLOYMENT_STATUS.active]: ["Actif", theme.palette.success.main],
     [EMPLOYMENT_STATUS.pending]: ["À valider", theme.palette.warning.main],
     [EMPLOYMENT_STATUS.future]: ["À venir", theme.palette.warning.main],
-    [EMPLOYMENT_STATUS.ended]: ["Terminé", theme.palette.error.main]
+    [EMPLOYMENT_STATUS.ended]: ["Terminé", theme.palette.error.main],
+    [EMPLOYMENT_STATUS.ceased]: ["Cessée", theme.palette.error.main]
   };
 }
 
@@ -154,7 +155,9 @@ export function EmploymentInfoCard({
       expanded={open}
       onChange={(event, open_) => setOpen(open_)}
       className={
-        status === EMPLOYMENT_STATUS.ended && lightenIfEnded
+        (status === EMPLOYMENT_STATUS.ended ||
+          status === EMPLOYMENT_STATUS.ceased) &&
+        lightenIfEnded
           ? classes.ended
           : ""
       }
@@ -305,13 +308,16 @@ export function EmploymentInfoCard({
           )}
         </Grid>
 
-        {!hideStatus && !hideActions && status === EMPLOYMENT_STATUS.ended && (
-          <Notice
-            type="warning"
-            description="L'entreprise a mis un terme à votre rattachement. Vous ne pouvez
+        {!hideStatus &&
+          !hideActions &&
+          (status === EMPLOYMENT_STATUS.ended ||
+            status === EMPLOYMENT_STATUS.ceased) && (
+            <Notice
+              type="warning"
+              description="L'entreprise a mis un terme à votre rattachement. Vous ne pouvez
             plus saisir de temps de travail pour cette entreprise."
-          />
-        )}
+            />
+          )}
         {!hideStatus && !hideActions && status === EMPLOYMENT_STATUS.pending && (
           <>
             <Notice
