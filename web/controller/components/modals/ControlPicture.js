@@ -7,7 +7,13 @@ export default function ControlPicture({ open, handleClose, src, title }) {
       open={open}
       handleClose={handleClose}
       title={title}
-      content={<img alt={title} src={src} />}
+      content={
+        <img
+          alt={title}
+          src={src}
+          style={{ display: "block", margin: "auto" }}
+        />
+      }
       size="lg"
     />
   );
