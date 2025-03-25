@@ -6,6 +6,10 @@ import { ControlPicturesReview } from "./ControlPicturesReview";
 import { TakePictureButton } from "./TakePictureButton";
 import Picture from "./Picture";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
+import Notice from "../../../common/Notice";
+import { useControl } from "../../utils/contextControl";
+
+const MAX_NB_PICTURES = 60;
 
 const useStyles = makeStyles(theme => ({
   pictureContainer: {
@@ -40,12 +44,21 @@ const useStyles = makeStyles(theme => ({
 
 export function ControlTakePictures({ onClose }) {
   const classes = useStyles();
+  const { controlData } = useControl();
   const [stream, setStream] = useState(null);
   const [capturedImages, setCapturedImages] = useState([]);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [displayReview, setDisplayReview] = React.useState(false);
   const alerts = useSnackbarAlerts();
+
+  const remaining_pictures = React.useMemo(
+    () =>
+      MAX_NB_PICTURES -
+      (controlData.pictures?.length || 0) -
+      capturedImages.length,
+    [capturedImages, controlData.pictures]
+  );
 
   const displayCameraDeniedAlert = () => {
     alerts.error(
@@ -204,6 +217,14 @@ export function ControlTakePictures({ onClose }) {
         marginTop: { xs: "40%", sm: "inherit" }
       }}
     >
+      <Notice
+        description={
+          remaining_pictures > 0
+            ? `Vous pouvez prendre ${remaining_pictures} photos supplémentaires.`
+            : `Vous avez déja pris ${MAX_NB_PICTURES} photos.`
+        }
+        type={remaining_pictures > 0 ? "info" : "error"}
+      />
       {stream && (
         <div style={{ position: "relative", display: "inline-block" }}>
           <video
@@ -216,7 +237,10 @@ export function ControlTakePictures({ onClose }) {
               objectFit: "cover"
             }}
           />
-          <TakePictureButton onClick={captureImage} />
+          <TakePictureButton
+            onClick={captureImage}
+            disabled={remaining_pictures <= 0}
+          />
           {capturedImages.length > 0 && (
             <div className={classes.pictureContainer}>
               <Picture
