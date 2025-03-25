@@ -5,6 +5,7 @@ import { useControl } from "../../utils/contextControl";
 import Picture from "./Picture";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { makeStyles } from "@mui/styles";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   addPicturesButton: {
@@ -23,6 +24,7 @@ export function ControlPicturesReview({
 }) {
   const { uploadPictures } = useControl();
   const classes = useStyles();
+  const modals = useModals();
 
   const _onUpload = async () => {
     await uploadPictures(pictures);
@@ -50,6 +52,12 @@ export function ControlPicturesReview({
             key={picture.url}
             component="li"
             sx={{ display: "flex", justifyContent: "center" }}
+            onClick={() =>
+              modals.open("controlPicture", {
+                src: picture.url,
+                title: `Photo ${index + 1}`
+              })
+            }
           >
             <Picture
               src={picture.url}
