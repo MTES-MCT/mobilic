@@ -15,7 +15,8 @@ import Picture from "../pictures/Picture";
 
 const useStyles = makeStyles(theme => ({
   tag: {
-    color: fr.colors.decisions.background.flat.warning.default
+    color: fr.colors.decisions.background.flat.warning.default,
+    backgroundColor: fr.colors.decisions.background.contrast.warning.default
   }
 }));
 
@@ -29,7 +30,7 @@ export function ControllerControlPictures({ showPictures, takePictures }) {
           Photos du LIC
         </Typography>
         <Button
-          priority="primary"
+          priority={controlData.pictures?.length > 0 ? "tertiary" : "primary"}
           size="small"
           disabled={!controlData.canTakePictures}
           onClick={takePictures}
@@ -61,19 +62,28 @@ const Content = ({ controlData, showPictures }) => {
 
   return areThereAnyPictures ? (
     <Stack direction="column" rowGap={1}>
-      <Stack direction="row" columnGap={2}>
+      <Stack
+        direction="row"
+        columnGap={2}
+        component="ul"
+        style={{ listStyleType: "none", padding: 0 }}
+      >
         {controlData.pictures.slice(0, 3).map((picture, idx) => (
-          <Picture
+          <li
             key={`control_picture_${idx}`}
-            src={picture.url}
-            alt=""
-            width="100px"
-            height="100px"
-          />
+            style={{ width: "100%", position: "relative" }}
+          >
+            <Picture
+              src={picture.url}
+              alt={`Photo ${idx + 1}`}
+              width="100%"
+              height="100%"
+            />
+          </li>
         ))}
       </Stack>
       <Tag className={classes.tag}>
-        {`${diffInDays + 1} jour${diffInDays > 1 ? "s" : ""} avant la
+        {`${diffInDays + 1} jour${diffInDays > 0 ? "s" : ""} avant la
 suppression`}
       </Tag>
       <Button

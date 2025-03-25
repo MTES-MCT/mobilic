@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { useControl } from "../../utils/contextControl";
 import Picture from "./Picture";
@@ -9,6 +9,10 @@ import { makeStyles } from "@mui/styles";
 const useStyles = makeStyles(theme => ({
   addPicturesButton: {
     marginBottom: theme.spacing(4)
+  },
+  image: {
+    aspectRatio: "1 / 1",
+    objectFit: "cover"
   }
 }));
 export function ControlPicturesReview({
@@ -20,8 +24,8 @@ export function ControlPicturesReview({
   const { uploadPictures } = useControl();
   const classes = useStyles();
 
-  const _onUpload = () => {
-    uploadPictures(pictures);
+  const _onUpload = async () => {
+    await uploadPictures(pictures);
     onClose();
   };
 
@@ -33,39 +37,59 @@ export function ControlPicturesReview({
       <Typography mb={4}>
         Vous pouvez organiser les photos en les faisant glisser.
       </Typography>
-      <Stack direction="row" flexWrap="wrap" mb={2} columnGap={2} rowGap={1}>
-        {pictures.map((picture, index) => (
-          <Picture
-            key={`photo_${index}`}
-            src={picture.url}
-            alt=""
-            width="105px"
-            height="105px"
-            icon={
-              <Button
-                iconId="fr-icon-close-line"
-                onClick={() => removeImage(picture.url)}
-                title="Retirer l'image"
-              />
-            }
-          />
-        ))}
-      </Stack>
-      <Button
-        priority="tertiary"
-        size="small"
-        iconPosition="left"
-        iconId="fr-icon-camera-fill"
-        className={classes.addPicturesButton}
-        onClick={onBack}
+      <Grid
+        container
+        spacing={2}
+        component="ul"
+        style={{ listStyleType: "none", padding: 0 }}
       >
-        Ajouter des photos
-      </Button>
+        {pictures.map((picture, index) => (
+          <Grid
+            item
+            xs={4}
+            key={`photo_${index}`}
+            component="li"
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            <Picture
+              src={picture.url}
+              alt={`Photo ${index + 1}`}
+              width="100%"
+              height="auto"
+              className={{
+                root: classes.image
+              }}
+              icon={
+                <Button
+                  className={classes.removeButton}
+                  iconId="fr-icon-close-line"
+                  onClick={() => removeImage(picture.url)}
+                  title="Retirer l'image"
+                />
+              }
+            />
+          </Grid>
+        ))}
+      </Grid>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          priority="tertiary"
+          size="small"
+          iconPosition="left"
+          iconId="fr-icon-camera-fill"
+          className={classes.addPicturesButton}
+          onClick={onBack}
+        >
+          Ajouter des photos
+        </Button>
+      </div>
       <ButtonsGroup
         buttons={[
           {
             onClick: _onUpload,
-            children: `Ajouter ${pictures.length} photos au contrôle`
+            children: `Ajouter ${pictures.length} photo${
+              pictures.length > 1 ? "s" : ""
+            } au contrôle`
           },
           {
             children: "Annuler",

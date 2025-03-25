@@ -17,8 +17,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function TakePictureButton({ onClick }) {
+export function TakePictureButton({ onClick, disabled = false }) {
   const classes = useStyles();
 
-  return <Button onClick={onClick} className={classes.pictureButton} />;
+  return (
+    <Button
+      onClick={onClick}
+      className={classes.pictureButton}
+      disabled={disabled}
+    />
+  );
 }

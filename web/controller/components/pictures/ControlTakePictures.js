@@ -5,6 +5,11 @@ import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { ControlPicturesReview } from "./ControlPicturesReview";
 import { TakePictureButton } from "./TakePictureButton";
 import Picture from "./Picture";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
+import Notice from "../../../common/Notice";
+import { useControl } from "../../utils/contextControl";
+
+const MAX_NB_PICTURES = 60;
 
 const useStyles = makeStyles(theme => ({
   pictureContainer: {
@@ -39,11 +44,29 @@ const useStyles = makeStyles(theme => ({
 
 export function ControlTakePictures({ onClose }) {
   const classes = useStyles();
+  const { controlData } = useControl();
   const [stream, setStream] = useState(null);
   const [capturedImages, setCapturedImages] = useState([]);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [displayReview, setDisplayReview] = React.useState(false);
+  const alerts = useSnackbarAlerts();
+
+  const remaining_pictures = React.useMemo(
+    () =>
+      MAX_NB_PICTURES -
+      (controlData.pictures?.length || 0) -
+      capturedImages.length,
+    [capturedImages, controlData.pictures]
+  );
+
+  const displayCameraDeniedAlert = () => {
+    alerts.error(
+      "L'autorisation d'utiliser la caméra a été refusée. Pour l'activer, allez dans les paramètres de votre navigateur.",
+      {},
+      6000
+    );
+  };
 
   useEffect(() => {
     if (stream && videoRef.current) {
@@ -58,14 +81,28 @@ export function ControlTakePictures({ onClose }) {
 
   const startCamera = async () => {
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: true
-      });
+      let mediaStream;
+
+      // Try back camera first on mobile
+      try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { exact: "environment" }, aspectRatio: 1 }
+        });
+      } catch (error) {
+        console.warn("Back camera not available, trying default camera...");
+        // Try default camera as a fallback
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          aspectRatio: 1
+        });
+      }
+
       setStream(mediaStream);
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
       }
     } catch (error) {
+      displayCameraDeniedAlert();
       console.error("Error accessing camera:", error);
     }
   };
@@ -122,15 +159,29 @@ export function ControlTakePictures({ onClose }) {
   const captureImage = () => {
     if (videoRef.current && canvasRef.current) {
       const context = canvasRef.current.getContext("2d");
-      canvasRef.current.width = videoRef.current.videoWidth;
-      canvasRef.current.height = videoRef.current.videoHeight;
+      const videoWidth = videoRef.current.videoWidth;
+      const videoHeight = videoRef.current.videoHeight;
+
+      const squareSize = Math.min(videoWidth, videoHeight);
+
+      const startX = (videoWidth - squareSize) / 2;
+      const startY = (videoHeight - squareSize) / 2;
+
+      canvasRef.current.width = squareSize;
+      canvasRef.current.height = squareSize;
+
       context.drawImage(
         videoRef.current,
+        startX,
+        startY,
+        squareSize,
+        squareSize,
         0,
         0,
-        canvasRef.current.width,
-        canvasRef.current.height
+        squareSize,
+        squareSize
       );
+
       addWatermark(context);
       canvasRef.current.toBlob(blob => {
         const newFile = new File([blob], "captured-image.png", {
@@ -159,17 +210,37 @@ export function ControlTakePictures({ onClose }) {
       removeImage={removeImage}
     />
   ) : (
-    <Stack direction="column">
+    <Stack
+      direction="column"
+      rowGap={2}
+      sx={{
+        marginTop: { xs: "40%", sm: "inherit" }
+      }}
+    >
+      <Notice
+        description={
+          remaining_pictures > 0
+            ? `Vous pouvez prendre ${remaining_pictures} photos supplémentaires.`
+            : `Vous avez déja pris ${MAX_NB_PICTURES} photos.`
+        }
+        type={remaining_pictures > 0 ? "info" : "error"}
+      />
       {stream && (
         <div style={{ position: "relative", display: "inline-block" }}>
           <video
             ref={videoRef}
             autoPlay
             style={{
-              borderRadius: "8px"
+              borderRadius: "8px",
+              width: "100%",
+              aspectRatio: "1 / 1",
+              objectFit: "cover"
             }}
           />
-          <TakePictureButton onClick={captureImage} />
+          <TakePictureButton
+            onClick={captureImage}
+            disabled={remaining_pictures <= 0}
+          />
           {capturedImages.length > 0 && (
             <div className={classes.pictureContainer}>
               <Picture
@@ -192,7 +263,7 @@ export function ControlTakePictures({ onClose }) {
       )}
       <canvas
         ref={canvasRef}
-        width="640"
+        width="480"
         height="480"
         style={{ display: "none" }}
       />

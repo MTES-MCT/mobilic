@@ -14,7 +14,11 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(2)
   },
   buttonGroup: {
+    position: "sticky",
+    bottom: "-20px",
+    background: "white",
     paddingLeft: theme.spacing(2),
+    zIndex: 300,
     width: "100%"
   }
 }));
@@ -54,12 +58,24 @@ export function ControlDisplayPicturesDrawer({
       <ControlBulletinHeader onCloseDrawer={onClose} backLinkLabel="Fermer" />
       <Notice
         type="warning"
-        description="Ne pas diffuser. Ne pas verser au PV."
+        description="Ne pas diffuser. Ne pas verser au PV. Ne pas télécharger (directive police justice)."
       />
       {controlData.pictures && (
-        <Stack direction="column" rowGap={2} m={2}>
+        <Stack
+          direction="column"
+          rowGap={2}
+          m={2}
+          component="ul"
+          style={{ listStyleType: "none", padding: 0 }}
+        >
           {controlData.pictures.map((picture, index) => (
-            <img key={`picture__${index}`} src={picture.url} alt="" />
+            <li key={`picture__${index}`}>
+              <img
+                src={picture.url}
+                alt={`Photo ${index + 1}`}
+                style={{ width: "100%", height: "auto" }}
+              />
+            </li>
           ))}
         </Stack>
       )}

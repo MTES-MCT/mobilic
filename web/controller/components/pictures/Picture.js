@@ -6,11 +6,12 @@ const useStyles = makeStyles(() => ({
   imageContainer: ({ width, height }) => ({
     width,
     height,
-    position: "relative"
+    position: "relative",
+    paddingTop: "100%"
   }),
   image: {
     width: "100%",
-    height: "100%",
+    height: "auto",
     objectFit: "cover",
     position: "absolute",
     top: "50%",

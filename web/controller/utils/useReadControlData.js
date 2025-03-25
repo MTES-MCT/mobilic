@@ -4,6 +4,7 @@ import { useApi } from "common/utils/api";
 import {
   CONTROLLER_READ_CONTROL_DATA,
   CONTROLLER_READ_CONTROL_DATA_NO_LIC,
+  CONTROLLER_READ_CONTROL_PICTURES,
   HTTP_QUERIES
 } from "common/utils/apiQueries";
 import { useLoadingScreen } from "common/utils/loading";
@@ -62,7 +63,7 @@ export const useReadControlData = (controlId, controlType) => {
     [controlData]
   );
 
-  const uploadPictures = pictures => {
+  const uploadPictures = async pictures => {
     alerts.withApiErrorHandling(async () => {
       const presignedUrlsRes = await api.jsonHttpQuery(
         HTTP_QUERIES.controlPicturesGeneratePresignedUrls,
@@ -70,18 +71,35 @@ export const useReadControlData = (controlId, controlType) => {
           json: { control_id: controlId, nb_pictures: pictures.length }
         }
       );
-      const presignedUrls = presignedUrlsRes["presigned-urls"];
+      const presignedUrls = presignedUrlsRes["presignedUrls"];
 
-      pictures.forEach(async (picture, index) => {
-        const uploadRes = await fetch(presignedUrls[index], {
-          method: "PUT",
-          headers: { "Content-Type": "image/png" },
-          body: picture.file
-        });
-        // TODO: check status is 200
-        console.log("uploadRes", uploadRes);
+      await Promise.all(
+        pictures.map(async (picture, index) => {
+          const uploadRes = await fetch(presignedUrls[index], {
+            method: "PUT",
+            headers: { "Content-Type": "image/png" },
+            body: picture.file
+          });
+          if (uploadRes.status !== 200) {
+            alerts.error(
+              "Une erreur est survenue lors de l'upload d'une photo.",
+              "upload-control-picture",
+              6000
+            );
+          }
+        })
+      );
+
+      const picturesResponse = await api.graphQlMutate(
+        CONTROLLER_READ_CONTROL_PICTURES,
+        { controlId },
+        { context: { nonPublicApi: true } }
+      );
+      setControlData({
+        ...controlData,
+        pictures: picturesResponse.data.controlData.pictures
       });
-      alerts.success("Vos photos ont bien été sauvegardées", "", 5000);
+      alerts.success("Vos photos ont bien été sauvegardées", "", 6000);
     }, "controls-upload-pictures");
   };
 
