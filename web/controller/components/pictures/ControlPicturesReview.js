@@ -77,6 +77,18 @@ export function ControlPicturesReview({
           </Grid>
         ))}
       </Grid>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          priority="tertiary"
+          size="small"
+          iconPosition="left"
+          iconId="fr-icon-camera-fill"
+          className={classes.addPicturesButton}
+          onClick={onBack}
+        >
+          Ajouter des photos
+        </Button>
+      </div>
       <ButtonsGroup
         buttons={[
           {
