@@ -17,6 +17,12 @@ const useStyles = makeStyles(() => ({
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)"
+  },
+  icon: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    zIndex: 500
   }
 }));
 
@@ -30,9 +36,16 @@ const Picture = ({
   classes = {}
 }) => {
   const style = useStyles({ width, height });
+
+  const iconComponent = icon
+    ? React.cloneElement(icon, {
+        className: cx(style.icon, icon.props.className)
+      })
+    : null;
+
   return (
     <div className={cx(style.imageContainer, classes.root, className)}>
-      {icon}
+      {iconComponent}
       <img className={cx(style.image, classes.image)} src={src} alt={alt} />
     </div>
   );

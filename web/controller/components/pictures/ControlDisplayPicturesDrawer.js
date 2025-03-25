@@ -69,7 +69,7 @@ export function ControlDisplayPicturesDrawer({
           style={{ listStyleType: "none", padding: 0 }}
         >
           {controlData.pictures.map((picture, index) => (
-            <li key={`picture__${index}`}>
+            <li key={picture.url}>
               <img
                 src={picture.url}
                 alt={`Photo ${index + 1}`}

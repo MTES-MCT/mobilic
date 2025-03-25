@@ -7,12 +7,6 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles(theme => ({
-  removeButton: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    zIndex: 500
-  },
   addPicturesButton: {
     marginBottom: theme.spacing(4)
   },
@@ -53,7 +47,7 @@ export function ControlPicturesReview({
           <Grid
             item
             xs={4}
-            key={`photo_${index}`}
+            key={picture.url}
             component="li"
             sx={{ display: "flex", justifyContent: "center" }}
           >
