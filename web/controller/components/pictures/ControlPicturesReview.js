@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { useControl } from "../../utils/contextControl";
 import Picture from "./Picture";
@@ -15,6 +15,10 @@ const useStyles = makeStyles(theme => ({
   },
   addPicturesButton: {
     marginBottom: theme.spacing(4)
+  },
+  image: {
+    aspectRatio: "1 / 1",
+    objectFit: "cover"
   }
 }));
 export function ControlPicturesReview({
@@ -39,22 +43,28 @@ export function ControlPicturesReview({
       <Typography mb={4}>
         Vous pouvez organiser les photos en les faisant glisser.
       </Typography>
-      <Stack
-        direction="row"
-        flexWrap="wrap"
-        mb={2}
-        columnGap={2}
-        rowGap={1}
+      <Grid
+        container
+        spacing={2}
         component="ul"
         style={{ listStyleType: "none", padding: 0 }}
       >
         {pictures.map((picture, index) => (
-          <li key={`photo_${index}`}>
+          <Grid
+            item
+            xs={4}
+            key={`photo_${index}`}
+            component="li"
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
             <Picture
               src={picture.url}
               alt={`Photo ${index + 1}`}
-              width="105px"
-              height="105px"
+              width="100%"
+              height="auto"
+              className={{
+                root: classes.image
+              }}
               icon={
                 <Button
                   className={classes.removeButton}
@@ -64,19 +74,9 @@ export function ControlPicturesReview({
                 />
               }
             />
-          </li>
+          </Grid>
         ))}
-      </Stack>
-      <Button
-        priority="tertiary"
-        size="small"
-        iconPosition="left"
-        iconId="fr-icon-camera-fill"
-        className={classes.addPicturesButton}
-        onClick={onBack}
-      >
-        Ajouter des photos
-      </Button>
+      </Grid>
       <ButtonsGroup
         buttons={[
           {

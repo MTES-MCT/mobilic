@@ -70,7 +70,11 @@ export function ControlDisplayPicturesDrawer({
         >
           {controlData.pictures.map((picture, index) => (
             <li key={`picture__${index}`}>
-              <img src={picture.url} alt={`Photo ${index + 1}`} />
+              <img
+                src={picture.url}
+                alt={`Photo ${index + 1}`}
+                style={{ width: "100%", height: "auto" }}
+              />
             </li>
           ))}
         </Stack>
