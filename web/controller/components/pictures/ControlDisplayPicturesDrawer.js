@@ -58,7 +58,7 @@ export function ControlDisplayPicturesDrawer({
       <ControlBulletinHeader onCloseDrawer={onClose} backLinkLabel="Fermer" />
       <Notice
         type="warning"
-        description="Ne pas diffuser. Ne pas verser au PV."
+        description="Ne pas diffuser. Ne pas verser au PV. Ne pas télécharger (directive police justice)."
       />
       {controlData.pictures && (
         <Stack
