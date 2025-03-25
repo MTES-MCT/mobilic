@@ -47,7 +47,7 @@ export function ControlPicturesReview({
           <Grid
             item
             xs={4}
-            key={`photo_${index}`}
+            key={picture.url}
             component="li"
             sx={{ display: "flex", justifyContent: "center" }}
           >

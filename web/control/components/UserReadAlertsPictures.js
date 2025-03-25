@@ -27,7 +27,7 @@ export const UserReadAlertsPictures = () => {
       <Stack rowGap={2} height="100%" mt={2}>
         {controlData.pictures.map((picture, index) => (
           <Picture
-            key={`photo__${index}`}
+            key={picture.url}
             src={picture.url}
             classes={{
               root: classes.imageContainer
@@ -38,7 +38,8 @@ export const UserReadAlertsPictures = () => {
                 iconId="fr-icon-zoom-in-line"
                 onClick={() =>
                   modals.open("controlPicture", {
-                    src: picture.url
+                    src: picture.url,
+                    title: `Photo ${index + 1}`
                   })
                 }
               >
