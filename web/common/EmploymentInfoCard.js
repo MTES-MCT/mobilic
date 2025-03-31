@@ -66,6 +66,7 @@ export function EmploymentInfoCard({
   hideRole = false,
   hideStatus = false,
   hideActions = false,
+  showAdminEmails = false,
   lightenIfEnded = true,
   defaultOpen = false,
   hideBusiness = false,
@@ -249,7 +250,7 @@ export function EmploymentInfoCard({
               />
             </Grid>
           )}
-          {!!emailsCurrentAdminsDisplay && (
+          {!!showAdminEmails && !!emailsCurrentAdminsDisplay && (
             <Grid item>
               <InfoItem
                 name="Email(s) gestionnaire(s)"
