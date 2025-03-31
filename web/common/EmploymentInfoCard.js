@@ -303,7 +303,13 @@ export function EmploymentInfoCard({
           )}
           {!hideActions && (
             <Grid item xs={12}>
-              <HideEmail employment={employment} />
+              <HideEmail
+                employment={employment}
+                disabled={
+                  status === EMPLOYMENT_STATUS.ended ||
+                  status === EMPLOYMENT_STATUS.ceased
+                }
+              />
             </Grid>
           )}
         </Grid>

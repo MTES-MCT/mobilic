@@ -3,13 +3,14 @@ import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { useUpdateHideEmail } from "./useUpdateHideEmail";
 import { useTypographyStyles } from "../common/typography/TypographyStyles";
 
-export function HideEmail({ employment }) {
+export function HideEmail({ employment, disabled }) {
   const updateHideEmail = useUpdateHideEmail(employment);
   const { hideEmail } = employment;
   const classes = useTypographyStyles();
 
   return (
     <Checkbox
+      disabled={disabled}
       legend="Autorisation d'accès à mon email personnel"
       options={[
         {
