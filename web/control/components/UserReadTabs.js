@@ -77,7 +77,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
     );
   }, [props.totalAlertsNumber, props.reportedInfractionsLastUpdateTime, tab]);
 
-  const downloadBDC = useDownloadBDC(props.controlData?.id);
+  const downloadBDC = useDownloadBDC(props.controlId);
 
   const classes = controlTabsStyles();
   return (
