@@ -14,6 +14,9 @@ export default function BatchInviteModal({
   handleClose,
   handleSubmit,
   isNewAdmin = false,
+  title = "",
+  description = "",
+  acceptButtonTitle = "",
   onClose
 }) {
   const [emails, setEmails] = React.useState([]);
@@ -103,30 +106,34 @@ export default function BatchInviteModal({
       open={open}
       handleClose={_handleClose}
       title={
-        isNewAdmin
+        title ||
+        (isNewAdmin
           ? "Invitez vos salariés sur Mobilic !"
-          : "Inviter une liste d'emails"
+          : "Inviter une liste d'emails")
       }
       content={
         <>
-          {isNewAdmin ? (
-            <>
+          {description ||
+            (isNewAdmin ? (
+              <>
+                <p>
+                  Invitez plusieurs salariés en une fois en renseignant leur
+                  adresse e-mail ou en copiant une liste dans l’encadré
+                  ci-dessous.
+                </p>
+                <p>
+                  Une fois le compte créé, ils seront rattachés à votre
+                  entreprise et pourront commencer à enregistrer du temps de
+                  travail.
+                </p>
+              </>
+            ) : (
               <p>
                 Invitez plusieurs salariés en une fois en renseignant leur
                 adresse e-mail ou en copiant une liste dans l’encadré
                 ci-dessous.
               </p>
-              <p>
-                Une fois le compte créé, ils seront rattachés à votre entreprise
-                et pourront commencer à enregistrer du temps de travail.
-              </p>
-            </>
-          ) : (
-            <p>
-              Invitez plusieurs salariés en une fois en renseignant leur adresse
-              e-mail ou en copiant une liste dans l’encadré ci-dessous.
-            </p>
-          )}
+            ))}
           <Input
             label="Adresses e-mail"
             hintText="Exemple de format attendu : prenom.nom@domaine.fr. Les adresses doivent être séparées par un espace."
@@ -189,7 +196,7 @@ export default function BatchInviteModal({
               _handleClose();
             }}
           >
-            {isNewAdmin ? "Valider" : "Inviter"}
+            {acceptButtonTitle || (isNewAdmin ? "Valider" : "Inviter")}
           </LoadingButton>
         </>
       }

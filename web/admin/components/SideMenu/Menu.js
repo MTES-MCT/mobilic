@@ -5,13 +5,13 @@ import Link from "@mui/material/Link";
 import { makeStyles } from "@mui/styles";
 import useTheme from "@mui/styles/useTheme";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { useAdminStore } from "../store/store";
+import { useAdminStore } from "../../store/store";
 import {
   useCertificationInfo,
   useShouldDisplayBadge
-} from "../utils/certificationInfo";
-import { getBadgeRoutes } from "../../common/routes";
-import { TextWithBadge } from "../../common/TextWithBadge";
+} from "../../utils/certificationInfo";
+import { getBadgeRoutes } from "../../../common/routes";
+import { TextWithBadge } from "../../../common/TextWithBadge";
 
 const menuItemStyles = makeStyles(theme => ({
   root: {
@@ -63,13 +63,12 @@ function MenuItem({ label, path }) {
   );
 }
 
-export function SideMenu({ views }) {
+export function Menu({ views }) {
   const theme = useTheme();
 
   return (
     <List
       disablePadding
-      className={`side-menu-container`}
       style={{ backgroundColor: theme.palette.background.paper }}
     >
       {views.map(view => (

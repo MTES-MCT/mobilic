@@ -26,6 +26,7 @@ import CompanyTeamCreationRevisionModal from "./admin/modals/CompanyTeamCreation
 import SelectEmployeeModal from "./admin/modals/SelectEmployeeModal";
 import TerminateEmploymentModal from "./admin/modals/TerminateEmploymentModal";
 import BatchInviteModal from "./admin/modals/BatchInviteModal";
+import SuccessMessageModal from "./admin/modals/SuccessMessage";
 
 // home
 import ChangeEmailModal from "./pwa/modals/ChangeEmailModal";
@@ -87,5 +88,6 @@ export const MODAL_DICT = {
   confirmationCancelControlBulletinModal: ConfirmationCancelControlBulletinModal,
   typeformModal: TypeformModal,
   updateCompanyDetails: UpdateCompanyDetailsModal,
-  blockedTime: BlockedTimeModal
+  blockedTime: BlockedTimeModal,
+  successMessage: SuccessMessageModal
 };

@@ -22,7 +22,6 @@ import {
 import { Header } from "../common/Header";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthUp, useWidth } from "common/utils/useWidth";
-import { SideMenu } from "./components/SideMenu";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
@@ -31,6 +30,8 @@ import CertificationCommunicationModal from "../pwa/components/CertificationComm
 import { shouldUpdateBusinessType } from "common/utils/updateBusinessType";
 import UpdateCompanyBusinessTypeModal from "./modals/UpdateCompanyBusinessTypeModal";
 import { Main } from "../common/semantics/Main";
+
+import { SideMenu } from "./components/SideMenu/SideMenu";
 
 const useStyles = makeStyles(theme => ({
   container: {
