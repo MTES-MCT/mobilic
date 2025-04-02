@@ -1,16 +1,17 @@
 import React from "react";
-import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { InviteCompaniesCard } from "./InviteCompaniesCard";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { JoinWebinarsCard } from "./JoinWebinarsCard";
 
 export function Cards() {
   return (
-    <Box ml={2}>
+    <Stack ml={2} rowGap={2}>
+      <JoinWebinarsCard />
       <InviteCompaniesCard />
-    </Box>
+    </Stack>
   );
 }
 
