@@ -2071,6 +2071,10 @@ export const HTTP_QUERIES = {
   downloadFullDataWhenCGUrefused: {
     method: "POST",
     endpoint: "/users/download_full_data_when_CGU_refused"
+  },
+  inviteCompanies: {
+    method: "POST",
+    endpoint: "/bizdev/invite_companies"
   }
 };
 
