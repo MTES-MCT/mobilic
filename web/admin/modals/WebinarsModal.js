@@ -1,6 +1,5 @@
 import React from "react";
 import Modal from "../../common/Modal";
-import { Button } from "@codegouvfr/react-dsfr/Button";
 import { WebinarList } from "../../landing/components/WebinarList";
 
 export default function WebinarsModal({ open, handleClose, handleSubmit }) {
@@ -11,7 +10,6 @@ export default function WebinarsModal({ open, handleClose, handleSubmit }) {
 
   return (
     <Modal
-      size="lg"
       open={open}
       handleClose={handleClose}
       title="Prochains webinaires Mobilic"
@@ -27,13 +25,6 @@ export default function WebinarsModal({ open, handleClose, handleSubmit }) {
               }
             />
           )}
-        </>
-      }
-      actions={
-        <>
-          <Button onClick={handleClose} priority="secondary">
-            Plus tard
-          </Button>
         </>
       }
     />
