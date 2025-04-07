@@ -221,7 +221,7 @@ export function ControlTakePictures({ onClose }) {
         description={
           remaining_pictures > 0
             ? `Vous pouvez prendre ${remaining_pictures} photos supplémentaires.`
-            : `Vous avez déja pris ${MAX_NB_PICTURES} photos.`
+            : `Vous avez atteint la limite de ${MAX_NB_PICTURES} photos par contrôle.`
         }
         type={remaining_pictures > 0 ? "info" : "error"}
       />
