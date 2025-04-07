@@ -34,6 +34,7 @@ export const UserReadAlertsPictures = () => {
             }}
             icon={
               <Button
+                size="small"
                 style={{ margin: "auto" }}
                 iconId="fr-icon-zoom-in-line"
                 onClick={() =>
