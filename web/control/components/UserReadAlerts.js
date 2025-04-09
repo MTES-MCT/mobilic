@@ -135,7 +135,7 @@ export function UserReadAlerts({
       <Container className={classes.container}>
         <Grid container spacing={2}>
           {displayPictures && (
-            <Grid item xs={5}>
+            <Grid item xs={5} sx={{ overflow: "scroll", height: "80vh" }}>
               <UserReadAlertsPictures />
             </Grid>
           )}
