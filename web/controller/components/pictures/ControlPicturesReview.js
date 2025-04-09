@@ -36,12 +36,11 @@ export function ControlPicturesReview({
       <Typography variant="h2" component="h1" mb={2}>
         Confirmer la sélection
       </Typography>
-      <Typography mb={4}>
-        Vous pouvez organiser les photos en les faisant glisser.
-      </Typography>
+      <Typography mb={4}>Cliquez sur les photos pour les agrandir.</Typography>
       <Grid
         container
-        spacing={2}
+        rowSpacing={1}
+        columnSpacing={1}
         component="ul"
         style={{ listStyleType: "none", padding: 0 }}
       >
@@ -71,7 +70,10 @@ export function ControlPicturesReview({
                 <Button
                   className={classes.removeButton}
                   iconId="fr-icon-close-line"
-                  onClick={() => removeImage(picture.url)}
+                  onClick={e => {
+                    e.stopPropagation();
+                    removeImage(picture.url);
+                  }}
                   title="Retirer l'image"
                 />
               }
