@@ -211,13 +211,7 @@ export function ControlTakePictures({ onClose }) {
       removeImage={removeImage}
     />
   ) : (
-    <Stack
-      direction="column"
-      rowGap={2}
-      sx={{
-        marginTop: { xs: "40%", sm: "inherit" }
-      }}
-    >
+    <Stack direction="column" rowGap={2}>
       <Notice
         description={
           remaining_pictures > 0
