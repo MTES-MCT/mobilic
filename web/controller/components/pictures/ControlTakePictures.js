@@ -71,6 +71,7 @@ export function ControlTakePictures({ onClose }) {
   useEffect(() => {
     if (stream && videoRef.current) {
       videoRef.current.srcObject = stream;
+      videoRef.current.setAttribute("webkit-playsinline", "");
     }
     return () => {
       if (stream) {
@@ -230,6 +231,8 @@ export function ControlTakePictures({ onClose }) {
           <video
             ref={videoRef}
             autoPlay
+            playsInline
+            muted
             style={{
               borderRadius: "8px",
               width: "100%",
