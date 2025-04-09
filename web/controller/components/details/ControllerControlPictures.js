@@ -71,7 +71,7 @@ const Content = ({ controlData, showPictures }) => {
         {controlData.pictures.slice(0, 3).map((picture, idx) => (
           <li
             key={`control_picture_${idx}`}
-            style={{ width: "100%", position: "relative" }}
+            style={{ width: "100%", position: "relative", maxWidth: "33.33%" }}
           >
             <Picture
               src={picture.url}
