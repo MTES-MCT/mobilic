@@ -1,25 +1,30 @@
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import { ControlBulletinHeader } from "../controlBulletin/ControlBulletinHeader";
 import Notice from "../../../common/Notice";
 import { useControl } from "../../utils/contextControl";
-import { Stack } from "@mui/material";
 import { useInfractions } from "../../utils/contextInfractions";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
+import Drawer from "@mui/material/Drawer";
+import Stack from "@mui/material/Stack";
+import { fr } from "@codegouvfr/react-dsfr";
+import { Box } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   missionDrawer: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2)
+    paddingTop: theme.spacing(2)
   },
   buttonGroup: {
     position: "sticky",
-    bottom: "-20px",
+    bottom: "0px",
     background: "white",
-    paddingLeft: theme.spacing(2),
     zIndex: 300,
-    width: "100%"
+    width: "100%",
+    marginLeft: "0rem",
+    paddingRight: "0.5rem",
+    paddingTop: "1rem",
+    paddingLeft: "0.5rem",
+    borderTop: `1px solid ${fr.colors.decisions.border.default.grey.default}`
   }
 }));
 
@@ -41,7 +46,7 @@ export function ControlDisplayPicturesDrawer({
   };
 
   return (
-    <SwipeableDrawer
+    <Drawer
       anchor="right"
       open={isOpen}
       disableSwipeToOpen
@@ -54,8 +59,11 @@ export function ControlDisplayPicturesDrawer({
           width: { xs: "100vw", md: 860 }
         }
       }}
+      sx={{ marginTop: 2 }}
     >
-      <ControlBulletinHeader onCloseDrawer={onClose} backLinkLabel="Fermer" />
+      <Box mt={2} ml={2}>
+        <ControlBulletinHeader onCloseDrawer={onClose} backLinkLabel="Fermer" />
+      </Box>
       <Notice
         type="warning"
         description="Ne pas diffuser. Ne pas verser au PV. Ne pas télécharger (directive police justice)."
@@ -90,6 +98,6 @@ export function ControlDisplayPicturesDrawer({
           }
         ]}
       />
-    </SwipeableDrawer>
+    </Drawer>
   );
 }
