@@ -166,7 +166,7 @@ export function formatAlertText(alert, type) {
         uninterruptedJsx = (
           <span>
             Durée du temps de travail ininterrompu :{" "}
-            <b>{formatTimer(uninterruptedWorkTime)}</b>.
+            <b>{formatTimer(uninterruptedWorkTime)}</b>.{" "}
           </span>
         );
       }
