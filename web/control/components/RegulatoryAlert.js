@@ -227,7 +227,7 @@ export function RegulatoryAlert({
           ]}
         />
       )}
-      <div>
+      <div style={{ width: "100%" }}>
         {onChangeTab ? (
           <Link
             onClick={e => {
