@@ -21,13 +21,19 @@ export function Card({ onClick, svg, buttonTitle }) {
       <Button
         onClick={onClick}
         priority="secondary"
-        style={{ boxShadow: "none" }}
+        style={{
+          boxShadow: "none",
+          paddingTop: 0,
+          paddingLeft: 0,
+          paddingRight: 0
+        }}
       >
         <Stack direction="column" gap={2}>
           <img alt="" src={svg} style={{ flexShrink: 1 }} width={244} />
           <Typography
             variant="body1"
             className="fr-icon-arrow-right-line fr-btn--icon-right"
+            fontWeight="500"
           >
             {buttonTitle}
           </Typography>
