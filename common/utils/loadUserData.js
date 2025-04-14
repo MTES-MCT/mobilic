@@ -126,6 +126,7 @@ const USER_QUERY = gql`
           siren
           sirets
           hasNoActiveAdmins
+          hasCeasedActivity
           ...CompanySettings
         }
       }

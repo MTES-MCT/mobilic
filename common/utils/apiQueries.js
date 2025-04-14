@@ -1738,6 +1738,14 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
   }
 `;
 
+export const INVITE_COMPANIES_MUTATION = gql`
+  mutation inviteCompanies($companyId: Int!, $emails: [Email]!) {
+    inviteCompanies(companyId: $companyId, emails: $emails) {
+      success
+    }
+  }
+`;
+
 export const UPDATE_MISSION_VEHICLE_MUTATION = gql`
   mutation updateMissionVehicle(
     $missionId: Int!

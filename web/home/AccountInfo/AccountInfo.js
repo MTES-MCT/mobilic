@@ -37,6 +37,10 @@ import BecomeAdmin from "./BecomeAdmin";
 import Notice from "../../common/Notice";
 import { Main } from "../../common/semantics/Main";
 import { GENDERS } from "common/utils/gender";
+import {
+  EMPLOYMENT_STATUS,
+  getEmploymentsStatus
+} from "common/utils/employments";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
@@ -60,6 +64,7 @@ function NoEmploymentAlert() {
         </>
       }
       isNoMarginRight
+      sx={{ marginTop: 2 }}
     />
   );
 }
@@ -87,6 +92,18 @@ export default function Home() {
   const hasEmployment = React.useMemo(() => employments.length > 0, [
     employments
   ]);
+
+  const hasActiveEmployments = React.useMemo(
+    () =>
+      employments
+        .map(employment => getEmploymentsStatus(employment))
+        .filter(
+          status =>
+            status !== EMPLOYMENT_STATUS.ceased &&
+            status !== EMPLOYMENT_STATUS.ended
+        ).length > 0,
+    [employments]
+  );
 
   return (
     <>
@@ -277,7 +294,7 @@ export default function Home() {
                       : "Mon entreprise"
                   }
                 >
-                  {hasEmployment ? (
+                  {hasEmployment && (
                     <Grid container spacing={2} direction="column">
                       {employments.map(e => (
                         <Grid item xs={12} key={e.id}>
@@ -291,9 +308,8 @@ export default function Home() {
                         </Grid>
                       ))}
                     </Grid>
-                  ) : (
-                    <NoEmploymentAlert />
                   )}
+                  {!hasActiveEmployments && <NoEmploymentAlert />}
                   <BecomeAdmin mt={2} hasEmployments={hasEmployment} />
                 </Section>
                 <OAuthTokenSection />
