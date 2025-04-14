@@ -11,6 +11,7 @@ import { useApi } from "common/utils/api";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useControl } from "../../utils/contextControl";
 import { Description } from "../../../common/typography/Description";
+import { TitleContainer } from "../../../control/components/TitleContainer";
 
 const useStyles = makeStyles(() => ({
   addNoteButton: {
@@ -56,12 +57,8 @@ export function ControllerControlNote() {
 
   return (
     <Stack spacing={0} sx={{ width: "100%" }}>
-      <Stack
-        direction="row"
-        justifyContent={{ xs: "space-between", md: "flex-start" }}
-        alignItems="center"
-      >
-        <Typography variant="h5" component="h2" sx={{ marginRight: 2 }}>
+      <TitleContainer>
+        <Typography variant="h5" component="h2">
           Mes notes
         </Typography>
         {!isEditing && (
@@ -73,7 +70,7 @@ export function ControllerControlNote() {
             {note ? "Modifier" : "Ajouter"}
           </Button>
         )}
-      </Stack>
+      </TitleContainer>
       {isEditing ? (
         <Stack direction="column">
           <TextField
