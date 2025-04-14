@@ -44,7 +44,7 @@ export function ControlTakePicturesDrawer({ isOpen, onClose }) {
         }
       }}
     >
-      <Box m={2}>
+      <Box m={2} mt={0}>
         <ControlBulletinHeader
           onCloseDrawer={_onClose}
           backLinkLabel={backLabel}

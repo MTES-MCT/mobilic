@@ -61,7 +61,7 @@ export function ControlDisplayPicturesDrawer({
       }}
       sx={{ marginTop: 2 }}
     >
-      <Box mt={2} ml={2}>
+      <Box ml={2}>
         <ControlBulletinHeader onCloseDrawer={onClose} backLinkLabel="Fermer" />
       </Box>
       <Notice
