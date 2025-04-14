@@ -48,8 +48,6 @@ export const ALERT_TYPE_PROPS_SIMPLER = {
     rule: REGULATION_RULES.weeklyWork
   },
   [ALERT_TYPES.enoughBreak]: {
-    successMessage: () => "Temps de pause respecté",
-    errorMessage: (_, label) => label,
-    rule: REGULATION_RULES.dailyRest
+    rule: REGULATION_RULES.weeklyWork
   }
 };
