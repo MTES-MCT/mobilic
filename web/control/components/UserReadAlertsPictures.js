@@ -24,7 +24,12 @@ export const UserReadAlertsPictures = () => {
       <Typography fontWeight={700}>
         Photos du livret individuel de contrôle
       </Typography>
-      <Stack rowGap={2} height="100%" mt={2}>
+      <Stack
+        rowGap={2}
+        height="100%"
+        mt={2}
+        sx={{ overflow: "scroll", height: "65vh" }}
+      >
         {controlData.pictures.map((picture, index) => (
           <Picture
             key={picture.url}

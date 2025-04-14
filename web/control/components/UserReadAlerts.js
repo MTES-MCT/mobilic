@@ -135,7 +135,7 @@ export function UserReadAlerts({
       <Container className={classes.container}>
         <Grid container spacing={2}>
           {displayPictures && (
-            <Grid item xs={5} sx={{ overflow: "scroll", height: "80vh" }}>
+            <Grid item xs={5}>
               <UserReadAlertsPictures />
             </Grid>
           )}
@@ -179,7 +179,14 @@ export function UserReadAlerts({
                 </>
               )}
               {_groupedAlerts?.length > 0 ? (
-                <List>
+                <List
+                  sx={{
+                    ...(isReportingInfractions && {
+                      overflow: "scroll",
+                      height: "65vh"
+                    })
+                  }}
+                >
                   {_groupedAlerts.sort(sanctionComparator).map(group => (
                     <ListItem
                       key={`${group.type}_${group.sanction}`}
