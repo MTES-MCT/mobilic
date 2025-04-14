@@ -12,7 +12,8 @@ export const ALERT_TYPES = {
   maximumUninterruptedWorkTime: "maximumUninterruptedWorkTime",
   maximumWorkedDaysInWeek: "maximumWorkedDaysInWeek",
   noPaperLic: "noLic",
-  maximumWorkInCalendarWeek: "maximumWorkInCalendarWeek"
+  maximumWorkInCalendarWeek: "maximumWorkInCalendarWeek",
+  enoughBreak: "enoughBreak"
 };
 
 export const ALERT_TYPE_PROPS_SIMPLER = {
@@ -44,6 +45,9 @@ export const ALERT_TYPE_PROPS_SIMPLER = {
   [ALERT_TYPES.maximumWorkInCalendarWeek]: {
     successMessage: () => "Durée maximale de travail hebdomadaire respectée",
     errorMessage: (_, label) => label,
+    rule: REGULATION_RULES.weeklyWork
+  },
+  [ALERT_TYPES.enoughBreak]: {
     rule: REGULATION_RULES.weeklyWork
   }
 };

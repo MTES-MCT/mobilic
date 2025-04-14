@@ -165,7 +165,7 @@ export function prettyFormatDayHour(unixTimestamp) {
 }
 
 export function formatMinutesFromSeconds(seconds) {
-  return `${Math.floor(seconds / MINUTE)}m`;
+  return `${Math.floor(seconds / MINUTE)}\u00A0min`;
 }
 
 export function textualPrettyFormatWeek(startOfWeek) {

@@ -374,10 +374,25 @@ export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
         ...ObservedInfractions
       }
       reportedInfractionsLastUpdateTime
+      canTakePictures
+      pictures {
+        url
+      }
+      picturesExpiryDate
       businessTypeDuringControl {
         id
         transportType
         businessType
+      }
+    }
+  }
+`;
+
+export const CONTROLLER_READ_CONTROL_PICTURES = gql`
+  query readControlPictures($controlId: Int!) {
+    controlData(controlId: $controlId) {
+      pictures {
+        url
       }
     }
   }
@@ -1723,6 +1738,14 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
   }
 `;
 
+export const INVITE_COMPANIES_MUTATION = gql`
+  mutation inviteCompanies($companyId: Int!, $emails: [Email]!) {
+    inviteCompanies(companyId: $companyId, emails: $emails) {
+      success
+    }
+  }
+`;
+
 export const UPDATE_MISSION_VEHICLE_MUTATION = gql`
   mutation updateMissionVehicle(
     $missionId: Int!
@@ -2059,6 +2082,10 @@ export const HTTP_QUERIES = {
   controlBDCExport: {
     method: "POST",
     endpoint: "/controllers/generate_control_bulletin"
+  },
+  controlPicturesGeneratePresignedUrls: {
+    method: "POST",
+    endpoint: "/controllers/control_pictures_generate_presigned_urls"
   },
   certificateSearch: {
     method: "POST",

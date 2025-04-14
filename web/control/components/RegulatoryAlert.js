@@ -35,7 +35,8 @@ function formatAlertPeriod(alert, type) {
     case ALERT_TYPES.minimumDailyRest:
     case ALERT_TYPES.minimumWorkDayBreak:
     case ALERT_TYPES.maximumWorkDayTime:
-    case ALERT_TYPES.noPaperLic: {
+    case ALERT_TYPES.noPaperLic:
+    case ALERT_TYPES.enoughBreak: {
       return textualPrettyFormatDay(alert.day);
     }
     default: {
@@ -152,6 +153,45 @@ export function formatAlertText(alert, type) {
         </span>
       );
     }
+    case ALERT_TYPES.enoughBreak: {
+      const {
+        not_enough_break,
+        too_much_uninterrupted_work_time
+      } = alert.extra;
+
+      let uninterruptedJsx = undefined;
+      if (too_much_uninterrupted_work_time) {
+        const uninterruptedWorkTime =
+          alert.extra.longest_uninterrupted_work_in_seconds;
+        uninterruptedJsx = (
+          <span>
+            Durée du temps de travail ininterrompu :{" "}
+            <b>{formatTimer(uninterruptedWorkTime)}</b>.{" "}
+          </span>
+        );
+      }
+
+      let breakJsx = "";
+      if (not_enough_break) {
+        const breakTimeInSeconds = alert.extra.total_break_time_in_seconds;
+        const workTimeInSeconds = alert.extra.work_range_in_seconds;
+        breakJsx = (
+          <span>
+            Durée du temps de pause :{" "}
+            <b>{formatMinutesFromSeconds(breakTimeInSeconds)}</b> pour une
+            amplitude journalière de <b>{formatTimer(workTimeInSeconds)}</b>{" "}
+            effectuée entre le {formatDate(alert.extra.work_range_start)} et le{" "}
+            {formatDate(alert.extra.work_range_end)}.
+          </span>
+        );
+      }
+      return (
+        <>
+          {uninterruptedJsx}
+          {breakJsx}
+        </>
+      );
+    }
     default:
       return <span></span>;
   }
@@ -187,7 +227,7 @@ export function RegulatoryAlert({
           ]}
         />
       )}
-      <div>
+      <div style={{ width: "100%" }}>
         {onChangeTab ? (
           <Link
             onClick={e => {
