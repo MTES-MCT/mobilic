@@ -173,6 +173,19 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "center"
+  },
+  tab: {
+    textTransform: "none",
+    fontSize: "1rem",
+    lineHeight: "1.5rem",
+    fontWeight: 400,
+    opacity: 1,
+    color: fr.colors.decisions.background.flat.grey.default,
+    padding: theme.spacing(1),
+    "&.Mui-selected": {
+      color: fr.colors.decisions.background.flat.blueFrance.default,
+      fontWeight: 500
+    }
   }
 }));
 
@@ -545,12 +558,19 @@ export function History({
           variant="fullWidth"
           indicatorColor="primary"
           textColor="inherit"
+          sx={{
+            "& .MuiTabs-indicator": {
+              backgroundColor:
+                fr.colors.decisions.background.flat.blueFrance.default
+            }
+          }}
         >
           {Object.values(tabs).map((tabProps, index) => (
             <Tab
               key={index + 1}
               label={tabProps.label}
               value={tabProps.value}
+              className={classes.tab}
               style={{ flexGrow: 1, flexShrink: 1, minWidth: 0 }}
             />
           ))}
