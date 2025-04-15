@@ -110,6 +110,11 @@ export function formatDayOfWeek(unixTimestamp) {
   return SHORT_DAYS[date.getDay()];
 }
 
+export function formatCompleteDayOfWeek(unixTimestamp) {
+  const date = new Date(unixTimestamp * 1000);
+  return DAYS[date.getDay()];
+}
+
 export function getPrettyDateByperiod(date, period) {
   const dateAsUnixTimestamp = date.getTime() / 1000;
   switch (period) {

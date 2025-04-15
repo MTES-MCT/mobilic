@@ -4,12 +4,14 @@ import Box from "@mui/material/Box";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import Typography from "@mui/material/Typography";
-import { formatDayOfWeek, shortPrettyFormatDay } from "common/utils/time";
+import {
+  formatCompleteDayOfWeek,
+  shortPrettyFormatDay
+} from "common/utils/time";
 import { PERIOD_STATUSES } from "common/utils/history/computePeriodStatuses";
 
 const useStyles = makeStyles(theme => ({
   periodContainer: {
-    borderRadius: "16px",
     position: "relative",
     whiteSpace: "nowrap"
   },
@@ -126,15 +128,8 @@ export function PeriodCarouselPicker({
                   renderPeriod(period, periodMissionsGetter(period))
                 ) : (
                   <Box className="flex-column-space-between">
-                    <Typography
-                      className={periodStatus ? "bold" : ""}
-                      style={{ textTransform: "uppercase" }}
-                    >
-                      {formatDayOfWeek(period)}
-                    </Typography>
-                    <Typography className={periodStatus ? "bold" : ""}>
-                      {shortPrettyFormatDay(period)}
-                    </Typography>
+                    <Typography>{shortPrettyFormatDay(period)}</Typography>
+                    <Typography>{formatCompleteDayOfWeek(period)}</Typography>
                   </Box>
                 )}
               </Box>
