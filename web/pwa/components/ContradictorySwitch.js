@@ -1,15 +1,18 @@
 import React from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Switch from "@mui/material/Switch";
 import { makeStyles } from "@mui/styles";
 import { isConnectionError } from "common/utils/errors";
+import { SegmentedControl } from "@codegouvfr/react-dsfr/SegmentedControl";
 
 const useStyles = makeStyles(theme => ({
   infoText: {
     color: "inherit",
     fontStyle: "italic",
     opacity: 0.6
+  },
+  switch: {
+    margin: "auto"
   }
 }));
 
@@ -47,24 +50,33 @@ export function ContradictorySwitch({
           </Typography>
         </Grid>
       ) : (
-        <>
-          <Grid item>
-            <Typography variant="body2">Version gestionnaire</Typography>
-          </Grid>
-          <Grid item>
-            <Switch
-              color="secondary"
-              disabled={disabled}
-              checked={shouldDisplayInitialEmployeeVersion}
-              onChange={e =>
-                setShouldDisplayInitialEmployeeVersion(e.target.checked)
+        <SegmentedControl
+          legend=""
+          small
+          classes={{
+            root: classes.switch
+          }}
+          hideLegend
+          segments={[
+            {
+              label: "Gestionnaire",
+              nativeInputProps: {
+                disabled: disabled,
+                onChange: () => setShouldDisplayInitialEmployeeVersion(false),
+                checked: !shouldDisplayInitialEmployeeVersion
               }
-            />
-          </Grid>
-          <Grid item>
-            <Typography variant="body2">Version salarié</Typography>
-          </Grid>
-        </>
+            },
+            {
+              label: "Salarié",
+              iconId: "fr-icon-user-line",
+              nativeInputProps: {
+                disabled: disabled,
+                onChange: () => setShouldDisplayInitialEmployeeVersion(true),
+                checked: shouldDisplayInitialEmployeeVersion
+              }
+            }
+          ]}
+        />
       )}
     </Grid>
   );
