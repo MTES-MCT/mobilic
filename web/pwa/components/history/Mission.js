@@ -33,6 +33,8 @@ import {
   getNextHeadingComponent,
   getPrevHeadingComponent
 } from "common/utils/html";
+import { NoContradictory } from "./NoContradictory";
+import { PeriodHeader } from "./PeriodHeader";
 
 const useStyles = makeStyles(theme => ({
   alternateCard: {
@@ -41,11 +43,6 @@ const useStyles = makeStyles(theme => ({
   darkCard: {
     backgroundColor: theme.palette.grey[700],
     color: theme.palette.primary.contrastText
-  },
-  contradictorySwitch: {
-    marginBottom: ({ showMetrics }) => (showMetrics ? theme.spacing(1) : 0),
-    paddingRight: ({ showMetrics }) => (showMetrics ? 0 : theme.spacing(2)),
-    paddingLeft: ({ showMetrics }) => (showMetrics ? 0 : theme.spacing(2))
   },
   buttonContainer: {
     display: "flex",
@@ -173,6 +170,15 @@ export function Mission({
     />
   );
 
+  const contradictoryNotYetAvailable = !canDisplayContradictoryVersions;
+  const emptyContradictory = hasComputedContradictory && contradictoryIsEmpty;
+
+  const displayContradictory = !(
+    contradictoryNotYetAvailable ||
+    contradictoryComputationError ||
+    emptyContradictory
+  );
+
   return (
     <>
       <InfoCard
@@ -285,32 +291,34 @@ export function Mission({
               />
             </>
           )}
-        {!mission.isDeleted && (
-          <ContradictorySwitch
-            contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
-            emptyContradictory={
-              contradictoryIsEmpty && hasComputedContradictory
-            }
-            className={classes.contradictorySwitch}
-            shouldDisplayInitialEmployeeVersion={
-              shouldDisplayInitialEmployeeVersion
-            }
-            setShouldDisplayInitialEmployeeVersion={
-              setShouldDisplayInitialEmployeeVersion
-            }
+        <PeriodHeader>
+          {!mission.isDeleted && displayContradictory && (
+            <ContradictorySwitch
+              shouldDisplayInitialEmployeeVersion={
+                shouldDisplayInitialEmployeeVersion
+              }
+              setShouldDisplayInitialEmployeeVersion={
+                setShouldDisplayInitialEmployeeVersion
+              }
+              disabled={loadingEmployeeVersion}
+            />
+          )}
+          {showMetrics && (
+            <WorkTimeSummaryKpiGrid
+              loading={loadingEmployeeVersion}
+              metrics={renderMissionKpis(kpis, "Durée", true)}
+              cardProps={
+                alternateDisplay
+                  ? { elevation: 0, className: classes.alternateCard }
+                  : {}
+              }
+            />
+          )}
+        </PeriodHeader>
+        {!displayContradictory && (
+          <NoContradictory
+            contradictoryNotYetAvailable={contradictoryNotYetAvailable}
             contradictoryComputationError={contradictoryComputationError}
-            disabled={loadingEmployeeVersion}
-          />
-        )}
-        {showMetrics && (
-          <WorkTimeSummaryKpiGrid
-            loading={loadingEmployeeVersion}
-            metrics={renderMissionKpis(kpis, "Durée", true)}
-            cardProps={
-              alternateDisplay
-                ? { elevation: 0, className: classes.alternateCard }
-                : {}
-            }
           />
         )}
         {showMetrics ? (

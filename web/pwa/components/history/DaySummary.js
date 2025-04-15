@@ -1,8 +1,3 @@
-import {
-  renderPeriodKpis,
-  splitByLongBreaksAndComputePeriodStats,
-  WorkTimeSummaryKpiGrid
-} from "../WorkTimeSummary";
 import { ItalicWarningTypography } from "./ItalicWarningTypography";
 import { MissionReviewSection } from "../MissionReviewSection";
 import { ActivityList } from "../ActivityList";
@@ -18,19 +13,12 @@ export function DaySummary({
   activitiesWithNextAndPreviousDay,
   dayStart,
   userId,
-  loading = false,
   shouldDisplayInitialEmployeeVersion = false,
   missions,
   controlId = null
 }) {
   const dayEnd = dayStart + DAY;
   const infoCardStyles = useInfoCardStyles();
-
-  const stats = splitByLongBreaksAndComputePeriodStats(
-    activitiesWithNextAndPreviousDay,
-    dayStart,
-    dayEnd
-  );
 
   const hasWorkMissions = React.useMemo(
     () => missions.filter(mission => !mission.isHoliday).length > 0,
@@ -41,12 +29,6 @@ export function DaySummary({
     <>
       {hasWorkMissions && (
         <>
-          <WorkTimeSummaryKpiGrid
-            loading={loading}
-            metrics={renderPeriodKpis(stats, true)
-              .filter(kpi => kpi.name !== "workedDays")
-              .filter(kpi => kpi.name !== "offDays")}
-          />
           {!controlId && (
             <InfoCard className={infoCardStyles.topMargin}>
               {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (

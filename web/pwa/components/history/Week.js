@@ -15,6 +15,7 @@ import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { WeekRegulatoryAlerts } from "../../../regulatory/WeekRegulatoryAlerts";
 import { AlertsInHistory } from "../../../control/components/AlertsInHistory";
 import Notice from "../../../common/Notice";
+import { PeriodHeader } from "./PeriodHeader";
 
 export function Week({
   missionsInPeriod,
@@ -75,7 +76,9 @@ export function Week({
           description={missionsDeletedWarning}
         />
       )}
-      <WorkTimeSummaryKpiGrid metrics={kpis} />
+      <PeriodHeader>
+        <WorkTimeSummaryKpiGrid metrics={kpis} />
+      </PeriodHeader>
       {hasWorkMissions && !controlId && (
         <InfoCard className={infoCardStyles.topMargin}>
           <WeekRegulatoryAlerts

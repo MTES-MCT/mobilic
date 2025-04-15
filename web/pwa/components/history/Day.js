@@ -8,18 +8,14 @@ import { DaySummary } from "./DaySummary";
 import { useToggleContradictory } from "./toggleContradictory";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { ContradictorySwitch } from "../ContradictorySwitch";
-import { makeStyles } from "@mui/styles";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
-import { prettyFormatDay } from "common/utils/time";
+import { prettyFormatDay, textualPrettyFormatDay } from "common/utils/time";
 import { getNextHeadingComponent } from "common/utils/html";
 import { AlertsInHistory } from "../../../control/components/AlertsInHistory";
 import Notice from "../../../common/Notice";
-
-export const useStyles = makeStyles(theme => ({
-  contradictorySwitch: {
-    marginBottom: theme.spacing(1)
-  }
-}));
+import { DayKpis } from "./DayKpis";
+import { NoContradictory } from "./NoContradictory";
+import { PeriodHeader } from "./PeriodHeader";
 
 export function Day({
   missionsInPeriod,
@@ -43,7 +39,6 @@ export function Day({
   alertsInPeriod = null
 }) {
   const infoCardStyles = useInfoCardStyles();
-  const classes = useStyles();
 
   const [
     shouldDisplayInitialEmployeeVersion,
@@ -112,29 +107,53 @@ export function Day({
     () => missionsInPeriod.filter(mission => !mission.isHoliday),
     [missionsInPeriod]
   );
+
+  const contradictoryNotYetAvailable = !canDisplayContradictoryVersions;
+  const emptyContradictory = hasComputedContradictory && contradictoryIsEmpty;
+
+  const displayContradictory = !(
+    contradictoryNotYetAvailable ||
+    contradictoryComputationError ||
+    emptyContradictory
+  );
   return (
     <Box>
       {alertsInPeriod && alertsInPeriod.length > 0 && (
         <AlertsInHistory alertsInPeriod={alertsInPeriod} />
       )}
-      {missionsDeleted.length > 0 ? (
-        <Notice
-          type="warning"
-          sx={{ marginBottom: 2 }}
-          description={missionsDeletedWarning}
+      <PeriodHeader
+        title1="Journée du"
+        title2={textualPrettyFormatDay(selectedPeriodStart)}
+      >
+        {missionsDeleted.length > 0 ? (
+          <Notice
+            type="warning"
+            sx={{ marginBottom: 2 }}
+            description={missionsDeletedWarning}
+          />
+        ) : (
+          displayContradictory && (
+            <ContradictorySwitch
+              disabled={loadingEmployeeVersion}
+              shouldDisplayInitialEmployeeVersion={
+                shouldDisplayInitialEmployeeVersion
+              }
+              setShouldDisplayInitialEmployeeVersion={
+                setShouldDisplayInitialEmployeeVersion
+              }
+            />
+          )
+        )}
+        <DayKpis
+          activitiesWithNextAndPreviousDay={userActivitiesToUse}
+          dayStart={selectedPeriodStart}
+          loading={loadingEmployeeVersion}
+          missions={missionsInPeriod}
         />
-      ) : (
-        <ContradictorySwitch
-          contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
-          disabled={loadingEmployeeVersion}
-          emptyContradictory={hasComputedContradictory && contradictoryIsEmpty}
-          className={classes.contradictorySwitch}
-          shouldDisplayInitialEmployeeVersion={
-            shouldDisplayInitialEmployeeVersion
-          }
-          setShouldDisplayInitialEmployeeVersion={
-            setShouldDisplayInitialEmployeeVersion
-          }
+      </PeriodHeader>
+      {!displayContradictory && (
+        <NoContradictory
+          contradictoryNotYetAvailable={contradictoryNotYetAvailable}
           contradictoryComputationError={contradictoryComputationError}
         />
       )}

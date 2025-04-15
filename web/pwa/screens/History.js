@@ -142,13 +142,11 @@ const tabs = {
 
 const useStyles = makeStyles(theme => ({
   contentContainer: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
     flexGrow: 1,
     flexShrink: 0,
-    paddingTop: theme.spacing(4),
     textAlign: "center",
-    paddingBottom: theme.spacing(4)
+    paddingLeft: 0,
+    paddingRight: 0
   },
   placeholderContainer: {
     backgroundColor: "inherit",
