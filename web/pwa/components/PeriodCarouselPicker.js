@@ -42,23 +42,49 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     background:
       "linear-gradient(to left, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.9) 100%)"
-  },
-  periodChip: {
-    position: "absolute",
-    top: theme.spacing(0.5),
-    right: theme.spacing(0.5),
-    backgroundColor: theme.palette.secondary.main,
-    height: theme.spacing(1),
-    width: theme.spacing(1),
-    borderRadius: "50%"
-  },
-  selectedPeriodChip: {
-    backgroundColor: theme.palette.primary.contrastText
-  },
-  orangeChip: {
-    backgroundColor: theme.palette.warning.main
   }
 }));
+
+const Chip = ({ iconId, selected, selectedSuffix }) => {
+  const selectedClass = ` period-chip-${selectedSuffix}`;
+  return (
+    <span
+      className={`${iconId} fr-icon-sm${selected ? "" : selectedClass}`}
+      aria-hidden="true"
+    ></span>
+  );
+};
+
+const ChipSuccess = ({ selected }) => {
+  return (
+    <Chip
+      iconId="fr-icon-success-fill"
+      selected={selected}
+      selectedSuffix="success"
+    />
+  );
+};
+
+const ChipWait = ({ selected }) => {
+  return (
+    <Chip
+      iconId="fr-icon-time-fill"
+      selected={selected}
+      selectedSuffix="wait"
+    />
+  );
+};
+
+// #TODO: use this
+// const ChipCurrent = ({ selected }) => {
+//   return (
+//     <Chip
+//       iconId="fr-icon-play-circle-fill"
+//       selected={selected}
+//       selectedSuffix="current"
+//     />
+//   );
+// };
 
 export function PeriodCarouselPicker({
   selectedPeriod,
@@ -117,18 +143,23 @@ export function PeriodCarouselPicker({
                   onPeriodChange(period);
                 }}
               >
-                {periodStatus === PERIOD_STATUSES.notValidated ? (
-                  <Box className={`${classes.periodChip}`} />
-                ) : periodStatus === PERIOD_STATUSES.notValidatedByAdmin ? (
-                  <Box
-                    className={`${classes.periodChip} ${classes.orangeChip}`}
-                  />
-                ) : null}
                 {renderPeriod ? (
                   renderPeriod(period, periodMissionsGetter(period))
                 ) : (
                   <Box className="flex-column-space-between">
-                    <Typography>{shortPrettyFormatDay(period)}</Typography>
+                    <Typography>
+                      {shortPrettyFormatDay(period)}
+                      {"  "}
+                      {(periodStatus === PERIOD_STATUSES.notValidated ||
+                        periodStatus ===
+                          PERIOD_STATUSES.notValidatedByAdmin) && (
+                        <ChipWait selected={period === selectedPeriod} />
+                      )}
+                      {periodStatus === PERIOD_STATUSES.fullyValidated && (
+                        <ChipSuccess selected={period === selectedPeriod} />
+                      )}
+                      {/* // #TOTO: journee en cours ? */}
+                    </Typography>
                     <Typography>{formatCompleteDayOfWeek(period)}</Typography>
                   </Box>
                 )}

@@ -560,7 +560,8 @@ export function History({
             "& .MuiTabs-indicator": {
               backgroundColor:
                 fr.colors.decisions.background.flat.blueFrance.default
-            }
+            },
+            marginBottom: 1
           }}
         >
           {Object.values(tabs).map((tabProps, index) => (

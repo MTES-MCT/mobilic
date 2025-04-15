@@ -468,6 +468,24 @@ video:not([href])[controls] {
   --icon-size: 1.3rem
 }
 
+.fr-icon-sm {
+  &::before {
+    --icon-size: 1rem
+  }
+}
+
+.period-chip-success {
+  color: #18753C
+}
+
+.period-chip-wait {
+  color: #B34000
+}
+
+.period-chip-current {
+  color: #3965EA
+}
+
 .fr-modal__footer {
   z-index: 2;
 }
