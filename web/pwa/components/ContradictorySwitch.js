@@ -21,6 +21,7 @@ export function ContradictorySwitch({
       <SegmentedControl
         legend=""
         small
+        className="segmented-control-contrast"
         classes={{
           root: classes.switch
         }}
