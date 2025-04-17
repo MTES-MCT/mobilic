@@ -2,7 +2,6 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
-import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
 import { prettyFormatDayHour } from "common/utils/time";
@@ -232,7 +231,6 @@ export function UserReadAlerts({
                     />
                   )}
               </>
-              <Divider className={`hr-unstyled ${classes.divider}`} />
             </Stack>
           </Grid>
         </Grid>
