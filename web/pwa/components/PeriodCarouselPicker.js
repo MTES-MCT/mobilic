@@ -75,16 +75,28 @@ const ChipWait = ({ selected }) => {
   );
 };
 
-// #TODO: use this
-// const ChipCurrent = ({ selected }) => {
-//   return (
-//     <Chip
-//       iconId="fr-icon-play-circle-fill"
-//       selected={selected}
-//       selectedSuffix="current"
-//     />
-//   );
-// };
+const ChipCurrent = ({ selected }) => {
+  return (
+    <Chip
+      iconId="fr-icon-play-circle-fill"
+      selected={selected}
+      selectedSuffix="current"
+    />
+  );
+};
+
+const renderChip = (periodStatus, selected) => {
+  if (periodStatus === PERIOD_STATUSES.notValidated) {
+    return <ChipCurrent selected={selected} />;
+  }
+  if (periodStatus === PERIOD_STATUSES.notValidatedByAdmin) {
+    return <ChipWait selected={selected} />;
+  }
+  if (periodStatus === PERIOD_STATUSES.fullyValidated) {
+    return <ChipSuccess selected={selected} />;
+  }
+  return null;
+};
 
 export function PeriodCarouselPicker({
   selectedPeriod,
@@ -150,15 +162,7 @@ export function PeriodCarouselPicker({
                     <Typography>
                       {shortPrettyFormatDay(period)}
                       {"  "}
-                      {(periodStatus === PERIOD_STATUSES.notValidated ||
-                        periodStatus ===
-                          PERIOD_STATUSES.notValidatedByAdmin) && (
-                        <ChipWait selected={period === selectedPeriod} />
-                      )}
-                      {periodStatus === PERIOD_STATUSES.fullyValidated && (
-                        <ChipSuccess selected={period === selectedPeriod} />
-                      )}
-                      {/* // #TOTO: journee en cours ? */}
+                      {renderChip(periodStatus, period === selectedPeriod)}
                     </Typography>
                     <Typography>{formatCompleteDayOfWeek(period)}</Typography>
                   </Box>
