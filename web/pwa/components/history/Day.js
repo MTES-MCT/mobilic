@@ -86,19 +86,44 @@ export function Day({
     controlId
   );
 
-  const userActivitiesToUse = React.useMemo(() => {
-    return [
-      ...(shouldDisplayInitialEmployeeVersion
-        ? employeeVersion
-        : adminVersion
-      ).activities.filter(a => a.userId === userId && !a.isMissionDeleted),
+  const employeeVersionUserActivitiesToUse = React.useMemo(
+    () =>
+      employeeVersion?.activities
+        ? [
+            ...employeeVersion?.activities?.filter(
+              a => a.userId === userId && !a.isMissionDeleted
+            ),
+            ...activitiesWithNextAndPreviousDay.filter(
+              a =>
+                !missionsInPeriod.map(m => m.id).includes(a.missionId) &&
+                !a.isMissionDeleted
+            )
+          ]
+        : undefined,
+    [employeeVersion]
+  );
+
+  const adminVersionUserActivitiesToUse = React.useMemo(
+    () => [
+      ...adminVersion?.activities?.filter(
+        a => a.userId === userId && !a.isMissionDeleted
+      ),
       ...activitiesWithNextAndPreviousDay.filter(
         a =>
           !missionsInPeriod.map(m => m.id).includes(a.missionId) &&
           !a.isMissionDeleted
       )
-    ];
-  }, [employeeVersion, adminVersion, shouldDisplayInitialEmployeeVersion]);
+    ],
+    [adminVersion]
+  );
+
+  const userActivitiesToUse = React.useMemo(
+    () =>
+      shouldDisplayInitialEmployeeVersion
+        ? employeeVersionUserActivitiesToUse
+        : adminVersionUserActivitiesToUse,
+    [employeeVersion, adminVersion, shouldDisplayInitialEmployeeVersion]
+  );
 
   React.useEffect(() => {
     if (!canDisplayContradictoryVersions && shouldDisplayInitialEmployeeVersion)
@@ -147,7 +172,13 @@ export function Day({
           )
         )}
         <DayKpis
-          activitiesWithNextAndPreviousDay={userActivitiesToUse}
+          adminActivitiesWithNextAndPreviousDay={
+            adminVersionUserActivitiesToUse
+          }
+          employeeActivitiesWithNextAndPreviousDay={
+            employeeVersionUserActivitiesToUse
+          }
+          displayEmployee={shouldDisplayInitialEmployeeVersion}
           dayStart={selectedPeriodStart}
           loading={loadingEmployeeVersion}
           missions={missionsInPeriod}

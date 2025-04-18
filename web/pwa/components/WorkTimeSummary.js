@@ -262,9 +262,13 @@ export function splitByLongBreaksAndComputePeriodStats(
 }
 
 export function renderPeriodKpis(
-  kpis,
+  adminKpis,
+  employeeKpis,
+  displayEmployee,
   showInnerBreaksInsteadOfService = false
 ) {
+  const kpis = displayEmployee && employeeKpis ? employeeKpis : adminKpis;
+
   const formattedKpis = [];
 
   let subText = null;
@@ -282,11 +286,21 @@ export function renderPeriodKpis(
     });
   } else {
     subText = formatRangeString(kpis.startTime, kpis.endTime);
+    let diffText = "";
+    if (!displayEmployee && employeeKpis) {
+      const diffInS = adminKpis.timers.total - employeeKpis.timers.total;
+
+      diffText = `${diffInS > 0 ? "+" : "-"} ${formatMinutesFromSeconds(
+        Math.abs(diffInS),
+        false
+      )}`;
+    }
     formattedKpis.push({
       name: "service",
       label: "Amplitude",
       value: formatTimer(kpis.timers ? kpis.timers.total : 0),
-      subText
+      subText,
+      diffText
     });
   }
 

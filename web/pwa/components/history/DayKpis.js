@@ -7,18 +7,30 @@ import React from "react";
 import { DAY } from "common/utils/time";
 
 export function DayKpis({
-  activitiesWithNextAndPreviousDay,
+  adminActivitiesWithNextAndPreviousDay,
+  employeeActivitiesWithNextAndPreviousDay,
+  displayEmployee,
   dayStart,
   loading = false,
   missions
 }) {
   const dayEnd = dayStart + DAY;
 
-  const stats = splitByLongBreaksAndComputePeriodStats(
-    activitiesWithNextAndPreviousDay,
-    dayStart,
-    dayEnd
-  );
+  const adminStats =
+    adminActivitiesWithNextAndPreviousDay &&
+    splitByLongBreaksAndComputePeriodStats(
+      adminActivitiesWithNextAndPreviousDay,
+      dayStart,
+      dayEnd
+    );
+
+  const employeeStats =
+    employeeActivitiesWithNextAndPreviousDay &&
+    splitByLongBreaksAndComputePeriodStats(
+      employeeActivitiesWithNextAndPreviousDay,
+      dayStart,
+      dayEnd
+    );
 
   const hasWorkMissions = React.useMemo(
     () => missions.filter(mission => !mission.isHoliday).length > 0,
@@ -30,7 +42,12 @@ export function DayKpis({
       <>
         <WorkTimeSummaryKpiGrid
           loading={loading}
-          metrics={renderPeriodKpis(stats, true)
+          metrics={renderPeriodKpis(
+            adminStats,
+            employeeStats,
+            displayEmployee,
+            true
+          )
             .filter(kpi => kpi.name !== "workedDays")
             .filter(kpi => kpi.name !== "offDays")}
         />
