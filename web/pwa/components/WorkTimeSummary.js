@@ -20,6 +20,7 @@ import {
 } from "common/utils/activities";
 import { InfoCard, MetricCard } from "../../common/InfoCard";
 import { partition } from "lodash";
+import Stack from "@mui/material/Stack";
 
 export function formatRangeString(startTime, endTime) {
   return getStartOfDay(startTime) === getStartOfDay(endTime - 1)
@@ -29,29 +30,34 @@ export function formatRangeString(startTime, endTime) {
 
 export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {}, loading }) {
   return (
-    <Grid
-      container
-      direction="row"
-      justifyContent="center"
-      alignItems={"baseline"}
-      spacing={2}
-    >
+    <Stack direction="row" spacing={2} sx={{ width: "100%" }}>
       {metrics.map((metric, index) => {
         const CardComponent = metric.render ? InfoCard : MetricCard;
         return (
-          <Grid key={index} item xs={metric.fullWidth ? 12 : true}>
+          <Box
+            key={index}
+            sx={{
+              width: "50%",
+              display: "flex"
+            }}
+          >
             <CardComponent
               {...omit(metric, "render")}
               {...cardProps}
               loading={loading}
               titleProps={{ component: "h2" }}
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column"
+              }}
             >
               {metric.render && metric.render()}
             </CardComponent>
-          </Grid>
+          </Box>
         );
       })}
-    </Grid>
+    </Stack>
   );
 }
 
