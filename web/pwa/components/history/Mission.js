@@ -161,8 +161,6 @@ export function Mission({
     employeeVersionUserActivitiesToUse &&
     computeTimesAndDurationsFromActivities(employeeVersionUserActivitiesToUse);
 
-  console.log("adminKpis", adminKpis);
-  console.log("employeeKpis", employeeKpis);
   const actualDay = mission?.startTime;
 
   const MissionDetailsComponent = (
