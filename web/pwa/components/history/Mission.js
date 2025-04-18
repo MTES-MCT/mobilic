@@ -35,6 +35,9 @@ import {
 } from "common/utils/html";
 import { NoContradictory } from "./NoContradictory";
 import { PeriodHeader } from "./PeriodHeader";
+import { Box, Stack } from "@mui/material";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   alternateCard: {
@@ -52,6 +55,24 @@ const useStyles = makeStyles(theme => ({
   employeeValidation: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1)
+  },
+  missionName: {
+    fontWeight: 700,
+    fontSize: "1.25rem",
+    color: "white"
+  },
+  missionDate: {
+    fontWeight: 400,
+    fontSize: "1rem",
+    color: "white"
+  },
+  downloadButton: {
+    color: "white",
+    boxShadow: "inset 0 0 0 1px white",
+    "&:hover": {
+      color: fr.colors.decisions.text.actionHigh.blueFrance.default,
+      boxShadow: "inset 0 0 0 1px var(--border-action-high-blue-france)"
+    }
   }
 }));
 
@@ -163,6 +184,28 @@ export function Mission({
 
   const actualDay = mission?.startTime;
 
+  const onDownloadMission = async e => {
+    e.stopPropagation();
+    e.preventDefault();
+    trackLink({
+      href: `/generate_mission_export`,
+      linkType: "download"
+    });
+    try {
+      if (controlId) {
+        await api.downloadFileHttpQuery(HTTP_QUERIES.missionControlExport, {
+          json: { mission_id: mission.id, control_id: controlId }
+        });
+      } else {
+        await api.downloadFileHttpQuery(HTTP_QUERIES.missionExport, {
+          json: { mission_id: mission.id, user_id: userId }
+        });
+      }
+    } catch (err) {
+      alerts.error(formatApiError(err), "generate_mission_export", 6000);
+    }
+  };
+
   const MissionDetailsComponent = (
     <MissionDetails
       inverseColors
@@ -210,88 +253,60 @@ export function Mission({
 
   return (
     <>
-      <InfoCard
-        className={`${alternateDisplay ? classes.darkCard : ""} ${
-          infoCardStyles.bottomMargin
-        }`}
-        textAlign="left"
-      >
-        <Grid
-          container
-          spacing={2}
-          justifyContent="space-between"
-          alignItems="center"
-          wrap="nowrap"
-          onClick={() => setOpen(!open)}
+      {collapsable && (
+        <InfoCard
+          className={`${alternateDisplay ? classes.darkCard : ""} ${
+            infoCardStyles.bottomMargin
+          }`}
+          textAlign="left"
         >
-          <Grid item>
-            <Typography
-              component={getPrevHeadingComponent(headingComponent)}
-              sx={{ color: "inherit" }}
-            >
-              <span className="bold">
-                {mission.name
-                  ? `Nom de la mission : ${mission.name}`
-                  : `Mission du ${prettyFormatDay(actualDay)}`}
-              </span>
-              {mission.isDeleted
-                ? ` (mission supprimée le ${frenchFormatDateStringOrTimeStamp(
-                    unixTimestampToDate(mission?.deletedAt)
-                  )} par ${mission?.deletedBy})`
-                : ""}
-            </Typography>
-          </Grid>
-          <Grid item className={classes.buttonContainer}>
-            <IconButton
-              color={alternateDisplay ? "inherit" : "primary"}
-              className="no-margin-no-padding"
-              style={{ marginRight: 16 }}
-              onClick={async e => {
-                e.stopPropagation();
-                e.preventDefault();
-                trackLink({
-                  href: `/generate_mission_export`,
-                  linkType: "download"
-                });
-                try {
-                  if (controlId) {
-                    await api.downloadFileHttpQuery(
-                      HTTP_QUERIES.missionControlExport,
-                      {
-                        json: { mission_id: mission.id, control_id: controlId }
-                      }
-                    );
-                  } else {
-                    await api.downloadFileHttpQuery(
-                      HTTP_QUERIES.missionExport,
-                      {
-                        json: { mission_id: mission.id, user_id: userId }
-                      }
-                    );
-                  }
-                } catch (err) {
-                  alerts.error(
-                    formatApiError(err),
-                    "generate_mission_export",
-                    6000
-                  );
-                }
-              }}
-            >
-              <GetAppIcon />
-            </IconButton>
-            {collapsable && (
-              <IconButton
-                aria-label={open ? "Masquer" : "Afficher"}
-                color="inherit"
-                className="no-margin-no-padding"
+          <Grid
+            container
+            spacing={2}
+            justifyContent="space-between"
+            alignItems="center"
+            wrap="nowrap"
+            onClick={() => setOpen(!open)}
+          >
+            <Grid item>
+              <Typography
+                component={getPrevHeadingComponent(headingComponent)}
+                sx={{ color: "inherit" }}
               >
-                {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                <span className="bold">
+                  {mission.name
+                    ? `Nom de la mission : ${mission.name}`
+                    : `Mission du ${prettyFormatDay(actualDay)}`}
+                </span>
+                {mission.isDeleted
+                  ? ` (mission supprimée le ${frenchFormatDateStringOrTimeStamp(
+                      unixTimestampToDate(mission?.deletedAt)
+                    )} par ${mission?.deletedBy})`
+                  : ""}
+              </Typography>
+            </Grid>
+            <Grid item className={classes.buttonContainer}>
+              <IconButton
+                color={alternateDisplay ? "inherit" : "primary"}
+                className="no-margin-no-padding"
+                style={{ marginRight: 16 }}
+                onClick={onDownloadMission}
+              >
+                <GetAppIcon />
               </IconButton>
-            )}
+              {collapsable && (
+                <IconButton
+                  aria-label={open ? "Masquer" : "Afficher"}
+                  color="inherit"
+                  className="no-margin-no-padding"
+                >
+                  {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                </IconButton>
+              )}
+            </Grid>
           </Grid>
-        </Grid>
-      </InfoCard>
+        </InfoCard>
+      )}
       <Collapse in={open || !collapsable}>
         {!mission.ended && !mission.isDeleted && (
           <InfoCard
@@ -321,6 +336,23 @@ export function Mission({
             </>
           )}
         <PeriodHeader>
+          <Stack direction="row" justifyContent="space-between">
+            <Box sx={{ textAlign: "left" }}>
+              <Typography className={classes.missionName}>
+                Mission {mission.name}
+              </Typography>
+              <Typography className={classes.missionDate}>
+                {prettyFormatDay(mission.startTime, true)}
+              </Typography>
+            </Box>
+            <Button
+              iconId="fr-icon-download-line"
+              priority="secondary"
+              onClick={onDownloadMission}
+              title="Télécharger la mission"
+              className={classes.downloadButton}
+            />
+          </Stack>
           {!mission.isDeleted && displayContradictory && (
             <ContradictorySwitch
               shouldDisplayInitialEmployeeVersion={

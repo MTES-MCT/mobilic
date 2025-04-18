@@ -25,10 +25,16 @@ export function PeriodHeader({ title1 = "", title2 = "", children }) {
   const classes = useStyles();
   return (
     <Stack className={classes.header} direction="column" rowGap={3}>
-      <Box>
-        {title1 && <Typography className={classes.title}>{title1}</Typography>}
-        {title2 && <Typography className={classes.title}>{title2}</Typography>}
-      </Box>
+      {(title1 || title2) && (
+        <Box>
+          {title1 && (
+            <Typography className={classes.title}>{title1}</Typography>
+          )}
+          {title2 && (
+            <Typography className={classes.title}>{title2}</Typography>
+          )}
+        </Box>
+      )}
       {children}
     </Stack>
   );
