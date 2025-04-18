@@ -169,8 +169,8 @@ export function prettyFormatDayHour(unixTimestamp) {
   )}`;
 }
 
-export function formatMinutesFromSeconds(seconds) {
-  return `${Math.floor(seconds / MINUTE)}\u00A0min`;
+export function formatMinutesFromSeconds(seconds, withSpace = true) {
+  return `${Math.floor(seconds / MINUTE)}${withSpace ? "\u00A0" : ""}min`;
 }
 
 export function textualPrettyFormatWeek(startOfWeek) {

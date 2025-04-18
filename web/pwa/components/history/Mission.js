@@ -104,15 +104,14 @@ export function Mission({
       );
   }, [controlledShouldDisplayInitialEmployeeVersion]);
 
-  const [
-    missionResourcesToUse,
-    // eslint-disable-next-line no-unused-vars
-    _,
-    loadingEmployeeVersion,
+  const {
+    employeeVersion,
+    adminVersion,
+    isComputingContradictory: loadingEmployeeVersion,
     hasComputedContradictory,
     contradictoryIsEmpty,
     contradictoryComputationError
-  ] = useToggleContradictory(
+  } = useToggleContradictory(
     canDisplayContradictoryVersions,
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion,
@@ -121,17 +120,49 @@ export function Mission({
     controlId
   );
 
-  const userActivitiesToUse = missionResourcesToUse.activities.filter(
-    a => a.userId === userId
+  const employeeVersionUserActivitiesToUse = React.useMemo(
+    () => employeeVersion?.activities?.filter(a => a.userId === userId),
+    [employeeVersion]
   );
-  const userExpendituresToUse = missionResourcesToUse.expenditures.filter(
-    a => a.userId === userId
+
+  const adminVersionUserActivitiesToUse = React.useMemo(
+    () => adminVersion?.activities?.filter(a => a.userId === userId),
+    [adminVersion]
+  );
+
+  const userActivitiesToUse = React.useMemo(
+    () =>
+      shouldDisplayInitialEmployeeVersion
+        ? employeeVersionUserActivitiesToUse
+        : adminVersionUserActivitiesToUse,
+    [
+      shouldDisplayInitialEmployeeVersion,
+      adminVersionUserActivitiesToUse,
+      employeeVersionUserActivitiesToUse
+    ]
+  );
+
+  const userExpendituresToUse = React.useMemo(
+    () =>
+      (shouldDisplayInitialEmployeeVersion
+        ? employeeVersion
+        : adminVersion
+      ).expenditures.filter(a => a.userId === userId),
+    [shouldDisplayInitialEmployeeVersion, adminVersion, employeeVersion]
   );
 
   const classes = useStyles({ showMetrics });
   const infoCardStyles = useInfoCardStyles();
 
-  const kpis = computeTimesAndDurationsFromActivities(userActivitiesToUse);
+  const adminKpis =
+    adminVersionUserActivitiesToUse &&
+    computeTimesAndDurationsFromActivities(adminVersionUserActivitiesToUse);
+  const employeeKpis =
+    employeeVersionUserActivitiesToUse &&
+    computeTimesAndDurationsFromActivities(employeeVersionUserActivitiesToUse);
+
+  console.log("adminKpis", adminKpis);
+  console.log("employeeKpis", employeeKpis);
   const actualDay = mission?.startTime;
 
   const MissionDetailsComponent = (
@@ -306,7 +337,13 @@ export function Mission({
           {showMetrics && (
             <WorkTimeSummaryKpiGrid
               loading={loadingEmployeeVersion}
-              metrics={renderMissionKpis(kpis, "Durée", true)}
+              metrics={renderMissionKpis(
+                adminKpis,
+                employeeKpis,
+                shouldDisplayInitialEmployeeVersion,
+                "Durée",
+                true
+              )}
               cardProps={
                 alternateDisplay
                   ? { elevation: 0, className: classes.alternateCard }

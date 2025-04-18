@@ -70,15 +70,14 @@ export function Day({
     }
   }, [missionsDeleted]);
 
-  const [
-    missionResourcesToUse,
-    // eslint-disable-next-line no-unused-vars
-    _,
-    loadingEmployeeVersion,
+  const {
+    employeeVersion,
+    adminVersion,
+    isComputingContradictory: loadingEmployeeVersion,
     hasComputedContradictory,
     contradictoryIsEmpty,
     contradictoryComputationError
-  ] = useToggleContradictory(
+  } = useToggleContradictory(
     canDisplayContradictoryVersions,
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion,
@@ -87,16 +86,19 @@ export function Day({
     controlId
   );
 
-  const userActivitiesToUse = [
-    ...missionResourcesToUse.activities.filter(
-      a => a.userId === userId && !a.isMissionDeleted
-    ),
-    ...activitiesWithNextAndPreviousDay.filter(
-      a =>
-        !missionsInPeriod.map(m => m.id).includes(a.missionId) &&
-        !a.isMissionDeleted
-    )
-  ];
+  const userActivitiesToUse = React.useMemo(() => {
+    return [
+      ...(shouldDisplayInitialEmployeeVersion
+        ? employeeVersion
+        : adminVersion
+      ).activities.filter(a => a.userId === userId && !a.isMissionDeleted),
+      ...activitiesWithNextAndPreviousDay.filter(
+        a =>
+          !missionsInPeriod.map(m => m.id).includes(a.missionId) &&
+          !a.isMissionDeleted
+      )
+    ];
+  }, [employeeVersion, adminVersion, shouldDisplayInitialEmployeeVersion]);
 
   React.useEffect(() => {
     if (!canDisplayContradictoryVersions && shouldDisplayInitialEmployeeVersion)

@@ -70,6 +70,7 @@ export function MetricCard({
   label,
   value,
   subText,
+  diffText = "",
   hideSubText,
   titleProps = {},
   valueProps = {},
@@ -77,7 +78,6 @@ export function MetricCard({
 }) {
   const classes = useInfoCardStyles();
 
-  const diffText = "+ 15min";
   return (
     <InfoCard
       title={label}

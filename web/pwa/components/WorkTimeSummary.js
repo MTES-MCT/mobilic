@@ -3,6 +3,7 @@ import Typography from "@mui/material/Typography";
 import {
   DAY,
   formatDateTime,
+  formatMinutesFromSeconds,
   formatTimeOfDay,
   formatTimer,
   getStartOfDay,
@@ -131,10 +132,13 @@ export function computeTimesAndDurationsFromActivities(
 }
 
 export function renderMissionKpis(
-  kpis,
+  adminKpis,
+  employeeKpis,
+  displayEmployee,
   serviceLabel = "Amplitude",
   showInnerBreaksInsteadOfService = false
 ) {
+  const kpis = displayEmployee && employeeKpis ? employeeKpis : adminKpis;
   const { timers, startTime, endTime, innerLongBreaks } = kpis;
 
   const formattedKpis = [];
@@ -153,10 +157,20 @@ export function renderMissionKpis(
     });
   } else {
     subText = formatRangeString(startTime, endTime);
+    let diffText = "";
+    if (!displayEmployee && employeeKpis) {
+      const diffInS = adminKpis.timers.total - employeeKpis.timers.total;
+
+      diffText = `${diffInS > 0 ? "+" : "-"} ${formatMinutesFromSeconds(
+        Math.abs(diffInS),
+        false
+      )}`;
+    }
     formattedKpis.push({
       label: kpis.innerLongBreaks.length > 0 ? "Durée" : serviceLabel,
       value: formatTimer(timers ? timers.total : 0),
-      subText
+      subText,
+      diffText
     });
   }
 
