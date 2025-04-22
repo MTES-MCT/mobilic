@@ -6,7 +6,7 @@ import { Mission } from "./Mission";
 import Box from "@mui/material/Box";
 import { DaySummary } from "./DaySummary";
 import { useToggleContradictory } from "./toggleContradictory";
-import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
+import { InfoCard } from "../../../common/InfoCard";
 import { ContradictorySwitch } from "../ContradictorySwitch";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
 import { prettyFormatDay, textualPrettyFormatDay } from "common/utils/time";
@@ -16,6 +16,7 @@ import Notice from "../../../common/Notice";
 import { DayKpis } from "./DayKpis";
 import { NoContradictory } from "./NoContradictory";
 import { PeriodHeader } from "./PeriodHeader";
+import { Stack } from "@mui/material";
 
 export function Day({
   missionsInPeriod,
@@ -38,8 +39,6 @@ export function Day({
   headingComponent,
   alertsInPeriod = null
 }) {
-  const infoCardStyles = useInfoCardStyles();
-
   const [
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion
@@ -152,6 +151,18 @@ export function Day({
         title1="Journée du"
         title2={textualPrettyFormatDay(selectedPeriodStart)}
       >
+        <DayKpis
+          adminActivitiesWithNextAndPreviousDay={
+            adminVersionUserActivitiesToUse
+          }
+          employeeActivitiesWithNextAndPreviousDay={
+            employeeVersionUserActivitiesToUse
+          }
+          displayEmployee={shouldDisplayInitialEmployeeVersion}
+          dayStart={selectedPeriodStart}
+          loading={loadingEmployeeVersion}
+          missions={missionsInPeriod}
+        />
         {missionsDeleted.length > 0 ? (
           <Notice
             type="warning"
@@ -171,18 +182,6 @@ export function Day({
             />
           )
         )}
-        <DayKpis
-          adminActivitiesWithNextAndPreviousDay={
-            adminVersionUserActivitiesToUse
-          }
-          employeeActivitiesWithNextAndPreviousDay={
-            employeeVersionUserActivitiesToUse
-          }
-          displayEmployee={shouldDisplayInitialEmployeeVersion}
-          dayStart={selectedPeriodStart}
-          loading={loadingEmployeeVersion}
-          missions={missionsInPeriod}
-        />
       </PeriodHeader>
       {!displayContradictory && (
         <NoContradictory
@@ -191,72 +190,76 @@ export function Day({
         />
       )}
 
-      {missionsInPeriod.length !== missionsDeleted.length && (
-        <DaySummary
-          activitiesWithNextAndPreviousDay={userActivitiesToUse}
-          isDayEnded={true}
-          dayStart={selectedPeriodStart}
-          loading={loadingEmployeeVersion}
-          userId={userId}
-          shouldDisplayInitialEmployeeVersion={
-            shouldDisplayInitialEmployeeVersion
-          }
-          missions={missionsInPeriod}
-          controlId={controlId}
-        />
-      )}
-      {missionsToDetail.length > 0 && (
-        <InfoCard className={infoCardStyles.topMargin}>
-          <MissionReviewSection
-            title="Détail par mission"
-            className="no-margin-no-padding"
-            titleProps={{ component: headingComponent }}
-          >
-            <List>
-              {missionsToDetail.map(mission => (
-                <ListItem
-                  key={mission.id}
-                  style={{
-                    display: "block",
-                    paddingLeft: 0,
-                    paddingRight: 0
-                  }}
-                >
-                  <Mission
-                    mission={mission}
-                    currentMission={currentMission}
-                    alternateDisplay
-                    collapsable
-                    defaultOpenCollapse={
-                      missionsInPeriod.length === 1 &&
-                      missionsDeleted.length === 1
-                    }
-                    showMetrics={false}
-                    editActivityEvent={editActivityEvent}
-                    createActivity={createActivity}
-                    editExpenditures={editExpenditures}
-                    editVehicle={editVehicle}
-                    validateMission={validateMission}
-                    logComment={logComment}
-                    cancelComment={cancelComment}
-                    coworkers={coworkers}
-                    vehicles={vehicles}
-                    userId={userId}
-                    fromTime={selectedPeriodStart}
-                    untilTime={selectedPeriodEnd}
-                    registerKilometerReading={registerKilometerReading}
-                    controlledShouldDisplayInitialEmployeeVersion={
-                      shouldDisplayInitialEmployeeVersion
-                    }
-                    controlId={controlId}
-                    headingComponent={getNextHeadingComponent(headingComponent)}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </MissionReviewSection>
-        </InfoCard>
-      )}
+      <Stack direction="column" px={2}>
+        {missionsInPeriod.length !== missionsDeleted.length && (
+          <DaySummary
+            activitiesWithNextAndPreviousDay={userActivitiesToUse}
+            isDayEnded={true}
+            dayStart={selectedPeriodStart}
+            loading={loadingEmployeeVersion}
+            userId={userId}
+            shouldDisplayInitialEmployeeVersion={
+              shouldDisplayInitialEmployeeVersion
+            }
+            missions={missionsInPeriod}
+            controlId={controlId}
+          />
+        )}
+        {missionsToDetail.length > 0 && (
+          <InfoCard elevation={0}>
+            <MissionReviewSection
+              title="Détail par mission"
+              className="no-margin-no-padding"
+              titleProps={{ component: headingComponent }}
+            >
+              <List>
+                {missionsToDetail.map(mission => (
+                  <ListItem
+                    key={mission.id}
+                    style={{
+                      display: "block",
+                      paddingLeft: 0,
+                      paddingRight: 0
+                    }}
+                  >
+                    <Mission
+                      mission={mission}
+                      currentMission={currentMission}
+                      alternateDisplay
+                      collapsable
+                      defaultOpenCollapse={
+                        missionsInPeriod.length === 1 &&
+                        missionsDeleted.length === 1
+                      }
+                      showMetrics={false}
+                      editActivityEvent={editActivityEvent}
+                      createActivity={createActivity}
+                      editExpenditures={editExpenditures}
+                      editVehicle={editVehicle}
+                      validateMission={validateMission}
+                      logComment={logComment}
+                      cancelComment={cancelComment}
+                      coworkers={coworkers}
+                      vehicles={vehicles}
+                      userId={userId}
+                      fromTime={selectedPeriodStart}
+                      untilTime={selectedPeriodEnd}
+                      registerKilometerReading={registerKilometerReading}
+                      controlledShouldDisplayInitialEmployeeVersion={
+                        shouldDisplayInitialEmployeeVersion
+                      }
+                      controlId={controlId}
+                      headingComponent={getNextHeadingComponent(
+                        headingComponent
+                      )}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </MissionReviewSection>
+          </InfoCard>
+        )}
+      </Stack>
     </Box>
   );
 }

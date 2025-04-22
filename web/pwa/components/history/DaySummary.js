@@ -30,7 +30,7 @@ export function DaySummary({
       {hasWorkMissions && (
         <>
           {!controlId && (
-            <InfoCard>
+            <InfoCard elevation={0}>
               {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
                 <DayRegulatoryAlerts
                   day={isoFormatLocalDate(dayStart)}
@@ -55,7 +55,6 @@ export function DaySummary({
         justifyContent="left"
         alignItems={"baseline"}
         spacing={2}
-        my={2}
       >
         {missions
           .filter(m => !!m.isHoliday)
@@ -63,7 +62,7 @@ export function DaySummary({
             <HolidayRecap key={mission.id} mission={mission} />
           ))}
       </Grid>
-      <InfoCard className={infoCardStyles.topMargin}>
+      <InfoCard className={infoCardStyles.topMargin} elevation={0}>
         <MissionReviewSection
           title="Activités de la journée"
           className="no-margin-no-padding"

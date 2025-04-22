@@ -260,6 +260,7 @@ export function Mission({
             infoCardStyles.bottomMargin
           }`}
           textAlign="left"
+          elevation={0}
         >
           <Grid
             container
@@ -313,10 +314,10 @@ export function Mission({
           <InfoCard
             {...(alternateDisplay
               ? {
-                  elevation: 0,
                   className: `${classes.alternateCard} ${infoCardStyles.bottomMargin}`
                 }
               : { className: infoCardStyles.bottomMargin })}
+            elevation={0}
           >
             <ItalicWarningTypography>
               Mission en cours !
@@ -355,17 +356,6 @@ export function Mission({
               size="small"
             />
           </Stack>
-          {!mission.isDeleted && displayContradictory && (
-            <ContradictorySwitch
-              shouldDisplayInitialEmployeeVersion={
-                shouldDisplayInitialEmployeeVersion
-              }
-              setShouldDisplayInitialEmployeeVersion={
-                setShouldDisplayInitialEmployeeVersion
-              }
-              disabled={loadingEmployeeVersion}
-            />
-          )}
           {showMetrics && (
             <WorkTimeSummaryKpiGrid
               loading={loadingEmployeeVersion}
@@ -383,6 +373,17 @@ export function Mission({
               }
             />
           )}
+          {!mission.isDeleted && displayContradictory && (
+            <ContradictorySwitch
+              shouldDisplayInitialEmployeeVersion={
+                shouldDisplayInitialEmployeeVersion
+              }
+              setShouldDisplayInitialEmployeeVersion={
+                setShouldDisplayInitialEmployeeVersion
+              }
+              disabled={loadingEmployeeVersion}
+            />
+          )}
         </PeriodHeader>
         {!displayContradictory && (
           <NoContradictory
@@ -396,6 +397,7 @@ export function Mission({
             loading={loadingEmployeeVersion}
             px={0}
             py={0}
+            elevation={0}
           >
             {MissionDetailsComponent}
           </InfoCard>

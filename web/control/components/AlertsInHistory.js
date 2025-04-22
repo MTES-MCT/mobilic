@@ -9,7 +9,7 @@ import { sanctionComparator } from "../utils/sanctionComparator";
 
 export function AlertsInHistory({ alertsInPeriod }) {
   return (
-    <InfoCard sx={{ marginBottom: 2 }}>
+    <InfoCard sx={{ marginBottom: 2 }} elevation={0}>
       <MissionReviewSection
         title="Infractions calculées par Mobilic"
         titleProps={{ component: "h2", marginBottom: 1 }}
