@@ -76,6 +76,7 @@ const tabs = {
       const mission = missions ? missions[0] : {};
       return mission.name || "Sans nom";
     },
+    renderChip: getDayChip,
     renderPeriod: ({ missionsInPeriod, ...props }) => (
       <Mission
         mission={missionsInPeriod[0]}
@@ -100,6 +101,7 @@ const tabs = {
     ...PERIOD_UNITS.week,
     getTitle: (period, _) => shortPrettyFormatDay(period),
     getSubtitle: (period, _) => `au ${shortPrettyFormatDay(period + DAY * 6)}`,
+    renderChip: getDayChip,
     renderPeriod: props => <Week headingComponent="h2" {...props} />
   },
   month: {
@@ -107,14 +109,15 @@ const tabs = {
     value: "month",
     ...PERIOD_UNITS.month,
     renderPeriod: props => <Month {...props} />,
-    getTitle: (period, missions) => {
+    getTitle: (period, _) => {
       const periodDate = new Date(period * 1000);
       return SHORT_MONTHS[periodDate.getMonth()];
     },
-    getSubtitle: (period, missions) => {
+    getSubtitle: (period, _) => {
       const periodDate = new Date(period * 1000);
       return periodDate.getFullYear();
-    }
+    },
+    renderChip: getDayChip
   }
 };
 
