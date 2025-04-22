@@ -72,7 +72,8 @@ const useStyles = makeStyles(theme => ({
     "&:hover": {
       color: fr.colors.decisions.text.actionHigh.blueFrance.default,
       boxShadow: "inset 0 0 0 1px var(--border-action-high-blue-france)"
-    }
+    },
+    flexShrink: 0
   }
 }));
 
@@ -351,6 +352,7 @@ export function Mission({
               onClick={onDownloadMission}
               title="Télécharger la mission"
               className={classes.downloadButton}
+              size="small"
             />
           </Stack>
           {!mission.isDeleted && displayContradictory && (
