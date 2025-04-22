@@ -21,7 +21,6 @@ import {
 } from "common/utils/activities";
 import { InfoCard, MetricCard } from "../../common/InfoCard";
 import { partition } from "lodash";
-import Stack from "@mui/material/Stack";
 
 export function formatRangeString(startTime, endTime) {
   return getStartOfDay(startTime) === getStartOfDay(endTime - 1)
@@ -31,17 +30,11 @@ export function formatRangeString(startTime, endTime) {
 
 export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {}, loading }) {
   return (
-    <Stack direction="row" spacing={2} sx={{ width: "100%" }}>
+    <Grid container spacing={2}>
       {metrics.map((metric, index) => {
         const CardComponent = metric.render ? InfoCard : MetricCard;
         return (
-          <Box
-            key={index}
-            sx={{
-              width: "50%",
-              display: "flex"
-            }}
-          >
+          <Grid item xs={6} key={index} sx={{ display: "flex" }}>
             <CardComponent
               {...omit(metric, "render")}
               {...cardProps}
@@ -55,10 +48,10 @@ export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {}, loading }) {
             >
               {metric.render && metric.render()}
             </CardComponent>
-          </Box>
+          </Grid>
         );
       })}
-    </Stack>
+    </Grid>
   );
 }
 
@@ -287,7 +280,7 @@ export function renderPeriodKpis(
   } else {
     subText = formatRangeString(kpis.startTime, kpis.endTime);
     let diffText = "";
-    if (!displayEmployee && employeeKpis) {
+    if (!displayEmployee && employeeKpis?.timers) {
       const diffInS = adminKpis.timers.total - employeeKpis.timers.total;
 
       diffText = `${diffInS > 0 ? "+" : "-"} ${formatMinutesFromSeconds(
