@@ -4,17 +4,17 @@ export const HOUR = 3600;
 export const MINUTE = 60;
 export const SHORT_MONTHS = [
   "jan",
-  "fev",
+  "fév",
   "mar",
   "avr",
   "mai",
   "juin",
   "juil",
-  "aou",
+  "aoû",
   "sep",
   "oct",
   "nov",
-  "dec"
+  "déc"
 ];
 const MONTHS = [
   "janvier",

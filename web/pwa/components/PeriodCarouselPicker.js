@@ -4,11 +4,7 @@ import Box from "@mui/material/Box";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import Typography from "@mui/material/Typography";
-import {
-  formatCompleteDayOfWeek,
-  shortPrettyFormatDay
-} from "common/utils/time";
-import { PERIOD_STATUSES } from "common/utils/history/computePeriodStatuses";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   periodContainer: {
@@ -18,6 +14,9 @@ const useStyles = makeStyles(theme => ({
   selectedPeriod: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText
+  },
+  periodBottom: {
+    color: fr.colors.decisions.text.mention.grey.default
   },
   carousel: {
     overflowX: "auto",
@@ -45,65 +44,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const Chip = ({ iconId, selected, selectedSuffix }) => {
-  const selectedClass = ` period-chip-${selectedSuffix}`;
-  return (
-    <span
-      className={`${iconId} fr-icon-sm${selected ? "" : selectedClass}`}
-      aria-hidden="true"
-    ></span>
-  );
-};
-
-const ChipSuccess = ({ selected }) => {
-  return (
-    <Chip
-      iconId="fr-icon-success-fill"
-      selected={selected}
-      selectedSuffix="success"
-    />
-  );
-};
-
-const ChipWait = ({ selected }) => {
-  return (
-    <Chip
-      iconId="fr-icon-time-fill"
-      selected={selected}
-      selectedSuffix="wait"
-    />
-  );
-};
-
-const ChipCurrent = ({ selected }) => {
-  return (
-    <Chip
-      iconId="fr-icon-play-circle-fill"
-      selected={selected}
-      selectedSuffix="current"
-    />
-  );
-};
-
-const renderChip = (periodStatus, selected) => {
-  if (periodStatus === PERIOD_STATUSES.notValidated) {
-    return <ChipCurrent selected={selected} />;
-  }
-  if (periodStatus === PERIOD_STATUSES.notValidatedByAdmin) {
-    return <ChipWait selected={selected} />;
-  }
-  if (periodStatus === PERIOD_STATUSES.fullyValidated) {
-    return <ChipSuccess selected={selected} />;
-  }
-  return null;
-};
-
 export function PeriodCarouselPicker({
   selectedPeriod,
   periods,
   periodStatuses,
   onPeriodChange,
-  renderPeriod,
+  getTitle,
+  getSubtitle,
+  renderChip,
   periodMissionsGetter = () => {}
 }) {
   const classes = useStyles();
@@ -143,6 +91,13 @@ export function PeriodCarouselPicker({
         <Box py={1} mx={1} className={`flex-row ${classes.carousel}`}>
           {periods.map(period => {
             const periodStatus = periodStatuses[period.toString()];
+            const missions = periodMissionsGetter(period);
+            const isPeriodSelected = period === selectedPeriod;
+            const title = getTitle(period, missions);
+            const subtitle = getSubtitle(period, missions);
+            const chip = renderChip
+              ? renderChip(periodStatus, isPeriodSelected)
+              : null;
             return (
               <Box
                 p={1}
@@ -155,18 +110,29 @@ export function PeriodCarouselPicker({
                   onPeriodChange(period);
                 }}
               >
-                {renderPeriod ? (
-                  renderPeriod(period, periodMissionsGetter(period))
-                ) : (
-                  <Box className="flex-column-space-between">
-                    <Typography>
-                      {shortPrettyFormatDay(period)}
-                      {"  "}
-                      {renderChip(periodStatus, period === selectedPeriod)}
-                    </Typography>
-                    <Typography>{formatCompleteDayOfWeek(period)}</Typography>
-                  </Box>
-                )}
+                <Box
+                  className="flex-column-space-between"
+                  sx={{
+                    maxWidth: "140px"
+                  }}
+                >
+                  <Typography>
+                    {title}
+                    {chip && `  `}
+                    {chip}
+                  </Typography>
+                  <Typography
+                    className={`${!isPeriodSelected && classes.periodBottom}`}
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      maxWidth: "100%"
+                    }}
+                  >
+                    {subtitle}
+                  </Typography>
+                </Box>
               </Box>
             );
           })}

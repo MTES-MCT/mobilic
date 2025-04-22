@@ -45,7 +45,8 @@ import {
   shortPrettyFormatDay,
   SHORT_MONTHS,
   startOfDayAsDate,
-  isMoreOrLessTheSameDay
+  isMoreOrLessTheSameDay,
+  formatCompleteDayOfWeek
 } from "common/utils/time";
 import { usePageTitle } from "../../common/UsePageTitle";
 
@@ -63,20 +64,17 @@ import { useHolidays } from "../../common/useHolidays";
 import { LogHolidayButton } from "../../common/LogHolidayButton";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { fr } from "@codegouvfr/react-dsfr";
+import { getDayChip } from "../components/history/Chips";
 
 const tabs = {
   mission: {
     label: "Mission",
     value: "mission",
     ...PERIOD_UNITS.mission,
-    formatPeriod: (period, missions) => {
+    getTitle: (period, _) => shortPrettyFormatDay(period),
+    getSubtitle: (_, missions) => {
       const mission = missions ? missions[0] : {};
-      return (
-        <Box className="flex-column-space-between">
-          <Typography className="bold">{mission.name || "Sans nom"}</Typography>
-          <Typography>{shortPrettyFormatDay(period)}</Typography>
-        </Box>
-      );
+      return mission.name || "Sans nom";
     },
     renderPeriod: ({ missionsInPeriod, ...props }) => (
       <Mission
@@ -90,6 +88,9 @@ const tabs = {
   day: {
     label: "Jour",
     value: "day",
+    getTitle: (period, _) => shortPrettyFormatDay(period),
+    getSubtitle: (period, _) => formatCompleteDayOfWeek(period),
+    renderChip: getDayChip,
     ...PERIOD_UNITS.day,
     renderPeriod: props => <Day headingComponent="h2" {...props} />
   },
@@ -97,24 +98,8 @@ const tabs = {
     label: "Semaine",
     value: "week",
     ...PERIOD_UNITS.week,
-    formatPeriod: (period, missions) => {
-      return (
-        <Box className="flex-column-space-between">
-          <Typography className={missions ? "bold" : ""}>
-            {shortPrettyFormatDay(period)}
-          </Typography>
-          <Typography
-            className={missions ? "bold" : ""}
-            style={{ lineHeight: 0 }}
-          >
-            -
-          </Typography>
-          <Typography className={missions ? "bold" : ""}>
-            {shortPrettyFormatDay(period + DAY * 6)}
-          </Typography>
-        </Box>
-      );
-    },
+    getTitle: (period, _) => shortPrettyFormatDay(period),
+    getSubtitle: (period, _) => `au ${shortPrettyFormatDay(period + DAY * 6)}`,
     renderPeriod: props => <Week headingComponent="h2" {...props} />
   },
   month: {
@@ -122,20 +107,13 @@ const tabs = {
     value: "month",
     ...PERIOD_UNITS.month,
     renderPeriod: props => <Month {...props} />,
-    formatPeriod: (period, missions) => {
+    getTitle: (period, missions) => {
       const periodDate = new Date(period * 1000);
-      return (
-        <Box className="flex-column-space-between">
-          <Typography
-            variant="h5"
-            component="span"
-            style={{ fontWeight: missions ? "bold" : "normal" }}
-          >
-            {SHORT_MONTHS[periodDate.getMonth()]}
-          </Typography>
-          <Typography>{periodDate.getFullYear()}</Typography>
-        </Box>
-      );
+      return SHORT_MONTHS[periodDate.getMonth()];
+    },
+    getSubtitle: (period, missions) => {
+      const periodDate = new Date(period * 1000);
+      return periodDate.getFullYear();
     }
   }
 };
@@ -583,7 +561,7 @@ export function History({
               resetLocation();
             }}
             periodStatuses={periodStatuses[currentTab] || {}}
-            renderPeriod={tabs[currentTab].formatPeriod}
+            {...tabs[currentTab]}
             periodMissionsGetter={period => groupedMissions[period]}
           />
         )}
