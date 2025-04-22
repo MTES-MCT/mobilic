@@ -170,7 +170,9 @@ export function prettyFormatDayHour(unixTimestamp) {
 }
 
 export function formatMinutesFromSeconds(seconds, withSpace = true) {
-  return `${Math.floor(seconds / MINUTE)}${withSpace ? "\u00A0" : ""}min`;
+  return seconds >= HOUR
+    ? formatTimer(seconds)
+    : `${Math.floor(seconds / MINUTE)}${withSpace ? "\u00A0" : ""}min`;
 }
 
 export function textualPrettyFormatWeek(startOfWeek) {
