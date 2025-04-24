@@ -3,6 +3,7 @@ import Typography from "@mui/material/Typography";
 import {
   DAY,
   formatDateTime,
+  formatMinutesFromSeconds,
   formatTimeOfDay,
   formatTimer,
   getStartOfDay,
@@ -29,22 +30,21 @@ export function formatRangeString(startTime, endTime) {
 
 export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {}, loading }) {
   return (
-    <Grid
-      container
-      direction="row"
-      justifyContent="center"
-      alignItems={"baseline"}
-      spacing={2}
-    >
+    <Grid container spacing={2}>
       {metrics.map((metric, index) => {
         const CardComponent = metric.render ? InfoCard : MetricCard;
         return (
-          <Grid key={index} item xs={metric.fullWidth ? 12 : true}>
+          <Grid item xs={6} key={index} sx={{ display: "flex" }}>
             <CardComponent
               {...omit(metric, "render")}
               {...cardProps}
               loading={loading}
               titleProps={{ component: "h2" }}
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column"
+              }}
             >
               {metric.render && metric.render()}
             </CardComponent>
@@ -125,10 +125,13 @@ export function computeTimesAndDurationsFromActivities(
 }
 
 export function renderMissionKpis(
-  kpis,
+  adminKpis,
+  employeeKpis,
+  displayEmployee,
   serviceLabel = "Amplitude",
   showInnerBreaksInsteadOfService = false
 ) {
+  const kpis = displayEmployee && employeeKpis ? employeeKpis : adminKpis;
   const { timers, startTime, endTime, innerLongBreaks } = kpis;
 
   const formattedKpis = [];
@@ -147,10 +150,20 @@ export function renderMissionKpis(
     });
   } else {
     subText = formatRangeString(startTime, endTime);
+    let diffText = "";
+    if (!displayEmployee && employeeKpis) {
+      const diffInS = adminKpis.timers.total - employeeKpis.timers.total;
+
+      diffText = `${diffInS > 0 ? "+" : "-"} ${formatMinutesFromSeconds(
+        Math.abs(diffInS),
+        false
+      )}`;
+    }
     formattedKpis.push({
       label: kpis.innerLongBreaks.length > 0 ? "Durée" : serviceLabel,
       value: formatTimer(timers ? timers.total : 0),
-      subText
+      subText,
+      diffText
     });
   }
 
@@ -242,9 +255,13 @@ export function splitByLongBreaksAndComputePeriodStats(
 }
 
 export function renderPeriodKpis(
-  kpis,
+  adminKpis,
+  employeeKpis,
+  displayEmployee,
   showInnerBreaksInsteadOfService = false
 ) {
+  const kpis = displayEmployee && employeeKpis ? employeeKpis : adminKpis;
+
   const formattedKpis = [];
 
   let subText = null;
@@ -262,11 +279,24 @@ export function renderPeriodKpis(
     });
   } else {
     subText = formatRangeString(kpis.startTime, kpis.endTime);
+    let diffText = "";
+    if (!displayEmployee && employeeKpis?.timers && adminKpis?.timers) {
+      const diffInS = adminKpis.timers.total - employeeKpis.timers.total;
+
+      diffText =
+        diffInS !== 0
+          ? `${diffInS > 0 ? "+" : "-"} ${formatMinutesFromSeconds(
+              Math.abs(diffInS),
+              false
+            )}`
+          : "";
+    }
     formattedKpis.push({
       name: "service",
       label: "Amplitude",
       value: formatTimer(kpis.timers ? kpis.timers.total : 0),
-      subText
+      subText,
+      diffText
     });
   }
 

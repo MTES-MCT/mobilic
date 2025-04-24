@@ -1,22 +1,35 @@
 import Card from "@mui/material/Card";
-import Box from "@mui/material/Box";
 import omit from "lodash/omit";
 import Typography from "@mui/material/Typography";
 import Skeleton from "@mui/material/Skeleton";
 import React from "react";
 import { makeStyles } from "@mui/styles";
+import { fr } from "@codegouvfr/react-dsfr";
+import { Stack } from "@mui/material";
 
 export const useInfoCardStyles = makeStyles(theme => ({
   value: {
-    padding: theme.spacing(1),
     fontWeight: "bold",
-    fontSize: "200%"
+    fontSize: "2rem",
+    lineHeight: "2.2rem"
   },
   topMargin: {
     marginTop: theme.spacing(4)
   },
   bottomMargin: {
     marginBottom: theme.spacing(4)
+  },
+  subText: {
+    fontSize: "0.875rem",
+    color: fr.colors.decisions.text.mention.grey.default
+  },
+  diffText: {
+    fontSize: "0.875rem",
+    fontWeight: "bold",
+    color: theme.palette.primary.main
+  },
+  title: {
+    color: fr.colors.decisions.background.flat.grey.default
   }
 }));
 
@@ -30,16 +43,26 @@ export function InfoCard({
   textAlign = "justify",
   ...other
 }) {
+  const classes = useInfoCardStyles();
   return (
     <Card {...other}>
-      <Box px={px} py={py} m={"auto"} style={{ textAlign }}>
-        {title && <Typography {...titleProps}>{title}</Typography>}
+      <Stack
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        sx={{ height: "100%", paddingY: 2 }}
+      >
+        {title && (
+          <Typography {...titleProps} className={classes.title}>
+            {title}
+          </Typography>
+        )}
         {loading ? (
           <Skeleton variant="rectangular" width="100%" height={100} />
         ) : (
           children
         )}
-      </Box>
+      </Stack>
     </Card>
   );
 }
@@ -48,6 +71,7 @@ export function MetricCard({
   label,
   value,
   subText,
+  diffText = "",
   hideSubText,
   titleProps = {},
   valueProps = {},
@@ -70,10 +94,11 @@ export function MetricCard({
       >
         {value}
       </Typography>
-      {subText && (
-        <Typography className={hideSubText && "hidden"} variant="caption">
-          {subText}
-        </Typography>
+      {subText && !hideSubText && (
+        <Typography className={classes.subText}>{subText}</Typography>
+      )}
+      {diffText && (
+        <Typography className={classes.diffText}>{diffText}</Typography>
       )}
     </InfoCard>
   );
