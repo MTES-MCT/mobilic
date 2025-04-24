@@ -19,7 +19,7 @@ export function ContradictorySwitch({
   return (
     <Grid container spacing={0} alignItems="center" wrap="nowrap">
       <SegmentedControl
-        legend=""
+        legend="Version du contradictoire"
         small
         className="segmented-control-contrast"
         classes={{

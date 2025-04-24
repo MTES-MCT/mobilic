@@ -240,7 +240,7 @@ export function ActivityList({
       )}
       {canDisplayChart && (
         <SegmentedControl
-          legend=""
+          legend="Options de visualisation"
           small
           classes={{
             root: classes.switch
