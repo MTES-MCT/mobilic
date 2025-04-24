@@ -82,6 +82,7 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
       validations {
         id
         isAdmin
+        isAuto
         userId
         receptionTime
         missionId
@@ -326,6 +327,7 @@ export const CONTROLLER_READ_MISSION_DETAILS = gql`
         validations {
           id
           isAdmin
+          isAuto
           userId
           receptionTime
           missionId
@@ -763,6 +765,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 submitterId
                 receptionTime
                 isAdmin
+                isAuto
                 userId
               }
               vehicle {
@@ -812,6 +815,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 submitterId
                 receptionTime
                 isAdmin
+                isAuto
                 userId
               }
               vehicle {
