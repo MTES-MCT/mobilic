@@ -49,6 +49,7 @@ export function InfoCard({
       <Stack
         direction="column"
         justifyContent="center"
+        alignItems="center"
         sx={{ height: "100%", paddingY: 2 }}
       >
         {title && (
