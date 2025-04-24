@@ -283,10 +283,13 @@ export function renderPeriodKpis(
     if (!displayEmployee && employeeKpis?.timers && adminKpis?.timers) {
       const diffInS = adminKpis.timers.total - employeeKpis.timers.total;
 
-      diffText = `${diffInS > 0 ? "+" : "-"} ${formatMinutesFromSeconds(
-        Math.abs(diffInS),
-        false
-      )}`;
+      diffText =
+        diffInS !== 0
+          ? `${diffInS > 0 ? "+" : "-"} ${formatMinutesFromSeconds(
+              Math.abs(diffInS),
+              false
+            )}`
+          : "";
     }
     formattedKpis.push({
       name: "service",
