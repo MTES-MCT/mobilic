@@ -280,7 +280,7 @@ export function renderPeriodKpis(
   } else {
     subText = formatRangeString(kpis.startTime, kpis.endTime);
     let diffText = "";
-    if (!displayEmployee && employeeKpis?.timers) {
+    if (!displayEmployee && employeeKpis?.timers && adminKpis?.timers) {
       const diffInS = adminKpis.timers.total - employeeKpis.timers.total;
 
       diffText = `${diffInS > 0 ? "+" : "-"} ${formatMinutesFromSeconds(
