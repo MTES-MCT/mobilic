@@ -37,7 +37,6 @@ export function ContradictorySwitch({
           },
           {
             label: "Salarié",
-            iconId: "fr-icon-user-line",
             nativeInputProps: {
               disabled: disabled,
               onChange: () => setShouldDisplayInitialEmployeeVersion(true),

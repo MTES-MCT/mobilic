@@ -1,3 +1,10 @@
+.fr-segmented__elements .fr-segmented__element label {
+    min-width: 110px;
+    display: flex;
+    justify-content: center;
+
+}
+
 .segmented-control-contrast .fr-segmented__element label {
     color: white;
 }
