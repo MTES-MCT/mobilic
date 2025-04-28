@@ -1,8 +1,7 @@
-.fr-segmented__elements .fr-segmented__element label {
+.segmented-control-contrast .fr-segmented__element label {
     min-width: 110px;
     display: flex;
     justify-content: center;
-
 }
 
 .segmented-control-contrast .fr-segmented__element label {
@@ -16,4 +15,8 @@
 .segmented-control-contrast .fr-segmented__element input:checked + label {
     color: white;
     box-shadow: inset 0 0 0 1px white;
+}
+
+.segmented-control-contrast .fr-segmented__element input + label:hover {
+    background-color: transparent !important;
 }
