@@ -86,6 +86,7 @@ export function MetricCard({
       textAlign="center"
       {...other}
       titleProps={titleProps}
+      centered
     >
       <Typography
         className={`${classes.value} ${valueProps.className}`}
