@@ -41,6 +41,7 @@ export function InfoCard({
   px = 2,
   py = 1,
   textAlign = "justify",
+  centered = false,
   ...other
 }) {
   const classes = useInfoCardStyles();
@@ -50,6 +51,7 @@ export function InfoCard({
         direction="column"
         justifyContent="center"
         sx={{ height: "100%", paddingY: 2 }}
+        {...(centered ? { alignItems: "center" } : {})}
       >
         {title && (
           <Typography {...titleProps} className={classes.title}>

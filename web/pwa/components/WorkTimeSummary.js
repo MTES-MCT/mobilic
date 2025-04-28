@@ -43,8 +43,10 @@ export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {}, loading }) {
               sx={{
                 flex: 1,
                 display: "flex",
-                flexDirection: "column"
+                flexDirection: "column",
+                alignItems: "center"
               }}
+              centered
             >
               {metric.render && metric.render()}
             </CardComponent>
