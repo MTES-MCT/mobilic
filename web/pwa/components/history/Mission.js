@@ -269,6 +269,7 @@ export function Mission({
             alignItems="center"
             wrap="nowrap"
             onClick={() => setOpen(!open)}
+            px={2}
           >
             <Grid item>
               <Typography
