@@ -21,12 +21,13 @@ export const useInfoCardStyles = makeStyles(theme => ({
   },
   subText: {
     fontSize: "0.875rem",
-    color: fr.colors.decisions.text.mention.grey.default,
+    color: fr.colors.decisions.background.flat.grey.default,
     fontWeight: 700
   },
   diffText: {
     fontSize: "0.75rem",
-    fontWeight: 400
+    fontWeight: 400,
+    color: fr.colors.decisions.background.flat.grey.default
   },
   diffTextValue: {
     fontSize: "0.875rem",
