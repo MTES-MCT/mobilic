@@ -4,7 +4,7 @@ import { Description } from "../common/typography/Description";
 
 export function RegulatoryTextDayBeforeAndAfter() {
   return (
-    <Description sx={{ marginY: 1 }}>
+    <Description sx={{ marginY: 1, textAlign: "left" }}>
       Les seuils affichés prennent en compte le temps de travail du jour suivant
       et du jour précédent.
     </Description>
@@ -13,7 +13,7 @@ export function RegulatoryTextDayBeforeAndAfter() {
 
 export function RegulatoryTextWeekBeforeAndAfter() {
   return (
-    <Description sx={{ marginY: 1 }}>
+    <Description sx={{ marginY: 1, textAlign: "left" }}>
       Les seuils hebdomadaires prennent en compte le temps de travail de la
       semaine complète.
     </Description>

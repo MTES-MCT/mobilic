@@ -82,9 +82,10 @@ export function ContradictoryChanges({
     return classes.missionEvent;
   };
 
-  const changesHistory = contradictoryInfo[1];
-  const loadingEmployeeVersion = contradictoryInfo[2];
-  const contradictoryComputationError = contradictoryInfo[5];
+  const changesHistory = contradictoryInfo.eventsHistory;
+  const loadingEmployeeVersion = contradictoryInfo.isComputingContradictory;
+  const contradictoryComputationError =
+    contradictoryInfo.contradictoryComputationError;
 
   const userChangesHistory = changesHistory.filter(
     c =>

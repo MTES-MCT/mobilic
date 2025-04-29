@@ -140,7 +140,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
           isEmployee: !isAdmin,
           timezoneName: timezone,
           wayHeardOfMobilic: wayHeardOfMobilic,
-          ...(isAdmin && phoneNumber ? { phoneNumber } : {}),
+          phoneNumber,
           acceptCgu: true
         };
         if (employeeInvite) {
@@ -299,50 +299,53 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                   pour vous contacter à des fins d’aide à la prise en main."
                             sx={{ marginBottom: 3 }}
                           />
+                          <WayHeardOfMobilic
+                            setWayHeardOfMobilic={setWayHeardOfMobilic}
+                            touched={touched}
+                            required
+                          />
+                          <Checkbox
+                            legend=""
+                            options={[
+                              {
+                                label:
+                                  "Je m’oppose à ce que mon adresse e-mail soit utilisée pour recevoir la lettre d'information, les informations sur les nouvelles fonctionnalités et les dates de formation gestionnaire.",
+                                nativeInputProps: {
+                                  value: !subscribeToNewsletter,
+                                  onChange: () =>
+                                    setSubscribeToNewsletter(
+                                      !subscribeToNewsletter
+                                    )
+                                }
+                              }
+                            ]}
+                          />
                         </>
                       )}
-                      {isAdmin && (
-                        <WayHeardOfMobilic
-                          setWayHeardOfMobilic={setWayHeardOfMobilic}
-                          touched={touched}
-                          required
-                        />
-                      )}
                       {!isAdmin && (
-                        <Checkbox
-                          legend=""
-                          options={[
-                            {
-                              label:
-                                "En cochant cette case, j'accepte que mon adresse e-mail soit utilisée pour m'envoyer la lettre d'information Mobilic et pour me contacter en cas de besoin d'assistance technique.",
-                              nativeInputProps: {
-                                value: subscribeToNewsletter,
-                                onChange: () =>
-                                  setSubscribeToNewsletter(
-                                    !subscribeToNewsletter
-                                  )
+                        <>
+                          <PhoneNumber
+                            currentPhoneNumber={phoneNumber}
+                            setCurrentPhoneNumber={setPhoneNumber}
+                            label="Numéro de téléphone"
+                          />
+                          <Checkbox
+                            legend=""
+                            options={[
+                              {
+                                label:
+                                  "En cochant cette case, j'accepte que mon adresse e-mail soit utilisée pour m'envoyer la lettre d'information Mobilic et pour me contacter en cas de besoin d'assistance technique.",
+                                nativeInputProps: {
+                                  value: subscribeToNewsletter,
+                                  onChange: () =>
+                                    setSubscribeToNewsletter(
+                                      !subscribeToNewsletter
+                                    )
+                                }
                               }
-                            }
-                          ]}
-                        />
-                      )}
-                      {isAdmin && (
-                        <Checkbox
-                          legend=""
-                          options={[
-                            {
-                              label:
-                                "Je m’oppose à ce que mon adresse e-mail soit utilisée pour recevoir la lettre d'information, les informations sur les nouvelles fonctionnalités et les dates de formation gestionnaire.",
-                              nativeInputProps: {
-                                value: !subscribeToNewsletter,
-                                onChange: () =>
-                                  setSubscribeToNewsletter(
-                                    !subscribeToNewsletter
-                                  )
-                              }
-                            }
-                          ]}
-                        />
+                            ]}
+                          />
+                        </>
                       )}
                       <Box my={4}>
                         <LoadingButton
