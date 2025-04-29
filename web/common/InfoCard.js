@@ -21,9 +21,14 @@ export const useInfoCardStyles = makeStyles(theme => ({
   },
   subText: {
     fontSize: "0.875rem",
-    color: fr.colors.decisions.text.mention.grey.default
+    color: fr.colors.decisions.text.mention.grey.default,
+    fontWeight: 700
   },
   diffText: {
+    fontSize: "0.75rem",
+    fontWeight: 400
+  },
+  diffTextValue: {
     fontSize: "0.875rem",
     fontWeight: "bold",
     color: theme.palette.primary.main
@@ -100,7 +105,10 @@ export function MetricCard({
         <Typography className={classes.subText}>{subText}</Typography>
       )}
       {diffText && (
-        <Typography className={classes.diffText}>{diffText}</Typography>
+        <Typography>
+          <span className={classes.diffText}>Modif : </span>
+          <span className={classes.diffTextValue}>{diffText}</span>
+        </Typography>
       )}
     </InfoCard>
   );
