@@ -13,9 +13,6 @@ export const useInfoCardStyles = makeStyles(theme => ({
     fontSize: "2rem",
     lineHeight: "2.2rem"
   },
-  topMargin: {
-    marginTop: theme.spacing(4)
-  },
   bottomMargin: {
     marginBottom: theme.spacing(4)
   },

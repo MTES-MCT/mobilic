@@ -394,7 +394,6 @@ export function Mission({
         )}
         {showMetrics ? (
           <InfoCard
-            className={infoCardStyles.topMargin}
             loading={loadingEmployeeVersion}
             px={0}
             py={0}

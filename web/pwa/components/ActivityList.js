@@ -235,9 +235,11 @@ export function ActivityList({
   return (
     <Container ref={ref} maxWidth={false} disableGutters>
       {hasActivitiesBeforeMinTime && (
-        <Description>
-          Les activités avant minuit le jour précédent ne sont pas incluses.
-        </Description>
+        <Box textAlign="left">
+          <Description>
+            Les activités avant minuit le jour précédent ne sont pas incluses.
+          </Description>
+        </Box>
       )}
       {canDisplayChart && (
         <Box my={1} textAlign="left">

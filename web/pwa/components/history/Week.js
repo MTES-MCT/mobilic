@@ -65,9 +65,6 @@ export function Week({
   }, [hasWorkMissions, stats]);
   return (
     <div>
-      {alertsInPeriod && alertsInPeriod.length > 0 && (
-        <AlertsInHistory alertsInPeriod={alertsInPeriod} />
-      )}
       {missionsDeleted.length > 0 && (
         <Notice
           type="warning"
@@ -78,7 +75,10 @@ export function Week({
       <PeriodHeader>
         <WorkTimeSummaryKpiGrid metrics={kpis} />
       </PeriodHeader>
-      <Stack direction="column" px={2}>
+      <Stack direction="column" px={2} pt={2}>
+        {alertsInPeriod && alertsInPeriod.length > 0 && (
+          <AlertsInHistory alertsInPeriod={alertsInPeriod} />
+        )}
         {hasWorkMissions && !controlId && (
           <InfoCard elevation={0}>
             <WeekRegulatoryAlerts

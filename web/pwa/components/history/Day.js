@@ -144,9 +144,6 @@ export function Day({
   );
   return (
     <Box>
-      {alertsInPeriod && alertsInPeriod.length > 0 && (
-        <AlertsInHistory alertsInPeriod={alertsInPeriod} />
-      )}
       <PeriodHeader
         title1="Journée du"
         title2={textualPrettyFormatDay(selectedPeriodStart)}
@@ -190,7 +187,10 @@ export function Day({
         />
       )}
 
-      <Stack direction="column" px={2}>
+      <Stack direction="column" px={2} pt={2} rowGap={2}>
+        {alertsInPeriod && alertsInPeriod.length > 0 && (
+          <AlertsInHistory alertsInPeriod={alertsInPeriod} />
+        )}
         {missionsInPeriod.length !== missionsDeleted.length && (
           <DaySummary
             activitiesWithNextAndPreviousDay={userActivitiesToUse}
