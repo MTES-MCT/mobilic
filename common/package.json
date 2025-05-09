@@ -5,13 +5,13 @@
   "dependencies": {
     "@apollo/client": "^3.5.10",
     "@date-io/date-fns": "1.x",
-    "@mui/icons-material": "^5.4.2",
+    "@mui/icons-material": "^7.0.0",
     "apollo-link-timeout": "^4.0.0",
     "classnames": "^2.2.6",
     "date-fns": "^2.11.1",
     "graphql-tag": "^2.10.3",
     "jwt-decode": "^2.2.0",
     "react": "^18.3.1",
-    "react-router-dom": "^5.1.2"
+    "react-router-dom": "^6.0.0"
   }
 }
