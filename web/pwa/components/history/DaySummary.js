@@ -3,7 +3,7 @@ import { MissionReviewSection } from "../MissionReviewSection";
 import { ActivityList } from "../ActivityList";
 import React from "react";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
-import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
+import { InfoCard } from "../../../common/InfoCard";
 import { DayRegulatoryAlerts } from "../../../regulatory/DayRegulatoryAlerts";
 import { HolidayRecap } from "./HolidayRecap";
 import Grid from "@mui/material/Grid";
@@ -18,7 +18,6 @@ export function DaySummary({
   controlId = null
 }) {
   const dayEnd = dayStart + DAY;
-  const infoCardStyles = useInfoCardStyles();
 
   const hasWorkMissions = React.useMemo(
     () => missions.filter(mission => !mission.isHoliday).length > 0,
@@ -62,7 +61,7 @@ export function DaySummary({
             <HolidayRecap key={mission.id} mission={mission} />
           ))}
       </Grid>
-      <InfoCard className={infoCardStyles.topMargin} elevation={0}>
+      <InfoCard elevation={0}>
         <MissionReviewSection
           title="Activités de la journée"
           className="no-margin-no-padding"
