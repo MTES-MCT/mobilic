@@ -67,20 +67,26 @@ const NoAdminValidation = () => (
   />
 );
 
-export const MissionValidations = ({ mission }) => {
+export const MissionValidations = ({ mission, userId }) => {
   const doNotDisplayValidations = mission.isDeleted && !mission.complete;
 
   if (doNotDisplayValidations) {
     return;
   }
+
+  // Should we use getWorkerValidationForUser ?
   const employeeValidation = mission.validations.find(
     validation => !validation.isAdmin
   );
-  const adminAutoValidation = mission.validations.find(
-    validation => validation.isAdmin && validation.isAuto
+
+  const adminValidations = mission.validations.filter(
+    v => v.isAdmin && (!v.userId || v.userId === userId)
   );
-  const adminManualValidation = mission.validations.find(
-    validation => validation.isAdmin && !validation.isAuto
+  const adminAutoValidation = adminValidations.find(
+    validation => validation.isAuto
+  );
+  const adminManualValidation = adminValidations.find(
+    validation => !validation.isAuto
   );
   return (
     <Stack direction="column" textAlign="left">

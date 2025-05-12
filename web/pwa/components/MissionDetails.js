@@ -228,7 +228,9 @@ export function MissionDetails({
   return (
     <AlternateColors inverseColors={inverseColors}>
       <MissionReviewSection title="Historique des validations">
-        {mission.validations && <MissionValidations mission={mission} />}
+        {mission.validations && (
+          <MissionValidations mission={mission} userId={userId} />
+        )}
       </MissionReviewSection>
       <MissionReviewSection
         title="Activités"
