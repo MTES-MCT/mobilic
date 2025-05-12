@@ -6,20 +6,17 @@ import { Mission } from "./Mission";
 import Box from "@mui/material/Box";
 import { DaySummary } from "./DaySummary";
 import { useToggleContradictory } from "./toggleContradictory";
-import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
+import { InfoCard } from "../../../common/InfoCard";
 import { ContradictorySwitch } from "../ContradictorySwitch";
-import { makeStyles } from "@mui/styles";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
-import { prettyFormatDay } from "common/utils/time";
+import { prettyFormatDay, textualPrettyFormatDay } from "common/utils/time";
 import { getNextHeadingComponent } from "common/utils/html";
 import { AlertsInHistory } from "../../../control/components/AlertsInHistory";
 import Notice from "../../../common/Notice";
-
-export const useStyles = makeStyles(theme => ({
-  contradictorySwitch: {
-    marginBottom: theme.spacing(1)
-  }
-}));
+import { DayKpis } from "./DayKpis";
+import { NoContradictory } from "./NoContradictory";
+import { PeriodHeader } from "./PeriodHeader";
+import { Stack } from "@mui/material";
 
 export function Day({
   missionsInPeriod,
@@ -42,9 +39,6 @@ export function Day({
   headingComponent,
   alertsInPeriod = null
 }) {
-  const infoCardStyles = useInfoCardStyles();
-  const classes = useStyles();
-
   const [
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion
@@ -75,15 +69,14 @@ export function Day({
     }
   }, [missionsDeleted]);
 
-  const [
-    missionResourcesToUse,
-    // eslint-disable-next-line no-unused-vars
-    _,
-    loadingEmployeeVersion,
+  const {
+    employeeVersion,
+    adminVersion,
+    isComputingContradictory: loadingEmployeeVersion,
     hasComputedContradictory,
     contradictoryIsEmpty,
     contradictoryComputationError
-  ] = useToggleContradictory(
+  } = useToggleContradictory(
     canDisplayContradictoryVersions,
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion,
@@ -92,16 +85,44 @@ export function Day({
     controlId
   );
 
-  const userActivitiesToUse = [
-    ...missionResourcesToUse.activities.filter(
-      a => a.userId === userId && !a.isMissionDeleted
-    ),
-    ...activitiesWithNextAndPreviousDay.filter(
-      a =>
-        !missionsInPeriod.map(m => m.id).includes(a.missionId) &&
-        !a.isMissionDeleted
-    )
-  ];
+  const employeeVersionUserActivitiesToUse = React.useMemo(
+    () =>
+      employeeVersion?.activities
+        ? [
+            ...employeeVersion?.activities?.filter(
+              a => a.userId === userId && !a.isMissionDeleted
+            ),
+            ...activitiesWithNextAndPreviousDay.filter(
+              a =>
+                !missionsInPeriod.map(m => m.id).includes(a.missionId) &&
+                !a.isMissionDeleted
+            )
+          ]
+        : undefined,
+    [employeeVersion]
+  );
+
+  const adminVersionUserActivitiesToUse = React.useMemo(
+    () => [
+      ...adminVersion?.activities?.filter(
+        a => a.userId === userId && !a.isMissionDeleted
+      ),
+      ...activitiesWithNextAndPreviousDay.filter(
+        a =>
+          !missionsInPeriod.map(m => m.id).includes(a.missionId) &&
+          !a.isMissionDeleted
+      )
+    ],
+    [adminVersion]
+  );
+
+  const userActivitiesToUse = React.useMemo(
+    () =>
+      shouldDisplayInitialEmployeeVersion
+        ? employeeVersionUserActivitiesToUse
+        : adminVersionUserActivitiesToUse,
+    [employeeVersion, adminVersion, shouldDisplayInitialEmployeeVersion]
+  );
 
   React.useEffect(() => {
     if (!canDisplayContradictoryVersions && shouldDisplayInitialEmployeeVersion)
@@ -112,99 +133,133 @@ export function Day({
     () => missionsInPeriod.filter(mission => !mission.isHoliday),
     [missionsInPeriod]
   );
+
+  const contradictoryNotYetAvailable = !canDisplayContradictoryVersions;
+  const emptyContradictory = hasComputedContradictory && contradictoryIsEmpty;
+
+  const displayContradictory = !(
+    contradictoryNotYetAvailable ||
+    contradictoryComputationError ||
+    emptyContradictory
+  );
   return (
     <Box>
-      {alertsInPeriod && alertsInPeriod.length > 0 && (
-        <AlertsInHistory alertsInPeriod={alertsInPeriod} />
-      )}
-      {missionsDeleted.length > 0 ? (
-        <Notice
-          type="warning"
-          sx={{ marginBottom: 2 }}
-          description={missionsDeletedWarning}
+      <PeriodHeader
+        title1="Journée du"
+        title2={textualPrettyFormatDay(selectedPeriodStart)}
+      >
+        <DayKpis
+          adminActivitiesWithNextAndPreviousDay={
+            adminVersionUserActivitiesToUse
+          }
+          employeeActivitiesWithNextAndPreviousDay={
+            employeeVersionUserActivitiesToUse
+          }
+          displayEmployee={shouldDisplayInitialEmployeeVersion}
+          dayStart={selectedPeriodStart}
+          loading={loadingEmployeeVersion}
+          missions={missionsInPeriod}
         />
-      ) : (
-        <ContradictorySwitch
-          contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
-          disabled={loadingEmployeeVersion}
-          emptyContradictory={hasComputedContradictory && contradictoryIsEmpty}
-          className={classes.contradictorySwitch}
-          shouldDisplayInitialEmployeeVersion={
-            shouldDisplayInitialEmployeeVersion
-          }
-          setShouldDisplayInitialEmployeeVersion={
-            setShouldDisplayInitialEmployeeVersion
-          }
+        {missionsDeleted.length > 0 ? (
+          <Notice
+            type="warning"
+            sx={{ marginBottom: 2 }}
+            description={missionsDeletedWarning}
+          />
+        ) : (
+          displayContradictory && (
+            <ContradictorySwitch
+              disabled={loadingEmployeeVersion}
+              shouldDisplayInitialEmployeeVersion={
+                shouldDisplayInitialEmployeeVersion
+              }
+              setShouldDisplayInitialEmployeeVersion={
+                setShouldDisplayInitialEmployeeVersion
+              }
+            />
+          )
+        )}
+      </PeriodHeader>
+      {!displayContradictory && (
+        <NoContradictory
+          contradictoryNotYetAvailable={contradictoryNotYetAvailable}
           contradictoryComputationError={contradictoryComputationError}
         />
       )}
 
-      {missionsInPeriod.length !== missionsDeleted.length && (
-        <DaySummary
-          activitiesWithNextAndPreviousDay={userActivitiesToUse}
-          isDayEnded={true}
-          dayStart={selectedPeriodStart}
-          loading={loadingEmployeeVersion}
-          userId={userId}
-          shouldDisplayInitialEmployeeVersion={
-            shouldDisplayInitialEmployeeVersion
-          }
-          missions={missionsInPeriod}
-          controlId={controlId}
-        />
-      )}
-      {missionsToDetail.length > 0 && (
-        <InfoCard className={infoCardStyles.topMargin}>
-          <MissionReviewSection
-            title="Détail par mission"
-            className="no-margin-no-padding"
-            titleProps={{ component: headingComponent }}
-          >
-            <List>
-              {missionsToDetail.map(mission => (
-                <ListItem
-                  key={mission.id}
-                  style={{
-                    display: "block",
-                    paddingLeft: 0,
-                    paddingRight: 0
-                  }}
-                >
-                  <Mission
-                    mission={mission}
-                    currentMission={currentMission}
-                    alternateDisplay
-                    collapsable
-                    defaultOpenCollapse={
-                      missionsInPeriod.length === 1 &&
-                      missionsDeleted.length === 1
-                    }
-                    showMetrics={false}
-                    editActivityEvent={editActivityEvent}
-                    createActivity={createActivity}
-                    editExpenditures={editExpenditures}
-                    editVehicle={editVehicle}
-                    validateMission={validateMission}
-                    logComment={logComment}
-                    cancelComment={cancelComment}
-                    coworkers={coworkers}
-                    vehicles={vehicles}
-                    userId={userId}
-                    fromTime={selectedPeriodStart}
-                    untilTime={selectedPeriodEnd}
-                    registerKilometerReading={registerKilometerReading}
-                    controlledShouldDisplayInitialEmployeeVersion={
-                      shouldDisplayInitialEmployeeVersion
-                    }
-                    controlId={controlId}
-                    headingComponent={getNextHeadingComponent(headingComponent)}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </MissionReviewSection>
-        </InfoCard>
-      )}
+      <Stack direction="column" px={2} pt={2} rowGap={2}>
+        {alertsInPeriod && alertsInPeriod.length > 0 && (
+          <AlertsInHistory alertsInPeriod={alertsInPeriod} />
+        )}
+        {missionsInPeriod.length !== missionsDeleted.length && (
+          <DaySummary
+            activitiesWithNextAndPreviousDay={userActivitiesToUse}
+            isDayEnded={true}
+            dayStart={selectedPeriodStart}
+            loading={loadingEmployeeVersion}
+            userId={userId}
+            shouldDisplayInitialEmployeeVersion={
+              shouldDisplayInitialEmployeeVersion
+            }
+            missions={missionsInPeriod}
+            controlId={controlId}
+          />
+        )}
+        {missionsToDetail.length > 0 && (
+          <InfoCard elevation={0}>
+            <MissionReviewSection
+              title="Détail par mission"
+              className="no-margin-no-padding"
+              titleProps={{ component: headingComponent }}
+            >
+              <List>
+                {missionsToDetail.map(mission => (
+                  <ListItem
+                    key={mission.id}
+                    style={{
+                      display: "block",
+                      paddingLeft: 0,
+                      paddingRight: 0
+                    }}
+                  >
+                    <Mission
+                      mission={mission}
+                      currentMission={currentMission}
+                      alternateDisplay
+                      collapsable
+                      defaultOpenCollapse={
+                        missionsInPeriod.length === 1 &&
+                        missionsDeleted.length === 1
+                      }
+                      showMetrics={false}
+                      editActivityEvent={editActivityEvent}
+                      createActivity={createActivity}
+                      editExpenditures={editExpenditures}
+                      editVehicle={editVehicle}
+                      validateMission={validateMission}
+                      logComment={logComment}
+                      cancelComment={cancelComment}
+                      coworkers={coworkers}
+                      vehicles={vehicles}
+                      userId={userId}
+                      fromTime={selectedPeriodStart}
+                      untilTime={selectedPeriodEnd}
+                      registerKilometerReading={registerKilometerReading}
+                      controlledShouldDisplayInitialEmployeeVersion={
+                        shouldDisplayInitialEmployeeVersion
+                      }
+                      controlId={controlId}
+                      headingComponent={getNextHeadingComponent(
+                        headingComponent
+                      )}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </MissionReviewSection>
+          </InfoCard>
+        )}
+      </Stack>
     </Box>
   );
 }

@@ -1,4 +1,5 @@
 @use 'InfractionDay.scss';
+@use 'SegmentedControl.scss';
 
 .flex-column {
   display: flex !important;
@@ -465,6 +466,24 @@ video:not([href])[controls] {
 }
 .fr-btn--icon-right[class^="fr-icon-"]::after, .fr-btn--icon-right[class*=" fr-icon-"]::after, .fr-btn--icon-right[class^="fr-fi-"]::after, .fr-btn--icon-right[class*=" fr-fi-"]::after {
   --icon-size: 1.3rem
+}
+
+.fr-icon-sm {
+  &::before {
+    --icon-size: 1rem
+  }
+}
+
+.period-chip-success {
+  color: #18753C
+}
+
+.period-chip-wait {
+  color: #B34000
+}
+
+.period-chip-current {
+  color: #3965EA
 }
 
 .fr-modal__footer {

@@ -48,6 +48,6 @@ export const ALERT_TYPE_PROPS_SIMPLER = {
     rule: REGULATION_RULES.weeklyWork
   },
   [ALERT_TYPES.enoughBreak]: {
-    rule: REGULATION_RULES.weeklyWork
+    rule: REGULATION_RULES.dailyRest
   }
 };

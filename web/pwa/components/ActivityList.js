@@ -26,10 +26,10 @@ import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import { VerticalTimeline } from "common/components/VerticalTimeline";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import ToggleButton from "@mui/material/ToggleButton";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import { Description } from "../../common/typography/Description";
+import { SegmentedControl } from "@codegouvfr/react-dsfr/SegmentedControl";
+import { Box } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   longBreak: {
@@ -39,17 +39,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: props.color,
     color: theme.palette.primary.contrastText
   }),
-  toggleContainer: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2)
-  },
-  pieContainer: {
-    maxWidth: 300,
-    margin: "auto"
-  },
-  blurred: {
-    opacity: 0.3
-  },
   switch: {
     "& .MuiSwitch-thumb": {
       color: theme.palette.secondary.main
@@ -246,30 +235,46 @@ export function ActivityList({
   return (
     <Container ref={ref} maxWidth={false} disableGutters>
       {hasActivitiesBeforeMinTime && (
-        <Description>
-          Les activités avant minuit le jour précédent ne sont pas incluses.
-        </Description>
+        <Box textAlign="left">
+          <Description>
+            Les activités avant minuit le jour précédent ne sont pas incluses.
+          </Description>
+        </Box>
       )}
       {canDisplayChart && (
-        <ToggleButtonGroup
-          className={classes.toggleContainer}
-          value={view}
-          exclusive
-          onChange={(e, newView) => {
-            if (newView) setView(newView);
-          }}
-          size="small"
-        >
-          <ToggleButton key="list" value="list">
-            Liste
-          </ToggleButton>
-          <ToggleButton key="timeline" value="timeline">
-            Frise
-          </ToggleButton>
-          <ToggleButton key="chart" value="chart">
-            Global
-          </ToggleButton>
-        </ToggleButtonGroup>
+        <Box my={1} textAlign="left">
+          <SegmentedControl
+            legend="Options de visualisation"
+            small
+            classes={{
+              root: classes.switch
+            }}
+            hideLegend
+            segments={[
+              {
+                label: "Liste",
+                nativeInputProps: {
+                  onChange: () => setView("list"),
+                  checked: view === "list"
+                }
+              },
+              {
+                label: "Frise",
+                nativeInputProps: {
+                  onChange: () => setView("timeline"),
+                  checked: view === "timeline"
+                }
+              },
+              {
+                label: "Global",
+                nativeInputProps: {
+                  onChange: () => setView("chart"),
+                  checked: view === "chart"
+                }
+              }
+            ]}
+          />
+        </Box>
       )}
       {(view === "list" || !canDisplayChart) && (
         <List dense>

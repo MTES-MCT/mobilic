@@ -1,14 +1,9 @@
-import {
-  renderPeriodKpis,
-  splitByLongBreaksAndComputePeriodStats,
-  WorkTimeSummaryKpiGrid
-} from "../WorkTimeSummary";
 import { ItalicWarningTypography } from "./ItalicWarningTypography";
 import { MissionReviewSection } from "../MissionReviewSection";
 import { ActivityList } from "../ActivityList";
 import React from "react";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
-import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
+import { InfoCard } from "../../../common/InfoCard";
 import { DayRegulatoryAlerts } from "../../../regulatory/DayRegulatoryAlerts";
 import { HolidayRecap } from "./HolidayRecap";
 import Grid from "@mui/material/Grid";
@@ -18,19 +13,11 @@ export function DaySummary({
   activitiesWithNextAndPreviousDay,
   dayStart,
   userId,
-  loading = false,
   shouldDisplayInitialEmployeeVersion = false,
   missions,
   controlId = null
 }) {
   const dayEnd = dayStart + DAY;
-  const infoCardStyles = useInfoCardStyles();
-
-  const stats = splitByLongBreaksAndComputePeriodStats(
-    activitiesWithNextAndPreviousDay,
-    dayStart,
-    dayEnd
-  );
 
   const hasWorkMissions = React.useMemo(
     () => missions.filter(mission => !mission.isHoliday).length > 0,
@@ -41,14 +28,8 @@ export function DaySummary({
     <>
       {hasWorkMissions && (
         <>
-          <WorkTimeSummaryKpiGrid
-            loading={loading}
-            metrics={renderPeriodKpis(stats, true)
-              .filter(kpi => kpi.name !== "workedDays")
-              .filter(kpi => kpi.name !== "offDays")}
-          />
           {!controlId && (
-            <InfoCard className={infoCardStyles.topMargin}>
+            <InfoCard elevation={0}>
               {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
                 <DayRegulatoryAlerts
                   day={isoFormatLocalDate(dayStart)}
@@ -73,7 +54,6 @@ export function DaySummary({
         justifyContent="left"
         alignItems={"baseline"}
         spacing={2}
-        my={2}
       >
         {missions
           .filter(m => !!m.isHoliday)
@@ -81,7 +61,7 @@ export function DaySummary({
             <HolidayRecap key={mission.id} mission={mission} />
           ))}
       </Grid>
-      <InfoCard className={infoCardStyles.topMargin}>
+      <InfoCard elevation={0}>
         <MissionReviewSection
           title="Activités de la journée"
           className="no-margin-no-padding"
