@@ -4,6 +4,7 @@ import {
   renderPeriodKpis,
   WorkTimeSummaryKpiGrid
 } from "../WorkTimeSummary";
+import { PeriodHeader } from "./PeriodHeader";
 
 export function Month({
   activitiesWithNextAndPreviousDay,
@@ -37,8 +38,8 @@ export function Month({
   ]);
 
   return (
-    <div>
+    <PeriodHeader>
       <WorkTimeSummaryKpiGrid metrics={kpis} />
-    </div>
+    </PeriodHeader>
   );
 }

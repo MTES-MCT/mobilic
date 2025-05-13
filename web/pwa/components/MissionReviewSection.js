@@ -1,9 +1,9 @@
 import React from "react";
 import omit from "lodash/omit";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { SectionTitle } from "../../common/typography/SectionTitle";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -27,9 +27,7 @@ export function MissionReviewSection({
   return (
     <Box px={2} py={2} className={className} {...omit(other, ["className"])}>
       <Box className="flex-row-space-between full-width">
-        <Typography align="left" className="bold" {...titleProps}>
-          {title}
-        </Typography>
+        <SectionTitle title={title} {...titleProps} />
         {onEdit && (
           <Button
             size="small"

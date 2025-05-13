@@ -3,6 +3,7 @@ import Typography from "@mui/material/Typography";
 import {
   DAY,
   formatDateTime,
+  formatMinutesFromSeconds,
   formatTimeOfDay,
   formatTimer,
   getStartOfDay,
@@ -29,22 +30,23 @@ export function formatRangeString(startTime, endTime) {
 
 export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {}, loading }) {
   return (
-    <Grid
-      container
-      direction="row"
-      justifyContent="center"
-      alignItems={"baseline"}
-      spacing={2}
-    >
+    <Grid container spacing={2}>
       {metrics.map((metric, index) => {
         const CardComponent = metric.render ? InfoCard : MetricCard;
         return (
-          <Grid key={index} item xs={metric.fullWidth ? 12 : true}>
+          <Grid item xs={6} key={index} sx={{ display: "flex" }}>
             <CardComponent
               {...omit(metric, "render")}
               {...cardProps}
               loading={loading}
               titleProps={{ component: "h2" }}
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center"
+              }}
+              centered
             >
               {metric.render && metric.render()}
             </CardComponent>
@@ -124,16 +126,27 @@ export function computeTimesAndDurationsFromActivities(
   };
 }
 
+const diffSecondsToText = diffInS =>
+  diffInS === 0
+    ? ""
+    : `${diffInS > 0 ? "+" : "-"}${formatMinutesFromSeconds(
+        Math.abs(diffInS),
+        false
+      )}`;
 export function renderMissionKpis(
-  kpis,
+  adminKpis,
+  employeeKpis,
+  displayEmployee,
   serviceLabel = "Amplitude",
   showInnerBreaksInsteadOfService = false
 ) {
+  const kpis = displayEmployee && employeeKpis ? employeeKpis : adminKpis;
   const { timers, startTime, endTime, innerLongBreaks } = kpis;
 
   const formattedKpis = [];
 
   let subText = null;
+  let diffInS = 0;
   if (showInnerBreaksInsteadOfService && innerLongBreaks.length > 0) {
     const innerLongBreak = innerLongBreaks[0];
     subText = formatRangeString(
@@ -147,18 +160,35 @@ export function renderMissionKpis(
     });
   } else {
     subText = formatRangeString(startTime, endTime);
+    if (
+      !displayEmployee &&
+      adminKpis?.timers?.total &&
+      employeeKpis?.timers?.total
+    ) {
+      diffInS = adminKpis.timers.total - employeeKpis.timers.total;
+    }
     formattedKpis.push({
       label: kpis.innerLongBreaks.length > 0 ? "Durée" : serviceLabel,
       value: formatTimer(timers ? timers.total : 0),
-      subText
+      subText,
+      diffText: diffSecondsToText(diffInS)
     });
   }
 
+  diffInS = 0;
+  if (
+    !displayEmployee &&
+    adminKpis?.timers?.totalWork &&
+    employeeKpis?.timers?.totalWork
+  ) {
+    diffInS = adminKpis.timers.totalWork - employeeKpis.timers.totalWork;
+  }
   formattedKpis.push({
     label: "Temps de travail",
     value: formatTimer(timers ? timers.totalWork : 0),
     subText,
-    hideSubText: true
+    hideSubText: true,
+    diffText: diffSecondsToText(diffInS)
   });
 
   return formattedKpis;
@@ -242,12 +272,17 @@ export function splitByLongBreaksAndComputePeriodStats(
 }
 
 export function renderPeriodKpis(
-  kpis,
+  adminKpis,
+  employeeKpis,
+  displayEmployee,
   showInnerBreaksInsteadOfService = false
 ) {
+  const kpis = displayEmployee && employeeKpis ? employeeKpis : adminKpis;
+
   const formattedKpis = [];
 
   let subText = null;
+  let diffInS = 0;
   if (showInnerBreaksInsteadOfService && kpis.innerLongBreaks.length > 0) {
     const innerLongBreak = kpis.innerLongBreaks[0];
     subText = formatRangeString(
@@ -262,30 +297,48 @@ export function renderPeriodKpis(
     });
   } else {
     subText = formatRangeString(kpis.startTime, kpis.endTime);
+    if (
+      !displayEmployee &&
+      employeeKpis?.timers?.total &&
+      adminKpis?.timers?.total
+    ) {
+      diffInS = adminKpis.timers.total - employeeKpis.timers.total;
+    }
     formattedKpis.push({
       name: "service",
       label: "Amplitude",
       value: formatTimer(kpis.timers ? kpis.timers.total : 0),
-      subText
+      subText,
+      diffText: diffSecondsToText(diffInS)
     });
   }
 
-  formattedKpis.push(
-    {
-      name: "workedDays",
-      label: "Jours travaillés",
-      value: kpis.workedDays,
-      subText,
-      hideSubText: true
-    },
-    {
-      name: "workTime",
-      label: "Temps de travail",
-      value: formatTimer(kpis.timers ? kpis.timers.totalWork : 0),
-      subText,
-      hideSubText: true
-    }
-  );
+  formattedKpis.push({
+    name: "workedDays",
+    label: "Jours travaillés",
+    value: kpis.workedDays,
+    subText,
+    hideSubText: true
+  });
+
+  diffInS = 0;
+  if (
+    !displayEmployee &&
+    adminKpis?.timers?.totalWork &&
+    employeeKpis?.timers?.totalWork
+  ) {
+    diffInS = adminKpis.timers.totalWork - employeeKpis.timers.totalWork;
+  }
+  const workTimeKpis = {
+    name: "workTime",
+    label: "Temps de travail",
+    value: formatTimer(kpis.timers ? kpis.timers.totalWork : 0),
+    subText,
+    hideSubText: true,
+    diffText: diffSecondsToText(diffInS)
+  };
+
+  formattedKpis.push(workTimeKpis);
   if (Object.keys(kpis.expendituresCount).length > 0)
     formattedKpis.push({
       name: "expenditures",

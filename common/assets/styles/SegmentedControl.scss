@@ -1,0 +1,22 @@
+.segmented-control-contrast .fr-segmented__element label {
+    min-width: 110px;
+    display: flex;
+    justify-content: center;
+}
+
+.segmented-control-contrast .fr-segmented__element label {
+    color: white;
+}
+
+.segmented-control-contrast .fr-segmented__elements {
+    box-shadow: inset 0 0 0 1px #DAE9FF66;
+}
+
+.segmented-control-contrast .fr-segmented__element input:checked + label {
+    color: white;
+    box-shadow: inset 0 0 0 1px white;
+}
+
+.segmented-control-contrast .fr-segmented__element input + label:hover {
+    background-color: transparent !important;
+}

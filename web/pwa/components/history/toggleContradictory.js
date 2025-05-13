@@ -125,21 +125,20 @@ export function useToggleContradictory(
     setEmployeeMissionResourceVersions({});
   }, [missionsWithValidationTimes.map(m => m[0].id).reduce((a, b) => a + b)]);
 
-  return [
-    shouldDisplayInitialEmployeeVersion
-      ? employeeMissionResourceVersions
-      : missionsWithValidationTimes.reduce(
-          (acc, m) => {
-            acc.activities.push(...(m[0].allActivities || m[0].activities));
-            acc.expenditures.push(...(m[0].expenditures || []));
-            return acc;
-          },
-          { activities: [], expenditures: [] }
-        ),
+  return {
+    employeeVersion: employeeMissionResourceVersions,
+    adminVersion: missionsWithValidationTimes.reduce(
+      (acc, m) => {
+        acc.activities.push(...(m[0].allActivities || m[0].activities));
+        acc.expenditures.push(...(m[0].expenditures || []));
+        return acc;
+      },
+      { activities: [], expenditures: [] }
+    ),
     eventsHistory,
     isComputingContradictory,
     hasComputedContradictory,
     contradictoryIsEmpty,
     contradictoryComputationError
-  ];
+  };
 }

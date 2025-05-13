@@ -45,7 +45,8 @@ import {
   shortPrettyFormatDay,
   SHORT_MONTHS,
   startOfDayAsDate,
-  isMoreOrLessTheSameDay
+  isMoreOrLessTheSameDay,
+  formatCompleteDayOfWeek
 } from "common/utils/time";
 import { usePageTitle } from "../../common/UsePageTitle";
 
@@ -63,21 +64,19 @@ import { useHolidays } from "../../common/useHolidays";
 import { LogHolidayButton } from "../../common/LogHolidayButton";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { fr } from "@codegouvfr/react-dsfr";
+import { getDayChip } from "../components/history/Chips";
 
 const tabs = {
   mission: {
     label: "Mission",
     value: "mission",
     ...PERIOD_UNITS.mission,
-    formatPeriod: (period, missions) => {
+    getTitle: (period, _) => shortPrettyFormatDay(period),
+    getSubtitle: (_, missions) => {
       const mission = missions ? missions[0] : {};
-      return (
-        <Box className="flex-column-space-between">
-          <Typography className="bold">{mission.name || "Sans nom"}</Typography>
-          <Typography>{shortPrettyFormatDay(period)}</Typography>
-        </Box>
-      );
+      return mission.name || "Sans nom";
     },
+    renderChip: getDayChip,
     renderPeriod: ({ missionsInPeriod, ...props }) => (
       <Mission
         mission={missionsInPeriod[0]}
@@ -90,6 +89,9 @@ const tabs = {
   day: {
     label: "Jour",
     value: "day",
+    getTitle: (period, _) => shortPrettyFormatDay(period),
+    getSubtitle: (period, _) => formatCompleteDayOfWeek(period),
+    renderChip: getDayChip,
     ...PERIOD_UNITS.day,
     renderPeriod: props => <Day headingComponent="h2" {...props} />
   },
@@ -97,24 +99,9 @@ const tabs = {
     label: "Semaine",
     value: "week",
     ...PERIOD_UNITS.week,
-    formatPeriod: (period, missions) => {
-      return (
-        <Box className="flex-column-space-between">
-          <Typography className={missions ? "bold" : ""}>
-            {shortPrettyFormatDay(period)}
-          </Typography>
-          <Typography
-            className={missions ? "bold" : ""}
-            style={{ lineHeight: 0 }}
-          >
-            -
-          </Typography>
-          <Typography className={missions ? "bold" : ""}>
-            {shortPrettyFormatDay(period + DAY * 6)}
-          </Typography>
-        </Box>
-      );
-    },
+    getTitle: (period, _) => shortPrettyFormatDay(period),
+    getSubtitle: (period, _) => `au ${shortPrettyFormatDay(period + DAY * 6)}`,
+    renderChip: getDayChip,
     renderPeriod: props => <Week headingComponent="h2" {...props} />
   },
   month: {
@@ -122,33 +109,25 @@ const tabs = {
     value: "month",
     ...PERIOD_UNITS.month,
     renderPeriod: props => <Month {...props} />,
-    formatPeriod: (period, missions) => {
+    getTitle: (period, _) => {
       const periodDate = new Date(period * 1000);
-      return (
-        <Box className="flex-column-space-between">
-          <Typography
-            variant="h5"
-            component="span"
-            style={{ fontWeight: missions ? "bold" : "normal" }}
-          >
-            {SHORT_MONTHS[periodDate.getMonth()]}
-          </Typography>
-          <Typography>{periodDate.getFullYear()}</Typography>
-        </Box>
-      );
-    }
+      return SHORT_MONTHS[periodDate.getMonth()];
+    },
+    getSubtitle: (period, _) => {
+      const periodDate = new Date(period * 1000);
+      return periodDate.getFullYear();
+    },
+    renderChip: getDayChip
   }
 };
 
 const useStyles = makeStyles(theme => ({
   contentContainer: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
     flexGrow: 1,
     flexShrink: 0,
-    paddingTop: theme.spacing(4),
     textAlign: "center",
-    paddingBottom: theme.spacing(4)
+    paddingLeft: 0,
+    paddingRight: 0
   },
   placeholderContainer: {
     backgroundColor: "inherit",
@@ -173,6 +152,19 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "center"
+  },
+  tab: {
+    textTransform: "none",
+    fontSize: "1rem",
+    lineHeight: "1.5rem",
+    fontWeight: 400,
+    opacity: 1,
+    color: fr.colors.decisions.background.flat.grey.default,
+    padding: theme.spacing(1),
+    "&.Mui-selected": {
+      color: fr.colors.decisions.background.flat.blueFrance.default,
+      fontWeight: 500
+    }
   }
 }));
 
@@ -545,12 +537,20 @@ export function History({
           variant="fullWidth"
           indicatorColor="primary"
           textColor="inherit"
+          sx={{
+            "& .MuiTabs-indicator": {
+              backgroundColor:
+                fr.colors.decisions.background.flat.blueFrance.default
+            },
+            marginBottom: 1
+          }}
         >
           {Object.values(tabs).map((tabProps, index) => (
             <Tab
               key={index + 1}
               label={tabProps.label}
               value={tabProps.value}
+              className={classes.tab}
               style={{ flexGrow: 1, flexShrink: 1, minWidth: 0 }}
             />
           ))}
@@ -564,7 +564,7 @@ export function History({
               resetLocation();
             }}
             periodStatuses={periodStatuses[currentTab] || {}}
-            renderPeriod={tabs[currentTab].formatPeriod}
+            {...tabs[currentTab]}
             periodMissionsGetter={period => groupedMissions[period]}
           />
         )}

@@ -66,7 +66,7 @@ export function UserReadInfo({
   };
 
   return (
-    <Stack direction="column" p={3} rowGap={3}>
+    <Stack direction="column" p={3} rowGap={3} maxWidth="100%">
       <ControllerControlEmployeeInfo name={userName} />
       {!!currentControllerId() && (
         <ControllerControlMissionInfo

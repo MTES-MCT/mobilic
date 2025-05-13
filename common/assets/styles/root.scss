@@ -1,4 +1,5 @@
 @use 'InfractionDay.scss';
+@use 'SegmentedControl.scss';
 
 .flex-column {
   display: flex !important;
@@ -335,6 +336,16 @@ video:not([href])[controls] {
   width: var(--icon-size)
 }
 
+.fr-notice {
+  &.bordered {
+    box-shadow: inset 0 1px 0 0 var(--border-default-grey), 0 1px 0 0 var(--border-default-grey);
+  }
+  &.less-padding {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+}
+
 .fr-notice--success {
   background-color: var(--background-alt-green-emeraude);
   --idle: transparent;
@@ -465,6 +476,24 @@ video:not([href])[controls] {
 }
 .fr-btn--icon-right[class^="fr-icon-"]::after, .fr-btn--icon-right[class*=" fr-icon-"]::after, .fr-btn--icon-right[class^="fr-fi-"]::after, .fr-btn--icon-right[class*=" fr-fi-"]::after {
   --icon-size: 1.3rem
+}
+
+.fr-icon-sm {
+  &::before {
+    --icon-size: 1rem
+  }
+}
+
+.period-chip-success {
+  color: #18753C
+}
+
+.period-chip-wait {
+  color: #B34000
+}
+
+.period-chip-current {
+  color: #3965EA
 }
 
 .fr-modal__footer {
