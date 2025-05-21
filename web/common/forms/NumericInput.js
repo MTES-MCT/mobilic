@@ -5,6 +5,7 @@ export const NumericInput = ({
   initialValue,
   onChangeValue,
   label,
+  hintText,
   required = false,
   min = 0,
   max
@@ -58,6 +59,7 @@ export const NumericInput = ({
       type="number"
       state={state}
       stateRelatedMessage={errorMessage}
+      hintText={hintText}
     />
   );
 };

@@ -162,7 +162,8 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                       setHasValidatedChoice(false);
                       updateFacility(facility, "nbWorkers", newNbWorkers);
                     }}
-                    label="Nombre de chauffeurs et/ou travailleurs mobiles"
+                    label="Nombre de salariés concernés par Mobilic"
+                    hintText="Exemples : chauffeurs, accompagnateurs, ripeurs..."
                     required
                     min={MIN_NB_WORKERS}
                     max={MAX_NB_WORKERS}
