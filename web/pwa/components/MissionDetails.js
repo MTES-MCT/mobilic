@@ -229,7 +229,11 @@ export function MissionDetails({
     <AlternateColors inverseColors={inverseColors}>
       <MissionReviewSection title="Historique des validations">
         {mission.validations && (
-          <MissionValidations mission={mission} userId={userId} />
+          <MissionValidations
+            mission={mission}
+            validations={mission.validations}
+            userId={userId}
+          />
         )}
       </MissionReviewSection>
       <MissionReviewSection

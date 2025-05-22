@@ -3,6 +3,7 @@ import { Stack } from "@mui/material";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import { formatDay } from "common/utils/time";
 import Notice from "../../common/Notice";
+import { MOTIFS } from "../../admin/modals/OverrideValidationJustificationModal";
 
 const EmployeeValidation = validation => {
   const label = validation.isAuto
@@ -21,7 +22,7 @@ const EmployeeValidation = validation => {
       {description}
     </Accordion>
   ) : (
-    <Notice title={label} type="success" lessPadding withBorders />
+    <Notice title={label} type="warning" lessPadding withBorders />
   );
 };
 
@@ -46,17 +47,31 @@ const AdminAutoValidation = validation => (
     validation du salarié.
   </Accordion>
 );
-const AdminManualValidation = validation => (
-  <Notice
-    title={`Validée par le gestionnaire le ${formatDay(
-      validation.receptionTime,
-      true
-    )}`}
-    type="success"
-    lessPadding
-    withBorders
-  />
-);
+const AdminManualValidation = (validation, hasOverriden) => {
+  if (hasOverriden) {
+    return (
+      <Accordion
+        label="Modifiée par le gestionnaire après validation automatique"
+        className="warning"
+      >
+        Le gestionnaire a modifié la mission après sa validation pour la raison
+        suivante :{" "}
+        {MOTIFS.find(motif => motif.key === validation.justification)?.label}.
+      </Accordion>
+    );
+  }
+  return (
+    <Notice
+      title={`Validée par le gestionnaire le ${formatDay(
+        validation.receptionTime,
+        true
+      )}`}
+      type="success"
+      lessPadding
+      withBorders
+    />
+  );
+};
 
 const NoAdminValidation = () => (
   <Notice
@@ -67,7 +82,12 @@ const NoAdminValidation = () => (
   />
 );
 
-export const MissionValidations = ({ mission, userId }) => {
+export const MissionValidations = ({
+  mission,
+  validations,
+  userId,
+  justification
+}) => {
   const doNotDisplayValidations = mission.isDeleted && !mission.complete;
 
   if (doNotDisplayValidations) {
@@ -75,11 +95,11 @@ export const MissionValidations = ({ mission, userId }) => {
   }
 
   // Should we use getWorkerValidationForUser ?
-  const employeeValidation = mission.validations.find(
+  const employeeValidation = validations.find(
     validation => !validation.isAdmin
   );
 
-  const adminValidations = mission.validations.filter(
+  const adminValidations = validations.filter(
     v => v.isAdmin && (!v.userId || v.userId === userId)
   );
   const adminAutoValidation = adminValidations.find(
@@ -94,7 +114,12 @@ export const MissionValidations = ({ mission, userId }) => {
         ? EmployeeValidation(employeeValidation)
         : NoEmployeeValidation()}
       {adminAutoValidation && AdminAutoValidation(adminAutoValidation)}
-      {adminManualValidation && AdminManualValidation(adminManualValidation)}
+      {adminManualValidation &&
+        AdminManualValidation(
+          adminManualValidation,
+          adminAutoValidation,
+          justification
+        )}
       {!adminAutoValidation && !adminManualValidation && NoAdminValidation()}
     </Stack>
   );
