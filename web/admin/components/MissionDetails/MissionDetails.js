@@ -142,9 +142,10 @@ export function MissionDetails({
 
   const adminMayOverrideValidation = React.useMemo(
     () =>
-      (mission && mission.missionTooOld) ||
-      mission.missionNotUpdatedForTooLong ||
-      missionCreatedByAdmin(mission, adminStore.employments),
+      mission &&
+      (mission.missionTooOld ||
+        mission.missionNotUpdatedForTooLong ||
+        missionCreatedByAdmin(mission, adminStore.employments)),
     [mission]
   );
 

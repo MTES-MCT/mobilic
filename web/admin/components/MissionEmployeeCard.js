@@ -278,8 +278,11 @@ export function MissionEmployeeCard({
                 variant: "h6",
                 component: getNextHeadingComponent(headingComponent)
               }}
-              onActionButtonClick={overrideValidation}
-              actionButtonLabel="J'ai été absent : modifier les saisies"
+              {...(overrideValidation &&
+                adminAutoValidationOnly && {
+                  onActionButtonClick: overrideValidation,
+                  actionButtonLabel: "J'ai été absent : modifier les saisies"
+                })}
             />
           </Grid>
           {showExpenditures && (
