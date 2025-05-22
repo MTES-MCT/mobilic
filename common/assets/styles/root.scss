@@ -373,6 +373,10 @@ video:not([href])[controls] {
 
 .fr-accordion  {
 
+  .fr-collapse {
+    padding-left: 2rem;
+  }
+
   &.success {
     background-color: var(--background-alt-green-emeraude);
     --hover: var(--background-contrast-green-emeraude);
@@ -463,6 +467,43 @@ video:not([href])[controls] {
       --active: var(--background-open-red-marianne-active);
     }
   }
+
+  &.warning {
+    background-color: var(--background-contrast-warning);
+    --idle: transparent;
+    --hover: var(--background-contrast-warning-hover);
+
+    .fr-accordion__btn{
+      color: var(--text-default-warning);
+
+      &::before {
+        content: '';
+        -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScyNCcgaGVpZ2h0PScyNCcgdmlld0JveD0nMCAwIDI0IDI0Jz48cGF0aCBkPSdtMTIuODY2IDMgOS41MjYgMTYuNWExIDEgMCAwIDEtLjg2NiAxLjVIMi40NzRhMSAxIDAgMCAxLS44NjYtMS41TDExLjEzNCAzYTEgMSAwIDAgMSAxLjczMiAwWk0xMSAxNnYyaDJ2LTJoLTJabTAtN3Y1aDJWOWgtMlonLz48L3N2Zz4=");
+        mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScyNCcgaGVpZ2h0PScyNCcgdmlld0JveD0nMCAwIDI0IDI0Jz48cGF0aCBkPSdtMTIuODY2IDMgOS41MjYgMTYuNWExIDEgMCAwIDEtLjg2NiAxLjVIMi40NzRhMSAxIDAgMCAxLS44NjYtMS41TDExLjEzNCAzYTEgMSAwIDAgMSAxLjczMiAwWk0xMSAxNnYyaDJ2LTJoLTJabTAtN3Y1aDJWOWgtMlonLz48L3N2Zz4=");
+        --icon-size: 1.5rem;
+        flex: 0 0 auto;
+        display: inline-block;
+        vertical-align: calc((0.75em - var(--icon-size)) * 0.5);
+        background-color: currentColor;
+        width: var(--icon-size);
+        height: var(--icon-size);
+        -webkit-mask-size: 100% 100%;
+        mask-size: 100% 100%;
+        margin-right: 0.5rem;
+      }
+    }
+
+    .fr-accordion__btn[aria-expanded="true"] {
+      background-color: var(--background-contrast-warning-hover);
+      --idle: transparent;
+      --hover: var(--background-open-red-marianne-hover);
+      --active: var(--background-contrast-warning-active);
+    }
+  }
+}
+
+.fr-accordion__btn {
+  padding-left: 1.5rem;
 }
 
 .fr-btn--secondary.error {
