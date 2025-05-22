@@ -176,8 +176,19 @@ export function computeMissionStats(m, users) {
       adminValidation:
         m.validations.find(v => v.userId?.toString() === userId && v.isAdmin) ||
         adminGlobalValidation,
+      adminAutoValidation: m.validations.find(
+        v => v.userId?.toString() === userId && v.isAdmin && v.isAuto
+      ),
+      adminManualValidation: m.validations.find(
+        v => v.userId?.toString() === userId && v.isAdmin && !v.isAuto
+      ),
       workerValidation: getWorkerValidationForUser(m.validations, user?.id),
-      lastActivitySubmitterId
+      lastActivitySubmitterId,
+      validations: m.validations.filter(
+        v =>
+          (!v.userId && v.submitterId.toString() === userId) ||
+          v.userId.toString() === userId
+      )
     };
   });
   const missionNotUpdatedForTooLong = values(userStats).some(
