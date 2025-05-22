@@ -4,18 +4,19 @@ import Box from "@mui/material/Box";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import Typography from "@mui/material/Typography";
-import { formatDayOfWeek, shortPrettyFormatDay } from "common/utils/time";
-import { PERIOD_STATUSES } from "common/utils/history/computePeriodStatuses";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   periodContainer: {
-    borderRadius: "16px",
     position: "relative",
     whiteSpace: "nowrap"
   },
   selectedPeriod: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText
+  },
+  periodBottom: {
+    color: fr.colors.decisions.text.mention.grey.default
   },
   carousel: {
     overflowX: "auto",
@@ -40,21 +41,6 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     background:
       "linear-gradient(to left, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.9) 100%)"
-  },
-  periodChip: {
-    position: "absolute",
-    top: theme.spacing(0.5),
-    right: theme.spacing(0.5),
-    backgroundColor: theme.palette.secondary.main,
-    height: theme.spacing(1),
-    width: theme.spacing(1),
-    borderRadius: "50%"
-  },
-  selectedPeriodChip: {
-    backgroundColor: theme.palette.primary.contrastText
-  },
-  orangeChip: {
-    backgroundColor: theme.palette.warning.main
   }
 }));
 
@@ -63,7 +49,9 @@ export function PeriodCarouselPicker({
   periods,
   periodStatuses,
   onPeriodChange,
-  renderPeriod,
+  getTitle,
+  getSubtitle,
+  renderChip,
   periodMissionsGetter = () => {}
 }) {
   const classes = useStyles();
@@ -103,6 +91,13 @@ export function PeriodCarouselPicker({
         <Box py={1} mx={1} className={`flex-row ${classes.carousel}`}>
           {periods.map(period => {
             const periodStatus = periodStatuses[period.toString()];
+            const missions = periodMissionsGetter(period);
+            const isPeriodSelected = period === selectedPeriod;
+            const title = getTitle(period, missions);
+            const subtitle = getSubtitle(period, missions);
+            const chip = renderChip
+              ? renderChip(periodStatus, isPeriodSelected)
+              : null;
             return (
               <Box
                 p={1}
@@ -115,28 +110,29 @@ export function PeriodCarouselPicker({
                   onPeriodChange(period);
                 }}
               >
-                {periodStatus === PERIOD_STATUSES.notValidated ? (
-                  <Box className={`${classes.periodChip}`} />
-                ) : periodStatus === PERIOD_STATUSES.notValidatedByAdmin ? (
-                  <Box
-                    className={`${classes.periodChip} ${classes.orangeChip}`}
-                  />
-                ) : null}
-                {renderPeriod ? (
-                  renderPeriod(period, periodMissionsGetter(period))
-                ) : (
-                  <Box className="flex-column-space-between">
-                    <Typography
-                      className={periodStatus ? "bold" : ""}
-                      style={{ textTransform: "uppercase" }}
-                    >
-                      {formatDayOfWeek(period)}
-                    </Typography>
-                    <Typography className={periodStatus ? "bold" : ""}>
-                      {shortPrettyFormatDay(period)}
-                    </Typography>
-                  </Box>
-                )}
+                <Box
+                  className="flex-column-space-between"
+                  sx={{
+                    maxWidth: "140px"
+                  }}
+                >
+                  <Typography>
+                    {title}
+                    {chip && `  `}
+                    {chip}
+                  </Typography>
+                  <Typography
+                    className={`${!isPeriodSelected && classes.periodBottom}`}
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      maxWidth: "100%"
+                    }}
+                  >
+                    {subtitle}
+                  </Typography>
+                </Box>
               </Box>
             );
           })}

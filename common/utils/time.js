@@ -4,17 +4,17 @@ export const HOUR = 3600;
 export const MINUTE = 60;
 export const SHORT_MONTHS = [
   "jan",
-  "fev",
+  "fév",
   "mar",
   "avr",
   "mai",
   "juin",
   "juil",
-  "aou",
+  "aoû",
   "sep",
   "oct",
   "nov",
-  "dec"
+  "déc"
 ];
 const MONTHS = [
   "janvier",
@@ -110,6 +110,11 @@ export function formatDayOfWeek(unixTimestamp) {
   return SHORT_DAYS[date.getDay()];
 }
 
+export function formatCompleteDayOfWeek(unixTimestamp) {
+  const date = new Date(unixTimestamp * 1000);
+  return DAYS[date.getDay()];
+}
+
 export function getPrettyDateByperiod(date, period) {
   const dateAsUnixTimestamp = date.getTime() / 1000;
   switch (period) {
@@ -164,8 +169,10 @@ export function prettyFormatDayHour(unixTimestamp) {
   )}`;
 }
 
-export function formatMinutesFromSeconds(seconds) {
-  return `${Math.floor(seconds / MINUTE)}\u00A0min`;
+export function formatMinutesFromSeconds(seconds, withSpace = true) {
+  return seconds >= HOUR
+    ? formatTimer(seconds)
+    : `${Math.floor(seconds / MINUTE)}${withSpace ? "\u00A0" : ""}min`;
 }
 
 export function textualPrettyFormatWeek(startOfWeek) {

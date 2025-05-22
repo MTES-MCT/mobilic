@@ -187,10 +187,11 @@ async function createComment(api, mission, adminStore, text) {
   mission.comments.push(comment);
 }
 
-async function validateMission(api, mission, adminStore, userToValidate) {
+async function validateMission(api, mission, adminStore, args) {
   const apiResponse = await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
     missionId: mission.id,
-    usersIds: userToValidate,
+    usersIds: args.usersToValidate,
+    justification: args.overrideValidationJustification,
     activityItems: getPayloadFromVirtualActivities(
       adminStore.virtualActivities
     ),

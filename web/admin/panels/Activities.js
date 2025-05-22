@@ -64,6 +64,7 @@ import { usePageTitle } from "../../common/UsePageTitle";
 import { useGetUsersSinceDate } from "../../common/hooks/useGetUsersSinceDate";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import CloseButton from "../../common/CloseButton";
+import { PickersDay } from "@mui/x-date-pickers/PickersDay";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -339,6 +340,11 @@ function ActivitiesPanel() {
             }}
             cancelText={null}
             maxDate={today}
+            // renderDay is needed to fix issue caused by key being passed with props
+            renderDay={(day, selectedDates, pickersDayProps) => {
+              const { key, ...safeProps } = pickersDayProps;
+              return <PickersDay {...safeProps} />;
+            }}
             renderInput={props => (
               <TextField {...props} required variant="outlined" size="small" />
             )}
@@ -358,6 +364,11 @@ function ActivitiesPanel() {
             }}
             cancelText={null}
             maxDate={today}
+            // renderDay is needed to fix issue caused by key being passed with props
+            renderDay={(day, selectedDates, pickersDayProps) => {
+              const { key, ...safeProps } = pickersDayProps;
+              return <PickersDay {...safeProps} />;
+            }}
             renderInput={props => (
               <TextField {...props} required variant="outlined" size="small" />
             )}

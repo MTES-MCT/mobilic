@@ -83,6 +83,7 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
         id
         isAdmin
         isAuto
+        justification
         userId
         receptionTime
         missionId
@@ -328,6 +329,7 @@ export const CONTROLLER_READ_MISSION_DETAILS = gql`
           id
           isAdmin
           isAuto
+          justification
           userId
           receptionTime
           missionId
@@ -766,6 +768,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 receptionTime
                 isAdmin
                 isAuto
+                justification
                 userId
               }
               vehicle {
@@ -816,6 +819,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 receptionTime
                 isAdmin
                 isAuto
+                justification
                 userId
               }
               vehicle {
@@ -1640,6 +1644,7 @@ export const VALIDATE_MISSION_MUTATION = gql`
     $activityItems: [BulkActivityItem]
     $expendituresCancelIds: [Int]
     $expendituresInputs: [BulkExpenditureItem]
+    $justification: OverValidationJustificationEnum
   ) {
     activities {
       validateMission(
@@ -1649,6 +1654,7 @@ export const VALIDATE_MISSION_MUTATION = gql`
         activityItems: $activityItems
         expendituresCancelIds: $expendituresCancelIds
         expendituresInputs: $expendituresInputs
+        justification: $justification
       ) {
         ...FullMissionData
       }

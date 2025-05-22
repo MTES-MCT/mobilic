@@ -65,7 +65,7 @@ export function EmployeeFilter({
       disableCloseOnSelect
       getOptionLabel={option => formatPersonName(option, true)}
       renderOption={(props, option) => (
-        <li {...props}>
+        <li {...props} key={option.id}>
           {multiple && (
             <Checkbox
               color="secondary"

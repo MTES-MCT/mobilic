@@ -210,7 +210,7 @@ export function Employees({ company, containerRef }) {
     {
       label: "Nom",
       name: "name",
-      minWidth: 50,
+      minWidth: 75,
       baseWidth: 200,
       overflowTooltip: true,
       align: "left"

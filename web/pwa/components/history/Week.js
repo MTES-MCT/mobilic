@@ -11,10 +11,12 @@ import ListItemText from "@mui/material/ListItemText";
 import Link from "@mui/material/Link";
 import { isoFormatLocalDate, prettyFormatDay } from "common/utils/time";
 import Divider from "@mui/material/Divider";
-import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
+import { InfoCard } from "../../../common/InfoCard";
 import { WeekRegulatoryAlerts } from "../../../regulatory/WeekRegulatoryAlerts";
 import { AlertsInHistory } from "../../../control/components/AlertsInHistory";
 import Notice from "../../../common/Notice";
+import { PeriodHeader } from "./PeriodHeader";
+import { Stack } from "@mui/material";
 
 export function Week({
   missionsInPeriod,
@@ -27,8 +29,6 @@ export function Week({
   controlId = null,
   alertsInPeriod = null
 }) {
-  const infoCardStyles = useInfoCardStyles();
-
   const missionsDeleted = React.useMemo(
     () => missionsInPeriod.filter(mission => mission.isDeleted),
     [missionsInPeriod]
@@ -65,9 +65,6 @@ export function Week({
   }, [hasWorkMissions, stats]);
   return (
     <div>
-      {alertsInPeriod && alertsInPeriod.length > 0 && (
-        <AlertsInHistory alertsInPeriod={alertsInPeriod} />
-      )}
       {missionsDeleted.length > 0 && (
         <Notice
           type="warning"
@@ -75,55 +72,62 @@ export function Week({
           description={missionsDeletedWarning}
         />
       )}
-      <WorkTimeSummaryKpiGrid metrics={kpis} />
-      {hasWorkMissions && !controlId && (
-        <InfoCard className={infoCardStyles.topMargin}>
-          <WeekRegulatoryAlerts
-            userId={userId}
-            day={isoFormatLocalDate(selectedPeriodStart)}
-          />
-        </InfoCard>
-      )}
-      {missionsToDetail.length > 0 && (
-        <InfoCard className={infoCardStyles.topMargin}>
-          <MissionReviewSection
-            title="Détail par mission"
-            className="no-margin-no-padding"
-            titleProps={{ component: headingComponent }}
-          >
-            <List>
-              {missionsToDetail.map((mission, index) => [
-                <ListItem
-                  key={2 * index}
-                  onClick={handleMissionClick(mission.startTime)}
-                >
-                  <ListItemText disableTypography>
-                    <Link
-                      component="button"
-                      variant="body1"
-                      style={{ textAlign: "justify" }}
-                      onClick={e => {
-                        e.preventDefault();
-                      }}
-                    >
-                      Mission {mission.name} du{" "}
-                      {prettyFormatDay(mission.startTime)}
-                      {mission.isDeleted ? " (supprimée)" : ""}
-                    </Link>
-                  </ListItemText>
-                </ListItem>,
-                index < missionsInPeriod.length - 1 ? (
-                  <Divider
-                    key={2 * index + 1}
-                    component="li"
-                    className="hr-unstyled"
-                  />
-                ) : null
-              ])}
-            </List>
-          </MissionReviewSection>
-        </InfoCard>
-      )}
+      <PeriodHeader>
+        <WorkTimeSummaryKpiGrid metrics={kpis} />
+      </PeriodHeader>
+      <Stack direction="column" px={2} pt={2}>
+        {alertsInPeriod && alertsInPeriod.length > 0 && (
+          <AlertsInHistory alertsInPeriod={alertsInPeriod} />
+        )}
+        {hasWorkMissions && !controlId && (
+          <InfoCard elevation={0}>
+            <WeekRegulatoryAlerts
+              userId={userId}
+              day={isoFormatLocalDate(selectedPeriodStart)}
+            />
+          </InfoCard>
+        )}
+        {missionsToDetail.length > 0 && (
+          <InfoCard elevation={0}>
+            <MissionReviewSection
+              title="Détail par mission"
+              className="no-margin-no-padding"
+              titleProps={{ component: headingComponent }}
+            >
+              <List>
+                {missionsToDetail.map((mission, index) => [
+                  <ListItem
+                    key={2 * index}
+                    onClick={handleMissionClick(mission.startTime)}
+                  >
+                    <ListItemText disableTypography>
+                      <Link
+                        component="button"
+                        variant="body1"
+                        style={{ textAlign: "justify" }}
+                        onClick={e => {
+                          e.preventDefault();
+                        }}
+                      >
+                        Mission {mission.name} du{" "}
+                        {prettyFormatDay(mission.startTime)}
+                        {mission.isDeleted ? " (supprimée)" : ""}
+                      </Link>
+                    </ListItemText>
+                  </ListItem>,
+                  index < missionsInPeriod.length - 1 ? (
+                    <Divider
+                      key={2 * index + 1}
+                      component="li"
+                      className="hr-unstyled"
+                    />
+                  ) : null
+                ])}
+              </List>
+            </MissionReviewSection>
+          </InfoCard>
+        )}
+      </Stack>
     </div>
   );
 }

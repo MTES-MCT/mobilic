@@ -18,6 +18,7 @@ import {
   SubmitterType
 } from "common/utils/regulation/alertTypes";
 import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
+import { SectionTitle } from "../common/typography/SectionTitle";
 
 export function GenericRegulatoryAlerts({
   userId,
@@ -72,6 +73,7 @@ export function GenericRegulatoryAlerts({
 
   return (
     <>
+      <SectionTitle title="Seuils réglementaires" component="h2" />
       {loading && <Skeleton variant="rectangular" width="100%" height={300} />}
       {!loading && regulationComputations && (
         <>
