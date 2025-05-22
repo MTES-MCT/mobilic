@@ -54,7 +54,8 @@ export function MissionEmployeeCard({
   isDeleted = false,
   defaultOpen = false,
   displayIcon = true,
-  headingComponent
+  headingComponent,
+  overrideValidation = null
 }) {
   const stats = mission.userStats[user.id.toString()] || {};
   const activities = stats.activities || [];
@@ -76,6 +77,9 @@ export function MissionEmployeeCard({
   );
 
   const cacheContradictoryInfoInAdminStore = useCacheContradictoryInfoInAdminStore();
+
+  const adminAutoValidationOnly =
+    stats.adminAutoValidation && !stats.adminManualValidation;
 
   return (
     <Accordion
@@ -174,7 +178,15 @@ export function MissionEmployeeCard({
       <AccordionDetails style={{ display: "block" }}>
         <Grid container spacing={2} direction="column" wrap="nowrap">
           {!isDeleted && (
-            <MissionValidations mission={mission} userId={user.id} />
+            <MissionValidations
+              mission={mission}
+              validations={stats.validations}
+              userId={user.id}
+              {...(overrideValidation &&
+                adminAutoValidationOnly && {
+                  overrideManualValidation: overrideValidation
+                })}
+            />
           )}
           <Grid item container spacing={2} alignItems="stretch">
             <Grid xs={12} sm={6} item className={classes.cardRecapKPIContainer}>
@@ -266,6 +278,8 @@ export function MissionEmployeeCard({
                 variant: "h6",
                 component: getNextHeadingComponent(headingComponent)
               }}
+              onActionButtonClick={overrideValidation}
+              actionButtonLabel="J'ai été absent : modifier les saisies"
             />
           </Grid>
           {showExpenditures && (
