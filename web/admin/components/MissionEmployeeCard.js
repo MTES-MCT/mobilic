@@ -17,13 +17,13 @@ import {
 import { makeStyles } from "@mui/styles";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { MissionValidationInfo } from "../../common/MissionValidationInfo";
 import Hidden from "@mui/material/Hidden";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ContradictoryChanges } from "../../pwa/components/ContradictoryChanges";
 import { useCacheContradictoryInfoInAdminStore } from "common/utils/contradictory";
 import Emoji from "../../common/Emoji";
 import { getNextHeadingComponent } from "common/utils/html";
+import { MissionValidations } from "../../pwa/components/MissionValidations";
 import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
@@ -177,30 +177,19 @@ export function MissionEmployeeCard({
       </AccordionSummary>
       <AccordionDetails style={{ display: "block" }}>
         <Grid container spacing={2} direction="column" wrap="nowrap">
-          {!isDeleted && (
-            <>
-              <Grid item>
-                {isAdminBypassingEmployeeValidation ? (
-                  <Notice
-                    type="warning"
-                    description={
-                      <>La validation par le salarié n'a pas eu lieu pour </>
-                    }
-                    linkText="l'une des raisons suivantes."
-                    linkUrl="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic/suivi-et-validation-du-temps-de-travail#en-tant-que-gestionnaire-je-peux-uniquement-modifier-et-valider-les-missions-validees-par-les-salari"
-                  />
-                ) : (
-                  <MissionValidationInfo validation={stats.workerValidation} />
-                )}
-              </Grid>
-              <Grid item>
-                <MissionValidationInfo
-                  validation={stats.adminValidation}
-                  isAdmin
-                />
-              </Grid>
-            </>
-          )}
+          {!isDeleted &&
+            (isAdminBypassingEmployeeValidation ? (
+              <Notice
+                type="warning"
+                description={
+                  <>La validation par le salarié n'a pas eu lieu pour </>
+                }
+                linkText="l'une des raisons suivantes."
+                linkUrl="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic/suivi-et-validation-du-temps-de-travail#en-tant-que-gestionnaire-je-peux-uniquement-modifier-et-valider-les-missions-validees-par-les-salari"
+              />
+            ) : (
+              <MissionValidations mission={mission} userId={user.id} />
+            ))}
           <Grid item container spacing={2} alignItems="stretch">
             <Grid xs={12} sm={6} item className={classes.cardRecapKPIContainer}>
               <MetricCard

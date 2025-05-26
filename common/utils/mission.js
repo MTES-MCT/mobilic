@@ -38,11 +38,12 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     deletedAt: missionPayload.deletedAt,
     deletedBy: missionPayload.deletedBy,
     isHoliday:
-      missionPayload.isHoliday !== undefined ? missionPayload.isHoliday : false
+      missionPayload.isHoliday !== undefined ? missionPayload.isHoliday : false,
+    validations: missionPayload.validations
   };
 }
 
-const getWorkerValidationForUser = (validations, userId) =>
+export const getWorkerValidationForUser = (validations, userId) =>
   validations?.find(
     v =>
       (!v.userId && v.submitterId === userId) ||

@@ -336,6 +336,16 @@ video:not([href])[controls] {
   width: var(--icon-size)
 }
 
+.fr-notice {
+  &.bordered {
+    box-shadow: inset 0 1px 0 0 var(--border-default-grey), 0 1px 0 0 var(--border-default-grey);
+  }
+  &.less-padding {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+}
+
 .fr-notice--success {
   background-color: var(--background-alt-green-emeraude);
   --idle: transparent;

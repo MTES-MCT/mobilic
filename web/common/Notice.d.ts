@@ -14,6 +14,8 @@ export interface NoticeProps {
     style?: CSSProperties;
     sx?: SxProps;
     onClose?:()=>void;
+    withBorders?: boolean;
+    lessPadding: boolean;
 }
 
 declare const Notice: FC<NoticeProps>;
