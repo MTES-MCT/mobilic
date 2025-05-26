@@ -22,7 +22,7 @@ const EmployeeValidation = validation => {
       {description}
     </Accordion>
   ) : (
-    <Notice title={label} type="warning" lessPadding withBorders />
+    <Notice title={label} type="success" lessPadding withBorders />
   );
 };
 
