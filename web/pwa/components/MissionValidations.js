@@ -3,6 +3,7 @@ import { Stack } from "@mui/material";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import { formatDay } from "common/utils/time";
 import Notice from "../../common/Notice";
+import { getWorkerValidationForUser } from "common/utils/mission";
 
 const EmployeeValidation = validation => {
   const label = validation.isAuto
@@ -74,9 +75,9 @@ export const MissionValidations = ({ mission, userId }) => {
     return;
   }
 
-  // Should we use getWorkerValidationForUser ?
-  const employeeValidation = mission.validations.find(
-    validation => !validation.isAdmin
+  const employeeValidation = getWorkerValidationForUser(
+    mission.validations,
+    userId
   );
 
   const adminValidations = mission.validations.filter(
