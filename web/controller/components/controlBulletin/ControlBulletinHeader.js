@@ -19,7 +19,10 @@ const useStyles = makeStyles(theme => ({
 export function ControlBulletinHeader({ onCloseDrawer, backLinkLabel }) {
   const classes = useStyles();
   return (
-    <Container className={classes.controlHeaderContainer}>
+    <Container
+      className={classes.controlHeaderContainer}
+      id="control-bulletin-header"
+    >
       <ControllerControlBackButton onClick={onCloseDrawer}>
         {backLinkLabel}
       </ControllerControlBackButton>

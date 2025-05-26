@@ -43,7 +43,7 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
   };
 }
 
-const getWorkerValidationForUser = (validations, userId) =>
+export const getWorkerValidationForUser = (validations, userId) =>
   validations?.find(
     v =>
       (!v.userId && v.submitterId === userId) ||

@@ -24,6 +24,7 @@ import { useCacheContradictoryInfoInAdminStore } from "common/utils/contradictor
 import Emoji from "../../common/Emoji";
 import { getNextHeadingComponent } from "common/utils/html";
 import { MissionValidations } from "../../pwa/components/MissionValidations";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   cardRecapKPIContainer: {
@@ -70,6 +71,9 @@ export function MissionEmployeeCard({
   const augmentedAndSortedActivities = computeDurationAndTime(
     activitiesWithBreaks
   );
+
+  const isAdminBypassingEmployeeValidation =
+    !stats.workerValidation && (onCreateActivity || stats.adminValidation);
 
   const datetimeFormatter = useDateTimeFormatter(
     augmentedAndSortedActivities,
@@ -177,17 +181,27 @@ export function MissionEmployeeCard({
       </AccordionSummary>
       <AccordionDetails style={{ display: "block" }}>
         <Grid container spacing={2} direction="column" wrap="nowrap">
-          {!isDeleted && (
-            <MissionValidations
-              mission={mission}
-              validations={stats.validations}
-              userId={user.id}
-              {...(overrideValidation &&
-                adminAutoValidationOnly && {
-                  overrideManualValidation: overrideValidation
-                })}
-            />
-          )}
+          {!isDeleted &&
+            (isAdminBypassingEmployeeValidation ? (
+              <Notice
+                type="warning"
+                description={
+                  <>La validation par le salarié n'a pas eu lieu pour </>
+                }
+                linkText="l'une des raisons suivantes."
+                linkUrl="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic/suivi-et-validation-du-temps-de-travail#en-tant-que-gestionnaire-je-peux-uniquement-modifier-et-valider-les-missions-validees-par-les-salari"
+              />
+            ) : (
+              <MissionValidations
+                mission={mission}
+                validations={stats.validations}
+                userId={user.id}
+                {...(overrideValidation &&
+                  adminAutoValidationOnly && {
+                    overrideManualValidation: overrideValidation
+                  })}
+              />
+            ))}
           <Grid item container spacing={2} alignItems="stretch">
             <Grid xs={12} sm={6} item className={classes.cardRecapKPIContainer}>
               <MetricCard
