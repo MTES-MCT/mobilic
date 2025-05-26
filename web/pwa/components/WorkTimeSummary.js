@@ -126,6 +126,13 @@ export function computeTimesAndDurationsFromActivities(
   };
 }
 
+const diffSecondsToText = diffInS =>
+  diffInS === 0
+    ? ""
+    : `${diffInS > 0 ? "+" : "-"}${formatMinutesFromSeconds(
+        Math.abs(diffInS),
+        false
+      )}`;
 export function renderMissionKpis(
   adminKpis,
   employeeKpis,
@@ -139,6 +146,7 @@ export function renderMissionKpis(
   const formattedKpis = [];
 
   let subText = null;
+  let diffInS = 0;
   if (showInnerBreaksInsteadOfService && innerLongBreaks.length > 0) {
     const innerLongBreak = innerLongBreaks[0];
     subText = formatRangeString(
@@ -152,28 +160,35 @@ export function renderMissionKpis(
     });
   } else {
     subText = formatRangeString(startTime, endTime);
-    let diffText = "";
-    if (!displayEmployee && employeeKpis) {
-      const diffInS = adminKpis.timers.total - employeeKpis.timers.total;
-
-      diffText = `${diffInS > 0 ? "+" : "-"} ${formatMinutesFromSeconds(
-        Math.abs(diffInS),
-        false
-      )}`;
+    if (
+      !displayEmployee &&
+      adminKpis?.timers?.total &&
+      employeeKpis?.timers?.total
+    ) {
+      diffInS = adminKpis.timers.total - employeeKpis.timers.total;
     }
     formattedKpis.push({
       label: kpis.innerLongBreaks.length > 0 ? "Durée" : serviceLabel,
       value: formatTimer(timers ? timers.total : 0),
       subText,
-      diffText
+      diffText: diffSecondsToText(diffInS)
     });
   }
 
+  diffInS = 0;
+  if (
+    !displayEmployee &&
+    adminKpis?.timers?.totalWork &&
+    employeeKpis?.timers?.totalWork
+  ) {
+    diffInS = adminKpis.timers.totalWork - employeeKpis.timers.totalWork;
+  }
   formattedKpis.push({
     label: "Temps de travail",
     value: formatTimer(timers ? timers.totalWork : 0),
     subText,
-    hideSubText: true
+    hideSubText: true,
+    diffText: diffSecondsToText(diffInS)
   });
 
   return formattedKpis;
@@ -267,6 +282,7 @@ export function renderPeriodKpis(
   const formattedKpis = [];
 
   let subText = null;
+  let diffInS = 0;
   if (showInnerBreaksInsteadOfService && kpis.innerLongBreaks.length > 0) {
     const innerLongBreak = kpis.innerLongBreaks[0];
     subText = formatRangeString(
@@ -281,43 +297,48 @@ export function renderPeriodKpis(
     });
   } else {
     subText = formatRangeString(kpis.startTime, kpis.endTime);
-    let diffText = "";
-    if (!displayEmployee && employeeKpis?.timers && adminKpis?.timers) {
-      const diffInS = adminKpis.timers.total - employeeKpis.timers.total;
-
-      diffText =
-        diffInS !== 0
-          ? `${diffInS > 0 ? "+" : "-"} ${formatMinutesFromSeconds(
-              Math.abs(diffInS),
-              false
-            )}`
-          : "";
+    if (
+      !displayEmployee &&
+      employeeKpis?.timers?.total &&
+      adminKpis?.timers?.total
+    ) {
+      diffInS = adminKpis.timers.total - employeeKpis.timers.total;
     }
     formattedKpis.push({
       name: "service",
       label: "Amplitude",
       value: formatTimer(kpis.timers ? kpis.timers.total : 0),
       subText,
-      diffText
+      diffText: diffSecondsToText(diffInS)
     });
   }
 
-  formattedKpis.push(
-    {
-      name: "workedDays",
-      label: "Jours travaillés",
-      value: kpis.workedDays,
-      subText,
-      hideSubText: true
-    },
-    {
-      name: "workTime",
-      label: "Temps de travail",
-      value: formatTimer(kpis.timers ? kpis.timers.totalWork : 0),
-      subText,
-      hideSubText: true
-    }
-  );
+  formattedKpis.push({
+    name: "workedDays",
+    label: "Jours travaillés",
+    value: kpis.workedDays,
+    subText,
+    hideSubText: true
+  });
+
+  diffInS = 0;
+  if (
+    !displayEmployee &&
+    adminKpis?.timers?.totalWork &&
+    employeeKpis?.timers?.totalWork
+  ) {
+    diffInS = adminKpis.timers.totalWork - employeeKpis.timers.totalWork;
+  }
+  const workTimeKpis = {
+    name: "workTime",
+    label: "Temps de travail",
+    value: formatTimer(kpis.timers ? kpis.timers.totalWork : 0),
+    subText,
+    hideSubText: true,
+    diffText: diffSecondsToText(diffInS)
+  };
+
+  formattedKpis.push(workTimeKpis);
   if (Object.keys(kpis.expendituresCount).length > 0)
     formattedKpis.push({
       name: "expenditures",

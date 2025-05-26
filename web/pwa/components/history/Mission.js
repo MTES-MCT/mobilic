@@ -269,6 +269,7 @@ export function Mission({
             alignItems="center"
             wrap="nowrap"
             onClick={() => setOpen(!open)}
+            px={2}
           >
             <Grid item>
               <Typography
@@ -393,7 +394,6 @@ export function Mission({
         )}
         {showMetrics ? (
           <InfoCard
-            className={infoCardStyles.topMargin}
             loading={loadingEmployeeVersion}
             px={0}
             py={0}

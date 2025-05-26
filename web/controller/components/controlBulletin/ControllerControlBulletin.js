@@ -26,6 +26,7 @@ import {
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { useInfractions } from "../../utils/contextInfractions";
 import { useControl } from "../../utils/contextControl";
+import { scrollToId } from "../../../common/hooks/useScroll";
 
 const STEPS = {
   1: {
@@ -69,6 +70,8 @@ export function ControllerControlBulletin({
     setGrecoId(newGrecoId);
     setFieldUpdated(true);
   };
+
+  React.useEffect(() => scrollToId("control-bulletin-header"), [step]);
 
   React.useEffect(() => {
     setControlBulletin(initControlBulletinFromControlData());

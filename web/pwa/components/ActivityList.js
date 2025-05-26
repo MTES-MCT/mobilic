@@ -29,6 +29,7 @@ import { VerticalTimeline } from "common/components/VerticalTimeline";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import { Description } from "../../common/typography/Description";
 import { SegmentedControl } from "@codegouvfr/react-dsfr/SegmentedControl";
+import { Box } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   longBreak: {
@@ -234,42 +235,46 @@ export function ActivityList({
   return (
     <Container ref={ref} maxWidth={false} disableGutters>
       {hasActivitiesBeforeMinTime && (
-        <Description>
-          Les activités avant minuit le jour précédent ne sont pas incluses.
-        </Description>
+        <Box textAlign="left">
+          <Description>
+            Les activités avant minuit le jour précédent ne sont pas incluses.
+          </Description>
+        </Box>
       )}
       {canDisplayChart && (
-        <SegmentedControl
-          legend="Options de visualisation"
-          small
-          classes={{
-            root: classes.switch
-          }}
-          hideLegend
-          segments={[
-            {
-              label: "Liste",
-              nativeInputProps: {
-                onChange: () => setView("list"),
-                checked: view === "list"
+        <Box my={1} textAlign="left">
+          <SegmentedControl
+            legend="Options de visualisation"
+            small
+            classes={{
+              root: classes.switch
+            }}
+            hideLegend
+            segments={[
+              {
+                label: "Liste",
+                nativeInputProps: {
+                  onChange: () => setView("list"),
+                  checked: view === "list"
+                }
+              },
+              {
+                label: "Frise",
+                nativeInputProps: {
+                  onChange: () => setView("timeline"),
+                  checked: view === "timeline"
+                }
+              },
+              {
+                label: "Global",
+                nativeInputProps: {
+                  onChange: () => setView("chart"),
+                  checked: view === "chart"
+                }
               }
-            },
-            {
-              label: "Frise",
-              nativeInputProps: {
-                onChange: () => setView("timeline"),
-                checked: view === "timeline"
-              }
-            },
-            {
-              label: "Global",
-              nativeInputProps: {
-                onChange: () => setView("chart"),
-                checked: view === "chart"
-              }
-            }
-          ]}
-        />
+            ]}
+          />
+        </Box>
       )}
       {(view === "list" || !canDisplayChart) && (
         <List dense>
