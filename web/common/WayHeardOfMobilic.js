@@ -17,14 +17,6 @@ export const WAY_HEARD_OF_MOBILIC_CHOICES = [
     label: "Courrier/courriel de la DREAL"
   },
   {
-    value: "SOCIAL_NETWORK",
-    label: "Sur les réseaux sociaux"
-  },
-  {
-    value: "SEARCH_ENGINE",
-    label: "Recherche internet"
-  },
-  {
     value: "WORD_OF_MOUTH",
     label:
       "Bouche à oreille (en entreprise, donneur d’ordre, collègue, client…)"
@@ -36,6 +28,14 @@ export const WAY_HEARD_OF_MOBILIC_CHOICES = [
   {
     value: "SECTOR_ORGANIZATION",
     label: "Syndicat, fédération / organisation professionnelle"
+  },
+  {
+    value: "SOCIAL_NETWORK",
+    label: "Sur les réseaux sociaux"
+  },
+  {
+    value: "SEARCH_ENGINE",
+    label: "Recherche internet"
   }
 ];
 
