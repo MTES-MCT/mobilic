@@ -29,6 +29,7 @@ import TerminateEmploymentModal from "./admin/modals/TerminateEmploymentModal";
 import BatchInviteModal from "./admin/modals/BatchInviteModal";
 import SuccessMessageModal from "./admin/modals/SuccessMessage";
 import WebinarsModal from "./admin/modals/WebinarsModal";
+import OverrideValidationJustificationModal from "./admin/modals/OverrideValidationJustificationModal";
 
 // home
 import ChangeEmailModal from "./pwa/modals/ChangeEmailModal";
@@ -93,5 +94,6 @@ export const MODAL_DICT = {
   blockedTime: BlockedTimeModal,
   successMessage: SuccessMessageModal,
   webinars: WebinarsModal,
-  controlPicture: ControlPicture
+  controlPicture: ControlPicture,
+  overrideValidation: OverrideValidationJustificationModal
 };

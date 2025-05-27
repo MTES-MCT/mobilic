@@ -55,7 +55,8 @@ export function MissionEmployeeCard({
   isDeleted = false,
   defaultOpen = false,
   displayIcon = true,
-  headingComponent
+  headingComponent,
+  overrideValidation = null
 }) {
   const stats = mission.userStats[user.id.toString()] || {};
   const activities = stats.activities || [];
@@ -80,6 +81,9 @@ export function MissionEmployeeCard({
   );
 
   const cacheContradictoryInfoInAdminStore = useCacheContradictoryInfoInAdminStore();
+
+  const adminAutoValidationOnly =
+    stats.adminAutoValidation && !stats.adminManualValidation;
 
   return (
     <Accordion
@@ -188,7 +192,11 @@ export function MissionEmployeeCard({
                 linkUrl="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic/suivi-et-validation-du-temps-de-travail#en-tant-que-gestionnaire-je-peux-uniquement-modifier-et-valider-les-missions-validees-par-les-salari"
               />
             ) : (
-              <MissionValidations mission={mission} userId={user.id} />
+              <MissionValidations
+                mission={mission}
+                validations={stats.validations}
+                userId={user.id}
+              />
             ))}
           <Grid item container spacing={2} alignItems="stretch">
             <Grid xs={12} sm={6} item className={classes.cardRecapKPIContainer}>
@@ -280,6 +288,11 @@ export function MissionEmployeeCard({
                 variant: "h6",
                 component: getNextHeadingComponent(headingComponent)
               }}
+              {...(overrideValidation &&
+                adminAutoValidationOnly && {
+                  onActionButtonClick: overrideValidation,
+                  actionButtonLabel: "J'ai été absent : modifier les saisies"
+                })}
             />
           </Grid>
           {showExpenditures && (

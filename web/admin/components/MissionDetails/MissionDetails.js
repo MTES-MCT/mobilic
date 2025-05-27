@@ -85,6 +85,11 @@ export function MissionDetails({
   const [usersToAdd, setUsersToAdd] = React.useState([]);
 
   const [
+    overrideValidationJustification,
+    setOverrideValidationJustification
+  ] = React.useState("");
+
+  const [
     entriesToValidateByAdmin,
     setEntriesToValidateByAdmin
   ] = React.useState([]);
@@ -97,6 +102,12 @@ export function MissionDetails({
     []
   );
   const [userIdsWithEntries, setUserIdsWithEntries] = React.useState(false);
+
+  const overrideValidation = () => {
+    modals.open("overrideValidation", {
+      updateJustification: setOverrideValidationJustification
+    });
+  };
 
   async function loadMission() {
     const alreadyFetchedMission = missionsSelector(adminStore)?.find(
@@ -142,9 +153,15 @@ export function MissionDetails({
     () =>
       !isMissionHoliday &&
       !isMissionDeleted &&
-      !missionHasAtLeastOneAdminValidation(mission) &&
-      (entriesToValidateByAdmin?.length > 0 || adminMayOverrideValidation),
-    [entriesToValidateByAdmin, adminMayOverrideValidation]
+      (overrideValidationJustification ||
+        (!missionHasAtLeastOneAdminValidation(mission) &&
+          (entriesToValidateByAdmin?.length > 0 ||
+            adminMayOverrideValidation))),
+    [
+      entriesToValidateByAdmin,
+      adminMayOverrideValidation,
+      overrideValidationJustification
+    ]
   );
 
   const onValidate = async () => {
@@ -152,7 +169,11 @@ export function MissionDetails({
     const usersToValidate = entriesToValidateByAdmin.map(
       workerEntryToValidate => workerEntryToValidate.user.id
     );
-    await missionActions.validateMission(usersToValidate);
+    await missionActions.validateMission(
+      usersToValidate,
+      overrideValidationJustification
+    );
+    setOverrideValidationJustification("");
     setLoading(false);
   };
 
@@ -172,7 +193,8 @@ export function MissionDetails({
       entryToBeValidatedByAdmin(
         workerEntry,
         adminStore.userId,
-        adminMayOverrideValidation
+        adminMayOverrideValidation,
+        overrideValidationJustification
       )
     );
     setEntriesToValidateByAdmin(toBeValidatedByAdmin);
@@ -182,7 +204,11 @@ export function MissionDetails({
     );
     setEntriesValidatedByAdmin(validatedByAdmin);
     setEntriesToValidateByWorker(toValidateByWorker);
-  }, [workerEntries, adminMayOverrideValidation]);
+  }, [
+    workerEntries,
+    adminMayOverrideValidation,
+    overrideValidationJustification
+  ]);
 
   React.useEffect(() => {
     if (mission) {
@@ -391,7 +417,8 @@ export function MissionDetails({
                     entryToBeValidatedByAdmin(
                       e,
                       adminStore.userId,
-                      adminMayOverrideValidation
+                      adminMayOverrideValidation,
+                      overrideValidationJustification
                     ) || !e.activities
                       ? () =>
                           modals.open("activityRevision", {
@@ -415,7 +442,8 @@ export function MissionDetails({
                     entryToBeValidatedByAdmin(
                       e,
                       adminStore.userId,
-                      adminMayOverrideValidation
+                      adminMayOverrideValidation,
+                      overrideValidationJustification
                     ) || !e.activities
                       ? async entry =>
                           modals.open("activityRevision", {
@@ -451,7 +479,8 @@ export function MissionDetails({
                     entryToBeValidatedByAdmin(
                       e,
                       adminStore.userId,
-                      adminMayOverrideValidation
+                      adminMayOverrideValidation,
+                      overrideValidationJustification
                     ) || !e.activities
                       ? (newExps, oldExps) =>
                           editUserExpenditures(
@@ -533,6 +562,7 @@ export function MissionDetails({
                   showExpenditures={showExpenditures}
                   day={day}
                   displayIcon={false}
+                  overrideValidation={overrideValidation}
                 />
               </ListItem>
             ))}

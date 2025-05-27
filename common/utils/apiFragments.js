@@ -56,6 +56,7 @@ export const FULL_MISSION_FRAGMENT = gql`
       receptionTime
       isAdmin
       isAuto
+      justification
       userId
     }
     vehicle {

@@ -29,7 +29,9 @@ export function ActivitiesCard({
   fromTime,
   untilTime,
   datetimeFormatter = formatTimeOfDay,
-  titleProps = {}
+  titleProps = {},
+  actionButtonLabel = "",
+  onActionButtonClick = null
 }) {
   const classes = useActivitiesCardStyles();
   const ref = React.useRef();
@@ -129,6 +131,8 @@ export function ActivitiesCard({
       extraPaddingBelowTitle
       loading={loading}
       titleProps={titleProps}
+      actionButtonLabel={actionButtonLabel}
+      onActionButtonClick={onActionButtonClick}
     >
       <Grid container key={2} spacing={2}>
         <Grid item xs={12}>

@@ -33,14 +33,28 @@ export const missionToValidationEntries = mission =>
 export const entryToBeValidatedByAdmin = (
   tableEntry,
   currentUserId,
-  adminCanBypass = false
-) =>
-  !tableEntry.isDeleted &&
-  !tableEntry.adminValidation &&
-  (entryValidatedByWorkerOrOutdated(tableEntry) ||
+  adminCanBypass = false,
+  overrideValidationJustification = ""
+) => {
+  if (tableEntry.isDeleted) {
+    return false;
+  }
+
+  if (tableEntry.adminManualValidation) {
+    return false;
+  }
+
+  if (tableEntry.adminAutoValidation) {
+    return !!overrideValidationJustification;
+  }
+
+  return (
+    entryValidatedByWorkerOrOutdated(tableEntry) ||
     tableEntry.lastActivitySubmitterId === currentUserId ||
     adminCanBypass ||
-    tableEntry.activities?.length === 0);
+    tableEntry.activities?.length === 0
+  );
+};
 
 export const entryToBeValidatedByWorker = tableEntry =>
   !tableEntry.adminValidation && !tableEntry.workerValidation;
