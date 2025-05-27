@@ -13,12 +13,21 @@ export const WAY_HEARD_OF_MOBILIC_CHOICES = [
     label: "Lors d'un contrôle"
   },
   {
-    value: "PHONE_CALL",
-    label: "Appel de l'équipe Mobilic"
-  },
-  {
     value: "MAIL_DREAL",
     label: "Courrier/courriel de la DREAL"
+  },
+  {
+    value: "WORD_OF_MOUTH",
+    label:
+      "Bouche à oreille (en entreprise, donneur d’ordre, collègue, client…)"
+  },
+  {
+    value: "PROFESSIONAL_TRAINING",
+    label: "Formation professionnelle"
+  },
+  {
+    value: "SECTOR_ORGANIZATION",
+    label: "Syndicat, fédération / organisation professionnelle"
   },
   {
     value: "SOCIAL_NETWORK",
@@ -27,10 +36,6 @@ export const WAY_HEARD_OF_MOBILIC_CHOICES = [
   {
     value: "SEARCH_ENGINE",
     label: "Recherche internet"
-  },
-  {
-    value: "WORD_OF_MOUTH",
-    label: "Bouche à oreille"
   }
 ];
 
