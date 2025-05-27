@@ -3,11 +3,11 @@ import Modal from "../../common/Modal";
 import { Select } from "@codegouvfr/react-dsfr/Select";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 
-export const MOTIFS = [
+export const JUSTIFICATIONS = [
   {
     value: "professional",
     key: "PROFESSIONAL",
-    label: "Raisons professionelles"
+    label: "Raisons professionnelles"
   },
   {
     value: "time_off",
@@ -23,16 +23,18 @@ export const MOTIFS = [
 export default function OverrideValidationJustificationModal({
   open,
   handleClose,
-  updateMotif
+  updateJustification
 }) {
-  const [motif, setMotif] = React.useState(MOTIFS[0].value);
+  const [justification, setJustification] = React.useState(
+    JUSTIFICATIONS[0].value
+  );
 
   const _handleSubmit = React.useCallback(() => {
-    updateMotif(motif);
+    updateJustification(justification);
     if (handleClose) {
       handleClose();
     }
-  }, [motif]);
+  }, [justification]);
 
   return (
     <Modal
@@ -49,13 +51,13 @@ export default function OverrideValidationJustificationModal({
           <Select
             label="Motif"
             nativeSelectProps={{
-              onChange: e => setMotif(e.target.value),
-              value: motif.value
+              onChange: e => setJustification(e.target.value),
+              value: justification.value
             }}
           >
-            {MOTIFS.map(motif => (
-              <option key={motif.value} value={motif.value}>
-                {motif.label}
+            {JUSTIFICATIONS.map(({ value, label }) => (
+              <option key={value} value={value}>
+                {label}
               </option>
             ))}
           </Select>

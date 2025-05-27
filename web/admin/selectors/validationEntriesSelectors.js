@@ -34,7 +34,7 @@ export const entryToBeValidatedByAdmin = (
   tableEntry,
   currentUserId,
   adminCanBypass = false,
-  overrideValidationReason = ""
+  overrideValidationJustification = ""
 ) => {
   if (tableEntry.isDeleted) {
     return false;
@@ -45,7 +45,7 @@ export const entryToBeValidatedByAdmin = (
   }
 
   if (tableEntry.adminAutoValidation) {
-    return !!overrideValidationReason;
+    return !!overrideValidationJustification;
   }
 
   return (

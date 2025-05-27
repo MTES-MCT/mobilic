@@ -105,7 +105,7 @@ export function MissionDetails({
 
   const overrideValidation = () => {
     modals.open("overrideValidation", {
-      updateMotif: setOverrideValidationJustification
+      updateJustification: setOverrideValidationJustification
     });
   };
 
@@ -169,10 +169,10 @@ export function MissionDetails({
     const usersToValidate = entriesToValidateByAdmin.map(
       workerEntryToValidate => workerEntryToValidate.user.id
     );
-    await missionActions.validateMission({
+    await missionActions.validateMission(
       usersToValidate,
       overrideValidationJustification
-    });
+    );
     setOverrideValidationJustification("");
     setLoading(false);
   };

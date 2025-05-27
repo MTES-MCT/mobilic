@@ -196,10 +196,6 @@ export function MissionEmployeeCard({
                 mission={mission}
                 validations={stats.validations}
                 userId={user.id}
-                {...(overrideValidation &&
-                  adminAutoValidationOnly && {
-                    overrideManualValidation: overrideValidation
-                  })}
               />
             ))}
           <Grid item container spacing={2} alignItems="stretch">

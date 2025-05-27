@@ -4,7 +4,7 @@ import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import { formatDay } from "common/utils/time";
 import Notice from "../../common/Notice";
 import { getWorkerValidationForUser } from "common/utils/mission";
-import { MOTIFS } from "../../admin/modals/OverrideValidationJustificationModal";
+import { JUSTIFICATIONS } from "../../admin/modals/OverrideValidationJustificationModal";
 
 const EmployeeValidation = validation => {
   const label = validation.isAuto
@@ -57,7 +57,12 @@ const AdminManualValidation = (validation, hasOverriden) => {
       >
         Le gestionnaire a modifié la mission après sa validation pour la raison
         suivante :{" "}
-        {MOTIFS.find(motif => motif.key === validation.justification)?.label}.
+        {
+          JUSTIFICATIONS.find(
+            justification => justification.key === validation.justification
+          )?.label
+        }
+        .
       </Accordion>
     );
   }
@@ -83,12 +88,7 @@ const NoAdminValidation = () => (
   />
 );
 
-export const MissionValidations = ({
-  mission,
-  validations,
-  userId,
-  justification
-}) => {
+export const MissionValidations = ({ mission, validations, userId }) => {
   const doNotDisplayValidations = mission.isDeleted && !mission.complete;
 
   if (doNotDisplayValidations) {
@@ -116,11 +116,7 @@ export const MissionValidations = ({
         : NoEmployeeValidation()}
       {adminAutoValidation && AdminAutoValidation(adminAutoValidation)}
       {adminManualValidation &&
-        AdminManualValidation(
-          adminManualValidation,
-          adminAutoValidation,
-          justification
-        )}
+        AdminManualValidation(adminManualValidation, adminAutoValidation)}
       {!adminAutoValidation && !adminManualValidation && NoAdminValidation()}
     </Stack>
   );
