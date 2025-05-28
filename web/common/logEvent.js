@@ -33,6 +33,8 @@ function changeResourceAsText(change) {
         change.after || change.before
       )} ${formatAddressSubText(change.after || change.before)}`;
     case MISSION_RESOURCE_TYPES.validation:
+    case MISSION_RESOURCE_TYPES.autoValidationAdmin:
+    case MISSION_RESOURCE_TYPES.autoValidationEmployee:
       return `la validation de ${formatPersonName(
         (change.after || change.before).submitter
       )}`;
@@ -124,6 +126,20 @@ export function getChangeIconAndText(change) {
       switch (change.resourceType) {
         case MISSION_RESOURCE_TYPES.validation:
           return [{ icon: <CheckIcon />, text: `a validé la mission` }];
+        case MISSION_RESOURCE_TYPES.autoValidationAdmin:
+          return [
+            {
+              icon: <CheckIcon />,
+              text: `a validé automatiquement la mission à la place du gestionnaire`
+            }
+          ];
+        case MISSION_RESOURCE_TYPES.autoValidationEmployee:
+          return [
+            {
+              icon: <CheckIcon />,
+              text: `a validé automatiquement la mission à la place du salarié`
+            }
+          ];
         case MISSION_RESOURCE_TYPES.startLocation:
           return [
             {
