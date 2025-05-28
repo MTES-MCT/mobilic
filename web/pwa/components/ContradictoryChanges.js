@@ -76,7 +76,11 @@ export function ContradictoryChanges({
     if (event.type !== "CREATE") {
       return classes.updateActivityEvent;
     }
-    if (event.resourceType === MISSION_RESOURCE_TYPES.validation) {
+    if (
+      event.resourceType === MISSION_RESOURCE_TYPES.validation ||
+      event.resourceType === MISSION_RESOURCE_TYPES.autoValidationAdmin ||
+      event.resourceType === MISSION_RESOURCE_TYPES.autoValidationEmployee
+    ) {
       return classes.validationEvent;
     }
     return classes.missionEvent;
