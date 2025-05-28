@@ -130,14 +130,14 @@ export function getChangeIconAndText(change) {
           return [
             {
               icon: <CheckIcon />,
-              text: `a validé automatiquement la mission à la place du gestionnaire`
+              text: `a validé la mission automatiquement à la place du gestionnaire`
             }
           ];
         case MISSION_RESOURCE_TYPES.autoValidationEmployee:
           return [
             {
               icon: <CheckIcon />,
-              text: `a validé automatiquement la mission à la place du salarié`
+              text: `a validé la mission automatiquement à la place du salarié`
             }
           ];
         case MISSION_RESOURCE_TYPES.startLocation:
