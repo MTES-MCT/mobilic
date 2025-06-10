@@ -39,7 +39,8 @@ export function Event({
   icon = null,
   iconClassName = null,
   cancel,
-  iconBackgroundColor = null
+  iconBackgroundColor = null,
+  isAutomatic = false
 }) {
   const classes = useStyles();
   const store = useStoreSyncedWithLocalStorage();
@@ -63,6 +64,8 @@ export function Event({
             <Typography variant="body2" className={classes.submitter}>
               {submitter
                 ? formatPersonName(submitter)
+                : isAutomatic
+                ? "Mobilic"
                 : formatPersonName(store.userInfo())}
               {" - "}
             </Typography>
