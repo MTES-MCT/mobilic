@@ -141,6 +141,12 @@ export function ContradictoryChanges({
                     time={userChange.time}
                     withFullDate={true}
                     iconBackgroundColor={color}
+                    isAutomatic={
+                      userChange.resourceType ===
+                        MISSION_RESOURCE_TYPES.autoValidationAdmin ||
+                      userChange.resourceType ===
+                        MISSION_RESOURCE_TYPES.autoValidationEmployee
+                    }
                   />
                 ));
               })}
