@@ -20,8 +20,8 @@ export const VIDEOS = {
     description: "Vous inscrire sur Mobilic"
   },
   Admin_Utilisation: {
-    id: "873641999",
-    title: "gestionnaire-utilisation",
+    id: "1092714544",
+    title: "gestionnaire-utilisation-mai-2025",
     description: "Utiliser l'interface gestionnaire"
   },
   Employee_Inscription: {
@@ -45,8 +45,8 @@ export const VIDEOS = {
     description: "Utiliser Mobilic au quotidien"
   },
   Tuto_Ctt: {
-    id: "909969262",
-    title: "tuto-ctt-it-janvier-2024",
+    id: "1092713758",
+    title: "tuto-ctt-it-mai-2025",
     description: "Effectuer un contrôle en bord de route"
   },
   Tuto_Police: {
