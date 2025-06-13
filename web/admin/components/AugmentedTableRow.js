@@ -50,7 +50,7 @@ export function AugmentedTableRowCellContent({
     <CellInnerComponent {...cellInnerComponentProps}>
       {column.boolean ? (
         <Checkbox
-          color="secondary"
+          color="primary"
           size="small"
           checked={cellData || false}
           disabled

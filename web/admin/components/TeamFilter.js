@@ -55,7 +55,7 @@ export function TeamFilter({
         <li {...props}>
           {multiple && (
             <Checkbox
-              color="secondary"
+              color="primary"
               style={{ marginRight: 8 }}
               checked={option.selected || false}
             />

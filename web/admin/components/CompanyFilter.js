@@ -48,7 +48,7 @@ export function CompanyFilter({ companies, setCompanies, className }) {
       renderOption={(props, company) => (
         <li {...props}>
           <Checkbox
-            color="secondary"
+            color="primary"
             style={{ marginRight: 8 }}
             checked={company.selected || false}
           />

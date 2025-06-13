@@ -59,7 +59,7 @@ export default function ConfirmationModal({
                 <FormControlLabel
                   control={
                     <Checkbox
-                      color="secondary"
+                      color="primary"
                       checked={shouldDisableWarning}
                       onChange={e => setShouldDisableWarning(e.target.checked)}
                       size="small"
