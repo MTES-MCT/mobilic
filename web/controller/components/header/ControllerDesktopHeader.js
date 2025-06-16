@@ -8,7 +8,6 @@ import { makeStyles } from "@mui/styles";
 import Divider from "@mui/material/Divider";
 import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@mui/material/Typography";
-import { SocialNetworkPanel } from "../../../common/Header";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { ControllerNavigationMenu } from "./ControllerNavigationMenu";
 
@@ -60,12 +59,6 @@ export function ControllerDesktopHeader() {
       <Logos />
       <Box className="flex-row-center" style={{ overflowX: "hidden" }}>
         {docLinks()}
-        <Divider
-          className={`hr-unstyled ${classes.divider}`}
-          orientation="vertical"
-          flexItem
-        />
-        <SocialNetworkPanel />
         <Divider
           className={`hr-unstyled ${classes.divider}`}
           orientation="vertical"

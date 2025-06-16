@@ -24,12 +24,6 @@ import ListSubheader from "@mui/material/ListSubheader";
 import CloseIcon from "@mui/icons-material/Close";
 import Tooltip from "@mui/material/Tooltip";
 import { Link, LinkButton } from "./LinkButton";
-import YoutubeIcon from "common/assets/images/youtube.png";
-import FacebookIcon from "common/assets/images/facebook.png";
-import LinkedInWhiteIcon from "common/assets/images/linkedin.svg";
-import YoutubeWhiteIcon from "common/assets/images/youtube-white.png";
-import TwitterIcon from "common/assets/images/twitter.svg";
-import TwitterWhiteIcon from "common/assets/images/twitter-white.svg";
 import Grid from "@mui/material/Grid";
 import { useAdminStore, useAdminCompanies } from "../admin/store/store";
 import {
@@ -42,60 +36,6 @@ import TextField from "common/utils/TextField";
 import { MenuItem } from "@mui/material";
 import { ControllerHeader } from "../controller/components/header/ControllerHeader";
 import { LoadingButton } from "common/components/LoadingButton";
-
-const SOCIAL_NETWORKS = [
-  {
-    name: "LinkedIn",
-    colorLogo: "/linkedin.png",
-    whiteLogo: LinkedInWhiteIcon,
-    link: "https://www.linkedin.com/company/mobilic-beta-gouv"
-  },
-  {
-    name: "YouTube",
-    colorLogo: YoutubeIcon,
-    whiteLogo: YoutubeWhiteIcon,
-    link: "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg"
-  },
-  {
-    name: "Twitter",
-    colorLogo: TwitterIcon,
-    whiteLogo: TwitterWhiteIcon,
-    link: "https://twitter.com/Mobilic_gouv"
-  },
-  {
-    name: "Facebook",
-    colorLogo: FacebookIcon,
-    whiteLogo: FacebookIcon,
-    link: "https://www.facebook.com/Mobilic-115289304492481"
-  }
-];
-
-export function SocialNetworkPanel({
-  size = 18,
-  spacing = 1,
-  darkBackground = false
-}) {
-  return (
-    <Grid
-      container
-      spacing={spacing}
-      alignItems="center"
-      style={{ width: "auto" }}
-    >
-      {SOCIAL_NETWORKS.map(sn => (
-        <Grid item key={sn.name}>
-          <IconButton href={sn.link} size="small" target="_blank">
-            <img
-              height={size}
-              alt={sn.name}
-              src={darkBackground ? sn.whiteLogo : sn.colorLogo}
-            />
-          </IconButton>
-        </Grid>
-      ))}
-    </Grid>
-  );
-}
 
 const useStyles = makeStyles(theme => ({
   navItemButton: {
@@ -370,33 +310,32 @@ function DesktopHeader({ disableMenu }) {
   const companyName = company ? company.name : null;
   const routes = getAccessibleRoutes({ userInfo, companies });
 
-  const docLinks = () => (
-    <>
-      <LinkButton
-        href="https://faq.mobilic.beta.gouv.fr"
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{ padding: "0.25rem 0.5rem" }}
-      >
-        Foire aux questions
-      </LinkButton>
-      <LinkButton
-        href="/resources/home"
-        target="_blank"
-        style={{ padding: "0.25rem 0.5rem" }}
-      >
-        Documentation
-      </LinkButton>
-      <LinkButton to="/partners" style={{ padding: "0.25rem 0.5rem" }}>
-        Partenaires et logiciels
-      </LinkButton>
-      {!userInfo?.id && (
-        <LinkButton to="/certificate" style={{ padding: "0.25rem 0.5rem" }}>
-          Certificat
+  const docLinks = () => {
+    const style = { padding: "0.25rem 1rem" };
+    return (
+      <Box mr={4}>
+        <LinkButton
+          href="https://faq.mobilic.beta.gouv.fr"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={style}
+        >
+          Foire aux questions
         </LinkButton>
-      )}
-    </>
-  );
+        <LinkButton href="/resources/home" target="_blank" style={style}>
+          Documentation
+        </LinkButton>
+        <LinkButton to="/partners" style={style}>
+          Partenaires et logiciels
+        </LinkButton>
+        {!userInfo?.id && (
+          <LinkButton to="/certificate" style={style}>
+            Certificat
+          </LinkButton>
+        )}
+      </Box>
+    );
+  };
 
   return (
     <Box className={`flex-row-space-between ${classes.desktopHeader}`}>
@@ -404,21 +343,6 @@ function DesktopHeader({ disableMenu }) {
       {store.userId() ? (
         <Box className="flex-row-center" style={{ overflowX: "hidden" }}>
           {!disableMenu && docLinks()}
-          {!disableMenu && (
-            <Divider
-              className={`hr-unstyled ${classes.divider}`}
-              orientation="vertical"
-              flexItem
-            />
-          )}
-          {!disableMenu && <SocialNetworkPanel />}
-          {!disableMenu && (
-            <Divider
-              className={`hr-unstyled ${classes.divider}`}
-              orientation="vertical"
-              flexItem
-            />
-          )}
           <Tooltip
             title={`${formatPersonName(userInfo)}${
               companyName ? " - " + companyName : ""
@@ -450,17 +374,6 @@ function DesktopHeader({ disableMenu }) {
         !disableMenu && (
           <Box className="flex-row-center">
             {docLinks()}
-            <Divider
-              className={`hr-unstyled ${classes.divider}`}
-              orientation="vertical"
-              flexItem
-            />
-            <SocialNetworkPanel />
-            <Divider
-              className={`hr-unstyled ${classes.divider}`}
-              orientation="vertical"
-              flexItem
-            />
             <Grid
               container
               style={{ width: "auto" }}
