@@ -388,7 +388,7 @@ function DesktopHeader({ disableMenu }) {
         Documentation
       </LinkButton>
       <LinkButton to="/partners" style={{ padding: "0.25rem 0.5rem" }}>
-        Partenaires
+        Partenaires et logiciels
       </LinkButton>
       {!userInfo?.id && (
         <LinkButton to="/certificate" style={{ padding: "0.25rem 0.5rem" }}>

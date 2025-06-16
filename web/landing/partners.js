@@ -262,7 +262,7 @@ export function Partners() {
                 </Typography>
                 <Grid
                   container
-                  justifyContent="space-evenly"
+                  justifyContent="center"
                   alignItems="center"
                   spacing={{ xs: 2, sm: 4 }}
                 >
