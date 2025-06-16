@@ -78,7 +78,7 @@ const RESOURCES_ROUTE = {
     },
     {
       path: "/partners",
-      label: "Partenaires"
+      label: "Partenaires et logiciels"
     }
   ]
 };
@@ -379,7 +379,7 @@ export const ROUTES = [
   },
   {
     path: "/partners",
-    label: "Partenaires",
+    label: "Partenaires et logiciels",
     accessible: () => true,
     component: <Partners />,
     menuItemFilter: () => false

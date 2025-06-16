@@ -25,15 +25,15 @@ export const RESOURCES_DOCUMENT = {
   noticeUtilisation: {
     gestionnaire: {
       slideshare:
-        "https://www.slideshare.net/slideshow/embed_code/key/csRjiZP7BrQcMu/",
+        "https://www.slideshare.net/slideshow/embed_code/key/5qE1tW5HS38tDT",
       download:
-        "https://drive.google.com/uc?export=download&id=1S7qU2W2ypGUtuAG-fKmF__Sc9KOfqGte"
+        "https://drive.google.com/uc?export=download&id=1tIDN9OaqC6c23-TvLcM4aH_IZvIyPjCp"
     },
     salarie: {
       slideshare:
-        "https://www.slideshare.net/slideshow/embed_code/key/zIMzBV9OangCxm/",
+        "https://www.slideshare.net/slideshow/embed_code/key/oLCKAvydrLM3XI",
       download:
-        "https://drive.google.com/uc?export=download&id=1MmMhbd75_T8K2YWhKKl2PRd29NXus5OU"
+        "https://drive.google.com/uc?export=download&id=130GKccHEdlh-9Wll_mCxUutO0_3_bsH2"
     },
     controleur: {
       slideshare:
@@ -43,9 +43,9 @@ export const RESOURCES_DOCUMENT = {
     },
     controleurConnected: {
       slideshare:
-        "https://www.slideshare.net/slideshow/embed_code/key/r1TfId1XpMD66Z",
+        "https://www.slideshare.net/slideshow/embed_code/key/9HTSwAGETtOIZP",
       download:
-        "https://drive.google.com/uc?export=download&id=1kUdMyTkO7x-vPWLTOGwUcDXfuSeXAKi1"
+        "https://drive.google.com/uc?export=download&id=1EJj3FmvUkjiqRoESioBFZDQNlFVWKWp4"
     }
   },
   brochure: {

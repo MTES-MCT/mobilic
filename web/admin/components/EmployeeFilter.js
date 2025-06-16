@@ -68,7 +68,7 @@ export function EmployeeFilter({
         <li {...props} key={option.id}>
           {multiple && (
             <Checkbox
-              color="secondary"
+              color="primary"
               style={{ marginRight: 8 }}
               checked={option.selected || false}
             />

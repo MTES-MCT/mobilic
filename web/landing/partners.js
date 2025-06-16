@@ -12,6 +12,7 @@ import { LoadingButton } from "common/components/LoadingButton";
 import { usePageTitle } from "../common/UsePageTitle";
 import { Main } from "../common/semantics/Main";
 import { LinkButton } from "../common/LinkButton";
+import { ExternalLink } from "../common/ExternalLink";
 
 // This condition actually should detect if it's a Node environment
 if (typeof require.context === "undefined") {
@@ -115,7 +116,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function Partners() {
-  usePageTitle("Partenaires - Mobilic");
+  usePageTitle("Partenaires et logiciels - Mobilic");
   const classes = useStyles();
   const [partnersToShow, setPartnersToShow] = React.useState([]);
   const [showAllPartners, setShowAllPartners] = React.useState(false);
@@ -142,19 +143,17 @@ export function Partners() {
         <Container maxWidth="xl" className={classes.inner}>
           <Box>
             <PaperContainerTitle variant="h1" className={classes.title}>
-              Qui sont les partenaires de Mobilic ?
+              Partenaires et logiciels habilités
             </PaperContainerTitle>
           </Box>
           <Grid container spacing={14}>
             <Grid item xs={12} md={6} textAlign="center">
               <Typography variant="h5" component="h2" className={classes.title}>
-                Les entreprises
+                Les entreprises partenaires
               </Typography>
               <Typography className={classes.paragraphDescription}>
-                Les entreprises partenaires{" "}
-                <strong>utilisent Mobilic de manière active</strong>,
-                c'est-à-dire qu'au moins 60% de leurs salariés inscrits sur
-                Mobilic s'en servent au quotidien.
+                Les entreprises partenaires soutiennent activement l’utilisation
+                de Mobilic pour le suivi du temps de travail.
               </Typography>
               <Grid
                 container
@@ -198,19 +197,19 @@ export function Partners() {
                   component="h2"
                   className={classes.title}
                 >
-                  Les éditeurs de logiciels
+                  Les logiciels habilités
                 </Typography>
                 <Typography
                   className={classes.paragraphDescription}
                   component="div"
                 >
-                  Les éditeurs de logiciels partenaires sont{" "}
-                  <strong>
-                    interfacés avec{" "}
-                    <span style={{ whiteSpace: "nowrap" }}>
-                      l'API Mobilic :
-                    </span>
-                  </strong>
+                  Les éditeurs de logiciel sont habilités à assurer le suivi du
+                  temps de travail conformément à{" "}
+                  <ExternalLink
+                    text="l'arrêté du 6 mars 2025"
+                    url="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000051347969"
+                  />{" "}
+                  :
                   <br />
                   <br />
                   <ul>
@@ -259,11 +258,11 @@ export function Partners() {
                   component="h2"
                   className={classes.title}
                 >
-                  Les différents soutiens
+                  Les différents soutiens institutionnels
                 </Typography>
                 <Grid
                   container
-                  justifyContent="space-evenly"
+                  justifyContent="center"
                   alignItems="center"
                   spacing={{ xs: 2, sm: 4 }}
                 >
