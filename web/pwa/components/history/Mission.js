@@ -28,7 +28,6 @@ import { formatApiError } from "common/utils/errors";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useApi } from "common/utils/api";
-import { MissionValidationInfo } from "../../../common/MissionValidationInfo";
 import {
   getNextHeadingComponent,
   getPrevHeadingComponent
@@ -325,19 +324,6 @@ export function Mission({
             </ItalicWarningTypography>
           </InfoCard>
         )}
-        {!(mission.isDeleted && !mission.complete) &&
-          (!validateMission ||
-            mission.validation ||
-            mission.adminValidation) && (
-            <>
-              <MissionValidationInfo validation={mission.validation} />
-              <MissionValidationInfo
-                className={classes.employeeValidation}
-                validation={mission.adminValidation}
-                isAdmin
-              />
-            </>
-          )}
         <PeriodHeader>
           <Stack direction="row" justifyContent="space-between">
             <Box sx={{ textAlign: "left" }}>
