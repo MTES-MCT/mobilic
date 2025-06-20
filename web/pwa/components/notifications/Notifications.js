@@ -34,14 +34,20 @@ export const Notifications = () => {
   return (
     <section
       className={fr.cx("fr-accordion")}
-      style={{ backgroundColor: "white" }}
+      style={{
+        backgroundColor: "white",
+        position: "absolute",
+        bottom: 0,
+        width: "100%",
+        zIndex: 4000
+      }}
     >
       <div
         className={fr.cx("fr-collapse")}
         id={collapseElementId}
         style={{ padding: 0 }}
       >
-        <Stack direction="column" width="100%">
+        <Stack direction="column" width="100%" maxHeight="85vh">
           {notifs.map((notif, notif_id) => (
             <Notification key={`notif__${notif_id}`} {...notif} />
           ))}
