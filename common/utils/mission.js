@@ -38,11 +38,12 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     deletedAt: missionPayload.deletedAt,
     deletedBy: missionPayload.deletedBy,
     isHoliday:
-      missionPayload.isHoliday !== undefined ? missionPayload.isHoliday : false
+      missionPayload.isHoliday !== undefined ? missionPayload.isHoliday : false,
+    validations: missionPayload.validations
   };
 }
 
-const getWorkerValidationForUser = (validations, userId) =>
+export const getWorkerValidationForUser = (validations, userId) =>
   validations?.find(
     v =>
       (!v.userId && v.submitterId === userId) ||
@@ -175,8 +176,19 @@ export function computeMissionStats(m, users) {
       adminValidation:
         m.validations.find(v => v.userId?.toString() === userId && v.isAdmin) ||
         adminGlobalValidation,
+      adminAutoValidation: m.validations.find(
+        v => v.userId?.toString() === userId && v.isAdmin && v.isAuto
+      ),
+      adminManualValidation: m.validations.find(
+        v => v.userId?.toString() === userId && v.isAdmin && !v.isAuto
+      ),
       workerValidation: getWorkerValidationForUser(m.validations, user?.id),
-      lastActivitySubmitterId
+      lastActivitySubmitterId,
+      validations: m.validations.filter(
+        v =>
+          (!v.userId && v.submitterId.toString() === userId) ||
+          v.userId.toString() === userId
+      )
     };
   });
   const missionNotUpdatedForTooLong = values(userStats).some(

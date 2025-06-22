@@ -72,6 +72,10 @@ export function useToggleContradictory(
               hasContradictoryChanges: missionResourcesWithHistory.history.some(
                 change =>
                   change.resourceType !== MISSION_RESOURCE_TYPES.validation &&
+                  change.resourceType !==
+                    MISSION_RESOURCE_TYPES.autoValidationAdmin &&
+                  change.resourceType !==
+                    MISSION_RESOURCE_TYPES.autoValidationEmployee &&
                   change.time > mi[1]
               )
             };

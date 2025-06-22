@@ -16,14 +16,18 @@ const Notice = ({
   isFullWidth = true,
   classes = {},
   sx = {},
-  onClose = null
+  onClose = null,
+  withBorders = false,
+  lessPadding = false
 }) => {
   return (
     <Box
       className={cx(
         fr.cx("fr-notice", `fr-notice--${type}`),
         classes.root,
-        className
+        className,
+        withBorders && "bordered",
+        lessPadding && "less-padding"
       )}
       style={{ ...style, textAlign: "initial" }}
       sx={sx}
