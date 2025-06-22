@@ -3,6 +3,7 @@ import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { Stack } from "@mui/material";
 import React, { useState, useCallback } from "react";
 import { Notification } from "./Notification";
+import { cx } from "@codegouvfr/react-dsfr/fr/cx";
 
 const notifs = [
   {
@@ -33,7 +34,7 @@ export const Notifications = () => {
 
   return (
     <section
-      className={fr.cx("fr-accordion")}
+      className={cx(fr.cx("fr-accordion"), "notifications")}
       style={{
         backgroundColor: "white",
         position: "absolute",

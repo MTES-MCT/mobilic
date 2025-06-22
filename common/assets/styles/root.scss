@@ -455,6 +455,15 @@ video:not([href])[controls] {
   }
 }
 
+
+.fr-accordion   {
+  &.notifications {
+    .fr-accordion__btn[aria-expanded="true"] {
+      background-color: inherit;
+}
+  }
+}
+
 .fr-btn--secondary.error {
   background-color: var(--background-alt-red-marianne);
   color: var(--background-action-high-red-marianne);
