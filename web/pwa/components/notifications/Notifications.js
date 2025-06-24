@@ -3,32 +3,38 @@ import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { Stack } from "@mui/material";
 import React, { useState, useCallback } from "react";
 import { Notification } from "./Notification";
-
-const notifs = [
-  {
-    title: "Votre gestionnaire a modifié la mission Déménagement du 10/12/2024",
-    content: "Retrouvez le détail des modifications dans votre historique.",
-    read: false,
-    link: "Afficher l'historique"
-  },
-  {
-    title: "Mission Tournée du 09/12/2024 validée automatiquement",
-    content:
-      "Informez votre gestionnaire de vos horaires réels en laissant une observation dans l’historique.",
-    read: true
-  }
-];
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
+import { READ_NOTIFICATIONS_MUTATION } from "common/utils/apiQueries";
+import { useApi } from "common/utils/api";
 
 export const Notifications = () => {
   const id = "fr-accordion-notifs";
-
   const collapseElementId = `${id}-collapse`;
 
+  // Récupère les notifications depuis le store
+  const store = useStoreSyncedWithLocalStorage();
+  const userInfo = store.userInfo();
+  const notifs = userInfo.notifications || [];
+  console.log("Notifications:", notifs);
+  console.log("Notifications:", userInfo);
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const onExtendButtonClick = useCallback(() => {
+  const api = useApi();
+  const onExtendButtonClick = useCallback(async () => {
     const isExpended_newValue = !isExpanded;
     setIsExpanded(isExpended_newValue);
+
+    if (isExpanded) {
+      const apiResponse = await api.graphQlMutate(
+        READ_NOTIFICATIONS_MUTATION,
+        { notificationIds: notifs.map(n => n.id) },
+        { context: { nonPublicApi: true } }
+      );
+
+      await store.setUserInfo({
+        ...store.userInfo(),
+        notifications: apiResponse.data.account.MarkNotificationsAsRead
+      });
+    }
   });
 
   return (
@@ -48,9 +54,13 @@ export const Notifications = () => {
         style={{ padding: 0 }}
       >
         <Stack direction="column" width="100%" maxHeight="85vh">
-          {notifs.map((notif, notif_id) => (
-            <Notification key={`notif__${notif_id}`} {...notif} />
-          ))}
+          {notifs.length === 0 ? (
+            <span>Aucune notification</span>
+          ) : (
+            notifs.map((notif, notif_id) => (
+              <Notification key={`notif__${notif_id}`} {...notif} />
+            ))
+          )}
         </Stack>
       </div>
       <h3 className={fr.cx("fr-accordion__title")}>
@@ -78,7 +88,7 @@ export const Notifications = () => {
               Informations
             </span>
             <Badge noIcon severity="error" style={{ fontSize: "0.625rem" }}>
-              2 nouveaux messages
+              {notifs.filter(n => !n.read).length} nouveaux messages
             </Badge>
           </Stack>
         </button>
