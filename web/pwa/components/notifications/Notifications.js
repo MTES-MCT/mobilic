@@ -24,6 +24,9 @@ const getNotificationDetails = (type, data) => {
   }
 };
 const InnerNotification = ({ type, data, read, openHistory }) => {
+  if (!data) {
+    return null;
+  }
   const details = getNotificationDetails(type, JSON.parse(data));
   const { title, content, missionId } = details;
   return (
@@ -45,24 +48,18 @@ export const Notifications = ({ openHistory }) => {
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
   const notifs = userInfo.notifications || [];
-  console.log("Notifications:", notifs);
-  console.log("Notifications:", userInfo);
   const [isExpanded, setIsExpanded] = useState(false);
   const api = useApi();
   const onExtendButtonClick = useCallback(async () => {
     const isExpended_newValue = !isExpanded;
     setIsExpanded(isExpended_newValue);
 
-    if (isExpanded) {
-      const apiResponse = await api.graphQlMutate(
+    if (isExpended_newValue) {
+      await api.graphQlMutate(
         READ_NOTIFICATIONS_MUTATION,
         { notificationIds: notifs.map(n => n.id) },
         { context: { nonPublicApi: true } }
       );
-      await store.setUserInfo({
-        ...store.userInfo(),
-        notifications: apiResponse.data.account.markNotificationsAsRead
-      });
     }
   });
 
