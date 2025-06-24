@@ -8,7 +8,36 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { READ_NOTIFICATIONS_MUTATION } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 
-export const Notifications = () => {
+const getNotificationDetails = (type, data) => {
+  switch (type) {
+    case "MISSION_CHANGES_WARNING": {
+      const missionStartDate = data.mission_start_date;
+      const missionId = 597; //data.mission_id;
+      return {
+        title: `Votre gestionnaire a modifié votre mission du ${missionStartDate}`,
+        content: "Retrouvez le détail des modifications dans votre historique.",
+        missionId: missionId
+      };
+    }
+    default:
+      return {};
+  }
+};
+const InnerNotification = ({ type, data, read, openHistory }) => {
+  const details = getNotificationDetails(type, JSON.parse(data));
+  const { title, content, missionId } = details;
+  return (
+    <Notification
+      title={title}
+      content={content}
+      missionId={missionId}
+      historyOnClick={() => openHistory(missionId)}
+      read={read}
+    />
+  );
+};
+
+export const Notifications = ({ openHistory }) => {
   const id = "fr-accordion-notifs";
   const collapseElementId = `${id}-collapse`;
 
@@ -30,13 +59,21 @@ export const Notifications = () => {
         { notificationIds: notifs.map(n => n.id) },
         { context: { nonPublicApi: true } }
       );
-
       await store.setUserInfo({
         ...store.userInfo(),
-        notifications: apiResponse.data.account.MarkNotificationsAsRead
+        notifications: apiResponse.data.account.markNotificationsAsRead
       });
     }
   });
+
+  const unreadNotifs = React.useMemo(() => notifs.filter(n => !n.read), [
+    notifs
+  ]);
+  const title = React.useMemo(
+    () =>
+      unreadNotifs.length > 0 ? `${unreadNotifs.length} nouveaux messages` : "",
+    [unreadNotifs]
+  );
 
   return (
     <section
@@ -55,13 +92,13 @@ export const Notifications = () => {
         style={{ padding: 0 }}
       >
         <Stack direction="column" width="100%" maxHeight="85vh">
-          {notifs.length === 0 ? (
-            <span>Aucune notification</span>
-          ) : (
-            notifs.map((notif, notif_id) => (
-              <Notification key={`notif__${notif_id}`} {...notif} />
-            ))
-          )}
+          {notifs.map((notif, notif_id) => (
+            <InnerNotification
+              key={`notif__${notif_id}`}
+              {...notif}
+              openHistory={openHistory}
+            />
+          ))}
         </Stack>
       </div>
       <h3 className={fr.cx("fr-accordion__title")}>
@@ -88,9 +125,11 @@ export const Notifications = () => {
             >
               Informations
             </span>
-            <Badge noIcon severity="error" style={{ fontSize: "0.625rem" }}>
-              {notifs.filter(n => !n.read).length} nouveaux messages
-            </Badge>
+            {title && (
+              <Badge noIcon severity="error" style={{ fontSize: "0.625rem" }}>
+                {title}
+              </Badge>
+            )}
           </Stack>
         </button>
       </h3>

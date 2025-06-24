@@ -38,7 +38,12 @@ const useStyles = makeStyles(theme => ({
   })
 }));
 
-export const Notification = ({ title, content, link, read = true }) => {
+export const Notification = ({
+  title,
+  content,
+  historyOnClick,
+  read = true
+}) => {
   const classes = useStyles({ read });
   return (
     <Stack direction="column" width="100%" p={2} className={classes.container}>
@@ -47,12 +52,12 @@ export const Notification = ({ title, content, link, read = true }) => {
       <Button
         priority="tertiary no outline"
         size="small"
-        onClick={e => {}}
+        onClick={historyOnClick}
         iconId="fr-icon-arrow-right-line"
         iconPosition="right"
         className={classes.link}
       >
-        {link}
+        Afficher l'historique
       </Button>
     </Stack>
   );

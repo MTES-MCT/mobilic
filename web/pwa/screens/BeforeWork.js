@@ -315,7 +315,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
           </List>
         </Box>
       )}
-      <Notifications />
+      <Notifications openHistory={openHistory} />
     </Container>
   );
 }
