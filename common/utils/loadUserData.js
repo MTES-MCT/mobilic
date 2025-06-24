@@ -133,6 +133,13 @@ const USER_QUERY = gql`
       userAgreementStatus {
         ...UserAgreementData
       }
+      notifications {
+        id
+        type
+        creationTime
+        read
+        data
+      }
     }
   }
 `;
@@ -279,7 +286,8 @@ export async function syncUser(userPayload, api, store) {
     missions: missionsPayload,
     employments,
     surveyActions,
-    userAgreementStatus
+    userAgreementStatus,
+    notifications
   } = userPayload;
 
   onLogIn(shouldUpdatePassword);
@@ -320,7 +328,8 @@ export async function syncUser(userPayload, api, store) {
           hasActivatedEmail,
           disabledWarnings,
           surveyActions,
-          userAgreementStatus
+          userAgreementStatus,
+          notifications
         },
         false
       )
