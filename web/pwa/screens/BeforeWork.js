@@ -224,7 +224,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
       <PlaceHolder style={{ textAlign: "center" }}>
         <img alt="mobilic-logo-text" src={LogoWithText} width={150} />
       </PlaceHolder>
-      <Box mt={2} className="cta-container" mb={2}>
+      <Box mt={2} className="cta-container" mb={8}>
         <Typography className={classes.promiseText}>
           Le suivi de votre temps de travail
         </Typography>

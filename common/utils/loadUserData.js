@@ -8,6 +8,7 @@ import { startOfMonth, subMonths } from "date-fns";
 import {
   COMPANY_SETTINGS_FRAGMENT,
   FULL_MISSION_FRAGMENT,
+  NOTIFICATION_FRAGMENT,
   USER_AGREEMENT
 } from "./apiFragments";
 import { gql } from "graphql-tag";
@@ -78,6 +79,7 @@ const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FULL_MISSION_FRAGMENT}
   ${USER_AGREEMENT}
+  ${NOTIFICATION_FRAGMENT}
   query user($id: Int!, $activityAfter: TimeStamp) {
     user(id: $id) {
       id
@@ -134,11 +136,7 @@ const USER_QUERY = gql`
         ...UserAgreementData
       }
       notifications {
-        id
-        type
-        creationTime
-        read
-        data
+        ...NotificationData
       }
     }
   }

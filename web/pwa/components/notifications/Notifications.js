@@ -47,7 +47,9 @@ export const Notifications = ({ openHistory }) => {
   // Récupère les notifications depuis le store
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
-  const notifs = userInfo.notifications || [];
+
+  const [notifs] = React.useState(userInfo.notifications);
+
   const [isExpanded, setIsExpanded] = useState(false);
   const api = useApi();
   const onExtendButtonClick = useCallback(async () => {
@@ -55,22 +57,21 @@ export const Notifications = ({ openHistory }) => {
     setIsExpanded(isExpended_newValue);
 
     if (isExpended_newValue) {
-      await api.graphQlMutate(
+      const apiResponse = await api.graphQlMutate(
         READ_NOTIFICATIONS_MUTATION,
         { notificationIds: notifs.map(n => n.id) },
         { context: { nonPublicApi: true } }
       );
+      await store.setUserInfo({
+        ...store.userInfo(),
+        notifications: apiResponse.data.account.markNotificationsAsRead
+      });
     }
   });
 
-  const unreadNotifs = React.useMemo(() => notifs.filter(n => !n.read), [
-    notifs
-  ]);
-  const title = React.useMemo(
-    () =>
-      unreadNotifs.length > 0 ? `${unreadNotifs.length} nouveaux messages` : "",
-    [unreadNotifs]
-  );
+  const unreadNotifs = notifs.filter(n => !n.read);
+  const title =
+    unreadNotifs.length > 0 ? `${unreadNotifs.length} nouveaux messages` : "";
 
   return (
     <section
@@ -89,7 +90,7 @@ export const Notifications = ({ openHistory }) => {
         style={{ padding: 0 }}
       >
         <Stack direction="column" width="100%" maxHeight="85vh">
-          {notifs.map((notif, notif_id) => (
+          {notifs?.map((notif, notif_id) => (
             <InnerNotification
               key={`notif__${notif_id}`}
               {...notif}

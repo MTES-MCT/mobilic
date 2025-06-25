@@ -300,3 +300,13 @@ export const USER_AGREEMENT = gql`
     cguVersion
   }
 `;
+
+export const NOTIFICATION_FRAGMENT = gql`
+  fragment NotificationData on Notification {
+    id
+    type
+    creationTime
+    read
+    data
+  }
+`;
