@@ -122,7 +122,8 @@ export function MissionDetails({
   disableEmptyActivitiesPlaceHolder = false,
   forceDisplayEndLocation = false,
   controlId = null,
-  titleProps = {}
+  titleProps = {},
+  hideHistory = false
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -227,15 +228,17 @@ export function MissionDetails({
 
   return (
     <AlternateColors inverseColors={inverseColors}>
-      <MissionReviewSection title="Historique des validations">
-        {mission.validations && (
-          <MissionValidations
-            mission={mission}
-            validations={mission.validations}
-            userId={userId}
-          />
-        )}
-      </MissionReviewSection>
+      {!hideHistory && (
+        <MissionReviewSection title="Historique des validations">
+          {mission.validations && (
+            <MissionValidations
+              mission={mission}
+              validations={mission.validations}
+              userId={userId}
+            />
+          )}
+        </MissionReviewSection>
+      )}
       <MissionReviewSection
         title="Activités"
         editButtonLabel="Ajouter"
