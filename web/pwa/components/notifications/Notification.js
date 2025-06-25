@@ -14,7 +14,22 @@ const useStyles = makeStyles(theme => ({
       ? fr.colors.decisions.background.flat.grey.default
       : fr.colors.decisions.background.flat.blueFrance.default,
     fontSize: "0.875rem",
-    fontWeight: "bold"
+    fontWeight: "bold",
+    position: "relative",
+    ...(!read && {
+      marginLeft: "1.2rem",
+      "&::before": {
+        content: '""',
+        position: "absolute",
+        left: "-24px", // adjust as needed
+        top: "50%",
+        transform: "translateY(-50%)",
+        width: "12px",
+        height: "12px",
+        borderRadius: "50%",
+        backgroundColor: "red"
+      }
+    })
   }),
   content: ({ read }) => ({
     color: read
