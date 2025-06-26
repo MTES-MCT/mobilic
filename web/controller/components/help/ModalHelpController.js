@@ -38,12 +38,6 @@ export function HelpController() {
           clickAction={openChat}
         />
       )}
-      <ControllerHelpCard
-        iconName={"fr-icon-question-answer-fill"}
-        title="Forum Tchap"
-        description="Échangez avec d’autres contrôleurs sur notre forum Tchap !"
-        linkTo="https://www.tchap.gouv.fr/#/room/%23SupportMobilicYNhe5wcTWWb:agent.dinum.tchap.gouv.fr"
-      />
     </Stack>
   );
 }
