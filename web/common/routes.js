@@ -464,12 +464,6 @@ export const ROUTES = [
         href: "https://mobilic.gitbook.io/natinf-expliques/",
         target: "_blank",
         label: "NATINFS expliqués"
-      },
-      {
-        href:
-          "https://tchap.gouv.fr/#/room/#SupportMobilicYNhe5wcTWWb:agent.dinum.tchap.gouv.fr",
-        target: "_blank",
-        label: "Forum Tchap"
       }
     ]
   },
