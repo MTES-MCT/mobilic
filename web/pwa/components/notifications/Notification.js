@@ -21,13 +21,13 @@ const useStyles = makeStyles(theme => ({
       "&::before": {
         content: '""',
         position: "absolute",
-        left: "-24px", // adjust as needed
+        left: "-24px",
         top: "50%",
         transform: "translateY(-50%)",
         width: "12px",
         height: "12px",
         borderRadius: "50%",
-        backgroundColor: "red"
+        backgroundColor: "var(--background-flat-red-marianne)"
       }
     })
   }),

@@ -7,27 +7,13 @@ import { cx } from "@codegouvfr/react-dsfr/fr/cx";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { READ_NOTIFICATIONS_MUTATION } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
+import { getNotificationContent } from "./NotificationContent";
 
-const getNotificationDetails = (type, data) => {
-  switch (type) {
-    case "MISSION_CHANGES_WARNING": {
-      const missionStartDate = data.mission_start_date;
-      const missionId = 597; //data.mission_id;
-      return {
-        title: `Votre gestionnaire a modifié votre mission du ${missionStartDate}`,
-        content: "Retrouvez le détail des modifications dans votre historique.",
-        missionId: missionId
-      };
-    }
-    default:
-      return {};
-  }
-};
 const InnerNotification = ({ type, data, read, openHistory }) => {
   if (!data) {
     return null;
   }
-  const details = getNotificationDetails(type, JSON.parse(data));
+  const details = getNotificationContent(type, JSON.parse(data));
   const { title, content, missionId } = details;
   return (
     <Notification
@@ -44,7 +30,6 @@ export const Notifications = ({ openHistory }) => {
   const id = "fr-accordion-notifs";
   const collapseElementId = `${id}-collapse`;
 
-  // Récupère les notifications depuis le store
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
 
@@ -90,13 +75,24 @@ export const Notifications = ({ openHistory }) => {
         style={{ padding: 0 }}
       >
         <Stack direction="column" width="100%" maxHeight="85vh">
-          {notifs?.map((notif, notif_id) => (
-            <InnerNotification
-              key={`notif__${notif_id}`}
-              {...notif}
-              openHistory={openHistory}
-            />
-          ))}
+          {notifs && notifs.length > 0 ? (
+            notifs.map((notif, notif_id) => (
+              <InnerNotification
+                key={`notif__${notif_id}`}
+                {...notif}
+                openHistory={openHistory}
+              />
+            ))
+          ) : (
+            <p
+              style={{
+                textAlign: "center",
+                padding: "2rem 0"
+              }}
+            >
+              Vous n'avez aucun message
+            </p>
+          )}
         </Stack>
       </div>
       <h3 className={fr.cx("fr-accordion__title")}>
