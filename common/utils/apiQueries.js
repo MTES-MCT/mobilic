@@ -13,7 +13,8 @@ import {
   FRAGMENT_ACTIVITY,
   FULL_MISSION_FRAGMENT,
   FULL_EMPLOYMENT_FRAGMENT,
-  USER_AGREEMENT
+  USER_AGREEMENT,
+  NOTIFICATION_FRAGMENT
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
 
@@ -2372,6 +2373,17 @@ export const REJECT_CGU_MUTATION = gql`
     account {
       rejectCgu(userId: $userId, cguVersion: $cguVersion) {
         ...UserAgreementData
+      }
+    }
+  }
+`;
+
+export const READ_NOTIFICATIONS_MUTATION = gql`
+  ${NOTIFICATION_FRAGMENT}
+  mutation markNotificationsAsRead($notificationIds: [Int!]!) {
+    account {
+      markNotificationsAsRead(notificationIds: $notificationIds) {
+        ...NotificationData
       }
     }
   }
