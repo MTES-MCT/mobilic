@@ -76,9 +76,9 @@ export const Notifications = ({ openHistory }) => {
       >
         <Stack direction="column" width="100%" maxHeight="85vh">
           {notifs && notifs.length > 0 ? (
-            notifs.map((notif, notif_id) => (
+            notifs.map(notif => (
               <InnerNotification
-                key={`notif__${notif_id}`}
+                key={`notif__${notif.id}`}
                 {...notif}
                 openHistory={openHistory}
               />
