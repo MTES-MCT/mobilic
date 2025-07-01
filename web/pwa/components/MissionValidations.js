@@ -30,7 +30,7 @@ const EmployeeValidation = ({ validation }) => {
     : "";
 
   return description ? (
-    <Accordion label={label} className="success">
+    <Accordion label={label} className={`success notice-title`}>
       <AccordionDetails className={classes.sucessDetails}>
         {description}
       </AccordionDetails>
@@ -57,7 +57,7 @@ const AdminAutoValidation = ({ validation }) => {
         validation.receptionTime,
         true
       )}`}
-      className="success"
+      className={`success notice-title`}
     >
       <AccordionDetails className={classes.sucessDetails}>
         La validation automatique s'effectue au plus tard 2 jours ouvrés après
@@ -72,7 +72,7 @@ const AdminManualValidation = ({ validation, hasOverriden }) => {
     return (
       <Accordion
         label="Modifiée par le gestionnaire après validation automatique"
-        className="warning"
+        className="warning notice-title"
       >
         <AccordionDetails className={classes.warningDetails}>
           Le gestionnaire a modifié la mission après sa validation pour la
