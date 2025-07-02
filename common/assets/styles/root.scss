@@ -371,11 +371,23 @@ video:not([href])[controls] {
   color: var(--text-label-red-marianne);
 }
 
-.fr-accordion  {
+.fr-notice.notice-title {
+  span{
+    display: inline-flex;
+    padding-left: 0.5rem;
+    align-items: center;
 
-  .fr-collapse {
-    padding-left: 2rem;
+    @media (min-width: 48em) {
+      padding-left: 1.5rem;
+    }
   }
+
+  .fr-container {
+    padding-left: 0;
+  }
+}
+
+.fr-accordion  {
 
   &.success {
     background-color: var(--background-alt-green-emeraude);
@@ -502,14 +514,29 @@ video:not([href])[controls] {
   }
 }
 
-.fr-accordion.notice-title .fr-accordion__btn {
-  font-weight: 700;
-  font-size: 1rem;
-  line-height: 1.5rem;
+.fr-accordion.notice-title {
+  .fr-accordion__btn {
+    font-weight: 700;
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+  
+    @media (min-width: 48em) {
+      font-size: 1rem;
+    }
+  }
+
+  .fr-collapse--expanded {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+  }
 }
 
 .fr-accordion__btn {
-  padding-left: 1.5rem;
+  padding-left: 0.5rem;
+
+  @media (min-width: 48em) {
+    padding-left: 1.5rem;
+  }
 }
 
 .fr-btn--secondary.error {
