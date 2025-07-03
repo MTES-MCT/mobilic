@@ -2388,3 +2388,13 @@ export const READ_NOTIFICATIONS_MUTATION = gql`
     }
   }
 `;
+export const NOTIFICATIONS_QUERY = gql`
+  ${NOTIFICATION_FRAGMENT}
+  query GetUserNotifications($id: Int!) {
+    user(id: $id) {
+      notifications {
+        ...NotificationData
+      }
+    }
+  }
+`;

@@ -1,13 +1,17 @@
 import { fr } from "@codegouvfr/react-dsfr";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { Stack } from "@mui/material";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Notification } from "./Notification";
 import { cx } from "@codegouvfr/react-dsfr/fr/cx";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import { READ_NOTIFICATIONS_MUTATION } from "common/utils/apiQueries";
+import {
+  NOTIFICATIONS_QUERY,
+  READ_NOTIFICATIONS_MUTATION
+} from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { getNotificationContent } from "./NotificationContent";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
 
 const InnerNotification = ({ type, data, read, openHistory }) => {
   if (!data) {
@@ -33,26 +37,49 @@ export const Notifications = ({ openHistory }) => {
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
 
-  const [notifs] = React.useState(userInfo.notifications);
+  const [notifs, setNotifs] = useState(userInfo.notifications || []);
 
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpended, setIsExpended] = useState(false);
   const api = useApi();
+  const alerts = useSnackbarAlerts();
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      await alerts.withApiErrorHandling(async () => {
+        const apiResponse = await api.graphQlQuery(
+          NOTIFICATIONS_QUERY,
+          { id: userInfo?.id },
+          {}
+        );
+        setNotifs(apiResponse.data.user.notifications);
+        await store.setUserInfo({
+          ...store.userInfo(),
+          notifications: apiResponse.data.user.notifications
+        });
+      }, "get-notifications");
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [api, store, userInfo?.id]);
+
   const onExtendButtonClick = useCallback(async () => {
-    const isExpended_newValue = !isExpanded;
-    setIsExpanded(isExpended_newValue);
+    const isExpended_newValue = !isExpended;
+    setIsExpended(isExpended_newValue);
 
     if (isExpended_newValue) {
-      const apiResponse = await api.graphQlMutate(
-        READ_NOTIFICATIONS_MUTATION,
-        { notificationIds: notifs.map(n => n.id) },
-        { context: { nonPublicApi: true } }
-      );
-      await store.setUserInfo({
-        ...store.userInfo(),
-        notifications: apiResponse.data.account.markNotificationsAsRead
-      });
+      await alerts.withApiErrorHandling(async () => {
+        const apiResponse = await api.graphQlMutate(
+          READ_NOTIFICATIONS_MUTATION,
+          { notificationIds: notifs.map(n => n.id) },
+          { context: { nonPublicApi: true } }
+        );
+        setNotifs(apiResponse.data.account.markNotificationsAsRead);
+        await store.setUserInfo({
+          ...store.userInfo(),
+          notifications: apiResponse.data.account.markNotificationsAsRead
+        });
+      }, "read-notifications");
     }
-  });
+  }, [isExpended, notifs, store, api]);
 
   const unreadNotifs = notifs.filter(n => !n.read);
   const title =
@@ -98,7 +125,7 @@ export const Notifications = ({ openHistory }) => {
       <h3 className={fr.cx("fr-accordion__title")}>
         <button
           className={fr.cx("fr-accordion__btn")}
-          aria-expanded={isExpanded}
+          aria-expanded={isExpended}
           aria-controls={collapseElementId}
           onClick={onExtendButtonClick}
           type="button"

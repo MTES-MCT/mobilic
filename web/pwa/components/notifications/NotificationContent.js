@@ -1,5 +1,11 @@
 import { strToUnixTimestamp, formatDay } from "common/utils/time";
 
+const DEFAULT_NOTIFICATION_FALLBACK = {
+  title: "Notification",
+  content: "",
+  missionId: null
+};
+
 export const notificationContent = {
   MISSION_CHANGES_WARNING: data => {
     const date = data.mission_start_date;
@@ -41,7 +47,5 @@ export const notificationContent = {
 
 export function getNotificationContent(type, data) {
   const fn = notificationContent[type];
-  return fn
-    ? fn(data)
-    : { title: "Notification", content: "", missionId: null };
+  return fn ? fn(data) : DEFAULT_NOTIFICATION_FALLBACK;
 }
