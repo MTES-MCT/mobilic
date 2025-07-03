@@ -8,6 +8,7 @@ import { startOfMonth, subMonths } from "date-fns";
 import {
   COMPANY_SETTINGS_FRAGMENT,
   FULL_MISSION_FRAGMENT,
+  NOTIFICATION_FRAGMENT,
   USER_AGREEMENT
 } from "./apiFragments";
 import { gql } from "graphql-tag";
@@ -78,6 +79,7 @@ const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FULL_MISSION_FRAGMENT}
   ${USER_AGREEMENT}
+  ${NOTIFICATION_FRAGMENT}
   query user($id: Int!, $activityAfter: TimeStamp) {
     user(id: $id) {
       id
@@ -132,6 +134,9 @@ const USER_QUERY = gql`
       }
       userAgreementStatus {
         ...UserAgreementData
+      }
+      notifications {
+        ...NotificationData
       }
     }
   }
@@ -279,7 +284,8 @@ export async function syncUser(userPayload, api, store) {
     missions: missionsPayload,
     employments,
     surveyActions,
-    userAgreementStatus
+    userAgreementStatus,
+    notifications
   } = userPayload;
 
   onLogIn(shouldUpdatePassword);
@@ -320,7 +326,8 @@ export async function syncUser(userPayload, api, store) {
           hasActivatedEmail,
           disabledWarnings,
           surveyActions,
-          userAgreementStatus
+          userAgreementStatus,
+          notifications
         },
         false
       )
