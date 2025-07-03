@@ -528,6 +528,11 @@ video:not([href])[controls] {
   .fr-collapse--expanded {
     padding-top: 0.2rem;
     padding-bottom: 0.2rem;
+    font-size: 0.875rem;
+
+    @media (min-width: 48em) {
+      font-size: 1rem;
+    }
   }
 }
 
