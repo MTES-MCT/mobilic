@@ -125,6 +125,7 @@ export function CurrentActivity({
       editActivityEvent={editActivityEvent}
       hideExpenditures
       hideValidations
+      hideHistory
       hideComments
       editVehicle={vehicle => editVehicle({ mission: currentMission, vehicle })}
       previousMissionEnd={previousMissionEnd}

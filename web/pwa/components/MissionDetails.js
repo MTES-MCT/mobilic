@@ -36,6 +36,7 @@ import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory"
 import { DISMISSABLE_WARNINGS } from "../../admin/utils/dismissableWarnings";
 import Notice from "../../common/Notice";
 import { LoadingButton } from "common/components/LoadingButton";
+import { MissionValidations } from "./MissionValidations";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -121,7 +122,8 @@ export function MissionDetails({
   disableEmptyActivitiesPlaceHolder = false,
   forceDisplayEndLocation = false,
   controlId = null,
-  titleProps = {}
+  titleProps = {},
+  hideHistory = false
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -226,6 +228,17 @@ export function MissionDetails({
 
   return (
     <AlternateColors inverseColors={inverseColors}>
+      {!hideHistory && (
+        <MissionReviewSection title="Historique des validations">
+          {mission.validations && (
+            <MissionValidations
+              mission={mission}
+              validations={mission.validations}
+              userId={userId}
+            />
+          )}
+        </MissionReviewSection>
+      )}
       <MissionReviewSection
         title="Activités"
         editButtonLabel="Ajouter"
