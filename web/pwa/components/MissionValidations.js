@@ -36,7 +36,13 @@ const EmployeeValidation = ({ validation }) => {
       </AccordionDetails>
     </Accordion>
   ) : (
-    <Notice title={label} type="success" lessPadding withBorders />
+    <Notice
+      title={label}
+      type="success"
+      lessPadding
+      withBorders
+      className="notice-title"
+    />
   );
 };
 
@@ -46,6 +52,7 @@ const NoEmployeeValidation = () => (
     type="warning"
     withBorders
     lessPadding
+    className="notice-title"
   />
 );
 
@@ -94,6 +101,7 @@ const AdminManualValidation = ({ validation, hasOverriden }) => {
       type="success"
       lessPadding
       withBorders
+      className="notice-title"
     />
   );
 };
@@ -104,6 +112,7 @@ const NoAdminValidation = () => (
     type="warning"
     withBorders
     lessPadding
+    className="notice-title"
   />
 );
 
