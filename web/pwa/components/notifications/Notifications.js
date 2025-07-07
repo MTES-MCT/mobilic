@@ -65,7 +65,8 @@ export const Notifications = ({ openHistory }) => {
     const isExpended_newValue = !isExpended;
     setIsExpended(isExpended_newValue);
 
-    if (isExpended_newValue) {
+    // Marquer comme lu quand on FERME le panel (pas quand on l'ouvre)
+    if (!isExpended_newValue && notifs.some(n => !n.read)) {
       await alerts.withApiErrorHandling(async () => {
         const apiResponse = await api.graphQlMutate(
           READ_NOTIFICATIONS_MUTATION,
@@ -79,7 +80,7 @@ export const Notifications = ({ openHistory }) => {
         });
       }, "read-notifications");
     }
-  }, [isExpended, notifs, store, api]);
+  }, [isExpended, notifs, store, api, alerts]);
 
   const unreadNotifs = notifs.filter(n => !n.read);
   const title =
@@ -99,7 +100,7 @@ export const Notifications = ({ openHistory }) => {
       <div
         className={fr.cx("fr-collapse")}
         id={collapseElementId}
-        style={{ padding: 0 }}
+        style={{ paddingTop: 0, paddingBottom: 0 }}
       >
         <Stack direction="column" width="100%" maxHeight="85vh">
           {notifs && notifs.length > 0 ? (
@@ -113,8 +114,10 @@ export const Notifications = ({ openHistory }) => {
           ) : (
             <p
               style={{
-                textAlign: "center",
-                padding: "2rem 0"
+                margin: 0,
+                padding: "1rem 1rem",
+                color: fr.colors.decisions.background.flat.grey.default,
+                borderBottom: `2px solid ${fr.colors.decisions.border.default.grey.default}`
               }}
             >
               Vous n'avez aucun message
@@ -122,7 +125,10 @@ export const Notifications = ({ openHistory }) => {
           )}
         </Stack>
       </div>
-      <h3 className={fr.cx("fr-accordion__title")}>
+      <h3
+        className={fr.cx("fr-accordion__title")}
+        style={{ paddingLeft: "0.5rem" }}
+      >
         <button
           className={fr.cx("fr-accordion__btn")}
           aria-expanded={isExpended}
