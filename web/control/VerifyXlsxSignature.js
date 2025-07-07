@@ -36,9 +36,8 @@ const STATUS_MAP = {
     desc: "Aucun fichier n'a été détecté"
   },
   MISSING_SIGNATURE: {
-    title: "le fichier ne provient pas de mobilic",
-    desc:
-      "Le fichier ne comporte pas d'informations d'intégrité, il est impossible d'effectuer la vérification. Êtes-vous sûrs qu'il a bien été généré par Mobilic ?"
+    title: "vérification impossible",
+    desc: "Le fichier ne provient pas de Mobilic."
   },
   INVALID_FORMAT: {
     title: "mauvais format",
@@ -202,11 +201,12 @@ export function XlsxVerifier() {
           </PaperContainerTitle>
           <Typography align="justify" className={classes.text}>
             Vous pouvez vérifier ici l'intégrité des rapports d'activité au
-            format Excel (.xlsx) téléchargés depuis Mobilic et envoyés par les
-            entreprises. Un fichier est considéré comme intègre si le fichier
-            n'a subi aucune modification après son téléchargement. Cela vous
-            assure que les données du rapport d'activité n'ont pas été modifiées
-            avant de vous le transmettre.
+            format Excel (.xlsx) <strong>téléchargés depuis Mobilic</strong> et
+            envoyés par les entreprises. Un fichier est considéré comme intègre
+            s’il n'a subi{" "}
+            <strong>aucune modification après son téléchargement</strong>. Cela
+            vous assure que les données du rapport d'activité n'ont pas été
+            modifiées avant de vous le transmettre.
           </Typography>
           <Box className={classes.outer}>
             <Box
