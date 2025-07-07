@@ -25,7 +25,9 @@ export const MISSION_RESOURCE_TYPES = {
   expenditure: "expenditure",
   startLocation: "startLocation",
   endLocation: "endLocation",
-  validation: "validation"
+  validation: "validation",
+  autoValidationEmployee: "auto-validation-employee",
+  autoValidationAdmin: "auto-validation-admin"
 };
 
 const RESOURCE_TYPE_ORDER = {
@@ -33,7 +35,9 @@ const RESOURCE_TYPE_ORDER = {
   [MISSION_RESOURCE_TYPES.activity]: 4,
   [MISSION_RESOURCE_TYPES.endLocation]: 3,
   [MISSION_RESOURCE_TYPES.expenditure]: 2,
-  [MISSION_RESOURCE_TYPES.validation]: 1
+  [MISSION_RESOURCE_TYPES.validation]: 1,
+  [MISSION_RESOURCE_TYPES.autoValidationEmployee]: 1,
+  [MISSION_RESOURCE_TYPES.autoValidationAdmin]: 1
 };
 
 export function orderLogEvents(event1, event2) {
@@ -194,10 +198,28 @@ export async function getResourcesAndHistoryForMission(
       }))
     );
     resources.push(
-      ...apiResponse.validations.map(v => ({
-        resource: v,
-        type: MISSION_RESOURCE_TYPES.validation
-      }))
+      ...apiResponse.validations
+        .filter(v => !v.isAuto)
+        .map(v => ({
+          resource: v,
+          type: MISSION_RESOURCE_TYPES.validation
+        }))
+    );
+    resources.push(
+      ...apiResponse.validations
+        .filter(v => v.isAuto && !v.isAdmin)
+        .map(v => ({
+          resource: v,
+          type: MISSION_RESOURCE_TYPES.autoValidationEmployee
+        }))
+    );
+    resources.push(
+      ...apiResponse.validations
+        .filter(v => v.isAuto && v.isAdmin)
+        .map(v => ({
+          resource: v,
+          type: MISSION_RESOURCE_TYPES.autoValidationAdmin
+        }))
     );
     resources.push({
       resource: apiResponse.startLocation,

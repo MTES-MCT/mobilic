@@ -19,37 +19,36 @@ import AlertTitle from "@mui/material/AlertTitle";
 
 const STATUS_MAP = {
   SUCCESS: {
-    title: "FICHIER INTÈGRE",
+    title: "fichier intègre",
     desc: "Le fichier n'a pas été modifié après sa génération par Mobilic"
   },
   INTERNAL_ERROR: {
-    title: "ERREUR INTERNE",
+    title: "erreur interne",
     desc:
       "La vérification d'intégrité n'a pas pu être effectuée à cause d'une erreur interne. Veuillez réessayer plus tard."
   },
   NETWORK_ERROR: {
-    title: "ERREUR DE CONNEXION",
+    title: "erreur de connexion",
     desc: "Le serveur Mobilic semble injoignable. Veuillez réessayer plus tard."
   },
   MISSING_FILE: {
-    title: "PAS DE FICHIER",
+    title: "pas de fichier",
     desc: "Aucun fichier n'a été détecté"
   },
   MISSING_SIGNATURE: {
-    title: "VÉRIFICATION IMPOSSIBLE",
-    desc:
-      "Le fichier ne comporte pas d'informations d'intégrité, il est impossible d'effectuer la vérification. Êtes-vous sûrs qu'il a bien été généré par Mobilic ?"
+    title: "vérification impossible",
+    desc: "Le fichier ne provient pas de Mobilic."
   },
   INVALID_FORMAT: {
-    title: "MAUVAIS FORMAT",
+    title: "mauvais format",
     desc: "Le fichier n'est pas dans un format .xlsx valide"
   },
   SIGNATURE_DOES_NOT_MATCH: {
-    title: "FICHIER NON INTÈGRE",
+    title: "fichier non intègre",
     desc: "Le fichier a été modifié après sa génération par Mobilic."
   },
   UNAVAILABLE: {
-    title: "SERVICE NON DISPONIBLE",
+    title: "service non disponible",
     desc:
       "Impossible d'effectuer la vérification d'intégrité, veuillez réessayer plus tard."
   }
@@ -122,6 +121,9 @@ const useStyles = makeStyles(theme => ({
   response: {
     textAlign: "justify",
     marginTop: theme.spacing(2)
+  },
+  titleUppercase: {
+    textTransform: "uppercase"
   }
 }));
 
@@ -198,11 +200,13 @@ export function XlsxVerifier() {
             Vérification de l'intégrité d'un fichier
           </PaperContainerTitle>
           <Typography align="justify" className={classes.text}>
-            Vous pouvez vérifier ici l'intégrité des rapports d'activité générés
-            par Mobilic au format Excel (.xlsx). Un fichier est considéré comme
-            intègre si le fichier n'a subi aucune modification après sa
-            génération. Cela permet de sécuriser que les données du rapport
-            d'activité n'ont pas été modifiées avant de vous le transmettre.
+            Vous pouvez vérifier ici l'intégrité des rapports d'activité au
+            format Excel (.xlsx) <strong>téléchargés depuis Mobilic</strong> et
+            envoyés par les entreprises. Un fichier est considéré comme intègre
+            s’il n'a subi{" "}
+            <strong>aucune modification après son téléchargement</strong>. Cela
+            vous assure que les données du rapport d'activité n'ont pas été
+            modifiées avant de vous le transmettre.
           </Typography>
           <Box className={classes.outer}>
             <Box
@@ -232,7 +236,7 @@ export function XlsxVerifier() {
               className={classes.response}
               severity={verifyResponse.success ? "success" : "error"}
             >
-              <AlertTitle className="bold">
+              <AlertTitle className={`bold ${classes.titleUppercase}`}>
                 {
                   (
                     STATUS_MAP[verifyResponseStatus] ||
