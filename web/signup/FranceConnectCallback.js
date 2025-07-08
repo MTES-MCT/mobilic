@@ -64,22 +64,43 @@ export function FranceConnectCallback() {
 
   React.useEffect(() => {
     const queryString = new URLSearchParams(window.location.search);
+
+    // v2: Handle redirected errors
+    const error = queryString.get("error");
+    const errorDescription = queryString.get("error_description");
+
+    if (error) {
+      const errorMessage = `Erreur d'authentification FranceConnect: ${error}`;
+      const details = errorDescription ? ` - ${errorDescription}` : "";
+      setError(errorMessage + details);
+      return;
+    }
+
+    // Standard parameters for v1/v2
     const inviteToken = queryString.get("invite_token");
     const code = queryString.get("code");
     const create = queryString.get("create");
     const state = queryString.get("state");
+
+    // Clean v1/v2 parameters from URL
     const newQS = removeParamsFromQueryString(window.location.search, [
       "code",
       "state",
-      "iss"
+      "iss", // v1 parameter
+      "error", // v2 parameter
+      "error_description" // v2 parameter
     ]);
+
     const callBackUrl =
       window.location.origin +
       window.location.pathname +
       (newQS.length > 0 ? `?${newQS}` : "");
+
     if (code) {
       retrieveFranceConnectInfo(code, callBackUrl, inviteToken, create, state);
-    } else setError("Paramètres invalides");
+    } else if (!error) {
+      setError("Paramètres invalides");
+    }
   }, []);
 
   return error ? <Typography color="error">{error}</Typography> : null;
