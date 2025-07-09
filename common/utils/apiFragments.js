@@ -9,6 +9,8 @@ export const COMPANY_SETTINGS_FRAGMENT = gql`
       allowTransfers
       requireExpenditures
       requireMissionName
+      allowOtherTask
+      otherTaskLabel
     }
   }
 `;
