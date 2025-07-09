@@ -389,6 +389,18 @@ video:not([href])[controls] {
 
 .fr-accordion  {
 
+  &.notifications {
+    .fr-accordion__btn[aria-expanded="true"] {
+      background-color: inherit;
+    }
+    .fr-accordion__btn[aria-expanded="false"]::after {
+      transform: rotate(-180deg);
+    }
+    .fr-accordion__btn[aria-expanded="true"]::after {
+      transform: rotate(0deg);
+    }
+  }
+
   &.success {
     background-color: var(--background-alt-green-emeraude);
     --hover: var(--background-contrast-green-emeraude);
