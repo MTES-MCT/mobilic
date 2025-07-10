@@ -242,6 +242,8 @@ export function MissionDetails({
     adminSettings.requireExpenditures && !mission.isHoliday;
   const showKilometerReading = adminSettings.requireKilometerData;
   const allowTransfers = adminSettings.allowTransfers;
+  const allowOtherTask = adminSettings.allowOtherTask;
+  const otherTaskLabel = adminSettings.otherTaskLabel;
   const allowSupportActivity = adminSettings.requireSupportActivity;
   const editableMissionName = adminSettings.requireMissionName;
 
@@ -431,6 +433,8 @@ export function MissionDetails({
                             adminMode: true,
                             allowTransfers,
                             allowSupportActivity,
+                            allowOtherTask,
+                            otherTaskLabel,
                             nullableEndTime: false,
                             defaultTime: mission.startTime || day,
                             forcedUser: e.user,
@@ -462,6 +466,8 @@ export function MissionDetails({
                             adminMode: true,
                             allowTransfers,
                             allowSupportActivity,
+                            allowOtherTask,
+                            otherTaskLabel,
                             nullableEndTime: false,
                             forcedUser: e.user,
                             displayWarningMessage: false,
