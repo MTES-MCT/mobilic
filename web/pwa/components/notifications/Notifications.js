@@ -94,7 +94,7 @@ export const Notifications = ({ openHistory }) => {
         position: "absolute",
         bottom: 0,
         width: "100%",
-        zIndex: 4000
+        zIndex: 600
       }}
     >
       <div
