@@ -1436,6 +1436,7 @@ export const CREATE_MISSION_MUTATION = gql`
     $vehicleId: Int
     $vehicleRegistrationNumber: String
     $creationTime: TimeStamp
+    $pastRegistrationJustification: String
   ) {
     activities {
       createMission(
@@ -1445,6 +1446,7 @@ export const CREATE_MISSION_MUTATION = gql`
         vehicleId: $vehicleId
         vehicleRegistrationNumber: $vehicleRegistrationNumber
         creationTime: $creationTime
+        pastRegistrationJustification: $pastRegistrationJustification
       ) {
         id
         name

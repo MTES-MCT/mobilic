@@ -45,6 +45,10 @@ export default function NewMissionForm({
   const [endAddress, setEndAddress] = React.useState(null);
   const [kilometerReading, setKilometerReading] = React.useState("");
   const [defaultAddresses, setDefaultAddresses] = React.useState([]);
+  const [
+    pastRegistrationJustification,
+    setPastRegistrationJustification
+  ] = React.useState("");
 
   React.useEffect(() => {
     if (onSelectNoAdminCompany && company.hasNoAdmin) {
@@ -95,7 +99,8 @@ export default function NewMissionForm({
               company,
               endAddress,
               kilometerReading,
-              day
+              day,
+              pastRegistrationJustification
             };
             await handleSubmit(payLoad);
             setLoading(false);
@@ -232,13 +237,34 @@ export default function NewMissionForm({
                 : null
             }
           />
+          {withDay && (
+            <>
+              <Typography
+                variant="h5"
+                component="p"
+                className="form-field-title"
+              >
+                Motif
+              </Typography>
+              <TextField
+                required
+                fullWidth
+                multiline
+                minRows={3}
+                label="Raison de l'ajout d'une mission passée"
+                variant="filled"
+                value={pastRegistrationJustification}
+                onChange={e => setPastRegistrationJustification(e.target.value)}
+              />
+            </>
+          )}
           <Box className="cta-container" my={4}>
             <LoadingButton
               disabled={
                 !address ||
                 (!mission && settings?.requireMissionName) ||
                 (withEndLocation && !endAddress) ||
-                (withDay && !day)
+                (withDay && (!day || !pastRegistrationJustification))
               }
               type="submit"
               loading={loading}

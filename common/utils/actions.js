@@ -846,14 +846,16 @@ class Actions {
     startLocation = null,
     endLocation = null,
     kilometerReading = null,
-    endKilometerReading = null
+    endKilometerReading = null,
+    pastRegistrationJustification = null
   }) => {
     const missionPayload = {
       name,
       companyId,
       vehicleId: vehicle ? vehicle.id : null,
       vehicleRegistrationNumber: vehicle ? vehicle.registrationNumber : null,
-      creationTime: nowMilliseconds()
+      creationTime: nowMilliseconds(),
+      pastRegistrationJustification
     };
 
     let missionCurrentId;
