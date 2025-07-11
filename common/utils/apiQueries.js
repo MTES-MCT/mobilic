@@ -1474,6 +1474,7 @@ export const END_MISSION_MUTATION = gql`
     $missionId: Int!
     $userId: Int
     $creationTime: TimeStamp
+    $pastRegistrationJustification: String
   ) {
     activities {
       endMission(
@@ -1481,6 +1482,7 @@ export const END_MISSION_MUTATION = gql`
         missionId: $missionId
         userId: $userId
         creationTime: $creationTime
+        pastRegistrationJustification: $pastRegistrationJustification
       ) {
         id
         name
