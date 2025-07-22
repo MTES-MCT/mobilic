@@ -865,7 +865,8 @@ class Actions {
         name,
         companyId,
         vehicle,
-        ended: false
+        ended: false,
+        pastRegistrationJustification
       };
       const missionId = this.store.createEntityObject(
         mission,

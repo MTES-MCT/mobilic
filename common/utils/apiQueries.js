@@ -803,6 +803,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                   lastName
                 }
               }
+              pastRegistrationJustification
             }
           }
         }

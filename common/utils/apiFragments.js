@@ -112,6 +112,7 @@ export const FULL_MISSION_FRAGMENT = gql`
     endLocation {
       ...FullLocation
     }
+    pastRegistrationJustification
   }
 `;
 

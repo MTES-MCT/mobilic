@@ -53,6 +53,7 @@ import { MissionDetailsLocations } from "./MissionDetailsLocations";
 import { MissionDetailsObservations } from "./MissionDetailsObservations";
 import Notice from "../../../common/Notice";
 import CloseButton from "../../../common/CloseButton";
+import { PastMissionNotice } from "./PastMissionNotice";
 
 export function MissionDetails({
   missionId,
@@ -137,6 +138,7 @@ export function MissionDetails({
     setLoading(false);
   }
 
+  console.log("mission", mission);
   const isMissionDeleted = React.useMemo(() => mission?.isDeleted, [mission]);
   const isMissionHoliday = React.useMemo(() => mission?.isHoliday, [mission]);
 
@@ -319,7 +321,14 @@ export function MissionDetails({
           sx={{ mb: 2 }}
         />
       )}
-      {globalFieldsEditable && <WarningModificationMission />}
+      {mission.pastRegistrationJustification ? (
+        <PastMissionNotice
+          missionName={mission.name}
+          justification={mission.pastRegistrationJustification}
+        />
+      ) : (
+        globalFieldsEditable && <WarningModificationMission />
+      )}
       {globalFieldsEditable && mission.missionNotUpdatedForTooLong && (
         <Notice
           type="warning"
