@@ -6,9 +6,10 @@ import { makeStyles } from "@mui/styles";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
-  container: {
-    borderBottom: `1px solid ${fr.colors.decisions.border.default.grey.default}`
-  },
+  container: ({ read }) => ({
+    borderBottom: `1px solid ${fr.colors.decisions.border.default.grey.default}`,
+    backgroundColor: read ? "transparent" : "var(--background-alt-blue-france)"
+  }),
   title: ({ read }) => ({
     color: read
       ? fr.colors.decisions.background.flat.grey.default
@@ -16,20 +17,19 @@ const useStyles = makeStyles(theme => ({
     fontSize: "0.875rem",
     fontWeight: "bold",
     position: "relative",
-    ...(!read && {
-      marginLeft: "1.2rem",
-      "&::before": {
-        content: '""',
-        position: "absolute",
-        left: "-24px",
-        top: "50%",
-        transform: "translateY(-50%)",
-        width: "12px",
-        height: "12px",
-        borderRadius: "50%",
-        backgroundColor: "var(--background-flat-red-marianne)"
-      }
-    })
+    marginLeft: read ? "0" : "1.2rem",
+    "&::before": {
+      content: read ? '""' : '""',
+      position: "absolute",
+      left: "-24px",
+      top: "50%",
+      transform: "translateY(-50%)",
+      width: "12px",
+      height: "12px",
+      borderRadius: "50%",
+      backgroundColor: "var(--background-flat-red-marianne)",
+      display: read ? "none" : "block"
+    }
   }),
   content: ({ read }) => ({
     color: read
@@ -53,12 +53,8 @@ const useStyles = makeStyles(theme => ({
   })
 }));
 
-export const Notification = ({
-  title,
-  content,
-  historyOnClick,
-  read = true
-}) => {
+export const Notification = ({ title, content, historyOnClick, read }) => {
+  console.log("Notification render:", { title: title?.substring(0, 20), read });
   const classes = useStyles({ read });
   return (
     <Stack direction="column" width="100%" p={2} className={classes.container}>

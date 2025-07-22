@@ -61,26 +61,37 @@ export const Notifications = ({ openHistory }) => {
     return () => clearInterval(interval);
   }, [api, store, userInfo?.id]);
 
+  useEffect(() => {
+    return async () => {
+      if (isExpended && notifs.some(n => !n.read)) {
+        await markNotificationsAsRead();
+      }
+    };
+  }, [isExpended, notifs]);
+
+  const markNotificationsAsRead = async () => {
+    await alerts.withApiErrorHandling(async () => {
+      const apiResponse = await api.graphQlMutate(
+        READ_NOTIFICATIONS_MUTATION,
+        { notificationIds: notifs.map(n => n.id) },
+        { context: { nonPublicApi: true } }
+      );
+      const updatedNotifs = apiResponse.data.account.markNotificationsAsRead;
+
+      setNotifs(updatedNotifs);
+
+      await store.setUserInfo({
+        ...store.userInfo(),
+        notifications: updatedNotifs
+      });
+      return updatedNotifs;
+    }, "read-notifications");
+  };
+
   const onExtendButtonClick = useCallback(async () => {
     const isExpended_newValue = !isExpended;
     setIsExpended(isExpended_newValue);
-
-    // Marquer comme lu quand on FERME le panel (pas quand on l'ouvre)
-    if (!isExpended_newValue && notifs.some(n => !n.read)) {
-      await alerts.withApiErrorHandling(async () => {
-        const apiResponse = await api.graphQlMutate(
-          READ_NOTIFICATIONS_MUTATION,
-          { notificationIds: notifs.map(n => n.id) },
-          { context: { nonPublicApi: true } }
-        );
-        setNotifs(apiResponse.data.account.markNotificationsAsRead);
-        await store.setUserInfo({
-          ...store.userInfo(),
-          notifications: apiResponse.data.account.markNotificationsAsRead
-        });
-      }, "read-notifications");
-    }
-  }, [isExpended, notifs, store, api, alerts]);
+  }, [isExpended]);
 
   const unreadNotifs = notifs.filter(n => !n.read);
   const title =
@@ -125,10 +136,7 @@ export const Notifications = ({ openHistory }) => {
           )}
         </Stack>
       </div>
-      <h3
-        className={fr.cx("fr-accordion__title")}
-        style={{ paddingLeft: "0.5rem" }}
-      >
+      <h3 className={fr.cx("fr-accordion__title")}>
         <button
           className={fr.cx("fr-accordion__btn")}
           aria-expanded={isExpended}
