@@ -257,6 +257,10 @@ export function getStartOfDay(unixTimestamp) {
   return startOfDay(date);
 }
 
+export function isDateBeforeToday(unixTimestamp) {
+  return getStartOfDay(unixTimestamp) < startOfDay(new Date());
+}
+
 export function truncateMinute(unixTimestamp) {
   return !unixTimestamp ? null : unixTimestamp - (unixTimestamp % 60);
 }

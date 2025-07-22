@@ -37,6 +37,7 @@ import { PeriodHeader } from "./PeriodHeader";
 import { Box, Stack } from "@mui/material";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { fr } from "@codegouvfr/react-dsfr";
+import { PastMissionNotice } from "../../../admin/components/MissionDetails/PastMissionNotice";
 
 const useStyles = makeStyles(theme => ({
   alternateCard: {
@@ -376,6 +377,12 @@ export function Mission({
           <NoContradictory
             contradictoryNotYetAvailable={contradictoryNotYetAvailable}
             contradictoryComputationError={contradictoryComputationError}
+          />
+        )}
+        {mission.pastRegistrationJustification && (
+          <PastMissionNotice
+            missionName={mission.name}
+            justification={mission.pastRegistrationJustification}
           />
         )}
         {showMetrics ? (

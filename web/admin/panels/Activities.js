@@ -602,7 +602,9 @@ function ActivitiesPanel() {
                       : null,
                     vehicleRegistrationNumber: missionInfos.vehicle
                       ? missionInfos.vehicle.registrationNumber
-                      : null
+                      : null,
+                    pastRegistrationJustification:
+                      missionInfos.pastRegistrationJustification
                   }
                 );
                 const mission = missionResponse.data.activities.createMission;

@@ -114,6 +114,7 @@ export const FULL_MISSION_FRAGMENT = gql`
     endLocation {
       ...FullLocation
     }
+    pastRegistrationJustification
   }
 `;
 
@@ -302,5 +303,15 @@ export const USER_AGREEMENT = gql`
     answerDate
     expiresAt
     cguVersion
+  }
+`;
+
+export const NOTIFICATION_FRAGMENT = gql`
+  fragment NotificationData on Notification {
+    id
+    type
+    creationTime
+    read
+    data
   }
 `;
