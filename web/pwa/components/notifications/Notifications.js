@@ -1,7 +1,7 @@
 import { fr } from "@codegouvfr/react-dsfr";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { Stack } from "@mui/material";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Notification } from "./Notification";
 import { cx } from "@codegouvfr/react-dsfr/fr/cx";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
@@ -43,6 +43,17 @@ export const Notifications = ({ openHistory }) => {
   const api = useApi();
   const alerts = useSnackbarAlerts();
 
+  const isExpendedRef = useRef(isExpended);
+  const notifsRef = useRef(notifs);
+
+  useEffect(() => {
+    isExpendedRef.current = isExpended;
+  }, [isExpended]);
+
+  useEffect(() => {
+    notifsRef.current = notifs;
+  }, [notifs]);
+
   useEffect(() => {
     const interval = setInterval(async () => {
       await alerts.withApiErrorHandling(async () => {
@@ -62,12 +73,12 @@ export const Notifications = ({ openHistory }) => {
   }, [api, store, userInfo?.id]);
 
   useEffect(() => {
-    return async () => {
-      if (isExpended && notifs.some(n => !n.read)) {
-        await markNotificationsAsRead();
+    return () => {
+      if (isExpendedRef.current && notifsRef.current.some(n => !n.read)) {
+        markNotificationsAsRead();
       }
     };
-  }, [isExpended, notifs]);
+  }, []);
 
   const markNotificationsAsRead = async () => {
     await alerts.withApiErrorHandling(async () => {
@@ -91,7 +102,11 @@ export const Notifications = ({ openHistory }) => {
   const onExtendButtonClick = useCallback(async () => {
     const isExpended_newValue = !isExpended;
     setIsExpended(isExpended_newValue);
-  }, [isExpended]);
+
+    if (!isExpended_newValue && notifs.some(n => !n.read)) {
+      await markNotificationsAsRead();
+    }
+  }, [isExpended, notifs, markNotificationsAsRead]);
 
   const unreadNotifs = notifs.filter(n => !n.read);
   const title =
