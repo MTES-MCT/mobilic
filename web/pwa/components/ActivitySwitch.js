@@ -38,8 +38,8 @@ const useStyles = makeStyles(theme => ({
     cursor: props.disabled ? "inherit" : "pointer"
   }),
   cardContent: {
-    width: 93,
-    height: 86,
+    width: "93px",
+    height: "86px",
     margin: "auto",
     padding: theme.spacing(0.5)
   },

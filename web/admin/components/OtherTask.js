@@ -34,7 +34,7 @@ export const OtherTask = ({
             nativeInputProps={{
               value: label,
               onChange: e => {
-                setLabel(e.target.value.trimStart());
+                setLabel(e.target.value.trim());
               },
               onBlur: onChangeLabel,
               maxLength: 12
