@@ -466,7 +466,9 @@ export function History({
                             name: missionInfos.mission,
                             vehicle: missionInfos.vehicle,
                             startLocation: missionInfos.address,
-                            endLocation: missionInfos.endAddress
+                            endLocation: missionInfos.endAddress,
+                            pastRegistrationJustification:
+                              missionInfos.pastRegistrationJustification
                           });
                           await api.executePendingRequests();
                           const actualMissionId = store.identityMap()[
