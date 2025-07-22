@@ -233,6 +233,7 @@ export default function EndMissionModal({
                   onChange={e =>
                     setPastRegistrationJustification(e.target.value)
                   }
+                  inputProps={{ maxLength: 48 }}
                 />
               </>
             )}

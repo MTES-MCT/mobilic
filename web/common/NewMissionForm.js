@@ -255,6 +255,7 @@ export default function NewMissionForm({
                 variant="filled"
                 value={pastRegistrationJustification}
                 onChange={e => setPastRegistrationJustification(e.target.value)}
+                inputProps={{ maxLength: 48 }}
               />
             </>
           )}
