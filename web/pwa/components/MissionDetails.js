@@ -158,9 +158,10 @@ export function MissionDetails({
     !mission.submittedBySomeoneElse;
 
   const allowSupportActivity =
-    !mission.company ||
-    !mission.company.settings ||
-    mission.company.settings.requireSupportActivity;
+    mission?.company?.settings?.requireSupportActivity || true;
+
+  const allowOtherTask = mission.company?.settings?.allowOtherTask || true;
+  const otherTaskLabel = mission.company?.settings?.otherTaskLabel || "";
 
   const teamAtMissionEnd = [
     actualUserId,
@@ -273,6 +274,8 @@ export function MissionDetails({
                   nullableEndTime: nullableEndTimeInEditActivity,
                   allowTeamMode: allowTeamActions,
                   allowSupportActivity,
+                  allowOtherTask,
+                  otherTaskLabel,
                   defaultTime: lastActivityTime || defaultTime
                 })
             : null

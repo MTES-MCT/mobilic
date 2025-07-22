@@ -1738,6 +1738,8 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
     $requireSupportActivity: Boolean
     $allowTransfers: Boolean
     $requireMissionName: Boolean
+    $allowOtherTask: Boolean
+    $otherTaskLabel: String
   ) {
     editCompanySettings(
       companyId: $companyId
@@ -1747,6 +1749,8 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
       requireSupportActivity: $requireSupportActivity
       allowTransfers: $allowTransfers
       requireMissionName: $requireMissionName
+      allowOtherTask: $allowOtherTask
+      otherTaskLabel: $otherTaskLabel
     ) {
       id
       ...CompanySettings
