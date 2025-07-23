@@ -1,7 +1,13 @@
 import { fr } from "@codegouvfr/react-dsfr";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { Stack } from "@mui/material";
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  useMemo
+} from "react";
 import { Notification } from "./Notification";
 import { cx } from "@codegouvfr/react-dsfr/fr/cx";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
@@ -13,22 +19,46 @@ import { useApi } from "common/utils/api";
 import { getNotificationContent } from "./NotificationContent";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 
-const InnerNotification = ({ type, data, read, openHistory }) => {
-  if (!data) {
-    return null;
-  }
-  const details = getNotificationContent(type, JSON.parse(data));
-  const { title, content, missionId } = details;
-  return (
-    <Notification
-      title={title}
-      content={content}
-      missionId={missionId}
-      historyOnClick={() => openHistory(missionId)}
-      read={read}
-    />
+const mergeNotifications = (apiNotifs, localNotifs) => {
+  const localById = Object.fromEntries(localNotifs.map(n => [n.id, n]));
+
+  const apiIds = new Set(apiNotifs.map(api => api.id));
+
+  const allNotifs = [
+    ...apiNotifs.map(api =>
+      localById[api.id] ? { ...api, read: localById[api.id].read } : api
+    ),
+    ...localNotifs.filter(local => !apiIds.has(local.id))
+  ];
+
+  return allNotifs.sort(
+    (a, b) => new Date(b.creationTime) - new Date(a.creationTime)
   );
 };
+
+const InnerNotification = React.memo(
+  ({ type, data, read, openHistory, onNotificationClick }) => {
+    const details = React.useMemo(() => {
+      if (!data) return null;
+      return getNotificationContent(type, JSON.parse(data));
+    }, [type, data]);
+
+    if (!details) {
+      return null;
+    }
+
+    const { title, content, missionId } = details;
+    return (
+      <Notification
+        title={title}
+        content={content}
+        missionId={missionId}
+        historyOnClick={() => onNotificationClick(missionId)}
+        read={read}
+      />
+    );
+  }
+);
 
 export const Notifications = ({ openHistory }) => {
   const id = "fr-accordion-notifs";
@@ -37,7 +67,7 @@ export const Notifications = ({ openHistory }) => {
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
 
-  const [notifs, setNotifs] = useState(userInfo.notifications || []);
+  const [notifs, setNotifs] = useState(() => userInfo.notifications || []);
 
   const [isExpended, setIsExpended] = useState(false);
   const api = useApi();
@@ -55,62 +85,121 @@ export const Notifications = ({ openHistory }) => {
   }, [notifs]);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
+    setNotifs(userInfo.notifications || []);
+  }, [userInfo.notifications]);
+
+  useEffect(() => {
+    if (!userInfo?.id) return;
+
+    const loadNotifications = async () => {
       await alerts.withApiErrorHandling(async () => {
         const apiResponse = await api.graphQlQuery(
           NOTIFICATIONS_QUERY,
-          { id: userInfo?.id },
+          { id: userInfo.id },
           {}
         );
-        setNotifs(apiResponse.data.user.notifications);
+
+        const apiNotifs = apiResponse.data.user.notifications;
+        const localNotifs = store.userInfo().notifications || [];
+        const merged = mergeNotifications(apiNotifs, localNotifs);
+
+        setNotifs(merged);
         await store.setUserInfo({
           ...store.userInfo(),
-          notifications: apiResponse.data.user.notifications
+          notifications: merged
         });
       }, "get-notifications");
-    }, 15000);
-    return () => clearInterval(interval);
-  }, [api, store, userInfo?.id]);
-
-  useEffect(() => {
-    return () => {
-      if (isExpendedRef.current && notifsRef.current.some(n => !n.read)) {
-        markNotificationsAsRead();
-      }
     };
-  }, []);
 
-  const markNotificationsAsRead = async () => {
-    await alerts.withApiErrorHandling(async () => {
-      const apiResponse = await api.graphQlMutate(
-        READ_NOTIFICATIONS_MUTATION,
-        { notificationIds: notifs.map(n => n.id) },
-        { context: { nonPublicApi: true } }
+    loadNotifications();
+  }, [api, store, userInfo?.id, alerts]);
+
+  const updateNotificationsReadStatus = useCallback(
+    async (notificationIds, errorKey = "read-notifications") => {
+      const updatedNotifs = notifsRef.current.map(n =>
+        notificationIds.includes(n.id) ? { ...n, read: true } : n
       );
-      const updatedNotifs = apiResponse.data.account.markNotificationsAsRead;
 
       setNotifs(updatedNotifs);
-
       await store.setUserInfo({
         ...store.userInfo(),
         notifications: updatedNotifs
       });
-      return updatedNotifs;
-    }, "read-notifications");
-  };
+
+      await alerts.withApiErrorHandling(async () => {
+        await api.graphQlMutate(
+          READ_NOTIFICATIONS_MUTATION,
+          { notificationIds },
+          { context: { nonPublicApi: true } }
+        );
+      }, errorKey);
+    },
+    [api, store, alerts]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (isExpendedRef.current && notifsRef.current.some(n => !n.read)) {
+        const allNotificationIds = notifsRef.current.map(n => n.id);
+        updateNotificationsReadStatus(allNotificationIds, "read-notifications");
+      }
+    };
+  }, [updateNotificationsReadStatus]);
+
+  const markNotificationAsRead = useCallback(
+    async notificationId => {
+      await updateNotificationsReadStatus(
+        [notificationId],
+        "read-notification"
+      );
+    },
+    [updateNotificationsReadStatus]
+  );
+
+  const markNotificationsAsRead = useCallback(async () => {
+    const allNotificationIds = notifsRef.current.map(n => n.id);
+    await updateNotificationsReadStatus(
+      allNotificationIds,
+      "read-notifications"
+    );
+  }, [updateNotificationsReadStatus]);
+
+  const handleNotificationClick = useCallback(
+    async missionId => {
+      const notification = notifsRef.current.find(n => {
+        const details = getNotificationContent(n.type, JSON.parse(n.data));
+        return details.missionId === missionId;
+      });
+
+      if (notification && !notification.read) {
+        await markNotificationAsRead(notification.id);
+      }
+
+      openHistory(missionId);
+    },
+    [markNotificationAsRead, openHistory]
+  );
 
   const onExtendButtonClick = useCallback(async () => {
     const isExpended_newValue = !isExpended;
     setIsExpended(isExpended_newValue);
 
-    if (!isExpended_newValue && notifs.some(n => !n.read)) {
+    if (
+      isExpended &&
+      !isExpended_newValue &&
+      notifsRef.current.some(n => !n.read)
+    ) {
       await markNotificationsAsRead();
     }
-  }, [isExpended, notifs, markNotificationsAsRead]);
+  }, [isExpended, markNotificationsAsRead]);
 
-  const unreadNotifs = notifs.filter(n => !n.read);
-  const title =
-    unreadNotifs.length > 0 ? `${unreadNotifs.length} nouveaux messages` : "";
+  const unreadNotifs = useMemo(() => notifs.filter(n => !n.read), [notifs]);
+
+  const title = useMemo(
+    () =>
+      unreadNotifs.length > 0 ? `${unreadNotifs.length} nouveaux messages` : "",
+    [unreadNotifs.length]
+  );
 
   return (
     <section
@@ -129,12 +218,13 @@ export const Notifications = ({ openHistory }) => {
         style={{ paddingTop: 0, paddingBottom: 0 }}
       >
         <Stack direction="column" width="100%" maxHeight="85vh">
-          {notifs && notifs.length > 0 ? (
+          {notifs.length > 0 ? (
             notifs.map(notif => (
               <InnerNotification
                 key={`notif__${notif.id}`}
                 {...notif}
                 openHistory={openHistory}
+                onNotificationClick={handleNotificationClick}
               />
             ))
           ) : (
