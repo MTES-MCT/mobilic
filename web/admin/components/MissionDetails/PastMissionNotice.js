@@ -1,7 +1,11 @@
 import React from "react";
 import Notice from "../../../common/Notice";
 
-export const PastMissionNotice = ({ missionName, justification }) => {
+export const PastMissionNotice = ({
+  missionName,
+  justification,
+  ...otherProps
+}) => {
   return (
     <Notice
       description={
@@ -11,6 +15,7 @@ export const PastMissionNotice = ({ missionName, justification }) => {
           Motif : "{justification}."
         </>
       }
+      {...otherProps}
     />
   );
 };

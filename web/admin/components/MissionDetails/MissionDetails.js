@@ -327,6 +327,7 @@ export function MissionDetails({
         <PastMissionNotice
           missionName={mission.name}
           justification={mission.pastRegistrationJustification}
+          sx={{ mb: 2 }}
         />
       ) : (
         globalFieldsEditable && <WarningModificationMission />
