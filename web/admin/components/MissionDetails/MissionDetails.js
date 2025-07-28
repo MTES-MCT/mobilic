@@ -138,7 +138,6 @@ export function MissionDetails({
     setLoading(false);
   }
 
-  console.log("mission", mission);
   const isMissionDeleted = React.useMemo(() => mission?.isDeleted, [mission]);
   const isMissionHoliday = React.useMemo(() => mission?.isHoliday, [mission]);
 
