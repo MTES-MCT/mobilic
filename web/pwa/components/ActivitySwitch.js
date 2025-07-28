@@ -88,7 +88,11 @@ export function ActivitySwitchCard({
             {label}
           </Typography>
           {subLabel && (
-            <Typography fontSize="0.5rem" lineHeight="0.7rem">
+            <Typography
+              fontSize="0.5rem"
+              lineHeight="0.7rem"
+              marginTop="0.15rem"
+            >
               {subLabel}
             </Typography>
           )}
