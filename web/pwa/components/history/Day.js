@@ -17,6 +17,7 @@ import { DayKpis } from "./DayKpis";
 import { NoContradictory } from "./NoContradictory";
 import { PeriodHeader } from "./PeriodHeader";
 import { Stack } from "@mui/material";
+import { PastMissionNotice } from "../../../admin/components/MissionDetails/PastMissionNotice";
 
 export function Day({
   missionsInPeriod,
@@ -186,6 +187,16 @@ export function Day({
           contradictoryComputationError={contradictoryComputationError}
         />
       )}
+      {missionsInPeriod
+        .filter(m => !!m.pastRegistrationJustification)
+        .map(m => (
+          <PastMissionNotice
+            missionName={m.name}
+            justification={m.pastRegistrationJustification}
+            submitter={m.submitter}
+            key={m.id}
+          />
+        ))}
 
       <Stack direction="column" px={2} pt={2} rowGap={2}>
         {alertsInPeriod && alertsInPeriod.length > 0 && (

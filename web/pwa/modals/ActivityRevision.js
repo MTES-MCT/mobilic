@@ -43,7 +43,9 @@ export default function ActivityRevisionOrCreationModal({
   allowTeamMode = false,
   nullableEndTime = true,
   allowSupportActivity = true,
+  allowOtherTask = true,
   allowTransfers = false,
+  otherTaskLabel = "",
   createActivity,
   handleSeveralActions,
   adminMode = false,
@@ -368,13 +370,18 @@ export default function ActivityRevisionOrCreationModal({
 
   const filterOutSupport = activity =>
     allowSupportActivity ? true : activity !== ACTIVITIES.support.name;
+  const filterOutOtherTask = activity =>
+    allowOtherTask ? true : activity !== ACTIVITIES.work.name;
   const filterOutTransfer = activity =>
     allowTransfers ? true : activity !== ACTIVITIES.transfer.name;
 
   const filteredActivities = () => {
     return Object.keys(ACTIVITIES).filter(
       a =>
-        filterOutSupport(a) && filterOutTransfer(a) && a !== ACTIVITIES.off.name
+        filterOutSupport(a) &&
+        filterOutTransfer(a) &&
+        filterOutOtherTask(a) &&
+        a !== ACTIVITIES.off.name
     );
   };
 
@@ -409,15 +416,24 @@ export default function ActivityRevisionOrCreationModal({
               value={isCreation ? newActivityType : event.type}
               onChange={e => setNewActivityType(e.target.value)}
             >
-              {filteredActivities().map(activityName => (
-                <MenuItem
-                  disabled={activityName === ACTIVITIES.support.name}
-                  key={activityName}
-                  value={activityName}
-                >
-                  {ACTIVITIES[activityName].label}
-                </MenuItem>
-              ))}
+              {filteredActivities().map(activityName => {
+                const activity = ACTIVITIES[activityName];
+                const isDisabled = activityName === ACTIVITIES.support.name;
+                const label = `${activity.label}${
+                  activityName === ACTIVITIES.work.name && otherTaskLabel
+                    ? " - " + otherTaskLabel
+                    : ""
+                }`;
+                return (
+                  <MenuItem
+                    disabled={isDisabled}
+                    key={activityName}
+                    value={activityName}
+                  >
+                    {label}
+                  </MenuItem>
+                );
+              })}
             </TextField>
             {requiresDriver() && (
               <TextField

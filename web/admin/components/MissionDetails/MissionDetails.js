@@ -53,6 +53,7 @@ import { MissionDetailsLocations } from "./MissionDetailsLocations";
 import { MissionDetailsObservations } from "./MissionDetailsObservations";
 import Notice from "../../../common/Notice";
 import CloseButton from "../../../common/CloseButton";
+import { PastMissionNotice } from "./PastMissionNotice";
 
 export function MissionDetails({
   missionId,
@@ -242,6 +243,8 @@ export function MissionDetails({
     adminSettings.requireExpenditures && !mission.isHoliday;
   const showKilometerReading = adminSettings.requireKilometerData;
   const allowTransfers = adminSettings.allowTransfers;
+  const allowOtherTask = adminSettings.allowOtherTask;
+  const otherTaskLabel = adminSettings.otherTaskLabel;
   const allowSupportActivity = adminSettings.requireSupportActivity;
   const editableMissionName = adminSettings.requireMissionName;
 
@@ -319,7 +322,16 @@ export function MissionDetails({
           sx={{ mb: 2 }}
         />
       )}
-      {globalFieldsEditable && <WarningModificationMission />}
+      {mission.pastRegistrationJustification ? (
+        <PastMissionNotice
+          missionName={mission.name}
+          justification={mission.pastRegistrationJustification}
+          submitter={mission.submitter}
+          sx={{ mb: 2 }}
+        />
+      ) : (
+        globalFieldsEditable && <WarningModificationMission />
+      )}
       {globalFieldsEditable && mission.missionNotUpdatedForTooLong && (
         <Notice
           type="warning"
@@ -431,6 +443,8 @@ export function MissionDetails({
                             adminMode: true,
                             allowTransfers,
                             allowSupportActivity,
+                            allowOtherTask,
+                            otherTaskLabel,
                             nullableEndTime: false,
                             defaultTime: mission.startTime || day,
                             forcedUser: e.user,
@@ -462,6 +476,8 @@ export function MissionDetails({
                             adminMode: true,
                             allowTransfers,
                             allowSupportActivity,
+                            allowOtherTask,
+                            otherTaskLabel,
                             nullableEndTime: false,
                             forcedUser: e.user,
                             displayWarningMessage: false,

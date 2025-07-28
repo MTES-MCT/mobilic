@@ -846,14 +846,16 @@ class Actions {
     startLocation = null,
     endLocation = null,
     kilometerReading = null,
-    endKilometerReading = null
+    endKilometerReading = null,
+    pastRegistrationJustification = null
   }) => {
     const missionPayload = {
       name,
       companyId,
       vehicleId: vehicle ? vehicle.id : null,
       vehicleRegistrationNumber: vehicle ? vehicle.registrationNumber : null,
-      creationTime: nowMilliseconds()
+      creationTime: nowMilliseconds(),
+      pastRegistrationJustification
     };
 
     let missionCurrentId;
@@ -863,7 +865,8 @@ class Actions {
         name,
         companyId,
         vehicle,
-        ended: false
+        ended: false,
+        pastRegistrationJustification
       };
       const missionId = this.store.createEntityObject(
         mission,
@@ -1051,7 +1054,8 @@ class Actions {
     team = [],
     comment = null,
     endLocation = null,
-    kilometerReading = null
+    kilometerReading = null,
+    pastRegistrationJustification = null
   }) => {
     if (team.length === 0)
       return await this.endMission({
@@ -1060,7 +1064,8 @@ class Actions {
         expenditures,
         comment,
         endLocation,
-        kilometerReading
+        kilometerReading,
+        pastRegistrationJustification
       });
 
     const userId = this.store.userId();
@@ -1072,7 +1077,8 @@ class Actions {
         expenditures,
         comment,
         endLocation,
-        kilometerReading
+        kilometerReading,
+        pastRegistrationJustification
       });
     }
 
@@ -1113,7 +1119,8 @@ class Actions {
         comment,
         address,
         kilometerReading,
-        endTime
+        endTime,
+        pastRegistrationJustification
       ) =>
         await this.endMissionForTeam({
           mission: mission,
@@ -1122,7 +1129,8 @@ class Actions {
           expenditures,
           comment,
           endLocation: address,
-          kilometerReading
+          kilometerReading,
+          pastRegistrationJustification
         }),
       currentEndLocation: mission.endLocation,
       currentMission: mission,
@@ -1167,7 +1175,8 @@ class Actions {
     userId = null,
     comment = null,
     endLocation = null,
-    kilometerReading = null
+    kilometerReading = null,
+    pastRegistrationJustification = null
   }) => {
     const missionId = mission.id;
     const actualUserId = userId || this.store.userId();
@@ -1175,7 +1184,8 @@ class Actions {
       endTime,
       missionId,
       userId: actualUserId,
-      creationTime: nowMilliseconds()
+      creationTime: nowMilliseconds(),
+      pastRegistrationJustification
     };
     const updateStore = (store, requestId) => {
       const currentActivity = this._findAndCloseCurrentActivity(

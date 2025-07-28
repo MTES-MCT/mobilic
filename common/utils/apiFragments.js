@@ -9,6 +9,8 @@ export const COMPANY_SETTINGS_FRAGMENT = gql`
       allowTransfers
       requireExpenditures
       requireMissionName
+      allowOtherTask
+      otherTaskLabel
     }
   }
 `;
@@ -47,6 +49,10 @@ export const FULL_MISSION_FRAGMENT = gql`
     id
     name
     submitterId
+    submitter {
+      firstName
+      lastName
+    }
     isHoliday
     deletedAt
     deletedBy
@@ -112,6 +118,7 @@ export const FULL_MISSION_FRAGMENT = gql`
     endLocation {
       ...FullLocation
     }
+    pastRegistrationJustification
   }
 `;
 
@@ -300,5 +307,15 @@ export const USER_AGREEMENT = gql`
     answerDate
     expiresAt
     cguVersion
+  }
+`;
+
+export const NOTIFICATION_FRAGMENT = gql`
+  fragment NotificationData on Notification {
+    id
+    type
+    creationTime
+    read
+    data
   }
 `;

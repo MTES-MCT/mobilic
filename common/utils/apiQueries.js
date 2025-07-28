@@ -13,7 +13,8 @@ import {
   FRAGMENT_ACTIVITY,
   FULL_MISSION_FRAGMENT,
   FULL_EMPLOYMENT_FRAGMENT,
-  USER_AGREEMENT
+  USER_AGREEMENT,
+  NOTIFICATION_FRAGMENT
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
 
@@ -762,6 +763,10 @@ export const ADMIN_COMPANIES_QUERY = gql`
               id
               name
               submitterId
+              submitter {
+                firstName
+                lastName
+              }
               isHoliday
               validations {
                 submitterId
@@ -802,6 +807,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                   lastName
                 }
               }
+              pastRegistrationJustification
             }
           }
         }
@@ -1435,6 +1441,7 @@ export const CREATE_MISSION_MUTATION = gql`
     $vehicleId: Int
     $vehicleRegistrationNumber: String
     $creationTime: TimeStamp
+    $pastRegistrationJustification: String
   ) {
     activities {
       createMission(
@@ -1444,6 +1451,7 @@ export const CREATE_MISSION_MUTATION = gql`
         vehicleId: $vehicleId
         vehicleRegistrationNumber: $vehicleRegistrationNumber
         creationTime: $creationTime
+        pastRegistrationJustification: $pastRegistrationJustification
       ) {
         id
         name
@@ -1471,6 +1479,7 @@ export const END_MISSION_MUTATION = gql`
     $missionId: Int!
     $userId: Int
     $creationTime: TimeStamp
+    $pastRegistrationJustification: String
   ) {
     activities {
       endMission(
@@ -1478,6 +1487,7 @@ export const END_MISSION_MUTATION = gql`
         missionId: $missionId
         userId: $userId
         creationTime: $creationTime
+        pastRegistrationJustification: $pastRegistrationJustification
       ) {
         id
         name
@@ -1732,6 +1742,8 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
     $requireSupportActivity: Boolean
     $allowTransfers: Boolean
     $requireMissionName: Boolean
+    $allowOtherTask: Boolean
+    $otherTaskLabel: String
   ) {
     editCompanySettings(
       companyId: $companyId
@@ -1741,6 +1753,8 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
       requireSupportActivity: $requireSupportActivity
       allowTransfers: $allowTransfers
       requireMissionName: $requireMissionName
+      allowOtherTask: $allowOtherTask
+      otherTaskLabel: $otherTaskLabel
     ) {
       id
       ...CompanySettings
@@ -2372,6 +2386,27 @@ export const REJECT_CGU_MUTATION = gql`
     account {
       rejectCgu(userId: $userId, cguVersion: $cguVersion) {
         ...UserAgreementData
+      }
+    }
+  }
+`;
+
+export const READ_NOTIFICATIONS_MUTATION = gql`
+  ${NOTIFICATION_FRAGMENT}
+  mutation markNotificationsAsRead($notificationIds: [Int!]!) {
+    account {
+      markNotificationsAsRead(notificationIds: $notificationIds) {
+        ...NotificationData
+      }
+    }
+  }
+`;
+export const NOTIFICATIONS_QUERY = gql`
+  ${NOTIFICATION_FRAGMENT}
+  query GetUserNotifications($id: Int!) {
+    user(id: $id) {
+      notifications {
+        ...NotificationData
       }
     }
   }
