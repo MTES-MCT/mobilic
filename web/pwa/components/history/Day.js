@@ -193,6 +193,7 @@ export function Day({
           <PastMissionNotice
             missionName={m.name}
             justification={m.pastRegistrationJustification}
+            submitter={m.submitter}
             key={m.id}
           />
         ))}

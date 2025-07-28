@@ -327,6 +327,7 @@ export function MissionDetails({
         <PastMissionNotice
           missionName={mission.name}
           justification={mission.pastRegistrationJustification}
+          submitter={mission.submitter}
           sx={{ mb: 2 }}
         />
       ) : (

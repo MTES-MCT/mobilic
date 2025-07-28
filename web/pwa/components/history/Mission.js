@@ -383,6 +383,7 @@ export function Mission({
           <PastMissionNotice
             missionName={mission.name}
             justification={mission.pastRegistrationJustification}
+            submitter={mission.submitter}
           />
         )}
         {showMetrics ? (

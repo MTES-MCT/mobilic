@@ -763,6 +763,10 @@ export const ADMIN_COMPANIES_QUERY = gql`
               id
               name
               submitterId
+              submitter {
+                firstName
+                lastName
+              }
               isHoliday
               validations {
                 submitterId

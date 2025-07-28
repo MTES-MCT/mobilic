@@ -49,6 +49,10 @@ export const FULL_MISSION_FRAGMENT = gql`
     id
     name
     submitterId
+    submitter {
+      firstName
+      lastName
+    }
     isHoliday
     deletedAt
     deletedBy
