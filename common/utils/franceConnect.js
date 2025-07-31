@@ -15,11 +15,17 @@ export function buildCallbackUrl(employeeInvite, create, isAdmin) {
     hasQueryString = true;
   }
   if (create) {
-    baseUrl =
-      baseUrl +
-      `${hasQueryString ? "&" : "?"}create=true&next=${encodeURIComponent(
-        "/signup/user_login" + (isAdmin ? "?admin=true" : "")
-      )}`;
+    const signupNext = "/signup/user_login" + (isAdmin ? "?admin=true" : "");
+    baseUrl = baseUrl + `${hasQueryString ? "&" : "?"}create=true`;
+    // Override next parameter for signup flow
+    if (!hasQueryString) {
+      baseUrl = baseUrl + `&next=${encodeURIComponent(signupNext)}`;
+    } else {
+      // Replace or add next parameter
+      const url = new URL(baseUrl);
+      url.searchParams.set("next", signupNext);
+      baseUrl = url.toString();
+    }
   }
   return baseUrl;
 }

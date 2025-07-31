@@ -41,7 +41,7 @@ export function FranceConnectCallback() {
             inviteToken: token,
             originalRedirectUri: callbackURL,
             authorizationCode: code,
-            create: !!create,
+            create: create,
             state
           },
           { context: { nonPublicApi: true } },
@@ -65,7 +65,6 @@ export function FranceConnectCallback() {
   React.useEffect(() => {
     const queryString = new URLSearchParams(window.location.search);
 
-    // v2: Handle redirected errors
     const error = queryString.get("error");
     const errorDescription = queryString.get("error_description");
 
@@ -76,11 +75,18 @@ export function FranceConnectCallback() {
       return;
     }
 
-    // Standard parameters for v1/v2
     const inviteToken = queryString.get("invite_token");
     const code = queryString.get("code");
-    const create = queryString.get("create");
+    let create = queryString.get("create");
     const state = queryString.get("state");
+
+    // In dev/test (with redirect override), create is only in state
+    // In staging/prod (no override), create is in URL. Fallback to state if needed.
+    if (!create && state) {
+      // eslint-disable-next-line
+      const stateData = JSON.parse(atob(state));
+      create = stateData.create;
+    }
 
     // Clean v1/v2 parameters from URL
     const newQS = removeParamsFromQueryString(window.location.search, [
@@ -97,6 +103,9 @@ export function FranceConnectCallback() {
       (newQS.length > 0 ? `?${newQS}` : "");
 
     if (code) {
+      // eslint-disable-next-line eqeqeq
+      const create = true;
+
       retrieveFranceConnectInfo(code, callBackUrl, inviteToken, create, state);
     } else if (!error) {
       setError("Paramètres invalides");
