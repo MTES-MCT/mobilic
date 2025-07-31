@@ -77,15 +77,18 @@ export function FranceConnectCallback() {
 
     const inviteToken = queryString.get("invite_token");
     const code = queryString.get("code");
-    let create = queryString.get("create");
+    const context = queryString.get("context");
+    let create = queryString.get("create") === "true";
     const state = queryString.get("state");
 
-    // In dev/test (with redirect override), create is only in state
-    // In staging/prod (no override), create is in URL. Fallback to state if needed.
-    if (!create && state) {
+    if (context === "signup") {
+      create = true;
+    } else if (context === "login") {
+      create = false;
+    } else if (!create && state) {
       // eslint-disable-next-line
       const stateData = JSON.parse(atob(state));
-      create = stateData.create;
+      create = stateData.create === true;
     }
 
     // Clean v1/v2 parameters from URL
@@ -103,9 +106,6 @@ export function FranceConnectCallback() {
       (newQS.length > 0 ? `?${newQS}` : "");
 
     if (code) {
-      // eslint-disable-next-line eqeqeq
-      const create = true;
-
       retrieveFranceConnectInfo(code, callBackUrl, inviteToken, create, state);
     } else if (!error) {
       setError("Paramètres invalides");
