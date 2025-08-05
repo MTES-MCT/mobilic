@@ -2411,3 +2411,29 @@ export const NOTIFICATIONS_QUERY = gql`
     }
   }
 `;
+
+export const SET_EMPLOYEE_CONTRACT_TYPES_MUTATION = gql`
+  ${FULL_EMPLOYMENT_FRAGMENT}
+  mutation setEmployeeContractTypes(
+    $contractSpecifications: [EmployeeContractTypeInput]!
+  ) {
+    employments {
+      setEmployeeContractTypes(
+        contractSpecifications: $contractSpecifications
+      ) {
+        ...FullEmploymentData
+      }
+    }
+  }
+`;
+
+export const SNOOZE_CONTRACT_TYPE_INFO_MUTATION = gql`
+  ${FULL_EMPLOYMENT_FRAGMENT}
+  mutation snoozeContractTypeInfo {
+    employments {
+      snoozeContractTypeInfo {
+        ...FullEmploymentData
+      }
+    }
+  }
+`;

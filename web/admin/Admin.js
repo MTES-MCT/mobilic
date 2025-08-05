@@ -23,12 +23,16 @@ import { Header } from "../common/Header";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthUp, useWidth } from "common/utils/useWidth";
 import { useSnackbarAlerts } from "../common/Snackbar";
+import { isoFormatLocalDate } from "common/utils/time";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
 import { MissionDrawerContextProvider } from "./components/MissionDrawer";
 import CertificationCommunicationModal from "../pwa/components/CertificationCommunicationModal";
 import { shouldUpdateBusinessType } from "common/utils/updateBusinessType";
+import { shouldDisplayContractTypeModal } from "common/utils/updateContractType";
 import UpdateCompanyBusinessTypeModal from "./modals/UpdateCompanyBusinessTypeModal";
+import UpdateEmployeeContractTypeModal from "./modals/UpdateEmployeeContractTypeModal";
+import ContractTypeSetupPanel from "./panels/ContractTypeSetupPanel";
 import { Main } from "../common/semantics/Main";
 
 import { SideMenu } from "./components/SideMenu/SideMenu";
@@ -53,7 +57,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function _Admin() {
+function AdminComponent() {
   const api = useApi();
   const adminStore = useAdminStore();
   const withLoadingScreen = useLoadingScreen();
@@ -68,6 +72,12 @@ function _Admin() {
     companiesToAcceptCertificateCommunication,
     setCompaniesToAcceptCertificateCommunication
   ] = React.useState([]);
+  const [showContractTypeSetup, setShowContractTypeSetup] = React.useState(
+    false
+  );
+  const [showContractTypeModal, setShowContractTypeModal] = React.useState(
+    false
+  );
 
   const location = useLocation();
   const width = useWidth();
@@ -197,11 +207,68 @@ function _Admin() {
   const shouldRefreshDataSetter = val => setShouldRefreshData({ value: val });
 
   const defaultView = views.find(view => view.isDefault);
+
+  const shouldShowContractTypeModal = () => {
+    if (!adminStore.business || !adminStore.business.businessType) {
+      return false;
+    }
+
+    if (!shouldDisplayContractTypeModal()) {
+      return false;
+    }
+    const eligibleEmployments =
+      adminStore.employments?.filter(
+        emp =>
+          emp.companyId === adminStore.companyId &&
+          emp.isAcknowledged &&
+          emp.user.firstName &&
+          emp.user.lastName &&
+          (!emp.endDate || emp.endDate >= isoFormatLocalDate(new Date()))
+      ) || [];
+
+    return eligibleEmployments.some(emp => !emp.contractType);
+  };
+
+  React.useEffect(() => {
+    if (
+      shouldShowContractTypeModal() &&
+      !showContractTypeModal &&
+      !showContractTypeSetup
+    ) {
+      setShowContractTypeModal(true);
+    }
+  }, [
+    adminStore.business,
+    adminStore.employments,
+    adminStore.companyId,
+    showContractTypeModal,
+    showContractTypeSetup
+  ]);
+
+  const handleStartContractTypeSetup = () => {
+    setShowContractTypeModal(false);
+    setShowContractTypeSetup(true);
+  };
+
+  const handleCloseContractTypeSetup = () => {
+    setShowContractTypeSetup(false);
+  };
+
+  const handleSnoozeContractType = () => {
+    setShowContractTypeModal(false);
+  };
+
   return (
     <>
       {!!adminStore.business &&
         !adminStore.business.businessType &&
         shouldUpdateBusinessType() && <UpdateCompanyBusinessTypeModal />}
+      {showContractTypeModal && (
+        <UpdateEmployeeContractTypeModal
+          onStartSetup={handleStartContractTypeSetup}
+          onClose={handleSnoozeContractType}
+        />
+      )}
       <Header />
       <MissionDrawerContextProvider
         width={width}
@@ -222,25 +289,33 @@ function _Admin() {
             ref={ref}
           >
             <Switch>
-              {views.map(view => (
-                <Route
-                  key={view.label}
-                  path={view.path}
-                  render={() => (
-                    <view.component
-                      containerRef={ref}
-                      setShouldRefreshData={val =>
-                        setShouldRefreshData(shouldRefreshDataSetter)
-                      }
+              {showContractTypeSetup ? (
+                <ContractTypeSetupPanel
+                  onClose={handleCloseContractTypeSetup}
+                />
+              ) : (
+                <>
+                  {views.map(view => (
+                    <Route
+                      key={view.label}
+                      path={view.path}
+                      render={() => (
+                        <view.component
+                          containerRef={ref}
+                          setShouldRefreshData={val =>
+                            setShouldRefreshData(shouldRefreshDataSetter)
+                          }
+                        />
+                      )}
+                    />
+                  ))}
+                  {defaultView && (
+                    <Route
+                      path="*"
+                      render={() => <Redirect push to={defaultView.path} />}
                     />
                   )}
-                />
-              ))}
-              {defaultView && (
-                <Route
-                  path="*"
-                  render={() => <Redirect push to={defaultView.path} />}
-                />
+                </>
               )}
             </Switch>
           </Container>
@@ -254,7 +329,7 @@ export default function Admin(props) {
   return (
     <LoadingScreenContextProvider>
       <AdminStoreProvider>
-        <_Admin {...props} />
+        <AdminComponent {...props} />
       </AdminStoreProvider>
     </LoadingScreenContextProvider>
   );

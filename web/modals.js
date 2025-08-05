@@ -30,6 +30,7 @@ import BatchInviteModal from "./admin/modals/BatchInviteModal";
 import SuccessMessageModal from "./admin/modals/SuccessMessage";
 import WebinarsModal from "./admin/modals/WebinarsModal";
 import OverrideValidationJustificationModal from "./admin/modals/OverrideValidationJustificationModal";
+import UpdateEmployeeContractTypeModal from "./admin/modals/UpdateEmployeeContractTypeModal";
 
 // home
 import ChangeEmailModal from "./pwa/modals/ChangeEmailModal";
@@ -95,5 +96,6 @@ export const MODAL_DICT = {
   successMessage: SuccessMessageModal,
   webinars: WebinarsModal,
   controlPicture: ControlPicture,
-  overrideValidation: OverrideValidationJustificationModal
+  overrideValidation: OverrideValidationJustificationModal,
+  updateEmployeeContractType: UpdateEmployeeContractTypeModal
 };
