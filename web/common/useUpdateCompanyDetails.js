@@ -22,6 +22,9 @@ export const useUpdateCompanyDetails = (
   const [newCompanyBusinessType, setNewCompanyBusinessType] = React.useState(
     adminStore.business?.businessType
   );
+  const [newNbWorkers, setNewNbWorkers] = React.useState(
+    company?.nbWorkers && company.nbWorkers > 0 ? company.nbWorkers : null
+  );
 
   const hasBusinessTypeChanged = React.useMemo(
     () => newCompanyBusinessType !== adminStore.business?.businessType,
@@ -38,6 +41,7 @@ export const useUpdateCompanyDetails = (
           companyId: company?.id,
           newName: newCompanyName || null,
           newPhoneNumber: newCompanyPhoneNumber || null,
+          newNbWorkers: newNbWorkers || null,
           ...(hasBusinessTypeChanged
             ? {
                 newBusinessType: newCompanyBusinessType,
@@ -52,12 +56,14 @@ export const useUpdateCompanyDetails = (
       const business = apiResponse?.data?.updateCompanyDetails?.business;
       const name = apiResponse?.data?.updateCompanyDetails?.name;
       const phoneNumber = apiResponse?.data?.updateCompanyDetails?.phoneNumber;
+      const nbWorkers = apiResponse?.data?.updateCompanyDetails?.nbWorkers;
       await adminStore.dispatch({
         type: ADMIN_ACTIONS.updateCompanyNameAndPhoneNumber,
         payload: {
           companyId: id,
           companyName: name,
-          companyPhoneNumber: phoneNumber
+          companyPhoneNumber: phoneNumber,
+          companyNbWorkers: nbWorkers
         }
       });
       await adminStore.dispatch({
@@ -100,6 +106,8 @@ export const useUpdateCompanyDetails = (
     setNewCompanyBusinessType,
     hasBusinessTypeChanged,
     updateCompanyDetails,
-    newCompanyBusinessType
+    newCompanyBusinessType,
+    newNbWorkers,
+    setNewNbWorkers
   };
 };

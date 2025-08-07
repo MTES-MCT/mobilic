@@ -11,7 +11,12 @@ import { MandatoryField } from "../../common/MandatoryField";
 import { Input } from "../../common/forms/Input";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { NumericInput } from "../../common/forms/NumericInput";
-import { MAX_NB_WORKERS, MIN_NB_WORKERS } from "./SubmitStep";
+import {
+  MAX_NB_WORKERS,
+  MIN_NB_WORKERS,
+  NB_WORKERS_LABEL,
+  NB_WORKERS_HINT_TEXT
+} from "common/utils/companyConstants";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -162,8 +167,8 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                       setHasValidatedChoice(false);
                       updateFacility(facility, "nbWorkers", newNbWorkers);
                     }}
-                    label="Nombre de salariés concernés par Mobilic"
-                    hintText="Exemples : chauffeurs, accompagnateurs, ripeurs..."
+                    label={NB_WORKERS_LABEL}
+                    hintText={NB_WORKERS_HINT_TEXT}
                     required
                     min={MIN_NB_WORKERS}
                     max={MAX_NB_WORKERS}

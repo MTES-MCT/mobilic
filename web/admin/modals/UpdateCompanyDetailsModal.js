@@ -9,6 +9,13 @@ import { useUpdateCompanyDetails } from "../../common/useUpdateCompanyDetails";
 import Modal from "../../common/Modal";
 import { MandatoryField } from "../../common/MandatoryField";
 import { Input } from "../../common/forms/Input";
+import { NumericInput } from "../../common/forms/NumericInput";
+import {
+  MIN_NB_WORKERS,
+  MAX_NB_WORKERS,
+  NB_WORKERS_HINT_TEXT,
+  NB_WORKERS_LABEL
+} from "common/utils/companyConstants";
 
 export default function UpdateCompanyDetailsModal({
   open,
@@ -24,7 +31,9 @@ export default function UpdateCompanyDetailsModal({
     setNewCompanyBusinessType,
     hasBusinessTypeChanged,
     updateCompanyDetails,
-    newCompanyBusinessType
+    newCompanyBusinessType,
+    newNbWorkers,
+    setNewNbWorkers
   } = useUpdateCompanyDetails(company, adminStore, handleClose);
 
   const [
@@ -35,21 +44,27 @@ export default function UpdateCompanyDetailsModal({
   const canSave = React.useMemo(
     () =>
       newCompanyName &&
+      newNbWorkers >= MIN_NB_WORKERS &&
+      newNbWorkers <= MAX_NB_WORKERS &&
       (newCompanyName !== company?.name ||
         newCompanyPhoneNumber !== company?.phoneNumber ||
+        newNbWorkers !== company?.nbWorkers ||
         (hasBusinessTypeChanged && !!newCompanyBusinessType)),
     [
       company?.phoneNumber,
       company?.name,
+      company?.nbWorkers,
       newCompanyName,
       newCompanyPhoneNumber,
+      newNbWorkers,
       hasBusinessTypeChanged,
       newCompanyBusinessType
     ]
   );
 
-  const handleSubmit = async () =>
+  const handleSubmit = async () => {
     await updateCompanyDetails(applyBusinessTypeToEmployees);
+  };
 
   return (
     <Modal
@@ -81,6 +96,15 @@ export default function UpdateCompanyDetailsModal({
               setNewCompanyPhoneNumber(newNumber)
             }
             label="Numéro de téléphone de l'entreprise"
+          />
+          <NumericInput
+            initialValue={newNbWorkers}
+            onChangeValue={setNewNbWorkers}
+            label={NB_WORKERS_LABEL}
+            hintText={NB_WORKERS_HINT_TEXT}
+            required
+            min={MIN_NB_WORKERS}
+            max={MAX_NB_WORKERS}
           />
           {adminStore.business && (
             <>

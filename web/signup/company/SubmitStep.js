@@ -10,6 +10,12 @@ import { Section } from "../../common/Section";
 import { MandatoryField } from "../../common/MandatoryField";
 import { Input } from "../../common/forms/Input";
 import { NumericInput } from "../../common/forms/NumericInput";
+import {
+  MIN_NB_WORKERS,
+  MAX_NB_WORKERS,
+  NB_WORKERS_HINT_TEXT,
+  NB_WORKERS_LABEL
+} from "common/utils/companyConstants";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -17,8 +23,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const MIN_NB_WORKERS = 1;
-export const MAX_NB_WORKERS = 5000;
 export function SubmitStep({
   handleSubmit,
   loading,
@@ -69,8 +73,8 @@ export function SubmitStep({
             <NumericInput
               initialValue={nbWorkers}
               onChangeValue={setNbWorkers}
-              label="Nombre de salariés concernés par Mobilic"
-              hintText="Exemples : chauffeurs, accompagnateurs, ripeurs..."
+              label={NB_WORKERS_LABEL}
+              hintText={NB_WORKERS_HINT_TEXT}
               required
               min={MIN_NB_WORKERS}
               max={MAX_NB_WORKERS}
