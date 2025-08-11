@@ -2274,6 +2274,27 @@ export const COMPANY_CERTIFICATION_COMMUNICATION_QUERY = gql`
         notTooManyChanges
         validateRegularly
         logInRealTime
+        logInRealTimeScore
+        notTooManyChangesScore
+      }
+    }
+  }
+`;
+
+export const COMPANY_REGULATORY_SCORE_QUERY = gql`
+  query companyRegulatoryScore($companyId: Int!, $fromDate: Date, $toDate: Date) {
+    company(id: $companyId) {
+      id
+      companyRegulatoryScore(fromDate: $fromDate, toDate: $toDate) {
+        compliant
+        total
+        details {
+          type
+          totalAlerts
+          significantAlerts
+          compliant
+          complianceRate
+        }
       }
     }
   }
